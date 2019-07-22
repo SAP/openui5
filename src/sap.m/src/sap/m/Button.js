@@ -174,6 +174,7 @@ sap.ui.define([
 
 	Button.prototype.init = function() {
 		this._onmouseenter = this._onmouseenter.bind(this);
+		this._buttonPressed = false;
 	};
 
 	/**
@@ -234,7 +235,7 @@ sap.ui.define([
 		// change the source only when the first finger is on the control, the
 		// following fingers doesn't affect
 		if (oEvent.targetTouches.length === 1) {
-
+			this._buttonPressed = true;
 			// set active button state
 			this._activeButton();
 		}
@@ -256,6 +257,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontouchend = function(oEvent) {
+		this._buttonPressed = oEvent.originalEvent && oEvent.originalEvent.buttons & 1;
 
 		// set inactive button state
 		this._inactiveButton();
@@ -274,7 +276,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontouchcancel = function() {
-
+		this._buttonPressed = false;
 		// set inactive button state
 		this._inactiveButton();
 	};
@@ -374,7 +376,7 @@ sap.ui.define([
 	};
 
 	Button.prototype._onmouseenter = function(oEvent) {
-		if (oEvent.originalEvent && oEvent.originalEvent.buttons & 1) {
+		if (this._buttonPressed && oEvent.originalEvent && oEvent.originalEvent.buttons & 1) {
 			this._activeButton();
 		}
 	};

@@ -855,10 +855,30 @@ sap.ui.define([
 
 		// Action
 		// enter when left mouse and wheel are depressed
+		oButton._buttonPressed = true;
 		oButton._onmouseenter({ originalEvent: { buttons: 5 } });
 
 		// Assert
 		assert.ok(spyActivate.calledOnce, "_activeButton was called");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	//BCP: 1970231584
+	QUnit.test("on mouse enter, button doesn't get active if it wasn't pressed before and the left mouse button is pressed", function(assert) {
+		// System under Test
+		var oButton = new Button();
+
+		var spyActivate = this.spy(oButton, "_activeButton");
+
+		// Action
+		// enter when left mouse and wheel are depressed
+		oButton._buttonPressed = false;
+		oButton._onmouseenter({ originalEvent: { buttons: 5 } });
+
+		// Assert
+		assert.ok(!spyActivate.called, "_activeButton wasn't called");
 
 		// Cleanup
 		oButton.destroy();
