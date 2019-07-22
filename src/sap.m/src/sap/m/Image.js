@@ -460,28 +460,6 @@ sap.ui.define([
 		}
 	};
 
-	Image.prototype.setSrc = function(sSrc) {
-		if (sSrc === this.getSrc()) {
-			return this;
-		}
-
-		this.setProperty("src", sSrc, true);
-
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			this._updateDomSrc(this._getDensityAwareSrc());
-		}
-
-		return this;
-	};
-
-	Image.prototype.setActiveSrc = function(sActiveSrc) {
-		if (!sActiveSrc) {
-			sActiveSrc = "";
-		}
-		return this.setProperty("activeSrc", sActiveSrc, true);
-	};
-
 	Image.prototype.attachPress = function() {
 		Array.prototype.unshift.apply(arguments, ["press"]);
 		Control.prototype.attachEvent.apply(this, arguments);
