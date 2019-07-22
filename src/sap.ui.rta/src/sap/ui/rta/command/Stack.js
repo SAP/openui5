@@ -70,9 +70,11 @@ sap.ui.define([
 			var sAppName = sap.ui.fl.Utils.getAppDescriptor(oComponent)["sap.app"].id;
 			var mPropertyBag = {
 				oComponent : oComponent,
-				appName : sAppName
+				appName : sAppName,
+				selector: oControl,
+				invalidateCache: false
 			};
-			return PersistenceWriteAPI._getUIChanges(oControl, Object.assign({}, mPropertyBag, {invalidateCache: false}))
+			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
 			.then(function(aChanges) {
 				var mChanges = {};
 				aChanges.forEach(function(oChange) {

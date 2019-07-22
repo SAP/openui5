@@ -1200,7 +1200,7 @@ function (
 					return this.oCommandStack.undo()
 						.then(function () {
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
-							assert.ok(fnRevertChangesOnControlStub.calledWith(oChange, this.oButton), "then PersistenceWriteAPI.remove called with required parameters");
+							assert.ok(fnRevertChangesOnControlStub.calledWithExactly({change: oChange, element: this.oButton}), "then PersistenceWriteAPI.remove called with required parameters");
 							assert.equal(this.fnRtaStartRecordingStub.callCount, 0, "then recording of rta undo operations not started");
 							assert.equal(this.fnRtaStopRecordingStub.callCount, 0, "then recording of rta undo operations not stopped");
 						}.bind(this));

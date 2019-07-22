@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
 	"sap/base/util/includes",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/Utils"
 ], function(
 	ChangesController,
 	DescriptorInlineChangeFactory,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Component,
 	Element,
 	includes,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	flexUtils
 ) {
 	"use strict";
 	/**
@@ -38,34 +40,35 @@ sap.ui.define([
 		/**
 		 * Create a change on the flex persistence.
 		 *
-		 * @param {object} oChangeSpecificData - Property bag holding the change information {@see sap.ui.fl.Change#createInitialFileContent}
-		 * The property "oChangeSpecificData.packageName" is set to $TMP and internally since flex changes are always local when they are created.
-		 * @param {sap.ui.fl.Selector} vSelector - Managed Object or selector object
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information {@see sap.ui.fl.Change#createInitialFileContent}
+		 * The property "mPropertyBag.changeSpecificData.packageName" is set to $TMP and internally since flex changes are always local when they are created.
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Managed Object or selector object
 		 *
 		 * @returns {Promise | sap.ui.fl.Change} If descriptor change then a promise resolves to the created change.
 		 * For flex change the created change object is returned.
 		 * @public
 		 */
-		create: function(oChangeSpecificData, vSelector) {
+		create: function(mPropertyBag) {
 			var oFlexController;
 			// descriptor change
-			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChangeSpecificData.changeType)) {
-				oFlexController = ChangesController.getDescriptorFlexControllerInstance(vSelector);
+			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), mPropertyBag.changeSpecificData.changeType)) {
+				oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 				var sReference = oFlexController.getComponentName();
 				var sLayer;
-				if (oChangeSpecificData.layer) {
+				if (mPropertyBag.changeSpecificData.layer) {
 					// Smart business must pass the layer as a part of ChangeSpecificData
 					// If not passed, layer CUSTOMER will be set
-					sLayer = oChangeSpecificData.layer;
-					delete oChangeSpecificData.layer;
+					sLayer = mPropertyBag.changeSpecificData.layer;
+					delete mPropertyBag.changeSpecificData.layer;
 				}
 
 				return DescriptorInlineChangeFactory.createDescriptorInlineChange(
-					oChangeSpecificData.changeType, oChangeSpecificData.content, oChangeSpecificData.texts
+					mPropertyBag.changeSpecificData.changeType, mPropertyBag.changeSpecificData.content, mPropertyBag.changeSpecificData.texts
 				)
 					.then(function (oAppDescriptorChangeContent) {
 						return new DescriptorChangeFactory().createNew(
-							sReference, oAppDescriptorChangeContent, sLayer, vSelector
+							sReference, oAppDescriptorChangeContent, sLayer, mPropertyBag.selector
 						);
 					})
 					.catch(function(oError) {
@@ -75,74 +78,79 @@ sap.ui.define([
 			}
 
 			// flex change
-			oFlexController = ChangesController.getFlexControllerInstance(vSelector);
+			oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 			// if a component instance is passed only a base change is created
-			if (vSelector instanceof Component) {
-				return oFlexController.createBaseChange(oChangeSpecificData, vSelector);
+			if (mPropertyBag.selector instanceof Component) {
+				return oFlexController.createBaseChange(mPropertyBag.changeSpecificData, mPropertyBag.selector);
 			}
 			// in other cases if a control instance or selector is passed then change handler's completeChangeContent() is called
-			return oFlexController.createChange(oChangeSpecificData, vSelector);
+			return oFlexController.createChange(mPropertyBag.changeSpecificData, mPropertyBag.selector);
 		},
 
 		/**
 		 * Applying a specific change on the passed control, if it is not already applied.
 		 *
-		 * @param {sap.ui.fl.Change} oChange - Change object which should be applied on the passed control
-		 * @param {sap.ui.core.Element} oElement - Element instance on which change should be applied
-		 * @param {object} mPropertyBag - Change application properties
-		 * @param {object} mPropertyBag.modifier - Modifier used to apply change
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object which should be applied on the passed control
+		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which change should be applied
+		 * @param {object} [mPropertyBag.modifier] - Modifier used to apply change
 		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
 		 * @public
 		 */
-		apply: function(oChange, oElement, mPropertyBag) {
-			var oFlexController = ChangesController.getFlexControllerInstance(oElement);
-			mPropertyBag.appComponent = ChangesController.getAppComponentForSelector(oElement);
-			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(oChange.getSelector(), mPropertyBag.modifier, mPropertyBag.appComponent);
-			if (!bDependenciesExist && oElement instanceof Element) {
-				return oFlexController.checkTargetAndApplyChange(oChange, oElement, mPropertyBag);
+		apply: function(mPropertyBag) {
+			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.element);
+			mPropertyBag.appComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
+			if (!mPropertyBag.modifier) {
+				mPropertyBag.modifier = JsControlTreeModifier;
+			}
+			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.modifier, mPropertyBag.appComponent);
+			if (!bDependenciesExist && mPropertyBag.element instanceof Element) {
+				return oFlexController.checkTargetAndApplyChange(mPropertyBag.change, mPropertyBag.element, flexUtils.omit(mPropertyBag, ["element", "change"]));
 			}
 			// TODO: Descriptor apply function
-			return Promise.reject(new Error("The following Change cannot be applied because of a dependency: " + oChange.getId()));
+			return Promise.reject(new Error("The following Change cannot be applied because of a dependency: " + mPropertyBag.change.getId()));
 		},
 
 		/**
 		 * Reverting a specific change on the passed control, if it is already applied or is in the process of being applied.
 		 *
-		 * @param {sap.ui.fl.Change} oChange - Change object which should be applied on the passed control
-		 * @param {sap.ui.core.Element} oElement - Element instance on which change should be reverted
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object which should be applied on the passed control
+		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which change should be reverted
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
 		 * @public
 		 */
-		revert: function(oChange, oElement) {
-			var oAppComponent = ChangesController.getAppComponentForSelector(oElement);
-			var mPropertyBag = {
+		revert: function(mPropertyBag) {
+			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
+			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			};
-			return ChangesController.getFlexControllerInstance(oElement)
-				._revertChange(oChange, oElement, mPropertyBag);
+			return ChangesController.getFlexControllerInstance(mPropertyBag.element)
+				._revertChange(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
 		},
 
 		/**
 		 * Check if change handler applicable to the passed change and control has revertChange().
 		 * If no change handler is given it will get the change handler from the change and control.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - Selector object
-		 * @param {sap.ui.fl.Change} oChange - Change object
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector object
+		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object
 		 *
 		 * @returns {boolean} Returns true if change handler has revertChange function
 		 * @private
 		 */
-		_isChangeHandlerRevertible: function(vSelector, oChange) {
+		_isChangeHandlerRevertible: function(mPropertyBag) {
 			// TODO: Remove function after RTA undo logic is removed
-			var oFlexController = ChangesController.getFlexControllerInstance(vSelector);
-			var sControlType = JsControlTreeModifier.getControlType(vSelector);
-			var mControl = oFlexController._getControlIfTemplateAffected(oChange, vSelector, sControlType, {
+			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+			var sControlType = JsControlTreeModifier.getControlType(mPropertyBag.selector);
+			var mControl = oFlexController._getControlIfTemplateAffected(mPropertyBag.change, mPropertyBag.selector, sControlType, {
 				modifier: JsControlTreeModifier,
-				appComponent: ChangesController.getAppComponentForSelector(vSelector)
+				appComponent: ChangesController.getAppComponentForSelector(mPropertyBag.selector)
 			});
-			return oFlexController.isChangeHandlerRevertible(oChange, mControl.control);
+			return oFlexController.isChangeHandlerRevertible(mPropertyBag.change, mControl.control);
 		}
 	};
 	return ChangesWriteAPI;

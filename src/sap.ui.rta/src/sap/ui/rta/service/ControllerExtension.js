@@ -101,8 +101,8 @@ function (
 						scenario: oFlexSettings.scenario
 					};
 
-					var oPreparedChange = ChangesWriteAPI.create(oChangeSpecificData, oAppComponent);
-					PersistenceWriteAPI.add(oPreparedChange, oAppComponent);
+					var oPreparedChange = ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: oAppComponent});
+					PersistenceWriteAPI.add({change: oPreparedChange, selector: oAppComponent});
 					return oPreparedChange.getDefinition();
 				},
 

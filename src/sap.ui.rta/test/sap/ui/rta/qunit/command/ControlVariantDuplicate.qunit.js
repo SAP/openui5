@@ -169,7 +169,7 @@ function (
 					assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
 					assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
 					assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
 				.then(function (bPublishChangesExist) {
 					assert.ok(bPublishChangesExist, "then there are changes to publish");
@@ -179,7 +179,7 @@ function (
 					oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
 					aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
 					assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
 				.then(function (bPublishChangesExist) {
 					assert.notOk(bPublishChangesExist, "then there are no changes to publish");

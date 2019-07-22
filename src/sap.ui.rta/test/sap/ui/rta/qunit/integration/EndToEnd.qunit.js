@@ -99,7 +99,7 @@ sap.ui.define([
 									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
 										fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
 											assert.strictEqual(this.oCompanyCodeField._getLabel().getText(), sText, "then label of the group element is " + sText);
-											return PersistenceWriteAPI.hasChangesToPublish(oControl)
+											return PersistenceWriteAPI.hasChangesToPublish({selector: oControl})
 												.then(function (bChangesToPublish) {
 													assert.ok(bChangesToPublish, "then there are changes to publish");
 													fnResolve();
@@ -133,7 +133,7 @@ sap.ui.define([
 		QUnit.test("when adding a group element via context menu (expanded context menu - reveal)", function(assert) {
 			var fnDone = assert.async();
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
-			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 				.then(function(bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 					var oCommandStack = this.oRta.getCommandStack();
@@ -164,7 +164,7 @@ sap.ui.define([
 												assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
 												assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
 												assert.equal(this.oBoundButton35Field.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
-												return PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField);
+												return PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField});
 											}.bind(this))
 												.then(function(bChangesToPublish) {
 													assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
@@ -194,7 +194,7 @@ sap.ui.define([
 		QUnit.test("when adding a group element via context menu (expanded context menu - addODataProperty)", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var fnDone = assert.async();
-			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 					var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
@@ -221,7 +221,7 @@ sap.ui.define([
 								var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
 								assert.equal(oGroupElements[iIndex].getLabelText(), sFieldToAddText, "the added element is at the correct position");
 								assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-								PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+								PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 									.then(function(bChangesToPublish) {
 										assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
 										oObserver.disconnect();
@@ -248,7 +248,7 @@ sap.ui.define([
 
 			var oCommandStack = this.oRta.getCommandStack();
 
-			PersistenceWriteAPI.hasChangesToPublish(this.oVictim)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oVictim})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
@@ -258,7 +258,7 @@ sap.ui.define([
 							//TODO fix timing as modified is called before serializer is triggered...
 							fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 								assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
-								PersistenceWriteAPI.hasChangesToPublish(this.oVictim)
+								PersistenceWriteAPI.hasChangesToPublish({selector: this.oVictim})
 									.then(function (bChangesToPublish) {
 										assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
 									})
@@ -281,7 +281,7 @@ sap.ui.define([
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var oCommandStack = this.oRta.getCommandStack();
 
-			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
@@ -292,7 +292,7 @@ sap.ui.define([
 							fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 								var iIndex = 0;
 								assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
-								PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+								PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 									.then(function (bChangesToPublish) {
 										assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
 									})
@@ -314,7 +314,7 @@ sap.ui.define([
 
 		QUnit.test("when renaming a group (via double click) and setting a new title...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			PersistenceWriteAPI.hasChangesToPublish(this.oDatesGroup)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oDatesGroup})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
@@ -339,7 +339,7 @@ sap.ui.define([
 											oFirstExecutedCommand.getName() === "rename") {
 											fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 												assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
-												PersistenceWriteAPI.hasChangesToPublish(oCompCont.getComponentInstance())
+												PersistenceWriteAPI.hasChangesToPublish({selector: oCompCont.getComponentInstance()})
 													.then(function (bChangesToPublish) {
 														assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
 														fnResolve();
@@ -391,7 +391,7 @@ sap.ui.define([
 				}
 			}
 
-			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
@@ -442,7 +442,7 @@ sap.ui.define([
 															.then(function () {
 																sap.ui.getCore().applyChanges();
 															})
-															.then(PersistenceWriteAPI.hasChangesToPublish.bind(null, oCompCont.getComponentInstance()))
+															.then(PersistenceWriteAPI.hasChangesToPublish.bind(null, {selector: oCompCont.getComponentInstance()}))
 															.then(function (bChangesToPublish) {
 																assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");
 															})
@@ -479,7 +479,7 @@ sap.ui.define([
 		QUnit.test("when renaming a group element via context menu (expanded context menu) and setting a new label...", function(assert) {
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 
-			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
@@ -498,7 +498,7 @@ sap.ui.define([
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var fnDone = assert.async();
 
-			PersistenceWriteAPI.hasChangesToPublish(this.oCompanyCodeField)
+			PersistenceWriteAPI.hasChangesToPublish({selector: this.oCompanyCodeField})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
@@ -524,7 +524,7 @@ sap.ui.define([
 			var oCombinedElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
-			PersistenceWriteAPI.hasChangesToPublish(oCombinedElement)
+			PersistenceWriteAPI.hasChangesToPublish({selector: oCombinedElement})
 				.then(function (bChangesToPublish) {
 					assert.notOk(bChangesToPublish, "then there are no changes to publish in the Flex Persistence");
 
@@ -533,7 +533,7 @@ sap.ui.define([
 						fnWaitForExecutionAndSerializationBeingDone.call(this)
 							.then(function () {
 								sap.ui.getCore().applyChanges();
-								return PersistenceWriteAPI.hasChangesToPublish(oCompCont.getComponentInstance());
+								return PersistenceWriteAPI.hasChangesToPublish({selector: oCompCont.getComponentInstance()});
 							})
 							.then(function(bChangesToPublish) {
 								assert.ok(bChangesToPublish, "then there are changes to publish in the Flex Persistence");

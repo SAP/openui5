@@ -165,7 +165,7 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
 				.then(function (bPublishChangesExist) {
 					assert.ok(bPublishChangesExist, "then there are changes to publish");
@@ -177,7 +177,7 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
 				.then(function (bPublishChangesExist) {
 					assert.notOk(bPublishChangesExist, "then changes to publish are removed");
@@ -219,7 +219,7 @@ function(
 					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
 				.then(function (bPublishChangesExist) {
 					assert.ok(bPublishChangesExist, "then there are changes to publish");
@@ -228,7 +228,7 @@ function(
 				.then(function () {
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
 				.then(function (bPublishChangesExist) {
 					assert.notOk(bPublishChangesExist, "then changes to publish are removed");

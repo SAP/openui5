@@ -632,6 +632,7 @@ function(
 	 * @return {Object} returns new object
 	 */
 	Utils.omit = function (oObject, vPropertyName) {
+		// TODO: Similar functionality also exists in sap.ui.rta.Utils. Use a common location.
 		var oNewObject = Object.assign({}, oObject);
 		var aPropertyPaths = DtUtil.castArray(vPropertyName);
 		aPropertyPaths.forEach(function (sProperty) {

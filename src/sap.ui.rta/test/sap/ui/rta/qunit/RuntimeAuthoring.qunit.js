@@ -873,12 +873,13 @@ function(
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isApplicationVariant() got called");
-				assert.deepEqual(fnPublishStub.firstCall.args[1], {
+				assert.deepEqual(fnPublishStub.firstCall.args[0], {
+					selector: this.oRootControl,
 					styleClass: RtaUtils.getRtaStyleClassName(),
 					layer: "CUSTOMER",
 					appVariantDescriptors: []
 				}, "then style class and layer was passed correctly");
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is an application variant by navigation parameters", function(assert) {
@@ -904,12 +905,13 @@ function(
 			return this.oRta.transport().then(function() {
 				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
 				assert.equal(oAppVariantRunningStub.callCount, 1, "then isAppVariantRunning() got called");
-				assert.deepEqual(fnPublishStub.firstCall.args[1], {
+				assert.deepEqual(fnPublishStub.firstCall.args[0], {
+					selector: this.oRootControl,
 					appVariantDescriptors: aAppVariantDescriptors,
 					layer: "CUSTOMER",
 					styleClass: "sapContrast sapContrastPlus"
 				}, "then appVariantDescriptors, layer and styleClass parameters were passed correctly");
-			});
+			}.bind(this));
 		});
 
 		QUnit.test("When transport function is called and Promise.reject() is returned from the flex persistence", function(assert) {
@@ -1049,16 +1051,16 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully", function(assert) {
-			assert.expect(3);
+			assert.expect(2);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
-				assert.deepEqual(arguments[0], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
-				assert.deepEqual(arguments[1], {
+				assert.deepEqual(arguments[0], {
+					selector: oCompCont.getComponentInstance(),
 					generator: "Change.createInitialFileContent",
 					layer: "CUSTOMER"
-				}, "then the correct generator and layer was passed");
+				}, "then the correct parameters were passed");
 				return Promise.resolve();
-			}.bind(this));
+			});
 
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
@@ -1066,17 +1068,17 @@ function(
 		});
 
 		QUnit.test("when calling '_deleteChanges' successfully in AppVariant", function(assert) {
-			assert.expect(3);
+			assert.expect(2);
 			this.oDeleteChangesStub.restore();
 			sandbox.stub(Utils, "isApplicationVariant").returns(true);
 			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
-				assert.deepEqual(arguments[0], Utils.getAppComponentForControl(this.oRootControl), "then correct component parameter passed");
-				assert.deepEqual(arguments[1], {
+				assert.deepEqual(arguments[0], {
+					selector: oCompCont.getComponentInstance(),
 					generator: "Change.createInitialFileContent",
 					layer: "CUSTOMER"
 				}, "then the correct generator and layer was passed");
 				return Promise.resolve();
-			}.bind(this));
+			});
 
 			return this.oRta._deleteChanges().then(function() {
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");

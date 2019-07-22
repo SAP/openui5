@@ -47,19 +47,21 @@ sap.ui.define([
 		QUnit.test("When add() is called all arguments are passed correctly", function (assert) {
 			sandbox.stub(SmartVariantManagementApplyAPI, "_getStableId").returns("sStableId");
 			var sPersistencyKey = SmartVariantManagementApplyAPI._PERSISTENCY_KEY;
-			var addChangeStub = sandbox.stub();
+			var fnAddChangeStub = sandbox.stub();
 
 			var mParameters = {
 				type: "filterVariant",
 				id: "abcId"
 			};
 
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").withArgs(this.oControl).returns({
-				addChangeForVariant: addChangeStub
-			});
-			SmartVariantManagementWriteAPI.add(this.oControl, mParameters);
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
+				.withArgs(this.oControl)
+				.returns({
+					addChangeForVariant: fnAddChangeStub
+				});
+			SmartVariantManagementWriteAPI.add({control: this.oControl, changeSpecificData: mParameters});
 
-			assert.ok(addChangeStub.calledWith(sPersistencyKey, "sStableId", mParameters));
+			assert.ok(fnAddChangeStub.calledWith(sPersistencyKey, "sStableId", mParameters));
 		});
 
 		QUnit.test("When save is called all arguments are passed correctly and the return flow is correct", function (assert) {
@@ -77,10 +79,14 @@ sap.ui.define([
 				}
 			});
 
-			sandbox.stub(SmartVariantManagementApplyAPI, "_getChangeMap").withArgs(this.oControl).returns(oChange);
-			sandbox.stub(ChangePersistence.prototype, "saveAllChangesForVariant").withArgs("sStableId").returns("ok");
+			sandbox.stub(SmartVariantManagementApplyAPI, "_getChangeMap")
+				.withArgs(this.oControl)
+				.returns(oChange);
+			sandbox.stub(ChangePersistence.prototype, "saveAllChangesForVariant")
+				.withArgs("sStableId")
+				.returns("ok");
 
-			return SmartVariantManagementWriteAPI.save(this.oControl).then(function(aResponse) {
+			return SmartVariantManagementWriteAPI.save({control: this.oControl}).then(function(aResponse) {
 				assert.ok(getChangePersistenceForControlStub.calledWith(this.oControl));
 				assert.equal(aResponse[0], ["ok"]);
 			}.bind(this));
@@ -96,11 +102,13 @@ sap.ui.define([
 					id_1561376510625_89_moveControls: oChange
 				}
 			};
-			sandbox.stub(SmartVariantManagementApplyAPI, "_getChangeMap").withArgs(this.oControl).returns(oChanges);
+			sandbox.stub(SmartVariantManagementApplyAPI, "_getChangeMap")
+				.withArgs(this.oControl)
+				.returns(oChanges);
 			sandbox.stub(DefaultVariant, "updateDefaultVariantId").returns(oChange);
 			sandbox.stub(SmartVariantManagementApplyAPI, "_getStableId").returns("filterBar1");
 
-			var oDefaultVariantChange = SmartVariantManagementWriteAPI.setDefaultVariantId(this.oControl, sDefaultVariantId);
+			var oDefaultVariantChange = SmartVariantManagementWriteAPI.setDefaultVariantId({control: this.oControl, defaultVariantId: sDefaultVariantId});
 
 			assert.deepEqual(oDefaultVariantChange, oChange);
 		});
@@ -124,7 +132,7 @@ sap.ui.define([
 			sandbox.stub(DefaultVariant, "createChangeObject").returns(oChange);
 			sandbox.stub(SmartVariantManagementApplyAPI, "_getStableId").returns("filterBar1");
 
-			var oDefaultVariantChange = SmartVariantManagementWriteAPI.setDefaultVariantId(this.oControl, sDefaultVariantId);
+			var oDefaultVariantChange = SmartVariantManagementWriteAPI.setDefaultVariantId({control: this.oControl, defaultVariantId: sDefaultVariantId});
 
 			assert.deepEqual(oDefaultVariantChange, oChange);
 		});
@@ -143,20 +151,21 @@ sap.ui.define([
 				}
 			};
 
-			var getChangePersistenceForControlStub = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").withArgs(this.oControl).returns({
-				getComponentName: function() {
-					return "sComponent";
-				}
-			});
+			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl")
+				.withArgs(this.oControl)
+				.returns({
+					getComponentName: function () {
+						return "sComponent";
+					}
+				});
 
 			sandbox.stub(SmartVariantManagementApplyAPI, "_getChangeMap").withArgs(this.oControl).returns(oChanges);
 			sandbox.stub(StandardVariant, "updateExecuteOnSelect").returns(undefined);
 			sandbox.stub(StandardVariant, "createChangeObject").returns(oChange);
 			sandbox.stub(SmartVariantManagementApplyAPI, "_getStableId").returns("filterBar1");
 
-			var oDefaultVariantChange = SmartVariantManagementWriteAPI.setExecuteOnSelect(this.oControl, bExecuteOnSelect);
+			var oDefaultVariantChange = SmartVariantManagementWriteAPI.setExecuteOnSelect({control: this.oControl, executeOnSelect: bExecuteOnSelect});
 
-			assert.ok(getChangePersistenceForControlStub.calledWith(this.oControl));
 			assert.deepEqual(oDefaultVariantChange, oChange);
 		});
 	});

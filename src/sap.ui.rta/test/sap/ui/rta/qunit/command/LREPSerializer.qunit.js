@@ -1027,7 +1027,7 @@ sap.ui.define([
 			});
 
 			// Simulate that the UI changes are saved in the persistence with the new reference
-			return PersistenceWriteAPI.save(oMockedAppComponent, true);
+			return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true});
 		})
 
 		.then(function() {
@@ -1175,7 +1175,7 @@ sap.ui.define([
 					});
 
 					// Simulate that the UI changes are saved in the persistence with the new reference
-					return PersistenceWriteAPI.save(oMockedAppComponent, true)
+					return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true})
 						.then(function() {
 							return this.oSerializer.clearCommandStack("customer.sap.test")
 							.then(function() {

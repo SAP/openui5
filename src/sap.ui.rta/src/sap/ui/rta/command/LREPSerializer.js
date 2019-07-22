@@ -98,7 +98,7 @@ sap.ui.define([
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
 						if (oAppComponent) {
-							PersistenceWriteAPI.remove(oChange, oAppComponent);
+							PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent});
 						}
 					});
 				} else {
@@ -116,7 +116,7 @@ sap.ui.define([
 									oPreparedChange.setState(Change.states.NEW);
 								}
 								if (!this._isPersistedChange(oPreparedChange)) {
-									PersistenceWriteAPI.add(oCommand.getPreparedChange(), oAppComponent);
+									PersistenceWriteAPI.add({change: oCommand.getPreparedChange(), selector: oAppComponent});
 								}
 							}
 						} else if (oCommand instanceof AppDescriptorCommand) {
@@ -164,7 +164,7 @@ sap.ui.define([
 			if (!oRootControl) {
 				throw new Error("Can't save commands without root control instance!");
 			}
-			return PersistenceWriteAPI.save(oRootControl, false);
+			return PersistenceWriteAPI.save({selector: oRootControl, skipUpdateCache: false});
 		}.bind(this))
 
 		.then(function() {
@@ -198,7 +198,7 @@ sap.ui.define([
 			if (oCommand instanceof FlexCommand) {
 				var oChange = oCommand.getPreparedChange();
 				var oAppComponent = oCommand.getAppComponent();
-				PersistenceWriteAPI.remove(oChange, oAppComponent);
+				PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent});
 			}
 		});
 
