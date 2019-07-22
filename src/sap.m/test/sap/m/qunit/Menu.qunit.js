@@ -1192,4 +1192,74 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps).controls, "sControlId", "Should return also the additional mAriaProps if a custom function is set");
 	});
+
+	QUnit.test("Custom data is propagated properly", function (oAssert) {
+		var oItem = new sap.m.MenuItem(),
+			oUfdItem;
+
+		// Arrange
+		oItem.addCustomData(new sap.ui.core.CustomData({
+			key: "customKey",
+			value: "customValue"
+		}));
+		oUfdItem = this.oMenu._createVisualMenuItemFromItem(oItem);
+
+		// Assert
+		assert.strictEqual(oUfdItem.data("customKey"), "customValue", "Custom data is propagated properly to the Unified menu item");
+	});
+
+	QUnit.test("Custom data is propagated properly when binding with binding string", function (oAssert) {
+		// Arrange
+		var oModel = new JSONModel([{
+				bar : 'barche'
+			},{
+				bar : 'barche'
+			}]),
+			oMenu = new Menu({
+				id: "menu",
+				items: {
+					path:"myModel>/",
+					template:new sap.m.MenuItem({
+						text:"test",
+						customData : [
+							new CustomData({
+								id: 'cust',
+								key:"foo",
+								value:"{path:'myModel>bar'}",
+								writeToDom: true
+							})
+						]
+					})
+				}
+			}),
+			oItemCustomData,
+			oUnfdItemCustomData,
+			oButton = new Button();
+
+		oMenu.setModel(oModel, "myModel");
+
+		oButton.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMenu.openBy(oButton);
+		oItemCustomData = oMenu.getItems()[0].getCustomData()[0];
+		oUnfdItemCustomData = oMenu._getMenu().getItems()[0].getCustomData()[0];
+
+		// Assert
+		assert.strictEqual(oUnfdItemCustomData.getValue(), oItemCustomData.getValue(), "Source data is propagated property to the target data");
+		assert.strictEqual(oItemCustomData.getValue(), oModel.getData()[0].bar, "Source data is propagated property to the target data");
+
+		// Act
+		oMenu.getItems()[0].getCustomData()[0].setValue("newValue");
+
+		// Assert
+		assert.strictEqual(oUnfdItemCustomData.getValue(), oItemCustomData.getValue(), "Source data is propagated property to the target data");
+		assert.strictEqual(oItemCustomData.getValue(), "newValue", "Source data is propagated property to the target data");
+
+		// Destroy
+		oButton.destroy();
+		oMenu.destroy();
+	});
+
 });
