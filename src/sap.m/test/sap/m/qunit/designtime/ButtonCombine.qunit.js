@@ -249,7 +249,7 @@ sap.ui.define([
 
 		});
 
-		QUnit.test('getCustomData function of the Button is overwritten to return either the customData of the button or the one of the MenuItem', function (assert) {
+		QUnit.test('getAggregation for "CustomData" function of the Button is overwritten to return either the customData of the button or the one of the MenuItem', function (assert) {
 			// Arrange
 			var oBtn1 = new Button({
 				id: "btn1",
@@ -292,8 +292,7 @@ sap.ui.define([
 			});
 
 			// Assert
-			assert.ok(bIsFound, "The getCustomData function of the Button has returned the customData that was set to the menuItem");
-			assert.equal(oBtn1.getAggregation("customData").length, 0, "customData is empty for the Button since it is copied inside the MenuItem");
+			assert.ok(bIsFound, "The getAggregation('customData') function of the Button has returned the customData that was set to the menuItem");
 
 			// clean up
 			oBtn1.destroy();

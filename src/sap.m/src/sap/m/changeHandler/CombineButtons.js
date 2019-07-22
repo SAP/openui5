@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjectObserver'],
-	function(FlexUtils, uid, ManagedObjectObserver) {
+sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjectObserver', 'sap/ui/base/ManagedObject'],
+	function(FlexUtils, uid, ManagedObjectObserver, ManagedObject) {
 		"use strict";
 
 		/**
@@ -75,8 +75,18 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/base/util/uid", 'sap/ui/base/ManagedObjec
 					return oButton.firePress(oEvent);
 				});
 
-				oButton.getCustomData = function() {
-					return (oButton.getAggregation("customData").length) ? oButton.getAggregation("customData") : oMenuItem.getCustomData();
+				oButton.getAggregation = function (sAggregationName, oDefaultForCreation) {
+					if (sAggregationName === "customData") {
+						var oCustomData = ManagedObject.prototype.getAggregation.call(oButton, "customData"),
+							oMenuItemCustomData = oMenuItem ? ManagedObject.prototype.getAggregation.call(oMenuItem, "customData") : [];
+
+						// in case oMenuItemCustomData is null return empty object
+						oMenuItemCustomData = (oMenuItemCustomData) ? oMenuItemCustomData : [];
+
+						return (oCustomData && oCustomData.length) ? oCustomData : oMenuItemCustomData;
+					} else {
+						return ManagedObject.prototype.getAggregation.apply(this, arguments);
+					}
 				};
 
 				// observe the Button enabled property so in case it is changed the new value should be applied to the MenuItem also
