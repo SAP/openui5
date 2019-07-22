@@ -44,7 +44,7 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeCSS"],
 				aLabelledBy = oAvatar.getAriaLabelledBy(),
 				aDescribedBy = oAvatar.getAriaDescribedBy(),
 				sAriaLabelTooltip = sTooltip && sInitials ? sDefaultTooltip + " " + sTooltip : sDefaultTooltip,
-				sAriLabelInitials = sInitials ? sDefaultTooltip + " " + sInitials : sDefaultTooltip;
+				sAriaLabelInitials = sInitials ? sDefaultTooltip + " " + sInitials : sDefaultTooltip;
 
 			oRm.openStart("span", oAvatar);
 			oRm.class(sAvatarClass);
@@ -64,8 +64,12 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeCSS"],
 				oRm.style("height", sCustomDisplaySize);
 				oRm.style("font-size", sCustomFontSize);
 			}
-			oRm.attr("title", sTooltip);
-			oRm.attr("aria-label", sTooltip ? sAriaLabelTooltip : sAriLabelInitials);
+			if (sTooltip) {
+				oRm.attr("title", sTooltip);
+				oRm.attr("aria-label",sAriaLabelTooltip);
+			} else {
+				oRm.attr("aria-label",sAriaLabelInitials);
+			}
 			// aria-labelledby references
 			if (aLabelledBy && aLabelledBy.length > 0) {
 				oRm.attr("aria-labelledby", aLabelledBy.join(" "));
