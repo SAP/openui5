@@ -921,7 +921,7 @@ sap.ui.define([
 			// set default variant only if passed variant id matches the current variant, or
 			// if no variant id passed, set to default variant
 			if (!sVariantId || this.oData[sVariantManagementReference].currentVariant === sVariantId) {
-				this.switchToDefaultForVariantManagement.call(this, sVariantManagementReference);
+				this.switchToDefaultForVariantManagement(sVariantManagementReference);
 			}
 		}.bind(this));
 	};

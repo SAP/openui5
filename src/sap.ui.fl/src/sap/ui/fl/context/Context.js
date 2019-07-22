@@ -177,7 +177,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', "sap/base/Log"], function(ManagedObj
 			if (mConfiguration.hasOwnProperty(oRequest.domain)) {
 				var oActProvider = mConfiguration[oRequest.domain];
 				if (oActProvider instanceof sap.ui.fl.context.BaseContextProvider) {
-					aPromises.push(oActProvider[sPropertyName].call(oActProvider, oRequest.request).then(function(mValue) {
+					aPromises.push(oActProvider[sPropertyName](oRequest.request).then(function(mValue) {
 						var mSingleResult = {};
 						var sResultKey = oRequest.domain;
 						if (oRequest.request) {
