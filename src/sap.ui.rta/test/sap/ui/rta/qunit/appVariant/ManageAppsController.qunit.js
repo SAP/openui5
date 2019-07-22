@@ -115,7 +115,7 @@ sap.ui.define([
 					return true;
 				},
 				getLayer: function() {
-					return "CUSTOMER"
+					return "CUSTOMER";
 				}
 			};
 
@@ -152,7 +152,7 @@ sap.ui.define([
 					return true;
 				},
 				getLayer: function() {
-					return "CUSTOMER"
+					return "CUSTOMER";
 				}
 			};
 

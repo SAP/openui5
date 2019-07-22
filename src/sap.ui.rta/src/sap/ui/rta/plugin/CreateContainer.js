@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CreateContainer.prototype._isEditable = function (oOverlay) {
-		return Promise.all([this._isEditableCheck.call(this, oOverlay, true), this._isEditableCheck.call(this, oOverlay, false)])
+		return Promise.all([this._isEditableCheck(oOverlay, true), this._isEditableCheck(oOverlay, false)])
 		.then(function(aPromiseValues) {
 			return {
 				asSibling: aPromiseValues[0],
@@ -133,7 +133,7 @@ sap.ui.define([
 		var sId = sNewControlID;
 		if (vAction.getCreatedContainerId && typeof vAction.getCreatedContainerId === "function") {
 			var fnMapToRelevantControlID = vAction.getCreatedContainerId;
-			sId = fnMapToRelevantControlID.call(null, sNewControlID);
+			sId = fnMapToRelevantControlID(sNewControlID);
 		}
 		return sId;
 	};

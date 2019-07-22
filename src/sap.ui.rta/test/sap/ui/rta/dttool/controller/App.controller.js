@@ -648,7 +648,7 @@ sap.ui.define([
 					text: "Add",
 					enabled: false,
 					press: function () {
-						this.onAddCustomControl.call(this);
+						this.onAddCustomControl();
 						oDialog.close();
 					}.bind(this)
 				}),
@@ -667,7 +667,7 @@ sap.ui.define([
 				var sText = oEvent.srcControl.getValue();
 
 				if (/^(?:\w+\/)+\w+$/.test(sText)) {
-					this.onAddCustomControl.call(this);
+					this.onAddCustomControl();
 					oDialog.close();
 				}
 			}.bind(this);

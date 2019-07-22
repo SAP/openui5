@@ -407,7 +407,7 @@ function(
 		var iIndex;
 		if (fnGetIndex && typeof fnGetIndex === "function") {
 			// fnGetIndex usually comes from designtime metadata, so aggregation name is clear and available in it
-			iIndex = fnGetIndex.call(null, oParentElement, oChildElement);
+			iIndex = fnGetIndex(oParentElement, oChildElement);
 		} else {
 			var oMetadata = oParentElement.getMetadata();
 			var oAggregation = oMetadata.getAggregation(sAggregationName);
