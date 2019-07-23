@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -40,6 +41,7 @@ function (
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	DescriptorInlineChangeFactory,
+	includes,
 	sinon
 ) {
 	"use strict";
@@ -193,7 +195,7 @@ function (
 					assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
 					aAllInlineChanges.forEach(function(oInlineChange) {
 						var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
-						assert.equal(DescriptorInlineChangeFactory.getDescriptorChangeTypes().includes(sChangeType), true, "then inline change " + sChangeType + " got successfully created");
+						assert.equal(includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), sChangeType), true, "then inline change " + sChangeType + " got successfully created");
 					});
 				});
 		});

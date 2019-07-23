@@ -198,7 +198,8 @@ sap.ui.define([
 						semanticObject : sSemanticObject,
 						action : sAction
 					},
-					params: oParams
+					params: oParams,
+					writeHistory : false
 				};
 
 				RuntimeAuthoring.enableRestart("CUSTOMER");
