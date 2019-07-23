@@ -32,9 +32,24 @@ sap.ui.define([
 		this.mCacheQueryOptions = undefined;
 		// used to create cache only for the latest call to #fetchCache
 		this.oFetchCacheCallToken = undefined;
+		// the absolute binding path (possibly reduced if the binding uses a parent binding's cache)
+		this.sReducedPath = undefined;
 		// change reason to be used when the binding is resumed
 		this.sResumeChangeReason = ChangeReason.Change;
 	}
+
+	/**
+	 * Adjusts the paths of all contexts of this binding by replacing the given transient predicate
+	 * with the given predicate and adjusts all contexts of child bindings.
+	 *
+	 * @param {string} sTransientPredicate - The transient predicate to be replaced
+	 * @param {string} sPredicate - The new predicate
+	 * @param {sap.ui.model.odata.v4.Context} [oContext] - The only context that changed
+	 *
+	 * @abstract
+	 * @name sap.ui.model.odata.v4.ODataBinding#adjustPredicate
+	 * @private
+	 */
 
 	/**
 	 * Checks binding-specific parameters from the given map. "Binding-specific" parameters are
@@ -244,7 +259,9 @@ sap.ui.define([
 		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
 		this.mCacheQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
-			var mQueryOptions = aResult[0];
+			var mQueryOptions = aResult[0].mQueryOptions;
+
+			that.sReducedPath = aResult[0].sReducedPath;
 
 			// Note: do not create a cache for a virtual context
 			if (mQueryOptions && !(oContext && oContext.iIndex === Context.VIRTUAL)) {
@@ -297,26 +314,49 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fetches the query options to create the cache for this binding or <code>undefined</code> if
-	 * no cache is to be created.
+	 * Fetches the query options to create the cache for this binding and the binding's reduced
+	 * path.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, must be undefined for absolute bindings
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which resolves with the query options to create the cache for this binding,
-	 *   or with <code>undefined</code> if no cache is to be created
+	 *   A promise resolving with an object having two properties:
+	 *   {object} mQueryOptions - The query options to create the cache for this binding or
+	 *     <code>undefined</code> if no cache is to be created
+	 *   {string} sReducedPath - The binding's absolute, reduced path in the cache hierarchy
 	 *
 	 * @private
 	 */
 	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext) {
 		var bHasNonSystemQueryOptions,
 			oQueryOptionsPromise,
+			sResolvedPath = this.oModel.resolve(this.sPath, oContext),
 			that = this;
+
+		/*
+		 * Wraps the given query options (promise) and adds sResolvedPath so that it can be returned
+		 * by fetchQueryOptionsForOwnCache.
+		 *
+		 * @param {object|sap.ui.base.SyncPromise} vQueryOptions
+		 *   The query options (promise)
+		 * @param {string} [sReducedPath=sResolvedPath]
+		 *   The reduced path
+		 * @returns {sap.ui.base.SyncPromise}
+		 *   A promise to be returned by fetchQueryOptionsForOwnCache
+		 */
+		function wrapQueryOptions(vQueryOptions, sReducedPath) {
+			return SyncPromise.resolve(vQueryOptions).then(function (mQueryOptions) {
+				return {
+					mQueryOptions : mQueryOptions,
+					sReducedPath : sReducedPath || sResolvedPath
+				};
+			});
+		}
 
 		if (this.oOperation // operation binding manages its cache on its own
 			|| this.bRelative && !oContext // unresolved binding
 			|| this.isMeta()) {
-			return SyncPromise.resolve(undefined);
+			return wrapQueryOptions(undefined);
 		}
 
 		// auto-$expand/$select and binding is a parent binding, so that it needs to wait until all
@@ -343,7 +383,7 @@ sap.ui.define([
 
 		// (quasi-)absolute binding
 		if (!this.bRelative || !oContext.fetchValue) {
-			return oQueryOptionsPromise;
+			return wrapQueryOptions(oQueryOptionsPromise);
 		}
 
 		// auto-$expand/$select: Use parent binding's cache if possible
@@ -353,24 +393,26 @@ sap.ui.define([
 					return sKey[0] !== "$" || sKey[1] === "$";
 				});
 			if (bHasNonSystemQueryOptions) {
-				return oQueryOptionsPromise;
+				return wrapQueryOptions(oQueryOptionsPromise);
 			}
 			return oContext.getBinding()
 				.fetchIfChildCanUseCache(oContext, that.sPath, oQueryOptionsPromise)
-				.then(function (bCanUseCache) {
-					return bCanUseCache ? undefined : oQueryOptionsPromise;
+				.then(function (sReducedPath) {
+					return wrapQueryOptions(sReducedPath ? undefined : oQueryOptionsPromise,
+						sReducedPath);
 				});
 		}
 
 		// relative list or context binding with parameters which are not query options
 		// (such as $$groupId)
 		if (this.mParameters && Object.keys(this.mParameters).length) {
-			return oQueryOptionsPromise;
+			return wrapQueryOptions(oQueryOptionsPromise);
 		}
 
 		// relative binding which may have query options from UI5 filter or sorter objects
 		return oQueryOptionsPromise.then(function (mQueryOptions) {
-			return Object.keys(mQueryOptions).length === 0 ? undefined : mQueryOptions;
+			return wrapQueryOptions(
+				Object.keys(mQueryOptions).length ? mQueryOptions : undefined);
 		});
 	};
 

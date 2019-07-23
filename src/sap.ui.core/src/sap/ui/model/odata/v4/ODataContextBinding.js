@@ -356,6 +356,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
+	 */
+	ODataContextBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate) {
+		if (this.oElementContext) {
+			this.oElementContext.adjustPredicate(sTransientPredicate, sPredicate);
+		}
+		// this.oReturnValueContext cannot have the transient predicate; it results from execute,
+		// but execute is not possible with a transient predicate
+	};
+
+	/**
 	 * Applies the given map of parameters to this binding's parameters.
 	 *
 	 * @param {object} mParameters

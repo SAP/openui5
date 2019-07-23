@@ -695,6 +695,109 @@ sap.ui.define([
 		oContainerData = mScope["tea_busi.DefaultContainer"],
 		aOverloadedAction = mScope["name.space.OverloadedAction"],
 		aOverloadedBoundFunction = mScope["name.space.OverloadedBoundFunction"],
+		mReducedPathScope = {
+			"$Annotations" : {},
+			"$EntityContainer" : "reduce.path.DefaultContainer",
+			"reduce.path." : {
+				"$kind" : "Schema"
+			},
+			"reduce.path.A" : {
+				"$kind" : "EntityType",
+				"AValue" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				},
+				"AtoB" : {
+					"$kind" : "NavigationProperty",
+					"$Partner" : "BtoA",
+					"$Type" : "reduce.path.B"
+				},
+				"AtoC" : {
+					"$kind" : "NavigationProperty",
+					"$Partner" : "CtoA",
+					"$Type" : "reduce.path.C"
+				},
+				"AtoDs" : {
+					"$isCollection" : true,
+					"$kind" : "NavigationProperty",
+					"$Partner" : "DtoA",
+					"$Type" : "reduce.path.D"
+				}
+			},
+			"reduce.path.B" : {
+				"$kind" : "EntityType",
+				"BValue" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				},
+				"BtoA" : {
+					"$kind" : "NavigationProperty",
+					"$Partner" : "AtoB",
+					"$Type" : "reduce.path.A"
+				},
+				"BtoC" : {
+					"$kind" : "NavigationProperty",
+					"$Partner" : "CtoB",
+					"$Type" : "reduce.path.C"
+				},
+				"BtoD" : {
+					"$kind" : "NavigationProperty",
+					"$Partner" : "DtoBs",
+					"$Type" : "reduce.path.D"
+				}
+			},
+			"reduce.path.C" : {
+				"$kind" : "EntityType",
+				"CValue" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				},
+				"CtoA" : {
+					"$kind" : "NavigationProperty",
+					// no $Partner (could be in a derived type)
+					"$Type" : "reduce.path.A"
+				},
+				"CtoB" : {
+					"$kind" : "NavigationProperty",
+					"$Partner" : "BtoC",
+					"$Type" : "reduce.path.B"
+				}
+			},
+			"reduce.path.D" : {
+				"$kind" : "EntityType",
+				"DValue" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				},
+				"DtoA" : {
+					"$kind" : "NavigationProperty",
+					"$Partner" : "AtoDs",
+					"$Type" : "reduce.path.A"
+				},
+				"DtoBs" : {
+					"$isCollection" : true,
+					"$kind" : "NavigationProperty",
+					"$Partner" : "BtoD",
+					"$Type" : "reduce.path.B"
+				},
+				"DtoCs" : {
+					"$isCollection" : true,
+					"$kind" : "NavigationProperty",
+					"$Type" : "reduce.path.C"
+				}
+			},
+			"reduce.path.DefaultContainer" : {
+				"$kind" : "EntityContainer",
+				"As" : {
+					"$kind" : "EntitySet",
+					"$Type" : "reduce.path.A"
+				},
+				"Ds" : {
+					"$kind" : "EntitySet",
+					"$Type" : "reduce.path.D"
+				}
+			}
+		},
 		mSupplierScope = {
 			"$Version" : "4.0",
 			"tea_busi_supplier.v0001." : {
@@ -757,6 +860,7 @@ sap.ui.define([
 		aAllScopes = [
 			mMostlyEmptyScope,
 			mProductScope,
+			mReducedPathScope,
 			mScope,
 			mSupplierScope,
 			mXServiceScope
@@ -6326,6 +6430,46 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(this.oMetaModel.requestUnitsOfMeasure(vRawValue, oDetails), oPromise);
 	});
+
+	//*********************************************************************************************
+	// Tests that each key is reduced to the corresponding value. The root path is the part of the
+	// key until the "|".
+forEach({
+	"/As(1)|AValue" : "/As(1)/AValue",
+	"/As(1)|#reduce.path.Action" : "/As(1)/#reduce.path.Action",
+	"/As(1)|AtoB/BValue" : "/As(1)/AtoB/BValue",
+	"/As(1)|AtoB/BtoA" : "/As(1)",
+	"/As(1)|AtoB/BtoA/AValue" : "/As(1)/AValue",
+	"/As(1)|AtoC/CtoA/AValue" : "/As(1)/AtoC/CtoA/AValue", // potential backlink has no $Partner
+	"/As(1)|AtoDs(42)/DtoA/AValue" : "/As(1)/AValue",
+	"/As(1)|AtoDs(42)/DtoA/AtoC/CValue" : "/As(1)/AtoC/CValue",
+	"/Ds(1)|DtoA/AtoDs(42)/DValue" : "/Ds(1)/DtoA/AtoDs(42)/DValue", // backlink via collection
+	"/As(1)|AtoDs/42/DtoA/AValue" : "/As(1)/AValue", // using index
+	"/Ds(1)|DtoCs/42" : "/Ds(1)/DtoCs/42", // no partner, ends with index
+	// backlink via collection w/ index
+	"/Ds(1)|DtoA/AtoDs/42/DValue" : "/Ds(1)/DtoA/AtoDs/42/DValue",
+	"/As(1)/AtoB|BtoA/AValue" : "/As(1)/AtoB/BtoA/AValue", // reduced path not shorter than base
+	"/As(1)|AtoB/BtoC/CtoB/BtoA/AValue" : "/As(1)/AValue", // multiple reduction
+	"/As(1)|AtoDs/-2/DtoBs(7)/BtoD/DtoA/AValue" : "/As(1)/AValue", // multiple pairs w/ index
+	// a path to a collection property must not be reduced
+	"/As(1)|AtoB/BtoA/AtoDs(42)/DValue" : "/As(1)/AtoB/BtoA/AtoDs(42)/DValue",
+	// a path to a collection must not be reduced
+	"/As(1)|AtoB/BtoA/AtoDs" : "/As(1)/AtoB/BtoA/AtoDs",
+	"/As(1)|AtoDs(42)/DtoBs(7)/BtoD/DValue" : "/As(1)/AtoDs(42)/DValue", // following a collection
+	"/As(1)|AtoDs(42)/DtoA/AValue@Common.Label" : "/As(1)/AValue@Common.Label",
+	"/As(1)|AtoDs(42)/DtoA/@Common.Label" : "/As(1)/@Common.Label", // annotation at type A
+	// annotation at navigation property DtoA
+	"/As(1)|AtoDs(42)/DtoA@Common.Label" : "/As(1)/AtoDs(42)/DtoA@Common.Label",
+	// UI5 runtime annotation at type A
+	"/As(1)|AtoDs(42)/DtoA/@$ui5._/predicate" : "/As(1)/@$ui5._/predicate"
+}, function (sPath, sReducedPath, sRootPath) {
+	QUnit.test("getReducedPath: " + sPath, function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
+			.returns(SyncPromise.resolve(mReducedPathScope));
+
+		assert.strictEqual(this.oMetaModel.getReducedPath(sPath, sRootPath), sReducedPath);
+	});
+});
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
