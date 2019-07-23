@@ -85,8 +85,7 @@ sap.ui.define([
 								oPopover.addContent(oText);
 								oPopover.openBy(oLink);
 							},
-							text : "Technical Details",
-							visible : "{= !!${messages>technicalDetails} }"
+							text : "Technical Details"
 						})
 					}),
 					templateShareable : false

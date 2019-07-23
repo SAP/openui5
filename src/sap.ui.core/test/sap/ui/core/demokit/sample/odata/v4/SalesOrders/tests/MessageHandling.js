@@ -94,9 +94,6 @@ sap.ui.define([
 				type : MessageType.Warning
 			}]);
 
-			// due to a feature of the message popover for exactly one message we are in this case
-			// on the details screen
-			// TODO: clarify why back did not work
 			When.onTheMessagePopover.close();
 			When.onTheMainPage.selectSalesOrder(1);
 			Then.onTheMainPage.checkMessagesButtonCount(2);
@@ -107,8 +104,6 @@ sap.ui.define([
 				sQuantityBoundError);
 
 			When.onTheMainPage.pressMessagesButton();
-			// because of the TODO above we navigate back in order to be able to check messages
-			When.onTheMessagePopover.back();
 			Then.onTheMessagePopover.checkMessages([{
 					message : sNoteBoundWarning,
 					type : MessageType.Warning
