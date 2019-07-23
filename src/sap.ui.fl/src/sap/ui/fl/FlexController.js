@@ -1237,7 +1237,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.isChangeHandlerRevertible = function(oChange, vControl, oChangeHandler) {
-		var oPromise = Promise.resolve(oChangeHandler);
+		var oPromise = new Utils.FakePromise(oChangeHandler);
 		if (!oChangeHandler) {
 			var sControlType = vControl.controlType ? vControl.controlType : JsControlTreeModifier.getControlType(vControl);
 			oPromise = oPromise.then(this._getChangeHandler.bind(this, oChange, sControlType, vControl, JsControlTreeModifier));
