@@ -68,6 +68,20 @@ sap.ui.define([], function() {
   xhr.onCreate = function(request) {
     var	responses = {
       "GET": {
+		"Customers/$count":
+			[200, oCountHeaders, "91"],
+		"Customers?$skip=0&$top=60":
+			[200, oJSONHeaders, JSON.stringify(oCustomers1)],
+		"Customers?$skip=20&$top=40":
+			[200, oJSONHeaders, JSON.stringify(oCustomers2)],
+		"Customers?$skip=40&$top=20":
+			[200, oJSONHeaders, JSON.stringify(oCustomers3)],
+		"Customers?$skip=21&$top=42":
+			[200, oJSONHeaders, JSON.stringify(oCustomers4)],
+		"Customers?$skip=41&$top=22":
+			[200, oJSONHeaders, JSON.stringify(oCustomers5)],
+		"Customers?$skip=61&$top=2":
+			[200, oJSONHeaders, JSON.stringify(oCustomers6)],
         "$metadata":
           [200, oMetaDataHeaders, sMetaData],
         "$metadata?test-namespace=true":
@@ -9492,3 +9506,1275 @@ sap.ui.define([], function() {
 
   return ofakeService;
 });
+
+var oCustomers1 = {
+	"d" : {
+		"results": [
+			{
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ALFKI')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "ALFKI", "CompanyName": "Alfreds Futterkiste", "ContactName": "Maria Anders", "ContactTitle": "Sales Representative", "Address": "Obere Str. 57", "City": "Berlin", "Region": null, "PostalCode": "12209", "Country": "Germany", "Phone": "030-0074321", "Fax": "030-0076545", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ALFKI')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ALFKI')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ANATR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "ANATR", "CompanyName": "Ana Trujillo Emparedados y helados", "ContactName": "Ana Trujillo", "ContactTitle": "Owner", "Address": "Avda. de la Constituci\u00f3n 2222", "City": "M\u00e9xico D.F.", "Region": null, "PostalCode": "05021", "Country": "Mexico", "Phone": "(5) 555-4729", "Fax": "(5) 555-3745", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ANATR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ANATR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ANTON')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "ANTON", "CompanyName": "Antonio Moreno Taquer\u00eda", "ContactName": "Antonio Moreno", "ContactTitle": "Owner", "Address": "Mataderos  2312", "City": "M\u00e9xico D.F.", "Region": null, "PostalCode": "05023", "Country": "Mexico", "Phone": "(5) 555-3932", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ANTON')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ANTON')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('AROUT')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "AROUT", "CompanyName": "Around the Horn", "ContactName": "Thomas Hardy", "ContactTitle": "Sales Representative", "Address": "120 Hanover Sq.", "City": "London", "Region": null, "PostalCode": "WA1 1DP", "Country": "UK", "Phone": "(171) 555-7788", "Fax": "(171) 555-6750", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('AROUT')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('AROUT')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BERGS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "BERGS", "CompanyName": "Berglunds snabbk\u00f6p", "ContactName": "Christina Berglund", "ContactTitle": "Order Administrator", "Address": "Berguvsv\u00e4gen  8", "City": "Lule\u00e5", "Region": null, "PostalCode": "S-958 22", "Country": "Sweden", "Phone": "0921-12 34 65", "Fax": "0921-12 34 67", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BERGS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BERGS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BLAUS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "BLAUS", "CompanyName": "Blauer See Delikatessen", "ContactName": "Hanna Moos", "ContactTitle": "Sales Representative", "Address": "Forsterstr. 57", "City": "Mannheim", "Region": null, "PostalCode": "68306", "Country": "Germany", "Phone": "0621-08460", "Fax": "0621-08924", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BLAUS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BLAUS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BLONP')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "BLONP", "CompanyName": "Blondesddsl p\u00e8re et fils", "ContactName": "Fr\u00e9d\u00e9rique Citeaux", "ContactTitle": "Marketing Manager", "Address": "24, place Kl\u00e9ber", "City": "Strasbourg", "Region": null, "PostalCode": "67000", "Country": "France", "Phone": "88.60.15.31", "Fax": "88.60.15.32", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BLONP')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BLONP')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BOLID')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "BOLID", "CompanyName": "B\u00f3lido Comidas preparadas", "ContactName": "Mart\u00edn Sommer", "ContactTitle": "Owner", "Address": "C/ Araquil, 67", "City": "Madrid", "Region": null, "PostalCode": "28023", "Country": "Spain", "Phone": "(91) 555 22 82", "Fax": "(91) 555 91 99", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BOLID')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BOLID')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BONAP')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "BONAP", "CompanyName": "Bon app'", "ContactName": "Laurence Lebihan", "ContactTitle": "Owner", "Address": "12, rue des Bouchers", "City": "Marseille", "Region": null, "PostalCode": "13008", "Country": "France", "Phone": "91.24.45.40", "Fax": "91.24.45.41", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BONAP')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BONAP')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BOTTM')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "BOTTM", "CompanyName": "Bottom-Dollar Markets", "ContactName": "Elizabeth Lincoln", "ContactTitle": "Accounting Manager", "Address": "23 Tsawassen Blvd.", "City": "Tsawassen", "Region": "BC", "PostalCode": "T2F 8M4", "Country": "Canada", "Phone": "(604) 555-4729", "Fax": "(604) 555-3745", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BOTTM')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BOTTM')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BSBEV')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "BSBEV", "CompanyName": "B's Beverages", "ContactName": "Victoria Ashworth", "ContactTitle": "Sales Representative", "Address": "Fauntleroy Circus", "City": "London", "Region": null, "PostalCode": "EC2 5NT", "Country": "UK", "Phone": "(171) 555-1212", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BSBEV')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('BSBEV')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CACTU')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "CACTU", "CompanyName": "Cactus Comidas para llevar", "ContactName": "Patricio Simpson", "ContactTitle": "Sales Agent", "Address": "Cerrito 333", "City": "Buenos Aires", "Region": null, "PostalCode": "1010", "Country": "Argentina", "Phone": "(1) 135-5555", "Fax": "(1) 135-4892", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CACTU')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CACTU')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CENTC')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "CENTC", "CompanyName": "Centro comercial Moctezuma", "ContactName": "Francisco Chang", "ContactTitle": "Marketing Manager", "Address": "Sierras de Granada 9993", "City": "M\u00e9xico D.F.", "Region": null, "PostalCode": "05022", "Country": "Mexico", "Phone": "(5) 555-3392", "Fax": "(5) 555-7293", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CENTC')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CENTC')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CHOPS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "CHOPS", "CompanyName": "Chop-suey Chinese", "ContactName": "Yang Wang", "ContactTitle": "Owner", "Address": "Hauptstr. 29", "City": "Bern", "Region": null, "PostalCode": "3012", "Country": "Switzerland", "Phone": "0452-076545", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CHOPS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CHOPS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('COMMI')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "COMMI", "CompanyName": "Com\u00e9rcio Mineiro", "ContactName": "Pedro Afonso", "ContactTitle": "Sales Associate", "Address": "Av. dos Lus\u00edadas, 23", "City": "Sao Paulo", "Region": "SP", "PostalCode": "05432-043", "Country": "Brazil", "Phone": "(11) 555-7647", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('COMMI')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('COMMI')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CONSH')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "CONSH", "CompanyName": "Consolidated Holdings", "ContactName": "Elizabeth Brown", "ContactTitle": "Sales Representative", "Address": "Berkeley Gardens 12  Brewery", "City": "London", "Region": null, "PostalCode": "WX1 6LT", "Country": "UK", "Phone": "(171) 555-2282", "Fax": "(171) 555-9199", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CONSH')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('CONSH')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('DRACD')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "DRACD", "CompanyName": "Drachenblut Delikatessen", "ContactName": "Sven Ottlieb", "ContactTitle": "Order Administrator", "Address": "Walserweg 21", "City": "Aachen", "Region": null, "PostalCode": "52066", "Country": "Germany", "Phone": "0241-039123", "Fax": "0241-059428", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('DRACD')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('DRACD')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('DUMON')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "DUMON", "CompanyName": "Du monde entier", "ContactName": "Janine Labrune", "ContactTitle": "Owner", "Address": "67, rue des Cinquante Otages", "City": "Nantes", "Region": null, "PostalCode": "44000", "Country": "France", "Phone": "40.67.88.88", "Fax": "40.67.89.89", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('DUMON')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('DUMON')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('EASTC')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "EASTC", "CompanyName": "Eastern Connection", "ContactName": "Ann Devon", "ContactTitle": "Sales Agent", "Address": "35 King George", "City": "London", "Region": null, "PostalCode": "WX3 6FW", "Country": "UK", "Phone": "(171) 555-0297", "Fax": "(171) 555-3373", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('EASTC')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('EASTC')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ERNSH')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "ERNSH", "CompanyName": "Ernst Handel", "ContactName": "Roland Mendel", "ContactTitle": "Sales Manager", "Address": "Kirchgasse 6", "City": "Graz", "Region": null, "PostalCode": "8010", "Country": "Austria", "Phone": "7675-3425", "Fax": "7675-3426", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ERNSH')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ERNSH')/CustomerDemographics"
+					}
+				}
+			}
+		], "__next": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers?$top=40&$skiptoken='ERNSH'"
+	}
+};
+
+var oCustomers2 = {
+	"d" : {
+		"results": [
+			{
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FAMIA')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FAMIA", "CompanyName": "Familia Arquibaldo", "ContactName": "Aria Cruz", "ContactTitle": "Marketing Assistant", "Address": "Rua Or\u00f3s, 92", "City": "Sao Paulo", "Region": "SP", "PostalCode": "05442-030", "Country": "Brazil", "Phone": "(11) 555-9857", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FAMIA')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FAMIA')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FISSA')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FISSA", "CompanyName": "FISSA Fabrica Inter. Salchichas S.A.", "ContactName": "Diego Roel", "ContactTitle": "Accounting Manager", "Address": "C/ Moralzarzal, 86", "City": "Madrid", "Region": null, "PostalCode": "28034", "Country": "Spain", "Phone": "(91) 555 94 44", "Fax": "(91) 555 55 93", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FISSA')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FISSA')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLIG')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FOLIG", "CompanyName": "Folies gourmandes", "ContactName": "Martine Ranc\u00e9", "ContactTitle": "Assistant Sales Agent", "Address": "184, chauss\u00e9e de Tournai", "City": "Lille", "Region": null, "PostalCode": "59000", "Country": "France", "Phone": "20.16.10.16", "Fax": "20.16.10.17", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLIG')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLIG')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLKO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FOLKO", "CompanyName": "Folk och f\u00e4 HB", "ContactName": "Maria Larsson", "ContactTitle": "Owner", "Address": "\u00c5kergatan 24", "City": "Br\u00e4cke", "Region": null, "PostalCode": "S-844 67", "Country": "Sweden", "Phone": "0695-34 67 21", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLKO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLKO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FRANK", "CompanyName": "Frankenversand", "ContactName": "Peter Franken", "ContactTitle": "Marketing Manager", "Address": "Berliner Platz 43", "City": "M\u00fcnchen", "Region": null, "PostalCode": "80805", "Country": "Germany", "Phone": "089-0877310", "Fax": "089-0877451", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FRANR", "CompanyName": "France restauration", "ContactName": "Carine Schmitt", "ContactTitle": "Marketing Manager", "Address": "54, rue Royale", "City": "Nantes", "Region": null, "PostalCode": "44000", "Country": "France", "Phone": "40.32.21.21", "Fax": "40.32.21.20", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FRANS", "CompanyName": "Franchi S.p.A.", "ContactName": "Paolo Accorti", "ContactTitle": "Sales Representative", "Address": "Via Monte Bianco 34", "City": "Torino", "Region": null, "PostalCode": "10100", "Country": "Italy", "Phone": "011-4988260", "Fax": "011-4988261", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FURIB')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FURIB", "CompanyName": "Furia Bacalhau e Frutos do Mar", "ContactName": "Lino Rodriguez", "ContactTitle": "Sales Manager", "Address": "Jardim das rosas n. 32", "City": "Lisboa", "Region": null, "PostalCode": "1675", "Country": "Portugal", "Phone": "(1) 354-2534", "Fax": "(1) 354-2535", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FURIB')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FURIB')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GALED')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GALED", "CompanyName": "Galer\u00eda del gastr\u00f3nomo", "ContactName": "Eduardo Saavedra", "ContactTitle": "Marketing Manager", "Address": "Rambla de Catalu\u00f1a, 23", "City": "Barcelona", "Region": null, "PostalCode": "08022", "Country": "Spain", "Phone": "(93) 203 4560", "Fax": "(93) 203 4561", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GALED')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GALED')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GODOS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GODOS", "CompanyName": "Godos Cocina T\u00edpica", "ContactName": "Jos\u00e9 Pedro Freyre", "ContactTitle": "Sales Manager", "Address": "C/ Romero, 33", "City": "Sevilla", "Region": null, "PostalCode": "41101", "Country": "Spain", "Phone": "(95) 555 82 82", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GODOS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GODOS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GOURL')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GOURL", "CompanyName": "Gourmet Lanchonetes", "ContactName": "Andr\u00e9 Fonseca", "ContactTitle": "Sales Associate", "Address": "Av. Brasil, 442", "City": "Campinas", "Region": "SP", "PostalCode": "04876-786", "Country": "Brazil", "Phone": "(11) 555-9482", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GOURL')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GOURL')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GREAL')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GREAL", "CompanyName": "Great Lakes Food Market", "ContactName": "Howard Snyder", "ContactTitle": "Marketing Manager", "Address": "2732 Baker Blvd.", "City": "Eugene", "Region": "OR", "PostalCode": "97403", "Country": "USA", "Phone": "(503) 555-7555", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GREAL')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GREAL')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GROSR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GROSR", "CompanyName": "GROSELLA-Restaurante", "ContactName": "Manuel Pereira", "ContactTitle": "Owner", "Address": "5\u00aa Ave. Los Palos Grandes", "City": "Caracas", "Region": "DF", "PostalCode": "1081", "Country": "Venezuela", "Phone": "(2) 283-2951", "Fax": "(2) 283-3397", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GROSR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GROSR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HANAR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HANAR", "CompanyName": "Hanari Carnes", "ContactName": "Mario Pontes", "ContactTitle": "Accounting Manager", "Address": "Rua do Pa\u00e7o, 67", "City": "Rio de Janeiro", "Region": "RJ", "PostalCode": "05454-876", "Country": "Brazil", "Phone": "(21) 555-0091", "Fax": "(21) 555-8765", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HANAR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HANAR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HILAA')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HILAA", "CompanyName": "HILARION-Abastos", "ContactName": "Carlos Hern\u00e1ndez", "ContactTitle": "Sales Representative", "Address": "Carrera 22 con Ave. Carlos Soublette #8-35", "City": "San Crist\u00f3bal", "Region": "T\u00e1chira", "PostalCode": "5022", "Country": "Venezuela", "Phone": "(5) 555-1340", "Fax": "(5) 555-1948", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HILAA')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HILAA')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGC')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HUNGC", "CompanyName": "Hungry Coyote Import Store", "ContactName": "Yoshi Latimer", "ContactTitle": "Sales Representative", "Address": "City Center Plaza 516 Main St.", "City": "Elgin", "Region": "OR", "PostalCode": "97827", "Country": "USA", "Phone": "(503) 555-6874", "Fax": "(503) 555-2376", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGC')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGC')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HUNGO", "CompanyName": "Hungry Owl All-Night Grocers", "ContactName": "Patricia McKenna", "ContactTitle": "Sales Associate", "Address": "8 Johnstown Road", "City": "Cork", "Region": "Co. Cork", "PostalCode": null, "Country": "Ireland", "Phone": "2967 542", "Fax": "2967 3333", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ISLAT')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "ISLAT", "CompanyName": "Island Trading", "ContactName": "Helen Bennett", "ContactTitle": "Marketing Manager", "Address": "Garden House Crowther Way", "City": "Cowes", "Region": "Isle of Wight", "PostalCode": "PO31 7PJ", "Country": "UK", "Phone": "(198) 555-8888", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ISLAT')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ISLAT')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('KOENE')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "KOENE", "CompanyName": "K\u00f6niglich Essen", "ContactName": "Philip Cramer", "ContactTitle": "Sales Associate", "Address": "Maubelstr. 90", "City": "Brandenburg", "Region": null, "PostalCode": "14776", "Country": "Germany", "Phone": "0555-09876", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('KOENE')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('KOENE')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LACOR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LACOR", "CompanyName": "La corne d'abondance", "ContactName": "Daniel Tonini", "ContactTitle": "Sales Representative", "Address": "67, avenue de l'Europe", "City": "Versailles", "Region": null, "PostalCode": "78000", "Country": "France", "Phone": "30.59.84.10", "Fax": "30.59.85.11", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LACOR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LACOR')/CustomerDemographics"
+					}
+				}
+			}
+		], "__next": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers?$top=30&$skiptoken='LACOR'"
+	}
+};
+
+var oCustomers3 = {
+	"d" : {
+		"results": [
+			{
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAMAI')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LAMAI", "CompanyName": "La maison d'Asie", "ContactName": "Annette Roulet", "ContactTitle": "Sales Manager", "Address": "1 rue Alsace-Lorraine", "City": "Toulouse", "Region": null, "PostalCode": "31000", "Country": "France", "Phone": "61.77.61.10", "Fax": "61.77.61.11", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAMAI')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAMAI')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAUGB')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LAUGB", "CompanyName": "Laughing Bacchus Wine Cellars", "ContactName": "Yoshi Tannamuri", "ContactTitle": "Marketing Assistant", "Address": "1900 Oak St.", "City": "Vancouver", "Region": "BC", "PostalCode": "V3F 2K1", "Country": "Canada", "Phone": "(604) 555-3392", "Fax": "(604) 555-7293", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAUGB')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAUGB')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAZYK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LAZYK", "CompanyName": "Lazy K Kountry Store", "ContactName": "John Steel", "ContactTitle": "Marketing Manager", "Address": "12 Orchestra Terrace", "City": "Walla Walla", "Region": "WA", "PostalCode": "99362", "Country": "USA", "Phone": "(509) 555-7969", "Fax": "(509) 555-6221", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAZYK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAZYK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LEHMS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LEHMS", "CompanyName": "Lehmanns Marktstand", "ContactName": "Renate Messner", "ContactTitle": "Sales Representative", "Address": "Magazinweg 7", "City": "Frankfurt a.M.", "Region": null, "PostalCode": "60528", "Country": "Germany", "Phone": "069-0245984", "Fax": "069-0245874", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LEHMS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LEHMS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LETSS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LETSS", "CompanyName": "Let's Stop N Shop", "ContactName": "Jaime Yorres", "ContactTitle": "Owner", "Address": "87 Polk St. Suite 5", "City": "San Francisco", "Region": "CA", "PostalCode": "94117", "Country": "USA", "Phone": "(415) 555-5938", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LETSS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LETSS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LILAS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LILAS", "CompanyName": "LILA-Supermercado", "ContactName": "Carlos Gonz\u00e1lez", "ContactTitle": "Accounting Manager", "Address": "Carrera 52 con Ave. Bol\u00edvar #65-98 Llano Largo", "City": "Barquisimeto", "Region": "Lara", "PostalCode": "3508", "Country": "Venezuela", "Phone": "(9) 331-6954", "Fax": "(9) 331-7256", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LILAS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LILAS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LINOD')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LINOD", "CompanyName": "LINO-Delicateses", "ContactName": "Felipe Izquierdo", "ContactTitle": "Owner", "Address": "Ave. 5 de Mayo Porlamar", "City": "I. de Margarita", "Region": "Nueva Esparta", "PostalCode": "4980", "Country": "Venezuela", "Phone": "(8) 34-56-12", "Fax": "(8) 34-93-93", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LINOD')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LINOD')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LONEP')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LONEP", "CompanyName": "Lonesome Pine Restaurant", "ContactName": "Fran Wilson", "ContactTitle": "Sales Manager", "Address": "89 Chiaroscuro Rd.", "City": "Portland", "Region": "OR", "PostalCode": "97219", "Country": "USA", "Phone": "(503) 555-9573", "Fax": "(503) 555-9646", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LONEP')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LONEP')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAGAA')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MAGAA", "CompanyName": "Magazzini Alimentari Riuniti", "ContactName": "Giovanni Rovelli", "ContactTitle": "Marketing Manager", "Address": "Via Ludovico il Moro 22", "City": "Bergamo", "Region": null, "PostalCode": "24100", "Country": "Italy", "Phone": "035-640230", "Fax": "035-640231", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAGAA')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAGAA')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAISD')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MAISD", "CompanyName": "Maison Dewey", "ContactName": "Catherine Dewey", "ContactTitle": "Sales Agent", "Address": "Rue Joseph-Bens 532", "City": "Bruxelles", "Region": null, "PostalCode": "B-1180", "Country": "Belgium", "Phone": "(02) 201 24 67", "Fax": "(02) 201 24 68", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAISD')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAISD')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MEREP')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MEREP", "CompanyName": "M\u00e8re Paillarde", "ContactName": "Jean Fresni\u00e8re", "ContactTitle": "Marketing Assistant", "Address": "43 rue St. Laurent", "City": "Montr\u00e9al", "Region": "Qu\u00e9bec", "PostalCode": "H1J 1C3", "Country": "Canada", "Phone": "(514) 555-8054", "Fax": "(514) 555-8055", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MEREP')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MEREP')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MORGK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MORGK", "CompanyName": "Morgenstern Gesundkost", "ContactName": "Alexander Feuer", "ContactTitle": "Marketing Assistant", "Address": "Heerstr. 22", "City": "Leipzig", "Region": null, "PostalCode": "04179", "Country": "Germany", "Phone": "0342-023176", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MORGK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MORGK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('NORTS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "NORTS", "CompanyName": "North/South", "ContactName": "Simon Crowther", "ContactTitle": "Sales Associate", "Address": "South House 300 Queensbridge", "City": "London", "Region": null, "PostalCode": "SW7 1RZ", "Country": "UK", "Phone": "(171) 555-7733", "Fax": "(171) 555-2530", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('NORTS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('NORTS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OCEAN')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "OCEAN", "CompanyName": "Oc\u00e9ano Atl\u00e1ntico Ltda.", "ContactName": "Yvonne Moncada", "ContactTitle": "Sales Agent", "Address": "Ing. Gustavo Moncada 8585 Piso 20-A", "City": "Buenos Aires", "Region": null, "PostalCode": "1010", "Country": "Argentina", "Phone": "(1) 135-5333", "Fax": "(1) 135-5535", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OCEAN')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OCEAN')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OLDWO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "OLDWO", "CompanyName": "Old World Delicatessen", "ContactName": "Rene Phillips", "ContactTitle": "Sales Representative", "Address": "2743 Bering St.", "City": "Anchorage", "Region": "AK", "PostalCode": "99508", "Country": "USA", "Phone": "(907) 555-7584", "Fax": "(907) 555-2880", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OLDWO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OLDWO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OTTIK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "OTTIK", "CompanyName": "Ottilies K\u00e4seladen", "ContactName": "Henriette Pfalzheim", "ContactTitle": "Owner", "Address": "Mehrheimerstr. 369", "City": "K\u00f6ln", "Region": null, "PostalCode": "50739", "Country": "Germany", "Phone": "0221-0644327", "Fax": "0221-0765721", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OTTIK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OTTIK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PARIS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PARIS", "CompanyName": "Paris sp\u00e9cialit\u00e9s", "ContactName": "Marie Bertrand", "ContactTitle": "Owner", "Address": "265, boulevard Charonne", "City": "Paris", "Region": null, "PostalCode": "75012", "Country": "France", "Phone": "(1) 42.34.22.66", "Fax": "(1) 42.34.22.77", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PARIS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PARIS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PERIC')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PERIC", "CompanyName": "Pericles Comidas cl\u00e1sicas", "ContactName": "Guillermo Fern\u00e1ndez", "ContactTitle": "Sales Representative", "Address": "Calle Dr. Jorge Cash 321", "City": "M\u00e9xico D.F.", "Region": null, "PostalCode": "05033", "Country": "Mexico", "Phone": "(5) 552-3745", "Fax": "(5) 545-3745", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PERIC')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PERIC')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PICCO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PICCO", "CompanyName": "Piccolo und mehr", "ContactName": "Georg Pipps", "ContactTitle": "Sales Manager", "Address": "Geislweg 14", "City": "Salzburg", "Region": null, "PostalCode": "5020", "Country": "Austria", "Phone": "6562-9722", "Fax": "6562-9723", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PICCO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PICCO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PRINI')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PRINI", "CompanyName": "Princesa Isabel Vinhos", "ContactName": "Isabel de Castro", "ContactTitle": "Sales Representative", "Address": "Estrada da sa\u00fade n. 58", "City": "Lisboa", "Region": null, "PostalCode": "1756", "Country": "Portugal", "Phone": "(1) 356-5634", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PRINI')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PRINI')/CustomerDemographics"
+					}
+				}
+			}
+		], "__next": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers?$top=30&$skiptoken='PRINI'"
+	}
+};
+
+var oCustomers4 = {
+	"d" : {
+		"results": [
+			{
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FISSA')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FISSA", "CompanyName": "FISSA Fabrica Inter. Salchichas S.A.", "ContactName": "Diego Roel", "ContactTitle": "Accounting Manager", "Address": "C/ Moralzarzal, 86", "City": "Madrid", "Region": null, "PostalCode": "28034", "Country": "Spain", "Phone": "(91) 555 94 44", "Fax": "(91) 555 55 93", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FISSA')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FISSA')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLIG')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FOLIG", "CompanyName": "Folies gourmandes", "ContactName": "Martine Ranc\u00e9", "ContactTitle": "Assistant Sales Agent", "Address": "184, chauss\u00e9e de Tournai", "City": "Lille", "Region": null, "PostalCode": "59000", "Country": "France", "Phone": "20.16.10.16", "Fax": "20.16.10.17", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLIG')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLIG')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLKO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FOLKO", "CompanyName": "Folk och f\u00e4 HB", "ContactName": "Maria Larsson", "ContactTitle": "Owner", "Address": "\u00c5kergatan 24", "City": "Br\u00e4cke", "Region": null, "PostalCode": "S-844 67", "Country": "Sweden", "Phone": "0695-34 67 21", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLKO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FOLKO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FRANK", "CompanyName": "Frankenversand", "ContactName": "Peter Franken", "ContactTitle": "Marketing Manager", "Address": "Berliner Platz 43", "City": "M\u00fcnchen", "Region": null, "PostalCode": "80805", "Country": "Germany", "Phone": "089-0877310", "Fax": "089-0877451", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FRANR", "CompanyName": "France restauration", "ContactName": "Carine Schmitt", "ContactTitle": "Marketing Manager", "Address": "54, rue Royale", "City": "Nantes", "Region": null, "PostalCode": "44000", "Country": "France", "Phone": "40.32.21.21", "Fax": "40.32.21.20", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FRANS", "CompanyName": "Franchi S.p.A.", "ContactName": "Paolo Accorti", "ContactTitle": "Sales Representative", "Address": "Via Monte Bianco 34", "City": "Torino", "Region": null, "PostalCode": "10100", "Country": "Italy", "Phone": "011-4988260", "Fax": "011-4988261", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FRANS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FURIB')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "FURIB", "CompanyName": "Furia Bacalhau e Frutos do Mar", "ContactName": "Lino Rodriguez", "ContactTitle": "Sales Manager", "Address": "Jardim das rosas n. 32", "City": "Lisboa", "Region": null, "PostalCode": "1675", "Country": "Portugal", "Phone": "(1) 354-2534", "Fax": "(1) 354-2535", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FURIB')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('FURIB')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GALED')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GALED", "CompanyName": "Galer\u00eda del gastr\u00f3nomo", "ContactName": "Eduardo Saavedra", "ContactTitle": "Marketing Manager", "Address": "Rambla de Catalu\u00f1a, 23", "City": "Barcelona", "Region": null, "PostalCode": "08022", "Country": "Spain", "Phone": "(93) 203 4560", "Fax": "(93) 203 4561", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GALED')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GALED')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GODOS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GODOS", "CompanyName": "Godos Cocina T\u00edpica", "ContactName": "Jos\u00e9 Pedro Freyre", "ContactTitle": "Sales Manager", "Address": "C/ Romero, 33", "City": "Sevilla", "Region": null, "PostalCode": "41101", "Country": "Spain", "Phone": "(95) 555 82 82", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GODOS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GODOS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GOURL')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GOURL", "CompanyName": "Gourmet Lanchonetes", "ContactName": "Andr\u00e9 Fonseca", "ContactTitle": "Sales Associate", "Address": "Av. Brasil, 442", "City": "Campinas", "Region": "SP", "PostalCode": "04876-786", "Country": "Brazil", "Phone": "(11) 555-9482", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GOURL')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GOURL')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GREAL')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GREAL", "CompanyName": "Great Lakes Food Market", "ContactName": "Howard Snyder", "ContactTitle": "Marketing Manager", "Address": "2732 Baker Blvd.", "City": "Eugene", "Region": "OR", "PostalCode": "97403", "Country": "USA", "Phone": "(503) 555-7555", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GREAL')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GREAL')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GROSR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "GROSR", "CompanyName": "GROSELLA-Restaurante", "ContactName": "Manuel Pereira", "ContactTitle": "Owner", "Address": "5\u00aa Ave. Los Palos Grandes", "City": "Caracas", "Region": "DF", "PostalCode": "1081", "Country": "Venezuela", "Phone": "(2) 283-2951", "Fax": "(2) 283-3397", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GROSR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('GROSR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HANAR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HANAR", "CompanyName": "Hanari Carnes", "ContactName": "Mario Pontes", "ContactTitle": "Accounting Manager", "Address": "Rua do Pa\u00e7o, 67", "City": "Rio de Janeiro", "Region": "RJ", "PostalCode": "05454-876", "Country": "Brazil", "Phone": "(21) 555-0091", "Fax": "(21) 555-8765", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HANAR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HANAR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HILAA')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HILAA", "CompanyName": "HILARION-Abastos", "ContactName": "Carlos Hern\u00e1ndez", "ContactTitle": "Sales Representative", "Address": "Carrera 22 con Ave. Carlos Soublette #8-35", "City": "San Crist\u00f3bal", "Region": "T\u00e1chira", "PostalCode": "5022", "Country": "Venezuela", "Phone": "(5) 555-1340", "Fax": "(5) 555-1948", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HILAA')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HILAA')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGC')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HUNGC", "CompanyName": "Hungry Coyote Import Store", "ContactName": "Yoshi Latimer", "ContactTitle": "Sales Representative", "Address": "City Center Plaza 516 Main St.", "City": "Elgin", "Region": "OR", "PostalCode": "97827", "Country": "USA", "Phone": "(503) 555-6874", "Fax": "(503) 555-2376", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGC')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGC')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "HUNGO", "CompanyName": "Hungry Owl All-Night Grocers", "ContactName": "Patricia McKenna", "ContactTitle": "Sales Associate", "Address": "8 Johnstown Road", "City": "Cork", "Region": "Co. Cork", "PostalCode": null, "Country": "Ireland", "Phone": "2967 542", "Fax": "2967 3333", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('HUNGO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ISLAT')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "ISLAT", "CompanyName": "Island Trading", "ContactName": "Helen Bennett", "ContactTitle": "Marketing Manager", "Address": "Garden House Crowther Way", "City": "Cowes", "Region": "Isle of Wight", "PostalCode": "PO31 7PJ", "Country": "UK", "Phone": "(198) 555-8888", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ISLAT')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('ISLAT')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('KOENE')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "KOENE", "CompanyName": "K\u00f6niglich Essen", "ContactName": "Philip Cramer", "ContactTitle": "Sales Associate", "Address": "Maubelstr. 90", "City": "Brandenburg", "Region": null, "PostalCode": "14776", "Country": "Germany", "Phone": "0555-09876", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('KOENE')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('KOENE')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LACOR')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LACOR", "CompanyName": "La corne d'abondance", "ContactName": "Daniel Tonini", "ContactTitle": "Sales Representative", "Address": "67, avenue de l'Europe", "City": "Versailles", "Region": null, "PostalCode": "78000", "Country": "France", "Phone": "30.59.84.10", "Fax": "30.59.85.11", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LACOR')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LACOR')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAMAI')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LAMAI", "CompanyName": "La maison d'Asie", "ContactName": "Annette Roulet", "ContactTitle": "Sales Manager", "Address": "1 rue Alsace-Lorraine", "City": "Toulouse", "Region": null, "PostalCode": "31000", "Country": "France", "Phone": "61.77.61.10", "Fax": "61.77.61.11", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAMAI')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAMAI')/CustomerDemographics"
+					}
+				}
+			}
+		], "__next": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers?$top=22&$skiptoken='LAMAI'"
+	}
+};
+
+var oCustomers5 = {
+	"d" : {
+		"results": [
+			{
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAUGB')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LAUGB", "CompanyName": "Laughing Bacchus Wine Cellars", "ContactName": "Yoshi Tannamuri", "ContactTitle": "Marketing Assistant", "Address": "1900 Oak St.", "City": "Vancouver", "Region": "BC", "PostalCode": "V3F 2K1", "Country": "Canada", "Phone": "(604) 555-3392", "Fax": "(604) 555-7293", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAUGB')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAUGB')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAZYK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LAZYK", "CompanyName": "Lazy K Kountry Store", "ContactName": "John Steel", "ContactTitle": "Marketing Manager", "Address": "12 Orchestra Terrace", "City": "Walla Walla", "Region": "WA", "PostalCode": "99362", "Country": "USA", "Phone": "(509) 555-7969", "Fax": "(509) 555-6221", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAZYK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LAZYK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LEHMS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LEHMS", "CompanyName": "Lehmanns Marktstand", "ContactName": "Renate Messner", "ContactTitle": "Sales Representative", "Address": "Magazinweg 7", "City": "Frankfurt a.M.", "Region": null, "PostalCode": "60528", "Country": "Germany", "Phone": "069-0245984", "Fax": "069-0245874", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LEHMS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LEHMS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LETSS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LETSS", "CompanyName": "Let's Stop N Shop", "ContactName": "Jaime Yorres", "ContactTitle": "Owner", "Address": "87 Polk St. Suite 5", "City": "San Francisco", "Region": "CA", "PostalCode": "94117", "Country": "USA", "Phone": "(415) 555-5938", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LETSS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LETSS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LILAS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LILAS", "CompanyName": "LILA-Supermercado", "ContactName": "Carlos Gonz\u00e1lez", "ContactTitle": "Accounting Manager", "Address": "Carrera 52 con Ave. Bol\u00edvar #65-98 Llano Largo", "City": "Barquisimeto", "Region": "Lara", "PostalCode": "3508", "Country": "Venezuela", "Phone": "(9) 331-6954", "Fax": "(9) 331-7256", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LILAS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LILAS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LINOD')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LINOD", "CompanyName": "LINO-Delicateses", "ContactName": "Felipe Izquierdo", "ContactTitle": "Owner", "Address": "Ave. 5 de Mayo Porlamar", "City": "I. de Margarita", "Region": "Nueva Esparta", "PostalCode": "4980", "Country": "Venezuela", "Phone": "(8) 34-56-12", "Fax": "(8) 34-93-93", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LINOD')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LINOD')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LONEP')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "LONEP", "CompanyName": "Lonesome Pine Restaurant", "ContactName": "Fran Wilson", "ContactTitle": "Sales Manager", "Address": "89 Chiaroscuro Rd.", "City": "Portland", "Region": "OR", "PostalCode": "97219", "Country": "USA", "Phone": "(503) 555-9573", "Fax": "(503) 555-9646", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LONEP')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('LONEP')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAGAA')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MAGAA", "CompanyName": "Magazzini Alimentari Riuniti", "ContactName": "Giovanni Rovelli", "ContactTitle": "Marketing Manager", "Address": "Via Ludovico il Moro 22", "City": "Bergamo", "Region": null, "PostalCode": "24100", "Country": "Italy", "Phone": "035-640230", "Fax": "035-640231", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAGAA')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAGAA')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAISD')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MAISD", "CompanyName": "Maison Dewey", "ContactName": "Catherine Dewey", "ContactTitle": "Sales Agent", "Address": "Rue Joseph-Bens 532", "City": "Bruxelles", "Region": null, "PostalCode": "B-1180", "Country": "Belgium", "Phone": "(02) 201 24 67", "Fax": "(02) 201 24 68", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAISD')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MAISD')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MEREP')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MEREP", "CompanyName": "M\u00e8re Paillarde", "ContactName": "Jean Fresni\u00e8re", "ContactTitle": "Marketing Assistant", "Address": "43 rue St. Laurent", "City": "Montr\u00e9al", "Region": "Qu\u00e9bec", "PostalCode": "H1J 1C3", "Country": "Canada", "Phone": "(514) 555-8054", "Fax": "(514) 555-8055", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MEREP')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MEREP')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MORGK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "MORGK", "CompanyName": "Morgenstern Gesundkost", "ContactName": "Alexander Feuer", "ContactTitle": "Marketing Assistant", "Address": "Heerstr. 22", "City": "Leipzig", "Region": null, "PostalCode": "04179", "Country": "Germany", "Phone": "0342-023176", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MORGK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('MORGK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('NORTS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "NORTS", "CompanyName": "North/South", "ContactName": "Simon Crowther", "ContactTitle": "Sales Associate", "Address": "South House 300 Queensbridge", "City": "London", "Region": null, "PostalCode": "SW7 1RZ", "Country": "UK", "Phone": "(171) 555-7733", "Fax": "(171) 555-2530", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('NORTS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('NORTS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OCEAN')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "OCEAN", "CompanyName": "Oc\u00e9ano Atl\u00e1ntico Ltda.", "ContactName": "Yvonne Moncada", "ContactTitle": "Sales Agent", "Address": "Ing. Gustavo Moncada 8585 Piso 20-A", "City": "Buenos Aires", "Region": null, "PostalCode": "1010", "Country": "Argentina", "Phone": "(1) 135-5333", "Fax": "(1) 135-5535", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OCEAN')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OCEAN')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OLDWO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "OLDWO", "CompanyName": "Old World Delicatessen", "ContactName": "Rene Phillips", "ContactTitle": "Sales Representative", "Address": "2743 Bering St.", "City": "Anchorage", "Region": "AK", "PostalCode": "99508", "Country": "USA", "Phone": "(907) 555-7584", "Fax": "(907) 555-2880", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OLDWO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OLDWO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OTTIK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "OTTIK", "CompanyName": "Ottilies K\u00e4seladen", "ContactName": "Henriette Pfalzheim", "ContactTitle": "Owner", "Address": "Mehrheimerstr. 369", "City": "K\u00f6ln", "Region": null, "PostalCode": "50739", "Country": "Germany", "Phone": "0221-0644327", "Fax": "0221-0765721", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OTTIK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('OTTIK')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PARIS')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PARIS", "CompanyName": "Paris sp\u00e9cialit\u00e9s", "ContactName": "Marie Bertrand", "ContactTitle": "Owner", "Address": "265, boulevard Charonne", "City": "Paris", "Region": null, "PostalCode": "75012", "Country": "France", "Phone": "(1) 42.34.22.66", "Fax": "(1) 42.34.22.77", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PARIS')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PARIS')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PERIC')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PERIC", "CompanyName": "Pericles Comidas cl\u00e1sicas", "ContactName": "Guillermo Fern\u00e1ndez", "ContactTitle": "Sales Representative", "Address": "Calle Dr. Jorge Cash 321", "City": "M\u00e9xico D.F.", "Region": null, "PostalCode": "05033", "Country": "Mexico", "Phone": "(5) 552-3745", "Fax": "(5) 545-3745", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PERIC')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PERIC')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PICCO')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PICCO", "CompanyName": "Piccolo und mehr", "ContactName": "Georg Pipps", "ContactTitle": "Sales Manager", "Address": "Geislweg 14", "City": "Salzburg", "Region": null, "PostalCode": "5020", "Country": "Austria", "Phone": "6562-9722", "Fax": "6562-9723", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PICCO')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PICCO')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PRINI')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "PRINI", "CompanyName": "Princesa Isabel Vinhos", "ContactName": "Isabel de Castro", "ContactTitle": "Sales Representative", "Address": "Estrada da sa\u00fade n. 58", "City": "Lisboa", "Region": null, "PostalCode": "1756", "Country": "Portugal", "Phone": "(1) 356-5634", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PRINI')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('PRINI')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUEDE')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "QUEDE", "CompanyName": "Que Del\u00edcia", "ContactName": "Bernardo Batista", "ContactTitle": "Accounting Manager", "Address": "Rua da Panificadora, 12", "City": "Rio de Janeiro", "Region": "RJ", "PostalCode": "02389-673", "Country": "Brazil", "Phone": "(21) 555-4252", "Fax": "(21) 555-4545", "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUEDE')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUEDE')/CustomerDemographics"
+					}
+				}
+			}
+		], "__next": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers?$top=2&$skiptoken='QUEDE'"
+	}
+};
+
+var oCustomers6 = {
+	"d" : {
+		"results": [
+			{
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUEEN')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "QUEEN", "CompanyName": "Queen Cozinha", "ContactName": "L\u00facia Carvalho", "ContactTitle": "Marketing Assistant", "Address": "Alameda dos Can\u00e0rios, 891", "City": "Sao Paulo", "Region": "SP", "PostalCode": "05487-020", "Country": "Brazil", "Phone": "(11) 555-1189", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUEEN')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUEEN')/CustomerDemographics"
+					}
+				}
+			}, {
+				"__metadata": {
+					"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUICK')", "type": "NorthwindModel.Customer"
+				}, "CustomerID": "QUICK", "CompanyName": "QUICK-Stop", "ContactName": "Horst Kloss", "ContactTitle": "Accounting Manager", "Address": "Taucherstra\u00dfe 10", "City": "Cunewalde", "Region": null, "PostalCode": "01307", "Country": "Germany", "Phone": "0372-035188", "Fax": null, "Orders": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUICK')/Orders"
+					}
+				}, "CustomerDemographics": {
+					"__deferred": {
+						"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/Customers('QUICK')/CustomerDemographics"
+					}
+				}
+			}
+		]
+	}
+};

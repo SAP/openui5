@@ -2800,9 +2800,6 @@ sap.ui.define([
 		}
 	});
 
-
-
-
 	/**
 	 * creates a panel with a list with the following bindings
 	 * <code>/Products(1)/Supplier/Products</code>
@@ -3405,4 +3402,108 @@ sap.ui.define([
 		}, fnCompleted, this, "attachRequestCompleted");
 
 	});
+
+	QUnit.module("Listbinding skip/top", {
+		beforeEach: function() {
+			this.aRegisteredControls = [];
+		},
+		afterEach: function() {
+			oModel.destroy();
+			oModel = undefined;
+			this.aRegisteredControls.forEach(function(oControl) {
+				if (oControl.destroy) {
+					oControl.destroy();
+				}
+			});
+			if (oSpySubmitBatchRequest) {
+				oSpySubmitBatchRequest.restore();
+			}
+		}
+	});
+
+
+	QUnit.test("Non-batch: ListBinding - skip/top - default", function(assert) {
+		var done = assert.async();
+
+		//var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {json: true, useBatch: false});
+		oModel = initModel();
+		oModel.setUseBatch(false);
+		oModel.metadataLoaded().then(function() {
+			var oBinding = oModel.bindList("/Customers", null, null, null, {});
+
+			var fnHandler1 = function() {
+				oBinding.detachChange(fnHandler1);
+				assert.equal(oBinding.getPath(), "/Customers", "ListBinding path");
+				assert.equal(oBinding.getLength(), 91, "length of items");
+				assert.equal(oBinding.aKeys.length, 20);
+				oBinding.attachChange(fnHandler2);
+				oBinding.getContexts(0, 10, 50);
+			};
+
+			var fnHandler2 = function() {
+				oBinding.detachChange(fnHandler2);
+				assert.equal(oBinding.getLength(), 91, "length of items");
+				assert.equal(oBinding.aKeys.length, 40);
+				oBinding.attachChange(fnHandler3);
+				oBinding.getContexts(0, 10, 50);
+			};
+
+			var fnHandler3 = function() {
+				oBinding.detachChange(fnHandler3);
+				assert.equal(oBinding.getLength(), 91, "length of items");
+				assert.equal(oBinding.aKeys.length, 60);
+				done();
+			};
+
+			oBinding.attachRefresh(function() {
+				oBinding.attachChange(fnHandler1);
+				oBinding.getContexts(0, 10, 50);
+			});
+
+			oBinding.initialize();
+		});
+	});
+
+	QUnit.test("Non-batch: ListBinding - skip/top - negative threshold is available", function(assert) {
+		var done = assert.async();
+
+		//var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {json: true, useBatch: false});
+		oModel = initModel();
+		oModel.setUseBatch(false);
+		oModel.metadataLoaded().then(function() {
+			var oBinding = oModel.bindList("/Customers", null, null, null, {});
+
+			var fnHandler1 = function() {
+				oBinding.detachChange(fnHandler1);
+				assert.equal(oBinding.getPath(), "/Customers", "ListBinding path");
+				assert.equal(oBinding.getLength(), 91, "length of items");
+				assert.equal(oBinding.aKeys.length, 20);
+				oBinding.attachChange(fnHandler2);
+				oBinding.getContexts(0, 10, 50);
+			};
+
+			var fnHandler2 = function() {
+				oBinding.detachChange(fnHandler2);
+				assert.equal(oBinding.getLength(), 91, "length of items");
+				assert.equal(oBinding.aKeys.length, 40);
+				oBinding.attachChange(fnHandler3);
+				oBinding.getContexts(0, 10, 50);
+			};
+
+			var fnHandler3 = function() {
+				oBinding.detachChange(fnHandler3);
+				assert.equal(oBinding.getLength(), 91, "length of items");
+				assert.equal(oBinding.aKeys.length, 60);
+				done();
+			};
+
+			oBinding.attachRefresh(function() {
+				oBinding.attachChange(fnHandler1);
+				oBinding.getContexts(0, 10, 50);
+			});
+
+			oBinding.initialize();
+		});
+	});
+
 });
