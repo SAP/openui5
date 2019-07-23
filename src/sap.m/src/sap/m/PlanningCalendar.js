@@ -2762,6 +2762,11 @@ sap.ui.define([
 
 	});
 
+	PlanningCalendarRowHeader.prototype.isSelectable = function () {
+		// The header itself isn't selectable - the row is.
+		return false;
+	};
+
 	/*global PlanningCalendarRowHeaderRenderer:true*/
 	PlanningCalendarRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
 	};

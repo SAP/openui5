@@ -961,6 +961,18 @@ sap.ui.define([
 		return this._ariaRole ? this._ariaRole : "gridcell";
 	};
 
+	TimesRow.prototype._updateItemARIASelected = function($oDomRef, bSelect) {
+		var sRole = this._getAriaRole();
+
+		if (sRole === "gridcell") {
+			// aria-selected is valid only for role=gridcell and not for role=button
+			$oDomRef.attr("aria-selected", bSelect);
+		}
+
+		return this;
+	};
+
+
 	function _initItemNavigation(){
 
 		var oDate = this._getDate();
@@ -1298,10 +1310,10 @@ sap.ui.define([
 					if ($DomRef.attr("data-sap-time") == sYyyyMMddHHmm) {
 						if (iSelected > 0) {
 							$DomRef.removeClass("sapUiCalItemSel");
-							$DomRef.attr("aria-selected", "false");
+							this._updateItemARIASelected($DomRef, false);
 						} else {
 							$DomRef.addClass("sapUiCalItemSel");
-							$DomRef.attr("aria-selected", "true");
+							this._updateItemARIASelected($DomRef, true);
 						}
 					}
 				}
@@ -1329,11 +1341,11 @@ sap.ui.define([
 				bEnd = false;
 				if ($DomRef.attr("data-sap-time") == sYyyyMMddHHmm) {
 					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
+					this._updateItemARIASelected($DomRef, true);
 					bStart = true;
 				} else if ($DomRef.hasClass("sapUiCalItemSel")) {
 					$DomRef.removeClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "false");
+					this._updateItemARIASelected($DomRef, false);
 				}
 				if ($DomRef.hasClass("sapUiCalItemSelStart")) {
 					$DomRef.removeClass("sapUiCalItemSelStart");
@@ -1355,7 +1367,7 @@ sap.ui.define([
 					$DomRef.addClass("sapUiCalItemSelStart");
 					bStart = true;
 					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
+					this._updateItemARIASelected($DomRef, true);
 					if (oEndDate && oDay.getTime() == oEndDate.getTime()) {
 						// start day and end day are the same
 						$DomRef.addClass("sapUiCalItemSelEnd");
@@ -1364,7 +1376,7 @@ sap.ui.define([
 					$DomRef.removeClass("sapUiCalItemSelBetween");
 				} else if (oEndDate && oDay.getTime() > oStartDate.getTime() && oDay.getTime() < oEndDate.getTime()) {
 					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
+					this._updateItemARIASelected($DomRef, true);
 					$DomRef.addClass("sapUiCalItemSelBetween");
 					$DomRef.removeClass("sapUiCalItemSelStart");
 					$DomRef.removeClass("sapUiCalItemSelEnd");
@@ -1372,13 +1384,13 @@ sap.ui.define([
 					$DomRef.addClass("sapUiCalItemSelEnd");
 					bEnd = true;
 					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
+					this._updateItemARIASelected($DomRef, true);
 					$DomRef.removeClass("sapUiCalItemSelStart");
 					$DomRef.removeClass("sapUiCalItemSelBetween");
 				} else {
 					if ($DomRef.hasClass("sapUiCalItemSel")) {
 						$DomRef.removeClass("sapUiCalItemSel");
-						$DomRef.attr("aria-selected", "false");
+						this._updateItemARIASelected($DomRef, false);
 					}
 					if ($DomRef.hasClass("sapUiCalItemSelStart")) {
 						$DomRef.removeClass("sapUiCalItemSelStart");
