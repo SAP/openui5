@@ -452,6 +452,9 @@ sap.ui.define([
 		// filters
 		this.oVSD.setSelectedFilterKeys(this.oFilterState);
 		assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+
+		this.oVSD.setSelectedPresetFilterItem(null);
+		assert.strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "The selected preset filter item should be null");
 	});
 
 	QUnit.test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function (assert) {
