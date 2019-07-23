@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/events/isMouseEventDelayed",
+	"sap/ui/base/EventProvider",
 	"sap/ui/dom/jquery/control", // jQuery Plugin "control"
 	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
@@ -43,7 +44,11 @@ sap.ui.define([
 	containsOrEquals,
 	jQuery,
 	F6Navigation,
-	isMouseEventDelayed
+	isMouseEventDelayed,
+	EventProvider
+	//control
+	//Focusable
+	//rect
 ) {
 	"use strict";
 
@@ -53,7 +58,6 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = library.OpenState;
-
 
 	/**
 	 * Creates an instance of <code>sap.ui.core.Popup</code> that can be used to open controls as a Popup,
@@ -2461,6 +2465,77 @@ sap.ui.define([
 	};
 
 	/**
+	 * The 'blockLayerStateChange' event is fired only in case of using modal popups and under certain conditions:
+	 * <pre>
+	 *  a. the first inserted modal popup in a popup stack opens
+	 *  b. the first inserted modal popup in a popup stack closes
+	 * </pre>
+	 *
+	 * @name sap.ui.core.Popup.blockLayerStateChange
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+	 * @param {boolean} oEvent.getParameters.visible Indicates whether a blocking layer is currently visible <code>visible: true</code>
+	 *  or not <code>visible: false</code>
+	 * @param {Number} oEvent.getParameters.zIndex In case a blocking layer is visible, the <code>zIndex</code> property
+	 *  will represent the zIndex at which the blocking layer is displayed.
+	 *  In case of <code>visible: false</code>, <code>zIndex</code> represents the zIndex value of the last open popup.
+	 * @static
+	 * @private
+	 */
+
+	/**
+	 * Triggers the static 'blockLayerStateChange' event with a given map of parameters.
+	 *
+	 * @param {object} mParams A map of parameters with which the event gets fired.
+	 *
+	 * @private
+	 */
+	function _fireBlockLayerStateChange (mParams) {
+		if (Popup._blockLayerStateProvider) {
+			Popup._blockLayerStateProvider.fireEvent("blockLayerStateChange", mParams);
+		}
+	}
+
+	/**
+	 * Attaches an event-handler <code>fnFunction</code> to the static 'blockLayerStateChange' event.
+	 *
+	 * The event gets triggered in case of modal popups when the first of multiple popups opens and closes.
+	 *
+	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
+	 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
+	 *            oListener-instance (if present) or in a 'static way'.
+	 * @param {object} [oListener] Object on which to call the given function.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ushell
+	 */
+	Popup.attachBlockLayerStateChange = function (oData, fnFunction, oListener) {
+		if (!Popup._blockLayerStateProvider) {
+			Popup._blockLayerStateProvider = new EventProvider();
+		}
+		Popup._blockLayerStateProvider.attachEvent("blockLayerStateChange", oData, fnFunction, oListener);
+	};
+
+	/**
+	 * Removes a previously attached event handler <code>fnFunction</code> from the static 'blockLayerStateChange' event.
+	 *
+	 * The event gets triggered in case of modal popups when the first of multiple popups opens and closes.
+	 *
+	 * @param {function} fnFunction The function to call, when the event occurs.
+	 * @param {object} [oListener] Object on which the given function had to be called.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ushell
+	 */
+	Popup.detachBlockLayerStateChange = function (fnFunction, oListener) {
+		if (Popup._blockLayerStateProvider) {
+			Popup._blockLayerStateProvider.detachEvent("blockLayerStateChange", fnFunction, oListener);
+		}
+	};
+
+	/**
 	 * @private
 	 */
 	Popup.prototype._showBlockLayer = function() {
@@ -2479,6 +2554,7 @@ sap.ui.define([
 			zIndex: this._iZIndex - 2,
 			popup: this
 		});
+
 		$BlockRef.css({
 			"z-index" : this._iZIndex - 2,
 			"visibility" : "visible"
@@ -2486,11 +2562,18 @@ sap.ui.define([
 
 		// prevent HTML page from scrolling
 		jQuery("html").addClass("sapUiBLyBack");
+
+		if (Popup.blStack.length === 1) {
+			_fireBlockLayerStateChange({
+				visible: true,
+				zIndex: Popup.blStack[0].zIndex
+			});
+		}
 	};
 
 	Popup.prototype._hideBlockLayer = function() {
 		// a dialog was closed so pop his z-index from the stack
-		Popup.blStack.pop();
+		var oLastPopup = Popup.blStack.pop();
 
 		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup");
 		if ($oBlockLayer.length) {
@@ -2513,6 +2596,11 @@ sap.ui.define([
 					// Allow scrolling again in HTML page only if there is no BlockLayer left
 					jQuery("html").removeClass("sapUiBLyBack");
 				}, 0);
+
+				_fireBlockLayerStateChange({
+					visible: false,
+					zIndex: oLastPopup.zIndex
+				});
 			}
 		}
 	};
