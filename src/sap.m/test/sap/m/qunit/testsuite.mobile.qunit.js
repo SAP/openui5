@@ -1424,6 +1424,12 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			WizardIntegrationOpa: {
+				title: "Opa test Page for sap.m.Wizard",
+				module: [
+					"./WizardIntegration.opa.qunit"
+				]
+			},
 			WizardProgressNavigator: {
 				title: "QUnit Page for sap.m.WizardProgressNavigator",
 				ui5: {
