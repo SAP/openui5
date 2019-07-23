@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/FlexCustomData",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
@@ -34,6 +35,7 @@ function (
 	FlexController,
 	FlexCustomData,
 	Change,
+	LrepConnector,
 	ChangeRegistry,
 	Settings,
 	ChangeHandlerRegistration,
@@ -103,6 +105,7 @@ function (
 			this.oControl = new Control("existingId");
 			this.oChange = new Change(labelChangeContent);
 			this.iRevertibleStub = sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
+			this.oLrepConnector = LrepConnector.createConnector();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -3977,6 +3980,77 @@ function (
 			return this.oFlexController.hasHigherLayerChanges().then(function (bHasHigherLayerChanges) {
 				assert.ok(bHasHigherLayerChanges, "personalization was determined");
 			});
+		});
+	});
+
+	QUnit.module("getFlexInfo", {
+		beforeEach: function () {
+			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
+			this.oLrepConnector = LrepConnector.createConnector();
+			this.mPropertyBag = {
+				layer: "CUSTOMER"
+			};
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("isResetEnabled true success", function (assert) {
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
+
+			return this.oFlexController.isResetEnabled(this.mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, true, "flex/info resetEnabled is true");
+			});
+		});
+
+		QUnit.test("isResetEnabled false success", function (assert) {
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({
+				isResetEnabled: false,
+				isPublishEnabled: true
+			});
+
+			return this.oFlexController.isResetEnabled(this.mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, false, "flex/info resetEnabled is false");
+			});
+		});
+
+		QUnit.test("isPublishEnabled true success", function (assert) {
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
+
+			return this.oFlexController.isPublishEnabled(this.mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, true, "flex/info publishEnabled is true");
+			});
+		});
+
+		QUnit.test("isPublishEnabled false success", function (assert) {
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: false
+			});
+
+			return this.oFlexController.isPublishEnabled(this.mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, false, "flex/info publishEnabled is false");
+			});
+		});
+
+		QUnit.test("isResetEnabled failed", function (assert) {
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			var oSendStub = sandbox.stub(this.oLrepConnector, "getFlexInfo").rejects();
+
+			this.oFlexController.isResetEnabled(this.mPropertyBag);
+			assert.equal(oSendStub.callCount, 1, "call isResetEnabled is triggered");
+			this.oFlexController.isPublishEnabled(this.mPropertyBag);
+			assert.equal(oSendStub.callCount, 2, "call isPublishEnabled is triggered");
 		});
 	});
 
