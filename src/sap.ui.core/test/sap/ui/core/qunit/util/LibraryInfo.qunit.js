@@ -243,26 +243,22 @@ sap.ui.define([
 		var done = assert.async();
 
 		this.oLibraryInfo._getReleaseNotes("sap/ui/testlib", "1.2.3-SNAPSHOT", function(oData) {
-			assert.deepEqual(oData, {
-				"1.2.3": {
-					"date": "December 9999",
-					"notes": [
-						{
-							"id": "abc123",
-							"author": "Foo \u003cfoo@example.com\u003e",
-							"type": "FEATURE",
-							"text": "Super new feature",
-							"references": []
-						},
-						{
-							"id": "def456",
-							"author": "Bar \u003cbar@example.com\u003e",
-							"type": "FIX",
-							"text": "Important fix",
-							"references": []
-						}
-					]
-				}
+			assert.deepEqual(oData["1.2.3"], {
+				"date": "December 9999",
+				"notes": [
+					{
+						"id": "abc123",
+						"type": "FEATURE",
+						"text": "Super new feature",
+						"references": []
+					},
+					{
+						"id": "def456",
+						"type": "FIX",
+						"text": "Important fix",
+						"references": []
+					}
+				]
 			}, "Release notes");
 			done();
 		});
