@@ -2570,6 +2570,60 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario case-insensitive filtering
+	// JIRA: CPOUI5UISERVICESV3-1263
+	QUnit.test("OLDB: case insensitive filtering", function (assert) {
+		var oListBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/ProductList\'}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("ProductList?$select=Name,ProductID&$skip=0&$top=100", {
+				value : [{
+					ProductID : "1",
+					Name : "Pommes"
+				}, {
+					ProductID : "2",
+					Name : "Salat"
+				}
+			]})
+			.expectChange("name", ["Pommes", "Salat"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectRequest("ProductList?$select=Name,ProductID"
+					+ "&$filter=tolower(Name) eq tolower('salat')&$skip=0&$top=100", {
+					value : [{
+						ProductID : "2",
+						Name : "Salat"
+					}
+				]})
+				.expectChange("name", ["Salat"]);
+
+			// code under test
+			oListBinding.filter(new Filter({
+				filters : [
+					new Filter({
+						caseSensitive : false,
+						operator : FilterOperator.EQ,
+						path : "Name",
+						value1 : "salat"
+					})
+				]
+			}));
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: SalesOrders app
 	// * Sort the sales orders
 	// * Delete a sales order
