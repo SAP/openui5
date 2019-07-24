@@ -153,7 +153,7 @@ sap.ui.define([
 		var iRowContentHeight = this.getRowContentHeight();
 
 		if (iRowContentHeight > 0) {
-			oRM.addStyle("height", this.getBaseRowHeightOfTable() + "px");
+			oRM.style("height", this.getBaseRowHeightOfTable() + "px");
 		}
 	};
 
@@ -172,7 +172,7 @@ sap.ui.define([
 		}
 
 		if (iRowContentHeight > 0) {
-			oRM.addStyle("max-height", iRowContentHeight + "px");
+			oRM.style("max-height", iRowContentHeight + "px");
 		}
 	};
 

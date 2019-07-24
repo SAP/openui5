@@ -5292,53 +5292,47 @@ sap.ui.define([
 			oTable.setSelectionMode(sSelectionMode);
 			sap.ui.getCore().applyChanges();
 
-			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
-			}).then(function() {
-				var aCells = [
-					getCell(0, 0),
-					getRowAction(0)
-				];
+			var aCells = [
+				getCell(0, 0),
+				getRowAction(0)
+			];
 
-				if (sSelectionMode !== tableLibrary.SelectionMode.None) {
-					aCells.push(getSelectAll());
-					aCells.push(getRowHeader(0));
+			if (sSelectionMode !== tableLibrary.SelectionMode.None) {
+				aCells.push(getSelectAll());
+				aCells.push(getRowHeader(0));
+			}
+
+			for (var i = 0; i < aCells.length; i++) {
+				var oElem = aCells[i];
+
+				oElem.focus();
+				checkFocus(oElem, assert);
+
+				for (var j = 0; j < aSelectedIndices.length; j++) {
+					var iRowIndex = aSelectedIndices[j];
+					TableUtils.toggleRowSelection(oTable, iRowIndex);
 				}
 
-				for (var i = 0; i < aCells.length; i++) {
-					var oElem = aCells[i];
+				var sAssertionMessage = "No rows are selected";
+				if (aSelectedIndices.length > 0) {
+					sAssertionMessage = "Rows with indices [" + aSelectedIndices.join(", ") + "] are selected";
+				}
+				assert.deepEqual(oTable.getSelectedIndices(), aSelectedIndices, sAssertionMessage);
 
-					oElem.focus();
-					checkFocus(oElem, assert);
-
-					for (var j = 0; j < aSelectedIndices.length; j++) {
-						var iRowIndex = aSelectedIndices[j];
-						TableUtils.toggleRowSelection(oTable, iRowIndex);
-					}
-
-					var sAssertionMessage = "No rows are selected";
-					if (aSelectedIndices.length > 0) {
-						sAssertionMessage = "Rows with indices [" + aSelectedIndices.join(", ") + "] are selected";
-					}
-					assert.deepEqual(oTable.getSelectedIndices(), aSelectedIndices, sAssertionMessage);
-
-					if (aSelectedIndices.length > 0) {
-						qutils.triggerKeydown(oElem, Key.A, true, false, true);
-						assert.ok(!TableUtils.areAllRowsSelected(oTable), "DeselectAll on cell \"" + oElem.attr("id") + "\": All rows deselected");
-					}
-
+				if (aSelectedIndices.length > 0) {
 					qutils.triggerKeydown(oElem, Key.A, true, false, true);
-					assert.ok(!TableUtils.areAllRowsSelected(oTable), "DeselectAll on cell \"" + oElem.attr("id") + "\": All rows still deselected");
+					assert.ok(!TableUtils.areAllRowsSelected(oTable), "DeselectAll on cell \"" + oElem.attr("id") + "\": All rows deselected");
 				}
-			});
+
+				qutils.triggerKeydown(oElem, Key.A, true, false, true);
+				assert.ok(!TableUtils.areAllRowsSelected(oTable), "DeselectAll on cell \"" + oElem.attr("id") + "\": All rows still deselected");
+			}
 		}
 
 		initRowActions(oTable, 2, 2);
-		return test(tableLibrary.SelectionMode.None, []).then(function() {
-			return test(tableLibrary.SelectionMode.Single, [1]);
-		}).then(function() {
-			return test(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4], true);
-		});
+		test(tableLibrary.SelectionMode.None, []);
+		test(tableLibrary.SelectionMode.Single, [1]);
+		test(tableLibrary.SelectionMode.MultiToggle, [0, 1, 4], true);
 	});
 
 	QUnit.test("Deselect All not possible", function(assert) {

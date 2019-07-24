@@ -178,14 +178,16 @@ sap.ui.define([
 		metadata: {
 			properties: {height: "string", defaultValue: "1px"}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.addStyle("height", oControl.getHeight());
-			oRm.addStyle("width", "100px");
-			oRm.addStyle("background-color", "orange");
-			oRm.writeStyles();
-			oRm.writeControlData(oControl);
-			oRm.write("></div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.style("height", oControl.getHeight());
+				oRm.style("width", "100px");
+				oRm.style("background-color", "orange");
+				oRm.openEnd();
+				oRm.close("div");
+			}
 		},
 		setHeight: function(sHeight) {
 			this.setProperty("height", sHeight, true);
@@ -1470,22 +1472,6 @@ sap.ui.define([
 			that.assertSynchronization(assert, 70);
 			that.oScrollExtension.getHorizontalScrollbar().scrollLeft = oTable.getDomRef("sapUiTableCtrlScr").scrollWidth;
 
-		}).then(wait).then(function() {
-			var oColumn = oTable.getColumns()[4];
-			var $Resizer = oTable.$("rsz");
-			var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
-			var iResizeHandlerTop = oColumnRect.top + 10;
-			var iResizeHandlerLeft = oColumnRect.right - 1;
-
-			moveResizer(oColumn);
-			qutils.triggerMouseEvent($Resizer, "mousedown", 1, 1, iResizeHandlerLeft, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
-			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
-
-		}).then(afterRendering).then(wait).then(function() {
-			var oHSb = that.oScrollExtension.getHorizontalScrollbar();
-			var iMaxScrollLeft = oHSb.scrollWidth - oHSb.clientWidth;
-			that.assertSynchronization(assert, iMaxScrollLeft);
 		});
 	});
 
@@ -5585,17 +5571,32 @@ sap.ui.define([
 		}
 
 		var DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
-			renderer: function(oRm, oControl) {
-				oRm.write("<div style=\"display: flex; flex-direction: column\">");
-				oRm.write("<span tabindex=\"0\" style=\"width: 100px; margin-top: 100px;\">really very looooooooooong text</span>");
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					oRm.openStart("div");
+					oRm.style("display", "flex");
+					oRm.style("flex-direction", "column");
+					oRm.openEnd();
 
-				oRm.write("<span tabindex=\"0\" style=\"width: 100px; margin-left: 100px;\"");
-				oRm.writeControlData(oControl); // This element should be returned by getDomRef()
-				oRm.write(">");
-				oRm.writeEscaped("really very looooooooooong text");
-				oRm.write("</span>");
+					oRm.openStart("span");
+					oRm.attr("tabindex", "0");
+					oRm.style("width", "100px");
+					oRm.style("margin-top", "100px");
+					oRm.openEnd();
+					oRm.text("really very looooooooooong text");
+					oRm.close("span");
 
-				oRm.write("</div>");
+					oRm.openStart("span", oControl); // This element should be returned by getDomRef()
+					oRm.attr("tabindex", "0");
+					oRm.style("width", "100px");
+					oRm.style("margin-left", "100px");
+					oRm.openEnd();
+					oRm.text("really very looooooooooong text");
+					oRm.close("span");
+
+					oRm.close("div");
+				}
 			}
 		});
 

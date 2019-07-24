@@ -345,9 +345,9 @@ sap.ui.define([
 		var mTableStyles = this.getTableStyles();
 
 		if (oRM) {
-			oRM.addStyle("height", mTableStyles.height);
-			oRM.addStyle("min-height", mTableStyles.minHeight);
-			oRM.addStyle("max-height", mTableStyles.maxHeight);
+			oRM.style("height", mTableStyles.height);
+			oRM.style("min-height", mTableStyles.minHeight);
+			oRM.style("max-height", mTableStyles.maxHeight);
 			return;
 		}
 
@@ -372,7 +372,7 @@ sap.ui.define([
 		var mPlaceholderStyles = this.getTableBottomPlaceholderStyles();
 
 		if (oRM) {
-			oRM.addStyle("height", mPlaceholderStyles.height);
+			oRM.style("height", mPlaceholderStyles.height);
 			return;
 		}
 
@@ -395,9 +395,9 @@ sap.ui.define([
 		var mRowContainerStyles = this.getRowContainerStyles();
 
 		if (oRM) {
-			oRM.addStyle("height", mRowContainerStyles.height);
-			oRM.addStyle("min-height", mRowContainerStyles.minHeight);
-			oRM.addStyle("max-height", mRowContainerStyles.maxHeight);
+			oRM.style("height", mRowContainerStyles.height);
+			oRM.style("min-height", mRowContainerStyles.minHeight);
+			oRM.style("max-height", mRowContainerStyles.maxHeight);
 			return;
 		}
 

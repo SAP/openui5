@@ -110,25 +110,24 @@ sap.ui.define([
 			 * invalid. To correctly restore the focus, first the ItemNavigation must be invalidated and then the focus must be set (or trigger
 			 * the jQuery focus event, if the focus is already on the correct element).
 			 */
-			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
-			if (bRenderedRows) {
-				this._oStoredFocusInfo = this.getFocusInfo();
-			}
+			this._oStoredFocusInfo = this.getFocusInfo();
 		},
 		onAfterRendering: function(oEvent) {
 			var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 			this._getKeyboardExtension().invalidateItemNavigation();
 
-			if (bRenderedRows) {
-				// The presence of the "customId" property in the focus info indicates that the table had the focus before rendering.
-				// Reapply the focus info to the table only in this case.
-				if (this._oStoredFocusInfo && this._oStoredFocusInfo.customId) {
+			// The presence of the "customId" property in the focus info indicates that the table had the focus before rendering.
+			// Reapply the focus info to the table only in this case.
+			if (this._oStoredFocusInfo && this._oStoredFocusInfo.customId) {
+				if (bRenderedRows) {
 					this.applyFocusInfo(this._oStoredFocusInfo);
+				} else {
+					this._getKeyboardExtension().initItemNavigation();
 				}
-				delete this._oStoredFocusInfo;
 			}
+			delete this._oStoredFocusInfo;
 		},
 		onfocusin: function(oEvent) {
 			var oExtension = this._getKeyboardExtension();

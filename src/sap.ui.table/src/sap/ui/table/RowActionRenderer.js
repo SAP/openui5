@@ -11,7 +11,9 @@ sap.ui.define(['sap/ui/table/Row'],
 	 * RowAction renderer.
 	 * @namespace
 	 */
-	var RowActionRenderer = {};
+	var RowActionRenderer = {
+		apiVersion: 2
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -20,28 +22,25 @@ sap.ui.define(['sap/ui/table/Row'],
 	 * @param {sap.ui.core.Control} oTable an object representation of the control that should be rendered
 	 */
 	RowActionRenderer.render = function(rm, oAction) {
-		rm.write("<div");
-		rm.writeControlData(oAction);
-		rm.addClass("sapUiTableAction");
+		rm.openStart("div", oAction);
+		rm.class("sapUiTableAction");
 		if (!(oAction.getParent() instanceof Row)) {
-			rm.addStyle("display", "none");
+			rm.style("display", "none");
 		}
 		if (!oAction.getVisible()) {
-			rm.addClass("sapUiTableActionHidden");
+			rm.class("sapUiTableActionHidden");
 		}
-		rm.writeClasses();
-		rm.writeStyles();
 		var sTooltip = oAction.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			rm.attr("title", sTooltip);
 		}
-		rm.write(">");
+		rm.openEnd();
 
 		var aIcons = oAction.getAggregation("_icons");
 		rm.renderControl(aIcons[0]);
 		rm.renderControl(aIcons[1]);
 
-		rm.write("</div>");
+		rm.close("div");
 	};
 
 	return RowActionRenderer;

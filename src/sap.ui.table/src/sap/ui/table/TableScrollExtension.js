@@ -1222,6 +1222,7 @@ sap.ui.define([
 			// focused cell always gets scrolled into the viewport. If the cell is wider than the row container, no action is performed.
 			var oRowContainer;
 			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+			var oHSb = this._getScrollExtension().getHorizontalScrollbar();
 
 			if (oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL)) {
 				oRowContainer = this.getDomRef("sapUiTableCtrlScr");
@@ -1229,8 +1230,7 @@ sap.ui.define([
 				oRowContainer = this.getDomRef("sapUiTableColHdrScr");
 			}
 
-			if (oRowContainer && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
-				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
+			if (oRowContainer && oHSb && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
 				var $HSb = jQuery(oHSb);
 				var oCell = oCellInfo.cell[0];
 

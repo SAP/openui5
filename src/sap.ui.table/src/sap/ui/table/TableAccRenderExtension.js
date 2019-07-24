@@ -16,15 +16,16 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 		aCSSClasses = aCSSClasses || [];
 		aCSSClasses.push("sapUiInvisibleText");
 
-		oRm.write("<span");
-		oRm.writeAttribute("id", sParentId + "-" + sId);
-		oRm.writeAttribute("class", aCSSClasses.join(" "));
-		oRm.writeAttribute("aria-hidden", "true");
-		oRm.write(">");
+		oRm.openStart("span", sParentId + "-" + sId);
+		aCSSClasses.forEach(function(sClass) {
+			oRm.class(sClass);
+		});
+		oRm.attr("aria-hidden", "true");
+		oRm.openEnd();
 		if (sText) {
-			oRm.writeEscaped(sText);
+			oRm.text(sText);
 		}
-		oRm.write("</span>");
+		oRm.close("span");
 	};
 
 	//********************************************************************
@@ -67,7 +68,11 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 
 			var sTableId = oTable.getId();
 
-			oRm.write("<div class='sapUiTableHiddenTexts' style='display:none;' aria-hidden='true'>");
+			oRm.openStart("div");
+			oRm.class("sapUiTableHiddenTexts");
+			oRm.style("display", "none");
+			oRm.attr("aria-hidden", "true");
+			oRm.openEnd();
 
 			// aria description for the table
 			var sDesc = oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "" ? oTable.getTitle().getText() : "";
@@ -137,7 +142,7 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 				_writeAccText(oRm, sTableId, "ariafixedcolumn", TableUtils.getResourceText("TBL_FIXED_COLUMN"));
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		},
 
 		/**
@@ -166,7 +171,7 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 					oValue = oValue.join(" ");
 				}
 				if (oValue) {
-					oRm.writeAttributeEscaped(sKey, oValue);
+					oRm.attr(sKey.toLowerCase(), oValue);
 				}
 			}
 		},

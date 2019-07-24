@@ -1364,15 +1364,16 @@ sap.ui.define([
 						content: {type: "sap.ui.core.Control", multiple: true}
 					}
 				},
-				renderer: function(rm, oControl) {
-					rm.write("<div");
-					rm.writeControlData(oControl);
-					rm.write(">");
-					var aContent = oControl.getContent();
-					for (var i = 0; i < aContent.length; i++) {
-						rm.renderControl(aContent[i]);
+				renderer: {
+					apiVersion: 2,
+					render: function(rm, oControl) {
+						rm.openStart("div", oControl).openEnd();
+						var aContent = oControl.getContent();
+						for (var i = 0; i < aContent.length; i++) {
+							rm.renderControl(aContent[i]);
+						}
+						rm.close("div");
 					}
-					rm.write("</div>");
 				}
 			}, false);
 		},

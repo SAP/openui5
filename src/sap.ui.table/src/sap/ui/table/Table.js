@@ -864,21 +864,20 @@ sap.ui.define([
 			rowSettingsTemplate: true
 		};
 
-		this._initLegacyRowMode();
-
 		// Todo: the base class shouldn't know that subclasses might set a variable before its own init
 		if (!this._SelectionAdapterClass) {
 			this._SelectionAdapterClass = SelectionModelPlugin;
 		}
+
+		this._attachExtensions(); // Extensions are an inner part of the table must be initialized first, e.g. for correct delegate order.
+		this._initLegacyRowMode();
+		this._initSelectionPlugin();
 
 		// create an information object which contains always required infos
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
 		// Will be set to true in updateTableSizes, if the table is in a flex container (parent has "display: flex").
 		this._bIsFlexItem = false;
-
-		this._attachExtensions();
-		this._initSelectionPlugin();
 
 		this._bRowsBeingBound = false;
 		this._bContextsAvailable = false;

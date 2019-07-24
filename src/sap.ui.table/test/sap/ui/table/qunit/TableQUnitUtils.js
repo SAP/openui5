@@ -35,21 +35,22 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oControl) {
-			oRm.write("<span");
-			oRm.writeControlData(oControl);
-			if (oControl.getTabbable()) {
-				oRm.writeAttribute("tabindex", "0");
-			} else if (oControl.getFocusable()) {
-				oRm.writeAttribute("tabindex", "-1");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("span", oControl);
+				if (oControl.getTabbable()) {
+					oRm.attr("tabindex", "0");
+				} else if (oControl.getFocusable()) {
+					oRm.attr("tabindex", "-1");
+				}
+				if (!oControl.getVisible()) {
+					oRm.style("display", "none");
+				}
+				oRm.openEnd();
+				oRm.text(oControl.getText() || oControl.getAlt() || "");
+				oRm.close("span");
 			}
-			if (!oControl.getVisible()) {
-				oRm.addStyle("display", "none");
-				oRm.writeStyles();
-			}
-			oRm.write(">");
-			oRm.writeEscaped(oControl.getText() || oControl.getAlt() || "");
-			oRm.write("</span>");
 		}
 	});
 
@@ -67,19 +68,20 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oControl) {
-			oRm.write("<input");
-			oRm.writeControlData(oControl);
-			oRm.writeAttribute("type", oControl.getType() || "text");
-			oRm.writeAttribute("value", oControl.getText() || "");
-			if (oControl.getTabbable()) {
-				oRm.writeAttribute("tabindex", "0");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.voidStart("input", oControl);
+				oRm.attr("type", oControl.getType() || "text");
+				oRm.attr("value", oControl.getText() || "");
+				if (oControl.getTabbable()) {
+					oRm.attr("tabindex", "0");
+				}
+				if (!oControl.getVisible()) {
+					oRm.style("display", "none");
+				}
+				oRm.voidEnd();
 			}
-			if (!oControl.getVisible()) {
-				oRm.addStyle("display", "none");
-				oRm.writeStyles();
-			}
-			oRm.write(">");
 		}
 	});
 
@@ -89,17 +91,19 @@ sap.ui.define([
 				height: "string"
 			}
 		},
-		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.addStyle("height", oControl.getHeight() || "10px");
-			oRm.addStyle("width", "100px");
-			oRm.addStyle("background-color", "orange");
-			oRm.addStyle("box-sizing", "border-box");
-			oRm.addStyle("border-top", "2px solid blue");
-			oRm.addStyle("border-bottom", "2px solid blue");
-			oRm.writeStyles();
-			oRm.writeControlData(oControl);
-			oRm.write("></div>");
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.style("height", oControl.getHeight() || "10px");
+				oRm.style("width", "100px");
+				oRm.style("background-color", "orange");
+				oRm.style("box-sizing", "border-box");
+				oRm.style("border-top", "2px solid blue");
+				oRm.style("border-bottom", "2px solid blue");
+				oRm.openEnd();
+				oRm.close("div");
+			}
 		},
 		setHeight: function(sHeight) {
 			this.setProperty("height", sHeight, true);

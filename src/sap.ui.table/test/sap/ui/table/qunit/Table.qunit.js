@@ -3441,10 +3441,12 @@ sap.ui.define([
 					handleOnPaste: {type: "boolean"}
 				}
 			},
-			renderer: function(oRm, oControl) {
-				oRm.write("<" + oControl.getTagName());
-				oRm.writeControlData(oControl);
-				oRm.write("></" + oControl.getTagName() + ">");
+			renderer: {
+				apiVersion: 2,
+				render: function(oRm, oControl) {
+					oRm.openStart(oControl.getTagName(), oControl).openEnd();
+					oRm.close(oControl.getTagName());
+				}
 			},
 			onpaste: function(oEvent) {
 				if (this.getHandleOnPaste()) {
