@@ -4,7 +4,7 @@
 /* ============================== */
 
 html.sap-desktop .sapMTBActive:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.1875rem;
 }
 
@@ -75,4 +75,8 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 	.sapMTB-Info-CTX.sapMTBActive:focus:before {
 		border-color: @sapUiContentContrastFocusColor;
 	}
+}
+
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMTBActive:focus {
+	outline-style: dashed;
 }
