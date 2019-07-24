@@ -48,6 +48,16 @@ sap.ui.define([
 		}
 	};
 
+	var mModules = {
+		module1: {
+			handler: function() { return this; }
+		}
+	};
+
+	window.module1 = {
+		globalHandler: function() { return this; }
+	};
+
 	var NAN = {};
 	var ERROR = {};
 	var PRIMITIVE_TYPES = {
@@ -124,6 +134,12 @@ sap.ui.define([
 				{ input: '.nested.handler', value: oController.nested.handler, context: oController, compareMode: 'strict' },
 				{ input: 'jQuery.sap.formatMessage', value: jQuery.sap.formatMessage, context: oController, compareMode: 'strict' },
 				{ input: 'jQuery.sap.formatMessage', value: jQuery.sap.formatMessage, context: undefined, compareMode: 'strict' },
+				{ input: 'jQuery.sap.formatMessage', value: jQuery.sap.formatMessage, context: undefined, locals: mModules, compareMode: 'strict' },
+				{ input: 'module1.handler', context: oController, locals: mModules, thisContext: mModules.module1},
+				{ input: 'module1.handler', context: undefined, locals: mModules, thisContext: mModules.module1},
+				{ input: 'module1.globalHandler', value: window.module1.globalHandler, context: undefined, compareMode: 'strict'},
+				{ input: 'module1.globalHandler', value: ERROR, context: undefined, locals: mModules},
+				{ input: '.handler', value: oController.handler, context: oController, locals: mModules, compareMode: 'strict' },
 				{ input: '.handler', value: ERROR, context: undefined, compareMode: 'strict' },
 				{ input: '.nested.handler', value: ERROR, context: undefined, compareMode: 'strict' },
 				{ input: '.handler()', value: ERROR, context: oController, compareMode: 'strict' },
@@ -188,13 +204,18 @@ sap.ui.define([
 			if (parseValue) {
 				parseValue.forEach(function (data) {
 					try {
-						var result = typeObject.parseValue(data.input, data.context ? { context: data.context } : undefined);
+						var result = typeObject.parseValue(data.input, (data.context || data.locals) ? {
+								context: data.context,
+								locals: data.locals
+							} : undefined);
 						if (data.value === ERROR) {
 							assert.ok(false, "parsing '" + data.input + "' should have failed");
 						} else if (data.value === NAN) {
 							assert.ok(result !== result, "parsing '" + data.input + "' should result in a NaN value"); //eslint-disable-line no-self-compare
 						} else if (data.compareMode === 'strict') {
 							assert.strictEqual(result, data.value, "parsing '" + data.input + "' should deliver the expected result");
+						} else if (data.thisContext ) {
+							assert.strictEqual(result(), data.thisContext, "context should be set");
 						} else {
 							assert.deepEqual(result, data.value, "parsing '" + data.input + "' should deliver the expected result");
 						}

@@ -2685,10 +2685,10 @@ sap.ui.define([
 		};
 
 		// make sure we do not create namespaces!
-		this.oObjectPathMock.expects("get").atLeast(1).withExactArgs(sinon.match.string)
+		this.oObjectPathMock.expects("get").atLeast(1).withExactArgs(sinon.match.string.or(sinon.match.array))
 			.callThrough();
 		this.oObjectPathMock.expects("get").atLeast(1)
-			.withExactArgs(sinon.match.string, sinon.match.object)
+			.withExactArgs(sinon.match.string.or(sinon.match.array), sinon.match.object)
 			.callThrough();
 		this.mock(BindingParser).expects("complexParser").atLeast(1)
 			.withExactArgs(sinon.match.string, sinon.match.object, sinon.match.bool,

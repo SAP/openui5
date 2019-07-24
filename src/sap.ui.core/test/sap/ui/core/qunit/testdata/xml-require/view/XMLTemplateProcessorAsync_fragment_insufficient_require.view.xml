@@ -1,0 +1,8 @@
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout"
+	core:require="{Toast: 'sap/m/MessageToast'}">
+	<layout:HorizontalLayout>
+		<layout:content>
+			<core:Fragment fragmentName="testdata.xml-require.fragments.XMLFragmentRequire_insufficient" type="XML" />
+		</layout:content>
+	</layout:HorizontalLayout>
+</mvc:XMLView>

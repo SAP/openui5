@@ -306,6 +306,7 @@ sap.ui.define(function() {
 					"testdata/core/base/util/values.qunit",
 					"testdata/core/base/util/ObjectPath.qunit",
 					"testdata/core/base/util/defineCoupledProperty.qunit",
+					"testdata/core/base/util/resolveReference.qunit",
 
 					// sap/base/util/array/*
 					"testdata/core/base/util/array/diff.qunit",

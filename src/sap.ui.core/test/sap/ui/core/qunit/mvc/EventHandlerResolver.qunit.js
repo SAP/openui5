@@ -28,25 +28,38 @@ sap.ui.define([
 		}
 	};
 
+	var mLocals = {
+		someMethod: function() {
+			thisContext = this;
+		},
+		someFormatter: function() {
+			return "#" + Array.prototype.slice.call(arguments).join(",") + "#";
+		}
+	};
+
 	QUnit.module("sap.ui.core.mvc.EventHandlerResolver - handler function", {
 		beforeEach: function() {
 			thisContext = null;
 
 			oController = {
-				fnControllerMethod: function(){
+				fnControllerMethod: function() {
 					thisContext = this;
+				},
+				ns: {
+					deepMethod: function() {
+					}
 				}
 			};
 
 			window.testEventHandlerResolver = {
 				subobject: {
-					someGlobalMethod: function(){
+					someGlobalMethod: function() {
 						thisContext = this;
 					}
 				}
 			};
 
-			window.someGlobalMethodOnWindow = function(){
+			window.someGlobalMethodOnWindow = function() {
 				thisContext = this;
 			};
 
@@ -67,6 +80,9 @@ sap.ui.define([
 
 		var fnGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController)[0];
 		assert.equal(fnGlobal, window.testEventHandlerResolver.subobject.someGlobalMethod, "Global method should be found");
+
+		fnGlobal = EventHandlerResolver.resolveEventHandler("ns.deepMethod", oController);
+		assert.strictEqual(fnGlobal, undefined, "Function name with deeper path shouldn't be searched in the controller");
 	});
 
 	QUnit.test("Handler resolution when parentheses are present", function(assert) {
@@ -89,6 +105,75 @@ sap.ui.define([
 		fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
 		fnFromGlobal(oDummyEvent);
 		assert.equal(someGlobalMethodOnWindow.callCount, 1, "Global method without dot should be called once");
+	});
+
+	QUnit.test("Handler resolution with local variables", function(assert) {
+		var oSpy = this.spy(mLocals, "someMethod");
+		// immediately call the resolving handler
+		EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: mLocals})[0]();
+		assert.equal(oSpy.callCount, 1, "Module method should be called once");
+		oSpy.resetHistory();
+
+		// without parentheses
+		EventHandlerResolver.resolveEventHandler("Module.someMethod", oController, {Module: mLocals})[0]();
+		assert.equal(oSpy.callCount, 1, "Module method should be called once");
+		oSpy.resetHistory();
+
+		// test without associated controller
+		EventHandlerResolver.resolveEventHandler("Module.someMethod()", null, {Module: mLocals})[0]();
+		assert.equal(oSpy.callCount, 1, "Module method should be called once");
+		oSpy.resetHistory();
+
+		// without parentheses
+		EventHandlerResolver.resolveEventHandler("Module.someMethod", null, {Module: mLocals})[0]();
+		assert.equal(oSpy.callCount, 1, "Module method should be called once");
+	});
+
+	QUnit.test("Log warning for usage of not properly XML-required modules", function(assert) {
+		var logSpy = sinon.spy(Log, "warning");
+
+		// immediately call the resolving handler
+		EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: {}});
+		sinon.assert.calledWithExactly(logSpy, "Event handler name 'Module.someMethod()' could not be resolved to an event handler function");
+		logSpy.resetHistory();
+
+		// test without associated controller
+		EventHandlerResolver.resolveEventHandler("Module.someMethod()", null, {Module: {}});
+		sinon.assert.calledWithExactly(logSpy, "Event handler name 'Module.someMethod()' could not be resolved to an event handler function");
+
+		logSpy.restore();
+	});
+
+	QUnit.test("'this' context when no parenthese is present", function(assert) {
+		// controller functions
+		var vResolvedHandler = EventHandlerResolver.resolveEventHandler(".fnControllerMethod", oController);
+		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
+		assert.equal(thisContext, oController, "Controller method should be called with controller as 'this' context");
+		thisContext = "wrong"; // to make sure non-calls don't accidentally get the correct value
+
+		// controller functions without dot
+		vResolvedHandler = EventHandlerResolver.resolveEventHandler("fnControllerMethod", oController);
+		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
+		assert.equal(thisContext, oController, "Controller method without dot should be called with controller as 'this' context");
+		thisContext = "wrong";
+
+		// global functions
+		vResolvedHandler = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController);
+		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
+		assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when there's no parenthese");
+		thisContext = "wrong";
+
+		// global functions without dot
+		vResolvedHandler = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow", oController);
+		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
+		assert.equal(thisContext, oController, "Global method without dot should be called with oController as 'this' context when there's no parenthese");
+		thisContext = "wrong";
+
+		// with local variables
+		vResolvedHandler = EventHandlerResolver.resolveEventHandler("Module.someMethod", oController, {Module: mLocals});
+		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
+		assert.equal(thisContext, oController, "XML-required module should be called with oController as 'this' context when there's no parenthese");
+		thisContext = "wrong";
 	});
 
 	QUnit.test("'this' context when parentheses are present", function(assert) {
@@ -121,9 +206,19 @@ sap.ui.define([
 		fnFromGlobal(oDummyEvent);
 		assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when set using .call($controller)");
 		thisContext = "wrong";
+
+		// with local variables
+		var fnFromModule = EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: mLocals})[0];
+		fnFromModule(oDummyEvent);
+		assert.equal(thisContext, mLocals, "XML-required module should be called with the module as 'this' context");
+		thisContext = "wrong";
+
+		// with local variables and with .call()
+		fnFromModule = EventHandlerResolver.resolveEventHandler("Module.someMethod.call($controller)", oController, {Module: mLocals})[0];
+		fnFromModule(oDummyEvent);
+		assert.equal(thisContext, oController, "XML-required module should be called with controller as 'this' context when set using .call($controller)");
+		thisContext = "wrong";
 	});
-
-
 
 
 	QUnit.module("sap.ui.core.mvc.EventHandlerResolver - parameter resolution", {
@@ -211,7 +306,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("bound values", function(assert) { // CAUTION: this is a map and IE is particularly sensitive to duplicate keys in a map even if they don't look duplicate here (e.g. due to escaped quotes)
+	QUnit.test("bound values with controller method", function(assert) { // CAUTION: this is a map and IE is particularly sensitive to duplicate keys in a map even if they don't look duplicate here (e.g. due to escaped quotes)
 		var spy = sinon.spy(oController, "fnControllerMethod");
 		var fnFromController;
 		var mTestSet = {
@@ -240,6 +335,39 @@ sap.ui.define([
 			fnFromController = EventHandlerResolver.resolveEventHandler(sTestString, oController)[0];
 			fnFromController(oDummyEvent);
 			assert.deepEqual(spy.args[0], [mTestSet[sTestString]], "Bound model property value should be correctly calculated for: " + sTestString);
+		}
+	});
+
+
+	QUnit.test("bound values with XML-required modules", function(assert) { // CAUTION: this is a map and IE is particularly sensitive to duplicate keys in a map even if they don't look duplicate here (e.g. due to escaped quotes)
+		var methodSpy = this.spy(mLocals, "someMethod");
+		var fnFromModule;
+		var mTestSet = {
+			"Module.someMethod(${/someModelProperty})": "someModelValue",   // plain, absolute binding path
+			"  Module.someMethod (   ${/someModelProperty}	)  ": "someModelValue",   // some whitespace fun
+			"Module.someMethod(${secondModel>someSecondModelProperty})": "someSecondModelValue",   // relative path using element binding, in named model
+			"Module.someMethod(${path:'/someModelProperty'})": "someModelValue",  // complex syntax, entry-level
+			"Module.someMethod(${path:'/someModelProperty', formatter: 'Module.someFormatter'})": "#someModelValue#",   // complex syntax with formatter
+			"Module.someMethod(${path:'/someModelProperty', formatter: 'Module.someFormatter', type: 'sap.ui.model.type.String'})": "#someModelValue#",   // complex syntax with type
+			// does not work, deep nesting of parts is not supported in EventHandlerResolver:
+			//"Module.someMethod(${parts: ['/someModelProperty'], formatter: 'Module.someFormatter'})": "#someModelValue,someModelValue#",   // complex syntax with mixed parts
+			"Module.someMethod(${$parameters>/someEventParameter})": "someEventParameterValue",  // another model (event parameters)
+			"Module.someMethod(${$source>/someControlProperty})": "someControlPropertyValue",   // the event source model
+			"Module.someMethod('Value is: ' + ${/someModelProperty})": "Value is: someModelValue",   // “calculated fields” (template string)
+			"Module.someMethod(${/someModelProperty} + ',' + ${/someModelProperty})": "someModelValue,someModelValue",   // attention, also a calculated field!
+			"Module.someMethod(\"Value is: \" + ${path:'/someModelProperty', formatter: 'Module.someFormatter', type: 'sap.ui.model.type.String'})": "Value is: #someModelValue#",   // calculated field with complex binding syntax
+			// not allowed to use binding expressions inside because the entire string is a binding expression:
+			//"Module.someMethod({= ${/someModelProperty} + ${/someModelProperty}})": "someModelValuesomeModelValue",   // expression binding
+			"Module.someMethod({x: 'y', z: {a: ${/someModelProperty}}})": {x: 'y', z: {a: "someModelValue"}},   // binding in object
+			'Module.someMethod(${path:\'/someModelProperty\',formatter: \'Module.someFormatter\'})': "#someModelValue#",   // quotes escaped
+			"Module.someMethod(${formatter: \"Module.someFormatter\",path:\"/someModelProperty\"})": "#someModelValue#"   // quotes escaped, inverted (swap of arguments needed for test to pass in IE because map may not have duplicate keys!)
+		};
+
+		for (var sTestString in mTestSet) {
+			methodSpy.resetHistory();
+			fnFromModule = EventHandlerResolver.resolveEventHandler(sTestString, oController, {Module: mLocals})[0];
+			fnFromModule(oDummyEvent);
+			assert.deepEqual(methodSpy.args[0], [mTestSet[sTestString]], "Bound model property value should be correctly calculated for: " + sTestString);
 		}
 	});
 

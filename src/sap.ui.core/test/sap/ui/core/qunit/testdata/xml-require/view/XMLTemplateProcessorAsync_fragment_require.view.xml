@@ -1,0 +1,7 @@
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:layout="sap.ui.layout">
+	<layout:HorizontalLayout>
+		<layout:content>
+			<core:Fragment fragmentName="testdata.xml-require.fragments.XMLFragmentRequire" type="XML" />
+		</layout:content>
+	</layout:HorizontalLayout>
+</mvc:XMLView>

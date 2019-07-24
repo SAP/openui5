@@ -21,6 +21,8 @@ sap.ui.define([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
+	var enclosingContext;
+
 	var oController = {
 			mytype : String,
 			myformatter : function($) { return $; },
@@ -30,6 +32,26 @@ sap.ui.define([
 				pattern : "yyyy-MM-dd"
 			}),
 			myeventHandler: function () {}
+		},
+		oGlobalContext = {
+			module1: {
+				formatter : function($) { return $; },
+				check : function(iValue) { return iValue > 100; },
+				fn: function() {
+					enclosingContext = this;
+					return "fn";
+				},
+				ns: {
+					fn: function() {
+						enclosingContext = this;
+						return "ns";
+					}
+				}
+			},
+			Global: {
+				ns: undefined
+			},
+			formatter: function($) { return $; }
 		},
 		Global = {
 			type : String,
@@ -42,7 +64,13 @@ sap.ui.define([
 			instancedType : new Date({
 				pattern : "yyyy-MM-dd"
 			}),
-			eventHandler: function () {}
+			eventHandler: function () {},
+			ns: {
+				global: function() {
+					enclosingContext = this;
+					return "global";
+				}
+			}
 		},
 		parse = ManagedObject.bindingParser,
 		TestControl = ManagedObject.extend("TestControl", {
@@ -143,6 +171,17 @@ sap.ui.define([
 		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
 		assert.strictEqual(o.path, "something", "path should be as specified");
 		assert.ok(o.type instanceof String, "parse should return the global type");
+		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
+	});
+
+	QUnit.test("Single Binding with required type", function (assert) {
+		var o = parse("{path:'something', type: 'myType'}", /*oContext*/null, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true, /*bPreferContext*/false,
+			/*mLocals*/{myType: String});
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.strictEqual(o.parts, undefined, "binding info should not be a composite binding info");
+		assert.strictEqual(o.path, "something", "path should be as specified");
+		assert.ok(o.type instanceof String, "parse should return the type required from mLocals");
 		assert.strictEqual(o.formatter, undefined, "parse should return no formatter");
 	});
 
@@ -838,6 +877,21 @@ sap.ui.define([
 		assert.strictEqual(oControl.getText(), "prefix 0,foo,bar", "prefix 0,foo,bar");
 	});
 
+	QUnit.test("Expression binding: use global context", function (assert) {
+		var oBindingInfo,
+			oControl = new TestControl(),
+			oModel = new JSONModel({value : 99, p1 : "foo", p2 : "bar"});
+
+		oControl.setModel(oModel);
+
+		oBindingInfo = parse("{= module1.check(${/value}) ? ${/p1} : ${/p2}}", /*oContext*/null,
+			/*bUnescape*/false, /*bTolerateFunctionsNotFound*/false,
+			/*bStaticContext*/false, /*bPreferContext*/false, /*mGlobals*/oGlobalContext);
+		oControl.bindProperty("text", oBindingInfo);
+
+		assert.strictEqual(oControl.getText(), "bar", "bar");
+	});
+
 	QUnit.test("parseExpression: uses Expression.parse", function (assert) {
 		var sInput = "foo",
 			iStart = 0,
@@ -935,7 +989,7 @@ sap.ui.define([
 		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo"]);
 
 		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
-			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/true);
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true, /*bPreferContext*/true);
 
 		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
 
@@ -943,6 +997,99 @@ sap.ui.define([
 			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/true);
 
 		assert.strictEqual(oBindingInfo.formatter, Global.formatter);
+	});
+
+	QUnit.test("Scope access w/o dot by given static context", function (assert) {
+		var sBinding1 = "{path : '/', formatter : 'foo'}",
+			sBinding2 = "{path : '/', formatter : 'Global.formatter'}",
+			sBinding3 = "{path : '/', formatter : 'module1.formatter'}",
+			sBinding4 = "{path : '/', formatter : 'module1.fn'}",
+			sBinding5 = "{path : '/', formatter : 'module1.ns.fn'}",
+			sBinding6 = "{path : '/', formatter : 'Global.ns.global'}",
+			sBinding7 = "{path : '/', formatter : 'formatter'}",
+			oBindingInfo,
+			oScope = {
+				foo : function () {}
+			};
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["foo"]);
+
+		oBindingInfo = parse(sBinding1, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true, /*bPreferContext*/true,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, oScope.foo);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding2, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["Global.formatter"]);
+
+		oBindingInfo = parse(sBinding3, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			oGlobalContext.module1.formatter.bind(oGlobalContext.module1).toString());
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding4, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			oGlobalContext.module1.fn.bind(oGlobalContext.module1).toString());
+
+		oBindingInfo.formatter();
+		assert.strictEqual(enclosingContext, oGlobalContext.module1);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding5, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			oGlobalContext.module1.ns.fn.bind(oGlobalContext.module1.ns.fn).toString());
+
+		oBindingInfo.formatter();
+		assert.strictEqual(enclosingContext, oGlobalContext.module1.ns);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding6, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter, undefined);
+		assert.deepEqual(oBindingInfo.functionsNotFound, ["Global.ns.global"]);
+
+		oBindingInfo = parse(sBinding6, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false);
+
+		assert.strictEqual(oBindingInfo.formatter.toString(),
+			Global.ns.global.toString());
+
+		oBindingInfo.formatter();
+		assert.strictEqual(enclosingContext, oBindingInfo);
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		oBindingInfo = parse(sBinding7, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/false, /*bPreferContext*/false,
+			/*mGlobals*/oGlobalContext);
+
+		assert.strictEqual(oBindingInfo.formatter,
+			oGlobalContext.formatter, "function module");
+		assert.deepEqual(oBindingInfo.functionsNotFound, undefined);
+
+		// cleanup
+		enclosingContext = null;
 	});
 
 	QUnit.test("Expression binding with embedded composite binding", function (assert) {
