@@ -3637,6 +3637,36 @@ sap.ui.define([
 
 	QUnit.module("Type-ahead");
 
+	QUnit.test("Auto complete should not be allowed when it is set to false", function (assert) {
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			filterSuggests: false,
+			autocomplete: false,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item("UK", {key: "UK", text: "United Kingdom"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+
+		sap.ui.getCore().applyChanges();
+
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
+
+		// act
+		oInput._$input.focus().trigger(oFakeKeydown).val("G").trigger("input");
+		this.clock.tick(300);
+
+		// assert
+		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should not be allowed when pressing 'G'.");
+
+		// clean up
+		oInput.destroy();
+		oInput = null;
+	});
+
 	QUnit.test("Autocomplete on desktop", function (assert) {
 		// arrange
 		var oInput = new Input({
