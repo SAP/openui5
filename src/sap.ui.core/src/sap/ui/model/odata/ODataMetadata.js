@@ -456,7 +456,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Extract the entity type name of a given sPath. Also navigation properties in the path will be followed to get the right entity type for that property.
+	 * Extract the entity type name of a given path. Also navigation properties in the path will be followed to get the right entity type for that property.
 	 * eg.
 	 * /Categories(1)/Products(1)/Category --> will get the Categories entity type
 	 * /Products --> will get the Products entity type
@@ -1396,6 +1396,32 @@ sap.ui.define([
 			}
 		}
 		return this.bMessageScopeSupported;
+	};
+	/**
+	 * Check whether the given path points to a entity collection or not (single entity or not known).
+	 *
+	 * @param {sPath} Entity path
+	 * @returns {boolean} Whether the path points to a collection.
+	 * @private
+	 */
+
+	ODataMetadata.prototype._isCollection = function(sPath){
+		var bCollection = false;
+		var iIndex = sPath.lastIndexOf("/");
+		if (iIndex > 0){ //e.g. 0:'/SalesOrderSet', -1:'empty string'
+			var sEntityPath = sPath.substring(0, iIndex);
+			var oEntityType = this._getEntityTypeByPath(sEntityPath);
+
+			if (oEntityType) {
+				var oAssociation = this._getEntityAssociationEnd(oEntityType, sPath.substring(iIndex + 1));
+				if (oAssociation && oAssociation.multiplicity === "*") {
+					bCollection = true;
+				}
+			}
+		} else {
+			bCollection = true;
+		}
+		return bCollection;
 	};
 
 	return ODataMetadata;

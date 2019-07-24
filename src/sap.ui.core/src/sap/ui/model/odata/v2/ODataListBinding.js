@@ -715,12 +715,12 @@ sap.ui.define([
 
 		}
 
-		var sPath = this.sPath,
-		oContext = this.oContext;
+		var sPath = this.sPath;
 
-		if (this.isRelative()) {
-			sPath = this.oModel.resolve(sPath,oContext);
+		if (this.isRelative()){
+			sPath = this.oModel.resolve(this.sPath, this.oContext);
 		}
+
 		if (sPath) {
 			// Execute the request and use the metadata if available
 			this.bPendingRequest = true;
@@ -730,7 +730,7 @@ sap.ui.define([
 			this.bSkipDataEvents = false;
 			//if load is triggered by a refresh we have to check the refreshGroup
 			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.mRequestHandles[sGuid] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
+			this.mRequestHandles[sGuid] = this.oModel.read(this.sPath, {context: this.oContext, groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 		}
 
 	};
@@ -822,10 +822,10 @@ sap.ui.define([
 		// Only send request, if path is defined
 		if (sPath) {
 			// execute the request and use the metadata if available
-			sPath = sPath + "/$count";
 			//if load is triggered by a refresh we have to check the refreshGroup
 			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.oCountHandle = this.oModel.read(sPath, {
+			this.oCountHandle = this.oModel.read(this.sPath + "/$count", {
+				context: this.oContext,
 				withCredentials: this.oModel.bWithCredentials,
 				groupId: sGroupId,
 				urlParameters:aParams,

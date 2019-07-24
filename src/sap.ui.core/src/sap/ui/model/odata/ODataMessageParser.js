@@ -471,26 +471,6 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestInfo) {
 	var sTarget = oMessageObject.target;
 	var sDeepPath = "";
-	var that = this;
-	var bCollection = false;
-
-	var isCollection = function(sPath){
-		var iIndex = sPath.lastIndexOf("/");
-		if (iIndex > 0){ //e.g. 0:'/SalesOrderSet', -1:'empty string'
-			var sEntityPath = sPath.substring(0, iIndex);
-			var oEntityType = that._metadata._getEntityTypeByPath(sEntityPath);
-
-			if (oEntityType) {
-				var oAssociation = that._metadata._getEntityAssociationEnd(oEntityType, sPath.substring(iIndex + 1));
-				if (oAssociation && oAssociation.multiplicity === "*") {
-					bCollection = true;
-				}
-			}
-		} else {
-			bCollection = true;
-		}
-		return bCollection;
-	};
 
 	if (sTarget.substr(0, 1) !== "/") {
 		var sRequestTarget = "";
@@ -549,7 +529,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 			// It is an entity
 			sTarget = sTarget ? sRequestTarget + "/" + sTarget : sRequestTarget;
 			sDeepPath = oMessageObject.target ? sDeepPath + "/" + oMessageObject.target : sDeepPath;
-		} else if (isCollection(sRequestTarget)){ // (0:n) cardinality
+		} else if (this._metadata._isCollection(sRequestTarget)){ // (0:n) cardinality
 				sTarget = sRequestTarget + sTarget;
 				sDeepPath = sDeepPath + oMessageObject.target;
 		} else { // 0:1 cardinality
