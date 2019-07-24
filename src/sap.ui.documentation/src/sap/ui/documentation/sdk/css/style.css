@@ -74,13 +74,14 @@ pre.sapUiDocumentationAPICode,
 }
 
 html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
-	height: 4rem;
+	height: 2.5rem;
 }
 
+.sapUiBlockLayoutSizeM:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent,
 .sapUiBlockLayoutSizeL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent,
 .sapUiBlockLayoutSizeXL:not(.sapUiBlockLayoutKeepFontSize) .sapUiDocumentationFooter > .sapUiBlockCellContent {
-	padding-top: 1rem;
-	padding-bottom: 1rem;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
 }
 
 /* 'index by version' entry item */
@@ -1116,7 +1117,7 @@ code {
 .footer-class {
 	display: flex;
 	flex-wrap: wrap;
-	background-color: #2f3c48;
+	background-color: #354a5f;
 	padding: 2rem 10rem;
 	box-sizing: border-box;
 }
@@ -1221,7 +1222,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 }
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
-	background-color: #2f3c48;
+	background-color: #354a5f;
 }
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText {
@@ -1243,7 +1244,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk,
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
-	color: #7ed0ff;
+	color: #d1e8ff;
 }
 
 .demokitInitialPagesBrightLinkSmallerText {
@@ -2369,12 +2370,6 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	padding-right: 1rem;
 	border-bottom: 0.188rem solid #d1e8ff;
 	border-radius: 0.125rem 0.125rem 0 0;
-}
-
-.sapUiTheme-sap_fiori_3 .actionButton .sapMBtnGhost:not(:hover) {
-	border-color: #d1e8ff;
-	color: #d1e8ff;
-	text-shadow: none;
 }
 
 /* SAP Quartz Light theme - end */
