@@ -794,10 +794,9 @@ sap.ui.define([
 	 * href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
 	 * "OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
-	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
+	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
 	 *
-	 * If you want {@link #requestObject} to read fresh data, call
-	 * <code>oContext.getBinding().refresh()</code> first.
+	 * If you want {@link #requestObject} to read fresh data, call {@link #refresh} first.
 	 *
 	 * @param {string} [sPath=""]
 	 *   A relative path within the JSON structure

@@ -1088,6 +1088,37 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise on the value for the given path relative to this binding. The function
+	 * allows access to the complete data the binding points to (if <code>sPath</code> is "") or
+	 * any part thereof. The data is a JSON structure as described in
+	 * <a
+	 * href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
+	 * "OData JSON Format Version 4.0"</a>.
+	 * Note that the function clones the result. Modify values via
+	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
+	 *
+	 * If you want {@link #requestObject} to read fresh data, call
+	 * <code>oBinding.refresh()</code> first.
+	 *
+	 * @param {string} [sPath=""]
+	 *   A relative path within the JSON structure
+	 * @returns {Promise}
+	 *   A promise on the requested value; in case there is no bound context this promise resolves
+	 *   with <code>undefined</code>
+	 * @throws {Error}
+	 *   If the context's root binding is suspended
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.ODataContext#requestObject
+	 * @since 1.69
+	 */
+	ODataContextBinding.prototype.requestObject = function (sPath) {
+		return this.oElementContext
+			? this.oElementContext.requestObject(sPath)
+			: Promise.resolve();
+	};
+
+	/**
 	 * Resumes this binding and all dependent bindings and fires a change event afterwards.
 	 *
 	 * @param {boolean} bCheckUpdate

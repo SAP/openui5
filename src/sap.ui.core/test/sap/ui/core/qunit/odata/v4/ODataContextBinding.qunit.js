@@ -3245,6 +3245,31 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("requestObject - resolved binding", function (assert) {
+		var oBinding = this.bindContext("/EMPLOYEES('42')"),
+			oBoundContextMock = this.mock(oBinding.oElementContext),
+			aResult = [{/*Promise*/}, {/*Promise*/}];
+
+		oBoundContextMock.expects("requestObject").withExactArgs(undefined).returns(aResult[0]);
+		oBoundContextMock.expects("requestObject").withExactArgs("name").returns(aResult[1]);
+
+		// code under test
+		assert.strictEqual(oBinding.requestObject(), aResult[0]);
+		assert.strictEqual(oBinding.requestObject("name"), aResult[1]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestObject - unresolved binding", function (assert) {
+		var oBinding = this.bindContext("Player('0815')");
+
+		// code under test
+		return oBinding.requestObject().then(function (vValue) {
+			assert.strictEqual(vValue, undefined);
+		});
+
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("Action import on navigation property", function (assert) {

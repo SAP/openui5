@@ -19293,4 +19293,49 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: Request data from property binding
+	QUnit.test("ODPrB access value async via API", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oPropertyBinding = oModel.bindProperty("/SalesOrderList('1')/NetAmount"),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')/NetAmount", { value : 42});
+
+			// code under test
+			return oPropertyBinding.requestValue().then(function (vValue) {
+				assert.strictEqual(vValue, 42);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request data from context binding
+	QUnit.test("ODCB access value async via API", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oContextBinding = oModel.bindContext("/SalesOrderList('1')"),
+			oSalesOrder = {
+				NetAmount : 42,
+				SalesOrderID : "1",
+				TaxAmount : 117
+			},
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')", Object.assign({}, oSalesOrder));
+
+			// code under test
+			return oContextBinding.requestObject().then(function (oResponse) {
+				assert.deepEqual(oSalesOrder, oResponse);
+				assert.notStrictEqual(oSalesOrder, oResponse);
+
+				return oContextBinding.requestObject("TaxAmount").then(function (vValue) {
+					assert.strictEqual(vValue, 117);
+				});
+
+			});
+		});
+	});
 });

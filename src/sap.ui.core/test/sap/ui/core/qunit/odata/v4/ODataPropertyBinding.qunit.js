@@ -1976,6 +1976,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("requestValue", function (assert) {
+		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oPromise;
+
+		this.mock(oBinding).expects("checkUpdateInternal")
+			.returns(SyncPromise.resolve(Promise.resolve()));
+		this.mock(oBinding).expects("getValue").returns("42");
+
+		// code under test
+		oPromise = oBinding.requestValue();
+
+		assert.ok(oPromise instanceof Promise);
+		return oPromise.then(function (vValue) {
+			assert.strictEqual(vValue, "42");
+		});
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
 		QUnit.test("PATCH an entity", function (assert) {
