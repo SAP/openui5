@@ -420,9 +420,10 @@ sap.ui.define([
 		}
 
 		var oBindingInfo = this.getBindingInfo("rows");
+		var bTableIsScrollable = this._getTotalRowCount() > mRowCounts.count;
 
 		for (i = 0; i < aRows.length; i++) {
-			var bIsFixedRow = i > (mRowCounts.count - mRowCounts.fixedBottom - 1) && this._getTotalRowCount() > mRowCounts.count;
+			var bIsFixedRow = i > (mRowCounts.count - mRowCounts.fixedBottom - 1) && bTableIsScrollable;
 			var oRow = aRows[i];
 			var iRowIndex = oRow.getIndex();
 
