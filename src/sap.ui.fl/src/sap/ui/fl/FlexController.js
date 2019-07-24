@@ -1033,10 +1033,10 @@ sap.ui.define([
 				if (oComponent) {
 					var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (oModel) {
-						oModel.updateHasherEntry({
+						oModel.updateEntry({
 							parameters: [],
 							updateURL: true,
-							component: oComponent
+							updateHashEntry: true
 						});
 					}
 				}

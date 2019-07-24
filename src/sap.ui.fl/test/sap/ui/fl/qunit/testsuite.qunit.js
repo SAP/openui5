@@ -340,10 +340,10 @@ sap.ui.define(function () {
 			},
 
 			// Variant tests:
-			"variants/util/VariantUtil": {
+			"variants/util/URLHandler": {
 				group: "Variants",
 				coverage: {
-					only: ["sap/ui/fl/variants/VariantUtil"]
+					only: ["sap/ui/fl/variants/URLHandler"]
 				}
 			},
 			"variants/VariantController": {

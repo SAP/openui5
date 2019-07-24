@@ -31,7 +31,7 @@
 									<Button text="Personalization Changes" press=".createChanges" ariaDescribedBy="defaultButtonDescription genericButtonDescription"></Button>
 								</contentLeft>
 								<contentRight>
-									<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout"></vm:VariantManagement>
+									<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout" updateVariantInURL="true"></vm:VariantManagement>
 								</contentRight>
 							</Bar>
 						</uxap:navigationBar>

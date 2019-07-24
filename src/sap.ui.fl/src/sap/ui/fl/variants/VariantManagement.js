@@ -190,6 +190,15 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+				/**
+				 * When set to false, doesn't reset the VariantManagement control to the default variant,
+				 * when it's binding context is changed.
+				 */
+				resetOnContextChange: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: true
 				}
 			},
 			associations: {

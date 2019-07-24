@@ -911,7 +911,7 @@ function(
 				var oParsedHash = oURLParser.parseShellHash(hasher.getHash());
 				return oParsedHash || {};
 			}
-			return { };
+			return {};
 		},
 
 		/**
