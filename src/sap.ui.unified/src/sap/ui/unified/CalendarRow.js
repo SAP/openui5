@@ -1114,11 +1114,13 @@ sap.ui.define([
 		for (i = 0; i < aAppointments.length; i++) {
 			oAppointment = aAppointments[i];
 			var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), undefined, true);
+			var oAppointmentStartDateTime = oAppointmentStartDate.getTime();
 			oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
 			oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
 			var oAppointmentEndDate = oAppointment.getEndDate()
 				? CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true)
 				: CalendarUtils._createUniversalUTCDate(new Date(864000000000000), undefined, true); //max date
+			var oAppointmentEndDateTime = oAppointmentEndDate.getTime();
 			oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
 			oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
 
@@ -1150,7 +1152,8 @@ sap.ui.define([
 			oGroupAppointment2 = undefined;
 
 			if (oAppointmentStartDate && oAppointmentStartDate.getTime() <= iEndTime &&
-					oAppointmentEndDate && oAppointmentEndDate.getTime() >= iStartTime) {
+				oAppointmentEndDate && oAppointmentEndDate.getTime() >= iStartTime &&
+				oAppointmentStartDateTime < oAppointmentEndDateTime) {
 
 				if (bGroupsEnabled &&
 					(sIntervalType == CalendarIntervalType.Month) &&
