@@ -448,6 +448,36 @@ sap.ui.define([
 			assert.ok(fnApplyChangesOnVariantManagementSpy.calledTwice, "_applyChangesOnVariantManagement called twice, once per variant management reference");
 		});
 
+		QUnit.test("when calling 'setChangeFileContent' and the standard variant has no support.user entry", function(assert) {
+			var oFakeVariantResponse = {
+				changes : {
+					changes : [],
+					variantSection : {
+						variantMgmtId1 : {
+							variants : [
+								{
+									content: {
+										fileName:"variantMgmtId1",
+										content: {
+											title:"{i18n>STANDARD_VARIANT_TITLE}"
+										}
+									},
+									controlChanges : [],
+									variantChanges : {
+										setTitle: []
+									}
+								}
+							],
+							variantManagementChanges: {}
+						}
+					}
+				}
+			};
+			var oVariantController = new VariantController("MyComponent", "1.2.3", {});
+			oVariantController.setChangeFileContent(oFakeVariantResponse);
+			assert.equal(oVariantController._mVariantManagement["variantMgmtId1"].variants[0].content.support.user, "SAP", "then the standard variant author is set to: SAP");
+		});
+
 		QUnit.test("when calling 'setChangeFileContent' and the standard variant has a title from the resource bundle", function(assert) {
 			var oFakeVariantResponse = {
 				changes : {
@@ -474,9 +504,6 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variantMgmtId1",
-										support:{
-											user:"SAP"
-										},
 										content: {
 											title:"{i18n>STANDARD_VARIANT_TITLE}"
 										}
@@ -512,7 +539,7 @@ sap.ui.define([
 									content: {
 										fileName:"variant0",
 										layer:"CUSTOMER",
-										support:{
+										support: {
 											user:"Me"
 										},
 										content: {
@@ -557,9 +584,6 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variantMgmtId1",
-										support:{
-											user:"SAP"
-										},
 										content: {
 											title:"Standard"
 										}
@@ -599,12 +623,14 @@ sap.ui.define([
 					defaultVariant: "variant1",
 					currentVariant: "variant0",
 					variants: [{
+						author: "SAP",
 						favorite: true,
 						visible: true,
 						key: "variantMgmtId1",
 						title: "Standard"
 					},
 						{
+							author: "Me",
 							favorite: true,
 							visible: true,
 							key: "variant0",
@@ -612,6 +638,7 @@ sap.ui.define([
 							title: "variant A"
 						},
 						{
+							author: "Me",
 							favorite: true,
 							visible: true,
 							key: "variant1",
@@ -622,6 +649,7 @@ sap.ui.define([
 			};
 			var oVariantController = new VariantController("MyComponent", "1.2.3", {});
 			var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
+
 			oVariantController.setChangeFileContent(oFakeVariantResponse);
 			oVariantController._mVariantManagement["variantMgmtId1"].currentVariant = "variant0"; //mocking property
 			var oData = oVariantController.fillVariantModel();
@@ -653,9 +681,6 @@ sap.ui.define([
 								{
 									content: {
 										fileName:"variantMgmtId1",
-										support:{
-											user:"SAP"
-										},
 										content: {
 											title:"Standard"
 										}
@@ -674,12 +699,14 @@ sap.ui.define([
 					defaultVariant: "variantMgmtId1",
 					currentVariant: "variant0",
 					variants: [{
+						author: "SAP",
 						favorite: true,
 						visible: true,
 						key: "variantMgmtId1",
 						title: "Standard"
 					},
 						{
+							author: "Me",
 							favorite: true,
 							visible: true,
 							key: "variant0",
@@ -694,8 +721,11 @@ sap.ui.define([
 			};
 			var oVariantController = new VariantController("MyComponent", "1.2.3", {});
 			var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
+
 			oVariantController.setChangeFileContent(oFakeVariantResponse, oTechnicalParameters);
 			var oData = oVariantController.fillVariantModel();
+
+
 			assert.equal(fnApplyChangesOnVariantSpy.callCount, 2, "_applyChangesOnVariant called twice for 2 variants");
 			assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
 		});
