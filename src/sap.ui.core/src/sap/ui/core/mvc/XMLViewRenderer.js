@@ -68,11 +68,6 @@ sap.ui.define([
 	 * @param {sap.ui.core.mvc.XMLView} oControl an object representation of the control that should be rendered
 	 */
 	XMLViewRenderer.render = function(rm, oControl) {
-		// make sure to preserve the content if not preserved yet
-		var oDomRef = oControl.getDomRef();
-		if (oDomRef && !RenderManager.isPreservedContent(oDomRef)) {
-			RenderManager.preserveContent(oDomRef, /* bPreserveRoot= */ true);
-		}
 		// write the HTML into the render manager
 		var $oldContent = oControl._$oldContent = RenderManager.findPreservedContent(oControl.getId());
 		if ( $oldContent.length === 0) {
