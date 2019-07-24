@@ -7,26 +7,28 @@
 
 .sapUiRtaToolbar {
 
-	.sapMSegBBtn.sapMSegBBtnFocusable{
+	.sapMSegBBtn.sapMSegBBtnFocusable {
 
-		&:hover,
-		&.sapMSegBBtnSel:hover {
+		&:hover .sapMSegBBtnInner,
+		&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
 			background-color: @sapHC_HighlightBackground;
 			color: @_sap_ui_rta_Toolbar_Base_TextColor;
 		}
 
-		&.sapMSegBBtnSel:hover::after{
+		&.sapMSegBBtnSel:hover .sapMSegBBtnInner::after{
 			border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_TextColor;
 		}
 	}
 
 	.sapMSegBBtnFocusable.sapMBtnActive:hover {
-		background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
-		&::after {
+		.sapMSegBBtnInner {
+			background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
+		}
+		& .sapMSegBBtnInner::after {
 			border-bottom: 2px solid @_sap_ui_rta_Toolbar_Base_TextColor;
 		}
 	}
-	.sapMSegB .sapMSegBBtn.sapMSegBtnLastVisibleButton:not(.sapMSegBBtnDis){
+	.sapMSegB .sapMSegBBtn.sapMSegBtnLastVisibleButton:not(.sapMSegBBtnDis) .sapMSegBBtnInner {
 		border-right: none;
 	}
 }

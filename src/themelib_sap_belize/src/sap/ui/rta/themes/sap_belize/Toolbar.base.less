@@ -19,18 +19,18 @@
 	}
 
 	.sapMSegBBtn.sapMSegBBtnFocusable {
-		&:hover,
-		&.sapMSegBBtnSel:hover {
+		&:hover .sapMSegBBtnInner,
+		&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
 			background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
 		}
 	}
 }
 
-html.sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
-html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMBtnActive:hover {
+html.sap-desktop .sapUiRtaToolbar .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner,
+html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
 	background-color: @_sap_ui_rta_Toolbar_Base_BaseColor;
 }
 
-html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+html.sap-desktop .sapUiRtaToolbar .sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner {
 	outline-offset: -1px;
 }

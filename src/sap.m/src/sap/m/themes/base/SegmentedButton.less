@@ -5,7 +5,7 @@
 
 .sapMSegB {
 	margin: 0; /*To override the native browser margin*/
-	padding: 0.250rem 0;
+	padding: 0;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	border: none;
 	white-space: nowrap;
@@ -22,23 +22,30 @@
 
 .sapMSegB .sapMSegBBtn {
 	list-style: none;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-	text-align: center;
 	cursor: pointer;
-	vertical-align: text-bottom;
-	box-sizing: border-box;
 	display: inline-block;
-	font-size: 0.875rem;
-	height: 2.5rem;
-	line-height: 2.375rem;
-	padding-left: 0.75rem;
-	padding-right: 0.75rem;
-	text-shadow: none;
-	color: @sapUiSegmentedButtonTextColor;
-	border: 1px solid @sapUiSegmentedButtonBorderColor;
-	background-color: @sapUiSegmentedButtonBackground;
+	padding: 0.250rem 0;
+	outline: none;
+}
+
+.sapMSegB .sapMSegBBtn {
+	.sapMSegBBtnInner {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+		text-align: center;
+		vertical-align: text-bottom;
+		box-sizing: border-box;
+		font-size: 0.875rem;
+		height: 2.5rem;
+		line-height: 2.375rem;
+		padding-left: 0.75rem;
+		padding-right: 0.75rem;
+		text-shadow: none;
+		color: @sapUiSegmentedButtonTextColor;
+		border: 1px solid @sapUiSegmentedButtonBorderColor;
+		background-color: @sapUiSegmentedButtonBackground;
+	}
 	&:not(.sapMSegBBtnMixed) .sapMImg {
 		padding-left: 0.75rem;
 		padding-right: 0.75rem;
@@ -53,11 +60,11 @@
 	margin-left: 0.250rem;
 }
 
-html.sap-desktop .sapMSegBBtnFocusable:hover {
+html.sap-desktop .sapMSegBBtnFocusable:hover .sapMSegBBtnInner {
 	background: @sapUiSegmentedButtonHoverBackground;
 }
 
-.sapMSegBBtn:focus {
+.sapMSegBBtn:focus .sapMSegBBtnInner {
 	outline: none;
 }
 
@@ -71,7 +78,7 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 
 /* style for icon and text usage */
 .sapMSegB.sapMSegBIcons {
-	.sapMSegBBtn:not(.sapMSegBBtnMixed) {
+	.sapMSegBBtn:not(.sapMSegBBtnMixed) .sapMSegBBtnInner {
 		padding: 0; /*BCP: 1580200804*/
 		margin-right: 0;
 	}
@@ -91,8 +98,11 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 }
 
 .sapMSegBBtn.sapMSegBBtnDis {
-	text-shadow: none;
 	cursor: default;
+}
+
+.sapMSegBBtn.sapMSegBBtnDis .sapMSegBBtnInner {
+	text-shadow: none;
 	opacity: 0.5;
 }
 
@@ -100,7 +110,7 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
   cursor: pointer;
 }
 
-.sapMSegBBtn.sapMSegBBtnSel {
+.sapMSegBBtn.sapMSegBBtnSel .sapMSegBBtnInner {
 	background: @sapUiSegmentedButtonSelectedBackground;
 	color: @sapUiSegmentedButtonSelectedTextColor;
 	border-color: @sapUiSegmentedButtonSelectedHoverBorderColor;
@@ -109,8 +119,8 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	}
 }
 
-.sapMSegBBtnSel:active,
-.sapMSegBBtnFocusable.sapMBtnActive {
+.sapMSegBBtnSel:active .sapMSegBBtnInner,
+.sapMSegBBtnFocusable.sapMBtnActive .sapMSegBBtnInner {
 	background: @sapUiSegmentedButtonActiveBackground;
 	color: @sapUiSegmentedButtonActiveTextColor;
 	.sapUiIcon{
@@ -118,12 +128,12 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	}
 }
 
-html.sap-desktop .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover,
-html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover {
+html.sap-desktop .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner,
+html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
 	background: @sapUiSegmentedButtonSelectedHoverBackground;
 }
 
-.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+.sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel .sapMSegBBtnInner {
 	border-right: 1px solid @sapUiSegmentedButtonSelectedHoverBorderColor;
 }
 
@@ -167,6 +177,10 @@ html[data-sap-ui-os^="iOS"] {
 .sapUiSizeCompact {
 	.sapMSegB {
 		height: 2rem;
+		padding: 0;
+	}
+
+	.sapMSegB .sapMSegBBtn {
 		padding: 0.1875rem 0;
 	}
 
@@ -201,19 +215,19 @@ html[data-sap-ui-os^="iOS"] {
 		}
 	}
 
-	.sapMSegBBtn {
+	.sapMSegBBtn .sapMSegBBtnInner {
 		height: 1.625rem;
 		line-height: 1.5rem;
 		padding-left: 0.4375rem;
 		padding-right: 0.4375rem;
 	}
 
-	.sapMSegBBtn:first-child {
+	.sapMSegBBtn:first-child .sapMSegBBtnInner {
 		border-top-left-radius: 0.2rem;
 		border-bottom-left-radius: 0.2rem;
 	}
 
-	.sapMSegBBtn:last-child {
+	.sapMSegBBtn:last-child .sapMSegBBtnInner {
 		border-top-right-radius: 0.2rem;
 		border-bottom-right-radius: 0.2rem;
 	}
@@ -240,11 +254,11 @@ html[data-sap-ui-os^="Android"] {
 /* IE ignores outline-offset. Use an overlay: */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSegBBtn.sapMSegBBtnFocusable:focus {
+	.sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner {
 		outline: none;
 		position: relative;
 	}
-	.sapMSegBBtn.sapMSegBBtnFocusable:focus:before {
+	.sapMSegBBtn.sapMSegBBtnFocusable:focus .sapMSegBBtnInner:before {
 		content: " ";
 		box-sizing: border-box;
 		position: absolute;
@@ -258,11 +272,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 
 	.sapMSegB {
-		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner {
 			outline: none;
 			position: relative;
 		}
-		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus:before {
+		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner:before {
 			content: " ";
 			box-sizing: border-box;
 			position: absolute;
@@ -275,10 +289,10 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 			pointer-events: none;
 		}
 		.sapMSegBBtnFocusable {
-			&:focus:before {
+			&:focus .sapMSegBBtnInner:before {
 				border: 1px dashed @sapUiContentFocusColor;
 			}
-			&.sapMSegBBtnSel:focus:before {
+			&.sapMSegBBtnSel:focus .sapMSegBBtnInner:before {
 				border: 1px dashed @sapUiContentContrastFocusColor;
 			}
 		}
