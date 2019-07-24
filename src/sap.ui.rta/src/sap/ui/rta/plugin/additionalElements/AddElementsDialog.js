@@ -249,8 +249,8 @@ sap.ui.define([
 		}).addStyleClass("sapUIRtaCCDialogScrollContainer");
 
 		return [this.oInputFields,
-				this._oBCContainer,
-				oScrollContainer];
+			this._oBCContainer,
+			oScrollContainer];
 	};
 
 	/**
@@ -275,8 +275,6 @@ sap.ui.define([
 	 * Close the dialog.
 	 */
 	AddElementsDialog.prototype._submitDialog = function() {
-		// remove Business Contexts
-		this._removeBusinessContexts();
 		this._oDialog.close();
 		this._fnResolve();
 	};
@@ -285,8 +283,6 @@ sap.ui.define([
 	 * Close dialog and revert all change operations
 	 */
 	AddElementsDialog.prototype._cancelDialog = function() {
-		// remove Business Contexts
-		this._removeBusinessContexts();
 		// clear all variables
 		this._oList.removeSelections();
 		this._oDialog.close();
@@ -415,6 +411,8 @@ sap.ui.define([
 	 * @public
 	 */
 	AddElementsDialog.prototype.addBusinessContext = function (aBusinessContexts) {
+		// clear old values from last run
+		this._removeBusinessContexts();
 		// Message "none" when no business contexts are available
 		var oBCDescription = new Text({
 			text: this._oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS")

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/ui/rta/RuntimeAuthoring",
 	"qunit/RtaQunitUtils",
+	"sap/ui/rta/Utils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/m/Page",
@@ -18,6 +19,7 @@ function(
 	ObjectPageLayout,
 	RuntimeAuthoring,
 	RtaQunitUtils,
+	Utils,
 	OverlayRegistry,
 	ChangeRegistry,
 	Page,
@@ -32,7 +34,8 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given RTA is started...", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
 			this.oPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 			this.oSmartForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument");
@@ -48,7 +51,16 @@ function(
 				rootControl : oComp.getAggregation("rootControl"),
 				showToolbars: false
 			});
-			return this.oRta.start();
+
+			this.oRta.start().then(function() {
+				// wait for Binding Context of the Group before starting the Tests
+				// The Context-Menu entry for adding an element needs the Binding Context to determine entries
+				if (!this.oGroup.getBindingContext()) {
+					this.oGroup.attachModelContextChange(fnDone);
+				} else {
+					fnDone();
+				}
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oRta.destroy();
@@ -58,21 +70,23 @@ function(
 		QUnit.test("When the context menu is opened on various overlays", function(assert) {
 			// SmartForm
 			return keyboardGroupElement.call(this, assert)
-			.then(mouseGroup.bind(this, assert))
-			.then(keyboardSmartForm.bind(this, assert))
-			.then(mouseTwoSelectedGroupElementsWithBoundFields.bind(this, assert))
-			.then(mouseTwoSelectedGroupElementsWithOneBoundField.bind(this, assert))
-			.then(mouseTwoGroupElementsWithOneBoundField.bind(this, assert))
-			.then(mouseGroupElementWithTwoFields.bind(this, assert))
-			.then(mouseStableGroupElementInUnstableGroup.bind(this, assert))
-			.then(keyboardCustomSettings.bind(this, assert))
-			.then(keyboardPageWithoutTitle.bind(this, assert))
+				.then(keyboardGroupElementWithoutAdditionalFieldsAvailable.bind(this, assert))
+				.then(keyboardGroupElementWithCustomFieldsAndNoFieldsAvailable.bind(this, assert))
+				.then(mouseGroup.bind(this, assert))
+				.then(keyboardSmartForm.bind(this, assert))
+				.then(mouseTwoSelectedGroupElementsWithBoundFields.bind(this, assert))
+				.then(mouseTwoSelectedGroupElementsWithOneBoundField.bind(this, assert))
+				.then(mouseTwoGroupElementsWithOneBoundField.bind(this, assert))
+				.then(mouseGroupElementWithTwoFields.bind(this, assert))
+				.then(mouseStableGroupElementInUnstableGroup.bind(this, assert))
+				.then(keyboardCustomSettings.bind(this, assert))
+				.then(keyboardPageWithoutTitle.bind(this, assert))
 
-			// SimpleForm
-			.then(keyboardSimpleFormFormElement.bind(this, assert))
-			.then(keyboardSimpleFormWithTitle.bind(this, assert))
-			.then(keyboardSimpleFormGroup.bind(this, assert))
-			.then(contextMenuOpenWithTestData.bind(this, assert));
+				// SimpleForm
+				.then(keyboardSimpleFormFormElement.bind(this, assert))
+				.then(keyboardSimpleFormWithTitle.bind(this, assert))
+				.then(keyboardSimpleFormGroup.bind(this, assert))
+				.then(contextMenuOpenWithTestData.bind(this, assert));
 		});
 
 		function keyboardGroupElement(assert) {
@@ -84,10 +98,45 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu is opened (via keyboard) for a sap.ui.comp.smartform.GroupElement");
 				assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
+				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add field Button is enabled, because there are fields available");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut field");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste field");
+			}.bind(this));
+		}
+
+		function keyboardGroupElementWithoutAdditionalFieldsAvailable(assert) {
+			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+			oGroupElementOverlay.focus();
+			oGroupElementOverlay.setSelected(true);
+			// fake no Elements available
+			var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
+			sandbox.stub(oAdditionalElementsPlugin, "getAllElements").resolves([]);
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				assert.ok(oContextMenuControl.bOpen, "when context menu is opened and there are no Fields available to be added");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
+				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "add field Button is disabled, because there are no available fields");
+				sandbox.restore();
+			}.bind(this));
+		}
+
+		function keyboardGroupElementWithCustomFieldsAndNoFieldsAvailable(assert) {
+			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+			oGroupElementOverlay.focus();
+			oGroupElementOverlay.setSelected(true);
+			// Fake Custom Fields Creation available
+			sandbox.stub(Utils, "isCustomFieldAvailable").resolves(true);
+			// fake no Elements available
+			var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
+			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				assert.ok(oContextMenuControl.bOpen, "when context menu is opened and there are no Fields to be added, but custom fields is available");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
+				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add field Button is enabled, because custom fields creation is available");
+				sandbox.restore();
 			}.bind(this));
 		}
 
@@ -98,7 +147,7 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu is opened (via mouse) for a sap.ui.comp.smartform.Group");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a group");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "we can create group");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_REMOVE", "we can remove group");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_CUT", "we can cut group");
@@ -128,7 +177,7 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on two selected GroupElements and both have bound fields");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut groups");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
@@ -148,7 +197,7 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on two selected GroupElements when one field has no binding");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut groups");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
@@ -167,7 +216,7 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on GroupElement when two fields, one field has no binding");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut groups");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
@@ -183,7 +232,7 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on GroupElement with two fields");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "we can add field");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "we can remove field");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "we can cut groups");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "we can paste groups");
@@ -214,31 +263,31 @@ function(
 					changeSettings : "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			})
-			.then(function() {
-				var oGroupDesigntime = {
-					settings : function() {
-						return {
-							changeType : "changeSettings",
-							isEnabled : true,
-							handler : function() {}
-						};
-					}
-				};
-				sandbox.stub(oSettings, "getAction").callsFake(function() {
-					return oGroupDesigntime.settings();
-				});
-				var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
-				oSettings.deregisterElementOverlay(oGroupOverlay);
-				oSettings.registerElementOverlay(oGroupOverlay);
+				.then(function() {
+					var oGroupDesigntime = {
+						settings : function() {
+							return {
+								changeType : "changeSettings",
+								isEnabled : true,
+								handler : function() {}
+							};
+						}
+					};
+					sandbox.stub(oSettings, "getAction").callsFake(function() {
+						return oGroupDesigntime.settings();
+					});
+					var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
+					oSettings.deregisterElementOverlay(oGroupOverlay);
+					oSettings.registerElementOverlay(oGroupOverlay);
 
-				oGroupOverlay.focus();
-				oGroupOverlay.setSelected(true);
-				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupOverlay).then(function() {
-					var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-					assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on a Control with a defined settings action");
-					assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
+					oGroupOverlay.focus();
+					oGroupOverlay.setSelected(true);
+					return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupOverlay).then(function() {
+						var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+						assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened on a Control with a defined settings action");
+						assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
+					}.bind(this));
 				}.bind(this));
-			}.bind(this));
 		}
 
 		function keyboardPageWithoutTitle(assert) {
@@ -267,7 +316,7 @@ function(
 				assert.ok(oContextMenuControl.bOpen, "when context menu (context menu) is opened (via keyboard) for a SimpleForm FormElement");
 				assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename label is available");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field is available");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_REMOVE", "remove field is available");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_CUT", "cut field is available");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "paste field is available");
@@ -299,7 +348,7 @@ function(
 				assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename title is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "and rename title is enabled");
-				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "add field is available");
+				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[2].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
 				assert.equal(oContextMenuControl.getButtons()[3].data("id"), "CTX_REMOVE", "remove group is available");
 				assert.equal(oContextMenuControl.getButtons()[4].data("id"), "CTX_PASTE", "paste field is available");
