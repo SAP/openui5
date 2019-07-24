@@ -448,7 +448,7 @@ sap.ui.define([
 										oCheckElement = mParents.relevantContainer;
 									}
 									if (oItem.changeSpecificData.changeType) {
-										aChangeHandlerPromises.push(this.hasChangeHandler.call(this, oItem.changeSpecificData.changeType, oCheckElement));
+										aChangeHandlerPromises.push(this.hasChangeHandler(oItem.changeSpecificData.changeType, oCheckElement));
 									}
 								}.bind(this));
 
@@ -956,7 +956,7 @@ sap.ui.define([
 		 * @protected
 		 */
 		_isEditable: function(oOverlay) {
-			return Promise.all([this._isEditableCheck.call(this, oOverlay, true), this._isEditableCheck.call(this, oOverlay, false)])
+			return Promise.all([this._isEditableCheck(oOverlay, true), this._isEditableCheck(oOverlay, false)])
 			.then(function(aPromiseValues) {
 				return {
 					asSibling: aPromiseValues[0],
