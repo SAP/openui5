@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
@@ -18,6 +19,7 @@ sap.ui.define([
 	MessageToast,
 	ContextMenuPlugin,
 	DesignTime,
+	ZIndexManager,
 	Settings,
 	FlexUtils,
 	RtaFlexUtils,
@@ -305,14 +307,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("when RTA is started and _handleHigherLayerChangesOnStart returns true", function(assert) {
-			assert.expect(3);
+			assert.expect(4);
 			sandbox.stub(this.oRta, "_handleHigherLayerChangesOnStart").returns(Promise.resolve(true));
 			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
+			var fnRemovePopupFilterStub = sandbox.spy(ZIndexManager, "removePopupFilter");
 			return this.oRta.start()
 			.catch(function(oError) {
 				assert.ok(true, "then the start promise rejects");
 				assert.equal(oFireFailedStub.callCount, 0, "and fireFailed was not called");
 				assert.equal(oError, "Reload triggered", "and the Error is 'Reload triggered'");
+				assert.equal(fnRemovePopupFilterStub.callCount, 2, "then the popup filter from the old rta popupManager are removed from ZIndexManager");
 			});
 		});
 
