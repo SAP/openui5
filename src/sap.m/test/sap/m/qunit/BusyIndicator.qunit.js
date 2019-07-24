@@ -2,6 +2,9 @@
 
 sap.ui.define([
 	"sap/m/BusyIndicator",
+	"sap/ui/core/Core",
+	"sap/ui/core/Configuration",
+	"sap/ui/Device",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -9,7 +12,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (BusyIndicator) {
+], function (BusyIndicator, Core, Configuration, Device) {
 	"use strict";
 
 	QUnit.module("sap.m.BusyIndicator API", {
@@ -162,5 +165,36 @@ sap.ui.define([
 		var $label = this.oBusyInd.$().find(".sapMLabel");
 		assert.strictEqual($label.length, 1, "sap.m.Label shoud be rendered");
 		assert.strictEqual($label.text(), text, "rendered text should be " + text);
+	});
+
+	QUnit.test("Animations have option to be disabled globally and this behaviour should be applied when there is a custom icon in the BusyIndicator", function (assert) {
+		// arrange
+		this.oBusyInd.setCustomIcon("../images/settings_64.png");
+		Core.applyChanges();
+		var oDefaultAnimation = {
+			animationName: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-name'),
+			animationDuration: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-duration'),
+			animationDelay: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-delay'),
+			animationIterationCount: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-iteration-count'),
+			animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-dericetion'),
+			animationFillMode: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-fill-mode'),
+			animationPlayState: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-play-state')
+		};
+
+		// act
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		Core.applyChanges();
+
+		var oUpdatedAnimation = {
+			animationName: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-name'),
+			animationDuration: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-duration'),
+			animationDelay: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-delay'),
+			animationIterationCount: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-iteration-count'),
+			animationDirection: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-dericetion'),
+			animationFillMode: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-fill-mode'),
+			animationPlayState: this.oBusyInd.$().find(".sapMBsyIndIcon").css('animation-play-state')
+		};
+		// assert
+		assert.notEqual(oUpdatedAnimation, oDefaultAnimation, "Animation is changed");
 	});
 });
