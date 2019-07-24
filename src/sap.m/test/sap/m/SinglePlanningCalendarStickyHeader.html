@@ -346,7 +346,7 @@
 						new Button("overrideTime", {
 							text: "Override time",
 							press: function () {
-								var oGrid = sap.ui.getCore().byId("SinglePlanningCalendar")._getGrid();
+								var oGrid = sap.ui.getCore().byId("SinglePlanningCalendar").getAggregation("_grid");
 
 								oGrid._updateRowHeaderAndNowMarker = function () {
 									var oCurrentDate = new Date(2018, 6, 8, 0, 30, 0, 0);

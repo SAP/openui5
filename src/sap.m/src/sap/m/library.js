@@ -265,6 +265,7 @@ sap.ui.define([
 			"sap.m.SimpleFixFlex",
 			"sap.m.SinglePlanningCalendar",
 			"sap.m.SinglePlanningCalendarGrid",
+			"sap.m.SinglePlanningCalendarMonthGrid",
 			"sap.m.Slider",
 			"sap.m.SliderTooltip",
 			"sap.m.SliderTooltipBase",

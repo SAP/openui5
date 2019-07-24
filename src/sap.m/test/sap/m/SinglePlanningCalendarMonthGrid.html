@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>sap.m.SinglePlanningCalendarMonthGrid</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<style>
+		.test {
+			margin: 20px;
+		}
+	</style>
+
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.ui.unified">
+	</script>
+
+	<script>
+		var oSPCGrid;
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				'sap/ui/model/json/JSONModel',
+				'sap/m/SinglePlanningCalendarMonthGrid',
+				'sap/ui/unified/CalendarAppointment',
+				'sap/m/App',
+				'sap/m/Page'
+			],
+			function (JSONModel, SinglePlanningCalendarMonthGrid, CalendarAppointment, App, Page) {
+				var aAppointments = [
+					{
+						title: "App 0",
+						type: "Type02",
+						startDate: new Date(2018, 5, 20, 14, 0, 0),
+						endDate: new Date(2018, 5, 20, 18, 30, 0)
+					},
+					{
+						title: "App 1",
+						type: "Type02",
+						startDate: new Date(2018, 5, 20, 11, 0, 0),
+						endDate: new Date(2018, 5, 20, 12, 0, 0)
+					},
+
+
+					{
+						type: "Type01",
+						title: "App 2",
+						startDate: new Date(2018, 5, 18, 11, 0, 0),
+						endDate: new Date(2018, 5, 18, 16, 0, 0)
+					},
+					{
+						type: "Type02",
+						title: "App 31",
+						startDate: new Date(2018, 5, 18, 12, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					},
+					{
+						type: "Type02",
+						title: "App 3",
+						startDate: new Date(2018, 5, 18, 12, 0, 0),
+						endDate: new Date(2018, 5, 18, 16, 0, 0)
+					},
+					{
+						type: "Type03",
+						title: "App 4",
+						startDate: new Date(2018, 5, 18, 13, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					},
+					{
+						type: "Type04",
+						title: "App 5",
+						startDate: new Date(2018, 5, 18, 16, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					},
+					{
+						type: "Type05",
+						title: "App 6",
+						startDate: new Date(2018, 5, 18, 11, 0, 0),
+						endDate: new Date(2018, 5, 18, 12, 0, 0)
+					},
+					{
+						type: "Type06",
+						title: "App 7",
+						startDate: new Date(2018, 5, 18, 11, 30, 0),
+						endDate: new Date(2018, 5, 18, 12, 30, 0)
+					},
+					{
+						type: "Type07",
+						title: "App 8",
+						startDate: new Date(2018, 5, 18, 12, 30, 0),
+						endDate: new Date(2018, 5, 18, 14, 30, 0)
+					},
+					{
+						type: "Type08",
+						title: "App 9",
+						startDate: new Date(2018, 5, 18, 12, 30, 0),
+						endDate: new Date(2018, 5, 18, 13, 0, 0)
+					},
+					{
+						type: "Type09",
+						title: "App 10",
+						startDate: new Date(2018, 5, 18, 16, 0, 0),
+						endDate: new Date(2018, 5, 18, 17, 0, 0)
+					},
+					{
+						type: "Type09",
+						title: "App 11",
+						startDate: new Date(2018, 5, 18, 17, 30, 0),
+						endDate: new Date(2018, 5, 18, 18, 0, 0)
+					},
+					{
+						type: "Type09",
+						title: "App 12",
+						startDate: new Date(2018, 5, 18, 15, 30, 0),
+						endDate: new Date(2018, 5, 18, 16, 30, 0)
+					},
+
+					{
+						title: "Full 1 (22-23)",
+						startDate: new Date(2018, 5, 22, 0, 0, 0),
+						endDate: new Date(2018, 5, 23, 0, 0, 0)
+					},
+					{
+						title: "Full 2 (17-21)",
+						startDate: new Date(2018, 5, 17, 0, 0, 0),
+						endDate: new Date(2018, 5, 21, 0, 0, 0)
+					},
+					{
+						title: "Full 3 (16-26)",
+						startDate: new Date(2018, 5, 16, 0, 0, 0),
+						endDate: new Date(2018, 5, 26, 0, 0, 0)
+					},
+					{
+						title: "Full 4 (24-30)",
+						startDate: new Date(2018, 5, 24, 0, 0, 0),
+						endDate: new Date(2018, 5, 30, 0, 0, 0)
+					},
+					{
+						title: "Full 5 (25-27)",
+						startDate: new Date(2018, 5, 25, 0, 0, 0),
+						endDate: new Date(2018, 5, 27, 0, 0, 0)
+					},
+					{
+						title: "Full 6 (17-18)",
+						startDate: new Date(2018, 5, 17, 0, 0, 0),
+						endDate: new Date(2018, 5, 18, 0, 0, 0)
+					}
+				];
+				var oModel = new JSONModel();
+				oModel.setData({modelData: aAppointments});
+				sap.ui.getCore().setModel(oModel);
+
+				oSPCGrid = new SinglePlanningCalendarMonthGrid("SinglePlanningCalendarMonthGrid", {
+					startDate: new Date(2018, 5, 18),
+					appointments : {
+						path : '/modelData',
+						template : new CalendarAppointment({
+							title: "{title}",
+							text: "{text}",
+							type: "{type}",
+							icon: "{icon}",
+							color: "{color}",
+							startDate: "{startDate}",
+							endDate: "{endDate}"
+						})
+					}
+				});
+				new App({
+					pages: new Page({
+						title: "SinglePlanningCalendarMonthGrid test page",
+						content: oSPCGrid
+					})
+				}).placeAt("body");
+			});
+		});
+	</script>
+</head>
+<body id="body" class="sapUiBody"></body>
+</html>

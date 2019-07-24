@@ -74,7 +74,7 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(oSPC.getStartDate(), oDate, "StartDate is set correctly");
 		assert.equal(oSPC._getHeader().getStartDate().toString(), oDate.toString(), "StartDate is set correctly");
-		assert.equal(oSPC._getGrid().getStartDate().toString(), oDate.toString(), "StartDate is set correctly");
+		assert.equal(oSPC.getAggregation("_grid").getStartDate().toString(), oDate.toString(), "StartDate is set correctly");
 
 		//clean up
 		oSPC.destroy();
@@ -100,8 +100,8 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(oSPC.getAppointments().length, 1, "One appointment is set");
-		assert.strictEqual(oSPC._getGrid().getAppointments().length, 1, "One appointment is set to the grid");
-		assert.strictEqual(oSPC._getGrid().getAppointments()[0], oAppointment, "Appointment set to the calendar is the same that is set to the grid");
+		assert.strictEqual(oSPC.getAggregation("_grid").getAppointments().length, 1, "One appointment is set to the grid");
+		assert.strictEqual(oSPC.getAggregation("_grid").getAppointments()[0], oAppointment, "Appointment set to the calendar is the same that is set to the grid");
 
 		//clean up
 		oSPC.destroy();
@@ -123,8 +123,8 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(oSPC.getSpecialDates().length, 1, "One special date is set");
-		assert.strictEqual(oSPC._getGrid().getSpecialDates().length, 1, "One special date is set to the grid");
-		assert.strictEqual(oSPC._getGrid().getSpecialDates()[0], oSpecialDate, "Special date set to the calendar is the same that is set to the grid");
+		assert.strictEqual(oSPC.getAggregation("_grid").getSpecialDates().length, 1, "One special date is set to the grid");
+		assert.strictEqual(oSPC.getAggregation("_grid").getSpecialDates()[0], oSpecialDate, "Special date set to the calendar is the same that is set to the grid");
 
 		//clean up
 		oSPC.destroy();
@@ -185,7 +185,7 @@ sap.ui.define([
 	QUnit.test("setEnableAppointmentsDragAndDrop propagates to the internal grid", function (assert) {
 		// arrange
 		var oSPC = new SinglePlanningCalendar(),
-			oGridSetEnableAppointmentsDragAndDropSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsDragAndDrop");
+			oGridSetEnableAppointmentsDragAndDropSpy = this.spy(oSPC.getAggregation("_grid"), "setEnableAppointmentsDragAndDrop");
 
 		// act
 		oSPC.setEnableAppointmentsDragAndDrop(true);
@@ -201,7 +201,7 @@ sap.ui.define([
 	QUnit.test("setEnableAppointmentsResize propagates to the internal grid", function (assert) {
 		// arrange
 		var oSPC = new SinglePlanningCalendar(),
-			oGridSetEnableAppointmentsResizeSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsResize");
+			oGridSetEnableAppointmentsResizeSpy = this.spy(oSPC.getAggregation("_grid"), "setEnableAppointmentsResize");
 
 		// act
 		oSPC.setEnableAppointmentsResize(true);
@@ -217,7 +217,7 @@ sap.ui.define([
 	QUnit.test("setEnableAppointmentsCreate propagates to the internal grid", function (assert) {
 		// arrange
 		var oSPC = new SinglePlanningCalendar(),
-			oGridSetEnableAppointmentsCreateSpy = this.spy(oSPC._getGrid(), "setEnableAppointmentsCreate");
+			oGridSetEnableAppointmentsCreateSpy = this.spy(oSPC.getAggregation("_grid"), "setEnableAppointmentsCreate");
 
 		// act
 		oSPC.setEnableAppointmentsCreate(true);
@@ -252,7 +252,7 @@ sap.ui.define([
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
 		//act
-		oSPC._getGrid().ontap(oFakeEvent);
+		oSPC.getAggregation("_grid").ontap(oFakeEvent);
 
 		//assert
 		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
@@ -293,7 +293,7 @@ sap.ui.define([
 			fnFireAppointmentSelectSpy = this.spy(oSPC, "fireAppointmentSelect");
 
 		//act
-		oSPC._getGrid().ontap(oFakeEvent);
+		oSPC.getAggregation("_grid").ontap(oFakeEvent);
 
 		//assert
 		assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
@@ -309,7 +309,7 @@ sap.ui.define([
 
 	QUnit.test("headerDateSelect", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
-			oSPCHeaders = oSPC._getGrid()._getColumnHeaders(),
+			oSPCHeaders = oSPC.getAggregation("_grid")._getColumnHeaders(),
 			oStartDate = oSPC.getStartDate(),
 			oHeaderDateToSelect = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate()),
 			fnFireHeaderDateSelect = this.spy(oSPC, "fireHeaderDateSelect");
@@ -414,7 +414,7 @@ sap.ui.define([
 	QUnit.test("appointmentDrop is fired when internal grid event appointmentDrop is fired", function (assert) {
 		// arrange
 		var oSPC = new SinglePlanningCalendar(),
-			oGrid = oSPC._getGrid(),
+			oGrid = oSPC.getAggregation("_grid"),
 			oFireAppointmentDropSpy = this.spy(oSPC, "fireAppointmentDrop");
 
 		// act
@@ -431,7 +431,7 @@ sap.ui.define([
 	QUnit.test("appointmentResize is fired when internal grid event appointmentResize is fired", function (assert) {
 		// arrange
 		var oSPC = new SinglePlanningCalendar(),
-			oGrid = oSPC._getGrid(),
+			oGrid = oSPC.getAggregation("_grid"),
 			oFireAppointmentResizeSpy = this.spy(oSPC, "fireAppointmentResize");
 
 		// act
@@ -448,7 +448,7 @@ sap.ui.define([
 	QUnit.test("appointmentCreate is fired when internal grid event appointmentCreate is fired", function (assert) {
 		// arrange
 		var oSPC = new SinglePlanningCalendar(),
-			oGrid = oSPC._getGrid(),
+			oGrid = oSPC.getAggregation("_grid"),
 			oFireAppointmentCreateSpy = this.spy(oSPC, "fireAppointmentCreate");
 
 		// act
@@ -479,7 +479,7 @@ sap.ui.define([
 			fnFireGridCellFocusSpy = this.spy(oSPC, "fireEvent");
 
 		// act
-		oSPC._getGrid().onkeydown(oFakeEvent);
+		oSPC.getAggregation("_grid").onkeydown(oFakeEvent);
 		// assert
 
 		assert.ok(fnFireGridCellFocusSpy.calledOnce, "The cellPress event was fired");
@@ -517,10 +517,10 @@ sap.ui.define([
 			},
 			fnBorderReachedCallbackSpy = this.spy();
 
-		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+		oSPC.getAggregation("_grid").attachEvent("borderReached", fnBorderReachedCallbackSpy);
 
 		// act
-		oSPC._getGrid().onsapleft(oFakeEvent);
+		oSPC.getAggregation("_grid").onsapleft(oFakeEvent);
 
 		// assert
 		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
@@ -559,10 +559,10 @@ sap.ui.define([
 			},
 			fnBorderReachedCallbackSpy = this.spy();
 
-		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+		oSPC.getAggregation("_grid").attachEvent("borderReached", fnBorderReachedCallbackSpy);
 
 		// act
-		oSPC._getGrid().onsapright(oFakeEvent);
+		oSPC.getAggregation("_grid").onsapright(oFakeEvent);
 
 		// assert
 		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
@@ -593,10 +593,10 @@ sap.ui.define([
 			},
 			fnBorderReachedCallbackSpy = this.spy();
 
-		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+		oSPC.getAggregation("_grid").attachEvent("borderReached", fnBorderReachedCallbackSpy);
 
 		// act
-		oSPC._getGrid().onsapleft(oFakeEvent);
+		oSPC.getAggregation("_grid").onsapleft(oFakeEvent);
 
 		// assert
 		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
@@ -627,10 +627,10 @@ sap.ui.define([
 			},
 			fnBorderReachedCallbackSpy = this.spy();
 
-		oSPC._getGrid().attachEvent("borderReached", fnBorderReachedCallbackSpy);
+		oSPC.getAggregation("_grid").attachEvent("borderReached", fnBorderReachedCallbackSpy);
 
 		// act
-		oSPC._getGrid().onsapright(oFakeEvent);
+		oSPC.getAggregation("_grid").onsapright(oFakeEvent);
 
 		// assert
 		assert.ok(fnBorderReachedCallbackSpy.calledOnce, "borderReached callback is called");
@@ -1188,7 +1188,7 @@ sap.ui.define([
 				],
 				legend: oLegend
 			}),
-			oSPCGrid = oSPC._getGrid(),
+			oSPCGrid = oSPC.getAggregation("_grid"),
 			// Expecting start/end information to look like this: "Start Time: *date here*; End Time: *date here*"
 			sAnnouncement = oSPCGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": " +
 							oSPCGrid._oFormatAriaApp.format(oStartDate) + "; " +
@@ -1221,7 +1221,7 @@ sap.ui.define([
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			sHeaderId = oSPC._getHeader()._getOrCreateTitleControl().getId(),
-			sNowMarkerTextId = oSPC._getGrid().getId() + "-nowMarkerText",
+			sNowMarkerTextId = oSPC.getAggregation("_grid").getId() + "-nowMarkerText",
 			$oSPCRef,
 			aAriaLabelledBy;
 
@@ -1429,7 +1429,7 @@ sap.ui.define([
 				"Appointments have an appropriate hidden label");
 
 		// Act
-		oSPC._getGrid()._toggleAppointmentSelection(oAppointment, true);
+		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oAppointment, true);
 
 		// Assert
 		assert.strictEqual($oAppointmentRef.attr("aria-selected"), "true", "Selected appointments have correct ARIA selected attribute value");
@@ -1475,7 +1475,7 @@ sap.ui.define([
 			"Blockers have an appropriate hidden label");
 
 		// Act
-		oSPC._getGrid()._toggleAppointmentSelection(oBlocker, true);
+		oSPC.getAggregation("_grid")._toggleAppointmentSelection(oBlocker, true);
 
 		// Assert
 		assert.strictEqual($oBlockerRef.attr("aria-selected"), "true", "Selected blockers have correct ARIA selected attribute value");
@@ -1490,7 +1490,7 @@ sap.ui.define([
 	QUnit.test("isAllDayAppointment", function (assert) {
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
-			oGrid = oSPC._getGrid(),
+			oGrid = oSPC.getAggregation("_grid"),
 			oStartDate = new Date(2017, 1, 1, 1, 1),
 			oStartDateFullDay = new Date(2017, 1, 1, 0, 0),
 			oEndDate = new Date(2017, 1, 2, 2, 2),

@@ -31,6 +31,7 @@
 					'sap/m/SinglePlanningCalendarDayView',
 					'sap/m/SinglePlanningCalendarWorkWeekView',
 					'sap/m/SinglePlanningCalendarWeekView',
+					'sap/m/SinglePlanningCalendarMonthView',
 					'sap/m/PlanningCalendarLegend',
 					'sap/m/Dialog',
 					'sap/m/Button',
@@ -46,10 +47,9 @@
 					'sap/m/Page'
 				],
 				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView,
-							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView,
+							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, SinglePlanningCalendarMonthView,
 							PlanningCalendarLegend, Dialog, Button, Item, CalendarAppointment,
-							CalendarLegendItem, MessageToast, MessageView,
-							MessageItem, MessageType, PlacementType, App, Page) {
+							CalendarLegendItem, MessageToast, MessageView, MessageItem, MessageType, PlacementType, App, Page) {
 					var aAppointments = [
 						{
 							title: "1 hour app. 0 without type and color",
@@ -380,8 +380,12 @@
 						}),
 						oWeekView = new SinglePlanningCalendarWeekView({
 							key: "WeekView",
-                            // "Full Week" used instead of "Week" as per guidelines for visual tests reasons
+							// "Full Week" used instead of "Week" as per guidelines for visual tests reasons
 							title: "Full Week"
+						}),
+						oMonthView = new SinglePlanningCalendarMonthView({
+							key: "Month",
+							title: "Month"
 						});
 
 					sap.m.SinglePlanningCalendarView.extend("sap.custom.CustomView", {});
@@ -496,12 +500,13 @@
 					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: new Date(2018, 6, 9),
-						views: [oDayView, oWorkWeekView, oWeekView, oCustomView],
+						enableAppointmentsDragAndDrop: true,
+						views: [oDayView, oWorkWeekView,oWeekView, oCustomView, oMonthView],
 						actions: [
 							new Button("overrideTime", {
 								text: "Override current time",
 								press: function () {
-									var oGrid = sap.ui.getCore().byId("SinglePlanningCalendar")._getGrid();
+									var oGrid = sap.ui.getCore().byId("SinglePlanningCalendar").getAggregation("_grid");
 
 									oGrid._updateRowHeaderAndNowMarker = function () {
 										var oCurrentDate = new Date(2018, 6, 8, 0, 30, 0, 0);
@@ -644,22 +649,13 @@
 						},
 						cellPress: function (oEvent) {
 							var oAppStartDate = oEvent.getParameter("startDate"),
-								oAppEndDate = oEvent.getParameter("endDate"),
-								oNewAppointment,
-								aAppointments;
+								oAppEndDate = oEvent.getParameter("endDate");
 
-							oNewAppointment = {
-								title: "New appointment",
-								startDate: oAppStartDate,
-								endDate: oAppEndDate
-							};
-
-							aAppointments = this.getModel().getData().modelData;
-							aAppointments.push(oNewAppointment);
-							oModel.updateBindings(true);
-							sap.ui.getCore().applyChanges();
-
-							this.getAppointments()[aAppointments.length - 1].focus();
+							MessageToast.show("startDate: '" + oAppStartDate + "'. endDate: '" + oAppEndDate + "'.");
+						},
+						moreLinkPress: function(oEvent) {
+							var oDate = oEvent.getParameter("date");
+							MessageToast.show("Date of more link '" + oDate + "'.");
 						}
 					});
 					new App({
