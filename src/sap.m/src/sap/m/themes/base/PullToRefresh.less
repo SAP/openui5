@@ -21,6 +21,29 @@
 	text-overflow: ellipsis;
 }
 
+.sapMPullDownNontouch:focus {
+	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.1875rem;
+}
+
+html[data-sap-ui-browser^="ie"] {
+	.sapMPullDownNontouch:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMPullDownNontouch:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: calc(~'100% - 0.0625rem');
+		height: calc(~'100% - 0.0625rem');
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
 .sapMPullDownTouch {
 	min-height: 3rem;
 	border-bottom: 1px solid @sapUiGroupContentBorderColor;

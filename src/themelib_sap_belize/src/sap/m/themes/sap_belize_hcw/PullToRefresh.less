@@ -3,13 +3,12 @@
 /* Belize High Contrast White theme     */
 /* ==================================== */
 
-.sapMPullDownNontouch:focus:after {
-	content: '';
-	display: block;
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	top: 0;
-	border: 0.125rem dotted @sapUiContentFocusColor;
+.sapMPullDownNontouch:focus {
+	outline-width: 0.125rem;
+}
+
+html[data-sap-ui-browser^="ie"] .sapMPullDownNontouch:focus:before {
+	width: calc(~'100% - 0.125rem');
+	height: calc(~'100% - 0.125rem');
+	border-width: 0.125rem;
 }
