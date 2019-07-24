@@ -8234,39 +8234,6 @@ sap.ui.define([
 			// assert
 			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), oExpectedItem.getId(), 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
-			oSelect.close();
-			this.clock.tick(1000);
-
-			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is removed when popover closed');
-
-			// cleanup
-			oSelect.destroy();
-		});
-
-		QUnit.test('it should not set the attribute "aria-activedescendant" for IconOnly select', function (assert) {
-
-			// system under test
-			var oSelect = new Select({
-				type: "IconOnly",
-				items: [
-					new Item(),
-					new Item()
-				]
-			});
-
-			// arrange
-			oSelect.placeAt("content");
-			sap.ui.getCore().applyChanges();
-			oSelect.focus();
-			oSelect.open();
-			this.clock.tick(1000);	// wait after the open animation is completed and the list is rendered
-
-			// act
-			qutils.triggerKeydown(oSelect.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-
-			// assert
-			assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is not set for IconOnly select');
-
 			// cleanup
 			oSelect.destroy();
 		});
