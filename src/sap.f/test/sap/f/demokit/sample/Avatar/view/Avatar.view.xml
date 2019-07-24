@@ -58,7 +58,8 @@
 					alignItems="Center">
 					<f:Avatar
 						initials="IS"
-						displaySize="XL">
+						displaySize="XL"
+						backgroundColor="Random">
 					</f:Avatar>
 					<m:Text
 						text="Circle with initials"
@@ -70,7 +71,8 @@
 					<f:Avatar
 						src="sap-icon://lab"
 						displaySize="XL"
-						displayShape="Square">
+						displayShape="Square"
+						backgroundColor="Random">
 					</f:Avatar>
 					<m:Text
 						text="With lab icon"
@@ -80,7 +82,8 @@
 				<m:VBox
 					alignItems="Center">
 					<f:Avatar
-						displaySize="XL">
+						displaySize="XL"
+						backgroundColor="Random">
 					</f:Avatar>
 					<m:Text
 						text="With person icon"
@@ -230,56 +233,66 @@
 						alignItems="Center">
 					<f:Avatar
 							initials="IS"
-							displaySize="XL">
+							displaySize="XL"
+							backgroundColor="Accent1">
 					</f:Avatar>
 					<m:Text
 							text="XL"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent1"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							initials="IS"
-							displaySize="L">
+							displaySize="L"
+							backgroundColor="Accent2">
 					</f:Avatar>
 					<m:Text
 							text="L"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent2"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							initials="IS"
-							displaySize="M">
+							displaySize="M"
+							backgroundColor="Accent3">
 					</f:Avatar>
 					<m:Text
 							text="M"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent3"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							initials="IS"
-							displaySize="S">
+							displaySize="S"
+							backgroundColor="Accent4">
 					</f:Avatar>
 					<m:Text
 							text="S"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent4"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							initials="IS"
-							displaySize="XS">
+							displaySize="XS"
+							backgroundColor="Accent5">
 					</f:Avatar>
 					<m:Text
 							text="XS"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent5"/>
 				</m:VBox>
 			</l:content>
 		</l:Grid>
@@ -291,56 +304,66 @@
 						alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
-							displaySize="XL">
+							displaySize="XL"
+							backgroundColor="Accent6">
 					</f:Avatar>
 					<m:Text
 							text="XL"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent6"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
-							displaySize="L">
+							displaySize="L"
+							backgroundColor="Accent7">
 					</f:Avatar>
 					<m:Text
 							text="L"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent7"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
-							displaySize="M">
+							displaySize="M"
+							backgroundColor="Accent8">
 					</f:Avatar>
 					<m:Text
 							text="M"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent8"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
-							displaySize="S">
+							displaySize="S"
+							backgroundColor="Accent9">
 					</f:Avatar>
 					<m:Text
 							text="S"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent9"/>
 				</m:VBox>
 				<m:VBox
 						alignItems="Center">
 					<f:Avatar
 							src="sap-icon://lab"
-							displaySize="XS">
+							displaySize="XS"
+							backgroundColor="Accent10">
 					</f:Avatar>
 					<m:Text
 							text="XS"
 							class="sapUiSmallMarginTop">
 					</m:Text>
+					<m:Text text="Accent10"/>
 				</m:VBox>
 			</l:content>
 		</l:Grid>
@@ -380,7 +403,8 @@
 								alignItems="Center">
 								<f:Avatar
 										displaySize="XL"
-										displayShape="Square">
+										displayShape="Square"
+										backgroundColor="Random">
 								</f:Avatar>
 								<m:Text
 										text="With product icon"
@@ -390,7 +414,8 @@
 							<m:VBox
 									alignItems="Center">
 								<f:Avatar
-										displaySize="XL">
+										displaySize="XL"
+										backgroundColor="Random">
 								</f:Avatar>
 								<m:Text
 										text="With person icon"
@@ -402,7 +427,8 @@
 								<f:Avatar
 										displaySize="XL"
 										displayShape="Square"
-										fallbackIcon="sap-icon://accelerated">
+										fallbackIcon="sap-icon://accelerated"
+										backgroundColor="Random">
 								</f:Avatar>
 								<m:Text
 										text="With custom fallback icon"
@@ -414,7 +440,8 @@
 								<f:Avatar
 										displaySize="XL"
 										initials="PB"
-										src="images/cannotfind_Woman_avatar_01.png">
+										src="images/cannotfind_Woman_avatar_01.png"
+										backgroundColor="Random">
 								</f:Avatar>
 								<m:Text
 										text="With invalid image source, but initials provided"

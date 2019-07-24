@@ -8,9 +8,30 @@
 	position: relative;
 }
 
+// Define a loop and go trough 10 color sets
+.loop-colors(@i: 1) when (@i =< 10) {
+	.generateColor(@i);
+
+	.loop-colors(@i + 1); // Execute next loop iteration
+}
+
+// Execute Loop through color sets
+.loop-colors(1);
+
+// Create classes which would just set background color of Avatar
+.generateColor (@accentIndex) {
+	@css-selector: ~"sapFAvatarColorAccent@{accentIndex}"; // Create the css selector string
+	@color-param: ~"sapUiAccent@{accentIndex}"; // Build the color param which is a sapUiAccent
+
+	// Build the real CSS selector.
+	// The output would be something like this: .sapFAvatar.sapFAvatarColorAccent6 {background-color: #0092d1;}
+	.@{css-selector} {
+		background-color: @@color-param;
+	}
+}
+
 .sapFAvatarIcon {
 	text-align: center;
-	background-color: @sapUiContentImagePlaceholderBackground;
 	color: @sapUiContentIconColor;
 
 	.sapUiIcon {
@@ -58,7 +79,6 @@
 
 .sapFAvatarImageContain {
 	background-size: contain;
-	background-color: @sapUiContentImagePlaceholderBackground;
 }
 
 .sapFAvatarCircle {
@@ -133,10 +153,6 @@ html[data-sap-ui-browser^="ed"] .sapFAvatarFocusable:focus {
 
 html:not(.sap-desktop) .sapFAvatarFocusable:focus {
 	outline: none;
-}
-
-.sapFAvatarInitials {
-	background-color: @sapUiContentImagePlaceholderBackground;
 }
 
 .sapFAvatarInitialsHolder {
