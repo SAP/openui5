@@ -63,6 +63,9 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeCSS"],
 			} else {
 				oRm.attr("role", "img");
 			}
+			if (oAvatar.getShowBorder()) {
+				oRm.class("sapFAvatarBorder");
+			}
 			if (sDisplaySize === AvatarSize.Custom) {
 				oRm.style("width", sCustomDisplaySize);
 				oRm.style("height", sCustomDisplaySize);
