@@ -101,6 +101,18 @@
 				decorative: false
 			});
 
+			var oBGImage2 = new sap.m.Image({
+				src: "images/SAPLogo.jpg",
+				alt: "test image",
+				width: "30px",
+				height: "50px",
+				mode: sap.m.ImageMode.Background,
+				backgroundSize: "contain",
+				backgroundPosition: "center top",
+				densityAware: true,
+				decorative: false
+			});
+
 			new sap.m.App({
 				pages : [
 					new sap.m.Page({
@@ -132,6 +144,9 @@
 							}),
 							new sap.m.FlexBox({
 								items: [oBGImage1, new sap.m.Text({text: "The SAP Logo image is set as background of the dom element. The letter 'P' is extracted from the logo by using the backgroundPosition. In order to display the high density correctly, the backgroundSize property needs to be set with the dimension of normal density version."})]
+							}),
+							new sap.m.FlexBox({
+								items: [oBGImage2, new sap.m.Text({text: "The SAP Logo image is set as background of the dom element. It adjusts its width and height proportionally until it is fully contained in the applied size."})]
 							})
 						]
 					})
