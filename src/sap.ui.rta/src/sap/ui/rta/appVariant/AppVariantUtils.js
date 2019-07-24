@@ -381,6 +381,7 @@ function(
 	};
 
 	AppVariantUtils.showRelevantDialog = function(oInfo, bSuccessful) {
+		BusyIndicator.hide();
 		var sTitle;
 		var sRightButtonText;
 		var sOKButtonText;
