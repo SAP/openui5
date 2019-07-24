@@ -2574,10 +2574,6 @@ sap.ui.define([
 		return oBinding.getLength();
 	};
 
-	Table.prototype._getRowCount = function() {
-
-	};
-
 	/**
 	 * Returns the number of rows which can be selected.
 	 *
