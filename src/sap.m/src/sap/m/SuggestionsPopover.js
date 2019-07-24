@@ -1027,6 +1027,7 @@ sap.ui.define([
 			oPopover.attachAfterOpen(this._handleTypeAhead, this);
 		}
 
+		oPopover.attachAfterOpen(this._setSelectedSuggestionItem, this);
 		oPopover.attachAfterClose(this._finalizeAutocomplete, this);
 
 		this._oInputDelegate = {
@@ -1049,6 +1050,7 @@ sap.ui.define([
 			sValue = oInput.getValue();
 
 		this._oProposedItem = null;
+		this._sProposedItemText = null;
 		this._sTypedInValue = sValue;
 
 		if (!this._bDoTypeAhead || sValue === "") {
@@ -1100,6 +1102,25 @@ sap.ui.define([
 				setTimeout(function () {
 					oInput.selectText(sValue.length, sNewValue.length);
 				}, 0);
+			}
+		}
+	};
+
+	/**
+	 * Sets matched selected item in the suggestion popover
+	 *
+	 * @private
+	 */
+	SuggestionsPopover.prototype._setSelectedSuggestionItem = function () {
+		var aFilteredItems;
+
+		if (this._oList) {
+			aFilteredItems = this._oList.getItems();
+			for (var i = 0; i < aFilteredItems.length; i++) {
+				if ((aFilteredItems[i]._oItem || aFilteredItems[i]) === this._oProposedItem) { // for list || for table
+					aFilteredItems[i].setSelected(true);
+					break;
+				}
 			}
 		}
 	};
