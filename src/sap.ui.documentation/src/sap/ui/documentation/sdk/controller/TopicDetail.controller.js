@@ -73,6 +73,9 @@ sap.ui.define([
 				jsonObj.topicURL = topicURL;
 				jsonObj.iframeAttribute = Device.os.name === Device.os.OS.IOS ? ' scrolling="no" ' : "";
 				jsonObj.bIsPhone = Device.system.phone;
+				if (jsonObj.shortdesc) {
+					jsonObj.shortdesc = jsonObj.shortdesc.trim().replace(/(\r\n|\n|\r)/gm, ' ');
+				}
 
 				this.jsonDefModel.setData(jsonObj);
 
