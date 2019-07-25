@@ -501,6 +501,7 @@ function(
 
 		if (this.getShowSuggestion()) {
 
+			this._oSuggPopover._bAutocompleteEnabled = this.getAutocomplete();
 			if (this.getShowTableSuggestionValueHelp()) {
 				this._addShowMoreButton();
 			} else {
@@ -1348,7 +1349,7 @@ function(
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
 		 * @return {sap.m.Input} this Input instance for chaining.
-	 	 */
+		 */
 		Input.prototype.setShowSuggestion = function(bValue){
 			this.setProperty("showSuggestion", bValue, true);
 
@@ -1376,7 +1377,7 @@ function(
 		 * @public
 		 * @param {boolean} bValue Show suggestions.
 		 * @return {sap.m.Input} this Input instance for chaining.
-	 	 */
+		 */
 		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
 			this.setProperty("showTableSuggestionValueHelp", bValue, true);
 
