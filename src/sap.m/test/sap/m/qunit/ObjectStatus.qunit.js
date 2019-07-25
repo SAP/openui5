@@ -613,7 +613,7 @@ sap.ui.define([
 		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
 	});
 
-	QUnit.test("When _isActive is true and target click is on icon", function(assert) {
+	QUnit.test("When _isActive is true and target click is on the wrapper of the icon", function(assert) {
 		// Arrange
 		var oEvent = new jQuery.Event();
 
@@ -623,6 +623,18 @@ sap.ui.define([
 		// Act
 		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
 	});
+
+	QUnit.test("When _isActive is true and target click is on icon", function(assert) {
+		// Arrange
+		var oEvent = new jQuery.Event();
+
+		this.oStub.withArgs().returns(true);
+		oEvent.target = this.oActiveStat.$().find(".sapUiIcon")[0];
+
+		// Act
+		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
+	});
+
 
 	QUnit.test("When _isActive is true and target click is on wrapper IconText", function(assert) {
 		// Arrange
