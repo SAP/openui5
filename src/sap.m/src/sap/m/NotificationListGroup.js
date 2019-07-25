@@ -265,6 +265,9 @@ function(
 		this._updateAccessibilityInfo();
 		this._updateCollapseButtonText(this.getCollapsed());
 
+		var oAuthorPicture = this.getAuthorPicture();
+		this._getAuthorImage().setSrc(oAuthorPicture);
+
 		this._maxNumberOfNotificationsTitle = this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', notificationsCount - this._maxNumberOfNotifications);
 		this._maxNumberOfNotificationsBody = this._resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY');
 	};
