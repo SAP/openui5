@@ -777,6 +777,22 @@ sap.ui.define([
 
     });
 
+    QUnit.test("ODataModel.deepResolve - Empty string binding path", function (assert) {
+        var that = this;
+        var done = assert.async();
+
+        this.oModel.metadataLoaded().then(function () {
+            that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", { urlParameters: { $expand: "ToProduct" } });
+            var fnBatchCompleted1 = function () {
+                that.oModel.detachBatchRequestCompleted(fnBatchCompleted1);
+                var oContext = that.oModel.createBindingContext("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct");
+                assert.strictEqual(that.oModel.resolveDeep("", oContext), "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is resolved correctly.");
+                done();
+            };
+            that.oModel.attachBatchRequestCompleted(fnBatchCompleted1);
+        });
+    });
+
     QUnit.module("Message Scope supported", {
         beforeEach: function () {
             this.sServiceUri = "/SalesOrderSrv/";
