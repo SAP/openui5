@@ -49,6 +49,7 @@ sap.ui.define([
 		types: [
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",
+			"sap.m.BreadcrumbsSeparatorStyle",
 			"sap.m.ButtonType",
 			"sap.m.CarouselArrowsPlacement",
 			"sap.m.DateTimeInputType",
@@ -588,6 +589,60 @@ sap.ui.define([
 		 * @public
 		 */
 		Footer : "Footer"
+
+	};
+
+	/**
+	 * Variations of the {@link sap.m.Breadcrumbs} separators.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.69
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	thisLib.BreadcrumbsSeparatorStyle = {
+		/**
+		 * The separator will appear as "/"
+		 * @public
+		 */
+
+		Slash: "/",
+
+		/**
+		 * The separator will appear as "\"
+		 * @public
+		 */
+
+		BackSlash: "\\",
+
+		/**
+		 * The separator will appear as "//"
+		 * @public
+		 */
+
+		DoubleSlash: "//",
+
+		/**
+		 * The separator will appear as "\\"
+		 * @public
+		 */
+
+		DoubleBackSlash: "\\\\",
+
+		/**
+		 * The separator will appear as ">"
+		 * @public
+		 */
+
+		GreaterThan: ">",
+
+		/**
+		 * The separator will appear as ">>"
+		 * @public
+		 */
+
+		DoubleGreaterThan: ">>"
 
 	};
 
@@ -4797,5 +4852,4 @@ sap.ui.define([
 	}
 
 	return thisLib;
-
 });

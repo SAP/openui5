@@ -243,6 +243,13 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
 		assert.ok(oStandardBreadCrumbsControl._getSelectWidth() === 0, "Select is not rendered");
 	});
 
+	QUnit.test("Custom separator", function (assert) {
+		//arrange
+		var sSeparator = "/";
+		// assert
+		assert.equal(this.oStandardBreadCrumbsControl.getSeparatorStyle(), sSeparator, "Default separtor loaded");
+	});
+
 	/*------------------------------------------------------------------------------------*/
 	QUnit.module("Breadcrumbs - Mobile cases, small screen", {
 		beforeEach: function () {
@@ -451,4 +458,4 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
 
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("tabindex"), undefined, "Tabindex should not be set for empty breadcrumbs");
 	});
- });
+});

@@ -1,10 +1,11 @@
 <mvc:View controllerName="sap.m.sample.Breadcrumbs.controller.Breadcrumbs"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
-		xmlns:l="sap.ui.layout">
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
 	<l:VerticalLayout class="sapUiContentPadding" width="100%">
 		<l:content>
-			<Breadcrumbs currentLocationText="Laptop">
+			<Breadcrumbs currentLocationText="Laptop" separatorStyle="{/selected}">
 				<Link press="onPress" text="Products"/>
 				<Link press="onPress" text="Suppliers"/>
 				<Link press="onPress" text="Titanium"/>
@@ -12,6 +13,25 @@
 				<Link press="onPress" text="12 inch"/>
 				<Link press="onPress" text="Super portable deluxe"/>
 			</Breadcrumbs>
+			<Hbox alignItems="Center">
+				<items>
+					<Label
+							labelFor="separatorSelect"
+							text="Change separator style"
+					/>
+					<Select
+							class="sapUiSmallMarginBegin"
+							id="separatorSelect"
+							selectedKey="{/selected}"
+							change="onChange"
+							items="{
+								path: '/items'
+							}">
+						<core:Item key="{text}" text="{key}" />
+					</Select>
+				</items>
+			</Hbox>
+
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

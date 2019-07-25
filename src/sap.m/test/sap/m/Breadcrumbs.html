@@ -10,7 +10,7 @@
 </head>
 <body id="body" class="sapUiBody">
 <script>
-	(function (jQuery, App, Page, Link, Breadcrumbs, MessageToast, Input, Label, Button, VerticalLayout, Slider, Panel) {
+	(function (jQuery, App, Page, Link, Breadcrumbs, MessageToast, Input, Label, Button, VerticalLayout, Slider, Panel, Select, BreadcrumbsSeparatorStyle) {
 		var fnLinkPressHandler = function (oEvent) {
 				MessageToast.show(oEvent.getSource().getText() + " has been activated");
 			},
@@ -33,13 +33,16 @@
 			fnUpdateBreadcrumbsWidth = function () {
 				oBreadcrumbs.$().css("width", sBreadcrumbWidth);
 			},
+			oBreadcrumbsSeparatorStyle = [],
 			oTestDataModel = new sap.ui.model.json.JSONModel({
 				currentLocationText: "Current location",
-				indexOfLinkToRemove: 0
+				indexOfLinkToRemove: 0,
+				items: []
 			}),
 			sBreadcrumbWidth = "auto",
 			oBreadcrumbs = new Breadcrumbs({
-				currentLocationText: "{testData>/currentLocationText}",
+				id: "breadcrumbs_0",
+				currentLocationText: "{separatorData}",
 				links: fnLinkGenerator(10, "NormalLink")
 			}).addEventDelegate({onAfterRendering: fnUpdateBreadcrumbsWidth}),
 			oBreadcrumbsWithSelect = new Breadcrumbs("breadCrumbWithSelect", {
@@ -50,13 +53,36 @@
 					oBreadcrumbsWithSelect.$().css("width", "100px");
 				}
 			}),
+			oItemTemplate = new sap.ui.core.Item({
+				key: "{text}",
+				text: "{key}"
+			}),
+
+			oSeparatorSelect = new sap.m.Select({
+				id: "separator_select",
+				items: {
+					path: "/items",
+					template: oItemTemplate
+				},
+				change: function(oControlEvent) {
+					oBreadcrumbs.setSeparatorStyle(oControlEvent.getParameter("selectedItem").getKey());
+				}
+			}),
+
+			oSeparatorSelectLabel = new sap.m.Label({
+				text: "Breadcrumbs separator style:",
+				labelFor: "separator_select"
+			}),
+			oSeparatorVerticalLayout = new VerticalLayout({
+				content: [oSeparatorSelectLabel, oSeparatorSelect]
+			}),
 			oApp = new App(),
 			oAddLinkLabel = new Label({text: "Link text:"}),
 			oRemoveLinkAtIndexLabel = new Label({text: "Remove link at index:"}),
 			oAddLinkInput = new Input(),
 			oChangeCurrentLocationTextLabel = new Label({text: "Current location text:"}),
-			oChangeCurrentLocationTextInput = new Input({value: "{testData>/currentLocationText}"}),
-			oIndexOfLinkToRemoveInput = new Input({value: "{testData>/indexOfLinkToRemove}"}),
+			oChangeCurrentLocationTextInput = new Input({value: "{currentLocationText}"}),
+			oIndexOfLinkToRemoveInput = new Input({value: "{indexOfLinkToRemove}"}),
 			oAddLinkButton = new Button({
 				text: "Add a link", press: function () {
 					oBreadcrumbs.addLink(fnGetLink(oAddLinkInput.getValue()));
@@ -95,18 +121,28 @@
 				content: [oChangeCurrentLocationTextLabel, oChangeCurrentLocationTextInput]
 			});
 
-		sap.ui.getCore().setModel(oTestDataModel, "testData");
+		Object.keys(BreadcrumbsSeparatorStyle).forEach(function(item) {
+			oBreadcrumbsSeparatorStyle.push({
+				'key' : item,
+				'text': BreadcrumbsSeparatorStyle[item]
+			})
+		});
+
+		sap.ui.getCore().setModel(oTestDataModel);
+
+		oTestDataModel.setProperty("/items", oBreadcrumbsSeparatorStyle);
 
 		oApp.addPage(new Page({
 			title: "Breadcrumbs",
 			content: [new Panel({
-				content: [oBreadcrumbs, oSlider, oVerticalLayoutAddLink, oVerticalLayoutEditCurrentLocation,
+				content: [oSeparatorVerticalLayout, oBreadcrumbs, oSlider, oVerticalLayoutAddLink, oVerticalLayoutEditCurrentLocation,
 					oRemoveLinkAtIndexLabel, oIndexOfLinkToRemoveInput, oRemoveLinkAtIndexButton, oBreadcrumbsWithSelect]
 			})]
 		})).placeAt("content");
 
 	}(jQuery, sap.m.App, sap.m.Page, sap.m.Link, sap.m.Breadcrumbs, sap.m.MessageToast,
-			sap.m.Input, sap.m.Label, sap.m.Button, sap.ui.layout.VerticalLayout, sap.m.Slider, sap.m.Panel))
+			sap.m.Input, sap.m.Label, sap.m.Button, sap.ui.layout.VerticalLayout, sap.m.Slider, sap.m.Panel, sap.m.Select,
+	sap.m.BreadcrumbsSeparatorStyle))
 </script>
 <div id="content"></div>
 </body>
