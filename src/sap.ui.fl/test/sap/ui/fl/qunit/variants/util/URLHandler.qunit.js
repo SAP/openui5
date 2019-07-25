@@ -394,11 +394,9 @@ function(
 		});
 
 		QUnit.test("when '_navigationFilter' is called and there is an error in hash parsing", function (assert) {
-			assert.expect(2);
-			sandbox.stub(Log, "error").callsFake(function (sMessage) {
-				assert.ok(sMessage.indexOf("hasOwnProperty") !== -1, "then the error was logged");
-			});
+			var oLogErrorSpy = sandbox.spy(Log, "error");
 			assert.strictEqual(URLHandler._navigationFilter.call(this.oModel, {}), this.sDefaultStatus, "then the default navigation filter status was returned");
+			assert.equal(oLogErrorSpy.callCount, 1, "then the error was logged");
 		});
 
 		QUnit.test("when '_navigationFilter' is called and there is no variant parameter", function (assert) {
