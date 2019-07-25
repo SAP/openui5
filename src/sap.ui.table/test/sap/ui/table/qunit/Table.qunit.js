@@ -524,28 +524,6 @@ sap.ui.define([
 			document.getElementById("qunit-fixture").classList.remove("visible");
 		}
 
-		function wait() {
-			return new Promise(function(resolve) {
-				setTimeout(resolve, 0);
-			});
-		}
-
-		var aPromiseResolvers = [];
-		oTable.addEventDelegate({
-			onAfterRendering: function() {
-				aPromiseResolvers.forEach(function(fnPromiseResolver) {
-					fnPromiseResolver();
-				});
-				aPromiseResolvers = [];
-			}
-		});
-
-		function afterRendering() {
-			return new Promise(function(resolve) {
-				aPromiseResolvers.push(resolve);
-			});
-		}
-
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({template: new HeightTestControl({height: "1px"})}));
 		oTable.addColumn(new Column({template: new HeightTestControl({height: "1px"})}));
@@ -571,11 +549,12 @@ sap.ui.define([
 					}
 				}
 
-				var pAfterRendering = afterRendering();
 				sap.ui.getCore().applyChanges();
-				return pAfterRendering;
 
-			}).then(wait).then(function() {
+				return new Promise(function(resolve) {
+					oTable.attachEventOnce("_rowsUpdated", resolve);
+				});
+			}).then(function() {
 				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
 				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
 									   + ", Density=\"" + sDensity + "\")";
@@ -680,28 +659,6 @@ sap.ui.define([
 			document.getElementById("qunit-fixture").classList.remove("visible");
 		}
 
-		function wait() {
-			return new Promise(function(resolve) {
-				setTimeout(resolve, 0);
-			});
-		}
-
-		var aPromiseResolvers = [];
-		oTable.addEventDelegate({
-			onAfterRendering: function() {
-				aPromiseResolvers.forEach(function(fnPromiseResolver) {
-					fnPromiseResolver();
-				});
-				aPromiseResolvers = [];
-			}
-		});
-
-		function afterRendering() {
-			return new Promise(function(resolve) {
-				aPromiseResolvers.push(resolve);
-			});
-		}
-
 		oTable.removeAllColumns();
 		oTable.addColumn(new Column({label: new HeightTestControl({height: "1px"}), template: new HeightTestControl()}));
 		oTable.addColumn(new Column({label: new HeightTestControl({height: "1px"}), template: new HeightTestControl()}));
@@ -728,11 +685,12 @@ sap.ui.define([
 					}
 				}
 
-				var pAfterRendering = afterRendering();
 				sap.ui.getCore().applyChanges();
-				return pAfterRendering;
 
-			}).then(wait).then(function() {
+				return new Promise(function(resolve) {
+					oTable.attachEventOnce("_rowsUpdated", resolve);
+				});
+			}).then(function() {
 				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
 				mTestSettings.title += " (VisibleRowCountMode=\"" + mTestSettings.visibleRowCountMode + "\""
 									   + ", Density=\"" + sDensity + "\")";
@@ -928,10 +886,13 @@ sap.ui.define([
 				template: new HeightTestControl(),
 				width: "100px"
 			}), 1);
-			var pAfterRendering = afterRendering();
+
 			sap.ui.getCore().applyChanges();
-			return pAfterRendering;
-		}).then(wait).then(function() {
+
+			return new Promise(function(resolve) {
+				oTable.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
 			var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
 			var iHeightWithoutIcons = Device.browser.msie ? aRowDomRefs[0].offsetHeight : aRowDomRefs[0].getBoundingClientRect().height;
 			var iFixedPartHeight;
