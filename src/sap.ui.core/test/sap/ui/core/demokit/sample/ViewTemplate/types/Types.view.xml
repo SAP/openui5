@@ -122,6 +122,8 @@
 			<Label text="TimeOfDay, relative: &quot;true&quot;" visible="{ui>/v4}" labelFor="I25"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}" id="I25"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay bound property dateValue" visible="{ui>/v4}" labelFor="I58"/>
+			<TimePicker dateValue="{v4>TimeOfDay}" visible="{ui>/v4}" id="I58"/>
 
 			<core:Title text="sap.ui.model.odata.type.Decimal" />
 			<Label text="scale: 3" labelFor="I26"/>
