@@ -705,8 +705,9 @@ sap.ui.define([
 				Measurement.pause(oControl.getParent().getId() + "---rerender");
 			}
 			aRenderStack.unshift(oControl.getId());
+
 			// start performance measurement
-			Measurement.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
+			Measurement.start(oControl.getId() + "---renderControl", "Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 
 			//Remember the current buffer size to check later whether the control produced output
 			var iBufferLength = aBuffer.length;
@@ -718,9 +719,11 @@ sap.ui.define([
 
 			aStyleStack.push(oControlStyles);
 
+			// Trigger onBeforeRendering before checking visibility, as visible property might be changed in handler
+			triggerBeforeRendering(oControl);
+
 			Measurement.pause(oControl.getId() + "---renderControl");
 			// don't measure getRenderer because if Load needed its measured in Ajax call
-			// but start measurement before is to see general rendering time including loading time
 
 			// Either render the control normally, or invoke the InvisibleRenderer in case the control
 			// uses the default visible property
@@ -750,8 +753,6 @@ sap.ui.define([
 			}
 
 			Measurement.resume(oControl.getId() + "---renderControl");
-
-			triggerBeforeRendering(oControl);
 
 			// unbind any generically bound browser event handlers
 			var aBindings = oControl.aBindParameters;
