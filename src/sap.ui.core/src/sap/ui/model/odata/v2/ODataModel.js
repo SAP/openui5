@@ -6435,6 +6435,10 @@ sap.ui.define([
 			// if sPath is relative we resolve with the deep path of the context - else the path is absolute already
 			sResolvedPath = oContext ? oContext.sDeepPath + '/' + sPath : sResolvedPath;
 		}
+		if (sPath === ""){
+			sResolvedPath = oContext ? oContext.sDeepPath : sResolvedPath;
+		}
+
 		return sResolvedPath;
 	};
 
