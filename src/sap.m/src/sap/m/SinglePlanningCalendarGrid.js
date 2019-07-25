@@ -69,19 +69,16 @@ sap.ui.define([
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
-		 * Disclaimer: This control is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
+		 *
+		 * Displays a grid in which appointments of the {@link sap.m.SinglePlanningCalendar} are rendered.
 		 *
 		 * <h3>Overview</h3>
-		 *
-		 * Displays a grid in which appointments are rendered.
 		 *
 		 * <b>Note:</b> The <code>PlanningCalendarGrid</code> uses parts of the <code>sap.ui.unified</code> library.
 		 * This library will be loaded after the <code>PlanningCalendarGrid</code>, if it wasn't previously loaded.
 		 * This could lead to a waiting time when a <code>PlanningCalendarGrid</code> is used for the first time.
 		 * To prevent this, apps using the <code>PlanningCalendarGrid</code> must also load the
 		 * <code>sap.ui.unified</code> library.
-		 *
-		 * <h3>Usage</h3>
 		 *
 		 * The <code>PlanningCalendarGrid</code> has the following structure:
 		 *
