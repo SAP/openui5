@@ -455,7 +455,7 @@ sap.ui.define([
 		};
 
 		Menu.prototype._createVisualMenuItemFromItem = function(oItem) {
-			return new UfdMenuItem({
+			var oUfMenuItem = new UfdMenuItem({
 				id: this._generateUnifiedMenuItemId(oItem.getId()),
 				icon: oItem.getIcon(),
 				text: oItem.getText(),
@@ -463,7 +463,15 @@ sap.ui.define([
 				tooltip: oItem.getTooltip(),
 				visible: oItem.getVisible(),
 				enabled: oItem.getEnabled()
-			});
+			}),
+			i,
+			aCustomData = oItem.getCustomData();
+
+			for (i = 0; i < aCustomData.length; i++) {
+				oItem._addCustomData(oUfMenuItem, aCustomData[i]);
+			}
+
+			return oUfMenuItem;
 		};
 
 		Menu.prototype._addVisualMenuItemFromItem = function(oItem, oMenu, iIndex) {

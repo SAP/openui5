@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MenuItem.
-sap.ui.define(['./library', 'sap/ui/core/Item'],
-	function(library, Item) {
+sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserver'],
+	function(library, Item, ManagedObjectObserver) {
 		"use strict";
 
 
@@ -105,6 +105,8 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 			}
 		}});
 
+		MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX = '-unifiedmenu';
+
 		MenuItem.prototype.exit = function() {
 			if (this._sVisualChild) {
 				this._sVisualChild = null;
@@ -133,7 +135,15 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 		};
 
 		MenuItem.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+			var oVisualItemId = this._getVisualControl(),
+				oVisualItem;
+
 			Item.prototype.addAggregation.apply(this, arguments);
+
+			if (sAggregationName === 'customData' && oVisualItemId) {
+				oVisualItem = sap.ui.getCore().byId(oVisualItemId);
+				this._addCustomData(oVisualItem, oObject);
+			}
 
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "add", methodParams: { item: oObject } });
 
@@ -141,7 +151,16 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 		};
 
 		MenuItem.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
+			var oVisualItemId = this._getVisualControl(),
+				oVisualItem;
+
 			Item.prototype.insertAggregation.apply(this, arguments);
+
+			if (sAggregationName === 'customData' && oVisualItemId) {
+				oVisualItem = sap.ui.getCore().byId(oVisualItemId);
+				oVisualItem.insertCustomData(oObject.clone(MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX), iIndex);
+				this._observeCustomDataChanges(oObject);
+			}
 
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "insert", methodParams: { item: oObject, index: iIndex }});
 
@@ -151,6 +170,16 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 		MenuItem.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
 			var oObject = Item.prototype.removeAggregation.apply(this, arguments);
 
+			if (sAggregationName === "customData") {
+				if (this.getCustomData().length === 1) {
+					this._disconnectAndDestroyViewsObserver();
+				} else if (vObject && this._oViewsObserver) {
+					this._oViewsObserver.unobserve(vObject, {
+						properties: ["value"]
+					});
+				}
+			}
+
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "remove", methodParams: { item: oObject }});
 
 			return oObject;
@@ -159,12 +188,20 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 		MenuItem.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
 			var aObjects = Item.prototype.removeAllAggregation.apply(this, arguments);
 
+			if (sAggregationName === 'customData') {
+				this._disconnectAndDestroyCustomDataObserver();
+			}
+
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "removeall", methodParams: { items: aObjects }});
 
 			return aObjects;
 		};
 
 		MenuItem.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+			if (sAggregationName === 'customData') {
+				this._disconnectAndDestroyCustomDataObserver();
+			}
+
 			this.fireEvent("aggregationChanged", { aggregationName: sAggregationName, methodName: "destroy"});
 			return Item.prototype.destroyAggregation.apply(this, arguments);
 		};
@@ -177,6 +214,66 @@ sap.ui.define(['./library', 'sap/ui/core/Item'],
 			}
 
 			return Item.prototype.destroy.apply(this, arguments);
+		};
+
+		/**
+		 * Observes the value property of the passed menu item
+		 *
+		 * @param {sap.ui.unified.MenuItem} oVisualItem the sap.ui.unified.MenuItem, which property will be observed
+		 * @param {sap.ui.core.CustomData} oCustomData the custom data, which property will be observed
+		 * @private
+		 */
+		MenuItem.prototype._addCustomData = function (oVisualItem, oCustomData) {
+			oVisualItem.addCustomData(oCustomData.clone(MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX, undefined, { bCloneChildren: false, bCloneBindings: true }));
+			this._observeCustomDataChanges(oCustomData);
+		};
+
+		/**
+		 * Observes the value property of the passed menu item
+		 *
+		 * @param {sap.ui.core.CustomData} oCustomData the custom data, which property will be observed
+		 * @private
+		 */
+		MenuItem.prototype._observeCustomDataChanges = function (oCustomData) {
+			this._getCustomDataObserver().observe(oCustomData, {
+				properties: ["value"]
+			});
+		};
+
+		/**
+		 * Sets the value property of the inner sap.ui.unified.MenuItem
+		 *
+		 * @param {object} oChanges the detected from the ManagedObjectObserver changes
+		 * @private
+		 */
+		MenuItem.prototype._customDataObserverCallbackFunction = function (oChanges) {
+			sap.ui.getCore().byId(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX).setValue(oChanges.current);
+		};
+
+		/**
+		 * Returns the ManagedObjectObserver for the custom data
+		 *
+		 * @return {sap.ui.base.ManagedObjectObserver} the custom data observer object
+		 * @private
+		 */
+		MenuItem.prototype._getCustomDataObserver = function () {
+			if (!this._oCustomDataObserver) {
+				this._oCustomDataObserver = new ManagedObjectObserver(this._customDataObserverCallbackFunction);
+			}
+			return this._oCustomDataObserver;
+		};
+
+		/**
+		 * Disconnects and destroys the ManagedObjectObserver observing the menu items
+		 *
+		 * @private
+		 */
+		MenuItem.prototype._disconnectAndDestroyCustomDataObserver = function () {
+			if (this._oCustomDataObserver) {
+				this._oCustomDataObserver.disconnect();
+				this._oCustomDataObserver.destroy();
+				this._oCustomDataObserver = null;
+			}
 		};
 
 		//Internal methods used to identify the item in the Menu's hierarchy.
