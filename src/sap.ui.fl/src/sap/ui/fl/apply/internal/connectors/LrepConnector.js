@@ -2,22 +2,22 @@
  * ! ${copyright}
  */
 
-/* global XMLHttpRequest */
-
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/security/encodeURLParameters",
 	"sap/base/util/UriParameters",
-	"sap/ui/fl/apply/connectors/BaseConnector"
+	"sap/ui/fl/apply/connectors/BaseConnector",
+	"sap/ui/fl/apply/internal/connectors/Utils"
 ], function(
 	merge,
 	encodeURLParameters,
 	UriParameters,
-	BaseConnector
+	BaseConnector,
+	ApplyUtils
 ) {
 	"use strict";
 
-	var URLS = {
+	var ROUTES = {
 		DATA: "/flex/data/",
 		MODULES: "/flex/modules/"
 	};
@@ -38,76 +38,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Creating a full request url;
-	 * This includes the url prefix and optional cache buster token, flex reference and query parameters.
-	 *
-	 * @param {string} sUrl url prefix
-	 * @param {string} sFlexReference flexibility reference
-	 * @param {string} sCacheKey cache buster token
-	 * @param {map} mParameters query parameters
-	 * @returns {string} full request url
-	 * @private
-	 */
-	function getUrlWithQueryParameters(mPropertyBag, sRoute) {
-		var mParameters = {};
-
-		if (mPropertyBag.appVersion) {
-			mParameters.appVersion = mPropertyBag.appVersion;
-		}
-
-		var sUrl = mPropertyBag.url + sRoute;
-
-		if (mPropertyBag.cacheKey) {
-			sUrl += "~" + mPropertyBag.cacheKey + "~/";
-		}
-
-		if (mPropertyBag.reference) {
-			sUrl += mPropertyBag.reference;
-		}
-
-		mParameters = mParameters || {};
-
-		var sClient = getClient();
-
-		if (sClient) {
-			mParameters["sap-client"] = sClient;
-		}
-
-		var sQueryParameters = encodeURLParameters(mParameters);
-
-		if (sQueryParameters.length > 0) {
-			sUrl += "?" + sQueryParameters;
-		}
-
-		return sUrl;
-	}
-
-	/**
-	 * Sending a xhr request and handling the response according to the status code of the response.
-	 *
-	 * @param {string} sUrl Url of the sent request
-	 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
-	 * @private
-	 */
-	function sendRequest(sUrl) {
-		return new Promise(function (resolve, reject) {
-			var xhr = new XMLHttpRequest();
-
-			xhr.open('GET', sUrl);
-
-			xhr.send();
-
-			xhr.onload = function() {
-				if (xhr.status >= 200 && xhr.status < 400) {
-					resolve(JSON.parse(xhr.response));
-				} else {
-					reject(xhr.status + ": " + xhr.statusText);
-				}
-			};
-		});
-	}
-
-	/**
 	 * Connector for requesting data from an LRep based back end.
 	 *
 	 * @namespace sap.ui.fl.apply.connectors.LrepConnector
@@ -121,24 +51,31 @@ sap.ui.define([
 		 * Loads the data from the back end and triggers a second request for modules in case the back end responses with
 		 * a flag that such modules are present.
 		 *
-		 * @param {map} mPropertyBag further properties
-		 * @param {string} mPropertyBag.flexReference flexibility reference
-		 * @param {string} [mPropertyBag.appVersion] version of the application
-		 * @param {string} [mPropertyBag.url] configured url for the connector
-		 * @param {string} [mPropertyBag.cacheKey] cache buster token
+		 * @param {object} mPropertyBag Further properties
+		 * @param {string} mPropertyBag.reference Flexibility reference
+		 * @param {string} mPropertyBag.appVersion Version of the application
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var sDataUrl = getUrlWithQueryParameters(mPropertyBag, URLS.DATA);
-			return sendRequest(sDataUrl).then(function (oResponse) {
+			var mParameters = {};
+
+			var sClient = getClient();
+			if (sClient) {
+				mParameters["sap-client"] = sClient;
+			}
+
+			var sDataUrl = ApplyUtils.getUrlWithQueryParameters(ROUTES.DATA, mPropertyBag, mParameters);
+			return ApplyUtils.sendRequest(sDataUrl).then(function (oResponse) {
 				// TODO(when the cacheKey calculation implementation happens): see that the etag / cacheKey is handled accordingly
 
 				if (!oResponse.loadModules) {
 					return oResponse;
 				}
 
-				var sModulesUrl = getUrlWithQueryParameters(mPropertyBag, URLS.MODULES);
-				return sendRequest(sModulesUrl).then(function () {
+				var sModulesUrl = ApplyUtils.getUrlWithQueryParameters(ROUTES.MODULES, mPropertyBag, mParameters);
+				return ApplyUtils.sendRequest(sModulesUrl).then(function () {
 					return oResponse;
 				});
 			});
