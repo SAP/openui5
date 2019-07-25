@@ -179,8 +179,8 @@ sap.ui.define([
 			 * When multi-selection is enabled and multiple items are selected, the method returns
 			 * the lead selected item. Sets the zero-based index of the currently selected item. This method
 			 * removes any previous selections. When the given index is invalid, the call is ignored.
-			 * <b>Note:</b> The property cannot be defined in the view. When a selection plugin is applied to the table, the property is not
-			 * bindable.
+			 * <b>Note:</b> If the rows of the table are bound, the value of the property is reset to -1.
+			 * When a selection plugin is applied to the table, the property is not bindable.
 			 *
 			 * @deprecated As of version 1.69, replaced by {@link sap.ui.table.Table#getSelectedIndices} and
 			 * {@link sap.ui.table.Table#setSelectedIndex}
