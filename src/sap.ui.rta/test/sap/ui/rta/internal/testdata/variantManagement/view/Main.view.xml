@@ -74,10 +74,9 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
-					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="{SectionTitle2}" class="sapUiNoMargin">
+					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="{SectionTitle2}">
 						<uxap:ObjectPageSubSection>
-							<form:SimpleForm class="sapUiNoMargin"
-											 title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
+							<form:SimpleForm title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
 											 maxContainerCols="3"
 											 editable="true"
 											 adjustLabelSpan="false"
@@ -154,7 +153,7 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
-					<uxap:ObjectPageSection id="ObjectPageSectionWithSmartForm" title="{SectionTitle4}" class="sapUiNoMargin">
+					<uxap:ObjectPageSection id="ObjectPageSectionWithSmartForm" title="{SectionTitle4}">
 						<uxap:ObjectPageSubSection>
 							<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
 								<smartForm:Group id="MainFormExpandable.FirstGroup" label="1. Group">
@@ -189,10 +188,9 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
-					<uxap:ObjectPageSection id="ObjectPageSectionWithVM" title="{SectionTitle3}" class="sapUiNoMargin">
+					<uxap:ObjectPageSection id="ObjectPageSectionWithVM" title="{SectionTitle3}">
 						<uxap:ObjectPageSubSection id="ObjectPageSubSectionWithVM">
 							<l:Grid
-									class="sapUiNoMargin"
 									hSpacing="0"
 									defaultSpan="L12 M12 S12">
 								<Bar>
