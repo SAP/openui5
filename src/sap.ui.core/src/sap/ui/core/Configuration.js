@@ -248,14 +248,39 @@ sap.ui.define([
 				}
 			}
 
+			function getMetaTagValue(sName) {
+				var oMetaTag = document.querySelector("META[name='" + sName + "']"),
+				    sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
+				if (sMetaContent) {
+					return sMetaContent;
+				}
+			}
+
+			function validateThemeOrigin(sOrigin) {
+				var sAllowedOrigins = getMetaTagValue("sap-allowedThemeOrigins");
+				return !!sAllowedOrigins && sAllowedOrigins.split(",").some(function(sAllowedOrigin) {
+					return sAllowedOrigin === "*" || sOrigin === sAllowedOrigin.trim();
+				});
+			}
+
 			function validateThemeRoot(sThemeRoot) {
 				var oThemeRoot,
 					sPath;
 
 				try {
-					oThemeRoot = new URI(sThemeRoot, window.location.href).normalize();
-					sPath = oThemeRoot.path();
-					return sPath + (sPath.slice(-1) === '/' ? '' : '/') + "UI5/";
+					// Remove search query as they are not supported for themeRoots/resourceRoots
+					oThemeRoot = new URI(sThemeRoot).search("");
+
+					// If the URL is absolute, validate the origin
+					var sOrigin = oThemeRoot.origin();
+					if (sOrigin && validateThemeOrigin(sOrigin)) {
+						sPath = oThemeRoot.toString();
+					} else {
+						// For relative URLs or not allowed origins
+						// ensure same origin and resolve relative paths based on href
+						sPath = oThemeRoot.absoluteTo(window.location.href).origin(window.location.origin).normalize().toString();
+					}
+					return sPath + (sPath.endsWith('/') ? '' : '/') + "UI5/";
 				} catch (e) {
 					// malformed URL are also not accepted
 				}
@@ -306,14 +331,6 @@ sap.ui.define([
 			this._compatversion._default = _getCVers();
 			for (var n in M_COMPAT_FEATURES) {
 				this._compatversion[n] = _getCVers(n);
-			}
-
-			function getMetaTagValue(sName) {
-				var oMetaTag = document.querySelector("META[name='" + sName + "']"),
-				    sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
-				if (sMetaContent) {
-					return sMetaContent;
-				}
 			}
 
 			// 6. apply the settings from the url (only if not blocked by app configuration)
