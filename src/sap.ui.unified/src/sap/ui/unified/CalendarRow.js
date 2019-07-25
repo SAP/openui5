@@ -1648,20 +1648,22 @@ sap.ui.define([
 			}
 		}
 
+		sAriaLabelSelected = oAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
+		sAriaLabelNotSelected = oAppointment.$().attr("aria-labelledby").replace(sSelectedTextId, "").trim();
+
 		if (oAppointment.getSelected()){
 			oAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
 			oAppointment.$().removeClass("sapUiCalendarAppSel");
+			oAppointment.$().attr("aria-labelledby", sAriaLabelNotSelected);
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);
 		} else {
 			oAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
 			oAppointment.$().addClass("sapUiCalendarAppSel");
+			oAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
 			_removeAllAppointmentSelections(this, bRemoveOldSelection);
 		}
 		// removes or adds the selected appointments from this.aSelectedAppointments
 		this._updateSelectedAppointmentsArray(oAppointment);
-
-		sAriaLabelSelected = oAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
-		oAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
 
 		if (oAppointment._aAppointments) {
 			// it's a group Appointment

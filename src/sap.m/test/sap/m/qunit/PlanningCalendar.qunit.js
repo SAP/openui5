@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
 ], function(
@@ -68,6 +69,7 @@ sap.ui.define([
 	DatesRow,
 	coreLibrary,
 	Control,
+	InvisibleText,
 	waitForThemeApplied
 ) {
 	// set language to en-GB, since we have specific language strings tested
@@ -4483,6 +4485,36 @@ sap.ui.define([
 		assert.strictEqual(jQuery("#" + oSut.getId() + "-OneMonthInt--Month0-20141201").attr("role"), sExpectedRole, "Correct role 'gridcell' is set in One Month view");
 
 		// Clean up
+		oSut.destroy();
+	});
+
+	QUnit.test("Hidden 'Selected' text when selecting/deselecting appointment", function (assert) {
+		// Arrange
+		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), new Date(2015, 0, 1)),
+			sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED"),
+			$appointmentRef;
+
+		oSut.placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
+
+		$appointmentRef = jQuery("#PC-R1A1");
+
+		// Assert
+		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1,
+			"The appointment shouldn't have a hidden 'Selected' text");
+
+		// Act - click on an appointment to select it
+		qutils.triggerEvent("tap", "PC-R1A1");
+
+		// Assert
+		assert.ok($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId) > -1,
+			"The appointment should have a hidden 'Selected' text");
+
+		// Act - click on an appointment again to deselect it
+		qutils.triggerEvent("tap", "PC-R1A1");
+		assert.strictEqual($appointmentRef.attr("aria-labelledby").indexOf(sSelectedTextId), -1,
+			"The 'Selected' text should be removed from the references");
+
 		oSut.destroy();
 	});
 
