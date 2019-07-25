@@ -464,13 +464,13 @@ sap.ui.define([
 
 	QUnit.test("Has the appropriate ARIA attributes", function (assert) {
 		//Arange
-		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.SUCCESS});
+		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.Success});
 		oObjectStatus.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		assert.ok(oObjectStatus.$().attr("aria-describedby") !== null, "aria-describedby attribute is present");
-		assert.ok(oObjectStatus.$().children(":last-child").attr("aria-hidden") !== null, "hidden element has aria-hidden attribute");
+		assert.ok(oObjectStatus.$().attr("aria-describedby"), "aria-describedby attribute is present");
+		assert.notOk(oObjectStatus.$().children(":last-child").attr("aria-hidden"), "hidden element doesn't have aria-hidden attribute");
 
 		//Cleanup
 		oObjectStatus.destroy();
@@ -512,6 +512,27 @@ sap.ui.define([
 		// Clean up
 		oObjectStatus.destroy();
 
+	});
+
+	QUnit.test("Hidden state element invisibility class", function (assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus("os", {
+			text: "Something",
+			state: ValueState.Error
+		});
+
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oObjectStatus.$().find("#ossapSRH").hasClass("sapUiPseudoInvisibleText"),
+			"Hidden state element has the pseudo invisibility class");
+
+		assert.notOk(jQuery("#ossapSRH").hasClass("sapUiInvisibleText"),
+			"Hidden state element doesn't have the pure invisible text class");
+
+		//Cleanup
+		oObjectStatus.destroy();
 	});
 
 	QUnit.module("textDirection");
