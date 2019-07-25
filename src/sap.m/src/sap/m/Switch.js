@@ -149,6 +149,10 @@ function(
 			this._setTempState(Math.abs(iPosition) < Switch._SWAPPOINT);
 		};
 
+		Switch.prototype._resetSlide = function() {
+			this.getDomRef("inner").style.cssText = "";
+		};
+
 		Switch.prototype._setTempState = function(b) {
 			if (this._bTempState === b) {
 				return;
@@ -156,48 +160,6 @@ function(
 
 			this._bTempState = b;
 			this.getDomRef("handle").setAttribute("data-sap-ui-swt", b ? this._sOn : this._sOff);
-		};
-
-		Switch.prototype._setDomState = function(bState, bAnimate) {
-			var CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sState = bState ? this._sOn : this._sOff,
-				oDomRef = this.getDomRef();
-
-			if (!oDomRef) {
-				return;
-			}
-
-			var $Switch = this.$("switch"),
-				oSwitchInnerDomRef = this.getDomRef("inner"),
-				oHandleDomRef = this.getDomRef("handle"),
-				oCheckboxDomRef = null;
-
-			if (this.getName()) {
-				oCheckboxDomRef = this.getDomRef("input");
-				oCheckboxDomRef.setAttribute("checked", bState);
-				oCheckboxDomRef.setAttribute("value", sState);
-			}
-
-			oHandleDomRef.setAttribute("data-sap-ui-swt", sState);
-
-			this._getInvisibleElement().text(this.getInvisibleElementText(bState));
-
-			if (bState) {
-				$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
-				oDomRef.setAttribute("aria-checked", "true");
-			} else {
-				$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
-				oDomRef.setAttribute("aria-checked", "false");
-			}
-
-			if (sap.ui.getCore().getConfiguration().getAnimation() && bAnimate) {
-				$Switch.addClass(CSS_CLASS + "Trans");
-			} else {
-				$Switch.removeClass(CSS_CLASS + "Trans");
-			}
-
-			// remove inline styles
-			oSwitchInnerDomRef.style.cssText = "";
 		};
 
 		Switch.prototype._getInvisibleElement = function(){
@@ -235,9 +197,6 @@ function(
 
 			return sText;
 		};
-
-		// the milliseconds takes the transition from one state to another
-		Switch._TRANSITIONTIME = Number(Parameters.get("_sap_m_Switch_TransitionTime")) || 0;
 
 		// the position of the inner HTML element whether the switch is "ON"
 		Switch._ONPOSITION = Number(Parameters.get("_sap_m_Switch_OnPosition"));
@@ -302,8 +261,7 @@ function(
 			setTimeout(this["focus"].bind(this), 0);
 
 			// add active state
-			this.$("switch").addClass(CSS_CLASS + "Pressed")
-							.removeClass(CSS_CLASS + "Trans");
+			this.$("switch").addClass(CSS_CLASS + "Pressed");
 		};
 
 		/**
@@ -401,19 +359,10 @@ function(
 				// the touchend for the touch we're monitoring
 				assert(!fnTouch.find(oEvent.touches, this._iActiveTouchId), "touchend still active");
 
-				// remove active state
-				this.$("switch").removeClass(this.getRenderer().CSS_CLASS + "Pressed");
-
-				if (this._updateStateTimeout) {
-					clearTimeout(this._updateStateTimeout);
-					this._updateStateAndNotify();
+				if (!this._updateStateAndNotify()) {
+					this.$("switch").removeClass(this.getRenderer().CSS_CLASS + "Pressed");
+					this._resetSlide();
 				}
-
-				// note: update the DOM before the change event is fired for better user experience
-				this._setDomState(this._bDragging ? this._bTempState : !this.getState(), true);
-
-				// fire the change event after the CSS transition is completed
-				this._updateStateTimeout = setTimeout(this._updateStateAndNotify.bind(this), Switch._TRANSITIONTIME);
 			}
 		};
 
@@ -437,14 +386,9 @@ function(
 				// mark the event for components that needs to know if the event was handled by the Switch
 				oEvent.setMarked();
 
-				if (this._updateStateTimeout) {
-					clearTimeout(this._updateStateTimeout);
+				if (!this._bDragging) {
 					this._updateStateAndNotify();
 				}
-				this._setDomState(this._bDragging ? this._bTempState : !this.getState(), true);
-
-				// fire the change event after the CSS transition is completed
-				this._updateStateTimeout = setTimeout(this._updateStateAndNotify.bind(this), Switch._TRANSITIONTIME);
 			}
 		};
 
@@ -477,32 +421,24 @@ function(
 
 
 		Switch.prototype._updateStateAndNotify = function() {
-			var bState = this.getState();
+			var bState = this.getState(),
+				bChanged;
+
 			this.setState(this._bDragging ? this._bTempState : !bState);
 
-			if (bState !== this.getState()) {
+			bChanged = bState !== this.getState();
+
+			if (bChanged) {
 				this.fireChange({ state: this.getState() });
 			}
-			this._updateStateTimeout = null;
 			this._bDragging = false;
+
+			return bChanged;
 		};
 
 		/* =========================================================== */
 		/* API method                                                  */
 		/* =========================================================== */
-
-		/**
-		 * Change the switch state between on and off.
-		 *
-		 * @param {boolean} bState The new state - true for 'on' and false for 'off'
-		 * @public
-		 * @returns {sap.m.Switch} <code>this</code> to allow method chaining.
-		 */
-		Switch.prototype.setState = function(bState) {
-			this.setProperty("state", bState, true);
-			this._setDomState(this.getState());
-			return this;
-		};
 
 		Switch.prototype.getAccessibilityInfo = function() {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
