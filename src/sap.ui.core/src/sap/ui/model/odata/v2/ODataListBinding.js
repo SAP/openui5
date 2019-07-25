@@ -202,7 +202,7 @@ sap.ui.define([
 		var bLoadContexts = true,
 		aContexts = this._getContexts(iStartIndex, iLength),
 		aContextData = [],
-		oSection;
+		oMissingSection;
 
 		if (this.useClientMode()) {
 			if (!this.aAllKeys && !this.bPendingRequest && this.oModel.getServiceMetadata()) {
@@ -210,14 +210,14 @@ sap.ui.define([
 				aContexts.dataRequested = true;
 			}
 		} else {
-			oSection = this.calculateSection(iStartIndex, iLength, iThreshold, aContexts);
-			bLoadContexts = aContexts.length !== iLength && !(this.bLengthFinal && aContexts.length >= this.iLength - iStartIndex);
+			oMissingSection = this.calculateSection(iStartIndex, iLength, iThreshold, aContexts);
+			bLoadContexts = aContexts.length !== iLength || oMissingSection.length > 0;
 
 			// check if metadata are already available
 			if (this.oModel.getServiceMetadata()) {
 				// If rows are missing send a request
-				if (!this.bPendingRequest && oSection.length > 0 && (bLoadContexts || iLength < oSection.length)) {
-					this.loadData(oSection.startIndex, oSection.length);
+				if (!this.bPendingRequest && oMissingSection.length > 0 && bLoadContexts) {
+					this.loadData(oMissingSection.startIndex, oMissingSection.length);
 					aContexts.dataRequested = true;
 				}
 			}
@@ -312,92 +312,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Calculates a missing section inside the binding's data array.
+	 * The result is an object containing the first missing index (startIndex),
+	 * and the number of missing entries (length).
+	 *
+	 * The given threshold is prependend and appended before/after the given iStartIndex
+	 * and iLength.
+	 *
 	 * @param {int} iStartIndex The start index of the requested contexts
 	 * @param {int} iLength The requested amount of contexts
 	 * @param {int} iThreshold The threshold value
-	 * @param {array} aContexts Array of existing contexts
-	 * @returns {object} oSection The section info object
+	 * @returns {object} oMissingSection The section object;
 	 * @private
 	 */
-	ODataListBinding.prototype.calculateSection = function(iStartIndex, iLength, iThreshold, aContexts) {
-		//var bLoadNegativeEntries = false,
-		var iSectionLength,
-		iSectionStartIndex,
-		iPreloadedSubsequentIndex,
-		iPreloadedPreviousIndex,
-		iRemainingEntries,
-		oSection = {},
-		sKey;
-
-		iSectionStartIndex = iStartIndex;
-		iSectionLength = 0;
-
-		// check which data exists before startindex; If all necessary data is loaded iPreloadedPreviousIndex stays undefined
-		for (var i = iStartIndex; i >= Math.max(iStartIndex - iThreshold, 0); i--) {
-			sKey = this.aKeys[i];
-			if (!sKey) {
-				iPreloadedPreviousIndex = i + 1;
-				break;
-			}
-		}
-		// check which data is already loaded after startindex; If all necessary data is loaded iPreloadedSubsequentIndex stays undefined
-		for (var j = iStartIndex + iLength; j < iStartIndex + iLength + iThreshold; j++) {
-			sKey = this.aKeys[j];
-			if (!sKey) {
-				iPreloadedSubsequentIndex = j;
-				break;
-			}
+	ODataListBinding.prototype.calculateSection = function(iStartIndex, iLength, iThreshold) {
+		// prepend threshold to start
+		if (iStartIndex >= iThreshold) {
+			iStartIndex -= iThreshold;
+			iLength += iThreshold;
+		} else {
+			iLength += iStartIndex;
+			iStartIndex = 0;
 		}
 
-		// calculate previous remaining entries
-		iRemainingEntries = iStartIndex - iPreloadedPreviousIndex;
-		if (iPreloadedPreviousIndex && iStartIndex > iThreshold && iRemainingEntries < iThreshold) {
-			if (aContexts.length !== iLength) {
-				iSectionStartIndex = iStartIndex - iThreshold;
-			} else {
-				iSectionStartIndex = iPreloadedPreviousIndex - iThreshold;
-			}
-			iSectionLength = iThreshold;
+		// append threshold to end
+		iLength += iThreshold;
+		if (this.bLengthFinal && iStartIndex + iLength > this.iLength) {
+			iLength = this.iLength - iStartIndex;
 		}
 
-		// prevent iSectionStartIndex to become negative
-		iSectionStartIndex = Math.max(iSectionStartIndex, 0);
-
-		// No negative preload needed; move startindex if we already have some data
-		if (iSectionStartIndex === iStartIndex) {
-			iSectionStartIndex += aContexts.length;
+		// search start of first gap
+		while (iLength && this.aKeys[iStartIndex]) {
+			iStartIndex += 1;
+			iLength -= 1;
 		}
 
-		//read the rest of the requested data
-		if (aContexts.length !== iLength) {
-			iSectionLength += iLength - aContexts.length;
+		// search end of last gap
+		while (iLength && this.aKeys[iStartIndex + iLength - 1]) {
+			iLength -= 1;
 		}
 
-		//calculate subsequent remaining entries
-		iRemainingEntries = iPreloadedSubsequentIndex - iStartIndex - iLength;
-
-		if (iRemainingEntries === 0) {
-			iSectionLength += iThreshold;
-		}
-
-		if (iPreloadedSubsequentIndex && iRemainingEntries < iThreshold && iRemainingEntries > 0) {
-			//check if we need to load previous entries; If not we can move the startindex
-			if (iSectionStartIndex > iStartIndex) {
-				iSectionStartIndex = iPreloadedSubsequentIndex;
-				iSectionLength += iThreshold;
-			}
-
-		}
-
-		//check final length and adapt sectionLength if needed.
-		if (this.bLengthFinal && this.iLength < (iSectionLength + iSectionStartIndex)) {
-			iSectionLength = this.iLength - iSectionStartIndex;
-		}
-
-		oSection.startIndex = iSectionStartIndex;
-		oSection.length = iSectionLength;
-
-		return oSection;
+		return {
+			startIndex : iStartIndex,
+			length : iLength
+		};
 	};
 
 	/**

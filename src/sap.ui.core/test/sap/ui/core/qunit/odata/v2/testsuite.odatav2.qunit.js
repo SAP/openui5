@@ -39,6 +39,9 @@ sap.ui.define(function() {
 			ODataV2ListBinding: {
 				title: "sap.ui.model.odata.v2.ODataListBinding - QUnit tests"
 			},
+			ODataV2ListBinding_Paging: {
+				title: "sap.ui.model.odata.v2.ODataListBinding_Paging - QUnit tests"
+			},
 			ODataPropertyBinding: {
 				title: "sap.ui.model.odata.v2.ODataPropertyBinding - QUnit tests"
 			},
