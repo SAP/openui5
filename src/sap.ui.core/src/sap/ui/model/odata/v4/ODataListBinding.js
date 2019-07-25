@@ -1242,7 +1242,6 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
 		var sChangeReason,
-			oContext = this.oContext,
 			aContexts,
 			bDataRequested = false,
 			bFireChange = false,
@@ -1269,7 +1268,7 @@ sap.ui.define([
 				+ " third parameter must not be set if extended change detection is enabled");
 		}
 
-		if (this.bRelative && !oContext) { // unresolved relative binding
+		if (this.bRelative && !this.oContext) { // unresolved relative binding
 			this.aPreviousData = []; // compute diff from scratch when binding is resolved again
 			return [];
 		}
@@ -1307,7 +1306,7 @@ sap.ui.define([
 
 		oGroupLock = this.oReadGroupLock;
 		this.oReadGroupLock = undefined;
-		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
+		if (!this.oDiff) { // w/o E.C.D there won't be a diff
 			// make sure "refresh" is followed by async "change"
 			oPromise = this.fetchContexts(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
 				/*bAsync=*/bRefreshEvent, function () {
