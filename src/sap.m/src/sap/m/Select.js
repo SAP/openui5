@@ -1197,11 +1197,6 @@ function(
 			// rendering phase is started
 			this.bRenderingPhase = true;
 
-			// note: in Firefox 38, the focusout event is not fired when the select is removed
-			if (Device.browser.firefox && (this.getFocusDomRef() === document.activeElement)) {
-				this._handleFocusout();
-			}
-
 			this.synchronizeSelection({
 				forceSelection: this.getForceSelection()
 			});
