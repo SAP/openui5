@@ -13,6 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	var sServiceURI = "/service/";
+	var SelectionMode = tableLibrary.SelectionMode;
 
 	function startMockServer() {
 		MockServer.config({
@@ -127,6 +128,19 @@ sap.ui.define([
 			done();
 		});
 		this.oTable.addSelectionInterval(0, 5);
+	});
+
+	QUnit.test("SelectionMode", function(assert) {
+		assert.equal(this.oTable._oSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is correctly initialized");
+		this.oTable.removeAllPlugins();
+		this.oTable.addPlugin(new MultiSelectionPlugin({
+			selectionMode: "Single"
+		}));
+		assert.equal(this.oTable._oSelectionPlugin.getSelectionMode(), SelectionMode.Single, "SelectionMode is correctly initialized");
+		assert.equal(this.oTable.getSelectionMode(), SelectionMode.Single, "SelectionMode is properly set in the Table");
+		this.oTable._oSelectionPlugin.setSelectionMode(SelectionMode.MultiToggle);
+		assert.equal(this.oTable._oSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is properly set");
+		assert.equal(this.oTable.getSelectionMode(), SelectionMode.MultiToggle, "The SelectionMode is properly set in the Table");
 	});
 
 	QUnit.test("Selection: number of items in range below limit", function(assert) {

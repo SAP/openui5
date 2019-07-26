@@ -279,19 +279,34 @@
 						NONE: {
 							text: "None",
 							action: function(oTable) {
-								oTable.setSelectionMode("None");
+								if (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
+									|| oTable._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
+									oTable.setSelectionMode("None");
+								} else {
+									oTable._oSelectionPlugin.setSelectionMode("None");
+								}
 							}
 						},
 						SINGLE: {
 							text: "Single",
 							action: function(oTable) {
-								oTable.setSelectionMode("Single");
+								if (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
+									|| oTable._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
+									oTable.setSelectionMode("Single");
+								} else {
+									oTable._oSelectionPlugin.setSelectionMode("Single");
+								}
 							}
 						},
 						MULTITOGGLE: {
 							text: "MultiToggle",
 							action: function(oTable) {
-								oTable.setSelectionMode("MultiToggle");
+								if (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
+									|| oTable._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
+									oTable.setSelectionMode("MultiToggle");
+								} else {
+									oTable._oSelectionPlugin.setSelectionMode("MultiToggle");
+								}
 							}
 						}
 					}
@@ -338,7 +353,7 @@
 							text: "MultiSelection",
 							action: function(oTable) {
 								var MultiSelectionPlugin = sap.ui.requireSync("sap/ui/table/plugins/MultiSelectionPlugin");
-								oTable.addPlugin(new MultiSelectionPlugin({
+								var oPlugin = new MultiSelectionPlugin({
 									limit: 20,
 									selectionChange: function(oEvent) {
 										var oPlugin = oEvent.getSource();
@@ -364,7 +379,9 @@
 										this.message.setVisible(!!sMessage);
 										return this;
 									}
-								}));
+								});
+								oTable.addPlugin(oPlugin);
+								sap.ui.getCore().byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
 							}
 						}
 					}
