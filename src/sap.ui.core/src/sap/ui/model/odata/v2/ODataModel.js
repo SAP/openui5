@@ -3931,10 +3931,10 @@ sap.ui.define([
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod, sDeepPath) {
 		var oPayload, oEntityType, mParams, sMethod, sETag, sUrl, bCreated, mHeaders, aUrlParams, oRequest, oUnModifiedEntry, that = this;
 
-		if (sDeepPath && this.mChangedEntities[sKey].__metadata) {
+		if (sDeepPath && this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata) {
 			// store or update deep path
 			this.mChangedEntities[sKey].__metadata.deepPath = sDeepPath;
-		} else if (!sDeepPath && this.mChangedEntities[sKey].__metadata && this.mChangedEntities[sKey].__metadata.deepPath){
+		} else if (!sDeepPath && this.mChangedEntities[sKey] && this.mChangedEntities[sKey].__metadata && this.mChangedEntities[sKey].__metadata.deepPath){
 			// retrieve deep path
 			sDeepPath = this.mChangedEntities[sKey].__metadata.deepPath;
 		}

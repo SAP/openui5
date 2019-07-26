@@ -793,6 +793,20 @@ sap.ui.define([
         });
     });
 
+    QUnit.test("ODataModel.submitChanges/resetChanges - Synchronous reset changes call", function (assert) {
+        var that = this;
+        var done = assert.async();
+
+        this.oModel.metadataLoaded().then(function () {
+            that.oModel.createEntry("/ProductSet", oCreateEntryProduct);
+            that.oModel.submitChanges();
+            that.oModel.resetChanges();
+            assert.ok("Reset works as expected");
+            done();
+        });
+    });
+
+
     QUnit.module("Message Scope supported", {
         beforeEach: function () {
             this.sServiceUri = "/SalesOrderSrv/";
