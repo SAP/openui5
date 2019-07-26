@@ -604,7 +604,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 			var oSpy = sinon.spy(oResizeSplitter, "getCalculatedSizes");
 
-			oXMLView.onBeforeRendering = function () {
+			oXMLView.attachBeforeRendering(function () {
 				// check
 				assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
 				oResizeSplitter.triggerResize(true);
@@ -612,7 +612,7 @@ sap.ui.define([
 
 				oXMLView.destroy();
 				done();
-			};
+			});
 
 			oXMLView.rerender();
 		});

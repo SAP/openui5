@@ -2,10 +2,12 @@
 sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/ui/core/Core",
+	"sap/ui/core/Control",
+	"sap/ui/core/RenderManager",
 	"sap/ui/commons/layout/MatrixLayout",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery"
-], function(HTML, oCore, MatrixLayout, TestButton, jQuery) {
+], function(HTML, oCore, Control, RenderManager, MatrixLayout, TestButton, jQuery) {
 	"use strict";
 
 	var normalize = (function() {
@@ -60,7 +62,8 @@ sap.ui.define([
 			'<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(0,0,255)"></div>' +
 			'<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(255,255,255)"></div>' +
 			'<div data-sap-ui-preserve="html7" style="width:256px;height:64px;background-color:rgb(255,0,0)"></div>',
-		"uiAreaE": ""
+		"uiAreaE": "",
+		"uiAreaF": ""
 	};
 	Object.keys(DOM_FIXTURE).forEach(function(sId) {
 		var uiArea = document.createElement("div");
@@ -133,6 +136,24 @@ sap.ui.define([
 			}, 200);
 		});
 	}
+
+	var TestContainer = Control.extend("my.TestContainer", {
+		metadata: {
+			aggregations: {
+				content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl).openEnd();
+				oRm.openStart("div", oControl.getId() + "-content").openEnd();
+				oControl.getContent().forEach(oRm.renderControl, oRm);
+				oRm.close("div");
+				oRm.close("div");
+			}
+		}
+	});
 
 	// =================================================================
 	// TESTS
@@ -298,6 +319,52 @@ sap.ui.define([
 		okFragment(assert, FRAGMENT_2, "uiAreaA", "html3 DOM must be equal to FRAGMENT_2");
 	});
 
+	QUnit.test("remove & rerender", function(assert) {
+		var oHtml3 = oCore.byId("html3");
+		var oHtml3Dom = oHtml3.getDomRef();
+		var oParent = oHtml3.getParent();
+		oParent.removeContent(0);
+		oCore.applyChanges();
+
+		assert.ok(RenderManager.isPreservedContent(jQuery("#html3")[0]), "html3 DOM must have been moved to preserve area");
+
+		oParent.insertContent(oHtml3);
+		oCore.applyChanges();
+
+		assert.ok(oHtml3Dom === oHtml3.getDomRef(), "html3 has the same DOM before rendering");
+	});
+
+	QUnit.test("move & rerender", function(assert) {
+		var oGrandChild = new HTML({
+			content: "<br>"
+		});
+		var oChild1 = new TestContainer({
+			content: oGrandChild
+		});
+		var oChild2 = new TestContainer();
+		var oParent = new TestContainer({
+			content : [oChild1, oChild2]
+		});
+		oParent.placeAt("uiAreaF");
+		oCore.applyChanges();
+
+		var oGrandChildDom = oGrandChild.getDomRef();
+		oChild2.addContent(oChild1.removeContent(0));
+		oParent.rerender();
+		assert.ok(oGrandChildDom === oGrandChild.getDomRef(), "oGrandChild DOM reference has not changed after moving from child1 to child2");
+
+		oChild1.addContent(oChild2.removeContent(0));
+		oParent.rerender();
+		assert.ok(oGrandChildDom === oGrandChild.getDomRef(), "oGrandChild DOM reference has not changed after moving from child2 to child1");
+
+		oParent.setVisible(false);
+		oCore.applyChanges();
+		oParent.setVisible(true);
+		oCore.applyChanges();
+		assert.ok(oGrandChildDom === oGrandChild.getDomRef(), "oGrandChild DOM reference has not changed after parent visibility is changed");
+
+		oParent.destroy();
+	});
 
 	QUnit.test("survive removal", function(assert) {
 		// check preconditions

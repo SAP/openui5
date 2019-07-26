@@ -194,8 +194,17 @@ sap.ui.define([
 	};
 
 	HTML.prototype.onBeforeRendering = function() {
-		if (this.getPreferDOM() && this.getDomRef() && !RenderManager.isPreservedContent(this.getDomRef())) {
-			RenderManager.preserveContent(this.getDomRef(), /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
+		if (!this.getPreferDOM()) {
+			return;
+		}
+
+		var oDomRef = this.getDomRef();
+		if (oDomRef && !RenderManager.isPreservedContent(oDomRef)) {
+			// before the re-rendering move all "to-be-preserved" nodes to the preserved area
+			for (var sId = oDomRef.id, oNextDomRef; oDomRef && oDomRef.getAttribute("data-sap-ui-preserve") == sId; oDomRef = oNextDomRef) {
+				oNextDomRef = oDomRef.nextElementSibling;
+				RenderManager.preserveContent(oDomRef, /* bPreserveRoot */ true, /* bPreserveNodesWithId */ false);
+			}
 		}
 	};
 
@@ -245,8 +254,10 @@ sap.ui.define([
 				}
 			}
 
-			// set a marker that identifies all root nodes in $newContent as 'to-be-preserved'
-			RenderManager.markPreservableContent($newContent, this.getId());
+			if (this.getPreferDOM()) {
+				// set a marker that identifies all root nodes in $newContent as 'to-be-preserved'
+				RenderManager.markPreservableContent($newContent, this.getId());
+			}
 			// and if no node has the control id, search the first without an id and set it
 			if ( $newContent.find("#" + this.getId().replace(/(:|\.)/g,'\\$1')).length === 0 ) {
 				$newContent.filter(":not([id])").first().attr("id", this.getId());
