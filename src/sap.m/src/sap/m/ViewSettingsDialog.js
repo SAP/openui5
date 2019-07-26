@@ -1097,7 +1097,7 @@ function(
 	 *
 	 * @overwrite
 	 * @public
-	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The selected item or the item's key string
+	 * @param {sap.m.ViewSettingsItem|string|null} vItemOrKey The selected item or the item's key string
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.setSelectedPresetFilterItem = function(vItemOrKey) {
@@ -1109,14 +1109,16 @@ function(
 				"Could not set selected preset filter item. Item is not found: '" + vItemOrKey + "'"
 			);
 
-		//change selected item only if it is found among the preset filter items
-		if (validateViewSettingsItem(oItem)) {
+		//change selected item if it is found among the preset filter items or in case of resetting the value
+		if (validateViewSettingsItem(oItem) || oItem === null) {
 			// set selected = true for this item & selected = false for all others items
 			for (i = 0; i < aItems.length; i++) {
 				aItems[i].setProperty('selected', false, true);
 			}
 
-			oItem.setProperty('selected', true, true);
+			if (oItem !== null) {
+				oItem.setProperty('selected', true, true);
+			}
 			// clear filters (only one mode is allowed, preset filters or filters)
 			this._clearSelectedFilters();
 
