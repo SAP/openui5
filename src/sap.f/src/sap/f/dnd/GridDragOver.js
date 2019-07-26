@@ -150,6 +150,12 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 
 		this._removeDragEndDelegate();
 
+		// fire private event for handling IE specific layout fixes
+		this._oDropContainer.fireEvent("_gridPolyfillAfterDragEnd", {
+			indicator: this._$indicator
+		});
+
+		this._$indicator.attr("style", ""); // VirtualGrid sets position 'absolute' to the indicator, which breaks calculations in other containers, such as GridList
 		this._oDragControl = null;
 		this._oDropContainer = null;
 		this._sTargetAggregation = null;
@@ -168,6 +174,11 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		var $targetGridItem = this._findContainingGridItem(mDropPosition.targetControl),
 			$insertTarget = $targetGridItem || mDropPosition.targetControl.$(),
 			mStyles;
+
+		if (this._oDropContainer.isA("sap.f.GridContainer")) {
+			// todo: find better way to find the item wrapper when it is not grid item, needed for IE
+			$insertTarget = $insertTarget.closest(".sapFGridContainerItemWrapper");
+		}
 
 		// indicator should be the same size as dragged item
 		if ($targetGridItem) { // target container is a grid
@@ -195,6 +206,13 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 
 		// when drop indicator is shown, it becomes the new "drag from"
 		this._iDragFromIndex = this._$indicator.index();
+
+		// fire private event for handling IE specific layout fixes
+		this._oDropContainer.fireEvent("_gridPolyfillAfterDragOver", {
+			indicator: this._$indicator,
+			width: this._mDragItemDimensions.rect.width,
+			height: this._mDragItemDimensions.rect.height
+		});
 	};
 
 	/**
@@ -221,6 +239,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		if ($gridItem) {
 			$gridItem.show();
 		}
+
 	};
 
 	/**

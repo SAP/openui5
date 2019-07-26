@@ -158,5 +158,17 @@ sap.ui.define([
 		return Math.ceil((iItemHeight + iGapSize) / (iRowSize + iGapSize));
 	};
 
+	/**
+	 * Calculates how many columns would an item need to fit, based on its width.
+	 * @param {int} iItemWidth The width of the item.
+	 * @returns {int} The calculated columns for the given width. NaN if it can not be calculated.
+	 */
+	GridContainerSettings.prototype.calculateColumnsForItem = function (iItemWidth) {
+		var iGapSize = this.getGapInPx(),
+			iColumnSize = this.getColumnSizeInPx();
+
+		return Math.ceil((iItemWidth + iGapSize) / (iColumnSize + iGapSize));
+	};
+
 	return GridContainerSettings;
 });

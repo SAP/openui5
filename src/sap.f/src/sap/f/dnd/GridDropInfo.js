@@ -175,11 +175,6 @@ sap.ui.define([
 				return this._bShouldEnhance;
 			}
 
-			if (Device.browser.msie) { // enhanced DnD is not yet possible for IE
-				this._bShouldEnhance = false;
-				return this._bShouldEnhance;
-			}
-
 			this._bShouldEnhance = this.getDropPosition() === coreLibrary.dnd.DropPosition.Between
 				&& this.getDropLayout() === coreLibrary.dnd.DropLayout.Horizontal;
 		}
