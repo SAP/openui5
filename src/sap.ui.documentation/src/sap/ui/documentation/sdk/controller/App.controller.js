@@ -228,9 +228,9 @@ sap.ui.define([
 
 				oEvent.preventDefault();
 				if (sKey && sKey !== "home") {
-					this.getRouter().navTo(sKey, {}, true);
+					this.getRouter().navTo(sKey, {});
 				} else {
-					this.getRouter().navTo("welcome", {}, true);
+					this.getRouter().navTo("welcome", {});
 
 					this._setHeaderSelectedKey("home");
 				}
