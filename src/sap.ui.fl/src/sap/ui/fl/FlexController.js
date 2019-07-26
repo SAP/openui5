@@ -769,9 +769,7 @@ sap.ui.define([
 				var sMessage;
 				if (!oChangeHandler) {
 					sMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
-				}
-
-				if (!this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler)) {
+				} else if (!(typeof oChangeHandler.revertChange === "function")) {
 					sMessage = "No revert change function available to handle revert data for control type " + mControl.controlType;
 				}
 
@@ -805,7 +803,7 @@ sap.ui.define([
 						});
 				}
 				return false;
-			}.bind(this))
+			})
 			.then(function(bPending) {
 				if (bPending || (!bPending && bIsCurrentlyApplied) || bStashed) {
 					// if the change has no revertData attached to it they may be saved in the custom data
