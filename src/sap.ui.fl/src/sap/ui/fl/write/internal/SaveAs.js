@@ -133,7 +133,7 @@ sap.ui.define([
 	}
 
 	var SaveAs = {
-		saveAs: function(vSelector, mPropertyBag) {
+		saveAs: function(mPropertyBag) {
 			var oAppVariantClosure;
 			return DescriptorVariantFactory.createAppVariant(mPropertyBag)
 				.then(function(oAppVariant) {
@@ -144,14 +144,14 @@ sap.ui.define([
 					return _setTransportInfoForAppVariant(oAppVariantClosure, oTransportInfo);
 				})
 				.then(function() {
-					_moveChangesToNewFlexReference(vSelector, oAppVariantClosure);
-					return _gatherInlineDescrChanges(vSelector);
+					_moveChangesToNewFlexReference(mPropertyBag.selector, oAppVariantClosure);
+					return _gatherInlineDescrChanges(mPropertyBag.selector);
 				})
 				.then(function(aAllInlineChanges) {
 					return _inlineDescriptorChanges(aAllInlineChanges, oAppVariantClosure);
 				})
 				.then(function() {
-					var oFlexController = ChangesController.getFlexControllerInstance(vSelector);
+					var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 					// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
 					return oFlexController.saveAll(true)
 						.catch(function(oError) {
@@ -174,9 +174,9 @@ sap.ui.define([
 					throw new Error(oError, sMessageKey);
 				});
 		},
-		deleteAppVar: function(sReferenceAppId, mPropertyBag) {
+		deleteAppVar: function(mPropertyBag) {
 			var oAppVariantClosure;
-			return DescriptorVariantFactory.loadAppVariant(sReferenceAppId, true)
+			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, true)
 				.then(function(oAppVariant) {
 					oAppVariantClosure = merge({}, oAppVariant);
 					return _getTransportInfo(oAppVariantClosure, mPropertyBag);

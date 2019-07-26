@@ -113,7 +113,7 @@ function(
 
 	AppVariantUtils.createAppVariant = function(oRootControl, mPropertyBag) {
 		mPropertyBag.version = "1.0.0"; // Application variant version should be 1.0.0 which is expected by backend
-		return PersistenceWriteAPI.saveAs(oRootControl, mPropertyBag);
+		return PersistenceWriteAPI.saveAs(Object.assign({selector: oRootControl}, mPropertyBag));
 	};
 
 	AppVariantUtils.getInlineChangeInput = function(sValue, sComment) {
@@ -249,12 +249,12 @@ function(
 			oChangeSpecificData.texts = oChangeSpecificData.content.texts;
 			delete oChangeSpecificData.content.texts;
 		}
-		return ChangesWriteAPI.create(oChangeSpecificData, oRootControl);
+		return ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: oRootControl});
 	};
 
 	AppVariantUtils.addChangesToPersistence = function(aAllInlineChanges) {
 		aAllInlineChanges.forEach(function(oChange) {
-			return PersistenceWriteAPI.add(oChange);
+			return PersistenceWriteAPI.add({change: oChange});
 		});
 
 		return Promise.resolve();
@@ -466,7 +466,7 @@ function(
 	};
 
 	AppVariantUtils.deleteAppVariant = function(vSelector) {
-		return PersistenceWriteAPI.deleteAppVariant(vSelector);
+		return PersistenceWriteAPI.deleteAppVariant({selector: vSelector});
 	};
 
 	AppVariantUtils.handleBeforeUnloadEvent = function () {

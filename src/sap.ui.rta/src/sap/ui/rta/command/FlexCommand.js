@@ -190,7 +190,7 @@ sap.ui.define([
 		if (sVariantReference) {
 			mChangeSpecificData = Object.assign({}, mChangeSpecificData, mVariantObj);
 		}
-		return ChangesWriteAPI.create(mChangeSpecificData, this._validateControlForChange(mFlexSettings))
+		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
 			.then(function(oChange) {
 				if (mFlexSettings && mFlexSettings.originalSelector) {
 					oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
@@ -218,9 +218,9 @@ sap.ui.define([
 
 			if (oChange.getRevertData()) {
 				var oAppComponent = this.getAppComponent(true);
-				return ChangesWriteAPI.revert(oChange, vControl)
+				return ChangesWriteAPI.revert({change: oChange, element: vControl})
 					.then(function() {
-						PersistenceWriteAPI.remove(oChange, oAppComponent);
+						PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent});
 					});
 			} else if (this._aRecordedUndo) {
 				RtaControlTreeModifier.performUndo(this._aRecordedUndo);
@@ -246,7 +246,7 @@ sap.ui.define([
 		var bRevertible;
 		var mPropertyBag;
 		// TODO: Remove this function while removing RTA Undo logic
-		return ChangesWriteAPI._isChangeHandlerRevertible(oSelectorElement, oChange)
+		return ChangesWriteAPI._isChangeHandlerRevertible({selector: oSelectorElement, change: oChange})
 			.then(function(bRevertibleResult) {
 				bRevertible = bRevertibleResult;
 				mPropertyBag = {
@@ -264,7 +264,7 @@ sap.ui.define([
 			})
 
 			.then(function() {
-				return ChangesWriteAPI.apply(oChange, oSelectorElement, mPropertyBag);
+				return ChangesWriteAPI.apply(Object.assign({change: oChange, element: oSelectorElement}, mPropertyBag));
 			})
 
 			.then(function(oResult) {

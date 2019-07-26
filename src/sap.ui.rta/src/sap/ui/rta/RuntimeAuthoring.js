@@ -1085,7 +1085,8 @@ function(
 					if (oAppVariantDescriptor) {
 						aAppVariantDescriptor.push(oAppVariantDescriptor);
 					}
-					return PersistenceWriteAPI.publish(this._oRootControl, {
+					return PersistenceWriteAPI.publish({
+						selector: this.getRootControlInstance(),
 						styleClass: Utils.getRtaStyleClassName(),
 						layer: this.getLayer(),
 						appVariantDescriptors: aAppVariantDescriptor
@@ -1110,7 +1111,8 @@ function(
 		var oRootControl = this.getRootControlInstance();
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
 
-		return PersistenceWriteAPI.reset(oAppComponent, {
+		return PersistenceWriteAPI.reset({
+			selector: oAppComponent,
 			layer: this.getLayer(),
 			generator: "Change.createInitialFileContent"
 		})
@@ -1324,7 +1326,8 @@ function(
 		var oRootControl = this.getRootControlInstance();
 		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
 		if (FlexUtils.getComponentName(oAppComponent).length > 0) {
-			return PersistenceWriteAPI.hasChangesToPublish(oAppComponent, {
+			return PersistenceWriteAPI.hasChangesToPublish({
+				selector: oAppComponent,
 				currentLayer: this.getLayer()
 			});
 		}
@@ -1442,7 +1445,9 @@ function(
 		var oUshellContainer = FlexUtils.getUshellContainer();
 		if (oUshellContainer && this.getLayer() !== "USER") {
 			var mParsedHash = FlexUtils.getParsedURLHash();
-			return PersistenceWriteAPI.hasHigherLayerChanges(this.getRootControlInstance(), {ignoreMaxLayerParameter: false})
+			return PersistenceWriteAPI.hasHigherLayerChanges({
+				selector: this.getRootControlInstance(),
+				ignoreMaxLayerParameter: false})
 				.then(function (bHasHigherLayerChanges) {
 					if (bHasHigherLayerChanges) {
 						return this._handleReloadWithoutHigherLayerChangesMessageBoxOnStart().then(function () {
@@ -1467,7 +1472,7 @@ function(
 			this._oSerializer.needsReload(),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			PersistenceWriteAPI.hasHigherLayerChanges(this.getRootControlInstance(), {ignoreMaxLayerParameter: true})
+			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true})
 		]).then(function (aArgs) {
 			var bChangesNeedRestart = aArgs[0];
 			var bHasHigherLayerChanges = aArgs[1];

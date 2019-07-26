@@ -18,7 +18,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Provides an API to handle specific functionalities for sap.ui.comp library.
+	 * Provides an API to handle specific functionality for sap.ui.comp library.
 	 *
 	 * @experimental
 	 * @namespace
@@ -44,11 +44,13 @@ sap.ui.define([
 		 * @returns {string} the ID of the newly created change
 		 * @public
 		 */
-		add: function(oControl, mParameters) {
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
+		add: function(mPropertyBag) {
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || [arguments[0]]);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
 
-			return oChangePersistence.addChangeForVariant(SmartVariantManagementApplyAPI._PERSISTENCY_KEY, sStableId, mParameters);
+			return oChangePersistence.addChangeForVariant(
+				SmartVariantManagementApplyAPI._PERSISTENCY_KEY, sStableId, typeof arguments[1] === "object" ? arguments[1] : mPropertyBag.changeSpecificData
+			);
 		},
 
 		/**
@@ -58,9 +60,9 @@ sap.ui.define([
 		 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 		 * @public
 		 */
-		save: function(oControl) {
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
+		save: function(mPropertyBag) {
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
 
 			return oChangePersistence.saveAllChangesForVariant(sStableId);
 		},
@@ -75,18 +77,18 @@ sap.ui.define([
 		 * @returns {object} the default variant change
 		 * @public
 		 */
-		setDefaultVariantId: function(oControl, sDefaultVariantId) {
+		setDefaultVariantId: function(mPropertyBag) {
 			var mParameters;
 			var oChange;
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
 			var mSelector = {};
 
 			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
 
 			mParameters = {
-				defaultVariantId: sDefaultVariantId,
+				defaultVariantId: typeof arguments[1] === "string" ? arguments[1] : mPropertyBag.defaultVariantId,
 				reference: oChangePersistence.getComponentName(),
 				selector: mSelector,
 				validAppVersions: {
@@ -95,8 +97,8 @@ sap.ui.define([
 				}
 			};
 
-			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(oControl);
-			oChange = DefaultVariant.updateDefaultVariantId(oChanges, sDefaultVariantId);
+			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control || arguments[0]);
+			oChange = DefaultVariant.updateDefaultVariantId(oChanges, arguments[1] || mPropertyBag.defaultVariantId);
 
 			if (oChange) {
 				return oChange;
@@ -117,24 +119,24 @@ sap.ui.define([
 		 * @public
 		 * @returns {object} the default variant change
 		 */
-		setExecuteOnSelect: function(oControl, bExecuteOnSelect) {
+		setExecuteOnSelect: function(mPropertyBag) {
 			var mParameters;
 			var oChange;
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(oControl);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
 
 			var mSelector = {};
 			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
 
 			mParameters = {
-				executeOnSelect: bExecuteOnSelect,
+				executeOnSelect: typeof arguments[1] === "boolean" ? arguments[1] : mPropertyBag.executeOnSelect,
 				reference: oChangePersistence.getComponentName(),
 				selector: mSelector
 			};
 
-			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(oControl);
-			oChange = StandardVariant.updateExecuteOnSelect(oChanges, bExecuteOnSelect);
+			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control || arguments[0]);
+			oChange = StandardVariant.updateExecuteOnSelect(oChanges, arguments[1] || mPropertyBag.executeOnSelect);
 
 			if (oChange) {
 				return oChange;

@@ -125,9 +125,9 @@ function(
 				layer: "VENDOR"
 			};
 
-			var oChange = ChangesWriteAPI.create(oChangeContent, oParentInfo.parent);
-			PersistenceWriteAPI.add(oChange, oParentInfo.parent);
-			PersistenceWriteAPI.save(oParentInfo.parent, false);
+			var oChange = ChangesWriteAPI.create({changeSpecificData: oChangeContent, selector: oParentInfo.parent});
+			PersistenceWriteAPI.add({change: oChange, selector: oParentInfo.parent});
+			PersistenceWriteAPI.save({selector: oParentInfo.parent, skipUpdateCache: false});
 			return oChange;
 		});
 	};

@@ -234,7 +234,7 @@ function (
 		function cleanUpAfterUndo(oCommand) {
 			var oChange = oCommand.getPreparedChange();
 			if (oCommand.getAppComponent) {
-				return PersistenceWriteAPI.remove(oChange, oCommand.getAppComponent());
+				return PersistenceWriteAPI.remove({change: oChange, selector: oCommand.getAppComponent()});
 			}
 		}
 

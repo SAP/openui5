@@ -793,6 +793,16 @@ function(
 			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
 		});
 
+		QUnit.test("when omit is called with an object and some properties", function (assert) {
+			var oSourceObject = {a : 1, b : 2, c : 3, d : 4};
+			assert.deepEqual(Utils.omit(oSourceObject, ['b', 'd']), {a : 1, c : 3}, "then a new object is returned without the properties");
+		});
+
+		QUnit.test("when omit is called with a single property as a string", function (assert) {
+			var oSourceObject = {a : 1, b : 2, c : 3};
+			assert.deepEqual(Utils.omit(oSourceObject, 'b'), {a : 1, c : 3}, "then a new object is returned without the property");
+		});
+
 		QUnit.test("isTrialSystem with ushellContainer available and returning true", function(assert) {
 			assert.expect(2);
 			sandbox.stub(Utils, "getUshellContainer").returns({

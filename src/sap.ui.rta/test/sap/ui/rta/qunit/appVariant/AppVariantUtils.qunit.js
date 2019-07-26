@@ -541,14 +541,15 @@ sap.ui.define([
 			var oAppComponent = fnCreateAppComponent();
 			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves();
 			return AppVariantUtils.createAppVariant(oAppComponent, {id: "customer.appvar.id", layer: "CUSTOMER"}).then(function() {
-				assert.ok(fnSaveAsAppVariantStub.calledWithExactly(oAppComponent, {id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}));
+				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: oAppComponent, id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}));
 			});
 		});
 
 		QUnit.test("When deleteAppVariant() method is called", function (assert) {
-			var fndeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
-			return AppVariantUtils.deleteAppVariant({appId: "customer.appvar.id"}).then(function() {
-				assert.ok(fndeleteAppVariantStub.calledWithExactly({appId: "customer.appvar.id"}));
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
+			var vAppIdSelector = {appId: "customer.appvar.id"};
+			return AppVariantUtils.deleteAppVariant(vAppIdSelector).then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: vAppIdSelector}));
 			});
 		});
 

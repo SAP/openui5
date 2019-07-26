@@ -51,10 +51,9 @@ sap.ui.define([
 		 * @public
 		 */
 		add: function(mPropertyBag) {
-			mPropertyBag.changes.forEach(function(oPersonalizationChange) {
+			mPropertyBag.controlChanges.forEach(function(oPersonalizationChange) {
 				oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
 			});
-			mPropertyBag.controlChanges = mPropertyBag.changes;
 			return OldControlPersonalizationAPI.addPersonalizationChanges(mPropertyBag);
 		},
 
@@ -70,9 +69,9 @@ sap.ui.define([
 		 * @method sap.ui.fl.write.api.ControlPersonalizationWriteAPI.resetChanges
 		 * @public
 		 */
-		reset: function(aSelectors, mPropertyBag) {
-			mPropertyBag = mPropertyBag || {};
-			return OldControlPersonalizationAPI.resetChanges(aSelectors, mPropertyBag.changeTypes);
+		reset: function(mPropertyBag) {
+			mPropertyBag.selectors = mPropertyBag.selectors || [];
+			return OldControlPersonalizationAPI.resetChanges(mPropertyBag.selectors, mPropertyBag.changeTypes);
 		},
 
 		/**
@@ -86,22 +85,22 @@ sap.ui.define([
 		 * @method sap.ui.fl.write.api.ControlPersonalizationWriteAPI.saveChanges
 		 * @public
 		 */
-		save: function(vSelector, aChanges) {
-			var oAppComponent = vSelector.appComponent || Utils.getAppComponentForControl(vSelector);
-			return OldControlPersonalizationAPI.saveChanges(aChanges, oAppComponent);
+		save: function(mPropertyBag) {
+			var oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(mPropertyBag.selector);
+			return OldControlPersonalizationAPI.saveChanges(mPropertyBag.changes, oAppComponent);
 		},
 
 		/**
 		 * Builds an object of type {@link sap.ui.fl.Selector} with elementId, elementType and appComponent
 		 *
-		 * @param {sap.ui.core.Element} oElement Element instance to retrieve the app component
-		 * @param {object} mPropertyBag Contains additional information needed to build the control equivalent
-		 * @param {string} mPropertyBag.elementId Id of the control
-		 * @param {string} mPropertyBag.elementType Type of the control
+		 * @param {sap.ui.core.Element} oElement - Element instance to retrieve the app component
+		 * @param {object} mPropertyBag - Contains additional information needed to build the control equivalent
+		 * @param {string} mPropertyBag.elementId - Id of the control
+		 * @param {string} mPropertyBag.elementType - Type of the control
 		 * @returns {object} Returns object of type {@link sap.ui.fl.Selector}
 		 */
-		buildSelectorFromElementIdAndType: function(oElement, mPropertyBag) {
-			var oAppComponent = Utils.getAppComponentForControl(oElement);
+		buildSelectorFromElementIdAndType: function(mPropertyBag) {
+			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.element);
 			if (!oAppComponent || !mPropertyBag.elementId || !mPropertyBag.elementType) {
 				throw new Error("Not enough information given to build selector.");
 			}

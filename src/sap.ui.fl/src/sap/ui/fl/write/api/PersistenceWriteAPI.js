@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/base/util/includes",
-	"sap/ui/fl/write/internal/SaveAs"
+	"sap/ui/fl/write/internal/SaveAs",
+	"sap/ui/fl/Utils"
 ], function(
 	ChangesController,
 	JsControlTreeModifier,
 	DescriptorInlineChangeFactory,
 	includes,
-	SaveAs
+	SaveAs,
+	flexUtils
 ) {
 	"use strict";
 
@@ -29,44 +31,61 @@ sap.ui.define([
 	 * @public
 	 *
 	 */
+
+	/**
+	 * Retrieves the changes from the flex persistence for the selector.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - Change instance
+	 *
+	 * @returns {Boolean} Returns a boolean value if it is a descriptor change
+	 * @private
+	 */
+	function isDescriptorChange(oChange) {
+		return (oChange._getMap
+			&& includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange._getMap().changeType))
+			|| (oChange.getChangeType && includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType()));
+	}
+
 	var PersistenceWriteAPI = {
 		/**
 		 * Determines if user specific changes or variants are present in the flex persistence.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
-		 * @param {object} [mPropertyBag] - Contains additional data needed for checking personalization
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 * @param {string} [mPropertyBag.upToLayer] - layer to compare with
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization shall be checked without max layer filtering
 		 * @returns {Promise<boolean>} Promise resolving to a boolean, indicating if a personalization change created during runtime is active in the application
 		 * @public
 		 */
-		hasHigherLayerChanges: function (vSelector, mPropertyBag) {
-			return ChangesController.getFlexControllerInstance(vSelector)
-				.hasHigherLayerChanges(mPropertyBag);
+		hasHigherLayerChanges: function (mPropertyBag) {
+			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
+				.hasHigherLayerChanges(flexUtils.omit(mPropertyBag, "selector"));
 		},
 
 		/**
 		 * Saves all flex changes and descriptor changes on the relevant flex persistence.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
-		 * @param {boolean} [bSkipUpdateCache] - If cache update should be skipped
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+		 * @param {boolean} [mPropertyBag.skipUpdateCache] - If cache update should be skipped
 		 *
 		 * @returns {Promise} resolving with an array of responses or rejecting with the first error
 		 * @public
 		 */
-		save: function (vSelector, bSkipUpdateCache) {
-			var oFlexController = ChangesController.getFlexControllerInstance(vSelector);
-			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(vSelector);
-			return oFlexController.saveAll(bSkipUpdateCache)
-				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, bSkipUpdateCache))
-				.then(PersistenceWriteAPI._getUIChanges.bind(null, vSelector, {invalidateCache: true}));
+		save: function (mPropertyBag) {
+			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+			mPropertyBag.invalidateCache = true;
+			return oFlexController.saveAll(mPropertyBag.skipUpdateCache)
+				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, mPropertyBag.skipUpdateCache))
+				.then(PersistenceWriteAPI._getUIChanges.bind(null, flexUtils.omit(mPropertyBag, "skipUpdateCache")));
 		},
 
 		/**
 		 * Saves the app variant to backend.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - a selector
-		 * @param {object} mPropertyBag property bag
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - a selector
 		 * @param {string} mPropertyBag.id App Variant ID
 		 * @param {string} [mPropertyBag.package] the package info for the app variant - Smart Business must pass the package
 		 * @param {string} [mPropertyBag.transport] the transport request for the app variant - Smart Business must pass the package
@@ -77,27 +96,27 @@ sap.ui.define([
 		 * @returns {Promise} resolving with AppVariant save response
 		 * @public
 		 */
-		saveAs: function(vSelector, mPropertyBag) {
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(vSelector);
+		saveAs: function(mPropertyBag) {
+			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
 			mPropertyBag.reference = oFlexController.getComponentName();
 
-			return SaveAs.saveAs(vSelector, mPropertyBag);
+			return SaveAs.saveAs(mPropertyBag);
 		},
 
 		/**
 		 * Deletes the app variant from the backend
-		 * @param {sap.ui.fl.Selector} vSelector - a selector
-		 * @param {object} [mPropertyBag] property bag
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - a selector
 		 * @param {string} [mPropertyBag.transport] the transport request for the app variant - Smart Business must pass the package
 		 *
 		 * @returns {Promise} resolving with AppVariant deletion response
 		 * @public
 		 */
-		deleteAppVariant: function(vSelector, mPropertyBag) {
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(vSelector);
-			var sReferenceAppId = oFlexController.getComponentName();
+		deleteAppVariant: function(mPropertyBag) {
+			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+			mPropertyBag.referenceAppId = oFlexController.getComponentName();
 
-			return SaveAs.deleteAppVar(sReferenceAppId, mPropertyBag);
+			return SaveAs.deleteAppVar(mPropertyBag);
 		},
 
 		/**
@@ -105,8 +124,8 @@ sap.ui.define([
 		 * If the reset is performed for an entire component, a browser reload is required.
 		 * If the reset is performed for a control, this function also triggers a reversion of deleted UI changes.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
-		 * @param {object} [mPropertyBag] - Contains additional data
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 * @param {string} [mPropertyBag.layer] - Layer for which changes shall be deleted
 		 * @param {string} [mPropertyBag.generator] - Generator of changes
 		 * @param {string[]} [mPropertyBag.selectorIds] - Selector IDs in local format
@@ -114,19 +133,22 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Promise that resolves after the deletion took place
 		 */
-		reset: function (vSelector, mPropertyBag) {
-			var oAppComponent = ChangesController.getAppComponentForSelector(vSelector);
+		reset: function (mPropertyBag) {
+			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 			var oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
 			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
-			return oFlexController.resetChanges(mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes)
-				.then(oDescriptorFlexController.resetChanges.bind(oDescriptorFlexController, mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes));
+			var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
+			return oFlexController.resetChanges.apply(oFlexController, aArguments)
+				.then(oDescriptorFlexController.resetChanges.bind.apply(
+					oDescriptorFlexController.resetChanges, [oDescriptorFlexController].concat(aArguments))
+				);
 		},
 
 		/**
 		 * Transports all the UI changes and app variant descriptor (if exists) to the target system.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
-		 * @param {object} mPropertyBag - Contains additional data
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 * @param {string} mPropertyBag.styleClass - RTA style class name
 		 * @param {string} mPropertyBag.layer - Working layer
 		 * @param {array} [mPropertyBag.appVariantDescriptors] - an array of app variant descriptors which needs to be transported
@@ -135,81 +157,68 @@ sap.ui.define([
 		 * @private
 		 * TODO: Must be changed in future.
 		 */
-		publish: function(vSelector, mPropertyBag) {
-			var oAppComponent = ChangesController.getAppComponentForSelector(vSelector);
+		publish: function(mPropertyBag) {
+			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 			return ChangesController.getFlexControllerInstance(oAppComponent)
 				._oChangePersistence.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
-		},
-
-			/**
-		 * Retrieves the changes from the flex persistence for the selector.
-		 *
-		 * @param {sap.ui.fl.Change} oChange - Change instance
-		 *
-		 * @returns {Boolean} Returns a boolean value if it is a descriptor change
-		 * @private
-		 */
-		_isDescriptorChange: function(oChange) {
-			return (oChange._getMap
-				&& includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange._getMap().changeType))
-				|| (oChange.getChangeType && includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType()));
 		},
 
 		/**
 		 * Adds a change to the flex persistence.
 		 * If it's a descriptor change, then a transport request is set.
 		 *
-		 * @param {sap.ui.fl.Change} oChange - Change instance
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 * @public
 		 */
-		add: function (oChange, vSelector) {
-			if (this._isDescriptorChange(oChange)) {
-				return oChange.store();
+		add: function (mPropertyBag) {
+			if (isDescriptorChange(mPropertyBag.change)) {
+				return mPropertyBag.change.store();
 			}
-			var oAppComponent = ChangesController.getAppComponentForSelector(vSelector);
-			return ChangesController.getFlexControllerInstance(oAppComponent).addPreparedChange(oChange, oAppComponent);
+			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			return ChangesController.getFlexControllerInstance(oAppComponent).addPreparedChange(mPropertyBag.change, oAppComponent);
 		},
 
 		/**
 		 * Removes a change from from the applied changes on a control and from flex persistence map
 		 *
-		 * @param {sap.ui.fl.Change} oChange - Change to be removed
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be removed
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 *
 		 * @public
 		 */
-		remove: function (oChange, vSelector) {
-			var oAppComponent = ChangesController.getAppComponentForSelector(vSelector);
+		remove: function (mPropertyBag) {
+			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 			// descriptor change
-			if (this._isDescriptorChange(oChange)) {
+			if (isDescriptorChange(mPropertyBag.change)) {
 				var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
-				oDescriptorFlexController.deleteChange(oChange, oAppComponent);
+				oDescriptorFlexController.deleteChange(mPropertyBag.change, oAppComponent);
 				return;
 			}
-			var oElement = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+			var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
 			var oFlexController = ChangesController.getFlexControllerInstance(oElement);
 			// remove custom data for flex change
-			oFlexController._removeChangeFromControl(oElement, oChange, JsControlTreeModifier);
+			oFlexController._removeChangeFromControl(oElement, mPropertyBag.change, JsControlTreeModifier);
 			// delete from flex persistence map
-			oFlexController.deleteChange(oChange, oAppComponent);
+			oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
 		},
 
 		/**
 		 * Check if changes exist for the flex persistence associated with the selector control.
 		 * If the optional layer parameter is passed then changes are checked on only that layer.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
-		 * @param {object} [mPropertyBag] Contains additional Data
-		 * @param {string} [mPropertyBag.currentLayer] Layer on which changes should be checked
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+		 * @param {string} [mPropertyBag.currentLayer] - Layer on which changes should be checked
 		 * @returns {Promise<boolean>} Promise resolving to a boolean indicating if changes exist on the optionally passed layer
 		 * @public
 		 */
-		hasChanges: function(vSelector, mPropertyBag) {
-			mPropertyBag = mPropertyBag || {};
+		hasChanges: function(mPropertyBag) {
 			mPropertyBag.includeCtrlVariants = true;
 			mPropertyBag.invalidateCache = false;
-			return PersistenceWriteAPI._getUIChanges(vSelector, mPropertyBag)
+			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
 				.then(function(aChanges) {
 					return aChanges.length > 0;
 				});
@@ -219,19 +228,19 @@ sap.ui.define([
 		 * Check if changes exist to publish.
 		 * If the optional layer parameter is passed then changes are checked on only that layer.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector - To retrieve the associated flex persistence
-		 * @param {object} [mPropertyBag] Contains additional Data
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 * @param {string} [mPropertyBag.currentLayer] Layer on which changes should be checked
 		 * @returns {Promise<boolean>} Promise resolving to a boolean indicating if changes exist on the optionally passed layer
 		 * @public
 		 */
-		hasChangesToPublish: function(vSelector, mPropertyBag) {
-			return PersistenceWriteAPI.hasChanges(vSelector, mPropertyBag)
+		hasChangesToPublish: function(mPropertyBag) {
+			return PersistenceWriteAPI.hasChanges(mPropertyBag)
 				.then(function(bChangesExist) {
 					if (!bChangesExist) {
-						return ChangesController.getFlexControllerInstance(vSelector)
+						return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
 							._oChangePersistence.getDirtyChanges().length > 0
-						|| ChangesController.getDescriptorFlexControllerInstance(vSelector)
+						|| ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector)
 							._oChangePersistence.getDirtyChanges().length > 0;
 					}
 					return true;
@@ -241,8 +250,8 @@ sap.ui.define([
 		/**
 		 * Retrieves the changes from the flex persistence for the selector.
 		 *
-		 * @param {sap.ui.fl.Selector} vSelector Selector to retrieve the associated flex persistence
-		 * @param {map} [mPropertyBag] Contains additional Data needed for reading changes
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the associated flex persistence
 		 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to the current running component
 		 * @param {string} [mPropertyBag.siteId] - ID of the site belonging to the current running component
 		 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
@@ -254,10 +263,9 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves with a map of all change instances {@see sap.ui.fl.Change}
 		 * @private
 		 */
-		_getUIChanges: function(vSelector, mPropertyBag) {
-			mPropertyBag = mPropertyBag || {};
-			return ChangesController.getFlexControllerInstance(vSelector)
-				._oChangePersistence.getChangesForComponent(mPropertyBag, mPropertyBag.invalidateCache);
+		_getUIChanges: function(mPropertyBag) {
+			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
+				._oChangePersistence.getChangesForComponent(flexUtils.omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
 		}
 	};
 	return PersistenceWriteAPI;

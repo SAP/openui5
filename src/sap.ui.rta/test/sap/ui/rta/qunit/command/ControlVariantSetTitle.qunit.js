@@ -149,7 +149,7 @@ sap.ui.define([
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
 				.then(function(bPublishChangesExist) {
 					assert.ok(bPublishChangesExist, "then there are changes to publish");
@@ -161,10 +161,10 @@ sap.ui.define([
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
-					return PersistenceWriteAPI.hasChangesToPublish(this.oMockedAppComponent);
+					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
 				}.bind(this))
-				.then(function () {
-					assert.notOk(oControlVariantSetTitleCommand.getVariantChange(), "then title change from command unset");
+				.then(function (bPublishChangesExist) {
+					assert.notOk(bPublishChangesExist, "then there are no changes to publish");
 					done();
 				})
 				.catch(function (oError) {

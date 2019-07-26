@@ -68,9 +68,9 @@ function(
 			});
 			this.iCreateChangeCounter = 0;
 			this.iAddChangeCounter = 0;
-			sandbox.stub(ChangesWriteAPI, "create").callsFake(function (oChangeSpecificData) {
+			sandbox.stub(ChangesWriteAPI, "create").callsFake(function (mPropertyBag) {
 				this.iCreateChangeCounter++;
-				this.oCreateChangeParameter = oChangeSpecificData;
+				this.oCreateChangeParameter = mPropertyBag.changeSpecificData;
 				return {
 					getDefinition: function () {
 						return {definition: "definition"};

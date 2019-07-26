@@ -36,6 +36,7 @@ sap.ui.define([
 
 	function mockFlexController(oControl, oReturn) {
 		sandbox.stub(ChangesController, "getFlexControllerInstance")
+			.throws("invalid parameters for flex persistence function")
 			.withArgs(oControl)
 			.returns(oReturn);
 	}
@@ -43,6 +44,7 @@ sap.ui.define([
 	function getMethodStub(aArguments, vReturnValue) {
 		var fnPersistenceStub = sandbox.stub();
 		fnPersistenceStub
+			.throws("invalid parameters for flex persistence function")
 			.withArgs.apply(fnPersistenceStub, aArguments)
 			.returns(vReturnValue);
 		return fnPersistenceStub;
@@ -92,63 +94,74 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when create is called for a descriptor change", function(assert) {
 			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
-			this.vSelector.getManifest = function() {};
-			var oChangeSpecificData = {
-				changeType: sChangeType,
-				content: {
-					card : {
-						"customer.acard" : {}
-					}
-				},
-				texts: {
-					text1: "text1"
-				},
-				reference: "reference",
-				layer: "CUSTOMER"
+			var mPropertyBag = {
+				selector: this.vSelector,
+				changeSpecificData: {
+					changeType: sChangeType,
+					content: {
+						card : {
+							"customer.acard" : {}
+						}
+					},
+					texts: {
+						text1: "text1"
+					},
+					reference: "reference",
+					layer: "CUSTOMER"
+				}
 			};
-			sandbox.stub(Settings, "getInstance").resolves({});
+			mPropertyBag.selector.getManifest = function() {};
 
+			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.vSelector.appComponent);
-			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(mPropertyBag.selector.appComponent);
+
+			return ChangesWriteAPI.create(mPropertyBag)
 				.then(function (oChange) {
 					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
 				});
 		});
 
 		QUnit.test("when create is called with a control or selector object", function(assert) {
-			var oChangeSpecificData = {type: "changeSpecificData"};
-			var vSelector = {type: "control"};
-			var fnPersistenceStub = getMethodStub(oChangeSpecificData, sReturnValue);
-			mockFlexController(vSelector, { createChange : fnPersistenceStub });
+			var mPropertyBag = {
+				changeSpecificData: {type: "changeSpecificData"},
+				selector: {type: "control"}
+			};
+			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
 
-			assert.strictEqual(ChangesWriteAPI.create(oChangeSpecificData, vSelector), sReturnValue, "then the flex persistence was called with correct parameters");
+			mockFlexController(mPropertyBag.selector, { createChange : fnPersistenceStub });
+
+			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when create is called with a component", function(assert) {
-			var oChangeSpecificData = {type: "changeSpecificData"};
-			var oComponent = new Component();
-			this.aObjectsToDestroy.push(oComponent);
-			var fnPersistenceStub = getMethodStub([oChangeSpecificData, oComponent], sReturnValue);
-			mockFlexController(oComponent, { createBaseChange : fnPersistenceStub });
-			assert.strictEqual(ChangesWriteAPI.create(oChangeSpecificData, oComponent), sReturnValue, "then the flex persistence was called with correct parameters");
+			var mPropertyBag = {
+				changeSpecificData: {type: "changeSpecificData"},
+				selector: new Component()
+			};
+			this.aObjectsToDestroy.push(mPropertyBag.selector);
+			var fnPersistenceStub = getMethodStub([mPropertyBag.changeSpecificData, mPropertyBag.selector], sReturnValue);
+			mockFlexController(mPropertyBag.selector, { createBaseChange : fnPersistenceStub });
+			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when create is called for a descriptor change and the create promise is rejected", function(assert) {
 			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
-
-			var oChangeSpecificData = {
-				changeType: sChangeType
+			var mPropertyBag = {
+				changeSpecificData: {
+					changeType: sChangeType
+				},
+				selector: this.vSelector
 			};
 
 			sandbox.stub(FlexUtils, "getComponentClassName").returns("testComponent");
-			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.vSelector.appComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(mPropertyBag.selector.appComponent);
 
 			var oCreateInlineChangeStub = sandbox.stub(DescriptorInlineChangeFactory, "createDescriptorInlineChange").rejects(new Error("myError"));
 			var oCreateChangeStub = sandbox.stub(DescriptorChangeFactory.prototype, "createNew");
 			var oErrorLogStub = sandbox.stub(Log, "error");
 
-			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
+			return ChangesWriteAPI.create(mPropertyBag)
 			.then(function() {
 				assert.ok(false, "should not go here");
 			})
@@ -161,96 +174,121 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _isChangeHandlerRevertible is called", function(assert) {
-			var oChange = {type: "change"};
+			var mPropertyBag = {
+				change: {type: "change"},
+				selector: this.vSelector
+			};
+
 			var sControlType = "controlType";
 			var oAppComponent = {id: "appComponent"};
 			var oTemplateControl = {id: "templateControl"};
 
 			sandbox.stub(JsControlTreeModifier, "getControlType")
-				.withArgs(this.vSelector)
+				.withArgs(mPropertyBag.selector)
 				.returns(sControlType);
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(this.vSelector)
+				.withArgs(mPropertyBag.selector)
 				.returns(oAppComponent);
 
-			var fnGetControlIfTemplateAffectedStub = getMethodStub([oChange, this.vSelector, sControlType, {
+			var fnGetControlIfTemplateAffectedStub = getMethodStub([mPropertyBag.change, mPropertyBag.selector, sControlType, {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			}], {control: oTemplateControl});
 
-			var fnIsChangeHandlerRevertibleStub = getMethodStub([oChange, oTemplateControl], sReturnValue);
+			var fnIsChangeHandlerRevertibleStub = getMethodStub([mPropertyBag.change, oTemplateControl], sReturnValue);
 
-			mockFlexController(this.vSelector, { isChangeHandlerRevertible : fnIsChangeHandlerRevertibleStub, _getControlIfTemplateAffected: fnGetControlIfTemplateAffectedStub });
+			mockFlexController(mPropertyBag.selector, { isChangeHandlerRevertible : fnIsChangeHandlerRevertibleStub, _getControlIfTemplateAffected: fnGetControlIfTemplateAffectedStub });
 
-			assert.strictEqual(ChangesWriteAPI._isChangeHandlerRevertible(this.vSelector, oChange), sReturnValue, "then the flex persistence was called with correct parameters");
+			assert.strictEqual(ChangesWriteAPI._isChangeHandlerRevertible(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 
 		QUnit.test("when apply is called with no dependencies on control", function(assert) {
-			var oChange = {
-				getSelector: function () { return "selector"; }
+			var mPropertyBag = {
+				change: {
+					getSelector: function () {
+						return "selector";
+					}
+				},
+				element: new Element()
 			};
-			var oElement = new Element();
-			this.aObjectsToDestroy.push(oElement);
-			var mPropertyBag = { modifier: {} };
 			var oAppComponent = {id: "appComponent"};
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(oElement)
+				.withArgs(mPropertyBag.element)
 				.returns(oAppComponent);
 
-			var fnPersistenceStub = getMethodStub([oChange, oElement, Object.assign({}, mPropertyBag, {appComponent: oAppComponent})], Promise.resolve(sReturnValue));
+			var fnCheckTargetAndApplyChangeStub = getMethodStub([
+				mPropertyBag.change,
+				mPropertyBag.element,
+				{appComponent: oAppComponent, modifier: JsControlTreeModifier}
+			], Promise.resolve(sReturnValue));
+			var fnCheckForOpenDependenciesStub = getMethodStub([
+				mPropertyBag.change.getSelector(),
+				JsControlTreeModifier,
+				oAppComponent
+			], false);
 
-			mockFlexController(oElement, {
-				checkTargetAndApplyChange: fnPersistenceStub,
-				checkForOpenDependenciesForControl: function() { return false; }
+			mockFlexController(mPropertyBag.element, {
+				checkTargetAndApplyChange: fnCheckTargetAndApplyChangeStub,
+				checkForOpenDependenciesForControl: fnCheckForOpenDependenciesStub
 			});
 
-			return ChangesWriteAPI.apply(oChange, oElement, mPropertyBag)
+			return ChangesWriteAPI.apply(mPropertyBag)
 				.then(function(sValue) {
 					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 				});
 		});
 
 		QUnit.test("when apply is called with dependencies on control", function(assert) {
-			var oChange = {
-				getSelector: function () { return "selector"; },
-				getId: function() { return "changeId"; }
+			var mPropertyBag = {
+				change: {
+					getSelector: function () {
+						return "selector";
+					},
+					getId: function () {
+						return "changeId";
+					}
+				},
+				element: new Element()
 			};
-			var oElement = new Element();
-			this.aObjectsToDestroy.push(oElement);
-			var mPropertyBag = {};
+			this.aObjectsToDestroy.push(mPropertyBag.element);
 
-			mockFlexController(oElement, {
+			var fnCheckForOpenDependenciesStub = getMethodStub([mPropertyBag.change.getSelector()], true);
+
+			mockFlexController(mPropertyBag.element, {
 				checkTargetAndApplyChange: function () {
 					assert.notOk(true, "the change should not be applied");
 				},
-				checkForOpenDependenciesForControl: function() { return true; }
+				checkForOpenDependenciesForControl: fnCheckForOpenDependenciesStub
 			});
 
-			return ChangesWriteAPI.apply(oChange, oElement, mPropertyBag)
+			return ChangesWriteAPI.apply(mPropertyBag)
 				.catch(function (oError) {
 					assert.strictEqual(oError.message, "The following Change cannot be applied because of a dependency: changeId", "then a rejected promise with an error was returned");
 				});
 		});
 
 		QUnit.test("when revert is called", function(assert) {
-			var oChange = {type: "change"};
-			var oElement = {type: "element"};
+			var mPropertyBag = {
+				change: {type: "change"},
+				element: {type: "element"}
+			};
 			var oAppComponent = {type: "appComponent"};
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(oElement)
+				.withArgs(mPropertyBag.element)
 				.returns(oAppComponent);
 
-			var mPropertyBag = {
+			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			};
-			var fnPersistenceStub = getMethodStub([oChange, oElement, mPropertyBag], Promise.resolve(sReturnValue));
-			mockFlexController(oElement, {_revertChange: fnPersistenceStub});
+			var fnPersistenceStub = getMethodStub([mPropertyBag.change, mPropertyBag.element, mRevertSettings], Promise.resolve(sReturnValue));
 
-			return ChangesWriteAPI.revert(oChange, oElement)
+			mockFlexController(mPropertyBag.element, {_revertChange: fnPersistenceStub});
+
+			return ChangesWriteAPI.revert(mPropertyBag)
 				.then(function (sValue) {
 					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 				});
@@ -270,47 +308,49 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when create is called for a descriptor change without app version as a part of selector", function(assert) {
 			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
-
-			var oChangeSpecificData = {
-				changeType: 'appdescr_ovp_addNewCard',
-				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+			var mPropertyBag = {
+				selector: this.vSelector,
+				changeSpecificData: {
+					changeType: 'appdescr_ovp_addNewCard',
+					content: {
+						card: {
+							"customer.acard": {
+								model: "customer.boring_model",
+								template: "sap.ovp.cards.list",
+								settings: {
+									category: "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+									title: "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+									description: "extended",
+									entitySet: "Zme_Overdue",
+									sortBy: "OverdueTime",
+									sortOrder: "desc",
+									listType: "extended"
+								}
 							}
 						}
-					}
-				},
-				texts: {
-					"reference.app_sap.app.ovp.cards.customer.acard.category": {
-						type: "XTIT",
-						maxLength: 20,
-						comment: "example",
-						value: {
-							"": "Category example default text",
-							en: "Category example text in en",
-							de: "Kategorie Beispieltext in de",
-							en_US: "Category example text in en_US"
-						}
 					},
-					"reference.app_sap.app.ovp.cards.customer.acard.title": {
-						type: "XTIT",
-						maxLength: 20,
-						comment: "example",
-						value: {
-							"": "Title example default text",
-							en: "Title example text in en",
-							de: "Titel Beispieltext in de",
-							en_US: "Title example text in en_US"
+					texts: {
+						"reference.app_sap.app.ovp.cards.customer.acard.category": {
+							type: "XTIT",
+							maxLength: 20,
+							comment: "example",
+							value: {
+								"": "Category example default text",
+								en: "Category example text in en",
+								de: "Kategorie Beispieltext in de",
+								en_US: "Category example text in en_US"
+							}
+						},
+						"reference.app_sap.app.ovp.cards.customer.acard.title": {
+							type: "XTIT",
+							maxLength: 20,
+							comment: "example",
+							value: {
+								"": "Title example default text",
+								en: "Title example text in en",
+								de: "Titel Beispieltext in de",
+								en_US: "Title example text in en_US"
+							}
 						}
 					}
 				}
@@ -318,7 +358,7 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves({});
 
-			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
+			return ChangesWriteAPI.create(mPropertyBag)
 				.then(function (oChange) {
 					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
 				});
@@ -327,55 +367,58 @@ sap.ui.define([
 		QUnit.test("when create is called for a descriptor change with app version as a part of selector", function(assert) {
 			var sChangeType = DescriptorInlineChangeFactory.getDescriptorChangeTypes()[0];
 			this.vSelector.appVersion = "1.0.0";
-
-			var oChangeSpecificData = {
-				changeType: 'appdescr_ovp_addNewCard',
-				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+			var mPropertyBag = {
+				selector: this.vSelector,
+				changeSpecificData: {
+					changeType: 'appdescr_ovp_addNewCard',
+					content: {
+						card: {
+							"customer.acard": {
+								model: "customer.boring_model",
+								template: "sap.ovp.cards.list",
+								settings: {
+									category: "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+									title: "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+									description: "extended",
+									entitySet: "Zme_Overdue",
+									sortBy: "OverdueTime",
+									sortOrder: "desc",
+									listType: "extended"
+								}
 							}
 						}
-					}
-				},
-				texts: {
-					"reference.app_sap.app.ovp.cards.customer.acard.category": {
-						type: "XTIT",
-						maxLength: 20,
-						comment: "example",
-						value: {
-							"": "Category example default text",
-							en: "Category example text in en",
-							de: "Kategorie Beispieltext in de",
-							en_US: "Category example text in en_US"
-						}
 					},
-					"reference.app_sap.app.ovp.cards.customer.acard.title": {
-						type: "XTIT",
-						maxLength: 20,
-						comment: "example",
-						value: {
-							"": "Title example default text",
-							en: "Title example text in en",
-							de: "Titel Beispieltext in de",
-							en_US: "Title example text in en_US"
+					texts: {
+						"reference.app_sap.app.ovp.cards.customer.acard.category": {
+							type: "XTIT",
+							maxLength: 20,
+							comment: "example",
+							value: {
+								"": "Category example default text",
+								en: "Category example text in en",
+								de: "Kategorie Beispieltext in de",
+								en_US: "Category example text in en_US"
+							}
+						},
+						"reference.app_sap.app.ovp.cards.customer.acard.title": {
+							type: "XTIT",
+							maxLength: 20,
+							comment: "example",
+							value: {
+								"": "Title example default text",
+								en: "Title example text in en",
+								de: "Titel Beispieltext in de",
+								en_US: "Title example text in en_US"
+							}
 						}
+
 					}
 				}
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves({});
 
-			return ChangesWriteAPI.create(oChangeSpecificData, this.vSelector)
+			return ChangesWriteAPI.create(mPropertyBag)
 				.then(function (oChange) {
 					assert.strictEqual(oChange._oInlineChange._getChangeType(), sChangeType, "then the correct descriptor change type was created");
 				});
