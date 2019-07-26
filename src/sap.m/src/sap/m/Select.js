@@ -756,6 +756,8 @@ function(
 			// call the hook to add additional content to the list
 			this.addContent();
 
+			this.addContentToFlex();
+
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
 
@@ -855,6 +857,24 @@ function(
 
 			// initialize the control's picker
 			return this.createPicker(this.getPickerType());
+		};
+
+		Select.prototype.getSimpleFixFlex = function() {
+			if (this.bIsDestroyed) {
+				return null;
+			} else if (this.oSimpleFixFlex) {
+				return this.oSimpleFixFlex;
+			}
+
+			// initialize the SimpleFixFlex
+			this.oSimpleFixFlex = new SimpleFixFlex({
+				id: this.getPickerValueStateContentId(),
+				fixContent: this._getPickerValueStateContent()
+						.addStyleClass(this.getRenderer().CSS_CLASS + "PickerValueState"),
+				flexContent: this.createList()
+			});
+
+			return this.oSimpleFixFlex;
 		};
 
 		/**
@@ -1807,6 +1827,8 @@ function(
 		 */
 		Select.prototype.addContent = function(oPicker) {};
 
+		Select.prototype.addContentToFlex = function() {};
+
 		/**
 		 * Creates a picker popup container where the selection should take place.
 		 *
@@ -1816,8 +1838,7 @@ function(
 		 */
 		Select.prototype.createPicker = function(sPickerType) {
 			var oPicker = this.getAggregation("picker"),
-				CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sPickerValueStateContentValueStateClass = CSS_CLASS + "PickerValueState";
+				CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			if (oPicker) {
 				return oPicker;
@@ -1841,12 +1862,7 @@ function(
 						onBeforeRendering: this.onBeforeRenderingPicker,
 						onAfterRendering: this.onAfterRenderingPicker
 					}, this)
-					.addContent(new SimpleFixFlex({
-						id: this.getPickerValueStateContentId(),
-						fixContent: this._getPickerValueStateContent()
-									.addStyleClass(sPickerValueStateContentValueStateClass),
-						flexContent: this.createList()
-					}));
+					.addContent(this.getSimpleFixFlex());
 
 			return oPicker;
 		};
