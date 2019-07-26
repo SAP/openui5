@@ -1460,6 +1460,20 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("F6 focusing on next focusable group", function (assert) {
+		var done = assert.async();
+
+		// Act
+		qutils.triggerKeydown(this.oCarousel.$(), KeyCodes.F6);
+
+		setTimeout(function () {
+			// Assert
+			assert.ok(this.oCarousel.getDomRef() !== document.activeElement, "F6 is focusing on the next group");
+
+			done();
+		}.bind(this), sinonClockTickValue);
+	});
+
 	//================================================================================
 	// End of Carousel Keyboard handling
 	//================================================================================
