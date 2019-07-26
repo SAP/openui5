@@ -153,6 +153,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 				}
 
 				oRM.write('>');
+				oRM.write("<div");
+				oRM.addClass("sapMSegBBtnInner");
+				oRM.writeClasses();
+				oRM.write('>');
 
 				if (oButtonIcon && oImage) {
 					oRM.renderControl(oImage);
@@ -162,6 +166,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 				if (sButtonText !== '') {
 					oRM.writeEscaped(sButtonText, false);
 				}
+				oRM.write("</div>");
 				oRM.write("</li>");
 			} else {
 				InvisibleRenderer.render(oRM, oButton, "li");

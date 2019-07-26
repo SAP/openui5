@@ -9,27 +9,27 @@
 	top: -3px;
 	box-shadow: none;
 }
-.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn, .sapMVSPopover .sapMDialogTitle .sapMSegBBtn {
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn .sapMSegBBtnInner, .sapMVSPopover .sapMDialogTitle .sapMSegBBtn .sapMSegBBtnInner {
 	margin-right: 5px;
 	border-radius: 3px;
 }
 
-.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn,
-.sapMPopoverHeader .sapMSegBBtn:last-child,
-.sapMPopoverHeader .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn .sapMSegBBtnInner,
+.sapMPopoverHeader .sapMSegBBtn:last-child .sapMSegBBtnInner,
+.sapMPopoverHeader .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel .sapMSegBBtnInner {
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
 /* Custom focus outline: */
 html.sap-desktop .sapMVSPopover {
-	.sapMSegBBtnFocusable:focus + .sapMSegBBtn {
+	.sapMSegBBtnFocusable:focus + .sapMSegBBtn .sapMSegBBtnInner {
 		outline: none;
 		border-left: 1px solid @sapUiButtonLiteBorderColor;
 	}
 }
 
-.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn,
-.sapMVSPopover .sapMDialogTitle .sapMSegBBtn {
+.sapMVSPopover .sapMPopoverHeader .sapMSegBBtn .sapMSegBBtnInner,
+.sapMVSPopover .sapMDialogTitle .sapMSegBBtn .sapMSegBBtnInner {
 	margin-right: 5px;
 	border-radius: 3px;
 	border: 1px solid @sapUiButtonLiteBorderColor;

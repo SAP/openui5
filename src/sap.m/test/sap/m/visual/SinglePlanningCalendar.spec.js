@@ -23,7 +23,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 				element.all(by.cssContainingText(".sapMSelectListItem", "Work Week")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element.all(by.cssContainingText(".sapMSegB", "Work Week")).click();
+				element.all(by.cssContainingText(".sapMSegBBtn .sapMSegBBtnInner", "Work Week")).click();
 			}
 		});
 
@@ -41,7 +41,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 				element.all(by.cssContainingText(".sapMSelectListItem", "Full Week")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element.all(by.cssContainingText(".sapMSegBBtn", "Full Week")).click();
+				element.all(by.cssContainingText(".sapMSegBBtn .sapMSegBBtnInner", "Full Week")).click();
 			}
 		});
 
