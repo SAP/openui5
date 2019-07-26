@@ -183,25 +183,6 @@ sap.ui.define([
 		oSwitch.destroy();
 	});
 
-	QUnit.test("setState() test case 3", function (assert) {
-
-		// system under test
-		var oSwitch = new Switch();
-
-		// arrange
-		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		oSwitch.setState(true);
-
-		// assert
-		assert.strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "true", 'The "aria-checked" attribute is set to "true"');
-
-		// cleanup
-		oSwitch.destroy();
-	});
-
 	QUnit.test("setState() test case 4", function (assert) {
 
 		// system under test
@@ -216,25 +197,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oSwitch.getFocusDomRef().getAttribute("aria-checked"), "false", 'The "aria-checked" attribute is set to "false"');
-
-		// cleanup
-		oSwitch.destroy();
-	});
-
-	QUnit.test("setState() does not use css transition", function(assert) {
-		// system under test
-		var oSwitch = new Switch({
-			state: false
-		});
-
-		// arrange
-		oSwitch.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		oSwitch.setState(true);
-
-		// assert
-		assert.ok(!oSwitch.$().find('.sapMSwt').hasClass('sapMSwtTrans'), 'setState does not use css transition');
 
 		// cleanup
 		oSwitch.destroy();
@@ -805,7 +767,7 @@ sap.ui.define([
 		this.clock.tick(Switch._TRANSITIONTIME - iClickThreshold);
 
 		// assert
-		assert.strictEqual(oSwitch.getState(), false);
+		assert.strictEqual(oSwitch.getState(), true, "no treshold between clicks");
 		this.clock.tick(iClickThreshold);
 		assert.strictEqual(oSwitch.getState(), true);
 
@@ -1002,16 +964,19 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_setDomState", function(assert) {
+	QUnit.test("invisible text", function(assert) {
 		// arrange
-		var invisibleElementSpy = this.spy(this.switch, "getInvisibleElementText"),
-			switchDomRef = this.switch.getDomRef(),
-			domRefSpy = this.spy(switchDomRef, "setAttribute");
-
-		// act
-		this.switch._setDomState(true);
+		var $IT = this.switch.$().find(".sapUiInvisibleText");
 
 		// assert
-		assert.ok(invisibleElementSpy.calledBefore(domRefSpy), "InvisibleElement text was set before updating the dom reference attribute.");
+		assert.ok($IT.length, "invisible text exists");
+		assert.equal($IT.html(), "Off", "its text is correct");
+
+		// act
+		this.switch.setState(true);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal($IT.html(), "On", "its text is correct");
 	});
 });
