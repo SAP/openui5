@@ -2708,7 +2708,7 @@ sap.ui.define([
 					// redefine existing alias
 					'<template:alias name=".foo" value="foo.Helper.bar">',
 						"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
-						"<Text text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
+						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
 							+ " parameters: {foo: 'bar'}}\"/>",
 					'</template:alias>',
 					// old value must be used again
@@ -2739,7 +2739,10 @@ sap.ui.define([
 				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 					'<Text text="/foo"/>',
 						'<Text text="/bar"/>',
-						'<Text/>', // checkScope() returns undefined
+						// The nearest .foo alias doesn't have "Helper" defined,
+						// therefore the formatter can't be resolved
+						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
+							+ " parameters: {foo: 'bar'}}\"/>",
 					'<Text text="/foo"/>',
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",

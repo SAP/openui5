@@ -182,10 +182,9 @@ sap.ui.define(['sap/base/util/resolveReference'], function(resolveReference) {
 			}
 		};
 
-		// dot variable has evilMethod defined with undefined, fallback to other variables
+		// dot variable has evilMethod defined with undefined, no fallback to other variables
 		fn = resolveReference("module.evilMethod", {".": oDotModule, "module": oModule}, {preferDotContext: true});
-		assert.strictEqual(fn(), "evilMethod", "correct method was returned");
-		assert.strictEqual(oContext, oModule, "correct context was bound");
+		assert.strictEqual(fn, undefined, "correct method was returned");
 
 		// test the resolve order (dot variable -> the other variables) with prefer dot context
 		fn = resolveReference("module.method", {".": oDotModule, "module": oModule}, {preferDotContext: true});
