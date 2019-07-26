@@ -634,7 +634,7 @@ sap.ui.define([
 	 *		   [oContext=null] the context with which the path should be resolved
 	 * @param {object}
 	 *         [mParameters] additional model specific parameters
-	 *
+	 * @returns {any} The value for the given path/context or <code>undefined</code> if data could not be found
 	 * @public
 	 */
 	Model.prototype.getObject = function(sPath, oContext, mParameters) {
