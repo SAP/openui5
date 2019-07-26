@@ -409,13 +409,12 @@ sap.ui.define([
 		var aRelevantChanges = [];
 		aNotYetProcessedChanges.forEach(function(oChange) {
 			var aChanges = this._checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
-			aRelevantChanges = aRelevantChanges.concat(aChanges);
-		}, this);
-
-		// remove duplicates
-		aRelevantChanges = aRelevantChanges.filter(function(oChange, iPosition, aAllChanges) {
-			return aAllChanges.indexOf(oChange) === iPosition;
-		});
+			aChanges.forEach(function(oDependentChange) {
+				if (aRelevantChanges.indexOf(oDependentChange) === -1) {
+					aRelevantChanges.push(oDependentChange);
+				}
+			});
+		}.bind(this));
 
 		// attach promises to the relevant Changes and wait for them to be applied
 		aRelevantChanges.forEach(function(oChange) {
@@ -1169,11 +1168,13 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		return Utils.execPromiseQueueSequentially(aPromiseStack)
-
-		.then(function () {
-			return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
-		}.bind(this));
+		if (aChangesForControl.length) {
+			return Utils.execPromiseQueueSequentially(aPromiseStack)
+				.then(function () {
+					return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
+				}.bind(this));
+		}
+		return new Utils.FakePromise();
 	};
 
 	/**

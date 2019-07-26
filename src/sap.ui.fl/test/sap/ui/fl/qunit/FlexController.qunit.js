@@ -1577,6 +1577,25 @@ function (
 			});
 		});
 
+		QUnit.test("when calling '_applyChangesOnControl' without changes for the control", function (assert) {
+			var oProcessDependentQueueSpy = sandbox.spy(this.oFlexController, "_processDependentQueue");
+			var oExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
+			var fnGetChangesMap = function () {
+				return {
+					mChanges: {},
+					mDependencies: {},
+					mDependentChangesOnMe: {}
+				};
+			};
+			var oAppComponent = {};
+
+			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oList)
+			.then(function() {
+				assert.equal(oExecPromiseQueueSpy.callCount, 0, "the function 'execPromiseQueueSequentially is not called");
+				assert.equal(oProcessDependentQueueSpy.callCount, 0, "the function '_processDependentQueue is not called");
+			});
+		});
+
 		QUnit.test("when calling 'revertChangesOnControl' with a change type only registered for a control inside the template", function (assert) {
 			this.oChange.setRevertData({
 				originalValue: false
@@ -1940,7 +1959,7 @@ function (
 				.then(this.oFlexController._applyChangesOnControl.bind(this.oFlexController, fnGetChangesMap.bind(this), {}, oProcessedControl))
 				.then(this.oFlexController._applyChangesOnControl.bind(this.oFlexController, fnGetChangesMap.bind(this), {}, oNotProcessedControl))
 				.then(function() {
-					assert.ok(this.oCheckTargetAndApplyChangeStub.calledTwice, "then two changes were processed");
+					assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "then two changes were processed");
 					assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].getId(), "appliedChange", "then first change was processed");
 					assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].getId(), "processedChange", "then second change was processed");
 					oAppliedControl.destroy();
