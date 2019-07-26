@@ -39,6 +39,8 @@ sap.ui.define([
 	 * Every item can override its size by specifying the number of columns and/or rows it will take in the grid.
 	 * This is done using {@link sap.ui.layout.cssgrid.GridItemLayoutData GridItemLayoutData}.
 	 *
+	 * For best visualization, items of type {@link sap.f.GridListItem sap.f.GridListItem} should be used inside the <code>items</code> aggregation.
+	 *
 	 * <h3>Usage</h3>
 	 *
 	 * For general cases, use the default grid configuration of the <code>GridList</code>.

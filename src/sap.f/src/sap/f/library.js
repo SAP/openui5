@@ -51,6 +51,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.FlexibleColumnLayout",
 			"sap.f.semantic.SemanticPage",
 			"sap.f.GridList",
+			"sap.f.GridListItem",
 			"sap.f.ShellBar"
 		],
 		elements: [

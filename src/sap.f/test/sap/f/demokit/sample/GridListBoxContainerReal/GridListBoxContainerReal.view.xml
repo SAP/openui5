@@ -22,7 +22,7 @@
 					<grid:GridBoxLayout boxWidth="15rem"/>
 				</f:customLayout>
 
-				<CustomListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox justifyContent="SpaceBetween">
 							<layoutData>
@@ -41,8 +41,8 @@
 							</OverflowToolbar>
 						</VBox>
 					</VBox>
-				</CustomListItem>
-				<CustomListItem>
+				</f:GridListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox justifyContent="SpaceBetween">
 							<layoutData>
@@ -61,8 +61,8 @@
 							</OverflowToolbar>
 						</VBox>
 					</VBox>
-				</CustomListItem>
-				<CustomListItem>
+				</f:GridListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox justifyContent="SpaceBetween">
 							<layoutData>
@@ -81,7 +81,7 @@
 							</OverflowToolbar>
 						</VBox>
 					</VBox>
-				</CustomListItem>
+				</f:GridListItem>
 			</f:GridList>
 
 			<f:GridList
@@ -92,7 +92,7 @@
 					<grid:GridBoxLayout boxWidth="22.5rem"/>
 				</f:customLayout>
 
-				<CustomListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox class="sapUiSmallMargin">
 							<layoutData>
@@ -103,8 +103,8 @@
 							<Text text="A great description with useful information about this project. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy." wrapping="true"/>
 						</VBox>
 					</VBox>
-				</CustomListItem>
-				<CustomListItem>
+				</f:GridListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox class="sapUiSmallMargin">
 							<layoutData>
@@ -115,7 +115,7 @@
 							<Text text="A great description with useful information about this project." wrapping="true"/>
 						</VBox>
 					</VBox>
-				</CustomListItem>
+				</f:GridListItem>
 			</f:GridList>
 
 			<f:GridList
@@ -126,7 +126,7 @@
 					<grid:GridBoxLayout boxWidth="17.5rem"/>
 				</f:customLayout>
 
-				<CustomListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox justifyContent="SpaceBetween">
 							<layoutData>
@@ -149,8 +149,8 @@
 							</OverflowToolbar>
 						</VBox>
 					</VBox>
-				</CustomListItem>
-				<CustomListItem>
+				</f:GridListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox justifyContent="SpaceBetween">
 							<layoutData>
@@ -172,7 +172,7 @@
 							</OverflowToolbar>
 						</VBox>
 					</VBox>
-				</CustomListItem>
+				</f:GridListItem>
 			</f:GridList>
 		</content>
 	</Panel>

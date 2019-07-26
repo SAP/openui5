@@ -37,8 +37,15 @@
 }
 
 .sapFGridList .sapMLIB {
-	border: 1px solid @sapUiListBorderColor;
+	border-radius: 0.25rem;
+	border: none;
+	box-shadow: @sapUiShadowLevel0;
 
+	// Highlighted items
+	.sapMLIBHighlight {
+		border-top-left-radius: 0.25rem;
+		border-bottom-left-radius: 0.25rem;
+	}
 	& > .sapMLIBContent {
 		height: 100%;
 	}

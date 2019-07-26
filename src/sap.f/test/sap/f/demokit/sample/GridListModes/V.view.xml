@@ -1,0 +1,46 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:grid="sap.ui.layout.cssgrid"
+		xmlns:f="sap.f"
+		controllerName="sap.f.sample.GridListModes.C">
+
+	<HBox justifyContent="End">
+		<SegmentedButton 
+			selectedKey="MultiSelect"
+			class="sapUiSmallMarginTop sapUiSmallMarginEnd"
+			selectionChange="onModeChange">
+			<items>
+				<SegmentedButtonItem width="auto" text="MultiSelect" key="MultiSelect" />
+				<SegmentedButtonItem width="auto" text="SingleSelect" key="SingleSelect" />
+				<SegmentedButtonItem width="auto" text="SingleSelectLeft" key="SingleSelectLeft" />
+				<SegmentedButtonItem width="auto" text="SingleSelectMaster" key="SingleSelectMaster" />
+				<SegmentedButtonItem width="auto" text="Delete" key="Delete"/>
+				<SegmentedButtonItem width="auto" text="None" key="None"/>
+			</items>
+		</SegmentedButton>
+	</HBox>
+	<f:GridList id="gridList"
+				headerText="GridList with mode MultiSelect"
+				mode="MultiSelect"
+				items="{ path: '/' }"
+				selectionChange="onSelectionChange"
+				delete="onDelete"
+				class="sapUiResponsiveContentPadding">
+		<f:GridListItem
+			detailPress="onDetailPress"
+			counter="{counter}"
+			highlight="{highlight}"
+			unread="{unread}"
+			type="{type}">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" />
+					</layoutData>
+					<Title text="{title}" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+		</f:GridListItem>
+	</f:GridList>
+
+</mvc:View>

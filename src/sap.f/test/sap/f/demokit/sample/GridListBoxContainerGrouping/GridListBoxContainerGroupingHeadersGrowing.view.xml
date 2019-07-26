@@ -39,7 +39,7 @@
 					<grid:GridBoxLayout/>
 				</f:customLayout>
 
-				<CustomListItem>
+				<f:GridListItem>
 					<VBox >
 						<VBox class="sapUiSmallMargin">
 							<layoutData>
@@ -49,7 +49,7 @@
 							<Label text="{subtitle}" wrapping="true" />
 						</VBox>
 					</VBox>
-				</CustomListItem>
+				</f:GridListItem>
 			</f:GridList>
 		</content>
 	</Panel>

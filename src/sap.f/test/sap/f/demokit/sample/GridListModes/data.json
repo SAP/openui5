@@ -1,0 +1,155 @@
+[
+	{
+		"title": "Box title 1",
+		"subtitle": "Subtitle 1",
+		"counter": 5,
+		"highlight": "Error",
+		"unread": true,
+		"type": "Active"
+	},
+	{
+		"title": "Box title 2",
+		"subtitle": "Subtitle 2",
+		"counter": 15,
+		"highlight": "Warning",
+		"type": "Active"
+	},
+	{
+		"title": "Box title 3",
+		"subtitle": "Subtitle 3",
+		"counter": 15734,
+		"busy": true
+	},
+	{
+		"title": "Box title 4",
+		"subtitle": "Subtitle 4",
+		"counter": 2
+	},
+	{
+		"title": "Box title 5",
+		"subtitle": "Subtitle 5",
+		"counter": 1,
+		"highlight": "Warning"
+	},
+	{
+		"title": "Box title 6 Box title Box title Box title Box title Box title",
+		"subtitle": "Subtitle 6",
+		"counter": 5,
+		"type": "Active"
+	},
+	{
+		"title": "Very long Box title that should wrap 7",
+		"subtitle": "This is a long subtitle 7",
+		"counter": 5,
+		"highlight": "Error",
+		"type": "DetailAndActive"
+	},
+	{
+		"title": "Box title B 8",
+		"subtitle": "Subtitle 8",
+		"counter": 0,
+		"type": "Navigation"
+	},
+	{
+		"title": "Box title B 9 Box title B  Box title B 9 Box title B 9Box title B 9title B 9 Box title B 9Box title B",
+		"subtitle": "Subtitle 9",
+		"highlight": "Success"
+	},
+	{
+		"title": "Box title B 10",
+		"subtitle": "Subtitle 10",
+		"type": "Active"
+	},
+	{
+		"title": "Box title B 11",
+		"subtitle": "Subtitle 11",
+		"type": "Active"
+	},
+	{
+		"title": "Box title B 12",
+		"subtitle": "Subtitle 12",
+		"highlight": "Information"
+	},
+	{
+		"title": "Box title 13",
+		"subtitle": "Subtitle 13",
+		"counter": 5,
+		"type": "Navigation"
+	},
+	{
+		"title": "Box title 14",
+		"subtitle": "Subtitle 14",
+		"highlight": "Success",
+		"type": "DetailAndActive"
+	},
+	{
+		"title": "Box title 15",
+		"subtitle": "Subtitle 15"
+	},
+	{
+		"title": "Box title 16",
+		"subtitle": "Subtitle 16",
+		"counter": 37412578,
+		"type": "Navigation"
+	},
+	{
+		"title": "Box title 17",
+		"subtitle": "Subtitle 17",
+		"highlight": "Information"
+	},
+	{
+		"title": "Box title 18",
+		"subtitle": "Subtitle 18"
+	},
+	{
+		"title": "Very long Box title that should wrap 19",
+		"subtitle": "This is a long subtitle 19"
+	},
+	{
+		"title": "Box title B 20",
+		"subtitle": "Subtitle 20",
+		"counter": 1,
+		"busy": true,
+		"highlight": "Success",
+		"type": "Inactive"
+	},
+	{
+		"title": "Box title B 21",
+		"subtitle": "Subtitle 21",
+		"type": "Navigation"
+	},
+	{
+		"title": "Box title B 22",
+		"subtitle": "Subtitle 22",
+		"counter": 5,
+		"unread": true
+	},
+	{
+		"title": "Box title B 23",
+		"subtitle": "Subtitle 23",
+		"counter": 3,
+		"unread": true
+	},
+	{
+		"title": "Box title B 24",
+		"subtitle": "Subtitle 24",
+		"counter": 5,
+		"highlight": "Error",
+		"type": "Inactive"
+	},
+	{
+		"title": "Box title B 21",
+		"subtitle": "Subtitle 21"
+	},
+	{
+		"title": "Box title B 22",
+		"subtitle": "Subtitle 22",
+		"unread": true,
+		"type": "Navigation"
+	},
+	{
+		"title": "Box title B 23",
+		"subtitle": "Subtitle 23",
+		"type": "Navigation"
+	}
+]
