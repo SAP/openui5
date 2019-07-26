@@ -310,15 +310,6 @@ function(
 		StepInput._TOLERANCE = 10; // pixels
 
 		/**
-		 * Map between StepInput properties and their corresponding aria attributes.
-		 */
-		var mNameToAria = {
-			"min": "aria-valuemin",
-			"max": "aria-valuemax",
-			"value": "aria-valuenow"
-		};
-
-		/**
 		 * Property names which when set are directly forwarded to inner input <code>setProperty</code> method
 		 * @type {Array.<string>}
 		 */
@@ -424,11 +415,16 @@ function(
 		StepInput.prototype.onBeforeRendering = function () {
 			var fMin = this.getMin(),
 				fMax = this.getMax(),
-				vValue = this.getValue();
+				vValue = this.getValue(),
+				bEditable = this.getEditable();
 
 			this._iRealPrecision = this._getRealValuePrecision();
 
 			this._getInput().setValue(this._getFormatedValue(vValue));
+			this._getInput().setValueState(this.getValueState());
+			this._getInput().setTooltip(this.getTooltip());
+			this._getOrCreateDecrementButton().setVisible(bEditable);
+			this._getOrCreateIncrementButton().setVisible(bEditable);
 
 			this._disableButtons(vValue, fMax, fMin);
 			this.$().unbind(Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
@@ -443,8 +439,6 @@ function(
 		};
 
 		StepInput.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
-			this._writeAccessibilityState(sPropertyName, oValue);
-
 			Control.prototype.setProperty.call(this, sPropertyName, oValue, bSuppressInvalidate);
 
 			if (aForwardableProps.indexOf(sPropertyName) > -1) {
@@ -482,21 +476,11 @@ function(
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setMin = function (min) {
-			var oResult,
-				vValue = this.getValue(),
-				bSuppressInvalidate = (vValue !== 0 && !vValue);
-
-			if (min === undefined) {
-				return this.setProperty("min", min, true);
-			}
-			if (!this._validateOptionalNumberProperty("min", min)) {
+			if (min !== undefined && !this._validateOptionalNumberProperty("min", min)) {
 				return this;
 			}
 
-			oResult = this.setProperty("min", min, bSuppressInvalidate);
-			this._disableButtons(vValue, this.getMax(), min);
-
-			return oResult;
+			return this.setProperty("min", min);
 		};
 
 		/*
@@ -506,21 +490,11 @@ function(
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setMax = function (max) {
-			var oResult,
-				vValue = this.getValue(),
-				bSuppressInvalidate = (vValue !== 0 && !vValue);
-
-			if (max === undefined) {
-				return this.setProperty("max", max, true);
-			}
-			if (!this._validateOptionalNumberProperty("max", max)) {
+			if (max !== undefined && !this._validateOptionalNumberProperty("max", max)) {
 				return this;
 			}
 
-			oResult =  this.setProperty("max", max, bSuppressInvalidate);
-			this._disableButtons(this.getValue(), max, this.getMin());
-
-			return oResult;
+			return this.setProperty("max", max);
 		};
 
 		/**
@@ -547,9 +521,7 @@ function(
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setDisplayValuePrecision = function (number) {
-			var vValuePrecision,
-				vValue = this.getValue(),
-				bSuppressInvalidate = (vValue !== 0 && !vValue);
+			var vValuePrecision;
 
 			if (isValidPrecisionValue(number)) {
 				vValuePrecision = parseInt(number);
@@ -558,18 +530,7 @@ function(
 				Log.warning(this + ": ValuePrecision (" + number + ") is not correct. It should be a number between 0 and 20! Setting the default ValuePrecision:0.");
 			}
 
-			return this.setProperty("displayValuePrecision", vValuePrecision, bSuppressInvalidate);
-		};
-
-		/**
-		 * Sets a new tooltip for this object.
-		 * @link sap.ui.core.Element#setTooltip
-		 * @param {string|sap.ui.core.TooltipBase} sTooltip The value of tooltip
-		 */
-		StepInput.prototype.setTooltip = function (sTooltip) {
-			//We need to call the special logic implemented in InputBase.prototype.setTooltip
-			this._getInput().setTooltip(sTooltip);
-			return this;
+			return this.setProperty("displayValuePrecision", vValuePrecision);
 		};
 
 		/**
@@ -678,7 +639,6 @@ function(
 			return this.getAggregation("_input");
 		};
 
-
 		/**
 		 * Handles the button press.
 		 *
@@ -687,12 +647,9 @@ function(
 		 * @private
 		 */
 		StepInput.prototype._handleButtonPress = function (isPlusButton) {
-			var oNewValue = this._calculateNewValue(1, isPlusButton),
-				fMin = this.getMin(),
-				fMax = this.getMax();
+			var oNewValue = this._calculateNewValue(1, isPlusButton);
 
 			this._btndown = undefined;
-			this._disableButtons(oNewValue.displayValue, fMax, fMin);
 			this.setValue(oNewValue.value);
 
 			if (this._sOldValue !== this.getValue()) {
@@ -789,11 +746,10 @@ function(
 
 			this._getInput().setValue(this._getFormatedValue(oValue));
 
-			this._disableButtons(oValue, this.getMax(), this.getMin());
-
-			oResult = this.setProperty("value", parseFloat(oValue), true);
+			oResult = this.setProperty("value", parseFloat(oValue));
 
 			this._iRealPrecision = this._getRealValuePrecision();
+
 			return oResult;
 		};
 
@@ -1130,55 +1086,6 @@ function(
 			return (iDigitsValueL > iDigitsStepL) ? iDigitsValueL : iDigitsStepL;
 		};
 
-		/*
-		 * Handles the value state of the control.
-		 *
-		 * @param  {string} valueState The given value state
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
-		 */
-		StepInput.prototype.setValueState = function (valueState) {
-			var bError = false,
-				bWarning = false;
-
-			switch (valueState) {
-				case ValueState.Error:
-					bError = true;
-					break;
-				case ValueState.Warning:
-					bWarning = true;
-					break;
-				case ValueState.Success:
-				case ValueState.None:
-					break;
-				default:
-					return this;
-			}
-			this._getInput().setValueState(valueState);
-
-			setTimeout(function () {
-				this.$().toggleClass("sapMStepInputError", bError).toggleClass("sapMStepInputWarning", bWarning);
-			}.bind(this), 0);
-
-			this.setProperty("valueState", valueState, true);
-
-			return this;
-		};
-
-		/*
-		 * Sets the editable property.
-		 *
-		 * @param {boolean} editable - Indicates if the value is editable
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
-		 */
-		StepInput.prototype.setEditable = function (editable) {
-			var oResult = StepInput.prototype.setProperty.call(this, "editable", editable);
-
-			this._getOrCreateDecrementButton().setVisible(editable);
-			this._getOrCreateIncrementButton().setVisible(editable);
-
-			return oResult;
-		};
-
 		/**
 		 * Checks whether there is an existing instance of a decrement button or it has to be created.
 		 *
@@ -1310,18 +1217,6 @@ function(
 		 */
 		StepInput.prototype._isInteger = function(val) {
 			return val === parseInt(val);
-		};
-
-		StepInput.prototype._writeAccessibilityState = function (sProp, sValue) {
-			var $input = this._getInput().getDomRef("inner");
-
-			if (!$input){
-				return;
-			}
-
-			if (sProp && mNameToAria[sProp]) {
-				$input.setAttribute(mNameToAria[sProp], sValue);
-			}
 		};
 
 		StepInput.prototype._isButtonFocused = function () {
