@@ -2088,4 +2088,18 @@ sap.ui.define([
 				}
 		});
 	});
+
+	QUnit.test("Binding length available before first getContexts call", function(assert) {
+		var done = assert.async();
+		createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+			displayRootNode: true,
+			rootLevel: 1
+		});
+		oBinding.attachDataReceived(function() {
+			assert.equal(oBinding.getLength(),  1, "Binding length can be retrieved");
+			done();
+		});
+		oBinding.getContexts(0, 100);
+	});
+
 });

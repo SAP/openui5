@@ -270,6 +270,15 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
 
 	};
 
+	/**
+	 * @override
+	 */
+	ODataTreeBindingAdapter.prototype.getLength = function() {
+        if ((!this._oRootNode || !this._oRootNode.magnitude) && this.oFinalLengths[null]) {
+            return this.oLengths[null];
+        }
+        return TreeBindingAdapter.prototype.getLength.apply(this);
+	};
 
 	/**
 	 * Returns a tree state handle.
