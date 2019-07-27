@@ -26,6 +26,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			],
 			controls: [
 				"sap.ui.integration.widgets.Card",
+				"sap.ui.integration.Widget",
 				"sap.ui.integration.host.HostConfiguration"
 			],
 			elements: [],
@@ -34,6 +35,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			//define the custom tags that can be used in this library
 			customTags: {
 				"card": "sap/ui/integration/widgets/Card",
+				"widget": "sap/ui/integration/Widget",
 				"host-configuration": "sap/ui/integration/host/HostConfiguration"
 			},
 			defaultTagPrefix: "ui"

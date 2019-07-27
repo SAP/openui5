@@ -1,0 +1,67 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.my.test.widget.component",
+		"type": "widget",
+		"i18n": "i18n/i18n.properties",
+        "title": "{{TITLE}}", 
+        "subTitle": "{{SUBTITLE}}", 
+        "shortTitle": "{{SHORTTITLE}}", 
+        "info": "{{INTO}}", 
+        "description": "{{DESCRIPTION}}", 
+        "tags": {
+            "keywords": ["{{KEYWORD1}}","{{KEYWORD2}}"]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5", 
+        "icons": { 
+			"icon": "img/app_icon.png"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.67.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.my.test.widget.component.view.Widget",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.my.test.widget.component.i18n.i18n"
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/styles.css"
+				}
+			]
+		}
+	},
+	"sap.widget": {
+		"configuration": {
+			"parameters": {
+				"text": {
+					"value": "Parameter Value"
+				}
+			},
+			"settings": {
+				"stringProperty": "stringValue",
+				"intProperty": 2,
+				"floatProperty": 2.2,
+				"dateProperty": "2019-12-12T20:00"
+			}
+		}
+	}
+}
