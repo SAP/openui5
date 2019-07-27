@@ -965,6 +965,9 @@ sap.ui.define([
 					"./rules/ViewSettingsDialog.qunit"
 				]
 			},
+			ScrollBar: {
+				title: "QUnit Page for sap.m.ScrollBar"
+			},
 			ScrollContainer: {
 				title: "QUnit Page for sap.m.ScrollContainer"
 			},

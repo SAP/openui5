@@ -88,14 +88,6 @@ function(Control, ScrollBarRenderer) {
 		return this.setProperty("scrollPosition", iPos, true);
 	};
 
-	/**
-	 * @override
-	 */
-	ScrollBar.prototype.setContentSize = function (sContentSize) {
-		this.$("sbcnt").height(sContentSize);
-		return this.setProperty("contentSize", sContentSize, true);
-	};
-
 
 	//=============================================================================
 	// Private Members
