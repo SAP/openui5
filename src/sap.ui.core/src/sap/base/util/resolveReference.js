@@ -124,8 +124,8 @@ sap.ui.define(["sap/base/util/ObjectPath"], function(ObjectPath) {
 			});
 		}
 
-		// If no value is returned, resolve the path under mVariables
-		if (!vRef || vRef === oNotFound) {
+		// If sPath isn't resolved yet, resolve the path under mVariables
+		if (vRef === oNotFound) {
 			vRef = _resolve(aParts, mVariables, {
 				bindContext: mOptions.bindContext
 					// dot case: mOptions.bindDotContext determins whether context should be bound
