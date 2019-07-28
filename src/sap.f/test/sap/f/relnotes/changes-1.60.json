@@ -197,5 +197,16 @@
         "references": []
       }
     ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "a7b4cc87244401c56c3cc66d964afb3a082300bf",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Ensured header snapped on resize",
+        "references": []
+      }
+    ]
   }
 }

@@ -924,5 +924,117 @@
         "references": []
       }
     ]
+  },
+  "1.65.6": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "957c98132f8201067dca17c2aaa51918c7384335",
+        "type": "FIX",
+        "text": " P13nConditionPanel: Proper date format settings handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "389830"
+          }
+        ]
+      },
+      {
+        "id": "94957f973e0fb974b05fa7f9be4b9adfd79d8c81",
+        "type": "FIX",
+        "text": " sap.m.Button: doesn\u0027t get active on drag over",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970231584"
+          }
+        ]
+      },
+      {
+        "id": "6275cab7c0fc109f998d495d17649824a8dd9960",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Align List items with Items aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970317746"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970197424"
+          }
+        ]
+      },
+      {
+        "id": "587ef29c9c1c6292b5bfa3c05c48674ce47c271e",
+        "type": "FIX",
+        "text": " sap.m.Input: change event is now fired only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "302898"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970220864"
+          }
+        ]
+      },
+      {
+        "id": "c4841cbc45e6c158d5bea0dfbce1d19d30cdc99c",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Not truncated now when used outside of ObjectList",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970267395"
+          }
+        ]
+      },
+      {
+        "id": "cb831496af6d3d8f46d2d480f4433628633f9b8c",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Content can now be scrolled with the keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980265832"
+          }
+        ]
+      },
+      {
+        "id": "3705f87bf0284804d25e6f66662d508901cb16bf",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Unnecessary readings now prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980269863"
+          }
+        ]
+      },
+      {
+        "id": "79bb47b576a7620945b060d302f22958dba16246",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: View\u0027s title is now always propagated to the view switch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "357152"
+          }
+        ]
+      },
+      {
+        "id": "945bc1ca3ad5e0b1cd54ed15c14ef636fc54db73",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: null can now be set to selectedPresetFilterItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "371479"
+          }
+        ]
+      }
+    ]
   }
 }
