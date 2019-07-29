@@ -26,12 +26,24 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				enterDateTimePickerValue : function (sId, sValue) {
+					return this.waitFor({
+						controlType : "sap.m.DateTimePicker",
+						id : sId,
+						success : function (oControl) {
+							oControl.setValue(sValue);
+							Opa5.assert.strictEqual(oControl.getValue(), sValue,
+								"Control: " + sId + " Value is: " + oControl.getValue());
+						},
+						viewName : sViewName
+					});
+				},
 				enterInputValue : function (sId, sValue, sViewName0) {
 					return this.waitFor({
-						actions: new EnterText({clearTextFirst: true, text: sValue}),
-						controlType: "sap.m.Input",
-						id: sId,
-						success: function (oControl) {
+						actions : new EnterText({clearTextFirst : true, text : sValue}),
+						controlType : "sap.m.Input",
+						id : sId,
+						success : function (oControl) {
 							Opa5.assert.strictEqual(oControl.getValue(), sValue,
 								"Control: " + sId + " Value is: " + oControl.getValue());
 						},
@@ -40,9 +52,9 @@ sap.ui.define([
 				},
 				enterStepInputValue : function (sId, nValue) {
 					return this.waitFor({
-						controlType: "sap.m.StepInput",
-						id: sId,
-						success: function (oControl) {
+						controlType : "sap.m.StepInput",
+						id : sId,
+						success : function (oControl) {
 							oControl.setValue(nValue);// StepInput does not support EnterText action
 							Opa5.assert.strictEqual(oControl.getValue(), nValue,
 								"Control: " + sId + " Value is: " + oControl.getValue());
@@ -55,6 +67,17 @@ sap.ui.define([
 				}
 			},
 			assertions : {
+				checkDateTimePickerValueState : function (sId, sState) {
+					return this.waitFor({
+						controlType : "sap.m.DateTimePicker",
+						id : sId,
+						success : function (oInput) {
+							Opa5.assert.strictEqual(oInput.getValueState(), sState,
+								"checkDateTimePickerValueState('" + sId + "', '" + sState + "')");
+						},
+						viewName : sViewName
+					});
+				},
 				checkInputIsDirty : function (sId, bIsDirty, sViewName0) {
 					return Helper.checkInputIsDirty(this, sViewName0 || sViewName, sId, bIsDirty);
 				},
