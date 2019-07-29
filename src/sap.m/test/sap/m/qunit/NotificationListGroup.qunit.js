@@ -1081,4 +1081,38 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(document.activeElement.id, thirdNotification.getId(), 'Should not move the focus');
 	});
+
+	QUnit.module('Setter', {
+		beforeEach: function () {
+
+			var oListItem = new sap.m.NotificationListItem({
+				title:"test"
+			});
+
+			this.NotificationListGroup = new NotificationListGroup({
+				title: "Test",
+				items: [
+					oListItem
+				]
+			});
+
+
+			this.NotificationListGroup.setAuthorPicture("sap-icon://add");
+			this.NotificationListGroup.placeAt(RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.NotificationListGroup.destroy();
+		}
+	});
+
+	QUnit.test('Author picture', function (assert) {
+
+		// act
+		this.NotificationListGroup.setAuthorPicture("sap-icon://email");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.NotificationListGroup._getAuthorImage().getSrc(), this.NotificationListGroup.getAuthorPicture(), 'Picture should be updated');
+	});
 });
