@@ -59,8 +59,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 			}
 
 			oRm.openEnd();
-			oRm.openStart("div");
-			oRm.attr("id", oSwitch.getId() + "-switch");
+			oRm.openStart("div", oSwitch.getId() + "-switch");
 			oRm.attr("aria-hidden", "true");
 			oRm.class(CSS_CLASS);
 			if (bAnimate) {
@@ -78,9 +77,8 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 			}
 
 			oRm.openEnd();
-			oRm.openStart("div");
+			oRm.openStart("div", oSwitch.getId() + "-inner");
 			oRm.class(CSS_CLASS + "Inner");
-			oRm.attr("id", oSwitch.getId() + "-inner");
 			oRm.openEnd();
 
 			// text
@@ -113,10 +111,9 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 				bDefaultType = oSwitch.getType() === SwitchType.Default;
 
 			// on
-			oRm.openStart("div");
+			oRm.openStart("div", oSwitch.getId() + "-texton");
 			oRm.class(CSS_CLASS + "Text");
 			oRm.class(CSS_CLASS + "TextOn");
-			oRm.attr("id", oSwitch.getId() + "-texton");
 			oRm.openEnd();
 			oRm.openStart("span");
 			oRm.class(CSS_CLASS + "Label");
@@ -131,10 +128,9 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 			oRm.close("div");
 
 			// off
-			oRm.openStart("div");
+			oRm.openStart("div", oSwitch.getId() + "-textoff");
 			oRm.class(CSS_CLASS + "Text");
 			oRm.class(CSS_CLASS + "TextOff");
-			oRm.attr("id", oSwitch.getId() + "-textoff");
 			oRm.openEnd();
 			oRm.openStart("span");
 			oRm.class(CSS_CLASS + "Label");
@@ -152,8 +148,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 		SwitchRenderer.renderHandle = function(oRm, oSwitch, sState) {
 			var CSS_CLASS = SwitchRenderer.CSS_CLASS;
 
-			oRm.openStart("div");
-			oRm.attr("id", oSwitch.getId() + "-handle");
+			oRm.openStart("div", oSwitch.getId() + "-handle");
 			oRm.attr("data-sap-ui-swt", sState);
 			oRm.class(CSS_CLASS + "Handle");
 			oRm.openEnd();
@@ -161,8 +156,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 		};
 
 		SwitchRenderer.renderCheckbox = function(oRm, oSwitch, sState) {
-			oRm.voidStart("input");
-			oRm.attr("id", oSwitch.getId() + "-input");
+			oRm.voidStart("input", oSwitch.getId() + "-input");
 			oRm.attr("type", "checkbox");
 			oRm.attr("name", oSwitch.getName());
 			oRm.attr("value", sState);
@@ -216,8 +210,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 		 * @param {object} mOptions
 		 */
 		SwitchRenderer.renderInvisibleElement = function(oRm, oSwitch, mOptions) {
-			oRm.openStart("span");
-			oRm.attr("id", mOptions.id);
+			oRm.openStart("span", mOptions.id);
 			oRm.attr("aria-hidden", "true");
 			oRm.class("sapUiInvisibleText");
 			oRm.openEnd();
