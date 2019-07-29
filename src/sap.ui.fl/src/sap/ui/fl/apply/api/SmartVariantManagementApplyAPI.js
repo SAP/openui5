@@ -37,12 +37,13 @@ sap.ui.define([
 		 * @returns {Promise<Object<string,sap.ui.fl.Change>>} Map with key <code>changeId</code> and value instance of <code>sap.ui.fl.Change</code>
 		 * @ui5-restricted
 		 */
-		loadChanges: function(oControl) {
+		loadChanges: function(mPropertyBag) {
+			var oControl = mPropertyBag.control || arguments[0];
 			var oAppDescriptor = Utils.getAppDescriptor(oControl);
 			var sSiteId = Utils.getSiteId(oControl);
 			var sStableId = this._getStableId(oControl);
 
-			var mPropertyBag = {
+			var mParameters = {
 				appDescriptor: oAppDescriptor,
 				siteId: sSiteId,
 				includeVariants: true
@@ -50,7 +51,7 @@ sap.ui.define([
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
-			return oChangePersistence.getChangesForVariant(this._PERSISTENCY_KEY, sStableId, mPropertyBag);
+			return oChangePersistence.getChangesForVariant(this._PERSISTENCY_KEY, sStableId, mParameters);
 		},
 
 		/**
@@ -62,7 +63,9 @@ sap.ui.define([
 		 * @returns {sap.ui.fl.Change} Change or variant object
 		 * @ui5-restricted
 		 */
-		getChangeById: function (oControl, sId) {
+		getChangeById: function (mPropertyBag) {
+			var oControl = mPropertyBag.control || arguments[0];
+			var sId = mPropertyBag.id || arguments[1];
 			if (!sId || !oControl) {
 				Utils.log.error("sId or oControl is not defined");
 				return undefined;
@@ -92,7 +95,8 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if it's an application variant
 		 * @ui5-restricted
 		 */
-		isApplicationVariant: function(oControl) {
+		isApplicationVariant: function(mPropertyBag) {
+			var oControl = mPropertyBag.control || arguments[0];
 			if (Utils.isApplicationVariant(oControl)) {
 				return true;
 			}
@@ -142,8 +146,8 @@ sap.ui.define([
 		 * @returns {String} ID of the default variant
 		 * @ui5-restricted
 		 */
-		getDefaultVariantId: function(oControl) {
-			var oChanges = this._getChangeMap(oControl);
+		getDefaultVariantId: function(mPropertyBag) {
+			var oChanges = this._getChangeMap(mPropertyBag.control || arguments[0]);
 
 			return DefaultVariant.getDefaultVariantId(oChanges);
 		},
@@ -158,8 +162,8 @@ sap.ui.define([
 		 * @returns {boolean} <code>ExecuteOnSelect</code> flag
 		 * @ui5-restricted
 		 */
-		getExecuteOnSelect: function(oControl) {
-			var oChanges = this._getChangeMap(oControl);
+		getExecuteOnSelect: function(mPropertyBag) {
+			var oChanges = this._getChangeMap(mPropertyBag.control || arguments[0]);
 
 			return StandardVariant.getExecuteOnSelect(oChanges);
 		},

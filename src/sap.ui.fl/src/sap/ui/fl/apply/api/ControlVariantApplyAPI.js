@@ -28,12 +28,12 @@ sap.ui.define([
 		 * If a variant management control is given as a parameter, only parameters specific to that control are cleared.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.base.ManagedObject} mPropertyBag.variantManagementControl - Variant management control for which the URL technical parameter has to be cleared
+		 * @param {sap.ui.base.ManagedObject} mPropertyBag.control - Variant management control for which the URL technical parameter has to be cleared
 		 *
 		 * @public
 		 */
-		clearVariantParameterInURL: function () {
-			OldControlPersonalizationAPI.clearVariantParameterInURL.apply(OldControlPersonalizationAPI, arguments);
+		clearVariantParameterInURL: function (mPropertyBag) {
+			OldControlPersonalizationAPI.clearVariantParameterInURL(mPropertyBag.control);
 		},
 
 		/**
@@ -48,8 +48,8 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		activateVariant: function() {
-			return OldControlPersonalizationAPI.activateVariant.apply(OldControlPersonalizationAPI, arguments);
+		activateVariant: function(mPropertyBag) {
+			return OldControlPersonalizationAPI.activateVariant(mPropertyBag.element, mPropertyBag.variantReference);
 		}
 
 	};
