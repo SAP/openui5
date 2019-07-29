@@ -28,7 +28,7 @@ sap.ui.define([
 	var _WRITE_CONNECTOR_NAME_SPACE = "sap/ui/fl/write/internal/connectors/";
 
 	function _getConnectors (sNameSpace, bIncludingStaticFileConnector) {
-		var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityConnectors();
+		var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 		var mConnectors = [];
 		if (bIncludingStaticFileConnector) {
 			mConnectors = [StaticFileConnector.CONFIGURATION];

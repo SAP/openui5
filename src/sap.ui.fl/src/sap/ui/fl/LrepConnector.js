@@ -76,11 +76,6 @@ sap.ui.define([
 		});
 	};
 
-
-	LrepConnector.prototype._getFlexibilityServicesUrlPrefix = function() {
-		return sap.ui.getCore().getConfiguration().getFlexibilityServices();
-	};
-
 	/**
 	 * Registers a callback for a sent request to the back end. The callback is only called once for each change. Each call is done with an object
 	 * similar to the resolve of the promises containing a <code>status</code> of the response from the back end i.e. <code>success</code>, a
@@ -284,7 +279,7 @@ sap.ui.define([
 	 * @private
 	 */
 	LrepConnector.prototype._sendAjaxRequest = function(sUri, mOptions) {
-		var sFlexibilityServicePrefix = this._getFlexibilityServicesUrlPrefix();
+		var sFlexibilityServicePrefix = FlexUtils.getLrepUrl();
 
 		if (!sFlexibilityServicePrefix) {
 			return Promise.reject({
@@ -449,8 +444,8 @@ sap.ui.define([
 
 		function _createUrls(oComponent, mPropertyBag, sClient) {
 			var mUrls = {};
-			var sFlexDataPrefix = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.DATA;
-			var sFlexModulesPrefix = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.MODULES;
+			var sFlexDataPrefix = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.DATA;
+			var sFlexModulesPrefix = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.MODULES;
 			var sPostFix = "";
 
 			if (mPropertyBag.cacheKey) {
@@ -581,7 +576,7 @@ sap.ui.define([
 	 */
 	LrepConnector.prototype.loadSettings = function() {
 		if (!LrepConnector._oLoadSettingsPromise) {
-			var sUri = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.SETTINGS;
+			var sUri = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.SETTINGS;
 
 			if (this._sClient) {
 				sUri += "?sap-client=" + this._sClient;
@@ -650,9 +645,9 @@ sap.ui.define([
 	 */
 	LrepConnector.prototype._getUrlPrefix = function(bIsVariant) {
 		if (bIsVariant) {
-			return this._getFlexibilityServicesUrlPrefix() + "/variants/";
+			return FlexUtils.getLrepUrl() + "/variants/";
 		}
-		return this._getFlexibilityServicesUrlPrefix() + "/changes/";
+		return FlexUtils.getLrepUrl() + "/changes/";
 	};
 
 	/**
@@ -832,7 +827,7 @@ sap.ui.define([
 	 * @public
 	 */
 	LrepConnector.prototype.getStaticResource = function(sNamespace, sName, sType, bIsRuntime) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -859,7 +854,7 @@ sap.ui.define([
 	 * @public
 	 */
 	LrepConnector.prototype.getFileAttributes = function(sNamespace, sName, sType, sLayer) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -914,7 +909,7 @@ sap.ui.define([
 	};
 
 	LrepConnector.prototype._fileAction = function(sMethod, sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -951,7 +946,7 @@ sap.ui.define([
 	 * @private Private for now, as is not in use.
 	 */
 	LrepConnector.prototype.publish = function(sOriginNamespace, sName, sType, sOriginLayer, sTargetLayer, sTargetNamespace, sChangelist) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.PUBLISH;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.PUBLISH;
 		sRequestPath += sOriginNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -994,7 +989,7 @@ sap.ui.define([
 	 * @public
 	 */
 	LrepConnector.prototype.listContent = function(sNamespace, sLayer) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace;
 
 		var aParams = [];

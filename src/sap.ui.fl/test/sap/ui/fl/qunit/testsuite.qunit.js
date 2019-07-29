@@ -58,7 +58,7 @@ sap.ui.define(function () {
 						"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"
 					},
 					"xx-flexBundleRequestForced": true,
-					"xx-flexibilityConnectors": [{connectorName: "my/lib/BrokenConnector", custom: true, layerFilter: []}]
+					flexibilityServices: '[{"connectorName": "my/lib/BrokenConnector", "custom": true, "layerFilter": []}]'
 				},
 				coverage: {
 					only: ["sap/ui/fl/write/internal/Connector"]
@@ -398,7 +398,7 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/library"]
 				},
 				ui5: {
-					flexibilityServices: false,
+					flexibilityServices: "",
 					libs: null // The fl library is being loaded inside the test
 				}
 			},

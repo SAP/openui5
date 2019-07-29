@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
-	"sap/ui/fl/ChangePersistenceFactory"
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Utils"
 ], function(
 	jQuery,
 	LrepConnector,
 	Cache,
-	ChangePersistenceFactory
+	ChangePersistenceFactory,
+	Utils
 ) {
 	"use strict";
 	var oLrepConnector = Object.create(LrepConnector.prototype);
@@ -47,15 +49,11 @@ sap.ui.define([
 		}
 	}
 
-	FakeLrepConnector.prototype._getFlexibilityServicesUrlPrefix = function() {
-		return sap.ui.getCore().getConfiguration().getFlexibilityServices();
-	};
-
 	FakeLrepConnector.prototype._getUrlPrefix = function(bIsVariant) {
 		if (bIsVariant) {
-			return this._getFlexibilityServicesUrlPrefix() + "/variants/";
+			return Utils.getLrepUrl() + "/variants/";
 		}
-		return this._getFlexibilityServicesUrlPrefix() + "/changes/";
+		return Utils.getLrepUrl() + "/changes/";
 	};
 
 	/**
