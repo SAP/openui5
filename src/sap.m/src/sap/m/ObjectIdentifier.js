@@ -291,49 +291,6 @@ function(
 	};
 
 	/**
-	 * Updates the text of the title control and re-renders it if present in the DOM.
-	 * @param {boolean} bIsTitleActive Update title control with the respect to the current 'titleActive' property value
-	 *
-	 * @private
-	 */
-	ObjectIdentifier.prototype._updateTitleControl = function(bIsTitleActive) {
-		var oRm,
-			oTitleControl = this._getTitleControl(),
-			sId = this.getId();
-
-		if (bIsTitleActive && oTitleControl instanceof sap.m.Text) {
-			this.destroyAggregation("_titleControl", true);
-			oTitleControl = new Link({
-				id : sId + "-link",
-				text: ManagedObject.escapeSettingsValue(this.getProperty("title")),
-				//Add a custom hidden role "ObjectIdentifier" with hidden text
-				ariaLabelledBy: this._oAriaCustomRole
-			});
-			oTitleControl.addAssociation("ariaLabelledBy", sId + "-text", true);
-			this.setAggregation("_titleControl", oTitleControl, true);
-		} else if (!bIsTitleActive && oTitleControl instanceof sap.m.Link) {
-			this.destroyAggregation("_titleControl", true);
-			oTitleControl = new Text({
-				id : sId + "-txt",
-				text: ManagedObject.escapeSettingsValue(this.getProperty("title"))
-			});
-			this.setAggregation("_titleControl", oTitleControl, true);
-		}
-
-		// check if we have "-title" div rendered and if so rerender the Title inside it
-		if (this.$("title").length) {
-			oTitleControl.setProperty("text", this.getProperty("title"), true);
-
-			oRm = sap.ui.getCore().createRenderManager();
-			oRm.renderControl(oTitleControl);
-			oRm.flush(this.$("title")[0]);
-			oRm.destroy();
-		}
-
-		return oTitleControl;
-	};
-
-	/**
 	 * Lazy loads _textControl aggregation.
 	 * @returns {sap.m.Control} The control for the text
 	 * @private
@@ -364,24 +321,12 @@ function(
 	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setTitle = function (sTitle) {
-		//always suppress rerendering because title div is rendered
-		//if text is empty or not
-		var oTitleControl = this._getTitleControl(),
-			$TitleContainerRow;
-		oTitleControl.setProperty("text", sTitle, false);
+		var oTitleControl = this._getTitleControl();
+
+		oTitleControl.setProperty("text", sTitle);
 		oTitleControl.setVisible(!!oTitleControl.getText());
-		this.setProperty("title", sTitle, true);
 
-		$TitleContainerRow = this.$().find(".sapMObjectIdentifierTopRow");
-		if (this._hasTopRow()) {
-			$TitleContainerRow.attr('style', null);
-		} else {
-			$TitleContainerRow.css("display", "none");
-		}
-		this.$("text").toggleClass("sapMObjectIdentifierTextBellow",
-				!!this.getProperty("text") && !!this.getProperty("title"));
-
-		return this;
+		return this.setProperty("title", sTitle);
 	};
 
 	/**
@@ -392,16 +337,9 @@ function(
 	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setText = function (sText) {
-		//always suppress rerendering because text div is rendered
-		//if text is empty or not
-		this.setProperty("text", sText, true);
+		this._getTextControl().setProperty("text", sText);
 
-		var oTextControl = this._getTextControl();
-		oTextControl.setProperty("text", sText, false);
-		this.$("text").toggleClass("sapMObjectIdentifierTextBellow",
-				!!this.getProperty("text") && !!this.getProperty("title"));
-
-		return this;
+		return this.setProperty("text", sText);
 	};
 
 	/**
@@ -412,14 +350,15 @@ function(
 	 * @returns {sap.m.ObjectIdentifier} this to allow method chaining
 	 */
 	ObjectIdentifier.prototype.setTitleActive = function(bValue) {
-		var bPrevValue = this.getProperty("titleActive");
+		var bPrevValue = this.getTitleActive();
 
-		// Return if the new value is the same as the old one
+		this.setProperty("titleActive", bValue);
+
 		if (bPrevValue != bValue) {
-			this.setProperty("titleActive", bValue, true);
-			// If the title is already rendered, then the title control has to be updated and rerendered
-			this._updateTitleControl(bValue);
+			this.destroyAggregation("_titleControl");
+			this._getTitleControl();
 		}
+
 		return this;
 	};
 
