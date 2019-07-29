@@ -455,7 +455,10 @@ sap.ui.define([
 				};
 
 				var fnOverridePropertyFilter = function (item) {
-					return aPropertyNames.indexOf(item.name) === -1 && !item.borrowedFrom;
+					return aPropertyNames.indexOf(item.name) === -1 && !item.borrowedFrom
+						&& !aBorrowChain.properties.some(function(oProp) {
+							return oProp.name === item.name;
+						});
 				};
 
 				var fnOverrideAggregationFilter = function (item) {
