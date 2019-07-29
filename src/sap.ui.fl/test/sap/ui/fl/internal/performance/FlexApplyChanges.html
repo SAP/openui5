@@ -3,7 +3,6 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Flex - ApplyChanges</title>
-
 		<style>
 			html, body, #content {
 				height : 100%;
@@ -15,7 +14,6 @@
 				margin-top: 50px;
 			}
 		</style>
-
 		<script src="../../shared-config.js"></script>
 		<script>
 			window['sap-ui-config'].noConflict = 'true';
@@ -23,12 +21,10 @@
 			window['sap-ui-config'].resourceroots = { "fl.performance": "./" };
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
-
 		<script>
 			window.wpp = {
 				customMetrics: {}
 			};
-
 			sap.ui.require([
 				"sap/base/Log",
 				"sap/ui/core/mvc/JSView",
@@ -54,11 +50,10 @@
 				Label
 			) {
 				jQuery.sap.measure.setActive(true);
-				var oControlToBeChanged,
-					oAppComponent;
+				var oControlToBeChanged;
+				var oAppComponent;
 
 				sap.ui.controller("my.own.controller", {});
-
 				sap.ui.jsview("my.own.view", {
 					// defines the UI of this View
 					getControllerName: function() {
@@ -78,7 +73,8 @@
 								new Label("containerLabel", {
 									text : "ContainerLayout1"
 								}),
-								oLayout1
+								oLayout1,
+								new Label("duration")
 							]
 						});
 						var oHorizontalLayout = new HorizontalLayout("HorizontalLayout", {
@@ -87,10 +83,6 @@
 						return [ oHorizontalLayout ] ;
 					}
 				});
-
-				// start performance measurement
-				window.performance.mark("applyChangesMassive.start");
-
 				Component.create({
 					name: "fl.performance.flexApplyChanges.Component",
 					url: "./flexApplyChanges/",
@@ -105,14 +97,10 @@
 					});
 				})
 				.then(function(oComponentContainer) {
+					// start performance measurement
+					window.performance.mark("applyChangesMassive.start");
 					oComponentContainer.placeAt('content');
 					sap.ui.getCore().applyChanges();
-					var mAppManifest = oAppComponent.getManifestEntry("sap.app");
-					return ChangePersistenceFactory
-						.getChangePersistenceForComponent(
-							"fl.performance.flexApplyChanges.Component",
-							mAppManifest.applicationVersion.version)
-						.getChangesForComponent();
 				})
 				.then(function() {
 					return FlexControllerFactory.createForControl(oAppComponent).waitForChangesToBeApplied(oControlToBeChanged)
@@ -122,7 +110,9 @@
 					window.performance.mark("applyChangesMassive.stop");
 					window.performance.measure("ApplyChangesMassive", "applyChangesMassive.start", "applyChangesMassive.stop");
 					window.wpp.customMetrics.applyChangesMassive = window.performance.getEntriesByName("ApplyChangesMassive")[0].duration;
-					BaseLog.info("ApplyChangesMassive = ", window.wpp.customMetrics.applyChangesMassive + "ms");
+					var sDurationText = "ApplyChangesMassive = " + window.wpp.customMetrics.applyChangesMassive + "ms";
+					BaseLog.info(sDurationText);
+					sap.ui.getCore().byId("duration").setText(sDurationText);
 				});
 			});
 		</script>
