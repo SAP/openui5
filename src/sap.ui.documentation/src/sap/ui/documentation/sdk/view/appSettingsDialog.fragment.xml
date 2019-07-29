@@ -14,8 +14,8 @@
 						<core:Item key="sap_fiori_3" text="Quartz Light"/>
 						<core:Item key="sap_belize" text="Belize"/>
 						<core:Item key="sap_belize_plus" text="Belize Deep"/>
-						<core:Item key="sap_belize_hcb" text="High Contrast Black"/>
-						<core:Item key="sap_belize_hcw" text="High Contrast White"/>
+						<core:Item key="sap_fiori_3_hcb" text="High Contrast Black"/>
+						<core:Item key="sap_fiori_3_hcw" text="High Contrast White"/>
 					</Select>
 
 					<Label text="Content Density:" design="Standard"  labelFor="CompactModeSwitch" />
