@@ -41,6 +41,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/SmartVariantManagementApplyAPI"]
 				}
 			},
+			"apply/api/UI2PersonalizationApplyAPI": {
+				group: 'Apply API',
+				coverage: {
+					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
+				}
+			},
 			"apply/internal/Connector": {
 				group: 'Apply Internal',
 				ui5: {
@@ -100,6 +106,12 @@ sap.ui.define(function () {
 				group: 'Write API',
 				coverage: {
 					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/write/internal/ChangesController"]
+				}
+			},
+			"write/api/UI2PersonalizationWriteAPI": {
+				group: 'Write API',
+				coverage: {
+					only: ["sap/ui/fl/write/api/UI2PersonalizationWriteAPI"]
 				}
 			},
 			"write/api/SmartVariantManagementWriteAPI": {
