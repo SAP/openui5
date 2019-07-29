@@ -1115,4 +1115,24 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(this.NotificationListGroup._getAuthorImage().getSrc(), this.NotificationListGroup.getAuthorPicture(), 'Picture should be updated');
 	});
+
+	QUnit.test("#setCollapsed", function (assert) {
+		// assert
+		assert.strictEqual(this.NotificationListGroup, this.NotificationListGroup.setCollapsed(true), "Overridden method should return 'this'.");
+
+		// act
+		this.NotificationListGroup.setCollapsed(false);
+		// assert
+		assert.notOk(this.NotificationListGroup.$().hasClass("sapMNLG-Collapsed"), "Expanded group should NOT have collapsed class.");
+
+		// act
+		this.NotificationListGroup.setCollapsed(false); // call the setter second time with the same value
+		// assert
+		assert.notOk(this.NotificationListGroup.$().hasClass("sapMNLG-Collapsed"), "Expanded group should NOT have collapsed class.");
+
+		// act
+		this.NotificationListGroup.setCollapsed(true);
+		// assert
+		assert.ok(this.NotificationListGroup.$().hasClass("sapMNLG-Collapsed"), "Collapsed group should have collapsed class.");
+	});
 });
