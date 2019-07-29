@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	Settings,
 	Cache,
 	Utils,
+	LrepConnector,
 	sinon
 ) {
 	"use strict";
@@ -339,6 +341,27 @@ sap.ui.define([
 			assert.equal(oSettings.isAtoEnabled(), false);
 			assert.equal(oSettings.isProductiveSystem(), false);
 			assert.equal(oSettings.isVariantSharingEnabled(), false);
+		});
+	});
+
+	QUnit.module("Given that Settings loading failed", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("a default response is resolving the request", function(assert) {
+			var oLrepConnector = new LrepConnector();
+			sandbox.stub(oLrepConnector, "loadSettings").resolves();
+			sandbox.stub(LrepConnector, "createConnector").returns(oLrepConnector);
+
+			return Settings.getInstance().then(function (oSettings) {
+				assert.ok(oSettings, "the settings instance is available");
+				assert.equal(oSettings.isKeyUser(), false);
+				assert.equal(oSettings.isAtoAvailable(), false);
+				assert.equal(oSettings.isAtoEnabled(), false);
+				assert.equal(oSettings.isProductiveSystem(), true);
+				assert.equal(oSettings.isVariantSharingEnabled(), false);
+			});
 		});
 	});
 

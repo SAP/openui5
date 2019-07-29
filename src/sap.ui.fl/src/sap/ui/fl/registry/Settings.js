@@ -8,13 +8,15 @@ sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
 	"sap/ui/base/EventProvider",
-	"sap/base/util/UriParameters"
+	"sap/base/util/UriParameters",
+	"sap/base/Log"
 ], function(
 	LrepConnector,
 	Cache,
 	Utils,
 	EventProvider,
-	UriParameters
+	UriParameters,
+	Log
 ) {
 	"use strict";
 
@@ -164,6 +166,20 @@ sap.ui.define([
 	 */
 	Settings._loadSettings = function() {
 		return LrepConnector.createConnector().loadSettings().then(function (oSettings) {
+			if (!oSettings) {
+				Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
+				// in case the back end cannot respond resolve with a default response
+				oSettings = {
+					isKeyUser: false,
+					isVariantSharingEnabled: false,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: true,
+					_bFlexChangeMode: false,
+					_bFlexibilityAdaptationButtonAllowed: false
+				};
+			}
+
 			return Settings._storeInstance(oSettings);
 		});
 	};
