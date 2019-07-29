@@ -62,6 +62,12 @@
 				'sap.ui.model.odata.type.Raw' does not support formatting".</li>
 			<li>Press <code>Reset Model</code> or <code>Reset ContextBinding</code>.</li>
 			<li><b>Check</b>: The error is gone.</li>
+			<li>Enter "Apr 19, 2029" in the date date picker labeled with
+				<code>Date, bound property dateValue</code>.</li>
+			<li><b>Check</b>: There is no error displayed.</li>
+			<li>Enter "Apr 19, 2029, 8:25:21 AM" in the date time picker labeled with
+				<code>DateTimeOffset, bound property dateValue</code>.</li>
+			<li><b>Check</b>: There is no error displayed.</li>
 		</ol>
 		<h3>Real OData tests</h3>
 		<ol>
@@ -69,6 +75,11 @@
 			<li>Enter valid values in the input fields.</li>
 			<li>Press <code>Save</code>.</li>
 			<li>Reload the application and <b>Check</b> whether the before saved values appear.</li>
+			<li>Clear the field labeled <code>String40</code></li>
+			<li><b>Check</b>: The input field is empty.</li>
+			<li>Press <code>Save</code>.</li>
+			<li><b>Check</b>: No error occurs.</li>
+			<li>Reload the application and <b>Check</b> whether the field is still empty.</li>
 			<li>Press <code>Reset</code>.</li>
 			<li><b>Check</b> whether the default values provided by the service appear.</li>
 			<li>Reload the application and <b>Check</b> whether the default values still appear.

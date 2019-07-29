@@ -29,7 +29,7 @@ sap.ui.define([
 		ODataModel, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
 		_Helper, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$groupId",
@@ -1030,7 +1030,10 @@ sap.ui.define([
 			aContexts,
 			oResetSpy,
 			sResolvedPath = "/TEAMS('4711')/TEAM_2_EMPLOYEES",
-			oVirtualContext = {};
+			oVirtualContext = {
+				destroy : function () {}
+			},
+			that = this;
 
 		oBinding.sChangeReason = "AddVirtualContext";
 		this.mock(oBinding).expects("checkSuspended").twice().withExactArgs();
@@ -1067,8 +1070,9 @@ sap.ui.define([
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.notOk(bChangeFired, "not yet!");
 
-
 		return Promise.resolve().then(function () {
+			that.mock(oVirtualContext).expects("destroy").withExactArgs();
+
 			// call 1st call's 1st arg
 			oAddPrerenderingTaskSpy.args[0][0]();
 			assert.ok(bChangeFired);
@@ -1362,14 +1366,15 @@ sap.ui.define([
 			oContext = Context.create(this.oModel, {}, "/TEAMS('4711')"),
 			oPromise = SyncPromise.resolve();
 
-		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
-			.returns(oPromise);
 		this.mock(ODataListBinding.prototype).expects("checkSuspended").withExactArgs();
+		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
+		oBinding.sReducedPath = "/reduced/path"; // simulate fetchCache with autoExpandSelect
+		this.mock(oContext).expects("fetchValue").withExactArgs("/reduced/path")
+			.returns(oPromise);
 
 		// code under test
-		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
-
 		assert.deepEqual(oBinding.getContexts(), []);
+
 		return oPromise;
 	});
 
@@ -1466,7 +1471,6 @@ sap.ui.define([
 		var done = assert.async(),
 			oCacheMock = this.getCacheMock(), // this is used in bindList
 			oBinding = this.bindList("/EMPLOYEES"),
-			oBindingMock = this.mock(oBinding),
 			oContext = {},
 			bLocked = true, // only the first read is locked
 			iSerialNumber = 0,
@@ -1493,8 +1497,7 @@ sap.ui.define([
 				i,
 				iLength = oFixture[iRangeIndex].length || iSizeLimit,
 				sMessage,
-				iStart = oFixture[iRangeIndex].start || 0,
-				oPromise;
+				iStart = oFixture[iRangeIndex].start || 0;
 
 			if (bSync) {
 				// during the last iteration there is only a sync request, otherwise an async one
@@ -1537,13 +1540,6 @@ sap.ui.define([
 					assert.strictEqual(aContexts[i].getPath(),
 						"/EMPLOYEES/" + (iStart + i),
 						sMessage);
-					//check delegation of fetchValue from context
-					oPromise = {}; // a fresh new object each turn around
-					oBindingMock.expects("fetchValue").withExactArgs(
-							"/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined, undefined)
-						.returns(oPromise);
-
-					assert.strictEqual(aContexts[i].fetchValue("foo/bar/" + i), oPromise);
 				}
 			}
 		}
@@ -2002,7 +1998,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		oBinding.setContext(oContext);
-		this.mock(oContext).expects("fetchValue").withExactArgs("TEAM_2_EMPLOYEES")
+		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS('1')/TEAM_2_EMPLOYEES")
 			.returns(oReadPromise);
 
 		oBinding.getContexts(0, 10);
@@ -2454,7 +2450,7 @@ sap.ui.define([
 		oBinding.oReadGroupLock = oReadGroupLock;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
+		this.mock(oParentContext).expects("fetchValue").withExactArgs("/TEAMS('4711')/EMPLOYEES")
 			.returns(SyncPromise.resolve(createData(10, 0, true, 10)));
 		this.mock(oReadGroupLock).expects("unlock").withExactArgs();
 
@@ -2962,7 +2958,7 @@ sap.ui.define([
 			oRange = {start : 3, length : 2};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
+		this.mock(oParentContext).expects("fetchValue").withExactArgs("/TEAMS('4711')/EMPLOYEES")
 			.returns(SyncPromise.resolve(aData));
 
 		// code under test
@@ -2983,7 +2979,7 @@ sap.ui.define([
 			oRange = {start : 3, length : 2};
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
+		this.mock(oParentContext).expects("fetchValue").withExactArgs("/TEAMS('4711')/EMPLOYEES")
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -3210,6 +3206,24 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aContexts[2], oContext2);
 		assert.strictEqual(oBinding.aContexts[3], oContext3);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createContexts, prerendering task called on destroyed binding", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
+			oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask");
+
+		oBinding.mPreviousContextsByPath = {"/EMPLOYEES/0" : {}};
+
+		// code under test
+		oBinding.createContexts(1, 0, []);
+
+		oBinding.destroy();
+
+		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
+
+		// code under test - prerendering task does not fail if binding is already destroyed
+		oExpectation.args[0][0]();
 	});
 
 	//*********************************************************************************************
@@ -3707,17 +3721,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\('bar'\)$/,
 		sPredicate : "('bar')"
 	}, {
 		oInitialData : {},
-		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\('bar'\)$/,
 		sPredicate : "('bar')"
 	}, {
-		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\(\$uid=.+\)$/,
 		oInitialData : {}
 	}, {
-		rExpectedPath : /^\/TEAMS\/1\/TEAM_2_EMPLOYEES\(\$uid=.+\)$/,
 		oInitialData : {"@$ui5.keepTransientPath" : true}
 	}].forEach(function (oFixture) {
 		var sTitle = "create: relative binding, initial data: "
@@ -3758,6 +3768,9 @@ sap.ui.define([
 				that.mock(_Helper).expects("getPrivateAnnotation").atLeast(0)
 					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
 					.returns(oFixture.sPredicate);
+				oBindingMock.expects("adjustPredicate").exactly(oFixture.sPredicate ? 1 : 0)
+					.withExactArgs(sinon.match(rTransientPredicate), oFixture.sPredicate,
+						sinon.match.same(oContext));
 			});
 			this.mock(this.oModel).expects("checkMessages").exactly(oFixture.sPredicate ? 1 : 0)
 				.withExactArgs();
@@ -3774,7 +3787,8 @@ sap.ui.define([
 
 			aCacheResult.unshift({/*transient element*/});
 			this.mock(oBinding.oContext).expects("fetchValue")
-				.withExactArgs("TEAM_2_EMPLOYEES").returns(SyncPromise.resolve(aCacheResult));
+				.withExactArgs("/TEAMS/1/TEAM_2_EMPLOYEES")
+				.returns(SyncPromise.resolve(aCacheResult));
 
 			// code under test - ensure that getContexts delivers the created context correctly
 			aContexts = oBinding.getContexts(0, 4);
@@ -3799,9 +3813,6 @@ sap.ui.define([
 				+ "exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS/1[1]|TEAM_2_EMPLOYEES"));
 
 			return oContext.created().then(function () {
-				assert.ok(oFixture.rExpectedPath.test(oContext.getPath()));
-				assert.strictEqual(oBinding.aPreviousData[0], oContext.getPath());
-
 				that.mock(oBinding).expects("reset").withExactArgs();
 				that.mock(oBinding).expects("fetchCache")
 					.withExactArgs(sinon.match.same(oContext2));
@@ -3856,7 +3867,7 @@ sap.ui.define([
 
 		aCacheResult.unshift({/*transient element*/});
 		that.mock(oBinding.oContext).expects("fetchValue")
-			.withExactArgs("TEAM_2_EMPLOYEES").returns(SyncPromise.resolve(aCacheResult));
+			.withExactArgs("/TEAMS/1/TEAM_2_EMPLOYEES").returns(SyncPromise.resolve(aCacheResult));
 
 		// code under test
 		aContexts = oBinding.getContexts(0, 3);
@@ -4191,14 +4202,17 @@ sap.ui.define([
 
 		// avoid that the binding has a cache despite parameter $count (normally
 		// auto-$expand/$select ensures this)
-		oBindingMock.expects("fetchCache").atLeast(1).returns(SyncPromise.resolve());
+		oBindingMock.expects("fetchCache").atLeast(1).callsFake(function () {
+			oBinding.sReducedPath = "/reduced/path";
+			return SyncPromise.resolve();
+		});
 		oBinding.setContext(oParentContext);
 
 		oBindingMock.expects("checkSuspended").exactly(6); // create and getContext
 		aReadResults = [{}, {}, {}, {}];
 		aReadResults.$count = 4;
 		oParentContextMock.expects("fetchValue")
-			.withExactArgs("TEAM_2_EMPLOYEES")
+			.withExactArgs("/reduced/path")
 			.returns(SyncPromise.resolve(aReadResults));
 
 		// code under test
@@ -4222,7 +4236,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.getLength(), 5);
 
 		oParentContextMock.expects("fetchValue").exactly(3) // with each getContexts
-			.withExactArgs("TEAM_2_EMPLOYEES")
+			.withExactArgs("/reduced/path")
 			.returns(SyncPromise.resolve([{}, {}, {}, {}, {}]));
 
 		// code under test
@@ -4257,7 +4271,7 @@ sap.ui.define([
 			aReadResults = [{}, {}, {}, {}, {}];
 			aReadResults.$count = 5;
 			oParentContextMock.expects("fetchValue")
-				.withExactArgs("TEAM_2_EMPLOYEES")
+				.withExactArgs("/reduced/path")
 				.returns(SyncPromise.resolve(aReadResults));
 
 			// code under test
@@ -6479,6 +6493,59 @@ sap.ui.define([
 
 		// code under test
 		oBinding.detachCreateSent(fnFunction, oListener);
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHasPath, i) {
+	QUnit.test("adjustPredicate: single context #" + i, function (assert) {
+		var oBinding = this.bindList("/SalesOrderList"),
+			oContext = {adjustPredicate : function () {}},
+			oExpectation;
+
+		oBinding.aPreviousData = bHasPath
+			? ["foo", "/SalesOrderList($uid=1)", "bar"]
+			: ["foo", "bar"];
+		oExpectation = this.mock(oContext).expects("adjustPredicate")
+			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
+
+		// code under test
+		oBinding.adjustPredicate("($uid=1)", "('42')", oContext);
+		oExpectation.args[0][2]("/SalesOrderList($uid=1)", "/SalesOrderList('42')");
+
+		assert.deepEqual(oBinding.aPreviousData, bHasPath
+			? ["foo", "/SalesOrderList('42')", "bar"]
+			: ["foo", "bar"]);
+		assert.notOk(oBinding.aPreviousData.hasOwnProperty("-1"));
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("adjustPredicate", function (assert) {
+		var oBinding = this.bindList("SO_2_SOITEM",
+				Context.create({/*oModel*/}, {/*oBinding*/}, "/SalesOrderList($uid=1)")),
+			oContext1 = {adjustPredicate : function () {}},
+			oContext2 = {adjustPredicate : function () {}},
+			oExpectation1,
+			oExpectation2;
+
+		oBinding.aPreviousData = ["/SalesOrderList($uid=1)/SO_2_SOITEM($uid=2)"];
+		oBinding.aContexts = [,, oContext1, oContext2]; // sparse array
+		this.mock(oBinding.oHeaderContext).expects("adjustPredicate")
+			.withExactArgs("($uid=1)", "('42')");
+		oExpectation1 = this.mock(oContext1).expects("adjustPredicate")
+			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
+		oExpectation2 = this.mock(oContext2).expects("adjustPredicate")
+			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
+
+		// code under test
+		oBinding.adjustPredicate("($uid=1)", "('42')");
+		oExpectation1.args[0][2]("/SalesOrderList($uid=1)/SO_2_SOITEM($uid=2)",
+			"/SalesOrderList('42')/SO_2_SOITEM($uid=2)");
+		oExpectation2.args[0][2]("/SalesOrderList($uid=1)/SO_2_SOITEM($uid=3)",
+			"/SalesOrderList('42')/SO_2_SOITEM($uid=3)");
+
+		assert.deepEqual(oBinding.aPreviousData, ["/SalesOrderList('42')/SO_2_SOITEM($uid=2)"]);
+		assert.notOk(oBinding.aPreviousData.hasOwnProperty("-1"));
 	});
 });
 

@@ -25,11 +25,12 @@ sap.ui.define([
 	var oDateOnly = new Date(Date.UTC(2014, 10, 27, 0, 0, 0, 0)),
 		oDateTime = new Date(2014, 10, 27, 13, 47, 26),
 		sDateTimeOffset = "2014-11-27T13:47:26" + getTimezoneOffset(oDateTime),
+		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
 		sDateTimeOffsetYear0 = "0000-11-27T13:47:26" + getTimezoneOffset(oDateTime),
+		oDateTimeUTC = new Date(Date.UTC(2014, 10, 27, 13, 47, 26)),
 		oDateTimeWithMS = new Date(2014, 10, 27, 13, 47, 26, 456),
 		sFormattedDateOnly = "Nov 27, 2014",
 		sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
-		sDateTimeOffsetWithMS = "2014-11-27T13:47:26.456" + getTimezoneOffset(oDateTime),
 //		sFormattedDateTimeWithMS = "Nov 27, 2014, 1:47:26.456 PM",
 		iFullYear = new Date().getFullYear(),
 		oMessages = {
@@ -476,6 +477,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("setV4", function (assert) {
 		var oDateTimeOffsetV4 = new DateTimeOffset(undefined, {precision : 7}).setV4(),
+			sDateTimeOffsetFromObjectSource = oDateTimeOffsetV4.parseValue(oDateTime, "object"),
 			sDateTimeOffsetParsed = oDateTimeOffsetV4.parseValue(sFormattedDateTime, "string"),
 			sDateTimeOffsetWithPrecision = "2014-11-27T13:47:26.0000000"
 				+ getTimezoneOffset(oDateTime),
@@ -484,6 +486,8 @@ sap.ui.define([
 
 		assert.strictEqual(typeof sDateTimeOffset, "string");
 		assert.strictEqual(sDateTimeOffsetParsed, sDateTimeOffsetWithPrecision);
+		assert.strictEqual(sDateTimeOffsetFromObjectSource, sDateTimeOffsetWithPrecision);
+
 		assert.ok(oDateTimeOffsetAsDate instanceof Date);
 
 		assert.throws(function () {
@@ -522,6 +526,12 @@ sap.ui.define([
 	QUnit.test("V4: formatValue", function (assert) {
 		var oDateTimeOffset = new DateTimeOffset();
 
+		assert.deepEqual(oDateTimeOffset.formatValue(oDateTimeUTC, "object"),
+			oDateTime, "JS date-object can be formatted");
+		assert.deepEqual(oDateTimeOffset.formatValue("foo", "object"), null);
+		assert.deepEqual(oDateTimeOffset.formatValue(undefined, "object"), null);
+		assert.deepEqual(oDateTimeOffset.formatValue(null, "object"), null);
+		assert.deepEqual(oDateTimeOffset.formatValue("", "object"), null);
 		assert.strictEqual(oDateTimeOffset.formatValue(sDateTimeOffset, "string"),
 			sFormattedDateTime, "V4 values can be formatted");
 		assert.strictEqual(oDateTimeOffset.formatValue("2014-11-27T12:47:26Z", "any"),
@@ -534,7 +544,7 @@ sap.ui.define([
 			"Illegal sap.ui.model.odata.type.DateTimeOffset value: 2000-02-30T00:00:00Z"));
 		// Note: We support duck typing! If it is not a string, it must have getTime()...
 
-		this.mock(oDateTimeOffset).expects("getPrimitiveType").twice().
+		this.mock(oDateTimeOffset).expects("getPrimitiveType").thrice().
 			withExactArgs("sap.ui.core.CSSSize").returns("string");
 		assert.strictEqual(oDateTimeOffset.formatValue(sDateTimeOffset, "sap.ui.core.CSSSize"),
 				sFormattedDateTime);
@@ -603,7 +613,8 @@ sap.ui.define([
 	QUnit.test("V4: format option UTC", function (assert) {
 		var oType = new DateTimeOffset({UTC : true}, {V4 : true}),
 			sDateTime = "2014-11-27T13:47:26Z",
-			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM";
+			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM",
+			oFormattedDateTime = new Date(Date.UTC(2014, 10, 27, 13, 47, 26));
 
 		oType._resetModelFormatter();
 		this.mock(DateFormat).expects("getDateInstance") // getModelFormatter
@@ -617,6 +628,9 @@ sap.ui.define([
 
 		assert.strictEqual(oType.formatValue(sDateTime, "string"), sFormattedDateTime);
 		assert.strictEqual(oType.parseValue(sFormattedDateTime, "string"), sDateTime);
+
+		assert.deepEqual(oType.formatValue(sDateTime, "object"), oFormattedDateTime);
+		assert.deepEqual(oType.parseValue(oFormattedDateTime, "object"), sDateTime);
 	});
 
 	//*********************************************************************************************

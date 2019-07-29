@@ -146,6 +146,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adjusts this context's path by replacing the given transient predicate with the given
+	 * predicate and adjusts all contexts of child bindings.
+	 *
+	 * @param {string} sTransientPredicate
+	 *   The transient predicate to be replaced
+	 * @param {string} sPredicate
+	 *   The new predicate
+	 * @param {function} [fnPathChanged]
+	 *   A function called with the old and the new path if the path changed
+	 *
+	 * @private
+	 */
+	Context.prototype.adjustPredicate = function (sTransientPredicate, sPredicate, fnPathChanged) {
+		var sTransientPath = this.sPath;
+
+		if (sTransientPath.includes(sTransientPredicate)) {
+			this.sPath = sTransientPath.split("/").map(function (sSegment) {
+					if (sSegment.endsWith(sTransientPredicate)) {
+						sSegment = sSegment.slice(0, -sTransientPredicate.length) + sPredicate;
+					}
+					return sSegment;
+				}).join("/");
+			if (fnPathChanged) {
+				fnPathChanged(sTransientPath, this.sPath);
+			}
+			this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+				oDependentBinding.adjustPredicate(sTransientPredicate, sPredicate);
+			});
+		}
+	};
+
+	/**
 	 * Updates all dependent bindings of this context.
 	 *
 	 * @returns {sap.ui.base.SyncPromise}
@@ -221,18 +253,28 @@ sap.ui.define([
 	 */
 	Context.prototype.delete = function (sGroupId) {
 		var oGroupLock,
+			oModel = this.oModel,
 			that = this;
 
-		this.oModel.checkGroupId(sGroupId);
+		oModel.checkGroupId(sGroupId);
 		this.oBinding.checkSuspended();
 		if (!this.isTransient() && this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
 
 		oGroupLock = this.oModel.lockGroup(sGroupId, true, this);
-		return this._delete(oGroupLock).catch(function (oError) {
+
+		return this._delete(oGroupLock).then(function () {
+			var sResourcePathPrefix = that.sPath.slice(1);
+
+			// Messages have been updated via _Cache#_delete; "that" is already destroyed; remove
+			// all dependent caches in all bindings
+			oModel.getAllBindings().forEach(function (oBinding) {
+				oBinding.removeCachesAndMessages(sResourcePathPrefix, true);
+			});
+		}).catch(function (oError) {
 			oGroupLock.unlock(true);
-			that.oModel.reportError("Failed to delete " + that, sClassName, oError);
+			oModel.reportError("Failed to delete " + that, sClassName, oError);
 			throw oError;
 		});
 	};
@@ -349,7 +391,8 @@ sap.ui.define([
 
 	/**
 	 * Delegates to the <code>fetchValue</code> method of this context's binding which requests
-	 * the value for the given path. A relative path is assumed to be relative to this context.
+	 * the value for the given path. A relative path is assumed to be relative to this context and
+	 * is reduced before accessing the cache if the model uses autoExpandSelect.
 	 *
 	 * @param {string} [sPath]
 	 *   A path (absolute or relative to this context)
@@ -367,12 +410,16 @@ sap.ui.define([
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
-		// Create an absolute path based on the context's path to ensure that fetchValue uses key
-		// predicates if the context does. Then the path to register the listener in the cache is
-		// the same that is used for an update and the update notifies the listener.
-		return this.oBinding.fetchValue(
-			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath), oListener,
-			bCached);
+		if (!sPath || sPath[0] !== "/") {
+			// Create an absolute path based on the context's path and reduce it. This is only
+			// necessary for data access via Context APIs, bindings already use absolute paths.
+			sPath = _Helper.buildPath(this.sPath, sPath);
+			if (this.oModel.bAutoExpandSelect) {
+				sPath = this.oModel.getMetaModel()
+					.getReducedPath(sPath, this.oBinding.getBaseForPathReduction());
+			}
+		}
+		return this.oBinding.fetchValue(sPath, oListener, bCached);
 	};
 
 	/**
@@ -747,10 +794,9 @@ sap.ui.define([
 	 * href="http://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html">
 	 * "OData JSON Format Version 4.0"</a>.
 	 * Note that the function clones the result. Modify values via
-	 * {@link sap.ui.model.odata.v4.ODataPropertyBinding#setValue}.
+	 * {@link sap.ui.model.odata.v4.Context#setProperty}.
 	 *
-	 * If you want {@link #requestObject} to read fresh data, call
-	 * <code>oContext.getBinding().refresh()</code> first.
+	 * If you want {@link #requestObject} to read fresh data, call {@link #refresh} first.
 	 *
 	 * @param {string} [sPath=""]
 	 *   A relative path within the JSON structure
