@@ -62,6 +62,12 @@
 				'sap.ui.model.odata.type.Raw' does not support formatting".</li>
 			<li>Press <code>Reset Model</code> or <code>Reset ContextBinding</code>.</li>
 			<li><b>Check</b>: The error is gone.</li>
+			<li>Enter "Apr 19, 2029" in the date date picker labeled with
+				<code>Date, bound property dateValue</code>.</li>
+			<li><b>Check</b>: There is no error displayed.</li>
+			<li>Enter "Apr 19, 2029, 8:25:21 AM" in the date time picker labeled with
+				<code>DateTimeOffset, bound property dateValue</code>.</li>
+			<li><b>Check</b>: There is no error displayed.</li>
 		</ol>
 		<h3>Real OData tests</h3>
 		<ol>
