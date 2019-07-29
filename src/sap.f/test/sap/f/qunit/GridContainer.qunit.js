@@ -158,7 +158,7 @@ function (
 
 		// Assert
 		if (bIsGridSupported) {
-			assert.strictEqual(this.oGrid.$().css("grid-auto-flow"), "row dense", "The grid has 'grid-auto-flow:row dense', when allowDenseFill is true");
+			assert.ok(this.oGrid.$().hasClass("sapFGridContainerDenseFill"), "The grid has class 'sapFGridContainerDenseFill' when allowDenseFill is true");
 		} else {
 			assert.expect(0);
 		}
