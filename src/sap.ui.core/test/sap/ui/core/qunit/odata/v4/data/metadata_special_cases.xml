@@ -46,6 +46,42 @@
 				<Property Name="Key" Type="special.cases.ComplexKey"/>
 				<Property Name="Value" Type="Edm.String"/>
 			</EntityType>
+			<EntityType Name="A">
+				<Key>
+					<PropertyRef Name="AID"/>
+				</Key>
+				<Property Name="AID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="AValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="AtoB" Partner="BtoA" Type="special.cases.B"/>
+				<NavigationProperty Name="AtoCs" Partner="CtoA" Type="Collection(special.cases.C)"/>
+			</EntityType>
+			<EntityType Name="B">
+				<Key>
+					<PropertyRef Name="BID"/>
+				</Key>
+				<Property Name="BID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="BValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="BtoA" Partner="AtoB" Type="special.cases.A"/>
+				<NavigationProperty Name="BtoDs" Partner="DtoB" Type="Collection(special.cases.D)"/>
+			</EntityType>
+			<EntityType Name="C">
+				<Key>
+					<PropertyRef Name="CID"/>
+				</Key>
+				<Property Name="CID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="CValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="CtoA" Partner="AtoCs" Type="special.cases.A"/>
+				<NavigationProperty Name="CtoD" Partner="DtoC" Type="special.cases.D"/>
+			</EntityType>
+			<EntityType Name="D">
+				<Key>
+					<PropertyRef Name="DID"/>
+				</Key>
+				<Property Name="DID" Type="Edm.Int16" Nullable="false"/>
+				<Property Name="DValue" Type="Edm.Int16"/>
+				<NavigationProperty Name="DtoB" Partner="BtoDs" Type="special.cases.B"/>
+				<NavigationProperty Name="DtoC" Partner="CtoD" Type="special.cases.C"/>
+			</EntityType>
 			<ComplexType Name="Address">
 				<Property Name="City" Type="Edm.String"/>
 			</ComplexType>
@@ -96,6 +132,8 @@
 			<EntityContainer Name="Container">
 				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
 				<EntitySet Name="Artists" EntityType="special.cases.ArtistsType"/>
+				<EntitySet Name="As" EntityType="special.cases.A"/>
+				<EntitySet Name="Bs" EntityType="special.cases.B"/>
 			</EntityContainer>
 			<Annotations Target="special.cases.ArtistsType/Name">
 				<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Artist Name" />

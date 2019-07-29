@@ -26,7 +26,7 @@ sap.ui.define([
 		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
 		ODataListBinding, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
@@ -47,6 +47,27 @@ sap.ui.define([
 	 */
 	function createBusinessPartnerTestModel(mModelParameters) {
 		return createModel("/serviceroot.svc/", mModelParameters);
+	}
+
+	/**
+	 * Creates an error to be used in {@link #expectRequest} similar to _Helper#createError. It is
+	 * used to simulate a server error (the server responds with an error JSON) by giving an object
+	 * defining the relevant <code>error</code> property of this JSON. It should contain the
+	 * properties "code" and "message".
+	 *
+	 * @param {object} oErrorResponse
+	 *   The <code>error</code> property of the simulated error response from the server
+	 * @returns {Error}
+	 *   The error object for {@link #expectRequest}
+	 */
+	function createError(oErrorResponse) {
+		var oError = new Error();
+
+		oError.status = 500;
+		oError.statusText = "";
+		oError.error = oErrorResponse;
+		oError.message = "Communication error: " + oError.status + " " + oError.statusText;
+		return oError;
 	}
 
 	/**
@@ -200,9 +221,6 @@ sap.ui.define([
 
 			// Counter for batch requests
 			this.iBatchNo = 0;
-			// maps $batch number to an error response object which replaces all responses for
-			// the requests contained in that $batch
-			this.mBatch2Error = {};
 			// {map<string, string[]>}
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
@@ -726,50 +744,74 @@ sap.ui.define([
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
 			function checkBatch(aRequests) {
+				/**
+				 * Processes a request or a change set within a batch/change set.
+				 * @param {number} iChangeSetNo Number of the change set in the current batch
+				 *   starting with 1; a value of 0 indicates that the request is not part of a
+				 *   change set
+				 * @param {object} oRequest The request
+				 * @param {number} i The request's position in the batch/change set
+				 * @returns {Promise} A promise resolving with an object suitable for visit of
+				 *   _Requestor#submitBatch
+				 */
+				function processRequest(iChangeSetNo, oRequest, i) {
+					if (Array.isArray(oRequest)) {
+						return processRequests(oRequest, i + 1);
+					}
+					return checkRequest(oRequest.method, oRequest.url, oRequest.headers,
+						oRequest.body, undefined, that.iBatchNo, iChangeSetNo || i + 1
+					).catch(function (oError) {
+						if (oError.error) {
+							// convert the error back to a response
+							return {
+								headers : {"Content-Type" : "application/json"},
+								status : oError.status,
+								body : {error : oError.error}
+							};
+						}
+						// a technical error -> let the $batch itself fail
+						throw oError;
+					}).then(function (oResponse) {
+						var mHeaders = oResponse.messages
+								? Object.assign({}, oResponse.headers,
+									{"sap-messages" : oResponse.messages})
+								: oResponse.headers;
+
+						return {
+							headers : mHeaders,
+							status : oResponse.status || 200,
+							responseText : JSON.stringify(oResponse.body)
+						};
+					});
+				}
+
 				/*
 				 * @param {object[]} aRequests The array of requests in a $batch or in a change set
-				 * @param {number} [iChangeSetNo] Number of the change set in the current batch, in
-				 * 	 case aRequests are the requests of a change set. Note: Change sets are
-				 * 	 numbered starting with 1, just as batches.
+				 * @param {number} iChangeSetNo Number of the change set in the current batch
+				 *   starting with 1; a value of 0 indicates that the request is not part of a
+				 *   change set
 				 * @returns {Promise} A promise on the array of batch responses
 				 */
 				function processRequests(aRequests0, iChangeSetNo) {
-					return Promise.all(aRequests0.map(function (oRequest, i) {
-						return Array.isArray(oRequest)
-							? processRequests(oRequest, i + 1)
-							: checkRequest(oRequest.method, oRequest.url, oRequest.headers,
-								oRequest.body, undefined, that.iBatchNo, iChangeSetNo || i + 1
-							).then(function (oResponse) {
-								var mHeaders = {};
-
-								if (oResponse.messages) {
-									mHeaders["sap-messages"] = oResponse.messages;
-								}
-								return {
-									headers : mHeaders,
-									status : 200,
-									responseText : JSON.stringify(oResponse.body)
-								};
-							}, function (oError) {
-								return {
-									status : 500,
-									statusText : "Internal Server Error",
-									responseText : oError.message
-								};
+					return Promise.all(
+						aRequests0.map(processRequest.bind(null, iChangeSetNo))
+					).then(function (aResponses) {
+						var iErrorIndex = aResponses.findIndex(function (oResponse) {
+								return oResponse.status >= 300;
 							});
-					}));
+
+						if (iErrorIndex >= 0) {
+							return iChangeSetNo
+								? aResponses[iErrorIndex] // only one error for the whole change set
+								: aResponses.slice(0, iErrorIndex + 1);
+						}
+						return aResponses;
+					});
 				}
 
 				that.iBatchNo += 1;
 
-				return processRequests(aRequests).then(function (aResponses) {
-					var oErrorResponse = that.mBatch2Error[that.iBatchNo];
-
-					if (oErrorResponse) {
-						return [oErrorResponse];
-					}
-					return aResponses;
-				});
+				return processRequests(aRequests, 0);
 			}
 
 			/*
@@ -781,23 +823,18 @@ sap.ui.define([
 			 * @param {object} mHeaders The headers (including various generic headers)
 			 * @param {object|string} [vPayload] The payload (string from the requestor, object from
 			 *   checkBatch)
-			 * @param {string} [sOriginalResourcePath]
-			 *  The path by which the resource has originally been requested
-			 * @returns {Promise} A promise resolving with an object having following properties:
-			 *  - body: The response body of the matching request
-			 *  - messages: The messages contained in the "sap-messages" response header
-			 *  - resourcePath: The value of "sUrl"
-			 *  If the response (see expectRequest) is of type "Error" the promise rejects with the
-			 *  error. If the response is of type "Error" and the error has a property
-			 *  "errorResponse" then the content of "errorResponse" is stored in "mBatch2Error" for
-			 *  the current $batch and the promise resolves with the content of "errorResponse" as
-			 *  "body".
 			 * @param {string} [sOriginalResourcePath] The path by which the resource has originally
 			 *   been requested
 			 * @param {number} [iBatchNo] Number of the batch which the request belongs to
 			 * @param {number} [iChangeSetNo] Number of the change set in the current batch which
-			 *   the request belongs to
-			 * @returns {Promise} A promise on an object with the response in the property "body"
+			 *   the request is expected to belong to
+			 * @returns {Promise} A promise resolving with an object having following properties:
+			 *     {string|object} body - The response body of the matching request
+			 *     {string} [messages] - The messages contained in the "sap-messages" response
+			 *       header as a JSON string
+			 *     {string} resourcePath - The value of "sUrl"
+			 *   If the response (see #expectRequest) is of type "Error" the promise rejects with
+			 *   the error.
 			 */
 			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath,
 					iBatchNo, iChangeSetNo) {
@@ -859,15 +896,9 @@ sap.ui.define([
 
 				return Promise.resolve(oResponse).then(function (oResponseBody) {
 					if (oResponseBody instanceof Error) {
-						if (oResponseBody.errorResponse) {
-							// single error response for a request within a successful $batch
-							oResponseBody = oResponseBody.errorResponse;
-							that.mBatch2Error[that.iBatchNo] = oResponseBody;
-						} else {
-							oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
-							oResponseBody.resourcePath = sOriginalResourcePath;
-							throw oResponseBody;
-						}
+						oResponseBody.requestUrl = that.oModel.sServiceUrl + sUrl;
+						oResponseBody.resourcePath = sOriginalResourcePath;
+						throw oResponseBody;
 					}
 
 					return {
@@ -1054,15 +1085,29 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
-		 * {@link #waitForChanges}) is expected to perform the given request.
+		 * {@link #waitForChanges}) is expected to perform the given request. <code>oResponse</code>
+		 * describes how to react on the request. Usually you simply give the JSON for the response
+		 * and the request will be responded in the next microtask.
+		 *
+		 * A failure response (with status code 500) is mocked if <code>oResponse</code> is an
+		 * Error. This error must be created with {@link #createError}. It is immediately used to
+		 * reject the promise of _Requestor#request for a $direct request. If the request is part of
+		 * a $batch, {@link #checkBatch} converts it to a response and inserts it into the $batch
+		 * response. If the request is part of a change set, the error is used as a response for the
+		 * complete change set (the following requests do not need a response). GET requests
+		 * following an error request are rejected automatically and do not need a response.
+		 *
+		 * <code>oResponse</code> may also be a promise resolving with the response or the error. In
+		 * this case you can control the response time (typically to control the order of the
+		 * responses).
 		 *
 		 * @param {string|object} vRequest The request with the properties "method", "url" and
 		 *   "headers". A string is interpreted as URL with method "GET". Spaces inside the URL are
-		 *   percent encoded automatically.
-		 * @param {object|Promise} [oResponse] The response message to be returned from the
-		 *   requestor or a promise on it.
+		 *   percent-encoded automatically.
+		 * @param {object|Promise|Error} [oResponse] The response message to be returned from the
+		 *   requestor or a promise on it
 		 * @param {object} [mResponseHeaders] The response headers to be returned from the
-		 *   requestor.
+		 *   requestor
 		 * @returns {object} The test instance for chaining
 		 */
 		expectRequest : function (vRequest, oResponse, mResponseHeaders) {
@@ -1282,6 +1327,131 @@ sap.ui.define([
 	}
 
 	//*********************************************************************************************
+	// verify that error responses are processed correctly for direct requests
+	QUnit.test("error response: $direct (framework test)", function (assert) {
+		var oError = createError({
+				code : "Code",
+				message : "Request intentionally failed"
+			}),
+			sView = '<Text text="{/EMPLOYEES(\'1\')/ID}" />';
+
+		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
+
+		this.expectRequest("EMPLOYEES('1')/ID", oError)
+			.expectMessages([{
+				code : "Code",
+				descriptionUrl : undefined,
+				message : "Request intentionally failed",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// verify that error responses are processed correctly for batch requests
+	QUnit.test("error response: $batch (framework test)", function (assert) {
+		var oError = createError({
+				code : "Code",
+				message : "Request intentionally failed"
+			}),
+			sView = '\
+<Text text="{/EMPLOYEES(\'1\')/ID}" />\
+<Text text="{/EMPLOYEES(\'2\')/Name}" />';
+
+		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('1')/ID");
+		this.oLogMock.expects("error").withArgs("Failed to read path /EMPLOYEES('2')/Name");
+
+		this.expectRequest("EMPLOYEES('1')/ID", oError)
+			.expectRequest("EMPLOYEES('2')/Name") // no response required
+			.expectMessages([{
+				code : "Code",
+				descriptionUrl : undefined,
+				message : "Request intentionally failed",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		return this.createView(assert, sView, createTeaBusiModel({groupId : "$auto"}));
+	});
+
+	//*********************************************************************************************
+	// verify that error responses are processed correctly for change sets
+	QUnit.test("error response: $batch w/ change set (framework test)", function (assert) {
+		var oModel = createSalesOrdersModel({groupId : "$auto"}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}" >\
+	<columns><Column/><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="id" text="{SalesOrderID}" />\
+		<Input id="note" value="{Note}" />\
+	</ColumnListItem>\
+</Table>\
+<Text id="name" text="{/BusinessPartnerList(\'1\')/CompanyName}" />',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$skip=0&$top=100", {
+				value : [
+					{SalesOrderID : "1", Note : "Note 1"},
+					{SalesOrderID : "2", Note : "Note 2"}
+				]
+			})
+			.expectRequest("BusinessPartnerList('1')/CompanyName", {value : "SAP SE"})
+			.expectChange("id", ["1", "2"])
+			.expectChange("note", ["Note 1", "Note 2"])
+			.expectChange("name", "SAP SE");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aTableRows = that.oView.byId("table").getItems(),
+				oError = createError({
+					code : "Code",
+					message : "Request intentionally failed"
+				});
+
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('1')/Note");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('2')/Note");
+			that.oLogMock.expects("error")
+				.withArgs("Failed to read path /BusinessPartnerList('1')/CompanyName");
+
+			that.expectChange("note", ["Note 1 changed", "Note 2 changed"])
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('1')",
+					payload : {Note : "Note 1 changed"}
+				}, oError)
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('2')",
+					payload : {Note : "Note 2 changed"}
+				}) // no response required
+				.expectRequest("BusinessPartnerList('1')/CompanyName") // no response required
+				.expectChange("name", null)
+				.expectMessages([{
+					code : "Code",
+					descriptionUrl : undefined,
+					message : "Request intentionally failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+
+			aTableRows[0].getCells()[1].getBinding("value").setValue("Note 1 changed");
+			aTableRows[1].getCells()[1].getBinding("value").setValue("Note 2 changed");
+			that.oView.byId("name").getBinding("text").refresh();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Minimal test for an absolute ODataPropertyBinding. This scenario is comparable with
 	// "FavoriteProduct" in the SalesOrders application.
 	testViewStart("Absolute ODPB",
@@ -1410,18 +1580,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
 	QUnit.test("ODCB: read failure & message", function (assert) {
-		var oError = new Error("Failure"),
+		var oError = createError({
+				code : "CODE",
+				message : "Could not read",
+				target : "Name"
+			}),
 			sView = '\
 <FlexBox binding="{/EMPLOYEES(\'42\')}">\
 	<Input id="text" value="{Name}" />\
 </FlexBox>',
 			that = this;
 
-		oError.error = {
-			code : "CODE",
-			message : "Could not read",
-			target : "Name"
-		};
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')", sinon.match(oError.message),
 				"sap.ui.model.odata.v4.ODataContextBinding");
@@ -1453,15 +1622,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataPropertyBinding returning a bound message
 	QUnit.test("ODPB: read failure & message", function (assert) {
-		var oError = new Error("Failure"),
+		var oError = createError({
+				code : "CODE",
+				message : "Could not read",
+				target : ""
+			}),
 			sView = '<Input id="text" value="{/EMPLOYEES(\'42\')/Name}" />',
 			that = this;
 
-		oError.error = {
-			code : "CODE",
-			message : "Could not read",
-			target : ""
-		};
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read path /EMPLOYEES('42')/Name", sinon.match(oError.message),
 				"sap.ui.model.odata.v4.ODataPropertyBinding");
@@ -1726,7 +1894,11 @@ sap.ui.define([
 	// Refresh a single row that has been removed in between. Check the bound message of the error
 	// response.
 	QUnit.test("Context#refresh() error messages", function (assert) {
-		var oError = new Error("404 Not Found"),
+		var oError = createError({
+				code : "CODE",
+				message : "Not found",
+				target : "ID"
+			}, 404),
 			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/EMPLOYEES}">\
@@ -1737,11 +1909,6 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		oError.error = {
-			code : "CODE",
-			message : "Not found",
-			target : "ID"
-		};
 		this.expectRequest("EMPLOYEES?$select=ID&$skip=0&$top=100", {
 				value : [{ID : "0"}]
 			});
@@ -1749,7 +1916,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to refresh entity: /EMPLOYEES('0')[0]",
-					sinon.match("404 Not Found"), "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataListBinding");
 			that.expectRequest("EMPLOYEES('0')?$select=ID", oError)
 				.expectMessages([{
 					code : "CODE",
@@ -2127,7 +2294,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			return that.checkValueState(assert, "text", "Warning", "Text");
 		}).then(function () {
-			var oError = new Error("Employee does not exist");
+			var oError = createError({code : "CODE", message : "Employee does not exist"});
 
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
@@ -2137,7 +2304,7 @@ sap.ui.define([
 				"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
-					code : undefined,
+					code : "CODE",
 					message : "Employee does not exist",
 					persistent : true,
 					target : "",
@@ -3106,10 +3273,10 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			var oCreateCompletedPromise = expectCreateCompleted(false),
-				oError = new Error("Failure");
+				oError = createError({code : "CODE", message : "Failure"});
 
 			that.expectMessages([{
-					code : undefined,
+					code : "CODE",
 					descriptionUrl : undefined,
 					message : "Failure",
 					persistent : true,
@@ -3119,7 +3286,7 @@ sap.ui.define([
 				}]);
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList' failed; will be repeated automatically",
-					sinon.match("Failure"), "sap.ui.model.odata.v4.ODataListBinding");
+					sinon.match(oError.message), "sap.ui.model.odata.v4.ODataListBinding");
 
 			fnRejectPost(oError);
 
@@ -5938,8 +6105,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Failure when creating a sales order line item. Observe the message.
 	QUnit.test("Create error", function (assert) {
-		var oError = new Error("Failure"),
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderList(\'42\')}">\
 	<Table id="table" items="{SO_2_SOITEM}">\
@@ -5959,15 +6125,16 @@ sap.ui.define([
 			});
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oError = createError({
+					code : "CODE",
+					message : "Enter a product ID",
+					target : "ProductID"
+				});
+
 			that.oLogMock.expects("error")
 				.withExactArgs("POST on 'SalesOrderList('42')/SO_2_SOITEM' failed; "
-					+ "will be repeated automatically", sinon.match("Failure"),
+					+ "will be repeated automatically", sinon.match(oError.message),
 					"sap.ui.model.odata.v4.ODataListBinding");
-			oError.error = {
-				code : "CODE",
-				message : "Enter a product ID",
-				target : "ProductID"
-			};
 			that.expectRequest({
 					method : "POST",
 					url : "SalesOrderList('42')/SO_2_SOITEM",
@@ -5999,14 +6166,21 @@ sap.ui.define([
 	// messages are not deleted.
 	// The navigation property is necessary so that read path and patch path are different.
 	QUnit.test("Read a sales order line item, enter an invalid quantity", function (assert) {
-		var sView = '\
-<FlexBox binding="{\
-		path : \'/BusinessPartnerList(\\\'1\\\')/BP_2_SO(\\\'42\\\')/SO_2_SOITEM(\\\'0010\\\')\',\
-		parameters : {$select : \'Messages\'}}">\
-	<Input id="quantity" value="{Quantity}"/>\
-	<Text id="unit" text="{QuantityUnit}"/>\
-</FlexBox>',
-			oError = new Error("Error occurred while processing the request"),
+		var oError = createError({
+				code : "top",
+				message : "Error occurred while processing the request",
+				details : [{
+					code : "bound",
+					message : "Value must be greater than 0",
+					"@Common.longtextUrl" : "../Messages(1)/LongText",
+					"@Common.numericSeverity" : 4,
+					target : "Quantity"
+				}, {
+					code : "unbound",
+					message : "Some unbound warning",
+					"@Common.numericSeverity" : 3
+				}]
+			}),
 			oExpectedMessage = {
 				code : "23",
 				message : "Enter a minimum quantity of 2",
@@ -6016,23 +6190,14 @@ sap.ui.define([
 				type : "Warning"
 			},
 			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{\
+		path : \'/BusinessPartnerList(\\\'1\\\')/BP_2_SO(\\\'42\\\')/SO_2_SOITEM(\\\'0010\\\')\',\
+		parameters : {$select : \'Messages\'}}">\
+	<Input id="quantity" value="{Quantity}"/>\
+	<Text id="unit" text="{QuantityUnit}"/>\
+</FlexBox>',
 			that = this;
-
-		oError.error = {
-			code : "top",
-			message : "Error occurred while processing the request",
-			details : [{
-				code : "bound",
-				message : "Value must be greater than 0",
-				"@Common.longtextUrl" : "../Messages(1)/LongText",
-				"@Common.numericSeverity" : 4,
-				target : "Quantity"
-			}, {
-				code : "unbound",
-				message : "Some unbound warning",
-				"@Common.numericSeverity" : 3
-			}]
-		};
 
 		this.expectRequest("BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')"
 			+ "?$select=ItemPosition,Messages,Quantity,QuantityUnit,SalesOrderID", {
@@ -6066,8 +6231,7 @@ sap.ui.define([
 							Quantity : "0.000",
 							QuantityUnit : "DZ"
 						}
-					},
-					oError)
+					}, oError)
 				.expectMessages([
 					oExpectedMessage, {
 						code : "top",
@@ -6276,7 +6440,7 @@ sap.ui.define([
 	// the error is logged for each request in the change set, but it is reported only once to
 	// the message model
 	QUnit.test("Error response for a change set w/o content-ID", function (assert) {
-		var oError = new Error("Failure"),
+		var oError = createError({code : "CODE", message : "Value 4.22 not allowed"}),
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "update"
@@ -6289,13 +6453,6 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>',
 			that = this;
-
-		oError.errorResponse = {
-			headers : {"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8"},
-			responseText : '{"error":{"code":"CODE","message":"Value 4.22 not allowed"}}',
-			status : 400,
-			statusText : "Bad Request"
-		};
 
 		this.expectRequest(
 			"SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
@@ -6321,7 +6478,7 @@ sap.ui.define([
 					url : "SalesOrderList('41')",
 					headers : {"If-Match" : "ETag0"},
 					payload : {GrossAmount : "4.11"}
-				}, /*not relevant as $batch uses oError.errorResponse for response*/undefined)
+				}) // no response required since the 2nd request fails
 				.expectRequest({
 					method : "PATCH",
 					url : "SalesOrderList('42')",
@@ -6740,7 +6897,6 @@ sap.ui.define([
 			var fnAfterPatchCompleted,
 				oBatchPromise0,
 				oBatchPromise1,
-				oError = new Error(),
 				oModel = createSalesOrdersModel({
 					autoExpandSelect : true,
 					updateGroupId : sUpdateGroupId
@@ -6814,7 +6970,7 @@ sap.ui.define([
 				that.oLogMock.expects("error")
 					.withArgs("Failed to update path /SalesOrderList('42')/Note");
 
-				fnReject(oError);
+				fnReject(createError({code : "CODE", message : "Patch failed"}));
 
 				return oPromise;
 			}).then(function () {
@@ -6822,11 +6978,17 @@ sap.ui.define([
 				assert.strictEqual(iPatchCompleted, 1, "patchCompleted 1");
 
 				that.expectMessages([{
-						code : undefined,
-						message : "Communication error: 500 Internal Server Error",
+						code : "CODE",
+						message : "Patch failed",
 						persistent : true,
 						target : "",
 						technical : true,
+						technicalDetails : {
+							originalMessage : {
+								code : "CODE",
+								message : "Patch failed"
+							}
+						},
 						type : "Error"
 					}])
 					.expectChange("lifecycleStatus", "P")
@@ -7312,21 +7474,20 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			var oError = new Error("Missing team ID");
+			var oError = createError({
+					message : "Missing team ID",
+					target : "TeamID",
+					details : [{
+						message : "Illegal Status",
+						"@Common.numericSeverity" : 4,
+						target : "EMPLOYEE/STATUS"
+					}, {
+						message : "Target resolved to ''",
+						"@Common.numericSeverity" : 4,
+						target : "EMPLOYEE"
+					}]
+				});
 
-			oError.error = {
-				message : "Missing team ID",
-				target : "TeamID",
-				details : [{
-					message : "Illegal Status",
-					"@Common.numericSeverity" : 4,
-					target : "EMPLOYEE/STATUS"
-				}, {
-					message : "Target resolved to ''",
-					"@Common.numericSeverity" : 4,
-					target : "EMPLOYEE"
-				}]
-			};
 			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
 			that.oLogMock.expects("error").withExactArgs(
@@ -14628,13 +14789,12 @@ sap.ui.define([
 				"Warning", "Text");
 		}).then(function () {
 			var oContext = that.oView.byId("table").getItems()[0].getBindingContext(),
-				oError = new Error("Deletion failed");
+				oError = createError({
+					code : "occupied",
+					message : "Cannot delete occupied worker",
+					target : "STATUS"
+				});
 
-			oError.error = {
-				code : "occupied",
-				message : "Cannot delete occupied worker",
-				target : "STATUS"
-			};
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to delete /EMPLOYEES('1')[0]", sinon.match(oError.message),
 					"sap.ui.model.odata.v4.Context");
@@ -14842,6 +15002,109 @@ sap.ui.define([
 				that.oView.byId("table").getItems()[1].getBindingContext().delete("$auto"),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Navigate to a detail page (e.g. by passing an entity key via URL parameter),
+	// delete the root element and navigate back to the master page. When navigating again to the
+	// detail page with the same entity key (e.g. via browser forward/back) no obsolte caches must
+	// be used and all bindings shall fail while trying to read the data.
+	// BCP: 1970282109
+	QUnit.test("Delete removes dependent caches", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="detail" binding="">\
+	<Text id="Team_Id" text="{Team_Id}"/>\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("Team_Id")
+			.expectChange("name", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id", {
+					Team_Id : "TEAM_01"
+				})
+				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						ID : "1",
+						Name : "Jonathan Smith"
+					}, {
+						ID : "2",
+						Name : "Frederic Fall"
+					}]
+				})
+				.expectChange("Team_Id", "TEAM_01")
+				.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+			// simulate navigation to a detail page if only a key property is given
+			that.oView.byId("detail").setBindingContext(
+				that.oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "TEAMS('TEAM_01')"
+				})
+				.expectChange("Team_Id", null);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("detail").getBindingContext().delete("$auto"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// simulate failing read of data that has been deleted before
+			var oError1 = new Error("404 Not Found"),
+				oError2 = new Error("404 Not Found");
+
+			that.oLogMock.expects("error").twice()
+				.withExactArgs("Failed to read path /TEAMS('TEAM_01')/Team_Id",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to read path /TEAMS('TEAM_01')",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataContextBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to get contexts for "
+						+ "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/TEAMS('TEAM_01')/"
+						+ "TEAM_2_EMPLOYEES with start index 0 and length 100",
+					sinon.match.string, "sap.ui.model.odata.v4.ODataListBinding");
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id", oError1)
+				.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name"
+					+ "&$skip=0&$top=100", oError2)
+				.expectMessages([{
+					code : undefined,
+					message : "404 Not Found",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "404 Not Found",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+
+
+			// simulate navigation to a detail page if only a key property is given which belongs
+			// to a deleted entity; all bindings have to read data again and fail because entity is
+			// deleted
+			that.oView.byId("detail").setBindingContext(
+				that.oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -15204,17 +15467,8 @@ sap.ui.define([
 			.expectChange("grossAmount", "119.00");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oError = new Error("This request intentionally failed"),
-				oPromise;
+			var oPromise;
 
-			oError.errorResponse = {
-				headers : {
-					"Content-Type" : "application/json;odata.metadata=minimal;charset=utf-8"
-				},
-				responseText : '{"error":{"code":"CODE","message":"Value -1 not allowed"}}',
-				status : 400,
-				statusText : "Bad Request"
-			};
 			// don't care about other parameters
 			that.oLogMock.expects("error")
 				.withArgs("Failed to update path /SalesOrderList('42')/NetAmount");
@@ -15228,12 +15482,12 @@ sap.ui.define([
 					url : "SalesOrderList('42')?sap-client=123",
 					headers : {"If-Match" : "ETag0"},
 					payload : {NetAmount : "-1"}
-				}, oError)
+				}, createError({code : "CODE", message : "Value -1 not allowed"}))
 				.expectRequest({
 					batchNo : 1,
 					method : "GET",
 					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount"
-				}, /*not relevant as $batch uses oError.errorResponse for response*/undefined)
+				}) // no response required since the PATCH fails
 				.expectMessages([{
 					code : "CODE",
 					descriptionUrl : undefined,
@@ -16377,15 +16631,16 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error"); // don't care about console here
-			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", new Error())
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
+					createError({code : "CODE", message : "Request intentionally failed"}))
 				.expectMessages([{
-					"code": undefined,
-					"descriptionUrl": undefined,
-					"message": "Communication error: 500 Internal Server Error",
-					"persistent": true,
-					"target": "",
-					"technical": true,
-					"type": "Error"
+					code : "CODE",
+					descriptionUrl : undefined,
+					message : "Request intentionally failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
 				}]);
 
 			oTable = that.oView.byId("master");
@@ -16449,24 +16704,17 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.oLogMock.expects("error").twice(); // don't care about console here
-			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", new Error())
-				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", new Error())
+			that.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100",
+					createError({code : "CODE", message : "Request intentionally failed"}))
+				.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID") // no reponse req.
 				.expectMessages([{
-					"code": undefined,
-					"descriptionUrl": undefined,
-					"message": "Communication error: 500 Internal Server Error",
-					"persistent": true,
-					"target": "",
-					"technical": true,
-					"type": "Error"
-				}, {
-					"code": undefined,
-					"descriptionUrl": undefined,
-					"message": "Communication error: 500 Internal Server Error",
-					"persistent": true,
-					"target": "",
-					"technical": true,
-					"type": "Error"
+					code : "CODE",
+					descriptionUrl : undefined,
+					message : "Request intentionally failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
 				}]);
 
 			return Promise.all([
@@ -16524,25 +16772,19 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error").thrice(); // don't care about console here
-			that.expectRequest("SalesOrderList('42')?$select=SalesOrderID", new Error())
+			that.expectRequest("SalesOrderList('42')?$select=SalesOrderID",
+					createError({code : "CODE1", message : "Request 1 intentionally failed"}))
 				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
-					+ "&$skip=0&$top=100", new Error())
+					+ "&$skip=0&$top=100",
+					createError({code : "CODE2", message : "Request 2 intentionally failed"}))
 				.expectMessages([{
-					"code": undefined,
-					"descriptionUrl": undefined,
-					"message": "Communication error: 500 Internal Server Error",
-					"persistent": true,
-					"target": "",
-					"technical": true,
-					"type": "Error"
-				}, {
-					"code": undefined,
-					"descriptionUrl": undefined,
-					"message": "Communication error: 500 Internal Server Error",
-					"persistent": true,
-					"target": "",
-					"technical": true,
-					"type": "Error"
+					code : "CODE2",
+					descriptionUrl : undefined,
+					message : "Request 2 intentionally failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
 				}]);
 
 			return Promise.all([
@@ -16805,10 +17047,10 @@ sap.ui.define([
 						url : "EMPLOYEES('3')",
 						headers : {"If-Match" : "ETag0"},
 						payload : {ROOM_ID : "42"}
-					}, new Error())
+					}, createError({code : "CODE", message : "Request intentionally failed"}))
 					.expectMessages([{
-						code : undefined,
-						message : "Communication error: 500 Internal Server Error",
+						code : "CODE",
+						message : "Request intentionally failed",
 						persistent : true,
 						target : "",
 						technical : true,
@@ -16880,7 +17122,7 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			}).then(function () {
-				var oError = new Error();
+				var oError = createError({code : "CODE", message : "Request intentionally failed"});
 
 				that.expectChange("roomId", "23")
 					.expectRequest({
@@ -16896,8 +17138,8 @@ sap.ui.define([
 						AGE : 67,
 						ROOM_ID : "23"
 					}).expectMessages([{
-						code : undefined,
-						message : "Communication error: 500 Internal Server Error",
+						code : "CODE",
+						message : "Request intentionally failed",
 						persistent : true,
 						target : "",
 						technical : true,
@@ -16986,8 +17228,8 @@ sap.ui.define([
 
 			function reject() {
 				that.expectMessages([{
-					code : undefined,
-					message : "Communication error: 500 Internal Server Error",
+					code : "CODE",
+					message : "Request intentionally failed",
 					persistent : true,
 					target : "",
 					technical : true,
@@ -16995,7 +17237,7 @@ sap.ui.define([
 				}]);
 				that.oLogMock.expects("error").twice(); // don't care about console here
 
-				fnReject(new Error("500 Internal Server Error"));
+				fnReject(createError({code : "CODE", message : "Request intentionally failed"}));
 			}
 
 			that.expectRequest({
@@ -17212,19 +17454,18 @@ sap.ui.define([
 				});
 
 			return this.createView(assert, sView, oModel).then(function () {
-				var oError = new Error("Failure");
+				var oError = createError({
+						code : "top_patch",
+						message : "Error occurred while processing the request",
+						details : [{
+							code : "bound_patch",
+							message : "Must not change mock data",
+							"@Common.longtextUrl" : "Messages(1)/LongText",
+							"@Common.numericSeverity" : 4,
+							target : "Name"
+						}]
+					});
 
-				oError.error = {
-					code : "top_patch",
-					message : "Error occurred while processing the request",
-					details : [{
-						code : "bound_patch",
-						message : "Must not change mock data",
-						"@Common.longtextUrl" : "Messages(1)/LongText",
-						"@Common.numericSeverity" : 4,
-						target : "Name"
-					}]
-				};
 				that.oLogMock.expects("error").twice() // Note: twice, w/ different class name :-(
 					.withArgs("Failed to update path /SalesOrderList('0500000000')/SO_2_BP/"
 						+ "BP_2_PRODUCT('1')/Name", sinon.match(oError.message));
@@ -17262,19 +17503,17 @@ sap.ui.define([
 
 				return that.checkValueState(assert, oInput, "Error", "Must not change mock data");
 			}).then(function () {
-				var oError = new Error("Failure");
-
-				oError.error = {
-					code : "top_delete",
-					message : "Error occurred while processing the request",
-					details : [{
-						code : "bound_delete",
-						message : "Must not delete mock data",
-						"@Common.longtextUrl" : "./Messages(1)/LongText",
-						"@Common.numericSeverity" : 4,
-						target : ""
-					}]
-				};
+				var oError = createError({
+						code : "top_delete",
+						message : "Error occurred while processing the request",
+						details : [{
+							code : "bound_delete",
+							message : "Must not delete mock data",
+							"@Common.longtextUrl" : "./Messages(1)/LongText",
+							"@Common.numericSeverity" : 4,
+							target : ""
+						}]
+					});
 
 				that.oLogMock.expects("error")
 					.withExactArgs("Failed to delete /SalesOrderList('0500000000')/SO_2_BP/"
@@ -18692,6 +18931,411 @@ sap.ui.define([
 				oBinding.getContexts(0, 10);
 			});
 			oBinding.initialize();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing partner attributes SO_2_SOITEM and SOITEM_2_SO, so that
+	// "SOITEM_2_SO/CurrencyCode" is not expanded, but taken from the parent sales order in the same
+	// cache.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path: property in same cache", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="note" text="{Note}"/>\
+				<Text id="soCurrencyCode" text="{SOITEM_2_SO/CurrencyCode}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				CurrencyCode : "EUR",
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("soCurrencyCode", ["EUR"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing partner attributes SO_2_SOITEM and SOITEM_2_SO. Simulate an
+	// In-Parameter of a value help for which the value is cached in the parent binding.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path: property in parent cache", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Text id="soCurrencyCode" text="{CurrencyCode}"/>\
+	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="note" text="{Note}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="valueHelp">\
+	<Text id="valueHelp::currencyCode" text="{SOITEM_2_SO/CurrencyCode}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID", {
+				CurrencyCode : "EUR",
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+				value : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("soCurrencyCode", "EUR")
+			.expectChange("valueHelp::currencyCode");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("valueHelp::currencyCode", "EUR");
+
+			that.oView.byId("valueHelp").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing multiple pairs of partner attributes.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path by removing multiple pairs of partner attributes", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)}">\
+	<FlexBox binding="{AtoB}">\
+		<Table id="table" items="{BtoDs}">\
+			<columns><Column/></columns>\
+			<items>\
+				<ColumnListItem>\
+					<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
+				</ColumnListItem>\
+			</items>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>';
+
+		this.expectRequest("As(1)?$select=AID,AValue"
+			+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID))", {
+				AID : 1,
+				AValue : 42,
+				AtoB : {
+					BID : 2,
+					BtoDs : [{
+						DID : 3
+					}]
+				}
+			})
+			.expectChange("aValue", ["42"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduce path by removing multiple pairs of partner attributes. See that AValue is
+	// taken from two caches above.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduce path and step up multiple caches", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)}">\
+	<FlexBox binding="{path : \'AtoB\', parameters : {$$ownRequest : true}}">\
+		<Text text="{BValue}"/>\
+		<Table id="table" items="{path : \'BtoDs\', parameters : {$$ownRequest : true}}">\
+			<columns><Column/></columns>\
+			<items>\
+				<ColumnListItem>\
+					<Text text="{DValue}"/>\
+					<Text id="aValue" text="{DtoB/BtoA/AValue}"/>\
+				</ColumnListItem>\
+			</items>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>';
+
+		this.expectRequest("As(1)?$select=AID,AValue", {
+				AID : 1,
+				AValue : 42
+			})
+			.expectRequest("As(1)/AtoB?$select=BID,BValue", {
+				BID : 2,
+				BValue : 102
+			})
+			.expectRequest("As(1)/AtoB/BtoDs?$select=DID,DValue&$skip=0&$top=100", {
+				value : [
+					{DID : 3, DValue : 103},
+					{DID : 4, DValue : 104}
+				]
+			})
+			.expectChange("aValue", ["42", "42"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Reduced path must not be shorter than root binding's path.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Reduced path must not be shorter than root binding's path", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/As(1)/AtoB}">\
+	<Text id="aValue" text="{BtoA/AValue}"/>\
+	<Table id="table" items="{BtoDs}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="table::aValue" text="{DtoB/BtoA/AValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("As(1)/AtoB?$select=BID"
+				+ "&$expand=BtoA($select=AID,AValue),BtoDs($select=DID)", {
+				BID : 2,
+				BtoA : {
+					AID : 1,
+					AValue : 42
+				},
+				BtoDs : [{
+					DID : 3
+				}]
+			})
+			.expectChange("aValue", "42")
+			.expectChange("table::aValue", ["42"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Operation on reduceable path. The operation path will not be reduced, but the
+	// reduced path must be used to access the binding parameter.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Operation on reduceable path", function (assert) {
+		var sAction = "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm",
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="note" text="{Note}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="form" binding="{SOITEM_2_SO/' + sAction + '(...)}">\
+	<Text id="status" text="{LifecycleStatus}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				"@odata.etag" : "ETag",
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("status");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oForm = that.oView.byId("form");
+
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')"
+						+ "/SOITEM_2_SO/" + sAction, // TODO reduce operation path
+					headers : {"If-Match" : "ETag"},
+					payload : {}
+				}, {
+					LifecycleStatus : "C",
+					SalesOrderID : "1"
+				})
+				.expectChange("status", "C");
+
+			oForm.setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+			oForm.getElementBinding().execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Partner attributes are in the path to a collection. Ensure that the path is reduced
+	// and all properties including $count can be accessed. Check also that it does not clash with
+	// unreduced list bindings.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Partner attributes in path to collection", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Bs(1)}">\
+	<Table id="table" items="{BtoA/AtoB/BtoDs}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="bValue" text="{DtoB/BValue}"/>\
+				<Text id="dValue" text="{DValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Bs(1)?$select=BID,BValue&$expand=BtoA($select=AID"
+			+ ";$expand=AtoB($select=BID;$expand=BtoDs($select=DID,DValue)))", {
+				BID : 1,
+				BValue : 101,
+				BtoA : {
+					AtoB : {
+						BtoDs : [
+							{DID : 2, DValue : 99},
+							{DID : 3, DValue : 98}
+						]
+					}
+				}
+			})
+			.expectChange("bValue", ["101", "101"])
+			.expectChange("dValue", ["99", "98"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Bs(1)/BtoA/AtoB/BtoDs?$select=DID,DValue&$orderby=DValue"
+				+ "&$skip=0&$top=100", {
+					value : [
+						{DID : 3, DValue : 98},
+						{DID : 2, DValue : 99}
+					],
+					"BtoDs@odata.count" : "2"
+				})
+				.expectChange("dValue", ["98", "99"]);
+
+			// code under test
+			that.oView.byId("table").getBinding("items").sort(new Sorter("DValue"));
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Partner attributes are in the path to a property, but reduction is impossible due
+	// to a changed update group ID.
+	// JIRA: CPOUI5UISERVICESV3-1877
+	QUnit.test("Partner attributes in path to collection, other updateGroupId", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Bs(1)}">\
+	<Text id="bValue" text="{BValue}"/>\
+	<Table items="{BtoDs}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="bValue::table1" text="{DtoB/BValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+	<Table items="{path : \'BtoDs\', parameters : {$$updateGroupId : \'update\'}}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="bValue::table2" text="{DtoB/BValue}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>';
+
+		this.expectRequest("Bs(1)?$select=BID,BValue&$expand=BtoDs($select=DID)", {
+				BID : 1,
+				BValue : 101,
+				BtoDs : [
+					{DID : 2},
+					{DID : 3}
+				]
+			})
+			.expectRequest("Bs(1)/BtoDs?$select=DID&$expand=DtoB($select=BID,BValue)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					DID : 2,
+					DtoB : {BID : 1, BValue : 101}
+				}, {
+					DID : 3,
+					DtoB : {BID : 1, BValue : 101}
+				}]
+			})
+			.expectChange("bValue", "101")
+			.expectChange("bValue::table1", ["101", "101"])
+			.expectChange("bValue::table2", ["101", "101"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request data from property binding
+	QUnit.test("ODPrB access value async via API", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oPropertyBinding = oModel.bindProperty("/SalesOrderList('1')/NetAmount"),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')/NetAmount", { value : 42});
+
+			// code under test
+			return oPropertyBinding.requestValue().then(function (vValue) {
+				assert.strictEqual(vValue, 42);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request data from context binding
+	QUnit.test("ODCB access value async via API", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			oContextBinding = oModel.bindContext("/SalesOrderList('1')"),
+			oSalesOrder = {
+				NetAmount : 42,
+				SalesOrderID : "1",
+				TaxAmount : 117
+			},
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')", Object.assign({}, oSalesOrder));
+
+			// code under test
+			return oContextBinding.requestObject().then(function (oResponse) {
+				assert.deepEqual(oSalesOrder, oResponse);
+				assert.notStrictEqual(oSalesOrder, oResponse);
+
+				return oContextBinding.requestObject("TaxAmount").then(function (vValue) {
+					assert.strictEqual(vValue, 117);
+				});
+
+			});
 		});
 	});
 });

@@ -159,6 +159,14 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
+	 */
+	ODataPropertyBinding.prototype.adjustPredicate = function () {
+		// nothing to do here
+	};
+
 	// See class documentation
 	// @override
 	// @public
@@ -243,7 +251,7 @@ sap.ui.define([
 							that.fireDataRequested();
 						}, that);
 				}
-				if (that.bRelative && !that.oContext) {
+				if (!that.sReducedPath || that.bRelative && !that.oContext) {
 					// binding is unresolved or context was reset by another call to
 					// checkUpdateInternal
 					return undefined;
@@ -253,7 +261,7 @@ sap.ui.define([
 					oCallToken.forceUpdate = false;
 				}
 				if (!bIsMeta) { // relative data binding
-					return that.oContext.fetchValue(that.sPath, that);
+					return that.oContext.fetchValue(that.sReducedPath, that);
 				} // else: metadata binding
 				sDataPath = that.sPath.slice(0, iHashHash);
 				sMetaPath = that.sPath.slice(iHashHash + 2);
@@ -399,6 +407,24 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.getValue = function () {
 		return this.vValue;
+	};
+
+	/**
+	 * Requests the value of the property binding.
+	 *
+	 * @returns {Promise}
+	 *   A promise resolving with the resulting value or <code>undefined</code> if it could not be
+	 *   determined
+	 *
+	 * @public
+	 * @since 1.69
+	 */
+	ODataPropertyBinding.prototype.requestValue = function () {
+		var that = this;
+
+		return Promise.resolve(this.checkUpdateInternal().then(function () {
+			return that.getValue();
+		}));
 	};
 
 	/**

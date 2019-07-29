@@ -41,7 +41,8 @@
  * <tr><td><code>float</code></td><td>The value is converted to a <code>number</code>. Supported by
  * all numeric types.</td></tr>
  * <tr><td><code>object</code></td><td>The value is converted to a <code>Date</code> so that it can
- * be displayed in a date picker. Supported by {@link sap.ui.model.odata.type.Date} since 1.69.0.
+ * be displayed in a date or time picker. Supported by {@link sap.ui.model.odata.type.Date} and
+ * {@link sap.ui.model.odata.type.DateTimeOffset} since 1.69.0.
  * </td></tr>
  * <tr><td><code>any</code></td><td>A technical format. The value is simply passed through. Only
  * supported by <code>format</code>, not by <code>parse</code>. Supported by all types.</td></tr>

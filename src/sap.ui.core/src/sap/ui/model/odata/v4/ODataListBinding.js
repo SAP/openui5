@@ -283,6 +283,38 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#adjustPredicate
+	 */
+	ODataListBinding.prototype.adjustPredicate = function (sTransientPredicate, sPredicate,
+			oContext) {
+		var that = this;
+
+		/*
+		 * Replace $uid also in previous data to avoid useless diff in ODLB#getContexts.
+		 *
+		 * @param {string} sOldPath - The old path containing the transient predicate
+		 * @param {string} sNewPath - The path with the transient predicate replaced
+		 */
+		function adjustPreviousData(sOldPath, sNewPath) {
+			var iIndex = that.aPreviousData.indexOf(sOldPath);
+
+			if (iIndex >= 0) {
+				that.aPreviousData[iIndex] = sNewPath;
+			}
+		}
+
+		if (oContext) {
+			oContext.adjustPredicate(sTransientPredicate, sPredicate, adjustPreviousData);
+		} else {
+			this.oHeaderContext.adjustPredicate(sTransientPredicate, sPredicate);
+			this.aContexts.forEach(function (oContext) {
+				oContext.adjustPredicate(sTransientPredicate, sPredicate, adjustPreviousData);
+			});
+		}
+	};
+
+	/**
 	 * Applies the given map of parameters to this binding's parameters and triggers the
 	 * creation of a new cache if called with a change reason.
 	 *
@@ -631,18 +663,13 @@ sap.ui.define([
 				that.fireEvent("createSent", {context : oContext});
 			}
 		).then(function (oCreatedEntity) {
-			var sGroupId, iIndex, sPredicate;
+			var sGroupId, sPredicate;
 
 			if (!(oInitialData && oInitialData["@$ui5.keepTransientPath"])) {
 				// refreshSingle requires the new key predicate in oContext.getPath()
 				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
 				if (sPredicate) {
-					oContext.sPath = sResolvedPath + sPredicate;
-					iIndex = that.aPreviousData.indexOf(sTransientPath);
-					if (iIndex >= 0) {
-						// replace $uid also in previous data to avoid useless diff
-						that.aPreviousData[iIndex] = oContext.sPath;
-					}
+					that.adjustPredicate(sTransientPredicate, sPredicate, oContext);
 					that.oModel.checkMessages();
 				}
 			}
@@ -741,10 +768,12 @@ sap.ui.define([
 		// destroy previous contexts which are not reused
 		if (Object.keys(this.mPreviousContextsByPath).length) {
 			sap.ui.getCore().addPrerenderingTask(function () {
-				Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
-					that.mPreviousContextsByPath[sPath].destroy();
-					delete that.mPreviousContextsByPath[sPath];
-				});
+				if (that.mPreviousContextsByPath) { // binding might be destroyed already
+					Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
+						that.mPreviousContextsByPath[sPath].destroy();
+						delete that.mPreviousContextsByPath[sPath];
+					});
+				}
 			});
 		}
 		if (iCount !== undefined) {
@@ -1231,6 +1260,7 @@ sap.ui.define([
 					reason : ChangeReason.Change
 				});
 				that.reset(ChangeReason.Refresh);
+				oVirtualContext.destroy();
 			}, true);
 			oVirtualContext = Context.create(this.oModel, this,
 				this.oModel.resolve(this.sPath, this.oContext) + "/" + Context.VIRTUAL,
@@ -1271,7 +1301,7 @@ sap.ui.define([
 					if (oGroupLock) {
 						oGroupLock.unlock();
 					}
-					return oContext.fetchValue(that.sPath).then(function (aResult) {
+					return oContext.fetchValue(that.sReducedPath).then(function (aResult) {
 						var iCount;
 
 						// aResult may be undefined e.g. in case of a missing $expand in

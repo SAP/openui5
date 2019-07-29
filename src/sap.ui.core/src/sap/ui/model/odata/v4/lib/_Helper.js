@@ -674,6 +674,38 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the query options corresponding to the given path.
+		 *
+		 * @param {object} [mQueryOptions]
+		 *   A map of query options as returned by
+		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
+		 * @param {string} sPath
+		 *   The path of the cache value in the cache
+		 * @returns {object}
+		 *   The corresponding query options (live reference, no clone!); may be empty, but not
+		 *   falsy
+		 */
+		getQueryOptionsForPath : function (mQueryOptions, sPath) {
+			sPath = sPath[0] === "("
+				? _Helper.getMetaPath(sPath).slice(1) // avoid leading "/"
+				// getMetaPath needs an absolute path, a relative path starting with an index would
+				// not result in a correct meta path -> first add, then remove '/'
+				: _Helper.getMetaPath("/" + sPath).slice(1);
+			if (sPath) {
+				sPath.split("/").some(function (sSegment) {
+					mQueryOptions = mQueryOptions && mQueryOptions.$expand
+						&& mQueryOptions.$expand[sSegment];
+					if (!mQueryOptions || mQueryOptions === true) {
+						mQueryOptions = {};
+						return true;
+					}
+				});
+			}
+
+			return mQueryOptions || {};
+		},
+
+		/**
 		 * Returns the relative path for a given absolute path by stripping off the base path. Note
 		 * that the resulting path may start with a key predicate.
 		 *
@@ -708,38 +740,6 @@ sap.ui.define([
 				}
 			}
 			return sPath;
-		},
-
-		/**
-		 * Returns the query options corresponding to the given path.
-		 *
-		 * @param {object} [mQueryOptions]
-		 *   A map of query options as returned by
-		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
-		 * @param {string} sPath
-		 *   The path of the cache value in the cache
-		 * @returns {object}
-		 *   The corresponding query options (live reference, no clone!); may be empty, but not
-		 *   falsy
-		 */
-		getQueryOptionsForPath : function (mQueryOptions, sPath) {
-			sPath = sPath[0] === "("
-				? _Helper.getMetaPath(sPath).slice(1) // avoid leading "/"
-				// getMetaPath needs an absolute path, a relative path starting with an index would
-				// not result in a correct meta path -> first add, then remove '/'
-				: _Helper.getMetaPath("/" + sPath).slice(1);
-			if (sPath) {
-				sPath.split("/").some(function (sSegment) {
-					mQueryOptions = mQueryOptions && mQueryOptions.$expand
-						&& mQueryOptions.$expand[sSegment];
-					if (!mQueryOptions || mQueryOptions === true) {
-						mQueryOptions = {};
-						return true;
-					}
-				});
-			}
-
-			return mQueryOptions || {};
 		},
 
 		/**

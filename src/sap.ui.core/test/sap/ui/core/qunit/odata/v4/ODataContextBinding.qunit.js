@@ -399,7 +399,8 @@ sap.ui.define([
 
 			this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 			oBinding = this.bindContext("relative");
-			oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
+			oModelMock.expects("resolve").twice()
+				.withExactArgs("relative", sinon.match.same(oContext))
 				.returns("/contextPath/relative");
 			this.mock(oBinding).expects("_fireChange").twice()
 				.withExactArgs({reason : ChangeReason.Context});
@@ -416,6 +417,8 @@ sap.ui.define([
 			if (oReturnValueContext) {
 				this.mock(oBinding.oReturnValueContext).expects("destroy").withExactArgs();
 			}
+
+			oModelMock.expects("resolve").withExactArgs("relative", undefined).returns(undefined);
 
 			// code under test: reset parent binding fires change
 			oBinding.setContext(undefined);
@@ -475,7 +478,7 @@ sap.ui.define([
 					});
 			}
 			if (oTargetContext) {
-				oModelMock.expects("resolve")
+				oModelMock.expects("resolve").exactly(oFixture.sTarget === "v4" ? 2 : 1)
 					.withExactArgs("EMPLOYEE_2_TEAM", sinon.match.same(oTargetContext))
 					.returns("/EMPLOYEES(ID='2')/EMPLOYEE_2_TEAM");
 			}
@@ -3221,6 +3224,49 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.getDependentBindings(), aDependentBindings);
+	});
+
+	//*********************************************************************************************
+[
+	Context.create({/*oModel*/}, {/*oBinding*/}, "/SalesOrderList($uid=1)"),
+	null
+].forEach(function (oContext, i) {
+	QUnit.test("adjustPredicate: " + i, function (assert) {
+		var oBinding = this.bindContext("SO_2_BP", oContext);
+
+		if (oContext) {
+			this.mock(oBinding.oElementContext).expects("adjustPredicate")
+				.withExactArgs("($uid=1)", "('42')");
+		}
+
+		// code under test
+		oBinding.adjustPredicate("($uid=1)", "('42')");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("requestObject - resolved binding", function (assert) {
+		var oBinding = this.bindContext("/EMPLOYEES('42')"),
+			oBoundContextMock = this.mock(oBinding.oElementContext),
+			aResult = [{/*Promise*/}, {/*Promise*/}];
+
+		oBoundContextMock.expects("requestObject").withExactArgs(undefined).returns(aResult[0]);
+		oBoundContextMock.expects("requestObject").withExactArgs("name").returns(aResult[1]);
+
+		// code under test
+		assert.strictEqual(oBinding.requestObject(), aResult[0]);
+		assert.strictEqual(oBinding.requestObject("name"), aResult[1]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestObject - unresolved binding", function (assert) {
+		var oBinding = this.bindContext("Player('0815')");
+
+		// code under test
+		return oBinding.requestObject().then(function (vValue) {
+			assert.strictEqual(vValue, undefined);
+		});
+
 	});
 
 	//*********************************************************************************************
