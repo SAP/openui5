@@ -784,31 +784,16 @@ function(
 	 */
 	SegmentedButton.prototype.setSelectedButton = function (vButton) {
 		var sSelectedButtonBefore = this.getSelectedButton(),
-			oSelectedButton,
 			aButtons = this.getButtons();
 
 		// set the new value
-		this.setAssociation("selectedButton", vButton, true);
+		this.setAssociation("selectedButton", vButton);
 
-		// CSN# 1143859/2014: update selection state in DOM when calling API method to change the selection
 		if (sSelectedButtonBefore !== this.getSelectedButton()) {
-			// CSN# 0001429454/2014: only update DOM when control is already rendered (otherwise it will be done in onBeforeRendering)
-			if (this.$().length) {
-				// Select default button if there is no selected button and if there is more than one button available
-				if (!this.getSelectedButton() && aButtons.length > 1) {
-					this._selectDefaultButton();
-				}
-				oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
-				aButtons.forEach(function (oButton) {
-					oButton.$().removeClass("sapMSegBBtnSel");
-					oButton.$().attr("aria-checked", false);
-				});
-				if (oSelectedButton) {
-					oSelectedButton.$().addClass("sapMSegBBtnSel");
-					oSelectedButton.$().attr("aria-checked", true);
-				}
-				this._focusSelectedButton();
+			if (!this.getSelectedButton() && aButtons.length > 1) {
+				this._selectDefaultButton();
 			}
+			this._focusSelectedButton();
 		}
 
 		this._syncSelect();
