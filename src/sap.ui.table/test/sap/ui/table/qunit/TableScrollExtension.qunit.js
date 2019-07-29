@@ -1421,11 +1421,9 @@ sap.ui.define([
 			return TableQUnitUtils.wait(Device.browser.msie ? 250 : 150);
 		}
 
-		function afterRendering() {
+		function whenRowsUpdated() {
 			return new Promise(function(resolve) {
-				oTable.addEventDelegate({
-					onAfterRendering: resolve
-				});
+				oTable.attachEventOnce("_rowsUpdated", resolve);
 			});
 		}
 
@@ -1435,10 +1433,11 @@ sap.ui.define([
 			that.assertSynchronization(assert, 50);
 
 			// Resize the first scrollable column.
-			var oColumn = oTable.getColumns()[1];
-			oColumn.setWidth("600px");
+			oTable.getColumns()[1].setWidth("600px");
 			sap.ui.getCore().applyChanges();
 
+		}).then(whenRowsUpdated).then(function() {
+			var oColumn = oTable.getColumns()[1];
 			var $Resizer = oTable.$("rsz");
 			var oColumnRect = oColumn.getDomRef().getBoundingClientRect();
 			var iResizeHandlerTop = oColumnRect.top + 1;
@@ -1449,7 +1448,7 @@ sap.ui.define([
 			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
 			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
 
-		}).then(afterRendering).then(wait).then(function() {
+		}).then(whenRowsUpdated).then(wait).then(function() {
 			that.assertSynchronization(assert, 0);
 
 			// Prepare test of an edge case:
@@ -1468,10 +1467,9 @@ sap.ui.define([
 			qutils.triggerMouseEvent($Resizer, "mousemove", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
 			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 50, iResizeHandlerTop, 0);
 
-		}).then(afterRendering).then(wait).then(function() {
+		}).then(whenRowsUpdated).then(wait).then(function() {
 			that.assertSynchronization(assert, 70);
 			that.oScrollExtension.getHorizontalScrollbar().scrollLeft = oTable.getDomRef("sapUiTableCtrlScr").scrollWidth;
-
 		});
 	});
 
