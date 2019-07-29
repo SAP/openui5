@@ -48,6 +48,119 @@
             "reference": "1970275436"
           }
         ]
+      },
+      {
+        "id": "fae5d108aeb3d82096b30026a81d0dd52bc1dd19",
+        "type": "FEATURE",
+        "text": " Theme Origin Whitelist via \u003cmeta\u003e tag",
+        "references": []
+      },
+      {
+        "id": "2dab48e8c3604099f7d2bd56741f5635d3357639",
+        "type": "FEATURE",
+        "text": " mvc/XMLView: support core:require tag",
+        "references": []
+      },
+      {
+        "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added option to change the background color",
+        "references": []
+      },
+      {
+        "id": "71d638bee3f0453f42e5fe4813dc45057b7d44dc",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Added one month view",
+        "references": []
+      },
+      {
+        "id": "aedfff73d43cd402175e885d60c5ff087c5f2d65",
+        "type": "FIX",
+        "text": " LocaleData: Fix wrong field expansion for custom patterns in Japanese and Chinese",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970346792"
+          }
+        ]
+      },
+      {
+        "id": "d2adfc3e72579d4fb38e4aeff643106b36faf3a1",
+        "type": "FIX",
+        "text": " ODataModel: Preserve deep path information",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970290872"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970340544"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970310537"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970259259"
+          }
+        ]
+      },
+      {
+        "id": "1b2216d708d9e29686e8b9c6bd040acba6e31d2a",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter: Prefer $count value as initial binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970312273"
+          }
+        ]
+      },
+      {
+        "id": "ae475e9c8ba546ada2427fc9687b2e3f8ea75c72",
+        "type": "FIX",
+        "text": " RenderManager: Wrong rendering when visible property is changed in onBeforeRendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980301954"
+          }
+        ]
+      },
+      {
+        "id": "20ef47a70b12411b42ea9753a81711621b0ef75c",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: correct calculation for missing sections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880473575"
+          }
+        ]
+      },
+      {
+        "id": "7573f9818de534c4c6db2d115b5fd305f7ade1c3",
+        "type": "FIX",
+        "text": " v2/ODataModel: Deep resolve with empty path",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980287335"
+          }
+        ]
+      },
+      {
+        "id": "ff6203240f54d07743f98bab4459a02b14c31c3d",
+        "type": "FIX",
+        "text": " v2/ODataModel: Make processChange method more robust",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970379474"
+          }
+        ]
       }
     ]
   }

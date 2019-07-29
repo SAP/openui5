@@ -18,6 +18,28 @@
             "reference": "324698"
           }
         ]
+      },
+      {
+        "id": "ae17fbeb435361bd4df78972aa1451697ae87023",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Appointment selection now properly indicated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970332529"
+          }
+        ]
+      },
+      {
+        "id": "9375d005f0b629e2f4fd8415745e448fd3de85a0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments with start date later that end date are not rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "376892"
+          }
+        ]
       }
     ]
   }

@@ -7,6 +7,17 @@
         "type": "FIX",
         "text": " Add missing library definition for elements in sub-namespace",
         "references": []
+      },
+      {
+        "id": "1b2216d708d9e29686e8b9c6bd040acba6e31d2a",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter: Prefer $count value as initial binding length",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970312273"
+          }
+        ]
       }
     ]
   }

@@ -36,6 +36,23 @@
             "reference": "1970341860"
           }
         ]
+      },
+      {
+        "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added option to change the background color",
+        "references": []
+      },
+      {
+        "id": "d6ac114c36ba84712a5577a4c71c076a1911f3ef",
+        "type": "FIX",
+        "text": " sap.f.Avatar: Fixed tooltip",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970322086"
+          }
+        ]
       }
     ]
   }

@@ -1,0 +1,13 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added option to change the background color",
+        "references": []
+      }
+    ]
+  }
+}

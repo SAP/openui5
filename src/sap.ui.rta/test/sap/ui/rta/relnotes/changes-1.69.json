@@ -25,6 +25,29 @@
         "type": "FIX",
         "text": " sap.ui.rta - fixed simple form ElementMover",
         "references": []
+      },
+      {
+        "id": "b3fd722d43f36522538f750ec4a4f743978b624c",
+        "type": "FIX",
+        "text": " Fixing includes",
+        "references": []
+      },
+      {
+        "id": "176ca4d911cba1b17924353d54d50a09cd590def",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Clickable area is wider",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980014241"
+          }
+        ]
+      },
+      {
+        "id": "5c3a8aef6e8764f8b48238ecb2aeb9ab26c853ed",
+        "type": "FIX",
+        "text": " sap.ui.rta - rta toolbar not visible after restart without pers",
+        "references": []
       }
     ]
   }

@@ -28,6 +28,51 @@
             "reference": "1970298759"
           }
         ]
+      },
+      {
+        "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added option to change the background color",
+        "references": []
+      },
+      {
+        "id": "71d638bee3f0453f42e5fe4813dc45057b7d44dc",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Added one month view",
+        "references": []
+      },
+      {
+        "id": "6bbb15baf541804673f751076fb9acb39bf9961c",
+        "type": "FIX",
+        "text": " sap.m.PullToRefresh: Focus aligned with Global Focus Concept",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970274638"
+          }
+        ]
+      },
+      {
+        "id": "17c43d58472134da12588e023fd2db1017b4a8bf",
+        "type": "FIX",
+        "text": " sap.m.ScrollContainer: Default focus outline removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970244909"
+          }
+        ]
+      },
+      {
+        "id": "176ca4d911cba1b17924353d54d50a09cd590def",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Clickable area is wider",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980014241"
+          }
+        ]
       }
     ]
   }
