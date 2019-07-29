@@ -1218,7 +1218,7 @@ function(
 		this.$().focus();
 
 		oEventF6.target = oEvent.target;
-		oEventF6.keyCode = KeyCodes.F6;
+		oEventF6.key = 'F6';
 		oEventF6.shiftKey = bShiftKey;
 
 		F6Navigation.handleF6GroupNavigation(oEventF6);
