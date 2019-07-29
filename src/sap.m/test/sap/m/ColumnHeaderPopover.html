@@ -60,23 +60,6 @@
 			]
 	};
 
-
-
-// 	var fGenericFilter = function(oViewSettingsPopover, oEvent) {
-// 		var oTable = oViewSettingsPopover.getParent().getParent().getParent();
-// 		var aItems = oEvent.getParameters().items;
-// 		var sPath = "";
-// 		var sFilterValue = "";
-
-// 		if (aItems != null && aItems.length > 0) {
-// 			sPath = aItems[0].getParent().getKey();
-// 			sFilterValue = aItems[0].getKey();
-// 		}
-// 		var oFilter = new sap.ui.model.Filter(sPath, "Contains", sFilterValue);
-// 		oTable.getBinding("items").filter(oFilter);
-// 	};
-
-
 //******************TEMPLATE*************************************************
 
 	var oColumnTemplate = new sap.m.Column({
@@ -170,6 +153,23 @@
 			// TODO: improve - no parent
 		//	oColumn.addDependent(oPopover);
 			oPopover.addItem(oSortItem);
+
+			var oGroupItem = new sap.m.ColumnPopoverActionItem({
+				icon: "sap-icon://group",
+				text: "group",
+				press: function(oEvent) {
+					var oTableBinding = oTable.getBinding("items"),
+					oGrouping = new sap.ui.model.Sorter("name", true, function(oContext) {
+						var sKey = oContext.getProperty("name");
+						return {
+							key: sKey,
+							text: sKey
+						};
+					});
+					oTable.getBinding("items").sort(oGrouping);
+				}
+			});
+			oPopover.addItem(oGroupItem);
 			oPopover.openBy(oColumn);
 		}
 
@@ -189,6 +189,20 @@
 		})
 	});
 
+	var oListfilter = new sap.m.List({
+		items: [
+			new sap.m.StandardListItem({
+					type: "Active",
+					title: "Doris",
+					press: function (oEvent) {
+						var oFilter = new sap.ui.model.Filter("name", "Contains", "doris");
+						oTable.getBinding("items").filter(oFilter);
+						oPopover.getAggregation("_popover").close();
+					}
+				})
+		]
+	});
+
 	var oData = [
 		{
 			type: "action",
@@ -200,26 +214,33 @@
 			type: "custom",
 			visible : true,
 			text: "custom item tooltip",
-			icon: "sap-icon://filter",
+			icon: "sap-icon://call",
 			content: oList
 		},
 		{
 			type: "sort",
-			visible : true
-		},
-		{
-			type: "action",
-			visible : true,
-			text: "action",
-			icon: "sap-icon://meeting-room"
+			visible : false
 		},
 		{
 			type: "custom",
 			visible : true,
-			text: "custom item tooltip",
-			icon: "sap-icon://money-bills",
-			content: new sap.m.Input()
-		}
+			text: "filter",
+			icon: "sap-icon://filter",
+			content: oListfilter
+		},
+// 		{
+// 			type: "action",
+// 			visible : true,
+// 			text: "action",
+// 			icon: "sap-icon://meeting-room"
+// 		},
+// 		{
+// 			type: "custom",
+// 			visible : true,
+// 			text: "custom item tooltip",
+// 			icon: "sap-icon://money-bills",
+// 			content: new sap.m.Input()
+// 		}
 
 		];
 
