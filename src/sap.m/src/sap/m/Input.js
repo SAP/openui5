@@ -1075,7 +1075,7 @@ function(
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
 
-		if (this._oSuggPopover && this._oSuggPopover._oPopover.isOpen()) {
+		if (this._oSuggPopover && this._oSuggPopover._oPopover && this._oSuggPopover._oPopover.isOpen()) {
 			if (!this._updateSelectionFromList()) {
 				this._closeSuggestionPopup();
 			}
