@@ -202,7 +202,7 @@ sap.ui.define([
 	Button.prototype.onBeforeRendering = function() {
 		this._bRenderActive = this._bActive;
 
-		this.$().on("mouseenter", this._onmouseenter);
+		this.$().off("mouseenter", this._onmouseenter);
 	};
 
 	/*
@@ -556,18 +556,7 @@ sap.ui.define([
 		}
 
 		if (sValue !== sText) {
-			var oDomRef = this.getDomRef("BDI-content") || this.getDomRef("content");
-			var bShouldSupressRendering = !!oDomRef;
-
-			// Render control if element is not available in the DOM
-			this.setProperty("text", sText, bShouldSupressRendering);
-
-			if (bShouldSupressRendering) {
-				// Get text to have the type conversation for non-string values done by the framework
-				sText = this.getText();
-				oDomRef.textContent = sText;
-				this.$("inner").toggleClass("sapMBtnText", !!sText);
-			}
+			this.setProperty("text", sText);
 		}
 
 		return this;
@@ -585,11 +574,7 @@ sap.ui.define([
 		sIcon = sIcon || "";
 
 		if (sValue !== sIcon) {
-			var bSupressRendering = !!sValue && !!sIcon && IconPool.isIconURI(sIcon) === IconPool.isIconURI(sValue);
-			this.setProperty("icon", sIcon, bSupressRendering);
-			if (bSupressRendering && this._image) {
-				this._image.setSrc(sIcon);
-			}
+			this.setProperty("icon", sIcon);
 		}
 		return this;
 	};
