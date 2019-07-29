@@ -136,15 +136,6 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
-			ColumnHeader: {
-				title: "QUnit Page for sap.m.ColumnHeader",
-				coverage: {
-					only: "sap/m/ColumnHeader"
-				},
-				ui5: {
-					language: "en"
-				}
-			},
 			ColumnHeaderPopover: {
 				title: "QUnit Page for sap.m.ColumnHeaderPopover",
 				sinon: {
@@ -1417,15 +1408,6 @@ sap.ui.define([
 			},
 			ViewSettingsDialogCustomTabs: {
 				title: "QUnit Page for sap.m.ViewSettingsDialog"
-			},
-			ViewSettingsPopover: {
-				title: "QUnit Page for sap.m.ViewSettingsPopover",
-				ui5: {
-					language: "en_US"
-				},
-				sinon: {
-					useFakeTimers: true
-				}
 			},
 			Wizard: {
 				title: "QUnit Page for sap.m.Wizard",

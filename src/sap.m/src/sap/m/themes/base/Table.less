@@ -366,6 +366,23 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	padding: .875rem .5rem 1rem;
 }
 
+.sapMColumnHeaderText {
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-weight: normal;
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMColumnHeaderIcons {
+	white-space: nowrap;
+}
+
+.sapMColumnHeaderIcons > .sapUiIcon {
+	padding-left: 0.375rem;
+}
+
 .sapMListTblHighlightCol + .sapMListTblCell.sapMListTblHeaderCell {
 	padding-left: .5rem;
 }
