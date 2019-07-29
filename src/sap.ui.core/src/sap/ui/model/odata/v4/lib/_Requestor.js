@@ -1230,12 +1230,12 @@ sap.ui.define([
 							// the session
 							that.setSessionContext(sContextId,
 								jqXHR.getResponseHeader("SAP-Http-Session-Timeout"));
-						} else if (jqXHR.getResponseHeader("SAP-Err-Id") === "ICMENOSESSION") {
-							// The server could not find the context ID ("ICM Error NO SESSION")
+						} else if (that.mHeaders["SAP-ContextId"]) {
+							// There was a session, but now it's gone
 							sMessage = "Session not found on server";
 							Log.error(sMessage, undefined, sClassName);
 							that.clearSessionContext(/*bTimeout*/true);
-						} // else keep the session untouched
+						}
 						fnReject(_Helper.createError(jqXHR, sMessage, sRequestUrl,
 							sOriginalResourcePath));
 					}

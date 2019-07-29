@@ -514,59 +514,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bErrorId, i) {
-		QUnit.test("sendRequest(): error & session, bErrorId=" + bErrorId, function (assert) {
-			var oJQueryMock = this.mock(jQuery),
-				oRequestor = _Requestor.create("/", oModelInterface),
-				that = this;
+	QUnit.test("sendRequest(): error & session", function (assert) {
+		var oJQueryMock = this.mock(jQuery),
+			oRequestor = _Requestor.create("/", oModelInterface),
+			that = this;
 
+		oJQueryMock.expects("ajax")
+			.withExactArgs("/", sinon.match.object)
+			.returns(createMock(assert, {/*oPayload*/}, "OK", {
+				"OData-Version" : "4.0",
+				"SAP-ContextId" : "abc123"
+			}));
+
+		// code under test
+		return oRequestor.sendRequest("GET", "").then(function () {
+			var oExpectedError = new Error(),
+				jqXHRMock;
+
+			assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "abc123");
+
+			jqXHRMock = new jQuery.Deferred();
+			setTimeout(function () {
+				jqXHRMock.reject({
+					getResponseHeader : function (sName) {
+						switch (sName) {
+							case "SAP-ContextId" : return null;
+							case "X-CSRF-Token" : return null;
+							default : assert.ok(false, "unexpected header " + sName);
+						}
+					},
+					"status" : 500
+				});
+			}, 0);
 			oJQueryMock.expects("ajax")
-				.withExactArgs("/", sinon.match.object)
-				.returns(createMock(assert, {/*oPayload*/}, "OK", {
-					"OData-Version" : "4.0",
-					"SAP-ContextId" : "abc123"
-				}));
+				.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
+				.returns(jqXHRMock);
+			that.oLogMock.expects("error")
+				.withExactArgs("Session not found on server", undefined, sClassName);
+			that.mock(oRequestor).expects("clearSessionContext").withExactArgs(true);
+			that.mock(_Helper).expects("createError")
+				.withExactArgs(sinon.match.object, "Session not found on server", "/", undefined)
+				.returns(oExpectedError);
 
 			// code under test
 			return oRequestor.sendRequest("GET", "").then(function () {
-				var oExpectedError = new Error(),
-					jqXHRMock;
-
-				assert.strictEqual(oRequestor.mHeaders["SAP-ContextId"], "abc123");
-
-				jqXHRMock = new jQuery.Deferred();
-				setTimeout(function () {
-					jqXHRMock.reject({
-						getResponseHeader : function (sName) {
-							switch (sName) {
-								case "SAP-ContextId": return null;
-								case "SAP-Err-Id" : return bErrorId ? "ICMENOSESSION" : null;
-								case "X-CSRF-Token" : return null;
-								default : assert.ok(false, "unexpected header " + sName);
-							}
-						},
-						"status" : 500
-					});
-				}, 0);
-				oJQueryMock.expects("ajax")
-					.withExactArgs("/", sinon.match({headers : {"SAP-ContextId" : "abc123"}}))
-					.returns(jqXHRMock);
-				that.oLogMock.expects("error").exactly(bErrorId ? 1 : 0)
-					.withExactArgs("Session not found on server", undefined, sClassName);
-				that.mock(oRequestor).expects("clearSessionContext").exactly(bErrorId ? 1 : 0)
-					.withExactArgs(true);
-				that.mock(_Helper).expects("createError")
-					.withExactArgs(sinon.match.object,
-						bErrorId ? "Session not found on server" : "Communication error",
-						"/", undefined)
-					.returns(oExpectedError);
-
-				// code under test
-				return oRequestor.sendRequest("GET", "").then(function () {
-					assert.ok(false);
-				}, function (oError) {
-					assert.strictEqual(oError, oExpectedError);
-				});
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError, oExpectedError);
 			});
 		});
 	});
