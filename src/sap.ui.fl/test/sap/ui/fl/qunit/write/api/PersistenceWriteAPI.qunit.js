@@ -13,6 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/base/Log",
+	"sap/ui/fl/write/internal/SaveAs",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -27,6 +29,8 @@ sap.ui.define([
 	TransportSelection,
 	flexUtils,
 	ChangesWriteAPI,
+	Log,
+	SaveAs,
 	jQuery,
 	sinon
 ) {
@@ -440,15 +444,176 @@ sap.ui.define([
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
 							// Get the UI change to be saved to backend
-							var oChangePayload = fnSendBackendCall.firstCall.args[2];
+							var oChangePayload = fnSendBackendCall.secondCall.args[2];
 							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
 							// Get the app variant to be saved to backend
-							var oAppVariant = fnSendBackendCall.secondCall.args[2];
+							var oAppVariant = fnSendBackendCall.firstCall.args[2];
 							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
 							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/appdescr_variants/", "POST", oAppVariant), "then backend call is triggered with correct parameters");
+							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
+						});
+				});
+		});
+
+		QUnit.test("(Save As scenario) when saveAs is called and saving app variant failed", function(assert) {
+			var oAppComponent = createAppComponent();
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
+				})
+			);
+			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns({
+				completeChangeContent: function() {
+				},
+				applyChange: function() {
+				},
+				revertChange: function() {
+				}
+			});
+
+			var fnSendBackendCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
+			fnSendBackendCall.onFirstCall().rejects("App variant failed to save");
+			fnSendBackendCall.onSecondCall().resolves();
+
+			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "App variant failed to save").returns();
+
+			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+
+			var oUIChange;
+			// Creates a first descriptor change
+			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: oAppComponent})
+				.then(function(oDescriptorInlineChange) {
+					// Adds a first descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
+					// Creates a second descriptor change
+					return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData2, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a second descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
+					// Creates a UI change
+					return ChangesWriteAPI.create({changeSpecificData: this.oUIChangeSpecificData, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oCreatedUIChange) {
+					oUIChange = oCreatedUIChange;
+					// Adds a UI change to its own persistence
+					return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
+				})
+				.then(function() {
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
+					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id"})
+						.catch(function(oError) {
+							assert.ok("then the promise got rejected");
+							assert.equal(oError.messageKey, "MSG_SAVE_APP_VARIANT_FAILED", "then the messagekey is correct");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then Descriptor changes are still present in the persistence");
+							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still present in the persistence but the reference has been changed");
+							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
+							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
+							// Delete dirty inline changes from persistence
+							var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges();
+							aDescrChanges = aDescrChanges.slice();
+							aDescrChanges.forEach(function(oChange) {
+								ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.deleteChange(oChange);
+							});
+							// Delete the UI change from persistence
+							ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.deleteChange(oUIChange);
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then Descriptor changes have been removed from the persistence");
+							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
+						});
+				});
+		});
+
+		QUnit.test("(Save As scenario) when saveAs is called and saving dirty changes failed", function(assert) {
+			var oAppComponent = createAppComponent();
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
+				})
+			);
+			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(ChangeRegistry.prototype, "getChangeHandler").returns({
+				completeChangeContent: function() {
+				},
+				applyChange: function() {
+				},
+				revertChange: function() {
+				}
+			});
+
+			var fnSendBackendCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
+			fnSendBackendCall.onFirstCall().resolves();
+			fnSendBackendCall.onSecondCall().rejects("Dirty changes failed to save");
+
+			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "Dirty changes failed to save").returns();
+
+			sandbox.stub(flexUtils, "getControlType").returns("sap.ui.fl.DummyControl");
+			var fnDeleteAppVarSpy = sandbox.stub(SaveAs, "deleteAppVar").resolves();
+
+			var oUIChange;
+			// Creates a first descriptor change
+			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: oAppComponent})
+				.then(function(oDescriptorInlineChange) {
+					// Adds a first descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
+					// Creates a second descriptor change
+					return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData2, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a second descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
+					// Creates a UI change
+					return ChangesWriteAPI.create({changeSpecificData: this.oUIChangeSpecificData, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oCreatedUIChange) {
+					oUIChange = oCreatedUIChange;
+					// Adds a UI change to its own persistence
+					return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
+				})
+				.then(function() {
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
+					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id"})
+						.catch(function(oError) {
+							assert.ok("then the promise got rejected");
+							assert.equal(oError.messageKey, "MSG_COPY_UNSAVED_CHANGES_FAILED", "then the messagekey is correct");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then the Descriptor changes are still present in persistence");
+							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still in the persistence");
+							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
+							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
+							// Get the UI change to be saved to backend
+							var oChangePayload = fnSendBackendCall.secondCall.args[2];
+							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
+							assert.ok(fnDeleteAppVarSpy.calledWithExactly("customer.reference.app.id"), "then deleteAppVar call is called with correct parameters");
+							// Delete the UI change from persistence
+							ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.deleteChange(oUIChange);
+							// Delete dirty inline changes from persistence
+							var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges();
+							aDescrChanges = aDescrChanges.slice();
+							aDescrChanges.forEach(function(oChange) {
+								ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.deleteChange(oChange);
+							});
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then Descriptor changes have been removed from the persistence");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
 						});
 				});
@@ -505,10 +670,10 @@ sap.ui.define([
 							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
 							assert.equal(oUIChange.getRequest(), "ATO_NOTIFICATION", "the request has been set correctly");
 							// Get the UI change to be saved to backend
-							var oChangePayload = fnSendBackendCall.firstCall.args[2];
+							var oChangePayload = fnSendBackendCall.secondCall.args[2];
 							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/?changelist=ATO_NOTIFICATION", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
 							// Get the app variant to be saved to backend
-							var oAppVariant = fnSendBackendCall.secondCall.args[2];
+							var oAppVariant = fnSendBackendCall.firstCall.args[2];
 							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
@@ -542,7 +707,8 @@ sap.ui.define([
 				})
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return PersistenceWriteAPI.saveAs({selector: oAppComponent,
+					return PersistenceWriteAPI.saveAs({
+						selector: oAppComponent,
 						id: "customer.reference.app.id",
 						// eslint-disable-next-line quote-props
 						package: "TEST_PACKAGE",
@@ -586,7 +752,8 @@ sap.ui.define([
 				})
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
-					return PersistenceWriteAPI.saveAs({selector: oAppComponent,
+					return PersistenceWriteAPI.saveAs({
+						selector: oAppComponent,
 						id: "customer.reference.app.id",
 						// eslint-disable-next-line quote-props
 						layer: "CUSTOMER",
@@ -665,6 +832,130 @@ sap.ui.define([
 
 			return PersistenceWriteAPI.deleteAppVariant({selector: oAppComponent})
 				.then(function() {
+					assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/appdescr_variants/reference.app", "GET", undefined), "then the parameters are correct");
+					assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=customer.reference.app.id&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/appdescr_variants/reference.app?changelist=TRANSPORT123", "DELETE", mAppVariant.response), "then the parameters are correct");
+					assert.ok(oOpenDialogStub.calledOnce, "the dialog was opened");
+				});
+		});
+
+		QUnit.test("(Key User Delete Appvar scenario) when deleteAppVariant is called and loading app variant failed", function(assert) {
+			var oAppComponent = createAppComponent();
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
+				})
+			);
+			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: false,
+					transports: "TRANSPORT123"
+				}
+			};
+
+			var fnSendBackendCall = sandbox.stub(LrepConnector.prototype, "send");
+			fnSendBackendCall.onFirstCall().rejects("Loading app variant failed"); // Get Descriptor variant call
+			fnSendBackendCall.onSecondCall().resolves(oTransportResponse); // Get transports
+			fnSendBackendCall.onThirdCall().resolves(); // Delete call to backend
+
+			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be deleted.", "Loading app variant failed").returns();
+
+			var fnSimulateDialogSelectionAndOk = function (oConfig, fOkay) {
+				var oDialogSelection = {
+					selectedTransport: oConfig.transports, // second transport was selected
+					selectedPackage: oConfig.pkg,
+					dialog: true
+				};
+
+				var oResponse = {
+					getParameters: function () {
+						return oDialogSelection;
+					}
+				};
+				fOkay(oResponse);
+			};
+
+			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndOk);
+
+			return PersistenceWriteAPI.deleteAppVariant({selector: oAppComponent})
+				.catch(function(oError) {
+					assert.ok("then the promise got rejected");
+					assert.equal(oError.messageKey, "MSG_LOAD_APP_VARIANT_FAILED", "then the messagekey is correct");
+					assert.ok(oOpenDialogStub.notCalled, "the dialog was never opened");
+				});
+		});
+
+		QUnit.test("(Key User Delete Appvar scenario) when deleteAppVariant is called and deletion failed", function(assert) {
+			var oAppComponent = createAppComponent();
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:false,
+					isAtoEnabled:false,
+					isProductiveSystem:false
+				})
+			);
+			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "layer1",
+					fileType: "fileType1",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: false,
+					transports: "TRANSPORT123"
+				}
+			};
+
+			var fnSendBackendCall = sandbox.stub(LrepConnector.prototype, "send");
+			fnSendBackendCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			fnSendBackendCall.onSecondCall().resolves(oTransportResponse); // Get transports
+			fnSendBackendCall.onThirdCall().rejects("Deletion error"); // Delete call to backend
+
+			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be deleted.", "Deletion error").returns();
+
+			var fnSimulateDialogSelectionAndOk = function (oConfig, fOkay) {
+				var oDialogSelection = {
+					selectedTransport: oConfig.transports, // second transport was selected
+					selectedPackage: oConfig.pkg,
+					dialog: true
+				};
+
+				var oResponse = {
+					getParameters: function () {
+						return oDialogSelection;
+					}
+				};
+				fOkay(oResponse);
+			};
+
+			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndOk);
+
+			return PersistenceWriteAPI.deleteAppVariant({selector: oAppComponent})
+				.catch(function(oError) {
+					assert.ok("then the promise got rejected");
+					assert.equal(oError.messageKey, "MSG_DELETE_APP_VARIANT_FAILED", "then the messagekey is correct");
 					assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/appdescr_variants/reference.app", "GET", undefined), "then the parameters are correct");
 					assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=customer.reference.app.id&namespace=namespace1&type=fileType1"), "then the parameters are correct");
 					assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/appdescr_variants/reference.app?changelist=TRANSPORT123", "DELETE", mAppVariant.response), "then the parameters are correct");
