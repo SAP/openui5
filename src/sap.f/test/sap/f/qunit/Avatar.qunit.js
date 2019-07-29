@@ -197,8 +197,14 @@ sap.ui.define([
 		this.oAvatar.setSrc(sImagePath);
 		oCore.applyChanges();
 
-		var $oAvatar = this.oAvatar.$();
+		var $oAvatar = this.oAvatar.$(),
+			sBackgroundColorValue = $oAvatar.css("background-color"),
+			bIsTransparent = sBackgroundColorValue === "transparent" ||
+					sBackgroundColorValue === "rgba(0, 0, 0, 0)";
+
+		// Assert
 		assert.ok($oAvatar.hasClass("sapFAvatarImage"), sPreAvatarType + "Image");
+		assert.ok(bIsTransparent, "Background is transparent");
 	});
 
 	QUnit.test("Avatar with src leading to an image has correct css style", function (assert) {
