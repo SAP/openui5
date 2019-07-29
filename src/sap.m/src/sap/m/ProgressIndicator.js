@@ -111,6 +111,19 @@ sap.ui.define([
 			 */
 			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
+		associations : {
+			/**
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * @since 1.69
+			 */
+			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
+
+			/**
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledBy).
+			 * @since 1.69
+			 */
+			ariaLabelledBy: {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		designtime: "sap/m/designtime/ProgressIndicator.designtime"
 	}});
 
