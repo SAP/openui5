@@ -1,3 +1,4 @@
+
 /*global OData, QUnit, sinon */
 sap.ui.define([
 		"sap/base/Log",
@@ -7076,6 +7077,24 @@ sap.ui.define([
 			});
 
 			this.oModel.submitChanges();
+		}.bind(this));
+	});
+
+	QUnit.test("Result property in entity", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
+		this.oModel = new ODataModel(sURI, {metadataUrlParams: {"result-property":true}});
+		this.oModel.metadataLoaded().then(function() {
+
+			function fnSuccess() {
+				var oCategory = this.oModel.getObject("/Categories(20)");
+				assert.ok(oCategory.results, "result property exists");
+				assert.strictEqual(oCategory.results, "test", "result property imported correctly");
+				done();
+			}
+			this.oModel.read("/Categories(20)", {
+				success: fnSuccess.bind(this)
+			});
 		}.bind(this));
 	});
 });
