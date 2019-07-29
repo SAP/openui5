@@ -153,8 +153,6 @@ sap.ui.define([
 
 		var generateModuleName = function(oChangeDefinition) {
 			var sModuleName = oChangeDefinition.reference.replace(/\./g, "/");
-			sModuleName += "/$$flexModules/";
-			sModuleName += oChangeDefinition.validAppVersions.creation;
 			sModuleName += "/changes/";
 			sModuleName += oChangeDefinition.content.fragmentPath.replace(/\.fragment\.xml/g, "");
 
