@@ -233,8 +233,8 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 
 	function _selectWorkWeekView() {
 		_checkForOverflowButton();
-		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-			element(by.id("__item4-button")).click();
+		if (browser.testrunner.runtime.platformName !== "android" && browser.testrunner.runtime.platformName !== "ios") {
+			element(by.id("__view1--item-button")).click();
 		} else {
 			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
 			element(by.id("__item7")).click();
@@ -243,8 +243,8 @@ describe("sap.m.SinglePlanningCalendarStickyHeader", function () {
 
 	function _selectWeekView() {
 		_checkForOverflowButton();
-		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-			element(by.id("__item5-button")).click();
+		if (browser.testrunner.runtime.platformName !== "android" && browser.testrunner.runtime.platformName !== "ios") {
+			element(by.id("__view2--item-button")).click();
 		} else {
 			element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
 			element(by.id("__item8")).click();

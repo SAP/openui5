@@ -20,16 +20,36 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element.all(by.cssContainingText(".sapMSelectListItem", "Work Week")).click();
+				element(by.id("__item15")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element.all(by.cssContainingText(".sapMSegBBtn .sapMSegBBtnInner", "Work Week")).click();
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item10")).click();
 			}
 		});
 
 		element(by.id("overrideTime")).click();
-
 		expect(takeScreenshot(oSPC)).toLookAs("work_week_view");
+	});
+
+	it("should navigate to month view", function () {
+		var oSPC = element(by.id("SinglePlanningCalendar"));
+
+		//click on overflow button if available
+		element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).isPresent().then(function(presented){
+			if (presented) {
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item43")).click();
+				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
+			} else {
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item28")).click();
+			}
+		});
+
+		element(by.id("overrideTime")).click();
+		expect(takeScreenshot(oSPC)).toLookAs("month_view");
 	});
 
 	it("should navigate to week view", function () {
@@ -38,10 +58,11 @@ describe("sap.m.SinglePlanningCalendar", function() {
 			if (presented) {
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
-				element.all(by.cssContainingText(".sapMSelectListItem", "Full Week")).click();
+				element(by.id("__item66")).click();
 				element(by.id("SinglePlanningCalendar-Header-ActionsToolbar-overflowButton")).click();
 			} else {
-				element.all(by.cssContainingText(".sapMSegBBtn .sapMSegBBtnInner", "Full Week")).click();
+				element(by.id("SinglePlanningCalendar-Header-ViewSwitch")).click();
+				element(by.id("__item41")).click();
 			}
 		});
 
@@ -89,7 +110,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
-			element(by.id("SinglePlanningCalendar-Header-NavToolbar-NextBtn")).click();
+			element(by.id("overrideTime")).click();
 			element(by.id("__appointment0-SinglePlanningCalendar-0")).click();
 			browser.actions().mouseMove(element(by.id("__appointment0-SinglePlanningCalendar-13"))).sendKeys(CTRL_KEY).click().sendKeys(CTRL_KEY).perform();
 
@@ -102,6 +123,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("overrideTime")).click();
 			element(by.id("__appointment0-SinglePlanningCalendar-38")).click();
 
 			expect(takeScreenshot(oSPC)).toLookAs("1_selected_appointment_with_mouse");
@@ -113,6 +135,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("overrideTime")).click();
 			element(by.id("__appointment0-SinglePlanningCalendar-0")).sendKeys(protractor.Key.SPACE);
 			element(by.id("__appointment0-SinglePlanningCalendar-13")).sendKeys(CTRL_KEY, protractor.Key.SPACE, CTRL_KEY);
 
@@ -125,6 +148,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 
 		//there is no keyboard on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("overrideTime")).click();
 			element(by.id("__appointment0-SinglePlanningCalendar-38")).sendKeys(protractor.Key.ENTER);
 
 			expect(takeScreenshot(oSPC)).toLookAs("1_selected_appointment_with_kb");
@@ -135,6 +159,7 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 		//there is no focus on mobile
 		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("overrideTime")).click();
 			element(by.css("[data-sap-start-date='20180711-0200']")).click();
 			expect(takeScreenshot(oSPC)).toLookAs("focused_cell_with_mouse");
 		}
@@ -176,7 +201,8 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		//there is no keyboard on mobile
-		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+		if (browser.testrunner.runtime.platformName !== "android" && browser.testrunner.runtime.platformName !== "ios") {
+			element(by.id("overrideTime")).click();
 			element(by.css(sSelector)).sendKeys(iControl);
 			expect(takeScreenshot(oSPC)).toLookAs(sRefImage);
 		}
@@ -186,7 +212,8 @@ describe("sap.m.SinglePlanningCalendar", function() {
 		var oSPC = element(by.id("SinglePlanningCalendar"));
 
 		//there is no keyboard on mobile
-		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+		if (browser.testrunner.runtime.platformName !== "android" && browser.testrunner.runtime.platformName !== "ios") {
+			element(by.id("overrideTime")).click();
 			element(by.id(sSelector)).sendKeys(iControl);
 			expect(takeScreenshot(oSPC)).toLookAs(sRefImage);
 		}
