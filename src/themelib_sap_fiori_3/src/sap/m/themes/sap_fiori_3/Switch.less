@@ -11,7 +11,10 @@
 /* ------------------------------ */
 
 .sapMSwtCont {
-	padding: 0.3125rem 0 0.3125rem 0;
+	overflow: hidden;
+	//in order to have a touchable area of 2.75rem
+	padding-top: 0.6875rem;
+	padding-bottom: 0.6875rem;
 }
 
 /* focus */
@@ -23,6 +26,17 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 /* ------------------------------ */
 /* Switch                         */
 /* ------------------------------ */
+
+.sapMSwt {
+	width: 3.75rem;
+	height: 1.25rem;
+	overflow: visible;
+	border: 1px solid;
+	border-top-left-radius: 0.75rem;
+	border-top-right-radius: 0.75rem;
+	border-bottom-right-radius: 0.75rem;
+	border-bottom-left-radius: 0.75rem;
+}
 
 /* background */
 
@@ -43,13 +57,73 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 }
 
 /* ------------------------------ */
+/* Text                           */
+/* ------------------------------ */
+.sapMSwtText {
+	line-height: 1.375rem;
+	width: 1.75rem;
+	&.sapMSwtTextOn {
+		margin: 0 0 0 0.125rem;
+		color: @sapUiBaseText;
+	}
+	&.sapMSwtTextOff {
+		margin: 0 0.125rem 0 0;
+		color: @sapUiBaseText;
+		left: 3.8rem;
+	}
+	.sapMSwtLabel {
+		padding: 0;
+	}
+}
+
+/* ------------------------------ */
 /* Switch handler                 */
 /* ------------------------------ */
 
-/* background */
-
+.sapMSwtOn .sapMSwtHandle,
 .sapMSwtOff .sapMSwtHandle {
-	border-color: @sapUiContentForegroundBorderColor;
+	height: 1.875rem;
+	width: 1.875rem;
+	box-shadow: 0 0.0625rem 0.125rem 0 fade(@sapUiContentShadowColor, 15);
+	border-top-left-radius: 1rem;
+	border-top-right-radius: 1rem;
+	border-bottom-right-radius: 1rem;
+	border-bottom-left-radius: 1rem;
+	border: 1px solid;
+	left: 1.95rem;
+}
+
+//on
+.sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
+	background: lighten(@sapUiButtonSelectedBackground,63);
+	.sapMSwtHandle {
+		box-sizing: border-box;
+		background: @sapUiButtonSelectedBackground;
+		border-color: @sapUiButtonSelectedBorderColor;
+	}
+	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+	  background: lighten(@sapUiButtonSelectedBackground,63);
+		.sapMSwtHandle {
+			background: @sapUiButtonSelectedHoverBackground;
+			border-color: @sapUiButtonSelectedHoverBorderColor;
+		}
+	}
+}
+
+//off
+.sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
+	background: darken(@sapUiButtonBackground,7);
+	.sapMSwtHandle {
+		background: @sapUiButtonBackground;
+		border-color: @sapUiContentForegroundBorderColor;
+	}
+	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+		border-color: @sapUiButtonHoverBorderColor;
+		.sapMSwtHandle {
+			background: @sapUiButtonHoverBackground;
+			border-color: @sapUiButtonHoverBorderColor;
+		}
+	}
 }
 
 /* ====================================================== */
@@ -60,10 +134,36 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 /* Switch                         */
 /* ------------------------------ */
 
-/* background */
-
 .sapMSwtAcceptReject.sapMSwt {
 	background: @_sap_m_Switch_OffBackground;
+	//on
+	&.sapMSwtOn {
+		background: @sapUiSuccessBG;
+		border-color: @sapUiSuccessBorder;
+		.sapMSwtHandle {
+			background: @sapUiButtonBackground;
+			border-color: @sapUiSuccessBorder;
+		}
+		&.sapMSwtHoverable:hover {
+			.sapMSwtHandle {
+				background: @sapUiSuccessBG;
+			}
+		}
+	}
+	//off
+	&.sapMSwtOff {
+		background: @sapUiErrorBG;
+		border-color: @sapUiErrorBorder;
+		.sapMSwtHandle {
+			background: @sapUiButtonBackground;
+			border-color: @sapUiErrorBorder;
+		}
+		&.sapMSwtHoverable:hover {
+			.sapMSwtHandle {
+				background: @sapUiErrorBG;
+			}
+		}
+	}
 }
 
 /* ------------------------------ */
@@ -95,3 +195,28 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	background: @sapUiSuccessBG;
 }
 
+/* ------------------------------ */
+/* Compact mode                   */
+/* ------------------------------ */
+
+.sapUiSizeCompact {
+	.sapMSwtCont {
+	  //in order to have a touchable area of 2rem
+		padding-top: 0.3125rem;
+		padding-bottom: 0.3125rem;
+		.sapMSwt {
+			width: 3.375rem;
+			height: 1.25rem;
+			.sapMSwtHandle {
+				height: 1.5rem;
+				width: 1.5rem;
+			}
+			.sapMSwtText {
+				line-height: 1.425rem;
+				&.sapMSwtTextOff {
+					left: 3.5rem;
+				}
+			}
+		}
+	}
+}
