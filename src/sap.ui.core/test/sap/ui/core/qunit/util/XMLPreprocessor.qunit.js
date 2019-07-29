@@ -2701,13 +2701,14 @@ sap.ui.define([
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 			'<template:alias name=".bar" value="foo.Helper.bar">',
-				"<Text text=\"{formatter: '.bar', path: '/'}\"/>",
+				"<Text text=\"{formatter: '.bar', path: '/', parameters: {foo : 'bar'}}\"/>",
 				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 				'<template:alias name=".foo" value="foo.Helper.foo">',
 					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
 					// redefine existing alias
 					'<template:alias name=".foo" value="foo.Helper.bar">',
 						"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
+						//TODO the control is now converted totally different now, check again
 						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
 							+ " parameters: {foo: 'bar'}}\"/>",
 					'</template:alias>',
