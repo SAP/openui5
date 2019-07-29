@@ -1896,5 +1896,32 @@
         "references": []
       }
     ]
+  },
+  "1.52.31": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "136095a98bb2ffdf2e63aed4ab39bcf75945d455",
+        "type": "FIX",
+        "text": " Improve jQuery.parseHTML implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "739df58ca76b96d8c84dbcaa5bbbe1c9b8e4ba5e",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_createMultiUnitRepresentativeEntry",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880292532"
+          }
+        ]
+      }
+    ]
   }
 }
