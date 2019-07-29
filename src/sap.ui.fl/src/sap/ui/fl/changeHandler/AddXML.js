@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/changeHandler/Base",
 	"sap/base/util/LoaderExtensions"
 ], function(
 	Utils,
+	Base,
 	LoaderExtensions
 ) {
 	"use strict";
@@ -46,32 +48,20 @@ sap.ui.define([
 	AddXML.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
-		var sModuleName = oChange.getModuleName();
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
 
-		if (!sModuleName) {
-			throw new Error("The module name of the fragment is not set. This should happen in the backend");
-		}
-
-		var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
+		var aNewControls = Base.instantiateFragment(oChange, mPropertyBag);
 
 		var iIndex = oChangeDefinition.content.index;
 		var oView = mPropertyBag.view;
-		var sNamespace = oChange.getProjectId();
-
-		var aNewControls;
-		try {
-			aNewControls = oModifier.instantiateFragment(sFragment, sNamespace, oView);
-		} catch (oError) {
-			throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
-		}
 
 		var oAggregationDefinition = oModifier.findAggregation(oControl, sAggregationName);
 		if (!oAggregationDefinition) {
 			destroyArrayOfControls(aNewControls);
 			throw new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl));
 		}
-
+		var sModuleName = oChange.getModuleName();
+		var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
 		aNewControls.forEach(function(oNewControl, iIterator) {
 			if (!oModifier.validateType(oNewControl, oAggregationDefinition, oControl, sFragment, iIterator)) {
 				destroyArrayOfControls(aNewControls);

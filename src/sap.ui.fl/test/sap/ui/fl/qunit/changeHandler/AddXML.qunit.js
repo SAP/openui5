@@ -194,47 +194,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When applying the change on a js control tree with an invalid fragment", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error,
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change on a js control tree with an invalid type", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidTypePath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change with a not found module", function(assert) {
-			this.oChange.setModuleName(sNonExistingPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				function(err) {
-					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/" +
-						"1.0.0/changes/fragments/NonExisting could not be loaded from";
-					return err.toString().indexOf(sErrorMessage) === 0;
-				},
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change on a js control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			var oItems = this.oHBox.getItems();
-			assert.equal(oItems.length, 4, "after the change there are 4 items in the hbox");
-			assert.equal(oItems[1].getId(), "projectId.button1", "then the first button in the fragment has the correct index and ID");
-			assert.equal(oItems[2].getId(), "projectId.button2", "then the second button in the fragment has the correct index and ID");
-			assert.equal(oItems[3].getId(), "projectId.button3", "then the third button in the fragment has the correct index and ID");
-		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements and one invalid type inside", function(assert) {
 			this.oChange.setModuleName(sFragmentMultipleInvalidTypesPath);
@@ -354,15 +313,6 @@ sap.ui.define([
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
 				Error(sWrongAggregationError),
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change on a xml control tree with an invalid fragment", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error,
 				"then apply change throws an error"
 			);
 		});
