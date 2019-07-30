@@ -1993,6 +1993,7 @@ sap.ui.define([
 	DynamicPage.prototype._detachResizeHandlers = function () {
 		this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.PAGE);
 		this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.TITLE);
+		this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.HEADER);
 		this._deRegisterResizeHandler(DynamicPage.RESIZE_HANDLER_ID.CONTENT);
 	};
 
