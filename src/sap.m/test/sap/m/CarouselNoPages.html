@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>sap.m.Carousel Test</title>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-compatVersion="1.20">
+		</script>
+
+		<script >
+			// create and add app
+			var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
+			app.placeAt("body");
+
+			var data = {
+				texts : [ {
+					text : "Travel Expend"
+				}, {
+					text : "Travel and expense report"
+				}, {
+					text : "Expense report"
+				}]
+			};
+			var oCarousel = new sap.m.Carousel("car1", {
+				width : "100%",
+				height : "45%",
+				pages : {path:"/wrongPath", template:
+					new sap.m.Text({
+						text: "{text}"
+					})
+				}
+			});
+
+			var oCarousel2 = new sap.m.Carousel("car2", {
+				width : "40%",
+				height : "45%",
+				pages : {path:"/wrongPath", template:
+					new sap.m.Text({
+						text: "{text}"
+					})
+				}
+			});
+
+			var initialPage = new sap.m.Page("tabBarPage", {
+				showHeader: false,
+				content: [
+					new sap.m.Title({
+						text: "Carousel with 100% width and no pages"
+					}),
+					oCarousel,
+					new sap.m.Title({
+						text: "Carousel with 40% width and no pages"
+					}),
+					oCarousel2
+				]
+			});
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(data);
+			oCarousel.setModel(oModel);
+			oCarousel2.setModel(oModel);
+
+			app.addPage(initialPage);
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+	</body>
+</html>

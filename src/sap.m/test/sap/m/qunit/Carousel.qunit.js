@@ -102,6 +102,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getHeight(), '100%', "Default 'height' value is 100%");
 		assert.strictEqual(this.oCarousel.getVisible(), true, "Default 'visible' value is true");
 		assert.strictEqual(this.oCarousel.getActivePage(), null, "Default 'activePage' value is null");
+		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 1, "When there are no pages set initially there is sap.m.MessagePage with error message");
 		assert.strictEqual(this.oCarousel.getShowPageIndicator(), true, "Default 'showPageIndicator' value is true");
 		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
 		assert.strictEqual(this.oCarousel.getArrowsPlacement(), CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
@@ -1574,6 +1575,60 @@ sap.ui.define([
 			oButton.destroy();
 			done();
 		}, sinonClockTickValue);
+	});
+
+	QUnit.module("Error page", {
+		beforeEach: function () {
+			this.data = {
+				texts : [ {
+					text : "Travel Expend"
+				}, {
+					text : "Travel and expense report"
+				}, {
+					text : "Expense report"
+				}]
+			};
+
+			this.oCarousel = new sap.m.Carousel();
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			sinon.config.useFakeTimers = false;
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Wrong Binding", function (assert) {
+		var oModel = new sap.ui.model.json.JSONModel();
+		this.oCarousel.setModel(oModel);
+		oModel.setData(this.data);
+
+		this.oCarousel.bindAggregation("pages",{path:"/wrongPath", template:new sap.m.Text({text: "{text}"})});
+
+		assert.strictEqual(this.oCarousel.getPages().length, 0, "There are no pages in the carousel when the binding is wrong (or other similar issue)");
+		assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 1, "When there is wrong binding path there is sap.m.MessagePage with error message");
+	});
+
+
+	QUnit.test("Late Binding", function (assert) {
+		var done = assert.async();
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		this.oCarousel.setModel(oModel);
+
+		this.oCarousel.bindAggregation("pages",{path:"/texts", template:new sap.m.Text({text: "{text}"})});
+
+		setTimeout(function () {
+			oModel.setData(this.data);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.oCarousel.getPages().length, 3, "There are 3 pages in the carousel");
+			assert.strictEqual(this.oCarousel.getDomRef().getElementsByClassName("sapMMessagePage").length, 0, "When there is late binding there is no sap.m.MessagePage with error message");
+				done();
+		}.bind(this), 1000);
 	});
 
 	return waitForThemeApplied();

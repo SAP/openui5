@@ -154,8 +154,12 @@ sap.ui.define(["sap/m/library", "sap/ui/core/Core", "sap/ui/Device"],
 			rm.write("</div>");
 		};
 
-		//Render Pages
-		aPages.forEach(fnRenderPage);
+		// Render Pages
+		if (aPages.length !== 0) {
+			aPages.forEach(fnRenderPage);
+		} else {
+			rm.renderControl(oCarousel._getErrorPage());
+		}
 
 		rm.write("</div>");
 	};

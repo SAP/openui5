@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/HTML',
 	'sap/m/ScrollContainer',
+	'sap/m/MessagePage',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/dom/units/Rem',
 	'./CarouselRenderer',
@@ -32,6 +33,7 @@ function(
 	coreLibrary,
 	HTML,
 	ScrollContainer,
+	MessagePage,
 	Parameters,
 	DomUnitsRem,
 	CarouselRenderer,
@@ -325,6 +327,10 @@ function(
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
+		if (this.oMessagePage) {
+			this.oMessagePage.destroy();
+			this.oMessagePage = null;
+		}
 		this.$().off('afterSlide');
 
 		this._cleanUpScrollContainer();
@@ -396,10 +402,12 @@ function(
 	Carousel.prototype.onBeforeRendering = function() {
 		//make sure, active page has an initial value
 		var sActivePage = this.getActivePage();
+
 		if (!sActivePage && this.getPages().length > 0) {
 			//if no active page is specified, set first page.
 			this.setAssociation("activePage", this.getPages()[0].getId(), true);
 		}
+
 		if (this._sResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
@@ -891,6 +899,27 @@ function(
 		oScrollContainer.setParent(this, null, true);
 		this._aScrollContainers.push(oScrollContainer);
 		return oScrollContainer;
+	};
+
+	/**
+	 * Private method that creates error message page when no pages are loaded
+	 *
+	 * @private
+	 */
+	Carousel.prototype._getErrorPage = function () {
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var sErrorMessage = oRb.getText("CAROUSEL_ERROR_MESSAGE");
+
+		if (!this.oMessagePage ) {
+			this.oMessagePage = new MessagePage({
+				text: sErrorMessage,
+				description: "",
+				icon: "sap-icon://document",
+				showHeader: false
+			});
+		}
+
+		return this.oMessagePage;
 	};
 
 	/**
