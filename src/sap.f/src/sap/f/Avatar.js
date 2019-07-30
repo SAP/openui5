@@ -132,7 +132,13 @@ sap.ui.define([
 				 *
 				 * @since 1.69
 				 */
-				backgroundColor: {type: "sap.f.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6}
+				backgroundColor: {type: "sap.f.AvatarColor", group: "Appearance", defaultValue: AvatarColor.Accent6},
+
+				/**
+				 * Determines whether the control is displayed with border.
+				 * @since 1.69
+				 */
+				showBorder: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			aggregations : {
 				/**

@@ -521,6 +521,21 @@ sap.ui.define([
 		assert.notStrictEqual($oAvatar.find(".sapFAvatarImageHolder").css("background-image"), "none", "src is properly escaped");
 	});
 
+	QUnit.test("Avatar with border", function (assert) {
+		// Arrange
+		var $oAvatar = this.oAvatar.$();
+
+		// Assert
+		assert.notOk($oAvatar.hasClass("sapFAvatarBorder"), "Avatar does not have 'sapFAvatarBorder' class when showBorder='fase'");
+
+		// Act
+		this.oAvatar.setShowBorder(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok($oAvatar.hasClass("sapFAvatarBorder"), "Avatar has 'sapFAvatarBorder' class when showBorder='true'");
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oAvatar = createAvatar({ tooltip: "sampleTooltip" });

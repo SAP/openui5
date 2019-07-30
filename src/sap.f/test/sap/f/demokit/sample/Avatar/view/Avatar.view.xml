@@ -12,7 +12,7 @@
 		horizontal="false"
 		vertical="true">
 		<m:Text
-				text="The Avatar Control allows usage of different shapes, sizes and content:"
+				text="The Avatar Control allows usage of different shapes, sizes and content. Border can also be applied:"
 				width="100%"
 				class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiMediumMarginBottom">
 		</m:Text>
@@ -24,10 +24,11 @@
 					<f:Avatar
 						src="./test-resources/sap/f/images/Speakers_avatar_01.jpg"
 						displaySize="XL"
-						displayShape="Square">
+						displayShape="Square"
+						showBorder="true">
 					</f:Avatar>
 					<m:Text
-						text="Avatar of a product"
+						text="Avatar of a product with border"
 						class="sapUiSmallMarginTop">
 					</m:Text>
 				</m:VBox>
@@ -35,10 +36,11 @@
 					alignItems="Center">
 					<f:Avatar
 						src="./test-resources/sap/f/images/Woman_avatar_01.png"
-						displaySize="XL">
+						displaySize="XL"
+						showBorder="true">
 					</f:Avatar>
 					<m:Text
-						text="Avatar of a person"
+						text="Avatar of a person with border"
 						class="sapUiSmallMarginTop">
 					</m:Text>
 				</m:VBox>
@@ -59,10 +61,11 @@
 					<f:Avatar
 						initials="IS"
 						displaySize="XL"
-						backgroundColor="Random">
+						backgroundColor="Random"
+						showBorder="true">
 					</f:Avatar>
 					<m:Text
-						text="Circle with initials"
+						text="Circle with initials with border"
 						class="sapUiSmallMarginTop">
 					</m:Text>
 				</m:VBox>
@@ -72,10 +75,11 @@
 						src="sap-icon://lab"
 						displaySize="XL"
 						displayShape="Square"
-						backgroundColor="Random">
+						backgroundColor="Random"
+						showBorder="true">
 					</f:Avatar>
 					<m:Text
-						text="With lab icon"
+						text="With lab icon with border"
 						class="sapUiSmallMarginTop">
 					</m:Text>
 				</m:VBox>
