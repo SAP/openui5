@@ -62,6 +62,9 @@ sap.ui.define([
 			} else {
 				sControlName = oOverlay.getDesignTimeMetadata().getAggregation("sections").childNames.plural();
 			}
+			// This is needed to trigger the selection of available elements in the showAvailableElements method
+			// Normally, getAllElements is called before showAvailableElements, here this is not the case
+			this.clearCachedElements();
 			this.showAvailableElements(bOverlayIsSibling, [oOverlay], iIndex, sControlName);
 		}.bind(this);
 

@@ -35,7 +35,7 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		oRm.openEnd();
 
 		if (oSelect.getVisible()) {
-			this._renderControlInListItem(oRm, oSelect, false, "sapMBreadcrumbsSelectItem");
+			this._renderControlInListItem(oRm, oSelect, sSeparator, false, "sapMBreadcrumbsSelectItem");
 		}
 
 		aControls.forEach(function (oChildControl) {

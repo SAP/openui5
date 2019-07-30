@@ -30,7 +30,8 @@ function(Device, UIArea, jQuery) {
 		$DropIndicator,				// drop position indicator
 		$GhostContainer,			// container to place custom ghosts
 		sCalculatedDropPosition,	// calculated position of the drop action relative to the valid dropped control.
-		iTargetEnteringTime;		// timestamp of drag enter
+		iTargetEnteringTime,		// timestamp of drag enter
+		mLastIndicatorStyle = {};	// holds the last style settings of the indicator
 
 
 	function addStyleClass(oElement, sStyleClass) {
@@ -292,6 +293,7 @@ function(Device, UIArea, jQuery) {
 	function hideDropIndicator() {
 		if ($DropIndicator) {
 			$DropIndicator.removeAttr("style").hide();
+			mLastIndicatorStyle = {};
 		}
 	}
 
@@ -392,9 +394,15 @@ function(Device, UIArea, jQuery) {
 			sDropPosition = "Between";
 		}
 
-		$Indicator.attr("data-drop-layout", sDropLayout);
-		$Indicator.attr("data-drop-position", sDropPosition);
-		$Indicator.css(jQuery.extend(mStyle, mIndicatorConfig)).show();
+		if (mLastIndicatorStyle.top != mStyle.top ||
+			mLastIndicatorStyle.left != mStyle.left ||
+			mLastIndicatorStyle.width != mStyle.width ||
+			mLastIndicatorStyle.height != mStyle.height) {
+			$Indicator.attr("data-drop-layout", sDropLayout);
+			$Indicator.attr("data-drop-position", sDropPosition);
+			$Indicator.css(jQuery.extend(mStyle, mIndicatorConfig)).show();
+			mLastIndicatorStyle = mStyle;
+		}
 
 		return sRelativePosition;
 	}

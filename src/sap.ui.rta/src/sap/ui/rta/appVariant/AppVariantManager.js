@@ -6,15 +6,13 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantDialog",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/rta/appVariant/S4HanaCloudBackend",
-	"sap/ui/core/BusyIndicator"
+	"sap/ui/rta/appVariant/S4HanaCloudBackend"
 ], function(
 	ManagedObject,
 	AppVariantDialog,
 	AppVariantUtils,
 	RtaAppVariantFeature,
-	S4HanaCloudBackend,
-	BusyIndicator
+	S4HanaCloudBackend
 ) {
 	"use strict";
 
@@ -157,8 +155,8 @@ sap.ui.define([
 			layer: this.getLayer()
 		};
 		return AppVariantUtils.createAppVariant(this.getRootControl(), mPropertyBag)
-			.catch(function(oError, sMessageKey) {
-				BusyIndicator.hide();
+			.catch(function(oError) {
+				var sMessageKey = oError.messageKey;
 				if (!sMessageKey) {
 					sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
 				}
@@ -175,7 +173,8 @@ sap.ui.define([
 		return AppVariantUtils.deleteAppVariant({
 			appId: sAppVariantId
 		})
-			.catch(function(oError, sMessageKey) {
+			.catch(function(oError) {
+				var sMessageKey = oError.messageKey;
 				if (!sMessageKey) {
 					sMessageKey = "MSG_DELETE_APP_VARIANT_FAILED";
 				}
@@ -264,7 +263,6 @@ sap.ui.define([
 	AppVariantManager.prototype.notifyKeyUserWhenPublishingIsReady = function(sIamId, sAppVarId, bCreation) {
 		var oS4HanaCloudBackend = new S4HanaCloudBackend();
 		return oS4HanaCloudBackend.notifyFlpCustomizingIsReady(sIamId, bCreation).catch(function(oError) {
-			BusyIndicator.hide();
 			var sMessageKey = bCreation ? "MSG_TILE_CREATION_FAILED" : "MSG_DELETE_APP_VARIANT_FAILED";
 			if (!bCreation && oError.error === "locked") {
 				sMessageKey = "MSG_CATALOGS_LOCKED";
@@ -282,7 +280,6 @@ sap.ui.define([
 	 * If a user chooses 'Save As' from app variant overview dialog, it opens the app variant overview dialog again to show the 'Just Created' app variant.
 	 */
 	AppVariantManager.prototype.showSuccessMessage = function(oSuccessInfo) {
-		BusyIndicator.hide();
 		return AppVariantUtils.showRelevantDialog(oSuccessInfo, true);
 	};
 

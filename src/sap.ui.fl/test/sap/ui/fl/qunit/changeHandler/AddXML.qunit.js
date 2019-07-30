@@ -21,25 +21,25 @@ sap.ui.define([
 
 	var mPreloadedModules = {};
 
-	var sFragmentPath = "sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/1.0.0/changes/fragments/Fragment";
+	var sFragmentPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/Fragment";
 	mPreloadedModules[sFragmentPath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"><Button xmlns="sap.m" id="button" text="Hello World"></Button></core:FragmentDefinition>';
-	var sFragmentInvalidTypePath = "sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/1.0.0/changes/fragments/FragmentInvalidType";
+	var sFragmentInvalidTypePath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentInvalidType";
 	mPreloadedModules[sFragmentInvalidTypePath] = '<ManagedObject xmlns="sap.ui.base" id="managedObject"></ManagedObject>';
-	var sFragmentMultiplePath = "sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/1.0.0/changes/fragments/FragmentMultiple";
+	var sFragmentMultiplePath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentMultiple";
 	mPreloadedModules[sFragmentMultiplePath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 		'<Button xmlns="sap.m" id="button1" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button3" text="Hello World"></Button>' +
 		'</core:FragmentDefinition>';
-	var sFragmentMultipleInvalidTypesPath = "sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/1.0.0/changes/fragments/FragmentMultipleInvalidTypes";
+	var sFragmentMultipleInvalidTypesPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentMultipleInvalidTypes";
 	mPreloadedModules[sFragmentMultipleInvalidTypesPath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:base="sap.ui.base">' +
 		'<Button xmlns="sap.m" id="button" text="Hello World"></Button>' +
 		'<Button xmlns="sap.m" id="button2" text="Hello World"></Button>' +
 		'<base:ManagedObject id="managedObject"></base:ManagedObject>' +
 		'</core:FragmentDefinition>';
-	var sFragmentInvalidPath = "sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/1.0.0/changes/fragments/FragmentInvalid";
+	var sFragmentInvalidPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/FragmentInvalid";
 	mPreloadedModules[sFragmentInvalidPath] = 'invalidFragment';
-	var sNonExistingPath = "sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/1.0.0/changes/fragments/NonExisting";
+	var sNonExistingPath = "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/NonExisting";
 
 	sap.ui.require.preload(mPreloadedModules);
 
@@ -95,7 +95,7 @@ sap.ui.define([
 			var oChangeDefinition = this.oChange.getDefinition();
 			var oSpecificContent = oChangeDefinition.content;
 			assert.deepEqual(oSpecificContent, oExpectedChangeContent, "then the change specific content is in the change, but the fragment not");
-			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/1.0.0/changes/fragments/Fragment", "and the module name is set correct");
+			assert.equal(this.oChange.getModuleName(), "sap/ui/fl/qunit/changeHander/AddXML/changes/fragments/Fragment", "and the module name is set correct");
 		});
 
 		QUnit.test("When calling 'completeChangeContent' without complete information", function(assert) {
@@ -192,48 +192,6 @@ sap.ui.define([
 				Error(sWrongAggregationError),
 				"then apply change throws an error"
 			);
-		});
-
-		QUnit.test("When applying the change on a js control tree with an invalid fragment", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error,
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change on a js control tree with an invalid type", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidTypePath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error(sTypeError + this.sAggregationType),
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change with a not found module", function(assert) {
-			this.oChange.setModuleName(sNonExistingPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				function(err) {
-					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/" +
-						"1.0.0/changes/fragments/NonExisting could not be loaded from";
-					return err.toString().indexOf(sErrorMessage) === 0;
-				},
-				"then apply change throws an error"
-			);
-		});
-
-		QUnit.test("When applying the change on a js control tree with multiple root elements", function(assert) {
-			this.oChange.setModuleName(sFragmentMultiplePath);
-			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
-
-			var oItems = this.oHBox.getItems();
-			assert.equal(oItems.length, 4, "after the change there are 4 items in the hbox");
-			assert.equal(oItems[1].getId(), "projectId.button1", "then the first button in the fragment has the correct index and ID");
-			assert.equal(oItems[2].getId(), "projectId.button2", "then the second button in the fragment has the correct index and ID");
-			assert.equal(oItems[3].getId(), "projectId.button3", "then the third button in the fragment has the correct index and ID");
 		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements and one invalid type inside", function(assert) {
@@ -358,15 +316,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("When applying the change on a xml control tree with an invalid fragment", function(assert) {
-			this.oChange.setModuleName(sFragmentInvalidPath);
-			assert.throws(
-				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
-				Error,
-				"then apply change throws an error"
-			);
-		});
-
 		QUnit.test("When applying the change on a xml control tree with an invalid type", function(assert) {
 			this.oChange.setModuleName(sFragmentInvalidTypePath);
 
@@ -442,8 +391,8 @@ sap.ui.define([
 			assert.throws(
 				function() {this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);},
 				function(err) {
-					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/AddXML/$$flexModules/" +
-						"1.0.0/changes/fragments/NonExisting could not be loaded from";
+					var sErrorMessage = "Error: resource sap/ui/fl/qunit/changeHander/AddXML/" +
+						"changes/fragments/NonExisting could not be loaded from";
 					return err.toString().indexOf(sErrorMessage) === 0;
 				},
 				"then apply change throws an error"

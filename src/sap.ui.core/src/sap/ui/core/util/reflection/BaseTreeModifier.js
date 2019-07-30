@@ -29,8 +29,7 @@ sap.ui.define([
 	 * applied on XMLViews and normal ManagedObject instances.
 	 *
 	 * @namespace sap.ui.core.util.reflection.BaseTreeModifier
-	 * @private
-	 * @sap-restricted sap.ui.fl, sap.ui.rta, sap.ui.model.meta, control change handler and provider
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.model.meta, control change handler and provider
 	 * @since 1.56.0
 	 */
 	return /** @lends sap.ui.core.util.reflection.BaseTreeModifier */{
@@ -707,7 +706,7 @@ sap.ui.define([
 		 * @param {string} sFragment - XML fragment as string
 		 * @param {string} sNamespace - Namespace of the app
 		 * @param {sap.ui.core.mvc.View} oView - View for the fragment
-		 * @returns {Element[]} Array with the nodes of the controls of the fragment
+		 * @returns {Element[]|sap.ui.core.Element[]} Array with the nodes/instances of the controls of the fragment
 		 * @public
 		 */
 		instantiateFragment: function(sFragment, sNamespace, oView) {},

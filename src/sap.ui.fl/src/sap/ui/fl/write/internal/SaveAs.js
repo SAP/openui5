@@ -63,18 +63,18 @@ sap.ui.define([
 		return Promise.reject();
 	}
 
-	function _gatherInlineDescrChanges(vSelector) {
+	function _getDirtyDescrChanges(vSelector) {
 		var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(vSelector)
 			._oChangePersistence.getDirtyChanges();
 		aDescrChanges = aDescrChanges.slice();
+		return aDescrChanges;
+	}
+
+	function _gatherInlineDescrChanges(vSelector) {
 		var aInlineChangesPromises = [];
 
-		aDescrChanges.forEach(function(oChange) {
+		_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
 			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
-				//now remove the descriptor inline changes from persistence
-				ChangesController.getDescriptorFlexControllerInstance(vSelector)
-						._oChangePersistence.deleteChange(oChange);
-
 				var oChangeDefinition = oChange.getDefinition();
 				// Change contains only descriptor change information so the descriptor inline change needs to be created again
 				aInlineChangesPromises.push(DescriptorInlineChangeFactory.createNew(oChangeDefinition.changeType, oChangeDefinition.content, oChangeDefinition.texts));
@@ -135,6 +135,7 @@ sap.ui.define([
 	var SaveAs = {
 		saveAs: function(mPropertyBag) {
 			var oAppVariantClosure;
+			var oAppVariantResultClosure;
 			return DescriptorVariantFactory.createAppVariant(mPropertyBag)
 				.then(function(oAppVariant) {
 					oAppVariantClosure = merge({}, oAppVariant);
@@ -151,6 +152,16 @@ sap.ui.define([
 					return _inlineDescriptorChanges(aAllInlineChanges, oAppVariantClosure);
 				})
 				.then(function() {
+					// Save the app variant to backend
+					return oAppVariantClosure.submit()
+						.catch(function(oError) {
+							oError.messageKey = "MSG_SAVE_APP_VARIANT_FAILED";
+							throw oError;
+						});
+				})
+				.then(function(oResult) {
+					oAppVariantResultClosure = merge({}, oResult);
+
 					var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 					// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
 					return oFlexController.saveAll(true)
@@ -158,25 +169,32 @@ sap.ui.define([
 							// Delete the inconsistent app variant if the UI changes failed to save
 							return this.deleteAppVar(mPropertyBag.id)
 								.then(function() {
-									throw new Error(oError, "MSG_COPY_UNSAVED_CHANGES_FAILED");
+									oError.messageKey = "MSG_COPY_UNSAVED_CHANGES_FAILED";
+									throw oError;
 								});
 						}.bind(this));
 				}.bind(this))
 				.then(function() {
-					// Save the app variant to backend
-					return oAppVariantClosure.submit()
-						.catch(function(oError) {
-							throw new Error(oError, "MSG_SAVE_APP_VARIANT_FAILED");
-						});
+					//Since the UI changes have been successfully saved, the descriptor inline changes will now be removed from persistence
+					_getDirtyDescrChanges(mPropertyBag.selector).forEach(function(oChange) {
+						if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
+							ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector)._oChangePersistence.deleteChange(oChange);
+						}
+					});
+					return oAppVariantResultClosure;
 				})
-				.catch(function(oError, sMessageKey) {
-					Log.error("the app variant could not be created.", oError.message);
-					throw new Error(oError, sMessageKey);
+				.catch(function(oError) {
+					Log.error("the app variant could not be created.", oError.message || oError.name);
+					throw oError;
 				});
 		},
 		deleteAppVar: function(mPropertyBag) {
 			var oAppVariantClosure;
 			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, true)
+				.catch(function(oError) {
+					oError.messageKey = "MSG_LOAD_APP_VARIANT_FAILED";
+					throw oError;
+				})
 				.then(function(oAppVariant) {
 					oAppVariantClosure = merge({}, oAppVariant);
 					return _getTransportInfo(oAppVariantClosure, mPropertyBag);
@@ -191,17 +209,18 @@ sap.ui.define([
 						}
 						return oTransportInfo;
 					}
-					return Promise.reject();
+					throw new Error("Transport information could not be determined");
 				})
 				.then(function () {
 					return oAppVariantClosure.submit()
 						.catch(function(oError) {
-							throw new Error(oError, "MSG_DELETE_APP_VARIANT_FAILED");
+							oError.messageKey = "MSG_DELETE_APP_VARIANT_FAILED";
+							throw oError;
 						});
 				})
-				.catch(function(oError, sMessageKey) {
-					Log.error("the app variant could not be deleted.", oError.message);
-					throw new Error(oError, sMessageKey);
+				.catch(function(oError) {
+					Log.error("the app variant could not be deleted.", oError.message || oError.name);
+					throw oError;
 				});
 		}
 	};

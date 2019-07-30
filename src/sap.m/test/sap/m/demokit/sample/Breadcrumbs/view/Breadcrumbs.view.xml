@@ -13,7 +13,7 @@
 				<Link press="onPress" text="12 inch"/>
 				<Link press="onPress" text="Super portable deluxe"/>
 			</Breadcrumbs>
-			<Hbox alignItems="Center">
+			<HBox alignItems="Center">
 				<items>
 					<Label
 							labelFor="separatorSelect"
@@ -30,7 +30,7 @@
 						<core:Item key="{text}" text="{key}" />
 					</Select>
 				</items>
-			</Hbox>
+			</HBox>
 
 		</l:content>
 	</l:VerticalLayout>
