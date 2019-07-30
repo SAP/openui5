@@ -735,7 +735,7 @@ sap.ui.define([
 			oRevertPromise = this._revertChange(oChange, oControl, mPropertyBag);
 		}
 		return oRevertPromise.then(function(bRevertSuccessful) {
-			this._removeChangeFromControl(oChange, oControl, mPropertyBag.modifier);
+			this._removeChangeFromControl(oControl, oChange, mPropertyBag.modifier);
 			return bRevertSuccessful;
 		}.bind(this));
 	};
