@@ -127,6 +127,7 @@ function (
 			// Overlay enabled by default
 			sWidth = fnGetWidth(this.oElementOverlay);
 			this.oButton.setText('Lorem ipsum dolor sit amet...');
+			sap.ui.getCore().applyChanges();
 			this.oElementOverlay.applyStyles();
 			assert.notStrictEqual(sWidth, fnGetWidth(this.oElementOverlay), "overlay changes its width");
 

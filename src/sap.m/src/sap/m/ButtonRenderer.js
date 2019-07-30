@@ -7,11 +7,10 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/IconPool',
 	'sap/m/library',
-	'sap/ui/core/InvisibleText',
-	"sap/base/security/encodeXML"
+	'sap/ui/core/InvisibleText'
 ],
 
-	function(Device, coreLibrary, IconPool, library, InvisibleText, encodeXML) {
+	function(Device, coreLibrary, IconPool, library, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -24,7 +23,7 @@ sap.ui.define([
 	 * Button renderer.
 	 * @namespace
 	 */
-	var ButtonRenderer = {};
+	var ButtonRenderer = {apiVersion: 2};
 
 	/**
 	 * Renders the HTML for the given control, using the provided
@@ -53,17 +52,16 @@ sap.ui.define([
 		var sBackURI = IconPool.getIconURI("nav-back");
 
 		// start button tag
-		oRm.write("<button");
-		oRm.writeControlData(oButton);
-		oRm.addClass("sapMBtnBase");
+		oRm.openStart("button", oButton);
+		oRm.class("sapMBtnBase");
 
 		// button container style class
 		if (!oButton._isUnstyled()) {
-			oRm.addClass("sapMBtn");
+			oRm.class("sapMBtn");
 
 			// extend  minimum button size if icon is set without text for button types back and up
 			if ((sType === ButtonType.Back || sType === ButtonType.Up) && oButton.getIcon() && !sText) {
-				oRm.addClass("sapMBtnBack");
+				oRm.class("sapMBtnBack");
 			}
 		}
 
@@ -95,20 +93,20 @@ sap.ui.define([
 		if (this.renderAccessibilityAttributes) {
 			this.renderAccessibilityAttributes(oRm, oButton, mAccProps);
 		}
-		oRm.writeAccessibilityState(oButton, mAccProps);
+		oRm.accessibilityState(oButton, mAccProps);
 
 		// check if the button is disabled
 		if (!bEnabled) {
-			oRm.writeAttribute("disabled", "disabled");
+			oRm.attr("disabled", "disabled");
 			if (!oButton._isUnstyled()) {
-				oRm.addClass("sapMBtnDisabled");
+				oRm.class("sapMBtnDisabled");
 			}
 		} else {
 			switch (sType) {
 			case ButtonType.Accept:
 			case ButtonType.Reject:
 			case ButtonType.Emphasized:
-				oRm.addClass("sapMBtnInverted");
+				oRm.class("sapMBtnInverted");
 				break;
 			default: // No need to do anything for other button types
 				break;
@@ -117,56 +115,52 @@ sap.ui.define([
 
 		// add tooltip if available
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
-
-		oRm.writeClasses();
 
 		// set user defined width
 		if (sWidth != "" || sWidth.toLowerCase() === "auto") {
-			oRm.addStyle("width", sWidth);
-			oRm.writeStyles();
+			oRm.style("width", sWidth);
 		}
 		renderTabIndex(oButton, oRm);
 
 		// close button tag
-		oRm.write(">");
+		oRm.openEnd();
 
 		// start inner button tag
-		oRm.write("<span");
-		oRm.writeAttribute("id", oButton.getId() + "-inner");
+		oRm.openStart("span", oButton.getId() + "-inner");
 
 		// button style class
 		if (!oButton._isUnstyled()) {
-			oRm.addClass("sapMBtnInner");
+			oRm.class("sapMBtnInner");
 		}
 
 		// check if button is hoverable
 		if (oButton._isHoverable()) {
-			oRm.addClass("sapMBtnHoverable");
+			oRm.class("sapMBtnHoverable");
 		}
 
 		// check if button is focusable (not disabled)
 		if (bEnabled) {
-			oRm.addClass("sapMFocusable");
+			oRm.class("sapMFocusable");
 			// special focus handling for IE
 			if (bIE_Edge) {
-				oRm.addClass("sapMIE");
+				oRm.class("sapMIE");
 			}
 		}
 
 		if (!oButton._isUnstyled()) {
 			if (sText) {
-				oRm.addClass("sapMBtnText");
+				oRm.class("sapMBtnText");
 			}
 			if (sType === ButtonType.Back || sType === ButtonType.Up) {
-				oRm.addClass("sapMBtnBack");
+				oRm.class("sapMBtnBack");
 			}
 			if (oButton.getIcon()) {
 				if (oButton.getIconFirst()) {
-					oRm.addClass("sapMBtnIconFirst");
+					oRm.class("sapMBtnIconFirst");
 				} else {
-					oRm.addClass("sapMBtnIconLast");
+					oRm.class("sapMBtnIconLast");
 				}
 			}
 		}
@@ -179,17 +173,14 @@ sap.ui.define([
 		// set button specific styles
 		if (!oButton._isUnstyled() && sType !== "") {
 			// set button specific styles
-			oRm.addClass("sapMBtn" + encodeXML(sType));
+			oRm.class("sapMBtn" + sType);
 		}
-
-		// add all classes to inner button tag
-		oRm.writeClasses();
 
 		//apply on the inner level as well as not applying it will allow for focusing the button after a mouse click
 		renderTabIndex(oButton, oRm);
 
 		// close inner button tag
-		oRm.write(">");
+		oRm.openEnd();
 
 		// set image for internal image control (back)
 		if (sType === ButtonType.Back || sType === ButtonType.Up) {
@@ -203,49 +194,46 @@ sap.ui.define([
 
 		// write button text
 		if (sText) {
-			oRm.write("<span ");
-			oRm.addClass("sapMBtnContent");
+			oRm.openStart("span", oButton.getId() + "-content");
+			oRm.class("sapMBtnContent");
 			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
 			if (sTextDir !== TextDirection.Inherit) {
-				oRm.writeAttribute("dir", sTextDir.toLowerCase());
+				oRm.attr("dir", sTextDir.toLowerCase());
 			}
-			oRm.writeClasses();
-			oRm.writeAttribute("id", oButton.getId() + "-content");
-			oRm.write(">");
+			oRm.openEnd();
 
 			if (bRenderBDI) {
-				oRm.write("<bdi");
-				oRm.writeAttribute("id", oButton.getId() + "-BDI-content");
-				oRm.write(">");
+				oRm.openStart("bdi", oButton.getId() + "-BDI-content");
+				oRm.openEnd();
 			}
-			oRm.writeEscaped(sText);
+			oRm.text(sText);
 			if (bRenderBDI) {
-				oRm.write("</bdi>");
+				oRm.close("bdi");
 			}
-			oRm.write("</span>");
+			oRm.close("span");
 		}
 
 		// special handling for IE focus outline
 		if (bIE_Edge && bEnabled) {
-			oRm.write('<span class="sapMBtnFocusDiv"></span>');
+			oRm.openStart("span");
+			oRm.class("sapMBtnFocusDiv");
+			oRm.close("span");
 		}
 
 		// end inner button tag
-		oRm.write("</span>");
+		oRm.close("span");
 
 		// add tooltip if available
 		if (sTooltip) {
-			oRm.write("<span");
-			oRm.writeAttributeEscaped("id", sTooltipId);
-			oRm.addClass("sapUiInvisibleText");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sTooltip);
-			oRm.write("</span>");
+			oRm.openStart("span", sTooltipId);
+			oRm.class("sapUiInvisibleText");
+			oRm.openEnd();
+			oRm.text(sTooltip);
+			oRm.close("span");
 		}
 
 		// end button tag
-		oRm.write("</button>");
+		oRm.close("button");
 	};
 
 	/**
@@ -283,7 +271,7 @@ sap.ui.define([
 	 */
 	function renderTabIndex(oButton, oRm){
 		if (oButton._bExcludeFromTabChain) {
-			oRm.writeAttribute("tabindex", -1);
+			oRm.attr("tabindex", -1);
 		}
 	}
 
