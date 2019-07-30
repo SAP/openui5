@@ -6780,6 +6780,36 @@ sap.ui.define([
 			oSel6.destroy();
 		});
 
+		QUnit.module("Rendering - wrapping items text");
+
+		QUnit.test("Wrapped/truncated", function (assert) {
+			var oSelect = new Select({wrapItemsText: true});
+
+			// Arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// Assert
+			assert.equal(oSelect.getList().hasStyleClass("sapMSelectListWrappedItems"), true, 'text is wrapped');
+
+			// Act
+			oSelect.setWrapItemsText(false);
+			Core.applyChanges();
+
+			// Assert
+			assert.equal(oSelect.getList().hasStyleClass("sapMSelectListWrappedItems"), false, 'text is truncated');
+
+			// Act
+			oSelect.setWrapItemsText(true);
+			Core.applyChanges();
+
+			// Assert
+			assert.equal(oSelect.getList().hasStyleClass("sapMSelectListWrappedItems"), true, 'text is wrapped');
+
+			// Clean up
+			oSelect.destroy();
+		});
+
 		QUnit.module("touchstart");
 
 		QUnit.test("touchstart", function (assert) {

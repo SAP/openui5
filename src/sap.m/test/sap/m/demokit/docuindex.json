@@ -1062,7 +1062,8 @@
 			"sap.m.sample.Select",
 			"sap.m.sample.Select2Columns",
 			"sap.m.sample.SelectWithIcons",
-			"sap.m.sample.SelectValueState"
+			"sap.m.sample.SelectValueState",
+			"sap.m.sample.SelectWithWrappedItemText"
 		  ]
 		},
 		{
@@ -2146,6 +2147,10 @@
 		  "id": "sap.m.sample.SelectValueState",
 		  "name": "Select - Validation states",
 		  "description": "Visualizes the validation state of the control, for example, Error, Warning and Success."
+		},{
+		  "id": "sap.m.sample.SelectWithWrappedItemText",
+		  "name": "Select - Wrapping text",
+		  "description": "Illustrates how the text in items wrap."
 		},
 		{
 		  "id": "sap.m.sample.SelectWithIcons",

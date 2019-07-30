@@ -113,6 +113,10 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 
 			oRm.openStart("li", mStates.elementData ? oItem : null);
 
+			if (oItem.getIcon && oItem.getIcon()) {
+				oRm.class("sapMSelectListItemWithIcon");
+			}
+
 			if (oItem instanceof sap.ui.core.SeparatorItem) {
 				oRm.class(CSS_CLASS + "SeparatorItem");
 
@@ -149,6 +153,8 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 					oRm.attr("tabindex", "0");
 				}
 			}
+
+			oRm.style("max-width", oList.getMaxWidth());
 
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
