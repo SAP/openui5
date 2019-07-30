@@ -176,7 +176,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("formatValue success", function (assert) {
-		var oType = new TimeOfDay(undefined, {precision : 7}),
+		var oDate = new Date(1970, 0, 1, 2, 53, 49),
+			oDateWithMS = new Date(1970, 0, 1, 13, 53, 49),
+			oType = new TimeOfDay(undefined, {precision : 7}),
 			sValue = "13:53:49.1234567";
 
 		assert.strictEqual(oType.formatValue(undefined, "foo"), null);
@@ -186,6 +188,9 @@ sap.ui.define([
 		assert.strictEqual(oType.formatValue(sValue, "string"), "1:53:49 PM");
 
 		assert.strictEqual(oType.formatValue("13:53:49", "string"), "1:53:49 PM");
+
+		assert.deepEqual(oType.formatValue("02:53:49", "object"), oDate, "Object");
+		assert.deepEqual(oType.formatValue(sValue, "object"), oDateWithMS, "Object with ms");
 
 		this.mock(oType).expects("getPrimitiveType").withExactArgs("sap.ui.core.CSSSize")
 			.returns("string");
@@ -225,7 +230,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parse", function (assert) {
-		var oType = new TimeOfDay(),
+		var oDate = new Date(1970, 0, 1, 2, 53, 49),
+			oType = new TimeOfDay(),
 			oTypePrecision = new TimeOfDay({pattern : "HH:mm:ss.SSS a"}, {precision : 5});
 
 		assert.strictEqual(oType.parseValue(null, "string"), null);
@@ -233,6 +239,8 @@ sap.ui.define([
 
 		assert.strictEqual(oType.parseValue("1:53:49 PM", "string"), "13:53:49");
 		assert.strictEqual(oTypePrecision.parseValue("1:53:49.123 PM", "string"), "13:53:49.12300");
+
+		assert.strictEqual(oType.parseValue(oDate, "object"), "02:53:49", "Date");
 
 		parseError(assert, oType, "foo");
 		parseError(assert, oType, "1:69:30 AM");
