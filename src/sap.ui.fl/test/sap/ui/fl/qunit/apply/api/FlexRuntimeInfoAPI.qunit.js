@@ -307,25 +307,6 @@ sap.ui.define([
 		});
 	});
 
-	/*
-	QUnit.module("getChangeSelector", {
-		beforeEach: function() {
-			this.oGetSelectorStub = sandbox.stub(JsControlTreeModifier, "getSelector");
-			sandbox.stub(Utils, "getAppComponentForControl").returns("appComponent");
-			this.oControl = new Control();
-		},
-		afterEach: function() {
-			sandbox.restore();
-			this.oControl.destroy();
-		}
-	}, function() {
-		QUnit.test("when called with a control", function(assert) {
-			this.oGetSelectorStub.returns("selector");
-			assert.equal(FlexRuntimeInfoAPI.getChangeSelector("id", this.oControl, {}), "selector", "the function returns the value of getSelector");
-			assert.ok(this.oGetSelectorStub.calledWith("id", "appComponent", {}), "the function was called with the correct parameters");
-		});
-	});
-*/
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

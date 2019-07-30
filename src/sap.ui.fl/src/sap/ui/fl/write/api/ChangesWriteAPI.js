@@ -25,29 +25,26 @@ sap.ui.define([
 ) {
 	"use strict";
 	/**
-	 * Provides an API to handle functionality for {@link sap.ui.fl.Changes} on a Flex Persistence instance.
+	 * Provides an API for tools like {@link sap.ui.rta} to create, apply and revert {@link sap.ui.fl.Change}.
 	 *
-	 * @namespace
-	 * @name sap.ui.fl.write.ChangesWriteAPI
-	 * @author SAP SE
+	 * @namespace sap.ui.fl.write.api.ChangesWriteAPI
 	 * @experimental Since 1.68
 	 * @since 1.68
-	 * @version ${version}
-	 * @public
+	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
-	var ChangesWriteAPI = {
+	var ChangesWriteAPI = /** @lends sap.ui.fl.write.api.ChangesWriteAPI */{
 		/**
-		 * Create a change on the flex persistence.
+		 * Creates a change on the flex persistence.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information {@see sap.ui.fl.Change#createInitialFileContent}
-		 * The property "mPropertyBag.changeSpecificData.packageName" is set to $TMP and internally since flex changes are always local when they are created.
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Managed Object or selector object
+		 * @param {object} mPropertyBag.changeSpecificData - Property bag holding the change information, see {@link sap.ui.fl.Change#createInitialFileContent}
+		 * The property <code>mPropertyBag.changeSpecificData.packageName</code> is set to <code>$TMP</code> and internally since flex changes are always local when they are created.
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Managed object or selector object
 		 *
-		 * @returns {Promise | sap.ui.fl.Change} If descriptor change then a promise resolves to the created change.
-		 * For flex change the created change object is returned.
-		 * @public
+		 * @returns {Promise|sap.ui.fl.Change} In case of a descriptor change, promise resolves to the created change.
+		 * In case of a flex change, the created change object is returned.
+		 * @ui5-restricted
 		 */
 		create: function(mPropertyBag) {
 			var oFlexController;
@@ -88,15 +85,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Applying a specific change on the passed control, if it is not already applied.
+		 * Applies a specific change on the passed control if it is not already applied.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object which should be applied on the passed control
-		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which change should be applied
-		 * @param {object} [mPropertyBag.modifier] - Modifier used to apply change
+		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object that should be applied to the passed control
+		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance to which the change should be applied
+		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} [mPropertyBag.modifier] - Modifier used to apply the change; if not provided, {@link sap.ui.core.util.reflection.JsControlTreeModifier} is used
 		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
-		 * @public
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were applied in asynchronous case, or FakePromise for the synchronous processing scenario
+		 * @ui5-restricted
 		 */
 		apply: function(mPropertyBag) {
 			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.element);
@@ -113,13 +110,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Reverting a specific change on the passed control, if it is already applied or is in the process of being applied.
+		 * Reverting a specific change on the passed control if it has already been applied or is in the process of being applied.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object which should be applied on the passed control
-		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which change should be reverted
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
-		 * @public
+		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object that should be reverted from the passed element
+		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which the change should be reverted
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case, or FakePromise for the synchronous processing scenario
+		 * @ui5-restricted
 		 */
 		revert: function(mPropertyBag) {
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
@@ -132,14 +129,14 @@ sap.ui.define([
 		},
 
 		/**
-		 * Check if change handler applicable to the passed change and control has revertChange().
-		 * If no change handler is given it will get the change handler from the change and control.
+		 * Check if change handler applicable to the passed change and control has <code>revertChange()</code>.
+		 * If no change handler is given, it will get the change handler from the change and control.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector object
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object
 		 *
-		 * @returns {boolean} Returns true if change handler has revertChange function
+		 * @returns {boolean} <code>true</code> if change handler has <code>revertChange</code> function
 		 * @private
 		 */
 		_isChangeHandlerRevertible: function(mPropertyBag) {

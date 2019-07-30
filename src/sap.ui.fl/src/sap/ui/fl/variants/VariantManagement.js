@@ -115,7 +115,6 @@ sap.ui.define([
 	 * @public
 	 * @since 1.56
 	 * @alias sap.ui.fl.variants.VariantManagement
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var VariantManagement = Control.extend("sap.ui.fl.variants.VariantManagement", /** @lends sap.ui.fl.variants.VariantManagement.prototype */ {
 		metadata: {
@@ -192,8 +191,7 @@ sap.ui.define([
 					defaultValue: false
 				},
 				/**
-				 * When set to false, doesn't reset the VariantManagement control to the default variant,
-				 * when it's binding context is changed.
+				 * When set to false, doesn't reset the <code>VariantManagement</code> control to the default variant, when its binding context is changed.
 				 */
 				resetOnContextChange: {
 					type: "boolean",

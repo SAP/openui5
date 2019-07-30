@@ -10,21 +10,18 @@ sap.ui.define([
 	/**
 	 * Base class for connectors.
 	 *
-	 * @namespace
-	 * @name sap.ui.fl.write.connectors.BaseConnector
-	 * @author SAP SE
+	 * @namespace sap.ui.fl.write.connectors.BaseConnector
 	 * @experimental Since 1.67
 	 * @since 1.67
-	 * @version ${version}
 	 * @private
 	 */
-	var BaseConnector = {
+	var BaseConnector = /** @lends sap.ui.fl.write.connectors.BaseConnector */{
 
 		/**
 		 * Interface called to write changes and variants.
 		 *
-		 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} vPayload Data to be stored
-		 * @returns {Promise} Promise resolving as soon as the writing was completed
+		 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} vPayload - Data to be stored
+		 * @returns {Promise} Promise that resolves as soon as the writing is completed
 		 */
 		writeChanges:function (/* vPayload */) {
 			return Promise.reject("writeChanges is not implemented");
