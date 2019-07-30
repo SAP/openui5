@@ -6,15 +6,19 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DOMUtil",
-	"sap/base/util/restricted/_intersection"
+	"sap/base/util/restricted/_intersection",
+	"sap/base/util/restricted/_uniq"
 ], function(
 	jQuery,
 	OverlayUtil,
+	ElementUtil,
 	ManagedObject,
 	DOMUtil,
-	_intersection
+	_intersection,
+	_uniq
 ) {
 	"use strict";
 
@@ -55,18 +59,19 @@ sap.ui.define([
 	});
 
 	MutationObserver.prototype.init = function() {
-		this._fireDomChangeOnTransitionEnd = this._fireDomChangeOnTransitionEnd.bind(this);
-		this._fireDomChangeOnAnimationEnd = this._fireDomChangeOnAnimationEnd.bind(this);
-		this._fireDomChangeOnResize = this._fireDomChangeOnResize.bind(this);
+		this._mutationOnTransitionend = this._callDomChangedCallback.bind(this, "MutationOnTransitionend");
+		this._mutationOnAnimationEnd = this._callDomChangedCallback.bind(this, "MutationOnAnimationEnd");
 		this._fireDomChangeOnScroll = this._fireDomChangeOnScroll.bind(this);
+		this._mutationOnResize = this._callDomChangedCallbackWithRoot.bind(this, "MutationOnResize");
 
-		window.addEventListener("transitionend", this._fireDomChangeOnTransitionEnd, true);
-		window.addEventListener("animationend", this._fireDomChangeOnAnimationEnd, true);
+		window.addEventListener("transitionend", this._mutationOnTransitionend, true);
+		window.addEventListener("animationend", this._mutationOnAnimationEnd, true);
 		window.addEventListener("scroll", this._fireDomChangeOnScroll, true);
-		jQuery(window).on("resize", this._fireDomChangeOnResize);
+		jQuery(window).on("resize", this._mutationOnResize);
 
 		this._aIgnoredMutations = [];
-		this._aWhiteList = [];
+		this._aWhitelistedDomNodeIDs = [];
+		this._mMutationHandlers = {};
 
 		this._startMutationObserver();
 	};
@@ -79,10 +84,14 @@ sap.ui.define([
 	MutationObserver.prototype.exit = function() {
 		this._stopMutationObserver();
 
-		window.removeEventListener("transitionend", this._fireDomChangeOnTransitionEnd, true);
-		window.removeEventListener("animationend", this._fireDomChangeOnAnimationEnd, true);
+		window.removeEventListener("transitionend", this._mutationOnTransitionend, true);
+		window.removeEventListener("animationend", this._mutationOnAnimationEnd, true);
 		window.removeEventListener("scroll", this._fireDomChangeOnScroll, true);
-		jQuery(window).off("resize", this._fireDomChangeOnResize);
+		jQuery(window).off("resize", this._mutationOnResize);
+
+		this._aIgnoredMutations = [];
+		this._aWhitelistedDomNodeIDs = [];
+		this._mMutationHandlers = {};
 	};
 
 	/**
@@ -96,60 +105,145 @@ sap.ui.define([
 		this._aIgnoredMutations.push(mParams);
 	};
 
-	MutationObserver.prototype.addToWhiteList = function (sId) {
-		this._aWhiteList.push(sId);
+	MutationObserver.prototype.addToWhiteList = function (sId, fnDomChangedCallback, bIsRoot) {
+		if (this._aWhitelistedDomNodeIDs.indexOf(sId) === -1) {
+			this._aWhitelistedDomNodeIDs.push(sId);
+			this._mMutationHandlers[sId] = [];
+		}
+		this._mMutationHandlers[sId].push(fnDomChangedCallback);
+		if (bIsRoot) {
+			this._sRootId = sId;
+		}
 	};
 
 	MutationObserver.prototype.removeFromWhiteList = function (sId) {
-		this._aWhiteList = this._aWhiteList.filter(function (sCurrentId) {
-			return sCurrentId !== sId;
-		});
+		this._aWhitelistedDomNodeIDs = this._aWhitelistedDomNodeIDs.filter(function (sCurrentId) {
+			if (sCurrentId === sId) {
+				delete this._mMutationHandlers[sId];
+				return false;
+			}
+			return true;
+		}.bind(this));
+		if (sId === this._sRootId) {
+			this._sRootId = undefined;
+		}
 	};
 
-	MutationObserver.prototype._isRelevantNode = function (oNode) {
-		return (
-			// 1. Mutation happened in Node which is still in actual DOM Tree
+	MutationObserver.prototype._hasScrollbar = function (bScrollbarOnElement, $Element) {
+		return bScrollbarOnElement || DOMUtil.hasScrollBar($Element);
+	};
+
+	MutationObserver.prototype._getIdsWhenWhitelisted = function (bScrollbarOnElement, sElementId, mElementIds) {
+		// check if element id is whitelisted
+		var sWhitelistedParentId;
+		if (sElementId && this._aWhitelistedDomNodeIDs.indexOf(sElementId) > -1) {
+			sWhitelistedParentId = sElementId;
+			// remember the closest whitelisted element id on mutated dom node
+			if (!mElementIds.closestElementInWhitlist) {
+				mElementIds.closestElementInWhitlist = sElementId;
+			}
+		}
+		mElementIds.result = bScrollbarOnElement ? sWhitelistedParentId : mElementIds.closestElementInWhitlist;
+		return mElementIds;
+	};
+
+	/*
+	 * Searching for closest element that is whitelisted but we also need to consider the scrollbar usecase.
+	 * Unfortunately we are not notified from MutationObserver when scrollbars appears on parent controls. Let's asume
+	 * we got a mutation from a node inside a container that is also mutated with a new scrollbar (but without own mutations).
+	 * Then we need to handle the mutation not only for the triggering element but for the container element that mutated with
+	 * the scrollbar. In this regard we need to consider the following possible cases:
+	 *
+	 *  Return values:
+	 *		1. whitelisted element with scrollbar (on the same element or in children) found
+	 *			=> returns the last whitelisted element id
+	 *		2. whitelisted element found but no scrollbar element available on parents
+	 *			=> returns the closest element id whitelisted on mutated node
+	 *		3. whitelisted element with scrollbar element available on parents but not whitelisted itself and without own whitelisted parents found
+	 *			=> returns the closest element id whitelisted on mutated node
+	 *		4. whitelisted element with scrollbar element available on parents and is whitelisted itself of with own whitelisted parents found
+	 *			=> returns the closest element id whitelisted on scrollbar element
+	 *		5. no whitelisted element available
+	 *			=> undefined
+	 */
+	MutationObserver.prototype._getClosestParentIdForNodeInWhitelistWithScrollbar = function (sNodeId, oNode) {
+		var mElementIds = {
+			closestElementInWhitlist: undefined,
+			result: undefined
+		};
+		var bScrollbarOnElement = false;
+		var $ClosestParentElement = jQuery(oNode);
+		var sClosestParentElementId = sNodeId;
+
+		do {
+			bScrollbarOnElement = this._hasScrollbar(bScrollbarOnElement, $ClosestParentElement);
+			mElementIds = this._getIdsWhenWhitelisted(bScrollbarOnElement, sClosestParentElementId, mElementIds);
+			$ClosestParentElement = $ClosestParentElement.parent();
+			sClosestParentElementId = $ClosestParentElement.attr("data-sap-ui");
+		} while (
+			!(mElementIds.result && bScrollbarOnElement)
+			&& $ClosestParentElement.length
+			&& $ClosestParentElement[0] !== document
+		);
+
+		return mElementIds.result || mElementIds.closestElementInWhitlist/* when element with scrollbar and his parents are not whitelisted */;
+	};
+
+	MutationObserver.prototype._getRelevantElementId = function (oNode) {
+		var sNodeId = oNode && oNode.getAttribute && oNode.getAttribute('id');
+		if (
+			// 1. Filter out overlay mutations
+			!DOMUtil.contains("overlay-container", oNode)
+
+			&& this._aWhitelistedDomNodeIDs.length
+
+			// 2. Mutation happened in Node which is still in actual DOM Tree
 			// Must be always on the first place since sometimes mutations for detached nodes may come
-			document.body.contains(oNode)
+			&& document.body.contains(oNode)
 
-			// 2. Ignore direct mutation on static area Node
-			&& oNode.getAttribute('id') !== 'sap-ui-static'
+			// 3. Ignore direct mutation on static area Node
+			&& sNodeId !== "sap-ui-static"
 
-			// 3. Node is not part of preserve area
-			&& !DOMUtil.contains('sap-ui-preserve', oNode)
+			// 4. Node is not part of preserve area
+			&& !DOMUtil.contains("sap-ui-preserve", oNode)
 
-			// 4. Node must be white listed OR meet certain criteria
-			&& (
-				this._aWhiteList.some(function (sId) {
-					return (
-						// 4.1. Target Node is inside one of the white listed element
-						DOMUtil.contains(sId, oNode)
-						// 4.2. Target Node is an ancestor of one of the white listed element, but not a static area
-						|| oNode.contains(document.getElementById(sId))
-					);
-				})
-			)
+		) {
+			// 4.1, OR the closest element need to be white listed
+			var sRelevantElementId = this._getClosestParentIdForNodeInWhitelistWithScrollbar(sNodeId, oNode);
+			if (sRelevantElementId) {
+				return sRelevantElementId;
+			}
+			// 4.2. Target Node is an ancestor of the root element, but not a static area
+			return (this._sRootId && oNode.contains(document.getElementById(this._sRootId))) ? this._sRootId : undefined;
+		}
+		return undefined;
+	};
+
+	MutationObserver.prototype._getRelevantElementIdsFromStaticArea = function (oMutation) {
+		return oMutation.target.id === "sap-ui-static"
+			&& 	_intersection(
+				[]
+					.concat(
+						Array.prototype.slice.call(oMutation.addedNodes),
+						Array.prototype.slice.call(oMutation.removedNodes)
+					)
+					.map(function (oNode) {
+						return oNode.id;
+					}),
+				this._aWhitelistedDomNodeIDs
 		);
 	};
 
-	MutationObserver.prototype._isRelevantMutation = function (oMutation) {
-		return (
-			this._isRelevantNode(this._getTargetNode(oMutation))
-			|| (
-				oMutation.target.id === 'sap-ui-static'
-				&& _intersection(
-					[]
-						.concat(
-							Array.prototype.slice.call(oMutation.addedNodes),
-							Array.prototype.slice.call(oMutation.removedNodes)
-						)
-						.map(function (oNode) {
-							return oNode.id;
-						}),
-					this._aWhiteList
-				).length > 0
-			)
-		);
+	MutationObserver.prototype._ignoreMutation = function(oMutation) {
+		return this._aIgnoredMutations.some(function(oIgnoredMutation, iIndex, aSource) {
+			if (
+				oIgnoredMutation.target === oMutation.target
+				&& (!oIgnoredMutation.type || oIgnoredMutation.type === oMutation.type)
+			) {
+				aSource.splice(iIndex, 1);
+				return true;
+			}
+		});
 	};
 
 	MutationObserver.prototype._getTargetNode = function (oMutation) {
@@ -161,33 +255,39 @@ sap.ui.define([
 		);
 	};
 
+	MutationObserver.prototype._callRelevantCallbackFunctions = function (aTargetElementId, sType) {
+		aTargetElementId = _uniq(aTargetElementId);
+		aTargetElementId.forEach(function (sTargetElementId) {
+			(this._mMutationHandlers[sTargetElementId] || []).forEach(function (fnTargetElementCallback) {
+				fnTargetElementCallback({ type: sType });
+			});
+		}.bind(this));
+	};
+
 	MutationObserver.prototype._startMutationObserver = function () {
 		this._oMutationObserver = new window.MutationObserver(function(aMutations) {
-			var aTargetNodes = [];
-			aMutations.forEach(function(oMutation) {
-				if (this._isRelevantMutation(oMutation)) {
-					var oTarget = this._getTargetNode(oMutation);
-					var bIgnore = this._aIgnoredMutations.some(function(oIgnoredMutation, iIndex, aSource) {
-						if (
-							oIgnoredMutation.target === oMutation.target
-							&& (!oIgnoredMutation.type || oIgnoredMutation.type === oMutation.type)
-						) {
-							aSource.splice(iIndex, 1);
-							return true;
-						}
-					});
-
-					if (!bIgnore) {
-						aTargetNodes.push(oTarget);
-					}
+			var aOverallTargetElementIds = aMutations.reduce(function (aOverallTargetElementIds, oMutation) {
+				var aTargetElementIds = [];
+				var oTargetNode = this._getTargetNode(oMutation);
+				var oTargetElementId = this._getRelevantElementId(oTargetNode);
+				if (oTargetElementId) {
+					aTargetElementIds.push(oTargetElementId);
+				} else {
+					aTargetElementIds = this._getRelevantElementIdsFromStaticArea(oMutation);
 				}
-			}.bind(this));
+				if (
+					aTargetElementIds.length
+					&& !this._ignoreMutation(oMutation)
+				) {
+					return aOverallTargetElementIds.concat(aTargetElementIds);
+				}
+				return aOverallTargetElementIds;
+			}.bind(this), []);
 
-			if (aTargetNodes.length) {
-				this.fireDomChanged({
-					type: "mutation",
-					targetNodes: aTargetNodes
-				});
+			if (aOverallTargetElementIds.length) {
+				window.requestAnimationFrame(function () {
+					this._callRelevantCallbackFunctions(aOverallTargetElementIds, "MutationObserver");
+				}.bind(this));
 			}
 		}.bind(this));
 
@@ -209,37 +309,43 @@ sap.ui.define([
 		}
 	};
 
-	MutationObserver.prototype._fireDomChangeOnTransitionEnd = function () {
-		this.fireDomChanged({
-			type: "transitionend"
-		});
+	MutationObserver.prototype._callDomChangedCallback = function (sMutationType, oEvent) {
+		var oTarget = oEvent.target;
+		if (oTarget !== window) {
+			var sTargetElementId = this._getRelevantElementId(oTarget);
+			if (sTargetElementId) {
+				this._callRelevantCallbackFunctions([sTargetElementId], sMutationType);
+			}
+		}
 	};
 
-
-	MutationObserver.prototype._fireDomChangeOnAnimationEnd = function () {
-		this.fireDomChanged({
-			type: "animationend"
-		});
-	};
-
-	MutationObserver.prototype._fireDomChangeOnResize = function () {
-		this.fireDomChanged({
-			type: "resize"
-		});
+	MutationObserver.prototype._callDomChangedCallbackWithRoot = function (sMutationType) {
+		if (this._sRootId) {
+			this._callRelevantCallbackFunctions([this._sRootId], sMutationType);
+		}
 	};
 
 	MutationObserver.prototype._fireDomChangeOnScroll = function (oEvent) {
 		var oTarget = oEvent.target;
-		if (
-			this._isRelevantNode(oTarget)
-			&& !OverlayUtil.getClosestOverlayForNode(oTarget)
-			// The line below is required to avoid double scrollbars on the browser
-			// when the document is scrolled to negative values (relevant for Mac)
-			&& oTarget !== document
-		) {
-			this.fireDomChanged({
-				type: "scroll"
-			});
+		// The line below is required to avoid double scrollbars on the browser
+		// when the document is scrolled to negative values (relevant for Mac)
+		if (oTarget !== document) {
+			// Target Node is inside one of the white listed element
+			var sTargetElementId = this._getRelevantElementId(oTarget);
+			// Target Node is an ancestor of one of the root element, but not a static area
+			if (
+				sTargetElementId === undefined
+				&& oTarget.contains(document.getElementById(this._sRootId))
+				&& oTarget.getAttribute("id") !== "sap-ui-static"
+			) {
+				sTargetElementId = this._sRootId;
+			}
+			if (
+				sTargetElementId
+				&& !OverlayUtil.getClosestOverlayForNode(oTarget)
+			) {
+				this._callRelevantCallbackFunctions([sTargetElementId], "MutationOnScroll");
+			}
 		}
 	};
 

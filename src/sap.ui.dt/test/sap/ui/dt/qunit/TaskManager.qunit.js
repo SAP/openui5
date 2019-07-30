@@ -69,6 +69,55 @@ sap.ui.define([
 				'error was thrown with some message'
 			);
 		});
+		QUnit.test("must fail when object has wrong 'identifier' property", function (assert) {
+			assert.throws(
+				function () {
+					this.oTaskManager.add({
+						type: 'bar'
+					}, ['string-instead-validator-function']);
+				},
+				/.*/,
+				'error was thrown with some message'
+			);
+		});
+		QUnit.test("must remove outdated and add new task when identifier parameter as function is provided (duplicate: same type & same identifier)", function (assert) {
+			var fnDoublesIdentifier = function(mTask) {
+				return mTask.identifier;
+			};
+			this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'foo'
+			}, fnDoublesIdentifier);
+			assert.equal(this.oTaskManager.getList().length, 1, "then first Task with 'foo' identifier is added");
+			this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'bar'
+			}, fnDoublesIdentifier);
+			assert.equal(this.oTaskManager.getList().length, 2, "then second Task with 'bar' identifier is added");
+			this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'foo' },
+			fnDoublesIdentifier);
+			assert.equal(this.oTaskManager.getList().length, 2, "then the queue contains just the first two tasks");
+		});
+		QUnit.test("must remove outdated and add new task when identifier paramter as string is provided (duplicate: same type & same identifier)", function (assert) {
+			var sDoublesIdentifier = "identifier";
+			this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'foo'
+			}, sDoublesIdentifier);
+			assert.equal(this.oTaskManager.getList().length, 1, "then first Task with 'foo' identifier is added");
+			this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'bar'
+			}, sDoublesIdentifier);
+			assert.equal(this.oTaskManager.getList().length, 2, "then second Task with 'bar' identifier is added");
+			this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'foo' },
+			sDoublesIdentifier);
+			assert.equal(this.oTaskManager.getList().length, 2, "then the queue contains just the first two tasks");
+		});
 	});
 
 	QUnit.module("Public API - complete()", {
@@ -206,6 +255,19 @@ sap.ui.define([
 		});
 		QUnit.test("must be empty after adding new task and then completing it", function (assert) {
 			var iTaskId = this.oTaskManager.add({ type: 'foo' });
+			this.oTaskManager.complete(iTaskId);
+			assert.strictEqual(this.oTaskManager.isEmpty(), true, 'function returns correct value');
+		});
+		QUnit.test("must be empty after adding new task and then completing it, including add of duplicate tasks (duplicate: same type & same identifier)", function (assert) {
+			var sDoublesIdentifier = "identifier";
+			this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'foo'
+			}, sDoublesIdentifier);
+			var iTaskId = this.oTaskManager.add({
+				type: 'withValidator',
+				identifier: 'foo'
+			}, sDoublesIdentifier);
 			this.oTaskManager.complete(iTaskId);
 			assert.strictEqual(this.oTaskManager.isEmpty(), true, 'function returns correct value');
 		});

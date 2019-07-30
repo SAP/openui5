@@ -367,6 +367,7 @@ sap.ui.define([
 		});
 		QUnit.test("when there is only vertical scrollbar", function (assert) {
 			this.$InnerPanel.css({
+				width: '100px',
 				height: '200px'
 			});
 			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.$OuterPanel.get(0)), false);

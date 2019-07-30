@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/dt/TaskManager",
 	"sap/ui/dt/Util",
 	"sap/base/Log"
-
 ],
 function(
 	TaskManager,
@@ -39,12 +38,11 @@ function(
 		this._oTaskManager = mParam.taskManager;
 		this._sInitialTaskType = mParam.taskType;
 		this._sObservedTaskType = mParam.taskType;
-
 		this._iRequestId = undefined;
 		this.bIsStopped = true;
+		this._oTaskPromise = Promise.resolve();
 	};
 
-	// TaskRunner.prototype._breakObserve = function () {
 	TaskRunner.prototype._shouldObserveBreak = function () {
 		if (
 			this.bIsStopped
@@ -57,18 +55,13 @@ function(
 		return false;
 	};
 
-	TaskRunner.prototype._observe = function () {
-		this._checkTasks();
-		if (!this._shouldObserveBreak()) {
-			this._iRequestId = window.requestAnimationFrame(this._observe.bind(this));
-		}
-	};
-
-	TaskRunner.prototype._unobserve = function () {
-		if (this._iRequestId) {
-			window.cancelAnimationFrame(this._iRequestId);
-			this._iRequestId = undefined;
-		}
+	TaskRunner.prototype._observe = function (oEvent) {
+		this._oTaskPromise = this._oTaskPromise.then(function() {
+			if (this._shouldObserveBreak()) {
+				return this.stop();
+			}
+			this._checkTasks(oEvent);
+		}.bind(this));
 	};
 
 	TaskRunner.prototype._checkTasks = function () {
@@ -94,12 +87,13 @@ function(
 	TaskRunner.prototype.run = function (sTaskType) {
 		this._sObservedTaskType = sTaskType || this._sInitialTaskType;
 		this.bIsStopped = false;
+		this._oTaskManager.attachAdd(this._observe, this);
 		this._observe();
 	};
 
 	TaskRunner.prototype.stop = function () {
 		this.bIsStopped = true;
-		this._unobserve();
+		this._oTaskManager.detachAdd(this._observe, this);
 	};
 
 	return TaskRunner;
