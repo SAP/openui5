@@ -25,6 +25,7 @@ sap.ui.define(['../Element', '../library', 'sap/base/Log', './DragAndDrop'],
 	 *   <li>A custom dragging ghost element is not possible in Internet Explorer.</li>
 	 *   <li>Transparency of the drag ghost element and the cursor during drag-and-drop operations depends on the browser implementation.</li>
 	 *   <li>Internet Explorer does only support plain text MIME type for the DataTransfer Object.</li>
+	 *   <li>In Internet Explorer, default visual drop effect is <code>copy</code> and <code>dropEffect</code> property of the <code>DropInfo</code> has no effect.
 	 *   <li>Constraining a drag position is not possible, therefore there is no snap-to-grid or snap-to-element feature possible.</li>
 	 *   <li>Texts in draggable controls cannot be selected.</li>
 	 *   <li>The text of input fields in draggable controls can be selected, but not dragged.</li>
