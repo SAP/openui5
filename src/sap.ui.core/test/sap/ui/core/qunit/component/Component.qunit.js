@@ -8,8 +8,10 @@ sap.ui.define([
 	'samples/components/routing/Component',
 	'samples/components/routing/RouterExtension',
 	'sap/ui/thirdparty/URI',
-	'sap/ui/base/ManagedObjectRegistry'
-], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry) {
+	'sap/ui/base/ManagedObjectRegistry',
+	'sap/base/Log',
+	'sap/ui/core/Manifest'
+], function(jQuery, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesLoadFromFileComponent, SamplesRoutingComponent, SamplesRouterExtension, URI, ManagedObjectRegistry, Log, Manifest) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -1818,4 +1820,135 @@ sap.ui.define([
 		oFooC.destroy();
 	});
 
+	QUnit.module("Hook _fnPreprocessManifest", {
+		afterEach: function() {
+			Component._fnPreprocessManifest = null;
+		}
+	});
+
+	QUnit.test("Hook is called when manifest is given in config object (Hook modifies the manifest)", function(assert) {
+		var oManifestJSON = {
+			"sap.app": {
+				"id": "sap.ui.test.other",
+				"type": "application",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {
+				"resources": {
+					"css": [
+						{
+							"uri": "style3.css"
+						}
+					]
+				},
+				"models": {
+					"myModel": {
+						"type": "sap.ui.model.odata.ODataModel",
+						"uri": "./some/odata/service"
+					}
+				}
+			}
+		};
+
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// To test if the modification is correctly passed back to the
+			// Component's manifest processing, we just change the class of a given model v1 -> v2
+			oManifestJSON["sap.ui5"]["models"]["myModel"].type = "sap.ui.model.odata.v2.ODataModel";
+
+			return Promise.resolve(oManifestJSON);
+		};
+
+		return Component.create({
+			name: "sap.ui.test.other",
+			manifest: oManifestJSON
+		}).then(function(oComponent) {
+			// check if the modification was correctly taken over
+			var oModel = oComponent.getModel("myModel");
+			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the default location (Hook modifies the manifest)", function(assert) {
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// To test if the modification is correctly passed back to the
+			// Component's manifest processing, we just change the class of a given model v1 -> v2
+			oManifestJSON["sap.ui5"]["models"]["sfapi"].type = "sap.ui.model.odata.v2.ODataModel";
+
+			return Promise.resolve(oManifestJSON);
+		};
+
+		// loading manifest from default location
+		return Component.create({
+			name: "sap.ui.test.v2"
+		}).then(function(oComponent) {
+			// check if the modification was correctly taken over
+			var oModel = oComponent.getModel("sfapi");
+			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("Hook is called when manifest is loaded from the given manifest URL", function(assert) {
+		var sManifestUrl = sap.ui.require.toUrl("sap/ui/test/v2/manifest.json");
+
+		// register hook and modify the manifest
+		Component._fnPreprocessManifest = function(oManifestJSON) {
+			// To test if the modification is correctly passed back to the
+			// Component's manifest processing, we just change the class of a given model v1 -> v2
+			oManifestJSON["sap.ui5"]["models"]["sfapi"].type = "sap.ui.model.odata.v2.ODataModel";
+
+			return Promise.resolve(oManifestJSON);
+		};
+
+		return Component.create({
+			name: "sap.ui.test.v2",
+			manifest: sManifestUrl
+		}).then(function(oComponent) {
+			// check if the modification was correctly taken over
+			var oModel = oComponent.getModel("sfapi");
+			assert.ok(oModel.isA("sap.ui.model.odata.v2.ODataModel"), "Manifest was modified to use v2 instead of v1 ODataModel.");
+		});
+	});
+
+	QUnit.test("When hook returns a rejected promise, it should also reject the Component.create with same reason", function(assert) {
+		var sRejectReason = "Rejected from preprocess manifest";
+
+		Component._fnPreprocessManifest = function() {
+			return Promise.reject(sRejectReason);
+		};
+		this.oPreprocessManifestSpy = this.spy(Component, "_fnPreprocessManifest");
+
+		return Component.create({
+			name: "sap.ui.test.v2empty"
+		}).then(function() {
+			assert.ok(false, "shouldn't reach here");
+		}, function(sReason) {
+			assert.equal(sReason, sRejectReason, "Promise is rejected with the correct reason");
+			this.oPreprocessManifestSpy.restore();
+		}.bind(this));
+	});
+
+	QUnit.test("When hook causes unhandled errors, it should also reject the Component.create", function(assert) {
+		var sErrorText = "Uncaught TypeError: o.x is not a function";
+
+		Component._fnPreprocessManifest = function() {
+			// provoke unhandled error
+			throw new Error(sErrorText);
+		};
+
+		// spy to check if we logged the error for debugging
+		var oLogSpy = this.spy(Log, "error");
+
+		return Component.create({
+			name: "sap.ui.test.v2empty"
+		}).then(function() {
+			assert.ok(false, "shouldn't reach here");
+		}).catch(function(oError) {
+			assert.deepEqual(oError, new Error(sErrorText), "Promise is rejected with the correct reason");
+			assert.ok(oLogSpy.calledWithExactly("Failed to execute flexibility hook for manifest preprocessing.", oError), "Correct Error was logged for supportability");
+			oLogSpy.restore();
+		});
+	});
 });
