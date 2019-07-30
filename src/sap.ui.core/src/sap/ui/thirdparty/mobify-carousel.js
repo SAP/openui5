@@ -6,9 +6,18 @@ Mobify.UI = Mobify.UI || { classPrefix: '' };
 (function($, document) {
     $.support = $.support || {};
 
-    $.extend($.support, {
+    // SAP MODIFICATION
+    var support = {
         'touch': 'ontouchend' in document
-    });
+    };
+
+    // => if the device API is loaded we override the touch detection
+    if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support) {
+        support.touch = sap.ui.Device.support.touch
+    }
+
+    $.extend($.support, support);
+    // SAP MODIFICATION END
 
 })(Mobify.$, document);
 
