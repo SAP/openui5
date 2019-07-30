@@ -14,6 +14,11 @@
 			"virtual": false,
 			"ignore": false
 		},
+		"dtMetadataProperty3": {
+			"ignore": false,
+			"value": "[NOT SERIALIZABLE]",
+			"virtual": false
+		},
 		"virtualProperty1": {
 			"value": "Virtual property value 1",
 			"virtual": true,
@@ -71,6 +76,16 @@
 				}
 			]
 		},
+		"virtualProperty4": {
+			"group": "Virtual Property Group 4",
+			"ignore": false,
+			"name": "Virtual Property Name 4",
+			"nullable": false,
+			"possibleValues": "[NOT SERIALIZABLE]",
+			"type": "Virtual property type",
+			"value": "[NOT SERIALIZABLE]",
+			"virtual": true
+		},
 		"metadataProperty1": {
 			"value": "metadataPropertyValue1",
 			"virtual": false,
@@ -111,7 +126,7 @@
 			"visibility": "public"
 		},
 		"metadataProperty3": {
-			"value": "metadataPropertyValue3",
+			"value": "[NOT SERIALIZABLE]",
 			"virtual": false,
 			"type": "metadataPropertyType3",
 			"name": "metadataPropertyName3",
@@ -157,6 +172,10 @@
 					{
 						"href": "annotation2.html",
 						"text": "Annotation 1 Text 2"
+					},
+					{
+						"href": "notSerializable.html",
+						"text": "[NOT SERIALIZABLE]"
 					}
 				]
 			}
@@ -172,6 +191,10 @@
 			{
 				"href": "links1.html",
 				"text": "Links 1 Text"
+			},
+			{
+				"href": "notSerializable.html",
+				"text": "[NOT SERIALIZABLE]"
 			}
 		],
 		"guidelines": [

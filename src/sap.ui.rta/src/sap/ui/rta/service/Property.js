@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+/* global Map */
+
 sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
@@ -42,6 +44,39 @@ sap.ui.define([
 	 * @property {string} [label] - Label from <code>getLabel</code> property of design time metadata
 	 * @property {object} [links] - Links from design time metadata
 	 */
+
+	var _NOT_SERIALIZABLE = "[NOT SERIALIZABLE]";
+	function isSerializable(vPrimitiveOrObject, vIndexOrKey, vParent) {
+		// check for primitives: boolean, undefined, null, number, string, symbol
+		if (Object(vPrimitiveOrObject) !== vPrimitiveOrObject) {
+			return true;
+		}
+		if (typeof vPrimitiveOrObject === "function") { // function
+			return false;
+		}
+		if (typeof vPrimitiveOrObject === "object") {
+			if (Array.isArray(vPrimitiveOrObject)) { // array
+				return vPrimitiveOrObject.every(isSerializable);
+			} else if (vPrimitiveOrObject instanceof Map) { // map -> convert to object
+				var oMapEquivalent = {};
+				vPrimitiveOrObject.forEach(function(vValue, sKey) {
+					oMapEquivalent[sKey] = vValue;
+				});
+				if (vParent) {
+					vParent[vIndexOrKey] = oMapEquivalent;
+				}
+				vPrimitiveOrObject = oMapEquivalent;
+			}
+			return Object.keys(vPrimitiveOrObject).every(function(sKey) { // object
+				return isSerializable(vPrimitiveOrObject[sKey], sKey, vPrimitiveOrObject);
+			});
+		}
+		return false;
+	}
+
+	function validate(vPrimitiveOrObject) {
+		return isSerializable(vPrimitiveOrObject) ? vPrimitiveOrObject : _NOT_SERIALIZABLE;
+	}
 
 	return function() {
 		var oProperty = {};
@@ -85,7 +120,7 @@ sap.ui.define([
 						{},
 						aPromiseResults[0] && !jQuery.isEmptyObject(aPromiseResults[0]) && {annotations: aPromiseResults[0]},
 						aPromiseResults[1] && {properties: aPromiseResults[1]},
-						aPromiseResults[2] && {label: aPromiseResults[2]},
+						aPromiseResults[2] && {label: validate(aPromiseResults[2])},
 						oDesignTimeMetadataData.name && {name: oDesignTimeMetadata.getName(oElement)},
 						!jQuery.isEmptyObject(aPromiseResults[3]) && {links: aPromiseResults[3]}
 					);
@@ -107,7 +142,7 @@ sap.ui.define([
 			var mFilteredMetadataObject = Object.keys(mMetadataObj)
 				.reduce(function (mFiltered, sKey) {
 					mFiltered[sKey] = {
-						value: oElement.getProperty(sKey),
+						value: validate(oElement.getProperty(sKey)),
 						virtual: false,
 						type: mMetadataObj[sKey].type,
 						name: mMetadataObj[sKey].name,
@@ -151,7 +186,7 @@ sap.ui.define([
 											} else {
 												// dt-metadata properties
 												mResult[sKey] = {
-													value: RtaUtils.omit(mDtObj[sKey], "ignore"),
+													value: validate(RtaUtils.omit(mDtObj[sKey], "ignore")),
 													virtual: false,
 													ignore: bIgnore
 												};
@@ -189,7 +224,7 @@ sap.ui.define([
 			var mEvaluatedProperty = {};
 			// evaluate if virtual - not found in metadata object
 			mEvaluatedProperty[sPropertyName] = {
-				value: mDtObj[sPropertyName].get(oElement),
+				value: validate(mDtObj[sPropertyName].get(oElement)),
 				virtual: true,
 				type: mDtObj[sPropertyName].type,
 				name: mDtObj[sPropertyName].name,
@@ -204,7 +239,7 @@ sap.ui.define([
 					Object.assign(
 						mEvaluatedProperty[sPropertyName],
 						mBindingInfo && {binding: mBindingInfo},
-						vPossibleValues && {possibleValues: vPossibleValues},
+						vPossibleValues && {possibleValues: validate(vPossibleValues)},
 						typeof mDtObj[sPropertyName].nullable === "boolean" && {nullable: mDtObj[sPropertyName].nullable} // nullable property
 					);
 
@@ -219,7 +254,7 @@ sap.ui.define([
 		 * @param {object} mDtObj - Design time metadata annotations object
 		 * @param {sap.ui.core.Element} oElement - Element for which properties need to be calculated
 		 *
-		 * @return {Promise} Pomise resolving to an object containing all annotations consolidated
+		 * @return {Promise} Promise resolving to an object containing all annotations consolidated
 		 * @private
 		 */
 		oProperty._getConsolidatedAnnotations = function (mDtObj, oElement) {
@@ -292,7 +327,7 @@ sap.ui.define([
 								}
 							})(oLink)
 								.then(function (sLinkText) {
-									oLink.text = sLinkText || oLink.text;
+									oLink.text = validate(sLinkText || oLink.text);
 								})
 						);
 					});
