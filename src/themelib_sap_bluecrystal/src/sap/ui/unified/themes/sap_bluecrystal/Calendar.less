@@ -102,6 +102,10 @@ html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus{
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
+html.sap-desktop .sapUiSizeCompact .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	// do this only for the Planing Calendar
