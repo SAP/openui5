@@ -3,13 +3,14 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Table",
+	"sap/ui/table/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/library",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/thirdparty/jquery"
-], function(MockServer, Table, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin, jQuery) {
+], function(MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin, jQuery) {
 	"use strict";
 
 	var sServiceURI = "/service/";
@@ -87,6 +88,14 @@ sap.ui.define([
 			this.oTable.setModel(oModel);
 
 			sap.ui.getCore().applyChanges();
+
+			return new Promise(function(resolve) {
+				this.oTable.attachEvent("_rowsUpdated", function(oEvent) {
+					if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Change) {
+						resolve();
+					}
+				});
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -110,27 +119,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Selection", function(assert) {
-		var done = assert.async();
-		var that = this;
-		var $Table = this.oTable.$();
-		var aSelectedIndices = [];
-
-		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			aSelectedIndices = that.oTable.getSelectedIndices();
-			assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4, 5], "rows properly selected");
-			assert.equal(that.oTable._oSelectionPlugin.getLimit(), 200, "Default selection limit is 200");
-			assert.notOk(that.oTable._oSelectionPlugin.isLimitReached(), "Selection limit is not reached");
-
-			$Table.find(".sapUiTableSelectClear").first().click();
-			aSelectedIndices = that.oTable.getSelectedIndices();
-			assert.deepEqual(aSelectedIndices, [], "select all function doesn't exist, the selection will be cleared");
-			done();
-		});
-		this.oTable.addSelectionInterval(0, 5);
-	});
-
-	QUnit.test("SelectionMode", function(assert) {
+	QUnit.test("Change SelectionMode", function(assert) {
 		assert.equal(this.oTable._oSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is correctly initialized");
 		this.oTable.removeAllPlugins();
 		this.oTable.addPlugin(new MultiSelectionPlugin({
@@ -148,15 +137,18 @@ sap.ui.define([
 		var that = this;
 		var aSelectedIndices = [];
 
+		assert.equal(that.oTable._oSelectionPlugin.getLimit(), 200, "Default selection limit is 200");
 		this.oTable._oSelectionPlugin.setLimit(5);
 		assert.equal(this.oTable._oSelectionPlugin.getLimit(), 5, "Selection limit is properly set");
 		assert.equal(this.oTable._getSelectedIndicesCount(), 0, "no items are selected");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 
 		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.ok(fnGetContexts.calledWith(0, 5), "getContexts is called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts is called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			aSelectedIndices = that.oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [0, 1, 2, 3, 4], "Range selection is possible for number of items below limit");
+			assert.notOk(that.oTable._oSelectionPlugin.isLimitReached(), "Selection limit is not reached");
 
 			that.oTable._oSelectionPlugin.attachSelectionChange(function(oEvent){
 				assert.deepEqual(oEvent.getParameters().rowIndices, [5, 6, 7, 8, 9], "rowIndices parameter is correct");
@@ -166,6 +158,7 @@ sap.ui.define([
 				done();
 			});
 
+			fnGetContexts.reset();
 			that.oTable.addSelectionInterval(5, 9);
 		});
 		this.oTable.addSelectionInterval(0, 4);
@@ -180,13 +173,15 @@ sap.ui.define([
 		assert.equal(this.oTable._getSelectedIndicesCount(), 0, "no items are selected");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 
-		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.ok(fnGetContexts.calledWith(0, 1), "getContexts is called with the correct parameters");
+		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function() {
+			assert.ok(fnGetContexts.calledWithExactly(0, 1), "getContexts is called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			aSelectedIndices = that.oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [0], "First row is selected");
 
-			that.oTable._oSelectionPlugin.attachSelectionChange(function(oEvent){
-				assert.ok(fnGetContexts.calledWith(1, 5), "getContexts is called with the correct parameters");
+			that.oTable._oSelectionPlugin.attachSelectionChange(function(oEvent) {
+				assert.ok(fnGetContexts.calledWithExactly(1, 5), "getContexts is called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				aSelectedIndices = that.oTable.getSelectedIndices();
@@ -194,6 +189,7 @@ sap.ui.define([
 				done();
 			});
 
+			fnGetContexts.reset();
 			that.oTable.addSelectionInterval(0, 10);
 		});
 		this.oTable.setSelectedIndex(0);
@@ -209,13 +205,16 @@ sap.ui.define([
 		assert.equal(this.oTable._getSelectedIndicesCount(), 0, "no items are selected");
 		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 
-		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.ok(fnGetContexts.calledWith(16, 5), "getContexts is called with the correct parameters");
+		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function() {
+			assert.ok(fnGetContexts.calledWithExactly(16, 5), "getContexts is called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			aSelectedIndices = that.oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices, [16, 17, 18, 19, 20], "The correct indices are selected");
 
-			that.oTable._oSelectionPlugin.attachSelectionChange(function(oEvent){
-				assert.ok(fnGetContexts.calledWith(16, 5), "getContexts is called with the correct parameters");
+			that.oTable._oSelectionPlugin.attachSelectionChange(function(oEvent) {
+				assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts is called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+				assert.ok(that.oTable._oSelectionPlugin.isLimitReached(), "Selection limit is reached");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 16, 17, 18, 19, 20], "rowIndices parameter is correct (indices that are being selected and deselected)");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				aSelectedIndices = that.oTable.getSelectedIndices();
@@ -223,6 +222,7 @@ sap.ui.define([
 				done();
 			});
 
+			fnGetContexts.reset();
 			that.oTable.setSelectionInterval(0, 10);
 		});
 		this.oTable.setSelectionInterval(16, 20);
@@ -284,12 +284,13 @@ sap.ui.define([
 
 		this.oTable.attachEventOnce("_rowsUpdated", function() {
 			assert.equal(that.oTable._getSelectedIndicesCount(), 0, "no items are selected");
-
+			fnGetContexts.reset();
 			that.oTable._oSelectionPlugin.selectAll();
 		});
 
-		that.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.ok(fnGetContexts.calledWith(0, that.oTable.getBinding("rows").getLength()), "getContexts is called with the correct parameters");
+		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			assert.ok(fnGetContexts.calledWithExactly(0, that.oTable.getBinding("rows").getLength()), "getContexts is called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			aSelectedIndices = that.oTable.getSelectedIndices();
 			assert.deepEqual(aSelectedIndices.length, 16, "The correct indices are selected");
 			done();
@@ -320,5 +321,70 @@ sap.ui.define([
 		});
 
 		that.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
+	});
+
+	QUnit.test("Selection (selectionMode = Single)", function(assert) {
+		var done = assert.async();
+		this.oTable._oSelectionPlugin.setSelectionMode(SelectionMode.Single);
+		assert.equal(this.oTable._oSelectionPlugin.getSelectionMode(), SelectionMode.Single, "SelectionMode is properly set");
+
+		sap.ui.getCore().applyChanges();
+		var oCell = this.oTable.getDomRef("selall");
+
+		assert.ok(!oCell.hasAttribute("role"), "DeselectAll role is not set");
+		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
+		assert.ok(!oCell.hasChildNodes(), "No DeselectAll icon");
+
+		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var that = this;
+		this.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts is called with the correct parameters");
+			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+			assert.deepEqual(that.oTable._oSelectionPlugin.getSelectedIndices(), [9], "Only one item is selected (iIndexTo)");
+			that.oTable._oSelectionPlugin.attachEventOnce("selectionChange", function(){
+				assert.ok(fnGetContexts.calledWithExactly(4, 1), "getContexts is called with the correct parameters");
+				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
+				assert.deepEqual(that.oTable._oSelectionPlugin.getSelectedIndices(), [4], "Only one item is selected (iIndexTo)");
+				jQuery(oCell).trigger("click");
+				assert.equal(that.oTable._oSelectionPlugin.getSelectedCount(), 1, "the selection is not cleared");
+				done();
+			});
+			fnGetContexts.reset();
+			that.oTable._oSelectionPlugin.setSelectionInterval(0, 4);
+		});
+
+		this.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
+	});
+
+	QUnit.test("Selection (selectionMode = None)", function(assert) {
+		var that = this;
+
+		this.oTable._oSelectionPlugin.setSelectionMode(SelectionMode.None);
+		assert.equal(this.oTable._oSelectionPlugin.getSelectionMode(), SelectionMode.None, "SelectionMode is properly set");
+
+		sap.ui.getCore().applyChanges();
+		var oCell = this.oTable.getDomRef("selall");
+
+		assert.ok(!oCell.hasAttribute("role"), "DeselectAll role is not set");
+		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
+		assert.ok(!oCell.hasChildNodes(), "No DeselectAll icon");
+
+		var fnGetContexts = sinon.spy(that.oTable.getBinding("rows"), "getContexts");
+
+		this.oTable._oSelectionPlugin.addSelectionInterval(0, 9);
+		this.oTable._oSelectionPlugin.setSelectionInterval(0, 9);
+		this.oTable._oSelectionPlugin.setSelectedIndex(0);
+		this.oTable._oSelectionPlugin.selectAll();
+
+		assert.ok(fnGetContexts.notCalled, "getContexts is called with the correct parameters");
+		assert.deepEqual(that.oTable._oSelectionPlugin.getSelectedCount(), 0, "Nothing is selected");
+
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				assert.ok(fnGetContexts.notCalled, "getContexts is called with the correct parameters");
+				assert.deepEqual(that.oTable._oSelectionPlugin.getSelectedCount(), 0, "Nothing is selected");
+				resolve();
+			}, 100);
+		});
 	});
 });
