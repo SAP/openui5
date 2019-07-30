@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Variant"
+	"sap/ui/fl/Variant",
+	"sap/base/util/ObjectPath"
 ], function (
 	Utils,
 	Change,
-	Variant
+	Variant,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -76,6 +78,15 @@ sap.ui.define([
 				aVariants.forEach(function (oVariant, index) {
 					if (oVariant.content.fileName === sVariantManagementReference) {
 						iIndex = index;
+						// Standard Variant should always contain the value: "SAP" in "author" / "Created by" field
+						if (!ObjectPath.get("content.support.user", oVariant)) {
+							var oSupport = {
+								support: {
+									user: "SAP"
+								}
+							};
+							Object.assign(oVariant.content, oSupport);
+						}
 					}
 					if (!oVariant.content.content.favorite) {
 						oVariant.content.content.favorite = true;
@@ -447,7 +458,8 @@ sap.ui.define([
 							title : oVariant.content.content.title,
 							layer : oVariant.content.layer,
 							favorite : oVariant.content.content.favorite,
-							visible : oVariant.content.content.visible
+							visible : oVariant.content.content.visible,
+							author : ObjectPath.get("content.support.user", oVariant)
 						})
 					);
 			});
