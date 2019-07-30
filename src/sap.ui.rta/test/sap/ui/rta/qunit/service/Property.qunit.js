@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit, Map*/
 QUnit.dump.maxDepth = 50;
 
 sap.ui.define([
@@ -43,7 +43,8 @@ function(
 						"sap.app" : {
 							applicationVersion : {
 								version : "1.2.3"
-							}
+							},
+							id: "MockAppId"
 						}
 					}
 				},
@@ -100,6 +101,19 @@ function(
 							text: function (oControl) {
 								return oControl.getId() === "mockControl" ? "Links 1 Text" : "";
 							}
+						},
+						{
+							href: "notSerializable.html",
+							text: function (oControl) {
+								if (oControl.getId() === "mockControl") {
+									return {
+										prop: {
+											subProp: function () {} // NOT_SERIALIZABLE inside sub object property
+										}
+									};
+								}
+								throw new Error("invalid Control");
+							}
 						}
 					],
 					guidelines: [
@@ -122,6 +136,10 @@ function(
 					dtMetadataProperty2: {
 					// dt-metadata property not ignored
 						mockKey2: "dtMetadataProperty2"
+					},
+					dtMetadataProperty3: {
+						// dt-metadata property not serializable
+						mockKey3: {subProp: function () {}} // NOT_SERIALIZABLE inside sup property
 					},
 					metadataProperty2: {
 					// metadata property ignored
@@ -181,20 +199,41 @@ function(
 							return null;
 						},
 						possibleValues: function (oControl) {
-							return oControl.getId() === "mockControl"
-							? [
-								{
-									possibleKey4: {
-										displayName: "Possible Value 4"
-									}
-								},
-								{
+							if (oControl.getId() === "mockControl") {
+								var mPossibleValues1 = new Map();
+								mPossibleValues1.set("possibleKey4", {displayName: "Possible Value 4"});
+								var oPossibleValues2 = {
 									possibleKey5: {
 										displayName: "Possible Value 5"
 									}
-								}
-							]
-							: "";
+								};
+								return [mPossibleValues1, oPossibleValues2];
+							}
+							throw Error("Invalid Control");
+						},
+						type: "Virtual property type"
+					},
+					virtualProperty4: {
+						// virtual property consisting of non serializable properties
+						virtual: true,
+						name: "Virtual Property Name 4",
+						group: "Virtual Property Group 4",
+						nullable: false,
+						get: function () {
+							var mMap = new Map();
+							mMap.set("prop", {subProp: function() {}});
+							return mMap; // NOT_SERIALIZABLE inside map
+						},
+						possibleValues: function (oControl) {
+							return oControl.getId() === "mockControl"
+								? [
+									{
+										possibleKey4: {
+											displayName: function() {} // NOT_SERIALIZABLE direct
+										}
+									}
+								]
+								: "";
 						},
 						type: "Virtual property type"
 					}
@@ -224,6 +263,15 @@ function(
 								{
 									href: "annotation2.html",
 									text: "Annotation 1 Text 2"
+								},
+								{
+									href: "notSerializable.html",
+									text: function (oControl) {
+										if (oControl.getId() === "mockControl") {
+											return ["serializable", function () {}]; // NOT_SERIALIZABLE inside array
+										}
+										throw new Error("incorrect control");
+									}
 								}
 							]
 						}
@@ -259,7 +307,7 @@ function(
 			sandbox.stub(this.oControl, "getProperty")
 			.withArgs("metadataProperty1").returns("metadataPropertyValue1")
 			.withArgs("metadataProperty2").returns("metadataPropertyValue2")
-			.withArgs("metadataProperty3").returns("metadataPropertyValue3");
+			.withArgs("metadataProperty3").returns({subProp: function() {}}); // NOT_SERIALIZABLE inside sub property
 
 		// control metadata properties
 			sandbox.stub(mControlMetadata, "getAllProperties").returns({
@@ -346,7 +394,6 @@ function(
 			}.bind(this));
 		},
 		after: function() {
-			sandbox.restore();
 			return this.oRta.stop().then(function () {
 				this.oComp.destroy();
 				delete this.oExpectedPropertyData;
@@ -359,8 +406,25 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("when property service get() is called with designtimeMetadata.getLabel() returning a non-serializable value", function (assert) {
+			// modify property service return object
+			var oExpectedPropertyDataWithMockedLabel = Object.assign({}, this.oExpectedPropertyData, {label: "[NOT SERIALIZABLE]"});
+			// mock getLabel() in designtime metadata
+			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
+			oDtObjProperties.getLabel = function() {
+				return ["property1", {}, function() {}];
+			};
+
+			var fnElementDesignTimeMetadataStub = sandbox.stub(ElementDesignTimeMetadata.prototype, "getData").returns(oDtObjProperties);
+
+			return this.oProperty.get(this.oControl.getId()).then(function (oPropertyData) {
+				assert.deepEqual(oExpectedPropertyDataWithMockedLabel, oPropertyData, "then the correct result object received from the service");
+				fnElementDesignTimeMetadataStub.restore();
+			});
+		});
+
 		QUnit.test("when property service get() is called for a control with designTime properties wrapped in a function", function (assert) {
-		// wrap properties in a function
+			// wrap properties in a function
 			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
 			oDtObjProperties.properties = sandbox.stub().returns(this.oMockDesignTime.properties);
 
@@ -374,14 +438,17 @@ function(
 		});
 
 		QUnit.test("when property service get() is called for a control with designTime properties wrapped in a function returning an undefined value", function (assert) {
-		// wrap properties in a function
+			// wrap properties in a function
 			var oDtObjProperties = Object.assign({}, this.oMockDesignTime);
 			oDtObjProperties.properties = sandbox.stub();
 
 			var fnElementDesignTimeMetadataStub = sandbox.stub(ElementDesignTimeMetadata.prototype, "getData").returns(oDtObjProperties);
-		// removing DT Properties from response
-			var oExpectedResultWithoutDtProperties = RtaUtils.omit(this.oExpectedPropertyData.properties, ["dtMetadataProperty1", "dtMetadataProperty2", "virtualProperty1", "virtualProperty2", "virtualProperty3"]);
-		// this property was changed within DT properties; restoring to default
+			// removing DT Properties from response, which are not calculated because of the undefined return value
+			var oExpectedResultWithoutDtProperties = Object.assign(
+				{},
+				RtaUtils.omit(this.oExpectedPropertyData.properties, ["dtMetadataProperty1", "dtMetadataProperty2", "dtMetadataProperty3", "virtualProperty1", "virtualProperty2", "virtualProperty3", "virtualProperty4"])
+			);
+			// this property was changed within DT properties; restoring to default
 			oExpectedResultWithoutDtProperties["metadataProperty2"].ignore = false;
 
 			return this.oProperty.get(this.oControl.getId()).then(function(oPropertyData) {
