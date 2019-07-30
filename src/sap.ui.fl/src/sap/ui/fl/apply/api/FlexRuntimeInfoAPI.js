@@ -3,12 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/internal/ChangesController"
 ], function(
-	JsControlTreeModifier,
 	OldControlPersonalizationAPI,
 	Utils,
 	ChangesController
@@ -36,8 +34,8 @@ sap.ui.define([
 		 *
 		 * @ui5-restricted
 		 */
-		isPersonalized: function(aSelectors, aChangeTypes) {
-			return OldControlPersonalizationAPI.isPersonalized(aSelectors, aChangeTypes);
+		isPersonalized: function(mPropertyBag) {
+			return OldControlPersonalizationAPI.isPersonalized(mPropertyBag.selectors, mPropertyBag.changeTypes);
 		},
 
 		/**
@@ -47,8 +45,8 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Control whose changes are being waited for
 		 * @returns {Promise} Promise that resolves when all changes on the control are processed
 		 */
-		waitForChanges: function(oElement) {
-			return ChangesController.getFlexControllerInstance(oElement).waitForChangesToBeApplied(oElement);
+		waitForChanges: function(mPropertyBag) {
+			return ChangesController.getFlexControllerInstance(mPropertyBag.element).waitForChangesToBeApplied(mPropertyBag.element);
 		},
 
 		/**
@@ -58,8 +56,8 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Control to be checked
 		 * @returns {boolean} <code>true</code> if flexibility features are supported
 		 */
-		isFlexSupported: function(oElement) {
-			return !!Utils.getAppComponentForControl(oElement);
+		isFlexSupported: function(mPropertyBag) {
+			return !!Utils.getAppComponentForControl(mPropertyBag.element || arguments[0]);
 		},
 
 		/**
@@ -71,8 +69,8 @@ sap.ui.define([
 		 *
 		 * @ui5-restricted
 		 */
-		hasVariantManagement: function(oElement) {
-			return OldControlPersonalizationAPI.hasVariantManagement(oElement);
+		hasVariantManagement: function(mPropertyBag) {
+			return OldControlPersonalizationAPI.hasVariantManagement(mPropertyBag.element);
 		}
 	};
 

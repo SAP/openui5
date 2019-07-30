@@ -2,16 +2,18 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/Utils",
 	"sap/ui/core/Component",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
 	jQuery,
-	Utils,
 	Component,
+	Utils,
 	LrepConnector,
+	FlexRuntimeInfoAPI,
 	sinon
 ) {
 	"use strict";
@@ -29,8 +31,7 @@ function (
 				isProductiveSystem: false
 			}
 		}
-	}
-	);
+	});
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach: function () {
@@ -90,7 +91,7 @@ function (
 				// simulate a recreation of the control
 				var oNewFieldInstance = new sap.m.Input(oView.createId("myGroupField"));
 				oForm.addContent(oNewFieldInstance);
-				return oFlexController.waitForChangesToBeApplied(oNewFieldInstance)
+				return FlexRuntimeInfoAPI.waitForChanges({element: oNewFieldInstance})
 				.then(function() {
 					return oNewFieldInstance;
 				});
