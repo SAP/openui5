@@ -1673,6 +1673,8 @@ function(
 
 		this._tokenizer._onTokenDelete(oTokenToDelete);
 		this._getTokensList().removeItem(oListItem);
+
+		this.focus();
 	};
 
 	/**
