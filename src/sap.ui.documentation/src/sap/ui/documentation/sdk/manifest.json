@@ -102,17 +102,15 @@
 					"target": [
 						"controlsMaster",
 						"controls"
-					],
-					"subroutes": [
-						{
-							"pattern": "controls/filter/{value}",
-							"name": "listFilter",
-							"target": [
-								"controlsMaster",
-								"controls"
-							]
-						}
 					]
+				},
+				{
+				  "pattern": "controls/filter/{value}",
+				  "name": "listFilter",
+				  "target": [
+					"controlsMaster",
+					"controls"
+				  ]
 				},
 				{
 					"pattern": "group/{id}",
