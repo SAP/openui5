@@ -482,10 +482,15 @@ sap.ui.define([
 					return;
 				}
 
-				var aRows = createRows(oTable, iRowCount);
+				var aRows = createRows(oTable, iRowCount), oRow;
+				var oBindingInfo = oTable.getBindingInfo("rows");
+				var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
 
 				for (var i = 0; i < aRows.length; i++) {
-					oTable.addAggregation("rows", aRows[i], true);
+					oRow = aRows[i];
+					// prevent propagation of parent binding context; else incorrect data might be requested by the model.
+					oRow.setBindingContext(null, sModelName);
+					oTable.addAggregation("rows", oRow, true);
 				}
 
 				oTable._bRowAggregationInvalid = false;
