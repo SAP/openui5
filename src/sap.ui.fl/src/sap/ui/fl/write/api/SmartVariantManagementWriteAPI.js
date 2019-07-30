@@ -45,7 +45,7 @@ sap.ui.define([
 		 * @public
 		 */
 		add: function(mPropertyBag) {
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || [arguments[0]]);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
 
 			return oChangePersistence.addChangeForVariant(
