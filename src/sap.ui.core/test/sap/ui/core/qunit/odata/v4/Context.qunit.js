@@ -1747,6 +1747,43 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("doSetProperty: reduce path", function (assert) {
+		var oBinding = {
+				getBaseForPathReduction : function () {}
+			},
+			oMetaModel = {
+				fetchUpdateData : function () {},
+				getReducedPath : function () {}
+			},
+			oModel = {
+				bAutoExpandSelect : true,
+				getMetaModel : function () {
+					return oMetaModel;
+				}
+			},
+			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
+			oFetchUpdateDataResult = {entityPath : {}};
+
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs("/BusinessPartnerList('0100000000')", "some/relative/path")
+			.returns("/~");
+		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs()
+			.returns("/base/path");
+		this.mock(oMetaModel).expects("getReducedPath")
+			.withExactArgs("/~", "/base/path")
+			.returns("/reduced/path");
+		this.mock(oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("/reduced/path", sinon.match.same(oContext))
+			.resolves(oFetchUpdateDataResult);
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, sinon.match.same(oFetchUpdateDataResult.entityPath))
+			.resolves();
+
+		// code under test
+		return oContext.doSetProperty("some/relative/path", "new value");
+	});
+
+	//*********************************************************************************************
 [null, "new value"].forEach(function (vValue) {
 	QUnit.test("setProperty: " + vValue, function (assert) {
 		var oBinding = {

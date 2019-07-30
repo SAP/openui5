@@ -6724,7 +6724,6 @@ sap.ui.define([
 	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({
-				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
 			aPromises = [],
@@ -6735,7 +6734,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+		this.expectRequest("SalesOrderList('42')", {
 				"@odata.etag" : "ETag0",
 				Note : "Note",
 				SalesOrderID : "42"
@@ -19002,14 +19001,16 @@ sap.ui.define([
 		<items>\
 			<ColumnListItem>\
 				<Text id="note" text="{Note}"/>\
-				<Text id="soCurrencyCode" text="{SOITEM_2_SO/CurrencyCode}"/>\
+				<Input id="soCurrencyCode" value="{SOITEM_2_SO/CurrencyCode}"/>\
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				"@odata.etag" : "ETag",
 				CurrencyCode : "EUR",
 				SalesOrderID : "1",
 				SO_2_SOITEM : [{
@@ -19021,7 +19022,24 @@ sap.ui.define([
 			.expectChange("note", ["Foo"])
 			.expectChange("soCurrencyCode", ["EUR"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value");
+
+			that.expectChange("soCurrencyCode", ["USD"])
+				.expectRequest({
+					method : "PATCH",
+					headers : {"If-Match" : "ETag"},
+					url : "SalesOrderList('1')",
+					payload : {CurrencyCode : "USD"}
+				}, {
+					CurrencyCode : "USD",
+					SalesOrderID : "1"
+				});
+
+			oBinding.setValue("USD");
+
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
