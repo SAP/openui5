@@ -40,15 +40,20 @@ sap.ui.define([
 		return containsOrEquals(this.getDomRef("content"), oEvent.target);
 	};
 
+	CustomMonthPicker.prototype.onBeforeRendering = function () {
+		var oHeader = this.getAggregation("header");
+		Calendar.prototype.onBeforeRendering.call(this, arguments);
+		oHeader.setVisibleButton1(false);
+		oHeader.setVisibleButton2(true);
+	};
+
 	CustomMonthPicker.prototype.onAfterRendering = function () {
 		this._showMonthPicker();
 	};
 
 	CustomMonthPicker.prototype._selectYear = function () {
-		var oYearPicker = this.getAggregation("yearPicker");
-
 		var oFocusedDate = this._getFocusedDate();
-		oFocusedDate.setYear(oYearPicker.getYear());
+		oFocusedDate.setYear(this.getAggregation("yearPicker").getYear());
 
 		this._focusDate(oFocusedDate, true);
 

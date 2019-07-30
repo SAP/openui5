@@ -1359,6 +1359,8 @@ sap.ui.define([
 			var oTimesRow = this.getAggregation("timesRow");
 			jQuery(oTimesRow._oItemNavigation.getItemDomRefs()[oTimesRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
 		}
+
+		this.getAggregation("calendarPicker")._closedPickers();
 	}
 
 	/**

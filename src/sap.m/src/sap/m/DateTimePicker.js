@@ -733,6 +733,7 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", false);
 		this._restoreInputSelection(this._$input.get(0));
 
+		this._oCalendar._closedPickers();
 		Device.media.detachHandler(this._handleWindowResize, this);
 	}
 

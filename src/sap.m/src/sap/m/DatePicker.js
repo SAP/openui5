@@ -1348,6 +1348,7 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", false);
 
 		this._restoreInputSelection(this._$input.get(0));
+		this._oCalendar._closedPickers();
 
 		InstanceManager.removePopoverInstance(this._oPopup);
 	}
@@ -1379,8 +1380,9 @@ sap.ui.define([
 	function _invalidateCalendar() {
 
 		if (this.isOpen()) {
-			// calendar is displayed -> update it immediately
-			this._oCalendar._bDateRangeChanged = true;
+			// Calendar header and DateRanges are changed so we have to
+			// invalidate the whole calendar and not only the Month
+			this._oCalendar._bDateRangeChanged = false;
 			this._oCalendar.invalidate();
 		}
 
