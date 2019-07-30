@@ -92,11 +92,16 @@ function(
 
 	var DEVICE_SET = "sapUiRtaToolbar";
 
+	Adaptation.prototype.init = function() {
+		Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
+
+		Base.prototype.init.apply(this, arguments);
+	};
+
 	Adaptation.prototype.onAfterRendering = function () {
 		if (!Device.media.hasRangeSet(DEVICE_SET)) {
 			Device.media.initRangeSet(DEVICE_SET, [600, 900], "px", [Adaptation.modes.MOBILE, Adaptation.modes.TABLET, Adaptation.modes.DESKTOP]);
 		}
-		Device.media.attachHandler(this._onSizeChanged, this, DEVICE_SET);
 		this._onSizeChanged(Device.media.getCurrentRange(DEVICE_SET));
 
 		Base.prototype.onAfterRendering.apply(this, arguments);
