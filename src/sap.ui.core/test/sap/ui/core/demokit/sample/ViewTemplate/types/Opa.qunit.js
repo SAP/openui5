@@ -101,6 +101,8 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheMainPage.checkDateTimePickerValueState("I54", MessageType.None);
 			When.onTheMainPage.enterDateTimePickerValue("I56", "Apr 19, 2029, 8:25:21 AM");
 			Then.onTheMainPage.checkDateTimePickerValueState("I56", MessageType.None);
+			When.onTheMainPage.enterDateTimePickerValue("I58", "8:25:21 AM");
+			Then.onTheMainPage.checkDateTimePickerValueState("I58", MessageType.None);
 
 			// parseKeepsEmptyString test
 			When.onTheMainPage.enterInputValue("Identification::String40", "",

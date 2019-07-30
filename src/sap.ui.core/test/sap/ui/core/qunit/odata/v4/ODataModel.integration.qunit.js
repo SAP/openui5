@@ -2570,6 +2570,60 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario case-insensitive filtering
+	// JIRA: CPOUI5UISERVICESV3-1263
+	QUnit.test("OLDB: case insensitive filtering", function (assert) {
+		var oListBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/ProductList\'}">\
+	<columns><Column/></columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("ProductList?$select=Name,ProductID&$skip=0&$top=100", {
+				value : [{
+					ProductID : "1",
+					Name : "Pommes"
+				}, {
+					ProductID : "2",
+					Name : "Salat"
+				}
+			]})
+			.expectChange("name", ["Pommes", "Salat"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectRequest("ProductList?$select=Name,ProductID"
+					+ "&$filter=tolower(Name) eq tolower('salat')&$skip=0&$top=100", {
+					value : [{
+						ProductID : "2",
+						Name : "Salat"
+					}
+				]})
+				.expectChange("name", ["Salat"]);
+
+			// code under test
+			oListBinding.filter(new Filter({
+				filters : [
+					new Filter({
+						caseSensitive : false,
+						operator : FilterOperator.EQ,
+						path : "Name",
+						value1 : "salat"
+					})
+				]
+			}));
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: SalesOrders app
 	// * Sort the sales orders
 	// * Delete a sales order
@@ -6670,7 +6724,6 @@ sap.ui.define([
 	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({
-				autoExpandSelect : true,
 				updateGroupId : "update"
 			}),
 			aPromises = [],
@@ -6681,7 +6734,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
+		this.expectRequest("SalesOrderList('42')", {
 				"@odata.etag" : "ETag0",
 				Note : "Note",
 				SalesOrderID : "42"
@@ -18948,14 +19001,16 @@ sap.ui.define([
 		<items>\
 			<ColumnListItem>\
 				<Text id="note" text="{Note}"/>\
-				<Text id="soCurrencyCode" text="{SOITEM_2_SO/CurrencyCode}"/>\
+				<Input id="soCurrencyCode" value="{SOITEM_2_SO/CurrencyCode}"/>\
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</FlexBox>';
+</FlexBox>',
+			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				"@odata.etag" : "ETag",
 				CurrencyCode : "EUR",
 				SalesOrderID : "1",
 				SO_2_SOITEM : [{
@@ -18967,7 +19022,24 @@ sap.ui.define([
 			.expectChange("note", ["Foo"])
 			.expectChange("soCurrencyCode", ["EUR"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value");
+
+			that.expectChange("soCurrencyCode", ["USD"])
+				.expectRequest({
+					method : "PATCH",
+					headers : {"If-Match" : "ETag"},
+					url : "SalesOrderList('1')",
+					payload : {CurrencyCode : "USD"}
+				}, {
+					CurrencyCode : "USD",
+					SalesOrderID : "1"
+				});
+
+			oBinding.setValue("USD");
+
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************

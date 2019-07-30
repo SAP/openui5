@@ -368,8 +368,6 @@ sap.ui.define([
 
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vFilters)).returns(aFilters);
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vSorters)).returns(aSorters);
-		this.mock(ODataListBinding).expects("checkCaseSensitiveFilters")
-			.withExactArgs(sinon.match.same(aFilters));
 		this.mock(jQuery).expects("extend")
 			.withExactArgs(true, {}, sinon.match.same(mParameters))
 			.returns(mParametersClone);
@@ -2649,8 +2647,6 @@ sap.ui.define([
 
 				this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 					.returns(aFilters);
-				this.mock(ODataListBinding).expects("checkCaseSensitiveFilters")
-					.withExactArgs(sinon.match.same(aFilters));
 				oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 				oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspended);
 				oBindingMock.expects("getGroupId").exactly(bSuspended ? 0 : 1)
@@ -4458,14 +4454,49 @@ sap.ui.define([
 		{op : FilterOperator.EndsWith, result : "endswith(SupplierName,'SAP')"},
 		{op : FilterOperator.NotEndsWith, result : "not endswith(SupplierName,'SAP')"},
 		{op : FilterOperator.StartsWith, result : "startswith(SupplierName,'SAP')"},
-		{op : FilterOperator.NotStartsWith, result : "not startswith(SupplierName,'SAP')"}
+		{op : FilterOperator.NotStartsWith, result : "not startswith(SupplierName,'SAP')"},
+		{caseSensitive : false, op : FilterOperator.BT,
+			result : "tolower(SupplierName) ge tolower('SAP') and "
+				+ "tolower(SupplierName) le tolower('XYZ')"},
+		{caseSensitive : false, op : FilterOperator.NB,
+			result : "tolower(SupplierName) lt tolower('SAP') or "
+				+ "tolower(SupplierName) gt tolower('XYZ')"},
+		{caseSensitive : false, op : FilterOperator.EQ,
+			result : "tolower(SupplierName) eq tolower('SAP')"},
+		{caseSensitive : false, op : FilterOperator.GE,
+			result : "tolower(SupplierName) ge tolower('SAP')"},
+		{caseSensitive : false, op : FilterOperator.GT,
+			result : "tolower(SupplierName) gt tolower('SAP')"},
+		{caseSensitive : false, op : FilterOperator.LE,
+			result : "tolower(SupplierName) le tolower('SAP')"},
+		{caseSensitive : false, op : FilterOperator.LT,
+			result : "tolower(SupplierName) lt tolower('SAP')"},
+		{caseSensitive : false, op : FilterOperator.NE,
+			result : "tolower(SupplierName) ne tolower('SAP')"},
+		{caseSensitive : false, op : FilterOperator.Contains,
+			result : "contains(tolower(SupplierName),tolower('SAP'))"},
+		{caseSensitive : false, op : FilterOperator.NotContains,
+			result : "not contains(tolower(SupplierName),tolower('SAP'))"},
+		{caseSensitive : false, op : FilterOperator.EndsWith,
+			result : "endswith(tolower(SupplierName),tolower('SAP'))"},
+		{caseSensitive : false, op : FilterOperator.NotEndsWith,
+			result : "not endswith(tolower(SupplierName),tolower('SAP'))"},
+		{caseSensitive : false, op : FilterOperator.StartsWith,
+			result : "startswith(tolower(SupplierName),tolower('SAP'))"},
+		{caseSensitive : false, op : FilterOperator.NotStartsWith,
+			result : "not startswith(tolower(SupplierName),tolower('SAP'))"},
+		{caseSensitive : true, op : FilterOperator.EQ, result : "SupplierName eq 'SAP'"},
+		{caseSensitive : false, op : FilterOperator.EQ,
+			result : "SupplierName eq 'SAP'",
+			type : "Edm.Foo"}
 	].forEach(function (oFixture) {
 		QUnit.test("fetchFilter: " + oFixture.op + " --> " + oFixture.result, function (assert) {
 			var oBinding = this.bindList("/SalesOrderList('4711')/SO_2_ITEMS"),
+				oHelperMock = this.mock(_Helper),
 				oMetaContext = {},
 				oMetaModelMock = this.mock(this.oModel.oMetaModel),
-				oHelperMock = this.mock(_Helper),
-				oPropertyMetadata = {$Type : "Edm.String"};
+				sType = oFixture.type || "Edm.String",
+				oPropertyMetadata = {$Type : sType};
 
 			this.mock(this.oModel).expects("resolve")
 				.withExactArgs(oBinding.sPath, undefined).returns(oBinding.sPath);
@@ -4474,14 +4505,23 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("SupplierName", sinon.match.same(oMetaContext))
 				.returns(SyncPromise.resolve(oPropertyMetadata));
-			oHelperMock.expects("formatLiteral").withExactArgs("SAP", "Edm.String")
+			oHelperMock.expects("formatLiteral").withExactArgs("SAP", sType)
 				.returns("'SAP'");
 			if (oFixture.op === FilterOperator.BT || oFixture.op === FilterOperator.NB) {
-				oHelperMock.expects("formatLiteral").withExactArgs("XYZ", "Edm.String")
+				oHelperMock.expects("formatLiteral").withExactArgs("XYZ", sType)
 					.returns("'XYZ'");
 			}
-			oBinding.aApplicationFilters = [new Filter("SupplierName", oFixture.op, "SAP", "XYZ")];
+			oBinding.aApplicationFilters = [new Filter({
+				caseSensitive : oFixture.caseSensitive !== undefined
+					? oFixture.caseSensitive
+					: true,
+				operator : oFixture.op,
+				path : "SupplierName",
+				value1 : "SAP",
+				value2 : "XYZ"
+			})];
 
+			// code under test
 			assert.strictEqual(oBinding.fetchFilter().getResult(), oFixture.result);
 		});
 	});
@@ -6048,75 +6088,6 @@ sap.ui.define([
 		oBinding.resumeInternal();
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Sort);
-	});
-
-	//*********************************************************************************************
-	[[
-		/*no Filter*/
-	], [
-		new Filter({caseSensitive : true, operator : "EQ", path : "Foo", value1 : "bar"})
-	], [
-		new Filter({operator : "EQ", path : "Foo", value1 : "bar"})
-	]].forEach(function (aFilters, i) {
-		QUnit.test("checkCaseSensitiveFilters: ok - " + i, function (assert) {
-			// code under test
-			ODataListBinding.checkCaseSensitiveFilters(aFilters);
-		});
-	});
-
-	//*********************************************************************************************
-	[[
-		new Filter({caseSensitive : false, operator : "EQ", path : "Foo", value1 : "bar"})
-	], [
-		new Filter({caseSensitive : true, operator : "EQ", path : "Foo0", value1 : "bar0"}),
-		new Filter({caseSensitive : false, operator : "EQ", path : "Foo", value1 : "bar"})
-	], [
-		new Filter({
-			condition : new Filter({
-				caseSensitive : false,
-				operator : FilterOperator.GT,
-				path : 'item/Quantity',
-				value1 : 100.0
-			}),
-			operator : FilterOperator.All,
-			path : 'Items',
-			variable : 'item'
-		})
-	], [
-		new Filter({
-			filters : [
-				new Filter({
-					caseSensitive : false,
-					operator : FilterOperator.GT,
-					path : 'item/Quantity',
-					value1 : 100.0
-				})
-			]
-		})
-	], [
-		new Filter({
-			condition : new Filter({
-				filters : [
-					new Filter({
-						caseSensitive : false,
-						operator : FilterOperator.GT,
-						path : 'item/Quantity',
-						value1 : 100.0
-					})
-				]
-			}),
-			operator : FilterOperator.All,
-			path : 'Items',
-			variable : 'item'
-		})
-	]].forEach(function (aFilters, i) {
-		QUnit.test("checkCaseSensitiveFilters: error - " + i, function (assert) {
-			assert.throws(function () {
-				// code under test
-				ODataListBinding.checkCaseSensitiveFilters(aFilters);
-			}, new Error("Filter for path '" + (i < 2 ? "Foo" : "item/Quantity")
-				+ "' has unsupported value for 'caseSensitive' : false"));
-		});
 	});
 
 	//*********************************************************************************************

@@ -320,6 +320,11 @@ sap.ui.define([
 		var oMetaModel = this.oModel.getMetaModel(),
 			that = this;
 
+		if (this.oModel.bAutoExpandSelect) {
+			sPath = this.oModel.getMetaModel().getReducedPath(
+				_Helper.buildPath(this.sPath, sPath),
+				this.oBinding.getBaseForPathReduction());
+		}
 		return oMetaModel.fetchUpdateData(sPath, this).then(function (oResult) {
 			return that.withCache(function (oCache, sCachePath, oBinding) {
 				// If a PATCH is merged into a POST request, firePatchSent is not called, thus
