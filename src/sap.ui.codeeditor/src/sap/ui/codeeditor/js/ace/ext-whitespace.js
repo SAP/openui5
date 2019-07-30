@@ -176,22 +176,26 @@ exports.$parseArg = function(arg) {
 
 exports.commands = [{
     name: "detectIndentation",
+    description: "Detect indentation from content",
     exec: function(editor) {
         exports.detectIndentation(editor.session);
     }
 }, {
     name: "trimTrailingSpace",
+    description: "Trim trailing whitespace",
     exec: function(editor, args) {
         exports.trimTrailingSpace(editor.session, args);
     }
 }, {
     name: "convertIndentation",
+    description: "Convert indentation to ...",
     exec: function(editor, arg) {
         var indent = exports.$parseArg(arg);
         exports.convertIndentation(editor.session, indent.ch, indent.length);
     }
 }, {
     name: "setIndentation",
+    description: "Set indentation",
     exec: function(editor, arg) {
         var indent = exports.$parseArg(arg);
         indent.length && editor.session.setTabSize(indent.length);
@@ -199,8 +203,7 @@ exports.commands = [{
     }
 }];
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/ext/whitespace"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

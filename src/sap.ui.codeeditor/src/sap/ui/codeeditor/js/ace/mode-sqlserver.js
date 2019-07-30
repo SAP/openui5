@@ -58,6 +58,7 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var SqlServerHighlightRules = function() {
     var logicalOperators = "ALL|AND|ANY|BETWEEN|EXISTS|IN|LIKE|NOT|OR|SOME";
     logicalOperators += "|NULL|IS|APPLY|INNER|OUTER|LEFT|RIGHT|JOIN|CROSS"; //SSMS colors these gray too
+    
 
     var builtinFunctions = (
         "OPENDATASOURCE|OPENQUERY|OPENROWSET|OPENXML|" +
@@ -433,8 +434,7 @@ oop.inherits(Mode, TextMode);
 
 exports.Mode = Mode;
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/sqlserver"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

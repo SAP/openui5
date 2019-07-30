@@ -27,7 +27,7 @@ exports.beautify = function(session) {
     var indent = 0;
     var unindent = 0;
     var roundDepth = 0;
-    var onCaseLine = false;
+    var curlyDepth = 0;
     var row;
     var curRow = 0;
     var rowsToAdd = 0;
@@ -39,7 +39,7 @@ exports.beautify = function(session) {
     var inCSS = false;
     var inBlock = false;
     var levels = {0: 0};
-    var parents = {};
+    var parents = [];
 
     var trimNext = function() {
         if (nextToken && nextToken.value && nextToken.type !== 'string.regexp')
@@ -183,8 +183,12 @@ exports.beautify = function(session) {
                 } else if (token.type === "punctuation.operator" && value.match(/^(:|,)$/)) {
                     trimCode();
                     trimNext();
-                    spaceAfter = true;
-                    breakBefore = false;
+                    if (value.match(/^(,)$/) && curlyDepth>0 && roundDepth===0) {
+                        rowsToAdd++;
+                    } else {
+                        spaceAfter = true;
+                        breakBefore = false;
+                    }
                 } else if (token.type === "support.php_tag" && value === "?>" && !breakBefore) {
                     trimCode();
                     spaceBefore = true;
@@ -239,6 +243,7 @@ exports.beautify = function(session) {
                 }
                 if (token.type === "paren.lparen") {
                     roundDepth += (value.match(/\(/g) || []).length;
+                    curlyDepth += (value.match(/\{/g) || []).length;
                     depth += value.length;
                 }
 
@@ -250,6 +255,7 @@ exports.beautify = function(session) {
 
                 if (token.type === "paren.rparen") {
                     roundDepth -= (value.match(/\)/g) || []).length;
+                    curlyDepth -= (value.match(/\}/g) || []).length;
 
                     for (i = 0; i < value.length; i++) {
                         depth--;
@@ -301,14 +307,14 @@ exports.beautify = function(session) {
 
 exports.commands = [{
     name: "beautify",
+    description: "Format selection (Beautify)",
     exec: function(editor) {
         exports.beautify(editor.session);
     },
     bindKey: "Ctrl-Shift-B"
 }];
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/ext/beautify"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

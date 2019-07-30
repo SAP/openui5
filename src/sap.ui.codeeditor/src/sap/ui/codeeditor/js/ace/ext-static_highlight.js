@@ -1,4 +1,4 @@
-ace.define("ace/ext/static_highlight",["require","exports","module","ace/edit_session","ace/layer/text","ace/config","ace/lib/dom"], function(require, exports, module) {
+ace.define("ace/ext/static_highlight",["require","exports","module","ace/edit_session","ace/layer/text","ace/config","ace/lib/dom","ace/lib/lang"], function(require, exports, module) {
 "use strict";
 
 var EditSession = require("../edit_session").EditSession;
@@ -13,6 +13,7 @@ width: 2em;\
 text-align: right;\
 padding: 0 3px 0 0;\
 margin-right: 3px;\
+contain: none;\
 }\
 .ace_static_highlight.ace_show_gutter .ace_line {\
 padding-left: 2.6em;\
@@ -38,6 +39,7 @@ counter-reset: ace_line;\
 ";
 var config = require("../config");
 var dom = require("../lib/dom");
+var escapeHTML = require("../lib/lang").escapeHTML;
 
 function Element(type) {
     this.type = type;
@@ -64,10 +66,11 @@ Element.prototype.toString = function() {
             stringBuilder.push(" style='", styleStr.join(""), "'");
         stringBuilder.push(">");
     }
-    
-    if (this.textContent)
+
+    if (this.textContent) {
         stringBuilder.push(this.textContent);
-    
+    }
+
     if (this.type != "fragment") {
         stringBuilder.push("</", this.type, ">");
     }
@@ -78,7 +81,7 @@ Element.prototype.toString = function() {
 
 var simpleDom = {
     createTextNode: function(textContent, element) {
-        return textContent;
+        return escapeHTML(textContent);
     },
     createElement: function(type) {
         return new Element(type);
@@ -198,10 +201,11 @@ highlight.renderSync = function(input, mode, theme, lineStart, disableGutter) {
         if (!disableGutter) {
             var gutterEl = simpleDom.createElement("span");
             gutterEl.className ="ace_gutter ace_gutter-cell";
-            gutterEl.textContent = ""; /*(ix + lineStart) + */
+            gutterEl.textContent = "";
             lineEl.appendChild(gutterEl);
         }
         textLayer.$renderLine(lineEl, ix, false);
+        lineEl.textContent += "\n";
         innerEl.appendChild(lineEl);
     }
     outerEl.appendChild(innerEl);
@@ -215,8 +219,7 @@ highlight.renderSync = function(input, mode, theme, lineStart, disableGutter) {
 
 module.exports = highlight;
 module.exports.highlight = highlight;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/ext/static_highlight"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

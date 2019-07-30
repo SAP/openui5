@@ -517,6 +517,7 @@ function validateDelta(docLines, delta) {
 }
 
 exports.applyDelta = function(docLines, delta, doNotValidate) {
+    
     var row = delta.start.row;
     var startColumn = delta.start.column;
     var line = docLines[row] || "";
@@ -598,10 +599,15 @@ EventEmitter._signal = function(eventName, e) {
 
 EventEmitter.once = function(eventName, callback) {
     var _self = this;
-    callback && this.addEventListener(eventName, function newCallback() {
+    this.addEventListener(eventName, function newCallback() {
         _self.removeEventListener(eventName, newCallback);
         callback.apply(null, arguments);
     });
+    if (!callback) {
+        return new Promise(function(resolve) {
+            callback = resolve;
+        });
+    }
 };
 
 
@@ -733,6 +739,7 @@ var Anchor = exports.Anchor = function(doc, row, column) {
                 column: point.column + (point.row == deltaEnd.row ? deltaColShift : 0)
             };
         }
+        
         return {
             row: deltaStart.row,
             column: deltaStart.column
@@ -981,7 +988,7 @@ var Document = function(textOrLines) {
             column = this.$lines[row].length;
         }
         this.insertMergedLines({row: row, column: column}, lines);
-    };
+    };    
     this.insertMergedLines = function(position, lines) {
         var start = this.clippedPos(position.row, position.column);
         var end = {
@@ -1404,6 +1411,7 @@ var Mirror = exports.Mirror = function(sender) {
 
 ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
 "use strict";
+
     var at,     // The index of the current character
         ch,     // The current character
         escapee = {
@@ -1419,6 +1427,7 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         text,
 
         error = function (m) {
+
             throw {
                 name:    'SyntaxError',
                 message: m,
@@ -1428,15 +1437,18 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         },
 
         next = function (c) {
+
             if (c && c !== ch) {
                 error("Expected '" + c + "' instead of '" + ch + "'");
             }
+
             ch = text.charAt(at);
             at += 1;
             return ch;
         },
 
         number = function () {
+
             var number,
                 string = '';
 
@@ -1475,10 +1487,12 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         },
 
         string = function () {
+
             var hex,
                 i,
                 string = '',
                 uffff;
+
             if (ch === '"') {
                 while (next()) {
                     if (ch === '"') {
@@ -1512,12 +1526,14 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         },
 
         white = function () {
+
             while (ch && ch <= ' ') {
                 next();
             }
         },
 
         word = function () {
+
             switch (ch) {
             case 't':
                 next('t');
@@ -1545,6 +1561,7 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         value,  // Place holder for the value function.
 
         array = function () {
+
             var array = [];
 
             if (ch === '[') {
@@ -1569,6 +1586,7 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         },
 
         object = function () {
+
             var key,
                 object = {};
 
@@ -1600,6 +1618,7 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         };
 
     value = function () {
+
         white();
         switch (ch) {
         case '{':
@@ -1614,6 +1633,7 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
             return ch >= '0' && ch <= '9' ? number() : word();
         }
     };
+
     return function (source, reviver) {
         var result;
 
@@ -1625,6 +1645,7 @@ ace.define("ace/mode/json/json_parse",[], function(require, exports, module) {
         if (ch) {
             error("Syntax error");
         }
+
         return typeof reviver === 'function' ? function walk(holder, key) {
             var k, v, value = holder[key];
             if (value && typeof value === 'object') {
@@ -1684,8 +1705,6 @@ oop.inherits(JsonWorker, Mirror);
 
 ace.define("ace/lib/es5-shim",[], function(require, exports, module) {
 
-//
-//
 function Empty() {}
 
 if (!Function.prototype.bind) {
@@ -1698,6 +1717,7 @@ if (!Function.prototype.bind) {
         var bound = function () {
 
             if (this instanceof bound) {
+
                 var result = target.apply(
                     this,
                     args.concat(slice.call(arguments))
@@ -1721,7 +1741,6 @@ if (!Function.prototype.bind) {
             bound.prototype = new Empty();
             Empty.prototype = null;
         }
-        //
         return bound;
     };
 }
@@ -1742,9 +1761,6 @@ if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
     lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
     lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
 }
-
-//
-//
 if ([1,2].splice(0).length != 2) {
     if(function() { // test IE < 9 to splice bug - see issue #138
         function makeArray(l) {
@@ -2067,9 +2083,6 @@ if (!Array.prototype.lastIndexOf || ([0, 1].lastIndexOf(0, -3) != -1)) {
         return -1;
     };
 }
-
-//
-//
 if (!Object.getPrototypeOf) {
     Object.getPrototypeOf = function getPrototypeOf(object) {
         return object.__proto__ || (
@@ -2153,6 +2166,7 @@ if (!Object.create) {
         return object;
     };
 }
+
 function doesDefinePropertyWork(object) {
     try {
         Object.defineProperty(object, "sentinel", {});
@@ -2318,18 +2332,11 @@ if (!Object.keys) {
     };
 
 }
-
-//
-//
 if (!Date.now) {
     Date.now = function now() {
         return new Date().getTime();
     };
 }
-
-
-//
-//
 var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
     "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
     "\u2029\uFEFF";
@@ -2342,8 +2349,6 @@ if (!String.prototype.trim || ws.trim()) {
     };
 }
 
-//
-//
 function toInteger(n) {
     n = +n;
     if (n !== n) { // isNaN

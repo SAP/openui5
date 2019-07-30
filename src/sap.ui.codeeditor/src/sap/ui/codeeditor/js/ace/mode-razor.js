@@ -92,6 +92,7 @@ var JavaScriptHighlightRules = function(options) {
         "3[0-7][0-7]?|" + // oct
         "[4-7][0-7]?|" + //oct
         ".)";
+
     this.$rules = {
         "no_regex" : [
             DocCommentHighlightRules.getStartRule("doc-start"),
@@ -813,6 +814,7 @@ var CssHighlightRules = function() {
         "support.constant.color": supportConstantColor,
         "support.constant.fonts": supportConstantFonts
     }, "text", true);
+
     this.$rules = {
         "start" : [{
             include : ["strings", "url", "comments"]
@@ -1101,11 +1103,7 @@ var CssCompletions = function() {
             this.defineCompletions();
         }
 
-        var token = session.getTokenAt(pos.row, pos.column);
-
-        if (!token)
-            return [];
-        if (state==='ruleset'){
+        if (state==='ruleset' || session.$mode.$id == "ace/mode/scss") {
             var line = session.getLine(pos.row).substr(0, pos.column);
             if (/:[^;]+$/.test(line)) {
                 /([\w\-]+):[^:]*$/.test(line);
@@ -2510,9 +2508,10 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var CSharpHighlightRules = function() {
     var keywordMapper = this.createKeywordMapper({
         "variable.language": "this",
-        "keyword": "abstract|event|new|struct|as|explicit|null|switch|base|extern|object|this|bool|false|operator|throw|break|finally|out|true|byte|fixed|override|try|case|float|params|typeof|catch|for|private|uint|char|foreach|protected|ulong|checked|goto|public|unchecked|class|if|readonly|unsafe|const|implicit|ref|ushort|continue|in|return|using|decimal|int|sbyte|virtual|default|interface|sealed|volatile|delegate|internal|partial|short|void|do|is|sizeof|while|double|lock|stackalloc|else|long|static|enum|namespace|string|var|dynamic",
+        "keyword": "abstract|async|await|event|new|struct|as|explicit|null|switch|base|extern|object|this|bool|false|operator|throw|break|finally|out|true|byte|fixed|override|try|case|float|params|typeof|catch|for|private|uint|char|foreach|protected|ulong|checked|goto|public|unchecked|class|if|readonly|unsafe|const|implicit|ref|ushort|continue|in|return|using|decimal|int|sbyte|virtual|default|interface|sealed|volatile|delegate|internal|partial|short|void|do|is|sizeof|while|double|lock|stackalloc|else|long|static|enum|namespace|string|var|dynamic",
         "constant.language": "null|true|false"
     }, "identifier");
+
     this.$rules = {
         "start" : [
             {
@@ -2658,6 +2657,7 @@ oop.inherits(RazorLangHighlightRules, CSharpHighlightRules);
 
 var RazorHighlightRules = function() {
     HtmlHighlightRules.call(this);
+
     var blockStartRule = {
         regex: '@[({]|@functions{',
         onMatch: function(value, state, stack) {
@@ -2687,6 +2687,7 @@ var RazorHighlightRules = function() {
             return 'punctuation.block.razor';
         }
     };
+
     var shortStartRule = {
         regex: "@(?![{(])",
         onMatch: function(value, state, stack) {
@@ -2701,6 +2702,7 @@ var RazorHighlightRules = function() {
         regex: "(?=[^A-Za-z_\\.()\\[\\]])",
         next: 'pop'
     };
+
     var ifStartRule = {
         regex: "@(?=if)",
         onMatch: function(value, state, stack) {
@@ -2714,6 +2716,7 @@ var RazorHighlightRules = function() {
             return 'punctuation.control.razor';
         }
     };
+
     var razorStartRules = [
         {
             start: "@\\*",
@@ -2858,8 +2861,7 @@ oop.inherits(Mode, HtmlMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/razor"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;
