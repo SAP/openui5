@@ -18,17 +18,20 @@
 			#overlay-container {
 				background-color: rgba(255,0,255,0.5);
 			}
+			#HorizontalLayout {
+				margin-top: 50px;
+			}
 		</style>
 
 		<script src="../shared-config.js"></script>
 		<script>
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 			window['sap-ui-config'].noConflict = 'true';
 			window['sap-ui-config'].libs = 'sap.ui.dt, sap.m, sap.ui.layout';
 			window['sap-ui-config'].resourceroots = {
 				"dt.performance": "./",
 				"rta.performance": "../../../../sap/ui/rta/internal/performance/"
 			};
-			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
 		<script>
