@@ -489,14 +489,7 @@ sap.ui.define([
 			if (!this._mVariantsChanges[sStableId]) {
 				this._mVariantsChanges[sStableId] = {};
 			}
-			if (aChanges && aChanges.length === 0) {
-				return LRepConnector.isFlexServiceAvailable().then(function (bStatus) {
-					if (bStatus === false) {
-						return Promise.reject();
-					}
-					return Promise.resolve(this._mVariantsChanges[sStableId]);
-				}.bind(this));
-			}
+
 			var sId;
 			aChanges.forEach(function (oChange) {
 				sId = oChange.getId();
