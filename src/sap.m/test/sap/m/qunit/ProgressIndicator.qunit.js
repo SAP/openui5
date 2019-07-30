@@ -310,6 +310,21 @@ sap.ui.define([
 		oProgIndicator.destroy();
 	});
 
+	QUnit.test("ARIA labelledBy and describedBy are set", function(assert) {
+		var oProgIndicator = new ProgressIndicator({
+			ariaLabelledBy: "id1",
+			ariaDescribedBy: "id2"
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.strictEqual(oProgIndicator.$().attr("aria-labelledby"), "id1", "aria-labelledby is set correctly");
+		assert.strictEqual(oProgIndicator.$().attr("aria-describedby"), "id2", "aria-describedby is set correctly");
+
+		oProgIndicator.destroy();
+	});
+
 	QUnit.test("explicitly setting textDirection to RTL should override the global setting", function(assert) {
 		var $TestSubject = jQuery("#pi3").find("span");
 		var sDirAttribute = $TestSubject.attr("dir");
