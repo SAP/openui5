@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/internal/ChangesController",
+	"sap/ui/fl/apply/internal/ChangesController",
 	"sap/ui/fl/Cache"
 ], function(
 	ChangesController,

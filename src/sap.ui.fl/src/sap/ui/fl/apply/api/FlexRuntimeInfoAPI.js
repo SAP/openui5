@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/internal/ChangesController"
+	"sap/ui/fl/apply/internal/ChangesController"
 ], function(
 	OldControlPersonalizationAPI,
 	Utils,

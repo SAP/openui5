@@ -1,8 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/internal/ChangesController",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/apply/internal/ChangesController",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/base/ManagedObject",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesController,
-	ChangesWriteAPI,
 	FlexUtils,
 	FlexControllerFactory,
 	ManagedObject,

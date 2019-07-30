@@ -6,17 +6,17 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/base/util/includes",
-	"sap/ui/fl/write/internal/ChangesController",
+	"sap/ui/fl/apply/internal/ChangesController",
 	"sap/base/Log",
+	"sap/base/util/includes",
 	"sap/base/util/merge"
 ], function(
 	DescriptorVariantFactory,
 	TransportSelection,
 	DescriptorInlineChangeFactory,
-	includes,
 	ChangesController,
 	Log,
+	includes,
 	merge
 ) {
 	"use strict";

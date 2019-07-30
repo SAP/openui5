@@ -24,31 +24,37 @@ sap.ui.define(function () {
 		tests: {
 			// new tests
 			"apply/api/FlexRuntimeInfoAPI": {
-				group: 'Apply API',
+				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"apply/api/ControlVariantApplyAPI": {
-				group: 'Apply API',
+				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"apply/api/SmartVariantManagementApplyAPI": {
-				group: 'Apply API',
+				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/SmartVariantManagementApplyAPI"]
 				}
 			},
 			"apply/api/UI2PersonalizationApplyAPI": {
-				group: 'Apply API',
+				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
+			"apply/internal/ChangesController": {
+				group: "Apply API",
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/ChangesController"]
+				}
+			},
 			"apply/internal/Connector": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				ui5: {
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
 				},
@@ -57,7 +63,7 @@ sap.ui.define(function () {
 				}
 			},
 			"apply/internal/ConnectorWithCustomBrokenConnector": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				ui5: {
 					resourceroots: {
 						"my.lib": "./test-resources/sap/ui/fl/qunit/apply/internal/",
@@ -71,7 +77,7 @@ sap.ui.define(function () {
 				}
 			},
 			"apply/internal/ConnectorWithDebugEnabled": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				ui5: {
 					debug: true,
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
@@ -81,7 +87,7 @@ sap.ui.define(function () {
 				}
 			},
 			"apply/internal/ConnectorWithForcedFlexBundle": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				ui5: {
 					"xx-flexBundleRequestForced": true,
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
@@ -91,50 +97,44 @@ sap.ui.define(function () {
 				}
 			},
 			"write/api/ChangesWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/write/internal/ChangesController"]
+					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/apply/internal/ChangesController"]
 				}
 			},
 			"write/api/ControlPersonalizationWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"write/api/PersistenceWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/write/internal/ChangesController"]
+					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/apply/internal/ChangesController"]
 				}
 			},
 			"write/api/UI2PersonalizationWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/UI2PersonalizationWriteAPI"]
 				}
 			},
 			"write/api/SmartVariantManagementWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/SmartVariantManagementWriteAPI"]
 				}
 			},
-			"write/internal/ChangesController": {
-				group: 'Write API',
-				coverage: {
-					only: ["sap/ui/fl/write/internal/ChangesController"]
-				}
-			},
 			"write/internal/Connector": {
-				group: 'Write Internal',
+				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/api/internal/Connector"]
 				}
 			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
-				group: 'Descriptor related APIs',
+				group: "Descriptor related APIs",
 				coverage: {
 					only: [
 						"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
@@ -144,7 +144,7 @@ sap.ui.define(function () {
 				}
 			},
 			"descriptorRelated/internal/Utils": {
-				group: 'Descriptor related Utils',
+				group: "Descriptor related Utils",
 				coverage: {
 					only: ["sap/ui/fl/descriptorRelated/internal/Utils"]
 				}
@@ -291,8 +291,8 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/changeHandler/PropertyBindingChange"]
 				},
 				ui5: {
-					'xx-bindingSyntax': 'complex',
-					'xx-designMode': 'true'
+					"xx-bindingSyntax": "complex",
+					"xx-designMode": "true"
 				}
 			},
 			"changeHandler/PropertyChange": {
