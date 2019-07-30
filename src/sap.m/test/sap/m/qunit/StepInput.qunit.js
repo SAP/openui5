@@ -113,6 +113,8 @@ sap.ui.define([
 
 		//Act
 		oSI.setEditable(true);
+		oCore.applyChanges();
+
 		//Assert
 		assert.ok(oSI._getDecrementButton().getVisible(),
 			"Decrement button is available once StepInput is editable");
@@ -240,24 +242,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("setMin", function (assert) {
-		//prepare & act
-		var oSpyDisableButtons,
-			oSpyVerifyValue;
+		//act
 		this.stepInput.setMin(undefined);
+
 		//assert
 		assert.strictEqual(this.stepInput.getMin(), undefined,
 			"Value of undefined is set");
 
 		//act
 		this.stepInput.setMin("string");
+
 		//assert
 		assert.strictEqual(this.stepInput.getMin(), undefined,
 			"Value of 'min' is not changed");
 
 		//prepare
-		oSpyDisableButtons = sinon.spy(this.stepInput, "_disableButtons");
+		oSpyDisableButtons = this.spy(this.stepInput, "_disableButtons");
 		//act
 		this.stepInput.setMin(9);
+		oCore.applyChanges();
 		//assert
 		assert.equal(oSpyDisableButtons.callCount, 1, "setMin always calls _disableButtons so the buttons state is reflected");
 		assert.strictEqual(oSpyDisableButtons.getCall(0).args[2], 9,
@@ -265,25 +268,27 @@ sap.ui.define([
 	});
 
 	QUnit.test("setMax", function (assert) {
-		var oSpyDisableButtons,
-			oSpyVerifyValue;
-		//prepare
+		var oSpyDisableButtons;
+
+		//act
 		this.stepInput.setMax(undefined);
 		//assert
 		assert.strictEqual(this.stepInput.getMax(), undefined,
 			"Value of undefined is set to the 'max'");
 
-		//prepare
+		//act
 		this.stepInput.setMax("string");
+
 		//assert
 		assert.strictEqual(this.stepInput.getMax(), undefined,
 			"Value of 'max' is not changed");
 
 		//prepare
-		oSpyDisableButtons = sinon.spy(this.stepInput, "_disableButtons");
+		oSpyDisableButtons = this.spy(this.stepInput, "_disableButtons");
 		//Act
 		this.stepInput.setMax(20);
-		// Assert
+		oCore.applyChanges();
+
 		assert.equal(oSpyDisableButtons.callCount, 1,
 			"setMax always calls _disableButtons so the buttons state is reflected");
 		assert.strictEqual(oSpyDisableButtons.getCall(0).args[1], 20,
@@ -296,6 +301,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValueState(sValue);
+		oCore.applyChanges();
 
 		//assert
 		assert.equal(this.stepInput.getValueState(), sValue, "valueState is set to " + sValue);
@@ -426,18 +432,22 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setMin(3);
+		oCore.applyChanges();
+
 		//assert
 		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
 			"The decrement button is disabled because there's min and min = value");
 
 		//act
 		this.stepInput.setValue(2);
+		oCore.applyChanges();
 		//assert
 		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
 			"The decrement button is disabled because value < min");
 
 		//act
 		this.stepInput.setValue(4);
+		oCore.applyChanges();
 		//assert
 		assert.strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 			"The decrement button is enabled because the value > min");
@@ -468,6 +478,7 @@ sap.ui.define([
 		oInput.setValue(2);
 		oInput.$().blur();
 		this.stepInput._change();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(this.stepInput._getInput().getValueState(), "Error",
@@ -476,6 +487,7 @@ sap.ui.define([
 		//act
 		//value becomes 3
 		this.stepInput._getIncrementButton().firePress();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(this.stepInput._getInput().getValueState(), "None",
@@ -518,10 +530,12 @@ sap.ui.define([
 		var oIncrementButton = this.stepInput._getIncrementButton(),
 			oDecrementButton = this.stepInput._getDecrementButton();
 		oIncrementButton.firePress();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(this.stepInput.getValue(), 1.1, "The value is successfuly incremented");
 		oDecrementButton.firePress();
+		oCore.applyChanges();
 		assert.strictEqual(this.stepInput.getValue(), 0,
 			"The value is successfuly decremented");
 
@@ -544,6 +558,7 @@ sap.ui.define([
 		//act
 		oIncrementButton.firePress();
 		oIncrementButton.firePress();
+		oCore.applyChanges();
 
 		//assert
 		assert.strictEqual(this.stepInput.getValue(), 2,
@@ -562,9 +577,11 @@ sap.ui.define([
 			oDecrementButton = this.stepInput._getDecrementButton();
 
 		oIncrementButton.firePress();
+		oCore.applyChanges();
 		assert.strictEqual(this.stepInput.getValue(), 431.2,
 			"The value is successfuly incremented");
 		oDecrementButton.firePress();
+		oCore.applyChanges();
 		assert.strictEqual(this.stepInput.getValue(), 431.15,
 			"The value is successfuly decremented");
 
@@ -963,6 +980,7 @@ sap.ui.define([
 	QUnit.test("if the value is out of min/max range, pressing up/down arrow the value will be set to min/max", function (assert) {
 		//act
 		this.stepInput.setValue(-7);
+		oCore.applyChanges();
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 		this.clock.tick(1000);
 
@@ -972,6 +990,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue(13);
+		oCore.applyChanges();
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 		this.clock.tick(1000);
 
@@ -983,6 +1002,7 @@ sap.ui.define([
 	QUnit.test("if the value is out of min/max range, pressing up/down arrow + alt the value will be set to min/max", function (assert) {
 		//act
 		this.stepInput.setValue(-7);
+		oCore.applyChanges();
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true);
 		this.clock.tick(1000);
 
@@ -992,6 +1012,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue(13);
+		oCore.applyChanges();
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(1000);
 
@@ -1003,6 +1024,7 @@ sap.ui.define([
 	QUnit.test("if the value is out of min/max range, pressing up/down arrow + ctrl the value will be set to min/max", function (assert) {
 		//act
 		this.stepInput.setValue(-7);
+		oCore.applyChanges();
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, false, true);
 		this.clock.tick(1000);
 
@@ -1012,6 +1034,7 @@ sap.ui.define([
 
 		//act
 		this.stepInput.setValue(13);
+		oCore.applyChanges();
 		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, true);
 		this.clock.tick(1000);
 
