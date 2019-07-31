@@ -32,9 +32,9 @@ sap.ui.define([
 	 * <ul>
 	 * <li>No Select All checkbox, select all can only be done via range selection</li>
 	 * <li>Dedicated Deselect All button to clear the selection</li>
-	 * <li>The number of items which can be selected in a range is defined with the limit property by the application.
-	 * If the user tries to select more items, the selection is automatically limited, and the table scrolls back to the last selected item</li>
-	 * <li>If not already loaded, the table loads the selected items up to the given limit</li>
+	 * <li>The number of indices which can be selected in a range is defined by the <code>limit</code> property by the application.
+	 * If the user tries to select more indices, the selection is automatically limited, and the table scrolls to the last selected index.</li>
+	 * <li>The plugin makes sure that the corresponding binding contexts up to the given limit are available, by requesting them from the binding.</li>
 	 * <li>Multiple consecutive selections are possible</li>
 	 * </ul>
 	 *
@@ -51,8 +51,8 @@ sap.ui.define([
 	var MultiSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.MultiSelectionPlugin", {metadata : {
 		properties : {
 			/**
-			 * Number of items which can be selected in a range.
-			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All button. The plugin loads all selected items.
+			 * Number of indices which can be selected in a range.
+			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All button.
 			 * <b>Note:</b> To avoid severe performance problems, the limit should only be set to 0 in the following cases:
 			 * <ul>
 			 * <li>With client-side models</li>
@@ -206,7 +206,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Loads all contexts and adds all indices to the selection if the limit is disabled.
+	 * Requests the binding contexts and adds all indices to the selection if the limit is disabled.
 	 *
 	 * @public
 	 */
@@ -220,25 +220,38 @@ sap.ui.define([
 
 	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo) {
 		var iLimit = oMultiSelectionPlugin.getLimit();
-		var iLength = iIndexTo - iIndexFrom + 1;
+		var bReverse = iIndexTo < iIndexFrom;
+		var iLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 		var oBinding = oMultiSelectionPlugin._getBinding();
 
 		if (!oMultiSelectionPlugin._bLimitDisabled) {
 			// in case iIndexFrom is already selected the range starts from the next index
-			if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom) && iIndexTo > iIndexFrom) {
-				iIndexFrom++;
+			if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
+				if (iIndexTo > iIndexFrom) {
+					iIndexFrom++;
+				} else if (bReverse) {
+					iIndexFrom--;
+				}
 			}
 
 			oMultiSelectionPlugin.setLimitReached(false);
 			if (iLength > iLimit) {
-				iIndexTo = iIndexFrom + iLimit - 1;
-				iLength = iLimit;
+				if (!bReverse) {
+					iIndexTo = iIndexFrom + iLimit - 1;
+				} else {
+					iIndexTo = iIndexFrom - iLimit + 1;
+				}
+
+				// the table will be scrolled one row further to make it transparent for the user where the selection ends
+				// load the extra row here to avoid additional batch request.
+				iLength = iLimit + 1;
 				oMultiSelectionPlugin.setLimitReached(true);
 			}
 		}
 
-		if (oBinding && iIndexFrom >= 0 && iLength > 0) {
-			return loadMultipleContexts(oBinding, iIndexFrom, iLength).then(function () {
+		var iStartIndex = bReverse ? iIndexTo : iIndexFrom;
+		if (oBinding && iStartIndex >= 0 && iLength > 0) {
+			return loadMultipleContexts(oBinding, iStartIndex, iLength).then(function () {
 				return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 			});
 		}
@@ -246,8 +259,12 @@ sap.ui.define([
 	}
 
 	/**
-	 * Loads the contexts of the selected range and sets the given selection interval as the selection.
-	 * In single-selection mode it loads the context and sets the selected index to <code>iIndexTo</code>.
+	 * Sets the given selection interval as the selection and requests the corresponding binding contexts.
+	 * In single-selection mode it requests the context and sets the selected index to <code>iIndexTo</code>.
+	 *
+	 * If the number of indices in the range is greater than the value of the <code>limit</code> property, only n=limit
+	 * indices, starting from <code>iIndexFrom</code>, are selected. The table is scrolled to display the index last
+	 * selected.
 	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
@@ -264,13 +281,18 @@ sap.ui.define([
 		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
 			if (mIndices) {
 				this.oSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
+				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
 			}
 		}.bind(this));
 	};
 
 	/**
-	 * Loads the context of the selected range and adds the given selection interval to the selection.
-	 * In single-selection mode it loads the context and sets the selected index to <code>iIndexTo</code>.
+	 * Adds the given selection interval to the selection and requests the corresponding binding contexts.
+	 * In single-selection mode it requests the context and sets the selected index to <code>iIndexTo</code>.
+	 *
+	 * If the number of indices in the range is greater than the value of the <code>limit</code> property, only n=limit
+	 * indices, starting from <code>iIndexFrom</code>, are selected. The table is scrolled to display the index last
+	 * selected.
 	 *
 	 * @param {int} iIndexFrom Index from which the selection starts
 	 * @param {int} iIndexTo Index up to which to select
@@ -289,8 +311,27 @@ sap.ui.define([
 		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
 			if (mIndices) {
 				this.oSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
+				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
 			}
 		}.bind(this));
+	};
+
+	/**
+	 * If the limit is reached, the table is scrolled to the <code>iIndex</code>.
+	 * If <code>bReverse</code> is true the <code>firstVisibleRow</code> property of the Table is set to <code>iIndex</code> - 1,
+	 * otherwise to <code>iIndex</code> - row count + 2.
+	 * @private
+	 */
+	MultiSelectionPlugin.prototype._scrollTable = function(bReverse, iIndex) {
+		var oTable = this.getParent();
+
+		if (oTable && this.isLimitReached()) {
+			if (!bReverse) {
+				oTable.setFirstVisibleRow(Math.max(0, iIndex - oTable.getVisibleRowCount() + 2));
+			} else {
+				oTable.setFirstVisibleRow(Math.max(0, iIndex - 1));
+			}
+		}
 	};
 
 	function loadMultipleContexts(oBinding, iStartIndex, iLength){
@@ -348,7 +389,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Zero-based indices of selected items, wrapped in an array. An empty array means nothing has been selected.
+	 * Zero-based indices of selected indices, wrapped in an array. An empty array means nothing has been selected.
 	 *
 	 * @returns {int[]} An array containing all selected indices
 	 * @public
