@@ -63,7 +63,7 @@ function(
 				sandbox.stub(PropertyChange, "completeChangeContent");
 
 				this.oSettingsChange = {
-					selectorControl : {
+					selectorElement : {
 						id : "button",
 						controlType : "sap.m.Button",
 						appComponent : this.oMockedAppComponent
@@ -80,7 +80,7 @@ function(
 		}
 	}, function () {
 		QUnit.test("when getting a settings command for the change ...", function(assert) {
-			return this.oCommandFactory.getCommandFor(this.oSettingsChange.selectorControl, "settings", this.oSettingsChange.changeSpecificData)
+			return this.oCommandFactory.getCommandFor(this.oSettingsChange.selectorElement, "settings", this.oSettingsChange.changeSpecificData)
 			.then(function(oCommand) {
 				assert.ok(oCommand instanceof BaseCommand, "the settings command exists");
 			})

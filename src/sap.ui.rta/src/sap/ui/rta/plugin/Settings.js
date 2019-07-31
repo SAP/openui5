@@ -109,14 +109,15 @@ sap.ui.define([
 	Settings.prototype._handleFlexChangeCommand = function(mChange, aSelectedOverlays, oCompositeCommand) {
 		var mChangeSpecificData = mChange.changeSpecificData;
 		var sVariantManagementReference;
-		var vSelectorControl = mChange.selectorControl;
+		// temporarily support both
+		var vSelector = mChange.selectorElement || mChange.selectorControl;
 		var sControlType;
 		var oControl;
 
-		if (vSelectorControl.controlType) {
-			sControlType = vSelectorControl.controlType;
+		if (vSelector.controlType) {
+			sControlType = vSelector.controlType;
 		} else {
-			oControl = vSelectorControl;
+			oControl = vSelector;
 		}
 
 		return this._getChangeHandler(mChangeSpecificData.changeType, oControl, sControlType)
@@ -125,7 +126,7 @@ sap.ui.define([
 					sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
 				}
 				return this.getCommandFactory().getCommandFor(
-					vSelectorControl,
+					vSelector,
 					"settings",
 					mChangeSpecificData,
 					undefined,
