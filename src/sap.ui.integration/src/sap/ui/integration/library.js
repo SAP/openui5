@@ -3,11 +3,12 @@
  */
 
 /**
- * Initialization Code and shared classes of library sap.f.
+ * Initialization Code and shared classes of library sap.ui.integration.
  */
 sap.ui.define(["sap/ui/base/DataType",
 		"sap/ui/Global",
 		"sap/ui/core/library",
+		"sap/m/library",
 		"sap/f/library"
 	], // library dependency
 	function (DataType) {
@@ -18,7 +19,7 @@ sap.ui.define(["sap/ui/base/DataType",
 		sap.ui.getCore().initLibrary({
 			name: "sap.ui.integration",
 			version: "${version}",
-			dependencies: ["sap.ui.core", "sap.f"],
+			dependencies: ["sap.ui.core", "sap.f", "sap.m"],
 			types: [
 				"sap.ui.integration.CardActionType",
 				"sap.ui.integration.CardDataMode"
