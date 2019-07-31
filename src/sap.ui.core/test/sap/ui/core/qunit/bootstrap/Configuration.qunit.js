@@ -747,22 +747,45 @@ sap.ui.define([
 		assert.equal(getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full, "Default animation mode should stay the same.");
 	});
 
-	QUnit.module("Flexibility Services & Connectors", {});
-
-	QUnit.test("Get the Flexibility Services", function(assert) {
-		var oCfg = new Configuration();
-		var sFlexibilityService = oCfg.getFlexibilityServices();
-		assert.equal(sFlexibilityService, "/sap/bc/lrep");
+	QUnit.module("Flexibility Services & Connectors", {
+		afterEach: function () {
+			delete window["sap-ui-config"]["flexibilityservices"];
+		}
 	});
 
 	QUnit.test("Get the Flexibility Services", function(assert) {
 		var oCfg = new Configuration();
-		var oFlexibilityServicesConfiguration = oCfg.getFlexibilityConnectors();
-		assert.equal(oFlexibilityServicesConfiguration.length, 1);
-		var mDefaultFlexibilityService = oFlexibilityServicesConfiguration[0];
-		assert.equal(mDefaultFlexibilityService.connectorName, "LrepConnector", "the connector name is set correct");
-		assert.equal(mDefaultFlexibilityService.layerFilter.length, 1, "a filtering set");
-		assert.equal(mDefaultFlexibilityService.layerFilter[0], "ALL", "per default the filtering is set to 'ALL'");
+		var sFlexibilityService = oCfg.getFlexibilityServices();
+		assert.deepEqual(sFlexibilityService, [{layerFilter: ["ALL"], connectorName: "LrepConnector", url: "/sap/bc/lrep"}]);
+	});
+
+	QUnit.test("Get the Flexibility Services - set to an empty string", function(assert) {
+		window["sap-ui-config"]["flexibilityservices"] = "";
+
+		var oCfg = new Configuration();
+		var sFlexibilityService = oCfg.getFlexibilityServices();
+		assert.deepEqual(sFlexibilityService, []);
+	});
+
+	QUnit.test("Get the Flexibility Services - set to an empty array", function(assert) {
+		window["sap-ui-config"]["flexibilityservices"] = "[]";
+
+		var oCfg = new Configuration();
+		var sFlexibilityService = oCfg.getFlexibilityServices();
+		assert.deepEqual(sFlexibilityService, []);
+	});
+
+	QUnit.test("Get the Flexibility Services - set to multiple objects", function(assert) {
+		var oFirstConfigObject = {'layerFilter': ['CUSTOMER'], 'connectorName': 'KeyUserConnector', 'url': '/flex/keyUser'};
+		var oSecondConfigObject = {'layerFilter': ['CUSTOMER'], 'connectorName': 'PersonalizationConnector', 'url': '/sap/bc/lrep'};
+		var aConfig = [oFirstConfigObject, oSecondConfigObject];
+		var sConfigString = JSON.stringify(aConfig);
+
+		window["sap-ui-config"]["flexibilityservices"] = sConfigString;
+
+		var oCfg = new Configuration();
+		var sFlexibilityService = oCfg.getFlexibilityServices();
+		assert.deepEqual(sFlexibilityService, aConfig);
 	});
 
 	QUnit.module("ThemeRoot Validation");

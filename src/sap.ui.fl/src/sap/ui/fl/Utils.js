@@ -796,6 +796,15 @@ function(
 			return "";
 		},
 
+		getLrepUrl: function () {
+			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
+			var oLrepConfiguration = aFlexibilityServices.find(function (oServiceConfig) {
+				return oServiceConfig.connectorName === "LrepConnector";
+			});
+
+			return oLrepConfiguration ? oLrepConfiguration.url : "";
+		},
+
 		/**
 		 * Returns the current language in ISO 639-1 format.
 		 *

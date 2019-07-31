@@ -136,7 +136,6 @@ sap.ui.define([
 					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 					"support"               : { type : "string[]",  defaultValue : null },
-					"xx-flexibilityConnectors"   : { type : "object",   defaultValue : [{layerFilter: ["ALL"], connectorName: "LrepConnector"}], noUrl:true }, // determining the end points for requesting flexibility content; must not be changed at run time
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
 					"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
 					"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
@@ -1325,20 +1324,23 @@ sap.ui.define([
 		 * @since 1.60.0
 		 */
 		getFlexibilityServices : function() {
-			return this.flexibilityServices;
-		},
+			if (!this.flexibilityServices) {
+				this.flexibilityServices = [];
+			}
 
-		/**
-		 * Returns the URL from where the UI5 flexibility conenctors are called;
-		 * if empty, the flexibility services are not called.
-		 *
-		 * @returns {string} URL from where the flexibility services are requested
-		 * @public
-		 * @experimental
-		 * @since 1.67
-		 */
-		getFlexibilityConnectors : function() {
-			return this["xx-flexibilityConnectors"];
+			if (typeof this.flexibilityServices === 'string') {
+				if (this.flexibilityServices[0] === "/") {
+					this.flexibilityServices = [{
+						url : this.flexibilityServices,
+						layerFilter : ["ALL"],
+						connectorName : "LrepConnector"
+					}];
+				} else {
+					this.flexibilityServices = JSON.parse(this.flexibilityServices);
+				}
+			}
+
+			return this.flexibilityServices;
 		},
 
 		/**

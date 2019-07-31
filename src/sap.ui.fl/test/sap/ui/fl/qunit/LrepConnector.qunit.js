@@ -1189,7 +1189,7 @@ sap.ui.define([
 
 
 		QUnit.test("_getUrlPrefix shall embody the core configuration '' to the path for changes", function(assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("/something/else");
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{connectorName: "LrepConnector", url: "/something/else"}]);
 
 			var sPrefix = this.oLrepConnector._getUrlPrefix();
 			assert.equal(sPrefix, "/something/else/changes/");
@@ -1323,7 +1323,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("_sendAjaxRequest - shall reject Promise when no flexibility services url prefix is returned", function(assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("");
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([]);
 			var sSampleUri = "http://www.abc.de/files/";
 
 			//Act
@@ -1534,7 +1534,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("does not send a request in case 'sap-data-ui-flexibilityServices' was set to an empty string", function (assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns("");
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([]);
 
 			var done = assert.async();
 			assert.expect(0);
