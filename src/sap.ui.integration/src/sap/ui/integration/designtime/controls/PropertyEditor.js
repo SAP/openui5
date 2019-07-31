@@ -47,7 +47,7 @@ sap.ui.define([
         getLabel: function() {
             var oLabel = this.getAggregation("_label");
             if (!oLabel) {
-                oLabel = new Label({text : "{label}"});
+                oLabel = new Label({text: this.getPropertyInfo().label});
                 this.setAggregation("_label", oLabel);
             }
 
