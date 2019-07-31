@@ -324,6 +324,7 @@ sap.ui.define([
 
 	QUnit.module("Given that Settings file is loaded", {
 		afterEach: function() {
+			delete Settings._instance;
 			sandbox.restore();
 		}
 	}, function() {
@@ -346,6 +347,7 @@ sap.ui.define([
 
 	QUnit.module("Given that Settings loading failed", {
 		afterEach: function() {
+			delete Settings._instance;
 			sandbox.restore();
 		}
 	}, function() {
