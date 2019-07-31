@@ -6,7 +6,8 @@
 	xmlns:f="sap.f"
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
-	xmlns:w="sap.ui.integration.widgets">
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:dtcontrols="sap.ui.integration.designtime.controls">
 	<l:ResponsiveSplitter id="splitView">
 		<l:PaneContainer orientation="Horizontal">
 			<l:SplitPane id="cardPane" requiredParentWidth="1">
@@ -38,32 +39,55 @@
 					<customHeader>
 						<Bar>
 							<contentLeft>
-								<Button class="sapUiSmallMarginBegin"
-										text="Run"
-										type="Emphasized"
-										icon="sap-icon://media-play"
-										press="onRunPressed"
-										enabled="{settings>/editable}">
-								</Button>
-								<CheckBox text="Auto Run" selected="{settings>/autoRun}" enabled="{settings>/editable}"></CheckBox>
+								<Button
+									class="sapUiSmallMarginBegin"
+									text="Run"
+									type="Emphasized"
+									icon="sap-icon://media-play"
+									press="onRunPressed"
+									enabled="{settings>/editable}"
+								/>
+								<CheckBox
+									text="Auto Run"
+									selected="{settings>/autoRun}"
+									enabled="{settings>/editable}"
+								/>
 							</contentLeft>
 							<contentRight>
-								<Button class="orientationBtn"
-										press="onChangeSplitterOrientation"
-										icon="sap-icon://header"
-										enabled="{settings>/editable}"
-										type="Transparent">
-								</Button>
+								<Button
+									press="onChangeEditorClick"
+									icon="sap-icon://developer-settings"
+									enabled="{settings>/editable}"
+									type="Transparent"
+									visible="{= ${settings>/editable} &amp;&amp; ${settings>/designtime} }"
+								/>
+								<Button
+									class="orientationBtn"
+									press="onChangeSplitterOrientation"
+									icon="sap-icon://header"
+									enabled="{settings>/editable}"
+									type="Transparent"
+								/>
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<MessageStrip id="errorMessageStrip" visible="false" type="Error" showIcon="true"></MessageStrip>
-					<MessageStrip visible="{= !${settings>/editable} }"
-								showIcon="true"
-								type="Warning"
-								text="This example is not editable">
-					</MessageStrip>
-					<editor:CodeEditor type="json" syntaxHints="false" class="sapUiSmallMarginBegin" id="editor" height="100%" editable="{settings>/editable}" liveChange="onManifestEdited"></editor:CodeEditor>
+					<MessageStrip id="errorMessageStrip" visible="false" type="Error" showIcon="true" />
+					<MessageStrip visible="{= !${settings>/editable} }" showIcon="true" type="Warning" text="This example is not editable" />
+					<editor:CodeEditor
+						id="editor"
+						visible="{= ${settings>/editorType} === 'text' }"
+						type="json"
+						syntaxHints="false"
+						class="sapUiSmallMarginBegin"
+						height="100%"
+						editable="{settings>/editable}"
+						liveChange="onManifestEdited"
+					/>
+					<dtcontrols:CardEditor
+						id="cardEditor"
+						visible="{= ${settings>/editorType} === 'card' }"
+						jsonChanged="onManifestEdited"
+					/>
 				</Page>
 			</l:SplitPane>
 		</l:PaneContainer>
