@@ -3272,7 +3272,7 @@ function(
 	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
 			var iSpace,
-				iControlWidth = this.getDomRef().offsetWidth,
+				iControlWidth = this.getDomRef().clientWidth,
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),
 				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
