@@ -146,7 +146,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-		 * @param {string} mPropertyBag.styleClass - RTA style class name
+		 * @param {string} [mPropertyBag.styleClass] - Style class name that will be added to the transport dialog
 		 * @param {string} mPropertyBag.layer - Working layer
 		 * @param {array} [mPropertyBag.appVariantDescriptors] - Array of app variant descriptors that need to be transported
 		 *
@@ -155,6 +155,7 @@ sap.ui.define([
 		 * @private
 		 */
 		publish: function(mPropertyBag) {
+			mPropertyBag.styleClass = mPropertyBag.styleClass || "";
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 			return ChangesController.getFlexControllerInstance(oAppComponent)
 				._oChangePersistence.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);

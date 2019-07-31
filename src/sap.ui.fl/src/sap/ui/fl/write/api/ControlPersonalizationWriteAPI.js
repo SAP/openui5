@@ -45,9 +45,11 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		add: function(mPropertyBag) {
-			mPropertyBag.controlChanges.forEach(function(oPersonalizationChange) {
+			mPropertyBag.changes.forEach(function(oPersonalizationChange) {
 				oPersonalizationChange.selectorControl = oPersonalizationChange.selectorElement;
 			});
+			// old API is still using the old name
+			mPropertyBag.controlChanges = mPropertyBag.changes;
 			return OldControlPersonalizationAPI.addPersonalizationChanges(mPropertyBag);
 		},
 
@@ -72,7 +74,7 @@ sap.ui.define([
 		 *
 	 	 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {String[]} [mPropertyBag.changeTypes] - Array of changes to be saved; if not provided all unsaved changes will be saved
+		 * @param {String[]} [mPropertyBag.changes] - Array of changes to be saved; if not provided, all unsaved changes will be saved
 		 *
 		 * @returns {Promise} Promise that is resolved when the changes have been saved
 		 *
