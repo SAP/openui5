@@ -2,9 +2,10 @@
 sap.ui.define([
 	'sap/ui/model/odata/ODataUtils',
 	'sap/ui/model/Filter',
+	'sap/ui/model/odata/Filter',
 	'sap/ui/model/FilterOperator',
 	"sap/ui/core/library"
-], function(ODataUtils, Filter, FilterOperator, library) {
+], function(ODataUtils, Filter, ODataFilter, FilterOperator, library) {
 
 	"use strict";
 
@@ -463,5 +464,27 @@ sap.ui.define([
 
 		assert.ok(sFilterString, "Filter string should be created");
 		assert.equal(sFilterString, "$filter=Price%20eq%20100%20and%20(Quantity%20lt%2020%20or%20Price%20gt%2014)", "Filter string (brackets available on multifilter group) should be correct.");
+	});
+
+	QUnit.test("createFilterParams: Use API with deprecated sap.ui.model.odata.Filter", function(assert) {
+		var oFilter1 = new ODataFilter('Customer',[{
+			operator: 'EQ',
+			value1: "test0"
+		}]);
+
+		var oFilter2 = new ODataFilter('CollectionSegment',[{
+			operator: 'EQ',
+			value1: "test1"
+		}]);
+
+		var oFilter3 = new ODataFilter('CompanyCode',[{
+			operator: 'EQ',
+			value1: "test2"
+		}]);
+
+		var aFilters = [oFilter1, oFilter2, oFilter3];
+
+		var sFilterString = ODataUtils.createFilterParams(aFilters);
+		assert.equal(sFilterString, "$filter=Customer%20eq%20test0%20and%20CollectionSegment%20eq%20test1%20and%20CompanyCode%20eq%20test2", "Filter string should be returned.");
 	});
 });
