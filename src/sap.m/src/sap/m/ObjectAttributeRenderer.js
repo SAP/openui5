@@ -82,7 +82,7 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.openStart("span", oOA.getId() + "-colon");
 		oRm.class("sapMObjectAttributeColon");
 		oRm.openEnd();
-		oRm.text(": ");
+		oRm.unsafeHtml(":&nbsp;");
 		oRm.close("span");
 	};
 
