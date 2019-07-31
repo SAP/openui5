@@ -32,15 +32,15 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @param {object} mPropertyBag.parameters - Map of parameters, see below
-		 * @param {string} mPropertyBag.parameters.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
-		 * @param {string} mPropertyBag.parameters.ODataService - Name of the OData service --> can be null
-		 * @param {object} mPropertyBag.parameters.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
-		 * @param {object} mPropertyBag.parameters.content - Content of the new change
-		 * @param {boolean} mPropertyBag.parameters.isVariant - Indicates if the change is a variant
-		 * @param {string} [mPropertyBag.parameters.packageName] - Package name for the new entity; default is <code>$tmp</code>
-		 * @param {boolean} mPropertyBag.parameters.isUserDependent - Indicates if a change is only valid for the current user
-		 * @param {boolean} [mPropertyBag.parameters.id] - ID of the change; the ID has to be globally unique and should only be set in exceptional cases for example downport of variants
+		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
+		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
+		 * @param {string} mPropertyBag.changeSpecificData.ODataService - Name of the OData service --> can be null
+		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
+		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
+		 * @param {boolean} mPropertyBag.changeSpecificData.isVariant - Indicates if the change is a variant
+		 * @param {string} [mPropertyBag.changeSpecificData.packageName] - Package name for the new entity; default is <code>$tmp</code>
+		 * @param {boolean} mPropertyBag.changeSpecificData.isUserDependent - Indicates if a change is only valid for the current user
+		 * @param {boolean} [mPropertyBag.changeSpecificData.id] - ID of the change; the ID has to be globally unique and should only be set in exceptional cases for example downport of variants
 		 * @returns {string} ID of the newly created change
 		 * @ui5-restricted
 		 */

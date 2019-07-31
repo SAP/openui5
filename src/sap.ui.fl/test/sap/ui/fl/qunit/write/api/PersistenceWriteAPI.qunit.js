@@ -315,6 +315,34 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when publish is called without style class", function(assert) {
+			var mPropertyBag = {
+				layer: "customer",
+				appVariantDescriptors: [],
+				selector: this.vSelector
+			};
+
+			var oAppComponent = { id: "appComponent" };
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(mPropertyBag.selector)
+				.returns(oAppComponent);
+
+			var fnPersistenceStub = getMethodStub([
+				{},
+				"",
+				mPropertyBag.layer,
+				mPropertyBag.appVariantDescriptors
+			], Promise.resolve(sReturnValue));
+
+			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges : fnPersistenceStub } });
+
+			return PersistenceWriteAPI.publish(mPropertyBag)
+				.then(function(sValue) {
+					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
+				});
+		});
+
 		QUnit.test("when _getUIChanges is called", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector,

@@ -308,7 +308,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling 'add' with two valid variant changes", function(assert) {
 			return ControlPersonalizationWriteAPI.add({
-				controlChanges: [this.mMoveChangeData1, this.mMoveChangeData2]
+				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
 			})
 			.then(function (aSuccessfulChanges) {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no errors occurred");
@@ -330,7 +330,7 @@ sap.ui.define([
 				.withArgs(this.mMoveChangeData1)
 				.rejects(new Error("myError"));
 			return ControlPersonalizationWriteAPI.add({
-				controlChanges: [this.mMoveChangeData1, this.mMoveChangeData2]
+				changes: [this.mMoveChangeData1, this.mMoveChangeData2]
 			})
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error occurred");
@@ -345,7 +345,7 @@ sap.ui.define([
 			// mocking unstable id
 			oUnstableIdChangeData.changeSpecificData.movedElements[0].id = "__" + oUnstableIdChangeData.changeSpecificData.movedElements[0].id;
 			return ControlPersonalizationWriteAPI.add({
-				controlChanges: [oUnstableIdChangeData, this.mMoveChangeData1]
+				changes: [oUnstableIdChangeData, this.mMoveChangeData1]
 			})
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error occurred");
@@ -359,7 +359,7 @@ sap.ui.define([
 		QUnit.test("when calling 'add' with two valid variant changes and an invalid change", function(assert) {
 			this.mRenameChangeData1.selectorControl = undefined;
 			return ControlPersonalizationWriteAPI.add({
-				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2]
+				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2]
 			})
 			.then(function() {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error occurred");
@@ -372,7 +372,7 @@ sap.ui.define([
 			sandbox.spy(ControlPersonalizationAPI, "_getVariantManagement");
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
-				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2]
+				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2]
 			})
 			.then(function(aSuccessfulChanges) {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");
@@ -400,7 +400,7 @@ sap.ui.define([
 				}
 			};
 			return ControlPersonalizationWriteAPI.add({
-				controlChanges: [oChangeData]
+				changes: [oChangeData]
 			})
 			.then(function() {
 				assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error occurred");
@@ -417,7 +417,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
-				controlChanges: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
+				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2],
 				ignoreVariantManagement: true
 			})
 			.then(function (aSuccessfulChanges) {
