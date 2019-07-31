@@ -161,6 +161,23 @@
             "reference": "1970379474"
           }
         ]
+      },
+      {
+        "id": "99abbf3ad741ba662fa5e1a5888f60d1f7bcffe9",
+        "type": "FEATURE",
+        "text": " SAP Icons v4.4 update",
+        "references": []
+      },
+      {
+        "id": "7a42d6ff06918de0ff881521b0bfd36fe6cee909",
+        "type": "FIX",
+        "text": " v2.ODataModel: Cannot import result properties",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970387814"
+          }
+        ]
       }
     ]
   }

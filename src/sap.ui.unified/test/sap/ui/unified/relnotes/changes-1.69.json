@@ -40,6 +40,12 @@
             "reference": "376892"
           }
         ]
+      },
+      {
+        "id": "033f6353856625273c8612f7186ab669d9a92f0d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Year optimization for mobile phone",
+        "references": []
       }
     ]
   }

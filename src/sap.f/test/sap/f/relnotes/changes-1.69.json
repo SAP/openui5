@@ -53,6 +53,12 @@
             "reference": "1970322086"
           }
         ]
+      },
+      {
+        "id": "d98e40ee2e995e156c9e576d7cf104215d77c834",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Introduced ability to display border",
+        "references": []
       }
     ]
   }
