@@ -260,7 +260,7 @@ sap.ui.define([
 			},
 
 			onAPIRefPress: function () {
-				this.getRouter().navTo("apiId", {id: this.entityId});
+				this.getRouter().navTo("apiId", {id: this._sEntityId});
 			},
 
 			onNavBack : function () {
