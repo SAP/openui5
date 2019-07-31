@@ -1782,7 +1782,7 @@ function(
 	MultiInput.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
 			var iSpace,
-				iControlWidth = this.getDomRef().offsetWidth,
+				iControlWidth = this.getDomRef().clientWidth,
 				iDescriptionWidth = this.$().find(".sapMInputDescriptionWrapper").width(),
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),

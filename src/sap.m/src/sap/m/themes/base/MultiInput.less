@@ -29,6 +29,12 @@
 		min-width: @_sap_m_InputWithTokens_TokenizerMinWidth;
 	}
 
+	&.sapMInputFocused .sapMInputBaseContentWrapper,
+	&.sapMFocus .sapMInputBaseContentWrapper {
+		padding-left: 0.125rem; // Global Focus Visual Concept: outline-offset + outline-width. so it'd end just before the focus
+		box-sizing: border-box;
+	}
+
 	.sapMInputBaseContentWrapper {
 		min-width: @_InputBase_Control_Tokens_MinWidth;
 		&.sapMInputBaseContentWrapperState {
