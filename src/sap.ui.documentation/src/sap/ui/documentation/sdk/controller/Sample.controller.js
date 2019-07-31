@@ -188,14 +188,14 @@ sap.ui.define([
 				this.getRouter().navTo("sample", {
 					entityId: this.entityId,
 					sampleId: this._viewModel.getProperty("/previousSampleId")
-				}, true);
+				});
 			},
 
 			onNextSample: function (oEvent) {
 				this.getRouter().navTo("sample", {
 					entityId: this.entityId,
 					sampleId: this._viewModel.getProperty("/nextSampleId")
-				}, true);
+				});
 			},
 
 			/**
@@ -315,7 +315,7 @@ sap.ui.define([
 			},
 
 			onNavBack : function (oEvt) {
-				this.getRouter().navTo("entity", { id : this.entityId }, true);
+				this.getRouter().navTo("entity", { id : this.entityId });
 			},
 
 			onNavToCode : function (evt) {

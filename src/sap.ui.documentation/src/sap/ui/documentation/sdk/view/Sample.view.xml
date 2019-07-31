@@ -17,7 +17,7 @@
 		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
-					<Button type="Back" press="onNavBack" tooltip="Back" enabled="{= ${/disableNavBack} === undefined }"/>
+					<Button type="Back" press="onNavBack" tooltip="Back to samples" enabled="{= ${/disableNavBack} === undefined }"/>
 				</contentLeft>
 				<contentMiddle>
 					<Title text="{/title}"/>

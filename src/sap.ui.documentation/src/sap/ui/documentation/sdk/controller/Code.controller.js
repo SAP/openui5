@@ -267,7 +267,7 @@ sap.ui.define([
 				this.router.navTo("sample", {
 					sampleId: this._sId,
 					entityId: this._sEntityId
-				}, true);
+				});
 			},
 
 			_convertCodeToHtml : function (code) {
