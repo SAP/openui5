@@ -236,7 +236,14 @@ function(
 					/**
 					 * The Items binding of the Select Dialog for search purposes. It will only be available if the items aggregation is bound to a model.
 					 */
-					itemsBinding : {type : "any"}
+					itemsBinding : {type : "any"},
+
+					/**
+					 * Returns if the Clear button is pressed.
+					 * @since 1.70
+					 */
+
+					clearButtonPressed: {type: "boolean"}
 				}
 			},
 
@@ -341,21 +348,24 @@ function(
 			width: "100%",
 			liveChange: function (oEvent) {
 				var sValue = oEvent.getSource().getValue(),
-					iDelay = (sValue ? 300 : 0); // no delay if value is empty
+				iDelay = (sValue ? 300 : 0); // no delay if value is empty
 
 				// execute search after user stops typing for 300ms
 				clearTimeout(iLiveChangeTimer);
 				if (iDelay) {
 					iLiveChangeTimer = setTimeout(function () {
-						that._executeSearch(sValue, "liveChange");
+						that._executeSearch(sValue, false, "liveChange");
 					}, iDelay);
 				} else {
-					that._executeSearch(sValue, "liveChange");
+					that._executeSearch(sValue, false, "liveChange");
 				}
 			},
 			// execute the standard search
 			search: function (oEvent) {
-				that._executeSearch(oEvent.getSource().getValue(), "search");
+				var sValue = oEvent.getSource().getValue(),
+					bClearButtonPressed = oEvent.getParameters().clearButtonPressed;
+
+				that._executeSearch(sValue, bClearButtonPressed, "search");
 			}
 		});
 		this._searchField = this._oSearchField; // for downward compatibility
@@ -871,10 +881,11 @@ function(
 	 * Fires the search event. This function is called whenever a search related parameter or the value in the search field is changed
 	 * @private
 	 * @param {string} sValue The new filter value or undefined if called by management functions
+	 * @param {boolean} bClearButtonPressed Indicates if the clear button is pressed
 	 * @param {string} sEventType The search field event type that has been called (liveChange / search)
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
-	SelectDialog.prototype._executeSearch = function (sValue, sEventType) {
+	SelectDialog.prototype._executeSearch = function (sValue, bClearButtonPressed, sEventType) {
 
 		var oList = this._oList,
 			oBinding = (oList ? oList.getBinding("items") : undefined),
@@ -898,7 +909,7 @@ function(
 				this._iListUpdateRequested += 1;
 				if (sEventType === "search") {
 					// fire the search so the data can be updated externally
-					this.fireSearch({value: sValue, itemsBinding: oBinding});
+					this.fireSearch({value: sValue, itemsBinding: oBinding, clearButtonPressed: bClearButtonPressed});
 				} else if (sEventType === "liveChange") {
 					// fire the liveChange so the data can be updated externally
 					this.fireLiveChange({value: sValue, itemsBinding: oBinding});
@@ -907,7 +918,7 @@ function(
 				// no binding, just fire the event for manual filtering
 				if (sEventType === "search") {
 					// fire the search so the data can be updated externally
-					this.fireSearch({value: sValue});
+					this.fireSearch({value: sValue, clearButtonPressed: bClearButtonPressed});
 				} else if (sEventType === "liveChange") {
 					// fire the liveChange so the data can be updated externally
 					this.fireLiveChange({value: sValue});
