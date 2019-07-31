@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet", "sap/ui/core/support/Hotkeys",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/trace/Interaction",
 	"sap/ui/base/syncXHRFix", "sap/base/util/LoaderExtensions",
+	'sap/ui/events/PasteEventFix',
 
 	// former sap-ui-core.js dependencies
 	"sap/ui/Device", "sap/ui/thirdparty/URI",
@@ -42,6 +43,7 @@ sap.ui.define([
 	includeStylesheet, SupportHotkeys,
 	FrameOptions, Measurement, Interaction,
 	syncXHRFix, LoaderExtensions,
+	PasteEventFix,
 
 	Device, URI,
 
