@@ -609,7 +609,14 @@ function(
 			id: this.getId() + "-selectMulti",
 			activeHandling: false,
 			selected: this.getSelected()
-		}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).setTabIndex(-1).attachSelect(function(oEvent) {
+		}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).setTabIndex(-1).addEventDelegate({
+			onkeydown: function (oEvent) {
+				this.informList("KeyDown", oEvent);
+			},
+			onkeyup: function (oEvent) {
+				this.informList("KeyUp", oEvent);
+			}
+		}, this).attachSelect(function(oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this.setSelected(bSelected);
 			this.informList("Select", bSelected);
