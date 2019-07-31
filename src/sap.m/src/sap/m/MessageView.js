@@ -74,22 +74,20 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * <strong><i>Overview</i></strong>
-	 * <br><br>
-	 * A {@link sap.m.MessageView} is used to display a summarized list of different types of messages (errors, warnings, success and information).
+	 * <h3>Overview</h3>
+	 * A <code>MessageView</code> is used to display a summarized list of different types of messages (error, warning, success, and information messages).
+	 * It is meant to be embedded into container controls (such as {@link sap.m.Popover}, {@link sap.m.ResponsivePopover}, {@link sap.m.Dialog}).
 	 * It provides a handy and systemized way to navigate and explore details for every message.
-	 * It is meant to be embedded into container controls.
 	 * If the MessageView contains only one item, which has either description, markupDescription or longTextUrl, its details page will be displayed initially.
-	 * <br><br>
-	 * <strong>Notes:</strong>
+	 * It also exposes an event {@link sap.m.MessageView#activeTitlePress}, which can be used for navigation from a message to its source.
+	 * <h3>Notes:</h3>
 	 * <ul>
 	 * <li>If your application changes its model between two interactions with the MessageView, this could lead to outdated messages being shown.
 	 * To avoid this, you need to call <code>navigateBack</code> on the MessageView BEFORE opening its container.</li>
 	 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>. </li>
 	 * <li> If the message cannot be fully displayed or includes a long description, the MessageView provides navigation to the detailed description. </li>
 	 * </ul>
-	 * <strong><i>Structure</i></strong>
-	 * <br><br>
+	 * <h3>Structure</h3>
 	 * The MessageView stores all messages in an association of type {@link sap.m.MessageItem} named <code>items</code>.
 	 * <br>
 	 * A set of properties determines how the items are rendered:
@@ -100,12 +98,13 @@ sap.ui.define([
 	 * <li> description - The long text description of the message</li>
 	 * <li> activeTitle - Determines whether the title of the item is interactive</li>
 	 * </ul>
-	 * <strong><i>Usage</i></strong>
-	 * <br><br>
-	 * As part of the messaging concept, MessageView provides a way to centrally manage messages and show them to the user without additional work for the developer.
-	 *
-	 * It also exposes an event {@link sap.m.MessageView#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
-	 * <br><br>
+	 * <h3>Usage</h3>
+	 * <h4>When to use:</h4>
+	 * <ul>
+	 * <li>When you want a way to centrally manage messages and show them to the user without additional work for the developer.
+	 * Navigation between the message item and the source of the error can be created, if needed by the application.
+	 * This can be done by setting the <code>activeTitle</code> property to true and providing a handler for the <code>activeTitlePress</code> event.</li>
+	 * </ul>
 	 * @author SAP SE
 	 * @version ${version}
 	 *
