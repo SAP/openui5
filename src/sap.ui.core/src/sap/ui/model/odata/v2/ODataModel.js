@@ -1384,11 +1384,11 @@ sap.ui.define([
 			sPath = sPath || "";
 			sKey = sKey || "";
 
-		if (oData.results) {
+		if (oData.results && Array.isArray(oData.results)) {
 			aList = [];
 			each(oData.results, function(i, entry) {
-				sKey = that._getKey(entry);
-				var sKey = that._importData(entry, mChangedEntities, oResponse, sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey);
+				var sKey = that._getKey(entry);
+				sKey = that._importData(entry, mChangedEntities, oResponse, sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey);
 				if (sKey) {
 					aList.push(sKey);
 				}
@@ -3732,7 +3732,7 @@ sap.ui.define([
 			}
 
 			// broken implementations need this
-			if (oResultData && oResultData.results && !Array.isArray(oResultData.results)) {
+			if (oResultData && !oResultData.__metadata && oResultData.results && !Array.isArray(oResultData.results)) {
 				oResultData = oResultData.results;
 			}
 

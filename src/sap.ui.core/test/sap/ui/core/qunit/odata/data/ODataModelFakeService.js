@@ -106,6 +106,8 @@ sap.ui.define([], function() {
           [200, oMetaDataHeaders, sMetadataComplex],
         "$metadata?sap-language=en&test2=xx":
           [200, oMetaDataHeaders, sMetaData],
+        "$metadata?result-property=true":
+          [200, oMetaDataHeaders, sMetaData5],
         "Products?$skip=0&$top=100&Error500":
           [500, oXMLErrorHeaders, sError],
         "Products?Error500&$skip=0&$top=100":
@@ -292,6 +294,8 @@ sap.ui.define([], function() {
             [200, oCountHeaders, "5"],
         "Categories(1)":
           [200, oJSONHeaders, sCategory1JSON],
+        "Categories(20)":
+          [200, oJSONHeaders, sCategoryWithResultProp],
         "Categories(1)?test":
           [200, oJSONHeaders, sCategory1JSON],
         "Categories(1)?hubel=dubel&test":
@@ -1448,6 +1452,46 @@ sap.ui.define([], function() {
     </edmx:DataServices>\
   </edmx:Edmx>\
     ';
+
+    var sMetaData5 = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+    <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">\
+      <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">\
+        <Schema Namespace="North.wind.Model" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+          <EntityType Name="Category">\
+            <Key>\
+              <PropertyRef Name="CategoryID" />\
+            </Key>\
+            <Property Name="CategoryID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+            <Property Name="results" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />\
+            <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />\
+            <Property Name="Description" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />\
+            <NavigationProperty Name="Products" Relationship="NorthwindModel.FK_Products_Categories" FromRole="Categories" ToRole="Products" />\
+          </EntityType>\
+        <Association Name="FK_Products_Categories">\
+            <End Role="Categories" Type="North.wind.Model.Category" Multiplicity="0..1" />\
+            <End Role="Products" Type="North.wind.Model.Product" Multiplicity="*" />\
+            <ReferentialConstraint>\
+              <Principal Role="Categories">\
+                <PropertyRef Name="CategoryID" />\
+              </Principal>\
+              <Dependent Role="Products">\
+                <PropertyRef Name="CategoryID" />\
+              </Dependent>\
+            </ReferentialConstraint>\
+          </Association>\
+        </Schema>\
+        <Schema Namespace="ODataWeb.Northwind.Model" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+          <EntityContainer Name="NorthwindEntities" p7:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true" xmlns:p7="http://schemas.microsoft.com/ado/2009/02/edm/annotation">\
+            <EntitySet Name="Categories" EntityType="North.wind.Model.Category" />\
+            <AssociationSet Name="FK_Products_Categories" Association="North.wind.Model.FK_Products_Categories">\
+              <End Role="Categories" EntitySet="Categories" />\
+              <End Role="Products" EntitySet="Products" />\
+            </AssociationSet>\
+          </EntityContainer>\
+        </Schema>\
+      </edmx:DataServices>\
+    </edmx:Edmx>\
+      ';
 
   var sCategoriesXML = '\<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
   <feed xml:base="http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">\
@@ -5898,7 +5942,26 @@ sap.ui.define([], function() {
       "	}\n" +
       "}"
   ;
-
+  var sCategoryWithResultProp = "{\n" +
+  "	\"d\" : {\n" +
+  "		\"__metadata\" : {\n" +
+  "			\"id\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(20)\",\n" +
+  "			\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(20)\",\n" +
+  "			\"type\" : \"NorthwindModel.Category\"\n" +
+  "		},\n" +
+  "		\"Products\" : {\n" +
+  "			\"__deferred\" : {\n" +
+  "				\"uri\" : \"http://localhost:8080/uilib-sample/proxy/http/services.odata.org/Northwind/Northwind.svc/Categories(20)/Products\"\n" +
+  "			}\n" +
+  "		},\n" +
+  "		\"CategoryID\" : 20,\n" +
+  "		\"results\" : \"test\",\n" +
+  "		\"CategoryName\" : \"Beverages\",\n" +
+  "		\"Description\" : \"Soft drinks, coffees, teas, beers, and ales\",\n" +
+  "		\"Picture\" : \"\"\n" +
+  "	}\n" +
+  "}"
+;
   var sProductExpandJSON = "\n" +
       "\n" +
       "{\n" +
