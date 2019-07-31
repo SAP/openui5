@@ -133,6 +133,15 @@ sap.ui.define(function() {
 					}
 				}
 			},
+			CommandExecution: {
+				title: "sap.ui.core: CommandExecution"
+			},
+			ShortcutHelper: {
+				title: "sap.ui.core: ShortcutHelper"
+			},
+			Shortcut: {
+				title: "sap.ui.core: Shortcut"
+			},
 			Declarative: {
 				title: "sap.ui.core.DeclarativeSupport",
 				// we keep the HTML page here, because of the complex test fixture

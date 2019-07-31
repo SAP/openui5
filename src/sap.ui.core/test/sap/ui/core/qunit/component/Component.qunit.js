@@ -1158,6 +1158,35 @@ sap.ui.define([
 		});
 	});
 
+	sap.ui.define("my/command/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.command.Component", {
+			metadata: {
+				manifest: {
+					"sap.app" : {
+						"id" : "my.command.constructor"
+					},
+					"sap.ui5" : {
+						"commands": {
+							"Save": {
+								"name": "Save",
+								"icon": "sap-icon://save",
+								"caption": "test",
+								"tooltip": "test",
+								"shortcut": "Ctrl+S"
+							},
+							"Cancel": {
+								"name": "Cancel",
+								"icon": "sap-icon://save",
+								"caption": "test",
+								"tooltip": "test",
+								"shortcut": "Ctrl+C"
+							}
+						}
+					}
+				}
+			}
+		});
+	});
 	QUnit.test("Async creation of component usage", function(assert) {
 
 		var oComponent = sap.ui.component({
@@ -1949,6 +1978,30 @@ sap.ui.define([
 			assert.deepEqual(oError, new Error(sErrorText), "Promise is rejected with the correct reason");
 			assert.ok(oLogSpy.calledWithExactly("Failed to execute flexibility hook for manifest preprocessing.", oError), "Correct Error was logged for supportability");
 			oLogSpy.restore();
+		});
+	});
+
+	QUnit.module("Commands in manifest", {
+		beforeEach: function () {
+			cleanUpRegistry();
+		},
+		afterEach: function() {
+			cleanUpRegistry();
+		}
+	});
+
+	QUnit.test("getCommand", function(assert) {
+		assert.expect(3);
+		var done = assert.async();
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(oComponent) {
+			assert.equal(Object.keys(oComponent.getCommand()).length, 2, "Two commands found");
+			assert.equal(oComponent.getCommand("Save").name, "Save", "Save command found");
+			assert.equal(oComponent.getCommand("Cancel").name, "Cancel", "Save command found");
+			done();
 		});
 	});
 });

@@ -1,0 +1,41 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.core.sample.Shortcuts",
+		"type": "application"
+	},
+	"sap.ui5": {
+		"commands": {
+			"Save": {
+				"name": "Save",
+				"icon": "sap-icon://save",
+				"caption": "test",
+				"tooltip": "test",
+				"shortcut": "Ctrl+S"
+			}
+		},
+		"models": {
+			"viewModel": {
+				"type": "sap.ui.model.json.JSONModel"
+			}
+		},
+		"rootView": {
+			"viewName": "sap.ui.core.sample.Shortcuts.Shortcuts",
+			"type": "XML",
+			"async": true,
+			"id": "shortcuts"
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Component.js",
+					"Shortcuts.view.xml",
+					"Shortcuts.controller.js",
+					"Popover.fragment.xml",
+					"PopoverShortcuts.fragment.xml",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

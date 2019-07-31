@@ -4,12 +4,10 @@
 
 // Provides module sap.ui.core.mvc.EventHandlerResolver.
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
 	"sap/ui/base/BindingParser",
-	"sap/ui/core/Element",
+	"sap/ui/core/CommandExecution",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/CompositeBinding",
-	// TODO: think about lazy-loading in async case
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/base/util/JSTokenizer",
@@ -18,9 +16,8 @@ sap.ui.define([
 	"sap/base/Log"
 ],
 	function(
-		ManagedObject,
 		BindingParser,
-		Element,
+		CommandExecution,
 		BindingMode,
 		CompositeBinding,
 		JSONModel,
@@ -76,32 +73,47 @@ sap.ui.define([
 			 */
 			resolveEventHandler: function(sName, oController, mLocals) {
 
-				var fnHandler;
+				var fnHandler, iStartBracket, sFunctionName;
 				sName = sName.trim();
 
 				if (sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
 					// When design mode is enabled, controller code is not loaded. That is why we stub the handler functions.
 					fnHandler = function() {};
 				} else {
-					// check for extended event handler syntax
-					var iStartBracket = sName.indexOf("("),
+					//check for command usage - create handler that triggers the CommandExecution
+					if (sName.startsWith("cmd:")) {
+						var sCommand = sName.substr(4);
+						fnHandler = function(oEvent) {
+							var oCommandExecution = CommandExecution.find(oEvent.getSource(), sCommand);
+							if (oCommandExecution) {
+								oCommandExecution.trigger();
+							} else {
+								Log.error("Handler '" + sName + "' could not be resolved. No CommandExecution defined for command: " + sCommand);
+							}
+						};
+					} else {
+						// check for extended event handler syntax
+						iStartBracket = sName.indexOf("(");
 						sFunctionName = sName;
-					if (iStartBracket > 0) {
-						sFunctionName = sName.substring(0, iStartBracket).trim();
-					} else if (iStartBracket === 0) {
-						throw new Error("Event handler name starts with a bracket, must start with a function name " +
-								"(or with a dot followed by controller-local function name): " + sName);
+
+						if (iStartBracket > 0) {
+							sFunctionName = sName.substring(0, iStartBracket).trim();
+						} else if (iStartBracket === 0) {
+							throw new Error("Event handler name starts with a bracket, must start with a function name " +
+									"(or with a dot followed by controller-local function name): " + sName);
+						}
+
+						fnHandler = resolveReference(sFunctionName,
+							Object.assign({".": oController}, mLocals), {
+								// resolve a name without leading dot under oController only when it doesn't contains dot
+								preferDotContext: sFunctionName.indexOf(".") === -1,
+								// the resolved function shouldn't be bound to any context because it may need to be bound
+								// to controller regardless where the handler is resolved if the sFunctionName doesn't have
+								// parentheses
+								bindContext: false
+							}
+						);
 					}
-
-					fnHandler = resolveReference(sFunctionName,
-						Object.assign({".": oController}, mLocals), {
-							// resolve a name without leading dot under oController only when it doesn't contains dot
-							preferDotContext: sFunctionName.indexOf(".") === -1,
-							// the resolved function shouldn't be bound to any context because it may need to be bound
-							// to controller regardless where the handler is resolved if the sFunctionName doesn't have
-							// parentheses
-							bindContext: false});
-
 					// handle extended event handler syntax
 					if (fnHandler && iStartBracket > 0) {
 						var iEndBracket = sName.lastIndexOf(")");
@@ -248,7 +260,7 @@ sap.ui.define([
 		};
 
 		function getBindingValue(oBindingInfo, oElement, oController, oParametersModel, oSourceModel) { // TODO: refactor ManagedObject and re-use parts that have been copied here
-			var oType;
+			var oType, oPart;
 			oBindingInfo.mode = BindingMode.OneWay;
 
 			if (!oBindingInfo.parts) {
@@ -271,7 +283,7 @@ sap.ui.define([
 
 			for (var i = 0; i < oBindingInfo.parts.length; i++) {
 
-				var oPart = oBindingInfo.parts[i];
+				oPart = oBindingInfo.parts[i];
 				if (typeof oPart == "string") {
 					oPart = { path: oPart };
 					oBindingInfo.parts[i] = oPart;
@@ -289,7 +301,7 @@ sap.ui.define([
 				}
 			}
 
-			var oContext, oBinding, aBindings = [];
+			var clType, oContext, oBinding, aBindings = [];
 			oBindingInfo.parts.forEach(function(oPart) {
 				var oModel;
 				if (oPart.model === "$parameters") {
@@ -324,7 +336,7 @@ sap.ui.define([
 				// Create type instance if needed
 				oType = oBindingInfo.type;
 				if (typeof oType == "string") {
-					var clType = ObjectPath.get(oType);
+					clType = ObjectPath.get(oType);
 					oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
 				}
 				oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);

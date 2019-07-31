@@ -2245,7 +2245,7 @@ sap.ui.define([
 				notifyOnInstanceCreated(oInstance, vConfig);
 				return oInstance;
 			}
-        }
+		}
 
 		// load the component class
 		var vClassOrPromise = loadComponent(vConfig, {
@@ -3258,6 +3258,25 @@ sap.ui.define([
 	 * @public
 	 */
 
-	return Component;
+	/**
+	 * Returns the information defined in the manifests command section. If a command name
+	 * is passed only the info for this command will be returned. If no name is passed a map
+	 * of all commands will be returned.
+	 *
+	 * @param {string} [sCommandName] The name of the command defined in manifest
+	 *
+	 * @returns {object} The command object as defined in the manifest
+	 * @private
+	 */
+	Component.prototype.getCommand = function(sCommandName) {
+		var oCommand,
+			oCommands = this.getManifestEntry("/sap.ui5/commands");
 
+		if (oCommands && sCommandName) {
+			oCommand = oCommands[sCommandName];
+		}
+		return sCommandName ? oCommand : oCommands;
+	};
+
+	return Component;
 });
