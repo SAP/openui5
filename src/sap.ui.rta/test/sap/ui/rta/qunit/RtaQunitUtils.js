@@ -1,12 +1,14 @@
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ], function(
 	FakeLrepConnectorSessionStorage,
 	FakeLrepSessionStorage,
+	Component,
 	ComponentContainer,
 	QUnitUtils,
 	KeyCodes
@@ -53,6 +55,32 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		return oCompCont;
+	};
+
+	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
+		FakeLrepConnectorSessionStorage.enableFakeConnector();
+
+		return Component.create({
+			name : "sap.ui.rta.qunitrta",
+			id : "Comp1",
+			settings : {
+				componentData : {
+					showAdaptButton : true
+				}
+			}
+		})
+		.then(function(oComponent) {
+			return new ComponentContainer({
+				component : oComponent,
+				async: true
+			});
+		})
+		.then(function(oComponentContainer) {
+			oComponentContainer.placeAt(sDomId);
+			sap.ui.getCore().applyChanges();
+
+			return oComponentContainer;
+		});
 	};
 
 	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId) {
