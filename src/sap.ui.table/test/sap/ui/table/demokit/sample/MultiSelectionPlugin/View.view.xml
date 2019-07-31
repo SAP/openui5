@@ -33,10 +33,20 @@
 						<m:content>
 							<m:Title id="title" text="Products"/>
 							<m:ToolbarSpacer/>
-							<m:Input
-								value="{path: 'config>/limit', type: 'sap.ui.model.type.Integer'}"
+							<m:Label text="Selection Mode" labelFor="select1"/>
+							<m:Select
+								id="select1"
 								width="20%"
-								placeholder="limit"
+								items="{config>/selectionModes}"
+								selectedKey="MultiToggle"
+								change="onSelectionModeChange">
+								<c:Item key="{config>key}" text="{config>text}"/>
+							</m:Select>
+							<m:Label text="Limit" labelFor="input1"/>
+							<m:Input
+								id="input1"
+								value="{path: 'config>/limit', type: 'sap.ui.model.type.Integer'}"
+								width="10%"
 								tooltip="limit"
 								change="onLimitChange"/>
 							<m:ToolbarSeparator/>
