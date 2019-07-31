@@ -32,7 +32,7 @@
 
 					<f:customLayout>
 						<grid:GridBasicLayout
-							gridTemplateColumns="repeat(6, minmax(10rem, 20rem))"
+							gridTemplateColumns="repeat(auto-fit, minmax(10rem, 20rem))"
 							gridGap="0.5rem 0.5rem"/>
 					</f:customLayout>
 
