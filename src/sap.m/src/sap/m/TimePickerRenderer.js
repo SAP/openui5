@@ -62,24 +62,6 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		};
 
 		/**
-		 * Write the id of the inner input
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-		 */
-		TimePickerRenderer.writeInnerId = function(oRm, oControl) {
-			oRm.writeAttribute("id", oControl.getId() + "-" + this.getInnerSuffix());
-		};
-
-		/**
-		 * Define own inner ID suffix.
-		 * @returns {string} The own inner ID suffix
-		 */
-		TimePickerRenderer.getInnerSuffix = function() {
-			return "inner";
-		};
-
-		/**
 		 * Returns aria accessibility role for the control.
 		 *
 		 * @override

@@ -55,10 +55,23 @@ sap.ui.define([
 		oRm.renderControl(oCounter);
 	};
 
-
-	// Write the opening tag name of the TextArea
+	// Write the opening tag of the TextArea
 	TextAreaRenderer.openInputTag = function(oRm, oControl) {
 		oRm.write("<textarea");
+		oRm.writeAttribute("id", oControl.getId() + "-" + this.getInnerSuffix());
+	};
+
+	/**
+	 * Ends the opened TextArea tag
+	 *
+	 * @override
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	TextAreaRenderer.endInputTag = function(oRm, oControl) {
+		oRm.writeClasses();
+		oRm.writeStyles();
+		oRm.write(">");
 	};
 
 	// Write the closing tag name of the TextArea

@@ -1880,6 +1880,7 @@ sap.ui.define([
 
 		// act
 		oInput.setTooltip("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oInput.$().attr("title"), undefined);
@@ -1902,6 +1903,7 @@ sap.ui.define([
 
 		// act
 		oInput.setTooltip("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -1934,6 +1936,7 @@ sap.ui.define([
 
 		// act
 		oInput.setTooltip("");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oInput.$().attr("title") === undefined);
@@ -2333,19 +2336,20 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-
 	QUnit.module("Renderer hooks");
-	QUnit.test("writeInnerId() is called", function(assert) {
+
+	QUnit.test("getInnerSuffix() is called", function(assert) {
 		var oInputBase = new InputBase({}),
 			oRenderer = oInputBase.getRenderer();
 
 		//spy writeInnerId()
-		var fnOnInputBaseSpy = this.spy(oRenderer, "writeInnerId");
+		var fnOnInputBaseSpy = this.spy(oRenderer, "getInnerSuffix");
 
 		oInputBase.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(fnOnInputBaseSpy.callCount, 1, "writeInnerId() is called");
+		assert.strictEqual(fnOnInputBaseSpy.callCount, 1, "getInnerSuffix() is called");
+		assert.strictEqual(oInputBase.$(oRenderer.getInnerSuffix()).length, 1, "The inner element has proper Id");
 
 		// cleanup
 		oInputBase.destroy();
