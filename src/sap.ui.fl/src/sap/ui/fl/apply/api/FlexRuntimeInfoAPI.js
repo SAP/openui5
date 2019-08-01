@@ -57,7 +57,7 @@ sap.ui.define([
 		 * @returns {boolean} <code>true</code> if flexibility features are supported
 		 */
 		isFlexSupported: function(mPropertyBag) {
-			return !!Utils.getAppComponentForControl(mPropertyBag.element || arguments[0]);
+			return !!Utils.getAppComponentForControl(mPropertyBag.element);
 		},
 
 		/**

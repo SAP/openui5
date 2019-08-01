@@ -38,7 +38,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		loadChanges: function(mPropertyBag) {
-			var oControl = mPropertyBag.control || arguments[0];
+			var oControl = mPropertyBag.control;
 			var oAppDescriptor = Utils.getAppDescriptor(oControl);
 			var sSiteId = Utils.getSiteId(oControl);
 			var sStableId = this._getStableId(oControl);
@@ -64,8 +64,8 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		getChangeById: function (mPropertyBag) {
-			var oControl = mPropertyBag.control || arguments[0];
-			var sId = mPropertyBag.id || arguments[1];
+			var oControl = mPropertyBag.control;
+			var sId = mPropertyBag.id;
 			if (!sId || !oControl) {
 				Utils.log.error("sId or oControl is not defined");
 				return undefined;
@@ -96,7 +96,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		isApplicationVariant: function(mPropertyBag) {
-			var oControl = mPropertyBag.control || arguments[0];
+			var oControl = mPropertyBag.control;
 			if (Utils.isApplicationVariant(oControl)) {
 				return true;
 			}
@@ -147,7 +147,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		getDefaultVariantId: function(mPropertyBag) {
-			var oChanges = this._getChangeMap(mPropertyBag.control || arguments[0]);
+			var oChanges = this._getChangeMap(mPropertyBag.control);
 
 			return DefaultVariant.getDefaultVariantId(oChanges);
 		},
@@ -163,7 +163,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		getExecuteOnSelect: function(mPropertyBag) {
-			var oChanges = this._getChangeMap(mPropertyBag.control || arguments[0]);
+			var oChanges = this._getChangeMap(mPropertyBag.control);
 
 			return StandardVariant.getExecuteOnSelect(oChanges);
 		},
