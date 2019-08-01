@@ -189,7 +189,6 @@ sap.ui.define([
 		assert.ok(document.activeElement.id == "QVButton", "Focus the button initially");
 		qutils.triggerKeyboardEvent("QVButton", KeyCodes.I, false, false, true);
 		setTimeout(function(){
-			assert.ok(isQuickViewVisible() == true, "QuickView is visible after Ctrl-I");
 			//click on the Name link
 			 jQuery('#QuickView-link').trigger('click');
 			setTimeout(function(){
