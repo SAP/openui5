@@ -34,6 +34,8 @@ function(
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.DESKTOP, "the mode was correctly set");
 				assert.notOk(this.oToolbar.getControl('exit').getIcon(), "the exit button has no icon");
 				assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
+				assert.ok(this.oToolbar.getControl('manageApps').getIcon(), "the App Variant button has an icon");
+				assert.notOk(this.oToolbar.getControl('manageApps').getText(), "the App Variant button has no text");
 				assert.equal(this.oToolbar.getControl('restore').getLayoutData().getPriority(), "Low", "the layout data priority is correct");
 
 				this.oToolbar._onSizeChanged({name: Adaptation.modes.TABLET});
@@ -55,6 +57,8 @@ function(
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.TABLET, "the mode was correctly set");
 				assert.notOk(this.oToolbar.getControl('exit').getIcon(), "the exit button has no icon");
 				assert.ok(this.oToolbar.getControl('exit').getText(), "the exit button has text");
+				assert.notOk(this.oToolbar.getControl('manageApps').getIcon(), "the App Variant button has no icon");
+				assert.ok(this.oToolbar.getControl('manageApps').getText(), "the App Variant button has text");
 				assert.equal(this.oToolbar.getControl('restore').getLayoutData().getPriority(), "AlwaysOverflow", "the layout data priority is correct");
 			}.bind(this));
 		});
@@ -70,6 +74,8 @@ function(
 				assert.equal(this.oToolbar.sMode, Adaptation.modes.MOBILE, "the mode was correctly set");
 				assert.ok(this.oToolbar.getControl('exit').getIcon(), "the exit button has an icon");
 				assert.notOk(this.oToolbar.getControl('exit').getText(), "the exit button has no text");
+				assert.notOk(this.oToolbar.getControl('manageApps').getIcon(), "the App Variant button has no icon");
+				assert.ok(this.oToolbar.getControl('manageApps').getText(), "the App Variant button has text");
 				assert.equal(this.oToolbar.getControl('restore').getLayoutData().getPriority(), "AlwaysOverflow", "the layout data priority is correct");
 			}.bind(this));
 		});
