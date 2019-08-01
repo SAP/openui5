@@ -236,6 +236,11 @@ sap.ui.define([
 		// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
 		this._getOverflowButton().$().attr("aria-haspopup", "true");
 
+		if (this._bContentVisibilityChanged) {
+			this._bControlsInfoCached = false;
+			this._bContentVisibilityChanged = false;
+		}
+
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 
 		if (this.getAsyncMode()) {
@@ -305,7 +310,6 @@ sap.ui.define([
 		// Start listening for invalidation events once again
 		this._bListenForInvalidationEvents = true;
 	};
-
 
 	/**
 	 * Asynchronous layouting
@@ -1242,6 +1246,12 @@ sap.ui.define([
 		if (typeof oControlConfig !== "undefined" &&
 			oControlConfig.noInvalidationProps.indexOf(sParameterName) !== -1) {
 			return;
+		}
+
+		// If the visibility of the conent has changed, in onAfterRendering method we assure that
+		// the cached controls' sizes will be updated, as they might not be accurate
+		if (sParameterName === "visible") {
+			this._bContentVisibilityChanged = true;
 		}
 
 		// Trigger a recalculation
