@@ -3,17 +3,17 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/internal/ChangesController",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/base/util/includes",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/internal/SaveAs",
 	"sap/ui/fl/Utils"
 ], function(
-	ChangesController,
-	JsControlTreeModifier,
-	DescriptorInlineChangeFactory,
 	includes,
+	JsControlTreeModifier,
+	ChangesController,
+	DescriptorInlineChangeFactory,
 	SaveAs,
 	flexUtils
 ) {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/write/internal/ChangesController",
+	"sap/ui/fl/apply/internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ComponentContainer,

@@ -2,7 +2,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/internal/ChangesController",
+	"sap/ui/fl/apply/internal/ChangesController",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
