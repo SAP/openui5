@@ -1699,6 +1699,50 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
+	QUnit.test("Open popup with Calendar when the display format is dd/MM/YYYY where YYYY results in weekYear for PatternSymbolSettings.type", function(assert) {
+		// Prepare
+		var oDP = new DatePicker({
+				displayFormat: "dd/MM/YYYY",
+				change: handleChange
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.toggleOpen(oDP.isOpen());
+
+		// Assert
+		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "Calendar is visible");
+
+		// Clean
+		oDP.destroy();
+	});
+
+	QUnit.test("Open popup with default Calendar when the display format is wrong", function(assert) {
+		// Prepare
+		var oDP = new DatePicker({
+				displayFormat: "aaa/bbb/ccc",
+				change: handleChange
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.toggleOpen(oDP.isOpen());
+
+		// Assert
+		assert.ok(sap.ui.getCore().byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
+		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "Calendar is visible");
+
+		// Clean
+		oDP.destroy();
+	});
+
 	QUnit.module("ARIA");
 
 	QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {
