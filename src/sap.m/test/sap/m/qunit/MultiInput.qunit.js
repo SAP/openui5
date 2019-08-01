@@ -1689,6 +1689,7 @@ sap.ui.define([
 		oPicker.getContent()[0].getItems()[0]._oDeleteControl.firePress();
 		// assert
 		assert.strictEqual(this.multiInput.getTokens().length, 3, "A token was deleted after deleting an item from the popover");
+		assert.ok(oPicker.isOpen(), "Popover remains open after deleting a token");
 
 		//close and open the picker
 		oPicker.close();
