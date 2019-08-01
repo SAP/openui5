@@ -52,18 +52,23 @@ function(
 		},
 		constructor: function () {
 			ManagedObject.apply(this, arguments);
-			this._aList = [];
+			this._mList = {};
 		},
 		/**
 		 * IDs counter
 		 * @type {number}
 		 * @private
 		 */
-		_iNextId: 0
+		_iNextId: 0,
+		_iTaskCounter: 0
 	});
 
 	TaskManager.prototype._validateTask = function(mTask) {
-		if (!isPlainObject(mTask) || !mTask.type) {
+		if (
+			!isPlainObject(mTask)
+			|| !mTask.type
+			|| typeof mTask.type !== "string"
+		) {
 			throw new Error('Invalid task specified');
 		}
 	};
@@ -78,9 +83,11 @@ function(
 		this._validateTask(mTask);
 
 		var iTaskId = this._iNextId++;
-		this._aList.push(Object.assign({}, mTask, {
+		this._mList[mTask.type] = this._mList[mTask.type] || [];
+		this._mList[mTask.type].push(Object.assign({}, mTask, {
 			id: iTaskId
 		}));
+		this._iTaskCounter++;
 		if (!this.getSuppressEvents()) {
 			this.fireAdd({
 				taskId: iTaskId
@@ -94,9 +101,15 @@ function(
 	 * @param {number} iTaskId - Task ID
 	 */
 	TaskManager.prototype.complete = function (iTaskId) {
-		this._aList = this._aList.filter(function (mTask) {
-			return mTask.id !== iTaskId;
-		});
+		Object.keys(this._mList).forEach(function (sTypeName) {
+			this._mList[sTypeName] = this._mList[sTypeName].filter(function (mTask) {
+				if (mTask.id === iTaskId) {
+					this._iTaskCounter--;
+					return false;
+				}
+				return true;
+			}.bind(this));
+		}, this);
 		if (!this.getSuppressEvents()) {
 			this.fireComplete({
 				taskId: [iTaskId]
@@ -113,16 +126,18 @@ function(
 	TaskManager.prototype.completeBy = function (mTask) {
 		this._validateTask(mTask);
 		var aCompledTaskIds = [];
-		this._aList = this._aList.filter(function (mLocalTask) {
+		// TODO: get rid of filtering other task parameters then type for performance reasons
+		this._mList[mTask.type] = this._mList[mTask.type].filter(function (mLocalTask) {
 			var bCompleteTask = Object.keys(mTask).every(function(sKey) {
 				return mLocalTask[sKey] && mLocalTask[sKey] === mTask[sKey];
 			});
 			if (bCompleteTask) {
+				this._iTaskCounter--;
 				aCompledTaskIds.push(mLocalTask.id);
 				return false;
 			}
 			return true;
-		});
+		}.bind(this));
 		if (!this.getSuppressEvents()) {
 			this.fireComplete({
 				taskId: aCompledTaskIds
@@ -140,26 +155,33 @@ function(
 
 	/**
 	 * Checks if the queue is empty
-	 * @return {boolean} - returns true if there is no pending task
+	 * @return {boolean} <code>true</code> if there is no pending task
 	 */
 	TaskManager.prototype.isEmpty = function () {
-		return this.count() === 0;
+		return this._iTaskCounter === 0;
 	};
 
 	/**
 	 * Returns amount of the tasks in the queue
-	 * @return {number} Amoutn of tasks
+	 * @param {string} [sType] - type of pending tasks to be counted. When <code>undefined</code> the count will be returned for all tasks
+	 * @return {number} Amount of tasks
 	 */
-	TaskManager.prototype.count = function () {
-		return this._aList.length;
+	TaskManager.prototype.count = function (sType) {
+		return this.getList(sType).length;
 	};
 
 	/**
 	 * Returns list of pending tasks
+	 * @param {string} [sType] - type of pending tasks to be returned. When <code>undefined</code> all tasks will be returned
 	 * @return {array} List copy of pending tasks
 	 */
-	TaskManager.prototype.getList = function () {
-		return this._aList.slice(0);
+	TaskManager.prototype.getList = function (sType) {
+		if (sType) {
+			return this._mList[sType] ? this._mList[sType].slice(0) : [];
+		}
+		return Object.keys(this._mList).reduce(function(aResult, sType) {
+			return aResult.concat(this._mList[sType]);
+		}.bind(this), []);
 	};
 
 	/**
@@ -170,6 +192,7 @@ function(
 		this.getList().forEach(function (oTask) {
 			this.cancel(oTask.id);
 		}, this);
+		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
 	return TaskManager;
