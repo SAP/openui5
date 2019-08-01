@@ -312,7 +312,7 @@ sap.ui.define([
 	 */
 	Button.prototype.onkeydown = function(oEvent) {
 
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT) {
 
 			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
 				// mark the event for components that needs to know if the event was handled by the button
@@ -330,12 +330,15 @@ sap.ui.define([
 				this._bPressedSpace = true;
 			}
 
-			// set inactive state of the button and marked ESCAPE as pressed only if SPACE was pressed before it
-			if (this._bPressedSpace && oEvent.which === KeyCodes.ESCAPE) {
-				this._bPressedEscape = true;
-				// set inactive button state
-				this._inactiveButton();
+			// set inactive state of the button and marked ESCAPE or SHIFT as pressed only if SPACE was pressed before it
+			if (this._bPressedSpace) {
+				if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+					this._bPressedEscapeOrShift = true;
+					// set inactive button state
+					this._inactiveButton();
+				}
 			}
+
 		} else {
 			if (this._bPressedSpace) {
 				oEvent.preventDefault();
@@ -361,7 +364,7 @@ sap.ui.define([
 		}
 
 		if (oEvent.which === KeyCodes.SPACE) {
-			if (!this._bPressedEscape) {
+			if (!this._bPressedEscapeOrShift) {
 				// mark the event for components that needs to know if the event was handled by the button
 				oEvent.setMarked();
 
@@ -369,7 +372,7 @@ sap.ui.define([
 				this._inactiveButton();
 				this.firePress({/* no parameters */});
 			} else {
-				this._bPressedEscape = false;
+				this._bPressedEscapeOrShift = false;
 			}
 			this._bPressedSpace = false;
 		}
