@@ -217,6 +217,7 @@ sap.ui.define([
 		if (bIE_Edge && bEnabled) {
 			oRm.openStart("span");
 			oRm.class("sapMBtnFocusDiv");
+			oRm.openEnd();
 			oRm.close("span");
 		}
 
