@@ -1250,8 +1250,9 @@ sap.ui.define([
 	 * @param {object} oConditionGridData the condition data for the new added condition grid controls
 	 * @param {string} sKey the key for the new added condition grid
 	 * @param {int} iPos the index of the new condition in the targetGrid
+         * @param {boolean} bUseRowFromAbove use the key from the row above for creating a new row
 	 */
-	P13nConditionPanel.prototype._createConditionRow = function(oTargetGrid, oConditionGridData, sKey, iPos) {
+	P13nConditionPanel.prototype._createConditionRow = function(oTargetGrid, oConditionGridData, sKey, iPos, bUseRowFromAbove) {
 
 		var oButtonContainer = null;
 		var oGrid;
@@ -1367,7 +1368,7 @@ sap.ui.define([
 							} else {
 								if (this.getUsePrevConditionSetting() && !this.getAutoReduceKeyFieldItems()) {
 									// select the key from the condition above
-									if (iPos > 0 && !sKey) {
+									if (iPos > 0 && !sKey && bUseRowFromAbove) { //bUseRowFromAbove determines, if the default needs to be used
 										oGrid = oTargetGrid.getContent()[iPos - 1];
 										if (oGrid.keyField.getSelectedKey()) {
 											oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
@@ -1549,7 +1550,7 @@ sap.ui.define([
 			icon: IconPool.getIconURI("add"),
 			tooltip: this._oRb.getText("CONDITIONPANEL_ADD" + (this._sAddRemoveIconTooltipKey ? "_" + this._sAddRemoveIconTooltipKey : "") + "_TOOLTIP"),
 			press: function() {
-				that._handleAddCondition(this.oTargetGrid, oConditionGrid);
+				that._handleAddCondition(this.oTargetGrid, oConditionGrid, true);
 			},
 			layoutData: new GridData({
 				span: this.getLayoutMode() === "Desktop" ? "L1 M1 S1" : "L1 M10 S10"
@@ -1641,10 +1642,11 @@ sap.ui.define([
 	 * @private
 	 * @param {grid} oTargetGrid the main grid
 	 * @param {grid} oSourceConditionGrid from where the Add is triggered
+         * @param {boolean} bUseRowFromAbove use the key from the row above for creating a new row
 	 */
-	P13nConditionPanel.prototype._handleAddCondition = function(oTargetGrid, oSourceConditionGrid) {
+	P13nConditionPanel.prototype._handleAddCondition = function(oTargetGrid, oSourceConditionGrid, bUseRowFromAbove) {
 		var iPos = oTargetGrid.getContent().indexOf(oSourceConditionGrid);
-		var oConditionGrid = this._createConditionRow(oTargetGrid, undefined, null, iPos + 1);
+		var oConditionGrid = this._createConditionRow(oTargetGrid, undefined, null, iPos + 1, bUseRowFromAbove);
 		this._changeField(oConditionGrid);
 
 		// set the focus in a fields of the newly added condition
