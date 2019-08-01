@@ -17,7 +17,6 @@
 			intervalSelect="handleIntervalSelect">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
 				<Select
 						change="handleSortChange"
 						width="230px">

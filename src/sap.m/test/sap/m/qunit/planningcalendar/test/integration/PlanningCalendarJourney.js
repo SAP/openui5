@@ -8,36 +8,36 @@ sap.ui.define(
 		QUnit.module("Hours View");
 		opaTest("Focus on Hours when right arrow is used", function (Given, When, Then) {
 			Given.iStartMyApp();
-			When.iPressOnRightArrowOnHoursView();
+			When.iPressOnRightArrow();
 			Then.iShouldCheckThatNextButtonOnHoursViewIsPressed();
 		});
 
 		QUnit.module("Days View");
-		opaTest("Focus on Day when right arrow is used", function (Given, When, Then) {
+		opaTest("Focus on Day when right arrow is used", function(Given, When, Then) {
 			When.iChooseViewSelect();
 			When.iChangeToDaysView();
-			When.iPressOnRightArrowOnDaysView();
+			When.iPressOnRightArrow();
 			Then.iShouldCheckThatNextButtonOnDaysViewIsPressed();
 		});
 		QUnit.module("Months View");
 		opaTest("Focus on Month when right arrow is used", function (Given, When, Then) {
 			When.iChooseViewSelect();
 			When.iChangeToMonthsView();
-			When.iPressOnRightArrowOnMonthsView();
+			When.iPressOnRightArrow();
 			Then.iShouldCheckThatNextButtonOnMonthsViewIsPressed();
 		});
 		QUnit.module("Week View");
 		opaTest("Focus on Day when right arrow is used", function (Given, When, Then) {
 			When.iChooseViewSelect();
 			When.iChangeToWeekView();
-			When.iPressOnRightArrowOnWeekView();
+			When.iPressOnRightArrow();
 			Then.iShouldCheckThatNextButtonOnWeekViewIsPressed();
 		});
 		QUnit.module("1Month View");
 		opaTest("Focus on Day when right arrow is used", function (Given, When, Then) {
 			When.iChooseViewSelect();
 			When.iChangeToOneMonthView();
-			When.iPressOnRightArrowOn1MonthView();
+			When.iPressOnRightArrow();
 			Then.iShouldCheckThatNextButtonOn1MonthViewIsPressed().and.iTeardownMyAppFrame();
 		});
 	}

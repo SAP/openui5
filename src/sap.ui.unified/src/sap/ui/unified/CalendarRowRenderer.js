@@ -163,7 +163,7 @@ sap.ui.define(['sap/ui/core/date/UniversalDate', 'sap/ui/unified/CalendarAppoint
 				break;
 		}
 
-		if (oRow._isOneMonthIntervalOnSmallSizes()) {
+		if (oRow._isOneMonthsRowOnSmallSizes()) {
 			this.renderSingleDayInterval(oRm, oRow, aAppointments, aTypes, aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, true, true);
 		} else {
 

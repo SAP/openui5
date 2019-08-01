@@ -16,136 +16,21 @@ sap.ui.define([
 	CalendarAppointment, SearchField, Button, DateTypeRange, Log, unifiedLibrary) {
 	"use strict";
 
-	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
 
 	QUnit.module("Events", {
 		beforeEach: function () {
-			this.oPC = new PlanningCalendar('pc1', {
-				startDate: new Date(2015, 0, 1, 8, 0, 0),
-				viewKey: "Week",
-				rows: [
-					new PlanningCalendarRow("pc1-Row1", {
-						icon: "sap-icon://employee",
-						title: "Max Mustermann",
-						text: "Musterteam",
-						tooltip: "Header tooltip",
-						intervalHeaders: [
-							new CalendarAppointment("pc1-row1-R1H1",{
-								startDate: new Date(2015, 0, 1, 9, 0),
-								endDate: new Date(2015, 0, 1, 11, 0),
-								type: CalendarDayType.Type02,
-								title: "SAPUI5",
-								tooltip: "Test",
-								icon: "sap-icon://sap-ui5"
-							})
-						],
-						appointments: [
-							new CalendarAppointment("pc1-row1-R1A1", {
-								startDate: new Date(2015, 0, 1, 8, 0),
-								endDate: new Date(2015, 0, 1, 9, 0),
-								type: CalendarDayType.Type01,
-								title: "App 1",
-								icon: "../../ui/unified/images/m_01.png",
-								tooltip: "Tooltip",
-								text: "Text"
-							}),
-							new CalendarAppointment("pc1-row1-R1A2", {
-								startDate: new Date(2015, 0, 1, 7, 0),
-								endDate: new Date(2015, 0, 1, 11, 0),
-								type: CalendarDayType.Type02,
-								title: "App 2",
-								icon: "sap-icon://home",
-								tooltip: "Tooltip",
-								text: "Text",
-								tentative: true
-							}),
-							new CalendarAppointment("pc1-row1-R1A3", {
-								startDate: new Date(2015, 0, 2, 8, 30),
-								endDate: new Date(2015, 0, 2, 9, 30),
-								type: CalendarDayType.Type03,
-								title: "App3",
-								icon: "sap-icon://home",
-								tooltip: "Tooltip"
-							}),
-							new CalendarAppointment("pc1-row1-R1A4", {
-								startDate: new Date(2014, 6, 1),
-								endDate: new Date(2014, 6, 2),
-								type: CalendarDayType.Type04,
-								title: "Meeting 4",
-								tooltip: "Tooltip 4",
-								selected: true
-							})
-						]
-					}),
-					new PlanningCalendarRow("pc1-Row2", {
-						icon: "../../ui/unified/images/m_01.png",
-						title: "Edward",
-						text: "the great",
-						tooltip: "Header tooltip",
-						nonWorkingDays: [2,3],
-						nonWorkingHours: [11, 12],
-						intervalHeaders: [
-							new CalendarAppointment("pc1-row2-R2H1",{
-								startDate: new Date(2015, 0, 2),
-								endDate: new Date(2015, 0, 2, 23, 59),
-								type: CalendarDayType.Type01,
-								title: "SAPUI5",
-								tooltip: "Test",
-								icon: "sap-icon://sap-ui5"
-							})
-						],
-						appointments: [
-							new CalendarAppointment("pc1-row2-R2A1", {
-								startDate: new Date(2015, 0, 1),
-								endDate: new Date(2015, 0, 2, 23, 59),
-								type: CalendarDayType.Type01,
-								title: "App 1",
-								tooltip: "Tooltip",
-								text: "Text"
-							})
-						]
-					})
-				],
-				specialDates: [
-					new DateTypeRange("pc1-SD1", {
-						startDate: new Date(2015, 0, 6),
-						type: CalendarDayType.Type01,
-						tooltip: "Heilige 3 Könige"
-					}),
-					new DateTypeRange("pc1-SD2", {
-						startDate: new Date(2015, 0, 1, 12, 0),
-						endDate: new Date(2015, 0, 1, 14, 0),
-						type: CalendarDayType.Type02,
-						tooltip: "Lunch"
-					})
-				],
-				toolbarContent: [new SearchField(), new Button()],
-				appointmentSelect: function(oEvent){
-					Log.info("Appointment select event fired");
-				},
-				startDateChange: function(oEvent){
-					Log.info("Start date change event fired");
-				},
-				rowSelectionChange:  function(oEvent){
-					Log.info("Row selection change event fired");
-				},
-				viewChange: function(oEvent){
-					Log.info("ViewChange event fired");
-				},
-				intervalSelect: function (oEvent) {
-					Log.info("IntervalSelect event fired");
-				}
-			});
-			this.oPC.placeAt("content");
+			this.sut = new CalendarWeekInterval("CalP",{
+				startDate: new Date("2015", "0", "1", "8", "0", "0"),
+				pickerPopup: true
+			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			this.sut = this.oPC.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 			this.sutMonth = this.sut.getAggregation("month")[0];
 		},
 		afterEach: function () {
-			this.oPC.destroy();
-			this.oPC = undefined;
+			this.sut.destroy();
+			this.sut = undefined;
 		}
 	});
 

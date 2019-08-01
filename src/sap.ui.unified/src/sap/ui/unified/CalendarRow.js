@@ -599,7 +599,7 @@ sap.ui.define([
 		// check if part of an Interval
 		for (iIndex = 0; iIndex < aIntervals.length; iIndex++) {
 			var oInterval = aIntervals[iIndex];
-			if (!this._isOneMonthIntervalOnSmallSizes() && containsOrEquals(oInterval, oEvent.target)) {
+			if (!this._isOneMonthsRowOnSmallSizes() && containsOrEquals(oInterval, oEvent.target)) {
 				bInterval = true;
 				break;
 			}
@@ -859,7 +859,7 @@ sap.ui.define([
 	/*
 	 * returns if the appointments are rendered as list instead in a table
 	 */
-	CalendarRow.prototype._isOneMonthIntervalOnSmallSizes = function() {
+	CalendarRow.prototype._isOneMonthsRowOnSmallSizes = function() {
 		return this.getIntervalType() === CalendarIntervalType.OneMonth && this.getIntervals() === 1;
 	};
 
@@ -1486,7 +1486,7 @@ sap.ui.define([
 	// as the top position of the appointments depends on the rendered height it must be calculated after rendering
 	function _positionAppointments() {
 
-		if (this._isOneMonthIntervalOnSmallSizes()) {
+		if (this._isOneMonthsRowOnSmallSizes()) {
 			return;
 		}
 

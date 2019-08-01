@@ -594,6 +594,17 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the parent control instance which contains the legend
+	 * to the TimesRow control instance
+	 * @ui5-restricted sap.m.PlanningCalendar
+	 * @private
+	 * @param {*} oControl containing the legend
+	 */
+	TimesRow.prototype._setLegendControlOrigin = function (oControl) {
+		this._oLegendControlOrigin = oControl;
+	};
+
 	/*
 	 * if used inside CalendarTimeInterval get the value from the parent
 	 * To don't have sync issues...
@@ -601,6 +612,10 @@ sap.ui.define([
 	TimesRow.prototype.getLegend = function(){
 
 		var oParent = this.getParent();
+
+		if (this._oLegendControlOrigin) {
+			return this._oLegendControlOrigin.getLegend();
+		}
 
 		if (oParent && oParent.getLegend) {
 			return oParent.getLegend();

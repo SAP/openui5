@@ -17,10 +17,21 @@ sap.ui.define(['sap/ui/core/Renderer', './MonthRenderer', './DatesRowRenderer'],
 				if (oDatesRow.iMode < 2) {
 					return MonthRenderer[sHelperMethod].apply(MonthRenderer, arguments);
 				} else {
+					if (sHelperMethod === "getClass") {
+						var sClasses = "sapUiCalDatesRow sapUiCalRow sapUiCalOneMonthDatesRow";
+
+						if (!oDatesRow.getShowDayNamesLine()) {
+							sClasses = sClasses + " sapUiCalNoNameLine";
+						}
+
+						return sClasses;
+					}
 					return DatesRowRenderer[sHelperMethod].apply(DatesRowRenderer, arguments);
 				}
 			};
 		});
+
+
 
 		return OneMonthDatesRowRenderer;
 

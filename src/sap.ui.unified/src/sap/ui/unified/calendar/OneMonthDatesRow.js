@@ -106,6 +106,13 @@ sap.ui.define([
 		return this;
 	};
 
+	OneMonthDatesRow.prototype.getDays = function() {
+		if (this.iMode === 2) {
+			return 31;
+		} else {
+			return CalendarUtils._daysInMonth(CalendarDate.fromLocalJSDate(this.getStartDate()));
+		}
+	};
 
 	/**
 	 * Displays a given date.

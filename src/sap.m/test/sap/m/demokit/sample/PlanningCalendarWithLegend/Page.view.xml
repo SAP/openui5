@@ -25,7 +25,6 @@
 						legend="PlanningCalendarLegend"
 						specialDates="{path: '/specialDates', templateShareable: true}">
 					<toolbarContent>
-						<ToolbarSpacer/>
 						<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
 					</toolbarContent>
 					<rows>
