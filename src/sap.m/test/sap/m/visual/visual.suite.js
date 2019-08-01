@@ -22,6 +22,7 @@ module.exports = [
 	"IconTabHeaderResponsivePaddings.spec.js",
 	"Image.spec.js",
 	"InputVisualTests.spec.js",
+	"InputDescriptionVisualTests.spec.js",
 	"Label.spec.js",
 	"LightBox.spec.js",
 	"Link.spec.js",
