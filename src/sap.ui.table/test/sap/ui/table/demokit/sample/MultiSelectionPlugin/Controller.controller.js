@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast"
-], function(Controller, MockServer, ODataModel, JSONModel, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/table/SelectionMode"
+], function(Controller, MockServer, ODataModel, JSONModel, MessageToast, SelectionMode) {
 	"use strict";
 
 	var sServiceUrl = "http://my.test.service.com/";
@@ -26,12 +27,26 @@ sap.ui.define([
 
 			this.oMockServer.start();
 
+			var aSelectionModes = [];
+			jQuery.each(SelectionMode, function(k, v){
+				if (k != SelectionMode.Multi) {
+					aSelectionModes.push({key: k, text: v});
+				}
+			});
+
 			var oView = this.getView();
 			oView.setModel(new ODataModel(sServiceUrl));
 			oView.setModel(new JSONModel({
 				limit: 20,
-				showHeaderSelector: true
+				showHeaderSelector: true,
+				selectionModes: aSelectionModes
 			}), "config");
+		},
+
+		onSelectionModeChange: function(oEvent) {
+			var oTable = this.byId("table");
+			var oPlugin = oTable.getPlugins()[0];
+			oPlugin.setSelectionMode(oEvent.getParameter("selectedItem").getKey());
 		},
 
 		onSelectionChange: function(oEvent) {
