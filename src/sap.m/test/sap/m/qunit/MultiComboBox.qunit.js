@@ -5305,8 +5305,7 @@ sap.ui.define([
 		this.oMultiComboBox.addItem(oItem);
 		this.oMultiComboBox.setSelectedItems([oItem]);
 
-		this.oMultiComboBox.setValue = "text";
-		this.oMultiComboBox.getFocusDomRef().selectionStart = 3;
+		this.oMultiComboBox.setValue("text");
 
 		sap.ui.getCore().applyChanges();
 
