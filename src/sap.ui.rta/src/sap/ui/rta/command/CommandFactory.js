@@ -98,7 +98,7 @@ function(
 		return oAction;
 	}
 
-	function adjustAddXmlCommand(mSettings) {
+	function adjustSelectorForCommand(mSettings) {
 		mSettings.element = sap.ui.getCore().byId(getTemplateElementId(mSettings.element));
 		evaluateResult(mSettings.element);
 	}
@@ -260,7 +260,8 @@ function(
 			noSelector: true
 		},
 		property : {
-			clazz : 'sap.ui.rta.command.Property'
+			clazz : 'sap.ui.rta.command.Property',
+			adjustForBinding : adjustSelectorForCommand
 		},
 		bindProperty : {
 			clazz : 'sap.ui.rta.command.BindProperty'
@@ -268,7 +269,7 @@ function(
 		addXML : {
 			clazz : 'sap.ui.rta.command.AddXML',
 			configure : configureAddXmlCommand,
-			adjustForBinding : adjustAddXmlCommand
+			adjustForBinding : adjustSelectorForCommand
 		},
 		createContainer : {
 			clazz : 'sap.ui.rta.command.CreateContainer',

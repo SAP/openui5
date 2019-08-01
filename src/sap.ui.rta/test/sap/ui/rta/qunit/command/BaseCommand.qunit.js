@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/changeHandler/UnhideControl",
+	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -55,6 +56,7 @@ function (
 	MoveControls,
 	HideControl,
 	UnhideControl,
+	PropertyChange,
 	ChangeRegistry,
 	SimpleChanges,
 	PersistenceWriteAPI,
@@ -1340,7 +1342,6 @@ function (
 				}
 			});
 
-			// select the second text in the inner vbox of the third list item
 			var oMovedElement = this.oText1;
 			var oRelevantContainer = oMovedElement.getParent();
 			var oSource = {
@@ -1414,7 +1415,6 @@ function (
 				}
 			});
 
-			// select the second text in the inner vbox of the third list item
 			var oRevealedElement = this.oText1;
 			var oRelevantContainer = oRevealedElement.getParent();
 			var oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
@@ -1462,6 +1462,57 @@ function (
 				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getVisible(), true, "and text control in first item is visible again");
 				assert.equal(this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getVisible(), true, "and text control in second item is visible again");
 				assert.equal(this.oList.getItems()[2].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getVisible(), true, "and text control in third item is visible again");
+			}.bind(this));
+		});
+
+		QUnit.test("when getting a property change command for a bound control deep inside a bound list control,", function(assert) {
+			var oCreateChangeFromDataSpy = sandbox.spy(FlexCommand.prototype, "_createChangeFromData");
+			var oCompleteChangeContentSpy = sandbox.spy(PropertyChange, "completeChangeContent");
+			var oApplyChangeSpy = sandbox.spy(PropertyChange, "applyChange");
+
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "VENDOR",
+					developerMode: true
+				}
+			});
+
+			var oElement = this.oText1;
+			var oTextItem = this.oItemTemplate.getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+
+			var oExpectedFlexSettings = {
+				layer: "VENDOR",
+				developerMode: true,
+				originalSelector : "text1",
+				templateSelector : "list",
+				content : {
+					boundAggregation : "items"
+				}
+			};
+
+			return oCommandFactory.getCommandFor(oElement, "property", {
+				element : oElement,
+				changeType: "propertyChange",
+				newValue: false,
+				propertyName: "visible"
+			})
+
+			.then(function(oPropertyCommand) {
+				assert.ok(oPropertyCommand, "then command is available");
+				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
+				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
+				assert.strictEqual(oPropertyCommand.getPreparedChange().getDefinition().dependentSelector.originalSelector.id, oExpectedFlexSettings.originalSelector, "and the prepared change contains the original selector as dependency");
+				assert.strictEqual(oPropertyCommand.getPreparedChange().getContent().boundAggregation, "items", "and the bound aggegation is written to the change content");
+				assert.strictEqual(oPropertyCommand._getChangeSpecificData().selector.id, oTextItem.getId(), "and the change specific content of the change is also adjusted");
+				return oPropertyCommand.execute();
+			})
+
+			.then(function() {
+				assert.equal(oCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(oApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getVisible(), false, "and visibility property of text control in first item is set to invisible");
+				assert.equal(this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getVisible(), false, "and visibility property of text control in second item is set to invisible");
+				assert.equal(this.oList.getItems()[2].getContent()[0].getItems()[0].getItems()[0].getItems()[0].getVisible(), false, "and visibility property of text control in third item is set to invisible");
 			}.bind(this));
 		});
 	});
@@ -1543,7 +1594,6 @@ function (
 				}
 			});
 
-			// select the second text in the inner vbox of the third list item
 			var oRenamedElement = this.oList.getItems()[2].getContent()[0].getItems()[1].getItems()[1];
 
 			return oCommandFactory.getCommandFor(oRenamedElement, "rename", {
@@ -1559,6 +1609,101 @@ function (
 				assert.equal(oError.message, "Multiple template bindings are not supported",
 					"an error message is raised that multiple bindings are not supported");
 			});
+		});
+	});
+
+	QUnit.module("Given a command factory and a bound control containing an aggregation binding with a factory function", {
+		beforeEach : function(assert) {
+			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
+
+			var done = assert.async();
+
+			var aTexts = [{text1: "Text 1", text2: "More Text 1"}, {text1: "Text 2", text2: "More Text 2"}, {text1: "Text 3", text2: "More Text 3"}];
+			var oModel = new JSONModel({
+				texts : aTexts
+			});
+
+			this.oList = new List("list").setModel(oModel);
+			this.oList.bindAggregation("items", "/texts", function(sId, oContext) {
+				var oItem;
+				if (oContext.getProperty("text1").charAt(5) % 2 === 0) {
+					oItem = new CustomListItem(sId, {
+						content : new VBox(sId + "--vbox", {
+							items : [
+								new Text(sId + "--text1", {text : "{text1}"}),
+								new Text(sId + "--text2", {text : "{text2}"})
+							]
+						})
+					});
+				} else {
+					oItem = new CustomListItem(sId, {
+						content : new VBox(sId + "--vbox", {
+							items : [
+								new Button(sId + "--button1", {text : "{text1}"}),
+								new Button(sId + "--button2", {text : "{text2}"})
+							]
+						})
+					});
+				}
+				return oItem;
+			});
+
+			this.oList.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0];
+			var oDesignTime = new DesignTime({
+				rootElements : [this.oList]
+			});
+
+			oDesignTime.attachEventOnce("synced", function() {
+				done();
+			}.bind(this));
+		},
+		afterEach : function() {
+			sandbox.restore();
+			this.oList.destroy();
+		}
+	}, function() {
+		QUnit.test("when getting a property change command for a bound control inside a bound list control,", function(assert) {
+			var oCreateChangeFromDataSpy = sandbox.spy(FlexCommand.prototype, "_createChangeFromData");
+			var oCompleteChangeContentSpy = sandbox.spy(PropertyChange, "completeChangeContent");
+			var oApplyChangeSpy = sandbox.spy(PropertyChange, "applyChange");
+
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "VENDOR",
+					developerMode: true
+				}
+			});
+
+			var oExpectedFlexSettings = {
+				layer: "VENDOR",
+				developerMode: true
+			};
+
+			return oCommandFactory.getCommandFor(this.oText1, "property", {
+				element : this.oText1,
+				changeType: "propertyChange",
+				newValue: false,
+				propertyName: "visible"
+			})
+
+			.then(function(oPropertyCommand) {
+				assert.ok(oPropertyCommand, "then command is available");
+				assert.equal(oCreateChangeFromDataSpy.callCount, 1, "and '_createChangeFromData' is called once");
+				assert.deepEqual(oCreateChangeFromDataSpy.args[0][1], oExpectedFlexSettings, "and '_createChangeFromData' is called with the enriched set of flex settings");
+				assert.strictEqual(oPropertyCommand._getChangeSpecificData().selector.id, this.oText1.getId(), "and the change specific content has the selected element as selector");
+				return oPropertyCommand.execute();
+			}.bind(this))
+
+			.then(function() {
+				assert.equal(oCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(oApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				assert.equal(this.oList.getItems()[0].getContent()[0].getItems()[0].getVisible(), true, "and visibility property of the control in first item is not set to invisible");
+				assert.equal(this.oList.getItems()[1].getContent()[0].getItems()[0].getVisible(), false, "and visibility property of the control in second item is set to invisible");
+				assert.equal(this.oList.getItems()[2].getContent()[0].getItems()[0].getVisible(), true, "and visibility property of the control in third item is not set to invisible");
+			}.bind(this));
 		});
 	});
 
