@@ -480,12 +480,25 @@ sap.ui.define([
 		oHashChanger.destroy();
 	});
 
+
+	QUnit.test("Should save the initial hash without slash", function(assert) {
+		var sHash = "test/abc";
+		window.location.hash = sHash;
+		//System under Test
+		var oHashChanger = HashChanger.getInstance();
+
+		// eslint-disable-next-line no-new
+		new History(oHashChanger);
+
+		assert.strictEqual(History._aStateHistory[History._aStateHistory.length - 1], sHash, "The hash with no leading # is inserted");
+	});
+
 	QUnit.module("history.state enhancement", {
 		beforeEach: function(assert) {
 			var that = this;
 			// Extended a hashchange to deliver the additional fullHash parameter HashChanger
 			this.oExtendedHashChanger = HashChanger.getInstance();
-			// The fireEvent method nees to be stubbed instead of the fireHashChanged because the original
+			// The fireEvent method needs to be stubbed instead of the fireHashChanged because the original
 			// fireHashChanged is already registered as an event handler to hasher at HashChanger.init and
 			// the stub of it here can't affect the hasher event handler anymore
 			this.oFireHashChangeStub = stubWith(sinon, this.oExtendedHashChanger, "fireEvent", function(sEventName, oParameter) {
@@ -494,8 +507,8 @@ sap.ui.define([
 						that.fnBeforeFireHashChange();
 					}
 
-					// Simulate the fullHash parameter which is necessary for extended direction determination
-					oParameter.fullHash = window.location.hash;
+					// extend the parameter with fullHash for pushState
+					oParameter.fullHash = oParameter.newHash;
 				}
 				HashChanger.prototype.fireEvent.apply(this, arguments);
 			});
@@ -549,6 +562,77 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Method getHistoryStateOffset", function(assert) {
+		var that = this;
+		var pSetup = this.setup();
+
+		if (Device.browser.msie) {
+			return pSetup.then(function() {
+				assert.strictEqual(that.oHistory.getHistoryStateOffset(), undefined, "The functionality isn't available in IE");
+			});
+		} else {
+			return pSetup.then(function() {
+				assert.strictEqual(that.oHistory.getHistoryStateOffset(), 0, "History state offest is 0 after hashChange is processed");
+			}).then(function() {
+				that.fnBeforeFireHashChange = function() {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), undefined, "History state offset is undefined after new hash");
+				};
+
+				return that.checkDirection(function() {
+					// set new hash to add a new entry to the browser history, getHistoryStateOffset returns:
+					//  * undefined before hashChange event is processed
+					//  * 0 after hashChange event is processed
+					that.oExtendedHashChanger.setHash("foobar");
+				}, function(sHash) {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), 0, "History state offest is 0 after hashChange is processed");
+					delete that.fnBeforeFireHashChange;
+				});
+			}).then(function() {
+				that.fnBeforeFireHashChange = function() {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), -2, "History state offset is -2 after window.history.go(-2)");
+				};
+
+				return that.checkDirection(function() {
+					// call window.history.go with negative number to go back in browser history, getHistoryStateOffset returns:
+					//  * The exact same negative number given to window.history.go before hashChange event is processed
+					//  * 0 after hashChange event is processed
+					window.history.go(-2);
+				}, function(sHash) {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), 0, "History state offest is 0 after hashChange is processed");
+					delete that.fnBeforeFireHashChange;
+				});
+			}).then(function() {
+				that.fnBeforeFireHashChange = function() {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), 2, "History state offset is 2 after window.history.go(2)");
+				};
+
+				return that.checkDirection(function() {
+					// call window.history.go with positive number to go forward in browser history, getHistoryStateOffset returns:
+					//  * The exact same positive number given to window.history.go before hashChange event is processed
+					//  * 0 after hashChange event is processed
+					window.history.go(2);
+				}, function(sHash) {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), 0, "History state offest is 0 after hashChange is processed");
+					delete that.fnBeforeFireHashChange;
+				});
+			}).then(function() {
+				that.fnBeforeFireHashChange = function() {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), undefined, "History state offset is undefined after hash is replaced");
+				};
+
+				return that.checkDirection(function() {
+					// replace the current hash in browser, getHistoryStateOffset returns:
+					//  * undefined before hashChange event is processed
+					//  * 0 after hashChange event is processed
+					that.oExtendedHashChanger.replaceHash("replacedHash");
+				}, function(sHash) {
+					assert.strictEqual(that.oHistory.getHistoryStateOffset(), 0, "History state offest is 0 after hashChange is processed");
+					delete that.fnBeforeFireHashChange;
+				});
+			});
+		}
+	});
+
 	QUnit.test("Consume fullHash parameter of hashChange event", function(assert) {
 		assert.expect(5);
 		return this.setup().then(function() {
@@ -577,15 +661,15 @@ sap.ui.define([
 				if (sHash === "foo") {
 					assert.strictEqual(this.oHistory.getDirection(), "Unknown");
 				}
-			}.bind(this)).then(function() {
-				if (Device.browser.msie) {
-					assert.equal(oSpy.callCount, 0, "there's no log written for IE");
-				} else {
-					assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
-				}
-				oSpy.restore();
-			});
-		}.bind(this));
+			}.bind(this));
+		}.bind(this)).then(function() {
+			if (Device.browser.msie) {
+				assert.equal(oSpy.callCount, 0, "there's no log written for IE");
+			} else {
+				assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
+			}
+			oSpy.restore();
+		});
 	});
 
 	QUnit.test("The new direction method should return undefined if hashChanged event is fired without browser hash change", function(assert) {
