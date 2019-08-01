@@ -139,31 +139,37 @@ ui5 build jsdoc
 ```
 By default, the `jsdoc` command generates an API summary file `api.json` for your project.
 
+⚠️ **Note:** Currently there are known issues with the JSDoc build when using Node.js `v12.x`. If you are facing issues, you may try using Node.js `v10.x`.
+
 #### Building the OpenUI5 SDK (Demo Kit)
 Before you start building the SDK, make sure you have followed the [advanced setup](#advanced-setup) of your OpenUI5 development environment at first.
 
 Execute the build:
 ```
-cd openui5/testsuite
+cd src/testsuite
 ui5 build jsdoc --all
 ```
-With the `--all` option the JSDoc build generates an `api.json` of all project dependencies. This can then be used to launch the demokit and find the full API reference for all OpenUI5 libraries.
+With the `--all` option the JSDoc build generates an `api.json` of all project dependencies. This can then be used to launch the Demo Kit and find the full API reference for all OpenUI5 libraries.
+
+⚠️ **Note:** Currently there are known issues with the JSDoc build when using Node.js `v12.x`. If you are facing issues, you may try using Node.js `v10.x`.
 
 ##### Test the SDK
-1. To run the Demo Kit, a HTTP server is required. You can use any HTTP server. We recommend using [zeit/serve](https://www.npmjs.com/package/serve).
-```
-# Install zeit/serve
-npm install --global serve@6
+
+1. After you have run the `ui5 build jsdoc --all` command in the testsuite project, a `dist` folder is created.
+
+2. Start an HTTP server for the `dist` folder
+```sh
+npm run serve-sdk
 ```
 
-2. After you have run the `ui5 build jsdoc --all` command in the testsuite project, a `dist` folder is created.
+3. Launch the Demo Kit at [http://localhost:8000/documentation.html](http://localhost:8000/documentation.html)
 
-3. Start the HTTP server for the `dist` folder
-```
-# assuming you are using zeit/serve: Start the HTTP server in the testsuite project
-serve ./dist
-```
-4. Launch the Demo Kit at [http:localhost:5000/documentation.html](http:localhost:5000/documentation.html)
+##### Shortcuts
+Within the testsuite project:
+- You can **build and serve** the SDK using this command:  
+`npm run sdk`
+- You can **update** and already built SDK using this command:  
+`npm run update-sdk` *(followed by `npm run serve-sdk` to start the server if necessary)*
 
 
 Testing UI5
