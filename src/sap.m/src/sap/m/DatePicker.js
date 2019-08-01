@@ -1092,7 +1092,7 @@ sap.ui.define([
 		var aPatternSymbolTypes = this._getFormatter(true)
 			.aFormatArray
 			.map(function(oPatternSymbolSettings) {
-				return oPatternSymbolSettings.type;
+				return oPatternSymbolSettings.type.toLowerCase();
 			}),
 			bDay = aPatternSymbolTypes.indexOf("day") >= 0 ? true : false,
 			bMonth = aPatternSymbolTypes.indexOf("month") >= 0 ? true : false,
@@ -1107,6 +1107,9 @@ sap.ui.define([
 				CalendarConstructor = CustomMonthPicker;
 			} else if (bYear) {
 				CalendarConstructor = CustomYearPicker;
+			} else {
+				CalendarConstructor = Calendar;
+				Log.warning("Not valid date pattern! Openning default Calendar", this);
 			}
 
 			this._oCalendar = new CalendarConstructor(this.getId() + "-cal", {
