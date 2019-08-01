@@ -708,7 +708,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Space event should not fire press if escape is pressed and released after the Space is released", function(assert) {
+	QUnit.test("Space event should not fire press if ESCAPE is pressed and released after the Space is released", function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -731,7 +731,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Space event should not fire press if escape is pressed then Space is released and then Escape is released", function(assert) {
+	QUnit.test("Space event should not fire press if ESCAPE is pressed then Space is released and then Escape is released", function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -745,6 +745,52 @@ sap.ui.define([
 		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Space event should not fire press if SHIFT is pressed and released after the Space is released", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		// first keydown on SPACE, keydown on SHIFT, release SPACE then release SHIFT
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Space event should not fire press if SHIFT is pressed then Space is released and then SHIFT is released", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		// first keydown on SPACE, keydown on SHIFT, release ESCAPE then release SHIFT
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SHIFT);
 		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 
 		// Assert
