@@ -44,6 +44,9 @@ sap.ui.define([
 			// shortcut for sap.ui.core.TextDirection
 			var TextDirection = coreLibrary.TextDirection;
 
+			// shortcut for sap.m.ButtonType
+			var ButtonType = library.ButtonType;
+
 			/**
 			 * Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts,
 			 * confirmation dialogs, or arbitrary message dialogs.
@@ -262,7 +265,8 @@ sap.ui.define([
 								verticalScrolling: true,
 								horizontalScrolling: true,
 								details: "",
-								contentWidth: null
+								contentWidth: null,
+								isCustomAction: true
 							},
 							//set the information icon according to the used theme
 							bInformationIconUsed = Parameters.get("_sap_m_Message_Box_Information_Icon") === "true",
@@ -307,6 +311,7 @@ sap.ui.define([
 					if (mOptions && mOptions.hasOwnProperty("details")) {
 						mDefaults.icon = Icon.INFORMATION;
 						mDefaults.actions = [Action.OK, Action.CANCEL];
+						mOptions.isCustomAction = !mOptions.actions || mOptions.actions.length === 0 ? false : true;
 						mOptions = jQuery.extend({}, mDefaults, mOptions);
 					}
 
@@ -316,13 +321,16 @@ sap.ui.define([
 					if (typeof mOptions.actions !== "undefined" && !Array.isArray(mOptions.actions)) {
 						mOptions.actions = [mOptions.actions];
 					}
+
 					if (!mOptions.actions || mOptions.actions.length === 0) {
 						mOptions.actions = [Action.OK];
+						mOptions.isCustomAction = false;
 					}
 
 					/** creates a button for the given action */
 					function button(sAction) {
-						var sText;
+						var sText,
+						sButtonType = !mOptions.isCustomAction && Action.OK === sAction ? ButtonType.Emphasized : ButtonType.Default;
 
 						// Don't check in ResourceBundle library if the button is with custom text
 						if (MessageBox.Action.hasOwnProperty(sAction)) {
@@ -332,6 +340,7 @@ sap.ui.define([
 						var oButton = new Button({
 							id: ElementMetadata.uid("mbox-btn-"),
 							text: sText || sAction,
+							type: sButtonType,
 							press: function () {
 								oResult = sAction;
 								oDialog.close();
@@ -525,7 +534,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_ALERT"),
 						actions: Action.OK,
 						id: ElementMetadata.uid("alert"),
-						initialFocus: null
+						initialFocus: null,
+						isCustomAction: false
 					}, fnCallback, sTitle, sDialogId, sStyleClass;
 
 					if (typeof mOptions === "function" || arguments.length > 2) {
@@ -600,7 +610,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_CONFIRM"),
 						actions: [Action.OK, Action.CANCEL],
 						id: ElementMetadata.uid("confirm"),
-						initialFocus: null
+						initialFocus: null,
+						isCustomAction: false
 					}, fnCallback, sTitle, sDialogId, sStyleClass;
 
 					if (typeof mOptions === "function" || arguments.length > 2) {
@@ -672,7 +683,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_ERROR"),
 						actions: [Action.CLOSE],
 						id: ElementMetadata.uid("error"),
-						initialFocus: null
+						initialFocus: null,
+						isCustomAction: false
 					};
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
@@ -728,7 +740,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_INFO"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("info"),
-						initialFocus: null
+						initialFocus: null,
+						isCustomAction: false
 					};
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
@@ -784,7 +797,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_WARNING"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("warning"),
-						initialFocus: null
+						initialFocus: null,
+						isCustomAction: false
 					};
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
@@ -840,7 +854,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_SUCCESS"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("success"),
-						initialFocus: null
+						initialFocus: null,
+						isCustomAction: false
 					};
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
