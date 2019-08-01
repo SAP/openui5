@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/base/ManagedObject",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -16,6 +17,7 @@ function(
 	Control,
 	UIComponent,
 	ManagedObject,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -434,6 +436,14 @@ function(
 			this.oControlWithGeneratedId = new Control();
 			this.oControlWithPrefix = new Control(this.oComponent.createId("myButton"));
 			this.oControlWithoutPrefix = new Control("myButtonWithoutAppPrefix");
+			this.oLogStub = sandbox.stub(Log, "warning")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes("Control ID was generated dynamically by SAPUI5");
+					})
+				)
+				.returns();
 		},
 
 		afterEach: function () {
@@ -448,22 +458,28 @@ function(
 			assert.equal(BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent), false);
 		});
 
-		QUnit.test("checkControlId shall throw an error if the ID was generated", function (assert) {
-			var Log = sap.ui.require("sap/base/Log");
-			assert.ok(Log, "Log module should be available");
-
-			var spyLog = sandbox.spy(Log, "warning");
+		QUnit.test("checkControlId shall throw a warning if the ID was generated", function (assert) {
 			BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent);
-			assert.ok(spyLog.calledOnce);
+			assert.strictEqual(this.oLogStub.callCount, 1);
+		});
+
+		QUnit.test("checkControlId shall throw an error if the ID was generated", function (assert) {
+			this.oLogStub = sandbox.stub(Log, "error")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes("Control ID was generated dynamically by SAPUI5");
+					})
+				)
+				.returns();
+
+			BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent, /* Suppress = */false, "error");
+			assert.strictEqual(this.oLogStub.callCount, 1);
 		});
 
 		QUnit.test("checkControlId does not throw an error if the ID was generated, but the logging was suppressed", function (assert) {
-			var Log = sap.ui.require("sap/base/Log");
-			assert.ok(Log, "Log module should be available");
-
-			var spyLog = sandbox.spy(Log, "warning");
 			BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent, true);
-			assert.equal(spyLog.callCount, 0);
+			assert.strictEqual(this.oLogStub.callCount, 0);
 		});
 
 		QUnit.test("checkControlId shall return true if control ID was not generated", function (assert) {

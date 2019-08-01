@@ -5,21 +5,21 @@
 // Provides class sap.ui.rta.plugin.Plugin.
 sap.ui.define([
 	"sap/ui/dt/Plugin",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/ElementOverlay",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier"
+	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/rta/util/hasStableId"
 ],
 function(
 	Plugin,
-	FlexUtils,
 	ChangeRegistry,
 	OverlayRegistry,
 	OverlayUtil,
 	ElementOverlay,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	hasStableId
 ) {
 	"use strict";
 
@@ -43,12 +43,6 @@ function(
 	 * @alias sap.ui.rta.plugin.Plugin
 	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-
-	/* Methods to save stable ID info on Overlay */
-	ElementOverlay.prototype._bElementHasStableId = undefined;
-	ElementOverlay.prototype.getElementHasStableId = function() { return this._bElementHasStableId;};
-	ElementOverlay.prototype.setElementHasStableId = function(bHasStableId) { this._bElementHasStableId = bHasStableId; };
-	ElementOverlay.prototype.hasElementStableId = function() { return !!this._bElementHasStableId; };
 
 	var BasePlugin = Plugin.extend("sap.ui.rta.plugin.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
 		metadata : {
@@ -261,37 +255,8 @@ function(
 	 * @return {boolean} Returns true if the element has a stable ID
 	 */
 	BasePlugin.prototype.hasStableId = function(oOverlay) {
-		if (!oOverlay || oOverlay._bIsBeingDestroyed) {
-			return false;
-		}
-
-		// without DesignTimeMetadata the Overlay was not registered yet.
-		if (!oOverlay.getDesignTimeMetadata()) {
-			return false;
-		}
-
-		if (oOverlay.getElementHasStableId() === undefined) {
-			var aStableElements = oOverlay.getDesignTimeMetadata().getStableElements(oOverlay);
-			var bUnstable = aStableElements.length > 0 ? aStableElements.some(function(vStableElement) {
-				var oControl = vStableElement.id || vStableElement;
-				if (!FlexUtils.checkControlId(oControl, vStableElement.appComponent)) {
-					return _checkAggregationBindingTemplateID(oOverlay, vStableElement);
-				}
-			}) : true;
-			oOverlay.setElementHasStableId(!bUnstable);
-		}
-		return oOverlay.hasElementStableId();
+		return hasStableId(oOverlay);
 	};
-
-	//Check if related binding template has stable id
-	function _checkAggregationBindingTemplateID(oOverlay, vStableElement) {
-		var mAggregationInfo = OverlayUtil.getAggregationInformation(oOverlay, oOverlay.getElement().sParentAggregationName);
-		if (!mAggregationInfo.templateId) {
-			return true;
-		}
-
-		return !FlexUtils.checkControlId(mAggregationInfo.templateId, vStableElement.appComponent);
-	}
 
 	BasePlugin.prototype.getVariantManagementReference = function (oOverlay) {
 		var sVariantManagementReference;

@@ -872,12 +872,12 @@ function(
 		/**
 		 * See {@link sap.ui.core.BaseTreeModifier#checkControlId} method
 		 */
-		checkControlId: function (vControl, oAppComponent, bSuppressLogging) {
+		checkControlId: function (vControl, oAppComponent, bSuppressLogging, sLoggingSeverity) {
 			if (!oAppComponent) {
 				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
 				oAppComponent = Utils.getAppComponentForControl(vControl);
 			}
-			return BaseTreeModifier.checkControlId(vControl, oAppComponent, bSuppressLogging);
+			return BaseTreeModifier.checkControlId(vControl, oAppComponent, bSuppressLogging, sLoggingSeverity);
 		},
 
 		/**
