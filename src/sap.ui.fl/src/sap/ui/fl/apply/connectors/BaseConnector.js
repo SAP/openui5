@@ -13,41 +13,23 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.apply.connectors.BaseConnector
 	 * @experimental Since 1.67
 	 * @since 1.67
-	 * @ui5-restricted sap.ui.fl.apply.connectors, sap.ui.fl.apply.internal.Connector, sap.ui.fl.write.internal.Connector
+	 * @version ${version}
+	 * @public
 	 */
-	var BaseConnector = /** @lends sap.ui.fl.apply.connectors.BaseConnector */{
-		/**
-		 * Returns default responses for non-implemented functions, or needed response for error handling.
-		 *
-		 */
-		_RESPONSES: {
-			FLEX_DATA : {
-				changes : [],
-				variantSection : {}
-			},
-			FEATURES : {}
-		},
-
+	var BaseConnector = /** @lends sap.ui.fl.apply.api.connectors.BaseConnector */ {
 		/**
 		 * Interface called to get the flex data, including changes and variants.
 		 *
-		 * @param {string} sFlexReference - Reference of the application
-		 * @param {string} sAppVersion - Version of the application
+		 * @param {map} mPropertyBag - Properties needed by the connectors
+		 * @param {string} mPropertyBag.flexReference - Reference of the application
+		 * @param {string} [mPropertyBag.appVersion] - Version of the application
+		 * @param {string} [mPropertyBag.url] - Configured url for the connector
+		 * @param {string} [mPropertyBag.cacheKey] - Key which can be used to etag / cachebuster the request
 		 * @returns {Promise<Object>} Promise resolving with an object containing a flex data response
 		 * @ui5-restricted
 		 */
-		loadFlexData:function (/* sFlexReference , sAppVersion */) {
-			return Promise.resolve(this._RESPONSES.FLEX_DATA);
-		},
-
-		/**
-		 * Interface called to get the flex feature.
-		 *
-		 * @returns {Promise<Object>} Promise resolving with an object containing a flex data response
-		 * @ui5-restricted
-		 */
-		loadFeatures: function () {
-			return Promise.resolve(this._RESPONSES.FEATURES);
+		loadFlexData:function (/* mPropertyBag */) {
+			return Promise.reject("loadFlexData is not implemented");
 		}
 	};
 
