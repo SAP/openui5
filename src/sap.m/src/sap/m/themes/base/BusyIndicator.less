@@ -40,7 +40,7 @@ html[data-sap-ui-browser^="cr"] {
 	animation:         @name 2s linear 0s infinite normal none;
 }
 
-html[dir='rtl'] .sapMBsyIndIcon {
+html[dir='rtl'][data-sap-ui-animation-mode="full"] .sapMBsyIndIcon {
 	.sapMBsyIndAnimation(sapMBsyIndRotateRTL);
 }
 
@@ -50,7 +50,9 @@ html[dir='rtl'] .sapMBsyIndIcon {
 	transform: rotate(0deg) translateZ(0);
 	-webkit-transition-duration: 0ms;
 	transition-duration: 0ms;
+}
 
+html[data-sap-ui-animation-mode="full"] .sapMBsyIndIcon {
 	.sapMBsyIndAnimation(sapMBsyIndRotate);
 }
 
