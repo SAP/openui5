@@ -1,24 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/Utils",
-	"sap/ui/layout/Grid",
-	"sap/m/Input",
-	"sap/ui/core/Icon",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
-], function(
-	VariantManagement,
-	VariantModel,
-	flUtils,
-	Grid,
-	Input,
-	Icon,
-	jQuery,
-	sinon
-) {
+	"sap/ui/fl/variants/VariantManagement", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/Utils", "sap/ui/layout/Grid", "sap/m/Input", "sap/m/RadioButton", "sap/ui/core/Icon", "sap/ui/thirdparty/jquery", "sap/ui/thirdparty/sinon-4"
+], function(VariantManagement, VariantModel, flUtils, Grid, Input, RadioButton, Icon, jQuery, sinon) {
 	"use strict";
 
 	var oModel;
@@ -94,12 +78,20 @@ sap.ui.define([
 						}
 					]
 				}
-			}, { _oChangePersistence: { _oVariantController: { assignResetMapListener: function () {} } } });
+			}, {
+				_oChangePersistence: {
+					_oVariantController: {
+						assignResetMapListener: function() {
+						}
+					}
+				}
+			});
 
 			sinon.stub(oModel, "updateCurrentVariant").returns(Promise.resolve());
 			// to suppress "manage" event listener in VariantModel
 			sinon.stub(oModel, "_initializeManageVariantsEvents");
-			oModel.fnManageClick = function() {};
+			oModel.fnManageClick = function() {
+			};
 		},
 		afterEach: function() {
 			this.oVariantManagement.destroy();
@@ -469,6 +461,44 @@ sap.ui.define([
 			this.oVariantManagement.oManagementSave = undefined;
 		});
 
+		QUnit.test("Checking _handleManageDefaultVariantChange, ensure favorites are flagged for default variant", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			var oItem = this.oVariantManagement._getItemByKey("1");
+
+			sinon.stub(this.oVariantManagement, "_setFavoriteIcon");
+			sinon.stub(this.oVariantManagement, "_anyInErrorState").returns(false);
+
+			this.oVariantManagement.oManagementSave = {
+				setEnabled: function() {
+				}
+			};
+
+			var oDefaultRadioButton = new RadioButton();
+
+			oDefaultRadioButton.getParent = function() {
+				return {
+					getCells: function() {
+						return [
+							"ICON"
+						];
+					}
+				}
+			};
+
+			assert.ok(oItem.favorite);
+			this.oVariantManagement._handleManageDefaultVariantChange(oDefaultRadioButton, oItem);
+			assert.ok(oItem.favorite);
+
+			oItem.favorite = false;
+			assert.ok(!oItem.favorite);
+			this.oVariantManagement._handleManageDefaultVariantChange(oDefaultRadioButton, oItem);
+			assert.ok(oItem.favorite);
+
+			this.oVariantManagement.oManagementSave = undefined;
+			oDefaultRadioButton.destroy();
+		});
+
 		QUnit.test("Checking _handleManageCancelPressed", function(assert) {
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 
@@ -770,6 +800,14 @@ sap.ui.define([
 
 			this.oVariantManagement._triggerSearchInManageDialog(oEvent, this.oVariantManagement.oManagementTable);
 			assert.ok(this.oVariantManagement._bDeleteOccured);
+		});
+
+		QUnit.test("Checking _handleManageExecuteOnSelectionChanged ", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement._createManagementDialog();
+
+			this.oVariantManagement._handleManageExecuteOnSelectionChanged({});
+			assert.ok(this.oVariantManagement.oManagementSave.getEnabled());
 		});
 
 		QUnit.test("Checking _handleManageExecuteOnSelectionChanged ", function(assert) {
