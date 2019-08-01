@@ -625,6 +625,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.ok(oNavigateStub.called, "Navigation to details had been triggered");
+
+		this.oMessageView.navigateBack();
+		this.clock.tick(500);
+
+		assert.ok(this.oMessageView._oLists['all'].getVisible(), "The list with all items is visible");
 	});
 
 	QUnit.module("HTML representation", {

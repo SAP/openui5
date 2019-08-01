@@ -342,7 +342,7 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._restoreItemsType = function () {
-		if (this._isListPage() && this.getItems().length) {
+		if (this._isListPage() && this.getItems().length > 1) {
 			var that = this;
 			this._oLists[this._sCurrentList || 'all'].getItems().forEach(function (oListItem) {
 				that._setItemType(oListItem);
