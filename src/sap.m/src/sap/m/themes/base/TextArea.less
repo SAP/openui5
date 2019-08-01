@@ -5,6 +5,8 @@
 
 @_sapMTextAreaPadding: 0.625rem 0.75rem;
 @_sapMTextAreaPadding_Compact: 0.1875rem 0.5rem;
+@_sapMTextAreaValueStatePadding: 0.5625rem 0.6875rem;
+@_sapMTextAreaValueStatePadding_Compact: 0.125rem 0.4375rem;
 
 /* uses sapMInputBase styles */
 
@@ -80,7 +82,7 @@
 
 .sapMInputBase.sapMTextArea .sapMInputBaseContentWrapperState {
 	.sapMTextAreaInner, .sapMTextAreaMirror {
-		padding: 0.5625rem 0.6875rem;
+		padding: @_sapMTextAreaValueStatePadding;
 	}
 }
 
@@ -116,8 +118,15 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
-.sapUiSizeCompact .sapMInputBase.sapMTextArea .sapMInputBaseContentWrapperState .sapMTextAreaInner {
-	padding: 0.125rem 0.4375rem;
+.sapUiSizeCompact .sapMInputBase.sapMTextArea {
+	.sapMTextAreaInner, .sapMTextAreaMirror {
+		padding: @_sapMTextAreaPadding_Compact;
+	}
+	.sapMInputBaseContentWrapperState {
+		.sapMTextAreaInner, .sapMTextAreaMirror {
+			padding: @_sapMTextAreaValueStatePadding_Compact;
+		}
+	}
 }
 
 /**
