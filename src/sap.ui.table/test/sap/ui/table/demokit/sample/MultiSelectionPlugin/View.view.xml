@@ -25,6 +25,7 @@
 				<plugins>
 					<plugins:MultiSelectionPlugin
 						limit="{path: 'config>/limit', type: 'sap.ui.model.type.Integer'}"
+						enableNotification="true"
 						showHeaderSelector="{config>/showHeaderSelector}"
 						selectionChange="onSelectionChange"/>
 				</plugins>

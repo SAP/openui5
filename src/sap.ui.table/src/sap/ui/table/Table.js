@@ -2995,10 +2995,7 @@ sap.ui.define([
 		var aRowIndices = oEvent.getParameter("rowIndices");
 		var bSelectAll = oEvent.getParameter("selectAll");
 		var iRowIndex = this._iSourceRowIndex !== undefined ? this._iSourceRowIndex : oSelectionPlugin.getSelectedIndex();
-		var bLimitReached = oEvent.getParameter("limitReached");
-		if (bLimitReached) {
-			this.setFirstVisibleRow(Math.max(0, oSelectionPlugin.getSelectedIndex() - this._getRowCounts().count + 1));
-		}
+
 		this._updateSelection();
 
 		// If a selection plugin is applied to the table, the "rowSelectionChange" event should not be fired.
