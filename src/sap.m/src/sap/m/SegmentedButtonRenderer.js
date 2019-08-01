@@ -53,9 +53,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 			oRM.class("sapMSegBIcons");
 		}
 		oRM.class("sapMSegB");
-		if (oControl.getWidth() && oControl.getWidth() !== '') {
-			oRM.style('width', oControl.getWidth());
-		}
+		oRM.style('width', oControl.getWidth());
+
 		sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRM.attr("title", sTooltip);
@@ -111,9 +110,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 					oRM.class("sapMSegBBtnMixed");
 				}
 				sButtonWidth = oButton.getWidth();
-				if (sButtonWidth) {
-					oRM.style('width', sButtonWidth);
-				}
+				oRM.style('width', sButtonWidth);
 
 				sTooltip = oButton.getTooltip_AsString();
 				if (sTooltip) {
@@ -155,7 +152,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"],
 
 				// render text
 				if (sButtonText !== '') {
-					oRM.text(sButtonText, false);
+					oRM.text(sButtonText);
 				}
 				oRM.close("div");
 				oRM.close("li");
