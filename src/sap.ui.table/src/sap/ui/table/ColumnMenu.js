@@ -507,9 +507,15 @@ sap.ui.define([
 				return;
 			}
 			var aItems = oSubmenu.getItems();
-			var oItem = aItems.find(function(element) {
-				return element.getId().endsWith("-item-" + iIndex);
-			});
+			var oItem;
+			for (var i = 0; i < aItems.length; i++) {
+				var sItemId = aItems[i].getId();
+				var sSearch = "-item-" + iIndex;
+				if (sItemId.substring(sItemId.length - sSearch.length) === sSearch) {
+					oItem = aItems[i];
+					break;
+				}
+			}
 			if (!oItem){
 				return;
 			}
