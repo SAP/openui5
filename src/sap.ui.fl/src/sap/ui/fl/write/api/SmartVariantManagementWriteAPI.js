@@ -45,11 +45,11 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		add: function(mPropertyBag) {
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
 
 			return oChangePersistence.addChangeForVariant(
-				SmartVariantManagementApplyAPI._PERSISTENCY_KEY, sStableId, typeof arguments[1] === "object" ? arguments[1] : mPropertyBag.changeSpecificData
+				SmartVariantManagementApplyAPI._PERSISTENCY_KEY, sStableId, mPropertyBag.changeSpecificData
 			);
 		},
 
@@ -62,8 +62,8 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		save: function(mPropertyBag) {
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
 
 			return oChangePersistence.saveAllChangesForVariant(sStableId);
 		},
@@ -82,15 +82,15 @@ sap.ui.define([
 		setDefaultVariantId: function(mPropertyBag) {
 			var mParameters;
 			var oChange;
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
 			var mSelector = {};
 
 			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
 
 			mParameters = {
-				defaultVariantId: typeof arguments[1] === "string" ? arguments[1] : mPropertyBag.defaultVariantId,
+				defaultVariantId: mPropertyBag.defaultVariantId,
 				reference: oChangePersistence.getComponentName(),
 				selector: mSelector,
 				validAppVersions: {
@@ -99,8 +99,8 @@ sap.ui.define([
 				}
 			};
 
-			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control || arguments[0]);
-			oChange = DefaultVariant.updateDefaultVariantId(oChanges, arguments[1] || mPropertyBag.defaultVariantId);
+			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control);
+			oChange = DefaultVariant.updateDefaultVariantId(oChanges, mPropertyBag.defaultVariantId);
 
 			if (oChange) {
 				return oChange;
@@ -125,21 +125,21 @@ sap.ui.define([
 		setExecuteOnSelect: function(mPropertyBag) {
 			var mParameters;
 			var oChange;
-			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control || arguments[0]);
+			var sStableId = SmartVariantManagementApplyAPI._getStableId(mPropertyBag.control);
 
 			var mSelector = {};
 			mSelector[SmartVariantManagementApplyAPI._PERSISTENCY_KEY] = sStableId;
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control || arguments[0]);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.control);
 
 			mParameters = {
-				executeOnSelect: typeof arguments[1] === "boolean" ? arguments[1] : mPropertyBag.executeOnSelect,
+				executeOnSelect: mPropertyBag.executeOnSelect,
 				reference: oChangePersistence.getComponentName(),
 				selector: mSelector
 			};
 
-			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control || arguments[0]);
-			oChange = StandardVariant.updateExecuteOnSelect(oChanges, arguments[1] || mPropertyBag.executeOnSelect);
+			var oChanges = SmartVariantManagementApplyAPI._getChangeMap(mPropertyBag.control);
+			oChange = StandardVariant.updateExecuteOnSelect(oChanges, mPropertyBag.executeOnSelect);
 
 			if (oChange) {
 				return oChange;
