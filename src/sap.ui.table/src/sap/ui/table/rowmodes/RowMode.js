@@ -314,21 +314,21 @@ sap.ui.define([
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 
 		// Special handling for the V4 AutoExpandSelect feature.
-		if (sReason === "AddVirtualContext") {
-			var oVirtualContext = this.getRowContexts(1, true)[0];
-			var oVirtualRow = createRows(oTable, 1)[0];
+		if (!oTable._bBindingReady) {
+			var aContexts = this.getRowContexts(null, true);
 
-			this.updateTableAsync.cancel();
+			if (this.getTotalRowCountOfTable() === 0 && aContexts.length === 1) {
+				// The context might be a virtual context part of AutoExpandSelect.
+				var oVirtualContext = aContexts[0];
+				var oVirtualRow = createRows(oTable, 1)[0];
 
-			oVirtualRow.setBindingContext(oVirtualContext);
-			oTable.addAggregation("rows", oVirtualRow, true);
-			oTable.removeAggregation("rows", oVirtualRow, true);
-			oVirtualRow.setBindingContext(undefined);
+				oVirtualRow.setBindingContext(oVirtualContext);
+				oTable.addAggregation("rows", oVirtualRow, true);
+				oTable.removeAggregation("rows", oVirtualRow, true);
+				oVirtualRow.setBindingContext(null);
+			}
 
-			return;
-		} else if (sReason === "RemoveVirtualContext") {
-			this.updateTableAsync.cancel();
-			return;
+			return; // No need to update rows if the binding is not ready.
 		}
 
 		this.updateTableAsync(sReason);
@@ -603,9 +603,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets contexts from the table's rows aggregation binding.
+	 * Gets contexts from the table's rows aggregation binding. Requests at least as many contexts as the table has rows or as is returned
+	 * by {@link RowMode#getMinRequestLength}.
 	 *
-	 * @param {int} iRequestLength The number of context to request.
+	 * @param {int} [iRequestLength] The number of context to request.
 	 * @param {boolean} [bSuppressAdjustToBindingLength=false] Whether the table should be adjusted to a possibly new binding length.
 	 * @returns {Object[]} The contexts returned from the binding.
 	 * @private
@@ -673,6 +674,7 @@ sap.ui.define([
 	 */
 	function updateBindingContextsOfRows(oMode, aRows) {
 		var oTable = oMode.getParent();
+		var aContexts = oMode.getRowContexts(aRows.length);
 
 		if (!oTable || aRows.length === 0) {
 			return;
@@ -681,7 +683,6 @@ sap.ui.define([
 		var oBinding = oTable.getBinding("rows");
 		var oBindingInfo = oTable.getBindingInfo("rows");
 		var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
-		var aContexts = oMode.getRowContexts(aRows.length);
 
 		for (var i = 0; i < aRows.length; i++) {
 			aRows[i].setRowBindingContext(aContexts[i], sModelName, oBinding);
