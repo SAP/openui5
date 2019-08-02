@@ -1168,7 +1168,7 @@ sap.ui.define([
 			.removeStyleClass("sapMNavItemSlideLeft")
 			.removeStyleClass("sapMNavItemSlideRight");
 
-		setTimeout(this._fadeInAnimation.bind(this), 0);
+		this._fadeInAnimation();
 	};
 
 	NavContainer.prototype._fadeInAnimation = function() {
