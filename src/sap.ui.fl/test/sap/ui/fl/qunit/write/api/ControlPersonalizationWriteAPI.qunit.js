@@ -357,7 +357,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'add' with two valid variant changes and an invalid change", function(assert) {
-			this.mRenameChangeData1.selectorControl = undefined;
+			this.mRenameChangeData1.selectorElement = undefined;
 			return ControlPersonalizationWriteAPI.add({
 				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2]
 			})
