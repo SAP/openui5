@@ -1363,7 +1363,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");  // render
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1374,7 +1374,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");  // render
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1385,9 +1385,11 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The call to Binding#getContexts considers the visible row count");
+			assert.strictEqual(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The second call to Binding#getContexts considers the visible row count");
 		});
 	});
 
@@ -1398,13 +1400,13 @@ sap.ui.define([
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			oGetContextsSpy.reset();
 		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
 
 		}).then(oTable.qunit.resetSize).then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
@@ -1446,7 +1448,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Fixed: Initialization when metadata not loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Fixed, createODataModel());
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1454,13 +1456,13 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Fixed: Initialization when metadata loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Fixed);
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1468,13 +1470,13 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Interactive: Initialization when metadata not loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Interactive, createODataModel());
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1482,13 +1484,13 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Interactive: Initialization when metadata loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Interactive);
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1496,47 +1498,51 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Auto: Initialization when metadata not loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Auto, createODataModel());
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
 
-		// render, refreshRows, updateRows
+		// render, render, auto rerender, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
 				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The third call to Binding#getContexts considers the visible row count");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 20, 100),
+				"The third call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The fourth call to Binding#getContexts considers the visible row count");
 			assert.notEqual(oTable.getVisibleRowCount(), 20,
 				"The computed request length and the visible row count should not be equal in this test");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Auto: Initialization when metadata loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Auto);
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
 
-		// refreshRows, render, updateRows
+		// refreshRows, render, auto rerender, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
 				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The third call to Binding#getContexts considers the visible row count");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 20, 100),
+				"The third call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The fourth call to Binding#getContexts considers the visible row count");
 			assert.notEqual(oTable.getVisibleRowCount(), 20,
 				"The computed request length and the visible row count should not be equal in this test");
 		});
