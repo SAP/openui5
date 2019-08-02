@@ -314,23 +314,6 @@ sap.ui.define([
 			return this;
 		};
 
-		/*
-		 * Sets the slider isCyclic property.
-		 * @param {boolean} bValue If the slider is cyclic or not
-		 * @returns {*} this
-		 */
-		TimePickerSlider.prototype.setIsCyclic = function(bValue) {
-			if (this.getDomRef()) {
-				if (bValue) {
-					this.$().removeClass("sapMTimePickerSliderShort");
-				} else {
-					this.$().addClass("sapMTimePickerSliderShort");
-				}
-			}
-
-			return this.setProperty("isCyclic", bValue, false);
-		};
-
 		/**
 		 * Handles the focusin event.
 		 *

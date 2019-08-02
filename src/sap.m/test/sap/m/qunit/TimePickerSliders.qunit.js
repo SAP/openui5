@@ -60,9 +60,7 @@ sap.ui.define([
 		this.oTPS.setLabelText(sLabelText);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSetPropertySpy.calledWithExactly("labelText", sLabelText, true), true, "setProperty is called with right arguments");
-
-		oSetPropertySpy.restore();
+		assert.equal(oSetPropertySpy.calledWithExactly("labelText", sLabelText), true, "setProperty is called with right arguments");
 	});
 
 	QUnit.test("Call to setMinutesStep sets minutesStep and regenerates the lists", function(assert) {
@@ -130,10 +128,8 @@ sap.ui.define([
 		this.oTPS.setWidth(sWidth);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSetPropertySpy.calledWithExactly("width", sWidth, true), true, "setProperty is called with right arguments");
+		assert.equal(oSetPropertySpy.calledWithExactly("width", sWidth), true, "setProperty is called with right arguments");
 		assert.equal(this.oTPS.$().outerWidth() + "px", sWidth, "width is properly set");
-
-		oSetPropertySpy.restore();
 	});
 
 	QUnit.test("Call to setHeight sets the height", function (assert) {
@@ -143,10 +139,8 @@ sap.ui.define([
 		this.oTPS.setHeight(sHeight);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oSetPropertySpy.calledWithExactly("height", sHeight, true), true, "setProperty is called with right arguments");
+		assert.equal(oSetPropertySpy.calledWithExactly("height", sHeight), true, "setProperty is called with right arguments");
 		assert.equal(this.oTPS.$().outerHeight() + "px", sHeight, "height is properly set");
-
-		oSetPropertySpy.restore();
 	});
 
 	QUnit.test("Call to setValue sets the value", function (assert) {

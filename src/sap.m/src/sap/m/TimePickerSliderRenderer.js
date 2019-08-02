@@ -11,6 +11,7 @@ sap.ui.define([],
 		 * @namespace
 		 */
 		var TimePickerSliderRenderer = {
+			apiVersion: 2
 		};
 
 		/**
@@ -26,24 +27,22 @@ sap.ui.define([],
 				aItems = oControl.getItems(),
 				sControlLabel = oControl.getLabel();
 
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.writeAttribute("tabindex", "0");
+			oRm.openStart("div", oControl);
+			oRm.attr("tabindex", "0");
 
-			oRm.addClass("sapMTPColumn");
+			oRm.class("sapMTPColumn");
 			if (oControl.getIsExpanded()) {
-				oRm.addClass("sapMTPSliderExpanded");
+				oRm.class("sapMTPSliderExpanded");
 			}
 			if (!oControl.getIsCyclic()) {
-				oRm.addClass("sapMTimePickerSliderShort");
+				oRm.class("sapMTimePickerSliderShort");
 			}
 			if (!oControl._getEnabled()) {
-				oRm.addClass("sapMTPDisabled");
+				oRm.class("sapMTPDisabled");
 			}
-			oRm.writeClasses();
 
 			//WAI-ARIA region
-			oRm.writeAccessibilityState(oControl, {
+			oRm.accessibilityState(oControl, {
 				role: "list",
 				labelledby: {
 					value: oControl.getId() + "-label",
@@ -55,76 +54,75 @@ sap.ui.define([],
 				}
 			});
 
-			oRm.write(">");
+			oRm.openEnd();
 
 			//Title label of the slider
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-label");
-			oRm.addClass("sapMTimePickerLabel");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.writeEscaped(sControlLabel);
-			oRm.write("</div>");
+			oRm.openStart("div", oControl.getId() + "-label");
+			oRm.class("sapMTimePickerLabel");
+			oRm.openEnd();
+			oRm.text(sControlLabel);
+			oRm.close("div");
 
-			oRm.write("<div");
-			oRm.writeAttribute("id", oControl.getId() + "-valDescription");
-			oRm.writeAttribute('aria-hidden', 'false');
-			oRm.writeAttribute('aria-live', 'assertive');
-			oRm.addClass("sapUiInvisibleText");
-			oRm.writeClasses();
-			oRm.write("></div>");
+			oRm.openStart("div", oControl.getId() + "-valDescription");
+			oRm.attr('aria-hidden', 'false');
+			oRm.attr('aria-live', 'assertive');
+			oRm.class("sapUiInvisibleText");
+			oRm.openEnd();
+			oRm.close("div");
 
-			oRm.write("<div class='sapMTimePickerItemArrows'>");
+			oRm.openStart("div");
+			oRm.class("sapMTimePickerItemArrows");
+			oRm.openEnd();
 			oRm.renderControl(oControl.getAggregation("_arrowUp"));
-			oRm.write("</div>");
+			oRm.close("div");
 
-			oRm.write("<div");
-			oRm.addClass("sapMTimePickerSlider");
+			oRm.openStart("div");
+			oRm.class("sapMTimePickerSlider");
 			TimePickerSliderRenderer.addItemValuesCssClass(oRm, oControl);
-			oRm.writeClasses();
-
-			oRm.writeAttribute("unselectable", "on");
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.attr("unselectable", "on");
+			oRm.openEnd();
 
 			//render selection frame, same height - border height
-			oRm.write("<div class=\"sapMTPPickerSelectionFrame\"></div>");
+			oRm.openStart("div");
+			oRm.class("sapMTPPickerSelectionFrame");
+			oRm.openEnd();
+			oRm.close("div");
 
-			oRm.write("<ul");
-			oRm.writeAttribute("id", oControl.getId() + "-content");
-			oRm.writeAttribute("unselectable", "on");
-			oRm.write(">");
+			oRm.openStart("ul", oControl.getId() + "-content");
+			oRm.attr("unselectable", "on");
+			oRm.openEnd();
 
 			for (iRepetition = 1; iRepetition <= nContentRepetitions; iRepetition++) {
 				for (iIndex = 0; iIndex < aItems.length; iIndex++) {
 					//unselectable for IE9
-					oRm.write("<li");
+					oRm.openStart("li");
 
-					oRm.addClass("sapMTimePickerItem");
+					oRm.class("sapMTimePickerItem");
 					if (!aItems[iIndex].getVisible()) {
-						oRm.addClass("TPSliderItemHidden");
+						oRm.class("TPSliderItemHidden");
 					}
-					oRm.writeClasses();
 
 					//WAI-ARIA region
-					oRm.writeAccessibilityState(oControl);
-					oRm.writeAttribute("unselectable", "on");
+					oRm.accessibilityState(oControl);
+					oRm.attr("unselectable", "on");
 
-					oRm.write(">");
-					oRm.writeEscaped(aItems[iIndex].getText());
-					oRm.write("</li>");
+					oRm.openEnd();
+					oRm.text(aItems[iIndex].getText());
+					oRm.close("li");
 				}
 			}
-			oRm.write("</ul>");
+			oRm.close("ul");
 
-			oRm.write("</div>");
+			oRm.close("div");
 
 			//arrow down
-			oRm.write("<div class='sapMTimePickerItemArrows'>");
+			oRm.openStart("div");
+			oRm.class("sapMTimePickerItemArrows");
+			oRm.openEnd();
 			oRm.renderControl(oControl.getAggregation("_arrowDown"));
-			oRm.write("</div>");
+			oRm.close("div");
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		/**
@@ -140,7 +138,7 @@ sap.ui.define([],
 			}).length;
 
 			if (iVisibleItemsLength > 2 && iVisibleItemsLength < 13) {
-				oRm.addClass("SliderValues" + iVisibleItemsLength.toString());
+				oRm.class("SliderValues" + iVisibleItemsLength.toString());
 			}
 		};
 
