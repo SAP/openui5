@@ -83,7 +83,7 @@ sap.ui.define([
 			/**
 			 * Determines the text of the <code>Button</code>.
 			 */
-			text : {type : "string", group : "Misc", defaultValue : null},
+			text : {type : "string", group : "Misc", defaultValue: "" },
 
 			/**
 			 * Defines the <code>Button</code> type.
@@ -105,7 +105,7 @@ sap.ui.define([
 			 * Defines the icon to be displayed as graphical element within the <code>Button</code>.
 			 * It can be an image or an icon from the icon font.
 			 */
-			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" },
 
 			/**
 			 * Determines whether the icon is displayed before the text.
@@ -454,25 +454,27 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype._getImage = function(sImgId, sSrc, sActiveSrc, bIconDensityAware) {
+		var bIsIconURI = IconPool.isIconURI(sSrc),
+			bIconFirst;
 
-		// check if image source has changed - if yes destroy and reset image control
-		if (this._image && (this._image.getSrc() !== sSrc)) {
+		// check if image control type and src match - destroy it, if they don't
+		if (this._image instanceof sap.m.Image && bIsIconURI ||
+			this._image instanceof sap.ui.core.Icon && !bIsIconURI) {
 			this._image.destroy();
 			this._image = undefined;
 		}
 
 		// update or create image control
-		var oImage = this._image;
-		var bIconFirst = this.getIconFirst();
+		bIconFirst = this.getIconFirst();
 
-		if (!!oImage) {
-			oImage.setSrc(sSrc);
-			if (oImage instanceof sap.m.Image) {
-				oImage.setActiveSrc(sActiveSrc);
-				oImage.setDensityAware(bIconDensityAware);
+		if (this._image) {
+			this._image.setSrc(sSrc);
+			if (this._image instanceof sap.m.Image) {
+				this._image.setActiveSrc(sActiveSrc);
+				this._image.setDensityAware(bIconDensityAware);
 			}
 		} else {
-			oImage = IconPool.createControlByURI({
+			this._image = IconPool.createControlByURI({
 				id: sImgId,
 				src : sSrc,
 				activeSrc : sActiveSrc,
@@ -485,13 +487,12 @@ sap.ui.define([
 		}
 
 		// add style classes to the object
-		oImage.addStyleClass("sapMBtnIcon");
+		this._image.addStyleClass("sapMBtnIcon");
 
 		// check and set absolute position depending on icon and icon position
-		oImage.toggleStyleClass("sapMBtnIconLeft", bIconFirst);
-		oImage.toggleStyleClass("sapMBtnIconRight", !bIconFirst);
+		this._image.toggleStyleClass("sapMBtnIconLeft", bIconFirst);
+		this._image.toggleStyleClass("sapMBtnIconRight", !bIconFirst);
 
-		this._image = oImage;
 		return this._image;
 	};
 
@@ -542,44 +543,6 @@ sap.ui.define([
 		}
 
 		return bUnstyled;
-	};
-
-	/**
-	 * Property setter for the text
-	 *
-	 * @param {string} sText - new value of the Text attribute
-	 * @return {sap.m.Button} this to allow method chaining
-	 * @public
-	 */
-	Button.prototype.setText = function(sText) {
-		var sValue = this.getText();
-
-		if (sText === null || sText === undefined) {
-			sText = "";
-		}
-
-		if (sValue !== sText) {
-			this.setProperty("text", sText);
-		}
-
-		return this;
-	};
-
-	/**
-	 * Property setter for the icon
-	 *
-	 * @param {sap.ui.core.URI} sIcon - new value of the Icon property
-	 * @return {sap.m.Button} this to allow method chaining
-	 * @public
-	 */
-	Button.prototype.setIcon = function(sIcon) {
-		var sValue = this.getIcon() || "";
-		sIcon = sIcon || "";
-
-		if (sValue !== sIcon) {
-			this.setProperty("icon", sIcon);
-		}
-		return this;
 	};
 
 	/**
