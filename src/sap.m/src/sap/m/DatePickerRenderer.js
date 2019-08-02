@@ -11,6 +11,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 	 * @namespace
 	 */
 	var DatePickerRenderer = Renderer.extend(InputBaseRenderer);
+	DatePickerRenderer.apiVersion = 2;
 
 	/**
 	 * Write the value of the input.
@@ -19,13 +20,11 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 	 * @param {sap.m.DatePicker} oDP An object representation of the control that should be rendered.
 	 */
 	DatePickerRenderer.writeInnerValue = function(oRm, oDP) {
-
 		if (oDP._bValid) {
-			oRm.writeAttributeEscaped("value", oDP._formatValue(oDP.getDateValue()));
+			oRm.attr("value", oDP._formatValue(oDP.getDateValue()));
 		} else {
-			oRm.writeAttributeEscaped("value", oDP.getValue());
+			oRm.attr("value", oDP.getValue());
 		}
-
 	};
 
 	/**
@@ -35,11 +34,11 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer'],
 	 * @param {sap.m.DatePicker} oDP An object representation of the control that should be rendered.
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
-		oRm.writeAttribute("type", "text");
+		oRm.attr("type", "text");
 
 		if (oDP._bMobile) {
 			// prevent keyboard in mobile devices
-			oRm.writeAttribute("readonly", "readonly");
+			oRm.attr("readonly", "readonly");
 		}
 	};
 
