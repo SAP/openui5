@@ -17,6 +17,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 * @namespace
 		 */
 		var TimePickerRenderer = Renderer.extend(InputBaseRenderer);
+		TimePickerRenderer.apiVersion = 2;
 
 		TimePickerRenderer.CSS_CLASS = "sapMTimePicker";
 
@@ -28,7 +29,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 * @param {sap.m.TimePicker} oControl The control that should be rendered
 		 */
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
-			oRm.addClass(TimePickerRenderer.CSS_CLASS);
+			oRm.class(TimePickerRenderer.CSS_CLASS);
 		};
 
 		/**
@@ -44,9 +45,12 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 				sText = oRb.getText("TIMEPICKER_SCREENREADER_TAG");
 
 			// invisible span with custom role
-			oRm.write('<span id="' + oControl.getId() + '-descr" style="visibility: hidden; display: none;">');
-			oRm.writeEscaped(sText);
-			oRm.write('</span>');
+			oRm.openStart("span", oControl.getId() + "-descr");
+			oRm.style("visibility", "hidden");
+			oRm.style("display", "none");
+			oRm.openEnd();
+			oRm.text(sText);
+			oRm.close("span");
 		};
 
 		/**
@@ -58,7 +62,7 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 		 * @param {sap.m.TimePicker} oControl An object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerValue = function(oRm, oControl) {
-			oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue()));
+			oRm.attr("value", oControl._formatValue(oControl.getDateValue()));
 		};
 
 		/**

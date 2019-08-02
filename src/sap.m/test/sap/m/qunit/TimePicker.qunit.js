@@ -321,11 +321,13 @@ sap.ui.define([
 
 	QUnit.test("setIsCyclic", function(assert) {
 		this.oSlider.setIsCyclic(true);
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(!this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
 		assert.equal(this.oSlider.getProperty("isCyclic"), true, "property is updated");
 
 		this.oSlider.setIsCyclic(false);
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
 		assert.equal(this.oSlider.getProperty("isCyclic"), false, "property is updated");
