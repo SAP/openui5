@@ -94,6 +94,53 @@ sap.ui.define([
 		qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
 	});
 
+	QUnit.test("Space event should not fire press if escape is pressed and released after the Space is released", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oLink = new Link({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release SPACE then release ESCAPE
+		var oLinkDomRef = oLink.getDomRef();
+		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oLink.destroy();
+	});
+
+	QUnit.test("Space event should not fire press if escape is pressed then Space is released and then Escape is released", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oLink = new Link({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then release SPACE
+		var oLinkDomRef = oLink.getDomRef();
+		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oLinkDomRef, jQuery.sap.KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oLink.destroy();
+	});
+
 	QUnit.test("Disabled", function(assert) {
 		assert.expect(0); // verifies the event handler was NOT executed
 		oLink1.setEnabled(false);
