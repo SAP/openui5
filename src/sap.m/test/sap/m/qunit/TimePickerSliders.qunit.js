@@ -752,6 +752,22 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("When drag and drop a slider, mouse wheel events are not handled", function () {
+		var oFirstSlider = this.oTPS._getFirstSlider(),
+			oSpyWheeling = this.spy(oFirstSlider, "_handleWheelScroll");
+
+		// act
+		oFirstSlider.setIsExpanded(true);
+		oFirstSlider._animateScroll();
+		oFirstSlider._onmousewheel({
+			preventDefault: function () {},
+			stopPropagation: function () {}
+		});
+
+		// assert
+		sinon.assert.notCalled(oSpyWheeling, "_onmousewheel didn't simulate the wheeling");
+	});
+
 	// BCP: 1880065660
 	QUnit.test("_setTimeValues with iframe's JS date object should set properly the date", function (assert) {
 		// arrange
