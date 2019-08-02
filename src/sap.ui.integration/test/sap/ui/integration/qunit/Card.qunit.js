@@ -1328,6 +1328,85 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_ListCard_maxItems_Parameters = {
+			"sap.card": {
+				"configuration": {
+					"parameters": {
+						"max": {
+							"value": 2
+						}
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "L3 Request list content Card",
+					"subTitle": "Card subtitle",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Notebook Basic 15",
+								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1000",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Information",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+							},
+							{
+								"Name": "Notebook Basic 17",
+								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1001",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Success",
+								"info": "27.45 EUR",
+								"infoState": "Success"
+
+							},
+							{
+								"Name": "Notebook Basic 18",
+								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+								"Id": "HT-1002",
+								"SubCategoryId": "Notebooks",
+								"icon": "../images/Woman_avatar_01.png",
+								"state": "Warning",
+								"info": "9.45 EUR",
+								"infoState": "Error"
+							}
+						]
+					},
+					"maxItems": "{{parameters.max}}",
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		};
+
 		function testContentInitialization(oManifest, assert) {
 
 			// Arrange
@@ -1770,6 +1849,25 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_MaxItems);
+		});
+
+		QUnit.test("Using maxItems set trough parameters", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+
+				Core.applyChanges();
+
+				var iNumberOfItems = this.oCard.getCardContent().getAggregation("_content").getItems().length;
+				assert.ok(iNumberOfItems === 2, "After Manifest is processed maxItems should be a number");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_maxItems_Parameters);
 		});
 
 		QUnit.module("Object Card", {
@@ -2367,9 +2465,9 @@ sap.ui.define([
 			this.oCard.attachEventOnce("_ready", function () {
 
 				// Act
-                var sSubtitle = this.oCard.getCardHeader()._getSubtitle().getText();
-                assert.ok(sSubtitle !== "", "Card should have a subtitle with the now Date");
-                done();
+				var sSubtitle = this.oCard.getCardHeader()._getSubtitle().getText();
+				assert.ok(sSubtitle !== "", "Card should have a subtitle with the now Date");
+				done();
 			}.bind(this));
 
 			this.oCard.setManifest(oManifest_Today_Parameter);
