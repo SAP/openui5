@@ -117,7 +117,33 @@ sap.ui.define([
 		},
 
 		/**
-		 * Resets changes in the backend.
+		 * Provides information whether content in an application can be reset.
+		 *
+		 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
+		 * @param {string} [mPropertyBag.layer] Layer which send request the backend
+		 *
+		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be reset
+		 */
+		isResetEnabled: function (mPropertyBag) {
+			return ChangesController.getFlexControllerInstance(mPropertyBag.selector).isResetEnabled(mPropertyBag);
+		},
+
+		/**
+		 * Provides information if content in an application can be publish.
+		 *
+		 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
+		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
+		 * @param {string} [mPropertyBag.layer] Layer which send request the backend
+		 *
+		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be publish
+		 */
+		isPublishEnabled: function (mPropertyBag) {
+			return ChangesController.getFlexControllerInstance(mPropertyBag.selector).isPublishEnabled(mPropertyBag);
+		},
+
+		/**
+		 * Reset changes in the backend.
 		 * If the reset is performed for an entire component, a browser reload is required.
 		 * If the reset is performed for a control, this function also triggers a reversion of deleted UI changes.
 		 *

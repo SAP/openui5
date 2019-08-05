@@ -1185,5 +1185,31 @@ sap.ui.define([
 			PersistenceWriteAPI.remove(mPropertyBag);
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
 		});
+
+		QUnit.test("get flex/info resetEnable", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
+
+			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
+
+			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info publishEnable", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
+
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			});
+		});
 	});
 });

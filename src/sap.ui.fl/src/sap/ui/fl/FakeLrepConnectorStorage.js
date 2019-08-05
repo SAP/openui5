@@ -34,12 +34,16 @@ sap.ui.define([
 		 * @since 1.58
 		 * @alias sap.ui.fl.FakeLrepConnectorStorage
 		 */
-		function FakeLrepConnectorStorage(mSettings) {
+		function FakeLrepConnectorStorage(mSettings, mInfo) {
 			this.mSettings = Object.assign({
 				isKeyUser: true,
 				isAtoAvailable: false,
 				isProductiveSystem: false
 			}, mSettings);
+			this.mInfo = Object.assign({
+				isResetEnabled: false,
+				isPublishEnabled: false
+			}, mInfo);
 			this._iChangeCounter = 0;
 		}
 
@@ -463,6 +467,14 @@ sap.ui.define([
 					if (!FakeLrepConnectorStorage._oFakeInstance) {
 						FakeLrepConnectorStorage._oFakeInstance = new FakeLrepConnectorStorage(mSettings);
 					}
+					//when there is a change isResetEnabled and isPublishEnabled are true
+					var aChanges = oFakeLrepStorage.getChanges(sAppComponentName);
+					this.mInfo = {
+						isResetEnabled: aChanges.length > 0,
+						isPublishEnabled: aChanges.length > 0
+					};
+					FakeLrepConnectorStorage._oFakeInstance.setInfo(this.mInfo);
+
 					return FakeLrepConnectorStorage._oFakeInstance;
 				};
 			}

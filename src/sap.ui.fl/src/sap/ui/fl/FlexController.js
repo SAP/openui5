@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -25,6 +26,7 @@ sap.ui.define([
 	Change,
 	Variant,
 	FlexSettings,
+	LrepConnector,
 	ChangePersistenceFactory,
 	ContextManager,
 	JsControlTreeModifier,
@@ -1400,6 +1402,44 @@ sap.ui.define([
 	 */
 	FlexController.prototype.saveSequenceOfDirtyChanges = function (aDirtyChanges) {
 		return this._oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges);
+	};
+
+	/**
+	 * Check if there are UI or Descriptor changes on the server.
+	 *
+	 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {string} [mPropertyBag.layer] layer which send request the backend
+	 *
+	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset
+	 */
+	FlexController.prototype.isResetEnabled = function (mPropertyBag) {
+		mPropertyBag.reference = this._sComponentName;
+		mPropertyBag.appVersion = this._sAppVersion;
+		return LrepConnector.createConnector().getFlexInfo(mPropertyBag).then(function (oInfo) {
+			if (oInfo) {
+				return oInfo.isResetEnabled;
+			}
+			return Promise.reject();
+		});
+	};
+
+	/**
+	 * Check if there are UI or Descriptor changes with transport value on the server.
+	 *
+	 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {string} [mPropertyBag.layer] layer which send request the backend
+	 *
+	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be publish
+	 */
+	FlexController.prototype.isPublishEnabled = function (mPropertyBag) {
+		mPropertyBag.reference = this._sComponentName;
+		mPropertyBag.appVersion = this._sAppVersion;
+		return LrepConnector.createConnector().getFlexInfo(mPropertyBag).then(function (oInfo) {
+			if (oInfo) {
+				return oInfo.isPublishEnabled;
+			}
+			return Promise.reject();
+		});
 	};
 
 	return FlexController;

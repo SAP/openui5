@@ -361,6 +361,85 @@ sap.ui.define([
 			assert.equal(this.oLrepConnector._aSentRequestListeners[1], fFunction3, "the third function should be still in the list of attached functions");
 		});
 
+		QUnit.test("loadFlexInfo succeed with appVersion", function(assert) {
+			var sComponentName = "sap.ui.demoapps.rta.Component";
+			var sAppVersion = "1.0.0";
+			var sLayer = "CUSTOMER";
+			var mPropertyBag = {
+				reference: sComponentName,
+				appVersion: sAppVersion,
+				layer: sLayer
+			};
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/info/" + sComponentName + "?appVersion=" + sAppVersion + "&layer=" + sLayer;
+			var oFakeResponse = {
+				response: {}
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.getFlexInfo(mPropertyBag).then(function() {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly build");
+			});
+		});
+
+		QUnit.test("loadFlexInfo succeed without appVersion", function(assert) {
+			var sComponentName = "sap.ui.demoapps.rta.Component";
+			var sAppVersion = null;
+			var sLayer = "CUSTOMER";
+			var mPropertyBag = {
+				reference: sComponentName,
+				appVersion: sAppVersion,
+				layer: sLayer
+			};
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/info/" + sComponentName + "?layer=" + sLayer;
+			var oFakeResponse = {
+				response: {}
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.getFlexInfo(mPropertyBag).then(function() {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly build");
+			});
+		});
+
+		QUnit.test("loadFlexInfo failed", function(assert) {
+			var sComponentName = "sap.ui.demoapps.rta.Component";
+			var sAppVersion = null;
+			var sLayer = "CUSTOMER";
+			var mPropertyBag = {
+				reference: sComponentName,
+				appVersion: sAppVersion,
+				layer: sLayer
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects();
+
+			this.oLrepConnector.getFlexInfo(mPropertyBag);
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+		});
+
+		QUnit.test("loadFlexInfo throw error because no component name", function(assert) {
+			var sComponentName = null;
+			var sAppVersion = null;
+			var sLayer = "CUSTOMER";
+			var mPropertyBag = {
+				reference: sComponentName,
+				appVersion: sAppVersion,
+				layer: sLayer
+			};
+
+			assert.throws(function() {
+				this.oLrepConnector.getFlexInfo(mPropertyBag);
+			}, new Error("No Component to get flex info"));
+		});
+
 		QUnit.test("loadSettings succeed", function(assert) {
 			this.oLrepConnector._sClient = "123";
 			var sExpectedCallUrl = "/sap/bc/lrep/flex/settings" + "?sap-client=" + this.oLrepConnector._sClient;
