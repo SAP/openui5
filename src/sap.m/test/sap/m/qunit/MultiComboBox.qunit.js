@@ -5783,6 +5783,26 @@ sap.ui.define([
 		oMCB.destroy();
 	});
 
+	QUnit.test("Sync Items with Tokens", function (assert) {
+		// Setup
+		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
+
+		// Act
+		this.oMCB1.setWidth("30px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 4));
+
+		// Act
+		this.oMCB1.getItems()[0].setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
+		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 3));
+	});
+
 	QUnit.module("Expanded state (N-more)", {
 		beforeEach : function() {
 			var aItems = [
