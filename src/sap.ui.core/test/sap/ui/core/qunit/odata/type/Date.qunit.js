@@ -260,6 +260,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("format, parse, validate with target type object", function (assert) {
+		var oType = new DateType({pattern : "dd.MMM.yyyy"}),
+			sFormattedDate = oType.formatValue("0715-11-01", "object"),
+			sResultingDate = oType.parseValue(sFormattedDate, "object");
+
+		oType.validateValue(sResultingDate);
+		assert.deepEqual(sResultingDate, "0715-11-01", "format and parse did not change the date");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getModelFormat() uses Gregorian calendar type", function (assert) {
 		var oFormat,
 			sModelValue = "2015-11-27",

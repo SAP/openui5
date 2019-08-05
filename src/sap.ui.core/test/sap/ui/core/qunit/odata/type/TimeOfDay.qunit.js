@@ -318,6 +318,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("format, parse, validate with target type object", function (assert) {
+		var oType = new TimeOfDay({pattern : "HH:mm:ss.SSS a"}),
+			sFormattedDate = oType.formatValue("13:53:49", "object"),
+			sResultingDate = oType.parseValue(sFormattedDate, "object");
+
+		oType.validateValue(sResultingDate);
+		assert.deepEqual(sResultingDate, "13:53:49", "format and parse did not change the time");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getModelFormat() uses Gregorian calendar type", function (assert) {
 		var oFormat,
 			sModelValue = "13:53:49.123",
