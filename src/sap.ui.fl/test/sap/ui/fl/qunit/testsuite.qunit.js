@@ -65,7 +65,7 @@ sap.ui.define(function () {
 				}
 			},
 			"apply/internal/connectors/LrepConnector": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/internal/connectors/LrepConnector"]
 				}
@@ -120,6 +120,12 @@ sap.ui.define(function () {
 				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/apply/internal/ChangesController"]
+				}
+			},
+			"write/api/FeaturesAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/FeaturesAPI"]
 				}
 			},
 			"write/api/UI2PersonalizationWriteAPI": {
