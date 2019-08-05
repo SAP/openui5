@@ -1540,11 +1540,21 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} [oThis] The context in the delegate's event listeners. The default is the delegate object itself.
 		 */
 		addDelegate: function(oElement, oDelegate, oThis) {
-			if (!oElement || !oDelegate) {
-				return;
+			if (oElement && oDelegate) {
+				oElement.addDelegate(oDelegate, false, oThis ? oThis : oDelegate, false);
 			}
+		},
 
-			oElement.addDelegate(oDelegate, false, oThis ? oThis : oDelegate, false);
+		/**
+		 * Removes a delegate from an element.
+		 *
+		 * @param {sap.ui.core.Element} oElement The element to add the delegate to.
+		 * @param {object} oDelegate The delegate object.
+		 */
+		removeDelegate: function(oElement, oDelegate) {
+			if (oElement && oDelegate) {
+				oElement.removeDelegate(oDelegate);
+			}
 		}
 	};
 

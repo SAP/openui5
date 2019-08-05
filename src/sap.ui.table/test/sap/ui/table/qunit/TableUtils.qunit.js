@@ -1225,10 +1225,32 @@ sap.ui.define([
 		assert.ok(oDelegateSpy.notCalled, "No delegate passed: Element#addDelegate was not called");
 
 		TableUtils.addDelegate(oTable, oDelegateDummy);
-		assert.ok(oDelegateSpy.calledWith(oDelegateDummy, false, oDelegateDummy, false), "Element#addDelegate is called with the correct parameters");
+		assert.ok(oDelegateSpy.calledOnce, "Element#addDelegate was called once");
+		assert.ok(oDelegateSpy.calledWithExactly(oDelegateDummy, false, oDelegateDummy, false),
+			"Element#addDelegate is called with the correct parameters");
+		oDelegateSpy.reset();
 
 		TableUtils.addDelegate(oTable, oDelegateDummy, oThisDummy);
-		assert.ok(oDelegateSpy.calledWith(oDelegateDummy, false, oThisDummy, false), "Element#addDelegate is called with the correct parameters");
+		assert.ok(oDelegateSpy.calledOnce, "Element#addDelegate was called once");
+		assert.ok(oDelegateSpy.calledWithExactly(oDelegateDummy, false, oThisDummy, false),
+			"Element#addDelegate is called with the correct parameters");
+
+		oDelegateSpy.restore();
+	});
+
+	QUnit.test("removeDelegate", function(assert) {
+		var oDelegateSpy = sinon.spy(oTable, "removeDelegate");
+		var oDelegateDummy = {prop: 1};
+
+		TableUtils.removeDelegate();
+		assert.ok(oDelegateSpy.notCalled, "No parameters passed: Element#removeDelegate was not called");
+
+		TableUtils.removeDelegate(oTable);
+		assert.ok(oDelegateSpy.notCalled, "No delegate passed: Element#removeDelegate was not called");
+
+		TableUtils.removeDelegate(oTable, oDelegateDummy);
+		assert.ok(oDelegateSpy.calledOnce, "Element#addDelegate was called once");
+		assert.ok(oDelegateSpy.calledWithExactly(oDelegateDummy), "Element#removeDelegate is called with the correct parameters");
 
 		oDelegateSpy.restore();
 	});
