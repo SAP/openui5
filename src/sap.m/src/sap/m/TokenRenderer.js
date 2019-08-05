@@ -28,7 +28,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	TokenRenderer.render = function(oRm, oControl){
-		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable()),
+		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable() && oControl.getProperty("editableParent")),
 			aAccDescribebyValues = [], // additional accessibility attributes
 			oAccAttributes = {
 				role: "listitem"

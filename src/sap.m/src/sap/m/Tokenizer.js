@@ -1278,6 +1278,9 @@ sap.ui.define([
 	Tokenizer.prototype.addToken = function(oToken, bSuppressInvalidate) {
 		// if tokenizer is in MultiInput
 		var oParent = this.getParent();
+
+		oToken.setProperty("editableParent", this.getEditable());
+
 		if (oParent instanceof sap.m.MultiInput) {
 			// if max number is set and the number of existing tokens is equal to or more than the max number, then do not add token.
 			if (oParent.getMaxTokens() !== undefined && oParent.getTokens().length >= oParent.getMaxTokens()) {
