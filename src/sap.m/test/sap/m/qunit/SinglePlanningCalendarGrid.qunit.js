@@ -175,6 +175,25 @@ sap.ui.define([
 		assert.equal(sLineClamp, "8", "Eight lines of appointment text will be shown");
 	});
 
+	QUnit.test("_getCellStartEndInfo formats start/end info correctly", function (assert) {
+		// Prepare
+		var oGrid = new SinglePlanningCalendarGrid(),
+			oMockStardDate = new Date(2019, 7, 5, 10),
+			oMockEndDate = new Date(2019, 7, 5, 11),
+			// Should be something like "Start Time: day-name DD/MM/YYYY at HH AM/PM; End Time: day-name DD/MM/YYYY at HH AM/PM"
+			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday 05/08/2019 at 10 AM; " +
+				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 11 AM";
+
+		oGrid.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
+
+		// Destroy
+		oGrid.destroy();
+	});
+
 	QUnit.test("applyFocusInfo", function(assert) {
 		// prepare
 		var oAppointment = new CalendarAppointment({
