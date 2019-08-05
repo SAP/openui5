@@ -3,13 +3,11 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/internal/Connector",
-	"sap/ui/fl/apply/internal/connectors/LrepConnector",
-	"sap/ui/fl/apply/connectors/BaseConnector"
+	"sap/ui/fl/apply/internal/connectors/LrepConnector"
 ], function(
 	sinon,
 	Connector,
-	LrepConnector,
-	BaseConnector
+	LrepConnector
 ) {
 	"use strict";
 
@@ -22,7 +20,7 @@ sap.ui.define([
 
 	QUnit.module("Connector", {
 		beforeEach : function () {
-			sandbox.stub(LrepConnector, "loadFlexData").callsFake(BaseConnector.loadFlexData);
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(FLEX_DATA_RESPONSE);
 		},
 		afterEach: function() {
 			sandbox.restore();

@@ -17,8 +17,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var CONNECTOR_NAME = "LrepConnector";
-
 	var URLS = {
 		DATA: "/flex/data/",
 		MODULES: "/flex/modules/"
@@ -57,7 +55,7 @@ sap.ui.define([
 			mParameters.appVersion = mPropertyBag.appVersion;
 		}
 
-		var sUrl = mPropertyBag.urls[CONNECTOR_NAME] + sRoute;
+		var sUrl = mPropertyBag.url + sRoute;
 
 		if (mPropertyBag.cacheKey) {
 			sUrl += "~" + mPropertyBag.cacheKey + "~/";

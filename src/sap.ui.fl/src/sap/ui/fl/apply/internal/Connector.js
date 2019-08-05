@@ -28,15 +28,10 @@ sap.ui.define([
 	};
 
 	function loadFlexDataFromConnectors (mPropertyBag, aConnectors) {
-		mPropertyBag.urls = {};
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			if (oConnectorConfig.url) {
-				mPropertyBag.urls[oConnectorConfig.connectorName] = oConnectorConfig.url;
-			}
-			return new Promise(function (resolve) {
-				oConnectorConfig.connector.loadFlexData(mPropertyBag)
-					.then(resolve, ConnectorUtils.logAndResolveDefault.bind(null, resolve, RESPONSES.FLEX_DATA, oConnectorConfig, "loadFlexData"));
-			});
+			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url});
+			return oConnectorConfig.connector.loadFlexData(oConnectorSpecificPropertyBag)
+				.catch(ConnectorUtils.logAndResolveDefault.bind(undefined, RESPONSES.FLEX_DATA, oConnectorConfig, "loadFlexData"));
 		});
 
 		return Promise.all(aConnectorPromises);
@@ -50,7 +45,7 @@ sap.ui.define([
 	 * @param {map} mPropertyBag properties needed by the connectors
 	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
-	 * @param {string} mPropertyBag.cacheKey cacheKey which can be used to etag / cachebuster the request
+	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
 	 * @returns {Promise<Object>}
 	 */
 	Connector.loadFlexData = function (mPropertyBag) {
