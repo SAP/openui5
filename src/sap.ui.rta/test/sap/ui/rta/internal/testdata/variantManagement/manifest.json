@@ -23,6 +23,7 @@
 	},
 
 	"sap.ui5": {
+		"flexEnabled": true,
 		"rootView": {
 			"viewName": "sap.ui.rta.test.variantManagement.view.Root",
 			"type": "XML",
