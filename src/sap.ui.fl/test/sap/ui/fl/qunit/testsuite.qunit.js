@@ -47,8 +47,27 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
+			"apply/internal/connectors/BrowserStorageConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/apply/internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/apply/internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connectorName": "BrowserStorageConnector", "layerFilter": []}]'
+				}
+			},
+			"apply/internal/connectors/BrowserStorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/connectors/BrowserStorageUtils"]
+				}
+			},
 			"apply/internal/ChangesController": {
-				group: "Apply API",
+				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/internal/ChangesController"]
 				}
@@ -150,6 +169,19 @@ sap.ui.define(function () {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/api/internal/Connector"]
+				}
+			},
+			"write/internal/connectors/BrowserStorageConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/write/internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/write/internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connectorName": "BrowserStorageConnector", "layerFilter": []}]'
 				}
 			},
 			// Team Gravity tests
