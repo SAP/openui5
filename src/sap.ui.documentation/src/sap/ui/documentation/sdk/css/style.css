@@ -178,6 +178,13 @@ html:not(.sapUiMedia-StdExt-Phone) .sapUiDocumentationFooter {
 	font-size: 1.1rem;
 }
 
+.sapUiDemoKitFixedStrip {
+	position: absolute;
+	bottom: 0;
+	z-index: 99;
+	width: calc(100% - 2rem);
+}
+
 @media (min-width: 64rem) {
 	.sapUiDemokit .sapMBtn.actionButton {
 		padding-top: 0;

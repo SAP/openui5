@@ -15,6 +15,13 @@
 		showNavButton="false"
 		class="sapUiDemokit">
 		<content>
+			<MessageStrip id="cookieMessageStrip"
+				class="sapUiSmallMargin sapUiDemoKitFixedStrip"
+				text="We use cookies to improve your experience on our site. By continuing to use this website, you consent to use our cookies."
+				showIcon="true"
+				showCloseButton="true">
+				<Link text="Accept" press="onCookieDialogAccept" />
+			</MessageStrip>
 			<tnt:ToolHeader id="headerToolbar">
 				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${appView>/bPhoneSize} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 					<layoutData>
