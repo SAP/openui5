@@ -1973,7 +1973,7 @@ sap.ui.define([
 	 *   <code>iLength</code> are less than 0 or when requesting the data fails
 	 *
 	 * @public
-	 * @since 1.69.0
+	 * @since 1.70.0
 	 */
 	ODataListBinding.prototype.requestContexts = function (iStart, iLength) {
 		var that = this;
