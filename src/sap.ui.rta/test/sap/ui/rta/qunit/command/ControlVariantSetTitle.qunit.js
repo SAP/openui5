@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"test-resources/sap/ui/fl/qunit/write/test/TestChangesUtil",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	flUtils,
@@ -18,7 +18,7 @@ sap.ui.define([
 	OverlayRegistry,
 	VariantManagement,
 	VariantModel,
-	PersistenceWriteAPI,
+	TestChangesUtil,
 	sinon
 ) {
 	'use strict';
@@ -119,8 +119,6 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("when calling command factory for setTitle and undo", function (assert) {
-			var done = assert.async();
-
 			var oDummyOverlay = {
 				getVariantManagement : function() {
 					return "idMain1--variantManagementOrdersTable";
@@ -132,7 +130,7 @@ sap.ui.define([
 			var mFlexSettings = {layer: "CUSTOMER"};
 			var sNewText = "Test";
 			var oControlVariantSetTitleCommand;
-
+			var iDirtyChangesCount;
 			return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
 				newText: sNewText
 			}, oDesignTimeMetadata, mFlexSettings)
@@ -149,24 +147,19 @@ sap.ui.define([
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
-					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
-				}.bind(this))
-				.then(function(bPublishChangesExist) {
-					assert.ok(bPublishChangesExist, "then there are changes to publish");
+					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 					return oControlVariantSetTitleCommand.undo();
-				})
+				}.bind(this))
 				.then(function () {
 					var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
 					assert.notOk(oPreparedChange, "then no prepared change is available after undo");
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, "variant A", "then title is correctly reverted in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), "variant A", "then title is correctly set in variant management control");
-					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
+					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
-				.then(function (bPublishChangesExist) {
-					assert.notOk(bPublishChangesExist, "then there are no changes to publish");
-					done();
-				})
 				.catch(function (oError) {
 					assert.ok(false, 'catch must never be called - Error: ' + oError);
 				});

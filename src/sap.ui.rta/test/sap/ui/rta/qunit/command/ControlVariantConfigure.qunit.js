@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"test-resources/sap/ui/fl/qunit/write/test/TestChangesUtil",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -19,7 +19,7 @@ function(
 	OverlayRegistry,
 	VariantManagement,
 	VariantModel,
-	PersistenceWriteAPI,
+	TestChangesUtil,
 	sinon
 ) {
 	'use strict';
@@ -147,6 +147,7 @@ function(
 			var aChanges = [oTitleChange, oFavoriteChange, oVisibleChange];
 			var oControlVariantConfigureCommand;
 			var aPreparedChanges;
+			var iDirtyChangesCount;
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control : this.oVariantManagement,
@@ -165,23 +166,19 @@ function(
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, oVisibleChange.visible, "then visibility is correctly set in model");
-					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
-				}.bind(this))
-				.then(function (bPublishChangesExist) {
-					assert.ok(bPublishChangesExist, "then there are changes to publish");
+					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
-				})
+				}.bind(this))
 				.then(function () {
 					aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
 					assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.originalTitle, "then title is correctly reverted in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.originalFavorite, "then favorite is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].visible, !oVisibleChange.visible, "then visibility is correctly reverted in model");
-					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
+					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
-				.then(function (bPublishChangesExist) {
-					assert.notOk(bPublishChangesExist, "then changes to publish are removed");
-				})
 				.catch(function (oError) {
 					assert.ok(false, 'catch must never be called - Error: ' + oError);
 				});
@@ -205,6 +202,7 @@ function(
 			};
 			var aChanges = [oDefaultChange];
 			var oControlVariantConfigureCommand;
+			var iDirtyChangesCount;
 			return CommandFactory.getCommandFor(this.oVariantManagement, "configure", {
 				control: this.oVariantManagement,
 				changes: aChanges
@@ -214,25 +212,21 @@ function(
 					assert.ok(oControlVariantConfigureCommand, "control variant configure command exists for element");
 					return oControlVariantConfigureCommand.execute();
 				})
-				.then(function () {
+				.then(function() {
 					var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
 					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
-					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
-				}.bind(this))
-				.then(function (bPublishChangesExist) {
-					assert.ok(bPublishChangesExist, "then there are changes to publish");
+					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
-				})
-				.then(function () {
+				}.bind(this))
+				.then(function() {
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.originalDefaultVariant, "then default variant is correctly reverted in the model");
-					return PersistenceWriteAPI.hasChangesToPublish({selector: this.oMockedAppComponent});
+					iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oMockedAppComponent}).length;
+					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 				}.bind(this))
-				.then(function (bPublishChangesExist) {
-					assert.notOk(bPublishChangesExist, "then changes to publish are removed");
-				})
 				.catch(function (oError) {
 					assert.ok(false, 'catch must never be called - Error: ' + oError);
 				});
