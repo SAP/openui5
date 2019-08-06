@@ -19410,4 +19410,94 @@ sap.ui.define([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: requestSideEffects must not refresh a dependent list binding in case it is a
+	// "creation row" which means it only contains transient contexts.
+	// JIRA: CPOUI5UISERVICESV3-1943
+	QUnit.test("requestSideEffects does not refresh creation row", function (assert) {
+		var oCreationRowContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTableBinding,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="soCurrencyCode" text="{CurrencyCode}"/>\
+	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
+		<columns><Column/></columns>\
+		<items>\
+			<ColumnListItem>\
+				<Text id="note" text="{Note}"/>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="creationRow">\
+	<Input id="creationRow::note" value="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID", {
+				CurrencyCode : "EUR",
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+				value : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("soCurrencyCode", "EUR")
+			.expectChange("creationRow::note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCreationRowListBinding;
+
+			oTableBinding = that.oView.byId("table").getBinding("items");
+			oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
+				oTableBinding.getContext(), undefined, undefined,
+				{$$updateGroupId : "doNotSubmit"});
+
+			that.expectChange("creationRow::note", "New item note");
+
+			// initialize creation row
+			oCreationRowContext = oCreationRowListBinding.create({Note : "New item note"});
+			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : "10",
+						Note : "Foo - side effect",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("note", ["Foo - side effect"]);
+
+			// code under test: requestSideEffects promise resolves, "creationRow::note" unchanged
+			return Promise.all([
+				oTableBinding.getContext().requestSideEffects([{
+					$NavigationPropertyPath : "SO_2_SOITEM"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("creationRow::note", "Changed item note");
+
+			// code under test: no error on edit in transient context after requestSideEffects
+			that.oView.byId("creationRow::note").getBinding("value").setValue("Changed item note");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// cleanup: delete creation row to avoid error on view destruction
+			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
+			oCreationRowContext.delete("$auto");
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
