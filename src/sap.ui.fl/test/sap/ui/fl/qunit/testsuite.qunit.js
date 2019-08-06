@@ -70,6 +70,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/internal/connectors/LrepConnector"]
 				}
 			},
+			"apply/internal/connectors/PersonalizationConnector": {
+				group: 'Apply Internal',
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/connectors/PersonalizationConnector"]
+				}
+			},
 			"apply/internal/ConnectorWithCustomBrokenConnector": {
 				group: "Apply Internal",
 				ui5: {

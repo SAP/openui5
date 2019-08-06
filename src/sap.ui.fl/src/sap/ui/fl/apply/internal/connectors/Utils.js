@@ -2,11 +2,15 @@
  * ! ${copyright}
  */
 
+/* global XMLHttpRequest */
+
 sap.ui.define([
 	"sap/ui/fl/apply/internal/connectors/StaticFileConnector",
+	"sap/base/security/encodeURLParameters",
 	"sap/base/Log"
 ], function (
 	StaticFileConnector,
+	encodeURLParameters,
 	Log
 ) {
 	"use strict";
@@ -18,7 +22,7 @@ sap.ui.define([
 	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @version ${version}
-	 * @ui5-restricted sap.ui.fl.apply.internal.Connector, sap.ui.fl.write.internal.Connector
+	 * @ui5-restricted sap.ui.fl.apply.internal, sap.ui.fl.write.internal
 	 */
 
 
@@ -78,10 +82,8 @@ sap.ui.define([
 		if (typeof oTarget[sKey] === 'object') {
 			Object.keys(oSource[sKey]).forEach(function (sInnerKey) {
 				addToObject(oSource[sKey], oTarget[sKey], sInnerKey);
-				return; // continue
 			});
 		}
-
 		// simple entities are just overwritten
 		oTarget[sKey] = oSource[sKey];
 	}
@@ -134,6 +136,57 @@ sap.ui.define([
 				mWriteConnectors = getConnectors(WRITE_CONNECTOR_NAME_SPACE, false);
 			}
 			return mWriteConnectors;
+		},
+
+		/**
+		 * Creating a full request url. Generic Method for all Connectors.
+		 * This includes the url prefix and optional cache buster token, flex reference and query parameters.
+		 *
+		 * @param {string} sRoute Url-prefix e.g. "/flex/data/"
+		 * @param {object} mPropertyBag Object with parameters as properties
+		 * @param {string} mPropertyBag.reference Flexibility reference
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @param {string} [mPropertyBag.appVersion] Version of the application
+		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
+		 * @param {object} [mParameters] Query-parameters which should be added to the url
+		 * @returns {string} Complete request url
+		 * @private
+		 */
+		getUrlWithQueryParameters: function(sRoute, mPropertyBag, mParameters) {
+			var sUrl = mPropertyBag.url + sRoute;
+
+			mPropertyBag.cacheKey && (sUrl += "~" + mPropertyBag.cacheKey + "~/");
+			mPropertyBag.reference && (sUrl += mPropertyBag.reference);
+
+			mParameters = mParameters || {};
+			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
+
+			var sQueryParameters = encodeURLParameters(mParameters);
+			sQueryParameters.length > 0 && (sUrl += "?" + sQueryParameters);
+
+			return sUrl;
+		},
+
+		/**
+		 * Sending a xhr request and handling the response according to the status code of the response.
+		 *
+		 * @param {string} sUrl Url of the sent request
+		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
+		 * @private
+		 */
+		sendRequest: function(sUrl) {
+			return new Promise(function (resolve, reject) {
+				var xhr = new XMLHttpRequest();
+				xhr.open('GET', sUrl);
+				xhr.send();
+				xhr.onload = function() {
+					if (xhr.status >= 200 && xhr.status < 400) {
+						resolve(JSON.parse(xhr.response));
+					} else {
+						reject(xhr.status + ": " + xhr.statusText);
+					}
+				};
+			});
 		}
 	};
 });

@@ -5,12 +5,12 @@
 sap.ui.define([
 	"sap/ui/fl/apply/internal/connectors/Utils"
 ], function(
-	ConnectorUtils
+	ApplyUtils
 ) {
 	"use strict";
 
 	/**
-	 * Abstraction providing an API to handle communication with persistencies like back ends, local & session storage or work spaces.
+	 * Abstraction providing an API to handle communication with persistence like back ends, local & session storage or work spaces.
 	 *
 	 * @namespace sap.ui.fl.apply.internal.Connector
 	 * @experimental Since 1.67
@@ -31,7 +31,7 @@ sap.ui.define([
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
 			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url});
 			return oConnectorConfig.connector.loadFlexData(oConnectorSpecificPropertyBag)
-				.catch(ConnectorUtils.logAndResolveDefault.bind(undefined, RESPONSES.FLEX_DATA, oConnectorConfig, "loadFlexData"));
+				.catch(ApplyUtils.logAndResolveDefault.bind(undefined, RESPONSES.FLEX_DATA, oConnectorConfig, "loadFlexData"));
 		});
 
 		return Promise.all(aConnectorPromises);
@@ -53,9 +53,9 @@ sap.ui.define([
 			return Promise.reject("loadFlexData: No reference was provided.");
 		}
 
-		return ConnectorUtils.getApplyConnectors()
+		return ApplyUtils.getApplyConnectors()
 			.then(loadFlexDataFromConnectors.bind(this, mPropertyBag))
-			.then(ConnectorUtils.mergeResults);
+			.then(ApplyUtils.mergeResults);
 	};
 
 	return Connector;
