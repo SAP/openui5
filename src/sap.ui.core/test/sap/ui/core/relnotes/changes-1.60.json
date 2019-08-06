@@ -1109,5 +1109,32 @@
         "references": []
       }
     ]
+  },
+  "1.60.16": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "9b30fc2b2844d58f394886bb92ca5acdb59eb416",
+        "type": "FIX",
+        "text": " Improve jQuery.parseHTML implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "7f71d09c433a3952aaec2c39a1ff2f17b942d66b",
+        "type": "FIX",
+        "text": " Opa: iframe size and position in Chrome 75",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970223441"
+          }
+        ]
+      }
+    ]
   }
 }

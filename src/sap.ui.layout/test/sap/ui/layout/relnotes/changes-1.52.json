@@ -271,5 +271,21 @@
         "references": []
       }
     ]
+  },
+  "1.52.31": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "ba4107760d26f8bca646a3d22cce30a6844cfb81",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: Toggle on mobile is now working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970185680"
+          }
+        ]
+      }
+    ]
   }
 }

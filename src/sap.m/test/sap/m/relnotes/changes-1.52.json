@@ -4559,5 +4559,32 @@
         "references": []
       }
     ]
+  },
+  "1.52.31": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "84bcb18f87151771731cf86e0830b3d0f8798c0e",
+        "type": "FIX",
+        "text": " OverflowToolbar: Resize is now handled correctly when in Dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "214095"
+          }
+        ]
+      },
+      {
+        "id": "6f7ed8f7b030cf50907d2401614ed96674e3ff78",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Download of item not happening when factory binding is used.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "12005041000000451312019."
+          }
+        ]
+      }
+    ]
   }
 }

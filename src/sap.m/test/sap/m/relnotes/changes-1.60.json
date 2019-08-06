@@ -2891,5 +2891,62 @@
         "references": []
       }
     ]
+  },
+  "1.60.16": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "d22e7d79e55033654b527346584821bebc8ee316",
+        "type": "FIX",
+        "text": " sap.m.Button: CombineButtons overwrites getAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "404419"
+          }
+        ]
+      },
+      {
+        "id": "e65340420934098d8561eb7786755636c3f9e710",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon size fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "413798"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970378775"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970336083"
+          }
+        ]
+      },
+      {
+        "id": "c0a0469b909f33eefa7cc4d5b83abd81b2d2802f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokenizer space calculation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980195031"
+          }
+        ]
+      },
+      {
+        "id": "f2c02cb7e3950ab669c9b0c856e8de86c9025c57",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: null can now be set to selectedPresetFilterItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "371479"
+          }
+        ]
+      }
+    ]
   }
 }
