@@ -2,9 +2,10 @@
 sap.ui.define([
 	'sap/ui/model/odata/ODataUtils',
 	'sap/ui/model/Filter',
+	'sap/ui/model/odata/Filter',
 	'sap/ui/model/FilterOperator',
 	"sap/ui/core/CalendarType"
-], function(ODataUtils, Filter, FilterOperator, CalendarType) {
+], function(ODataUtils, Filter, ODataFilter, FilterOperator, CalendarType) {
 
 	"use strict";
 
@@ -487,5 +488,27 @@ sap.ui.define([
 
 		sFilterString = ODataUtils.createFilterParams(oFilter1);
 		assert.equal(sFilterString, "$filter=false", "Filter string should be returned.");
+	});
+
+	QUnit.test("createFilterParams: Use API with deprecated sap.ui.model.odata.Filter", function(assert) {
+		var oFilter1 = new ODataFilter('Customer',[{
+			operator: 'EQ',
+			value1: "test0"
+		}]);
+
+		var oFilter2 = new ODataFilter('CollectionSegment',[{
+			operator: 'EQ',
+			value1: "test1"
+		}]);
+
+		var oFilter3 = new ODataFilter('CompanyCode',[{
+			operator: 'EQ',
+			value1: "test2"
+		}]);
+
+		var aFilters = [oFilter1, oFilter2, oFilter3];
+
+		var sFilterString = ODataUtils.createFilterParams(aFilters);
+		assert.equal(sFilterString, "$filter=Customer%20eq%20test0%20and%20CollectionSegment%20eq%20test1%20and%20CompanyCode%20eq%20test2", "Filter string should be returned.");
 	});
 });
