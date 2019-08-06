@@ -100,9 +100,9 @@ sap.ui.define([
 			return mApplyConnectors;
 		},
 
-		logAndResolveDefault: function(resolve, oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
+		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
 			Log.error("Connector (" + oConnectorConfig.connectorName + ") failed call '" + sFunctionName + "': " + sErrorMessage);
-			resolve(oResponse);
+			return oResponse;
 		},
 
 		/**
