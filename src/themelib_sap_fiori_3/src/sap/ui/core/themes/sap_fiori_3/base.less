@@ -285,6 +285,16 @@
 // [Tags "Base", "Button", "Dimension", "Protected"]
 @sapElement_BorderWidth: 0.0625 * @sapContent_GridSize;
 
+@sapElement_BorderCornerRadius: 0.25 * @sapContent_GridSize;
+
+@sapElement_Compact_LineHeight: 2 * @sapContent_GridSize;
+
+@sapElement_Compact_Height: 1.625 * @sapContent_GridSize;
+
+@sapElement_Condensed_LineHeight: 1.5 * @sapContent_GridSize;
+
+@sapElement_Condensed_Height: 1.375 * @sapContent_GridSize;
+
 // [Label "Content Line Height EM"]
 // [Description "The height of lines in the content area (in em). Basically this is used as the CSS line-height property."]
 // [Tags "Base", "Content", "Dimension", "Protected"]
@@ -350,6 +360,10 @@
 // [Tags "Base", "Content", "Color"]
 @sapContent_FocusColor: #000;
 
+@sapContent_FocusStyle: dotted;
+
+@sapContent_FocusWidth: 0.0625 * @sapContent_GridSize;
+
 // [Label "Content Focus Contrast Color"]
 // [Description "The alternative focus color."]
 // [Tags "Base", "Content", "Color"]
@@ -364,6 +378,18 @@
 // [Description "The alternative shadow color."]
 // [Tags "Base", "Content", "Color"]
 @sapContent_ContrastShadowColor: #fff;
+
+@sapContent_Shadow0: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 10), 0 0.125rem 0.5rem 0 fade(@sapContent_ShadowColor, 10);
+
+@sapContent_Shadow1: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 15), 0 0.125rem 0.5rem 0 fade(@sapContent_ShadowColor, 30);
+
+@sapContent_Shadow2: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 15), 0 0.625rem 1.875rem 0 fade(@sapContent_ShadowColor, 30);
+
+@sapContent_Shadow3: 0 0 0 0.0625rem fade(@sapContent_ShadowColor, 15), 0 1.25rem 5rem 0 fade(@sapContent_ShadowColor, 30);
+
+@sapContent_TextShadow: 0 0 0.125rem @sapContent_ContrastShadowColor;
+
+@sapContent_HeaderShadow: 0 0 0.25rem 0 fade(@sapContent_ShadowColor, 15), inset 0 -0.0625rem 0 0 @sapObjectHeader_BorderColor;
 
 // [Label "Content Search Result Highlight Color"]
 // [Description "The color of found search results in the content."]
@@ -492,6 +518,16 @@
 // [Tags "Base", "Shell", "URI", "Image"]
 @sapShell_Favicon: none;
 
+@sapShell_Navigation_Background: @sapPrimary3;
+
+@sapShell_Navigation_SelectedColor: @sapSelectedColor;
+
+@sapShell_Navigation_Selected_TextColor: @sapSelectedColor;
+
+@sapShell_Navigation_TextColor: @sapShell_GroupTitleTextColor;
+
+@sapShell_Shadow: 0 0 0.25rem 0 fade(@sapContent_ShadowColor, 15), inset 0 -0.0625rem 0 0 fade(@sapContent_ShadowColor, 15);
+
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
 // [Tags "Base", "Button", "Dimension"]
@@ -500,7 +536,7 @@
 // [Label "Button Corner Radius"]
 // [Description "Defines whether a button has rounded corners."]
 // [Tags "Base", "Button", "Dimension"]
-@sapButton_BorderCornerRadius: 0.25 * @sapContent_GridSize; // 3px;
+@sapButton_BorderCornerRadius: @sapElement_BorderCornerRadius;
 
 // [Label "Button Background Color"]
 // [Description "The background color of buttons."]
@@ -560,11 +596,15 @@
 
 @sapButton_Emphasized_Hover_BorderColor: @sapButton_Emphasized_Hover_Background;
 
+@sapButton_Emphasized_Hover_TextColor: @sapButton_Emphasized_TextColor;
+
 @sapButton_Emphasized_Active_Background: darken(@sapButton_Emphasized_Background, 10);
 
 @sapButton_Emphasized_Active_BorderColor: @sapButton_Emphasized_Active_Background;
 
 @sapButton_Emphasized_TextShadow: transparent;
+
+@sapButton_Emphasized_FontWeight: bold;
 
 // [Label "Reject Button Background Color"]
 // [Description "The background color of \"Reject\" buttons."]
@@ -576,6 +616,8 @@
 @sapButton_Reject_Hover_Background: @sapErrorBackground;
 
 @sapButton_Reject_Hover_BorderColor: @sapButton_Reject_BorderColor;
+
+@sapButton_Reject_Hover_TextColor: @sapButton_Reject_TextColor;
 
 @sapButton_Reject_Active_Background: darken(@sapNegativeElementColor, 5);
 
@@ -594,6 +636,8 @@
 
 @sapButton_Accept_Hover_BorderColor: @sapButton_Accept_BorderColor;
 
+@sapButton_Accept_Hover_TextColor: @sapButton_Accept_TextColor;
+
 @sapButton_Accept_Active_Background: darken(@sapPositiveElementColor, 5);
 
 @sapButton_Accept_Active_BorderColor: @sapButton_Accept_Active_Background;
@@ -609,6 +653,8 @@
 @sapButton_Lite_Hover_Background: @sapButton_Hover_Background;
 
 @sapButton_Lite_Hover_BorderColor: @sapButton_Hover_BorderColor;
+
+@sapButton_Lite_Hover_TextColor: @sapButton_Lite_TextColor;
 
 @sapButton_Lite_Active_Background: @sapButton_Active_Background;
 
@@ -654,7 +700,7 @@
 // [Label "Field Corner Radius"]
 // [Description "Defines whether an input field has rounded corners."]
 // [Tags "Base", "Field", "Dimension"]
-@sapField_BorderCornerRadius: 0;
+@sapField_BorderCornerRadius: 0.125 * @sapContent_GridSize;
 
 // [Label "Field Hover Background Color"]
 // [Description "The background color of input fields on hover."]
@@ -707,7 +753,7 @@
 // [Label "Required Field Color"]
 // [Description "The color of the asterisk next to required input fields."]
 // [Tags "Base", "Field", "Color"]
-@sapField_RequiredColor: @sapAccentColor2; // @sapAccentColor3;
+@sapField_RequiredColor: darken(@sapAccentColor2, 2); // @sapAccentColor3;
 
 // [Label "Invalid Field Color"]
 // [Description "The base color of input fields with an invalid value."]
@@ -777,7 +823,7 @@
 // [Label "Group Content Border Color"]
 // [Description "The color of the borders of a group's content area."]
 // [Tags "Base", "Group", "Color"]
-@sapGroup_ContentBorderColor: darken(@sapGroup_ContentBackground, 7); // darken(@sapGroup_ContentBackground, 8);
+@sapGroup_ContentBorderColor: darken(@sapGroup_ContentBackground, 15); // darken(@sapGroup_ContentBackground, 8);
 
 // [Label "Group Border Thickness"]
 // [Description "The thickness of the borders of a group's content area."]
@@ -846,6 +892,8 @@
 // [Tags "Base", "List", "Color"]
 @sapList_SelectionBackgroundColor: lighten(desaturate(@sapSelectedColor, 24), 61); // lighten(desaturate(@sapSelectedColor, 2), 47);
 
+@sapList_SelectionBorderColor: @sapSelectedColor;
+
 @sapList_Hover_SelectionBackground: contrast(@sapList_SelectionBackgroundColor,darken(@sapList_SelectionBackgroundColor, 3), lighten(@sapList_SelectionBackgroundColor, 3));
 
 // [Label "List Background Color"]
@@ -901,7 +949,7 @@
 // [Label "Scrollbar Dimension"]
 // [Description "The size of the scrollbar (in pixel)."]
 // [Tags "Base", "Scrollbar", "Dimension", "Protected"]
-@sapScrollBar_Dimension: 0.7 * @sapContent_GridSize; // 16px;
+@sapScrollBar_Dimension: 0.75 * @sapContent_GridSize; // 16px;
 
 // [Label "Scrollbar Hover Face Color"]
 // [Description "The hover color of the surface of a scrollbar."]
