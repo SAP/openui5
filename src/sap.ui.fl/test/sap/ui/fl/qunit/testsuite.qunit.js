@@ -80,19 +80,25 @@ sap.ui.define(function () {
 					}
 				},
 				coverage: {
-					only: ["sap/ui/fl/write/internal/Connector"]
+					only: ["sap/ui/fl/apply/internal/Connector"]
 				}
 			},
 			"apply/internal/connectors/LrepConnector": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/internal/connectors/LrepConnector"]
+					only: ["sap/ui/fl/apply/internal/connectors/LrepConnector"]
 				}
 			},
 			"apply/internal/connectors/PersonalizationConnector": {
 				group: 'Apply Internal',
 				coverage: {
 					only: ["sap/ui/fl/apply/internal/connectors/PersonalizationConnector"]
+				}
+			},
+			"apply/internal/connectors/KeyUserConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/connectors/KeyUserConnector"]
 				}
 			},
 			"apply/internal/ConnectorWithCustomBrokenConnector": {
