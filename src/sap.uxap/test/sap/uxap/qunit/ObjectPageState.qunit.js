@@ -137,6 +137,36 @@ function (
 
 	});
 
+	QUnit.test("Resize is detected if rerendered while hidden", function (assert) {
+
+		var oPage1 = createPage("page1"),
+			done = assert.async(),
+			oSpy = sinon.spy(oPage1.getHeaderTitle(), "_onHeaderResize");
+
+		oPage1.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.expect(1);
+
+		function toggleHidden(bEnable) {
+			oPage1.toggleStyleClass("sapMNavItem", bEnable).toggleStyleClass("sapMNavItemHidden", bEnable);
+		}
+
+		oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
+			toggleHidden(false); // hide page
+			oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
+				oSpy.reset();
+				toggleHidden(true); // show page
+				setTimeout(function() {
+					assert.ok(oSpy.called, "resize is detected");
+					done();
+					oPage1.destroy(); // cleanup
+				}, 100);
+			});
+			oPage1.rerender();
+		});
+	});
+
 	QUnit.test("CSS white-space rule reset. BCP: 1780382804", function (assert) {
 		// Arrange
 		var oOPL = new ObjectPageLayout().placeAt("qunit-fixture"),
