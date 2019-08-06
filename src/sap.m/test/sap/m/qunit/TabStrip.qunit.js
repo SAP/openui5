@@ -226,6 +226,28 @@ sap.ui.define([
 				"The correspondent CSS class for the item change state is available ");
 	});
 
+	QUnit.test("Add modified symbol class and attributes", function(assert){
+		//arrange
+		var $modifiedTabSymbol;
+		this.sut.addItem(new TabStripItem({
+			text: "Button tab 1"
+		}));
+		this.sut.addItem(new TabStripItem({
+			text: "Button tab 2"
+		}));
+		this.sut.addItem(new TabStripItem({
+			text: "Button tab 3",
+			modified:true
+		}));
+		oCore.applyChanges();
+
+		$modifiedTabSymbol = this.sut.getItems()[5].$().find(".sapMTabStripItemModifiedSymbol");
+
+		//assert
+		assert.strictEqual($modifiedTabSymbol.attr("role"), "presentation","The proper role is applied.");
+		assert.strictEqual($modifiedTabSymbol.attr("aria-hidden"), "true", "The star is hidden from screen reader.");
+	});
+
 	// tests for a bug that resulted in destroying the select aggr if it already existed on setHasSelect(true)
 	QUnit.test("setHasSelect(true)", function (assert) {
 		this.sut.setHasSelect(true);
