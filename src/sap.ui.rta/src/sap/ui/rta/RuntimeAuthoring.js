@@ -53,7 +53,8 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/write/api/PersistenceWriteAPI"
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/rta/util/validateFlexEnabled"
 ],
 function(
 	jQuery,
@@ -105,7 +106,8 @@ function(
 	Measurement,
 	Log,
 	KeyCodes,
-	PersistenceWriteAPI
+	PersistenceWriteAPI,
+	validateFlexEnabled
 ) {
 	"use strict";
 
@@ -267,6 +269,10 @@ function(
 
 			if (window.parent !== window) {
 				this.startService('receiver');
+			}
+
+			if (sap.ui.version.includes("-SNAPSHOT")) {
+				this.attachStart(validateFlexEnabled.bind(null, this));
 			}
 		},
 		_RESTART : {

@@ -484,6 +484,11 @@ sap.ui.define([
 						only: ["sap/ui/rta/util/hasStableId"]
 					}
 				},
+				"util/showMessageBox": {
+					coverage: {
+						only: ["sap/ui/rta/util/showMessageBox"]
+					}
+				},
 				ContextMenu: { // Integration
 					ui5: {
 						resourceroots: {
