@@ -549,16 +549,16 @@ sap.ui.define([
 				this.updateButtonEnabledState();
 			},
 
-			_removeAppointment: function(oAppointment, iPersonId){
+			_removeAppointment: function(oAppointment, sPersonId){
 				var oModel = this.getView().getModel(),
 					sTempPath,
 					aPersonAppointments,
 					iIndexForRemoval;
 
-				if (this.sPath){
+				if (!sPersonId){
 					sTempPath = this.sPath.slice(0,this.sPath.indexOf("appointments/") + "appointments/".length);
 				} else {
-					sTempPath = "/people/" + iPersonId.toString() + "/appointments";
+					sTempPath = "/people/" + sPersonId + "/appointments";
 				}
 
 				aPersonAppointments = oModel.getProperty(sTempPath);
@@ -642,8 +642,10 @@ sap.ui.define([
 				if (bIsIntervalAppointment) {
 					this._convertToHeader(oAppointment, iPersonId);
 				} else {
-					this._addNewAppointment(this._oNewAppointmentDialog.getModel().getProperty(this.sPath));
-					this._removeAppointment(this._oNewAppointmentDialog.getModel().getProperty(this.sPath));
+					if (this.sPath !== sAppointmentPath) {
+						this._addNewAppointment(this._oNewAppointmentDialog.getModel().getProperty(this.sPath));
+						this._removeAppointment(this._oNewAppointmentDialog.getModel().getProperty(this.sPath));
+					}
 					oModel.setProperty(sAppointmentPath + "/title", oAppointment.title);
 					oModel.setProperty(sAppointmentPath + "/info", oAppointment.info);
 					oModel.setProperty(sAppointmentPath + "/type", oAppointment.type);
