@@ -54,11 +54,11 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Should render TextArea correctly when _adjustHeight is called before the DOM is ready", function(assert) {
+	QUnit.test("Should render TextArea correctly when _adjustContainerDimensions is called before the DOM is ready", function(assert) {
 		var sut = new TextArea();
 
 		// act
-		sut._adjustHeight();
+		sut._adjustContainerDimensions();
 		sut.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
@@ -501,6 +501,36 @@ sap.ui.define([
 		assert.ok(oTextAreaDOMRef.clientHeight < oTextAreaDOMRef.scrollHeight, "TextArea should have a scroll.");
 
 		oTA.destroy();
+	});
+
+	QUnit.test("Sync properties: growing + width + cols", function (assert) {
+		var oTextArea = new TextArea({
+				growing: true,
+				cols: 80
+			}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oTextArea.getDomRef("hidden").style.width, "40rem", "Width properly calculated");
+		assert.strictEqual(oTextArea.$("hidden").width(), oTextArea.$("hidden").width(), "Hidden and textarea are equally spanned");
+
+
+		// Act
+		oTextArea.setWidth("200px");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oTextArea.$().width(), 200, "Width property takes over the cols");
+		assert.notEqual(oTextArea.getDomRef("hidden").style.width, "40rem", "Width property takes over the cols");
+
+		// Act
+		oTextArea.setWidth(null);
+		oTextArea.setGrowing(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notEqual(oTextArea.$().width(), 200, "TextArea resizes to default dimesnions");
+		assert.notOk(oTextArea.getDomRef("hidden"), "The ghost container is gone");
 	});
 
 	QUnit.module("Input and Live change events in IE10+ when textarea html element is used");
