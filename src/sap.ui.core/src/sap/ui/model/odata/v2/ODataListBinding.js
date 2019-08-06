@@ -81,6 +81,7 @@ sap.ui.define([
 			this.sSortParams = null;
 			this.sRangeParams = null;
 			this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
+			this.mCustomParams = mParameters && mParameters.custom;
 			this.iStartIndex = 0;
 			this.iLength = 0;
 			this.bPendingChange = false;
@@ -476,7 +477,7 @@ sap.ui.define([
 		var bResolves = !!this.oModel.resolve(this.sPath, this.oContext),
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
 
-		if (!bResolves || oRef === undefined ||
+		if (!bResolves || oRef === undefined || this.mCustomParams ||
 		    (this.sOperationMode === OperationMode.Server && (this.aApplicationFilters.length > 0 || this.aFilters.length > 0 || this.aSorters.length > 0))) {
 			this.bUseExpandedList = false;
 			this.aExpandRefs = undefined;

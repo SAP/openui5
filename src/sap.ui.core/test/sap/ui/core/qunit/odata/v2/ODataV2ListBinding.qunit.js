@@ -2103,6 +2103,36 @@ sap.ui.define([
 		oBinding.attachChange(handler);
 	});
 
+	QUnit.test("ListBinding on expanded data, operationmode Default, custom parameter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null, null, {custom:{search: "Test"}});
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var listhandler = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 12, "12 entries contained");
+			assert.ok(oSpy.calledOnce, "Second request sent because custom parameter prevents usage of expand data");
+			oSpy.reset();
+			oListBinding.detachChange(listhandler);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+
+
 	QUnit.test("ListBinding Diff", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories");
