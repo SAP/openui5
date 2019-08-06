@@ -1,6 +1,6 @@
 {
   "name": "@openui5/sap.ui.unified",
-  "version": "1.60.16-SNAPSHOT",
+  "version": "1.60.16",
   "description": "OpenUI5 UI Library sap.ui.unified",
   "author": "SAP SE (https://www.sap.com)",
   "license": "Apache-2.0",
