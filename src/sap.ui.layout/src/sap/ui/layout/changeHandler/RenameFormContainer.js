@@ -5,8 +5,12 @@
 /*global sap */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base", "sap/ui/fl/Utils"
-], function(BaseChangeHandler, Utils) {
+	"sap/ui/fl/changeHandler/Base",
+	"sap/base/Log"
+], function(
+	BaseChangeHandler,
+	Log
+) {
 	"use strict";
 
 	/**
@@ -55,7 +59,7 @@ sap.ui.define([
 
 			return true;
 		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
+			Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 			//however subsequent changes should be applied
 		}
 	};

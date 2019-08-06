@@ -1101,7 +1101,7 @@ function(
 
 		QUnit.test("when calling '_handleElementModified' and the command fails because of dependencies", function(assert) {
 			assert.expect(2);
-			var oLogStub = sandbox.stub(Utils.log, "error");
+			var oLogStub = sandbox.stub(Log, "error");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox");
 			var oCommandStack = {
 				pushAndExecute: function() {
@@ -1125,7 +1125,7 @@ function(
 
 		QUnit.test("when calling '_handleElementModified' and the command fails, but not because of dependencies", function(assert) {
 			assert.expect(2);
-			var oLogStub = sandbox.stub(Utils.log, "error");
+			var oLogStub = sandbox.stub(Log, "error");
 			var oMessageBoxStub = sandbox.stub(RtaUtils, "_showMessageBox");
 			var oCommandStack = {
 				pushAndExecute: function() {

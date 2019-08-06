@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"], function(Utils) {
+sap.ui.define([
+	"sap/base/Log"
+], function(
+	Log
+) {
 	"use strict";
 
 	/**
@@ -21,10 +25,10 @@ sap.ui.define(["sap/ui/fl/Utils"], function(Utils) {
 	 */
 	var ChangeRegistryItem = function(mParam) {
 		if (!mParam.changeTypeMetadata) {
-			Utils.log.error("sap.ui.fl.registry.ChangeRegistryItem: ChangeTypeMetadata required");
+			Log.error("sap.ui.fl.registry.ChangeRegistryItem: ChangeTypeMetadata required");
 		}
 		if (!mParam.controlType) {
-			Utils.log.error("sap.ui.fl.registry.ChangeRegistryItem: ControlType required");
+			Log.error("sap.ui.fl.registry.ChangeRegistryItem: ControlType required");
 		}
 
 		this._changeTypeMetadata = mParam.changeTypeMetadata;

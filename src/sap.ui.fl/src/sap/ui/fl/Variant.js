@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/Log"
 ], function (
 	jQuery,
 	ManagedObject,
 	Utils,
 	Settings,
-	fnBaseMerge
+	merge,
+	Log
 ) {
 	"use strict";
 
@@ -34,11 +36,11 @@ sap.ui.define([
 			ManagedObject.apply(this);
 
 			if (!jQuery.isPlainObject(oFile)) {
-				Utils.log.error("Constructor : sap.ui.fl.Variant : oFile is not defined");
+				Log.error("Constructor : sap.ui.fl.Variant : oFile is not defined");
 			}
 
 			this._oDefinition = oFile;
-			this._oOriginDefinition = fnBaseMerge({}, oFile);
+			this._oOriginDefinition = merge({}, oFile);
 			this._sRequest = '';
 			this._bUserDependent = (oFile.content.layer === "USER");
 			this._vRevertData = null;
@@ -300,7 +302,7 @@ sap.ui.define([
 	 */
 	Variant.prototype.getText = function (sTextId) {
 		if (typeof (sTextId) !== "string") {
-			Utils.log.error("sap.ui.fl.Variant.getTexts : sTextId is not defined");
+			Log.error("sap.ui.fl.Variant.getTexts : sTextId is not defined");
 		}
 		if (this._oDefinition.content.texts) {
 			if (this._oDefinition.content.texts[sTextId]) {
@@ -321,7 +323,7 @@ sap.ui.define([
 	 */
 	Variant.prototype.setText = function (sTextId, sNewText) {
 		if (typeof (sTextId) !== "string") {
-			Utils.log.error("sap.ui.fl.Variant.setTexts : sTextId is not defined");
+			Log.error("sap.ui.fl.Variant.setTexts : sTextId is not defined");
 			return;
 		}
 		if (this._oDefinition.content.texts) {
@@ -421,7 +423,7 @@ sap.ui.define([
 	 */
 	Variant.prototype.setRequest = function (sRequest) {
 		if (typeof (sRequest) !== "string") {
-			Utils.log.error("sap.ui.fl.Variant.setRequest : sRequest is not defined");
+			Log.error("sap.ui.fl.Variant.setRequest : sRequest is not defined");
 		}
 		this._sRequest = sRequest;
 	};

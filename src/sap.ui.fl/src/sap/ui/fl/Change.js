@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/registry/Settings",
+	"sap/base/Log"
 ], function (
 	jQuery,
 	ManagedObject,
 	Utils,
-	Settings
+	Settings,
+	Log
 ) {
 	"use strict";
 
@@ -30,7 +32,7 @@ sap.ui.define([
 			ManagedObject.apply(this);
 
 			if (!jQuery.isPlainObject(oFile)) {
-				Utils.log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
+				Log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
 			}
 
 			this._oDefinition = oFile;
@@ -480,7 +482,7 @@ sap.ui.define([
 	 */
 	Change.prototype.getText = function (sTextId) {
 		if (typeof (sTextId) !== "string") {
-			Utils.log.error("sap.ui.fl.Change.getTexts : sTextId is not defined");
+			Log.error("sap.ui.fl.Change.getTexts : sTextId is not defined");
 		}
 		if (this._oDefinition.texts) {
 			if (this._oDefinition.texts[sTextId]) {
@@ -500,7 +502,7 @@ sap.ui.define([
 	 */
 	Change.prototype.setText = function (sTextId, sNewText) {
 		if (typeof (sTextId) !== "string") {
-			Utils.log.error("sap.ui.fl.Change.setTexts : sTextId is not defined");
+			Log.error("sap.ui.fl.Change.setTexts : sTextId is not defined");
 			return;
 		}
 		if (this._oDefinition.texts) {
@@ -611,7 +613,7 @@ sap.ui.define([
 	 */
 	Change.prototype.setRequest = function (sRequest) {
 		if (typeof (sRequest) !== "string") {
-			Utils.log.error("sap.ui.fl.Change.setRequest : sRequest is not defined");
+			Log.error("sap.ui.fl.Change.setRequest : sRequest is not defined");
 		}
 		this._sRequest = sRequest;
 	};

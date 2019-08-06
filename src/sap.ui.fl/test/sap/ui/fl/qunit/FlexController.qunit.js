@@ -126,7 +126,7 @@ function (
 
 		QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert) {
 			assert.expect(4);
-			var oUtilsLogStub = sandbox.stub(Log, "warning");
+			var oLogStub = sandbox.stub(Log, "warning");
 			var oChangeSpecificData = {};
 			var oControlType = {};
 			var oControl = new Control();
@@ -148,7 +148,7 @@ function (
 			return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
 			.catch(function() {
 				assert.ok(true, "then Promise was rejected");
-				assert.ok(oUtilsLogStub.calledOnce, "a warning was logged");
+				assert.ok(oLogStub.calledOnce, "a warning was logged");
 			});
 		});
 
@@ -195,10 +195,10 @@ function (
 			var mPropertyBagStub = {
 				unmergedChangesOnly: true
 			};
-			var oUtilsLogStub = sandbox.stub(Log, "error");
+			var oLogStub = sandbox.stub(Log, "error");
 
 			var aResolveArray = this.oFlexController._resolveGetChangesForView(mPropertyBagStub, "thisIsNoArray");
-			assert.ok(oUtilsLogStub.calledOnce, "a error was logged");
+			assert.ok(oLogStub.calledOnce, "a error was logged");
 			assert.equal(aResolveArray.length, 0, "an empty array was returned");
 		});
 

@@ -528,7 +528,7 @@ function(
 		if (!this._oDesignTime) {
 			if (!oRootControl) {
 				vError = new Error("Root control not found");
-				FlexUtils.log.error(vError);
+				Log.error(vError);
 				return Promise.reject(vError);
 			}
 
@@ -538,7 +538,7 @@ function(
 				&& !FlexUtils.isCorrectAppVersionFormat(FlexUtils.getAppVersionFromManifest(FlexUtils.getAppComponentForControl(oRootControl).getManifest()))
 			) {
 				vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
-				FlexUtils.log.error(vError);
+				Log.error(vError);
 				return Promise.reject(vError);
 			}
 
@@ -1288,7 +1288,7 @@ function(
 				if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
 					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_DEPENDENCY_ERROR", "MSG_DEPENDENCY_ERROR", oError);
 				}
-				FlexUtils.log.error("sap.ui.rta: " + oError.message);
+				Log.error("sap.ui.rta: " + oError.message);
 			});
 		}
 		return Promise.resolve();

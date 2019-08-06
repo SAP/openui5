@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	'sap/ui/fl/Utils',
-	'sap/ui/fl/changeHandler/Base',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier'
+	"sap/ui/fl/changeHandler/Base",
+	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/base/Log"
 ], function (
-	Utils,
 	Base,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	Log
 ) {
 	"use strict";
 
@@ -124,7 +124,7 @@ sap.ui.define([
 			oModifier.insertAggregation(oForm, "content", oTitle, iInsertIndex, oView);
 
 		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChange.layer + "]" + oChange.namespace + "/" + oChange.fileName + "." + oChange.fileType);
+			Log.error("Change does not contain sufficient information to be applied: [" + oChange.layer + "]" + oChange.namespace + "/" + oChange.fileName + "." + oChange.fileType);
 			//however subsequent changes should be applied
 		}
 

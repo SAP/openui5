@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/base/Log"
 ], function (
 	Utils,
 	Change,
 	Variant,
-	ObjectPath
+	ObjectPath,
+	Log
 ) {
 	"use strict";
 
@@ -212,7 +214,7 @@ sap.ui.define([
 
 	VariantController.prototype.setVariantChanges = function(sVariantManagementReference, sVariantReference, aChanges) {
 		if (!sVariantManagementReference || !sVariantReference || !Array.isArray(aChanges)) {
-			Utils.log.error("Cannot set variant changes without Variant reference");
+			Log.error("Cannot set variant changes without Variant reference");
 			return undefined;
 		}
 
@@ -406,7 +408,7 @@ sap.ui.define([
 					}
 					break;
 				default:
-					Utils.log.error("No valid changes on variant " + oVariant.content.content.title + " available");
+					Log.error("No valid changes on variant " + oVariant.content.content.title + " available");
 			}
 		}.bind(this));
 	};

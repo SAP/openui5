@@ -59,26 +59,6 @@ function(
 		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		APP_ID_AT_DESIGN_TIME : "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
 		VARIANT_MODEL_NAME: "$FlexVariants",
-		/**
-		 * log object exposes available log functions
-		 *
-		 * @name sap.ui.fl.Utils.log
-		 * @public
-		 */
-		log: {
-			error: function (sMessage, sDetails, sComponent) {
-				Log.error(sMessage, sDetails, sComponent);
-			},
-			warning: function (sMessage, sDetails, sComponent) {
-				Log.warning(sMessage, sDetails, sComponent);
-			},
-			debug: function (sMessage, sDetails, sComponent) {
-				Log.debug(sMessage, sDetails, sComponent);
-			},
-			info: function (sMessage, sDetails, sComponent) {
-				Log.info(sMessage, sDetails, sComponent);
-			}
-		},
 
 		/**
 		 * Formats the log message by replacing placeholders with values and logging the message.
@@ -91,7 +71,7 @@ function(
 		formatAndLogMessage: function(sLogType, aMessageComponents, aValuesToInsert, sCallStack) {
 			var sLogMessage = aMessageComponents.join(' ');
 			sLogMessage = formatMessage(sLogMessage, aValuesToInsert);
-			this.log[sLogType](sLogMessage, sCallStack || "");
+			Log[sLogType](sLogMessage, sCallStack || "");
 		},
 
 		/**
@@ -941,7 +921,7 @@ function(
 				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
 					// if mTechnicalParameters are not available we write a warning and continue updating the hash
 				if (!mTechnicalParameters) {
-					this.log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
+					Log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
 				}
 				if (aValues.length === 0) {
 					delete oParsedHash.params[sParameterName];
@@ -1163,7 +1143,7 @@ function(
 					return sAppId;
 				}
 			}
-			this.log.warning("No Manifest received.");
+			Log.warning("No Manifest received.");
 			return "";
 		},
 
@@ -1199,7 +1179,7 @@ function(
 					sVersion = oSapApp.applicationVersion.version;
 				}
 			} else {
-				this.log.warning("No Manifest received.");
+				Log.warning("No Manifest received.");
 			}
 			return sVersion;
 		},
@@ -1219,7 +1199,7 @@ function(
 					sUri = oSapApp.dataSources.mainService.uri;
 				}
 			} else {
-				this.log.warning("No Manifest received.");
+				Log.warning("No Manifest received.");
 			}
 			return sUri;
 		},
@@ -1351,19 +1331,19 @@ function(
 				.catch(function(e) {
 					var sErrorMessage = "Error during execPromiseQueueSequentially processing occured";
 					sErrorMessage += e ? ": " + e.message : "";
-					this.log.error(sErrorMessage);
+					Log.error(sErrorMessage);
 
 					if (bThrowError) {
 						throw new Error(sErrorMessage);
 					}
-				}.bind(this))
+				})
 
 				.then(function() {
 					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 				}.bind(this));
 			}
 
-			this.log.error("Changes could not be applied, promise not wrapped inside function.");
+			Log.error("Changes could not be applied, promise not wrapped inside function.");
 			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 		},
 

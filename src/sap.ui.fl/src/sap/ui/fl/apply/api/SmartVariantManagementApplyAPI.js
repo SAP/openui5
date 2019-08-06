@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/Log"
 ], function(
 	DefaultVariant,
 	StandardVariant,
 	ChangePersistenceFactory,
 	Settings,
-	Utils
+	Utils,
+	Log
 ) {
 	"use strict";
 
@@ -67,7 +69,7 @@ sap.ui.define([
 			var oControl = mPropertyBag.control;
 			var sId = mPropertyBag.id;
 			if (!sId || !oControl) {
-				Utils.log.error("sId or oControl is not defined");
+				Log.error("sId or oControl is not defined");
 				return undefined;
 			}
 			var oChanges = this._getChangeMap(oControl);

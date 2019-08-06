@@ -104,7 +104,7 @@ function(
 					resolve(aModules);
 				},
 				function(oError) {
-					Utils.log.error("Code Extension not found", oError.message);
+					Log.error("Code Extension not found", oError.message);
 					resolve([]);
 				}
 			);

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistryItem",
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/fl/changeHandler/MoveControls",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -16,6 +17,7 @@ function(
 	ChangeRegistryItem,
 	SimpleChanges,
 	MoveControlsChangeHandler,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -444,16 +446,20 @@ function(
 		});
 
 		QUnit.test("registerChangeHandlersForControl does not crash if the loading of a module path leads to an error (file not found)", function (assert) {
+			assert.expect(3);
 			var sControlType = "my.control.Implementation";
 			var oChangeHandlers = "sap/ui/fl/test/registry/DefinitelyNotAChangeHandlers";
-			var registerControlStub = sandbox.stub(this.instance, "registerControlForSimpleChange");
-			var errorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
+			var fnRegisterControlStub = sandbox.stub(this.instance, "registerControlForSimpleChange");
+			sandbox.stub(Log, "error").callsFake(function (sErrorMessage) {
+				if (sErrorMessage.indexOf(sControlType) !== -1) {
+					assert.ok(true, "then error was logged");
+				}
+			});
 
 			return this.instance._registerChangeHandlersForControl(sControlType, oChangeHandlers)
 			.then(function() {
 				assert.ok(true, "the js processing continues");
-				assert.equal(registerControlStub.callCount, 0, "no registration was done");
-				assert.equal(errorLoggingStub.callCount, 1, "the error was logged");
+				assert.equal(fnRegisterControlStub.callCount, 0, "no registration was done");
 			});
 		});
 
@@ -461,7 +467,7 @@ function(
 			var sControlType = "my.control.Implementation";
 			var sChangeHandler = "sap/ui/fl/test/registry/TestChangeHandlersBROKEN";
 			var registerControlStub = sandbox.stub(this.instance, "registerControlForSimpleChange");
-			var errorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
+			var errorLoggingStub = sandbox.stub(Log, "error");
 			sandbox.stub(sap.ui, "require")
 				.callsArgWithAsync(2, {message: "error"});
 
@@ -794,28 +800,32 @@ function(
 		});
 
 		QUnit.test("when _getInstanceSpecificChangeRegistryItem is called with invalid flexibility path defined on given control", function (assert) {
+			assert.expect(3);
 			var oGetChangeHandlerModuleStub = sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("invalid/path/TestChangeHandlers");
-			var oErrorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
 			var oControl = {};
-			sandbox.stub(JsControlTreeModifier, "getId").returns("controlId");
-
+			var sControlId = "controlId";
 			var sPropertyBindingChangeType = "propertyBindingChange";
 			var oExplicitRegisteredChangeHandlerStub = {};
 			var oSimpleChangeObject = {
 				changeType: sPropertyBindingChangeType,
 				changeHandler: oExplicitRegisteredChangeHandlerStub
 			};
+			sandbox.stub(JsControlTreeModifier, "getId").returns(sControlId);
+			sandbox.stub(Log, "error").callsFake(function(sErrorMessage) {
+				if (sErrorMessage.indexOf(sControlId) !== -1) {
+					assert.ok(true, "then error was logged");
+				}
+			});
 
 			return this.instance._getInstanceSpecificChangeRegistryItem(oSimpleChangeObject, oControl, JsControlTreeModifier)
 				.then(function(oChangeRegistryItem) {
 					assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
-					assert.equal(oErrorLoggingStub.callCount, 1, "then the error was logged");
 					assert.equal(oChangeRegistryItem, undefined, "then no registry item is returned");
 				});
 		});
 
 		QUnit.test("when _getInstanceSpecificChangeRegistryItem is called and passed parameter is a valid changeType", function (assert) {
-			var oErrorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
+			var oErrorLoggingStub = sandbox.stub(Log, "error");
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("controlType");
 			var oControl = {};
@@ -832,7 +842,7 @@ function(
 		});
 
 		QUnit.test("when _getInstanceSpecificChangeRegistryItem is called and passed parameter is a change with a valid changeType", function (assert) {
-			var oErrorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
+			var oErrorLoggingStub = sandbox.stub(Log, "error");
 			var oGetChangeHandlerModuleStub = sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("controlType");
 			var oControl = {};
@@ -859,7 +869,7 @@ function(
 				}
 			})
 				.then(function() {
-					oErrorLoggingStub = sandbox.stub(sap.ui.fl.Utils.log, "error");
+					oErrorLoggingStub = sandbox.stub(Log, "error");
 					oGetChangeHandlerModuleStub = sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 					sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
 

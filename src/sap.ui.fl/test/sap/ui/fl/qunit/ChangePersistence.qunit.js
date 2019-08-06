@@ -2641,9 +2641,9 @@ function (
 		});
 
 		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function (assert) {
-			sandbox.stub(Utils.log, "error");
+			sandbox.stub(Log, "error");
 			this.oChangePersistence.resetChanges("VENDOR");
-			assert.ok(Utils.log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Utils.log.error() is called with an error");
+			assert.ok(Log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Log.error() is called with an error");
 		});
 
 		QUnit.test("when calling resetChanges in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
