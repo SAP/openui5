@@ -1,0 +1,12 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="sap.my.test.widget.component.controller.Widget" displayBlock="true">
+	<Panel id="myPanel" headerText="Panel">
+		<Input value="{sap.widget>/configuration/settings/stringProperty}" />
+		<Input value="{sap.widget>/configuration/parameters/text/value}" />
+		<Input type="Number" value="{sap.widget>/configuration/settings/intProperty}" />
+		<Input type="Number" value="{sap.widget>/configuration/settings/floatProperty}" />
+		<DatePicker value="{sap.widget>/configuration/settings/dateProperty}" />
+		<Button text="Cancel" press="fireCancel"/>
+		<Button text="OK" type="Emphasized" press="fireOK"/>
+		<Image src="./img/app_icon.png" width="50px" height="50px" alt="Image not shown"></Image>
+	</Panel>
+</mvc:View>

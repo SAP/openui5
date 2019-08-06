@@ -1,6 +1,6 @@
 /* global QUnit, sinon */
 
-sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "sap/base/Log"], function (CardManifest, Manifest, Log) {
+sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/base/Log"], function (CardManifest, Manifest, Log) {
 	"use strict";
 
 	var oJson = {
@@ -77,7 +77,7 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 	QUnit.test("Passing an object", function (assert) {
 
 		// Act
-		var oManifest = new CardManifest(oJson);
+		var oManifest = new CardManifest("sap.card", oJson);
 
 		// Assert
 		assert.ok(oManifest, "Should have successfully created a manifest.");
@@ -91,7 +91,7 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 	QUnit.test("Passing an empty object", function (assert) {
 
 		// Act
-		var oManifest = new CardManifest();
+		var oManifest = new CardManifest("sap.card");
 
 		// Assert
 		assert.notOk(oManifest._oManifest, "Should NOT have _oManifest reference.");
@@ -106,7 +106,7 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 	QUnit.test("getJson", function (assert) {
 
 		// Arrange
-		var oManifest = new CardManifest(oJson);
+		var oManifest = new CardManifest("sap.card", oJson);
 
 		// Act
 		var oManifestJson = oManifest.getJson();
@@ -123,7 +123,7 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 	QUnit.test("get", function (assert) {
 
 		// Arrange
-		var oManifest = new CardManifest(oJson);
+		var oManifest = new CardManifest("sap.card", oJson);
 
 		// Act
 		var oCard = oManifest.get("/sap.card");
@@ -142,7 +142,7 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 	QUnit.test("load without manifestUrl", function (assert) {
 
 		// Arrange
-		var oManifest = new CardManifest();
+		var oManifest = new CardManifest("sap.card");
 
 		// Act & Assert
 		assert.throws(function () {
@@ -163,7 +163,7 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 				return sTranslatedText;
 			}
 		};
-		var oManifest = new CardManifest();
+		var oManifest = new CardManifest("sap.card");
 
 		sinon.stub(Manifest, "load").callsFake(function () {
 			return Promise.resolve(new Manifest(oJson, { process: false }));
@@ -198,8 +198,8 @@ sap.ui.define(["sap/ui/integration/util/CardManifest", "sap/ui/core/Manifest", "
 	QUnit.module("Manifest parameters", {
 		beforeEach: function () {
 
-			this.oManifest = new CardManifest(oJson);
-			this.oManifestWhitoutParams = new CardManifest(oManifestWithOutPrameters);
+			this.oManifest = new CardManifest("sap.card", oJson);
+			this.oManifestWhitoutParams = new CardManifest("sap.card", oManifestWithOutPrameters);
 
 			this.oManifestParameter = {
 				"city": {

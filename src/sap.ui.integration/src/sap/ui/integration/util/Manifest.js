@@ -5,24 +5,29 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/core/Manifest",
+	"sap/base/util/deepClone",
+	"sap/base/util/merge",
 	"sap/base/Log"
 	], function (
 	BaseObject,
-	Manifest,
+	CoreManifest,
+	deepClone,
+	merge,
 	Log
 ) {
 	"use strict";
 
-	var MANIFEST_PARAMETERS =  "/sap.card/configuration/parameters";
+	var MANIFEST_PARAMETERS = "/{SECTION}/configuration/parameters",
+		MANIFEST_CONFIGURATION = "/{SECTION}";
 
 	/**
-	 * Creates a new CardManifest object.
+	 * Creates a new Manifest object.
 	 *
 	 * @class Provides a set of functions to create a card manifest and work with it.
 	 *
 	 * Example usages:
 	 *
-	 * var oManifest = new CardManifest()
+	 * var oManifest = new Manifest()
 	 * oManifest.load({ manifestUrl: "./somepath/manifest.json" }).then(function () {
 	 *   // Do something
 	 * })
@@ -34,11 +39,11 @@ sap.ui.define([
 	 *  "sap.card": { ... },
 	 *  ...
 	 * };
-	 * var oManifest = new CardManifest(oManifestJson);
+	 * var oManifest = new Manifest(oManifestJson);
 	 *
-	 * NOTE: Using CardManifest.prototype.load function will also load i18n files and process the manifest
+	 * NOTE: Using Manifest.prototype.load function will also load i18n files and process the manifest
 	 * replacing all translated texts and placeholders.
-	 * When passing a json object to the CardManifest constructor the manifest will NOT be processed as
+	 * When passing a json object to the Manifest constructor the manifest will NOT be processed as
 	 * it should be already processed beforehand.
 	 *
 	 * @extends sap.ui.base.Object
@@ -49,14 +54,15 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @param {Object} oManifestJson A manifest JSON.
-	 * @alias sap.ui.integration.util.CardManifest
+	 * @alias sap.ui.integration.util.Manifest
 	 */
-	var CardManifest = BaseObject.extend("sap.ui.integration.util.CardManifest", {
-		constructor: function(oManifestJson) {
+	var Manifest = BaseObject.extend("sap.ui.integration.util.Manifest", {
+		constructor: function(sSection, oManifestJson) {
 			BaseObject.call(this);
-
+			this.PARAMETERS = MANIFEST_PARAMETERS.replace("{SECTION}",sSection);
+			this.CONFIGURATION = MANIFEST_CONFIGURATION.replace("{SECTION}",sSection);
 			if (oManifestJson) {
-				this._oManifest = new Manifest(oManifestJson, { process: false });
+				this._oManifest = new CoreManifest(oManifestJson, { process: false });
 				this.oJson = this._oManifest.getRawJson();
 			}
 		}
@@ -65,7 +71,7 @@ sap.ui.define([
 	/**
 	 * @returns {Object} A copy of the Manifest JSON.
 	 */
-	CardManifest.prototype.getJson = function () {
+	Manifest.prototype.getJson = function () {
 		return this._unfreeze(this.oJson);
 	};
 
@@ -75,14 +81,14 @@ sap.ui.define([
 	 * @param {string} sPath The path to return a value for.
 	 * @returns {*} The value at the specified path.
 	 */
-	CardManifest.prototype.get = function (sPath) {
+	Manifest.prototype.get = function (sPath) {
 		return this._unfreeze(getObject(this.oJson, sPath));
 	};
 
 	/**
 	 * @returns {sap.base.i18n.ResourceBundle} The resource bundle.
 	 */
-	CardManifest.prototype.getResourceBundle = function () {
+	Manifest.prototype.getResourceBundle = function () {
 		return this.oResourceBundle;
 	};
 
@@ -92,7 +98,7 @@ sap.ui.define([
 	 * @param {*} vValue The value to unfreeze.
 	 * @returns {*} The unfrozen value.
 	 */
-	CardManifest.prototype._unfreeze = function (vValue) {
+	Manifest.prototype._unfreeze = function (vValue) {
 		if (typeof vValue === "object") {
 			return JSON.parse(JSON.stringify(vValue));
 		}
@@ -100,9 +106,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Destroy CardManifest resources.
+	 * Destroy Manifest resources.
 	 */
-	CardManifest.prototype.destroy = function () {
+	Manifest.prototype.destroy = function () {
 		this.oJson = null;
 		this.oResourceBundle = null;
 		if (this._oManifest) {
@@ -116,12 +122,12 @@ sap.ui.define([
 	 * @param {Object} mSettings The settings to use for manifest loading.
 	 * @returns {Promise} A promise resolved when the manifest is ready and processed.
 	 */
-	CardManifest.prototype.load = function (mSettings) {
+	Manifest.prototype.load = function (mSettings) {
 		if (!mSettings || !mSettings.manifestUrl) {
 			throw new Error("manifestUrl is mandatory!");
 		}
 
-		return Manifest.load({
+		return CoreManifest.load({
 			manifestUrl: mSettings.manifestUrl,
 			async: true
 		}).then(function (oManifest) {
@@ -140,7 +146,7 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} A promise resolved when the i18n resources are ready.
 	 */
-	CardManifest.prototype.loadI18n = function () {
+	Manifest.prototype.loadI18n = function () {
 		return this._oManifest._loadI18n(true).then(function (oBundle) {
 			this.oResourceBundle = oBundle;
 		}.bind(this));
@@ -153,7 +159,7 @@ sap.ui.define([
 	 * @private
 	 * @param {Object} oParams Parameters that should be replaced in the manifest.
 	 */
-	CardManifest.prototype.processManifest = function (oParams) {
+	Manifest.prototype.processManifest = function (oParams) {
 
 		var iCurrentLevel = 0,
 			iMaxLevel = 15,
@@ -318,13 +324,13 @@ sap.ui.define([
 	 * @param {Object} oParameters Parameters set in the card trough parameters property.
 	 * @private
 	 */
-	CardManifest.prototype.processParameters = function (oParameters) {
+	Manifest.prototype.processParameters = function (oParameters) {
 		if (!this._oManifest) {
 
 			return;
 		}
 
-		var oManifestParams = this.get(MANIFEST_PARAMETERS);
+		var oManifestParams = this.get(this.PARAMETERS);
 
 		if (oParameters && !oManifestParams) {
 			Log.error("If parameters property is set, parameters should be described in the manifest");
@@ -334,6 +340,22 @@ sap.ui.define([
 		var oParams = this._syncParameters(oParameters, oManifestParams);
 		this.processManifest(oParams);
 	};
+	/**
+	 * Merges passed configuration to the current section.
+	 *
+	 * @param {Object} oConfiguration Configuration set in the manifest for the {SECTION} property.
+	 * @private
+	 */
+	Manifest.prototype.mergeConfiguration = function (oConfiguration) {
+		if (!this._oManifest) {
+			return;
+		}
+		var oManifestConf = this.get(this.CONFIGURATION);
+		var oJson = deepClone(this.oJson);
+		oJson[this.CONFIGURATION.substring(1)] = merge({}, oManifestConf, oConfiguration);
+		this._oManifest._oManifest = oJson;
+		this.oJson = oJson;
+	};
 
 	/**
 	 * Syncs parameters from property.
@@ -342,12 +364,12 @@ sap.ui.define([
 	 * @param {Object} oManifestParameters Parameters set in the manifest.
 	 * @private
 	 */
-	CardManifest.prototype._syncParameters = function (oParameters, oManifestParameters) {
+	Manifest.prototype._syncParameters = function (oParameters, oManifestParameters) {
 		if (!oParameters) {
 			return oManifestParameters;
 		}
 
-		var oClonedManifestParams = jQuery.extend(true, {}, oManifestParameters),
+		var oClonedManifestParams = deepClone(oManifestParameters),
 			oParamProps = Object.getOwnPropertyNames(oParameters),
 			oManifestParamsProps = Object.getOwnPropertyNames(oClonedManifestParams);
 
@@ -362,5 +384,5 @@ sap.ui.define([
 		return oClonedManifestParams;
 	};
 
-	return CardManifest;
+	return Manifest;
 }, true);

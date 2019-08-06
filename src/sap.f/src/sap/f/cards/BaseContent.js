@@ -203,9 +203,9 @@ sap.ui.define([
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 		}
-
-		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
-
+		if (this._oDataProviderFactory) {
+			this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
+		}
 		if (this._oDataProvider) {
 			this.setBusy(true);
 
