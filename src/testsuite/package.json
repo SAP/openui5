@@ -15,7 +15,10 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "scripts": {
+    "sdk": "npm run build-sdk && npm run serve-sdk",
     "build-sdk": "ui5 build jsdoc --all",
+    "update-sdk": "npm run update-jsdoc",
+    "serve-sdk": "ws --compress -d dist",
     "update-jsdoc": "ui5 build jsdoc --all --exclude-task=buildThemes"
   },
   "dependencies": {
@@ -38,8 +41,11 @@
     "@openui5/sap.ui.unified": "1.70.0-SNAPSHOT",
     "@openui5/sap.ui.ux3": "1.70.0-SNAPSHOT",
     "@openui5/sap.uxap": "1.70.0-SNAPSHOT",
-    "@openui5/themelib_sap_fiori_3": "1.70.0-SNAPSHOT",
     "@openui5/themelib_sap_belize": "1.70.0-SNAPSHOT",
-    "@openui5/themelib_sap_bluecrystal": "1.70.0-SNAPSHOT"
+    "@openui5/themelib_sap_bluecrystal": "1.70.0-SNAPSHOT",
+    "@openui5/themelib_sap_fiori_3": "1.70.0-SNAPSHOT"
+  },
+  "devDependencies": {
+    "local-web-server": "^3.0.7"
   }
 }
