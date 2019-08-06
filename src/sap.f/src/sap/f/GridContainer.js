@@ -427,6 +427,10 @@ sap.ui.define([
 			sapprevious: ["alt", "meta"]
 		});
 		this.addDelegate(this._itemNavigation);
+
+		if (!isGridSupportedByBrowser()) {
+			this._attachDndPolyfill();
+		}
 	};
 
 	/**
@@ -531,6 +535,10 @@ sap.ui.define([
 			this.removeDelegate(this._itemNavigation);
 			this._itemNavigation.destroy();
 			delete this._itemNavigation;
+		}
+
+		if (!isGridSupportedByBrowser()) {
+			this._detachDndPolyfill();
 		}
 	};
 
@@ -744,7 +752,26 @@ sap.ui.define([
 			rows,
 			aFittedElements = [];
 
+
+		var fnInsertPolyfillDropIndicator = function (iKId) {
+			virtualGrid.fitElement(
+				iKId + '',
+				oSettings.calculateColumnsForItem(Math.round(this._polyfillDropIndicator.width)),
+				oSettings.calculateRowsForItem(Math.round(this._polyfillDropIndicator.height))
+			);
+			aFittedElements.push({
+				id: iKId + '',
+				domRef: this._polyfillDropIndicator.domRef
+			});
+		}.bind(this);
+
 		for (i = 0, k = 0; i < items.length; i++) {
+
+			if (this._polyfillDropIndicator && this._polyfillDropIndicator.insertAt === i) {
+				fnInsertPolyfillDropIndicator(k);
+				k++;
+			}
+
 			item = items[i];
 			$item = item.$();
 
@@ -768,6 +795,10 @@ sap.ui.define([
 			k++;
 		}
 
+		if (this._polyfillDropIndicator && this._polyfillDropIndicator.insertAt >= items.length) {
+			fnInsertPolyfillDropIndicator(items.length);
+		}
+
 		virtualGrid.calculatePositions();
 
 		aFittedElements.forEach(function (oFittedElement) {
@@ -783,6 +814,51 @@ sap.ui.define([
 		});
 
 		$that.css("height", virtualGrid.getHeight() + "px");
+	};
+
+	/**
+	 * Implements polyfill for IE after drag over.
+	 * @param {Object} oEvent After drag over event
+	 * @protected
+	 */
+	GridContainer.prototype._polyfillAfterDragOver = function (oEvent) {
+		var $indicator = oEvent.getParameter("indicator");
+
+		this._polyfillDropIndicator = {
+			width: oEvent.getParameter("width"),
+			height: oEvent.getParameter("height"),
+			domRef: $indicator,
+			insertAt: $indicator.index()
+		};
+
+		this._scheduleIEPolyfill();
+	};
+
+	/**
+	 * Implements polyfill for IE after drag end.
+	 * @param {Object} oEvent After drag end event
+	 * @protected
+	 */
+	GridContainer.prototype._polyfillAfterDragEnd = function (oEvent) {
+		this._polyfillDropIndicator = null;
+	};
+
+	/**
+	 * Attaches polyfill methods for drag and drop for IE.
+	 * @protected
+	 */
+	GridContainer.prototype._attachDndPolyfill = function () {
+		this.attachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
+		this.attachEvent("_gridPolyfillAfterDragEnd", this._polyfillAfterDragEnd, this);
+	};
+
+	/**
+	 * Detaches polyfill methods for drag and drop for IE.
+	 * @protected
+	 */
+	GridContainer.prototype._detachDndPolyfill = function () {
+		this.detachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
+		this.detachEvent("_gridPolyfillAfterDragEnd", this._polyfillAfterDragEnd, this);
 	};
 
 	/**
