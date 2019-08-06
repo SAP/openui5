@@ -1679,7 +1679,6 @@ sap.ui.define([
 		assert.ok(!oInput._oSuggPopover._oList.hasStyleClass("sapMInputSuggestionTableHidden"), "Tabular suggestions table does not have the hidden style class on desktop");
 
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-
 		// FIXME: check doesn't work in headless PhantomJS test cycle => commented out!
 		if (!Device.browser.phantomJS) {
 			assert.equal(getPopupItemsContent(oPopup).$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
@@ -2643,7 +2642,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("Highlighting", function(assert) {
+	QUnit.test("Hightlighting", function(assert) {
 		var oInput = createInputWithSuggestions();
 
 		oInput.placeAt("content");
@@ -3676,16 +3675,15 @@ sap.ui.define([
 			suggestionItems: [
 				new Item({text: "Germany"}),
 				new Item({text: "Bulgaria"}),
-				new Item({text: "Greece"}),
 				new Item("UK", {key: "UK", text: "United Kingdom"}),
-				new Item({text: "Italy"}),
-				new Item({text: "Greece"})
+				new Item({text: "Italy"})
 			]
 		}).placeAt("content");
 
 		sap.ui.getCore().applyChanges();
 
 		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
+
 		// act
 		oInput._$input.focus().trigger(oFakeKeydown).val("G").trigger("input");
 		this.clock.tick(300);
@@ -3694,30 +3692,19 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'G'.");
 		assert.strictEqual(oInput.getValue(), "Germany", "Input value should be autocompleted.");
 		assert.strictEqual(oInput.getSelectedText(), "ermany", "Suggested value should be selected");
-		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[0].getSelected(), true, "Correct item in the Suggestions list is selected.");
-
-		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("Gr").trigger("input");
-		this.clock.tick(300);
-
-		// assert
-		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[2].getSelected(), true, "Correct item in the Suggestions list is selected.");
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oInput._$input, KeyCodes.ENTER);
 
 		// assert
-		assert.strictEqual(oInput.getValue(), "Greece", "Pressing 'enter' should finalize autocompletion.");
+		assert.strictEqual(oInput.getValue(), "Germany", "Pressing 'enter' should finalize autocompletion.");
 		assert.strictEqual(oInput.getSelectedText(), "", "Text shouldn't be selected after pressing 'enter'");
 
 		// act
-		oInput._$input.focus().val("gre").trigger("input");
 		sap.ui.test.qunit.triggerKeydown(oInput._$input, KeyCodes.BACKSPACE);
-		this.clock.tick(300);
 
 		// assert
 		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "Autocomplete shouldn't be allowed when deleting.");
-		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getSelectedItem(), null, "No items in the Suggestions list are selected when deleting.");
 
 		// clean up
 		oInput.destroy();
@@ -3800,7 +3787,6 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
 		assert.strictEqual(oPopupInput.getValue(), "united Kingdom", "Input value should be autocompleted and character casing should be preserved.");
 		assert.strictEqual(oPopupInput.getSelectedText(), "ted Kingdom", "Suggested value should be selected");
-		assert.strictEqual(oPopover._oPopover.getContent()[1].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oPopupInput._$input, KeyCodes.ENTER);
@@ -3899,7 +3885,7 @@ sap.ui.define([
 				limit : "25.00 Eur",
 				price : "20.00 EUR"
 			}, {
-				name : "Photo scan",
+				name : "Product3",
 				qty : "8 EA",
 				limit : "35.00 Eur",
 				price : "30.00 EUR"
@@ -3922,22 +3908,6 @@ sap.ui.define([
 
 		// act
 		oInput._$input.focus().trigger(oFakeKeydown).val("p").trigger("input");
-		this.clock.tick(300);
-
-		// check selected (highlighted in blue) row in the suggestion table
-		var oSelectedRow1 = oInput._oSuggPopover._oList.getItems()[0];
-		assert.ok(oSelectedRow1.getSelected(), true, "First item is selected");
-		assert.equal(oSelectedRow1.getCells()[0].getText().toLowerCase(), oInput.getValue().toLowerCase(), "The value of the input is the same as the value of the selected row");
-
-		// act
-		oInput._$input.focus().trigger(oFakeKeydown).val("ph").trigger("input");
-		this.clock.tick(300);
-
-		// check selected (highlighted in blue) row in the suggestion table
-		var oSelectedRow2 = oInput._oSuggPopover._oList.getItems()[2];
-		assert.ok(oSelectedRow2.getSelected(), true, "First item is selected");
-		assert.equal(oSelectedRow2.getCells()[0].getText().toLowerCase(), oInput.getValue().toLowerCase(), "The value of the input is the same as the value of the selected row");
-
 		oInput.bindSuggestionRows({
 			path: "",
 			template: new ColumnListItem()
