@@ -5,15 +5,15 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/security/encodeURLParameters",
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/connectors/BaseConnector",
-	"sap/ui/fl/apply/internal/connectors/Utils"
+	"sap/ui/fl/apply/internal/connectors/Utils",
+	"sap/ui/fl/Utils"
 ], function(
 	merge,
 	encodeURLParameters,
-	UriParameters,
 	BaseConnector,
-	ApplyUtils
+	ApplyUtils,
+	FlexUtils
 ) {
 	"use strict";
 
@@ -21,21 +21,6 @@ sap.ui.define([
 		DATA: "/flex/data/",
 		MODULES: "/flex/modules/"
 	};
-
-
-	/**
-	 * Returns the tenant number for the communication with the ABAP back end.
-	 *
-	 * @private
-	 * @function
-	 * @returns {string} the current client
-	 * @name sap.ui.fl.Utils.getClient
-	 */
-	function getClient () {
-		var oUriParameter = UriParameters.fromQuery(window.location.search);
-		var sClient = oUriParameter.get("sap-client");
-		return sClient || undefined;
-	}
 
 	/**
 	 * Connector for requesting data from an LRep based back end.
@@ -59,14 +44,15 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var mParameters = {};
+			var mParameters = {
+				appVersion: mPropertyBag.appVersion
+			};
 
-			var sClient = getClient();
-			if (sClient) {
-				mParameters["sap-client"] = sClient;
-			}
+			var sClient = FlexUtils.getUrlParameter("sap-client");
 
-			var sDataUrl = ApplyUtils.getUrlWithQueryParameters(ROUTES.DATA, mPropertyBag, mParameters);
+			sClient && (mParameters["sap-client"] = sClient);
+
+			var sDataUrl = ApplyUtils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl).then(function (oResponse) {
 				// TODO(when the cacheKey calculation implementation happens): see that the etag / cacheKey is handled accordingly
 
@@ -74,7 +60,7 @@ sap.ui.define([
 					return oResponse;
 				}
 
-				var sModulesUrl = ApplyUtils.getUrlWithQueryParameters(ROUTES.MODULES, mPropertyBag, mParameters);
+				var sModulesUrl = ApplyUtils.getUrl(ROUTES.MODULES, mPropertyBag, mParameters);
 				return ApplyUtils.sendRequest(sModulesUrl).then(function () {
 					return oResponse;
 				});

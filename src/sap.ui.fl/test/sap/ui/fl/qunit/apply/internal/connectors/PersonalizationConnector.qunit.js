@@ -2,11 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/merge",
 	"sap/ui/fl/apply/internal/connectors/PersonalizationConnector"
 ], function(
 	sinon,
-	merge,
 	PersonalizationConnector
 ) {
 	"use strict";
