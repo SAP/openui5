@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/f/GridContainerRenderer",
 	"sap/ui/Device",
 	"sap/ui/layout/cssgrid/VirtualGrid",
-	"sap/f/GridContainerSettings"
-
+	"sap/f/GridContainerSettings",
+	"sap/base/strings/capitalize"
 ], function (Control,
 			Core,
             ManagedObjectObserver,
@@ -20,7 +20,8 @@ sap.ui.define([
             GridContainerRenderer,
             Device,
 			VirtualGrid,
-			GridContainerSettings) {
+			GridContainerSettings,
+			capitalize) {
 	"use strict";
 
 	/**
@@ -342,6 +343,10 @@ sap.ui.define([
 		}
 
 		delete this._resizeListeners;
+
+		if (!this.getContainerQuery()) {
+			Device.resize.detachHandler(this._resizeHandler);
+		}
 	};
 
 	/**
@@ -365,15 +370,24 @@ sap.ui.define([
 	 * @returns {boolean} True if the layout settings were changed.
 	 */
 	GridContainer.prototype._detectActiveLayout = function () {
-		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this.$().outerWidth() : window.innerWidth,
+		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this.$().outerWidth() : Device.resize.width,
 			oRange = Device.media.getCurrentRange("StdExt", iWidth),
 			sLayout = oRange ? GridContainer.mSizeLayouts[oRange.name] : "layout",
 			oOldSettings = this.getActiveLayoutSettings(),
 			bSettingsAreChanged = false;
 
 		if (this._sActiveLayout !== sLayout) {
+			this.addStyleClass("sapFGridContainer" + capitalize(sLayout));
+			if (this._sActiveLayout) { // remove old layout class if any
+				this.removeStyleClass("sapFGridContainer" + capitalize(this._sActiveLayout));
+			}
+
 			this._sActiveLayout = sLayout;
 			bSettingsAreChanged = oOldSettings !== this.getActiveLayoutSettings();
+
+			this.fireLayoutChange({
+				layout: this._sActiveLayout
+			});
 		}
 
 		return bSettingsAreChanged;
@@ -387,10 +401,18 @@ sap.ui.define([
 	GridContainer.prototype._getActiveGridStyles = function () {
 		var oSettings = this.getActiveLayoutSettings(),
 			sColumns = oSettings.getColumns() || "auto-fill",
+			sColumnSize = oSettings.getColumnSize(),
+			sMinColumnSize = oSettings.getMinColumnSize(),
+			sMaxColumnSize = oSettings.getMaxColumnSize(),
 			mStyles = {
-				"grid-template-columns": "repeat(" + sColumns + ", " + oSettings.getColumnSize() + ")",
 				"grid-gap": oSettings.getGap()
 			};
+
+		if (sMinColumnSize && sMaxColumnSize) {
+			mStyles["grid-template-columns"] = "repeat(" + sColumns + ", minmax(" + sMinColumnSize + ", " + sMaxColumnSize + "))";
+		} else {
+			mStyles["grid-template-columns"] = "repeat(" + sColumns + ", " + sColumnSize + ")";
+		}
 
 		if (this.getInlineBlockLayout()) {
 			mStyles["grid-auto-rows"] = "min-content";
@@ -419,6 +441,11 @@ sap.ui.define([
 		this._itemsObserver.observe(this, {aggregations: ["items"]});
 
 		this._resizeHandler = this._resize.bind(this);
+
+		if (!this.getContainerQuery()) {
+			Device.resize.attachHandler(this._resizeHandler);
+		}
+
 		this._resizeItemHandler = this._resizeItem.bind(this);
 
 		this._itemNavigation = new ItemNavigation().setCycling(false);
@@ -511,7 +538,9 @@ sap.ui.define([
 	 * @protected
 	 */
 	GridContainer.prototype.onAfterRendering = function () {
-		this._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), this._resizeHandler);
+		if (this.getContainerQuery() || !isGridSupportedByBrowser()) {
+			this._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), this._resizeHandler);
+		}
 
 		this._isRenderingFinished = true;
 
@@ -543,19 +572,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handler for resize of the grid.
+	 * Handler for resize of the grid or the viewport
 	 * @protected
 	 */
 	GridContainer.prototype._resize = function () {
-		var bSettingsAreChanged = this._detectActiveLayout();
-
-		this._applyLayout(bSettingsAreChanged);
-
-		if (bSettingsAreChanged) {
-			this.fireLayoutChange({
-				layout: this._sActiveLayout
-			});
+		if (!this._isWidthChanged()) {
+			return;
 		}
+
+		var bSettingsAreChanged = this._detectActiveLayout();
+		this._applyLayout(bSettingsAreChanged);
+	};
+
+	/**
+	 * Checks if the width of the grid or the viewport is different from the last time when it was checked.
+	 * Use to avoid resize handling when not needed.
+	 * @protected
+	 * @returns {boolean} True if the width of the grid or of the viewport is changed since last check.
+	 */
+	GridContainer.prototype._isWidthChanged = function () {
+		var iGridWidth = this.getDomRef() ? this.$().outerWidth() : 0,
+			iViewportWidth = Device.resize.width;
+
+		if (this._lastGridWidth === iGridWidth && this._lastViewportWidth === iViewportWidth) {
+			return false;
+		}
+
+		this._lastGridWidth = iGridWidth;
+		this._lastViewportWidth = iViewportWidth;
+		return true;
 	};
 
 	/**
@@ -727,6 +772,15 @@ sap.ui.define([
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
 			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
 			items = this.getItems();
+
+		if (oSettings.getMinColumnSize()) {
+			// Breathing not supported for IE.
+			return;
+		}
+
+		if (!columnSize || !rowSize) {
+			return;
+		}
 
 		if (!items.length) {
 			return;

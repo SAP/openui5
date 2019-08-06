@@ -33,7 +33,7 @@ sap.ui.define([
 				iValue = Rem.toPx(parseFloat(aMatch[1]));
 			}
 		} else {
-			Log.error("Css size '" + sCssSize + "' is not supported for GridContainer. Only 'px' and 'rem' are supported.");
+			Log.error("Css size '" + sCssSize + "' is not supported for some features in GridContainer. Only 'px' and 'rem' are supported.");
 			iValue = NaN;
 		}
 
@@ -82,9 +82,27 @@ sap.ui.define([
 				/**
 				 * The width of the columns.
 				 *
-				 * <b>Note:</b> Use only 'px' or 'rem'. Some features may not work as expected otherwise.
+				 * <b>Note:</b> Values different than single size in 'px' or 'rem' are not supported for the polyfill for IE.
 				 */
 				columnSize: { type: "sap.ui.core.CSSSize", defaultValue: "80px" },
+
+				/**
+				 * Sets the minimum width of the columns. Setting this together with <code>maxColumnSize</code> will allow the columns to breath between those two values.
+				 *
+				 * <b>Note:</b> Will not work in combination with <code>columnSize</code>.
+				 *
+				 * <b>Note:</b> Not supported for the polyfill for IE.
+				 */
+				minColumnSize: { type: "sap.ui.core.CSSSize" },
+
+				/**
+				 * Sets the maximum width of the columns. Setting this together with <code>minColumnSize</code> will allow the columns to breath between those two values.
+				 *
+				 * <b>Note:</b> Will not work in combination with <code>columnSize</code>.
+				 *
+				 * <b>Note:</b> Not supported for the polyfill for IE.
+				 */
+				maxColumnSize: { type: "sap.ui.core.CSSSize" },
 
 				/**
 				 * The height of the rows.

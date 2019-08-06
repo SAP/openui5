@@ -1,0 +1,103 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		xmlns:w="sap.ui.integration.widgets"
+		displayBlock="true"
+		controllerName="sap.f.cardsdemo.controller.GridContainerQuery">
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Title text="Grid container with containerQuery=true"/>
+				<ToolbarSpacer />
+			</Toolbar>
+		</subHeader>
+		<content>
+			<Panel>
+				<Slider value="100" liveChange="onSliderMoved" />
+			</Panel>
+
+			<Panel id="panel1" headerText="Card Group 1">
+				<f:GridContainer id="grid1" containerQuery="true">
+					<f:layoutXL>
+						<f:GridContainerSettings columns="14" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+					</f:layoutXL>
+					<f:layoutL>
+						<f:GridContainerSettings columns="10" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+					</f:layoutL>
+					<f:layoutM>
+						<f:GridContainerSettings columns="6" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+					</f:layoutM>
+					<f:layoutS>
+						<f:GridContainerSettings columns="4" rowSize="70px" minColumnSize="70px" maxColumnSize="105px" gap="8px" />
+					</f:layoutS>
+					<f:items>
+						<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
+							<layoutData>
+								<f:GridContainerItemLayoutData columns="2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://home-share" />
+							</TileContent>
+						</GenericTile>
+						<GenericTile header="Account" subheader="Your personal information">
+							<layoutData>
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
+							</layoutData>
+							<TileContent>
+								<ImageContent src="sap-icon://account" />
+							</TileContent>
+						</GenericTile>
+						<w:Card manifest="{manifests>/listContent/card13}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{manifests>/analyticalContent/stackedBar}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData rows="5" columns="4" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{manifests>/listContent/mediumList}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData rows="4" columns="2" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{manifests>/listContent/smallList}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
+							</w:layoutData>
+						</w:Card>
+						<w:Card manifest="{manifests>/listContent/card13}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="5" />
+							</w:layoutData>
+						</w:Card>
+						<GenericTile header="Appointments management">
+							<layoutData>
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://appointment" />
+							</TileContent>
+						</GenericTile>
+						<GenericTile header="Jessica D. Prince Senior Consultant" subheader="Department">
+							<layoutData>
+								<f:GridContainerItemLayoutData rows="2" columns="2" />
+							</layoutData>
+							<TileContent unit="EUR" footer="Current Quarter">
+								<ImageContent src="sap-icon://activity-individual" />
+							</TileContent>
+						</GenericTile>
+						<w:Card manifest="{manifests>/analyticalContent/stackedColumn}">
+							<w:layoutData>
+								<f:GridContainerItemLayoutData columns="3" />
+							</w:layoutData>
+						</w:Card>
+					</f:items>
+				</f:GridContainer>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>
