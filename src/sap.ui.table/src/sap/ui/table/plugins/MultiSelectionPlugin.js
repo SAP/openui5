@@ -126,7 +126,7 @@ sap.ui.define([
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
 				icon: this.oDeselectAllIcon,
-				visible: this.getSelectionMode() === SelectionMode.MultiToggle ? this.getShowHeaderSelector() : false
+				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector()
 			}
 		};
 	};
@@ -137,7 +137,7 @@ sap.ui.define([
 	 * @return {boolean}
 	 */
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
-		if (this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector()) {
+		if (this.getRenderConfig().headerSelector.visible) {
 			if (this._bLimitDisabled && this.getSelectableCount() > this.getSelectedCount()) {
 				this.selectAll();
 			} else {

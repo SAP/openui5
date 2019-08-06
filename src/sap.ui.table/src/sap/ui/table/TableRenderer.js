@@ -10,7 +10,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 
 	// shortcuts
-	var SelectionMode = library.SelectionMode;
 	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var SortOrder = library.SortOrder;
 
@@ -404,21 +403,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.class("sapUiTableHeaderCell");
 		rm.class("sapUiTableRowSelectionHeaderCell");
 
-		if (TableUtils.hasSelectAll(oTable)) {
+		var sSelectAllResourceTextID;
+		if (mRenderConfig.headerSelector.visible) {
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
 
-			if (oTable._getShowStandardTooltips() && mRenderConfig.headerSelector.visible) {
-				var sSelectAllResourceTextID;
+			if (mRenderConfig.headerSelector.type === "toggle") {
+				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			} else if (mRenderConfig.headerSelector.type === "clear") {
+				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+			}
 
-				if (mRenderConfig.headerSelector.type === "toggle") {
-					sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-				} else if (mRenderConfig.headerSelector.type === "clear") {
-					sSelectAllResourceTextID = "TBL_DESELECT_ALL";
-				}
-
-				if (sSelectAllResourceTextID) {
-					rm.attr("title", TableUtils.getResourceText(sSelectAllResourceTextID));
-				}
+			if (oTable._getShowStandardTooltips() && sSelectAllResourceTextID) {
+				rm.attr("title", TableUtils.getResourceText(sSelectAllResourceTextID));
 			}
 			if (!bAllRowsSelected) {
 				rm.class("sapUiTableSelAll");
@@ -437,7 +433,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.openEnd();
 
-		if (oTable.getSelectionMode() !== SelectionMode.Single && mRenderConfig.headerSelector.visible) {
+		if (mRenderConfig.headerSelector.visible) {
 			if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.icon) {
 				rm.renderControl(mRenderConfig.headerSelector.icon);
 			} else {
