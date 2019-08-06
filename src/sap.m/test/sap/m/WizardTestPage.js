@@ -672,7 +672,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 					}
 				}),
 				content: [wizard]
-			});
+			}).removeStyleClass("sapUiPopupWithPadding");
 
 			var button = new Button({
 				id: "open-dialog-btn",
