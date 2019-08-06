@@ -368,7 +368,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				reference: sComponentName,
 				appVersion: sAppVersion,
-				layer: sLayer
+				currentLayer: sLayer
 			};
 			var sExpectedCallUrl = "/sap/bc/lrep/flex/info/" + sComponentName + "?appVersion=" + sAppVersion + "&layer=" + sLayer;
 			var oFakeResponse = {
@@ -392,7 +392,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				reference: sComponentName,
 				appVersion: sAppVersion,
-				layer: sLayer
+				currentLayer: sLayer
 			};
 			var sExpectedCallUrl = "/sap/bc/lrep/flex/info/" + sComponentName + "?layer=" + sLayer;
 			var oFakeResponse = {
@@ -416,7 +416,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				reference: sComponentName,
 				appVersion: sAppVersion,
-				layer: sLayer
+				currentLayer: sLayer
 			};
 
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects();
@@ -432,7 +432,7 @@ sap.ui.define([
 			var mPropertyBag = {
 				reference: sComponentName,
 				appVersion: sAppVersion,
-				layer: sLayer
+				currentLayer: sLayer
 			};
 
 			assert.throws(function() {

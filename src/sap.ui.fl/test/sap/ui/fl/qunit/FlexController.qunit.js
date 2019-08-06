@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Manifest",
@@ -47,6 +48,7 @@ function (
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	ContextManager,
+	FeaturesAPI,
 	RTAControlTreeModifier,
 	CustomData,
 	Manifest,
@@ -4019,38 +4021,57 @@ function (
 			});
 		});
 
-		QUnit.test("isPublishEnabled true success", function (assert) {
+		QUnit.test("call isPublishEnabled where isPublishAvailable:false", function (assert) {
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").resolves(false);
+
+			return this.oFlexController.isPublishEnabled(this.mPropertyBag).then(function(bPublishEnabled) {
+				assert.equal(bPublishEnabled, false, "isPublishEnabled is false")
+			});
+		});
+
+		QUnit.test("call isPublishEnabled success where isPublishAvailable: true", function (assert) {
 			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
 			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({
 				isResetEnabled: true,
 				isPublishEnabled: true
 			});
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").resolves(true);
 
 			return this.oFlexController.isPublishEnabled(this.mPropertyBag).then(function (bPublishEnabled) {
 				assert.equal(bPublishEnabled, true, "flex/info publishEnabled is true");
 			});
 		});
 
-		QUnit.test("isPublishEnabled false success", function (assert) {
+		QUnit.test("call isPublishEnabled success where isPublishAvailable: false", function (assert) {
 			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
 			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({
 				isResetEnabled: true,
 				isPublishEnabled: false
 			});
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").resolves(true);
 
 			return this.oFlexController.isPublishEnabled(this.mPropertyBag).then(function (bPublishEnabled) {
 				assert.equal(bPublishEnabled, false, "flex/info publishEnabled is false");
 			});
 		});
 
-		QUnit.test("isResetEnabled failed", function (assert) {
+		QUnit.test("call isResetEnabled flex/info return Promise.resolve({})", function (assert) {
 			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-			var oSendStub = sandbox.stub(this.oLrepConnector, "getFlexInfo").rejects();
+			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({});
 
-			this.oFlexController.isResetEnabled(this.mPropertyBag);
-			assert.equal(oSendStub.callCount, 1, "call isResetEnabled is triggered");
-			this.oFlexController.isPublishEnabled(this.mPropertyBag);
-			assert.equal(oSendStub.callCount, 2, "call isPublishEnabled is triggered");
+			return this.oFlexController.isResetEnabled(this.mPropertyBag).then(function(bResetEnabled) {
+				assert.equal(bResetEnabled, false, "isResetEnabled is false");
+			});
+		});
+
+		QUnit.test("call isPublishEnabled flex/info return Promise.resolve({})", function (assert) {
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({});
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").resolves(true);
+
+			return this.oFlexController.isPublishEnabled(this.mPropertyBag).then(function(bPublishAvailable) {
+				assert.equal(bPublishAvailable, false, "isPublishAvailable is false");
+			});
 		});
 	});
 
