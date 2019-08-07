@@ -605,7 +605,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection Plugin", function(assert) {
-		assert.ok(this.table._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin"), "BindingSelectionPlugin is initialized");
+		assert.ok(this.table._getSelectionPlugin().isA("sap.ui.table.plugins.BindingSelectionPlugin"), "BindingSelectionPlugin is initialized");
 	});
 
 	QUnit.module("Selection", {

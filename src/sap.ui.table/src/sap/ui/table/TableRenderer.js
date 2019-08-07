@@ -395,7 +395,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
 		var bEnabled = false;
 		var bSelAll = false;
-		var mRenderConfig = oTable._oSelectionPlugin.getRenderConfig();
+		var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 
 		rm.openStart("div", oTable.getId() + "-selall");
 
@@ -624,7 +624,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
-		var bRowSelected = oTable.isIndexSelected(oRow.getIndex());
+		var bRowSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
 
 		rm.openStart("div");
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow._bHidden});
@@ -999,6 +999,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (!oRow) {
 			return;
 		}
+
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+
 		if (bFixedTable) {
 			rm.openStart("tr", oRow.getId() + "-fixed");
 			rm.attr("data-sap-ui-related", oRow.getId());
@@ -1017,7 +1020,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			if (bDraggable && bFixedTable) {
 				rm.attr("draggable", true);
 			}
-			if (oTable.isIndexSelected(oRow.getIndex())) {
+			if (oSelectionPlugin.isIndexSelected(oRow.getIndex())) {
 				rm.class("sapUiTableRowSel");
 			}
 		}
@@ -1035,7 +1038,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.openEnd();
 
-		var bSelected = !oRow._bHidden && oTable.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
+		var bSelected = !oRow._bHidden && oSelectionPlugin.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
 		var aCells = oRow.getCells();
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {

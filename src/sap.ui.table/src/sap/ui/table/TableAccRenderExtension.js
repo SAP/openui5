@@ -83,7 +83,7 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 			_writeAccText(oRm, sTableId, "toggleedit", TableUtils.getResourceText("TBL_TOGGLE_EDIT_KEY"));
 			// aria description for select all button
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
-			var mRenderConfig = oTable._oSelectionPlugin.getRenderConfig();
+			var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 			var sSelectAllResourceTextID;
 			if (mRenderConfig.headerSelector.type === "toggle") {
 				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
@@ -191,7 +191,7 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 				return;
 			}
 
-			var bIsSelected = oTable.isIndexSelected(iRowIndex);
+			var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(iRowIndex);
 			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
 			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 

@@ -137,7 +137,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Selection Plugin", function(assert) {
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin"), "BindingSelectionPlugin is initialized");
+		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.BindingSelectionPlugin"), "BindingSelectionPlugin is initialized");
 	});
 
 	QUnit.test("SelectionBehavior", function(assert) {
@@ -219,26 +219,6 @@ sap.ui.define([
 			bCollapseRecursive = false;
 			oTable.setCollapseRecursive(bCollapseRecursive);
 			assert.equal(oTable.getCollapseRecursive(), bCollapseRecursive, "Property");
-			done();
-		}
-
-		performTestAfterTableIsUpdated.call(this, doTest);
-	});
-
-	QUnit.test("_isRowSelectable", function(assert) {
-		assert.expect(5);
-		var done = assert.async();
-
-		function doTest(oTable) {
-			var oBinding = oTable.getBinding("rows");
-			oBinding.isIndexSelectable = function(iRowIndex) {
-				assert.ok(true, "isIndexSelectable on Binding called");
-				return iRowIndex === 5;
-			};
-			assert.equal(oTable._isRowSelectable(5), true, "Result of Binding");
-			assert.equal(oTable._isRowSelectable(4), false, "Result of Binding");
-			oTable.unbindRows();
-			assert.equal(oTable._isRowSelectable(5), false, "No Binding");
 			done();
 		}
 

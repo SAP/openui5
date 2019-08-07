@@ -73,7 +73,7 @@ sap.ui.define([
 	SelectionModelPlugin.prototype.exit = function() {
 		var oBinding = this._getBinding();
 		if (oBinding) {
-			oBinding.detachEvent("change", this._onBindingChange);
+			oBinding.detachChange(this._onBindingChange, this);
 		}
 		if (this.oSelectionModel) {
 			this.oSelectionModel.destroy();
