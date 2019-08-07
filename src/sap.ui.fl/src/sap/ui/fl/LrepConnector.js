@@ -506,11 +506,11 @@ sap.ui.define([
 	/**
 	 * Get flex/info from ABAP backend.
 	 *
-	 * @param {map} mPropertyBag Contains additional data needed for flex/info request
+	 * @param {object} mPropertyBag Contains additional data needed for flex/info request
 	 * @param {string} mPropertyBag.reference Name of Component
-	 * @param {string} [mPropertyBag.layer] Layer which send request the backend
+	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
 	 * @param {string} [mPropertyBag.appVersion] Version of the application that is currently running
-	 * @returns {Object} Returns the result from the request
+	 * @returns {Promise<object>} Returns the result from the request
 	 * @public
 	 */
 	LrepConnector.prototype.getFlexInfo = function(mPropertyBag) {
@@ -526,10 +526,10 @@ sap.ui.define([
 			});
 		}
 
-		if (mPropertyBag.layer) {
+		if (mPropertyBag.currentLayer) {
 			aParams.push({
 				name: "layer",
-				value: mPropertyBag.layer
+				value: mPropertyBag.currentLayer
 			});
 		}
 		sRequestPath += this._buildParams(aParams);
@@ -537,7 +537,7 @@ sap.ui.define([
 		return this.send(sRequestPath, "GET", null, null).then(function(oResponse) {
 			return oResponse.response;
 		}, function() {
-			return Promise.reject();
+			return Promise.resolve({});
 		});
 	};
 

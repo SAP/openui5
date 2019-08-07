@@ -119,27 +119,33 @@ sap.ui.define([
 		/**
 		 * Provides information whether content in an application can be reset.
 		 *
-		 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
+		 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-		 * @param {string} [mPropertyBag.layer] Layer which send request the backend
+		 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
 		 *
 		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be reset
 		 */
 		isResetEnabled: function (mPropertyBag) {
-			return ChangesController.getFlexControllerInstance(mPropertyBag.selector).isResetEnabled(mPropertyBag);
+			return PersistenceWriteAPI.hasChanges(mPropertyBag)
+				.then(function(bResetEnabled) {
+					return bResetEnabled || ChangesController.getFlexControllerInstance(mPropertyBag.selector).isResetEnabled(mPropertyBag);
+				});
 		},
 
 		/**
-		 * Provides information if content in an application can be publish.
+		 * Provides information if content from backend and persistence in an application can be publish.
 		 *
-		 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
+		 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-		 * @param {string} [mPropertyBag.layer] Layer which send request the backend
+		 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
 		 *
 		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be publish
 		 */
 		isPublishEnabled: function (mPropertyBag) {
-			return ChangesController.getFlexControllerInstance(mPropertyBag.selector).isPublishEnabled(mPropertyBag);
+			return PersistenceWriteAPI.hasChangesToPublish(mPropertyBag)
+				.then(function(bPublishEnabled) {
+					return bPublishEnabled || ChangesController.getFlexControllerInstance(mPropertyBag.selector).isPublishEnabled(mPropertyBag);
+				});
 		},
 
 		/**

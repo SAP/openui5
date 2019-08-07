@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/registry/Settings",
@@ -23,6 +24,7 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	Utils,
 	FlexCustomData,
+	FeaturesAPI,
 	Change,
 	Variant,
 	FlexSettings,
@@ -1407,39 +1409,39 @@ sap.ui.define([
 	/**
 	 * Check if there are UI or Descriptor changes on the server.
 	 *
-	 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
-	 * @param {string} [mPropertyBag.layer] layer which send request the backend
+	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
 	 *
 	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset
 	 */
 	FlexController.prototype.isResetEnabled = function (mPropertyBag) {
 		mPropertyBag.reference = this._sComponentName;
 		mPropertyBag.appVersion = this._sAppVersion;
-		return LrepConnector.createConnector().getFlexInfo(mPropertyBag).then(function (oInfo) {
-			if (oInfo) {
-				return oInfo.isResetEnabled;
-			}
-			return Promise.reject();
-		});
+		return LrepConnector.createConnector().getFlexInfo(mPropertyBag)
+			.then(function (oInfo) {
+				return !!oInfo.isResetEnabled;
+			});
 	};
 
 	/**
-	 * Check if there are UI or Descriptor changes with transport value on the server.
+	 * The changes can be publish, when publish is available and there are changes in the backend which are not yet publish.
 	 *
-	 * @param {map} mPropertyBag Contains additional data needed for checking flex/info
-	 * @param {string} [mPropertyBag.layer] layer which send request the backend
+	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
+	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
 	 *
-	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be publish
+	 * @returns {Promise<boolean>} Resolves the information if the application has changes which can be publish
 	 */
 	FlexController.prototype.isPublishEnabled = function (mPropertyBag) {
 		mPropertyBag.reference = this._sComponentName;
 		mPropertyBag.appVersion = this._sAppVersion;
-		return LrepConnector.createConnector().getFlexInfo(mPropertyBag).then(function (oInfo) {
-			if (oInfo) {
-				return oInfo.isPublishEnabled;
-			}
-			return Promise.reject();
-		});
+		return FeaturesAPI.isPublishAvailable()
+			.then(function (bPublishAvailable) {
+				return bPublishAvailable && LrepConnector.createConnector().getFlexInfo(mPropertyBag)
+					.then(function (oInfo) {
+						return !!oInfo.isPublishEnabled;
+					});
+			});
 	};
 
 	return FlexController;

@@ -1186,29 +1186,81 @@ sap.ui.define([
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
 		});
 
-		QUnit.test("get flex/info resetEnable", function(assert) {
+		QUnit.test("get flex/info isResetEnabale: has backend changes true, has persistence changes false", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
-
 			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(false);
 
 			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
 				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
 			});
 		});
 
-		QUnit.test("get flex/info publishEnable", function(assert) {
+		QUnit.test("get flex/info isResetEnabale: has backend changes false, has persistence changes true", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(true);
+
+			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isResetEnabale: has backend changes false, has persistence changes false", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(false);
+
+			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, false, "flex/info resetEnable is false");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled: has backend changes true, has persistence changes false", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
-
 			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(false);
 
 			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
 				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled: has backend changes false, has persistence changes true", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(true);
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled: has backend changes false, has persistence changes false", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(false);
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, false, "flex/info publishEnable is false");
 			});
 		});
 	});
