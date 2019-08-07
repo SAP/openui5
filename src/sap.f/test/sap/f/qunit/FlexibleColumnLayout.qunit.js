@@ -1070,4 +1070,54 @@ function (
 		assert.equal(this.oFCL._hasAnyColumnPagesRendered(), true, "_hasAnyColumnPagesRendered is true");
 		assert.strictEqual(oEventSpy.callCount, 1, "_hideShowArrows is called");
 	});
+
+	QUnit.module("Column width calculations", {
+		beforeEach: function () {
+			this.oFCL = new FlexibleColumnLayout();
+		},
+
+		afterEach: function () {
+			this.oFCL.destroy();
+		}
+	});
+
+	(function () {
+		var oFullscreenLayouts = ["OneColumn", "MidColumnFullScreen", "EndColumnFullScreen"],
+			_oSplitScreenLayouts = Object.keys(library.LayoutType).filter(function(sLayout) {
+				return oFullscreenLayouts.indexOf(sLayout) < 0;
+		});
+		Object.keys(_oSplitScreenLayouts).forEach(function(sLayoutName) {
+			_testDifferentLayoutsWidth(_oSplitScreenLayouts[sLayoutName]);
+		});
+	})();
+
+	function _testDifferentLayoutsWidth(sLayoutName) {
+		QUnit.test("Layout: " + sLayoutName, function (assert) {
+			// setup
+
+			this.oFCL.setLayout(sLayoutName);
+
+			this.oFCL.placeAt(sQUnitFixture);
+			Core.applyChanges();
+
+			// assert
+			_widthComparisonAssertions(this.oFCL, assert);
+		});
+	}
+
+	function _widthComparisonAssertions(oFCL, assert) {
+
+		// setup
+		var $beginColumn,
+			$midColumn,
+			$endColumn;
+
+		$beginColumn = oFCL.$("beginColumn");
+		$midColumn = oFCL.$("midColumn");
+		$endColumn = oFCL.$("endColumn");
+
+		assert.equal(parseInt($beginColumn[0].style.width), $beginColumn.width(), "Begin column width correct");
+		assert.equal(parseInt($midColumn[0].style.width), $midColumn.width(), "Mid column width correct");
+		assert.equal(parseInt($endColumn[0].style.width), $endColumn.width(), "End column width correct");
+	}
 });

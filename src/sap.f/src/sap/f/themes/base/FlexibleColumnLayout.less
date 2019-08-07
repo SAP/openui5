@@ -3,6 +3,8 @@
 /* Base theme                                  */
 /* =========================================== */
 
+@_sap_f_FCL_navigation_arrow_width: 1rem;
+
 .sapFFCL {
 	&, &.sapMNavItem:not(.sapMNavItemHidden) {
 		display: -webkit-flex;
@@ -15,23 +17,11 @@
 		position: relative;
 	}
 
-	&.sapFFCLBackgroundDesignSolid {
-		background: @sapUiObjectHeaderBackground;
-	}
-
-	&.sapFFCLBackgroundDesignTranslucent {
-		background: @sapUiShellBackgroundGradient;
-	}
 
 	.sapFFCLColumn {
 		height: 100%;
 		position: relative;
 		visibility: hidden;
-
-		// When there are more than one panels, the latter get margin
-		&.sapFFCLColumnMargin {
-			margin: 0 0 0 0.5rem;
-		}
 
 		// When there is content in a panel, it needs min-width
 		&.sapFFCLColumnActive {
@@ -42,56 +32,17 @@
 			display: none;
 		}
 
-		.sapFFCLNavigationButton {
-			// Button hit area size
-			width: 2rem;
-			height: 2.5rem;
-			padding: 0; // Vertical button hit area must be the same size as its visible area
-			position: absolute;
-			top: 45%;
-			z-index: 10000;
-
-			&.sapFFCLNavigationButtonLeft {
-				// Button clickable|hit area additional 0.5rem must overlap the area separator
-				left: -0.5rem;
-				.sapMBtnInner {
-					// Compensate for the aditional hit area of 0.5rem only for the left button
-					margin-left: 0.5rem;
-				}
-			}
-
-			&.sapFFCLNavigationButtonRight {
-				// Button clickable|hit-area additional 0.5rem must overlap the area separator
-				right: -0.5rem;
-			}
-
-			.sapMBtnInner {
-				width: 1.5rem;
-				height: 2.5rem;
-				min-width: 1.5rem;
-			}
-		}
-
 		.sapFFCLContainer {
 			height: 100%;
-		}
-
-		// In order to have reveal effect, columns should overlap each other
-		&.sapFFCLColumnBegin {
-			z-index: 300;
-		}
-
-		&.sapFFCLColumnMid {
-			z-index: 200;
-		}
-
-		&.sapFFCLColumnEnd {
-			z-index: 100;
 		}
 
 		&.sapFFCLPinnedColumn {
 			position: absolute;
 			right: 0;
+		}
+
+		&.sapFFCLColumnInset {
+			padding: 0 0 0 @_sap_f_FCL_navigation_arrow_width;
 		}
 	}
 
@@ -104,37 +55,118 @@
 	}
 }
 
+.sapFFCLNavigationButton,
+.sapUiSizeCompact & .sapFFCLNavigationButton {
+	// Button hit area size
+	width: 1.5rem;
+	height: 1.5rem;
+	padding: 0; // Vertical button hit area must be the same size as its visible area
+	transition: all 0.1s ease-in;
+	margin-left: -0.25rem;
+	margin-right: -0.25rem;
+	display: inline-block;
+	vertical-align: middle;
+	position: relative;
+	overflow: visible;
+
+
+	.sapMBtnInner {
+		width: 1.5rem;
+		height: 1.5rem;
+		min-width: auto;
+
+		.sapMBtnIcon {
+			line-height: 1.5rem;
+			width: 1rem;
+			font-size: 1rem;
+			margin-left: 0;
+			margin-right: 0;
+		}
+
+
+	&:before {
+		background-image: linear-gradient(to top, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		background-position-y: -0.3125rem;
+		bottom: 100%;
+	}
+
+	&:after {
+		background-image: linear-gradient(to bottom, @sapUiHighlight,  fade(@sapUiHighlight, 0));
+		background-position-y: 0.3125rem;
+		top: 100%;
+	}
+
+	&:after,
+	&:before {
+		content: '';
+		position: absolute;
+		left: 0;
+		height: 4rem;
+		width: 100%;
+		transition: all 0.1s ease-in;
+		background-repeat: no-repeat;
+		background-size: 0.0625rem 100%;
+		background-position-x: calc(50% - 0.03125rem);
+	}
+
+	}
+	&:hover{
+		.sapMBtnInner:not(.sapMBtnActive) {
+			&:after,
+			&:before {
+				height: 7rem;
+			}
+		}
+	}
+}
+
+.sapFFCLArrow
+{
+	position: relative;
+	vertical-align: middle;
+	display: inline-block;
+	height: 100%;
+	z-index: 400;
+
+	&:after {
+		content: "";
+		display: inline-block;
+		vertical-align: middle;
+		height: 100%;
+	}
+}
+
+.sapFFCLBackgroundDesignTransparent .sapFFCLArrow {
+	background: transparent;
+}
+
+.sapFFCLBackgroundDesignSolid .sapFFCLArrow {
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapFFCLBackgroundDesignTranslucent .sapFFCLArrow {
+	background: @sapUiShellBackgroundGradient;
+}
+
+// In order to have reveal effect, columns should overlap each other
+.sapFFCLColumnBegin {
+	z-index: 300;
+}
+
+.sapFFCLColumnMid {
+	z-index: 200;
+}
+
+.sapFFCLColumnEnd {
+	z-index: 100;
+}
+
 html[data-sap-ui-animation='on'] {
 	.sapFFCL {
 		.sapFFCLColumn {
 			&:not(.sapFFCLPinnedColumn) {
 				transition: width 560ms cubic-bezier(0.1, 0, 0.05, 1), visibility 560ms ease-in;
 				-webkit-transition: width 560ms cubic-bezier(0.1, 0, 0.05, 1), visibility 560ms ease-in;
-			}
-		}
-	}
-}
-
-// Compact mode
-.sapUiSizeCompact {
-	.sapFFCL {
-		.sapFFCLNavigationButton {
-			// Button hit area size
-			width: 1.5rem;
-			height: 2rem;
-
-			.sapMBtnInner {
-				// Button visible area size
-				width: 1rem;
-				height: 2rem;
-				min-width: 1rem;
-				.sapMBtnIcon {
-					line-height: 2rem;
-					width: 1rem;
-					font-size: 1rem;
-					margin-left: 0;
-					margin-right: 0;
-				}
 			}
 		}
 	}
