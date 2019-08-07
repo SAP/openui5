@@ -197,15 +197,19 @@ function(
 			defaultFilterOperator : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * Type of Filter. This is used to transform the search term to the specified type,
-			 * to make sure that the right columns are displayed. This should be the same as defined
-			 * in binding for this column. As an alternative you can pass a function which does the conversion.
-			 * The function receives the entered filter value as parameter and returns the proper
-			 * value for the filter expression. Another option is to pass the class name of the type,
-			 * e.g.: <code>sap.ui.model.type.Date</code> or an expression similar to the binding syntax,
+			 * Type of filter. It is used to transform the search term into the specified type and should be the same as
+			 * defined in the binding for the column template.
+			 * Default value is <code>sap.ui.model.type.String</code>.
+			 * It can be set to the class name of the type,
+			 * e.g.: <code>sap.ui.model.type.Date</code>,
+			 * or an expression similar to the binding syntax,
 			 * e.g.: <code>"\{type: 'sap.ui.model.type.Date', formatOptions: \{UTC: true\}, constraints: \{\} \}"</code>.
 			 * Here the escaping is mandatory to avoid handling by the binding parser.
-			 * By default the filter type is <code>sap.ui.model.type.String</code>.
+			 * As an alternative, a function can be passed that takes over the conversion. This cannot be done in the
+			 * XMLView, use <code>setFilterType</code> instead. The function should receive the entered filter value as
+			 * a parameter and return the appropriate value for the filter expression.
+			 * @example
+			 * oColumn.setFilterType(function(oValue) {return oValue == 1}) //converts the entered filter value to type Boolean.
 			 * @since 1.9.2
 			 */
 			filterType : {type : "any", group : "Misc", defaultValue : null},
