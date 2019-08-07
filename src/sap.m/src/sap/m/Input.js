@@ -1459,13 +1459,10 @@ function(
 		 * @return {object} Object containing the matched items and groups information
 		 */
 		Input.prototype._filterListItems = function (aItems, sTypedChars) {
-			var i,
-				oListItem,
-				oItem,
+			var i, oListItem, oItem,
 				aGroups = [],
 				aHitItems = [],
-				bFilter = this.getFilterSuggests(),
-				bIsAnySuggestionAlreadySelected = false;
+				bFilter = this.getFilterSuggests();
 
 			for (i = 0; i < aItems.length; i++) {
 				oItem = aItems[i];
@@ -1491,11 +1488,6 @@ function(
 					} else {
 						oListItem = new StandardListItem(oItem.getId() + "-sli");
 						oListItem.setTitle(oItem.getText());
-					}
-
-					if (!bIsAnySuggestionAlreadySelected && (this._oSuggPopover._sProposedItemText === aItems[i].getText())) {
-						oListItem.setSelected(true);
-						bIsAnySuggestionAlreadySelected = true;
 					}
 
 					if (aGroups.length) {
@@ -1530,8 +1522,7 @@ function(
 				bShowItem,
 				bFilter = this.getFilterSuggests(),
 				aHitItems = [],
-				aGroups = [],
-				bIsAnySuggestionAlreadySelected = false;
+				aGroups = [];
 
 			// filter tabular items
 			for (i = 0; i < aTabularRows.length; i++) {
@@ -1545,11 +1536,6 @@ function(
 
 					aTabularRows[i].setVisible(bShowItem);
 					bShowItem && aHitItems.push(aTabularRows[i]);
-
-					if (!bIsAnySuggestionAlreadySelected && bShowItem && this._oSuggPopover._sProposedItemText === this._fnRowResultFilter(aTabularRows[i])) {
-						aTabularRows[i].setSelected(true);
-						bIsAnySuggestionAlreadySelected = true;
-					}
 
 					if (aGroups.length && bShowItem) {
 						aGroups[aGroups.length - 1].visible = true;
