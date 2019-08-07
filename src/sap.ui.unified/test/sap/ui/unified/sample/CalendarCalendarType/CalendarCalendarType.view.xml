@@ -12,7 +12,7 @@
 					primaryCalendarType="Islamic"
 					secondaryCalendarType="Gregorian"
 					select="handleCalendarSelect" />
-			<l:HorizontalLayout>
+			<l:HorizontalLayout allowWrapping="true">
 				<Button
 						press="handleFocusToday"
 						text="Focus Today" />
