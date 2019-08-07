@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/DesignTimeStatus",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/plugin/TabHandling",
@@ -42,6 +43,7 @@ function(
 	AggregationOverlay,
 	OverlayRegistry,
 	DesignTime,
+	DesignTimeStatus,
 	ElementUtil,
 	Plugin,
 	TabHandling,
@@ -380,6 +382,25 @@ function(
 			oElementOverlay.setEditable(!oElementOverlay.getEditable());
 		});
 
+		QUnit.test("when an existing element overlay's editable property is changed and designtime is synced later and this overlay is destroyed in the meantime", function (assert) {
+			var fnDone = assert.async();
+			var oElementOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
+			var fnEditableChangeHandler = sandbox.stub();
+			this.oDesignTime.attachEventOnce("elementOverlayEditableChanged", fnEditableChangeHandler);
+			// mock "syncing" status
+			sandbox.stub(this.oDesignTime, "getStatus").returns(DesignTimeStatus.SYNCING);
+			// overlay editable property change
+			oElementOverlay.setEditable(!oElementOverlay.getEditable());
+			// in between "syncing" and "synced" events the overlay is destroyed
+			oElementOverlay.destroy();
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.ok(fnEditableChangeHandler.notCalled, "then event listeners for property changed was not called");
+				fnDone();
+			});
+			// fire "synced" event
+			setTimeout(this.oDesignTime.fireSynced.bind(this.oDesignTime), 0);
+		});
+
 		QUnit.test("when a new element overlay's editable property is changed during synchronization process", function (assert) {
 			assert.expect(4);
 			var fnDone = assert.async();
@@ -430,6 +451,25 @@ function(
 			});
 
 			this.oOuterLayout.setVisible(false);
+		});
+
+		QUnit.test("when a property on an element with an overlay was changed and designtime is synced later and this overlay is destroyed in the meantime", function (assert) {
+			var fnDone = assert.async();
+			var oElementOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
+			var fnElementPropertyChangedHandler = sandbox.stub();
+			this.oDesignTime.attachEventOnce("elementPropertyChanged", fnElementPropertyChangedHandler);
+			// mock "syncing" status
+			sandbox.stub(this.oDesignTime, "getStatus").returns(DesignTimeStatus.SYNCING);
+			// make property change
+			this.oOuterLayout.setVisible(false);
+			// in between "syncing" and "synced" events the overlay is destroyed
+			oElementOverlay.destroy();
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.ok(fnElementPropertyChangedHandler.notCalled, "then event listeners for property changed was not called");
+				fnDone();
+			});
+			// fire "synced" event
+			setTimeout(this.oDesignTime.fireSynced.bind(this.oDesignTime), 0);
 		});
 
 		QUnit.test("when a property on an element is changed during the creation of its overlay", function (assert) {
