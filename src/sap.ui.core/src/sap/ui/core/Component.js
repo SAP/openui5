@@ -1846,7 +1846,7 @@ sap.ui.define([
 
 
 
-	function loadManifests(oRootMetadata, oRootManifest) {
+	function loadManifests(oRootMetadata) {
 		var aManifestsToLoad = [];
 		var aMetadataObjects = [];
 
@@ -1856,9 +1856,8 @@ sap.ui.define([
 		 * Gathers promises within aManifestsToLoad.
 		 * Gathers associates meta data objects within aMetadataObjects.
 		 * @param {object} oMetadata The metadata object
-		 * @param {sap.ui.core.Manifest} [oManifest] root manifest, which is possibly already loaded
 		 */
-		function collectLoadManifestPromises(oMetadata, oManifest) {
+		function collectLoadManifestPromises(oMetadata) {
 			// ComponentMetadata classes with a static manifest or with legacy metadata
 			// do already have a manifest, so no action required
 			if (!oMetadata._oManifest) {
@@ -1869,28 +1868,23 @@ sap.ui.define([
 				var sName = oMetadata.getComponentName();
 				var sDefaultManifestUrl = getManifestUrl(sName);
 
-				var pLoadManifest;
-				if (oManifest) {
-					// Apply a copy of the already loaded manifest to be used by the static metadata class
-					pLoadManifest = Promise.resolve(JSON.parse(JSON.stringify(oManifest.getRawJson())));
-				} else {
-					// We need to load the manifest.json for the metadata class as
-					// it might differ from the one already loaded
-					// If the manifest.json is part of the Component-preload it will be taken from there
-					pLoadManifest = LoaderExtensions.loadResource({
-						url: sDefaultManifestUrl,
-						dataType: "json",
-						async: true
-					}).catch(function(oError) {
-						Log.error(
-							"Failed to load component manifest from \"" + sDefaultManifestUrl + "\" (component " + sName
-							+ ")! Reason: " + oError
-						);
+				// We need to load the manifest.json for the metadata class as
+				// it might differ from the one already loaded
+				// If the manifest.json is part of the Component-preload it will be taken from there
+				var pLoadManifest = LoaderExtensions.loadResource({
+					url: sDefaultManifestUrl,
+					dataType: "json",
+					async: true
+				}).catch(function(oError) {
+					Log.error(
+						"Failed to load component manifest from \"" + sDefaultManifestUrl + "\" (component " + sName
+						+ ")! Reason: " + oError
+					);
 
-						// If the request fails, ignoring the error would end up in a sync call, which would fail, too.
-						return {};
-					});
-				}
+					// If the request fails, ignoring the error would end up in a sync call, which would fail, too.
+					return {};
+				});
+
 				aManifestsToLoad.push(pLoadManifest);
 				aMetadataObjects.push(oMetadata);
 			}
@@ -1901,7 +1895,7 @@ sap.ui.define([
 			}
 		}
 
-		collectLoadManifestPromises(oRootMetadata, oRootManifest);
+		collectLoadManifestPromises(oRootMetadata);
 
 		return Promise.all(aManifestsToLoad).then(function(aManifestJson) {
 			// Inject the manifest into the metadata class
@@ -1932,8 +1926,8 @@ sap.ui.define([
 	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:
 	 * sap.ui.fl) and will be replaced with a more generic solution!
 	 *
-	 * @ui5-restricted sap.ui.fl
 	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 * @since 1.37.0
 	 */
 	Component._fnLoadComponentCallback = null;
@@ -1969,7 +1963,7 @@ sap.ui.define([
 
 	/**
 	 * Callback handler which will be executed once the manifest.json was
-	 * loaded for a component, but before the Manifest is interpreted.
+	 * loaded for a component, but before the manifest is interpreted.
 	 * The loaded manifest will be passed into the registered function.
 	 *
 	 * The callback may modify the parsed manifest object and must return a Promise which
@@ -3003,10 +2997,9 @@ sap.ui.define([
 					// Check if we loaded the manifest.json from the default location
 					// In this case it can be directly passed to its metadata class to prevent an additional request
 					if (oManifest && typeof vManifest !== "object" && (typeof sManifestUrl === "undefined" || sManifestUrl === sDefaultManifestUrl)) {
-						pLoaded = loadManifests(oMetadata, oManifest);
-					} else {
-						pLoaded = loadManifests(oMetadata);
+						oMetadata._applyManifest(JSON.parse(JSON.stringify(oManifest.getRawJson())));
 					}
+					pLoaded = loadManifests(oMetadata);
 
 					return pLoaded.then(function() {
 						// prepare the loaded class and resolve with it
