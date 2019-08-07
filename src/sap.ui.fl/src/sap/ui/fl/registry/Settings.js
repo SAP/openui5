@@ -7,14 +7,12 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
-	"sap/ui/base/EventProvider",
 	"sap/base/util/UriParameters",
 	"sap/base/Log"
 ], function(
 	LrepConnector,
 	Cache,
 	Utils,
-	EventProvider,
 	UriParameters,
 	Log
 ) {
@@ -26,12 +24,10 @@ sap.ui.define([
 	 * @param {object} oSettings settings as JSON object
 	 * @constructor
 	 * @alias sap.ui.fl.registry.Settings
-	 * @author SAP SE
 	 * @experimental Since 1.27.0
 	 * @private
 	 */
 	var Settings = function(oSettings) {
-		EventProvider.apply(this);
 		if (!oSettings) {
 			throw new Error("no flex settings provided");
 		}
@@ -61,14 +57,6 @@ sap.ui.define([
 		}
 
 		this._oSettings = oSettings;
-		this._hasMergeErrorOccured = false;
-	};
-
-	Settings.prototype = Object.create(EventProvider.prototype || null);
-
-	Settings.events = {
-		flexibilityAdaptationButtonAllowedChanged: "flexibilityAdaptationButtonAllowedChanged",
-		changeModeUpdated: "changeModeUpdated"
 	};
 
 	/**
@@ -87,22 +75,8 @@ sap.ui.define([
 	};
 
 	Settings._initInstance();
-	Settings._bFlexChangeMode = true;
-	Settings._bFlexibilityAdaptationButtonAllowed = false;
-	Settings._oEventProvider = new EventProvider();
 	Settings._IS_VARIANT_SHARING_ENABLED = "isVariantSharingEnabled";
 
-	/**
-	 * fires the passed event via its event provider
-	 *
-	 * @param {string} sEventId name of the event
-	 * @param {object} mParameters
-	 *
-	 * @public
-	 */
-	Settings.fireEvent = function(sEventId, mParameters) {
-		Settings._oEventProvider.fireEvent(sEventId, mParameters);
-	};
 
 	/**
 	 * attaches a callback to an event on the event provider of Settings
@@ -215,128 +189,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if the flexibility change mode is enabled.
-	 *
-	 * @returns {boolean} true if the flexibility change mode is enabled
-	 * @public
-	 */
-	Settings.isFlexChangeMode = function() {
-		var bFlexChangeModeUrl = this._isFlexChangeModeFromUrl();
-		if (bFlexChangeModeUrl !== undefined) {
-			return bFlexChangeModeUrl;
-		}
-
-		return Settings._bFlexChangeMode;
-	};
-
-	/**
-	 * Checks if the flexibility change mode is enabled via URL query parameter
-	 *
-	 * @returns {boolean} bFlexChangeMode true if the flexibility change mode is enabled, false if not enabled, undefined if not set via url.
-	 * @public
-	 */
-	Settings._isFlexChangeModeFromUrl = function() {
-		var bFlexChangeMode;
-		var oUriParams = UriParameters.fromQuery(window.location.search);
-		if (oUriParams.get('sap-ui-fl-changeMode') === 'true') {
-			bFlexChangeMode = true;
-		} else if (oUriParams.get('sap-ui-fl-changeMode') === 'false') {
-			bFlexChangeMode = false;
-		}
-		return bFlexChangeMode;
-	};
-
-	/**
-	 * Activates the flexibility change mode.
-	 *
-	 * @public
-	 */
-	Settings.activateFlexChangeMode = function() {
-		var bFlexChangeModeOn = true;
-		Settings._setFlexChangeMode(bFlexChangeModeOn);
-	};
-
-	/**
-	 * Deactivates / leaves the flexibility change mode.
-	 *
-	 * @public
-	 */
-	Settings.leaveFlexChangeMode = function() {
-		var bFlexChangeModeOff = false;
-		Settings._setFlexChangeMode(bFlexChangeModeOff);
-	};
-
-
-	/**
-	 * sets the flexChangeMode flag
-	 * fires an event if the flag has been toggled
-	 *
-	 * @private
-	 */
-	Settings._setFlexChangeMode = function (bFlexChangeModeOn) {
-		if (Settings._bFlexChangeMode === bFlexChangeModeOn) {
-			return; // no change
-		}
-
-		Settings._bFlexChangeMode = bFlexChangeModeOn;
-		var mParameter = {
-			bFlexChangeMode: bFlexChangeModeOn
-		};
-		Settings.fireEvent(Settings.events.changeModeUpdated, mParameter);
-	};
-
-	/**
-	 * Method to check for adaptation button allowance
-	 *
-	 * @returns {boolean} Settings._bFlexibilityAdaptationButtonAllowed
-	 * @public
-	 */
-	Settings.isFlexibilityAdaptationButtonAllowed = function () {
-		return Settings._bFlexibilityAdaptationButtonAllowed;
-	};
-
-	/**
-	 * Method to allow the adaptation button
-	 *
-	 * @public
-	 */
-	Settings.allowFlexibilityAdaptationButton = function () {
-		var bFlexibilityAdaptationButtonAllowed = true;
-		Settings.setFlexibilityAdaptationButtonAllowed(bFlexibilityAdaptationButtonAllowed);
-	};
-
-	/**
-	 * Method to disallow the adaptation button
-	 *
-	 * @public
-	 */
-	Settings.disallowFlexibilityAdaptationButton = function () {
-		var bFlexibilityAdaptationButtonDisallowed = false;
-		Settings.setFlexibilityAdaptationButtonAllowed(bFlexibilityAdaptationButtonDisallowed);
-	};
-
-	/**
-	 * Method to set the adaptation button allowance flag on or off depending on the passed parameter
-	 * fires an event if the flag has been toggled
-	 *
-	 * @param {boolean} bFlexibilityAdaptationButtonAllowed
-	 *
-	 * @public
-	 */
-	Settings.setFlexibilityAdaptationButtonAllowed = function (bFlexibilityAdaptationButtonAllowed) {
-		if (Settings._bFlexibilityAdaptationButtonAllowed === bFlexibilityAdaptationButtonAllowed) {
-			return; // no change
-		}
-
-		Settings._bFlexibilityAdaptationButtonAllowed = bFlexibilityAdaptationButtonAllowed;
-
-		var mParameter = {
-			bFlexibilityAdaptationButtonAllowed: bFlexibilityAdaptationButtonAllowed
-		};
-		Settings.fireEvent(Settings.events.flexibilityAdaptationButtonAllowedChanged, mParameter);
-	};
-
-	/**
 	 * Reads boolean property of settings.
 	 *
 	 * @param {string} sPropertyName name of property
@@ -409,16 +261,6 @@ sap.ui.define([
 	 */
 	Settings.prototype.isVariantSharingEnabled = function() {
 		return (this._oSettings.isVariantSharingEnabled === true);
-	};
-
-	Settings.prototype.setMergeErrorOccured = function(bErrorOccured) {
-		this._hasMergeErrorOccoured = bErrorOccured;
-	};
-	/**
-	 * Checks if a merge error occurred during merging changes into the view on startup
-	 */
-	Settings.prototype.hasMergeErrorOccured = function() {
-		return this._hasMergeErrorOccured;
 	};
 
 	/**

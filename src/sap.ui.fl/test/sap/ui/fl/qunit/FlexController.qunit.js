@@ -2564,13 +2564,11 @@ function (
 
 		QUnit.test("does not add appliedChanges custom data if an exception was raised during sync applyChanges", function (assert) {
 			this.oChangeHandlerApplyChangeStub.throws();
-			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 
 			return this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
 			.then(function() {
 				assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 1, "apply change functionality was called");
 				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 0, "the customData was not added");
-				assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 			}.bind(this));
 		});
 
@@ -2578,7 +2576,6 @@ function (
 			sandbox.restore();
 			sandbox.stub(Log, "error");
 			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
-			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.reject(new Error("myError")));
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
 				applyChange: this.oChangeHandlerApplyChangeStub
@@ -2595,7 +2592,6 @@ function (
 				assert.equal(oResult.error.message, "myError");
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
 				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 0, "the customData was not added");
-				assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 				assert.equal(oMarkFinishedSpy.callCount, 1, "the change was marked as finished");
 			}.bind(this));
 		});
@@ -2604,7 +2600,6 @@ function (
 			sandbox.restore();
 			var oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData");
 			var sNotApplicableMessage1 = "myNotApplicableMessage1";
-			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 			this.oChangeHandlerApplyChangeStub = sandbox.stub()
 			.onFirstCall().callsFake(function() {
 				return ChangeHandlerBase.markAsNotApplicable(sNotApplicableMessage1, true /* asyncronous return */);
@@ -2623,7 +2618,6 @@ function (
 				assert.notOk(oResult.success, "success in the return object is set to false");
 				assert.equal(oResult.error.message, sNotApplicableMessage1);
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-				assert.equal(mergeErrorStub.callCount, 0, "set merge error was not called");
 			}.bind(this));
 		});
 
@@ -3021,7 +3015,6 @@ function (
 			sandbox.stub(Log, "error");
 			var oFirstAsyncChangeHandlerApplyChangeStub = sandbox.stub().returns(fnDelayedPromiseReject);
 			var oFirstAsyncChangeHandlerRevertChangeStub = sandbox.stub().returns(Promise.resolve());
-			var oSetMergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 			sandbox.stub(this.oFlexController, "_getChangeHandler")
 			.onCall(0).resolves({ applyChange: oFirstAsyncChangeHandlerApplyChangeStub })
 			.onCall(1).resolves({ revertChange: oFirstAsyncChangeHandlerRevertChangeStub });
@@ -3031,7 +3024,6 @@ function (
 			return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl).then(function() {
 				assert.strictEqual(oFirstAsyncChangeHandlerApplyChangeStub.callCount, 1, "then the first async change is applied");
 				assert.strictEqual(oFirstAsyncChangeHandlerRevertChangeStub.callCount, 0, "then the first async revert change is never called");
-				assert.strictEqual(oSetMergeErrorStub.callCount, 1, "then _setMergeError function is called");
 			});
 		});
 	});
@@ -3088,7 +3080,6 @@ function (
 
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({_oSettings: {recordUndo: true}});
 			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(false);
-			var oMergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 			var oStartRecordSpy = sandbox.spy(RTAControlTreeModifier, "startRecordingUndo");
 			var oStopRecordSpy = sandbox.spy(RTAControlTreeModifier, "stopRecordingUndo");
 			var oSetInitialStub = sandbox.stub(this.oChange, "setInitialApplyState");
@@ -3096,7 +3087,6 @@ function (
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
 			.then(function () {
 				assert.equal(oSetInitialStub.callCount, 1, "the setInitialApplyState function was called");
-				assert.equal(oMergeErrorStub.callCount, 1, "an error was thrown");
 				assert.equal(oStartRecordSpy.callCount, 0, "the recording got started");
 				assert.equal(oStopRecordSpy.callCount, 0, "the recording got stopped");
 			});
@@ -3137,7 +3127,6 @@ function (
 			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			this.oControl = this.oView.childNodes[0];
 			this.oChangeHandlerApplyChangeStub.throws();
-			var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 			var oSetInitialStub = sandbox.stub(this.oChange, "setInitialApplyState");
 
 			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
@@ -3145,7 +3134,6 @@ function (
 				assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
 				assert.equal(oSetInitialStub.callCount, 1, "the setInitialApplyState function was called");
 				assert.equal(this.oAddFailedCustomDataStub.callCount, 1, "custom data was added");
-				assert.equal(mergeErrorStub.callCount, 1, "set merge error was called");
 			}.bind(this));
 		});
 
@@ -3259,7 +3247,6 @@ function (
 			}.bind(this));
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			sandbox.stub(Utils, "getAppComponentForControl").callThrough().withArgs(this.oControl).returns(this.oAppComponent);
-			this.oMergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 			// when custom data is written in XML we have to copy it to the JS control
 			var fnOriginalWriteCustomData = FlexCustomData._writeCustomData;
 			sandbox.stub(FlexCustomData, "_writeCustomData").callsFake(function(oControl, sKey, sValue, mPropertyBag) {
@@ -3304,7 +3291,6 @@ function (
 			.then(function(oView) {
 				assert.deepEqual(oView, this.oXmlView, "the view has not changed");
 				assert.equal(oChangeHandlerApplyChangeStub.callCount, 2, "the change handler was called twice");
-				assert.equal(this.oMergeErrorStub.callCount, 2, "2 errors were logged");
 				assert.notOk(this.oChange0.isApplyProcessFinished(), "the apply state is not finished");
 				assert.notOk(this.oChange1.isApplyProcessFinished(), "the apply state is not finished");
 			}.bind(this))
@@ -3313,7 +3299,6 @@ function (
 			}.bind(this))
 			.then(function() {
 				assert.equal(oChangeHandlerApplyChangeStub.callCount, 4, "the change handler was called twice again");
-				assert.equal(this.oMergeErrorStub.callCount, 2, "no new errors were logged");
 				assert.ok(this.oChange0.isApplyProcessFinished(), "the apply state is finished");
 				assert.ok(this.oChange1.isApplyProcessFinished(), "the apply state is finished");
 			}.bind(this));
@@ -3332,7 +3317,6 @@ function (
 			.then(function(oView) {
 				assert.deepEqual(oView, this.oXmlView, "the view has not changed");
 				assert.equal(oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called");
-				assert.equal(this.oMergeErrorStub.callCount, 0, "no errors were logged");
 				assert.notOk(this.oChange0.isApplyProcessFinished(), "the apply state is not finished");
 				assert.notOk(this.oChange1.isApplyProcessFinished(), "the apply state is not finished");
 			}.bind(this))
@@ -3341,7 +3325,6 @@ function (
 			}.bind(this))
 			.then(function() {
 				assert.equal(oChangeHandlerApplyChangeStub.callCount, 2, "the change handler was called twice");
-				assert.equal(this.oMergeErrorStub.callCount, 0, "no errors were logged");
 				assert.ok(this.oChange0.isApplyProcessFinished(), "the apply state is finished");
 				assert.ok(this.oChange1.isApplyProcessFinished(), "the apply state is finished");
 				this.oChange0.getDefinition().jsOnly = false;
@@ -3359,7 +3342,6 @@ function (
 			return this.oFlexController._resolveGetChangesForView(this.mXmlPropertyBag, [this.oChange0, this.oChange1])
 			.then(function() {
 				assert.equal(oChangeHandlerApplyChangeStub.callCount, 2, "the change handler was called twice");
-				assert.equal(this.oMergeErrorStub.callCount, 0, "no errors were logged");
 				assert.ok(this.oChange0.isApplyProcessFinished(), "the apply state is finished");
 				assert.ok(this.oChange1.isApplyProcessFinished(), "the apply state is finished");
 			}.bind(this))
@@ -3368,7 +3350,6 @@ function (
 			}.bind(this))
 			.then(function() {
 				assert.equal(oChangeHandlerApplyChangeStub.callCount, 2, "the change handler was not called again");
-				assert.equal(this.oMergeErrorStub.callCount, 0, "no errors were logged");
 				assert.ok(this.oChange0.isApplyProcessFinished(), "the apply state is finished");
 				assert.ok(this.oChange1.isApplyProcessFinished(), "the apply state is finished");
 			}.bind(this));
@@ -3398,7 +3379,6 @@ function (
 			}.bind(this);
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
-			sandbox.stub(this.oFlexController, "_setMergeError");
 			this.oAddAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "addAppliedCustomData");
 			this.oDestroyAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "destroyAppliedCustomData");
 

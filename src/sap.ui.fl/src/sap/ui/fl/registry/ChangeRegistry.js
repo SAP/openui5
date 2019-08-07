@@ -116,7 +116,7 @@ sap.ui.define([
 	/**
 	 * Registration of multiple changeHandlers for controlls.
 	 *
-	 * @param {object} mControlChanges - Map of changeHandler configuration for controlls
+	 * @param {object} mControlChanges - Map of changeHandler configuration for controls
 	 * @returns {Promise} Returns an empty promise when all changeHandlers are registered
 	 */
 	ChangeRegistry.prototype.registerControlsForChanges = function(mControlChanges) {
@@ -125,6 +125,7 @@ sap.ui.define([
 			var mChangeHandlers = {};
 			if (Array.isArray(vChangeHandlers)) {
 				vChangeHandlers.forEach(function (oChangeHandler) {
+					// check!
 					mChangeHandlers[oChangeHandler.changeType] = oChangeHandler.changeHandler;
 				});
 			} else {
