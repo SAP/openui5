@@ -43,7 +43,14 @@ sap.ui.define([
 			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
 
 			var sDataUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.DATA, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl);
+			return ApplyUtils.sendRequest(sDataUrl, "GET", { token : this.sXsrfToken }).then(function (oResult) {
+				// TODO(when the cacheKey calculation implementation happens): see that the etag / cacheKey is handled accordingly
+				var oResponse = oResult.response;
+				if (oResult.token) {
+					this.sXsrfToken = oResult.token;
+				}
+				return oResponse;
+			}.bind(this));
 		}
 	});
 

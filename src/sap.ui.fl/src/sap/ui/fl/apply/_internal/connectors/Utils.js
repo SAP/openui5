@@ -66,6 +66,7 @@ sap.ui.define([
 		 * @param {string} sNameSpace Namespace to determine the path to the configured connectors
 		 * @param {boolean} bIncludingStaticFileConnector Flag to determine if StaticFileConnector should be included
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getConnectors: function(sNameSpace, bIncludingStaticFileConnector) {
 			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
@@ -97,7 +98,7 @@ sap.ui.define([
 		 * mentioned in the core-Configuration.
 		 *
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured apply connectors and their requested modules
-		 * @public
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getApplyConnectors: function () {
 			return this.getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
@@ -111,7 +112,7 @@ sap.ui.define([
 		 * @param {string} sFunctionName Name of the called function
 		 * @param {string} sErrorMessage Error messages retrieved from the endpoint
 		 * @returns {object} oResponse Response from the endpoint
-		 * @public
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
 			Log.error("Connector (" + oConnectorConfig.connectorName + ") failed call '" + sFunctionName + "': " + sErrorMessage);
@@ -123,7 +124,7 @@ sap.ui.define([
 		 *
 		 * @param {object[]} aResponses All responses provided by the different connectors
 		 * @returns {object} Merged result
-		 * @public
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		mergeResults: function(aResponses) {
 			var oResult = {};
@@ -142,7 +143,7 @@ sap.ui.define([
 		 * @param {object} oSource Object containing the information needed for filling oTarget
 		 * @param {array<string>} aKeys Keys which should be added to oTarget
 		 * @returns {object} oTarget Object containing all key-value pairs which where found in oSource
-		 * @public
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getSubsetOfObject: function(oSource, aKeys) {
 			var oTarget = {};
@@ -167,7 +168,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
-		 * @public
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getUrl: function(sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
@@ -199,22 +200,37 @@ sap.ui.define([
 		 *
 		 * @param {string} sUrl Url of the sent request
 		 * @param {string} sMethod Desired action to be performed for a given resource
+		 * @param {object} [mPropertyBag] Object with parameters as properties
+		 * @param {string} [mPropertyBag.token] Existing X-CSRF token of the connector which triggers the request
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
-		 * @public
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		sendRequest: function(sUrl, sMethod) {
+		sendRequest: function(sUrl, sMethod, mPropertyBag) {
 			sMethod = sMethod || "GET";
 			sMethod = sMethod.toUpperCase();
 
 			return new Promise(function (resolve, reject) {
 				var xhr = new XMLHttpRequest();
 				xhr.open(sMethod, sUrl);
+				if ((sMethod === "GET" || sMethod === "HEAD") && mPropertyBag && !mPropertyBag.token) {
+					xhr.setRequestHeader("X-CSRF-Token", "fetch");
+				}
+				if ((sMethod === "POST" || sMethod === "PUT" || sMethod === "DELETE") && mPropertyBag && mPropertyBag.token) {
+					xhr.setRequestHeader("X-CSRF-Token", mPropertyBag.token);
+				}
 				xhr.send();
 				xhr.onload = function() {
 					if (xhr.status >= 200 && xhr.status < 400) {
-						resolve(JSON.parse(xhr.response));
+						var oResult = {};
+						oResult.response = JSON.parse(xhr.response);
+						oResult.status = xhr.status;
+						oResult.token = xhr.getResponseHeader("X-CSRF-Token");
+						resolve(oResult);
 					} else {
-						reject(xhr.status + ": " + xhr.statusText);
+						reject({
+							status : xhr.status,
+							message : xhr.statusText
+						});
 					}
 				};
 			});
