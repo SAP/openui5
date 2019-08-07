@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Connector for saving data to the window.localStorage
+	 * Connector for saving data to the <code>window.localStorage</code>.
 	 *
 	 * @namespace sap.ui.fl.write.internal.connectors.LocalStorageConnector
 	 * @experimental Since 1.70

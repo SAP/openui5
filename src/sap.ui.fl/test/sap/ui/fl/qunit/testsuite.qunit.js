@@ -83,6 +83,17 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/internal/Connector"]
 				}
 			},
+			"apply/internal/connectors/JsObjectConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/internal/connectors/JsObjectConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": []}]'
+				}
+			},
 			"apply/internal/connectors/LrepConnector": {
 				group: "Apply Internal",
 				coverage: {
@@ -182,6 +193,17 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					flexibilityServices: '[{"connectorName": "BrowserStorageConnector", "layerFilter": []}]'
+				}
+			},
+			"write/internal/connectors/JsObjectConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/internal/connectors/JsObjectConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": []}]'
 				}
 			},
 			// Team Gravity tests

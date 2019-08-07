@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Connector for requesting data from an LRep based back end.
+	 * Connector for requesting data from <code>window.localStorage</code>.
 	 *
 	 * @namespace sap.ui.fl.apply.internal.connectors.LocalStorageConnector
 	 * @experimental Since 1.70
