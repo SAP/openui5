@@ -62,8 +62,7 @@ sap.ui.define([
 
 		_defineTestStubs: function() {
 			sandbox.stub(FlexSettings, "getInstance").returns(Promise.resolve({
-				isProductiveSystem: function() { return false; },
-				hasMergeErrorOccured: function() { return false; }
+				isProductiveSystem: function() { return false; }
 			}));
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").resolves(false);

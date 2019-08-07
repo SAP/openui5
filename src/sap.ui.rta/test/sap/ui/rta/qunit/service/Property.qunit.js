@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Control",
 	"sap/m/Page",
@@ -19,6 +20,7 @@ function(
 	RuntimeAuthoring,
 	ElementDesignTimeMetadata,
 	DesignTime,
+	PersistenceWriteAPI,
 	VerticalLayout,
 	Control,
 	Page,
@@ -52,6 +54,9 @@ function(
 					return new Page("mainPage");
 				}
 			});
+
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
 
 			this.oComp = new MockComponent("testComponent");
 

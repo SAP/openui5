@@ -214,7 +214,7 @@ function(
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp
 			});
-			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
 		},
 		afterEach : function() {
 			this.oRta.destroy();

@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/m/Page",
@@ -12,6 +13,7 @@ sap.ui.define([
 function (
 	RuntimeAuthoring,
 	BasePlugin,
+	PersistenceWriteAPI,
 	UIComponent,
 	ComponentContainer,
 	Page,
@@ -56,6 +58,9 @@ function (
 			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, 'hasChangeHandler').resolves(true);
 		},
 		beforeEach: function () {
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponentContainer

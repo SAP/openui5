@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/ui/rta/RuntimeAuthoring",
 	"qunit/RtaQunitUtils",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -20,6 +21,7 @@ function(
 	ObjectPageLayout,
 	RuntimeAuthoring,
 	RtaQunitUtils,
+	FlexUtils,
 	Utils,
 	OverlayRegistry,
 	ChangeRegistry,
@@ -395,6 +397,8 @@ function(
 			//			ObjectPageSection - invisible
 			//			ObjectPageSection - visible
 
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oComp);
+
 			var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
 
 			var oSubSection = new ObjectPageSubSection({
@@ -501,8 +505,6 @@ function(
 			});
 			this.oObjectPageLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-
-			sandbox.stub(RuntimeAuthoring.prototype, '_checkChangesExist').resolves(false);
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oObjectPageLayout,
