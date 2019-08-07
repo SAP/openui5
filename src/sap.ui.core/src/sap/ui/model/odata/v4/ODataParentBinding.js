@@ -725,8 +725,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the absolute base path used for path reduction of child (property) bindings. This is
-	 * the path of the parent binding unless this binding is the root binding or the parent binding
-	 * has a different update group ID. This binding must be resolved.
+	 * the path of the root binding.
 	 *
 	 * @returns {string}
 	 *   The absolute base path for path reduction
@@ -734,15 +733,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.getBaseForPathReduction = function () {
-		var oParentBinding;
+		var oRootBinding = this.getRootBinding();
 
-		if (!this.isRoot()) {
-			oParentBinding = this.oContext.getBinding();
-			if (oParentBinding.getUpdateGroupId() === this.getUpdateGroupId()) {
-				return oParentBinding.getBaseForPathReduction();
-			}
-		}
-		return this.oModel.resolve(this.sPath, this.oContext);
+		return this.oModel.resolve(oRootBinding.sPath, oRootBinding.oContext);
 	};
 
 	/**

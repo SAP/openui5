@@ -2968,55 +2968,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getBaseForPathReduction: root binding", function (assert) {
+	QUnit.test("getBaseForPathReduction", function (assert) {
 		var oBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "quasi/absolute"
-			});
+				getRootBinding : function () {},
+				oModel : {resolve : function () {}}
+			}),
+			oRootBinding = {
+				oContext : {/*Context*/},
+				sPath : {/*string*/}
+			};
 
-		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
 		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+			.withExactArgs(sinon.match.same(oRootBinding.sPath),
+				sinon.match.same(oRootBinding.oContext))
 			.returns("/resolved/path");
 
 		// code under test
 		assert.strictEqual(oBinding.getBaseForPathReduction(), "/resolved/path");
 	});
-
-	//*********************************************************************************************
-[false, true].forEach(function (bDelegate) {
-	QUnit.test("getBaseForPathReduction: delegate to parent binding " + bDelegate,
-			function (assert) {
-		var oParentBinding = new ODataParentBinding(),
-			oContext = {
-				getBinding : function () {
-					return oParentBinding;
-				}
-			},
-			oBinding = new ODataParentBinding({
-				oContext : oContext,
-				oModel : {resolve : function () {}},
-				sPath : "relative"
-			});
-
-		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
-		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("groupId");
-		this.mock(oParentBinding).expects("getUpdateGroupId")
-			.withExactArgs().returns(bDelegate ? "groupId" : "otherGroupId");
-		this.mock(oParentBinding).expects("getBaseForPathReduction").exactly(bDelegate ? 1 : 0)
-			.withExactArgs()
-			.returns("/base/path");
-		this.mock(oBinding.oModel).expects("resolve").exactly(bDelegate ? 0 : 1)
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
-
-
-				// code under test
-		assert.strictEqual(oBinding.getBaseForPathReduction(),
-			bDelegate ? "/base/path" : "/resolved/path");
-	});
-});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"

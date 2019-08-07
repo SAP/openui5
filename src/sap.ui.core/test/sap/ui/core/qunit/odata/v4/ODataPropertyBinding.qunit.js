@@ -1576,8 +1576,14 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel).expects("checkGroupId")
 			.withExactArgs(oFixture.updateGroupId);
-		this.mock(oBinding).expects("lockGroup").withExactArgs(oFixture.updateGroupId, true)
-			.returns(oGroupLock);
+		if (oFixture.updateGroupId) {
+			this.mock(oBinding).expects("lockGroup").withExactArgs(oFixture.updateGroupId, true)
+				.returns(oGroupLock);
+		} else {
+			this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("update");
+			this.mock(oBinding).expects("lockGroup").withExactArgs("update", true)
+				.returns(oGroupLock);
+		}
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("Address/City", sinon.match.same(oFixture.value),
 				sinon.match.same(oGroupLock)); // return value does not matter here
