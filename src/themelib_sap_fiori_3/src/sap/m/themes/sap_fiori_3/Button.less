@@ -295,3 +295,9 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 .sapMTB-Transparent-CTX .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnDefault.sapMBtnActive {
 	background-color: @sapUiButtonActiveBackground;
 }
+
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconFirst.sapMBtnTransparent.sapMBtnActive,
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnIconLast.sapMBtnTransparent.sapMBtnActive {
+	background-color: @sapUiButtonLiteActiveBackground;
+	border-color: @sapUiButtonLiteActiveBorderColor;
+}
