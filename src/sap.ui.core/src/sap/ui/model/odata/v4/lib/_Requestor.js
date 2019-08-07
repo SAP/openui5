@@ -264,20 +264,25 @@ sap.ui.define([
 				oChangeRequest,
 				aChangeSet,
 				oError,
-				i;
+				i,
+				j;
 
-			aChangeSet = aBatchQueue[0];
 			// restore changes in reverse order to get the same initial state
-			for (i = aChangeSet.length - 1; i >= 0; i -= 1) {
-				oChangeRequest = aChangeSet[i];
-				if (oChangeRequest.$cancel && fnFilter(oChangeRequest)) {
-					oChangeRequest.$cancel();
-					oError = new Error("Request canceled: " + oChangeRequest.method + " "
-						+ oChangeRequest.url + "; group: " + sGroupId0);
-					oError.canceled = true;
-					oChangeRequest.$reject(oError);
-					aChangeSet.splice(i, 1);
-					bCanceled = true;
+			for (j = aBatchQueue.length - 1; j >= 0; j -= 1) {
+				if (Array.isArray(aBatchQueue[j])) {
+					aChangeSet = aBatchQueue[j];
+					for (i = aChangeSet.length - 1; i >= 0; i -= 1) {
+						oChangeRequest = aChangeSet[i];
+						if (oChangeRequest.$cancel && fnFilter(oChangeRequest)) {
+							oChangeRequest.$cancel();
+							oError = new Error("Request canceled: " + oChangeRequest.method + " "
+								+ oChangeRequest.url + "; group: " + sGroupId0);
+							oError.canceled = true;
+							oChangeRequest.$reject(oError);
+							aChangeSet.splice(i, 1);
+							bCanceled = true;
+						}
+					}
 				}
 			}
 		}
@@ -754,14 +759,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Tells whether there are pending changes for the given group ID.
+	 * Tells whether there are changes for the given group ID and given entity.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @param {object} oEntity
 	 *   The entity used to identify a request based on its "If-Match" header
 	 * @returns {boolean}
-	 *   Whether there are pending changes for the given group ID
+	 *   Whether there are changes for the given group ID and given entity
 	 *
 	 * @public
 	 */
@@ -769,11 +774,12 @@ sap.ui.define([
 		var aRequests = this.mBatchQueue[sGroupId];
 
 		if (aRequests) {
-			return aRequests[0].some(function (oRequest) {
-				return oRequest.headers["If-Match"] === oEntity;
+			return aRequests.some(function (vRequests) {
+				return Array.isArray(vRequests) && vRequests.some(function (oRequest) {
+					return oRequest.headers["If-Match"] === oEntity;
+				});
 			});
 		}
-
 		return false;
 	};
 
@@ -785,17 +791,16 @@ sap.ui.define([
 	 * @public
 	 */
 	Requestor.prototype.hasPendingChanges = function () {
-		var sGroupId, bPending;
+		var that = this;
 
-		for (sGroupId in this.mBatchQueue) {
-			bPending = this.mBatchQueue[sGroupId][0].some(function (oRequest) {
-				return oRequest.$cancel;
+		return Object.keys(this.mRunningChangeRequests).length > 0
+			|| Object.keys(this.mBatchQueue).some(function (sGroupId) {
+				return that.mBatchQueue[sGroupId].some(function (vRequests) {
+					return Array.isArray(vRequests) && vRequests.some(function (oRequest) {
+						return oRequest.$cancel;
+					});
+				});
 			});
-			if (bPending) {
-				return true;
-			}
-		}
-		return Object.keys(this.mRunningChangeRequests).length > 0;
 	};
 
 	/**
