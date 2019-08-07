@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/SeparatorItem",
+	"sap/ui/model/Sorter",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/CustomData",
 	"sap/ui/model/json/JSONModel",
@@ -45,6 +46,7 @@ sap.ui.define([
 	Item,
 	ListItem,
 	SeparatorItem,
+	Sorter,
 	SimpleForm,
 	CustomData,
 	JSONModel,
@@ -12113,6 +12115,39 @@ sap.ui.define([
 		// assert
 		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
 		assert.ok(!oExpectedListGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header does not have visual focus");
+	});
+
+	QUnit.test("Grouping with models", function (assert) {
+		// Setup
+		var oData = {
+				data: [
+					{key: 1, text: "Test 1", group: "Group 1"},
+					{key: 2, text: "Test 2", group: "Group 1"},
+					{key: 3, text: "Test 3", group: "Group 2"},
+					{key: 4, text: "Test 4", group: "Group 3"}
+				]
+			},
+			oComboBox = new ComboBox({
+				items: {
+					path: '/data',
+					sorter: new Sorter({
+						path: 'group',
+						descending: false,
+						group: function (oContext) {
+							return oContext.getProperty('group');
+						}
+					}),
+					template: new Item({key: "{key}", text: "{text}"})
+				}
+			}).setModel(new JSONModel(oData)).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oComboBox.getItems().length > 4, "There should be more items as there's a separator item for each group");
+		assert.ok(oComboBox.getItems()[0].isA("sap.ui.core.SeparatorItem"), "The first item is a SeparatorItem");
+
+		// Cleanup
+		oComboBox.destroy();
 	});
 
 	QUnit.module("Group header press");
