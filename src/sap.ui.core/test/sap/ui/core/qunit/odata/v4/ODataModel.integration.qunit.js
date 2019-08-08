@@ -19044,12 +19044,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Reduce path by removing partner attributes SO_2_SOITEM and SOITEM_2_SO. Simulate an
-	// In-Parameter of a value help for which the value is cached in the parent binding.
+	// In-Parameter of a value help for which the value is cached in the parent binding. Do this for
+	// a creation row, too.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	// JIRA: CPOUI5UISERVICESV3-1942
 	QUnit.test("Reduce path: property in parent cache", function (assert) {
-		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+		var oCreationRowContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/SalesOrderList(\'1\')}">\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
 	<Text id="soCurrencyCode" text="{CurrencyCode}"/>\
 	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
 		<columns><Column/></columns>\
@@ -19060,8 +19063,11 @@ sap.ui.define([
 		</items>\
 	</Table>\
 </FlexBox>\
+<FlexBox id="creationRow">\
+	<Text id="creationRow::note" text="{Note}"/>\
+</FlexBox>\
 <FlexBox id="valueHelp">\
-	<Text id="valueHelp::currencyCode" text="{SOITEM_2_SO/CurrencyCode}"/>\
+	<Input id="valueHelp::currencyCode" value="{SOITEM_2_SO/CurrencyCode}"/>\
 </FlexBox>',
 			that = this;
 
@@ -19082,12 +19088,50 @@ sap.ui.define([
 			.expectChange("valueHelp::currencyCode");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oTableBinding = that.oView.byId("table").getBinding("items"),
+				oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
+					oTableBinding.getContext(), undefined, undefined,
+					{$$updateGroupId : "doNotSubmit"});
+
+			// initialize creation row
+			oCreationRowContext = oCreationRowListBinding.create();
+			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectChange("valueHelp::currencyCode", "EUR");
 
+			// start value help
 			that.oView.byId("valueHelp").setBindingContext(
 				that.oView.byId("table").getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("valueHelp::currencyCode", null);
+
+			// stop value help
+			that.oView.byId("valueHelp").setBindingContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("valueHelp::currencyCode", "EUR");
+
+			// start value help on creation row
+			that.oView.byId("valueHelp").setBindingContext(oCreationRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("soCurrencyCode", "USD")
+				.expectChange("valueHelp::currencyCode", "USD");
+
+			// the PATCH must not be sent!
+			that.oView.byId("valueHelp::currencyCode").getBinding("value").setValue("USD");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// delete creation row to avoid errors in destroy
+			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
+			oCreationRowContext.delete("$auto");
 		});
 	});
 
@@ -19335,6 +19379,7 @@ sap.ui.define([
 		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
+				<Text id="dValue" text="{DValue}"/>\
 				<Text id="bValue::table2" text="{DtoB/BValue}"/>\
 			</ColumnListItem>\
 		</items>\
@@ -19349,17 +19394,17 @@ sap.ui.define([
 					{DID : 3}
 				]
 			})
-			.expectRequest("Bs(1)/BtoDs?$select=DID&$expand=DtoB($select=BID,BValue)"
-				+ "&$skip=0&$top=100", {
+			.expectRequest("Bs(1)/BtoDs?$select=DID,DValue&$skip=0&$top=100", {
 				value : [{
 					DID : 2,
-					DtoB : {BID : 1, BValue : 101}
+					DValue : 202
 				}, {
 					DID : 3,
-					DtoB : {BID : 1, BValue : 101}
+					DValue : 203
 				}]
 			})
 			.expectChange("bValue", "101")
+			.expectChange("dValue", ["202", "203"])
 			.expectChange("bValue::table1", ["101", "101"])
 			.expectChange("bValue::table2", ["101", "101"]);
 
