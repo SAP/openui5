@@ -492,6 +492,13 @@ sap.ui.define([
 				config["frameOptions"] = "allow";
 			}
 
+			// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
+			if (config.flexibilityServices
+					&& config.flexibilityServices !== M_SETTINGS.flexibilityServices.defaultValue
+					&& config.modules.indexOf("sap.ui.fl.library") == -1) {
+				config.modules.push("sap.ui.fl.library");
+			}
+
 			var aCSSLibs = config['preloadLibCss'];
 			if ( aCSSLibs.length > 0 ) {
 				// a leading "!" denotes that the application has loaded the file already
@@ -527,7 +534,6 @@ sap.ui.define([
 					Log.info("  " + n + " = " + config[n]);
 				}
 			}
-
 
 			// Setup animation mode. If no animation mode is provided
 			// the value is set depending on the animation setting.
