@@ -148,6 +148,44 @@ var sSingleLangTest = "de",
         });
     });
 
+	// WebAssembly is not supported in all browsers.
+	if (window.WebAssembly) {
+		QUnit.test("Multiple initialization calls", function(assert) {
+
+			// Arrange
+			var done = assert.async();
+			var iForcedInitializations = 300;
+			var oSpy = this.spy(window.WebAssembly, "instantiate");
+
+			// Initialize the default language and after that try to force multiple initializations.
+			this.oHyphenation.initialize().then(function() {
+
+				oSpy.reset();
+				var aPromises = [];
+
+				// Act
+				for (var i = 0; i < iForcedInitializations; i++) {
+					aPromises.push(new Promise(function (resolve) {
+						this.oHyphenation.initialize()
+							.then(resolve)
+							.catch(resolve);
+					}.bind(this)));
+				}
+
+				Promise.all(aPromises).then(function () {
+
+					// Assert
+					assert.ok(oSpy.notCalled, "Should only initialize once to avoid browser out of memory exceptions.");
+
+					// Clean up
+					oSpy.restore();
+					done();
+				});
+
+			}.bind(this));
+		});
+	}
+
     QUnit.test("is language supported", function(assert) {
         var that = this;
 
