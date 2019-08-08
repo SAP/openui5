@@ -6216,8 +6216,10 @@ sap.ui.define([
 			oError = new Error(),
 			sGroupId = "group";
 
+		oBinding.aContexts.push({isTransient : function () {}});
 		this.mock(this.oModel).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
+		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
 			.rejects(oError);
 
@@ -6259,7 +6261,11 @@ sap.ui.define([
 			oContext = oBinding.getHeaderContext(),
 			oResult = {};
 
+		oBinding.aContexts.push({isTransient : function () {}});
+		oBinding.aContexts.push({isTransient : function () {}});
 		this.mock(oBinding).expects("refreshSingle").never();
+		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oBinding.aContexts[1]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", false, true)
 			.resolves(oResult);
 
@@ -6349,10 +6355,12 @@ sap.ui.define([
 			aPaths = ["A"];
 
 		oBinding.oCachePromise = Promise.resolve(oBinding.oCachePromise); // make this pending
+		oBinding.aContexts.push({isTransient : function () {}});
 		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {}, 0, 0)
 			.returns(null); // "Missing key property"
+		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
 			.rejects(oError);
 
@@ -6363,6 +6371,26 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
+
+	//*********************************************************************************************
+[0, 2].forEach(function (iTransient, i) {
+	QUnit.test("requestSideEffects: all contexts transient => no refresh, " + i, function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			oBinding = this.bindList("/Set"),
+			j;
+
+		for (j = 0; j < iTransient; j += 1) {
+			oBinding.aContexts.push({isTransient : function () {} });
+			this.mock(oBinding.aContexts[j]).expects("isTransient").withExactArgs().returns(true);
+		}
+		this.mock(this.oModel).expects("lockGroup").never();
+		oCacheMock.expects("requestSideEffects").never();
+		this.mock(oBinding).expects("refreshInternal").never();
+
+		// code under test
+		return oBinding.requestSideEffects("group", ["n/a", ""]);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptions: with system query options", function (assert) {
