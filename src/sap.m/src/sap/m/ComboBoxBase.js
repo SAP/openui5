@@ -1502,6 +1502,11 @@ sap.ui.define([
 			});
 
 			this.addAggregation("items", oHeader, bSuppressInvalidate);
+
+			if (this._getList() && oHeader.isA("sap.ui.core.SeparatorItem")) {
+				this._getList().addItem(this._mapItemToListItem(oHeader));
+			}
+
 			return oHeader;
 		};
 
