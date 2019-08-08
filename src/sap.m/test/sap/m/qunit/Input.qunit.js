@@ -2344,9 +2344,7 @@ sap.ui.define([
 		}
 		assert.strictEqual(getPopupItemsContent(oPopup).$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
-		// TODO: trigger selection with pseudo-events here
-		//getPopupItemsContent(oPopup).getItems()[1].$().trigger("click");
-		getPopupItemsContent(oPopup)._fireSelectionChangeEvent([getPopupItemsContent(oPopup).getItems()[1]]);
+		getPopupItemsContent(oPopup).getItems()[1].ontap(new jQuery.Event());
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		assert.equal(oInput.getValue(), "You chose: " + oSuggestionData.tabularSuggestionItems[1].limit, "The input value has been formatted with the custom row result function");
@@ -2356,6 +2354,113 @@ sap.ui.define([
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
+		oInput.destroy();
+	});
+
+	QUnit.test("Tabular Suggestions - selecting an already selected item", function (assert) {
+
+		// arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					header: new Label({
+						text: "{i18n>/Name}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Qty}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Value}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Price}"
+					})
+				})
+			]});
+
+		var oTableItemTemplate = new ColumnListItem({
+			vAlign : "Middle",
+			cells : [
+				new Label({
+					text : "{name}"
+				}),
+				new Label({
+					text: "{qty}"
+				}), new Label({
+					text: "{limit}"
+				}), new Label({
+					text : "{price}"
+				})
+			]
+		});
+
+		var oSuggestionData = {
+			tabularSuggestionItems : [{
+				name : "Product1",
+				qty : "10 EA",
+				limit : "15.00 Eur",
+				price : "10.00 EUR"
+			}, {
+				name : "Product2",
+				qty : "9 EA",
+				limit : "25.00 Eur",
+				price : "20.00 EUR"
+			}, {
+				name : "Photo scan",
+				qty : "8 EA",
+				limit : "35.00 Eur",
+				price : "30.00 EUR"
+			}]
+		};
+
+		var oModel = new JSONModel(oSuggestionData);
+
+		oInput.setModel(oModel);
+		oInput.bindSuggestionRows({
+			path: "/tabularSuggestionItems",
+			template: oTableItemTemplate
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oFakeKeydown = jQuery.Event("keydown", { which: KeyCodes.G });
+		oInput._oSuggPopover._oPopover.open();
+
+		// act
+		oInput._$input.focus().trigger(oFakeKeydown).val("p").trigger("input");
+		this.clock.tick(300);
+
+		// check selected (highlighted in blue) row in the suggestion table
+		var oSelectedRow1 = oInput._oSuggPopover._oList.getItems()[0];
+		assert.ok(oSelectedRow1.getSelected(), true, "First item is selected");
+		assert.equal(oSelectedRow1.getCells()[0].getText().toLowerCase(), oInput.getValue().toLowerCase(), "The value of the input is the same as the value of the selected row");
+
+		// act
+		oInput._$input.focus().trigger(oFakeKeydown).val("ph").trigger("input");
+		this.clock.tick(300);
+
+		// check selected (highlighted in blue) row in the suggestion table
+		var oSelectedRow2 = oInput._oSuggPopover._oList.getItems()[2];
+		assert.ok(oSelectedRow2.getSelected(), true, "First item is selected");
+		assert.equal(oSelectedRow2.getCells()[0].getText().toLowerCase(), oInput.getValue().toLowerCase(), "The value of the input is the same as the value of the selected row");
+
+		// act
+		oSelectedRow2.ontap(new jQuery.Event());
+		this.clock.tick(300);
+
+		// assert
+		assert.notOk(oInput._oSuggPopover._oPopover.isOpen(), "Suggestion Popup should NOT be opened");
+		assert.equal(oSelectedRow2.getId(), oInput.getSelectedRow(), "SuggestionRow should be correctly set");
+
+		// clean up
 		oInput.destroy();
 	});
 

@@ -876,7 +876,7 @@ sap.ui.define([
 				width: "100%",
 				enableBusyIndicator: false,
 				rememberSelections : false,
-				selectionChange: function (oEvent) {
+				itemPress: function (oEvent) {
 					if (Device.system.desktop) {
 						oInput.focus();
 					}
