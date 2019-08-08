@@ -59,6 +59,14 @@ sap.ui.define([
 	 * <li>If only the layout is required, use {@link sap.ui.layout.cssgrid.CSSGrid} instead.
 	 * </ul>
 	 *
+	 * <h3>Drag and drop:</h3>
+	 * Drag and drop is enabled for the <code>GridList</code> with enhanced visualization and interaction, better suited for grid items. This is configured by using the <code>{@link sap.f.dnd.GridDropInfo}</code>.
+	 *
+	 * Similar to the <code>{@link sap.ui.core.dnd.DropInfo}</code>, <code>{@link sap.f.dnd.GridDropInfo}</code> has to be added to the <code>dragDropConfig</code> aggregation, by using <code>{@link sap.ui.core.Element#addDragDropConfig}</code>.
+	 *
+	 * Both <code>{@link sap.ui.core.dnd.DropInfo}</code> and <code>{@link sap.f.dnd.GridDropInfo}</code> can be used to configure drag and drop.
+	 * The difference is that the <code>{@link sap.f.dnd.GridDropInfo}</code> will provide a drop indicator, which mimics the size of the dragged item and shows the potential drop position inside the grid.
+	 *
 	 * <h3>Current Limitations</h3>
 	 * <ul>
 	 * <li>For Microsoft Internet Explorer some layouts are not supported, due to browser specifics.</li>

@@ -35,7 +35,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		constructor: function() {
 			// prepare drag end delegate for later use
 			this._oDragEndDelegate = {
-				ondragend: this.endDrag.bind(this)
+				ondragend: this.scheduleEndDrag.bind(this)
 			};
 		},
 
@@ -140,9 +140,32 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 	};
 
 	/**
-	 * Clean up after dragging is finished.
+	 * Schedule the execution of end drag which will hide the indicator and show the control.
+	 */
+	GridDragOver.prototype.scheduleEndDrag = function() {
+		if (!this._isDragActive()) {
+			return;
+		}
+
+		var oBinding = this._oDropContainer.getBindingInfo(this._sTargetAggregation);
+		if (oBinding && oBinding.template) {
+			// if there is template binding for target aggregation, wait for the framework to update items and then hide the indicator
+			setTimeout(this.endDrag.bind(this), 0);
+		} else {
+			// if there is no template binding for target aggregation, execute endDrag immediately
+			this.endDrag();
+		}
+	};
+
+	/**
+	 * Clean up after dragging is finished. This will hide the indicator and show the dragged control.
+	 * Use <code>scheduleEndDrag</code> if cleanup should be scheduled for a different tick and not executed immediately.
 	 */
 	GridDragOver.prototype.endDrag = function() {
+		if (!this._isDragActive()) {
+			return;
+		}
+
 		this._$indicator.detach();
 
 		// this._oDragControl.setVisible(true); // todo
@@ -164,6 +187,14 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		this._iDropPositionHoldStart = null;
 		this._mLastDropPosition = null;
 		this._mFreezePosition = null;
+	};
+
+	/**
+	 * Is the drag still active or it has ended.
+	 * @returns {bool} True if the drag is still active, false if it was ended.
+	 */
+	GridDragOver.prototype._isDragActive = function() {
+		return this._oDragControl && this._oDropContainer;
 	};
 
 	/**
@@ -232,7 +263,10 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 	 * Shows the control that is currently dragged.
 	 */
 	GridDragOver.prototype._showDraggedItem = function() {
-		this._oDragControl.$().show();
+
+		if (this._oDragControl.getDomRef()) {
+			this._oDragControl.$().show();
+		}
 		// this._oDragControl.setVisible(false); // todo, this brakes the drag session
 
 		var $gridItem = this._findContainingGridItem(this._oDragControl);

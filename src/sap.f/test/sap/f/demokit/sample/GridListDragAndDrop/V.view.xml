@@ -1,0 +1,48 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:grid="sap.ui.layout.cssgrid"
+		xmlns:f="sap.f"
+		xmlns:dnd="sap.ui.core.dnd"
+		xmlns:dnd-grid="sap.f.dnd"
+		controllerName="sap.f.sample.GridListDragAndDrop.C">
+	<Panel id="panelForGridList">
+		<headerToolbar>
+			<Toolbar height="3rem">
+				<Title text="Grid List with Drag and Drop"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<f:GridList
+					id="gridList"
+					headerText="GridList header"
+					items="{ path: '/' }">
+
+				<f:dragDropConfig>
+					<dnd:DragInfo sourceAggregation="items" />
+					<dnd-grid:GridDropInfo targetAggregation="items" dropPosition="Between" dropLayout="Horizontal" drop="onDrop"/>
+				</f:dragDropConfig>
+
+				<f:customLayout>
+					<grid:GridBoxLayout boxMinWidth="17rem"/>
+				</f:customLayout>
+
+				<f:GridListItem
+					counter="{counter}"
+					highlight="{highlight}"
+					type="{type}"
+					unread="{unread}">
+					<VBox height="100%">
+						<VBox class="sapUiSmallMargin">
+							<layoutData>
+								<FlexItemData growFactor="1" shrinkFactor="0" />
+							</layoutData>
+							<Title text="{title}" wrapping="true" />
+							<Label text="{subtitle}" wrapping="true" />
+						</VBox>
+					</VBox>
+				</f:GridListItem>
+			</f:GridList>
+		</content>
+	</Panel>
+</mvc:View>

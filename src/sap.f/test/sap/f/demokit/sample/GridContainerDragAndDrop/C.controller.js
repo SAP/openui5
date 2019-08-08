@@ -24,7 +24,7 @@ sap.ui.define([
 			oGrid.addDragDropConfig(new GridDropInfo({
 				targetAggregation: "items",
 				dropPosition: "Between",
-				dropLayout: oGrid.isA("sap.m.List") ? "Vertical" : "Horizontal",
+				dropLayout: "Horizontal",
 				drop: function (oInfo) {
 					var oDragged = oInfo.getParameter("draggedControl"),
 						oDropped = oInfo.getParameter("droppedControl"),
