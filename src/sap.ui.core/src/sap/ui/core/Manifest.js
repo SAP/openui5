@@ -755,14 +755,18 @@ sap.ui.define([
 	 * @param {string} [mOptions.componentName] name of the component
 	 * @param {boolean} [mOptions.async] Flag whether to load the manifest async or not (defaults to false)
 	 * @param {boolean} [mOptions.failOnError] Flag whether to fail if an error occurs or not (defaults to true)
+	 * @param {function} [mOptions.processJson] Callback for asynchronous processing of the loaded manifest.
+	 * The callback receives the parsed manifest object and must return a Promise which resolves with an object.
+	 * It allows to early access and modify the manifest object.
 	 * @return {sap.ui.core.Manifest|Promise} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @protected
 	 */
 	Manifest.load = function(mOptions) {
 		var sManifestUrl = mOptions && mOptions.manifestUrl,
-		    sComponentName = mOptions && mOptions.componentName,
-		    bAsync = mOptions && mOptions.async,
-		    bFailOnError = mOptions && mOptions.failOnError;
+			sComponentName = mOptions && mOptions.componentName,
+			bAsync = mOptions && mOptions.async,
+			bFailOnError = mOptions && mOptions.failOnError,
+			fnProcessJson = mOptions && mOptions.processJson;
 
 		// When loading the manifest via URL the language and client should be
 		// added as query parameter as it may contain language dependent texts
@@ -807,6 +811,13 @@ sap.ui.define([
 
 		if (bAsync) {
 			return oManifestJSON.then(function(oManifestJSON) {
+				// callback for preprocessing the json, e.g. via flex-hook in Component
+				if (fnProcessJson) {
+					return fnProcessJson(oManifestJSON);
+				} else {
+					return oManifestJSON;
+				}
+			}).then(function(oManifestJSON) {
 				return new Manifest(oManifestJSON, mSettings);
 			});
 		}

@@ -1932,7 +1932,7 @@ sap.ui.define([
 	 * <b>ATTENTION:</b> This hook must only be used by UI flexibility (library:
 	 * sap.ui.fl) and will be replaced with a more generic solution!
 	 *
-	 * @sap-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 * @private
 	 * @since 1.37.0
 	 */
@@ -1962,10 +1962,25 @@ sap.ui.define([
 	 * sap.ui.fl) and will be replaced with a more generic solution!
 	 *
 	 * @private
-	 * @sap-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 * @since 1.43.0
 	 */
 	Component._fnOnInstanceCreated = null;
+
+	/**
+	 * Callback handler which will be executed once the manifest.json was
+	 * loaded for a component, but before the Manifest is interpreted.
+	 * The loaded manifest will be passed into the registered function.
+	 *
+	 * The callback may modify the parsed manifest object and must return a Promise which
+	 * resolves with the manifest object. If the Promise is rejected, the component creation
+	 * fails with the rejection reason.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.fl
+	 * @since 1.70.0
+	 */
+	Component._fnPreprocessManifest = null;
 
 	/**
 	 * Asynchronously creates a new component instance from the given configuration.
@@ -2443,8 +2458,31 @@ sap.ui.define([
 			fnCallLoadComponentCallback;
 
 		function createSanitizedManifest( oRawManifestJSON, mOptions ) {
-			var oManifest = new Manifest( JSON.parse(JSON.stringify(oRawManifestJSON)), mOptions );
-			return oConfig.async ? Promise.resolve(oManifest) : oManifest;
+			var oManifestCopy = JSON.parse(JSON.stringify(oRawManifestJSON));
+
+			if (oConfig.async) {
+				return preprocessManifestJSON(oManifestCopy).then(function(oFinalJSON) {
+					// oFinalJSON might be modified by the flex-hook
+					return new Manifest(oFinalJSON, mOptions);
+				});
+			} else {
+				return new Manifest(oManifestCopy, mOptions);
+			}
+		}
+
+		function preprocessManifestJSON(rawJson) {
+			// call flex-hook if given
+			if (typeof Component._fnPreprocessManifest === "function") {
+				try {
+					return Component._fnPreprocessManifest(rawJson);
+				} catch (oError) {
+					// in case the hook itself crashes without 'safely' rejecting, we log the error and reject directly
+					Log.error("Failed to execute flexibility hook for manifest preprocessing.", oError);
+					return Promise.reject(oError);
+				}
+			} else {
+				return Promise.resolve(rawJson);
+			}
 		}
 
 		// url must be a string, although registerModulePath would also accept an object
@@ -2483,6 +2521,7 @@ sap.ui.define([
 			oManifest = Manifest.load({
 				manifestUrl: sManifestUrl,
 				componentName: sName,
+				processJson: preprocessManifestJSON,
 				async: oConfig.async
 			});
 		}
@@ -2521,7 +2560,8 @@ sap.ui.define([
 				manifestUrl: getManifestUrl(sName),
 				componentName: sName,
 				async: oConfig.async,
-				failOnError: false
+				failOnError: false,
+				processJson: preprocessManifestJSON
 			});
 		}
 
