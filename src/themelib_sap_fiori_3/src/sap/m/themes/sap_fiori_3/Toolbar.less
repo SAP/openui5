@@ -2,6 +2,7 @@
 /* CSS for control sap.m/Toolbar  */
 /* Fiori 3 theme                  */
 /* ============================== */
+@_sap_m_Toolbar_MarginRight: 0;
 
 html.sap-desktop .sapMTBActive:focus {
 	outline: 0.0625rem dotted @sapUiContentFocusColor;
@@ -42,7 +43,7 @@ html.sap-desktop .sapMTBActive:focus {
 	}
 
 	.sapMBarChild:last-child {
-		margin: 0 0 0 0.25rem;
+		margin: 0 @_sap_m_Toolbar_MarginRight 0 0.25rem;
 	}
 
 	.sapMBarChild:only-child {
