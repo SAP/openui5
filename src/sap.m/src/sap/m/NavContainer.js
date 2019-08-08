@@ -66,7 +66,9 @@ sap.ui.define([
 				 * <li>If <code>autoFocus</code> is set to <code>false</code> and the focus was inside
 				 * the current page, the focus will disappear.
 				 * <li>If the focus was outside the current page, after the navigation it will remain
-				 * unchanged regardless of what is set to the <code>autoFocus</code> property.</li></ul>
+				 * unchanged regardless of what is set to the <code>autoFocus</code> property.</li>
+				 * <li>If the <code>autoFocus</code> is set to <code>false</code> and at the same time another wrapping
+				 * control has its own logic for focus restoring upon rerendering, the focus will still appear.</li></ul>
 				 *
 				 * @since 1.30
 				 */
