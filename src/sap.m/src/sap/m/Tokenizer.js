@@ -240,7 +240,7 @@ sap.ui.define([
 		}
 
 		var iTokenizerWidth = parseInt(this.getMaxWidth()),
-			aTokens = this.getTokens().reverse(),
+			aTokens = this._getVisibleTokens().reverse(),
 			iTokensCount = aTokens.length,
 			iLabelWidth, iFreeSpace,
 			iCounter, iFirstTokenToHide = -1;
@@ -299,7 +299,7 @@ sap.ui.define([
 		if (iHiddenTokensCount) {
 			var sLabelKey = "MULTIINPUT_SHOW_MORE_TOKENS";
 
-			if (iHiddenTokensCount === this.getTokens().length) {
+			if (iHiddenTokensCount === this._getVisibleTokens().length) {
 				this.$().css("overflow", "visible");
 				if (iHiddenTokensCount === 1) {
 					sLabelKey = "TOKENIZER_SHOW_ALL_ITEM";
@@ -319,6 +319,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the visible tokens
+	 *
+	 * @returns {array} Array of tokens
+	 * @private
+	 */
+	Tokenizer.prototype._getVisibleTokens = function () {
+		return this.getTokens().filter(function (oToken) {
+			return oToken.getVisible();
+		});
+	};
+
+	/**
 	 * Function makes all tokens visible, used for collapsed=false
 	 *
 	 * @private
@@ -326,7 +338,7 @@ sap.ui.define([
 	Tokenizer.prototype._showAllTokens = function() {
 		this._handleNMoreIndicator(0);
 
-		this.getTokens().forEach(function(oToken) {
+		this._getVisibleTokens().forEach(function(oToken) {
 			oToken.removeStyleClass("sapMHiddenToken");
 		});
 	};
@@ -539,7 +551,7 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype._useCollapsedMode = function(bCollapse, bSkipSizeAdjustment) {
 		var oParent = this.getParent(),
-			aTokens = this.getTokens();
+			aTokens = this._getVisibleTokens();
 
 		if (!aTokens.length) {
 			return;
@@ -585,7 +597,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.isAllTokenSelected = function() {
-		if (this.getTokens().length === this.getSelectedTokens().length) {
+		if (this._getVisibleTokens().length === this.getSelectedTokens().length) {
 
 			return true;
 		}
@@ -611,9 +623,9 @@ sap.ui.define([
 
 			//to check how many tokens are selected before Ctrl + A in Tokenizer
 			this._iSelectedToken = this.getSelectedTokens().length;
-			bSelectAll = this.getSelectedTokens().length < this.getTokens().length;
+			bSelectAll = this.getSelectedTokens().length < this._getVisibleTokens().length;
 
-			if (this.getTokens().length > 0) {
+			if (this._getVisibleTokens().length > 0) {
 				this.focus();
 				this._changeAllTokensSelection(bSelectAll);
 				oEvent.preventDefault();
@@ -688,7 +700,7 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype._selectRange = function (bForwardSection) {
 		var oRange = {},
-			oTokens = this.getTokens(),
+			oTokens = this._getVisibleTokens(),
 			oFocusedControl = jQuery(document.activeElement).control()[0],
 			iTokenIndex = oTokens.indexOf(oFocusedControl);
 
@@ -824,7 +836,7 @@ sap.ui.define([
 
 	Tokenizer.prototype._focusUnselectedToken = function (oEvent) {
 		var aSelectedTokens = this.getSelectedTokens(),
-			aTokens = this.getTokens(),
+			aTokens = this._getVisibleTokens(),
 			iReferenceIndex, oTokenForSelection;
 
 
@@ -875,7 +887,7 @@ sap.ui.define([
 
 			this._removeSelectedTokens();
 
-			if (!this.getTokens().length) {
+			if (!this._getVisibleTokens().length) {
 				oEvent.setMarked("forwardFocusToParent");
 			}
 		}
@@ -896,7 +908,7 @@ sap.ui.define([
 			iTokenLeftOffset = oToken.$().offset().left,
 			iTokenWidth = oToken.$().width();
 
-		if (this.getTokens().indexOf(oToken) == 0) {
+		if (this._getVisibleTokens().indexOf(oToken) == 0) {
 			this.$().scrollLeft(0);
 			return;
 		}
@@ -916,9 +928,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsapprevious = function(oEvent) {
-		var aTokens = this.getTokens().filter(function(oToken){
-				return oToken.getVisible();
-			}),
+		var aTokens = this._getVisibleTokens(),
 			iLength = aTokens.length;
 
 		if (iLength === 0) {
@@ -968,9 +978,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsapnext = function(oEvent) {
-		var aTokens = this.getTokens().filter(function(oToken){
-				return oToken.getVisible();
-			}),
+		var aTokens = this._getVisibleTokens(),
 			iLength = aTokens.length;
 
 		if (iLength === 0) {
@@ -1436,7 +1444,7 @@ sap.ui.define([
 			bSelect = true;
 		}
 
-		var tokens = this.getTokens(),
+		var tokens = this._getVisibleTokens(),
 			length = tokens.length,
 			i;
 
@@ -1456,7 +1464,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype._changeAllTokensSelection = function(bSelect, skipToken) {
-		var tokens = this.getTokens(),
+		var tokens = this._getVisibleTokens(),
 			length = tokens.length,
 			token,
 			i;
@@ -1481,7 +1489,7 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.getSelectedTokens = function() {
 		var aSelectedTokens = [],
-			tokens = this.getTokens(),
+			tokens = this._getVisibleTokens(),
 			i,
 			token,
 			length = tokens.length;
@@ -1526,7 +1534,7 @@ sap.ui.define([
 	};
 
 	Tokenizer.prototype._onTokenSelect = function(oTokenSource, ctrlKey, shiftKey) {
-		var aTokens = this.getTokens(),
+		var aTokens = this._getVisibleTokens(),
 			oToken,
 			i;
 
@@ -1599,7 +1607,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsaphome = function(oEvent) {
-		this.getTokens()[0].focus();
+		this._getVisibleTokens()[0].focus();
 		this.scrollToStart();
 
 		oEvent.preventDefault();
@@ -1612,7 +1620,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype.onsapend = function(oEvent) {
-		var oTokens = this.getTokens(),
+		var oTokens = this._getVisibleTokens(),
 			oLastToken = oTokens[oTokens.length - 1];
 
 		// handle the event chain only if the focus is not on the last token
@@ -1690,7 +1698,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Tokenizer.prototype._setTokensAria = function() {
-		var iTokenCount = this.getTokens().length,
+		var iTokenCount = this._getVisibleTokens().length,
 		oInvisibleText,
 		sTokenizerAria = "";
 

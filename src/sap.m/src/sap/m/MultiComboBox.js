@@ -1914,6 +1914,23 @@ function(
 		oInput.updateDomValue(sUpdateValue);
 	};
 
+	MultiComboBox.prototype.onItemChange = function (oControlEvent) {
+		var oValue = ComboBoxBase.prototype.onItemChange.apply(this, arguments);
+		this._forwardItemInfoToToken(oControlEvent);
+
+		return oValue;
+	};
+
+	MultiComboBox.prototype._forwardItemInfoToToken = function (oControlEvent) {
+		var oItem = oControlEvent.getSource(),
+			oPropertyInfo = oControlEvent.getParameters(),
+			oToken = this._getTokenByItem(oItem);
+
+		if (oPropertyInfo.name === "enabled" && oToken) {
+			oToken.setVisible(oPropertyInfo.newValue);
+		}
+	};
+
 	/**
 	 * Handler for the press event on the N-more label.
 	 *
