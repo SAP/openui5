@@ -966,11 +966,9 @@ sap.ui.define([
 	 */
 	Table.prototype.exit = function() {
 		this.invalidateRowsAggregation();
-
-		// destroy helpers
 		this._detachExtensions();
+		this._destroyLegacyRowMode();
 
-		// cleanup
 		if (this._dataReceivedHandlerId) {
 			clearTimeout(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
@@ -985,7 +983,6 @@ sap.ui.define([
 		}
 
 		delete this._aTableHeaders;
-		delete this._oLegacyRowMode;
 	};
 
 
@@ -1925,8 +1922,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the row mode of the table. If no row mode is set in the <code>rowMode</code> aggregation, a legacy row mode is initialized based on the
-	 * <code>visibleRowCountMode</code> property.
+	 * Gets the row mode of the table. If no row mode is set, a legacy row mode is returned.
 	 *
 	 * @returns {sap.ui.table.rowmodes.RowMode} The row mode of the table.
 	 * @private
@@ -1946,8 +1942,7 @@ sap.ui.define([
 
 	/**
 	 * Initializes a legacy row mode based on the <code>visibleRowCountMode</code> property, if no row mode is set in the <code>rowMode</code>
-	 * aggregation. The legacy row mode is added to the dependents aggregation. If a legacy row mode exists in the table, it is destroyed
-	 * and removed.
+	 * aggregation. The legacy row mode is added to the dependents aggregation. If a legacy row mode exists, it is destroyed.
 	 *
 	 * @private
 	 */
@@ -1955,31 +1950,29 @@ sap.ui.define([
 		this._destroyLegacyRowMode();
 
 		if (!this.getRowMode()) { // No legacy row mode required if a row mode is set.
-			this._oLegacyRowMode = createLegacyRowMode(this.getVisibleRowCountMode());
-			this.addDependent(this._oLegacyRowMode);
+			this._oLegacyRowMode = createLegacyRowMode(this);
 		}
 	};
 
 	Table.prototype._destroyLegacyRowMode = function() {
 		if (this._oLegacyRowMode) {
-			this.removeDependent(this._oLegacyRowMode);
 			this._oLegacyRowMode.destroy();
 			delete this._oLegacyRowMode;
 		}
 	};
 
-	function createLegacyRowMode(sVisibleRowCountMode) {
+	function createLegacyRowMode(oTable) {
 		var oRowMode;
 
-		switch (sVisibleRowCountMode) {
+		switch (oTable.getVisibleRowCountMode()) {
 			case VisibleRowCountMode.Fixed:
-				oRowMode = new FixedRowMode(true);
+				oRowMode = new FixedRowMode(true, oTable);
 				break;
 			case VisibleRowCountMode.Interactive:
-				oRowMode = new InteractiveRowMode(true);
+				oRowMode = new InteractiveRowMode(true, oTable);
 				break;
 			case VisibleRowCountMode.Auto:
-				oRowMode = new AutoRowMode(true);
+				oRowMode = new AutoRowMode(true, oTable);
 				break;
 			default:
 		}

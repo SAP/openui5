@@ -32,24 +32,6 @@ sap.ui.define([
 
 	QUnit.module("Inheriting from RowMode");
 
-	QUnit.test("Table delegate", function(assert) {
-		var oDelegate = {
-			onBeforeRendering: sinon.spy()
-		};
-		var SubclassWithDelegate = RowModeSubclass.extend("sap.ui.table.test.RowModeSubclassWithDelegate", {
-			init: function() {
-				RowModeSubclass.prototype.init.call(this, oDelegate);
-			}
-		});
-		var oTable = TableQUnitUtils.createTable(function(oTable) {
-			oTable.setRowMode(new SubclassWithDelegate());
-		});
-
-		assert.ok(oDelegate.onBeforeRendering.calledOnce, "The delegate passed to the constructor is added to the table");
-
-		oTable.destroy();
-	});
-
 	QUnit.test("Abstract methods", function(assert) {
 		var InvalidSubclass = RowMode.extend("sap.ui.table.test.RowModeInvalidSubClass");
 		var oMode = new InvalidSubclass();

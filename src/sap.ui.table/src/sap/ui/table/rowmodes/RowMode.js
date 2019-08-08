@@ -17,13 +17,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Stores private row mode information.
-	 *
-	 * @type {WeakMapConstructor}
-	 */
-	var internal = new window.WeakMap();
-
-	/**
 	 * Constructor for a new row mode.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
@@ -71,10 +64,6 @@ sap.ui.define([
 	RowMode.prototype.init = function(oTableDelegate) {
 		this._bTableIsRendering = false;
 
-		internal.set(this, {
-			tableDelegate: typeof oTableDelegate === "object" ? oTableDelegate : null
-		});
-
 		/**
 		 * Updates the table asynchronously according to the current computed row count.
 		 *
@@ -87,31 +76,44 @@ sap.ui.define([
 	};
 
 	RowMode.prototype.exit = function() {
-		this.cleanUpTimersAndEventListeners();
+		this.detachEvents();
+		this.cancelAsyncOperations();
 	};
 
 	RowMode.prototype.setParent = function() {
-		this.cleanUpTimersAndEventListeners();
-
+		this.detachEvents();
+		this.cancelAsyncOperations();
 		Element.prototype.setParent.apply(this, arguments);
-
-		var oTable = this.getTable();
-
-		TableUtils.addDelegate(oTable, TableDelegate, this);
-		TableUtils.addDelegate(oTable, internal.get(this).tableDelegate, this);
+		this.attachEvents();
 	};
 
 	/**
-	 * Cancels any schedules asynchronous operations and removes event listeners.
+	 * Adds event listeners.
 	 *
 	 * @private
 	 */
-	RowMode.prototype.cleanUpTimersAndEventListeners = function() {
+	RowMode.prototype.attachEvents = function() {
+		TableUtils.addDelegate(this.getTable(), TableDelegate, this);
+	};
+
+	/**
+	 * Removes event listeners.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.detachEvents = function() {
+		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+	};
+
+	/**
+	 * Cancels scheduled asynchronous operations.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.cancelAsyncOperations = function() {
 		var oTable = this.getTable();
 
 		if (oTable) {
-			oTable.removeDelegate(TableDelegate);
-			oTable.removeDelegate(internal.get(this).tableDelegate);
 			clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 		}
 
@@ -689,10 +691,16 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * @this sap.ui.table.rowmodes.RowMode
+	 */
 	TableDelegate.onBeforeRendering = function() {
 		this._bTableIsRendering = true;
 	};
 
+	/**
+	 * @this sap.ui.table.rowmodes.RowMode
+	 */
 	TableDelegate.onAfterRendering = function() {
 		this._bTableIsRendering = false;
 	};
