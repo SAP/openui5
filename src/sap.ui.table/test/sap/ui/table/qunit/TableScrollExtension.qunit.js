@@ -5522,52 +5522,9 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Special cases", {
-		beforeEach: function() {
-			createTables();
-		},
-		afterEach: function() {
-			destroyTables();
-		}
-	});
+	QUnit.module("Special cases");
 
 	QUnit.test("Scrolling inside the cell", function(assert) {
-		function test(iRowIndex, iColumnIndex) {
-			var oCellContentInColumn = oTreeTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef();
-
-			oCellContentInColumn.focus();
-
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					var $InnerCellElement = TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCellInner");
-
-					assert.strictEqual(document.activeElement, oCellContentInColumn,
-						"The content of the cell in row " + iRowIndex + " column " + iColumnIndex + " is focused");
-					if (oTreeTable._bRtlMode) {
-						assert.strictEqual($InnerCellElement.scrollLeftRTL(), $InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth,
-							"The cell content is not scrolled horizontally");
-					} else {
-						assert.strictEqual($InnerCellElement[0].scrollLeft, 0, "The cell content is not scrolled horizontally");
-					}
-					assert.strictEqual($InnerCellElement[0].scrollTop, 0, "The cell content is not scrolled vertically");
-
-					resolve();
-				}, 100);
-			});
-		}
-
-		function changeRTL(bRTL) {
-			return new Promise(function(resolve) {
-				sap.ui.getCore().getConfiguration().setRTL(bRTL);
-				sap.ui.getCore().applyChanges();
-				// Give the text direction change enough time, otherwise the UI might not be ready when the tests start.
-				// BCP: 1870395335
-				window.setTimeout(function() {
-					resolve();
-				}, 500);
-			});
-		}
-
 		var DummyControl = Control.extend("sap.ui.table.test.DummyControl", {
 			renderer: {
 				apiVersion: 2,
@@ -5598,31 +5555,66 @@ sap.ui.define([
 			}
 		});
 
-		var oColumn1 = oTreeTable.getColumns()[0];
-		var oColumn2 = oTreeTable.getColumns()[1];
+		var oTreeTable = TableQUnitUtils.createTable(TreeTable, {
+			columns: [
+				new Column({template: new DummyControl(), width: "20px"}),
+				new Column({template: new DummyControl(), width: "20px"})
+			],
+			rows: {path: "/"},
+			models: new JSONModel([{}]),
+			rowHeight: 10,
+			fixedColumnCount: 1,
+			visibleRowCountMode: VisibleRowCountMode.Auto
+		});
 
-		oTreeTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
-		oTreeTable.setRowHeight(10);
-		oColumn1.setTemplate(new DummyControl());
-		oColumn1.setWidth("20px");
-		oColumn2.setTemplate(new DummyControl());
-		oColumn2.setWidth("20px");
-		sap.ui.getCore().applyChanges();
+		function test(iColumnIndex) {
+			var oCellContentInColumn = oTreeTable.getRows()[0].getCells()[iColumnIndex].getDomRef();
 
-		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", resolve);
+			oCellContentInColumn.focus();
+
+			return new Promise(function(resolve) {
+				setTimeout(function() {
+					var $InnerCellElement = TableUtils.getCell(oTreeTable, oCellContentInColumn).find(".sapUiTableCellInner");
+
+					assert.strictEqual(document.activeElement, oCellContentInColumn,
+						"The content of the cell in row 0 column " + iColumnIndex + " is focused");
+					if (oTreeTable._bRtlMode) {
+						assert.strictEqual($InnerCellElement.scrollLeftRTL(), $InnerCellElement[0].scrollWidth - $InnerCellElement[0].clientWidth,
+							"The cell content is not scrolled horizontally");
+					} else {
+						assert.strictEqual($InnerCellElement[0].scrollLeft, 0, "The cell content is not scrolled horizontally");
+					}
+					assert.strictEqual($InnerCellElement[0].scrollTop, 0, "The cell content is not scrolled vertically");
+
+					resolve();
+				}, 100);
+			});
+		}
+
+		function changeRTL(bRTL) {
+			return new Promise(function(resolve) {
+				sap.ui.getCore().getConfiguration().setRTL(bRTL);
+				sap.ui.getCore().applyChanges();
+				// Give the text direction change enough time, otherwise the UI might not be ready when the tests start.
+				// BCP: 1870395335
+				setTimeout(resolve, 500);
+			});
+		}
+
+		return oTreeTable.qunit.whenInitialRenderingFinished().then(function() {
+			return test(0);
 		}).then(function() {
-			return test(0, 0);
-		}).then(function() {
-			return test(0, 1);
+			return test(1);
 		}).then(function() {
 			return changeRTL(true);
 		}).then(function() {
-			return test(0, 0);
+			return test(0);
 		}).then(function() {
-			return test(0, 1);
+			return test(1);
 		}).then(function() {
 			return changeRTL(false);
+		}).then(function() {
+			oTreeTable.destroy();
 		});
 	});
 
