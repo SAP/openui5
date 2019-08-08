@@ -84,7 +84,8 @@ sap.ui.define([
 				"sap.m.Link": {
 					hideControl : {
 						applyChange: this.fnApplyChangeSpy,
-						completeChangeContent: this.fnCompleteChangeContentSpy
+						completeChangeContent: this.fnCompleteChangeContentSpy,
+						revertChange: function() {}
 					}
 				}
 			})

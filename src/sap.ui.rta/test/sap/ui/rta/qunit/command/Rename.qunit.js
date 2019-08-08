@@ -61,7 +61,8 @@ sap.ui.define([
 				"sap.m.Button": {
 					rename : {
 						applyChange: this.fnApplyChangeSpy,
-						completeChangeContent: this.fnCompleteChangeContentSpy
+						completeChangeContent: this.fnCompleteChangeContentSpy,
+						revertChange: function() {}
 					}
 				}
 			})

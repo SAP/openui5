@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/core/Control",
 	"sap/ui/fl/Utils",
@@ -17,7 +16,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -38,7 +36,6 @@ function (
 	Change,
 	LrepConnector,
 	ChangeRegistry,
-	Settings,
 	ChangeHandlerRegistration,
 	Control,
 	Utils,
@@ -49,7 +46,6 @@ function (
 	XmlTreeModifier,
 	ContextManager,
 	FeaturesAPI,
-	RTAControlTreeModifier,
 	CustomData,
 	Manifest,
 	UIComponent,
@@ -117,7 +113,6 @@ function (
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oControl = new Control("existingId");
 			this.oChange = new Change(labelChangeContent);
-			this.iRevertibleStub = sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 			this.oLrepConnector = LrepConnector.createConnector();
 		},
 		afterEach: function () {
@@ -307,43 +302,6 @@ function (
 			return this.oFlexController._getChangeHandler(this.oChange, sControlType, this.oControl, JsControlTreeModifier)
 				.then(function(fChangeHandlerActual) {
 					assert.strictEqual(fChangeHandlerActual, fChangeHandler);
-				});
-		});
-
-		QUnit.test("when isChangeHandlerRevertible is called", function (assert) {
-			this.iRevertibleStub.restore();
-			var sControlType = "sap.ui.core.Control";
-			var oChangeHandler = {
-				revertChange: function() {}
-			};
-			var oChange = {
-				getChangeType: function() {},
-				getLayer: function() {}
-			};
-			var oGetControlTypeStub = sandbox.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
-			var oGetChangeHandlerStub = sandbox.stub(this.oFlexController, "_getChangeHandler").resolves(oChangeHandler);
-
-			return this.oFlexController.isChangeHandlerRevertible(oChange, {controlType: "foo"})
-				.then(function(bRevertible) {
-					assert.ok(bRevertible, "the function returns true");
-					assert.equal(oGetControlTypeStub.callCount, 0, "the getControlType function was not called");
-					assert.equal(oGetChangeHandlerStub.callCount, 1, "the getChangeHandler function was called");
-					return this.oFlexController.isChangeHandlerRevertible(oChange, {}, oChangeHandler);
-				}.bind(this))
-				.then(function(bRevertible) {
-					assert.ok(bRevertible, "the function returns true");
-					assert.equal(oGetControlTypeStub.callCount, 0, "the getControlType function was not called");
-					assert.equal(oGetChangeHandlerStub.callCount, 1, "the getChangeHandler function was not called");
-					oChangeHandler.revertChange = "testValue";
-					return this.oFlexController.isChangeHandlerRevertible(oChange, {});
-				}.bind(this))
-				.then(function(bRevertible) {
-					assert.notOk(bRevertible, "then false is returned when change handler's revertChange() is not a function");
-					delete oChangeHandler.revertChange;
-					return this.oFlexController.isChangeHandlerRevertible(oChange, {});
-				}.bind(this))
-				.then(function(bRevertible) {
-					assert.notOk(bRevertible, "then false is returned when change handler's revertChange() is undefined");
 				});
 		});
 
@@ -1649,7 +1607,6 @@ function (
 			);
 			this.oAppComponent = {id: "appComponent"};
 			sandbox.stub(Utils, "getAppComponentForControl").callThrough().withArgs(this.oControl).returns(this.oAppComponent);
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 		},
 		afterEach: function () {
 			this.oControl.destroy();
@@ -2427,7 +2384,8 @@ function (
 			this.oChangeHandlerRevertChangeStub = sandbox.stub();
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
 				applyChange: this.oChangeHandlerApplyChangeStub,
-				revertChange: this.oChangeHandlerRevertChangeStub
+				revertChange: this.oChangeHandlerRevertChangeStub,
+				completeChangeContent: function() {}
 			});
 			sandbox.stub(Log, "error");
 			this.oAddAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "addAppliedCustomData");
@@ -2543,7 +2501,6 @@ function (
 			var oRevertData = {foo: "bar"};
 			sandbox.restore();
 			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {
 				this.oChange.setRevertData(oRevertData);
 			}.bind(this));
@@ -2564,7 +2521,6 @@ function (
 			var oRevertData = {foo: "bar"};
 			sandbox.restore();
 			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().callsFake(function() {
 				this.oChange.setRevertData(oRevertData);
 				return Promise.resolve();
@@ -2619,7 +2575,6 @@ function (
 		QUnit.test("does not add appliedChanges custom data if an exception was raised during async applyChanges", function (assert) {
 			sandbox.restore();
 			sandbox.stub(Log, "error");
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.reject(new Error("myError")));
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
 				applyChange: this.oChangeHandlerApplyChangeStub
@@ -2685,35 +2640,6 @@ function (
 				assert.equal(oDeleteChangeInMapSpy.callCount, 0, "the change was not deleted in the change persistence");
 			}.bind(this));
 		});
-
-		QUnit.test("records undo if change is not revertible", function(assert) {
-			sandbox.restore();
-			this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.resolve());
-			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
-				applyChange: this.oChangeHandlerApplyChangeStub
-			});
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({_oSettings: {recordUndo: true}});
-			var oStartRecordSpy = sandbox.spy(RTAControlTreeModifier, "startRecordingUndo");
-			var oStopRecordSpy = sandbox.spy(RTAControlTreeModifier, "stopRecordingUndo");
-
-			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
-				modifier: JsControlTreeModifier,
-				appComponent: {
-					getMetadata: function() {
-						return {
-							getName: function() {
-
-							}
-						};
-					}
-				}
-			})
-
-			.then(function () {
-				assert.equal(oStartRecordSpy.callCount, 1, "the recording got started");
-				assert.equal(oStopRecordSpy.callCount, 1, "the recording got stopped");
-			});
-		});
 	});
 
 	QUnit.module("applyVariantChanges with two changes for a label", {
@@ -2742,7 +2668,6 @@ function (
 				getId : function() {return "RTADemoAppMD";},
 				getManifestObject : function() {return oManifest;}
 			};
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 		},
 		afterEach: function () {
 			this.oControl.destroy();
@@ -2808,7 +2733,6 @@ function (
 				getId : function() {return "RTADemoAppMD";},
 				getManifestObject : function() {return oManifest;}
 			};
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 		},
 		afterEach: function () {
 			this.oControl.destroy();
@@ -2824,7 +2748,6 @@ function (
 
 		QUnit.test("calls the change handler twice for two unapplied async changes", function (assert) {
 			sandbox.restore();
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().returns(Promise.resolve());
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
 				applyChange: this.oChangeHandlerApplyChangeStub
@@ -2916,7 +2839,6 @@ function (
 				getId : function() {return "RTADemoAppMD";},
 				getManifestObject : function() {return oManifest;}
 			};
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 		},
 		afterEach: function () {
 			this.oControl.destroy();
@@ -3106,28 +3028,6 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("throws an error if change is not revertible and undo should be recorded", function(assert) {
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-					'<Label id="' + this.sLabelId + '" />' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({_oSettings: {recordUndo: true}});
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(false);
-			var oStartRecordSpy = sandbox.spy(RTAControlTreeModifier, "startRecordingUndo");
-			var oStopRecordSpy = sandbox.spy(RTAControlTreeModifier, "stopRecordingUndo");
-			var oSetInitialStub = sandbox.stub(this.oChange, "setInitialApplyState");
-
-			return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-			.then(function () {
-				assert.equal(oSetInitialStub.callCount, 1, "the setInitialApplyState function was called");
-				assert.equal(oStartRecordSpy.callCount, 0, "the recording got started");
-				assert.equal(oStopRecordSpy.callCount, 0, "the recording got stopped");
-			});
-		});
-
 		QUnit.test("adds custom data on the first change applied on a control", function (assert) {
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -3243,7 +3143,6 @@ function (
 			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
 				applyChange: this.oChangeHandlerApplyChangeStub
 			});
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -3451,7 +3350,6 @@ function (
 				getId : function() {return "RTADemoAppMD";},
 				getManifestObject : function() {return oManifest;}
 			};
-			sandbox.stub(this.oFlexController, "isChangeHandlerRevertible").resolves(true);
 		},
 		afterEach: function () {
 			this.oControl.destroy();

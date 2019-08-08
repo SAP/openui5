@@ -87,8 +87,8 @@ sap.ui.define([
 				"sap.m.Button": {
 					moveStuff : {
 						applyChange: this.fnApplyChangeSpy,
-						// This gets called twice: once for straightforward, once for undo preparation
-						completeChangeContent: this.fnCompleteChangeContentSpy
+						completeChangeContent: this.fnCompleteChangeContentSpy,
+						revertChange: function() {}
 					}
 				}
 			})

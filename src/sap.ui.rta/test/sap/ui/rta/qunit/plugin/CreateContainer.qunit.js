@@ -77,7 +77,11 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.Form" : {
-					addGroup: { completeChangeContent: function () {} }
+					addGroup: {
+						completeChangeContent: function() {},
+						applyChange: function() {},
+						revertChange: function() {}
+					}
 				}
 			})
 			.then(function() {
@@ -475,7 +479,11 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.SimpleForm": {
-					addSimpleFormGroup: { completeChangeContent: function () {} }
+					addSimpleFormGroup: {
+						completeChangeContent: function() {},
+						applyChange: function() {},
+						revertChange: function() {}
+					}
 				}
 			})
 			.then(function() {

@@ -173,36 +173,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when _isChangeHandlerRevertible is called", function(assert) {
-			var mPropertyBag = {
-				change: {type: "change"},
-				selector: this.vSelector
-			};
-
-			var sControlType = "controlType";
-			var oAppComponent = {id: "appComponent"};
-			var oTemplateControl = {id: "templateControl"};
-
-			sandbox.stub(JsControlTreeModifier, "getControlType")
-				.withArgs(mPropertyBag.selector)
-				.returns(sControlType);
-
-			sandbox.stub(ChangesController, "getAppComponentForSelector")
-				.withArgs(mPropertyBag.selector)
-				.returns(oAppComponent);
-
-			var fnGetControlIfTemplateAffectedStub = getMethodStub([mPropertyBag.change, mPropertyBag.selector, sControlType, {
-				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent
-			}], {control: oTemplateControl});
-
-			var fnIsChangeHandlerRevertibleStub = getMethodStub([mPropertyBag.change, oTemplateControl], sReturnValue);
-
-			mockFlexController(mPropertyBag.selector, { isChangeHandlerRevertible : fnIsChangeHandlerRevertibleStub, _getControlIfTemplateAffected: fnGetControlIfTemplateAffectedStub });
-
-			assert.strictEqual(ChangesWriteAPI._isChangeHandlerRevertible(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
-		});
-
 		QUnit.test("when apply is called with no dependencies on control", function(assert) {
 			var mPropertyBag = {
 				change: {

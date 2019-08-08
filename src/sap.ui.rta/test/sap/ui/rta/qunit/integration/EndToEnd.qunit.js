@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/fl/qunit/write/test/TestChangesUtil",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
@@ -24,7 +23,6 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	TestChangesUtil,
-	JsControlTreeModifier,
 	sinon
 ) {
 	"use strict";
@@ -440,7 +438,7 @@ sap.ui.define([
 								}.bind(this));
 							}.bind(this));
 					}.bind(this));
-				}.bind(this), 0);
+				}.bind(this));
 			}.bind(this));
 
 			// to reveal we have to remove the field first (otherwise it would be addODataProperty)

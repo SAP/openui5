@@ -45,7 +45,11 @@ function (
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.FormContainer" : {
-					renameGroup: { completeChangeContent: function () {} }
+					renameGroup: {
+						completeChangeContent: function () {},
+						applyChange: function() {},
+						revertChange: function() {}
+					}
 				}
 			})
 			.then(function() {

@@ -497,14 +497,6 @@ sap.ui.define([
 		if (oControlRegistrations) {
 			var oChangeHandler = oControlRegistrations[sChangeType];
 			if (oChangeHandler) {
-				var oChangeHandlerMetadata = oChangeHandler.getChangeTypeMetadata();
-				var oChangeHandlerImplementation = oChangeHandlerMetadata.getChangeHandler();
-				if (typeof oChangeHandlerImplementation === "string") {
-					// load the module synchronously
-					oChangeHandlerImplementation = sap.ui.requireSync(oChangeHandlerImplementation.replace(/\./g, "/"));
-					oChangeHandlerMetadata._changeHandler = oChangeHandlerImplementation;
-				}
-
 				return oChangeHandler;
 			}
 		}

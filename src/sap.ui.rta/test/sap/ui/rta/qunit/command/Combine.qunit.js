@@ -88,7 +88,8 @@ function (
 				"sap.m.Panel": {
 					combineStuff : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
-						applyChange: this.fnApplyChangeSpy
+						applyChange: this.fnApplyChangeSpy,
+						revertChange: function() {}
 					}
 				}
 			});
@@ -225,7 +226,8 @@ function (
 				"sap.m.Text": {
 					combineStuff : {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
-						applyChange: this.fnApplyChangeSpy
+						applyChange: this.fnApplyChangeSpy,
+						revertChange: function() {}
 					}
 				}
 			});

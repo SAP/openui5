@@ -1,39 +1,46 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/registry/ChangeTypeMetadata",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	jQuery,
+	Log,
+	MoveControlsChangeHandler,
 	ChangeTypeMetadata,
+	jQuery,
 	sinon
 ) {
 	"use strict";
+	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", {
-	}, function() {
+	var oValidChangeHandler = {
+		applyChange: function() {},
+		revertChange: function() {},
+		completeChangeContent: function() {}
+	};
+
+	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", function() {
 		QUnit.test("constructor - required params and their getter", function(assert) {
 			//Arrange
 			var mParam = {
 				name: "ABC",
-				changeHandler: "myChangeHandler"
+				changeHandler: oValidChangeHandler
 			};
 
 			//Act
-			var instance = new ChangeTypeMetadata(mParam);
+			var oChangeTypeMetadata = new ChangeTypeMetadata(mParam);
 
 			//Assert
-			assert.equal(instance.getName(), "ABC");
-			assert.equal(instance.getChangeHandler(), "myChangeHandler");
+			assert.equal(oChangeTypeMetadata.getName(), "ABC");
+			assert.equal(oChangeTypeMetadata.getChangeHandler(), oValidChangeHandler);
 		});
 
 		QUnit.test("constructor - shall log error messages for missing mandatory parameters", function(assert) {
-			var Log = sap.ui.require("sap/base/Log");
-			assert.ok(Log, "Log module should be available");
-
 			//Arrange
-			var errorLogStub = sinon.stub(Log, "error");
+			var oErrorLogStub = sandbox.stub(Log, "error");
 
 			//Act
 			/*eslint-disable no-new*/
@@ -41,15 +48,15 @@ sap.ui.define([
 			/*eslint-enable no-new*/
 
 			//Assert
-			sinon.assert.calledTwice(errorLogStub);
-			errorLogStub.restore();
+			assert.equal(oErrorLogStub.callCount, 2, "two errors were logged");
+			sandbox.restore();
 		});
 
 		QUnit.test("constructor - all params and their getter", function(assert) {
 			//Arrange
 			var mParam = {
 				name: "ABC",
-				changeHandler: "myChangeHandler",
+				changeHandler: oValidChangeHandler,
 				labelKey: "myLabelKey",
 				tooltipKey: "myTooltipKey",
 				iconKey: "myIconKey",
@@ -57,15 +64,45 @@ sap.ui.define([
 			};
 
 			//Act
-			var instance = new ChangeTypeMetadata(mParam);
+			var oChangeTypeMetadata = new ChangeTypeMetadata(mParam);
 
 			//Assert
-			assert.equal(instance.getName(), "ABC");
-			assert.equal(instance.getChangeHandler(), "myChangeHandler");
-			assert.equal(instance.getLabel(), "myLabelKey");
-			assert.equal(instance.getTooltip(), "myTooltipKey");
-			assert.equal(instance.getIcon(), "myIconKey");
-			assert.equal(instance.getSortIndex(), 5);
+			assert.equal(oChangeTypeMetadata.getName(), "ABC");
+			assert.equal(oChangeTypeMetadata.getLabel(), "myLabelKey");
+			assert.equal(oChangeTypeMetadata.getTooltip(), "myTooltipKey");
+			assert.equal(oChangeTypeMetadata.getIcon(), "myIconKey");
+			assert.equal(oChangeTypeMetadata.getSortIndex(), 5);
+		});
+
+		QUnit.test("getChangeHandler", function(assert) {
+			var oMissingApply = {
+				revertChange: function() {},
+				completeChangeContent: function() {}
+			};
+			var oMissingRevert = {
+				applyChange: function() {},
+				completeChangeContent: function() {}
+			};
+			var oMissingCompleteContent = {
+				applyChange: function() {},
+				revertChange: function() {}
+			};
+
+			var oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingApply});
+			assert.equal(undefined, oChangeTypeMetadata.getChangeHandler(), "without applyChange function the change handler is not returned");
+
+			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingRevert});
+			assert.equal(undefined, oChangeTypeMetadata.getChangeHandler(), "without revertChange function the change handler is not returned");
+
+			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingCompleteContent});
+			assert.equal(undefined, oChangeTypeMetadata.getChangeHandler(), "without completeChangeContent function the change handler is not returned");
+
+			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oValidChangeHandler});
+			assert.equal(oChangeTypeMetadata.getChangeHandler(), oValidChangeHandler, "with all functions the correct change handler is returned");
+
+			var sExplicitRegisteredChangeHandlerPath = 'sap.ui.fl.changeHandler.MoveControls';
+			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: sExplicitRegisteredChangeHandlerPath});
+			assert.equal(oChangeTypeMetadata.getChangeHandler(), MoveControlsChangeHandler, "then correct loaded changehandler is returned");
 		});
 	});
 
