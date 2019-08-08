@@ -21,9 +21,9 @@
 						singleContainerFullSize="false">
 					<f:content>
 						<Label text="Title" labelFor="appTitle"/>
-						<Input id="appTitle"/>
+						<Input id="appTitle" maxLength="255"/>
 						<Label text="Additional information" labelFor="inputInfo"/>
-						<Input id="moreInfo"/>
+						<Input id="moreInfo" maxLength="255"/>
 						<Label text="From" labelFor="startDate"/>
 						<DateTimePicker
 								id="DTPStartDate"
@@ -54,8 +54,8 @@
 						<Label text="Type" labelFor="appType"/>
 						<Select
 								id="appType"
-								items="{/types}">
-							<core:Item key="{type}" text="{type}" />
+								items="{/supportedAppointmentItems}">
+							<core:Item key="{type}" text="{text}" />
 						</Select>
 					</f:content>
 				</f:SimpleForm>

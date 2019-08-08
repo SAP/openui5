@@ -40,9 +40,9 @@
 							id="allDay"
 							text="All-day"
 							selected="{allDay>/allDay}"
-							editable="false"/>
+							enabled="false"/>
 					<Label text="Type" labelFor="appType"/>
-					<Text id="appType" text="{type}"/>
+					<Text id="appType" text="{ path: 'type', formatter: '._typeFormatter'}"/>
 				</f:content>
 			</f:SimpleForm>
 		</content>
