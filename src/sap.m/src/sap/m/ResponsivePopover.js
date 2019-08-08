@@ -603,6 +603,22 @@ sap.ui.define([
 		return this._oFooter;
 	};
 
+	/**
+	 * @private
+	 */
+	ResponsivePopover.prototype._getButtonFooter = function() {
+		return Device.system.phone ? this._oControl._getToolbar() : this._oControl.getFooter();
+	};
+
+	/**
+	 *
+	 * @returns {sap.ui.core.Popup}
+	 * @private
+	 */
+	ResponsivePopover.prototype._getPopup = function() {
+		return  this._oControl.oPopup;
+	};
+
 	ResponsivePopover.prototype._setButton = function(sPos, oButton){
 		if (this._oControl instanceof Popover) {
 			var sGetterName = "get" + this._firstLetterUpperCase(sPos) + "Button",
