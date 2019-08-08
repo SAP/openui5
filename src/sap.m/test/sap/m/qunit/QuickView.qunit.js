@@ -932,4 +932,51 @@ sap.ui.define([
 		// Assert
 		assert.ok(fnInvalidate.calledOnce, "Property change should trigger invalidation for QuickViewPage.");
 	});
+
+	QUnit.module("Navigate to next page", {
+		beforeEach: function () {
+			this.oQuickView = getQuickView();
+			this.oQuickView.setModel(oModel);
+			var that = this;
+			this.oButton = new Button({
+				text: "Open Quick View",
+				press: function () {
+					that.oQuickView.openBy(this);
+				}
+			});
+
+			oPage.addContent(this.oButton);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oButton.destroy();
+			this.oButton = null;
+
+			this.oQuickView.destroy();
+			this.oQuickView = null;
+		}
+	});
+
+	QUnit.test("Test navigation with sap.m.QuickViewGroupElementType.pageLink", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		// Act
+		this.oButton.firePress();
+		this.clock.tick(500);
+
+		this.clock.restore(); // restore the timer so we can use the real setTimeout temporary
+
+		var oLink = this.oQuickView.getPages()[0].getPageContent().form.getContent().find(function(item){
+			return item.isA("sap.m.Link");
+		});
+
+		oLink.firePress();
+
+		// Assert
+		setTimeout(function(){
+			assert.ok(this.oQuickView._oPopover.isOpen(), "After a link is clicked, the popup should stay opened with the content of the linked page.");
+			done();
+		}.bind(this), 1000);
+	});
 });
