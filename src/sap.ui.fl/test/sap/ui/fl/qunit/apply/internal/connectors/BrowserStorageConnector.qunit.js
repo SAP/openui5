@@ -116,20 +116,17 @@ sap.ui.define([
 		}, function () {
 			QUnit.test("when loadFlexData is called without filter parameters", function(assert) {
 				return oApplyStorage.loadFlexData({}).then(function(vValue) {
-					var mExpectedGroupedChanges = {
-						uiChanges: [oTestData.change1, oTestData.change2, oTestData.change3],
-						variants: [oTestData.variant1, oTestData.variant2],
-						controlVariantChanges: [oTestData.variantChange1],
-						controlVariantManagementChanges: [oTestData.variantManagementChange]
-					};
-					var oExpectedVariantsArray = [oTestData.variant1, oTestData.variant2];
-
 					assert.equal(vValue, "returnValue", "the return value of the Utils methods is returned");
 					assert.equal(this.oCreateMapStub.callCount, 1, "createChangesMapWithVariants was called");
-					assert.deepEqual(this.oCreateMapStub.lastCall.args[0], oExpectedVariantsArray);
+					assert.deepEqual(this.oCreateMapStub.lastCall.args[0].length, 2, "2 variants were passed");
 					assert.equal(this.oAddChangesStub.callCount, 1, "addChangesToMap was called");
 					assert.deepEqual(this.oAddChangesStub.lastCall.args[0], "returnValue", "the just created changes map was passed");
-					assert.deepEqual(this.oAddChangesStub.lastCall.args[1], mExpectedGroupedChanges, "the changes are correctly grouped");
+
+					var oGroupedChanges = this.oAddChangesStub.lastCall.args[1];
+					assert.equal(oGroupedChanges.uiChanges.length, 3, "there are 3 ui changes");
+					assert.equal(oGroupedChanges.controlVariantChanges.length, 1, "there is 1 control variant change");
+					assert.equal(oGroupedChanges.controlVariantManagementChanges.length, 1, "there is 1 control variant management change");
+
 					assert.equal(this.oSortChangesStub.callCount, 1, "sortChanges was called");
 					assert.equal(this.oAssignReferencedChangesStub.callCount, 1, "assignVariantReferenceChanges was called");
 				}.bind(this));
