@@ -2,8 +2,8 @@
 * ${copyright}
 */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/ui/core/Locale", "sap/ui/core/LocaleData"],
-function (jQuery, ManagedObject, Log, Locale, LocaleData) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/util/deepEqual", "sap/ui/core/Locale", "sap/ui/core/LocaleData"],
+function (jQuery, ManagedObject, Log, deepEqual, Locale, LocaleData) {
 	"use strict";
 
 	/**
@@ -120,6 +120,7 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 	var oHyphenateMethods = {};
 	var oPromisesForLang = {};
 	var aLanguagesQueue = [];
+	var mLanguageConfigs = {};
 
 	/**
 	 * Calls Hyphenopoly to initialize a language.
@@ -733,6 +734,13 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 		 */
 		var oConfig = prepareConfig(sLanguage, oConfig);
 
+		var bConfigChanged = true;
+		if (mLanguageConfigs[sLanguage] && deepEqual(mLanguageConfigs[sLanguage], oConfig)) {
+			bConfigChanged = false;
+		}
+
+		mLanguageConfigs[sLanguage] = oConfig;
+
 		if (oThirdPartySupportedLanguages[sLanguage]) {
 			if (!oHyphenationInstance.bIsInitialized && !oHyphenationInstance.bLoading) {
 
@@ -749,9 +757,12 @@ function (jQuery, ManagedObject, Log, Locale, LocaleData) {
 				return oPromisesForLang[sLanguage];
 
 			} else if (this.isLanguageInitialized(sLanguage)) {
-				oPromisesForLang[sLanguage] = new Promise(function (resolve, reject) {
-					reInitializeLanguage(sLanguage, oConfig, resolve);
-				});
+				// Reinitialize only if the config has changed.
+				if (bConfigChanged) {
+					oPromisesForLang[sLanguage] = new Promise(function (resolve) {
+						reInitializeLanguage(sLanguage, oConfig, resolve);
+					});
+				}
 			} else {
 					oPromisesForLang[sLanguage] = new Promise(function (resolve, reject) {
 						if (!oHyphenationInstance.bIsInitialized) {
