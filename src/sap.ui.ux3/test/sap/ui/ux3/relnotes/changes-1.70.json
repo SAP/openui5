@@ -1,0 +1,18 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "0985018cd5e545a1ea6b19e423b0ebf5e43d670f",
+        "type": "FIX",
+        "text": " sap.ui.ux3.QuickView: QUnit tests are now OK",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970396778"
+          }
+        ]
+      }
+    ]
+  }
+}

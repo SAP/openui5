@@ -1,0 +1,177 @@
+{
+  "1.70.0": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "3a5a84025eed8885cc1b1b89d986ffafd2de1775",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Now ignores keys on Space key hold",
+        "references": []
+      },
+      {
+        "id": "581c985378cfe3ca4c5ac6b6d63b0276e20979fe",
+        "type": "FIX",
+        "text": " ListItemBase: range selection fix",
+        "references": []
+      },
+      {
+        "id": "beb0ee0f3227fa02d8b406bbc62bf8bfb57b8ef6",
+        "type": "FIX",
+        "text": " P13nColumnsPanel: Do not set the focus manually",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970276818"
+          }
+        ]
+      },
+      {
+        "id": "d297fc6c3a7f46752dc9f4dc958720142b8ec603",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: handles correctly dd/MM/YYYYY",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970397249"
+          }
+        ]
+      },
+      {
+        "id": "bb44d66d96c60498973c98a3012a8ffd86ccd6ae",
+        "type": "FIX",
+        "text": " sap.m.Input: vertical alignment issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970315739"
+          }
+        ]
+      },
+      {
+        "id": "a831ecee25f39494258abf3de0eb95dba0a150ba",
+        "type": "FIX",
+        "text": " sap.m.Link: cancels action on pressed SPACE + SHIFT or ESCAPE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970299264"
+          }
+        ]
+      },
+      {
+        "id": "dd548492b2e00c06f05937d9467a21d53a6a5748",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Icons are now set in show method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970280057"
+          }
+        ]
+      },
+      {
+        "id": "25eecc971d31f05cf9dfe9126f90a27171502ae9",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Navigation between pages is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970369034"
+          }
+        ]
+      },
+      {
+        "id": "e6df7f60efd76a116b418a41dbd3318437926595",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: QUnit fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970332999"
+          }
+        ]
+      },
+      {
+        "id": "2346d5a7a9b960b47377803a5026b2b214c10e92",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Update properly selectedKeys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970361637"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970322003"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970355743"
+          }
+        ]
+      },
+      {
+        "id": "6b5f7e6870f20519cefbe21c38d9bd6f8967c123",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Picker now remains open after token\u0027s deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970290823"
+          }
+        ]
+      },
+      {
+        "id": "c2e38f5b768bf65a048dec78c4d8219b5d4f01d7",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Corrected qunit test for IE11",
+        "references": []
+      },
+      {
+        "id": "414850baccdd48f7fe917763de4d6e950c7af109",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: renders correctly space between title and text",
+        "references": []
+      },
+      {
+        "id": "17e36a095ce1b825c6bacf52c586e99a78343d82",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Changing visibility of content is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970072029"
+          }
+        ]
+      },
+      {
+        "id": "6e3f71f7fe675c0f9d932d73c8a3fd368391838e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: headers have now correct paddings",
+        "references": []
+      },
+      {
+        "id": "2d8a09b8817e9c2c6edeb4200f53fbb008771e3a",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Paddings are corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970397572"
+          }
+        ]
+      },
+      {
+        "id": "ff6e42321d6e64b7bd4cf7faebdb278e87ea58a1",
+        "type": "FIX",
+        "text": " sap.m.TimePickerSlider: does not react to mouse wheel when drag and drop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970291602"
+          }
+        ]
+      }
+    ]
+  }
+}
