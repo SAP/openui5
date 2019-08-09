@@ -937,7 +937,7 @@ sap.ui.define([
 			this._oSelectionPlugin.attachSelectionChange(this._onSelectionChanged, this);
 			this._oSelectionPlugin._setBinding(this.getBinding("rows"));
 		} else if (!(this._oSelectionPlugin instanceof this._SelectionAdapterClass)) {
-			this._oSelectionPlugin = new this._SelectionAdapterClass();
+			this._oSelectionPlugin = new this._SelectionAdapterClass(this);
 			this._oSelectionPlugin.attachSelectionChange(this._onSelectionChanged, this);
 			this._oSelectionPlugin._setBinding(this.getBinding("rows"));
 		}
@@ -2967,23 +2967,23 @@ sap.ui.define([
 			oRow._updateSelection(this, mTooltipTexts);
 		}
 
-		if (TableUtils.hasSelectAll(this)) {
+		var mRenderConfig = this._oSelectionPlugin.getRenderConfig();
+		if (mRenderConfig.headerSelector.visible) {
 			var $SelectAll = this.$("selall");
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
 
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
-			var mRenderConfig = this._oSelectionPlugin.getRenderConfig();
 			var sSelectAllResourceTextID;
 			if (mRenderConfig.headerSelector.type === "toggle") {
 				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
 			} else if (mRenderConfig.headerSelector.type === "clear") {
 				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 			}
-			var sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
 
-			if (this._getShowStandardTooltips() && mRenderConfig.headerSelector.visible) {
+			var sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
+			if (this._getShowStandardTooltips()) {
 				$SelectAll.attr('title', sSelectAllText);
 			} else if (mRenderConfig.headerSelector.type === "toggle") {
 				this.getDomRef("ariaselectall").innerText = sSelectAllText;
