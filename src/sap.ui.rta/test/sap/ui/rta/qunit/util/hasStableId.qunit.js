@@ -24,7 +24,7 @@ function (
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Control without ID", {
+	QUnit.module("Control with unstable ID", {
 		beforeEach: function (assert) {
 			var fnDone = assert.async();
 
@@ -94,9 +94,43 @@ function (
 			assert.strictEqual(hasStableId(this.oLayoutOverlay, /* Suppress = */ false, "error"), false);
 			assert.strictEqual(oStub.callCount, 1);
 		});
+
+		QUnit.test("when hasStableId is called multiple times, the following values must be taken from cache", function (assert) {
+			var oStub = sandbox.stub(Log, "warning")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes("Control ID was generated dynamically by SAPUI5");
+					})
+				)
+				.returns();
+
+			hasStableId(this.oLayoutOverlay);
+			hasStableId(this.oLayoutOverlay);
+			hasStableId(this.oLayoutOverlay);
+
+			assert.strictEqual(oStub.callCount, 1);
+		});
+
+		QUnit.test("when hasStableId is called multiple times with cache flush parameter", function (assert) {
+			var oStub = sandbox.stub(Log, "warning")
+				.callThrough()
+				.withArgs(
+					sinon.match(function (sMessage) {
+						return sMessage.includes("Control ID was generated dynamically by SAPUI5");
+					})
+				)
+				.returns();
+
+			hasStableId(this.oLayoutOverlay, /* Suppress = */false, /* Error type = */"warning", true);
+			hasStableId(this.oLayoutOverlay, /* Suppress = */false, /* Error type = */"warning", true);
+			hasStableId(this.oLayoutOverlay, /* Suppress = */false, /* Error type = */"warning", true);
+
+			assert.strictEqual(oStub.callCount, 3);
+		});
 	});
 
-	QUnit.module("Control with ID", {
+	QUnit.module("Control with stable ID", {
 		beforeEach: function (assert) {
 			var fnDone = assert.async();
 
