@@ -2,10 +2,24 @@
 
 sap.ui.define([
 	"sap/f/GridList",
+	"sap/ui/layout/cssgrid/GridBoxLayout",
+	"sap/m/CustomListItem",
+	"sap/m/VBox",
+	"sap/m/Text",
+	"sap/m/GroupHeaderListItem",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter",
 	"sap/ui/core/Core"
 ],
 function (
 	GridList,
+	GridBoxLayout,
+	CustomListItem,
+	VBox,
+	Text,
+	GroupHeaderListItem,
+	JSONModel,
+	Sorter,
 	Core
 ) {
 	"use strict";
@@ -34,6 +48,7 @@ function (
 
 		// Cleanup
 		GridList.prototype._addGridLayoutDelegate.restore();
+		oGrid.destroy();
 	});
 
 	QUnit.test("IGridConfigurable Interface implementation", function (assert) {
@@ -66,6 +81,7 @@ function (
 
 		// Cleanup
 		GridList.prototype.getDomRef.restore();
+		oGrid.destroy();
 	});
 
 	QUnit.test("IGridConfigurable Interface implementation - getGridLayoutConfiguration default", function (assert) {
@@ -82,6 +98,8 @@ function (
 		// Assert
 		assert.notOk(oLayout, "Should not have a default GridLayoutBase aggregation set");
 		assert.ok(oGrid.getItemsContainerDomRef().classList.contains("sapFGridListDefault"), "Should have grid layout set with class 'sapFGridListDefault'");
+
+		oGrid.destroy();
 	});
 
 	QUnit.module("Destroy");
@@ -225,6 +243,99 @@ function (
 
 		// Assert
 		assert.ok(oClone, "Should have successfully cloned the Grid");
+
+		oClone.destroy();
 	});
 
+	QUnit.module("Grouping and Growing", {
+		beforeEach: function () {
+			this.oGrid = new GridList({
+				growing: true,
+				growingThreshold: 4,
+				customLayout: new GridBoxLayout({
+					boxWidth: "200px"
+				}),
+				items: {
+					path: "/Objects",
+					sorter: new Sorter("Category", false, true),
+					groupHeaderFactory: function (oGroup) {
+						return new GroupHeaderListItem({
+							title: oGroup.key
+						});
+					},
+					template: new CustomListItem({
+						content: new VBox({
+							items: new Text({
+								text: "{Name}"
+							})
+						})
+					})
+				}
+			});
+
+			var oData = {
+				Objects: [
+					{ Name: "1", Category: "A" },
+					{ Name: "2 ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash", Category: "B" },
+					{ Name: "3", Category: "A" },
+					{ Name: "4", Category: "B" },
+					{ Name: "5 ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash", Category: "B" },
+					{ Name: "6", Category: "B" },
+					{ Name: "7", Category: "A" },
+					{ Name: "8", Category: "A" },
+					{ Name: "9", Category: "A" },
+					{ Name: "10", Category: "A" },
+					{ Name: "11", Category: "B" },
+					{ Name: "12 ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfashashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfashashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfashashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash ashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfashashfash ashfash ashfash ashfash ashfashasg asga sga sg ashfash ashfash", Category: "B" },
+					{ Name: "13", Category: "B" },
+					{ Name: "14", Category: "B" },
+					{ Name: "25", Category: "B" }
+				]
+			};
+			var oModel = new JSONModel();
+			oModel.setData(oData);
+
+			this.oGrid.setModel(oModel);
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("Equalize items height manually when grouping is on", function (assert) {
+
+		// Arrange
+		var oListTrigger = this.oGrid._oGrowingDelegate._getTrigger();
+
+		// Assert
+		checkHeights(this.oGrid, assert);
+
+		// Act
+		oListTrigger.ontap(new jQuery.Event());
+		this.clock.tick(500);
+
+		// Assert
+		checkHeights(this.oGrid, assert);
+
+		// Act
+		oListTrigger.ontap(new jQuery.Event());
+		this.clock.tick(500);
+
+		// Assert
+		checkHeights(this.oGrid, assert);
+	});
+
+	function checkHeights (oGrid, assert) {
+		var bEqualHeights = true;
+		var iHeight = oGrid.getItems()[1].$().outerHeight(); // Take the first non-group header item.
+		oGrid.getItems().forEach(function (oItem) {
+			if (!oItem.isGroupHeader() && oItem.$().outerHeight() !== iHeight) {
+				bEqualHeights = false;
+			}
+		});
+		assert.ok(bEqualHeights, "All items should have equal heights");
+	}
 });

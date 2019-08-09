@@ -138,6 +138,9 @@ sap.ui.define(function () {
 			"GridList": {
 				coverage: {
 					only: ["sap/f/GridList"]
+				},
+				sinon: {
+					useFakeTimers: true
 				}
 			},
 			"GridListItem": {
