@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/layout/SplitterLayoutData',
 	'sap/m/Button',
 	'sap/m/Text',
-	'sap/m/ScrollContainer'
+	'sap/m/ScrollContainer',
+	'sap/ui/core/HTML'
 ], function(
 	qutils,
 	jQuery,
@@ -19,7 +20,8 @@ sap.ui.define([
 	SplitterLayoutData,
 	Button,
 	Text,
-	ScrollContainer) {
+	ScrollContainer,
+	HTML) {
 	'use strict';
 
 	window._setTimeout = window.setTimeout;
@@ -650,5 +652,30 @@ sap.ui.define([
 		// Cleanup
 		oResponsiveSplitter.destroy();
 		oResponsiveSplitter = null;
+	});
+
+	QUnit.test("Should not throw error if svg is clicked inside splitter", function (assert) {
+		// Arrange
+		// when svg is clicked inside a splitter on IE, the event target (the svg) has no classList and we have an error
+		var oSplitter = new ResponsiveSplitter({
+			rootPaneContainer: new PaneContainer({
+				panes: [
+					new SplitPane({
+						content: new HTML({content: '<svg id="testSvg"></svg>'})
+					})
+				]
+			})
+		});
+		oSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSplitter.$().find("#testSvg").tap();
+
+		// Assert
+		assert.ok(true, "Error is not thrown when clicked on svg.");
+
+		// Clean up
+		oSplitter.destroy();
 	});
 });
