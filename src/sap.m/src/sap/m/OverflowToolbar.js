@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/core/IconPool",
+	'sap/ui/core/theming/Parameters',
+	'sap/ui/dom/units/Rem',
 	"sap/ui/Device",
 	"./OverflowToolbarRenderer",
 	"sap/base/Log",
@@ -29,6 +31,8 @@ sap.ui.define([
 	OverflowToolbarAssociativePopoverControls,
 	ResizeHandler,
 	IconPool,
+	Parameters,
+	DomUnitsRem,
 	Device,
 	OverflowToolbarRenderer,
 	Log
@@ -1281,9 +1285,11 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._getOverflowButtonSize = function () {
 		var iBaseFontSize = parseInt(library.BaseFontSize),
-			fCoefficient = this.$().parents().hasClass('sapUiSizeCompact') ? 2.5 : 3;
+			fCoefficient = this.$().parents().hasClass('sapUiSizeCompact') ? 2.5 : 3,
+			iMargin = DomUnitsRem.toPx(Parameters.get("_sap_m_Toolbar_MarginRight")),
+			iDeduction = iMargin === 0 ? 0.25 * iBaseFontSize : 0;
 
-		return parseInt(iBaseFontSize * fCoefficient);
+		return parseInt(iBaseFontSize * fCoefficient) - iDeduction;
 	};
 
 
