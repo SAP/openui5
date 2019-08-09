@@ -38,7 +38,10 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var sDataUrl = ApplyUtils.getUrlWithQueryParameters(ROUTES.FLEX_DATA, mPropertyBag);
+			var mParameters = {};
+			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
+
+			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_DATA, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl);
 		}
 	});

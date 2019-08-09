@@ -142,28 +142,30 @@ sap.ui.define([
 		 * Creating a full request url. Generic Method for all Connectors.
 		 * This includes the url prefix and optional cache buster token, flex reference and query parameters.
 		 *
-		 * @param {string} sRoute Url-prefix e.g. "/flex/data/"
+		 * @param {string} sRoute Url-suffix e.g. "/flex/data/"
 		 * @param {object} mPropertyBag Object with parameters as properties
-		 * @param {string} mPropertyBag.reference Flexibility reference
 		 * @param {string} mPropertyBag.url Configured url for the connector
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
+		 * @param {string} [mPropertyBag.reference] Flexibility reference
 		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
 		 * @param {object} [mParameters] Query-parameters which should be added to the url
 		 * @returns {string} Complete request url
 		 * @private
 		 */
-		getUrlWithQueryParameters: function(sRoute, mPropertyBag, mParameters) {
+		getUrl: function(sRoute, mPropertyBag, mParameters) {
+			if (!sRoute || !mPropertyBag.url) {
+				return;
+			}
 			var sUrl = mPropertyBag.url + sRoute;
 
+			/* If any of the following properties are available in mPropertyBag,
+			we append them to the Url */
 			mPropertyBag.cacheKey && (sUrl += "~" + mPropertyBag.cacheKey + "~/");
 			mPropertyBag.reference && (sUrl += mPropertyBag.reference);
 
-			mParameters = mParameters || {};
-			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
-
-			var sQueryParameters = encodeURLParameters(mParameters);
-			sQueryParameters.length > 0 && (sUrl += "?" + sQueryParameters);
-
+			if (mParameters) {
+				var sQueryParameters = encodeURLParameters(mParameters);
+				sQueryParameters.length > 0 && (sUrl += "?" + sQueryParameters);
+			}
 			return sUrl;
 		},
 
