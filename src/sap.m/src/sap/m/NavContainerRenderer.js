@@ -12,7 +12,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var NavContainerRenderer = {
-		// apiVersion: 2
+		apiVersion: 2
 	};
 
 
