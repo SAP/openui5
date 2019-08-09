@@ -11,6 +11,9 @@
 			data-sap-ui-compatVersion="1.16">
 		</script>
 		<script>
+
+		var sButtonWidth =  sap.ui.Device.system.phone ? "100%" : "";
+
 		jQuery.sap.require("sap.ui.core.util.MockServer");
 		jQuery.sap.require("sap.ui.model.odata.ODataModel");
 
@@ -466,6 +469,7 @@
 		});
 
 		var oButton3 = new sap.m.Button("Button3", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog with destroy call in close event & late binding",
 			press: function (evt) {
 				oTableSelectDialog3.open();
@@ -513,6 +517,7 @@
 		});
 
 		var oButton4 = new sap.m.Button("tsdWithMultiSelectButton", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog in MultiSelect mode",
 			press: function () {
 				// open dialog
@@ -609,6 +614,7 @@
 		});
 
 		var oButton5 = new sap.m.Button("tsdWithLargeDataAndMultiSelectButton", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog in MultiSelect mode with large data",
 			press: function () {
 				// open dialog
@@ -738,6 +744,7 @@
 		});
 
 		var oButton6 = new sap.m.Button("tsdWithVeryLargeDataButton", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog with very large data",
 			press: function () {
 				// open dialog
@@ -747,6 +754,7 @@
 		});
 
 		var oButton7 = new sap.m.Button("Button7", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog with multi Select and very large data",
 			press: function () {
 				// open dialog
@@ -839,6 +847,7 @@
 		});
 
 		var oButton8 = new sap.m.Button("Button8", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"id_1\" with web service binding and no fixed width",
 			press: function () {
 				// initiate model
@@ -904,6 +913,7 @@
 		});
 
 		var oButton9 = new sap.m.Button("Button9", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, late binding, with web service binding and 400px width",
 			press: function () {
 				// open dialog
@@ -924,6 +934,7 @@
 		});
 
 		var oButton10 = new sap.m.Button("Button10", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog with default property growing (true)",
 			press: function () {
 				oTableSelectDialog10.open();
@@ -931,6 +942,7 @@
 		});
 
 		var oButton11 = new sap.m.Button("Button11", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog with property growing false",
 			press: function () {
 				oTableSelectDialog11.open();
@@ -992,6 +1004,7 @@
 		}));
 
 		var oButton12 = new sap.m.Button("Button12", {
+			width: sButtonWidth,
 			text: "Open TableSelectDialog with Reset Button and long title",
 			press: function () {
 				oTableSelectDialog12.open();
