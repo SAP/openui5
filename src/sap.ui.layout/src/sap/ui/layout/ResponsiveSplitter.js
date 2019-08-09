@@ -203,47 +203,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 		}
 	};
 
-	/**
-	 * Handles tab / space / enter of Paginator's button
-	 * @returns {void}
-	 * @private
-	 */
-	ResponsiveSplitter.prototype._handlePaginatorButtonTap = function (oEvent) {
-		var iOldFocusedIndex = this._oItemNavigation.getFocusedIndex();
-		if (jQuery(oEvent.target).hasClass("sapUiResponsiveSplitterPaginatorButton")) {
-			jQuery(oEvent.target).attr("tabindex", 0);
-			var iPageIndex = parseInt(jQuery(oEvent.target).attr("page-index"), 10);
-			this.getAggregation("_pages").forEach(function (page) {
-				page.setVisible(false);
-			});
-
-			if (iPageIndex !== 0) {
-				var aDemandPanes = this._currentInterval.aPages.filter(function(page) { return page.demandPane; });
-
-				iPageIndex = this._currentInterval.aPages.indexOf(aDemandPanes[iPageIndex - 1]);
-			}
-
-			this._activatePage(iPageIndex, parseInt(jQuery(oEvent.target).attr("page-index"), 10));
-		}
-
-		if (jQuery(oEvent.target).hasClass("sapUiResponsiveSplitterPaginatorNavButton")) {
-			if (jQuery(oEvent.target).hasClass("sapUiResponsiveSplitterPaginatorButtonForward")) {
-				this._handlePaginatorForward(oEvent);
-			} else {
-				this._handlePaginatorBack(oEvent);
-			}
-			this._setItemNavigation();
-			this._oItemNavigation.focusItem(iOldFocusedIndex);
-		}
-		this._setItemNavigation();
-	};
-
-	ResponsiveSplitter.prototype.ontap = ResponsiveSplitter.prototype._handlePaginatorButtonTap;
-
-	ResponsiveSplitter.prototype.onsapenter = ResponsiveSplitter.prototype._handlePaginatorButtonTap;
-
-	ResponsiveSplitter.prototype.onsapspace = ResponsiveSplitter.prototype._handlePaginatorButtonTap;
-
 	ResponsiveSplitter.prototype.onsapright = function (oEvent) {
 		this._handleArrowNavigation(6, "Forward", oEvent);
 	};
@@ -608,10 +567,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 			aTargetClassList = oEvent.target.classList,
 			iPageIndex;
 
-		if (aTargetClassList.contains("sapUiResponsiveSplitterPaginatorButton")) {
+		if (aTargetClassList && aTargetClassList.contains("sapUiResponsiveSplitterPaginatorButton")) {
 			iPageIndex = oTarget.getAttribute("page-index");
 			this._activatePage(iPageIndex);
-		} else if (aTargetClassList.contains("sapUiResponsiveSplitterPaginatorNavButton")) {
+		} else if (aTargetClassList && aTargetClassList.contains("sapUiResponsiveSplitterPaginatorNavButton")) {
 			if (aTargetClassList.contains("sapUiResponsiveSplitterPaginatorButtonForward")) {
 				this._handlePaginatorForward(oEvent);
 			} else {
