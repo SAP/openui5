@@ -2,8 +2,9 @@ sap.ui.define([
 		'sap/m/Button',
 		'sap/m/Dialog',
 		'sap/m/Text',
-		'sap/ui/core/mvc/Controller'
-	], function(Button, Dialog, Text, Controller) {
+		'sap/ui/core/mvc/Controller',
+		'sap/m/ButtonType'
+	], function(Button, Dialog, Text, Controller, ButtonType) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.DialogMessage.C", {
@@ -16,6 +17,7 @@ sap.ui.define([
 						text: 'Build enterprise-ready web applications, responsive to all devices and running on the browser of your choice. That´s OpenUI5.'
 					}),
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
 						dialog.close();
@@ -38,6 +40,7 @@ sap.ui.define([
 					text: 'The only error you can make is not even trying.'
 				}),
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
 						dialog.close();
@@ -60,6 +63,7 @@ sap.ui.define([
 					text: 'Ruling the world is a time-consuming task. You will not have a lot of spare time.'
 				}),
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
 						dialog.close();
@@ -82,6 +86,7 @@ sap.ui.define([
 					text: 'One of the keys to success is creating realistic goals that can be achieved in a reasonable amount of time.'
 				}),
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
 						dialog.close();
@@ -104,6 +109,7 @@ sap.ui.define([
 					text: 'Dialog with value state Information.'
 				}),
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
 						dialog.close();
