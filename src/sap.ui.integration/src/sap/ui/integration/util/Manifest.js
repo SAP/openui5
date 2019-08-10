@@ -351,7 +351,7 @@ sap.ui.define([
 			return;
 		}
 		var oManifestConf = this.get(this.CONFIGURATION);
-		var oJson = deepClone(this.oJson);
+		var oJson = deepClone(this.oJson, 30, 30);
 		oJson[this.CONFIGURATION.substring(1)] = merge({}, oManifestConf, oConfiguration);
 		this._oManifest._oManifest = oJson;
 		this.oJson = oJson;
@@ -369,7 +369,7 @@ sap.ui.define([
 			return oManifestParameters;
 		}
 
-		var oClonedManifestParams = deepClone(oManifestParameters),
+		var oClonedManifestParams = deepClone(oManifestParameters, 20, 20),
 			oParamProps = Object.getOwnPropertyNames(oParameters),
 			oManifestParamsProps = Object.getOwnPropertyNames(oClonedManifestParams);
 
