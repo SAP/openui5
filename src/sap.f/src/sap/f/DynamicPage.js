@@ -352,7 +352,10 @@ sap.ui.define([
 			vertical: true
 		});
 		this._oHeaderObserver = null;
-		this._oSubHeaderAfterRenderingDelegate = {onAfterRendering: this._adjustStickyContent};
+		this._oSubHeaderAfterRenderingDelegate = {onAfterRendering: function() {
+				this._bStickySubheaderInTitleArea = false; // reset the flag as the stickySubHeader is freshly rerendered with the iconTabBar
+				this._adjustStickyContent();
+			}};
 	};
 
 	DynamicPage.prototype.onBeforeRendering = function () {
