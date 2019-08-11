@@ -4,18 +4,18 @@
 		"id": "sap.my.test.widget.component",
 		"type": "widget",
 		"i18n": "i18n/i18n.properties",
-        "title": "{{TITLE}}", 
-        "subTitle": "{{SUBTITLE}}", 
-        "shortTitle": "{{SHORTTITLE}}", 
-        "info": "{{INTO}}", 
-        "description": "{{DESCRIPTION}}", 
+        "title": "{{TITLE}}",
+        "subTitle": "{{SUBTITLE}}",
+        "shortTitle": "{{SHORTTITLE}}",
+        "info": "{{INTO}}",
+        "description": "{{DESCRIPTION}}",
         "tags": {
             "keywords": ["{{KEYWORD1}}","{{KEYWORD2}}"]
 		}
 	},
 	"sap.ui": {
-		"technology": "UI5", 
-        "icons": { 
+		"technology": "UI5",
+        "icons": {
 			"icon": "img/app_icon.png"
 		}
 	},
