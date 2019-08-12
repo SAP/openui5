@@ -130,7 +130,7 @@ function(
 				_collapseButton.setText(this.getTruncate() ? this._expandText : this._collapseText);
 
 				this.$().find('.sapMNLI-Header').toggleClass('sapMNLI-TitleWrapper--is-expanded');
-				this.$().find('.sapMNLI-TextWrapper').toggleClass('sapMNLI-TextWrapper--is-expanded', this.getDescription());
+				this.$().find('.sapMNLI-TextWrapper').toggleClass('sapMNLI-TextWrapper--is-expanded', !!this.getDescription());
 
 				this._registerResize();
 			}.bind(this)
@@ -383,7 +383,7 @@ function(
 				}
 			} else {
 				this.getAggregation('_collapseButton').setText(this._collapseText);
-				this.$().find('.sapMNLI-TextWrapper').toggleClass('sapMNLI-TextWrapper--is-expanded', this.getDescription());
+				this.$().find('.sapMNLI-TextWrapper').toggleClass('sapMNLI-TextWrapper--is-expanded', !!this.getDescription());
 
 				notificationDomRef.querySelector('.sapMNLI-Header').classList.add('sapMNLI-TitleWrapper--is-expanded');
 			}
