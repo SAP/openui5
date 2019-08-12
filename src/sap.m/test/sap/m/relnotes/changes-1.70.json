@@ -171,6 +171,150 @@
             "reference": "1970291602"
           }
         ]
+      },
+      {
+        "id": "d4c06c690205f8c4d405e2e44fa53488fe78fcb2",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: cancelButtonPress event documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970411802"
+          }
+        ]
+      },
+      {
+        "id": "ab538edbec0c8c53b9a2cf4f29231a6b92af6302",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items grouping is now working properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970415662"
+          }
+        ]
+      },
+      {
+        "id": "02987f51eebec816e0a80a5962c9144739b3655a",
+        "type": "FIX",
+        "text": " sap.m.Input: Selection in tabular suggestions fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970396382"
+          }
+        ]
+      },
+      {
+        "id": "fd5f5e1ae43b96f6969a7ca3c9d3a31393c89a27",
+        "type": "FIX",
+        "text": " sap.m.MenuItem: function name is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970409947"
+          }
+        ]
+      },
+      {
+        "id": "cd084ff6090d427135b10df65de3257de46f0b27",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Documentation for showValueHelp property updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970409908"
+          }
+        ]
+      },
+      {
+        "id": "5f1fe094576307366679ec658c3ee4cde1440d21",
+        "type": "FIX",
+        "text": " sap.m.NavContainer: Documentation about autoFocus is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970370023"
+          }
+        ]
+      },
+      {
+        "id": "597ccff3908324543d64530e8095526fce9ce1e5",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fixed calculation of overflow button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970354710"
+          }
+        ]
+      },
+      {
+        "id": "8929d0e809cd470f0cb3ec442c59ef9f8750b85a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalender: Sample issue solved",
+        "references": []
+      },
+      {
+        "id": "18f1e90f51eccf3515efc5398c4763df070a6867",
+        "type": "FIX",
+        "text": " sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970285385"
+          }
+        ]
+      },
+      {
+        "id": "67caf20ad8ddf852a31911be3e44bf054a3c9b75",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Cell\u0027s start/end information enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970330780"
+          }
+        ]
+      },
+      {
+        "id": "20e88c97c6beda059bf06dce4e7570b6bf76d39b",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: Modified star symbol screen reader issue solved",
+        "references": []
+      },
+      {
+        "id": "fc6cc3e370f2a2aaf20facf17eccc65e43e9dca4",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Sync properties growing + width + cols",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970303138"
+          }
+        ]
+      },
+      {
+        "id": "6a0c3aa72024dbf879f748cc770e79b6bff1f8e8",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Adjust properly accessibility title",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970409833"
+          }
+        ]
+      },
+      {
+        "id": "9efdf04b6e1c5735986d80b80dfa07248679dc78",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Handle properly not visible tokens",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970263638"
+          }
+        ]
       }
     ]
   }

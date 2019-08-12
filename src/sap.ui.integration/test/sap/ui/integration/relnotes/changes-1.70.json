@@ -12,6 +12,12 @@
             "reference": "N/A"
           }
         ]
+      },
+      {
+        "id": "7c639d2ff5a37df47f82ecdfcac3cb93647e87a8",
+        "type": "FEATURE",
+        "text": " Widget for UI Integration of Components",
+        "references": []
       }
     ]
   }
