@@ -2750,7 +2750,7 @@
 		 {
 		  "id": "sap.m.sample.MessageViewMessageHandling",
 		  "name": "Message View with Message Handling",
-		  "description": "A sample showing how you can connect and visualize external messages (such as a warning) as an item in the Message View."
+		  "description": "A sample showing how you can connect the MessageView with MessageManager."
 		 },
 		{
 		 "id": "sap.m.sample.MessageViewWithGrouping",
