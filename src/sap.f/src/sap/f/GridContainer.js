@@ -24,6 +24,8 @@ sap.ui.define([
 			capitalize) {
 	"use strict";
 
+	var isRtl = Core.getConfiguration().getRTL();
+
 	/**
 	 * Indicates the version of Microsoft Edge browser that has support for the display grid.
 	 * @type {number}
@@ -767,11 +769,12 @@ sap.ui.define([
 		}
 
 		var $that = this.$(),
+			innerWidth = $that.innerWidth(),
 			oSettings = this.getActiveLayoutSettings(),
 			columnSize = oSettings.getColumnSizeInPx(),
 			rowSize = oSettings.getRowSizeInPx(),
 			gapSize = oSettings.getGapInPx(),
-			columnsCount = oSettings.getComputedColumnsCount($that.innerWidth()),
+			columnsCount = oSettings.getComputedColumnsCount(innerWidth),
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
 			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
 			items = this.getItems();
@@ -798,7 +801,9 @@ sap.ui.define([
 			gapSize: gapSize,
 			topOffset: topOffset ? topOffset : 0,
 			leftOffset: leftOffset ? leftOffset : 0,
-			allowDenseFill: this.getAllowDenseFill()
+			allowDenseFill: this.getAllowDenseFill(),
+			rtl: isRtl,
+			width: innerWidth
 		});
 
 		var i,
@@ -808,7 +813,6 @@ sap.ui.define([
 			columns,
 			rows,
 			aFittedElements = [];
-
 
 		var fnInsertPolyfillDropIndicator = function (iKId) {
 			virtualGrid.fitElement(
@@ -859,6 +863,7 @@ sap.ui.define([
 		virtualGrid.calculatePositions();
 
 		aFittedElements.forEach(function (oFittedElement) {
+
 			var virtualGridItem = virtualGrid.getItems()[oFittedElement.id];
 
 			oFittedElement.domRef.css({
