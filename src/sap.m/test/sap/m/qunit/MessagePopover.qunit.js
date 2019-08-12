@@ -553,6 +553,33 @@ sap.ui.define([
 		assert.strictEqual(shrinkSpy.callCount, 2, "_collapseMsgPopover() is called the second time");
 	});
 
+	QUnit.test("_collapseMsgPopover() is NOT called on opening when initiallyExpanded=false and there is only one item", function (assert) {
+		var shrinkSpy = sinon.spy(),
+			oMockupData = {
+			count: 1,
+			messages: [{
+				type: "Error",
+				title: "Error message",
+				subtitle: "Subtitle",
+				description: "<p>First Error message description</p>"
+			}]
+		};
+
+		this.bindMessagePopover(this.oMessagePopover, oMockupData);
+
+		this.oMessagePopover._collapseMsgPopover = shrinkSpy;
+		this.oMessagePopover.setInitiallyExpanded(false);
+
+		this.oMessagePopover.openBy(this.oButton);
+		this.oMessagePopover.close();
+
+		assert.strictEqual(shrinkSpy.callCount, 0, "_collapseMsgPopover() is not called the first time");
+
+		this.oMessagePopover.openBy(this.oButton);
+
+		assert.strictEqual(shrinkSpy.callCount, 0, "_collapseMsgPopover() is not called the second time");
+	});
+
 	QUnit.test("When initialized without items template should automatically perform binding to the Message Model", function (assert) {
 		var oModel = new JSONModel({
 			form: {
