@@ -33,6 +33,22 @@ sap.ui.define([
 	 */
 	var PersonalizationConnector = merge({}, BaseConnector, {  /** @lends sap.ui.fl.write.internal.connectors.PersonalizationConnector */
 
+
+		/**
+		 * Creates a change or variant via REST call.
+		 *
+		 * @param {object} mPropertyBag Object with parameters as properties
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
+		 * @returns {Promise} Promise resolving with the result from the request
+		 * @public
+		 */
+		writeChanges: function (mPropertyBag) {
+			var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
+			// TODO: add the csrf token handling - check if its even needed in perso because of proxy
+			return ApplyUtils.sendRequest(sWriteUrl, "POST", mPropertyBag.payload);
+		},
+
 		/**
 		 * Resets changes via REST call; Filters by provided parameters like the application reference, its version,
 		 * the generator of the changes, the change type or changes on specific controls by their selector IDs.
@@ -65,9 +81,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Called to get the flex feature.
+		 * Called to get the flex features.
 		 *
-		 * @returns {object} Promise resolves with an object containing a flex data response
+		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
 		loadFeatures: function () {
 			return Promise.resolve(FEATURES);
