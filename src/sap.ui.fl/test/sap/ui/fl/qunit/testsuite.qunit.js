@@ -123,7 +123,7 @@ sap.ui.define(function () {
 					flexibilityServices: '[{"connectorName": "my/lib/BrokenConnector", "custom": true, "layerFilter": []}]'
 				},
 				coverage: {
-					only: ["sap/ui/fl/write/internal/Connector"]
+					only: ["sap/ui/fl/apply/internal/Connector"]
 				}
 			},
 			"apply/internal/ConnectorWithDebugEnabled": {
@@ -133,7 +133,7 @@ sap.ui.define(function () {
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
 				},
 				coverage: {
-					only: ["sap/ui/fl/write/internal/Connector"]
+					only: ["sap/ui/fl/apply/internal/Connector"]
 				}
 			},
 			"apply/internal/ConnectorWithForcedFlexBundle": {
@@ -216,6 +216,12 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": []}]'
+				}
+			},
+			"write/internal/connectors/LrepConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/internal/connectors/LrepConnector"]
 				}
 			},
 			// Team Gravity tests
