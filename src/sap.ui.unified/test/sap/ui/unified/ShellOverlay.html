@@ -55,7 +55,7 @@
 
 		var oSearchField = createTestSearchField("sf2");
 		oSearchField.addAriaLabelledBy("OverlySearch");
-		
+
 		var oOverlayContent = new sap.m.Page({
 			showHeader: false,
 			content: [new sap.m.Button({text: "Some Button"}), new sap.m.Text({text: window.sLorem})]
@@ -64,6 +64,7 @@
 			search: oSearchField,
 			content: [oOverlayContent],
 			closed: function(){
+				oShell.getSearch().setValue(oSearchField.getValue());
 				jQuery.sap.log.warning("ShellOverlay was closed - some cleanup can be done ...");
 			},
 			shell: oShell,
