@@ -27,19 +27,27 @@
 				selectionChange="onSelectionChange"
 				delete="onDelete"
 				class="sapUiResponsiveContentPadding">
+		<f:customLayout>
+			<grid:GridBasicLayout
+				gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))"
+				gridGap="0.5rem"/>
+		</f:customLayout>
 		<f:GridListItem
 			detailPress="onDetailPress"
-			counter="{counter}"
-			highlight="{highlight}"
-			unread="{unread}"
+			press="onPress"
+			counter="{Quantity}"
+			highlight="{Status}"
 			type="{type}">
-				<VBox class="sapUiSmallMargin">
-					<layoutData>
-						<FlexItemData growFactor="1" shrinkFactor="0" />
-					</layoutData>
-					<Title text="{title}" wrapping="true" />
-					<Label text="{subtitle}" wrapping="true" />
-				</VBox>
+			<VBox height="100%">
+				<Image src="{ProductPicUrl}" width="100%" visible="{= ${onlyImage} ? true : false }" class="imageDisplayBlock"/>
+				<HBox height="100%" class="sapUiSmallMargin" alignItems="Center" visible="{= ${onlyImage} ? false : true }">
+					<Image src="{ProductPicUrl}" width="3rem" class="sapUiSmallMarginEnd"/>
+					<VBox>
+						<Title text="{Name}" wrapping="true"/>
+						<Label text="{Description}" wrapping="true" />
+					</VBox>
+				</HBox>
+			</VBox>
 		</f:GridListItem>
 	</f:GridList>
 

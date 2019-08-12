@@ -1,155 +1,78 @@
 [
 	{
-		"title": "Box title 1",
-		"subtitle": "Subtitle 1",
-		"counter": 5,
-		"highlight": "Error",
-		"unread": true,
-		"type": "Active"
+		"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 15",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1000.jpg",
+		"Status": "Information",
+		"type": "DetailAndActive",
+		"Quantity": 24
 	},
 	{
-		"title": "Box title 2",
-		"subtitle": "Subtitle 2",
-		"counter": 15,
-		"highlight": "Warning",
-		"type": "Active"
-	},
-	{
-		"title": "Box title 3",
-		"subtitle": "Subtitle 3",
-		"counter": 15734,
-		"busy": true
-	},
-	{
-		"title": "Box title 4",
-		"subtitle": "Subtitle 4",
-		"counter": 2
-	},
-	{
-		"title": "Box title 5",
-		"subtitle": "Subtitle 5",
-		"counter": 1,
-		"highlight": "Warning"
-	},
-	{
-		"title": "Box title 6 Box title Box title Box title Box title Box title",
-		"subtitle": "Subtitle 6",
-		"counter": 5,
-		"type": "Active"
-	},
-	{
-		"title": "Very long Box title that should wrap 7",
-		"subtitle": "This is a long subtitle 7",
-		"counter": 5,
-		"highlight": "Error",
+		"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 17",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1001.jpg",
+		"Status": "Success",
+		"Quantity": 14,
 		"type": "DetailAndActive"
 	},
 	{
-		"title": "Box title B 8",
-		"subtitle": "Subtitle 8",
-		"counter": 0,
-		"type": "Navigation"
+		"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 18",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1002.jpg",
+		"Status": "Success",
+		"Quantity": 37
 	},
 	{
-		"title": "Box title B 9 Box title B  Box title B 9 Box title B 9Box title B 9title B 9 Box title B 9Box title B",
-		"subtitle": "Subtitle 9",
-		"highlight": "Success"
+		"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 19",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1003.jpg",
+		"Status": "Warning",
+		"Quantity": 2
 	},
 	{
-		"title": "Box title B 10",
-		"subtitle": "Subtitle 10",
-		"type": "Active"
+		"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+		"Name": "ITelO Vault",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1007.jpg",
+		"Status": "Error",
+		"Quantity": 0
 	},
 	{
-		"title": "Box title B 11",
-		"subtitle": "Subtitle 11",
-		"type": "Active"
+		"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+		"Name": "Notebook Professional 15",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1010.jpg",
+		"Quantity": 22
 	},
 	{
-		"title": "Box title B 12",
-		"subtitle": "Subtitle 12",
-		"highlight": "Information"
+		"Description": "Notebook Professional 17 with 2,80 GHz quad core, 17\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+		"Name": "Notebook Professional 17",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1011.jpg",
+		"Quantity": 31
 	},
 	{
-		"title": "Box title 13",
-		"subtitle": "Subtitle 13",
-		"counter": 5,
-		"type": "Navigation"
+		"Description": "Digital Organizer with State-of-the-Art Encryption for Storage and Network Communications",
+		"Name": "ITelO Vault Net",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1020.jpg",
+		"Quantity": 14
 	},
 	{
-		"title": "Box title 14",
-		"subtitle": "Subtitle 14",
-		"highlight": "Success",
-		"type": "DetailAndActive"
+		"Description": "Digital Organizer with State-of-the-Art Encryption for Storage and Secure Stellite Link",
+		"Name": "ITelO Vault SAT",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1021.jpg",
+		"Quantity": 50
 	},
 	{
-		"title": "Box title 15",
-		"subtitle": "Subtitle 15"
+		"Description": "32 GB Digital Assistant with high-resolution color screen",
+		"Name": "Comfort Easy",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1022.jpg",
+		"Quantity": 30
 	},
 	{
-		"title": "Box title 16",
-		"subtitle": "Subtitle 16",
-		"counter": 37412578,
-		"type": "Navigation"
-	},
-	{
-		"title": "Box title 17",
-		"subtitle": "Subtitle 17",
-		"highlight": "Information"
-	},
-	{
-		"title": "Box title 18",
-		"subtitle": "Subtitle 18"
-	},
-	{
-		"title": "Very long Box title that should wrap 19",
-		"subtitle": "This is a long subtitle 19"
-	},
-	{
-		"title": "Box title B 20",
-		"subtitle": "Subtitle 20",
-		"counter": 1,
-		"busy": true,
-		"highlight": "Success",
-		"type": "Inactive"
-	},
-	{
-		"title": "Box title B 21",
-		"subtitle": "Subtitle 21",
-		"type": "Navigation"
-	},
-	{
-		"title": "Box title B 22",
-		"subtitle": "Subtitle 22",
-		"counter": 5,
-		"unread": true
-	},
-	{
-		"title": "Box title B 23",
-		"subtitle": "Subtitle 23",
-		"counter": 3,
-		"unread": true
-	},
-	{
-		"title": "Box title B 24",
-		"subtitle": "Subtitle 24",
-		"counter": 5,
-		"highlight": "Error",
-		"type": "Inactive"
-	},
-	{
-		"title": "Box title B 21",
-		"subtitle": "Subtitle 21"
-	},
-	{
-		"title": "Box title B 22",
-		"subtitle": "Subtitle 22",
-		"unread": true,
-		"type": "Navigation"
-	},
-	{
-		"title": "Box title B 23",
-		"subtitle": "Subtitle 23",
+		"Description": "4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB2.0, Ethernet",
+		"Name": "Ultra Jet Super Highspeed",
+		"ProductPicUrl": "test-resources/sap/ui/documentation/sdk/images/HT-1065.jpg",
+		"Status": "None",
+		"Quantity": 25,
+		"onlyImage": true,
 		"type": "Navigation"
 	}
 ]
