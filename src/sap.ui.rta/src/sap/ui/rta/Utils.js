@@ -68,7 +68,7 @@ function(
 		if (sLayer === "USER") {
 			Utils._sRtaStyleClassName = "";
 		} else if (FlexUtils.getLayerIndex(sLayer) > -1) {
-			Utils._sRtaStyleClassName = "sapContrast sapContrastPlus";
+			Utils._sRtaStyleClassName = "sapUiRTABorder";
 		}
 	};
 

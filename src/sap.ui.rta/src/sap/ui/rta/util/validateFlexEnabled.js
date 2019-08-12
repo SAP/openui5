@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/rta/util/hasStableId",
 	"sap/ui/rta/util/showMessageBox",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/rta/Utils"
 ], function (
 	FlUtils,
 	MessageBox,
 	ObjectPath,
 	hasStableId,
 	showMessageBox,
-	Log
+	Log,
+	Utils
 ) {
 	"use strict";
 
@@ -47,7 +49,8 @@ sap.ui.define([
 						oRta._getTextResources().getText("MSG_NO_FLEX_ENABLED_FLAG"),
 						{
 							icon: MessageBox.Icon.WARNING,
-							title: oRta._getTextResources().getText("HEADER_WARNING")
+							title: oRta._getTextResources().getText("HEADER_WARNING"),
+							styleClass: Utils.getRtaStyleClassName()
 						}
 					);
 				} else {
@@ -71,7 +74,8 @@ sap.ui.define([
 							oRta._getTextResources().getText("MSG_UNSTABLE_ID_FOUND"),
 							{
 								icon: MessageBox.Icon.ERROR,
-								title: oRta._getTextResources().getText("HEADER_ERROR")
+								title: oRta._getTextResources().getText("HEADER_ERROR"),
+								styleClass: Utils.getRtaStyleClassName()
 							}
 						);
 					}

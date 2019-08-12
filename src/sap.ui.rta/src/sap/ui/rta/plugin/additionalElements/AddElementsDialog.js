@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/SearchField",
 	"sap/m/Button",
+	"sap/m/ButtonType",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/ui/model/Filter",
@@ -29,6 +30,7 @@ sap.ui.define([
 	JSONModel,
 	SearchField,
 	Button,
+	ButtonType,
 	Toolbar,
 	ToolbarSpacer,
 	Filter,
@@ -262,7 +264,8 @@ sap.ui.define([
 	AddElementsDialog.prototype._createButtons = function() {
 		this._oOKButton = new Button({
 			text : this._oTextResources.getText("BTN_FREP_OK"),
-			press : [this._submitDialog, this]
+			press : [this._submitDialog, this],
+			type: ButtonType.Emphasized
 		});
 		var oCancelButton = new Button({
 			text : this._oTextResources.getText("BTN_FREP_CANCEL"),
