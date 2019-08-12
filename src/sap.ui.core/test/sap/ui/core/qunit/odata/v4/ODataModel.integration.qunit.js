@@ -19137,7 +19137,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Reduce path by removing partner attributes SO_2_SOITEM and SOITEM_2_SO, so that
 	// "SOITEM_2_SO/CurrencyCode" is not expanded, but taken from the parent sales order in the same
-	// cache.
+	// cache and written back to it.
 	// JIRA: CPOUI5UISERVICESV3-1877
 	QUnit.test("Reduce path: property in same cache", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
@@ -19235,17 +19235,6 @@ sap.ui.define([
 			.expectChange("valueHelp::currencyCode");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTableBinding = that.oView.byId("table").getBinding("items"),
-				oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
-					oTableBinding.getContext(), undefined, undefined,
-					{$$updateGroupId : "doNotSubmit"});
-
-			// initialize creation row
-			oCreationRowContext = oCreationRowListBinding.create();
-			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
 			that.expectChange("valueHelp::currencyCode", "EUR");
 
 			// start value help
@@ -19261,7 +19250,17 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oCreationRowListBinding, oTableBinding;
+
 			that.expectChange("valueHelp::currencyCode", "EUR");
+
+			// create and initialize creation row
+			oTableBinding = that.oView.byId("table").getBinding("items");
+			oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
+				oTableBinding.getContext(), undefined, undefined,
+				{$$updateGroupId : "doNotSubmit"});
+			oCreationRowContext = oCreationRowListBinding.create();
+			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
 			// start value help on creation row
 			that.oView.byId("valueHelp").setBindingContext(oCreationRowContext);
@@ -19506,11 +19505,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Partner attributes are in the path to a property, but reduction is impossible due
-	// to a changed update group ID.
+	// Scenario: Partner attributes are in the path to a property, but reduction is impossible
+	// because the parent binding has a different update group with submit mode API.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	// JIRA: CPOUI5UISERVICESV3-1944
 	QUnit.test("Partner attributes in path to collection, other updateGroupId", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : 'update'}),
 			sView = '\
 <FlexBox binding="{/Bs(1)}">\
 	<Text id="bValue" text="{BValue}"/>\
@@ -19522,11 +19522,10 @@ sap.ui.define([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-	<Table items="{path : \'BtoDs\', parameters : {$$updateGroupId : \'update\'}}">\
+	<Table items="{path : \'BtoDs\', parameters : {$$updateGroupId : \'$auto\'}}">\
 		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
-				<Text id="dValue" text="{DValue}"/>\
 				<Text id="bValue::table2" text="{DtoB/BValue}"/>\
 			</ColumnListItem>\
 		</items>\
@@ -19541,17 +19540,17 @@ sap.ui.define([
 					{DID : 3}
 				]
 			})
-			.expectRequest("Bs(1)/BtoDs?$select=DID,DValue&$skip=0&$top=100", {
+			.expectRequest("Bs(1)/BtoDs?$select=DID&$expand=DtoB($select=BID,BValue)"
+				+ "&$skip=0&$top=100", {
 				value : [{
 					DID : 2,
-					DValue : 202
+					DtoB : {BID : 1, BValue : 101}
 				}, {
 					DID : 3,
-					DValue : 203
+					DtoB : {BID : 1, BValue : 101}
 				}]
 			})
 			.expectChange("bValue", "101")
-			.expectChange("dValue", ["202", "203"])
 			.expectChange("bValue::table1", ["101", "101"])
 			.expectChange("bValue::table2", ["101", "101"]);
 

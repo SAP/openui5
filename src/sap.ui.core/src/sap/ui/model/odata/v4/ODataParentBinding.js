@@ -6,12 +6,13 @@
 //with dependent bindings
 sap.ui.define([
 	"./ODataBinding",
+	"./SubmitMode",
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery"
-], function (asODataBinding, _Helper, Log, SyncPromise, ChangeReason, jQuery) {
+], function (asODataBinding, SubmitMode, _Helper, Log, SyncPromise, ChangeReason, jQuery) {
 	"use strict";
 
 	/**
@@ -725,7 +726,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the absolute base path used for path reduction of child (property) bindings. This is
-	 * the path of the root binding.
+	 * the shortest possible path of a binding that may carry the data for the reduced path. A
+	 * parent binding is not eligible if it uses a different update group with submit mode API.
 	 *
 	 * @returns {string}
 	 *   The absolute base path for path reduction
@@ -733,9 +735,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.getBaseForPathReduction = function () {
-		var oRootBinding = this.getRootBinding();
+		var oParentBinding, sParentUpdateGroupId;
 
-		return this.oModel.resolve(oRootBinding.sPath, oRootBinding.oContext);
+		if (!this.isRoot()) {
+			oParentBinding = this.oContext.getBinding();
+			sParentUpdateGroupId = oParentBinding.getUpdateGroupId();
+			if (sParentUpdateGroupId === this.getUpdateGroupId()
+					|| this.oModel.getGroupProperty(sParentUpdateGroupId, "submit")
+						!== SubmitMode.API) {
+				return oParentBinding.getBaseForPathReduction();
+			}
+		}
+		return this.oModel.resolve(this.sPath, this.oContext);
 	};
 
 	/**
