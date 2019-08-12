@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Filter"
+	"sap/ui/model/Filter",
+	"sap/ui/thirdparty/jqueryui/jquery-effects-core" // load this to test notifications in context of jquery-ui
 ], function(
 	qutils,
 	NotificationListItem,
