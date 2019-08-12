@@ -1,0 +1,617 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.my.test.widget.wfviz",
+		"type": "widget",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{TITLE}}",
+		"subTitle": "{{SUBTITLE}}",
+		"shortTitle": "{{SHORTTITLE}}",
+		"info": "{{INTO}}",
+		"description": "{{DESCRIPTION}}",
+		"tags": {
+			"keywords": [
+				"{{KEYWORD1}}",
+				"{{KEYWORD2}}"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "img/wfviz.png"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.67.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.my.test.widget.wfviz.view.Widget",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.my.test.widget.wfviz.i18n.i18n"
+				}
+			}
+		},
+		"resources": {
+			"css": []
+		}
+	},
+	"sap.widget": {
+		"preferedStyle": "transparent",
+		"sample": {
+			"tasks": [
+				{
+					"activityId": "usertask1",
+					"claimedAt": "2019-08-06T13:34:58.938Z",
+					"completedAt": null,
+					"createdAt": "2019-08-06T13:34:58.938Z",
+					"description": "Descr",
+					"id": "fc2e196d-b84e-11e9-b2bc-eeee0a9038f7",
+					"processor": null,
+					"recipientUsers": [],
+					"recipientGroups": [
+						"workflow"
+					],
+					"status": "READY",
+					"subject": "Apply for Leave",
+					"workflowDefinitionId": "applyforleave",
+					"workflowInstanceId": "fc1eb017-b84e-11e9-b2bc-eeee0a9038f7",
+					"priority": "MEDIUM",
+					"dueDate": "2019-08-14T13:34:58.938Z",
+					"createdBy": "p000023",
+					"definitionId": "usertask1@applyforleave",
+					"lastChangedAt": "2019-08-06T13:34:58.935Z",
+					"tasks": [
+						{
+							"activityId": "usertask1",
+							"claimedAt": null,
+							"completedAt": null,
+							"createdAt": "2019-08-06T13:34:58.938Z",
+							"description": null,
+							"id": "fc2e196d-b84e-11e9-b2bc-eeee0a9038f7",
+							"processor": null,
+							"recipientUsers": [],
+							"recipientGroups": [
+								"workflow"
+							],
+							"status": "READY",
+							"subject": "Register for Healthy Pregnancy Program",
+							"message": "You registered successfully",
+							"workflowDefinitionId": "applyforleave",
+							"workflowInstanceId": "fc1eb017-b84e-11e9-b2bc-eeee0a9038f7",
+							"priority": "MEDIUM",
+							"dueDate": null,
+							"createdBy": "p000023",
+							"definitionId": "usertask1@applyforleave",
+							"lastChangedAt": "2019-08-06T13:34:58.935Z",
+							"form": {
+								"id": "upload",
+								"name": "Upload",
+								"revision": "0.1",
+								"readOnly": false,
+								"type": "task",
+								"content": [
+									{
+										"id": "text1",
+										"value": "${context.file.certification}",
+										"label": "Enter a mandatory name",
+										"type": "string",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									},
+									{
+										"id": "int1",
+										"value": "${context.file.certification}",
+										"label": "Enter a number",
+										"type": "int",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									},
+									{
+										"id": "optionalBool",
+										"value": "${context.file.certification}",
+										"label": "A boolean",
+										"type": "boolean",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									}
+								],
+								"decisions": [
+									{
+										"id": "accept",
+										"text": "Done",
+										"decisionType": "positive"
+									},
+									{
+										"id": "reject",
+										"text": "Reject",
+										"decisionType": "negative"
+									},
+									{
+										"id": "clear",
+										"text": "Clear",
+										"decisionType": "clear"
+									}
+								]
+							}
+						},
+						{
+							"activityId": "usertask2",
+							"claimedAt": "2019-08-07T13:34:58.938Z",
+							"completedAt": null,
+							"createdAt": "2019-08-06T13:35:53.277Z",
+							"description": "You will need to fill out the following Leave Certification Form. Please have this completed by your physician.",
+							"id": "1c9207cb-b84f-11e9-9f55-eeee0a8832c3",
+							"processor": null,
+							"recipientUsers": [],
+							"recipientGroups": [
+								"workflow"
+							],
+							"status": "READY",
+							"subject": "Download Certification Forms",
+							"workflowDefinitionId": "applyforleave",
+							"workflowInstanceId": "68cd3413-b786-11e9-b286-eeee0a903e9c",
+							"priority": "MEDIUM",
+							"dueDate": null,
+							"createdBy": "p000023",
+							"definitionId": "usertask2@applyforleave",
+							"lastChangedAt": "2019-08-06T13:35:53.277Z",
+							"form": {
+								"id": "upload",
+								"name": "Upload",
+								"revision": "0.1",
+								"readOnly": false,
+								"type": "task",
+								"content": [
+									{
+										"id": "text1",
+										"value": "${context.file.certification}",
+										"label": "Enter a mandatory name",
+										"type": "string",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									},
+									{
+										"id": "int1",
+										"value": "${context.file.certification}",
+										"label": "Enter a number",
+										"type": "int",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									},
+									{
+										"id": "optionalBool",
+										"value": "${context.file.certification}",
+										"label": "An optional boolean",
+										"type": "boolean",
+										"readOnly": false
+									}
+								],
+								"decisions": [
+									{
+										"id": "accept",
+										"text": "Done",
+										"decisionType": "positive"
+									},
+									{
+										"id": "reject",
+										"text": "Reject",
+										"decisionType": "negative"
+									},
+									{
+										"id": "clear",
+										"text": "Clear",
+										"decisionType": "clear"
+									}
+								]
+							}
+						},
+						{
+							"activityId": "usertask3",
+							"claimedAt": null,
+							"completedAt": null,
+							"createdAt": "2019-08-06T13:35:45.408Z",
+							"description": null,
+							"id": "17e150f4-b84f-11e9-9f55-eeee0a8832c3",
+							"processor": null,
+							"recipientUsers": [],
+							"recipientGroups": [
+								"workflow"
+							],
+							"status": "READY",
+							"subject": "Upload Certification Forms",
+							"workflowDefinitionId": "applyforleave",
+							"workflowInstanceId": "f90cdc27-b84e-11e9-9f55-eeee0a8832c3",
+							"priority": "MEDIUM",
+							"dueDate": null,
+							"createdBy": "p000023",
+							"definitionId": "usertask3@applyforleave",
+							"form": {
+								"id": "upload",
+								"name": "Upload",
+								"revision": "0.1",
+								"readOnly": false,
+								"type": "task",
+								"content": [
+									{
+										"id": "choose_a_file_for_upload",
+										"value": "${context.file.certification}",
+										"label": "Upload the certificate file",
+										"type": "string",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										},
+										"subtype": "upload::pdf"
+									}
+								],
+								"decisions": [
+									{
+										"id": "upload_file",
+										"text": "Accept",
+										"decisionType": "positive"
+									},
+									{
+										"id": "reject",
+										"text": "Reject",
+										"decisionType": "negative"
+									},
+									{
+										"id": "help",
+										"text": "Help",
+										"decisionType": ""
+									}
+								]
+							}
+						},
+						{
+							"activityId": "usertask4",
+							"claimedAt": null,
+							"completedAt": null,
+							"createdAt": "2019-08-06T13:36:14.585Z",
+							"description": "Since you live in CA, you may be entitled to benefits thru CA State Disability:",
+							"id": "29455e92-b84f-11e9-9f55-eeee0a8832c3",
+							"processor": null,
+							"recipientUsers": [],
+							"recipientGroups": [
+								"workflow"
+							],
+							"status": "WHATSTATUSISNOTREADY",
+							"subject": "CA State Disability",
+							"workflowDefinitionId": "applyforleave",
+							"workflowInstanceId": "1dee3019-b39c-11e9-b302-eeee0a8044e5",
+							"priority": "MEDIUM",
+							"dueDate": null,
+							"createdBy": "p000023",
+							"definitionId": "usertask4@applyforleave",
+							"lastChangedAt": "2019-08-06T13:36:14.585Z"
+						}
+					]
+				},
+				{
+					"activityId": "usertask1",
+					"claimedAt": null,
+					"completedAt": null,
+					"createdAt": "2019-08-06T13:34:58.938Z",
+					"description": "Descr",
+					"id": "fc2e196d-b84e-11e9-b2bc-eeee0a9038f7",
+					"processor": null,
+					"recipientUsers": [],
+					"recipientGroups": [
+						"workflow"
+					],
+					"status": "READY",
+					"subject": "Plan Leave",
+					"workflowDefinitionId": "applyforleave",
+					"workflowInstanceId": "fc1eb017-b84e-11e9-b2bc-eeee0a9038f7",
+					"priority": "MEDIUM",
+					"dueDate": "2019-09-06T13:34:58.935Z",
+					"createdBy": "p000023",
+					"definitionId": "usertask1@applyforleave",
+					"lastChangedAt": "2019-08-06T13:34:58.935Z",
+					"tasks": [
+						{
+							"activityId": "usertask2",
+							"claimedAt": "2019-08-07T13:34:58.938Z",
+							"completedAt": null,
+							"createdAt": "2019-08-06T13:35:53.277Z",
+							"description": "Customer satisfaction is important, please ensure to communicate your leave to customers and provide them possible substitute information",
+							"id": "1c9207cb-b84f-11e9-9f55-eeee0a8832c3",
+							"processor": null,
+							"recipientUsers": [],
+							"recipientGroups": [
+								"workflow"
+							],
+							"status": "READY",
+							"subject": "Inform your important customers",
+							"workflowDefinitionId": "applyforleave",
+							"workflowInstanceId": "68cd3413-b786-11e9-b286-eeee0a903e9c",
+							"priority": "MEDIUM",
+							"dueDate": null,
+							"createdBy": "p000023",
+							"definitionId": "usertask2@applyforleave",
+							"lastChangedAt": "2019-08-06T13:35:53.277Z",
+							"form": {
+								"id": "upload",
+								"name": "Upload",
+								"revision": "0.1",
+								"readOnly": false,
+								"type": "task",
+								"decisions": [
+									{
+										"id": "accept",
+										"text": "Done",
+										"decisionType": "positive"
+									}
+								]
+							}
+						},{
+							"activityId": "usertask1",
+							"claimedAt": null,
+							"completedAt": "2019-08-06T13:34:58.938Z",
+							"createdAt": "2019-08-06T13:34:58.938Z",
+							"description": null,
+							"id": "fc2e196d-b84e-11e9-b2bc-eeee0a9038f7",
+							"processor": null,
+							"recipientUsers": [],
+							"recipientGroups": [
+								"workflow"
+							],
+							"status": "READY",
+							"subject": "Maintain a substitute",
+							"message": "Your substitute is: mark.adams@sap.com",
+							"workflowDefinitionId": "applyforleave",
+							"workflowInstanceId": "fc1eb017-b84e-11e9-b2bc-eeee0a9038f7",
+							"priority": "MEDIUM",
+							"dueDate": null,
+							"createdBy": "p000023",
+							"definitionId": "usertask1@applyforleave",
+							"lastChangedAt": "2019-08-06T13:34:58.935Z",
+							"form": {
+								"id": "upload",
+								"name": "Upload",
+								"revision": "0.1",
+								"readOnly": false,
+								"type": "task",
+								"content": [
+									{
+										"id": "text1",
+										"value": "${context.file.certification}",
+										"label": "Enter a mandatory name",
+										"type": "string",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									},
+									{
+										"id": "int1",
+										"value": "${context.file.certification}",
+										"label": "Enter a number",
+										"type": "int",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									},
+									{
+										"id": "optionalBool",
+										"value": "${context.file.certification}",
+										"label": "A boolean",
+										"type": "boolean",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										}
+									}
+								],
+								"decisions": [
+									{
+										"id": "accept",
+										"text": "Done",
+										"decisionType": "positive"
+									},
+									{
+										"id": "reject",
+										"text": "Reject",
+										"decisionType": "negative"
+									},
+									{
+										"id": "clear",
+										"text": "Clear",
+										"decisionType": "clear"
+									}
+								]
+							}
+						},
+						{
+							"activityId": "usertask3",
+							"claimedAt": null,
+							"completedAt": null,
+							"createdAt": "2019-08-06T13:35:45.408Z",
+							"description": null,
+							"id": "17e150f4-b84f-11e9-9f55-eeee0a8832c3",
+							"processor": null,
+							"recipientUsers": [],
+							"recipientGroups": [
+								"workflow"
+							],
+							"status": "READY",
+							"subject": "Activate your automatic out of office reply",
+							"workflowDefinitionId": "applyforleave",
+							"workflowInstanceId": "f90cdc27-b84e-11e9-9f55-eeee0a8832c3",
+							"priority": "MEDIUM",
+							"dueDate": null,
+							"createdBy": "p000023",
+							"definitionId": "usertask3@applyforleave",
+							"form": {
+								"id": "upload",
+								"name": "Upload",
+								"revision": "0.1",
+								"readOnly": false,
+								"type": "task",
+								"content": [
+									{
+										"id": "choose_a_file_for_upload",
+										"value": "${context.file.certification}",
+										"label": "Enter a out of office text",
+										"type": "string",
+										"readOnly": false,
+										"constraints": {
+											"required": true
+										},
+										"lines": 4
+									}
+								],
+								"decisions": [
+									{
+										"id": "upload_file",
+										"text": "Internal Mails",
+										"decisionType": ""
+									},
+									{
+										"id": "InternalExternal",
+										"text": "Internal and External Mails",
+										"decisionType": ""
+									},
+									{
+										"id": "reject",
+										"text": "No Replies",
+										"decisionType": "negative"
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					"activityId": "usertask1",
+					"claimedAt": null,
+					"completedAt": null,
+					"createdAt": "2019-08-06T13:34:58.938Z",
+					"description": "Maintain your childs information",
+					"id": "fc2e196d-b84e-11e9-b2bc-eeee0a9038f7",
+					"processor": null,
+					"recipientUsers": [],
+					"recipientGroups": [
+						"workflow"
+					],
+					"status": "READY",
+					"subject": "During Leave",
+					"workflowDefinitionId": "applyforleave",
+					"workflowInstanceId": "fc1eb017-b84e-11e9-b2bc-eeee0a9038f7",
+					"priority": "MEDIUM",
+					"dueDate": "2019-10-06T13:34:58.935Z",
+					"createdBy": "p000023",
+					"definitionId": "usertask1@applyforleave",
+					"lastChangedAt": "2019-08-06T13:34:58.935Z",
+					"form": {
+						"id": "upload",
+						"name": "Upload",
+						"revision": "0.1",
+						"readOnly": false,
+						"type": "task",
+						"content": [
+							{
+								"id": "text1",
+								"value": "${context.file.certification}",
+								"label": "Given Name",
+								"type": "string",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							},
+							{
+								"id": "text1",
+								"value": "${context.file.certification}",
+								"label": "Last Name",
+								"type": "string",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							},
+							{
+								"id": "Birthdate",
+								"value": "${context.file.certification}",
+								"label": "Date of Birth",
+								"type": "date",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							},
+							{
+								"id": "text1",
+								"value": "${context.file.certification}",
+								"label": "City of Birth",
+								"type": "string",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							}
+						],
+						"decisions": [
+							{
+								"id": "accept",
+								"text": "Done",
+								"decisionType": "positive"
+							},
+							{
+								"id": "clear",
+								"text": "Clear",
+								"decisionType": "clear"
+							}
+						]
+					}
+				},
+				{
+					"activityId": "usertask1",
+					"claimedAt": null,
+					"completedAt": null,
+					"createdAt": "2019-12-06T13:34:58.938Z",
+					"description": "Desc",
+					"id": "fc2e196d-b84e-11e9-b2bc-eeee0a9038f7",
+					"processor": null,
+					"recipientUsers": [],
+					"recipientGroups": [
+						"workflow"
+					],
+					"status": "NOTREADY",
+					"subject": "Back to Work",
+					"workflowDefinitionId": "applyforleave",
+					"workflowInstanceId": "fc1eb017-b84e-11e9-b2bc-eeee0a9038f7",
+					"priority": "MEDIUM",
+					"dueDate": "2020-07-06T13:34:58.935Z",
+					"createdBy": "p000023",
+					"definitionId": "usertask1@applyforleave",
+					"lastChangedAt": "2019-08-06T13:34:58.935Z"
+				}
+			]
+		}
+	}
+}

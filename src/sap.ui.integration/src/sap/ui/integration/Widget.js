@@ -457,7 +457,7 @@ sap.ui.define([
 		}
 		var oConfiguration = this.getConfiguration();
 		this._oWidgetManifest.mergeConfiguration(oConfiguration);
-
+		this.preferedStyle = this._oWidgetManifest.get("/sap.widget/preferedStyle");
 		BaseContent
 			.create("component", this._oWidgetManifest.getJson())
 			.then(function (oContent) {

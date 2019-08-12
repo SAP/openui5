@@ -1,0 +1,141 @@
+{
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.my.test.widget.wfviz",
+		"type": "widget",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{TITLE}}",
+		"subTitle": "{{SUBTITLE}}",
+		"shortTitle": "{{SHORTTITLE}}",
+		"info": "{{INTO}}",
+		"description": "{{DESCRIPTION}}",
+		"tags": {
+			"keywords": [
+				"{{KEYWORD1}}",
+				"{{KEYWORD2}}"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "img/wfviz.png"
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.67.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"rootView": {
+			"viewName": "sap.my.test.widget.wfviz.view.Widget",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.my.test.widget.wfviz.i18n.i18n"
+				}
+			}
+		},
+		"resources": {
+			"css": []
+		}
+	},
+	"sap.widget": {
+		"preferedStyle": "transparent",
+		"sample": {
+			"tasks": [
+				{
+					"activityId": "usertask1",
+					"claimedAt": null,
+					"completedAt": null,
+					"createdAt": "2019-08-06T13:34:58.938Z",
+					"description": "Maintain your childs information",
+					"id": "fc2e196d-b84e-11e9-b2bc-eeee0a9038f7",
+					"processor": null,
+					"recipientUsers": [],
+					"recipientGroups": [
+						"workflow"
+					],
+					"status": "NOTREADY",
+					"subject": "During Leave",
+					"workflowDefinitionId": "applyforleave",
+					"workflowInstanceId": "fc1eb017-b84e-11e9-b2bc-eeee0a9038f7",
+					"priority": "MEDIUM",
+					"dueDate": "2019-10-06T13:34:58.935Z",
+					"createdBy": "p000023",
+					"definitionId": "usertask1@applyforleave",
+					"lastChangedAt": "2019-08-06T13:34:58.935Z",
+					"form": {
+						"id": "upload",
+						"name": "Upload",
+						"revision": "0.1",
+						"readOnly": false,
+						"type": "task",
+						"content": [
+							{
+								"id": "text1",
+								"value": "${context.file.certification}",
+								"label": "Given Name",
+								"type": "string",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							},
+							{
+								"id": "text1",
+								"value": "${context.file.certification}",
+								"label": "Last Name",
+								"type": "string",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							},
+							{
+								"id": "Birthdate",
+								"value": "${context.file.certification}",
+								"label": "Date of Birth",
+								"type": "date",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							},
+							{
+								"id": "text1",
+								"value": "${context.file.certification}",
+								"label": "City of Birth",
+								"type": "string",
+								"readOnly": false,
+								"constraints": {
+									"required": true
+								}
+							}
+						],
+						"decisions": [
+							{
+								"id": "accept",
+								"text": "Done",
+								"decisionType": "positive"
+							},
+							{
+								"id": "clear",
+								"text": "Clear",
+								"decisionType": "clear"
+							}
+						]
+					}
+				}
+			]
+		}
+	}
+}

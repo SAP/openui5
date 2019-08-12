@@ -26,7 +26,9 @@ sap.ui.define([
 		//start
 		oRm.write("<div");
 		oRm.writeElementData(oWidget);
-		oRm.addClass("sapFCard");
+		if (oWidget.preferedStyle !== "transparent") {
+			oRm.addClass("sapFCard");
+		}
 		if (!oWidget.getWidgetContent()) {
 			oRm.addClass("sapFCardNoContent");
 		}
