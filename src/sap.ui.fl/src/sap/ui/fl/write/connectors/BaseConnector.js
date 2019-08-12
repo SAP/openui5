@@ -18,16 +18,17 @@ sap.ui.define([
 	var BaseConnector = /** @lends sap.ui.fl.write.connectors.BaseConnector */{
 
 		/**
-		 * Interface called to write changes and variants.
+		 * Interface called to write flex data; This method is called with a list of entities like changes, variants,
+		 * control variants, variant changes and variant management changes.
 		 *
 		 * @param {object} mPropertyBag Property bag
-		 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
+		 * @param {sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be stored
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		writeChanges:function (/* mPropertyBag */) {
-			return Promise.reject("writeChanges is not implemented");
+		writeFlexData:function (/* mPropertyBag */) {
+			return Promise.reject("writeFlexData is not implemented");
 		},
 
 		/**

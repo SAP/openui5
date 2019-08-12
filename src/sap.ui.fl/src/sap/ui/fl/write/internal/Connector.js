@@ -65,8 +65,8 @@ sap.ui.define([
 			.then(findConnectorForLayer.bind(this, sLayer));
 	}
 
-	function sendWriteChangesToConnector (mPropertyBag, oConnector) {
-		return oConnector.writeChanges(mPropertyBag);
+	function sendWriteFlexDataToConnector (mPropertyBag, oConnector) {
+		return oConnector.writeFlexData(mPropertyBag);
 	}
 
 	var Connector = {};
@@ -79,9 +79,9 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Connector.writeChanges = function (mPropertyBag) {
+	Connector.writeFlexData = function (mPropertyBag) {
 		return getConnectorByLayer(mPropertyBag.layer)
-			.then(sendWriteChangesToConnector.bind(this, mPropertyBag));
+			.then(sendWriteFlexDataToConnector.bind(this, mPropertyBag));
 	};
 
 	/**
