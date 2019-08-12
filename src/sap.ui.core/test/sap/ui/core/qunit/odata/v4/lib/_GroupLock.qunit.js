@@ -29,20 +29,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setGroupId", function (assert) {
-		var oGroupLock = new _GroupLock();
-
-		assert.strictEqual(oGroupLock.getGroupId(), undefined);
-
-		oGroupLock.setGroupId("foo");
-		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-
-		oGroupLock.setGroupId("bar");
-		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("locked, initial group", function (assert) {
+	QUnit.test("locked", function (assert) {
 		var oGroupLock,
 			oPromise1,
 			oPromise2;
@@ -69,58 +56,6 @@ sap.ui.define([
 		assert.ok(oPromise1.isFulfilled());
 		assert.ok(oPromise2.isFulfilled());
 		assert.notOk(oGroupLock.isLocked());
-	});
-
-	//*********************************************************************************************
-	QUnit.test("locked, no group initially", function (assert) {
-		var oGroupLock,
-			oBarPromise1,
-			oBarPromise2,
-			oFooPromise;
-
-		// code under test
-		oGroupLock = new _GroupLock(undefined, true);
-
-		assert.strictEqual(oGroupLock.getGroupId(), undefined);
-		assert.ok(oGroupLock.isLocked());
-
-		// code under test
-		oFooPromise = oGroupLock.waitFor("foo");
-		oBarPromise1 = oGroupLock.waitFor("bar");
-		oBarPromise2 = oGroupLock.waitFor("bar");
-
-		assert.ok(oFooPromise.isPending());
-		assert.ok(oBarPromise1.isPending());
-		assert.ok(oBarPromise2.isPending());
-
-		// code under test
-		oGroupLock.setGroupId("foo");
-
-		assert.ok(oGroupLock.isLocked());
-		assert.ok(oFooPromise.isPending());
-		assert.ok(oBarPromise1.isFulfilled());
-		assert.ok(oBarPromise2.isFulfilled());
-
-		// code under test
-		oGroupLock.unlock();
-
-		assert.notOk(oGroupLock.isLocked());
-		assert.ok(oFooPromise.isFulfilled());
-	});
-
-	//*********************************************************************************************
-	QUnit.test("locked & unlocked w/o group", function (assert) {
-		var oGroupLock = new _GroupLock(undefined, true),
-			oBarPromise,
-			oFooPromise;
-
-		// code under test
-		oFooPromise = oGroupLock.waitFor("foo");
-		oBarPromise = oGroupLock.waitFor("bar");
-		oGroupLock.unlock();
-
-		assert.ok(oFooPromise.isFulfilled());
-		assert.ok(oBarPromise.isFulfilled());
 	});
 
 	//*********************************************************************************************
@@ -158,10 +93,6 @@ sap.ui.define([
 				}
 			};
 
-		oGroupLock = new _GroupLock();
-		assert.strictEqual(oGroupLock.oOwner, undefined);
-		assert.strictEqual(oGroupLock.toString(), "sap.ui.model.odata.v4.lib._GroupLock(unlocked)");
-
 		oGroupLock = new _GroupLock("group", true);
 		assert.strictEqual(oGroupLock.toString(),
 			"sap.ui.model.odata.v4.lib._GroupLock(locked,group=group)");
@@ -171,19 +102,9 @@ sap.ui.define([
 		assert.strictEqual(oGroupLock.toString(),
 			"sap.ui.model.odata.v4.lib._GroupLock(unlocked,group=group,owner=owner)");
 
-		oGroupLock = new _GroupLock(undefined, true, oOwner);
-		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		oGroupLock = new _GroupLock("group", false, undefined, 0);
 		assert.strictEqual(oGroupLock.toString(),
-			"sap.ui.model.odata.v4.lib._GroupLock(locked,owner=owner)");
-
-		oGroupLock = new _GroupLock(undefined, false, oOwner, 42);
-		assert.strictEqual(oGroupLock.oOwner, oOwner);
-		assert.strictEqual(oGroupLock.toString(),
-			"sap.ui.model.odata.v4.lib._GroupLock(unlocked,owner=owner,serialNumber=42)");
-
-		oGroupLock = new _GroupLock(undefined, false, undefined, 0);
-		assert.strictEqual(oGroupLock.toString(),
-			"sap.ui.model.odata.v4.lib._GroupLock(unlocked,serialNumber=0)");
+			"sap.ui.model.odata.v4.lib._GroupLock(unlocked,group=group,serialNumber=0)");
 	});
 
 	//*********************************************************************************************

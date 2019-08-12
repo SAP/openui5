@@ -1559,8 +1559,6 @@ sap.ui.define([
 			oGroupLock = new _GroupLock("groupId"),
 			oResult = {};
 
-		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("updateGroup");
-		this.mock(oGroupLock).expects("setGroupId").withExactArgs("updateGroup");
 		this.mock(oCache).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
 				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(oETagEntity),

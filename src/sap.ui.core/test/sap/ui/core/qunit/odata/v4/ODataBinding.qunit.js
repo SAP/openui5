@@ -1947,19 +1947,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("lockGroup", function (assert) {
+[undefined, "group"].forEach(function (sGroupId) {
+	QUnit.test("lockGroup: groupId=" + sGroupId, function (assert) {
 		var oBinding = new ODataBinding({
-				oModel : {
-					lockGroup : function () {}
-				}
+				oModel : {lockGroup : function () {}}
 			}),
-			vLock = {};
+			bLocked = {/*boolean*/};
 
+		this.mock(oBinding).expects("getGroupId").exactly(sGroupId ? 0 : 1)
+			.withExactArgs().returns("group");
 		this.mock(oBinding.oModel).expects("lockGroup")
-			.withExactArgs("group", sinon.match.same(vLock), sinon.match.same(oBinding));
+			.withExactArgs("group", sinon.match.same(bLocked), sinon.match.same(oBinding));
 
-		oBinding.lockGroup("group", vLock);
+		oBinding.lockGroup(sGroupId, bLocked);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("checkBindingParameters, $$aggregation", function (assert) {

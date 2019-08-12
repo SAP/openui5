@@ -533,7 +533,6 @@ sap.ui.define([
 		}
 
 		if (oCache) {
-			oGroupLock.setGroupId(this.getUpdateGroupId());
 			sGroupId = oGroupLock.getGroupId();
 			if (!this.oModel.isAutoGroup(sGroupId) && !this.oModel.isDirectGroup(sGroupId)) {
 				throw new Error("Illegal update group ID: " + sGroupId);

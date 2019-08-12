@@ -262,7 +262,7 @@ sap.ui.define([
 			throw new Error("Cannot delete due to pending changes");
 		}
 
-		oGroupLock = this.oModel.lockGroup(sGroupId, true, this);
+		oGroupLock = this.oBinding.lockGroup(sGroupId, true);
 
 		return this._delete(oGroupLock).then(function () {
 			var sResourcePathPrefix = that.sPath.slice(1);
@@ -363,7 +363,6 @@ sap.ui.define([
 					oBinding.firePatchSent();
 				}
 
-				oGroupLock.setGroupId(oBinding.getUpdateGroupId());
 				// if request is canceled fnPatchSent and fnErrorCallback are not called and
 				// returned Promise is rejected -> no patch events
 				return oCache.update(oGroupLock, oResult.propertyPath, vValue,
@@ -756,7 +755,7 @@ sap.ui.define([
 		}
 
 		if (this.oBinding.refreshSingle) {
-			this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true, this),
+			this.oBinding.refreshSingle(this, this.oBinding.lockGroup(sGroupId, true),
 				bAllowRemoval);
 		} else {
 			if (arguments.length > 1) {
@@ -980,8 +979,7 @@ sap.ui.define([
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw new Error("Not a primitive value");
 		}
-		sGroupId = sGroupId || this.getUpdateGroupId();
-		oGroupLock = this.oModel.lockGroup(sGroupId, true);
+		oGroupLock = this.oModel.lockGroup(sGroupId || this.getUpdateGroupId(), true);
 
 		return this.doSetProperty(sPath, vValue, oGroupLock, true).catch(function (oError) {
 				oGroupLock.unlock(true);

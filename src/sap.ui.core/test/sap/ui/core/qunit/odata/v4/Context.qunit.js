@@ -835,7 +835,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete: success", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				lockGroup : function () {}
 			},
 			aBindings = [
 				{removeCachesAndMessages : function () {}},
@@ -845,8 +846,7 @@ sap.ui.define([
 			oGroupLock = new _GroupLock(),
 			oModel = {
 				checkGroupId : function () {},
-				getAllBindings : function () {},
-				lockGroup : function () {}
+				getAllBindings : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/Foo/Bar('42')", 42),
 			oPromise = Promise.resolve(),
@@ -855,8 +855,7 @@ sap.ui.define([
 		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("isTransient").withExactArgs().returns(true);
-		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
-			.returns(oGroupLock);
+		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
 		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
 			.returns(oPromise);
 		oPromise.then(function () {
@@ -880,13 +879,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("delete: failure", function (assert) {
 		var oBinding = {
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				lockGroup : function () {}
 			},
 			oError = new Error(),
 			oGroupLock = new _GroupLock(),
 			oModel = {
 				checkGroupId : function () {},
-				lockGroup : function () {},
 				reportError : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
@@ -897,8 +896,7 @@ sap.ui.define([
 			// check before deletion and twice while reporting the error
 			.exactly(3)
 			.returns(true);
-		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true, oContext)
-			.returns(oGroupLock);
+		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
 		this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
 			.returns(Promise.reject(oError));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
@@ -1144,6 +1142,7 @@ sap.ui.define([
 				checkSuspended : function () {},
 				getContext : function () { return null; },
 				isRelative : function () { return false; },
+				lockGroup : function () {},
 				refresh : function () {},
 				refreshSingle : function () {}
 			},
@@ -1151,15 +1150,13 @@ sap.ui.define([
 			oGroupLock = {},
 			oModel = {
 				checkGroupId : function () {},
-				lockGroup : function () {},
 				withUnresolvedBindings : function () {}
 			},
 			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		oModelMock.expects("checkGroupId");
-		oModelMock.expects("lockGroup").withExactArgs("myGroup", true, oContext)
-			.returns(oGroupLock);
+		oBindingMock.expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
 		oBindingMock.expects("refresh").never();
@@ -1688,10 +1685,8 @@ sap.ui.define([
 
 				oBindingMock.expects("firePatchCompleted").never();
 				oBindingMock.expects("firePatchSent").never();
-				oBindingMock.expects("getUpdateGroupId").withExactArgs().returns("up");
 				oBindingMock.expects("isPatchWithoutSideEffects").withExactArgs()
 					.returns(bPatchWithoutSideEffects);
-				that.mock(oGroupLock).expects("setGroupId").withExactArgs("up");
 				that.mock(oModel).expects("resolve").atLeast(1) // fnErrorCallback also needs it
 					.withExactArgs("some/relative/path", sinon.match.same(oContext))
 					.returns("/resolved/data/path");

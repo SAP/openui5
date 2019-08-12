@@ -235,7 +235,7 @@ sap.ui.define([
 	 * Calls the OData operation that corresponds to this operation binding.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group ID to be used for the request; defaults to this binding's group ID
+	 *   A lock for the group ID to be used for the request
 	 * @returns {Promise}
 	 *   A promise that is resolved without data or a return value context when the operation call
 	 *   succeeded, or rejected with an instance of <code>Error</code> in case of failure. A return
@@ -263,7 +263,6 @@ sap.ui.define([
 			return that.refreshDependentBindings("", oGroupLock.getGroupId(), true);
 		}
 
-		oGroupLock.setGroupId(this.getGroupId());
 		oPromise = oMetaModel.fetchObject(oMetaModel.getMetaPath(sResolvedPath) + "/@$ui5.overload")
 			.then(function (aOperationMetadata) {
 				var fnGetEntity, iIndex, sPath;
@@ -784,9 +783,7 @@ sap.ui.define([
 					if (bCached) {
 						oGroupLock = _GroupLock.$cached;
 					} else {
-						// Unless there is an expected read, a lock is not required here,
-						// only set the group ID
-						oGroupLock = that.lockGroup(that.getGroupId(), that.oReadGroupLock);
+						oGroupLock = that.oReadGroupLock || that.lockGroup();
 						that.oReadGroupLock = undefined;
 					}
 					return that.resolveRefreshPromise(
