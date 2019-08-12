@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/connectors/Utils"
+	"sap/ui/fl/apply/internal/connectors/Utils",
+	"sap/ui/fl/write/internal/connectors/Utils"
 ], function(
-	ConnectorUtils
+	ApplyUtils,
+	WriteUtils
 ) {
 	"use strict";
 
@@ -46,7 +48,7 @@ sap.ui.define([
 
 			return new Promise(function (resolve) {
 				return oConnectorConfig.connector.loadFeatures(mPropertyBag)
-					.then(resolve, ConnectorUtils.logAndResolveDefault.bind(null, resolve, {}, oConnectorConfig, "loadFeatures"));
+					.then(resolve, ApplyUtils.logAndResolveDefault.bind(null, resolve, {}, oConnectorConfig, "loadFeatures"));
 			});
 		});
 
@@ -61,7 +63,7 @@ sap.ui.define([
 	 * @private
 	 */
 	function getConnectorByLayer(sLayer) {
-		return ConnectorUtils.getWriteConnectors()
+		return WriteUtils.getWriteConnectors()
 			.then(findConnectorForLayer.bind(this, sLayer));
 	}
 
@@ -87,12 +89,12 @@ sap.ui.define([
 	/**
 	 * Provides the information which features are provided based on the responses of the involved connectors.
 	 *
-	 * @returns {Promise<Object>} map feature flags and additional provided information form the connectors
+	 * @returns {Promise<Object>} Map feature flags and additional provided information from the connectors
 	 */
 	Connector.loadFeatures = function () {
-		return ConnectorUtils.getApplyConnectors()
+		return WriteUtils.getWriteConnectors()
 			.then(sendLoadFeaturesToConnector)
-			.then(ConnectorUtils.mergeResults);
+			.then(ApplyUtils.mergeResults);
 	};
 
 	return Connector;
