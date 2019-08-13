@@ -16,45 +16,15 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Util class for Connector implementations (apply and write)
+	 * Util class for Connector implementations (apply).
 	 *
 	 * @namespace sap.ui.fl.apply.internal.connectors.Utils
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @version ${version}
 	 * @ui5-restricted sap.ui.fl.apply.internal, sap.ui.fl.write.internal
 	 */
 
-
-	var mApplyConnectors;
-	var mWriteConnectors;
 	var APPLY_CONNECTOR_NAME_SPACE = "sap/ui/fl/apply/internal/connectors/";
-	var WRITE_CONNECTOR_NAME_SPACE = "sap/ui/fl/write/internal/connectors/";
-
-	function getConnectors (sNameSpace, bIncludingStaticFileConnector) {
-		var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
-		var mConnectors = [];
-		if (bIncludingStaticFileConnector) {
-			mConnectors = [StaticFileConnector.CONFIGURATION];
-		}
-
-		mConnectors = mConnectors.concat(aConfiguredConnectors);
-
-		return new Promise(function (resolve) {
-			var aConnectorNames = mConnectors.map(function (mConnectorConfiguration) {
-				var sConnectorName = mConnectorConfiguration.connectorName;
-				return mConnectorConfiguration.custom ? sConnectorName : sNameSpace + sConnectorName;
-			});
-
-			sap.ui.require(aConnectorNames, function () {
-				Array.from(arguments).forEach(function (oConnector, iIndex) {
-					mConnectors[iIndex].connector = oConnector;
-				});
-
-				resolve(mConnectors);
-			});
-		});
-	}
 
 	/**
 	 * Adds entities of one object into another; depending of the type and presence of entries the behaviour differs:
@@ -65,7 +35,7 @@ sap.ui.define([
 	 *
 	 * @param {Object} oSource Object providing the data to merge
 	 * @param {Object} oTarget Object which got the data added provided by the source
-	 * @param {string} sKey key of the property which should be added
+	 * @param {string} sKey Key of the property which should be added
 	 * @private
 	 */
 	function addToObject(oSource, oTarget, sKey) {
@@ -89,17 +59,47 @@ sap.ui.define([
 	}
 
 	return {
+
+		/**
+		 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
+		 *
+		 * @param {string} sNameSpace Namespace to determine the path to the configured connectors
+		 * @param {boolean} bIncludingStaticFileConnector Flag to determine if StaticFileConnector should be included
+		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
+		 */
+		getConnectors: function(sNameSpace, bIncludingStaticFileConnector) {
+			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
+			var mConnectors = [];
+			if (bIncludingStaticFileConnector) {
+				mConnectors = [StaticFileConnector.CONFIGURATION];
+			}
+
+			mConnectors = mConnectors.concat(aConfiguredConnectors);
+
+			return new Promise(function (resolve) {
+				var aConnectorNames = mConnectors.map(function (mConnectorConfiguration) {
+					var sConnectorName = mConnectorConfiguration.connectorName;
+					return mConnectorConfiguration.custom ? sConnectorName : sNameSpace + sConnectorName;
+				});
+
+				sap.ui.require(aConnectorNames, function () {
+					Array.from(arguments).forEach(function (oConnector, iIndex) {
+						mConnectors[iIndex].connector = oConnector;
+					});
+
+					resolve(mConnectors);
+				});
+			});
+		},
+
 		/**
 		 * Provides all mandatory connectors required to read data for the apply case; these are the static file connector as well as all connectors
 		 * mentioned in the core-Configuration.
 		 *
-		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
+		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured apply connectors and their requested modules
 		 */
 		getApplyConnectors: function () {
-			if (!mApplyConnectors) {
-				mApplyConnectors = getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
-			}
-			return mApplyConnectors;
+			return this.getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
 		},
 
 		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
@@ -110,8 +110,8 @@ sap.ui.define([
 		/**
 		 * Merges the results from all involved connectors.
 		 *
-		 * @param {Object[]} aResponses all responses provided by the different connectors
-		 * @returns {Object} merged result
+		 * @param {Object[]} aResponses All responses provided by the different connectors
+		 * @returns {Object} Merged result
 		 * @private
 		 */
 		mergeResults: function(aResponses) {
@@ -124,18 +124,6 @@ sap.ui.define([
 			});
 
 			return oResult;
-		},
-
-		/**
-		 * Provides all mandatory connectors to write data; these are the connector mentioned in the core-Configuration.
-		 *
-		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
-		 */
-		getWriteConnectors: function () {
-			if (!mWriteConnectors) {
-				mWriteConnectors = getConnectors(WRITE_CONNECTOR_NAME_SPACE, false);
-			}
-			return mWriteConnectors;
 		},
 
 		/**
