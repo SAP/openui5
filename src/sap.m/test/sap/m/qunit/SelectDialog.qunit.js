@@ -1153,4 +1153,18 @@ sap.ui.define([
 		assert.equal(document.activeElement.getAttribute("id"), this.oSelectDialog._oDialog.getId(), 'After selection is reset the focus should be returned to the dialog"');
 	});
 
+	QUnit.test("Clear button pressed should fire search event with the correct clearButtonPressed value passed from SearchField", function (assert) {
+		// Arrange
+		var fnFireSelectSpy = sinon.spy(this.oSelectDialog, 'fireSearch'),
+			that = this;
+
+		jQuery.when(this.oSelectDialog.open()).then(function () {
+			// Act
+			that.oSelectDialog._oSearchField.fireSearch({clearButtonPressed: true});
+
+			// Assert
+			assert.strictEqual(fnFireSelectSpy.callCount, 1, 'Search event is fired once');
+			assert.strictEqual(fnFireSelectSpy.args[0][0].clearButtonPressed, true, 'Search event is fired with the correct clearButtonPressed value');
+		});
+	});
 });
