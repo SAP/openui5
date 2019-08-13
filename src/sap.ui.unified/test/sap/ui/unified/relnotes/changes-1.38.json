@@ -117,7 +117,7 @@
       {
         "id": "dfeae7318d02dc6cfb9c3d639f3951649358e843",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: don't select row if in 1 row mode",
+        "text": "sap.m.PlanningCalendar: don\u0027t select row if in 1 row mode",
         "references": []
       },
       {
@@ -291,7 +291,7 @@
       {
         "id": "e3d29776fd3d50e0fd5f794ca10d9c916dc32443",
         "type": "FIX",
-        "text": "sap.m.DatePicker: don't open for 0001.01.01 in IE",
+        "text": "sap.m.DatePicker: don\u0027t open for 0001.01.01 in IE",
         "references": [
           {
             "type": "BCP",
@@ -317,7 +317,7 @@
       {
         "id": "4538bc2d2fa354c0dd83931160f9c2b792d779a2",
         "type": "FIX",
-        "text": "unified.FileUploader: Removed 'src'-Attribute for BlindLayer",
+        "text": "unified.FileUploader: Removed \u0027src\u0027-Attribute for BlindLayer",
         "references": [
           {
             "type": "BCP",
@@ -756,6 +756,17 @@
             "reference": "002075129500003320162018"
           }
         ]
+      }
+    ]
+  },
+  "1.38.41": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "726fdc9072b743c4f7232129f4708993192744dc",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": []
       }
     ]
   }

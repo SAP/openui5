@@ -5442,5 +5442,32 @@
         "references": []
       }
     ]
+  },
+  "1.44.42": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "85d5ed9b33148ba2e75f79d13892341ae1cd06ba",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: In compact mode zoomed out sliders are aligned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770531600"
+          }
+        ]
+      },
+      {
+        "id": "d36e981723c56b808789f4957f4a980185ce360b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection : Download of item not happening when factory binding is used.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "12005041000000451312019."
+          }
+        ]
+      }
+    ]
   }
 }
