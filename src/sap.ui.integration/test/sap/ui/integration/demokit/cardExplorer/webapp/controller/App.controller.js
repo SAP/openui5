@@ -3,12 +3,14 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/Device",
 		"../model/DocumentationNavigationModel",
-		"../model/ExploreNavigationModel"
+		"../model/ExploreNavigationModel",
+		"../model/IntegrateNavigationModel"
 	], function (BaseController,
 				 JSONModel,
 				 Device,
 				 documentationNavigationModel,
-				 exploreNavigationModel) {
+				 exploreNavigationModel,
+				 integrateNavigationModel) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.cardExplorer.controller.App", {
@@ -44,9 +46,12 @@ sap.ui.define([
 					case "learnDetail":
 						this.getRouter().navTo("learnDetail", {key: "overview"});
 						return;
+					case "integrate":
+						this.getRouter().navTo("integrate", {key: "overview"});
+						return;
+					default:
+						this.getRouter().navTo(key);
 				}
-
-				this.getRouter().navTo(key);
 			},
 
 			onSideNavigationItemSelect: function (oEvent) {
@@ -79,17 +84,8 @@ sap.ui.define([
 				var routeArgs = oEvent.getParameter("arguments");
 				var routeName = routeConfig.name;
 				var sideNavigation = this.getView().byId('sideNavigation');
-				var iconTabHeader = this.getView().byId('iconTabHeader');
-				var model = documentationNavigationModel;
 
-				if (routeName.indexOf('explore') === 0) {
-					model = exploreNavigationModel;
-					iconTabHeader.setSelectedKey("exploreSamples");
-				} else {
-					iconTabHeader.setSelectedKey("learnDetail");
-				}
-
-				this.getView().setModel(model);
+				this.switchCurrentModelAndTab(routeName);
 
 				if (routeArgs["key"]) {
 					sideNavigation.setSelectedKey(routeArgs["key"]);
@@ -126,6 +122,24 @@ sap.ui.define([
 
 			navToHome: function () {
 				window.open('../index.html', '_self');
+			},
+
+			switchCurrentModelAndTab: function (sRouteName) {
+				var oIconTabHeader = this.getView().byId("iconTabHeader");
+				var oModel;
+
+				if (sRouteName.startsWith("explore")) {
+					oModel = exploreNavigationModel;
+					oIconTabHeader.setSelectedKey("exploreSamples");
+				} else if (sRouteName.startsWith("integrate")) {
+					oModel = integrateNavigationModel;
+					oIconTabHeader.setSelectedKey("integrate");
+				} else { // default is the Learn page
+					oModel = documentationNavigationModel;
+					oIconTabHeader.setSelectedKey("learnDetail");
+				}
+
+				this.setModel(oModel);
 			}
 		});
 	}
