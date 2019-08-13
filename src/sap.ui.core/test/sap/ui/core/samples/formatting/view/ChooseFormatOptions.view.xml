@@ -1,0 +1,71 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:c="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:semantic="sap.m.semantic"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	controllerName="sap.ui.core.samples.formatting.controller.ChooseFormatOptions">
+	<semantic:FullscreenPage title="Choose Format Options">
+
+		<semantic:customFooterContent>
+			<Button icon="sap-icon://activate" text="Activate!" press=".activate"/>
+		</semantic:customFooterContent>
+
+		<Panel expandable="true" expanded="true">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text="General"/>
+				</Toolbar>
+			</headerToolbar>
+
+			<content>
+				<l:VerticalLayout class="sapUiContentPadding" width="100%">
+					<CheckBox id="showMeasure" text="showMeasure" selected="true" />
+					<CheckBox id="strictParsing" text="strictParsing" />
+				</l:VerticalLayout>
+			</content>
+		</Panel>
+
+		<Panel expandable="true" expanded="true">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text="Unit specific"/>
+				</Toolbar>
+			</headerToolbar>
+
+			<content>
+				<l:VerticalLayout class="sapUiContentPadding" width="100%">
+					<CheckBox id="unitOptional" text="unitOptional" />
+				</l:VerticalLayout>
+			</content>
+		</Panel>
+
+		<Panel expandable="true" expanded="true">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text="Currency specific"/>
+				</Toolbar>
+			</headerToolbar>
+
+			<content>
+				<l:VerticalLayout class="sapUiContentPadding" width="100%">
+					<CheckBox id="currencyCode" text="currencyCode" selected="true"/>
+				</l:VerticalLayout>
+			</content>
+		</Panel>
+
+		<Panel expandable="true" expanded="true">
+			<headerToolbar>
+				<Toolbar height="3rem">
+					<Title text="Demo"/>
+				</Toolbar>
+			</headerToolbar>
+
+			<content>
+				<c:Fragment fragmentName="sap.ui.core.samples.formatting.view.InputFields" type="XML"/>
+			</content>
+		</Panel>
+	</semantic:FullscreenPage>
+</mvc:View>
