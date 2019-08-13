@@ -161,13 +161,17 @@ sap.ui.define([
 		 * Sending a xhr request and handling the response according to the status code of the response.
 		 *
 		 * @param {string} sUrl Url of the sent request
+		 * @param {string} sMethod Desired action to be performed for a given resource
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 * @private
 		 */
-		sendRequest: function(sUrl) {
+		sendRequest: function(sUrl, sMethod) {
+			sMethod = sMethod || "GET";
+			sMethod = sMethod.toUpperCase();
+
 			return new Promise(function (resolve, reject) {
 				var xhr = new XMLHttpRequest();
-				xhr.open('GET', sUrl);
+				xhr.open(sMethod, sUrl);
 				xhr.send();
 				xhr.onload = function() {
 					if (xhr.status >= 200 && xhr.status < 400) {
