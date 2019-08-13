@@ -724,7 +724,7 @@
 			  "sap.m.sample.MessageViewInsideResponsivePopover",
 			  "sap.m.sample.MessageViewInsideDialog",
 			  "sap.m.sample.MessageViewWithGrouping",
-			  "sap.m.sample.MessageViewMessageHandling"
+			  "sap.m.sample.MessageViewMessageManager"
 		  ]
 		 },
 		{
@@ -2748,8 +2748,8 @@
 		  "description": "A sample with Message View inside a ResponsivePopover."
 		 },
 		 {
-		  "id": "sap.m.sample.MessageViewMessageHandling",
-		  "name": "Message View with Message Handling",
+		  "id": "sap.m.sample.MessageViewMessageManager",
+		  "name": "Message View connected with Message Model",
 		  "description": "A sample showing how you can connect the MessageView with MessageManager."
 		 },
 		{

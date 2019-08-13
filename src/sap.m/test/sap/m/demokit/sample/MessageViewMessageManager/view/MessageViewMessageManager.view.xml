@@ -1,4 +1,4 @@
-<mvc:View height="100%" controllerName="sap.m.sample.MessageViewMessageHandling.controller.MessageViewMessageHandling"
+<mvc:View height="100%" controllerName="sap.m.sample.MessageViewMessageManager.controller.MessageViewMessageManager"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page id="messageHandlingPage" showHeader="false">
