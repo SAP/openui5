@@ -62,5 +62,21 @@
         "references": []
       }
     ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "07d30309ddad679817f03f006feab4b34827a55f",
+        "type": "FIX",
+        "text": "SDK: accept hash for LICENSE.txt",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1320"
+          }
+        ]
+      }
+    ]
   }
 }

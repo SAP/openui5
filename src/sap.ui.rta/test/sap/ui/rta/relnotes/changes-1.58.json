@@ -226,5 +226,119 @@
         ]
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "93471488e4e23afb3c934dba39ff82eb0c583d95",
+        "type": "FIX",
+        "text": "sap.ui.rta - Change Handler error for instance-specific flexibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880468643"
+          }
+        ]
+      },
+      {
+        "id": "0bebfde5738e3c94a4bb89700b76852b42684f7c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Check for aggregation binding only for overlays",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880500067"
+          }
+        ]
+      },
+      {
+        "id": "7d09787a00e08aa138fec2200edd1f7934fda109",
+        "type": "FIX",
+        "text": "sap.ui.rta - Combine plugin not considering triggering element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880530362"
+          }
+        ]
+      },
+      {
+        "id": "91028de1f2343a4f7031c14e7b5625b291d91bc4",
+        "type": "FIX",
+        "text": "sap.ui.rta - Evaluate AddOData Action after MetaModel is loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880499137"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "1df2d82421874bf49d3526458db671b66903962b",
+        "type": "FIX",
+        "text": "Setting the tooltip for every icon on App variant overview",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880221683"
+          }
+        ]
+      },
+      {
+        "id": "2a2797e56a366a8f87f94ddb6846cb497679d6a8",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880536682"
+          }
+        ]
+      },
+      {
+        "id": "fb31be5047e52f3dfb0ae9744b514241584fd267",
+        "type": "FIX",
+        "text": "sap.ui.rta - Actions no longer available for wrong aggregations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870346324"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.4": {
+    "date": "October 2018",
+    "notes": [
+      {
+        "id": "9bf512022a6ed7d2215754664554bb4f20bfe6f0",
+        "type": "FIX",
+        "text": "Fixing CSP problem in sap.ui.rta",
+        "references": []
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "26d790d580005ae12cbbba78a129e35046c5f69b",
+        "type": "FIX",
+        "text": "sap.ui.fl: Changes for VariantManagement are stored as instance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880596129"
+          }
+        ]
+      }
+    ]
   }
 }

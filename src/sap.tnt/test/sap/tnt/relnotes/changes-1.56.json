@@ -16,22 +16,13 @@
       {
         "id": "307d93eda2af5adeef61ae860f4e6dd898f0593b",
         "type": "FIX",
-        "text": "sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870055067"
-          },
-          {
-            "type": "BCP",
-            "reference": "1870059578"
-          }
-        ]
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
       },
       {
         "id": "e608b163b2a34c1aef5654345123845a0e3a31bd",
         "type": "FIX",
-        "text": "sap.tnt.InfoLabel: fix failing unit test",
+        "text": " sap.tnt.InfoLabel: fix failing unit test",
         "references": []
       }
     ]

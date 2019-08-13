@@ -5,19 +5,52 @@
       {
         "id": "35353b36fa6c5528b550544b5503f095c2c62883",
         "type": "FEATURE",
-        "text": "changeHander registration can be done in one file per control",
+        "text": " changeHander registration can be done in one file per control",
         "references": []
       },
       {
         "id": "dae5d5b096956a52cb140d4e0cab22cc952a3c9d",
         "type": "FEATURE",
-        "text": "sap.ui.fl provides a support panel to debug flexibility",
+        "text": " sap.ui.fl provides a support panel to debug flexibility",
         "references": []
       },
       {
         "id": "dc5c9027c2b40da37630a687ad213679515148f9",
         "type": "FEATURE",
-        "text": "sap.ui.fl: Shared configuration for test pages",
+        "text": " sap.ui.fl: Shared configuration for test pages",
+        "references": []
+      }
+    ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6d6f464434640e18e02d286dfba52cb9c1e894da",
+        "type": "FEATURE",
+        "text": " LRep CUSTOMER_BASE layer for flexibility",
+        "references": []
+      }
+    ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "042c05bf223621374724ed98c8b79da6602aa520",
+        "type": "FIX",
+        "text": " Variant loading fails if server sends correct content type",
+        "references": []
+      }
+    ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "03ef8c913f9bead85bc78760f6c1dd0d4eafea5e",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
         "references": []
       }
     ]

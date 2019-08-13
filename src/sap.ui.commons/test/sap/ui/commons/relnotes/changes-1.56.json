@@ -16,35 +16,20 @@
       {
         "id": "cbe6b8b0d555a274fc7fb2d87fd797c7408a4dd1",
         "type": "FIX",
-        "text": "sap.ui.commons.DatePicker: fix failing unit tests",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870142578"
-          }
-        ]
+        "text": " sap.ui.commons.DatePicker: fix failing unit tests",
+        "references": []
       },
       {
         "id": "12dbbdf36956b8ea3c05f9518178ab0af918d120",
         "type": "FIX",
-        "text": "sap.ui.commons.Toolbar: fix failing unit test",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870143079"
-          }
-        ]
+        "text": " sap.ui.commons.Toolbar: fix failing unit test",
+        "references": []
       },
       {
         "id": "d6dc402fb8acb64bb8ecfec8cb5b45b1886ec43e",
         "type": "FIX",
-        "text": "sap.ui.commons.SearchField: Control behaves correctly on combi devices",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870143076"
-          }
-        ]
+        "text": " sap.ui.commons.SearchField: Control behaves correctly on combi devices",
+        "references": []
       }
     ]
   }

@@ -1,169 +1,204 @@
 {
-	"1.34.0": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "68297b26e8c0330eadb656a5d115e7968ec11a6b",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.BlockLayout - titleLevel property added to BlockLayoutCell",
-				"references": []
-			},
-			{
-				"id": "42f80426dad0e8e311fa96a4abb5c84b3279bcd9",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.BlockLayout: Control implemented",
-				"references": []
-			},
-			{
-				"id": "0188cfab6e7c03959a8d85ed2a89e7654287751a",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.Form: support XL breakpoint in the ResponsiveGridLayout in the Form",
-				"references": []
-			},
-			{
-				"id": "6d93689bab6e478e97df5f8fdb29510b3c681133",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout single Container",
-				"references": []
-			},
-			{
-				"id": "7346d2cede300ca87ff0841df490a2fe3f800e03",
-				"type": "FEATURE",
-				"text": "sap.ui.layout.form.ResponsiveGridLayout: alignLabelSpan",
-				"references": []
-			},
-			{
-				"id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
-				"type": "FIX",
-				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100003930322015"
-					}
-				]
-			},
-			{
-				"id": "c3b3460a4463f6c92840dc5b37c088714d8bcc6a",
-				"type": "FIX",
-				"text": "layout.Splitter: Don't Attempt Resize on Preserved DOM",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580131174"
-					}
-				]
-			},
-			{
-				"id": "47fa1a3ec30bfb46b35a594cbb9a6d673e592724",
-				"type": "FIX",
-				"text": "sap.ui.Layout.DynamicSideContent - Height is properly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580200257"
-					}
-				]
-			},
-			{
-				"id": "ae0ca3d3ae8d5cbbc0e1fbe120e36e9cbdd6fe2a",
-				"type": "FIX",
-				"text": "sap.ui.core.layout.VerticalLayout: fix vertical-align in IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580197076"
-					}
-				]
-			},
-			{
-				"id": "99202f68d4af4f4c1d7f0735871dc500b2d3544b",
-				"type": "FIX",
-				"text": "sap.ui.layout.DynamicSideContent - Show and hide functionality now works correct when changing breakpoints",
-				"references": []
-			},
-			{
-				"id": "43e05c1d5c8994507e5349160f3a0b1f29cdf7a3",
-				"type": "FIX",
-				"text": "sap.ui.layout.DynamicSideContent: In samples slider does not appear for phones anymore",
-				"references": []
-			},
-			{
-				"id": "c2eb95ad5d5335196817a5f771466c885f486c5a",
-				"type": "FIX",
-				"text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "492"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570801167"
-					}
-				]
-			},
-			{
-				"id": "38e8d9b215ba490e34a7809a537f802977c55495",
-				"type": "FIX",
-				"text": "sap.ui.layout.ResponsiveFlowLayout - On Internet Explorer the layout container does not occupy the whole width anymore",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570798440"
-					}
-				]
-			},
-			{
-				"id": "bcc72a3c14cb903015091a331f5168fa436b6129",
-				"type": "FIX",
-				"text": "sap.ui.layout.VerticalLayout: Prevent rerendering on width property change",
-				"references": []
-			},
-			{
-				"id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580178200"
-					}
-				]
-			},
-			{
-				"id": "c2cae5cda5378743eda344d0d2b1f7794b59d756",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: missing paddings in sap.m",
-				"references": []
-			},
-			{
-				"id": "92bdf170af91089ed3553815587ece66f38d3377",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700006423272015"
-					}
-				]
-			}
-		]
-	},
-	"1.34.11": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "8b3a96e89c7ca75bdc465865a1c7048fcf76df59",
-				"type": "FIX",
-				"text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670208916"
-					}
-				]
-			}
-		]
-	}
+  "1.34.0": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "68297b26e8c0330eadb656a5d115e7968ec11a6b",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: TitleLevel property added to BlockLayoutCell",
+        "references": []
+      },
+      {
+        "id": "42f80426dad0e8e311fa96a4abb5c84b3279bcd9",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Control implemented",
+        "references": []
+      },
+      {
+        "id": "0188cfab6e7c03959a8d85ed2a89e7654287751a",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.Form: support XL breakpoint in the ResponsiveGridLayout in the Form",
+        "references": []
+      },
+      {
+        "id": "6d93689bab6e478e97df5f8fdb29510b3c681133",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout single Container",
+        "references": []
+      },
+      {
+        "id": "7346d2cede300ca87ff0841df490a2fe3f800e03",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: alignLabelSpan",
+        "references": []
+      },
+      {
+        "id": "8c4f0f2be7b8a9276202c8f6894484beaeb67c58",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "c3b3460a4463f6c92840dc5b37c088714d8bcc6a",
+        "type": "FIX",
+        "text": "layout.Splitter: Don\u0027t Attempt Resize on Preserved DOM",
+        "references": []
+      },
+      {
+        "id": "47fa1a3ec30bfb46b35a594cbb9a6d673e592724",
+        "type": "FIX",
+        "text": "sap.ui.Layout.DynamicSideContent: Height is properly",
+        "references": []
+      },
+      {
+        "id": "ae0ca3d3ae8d5cbbc0e1fbe120e36e9cbdd6fe2a",
+        "type": "FIX",
+        "text": "sap.ui.core.layout.VerticalLayout: Fix vertical-align in Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "99202f68d4af4f4c1d7f0735871dc500b2d3544b",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Show and hide functionality now works correct when changing breakpoints",
+        "references": []
+      },
+      {
+        "id": "43e05c1d5c8994507e5349160f3a0b1f29cdf7a3",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: In samples slider does not appear for phones anymore",
+        "references": []
+      },
+      {
+        "id": "c2eb95ad5d5335196817a5f771466c885f486c5a",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: Cyclic re-rendering when the width is small solved",
+        "references": []
+      },
+      {
+        "id": "38e8d9b215ba490e34a7809a537f802977c55495",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout: On Internet Explorer the layout container does not occupy the whole width anymore",
+        "references": []
+      },
+      {
+        "id": "bcc72a3c14cb903015091a331f5168fa436b6129",
+        "type": "FIX",
+        "text": "sap.ui.layout.VerticalLayout: Prevent rerendering on width property change",
+        "references": []
+      },
+      {
+        "id": "2bae7babba64ba2fd4f68ce32177ce937bf7ca9d",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Use Label style only for direct labels",
+        "references": []
+      },
+      {
+        "id": "c2cae5cda5378743eda344d0d2b1f7794b59d756",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: Missing paddings in sap.m",
+        "references": []
+      },
+      {
+        "id": "92bdf170af91089ed3553815587ece66f38d3377",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: Wrong tab sequence in RTL",
+        "references": []
+      }
+    ]
+  },
+  "1.34.1": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "e559f930517a4a3cafb1fc1032dc6695ed6b3c47",
+        "type": "FIX",
+        "text": "sap.m.BlockLayout: Add flex prefixes for IE 10",
+        "references": []
+      }
+    ]
+  },
+  "1.34.2": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "a4cb7dff6d7b4bd0e36e90ad413d4abbb78158f0",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Side content visibility on invalidation solved",
+        "references": []
+      },
+      {
+        "id": "fde5532f89be90fca1172620678d46453e9e990b",
+        "type": "FIX",
+        "text": "sap.ui.layout.Form: linebreakXL support correction in Grid.",
+        "references": []
+      }
+    ]
+  },
+  "1.34.3": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "44661ead63fb7ccbd22990f948ca2a5dba343ad6",
+        "type": "FIX",
+        "text": "sap.m.ScrollContainer, sap.ui.layout.FixFlex: A tweak, causing issues in Internet Explorer is now removed",
+        "references": []
+      },
+      {
+        "id": "704cfdaf100b7f4eeac200f5ef98b396e24898a9",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: No padding between FormContainer if no Title",
+        "references": []
+      }
+    ]
+  },
+  "1.34.4": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "ee395066cc1bd5fa1273e7b071cea748db635d75",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.SimpleForm: improve documentation",
+        "references": []
+      }
+    ]
+  },
+  "1.34.8": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "f4b787160e2e6ba9ffebb18d1395cc1cb985ab60",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: 1st container invisible",
+        "references": []
+      }
+    ]
+  },
+  "1.34.10": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "e4af4a8ab5c034b06cf2d95ada25add2b65b8cf6",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: double role \"form\" if only one container",
+        "references": []
+      },
+      {
+        "id": "c351784919ccc9a545f0dfc981e52b256806fc70",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveLayout: Labels wrong aligned in Edge",
+        "references": []
+      }
+    ]
+  },
+  "1.34.11": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "8b3a96e89c7ca75bdc465865a1c7048fcf76df59",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: labels not aligned in Firefox",
+        "references": []
+      }
+    ]
+  }
 }
