@@ -929,7 +929,7 @@ sap.ui.define([
 			// estimated length.
 			iStart += this.iCreatedContexts;
 		}
-		oPromise = this.readData(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
+		oPromise = this.fetchData(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
 			fnDataRequested);
 		if (bAsync) {
 			oPromise = Promise.resolve(oPromise);
@@ -942,6 +942,60 @@ sap.ui.define([
 				oGroupLock.unlock(true);
 			}
 			throw oError;
+		});
+	};
+
+	/**
+	 * Reads the requested range from the cache and returns an object as described in _Cache#read.
+	 *
+	 * @param {number} iIndex
+	 *   The start index of the range
+	 * @param {number} iLength
+	 *   The length of the range, <code>Infinity</code> may be used to retrieve all data
+	 * @param {number} iMaximumPrefetchSize
+	 *   The maximum number of rows to read before and after the given range
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used, defaults to the binding's group ID
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before a back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise to be resolved with the requested range as described in _Cache#read, or
+	 *   <code>undefined</code> w/o reading if the result is irrelevant because the context changed
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchData = function (iIndex, iLength, iMaximumPrefetchSize,
+		oGroupLock, fnDataRequested) {
+		var oContext = this.oContext,
+			that = this;
+
+		return this.oCachePromise.then(function (oCache) {
+			// ensure that the result is still relevant
+			if (that.bRelative && oContext !== that.oContext) {
+				return undefined;
+			}
+
+			if (oCache) {
+				oGroupLock = that.lockGroup(that.getGroupId(), oGroupLock);
+				return oCache.read(iIndex, iLength, iMaximumPrefetchSize, oGroupLock,
+					fnDataRequested);
+			}
+
+			if (oGroupLock) {
+				oGroupLock.unlock();
+			}
+			return oContext.fetchValue(that.sReducedPath).then(function (aResult) {
+				var iCount;
+
+				// aResult may be undefined e.g. in case of a missing $expand in parent binding
+				aResult = aResult || [];
+				iCount = aResult.$count;
+				aResult = aResult.slice(iIndex, iIndex + iLength);
+				aResult.$count = iCount;
+
+				return {value : aResult};
+			});
 		});
 	};
 
@@ -1744,60 +1798,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reads the requested range from the cache and returns an object as described in _Cache#read.
-	 *
-	 * @param {number} iIndex
-	 *   The start index of the range
-	 * @param {number} iLength
-	 *   The length of the range, <code>Infinity</code> may be used to retrieve all data
-	 * @param {number} iMaximumPrefetchSize
-	 *   The maximum number of rows to read before and after the given range
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used, defaults to the binding's group ID
-	 * @param {function} [fnDataRequested]
-	 *   The function is called just before a back-end request is sent.
-	 *   If no back-end request is needed, the function is not called.
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the requested range as described in _Cache#read, or
-	 *   <code>undefined</code> w/o reading if the result is irrelevant because the context changed
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.readData = function (iIndex, iLength, iMaximumPrefetchSize,
-			oGroupLock, fnDataRequested) {
-		var oContext = this.oContext,
-			that = this;
-
-		return this.oCachePromise.then(function (oCache) {
-			// ensure that the result is still relevant
-			if (that.bRelative && oContext !== that.oContext) {
-				return undefined;
-			}
-
-			if (oCache) {
-				oGroupLock = that.lockGroup(that.getGroupId(), oGroupLock);
-				return oCache.read(iIndex, iLength, iMaximumPrefetchSize, oGroupLock,
-					fnDataRequested);
-			}
-
-			if (oGroupLock) {
-				oGroupLock.unlock();
-			}
-			return oContext.fetchValue(that.sReducedPath).then(function (aResult) {
-				var iCount;
-
-				// aResult may be undefined e.g. in case of a missing $expand in parent binding
-				aResult = aResult || [];
-				iCount = aResult.$count;
-				aResult = aResult.slice(iIndex, iIndex + iLength);
-				aResult.$count = iCount;
-
-				return {value : aResult};
-			});
-		});
-	};
-
-	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
@@ -1985,11 +1985,11 @@ sap.ui.define([
 			}
 			return that.getContextsInViewOrder(iStart, iLength);
 		}, function (oError) {
-			Log.error("Failed to get contexts for "
+			that.oModel.reportError("Failed to get contexts for "
 				+ that.oModel.sServiceUrl
 				+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
 				+ " with start index " + iStart + " and length " + iLength,
-				oError, sClassName);
+				sClassName, oError);
 			throw oError;
 		}));
 	};
