@@ -4,7 +4,7 @@
 sap.ui.define([
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/api/UI2PersonalizationApplyAPI",
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

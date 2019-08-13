@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
