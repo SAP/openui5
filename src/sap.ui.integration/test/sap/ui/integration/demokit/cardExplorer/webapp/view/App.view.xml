@@ -29,6 +29,7 @@
 					<items>
 						<IconTabFilter key="learnDetail" text="Learn" />
 						<IconTabFilter key="exploreSamples" text="Explore" />
+						<IconTabFilter key="integrate" text="Integrate" />
 					</items>
 				</IconTabHeader>
 			</tnt:ToolHeader>

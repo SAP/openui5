@@ -233,7 +233,7 @@ sap.ui.define([
 
 			if (oCard) {
 				oCard.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
-				this.byId("cardContainer").rerender();
+				this.byId("cardContainer").invalidate();
 			}
 
 			if (!sManifestUrl) {

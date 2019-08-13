@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Integration Cards</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../css/style.css">
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+
+	<link  href="../google-code-prettify/prettify.css" rel="stylesheet">
+	<script src="../google-code-prettify/run_prettify.js"></script>
+
+</head>
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h1 id="overview">Integration Cards API</h1>
+			<p>
+				Card API is used by the host environment to:
+				<ul>
+					<li>Set manifest URL or manifest object and base URL to create the card</li>
+					<li>Provide handlers for different user interaction events</li>
+					<li>Pass parameters needed by the card</li>
+					<li>Set width and height which would work for the layout used in the host environment</li>
+					<li>Manage card state</li>
+				</ul>
+			</p>
+
+			<h1 id="handlingActions">Handling on-action events</h2>
+			<p>
+				A card instance can trigger an <code>action</code> event. This event should be handled by the host environment to make the card interactions fully functional.
+				The <code>action</code> event's <code>type</code>, determines the purpose of the action.
+				Today the types of actions are limited to <code>navigation</code>. In the future there might be additional types of actions.
+			</p>
+			<p>
+				Adding handler for <code>action</code> event in the XML View
+			</p>
+<pre class="prettyprint">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" action="onActionLog"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+			<p>
+				on <code>action</code> handler code in the controller.
+			</p>
+<pre class="prettyprint">
+...
+onActionLog: function (oEvent) {
+	console.log(oEvent.getParameter("type")); // The type of the action
+	console.log(JSON.stringify(oEvent.getParameter("manifestParameters"), null, 2)); // The action parameters passed from the card to the host environment
+	console.log(oEvent.getParameter("actionSource")); // The source of the action
+}
+...
+</pre>
+
+			<h1 id="passingParameters">Passing parameters</h2>
+			<p>
+				A card developer can add parameters to the cards manifest. Such parameters are often optional and allow to influence the cards content. Some parameters are mandatory, because the card relies on this information to work properly. If a card needs to load data, one parameter might be the url that should be used to trigger a data request. Parameters are card specific and are declared in the corresponding cards manifest.
+			</p>
+
+<pre class="prettyprint">
+var oCard = new Card();
+// This manifest expects a city parameter to render a card with information for that city.
+oCard.setManifest("./manifest.json");
+var oParameters = {
+	"city": "Waldorf,de"
+};
+oCard.setParameters(oParameters);
+</pre>
+
+			<h1 id="managingState">Managing card state</h1>
+
+			<h2 id="refreshingCards">Refreshing cards</h2>
+			<p>
+				In certain cases the host environment knows that the card is no longer showing up to date information and a card refresh is needed.
+				To do that the developer has to call the <code>refresh</code> function of the card. It will re-render the card, reapply the manifest and re-trigger all data requests.
+				This functionality depends on the <code>dataMode</code> property of the card, and will only work if it is set ot <code>Active</code>.
+			</p>
+<pre class="prettyprint">
+oCard.refresh();
+</pre>
+
+			<h2 id="dataMode">Card data mode</h2>
+			<p>
+				To control if the card should make requests or not the developer can set the <code>dataMode</code> property of the card.
+				If the <code>dataMode</code> is set to <code>Active</code> the card will be able to load its manifest, resources and data.
+				Setting the <code>dataMode</code> to <code>Inactive</code> will stop any further requests and loading.
+				Some cards can refresh their data in a certain interval. This property provides control to the host environment to disable/enable any further requests.
+			</p>
+<pre class="prettyprint">
+// Make card inactive for 10 seconds
+oCard.setDataMode("Inactive");
+setTimeout(function () {
+	oCard.setDataMode("Active");
+}, 10000);
+</pre>
+
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#overview">Card API</a></div>
+			<div><a href="#handlingActions">Handling events</a></div>
+			<div><a href="#passingParameters">Passing parameters</a></div>
+			<div><a href="#managingState">Managing card state</a></div>
+		</div>
+	</div>
+</body>
+</html>
