@@ -1546,10 +1546,8 @@ function(
 		};
 
 		Dialog.prototype.setBeginButton = function (oButton) {
-			var sTheme = Core.getConfiguration().getTheme();
 
-			if (oButton && oButton.isA("sap.m.Button") && sTheme.startsWith("sap_fiori_")) {
-				oButton.setType("Emphasized");
+			if (oButton && oButton.isA("sap.m.Button")) {
 				oButton.addStyleClass("sapMDialogBeginButton");
 			}
 
@@ -1557,10 +1555,8 @@ function(
 		};
 
 		Dialog.prototype.setEndButton = function (oButton) {
-			var sTheme = Core.getConfiguration().getTheme();
 
-			if (oButton && oButton.isA("sap.m.Button") && sTheme.startsWith("sap_fiori_")) {
-				oButton.setType("Transparent");
+			if (oButton && oButton.isA("sap.m.Button")) {
 				oButton.addStyleClass("sapMDialogEndButton");
 			}
 
