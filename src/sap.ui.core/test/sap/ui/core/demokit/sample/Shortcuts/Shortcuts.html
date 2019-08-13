@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+
+		<title>Shortcuts</title>
+
+		<script src="/resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-resourceroots='{"sap.ui.core.sample.Shortcuts": "."}'
+				data-sap-ui-libs="sap.m,sap.ui.layout"
+				data-sap-ui-compatVersion="edge"
+				data-sap-ui-theme="sap_belize">
+		</script>
+
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require(['sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/Device'],
+							function(Component, ComponentContainer) {
+
+					Component.create({
+						name: "sap.ui.core.sample.Shortcuts"
+					}).then(function(oComponent) {
+						var oContainer = new ComponentContainer({
+							component: oComponent,
+							propagateModel: true
+						});
+						oContainer.placeAt("content");
+					});
+				});
+			});
+		</script>
+
+	</head>
+	<body class="sapUiBody">
+		<div id="content"></div>
+	</body>
+</html>

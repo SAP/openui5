@@ -1,0 +1,44 @@
+ <mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	controllerName="sap.ui.core.sample.Shortcuts.Shortcuts"
+	displayBlock="true">
+	<App id="shortcuts">
+		<Page id="page" title="keydown Demo1">
+			<dependents>
+				<core:CommandExecution command="Save" execute=".onSave" />
+			</dependents>
+			<Panel headerText="Button">
+				<Button text="gecuttet" press="cmd:Save"/>
+			</Panel>
+			<!-- Input -->
+			<Panel headerText="sap.m.Input">
+				<Input id="myInput" value="{viewModel>/value}" />
+			</Panel>
+			<Panel headerText="sap.m.Combobox">
+				<ComboBox
+					items="{ path: 'viewModel>/countries'}"
+					selectedKey="{viewModel>/selected}">
+					<core:Item key="{viewModel>key}" text="{viewModel>text}" />
+				</ComboBox>
+			</Panel>
+			<Panel headerText="sap.m.Select">
+				<Select
+					selectedKey='{viewModel>/selected}'
+					items="{
+						path: 'viewModel>/countries',
+						sorter: {path: 'text'}
+					}">
+					<core:Item key="{viewModel>key}" text="{viewModel>text}" />
+				</Select>
+			</Panel>
+			<Panel headerText="Popover - Shortcut defined on underlying content">
+			<Button press=".onPopoveropen" text="Open Popover"/>
+			</Panel>
+			<Panel headerText="Popover - Shortcut defined in Popup content">
+			<Button press=".onShortcutPopoveropen" text="Open Popover"/>
+			</Panel>
+		</Page>
+	</App>
+</mvc:View>
