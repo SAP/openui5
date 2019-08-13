@@ -1,29 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/apply/internal/connectors/LocalStorageConnector",
-	"sap/ui/fl/apply/internal/connectors/Utils",
 	"sap/ui/fl/write/internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/internal/connectors/LocalStorageConnector"
 ], function(
-	SessionStorageConnector,
-	LocalStorageConnector,
-	ConnectorUtils,
 	SessionStorageWriteConnector,
 	LocalStorageWriteConnector
 ) {
 	"use strict";
-
-	QUnit.module("Loading of Connector", {}, function() {
-		QUnit.test("given a custom connector is configured", function(assert) {
-			return ConnectorUtils.getApplyConnectors().then(function (aConnectors) {
-				assert.equal(aConnectors.length, 2, "two connectors are loaded");
-				assert.equal(aConnectors[0].connectorName, "StaticFileConnector", "the StaticFileConnector is the first connector");
-				assert.equal(aConnectors[1].connectorName, "BrowserStorageConnector", "the BrowserStorageConnector is the second connector");
-			});
-		});
-	});
 
 	var oTestData = {
 		oChange1: {

@@ -83,10 +83,10 @@ sap.ui.define([
 
 	return {
 		/**
-		* The iterator for the fl changes in the given Storage
+		* The iterator for the fl changes in the given Storage.
 		* @public
 		* @param {Storage} oStorage browser storage, can be either session or local storage
-		* @param {function} fnPredicate The function to apply for each  cahnge
+		* @param {function} fnPredicate The function to apply for each  change
 		*/
 		forEachChangeInStorage: function(oStorage, fnPredicate) {
 			var aKeys = Object.keys(oStorage);

@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Connector for saving data to the window.SessionStorage
+	 * Connector for saving data to the <code>window.SessionStorage</code>.
 	 *
 	 * @namespace sap.ui.fl.write.internal.connectors.SessionStorageConnector
 	 * @experimental Since 1.70

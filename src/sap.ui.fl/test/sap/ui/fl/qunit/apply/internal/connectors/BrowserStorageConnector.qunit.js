@@ -2,21 +2,27 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/internal/connectors/BrowserStorageUtils",
+	"sap/ui/fl/apply/internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/apply/internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/apply/internal/connectors/Utils",
+	"sap/ui/fl/write/internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/internal/connectors/LocalStorageConnector",
 	"sap/ui/thirdparty/sinon-4",
+	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	BrowserStorageUtils,
+	JsObjectConnector,
 	SessionStorageConnector,
 	LocalStorageConnector,
 	ConnectorUtils,
+	JsObjectWriteConnector,
 	SessionStorageWriteConnector,
 	LocalStorageWriteConnector,
 	sinon,
+	merge,
 	jQuery
 ) {
 	"use strict";
@@ -81,22 +87,20 @@ sap.ui.define([
 		}
 	};
 
-	function parameterizedTest(oApplyStorage, oWriteStorage, sStorage) {
+	function parameterizedTest(oApplyStorageConnector, oWriteStorageConnector, sStorage) {
 		QUnit.module("loadFlexData: Given some changes in the " + sStorage, {
 			before: function() {
 				this.oOriginalStorageState = {};
-				Object.keys(oApplyStorage.oStorage).forEach(function(sKey) {
-					this.oOriginalStorageState[sKey] = oApplyStorage.oStorage[sKey];
-				}.bind(this));
-				oApplyStorage.oStorage.clear();
+				this.oOriginalStorageState = merge({}, oApplyStorageConnector.oStorage);
+				oApplyStorageConnector.oStorage.clear();
 
-				oWriteStorage.saveChange(oTestData.change1.fileName, oTestData.change1);
-				oWriteStorage.saveChange(oTestData.change2.fileName, oTestData.change2);
-				oWriteStorage.saveChange(oTestData.change3.fileName, oTestData.change3);
-				oWriteStorage.saveChange(oTestData.variant1.fileName, oTestData.variant1);
-				oWriteStorage.saveChange(oTestData.variant2.fileName, oTestData.variant2);
-				oWriteStorage.saveChange(oTestData.variantChange1.fileName, oTestData.variantChange1);
-				oWriteStorage.saveChange(oTestData.variantManagementChange.fileName, oTestData.variantManagementChange);
+				oWriteStorageConnector.saveChange(oTestData.change1.fileName, oTestData.change1);
+				oWriteStorageConnector.saveChange(oTestData.change2.fileName, oTestData.change2);
+				oWriteStorageConnector.saveChange(oTestData.change3.fileName, oTestData.change3);
+				oWriteStorageConnector.saveChange(oTestData.variant1.fileName, oTestData.variant1);
+				oWriteStorageConnector.saveChange(oTestData.variant2.fileName, oTestData.variant2);
+				oWriteStorageConnector.saveChange(oTestData.variantChange1.fileName, oTestData.variantChange1);
+				oWriteStorageConnector.saveChange(oTestData.variantManagementChange.fileName, oTestData.variantManagementChange);
 			},
 			beforeEach: function() {
 				this.oCreateMapStub = sandbox.stub(BrowserStorageUtils, "createChangesMapWithVariants").returns("returnValue");
@@ -105,17 +109,15 @@ sap.ui.define([
 				this.oAssignReferencedChangesStub = sandbox.stub(BrowserStorageUtils, "assignVariantReferenceChanges");
 			},
 			after: function() {
-				oApplyStorage.oStorage.clear();
-				Object.keys(this.oOriginalStorageState).forEach(function(sKey) {
-					oApplyStorage.oStorage.setItem(sKey, this.oOriginalStorageState[sKey]);
-				}.bind(this));
+				oApplyStorageConnector.oStorage.clear();
+				oApplyStorageConnector = this.oOriginalStorageState;
 			},
 			afterEach: function() {
 				sandbox.restore();
 			}
 		}, function () {
 			QUnit.test("when loadFlexData is called without filter parameters", function(assert) {
-				return oApplyStorage.loadFlexData({}).then(function(vValue) {
+				return oApplyStorageConnector.loadFlexData({}).then(function(vValue) {
 					assert.equal(vValue, "returnValue", "the return value of the Utils methods is returned");
 					assert.equal(this.oCreateMapStub.callCount, 1, "createChangesMapWithVariants was called");
 					assert.deepEqual(this.oCreateMapStub.lastCall.args[0].length, 2, "2 variants were passed");
@@ -133,43 +135,44 @@ sap.ui.define([
 			});
 
 			QUnit.test("when loadFlexData is called with a layer", function(assert) {
-				return oApplyStorage.loadFlexData({layer: "USER"}).then(function() {
+				return oApplyStorageConnector.loadFlexData({layer: "USER"}).then(function() {
 					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 1, "1 change is passed");
 
-					return oApplyStorage.loadFlexData({layer: "CUSTOMER"});
+					return oApplyStorageConnector.loadFlexData({layer: "CUSTOMER"});
 				}.bind(this)).then(function() {
 					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 2, "2 changes are passed");
 
-					return oApplyStorage.loadFlexData({layer: "VENDOR"});
+					return oApplyStorageConnector.loadFlexData({layer: "VENDOR"});
 				}.bind(this)).then(function() {
 					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 0, "no changes are passed");
 				}.bind(this));
 			});
 
 			QUnit.test("when loadFlexData is called with a reference", function(assert) {
-				return oApplyStorage.loadFlexData({reference: "sap.ui.fl.test"}).then(function() {
+				return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test"}).then(function() {
 					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 2, "2 changes are passed");
 
-					return oApplyStorage.loadFlexData({reference: "sap.ui.fl.test.1"});
+					return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test.1"});
 				}.bind(this)).then(function() {
 					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 1, "1 change is passed");
 
-					return oApplyStorage.loadFlexData({reference: "sap.ui.fl.test.2"});
+					return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test.2"});
 				}.bind(this)).then(function() {
 					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 0, "no changes are passed");
 				}.bind(this));
 			});
 
 			QUnit.test("when loadFlexData is called with a layer and a reference", function(assert) {
-				return oApplyStorage.loadFlexData({layer: "CUSTOMER", reference: "sap.ui.fl.test"}).then(function() {
+				return oApplyStorageConnector.loadFlexData({layer: "CUSTOMER", reference: "sap.ui.fl.test"}).then(function() {
 					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 1, "1 change is passed");
 				}.bind(this));
 			});
 		});
 	}
 
-	parameterizedTest(SessionStorageConnector, SessionStorageWriteConnector, "sessionStorage");
-	parameterizedTest(LocalStorageConnector, LocalStorageWriteConnector, "localStorage");
+	parameterizedTest(SessionStorageConnector, SessionStorageWriteConnector, "SessionStorage");
+	parameterizedTest(LocalStorageConnector, LocalStorageWriteConnector, "LocalStorage");
+	parameterizedTest(JsObjectConnector, JsObjectWriteConnector, "JsObjectStorage");
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();

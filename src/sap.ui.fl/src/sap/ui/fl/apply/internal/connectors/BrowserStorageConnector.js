@@ -40,8 +40,9 @@ sap.ui.define([
 			var aChanges = [];
 			var oChange;
 
-			BrowserStorageUtils.forEachChangeInStorage(this.oStorage, function(sKey) {
-				oChange = JSON.parse(this.oStorage[sKey]);
+			// _items is used in the internal keys of the JsObjectStorage
+			BrowserStorageUtils.forEachChangeInStorage(this.oStorage._items || this.oStorage, function(sKey) {
+				oChange = JSON.parse(this.oStorage.getItem(sKey));
 				var bSameReference = oChange.reference === mPropertyBag.reference || oChange.reference + ".Component" === mPropertyBag.reference;
 				var bSameLayer = oChange.layer === mPropertyBag.layer;
 				if (
