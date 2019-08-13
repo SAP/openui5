@@ -1947,6 +1947,7 @@ sap.ui.define([
 			oRequestor.request("GET", "Employees", new _GroupLock("groupId")),
 			oRequestor.request("POST", "ActionImport('42')", new _GroupLock("groupId"), undefined,
 					{foo : "bar"}),
+			oRequestor.addChangeSet("groupId"),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit",
 					new _GroupLock("groupId"), {"If-Match" : {/* leave requests 42 */}},
 					oPostData, undefined, fnCancelPost)
@@ -1979,7 +1980,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
-		aExpectedRequests.iChangeSet = 0;
+		aExpectedRequests.iChangeSet = 1;
 		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs(aExpectedRequests).resolves([createResponse(), createResponse()]);
 
@@ -2028,6 +2029,55 @@ sap.ui.define([
 	//*****************************************************************************************
 	QUnit.test("cancelChanges: unused group", function (assert) {
 		_Requestor.create("/Service/", oModelInterface).cancelChanges("unusedGroupId");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("hasChanges: correct for multiple change sets in one group", function (assert) {
+		var oEntity = {},
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
+
+		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : {}}, {Name : "foo"});
+		oRequestor.addChangeSet("groupId");
+		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : oEntity}, {Name : "bar"});
+
+		//code under test
+		assert.strictEqual(oRequestor.hasChanges("groupId", oEntity), true);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("hasChanges: correct for multiple change sets in one group w/o a match",
+			function (assert) {
+		var oEntity = {},
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
+
+		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : {}}, {Name : "foo"});
+		oRequestor.addChangeSet("groupId");
+		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : {}}, {Name : "bar"});
+		oRequestor.request("GET", "Employees", new _GroupLock("groupId"));
+
+		//code under test
+		assert.strictEqual(oRequestor.hasChanges("groupId", oEntity), false);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("hasPendingChanges: correct for multiple change sets in one group",
+			function (assert) {
+		var fnCancel = this.spy(),
+			oRequestor = _Requestor.create("/Service/", oModelInterface);
+
+		oRequestor.request("DELETE", "Products('42')", new _GroupLock("groupId"));
+		oRequestor.addChangeSet("groupId");
+		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			{"If-Match" : {}}, {Name : "foo"}, undefined, fnCancel);
+		oRequestor.addChangeSet("groupId");
+		oRequestor.request("DELETE", "Products('4711')", new _GroupLock("groupId"));
+
+		//code under test
+		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 	});
 
 	//*****************************************************************************************
