@@ -762,7 +762,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("readData: w/ cache", function (assert) {
+	QUnit.test("fetchData: w/ cache", function (assert) {
 		var oBinding,
 			oCache = {read : function () {}},
 			oData = {},
@@ -785,7 +785,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.resolve(oData)));
 
 		// code under test
-		oPromise = oBinding.readData(1, 2, 3, oGroupLock1, fnDataRequested);
+		oPromise = oBinding.fetchData(1, 2, 3, oGroupLock1, fnDataRequested);
 
 		oBinding.setContext({}); // must have no effect on absolute bindings
 		return oPromise.then(function (oResult) {
@@ -796,7 +796,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bHasData) {
 	[false, true].forEach(function (bHasGroupLock) {
-		var sTitle = "readData: w/o cache, data=" + bHasData + ", groupLock=" + bHasGroupLock;
+		var sTitle = "fetchData: w/o cache, data=" + bHasData + ", groupLock=" + bHasGroupLock;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
@@ -819,7 +819,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.resolve(bHasData ? aData : undefined)));
 
 		// code under test
-		return oBinding.readData(3, 2, 99, oGroupLock, fnDataRequested).then(function (oResult) {
+		return oBinding.fetchData(3, 2, 99, oGroupLock, fnDataRequested).then(function (oResult) {
 			assert.deepEqual(oResult, {value : bHasData ? [{id : 3}, {id : 4}] : []});
 			if (bHasData) {
 				assert.strictEqual(oResult.value.$count, 42);
@@ -831,9 +831,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// This tests simulates the data access for a virtual context which may be removed from the
-	// binding while readData still is waiting for the cache
+	// binding while fetchData still is waiting for the cache
 [false, true].forEach(function (bHasCache) {
-	QUnit.test("readData: context lost", function (assert) {
+	QUnit.test("fetchData: context lost", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
@@ -847,7 +847,7 @@ sap.ui.define([
 		this.mock(oContext).expects("fetchValue").never();
 
 		// code under test
-		oPromise = oBinding.readData(3, 2, 0);
+		oPromise = oBinding.fetchData(3, 2, 0);
 
 		oBindingMock.expects("fetchCache").callsFake(function () {
 			this.oCachePromise = SyncPromise.resolve();
@@ -872,7 +872,7 @@ sap.ui.define([
 			oPromise,
 			oResult = {value : {}};
 
-		this.mock(oBinding).expects("readData")
+		this.mock(oBinding).expects("fetchData")
 			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(oResult));
@@ -906,7 +906,7 @@ sap.ui.define([
 
 		oBinding.bCreatedAtEnd = bCreatedAtEnd;
 		oBinding.iCreatedContexts = 2;
-		this.mock(oBinding).expects("readData")
+		this.mock(oBinding).expects("fetchData")
 			.withExactArgs(iReadStart, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(oResult));
@@ -920,14 +920,14 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("fetchContexts: readData returns undefined", function (assert) {
+	QUnit.test("fetchContexts: fetchData returns undefined", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
 				Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')")),
 			fnDataRequested = {/*function*/},
 			oGroupLock = new _GroupLock(),
 			oPromise;
 
-		this.mock(oBinding).expects("readData")
+		this.mock(oBinding).expects("fetchData")
 			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(Promise.resolve(undefined)));
@@ -949,7 +949,7 @@ sap.ui.define([
 			oError = new Error(),
 			oGroupLock = bHasGroupLock ? new _GroupLock() : undefined;
 
-		this.mock(oBinding).expects("readData")
+		this.mock(oBinding).expects("fetchData")
 			.withExactArgs(1, 2, 3, sinon.match.same(oGroupLock),
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
@@ -1022,9 +1022,9 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("getContextsInViewOrder").never();
-		this.oLogMock.expects("error").withExactArgs(
+		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to get contexts for /service/EMPLOYEES with start index 1 and length 2",
-			sinon.match.same(oError), sClassName);
+			sClassName, sinon.match.same(oError));
 
 		// code under test
 		return oBinding.requestContexts(1, 2).then(function () {

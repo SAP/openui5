@@ -1588,9 +1588,9 @@ sap.ui.define([
 
 			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
 				value : [
-					{SalesOrderID : "01", Note : "Note 1"},
-					{SalesOrderID : "02", Note : "Note 2"},
-					{SalesOrderID : "03", Note : "Note 3"}
+					{SalesOrderID : "01"},
+					{SalesOrderID : "02"},
+					{SalesOrderID : "03"}
 				]
 			});
 
