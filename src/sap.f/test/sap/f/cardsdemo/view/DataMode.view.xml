@@ -27,7 +27,7 @@
 			<f:GridContainer class="sapUiSmallMargin">
 				<w:Card id="card" dataMode="Inactive"  height="auto" class="sapUiMediumMarginEnd">
 					<w:layoutData>
-						<f:GridContainerItemLayoutData columns="6" />
+					<f:GridContainerItemLayoutData columns="6" />
 					</w:layoutData>
 				</w:Card>
 			</f:GridContainer>

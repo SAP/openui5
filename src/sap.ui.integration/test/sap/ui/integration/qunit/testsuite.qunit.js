@@ -86,7 +86,8 @@ sap.ui.define(function () {
 						"sap/f/cards/ObjectContent",
 						"sap/f/cards/RequestDataProvider",
 						"sap/f/cards/ServiceDataProvider",
-						"sap/f/cards/TableContent"
+						"sap/f/cards/TableContent",
+						"sap/f/cards/IconFormatter"
 					]
 				},
 				module: [
@@ -97,7 +98,8 @@ sap.ui.define(function () {
 					'./util/CustomElements.qunit',
 					'test-resources/sap/f/qunit/BindingResolver.qunit',
 					'test-resources/sap/f/qunit/DataProvider.qunit',
-					'./ActionEnablement.qunit'
+					'./ActionEnablement.qunit',
+					'./cardbundle/CardStaticResources.qunit'
 				]
 			}
 		}

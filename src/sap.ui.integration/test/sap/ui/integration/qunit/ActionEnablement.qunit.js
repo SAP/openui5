@@ -1007,7 +1007,7 @@ sap.ui.define([
 
 				this.oCard.attachAction(function () {
 					// Assert
-					assert.ok(oLogSpy.calledOnceWith(LOG_MESSAGE), "Provided message should be logged to the console.");
+					assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
 					assert.ok(oActionSpy.callCount, "Card Header is clicked");
 
 					//Clean up
@@ -1193,7 +1193,7 @@ sap.ui.define([
 					// Assert
 					assert.ok(oCardListItems[0].getType() === "Navigation", "Card list item is actionable");
 					assert.notOk(oCardListItems[1].getType() === "Navigation" , "Card list item is NOT actionable");
-					assert.ok(oLogSpy.calledOnceWith(LOG_MESSAGE), "Provided message should be logged to the console.");
+					assert.ok(oLogSpy.calledWith(LOG_MESSAGE), "Provided message should be logged to the console.");
 					assert.ok(oActionSpy.callCount, "Card List item is clicked");
 
 					//Clean up
