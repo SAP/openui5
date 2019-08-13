@@ -1946,7 +1946,7 @@ sap.ui.define([
 		}).then(function() {
 			assert.ok(false, "shouldn't reach here");
 		}).catch(function(oError) {
-			assert.deepEqual(oError, new Error(sErrorText), "Promise is rejected with the correct reason");
+			assert.equal(oError.message, sErrorText, "Error was thrown, and Promise is rejected with the correct reason");
 			assert.ok(oLogSpy.calledWithExactly("Failed to execute flexibility hook for manifest preprocessing.", oError), "Correct Error was logged for supportability");
 			oLogSpy.restore();
 		});
