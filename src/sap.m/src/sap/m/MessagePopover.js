@@ -126,6 +126,7 @@ function(
 
 					/**
 					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded.
+					 * Note: If there is only one message in the control, this state will be ignored and the details page of the message will be shown.
 					 */
 					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
@@ -647,7 +648,7 @@ function(
 		 * @private
 		 */
 		MessagePopover.prototype._restoreExpansionDefaults = function () {
-			if (!this.getInitiallyExpanded()) {
+			if (!this.getInitiallyExpanded() && this.getItems().length != 1) {
 				this._collapseMsgPopover();
 				this._oMessageView._oSegmentedButton.setSelectedButton("none");
 			} else {
