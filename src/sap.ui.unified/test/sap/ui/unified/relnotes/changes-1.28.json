@@ -1,650 +1,518 @@
 {
-	"1.28.0": {
-		"date": "January 2015",
-		"notes": [
-			{
-				"id": "1a2a3b3dd9db50184c568d393a3366d6315ece55",
-				"type": "FEATURE",
-				"text": "FileUploader: Multi request implemented",
-				"references": []
-			},
-			{
-				"id": "4cdb5b5a5161b968f85774ef54e5ec7a2646204f",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.Menu: Improved ARIA support",
-				"references": []
-			},
-			{
-				"id": "b860a4e65871461115d695183c1315c2b139ab9d",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.Shell/Overlay: Provided ARIA support",
-				"references": []
-			},
-			{
-				"id": "260f8c13dd21c1f28be106cbc496f66a599cdbb0",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.ShellHeadUserItem: Property showPopupIndicator added",
-				"references": []
-			},
-			{
-				"id": "e5e8e4ef74ad20669fac42cc2a6cf268dbd12797",
-				"type": "FEATURE",
-				"text": "unified/FileUploader: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "75aa3c7bc2a39a4ffb8482c9c0818ccebaa0032e",
-				"type": "FEATURE",
-				"text": "unifield.Calendar: Implemented display of multiple months",
-				"references": []
-			},
-			{
-				"id": "30231d4398033d24e662742d665f05333fb31d8e",
-				"type": "FIX",
-				"text": "Fixed copyright headers in LESS/CSS resources",
-				"references": []
-			},
-			{
-				"id": "11f08b217449e36750a42add6e4a148d885b889a",
-				"type": "FIX",
-				"text": "Popup: Fixed accidental auto-close of DatePicker",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "720948"
-					}
-				]
-			},
-			{
-				"id": "b4dfea7f7a34ccc755430c5369a7192f04630c93",
-				"type": "FIX",
-				"text": "ShellHeader: Added missing dependency to the library",
-				"references": []
-			},
-			{
-				"id": "bf68f9487c2af0c7661fcbae76091396544ceb46",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: ARIA - announces item when navigating back from sub-menu",
-				"references": []
-			},
-			{
-				"id": "599c39eadec89779d103fca6d02837e761b3210e",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: Fixed positioning in NavigationBar",
-				"references": []
-			},
-			{
-				"id": "587cc002b8f4990dfecfc6e00d009cf7cd5b2e22",
-				"type": "FIX",
-				"text": "sap.ui.unified.ShellHeadItem: Navigation on click prevented",
-				"references": []
-			},
-			{
-				"id": "5a1f951be40b3dce60b3e20a5a62d8c4b473c461",
-				"type": "FIX",
-				"text": "sap.ui.unified.ShellOverlay: Cycling Tab-chain enabled",
-				"references": []
-			},
-			{
-				"id": "a612ba8cf2119695584309a6c12144f7a727af4b",
-				"type": "FEATURE",
-				"text": "ARIA support for DatePicker & Calendar",
-				"references": []
-			},
-			{
-				"id": "2ec2ca0dd98938b8089f42515620dddddc25bae0",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Content-Type for Internet Explorer header added",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1472019000"
-					}
-				]
-			},
-			{
-				"id": "f85d19cab3a32e6ce7978a5c816b8a9f12db27d0",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Tooltip in Chrome fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570006503"
-					}
-				]
-			},
-			{
-				"id": "1c3fb849a12fcc201d94321aa04c080ed5510f3a",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Mime type check fixed",
-				"references": []
-			}
-		]
-	},
-	"1.28.2": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "efcd2331c54570360b378142a4418d71f3abec71",
-				"type": "FIX",
-				"text": "sap.ui.unified.Currency: Render string tooltip",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580017880"
-					}
-				]
-			},
-			{
-				"id": "22c6c8b1548c6233accf80889c69888f58ddd962",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: ButtonOnly mode fixed when container is invisible",
-				"references": []
-			},
-			{
-				"id": "e120a4ad3e28cc4f96effc9093a9e519c7993fca",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Invisible + % width Bug fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580005408"
-					}
-				]
-			},
-			{
-				"id": "84d6b1b1855a9557d0d7ab388f71a3b4a9527353",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Invisible + % width Bug fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580005408"
-					}
-				]
-			},
-			{
-				"id": "83aaec20d16b23015b136d01744d177fe23c3db3",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Width for buttonOnly mode fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580005364"
-					}
-				]
-			}
-		]
-	},
-	"1.28.3": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "68882c5d72f3a400200faf34d75bf85b4b27ddca",
-				"type": "FIX",
-				"text": "FileUploader: Setting content-type for Internet Explorer 9 repaired",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570027253"
-					}
-				]
-			},
-			{
-				"id": "12b2a87faea54ef0b1abba94f228871e9ce08256",
-				"type": "FIX",
-				"text": "Menu: Submenu is closed when textfield item is focused",
-				"references": []
-			}
-		]
-	},
-	"1.28.4": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "3dc6d73ecb2d0e070ebe67bf50898ae0478fb523",
-				"type": "FIX",
-				"text": "Calendar: Month picker is now updated only if rendered",
-				"references": []
-			},
-			{
-				"id": "c855b26f35b33402c605447fb7656e3a5616b794",
-				"type": "FIX",
-				"text": "FileUploader: Internet Explorer change event handling corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580025384"
-					}
-				]
-			}
-		]
-	},
-	"1.28.5": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "3e37f255acaab810948c651a5e4ab2d4427248c0",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Fileuploader is now vertically aligned with the other sap.m controls",
-				"references": []
-			}
-		]
-	},
-	"1.28.6": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "252ede5397ff16fe99276835473ed723b20631e1",
-				"type": "FEATURE",
-				"text": "sap.ui-unified.Calendar, sap.m.DatePicker: islamic calendar support",
-				"references": []
-			},
-			{
-				"id": "9f895fb08971121030ed1f1524a006b37419735b",
-				"type": "FIX",
-				"text": "Existence of namespace ensured during Core.initLibrary()",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570295165"
-					}
-				]
-			},
-			{
-				"id": "2a3d4e7e5d9f041a1bfdd33300cd024aad9b72ea",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: setTooltip() fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570042401"
-					}
-				]
-			}
-		]
-	},
-	"1.28.8": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "2f42418cbb09919edc55d152cb5416b1ed929ece",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: File-type check fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580023849"
-					}
-				]
-			},
-			{
-				"id": "9950aaab94a3792aea26673a199d5db4532c74d9",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: sameFilenameAllowed fixed for multiple devices",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570295116"
-					}
-				]
-			},
-			{
-				"id": "10044ece65ae41cf6a60ef2339914a970acc38ac",
-				"type": "FIX",
-				"text": "sap.ui.unified.calendar.MonthPicker:Browser dependent width rounding issues avoided",
-				"references": []
-			}
-		]
-	},
-	"1.28.10": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "134e1c3de3ed779dcbc56a4843f8d890c68b5d94",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.Calendar new properties to set weekend and first weekday",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570308988"
-					}
-				]
-			},
-			{
-				"id": "f38d0d8cf8d3bdc60f9d3773b554351adddad83d",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.Calendar: use all space in islamic case",
-				"references": []
-			},
-			{
-				"id": "d6e97d5b81a61061014b7668ee693cacef906481",
-				"type": "FEATURE",
-				"text": "sap.ui.unified.CalendarLegend: allow to specify tye of an item",
-				"references": []
-			},
-			{
-				"id": "2e167ab58531faa24548650944642ee4fc082dcb",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: Focus issues after change of selectedDates",
-				"references": []
-			},
-			{
-				"id": "1462c46d841924d083bee7fe5d75d68a3eb9f615",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: focus lost on tab on year picker",
-				"references": []
-			},
-			{
-				"id": "1a466cb76ab303076e002410c0c4a18822815b12",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: specialDates can not be removed",
-				"references": []
-			},
-			{
-				"id": "683f468ae76ae0e78f822b0dbbb1cf1df3540e70",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: Open Popup before Menu state is set to opened.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570449292"
-					}
-				]
-			}
-		]
-	},
-	"1.28.13": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "9c707cf5ea61b7058b15378d1e707e6db9da4c00",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: Wrong date selected if daylight saving",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "533"
-					},
-					{
-						"type": "BCP",
-						"reference": "1570756375"
-					}
-				]
-			},
-			{
-				"id": "55b6d1f269e30205d3589019886e5aab3e5450a2",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: File is lost when pressing key fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570763916"
-					}
-				]
-			},
-			{
-				"id": "5689d3d9ae88d05a055f2b7f339cac6e583abfe2",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: Keyboard navigation in toolbar fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570675342"
-					}
-				]
-			}
-		]
-	},
-	"1.28.14": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "9de10f6d33e97b8c3be3b17980ed1976b15a8840",
-				"type": "FIX",
-				"text": "FileUploader: Internet Explorer focus behavior fixed",
-				"references": []
-			},
-			{
-				"id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570445096"
-					}
-				]
-			},
-			{
-				"id": "a8895867911372546e78a23d99b9f2588583b371",
-				"type": "FIX",
-				"text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
-				"references": []
-			}
-		]
-	},
-	"1.28.16": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "ce0cd9b0ee8b88f37619a58b26dc0ff9e5e6f441",
-				"type": "FIX",
-				"text": "Microsoft Edge Support: Fix CSS text-align statements",
-				"references": []
-			},
-			{
-				"id": "deba1dd4e7f0b2a36d3a6dce3ea833bff62674fa",
-				"type": "FIX",
-				"text": "sap.m.DatePicker: error message shortly appears by closing",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570786560"
-					}
-				]
-			}
-		]
-	},
-	"1.28.17": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "8d872f6c906a1c56ce837bae703ac60f0df0e9ce",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: don't select date on right click",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570817290"
-					}
-				]
-			}
-		]
-	},
-	"1.28.20": {
-		"date": "October 2015",
-		"notes": [
-			{
-				"id": "d52986fd09779300a0bb3fa50620c17412b2719a",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar Focus changes while rendering",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002007974700006951722015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.21": {
-		"date": "October 2015",
-		"notes": [
-			{
-				"id": "95e9b3b6ec88584ac5dbb174084a18c0be6f8c19",
-				"type": "FIX",
-				"text": "sap.ui.uinified.Calendar current day is wrong displayed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580153899"
-					}
-				]
-			},
-			{
-				"id": "9fd06daf5b8ea3f4c9cfd50815d38b1a5e53c247",
-				"type": "FIX",
-				"text": "sap.ui.unified.DateRange return instance to allow method chaining",
-				"references": []
-			},
-			{
-				"id": "8944f37429630e1c15592e7b6ed910589811b70d",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570802311"
-					}
-				]
-			}
-		]
-	},
-	"1.28.22": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "2fdbcdd5595842452fad026ac70c22edd9bbac85",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: focus lost after closing month picker or year picker",
-				"references": []
-			},
-			{
-				"id": "510750e78da82a4a648bd931066db29b39c2a8f1",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: Mousemove inside same day switch month",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580163230"
-					}
-				]
-			}
-		]
-	},
-	"1.28.23": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "48296573e9b6cff5b25986c859d2fab391093b5d",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: Day navigated twice on touch device",
-				"references": []
-			},
-			{
-				"id": "18f8bd6952f114eceb3b1d36eedf93d19202bedc",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: HCB - selected day in other month not shown",
-				"references": []
-			},
-			{
-				"id": "7f97fcb820fc04b7b2806f34084dcb2c3c1e1855",
-				"type": "FIX",
-				"text": "sap.ui.unified.Calendar: Date is selected before mouseup",
-				"references": []
-			}
-		]
-	},
-	"1.28.24": {
-		"date": "December 2015",
-		"notes": [
-			{
-				"id": "9e64070f6e975422fe1cc3fae0152efd47bb5122",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570140414"
-					}
-				]
-			}
-		]
-	},
-	"1.28.28": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "49958c7f559afceb01b2470dca82ec2e26722e18",
-				"type": "FIX",
-				"text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670027749"
-					}
-				]
-			}
-		]
-	},
-	"1.28.31": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "a776757cbc8149b5f3cf78d7db8bf223a54411e4",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: Resore focus when click outside the menu",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670001286"
-					}
-				]
-			}
-		]
-	},
-	"1.28.35": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "c2f8457ad94726f09ec7bf5b8c82994124f78b48",
-				"type": "FIX",
-				"text": "sap.ui.unified.FileUploader: clear() function fixed.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670311047"
-					}
-				]
-			}
-		]
-	},
-	"1.28.36": {
-		"date": "July 2016",
-		"notes": [
-			{
-				"id": "1460c9713a97b1caacd47bc25e64c31ffc7a7727",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: current item of type MenuTextFieldItem does not lost focus in IE and Edge anymore.",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129400001795982016"
-					}
-				]
-			},
-			{
-				"id": "b5b94751516b6858696d9188b583f8c65d8a76ae",
-				"type": "FIX",
-				"text": "unified.FileUploader: Removed 'src'-Attribute for BlindLayer",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129500001336622016"
-					}
-				]
-			}
-		]
-	}
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "1a2a3b3dd9db50184c568d393a3366d6315ece55",
+        "type": "FEATURE",
+        "text": "FileUploader: Multi request implemented",
+        "references": []
+      },
+      {
+        "id": "4cdb5b5a5161b968f85774ef54e5ec7a2646204f",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Menu: Improved ARIA support",
+        "references": []
+      },
+      {
+        "id": "b860a4e65871461115d695183c1315c2b139ab9d",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Shell/Overlay: Provided ARIA support",
+        "references": []
+      },
+      {
+        "id": "260f8c13dd21c1f28be106cbc496f66a599cdbb0",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.ShellHeadUserItem: Property showPopupIndicator added",
+        "references": []
+      },
+      {
+        "id": "e5e8e4ef74ad20669fac42cc2a6cf268dbd12797",
+        "type": "FEATURE",
+        "text": "unified/FileUploader: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "75aa3c7bc2a39a4ffb8482c9c0818ccebaa0032e",
+        "type": "FEATURE",
+        "text": "unifield.Calendar: Implemented display of multiple months",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "11f08b217449e36750a42add6e4a148d885b889a",
+        "type": "FIX",
+        "text": "Popup: Fixed accidental auto-close of DatePicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "720948"
+          }
+        ]
+      },
+      {
+        "id": "b4dfea7f7a34ccc755430c5369a7192f04630c93",
+        "type": "FIX",
+        "text": "ShellHeader: Added missing dependency to the library",
+        "references": []
+      },
+      {
+        "id": "bf68f9487c2af0c7661fcbae76091396544ceb46",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: ARIA - announces item when navigating back from sub-menu",
+        "references": []
+      },
+      {
+        "id": "599c39eadec89779d103fca6d02837e761b3210e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Fixed positioning in NavigationBar",
+        "references": []
+      },
+      {
+        "id": "587cc002b8f4990dfecfc6e00d009cf7cd5b2e22",
+        "type": "FIX",
+        "text": "sap.ui.unified.ShellHeadItem: Navigation on click prevented",
+        "references": []
+      },
+      {
+        "id": "5a1f951be40b3dce60b3e20a5a62d8c4b473c461",
+        "type": "FIX",
+        "text": "sap.ui.unified.ShellOverlay: Cycling Tab-chain enabled",
+        "references": []
+      },
+      {
+        "id": "a612ba8cf2119695584309a6c12144f7a727af4b",
+        "type": "FEATURE",
+        "text": "ARIA support for DatePicker \u0026 Calendar",
+        "references": []
+      },
+      {
+        "id": "2ec2ca0dd98938b8089f42515620dddddc25bae0",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Content-Type for Internet Explorer header added",
+        "references": []
+      },
+      {
+        "id": "f85d19cab3a32e6ce7978a5c816b8a9f12db27d0",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Tooltip in Chrome fixed",
+        "references": []
+      },
+      {
+        "id": "1c3fb849a12fcc201d94321aa04c080ed5510f3a",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Mime type check fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.2": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "efcd2331c54570360b378142a4418d71f3abec71",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Render string tooltip",
+        "references": []
+      },
+      {
+        "id": "22c6c8b1548c6233accf80889c69888f58ddd962",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: ButtonOnly mode fixed when container is invisible",
+        "references": []
+      },
+      {
+        "id": "e120a4ad3e28cc4f96effc9093a9e519c7993fca",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Invisible + % width Bug fixed",
+        "references": []
+      },
+      {
+        "id": "84d6b1b1855a9557d0d7ab388f71a3b4a9527353",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Invisible + % width Bug fixed",
+        "references": []
+      },
+      {
+        "id": "83aaec20d16b23015b136d01744d177fe23c3db3",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Width for buttonOnly mode fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "68882c5d72f3a400200faf34d75bf85b4b27ddca",
+        "type": "FIX",
+        "text": "FileUploader: Setting content-type for Internet Explorer 9 repaired",
+        "references": []
+      },
+      {
+        "id": "12b2a87faea54ef0b1abba94f228871e9ce08256",
+        "type": "FIX",
+        "text": "Menu: Submenu is closed when textfield item is focused",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "3dc6d73ecb2d0e070ebe67bf50898ae0478fb523",
+        "type": "FIX",
+        "text": "Calendar: Month picker is now updated only if rendered",
+        "references": []
+      },
+      {
+        "id": "c855b26f35b33402c605447fb7656e3a5616b794",
+        "type": "FIX",
+        "text": "FileUploader: Internet Explorer change event handling corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "3e37f255acaab810948c651a5e4ab2d4427248c0",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Fileuploader is now vertically aligned with the other sap.m controls",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "252ede5397ff16fe99276835473ed723b20631e1",
+        "type": "FEATURE",
+        "text": "sap.ui-unified.Calendar, sap.m.DatePicker: islamic calendar support",
+        "references": []
+      },
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "2a3d4e7e5d9f041a1bfdd33300cd024aad9b72ea",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setTooltip() fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.8": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "2f42418cbb09919edc55d152cb5416b1ed929ece",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File-type check fixed",
+        "references": []
+      },
+      {
+        "id": "9950aaab94a3792aea26673a199d5db4532c74d9",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: sameFilenameAllowed fixed for multiple devices",
+        "references": []
+      },
+      {
+        "id": "10044ece65ae41cf6a60ef2339914a970acc38ac",
+        "type": "FIX",
+        "text": "sap.ui.unified.calendar.MonthPicker:Browser dependent width rounding issues avoided",
+        "references": []
+      }
+    ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "134e1c3de3ed779dcbc56a4843f8d890c68b5d94",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar new properties to set weekend and first weekday",
+        "references": []
+      },
+      {
+        "id": "f38d0d8cf8d3bdc60f9d3773b554351adddad83d",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: use all space in islamic case",
+        "references": []
+      },
+      {
+        "id": "d6e97d5b81a61061014b7668ee693cacef906481",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.CalendarLegend: allow to specify tye of an item",
+        "references": []
+      },
+      {
+        "id": "2e167ab58531faa24548650944642ee4fc082dcb",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Focus issues after change of selectedDates",
+        "references": []
+      },
+      {
+        "id": "1462c46d841924d083bee7fe5d75d68a3eb9f615",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus lost on tab on year picker",
+        "references": []
+      },
+      {
+        "id": "1a466cb76ab303076e002410c0c4a18822815b12",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: specialDates can not be removed",
+        "references": []
+      },
+      {
+        "id": "683f468ae76ae0e78f822b0dbbb1cf1df3540e70",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Open Popup before Menu state is set to opened.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "9c707cf5ea61b7058b15378d1e707e6db9da4c00",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Wrong date selected if daylight saving",
+        "references": []
+      },
+      {
+        "id": "55b6d1f269e30205d3589019886e5aab3e5450a2",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File is lost when pressing key fixed",
+        "references": []
+      },
+      {
+        "id": "5689d3d9ae88d05a055f2b7f339cac6e583abfe2",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Keyboard navigation in toolbar fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "9de10f6d33e97b8c3be3b17980ed1976b15a8840",
+        "type": "FIX",
+        "text": "FileUploader: Internet Explorer focus behavior fixed",
+        "references": []
+      },
+      {
+        "id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "a8895867911372546e78a23d99b9f2588583b371",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
+        "references": []
+      }
+    ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ce0cd9b0ee8b88f37619a58b26dc0ff9e5e6f441",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements",
+        "references": []
+      },
+      {
+        "id": "deba1dd4e7f0b2a36d3a6dce3ea833bff62674fa",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: error message shortly appears by closing",
+        "references": []
+      }
+    ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "8d872f6c906a1c56ce837bae703ac60f0df0e9ce",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: don\u0027t select date on right click",
+        "references": []
+      }
+    ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "d52986fd09779300a0bb3fa50620c17412b2719a",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar Focus changes while rendering",
+        "references": []
+      }
+    ]
+  },
+  "1.28.21": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "95e9b3b6ec88584ac5dbb174084a18c0be6f8c19",
+        "type": "FIX",
+        "text": "sap.ui.uinified.Calendar current day is wrong displayed",
+        "references": []
+      },
+      {
+        "id": "9fd06daf5b8ea3f4c9cfd50815d38b1a5e53c247",
+        "type": "FIX",
+        "text": "sap.ui.unified.DateRange return instance to allow method chaining",
+        "references": []
+      },
+      {
+        "id": "8944f37429630e1c15592e7b6ed910589811b70d",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
+        "references": []
+      }
+    ]
+  },
+  "1.28.22": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "2fdbcdd5595842452fad026ac70c22edd9bbac85",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus lost after closing month picker or year picker",
+        "references": []
+      },
+      {
+        "id": "510750e78da82a4a648bd931066db29b39c2a8f1",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Mousemove inside same day switch month",
+        "references": []
+      }
+    ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "48296573e9b6cff5b25986c859d2fab391093b5d",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Day navigated twice on touch device",
+        "references": []
+      },
+      {
+        "id": "18f8bd6952f114eceb3b1d36eedf93d19202bedc",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: HCB - selected day in other month not shown",
+        "references": []
+      },
+      {
+        "id": "7f97fcb820fc04b7b2806f34084dcb2c3c1e1855",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Date is selected before mouseup",
+        "references": []
+      }
+    ]
+  },
+  "1.28.24": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "9e64070f6e975422fe1cc3fae0152efd47bb5122",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setEnabled() method repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.28.28": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "49958c7f559afceb01b2470dca82ec2e26722e18",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: When \"maxPrecision\" is set to 0 only the base part is being displayed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.31": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "a776757cbc8149b5f3cf78d7db8bf223a54411e4",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Resore focus when click outside the menu",
+        "references": []
+      }
+    ]
+  },
+  "1.28.35": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "c2f8457ad94726f09ec7bf5b8c82994124f78b48",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: clear() function fixed.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.36": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "1460c9713a97b1caacd47bc25e64c31ffc7a7727",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: current item of type MenuTextFieldItem does not lost focus in IE and Edge anymore.",
+        "references": []
+      },
+      {
+        "id": "b5b94751516b6858696d9188b583f8c65d8a76ae",
+        "type": "FIX",
+        "text": "unified.FileUploader: Removed \u0027src\u0027-Attribute for BlindLayer",
+        "references": []
+      }
+    ]
+  },
+  "1.28.38": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "53439351ab8de8e32ed730f0522c23386141a3d6",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: setting content-type for edge browser fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.42": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "beead6303334d4f66800ae8a0f0005b160cab199",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Day selection drag threshold added",
+        "references": []
+      }
+    ]
+  }
 }

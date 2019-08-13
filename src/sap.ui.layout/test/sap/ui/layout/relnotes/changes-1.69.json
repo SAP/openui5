@@ -13,6 +13,18 @@
         "type": "FIX",
         "text": " All libraries: apply migration tooling again",
         "references": []
+      },
+      {
+        "id": "c88b7d1a1a97e230cf7cc80227fe1d08965fb6a2",
+        "type": "FIX",
+        "text": " Add missing library definition for elements in sub-namespace",
+        "references": []
+      },
+      {
+        "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
+        "type": "FIX",
+        "text": " All libraries: apply migration tooling again",
+        "references": []
       }
     ]
   }

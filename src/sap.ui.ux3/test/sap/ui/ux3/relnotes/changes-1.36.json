@@ -1,127 +1,92 @@
 {
-	"1.36.0": {
-		"date": "January 2016",
-		"notes": [
-			{
-				"id": "5f644e4b93acf21248bf2703ebb131c97a05a053",
-				"type": "FEATURE",
-				"text": "ux3.NavigationBar - allow the items in the overflow to be uppercase",
-				"references": []
-			},
-			{
-				"id": "13c7984133df50698ee017bdeb8ff19057eb3f21",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
-				"references": []
-			}
-		]
-	},
-	"1.36.1": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "a9051c16916d628aa9eef987ac2c78809801b52e",
-				"type": "FIX",
-				"text": "ux3.Shell: Left and right part of the header do not overlap",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580210084"
-					}
-				]
-			}
-		]
-	},
-	"1.36.2": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "15fbcad0fb24bbfc82d8559f25faea80b4fee977",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers\"",
-				"references": []
-			},
-			{
-				"id": "e8f5b0df625375968bd5137156a64af7372b78e6",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Feeder: support edge browser",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670071390"
-					}
-				]
-			},
-			{
-				"id": "d9aef8ff2f03b61df63514fad2de8085afa7a06c",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: When there's a table inside, the shell is displaying scrollbar consistently accross browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670001319"
-					}
-				]
-			}
-		]
-	},
-	"1.36.3": {
-		"date": "February 2016",
-		"notes": [
-			{
-				"id": "5b2076d06a695418e630978d50132293cc95a13b",
-				"type": "FIX",
-				"text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670033924"
-					}
-				]
-			}
-		]
-	},
-	"1.36.4": {
-		"date": "March 2016",
-		"notes": [
-			{
-				"id": "60995790396cfdb229e63743b65823ea6842066a",
-				"type": "FIX",
-				"text": "[m/commons].Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670100799"
-					}
-				]
-			},
-			{
-				"id": "2acf27729a3d5945fa0ff22955e22f462560e8f8",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570896877"
-					}
-				]
-			}
-		]
-	},
-	"1.36.6": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "9cf248d290523617b3d725c1a444263e770fa00a",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100001917542016"
-					}
-				]
-			}
-		]
-	}
+  "1.36.0": {
+    "date": "January 2016",
+    "notes": [
+      {
+        "id": "5f644e4b93acf21248bf2703ebb131c97a05a053",
+        "type": "FEATURE",
+        "text": "ux3.NavigationBar - allow the items in the overflow to be uppercase",
+        "references": []
+      },
+      {
+        "id": "13c7984133df50698ee017bdeb8ff19057eb3f21",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
+        "references": []
+      }
+    ]
+  },
+  "1.36.1": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "a9051c16916d628aa9eef987ac2c78809801b52e",
+        "type": "FIX",
+        "text": "ux3.Shell: Left and right part of the header do not overlap",
+        "references": []
+      }
+    ]
+  },
+  "1.36.2": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "15fbcad0fb24bbfc82d8559f25faea80b4fee977",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there\u0027s a table inside, the shell is displaying scrollbar consistently accross browsers\"",
+        "references": []
+      },
+      {
+        "id": "e8f5b0df625375968bd5137156a64af7372b78e6",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Feeder: support edge browser",
+        "references": []
+      },
+      {
+        "id": "d9aef8ff2f03b61df63514fad2de8085afa7a06c",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: When there\u0027s a table inside, the shell is displaying scrollbar consistently accross browsers",
+        "references": []
+      }
+    ]
+  },
+  "1.36.3": {
+    "date": "February 2016",
+    "notes": [
+      {
+        "id": "5b2076d06a695418e630978d50132293cc95a13b",
+        "type": "FIX",
+        "text": "m.Dialog,commons.Dialog,ux3.ToolPopup: Preserve Content on Remove",
+        "references": []
+      }
+    ]
+  },
+  "1.36.4": {
+    "date": "March 2016",
+    "notes": [
+      {
+        "id": "60995790396cfdb229e63743b65823ea6842066a",
+        "type": "M/COMMONS",
+        "text": ".Dialog, ux3.ToolPopup: Preserve DOM only if rendered",
+        "references": []
+      },
+      {
+        "id": "2acf27729a3d5945fa0ff22955e22f462560e8f8",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NotificationBar: Minimized bar hovering is now consistent across all desktop browsers",
+        "references": []
+      }
+    ]
+  },
+  "1.36.6": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "9cf248d290523617b3d725c1a444263e770fa00a",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
+        "references": []
+      }
+    ]
+  }
 }

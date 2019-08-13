@@ -115,6 +115,130 @@
         "type": "FEATURE",
         "text": " sap.f.Avatar: Introduced ability to display border",
         "references": []
+      },
+      {
+        "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added option to change the background color",
+        "references": []
+      },
+      {
+        "id": "d98e40ee2e995e156c9e576d7cf104215d77c834",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Introduced ability to display border",
+        "references": []
+      },
+      {
+        "id": "95c3b0bd53d82a7fc58808dddb2ae57d3da55b35",
+        "type": "FEATURE",
+        "text": " sap.f: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "440613e82d0ce9a1c477502b914e3d525de9c907",
+        "type": "FEATURE",
+        "text": " sap.m.QuickViewPage: Fallback icon property introduced",
+        "references": []
+      },
+      {
+        "id": "2cd81489ddc6371a6b6d0393f2c0d092d5a2b520",
+        "type": "FEATURE",
+        "text": " sap.tnt: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "096cce908c69bf4edd9c5c3b1c56351c561d2ff3",
+        "type": "FEATURE",
+        "text": " sap.ui.layout: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "78ce92cb1fe1a5a939c0039af90ed29b591567e9",
+        "type": "FEATURE",
+        "text": " sap.ui.table: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "837b34a5ce6c9513112fc04cc0c5705ad2718f44",
+        "type": "FEATURE",
+        "text": " sap.ui.unified: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "c06f46120ca41a6d880bb78847d28f8080b9c8b1",
+        "type": "FEATURE",
+        "text": " sap.uxap: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "references": []
+      },
+      {
+        "id": "4df1622db18581a22951aaa2479a2b0e61b189d4",
+        "type": "FIX",
+        "text": " sap.m.Button: correct design in Bar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970302945"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970298759"
+          }
+        ]
+      },
+      {
+        "id": "6bbb15baf541804673f751076fb9acb39bf9961c",
+        "type": "FIX",
+        "text": " sap.m.PullToRefresh: Focus aligned with Global Focus Concept",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970274638"
+          }
+        ]
+      },
+      {
+        "id": "17c43d58472134da12588e023fd2db1017b4a8bf",
+        "type": "FIX",
+        "text": " sap.m.ScrollContainer: Default focus outline removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970244909"
+          }
+        ]
+      },
+      {
+        "id": "176ca4d911cba1b17924353d54d50a09cd590def",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Clickable area is wider",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980014241"
+          }
+        ]
+      },
+      {
+        "id": "9812b0fe8c882f56215fdabb704cfbbf6660fd3a",
+        "type": "FIX",
+        "text": " sap.m.Slider: Labels offset adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970217044"
+          }
+        ]
+      },
+      {
+        "id": "344ff6c027330e4897c9e25ffd921350f4dbdd4a",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Active toolbar focus outline corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970271277"
+          }
+        ]
       }
     ]
   }

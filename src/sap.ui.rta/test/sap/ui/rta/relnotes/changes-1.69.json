@@ -54,6 +54,79 @@
         "type": "FIX",
         "text": " performance test fixes",
         "references": []
+      },
+      {
+        "id": "b3fd722d43f36522538f750ec4a4f743978b624c",
+        "type": "FIX",
+        "text": " Fixing includes",
+        "references": []
+      },
+      {
+        "id": "0478c1f2b5c04bac11364c85a48387d8df86bc96",
+        "type": "FIX",
+        "text": " performance test fixes",
+        "references": []
+      },
+      {
+        "id": "176ca4d911cba1b17924353d54d50a09cd590def",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Clickable area is wider",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980014241"
+          }
+        ]
+      },
+      {
+        "id": "eb4e9b62eb1c581f3c89a4e16f75376c7c5fa805",
+        "type": "FIX",
+        "text": " sap.ui.dt - fixed checkTargetZone bug in navigation mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970206829"
+          }
+        ]
+      },
+      {
+        "id": "c7b3692d63729b8549cba5c1a86d4d57b162f144",
+        "type": "FIX",
+        "text": " sap.ui.rta - added smartlink mock in vm app",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970281893"
+          }
+        ]
+      },
+      {
+        "id": "495ee8d1bdb968c056b10d6f24632c7ec32cbaf7",
+        "type": "FIX",
+        "text": " sap.ui.rta - fixed simple form ElementMover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970280489"
+          }
+        ]
+      },
+      {
+        "id": "b7acefebd527192a6712880afe14fa2358792af3",
+        "type": "FIX",
+        "text": " sap.ui.rta - onElementModified handle addOrSetAggregation events",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970280489"
+          }
+        ]
+      },
+      {
+        "id": "5c3a8aef6e8764f8b48238ecb2aeb9ab26c853ed",
+        "type": "FIX",
+        "text": " sap.ui.rta - rta toolbar not visible after restart without pers",
+        "references": []
       }
     ]
   }

@@ -30,6 +30,35 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Removed redundant action on expand",
         "references": []
+      },
+      {
+        "id": "287158579a427e7bc0edd9a294499eef81f1bf1d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Adding tabs now invalidates the page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970307794"
+          }
+        ]
+      },
+      {
+        "id": "ede3c378f3b8e95a68b5a1dc6fc7077bc59692b1",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected anchorBar height calculation",
+        "references": []
+      },
+      {
+        "id": "59e76172e1cc32a0199ec0569d4e954a4750bd53",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected title height calculation",
+        "references": []
+      },
+      {
+        "id": "56413f2d858a45a6b88a7108d96a9c993f8cdb88",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Removed redundant action on expand",
+        "references": []
       }
     ]
   }

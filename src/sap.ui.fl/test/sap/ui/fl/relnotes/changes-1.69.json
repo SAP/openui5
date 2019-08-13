@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.ui.fl - FlexApplyChanges - performance test issue",
         "references": []
+      },
+      {
+        "id": "efbc8158b976ae3ef47d5818731396de782667f2",
+        "type": "FIX",
+        "text": " sap.ui.fl - FlexApplyChanges - performance test issue",
+        "references": []
       }
     ]
   }
