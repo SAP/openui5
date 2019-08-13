@@ -217,7 +217,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 	 * @private
 	 */
 	Row.prototype._updateSelection = function(oTable, mTooltipTexts) {
-		var bIsSelected = oTable.isIndexSelected(this.getIndex());
+		var bIsSelected = oTable._getSelectionPlugin().isIndexSelected(this.getIndex());
 		var $DomRefs = this.getDomRefs(true);
 
 		if (!$DomRefs.rowScrollPart) {
@@ -361,7 +361,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		var oGhostElement;
 		var oGhostAreaElement;
 		var oRowElementClone;
-		var iSelectedRowCount = oTable._getSelectedIndicesCount();
+		var iSelectedRowCount = oTable._getSelectionPlugin().getSelectedCount();
 
 		function removeForbiddenAttributes(oElement) {
 			oElement.removeAttribute("id");

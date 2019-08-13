@@ -17,7 +17,7 @@
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table"
 	data-sap-ui-theme="sap_bluecrystal"
 	src="../../../../resources/sap-ui-core.js"></script>
-	
+
 <script src="Settings.js"></script>
 
 <script>
@@ -33,16 +33,16 @@ var oTable = new sap.ui.table.TreeTable({
 		items: [
 			new sap.ui.commons.Button({text: "Expand",
 				press: function() {
-					var iSelectedIndex = oTable.getSelectedIndex();
+					var iSelectedIndex = oTable._getSelectionPlugin().getSelectedIndex();
 					oTable.expand(iSelectedIndex);
 					oTable.setSelectedIndex(iSelectedIndex);
 				}
 			}),
 			new sap.ui.commons.Button({text: "Collapse",
 				press: function() {
-					var iSelectedIndex = oTable.getSelectedIndex();
+					var iSelectedIndex = oTable._getSelectionPlugin().getSelectedIndex();
 					oTable.collapse(iSelectedIndex);
-					oTable.setSelectedIndex(iSelectedIndex);
+					oTable._getSelectionPlugin().setSelectedIndex(iSelectedIndex);
 				}
 			}),
 			new sap.ui.commons.Button({text: "Toggle Group Mode",

@@ -39,16 +39,18 @@ var oTable = new sap.ui.table.TreeTable({
 oTable.setToolbar(new sap.m.Toolbar({content: [
 	new sap.m.Button({text: "Expand",
 		press: function() {
-			var iSelectedIndex = oTable.getSelectedIndex();
+			var oSelectionPlugin = oTable._getSelectionPlugin();
+			var iSelectedIndex = oSelectionPlugin.getSelectedIndex();
 			oTable.expand(iSelectedIndex);
-			oTable.setSelectedIndex(iSelectedIndex);
+			oSelectionPlugin.setSelectedIndex(iSelectedIndex);
 		}
 	}),
 	new sap.m.Button({text: "Collapse",
 		press: function() {
-			var iSelectedIndex = oTable.getSelectedIndex();
+			var oSelectionPlugin = oTable._getSelectionPlugin();
+			var iSelectedIndex = oSelectionPlugin.getSelectedIndex();
 			oTable.collapse(iSelectedIndex);
-			oTable.setSelectedIndex(iSelectedIndex);
+			oSelectionPlugin.setSelectedIndex(iSelectedIndex);
 		}
 	})
 ]}));

@@ -182,7 +182,8 @@ sap.ui.define([
 
 		// Select/Deselect all.
 		if (oCellInfo.isOfType(CellType.COLUMNROWHEADER)) {
-			if (!oTable._oSelectionPlugin.onHeaderSelectorPress || oTable._oSelectionPlugin.onHeaderSelectorPress()) {
+			var oSelectionPlugin = oTable._getSelectionPlugin();
+			if (!oSelectionPlugin.onHeaderSelectorPress || oSelectionPlugin.onHeaderSelectorPress()) {
 				oTable._toggleSelectAll();
 			}
 
@@ -867,6 +868,7 @@ sap.ui.define([
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 		var sSelectionMode = this.getSelectionMode();
+		var oSelectionPlugin = this._getSelectionPlugin();
 
 		// IE fires the paste event only on editable DOM elements, but we need it on any element, e.g. cells.
 		if (Device.browser.msie && TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.V, ModKey.CTRL)) {
@@ -936,7 +938,7 @@ sap.ui.define([
 			 */
 			this._oRangeSelection = {
 				startIndex: iDataRowIndex,
-				selected: this.isIndexSelected(iDataRowIndex)
+				selected: oSelectionPlugin.isIndexSelected(iDataRowIndex)
 			};
 
 		// Ctrl+A: Select/Deselect all.
@@ -944,7 +946,7 @@ sap.ui.define([
 			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
-				if (!this._oSelectionPlugin.onKeyboardShortcut || this._oSelectionPlugin.onKeyboardShortcut("toggle")) {
+				if (!oSelectionPlugin.onKeyboardShortcut || oSelectionPlugin.onKeyboardShortcut("toggle")) {
 					this._toggleSelectAll();
 				}
 			}
@@ -952,7 +954,7 @@ sap.ui.define([
 		// Ctrl+Shift+A: Deselect all.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT)) {
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER)) {
-				this.clearSelection();
+				oSelectionPlugin.clearSelection();
 			}
 
 		// F4: Enter the action mode.

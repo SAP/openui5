@@ -175,7 +175,6 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalTable.prototype.init = function() {
-		this._SelectionAdapterClass = BindingSelectionPlugin;
 		Table.prototype.init.apply(this, arguments);
 
 		this.addStyleClass("sapUiAnalyticalTable");
@@ -616,7 +615,7 @@ sap.ui.define([
 					// Potential negative values are handled by the binding.
 					that.getBinding("rows").collapseToLevel(that._iGroupedLevel - 1);
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
-					that.clearSelection();
+					that._getSelectionPlugin().clearSelection();
 				}
 			}));
 			this._oGroupHeaderMenu.addItem(new MenuItem({
@@ -624,7 +623,7 @@ sap.ui.define([
 				select: function() {
 					that.getBinding("rows").collapseToLevel(0);
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
-					that.clearSelection();
+					that._getSelectionPlugin().clearSelection();
 				}
 			}));
 			if (UriParameters.fromQuery(window.location.search).get("sap-ui-xx-table-expand-menu")) {
@@ -633,7 +632,7 @@ sap.ui.define([
 					select: function() {
 						that.getBinding("rows").expandToLevel(that._iGroupedLevel);
 						that.setFirstVisibleRow(0);
-						that.clearSelection();
+						that._getSelectionPlugin().clearSelection();
 					}
 				}));
 				this._oGroupHeaderMenu.addItem(new MenuItem({
@@ -641,7 +640,7 @@ sap.ui.define([
 					select: function() {
 						that.getBinding("rows").expandToLevel(that._aGroupedColumns.length);
 						that.setFirstVisibleRow(0);
-						that.clearSelection();
+						that._getSelectionPlugin().clearSelection();
 					}
 				}));
 				this._oGroupHeaderMenu.addItem(new MenuItem({
@@ -656,7 +655,7 @@ sap.ui.define([
 						} else {
 							that._getRowContexts();
 						}
-						that.clearSelection();
+						that._getSelectionPlugin().clearSelection();
 					}
 				}));
 				this._oGroupHeaderMenu.addItem(new MenuItem({
@@ -671,7 +670,7 @@ sap.ui.define([
 						} else {
 							that._getRowContexts();
 						}
-						that.clearSelection();
+						that._getSelectionPlugin().clearSelection();
 					}
 				}));
 			}
@@ -1285,6 +1284,10 @@ sap.ui.define([
 	AnalyticalTable.prototype._initLegacyRowMode = function(oRowMode) {
 		Table.prototype._initLegacyRowMode.apply(this, arguments);
 		this._getRowMode().disableFixedRows(); // The AnalyticalTable does not support fixed top rows and manages the fixed bottom rows itself.
+	};
+
+	AnalyticalTable.prototype._createLegacySelectionPlugin = function() {
+		return new BindingSelectionPlugin(this);
 	};
 
 	return AnalyticalTable;

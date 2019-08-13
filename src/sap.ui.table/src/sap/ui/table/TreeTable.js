@@ -134,7 +134,6 @@ sap.ui.define([
 	 * @private
 	 */
 	TreeTable.prototype.init = function() {
-		this._SelectionAdapterClass = BindingSelectionPlugin;
 		Table.prototype.init.apply(this, arguments);
 		TableUtils.Grouping.setTreeMode(this);
 	};
@@ -512,6 +511,10 @@ sap.ui.define([
 			}
 		}
 		return this;
+	};
+
+	TreeTable.prototype._createLegacySelectionPlugin = function() {
+		return new BindingSelectionPlugin(this);
 	};
 
 	return TreeTable;

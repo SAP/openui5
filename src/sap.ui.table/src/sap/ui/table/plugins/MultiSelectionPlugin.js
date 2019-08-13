@@ -100,14 +100,14 @@ sap.ui.define([
 
 		this._bLimitReached = false;
 		this._bLimitDisabled = this.getLimit() === 0;
-		this.oSelectionPlugin = null;
+		this.oInnerSelectionPlugin = null;
 		this.oDeselectAllIcon = oIcon;
 	};
 
 	MultiSelectionPlugin.prototype.exit = function() {
-		if (this.oSelectionPlugin) {
-			this.oSelectionPlugin.destroy();
-			this.oSelectionPlugin = null;
+		if (this.oInnerSelectionPlugin) {
+			this.oInnerSelectionPlugin.destroy();
+			this.oInnerSelectionPlugin = null;
 		}
 
 		if (this.oDeselectAllIcon) {
@@ -280,7 +280,7 @@ sap.ui.define([
 
 		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
 			if (mIndices) {
-				this.oSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
+				this.oInnerSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
 				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
 			}
 		}.bind(this));
@@ -310,7 +310,7 @@ sap.ui.define([
 
 		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
 			if (mIndices) {
-				this.oSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
+				this.oInnerSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
 				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
 			}
 		}.bind(this));
@@ -371,9 +371,9 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.clearSelection = function() {
-		if (this.oSelectionPlugin) {
+		if (this.oInnerSelectionPlugin) {
 			this.setLimitReached(false);
-			this.oSelectionPlugin.clearSelection();
+			this.oInnerSelectionPlugin.clearSelection();
 		}
 	};
 
@@ -382,8 +382,8 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	MultiSelectionPlugin.prototype.getSelectedIndex = function() {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin.getSelectedIndex();
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin.getSelectedIndex();
 		}
 		return -1;
 	};
@@ -395,8 +395,8 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.getSelectedIndices = function() {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin.getSelectedIndices();
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin.getSelectedIndices();
 		}
 		return [];
 	};
@@ -406,8 +406,8 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	MultiSelectionPlugin.prototype.getSelectableCount = function() {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin.getSelectableCount();
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin.getSelectableCount();
 		}
 		return 0;
 	};
@@ -417,8 +417,8 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	MultiSelectionPlugin.prototype.getSelectedCount = function() {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin.getSelectedCount();
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin.getSelectedCount();
 		}
 		return 0;
 	};
@@ -428,8 +428,8 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	MultiSelectionPlugin.prototype.isIndexSelectable = function(iIndex) {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin.isIndexSelectable(iIndex);
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin.isIndexSelectable(iIndex);
 		}
 		return false;
 	};
@@ -442,8 +442,8 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.isIndexSelected = function(iIndex) {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin.isIndexSelected(iIndex);
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin.isIndexSelected(iIndex);
 		}
 		return false;
 	};
@@ -456,9 +456,9 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.removeSelectionInterval = function(iIndexFrom, iIndexTo) {
-		if (this.oSelectionPlugin) {
+		if (this.oInnerSelectionPlugin) {
 			this.setLimitReached(false);
-			this.oSelectionPlugin.removeSelectionInterval(iIndexFrom, iIndexTo);
+			this.oInnerSelectionPlugin.removeSelectionInterval(iIndexFrom, iIndexTo);
 		}
 	};
 
@@ -471,13 +471,13 @@ sap.ui.define([
 			return;
 		}
 
-		if (this.oSelectionPlugin) {
+		if (this.oInnerSelectionPlugin) {
 			var that = this;
 			this.setLimitReached(false);
 			var oBinding = this._getBinding();
 			if (oBinding && iIndex >= 0) {
 				loadMultipleContexts(oBinding, iIndex, 1).then(function () {
-					that.oSelectionPlugin.setSelectedIndex(iIndex);
+					that.oInnerSelectionPlugin.setSelectedIndex(iIndex);
 				});
 			}
 		}
@@ -490,14 +490,14 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.setParent = function(oParent) {
 		var vReturn = SelectionPlugin.prototype.setParent.apply(this, arguments);
 
-		if (this.oSelectionPlugin) {
-			this.oSelectionPlugin.destroy();
-			this.oSelectionPlugin = null;
+		if (this.oInnerSelectionPlugin) {
+			this.oInnerSelectionPlugin.destroy();
+			this.oInnerSelectionPlugin = null;
 		}
 		if (oParent) {
-			this.oSelectionPlugin = new oParent._SelectionAdapterClass();
-			this.oSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
-			oParent.setSelectionMode(this.getSelectionMode());
+			this.oInnerSelectionPlugin = new oParent._createLegacySelectionPlugin();
+			this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
+			oParent.setProperty("selectionMode", this.getSelectionMode());
 		}
 
 		return vReturn;
@@ -525,8 +525,8 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiSelectionPlugin.prototype._getLastIndex = function() {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin._getLastIndex();
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin._getLastIndex();
 		}
 		return 0;
 	};
@@ -538,8 +538,8 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiSelectionPlugin.prototype._getBinding = function() {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin._getBinding();
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin._getBinding();
 		}
 		return null;
 	};
@@ -552,8 +552,8 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiSelectionPlugin.prototype._setBinding = function(oBinding) {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin._setBinding(oBinding);
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin._setBinding(oBinding);
 		}
 	};
 
@@ -564,8 +564,8 @@ sap.ui.define([
 	 * @private
 	 */
 	MultiSelectionPlugin.prototype._onBindingChange = function(oEvent) {
-		if (this.oSelectionPlugin) {
-			return this.oSelectionPlugin._onBindingChange(oEvent);
+		if (this.oInnerSelectionPlugin) {
+			return this.oInnerSelectionPlugin._onBindingChange(oEvent);
 		}
 	};
 

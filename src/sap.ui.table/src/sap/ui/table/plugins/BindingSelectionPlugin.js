@@ -60,7 +60,7 @@ sap.ui.define([
 	BindingSelectionPlugin.prototype.exit = function() {
 		var oBinding = this._getBinding();
 		if (oBinding) {
-			oBinding.detachEvent("change", this._onBindingChange);
+			oBinding.detachChange(this._onBindingChange, this);
 		}
 		SelectionPlugin.prototype.exit.call(this);
 	};
