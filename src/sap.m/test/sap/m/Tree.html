@@ -973,23 +973,26 @@ var oData = [
 
 	function addIcon(){
 		return new sap.m.Select({
-			tooltip: "Icon",
+			tooltip: "icon (change icon will rebind the control)",
 			items: [
 				new sap.ui.core.Item({ key: "0", text: "withoutIcon" }),
 				new sap.ui.core.Item({ key: "1", text: "withIcon" })
 			],
 			selectedItem: "0",
 			change: function(oControlEvent){
+				var sType = oTree.getItems()[0].getType();
 				var sItem = oControlEvent.getParameter("selectedItem").getText();
 				if (sItem === "withIcon") {
 					var oStandardTreeItem = new sap.m.StandardTreeItem({
 						title: "{text}",
-						icon: "{ref}"
+						icon: "{ref}",
+						type: sType
 					});
 					oTree.bindItems("/", oStandardTreeItem);
 				} else {
 					var oStandardTreeItem = new sap.m.StandardTreeItem({
-						title: "{text}"
+						title: "{text}",
+						type: sType
 					});
 					oTree.bindItems("/", oStandardTreeItem);
 				}
