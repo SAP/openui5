@@ -2696,7 +2696,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: false,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return false;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2770,7 +2769,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: false,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return false;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2857,7 +2855,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: true,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2888,7 +2885,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: true,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2924,7 +2920,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: true,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));

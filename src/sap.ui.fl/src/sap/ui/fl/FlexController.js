@@ -859,11 +859,9 @@ sap.ui.define([
 				Utils.formatAndLogMessage("info", [sLogMessage, oRejectionReason.message], [sChangeId]);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyXml:
-				this._setMergeError(true);
 				Utils.formatAndLogMessage("warning", [sLogMessage, "Merge error detected while processing the XML tree."], [sChangeId], oRejectionReason.stack);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyJs:
-				this._setMergeError(true);
 				Utils.formatAndLogMessage("error", [sLogMessage, "Merge error detected while processing the JS control tree."], [sChangeId], oRejectionReason.stack);
 				break;
 			/*no default*/
@@ -1090,18 +1088,6 @@ sap.ui.define([
 		var oChangesMap = this._oChangePersistence.getChangesMapForComponent();
 		var aChanges = oChangesMap.mChanges[sId] || [];
 		return this.discardChanges(aChanges, bDiscardPersonalization);
-	};
-
-	/**
-	 * Set a flag in the settings instance in case an error has occurred when merging changes
-	 *
-	 * @returns {Promise} Promise resolved after the merge error flag is set
-	 * @private
-	 */
-	FlexController.prototype._setMergeError = function () {
-		return FlexSettings.getInstance().then(function (oSettings) {
-			oSettings.setMergeErrorOccured(true);
-		});
 	};
 
 	FlexController.prototype._checkIfDependencyIsStillValid = function(oAppComponent, oModifier, sChangeId) {

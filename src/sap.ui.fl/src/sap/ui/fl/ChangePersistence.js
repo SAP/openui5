@@ -1318,7 +1318,7 @@ sap.ui.define([
 					return Settings.getInstance(this.getComponentName());
 				}.bind(this))
 				.then(function (oSettings) {
-					if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
+					if (!oSettings.isProductiveSystem()) {
 						return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
 					}
 				}.bind(this));
