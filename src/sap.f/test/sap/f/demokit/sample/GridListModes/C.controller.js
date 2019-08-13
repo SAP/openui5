@@ -35,6 +35,12 @@ sap.ui.define([
 			var oGridListItem = oEvent.getSource();
 
 			MessageToast.show("Request details for item with Id " + oGridListItem.getId());
+		},
+
+		onPress: function (oEvent) {
+			var oGridListItem = oEvent.getSource();
+
+			MessageToast.show("Pressed item with Id " + oGridListItem.getId());
 		}
 	});
 

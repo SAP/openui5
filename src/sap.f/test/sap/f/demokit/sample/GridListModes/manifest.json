@@ -16,12 +16,20 @@
 				"sap.m": {}
 			}
 		},
+		"resources": {
+			"css": [
+				{
+					"uri": "main.css"
+				}
+			]
+		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
 					"data.json",
+					"main.css",
 					"manifest.json"
 				]
 			}
