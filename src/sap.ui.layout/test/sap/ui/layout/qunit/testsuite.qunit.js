@@ -89,6 +89,11 @@ sap.ui.define([
 				module: "./cssgrid/GridLayouts.qunit",
 				sinon: 1
 			},
+			"CSSGrid-VirtualGrid": {
+				group: "CSSGrid",
+				module: "./cssgrid/VirtualGrid.qunit",
+				sinon: 1
+			},
 			"Splitter": {
 				coverage: {
 					only: [
