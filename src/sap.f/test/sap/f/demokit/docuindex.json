@@ -23,6 +23,13 @@
 		  "samples": ["sap.f.sample.Avatar"]
 		},
 		{
+			"id": "sap.f.AvatarGroup",
+			"name": "Avatar Group",
+			"category": "Display",
+			"since": "1.73",
+			"samples": ["sap.f.sample.AvatarGroup"]
+		},
+		{
 		  "id": "sap.f.DynamicPage",
 		  "name": "Dynamic Page",
 		  "category": "Container",
@@ -175,6 +182,11 @@
 		  "id": "sap.f.sample.Avatar",
 		  "name": "Avatar",
 		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
+		},
+		{
+			"id": "sap.f.sample.AvatarGroup",
+			"name": "Avatar Group (Experimental)",
+			"description": "This sample demonstrates the different group types and item sizes of the AvatarGroup control."
 		},
 		{
 		  "id": "sap.f.sample.SemanticPage",

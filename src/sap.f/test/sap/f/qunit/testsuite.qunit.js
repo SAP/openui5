@@ -29,6 +29,16 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
+			"AvatarGroup": {
+				coverage: {
+					only: ["sap/f/AvatarGroup"]
+				}
+			},
+			"AvatarGroupItem": {
+				coverage: {
+					only: ["sap/f/AvatarGroupItem"]
+				}
+			},
 			"Card": {
 				coverage: {
 					only: ["sap/f/Card"]
