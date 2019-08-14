@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolving with the result from the request
 		 * @public
 		 */
-		writeChanges: function (mPropertyBag) {
+		writeFlexData: function (mPropertyBag) {
 			var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
 			// TODO: add the csrf token handling - check if its even needed in perso because of proxy
 			return ApplyUtils.sendRequest(sWriteUrl, "POST", mPropertyBag.payload);
@@ -64,21 +64,25 @@ sap.ui.define([
 		 * @public
 		 */
 		reset: function (mPropertyBag) {
-			var mParameters = {};
+			// Define all properties which should be added as query parameters
+			var aParameters = ["reference", "appVersion", "generator"];
+			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
 
-			mParameters.reference = mPropertyBag.reference;
+			if (mPropertyBag.selectorIds) {
+				mParameters.selector = mPropertyBag.selectorIds;
+			}
+			if (mPropertyBag.changeTypes) {
+				mParameters.changeType = mPropertyBag.changeTypes;
+			}
+
+			// Delete this property because it should not be part of the url
 			delete mPropertyBag.reference;
-
-			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
-			mPropertyBag.selectorIds && (mParameters.selectorIds = mPropertyBag.selectorIds);
-			mPropertyBag.changeTypes && (mParameters.changeTypes = mPropertyBag.changeTypes);
-			mPropertyBag.generator && (mParameters.generator = mPropertyBag.generator);
-
 			var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
 
 			//TODO: add the csrf token handling - currently this function is not working
 			return ApplyUtils.sendRequest(sResetUrl, "DELETE");
 		},
+
 
 		/**
 		 * Called to get the flex features.

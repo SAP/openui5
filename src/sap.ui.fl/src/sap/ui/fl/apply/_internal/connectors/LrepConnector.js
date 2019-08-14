@@ -44,15 +44,15 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var mParameters = {
-				appVersion: mPropertyBag.appVersion
-			};
+			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
-
-			sClient && (mParameters["sap-client"] = sClient);
+			if (sClient) {
+				mParameters["sap-client"] = sClient;
+			}
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
+
 			return ApplyUtils.sendRequest(sDataUrl).then(function (oResponse) {
 				// TODO(when the cacheKey calculation implementation happens): see that the etag / cacheKey is handled accordingly
 

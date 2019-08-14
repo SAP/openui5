@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(
 	merge,
 	BaseConnector,
-	Utils
+	ApplyUtils
 ) {
 	"use strict";
 
@@ -40,11 +40,10 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData : function(mPropertyBag) {
-			var mParameters = {};
-			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
+			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
 
-			var sDataUrl = Utils.getUrl(API_VERSION + ROUTES.DATA, mPropertyBag, mParameters);
-			return Utils.sendRequest(sDataUrl);
+			var sDataUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.DATA, mPropertyBag, mParameters);
+			return ApplyUtils.sendRequest(sDataUrl);
 		}
 	});
 
