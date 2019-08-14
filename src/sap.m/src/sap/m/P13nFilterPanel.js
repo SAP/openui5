@@ -466,6 +466,7 @@ sap.ui.define([
 		}).addStyleClass("sapMFilterPadding");
 
 		this._oIncludeFilterPanel = new P13nConditionPanel({
+			autoAddNewRow: true,
 			maxConditions: this.getMaxIncludes(),
 			alwaysShowAddIcon: false,
 			layoutMode: this.getLayoutMode(),

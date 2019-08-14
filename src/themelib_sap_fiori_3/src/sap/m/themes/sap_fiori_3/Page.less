@@ -99,6 +99,10 @@
 	> .sapMPageHeader + .sapMPageSubHeader + section {
 		top: 5.5rem;
 	}
+
+	> .sapMPageHeader + .sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+		top: 4.75rem;
+	}
 }
 
 .sapUiSizeCompact .sapF2CollapsedHeader.sapMPageWithHeader {
@@ -135,8 +139,14 @@
 		top: 2rem;
 	}
 
-	.sapMPageWithHeader.sapMPageWithSubHeader > section {
-		top: 4.5rem;
+	.sapMPageWithHeader.sapMPageWithSubHeader {
+		> section {
+			top: 4.5rem;
+		}
+
+		.sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+			top: 4.5rem;
+		}
 	}
 
 	.sapMPageWithHeader {

@@ -1516,27 +1516,25 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.updateItems = function (sReason) {
-		var bKeyItemSync, aItems,
-			// Get selected keys should be requested at that point as it
-			// depends on getSelectedItems()- calls it internally
-			aKeys = this.getSelectedKeys();
+		var fnGetItemKey = function (oItem) {
+				return oItem && oItem.getKey && oItem.getKey();
+			},
+			aSelectedItems,
+			// Stash selected keys and items prior the update
+			aSelectedItemKeys = this.getSelectedItems().map(fnGetItemKey),
+			aSelectedKeys = this.getSelectedKeys();
 
 		var oUpdateItems = ComboBoxBase.prototype.updateItems.apply(this, arguments);
 
-		// It's important to request the selected items after the update,
-		// because the sync breaks there.
-		aItems = this.getSelectedItems();
+		// Now check if selectedItems' keys have been modified. This means that the model has been updated.
+		// And as the ListItem instances are reused, we need to check for something more relevant like the key
+		aSelectedItemKeys = this.getSelectedItems().map(fnGetItemKey).filter(function (sItemKey) {
+			return aSelectedItemKeys.indexOf(sItemKey) > -1;
+		});
 
-		// Check if selected keys and selected items are in sync
-		bKeyItemSync = (aItems.length === aKeys.length) && aItems.every(function (oItem) {
-				return oItem && oItem.getKey && aKeys.indexOf(oItem.getKey()) > -1;
-			});
+		aSelectedItems = aSelectedKeys.concat(aSelectedItemKeys);
 
-		// Synchronize if sync has been broken by the update
-		if (!bKeyItemSync) {
-			aItems = aKeys.map(this.getItemByKey, this);
-			this.setSelectedItems(aItems);
-		}
+		this.setSelectedKeys(aSelectedItems);
 
 		return oUpdateItems;
 	};
@@ -1914,6 +1912,23 @@ function(
 		sUpdateValue = this._sOldInput || this._sOldValue || "";
 
 		oInput.updateDomValue(sUpdateValue);
+	};
+
+	MultiComboBox.prototype.onItemChange = function (oControlEvent) {
+		var oValue = ComboBoxBase.prototype.onItemChange.apply(this, arguments);
+		this._forwardItemInfoToToken(oControlEvent);
+
+		return oValue;
+	};
+
+	MultiComboBox.prototype._forwardItemInfoToToken = function (oControlEvent) {
+		var oItem = oControlEvent.getSource(),
+			oPropertyInfo = oControlEvent.getParameters(),
+			oToken = this._getTokenByItem(oItem);
+
+		if (oPropertyInfo.name === "enabled" && oToken) {
+			oToken.setVisible(oPropertyInfo.newValue);
+		}
 	};
 
 	/**
@@ -2710,8 +2725,8 @@ function(
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	MultiComboBox.prototype.addSelectedKeys = function (aKeys) {
-		var bUpdateSelectedKeys = false,
-			aSelectedKeys = this.getProperty("selectedKeys") || [];
+		var aStoredSelectedKeys,
+			aSelectedKeys = [];
 
 		aKeys = this.validateProperty("selectedKeys", aKeys);
 
@@ -2725,11 +2740,16 @@ function(
 				// If at this point of time aggregation 'items' does not exist we
 				// have save provided key.
 				aSelectedKeys.push(sKey);
-				bUpdateSelectedKeys = true;
 			}
 		}, this);
 
-		if (bUpdateSelectedKeys) {
+		// Merging should happen here as addSelectedItem could modify the selectedKeys property
+		if (aSelectedKeys.length > 0) {
+			aStoredSelectedKeys = this.getProperty("selectedKeys").filter(function (sKey) {
+				return aSelectedKeys.indexOf(sKey) === -1;
+			});
+			aSelectedKeys = aStoredSelectedKeys.concat(aSelectedKeys);
+
 			this.setProperty("selectedKeys", aSelectedKeys, true);
 		}
 
@@ -3272,7 +3292,7 @@ function(
 	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
 			var iSpace,
-				iControlWidth = this.getDomRef().offsetWidth,
+				iControlWidth = this.getDomRef().clientWidth,
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),
 				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],

@@ -59,26 +59,6 @@ function(
 		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		APP_ID_AT_DESIGN_TIME : "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
 		VARIANT_MODEL_NAME: "$FlexVariants",
-		/**
-		 * log object exposes available log functions
-		 *
-		 * @name sap.ui.fl.Utils.log
-		 * @public
-		 */
-		log: {
-			error: function (sMessage, sDetails, sComponent) {
-				Log.error(sMessage, sDetails, sComponent);
-			},
-			warning: function (sMessage, sDetails, sComponent) {
-				Log.warning(sMessage, sDetails, sComponent);
-			},
-			debug: function (sMessage, sDetails, sComponent) {
-				Log.debug(sMessage, sDetails, sComponent);
-			},
-			info: function (sMessage, sDetails, sComponent) {
-				Log.info(sMessage, sDetails, sComponent);
-			}
-		},
 
 		/**
 		 * Formats the log message by replacing placeholders with values and logging the message.
@@ -91,7 +71,7 @@ function(
 		formatAndLogMessage: function(sLogType, aMessageComponents, aValuesToInsert, sCallStack) {
 			var sLogMessage = aMessageComponents.join(' ');
 			sLogMessage = formatMessage(sLogMessage, aValuesToInsert);
-			this.log[sLogType](sLogMessage, sCallStack || "");
+			Log[sLogType](sLogMessage, sCallStack || "");
 		},
 
 		/**
@@ -796,6 +776,15 @@ function(
 			return "";
 		},
 
+		getLrepUrl: function () {
+			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
+			var oLrepConfiguration = aFlexibilityServices.find(function (oServiceConfig) {
+				return oServiceConfig.connectorName === "LrepConnector";
+			});
+
+			return oLrepConfiguration ? oLrepConfiguration.url : "";
+		},
+
 		/**
 		 * Returns the current language in ISO 639-1 format.
 		 *
@@ -863,12 +852,12 @@ function(
 		/**
 		 * See {@link sap.ui.core.BaseTreeModifier#checkControlId} method
 		 */
-		checkControlId: function (vControl, oAppComponent, bSuppressLogging) {
+		checkControlId: function (vControl, oAppComponent, bSuppressLogging, sLoggingSeverity) {
 			if (!oAppComponent) {
 				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
 				oAppComponent = Utils.getAppComponentForControl(vControl);
 			}
-			return BaseTreeModifier.checkControlId(vControl, oAppComponent, bSuppressLogging);
+			return BaseTreeModifier.checkControlId(vControl, oAppComponent, bSuppressLogging, sLoggingSeverity);
 		},
 
 		/**
@@ -932,7 +921,7 @@ function(
 				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
 					// if mTechnicalParameters are not available we write a warning and continue updating the hash
 				if (!mTechnicalParameters) {
-					this.log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
+					Log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
 				}
 				if (aValues.length === 0) {
 					delete oParsedHash.params[sParameterName];
@@ -1154,7 +1143,7 @@ function(
 					return sAppId;
 				}
 			}
-			this.log.warning("No Manifest received.");
+			Log.warning("No Manifest received.");
 			return "";
 		},
 
@@ -1190,7 +1179,7 @@ function(
 					sVersion = oSapApp.applicationVersion.version;
 				}
 			} else {
-				this.log.warning("No Manifest received.");
+				Log.warning("No Manifest received.");
 			}
 			return sVersion;
 		},
@@ -1210,7 +1199,7 @@ function(
 					sUri = oSapApp.dataSources.mainService.uri;
 				}
 			} else {
-				this.log.warning("No Manifest received.");
+				Log.warning("No Manifest received.");
 			}
 			return sUri;
 		},
@@ -1342,31 +1331,33 @@ function(
 				.catch(function(e) {
 					var sErrorMessage = "Error during execPromiseQueueSequentially processing occured";
 					sErrorMessage += e ? ": " + e.message : "";
-					this.log.error(sErrorMessage);
+					Log.error(sErrorMessage);
 
 					if (bThrowError) {
 						throw new Error(sErrorMessage);
 					}
-				}.bind(this))
+				})
 
 				.then(function() {
 					return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 				}.bind(this));
 			}
 
-			this.log.error("Changes could not be applied, promise not wrapped inside function.");
+			Log.error("Changes could not be applied, promise not wrapped inside function.");
 			return this.execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync);
 		},
 
 		/**
-		 * Function that behaves like Promise (es6) but is synchronous. Implements 'then' and 'catch' functions.
+		 * Class that behaves like a promise (es6), but is synchronous. Implements <code>then</code> and <code>catch</code> functions.
 		 * After instantiating can be used similar to standard Promises but synchronously.
 		 * As soon as one of the callback functions returns a Promise the asynchronous Promise replaces the FakePromise in further processing.
 		 *
+		 * @class sap.ui.fl.Utils.FakePromise
 		 * @param {any} vInitialValue - value on resolve FakePromise
 		 * @param {any} vError - value on reject FakePromise
 		 * @param {string} sInitialPromiseIdentifier - value identifies previous promise in chain. If the identifier is passed to the function and don't match with the FakePromiseIdentifier then native Promise execution is used for further processing
 		 * @returns {sap.ui.fl.Utils.FakePromise|Promise} Returns instantiated FakePromise only if no Promise is passed by value parameter
+		 * @ui5-restricted
 		 */
 		FakePromise : function(vInitialValue, vError, sInitialPromiseIdentifier) {
 			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
@@ -1388,6 +1379,12 @@ function(
 				}
 			};
 
+			/**
+			 * <code>then</code> function as for promise (es6), but without a rejection handler.
+			 * @param {function} fn - Resolve handler
+			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the resolve handler
+			 * @public
+			 */
 			Utils.FakePromise.prototype.then = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.resolve(fn(this.vValue));
@@ -1399,6 +1396,12 @@ function(
 				return this;
 			};
 
+			/**
+			 * <code>catch</code> function as for promise (es6), but without a rejection handler.
+			 * @param {function} fn - Rejection handler
+			 * @returns {sap.ui.fl.Utils.FakePromise|Promise} <code>FakePromise</code> if no promise is returned by the rejection handler
+			 * @public
+			 */
 			Utils.FakePromise.prototype.catch = function(fn) {
 				if (!this.bContinueWithFakePromise) {
 					return Promise.reject(fn(this.vError));

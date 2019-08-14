@@ -1,0 +1,17 @@
+/* ==================================== */
+/* CSS for control sap.m/ColumnListItem */
+/* Fiori 3 theme                        */
+/* ==================================== */
+
+/* sap.m.Table is using top-borders of cells for drawing borders between rows to support mergeDuplicates feature with less effort */
+/* therefore the bottom border selection indication of the selected row must be painted as a top border of the next rows all cell */ 
+.sapMLIBSelected + .sapMListTblRow > td,
+.sapMLIBSelected + .sapMListTblSubRow + .sapMListTblRow > td {
+	border-top: 0.0625rem solid @sapUiListSelectionBorderColor;
+}
+
+/* for the last row, bottom border of the selected row cells must be used for the selection indication */
+.sapMLIBSelected.sapMListTblRow:last-child > td,
+.sapMLIBSelected.sapMListTblRow + .sapMListTblSubRow:last-child > td {
+	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+}

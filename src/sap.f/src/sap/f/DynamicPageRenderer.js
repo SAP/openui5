@@ -44,7 +44,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		oRm.openEnd();
 		// Renders Dynamic Page Custom ScrollBar for Desktop mode
 		if (Device.system.desktop) {
-			oRm.renderControl(oDynamicPage._getScrollBar().addStyleClass("sapFDynamicPageScrollBar"));
+			oRm.renderControl(oDynamicPage._getScrollBar());
 		}
 
 		// Renders Dynamic Page Title.

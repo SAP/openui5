@@ -273,7 +273,7 @@ function (
 		QUnit.test("when the handle settings function is called and the handler returns a change object,", function(assert) {
 			var done = assert.async();
 			var oSettingsChange = {
-				selectorControl : this.oButton,
+				selectorElement : this.oButton,
 				changeSpecificData : {
 					changeType : "changeSettings",
 					content : "testchange"
@@ -550,7 +550,7 @@ function (
 				}
 			};
 			var mSettingsChange = {
-				selectorControl : {
+				selectorElement : {
 					id : "stableNavPopoverId",
 					controlType : "sap.m.Button",
 					appComponent : oMockedAppComponent
@@ -646,7 +646,7 @@ function (
 			var done2 = assert.async();
 
 			var mAction1Change = {
-				selectorControl : this.oButton,
+				selectorElement : this.oButton,
 				changeSpecificData : {
 					changeType : "changeSettings",
 					content : "testchange1"
@@ -654,7 +654,7 @@ function (
 			};
 
 			var mAction2Change = {
-				selectorControl : this.oButton,
+				selectorElement : this.oButton,
 				changeSpecificData : {
 					changeType : "changeSettings",
 					content : "testchange2"
@@ -732,7 +732,7 @@ function (
 			var done = assert.async();
 
 			var mAction1Change = {
-				selectorControl : this.oButton,
+				selectorElement : this.oButton,
 				changeSpecificData : {
 					changeType : "changeSettings",
 					content : "testchange1"

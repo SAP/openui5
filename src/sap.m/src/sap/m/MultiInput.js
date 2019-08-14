@@ -66,12 +66,14 @@ function(
 	* A multi-input field allows the user to enter multiple values, which are displayed as {@link sap.m.Token tokens}.
 	* You can enable auto-complete suggestions or value help to help the user choose the correct entry. You can define
 	* validator functions to define what token values are accepted.
+	*
 	* <b>Notes:</b>
 	* <ul>
 	* <li> New valid tokens are created, when the user presses Enter, selects a value from the suggestions drop-down, or when the focus leaves the field.</li>
 	* <li> When multiple values are copied and pasted in the field, separate tokens are created for each of them.</li>
 	* <li> When a single value is copied and pasted in the field, it is shown as a text value, as further editing might be required before it is converted into a token.</li>
 	* <li> Provide meaningful labels for all input fields. Do not use the placeholder as a replacement for the label.</li>
+	* <li> <code>showValueHelp</code> property is overwritten and after initialization of the control, its value becomes <code>truthy</code>.</li>
 	* </ul>
 	* <h3>Usage</h3>
 	* <h4>When to use:</h4>
@@ -1673,6 +1675,8 @@ function(
 
 		this._tokenizer._onTokenDelete(oTokenToDelete);
 		this._getTokensList().removeItem(oListItem);
+
+		this.focus();
 	};
 
 	/**
@@ -1782,7 +1786,7 @@ function(
 	MultiInput.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
 			var iSpace,
-				iControlWidth = this.getDomRef().offsetWidth,
+				iControlWidth = this.getDomRef().clientWidth,
 				iDescriptionWidth = this.$().find(".sapMInputDescriptionWrapper").width(),
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),

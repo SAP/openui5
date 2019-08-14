@@ -627,7 +627,7 @@ sap.ui.define([
 			switch (sType) {
 				case TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
-					var mRenderConfig = oTable._oSelectionPlugin.getRenderConfig();
+					var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 
 					if (mRenderConfig.headerSelector.visible) {
 						mAttributes["role"] = ["button"];
@@ -820,7 +820,7 @@ sap.ui.define([
 					mAttributes["role"] = "row";
 					var bSelected = false;
 					if (mParams && typeof mParams.index === "number" && oTable.getSelectionMode() !== SelectionMode.None
-						&& oTable.isIndexSelected(mParams.index)) {
+						&& oTable._getSelectionPlugin().isIndexSelected(mParams.index)) {
 						mAttributes["aria-selected"] = "true";
 						bSelected = true;
 					} else {
@@ -1205,7 +1205,7 @@ sap.ui.define([
 		if (!bGroup && $RowHdr && !bTreeMode) {
 			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
-				this, TableAccExtension.ELEMENTTYPES.ROWHEADER, {rowSelected: !oRow._bHidden && oTable.isIndexSelected(iIndex)});
+				this, TableAccExtension.ELEMENTTYPES.ROWHEADER, {rowSelected: !oRow._bHidden && oTable._getSelectionPlugin().isIndexSelected(iIndex)});
 			sTitle = mAttributes["title"] || null;
 		}
 
@@ -1305,7 +1305,7 @@ sap.ui.define([
 			}
 		};
 
-		var iSelectedIndicesCount = oTable._getSelectedIndicesCount();
+		var iSelectedIndicesCount = oTable._getSelectionPlugin().getSelectedCount();
 
 		if (sSelectionMode === SelectionMode.Single) {
 			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";

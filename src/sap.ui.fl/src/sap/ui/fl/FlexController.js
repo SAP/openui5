@@ -7,9 +7,11 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -22,9 +24,11 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	Utils,
 	FlexCustomData,
+	FeaturesAPI,
 	Change,
 	Variant,
 	FlexSettings,
+	LrepConnector,
 	ChangePersistenceFactory,
 	ContextManager,
 	JsControlTreeModifier,
@@ -735,7 +739,7 @@ sap.ui.define([
 			oRevertPromise = this._revertChange(oChange, oControl, mPropertyBag);
 		}
 		return oRevertPromise.then(function(bRevertSuccessful) {
-			this._removeChangeFromControl(oChange, oControl, mPropertyBag.modifier);
+			this._removeChangeFromControl(oControl, oChange, mPropertyBag.modifier);
 			return bRevertSuccessful;
 		}.bind(this));
 	};
@@ -855,11 +859,9 @@ sap.ui.define([
 				Utils.formatAndLogMessage("info", [sLogMessage, oRejectionReason.message], [sChangeId]);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyXml:
-				this._setMergeError(true);
 				Utils.formatAndLogMessage("warning", [sLogMessage, "Merge error detected while processing the XML tree."], [sChangeId], oRejectionReason.stack);
 				break;
 			case FlexCustomData.failedChangesCustomDataKeyJs:
-				this._setMergeError(true);
 				Utils.formatAndLogMessage("error", [sLogMessage, "Merge error detected while processing the JS control tree."], [sChangeId], oRejectionReason.stack);
 				break;
 			/*no default*/
@@ -1086,18 +1088,6 @@ sap.ui.define([
 		var oChangesMap = this._oChangePersistence.getChangesMapForComponent();
 		var aChanges = oChangesMap.mChanges[sId] || [];
 		return this.discardChanges(aChanges, bDiscardPersonalization);
-	};
-
-	/**
-	 * Set a flag in the settings instance in case an error has occurred when merging changes
-	 *
-	 * @returns {Promise} Promise resolved after the merge error flag is set
-	 * @private
-	 */
-	FlexController.prototype._setMergeError = function () {
-		return FlexSettings.getInstance().then(function (oSettings) {
-			oSettings.setMergeErrorOccured(true);
-		});
 	};
 
 	FlexController.prototype._checkIfDependencyIsStillValid = function(oAppComponent, oModifier, sChangeId) {
@@ -1400,6 +1390,44 @@ sap.ui.define([
 	 */
 	FlexController.prototype.saveSequenceOfDirtyChanges = function (aDirtyChanges) {
 		return this._oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges);
+	};
+
+	/**
+	 * Check if there are UI or Descriptor changes on the server.
+	 *
+	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
+	 *
+	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset
+	 */
+	FlexController.prototype.isResetEnabled = function (mPropertyBag) {
+		mPropertyBag.reference = this._sComponentName;
+		mPropertyBag.appVersion = this._sAppVersion;
+		return LrepConnector.createConnector().getFlexInfo(mPropertyBag)
+			.then(function (oInfo) {
+				return !!oInfo.isResetEnabled;
+			});
+	};
+
+	/**
+	 * The changes can be publish, when publish is available and there are changes in the backend which are not yet publish.
+	 *
+	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
+	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
+	 *
+	 * @returns {Promise<boolean>} Resolves the information if the application has changes which can be publish
+	 */
+	FlexController.prototype.isPublishEnabled = function (mPropertyBag) {
+		mPropertyBag.reference = this._sComponentName;
+		mPropertyBag.appVersion = this._sAppVersion;
+		return FeaturesAPI.isPublishAvailable()
+			.then(function (bPublishAvailable) {
+				return bPublishAvailable && LrepConnector.createConnector().getFlexInfo(mPropertyBag)
+					.then(function (oInfo) {
+						return !!oInfo.isPublishEnabled;
+					});
+			});
 	};
 
 	return FlexController;

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Popup",
 	"sap/m/NavContainer",
 	"sap/m/Page",
 	"sap/m/Popover",
@@ -15,11 +16,13 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/base/Log",
 	"sap/ui/util/Mobile",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/Device"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	jQuery,
+	Popup,
 	NavContainer,
 	Page,
 	Popover,
@@ -31,7 +34,8 @@ sap.ui.define([
 	Dialog,
 	Log,
 	Mobile,
-	Core
+	Core,
+	Device
 ) {
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -1970,6 +1974,90 @@ sap.ui.define([
 		// (4) The dialog is reopened and the same navigation (to oPage2) is performed.
 		this.iDialogOpeningsCount++;
 		oDialog.open();
+	});
+
+	QUnit.module("NavContainer in Popover", {
+		beforeEach: function () {
+			this.sinon = sinon.sandbox.create();
+			this.spy = this.sinon.spy(Popup.prototype, "close");
+			this.oNavC = new sap.m.NavContainer("navC", {
+				pages: [
+					new sap.m.Page("page1a", {
+						title: "page1a"
+					}),
+					new sap.m.Page("page2a", {
+						title: "page2a"
+					})
+				]
+			});
+			this.oPopover = new sap.m.ResponsivePopover({
+					contentWidth: "18rem",
+					contentHeight: "24rem",
+					content: [ this.oNavC ]
+				});
+			this.oOpeningBtn = new sap.m.Button();
+
+			this.oOpeningBtn.addEventDelegate({
+				"onAfterRendering": function() {
+					this.oPopover.openBy(this.oOpeningBtn);
+				}
+			}, this);
+		},
+		afterEach: function () {
+			this.oPopover.destroy();
+			this.oOpeningBtn.destroy();
+
+			this.oPopover = null;
+			this.oNavC = null;
+			this.oOpeningBtn = null;
+
+			this.sinon.restore();
+		}
+	});
+
+	QUnit.test("Focus is changed only after transition", function(oAssert) {
+		var fnDone = oAssert.async(),
+			oNavContainer = this.oNavC,
+			oPopover = this.oPopover,
+			transitionComplete = false;
+
+		var oFocusable1 = new sap.m.Button({text: "focusable1"}),
+			oFocusable2 = new sap.m.Button({text: "focusable2"});
+
+		// Setup: add one focusable item in each page
+		oNavContainer.getPages()[0].addContent(oFocusable1);
+		oNavContainer.getPages()[1].addContent(oFocusable2);
+
+		// Setup: navigation from page1 to page2
+		oPopover.attachEventOnce("afterOpen", function() {
+			oNavContainer.to("page2a");
+			document.addEventListener("blur", fnOnBlur, true);
+			oNavContainer.attachEventOnce("afterNavigate", function() {
+				// Check
+				assert.strictEqual(this.spy.called, false, "parent popup is not closed");
+				fnDone();
+			}, this);
+		}, this);
+
+		// Setup: flag when transition is over
+		var fnOrig = oNavContainer._afterTransitionCallback;
+		oNavContainer._afterTransitionCallback = function() {
+			transitionComplete = true;
+			fnOrig.apply(oNavContainer, arguments);
+		};
+
+		// Check
+		var fnOnBlur = function(oEvent) {
+			if (!Device.browser.msie) {
+				assert.strictEqual(oEvent.target, oFocusable1.getDomRef());
+				assert.ok(transitionComplete, "transition already completed");
+			}
+			document.removeEventListener("blur", fnOnBlur, true);
+		};
+
+		// Act
+		this.oOpeningBtn.placeAt("content");
+
 	});
 
 	QUnit.module("Internal methods", {

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragInfo", "./DropInfo", "sap/base/Log"],
-	function(DragInfo, DropInfo, Log) {
+sap.ui.define(["./DragInfo", "./DropInfo", "sap/ui/Device", "sap/base/Log"],
+	function(DragInfo, DropInfo, Device, Log) {
 	"use strict";
 
 	/**
@@ -87,7 +87,15 @@ sap.ui.define(["./DragInfo", "./DropInfo", "sap/base/Log"],
 	// Mixin the DragInfo implementation
 	DragDropInfo.prototype.isDraggable = DragInfo.prototype.isDraggable;
 	DragDropInfo.prototype.fireDragEnd = DragInfo.prototype.fireDragEnd;
-	DragDropInfo.prototype.fireDragStart = DragInfo.prototype.fireDragStart;
+
+	DragDropInfo.prototype.fireDragStart = function(oEvent) {
+		// In IE, we can only control the cursor by setting effectAllowed in the dragstart.
+		if (Device.browser.msie) {
+			oEvent.originalEvent.dataTransfer.effectAllowed = this.getDropEffect().toLowerCase();
+		}
+
+		return DragInfo.prototype.fireDragStart.apply(this, arguments);
+	};
 
 	DragDropInfo.prototype.getDropTarget = function() {
 		var sTargetElement = this.getTargetElement();

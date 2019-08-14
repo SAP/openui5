@@ -138,6 +138,11 @@ sap.ui.define(function () {
 					only: ['sap/ui/dt/TaskManager']
 				}
 			},
+			TaskRunner: {
+				coverage: {
+					only: ['sap/ui/dt/TaskRunner']
+				}
+			},
 			ManagedObjectObserver: {
 				coverage: {
 					only: ['sap/ui/dt/ManagedObjectObserver']

@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
-	"sap/ui/integration/util/CardManifest",
+	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
 	"sap/base/Log",
 	"sap/f/cards/DataProviderFactory",
@@ -380,7 +380,7 @@ sap.ui.define([
 		this.setProperty("manifest", vValue);
 
 		if (typeof vValue === "string" && vValue !== "") {
-			this._oCardManifest = new CardManifest();
+			this._oCardManifest = new CardManifest("sap.card");
 			this._oCardManifest.load({ manifestUrl: vValue }).then(function () {
 				if (this._oCardManifest && this._oCardManifest.getResourceBundle()) {
 					var oResourceModel = new ResourceModel({
@@ -394,9 +394,8 @@ sap.ui.define([
 			}.bind(this));
 		} else if (typeof vValue === "object" && !jQuery.isEmptyObject(vValue)) {
 			this._bApplyManifest = true;
-			this._oCardManifest = new CardManifest(vValue);
+			this._oCardManifest = new CardManifest("sap.card", vValue);
 		}
-
 		return this;
 	};
 

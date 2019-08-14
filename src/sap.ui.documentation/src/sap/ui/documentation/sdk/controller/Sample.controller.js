@@ -5,7 +5,7 @@
 /*global location */
 sap.ui.define([
     "sap/ui/thirdparty/jquery",
-    "sap/ui/documentation/sdk/controller/BaseController",
+    "sap/ui/documentation/sdk/controller/SampleBaseController",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/Component",
     "sap/ui/core/ComponentContainer",
@@ -17,7 +17,7 @@ sap.ui.define([
     "sap/base/Log"
 ], function(
     jQuery,
-	BaseController,
+	SampleBaseController,
 	JSONModel,
 	Component,
 	ComponentContainer,
@@ -33,8 +33,7 @@ sap.ui.define([
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper;
 
-		return BaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
-
+		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
 			/* =========================================================== */
 			/* lifecycle methods										   */
 			/* =========================================================== */
@@ -42,13 +41,14 @@ sap.ui.define([
 			onInit: function () {
 				this.getRouter().getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
 
-				this._viewModel = new JSONModel({
+				this.oModel = new JSONModel({
 					showNavButton : true,
 					showNewTab: false
 				});
 
 				this._sId = null; // Used to hold sample ID
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
+				this._codeCache = {};
 
 				// Load runtime authoring asynchronously
 				Promise.all([
@@ -56,7 +56,7 @@ sap.ui.define([
 					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
 				]).then(this._loadRTA.bind(this));
 
-				this.getView().setModel(this._viewModel);
+				this.getView().setModel(this.oModel);
 			},
 
 			/* =========================================================== */
@@ -80,7 +80,7 @@ sap.ui.define([
 
 			_loadSample: function(oData) {
 				var oPage = this.byId("page"),
-					oModelData = this._viewModel.getData(),
+					oModelData = this.oModel.getData(),
 					oSample = oData.samples[this._sId],
 					oSampleContext,
 					oContent;
@@ -143,11 +143,35 @@ sap.ui.define([
 
 				// only have the option to run standalone if there is an iframe
 				oModelData.showNewTab = !!oSampleConfig.iframe;
+				oModelData.id = oSample.id;
+				oModelData.name = oSample.name;
 
-				if (oSampleConfig.iframe) {
-					oContent = this._createIframe(oContent, oSampleConfig.iframe);
-				} else {
-					this.sIFrameUrl = null;
+				if (oSampleConfig) {
+
+					oModelData.stretch = oSampleConfig.stretch;
+					oModelData.includeInDownload = oSampleConfig.additionalDownloadFiles;
+
+					// retrieve files
+					if (oSampleConfig.files) {
+						var sRef = sap.ui.require.toUrl((oSample.id).replace(/\./g, "/"));
+						oModelData.files = [];
+						for (var i = 0; i < oSampleConfig.files.length; i++) {
+							var sFile = oSampleConfig.files[i];
+							var sContent = this.fetchSourceFile(sRef, sFile);
+
+							oModelData.files.push({
+								name : sFile,
+								raw : sContent
+							});
+						}
+					}
+
+					if (oSampleConfig.iframe) {
+						oContent = this._createIframe(oContent, oSampleConfig.iframe);
+						oModelData.iframe = oSampleConfig.iframe;
+					} else {
+						this.sIFrameUrl = null;
+					}
 				}
 
 				// handle stretch content
@@ -168,7 +192,7 @@ sap.ui.define([
 					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
 				}.bind(this));
 
-				this._viewModel.setData(oModelData);
+				this.oModel.setData(oModelData);
 
 				setTimeout(function () {
 					oPage.setBusy(false);
@@ -187,15 +211,15 @@ sap.ui.define([
 			onPreviousSample: function (oEvent) {
 				this.getRouter().navTo("sample", {
 					entityId: this.entityId,
-					sampleId: this._viewModel.getProperty("/previousSampleId")
-				}, true);
+					sampleId: this.oModel.getProperty("/previousSampleId")
+				});
 			},
 
 			onNextSample: function (oEvent) {
 				this.getRouter().navTo("sample", {
 					entityId: this.entityId,
-					sampleId: this._viewModel.getProperty("/nextSampleId")
-				}, true);
+					sampleId: this.oModel.getProperty("/nextSampleId")
+				});
 			},
 
 			/**
@@ -315,7 +339,7 @@ sap.ui.define([
 			},
 
 			onNavBack : function (oEvt) {
-				this.getRouter().navTo("entity", { id : this.entityId }, true);
+				this.getRouter().navTo("entity", { id : this.entityId });
 			},
 
 			onNavToCode : function (evt) {

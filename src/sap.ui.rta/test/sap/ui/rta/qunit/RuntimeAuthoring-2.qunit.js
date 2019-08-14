@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/fl/registry/Settings",
+	"sap/base/Log",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/fl/FakeLrepSessionStorage",
@@ -21,6 +22,7 @@ sap.ui.define([
 	DesignTime,
 	ZIndexManager,
 	Settings,
+	Log,
 	FlexUtils,
 	RtaFlexUtils,
 	FakeLrepSessionStorage,
@@ -132,12 +134,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when RTA starts", function(assert) {
-			this.oFlexUtilsLogStub = sandbox.stub(FlexUtils.log, "error");
+			this.oLogStub = sandbox.stub(Log, "error");
 			var done = assert.async();
 
 			this.oRta.start().catch(function(vError) {
 				assert.ok(vError, "then the promise is rejected");
-				assert.strictEqual(this.oFlexUtilsLogStub.callCount, 1, "and an error is logged");
+				assert.strictEqual(this.oLogStub.callCount, 1, "and an error is logged");
 				done();
 			}.bind(this));
 		});
@@ -592,26 +594,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
-		beforeEach : function() {
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
-			});
-			sandbox.stub(Settings, "getInstance").returns(Promise.reject());
-
-			return this.oRta.start();
-		},
-		afterEach : function() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("and FL settings return rejected promise", function(assert) {
-			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
-			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
-		});
-	});
-
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
 		beforeEach : function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
@@ -692,13 +674,6 @@ sap.ui.define([
 				}
 			});
 			assert.equal(this.oRta.iEditableOverlaysCount, 0, "the counter is now 0 again");
-		});
-
-		QUnit.test("when _checkChangesExist is called without a componentName", function(assert) {
-			sandbox.stub(FlexUtils, "getComponentName").returns("");
-			return this.oRta._checkChangesExist().then(function(bPromiseValue) {
-				assert.equal(bPromiseValue, false, "then the promise resolved with false as parameter");
-			});
 		});
 	});
 

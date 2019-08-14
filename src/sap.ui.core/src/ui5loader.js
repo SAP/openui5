@@ -1072,7 +1072,9 @@
 
 		this.push = function(name, deps, factory, _export) {
 			if ( log.isLoggable() ) {
-				log.debug("pushing define from " + (document.currentScript && document.currentScript.src) );
+				log.debug("pushing define() call"
+					+ (document.currentScript ? " from " + document.currentScript.src : "")
+					+ " to define queue #" + iRun);
 			}
 			aQueue.push({
 				name: name,
@@ -1084,7 +1086,7 @@
 
 			// trigger queue processing via a timer in case the currently executing script is not managed by the loader
 			if ( !vTimer ) {
-				vTimer = setTimeout(this.process.bind(this, null));
+				vTimer = setTimeout(this.process.bind(this, null, "timer"));
 			}
 		};
 
@@ -1104,8 +1106,9 @@
 		 * When called via timer, <code>oRequestedModule</code> will be undefined.
 		 *
 		 * @param {Module} [oRequestedModule] Module for which the current script was loaded.
+		 * @param {string} [sInitiator] A string describing the caller of <code>process</code>
 		 */
-		this.process = function(oRequestedModule) {
+		this.process = function(oRequestedModule, sInitiator) {
 			var bLoggable = log.isLoggable(),
 				iCurrentRun = iRun++,
 				aQueueCopy = aQueue,
@@ -1188,27 +1191,28 @@
 			}
 
 			if ( bLoggable ) {
-				log.debug("processing define queue " + iCurrentRun + (oRequestedModule ? " for " + oRequestedModule.name : "") + " with " + aQueueCopy.map(function(entry) { return entry.name; }));
+				log.debug(sLogPrefix + "[" + sInitiator + "] "
+					+ "processing define queue #" + iCurrentRun
+					+ (oRequestedModule ? " for '" + oRequestedModule.name + "'" : "")
+					+ " with entries [" + aQueueCopy.map(function(entry) { return "'" + entry.name + "'"; }) + "]");
 			}
+
 			aQueueCopy.forEach(function(oEntry) {
 				// start to resolve the dependencies
 				executeModuleDefinition(oEntry.name, oEntry.deps, oEntry.factory, oEntry._export, /* bAsync = */ true);
-				if ( bLoggable ) {
-					log.debug("define called for " + oEntry.name);
-				}
 			});
 
 			if ( sModuleName != null && !oRequestedModule.settled ) {
 				// module name still not consumed, might be a non-UI5 module (e.g. in 'global' format)
 				if ( bLoggable ) {
-					log.debug("no queued module definition for the requested module found, assume the module to be ready");
+					log.debug(sLogPrefix + "no queued module definition for the requested module found, assume the module to be ready");
 				}
 				oRequestedModule.data = undefined; // allow GC
 				oRequestedModule.ready(); // no export known, has to be retrieved via global name
 			}
 
 			if ( bLoggable ) {
-				log.debug("processing define queue done " + iCurrentRun);
+				log.debug(sLogPrefix + "processing define queue #" + iCurrentRun + " done");
 			}
 		};
 	}();
@@ -1280,18 +1284,18 @@
 
 		function onload(e) {
 			if ( log.isLoggable() ) {
-				log.debug("Javascript resource loaded: " + oModule.name);
+				log.debug("JavaScript resource loaded: " + oModule.name);
 			}
 			oScript.removeEventListener('load', onload);
 			oScript.removeEventListener('error', onerror);
-			queue.process(oModule);
+			queue.process(oModule, "onload");
 		}
 
 		function onerror(e) {
 			oScript.removeEventListener('load', onload);
 			oScript.removeEventListener('error', onerror);
 			if (sAlternativeURL) {
-				log.warning("retry loading Javascript resource: " + oModule.name);
+				log.warning("retry loading JavaScript resource: " + oModule.name);
 				if (oScript && oScript.parentNode) {
 					oScript.parentNode.removeChild(oScript);
 				}
@@ -1300,7 +1304,7 @@
 				return;
 			}
 
-			log.error("failed to load Javascript resource: " + oModule.name);
+			log.error("failed to load JavaScript resource: " + oModule.name);
 			oModule.fail(
 				ensureStacktrace(new Error("failed to load '" + oModule.name +  "' from " + oModule.url + ": script load error")));
 		}
@@ -1392,7 +1396,8 @@
 		}
 
 		if ( bLoggable ) {
-			log.debug(sLogPrefix + "require '" + sModuleName + "' of type '" + oSplitName.subType + "'");
+			log.debug(sLogPrefix + "require '" + sModuleName + "'"
+					+ (oRequestingModule ? " (dependency of '" + oRequestingModule.name + "')" : ""));
 		}
 
 		// check if module has been loaded already
@@ -1407,7 +1412,7 @@
 			}
 
 			if ( oModule.state === READY ) {
-				if ( bLoggable ) {
+				if ( !bExecutedNow && bLoggable ) {
 					log.debug(sLogPrefix + "module '" + sModuleName + "' has already been loaded (skipped).");
 				}
 				// Note: this intentionally does not return oModule.promise() as the export might be temporary in case of cycles
@@ -1467,7 +1472,7 @@
 				// create module URL for the current extension
 				oModule.url = getResourcePath(oSplitName.baseID, aExtensions[i] + oSplitName.subType);
 				if ( bLoggable ) {
-					log.debug(sLogPrefix + "loading " + (aExtensions[i] ? aExtensions[i] + " version of " : "") + "'" + sModuleName + "' from '" + oModule.url + "'");
+					log.debug(sLogPrefix + "loading " + (aExtensions[i] ? aExtensions[i] + " version of " : "") + "'" + sModuleName + "' from '" + oModule.url + "' (using sync XHR)");
 				}
 
 				if ( syncCallBehavior ) {
@@ -1512,6 +1517,11 @@
 			oModule.url = getResourcePath(oSplitName.baseID, aExtensions[0] + oSplitName.subType);
 			// in debug mode, fall back to the non-dbg source, otherwise try the same source again (for SSO re-connect)
 			var sAltUrl = bDebugSources ? getResourcePath(oSplitName.baseID, aExtensions[1] + oSplitName.subType) : oModule.url;
+
+			if ( log.isLoggable() ) {
+				log.debug(sLogPrefix + "loading '" + sModuleName + "' from '" + oModule.url + "' (using <script>)");
+			}
+
 			// call notification hook only once
 			ui5Require.load({ completeLoad:noop, async: true }, sAltUrl, oSplitName.baseID);
 			loadScript(oModule, /* sAlternativeURL= */ sAltUrl);
@@ -1539,7 +1549,11 @@
 				bForceSyncDefines = !bAsync;
 
 				if ( bLoggable ) {
-					log.debug(sLogPrefix + "executing '" + sModuleName + "'");
+					if ( typeof oModule.data === "string" ) {
+						log.warning(sLogPrefix + "executing '" + sModuleName + "' (using eval)");
+					} else {
+						log.debug(sLogPrefix + "executing '" + sModuleName + "'");
+					}
 					sOldPrefix = sLogPrefix;
 					sLogPrefix = sLogPrefix + ": ";
 				}
@@ -1600,7 +1614,7 @@
 					}
 				}
 				_execStack.pop();
-				queue.process(oModule);
+				queue.process(oModule, "after eval");
 
 				if ( bLoggable ) {
 					sLogPrefix = sOldPrefix;
@@ -1623,7 +1637,6 @@
 	function requireAll(oRequestingModule, aDependencies, fnCallback, fnErrCallback, bAsync) {
 
 		var sBaseName, aModules = [],
-			bLoggable = log.isLoggable(),
 			i, sDepModName, oError, oPromise;
 
 		try {
@@ -1649,9 +1662,6 @@
 
 			for (i = 0; i < aDependencies.length; i++) {
 				sDepModName = aDependencies[i];
-				if ( bLoggable ) {
-					log.debug(sLogPrefix + "require '" + sDepModName + "'");
-				}
 				if ( oRequestingModule ) {
 					switch ( sDepModName ) {
 					case 'require.js':
@@ -1671,9 +1681,6 @@
 				}
 				if ( !aModules[i] ) {
 					aModules[i] = requireModule(oRequestingModule, sDepModName, bAsync);
-				}
-				if ( bLoggable ) {
-					log.debug(sLogPrefix + "require '" + sDepModName + "': done.");
 				}
 			}
 
@@ -1698,7 +1705,7 @@
 		sResourceName = normalize(sResourceName);
 
 		if ( bLoggable ) {
-			log.debug("define(" + sResourceName + ", " + "['" + aDependencies.join("','") + "']" + ")");
+			log.debug(sLogPrefix + "define('" + sResourceName + "', " + "['" + aDependencies.join("','") + "']" + ")");
 		}
 
 		var oModule = declareModule(sResourceName);
@@ -1748,7 +1755,7 @@
 
 			// factory
 			if ( bLoggable ) {
-				log.debug("define(" + sResourceName + "): calling factory " + typeof vFactory);
+				log.debug(sLogPrefix + "define('" + sResourceName + "'): dependencies resolved, calling factory " + typeof vFactory);
 			}
 
 			if ( bExport && syncCallBehavior !== 2 ) {
@@ -1993,6 +2000,9 @@
 
 	function requireSync(sModuleName) {
 		sModuleName = getMappedName(sModuleName + '.js');
+		if ( log.isLoggable() ) {
+			log.warning("sync require of '" + sModuleName + "'");
+		}
 		return requireModule(null, sModuleName, /* bAsync = */ false);
 	}
 

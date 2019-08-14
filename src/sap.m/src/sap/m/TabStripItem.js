@@ -140,6 +140,13 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 		TabStripItem.CSS_CLASS_LABEL = "sapMTabStripItemLabel";
 
 		/**
+		 * The default CSS class name of the <code>TabStripItem</code>'s modified symbol in context of <code>TabStrip</code>.
+		 *
+		 * @type {string}
+		 */
+		TabStripItem.CSS_CLASS_MODIFIED_SYMBOL = "sapMTabStripItemModifiedSymbol";
+
+		/**
 		 * The default CSS class name of the <code>TabStripItem</code>'s additional text in context of <code>TabStrip</code>.
 		 *
 		 * @type {string}

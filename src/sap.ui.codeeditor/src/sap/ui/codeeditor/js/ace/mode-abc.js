@@ -5,6 +5,7 @@ ace.define("ace/mode/abc_highlight_rules",["require","exports","module","ace/lib
     var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
     var ABCHighlightRules = function () {
+
         this.$rules = {
             start: [
                 {
@@ -81,6 +82,7 @@ ace.define("ace/mode/abc_highlight_rules",["require","exports","module","ace/lib
 
             ]
         };
+
         this.normalizeRules();
     };
 
@@ -256,8 +258,7 @@ ace.define("ace/mode/abc",["require","exports","module","ace/lib/oop","ace/mode/
     }).call(Mode.prototype);
 
     exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/abc"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

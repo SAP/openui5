@@ -156,6 +156,13 @@ sap.ui.define([
 				}
 			}.bind(this);
 		}
+
+		if (!this.isGridSupportedByBrowser() && !this._dndPolyfillAttached) {
+			oGrid.attachEvent("_gridPolyfillAfterDragOver", oGrid, this._polyfillAfterDragOver, this);
+			oGrid.attachEvent("_gridPolyfillAfterDragEnd", oGrid, this._polyfillAfterDragEnd, this);
+			this._dndPolyfillAttached = true;
+			// todo: detach
+		}
 	};
 
 	/**
@@ -445,12 +452,38 @@ sap.ui.define([
 		oControl.getGridDomRefs().forEach(function (oDomRef) {
 			if (oDomRef && oDomRef.children) {
 				for (var i = 0; i < oDomRef.children.length; i++) {
-					fn(oDomRef.children[i]);
+
+					// process only visible items
+					// avoid using jQuery for performance reasons
+					if (oDomRef.children[i].style.display !== "none" && oDomRef.children[i].style.visibility !== "hidden") {
+						fn(oDomRef.children[i]);
+					}
 				}
 			}
 		});
 	};
 
+	/**
+	 * Implements polyfill for IE after drag over.
+	 * @param {Object} oEvent After drag over event
+	 * @protected
+	 */
+	GridBoxLayout.prototype._polyfillAfterDragOver = function (oEvent, oGrid) {
+		oEvent.getParameter("indicator").addClass("sapUiLayoutCSSGridItem");
+
+		this._applyClassForLastItem(oGrid);
+	};
+
+	/**
+	 * Implements polyfill for IE after drag end.
+	 * @param {Object} oEvent After drag end event
+	 * @protected
+	 */
+	GridBoxLayout.prototype._polyfillAfterDragEnd = function (oEvent, oGrid) {
+		oEvent.getParameter("indicator").removeClass("sapUiLayoutCSSGridItem");
+
+		this._applyClassForLastItem(oGrid);
+	};
 
 	return GridBoxLayout;
 });

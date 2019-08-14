@@ -298,6 +298,7 @@ var JavaScriptHighlightRules = function(options) {
         "3[0-7][0-7]?|" + // oct
         "[4-7][0-7]?|" + //oct
         ".)";
+
     this.$rules = {
         "no_regex" : [
             DocCommentHighlightRules.getStartRule("doc-start"),
@@ -1689,6 +1690,7 @@ var CssHighlightRules = function() {
         "support.constant.color": supportConstantColor,
         "support.constant.fonts": supportConstantFonts
     }, "text", true);
+
     this.$rules = {
         "start" : [{
             include : ["strings", "url", "comments"]
@@ -1977,11 +1979,7 @@ var CssCompletions = function() {
             this.defineCompletions();
         }
 
-        var token = session.getTokenAt(pos.row, pos.column);
-
-        if (!token)
-            return [];
-        if (state==='ruleset'){
+        if (state==='ruleset' || session.$mode.$id == "ace/mode/scss") {
             var line = session.getLine(pos.row).substr(0, pos.column);
             if (/:[^;]+$/.test(line)) {
                 /([\w\-]+):[^:]*$/.test(line);
@@ -3004,7 +3002,7 @@ oop.inherits(FoldMode, BaseFoldMode);
             var ch = token.value[0];
             if (ch == "=") return 6;
             if (ch == "-") return 5;
-            return 7 - token.value.search(/[^#]/);
+            return 7 - token.value.search(/[^#]|$/);
         }
 
         if (isHeading(row)) {
@@ -3067,6 +3065,7 @@ var ShHighlightRules = function() {
     }, "identifier");
 
     var integer = "(?:(?:[1-9]\\d*)|(?:0))";
+
     var fraction = "(?:\\.\\d+)";
     var intPart = "(?:\\d+)";
     var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
@@ -3322,6 +3321,7 @@ oop.inherits(Mode, TextMode);
     };
 
     this.autoOutdent = function(state, doc, row) {
+
         row += 1;
         var indent = this.$getIndent(doc.getLine(row));
         var tab = doc.getTabString();
@@ -3739,77 +3739,17 @@ exports.Mode = Mode;
 
 });
 
-ace.define("ace/mode/scss_highlight_rules",["require","exports","module","ace/lib/oop","ace/lib/lang","ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/scss_highlight_rules",["require","exports","module","ace/lib/oop","ace/lib/lang","ace/mode/text_highlight_rules","ace/mode/css_highlight_rules"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
 var lang = require("../lib/lang");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
+var CssHighlightRules = require("./css_highlight_rules");
 
 var ScssHighlightRules = function() {
     
-    var properties = lang.arrayToMap( (function () {
-
-        var browserPrefix = ("-webkit-|-moz-|-o-|-ms-|-svg-|-pie-|-khtml-").split("|");
-        
-        var prefixProperties = ("appearance|background-clip|background-inline-policy|background-origin|" + 
-             "background-size|binding|border-bottom-colors|border-left-colors|" + 
-             "border-right-colors|border-top-colors|border-end|border-end-color|" + 
-             "border-end-style|border-end-width|border-image|border-start|" + 
-             "border-start-color|border-start-style|border-start-width|box-align|" + 
-             "box-direction|box-flex|box-flexgroup|box-ordinal-group|box-orient|" + 
-             "box-pack|box-sizing|column-count|column-gap|column-width|column-rule|" + 
-             "column-rule-width|column-rule-style|column-rule-color|float-edge|" + 
-             "font-feature-settings|font-language-override|force-broken-image-icon|" + 
-             "image-region|margin-end|margin-start|opacity|outline|outline-color|" + 
-             "outline-offset|outline-radius|outline-radius-bottomleft|" + 
-             "outline-radius-bottomright|outline-radius-topleft|outline-radius-topright|" + 
-             "outline-style|outline-width|padding-end|padding-start|stack-sizing|" + 
-             "tab-size|text-blink|text-decoration-color|text-decoration-line|" + 
-             "text-decoration-style|transform|transform-origin|transition|" + 
-             "transition-delay|transition-duration|transition-property|" + 
-             "transition-timing-function|user-focus|user-input|user-modify|user-select|" +
-             "window-shadow|border-radius").split("|");
-        
-        var properties = ("azimuth|background-attachment|background-color|background-image|" +
-            "background-position|background-repeat|background|border-bottom-color|" +
-            "border-bottom-style|border-bottom-width|border-bottom|border-collapse|" +
-            "border-color|border-left-color|border-left-style|border-left-width|" +
-            "border-left|border-right-color|border-right-style|border-right-width|" +
-            "border-right|border-spacing|border-style|border-top-color|" +
-            "border-top-style|border-top-width|border-top|border-width|border|bottom|" +
-            "box-shadow|box-sizing|caption-side|clear|clip|color|content|counter-increment|" +
-            "counter-reset|cue-after|cue-before|cue|cursor|direction|display|" +
-            "elevation|empty-cells|float|font-family|font-size-adjust|font-size|" +
-            "font-stretch|font-style|font-variant|font-weight|font|height|left|" +
-            "letter-spacing|line-height|list-style-image|list-style-position|" +
-            "list-style-type|list-style|margin-bottom|margin-left|margin-right|" +
-            "margin-top|marker-offset|margin|marks|max-height|max-width|min-height|" +
-            "min-width|opacity|orphans|outline-color|" +
-            "outline-style|outline-width|outline|overflow|overflow-x|overflow-y|padding-bottom|" +
-            "padding-left|padding-right|padding-top|padding|page-break-after|" +
-            "page-break-before|page-break-inside|page|pause-after|pause-before|" +
-            "pause|pitch-range|pitch|play-during|position|quotes|richness|right|" +
-            "size|speak-header|speak-numeral|speak-punctuation|speech-rate|speak|" +
-            "stress|table-layout|text-align|text-decoration|text-indent|" +
-            "text-shadow|text-transform|top|unicode-bidi|vertical-align|" +
-            "visibility|voice-family|volume|white-space|widows|width|word-spacing|" +
-            "z-index").split("|");
-        var ret = [];
-        for (var i=0, ln=browserPrefix.length; i<ln; i++) {
-            Array.prototype.push.apply(
-                ret,
-                (( browserPrefix[i] + prefixProperties.join("|" + browserPrefix[i]) ).split("|"))
-            );
-        }
-        Array.prototype.push.apply(ret, prefixProperties);
-        Array.prototype.push.apply(ret, properties);
-        
-        return ret;
-        
-    })() );
-    
-
+    var properties = lang.arrayToMap(CssHighlightRules.supportType.split("|"));
 
     var functions = lang.arrayToMap(
         ("hsl|hsla|rgb|rgba|url|attr|counter|counters|abs|adjust_color|adjust_hue|" +
@@ -3819,56 +3759,9 @@ var ScssHighlightRules = function() {
          "scale_color|transparentize|type_of|unit|unitless|unquote").split("|")
     );
 
-    var constants = lang.arrayToMap(
-        ("absolute|all-scroll|always|armenian|auto|baseline|below|bidi-override|" +
-        "block|bold|bolder|border-box|both|bottom|break-all|break-word|capitalize|center|" +
-        "char|circle|cjk-ideographic|col-resize|collapse|content-box|crosshair|dashed|" +
-        "decimal-leading-zero|decimal|default|disabled|disc|" +
-        "distribute-all-lines|distribute-letter|distribute-space|" +
-        "distribute|dotted|double|e-resize|ellipsis|fixed|georgian|groove|" +
-        "hand|hebrew|help|hidden|hiragana-iroha|hiragana|horizontal|" +
-        "ideograph-alpha|ideograph-numeric|ideograph-parenthesis|" +
-        "ideograph-space|inactive|inherit|inline-block|inline|inset|inside|" +
-        "inter-ideograph|inter-word|italic|justify|katakana-iroha|katakana|" +
-        "keep-all|left|lighter|line-edge|line-through|line|list-item|loose|" +
-        "lower-alpha|lower-greek|lower-latin|lower-roman|lowercase|lr-tb|ltr|" +
-        "medium|middle|move|n-resize|ne-resize|newspaper|no-drop|no-repeat|" +
-        "nw-resize|none|normal|not-allowed|nowrap|oblique|outset|outside|" +
-        "overline|pointer|progress|relative|repeat-x|repeat-y|repeat|right|" +
-        "ridge|row-resize|rtl|s-resize|scroll|se-resize|separate|small-caps|" +
-        "solid|square|static|strict|super|sw-resize|table-footer-group|" +
-        "table-header-group|tb-rl|text-bottom|text-top|text|thick|thin|top|" +
-        "transparent|underline|upper-alpha|upper-latin|upper-roman|uppercase|" +
-        "vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|" +
-        "zero").split("|")
-    );
+    var constants = lang.arrayToMap(CssHighlightRules.supportConstant.split("|"));
 
-    var colors = lang.arrayToMap(
-        ("aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|" +
-        "blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|" +
-        "chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|" +
-        "darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|" +
-        "darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|" +
-        "darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|" +
-        "darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|" +
-        "dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|" +
-        "ghostwhite|gold|goldenrod|gray|green|greenyellow|grey|honeydew|" +
-        "hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|" +
-        "lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|" +
-        "lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|" +
-        "lightsalmon|lightseagreen|lightskyblue|lightslategray|" +
-        "lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|" +
-        "magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|" +
-        "mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|" +
-        "mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|" +
-        "moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|" +
-        "orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|" +
-        "papayawhip|peachpuff|peru|pink|plum|powderblue|purple|rebeccapurple|" +
-        "red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|" +
-        "seashell|sienna|silver|skyblue|slateblue|slategray|slategrey|snow|" +
-        "springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|" +
-        "wheat|white|whitesmoke|yellow|yellowgreen").split("|")
-    );
+    var colors = lang.arrayToMap(CssHighlightRules.supportConstantColor.split("|"));
     
     var keywords = lang.arrayToMap(
         ("@mixin|@extend|@include|@import|@media|@debug|@warn|@if|@for|@each|@while|@else|@font-face|@-webkit-keyframes|if|and|!default|module|def|end|declare").split("|")
@@ -3885,7 +3778,9 @@ var ScssHighlightRules = function() {
          "small|source|span|strike|strong|style|sub|summary|sup|table|tbody|td|" + 
          "textarea|tfoot|th|thead|time|title|tr|tt|u|ul|var|video|wbr|xmp").split("|")
     );
+
     var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
+
     this.$rules = {
         "start" : [
             {
@@ -3912,7 +3807,7 @@ var ScssHighlightRules = function() {
                 next : "qstring"
             }, {
                 token : "constant.numeric",
-                regex : numRe + "(?:em|ex|px|cm|mm|in|pt|pc|deg|rad|grad|ms|s|hz|khz|%)"
+                regex : numRe + "(?:ch|cm|deg|em|ex|fr|gd|grad|Hz|in|kHz|mm|ms|pc|pt|px|rad|rem|s|turn|vh|vmax|vmin|vm|vw|%)"
             }, {
                 token : "constant.numeric", // hex6 color
                 regex : "#[a-f0-9]{6}"
@@ -4012,7 +3907,7 @@ exports.ScssHighlightRules = ScssHighlightRules;
 
 });
 
-ace.define("ace/mode/scss",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/scss_highlight_rules","ace/mode/matching_brace_outdent","ace/mode/behaviour/css","ace/mode/folding/cstyle"], function(require, exports, module) {
+ace.define("ace/mode/scss",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/scss_highlight_rules","ace/mode/matching_brace_outdent","ace/mode/behaviour/css","ace/mode/folding/cstyle","ace/mode/css_completions"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -4021,11 +3916,14 @@ var ScssHighlightRules = require("./scss_highlight_rules").ScssHighlightRules;
 var MatchingBraceOutdent = require("./matching_brace_outdent").MatchingBraceOutdent;
 var CssBehaviour = require("./behaviour/css").CssBehaviour;
 var CStyleFoldMode = require("./folding/cstyle").FoldMode;
+var CssCompletions = require("./css_completions").CssCompletions;
+
 
 var Mode = function() {
     this.HighlightRules = ScssHighlightRules;
     this.$outdent = new MatchingBraceOutdent();
     this.$behaviour = new CssBehaviour();
+    this.$completer = new CssCompletions();
     this.foldingRules = new CStyleFoldMode();
 };
 oop.inherits(Mode, TextMode);
@@ -4057,6 +3955,11 @@ oop.inherits(Mode, TextMode);
     this.autoOutdent = function(state, doc, row) {
         this.$outdent.autoOutdent(doc, row);
     };
+    
+    this.getCompletions = function(state, session, pos, prefix) {
+        return this.$completer.getCompletions(state, session, pos, prefix);
+    };
+
 
     this.$id = "ace/mode/scss";
 }).call(Mode.prototype);
@@ -4095,8 +3998,7 @@ var SassHighlightRules = function() {
             {regex: /^\s*/, onMatch: function(value, currentState, stack) {
                 if (stack[1] === -1)
                     stack[1] = Math.max(stack[2], value.length - 1);
-                if (value.length <= stack[1]) {
-stack.shift();stack.shift();stack.shift();
+                if (value.length <= stack[1]) {stack.shift();stack.shift();stack.shift();
                     this.next = stack.shift();
                     return "text";
                 } else {
@@ -4163,7 +4065,9 @@ var LessHighlightRules = function() {
         "support.constant.color": CssHighlightRules.supportConstantColor,
         "support.constant.fonts": CssHighlightRules.supportConstantFonts
     }, "identifier", true);   
+
     var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
+
     this.$rules = {
         "start" : [
             {
@@ -4430,6 +4334,7 @@ var RubyHighlightRules = function() {
         "support.function": builtinFunctions,
         "invalid.deprecated": "debugger" // TODO is this a remnant from js mode?
     }, "identifier");
+
     this.$rules = {
         "start" : [
             {
@@ -4508,6 +4413,7 @@ var RubyHighlightRules = function() {
                     defaultToken: "string"
                 }]
             }],
+
             {
                 token : "text", // namespaces aren't symbols
                 regex : "::"
@@ -4725,8 +4631,7 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/slim"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

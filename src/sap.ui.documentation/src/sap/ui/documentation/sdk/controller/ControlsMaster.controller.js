@@ -371,11 +371,10 @@ sap.ui.define([
 				var oItemParam = oEvt.getParameter("listItem"),
 					oItem = (oItemParam) ? oItemParam : oEvt.getSource(),
 					sPath = oItem.getBindingContext().getPath(),
-					oEntity = this.getView().getModel().getProperty(sPath),
-					bReplace = !Device.system.phone;
+					oEntity = this.getView().getModel().getProperty(sPath);
 
 				this._bNavToEntityViaList = true;
-				this.getRouter().navTo("entity", {id: oEntity.id, part: "samples"}, bReplace);
+				this.getRouter().navTo("entity", {id: oEntity.id, part: "samples"});
 			},
 
 			getGroupHeader: function (oGroup) {

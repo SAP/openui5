@@ -31,7 +31,7 @@
 				"sap/ui/core/mvc/Controller",
 				"sap/ui/core/ComponentContainer",
 				"sap/ui/core/Component",
-				"sap/ui/fl/FlexControllerFactory",
+				"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 				"sap/ui/fl/ChangePersistenceFactory",
 				"sap/ui/layout/VerticalLayout",
 				"sap/ui/layout/HorizontalLayout",
@@ -43,7 +43,7 @@
 				Controller,
 				ComponentContainer,
 				Component,
-				FlexControllerFactory,
+				FlexRuntimeInfoAPI,
 				ChangePersistenceFactory,
 				VerticalLayout,
 				HorizontalLayout,
@@ -103,7 +103,7 @@
 					sap.ui.getCore().applyChanges();
 				})
 				.then(function() {
-					return FlexControllerFactory.createForControl(oAppComponent).waitForChangesToBeApplied(oControlToBeChanged)
+					return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
 				})
 				.then(function() {
 					// stop performance measurement

@@ -43,27 +43,15 @@ sap.ui.define([
 			var done = assert.async();
 
 			return BrokenConnector.loadFlexData().catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "loadFlexData is broken", "then the connector fails");
+				assert.equal(sErrorMessage, "loadFlexData is not implemented", "then the connector fails");
 				done();
 			});
 		});
 
-		QUnit.test("given the BrokenConnector is registered when Connector.loadFlexData is called", function(assert) {
-			return Connector.loadFlexData("reference", "1.0.0").then(function (oResult) {
-				assert.deepEqual(oResult, BaseConnector._RESPONSES.FLEX_DATA, "then default flex data response is returned");
-			});
-		});
-
 		QUnit.test("given the BrokenConnector is registered and a changes-bundle.json is present for the application when Connector.loadFlexData is called", function(assert) {
-			return Connector.loadFlexData("test.app", "1.0.0").then(function (oResult) {
+			return Connector.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "then one change is returned");
 				assert.deepEqual(oResult.changes[0], {dummy: true}, "and the data from the changes bundle is included");
-			});
-		});
-
-		QUnit.test("given the BrokenConnector is registered when Connector.loadFeatures is called", function(assert) {
-			return Connector.loadFeatures().then(function (oResult) {
-				assert.deepEqual(oResult, BaseConnector._RESPONSES.FEATURES, "then default flex features response returned");
 			});
 		});
 	});

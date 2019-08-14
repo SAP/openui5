@@ -5,25 +5,22 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	Settings,
 	Cache,
 	Utils,
+	LrepConnector,
 	sinon
 ) {
 	"use strict";
 
-	var bPresetFlexChangeMode;
-	var bFlexibilityAdaptationButtonAllowed;
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("sapbyDefault.ui.fl.registry.Settings", {
+	QUnit.module("sap.ui.fl.registry.Settings", {
 		beforeEach: function() {
-			bPresetFlexChangeMode = Settings._bFlexChangeMode;
-			bFlexibilityAdaptationButtonAllowed = Settings._bFlexibilityAdaptationButtonAllowed;
-
 			var oSettings = {
 				isKeyUser: false,
 				isAtoAvailable: false,
@@ -37,17 +34,7 @@ sap.ui.define([
 			this.cut = new Settings(oSettings);
 		},
 		afterEach: function() {
-			Settings._bFlexChangeMode = bPresetFlexChangeMode;
-			Settings._bFlexibilityAdaptationButtonAllowed = bFlexibilityAdaptationButtonAllowed;
-
 			Settings._instance = undefined;
-
-			// detach all events
-			jQuery.each(Settings._oEventProvider.mEventRegistry, function (sEventKey, aEvents) {
-				jQuery.each(aEvents, function (index, oRegisteredEvent) {
-					Settings.detachEvent(sEventKey, oRegisteredEvent.fFunction);
-				});
-			});
 
 			sandbox.restore();
 		}
@@ -195,133 +182,11 @@ sap.ui.define([
 				done();
 			});
 		});
-
-		QUnit.test("_isFlexChangeModeFromUrl", function(assert) {
-			var bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
-			assert.equal(bFlexChangeMode, undefined);
-
-			var UriParameters = sap.ui.require("sap/base/util/UriParameters");
-			assert.ok(UriParameters, "UriParameters must be loaded");
-
-			var oStub = sandbox.stub(UriParameters.prototype, "get");
-			oStub.withArgs("sap-ui-fl-changeMode").returns("true");
-
-			bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
-			assert.equal(bFlexChangeMode, true);
-			oStub.withArgs("sap-ui-fl-changeMode").returns("false");
-			bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
-			assert.equal(bFlexChangeMode, false);
-
-			oStub.restore();
-		});
-
-		QUnit.test("isFlexChangeMode", function(assert) {
-			var bFlexChangeMode = Settings.isFlexChangeMode();
-			assert.equal(bFlexChangeMode, true); //default is true
-
-			Settings.leaveFlexChangeMode();
-			bFlexChangeMode = Settings.isFlexChangeMode();
-			assert.equal(bFlexChangeMode, false);
-
-			Settings.activateFlexChangeMode();
-			bFlexChangeMode = Settings.isFlexChangeMode();
-			assert.equal(bFlexChangeMode, true);
-
-			var UriParameters = sap.ui.require("sap/base/util/UriParameters");
-			assert.ok(UriParameters, "UriParameters must be loaded");
-
-			var oStub = sandbox.stub(UriParameters.prototype, "get");
-			oStub.withArgs("sap-ui-fl-changeMode").returns("false");
-
-			bFlexChangeMode = Settings.isFlexChangeMode();
-			assert.equal(bFlexChangeMode, false);
-
-			oStub.restore();
-		});
-
-		QUnit.test("leave flexChangeMode eventing", function(assert) {
-			var done = assert.async();
-
-			var bFlexChangeMode = Settings.isFlexChangeMode();
-			assert.equal(bFlexChangeMode, true); //default is true
-
-			var fOnChangeModeUpdated = function(oEvent) {
-				Settings.detachEvent(sap.ui.fl.registry.Settings.events.changeModeUpdated, fOnChangeModeUpdated.bind(this));
-				assert.equal(oEvent.getParameter("bFlexChangeMode"), false);
-				assert.equal(sap.ui.fl.registry.Settings.isFlexChangeMode(), false);
-				done();
-			};
-			Settings.attachEvent(sap.ui.fl.registry.Settings.events.changeModeUpdated, fOnChangeModeUpdated.bind(this));
-			sap.ui.fl.registry.Settings.leaveFlexChangeMode();
-		});
-
-		QUnit.test("activate flexChangeMode eventing", function(assert) {
-			var done = assert.async();
-
-			var bFlexChangeMode = Settings.isFlexChangeMode();
-			assert.equal(bFlexChangeMode, true); //default is true
-
-			var fOnChangeModeUpdated = function(oEvent) {
-				Settings.detachEvent(sap.ui.fl.registry.Settings.events.changeModeUpdated, fOnChangeModeUpdated.bind(this));
-				assert.equal(oEvent.getParameter("bFlexChangeMode"), true);
-				assert.equal(Settings.isFlexChangeMode(), true);
-				done();
-			};
-			Settings.leaveFlexChangeMode();
-			Settings.attachEvent(sap.ui.fl.registry.Settings.events.changeModeUpdated, fOnChangeModeUpdated.bind(this));
-			Settings.activateFlexChangeMode();
-		});
-
-		QUnit.test("returns by default adaptation button disllowed", function (assert) {
-			var bFlexibilityAdaptationButtonAllowed = sap.ui.fl.registry.Settings.isFlexibilityAdaptationButtonAllowed();
-
-			assert.equal(bFlexibilityAdaptationButtonAllowed, false);
-		});
-
-		QUnit.test("changes adaptation button allowed", function (assert) {
-			var bRetrievedAdaptationButtonAllowed;
-			var bFlexibilityAdaptationButtonAllowed = true;
-			var bFlexibilityAdaptationButtonDisallowed = false;
-
-			Settings.setFlexibilityAdaptationButtonAllowed(bFlexibilityAdaptationButtonDisallowed);
-			bRetrievedAdaptationButtonAllowed = Settings.isFlexibilityAdaptationButtonAllowed();
-			assert.equal(bRetrievedAdaptationButtonAllowed, bFlexibilityAdaptationButtonDisallowed);
-
-			Settings.setFlexibilityAdaptationButtonAllowed(bFlexibilityAdaptationButtonAllowed);
-			bRetrievedAdaptationButtonAllowed = Settings.isFlexibilityAdaptationButtonAllowed();
-			assert.equal(bRetrievedAdaptationButtonAllowed, bFlexibilityAdaptationButtonAllowed);
-		});
-
-		QUnit.test("fires adaptation mode event on an adaptation button activation and the button is active", function(assert) {
-			var done = assert.async();
-
-			var fOnChangeModeUpdated = function(oEvent) {
-				Settings.detachEvent(sap.ui.fl.registry.Settings.events.flexibilityAdaptationButtonAllowedChanged, fOnChangeModeUpdated.bind(this));
-				assert.equal(oEvent.getParameter("bFlexibilityAdaptationButtonAllowed"), true, "the event was fired with the flag that the adaptation button was allowed");
-				assert.equal(sap.ui.fl.registry.Settings.isFlexibilityAdaptationButtonAllowed(), true, "the adaptation button is allowed");
-				done();
-			};
-			Settings.attachEvent(sap.ui.fl.registry.Settings.events.flexibilityAdaptationButtonAllowedChanged, fOnChangeModeUpdated.bind(this));
-			Settings.setFlexibilityAdaptationButtonAllowed(true);
-		});
-
-		QUnit.test("fires adaptation mode event on an adaptation button deactivation and the button is deactive", function(assert) {
-			var done = assert.async();
-
-			var fOnChangeModeUpdated = function(oEvent) {
-				Settings.detachEvent(sap.ui.fl.registry.Settings.events.flexibilityAdaptationButtonAllowedChanged, fOnChangeModeUpdated.bind(this));
-				assert.equal(oEvent.getParameter("bFlexibilityAdaptationButtonAllowed"), false, "the event was fired with the flag that the adaptation button was disallowed");
-				assert.equal(sap.ui.fl.registry.Settings.isFlexibilityAdaptationButtonAllowed(), false, "the adaptation button is disallowed");
-				done();
-			};
-			sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(true);
-			Settings.attachEvent(sap.ui.fl.registry.Settings.events.flexibilityAdaptationButtonAllowedChanged, fOnChangeModeUpdated.bind(this));
-			sap.ui.fl.registry.Settings.setFlexibilityAdaptationButtonAllowed(false);
-		});
 	});
 
 	QUnit.module("Given that Settings file is loaded", {
 		afterEach: function() {
+			delete Settings._instance;
 			sandbox.restore();
 		}
 	}, function() {
@@ -339,6 +204,28 @@ sap.ui.define([
 			assert.equal(oSettings.isAtoEnabled(), false);
 			assert.equal(oSettings.isProductiveSystem(), false);
 			assert.equal(oSettings.isVariantSharingEnabled(), false);
+		});
+	});
+
+	QUnit.module("Given that Settings loading failed", {
+		afterEach: function() {
+			delete Settings._instance;
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("a default response is resolving the request", function(assert) {
+			var oLrepConnector = new LrepConnector();
+			sandbox.stub(oLrepConnector, "loadSettings").resolves();
+			sandbox.stub(LrepConnector, "createConnector").returns(oLrepConnector);
+
+			return Settings.getInstance().then(function (oSettings) {
+				assert.ok(oSettings, "the settings instance is available");
+				assert.equal(oSettings.isKeyUser(), false);
+				assert.equal(oSettings.isAtoAvailable(), false);
+				assert.equal(oSettings.isAtoEnabled(), false);
+				assert.equal(oSettings.isProductiveSystem(), true);
+				assert.equal(oSettings.isVariantSharingEnabled(), false);
+			});
 		});
 	});
 

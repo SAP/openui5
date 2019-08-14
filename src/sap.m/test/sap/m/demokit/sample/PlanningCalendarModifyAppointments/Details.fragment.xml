@@ -3,39 +3,28 @@
 		xmlns:f="sap.ui.layout.form"
 		xmlns:core="sap.ui.core">
 	<ResponsivePopover
+			id="detailsPopover"
 			title="{title}"
 			class="sapUiPopupWithPadding"
-			placement="HorizontalPreferredRight">
+			placement="Auto">
 		<beginButton>
-			<Button id="OKButton" enabled="false" text="OK" press="handleOkButton"/>
+			<Button text="Edit" type="Emphasized" press="handleEditButton"/>
 		</beginButton>
 		<endButton>
-			<Button text="Cancel" press="handleCancelButton"/>
+			<Button text="Delete" press="handleDeleteAppointment"/>
 		</endButton>
 		<content>
-			<f:SimpleForm id="appointmentForm"
-						  editable="false"
-						  layout="ResponsiveGridLayout"
-						  labelSpanXL="3"
-						  labelSpanL="3"
-						  labelSpanM="3"
-						  labelSpanS="12"
-						  adjustLabelSpan="false"
-						  emptySpanXL="4"
-						  emptySpanL="4"
-						  emptySpanM="4"
-						  emptySpanS="0"
-						  columnsXL="1"
-						  columnsL="1"
-						  columnsM="1"
-						  singleContainerFullSize="false">
+			<f:SimpleForm
+					editable="false"
+					layout="ResponsiveGridLayout"
+					singleContainerFullSize="false">
 				<f:content>
-					<Label text="Start date"/>
-					<DateTimePicker id="startDate" change="handleDetailsChange"/>
-					<Label text="End date"/>
-					<DateTimePicker id="endDate" change="handleDetailsChange"/>
-					<Label text="More information"/>
-					<Input id="moreInfo"/>
+					<Label text="Additional information" labelFor="moreInfo"/>
+					<Text id="moreInfo" text="{text}"/>
+					<Label text="From" labelFor="startDate"/>
+					<Text id="startDate" text="{'startDate'}"/>
+					<Label text="To" labelFor="endDate"/>
+					<Text id="endDate" text="{'endDate'}"/>
 				</f:content>
 			</f:SimpleForm>
 		</content>

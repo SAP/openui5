@@ -10,7 +10,7 @@
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Title text="List Content Card "/>
+				<Title text="Table Content Card "/>
 				<ToolbarSpacer/>
 			</Toolbar>
 		</subHeader>

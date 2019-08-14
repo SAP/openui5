@@ -219,35 +219,60 @@ function(
 	Link.prototype.onBeforeRendering = function() {};
 
 	/**
-	 * Triggers link activation when space key is pressed on the focused control.
+	 * Handle the key down event for SPACE
+	 * SHIFT or ESCAPE on pressed SPACE cancels the action
 	 *
 	 * @param {jQuery.Event} oEvent The SPACE keyboard key event object
 	 */
-	Link.prototype.onsapspace = function(oEvent) {
-		if (this.getEnabled() || this.getHref()) {
-			// mark the event for components that needs to know if the event was handled by the link
-			oEvent.setMarked();
-			oEvent.preventDefault();
+	Link.prototype.onkeydown = function(oEvent) {
+		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			// set inactive state of the button and marked ESCAPE or SHIFT as pressed only if SPACE was pressed before it
+			if (oEvent.which === KeyCodes.SPACE) {
+				if (this.getEnabled() || this.getHref()) {
+					// mark the event for components that needs to know if the event was handled by the link
+					oEvent.setMarked();
+					oEvent.preventDefault();
+					this._bPressedSpace = true;
+				}
+			}
+
+			if (this._bPressedSpace && (oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)) {
+				this._bPressedEscapeOrShift = true;
+			}
+		} else {
+			if (this._bPressedSpace) {
+				oEvent.preventDefault();
+			}
 		}
 	};
 
+	/**
+	 * Handle the key up event for SPACE.
+	 *
+	 * @param {jQuery.Event} oEvent - the keyboard event.
+	 */
 	Link.prototype.onkeyup = function (oEvent) {
 		if (oEvent.which === KeyCodes.SPACE) {
-			this._handlePress(oEvent);
+			if (!this._bPressedEscapeOrShift) {
+				this._handlePress(oEvent);
 
-			if (this.getHref() && !oEvent.isDefaultPrevented()) {
-				// Normal browser link, the browser does the job. According to the keyboard spec, space should fire press event on keyup.
-				// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
+				if (this.getHref() && !oEvent.isDefaultPrevented()) {
+					// Normal browser link, the browser does the job. According to the keyboard spec, space should fire press event on keyup.
+					// To make the browser REALLY do the same (history, referrer, frames, target,...), create a new "click" event and let the browser "do the needful".
 
-				// first disarm the Space key event
-				oEvent.preventDefault(); // prevent any scrolling which the browser might do because from its perspective the Link does not handle the "space" key
-				oEvent.setMarked();
+					// first disarm the Space key event
+					oEvent.preventDefault(); // prevent any scrolling which the browser might do because from its perspective the Link does not handle the "space" key
+					oEvent.setMarked();
 
-				// then create the click event
-				var oClickEvent = document.createEvent('MouseEvents');
-				oClickEvent.initEvent('click' /* event type */, false, true); // non-bubbling, cancelable
-				this.getDomRef().dispatchEvent(oClickEvent);
+					// then create the click event
+					var oClickEvent = document.createEvent('MouseEvents');
+					oClickEvent.initEvent('click' /* event type */, false, true); // non-bubbling, cancelable
+					this.getDomRef().dispatchEvent(oClickEvent);
+				}
+			} else {
+				this._bPressedEscapeOrShift = false;
 			}
+			this._bPressedSpace = false;
 		}
 	};
 

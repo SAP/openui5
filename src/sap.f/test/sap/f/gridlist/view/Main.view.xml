@@ -6,7 +6,7 @@
 
     <App>
         <Page title="GridList Demo">
-            <IconTabBar>
+            <IconTabBar showOverflowSelectList="true">
                 <items>
                     <IconTabFilter id="GridList1" text="GridList" key="GridList1">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.General" />
@@ -40,6 +40,12 @@
                     </IconTabFilter>
                      <IconTabFilter id="GridList10" text="GridList Properties" key="GridList10">
                         <mvc:XMLView viewName="sap.f.gridlist.view.examples.Properties" />
+                    </IconTabFilter>
+                     <IconTabFilter id="GridList11" text="GridList with GridListItem" key="GridList11">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.GridListItems" />
+                    </IconTabFilter>
+                    <IconTabFilter id="GridList12" text="Sizes and Placement" key="GridList12">
+                        <mvc:XMLView viewName="sap.f.gridlist.view.examples.SizesAndPlacement" />
                     </IconTabFilter>
                 </items>
             </IconTabBar>

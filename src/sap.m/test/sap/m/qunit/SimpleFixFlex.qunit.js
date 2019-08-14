@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/m/SimpleFixFlex",
 	"sap/m/SimpleFixFlexRenderer",
-	"sap/m/Text"
-], function(SimpleFixFlex, SimpleFixFlexRenderer, Text) {
+	"sap/m/Text",
+	"sap/base/Log"
+], function(SimpleFixFlex, SimpleFixFlexRenderer, Text, Log) {
 	"use strict";
 
 	var oCore = sap.ui.getCore();
@@ -33,6 +34,52 @@ sap.ui.define([
 
 		assert.ok(oSimpleFixFlex.getDomRef(), "SimpleFixFlex should be rendered.");
 
+		oSimpleFixFlex.destroy();
+	});
+
+	QUnit.test("Warning is logged when FixContent's text exceeds recommended characters", function(assert) {
+
+		// Arrange
+		var fnErrorSpy = this.spy(Log, "warning"),
+			oSimpleFixFlex = new SimpleFixFlex().placeAt("qunit-fixture"),
+			sSimpleFixFlexId = oSimpleFixFlex.getId(),
+			iFixContentTextLength;
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(fnErrorSpy.callCount, 0, "No warning logged for unset text.");
+
+		// Act
+		oSimpleFixFlex.setFixContent(new Text({text: "Really short text."}));
+		oCore.applyChanges();
+
+		// Arrange
+		iFixContentTextLength = oSimpleFixFlex.getFixContent().getText().length;
+
+		// Assert
+		assert.ok(iFixContentTextLength < SimpleFixFlex.FIX_AREA_CHARACTER_COUNT_RECOMMENDATION,
+				"FixContent's text is less than recommended maximum. No warning needed.");
+		assert.strictEqual(fnErrorSpy.callCount, 0, "No warning logged for short text.");
+
+		// Act
+		oSimpleFixFlex.setFixContent(new Text({text: "Really long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long  text."}));
+		oCore.applyChanges();
+
+		// Arrange
+		iFixContentTextLength = oSimpleFixFlex.getFixContent().getText().length;
+
+		// Assert
+		assert.ok(iFixContentTextLength > SimpleFixFlex.FIX_AREA_CHARACTER_COUNT_RECOMMENDATION,
+				"FixContent's text is more than recommended maximum. Warning is required.");
+		assert.ok(fnErrorSpy.calledOnce, "Warning logged once.");
+		assert.ok(fnErrorSpy.calledWithExactly(SimpleFixFlex.FIX_AREA_CHARACTERS_ABOVE_RECOMMENDED_WARNING, "", sSimpleFixFlexId),
+				"The text of the logged warning is the correct one: '" +
+				SimpleFixFlex.FIX_AREA_CHARACTERS_ABOVE_RECOMMENDED_WARNING +
+				"' for our SimpleFixFlex instance with ID: '" + sSimpleFixFlexId + "'.");
+
+		// Clean up
 		oSimpleFixFlex.destroy();
 	});
 

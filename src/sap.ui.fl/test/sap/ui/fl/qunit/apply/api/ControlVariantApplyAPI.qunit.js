@@ -114,7 +114,7 @@ sap.ui.define([
 			var aUrlTechnicalParameters = ["fakevariant", "variant1"];
 			fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
 
-			ControlVariantApplyAPI.clearVariantParameterInURL(this.oDummyControl);
+			ControlVariantApplyAPI.clearVariantParameterInURL({control: this.oDummyControl});
 
 			assert.ok(Utils.getParsedURLHash.calledOnce, "then hash parameter values are requested");
 			assert.ok(URLHandler._setTechnicalURLParameterValues.calledWithExactly(this.oAppComponent, [aUrlTechnicalParameters[0]]), "then 'sap-ui-fl-control-variant-id' parameter value for the provided variant management control is cleared");
@@ -129,7 +129,7 @@ sap.ui.define([
 			var aUrlTechnicalParameters = ["fakevariant", "variant1"];
 			fnStubTechnicalParameterValues.call(this, aUrlTechnicalParameters);
 
-			ControlVariantApplyAPI.clearVariantParameterInURL();
+			ControlVariantApplyAPI.clearVariantParameterInURL({});
 
 			assert.equal(Utils.getParsedURLHash.callCount, 0, "then 'sap-ui-fl-control-variant-id' parameter values are not requested");
 			assert.ok(URLHandler._setTechnicalURLParameterValues.calledWithExactly(undefined, [], true), "then all 'sap-ui-fl-control-variant-id' parameter values are cleared");
@@ -139,7 +139,10 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with a control id", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
 
-			return ControlVariantApplyAPI.activateVariant("dummyControl", "variant1")
+			return ControlVariantApplyAPI.activateVariant({
+				element: "dummyControl",
+				variantReference: "variant1"
+			})
 			.then(function () {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
@@ -148,7 +151,10 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with a control", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
 
-			return ControlVariantApplyAPI.activateVariant(this.oDummyControl, "variant1")
+			return ControlVariantApplyAPI.activateVariant({
+				element: this.oDummyControl,
+				variantReference: "variant1"
+			})
 			.then(function () {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
@@ -157,7 +163,10 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with a component id", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
 
-			return ControlVariantApplyAPI.activateVariant(this.oComponent.getId(), "variant1")
+			return ControlVariantApplyAPI.activateVariant({
+				element: this.oComponent.getId(),
+				variantReference: "variant1"
+			})
 			.then(function () {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
@@ -166,7 +175,10 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with a component", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
 
-			return ControlVariantApplyAPI.activateVariant(this.oComponent, "variant1")
+			return ControlVariantApplyAPI.activateVariant({
+				element: this.oComponent,
+				variantReference: "variant1"
+			})
 			.then(function () {
 				fnCheckUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variant1");
 			}.bind(this));
@@ -175,7 +187,10 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with an invalid variant reference", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
 
-			return ControlVariantApplyAPI.activateVariant(this.oComponent, "variantInvalid")
+			return ControlVariantApplyAPI.activateVariant({
+				element: this.oComponent,
+				variantReference: "variantInvalid"
+			})
 			.then(function() {},
 				function (oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid control or component, and a valid variant/ID combination are required", oError.message);
@@ -186,7 +201,10 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with a random object", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
 
-			return ControlVariantApplyAPI.activateVariant({}, "variant1")
+			return ControlVariantApplyAPI.activateVariant({
+				element: {},
+				variantReference: "variant1"
+			})
 			.then(function() {},
 				function (oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "A valid variant management control or component (instance or ID) should be passed as parameter", oError.message);
@@ -197,7 +215,10 @@ sap.ui.define([
 		QUnit.test("when calling 'activateVariant' with an invalid id", function(assert) {
 			fnStubUpdateCurrentVariant.call(this);
 
-			return ControlVariantApplyAPI.activateVariant("invalidId", "variant1")
+			return ControlVariantApplyAPI.activateVariant({
+				element: "invalidId",
+				variantReference: "variant1"
+			})
 			.then(function() {},
 				function (oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "No valid component or control found for the provided ID", oError.message);
@@ -209,7 +230,10 @@ sap.ui.define([
 			fnStubUpdateCurrentVariant.call(this);
 			this.oAppComponent.setModel(null, Utils.VARIANT_MODEL_NAME);
 
-			return ControlVariantApplyAPI.activateVariant(this.oDummyControl, "variant1")
+			return ControlVariantApplyAPI.activateVariant({
+				element: this.oDummyControl,
+				variantReference: "variant1"
+			})
 			.then(function() {},
 				function (oError) {
 					fnCheckActivateVariantErrorResponse.call(this, assert, "No variant management model found for the passed control or application component", oError.message);

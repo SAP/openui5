@@ -39,11 +39,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"util/PopupManager": {
-				coverage: {
-					only: ["sap/ui/rta/util/PopupManager"]
-				}
-			},
 			"enablement/elementActionTest": {
 				coverage: {
 					only: ["sap/ui/rta/enablement/elementActionTest"]
@@ -477,6 +472,21 @@ sap.ui.define([
 						resourceroots: {
 							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
 						}
+					}
+				},
+				"util/PopupManager": {
+					coverage: {
+						only: ["sap/ui/rta/util/PopupManager"]
+					}
+				},
+				"util/hasStableId": {
+					coverage: {
+						only: ["sap/ui/rta/util/hasStableId"]
+					}
+				},
+				"util/showMessageBox": {
+					coverage: {
+						only: ["sap/ui/rta/util/showMessageBox"]
 					}
 				},
 				ContextMenu: { // Integration

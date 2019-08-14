@@ -37,7 +37,7 @@ background: #EEE8D5\
 background-color : #EDE5C1\
 }\
 .ace-solarized-light .ace_marker-layer .ace_selected-word {\
-border: 1px solid #073642\
+border: 1px solid #7f9390\
 }\
 .ace-solarized-light .ace_invisible {\
 color: rgba(147, 161, 161, 0.50)\
@@ -88,8 +88,7 @@ background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgb
 
 var dom = require("../lib/dom");
 dom.importCssString(exports.cssText, exports.cssClass);
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/theme/solarized_light"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

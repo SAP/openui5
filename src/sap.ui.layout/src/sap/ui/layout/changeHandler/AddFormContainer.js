@@ -3,14 +3,14 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	FlexUtils,
 	Base,
 	JsControlTreeModifier,
+	Log,
 	jQuery
 ) {
 	"use strict";
@@ -64,7 +64,7 @@ sap.ui.define([
 			oModifier.insertAggregation(oGroup, "title", oTitle, 0, oView);
 			oModifier.insertAggregation(oForm, "formContainers", oGroup, iInsertIndex, oView);
 		} else {
-			FlexUtils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
+			Log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 			//however subsequent changes should be applied
 		}
 	};

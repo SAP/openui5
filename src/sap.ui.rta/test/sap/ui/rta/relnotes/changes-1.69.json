@@ -48,6 +48,12 @@
         "type": "FIX",
         "text": " sap.ui.rta - rta toolbar not visible after restart without pers",
         "references": []
+      },
+      {
+        "id": "0478c1f2b5c04bac11364c85a48387d8df86bc96",
+        "type": "FIX",
+        "text": " performance test fixes",
+        "references": []
       }
     ]
   }

@@ -3,9 +3,11 @@
  */
 sap.ui.define([
 	'./SelectionPlugin',
+	"../TableUtils",
 	'../library'
 ], function(
 	SelectionPlugin,
+	TableUtils,
 	library
 ) {
 
@@ -23,27 +25,33 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.plugins.BindingSelectionPlugin
 	 */
-	var BindingSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.BindingSelectionPlugin", {metadata: {
-		library: "sap.ui.table",
-		events: {
-			/**
-			 * This event is fired when the selection is changed.
-			 */
-			selectionChange: {
-				parameters: {
-					/**
-					 * Array of indices whose selection has been changed (either selected or deselected)
-					 */
-					indices: {type: "int[]"},
+	var BindingSelectionPlugin = SelectionPlugin.extend("sap.ui.table.plugins.BindingSelectionPlugin", {
+		metadata: {
+			library: "sap.ui.table",
+			events: {
+				/**
+				 * This event is fired when the selection is changed.
+				 */
+				selectionChange: {
+					parameters: {
+						/**
+						 * Array of indices whose selection has been changed (either selected or deselected)
+						 */
+						indices: {type: "int[]"},
 
-					/**
-					 * Indicates whether the Select All function is used to select rows.
-					 */
-					selectAll: {type: "boolean"}
+						/**
+						 * Indicates whether the Select All function is used to select rows.
+						 */
+						selectAll: {type: "boolean"}
+					}
 				}
 			}
+		},
+		constructor: function(oTable) {
+			this._oTable = oTable;
+			SelectionPlugin.call(this);
 		}
-	}});
+	});
 
 	/**
 	 * @override
@@ -52,9 +60,18 @@ sap.ui.define([
 	BindingSelectionPlugin.prototype.exit = function() {
 		var oBinding = this._getBinding();
 		if (oBinding) {
-			oBinding.detachEvent("change", this._onBindingChange);
+			oBinding.detachChange(this._onBindingChange, this);
 		}
 		SelectionPlugin.prototype.exit.call(this);
+	};
+
+	BindingSelectionPlugin.prototype.getRenderConfig = function() {
+		return {
+			headerSelector: {
+				type: "toggle",
+				visible: TableUtils.hasSelectAll(this._oTable)
+			}
+		};
 	};
 
 	/**

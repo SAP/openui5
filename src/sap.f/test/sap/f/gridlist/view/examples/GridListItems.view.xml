@@ -1,0 +1,130 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+	controllerName="sap.f.gridlist.controller.Main">
+
+	<f:GridList
+		headerText="GridList with mode 'SingleSelectLeft' and BoxLayout"
+		id="GridListSingleSelectLeft"
+		mode="SingleSelectLeft"
+		items="{ path: '/' }">
+
+		<f:customLayout>
+			<grid:GridBoxLayout/>
+		</f:customLayout>
+
+		<f:GridListItem 
+			counter="{counter}"
+			highlight="{highlight}">
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
+
+	<f:GridList
+		headerText="GridList with mode 'MultiSelect' and 'showUnread'"
+		showUnread="true"
+		id="GridListMultiSelect"
+		mode="MultiSelect"
+		items="{ path: '/' }">
+
+		<f:customLayout>
+			<grid:GridBasicLayout
+				gridTemplateColumns="repeat(auto-fit, 16rem)"
+				gridGap="0.5rem">
+			</grid:GridBasicLayout>
+		</f:customLayout>
+
+		<f:GridListItem 
+			counter="{counter}" 
+			highlight="{highlight}" 
+			unread="{unread}" 
+			type="{type}"
+			selected="false">
+
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
+
+	<f:GridList
+		headerText="GridList with mode 'Delete' and 'showUnread'"
+		showUnread="true"
+		id="GridListDelete"
+		mode="Delete"
+		items="{ path: '/' }">
+
+		<f:customLayout>
+			<grid:GridBasicLayout
+				gridTemplateColumns="repeat(auto-fit, 16rem)"
+				gridGap="0.5rem">
+			</grid:GridBasicLayout>
+		</f:customLayout>
+
+		<f:GridListItem 
+			counter="{counter}" 
+			highlight="{highlight}" 
+			unread="{unread}" 
+			type="{type}"
+			selected="false">
+
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
+
+	<f:GridList
+		headerText="GridList with mode 'SingleSelectMaster'"
+		id="GridListSingleSelectMaster"
+		mode="SingleSelectMaster"
+		items="{ path: '/' }">
+
+		<f:customLayout>
+			<grid:GridBasicLayout
+				gridTemplateColumns="repeat(auto-fit, 16rem)"
+				gridGap="0.5rem">
+			</grid:GridBasicLayout>
+		</f:customLayout>
+
+		<f:GridListItem 
+			counter="{counter}" 
+			highlight="{highlight}" 
+			type="{type}"
+			selected="false">
+
+			<VBox height="100%">
+				<VBox class="sapUiSmallMargin">
+					<layoutData>
+						<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+					</layoutData>
+					<Title text="{title} (Click me)" wrapping="true" />
+					<Label text="{subtitle}" wrapping="true" />
+				</VBox>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
+
+</mvc:View>

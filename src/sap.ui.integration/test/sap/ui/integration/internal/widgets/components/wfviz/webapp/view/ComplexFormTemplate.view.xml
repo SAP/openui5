@@ -1,0 +1,76 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.my.test.widget.wfviz.controller.FormTemplate"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<VBox class="sapUiSmallMargin">
+	<template:if test="{meta>content}">
+		<f:SimpleForm id="SimpleFormDisplayColumn_oneGroup234"
+			editable="false"
+			layout="ColumnLayout"
+			columnsM="2"
+			columnsL="2"
+			columnsXL="2"
+			width="400px"
+		>
+			<template:if test="{main>description}">
+				<Text text="{main>description}"></Text>
+			</template:if>
+			<template:repeat list="{meta>content}" var="field">
+				<template:if test="{field>label}">
+					<Label text="{field>label}" required="{field>constraints/required}"></Label>
+				</template:if>
+				<template:if test="{field>text}">
+					<Text text="{field>text}"></Text>
+				</template:if>
+
+				<template:if test="{= ${field>type} === 'string' &amp;&amp; ${field>subtype} === 'upload::pdf'}">
+					<u:FileUploader
+						uploadUrl="http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/upload/"
+						id="{field>id}"
+						fileType="pdf"
+						tooltip="Upload your file to the local server"
+						uploadComplete=".handleUploadComplete"
+						uploadOnChange="true"/>
+				</template:if>
+				<template:if test="{= ${field>type} === 'string' &amp;&amp; ${field>subtype} !== 'upload::pdf' &amp;&amp; ${field>lines} &gt; 1}">
+					<template:then>
+						<TextArea rows="{field>lines}"/>
+					</template:then>
+					<template:else>
+					<template:if test="{= ${field>type} === 'string' &amp;&amp; ${field>subtype} !== 'upload::pdf'}">
+						<Input  />
+					</template:if>
+					</template:else>
+				</template:if>
+
+				<template:if test="{= ${field>type} === 'date'}">
+					<DatePicker
+
+				 />
+				 </template:if>
+				<template:if test="{= ${field>type} === 'int'}">
+					<Input
+			    type="Number"
+				id="{field>id}" />
+				</template:if>
+				<template:if test="{= ${field>type} === 'boolean'}">
+					<CheckBox id="{field>id}" />
+				</template:if>
+			</template:repeat>
+			<template:if test="{meta>dwp}">
+		</template:if>
+		</f:SimpleForm>
+	</template:if>
+	<template:if test="{meta>decisions}">
+		<OverflowToolbar width="400px" style="Clear">
+			<ToolbarSpacer/>
+			<Button text="OK" type="Emphasized" press=".takeOverAndClosePopover"/>
+			<Button text="Cancel" press=".closePopover"/>
+		</OverflowToolbar>
+	</template:if>
+	</VBox>
+</mvc:View>

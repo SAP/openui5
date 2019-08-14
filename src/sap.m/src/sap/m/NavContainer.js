@@ -66,7 +66,9 @@ sap.ui.define([
 				 * <li>If <code>autoFocus</code> is set to <code>false</code> and the focus was inside
 				 * the current page, the focus will disappear.
 				 * <li>If the focus was outside the current page, after the navigation it will remain
-				 * unchanged regardless of what is set to the <code>autoFocus</code> property.</li></ul>
+				 * unchanged regardless of what is set to the <code>autoFocus</code> property.</li>
+				 * <li>If the <code>autoFocus</code> is set to <code>false</code> and at the same time another wrapping
+				 * control has its own logic for focus restoring upon rerendering, the focus will still appear.</li></ul>
 				 *
 				 * @since 1.30
 				 */
@@ -1168,18 +1170,12 @@ sap.ui.define([
 			.removeStyleClass("sapMNavItemSlideLeft")
 			.removeStyleClass("sapMNavItemSlideRight");
 
-		setTimeout(this._fadeInAnimation.bind(this), 0);
+		this._fadeInAnimation();
 	};
 
 	NavContainer.prototype._fadeInAnimation = function() {
 		var that = this,
-			oFromPage = this.oFromPage,
 			oToPage = this.oToPage;
-
-		if (fnHasParent(oFromPage)) {
-			oFromPage.addStyleClass("sapMNavItemHidden");
-			oFromPage.removeStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemTransparent");
-		}
 
 
 		window.setTimeout(function () {
@@ -1202,10 +1198,16 @@ sap.ui.define([
 	};
 
 	NavContainer.prototype._fadeInAnimationEnd = function(oEvent) {
-		var oToPage = this.oToPage;
+		var oToPage = this.oToPage,
+			oFromPage = this.oFromPage;
 		this.bTransition2EndPending = false;
 		if (oEvent && oEvent.originalEvent && oEvent.originalEvent.propertyName !== "opacity") {
 			return; //since we have more than one transition property, we should not execute the animation end more than once.
+		}
+
+		if (fnHasParent(oFromPage)) {
+			oFromPage.addStyleClass("sapMNavItemHidden");
+			oFromPage.removeStyleClass("sapMNavItemFading").removeStyleClass("sapMNavItemTransparent");
 		}
 
 		jQuery(oToPage.$()).unbind("webkitTransitionEnd transitionend");

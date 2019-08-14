@@ -186,6 +186,12 @@ describe("sap.ui.unified.CalendarVisual", function() {
 				_initCalendar("1");
 			}
 		});
+
+		it("YearRangePicker looks OK", function() {
+			element(by.id("Cal1--Head-B2")).click(); //click the year button to open YearPicker
+			element(by.id("Cal1--Head-B2")).click(); //click the year button again to open YearRangePicker
+			expect(takeScreenshot(oCal)).toLookAs("year_range_picker_opened");
+		});
 	}
 
 	function twoTypes(){

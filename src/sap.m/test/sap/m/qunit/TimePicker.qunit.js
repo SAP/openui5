@@ -321,11 +321,13 @@ sap.ui.define([
 
 	QUnit.test("setIsCyclic", function(assert) {
 		this.oSlider.setIsCyclic(true);
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(!this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
 		assert.equal(this.oSlider.getProperty("isCyclic"), true, "property is updated");
 
 		this.oSlider.setIsCyclic(false);
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(this.oSlider.$().hasClass("sapMTimePickerSliderShort"), "slider styled correctly");
 		assert.equal(this.oSlider.getProperty("isCyclic"), false, "property is updated");
@@ -1744,7 +1746,7 @@ sap.ui.define([
 		//set hours to '24'
 		oEvent = this._createMouseWheelEvent(-1);
 		oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
-		this.clock.tick(160);
+		this.clock.tick(300);
 
 		//assert
 		assert.equal(oSliderMinutes.getSelectedValue(), "0", "When hours are set to 24, minutes are set to 0");
@@ -1975,7 +1977,7 @@ sap.ui.define([
 		//act
 		oEvent = this._createMouseWheelEvent(1);
 		oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
-		this.clock.tick(160);
+		this.clock.tick(300);
 
 		//assert
 		assert.equal(oSliderHours.getSelectedValue(), "15", "slider's value changed by 1");

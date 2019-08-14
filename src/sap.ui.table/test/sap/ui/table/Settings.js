@@ -279,33 +279,30 @@
 						NONE: {
 							text: "None",
 							action: function(oTable) {
-								if (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
-									|| oTable._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
-									oTable.setSelectionMode("None");
+								if (oTable._hasSelectionPlugin()) {
+									oTable._getSelectionPlugin().setSelectionMode("None");
 								} else {
-									oTable._oSelectionPlugin.setSelectionMode("None");
+									oTable.setSelectionMode("None");
 								}
 							}
 						},
 						SINGLE: {
 							text: "Single",
 							action: function(oTable) {
-								if (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
-									|| oTable._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
-									oTable.setSelectionMode("Single");
+								if (oTable._hasSelectionPlugin()) {
+									oTable._getSelectionPlugin().setSelectionMode("Single");
 								} else {
-									oTable._oSelectionPlugin.setSelectionMode("Single");
+									oTable.setSelectionMode("Single");
 								}
 							}
 						},
 						MULTITOGGLE: {
 							text: "MultiToggle",
 							action: function(oTable) {
-								if (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin")
-									|| oTable._oSelectionPlugin.isA("sap.ui.table.plugins.BindingSelectionPlugin")) {
-									oTable.setSelectionMode("MultiToggle");
+								if (oTable._hasSelectionPlugin()) {
+									oTable._getSelectionPlugin().setSelectionMode("MultiToggle");
 								} else {
-									oTable._oSelectionPlugin.setSelectionMode("MultiToggle");
+									oTable.setSelectionMode("MultiToggle");
 								}
 							}
 						}
@@ -340,7 +337,7 @@
 				SELECTIONPLUGIN: {
 					text: "Selection Plugin",
 					value: function(oTable) {
-						return (oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin") ? "MULTISELECTION" : "NONE");
+						return (oTable._getSelectionPlugin().isA("sap.ui.table.plugins.MultiSelectionPlugin") ? "MULTISELECTION" : "NONE");
 					},
 					choice: {
 						NONE: {

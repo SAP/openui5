@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @returns {boolean} If it is zero
 	 */
 	function isZero(currentValue) {
-		return currentValue == 0;
+		return currentValue === 0;
 	}
 
 	/**
@@ -59,6 +59,8 @@ sap.ui.define([
 	 * @param {int} settings.topOffset Top corner of the grid
 	 * @param {int} settings.leftOffset Left corner of the grid
 	 * @param {boolean} settings.allowDenseFill Similar to "row dense" for css grid
+	 * @param {boolean} settings.rtl Right to left mode
+	 * @param {int} settings.width The total width of the grid
 	 */
 	VirtualGrid.prototype.init = function (settings) {
 
@@ -83,6 +85,8 @@ sap.ui.define([
 		this.iGapSize = settings.gapSize ? settings.gapSize : 1;
 		this.bAllowDenseFill = settings.allowDenseFill ? settings.allowDenseFill : false;
 		this.items = {};
+		this.rtl = settings.rtl;
+		this.width = settings.width;
 
 		//This can be taken from parent element padding or configured
 		// this.topOffset = 0.625;
@@ -151,16 +155,34 @@ sap.ui.define([
 	 * Use <code>VirtualGrid.getItems()</code> after that to retrieve the calculated positions.
 	 */
 	VirtualGrid.prototype.calculatePositions = function () {
-		for (var row = 0; row < this.virtualGridMatrix.length; row++) {
-			for (var col = 0; col < this.virtualGridMatrix[row].length; col++) {
 
-				if (!this.items[parseInt(this.virtualGridMatrix[row][col])].calculatedCoords) {
+		var row,
+			col,
+			item,
+			itemLeft,
+			itemWidth;
 
-					var item = this.items[this.virtualGridMatrix[row][col]];
+		for (row = 0; row < this.virtualGridMatrix.length; row++) {
+			for (col = 0; col < this.virtualGridMatrix[row].length; col++) {
+
+				if (!this.virtualGridMatrix[row][col]) {
+					continue;
+				}
+
+				if (!this.items[this.virtualGridMatrix[row][col]].calculatedCoords) {
+
+					item = this.items[this.virtualGridMatrix[row][col]];
+
+					itemLeft = col * (this.cellWidth + this.iGapSize) + this.leftOffset;
+					itemWidth = item.cols * (this.cellHeight + this.iGapSize) - this.iGapSize;
+
+					if (this.rtl) {
+						itemLeft = this.width - itemLeft - itemWidth;
+					}
 
 					item.top = row * (this.cellHeight + this.iGapSize) + this.topOffset + this.unitOfMeasure;
-					item.left = col * (this.cellWidth + this.iGapSize) + this.leftOffset + this.unitOfMeasure;
-					item.width = (item.cols * (this.cellHeight + this.iGapSize) - this.iGapSize) + this.unitOfMeasure;
+					item.left = itemLeft + this.unitOfMeasure;
+					item.width = itemWidth + this.unitOfMeasure;
 					item.height = (item.rows * (this.cellWidth + this.iGapSize) - this.iGapSize) + this.unitOfMeasure;
 					item.calculatedCoords = true;
 				}

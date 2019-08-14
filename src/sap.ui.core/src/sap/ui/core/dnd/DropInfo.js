@@ -41,6 +41,8 @@ sap.ui.define(["./DragDropBase"],
 
 			/**
 			 * Defines the visual drop effect.
+			 *
+			 * In Internet Explorer, default visual drop effect is <code>Copy</code> and this property has no effect.
 			 */
 			dropEffect: {type: "sap.ui.core.dnd.DropEffect", defaultValue: "Move", invalidate: false},
 

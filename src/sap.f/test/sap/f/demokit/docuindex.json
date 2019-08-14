@@ -83,10 +83,12 @@
 		  "since": "1.60",
 		  "samples": [
 			"sap.f.sample.GridListBasic",
+			"sap.f.sample.GridListModes",
 			"sap.f.sample.GridListBreakPoints",
 			"sap.f.sample.GridListBoxContainer",
 			"sap.f.sample.GridListBoxContainerGrouping",
-			"sap.f.sample.GridListBoxContainerReal"
+			"sap.f.sample.GridListBoxContainerReal",
+			"sap.f.sample.GridListDragAndDrop"
 		  ]
 		},
 		{
@@ -178,6 +180,11 @@
 		  "description": ""
 		},
 		{
+			"id": "sap.f.sample.GridListModes",
+			"name": "Grid List - Different Modes With Various Item Types",
+			"description": "This is a sample for GridList with different modes of selection."
+		},
+		{
 		  "id": "sap.f.sample.GridListBreakPoints",
 		  "name": "Grid List - Break point examples - S, M, L, XL",
 		  "description": "This sample illustrates how to configure the responsive settings for different container sizes."
@@ -194,8 +201,13 @@
 		},
 		{
 		  "id": "sap.f.sample.GridListBoxContainerReal",
-		  "name": "Grid List - Recommended Item Designs",
+		  "name": "Grid List - Item Designs",
 		  "description": "This is a sample for GridList item templates representing a typical tools page dashboard style."
+		},
+		{
+			"id": "sap.f.sample.GridListDragAndDrop",
+			"name": "Grid List - Drag and Drop",
+			"description": "This sample represents GridList with enabled Drag and Drop functionality."
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",

@@ -191,25 +191,7 @@ sap.ui.define([
 
 			(function () {
 				var Action = MessageBox.Action,
-						Icon = MessageBox.Icon,
-						//set the information icon according to the used theme
-						bInformationIconUsed = Parameters.get("_sap_m_Message_Box_Information_Icon") === "true",
-						sSrcIcon = bInformationIconUsed ? "message-information" : "hint",
-						mClasses = {
-							"INFORMATION": "sapMMessageBoxInfo",
-							"WARNING": "sapMMessageBoxWarning",
-							"ERROR": "sapMMessageBoxError",
-							"SUCCESS": "sapMMessageBoxSuccess",
-							"QUESTION": "sapMMessageBoxQuestion",
-							"STANDARD":  "sapMMessageBoxStandard"
-						},
-						mIcons = {
-							"INFORMATION": IconPool.getIconURI(sSrcIcon),
-							"WARNING": IconPool.getIconURI("message-warning"),
-							"ERROR": IconPool.getIconURI("message-error"),
-							"SUCCESS": IconPool.getIconURI("message-success"),
-							"QUESTION": IconPool.getIconURI("question-mark")
-						};
+						Icon = MessageBox.Icon;
 
 				var _verifyBundle = function () {
 					if (MessageBox._rb !== sap.ui.getCore().getLibraryResourceBundle("sap.m")) {
@@ -281,6 +263,24 @@ sap.ui.define([
 								horizontalScrolling: true,
 								details: "",
 								contentWidth: null
+							},
+							//set the information icon according to the used theme
+							bInformationIconUsed = Parameters.get("_sap_m_Message_Box_Information_Icon") === "true",
+							sSrcIcon = bInformationIconUsed ? "message-information" : "hint",
+							mClasses = {
+								"INFORMATION": "sapMMessageBoxInfo",
+								"WARNING": "sapMMessageBoxWarning",
+								"ERROR": "sapMMessageBoxError",
+								"SUCCESS": "sapMMessageBoxSuccess",
+								"QUESTION": "sapMMessageBoxQuestion",
+								"STANDARD":  "sapMMessageBoxStandard"
+							},
+							mIcons = {
+								"INFORMATION": IconPool.getIconURI(sSrcIcon),
+								"WARNING": IconPool.getIconURI("message-warning"),
+								"ERROR": IconPool.getIconURI("message-error"),
+								"SUCCESS": IconPool.getIconURI("message-success"),
+								"QUESTION": IconPool.getIconURI("question-mark")
 							};
 
 					_verifyBundle();

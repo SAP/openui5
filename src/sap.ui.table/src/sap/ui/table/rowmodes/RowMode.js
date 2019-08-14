@@ -17,13 +17,6 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Stores private row mode information.
-	 *
-	 * @type {WeakMapConstructor}
-	 */
-	var internal = new window.WeakMap();
-
-	/**
 	 * Constructor for a new row mode.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
@@ -71,10 +64,6 @@ sap.ui.define([
 	RowMode.prototype.init = function(oTableDelegate) {
 		this._bTableIsRendering = false;
 
-		internal.set(this, {
-			tableDelegate: typeof oTableDelegate === "object" ? oTableDelegate : null
-		});
-
 		/**
 		 * Updates the table asynchronously according to the current computed row count.
 		 *
@@ -87,31 +76,44 @@ sap.ui.define([
 	};
 
 	RowMode.prototype.exit = function() {
-		this.cleanUpTimersAndEventListeners();
+		this.detachEvents();
+		this.cancelAsyncOperations();
 	};
 
 	RowMode.prototype.setParent = function() {
-		this.cleanUpTimersAndEventListeners();
-
+		this.detachEvents();
+		this.cancelAsyncOperations();
 		Element.prototype.setParent.apply(this, arguments);
-
-		var oTable = this.getTable();
-
-		TableUtils.addDelegate(oTable, TableDelegate, this);
-		TableUtils.addDelegate(oTable, internal.get(this).tableDelegate, this);
+		this.attachEvents();
 	};
 
 	/**
-	 * Cancels any schedules asynchronous operations and removes event listeners.
+	 * Adds event listeners.
 	 *
 	 * @private
 	 */
-	RowMode.prototype.cleanUpTimersAndEventListeners = function() {
+	RowMode.prototype.attachEvents = function() {
+		TableUtils.addDelegate(this.getTable(), TableDelegate, this);
+	};
+
+	/**
+	 * Removes event listeners.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.detachEvents = function() {
+		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+	};
+
+	/**
+	 * Cancels scheduled asynchronous operations.
+	 *
+	 * @private
+	 */
+	RowMode.prototype.cancelAsyncOperations = function() {
 		var oTable = this.getTable();
 
 		if (oTable) {
-			oTable.removeDelegate(TableDelegate);
-			oTable.removeDelegate(internal.get(this).tableDelegate);
 			clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 		}
 
@@ -314,21 +316,21 @@ sap.ui.define([
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 
 		// Special handling for the V4 AutoExpandSelect feature.
-		if (sReason === "AddVirtualContext") {
-			var oVirtualContext = this.getRowContexts(1, true)[0];
-			var oVirtualRow = createRows(oTable, 1)[0];
+		if (!oTable._bBindingReady) {
+			var aContexts = this.getRowContexts(null, true);
 
-			this.updateTableAsync.cancel();
+			if (this.getTotalRowCountOfTable() === 0 && aContexts.length === 1) {
+				// The context might be a virtual context part of AutoExpandSelect.
+				var oVirtualContext = aContexts[0];
+				var oVirtualRow = createRows(oTable, 1)[0];
 
-			oVirtualRow.setBindingContext(oVirtualContext);
-			oTable.addAggregation("rows", oVirtualRow, true);
-			oTable.removeAggregation("rows", oVirtualRow, true);
-			oVirtualRow.setBindingContext(undefined);
+				oVirtualRow.setBindingContext(oVirtualContext);
+				oTable.addAggregation("rows", oVirtualRow, true);
+				oTable.removeAggregation("rows", oVirtualRow, true);
+				oVirtualRow.setBindingContext(null);
+			}
 
-			return;
-		} else if (sReason === "RemoveVirtualContext") {
-			this.updateTableAsync.cancel();
-			return;
+			return; // No need to update rows if the binding is not ready.
 		}
 
 		this.updateTableAsync(sReason);
@@ -482,10 +484,15 @@ sap.ui.define([
 					return;
 				}
 
-				var aRows = createRows(oTable, iRowCount);
+				var aRows = createRows(oTable, iRowCount), oRow;
+				var oBindingInfo = oTable.getBindingInfo("rows");
+				var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
 
 				for (var i = 0; i < aRows.length; i++) {
-					oTable.addAggregation("rows", aRows[i], true);
+					oRow = aRows[i];
+					// prevent propagation of parent binding context; else incorrect data might be requested by the model.
+					oRow.setBindingContext(null, sModelName);
+					oTable.addAggregation("rows", oRow, true);
 				}
 
 				oTable._bRowAggregationInvalid = false;
@@ -598,9 +605,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets contexts from the table's rows aggregation binding.
+	 * Gets contexts from the table's rows aggregation binding. Requests at least as many contexts as the table has rows or as is returned
+	 * by {@link RowMode#getMinRequestLength}.
 	 *
-	 * @param {int} iRequestLength The number of context to request.
+	 * @param {int} [iRequestLength] The number of context to request.
 	 * @param {boolean} [bSuppressAdjustToBindingLength=false] Whether the table should be adjusted to a possibly new binding length.
 	 * @returns {Object[]} The contexts returned from the binding.
 	 * @private
@@ -668,6 +676,7 @@ sap.ui.define([
 	 */
 	function updateBindingContextsOfRows(oMode, aRows) {
 		var oTable = oMode.getParent();
+		var aContexts = oMode.getRowContexts(aRows.length);
 
 		if (!oTable || aRows.length === 0) {
 			return;
@@ -676,17 +685,22 @@ sap.ui.define([
 		var oBinding = oTable.getBinding("rows");
 		var oBindingInfo = oTable.getBindingInfo("rows");
 		var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
-		var aContexts = oMode.getRowContexts(aRows.length);
 
 		for (var i = 0; i < aRows.length; i++) {
 			aRows[i].setRowBindingContext(aContexts[i], sModelName, oBinding);
 		}
 	}
 
+	/**
+	 * @this sap.ui.table.rowmodes.RowMode
+	 */
 	TableDelegate.onBeforeRendering = function() {
 		this._bTableIsRendering = true;
 	};
 
+	/**
+	 * @this sap.ui.table.rowmodes.RowMode
+	 */
 	TableDelegate.onAfterRendering = function() {
 		this._bTableIsRendering = false;
 	};

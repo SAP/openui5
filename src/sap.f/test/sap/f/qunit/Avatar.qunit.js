@@ -197,8 +197,14 @@ sap.ui.define([
 		this.oAvatar.setSrc(sImagePath);
 		oCore.applyChanges();
 
-		var $oAvatar = this.oAvatar.$();
+		var $oAvatar = this.oAvatar.$(),
+			sBackgroundColorValue = $oAvatar.css("background-color"),
+			bIsTransparent = sBackgroundColorValue === "transparent" ||
+					sBackgroundColorValue === "rgba(0, 0, 0, 0)";
+
+		// Assert
 		assert.ok($oAvatar.hasClass("sapFAvatarImage"), sPreAvatarType + "Image");
+		assert.ok(bIsTransparent, "Background is transparent");
 	});
 
 	QUnit.test("Avatar with src leading to an image has correct css style", function (assert) {
@@ -519,6 +525,21 @@ sap.ui.define([
 		var $oAvatar = this.oAvatar.$();
 		// If src is not escaped, the css value would be invalid and jQuery would return 'none'
 		assert.notStrictEqual($oAvatar.find(".sapFAvatarImageHolder").css("background-image"), "none", "src is properly escaped");
+	});
+
+	QUnit.test("Avatar with border", function (assert) {
+		// Arrange
+		var $oAvatar = this.oAvatar.$();
+
+		// Assert
+		assert.notOk($oAvatar.hasClass("sapFAvatarBorder"), "Avatar does not have 'sapFAvatarBorder' class when showBorder='fase'");
+
+		// Act
+		this.oAvatar.setShowBorder(true);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok($oAvatar.hasClass("sapFAvatarBorder"), "Avatar has 'sapFAvatarBorder' class when showBorder='true'");
 	});
 
 	QUnit.module("Accessibility", {

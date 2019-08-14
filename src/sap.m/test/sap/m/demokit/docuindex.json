@@ -723,7 +723,8 @@
 			  "sap.m.sample.MessageViewInsidePopover",
 			  "sap.m.sample.MessageViewInsideResponsivePopover",
 			  "sap.m.sample.MessageViewInsideDialog",
-			  "sap.m.sample.MessageViewWithGrouping"
+			  "sap.m.sample.MessageViewWithGrouping",
+			  "sap.m.sample.MessageViewMessageHandling"
 		  ]
 		 },
 		{
@@ -1062,7 +1063,8 @@
 			"sap.m.sample.Select",
 			"sap.m.sample.Select2Columns",
 			"sap.m.sample.SelectWithIcons",
-			"sap.m.sample.SelectValueState"
+			"sap.m.sample.SelectValueState",
+			"sap.m.sample.SelectWithWrappedItemText"
 		  ]
 		},
 		{
@@ -2146,6 +2148,10 @@
 		  "id": "sap.m.sample.SelectValueState",
 		  "name": "Select - Validation states",
 		  "description": "Visualizes the validation state of the control, for example, Error, Warning and Success."
+		},{
+		  "id": "sap.m.sample.SelectWithWrappedItemText",
+		  "name": "Select - Wrapping text",
+		  "description": "Illustrates how the text in items wrap."
 		},
 		{
 		  "id": "sap.m.sample.SelectWithIcons",
@@ -2740,6 +2746,11 @@
 		  "id": "sap.m.sample.MessageViewInsideResponsivePopover",
 		  "name": "Message View inside ResponsivePopover",
 		  "description": "A sample with Message View inside a ResponsivePopover."
+		 },
+		 {
+		  "id": "sap.m.sample.MessageViewMessageHandling",
+		  "name": "Message View with Message Handling",
+		  "description": "A sample showing how you can connect the MessageView with MessageManager."
 		 },
 		{
 		 "id": "sap.m.sample.MessageViewWithGrouping",

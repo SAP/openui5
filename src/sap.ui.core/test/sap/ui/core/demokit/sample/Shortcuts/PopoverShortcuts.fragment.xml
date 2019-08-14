@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Popover
+		title="Popover"
+		class="sapUiContentPadding">
+		<dependents>
+			<core:CommandExecution command="Save" execute=".onSave" />
+		</dependents>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</footer>
+		 <Input value="{viewModel>/value}" />
+	</Popover>
+</core:FragmentDefinition>

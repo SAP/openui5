@@ -1838,6 +1838,14 @@ sap.ui.define([
 		assert.strictEqual(spyCache.callCount, 3, "When the layout of a control is changed, the cache is recalculated");
 		assert.strictEqual(spyResizeHandler.callCount, 5, "For every resize/change, _setControlsOverflowAndShrinking is called");
 
+		oOverflowTB.getContent()[0].setVisible(false);
+		oOverflowTB._handleResize();
+
+		this.clock.tick(1000);
+
+		assert.strictEqual(spyCache.callCount, 5,
+			"If visibility of a content Control is changed, cacheControlsInfo func is called again upon rerendering");
+
 		oOverflowTB.destroy();
 	});
 
@@ -2513,6 +2521,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Content size measurement");
+
+	QUnit.test("Size of Overflow Button in Fiori 3 theme is reported correctly", function (assert) {
+		// Arrange
+		var oOverflowTB = new OverflowToolbar(),
+			oMarginStub = this.stub(DomUnitsRem, "toPx", function () { return 0; }),
+			oBaseFontSizeStub = this.stub(mobileLibrary, "BaseFontSize", "16px");
+
+		// Assert
+		assert.strictEqual(oOverflowTB._getOverflowButtonSize(), 44, "When there is no right margin, 0.25rem is deducted");
+
+		// Clean-up
+		oMarginStub.restore();
+		oBaseFontSizeStub.restore();
+	});
+
 
 	QUnit.test("Size of content is reported correctly", function (assert) {
 		var oButton1 = new Button({

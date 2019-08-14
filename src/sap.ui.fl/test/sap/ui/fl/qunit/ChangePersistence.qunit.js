@@ -1659,34 +1659,6 @@ function (
 			});
 		});
 
-		QUnit.test("getChangesForVariant return promise reject when flexibility service is not available", function(assert) {
-			var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-			var oStubGetServiceAvailabilityStatus = sandbox.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(false));
-			return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).catch(function() {
-				assert.ok(oStubGetChangesForComponent.calledOnce);
-				assert.ok(oStubGetServiceAvailabilityStatus.calledOnce);
-			});
-		});
-
-		QUnit.test("getChangesForVariant return promise reject when flexibility service availability is not definied", function(assert) {
-			var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-			var oStubGetServiceAvailabilityStatus = sandbox.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(undefined));
-			return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function() {
-				assert.ok(oStubGetChangesForComponent.calledOnce);
-				assert.ok(oStubGetServiceAvailabilityStatus.calledOnce);
-			});
-		});
-
-		QUnit.test("getChangesForVariant return promise resolve with empty object when flexibility service is available", function(assert) {
-			var oStubGetChangesForComponent = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
-			var oStubGetServiceAvailabilityStatus = sandbox.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(true));
-			return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
-				assert.deepEqual(aChanges, {});
-				sinon.assert.calledOnce(oStubGetChangesForComponent);
-				sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
-			});
-		});
-
 		QUnit.test("getChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
 			var oPromise = new Promise(function(resolve) {
 				setTimeout(function() {
@@ -2669,9 +2641,9 @@ function (
 		});
 
 		QUnit.test("when calling resetChanges without generator, selector IDs and change types specified", function (assert) {
-			sandbox.stub(Utils.log, "error");
+			sandbox.stub(Log, "error");
 			this.oChangePersistence.resetChanges("VENDOR");
-			assert.ok(Utils.log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Utils.log.error() is called with an error");
+			assert.ok(Log.error.calledWith("Of the generator, selector IDs and change types parameters at least one has to filled"), "then Log.error() is called with an error");
 		});
 
 		QUnit.test("when calling resetChanges in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
@@ -2724,7 +2696,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: false,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return false;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2798,7 +2769,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: false,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return false;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2885,7 +2855,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: true,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2916,7 +2885,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: true,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
@@ -2952,7 +2920,6 @@ function (
 				isKeyUser: true,
 				isAtoAvailable: true,
 				isProductiveSystem: function() {return false;},
-				hasMergeErrorOccured: function() {return false;},
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));

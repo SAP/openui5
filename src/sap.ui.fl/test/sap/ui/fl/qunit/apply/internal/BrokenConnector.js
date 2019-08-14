@@ -9,21 +9,12 @@ sap.ui.define([
 	merge,
 	BaseConnector
 ) {
+	"use strict";
+
 	/**
 	 * Test Connector which breaks on every call to test failing behavior as well as custom connector registration
 	 */
-	var BrokenConnector = merge({}, BaseConnector, {
-		testCheckProperty: true,
-
-		loadFlexData: function () {
-			return Promise.reject("loadFlexData is broken");
-		},
-
-		loadFeatures: function () {
-			return Promise.reject("loadFeatures is broken");
-		}
-
+	return merge({}, BaseConnector, {
+		testCheckProperty: true
 	});
-
-	return BrokenConnector;
 });

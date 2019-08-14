@@ -72,8 +72,7 @@ sap.ui.define([
 	SelectionPlugin.prototype.getRenderConfig = function() {
 		return {
 			headerSelector: {
-				type: "toggle",
-				visible: true
+				type: "none"
 			}
 		};
 	};

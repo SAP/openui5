@@ -5,15 +5,14 @@
 //
 // The sinon-qunit-bridge isn't available in ushell therefore the sinon sandbox isn't available in each test
 
-/*global QUnit, hasher, sinon*/
+/*global QUnit, hasher*/
 sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
 	"sap/ui/core/library",
-	"sap/base/Log",
 	"sap/ui/Device"
-], function(createUID, HashChanger, History, coreLibrary, Log, Device) {
+], function(createUID, HashChanger, History, coreLibrary, Device) {
 	"use strict";
 
 	var HistoryDirection = coreLibrary.routing.HistoryDirection;
@@ -26,19 +25,6 @@ sap.ui.define([
 			return sHash;
 		};
 	};
-
-	// Helper to abstract from Sinon 1 and Sinon 4
-	// (this module is used with both versions)
-	function stubWith(sandbox, object, property, value) {
-		if ( sinon.log ) {// sinon has no version property, but 'log' was removed with 2.x
-			return sandbox.stub(object, property, value);
-		} else if ( typeof value === "function" ) {
-			return sandbox.stub(object, property).callsFake(value);
-		} else {
-			return sandbox.stub(object, property).value(value);
-		}
-	}
-
 
 	QUnit.test("Should record a hash change", function(assert) {
 		//System under Test
@@ -480,158 +466,19 @@ sap.ui.define([
 		oHashChanger.destroy();
 	});
 
-	QUnit.module("history.state enhancement", {
-		beforeEach: function(assert) {
-			var that = this;
-			// Extended a hashchange to deliver the additional fullHash parameter HashChanger
-			this.oExtendedHashChanger = HashChanger.getInstance();
-			// The fireEvent method nees to be stubbed instead of the fireHashChanged because the original
-			// fireHashChanged is already registered as an event handler to hasher at HashChanger.init and
-			// the stub of it here can't affect the hasher event handler anymore
-			this.oFireHashChangeStub = stubWith(sinon, this.oExtendedHashChanger, "fireEvent", function(sEventName, oParameter) {
-				if (sEventName === "hashChanged") {
-					if (that.fnBeforeFireHashChange) {
-						that.fnBeforeFireHashChange();
-					}
 
-					// Simulate the fullHash parameter which is necessary for extended direction determination
-					oParameter.fullHash = window.location.hash;
-				}
-				HashChanger.prototype.fireEvent.apply(this, arguments);
-			});
+	QUnit.test("Should save the initial hash without slash", function(assert) {
+		//System under Test
+		var oHashChanger = HashChanger.getInstance();
 
-			this.setup = function() {
-				this.checkDirection = function(fnAction, fnAssertion) {
-					return new Promise(function(resolve, reject) {
-						var handler = function(oEvent) {
-							// Assert
-							fnAssertion(oEvent.getParameter("newHash"));
-							// Only need the event once
-							this.oExtendedHashChanger.detachEvent("hashChanged", handler);
-							resolve();
-						}.bind(this);
+		// eslint-disable-next-line no-new
+		new History(oHashChanger);
 
-						// Setup the assertion
-						this.oExtendedHashChanger.attachEvent("hashChanged", handler);
-
-						// Trigger the history usage
-						fnAction();
-					}.bind(this));
-				}.bind(this);
-
-				// System under test
-				this.oExtendedHashChanger.init();
-				this.oHistory = History.getInstance();
-
-				// Arrange - setup a history
-				this.oExtendedHashChanger.setHash("foo");
-				assert.strictEqual(this.oHistory.getDirection(), "NewEntry");
-
-				this.oExtendedHashChanger.setHash("bar");
-				assert.strictEqual(this.oHistory.getDirection(), "NewEntry");
-
-				this.oExtendedHashChanger.setHash("foo");
-				assert.strictEqual(this.oHistory.getDirection(), "NewEntry");
-
-				return this.checkDirection(function() {
-					window.history.go(-1);
-				}, function(sHash) {
-					if (sHash === "bar") {
-						assert.strictEqual(this.oHistory.getDirection(), "Backwards");
-					}
-				}.bind(this));
-			}.bind(this);
-
-		},
-		afterEach: function() {
-			this.oExtendedHashChanger.setHash("");
-			this.oFireHashChangeStub.restore();
+		if (Device.browser.msie) {
+			assert.strictEqual(History._aStateHistory[History._aStateHistory.length - 1], undefined, "The push state isn't supported in IE");
+		} else {
+			assert.ok(History._aStateHistory[History._aStateHistory.length - 1].charAt(0) !== "#", "The hash with no leading # is inserted");
 		}
 	});
 
-	QUnit.test("Consume fullHash parameter of hashChange event", function(assert) {
-		assert.expect(5);
-		return this.setup().then(function() {
-			return this.checkDirection(function() {
-				window.history.go(1);
-			}, function(sHash) {
-				if (sHash === "foo") {
-					assert.strictEqual(this.oHistory.getDirection(), Device.browser.msie ? "Unknown" : "Forwards");
-				}
-			}.bind(this));
-		}.bind(this));
-	});
-
-	QUnit.test("Log a warning if window.history.state is already in use", function (assert) {
-		var oSpy = sinon.spy(Log, "debug");
-
-		this.fnBeforeFireHashChange = function() {
-			window.history.replaceState("invalid_state", window.document.title);
-		};
-
-		assert.expect(6);
-		return this.setup().then(function() {
-			return this.checkDirection(function() {
-				window.history.go(1);
-			}, function(sHash) {
-				if (sHash === "foo") {
-					assert.strictEqual(this.oHistory.getDirection(), "Unknown");
-				}
-			}.bind(this)).then(function() {
-				if (Device.browser.msie) {
-					assert.equal(oSpy.callCount, 0, "there's no log written for IE");
-				} else {
-					assert.ok(oSpy.alwaysCalledWith("Unable to determine HistoryDirection as history.state is already set: invalid_state", "sap.ui.core.routing.History"), "The debug log is done correctly");
-				}
-				oSpy.restore();
-			});
-		}.bind(this));
-	});
-
-	QUnit.test("The new direction method should return undefined if hashChanged event is fired without browser hash change", function(assert) {
-		assert.expect(Device.browser.msie ? 6 : 7);
-		var oSpy, that = this;
-		return this.setup().then(function() {
-			return that.checkDirection(function() {
-				oSpy = sinon.spy(that.oHistory, "_getDirectionWithState");
-				that.oExtendedHashChanger.fireHashChanged("");
-			}, function(sHash) {
-				if (sHash === "") {
-					if (Device.browser.msie) {
-						assert.equal(oSpy.callCount, 0, "function is not called in IE");
-					} else {
-						assert.equal(oSpy.callCount, 1, "function is called once");
-					}
-					if (!Device.browser.msie) {
-						assert.equal(oSpy.getCall(0).returnValue, undefined, "the function should return undefined");
-					}
-					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "the direction should be Unknown");
-					oSpy.restore();
-				}
-			});
-		});
-	});
-
-	QUnit.test("Direction determination after a hash is replaced", function(assert) {
-		assert.expect(7);
-		var that = this;
-		return this.setup().then(function() {
-			return that.checkDirection(function() {
-				that.oExtendedHashChanger.replaceHash("replaced");
-			}, function(sHash) {
-				if (sHash === "replaced") {
-					assert.strictEqual(that.oHistory.getDirection(), "Unknown", "The direction should be Unknown after the hash is replaced");
-				}
-			});
-		}).then(function() {
-			that.oExtendedHashChanger.setHash("afterReplaced");
-			assert.strictEqual(that.oHistory.getDirection(), "NewEntry", "The direction is new entry");
-		}).then(function() {
-			return that.checkDirection(function() {
-				window.history.back();
-			}, function(sHash) {
-				assert.strictEqual(that.oHistory.getDirection(), "Backwards", "The direction should be Backwards");
-			});
-		});
-	});
 });

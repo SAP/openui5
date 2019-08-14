@@ -50,7 +50,13 @@ sap.ui.define([
 			});
 
 			if (this.bLegacy) {
+				var oTable = arguments[1];
+
+				this.getParent = function() {
+					return oTable;
+				};
 				RowMode.call(this);
+				this.attachEvents();
 			} else {
 				RowMode.apply(this, arguments);
 			}
@@ -75,6 +81,30 @@ sap.ui.define([
 		this.adjustRowCountToAvailableSpaceAsync = TableUtils.debounce(this.adjustRowCountToAvailableSpace, {
 			requestAnimationFrame: true
 		});
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	AutoRowMode.prototype.attachEvents = function() {
+		RowMode.prototype.attachEvents.apply(this, arguments);
+		TableUtils.addDelegate(this.getTable(), TableDelegate, this);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	AutoRowMode.prototype.detachEvents = function() {
+		RowMode.prototype.detachEvents.apply(this, arguments);
+		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	AutoRowMode.prototype.cancelAsyncOperations = function() {
+		RowMode.prototype.cancelAsyncOperations.apply(this, arguments);
+		this.stopAutoRowMode();
 	};
 
 	/**
@@ -137,14 +167,6 @@ sap.ui.define([
 		} else {
 			return iMinRowCount;
 		}
-	};
-
-	/**
-	 * @inheritDoc
-	 */
-	AutoRowMode.prototype.cleanUpTimersAndEventListeners = function() {
-		RowMode.prototype.cleanUpTimersAndEventListeners.apply(this, arguments);
-		this.stopAutoRowMode();
 	};
 
 	/**
@@ -503,6 +525,9 @@ sap.ui.define([
 		return this.iLastAvailableSpace;
 	};
 
+	/**
+	 * @this sap.ui.table.rowmodes.AutoRowMode
+	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
@@ -512,6 +537,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @this sap.ui.table.rowmodes.AutoRowMode
+	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 

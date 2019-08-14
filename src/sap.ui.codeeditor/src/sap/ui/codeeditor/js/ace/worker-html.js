@@ -705,6 +705,7 @@ function validateDelta(docLines, delta) {
 }
 
 exports.applyDelta = function(docLines, delta, doNotValidate) {
+    
     var row = delta.start.row;
     var startColumn = delta.start.column;
     var line = docLines[row] || "";
@@ -786,10 +787,15 @@ EventEmitter._signal = function(eventName, e) {
 
 EventEmitter.once = function(eventName, callback) {
     var _self = this;
-    callback && this.addEventListener(eventName, function newCallback() {
+    this.addEventListener(eventName, function newCallback() {
         _self.removeEventListener(eventName, newCallback);
         callback.apply(null, arguments);
     });
+    if (!callback) {
+        return new Promise(function(resolve) {
+            callback = resolve;
+        });
+    }
 };
 
 
@@ -921,6 +927,7 @@ var Anchor = exports.Anchor = function(doc, row, column) {
                 column: point.column + (point.row == deltaEnd.row ? deltaColShift : 0)
             };
         }
+        
         return {
             row: deltaStart.row,
             column: deltaStart.column
@@ -1169,7 +1176,7 @@ var Document = function(textOrLines) {
             column = this.$lines[row].length;
         }
         this.insertMergedLines({row: row, column: column}, lines);
-    };
+    };    
     this.insertMergedLines = function(position, lines) {
         var start = this.clippedPos(position.row, position.column);
         var end = {
@@ -9731,16 +9738,13 @@ module.exports = {
 },
 {}],
 13:[function(_dereq_,module,exports){
-//
-//
-//
-//
-//
 var util = _dereq_('util/');
 
 var pSlice = Array.prototype.slice;
 var hasOwn = Object.prototype.hasOwnProperty;
+
 var assert = module.exports = ok;
+
 assert.AssertionError = function AssertionError(options) {
   this.name = 'AssertionError';
   this.actual = options.actual;
@@ -9801,6 +9805,7 @@ function getMessage(self) {
          self.operator + ' ' +
          truncate(JSON.stringify(self.expected, replacer), 128);
 }
+
 function fail(actual, expected, message, operator, stackStartFunction) {
   throw new assert.AssertionError({
     message: message,
@@ -9811,18 +9816,22 @@ function fail(actual, expected, message, operator, stackStartFunction) {
   });
 }
 assert.fail = fail;
+
 function ok(value, message) {
   if (!value) fail(value, true, message, '==', assert.ok);
 }
 assert.ok = ok;
+
 assert.equal = function equal(actual, expected, message) {
   if (actual != expected) fail(actual, expected, message, '==', assert.equal);
 };
+
 assert.notEqual = function notEqual(actual, expected, message) {
   if (actual == expected) {
     fail(actual, expected, message, '!=', assert.notEqual);
   }
 };
+
 assert.deepEqual = function deepEqual(actual, expected, message) {
   if (!_deepEqual(actual, expected)) {
     fail(actual, expected, message, 'deepEqual', assert.deepEqual);
@@ -9893,16 +9902,19 @@ function objEquiv(a, b) {
   }
   return true;
 }
+
 assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
   if (_deepEqual(actual, expected)) {
     fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
   }
 };
+
 assert.strictEqual = function strictEqual(actual, expected, message) {
   if (actual !== expected) {
     fail(actual, expected, message, '===', assert.strictEqual);
   }
 };
+
 assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
   if (actual === expected) {
     fail(actual, expected, message, '!==', assert.notStrictEqual);
@@ -9955,6 +9967,7 @@ function _throws(shouldThrow, block, expected, message) {
     throw actual;
   }
 }
+
 assert.throws = function(block, /*optional*/error, /*optional*/message) {
   _throws.apply(this, [true].concat(pSlice.call(arguments)));
 };
@@ -9985,9 +9998,7 @@ module.exports = function isBuffer(arg) {
 {}],
 15:[function(_dereq_,module,exports){
 (function (process,global){
-//
-//
-//
+
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
   if (!isString(f)) {
@@ -10482,9 +10493,7 @@ function hasOwnProperty(obj, prop) {
 },
 {"./support/isBuffer":14,"/usr/local/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":18,"inherits":17}],
 16:[function(_dereq_,module,exports){
-//
-//
-//
+
 function EventEmitter() {
   this._events = this._events || {};
   this._maxListeners = this._maxListeners || undefined;
@@ -10766,6 +10775,7 @@ if (typeof Object.create === 'function') {
 },
 {}],
 18:[function(_dereq_,module,exports){
+
 var process = module.exports = {};
 
 process.nextTick = (function () {
@@ -10902,8 +10912,6 @@ oop.inherits(Worker, Mirror);
 
 ace.define("ace/lib/es5-shim",[], function(require, exports, module) {
 
-//
-//
 function Empty() {}
 
 if (!Function.prototype.bind) {
@@ -10916,6 +10924,7 @@ if (!Function.prototype.bind) {
         var bound = function () {
 
             if (this instanceof bound) {
+
                 var result = target.apply(
                     this,
                     args.concat(slice.call(arguments))
@@ -10939,7 +10948,6 @@ if (!Function.prototype.bind) {
             bound.prototype = new Empty();
             Empty.prototype = null;
         }
-        //
         return bound;
     };
 }
@@ -10960,9 +10968,6 @@ if ((supportsAccessors = owns(prototypeOfObject, "__defineGetter__"))) {
     lookupGetter = call.bind(prototypeOfObject.__lookupGetter__);
     lookupSetter = call.bind(prototypeOfObject.__lookupSetter__);
 }
-
-//
-//
 if ([1,2].splice(0).length != 2) {
     if(function() { // test IE < 9 to splice bug - see issue #138
         function makeArray(l) {
@@ -11285,9 +11290,6 @@ if (!Array.prototype.lastIndexOf || ([0, 1].lastIndexOf(0, -3) != -1)) {
         return -1;
     };
 }
-
-//
-//
 if (!Object.getPrototypeOf) {
     Object.getPrototypeOf = function getPrototypeOf(object) {
         return object.__proto__ || (
@@ -11371,6 +11373,7 @@ if (!Object.create) {
         return object;
     };
 }
+
 function doesDefinePropertyWork(object) {
     try {
         Object.defineProperty(object, "sentinel", {});
@@ -11536,18 +11539,11 @@ if (!Object.keys) {
     };
 
 }
-
-//
-//
 if (!Date.now) {
     Date.now = function now() {
         return new Date().getTime();
     };
 }
-
-
-//
-//
 var ws = "\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003" +
     "\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028" +
     "\u2029\uFEFF";
@@ -11560,8 +11556,6 @@ if (!String.prototype.trim || ws.trim()) {
     };
 }
 
-//
-//
 function toInteger(n) {
     n = +n;
     if (n !== n) { // isNaN

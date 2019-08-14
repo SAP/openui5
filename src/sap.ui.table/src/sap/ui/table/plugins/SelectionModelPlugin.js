@@ -4,10 +4,12 @@
 sap.ui.define([
 	'sap/ui/model/SelectionModel',
 	'./SelectionPlugin',
+	"../TableUtils",
 	'../library'
 ], function(
 	SelectionModel,
 	SelectionPlugin,
+	TableUtils,
 	library
 ) {
 
@@ -25,27 +27,33 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.plugins.SelectionModelPlugin
 	 */
-	var SelectionModelPlugin = SelectionPlugin.extend("sap.ui.table.plugins.SelectionModelPlugin", {metadata: {
-		library: "sap.ui.table",
-		events: {
-			/**
-			 * This event is fired when the selection is changed.
-			 */
-			selectionChange: {
-				parameters: {
-					/**
-					 * Array of indices whose selection has been changed (either selected or deselected)
-					 */
-					indices: {type: "int[]"},
+	var SelectionModelPlugin = SelectionPlugin.extend("sap.ui.table.plugins.SelectionModelPlugin", {
+		metadata: {
+			library: "sap.ui.table",
+			events: {
+				/**
+				 * This event is fired when the selection is changed.
+				 */
+				selectionChange: {
+					parameters: {
+						/**
+						 * Array of indices whose selection has been changed (either selected or deselected)
+						 */
+						indices: {type: "int[]"},
 
-					/**
-					 * Indicates whether the Select All function is used to select rows.
-					 */
-					selectAll: {type: "boolean"}
+						/**
+						 * Indicates whether the Select All function is used to select rows.
+						 */
+						selectAll: {type: "boolean"}
+					}
 				}
 			}
+		},
+		constructor: function(oTable) {
+			this._oTable = oTable;
+			SelectionPlugin.call(this);
 		}
-	}});
+	});
 
 	/**
 	 * Initialization of the SelectionModelPlugin
@@ -65,13 +73,22 @@ sap.ui.define([
 	SelectionModelPlugin.prototype.exit = function() {
 		var oBinding = this._getBinding();
 		if (oBinding) {
-			oBinding.detachEvent("change", this._onBindingChange);
+			oBinding.detachChange(this._onBindingChange, this);
 		}
 		if (this.oSelectionModel) {
 			this.oSelectionModel.destroy();
 			this.oSelectionModel = null;
 		}
 		SelectionPlugin.prototype.exit.call(this);
+	};
+
+	SelectionModelPlugin.prototype.getRenderConfig = function() {
+		return {
+			headerSelector: {
+				type: "toggle",
+				visible: TableUtils.hasSelectAll(this._oTable)
+			}
+		};
 	};
 
 	/**

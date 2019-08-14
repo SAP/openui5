@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Page",
@@ -24,6 +25,7 @@ sap.ui.define([
 	CommandFactory,
 	OverlayRegistry,
 	DesignTime,
+	PersistenceWriteAPI,
 	VerticalLayout,
 	Button,
 	Page,
@@ -57,6 +59,9 @@ sap.ui.define([
 					return new Page("mainPage");
 				}
 			});
+
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
 
 			this.oComp = new MockComponent("testComponent");
 
@@ -285,6 +290,9 @@ sap.ui.define([
 					return new Page("mainPage");
 				}
 			});
+
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
 
 			this.oComp = new MockComponent("testComponent");
 			this.oPage = this.oComp.getRootControl();

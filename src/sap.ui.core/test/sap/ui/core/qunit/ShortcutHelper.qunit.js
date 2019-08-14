@@ -1,0 +1,177 @@
+/*global sinon, QUnit */
+sap.ui.define([
+	"sap/ui/core/util/ShortcutHelper",
+	"sap/ui/core/Component",
+	"sap/ui/core/CommandExecution",
+	"sap/ui/core/Control",
+	"sap/m/Panel"
+], function(
+	ShortcutHelper,
+	Component,
+	CommandExecution,
+	Control,
+	Panel
+) {
+	"use strict";
+
+	var oPanel, oControl, oCE, oStub, oFakeCommand, oOwnerComponentFake;
+
+	function fnInitControlTree() {
+		oPanel = new Panel();
+		oControl = new Control({});
+		oCE = new CommandExecution({command:"Save"});
+		oPanel.addContent(oControl);
+		oFakeCommand = {"Save":{shortcut:"Shift+s", fake:true}};
+		oOwnerComponentFake = {getCommand: function(sCommand) {return oFakeCommand[sCommand];}};
+		oStub = sinon.stub(Component, "getOwnerComponentFor").callsFake(
+			function() {
+				return oOwnerComponentFake;
+			}
+		);
+	}
+
+	function cleanup() {
+		oCE.destroy();
+		oPanel.destroy();
+		oStub.restore();
+	}
+
+	QUnit.module("ShourtcutHelper API", {
+		beforeEach: fnInitControlTree,
+		afterEach: cleanup
+	});
+
+	QUnit.test("findShortcut", function(assert) {
+		assert.expect(2);
+		oPanel.addDependent(oCE);
+		var oNormalizedShortcut = ShortcutHelper.getNormalizedShortcutSpec("Shift+s");
+		var oShortcut = ShortcutHelper.findShortcut(oPanel, oNormalizedShortcut);
+		assert.deepEqual(oShortcut.shortcutSpec, oNormalizedShortcut, "Shortcut found on scope control");
+		assert.strictEqual(oShortcut.platformIndependentShortcutString, "shift+s", "Shjortcut string ok");
+	});
+
+	QUnit.test("getNormalizedShortcutSpec", function(assert) {
+		assert.expect(1);
+		var oExpectedSpec = {
+			key: 's',
+			ctrlKey: false,
+			ctrlRequested: false,
+			altKey: false,
+			shiftKey: true,
+			metaKey: false
+		};
+
+		var oNormalizedShortcut = ShortcutHelper.getNormalizedShortcutSpec("Shift+s");
+		assert.deepEqual(oNormalizedShortcut, oExpectedSpec, "Shortcut normalized sucessfully");
+	});
+
+	QUnit.test("parseShortcut", function(assert) {
+		assert.expect(1);
+		var oExpectedSpec = {
+			key: 's',
+			ctrlKey: false,
+			ctrlRequested: false,
+			altKey: true,
+			shiftKey: true,
+			metaKey: false
+		};
+
+		var oParsedSpec = ShortcutHelper.parseShortcut("Shift+Alt+S");
+		assert.deepEqual(oParsedSpec, oExpectedSpec, "Shortcut partsed sucessfully");
+	});
+
+	QUnit.test("translateRegisteredKeyToStandard", function(assert) {
+		assert.expect(2);
+
+		var sKey = ShortcutHelper.translateRegisteredKeyToStandard("Space");
+		assert.strictEqual(sKey, " ", "key translated correctly");
+		sKey = ShortcutHelper.translateRegisteredKeyToStandard("Plus");
+		assert.strictEqual(sKey, "+", "key translated correctly");
+	});
+
+	QUnit.test("validateShortcutString", function(assert) {
+		assert.expect(8);
+		assert.throws(
+			function() {
+				ShortcutHelper.validateShortcutString("CTR+CTR+SLT+AA");
+			},
+			"Shortcut not valid"
+		);
+		assert.throws(
+			function() {
+				ShortcutHelper.validateShortcutString("CTRL++");
+			},
+			"Shortcut not valid"
+		);
+		assert.throws(
+			function() {
+				ShortcutHelper.validateShortcutString("CTRL+ ");
+			},
+			"Shortcut not valid"
+		);
+		//validation does not return a boolean, but throws an error when validation fails
+		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+SPACE"), "Shortcut valid");
+		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+PLUS"), "Shortcut valid");
+		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+s"), "Shortcut valid");
+		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+ALT+s"), "Shortcut valid");
+		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+ALT+SHIFT+s"), "Shortcut valid");
+	});
+
+	[".", ",", "-", "plus", "=", "*", "/"].forEach(function(sKey) {
+		QUnit.test("validateKeyCombination for key: '" + sKey + "'", function(assert) {
+			assert.expect(1);
+			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+" + sKey);
+			assert.throws(
+				function() {
+					ShortcutHelper.validateKeyCombination(oSpec);
+				},
+				"validation failed"
+			);
+		});
+	});
+
+	["s", "space", "h", "e", "7", "q", "M"].forEach(function(sKey) {
+		QUnit.test("validateKeyCombination for key: '" + sKey + "'", function(assert) {
+			assert.expect(1);
+			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+" + sKey);
+			assert.equal(undefined, ShortcutHelper.validateKeyCombination(oSpec),"Shortcut validation ok");
+		});
+	});
+
+	QUnit.test("getNormalizedShortcutString", function(assert) {
+		assert.expect(1);
+
+		var oSpec = ShortcutHelper.getNormalizedShortcutSpec("ctrl+shift+S");
+		assert.strictEqual("ctrl+shift+s", ShortcutHelper.getNormalizedShortcutString(oSpec), "Spec successfully normalized to string");
+	});
+
+	["ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp"].forEach(function(sKey) {
+		QUnit.test("shortcutMayBeUsedHere for key '" + sKey + "'", function(assert) {
+			assert.expect(2);
+			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("ctrl+shift+" + sKey);
+			assert.ok(!ShortcutHelper.shortcutMayBeUsedHere(oSpec, document.createElement("input")));
+			assert.ok(!ShortcutHelper.shortcutMayBeUsedHere(oSpec, document.createElement("textarea")));
+		});
+	});
+
+	QUnit.test("handleKeydown", function(assert) {
+
+		assert.expect(1);
+		var e;
+
+		var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+S");
+
+		e = jQuery.Event("keydown");
+		e.key = 's';       // 's'
+		e.ctrlKey = false;     // ctrl pressed
+		e.altKey = false;     // alt pressed
+		e.shiftKey = true;     // shift pressed
+		e.metaKey = false;     // meta key
+		e.srcElement = document.createElement("input");
+		ShortcutHelper.handleKeydown(oSpec, "shift+S", function() {
+			assert.ok(true, "shortcut triggered");
+
+		}, e);
+	});
+
+});

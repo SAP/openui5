@@ -330,7 +330,7 @@ sap.ui.define([
 				pattern: "EEEE dd/MM/YYYY"
 			});
 			this._oFormatAriaCell = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY 'at' HH"
+				pattern: "EEEE dd/MM/YYYY 'at' HH a"
 			});
 
 			//the id of the SPC's legend if any
@@ -1950,7 +1950,7 @@ sap.ui.define([
 			if (bFullDay) {
 				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate) + "; ";
 			}
-			return sStartTime + ": " + this._oFormatAriaCell.format(oStartDate) + "; " + sEndTime + ": " + this._oFormatAriaCell.format(oEndDate) + "; ";
+			return sStartTime + ": " + this._oFormatAriaCell.format(oStartDate) + "; " + sEndTime + ": " + this._oFormatAriaCell.format(oEndDate);
 		};
 
 		/**

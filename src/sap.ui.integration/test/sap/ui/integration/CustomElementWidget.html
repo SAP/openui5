@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>Custom Elements for sap.ui.integration</title>
+	<script src="../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3"></script>
+	<script>
+		function handleAction(event) {
+			sap.m.MessageToast.show("Event Type: " + event.type +": Action Type:" + event.data.type);
+		}
+	</script>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact" style="margin:2rem">
+		<ui-widget height="400px" width="400px"
+		manifest="./widgets/components/component1/webapp/manifest.json"
+		on-action="handleAction(event)"></ui-widget>
+		<ui-widget height="400px" width="400px"
+		manifest="./widgets/components/component1/webapp/manifest.json"
+		configuration='{
+			"configuration": { 
+				"settings": {
+					"stringProperty": "modifiedStringValue"
+				}
+			}
+		}'
+		parameters='{
+			"text": "modifiedParameterValue"
+		}'
+		on-action="handleAction(event)"
+		></ui-widget>
+	</body>
+
+</html>

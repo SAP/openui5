@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/core/UIArea",
 	"sap/base/util/merge",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4"
@@ -40,6 +41,7 @@ function(
 	UIArea,
 	merge,
 	FakeLrepConnectorSessionStorage,
+	PersistenceWriteAPI,
 	ZIndexManager,
 	XMLView,
 	sinon
@@ -133,6 +135,9 @@ function(
 
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function() {
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -550,6 +555,9 @@ function(
 	//when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach : function() {
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
 			});
@@ -637,6 +645,9 @@ function(
 	//Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
 		beforeEach : function(assert) {
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+
 			this.oDialog = new Dialog("testDialog");
 			oView.addDependent(this.oDialog);
 			this.oButton = new Button("testbutton", {
@@ -653,6 +664,7 @@ function(
 			});
 		},
 		afterEach : function() {
+			sandbox.restore();
 			if (this.oDialog) {
 				this.oDialog.destroy();
 			}
@@ -726,6 +738,9 @@ function(
 	//_isComponentInsidePopup
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach: function (assert) {
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+
 			var oCompContInDialog = new ComponentContainer("CompCont2", {
 				component : new MockComponent("compInContainer")
 			});
@@ -774,6 +789,9 @@ function(
 
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach: function (assert) {
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")

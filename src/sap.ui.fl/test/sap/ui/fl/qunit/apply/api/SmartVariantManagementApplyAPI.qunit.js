@@ -66,7 +66,7 @@ sap.ui.define([
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").withArgs(this.oControl).returns({
 				getChangesForVariant: fnStub
 			});
-			SmartVariantManagementApplyAPI.loadChanges(this.oControl);
+			SmartVariantManagementApplyAPI.loadChanges({control: this.oControl});
 
 			assert.ok(fnStub.calledWith("persistencyKey", "sStableId", mPropertyBag));
 		});
@@ -93,7 +93,7 @@ sap.ui.define([
 				}
 			});
 
-			var aVariantChange = SmartVariantManagementApplyAPI.loadChanges(this.oControl);
+			var aVariantChange = SmartVariantManagementApplyAPI.loadChanges({control: this.oControl});
 
 			assert.ok(getChangePersistenceForControlStub.calledWith(this.oControl));
 			assert.equal(aVariantChange, aChanges);
@@ -115,7 +115,10 @@ sap.ui.define([
 					}
 				}
 			);
-			var oVariantChange = SmartVariantManagementApplyAPI.getChangeById(this.oControl, sId);
+			var oVariantChange = SmartVariantManagementApplyAPI.getChangeById({
+				control: this.oControl,
+				id: sId
+			});
 
 			assert.deepEqual(oVariantChange, oChange);
 		});
@@ -150,24 +153,24 @@ sap.ui.define([
 
 			//Utils.isApplicationVariant returns true
 			var oStubUtilsIsApplicationVariant = sandbox.stub(Utils, "isApplicationVariant").withArgs(this.oControl).returns(true);
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant(this.oControl), true);
+			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), true);
 
 			//Utils.isApplicationVariant returns false, Utils.getComponentForControl return null
 			oStubUtilsIsApplicationVariant.withArgs(this.oControl).returns(false);
 			var oStubUtilsGetComponentForControl = sandbox.stub(Utils, "getComponentForControl").withArgs(this.oControl).returns(null);
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant(this.oControl), false);
+			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), false);
 
 			//Utils.isApplicationVariant returns false, Utils.getComponentForControl return empty object
 			oStubUtilsGetComponentForControl.withArgs(this.oControl).returns({});
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant(this.oControl), false);
+			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), false);
 
 			//Utils.isApplicationVariant returns false, Utils.getComponentForControl return component but not appComponent
 			oStubUtilsGetComponentForControl.withArgs(this.oControl).returns({getAppComponent : function() { return null;}});
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant(this.oControl), false);
+			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), false);
 
 			//Utils.isApplicationVariant returns false, Utils.getComponentForControl return component and appComponent
 			oStubUtilsGetComponentForControl.withArgs(this.oControl).returns({getAppComponent : function() { return {};}});
-			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant(this.oControl), true);
+			assert.equal(SmartVariantManagementApplyAPI.isApplicationVariant({control: this.oControl}), true);
 		});
 
 		QUnit.test("When isVendorLayer() is called it calls the corresponding Utils function", function (assert) {
@@ -199,7 +202,7 @@ sap.ui.define([
 			sandbox.stub(SmartVariantManagementApplyAPI, "_getStableId").returns("filterBar1");
 			sandbox.stub(ChangePersistence.prototype, "getSmartVariantManagementChangeMap").returns(mChangeMap);
 			sandbox.stub(StandardVariant, "getExecuteOnSelect").withArgs(mChangeMap["filterBar1"]).returns(true);
-			var bExecuteOnSelect = SmartVariantManagementApplyAPI.getExecuteOnSelect(this.oControl);
+			var bExecuteOnSelect = SmartVariantManagementApplyAPI.getExecuteOnSelect({control: this.oControl});
 
 			assert.equal(bExecuteOnSelect, true);
 		});
@@ -218,7 +221,7 @@ sap.ui.define([
 			sandbox.stub(SmartVariantManagementApplyAPI, "_getStableId").returns("filterBar1");
 			sandbox.stub(ChangePersistence.prototype, "getSmartVariantManagementChangeMap").returns(mChangeMap);
 			sandbox.stub(DefaultVariant, "getDefaultVariantId").withArgs(mChangeMap["filterBar1"]).returns(true);
-			var bDefaultVariantId = SmartVariantManagementApplyAPI.getDefaultVariantId(this.oControl);
+			var bDefaultVariantId = SmartVariantManagementApplyAPI.getDefaultVariantId({control: this.oControl});
 
 			assert.equal(bDefaultVariantId, true);
 		});

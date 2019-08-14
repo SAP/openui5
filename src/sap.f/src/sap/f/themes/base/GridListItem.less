@@ -1,0 +1,108 @@
+/* =================================== */
+/* CSS for control sap.f/GridListItem  */
+/* Base theme                          */
+/* =================================== */
+
+@_sap_f_GridListItem_Header_BoxShadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor;
+@_sap_f_GridListItem_HeaderHeight: 3rem;
+@_sap_f_GridListItem_Compact_HeaderHeight: 2rem;
+
+.sapFGLI {
+	padding: 0;
+	border-radius: 0.25rem;
+	border: none;
+	box-shadow: @sapUiShadowLevel0;
+
+	// Highlighted items
+	.sapMLIBHighlight {
+		border-top-left-radius: 0.25rem;
+		border-bottom-left-radius: 0.25rem;
+		z-index: 1;
+	}
+
+	.sapFGLIWrapper {
+		width: 100%;
+		height: 100%;
+
+		// Header Toolbar
+		.sapFGLIToolbar {
+			height: @_sap_f_GridListItem_HeaderHeight;
+			box-shadow: @_sap_f_GridListItem_Header_BoxShadow;
+			padding: 0 0.5rem;
+
+			display: flex;
+			align-items: center;
+
+			.sapFGLIToolbarSpacer {
+				flex: 1;
+			}
+
+			.sapMLIBCounter {
+				padding: 0;
+			}
+
+			// add spacing between the items, except for the first item
+			>:not(:first-child) {
+				padding: 0 0 0 0.5rem;
+				margin: 0;
+			}
+		}
+
+		// Content
+		.sapMLIBContent {
+			height: 100%;;
+		}
+
+		.sapFGLIToolbar + .sapMLIBContent {
+			height: calc(100% ~"-" @_sap_f_GridListItem_HeaderHeight);
+		}
+	}
+}
+
+/* GridList with highlighted GridListItems */
+.sapFGridList .sapMListHighlight .sapFGLI .sapFGLIWrapper {
+
+	.sapMLIBContent:first-child {
+		margin-left: 0;
+	}
+}
+
+.sapFGLI.sapMLIBActionable .sapFGLIWrapper .sapMLIBImgNav {
+	cursor: pointer;
+}
+
+/* Interaction states */
+.sapFGLI,
+.sapFGridList .sapMLIB {
+
+	&.sapMLIBHoverable:hover {
+		box-shadow: 0 0 0 1px fade(@sapUiContentShadowColor, 30);
+	}
+
+	&.sapMLIB.sapMLIBSelected {
+		box-shadow: 0 0 0px 0.125rem @sapUiSelected, 0 0 1px @sapUiListBackground inset;
+	}
+
+	&.sapMLIBActive {
+		.sapFGLIWrapper .sapFGLIToolbar {
+			box-shadow: none;
+		}
+	}
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapFGLI .sapFGLIWrapper {
+
+	.sapFGLIToolbar {
+		height: @_sap_f_GridListItem_Compact_HeaderHeight;
+	}
+
+	// Content
+	.sapMLIBContent {
+		height: 100%;;
+	}
+
+	.sapFGLIToolbar + .sapMLIBContent {
+		height: calc(100% ~"-" @_sap_f_GridListItem_Compact_HeaderHeight);
+	}
+}

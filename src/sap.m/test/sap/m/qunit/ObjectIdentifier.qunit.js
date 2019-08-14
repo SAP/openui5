@@ -163,10 +163,9 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Should not rerender the ObjectIdentifier if the title is changed", function(assert) {
+	QUnit.test("setTitle escaping, chaining", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
-			oRenderSpy,
 			oResult,
 			oConstructor = { title : "not empty text"};
 
@@ -174,15 +173,12 @@ sap.ui.define([
 		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
-
 		// Act
 		oResult = oObjectIdentifier.setTitle(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
 		assert.strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
 
@@ -218,61 +214,9 @@ sap.ui.define([
 		oObjectIdentifier.destroy();
 	});
 
-
-	QUnit.test("Should not rerender the ObjectIdentifier if the new  title is empty", function(assert) {
-		// Arrange
-		var sTextToSet,
-			oRenderSpy,
-			oResult,
-			oConstructor = { title : "not empty text" };
-
-		// System under Test
-		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
-
-		// Act
-		oResult = oObjectIdentifier.setTitle(sTextToSet);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-
-		//Cleanup
-		oObjectIdentifier.destroy();
-	});
-
-	QUnit.test("Should not rerender the ObjectIdentifier if the title is empty initially", function(assert) {
-		// Arrange
-		var sTextToSet = "non empty",
-			oRenderSpy,
-			oResult,
-			oConstructor = { };
-
-		// System under Test
-		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
-
-		// Act
-		oResult = oObjectIdentifier.setTitle(sTextToSet);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-
-		//Cleanup
-		oObjectIdentifier.destroy();
-	});
-
-	QUnit.test("Should not rerender the ObjectIdentifier if the text is changed", function(assert) {
+	QUnit.test("setText chaning, escaping", function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
-			oRenderSpy,
 			oResult,
 			oConstructor = { text : "not empty text"};
 
@@ -280,69 +224,14 @@ sap.ui.define([
 		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
-
 		// Act
 		oResult = oObjectIdentifier.setText(sTextToSet);
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().children(".sapMObjectIdentifierText").html()), "Did not contain an unescaped script tag");
 		assert.strictEqual(oObjectIdentifier.getText(), sTextToSet, "Did set the non encoded string as value");
-		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
-
-		//Cleanup
-		oObjectIdentifier.destroy();
-	});
-
-	QUnit.test("Should not rerender the ObjectIdentifier if the new  text is empty", function(assert) {
-		// Arrange
-		var sTextToSet,
-			oRenderSpy,
-			oResult,
-			oConstructor = { text : "not empty text" };
-
-		// System under Test
-		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
-
-		// Act
-		oResult = oObjectIdentifier.setText(sTextToSet);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-		assert.equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
-
-		//Cleanup
-		oObjectIdentifier.destroy();
-	});
-
-	QUnit.test("Should not rerender the ObjectIdentifier if the text is empty initially", function(assert) {
-		// Arrange
-		var sTextToSet = "non empty",
-			oRenderSpy,
-			oResult,
-			oConstructor = { };
-
-		// System under Test
-		var oObjectIdentifier = new ObjectIdentifier(oConstructor).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oObjectIdentifier, "invalidate");
-
-		// Act
-		oResult = oObjectIdentifier.setText(sTextToSet);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
-		assert.strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
 
 		//Cleanup

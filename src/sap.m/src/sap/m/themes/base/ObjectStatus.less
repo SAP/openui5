@@ -220,12 +220,17 @@
 	Fiori design guidelines say that statuses should be specially styled for ObjectPage
 	and share looks with other text only controls.
 */
-.sapUxAPObjectPageContainer .sapMObjStatusNone,
-.sapUxAPObjectPageHeaderContentItem.sapMObjStatusNone,
-.sapUxAPObjectPageHeaderContentItem .sapMObjStatusNone {
-	.sapMObjStatusText,
-	.sapMObjStatusIcon {
-		color: @sapUiGroupTitleTextColor;
+
+.sapMObjStatusNone {
+	.sapUxAPObjectPageContainer &,
+	.sapUxAPObjectPageHeaderContentItem &,
+	&.sapUxAPObjectPageHeaderContentItem,
+	.sapUxAPObjectPageHeaderDetails .sapFDynamicPageHeaderContent & {
+		.sapMObjStatusText,
+		.sapMObjStatusIcon {
+			color: @sapUiGroupTitleTextColor;
+		}
+
 	}
 }
 

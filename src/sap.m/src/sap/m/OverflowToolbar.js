@@ -14,6 +14,8 @@ sap.ui.define([
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	'sap/ui/core/ResizeHandler',
 	"sap/ui/core/IconPool",
+	'sap/ui/core/theming/Parameters',
+	'sap/ui/dom/units/Rem',
 	"sap/ui/Device",
 	"./OverflowToolbarRenderer",
 	"sap/base/Log",
@@ -29,6 +31,8 @@ sap.ui.define([
 	OverflowToolbarAssociativePopoverControls,
 	ResizeHandler,
 	IconPool,
+	Parameters,
+	DomUnitsRem,
 	Device,
 	OverflowToolbarRenderer,
 	Log
@@ -236,6 +240,11 @@ sap.ui.define([
 		// TODO: refactor with addEventDelegate for onAfterRendering for both overflow button and its label
 		this._getOverflowButton().$().attr("aria-haspopup", "true");
 
+		if (this._bContentVisibilityChanged) {
+			this._bControlsInfoCached = false;
+			this._bContentVisibilityChanged = false;
+		}
+
 		// Unlike toolbar, we don't set flexbox classes here, we rather set them on a later stage only if needed
 
 		if (this.getAsyncMode()) {
@@ -305,7 +314,6 @@ sap.ui.define([
 		// Start listening for invalidation events once again
 		this._bListenForInvalidationEvents = true;
 	};
-
 
 	/**
 	 * Asynchronous layouting
@@ -1244,6 +1252,12 @@ sap.ui.define([
 			return;
 		}
 
+		// If the visibility of the conent has changed, in onAfterRendering method we assure that
+		// the cached controls' sizes will be updated, as they might not be accurate
+		if (sParameterName === "visible") {
+			this._bContentVisibilityChanged = true;
+		}
+
 		// Trigger a recalculation
 		this._resetAndInvalidateToolbar(true);
 	};
@@ -1271,9 +1285,11 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._getOverflowButtonSize = function () {
 		var iBaseFontSize = parseInt(library.BaseFontSize),
-			fCoefficient = this.$().parents().hasClass('sapUiSizeCompact') ? 2.5 : 3;
+			fCoefficient = this.$().parents().hasClass('sapUiSizeCompact') ? 2.5 : 3,
+			iMargin = DomUnitsRem.toPx(Parameters.get("_sap_m_Toolbar_MarginRight")),
+			iDeduction = iMargin === 0 ? 0.25 * iBaseFontSize : 0;
 
-		return parseInt(iBaseFontSize * fCoefficient);
+		return parseInt(iBaseFontSize * fCoefficient) - iDeduction;
 	};
 
 

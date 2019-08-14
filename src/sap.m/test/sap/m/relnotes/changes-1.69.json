@@ -446,6 +446,107 @@
             "reference": "371479"
           }
         ]
+      },
+      {
+        "id": "937ee434c302e3756746d2562fe777da3c313f9b",
+        "type": "FEATURE",
+        "text": " sap.m.Carousel: Error message added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980203475"
+          }
+        ]
+      },
+      {
+        "id": "f29e806754ed50533229cd47b9fb7040d67d3a8f",
+        "type": "FEATURE",
+        "text": " sap.m.ProgressIndicator: ariaLabelledBy, ariaDescribedBy added",
+        "references": []
+      },
+      {
+        "id": "ec61dc833f01741c68465e8423dd0588f2df9d39",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Added limitation to the width",
+        "references": []
+      },
+      {
+        "id": "033f6353856625273c8612f7186ab669d9a92f0d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Year optimization for mobile phone",
+        "references": []
+      },
+      {
+        "id": "c27ee9c8a9f6391ae978fddb1f0f5c3b21dab5c5",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fixed misalignment when inside Toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970365060"
+          }
+        ]
+      },
+      {
+        "id": "0a524fbc0de370906a4a815d2d9347e4e59c2924",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Input focus is now fully visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980290869"
+          }
+        ]
+      },
+      {
+        "id": "1601d1f5bf96e7faae4d3372b48ca7d5c4847aaf",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Input focus is now fully visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980290869"
+          }
+        ]
+      },
+      {
+        "id": "9b5b28831e693b3c61a697a0560559d39577ae29",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: Author picture is now set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970364823"
+          }
+        ]
+      },
+      {
+        "id": "065a455a133f22cc92b38c0d01b5db22061ccba4",
+        "type": "FIX",
+        "text": " sap.m.NotificationListGroup: setCollapsed method fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970364862"
+          }
+        ]
+      },
+      {
+        "id": "1c39eb17f00efcaf1bef2528c7bd04132d29f9f0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: visual tests fixed",
+        "references": []
+      },
+      {
+        "id": "0be7ce5747e1d37403fffca61077ec038d055eeb",
+        "type": "FIX",
+        "text": ": sap.m.Carousel: F6 navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970245195"
+          }
+        ]
       }
     ]
   }

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -15,6 +16,7 @@ function(
 	ChangePersistence,
 	FlexControllerFactory,
 	Utils,
+	Log,
 	sinon,
 	jQuery
 ) {
@@ -227,7 +229,7 @@ function(
 			sync: true
 		};
 
-		var oLoggerSpy = sandbox.spy(Utils.log, "warning");
+		var oLoggerSpy = sandbox.spy(Log, "warning");
 
 		var oProcessedView = XmlPreprocessorImpl.process(oView, mProperties);
 

@@ -42,11 +42,13 @@ function(
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * A summarized list of different types of messages.
 		 * <h3>Overview</h3>
-		 * A message popover is used to display a summarized list of different types of messages (errors, warnings, success and information).
-		 * It provides a handy and systemized way to navigate and explore details for every message. It also exposes an event {@link sap.m.MessagePopover#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
-		 * <h4>Notes:</h4>
+	 	 * A <code>MessagePopover</code> is used to display a summarized list of different types of messages (error, warning, success, and information messages).
+		 * It provides a handy and systemized way to navigate and explore details for every message.
+		 * It is adaptive and responsive.
+		 * It renders as a dialog with a Close button in the header on phones, and as a popover on tablets and higher resolution devices.
+		 * It also exposes an event {@link sap.m.MessagePopover#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
+		 * <h3>Notes:</h3>
 		 * <ul>
 		 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>.</li>
 		 * <li> If the message cannot be fully displayed or includes a long description, the message popover provides navigation to the detailed description.</li>
@@ -63,12 +65,16 @@ function(
 		 * <li> activeTitle - Determines whether the title of the item is interactive</li>
 		 * </ul>
 		 * <h3>Usage</h3>
-		 * With the message concept, MessagePopover provides a way to centrally manage messages and show them to the user without additional work for the developer.
+		 * <h4>When to use:</h4>
+		 * <ul>
+		 * <li>When you want to make sure that all content is visible on any device.</li>
+		 * <li>When you want a way to centrally manage messages and show them to the user without additional work for the developer.
 		 * The message popover is triggered from a messaging button in the footer toolbar. If an error has occurred at any validation point,
 		 * the total number of messages should be incremented, but the user's work shouldn't be interrupted.
 		 * Navigation between the message item and the source of the error can be created, if needed by the application.
 		 * This can be done by setting the <code>activeTitle</code> property to true and providing a handler for the <code>activeTitlePress</code> event.
-		 * In addition, you can achieve the same functionality inside a different container using the sap.m.MessageView control.
+		 * In addition, you can achieve the same functionality inside a different container using the {@link sap.m.MessageView} control.</li>
+		 * </ul>
 		 * <h3>Responsive Behavior</h3>
 		 * On mobile phones, the message popover is automatically shown in full screen mode.<br>
 		 * On desktop and tablet, the message popover opens in a popover.<br>
@@ -120,6 +126,7 @@ function(
 
 					/**
 					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded.
+					 * Note: If there is only one message in the control, this state will be ignored and the details page of the message will be shown.
 					 */
 					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
@@ -384,6 +391,15 @@ function(
 			}, this);
 		};
 
+		MessagePopover.getMetadata().forwardAggregation(
+			"items",
+			{
+				getter: function(){ return this._oMessageView; },
+				aggregation: "items",
+				forwardBinding: true
+			}
+		);
+
 		MessagePopover.prototype.onBeforeRendering = function () {
 			if (this.getDependents().indexOf(this._oPopover) === -1) {
 				this.addDependent(this._oPopover);
@@ -641,7 +657,7 @@ function(
 		 * @private
 		 */
 		MessagePopover.prototype._restoreExpansionDefaults = function () {
-			if (!this.getInitiallyExpanded()) {
+			if (!this.getInitiallyExpanded() && this.getItems().length != 1) {
 				this._collapseMsgPopover();
 				this._oMessageView._oSegmentedButton.setSelectedButton("none");
 			} else {
@@ -679,7 +695,7 @@ function(
 		};
 
 		/**
-		 * Inserts close button in the in the provided location
+		 * Inserts Close button in the provided location
 		 *
 		 * @param {sap.ui.core.Control} oInsertCloseBtnHere The object in which we want to insert the control
 		 * @private
@@ -753,39 +769,6 @@ function(
 				}
 			};
 		});
-
-		// The following inherited methods of this control are extended because this control uses ResponsivePopover for rendering
-		["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
-			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
-				// First, they are saved for later reference
-				MessagePopover.prototype["_" + sFuncName + "Old"] = MessagePopover.prototype[sFuncName];
-
-				// Once they are called
-				MessagePopover.prototype[sFuncName] = function () {
-					// We immediately call the saved method first
-					var result = MessagePopover.prototype["_" + sFuncName + "Old"].apply(this, arguments);
-
-					// Then there is additional logic
-
-					// Mark items aggregation as changed and invalidate popover to trigger rendering
-					// See 'MessagePopover.prototype.onBeforeRenderingPopover'
-					this._bItemsChanged = true;
-
-					// If Popover dependency has already been instantiated ...
-					if (this._oPopover) {
-						// ... invalidate it
-						this._oPopover.invalidate();
-					}
-
-					// If the called method is 'removeAggregation' or 'removeAllAggregation' ...
-					if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
-						// ... return the result of the operation
-						return result;
-					}
-
-					return this;
-				};
-			});
 
 		return MessagePopover;
 

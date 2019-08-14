@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
+	'sap/ui/model/odata/type/DateTimeBase',
 	'./InputBase',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/library',
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function(
 	SimpleDateType,
 	ODataType,
+	DateTimeBase,
 	InputBase,
 	LocaleData,
 	coreLibrary,
@@ -257,6 +259,10 @@ sap.ui.define([
 		if (oBindingType && this._isSupportedBindingType(oBindingType)) {
 			try {
 				oDate = oBindingType.parseValue(sValue, "string");
+
+				if (typeof (oDate) === "string" && oBindingType instanceof DateTimeBase) {
+					oDate = DateTimeBase.prototype.parseValue.call(oBindingType, sValue, "string");
+				}
 
 				oFormatOptions = oBindingType.oFormatOptions;
 				if (oFormatOptions && oFormatOptions.source && oFormatOptions.source.pattern == "timestamp") {

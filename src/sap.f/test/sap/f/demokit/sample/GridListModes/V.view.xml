@@ -1,0 +1,54 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:grid="sap.ui.layout.cssgrid"
+		xmlns:f="sap.f"
+		controllerName="sap.f.sample.GridListModes.C">
+
+	<HBox justifyContent="End">
+		<SegmentedButton 
+			selectedKey="MultiSelect"
+			class="sapUiSmallMarginTop sapUiSmallMarginEnd"
+			selectionChange="onModeChange">
+			<items>
+				<SegmentedButtonItem width="auto" text="MultiSelect" key="MultiSelect" />
+				<SegmentedButtonItem width="auto" text="SingleSelect" key="SingleSelect" />
+				<SegmentedButtonItem width="auto" text="SingleSelectLeft" key="SingleSelectLeft" />
+				<SegmentedButtonItem width="auto" text="SingleSelectMaster" key="SingleSelectMaster" />
+				<SegmentedButtonItem width="auto" text="Delete" key="Delete"/>
+				<SegmentedButtonItem width="auto" text="None" key="None"/>
+			</items>
+		</SegmentedButton>
+	</HBox>
+	<f:GridList id="gridList"
+				headerText="GridList with mode MultiSelect"
+				mode="MultiSelect"
+				items="{ path: '/' }"
+				selectionChange="onSelectionChange"
+				delete="onDelete"
+				class="sapUiResponsiveContentPadding">
+		<f:customLayout>
+			<grid:GridBasicLayout
+				gridTemplateColumns="repeat(auto-fit, minmax(16rem, 1fr))"
+				gridGap="0.5rem"/>
+		</f:customLayout>
+		<f:GridListItem
+			detailPress="onDetailPress"
+			press="onPress"
+			counter="{Quantity}"
+			highlight="{Status}"
+			type="{type}">
+			<VBox height="100%">
+				<Image src="{ProductPicUrl}" width="100%" visible="{= ${onlyImage} ? true : false }" class="imageDisplayBlock"/>
+				<HBox height="100%" class="sapUiSmallMargin" alignItems="Center" visible="{= ${onlyImage} ? false : true }">
+					<Image src="{ProductPicUrl}" width="3rem" class="sapUiSmallMarginEnd"/>
+					<VBox>
+						<Title text="{Name}" wrapping="true"/>
+						<Label text="{Description}" wrapping="true" />
+					</VBox>
+				</HBox>
+			</VBox>
+		</f:GridListItem>
+	</f:GridList>
+
+</mvc:View>

@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.GridListModes",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.GridListModes.V",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "main.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"data.json",
+					"main.css",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

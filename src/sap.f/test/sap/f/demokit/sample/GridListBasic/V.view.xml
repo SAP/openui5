@@ -19,7 +19,7 @@
 			<f:GridList id="gridList"
 						headerText="GridList header"
 						items="{ path: '/' }">
-				<CustomListItem>
+				<f:GridListItem>
 					<VBox height="100%">
 						<VBox class="sapUiSmallMargin">
 							<layoutData>
@@ -29,7 +29,7 @@
 							<Label text="{subtitle}" wrapping="true" />
 						</VBox>
 					</VBox>
-				</CustomListItem>
+				</f:GridListItem>
 			</f:GridList>
 		</content>
 	</Panel>

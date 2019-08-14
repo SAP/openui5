@@ -1,0 +1,13 @@
+{
+  "1.69.0": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "efbc8158b976ae3ef47d5818731396de782667f2",
+        "type": "FIX",
+        "text": " sap.ui.fl - FlexApplyChanges - performance test issue",
+        "references": []
+      }
+    ]
+  }
+}

@@ -9,8 +9,7 @@ var GherkinHighlightRules = function() {
         name: "en",
         labels: "Feature|Background|Scenario(?: Outline)?|Examples",
         keywords: "Given|When|Then|And|But"
-    }
-];
+    }];
     
     var labels = languages.map(function(l) {
         return l.labels;
@@ -161,8 +160,7 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/gherkin"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

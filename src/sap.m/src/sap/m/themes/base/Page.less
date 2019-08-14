@@ -248,6 +248,10 @@ html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
 	top: 6rem;
 }
 
+.sapMPage > .sapMPageHeader + .sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+	top: 5rem;
+}
+
 /* page with header */
 .sapMPage > .sapMPageHeader + section,
 /* page with subheader */
@@ -323,8 +327,14 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 		}
 	}
 
-	.sapMPageWithHeader.sapMPageWithSubHeader > section {
-		top: 4.5rem;
+	.sapMPageWithHeader.sapMPageWithSubHeader {
+		> section {
+			top: 4.5rem;
+		}
+
+		.sapMPageSubHeader.sapMPageSubHeaderInfoBar + section {
+			top: 4.5rem;
+		}
 	}
 
 	.sapMBar-CTX .sapMBarLeft > .sapMImg.sapMPageAppIcon {

@@ -1,0 +1,78 @@
+[
+	{
+		"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 15",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1000.jpg",
+		"Status": "Information",
+		"type": "DetailAndActive",
+		"Quantity": 24
+	},
+	{
+		"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 17",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1001.jpg",
+		"Status": "Success",
+		"Quantity": 14,
+		"type": "DetailAndActive"
+	},
+	{
+		"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 18",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1002.jpg",
+		"Status": "Success",
+		"Quantity": 37
+	},
+	{
+		"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+		"Name": "Notebook Basic 19",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1003.jpg",
+		"Status": "Warning",
+		"Quantity": 2
+	},
+	{
+		"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
+		"Name": "ITelO Vault",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1007.jpg",
+		"Status": "Error",
+		"Quantity": 0
+	},
+	{
+		"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+		"Name": "Notebook Professional 15",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1010.jpg",
+		"Quantity": 22
+	},
+	{
+		"Description": "Notebook Professional 17 with 2,80 GHz quad core, 17\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+		"Name": "Notebook Professional 17",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1011.jpg",
+		"Quantity": 31
+	},
+	{
+		"Description": "Digital Organizer with State-of-the-Art Encryption for Storage and Network Communications",
+		"Name": "ITelO Vault Net",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1020.jpg",
+		"Quantity": 14
+	},
+	{
+		"Description": "Digital Organizer with State-of-the-Art Encryption for Storage and Secure Stellite Link",
+		"Name": "ITelO Vault SAT",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1021.jpg",
+		"Quantity": 50
+	},
+	{
+		"Description": "32 GB Digital Assistant with high-resolution color screen",
+		"Name": "Comfort Easy",
+		"ProductPicUrl": "test-resources/sap/ui/demokit/explored/img/HT-1022.jpg",
+		"Quantity": 30
+	},
+	{
+		"Description": "4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB2.0, Ethernet",
+		"Name": "Ultra Jet Super Highspeed",
+		"ProductPicUrl": "test-resources/sap/ui/documentation/sdk/images/HT-1065.jpg",
+		"Status": "None",
+		"Quantity": 25,
+		"onlyImage": true,
+		"type": "Navigation"
+	}
+]

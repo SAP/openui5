@@ -123,6 +123,12 @@
 		"group": "Other Card Examples"
 	},
 	{
+		"title": "Grid Container, containerQuery=true",
+		"description": "Grid Container, containerQuery=true",
+		"route": "gridContainerQuery",
+		"group": "Other Card Examples"
+	},
+	{
 		"title": "Navigation Action",
 		"description": "Navigation action examples",
 		"route": "navigationService",

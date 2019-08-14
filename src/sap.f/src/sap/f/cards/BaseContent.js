@@ -157,10 +157,12 @@ sap.ui.define([
 			return this;
 		}
 
-		var oList = this.getInnerList();
-		if (oList && oConfiguration.maxItems) {
+		var oList = this.getInnerList(),
+			maxItems = oConfiguration.maxItems;
+		if (oList && maxItems) {
 			oList.setGrowing(true);
-			oList.setGrowingThreshold(oConfiguration.maxItems);
+			//If pass trough parameters maxItems is a string
+			oList.setGrowingThreshold(parseInt(maxItems));
 			oList.addStyleClass("sapFCardMaxItems");
 		}
 
@@ -201,9 +203,9 @@ sap.ui.define([
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 		}
-
-		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
-
+		if (this._oDataProviderFactory) {
+			this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
+		}
 		if (this._oDataProvider) {
 			this.setBusy(true);
 

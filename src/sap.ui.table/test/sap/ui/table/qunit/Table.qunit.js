@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/ui/table/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/table/plugins/SelectionPlugin",
-	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/util/MockServer",
@@ -42,7 +41,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/library"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
-			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin, MultiSelectionPlugin,
+			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin,
 			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, FloatType,
 			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library) {
 	"use strict";
@@ -409,20 +408,6 @@ sap.ui.define([
 		oTable.addSelectionInterval(0, 0);
 		assert.ok(!$SelectAll.hasClass("sapUiTableSelAll"), "Selected the first row again: The SelectAll checkbox is checked");
 		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Selected the first row again: The SelectAll title text is correct");
-	});
-
-	QUnit.test("Selection with MultiSelectionPlugin", function(assert){
-		var done = assert.async();
-		oTable.addPlugin(new MultiSelectionPlugin({limit: 5}));
-		assert.ok(oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialized");
-		oTable._oSelectionPlugin.setSelectionMode(SelectionMode.MultiToggle);
-		oTable.setVisibleRowCount(3);
-		oTable._oSelectionPlugin.attachEvent("selectionChange", function(oEvent){
-			assert.ok(oEvent.mParameters.limitReached, "The selection limit was reached");
-			assert.strictEqual(oTable.getFirstVisibleRow(), 2, "The first visible row is properly set");
-			done();
-		});
-		oTable._oSelectionPlugin.addSelectionInterval(0,10);
 	});
 
 	QUnit.test("VisibleRowCount", function(assert) {
@@ -1377,7 +1362,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");  // render
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1388,7 +1373,7 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");  // render
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");  // render
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
@@ -1399,9 +1384,11 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The call to Binding#getContexts considers the visible row count");
+			assert.strictEqual(oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The second call to Binding#getContexts considers the visible row count");
 		});
 	});
 
@@ -1412,13 +1399,13 @@ sap.ui.define([
 		return oTable.qunit.whenInitialRenderingFinished().then(function() {
 			oGetContextsSpy.reset();
 		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
 
 		}).then(oTable.qunit.resetSize).then(function() {
-			assert.ok(oGetContextsSpy.calledOnce, "Binding#getContexts was called once");
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"The call to Binding#getContexts considers the visible row count");
 			oGetContextsSpy.reset();
@@ -1460,7 +1447,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Fixed: Initialization when metadata not loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Fixed, createODataModel());
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1468,13 +1455,13 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Fixed: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Fixed: Initialization when metadata loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Fixed);
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1482,13 +1469,13 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Interactive: Initialization when metadata not loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Interactive, createODataModel());
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1496,13 +1483,13 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Interactive: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Interactive: Initialization when metadata loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Interactive);
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
@@ -1510,47 +1497,51 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 3, "Binding#getContexts was called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, oTable.getVisibleRowCount(), 100),
 				"All calls to Binding#getContexts consider the visible row count");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Auto: Initialization when metadata not loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Auto, createODataModel());
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
 
-		// render, refreshRows, updateRows
+		// render, render, auto rerender, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
 				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The third call to Binding#getContexts considers the visible row count");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 20, 100),
+				"The third call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The fourth call to Binding#getContexts considers the visible row count");
 			assert.notEqual(oTable.getVisibleRowCount(), 20,
 				"The computed request length and the visible row count should not be equal in this test");
 		});
 	});
 
-	QUnit.test("VisibleRowCountMode = Auto: Initialization", function(assert) {
+	QUnit.test("VisibleRowCountMode = Auto: Initialization when metadata loaded", function(assert) {
 		var oTable = this.createTable(VisibleRowCountMode.Auto);
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
 
-		// refreshRows, render, updateRows
+		// refreshRows, render, auto rerender, updateRows
 		return pReady.then(function() {
-			assert.ok(oGetContextsSpy.calledThrice, "Binding#getContexts was called 3 times");
+			assert.strictEqual(oGetContextsSpy.callCount, 4, "Binding#getContexts was called 4 times");
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
 				"The first call to Binding#getContexts considers the device height for the length");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 20, 100),
 				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
-				"The third call to Binding#getContexts considers the visible row count");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 20, 100),
+				"The third call to Binding#getContexts considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getVisibleRowCount(), 100),
+				"The fourth call to Binding#getContexts considers the visible row count");
 			assert.notEqual(oTable.getVisibleRowCount(), 20,
 				"The computed request length and the visible row count should not be equal in this test");
 		});
@@ -4533,54 +4524,122 @@ sap.ui.define([
 		assert.strictEqual(Div.childElementCount, 0, "Nothing should be rendered without synchronization enabled");
 	});
 
-	QUnit.module("Plugins", {
+	QUnit.module("Selection plugin", {
 		beforeEach: function() {
 			this.oTable = new Table();
+			this.TestSelectionPlugin = SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin");
+			this.oTestPlugin = new this.TestSelectionPlugin();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
+			this.oTestPlugin.destroy();
 		}
 	});
 
-	QUnit.test("Selection plugin", function(assert) {
-		var oPlugin = new MultiSelectionPlugin();
+	QUnit.test("Initialization", function(assert) {
+		var oOtherTestPlugin = new (SelectionPlugin.extend("sap.ui.table.test.OtherTestSelectionPlugin"))();
+		var oTable = this.oTable;
 
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"), "The default selection plugin is used");
+		function expectLegacyPlugin() {
+			assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelPlugin"), "The legacy selection plugin is used");
+			assert.strictEqual(oTable._hasSelectionPlugin(), false, "Table#_hasSelectionPlugin returns \"false\"");
+		}
 
+		function expectAppliedPlugin(oAppliedPlugin) {
+			assert.strictEqual(oTable._getSelectionPlugin(), oAppliedPlugin, "The applied selection plugin is used");
+			assert.strictEqual(oTable._hasSelectionPlugin(), true, "Table#_hasSelectionPlugin returns \"true\"");
+		}
+
+		expectLegacyPlugin();
+
+		oTable.addPlugin(this.oTestPlugin);
+		expectAppliedPlugin(this.oTestPlugin);
+
+		oTable.removePlugin(this.oTestPlugin);
+		expectLegacyPlugin();
+
+		oTable.insertPlugin(this.oTestPlugin, 0);
+		expectAppliedPlugin(this.oTestPlugin);
+
+		oTable.removeAllPlugins();
+		expectLegacyPlugin();
+
+		oTable.addPlugin(this.oTestPlugin);
+		oTable.addPlugin(oOtherTestPlugin);
+		expectAppliedPlugin(this.oTestPlugin);
+		oTable.removePlugin(this.oTestPlugin);
+		expectAppliedPlugin(oOtherTestPlugin);
+		oTable.insertPlugin(this.oTestPlugin, 0);
+		expectAppliedPlugin(this.oTestPlugin);
+
+		oTable.destroyPlugins();
+		expectLegacyPlugin();
+
+		sinon.spy(Table.prototype, "_createLegacySelectionPlugin");
+		this.oTestPlugin = new this.TestSelectionPlugin(); // The old one was destroyed.
+		oTable = new Table({
+			plugins: [this.oTestPlugin]
+		});
+
+		assert.ok(oTable._getSelectionPlugin().isA("sap.ui.table.test.SelectionPlugin"),
+			"The selection plugin set to the table is used");
+		assert.ok(oTable._hasSelectionPlugin(), "Table#_hasSelectionPlugin returns \"true\"");
+		assert.ok(Table.prototype._createLegacySelectionPlugin.notCalled, "No legacy selection plugin was created on init");
+
+		Table.prototype._createLegacySelectionPlugin.restore();
+	});
+
+	QUnit.test("Set selection mode", function(assert) {
 		this.oTable.setSelectionMode(SelectionMode.Single);
 		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
 			"If the default selection plugin is used, the selection mode can be set");
 
-		this.oTable.addPlugin(oPlugin);
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"),
-			"Plugin added -> the selection plugin set to the table is used");
-
-		this.oTable.removePlugin(oPlugin);
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"),
-			"Plugin removed -> the default selection plugin is used");
-
-		this.oTable.insertPlugin(oPlugin, 0);
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"),
-			"Plugin inserted -> The selection plugin set to the table is used");
-
-		this.oTable.removeAllPlugins();
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"),
-			"All plugins removed -> the default selection plugin is used");
-
-		this.oTable.addPlugin(oPlugin);
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"),
-			"Plugin added again -> the selection plugin set to the table is used");
-
-		oPlugin.setSelectionMode(SelectionMode.Single);
-		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
-			"The selection mode is properly set");
+		this.oTable.addPlugin(this.oTestPlugin);
 		this.oTable.setSelectionMode(SelectionMode.MultiToggle);
 		assert.strictEqual(this.oTable.getSelectionMode(), SelectionMode.Single,
 			"The selection mode cannot be changed here, it is controlled by the plugin");
+	});
 
-		this.oTable.destroyPlugins();
-		assert.ok(this.oTable._oSelectionPlugin.isA("sap.ui.table.plugins.SelectionModelPlugin"),
-			"Plugins destroyed -> the default selection plugin is used");
+	QUnit.test("Selection API", function(assert) {
+		var aMethodNames = [
+			"getSelectedIndex",
+			"setSelectedIndex",
+			"clearSelection",
+			"selectAll",
+			"getSelectedIndices",
+			"addSelectionInterval",
+			"setSelectionInterval",
+			"removeSelectionInterval",
+			"isIndexSelected"
+		];
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+
+		aMethodNames.forEach(function(sMethodName) {
+			var oSpy = sinon.spy(oSelectionPlugin, sMethodName);
+
+			this.oTable[sMethodName]();
+			assert.ok(oSpy.calledOnce, "Table#" + sMethodName + " calls LegacySelectionPlugin#" + sMethodName + " once");
+		}.bind(this));
+
+		this.oTable.addPlugin(this.oTestPlugin);
+		oSelectionPlugin = this.oTable._getSelectionPlugin();
+
+		aMethodNames.forEach(function(sMethodName) {
+			var oSpy = sinon.spy(oSelectionPlugin, sMethodName);
+
+			assert.throws(this.oTable[sMethodName], "Table#" + sMethodName + " throws an error if a selection plugin is applied");
+			assert.ok(oSpy.notCalled, "Table#" + sMethodName + " does not call SelectionPlugin#" + sMethodName);
+		}.bind(this));
+	});
+
+	QUnit.test("Legacy multi selection", function(assert) {
+		this.oTable.addPlugin(this.oTestPlugin);
+		assert.throws(this.oTable._enableLegacyMultiSelection, "Table#_enableLegacyMultiSelection throws an error if a selection plugin is applied");
+
+		this.oTable.removePlugin(this.oTestPlugin);
+		this.oTable._enableLegacyMultiSelection();
+		assert.throws(this.oTable._legacyMultiSelection, "Table#_legacyMultiSelection throws an error if a selection plugin is applied");
+
 	});
 
 	QUnit.module("Model and context propagation", {

@@ -379,6 +379,7 @@ function IncrementalSearch() {
 }
 
 oop.inherits(IncrementalSearch, Search);
+
 function isRegExp(obj) {
     return obj instanceof RegExp;
 }
@@ -402,6 +403,7 @@ function stringToRegExp(string, flags) {
 function objectToRegExp(obj) {
     return stringToRegExp(obj.expression, obj.flags);
 }
+
 (function() {
 
     this.activate = function(ed, backwards) {
@@ -969,6 +971,7 @@ exports.handler.addCommands({
     },
     setMark:  {
         exec: function(editor, args) {
+
             if (args && args.count) {
                 if (editor.inMultiSelectMode) editor.forEachSelection(moveToMark);
                 else moveToMark();
@@ -993,6 +996,7 @@ exports.handler.addCommands({
                 editor.setEmacsMark(rangePositions[rangePositions.length-1]);
                 return;
             }
+
             function moveToMark() {
                 var mark = editor.popEmacsMark();
                 mark && editor.moveCursorToPosition(mark);
@@ -1089,6 +1093,7 @@ exports.handler.addCommands({
     },
     killRingSave: {
         exec: function(editor) {
+
             editor.$handlesEmacsOnCopy = true;
             var marks = editor.session.$emacsMarkRing.slice(),
                 deselectedMarks = [];
@@ -1104,6 +1109,7 @@ exports.handler.addCommands({
                 editor.$handlesEmacsOnCopy = false;
                 if (editor.inMultiSelectMode) editor.forEachSelection({exec: deselect});
                 else deselect();
+                editor.setEmacsMark(null);
                 editor.session.$emacsMarkRing = marks.concat(deselectedMarks.reverse());
             }, 0);
         },
@@ -1154,8 +1160,7 @@ exports.killRing = {
     }
 };
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/keyboard/emacs"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

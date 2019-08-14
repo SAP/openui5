@@ -4,18 +4,16 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/write/internal/ChangesController",
+	"sap/ui/fl/apply/internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ComponentContainer,
 	Control,
 	UIComponent,
-	JsControlTreeModifier,
 	Cache,
 	Utils,
 	FlexRuntimeInfoAPI,
@@ -51,7 +49,10 @@ sap.ui.define([
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl, {id: "controlId2", appComponent: this.oAppComponent}];
-			return FlexRuntimeInfoAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized({
+				selectors: aControls,
+				changeTypes: this.aChangeTypes
+			}).then(function(bIsPersonalized) {
 				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
 			});
 		});
@@ -60,7 +61,10 @@ sap.ui.define([
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({}));
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
-			return FlexRuntimeInfoAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized({
+				selectors: aControls,
+				changeTypes: this.aChangeTypes
+			}).then(function(bIsPersonalized) {
 				assert.ok(!bIsPersonalized, "No personalization changes on control were found.");
 			});
 		});
@@ -117,7 +121,10 @@ sap.ui.define([
 			};
 
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return FlexRuntimeInfoAPI.isPersonalized(aControls, this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized({
+				selectors: aControls,
+				changeTypes: this.aChangeTypes
+			}).then(function(bIsPersonalized) {
 				assert.ok(bIsPersonalized, "Personalization changes were found on control.");
 			});
 		});
@@ -125,7 +132,10 @@ sap.ui.define([
 		QUnit.test("When isPersonalized() is called with an empty control ids, non-empty change types", function(assert) {
 			this.aChangeTypes = ["changeType1", "changeType2"];
 			assert.throws(
-				FlexRuntimeInfoAPI.isPersonalized([], this.aChangeTypes),
+				FlexRuntimeInfoAPI.isPersonalized({
+					selectors: [],
+					changeTypes: this.aChangeTypes
+				}),
 				"a rejection takes place"
 			);
 		});
@@ -133,7 +143,10 @@ sap.ui.define([
 		QUnit.test("When isPersonalized() is called with an array of control maps, without an app component and empty changes", function(assert) {
 			var aControlIds = [{id: "controlId1"}];
 			assert.throws(
-				FlexRuntimeInfoAPI.isPersonalized(aControlIds, []),
+				FlexRuntimeInfoAPI.isPersonalized({
+					selectors: aControlIds,
+					changeTypes: []
+				}),
 				"a rejection takes place"
 			);
 		});
@@ -147,7 +160,9 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return FlexRuntimeInfoAPI.isPersonalized(aControls).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized({
+				selectors: aControls
+			}).then(function(bIsPersonalized) {
 				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
 			});
 		});
@@ -161,7 +176,10 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return FlexRuntimeInfoAPI.isPersonalized(aControls, []).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized({
+				selectors: aControls,
+				changeTypes: []
+			}).then(function(bIsPersonalized) {
 				assert.equal(!!bIsPersonalized, true, "Personalization changes were found on control.");
 			});
 		});
@@ -208,7 +226,10 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
-			return FlexRuntimeInfoAPI.isPersonalized([this.oControl], this.aChangeTypes).then(function(bIsPersonalized) {
+			return FlexRuntimeInfoAPI.isPersonalized({
+				selectors: [this.oControl],
+				changeTypes: this.aChangeTypes
+			}).then(function(bIsPersonalized) {
 				assert.equal(bIsPersonalized, false, "Personalization changes were found on control.");
 			});
 		});
@@ -229,7 +250,7 @@ sap.ui.define([
 			var oWaitForChangesStub = sandbox.stub().resolves();
 			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
 
-			return FlexRuntimeInfoAPI.waitForChanges(oControl).then(function() {
+			return FlexRuntimeInfoAPI.waitForChanges({element: oControl}).then(function() {
 				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
 			});
 		});
@@ -242,12 +263,12 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when there is an app component associated with the control", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns({});
-			assert.equal(FlexRuntimeInfoAPI.isFlexSupported({}), true, "the function returns true");
+			assert.equal(FlexRuntimeInfoAPI.isFlexSupported({element: {}}), true, "the function returns true");
 		});
 
 		QUnit.test("when there is no app component associated with the control", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns();
-			assert.equal(FlexRuntimeInfoAPI.isFlexSupported({}), false, "the function returns false");
+			assert.equal(FlexRuntimeInfoAPI.isFlexSupported({element: {}}), false, "the function returns false");
 		});
 	});
 
@@ -295,37 +316,18 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling 'hasVariantManagement' with a control that belong to a variant management control", function(assert) {
-			var bVariantManagementReference1 = FlexRuntimeInfoAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"));
-			var bVariantManagementReference2 = FlexRuntimeInfoAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--TextTitle1"));
+			var bVariantManagementReference1 = FlexRuntimeInfoAPI.hasVariantManagement({element: sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout")});
+			var bVariantManagementReference2 = FlexRuntimeInfoAPI.hasVariantManagement({element: sap.ui.getCore().byId("testComponent---mockview--TextTitle1")});
 			assert.ok(bVariantManagementReference1, "true is returned for the first variant management control");
 			assert.ok(bVariantManagementReference2, "true is returned for the second variant management control");
 		});
 
 		QUnit.test("when calling 'hasVariantManagement' with a control that doesn't belong to a variant management control", function(assert) {
-			var bVariantManagementReference = FlexRuntimeInfoAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--Button"));
+			var bVariantManagementReference = FlexRuntimeInfoAPI.hasVariantManagement({element: sap.ui.getCore().byId("testComponent---mockview--Button")});
 			assert.notOk(bVariantManagementReference, "false is returned");
 		});
 	});
 
-	/*
-	QUnit.module("getChangeSelector", {
-		beforeEach: function() {
-			this.oGetSelectorStub = sandbox.stub(JsControlTreeModifier, "getSelector");
-			sandbox.stub(Utils, "getAppComponentForControl").returns("appComponent");
-			this.oControl = new Control();
-		},
-		afterEach: function() {
-			sandbox.restore();
-			this.oControl.destroy();
-		}
-	}, function() {
-		QUnit.test("when called with a control", function(assert) {
-			this.oGetSelectorStub.returns("selector");
-			assert.equal(FlexRuntimeInfoAPI.getChangeSelector("id", this.oControl, {}), "selector", "the function returns the value of getSelector");
-			assert.ok(this.oGetSelectorStub.calledWith("id", "appComponent", {}), "the function was called with the correct parameters");
-		});
-	});
-*/
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

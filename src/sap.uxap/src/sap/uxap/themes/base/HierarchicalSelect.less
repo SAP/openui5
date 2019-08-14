@@ -76,14 +76,14 @@
 }
 
 /* OVERVIEW BUTTON */
-.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-html .sapUiContainer-Medium .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-html .sapUiContainer-Wide .sapUxAPHierarchicalSelect.sapMSltIconOnly {
-	position: absolute;
-	right: 0;
-	top: 0;
-	height: 3rem;
+.sapUxAPObjectPageLayout-Std-Tablet,
+.sapUxAPObjectPageLayout-Std-Desktop {
+	.sapUxAPHierarchicalSelect.sapMSltIconOnly {
+		position: absolute;
+		right: 0;
+		top: 0;
+		height: 3rem;
+	}
 }
 
 .sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly {
@@ -121,7 +121,7 @@ html .sapUiContainer-Wide .sapUxAPHierarchicalSelect.sapMSltIconOnly {
 }
 
 /* styling needed to achieve underline of the select label on phone */
-.sapUxAPObjectPageLayout-Std-Phone, .sap-phone, html .sapUiContainer-Narrow {
+.sapUxAPObjectPageLayout-Std-Phone, .sap-phone {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
 		position: relative;
 		top: 0.05rem;
@@ -131,21 +131,14 @@ html .sapUiContainer-Wide .sapUxAPHierarchicalSelect.sapMSltIconOnly {
 		padding-bottom: 0.8rem;
 	}
 
-	.sapMSlt.sapUxAPHierarchicalSelect {
+	.sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild {
 		height: 3rem;
 		border: none;
 		padding-left: 1rem;
 	}
-
-	.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltLabel {
-		padding-bottom: 0.3rem;
-	}
-
-	.sapUiSizeCompact .sapMSlt.sapUxAPHierarchicalSelect {
-		height: 2rem;
-	}
 }
 
+.sap-phone .sapUiSizeCompact,
 .sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Phone {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
 		padding-bottom: 0.3rem;

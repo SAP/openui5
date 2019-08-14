@@ -2,7 +2,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/internal/ChangesController",
+	"sap/ui/fl/apply/internal/ChangesController",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -303,6 +303,34 @@ sap.ui.define([
 			var fnPersistenceStub = getMethodStub([
 				{},
 				mPropertyBag.styleClass,
+				mPropertyBag.layer,
+				mPropertyBag.appVariantDescriptors
+			], Promise.resolve(sReturnValue));
+
+			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges : fnPersistenceStub } });
+
+			return PersistenceWriteAPI.publish(mPropertyBag)
+				.then(function(sValue) {
+					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
+				});
+		});
+
+		QUnit.test("when publish is called without style class", function(assert) {
+			var mPropertyBag = {
+				layer: "customer",
+				appVariantDescriptors: [],
+				selector: this.vSelector
+			};
+
+			var oAppComponent = { id: "appComponent" };
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector")
+				.withArgs(mPropertyBag.selector)
+				.returns(oAppComponent);
+
+			var fnPersistenceStub = getMethodStub([
+				{},
+				"",
 				mPropertyBag.layer,
 				mPropertyBag.appVariantDescriptors
 			], Promise.resolve(sReturnValue));
@@ -1156,6 +1184,84 @@ sap.ui.define([
 
 			PersistenceWriteAPI.remove(mPropertyBag);
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
+		});
+
+		QUnit.test("get flex/info isResetEnabale: has backend changes true, has persistence changes false", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
+			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(false);
+
+			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isResetEnabale: has backend changes false, has persistence changes true", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(true);
+
+			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isResetEnabale: has backend changes false, has persistence changes false", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(false);
+
+			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
+				assert.equal(bResetEnabled, false, "flex/info resetEnable is false");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled: has backend changes true, has persistence changes false", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(false);
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled: has backend changes false, has persistence changes true", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(true);
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled: has backend changes false, has persistence changes false", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(false);
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, false, "flex/info publishEnable is false");
+			});
 		});
 	});
 });

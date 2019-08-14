@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/util/URLHandler",
 	"sap/ui/core/Component",
+	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Utils,
@@ -25,6 +26,7 @@ sap.ui.define([
 	VariantManagement,
 	URLHandler,
 	Component,
+	Log,
 	jQuery
 ) {
 	"use strict";
@@ -131,7 +133,7 @@ sap.ui.define([
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
 				URLHandler._setTechnicalURLParameterValues(undefined, aUrlParameters, /*bSilent*/ true);
-				return Utils.log.warning("Variant model could not be found on the provided control");
+				return Log.warning("Variant model could not be found on the provided control");
 			}
 
 			//check if variant for the passed variant management control is present
@@ -200,7 +202,7 @@ sap.ui.define([
 				return oVariantModel.updateCurrentVariant(sVariantManagementReference, sVariantReference, oAppComponent);
 			})
 			["catch"](function (oError) {
-				Utils.log.error(oError);
+				Log.error(oError);
 				return Promise.reject(oError);
 			});
 		},
@@ -344,7 +346,7 @@ sap.ui.define([
 		},
 
 		_reject: function (sMessage) {
-			Utils.log.error(sMessage);
+			Log.error(sMessage);
 			return Promise.reject(sMessage);
 		},
 
@@ -411,7 +413,7 @@ sap.ui.define([
 		saveChanges: function(aChanges, oManagedObject) {
 			if (!(oManagedObject instanceof ManagedObject)) {
 				var sErrorMessage = "A valid sap.ui.base.ManagedObject instance is required as a parameter";
-				Utils.log.error(sErrorMessage);
+				Log.error(sErrorMessage);
 				return Promise.reject(sErrorMessage);
 			}
 			var mParameters = ControlPersonalizationAPI._determineParameters(oManagedObject);
@@ -439,7 +441,7 @@ sap.ui.define([
 			try {
 				return !!this._getVariantManagement(oControl);
 			} catch (oError) {
-				Utils.log.error(oError.message);
+				Log.error(oError.message);
 				return false;
 			}
 		}

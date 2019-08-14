@@ -161,7 +161,7 @@ function (
 
 		QUnit.test("when the control has no stable id and hasStableId method is called", function(assert) {
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
-			assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), false, "then the 'getElementHasStableId' property of the Overlay is set to false");
+			assert.strictEqual(this.oButtonOverlay.data("hasStableId"), false, "then the 'getElementHasStableId' property of the Overlay is set to false");
 		});
 
 		QUnit.test("when the control has no stable id but is bound and binding template has stable id", function(assert) {
@@ -282,7 +282,7 @@ function (
 	}, function() {
 		QUnit.test("when the controls are checked for a stable id and at least one plugin has been initialized", function(assert) {
 			assert.equal(this.oCheckControlIdSpy.callCount, 2, "then the utility method to check the control id has been already called element overlays");
-			assert.strictEqual(this.oButtonOverlay.getElementHasStableId(), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
+			assert.strictEqual(this.oButtonOverlay.data("hasStableId"), true, "and the 'getElementHasStableId' property of the Overlay is set to true");
 			assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then if hasStableId is called again it also returns true");
 			assert.equal(this.oCheckControlIdSpy.callCount, 2, "but then the utility method to check the control ids is not called another time");
 			assert.equal(this.oButtonOverlay.getEditableByPlugins().length, 2, "then the overlay is editable by 2 plugins");
@@ -331,17 +331,6 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the overlay is not registered yet (has no DTMD) or is undefined and hasStableId is called", function(assert) {
-			sandbox.stub(this.oButtonOverlay, "getDesignTimeMetadata").returns(null);
-			var oSetStableIdSpy = sandbox.spy(ElementOverlay.prototype, "setElementHasStableId");
-			assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay), "then the button has no stable ID");
-			assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
-
-			assert.notOk(this.oPlugin.hasStableId(this.oButtonOverlay2), "then the button has no stable ID");
-			assert.equal(oSetStableIdSpy.callCount, 0, "and the result is not saved on the overlay");
-			assert.equal(this.oModifyPluginListSpy.callCount, 4, "then the plugin modifikation is triggered twice for each plugin");
-		});
-
 		QUnit.test("when the event elementModified is thrown with visibility change", function(assert) {
 			var oSetRelevantSpy = sandbox.spy(this.oButtonOverlay, "setRelevantOverlays");
 			var oGetRelevantSpy = sandbox.spy(this.oButtonOverlay, "getRelevantOverlays");
@@ -644,7 +633,7 @@ function (
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
 				assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
-				assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
+				assert.strictEqual(this.oFormContainerOverlay.data("hasStableId"), null, "and the 'hasStableId' custom data of the Overlay is still undefined");
 				assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns true");
 				assert.equal(this.oCheckControlIdSpy.callCount, 3, "and the utility method to check the control id is called once for each stable element");
 				assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then a second call of hasStableId also returns true");
@@ -732,7 +721,7 @@ function (
 				}
 			});
 			assert.equal(this.oCheckControlIdSpy.callCount, 0, "then the utility method to check the control id has not yet been called for this Overlay");
-			assert.strictEqual(this.oFormContainerOverlay.getElementHasStableId(), undefined, "and the 'getElementHasStableId' property of the Overlay is still undefined");
+			assert.strictEqual(this.oFormContainerOverlay.data("hasStableId"), null, "and the 'hasStableId' property of the Overlay is still undefined");
 			assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then if hasStableId is called it returns false");
 			assert.equal(this.oCheckControlIdSpy.callCount, 1, "and the utility method to check the control id is called once for each stable element");
 		});

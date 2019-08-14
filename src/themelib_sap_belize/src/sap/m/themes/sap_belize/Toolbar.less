@@ -2,6 +2,11 @@
 /* CSS for control sap.m/Toolbar  */
 /* Belize theme                   */
 /* ============================== */
+@_sap_m_Toolbar_MarginRight: 0.25rem;
+
+.sapMIBar.sapMTB .sapMBarChild:last-child:not(:only-child) {
+	margin-right: @_sap_m_Toolbar_MarginRight;
+}
 
 html.sap-desktop .sapMTBActive:focus {
 	outline: 1px dotted @sapUiContentFocusColor;

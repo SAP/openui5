@@ -54,11 +54,11 @@ sap.ui.define([
 
 	function fireCustomEvent(node, eventType, data) {
 		var event = new window.CustomEvent(eventType),
-			attrValue = node.getAttribute("on" + eventType);
+			attrValue = node.getAttribute("on-" + eventType);
 		event.data = data;
 		if (attrValue) {
 			eventHelper.setAttribute("onclick", attrValue);
-			eventHelper.onclick(event);
+			node.addEventListener(eventType, eventHelper.onclick);
 		}
 		node.dispatchEvent(event);
 	}
@@ -148,7 +148,7 @@ sap.ui.define([
 		var tagMetadata = TagImpl.getMetadata(),
 			tagAllProperties = tagMetadata.getAllProperties(),
 			tagAllAssociations = tagMetadata.getAllAssociations(),
-			tagAllEvents = tagMetadata.getAllEvents(),
+			tagAllEvents = tagMetadata.getEvents(),
 			tagAllAttributes = {};
 		//create attributes for properties
 		Object.keys(tagAllProperties).map(function (n) {
@@ -160,7 +160,7 @@ sap.ui.define([
 		});
 		//create attributes for all events and register
 		Object.keys(tagAllEvents).map(function (n) {
-			tagAllAttributes["on" + n.toLowerCase()] = tagAllEvents[n];
+			tagAllAttributes["on-" + n.toLowerCase()] = tagAllEvents[n];
 		});
 
 		var Tag = function (node) {
@@ -277,7 +277,9 @@ sap.ui.define([
 				var aClasss = newValue.split(" ");
 				this._addedClasses = this._addedClasses || [];
 				this._addedClasses.forEach(function (s) {
-					s && oTagImpl.removeStyleClass(s);
+					if (s) {
+						oTagImpl.removeStyleClass(s);
+					}
 				});
 				aClasss.forEach(function (s) {
 					s = oTagImpl.addStyleClass(s);

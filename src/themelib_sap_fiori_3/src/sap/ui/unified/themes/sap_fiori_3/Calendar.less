@@ -150,6 +150,11 @@ html.sap-desktop .sapUiCalYearPicker .sapUiCalItemSel:focus {
 	background-color: @sapUiActive;
 }
 
+html.sap-desktop .sapUiSizeCompact .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName {
+	outline-color: @sapUiContentContrastFocusColor;
+	background-color: @sapUiActive;
+}
+
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	// do this only for the Planing Calendar
@@ -204,6 +209,18 @@ html.sap-desktop .sapUiCalItemWeekEnd:focus {
 .sapUiCalItemNow > .sapUiCalItemText {
 	line-height: 2.625rem;
 	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalItemText {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName {
+	border-top-left-radius: 0.25rem;
+	border-bottom-left-radius: 0.25rem;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
 }
 
 .sapUiCalItemOtherMonth {

@@ -58,7 +58,7 @@ sap.ui.define([
 				this._aApiIndex = oReferences.aApiIndex;
 				this._aAllowedMembers = oReferences.aAllowedMembers;
 				this._sEntityType = oReferences.sEntityType;
-				this._sEntityId = oReferences.sEntityId;
+				this._sEntityId = oReferences.sEntityId !== "undefined" ? oReferences.sEntityId : undefined;
 				this._oEntityData = oReferences.oEntityData;
 				this._oContainerController = oReferences.oContainerController;
 				this._oContainerView = oReferences.oContainerView;

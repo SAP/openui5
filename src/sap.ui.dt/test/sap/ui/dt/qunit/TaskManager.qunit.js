@@ -182,6 +182,11 @@ sap.ui.define([
 			this.oTaskManager.add({ type: 'bar' });
 			assert.strictEqual(this.oTaskManager.count(), 2, 'function returns correct number of tasks');
 		});
+		QUnit.test("must return amount of tasks for explicit type", function (assert) {
+			this.oTaskManager.add({ type: 'foo' });
+			this.oTaskManager.add({ type: 'bar' });
+			assert.strictEqual(this.oTaskManager.count('foo'), 1, 'function returns correct number of tasks for the given type');
+		});
 	});
 
 	QUnit.module("Public API - isEmpty()", {
@@ -215,11 +220,33 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("must return unique arrays each time it's called", function (assert) {
-			assert.notStrictEqual(this.oTaskManager.getList(), this.oTaskManager.getList(), 'function returns unique arrays');
+			assert.ok(Array.isArray(this.oTaskManager.getList()), 'function return an array value');
+			assert.notStrictEqual(this.oTaskManager.getList(), this.oTaskManager.getList(), 'function returns unique instances (arrays)');
 		});
 		QUnit.test("must return unique arrays but with same content", function (assert) {
 			this.oTaskManager.add({ type: 'foo' });
 			assert.deepEqual(this.oTaskManager.getList(), this.oTaskManager.getList(), 'function returns same content');
+		});
+		QUnit.test("must return unique array with the complete taskList", function (assert) {
+			this.oTaskManager.add({ type: 'foo' });
+			this.oTaskManager.add({ type: 'bar' });
+			var aTaskList = this.oTaskManager.getList();
+			assert.strictEqual(aTaskList.length, 2, 'function returns the right amount of values');
+			assert.strictEqual(aTaskList[0].type, 'foo', 'function returns the values in the correct order');
+			assert.strictEqual(aTaskList[1].type, 'bar', 'function returns the values in the correct order');
+		});
+		QUnit.test("must return unique array with the taskList selected by given taskType", function (assert) {
+			this.oTaskManager.add({ type: 'foo', order: 1 });
+			this.oTaskManager.add({ type: 'foo', order: 2 });
+			this.oTaskManager.add({ type: 'bar' });
+			var aTaskList = this.oTaskManager.getList('foo');
+			assert.ok(Array.isArray(aTaskList), 'function return an array value');
+			assert.strictEqual(aTaskList.length, 2, 'function returns the right amount of values');
+			assert.ok(aTaskList.every(function (mTask) {
+				return mTask.type === 'foo';
+			}), 'function returns the values with the right taskType');
+			// there is no sorting. it tests only that the task adding order is the same as the task running order
+			assert.ok(aTaskList[0].order < aTaskList[1].order, 'function returns the values with the same order as they are added');
 		});
 	});
 

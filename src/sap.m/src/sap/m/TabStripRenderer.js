@@ -73,11 +73,13 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {boolean} bSelected Flag indicating if this is the currently selected item
 	 */
 	TabStripRenderer.renderItem = function (oRm, oControl, oItem, bSelected) {
-		var sTooltip = oItem.getTooltip();
+		var sTooltip = oItem.getTooltip(),
+			sTabTexDomId = getTabTextDomId(oItem),
+			bModified = oItem.getModified();
 
 		oRm.write("<div id='" + oItem.getId() + "'");
 		oRm.addClass(TabStripItem.CSS_CLASS);
-		if (oItem.getModified()) {
+		if (bModified) {
 			oRm.addClass(TabStripItem.CSS_CLASS_MODIFIED);
 		}
 		if (bSelected) {
@@ -104,13 +106,21 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 		oRm.addClass("sapMTSTexts");
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.write("<div id='" + getTabTextDomId(oItem) + "-addText' class='" + TabStripItem.CSS_CLASS_TEXT + "'>");
+		oRm.write("<div id='" + sTabTexDomId + "-addText' class='" + TabStripItem.CSS_CLASS_TEXT + "'>");
 		this.renderItemText(oRm, oItem.getAdditionalText());
 		oRm.write("</div>");
 
 
-		oRm.write("<div id='" + getTabTextDomId(oItem) + "-text' class='" + TabStripItem.CSS_CLASS_LABEL + "'>");
+		oRm.write("<div id='" + sTabTexDomId + "-text' class='" + TabStripItem.CSS_CLASS_LABEL + "'>");
 		this.renderItemText(oRm, oItem.getText());
+		if (bModified) {
+			oRm.write("<span id='" + sTabTexDomId + "-symbol'");
+			oRm.addClass(TabStripItem.CSS_CLASS_MODIFIED_SYMBOL);
+			oRm.writeClasses();
+			oRm.writeAttribute("role", "presentation");
+			oRm.writeAttribute("aria-hidden", "true");
+			oRm.write("/>");
+		}
 		oRm.write("</div>");
 		oRm.write("</div>");
 

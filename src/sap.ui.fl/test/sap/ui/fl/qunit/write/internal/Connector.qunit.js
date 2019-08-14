@@ -18,12 +18,12 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("writeChanges", function(assert) {
+		QUnit.test("writeFlexData", function(assert) {
 			// First implementation to check that connector was called and the default rejection took place
 			var done = assert.async();
 
-			return Connector.writeChanges("VENDOR", {}).catch(function (sErrorMessage) {
-				assert.equal(sErrorMessage, "writeChanges is not implemented");
+			return Connector.writeFlexData("VENDOR", {}).catch(function (sErrorMessage) {
+				assert.equal(sErrorMessage, "writeFlexData is not implemented");
 				done();
 			});
 		});

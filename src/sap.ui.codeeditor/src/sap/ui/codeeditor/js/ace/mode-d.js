@@ -116,6 +116,7 @@ var DHighlightRules = function() {
     }, "identifier");
     
     var identifierRe = "[a-zA-Z_\u00a1-\uffff][a-zA-Z\\d_\u00a1-\uffff]*\\b";
+
     this.$rules = {
         "start" : [
             {     //-------------------------------------------------------- COMMENTS
@@ -509,8 +510,7 @@ oop.inherits(Mode, TextMode);
 }).call(Mode.prototype);
 
 exports.Mode = Mode;
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/mode/d"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

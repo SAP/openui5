@@ -19,7 +19,7 @@
 		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
-					<Button type="Back" press="onNavBack"/>
+					<Button type="Back" press="onNavBack" tooltip="Back to sample"/>
 				</contentLeft>
 				<contentMiddle>
 					<Title text="{/title}"/>

@@ -12,8 +12,7 @@
         <f:customLayout>
             <grid:GridBasicLayout
 				gridTemplateColumns="repeat(auto-fit, 16rem)"
-
-				gridGap="0.25rem 0.25rem">
+				gridGap="0.5rem">
             </grid:GridBasicLayout>
         </f:customLayout>
 
@@ -39,8 +38,7 @@
         <f:customLayout>
             <grid:GridBasicLayout
 				gridTemplateColumns="repeat(auto-fit, 16rem)"
-
-				gridGap="0.25rem 0.25rem">
+				gridGap="0.5rem">
             </grid:GridBasicLayout>
         </f:customLayout>
 
@@ -66,8 +64,7 @@
         <f:customLayout>
             <grid:GridBasicLayout
 				gridTemplateColumns="repeat(auto-fit, 16rem)"
-
-				gridGap="0.25rem 0.25rem">
+				gridGap="0.5rem">
             </grid:GridBasicLayout>
         </f:customLayout>
 

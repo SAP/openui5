@@ -10,7 +10,6 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 
 	// shortcuts
-	var SelectionMode = library.SelectionMode;
 	var VisibleRowCountMode = library.VisibleRowCountMode;
 	var SortOrder = library.SortOrder;
 
@@ -396,7 +395,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
 		var bEnabled = false;
 		var bSelAll = false;
-		var mRenderConfig = oTable._oSelectionPlugin.getRenderConfig();
+		var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 
 		rm.openStart("div", oTable.getId() + "-selall");
 
@@ -404,21 +403,18 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.class("sapUiTableHeaderCell");
 		rm.class("sapUiTableRowSelectionHeaderCell");
 
-		if (TableUtils.hasSelectAll(oTable)) {
+		var sSelectAllResourceTextID;
+		if (mRenderConfig.headerSelector.visible) {
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
 
-			if (oTable._getShowStandardTooltips() && mRenderConfig.headerSelector.visible) {
-				var sSelectAllResourceTextID;
+			if (mRenderConfig.headerSelector.type === "toggle") {
+				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+			} else if (mRenderConfig.headerSelector.type === "clear") {
+				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+			}
 
-				if (mRenderConfig.headerSelector.type === "toggle") {
-					sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-				} else if (mRenderConfig.headerSelector.type === "clear") {
-					sSelectAllResourceTextID = "TBL_DESELECT_ALL";
-				}
-
-				if (sSelectAllResourceTextID) {
-					rm.attr("title", TableUtils.getResourceText(sSelectAllResourceTextID));
-				}
+			if (oTable._getShowStandardTooltips() && sSelectAllResourceTextID) {
+				rm.attr("title", TableUtils.getResourceText(sSelectAllResourceTextID));
 			}
 			if (!bAllRowsSelected) {
 				rm.class("sapUiTableSelAll");
@@ -437,7 +433,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.openEnd();
 
-		if (oTable.getSelectionMode() !== SelectionMode.Single && mRenderConfig.headerSelector.visible) {
+		if (mRenderConfig.headerSelector.visible) {
 			if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.icon) {
 				rm.renderControl(mRenderConfig.headerSelector.icon);
 			} else {
@@ -628,7 +624,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderRowAddon = function(rm, oTable, oRow, iRowIndex, bHeader) {
-		var bRowSelected = oTable.isIndexSelected(oRow.getIndex());
+		var bRowSelected = oTable._getSelectionPlugin().isIndexSelected(oRow.getIndex());
 
 		rm.openStart("div");
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TR", {index: iRowIndex, rowHidden: oRow._bHidden});
@@ -1003,6 +999,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (!oRow) {
 			return;
 		}
+
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+
 		if (bFixedTable) {
 			rm.openStart("tr", oRow.getId() + "-fixed");
 			rm.attr("data-sap-ui-related", oRow.getId());
@@ -1021,7 +1020,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			if (bDraggable && bFixedTable) {
 				rm.attr("draggable", true);
 			}
-			if (oTable.isIndexSelected(oRow.getIndex())) {
+			if (oSelectionPlugin.isIndexSelected(oRow.getIndex())) {
 				rm.class("sapUiTableRowSel");
 			}
 		}
@@ -1039,7 +1038,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.openEnd();
 
-		var bSelected = !oRow._bHidden && oTable.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
+		var bSelected = !oRow._bHidden && oSelectionPlugin.isIndexSelected(oRow.getIndex()); //see TableRenderer.renderRowAddon
 		var aCells = oRow.getCells();
 
 		for (var cell = 0, count = aCells.length; cell < count; cell++) {

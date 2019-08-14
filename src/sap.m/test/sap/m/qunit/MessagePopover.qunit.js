@@ -553,6 +553,49 @@ sap.ui.define([
 		assert.strictEqual(shrinkSpy.callCount, 2, "_collapseMsgPopover() is called the second time");
 	});
 
+	QUnit.test("_collapseMsgPopover() is NOT called on opening when initiallyExpanded=false and there is only one item", function (assert) {
+		var oMessagePopover = new MessagePopover({
+				items: {
+					path: "/messages",
+					template: new MessagePopoverItem({
+						type: "{type}",
+						title: "{title}",
+						subtitle: "{subtitle}",
+						counter: 1,
+						description: "{description}",
+						longtextUrl: "{longtextUrl}",
+						markupDescription: false
+					})
+				}
+			}),
+			shrinkSpy = sinon.spy(oMessagePopover, "_collapseMsgPopover"),
+			oMockupData = {
+				count: 1,
+				messages: [{
+					type: "Warning",
+					title: "Warning without description",
+					description: ""
+				}]
+			},
+			oModel = new JSONModel(oMockupData);
+
+		oMessagePopover.setModel(oModel);
+		oMessagePopover.setInitiallyExpanded(false);
+
+		oMessagePopover.openBy(this.oButton);
+		oMessagePopover.close();
+
+		assert.strictEqual(shrinkSpy.callCount, 0, "_collapseMsgPopover() is not called the first time");
+
+		oMessagePopover.openBy(this.oButton);
+
+		assert.strictEqual(shrinkSpy.callCount, 0, "_collapseMsgPopover() is not called the second time");
+
+		// Clean
+		shrinkSpy.restore();
+		oMessagePopover.destroy();
+	});
+
 	QUnit.test("When initialized without items template should automatically perform binding to the Message Model", function (assert) {
 		var oModel = new JSONModel({
 			form: {
@@ -1378,9 +1421,10 @@ sap.ui.define([
 
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
+
 		//Assert
 		assert.ok(Array.isArray(aMVItems), "Items array exists in the MessageView");
-		assert.strictEqual(aMVItems.length, 0, "The items array is empty");
+		assert.strictEqual(aMVItems.length, 3, "The items array is empty");
 	});
 
 	QUnit.test("After the MessagePopover is opened - there are items in the MessageView", function (assert) {
@@ -1412,17 +1456,12 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var oItem = this.oMessagePopover.getItems()[0];
-		var spyInvalidate = sinon.spy(this.oMessagePopover, "invalidate");
 		oItem.setTitle("Test");
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.strictEqual(spyInvalidate.callCount, 1, "The MessagePopover is invalidated once");
 		assert.strictEqual(this.oMessagePopover.getItems()[0].getTitle() , "Test", "The title of the first item of the MessagePopover is changed");
 		assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getTitle() , "Test", "The title of the first item of the MessageView is changed");
-
-		//Clean
-		spyInvalidate.restore();
 	});
 
 	QUnit.test("Any custom data from the items of the MessagePopover should be cloned in the MessageView's items", function (assert) {

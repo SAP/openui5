@@ -415,58 +415,6 @@ function(
 			assert.strictEqual(bIsHotfix, false);
 		});
 
-		QUnit.test("when calling Utils.log.warning", function (assert) {
-			// PREPARE
-			var spyLog = sandbox.spy(Log, "warning");
-			var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
-
-			// CUT
-			Utils.log.warning.apply(undefined, aArguments);
-
-			// ASSERTIONS
-			assert.equal(spyLog.callCount, 1, "then sap.base.Log.warning called once");
-			assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.warning called with the correct arguments");
-		});
-
-		QUnit.test("when calling Utils.log.error", function (assert) {
-			// PREPARE
-			var spyLog = sandbox.spy(Log, "error");
-			var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
-
-			// CUT
-			Utils.log.error.apply(undefined, aArguments);
-
-			// ASSERTIONS
-			assert.equal(spyLog.callCount, 1, "then sap.base.Log.error called once");
-			assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.error called with the correct arguments");
-		});
-
-		QUnit.test("when calling Utils.log.debug", function (assert) {
-			// PREPARE
-			var spyLog = sandbox.spy(Log, "debug");
-			var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
-
-			// CUT
-			Utils.log.debug.apply(undefined, aArguments);
-
-			// ASSERTIONS
-			assert.equal(spyLog.callCount, 1, "then sap.base.Log.debug called once");
-			assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.debug called with the correct arguments");
-		});
-
-		QUnit.test("when calling Utils.log.info", function (assert) {
-			// PREPARE
-			var spyLog = sandbox.spy(Log, "info");
-			var aArguments = ["mockMessage", "mockDetails", "mockComponent"];
-
-			// CUT
-			Utils.log.info.apply(undefined, aArguments);
-
-			// ASSERTIONS
-			assert.equal(spyLog.callCount, 1, "then sap.base.Log.info called once");
-			assert.deepEqual(spyLog.getCall(0).args, aArguments, "then sap.base.Log.info called with the correct arguments");
-		});
-
 		QUnit.test('getFirstAncestorOfControlWithControlType', function (assert) {
 			var button1 = new Button('button1');
 			var hLayout1 = new HorizontalLayout('hLayout1');
@@ -1335,7 +1283,7 @@ function(
 		});
 
 		QUnit.test("getODataServiceUriFromManifest returns the OData service uri from manifest", function(assert) {
-			var oLogStub = sandbox.stub(Utils.log, "warning");
+			var oLogStub = sandbox.stub(Log, "warning");
 			var sUri = "ODataUri";
 			var oManifest = {
 				"sap.app": {

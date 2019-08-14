@@ -109,15 +109,13 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 /* styling needed to achieve underline of the select label on phone */
 .sapUxAPObjectPageLayout-Std-Phone, html.sap-phone {
 
-	.sapUiSizeCompact .sapMSlt.sapUxAPHierarchicalSelect,
-	.sapMSlt.sapUxAPHierarchicalSelect {
+	.sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild {
 		height: @sapElement_LineHeight;
 		line-height: @sapElement_LineHeight;
 		box-shadow: @sapUiFiori3HSBottomShadow, @sapUiFiori3HSTopShadow;
 		background-color: transparent;
 	}
 
-	.sapUiSizeCompact .sapUxAPHierarchicalSelect,
 	.sapUxAPHierarchicalSelect {
 
 		& .sapMSltArrow {
@@ -153,22 +151,18 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 	}
 }
 
-.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Phone .sapMSlt.sapUxAPHierarchicalSelect{
-	height: @sapElement_LineHeight;
-}
-
 .sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltIcon,
 .sapUxAPHierarchicalSelect .sapMSltIcon{
 	top: 0.5625rem;
 }
 
 /* OVERVIEW BUTTON */
-.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-html .sapUiContainer-Medium .sapUxAPHierarchicalSelect.sapMSltIconOnly,
-html .sapUiContainer-Wide .sapUxAPHierarchicalSelect.sapMSltIconOnly {
-	height: @sapElement_LineHeight;
+.sapUxAPObjectPageLayout-Std-Tablet,
+.sapUxAPObjectPageLayout-Std-Desktop,
+.sapUiSizeCompact .sapUxAPObjectPageLayout-Std-Desktop {
+	.sapUxAPHierarchicalSelect.sapMSltIconOnly {
+		height: @sapElement_LineHeight;
+	}
 }
 
 /* styling needed to achieve underline of the select label on phone on Android 4.4.2

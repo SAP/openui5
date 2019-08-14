@@ -140,6 +140,11 @@ sap.ui.define(function () {
 					only: ["sap/f/GridList"]
 				}
 			},
+			"GridListItem": {
+				coverage: {
+					only: ["sap/f/GridListItem"]
+				}
+			},
 			"Router": {
 				coverage: {
 					only: ["sap/f/Router"]

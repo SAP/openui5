@@ -1176,6 +1176,9 @@ function(
 							title: "Standard",
 							favorite: true,
 							visible: true
+						},
+						support: {
+							user: "SAP"
 						}
 					},
 					controlChanges: [],

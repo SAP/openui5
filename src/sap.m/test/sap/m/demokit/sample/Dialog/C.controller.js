@@ -1,12 +1,12 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/Button',
 		'sap/m/Dialog',
 		'sap/m/List',
 		'sap/m/StandardListItem',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Button, Dialog, List, StandardListItem, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/ButtonType'
+	], function(Button, Dialog, List, StandardListItem, Controller, JSONModel, ButtonType) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.Dialog.C", {
@@ -37,6 +37,7 @@ sap.ui.define([
 						}
 					}),
 					beginButton: new Button({
+						type: ButtonType.Emphasized,
 						text: 'OK',
 						press: function () {
 							this.pressDialog.close();

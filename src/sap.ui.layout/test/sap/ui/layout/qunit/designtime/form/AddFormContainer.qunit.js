@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Utils",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -23,7 +23,7 @@ function (
 	FormContainer,
 	FormElement,
 	Change,
-	FlexUtils,
+	Log,
 	sinon
 ) {
 	'use strict';
@@ -72,7 +72,7 @@ function (
 				view : oView,
 				appComponent : this.oMockedAppComponent
 			};
-			var oLogErrorSpy = sandbox.spy(FlexUtils.log, "error");
+			var oLogErrorSpy = sandbox.spy(Log, "error");
 
 			assert.equal(this.oForm.getFormContainers().length, 1,
 			"the form has only one form element in the beginning");

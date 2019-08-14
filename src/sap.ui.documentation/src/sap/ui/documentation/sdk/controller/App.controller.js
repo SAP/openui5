@@ -56,7 +56,35 @@ sap.ui.define([
 			sNeoAppJsonPath = "/neo-app.json", /* Load neo-app.json always from root URL */
 			ABOUT_TEXT = "About",
 			FEEDBACK_TEXT = "Feedback",
-			CHANGE_VERSION_TEXT = "Change version";
+			CHANGE_VERSION_TEXT = "Change version",
+			DEMOKIT_COOKIE_NAME = "dkc";
+
+		function setCookie(sCookieName, sValue) {
+			var sExpiresDate,
+				oDate = new Date();
+
+			oDate.setTime(oDate.getTime() + (356 * 24 * 60 * 60 * 1000)); // one year
+			sExpiresDate = "expires=" + oDate.toUTCString();
+
+			document.cookie = sCookieName + "=" + sValue + ";" + sExpiresDate + ";path=/";
+		}
+
+		function getCookie(sCookieName) {
+			var aCookies = document.cookie.split(';'),
+				sCookie;
+
+			sCookieName = sCookieName + "=";
+
+			for (var i = 0; i < aCookies.length; i++) {
+				sCookie = aCookies[i].trim();
+
+				if (sCookie.indexOf(sCookieName) == 0) {
+					return sCookie.substring(sCookieName.length, sCookie.length);
+				}
+			}
+
+			return "";
+		}
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
@@ -110,6 +138,8 @@ sap.ui.define([
 
 				this.oHeader = this._oView.byId("headerToolbar");
 
+				this._oMessageStrip = this._oView.byId("cookieMessageStrip");
+
 				this.oRouter = this.getRouter();
 
 				this._selectHeader = this._oView.byId("selectHeader");
@@ -134,6 +164,8 @@ sap.ui.define([
 
 			onBeforeRendering: function() {
 				Device.orientation.detachHandler(this._onOrientationChange, this);
+
+				this._oMessageStrip.setVisible(getCookie(DEMOKIT_COOKIE_NAME) !== "1");
 			},
 
 			onAfterRendering: function() {
@@ -143,6 +175,12 @@ sap.ui.define([
 				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
 
 				Device.orientation.attachHandler(this._onOrientationChange, this);
+			},
+
+			onCookieDialogAccept: function () {
+				setCookie(DEMOKIT_COOKIE_NAME, "1");
+
+				this._oMessageStrip.close();
 			},
 
 			onExit: function() {
@@ -228,9 +266,9 @@ sap.ui.define([
 
 				oEvent.preventDefault();
 				if (sKey && sKey !== "home") {
-					this.getRouter().navTo(sKey, {}, true);
+					this.getRouter().navTo(sKey, {});
 				} else {
-					this.getRouter().navTo("welcome", {}, true);
+					this.getRouter().navTo("welcome", {});
 
 					this._setHeaderSelectedKey("home");
 				}

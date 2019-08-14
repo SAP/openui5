@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/fl/DefaultVariant",
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ChangePersistenceFactory"
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/base/Log"
 ], function(
 	DefaultVariant,
 	StandardVariant,
 	Utils,
-	ChangePersistenceFactory
+	ChangePersistenceFactory,
+	Log
 ) {
 	"use strict";
 	/**
@@ -33,7 +35,7 @@ sap.ui.define([
 
 		this._sComponentName = Utils.getComponentClassName(oControl);
 		if (!this._sComponentName) {
-			Utils.log.error("The Control does not belong to an SAPUI5 component. Variants and Changes for this control might not work as expected.");
+			Log.error("The Control does not belong to an SAPUI5 component. Variants and Changes for this control might not work as expected.");
 		}
 		this._oAppDescriptor = Utils.getAppDescriptor(oControl);
 		this._sSiteId = Utils.getSiteId(oControl);
@@ -103,7 +105,7 @@ sap.ui.define([
 	 */
 	Persistence.prototype.getChange = function(sChangeId) {
 		if (!sChangeId) {
-			Utils.log.error("sap.ui.fl.Persistence.getChange : sChangeId is not defined");
+			Log.error("sap.ui.fl.Persistence.getChange : sChangeId is not defined");
 			return undefined;
 		}
 

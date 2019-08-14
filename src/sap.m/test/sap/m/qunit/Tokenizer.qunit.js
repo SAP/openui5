@@ -1262,4 +1262,22 @@ sap.ui.define([
 		assert.strictEqual(token1.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
 		assert.strictEqual(token2.$().attr("aria-setsize"), "2", "Token has correct aria-setsize attribute");
 	});
+
+	QUnit.test("Adjust Tokens' title on editable property", function(assert) {
+		var token1, token2;
+		// Setup
+		this.tokenizer.setEditable(false);
+		this.tokenizer.addToken(token1 = new Token("t1"));
+		this.tokenizer.addToken(token2 = new Token("t2"));
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!token1.$().attr("title"), "There's no title for the token");
+		assert.ok(!token2.$().attr("title"), "There's no title for the token");
+
+		this.tokenizer.setEditable(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(token1.$().attr("title"), "There's a title for the token");
+		assert.ok(token2.$().attr("title"), "There's a title for the token");
+	});
 });

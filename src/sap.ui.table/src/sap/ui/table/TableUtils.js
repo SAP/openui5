@@ -329,8 +329,11 @@ sap.ui.define([
 				return false;
 			}
 
-			var iSelectableRowCount = oTable._getSelectableRowCount();
-			return iSelectableRowCount > 0 && iSelectableRowCount === oTable._getSelectedIndicesCount();
+			var oSelectionPlugin = oTable._getSelectionPlugin();
+			var iSelectableRowCount = oSelectionPlugin.getSelectableCount();
+			var iSelectedRowCount = oSelectionPlugin.getSelectedCount();
+
+			return iSelectableRowCount > 0 && iSelectableRowCount === iSelectedRowCount;
 		},
 
 		/**
@@ -463,8 +466,10 @@ sap.ui.define([
 				return false;
 			}
 
+			var oSelectionPlugin = oTable._getSelectionPlugin();
+
 			function setSelectionState(iAbsoluteRowIndex) {
-				if (!oTable._isRowSelectable(iAbsoluteRowIndex)) {
+				if (!oSelectionPlugin.isIndexSelectable(iAbsoluteRowIndex)) {
 					return false;
 				}
 
@@ -474,14 +479,14 @@ sap.ui.define([
 
 				if (fnDoSelect) {
 					bSelectionChanged = fnDoSelect(iAbsoluteRowIndex, bSelect);
-				} else if (oTable.isIndexSelected(iAbsoluteRowIndex)) {
+				} else if (oSelectionPlugin.isIndexSelected(iAbsoluteRowIndex)) {
 					if (bSelect !== true) {
 						bSelectionChanged = true;
-						oTable.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+						oSelectionPlugin.removeSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 					}
 				} else if (bSelect !== false) {
 					bSelectionChanged = true;
-					oTable.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
+					oSelectionPlugin.addSelectionInterval(iAbsoluteRowIndex, iAbsoluteRowIndex);
 				}
 
 				delete oTable._iSourceRowIndex;
@@ -1540,11 +1545,21 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} [oThis] The context in the delegate's event listeners. The default is the delegate object itself.
 		 */
 		addDelegate: function(oElement, oDelegate, oThis) {
-			if (!oElement || !oDelegate) {
-				return;
+			if (oElement && oDelegate) {
+				oElement.addDelegate(oDelegate, false, oThis ? oThis : oDelegate, false);
 			}
+		},
 
-			oElement.addDelegate(oDelegate, false, oThis ? oThis : oDelegate, false);
+		/**
+		 * Removes a delegate from an element.
+		 *
+		 * @param {sap.ui.core.Element} oElement The element to add the delegate to.
+		 * @param {object} oDelegate The delegate object.
+		 */
+		removeDelegate: function(oElement, oDelegate) {
+			if (oElement && oDelegate) {
+				oElement.removeDelegate(oDelegate);
+			}
 		}
 	};
 

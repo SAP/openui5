@@ -172,9 +172,9 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 
 			if (sAggregationName === "customData") {
 				if (this.getCustomData().length === 1) {
-					this._disconnectAndDestroyViewsObserver();
-				} else if (vObject && this._oViewsObserver) {
-					this._oViewsObserver.unobserve(vObject, {
+					this._disconnectAndDestroyCustomDataObserver();
+				} else if (vObject && this._oCustomDataObserver) {
+					this._oCustomDataObserver.unobserve(vObject, {
 						properties: ["value"]
 					});
 				}

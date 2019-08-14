@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/UnhideControl",
 	"sap/ui/fl/changeHandler/StashControl",
 	"sap/ui/fl/changeHandler/UnstashControl",
-	"sap/ui/fl/changeHandler/AddXML"
+	"sap/ui/fl/changeHandler/AddXML",
+	"sap/base/Log"
 ], function(
 	Utils,
 	jQuery,
@@ -31,7 +32,8 @@ sap.ui.define([
 	UnhideControl,
 	StashControl,
 	UnstashControl,
-	AddXML
+	AddXML,
+	Log
 ) {
 	"use strict";
 
@@ -114,7 +116,7 @@ sap.ui.define([
 	/**
 	 * Registration of multiple changeHandlers for controlls.
 	 *
-	 * @param {object} mControlChanges - Map of changeHandler configuration for controlls
+	 * @param {object} mControlChanges - Map of changeHandler configuration for controls
 	 * @returns {Promise} Returns an empty promise when all changeHandlers are registered
 	 */
 	ChangeRegistry.prototype.registerControlsForChanges = function(mControlChanges) {
@@ -123,6 +125,7 @@ sap.ui.define([
 			var mChangeHandlers = {};
 			if (Array.isArray(vChangeHandlers)) {
 				vChangeHandlers.forEach(function (oChangeHandler) {
+					// check!
 					mChangeHandlers[oChangeHandler.changeType] = oChangeHandler.changeHandler;
 				});
 			} else {
@@ -140,7 +143,7 @@ sap.ui.define([
 		if (typeof oChangeHandlers === "string") {
 			oPromise = Utils.requireAsync(oChangeHandlers + ".flexibility")
 			.catch(function(oError) {
-				Utils.log.error("Flexibility change handler registration failed.\nControlType: " + sControlType + "\n" + oError.message);
+				Log.error("Flexibility change handler registration failed.\nControlType: " + sControlType + "\n" + oError.message);
 				return Promise.resolve(sSkipNext); // continue without a registration
 			});
 		}
@@ -190,7 +193,7 @@ sap.ui.define([
 				return oChangeRegistryItem;
 			}.bind(this))
 			.catch(function(oError) {
-				Utils.log.error("Flexibility registration for control " + oModifier.getId(oControl) +
+				Log.error("Flexibility registration for control " + oModifier.getId(oControl) +
 					" failed to load module " + sChangeHandlerModulePath + "\n" + oError.message);
 				return undefined; // continue without a registration
 			});
@@ -386,7 +389,7 @@ sap.ui.define([
 	 */
 	ChangeRegistry.prototype.removeRegistryItem = function(mParam) {
 		if (!mParam.changeTypeName && !mParam.controlType) {
-			Utils.log.error("sap.ui.fl.registry.ChangeRegistry: ChangeType and/or ControlType required");
+			Log.error("sap.ui.fl.registry.ChangeRegistry: ChangeType and/or ControlType required");
 			return;
 		}
 		//Either remove a specific changeType from a specific control type
@@ -438,14 +441,14 @@ sap.ui.define([
 	 */
 	ChangeRegistry.prototype.getRegistryItems = function(mParam) {
 		if (!mParam) {
-			Utils.log.error("sap.ui.fl.registry.ChangeRegistry: no parameters passed for getRegistryItems");
+			Log.error("sap.ui.fl.registry.ChangeRegistry: no parameters passed for getRegistryItems");
 		}
 
 		var sChangeType = mParam.changeTypeName;
 		var sControlType = mParam.controlType;
 
 		if (!sChangeType && !sControlType) {
-			Utils.log.error("sap.ui.fl.registry.ChangeRegistry: Change Type Name and/or Control Type required");
+			Log.error("sap.ui.fl.registry.ChangeRegistry: Change Type Name and/or Control Type required");
 		}
 
 		var result = null;
@@ -552,7 +555,7 @@ sap.ui.define([
 					bIsChangeTypeEnabled = oLayers[sLayer];
 
 					if (!bIsChangeTypeEnabled) {
-						Utils.log.warning("Change type " + sChangeType + " not enabled for layer " + sLayer);
+						Log.warning("Change type " + sChangeType + " not enabled for layer " + sLayer);
 						delete oControlReg[sChangeType];
 					}
 				});

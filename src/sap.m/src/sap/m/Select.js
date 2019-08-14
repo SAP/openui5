@@ -298,6 +298,15 @@ function(
 						type: "boolean",
 						group: "Behavior",
 						defaultValue: true
+					},
+					/**
+					 * Determines whether the text in the items wraps on multiple lines when the available width is not enough.
+					 * @since 1.69
+					 */
+					wrapItemsText: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: false
 					}
 				},
 				defaultAggregation : "items",
@@ -1905,6 +1914,7 @@ function(
 
 			this._oList = new SelectList({
 				width: "100%",
+				maxWidth: "600px",
 				keyboardNavigationMode: sKeyboardNavigationMode
 			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
 			.addEventDelegate({
@@ -1914,7 +1924,26 @@ function(
 				}
 			}, this)
 			.attachSelectionChange(this.onSelectionChange, this);
+
+			this._oList.toggleStyleClass("sapMSelectListWrappedItems", this.getWrapItemsText());
+
 			return this._oList;
+		};
+
+		/**
+		 * Sets the <code>wrapItemsText</code> property.
+		 *
+		 * @param {boolean} bWrap
+		 * @returns {sap.m.Select} <code>this</code> to allow method chaining
+		 * @since 1.69
+		 * @public
+		 */
+		Select.prototype.setWrapItemsText = function (bWrap) {
+			if (this._oList) {
+				this._oList.toggleStyleClass("sapMSelectListWrappedItems", bWrap);
+			}
+
+			return this.setProperty("wrapItemsText", bWrap, true);
 		};
 
 		/**

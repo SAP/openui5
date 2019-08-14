@@ -53,7 +53,8 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/write/api/PersistenceWriteAPI"
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/rta/util/validateFlexEnabled"
 ],
 function(
 	jQuery,
@@ -105,7 +106,8 @@ function(
 	Measurement,
 	Log,
 	KeyCodes,
-	PersistenceWriteAPI
+	PersistenceWriteAPI,
+	validateFlexEnabled
 ) {
 	"use strict";
 
@@ -267,6 +269,10 @@ function(
 
 			if (window.parent !== window) {
 				this.startService('receiver');
+			}
+
+			if (sap.ui.version.includes("-SNAPSHOT")) {
+				this.attachStart(validateFlexEnabled.bind(null, this));
 			}
 		},
 		_RESTART : {
@@ -528,7 +534,7 @@ function(
 		if (!this._oDesignTime) {
 			if (!oRootControl) {
 				vError = new Error("Root control not found");
-				FlexUtils.log.error(vError);
+				Log.error(vError);
 				return Promise.reject(vError);
 			}
 
@@ -538,7 +544,7 @@ function(
 				&& !FlexUtils.isCorrectAppVersionFormat(FlexUtils.getAppVersionFromManifest(FlexUtils.getAppComponentForControl(oRootControl).getManifest()))
 			) {
 				vError = this._getTextResources().getText("MSG_INCORRECT_APP_VERSION_ERROR");
-				FlexUtils.log.error(vError);
+				Log.error(vError);
 				return Promise.reject(vError);
 			}
 
@@ -610,6 +616,20 @@ function(
 				// Register function for checking unsaved before leaving RTA
 				this._oldUnloadHandler = window.onbeforeunload;
 				window.onbeforeunload = this._onUnload.bind(this);
+			}.bind(this))
+			.then(function () {
+				var mPropertyBag = {
+					selector : this.getRootControlInstance(),
+					currentLayer : this.getLayer()
+				};
+				return Promise.all([
+					PersistenceWriteAPI.isPublishEnabled(mPropertyBag),
+					PersistenceWriteAPI.isResetEnabled(mPropertyBag)
+				])
+				.then(function(aPromiseResults) {
+					this.bInitialPublishEnabled = aPromiseResults[0];
+					this.bInitialResetEnabled = aPromiseResults[1];
+				}.bind(this))
 			}.bind(this))
 			.then(function () {
 				if (this.getShowToolbars()) {
@@ -700,7 +720,7 @@ function(
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
-			return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
+			return [!oSettings.isProductiveSystem(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 		}.bind(this))
 		.catch(function () {
 			return false;
@@ -786,8 +806,8 @@ function(
 
 		if (this.getShowToolbars()) {
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
-			this.getToolbar().setPublishEnabled(this._bChangesExist || bCanUndo);
-			this.getToolbar().setRestoreEnabled(this._bChangesExist || bCanUndo);
+			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
+			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -892,11 +912,11 @@ function(
 			) {
 				this._onUndo().then(oEvent.stopPropagation.bind(oEvent));
 			} else if (
-				(( // OSX: CMD+SHIFT+Z
+				((// OSX: CMD+SHIFT+Z
 					bMacintosh
 					&& oEvent.keyCode === KeyCodes.Z
 					&& oEvent.shiftKey === true
-				) || ( // Others: CTRL+Y
+				) || (// Others: CTRL+Y
 					!bMacintosh
 					&& oEvent.keyCode === KeyCodes.Y
 					&& oEvent.shiftKey === false
@@ -976,6 +996,9 @@ function(
 				}), 'toolbar');
 			}
 
+			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
+			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
+
 			var bExtendedOverview;
 
 			if (bIsAppVariantSupported) {
@@ -1001,15 +1024,6 @@ function(
 					this.getToolbar().getControl('saveAs').setEnabled(bResult);
 				}.bind(this));
 			}
-
-			this._checkChangesExist().then(function(bResult) {
-				// FIXME: remove this condition when start() is refactored properly
-				if (!this.bIsDestroyed) {
-					this._bChangesExist = bResult;
-					this.getToolbar().setPublishEnabled(bResult);
-					this.getToolbar().setRestoreEnabled(bResult);
-				}
-			}.bind(this));
 		}
 	};
 
@@ -1105,7 +1119,7 @@ function(
 	/**
 	 * Delete all changes for current layer and root control's component.
 	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Flex Persistence instances,
-	 * so we have to call reset twice. For App Variants all the changes are saved in one place.
+	 * the changes for both places will be deleted. For App Variants all the changes are saved in one place.
 	 *
 	 * @private
 	 */
@@ -1288,7 +1302,7 @@ function(
 				if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
 					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_DEPENDENCY_ERROR", "MSG_DEPENDENCY_ERROR", oError);
 				}
-				FlexUtils.log.error("sap.ui.rta: " + oError.message);
+				Log.error("sap.ui.rta: " + oError.message);
 			});
 		}
 		return Promise.resolve();
@@ -1317,23 +1331,6 @@ function(
 		if (this.getPlugins()["cutPaste"]) {
 			this.getPlugins()["cutPaste"].stopCutAndPaste();
 		}
-	};
-
-	/**
-	 * Check if Changes exist
-	 * @private
-	 * @returns {Promise} Resolving to false means that no change check is required
-	 */
-	RuntimeAuthoring.prototype._checkChangesExist = function() {
-		var oRootControl = this.getRootControlInstance();
-		var oAppComponent = FlexUtils.getAppComponentForControl(oRootControl);
-		if (FlexUtils.getComponentName(oAppComponent).length > 0) {
-			return PersistenceWriteAPI.hasChangesToPublish({
-				selector: oAppComponent,
-				currentLayer: this.getLayer()
-			});
-		}
-		return Promise.resolve(false);
 	};
 
 	/**

@@ -314,23 +314,6 @@ sap.ui.define([
 			return this;
 		};
 
-		/*
-		 * Sets the slider isCyclic property.
-		 * @param {boolean} bValue If the slider is cyclic or not
-		 * @returns {*} this
-		 */
-		TimePickerSlider.prototype.setIsCyclic = function(bValue) {
-			if (this.getDomRef()) {
-				if (bValue) {
-					this.$().removeClass("sapMTimePickerSliderShort");
-				} else {
-					this.$().addClass("sapMTimePickerSliderShort");
-				}
-			}
-
-			return this.setProperty("isCyclic", bValue, false);
-		};
-
 		/**
 		 * Handles the focusin event.
 		 *
@@ -365,49 +348,57 @@ sap.ui.define([
 		};
 
 		TimePickerSlider.prototype._onmousewheel = function(oEvent) {
+			var oOriginalEvent,
+				bDirectionPositive,
+				wheelData;
+
 			// prevent the default behavior
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 
-			if (!this.getIsExpanded()) {
+			if (!this.getIsExpanded() || this._intervalId) {
 				return false;
 			}
 
-			var oOriginalEvent = oEvent.originalEvent,
-					bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0),
-					fnRound = bDirectionPositive ? Math.ceil : Math.floor,
-					wheelData = oOriginalEvent.detail ? (-oOriginalEvent.detail / 3) : (oOriginalEvent.wheelDelta / 120),
-					that = this,
-					iResultOffset;
+			oOriginalEvent = oEvent.originalEvent;
+			bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0);
+			wheelData = oOriginalEvent.detail ? (-oOriginalEvent.detail / 3) : (oOriginalEvent.wheelDelta / 120);
 
 			if (!wheelData) {
 				return false;
 			}
 
+			this._handleWheelScroll(bDirectionPositive, wheelData);
+		};
+
+		TimePickerSlider.prototype._handleWheelScroll = function(bDirectionPositive, wheelData) {
+			var fnRound = bDirectionPositive ? Math.ceil : Math.floor,
+				iResultOffset;
+
 			if (!this._aWheelDeltas) {
 				this._aWheelDeltas = [];
 			}
 
-			that._aWheelDeltas.push(wheelData);
+			this._aWheelDeltas.push(wheelData);
 
 			if (!this._bWheelScrolling) {
 				this._bWheelScrolling = true;
 
 				this._intervalId = setInterval(function () {
-					if (!that._aWheelDeltas.length) {
-						clearInterval(that._intervalId);
-						that._intervalId = null;
-						that._bWheelScrolling = false;
+					if (!this._aWheelDeltas.length) {
+						clearInterval(this._intervalId);
+						this._intervalId = null;
+						this._bWheelScrolling = false;
 					} else {
-						iResultOffset = that._aWheelDeltas[0]; //simplification, we could still use the array in some cases
-						that._aWheelDeltas = [];
+						iResultOffset = this._aWheelDeltas[0]; //simplification, we could still use the array in some cases
+						this._aWheelDeltas = [];
 
 						iResultOffset = fnRound(iResultOffset);
 						if (iResultOffset) { // !== 0, actually move
-							that._offsetSlider(iResultOffset);
+							this._offsetSlider(iResultOffset);
 						}
 					}
-				}, 150);
+				}.bind(this), 150);
 			}
 
 			return false;

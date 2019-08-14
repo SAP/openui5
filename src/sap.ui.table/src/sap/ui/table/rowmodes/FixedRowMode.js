@@ -45,7 +45,13 @@ sap.ui.define([
 			});
 
 			if (this.bLegacy) {
+				var oTable = arguments[1];
+
+				this.getParent = function() {
+					return oTable;
+				};
 				RowMode.call(this);
+				this.attachEvents();
 			} else {
 				RowMode.apply(this, arguments);
 			}
@@ -54,8 +60,20 @@ sap.ui.define([
 
 	var TableDelegate = {};
 
-	FixedRowMode.prototype.init = function() {
-		RowMode.prototype.init.call(this, TableDelegate);
+	/**
+	 * @inheritDoc
+	 */
+	FixedRowMode.prototype.attachEvents = function() {
+		RowMode.prototype.attachEvents.apply(this, arguments);
+		TableUtils.addDelegate(this.getTable(), TableDelegate, this);
+	};
+
+	/**
+	 * @inheritDoc
+	 */
+	FixedRowMode.prototype.detachEvents = function() {
+		RowMode.prototype.detachEvents.apply(this, arguments);
+		TableUtils.removeDelegate(this.getTable(), TableDelegate);
 	};
 
 	/*
@@ -195,6 +213,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @this sap.ui.table.rowmodes.FixedRowMode
+	 */
 	TableDelegate.onBeforeRendering = function(oEvent) {
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
@@ -203,6 +224,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @this sap.ui.table.rowmodes.FixedRowMode
+	 */
 	TableDelegate.onAfterRendering = function(oEvent) {
 		var oTable = this.getTable();
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");

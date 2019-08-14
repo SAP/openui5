@@ -5,11 +5,15 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/Variant"
+	"sap/ui/fl/Variant",
+	"sap/base/util/ObjectPath",
+	"sap/base/Log"
 ], function (
 	Utils,
 	Change,
-	Variant
+	Variant,
+	ObjectPath,
+	Log
 ) {
 	"use strict";
 
@@ -76,6 +80,15 @@ sap.ui.define([
 				aVariants.forEach(function (oVariant, index) {
 					if (oVariant.content.fileName === sVariantManagementReference) {
 						iIndex = index;
+						// Standard Variant should always contain the value: "SAP" in "author" / "Created by" field
+						if (!ObjectPath.get("content.support.user", oVariant)) {
+							var oSupport = {
+								support: {
+									user: "SAP"
+								}
+							};
+							Object.assign(oVariant.content, oSupport);
+						}
 					}
 					if (!oVariant.content.content.favorite) {
 						oVariant.content.content.favorite = true;
@@ -201,7 +214,7 @@ sap.ui.define([
 
 	VariantController.prototype.setVariantChanges = function(sVariantManagementReference, sVariantReference, aChanges) {
 		if (!sVariantManagementReference || !sVariantReference || !Array.isArray(aChanges)) {
-			Utils.log.error("Cannot set variant changes without Variant reference");
+			Log.error("Cannot set variant changes without Variant reference");
 			return undefined;
 		}
 
@@ -395,7 +408,7 @@ sap.ui.define([
 					}
 					break;
 				default:
-					Utils.log.error("No valid changes on variant " + oVariant.content.content.title + " available");
+					Log.error("No valid changes on variant " + oVariant.content.content.title + " available");
 			}
 		}.bind(this));
 	};
@@ -447,7 +460,8 @@ sap.ui.define([
 							title : oVariant.content.content.title,
 							layer : oVariant.content.layer,
 							favorite : oVariant.content.content.favorite,
-							visible : oVariant.content.content.visible
+							visible : oVariant.content.content.visible,
+							author : ObjectPath.get("content.support.user", oVariant)
 						})
 					);
 			});

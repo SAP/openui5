@@ -24,58 +24,120 @@ sap.ui.define(function () {
 		tests: {
 			// new tests
 			"apply/api/FlexRuntimeInfoAPI": {
-				group: 'Apply API',
+				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"apply/api/ControlVariantApplyAPI": {
-				group: 'Apply API',
+				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"apply/api/SmartVariantManagementApplyAPI": {
-				group: 'Apply API',
+				group: "Apply API",
 				coverage: {
 					only: ["sap/ui/fl/apply/api/SmartVariantManagementApplyAPI"]
 				}
 			},
-			"apply/internal/Connector": {
-				group: 'Apply Internal',
+			"apply/api/UI2PersonalizationApplyAPI": {
+				group: "Apply API",
+				coverage: {
+					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
+				}
+			},
+			"apply/internal/connectors/BrowserStorageConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/apply/internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/apply/internal/connectors/SessionStorageConnector"
+					]
+				},
 				ui5: {
-					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
+					flexibilityServices: '[{"connectorName": "BrowserStorageConnector", "layerFilter": []}]'
+				}
+			},
+			"apply/internal/connectors/BrowserStorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/connectors/BrowserStorageUtils"]
+				}
+			},
+			"apply/internal/ChangesController": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/ChangesController"]
+				}
+			},
+			"apply/internal/Connector": {
+				group: "Apply Internal",
+				ui5: {
+					resourceroots: {
+						"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"
+					}
 				},
 				coverage: {
-					only: ["sap/ui/fl/write/internal/Connector"]
+					only: ["sap/ui/fl/apply/internal/Connector"]
+				}
+			},
+			"apply/internal/connectors/JsObjectConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/internal/connectors/JsObjectConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": []}]'
+				}
+			},
+			"apply/internal/connectors/LrepConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/connectors/LrepConnector"]
+				}
+			},
+			"apply/internal/connectors/PersonalizationConnector": {
+				group: 'Apply Internal',
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/connectors/PersonalizationConnector"]
+				}
+			},
+			"apply/internal/connectors/KeyUserConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/internal/connectors/KeyUserConnector"]
 				}
 			},
 			"apply/internal/ConnectorWithCustomBrokenConnector": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				ui5: {
 					resourceroots: {
 						"my.lib": "./test-resources/sap/ui/fl/qunit/apply/internal/",
 						"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"
 					},
 					"xx-flexBundleRequestForced": true,
-					"xx-flexibilityConnectors": [{connectorName: "my/lib/BrokenConnector", custom: true, layerFilter: []}]
+					flexibilityServices: '[{"connectorName": "my/lib/BrokenConnector", "custom": true, "layerFilter": []}]'
 				},
 				coverage: {
-					only: ["sap/ui/fl/write/internal/Connector"]
+					only: ["sap/ui/fl/apply/internal/Connector"]
 				}
 			},
 			"apply/internal/ConnectorWithDebugEnabled": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				ui5: {
 					debug: true,
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
 				},
 				coverage: {
-					only: ["sap/ui/fl/write/internal/Connector"]
+					only: ["sap/ui/fl/apply/internal/Connector"]
 				}
 			},
 			"apply/internal/ConnectorWithForcedFlexBundle": {
-				group: 'Apply Internal',
+				group: "Apply Internal",
 				ui5: {
 					"xx-flexBundleRequestForced": true,
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/internal/"}
@@ -85,44 +147,86 @@ sap.ui.define(function () {
 				}
 			},
 			"write/api/ChangesWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/write/internal/ChangesController"]
+					only: ["sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/fl/apply/internal/ChangesController"]
 				}
 			},
 			"write/api/ControlPersonalizationWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/ControlPersonalizationAPI"]
 				}
 			},
 			"write/api/PersistenceWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
-					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/write/internal/ChangesController"]
+					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/apply/internal/ChangesController"]
+				}
+			},
+			"write/api/FeaturesAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/FeaturesAPI"]
+				}
+			},
+			"write/api/UI2PersonalizationWriteAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/UI2PersonalizationWriteAPI"]
 				}
 			},
 			"write/api/SmartVariantManagementWriteAPI": {
-				group: 'Write API',
+				group: "Write API",
 				coverage: {
 					only: ["sap/ui/fl/write/api/SmartVariantManagementWriteAPI"]
 				}
 			},
-			"write/internal/ChangesController": {
-				group: 'Write API',
-				coverage: {
-					only: ["sap/ui/fl/write/internal/ChangesController"]
-				}
-			},
 			"write/internal/Connector": {
-				group: 'Write Internal',
+				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/api/internal/Connector"]
 				}
 			},
+			"write/internal/connectors/PersonalizationConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/internal/connectors/PersonalizationConnector"]
+				}
+			},
+			"write/internal/connectors/BrowserStorageConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/write/internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/write/internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connectorName": "BrowserStorageConnector", "layerFilter": []}]'
+				}
+			},
+			"write/internal/connectors/JsObjectConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/internal/connectors/JsObjectConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": []}]'
+				}
+			},
+			"write/internal/connectors/LrepConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/internal/connectors/LrepConnector"]
+				}
+			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
-				group: 'Descriptor related APIs',
+				group: "Descriptor related APIs",
 				coverage: {
 					only: [
 						"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
@@ -132,7 +236,7 @@ sap.ui.define(function () {
 				}
 			},
 			"descriptorRelated/internal/Utils": {
-				group: 'Descriptor related Utils',
+				group: "Descriptor related Utils",
 				coverage: {
 					only: ["sap/ui/fl/descriptorRelated/internal/Utils"]
 				}
@@ -279,8 +383,8 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/changeHandler/PropertyBindingChange"]
 				},
 				ui5: {
-					'xx-bindingSyntax': 'complex',
-					'xx-designMode': 'true'
+					"xx-bindingSyntax": "complex",
+					"xx-designMode": "true"
 				}
 			},
 			"changeHandler/PropertyChange": {
@@ -398,7 +502,7 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/library"]
 				},
 				ui5: {
-					flexibilityServices: false,
+					flexibilityServices: "",
 					libs: null // The fl library is being loaded inside the test
 				}
 			},

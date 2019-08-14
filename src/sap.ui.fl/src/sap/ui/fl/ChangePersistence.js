@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
-	"sap/base/util/isEmptyObject"
+	"sap/base/util/isEmptyObject",
+	"sap/base/Log"
 ], function(
 	Change,
 	Variant,
@@ -35,7 +36,8 @@ sap.ui.define([
 	JSONModel,
 	jQuery,
 	merge,
-	isEmptyObject
+	isEmptyObject,
+	Log
 ) {
 	"use strict";
 
@@ -85,7 +87,7 @@ sap.ui.define([
 		this._mVariantsChanges = {};
 
 		if (!this._mComponent || !this._mComponent.name) {
-			Utils.log.error("The Control does not belong to an SAPUI5 component. Personalization and changes for this control might not work as expected.");
+			Log.error("The Control does not belong to an SAPUI5 component. Personalization and changes for this control might not work as expected.");
 			throw new Error("Missing component name.");
 		}
 
@@ -152,7 +154,7 @@ sap.ui.define([
 	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeOrChangeContent) {
 		var oChangeContent = oChangeOrChangeContent instanceof Change ? oChangeOrChangeContent.getDefinition() : oChangeOrChangeContent;
 		if (!oChangeContent.fileName) {
-			Utils.log.warning("A change without fileName is detected and excluded from component: " + this._mComponent.name);
+			Log.warning("A change without fileName is detected and excluded from component: " + this._mComponent.name);
 			return false;
 		}
 
@@ -480,7 +482,7 @@ sap.ui.define([
 		};
 
 		var fLogError = function(key, text) {
-			Utils.log.error("key : " + key + " and text : " + text.value);
+			Log.error("key : " + key + " and text : " + text.value);
 		};
 
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
@@ -489,22 +491,15 @@ sap.ui.define([
 			if (!this._mVariantsChanges[sStableId]) {
 				this._mVariantsChanges[sStableId] = {};
 			}
-			if (aChanges && aChanges.length === 0) {
-				return LRepConnector.isFlexServiceAvailable().then(function (bStatus) {
-					if (bStatus === false) {
-						return Promise.reject();
-					}
-					return Promise.resolve(this._mVariantsChanges[sStableId]);
-				}.bind(this));
-			}
+
 			var sId;
 			aChanges.forEach(function (oChange) {
 				sId = oChange.getId();
 				if (oChange.isValid()) {
 					if (this._mVariantsChanges[sStableId][sId] && oChange.isVariant()) {
-						Utils.log.error("Id collision - two or more variant files having the same id detected: " + sId);
+						Log.error("Id collision - two or more variant files having the same id detected: " + sId);
 						jQuery.each(oChange.getDefinition().texts, fLogError);
-						Utils.log.error("already exists in variant : ");
+						Log.error("already exists in variant : ");
 						jQuery.each(this._mVariantsChanges[sStableId][sId].getDefinition().texts, fLogError);
 					}
 					this._mVariantsChanges[sStableId][sId] = oChange;
@@ -542,14 +537,14 @@ sap.ui.define([
 			return undefined;
 		}
 		if (!mParameters.type) {
-			Utils.log.error("sap.ui.fl.Persistence.addChange : type is not defined");
+			Log.error("sap.ui.fl.Persistence.addChange : type is not defined");
 		}
 		//if (!mParameters.ODataService) {
-		//	Utils.log.error("sap.ui.fl.Persistence.addChange : ODataService is not defined");
+		//	Log.error("sap.ui.fl.Persistence.addChange : ODataService is not defined");
 		//}
 		var sContentType = jQuery.type(mParameters.content);
 		if (sContentType !== 'object' && sContentType !== 'array') {
-			Utils.log.error("mParameters.content is not of expected type object or array, but is: " + sContentType, "sap.ui.fl.Persistence#addChange");
+			Log.error("mParameters.content is not of expected type object or array, but is: " + sContentType, "sap.ui.fl.Persistence#addChange");
 		}
 		// convert the text object to the internal structure
 		mInternalTexts = {};
@@ -1247,7 +1242,7 @@ sap.ui.define([
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 			var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
 			var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-			Utils.log.error("transport error" + oError);
+			Log.error("transport error" + oError);
 			MessageBox.show(sMessage, {
 				icon: MessageBox.Icon.ERROR,
 				title: sTitle,
@@ -1306,7 +1301,7 @@ sap.ui.define([
 		var bChangeTypesProvided = aChangeTypes && aChangeTypes.length > 0;
 
 		if (!sGenerator && !bSelectorIdsProvided && !bChangeTypesProvided) {
-			Utils.log.error("Of the generator, selector IDs and change types parameters at least one has to filled");
+			Log.error("Of the generator, selector IDs and change types parameters at least one has to filled");
 			return Promise.reject("Of the generator, selector IDs and change types parameters at least one has to filled");
 		}
 
@@ -1323,7 +1318,7 @@ sap.ui.define([
 					return Settings.getInstance(this.getComponentName());
 				}.bind(this))
 				.then(function (oSettings) {
-					if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
+					if (!oSettings.isProductiveSystem()) {
 						return this._oTransportSelection.setTransports(aChanges, Component.get(this.getComponentName()));
 					}
 				}.bind(this));

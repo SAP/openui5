@@ -108,6 +108,8 @@ sap.ui.define([
 		 */
 		_handleClickSelection: function(oEvent, $Cell, oTable) {
 			TableUtils.toggleRowSelection(oTable, $Cell, null, function(iRowIndex) {
+				var oSelectionPlugin = oTable._getSelectionPlugin();
+
 				// IE and Edge perform a text selection if holding shift while clicking. This is not desired for range selection of rows.
 				if ((Device.browser.msie || Device.browser.edge) && oEvent.shiftKey) {
 					oTable._clearTextSelection();
@@ -117,28 +119,28 @@ sap.ui.define([
 
 				// Single selection
 				if (oSelMode === SelectionMode.Single) {
-					if (!oTable.isIndexSelected(iRowIndex)) {
-						oTable.setSelectedIndex(iRowIndex);
+					if (!oSelectionPlugin.isIndexSelected(iRowIndex)) {
+						oSelectionPlugin.setSelectedIndex(iRowIndex);
 					} else {
-						oTable.clearSelection();
+						oSelectionPlugin.clearSelection();
 					}
 
 				// Multi selection (range)
 				} else if (oEvent.shiftKey) {
 					// If no row is selected, getSelectedIndex returns -1. Then we simply select the clicked row.
-					var iSelectedIndex = oTable.getSelectedIndex();
+					var iSelectedIndex = oSelectionPlugin.getSelectedIndex();
 					if (iSelectedIndex >= 0) {
-						oTable.addSelectionInterval(iSelectedIndex, iRowIndex);
-					} else if (oTable._getSelectedIndicesCount() === 0) {
-						oTable.setSelectedIndex(iRowIndex);
+						oSelectionPlugin.addSelectionInterval(iSelectedIndex, iRowIndex);
+					} else if (oSelectionPlugin.getSelectedCount() === 0) {
+						oSelectionPlugin.setSelectedIndex(iRowIndex);
 					}
 
 				// Multi selection (toggle)
 				} else if (!oTable._legacyMultiSelection) {
-					if (!oTable.isIndexSelected(iRowIndex)) {
-						oTable.addSelectionInterval(iRowIndex, iRowIndex);
+					if (!oSelectionPlugin.isIndexSelected(iRowIndex)) {
+						oSelectionPlugin.addSelectionInterval(iRowIndex, iRowIndex);
 					} else {
-						oTable.removeSelectionInterval(iRowIndex, iRowIndex);
+						oSelectionPlugin.removeSelectionInterval(iRowIndex, iRowIndex);
 					}
 
 				// Multi selection (legacy)
@@ -789,8 +791,10 @@ sap.ui.define([
 				// forward the event
 				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
 					if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
-						if (this._oSelectionPlugin.onHeaderSelectorPress) {
-							this._oSelectionPlugin.onHeaderSelectorPress();
+						var oSelectionPlugin = this._getSelectionPlugin();
+
+						if (oSelectionPlugin.onHeaderSelectorPress) {
+							oSelectionPlugin.onHeaderSelectorPress();
 						} else {
 							this._toggleSelectAll();
 						}

@@ -163,7 +163,9 @@ sap.ui.define([
 			},
 
 			/**
-			 * This event is fired when the cancelButton is clicked. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by clicking outside.
+			 * This event is fired when the cancelButton is clicked.
+			 *
+			 * <b>Note: </b> For any device other than phones, this event would be fired always when the Popover closes. To prevent this behavior, the <code>showCancelButton</code> property needs to be set to <code>false</code>.
 			 */
 			cancelButtonPress : {}
 		},

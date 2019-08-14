@@ -17,7 +17,7 @@
 		<subHeader>
 			<Bar id="header" class="sapContrast sapContrastPlus">
 				<contentLeft>
-					<Button type="Back" press="onNavBack" tooltip="Back" enabled="{= ${/disableNavBack} === undefined }"/>
+					<Button type="Back" press="onNavBack" tooltip="Back to samples" enabled="{= ${/disableNavBack} === undefined }"/>
 				</contentLeft>
 				<contentMiddle>
 					<Title text="{/title}"/>
@@ -63,6 +63,15 @@
 							tooltip="Open in new Tab"
 							icon="sap-icon://inspect"
 							press="onNewTab" />
+					<Button
+							class="sapUiHideOnPhone"
+							text="Download"
+							icon="sap-icon://download"
+							press="onDownload" />
+					<Button
+							class="sapUiVisibleOnlyOnPhone"
+							icon="sap-icon://download"
+							press="onDownload" />
 				</contentRight>
 			</Bar>
 		</subHeader>

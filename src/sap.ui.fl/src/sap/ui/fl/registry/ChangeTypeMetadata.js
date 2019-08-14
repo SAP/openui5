@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"], function(Utils) {
+sap.ui.define([
+	"sap/base/Log"
+], function(
+	Log
+) {
 	"use strict";
 
 	/**
@@ -24,10 +28,10 @@ sap.ui.define(["sap/ui/fl/Utils"], function(Utils) {
 	 */
 	var ChangeTypeMetadata = function(mParam) {
 		if (!mParam.name) {
-			Utils.log.error("sap.ui.fl.registry.ChangeType: Name required");
+			Log.error("sap.ui.fl.registry.ChangeType: Name required");
 		}
 		if (!mParam.changeHandler) {
-			Utils.log.error("sap.ui.fl.registry.ChangeType: ChangeHandler required");
+			Log.error("sap.ui.fl.registry.ChangeType: ChangeHandler required");
 		}
 
 		this._name = mParam.name;

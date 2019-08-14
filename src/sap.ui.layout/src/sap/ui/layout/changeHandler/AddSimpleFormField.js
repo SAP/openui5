@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/ChangeHandlerMediator",
-	"sap/ui/fl/changeHandler/Base"
+	"sap/ui/fl/changeHandler/Base",
+	"sap/base/Log"
 ], function(
-	Utils,
 	ChangeHandlerMediator,
-	Base
+	Base,
+	Log
 ) {
 	"use strict";
 
@@ -146,7 +146,7 @@ sap.ui.define([
 
 				return true;
 			} else {
-				Utils.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
+				Log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
 					+ oChangeDefinition.namespace + "/"
 					+ oChangeDefinition.fileName + "."
 					+ oChangeDefinition.fileType);

@@ -62,19 +62,23 @@ margin: 0px;\
 background: #f0f0f0;\
 }";
 dom.importCssString(cssText);
-module.exports.overlayPage = function overlayPage(editor, contentElement, top, right, bottom, left) {
-    top = top ? 'top: ' + top + ';' : '';
-    bottom = bottom ? 'bottom: ' + bottom + ';' : '';
-    right = right ? 'right: ' + right + ';' : '';
-    left = left ? 'left: ' + left + ';' : '';
 
+module.exports.overlayPage = function overlayPage(editor, contentElement, callback) {
     var closer = document.createElement('div');
-    var contentContainer = document.createElement('div');
 
     function documentEscListener(e) {
         if (e.keyCode === 27) {
-            closer.click();
+            close();
         }
+    }
+
+    function close() {
+        if (!closer) return;
+        document.removeEventListener('keydown', documentEscListener);
+        closer.parentNode.removeChild(closer);
+        editor.focus();
+        closer = null;
+        callback && callback();
     }
 
     closer.style.cssText = 'margin: 0; padding: 0; ' +
@@ -82,34 +86,20 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, top, r
         'z-index: 9990; ' +
         'background-color: rgba(0, 0, 0, 0.3);';
     closer.addEventListener('click', function() {
-        document.removeEventListener('keydown', documentEscListener);
-        closer.parentNode.removeChild(closer);
-        editor.focus();
-        closer = null;
+        close();
     });
     document.addEventListener('keydown', documentEscListener);
 
-    contentContainer.style.cssText = top + right + bottom + left;
-    contentContainer.addEventListener('click', function(e) {
+    contentElement.addEventListener('click', function (e) {
         e.stopPropagation();
     });
 
-    var wrapper = dom.createElement("div");
-    wrapper.style.position = "relative";
-    
-    var closeButton = dom.createElement("div");
-    closeButton.className = "ace_closeButton";
-    closeButton.addEventListener('click', function() {
-        closer.click();
-    });
-    
-    wrapper.appendChild(closeButton);
-    contentContainer.appendChild(wrapper);
-    
-    contentContainer.appendChild(contentElement);
-    closer.appendChild(contentContainer);
+    closer.appendChild(contentElement);
     document.body.appendChild(closer);
     editor.blur();
+    return {
+        close: close
+    };
 };
 
 });
@@ -160,10 +150,13 @@ var supportedModes = {
     ASL:         ["dsl|asl"],
     Assembly_x86:["asm|a"],
     AutoHotKey:  ["ahk"],
+    Apex:        ["apex|cls|trigger|tgr"],
+    AQL:         ["aql"],
     BatchFile:   ["bat|cmd"],
     Bro:         ["bro"],
     C_Cpp:       ["cpp|c|cc|cxx|h|hh|hpp|ino"],
     C9Search:    ["c9search_results"],
+    Crystal:     ["cr"],
     Cirru:       ["cirru|cr"],
     Clojure:     ["clj|cljs"],
     Cobol:       ["CBL|COB"],
@@ -190,6 +183,7 @@ var supportedModes = {
     Forth:       ["frt|fs|ldr|fth|4th"],
     Fortran:     ["f|f90"],
     FSharp:      ["fsi|fs|ml|mli|fsx|fsscript"],
+    FSL:         ["fsl"],
     FTL:         ["ftl"],
     Gcode:       ["gcode"],
     Gherkin:     ["feature"],
@@ -202,7 +196,7 @@ var supportedModes = {
     HAML:        ["haml"],
     Handlebars:  ["hbs|handlebars|tpl|mustache"],
     Haskell:     ["hs"],
-    Haskell_Cabal:     ["cabal"],
+    Haskell_Cabal: ["cabal"],
     haXe:        ["hx"],
     Hjson:       ["hjson"],
     HTML:        ["html|htm|xhtml|vue|we|wpy"],
@@ -240,15 +234,18 @@ var supportedModes = {
     MIXAL:       ["mixal"],
     MUSHCode:    ["mc|mush"],
     MySQL:       ["mysql"],
+    Nginx:       ["nginx|conf"],
     Nix:         ["nix"],
+    Nim:         ["nim"],
     NSIS:        ["nsi|nsh"],
     ObjectiveC:  ["m|mm"],
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
     Perl:        ["pl|pm"],
+    Perl6:       ["p6|pl6|pm6"],
     pgSQL:       ["pgsql"],
     PHP_Laravel_blade: ["blade.php"],
-    PHP:         ["php|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
+    PHP:         ["php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
     Puppet:      ["epp|pp"],
     Pig:         ["pig"],
     Powershell:  ["ps1"],
@@ -267,7 +264,7 @@ var supportedModes = {
     Rust:        ["rs"],
     SASS:        ["sass"],
     SCAD:        ["scad"],
-    Scala:       ["scala"],
+    Scala:       ["scala|sbt"],
     Scheme:      ["scm|sm|rkt|oak|scheme"],
     SCSS:        ["scss"],
     SH:          ["sh|bash|^.bashrc"],
@@ -289,13 +286,14 @@ var supportedModes = {
     Textile:     ["textile"],
     Toml:        ["toml"],
     TSX:         ["tsx"],
-    Twig:        ["twig|swig"],
+    Twig:        ["latte|twig|swig"],
     Typescript:  ["ts|typescript|str"],
     Vala:        ["vala"],
     VBScript:    ["vbs|vb"],
     Velocity:    ["vm"],
     Verilog:     ["v|vh|sv|svh"],
     VHDL:        ["vhd|vhdl"],
+    Visualforce: ["vfp|component|page"],
     Wollok:      ["wlk|wpgm|wtest"],
     XML:         ["xml|rdf|rss|wsdl|xslt|atom|mathml|mml|xul|xbl|xaml"],
     XQuery:      ["xq"],
@@ -315,7 +313,9 @@ var nameOverrides = {
     HTML_Ruby: "HTML (Ruby)",
     HTML_Elixir: "HTML (Elixir)",
     FTL: "FreeMarker",
-    PHP_Laravel_blade: "PHP (Blade Template)"
+    PHP_Laravel_blade: "PHP (Blade Template)",
+    Perl6: "Perl 6",
+    AutoHotKey: "AutoHotkey / AutoIt"
 };
 var modesByName = {};
 for (var name in supportedModes) {
@@ -335,9 +335,8 @@ module.exports = {
 
 });
 
-ace.define("ace/ext/themelist",["require","exports","module","ace/lib/fixoldbrowsers"], function(require, exports, module) {
+ace.define("ace/ext/themelist",["require","exports","module"], function(require, exports, module) {
 "use strict";
-require("ace/lib/fixoldbrowsers");
 
 var themeData = [
     ["Chrome"         ],
@@ -436,7 +435,8 @@ var optionGroups = {
             items: [
                 { caption : "Ace", value : null },
                 { caption : "Vim", value : "ace/keyboard/vim" },
-                { caption : "Emacs", value : "ace/keyboard/emacs" }
+                { caption : "Emacs", value : "ace/keyboard/emacs" },
+                { caption : "Sublime", value : "ace/keyboard/sublime" }
             ]
         },
         "Font Size": {
@@ -739,8 +739,7 @@ var OptionPanel = function(editor, element) {
 
 exports.OptionPanel = OptionPanel;
 
-});
-                (function() {
+});                (function() {
                     ace.require(["ace/ext/options"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

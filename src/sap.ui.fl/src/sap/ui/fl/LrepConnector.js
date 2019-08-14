@@ -55,7 +55,8 @@ sap.ui.define([
 		PUBLISH: "/actions/publish/",
 		DATA: "/flex/data/",
 		MODULES: "/flex/modules/",
-		SETTINGS: "/flex/settings"
+		SETTINGS: "/flex/settings",
+		INFO: "/flex/info"
 	};
 
 	/**
@@ -74,11 +75,6 @@ sap.ui.define([
 		return LrepConnector.createConnector().loadSettings().then(function () {
 			return Promise.resolve(LrepConnector._bServiceAvailability);
 		});
-	};
-
-
-	LrepConnector.prototype._getFlexibilityServicesUrlPrefix = function() {
-		return sap.ui.getCore().getConfiguration().getFlexibilityServices();
 	};
 
 	/**
@@ -284,7 +280,7 @@ sap.ui.define([
 	 * @private
 	 */
 	LrepConnector.prototype._sendAjaxRequest = function(sUri, mOptions) {
-		var sFlexibilityServicePrefix = this._getFlexibilityServicesUrlPrefix();
+		var sFlexibilityServicePrefix = FlexUtils.getLrepUrl();
 
 		if (!sFlexibilityServicePrefix) {
 			return Promise.reject({
@@ -449,8 +445,8 @@ sap.ui.define([
 
 		function _createUrls(oComponent, mPropertyBag, sClient) {
 			var mUrls = {};
-			var sFlexDataPrefix = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.DATA;
-			var sFlexModulesPrefix = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.MODULES;
+			var sFlexDataPrefix = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.DATA;
+			var sFlexModulesPrefix = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.MODULES;
 			var sPostFix = "";
 
 			if (mPropertyBag.cacheKey) {
@@ -504,6 +500,44 @@ sap.ui.define([
 				LrepConnector._bServiceAvailability = false;
 			}
 			throw (oError);
+		});
+	};
+
+	/**
+	 * Get flex/info from ABAP backend.
+	 *
+	 * @param {object} mPropertyBag Contains additional data needed for flex/info request
+	 * @param {string} mPropertyBag.reference Name of Component
+	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
+	 * @param {string} [mPropertyBag.appVersion] Version of the application that is currently running
+	 * @returns {Promise<object>} Returns the result from the request
+	 * @public
+	 */
+	LrepConnector.prototype.getFlexInfo = function(mPropertyBag) {
+		if (!mPropertyBag.reference) {
+			throw new Error("No Component to get flex info");
+		}
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.INFO + "/" + mPropertyBag.reference;
+		var aParams = [];
+		if (mPropertyBag.appVersion) {
+			aParams.push({
+				name: "appVersion",
+				value: mPropertyBag.appVersion
+			});
+		}
+
+		if (mPropertyBag.currentLayer) {
+			aParams.push({
+				name: "layer",
+				value: mPropertyBag.currentLayer
+			});
+		}
+		sRequestPath += this._buildParams(aParams);
+
+		return this.send(sRequestPath, "GET", null, null).then(function(oResponse) {
+			return oResponse.response;
+		}, function() {
+			return Promise.resolve({});
 		});
 	};
 
@@ -581,7 +615,7 @@ sap.ui.define([
 	 */
 	LrepConnector.prototype.loadSettings = function() {
 		if (!LrepConnector._oLoadSettingsPromise) {
-			var sUri = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.SETTINGS;
+			var sUri = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.SETTINGS;
 
 			if (this._sClient) {
 				sUri += "?sap-client=" + this._sClient;
@@ -650,9 +684,9 @@ sap.ui.define([
 	 */
 	LrepConnector.prototype._getUrlPrefix = function(bIsVariant) {
 		if (bIsVariant) {
-			return this._getFlexibilityServicesUrlPrefix() + "/variants/";
+			return FlexUtils.getLrepUrl() + "/variants/";
 		}
-		return this._getFlexibilityServicesUrlPrefix() + "/changes/";
+		return FlexUtils.getLrepUrl() + "/changes/";
 	};
 
 	/**
@@ -832,7 +866,7 @@ sap.ui.define([
 	 * @public
 	 */
 	LrepConnector.prototype.getStaticResource = function(sNamespace, sName, sType, bIsRuntime) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -859,7 +893,7 @@ sap.ui.define([
 	 * @public
 	 */
 	LrepConnector.prototype.getFileAttributes = function(sNamespace, sName, sType, sLayer) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -914,7 +948,7 @@ sap.ui.define([
 	};
 
 	LrepConnector.prototype._fileAction = function(sMethod, sNamespace, sName, sType, sLayer, sContent, sContentType, sChangelist) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -951,7 +985,7 @@ sap.ui.define([
 	 * @private Private for now, as is not in use.
 	 */
 	LrepConnector.prototype.publish = function(sOriginNamespace, sName, sType, sOriginLayer, sTargetLayer, sTargetNamespace, sChangelist) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.PUBLISH;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.PUBLISH;
 		sRequestPath += sOriginNamespace + "/" + sName + "." + sType;
 
 		var aParams = [];
@@ -994,7 +1028,7 @@ sap.ui.define([
 	 * @public
 	 */
 	LrepConnector.prototype.listContent = function(sNamespace, sLayer) {
-		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.CONTENT;
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
 		sRequestPath += sNamespace;
 
 		var aParams = [];

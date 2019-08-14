@@ -228,6 +228,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedButton("doesnotexist");
+		sap.ui.getCore().applyChanges();
 
 		// Assert (no button is selected)
 		assert.ok(!oButton1.$().hasClass("sapMSegBBtnSel"), "Button1 should not have class sapMSegBBtnSel");
@@ -703,6 +704,7 @@ sap.ui.define([
 
 		//Act
 		oSegmentedButton.setSelectedKey("k2");
+		sap.ui.getCore().applyChanges();
 
 		//Assert
 		assert.strictEqual(oSegmentedButton.getSelectedButton(), oSegmentedButton.getButtons()[1].getId(), "The invisible button is selected");
@@ -1093,6 +1095,7 @@ sap.ui.define([
 
 		// Act
 		oThisForChaining = oSegmentedButton.setSelectedButton(oButton2);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton2.getId(), "now the second button is selected");
@@ -1101,6 +1104,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedButton(oButton3.getId());
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedButton(), oButton3.getId(), "now the third button is selected");
@@ -1108,6 +1112,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedButton("mumpitz");
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedButton(), "mumpitz", "selectedButton association contains \"mumpitz\"");
@@ -1143,6 +1148,7 @@ sap.ui.define([
 
 		// Act
 		oThisForChaining = oSegmentedButton.setSelectedItem(oButton2);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton2.getId(), "now the second button is selected");
@@ -1151,6 +1157,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem("label");
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), "label",
@@ -1160,6 +1167,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(oLabel);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oLabel.getId(),
@@ -1167,6 +1175,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(undefined);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oSegmentedButton.getItems()[0].getId(),
@@ -1176,6 +1185,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem(oButton3.getId());
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton3.getId(), "now the third button is selected");
@@ -1183,6 +1193,7 @@ sap.ui.define([
 
 		// Act
 		oSegmentedButton.setSelectedItem("mumpitz");
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedItem(), "mumpitz", "selectedItem association contains \"mumpitz\"");

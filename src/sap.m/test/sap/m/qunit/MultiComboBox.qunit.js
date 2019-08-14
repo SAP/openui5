@@ -1886,6 +1886,28 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("it should not purge selected keys from the items", function (assert) {
+		// system under test
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new Item({key: "1", text: "1"}),
+				new Item({key: "2", text: "2"})
+			]
+		}).placeAt("MultiComboBox-content");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.addSelectedKeys(["", "", "1", "2", ""]);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox.getSelectedKeys().length, 5, "To have 5 items as selected keys");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are 2 real selected items");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	// BCP 0020079747 0000613914 2015
 	QUnit.test("it should not throw an exception, when the undefined value is passed in as an argument to the addSelectedKeys() method", function(assert) {
 
@@ -5305,8 +5327,7 @@ sap.ui.define([
 		this.oMultiComboBox.addItem(oItem);
 		this.oMultiComboBox.setSelectedItems([oItem]);
 
-		this.oMultiComboBox.setValue = "text";
-		this.oMultiComboBox.getFocusDomRef().selectionStart = 3;
+		this.oMultiComboBox.setValue("text");
 
 		sap.ui.getCore().applyChanges();
 
@@ -5759,6 +5780,66 @@ sap.ui.define([
 		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected keys remain to 1.");
 		assert.deepEqual(oMultiCombo.getSelectedKeys(), oData.selectedCustomKeys, "Selected keys are not changed as the same item is in the new data.");
 		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are not changed as the same item is in the new data.");
+
+		oMultiCombo.destroy();
+		oModel.destroy();
+	});
+
+	QUnit.test("Data binding: update model data and selected items", function (assert) {
+		var oData = {
+			"ProductCollection": [
+				{
+					"ProductId": "1234567",
+					"Name": "Power Projector 5"
+				},
+				{
+					"ProductId": "123",
+					"Name": "Power Projector 1"
+				}
+				, {
+					"ProductId": "1234",
+					"Name": "Power Projector 2"
+				}
+				, {
+					"ProductId": "12345",
+					"Name": "Power Projector 3"
+				}
+				, {
+					"ProductId": "123456",
+					"Name": "Power Projector 4"
+				}
+			],
+			"selectedCustomKeys": [
+				"1234567", "Zzz3"
+			]
+		};
+
+		var oMultiCombo = new MultiComboBox({
+			selectedKeys: "{/selectedCustomKeys}",
+			items: {
+				path: '/ProductCollection',
+				template: new Item({key: "{ProductId}", text: "{Name}"})
+			}
+		});
+		var oModel = new JSONModel(oData);
+		oMultiCombo.setModel(oModel);
+		oMultiCombo.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 2, "Selected keys are set to 2 items.");
+		assert.strictEqual(oMultiCombo.getSelectedItems().length, 1, "Selected items are set to 1 item.");
+		assert.deepEqual(oMultiCombo.getSelectedKeys(), oData.selectedCustomKeys, "Selected keys are properly propagated.");
+		assert.strictEqual(oMultiCombo.getSelectedItems()[0].getKey(), oData.selectedCustomKeys[0], "Selected items are properly propagated.");
+
+		var oData2 = Object.assign({}, oData);
+		oData2.ProductCollection.push({ProductId: "Zzz3", Name: "New Item"});
+		oModel.setProperty("/ProductCollection", oData2.ProductCollection);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiCombo.getSelectedKeys().length, 2, "Selected keys remain to 2.");
+		assert.strictEqual(oMultiCombo.getSelectedItems().length, 2, "Selected keys are updated to 2.");
+		assert.deepEqual(oMultiCombo.getSelectedKeys(), oData.selectedCustomKeys, "Selected keys are not changed as the same item is in the new data.");
+		assert.strictEqual(oMultiCombo.getSelectedItems()[1].getKey(), oData.selectedCustomKeys[1], "Selected items are not changed as the same item is in the new data.");
 
 		oMultiCombo.destroy();
 		oModel.destroy();
@@ -6258,6 +6339,26 @@ sap.ui.define([
 
 		// clean up
 		oMCB.destroy();
+	});
+
+	QUnit.test("Sync Items with Tokens", function (assert) {
+		// Setup
+		var oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
+
+		// Act
+		this.oMCB1.setWidth("30px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 4));
+
+		// Act
+		this.oMCB1.getItems()[0].setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		oIndicator = this.oMCB1.$().find(".sapMTokenizerIndicator");
+		assert.strictEqual(oIndicator.text(), oResourceBundle.getText("TOKENIZER_SHOW_ALL_ITEMS", 3));
 	});
 
 	QUnit.module("Expanded state (N-more)", {
