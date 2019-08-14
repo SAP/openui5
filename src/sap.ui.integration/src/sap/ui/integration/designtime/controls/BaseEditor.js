@@ -5,7 +5,7 @@ sap.ui.define([
     "sap/ui/core/Control",
     "sap/ui/model/resource/ResourceModel",
     "sap/base/util/ObjectPath",
-    "./Config",
+    'sap/base/util/merge',
     "sap/base/util/deepClone",
     "sap/ui/model/json/JSONModel",
     "sap/base/i18n/ResourceBundle",
@@ -14,7 +14,7 @@ sap.ui.define([
     Control,
     ResourceModel,
     ObjectPath,
-    Config,
+    merge,
     deepClone,
     JSONModel,
     ResourceBundle,
@@ -36,6 +36,12 @@ sap.ui.define([
                 "json": {
                     type: "object",
                     multiple: false
+                },
+                "_defaultConfig": {
+                    type: "object",
+                    visibility: "hidden",
+                    // do not override during inheritance, use this.addDefaultConfig instead!
+                    defaultValue: {}
                 }
             },
             aggregations: {
@@ -47,16 +53,24 @@ sap.ui.define([
             },
             events: {
                 jsonChanged: {
-                    type: "object"
+                    parameters: {
+                        json: {type: "object"}
+                    }
+                },
+                propertyEditorsReady: {
+                    parameters: {
+                        propertyEditors: {type: "array"}
+                    }
                 }
             }
         },
 
+        init: function () {
+            this.setConfig({});
+        },
+
         exit: function () {
             this._cleanup();
-            if (this._oMergedConfig) {
-                this._oMergedConfig.destroy();
-            }
         },
 
         renderer: function (oRm, oEditor) {
@@ -74,12 +88,6 @@ sap.ui.define([
             oRm.write("</div>");
         },
 
-        setConfig: function (oConfig) {
-            var vReturn = this.setProperty("config", oConfig, false);
-            this._initialize();
-            return vReturn;
-        },
-
         setJson: function (oJSON) {
             if (typeof oJSON === "string") {
                 oJSON = JSON.parse(oJSON);
@@ -87,6 +95,42 @@ sap.ui.define([
             var vReturn = this.setProperty("json", oJSON, false);
             this._initialize();
             return vReturn;
+        },
+
+        /**
+         * To be used only in constructor when inheriting from xEditor to add additional default config
+         * @param  {} oConfig to merge with previous default
+         */
+        addDefaultConfig: function(oConfig) {
+            this.setProperty("_defaultConfig",
+                this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+            );
+        },
+
+        _mergeConfig: function(oTarget, oSource) {
+            var oResult = deepClone(oTarget);
+            merge(oResult, oSource);
+            // concat i18n properties to avoid override
+            oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
+            return oResult;
+        },
+
+        setConfig: function (oConfig) {
+            return this._setConfig(
+                this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+            );
+        },
+
+        _setConfig: function(oConfig) {
+            var vReturn = this.setProperty("config", oConfig, false);
+            this._initialize();
+            return vReturn;
+        },
+
+        addConfig: function (oNewConfig) {
+            return this._setConfig(
+                this._mergeConfig(this.getConfig(), oNewConfig)
+            );
         }
     });
 
@@ -105,38 +149,26 @@ sap.ui.define([
 
     BaseEditor.prototype._initialize = function () {
         this._cleanup();
-        var oMergedConfig = this._mergeConfig();
-        this._createModels(oMergedConfig);
-        this._createEditors(oMergedConfig);
-    };
-
-
-    /**
-     * Todo: refactor -> setConfig
-     */
-    BaseEditor.prototype._mergeConfig = function () {
-        if (this._oMergedConfig) {
-            this._oMergedConfig.setData(this.getConfig());
-        } else {
-            this._oMergedConfig = new Config({data : this.getConfig()});
+        if (this.getConfig() && this.getConfig().properties) {
+            this._createModels();
+            this._createEditors();
         }
-        return deepClone(this._oMergedConfig.getData());
     };
 
-    BaseEditor.prototype._createModels = function (oConfig) {
-        this._createContextModel(oConfig);
-        this._createPropertyModel(oConfig);
-        this._createI18nModel(oConfig);
+    BaseEditor.prototype._createModels = function () {
+        this._createContextModel();
+        this._createPropertyModel();
+        this._createI18nModel();
     };
 
 
     /**
      * Context model is used as interface (read-only) for property editors.
      * Context model wraps context object, which is edited by the base editor
-     * @param  {} oConfig merged config
      */
-    BaseEditor.prototype._createContextModel = function (oConfig) {
+    BaseEditor.prototype._createContextModel = function () {
         var oContext = this.getJson();
+        var oConfig = this.getConfig();
         if (oConfig.context) {
             oContext = ObjectPath.get(oConfig.context.split("/"), oContext);
         }
@@ -148,9 +180,9 @@ sap.ui.define([
     /**
      * Property model is used as interface (read-only) for property editors.
      * Property model wraps property section of config and keeps values in sync with the edited json
-     * @param  {} oConfig merged config
      */
-    BaseEditor.prototype._createPropertyModel = function (oConfig) {
+    BaseEditor.prototype._createPropertyModel = function () {
+        var oConfig = this.getConfig();
         oConfig.properties = Object.keys(oConfig.properties).map(function(sPropertyName) {
             var oProperty = oConfig.properties[sPropertyName];
             oProperty.name = sPropertyName;
@@ -167,9 +199,9 @@ sap.ui.define([
      * I18n model is used as interface (read-only) for property editors.
      * I18n model created from all i18n bundles in the merged config.
      * To separate properties from different bundles namespacing should be user, e.g. i18n>BASE_EDITOR.PROPERTY
-     * @param  {} oConfig merged config
      */
-    BaseEditor.prototype._createI18nModel = function (oConfig) {
+    BaseEditor.prototype._createI18nModel = function () {
+        var oConfig = this.getConfig();
         oConfig.i18n.forEach(function(sI18nPath) {
             var oBundle = ResourceBundle.create({
                 url: sap.ui.require.toUrl(sI18nPath)
@@ -205,9 +237,9 @@ sap.ui.define([
 
     /**
      * Requires all editor modules and creates editor instances for all configurable properties
-     * @param  {} oConfig merged config
      */
-    BaseEditor.prototype._createEditors = function (oConfig) {
+    BaseEditor.prototype._createEditors = function () {
+        var oConfig = this.getConfig();
         var aTypes = Object.keys(oConfig.propertyEditors);
         var aModules = aTypes.map(function(sType) {
             return oConfig.propertyEditors[sType];
@@ -215,17 +247,24 @@ sap.ui.define([
 
         var mEditors = {};
 
+        this.__createEditorsCallCount = (this.__createEditorsCallCount || 0) + 1;
+        var iCurrentCall = this.__createEditorsCallCount;
         sap.ui.require(aModules, function() {
-            Array.from(arguments).forEach(function(Editor, iIndex) {
-                mEditors[aTypes[iIndex]] = Editor;
-            });
+            // check whether this is still the most recent call of _createEditors (otherwise config is invalid)
+            if (this.__createEditorsCallCount === iCurrentCall) {
+                Array.from(arguments).forEach(function(Editor, iIndex) {
+                    mEditors[aTypes[iIndex]] = Editor;
+                });
 
-            for (var iIndex = 0; iIndex < oConfig.properties.length; iIndex++) {
-                var oPropertyContext = this._oPropertyModel.getContext("/" + iIndex);
-                var Editor = mEditors[oPropertyContext.getObject().type];
-                if (Editor) {
-                    this.addPropertyEditor(this._createPropertyEditor(Editor, oPropertyContext));
+                for (var iIndex = 0; iIndex < oConfig.properties.length; iIndex++) {
+                    var oPropertyContext = this._oPropertyModel.getContext("/" + iIndex);
+                    var Editor = mEditors[oPropertyContext.getObject().type];
+                    if (Editor) {
+                        this.addPropertyEditor(this._createPropertyEditor(Editor, oPropertyContext));
+                    }
                 }
+
+                this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditors()});
             }
         }.bind(this));
     };

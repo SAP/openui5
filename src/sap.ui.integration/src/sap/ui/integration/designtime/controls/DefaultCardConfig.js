@@ -44,7 +44,7 @@ function () {
                 "type": "string",
                 "path": "header/status/text"
             },
-            "Number": {
+            "kpiNumber": {
                 "label": "{i18n>CARD_EDITOR.KPI}",
                 "type": "string",
                 "path": "data/json/kpiInfos/kpi/number",
