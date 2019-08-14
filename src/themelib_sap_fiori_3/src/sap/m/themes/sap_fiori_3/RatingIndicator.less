@@ -3,33 +3,34 @@
 /* Fiori 3 theme                          */
 /* ====================================== */
 
-.sapMRI.sapMRIReadOnly {
-	.sapMRIIconSel{
-		color: @sapUiAccent1;
+.sapMRI {
+	.sapMRIUnsel {
+		color: @sapUiContentUnratedColor;
 	}
-	.sapMRIIconReadOnly{
-		color: @sapUiFieldPlaceholderTextColor;
+
+	.sapMRISel {
+		color: @sapUiContentRatedColor;
+	}
+
+	.sapMRIHov {
+		color: darken(@sapUiContentRatedColor, 5);
 	}
 }
 
 .sapMRI.sapMRIDisplayOnly {
-	.sapMRIIconUnsel {
-		color: @sapUiFieldPlaceholderTextColor;
+	.sapMRIIconSel {
+		color: @sapUiBaseText;
 	}
 }
 
 .sapMRIDisabled {
-	opacity: 0.5;
+	opacity: 0.4;
 }
 
 /* Custom focus outline */
 html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
-}
-
-.sapMRIUnsel {
-	color:@sapUiContentLabelColor;
 }
 
 /* TODO remove after 1.62 version */
