@@ -12,122 +12,197 @@
 				data-sap-ui-theme="sap_belize">
 		</script>
 		<script>
-			sap.ui.getCore().attachInit(function () {
-				oAlignedFlowLayout1 = new sap.ui.layout.AlignedFlowLayout({
+			sap.ui.require([
+				"sap/m/App",
+				"sap/m/Page",
+				"sap/ui/layout/AlignedFlowLayout",
+				"sap/m/Input",
+				"sap/m/TextArea",
+				"sap/m/Button",
+				"sap/m/Text",
+				"sap/m/Label",
+				"sap/m/Slider"
+			], function(
+				App,
+				Page,
+				AlignedFlowLayout,
+				Input,
+				TextArea,
+				Button,
+				Text,
+				Label,
+				Slider
+			) {
+				oAlignedFlowLayout1 = new AlignedFlowLayout({
 					content: [
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input()
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input()
 					],
-					endContent: new sap.m.Button({
+					endContent: new Button({
 						text: "Search"
 					})
-					// minItemWidth: "30rem"
 				});
 
-				oAlignedFlowLayout2 = new sap.ui.layout.AlignedFlowLayout({
+				oAlignedFlowLayout2 = new AlignedFlowLayout({
 					content: [
-						new sap.m.Input(),
-						new sap.m.Input()
+						new Input(),
+						new Input()
 					],
-					endContent: new sap.m.Button({
+					endContent: new Button({
 						text: "Search"
 					})
 				});
 
-				oAlignedFlowLayout3 = new sap.ui.layout.AlignedFlowLayout({
+				oAlignedFlowLayout3 = new AlignedFlowLayout({
 					content: [
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input()
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input()
 					],
-					endContent: new sap.m.Button({
+					endContent: new Button({
 						text: "Searrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrch"
 					})
 				});
 
-				oAlignedFlowLayout4 = new sap.ui.layout.AlignedFlowLayout({
+				oAlignedFlowLayout4 = new AlignedFlowLayout({
 					content: [
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input()
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input(),
+						new Input()
 					],
-					endContent: new sap.m.Button({
+					endContent: new Button({
 						text: "Searrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrch"
 					})
 				});
 
-				oAlignedFlowLayout5 = new sap.ui.layout.AlignedFlowLayout({
+				oAlignedFlowLayout5 = new AlignedFlowLayout({
 					content: [
-						new sap.m.Input(),
-						new sap.m.Input(),
-						new sap.m.Input()
+						new Input(),
+						new Input(),
+						new Input()
 					]
 				});
 
-				oAlignedFlowLayout6 = new sap.ui.layout.AlignedFlowLayout({
+				oAlignedFlowLayout6 = new AlignedFlowLayout({
 					content: [
-						new sap.m.TextArea({
-							height: "8rem",
-							width: "100%"}),
-						new sap.m.TextArea({
+						new Input(),
+						new Input(),
+						new Input()
+					],
+					endContent: [
+						new Button({
+							text: "Dostosowanie filtrów (1)",
+						}),
+
+						new Button({
+							text: "Rozpoczęcie",
+						})
+					]
+				});
+
+				oAlignedFlowLayout7 = new AlignedFlowLayout({
+					content: [
+						new TextArea({
 							height: "8rem",
 							width: "100%"
 						}),
-						new sap.m.TextArea({
+						new TextArea({
 							height: "8rem",
 							width: "100%"
 						}),
-						new sap.m.TextArea({
+						new TextArea({
+							height: "8rem",
+							width: "100%"
+						}),
+						new TextArea({
 							height: "8rem",
 							width: "100%"
 						})
 					],
-					endContent: new sap.m.TextArea({
+					endContent: new TextArea({
 						height: "18rem"
 					})
 				});
 
-				new sap.m.App({
-					pages: new sap.m.Page({
+				var aAlignedFlowLayout = [oAlignedFlowLayout1, oAlignedFlowLayout2, oAlignedFlowLayout3, oAlignedFlowLayout4, oAlignedFlowLayout5, oAlignedFlowLayout6, oAlignedFlowLayout7];
+				var oSlider = new Slider({
+					id: "slider",
+					min: 50,
+					max: 500,
+					change: function(oControlEvent) {
+						var sValue = oControlEvent.getParameter("value");
+
+						aAlignedFlowLayout.forEach(function(oAlignedFlowLayout) {
+							oAlignedFlowLayout.getEndContent().forEach(function(oEndContent) {
+
+								if (sValue === this.getMin()) {
+									oEndContent.setWidth(undefined);
+								} else {
+									oEndContent.setWidth(sValue + "px");
+								}
+							}, this);
+							oAlignedFlowLayout.invalidate();
+						}, this);
+					}
+				});
+
+				new App({
+					pages: new Page({
 						title: "AlignedFlowLayout Test Page",
 						content: [
-							new sap.m.Text({
+							new Label({
+								text: "Adjust the end items' width",
+								labelFor: oSlider
+							}),
+							oSlider,
+
+							new Text({
 								text: "A FilterBar-like Layout"
 							}),
 							oAlignedFlowLayout1,
-							new sap.m.Text({
+
+							new Text({
 								text: "Alternative content to test behavior with few items"
 							}),
 							oAlignedFlowLayout2,
-							new sap.m.Text({
+
+							new Text({
 								text: "Alternative content to test behavior with wide buttons"
 							}),
 							oAlignedFlowLayout3,
-							new sap.m.Text({
+
+							new Text({
 								text: "Alternative content to test behavior with wide buttons"
 							}),
 							oAlignedFlowLayout4,
-							new sap.m.Text({
+
+							new Text({
 								text: "Alternative content to test behavior with no buttons"
 							}),
 							oAlignedFlowLayout5,
-							new sap.m.Text({
+
+							new Text({
+								text: "Alternative content to test behavior with 3 items and a large end content"
+							}),
+							oAlignedFlowLayout6,
+
+							new Text({
 								text: "Alternative content to test height behavior"
 							}),
-							oAlignedFlowLayout6
+							oAlignedFlowLayout7
 						]
 					})
 				}).placeAt("content");
