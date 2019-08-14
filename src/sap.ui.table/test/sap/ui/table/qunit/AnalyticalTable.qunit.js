@@ -248,6 +248,28 @@ sap.ui.define([
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
 
+	QUnit.test("expandAll", function(assert) {
+		assert.expect(5);
+		var done = assert.async();
+
+		function doTest(oTable) {
+			var oBinding = oTable.getBinding("rows");
+			var oExpandLevelSpy = sinon.spy(oBinding, "expandToLevel");
+			var oClearSelectionSpy = sinon.spy(oTable._getSelectionPlugin(), "clearSelection");
+
+			oTable.setFirstVisibleRow(2);
+			assert.ok(oTable.expandAll() === oTable, "ExpandAll returns a reference to the table");
+			assert.ok(oExpandLevelSpy.calledOnce, "expandToLevel on Binding called once");
+			assert.ok(oExpandLevelSpy.calledWith(3), "called with the correct parameter value");
+			assert.ok(oClearSelectionSpy.calledOnce, "clearSelection called once");
+			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row");
+			oTable.unbindRows();
+			done();
+		}
+
+		performTestAfterTableIsUpdated.call(this, doTest);
+	});
+
 	QUnit.test("BindRows", function(assert) {
 		var spy = this.spy(AnalyticalTable.prototype, "bindRows");
 		var oTable = new AnalyticalTable({
