@@ -18,15 +18,6 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			var oModel = new JSONModel();
 			oModel.setData({
 					startDate: new Date("2018", "6", "9"),
-					types: (function() {
-						var aTypes = [];
-						for (var key in CalendarDayType) {
-							aTypes.push({
-								type: CalendarDayType[key]
-							});
-						}
-						return aTypes;
-					})(),
 					appointments: [{
 						title: "Meet John Miller",
 						type: CalendarDayType.Type05,
@@ -253,7 +244,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 						endDate: new Date("2018", "6", "17", "16", "30")
 					}
 				],
-				legendAppointmentItems: [
+				supportedAppointmentItems: [
 					{
 						text: "Team Meeting",
 						type: CalendarDayType.Type01
@@ -276,6 +267,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 					}
 				]
 			});
+
 			this.getView().setModel(oModel);
 
 			oModel = new JSONModel();
@@ -285,6 +277,23 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			oModel = new JSONModel();
 			oModel.setData({ stickyMode: "None", enableAppointmentsDragAndDrop: true, enableAppointmentsResize: true, enableAppointmentsCreate: true });
 			this.getView().setModel(oModel, "settings");
+		},
+
+		_typeFormatter: function(sType) {
+			var sTypeText = "",
+				aTypes = this.getView().getModel().getData().supportedAppointmentItems;
+
+			for (var  i = 0; i < aTypes.length; i++){
+				if (aTypes[i].type === sType){
+					sTypeText = aTypes[i].text;
+				}
+			}
+
+			if (sTypeText !== ""){
+				return sTypeText;
+			} else {
+				return sType;
+			}
 		},
 
 		handleAppointmentDrop: function (oEvent) {
@@ -401,7 +410,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			if (!this._oDetailsPopover) {
 				Fragment.load({
 					id: "popoverFrag",
-					name: "sap.m.sample.SinglePlanningCalendarCreateApp.Details",
+					name: "sap.m.sample.SinglePlanningCalendar.Details",
 					controller: this
 				})
 					.then(function(oPopoverContent){
@@ -447,7 +456,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			if (!this._oNewAppointmentDialog) {
 				Fragment.load({
 					id: "dialogFrag",
-					name: "sap.m.sample.SinglePlanningCalendarCreateApp.Modify",
+					name: "sap.m.sample.SinglePlanningCalendar.Modify",
 					controller: this
 				})
 					.then(function(oDialog){
@@ -467,14 +476,15 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 		},
 
 		_setValuesToDialogContent: function () {
-			var bAllDayAppointment = (Fragment.byId("dialogFrag", "allDay")).getSelected(),
-				sStartDatePickerID = bAllDayAppointment ? "DPStartDate" : "DTPStartDate",
-				sEndDatePickerID = bAllDayAppointment ? "DPEndDate" : "DTPEndDate",
+			var oAllDayAppointment = (Fragment.byId("dialogFrag", "allDay")),
+				sStartDatePickerID = oAllDayAppointment.getSelected() ? "DPStartDate" : "DTPStartDate",
+				sEndDatePickerID = oAllDayAppointment.getSelected() ? "DPEndDate" : "DTPEndDate",
 				oTitleControl = Fragment.byId("dialogFrag", "appTitle"),
 				oTextControl = Fragment.byId("dialogFrag", "moreInfo"),
 				oTypeControl = Fragment.byId("dialogFrag", "appType"),
 				oStartDateControl = Fragment.byId("dialogFrag", sStartDatePickerID),
 				oEndDateControl = Fragment.byId("dialogFrag", sEndDatePickerID),
+				oEmptyError = {errorState:false, errorMessage: ""},
 				oContext,
 				oContextObject,
 				oSPCStartDate,
@@ -496,11 +506,19 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			} else {
 				sTitle = "";
 				sText = "";
-				oSPCStartDate = this.getView().byId("SPC1").getStartDate();
-				oStartDate = new Date(oSPCStartDate);
-				oStartDate.setHours(this._getDefaultAppointmentStartHour());
-				oEndDate = new Date(oSPCStartDate);
-				oEndDate.setHours(this._getDefaultAppointmentEndHour());
+				if (this._oChosenDayData) {
+					oStartDate = this._oChosenDayData.start;
+					oEndDate = this._oChosenDayData.end;
+
+					delete this._oChosenDayData;
+				} else {
+					oSPCStartDate = this.getView().byId("SPC1").getStartDate();
+					oStartDate = new Date(oSPCStartDate);
+					oStartDate.setHours(this._getDefaultAppointmentStartHour());
+					oEndDate = new Date(oSPCStartDate);
+					oEndDate.setHours(this._getDefaultAppointmentEndHour());
+				}
+				oAllDayAppointment.setSelected(false);
 				sType = "Type01";
 			}
 
@@ -509,6 +527,9 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			oStartDateControl.setDateValue(oStartDate);
 			oEndDateControl.setDateValue(oEndDate);
 			oTypeControl.setSelectedKey(sType);
+			this._setDateValueState(oStartDateControl, oEmptyError);
+			this._setDateValueState(oEndDateControl, oEmptyError);
+			this.updateButtonEnabledState(oStartDateControl, oEndDateControl, this._oNewAppointmentDialog.getBeginButton());
 		},
 
 		handleDialogOkButton: function () {
@@ -517,7 +538,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 				sEndDate = bAllDayAppointment ? "DPEndDate" : "DTPEndDate",
 				sTitle = Fragment.byId("dialogFrag", "appTitle").getValue(),
 				sText = Fragment.byId("dialogFrag", "moreInfo").getValue(),
-				sType = Fragment.byId("dialogFrag", "appType").getSelectedItem().getText(),
+				sType = Fragment.byId("dialogFrag", "appType").getSelectedItem().getKey(),
 				oStartDate = Fragment.byId("dialogFrag", sStartDate).getDateValue(),
 				oEndDate = Fragment.byId("dialogFrag", sEndDate).getDateValue(),
 				oModel = this.getView().getModel(),
@@ -617,6 +638,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 
 			oStartDate.setHours(this._getDefaultAppointmentStartHour());
 			oEndDate.setHours(this._getDefaultAppointmentEndHour());
+			this._oChosenDayData = {start: oStartDate, end: oEndDate };
 			this.sPath = null;
 
 			this._arrangeDialogFragment("Create appointment");
@@ -636,16 +658,39 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			oButton.setEnabled(bEnabled);
 		},
 
-		handleDateTimePickerChange: function() {
+		handleDateTimePickerChange: function(oEvent) {
 			var oDateTimePickerStart = Fragment.byId("dialogFrag", "DTPStartDate"),
 				oDateTimePickerEnd = Fragment.byId("dialogFrag", "DTPEndDate"),
 				oStartDate = oDateTimePickerStart.getDateValue(),
 				oEndDate = oDateTimePickerEnd.getDateValue(),
-				bEndDateBiggerThanStartDate = oEndDate.getTime() <= oStartDate.getTime(),
-				bErrorState = oStartDate && oEndDate && bEndDateBiggerThanStartDate;
+				oErrorState = {errorState: false, errorMessage: ""};
 
-			this._setDateValueState(oDateTimePickerStart, bErrorState);
-			this._setDateValueState(oDateTimePickerEnd, bErrorState);
+			if (!oStartDate){
+				oErrorState.errorState = true;
+				oErrorState.errorMessage = "Please pick a date";
+				this._setDateValueState(oDateTimePickerStart, oErrorState);
+			} else if (!oEndDate){
+				oErrorState.errorState = true;
+				oErrorState.errorMessage = "Please pick a date";
+				this._setDateValueState(oDateTimePickerEnd, oErrorState);
+			} else if (!oEvent.getParameter("valid")){
+				oErrorState.errorState = true;
+				oErrorState.errorMessage = "Ivalid date";
+				if (oEvent.oSource.sId === oDateTimePickerStart.sId){
+					this._setDateValueState(oDateTimePickerStart, oErrorState);
+				} else {
+					this._setDateValueState(oDateTimePickerEnd, oErrorState);
+				}
+			} else if (oStartDate && oEndDate && (oEndDate.getTime() <= oStartDate.getTime())){
+				oErrorState.errorState = true;
+				oErrorState.errorMessage = "Start date should be before End date";
+				this._setDateValueState(oDateTimePickerStart, oErrorState);
+				this._setDateValueState(oDateTimePickerEnd, oErrorState);
+			} else {
+				this._setDateValueState(oDateTimePickerStart, oErrorState);
+				this._setDateValueState(oDateTimePickerEnd, oErrorState);
+			}
+
 			this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, this._oNewAppointmentDialog.getBeginButton());
 		},
 
@@ -655,19 +700,21 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 				oStartDate = oDatePickerStart.getDateValue(),
 				oEndDate = oDatePickerEnd.getDateValue(),
 				bEndDateBiggerThanStartDate = oEndDate.getTime() <= oStartDate.getTime(),
-				bErrorState = oStartDate && oEndDate && bEndDateBiggerThanStartDate;
+				oErrorState = {errorState: false, errorMessage: ""};
 
-			this._setDateValueState(oDatePickerStart, bErrorState);
-			this._setDateValueState(oDatePickerEnd, bErrorState);
+			if (oStartDate && oEndDate && bEndDateBiggerThanStartDate){
+				oErrorState.errorState = true;
+				oErrorState.errorMessage = "Start date should be before End date";
+			}
+			this._setDateValueState(oDatePickerStart, oErrorState);
+			this._setDateValueState(oDatePickerEnd, oErrorState);
 			this.updateButtonEnabledState(oDatePickerStart, oDatePickerEnd, this._oNewAppointmentDialog.getBeginButton());
 		},
 
-		_setDateValueState: function(oPicker, bErrorState) {
-			var sValueStateText = "Start date should be before End date";
-
-			if (bErrorState) {
+		_setDateValueState: function(oPicker, oErrorState) {
+			if (oErrorState.errorState) {
 				oPicker.setValueState("Error");
-				oPicker.setValueStateText(sValueStateText);
+				oPicker.setValueStateText(oErrorState.errorMessage);
 			} else {
 				oPicker.setValueState("None");
 			}

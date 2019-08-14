@@ -7,7 +7,7 @@
 			showHeader="false">
 		<PlanningCalendarLegend
 				appointmentItems="{
-					path : '/legendAppointmentItems',
+					path : '/supportedAppointmentItems',
 					templateShareable: 'true'
 				}">
 			<appointmentItems>
