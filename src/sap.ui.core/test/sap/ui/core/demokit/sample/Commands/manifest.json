@@ -1,10 +1,16 @@
 {
 	"_version": "1.12.0",
 	"sap.app": {
-		"id": "sap.ui.core.sample.Shortcuts",
+		"id": "sap.ui.core.sample.Commands",
 		"type": "application"
 	},
 	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
 		"commands": {
 			"Save": {
 				"name": "Save",
@@ -20,19 +26,17 @@
 			}
 		},
 		"rootView": {
-			"viewName": "sap.ui.core.sample.Shortcuts.Shortcuts",
+			"viewName": "sap.ui.core.sample.Commands.Commands",
 			"type": "XML",
 			"async": true,
-			"id": "shortcuts"
+			"id": "commands"
 		},
 		"config": {
 			"sample": {
 				"files": [
 					"Component.js",
-					"Shortcuts.view.xml",
-					"Shortcuts.controller.js",
-					"Popover.fragment.xml",
-					"PopoverShortcuts.fragment.xml",
+					"Commands.view.xml",
+					"Commands.controller.js",
 					"manifest.json"
 				]
 			}

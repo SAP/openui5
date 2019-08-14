@@ -141,7 +141,7 @@ sap.ui.define([
 		 * @private
 		 */
 		isRegistered: function(oScopeControl, vShortcut) {
-			assert(oScopeControl, "ShortcutHandler.isRegistered: oScopeControl must be given.");
+			assert(oScopeControl, "Shortcut.isRegistered: oScopeControl must be given.");
 			var oNormalizedShortcutSpec = ShortcutHelper.getNormalizedShortcutSpec(vShortcut); // the platform-dependent shortcut definition
 
 			return !!ShortcutHelper.findShortcut(oScopeControl, oNormalizedShortcutSpec);
@@ -157,7 +157,7 @@ sap.ui.define([
 		 * @private
 		 */
 		unregister: function(oScopeControl, vShortcut) {
-			assert(oScopeControl, "ShortcutHandler.unregister: oScopeControl must be given.");
+			assert(oScopeControl, "Shortcut.unregister: oScopeControl must be given.");
 
 			// the platform-dependent shortcut definition
 			var oNormalizedShortcutSpec = ShortcutHelper.getNormalizedShortcutSpec(vShortcut);

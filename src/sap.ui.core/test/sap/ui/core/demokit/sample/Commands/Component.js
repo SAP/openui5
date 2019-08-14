@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {
 	"use strict";
-	return UIComponent.extend("sap.ui.core.sample.shortcuts.Component", {
+	return UIComponent.extend("sap.ui.core.sample.Commands.Component", {
 		metadata : {
 			manifest: "json"
 		}
