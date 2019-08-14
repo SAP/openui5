@@ -581,4 +581,30 @@ function (
 
 		oContainer.destroy();
 	});
+
+	QUnit.module("Resizing", {
+		beforeEach: function () {
+			this.oGrid = new GridContainer();
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("resize container", function (assert) {
+
+		var fnApplyLayout = sinon.spy(this.oGrid, "_applyLayout");
+
+		// Arrange
+		this.oGrid.$().width('123px');
+
+		// forcing calling all resize listeners
+		sap.ui.core.ResizeHandler.suspend(this.oGrid.getDomRef());
+		sap.ui.core.ResizeHandler.resume(this.oGrid.getDomRef());
+
+		assert.ok(fnApplyLayout.called, "ApplyLayout is called");
+	});
 });
