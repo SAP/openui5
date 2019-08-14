@@ -1699,7 +1699,7 @@ sap.ui.define([
 			placeholder: oFieldInfo["Label"],
 			change: function(oEvent) {
 				that._validateAndFormatFieldValue(oEvent);
-				that._changeField(oConditionGrid);
+				that._changeField(oConditionGrid, oEvent);
 			},
 			layoutData: new GridData({
 				span: oFieldInfo["Span" + this._sConditionType]
@@ -2405,7 +2405,11 @@ sap.ui.define([
 			if (oControl.getDateValue && !(oControl.isA("sap.m.TimePicker")) && oType.getName() !== "sap.ui.comp.odata.type.StringDate") {
 				oValue = oControl.getDateValue();
 				if (oType && oValue) {
-					sValue = oType.formatValue(oValue, "string");
+					if (oEvent && oEvent.getParameter("valid")){
+						sValue = oType.formatValue(oValue, "string");
+					}else {
+						sValue = "";
+					}
 				}
 			} else {
 				sValue = this._getValueTextFromField(oControl);
@@ -2417,8 +2421,8 @@ sap.ui.define([
 						oValue = oType.parseValue(sValue, "string");
 						oType.validateValue(oValue);
 					} catch (err) {
-						sValue = "";
 						Log.error("sap.m.P13nConditionPanel", "not able to parse value " + sValue + " with type " + oType.getName());
+						sValue = "";
 					}
 				}
 			}
