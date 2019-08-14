@@ -1770,36 +1770,18 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("lockGroup: non-blocking", function (assert) {
-		var oGroupLock1,
-			oGroupLock2,
-			oModel = createModel(""),
-			oRequestorMock = this.mock(oModel.oRequestor);
+		var oGroupLock,
+			oModel = createModel("");
 
-		oRequestorMock.expects("getSerialNumber").returns(42);
+		this.mock(oModel.oRequestor).expects("getSerialNumber").returns(42);
 
 		// code under test
-		oGroupLock1 = oModel.lockGroup("foo");
+		oGroupLock = oModel.lockGroup("foo");
 
-		assert.ok(oGroupLock1 instanceof _GroupLock);
-		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
-		assert.notOk(oGroupLock1.isLocked());
-		assert.strictEqual(oGroupLock1.getSerialNumber(), 42);
-
-		oRequestorMock.expects("getSerialNumber").returns(77);
-
-		// code under test
-		oGroupLock1 = oModel.lockGroup();
-
-		assert.strictEqual(oGroupLock1.getGroupId(), undefined);
-		assert.notOk(oGroupLock1.isLocked());
-		assert.strictEqual(oGroupLock1.getSerialNumber(), 77);
-
-		// code under test
-		oGroupLock2 = oModel.lockGroup("foo", oGroupLock1);
-
-		assert.strictEqual(oGroupLock1, oGroupLock2);
-		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
-		assert.strictEqual(oGroupLock1.getSerialNumber(), 77);
+		assert.ok(oGroupLock instanceof _GroupLock);
+		assert.strictEqual(oGroupLock.getGroupId(), "foo");
+		assert.notOk(oGroupLock.isLocked());
+		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
 	});
 
 	//*********************************************************************************************
@@ -1808,12 +1790,15 @@ sap.ui.define([
 			oModel = createModel(""),
 			oOwner = {};
 
+		this.mock(oModel.oRequestor).expects("getSerialNumber").returns(42);
+
 		oGroupLock = oModel.lockGroup("foo", true, oOwner);
 
 		assert.ok(oGroupLock instanceof _GroupLock);
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
 		assert.ok(oGroupLock.isLocked());
 		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
 	});
 
 	//*********************************************************************************************

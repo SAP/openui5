@@ -929,6 +929,7 @@ sap.ui.define([
 			// estimated length.
 			iStart += this.iCreatedContexts;
 		}
+		oGroupLock = oGroupLock || this.lockGroup();
 		oPromise = this.fetchData(iStart, iLength, iMaximumPrefetchSize, oGroupLock,
 			fnDataRequested);
 		if (bAsync) {
@@ -938,9 +939,7 @@ sap.ui.define([
 		return oPromise.then(function (oResult) {
 			return oResult && that.createContexts(iStart, iLength, oResult.value);
 		}, function (oError) {
-			if (oGroupLock) {
-				oGroupLock.unlock(true);
-			}
+			oGroupLock.unlock(true);
 			throw oError;
 		});
 	};
@@ -977,14 +976,11 @@ sap.ui.define([
 			}
 
 			if (oCache) {
-				oGroupLock = that.lockGroup(that.getGroupId(), oGroupLock);
 				return oCache.read(iIndex, iLength, iMaximumPrefetchSize, oGroupLock,
 					fnDataRequested);
 			}
 
-			if (oGroupLock) {
-				oGroupLock.unlock();
-			}
+			oGroupLock.unlock();
 			return oContext.fetchValue(that.sReducedPath).then(function (aResult) {
 				var iCount;
 
@@ -1910,7 +1906,6 @@ sap.ui.define([
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 
-			oGroupLock.setGroupId(oBinding.getGroupId());
 			aPromises.push(
 				(bAllowRemoval
 					? oCache.refreshSingleWithRemove(oGroupLock, sPath, oContext.getModelIndex(),
