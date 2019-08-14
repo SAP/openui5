@@ -2708,9 +2708,7 @@ sap.ui.define([
 					// redefine existing alias
 					'<template:alias name=".foo" value="foo.Helper.bar">',
 						"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
-						//TODO the control is now converted totally different now, check again
-						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
-							+ " parameters: {foo: 'bar'}}\"/>",
+						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/'}\"/>",
 					'</template:alias>',
 					// old value must be used again
 					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
@@ -2742,8 +2740,7 @@ sap.ui.define([
 						'<Text text="/bar"/>',
 						// The nearest .foo alias doesn't have "Helper" defined,
 						// therefore the formatter can't be resolved
-						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/',"
-							+ " parameters: {foo: 'bar'}}\"/>",
+						"<Label text=\"{formatter: 'foo.Helper.checkScope', path: '/'}\"/>",
 					'<Text text="/foo"/>',
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
