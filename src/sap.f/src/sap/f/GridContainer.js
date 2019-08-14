@@ -215,26 +215,33 @@ sap.ui.define([
 				 * The sap.f.GridContainerSettings applied if no settings are provided for a specific size.
 				 *
 				 * If no layout is given, a default layout will be used. See the default values for <code>sap.f.GridContainerSettings</code>.
+				 *
+				 * <b>Note:</b> It is not possible to reuse the same instance of <code>GridContainerSettings</code> for several layouts. New instance has to be created for each of them. This is caused by the fact that one object can exist in only a single aggregation.
 				 */
 				layout: { type: "sap.f.GridContainerSettings", multiple: false },
 
 				/**
-				 * The sap.f.GridContainerSettings applied for size "S"
+				 * The sap.f.GridContainerSettings applied for size "XS". Range: up to 374px.
+				 */
+				layoutXS: { type: "sap.f.GridContainerSettings", multiple: false },
+
+				/**
+				 * The sap.f.GridContainerSettings applied for size "S". Range: 375px - 599px.
 				 */
 				layoutS: { type: "sap.f.GridContainerSettings", multiple: false },
 
 				/**
-				 * The sap.f.GridContainerSettings applied for size "M"
+				 * The sap.f.GridContainerSettings applied for size "M". Range: 600px - 1023px.
 				 */
 				layoutM: { type: "sap.f.GridContainerSettings", multiple: false },
 
 				/**
-				 * The sap.f.GridContainerSettings applied for size "L"
+				 * The sap.f.GridContainerSettings applied for size "L". Range: 1023px - 1439px.
 				 */
 				layoutL: { type: "sap.f.GridContainerSettings", multiple: false },
 
 				/**
-				 * The sap.f.GridContainerSettings applied for size "XL"
+				 * The sap.f.GridContainerSettings applied for size "XL". Range: from 1440px.
 				 */
 				layoutXL: { type: "sap.f.GridContainerSettings", multiple: false },
 
@@ -276,9 +283,19 @@ sap.ui.define([
 	 * @returns {sap.f.GridContainerSettings} The settings for the current layout
 	 */
 	GridContainer.prototype.getActiveLayoutSettings = function () {
-		return this.getAggregation(this._sActiveLayout)
-			|| this.getAggregation("layout")
-			|| this.getAggregation("_defaultLayout");
+		var oSettings = this.getAggregation(this._sActiveLayout);
+
+		if (!oSettings && this._sActiveLayout === "layoutXS") {
+			// if XS is not define, apply the S settings to stay backward compatible
+			oSettings = this.getAggregation("layoutS");
+		}
+
+		if (!oSettings) {
+			oSettings = this.getAggregation("layout")
+				|| this.getAggregation("_defaultLayout");
+		}
+
+		return oSettings;
 	};
 
 	/**
@@ -374,8 +391,8 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._detectActiveLayout = function () {
 		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this.$().outerWidth() : Device.resize.width,
-			oRange = Device.media.getCurrentRange("StdExt", iWidth),
-			sLayout = oRange ? GridContainer.mSizeLayouts[oRange.name] : "layout",
+			oRange = Device.media.getCurrentRange("GridContainerRangeSet", iWidth),
+			sLayout = "layout" + oRange.name,
 			oOldSettings = this.getActiveLayoutSettings(),
 			bSettingsAreChanged = false;
 
@@ -432,6 +449,8 @@ sap.ui.define([
 	 */
 	GridContainer.prototype.init = function () {
 		this.setAggregation("_defaultLayout", new GridContainerSettings());
+
+		this._initRangeSet();
 
 		this._resizeListeners = {};
 
@@ -571,6 +590,15 @@ sap.ui.define([
 
 		if (!isGridSupportedByBrowser()) {
 			this._detachDndPolyfill();
+		}
+	};
+
+	/**
+	 * Initializes the specific Device.media range set for <code>GridContainer</code>.
+	 */
+	GridContainer.prototype._initRangeSet = function () {
+		if (!Device.media.hasRangeSet("GridContainerRangeSet")) {
+			Device.media.initRangeSet("GridContainerRangeSet", [375, 600, 1024, 1440], "px", ["XS", "S", "M", "L", "XL"]);
 		}
 	};
 
@@ -916,17 +944,6 @@ sap.ui.define([
 	GridContainer.prototype._detachDndPolyfill = function () {
 		this.detachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
 		this.detachEvent("_gridPolyfillAfterDragEnd", this._polyfillAfterDragEnd, this);
-	};
-
-	/**
-	 * A map from Std-ext size to layout aggregation name
-	 * @private
-	 */
-	GridContainer.mSizeLayouts = {
-		"Phone": "layoutS",
-		"Tablet": "layoutM",
-		"Desktop": "layoutL",
-		"LargeDesktop": "layoutXL"
 	};
 
 	return GridContainer;
