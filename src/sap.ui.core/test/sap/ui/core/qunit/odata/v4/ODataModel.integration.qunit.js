@@ -19565,7 +19565,7 @@ sap.ui.define([
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			that.expectRequest("SalesOrderList('1')/NetAmount", { value : 42});
+			that.expectRequest("SalesOrderList('1')/NetAmount", {value : 42});
 
 			// code under test
 			return oPropertyBinding.requestValue().then(function (vValue) {
@@ -19584,15 +19584,16 @@ sap.ui.define([
 				SalesOrderID : "1",
 				TaxAmount : 117
 			},
+			oSalesOrderResponse = Object.assign({}, oSalesOrder),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			that.expectRequest("SalesOrderList('1')", Object.assign({}, oSalesOrder));
+			that.expectRequest("SalesOrderList('1')", oSalesOrderResponse);
 
 			// code under test
 			return oContextBinding.requestObject().then(function (oResponse) {
-				assert.deepEqual(oSalesOrder, oResponse);
-				assert.notStrictEqual(oSalesOrder, oResponse);
+				assert.deepEqual(oResponse, oSalesOrder);
+				assert.notStrictEqual(oResponse, oSalesOrderResponse);
 
 				return oContextBinding.requestObject("TaxAmount").then(function (vValue) {
 					assert.strictEqual(vValue, 117);
