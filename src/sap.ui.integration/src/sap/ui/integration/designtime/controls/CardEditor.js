@@ -20,7 +20,7 @@ sap.ui.define([
             this.addDefaultConfig(oDefaultCardConfig);
             return BaseEditor.prototype.init.apply(this, arguments);
         },
-        renderer: BaseEditor.getMetadata().getRenderer().render
+        renderer: BaseEditor.getMetadata().getRenderer()
     });
 
     return CardEditor;
