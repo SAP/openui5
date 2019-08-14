@@ -1213,19 +1213,14 @@ sap.ui.define([
 	 * submitBatch, even if the request is created later asynchronously. To achieve this, the API
 	 * function creates a lock that blocks _submitBatch until the request is created.
 	 *
-	 * It is possible to create a lock without giving a group ID initially. In this case all queues
-	 * for all group IDs are locked until a group ID is given. Once a group ID has been set, it
-	 * cannot be changed anymore.
-	 *
 	 * For performance reasons it is possible to create a group lock that actually doesn't lock. All
 	 * non-API functions use this group lock instead of the group ID so that a lock is possible. But
 	 * not in every case a lock is necessary and suitable.
 	 *
-	 * @param {string} [sGroupId]
-	 *   The group ID. If not given here, it can be set later on the created lock.
-	 * @param {boolean|sap.ui.model.odata.v4.lib._GroupLock} [vLock]
-	 *   If vLock is a group lock, it is modified and returned. Otherwise a lock is created which
-	 *   locks if vLock is truthy.
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} [bLocked]
+	 *   Whether the created lock is locked
 	 * @param {object} [oOwner]
 	 *   The lock's owner for debugging
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
@@ -1233,15 +1228,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.lockGroup = function (sGroupId, vLock, oOwner) {
+	ODataModel.prototype.lockGroup = function (sGroupId, bLocked, oOwner) {
 		var oGroupLock;
 
-		if (vLock instanceof _GroupLock) {
-			vLock.setGroupId(sGroupId);
-			return vLock;
-		}
-		oGroupLock = new _GroupLock(sGroupId, vLock, oOwner, this.oRequestor.getSerialNumber());
-		if (oGroupLock.isLocked()) {
+		oGroupLock = new _GroupLock(sGroupId, bLocked, oOwner, this.oRequestor.getSerialNumber());
+		if (bLocked) {
 			this.aLockedGroupLocks.push(oGroupLock);
 		}
 		return oGroupLock;

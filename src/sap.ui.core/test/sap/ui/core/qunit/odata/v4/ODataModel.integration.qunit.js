@@ -1578,6 +1578,153 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding not bound to any control
+	// JIRA: CPOUI5UISERVICESV3-1396
+	QUnit.test("OLDB#requestContexts standalone", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "", createSalesOrdersModel()).then(function () {
+			var oBinding = that.oModel.bindList("/SalesOrderList");
+
+			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01"},
+					{SalesOrderID : "02"},
+					{SalesOrderID : "03"}
+				]
+			});
+
+			// code under test
+			return oBinding.requestContexts(0, 3).then(function (aContexts) {
+				assert.deepEqual(aContexts.map(function (oContext) {
+					return oContext.getPath();
+				}), [
+					"/SalesOrderList('01')",
+					"/SalesOrderList('02')",
+					"/SalesOrderList('03')"
+				]);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding bound to a growing sap.m.Table
+	// JIRA: CPOUI5UISERVICESV3-1396
+[false, true].forEach(function (bGrowing) {
+	QUnit.test("OLDB#requestContexts w/ sap.m.Table, growing=" + bGrowing, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" growing="' + bGrowing + '" growingThreshold="3" items="{/SalesOrderList}">\
+	<columns><Column /></columns>\
+	<ColumnListItem>\
+		<Text id="note" text="{Note}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		if (!bGrowing) {
+			oModel.setSizeLimit(3);
+		}
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01", Note : "Note 1"},
+					{SalesOrderID : "02", Note : "Note 2"},
+					{SalesOrderID : "03", Note : "Note 3"}
+				]
+			})
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
+				value : [
+					{SalesOrderID : "04", Note : "Note 4"},
+					{SalesOrderID : "05", Note : "Note 5"}
+				]
+			});
+
+			return Promise.all([
+				oBinding.requestContexts(2, 10).then(function (aContexts) {
+					assert.deepEqual(aContexts.map(function (oContext) {
+						return oContext.getPath();
+					}), [
+						"/SalesOrderList('03')",
+						"/SalesOrderList('04')",
+						"/SalesOrderList('05')"
+					]);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			if (bGrowing) {
+				that.expectChange("note", [,,, "Note 4", "Note 5"]);
+
+				// show more items
+				that.oView.byId("table-trigger").firePress();
+			}
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding bound to a non-growing sap.ui.table.Table
+	// JIRA: CPOUI5UISERVICESV3-1396
+	QUnit.test("OLDB#requestContexts w/ sap.ui.table.Table", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template><Text id="note" text="{Note}" /></t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		oModel.setSizeLimit(3);
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01", Note : "Note 1"},
+					{SalesOrderID : "02", Note : "Note 2"},
+					{SalesOrderID : "03", Note : "Note 3"}
+				]
+			})
+			.expectChange("note", ["Note 1", "Note 2", "Note 3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=3&$top=9", {
+				value : [
+					{SalesOrderID : "04", Note : "Note 4"},
+					{SalesOrderID : "05", Note : "Note 5"}
+				]
+			});
+
+			return Promise.all([
+				oBinding.requestContexts(2, 10).then(function (aContexts) {
+					assert.deepEqual(aContexts.map(function (oContext) {
+						return oContext.getPath();
+					}), [
+						"/SalesOrderList('03')",
+						"/SalesOrderList('04')",
+						"/SalesOrderList('05')"
+					]);
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("note", [,, "Note 3", "Note 4", "Note 5"]);
+
+			// scroll down
+			that.oView.byId("table").setFirstVisibleRow(2);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = createError({
@@ -18990,7 +19137,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Reduce path by removing partner attributes SO_2_SOITEM and SOITEM_2_SO, so that
 	// "SOITEM_2_SO/CurrencyCode" is not expanded, but taken from the parent sales order in the same
-	// cache.
+	// cache and written back to it.
 	// JIRA: CPOUI5UISERVICESV3-1877
 	QUnit.test("Reduce path: property in same cache", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
@@ -19088,17 +19235,6 @@ sap.ui.define([
 			.expectChange("valueHelp::currencyCode");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oTableBinding = that.oView.byId("table").getBinding("items"),
-				oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
-					oTableBinding.getContext(), undefined, undefined,
-					{$$updateGroupId : "doNotSubmit"});
-
-			// initialize creation row
-			oCreationRowContext = oCreationRowListBinding.create();
-			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
-
-			return that.waitForChanges(assert);
-		}).then(function () {
 			that.expectChange("valueHelp::currencyCode", "EUR");
 
 			// start value help
@@ -19114,7 +19250,17 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oCreationRowListBinding, oTableBinding;
+
 			that.expectChange("valueHelp::currencyCode", "EUR");
+
+			// create and initialize creation row
+			oTableBinding = that.oView.byId("table").getBinding("items");
+			oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
+				oTableBinding.getContext(), undefined, undefined,
+				{$$updateGroupId : "doNotSubmit"});
+			oCreationRowContext = oCreationRowListBinding.create();
+			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
 			// start value help on creation row
 			that.oView.byId("valueHelp").setBindingContext(oCreationRowContext);
@@ -19359,11 +19505,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Partner attributes are in the path to a property, but reduction is impossible due
-	// to a changed update group ID.
+	// Scenario: Partner attributes are in the path to a property, but reduction is impossible
+	// because the parent binding has a different update group with submit mode API.
 	// JIRA: CPOUI5UISERVICESV3-1877
+	// JIRA: CPOUI5UISERVICESV3-1944
 	QUnit.test("Partner attributes in path to collection, other updateGroupId", function (assert) {
-		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+		var oModel = createSpecialCasesModel({autoExpandSelect : true, updateGroupId : 'update'}),
 			sView = '\
 <FlexBox binding="{/Bs(1)}">\
 	<Text id="bValue" text="{BValue}"/>\
@@ -19375,11 +19522,10 @@ sap.ui.define([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-	<Table items="{path : \'BtoDs\', parameters : {$$updateGroupId : \'update\'}}">\
+	<Table items="{path : \'BtoDs\', parameters : {$$updateGroupId : \'$auto\'}}">\
 		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
-				<Text id="dValue" text="{DValue}"/>\
 				<Text id="bValue::table2" text="{DtoB/BValue}"/>\
 			</ColumnListItem>\
 		</items>\
@@ -19394,17 +19540,17 @@ sap.ui.define([
 					{DID : 3}
 				]
 			})
-			.expectRequest("Bs(1)/BtoDs?$select=DID,DValue&$skip=0&$top=100", {
+			.expectRequest("Bs(1)/BtoDs?$select=DID&$expand=DtoB($select=BID,BValue)"
+				+ "&$skip=0&$top=100", {
 				value : [{
 					DID : 2,
-					DValue : 202
+					DtoB : {BID : 1, BValue : 101}
 				}, {
 					DID : 3,
-					DValue : 203
+					DtoB : {BID : 1, BValue : 101}
 				}]
 			})
 			.expectChange("bValue", "101")
-			.expectChange("dValue", ["202", "203"])
 			.expectChange("bValue::table1", ["101", "101"])
 			.expectChange("bValue::table2", ["101", "101"]);
 

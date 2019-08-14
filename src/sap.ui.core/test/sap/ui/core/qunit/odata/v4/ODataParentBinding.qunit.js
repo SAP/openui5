@@ -11,10 +11,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
+	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
-		asODataParentBinding, _GroupLock, _Helper) {
+		asODataParentBinding, SubmitMode, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -1559,8 +1560,6 @@ sap.ui.define([
 			oGroupLock = new _GroupLock("groupId"),
 			oResult = {};
 
-		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("updateGroup");
-		this.mock(oGroupLock).expects("setGroupId").withExactArgs("updateGroup");
 		this.mock(oCache).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
 				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(oETagEntity),
@@ -2968,25 +2967,67 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getBaseForPathReduction", function (assert) {
+	QUnit.test("getBaseForPathReduction: root binding", function (assert) {
 		var oBinding = new ODataParentBinding({
-				getRootBinding : function () {},
-				oModel : {resolve : function () {}}
-			}),
-			oRootBinding = {
-				oContext : {/*Context*/},
-				sPath : {/*string*/}
-			};
+				oContext : {},
+				oModel : {resolve : function () {}},
+				sPath : "quasi/absolute"
+			});
 
-		this.mock(oBinding).expects("getRootBinding").withExactArgs().returns(oRootBinding);
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
 		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(sinon.match.same(oRootBinding.sPath),
-				sinon.match.same(oRootBinding.oContext))
+			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
 			.returns("/resolved/path");
 
 		// code under test
 		assert.strictEqual(oBinding.getBaseForPathReduction(), "/resolved/path");
 	});
+
+	//*********************************************************************************************
+[
+	{parentGroup : "groupId", delegate : true},
+	{parentGroup : "otherGroupId", submitMode : SubmitMode.API, delegate : false},
+	{parentGroup : "otherGroupId", submitMode : SubmitMode.Auto, delegate : true},
+	{parentGroup : "otherGroupId", submitMode : SubmitMode.Direct, delegate : true}
+].forEach(function (oFixture) {
+	QUnit.test("getBaseForPathReduction: delegate to parent binding: " + JSON.stringify(oFixture),
+			function (assert) {
+		var oModel = {
+				getGroupProperty : function () {},
+				resolve : function () {}
+			},
+			oParentBinding = new ODataParentBinding({oModel : oModel}),
+			oContext = {
+				getBinding : function () {
+					return oParentBinding;
+				}
+			},
+			oBinding = new ODataParentBinding({
+				oContext : oContext,
+				oModel : oModel,
+				sPath : "relative"
+			});
+
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("groupId");
+		this.mock(oParentBinding).expects("getUpdateGroupId")
+			.withExactArgs().returns(oFixture.parentGroup);
+		this.mock(oParentBinding).expects("getBaseForPathReduction")
+			.exactly(oFixture.delegate ? 1 : 0)
+			.withExactArgs()
+			.returns("/base/path");
+		this.mock(oModel).expects("getGroupProperty").atLeast(0)
+			.withExactArgs(oFixture.parentGroup, "submit")
+			.returns(oFixture.submitMode);
+		this.mock(oBinding.oModel).expects("resolve").exactly(oFixture.delegate ? 0 : 1)
+			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+			.returns("/resolved/path");
+
+		// code under test
+		assert.strictEqual(oBinding.getBaseForPathReduction(),
+			oFixture.delegate ? "/base/path" : "/resolved/path");
+	});
+});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"
