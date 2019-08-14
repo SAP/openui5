@@ -7,8 +7,9 @@ sap.ui.define([
 		'sap/m/TextArea',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/layout/HorizontalLayout',
-		'sap/ui/layout/VerticalLayout'
-	], function(Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout) {
+		'sap/ui/layout/VerticalLayout',
+		'sap/m/ButtonType'
+	], function(Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout, ButtonType) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.DialogConfirm.C", {
@@ -19,6 +20,7 @@ sap.ui.define([
 				type: 'Message',
 				content: new Text({ text: 'Are you sure you want to submit your shopping cart?' }),
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'Submit',
 					press: function () {
 						MessageToast.show('Submit pressed!');
@@ -51,6 +53,7 @@ sap.ui.define([
 					})
 				],
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'Reject',
 					press: function () {
 						var sText = sap.ui.getCore().byId('rejectDialogTextarea').getValue();
@@ -90,6 +93,7 @@ sap.ui.define([
 					})
 				],
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'Submit',
 					enabled: false,
 					press: function () {
@@ -142,6 +146,7 @@ sap.ui.define([
 					})
 				],
 				beginButton: new Button({
+					type: ButtonType.Emphasized,
 					text: 'Submit',
 					press: function () {
 						var sText = sap.ui.getCore().byId('confirmDialogTextarea').getValue();

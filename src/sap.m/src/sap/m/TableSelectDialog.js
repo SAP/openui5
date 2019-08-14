@@ -44,6 +44,8 @@ sap.ui.define([
 	// shortcut for sap.m.ListMode
 	var ListMode = library.ListMode;
 
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 
 	/**
@@ -997,6 +999,7 @@ sap.ui.define([
 		if (!this._oOkButton) {
 			this._oOkButton = new Button(this.getId() + "-ok", {
 				text: this._oRb.getText("MSGBOX_OK"),
+				type: ButtonType.Emphasized,
 				press: function () {
 					// attach the reset function to afterClose to hide the dialog changes from the end user
 					that._oDialog.attachAfterClose(fnOKAfterClose);
