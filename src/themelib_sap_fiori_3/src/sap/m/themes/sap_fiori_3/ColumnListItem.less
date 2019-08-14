@@ -3,15 +3,10 @@
 /* Fiori 3 theme                        */
 /* ==================================== */
 
-/* sap.m.Table is using top-borders of cells for drawing borders between rows to support mergeDuplicates feature with less effort */
-/* therefore the bottom border selection indication of the selected row must be painted as a top border of the next rows all cell */ 
-.sapMLIBSelected + .sapMListTblRow > td,
-.sapMLIBSelected + .sapMListTblSubRow + .sapMListTblRow > td {
-	border-top: 0.0625rem solid @sapUiListSelectionBorderColor;
-}
-
-/* for the last row, bottom border of the selected row cells must be used for the selection indication */
-.sapMLIBSelected.sapMListTblRow:last-child > td,
-.sapMLIBSelected.sapMListTblRow + .sapMListTblSubRow:last-child > td {
-	border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+/* selection border indicator */
+/* note: adding border-bottom to the td, increased the size of the table, hence not adding border-bottom */
+/* note: adding border-top to the sibling row is not suitable as the sibling row can be hidden and in such case the selection border is lost */
+.sapMTableTBody:not(.sapMListTblHasPopin) > .sapMLIBSelected,
+.sapMTableTBody.sapMListTblHasPopin > .sapMLIBSelected + .sapMListTblSubRow {
+	box-shadow: inset 0px -0.0625rem @sapUiListSelectionBorderColor;
 }
