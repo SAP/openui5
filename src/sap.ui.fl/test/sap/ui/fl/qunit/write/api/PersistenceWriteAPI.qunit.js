@@ -2,7 +2,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/base/Log",
-	"sap/ui/fl/write/internal/SaveAs",
+	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

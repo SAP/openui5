@@ -5,9 +5,9 @@
 sap.ui.define([
 	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/fl/write/internal/SaveAs",
+	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/Utils"
 ], function(
 	includes,
