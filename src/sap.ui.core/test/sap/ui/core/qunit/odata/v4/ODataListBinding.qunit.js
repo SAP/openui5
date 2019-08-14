@@ -966,13 +966,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bChanged) {
-	QUnit.test("requestContexts: changed=" + bChanged, function (assert) {
+	[undefined, "groupId"].forEach(function (sGroupId) {
+
+	QUnit.test("requestContexts: changed=" + bChanged + ", group=" + sGroupId, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			aContexts = [],
+			oGroupLock = {},
 			oPromise;
 
+		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId, true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(1, 2, 0)
+			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.resolve(bChanged)));
 		this.mock(oBinding).expects("_fireChange").exactly(bChanged ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Change});
@@ -981,22 +985,25 @@ sap.ui.define([
 			.returns(aContexts);
 
 		// code under test
-		oPromise = oBinding.requestContexts(1, 2).then(function (aResults) {
+		oPromise = oBinding.requestContexts(1, 2, sGroupId).then(function (aResults) {
 			assert.strictEqual(aResults, aContexts);
 		});
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise;
 	});
+	});
 });
 
 	//*********************************************************************************************
 	QUnit.test("requestContexts: parameter defaults", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			aContexts = [];
+			aContexts = [],
+			oGroupLock = {};
 
+		this.mock(oBinding).expects("lockGroup").withExactArgs(undefined, true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(0, this.oModel.iSizeLimit, 0)
+			.withExactArgs(0, this.oModel.iSizeLimit, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.resolve(false)));
 		this.mock(oBinding).expects("getContextsInViewOrder")
 			.withExactArgs(0, this.oModel.iSizeLimit)
@@ -1011,10 +1018,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestContexts: error handling", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
-			oError = new Error();
+			oError = new Error(),
+			oGroupLock = {};
 
+		this.mock(oBinding).expects("lockGroup").withExactArgs(undefined, true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(1, 2, 0)
+			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("getContextsInViewOrder").never();

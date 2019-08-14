@@ -1581,21 +1581,14 @@ sap.ui.define([
 	// Scenario: Request contexts from an ODataListBinding not bound to any control
 	// JIRA: CPOUI5UISERVICESV3-1396
 	QUnit.test("OLDB#requestContexts standalone", function (assert) {
-		var that = this;
+		var oPromise,
+			that = this;
 
 		return this.createView(assert, "", createSalesOrdersModel()).then(function () {
 			var oBinding = that.oModel.bindList("/SalesOrderList");
 
-			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
-				value : [
-					{SalesOrderID : "01"},
-					{SalesOrderID : "02"},
-					{SalesOrderID : "03"}
-				]
-			});
-
 			// code under test
-			return oBinding.requestContexts(0, 3).then(function (aContexts) {
+			oPromise = oBinding.requestContexts(0, 3, "group").then(function (aContexts) {
 				assert.deepEqual(aContexts.map(function (oContext) {
 					return oContext.getPath();
 				}), [
@@ -1604,6 +1597,59 @@ sap.ui.define([
 					"/SalesOrderList('03')"
 				]);
 			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01"},
+					{SalesOrderID : "02"},
+					{SalesOrderID : "03"}
+				]
+			});
+
+			return Promise.all([
+				oPromise,
+				that.oModel.submitBatch("group"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding not bound to any control, Request
+	// creation is async and submitBatch must wait for the request.
+	// JIRA: CPOUI5UISERVICESV3-1396
+	QUnit.test("OLDB#requestContexts standalone: submitBatch must wait", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "").then(function () {
+			var oBinding = that.oModel.bindList(
+					"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT", undefined, undefined,
+					[new Filter("Name", FilterOperator.GE, "M")]);
+
+			that.expectRequest("Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT"
+				+ "?$filter=Name ge 'M'&$skip=0&$top=3", {
+				value : [
+					{ID : 1},
+					{ID : 2},
+					{ID : 3}
+				]
+			});
+
+			// code under test
+			return Promise.all([
+				oBinding.requestContexts(0, 3, "group").then(function (aContexts) {
+					assert.deepEqual(aContexts.map(function (oContext) {
+						return oContext.getPath();
+					}), [
+						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(1)",
+						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(2)",
+						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(3)"
+					]);
+				}),
+				that.oModel.submitBatch("group")
+			]);
 		});
 	});
 
