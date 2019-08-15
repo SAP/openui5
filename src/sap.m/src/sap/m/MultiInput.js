@@ -838,8 +838,10 @@ function(
 			}
 		}
 
-		// prevent scroll of the page
-		oEvent.preventDefault();
+		if (oEvent.keyCode === KeyCodes.ARROW_UP) {
+			// prevent scroll of the page
+			oEvent.preventDefault();
+		}
 	};
 
 	/**
