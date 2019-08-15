@@ -15,3 +15,34 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		}
 	}
 }
+
+/* ------------------------------ */
+/* Disabled                       */
+/* ------------------------------ */
+
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+  border-color: @sapUiHcReducedAltForeground;
+
+  &.sapMToken:hover,
+  &.sapMToken:focus,
+  &.sapMTokenSelected {
+    background: @sapUiButtonBackground;
+    cursor: default;
+    color: @sapUiBaseText;
+    outline: none;
+    border-color: @sapUiHcReducedAltForeground;
+  }
+
+  &.sapMTokenSelected .sapMTokenText {
+    color: @sapUiBaseText;
+  }
+
+  &.sapMTokenSelected .sapMTokenIcon {
+    color: @sapUiContentIconColor;
+    cursor: default;
+  }
+
+  & .sapMTokenIcon {
+    cursor: default;
+  }
+}

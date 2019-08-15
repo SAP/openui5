@@ -1021,6 +1021,8 @@ function(
 
 		this._bInitialSettersCompleted = true;
 
+		this._oTokenizer.setEnabled(this.getEnabled());
+
 		this.setEditable(this.getEditable());
 
 		this._deregisterResizeHandler();
