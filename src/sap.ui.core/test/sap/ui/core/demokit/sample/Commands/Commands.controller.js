@@ -2,12 +2,11 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/base/Log"
-
 ], function (Controller, MessageToast, Log) {
 
 	"use strict";
 
-	return Controller.extend("sap.ui.core.sample.Shortcuts.Shortcuts", {
+	return Controller.extend("sap.ui.core.sample.Commands.Commands", {
 		onInit: function () {
 			function addData() {
 				oViewModel.setProperty("/value", "HelloWorld!");
@@ -43,26 +42,12 @@ sap.ui.define([
 			MessageToast.show("CTRL+S: save triggered on controller");
 		},
 
-		onPopoveropen: function(oEvent) {
-			// create popover
-			if (!this._oPopover) {
-				this.getOwnerComponent().runAsOwner(function() {
-					this._oPopover = sap.ui.xmlfragment("sap.ui.core.sample.Shortcuts.Popover", this);
-					this.byId("page").addDependent(this._oPopover);
-				}.bind(this));
-			}
-			this._oPopover.openBy(oEvent.getSource());
+		onPopoverOpen: function(oEvent) {
+			this.byId("popover").openBy(oEvent.getSource());
 		},
 
-		onShortcutPopoveropen: function(oEvent) {
-			// create popover
-			if (!this._oShortcutPopover) {
-				this.getOwnerComponent().runAsOwner(function() {
-					this._oShortcutPopover = sap.ui.xmlfragment("sap.ui.core.sample.Shortcuts.PopoverShortcuts", this);
-					this.byId("page").addDependent(this._oShortcutPopover);
-				}.bind(this));
-			}
-			this._oShortcutPopover.openBy(oEvent.getSource());
+		onCommandPopoverOpen: function(oEvent) {
+			this.byId("popoverCommand").openBy(oEvent.getSource());
 		}
 	});
 });
