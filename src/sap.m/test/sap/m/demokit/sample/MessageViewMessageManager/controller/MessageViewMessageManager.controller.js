@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 		"use strict";
 
-		return Controller.extend("sap.m.sample.MessageViewMessageHandling.controller.MessageViewMessageHandling", {
+		return Controller.extend("sap.m.sample.MessageViewMessageManager.controller.MessageViewMessageManager", {
 			onInit: function () {
 				this.oView = this.getView();
 
