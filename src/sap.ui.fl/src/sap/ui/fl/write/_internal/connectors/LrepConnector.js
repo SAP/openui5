@@ -18,7 +18,8 @@ sap.ui.define([
 	var ROUTES = {
 		FLEX_INFO: "/flex/info/",
 		PUBLISH: "/actions/make_changes_transportable/",
-		RESET: "/changes/"
+		RESET: "/changes/",
+		SETTINGS: "/flex/settings"
 	};
 
 	/**
@@ -117,8 +118,26 @@ sap.ui.define([
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl);
-		}
+		},
 
+		/**
+		 * Called to get the flex features.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
+		 */
+		loadFeatures: function (mPropertyBag) {
+			var mParameters = {};
+
+			var sClient = FlexUtils.getUrlParameter("sap-client");
+			if (sClient) {
+				mParameters["sap-client"] = sClient;
+			}
+
+			var sFeaturesUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
+			return ApplyUtils.sendRequest(sFeaturesUrl);
+		}
 	});
 
 	return LrepConnector;
