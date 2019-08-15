@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.apply._internal.connectors.Utils
 	 * @since 1.70
 	 * @version ${version}
+	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 	 */
 
@@ -36,7 +37,6 @@ sap.ui.define([
 	 * @param {object} oSource Object providing the data to merge
 	 * @param {object} oTarget Object which got the data added provided by the source
 	 * @param {string} sKey Key of the property which should be added
-	 * @private
 	 */
 	function addToObject(oSource, oTarget, sKey) {
 		if (!oTarget[sKey]) {
@@ -66,7 +66,6 @@ sap.ui.define([
 		 * @param {string} sNameSpace Namespace to determine the path to the configured connectors
 		 * @param {boolean} bIncludingStaticFileConnector Flag to determine if StaticFileConnector should be included
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getConnectors: function(sNameSpace, bIncludingStaticFileConnector) {
 			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
@@ -98,7 +97,6 @@ sap.ui.define([
 		 * mentioned in the core-Configuration.
 		 *
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured apply connectors and their requested modules
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getApplyConnectors: function () {
 			return this.getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
@@ -112,7 +110,6 @@ sap.ui.define([
 		 * @param {string} sFunctionName Name of the called function
 		 * @param {string} sErrorMessage Error messages retrieved from the endpoint
 		 * @returns {object} oResponse Response from the endpoint
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
 			Log.error("Connector (" + oConnectorConfig.connectorName + ") failed call '" + sFunctionName + "': " + sErrorMessage);
@@ -124,7 +121,6 @@ sap.ui.define([
 		 *
 		 * @param {object[]} aResponses All responses provided by the different connectors
 		 * @returns {object} Merged result
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		mergeResults: function(aResponses) {
 			var oResult = {};
@@ -143,7 +139,6 @@ sap.ui.define([
 		 * @param {object} oSource Object containing the information needed for filling oTarget
 		 * @param {array<string>} aKeys Keys which should be added to oTarget
 		 * @returns {object} oTarget Object containing all key-value pairs which where found in oSource
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getSubsetOfObject: function(oSource, aKeys) {
 			var oTarget = {};
@@ -168,7 +163,6 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getUrl: function(sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
