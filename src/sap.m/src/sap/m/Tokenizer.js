@@ -854,6 +854,7 @@ sap.ui.define([
 			oTokenForSelection.focus();
 		}  else {
 			oEvent.setMarked("forwardFocusToParent");
+			this.focus();
 		}
 	};
 
@@ -1385,7 +1386,6 @@ sap.ui.define([
 		}
 
 		this.handleTokenDeletion(aTokensToBeDeleted);
-		this.focus();
 
 		this._doSelect();
 
