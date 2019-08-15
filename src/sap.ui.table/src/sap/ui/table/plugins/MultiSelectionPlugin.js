@@ -495,7 +495,7 @@ sap.ui.define([
 			this.oInnerSelectionPlugin = null;
 		}
 		if (oParent) {
-			this.oInnerSelectionPlugin = new oParent._createLegacySelectionPlugin();
+			this.oInnerSelectionPlugin = oParent._createLegacySelectionPlugin();
 			this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
 			oParent.setProperty("selectionMode", this.getSelectionMode());
 		}
