@@ -829,6 +829,25 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("onsapprevious when MultiInput has a token and value in the input field", function(assert) {
+		var oPreventSpy = this.spy(),
+			oFakeEvent = {
+				preventDefault: oPreventSpy,
+				keyCode: KeyCodes.ARROW_UP
+			},
+			token1 = new Token({text: "Token"});
+
+		this.multiInput1.addToken(token1);
+		this.multiInput1.setValue("text");
+
+		this.multiInput1._$input.focus();
+
+		this.multiInput1.onsapprevious(oFakeEvent);
+
+		// assert
+		assert.strictEqual(oPreventSpy.called, true, "Arrow up was prevented.");
+	});
+
 	QUnit.test("onsapdelete", function(assert) {
 		this.multiInput1.setValue("text123");
 		this.multiInput1.setTokens([new Token()]);
