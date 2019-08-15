@@ -1259,7 +1259,7 @@ sap.ui.define([
 			// jQuery Plugin "control"
 			var oTappedControl = jQuery(oControlEvent.target).control(0);
 
-			if (!oTappedControl.isA("sap.m.GroupHeaderListItem")) {
+			if (!oTappedControl || !oTappedControl.isA("sap.m.GroupHeaderListItem")) {
 				this.close();
 			}
 		};
