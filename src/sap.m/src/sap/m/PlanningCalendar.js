@@ -3368,9 +3368,13 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._calcResizeNewDaysAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
 		var oEndDate = new Date(oRowStartDate),
-			iNewEndDate = oEndDate.getDate() + iIndex + 1;
+			iNewEndDate = oEndDate.getDate() + iIndex + 1,
+			oNewEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
 
-		if (iNewEndDate <= oAppStartDate.getDate()) {
+		oNewEndDate.setDate(iNewEndDate);
+
+		// This line checks if the start date is after the new end date and if so it just adds 1 to the startdate.
+		if (oNewEndDate.getTime() <= oAppStartDate.getTime()) {
 			iNewEndDate = oAppStartDate.getDate() + 1;
 		}
 
