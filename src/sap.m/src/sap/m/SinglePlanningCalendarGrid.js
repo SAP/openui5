@@ -60,7 +60,9 @@ sap.ui.define([
 			MILLISECONDS_IN_A_DAY = 86400000,
 			// Day view only - indicates the special dates
 			// 3px height the marker itself + 2x2px on its top and bottom both on cozy & compact
-			DAY_MARKER_HEIGHT_PX = 7;
+			DAY_MARKER_HEIGHT_PX = 7,
+			FIRST_HOUR_OF_DAY = 0,
+			LAST_HOUR_OF_DAY = 24;
 
 		/**
 		 * Constructor for a new SinglePlanningCalendarGrid.
@@ -113,6 +115,26 @@ sap.ui.define([
 					 * The time part will be ignored. The current date is used as default.
 					 */
 					startDate: {type: "object", group: "Data"},
+
+					/**
+					 * Determines the start hour of the grid to be shown if the <code>fullDay</code> property is set to
+					 * <code>false</code>. Otherwise the previous hours are displayed as non-working. The passed hour is
+					 * considered as 24-hour based.
+					 */
+					startHour: {type: "int", group: "Data", defaultValue: 0},
+
+					/**
+					 * Determines the end hour of the grid to be shown if the <code>fullDay</code> property is set to
+					 * <code>false</code>. Otherwise the next hours are displayed as non-working. The passed hour is
+					 * considered as 24-hour based.
+					 */
+					endHour: {type: "int", group: "Data", defaultValue: 24},
+
+					/**
+					 * Determines if all of the hours in a day are displayed. If set to <code>false</code>, the hours shown are
+					 * between the <code>startHour</code> and <code>endHour</code>.
+					 */
+					fullDay: {type: "boolean", group: "Data", defaultValue: true},
 
 					/**
 					 * Determines whether the appointments in the grid are draggable.
@@ -1192,10 +1214,7 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getVisibleStartHour = function () {
-			// inject here the logic about the visibility of the fisrt visible hour, when the startHour property exist
-			// example:
-			// return this.getShowFullDay() ? 0 : this._getStartHour();
-			return 0;
+			return (this.getFullDay() || !this.getStartHour()) ? FIRST_HOUR_OF_DAY : this.getStartHour();
 		};
 
 		/**
@@ -1205,41 +1224,29 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._getVisibleEndHour = function () {
-			// inject here the logic about the visibility of the last visible hour, when the endHour property exist
-			// example:
-			// return (this.getShowFullDay() ? 24 : this._getEndHour()) - 1;
-			return 23;
+			return ((this.getFullDay() || !this.getEndHour()) ? LAST_HOUR_OF_DAY : this.getEndHour()) - 1;
 		};
 
 		/**
 		 * Determines if a given hour is between the first and the last visible hour in the grid.
 		 *
+		 * @param {int} iHour the hour to be checked
 		 * @returns {boolean} true if the iHour is in the visible hour range
 		 * @private
 		 */
-		SinglePlanningCalendarGrid.prototype._isVisibleHour = function () {
-			// inject here the logic about the visibility of the working time range, when the startHour and endHour
-			// properties exist
-			// example:
-			// return this._getStartHour() <= iHour && iHour <= this._getEndHour();
-			return true;
-		};
+		SinglePlanningCalendarGrid.prototype._isVisibleHour = function (iHour) {
+			var iStartHour = this.getStartHour(),
+				iEndHour = this.getEndHour();
 
-		/**
-		 * Determines whether the given hour is outside the visible hours of the grid.
-		 *
-		 * @returns {boolean} true if the iHour is outside the visible hour range
-		 * @private
-		 */
-		SinglePlanningCalendarGrid.prototype._isOutsideVisibleHours = function () {
-			// inject here the logic about the visibility of the working time range, when the startHour and endHour
-			// properties exist
-			// example:
-			// var iVisibleStartHour = this._getVisibleStartHour(),
-			// 	   iVisibleEndHour = this._getVisibleEndHour();
-			// 	   return iHour < iVisibleStartHour || iHour > iVisibleEndHour;
+			if (!this.getStartHour()) {
+				iStartHour = FIRST_HOUR_OF_DAY;
+			}
 
-			return false;
+			if (!this.getEndHour()) {
+				iEndHour = LAST_HOUR_OF_DAY;
+			}
+
+			return iStartHour <= iHour && iHour < iEndHour;
 		};
 
 		/**
@@ -1364,7 +1371,7 @@ sap.ui.define([
 			var $nowMarker = this.$("nowMarker"),
 				$nowMarkerText = this.$("nowMarkerText"),
 				$nowMarkerAMPM = this.$("nowMarkerAMPM"),
-				bCurrentHourNotVisible = this._isOutsideVisibleHours(oDate.getHours());
+				bCurrentHourNotVisible = !this._isVisibleHour(oDate.getHours());
 
 			$nowMarker.toggleClass("sapMSinglePCNowMarkerHidden", bCurrentHourNotVisible);
 			$nowMarker.css("top", this._calculateTopPosition(oDate) + "px");
