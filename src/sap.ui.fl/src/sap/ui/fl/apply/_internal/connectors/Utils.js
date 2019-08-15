@@ -33,8 +33,8 @@ sap.ui.define([
 	 * * present and an object: it is merged (recursion)
 	 * This function changes the object directly without returning it.
 	 *
-	 * @param {Object} oSource Object providing the data to merge
-	 * @param {Object} oTarget Object which got the data added provided by the source
+	 * @param {object} oSource Object providing the data to merge
+	 * @param {object} oTarget Object which got the data added provided by the source
 	 * @param {string} sKey Key of the property which should be added
 	 * @private
 	 */
@@ -97,11 +97,22 @@ sap.ui.define([
 		 * mentioned in the core-Configuration.
 		 *
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured apply connectors and their requested modules
+		 * @public
 		 */
 		getApplyConnectors: function () {
 			return this.getConnectors(APPLY_CONNECTOR_NAME_SPACE, true);
 		},
 
+		/**
+		 * Creates a Error messages in case of a failed Connector call while getting responses from multiple endpoints
+		 *
+		 * @param {object} oResponse Response from the sent request
+		 * @param {object} oConnectorConfig Configured Connector
+		 * @param {string} sFunctionName Name of the called function
+		 * @param {string} sErrorMessage Error messages retrieved from the endpoint
+		 * @returns {object} oResponse Response from the endpoint
+		 * @public
+		 */
 		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
 			Log.error("Connector (" + oConnectorConfig.connectorName + ") failed call '" + sFunctionName + "': " + sErrorMessage);
 			return oResponse;
@@ -110,20 +121,39 @@ sap.ui.define([
 		/**
 		 * Merges the results from all involved connectors.
 		 *
-		 * @param {Object[]} aResponses All responses provided by the different connectors
-		 * @returns {Object} Merged result
-		 * @private
+		 * @param {object[]} aResponses All responses provided by the different connectors
+		 * @returns {object} Merged result
+		 * @public
 		 */
 		mergeResults: function(aResponses) {
 			var oResult = {};
-
 			aResponses.forEach(function (oResponse) {
 				Object.keys(oResponse).forEach(function (sKey) {
 					addToObject(oResponse, oResult, sKey);
 				});
 			});
-
 			return oResult;
+		},
+
+		/**
+		 * Takes a source object and returns a target object that has a subset of properties of the source object
+		 * specified in 'aKeys'.
+		 *
+		 * @param {object} oSource Object containing the information needed for filling oTarget
+		 * @param {array<string>} aKeys Keys which should be added to oTarget
+		 * @returns {object} oTarget Object containing all key-value pairs which where found in oSource
+		 * @public
+		 */
+		getSubsetOfObject: function(oSource, aKeys) {
+			var oTarget = {};
+			if (Array.isArray(aKeys)) {
+				aKeys.forEach(function (sKey) {
+					if (oSource[sKey]) {
+						oTarget[sKey] = oSource[sKey];
+					}
+				});
+			}
+			return oTarget;
 		},
 
 		/**
@@ -135,24 +165,31 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} [mPropertyBag.reference] Flexibility reference
 		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
-		 * @param {object} [mParameters] Query-parameters which should be added to the url
+		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
-		 * @private
+		 * @public
 		 */
 		getUrl: function(sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
-				return;
+				throw new Error("Not all necessary parameters were passed");
 			}
 			var sUrl = mPropertyBag.url + sRoute;
 
-			/* If any of the following properties are available in mPropertyBag,
-			we append them to the Url */
-			mPropertyBag.cacheKey && (sUrl += "~" + mPropertyBag.cacheKey + "~/");
-			mPropertyBag.reference && (sUrl += mPropertyBag.reference);
+			// If any of the following properties are available in mPropertyBag we append them to the Url
+			if (mPropertyBag.cacheKey) {
+				sUrl += "~" + mPropertyBag.cacheKey + "~/";
+			}
+			if (mPropertyBag.reference) {
+				sUrl += mPropertyBag.reference;
+			}
 
+			// Adding Query-Parameters to the Url
 			if (mParameters) {
 				var sQueryParameters = encodeURLParameters(mParameters);
-				sQueryParameters.length > 0 && (sUrl += "?" + sQueryParameters);
+
+				if (sQueryParameters.length > 0) {
+					sUrl += "?" + sQueryParameters;
+				}
 			}
 			return sUrl;
 		},
@@ -163,7 +200,7 @@ sap.ui.define([
 		 * @param {string} sUrl Url of the sent request
 		 * @param {string} sMethod Desired action to be performed for a given resource
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
-		 * @private
+		 * @public
 		 */
 		sendRequest: function(sUrl, sMethod) {
 			sMethod = sMethod || "GET";

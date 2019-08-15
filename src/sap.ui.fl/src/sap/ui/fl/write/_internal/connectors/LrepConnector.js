@@ -47,24 +47,26 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves as soon as the reset has completed
 		 */
 		reset: function (mPropertyBag) {
-			var mParameters = {};
+			var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
+			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
-			sClient && (mParameters["sap-client"] = sClient);
+			if (sClient) {
+				mParameters["sap-client"] = sClient;
+			}
 
-			mParameters.reference = mPropertyBag.reference;
+			if (mPropertyBag.selectorIds) {
+				mParameters.selector = mPropertyBag.selectorIds;
+			}
+			if (mPropertyBag.changeTypes) {
+				mParameters.changeType = mPropertyBag.changeTypes;
+			}
+
 			delete mPropertyBag.reference;
-
-			mPropertyBag.layer && (mParameters.layer = mPropertyBag.layer);
-			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
-			mPropertyBag.changelist && (mParameters.changelist = mPropertyBag.changelist);
-			mPropertyBag.generator && (mParameters.generator = mPropertyBag.generator);
-			mPropertyBag.selectorIds && (mParameters.selector = mPropertyBag.selectorIds);
-			mPropertyBag.changeTypes && (mParameters.changeType = mPropertyBag.changeTypes);
-
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.RESET, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl, "DELETE");
 		},
+
 
 		/**
 		 * Publish flexibility files for a given application and layer.
@@ -79,19 +81,15 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves as soon as the publish has completed
 		 */
 		publish: function (mPropertyBag) {
-			var mParameters = {};
+			var aParameters = ["reference", "layer", "appVersion", "changelist", "package"];
+			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
-			sClient && (mParameters["sap-client"] = sClient);
+			if (sClient) {
+				mParameters["sap-client"] = sClient;
+			}
 
-			mParameters.reference = mPropertyBag.reference;
 			delete mPropertyBag.reference;
-
-			mPropertyBag.layer && (mParameters.layer = mPropertyBag.layer);
-			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
-			mPropertyBag.changelist && (mParameters.changelist = mPropertyBag.changelist);
-			mPropertyBag.package && (mParameters.package = mPropertyBag.package);
-
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.PUBLISH, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl, "POST");
 		},
@@ -109,13 +107,13 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves as soon as flex info has been retrieved
 		 */
 		getFlexInfo: function (mPropertyBag) {
-			var mParameters = {};
+			var aParameters = ["layer", "appVersion"];
+			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
-			sClient && (mParameters["sap-client"] = sClient);
-
-			mPropertyBag.layer && (mParameters.layer = mPropertyBag.layer);
-			mPropertyBag.appVersion && (mParameters.appVersion = mPropertyBag.appVersion);
+			if (sClient) {
+				mParameters["sap-client"] = sClient;
+			}
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl);

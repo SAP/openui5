@@ -31,7 +31,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves();
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
-			return PersonalizationConnector.writeChanges(mPropertyBag).then(function() {
+			return PersonalizationConnector.writeFlexData(mPropertyBag).then(function() {
 				assert.equal(oSpyGetUrl.getCall(0).args[0], "/changes/", "with correct route path");
 				assert.equal(oSpyGetUrl.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
@@ -50,7 +50,7 @@ sap.ui.define([
 				appVersion: "1.0.1",
 				changeTypes: "rename"
 			};
-			var sExpectedUrl = "/sap/bc/lrep/changes/?reference=reference&appVersion=1.0.1&selectorIds=id1,id2&changeTypes=rename&generator=generator";
+			var sExpectedUrl = "/sap/bc/lrep/changes/?reference=reference&appVersion=1.0.1&generator=generator&selector=id1,id2&changeType=rename";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves();
