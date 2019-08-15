@@ -15,7 +15,6 @@ sap.ui.define([
 	 * Abstraction providing an API to handle communication with persistencies like back ends, local & session storage or work spaces.
 	 *
 	 * @namespace sap.ui.fl.write._internal.Connector
-	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
 	 * @private
@@ -32,11 +31,11 @@ sap.ui.define([
 		}
 
 		if (aFilteredConnectors.length === 0) {
-			throw new Error("No Connector could be found to write into layer: " + sLayer);
+			throw new Error("No Connector configuration could be found to write into layer: " + sLayer);
 		}
 
 		if (aFilteredConnectors.length > 1) {
-			throw new Error("sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple Connectors were found to write into layer: " + sLayer);
+			throw new Error("sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple Connector configurations were found to write into layer: " + sLayer);
 		}
 	}
 
@@ -54,9 +53,11 @@ sap.ui.define([
 	 *
 	 * @param {string} sLayer Layer on which the file should be stored
 	 * @returns {Promise<sap.ui.fl.write.connectors.BaseConnector>} Returns the connector in charge for the layer or rejects in case no connector can be determined
-	 * @private
 	 */
 	function getConnectorConfigByLayer(sLayer) {
+		if (!sLayer) {
+			return Promise.reject("No layer was provided");
+		}
 		return WriteUtils.getWriteConnectors()
 			.then(findConnectorConfigForLayer.bind(this, sLayer));
 	}
@@ -67,7 +68,7 @@ sap.ui.define([
 	 * Stores the flex data by calling the according write of the connector in charge of the passed layer;
 	 * The promise is rejected in case the writing failed or no connector is configured to handle the layer.
 	 *
-	 * @param {object} mPropertyBag Property bag
+	 * @param {object} mPropertyBag Contains additional information for all the Connectors
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the file should be stored
 	 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
@@ -77,6 +78,27 @@ sap.ui.define([
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
 				oConnectorConfig.connector.write(mPropertyBag);
+			});
+	};
+
+	/**
+	 * Resets the flex data by calling the according reset of the connector in charge of the passed layer;
+	 * The promise is rejected in case the writing failed or no connector is configured to handle the layer.
+	 *
+	 * @param {object} mPropertyBag Contains additional information for all the Connectors
+	 * @param {string} mPropertyBag.reference Flexibility reference
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the reset should take place
+	 * @param {string} [mPropertyBag.appVersion] Version of the application
+	 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
+	 * @param {string[]} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter
+	 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset
+	 * @returns {Promise} Resolves after the reset is completed and rejects in case of an error
+	 */
+	Connector.reset = function (mPropertyBag) {
+		return getConnectorConfigByLayer(mPropertyBag.layer)
+			.then(function (oConnectorConfig) {
+				mPropertyBag.url = oConnectorConfig.url;
+				return oConnectorConfig.connector.reset(mPropertyBag);
 			});
 	};
 
