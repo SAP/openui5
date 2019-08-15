@@ -543,9 +543,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	GridContainer.prototype.onAfterRendering = function () {
-		if (this.getContainerQuery() || !isGridSupportedByBrowser()) {
-			this._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), this._resizeHandler);
-		}
+		this._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), this._resizeHandler);
 
 		this._isRenderingFinished = true;
 
