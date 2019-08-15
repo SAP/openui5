@@ -686,6 +686,14 @@
 
 	// ---- Modules -------------------------------------------------------------------------------
 
+	function wrapExport(value) {
+		return { moduleExport: value };
+	}
+
+	function unwrapExport(wrapper) {
+		return wrapper.moduleExport;
+	}
+
 	/**
 	 * Module neither has been required nor preloaded nor declared, but someone asked for it.
 	 */
@@ -799,7 +807,7 @@
 			// check arguments.length to allow a value of undefined
 			this.content = value;
 		}
-		this.deferred().resolve(this.value());
+		this.deferred().resolve(wrapExport(this.value()));
 		if ( this.aliases ) {
 			value = this.value();
 			this.aliases.forEach(function(alias) {
@@ -1417,7 +1425,7 @@
 				}
 				// Note: this intentionally does not return oModule.promise() as the export might be temporary in case of cycles
 				// or it might have changed after repeated module execution
-				return bAsync ? Promise.resolve(oModule.value()) : oModule.value();
+				return bAsync ? Promise.resolve(wrapExport(oModule.value())) : wrapExport(oModule.value());
 			} else if ( oModule.state === FAILED ) {
 				if ( bAsync ) {
 					return oModule.deferred().promise;
@@ -1435,7 +1443,7 @@
 							log.debug("cycle detected between '" + oRequestingModule.name + "' and '" + sModuleName + "', returning undefined for '" + sModuleName + "'");
 						}
 						// Note: this must be a separate promise as the fulfillment is not the final one
-						return Promise.resolve(undefined);
+						return Promise.resolve(wrapExport(undefined));
 					}
 					return oModule.deferred().promise;
 				}
@@ -1444,7 +1452,7 @@
 					if ( log.isLoggable() ) {
 						log.debug("cycle detected between '" + (oRequestingModule ? oRequestingModule.name : "unknown") + "' and '" + sModuleName + "', returning undefined for '" + sModuleName + "'");
 					}
-					return undefined;
+					return wrapExport(undefined);
 				}
 				// async pending, load sync again
 				log.warning("Sync request triggered for '" + sModuleName + "' while async request was already pending." +
@@ -1510,7 +1518,7 @@
 				throw oModule.error;
 			}
 
-			return oModule.value();
+			return wrapExport(oModule.value());
 
 		} else {
 
@@ -1666,14 +1674,14 @@
 					switch ( sDepModName ) {
 					case 'require.js':
 						// the injected local require should behave like the Standard require (2nd argument = true)
-						aModules[i] = createContextualRequire(sBaseName, true);
+						aModules[i] = wrapExport(createContextualRequire(sBaseName, true));
 						break;
 					case 'module.js':
-						aModules[i] = oRequestingModule.api();
+						aModules[i] = wrapExport(oRequestingModule.api());
 						break;
 					case 'exports.js':
 						oRequestingModule.api();
-						aModules[i] = oRequestingModule._exports;
+						aModules[i] = wrapExport(oRequestingModule._exports);
 						break;
 					default:
 						break;
@@ -1771,6 +1779,7 @@
 				// "If the factory function returns a value (an object, function, or any value that coerces to true),
 				//  then that value should be assigned as the exported value for the module."
 				try {
+					aModules = aModules.map(unwrapExport);
 					var exports = vFactory.apply(__global, aModules);
 					if ( oModule._api && oModule._api.exports !== undefined && oModule._api.exports !== oModule._exports ) {
 						exports = oModule._api.exports;
@@ -1936,6 +1945,7 @@
 			}
 
 			requireAll(sContextName, vDependencies, function(aModules) {
+				aModules = aModules.map(unwrapExport);
 				if ( typeof fnCallback === 'function' ) {
 					if ( bGlobalAsyncMode ) {
 						fnCallback.apply(__global, aModules);
@@ -2003,7 +2013,7 @@
 		if ( log.isLoggable() ) {
 			log.warning("sync require of '" + sModuleName + "'");
 		}
-		return requireModule(null, sModuleName, /* bAsync = */ false);
+		return unwrapExport(requireModule(null, sModuleName, /* bAsync = */ false));
 	}
 
 	function predefine(sModuleName, aDependencies, vFactory, bExport) {
@@ -2183,7 +2193,7 @@
 
 	function loadJSResourceAsync(sResource, bIgnoreErrors) {
 		sResource = getMappedName(sResource);
-		var promise = requireModule(null, sResource, /* bAsync = */ true);
+		var promise = requireModule(null, sResource, /* bAsync = */ true).then(unwrapExport);
 		return bIgnoreErrors ? promise.catch(noop) : promise;
 	}
 

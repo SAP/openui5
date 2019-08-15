@@ -29,6 +29,8 @@
 		}
 	});
 
+	function noop() {}
+
 	function isEmpty(obj) {
 		for (var key in obj ) { //eslint-disable-line no-unused-vars
 			return false;
@@ -36,6 +38,9 @@
 		return true;
 	}
 
+	function isThenable(obj) {
+		return obj && typeof obj === "object" && typeof obj.then === "function";
+	}
 
 	// ========================================================================================
 	// Dependency Resolution (with async APIs)
@@ -1002,6 +1007,74 @@
 			restoreAndDone();
 		});
 	});
+
+
+
+	// ========================================================================================
+	// Exports of Type "Promise"
+	// ========================================================================================
+
+	QUnit.module("Promise exports");
+
+	QUnit.test("sap.ui.define", function(assert) {
+		var doneWithDefine01 = assert.async();
+		sap.ui.define("fixture/exporting-promises/test-module-01", [
+			"fixture/exporting-promises/module-with-promise-export",
+			"require"
+		], function(_export, localRequire01) {
+			assert.ok(isThenable(_export), "The export must be a thenable");
+
+			var doneWithLocalRequire01 = assert.async();
+			localRequire01(["./module-with-promise-export"], function() {
+				assert.ok(isThenable(_export), "The export must be a thenable also on follow-up access with a local require");
+				doneWithLocalRequire01();
+			});
+
+			var doneWithDefine02 = assert.async();
+			sap.ui.define("fixture/exporting-promises/test-module-02", [
+				"fixture/exporting-promises/module-with-promise-export",
+				"require"
+			], function(_export, localRequire02) {
+
+				var doneWithLocalRequire02 = assert.async();
+				localRequire02(["./module-with-promise-export"], function() {
+					assert.ok(isThenable(_export), "The export must be a thenable also on follow-up access via a local require");
+					doneWithLocalRequire02();
+				});
+
+				assert.ok(isThenable(_export), "The export must be a thenable also on 2nd access");
+				doneWithDefine02();
+			});
+
+			// ensure evaluation of the 2nd module defined above
+			sap.ui.require(["fixture/exporting-promises/test-module-02"], noop);
+			doneWithDefine01();
+		});
+
+		// ensure evaluation of the 1st module defined above
+		sap.ui.require(["fixture/exporting-promises/test-module-01"], noop);
+	});
+
+	QUnit.test("sap.ui.require", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["fixture/exporting-promises/module-with-promise-export"], function(_export) {
+			assert.ok(isThenable(_export), "The export must be a thenable");
+
+			sap.ui.require(["fixture/exporting-promises/module-with-promise-export"], function(_export) {
+				assert.ok(isThenable(_export), "The export must be a thenable also on 2nd access");
+				done();
+			});
+		});
+	});
+
+	QUnit.test("sap.ui.requireSync", function(assert) {
+		var _export = sap.ui.requireSync("fixture/exporting-promises/module-with-promise-export");
+		assert.ok(isThenable(_export), "The export must be a thenable");
+
+		var _export = sap.ui.requireSync("fixture/exporting-promises/module-with-promise-export");
+		assert.ok(isThenable(_export), "The export must be a thenable also on 2nd access");
+	});
+
 
 	// ========================================================================================
 	// "Real World" scenarios
