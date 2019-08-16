@@ -415,7 +415,7 @@ function(
 		StepInput.prototype.onBeforeRendering = function () {
 			var fMin = this.getMin(),
 				fMax = this.getMax(),
-				vValue = this.getValue(),
+				vValue = this.getAggregation("_input")._$input.val() || this.getValue(),
 				bEditable = this.getEditable();
 
 			this._iRealPrecision = this._getRealValuePrecision();
