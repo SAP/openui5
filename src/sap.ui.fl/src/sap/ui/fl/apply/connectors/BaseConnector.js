@@ -17,6 +17,9 @@ sap.ui.define([
 	 * @public
 	 */
 	var BaseConnector = /** @lends sap.ui.fl.apply.api.connectors.BaseConnector */ {
+
+		sXsrfToken : undefined,
+
 		/**
 		 * Interface called to get the flex data, including changes and variants.
 		 *

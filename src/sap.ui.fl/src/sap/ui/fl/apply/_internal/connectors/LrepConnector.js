@@ -53,18 +53,21 @@ sap.ui.define([
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
 
-			return ApplyUtils.sendRequest(sDataUrl).then(function (oResponse) {
+			return ApplyUtils.sendRequest(sDataUrl, "GET", { token : this.sXsrfToken }).then(function (oResult) {
 				// TODO(when the cacheKey calculation implementation happens): see that the etag / cacheKey is handled accordingly
-
+				var oResponse = oResult.response;
+				if (oResult.token) {
+					this.sXsrfToken = oResult.token;
+				}
 				if (!oResponse.loadModules) {
 					return oResponse;
 				}
 
 				var sModulesUrl = ApplyUtils.getUrl(ROUTES.MODULES, mPropertyBag, mParameters);
-				return ApplyUtils.sendRequest(sModulesUrl).then(function () {
-					return oResponse;
+				return ApplyUtils.sendRequest(sModulesUrl, "GET").then(function (oModulesResult) {
+					return oModulesResult.response;
 				});
-			});
+			}.bind(this));
 		}
 	});
 

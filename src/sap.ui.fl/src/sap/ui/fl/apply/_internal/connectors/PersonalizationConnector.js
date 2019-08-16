@@ -41,7 +41,13 @@ sap.ui.define([
 			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_DATA, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl);
+			return ApplyUtils.sendRequest(sDataUrl, "GET", { token : this.sXsrfToken }).then(function (oResult) {
+				var oResponse = oResult.response;
+				if (oResult.token) {
+					this.sXsrfToken = oResult.token;
+				}
+				return oResponse;
+			}.bind(this));
 		}
 	});
 
