@@ -81,7 +81,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Connector.writeFlexData = function (mPropertyBag) {
+	Connector.writeFlexData = function(mPropertyBag) {
 		return getConnectorByLayer(mPropertyBag.layer)
 			.then(sendWriteFlexDataToConnector.bind(this, mPropertyBag));
 	};
@@ -91,7 +91,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<Object>} Map feature flags and additional provided information from the connectors
 	 */
-	Connector.loadFeatures = function () {
+	Connector.loadFeatures = function() {
 		return WriteUtils.getWriteConnectors()
 			.then(sendLoadFeaturesToConnector)
 			.then(ApplyUtils.mergeResults);

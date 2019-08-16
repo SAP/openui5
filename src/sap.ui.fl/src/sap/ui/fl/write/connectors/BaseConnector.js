@@ -84,11 +84,9 @@ sap.ui.define([
 		/**
 		 * Interface called to get the flex feature.
 		 *
-		 * @param {map} mPropertyBag Property bag
-		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise<Object>} Promise resolves with an object containing a flex features response
 		 */
-		loadFeatures: function (/* mPropertyBag */) {
+		loadFeatures: function () {
 			return Promise.reject("loadFeatures is not implemented");
 		}
 	};
