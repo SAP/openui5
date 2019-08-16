@@ -1,0 +1,69 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Quick Links",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "/quickLinks"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"Name": "Career",
+						"icon": "sap-icon://leads",
+						"url": "/careers"
+					},
+					{
+						"Name": "Company Directory",
+						"icon": "sap-icon://address-book"
+					},
+					{
+						"Name": "Development Plan",
+						"icon": "sap-icon://activity-items"
+					},
+					{
+						"Name": "Business Goals",
+						"icon": "sap-icon://target-group",
+						"url": "/businessGoals"
+					},
+					{
+						"Name": "Travel and Expenses",
+						"icon": "sap-icon://travel-expense"
+					},
+					{
+						"Name": "Time off",
+						"icon": "sap-icon://general-leave-request",
+						"url": "/timeOff"
+					}
+				]
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{Name}",
+				"description": "{Description}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"enabled": "{= ${url}}",
+						"parameters": {
+							"url": "{url}"
+						}
+					}
+				]
+			}
+		}
+	}
+}

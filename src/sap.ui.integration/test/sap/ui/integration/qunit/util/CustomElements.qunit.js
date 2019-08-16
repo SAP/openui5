@@ -223,4 +223,25 @@ sap.ui.define([
 				done();
 			}, 200);
 		});
+
+		QUnit.module("Events", {
+			beforeEach: function (assert) {
+				var done = assert.async();
+				initTags(done);
+			}
+		});
+
+		QUnit.test("Add event listener dynamically", function (assert) {
+			var done = assert.async(),
+				oElement = document.createCustomElement("ui-card");
+
+			assert.expect(1);
+			oElement.addEventListener("action", function (oEvent) {
+				assert.strictEqual(oEvent.type, "action", "The proper event is fired.");
+				done();
+			});
+
+			// act
+			oElement._control._controlImpl.fireAction();
+		});
 	});

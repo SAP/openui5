@@ -1,6 +1,6 @@
 /*!
- * ${copyright}
- */
+* ${copyright}
+*/
 
 sap.ui.define([
 	"sap/base/Log"
@@ -33,6 +33,7 @@ sap.ui.define([
 			coreInstance: null
 		};
 
+	// polyfill for CustomEvent
 	function initCustomEvents() {
 		if (typeof window.CustomEvent === "function") {
 			return false;
@@ -168,7 +169,7 @@ sap.ui.define([
 			node._control = this;
 			Tag.initCloneNode(node);
 			Tag.defineProperties(node);
-			this._controlImpl = this._controlImpl || new TagImpl(node.getAttribute("id"));
+			this._controlImpl = this._controlImpl || new TagImpl(node.id);
 			this._changeProperties(node);
 			//TODO: How to avoid the UI Area?
 			node.setAttribute("id", this._controlImpl.getId() + "-area");
@@ -177,6 +178,13 @@ sap.ui.define([
 			if (Tag.isInActiveDocument(node)) {
 				this._connectedCallback();
 			}
+
+			// attach event listeners for all the control events
+			Object.keys(tagAllEvents).map(function (n) {
+				this._controlImpl[tagAllEvents[n]._sMutator](function(oEvent) {
+					fireCustomEvent(node, n, oEvent);
+				});
+			}.bind(this));
 			return node;
 		};
 
@@ -260,19 +268,6 @@ sap.ui.define([
 				} else {
 					oSetting.set(oTagImpl, vOldValue);
 				}
-			} else if (oSetting && oSetting._iKind === 5 /*event*/ ) {
-				var that = this;
-				//detatch the old event handler
-				if (this["_" + oSetting.name]) {
-					oTagImpl[oSetting._sDetachMutator](this["_" + oSetting.name]);
-				}
-				//create a new event handler
-				this["_" + oSetting.name] = function (oEvent) {
-					//simply fire a custom browser event with the parameters
-					that.fireCustomEvent(oSetting.name.toLowerCase(), oEvent.mParameters);
-				};
-				//attach the new event handler
-				oTagImpl[oSetting._sMutator](this["_" + oSetting.name]);
 			} else if (property === "class") {
 				var aClasss = newValue.split(" ");
 				this._addedClasses = this._addedClasses || [];
