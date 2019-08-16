@@ -2286,6 +2286,7 @@ sap.ui.define([
 			oTransientBindingContextMock = this.mock(oTransientBindingContext);
 
 		oBinding = this.bindList("relative"); // unresolved
+		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oParentBindingPrototypeMock.expects("destroy").on(oBinding).withExactArgs();
@@ -2329,8 +2330,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, true].forEach(function (bDestroyLater) {
-	QUnit.test("destroyCreated: bDestroyLater=" + bDestroyLater, function (assert) {
+	QUnit.test("destroyPreviousContexts", function (assert) {
+		var oBinding = this.bindList("relative"),
+			oContext1 = {destroy : function () {}},
+			oContext2 = {destroy : function () {}};
+
+		oBinding.mPreviousContextsByPath = {p1 : oContext1, p2 : oContext2};
+		this.mock(oContext1).expects("destroy").withExactArgs();
+		this.mock(oContext2).expects("destroy").withExactArgs();
+
+		// code under test
+		oBinding.destroyPreviousContexts();
+
+		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("destroyPreviousContexts: binding already destroyed", function (assert) {
+		var oBinding = this.bindList("relative");
+
+		oBinding.destroy();
+
+		// code under test - simulate a pre-rendering task after the binding was destroyed
+		oBinding.destroyPreviousContexts();
+
+		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
+	});
+
+	//*********************************************************************************************
+[
+	{bDestroyLater : false, bHasRead : true},
+	{bDestroyLater : true, bHasRead : false},
+	{bDestroyLater : true, bHasRead : true}
+].forEach(function (oFixture) {
+	QUnit.test("destroyCreated: " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext0 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
 				Promise.resolve()),
@@ -2343,25 +2376,32 @@ sap.ui.define([
 				Promise.resolve()),
 			aData = [{}];
 
-		// simulate 1 entity read from server
-		oBinding.createContexts(0, 1, aData);
-		oContext0FromServer = oBinding.aContexts[0];
+		if (oFixture.bHasRead) {
+			// simulate 1 entity read from server
+			oBinding.createContexts(0, 1, aData);
+			oContext0FromServer = oBinding.aContexts[0];
+			oBinding.iCurrentEnd = 1;
+		}
 		// simulate 4 created entities
 		oBinding.aContexts.unshift(oContext3, oContext2, oContext1, oContext0);
 		oBinding.iCreatedContexts = 4;
 
-		// check some preconditions
-		assert.strictEqual(oBinding.aContexts[4], oContext0FromServer);
-		assert.strictEqual(oContext0FromServer.getIndex(), 4);
-		assert.strictEqual(oContext0FromServer.iIndex, 0, "Server index as expected");
-		assert.strictEqual(oBinding.getLength(), 15, "length");
+		if (oFixture.bHasRead) {
+			// check some preconditions
+			assert.strictEqual(oBinding.aContexts[4], oContext0FromServer);
+			assert.strictEqual(oContext0FromServer.getIndex(), 4);
+			assert.strictEqual(oContext0FromServer.iIndex, 0, "Server index as expected");
+		}
+		assert.strictEqual(oBinding.getLength(), oFixture.bHasRead ? 15 : 14, "length");
 
-		this.mock(oContext1).expects("destroy").exactly(bDestroyLater ? 0 : 1);
+		this.mock(oContext1).expects("destroy")
+			.exactly(oFixture.bDestroyLater && oFixture.bHasRead ? 0 : 1)
+			.withExactArgs();
 
 		// code under test
-		oBinding.destroyCreated(oContext1, bDestroyLater);
+		oBinding.destroyCreated(oContext1, oFixture.bDestroyLater);
 
-		assert.strictEqual(oBinding.getLength(), 14);
+		assert.strictEqual(oBinding.getLength(), oFixture.bHasRead ? 14 : 13);
 		assert.strictEqual(oBinding.iCreatedContexts, 3);
 		assert.strictEqual(oBinding.aContexts[0], oContext3);
 		assert.strictEqual(oContext3.getIndex(), 0);
@@ -2370,9 +2410,11 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aContexts[2], oContext0);
 		assert.strictEqual(oContext0.getIndex(), 2);
 		assert.strictEqual(oBinding.aContexts[3], oContext0FromServer);
-		assert.strictEqual(oContext0FromServer.getIndex(), 3);
+		if (oFixture.bHasRead) {
+			assert.strictEqual(oContext0FromServer.getIndex(), 3);
+		}
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-24)"],
-			bDestroyLater ? oContext1 : undefined);
+			oFixture.bDestroyLater && oFixture.bHasRead ? oContext1 : undefined);
 	});
 });
 
@@ -2601,7 +2643,7 @@ sap.ui.define([
 			.returns(oContext3);
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func).callsArg(0);
-		this.mock(mPreviousContextsByPath["/EMPLOYEES/0"]).expects("destroy").withExactArgs();
+		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs();
 
 		// code under test
 		oBinding.createContexts(1, 3, [{}, {}, {}]);
@@ -2609,25 +2651,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.aContexts[1], oContext1);
 		assert.strictEqual(oBinding.aContexts[2], oContext2);
 		assert.strictEqual(oBinding.aContexts[3], oContext3);
-		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("createContexts, prerendering task called on destroyed binding", function (assert) {
-		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
-			oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask");
-
-		oBinding.mPreviousContextsByPath = {"/EMPLOYEES/0" : {}};
-
-		// code under test
-		oBinding.createContexts(1, 0, []);
-
-		oBinding.destroy();
-
-		assert.strictEqual(oBinding.mPreviousContextsByPath, undefined);
-
-		// code under test - prerendering task does not fail if binding is already destroyed
-		oExpectation.args[0][0]();
 	});
 
 	//*********************************************************************************************
