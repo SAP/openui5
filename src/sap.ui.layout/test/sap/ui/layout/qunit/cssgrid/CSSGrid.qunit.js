@@ -606,4 +606,46 @@ function (
 		assert.ok(fnApplyLayoutStub.calledOnce, "Should call applyGridLayout.");
 	});
 
+	QUnit.module("Rendering", {
+		beforeEach: function () {
+			this.oGrid = new CSSGrid();
+
+			var aItems = [
+				new HTML({ content: "<div></div>" }),
+				new HTML({ content: "<div></div>" }),
+				new HTML({ content: "<div></div>" })
+			];
+
+			aItems.forEach(function (oItem) {
+				this.oGrid.addItem(oItem);
+			}, this);
+
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("Busy element inside the grid", function (assert) {
+
+		// Arrange
+		var oItem = this.oGrid.getItems()[0];
+		this.oGrid.setGridTemplateColumns("repeat(auto-fit, 8rem)");
+		oItem.setBusyIndicatorDelay(0);
+		Core.applyChanges();
+		var oItemPositionBeforeBusy = oItem.$().position(),
+			oItemPositionAfterBusy;
+
+		// Act
+		oItem.setBusy(true);
+
+		// Arrange
+		oItemPositionAfterBusy = oItem.$().position();
+
+		// Assert
+		assert.strictEqual(oItemPositionBeforeBusy.top, oItemPositionAfterBusy.top, "The element should NOT be moved vertically after it gets busy");
+		assert.strictEqual(oItemPositionBeforeBusy.left, oItemPositionAfterBusy.left, "The element should NOT be moved horizontally after it gets busy");
+	});
 });
