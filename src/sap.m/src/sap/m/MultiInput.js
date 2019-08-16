@@ -1683,8 +1683,10 @@ function(
 			return oToken.getId() === sSelectedId;
 		})[0];
 
-		this._tokenizer._onTokenDelete(oTokenToDelete);
-		this._getTokensList().removeItem(oListItem);
+		if (oTokenToDelete.getEditable()) {
+			this._tokenizer._onTokenDelete(oTokenToDelete);
+			this._getTokensList().removeItem(oListItem);
+		}
 
 		this.focus();
 	};
