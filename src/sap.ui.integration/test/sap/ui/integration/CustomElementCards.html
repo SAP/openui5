@@ -8,10 +8,15 @@
 	<script src="../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3"></script>
 </head>
 
+<script>
+	// TODO: how to know when createCustomElement is available?
+	// var dynamicallyCreatedCard = document.createCustomElement("ui-card");
+</script>
+
 <body>
 	<ui-host-configuration config="./host/sampleHostConfigDark.json" id="myStyle">
 	</ui-host-configuration>
-	<ui-card manifest="./widgets/cardmanifests/list.manifest.json"></ui-card>
+	<ui-card id="cardWithActions" manifest="./widgets/cardmanifests/list.actions.manifest.json"></ui-card>
 	<ui-card manifest="./widgets/cardmanifests/table.manifest.json"></ui-card>
 	<ui-card manifest="./widgets/cardmanifests/analytical.manifest.json"></ui-card>
 	<ui-card manifest="./widgets/cardmanifests/object.manifest.json"></ui-card>
@@ -22,6 +27,12 @@
 	<ui-card manifest="./widgets/cardmanifests/object.manifest.json" hostConfiguration="myStyle"></ui-card>
 	<ui-card manifest="./widgets/cardmanifests/numeric.good.manifest.json" hostConfiguration="myStyle"></ui-card>
 	<ui-card manifest="./widgets/cardmanifests/numeric.good.manifest.json" hostConfiguration="myStyle"></ui-card>
+
+	<script>
+		document.getElementById("cardWithActions").addEventListener("action", function () {
+			alert("Action triggered!")
+		});
+	</script>
 </body>
 
 </html>
