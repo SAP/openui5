@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/f/GridList",
 	"sap/ui/layout/cssgrid/GridBoxLayout",
 	"sap/m/CustomListItem",
+	"sap/f/GridListItem",
 	"sap/m/VBox",
 	"sap/m/Text",
 	"sap/m/GroupHeaderListItem",
@@ -15,6 +16,7 @@ function (
 	GridList,
 	GridBoxLayout,
 	CustomListItem,
+	GridListItem,
 	VBox,
 	Text,
 	GroupHeaderListItem,
@@ -338,4 +340,45 @@ function (
 		});
 		assert.ok(bEqualHeights, "All items should have equal heights");
 	}
+
+	QUnit.module("Rendering", {
+		beforeEach: function () {
+			this.oGridList = new GridList({
+				customLayout: new GridBoxLayout({
+					boxWidth: "200px"
+				}),
+				items: [
+					new GridListItem({}),
+					new GridListItem({}),
+					new GridListItem({})
+				]
+			});
+
+			this.oGridList.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGridList.destroy();
+		}
+	});
+
+	QUnit.test("Busy element inside the GridList", function (assert) {
+
+		// Arrange
+		var oItem = this.oGridList.getItems()[0];
+		oItem.setBusyIndicatorDelay(0);
+		Core.applyChanges();
+		var oItemPositionBeforeBusy = oItem.$().position(),
+			oItemPositionAfterBusy;
+
+		// Act
+		oItem.setBusy(true);
+
+		// Arrange
+		oItemPositionAfterBusy = oItem.$().position();
+
+		// Assert
+		assert.strictEqual(oItemPositionBeforeBusy.top, oItemPositionAfterBusy.top, "The element should NOT be moved vertically after it gets busy");
+		assert.strictEqual(oItemPositionBeforeBusy.left, oItemPositionAfterBusy.left, "The element should NOT be moved horizontally after it gets busy");
+	});
 });

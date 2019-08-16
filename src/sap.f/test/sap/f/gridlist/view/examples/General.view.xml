@@ -17,7 +17,7 @@
             </grid:GridBasicLayout>
         </f:customLayout>
 
-		<CustomListItem blocked="{blocked}">
+		<CustomListItem>
 			<VBox height="100%">
 				<VBox class="sapUiSmallMargin">
 					<layoutData>
@@ -34,7 +34,7 @@
 		headerText="GridList with default grid layout"
 		items="{ path: '/' }">
 
-		<CustomListItem busy="{busy}">
+		<CustomListItem>
 			<VBox height="100%">
 				<VBox class="sapUiSmallMargin">
 					<layoutData>
