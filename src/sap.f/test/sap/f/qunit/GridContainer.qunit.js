@@ -495,6 +495,23 @@ function (
 		assertGridSettings(this.oGrid, oSettings, "layout", assert);
 	});
 
+	QUnit.test("If breakpoint XS is not defined, fallback to S", function (assert) {
+		// Arrange
+		var oLayoutS = new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px"});
+		this.oGrid.setAggregation("layoutS", oLayoutS);
+		this.oGrid.setContainerQuery(true);
+		this.oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		this.oGrid.$().width("350px");
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		// Assert
+		assertGridSettings(this.oGrid, oLayoutS, "layoutS", assert);
+	});
+
 	QUnit.module("Layout breakpoints", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
@@ -504,11 +521,20 @@ function (
 				"layoutXL": new GridContainerSettings({rowSize: "90px", columnSize: "90px", gap: "20px"}),
 				"layoutL": new GridContainerSettings({rowSize: "80px", columnSize: "80px", gap: "16px"}),
 				"layoutM": new GridContainerSettings({rowSize: "60px", columnSize: "60px", gap: "8px"}),
-				"layoutS": new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px"})
+				"layoutS": new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px"}),
+				"layoutXS": new GridContainerSettings({rowSize: "20px", columnSize: "20px", gap: "2px"})
 			};
 			for (var sLayout in this.mTestSettings) {
 				this.oGrid.setAggregation(sLayout, this.mTestSettings[sLayout]);
 			}
+
+			this.mLayouts = {
+				"300px": "layoutXS",
+				"500px": "layoutS",
+				"700px": "layoutM",
+				"1200px": "layoutL",
+				"1600px": "layoutXL"
+			};
 
 			// listen for layout change event
 			this.oLayoutChangeStub = sinon.stub();
@@ -523,30 +549,26 @@ function (
 
 	QUnit.test("Breakpoints", function (assert) {
 		// Arrange
-		var oGetCurrentRangeStub = sinon.stub(Device.media, 'getCurrentRange');
-
 		this.oGrid.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
-		// Act & Assert
-		["Phone", "Tablet", "Desktop", "LargeDesktop"].forEach(function (sRangeName) {
+		var sLayoutName,
+			iOriginalWidth = Device.resize.width;
+
+		for (var sWidth in this.mLayouts) {
 
 			// Act
-			oGetCurrentRangeStub.returns({name: sRangeName});
-
-			// simulate resize, since we can not resize the window itself
-			Device.resize.width -= 1;
+			Device.resize.width = parseInt(sWidth);
 			this.oGrid._resize();
 
 			// Assert
-			var sLayoutName = GridContainer.mSizeLayouts[sRangeName];
+			sLayoutName = this.mLayouts[sWidth];
 			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
 			assert.ok(this.oLayoutChangeStub.calledWith(sLayoutName), "Layout change event was called for layout " + sLayoutName);
 			this.oLayoutChangeStub.reset();
-		}.bind(this));
+		}
 
-		oGetCurrentRangeStub.restore();
-		Device.resize._update(); // restore actual device size
+		Device.resize.width = iOriginalWidth;
 	});
 
 	QUnit.test("Breakpoints when containerQuery is true", function (assert) {
@@ -557,15 +579,9 @@ function (
 		Core.applyChanges();
 
 		// Act & Assert
-		var mLayouts = {
-				"500px": "layoutS",
-				"700px": "layoutM",
-				"1200px": "layoutL",
-				"1600px": "layoutXL"
-			},
-			sLayoutName;
+		var sLayoutName;
 
-		for (var sWidth in mLayouts) {
+		for (var sWidth in this.mLayouts) {
 
 			// Act
 			oContainer.$().width(sWidth);
@@ -573,7 +589,7 @@ function (
 			this.clock.tick(500);
 
 			// Assert
-			sLayoutName = mLayouts[sWidth];
+			sLayoutName = this.mLayouts[sWidth];
 			assertGridSettings(this.oGrid, this.mTestSettings[sLayoutName], sLayoutName, assert);
 			assert.ok(this.oLayoutChangeStub.calledWith(sLayoutName), "Layout change event was called for layout " + sLayoutName);
 			this.oLayoutChangeStub.reset();
