@@ -360,6 +360,27 @@ sap.ui.define([
 		assert.ok(this.oWizard.previousStep().previousStep(), "previousStep chaining should not throw an Error");
 	});
 
+	QUnit.test("currentStep is set correctly", function (assert) {
+		var oStep1 = new WizardStep({id: "firstStep", title: "First", optional: true}),
+			oStep2 = new WizardStep({id: "secondStep", title: "Second", optional: false}),
+			oStep3 = new WizardStep({id: "thirdStep", title: "Third"});
+
+		var oWizard = new Wizard({
+				currentStep: "thirdStep",
+				steps: [oStep1, oStep2, oStep3]
+			});
+
+		// arrange
+		oWizard.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//assert
+		assert.strictEqual(oWizard.getCurrentStep(), oWizard.getSteps()[2].getId(), "The currentStep is the correct one.");
+
+		// clean up
+		oWizard.destroy();
+	});
+
 	QUnit.test("Optional Step property", function (assert) {
 		var oNavigator,
 			oFirstStepRef,
@@ -476,7 +497,7 @@ sap.ui.define([
 				nextStep: this.step3,
 				content: []
 			});
-			this.step1 = new WizardStep({
+			this.step1 = new WizardStep("Step1",{
 				title: "Step1",
 				subsequentSteps: [this.step2, this.step3],
 				optional: true,
@@ -499,6 +520,14 @@ sap.ui.define([
 			ObjectPool.prototype.returnObject.restore();
 			this.oWizard = null;
 		}
+	});
+
+	QUnit.test("currentStep is set correctly in branching wizard", function (assert) {
+		this.oWizard.setCurrentStep(this.step4);
+		assert.strictEqual(this.oWizard.getCurrentStep(), this.oWizard.getSteps()[0].getId(), "the given currentStep is not part of the subsequentSteps, so it should not be set.");
+		this.step1.setNextStep(this.step2);
+		this.oWizard.setCurrentStep(this.step3);
+		assert.strictEqual(this.oWizard.getCurrentStep(), this.oWizard.getSteps()[2].getId(), "the given currentStep is part of the subsequentSteps, so it should be set.");
 	});
 
 	QUnit.test("Optional label in branching wizard", function (assert) {

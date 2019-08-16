@@ -404,6 +404,10 @@ sap.ui.define([
 		Wizard.prototype.setCurrentStep = function (stepId) {
 			var step = (typeof stepId === "string") ? Core.byId(stepId) : stepId;
 
+			if (!this.getEnableBranching()) {
+				this.setAssociation("currentStep", stepId, true);
+			}
+
 			if (step && this._isStepReachable(step)) {
 				this._activateAllPreceedingSteps(step);
 			} else {
@@ -565,6 +569,7 @@ sap.ui.define([
 						return false;
 					}
 				}
+				this.setAssociation("currentStep", step);
 
 				return true;
 			} else {
