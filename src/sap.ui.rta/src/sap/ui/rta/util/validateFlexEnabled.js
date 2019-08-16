@@ -37,7 +37,7 @@ sap.ui.define([
 			if (
 				oManifest
 				&& ObjectPath.get(["sap.app", "id"], oManifest) !== "sap.ui.documentation.sdk"
-				&& !ObjectPath.get(["sap.ui.generic.app"], oManifest)
+				&& !ObjectPath.get(["sap.ui.generic.app"], oManifest) && !ObjectPath.get(["sap.ovp"], oManifest)
 			) {
 				var vFlexEnabled = ObjectPath.get(["sap.ui5", "flexEnabled"], oManifest);
 				if (typeof vFlexEnabled !== "boolean") {
