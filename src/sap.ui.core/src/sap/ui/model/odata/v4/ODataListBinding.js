@@ -1961,6 +1961,11 @@ sap.ui.define([
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}; must be greater than 0,
 	 *   <code>Infinity</code> may be used to retrieve all data
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
+	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise<sap.ui.model.odata.v4.Context[]>}
 	 *   A promise which is resolved with the array of the contexts, the first entry containing the
 	 *   context for <code>iStart</code>; it is rejected if <code>iStart</code> or
@@ -1969,12 +1974,14 @@ sap.ui.define([
 	 * @public
 	 * @since 1.70.0
 	 */
-	ODataListBinding.prototype.requestContexts = function (iStart, iLength) {
+	ODataListBinding.prototype.requestContexts = function (iStart, iLength, sGroupId) {
 		var that = this;
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
-		return Promise.resolve(this.fetchContexts(iStart, iLength, 0).then(function (bChanged) {
+		return Promise.resolve(this.fetchContexts(iStart, iLength, 0,
+			this.lockGroup(sGroupId, true)
+		).then(function (bChanged) {
 			if (bChanged) {
 				that._fireChange({reason : ChangeReason.Change});
 			}
