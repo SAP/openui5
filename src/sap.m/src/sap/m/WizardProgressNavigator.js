@@ -503,7 +503,6 @@ function(
 	 * Updates the current step in the control instance as well as the DOM structure.
 	 * @param {number} newStep The step number to which current step will be set. Non zero-based.
 	 * @param {number} oldStep The step number to which current step was set. Non zero-based.
-	 * @param {boolean} suppressEvent Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
