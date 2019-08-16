@@ -508,7 +508,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Contains additional data needed for flex/info request
 	 * @param {string} mPropertyBag.reference Name of Component
-	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
+	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
 	 * @param {string} [mPropertyBag.appVersion] Version of the application that is currently running
 	 * @returns {Promise<object>} Returns the result from the request
 	 * @public
@@ -526,10 +526,10 @@ sap.ui.define([
 			});
 		}
 
-		if (mPropertyBag.currentLayer) {
+		if (mPropertyBag.layer) {
 			aParams.push({
 				name: "layer",
-				value: mPropertyBag.currentLayer
+				value: mPropertyBag.layer
 			});
 		}
 		sRequestPath += this._buildParams(aParams);

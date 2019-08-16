@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/fl/write/api/FeaturesAPI"
 ], function(
 	ChangesController,
 	PersistenceWriteAPI,
@@ -32,7 +33,8 @@ sap.ui.define([
 	Log,
 	SaveAs,
 	jQuery,
-	sinon
+	sinon,
+	FeaturesAPI
 ) {
 	"use strict";
 
@@ -1158,123 +1160,155 @@ sap.ui.define([
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
 		});
 
-		QUnit.test("get flex/info isResetEnabale, check hasChanges: persistence has NO changes, backend has changes", function(assert) {
+		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has NO changes, backend has changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
-			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
 
-			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
-				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
 			});
 		});
 
-		QUnit.test("get flex/info isResetEnabale, check hasChanges: persistence has changes, backend has NO changes", function(assert) {
+		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has changes to reset, backend has NO changes to reset", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
-			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves(sReturnValue);
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
 
-			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
-				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChangeSpecificData]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, false, "flex/info not called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
 			});
 		});
 
-		QUnit.test("get flex/info isResetEnabale, check hasChanges: persistence has NO changes, backend has NO changes", function(assert) {
+		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has NO changes to reset, backend has NO changes to reset", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
-			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
 
-			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
-				assert.equal(bResetEnabled, false, "flex/info resetEnable is false");
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "flex/info isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes, backend has changes", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes to publish, backend has changes to publish", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
-			var fnPersistenceStub2 = getMethodStub([], Promise.resolve({}));
-			var fnDescriptorStub = getMethodStub([], Promise.resolve({}));
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: true}));
 
-			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
-			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: "transported"}]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
-				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes, backend has NO changes", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes to publish, backend has NO changes to publish", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
-			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves(sReturnValue);
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
+			mockFlexController(mPropertyBag.selector, { getResetAndPublishInfo: fnPersistenceStub });
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChangeSpecificData]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
-				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, false, "flex/info not called");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes (dirty changes), backend has NO changes", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes to publish, backend has NO changes to publish", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
-			var fnPersistenceStub2 = getMethodStub([], Promise.resolve({}));
-			var fnDescriptorStub = getMethodStub([], Promise.resolve({}))
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
 
-			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
-			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
-				assert.equal(bPublishEnabled, false, "flex/info publishEnable is false");
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "flex/info isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes (dirty changes), backend has NO changes", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes that are not yet published, backend has NO changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
-			var fnPersistenceStub2 = getMethodStub([], sReturnValue);
-			var fnDescriptorStub = getMethodStub([], {})
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
 
-			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
-			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([this.oUIChangeSpecificData]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
-				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, false, "flex/info not called");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence descriptor has changes (dirty changes), backend has NO changes, ", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes that are all published, backend has NO changes to be published", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
-			var fnPersistenceStub2 = getMethodStub([], {});
-			var fnDescriptorStub = getMethodStub([], sReturnValue)
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
 
-			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
-			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: "transported"}, {packageName: "transported"}]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
-				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info with a change known by the client, which has packageName of an empty string", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{packageName: ""}, {packageName: "transported"}]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.calledOnce, false, "flex/info not called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
 			});
 		});
 	});

@@ -58,8 +58,10 @@ function (
 			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, 'hasChangeHandler').resolves(true);
 		},
 		beforeEach: function () {
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,

@@ -333,9 +333,11 @@ sap.ui.define([
 			}.bind(this));
 
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 			this.oRta.setShowToolbars(true);
-
 			this.oRta.start().then(function () {
 				this.oRta.getToolbar().getControl('exit').firePress();
 			}.bind(this));
