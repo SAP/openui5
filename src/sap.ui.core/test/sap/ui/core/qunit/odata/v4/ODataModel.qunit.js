@@ -1184,12 +1184,51 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("hasPendingChanges", function (assert) {
 		var oModel = createModel(),
+			oModelMock = this.mock(oModel),
+			oRequestorMock = this.mock(oModel.oRequestor),
 			oResult = {};
 
-		this.mock(oModel.oRequestor).expects("hasPendingChanges").withExactArgs().returns(oResult);
+		oModelMock.expects("checkBatchGroupId").never();
+		oRequestorMock.expects("hasPendingChanges").withExactArgs(undefined).returns(oResult);
 
-		// code under test
+		// code under test (all groups)
 		assert.strictEqual(oModel.hasPendingChanges(), oResult);
+
+		oModelMock.expects("checkBatchGroupId").withExactArgs("update");
+		oModelMock.expects("isAutoGroup").withExactArgs("update").returns(false);
+		oRequestorMock.expects("hasPendingChanges").withExactArgs("update").returns(oResult);
+
+		// code under test (only given API group)
+		assert.strictEqual(oModel.hasPendingChanges("update"), oResult);
+
+		oModelMock.expects("checkBatchGroupId").withExactArgs("$auto");
+		oModelMock.expects("isAutoGroup").withExactArgs("$auto").returns(true);
+		oRequestorMock.expects("hasPendingChanges").withExactArgs("$parked.$auto").returns(true);
+
+		// code under test ($auto (check also parked))
+		assert.strictEqual(oModel.hasPendingChanges("$auto"), true);
+
+		oModelMock.expects("checkBatchGroupId").withExactArgs("$auto");
+		oModelMock.expects("isAutoGroup").withExactArgs("$auto").returns(true);
+		oRequestorMock.expects("hasPendingChanges").withExactArgs("$parked.$auto").returns(false);
+		oRequestorMock.expects("hasPendingChanges").withExactArgs("$auto").returns(oResult);
+
+		// code under test ($auto (check also parked))
+		assert.strictEqual(oModel.hasPendingChanges("$auto"), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChanges, invalid groupId", function (assert) {
+		var oError = new Error("Invalid batch group"),
+			oModel = createModel(),
+			oModelMock = this.mock(oModel);
+
+		oModelMock.expects("checkBatchGroupId").withExactArgs("").throws(oError);
+
+		assert.throws(function () {
+			// code under test (invalid groupId)
+			oModel.hasPendingChanges("");
+		}, oError);
 	});
 
 	//*********************************************************************************************
