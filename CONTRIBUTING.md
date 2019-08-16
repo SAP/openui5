@@ -70,7 +70,7 @@ If the bug appears to be a regression introduced in a new version of UI5, try to
 
 ### Issue handling process
 
-When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "approved" label), close it if it is not an issue, or ask for more details. Approved issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes.
+When an issue is reported, a committer will look at it and either confirm it as a real issue (by giving the "in progress" label), close it if it is not an issue, or ask for more details. In-progress issues are then either assigned to a committer in GitHub, reported in our internal issue handling system, or left open as "contribution welcome" for easy or not urgent fixes.
 
 An issue that is about a real bug is closed as soon as the fix is committed. The closing comment explains which patch version(s) of UI5 will contain the fix.
 
@@ -94,9 +94,9 @@ Labels for issue categories:
 
 Status of open issues:
  * unconfirmed: this report needs confirmation whether it is really a bug (no label; this is the default status)
- * approved: this issue is confirmed to be a bug
+ * in progress: this issue has been triaged and is now being handled, e.g. because it looks like an actual bug
  * author action: the author is required to provide information
- * contribution welcome: this fix/enhancement is approved and you are invited to contribute it
+ * contribution welcome: this fix/enhancement is something we would like to have and you are invited to contribute it
 
 Status/resolution of closed issues:
  * fixed: a fix for the issue was provided
