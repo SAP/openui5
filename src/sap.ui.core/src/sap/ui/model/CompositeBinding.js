@@ -134,8 +134,9 @@ sap.ui.define([
 			return;
 		}
 		this.aBindings.forEach(function(oBinding, i) {
-			var oValue = aValues[i];
-			if (oValue !== undefined) {
+			var oValue = aValues[i],
+				sBindingMode = oBinding.getBindingMode();
+			if (oValue !== undefined  && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
 				oBinding.setValue(oValue);
 			}
 		});
@@ -260,9 +261,10 @@ sap.ui.define([
 
 		return pValues.then(function(aValues) {
 			that.aBindings.forEach(function(oBinding, iIndex) {
+				var sBindingMode = oBinding.getBindingMode();
 				oValue = aValues[iIndex];
 				// if a value is undefined skip the update of the nestend binding - this allows partial updates
-				if (oValue !== undefined) {
+				if (oValue !== undefined  && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
 					if (that.bRawValues) {
 						oBinding.setRawValue(oValue);
 					} else if (that.bInternalValues) {
@@ -329,8 +331,9 @@ sap.ui.define([
 
 		return pValues.then(function() {
 			that.aBindings.forEach(function(oBinding, iIndex) {
-				var vValue = aValues[iIndex];
-				if (vValue !== undefined) {
+				var vValue = aValues[iIndex],
+					sBindingMode = oBinding.getBindingMode();
+				if (vValue !== undefined  && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
 					oBinding.setInternalValue(vValue);
 				}
 			});
@@ -392,8 +395,9 @@ sap.ui.define([
 
 		return pValues.then(function() {
 			that.aBindings.forEach(function(oBinding, iIndex) {
-				var vValue = aValues[iIndex];
-				if (vValue !== undefined) {
+				var vValue = aValues[iIndex],
+					sBindingMode = oBinding.getBindingMode();
+				if (vValue !== undefined && sBindingMode !== BindingMode.OneWay && sBindingMode !== BindingMode.OneTime) {
 					oBinding.setRawValue(vValue);
 				}
 			});
