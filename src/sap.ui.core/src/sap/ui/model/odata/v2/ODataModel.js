@@ -6720,7 +6720,11 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.getContext = function(sPath, sDeepPath){
 		var oContext = Model.prototype.getContext.apply(this, arguments);
-		oContext.sDeepPath = sDeepPath || sPath;
+		if (sDeepPath){ // define or override
+			oContext.sDeepPath = sDeepPath;
+		} else if (!sDeepPath && !oContext.sDeepPath){ // set default value
+			oContext.sDeepPath = sPath;
+		}
 		return oContext;
 	};
 
