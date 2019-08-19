@@ -179,7 +179,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the base URL of the Card Manifest. It should be set used when manifest property is an object instead of a URL
+				 * Defines the base URL of the Card Manifest. It should be used when manifest property is an object instead of a URL.
 				 * @experimental Since 1.70
 				 * @since 1.70
 				 */
