@@ -217,6 +217,12 @@ function(
 				var oMovedElement = oMovedOverlay.getElement();
 				var oTargetOverlay = oAggregationOverlay.getParent();
 				var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
+
+				// the element or the parent overlay might be destroyed or not available
+				if (!oMovedElement || !oTargetOverlay) {
+					return false;
+				}
+
 				var oTargetElement = oTargetOverlay.getElement();
 				var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
 

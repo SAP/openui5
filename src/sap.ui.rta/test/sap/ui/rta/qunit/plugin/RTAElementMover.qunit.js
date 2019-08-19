@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/comp/smartform/SmartForm",
 	"sap/ui/comp/smartform/Group",
@@ -25,6 +26,7 @@ sap.ui.define([
 	DtUtil,
 	DesignTime,
 	ElementDesignTimeMetadata,
+	DtElementMover,
 	ChangeRegistry,
 	SmartForm,
 	Group,
@@ -142,6 +144,7 @@ sap.ui.define([
 			QUnit.config.fixture = '';
 		},
 		afterEach : function () {
+			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
 			this.oElementMover.destroy();
@@ -179,6 +182,28 @@ sap.ui.define([
 				.then(function(bCheckTargetZone) {
 					assert.ok(bCheckTargetZone, "then the form is a possible target zone");
 				});
+		});
+
+		QUnit.test("when the element is not available", function(assert) {
+			sandbox.stub(DtElementMover.prototype, "checkTargetZone").resolves(true);
+			sandbox.stub(this.oGroupEntityType01Overlay, "getElement");
+
+			return this.oElementMover.checkTargetZone(this.oFormAggrOverlay, this.oGroupEntityType01Overlay)
+			.then(function(bTargetZone) {
+				assert.ok(true, "the function resolves");
+				assert.equal(bTargetZone, false, "the form is not a target zone");
+			});
+		});
+
+		QUnit.test("when the parent is not available", function(assert) {
+			sandbox.stub(DtElementMover.prototype, "checkTargetZone").resolves(true);
+			sandbox.stub(this.oFormAggrOverlay, "getParent");
+
+			return this.oElementMover.checkTargetZone(this.oFormAggrOverlay, this.oGroupEntityType01Overlay)
+			.then(function(bTargetZone) {
+				assert.ok(true, "the function resolves");
+				assert.equal(bTargetZone, false, "the form is not a target zone");
+			});
 		});
 	});
 
