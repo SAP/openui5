@@ -27,7 +27,7 @@ controllerName="sap.ui.layout.cssgrid.gridplayground.controller.Main">
 						gridGap="     0.25rem     0.25rem    "
 						items="{ path: '/' }">
 
-					<VBox height="100%" busy="{busy}" blocked="{blocked}">
+					<VBox height="100%">
 						<VBox class="sapUiSmallMargin demoBox">
 							<layoutData>
 								<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
