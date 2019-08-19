@@ -1463,6 +1463,14 @@ sap.ui.define([
 			// if we got new data we have to update changed entities
 			var oMap = {};
 			oMap[sKey] = oEntry;
+
+			//if we detect a preliminary context we need to set preliminary false and flag for update
+			if (this.hasContext("/" + sKey) && this.getContext("/" + sKey).isPreliminary()) {
+				var oExistingContext = this.getContext("/" + sKey);
+				oExistingContext.setUpdated(true);
+				oExistingContext.setPreliminary(false);
+			}
+
 			this._updateChangedEntities(oMap);
 			mChangedEntities[sKey] = true;
 
@@ -6696,6 +6704,16 @@ sap.ui.define([
 		var oContext = Model.prototype.getContext.apply(this, arguments);
 		oContext.sDeepPath = sDeepPath || sPath;
 		return oContext;
+	};
+
+	/**
+	 * Check if a Context already exists for the model
+	 * @param {string} [sPath] The path to check
+	 * @returns {boolean} True if COntext for the given path exists
+	 * @private
+	 */
+	ODataModel.prototype.hasContext = function(sPath){
+		return this.mContexts[sPath];
 	};
 
 	/**
