@@ -8639,9 +8639,9 @@ sap.ui.define([
 		<Text id="employeeId" text="{ID}" />\
 	</ColumnListItem>\
 </Table>\
-<VBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
+<FlexBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
 	<Input id="employeeName" value="{Name}"/>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
@@ -9423,7 +9423,7 @@ sap.ui.define([
 	//   that collection; inspired by https://github.com/SAP/openui5/issues/1763
 	QUnit.test("Filter collection provided via object binding", function (assert) {
 		var sView = '\
-<VBox id="vbox" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
+<FlexBox id="form" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
 		path : \'/TEAMS(\\\'42\\\')\'}">\
 	<Table items="{TEAM_2_EMPLOYEES}">\
 		<columns><Column/></columns>\
@@ -9431,7 +9431,7 @@ sap.ui.define([
 			<Text id="id" text="{ID}" />\
 		</ColumnListItem>\
 	</Table>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
 		// Note: for simplicity, autoExpandSelect : false but still most properties are omitted
@@ -9450,7 +9450,7 @@ sap.ui.define([
 				})
 				.expectChange("id", ["2"]);
 
-			that.oView.byId("vbox").getObjectBinding()
+			that.oView.byId("form").getObjectBinding()
 				.changeParameters({$expand : "TEAM_2_EMPLOYEES($filter=ID eq '2')"});
 
 			return that.waitForChanges(assert);
@@ -14879,10 +14879,10 @@ sap.ui.define([
 		<Text id="id" text="{ID}" />\
 	</ColumnListItem>\
 </Table>\
-<VBox id="employeeDetails"\
+<FlexBox id="employeeDetails"\
 		binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$updateGroupId : \'foo\'\}}">\
 	<Input id="employeeName" value="{Name}"/>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("Equipments?$select=Category,ID&$skip=0&$top=100", {
