@@ -26,7 +26,7 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
-		QUnit.test("given a mock server, when get flex info is triggered", function (assert) {
+		QUnit.skip("given a mock server, when get flex info is triggered", function (assert) {
 			var oExpectedResponse = {
 				isResetEnabled: false,
 				isPublishEnabled: false
@@ -51,7 +51,7 @@ sap.ui.define([
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a make changes transportable request is send containing the reference, the app version, the layer, the changelist and the package as query parameters");
 			});
 		});
-		QUnit.test("given a mock server, when reset is triggered", function (assert) {
+		QUnit.skip("given a mock server, when reset is triggered", function (assert) {
 			var aExpectedResponse = [
 				{
 					appComponent: "sap.ui.demoapps.rta.freestyle.Component",
@@ -70,7 +70,7 @@ sap.ui.define([
 				assert.deepEqual(oResponse, aExpectedResponse, "reset response flow is correct");
 			});
 		});
-		QUnit.test("given a mock server, when loadFeatures is triggered", function (assert) {
+		QUnit.skip("given a mock server, when loadFeatures is triggered", function (assert) {
 			var oExpectedResponse = {
 				isKeyUser: true
 			};
