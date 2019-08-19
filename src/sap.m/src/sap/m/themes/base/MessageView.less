@@ -55,8 +55,11 @@
 	}
 
 	.sapMSLITitle {
-		padding-bottom: 0;
 		font-size: @sapMFontLargeSize;
+
+		.sapMLnk {
+			display: block;
+		}
 	}
 
 	.sapMSLITitleOnly {
@@ -79,6 +82,11 @@
 
 	.sapMTextMaxWidth {
 		max-width: ~"calc(100% - @{_sap_m_MessageView_DescIcon_Width})";
+	}
+
+	.sapMSLITitle, .sapMSLITitleOnly,
+	.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
+		padding: 0;
 	}
 }
 
@@ -120,11 +128,11 @@
 		font-size: @sapMFontMediumSize;
 	}
 
-	.sapMMsgViewItem.sapMSLINoDescIcon {
+	.sapMMsgViewItem:not(.sapMSLIWithDescription) {
 		height: 2rem;
 	}
 
-	.sapMMsgViewItem.sapMSLINoDescIcon .sapMLIBImgNav.sapUiIcon {
+	.sapMMsgViewItem:not(.sapMSLIWithDescription) .sapMLIBImgNav.sapUiIcon {
 		height: 2rem;
 		line-height: 2rem;
 	}
