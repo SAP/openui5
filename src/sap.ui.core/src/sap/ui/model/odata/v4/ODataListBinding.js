@@ -1970,12 +1970,20 @@ sap.ui.define([
 	 *   A promise which is resolved with the array of the contexts, the first entry containing the
 	 *   context for <code>iStart</code>; it is rejected if <code>iStart</code> or
 	 *   <code>iLength</code> are less than 0 or when requesting the data fails
+	 * @throws {Error} If the binding is relative and has no context, if the binding's root binding
+	 *   is suspended or if the given group ID is invalid
 	 *
 	 * @public
 	 * @since 1.70.0
 	 */
 	ODataListBinding.prototype.requestContexts = function (iStart, iLength, sGroupId) {
 		var that = this;
+
+		if (this.bRelative && !this.oContext) {
+			throw new Error("Unresolved binding: " + this.sPath);
+		}
+		this.checkSuspended();
+		this.oModel.checkGroupId(sGroupId);
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
