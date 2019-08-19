@@ -2244,123 +2244,106 @@ sap.ui.define([
 				oCodeListMetaModel = oCodeListModel.getMetaModel();
 				sTypePath = "/" + oCodeList.CollectionPath + "/";
 				oPromise = oCodeListMetaModel.requestObject(sTypePath).then(function (oType) {
-					return new Promise(function (resolve, reject) {
-						var sAlternateKeysPath = sTypePath + "@Org.OData.Core.V1.AlternateKeys",
-							aAlternateKeys = oCodeListMetaModel.getObject(sAlternateKeysPath),
-							oCodeListBinding,
-							sKeyPath = getKeyPath(oType.$Key),
-							sKeyAnnotationPathPrefix = sTypePath + sKeyPath
-								+ "@com.sap.vocabularies.Common.v1.",
-							aSelect,
-							sScalePropertyPath,
-							sStandardCodePath = sTypePath + sKeyPath
-								+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path",
-							sStandardPropertyPath,
-							sTextPropertyPath;
+					var sAlternateKeysPath = sTypePath + "@Org.OData.Core.V1.AlternateKeys",
+						aAlternateKeys = oCodeListMetaModel.getObject(sAlternateKeysPath),
+						oCodeListBinding,
+						sKeyPath = getKeyPath(oType.$Key),
+						sKeyAnnotationPathPrefix = sTypePath + sKeyPath
+							+ "@com.sap.vocabularies.Common.v1.",
+						aSelect,
+						sScalePropertyPath,
+						sStandardCodePath = sTypePath + sKeyPath
+							+ "@com.sap.vocabularies.CodeList.v1.StandardCode/$Path",
+						sStandardPropertyPath,
+						sTextPropertyPath;
 
-						/*
-						 * Adds customizing for a single code to the result map. Ignores customizing
-						 * where the unit-specific scale is missing, and logs an error for this.
-						 *
-						 * @param {object} mCode2Customizing
-						 *   Map from code to its customizing
-						 * @param {sap.ui.model.odata.v4.Context} oContext
-						 *   Context for a single code's customizing
-						 * @returns {object}
-						 *   <code>mCode2Customizing</code>
-						 */
-						function addCustomizing(mCode2Customizing, oContext) {
-							var sCode = oContext.getProperty(sKeyPath),
-								oCustomizing = {
-									Text : oContext.getProperty(sTextPropertyPath),
-									UnitSpecificScale : oContext.getProperty(sScalePropertyPath)
-								};
+					/*
+					 * Adds customizing for a single code to the result map. Ignores customizing
+					 * where the unit-specific scale is missing, and logs an error for this.
+					 *
+					 * @param {object} mCode2Customizing
+					 *   Map from code to its customizing
+					 * @param {sap.ui.model.odata.v4.Context} oContext
+					 *   Context for a single code's customizing
+					 * @returns {object}
+					 *   <code>mCode2Customizing</code>
+					 */
+					function addCustomizing(mCode2Customizing, oContext) {
+						var sCode = oContext.getProperty(sKeyPath),
+							oCustomizing = {
+								Text : oContext.getProperty(sTextPropertyPath),
+								UnitSpecificScale : oContext.getProperty(sScalePropertyPath)
+							};
 
-							if (sStandardPropertyPath) {
-								oCustomizing.StandardCode
-									= oContext.getProperty(sStandardPropertyPath);
-							}
-							if (oCustomizing.UnitSpecificScale === null) {
-								Log.error("Ignoring customizing w/o unit-specific scale for code "
-										+ sCode + " from " + oCodeList.CollectionPath,
-									oCodeList.Url, sODataMetaModel);
-							} else {
-								mCode2Customizing[sCode] = oCustomizing;
-							}
-
-							return mCode2Customizing;
-						}
-
-						/*
-						 * @param {object[]} aKeys
-						 *   The type's keys
-						 * @returns {string}
-						 *   The property path to the type's single key
-						 * @throws {Error}
-						 *   If the type does not have a single key
-						 */
-						function getKeyPath(aKeys) {
-							var vKey;
-
-							if (aKeys && aKeys.length === 1) {
-								vKey = aKeys[0];
-							} else {
-								throw new Error("Single key expected: " + sTypePath);
-							}
-
-							return typeof vKey === "string" ? vKey : vKey[Object.keys(vKey)[0]];
-						}
-
-						if (aAlternateKeys) {
-							if (aAlternateKeys.length !== 1) {
-								throw new Error("Single alternative expected: "
-									+ sAlternateKeysPath);
-							} else if (aAlternateKeys[0].Key.length !== 1) {
-								throw new Error("Single key expected: " + sAlternateKeysPath
-									+ "/0/Key");
-							}
-							sKeyPath = aAlternateKeys[0].Key[0].Name.$PropertyPath;
-						}
-
-						sScalePropertyPath = oCodeListMetaModel
-							.getObject(sKeyAnnotationPathPrefix + "UnitSpecificScale/$Path");
-						sTextPropertyPath = oCodeListMetaModel
-							.getObject(sKeyAnnotationPathPrefix + "Text/$Path");
-						aSelect = [sKeyPath, sScalePropertyPath, sTextPropertyPath];
-
-						sStandardPropertyPath = oCodeListMetaModel.getObject(sStandardCodePath);
 						if (sStandardPropertyPath) {
-							aSelect.push(sStandardPropertyPath);
+							oCustomizing.StandardCode = oContext.getProperty(sStandardPropertyPath);
+						}
+						if (oCustomizing.UnitSpecificScale === null) {
+							Log.error("Ignoring customizing w/o unit-specific scale for code "
+									+ sCode + " from " + oCodeList.CollectionPath,
+								oCodeList.Url, sODataMetaModel);
+						} else {
+							mCode2Customizing[sCode] = oCustomizing;
 						}
 
-						oCodeListBinding = oCodeListModel.bindList(
-							"/" + oCodeList.CollectionPath, null, null, null,
-							{$select : aSelect});
-						oCodeListBinding.attachChange(function () {
-							var aContexts;
+						return mCode2Customizing;
+					}
 
-							try {
-								aContexts = oCodeListBinding.getContexts(0, Infinity);
+					/*
+					 * @param {object[]} aKeys
+					 *   The type's keys
+					 * @returns {string}
+					 *   The property path to the type's single key
+					 * @throws {Error}
+					 *   If the type does not have a single key
+					 */
+					function getKeyPath(aKeys) {
+						var vKey;
 
-								if (!aContexts.length) {
-									Log.error("Customizing empty for ",
-										oCodeListModel.sServiceUrl + oCodeList.CollectionPath,
-										sODataMetaModel);
-								}
-								resolve(aContexts.reduce(addCustomizing, {}));
-							} catch (e) {
-								reject(e);
+						if (aKeys && aKeys.length === 1) {
+							vKey = aKeys[0];
+						} else {
+							throw new Error("Single key expected: " + sTypePath);
+						}
+
+						return typeof vKey === "string" ? vKey : vKey[Object.keys(vKey)[0]];
+					}
+
+					if (aAlternateKeys) {
+						if (aAlternateKeys.length !== 1) {
+							throw new Error("Single alternative expected: " + sAlternateKeysPath);
+						} else if (aAlternateKeys[0].Key.length !== 1) {
+							throw new Error(
+								"Single key expected: " + sAlternateKeysPath + "/0/Key");
+						}
+						sKeyPath = aAlternateKeys[0].Key[0].Name.$PropertyPath;
+					}
+
+					sScalePropertyPath = oCodeListMetaModel
+						.getObject(sKeyAnnotationPathPrefix + "UnitSpecificScale/$Path");
+					sTextPropertyPath = oCodeListMetaModel
+						.getObject(sKeyAnnotationPathPrefix + "Text/$Path");
+					aSelect = [sKeyPath, sScalePropertyPath, sTextPropertyPath];
+
+					sStandardPropertyPath = oCodeListMetaModel.getObject(sStandardCodePath);
+					if (sStandardPropertyPath) {
+						aSelect.push(sStandardPropertyPath);
+					}
+
+					oCodeListBinding = oCodeListModel.bindList("/" + oCodeList.CollectionPath,
+						null, null, null, {$select : aSelect});
+
+					return oCodeListBinding.requestContexts(0, Infinity)
+						.then(function (aContexts) {
+							if (!aContexts.length) {
+								Log.error("Customizing empty for ",
+									oCodeListModel.sServiceUrl + oCodeList.CollectionPath,
+									sODataMetaModel);
 							}
+							return aContexts.reduce(addCustomizing, {});
+						}).finally(function () {
+							oCodeListBinding.destroy();
 						});
-						oCodeListBinding.attachDataReceived(function (oEvent) {
-							var oError = oEvent.getParameter("error");
-
-							if (oError) {
-								reject(oError);
-							}
-						});
-						oCodeListBinding.getContexts(0, Infinity);
-					});
 				});
 				mCodeListUrl2Promise.set(sCacheKey, oPromise);
 
