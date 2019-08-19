@@ -966,15 +966,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bChanged) {
-	[undefined, "groupId"].forEach(function (sGroupId) {
-
-	QUnit.test("requestContexts: changed=" + bChanged + ", group=" + sGroupId, function (assert) {
+	QUnit.test("requestContexts: changed=" + bChanged, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			aContexts = [],
 			oGroupLock = {},
 			oPromise;
 
-		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId, true).returns(oGroupLock);
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
+		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true).returns(oGroupLock);
 		this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(1, 2, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.resolve(bChanged)));
@@ -985,13 +984,12 @@ sap.ui.define([
 			.returns(aContexts);
 
 		// code under test
-		oPromise = oBinding.requestContexts(1, 2, sGroupId).then(function (aResults) {
+		oPromise = oBinding.requestContexts(1, 2, "groupId").then(function (aResults) {
 			assert.strictEqual(aResults, aContexts);
 		});
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise;
-	});
 	});
 });
 
@@ -1016,7 +1014,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestContexts: error handling", function (assert) {
+	QUnit.test("requestContexts: error in fetchContexts", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oError = new Error(),
 			oGroupLock = {};
@@ -1037,6 +1035,43 @@ sap.ui.define([
 		}, function (oResult) {
 			assert.strictEqual(oResult, oError);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestContexts: unresolved", function (assert) {
+		var oBinding = this.bindList("relative");
+
+		this.mock(oBinding).expects("fetchContexts").never();
+
+		assert.throws(function () {
+			oBinding.requestContexts();
+		}, new Error("Unresolved binding: relative"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestContexts: suspended", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error();
+
+		this.mock(oBinding).expects("fetchContexts").never();
+		this.mock(oBinding).expects("checkSuspended").withExactArgs().throws(oError);
+
+		assert.throws(function () {
+			oBinding.requestContexts();
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestContexts: invalid group ID", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oError = new Error();
+
+		this.mock(oBinding).expects("fetchContexts").never();
+		this.mock(this.oModel).expects("checkGroupId").withExactArgs("$invalid").throws(oError);
+
+		assert.throws(function () {
+			oBinding.requestContexts(0, 10, "$invalid");
+		}, oError);
 	});
 
 	//*********************************************************************************************
