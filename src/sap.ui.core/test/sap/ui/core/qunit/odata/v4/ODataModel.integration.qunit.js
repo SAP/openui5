@@ -19829,4 +19829,296 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Creation of an entity fails due to a network error. A subsequent call to
+	// requestSideEffects repeats the failed POST in the same $batch.
+	// JIRA: CPOUI5UISERVICESV3-1936
+[{
+	expectations : function (that) {
+		that.expectRequest({
+				batchNo : 3,
+				method : "POST",
+				payload : {Note : "Created"},
+				url : "BusinessPartnerList('4711')/BP_2_SO"
+			}, {
+				Note : "Created",
+				SalesOrderID : "43"
+			})
+			.expectRequest({
+				batchNo : 3,
+				method : "GET",
+				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
+					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
+			}, {
+				BusinessPartnerID : "4711",
+				BP_2_SO : [{
+					Note : "Unrealistic",
+					SalesOrderID : "43"
+				}, {
+					Note : "Side Effect",
+					SalesOrderID : "0500000001"
+				}]
+			})
+			//.expectChange("id", ["43"]);
+			.expectChange("id", "43", -1) //TODO fix Context#getIndex to not return -1;
+			// this is caused by ODLB#reset which sets iCreatedContexts = 0 and parks all
+			// contexts without changing the index;
+			// this conflicts with the _Cache#create success handler that changes values
+			// corresponding to the context with iIndex === -1
+			.expectChange("note", ["Unrealistic", "Side Effect"]);
+	},
+	text : "Repeated POST succeeds"
+}, {
+	expectations : function (that) {
+		var oCausingError = createError(); // a technical error -> let the $batch itself fail
+
+		that.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
+			+ " failed; will be repeated automatically");
+		that.oLogMock.expects("error").withArgs("$batch failed");
+		that.oLogMock.expects("error").withArgs("Failed to request side effects");
+
+		that.expectRequest({
+				batchNo : 3,
+				method : "POST",
+				payload : {Note : "Created"},
+				url : "BusinessPartnerList('4711')/BP_2_SO"
+			}, oCausingError)
+			.expectRequest({
+				batchNo : 3,
+				method : "GET",
+				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
+					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
+			})  // no response required
+			.expectMessages([{
+				code : undefined,
+				message : "Communication error: 500 ",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}, {
+				code : undefined,
+				message : "HTTP request was not processed because $batch failed",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		return oCausingError;
+	},
+	text : "Repeated POST fails"
+}].forEach(function (oFixture) {
+	QUnit.test("requestSideEffects repeats failed POST -" + oFixture.text, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oTableBinding,
+			sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" items="{BP_2_SO}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="id" text="{SalesOrderID}" />\
+			<Text id="note" text="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		that.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				BusinessPartnerID : "4711",
+				BP_2_SO : [{
+					Note : "Test",
+					SalesOrderID : '0500000001'
+				}]
+			})
+			.expectChange("id", ["0500000001"])
+			.expectChange("note", ["Test"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
+				+ " failed; will be repeated automatically");
+			that.oLogMock.expects("error").withArgs("$batch failed");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "BusinessPartnerList('4711')/BP_2_SO"
+				}, createError()) // a technical error -> let the $batch itself fail
+				.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("id", ["", "0500000001"])
+				.expectChange("note", ["Created", "Test"]);
+
+			oTableBinding = that.oView.byId("table").getBinding("items");
+			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oCausingError;
+
+			assert.equal(oTableBinding.getLength(), 2);
+
+			// remove persistent, technical messages from above
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+			that.expectMessages([]);
+
+			oCausingError = oFixture.expectations(that);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : "BP_2_SO"
+				}]).catch(function (oError) {
+					if (!(oCausingError && oError.cause === oCausingError)) {
+						throw oError;
+					}
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.equal(oTableBinding.getLength(), 2);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Creation of an entity fails due to a network error. A subsequent call to
+	// requestSideEffects repeats the failed POST in the same $batch but fails again. All transient
+	// contexts are kept, even if not visible.
+	// JIRA: CPOUI5UISERVICESV3-1764
+	QUnit.skip("requestSideEffects keeps invisible transient contexts", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oTableBinding,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="2">\
+	<t:Column>\
+		<t:template><Text id="id" text="{SalesOrderID}" /></t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template><Text id="note" text="{Note}" /></t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
+				value : [
+					{Note : "Test 1", SalesOrderID : '0500000001'},
+					{Note : "Test 2", SalesOrderID : '0500000002'}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002"])
+			.expectChange("note", ["Test 1", "Test 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").withArgs("POST on 'SalesOrderList' failed; will be"
+				+ " repeated automatically");
+			that.oLogMock.expects("error").withArgs("$batch failed");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "SalesOrderList"
+				}, createError()) // a technical error -> let the $batch itself fail
+				.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("id", ["", "0500000001"])
+				.expectChange("note", ["Created", "Test 1"]);
+
+			oTableBinding = that.oView.byId("table").getBinding("rows");
+			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", [, "0500000001", "0500000002"])
+				.expectChange("note", [, "Test 1", "Test 2"]);
+
+			// scroll down
+			that.oView.byId("table").setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oCausingError = createError(); // a technical error -> let the $batch itself fail
+
+			// remove persistent, technical messages from above
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+
+			that.oLogMock.expects("error").withArgs("POST on 'SalesOrderList' failed; will be"
+				+ " repeated automatically");
+			that.oLogMock.expects("error").withArgs("Failed to get contexts for "
+				+ "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList"
+				+ " with start index 1 and length 2");
+			that.oLogMock.expects("error").withArgs("$batch failed");
+			that.oLogMock.expects("error").withArgs("Failed to request side effects");
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "SalesOrderList"
+				}, oCausingError)
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					// Because of the transient row in the first context the skip has to be adapted
+					// to 0 => CPOUI5UISERVICESV3-1764
+					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2"
+				})  // no response required
+				.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oTableBinding.getHeaderContext().requestSideEffects([{
+					$NavigationPropertyPath : ""
+				}]).catch(function (oError) {
+					if (!(oCausingError && oError.cause === oCausingError)) {
+						throw oError;
+					}
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
 });

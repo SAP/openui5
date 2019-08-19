@@ -2708,12 +2708,13 @@ sap.ui.define([
 				oBinding.iCreatedContexts += 1;
 			}
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", 1);
-			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')", 2);
+			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
+				{/*oPromise*/}); // transient context
 			oContext3 = Context.create(this.oModel, oBinding, "/EMPLOYEES('3')", 3);
 			mPreviousContextsByPath = {
 				"/EMPLOYEES('0')" : {destroy : function () {}},
 				"/EMPLOYEES('1')" : oContext1,
-				"/EMPLOYEES('2')" : oContext2
+				"/EMPLOYEES($uid=id-1-23)" : oContext2
 			};
 
 			oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
@@ -2734,7 +2735,7 @@ sap.ui.define([
 			oBinding.createContexts(iStart, 3, [{
 				"@$ui5._" : {"predicate" : "('1')"}
 			}, {
-				"@$ui5._" : {"predicate" : "('2')"}
+				"@$ui5._" : {"transientPredicate" : "($uid=id-1-23)"}
 			}, {
 				"@$ui5._" : {"predicate" : "('3')"}
 			}]);

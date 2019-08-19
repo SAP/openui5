@@ -1319,23 +1319,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects", function (assert) {
-		var oCache = {
-				// currently used to detect a context binding
-				requestSideEffects : function () {}
-			},
-			oBinding = {
-				oCachePromise : SyncPromise.resolve(oCache),
+	QUnit.test("requestSideEffects: error cases", function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*oCache*/}),
 				checkSuspended : function () {},
-				oContext : {},
-				bRelative : true,
-				requestSideEffects : function () {}
+				bRelative : false
 			},
 			oModel = {
 				checkGroupId : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
-			sUpdateGroupId = "update";
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
 		assert.throws(function () {
 			// code under test
@@ -1362,12 +1355,44 @@ sap.ui.define([
 				oContext.requestSideEffects([oPath]);
 			}, new Error("Not an edm:(Navigation)PropertyPath expression: " + sJSON), sJSON);
 		});
+	});
 
-		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
-		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
+	//*********************************************************************************************
+[
+	{auto : true, parked : "$parked.any", text : "unpark for auto group (no group ID)"},
+	{auto : false, context : {}, text : "relative binding, no auto group"},
+	{auto : true, group : "group", parked : "$parked.group", text : "unpark for auto group"},
+	{auto : false, group : "different", text : "different group ID"}
+].forEach(function (oFixture) {
+	QUnit.test("requestSideEffects: " + oFixture.text, function (assert) {
+		var oBinding = {
+				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				checkSuspended : function () {},
+				bRelative : !!oFixture.context,
+				oContext : oFixture.context,
+				requestSideEffects : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {},
+				isAutoGroup : function () {},
+				oRequestor : {
+					relocateAll : function () {}
+				}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
+			sGroupId = oFixture.group || "any";
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
+		this.mock(oContext).expects("getUpdateGroupId").exactly(oFixture.group ? 0 : 1)
+			.withExactArgs().returns("any");
+		this.mock(oModel).expects("isAutoGroup")
+			.withExactArgs(sGroupId).returns(oFixture.auto);
+		this.mock(oModel.oRequestor).expects("relocateAll").exactly(oFixture.auto ? 1 : 0)
+			.withExactArgs(oFixture.parked, sGroupId);
 		this.mock(oBinding).expects("requestSideEffects")
 			// Note: $select not yet sorted
-			.withExactArgs(sUpdateGroupId, ["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""],
+			.withExactArgs(sGroupId, ["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""],
 				sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({}));
 
@@ -1380,39 +1405,12 @@ sap.ui.define([
 				$PropertyPath : "ROOM_ID"
 			}, {
 				$NavigationPropertyPath : ""
-			}]).then(function (oResult) {
-				assert.strictEqual(oResult, undefined);
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestSideEffects: different group ID", function (assert) {
-		var oBinding = {
-				oCachePromise : SyncPromise.resolve({/*oCache*/}),
-				checkSuspended : function () {},
-				oContext : {},
-				bRelative : true,
-				requestSideEffects : function () {}
-			},
-			sGroupId = "different",
-			oModel = {
-				checkGroupId : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
-
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId);
-		this.mock(oContext).expects("getUpdateGroupId").never();
-		this.mock(oBinding).expects("requestSideEffects")
-			.withExactArgs(sGroupId, ["TEAM_ID"], sinon.match.same(oContext))
-			.returns(SyncPromise.resolve({}));
-
-		// code under test
-		return oContext.requestSideEffects([{$PropertyPath : "TEAM_ID"}], sGroupId)
+			}], oFixture.group)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: invalid different group ID", function (assert) {
@@ -1465,7 +1463,8 @@ sap.ui.define([
 				requestSideEffects : function () {}
 			},
 			oModel = {
-				checkGroupId : function () {}
+				checkGroupId : function () {},
+				isAutoGroup : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 			oError = new Error("Failed intentionally"),
@@ -1475,6 +1474,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
+		this.mock(oModel).expects("isAutoGroup").withExactArgs(sUpdateGroupId).returns(false);
 		this.mock(oBinding).expects("requestSideEffects")
 			.withExactArgs(sUpdateGroupId, ["TEAM_ID"], sinon.match.same(oContext))
 			.returns(SyncPromise.reject(oError));
