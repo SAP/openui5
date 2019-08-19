@@ -2329,10 +2329,10 @@ sap.ui.define([
 			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2, fnSubmit2, fnCancel2));
 
 		// code under test
-		oRequestor.relocateAll("$parked.unused", oEntity, "$auto");
+		oRequestor.relocateAll("$parked.unused", "$auto", oEntity);
 
 		// code under test
-		oRequestor.relocateAll("$parked.$auto", {/* some other entity */}, "unexpected");
+		oRequestor.relocateAll("$parked.$auto", "unexpected", {/* some other entity */});
 
 		// code under test
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oEntity), true);
@@ -2350,13 +2350,13 @@ sap.ui.define([
 			.resolves();
 
 		// code under test
-		oRequestor.relocateAll("$parked.$auto", oEntity, "$auto");
+		oRequestor.relocateAll("$parked.$auto", "$auto", oEntity);
 
 		// code under test
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oEntity), false);
 
 		// code under test: must not unpark anything again
-		oRequestor.relocateAll("$parked.$auto", oEntity, "unexpected");
+		oRequestor.relocateAll("$parked.$auto", "unexpected", oEntity);
 
 		// code under test
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), true);
@@ -2368,9 +2368,54 @@ sap.ui.define([
 			.resolves();
 
 		// code under test
-		oRequestor.relocateAll("$parked.$auto", oYetAnotherEntity, "$auto");
+		oRequestor.relocateAll("$parked.$auto", "$auto", oYetAnotherEntity);
 
 		// code under test
+		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), false);
+
+		return Promise.all(aPromises);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("relocateAll: do not filter by entity", function (assert) {
+		var oBody1 = {key : "value 1"},
+			oBody2 = {key : "value 2"},
+			fnCancel1 = assert.ok.bind(assert, false),
+			fnCancel2 = assert.ok.bind(assert, false),
+			oEntity = {},
+			mExpectedHeaders = sinon.match.has("If-Match", sinon.match.same(oEntity)),
+			aPromises = [],
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			fnSubmit1 = assert.ok.bind(assert, false),
+			fnSubmit2 = assert.ok.bind(assert, false),
+			oYetAnotherEntity = {};
+
+		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1, fnSubmit1, fnCancel1));
+		aPromises.push(oRequestor.request("DELETE", "Employees('2')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity}));
+		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2, fnSubmit2, fnCancel2));
+
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
+				sinon.match.same(oBody1), sinon.match.same(fnSubmit1), sinon.match.same(fnCancel1))
+			.resolves();
+		oRequestorMock.expects("request")
+			.withExactArgs("DELETE", "Employees('2')", new _GroupLock("$auto"),
+				sinon.match.has("If-Match", sinon.match.same(oYetAnotherEntity)), undefined,
+				undefined, undefined)
+			.resolves();
+		oRequestorMock.expects("request")
+			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
+				sinon.match.same(oBody2), sinon.match.same(fnSubmit2), sinon.match.same(fnCancel2))
+			.resolves();
+
+		// code under test
+		oRequestor.relocateAll("$parked.$auto", "$auto");
+
+		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oEntity), false);
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), false);
 
 		return Promise.all(aPromises);
@@ -2393,7 +2438,7 @@ sap.ui.define([
 			.resolves(oResult);
 
 		// code under test
-		oRequestor.relocateAll("$parked.$auto", oEntity, "$auto");
+		oRequestor.relocateAll("$parked.$auto", "$auto", oEntity);
 
 		return oPromise.then(function (oResult0) {
 			assert.strictEqual(oResult0, oResult);
@@ -2417,7 +2462,7 @@ sap.ui.define([
 			.rejects(oError);
 
 		// code under test
-		oRequestor.relocateAll("$parked.$auto", oEntity, "$auto");
+		oRequestor.relocateAll("$parked.$auto", "$auto", oEntity);
 
 		return oPromise.then(function () {
 			assert.ok(false);

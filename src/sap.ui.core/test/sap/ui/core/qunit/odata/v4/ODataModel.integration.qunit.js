@@ -17219,6 +17219,35 @@ sap.ui.define([
 		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), false);
 
 		return this.oModel.submitBatch("$auto");
+	}, function (assert) {
+		// failed PATCH is retried within the same $batch as the side effect
+		var oEmployeeBinding = this.oView.byId("form").getObjectBinding();
+
+		this.expectRequest({
+				batchNo : 2,
+				headers : {"If-Match" : "ETag0"},
+				method : "PATCH",
+				payload : {
+					ROOM_ID : "42" // <-- retry
+				},
+				url : "EMPLOYEES('3')"
+			}, {/* don't care */})
+			.expectRequest({
+				batchNo : 2,
+				method : "GET",
+				url : "EMPLOYEES('3')?$select=STATUS"
+			}, {
+				STATUS : "Busy"
+			})
+			.expectChange("status", "Busy");
+
+		assert.strictEqual(this.oModel.hasPendingChanges(), true);
+		assert.strictEqual(oEmployeeBinding.hasPendingChanges(), true);
+
+		return Promise.all([
+			oEmployeeBinding.getBoundContext().requestSideEffects([{$PropertyPath : "STATUS"}]),
+			this.oModel.submitBatch("$auto")
+		]);
 	}].forEach(function (fnCodeUnderTest, i) {
 		QUnit.test("Later retry failed PATCHes for $auto, " + i, function (assert) {
 			var oModel = createTeaBusiModel({updateGroupId : "$auto"}),

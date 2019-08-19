@@ -917,23 +917,24 @@ sap.ui.define([
 	 *
 	 * @param {string} sCurrentGroupId
 	 *   The ID of the group in which to search
-	 * @param {object} oEntity
-	 *   The entity used to identify a request based on its "If-Match" header
 	 * @param {string} sNewGroupId
 	 *   The ID of the group for the new requests
+	 * @param {object} [oEntity]
+	 *   The entity used to identify a request based on its "If-Match" header; if not set, all
+	 *   requests are taken into account
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
-	 * @private
+	 * @public
 	 */
-	Requestor.prototype.relocateAll = function (sCurrentGroupId, oEntity, sNewGroupId) {
+	Requestor.prototype.relocateAll = function (sCurrentGroupId, sNewGroupId, oEntity) {
 		var j = 0,
 			aRequests = this.mBatchQueue[sCurrentGroupId],
 			that = this;
 
 		if (aRequests) {
 			aRequests[0].slice().forEach(function (oChange) {
-				if (oChange.headers["If-Match"] === oEntity) {
+				if (!oEntity || oChange.headers["If-Match"] === oEntity) {
 					aRequests[0].splice(j, 1);
 					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
 							oChange.headers, oChange.body, oChange.$submit, oChange.$cancel)
