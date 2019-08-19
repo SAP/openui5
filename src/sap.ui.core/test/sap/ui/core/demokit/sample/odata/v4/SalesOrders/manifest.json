@@ -41,6 +41,7 @@
 					"Main.controller.js",
 					"Main.view.xml",
 					"manifest.json",
+					"../../../common/Controller.js",
 					"../../../common/ValueHelp.js"
 				]
 			}
