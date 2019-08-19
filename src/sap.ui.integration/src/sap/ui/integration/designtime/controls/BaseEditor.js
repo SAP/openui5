@@ -47,8 +47,9 @@ sap.ui.define([
                 }
             },
             aggregations: {
-                "propertyEditors": {
-                    type: "sap.ui.core.Control"
+                "_propertyEditors": {
+                    type: "sap.ui.core.Control",
+                    visibility: "hidden"
                 }
             },
             events: {
@@ -102,14 +103,13 @@ sap.ui.define([
          * @param  {} oConfig to merge with previous default
          */
         addDefaultConfig: function(oConfig) {
-            this.setProperty("_defaultConfig",
+            return this.setProperty("_defaultConfig",
                 this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
             );
         },
 
         _mergeConfig: function(oTarget, oSource) {
-            var oResult = deepClone(oTarget);
-            merge(oResult, oSource);
+            var oResult = merge({}, oTarget, oSource);
             // concat i18n properties to avoid override
             oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
             return oResult;
@@ -131,6 +131,32 @@ sap.ui.define([
             return this._setConfig(
                 this._mergeConfig(this.getConfig(), oNewConfig)
             );
+        },
+
+        getPropertyEditor: function(sPropertyName) {
+            return this._mPropertyEditors[sPropertyName];
+        },
+
+        getPropertyEditors: function(vTag) {
+            var hasTag = function(oPropertyEditor, sTag) {
+                return oPropertyEditor.getPropertyInfo().tags && (oPropertyEditor.getPropertyInfo().tags.indexOf(sTag) !== -1);
+            };
+
+            if (!vTag) {
+                return this.getAggregation("_propertyEditors");
+            } else if (typeof vTag === "string") {
+                return this.getPropertyEditors().filter(function(oPropertyEditor) {
+                    return hasTag(oPropertyEditor, vTag);
+                });
+            } else if (Array.isArray(vTag)) {
+                return this.getPropertyEditors().filter(function(oPropertyEditor) {
+                    return vTag.every(function(sTag) {
+                        return hasTag(oPropertyEditor, sTag);
+                    });
+                });
+            } else {
+                return [];
+            }
         }
     });
 
@@ -151,7 +177,8 @@ sap.ui.define([
             this._oPropertyObjectBinding.destroy();
             delete this._oPropertyObjectBinding;
         }
-        this.destroyPropertyEditors();
+        this._mPropertyEditors = {};
+        this.destroyAggregation("_propertyEditors");
     };
 
     BaseEditor.prototype._initialize = function() {
@@ -255,7 +282,7 @@ sap.ui.define([
             return oConfig.propertyEditors[sType];
         });
 
-        var mEditors = {};
+        var mEditorClasses = {};
 
         this.__createEditorsCallCount = (this.__createEditorsCallCount || 0) + 1;
         var iCurrentCall = this.__createEditorsCallCount;
@@ -263,14 +290,15 @@ sap.ui.define([
             // check whether this is still the most recent call of _createEditors (otherwise config is invalid)
             if (this.__createEditorsCallCount === iCurrentCall) {
                 Array.from(arguments).forEach(function(Editor, iIndex) {
-                    mEditors[aTypes[iIndex]] = Editor;
+                    mEditorClasses[aTypes[iIndex]] = Editor;
                 });
 
                 Object.keys(oConfig.properties).forEach(function(sPropertyName) {
                     var oPropertyContext = this._oPropertyModel.getContext("/" + sPropertyName);
-                    var Editor = mEditors[oPropertyContext.getObject().type];
+                    var Editor = mEditorClasses[oPropertyContext.getObject().type];
                     if (Editor) {
-                        this.addPropertyEditor(this._createPropertyEditor(Editor, oPropertyContext));
+                        this._mPropertyEditors[sPropertyName] = this._createPropertyEditor(Editor, oPropertyContext);
+                        this.addAggregation("_propertyEditors", this._mPropertyEditors[sPropertyName]);
                     }
                 }.bind(this));
 

@@ -48,7 +48,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("When editor value is changed", function (assert) {
+		QUnit.test("When property editor changes value", function (assert) {
 			var done = assert.async();
 			this.oBaseEditor.setConfig({
 				context: "context",
@@ -128,6 +128,49 @@ sap.ui.define([
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditors()[1].getBindingContext().getObject().val, "test", "Then binding against property model works properly");
 				assert.strictEqual(this.oBaseEditor.getPropertyEditors()[0].getBindingContext().getObject().val, "test", "Then binding against property model works properly");
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("When config contains properties with tags", function (assert) {
+			var done = assert.async();
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"prop1": {
+						path: "prop1",
+						tags: ["tag1", "commonTag"],
+						type: "string"
+					},
+					"prop2": {
+						path: "prop2",
+						tags: ["tag2", "commonTag"],
+						type: "string"
+					},
+					"prop3": {
+						path: "prop3",
+						tags: [],
+						type: "string"
+					},
+					"prop4": {
+						path: "prop4",
+						type: "anotherString"
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor",
+					"anotherString": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"
+				}
+			});
+			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
+				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop2").getPropertyInfo().path, "prop2", "Then property editor getter works with property name");
+
+				assert.strictEqual(this.oBaseEditor.getPropertyEditors("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditors("commonTag")[0].getPropertyInfo().path, "prop1", "Then property editor getter works with one tag (2/3)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditors("commonTag")[1].getPropertyInfo().path, "prop2", "Then property editor getter works with one tag (3/3)");
+
+				assert.strictEqual(this.oBaseEditor.getPropertyEditors(["commonTag", "tag1"]).length, 1, "Then property editor getter works with multiple tags (1/2)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditors(["commonTag", "tag1"])[0].getPropertyInfo().path, "prop1", "Then property editor getter works with multiple tags (2/2)");
 				done();
 			}.bind(this));
 		});
