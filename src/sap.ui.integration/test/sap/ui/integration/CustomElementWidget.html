@@ -8,19 +8,25 @@
 	<script src="../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3"></script>
 	<script>
 		function handleAction(event) {
-			sap.m.MessageToast.show("Event Type: " + event.type +": Action Type:" + event.data.type);
+			sap.m.MessageToast.show("Event Type: " + event.type);
 		}
 	</script>
+	<style>
+		.customSize{
+			width: 400px;
+			height: 400px;
+		}
+	</style>
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" style="margin:2rem">
-		<ui-widget height="400px" width="400px"
+		<ui-widget class="sapFCardBase customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
 		on-action="handleAction(event)"></ui-widget>
-		<ui-widget height="400px" width="400px"
+		<ui-widget class="customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
 		configuration='{
-			"configuration": { 
+			"configuration": {
 				"settings": {
 					"stringProperty": "modifiedStringValue"
 				}

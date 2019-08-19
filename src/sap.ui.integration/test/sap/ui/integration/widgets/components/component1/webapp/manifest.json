@@ -53,7 +53,7 @@
 		"configuration": {
 			"parameters": {
 				"text": {
-					"value": "Parameter Value"
+					"value": "{{TITLE}}"
 				}
 			},
 			"settings": {

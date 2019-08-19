@@ -368,18 +368,24 @@ sap.ui.define([
 		var oParams = this._syncParameters(oParameters, oManifestParams);
 		this.processManifest(oParams);
 	};
+
 	/**
 	 * Merges passed configuration to the current section.
 	 *
 	 * @param {Object} oConfiguration Configuration set in the manifest for the {SECTION} property.
 	 * @private
 	 */
-	Manifest.prototype.mergeConfiguration = function (oConfiguration) {
+	Manifest.prototype._mergeConfiguration = function (oConfiguration) {
 		if (!this._oManifest) {
 			return;
 		}
-		var oManifestConf = this.get(this.CONFIGURATION);
-		var oJson = deepClone(this.oJson, 30, 30);
+
+		if (!oConfiguration) {
+		    return;
+        }
+		var oManifestConf = this.get(this.CONFIGURATION),
+		    oJson = deepClone(this.oJson, 30, 30);
+
 		oJson[this.CONFIGURATION.substring(1)] = merge({}, oManifestConf, oConfiguration);
 		this._oManifest._oManifest = oJson;
 		this.oJson = oJson;
