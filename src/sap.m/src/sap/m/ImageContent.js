@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 				id : this.getId() + "-icon-image",
 				src : sUri,
 				alt : sDescription,
-				decorative : false
+				decorative : true
 			}, Image);
 			this.setAggregation("_content", oImage, true);
 			this._setPointerOnImage();
@@ -147,8 +147,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 		var oContent = this.getAggregation("_content");
 		if (oContent && oContent.getAlt() !== "") {
 			return oContent.getAlt();
-		} else if (oContent) {
+		} else if (oContent && oContent.getAccessibilityInfo()) {
 			return oContent.getAccessibilityInfo().description;
+		} else {
+			return "";
 		}
 	};
 
