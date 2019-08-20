@@ -4797,7 +4797,8 @@ sap.ui.define([
 	//*********************************************************************************************
 [true, false].forEach(function (bAutoExpandSelect) {
 	QUnit.test("getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect, function (assert) {
-		var oMapGetExpectation,
+		var mHeaders = {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"},
+			oMapGetExpectation,
 			oMapSetExpectation,
 			oModel = new ODataModel({
 				serviceUrl : "/Foo/DataService/",
@@ -4807,7 +4808,6 @@ sap.ui.define([
 			oMetaModelMock = this.mock(oMetaModel),
 			oSharedModel;
 
-		oModel.oRequestor.mHeaders["X-CSRF-Token"] = "xyz";
 		oMetaModelMock.expects("getAbsoluteServiceUrl")
 			.withExactArgs("../ValueListService/$metadata")
 			.returns("/Foo/ValueListService/");
@@ -4816,6 +4816,7 @@ sap.ui.define([
 			.returns("/Foo/ValueListService/");
 		oMapGetExpectation = this.mock(Map.prototype).expects("get").twice() //for both c.u.t
 			.withExactArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
+		this.mock(oModel).expects("getHttpHeaders").withExactArgs().returns(mHeaders);
 		oMapSetExpectation = this.mock(Map.prototype).expects("set")
 			.withArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
 
@@ -4824,10 +4825,10 @@ sap.ui.define([
 			undefined, bAutoExpandSelect);
 
 		assert.ok(oSharedModel instanceof ODataModel);
+		assert.deepEqual(oSharedModel.mHeaders, mHeaders);
 		assert.strictEqual(oSharedModel.sServiceUrl, "/Foo/ValueListService/");
 		assert.strictEqual(oSharedModel.getDefaultBindingMode(), BindingMode.OneWay);
 		assert.strictEqual(oSharedModel.sOperationMode, OperationMode.Server);
-		assert.strictEqual(oSharedModel.oRequestor.mHeaders["X-CSRF-Token"], "xyz");
 		assert.strictEqual(oSharedModel.getGroupId(), "$auto");
 		assert.strictEqual(oSharedModel.bAutoExpandSelect, !!bAutoExpandSelect);
 

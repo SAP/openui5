@@ -20468,4 +20468,34 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// The application sets a custom header via model API and the following request contains the
+	// custom header. Note that the integration test framework only allows for observing headers for
+	// individual requests inside the $batch but not for the $batch itself.
+	QUnit.test("ODataModel#changeHttpHeaders", function (assert) {
+		var mHeaders = {Authorization : "Bearer xyz"},
+			oModel = createTeaBusiModel({groupId : "$auto", autoExpandSelect : true}),
+			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}" />',
+			that = this;
+
+		this.expectRequest("EMPLOYEES(0)/Name", {value : "Frederic Fall"})
+			.expectChange("name", "Frederic Fall");
+
+		return this.createView(assert, sView, oModel)
+			.then(function () {
+				that.expectRequest({
+						headers : mHeaders,
+						method: "GET",
+						url : "EMPLOYEES(0)/Name"
+					}, {value : "Frederic Fall"});
+
+				// code under test
+				oModel.changeHttpHeaders(mHeaders);
+
+				that.oView.byId("name").getBinding("text").refresh();
+
+				return that.waitForChanges(assert);
+			});
+	});
 });

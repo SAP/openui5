@@ -1123,10 +1123,15 @@ sap.ui.define([
 		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
 			var oError = {},
 				oPromise,
-				oRequestor = _Requestor.create("/Service/", oModelInterface, undefined,
+				mHeaders = {},
+				mRequestHeaders = {},
+				oRequestor = _Requestor.create("/Service/", oModelInterface, mHeaders,
 					{"sap-client" : "123"}),
 				oTokenRequiredResponse = {};
 
+			this.mock(Object).expects("assign").twice()
+				.withExactArgs({}, sinon.match.same(mHeaders), {"X-CSRF-Token" : "Fetch"})
+				.returns(mRequestHeaders);
 			this.mock(_Helper).expects("createError")
 				.exactly(bSuccess ? 0 : 2)
 				.withExactArgs(sinon.match.same(oTokenRequiredResponse),
@@ -1135,7 +1140,7 @@ sap.ui.define([
 
 			this.mock(jQuery).expects("ajax").twice()
 				.withExactArgs("/Service/?sap-client=123", sinon.match({
-					headers : {"X-CSRF-Token" : "Fetch"},
+					headers : sinon.match.same(mRequestHeaders),
 					method : "HEAD"
 				}))
 				.callsFake(function () {
@@ -3671,6 +3676,94 @@ sap.ui.define([
 			}),
 			oBazPromise
 		]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkHeaderNames", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		// code under test
+		oRequestor.checkHeaderNames({allowed : "123"});
+		oRequestor.checkHeaderNames({"X-Http-Method" : "123"}); // V2 specific headers are allowed
+
+		["Accept", "Accept-Charset", "Content-Encoding", "Content-ID", "Content-Language",
+			"Content-Length", "Content-Transfer-Encoding", "Content-Type", "If-Match",
+			"If-None-Match", "Isolation", "OData-Isolation", "OData-MaxVersion", "OData-Version",
+			"Prefer", "SAP-ContextId"
+		].forEach(function (sHeaderName) {
+			var mHeaders = {};
+
+			mHeaders[sHeaderName] = "123";
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.checkHeaderNames(mHeaders);
+			}, new Error("Unsupported header: " + sHeaderName));
+		});
+	});
+
+
+	//*********************************************************************************************
+	QUnit.test("checkForOpenRequests", function (assert) {
+		var sErrorMessage = "Unexpected open requests",
+			oGroupLockMock0,
+			oGroupLockMock1,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		// code under test
+		oRequestor.checkForOpenRequests();
+
+		oRequestor.mRunningChangeRequests["groupId"] = {};
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.checkForOpenRequests();
+		}, new Error(sErrorMessage));
+
+		oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+		oRequestor.mBatchQueue["groupId"] = []; // empty batch queue: no error
+
+		// code under test
+		oRequestor.checkForOpenRequests();
+
+		oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+		oRequestor.mBatchQueue["groupId"] = [[]]; // cancelled change request: no error
+
+		// code under test
+		oRequestor.checkForOpenRequests();
+
+		oRequestor.mBatchQueue["groupId"] = [[{}]]; // batch queue with non-empty change set: error
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.checkForOpenRequests();
+		}, new Error(sErrorMessage));
+
+		oRequestor.mBatchQueue["groupId"] = [[], {}]; // batch queue with read request: error
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.checkForOpenRequests();
+		}, new Error(sErrorMessage));
+
+		oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+		oRequestor.aLockedGroupLocks = [{isLocked : function () {}}, {isLocked : function () {}}];
+
+		oGroupLockMock0 = this.mock(oRequestor.aLockedGroupLocks[0]);
+		oGroupLockMock0.expects("isLocked").withExactArgs().returns(false);
+		oGroupLockMock1 = this.mock(oRequestor.aLockedGroupLocks[1]);
+		oGroupLockMock1.expects("isLocked").withExactArgs().returns(false);
+
+		// code under test - only unlocked group locks
+		oRequestor.checkForOpenRequests();
+
+		oGroupLockMock0.expects("isLocked").withExactArgs().returns(false);
+		oGroupLockMock1.expects("isLocked").withExactArgs().returns(true);
+
+		assert.throws(function () {
+			// code under test - at least one locked group lock
+			oRequestor.checkForOpenRequests();
+		}, new Error(sErrorMessage));
 	});
 });
 // TODO: continue-on-error? -> flag on model
