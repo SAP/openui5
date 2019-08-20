@@ -140,7 +140,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="id" text="{ID}" />\
 			<Text id="text" text="{Name}" />\
@@ -1386,7 +1386,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({groupId : "$auto"}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}" >\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Input id="note" value="{Note}" />\
@@ -1903,7 +1903,7 @@ sap.ui.define([
 			sorter : {path : \'AGE\'},\
 			parameters : {foo : \'bar\'}\
 		}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Input id="age" value="{AGE}" />\
@@ -2167,7 +2167,7 @@ sap.ui.define([
 		QUnit.test("refresh: No drill-down error for deleted data #" + i, function (assert) {
 			var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="age" text="{AGE}" />\
@@ -3431,7 +3431,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="salesOrderID" text="{SalesOrderID}" />\
 		<Input id="note" value="{Note}" />\
@@ -3588,7 +3588,7 @@ sap.ui.define([
 				}),
 				sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="note" value="{Note}" />\
 		<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
@@ -6279,7 +6279,7 @@ sap.ui.define([
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="quantity" value="{Quantity}" />\
 		<Text id="unit" text="{QuantityUnit}" />\
@@ -6605,7 +6605,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="amount" value="{GrossAmount}"/>\
 		<Input id="note" value="{Note}"/>\
@@ -6694,7 +6694,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="amount" value="{GrossAmount}"/>\
 	</ColumnListItem>\
@@ -7795,7 +7795,7 @@ sap.ui.define([
 			oReturnValueContext,
 			sView = '\
 <Table id="table" items="{path : \'/Artists\', parameters : {$select : \'Messages\'}}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
 	</ColumnListItem>\
@@ -8011,7 +8011,7 @@ sap.ui.define([
 			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'},\
 			parameters : {$count : true}\
 		}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="teamId" text="{TEAM_ID}" />\
@@ -10947,7 +10947,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="idMemberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="idAge" text="{AGE}" />\
 			<Text id="idName" text="{Name}" />\
@@ -11019,7 +11019,7 @@ sap.ui.define([
 	<Text id="idMemberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false,\
 			parameters : {$$ownRequest : true}}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="idAge" text="{AGE}" />\
 			<Text id="idName" text="{Name}" />\
@@ -11567,7 +11567,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')/' + sFunctionName + '()}" id="function">\
 	<Table items="{value}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
 				<Text id="id" text="{ID}" />\
@@ -13017,7 +13017,7 @@ sap.ui.define([
 			}],
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', suspended : true}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="age" text="{AGE}" />\
@@ -14259,7 +14259,7 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>\
 <Table id="LineItems" items="{SO_2_SOITEM}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
 		<Text id="ItemPosition" text="{ItemPosition}" />\
@@ -16535,7 +16535,7 @@ sap.ui.define([
 	<Text id="id" text="{ArtistID}" />\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-			<columns><Column/><Column/></columns>\
+			<columns><Column/></columns>\
 			<ColumnListItem>\
 				<Text id="price" text="{Price}" />\
 				<Text id="currency" text="{CurrencyCode}" />\
@@ -16549,7 +16549,7 @@ sap.ui.define([
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 </FlexBox>\
 <Table id="detailTable" items="{_Artist/_Friend}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="idDetail" text="{ArtistID}" />\
 		<Text id="nameDetail" text="{Name}" />\
