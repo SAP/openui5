@@ -90,7 +90,7 @@ sap.ui.define([
 		var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
 			var oData,
 				bUpdated = oContext && oContext.isUpdated(),
-				bForceRefresh = oContext && oContext.isUpdated();
+				bForceRefresh = oContext && oContext.isRefreshForced();
 
 			if (that.bCreatePreliminaryContext && oContext && that.oElementContext && that.oElementContext.isPreliminary()) {
 				that.oElementContext.setPreliminary(false);
