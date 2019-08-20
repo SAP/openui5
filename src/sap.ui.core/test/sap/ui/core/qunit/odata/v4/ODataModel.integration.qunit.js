@@ -55,7 +55,10 @@ sap.ui.define([
 	 * defining the relevant <code>error</code> property of this JSON. It should contain the
 	 * properties "code" and "message".
 	 *
-	 * @param {object} oErrorResponse
+	 * When used without parameter, the function creates an error that makes the complete $batch
+	 * fail with status code 500.
+	 *
+	 * @param {object} [oErrorResponse]
 	 *   The <code>error</code> property of the simulated error response from the server
 	 * @returns {Error}
 	 *   The error object for {@link #expectRequest}
@@ -1091,11 +1094,18 @@ sap.ui.define([
 		 *
 		 * A failure response (with status code 500) is mocked if <code>oResponse</code> is an
 		 * Error. This error must be created with {@link #createError}. It is immediately used to
-		 * reject the promise of _Requestor#request for a $direct request. If the request is part of
-		 * a $batch, {@link #checkBatch} converts it to a response and inserts it into the $batch
-		 * response. If the request is part of a change set, the error is used as a response for the
-		 * complete change set (the following requests do not need a response). GET requests
-		 * following an error request are rejected automatically and do not need a response.
+		 * reject the promise of _Requestor#request for a $direct request.
+		 *
+		 * If the request is part of a $batch, there are two possibilities.
+		 * <ul>
+		 *   <li> If the error was created with an error object, {@link #checkBatch} converts it to
+		 *     a response and inserts it into the $batch response. If the request is part of a
+		 *     change set, the error is used as a response for the complete change set (the
+		 *     following requests do not need a response). GET requests following an error request
+		 *     are rejected automatically and do not need a response.
+	     *   <li> If the error was created without an error object, the complete $batch fails with
+		 *     status code 500.
+		 * </ul>
 		 *
 		 * <code>oResponse</code> may also be a promise resolving with the response or the error. In
 		 * this case you can control the response time (typically to control the order of the
