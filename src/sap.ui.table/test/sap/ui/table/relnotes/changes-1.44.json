@@ -698,7 +698,7 @@
       {
         "id": "191d0271cf89575c629379eaecb3a9b55bfbbc6a",
         "type": "FIX",
-        "text": "sap.ui.table.Table: exception \"Cannot read property '_onTableResize' of undefined\"",
+        "text": "sap.ui.table.Table: exception \"Cannot read property \u0027_onTableResize\u0027 of undefined\"",
         "references": [
           {
             "type": "BCP",
@@ -837,7 +837,7 @@
       {
         "id": "ff67c0cb3e7a5846baf51b4e36010209af99c558",
         "type": "FIX",
-        "text": "sap.ui.table.*: Avoid error while reorder columns via D&D",
+        "text": "sap.ui.table.*: Avoid error while reorder columns via D\u0026D",
         "references": [
           {
             "type": "BCP",
@@ -1409,6 +1409,33 @@
           {
             "type": "BCP",
             "reference": "002075129400006440602018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.42": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "77fad31f2ba903a0d92008334eedfeb017157024",
+        "type": "FIX",
+        "text": " Table: Vertical Scrollbar position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "270038"
+          }
+        ]
+      },
+      {
+        "id": "87ccbcc6ba287cdebe10bc7d2ea25be3d3762bde",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse nodes when pressing the expander icon",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "247720"
           }
         ]
       }
