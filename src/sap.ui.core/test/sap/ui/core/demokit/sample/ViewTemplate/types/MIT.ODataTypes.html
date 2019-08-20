@@ -51,12 +51,25 @@
 			<li>Press <code>V4</code> Button.</li>
 			<li>Enter invalid values in one or more of the data fields.</li>
 			<li><b>Check</b>: You get validation errors with appropriate error messages.</li>
+			<li><b>Check</b>: The data state of the related control is erroneous, this means that
+				the control now is displayed with a red border and if it gets the foccus, you see
+				the same error message highlighted beside the control.</li>
 			<li>Press <code>Reset Model</code> or <code>Reset ContextBinding</code>.</li>
 			<li><b>Check</b>: The validation errors are gone and the old values are displayed.</li>
 			<li>Enter again invalid values in one or more of the data fields.</li>
 			<li><b>Check</b>: You get validation errors with appropriate error messages.</li>
 			<li>Correct errors by enter valid values.</li>
 			<li><b>Check</b>: The validation errors are gone.</li>
+			<li>Enter 100 in the field labeled <code>precision: 10, scale: 3, minimum: 100
+				(exclusive), maximum: 1000</code>.</li>
+			<li><b>Check</b>: You get an error with the message "Enter a number greater than
+				100.000".</li>
+			<li>Correct the error by enter a valid value, e.g. 101</li>
+			<li><b>Check</b>: The validation error is gone.</li>
+			<li>Enter 102 in the field labeled <code>stepInput: min: 0 max: 99</code>.</li>
+			<li><b>Check</b>: You get an error invalid data state "Invalid Value".</li>
+			<li>Correct the error by enter a valid value, e.g. 99</li>
+			<li><b>Check</b>: The validation error is gone.</li>
 			<li>Enter any value in the field labeled <code>Duration</code>.</li>
 			<li><b>Check</b>: You get an error with the message "Type
 				'sap.ui.model.odata.type.Raw' does not support formatting".</li>
