@@ -363,7 +363,7 @@ function(
 
 	/**
 	 *
-	 * Expands one or multiple items.
+	 * Expands one or multiple items. Note that items that are hidden at the time of calling this API can't be expanded.
 	 *
 	 * @return {sap.m.Tree} A reference to the Tree control
 	 * @public
