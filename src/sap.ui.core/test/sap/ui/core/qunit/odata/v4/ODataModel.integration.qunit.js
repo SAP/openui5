@@ -1834,6 +1834,173 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Absolute ODCB, late property. See that it is requested only once, even when
+	// multiple bindings request it parallel. See that is written to the cache. See that it is
+	// updated via requestSideEffects.
+	// JIRA: CPOUI5UISERVICESV3-1878
+	QUnit.test("ODCB: late property", function (assert) {
+		var oFormContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_BP}">\
+	<Text id="city" text="{Address/City}" />\
+</FlexBox>\
+<Text id="longitude1" text="{Address/GeoLocation/Longitude}"/>\
+<Text id="longitude2" text="{Address/GeoLocation/Longitude}"/>\
+<Text id="longitude3" text="{Address/GeoLocation/Longitude}"/>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=Address/City,BusinessPartnerID",
+			{
+				Address : {
+					City : "Heidelberg"
+				},
+				BusinessPartnerID : "2"
+			})
+			.expectChange("city", "Heidelberg")
+			.expectChange("longitude1")
+			.expectChange("longitude2")
+			.expectChange("longitude3");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_BP"
+				+ "?$select=Address/GeoLocation/Longitude", {
+					Address : {
+						GeoLocation : {
+							Longitude : "8.7"
+						}
+					}
+				})
+				.expectChange("longitude1", "8.7") // TODO CPOUI5UISERVICESV3-1950
+				.expectChange("longitude2", "8.7");
+
+			// code under test - Longitude is requested once
+			oFormContext = that.oView.byId("form").getBindingContext();
+			that.oView.byId("longitude1").setBindingContext(oFormContext);
+			that.oView.byId("longitude2").setBindingContext(oFormContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("longitude3", "8.700000000000");
+
+			// code under test - Longitude is cached now
+			that.oView.byId("longitude3").setBindingContext(oFormContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_BP"
+				+ "?$select=Address/City,Address/GeoLocation/Longitude", {
+					Address : {
+						City : "Heidelberg",
+						GeoLocation : {
+							Longitude : "8.71"
+						}
+					}
+				})
+				.expectChange("longitude1", "8.71") // TODO CPOUI5UISERVICESV3-1950
+				.expectChange("longitude2", "8.71")
+				.expectChange("longitude3", "8.710000000000");
+
+			return Promise.all([
+				oFormContext.requestSideEffects([
+					{$PropertyPath : "Address"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Absolute ODLB, late property. See that it is requested only once, even when bound
+	// twice. See that it is updated via requestSideEffects called at the parent binding (all
+	// visible rows).
+	// JIRA: CPOUI5UISERVICESV3-1878
+	QUnit.test("ODLB: late property", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oRowContext,
+			sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'1\')}">\
+	<Text text="{Team_Id}"/><!-- TODO CPOUI5UISERVICESV3-1973 -->\
+	<Table id="table" growing="true" growingThreshold="2"\
+			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>\
+<Text id="age1" text="{AGE}" />\
+<Text id="age2" text="{AGE}" />',
+			that = this;
+
+		this.expectRequest("TEAMS('1')?$select=Team_Id", {Team_Id : "1"})
+			.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
+				value : [
+					{ID : "2", Name : "Frederic Fall"},
+					{ID : "3", Name : "Jonathan Smith"}
+				]
+			})
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
+			.expectChange("age1")
+			.expectChange("age2");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE", {AGE : 42})
+				.expectChange("age1", 42); // TODO CPOUI5UISERVICESV3-1950
+
+			// code under test - AGE is requested
+			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
+			that.oView.byId("age1").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("age2", "42");
+
+			// code under test - AGE is cached now
+			that.oView.byId("age2").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=2&$top=2", {
+					value : [
+						{ID : "4", Name : "Peter Burke"}
+					]
+				})
+				.expectChange("name", [,, "Peter Burke"]);
+
+			// code under test - AGE must not be requested when paging
+			that.oView.byId("table-trigger").firePress();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
+				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
+					value : [
+						{AGE : 43, ID : "2", Name : "Frederic Fall"},
+						{AGE : 29, ID : "3", Name : "Jonathan Smith"},
+						{AGE : 36, ID : "4", Name : "Peter Burke"}
+					]
+				})
+				.expectChange("age1", 43)  // TODO CPOUI5UISERVICESV3-1950
+				.expectChange("age2", "43");
+
+			// see that requestSideEffects updates AGE, too
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
+					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+				]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("age2", "29");
+
+			// change one Text to the second row - must be cached from requestSideEffects
+			oRowContext = that.oView.byId("table").getItems()[1].getBindingContext();
+			that.oView.byId("age2").setBindingContext(oRowContext);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = createError({
@@ -8414,8 +8581,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: master/detail where the detail needs additional $expand/$select and thus cannot
-	// reuse its parent's cache
+	// Scenario: master/detail where the detail needs additional $expand/$select and thus causes
+	// late property requests
 	QUnit.test("Auto-$expand/$select: master/detail with separate requests", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
@@ -8438,10 +8605,8 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
-			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id", {
-					Team_Id : "TEAM_01",
-					Name : "Team #1"
-				})
+			// 'Name' is added to the table row
+			that.expectRequest("TEAMS('TEAM_01')?$select=Name", {Name : "Team #1"})
 				.expectChange("text1", "Team #1");
 
 			that.oView.byId("detail").setBindingContext(oContext);
@@ -10085,13 +10250,11 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
+			// 'flightDetails' is added to the table row
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate=datetime"
-					+ "'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
+					+ "'2017-08-10T00%3A00%3A00')?$select=flightDetails", {
 					d : {
 						__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
-						carrid : "AA",
-						connid : "0017",
-						fldate : "/Date(1502323200000)/",
 						flightDetails : {
 							__metadata : {type : "RMTSAMPLEFLIGHT.FlightDetails"},
 							cityFrom : "New York",

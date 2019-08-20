@@ -6,9 +6,10 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
+	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/ui/thirdparty/URI"
-], function (Log, isEmptyObject, uid, URI) {
+], function (Log, isEmptyObject, merge, uid, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -927,6 +928,10 @@ sap.ui.define([
 				.replace(rEscapedOpenBracket, "(")
 				.replace(rEscapedCloseBracket, ")");
 		},
+
+		// Trampoline property to allow for mocking function module in unit tests.
+		// @see sap.base.util.merge
+		merge : merge,
 
 		/**
 		 * Merges the given values for "$orderby" and "$filter" into the given map of query options.

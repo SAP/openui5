@@ -1934,28 +1934,37 @@ sap.ui.define([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("fetchValue: absolute binding", function (assert) {
+	//********************************************************************************************
+[
+	{bCached : false, oGroupLock : {}},
+	{bCached : true, oGroupLock : _GroupLock.$cached}
+].forEach(function (oFixture) {
+	QUnit.test("fetchValue: absolute binding, bCached=" + oFixture.bCached, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oListener = {},
 			oPromise,
 			oReadResult = {};
 
+		oBinding.oModel.bAutoExpandSelect = {};
+		this.mock(oBinding).expects("lockGroup").exactly(oFixture.bCached ? 0 : 1)
+			.withExactArgs().returns(oFixture.oGroupLock);
 		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs("/EMPLOYEES/42/bar").returns("42/bar");
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "42/bar", undefined,
-				sinon.match.same(oListener))
+			.withExactArgs(sinon.match.same(oFixture.oGroupLock), "42/bar",
+				undefined, sinon.match.same(oListener),
+				sinon.match.same(oBinding.oModel.bAutoExpandSelect))
 			.returns(SyncPromise.resolve(oReadResult));
 
 		// code under test
-		oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener);
+		oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener, oFixture.bCached);
 
 		assert.ok(oPromise.isFulfilled());
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oReadResult);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: relative binding", function (assert) {

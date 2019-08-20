@@ -321,7 +321,7 @@ sap.ui.define([
 			that = this;
 
 		if (this.oModel.bAutoExpandSelect) {
-			sPath = this.oModel.getMetaModel().getReducedPath(
+			sPath = oMetaModel.getReducedPath(
 				_Helper.buildPath(this.sPath, sPath),
 				this.oBinding.getBaseForPathReduction());
 		}

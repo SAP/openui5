@@ -1195,13 +1195,14 @@ sap.ui.define([
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
-			var sRelativePath;
+			var oGroupLock, sRelativePath;
 
 			if (oCache) {
+				oGroupLock = bCached ? _GroupLock.$cached : that.lockGroup();
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					return oCache.fetchValue(_GroupLock.$cached, sRelativePath, undefined,
-						oListener);
+					return oCache.fetchValue(oGroupLock, sRelativePath, undefined, oListener,
+						that.oModel.bAutoExpandSelect);
 				}
 			}
 			if (that.oContext) {
