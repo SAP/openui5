@@ -22,64 +22,26 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oWidget an object representation of the control that should be rendered
 	 */
 	WidgetRenderer.render = function (oRm, oWidget) {
-		var sHeight = oWidget.getHeight();
+		var oContent = oWidget.getAggregation("_content");
+
 		//start
 		oRm.write("<div");
 		oRm.writeElementData(oWidget);
-		if (oWidget.preferedStyle !== "transparent") {
-			oRm.addClass("sapFCard");
-		}
-		if (!oWidget.getWidgetContent()) {
-			oRm.addClass("sapFCardNoContent");
-		}
 		oRm.writeClasses();
-
-		oRm.addStyle("width", oWidget.getWidth());
-
-		if (sHeight && sHeight !== 'auto') {
-			oRm.addStyle("height", sHeight);
-		}
 
 		//Accessibility state
 		oRm.writeAccessibilityState(oWidget, {
 			role: "region",
 			roledescription: {value: oRb.getText("ARIA_ROLEDESCRIPTION_CARD"), append: true}
 		});
-		oRm.writeStyles();
 		oRm.write(">");
 
-		//content
-		WidgetRenderer.renderContentSection(oRm, oWidget);
+		if (oContent) {
+			oRm.renderControl(oContent);
+		}
 
 		//end
 		oRm.write("</div>");
-	};
-
-	/**
-	 * Render content section.
-	 * Will be overwritten by subclasses.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
-	 */
-	WidgetRenderer.renderContentSection = function (oRm, oWidget) {
-		var oContent = oWidget.getWidgetContent();
-
-		if (oContent) {
-			oRm.write("<div");
-			oRm.addClass("sapFCardContent");
-			oRm.writeClasses();
-			//Accessibility configuration
-			oRm.writeAccessibilityState(oWidget, {
-				role: "group",
-				label: {value: oRb.getText("ARIA_LABEL_CARD_CONTENT"), append: true}
-			});
-			oRm.write(">");
-
-			oRm.renderControl(oContent);
-
-			oRm.write("</div>");
-		}
 	};
 
 	return WidgetRenderer;
