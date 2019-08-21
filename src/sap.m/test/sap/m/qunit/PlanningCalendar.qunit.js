@@ -5299,6 +5299,36 @@ sap.ui.define([
 		assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1), "End date month is correct");
 	});
 
+	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when appointment starts from previous month", function (assert) {
+		// arrange
+		var oRowStartDate = new Date(2017, 11, 1),
+			oAppStartDate = new Date(2017, 10, 24),
+			oAppEndDate = new Date(2017, 11, 7),
+			oNewAppPos;
+
+		// act - resize appointment's end with 6 Days from the beginning of the line
+		oNewAppPos = this.oPCRow._calcResizeNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
+
+		// assert
+		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(oNewAppPos.endDate, new Date(2017, 11, 8), "End date month is correct");
+	});
+
+	QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in '1 Month' view when aapointment starts from previous year", function (assert) {
+		// arrange
+		var oRowStartDate = new Date(2018, 0, 1),
+			oAppStartDate = new Date(2017, 11, 24),
+			oAppEndDate = new Date(2018, 0, 7),
+			oNewAppPos;
+
+		// act - resize appointment's end with 6 Days from the beginning of the line
+		oNewAppPos = this.oPCRow._calcResizeNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 6);
+
+		// assert
+		assert.deepEqual(oNewAppPos.startDate, oAppStartDate, "Start date should not be changed");
+		assert.deepEqual(oNewAppPos.endDate, new Date(2018, 0, 8), "End date month is correct");
+	});
+
 	QUnit.module("Create Appointments: setEnableAppointmentsCreate");
 
 	QUnit.test("setEnableAppointmentsCreate", function(assert) {
