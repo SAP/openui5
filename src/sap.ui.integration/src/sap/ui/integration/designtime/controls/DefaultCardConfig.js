@@ -36,41 +36,96 @@ function () {
                 "type": "string",
                 "path": "header/subTitle"
             },
+
+            // Default header type only
             "icon": {
-                "tags": ["header"],
+                "tags": ["header defaultHeader"],
                 "label": "{i18n>CARD_EDITOR.ICON}",
                 "type": "icon",
                 "path": "header/icon/src",
                 "visible": "{= ${context>/header/type} !== 'Numeric' }"
             },
             "statusText": {
-                "tags": ["header"],
+                "tags": ["header defaultHeader"],
                 "label": "{i18n>CARD_EDITOR.STATUS}",
                 "type": "string",
-                "path": "header/status/text"
+                "path": "header/status/text",
+                "visible": "{= ${context>/header/type} !== 'Numeric' }"
             },
-            "kpiNumber": {
-                "tags": ["header"],
-                "label": "{i18n>CARD_EDITOR.KPI}",
+
+            // Numeric header type only
+            "unitOfMeasurement": {
+                "tags": ["header numericHeader"],
+                "label": "{i18n>CARD_EDITOR.UOM}",
                 "type": "string",
-                "path": "data/json/kpiInfos/kpi/number",
+                "path": "header/unitOfMeasurement",
                 "visible": "{= ${context>/header/type} === 'Numeric' }"
             },
+            "mainIndicatorNumber": {
+                "tags": ["header numericHeader mainIndicator"],
+                "label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.NUMBER}",
+                "type": "string",
+                "path": "header/mainIndicator/number",
+                "visible": "{= ${context>/header/type} === 'Numeric' }"
+            },
+            "mainIndicatorUnit": {
+                "tags": ["header numericHeader mainIndicator"],
+                "label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.UNIT}",
+                "type": "string",
+                "path": "header/mainIndicator/unit",
+                "visible": "{= ${context>/header/type} === 'Numeric' }"
+            },
+            "mainIndicatorTrend": {
+                "tags": ["header numericHeader mainIndicator"],
+                "label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.TREND}",
+                "type": "enum",
+                "enum": [
+                    "Down",
+                    "None",
+                    "Up"
+                ],
+                "allowBinding": true,
+                "path": "header/mainIndicator/trend",
+                "visible": "{= ${context>/header/type} === 'Numeric' }"
+            },
+            "mainIndicatorState": {
+                "tags": ["header numericHeader mainIndicator"],
+                "label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.STATE}",
+                "type": "enum",
+                "enum": [
+                    "Critical",
+                    "Error",
+                    "Good",
+                    "Neutral"
+                ],
+                "allowBinding": true,
+                "path": "header/mainIndicator/state",
+                "visible": "{= ${context>/header/type} === 'Numeric' }"
+            },
+            "details": {
+                "tags": ["header numericHeader"],
+                "label": "{i18n>CARD_EDITOR.DETAILS}",
+                "type": "string",
+                "path": "header/details",
+                "visible": "{= ${context>/header/type} === 'Numeric' }"
+            },
+
+            // List Card Item
             "listItemTitle": {
-                "tags": ["content"],
-                "label": "{i18n>CARD_EDITOR.TITLE}",
+                "tags": ["content listItem"],
+                "label": "{i18n>CARD_EDITOR.LIST_ITEM.TITLE}",
                 "type": "string",
                 "path": "content/item/title"
             },
             "listItemDescription" : {
-                "tags": ["content"],
-                "label": "{i18n>CARD_EDITOR.DESCRIPTION}",
+                "tags": ["content listItem"],
+                "label": "{i18n>CARD_EDITOR.LIST_ITEM.DESCRIPTION}",
                 "type": "string",
                 "path": "content/item/description"
             },
             "listItemHighlight": {
-                "tags": ["content"],
-                "label": "{i18n>CARD_EDITOR.HIGHLIGHT}",
+                "tags": ["content listItem"],
+                "label": "{i18n>CARD_EDITOR.LIST_ITEM.HIGHLIGHT}",
                 "type": "string",
                 "path": "content/item/highlight"
             }
