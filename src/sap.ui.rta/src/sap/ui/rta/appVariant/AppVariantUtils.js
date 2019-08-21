@@ -375,8 +375,8 @@ function(
 		return { text: sMessage	};
 	};
 
-	AppVariantUtils.buildDeleteSuccessMessage = function() {
-		var sMessage = AppVariantUtils.getText("DELETE_APP_VARIANT_SUCCESS_MESSAGE");
+	AppVariantUtils.buildDeleteSuccessMessage = function(sAppVariantId) {
+		var sMessage = AppVariantUtils.getText("DELETE_APP_VARIANT_SUCCESS_MESSAGE", sAppVariantId);
 		return { text: sMessage	};
 	};
 
