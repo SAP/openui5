@@ -39,6 +39,7 @@ sap.ui.define([
 		this.setChangeFileContent(oChangeFileContent, {});
 		this.sVariantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+		this.DEFAULT_AUTHOR = "SAP";
 	};
 
 	/**
@@ -81,10 +82,11 @@ sap.ui.define([
 					if (oVariant.content.fileName === sVariantManagementReference) {
 						iIndex = index;
 						// Standard Variant should always contain the value: "SAP" in "author" / "Created by" field
+						// case when standard variant exists in the backend response
 						if (!ObjectPath.get("content.support.user", oVariant)) {
 							var oSupport = {
 								support: {
-									user: "SAP"
+									user: this.DEFAULT_AUTHOR
 								}
 							};
 							Object.assign(oVariant.content, oSupport);
