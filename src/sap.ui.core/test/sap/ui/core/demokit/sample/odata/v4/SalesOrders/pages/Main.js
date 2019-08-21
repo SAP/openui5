@@ -687,26 +687,10 @@ sap.ui.define([
 					});
 				},
 				checkInputValue : function (sID, sValue) {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : sID,
-						success : function (oInput) {
-							Opa5.assert.strictEqual(oInput.getValue(),
-								sValue, "checkInputValue('" + sID + "', '" + sValue + "')");
-						},
-						viewName : sViewName
-					});
+					return Helper.checkInputValue(this, sViewName, sID, sValue);
 				},
-				checkInputValueState : function (sID, sState) {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : sID,
-						success : function (oInput) {
-							Opa5.assert.strictEqual(oInput.getValueState(), sState,
-								"checkInputValueState('" + sID + "', '" + sState + "')");
-						},
-						viewName : sViewName
-					});
+				checkInputValueState : function (sID, sState, sMessage) {
+					return Helper.checkInputValueState(this, sViewName, sID, sState, sMessage);
 				},
 				checkMessagesButtonCount : function (iExpectedCount) {
 					return this.waitFor({

@@ -16,7 +16,8 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/TestUtils"
 	], function (Log, library, Any, Main, opaTest, TestUtils) {
 		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
-			MessageType = library.MessageType; // shortcut for sap.ui.core.MessageType
+			MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
+			ValueState = library.ValueState; // shortcut for sap.ui.core.ValueState
 
 		QUnit.module("sap.ui.core.sample.ViewTemplate.types", {
 			before : function () {
@@ -56,15 +57,16 @@ sap.ui.getCore().attachInit(function () {
 			}
 
 			When.onTheMainPage.enterInputValue("decimalInput", "100");
-			Then.onTheMainPage.checkInputValueState("decimalInput", MessageType.Error);
+			Then.onTheMainPage.checkInputValueState("decimalInput", ValueState.Error,
+				"Enter a number greater than 100.000");
 			When.onTheMainPage.enterInputValue("decimalInput", "101");
-			Then.onTheMainPage.checkInputValueState("decimalInput", MessageType.None);
+			Then.onTheMainPage.checkInputValueState("decimalInput", ValueState.None, "");
 
 			// TODO: checks skipped because StepInput ValueState is not as expected
 			// When.onTheMainPage.enterStepInputValue("stepInput", 102);
-			// Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.Error);
+			// Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error);
 			// When.onTheMainPage.enterStepInputValue("stepInput", 99);
-			// Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.None);
+			// Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.None);
 
 			When.onTheMainPage.enterInputValue("booleanInput", "XXX");
 			Then.onTheMainPage.checkInputIsDirty("booleanInput", true);
@@ -98,18 +100,18 @@ sap.ui.getCore().attachInit(function () {
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 
 			When.onTheMainPage.enterDateTimePickerValue("I54", "Apr 19, 2029");
-			Then.onTheMainPage.checkDateTimePickerValueState("I54", MessageType.None);
+			Then.onTheMainPage.checkDateTimePickerValueState("I54", ValueState.None);
 			When.onTheMainPage.enterDateTimePickerValue("I56", "Apr 19, 2029, 8:25:21 AM");
-			Then.onTheMainPage.checkDateTimePickerValueState("I56", MessageType.None);
+			Then.onTheMainPage.checkDateTimePickerValueState("I56", ValueState.None);
 			When.onTheMainPage.enterDateTimePickerValue("I58", "8:25:21 AM");
-			Then.onTheMainPage.checkDateTimePickerValueState("I58", MessageType.None);
+			Then.onTheMainPage.checkDateTimePickerValueState("I58", ValueState.None);
 
 			// parseKeepsEmptyString test
 			When.onTheMainPage.enterInputValue("Identification::String40", "",
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
 			Then.onTheMainPage.checkInputValue("Identification::String40", "",
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
-			Then.onTheMainPage.checkInputValueState("Identification::String40", MessageType.None,
+			Then.onTheMainPage.checkInputValueState("Identification::String40", ValueState.None, "",
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");// no server error on input
 			Then.onTheMainPage.checkInputIsDirty("Identification::String40", false,
 				"sap.ui.core.sample.ViewTemplate.types.TemplateV4");
