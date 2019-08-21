@@ -1260,12 +1260,14 @@ sap.ui.define([
 			},
 			fnCallback = {},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
-			oResult = {};
+			oResult = {},
+			bSync = {/*boolean*/};
 
 		this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.same(fnCallback), "/foo").returns(oResult);
+			.withExactArgs(sinon.match.same(fnCallback), "/foo", sinon.match.same(bSync))
+			.returns(oResult);
 
-		assert.strictEqual(oContext.withCache(fnCallback, "/foo"), oResult);
+		assert.strictEqual(oContext.withCache(fnCallback, "/foo", bSync), oResult);
 	});
 
 	//*********************************************************************************************
@@ -1275,14 +1277,16 @@ sap.ui.define([
 			},
 			fnCallback = {},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
-			oResult = {};
+			oResult = {},
+			bSync = {/*boolean*/};
 
 		this.mock(_Helper).expects("buildPath").withExactArgs("/EMPLOYEES('42')", "foo")
 			.returns("~");
 		this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.same(fnCallback), "~").returns(oResult);
+			.withExactArgs(sinon.match.same(fnCallback), "~", sinon.match.same(bSync))
+			.returns(oResult);
 
-		assert.strictEqual(oContext.withCache(fnCallback, "foo"), oResult);
+		assert.strictEqual(oContext.withCache(fnCallback, "foo", bSync), oResult);
 	});
 
 	//*********************************************************************************************

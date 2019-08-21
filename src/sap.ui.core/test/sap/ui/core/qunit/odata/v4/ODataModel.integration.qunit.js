@@ -20212,8 +20212,8 @@ sap.ui.define([
 			oCreationRowContext = oCreationRowListBinding.create({Note : "New item note"});
 			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
-			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oFormBinding.hasPendingChanges());
-			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oCreationRowListBinding.hasPendingChanges());
+			assert.ok(oFormBinding.hasPendingChanges());
+			assert.ok(oCreationRowListBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges(), "consider all groups");
 			assert.notOk(oModel.hasPendingChanges("$auto"));
 			assert.ok(oModel.hasPendingChanges("doNotSubmit"), "creation row has changes");
@@ -20790,6 +20790,182 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: hasPendingChanges works even while late child bindings are trying to reuse the
+	// parent binding's cache.
+	// JIRA: CPOUI5UISERVICESV3-1981
+	QUnit.test("hasPendingChanges works for late child bindings", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<Table id="orders" items="{path: \'/SalesOrderList\', parameters: {\
+		$expand : {\
+			SO_2_SOITEM : {\
+				$select : [\'ItemPosition\',\'Note\',\'SalesOrderID\']\
+			}\
+		},\
+		$select : \'Note\'\
+	}}">\
+	<ColumnListItem>\
+		<Input id="note" value="{Note}"/>\
+	</ColumnListItem>\
+</Table>\
+<Table id="items" items="{SO_2_SOITEM}">\
+	<ColumnListItem>\
+		<Text id="itemNote" text="{Note}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList"
+			+ "?$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)"
+			+ "&$select=Note,SalesOrderID"
+			+ "&$skip=0&$top=100", {
+				value : [{
+					Note : "SO_1",
+					SalesOrderID : "1",
+					SO_2_SOITEM : [{
+						ItemPosition : "10",
+						Note : "Item_10",
+						SalesOrderID : "1"
+					}]
+				}]
+			})
+			.expectChange("note", ["SO_1"])
+			.expectChange("itemNote", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOrdersTable = that.oView.byId("orders"),
+				oOrdersBinding = oOrdersTable.getBinding("items");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('1')",
+					payload : {Note : "SO_1 changed"}
+				}, {
+					Note : "SO_1 changed",
+					SalesOrderID : "1"
+				})
+				.expectChange("note", ["SO_1 changed"]);
+
+			oOrdersTable.getItems()[0].getCells()[0].getBinding("value").setValue("SO_1 changed");
+
+			assert.ok(oOrdersBinding.hasPendingChanges());
+
+			that.expectChange("itemNote", ["Item_10"]);
+
+			// Observe hasPendingChanges while the child binding is checking whether it can use the
+			// parent cache
+			that.oView.byId("items").setBindingContext(oOrdersBinding.getCurrentContexts()[0]);
+
+			// code under test
+			assert.ok(oOrdersBinding.hasPendingChanges());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity without using a UI and persist it.
+	// ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges work as expected even if
+	// late properties below a list binding want to reuse the parent binding's cache. Relative list
+	// binding without an own cache is necessary because determination whether cache can be used or
+	// not is async.
+	// JIRA: CPOUI5UISERVICESV3-1981
+[
+	// late dependent binding does not influence hasPendingChanges for a parent list binding with a
+	// persisted created entity.
+	function (assert, oModel, oBinding, oCreatedContext) {
+		this.expectChange("note", "New");
+
+		this.oView.byId("form").setBindingContext(oCreatedContext);
+
+		assert.notOk(oModel.hasPendingChanges());
+		assert.notOk(oBinding.hasPendingChanges());
+
+		return this.waitForChanges(assert);
+	},
+	// modify a persisted created entity; hasPendingChanges is not influenced by late properties
+	function (assert, oModel, oBinding, oCreatedContext) {
+		var oPropertyBinding = oModel.bindProperty("Note", oCreatedContext);
+
+		this.expectRequest({
+				method : "PATCH",
+				url : "SalesOrderList('43')",
+				payload : {Note : "Modified"}
+			}, {
+				Note : "From Server",
+				SalesOrderID : "43"
+			})
+			.expectChange("note", "Modified")
+			.expectChange("note", "From Server");
+
+		oPropertyBinding.initialize();
+		oPropertyBinding.setValue("Modified");
+		this.oView.byId("form").setBindingContext(oCreatedContext);
+
+		assert.ok(oModel.hasPendingChanges());
+		assert.ok(oBinding.hasPendingChanges());
+
+		return this.waitForChanges(assert);
+	}
+].forEach(function (fnTest, i) {
+	var sTitle = "hasPendingChanges: late properties for a list binding without a UI and with a"
+			+ " persisted created entity, #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedContext,
+			oListBindingWithoutUI,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<FlexBox id="form">\
+	<Text id="note" text="{Note}"/>\
+	<Table id="items" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="itemNote" text="{Note}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		oListBindingWithoutUI = oModel.bindList("/SalesOrderList");
+
+		this.expectChange("note")
+			.expectChange("itemNote", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {SO_2_SOITEM : null}
+				}, {
+					Note : "New",
+					SalesOrderID : "43"
+				});
+
+			oCreatedContext = oListBindingWithoutUI.create({SO_2_SOITEM : null}, true);
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+
+			return fnTest.call(that, assert, oModel, oListBindingWithoutUI, oCreatedContext);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Unpark a failed patch while requesting side effects. See that the PATCH response is

@@ -1734,6 +1734,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesForPath
+	 */
+	ODataListBinding.prototype.hasPendingChangesForPath = function (sPath) {
+		if (this.oCache === undefined) {
+			// as long as cache is not yet known there can be only changes caused by created
+			// entities; sPath does not matter
+			return this.iCreatedContexts > 0;
+		}
+		return asODataParentBinding.prototype.hasPendingChangesForPath.apply(this, arguments);
+	};
+
+	/**
 	 * Enhance the inherited query options by the given query options if this binding does not have
 	 * any binding parameters. If both have a '$orderby', the resulting '$orderby' is the
 	 * concatenation of both '$orderby' with the given one first. If both have a '$filter', the
