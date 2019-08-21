@@ -100,7 +100,10 @@ sap.ui.define([
 					onClose: function(oAction) {
 						if (oAction === "YES") {
 							if (this.iCounter === 0) {
-								var mMoveChangeData = {
+								// on first press of "Personalization Changes button"
+								// add changes and save -> not in dirty state
+								// change1: move sections to standard variant
+								var oMoveChangeData = {
 									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
 									changeSpecificData: {
 										changeType: "moveControls",
@@ -119,47 +122,65 @@ sap.ui.define([
 										}
 									}
 								};
-								var mRenameChangeData1 = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSubSectionWithForm")),
-									changeSpecificData: {
-										changeType: "rename",
-										renamedElement: {
-											id: oAppComponent.createId("idMain1--ObjectPageSubSectionWithForm")
-										},
-										value : "Personalization Test"
-									}
-								};
-								var mRenameChangeData2 = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--TitleForVM1")),
-									changeSpecificData: {
-										changeType: "rename",
-										renamedElement: {
-											id: oAppComponent.createId("idMain1--TitleForVM1")
-										},
-										value : "Change for the inner variant"
-									}
-								};
-								ControlPersonalizationAPI.addPersonalizationChanges({
-									controlChanges: [mMoveChangeData, mRenameChangeData1, mRenameChangeData2]
-								})
-								.then(function(aAppliedChanges) {
-									ControlPersonalizationAPI.saveChanges(aAppliedChanges, oAppComponent);
-								});
 
+								ControlPersonalizationAPI.addPersonalizationChanges({
+									controlChanges: [oMoveChangeData]
+								})
+									.then(function (aAppliedChanges) {
+										ControlPersonalizationAPI.saveChanges(aAppliedChanges, oAppComponent);
+
+										// change2: create new personalized variant
+										var oPersonalizedVariantParameters = {
+											def: false,
+											execute: false,
+											id: "application-masterDetail-display-component---idMain1--variantManagementOrdersTable",
+											key: null,
+											name: "Personalized Variant",
+											overwrite: false
+										};
+
+										var oVariantManagementControl = sap.ui.getCore().byId("application-masterDetail-display-component---idMain1--variantManagementOrdersTable");
+										oVariantManagementControl.fireEvent("save", oPersonalizedVariantParameters);
+
+										// change3: remove section to personalized variant
+										var oRemoveChangeData = {
+											selectorControl : sap.ui.getCore().byId("application-masterDetail-display-component---idMain1--ObjectPageSectionWithSmartForm"),
+											changeSpecificData: {
+												changeType: "stashControl"
+											}
+										};
+										return ControlPersonalizationAPI.addPersonalizationChanges({controlChanges: [oRemoveChangeData]});
+									})
+									.then(function (aAppliedChanges) {
+										// save change1, change2, change3
+										ControlPersonalizationAPI.saveChanges(aAppliedChanges, oAppComponent);
+									});
 								this.iCounter++;
 							} else if (this.iCounter === 1) {
-								var mRenameChangeData3 = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
+								// on second press of "Personalization Changes button"
+								// add change but not save -> dirty state
+								var oMoveChangeData2 = {
+									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
 									changeSpecificData: {
-										changeType: "rename",
-										renamedElement: {
-											id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
+										changeType: "moveControls",
+										movedElements: [{
+											id: oAppComponent.createId("idMain1--ObjectPageSectionWithVM"),
+											sourceIndex: 2,
+											targetIndex: 0
+										}],
+										source: {
+											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											aggregation: "sections"
 										},
-										value : "Personalization Test (2. Change)"
+										target: {
+											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											aggregation: "sections"
+										}
 									}
 								};
+
 								ControlPersonalizationAPI.addPersonalizationChanges({
-									controlChanges: [mRenameChangeData3]
+									controlChanges: [oMoveChangeData2]
 								});
 
 								oButton.setEnabled(false);
