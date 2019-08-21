@@ -77,6 +77,30 @@ sap.ui.define([
 			assert.equal(bIsVariantSharingEnabled, false);
 		});
 
+		QUnit.test("getSystem returns undefined when no system info is maintained in the settings", function(assert) {
+			assert.notOk(this.cut.getSystem());
+		});
+
+		QUnit.test("getSystem returns system info when it is maintained in the settings", function(assert) {
+			var oSettings = {
+				system: "someSystem"
+			};
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut.getSystem(), "someSystem");
+		});
+
+		QUnit.test("getClient returns undefined when no client info is maintained in the settings", function(assert) {
+			assert.notOk(this.cut.getClient());
+		});
+
+		QUnit.test("getClient returns client info when it is maintained in the settings", function(assert) {
+			var oSettings = {
+				client: "someClient"
+			};
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut.getClient(), "someClient");
+		});
+
 		QUnit.test("get instance from flex settings request when flex data promise is not available", function(assert) {
 			var done = assert.async();
 

@@ -264,6 +264,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Getter for the system Id of the connected backend.
+	 * Taken from the property 'system' of the LRep flex settings file. Only filled for an ABAP backend.
+	 *
+	 * @public
+	 * @returns {String} system Id of the connected backend or undefined (when property 'system' does not exist in the flex settings file)
+	 */
+	Settings.prototype.getSystem = function() {
+		return this._oSettings.system;
+	};
+
+	/**
+	 * Getter for the client of the connected backend.
+	 * Taken from the property 'client' of the LRep flex settings file. Only filled for an ABAP backend.
+	 *
+	 * @public
+	 * @returns {String} client of the connected backend or undefined (when property 'system' does not exist in the flex settings file)
+	 */
+	Settings.prototype.getClient = function() {
+		return this._oSettings.client;
+	};
+
+	/**
 	 * Getter for the default Layer-Permissions
 	 */
 	Settings.prototype.getDefaultLayerPermissions = function() {
