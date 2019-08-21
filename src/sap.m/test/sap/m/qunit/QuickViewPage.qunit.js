@@ -250,11 +250,14 @@ sap.ui.define([
 		oImage = aHeaderContent[IMAGE_INDEX];
 
 		oImage.$().on("load", function () {
-			// Assert
-			assert.strictEqual(oFallbackIcon.$().css("display"), "none", "The fallback icon should NOT be displayed.");
-			assert.notStrictEqual(oImage.$().css("display"), "none", "The image should be displayed.");
+			// use setTimeout to avoid IE11 problems
+			setTimeout(function () {
+				// Assert
+				assert.strictEqual(oFallbackIcon.$().css("display"), "none", "The fallback icon should NOT be displayed.");
+				assert.notStrictEqual(oImage.$().css("display"), "none", "The image should be displayed.");
 
-			done();
+				done();
+			}, 100);
 		});
 	});
 
