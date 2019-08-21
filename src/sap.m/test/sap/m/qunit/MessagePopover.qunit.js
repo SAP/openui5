@@ -1421,10 +1421,9 @@ sap.ui.define([
 
 		//Act
 		var aMVItems = this.oMessagePopover._oMessageView.getItems();
-
 		//Assert
 		assert.ok(Array.isArray(aMVItems), "Items array exists in the MessageView");
-		assert.strictEqual(aMVItems.length, 3, "The items array is empty");
+		assert.strictEqual(aMVItems.length, 0, "The items array is empty");
 	});
 
 	QUnit.test("After the MessagePopover is opened - there are items in the MessageView", function (assert) {
@@ -1456,12 +1455,17 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		var oItem = this.oMessagePopover.getItems()[0];
+		var spyInvalidate = sinon.spy(this.oMessagePopover, "invalidate");
 		oItem.setTitle("Test");
 		sap.ui.getCore().applyChanges();
 
 		//Assert
+		assert.strictEqual(spyInvalidate.callCount, 1, "The MessagePopover is invalidated once");
 		assert.strictEqual(this.oMessagePopover.getItems()[0].getTitle() , "Test", "The title of the first item of the MessagePopover is changed");
 		assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getTitle() , "Test", "The title of the first item of the MessageView is changed");
+
+		//Clean
+		spyInvalidate.restore();
 	});
 
 	QUnit.test("Any custom data from the items of the MessagePopover should be cloned in the MessageView's items", function (assert) {
