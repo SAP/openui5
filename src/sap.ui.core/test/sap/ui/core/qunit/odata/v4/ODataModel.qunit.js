@@ -694,12 +694,14 @@ sap.ui.define([
 
 		oModelMock.expects("checkBatchGroupId").withExactArgs("groupId");
 		oModelMock.expects("isAutoGroup").withExactArgs("groupId").returns(true);
+		this.mock(oModel.oRequestor).expects("relocateAll")
+			.withExactArgs("$parked.groupId", "groupId");
 		this.mock(oModel.oRequestor).expects("addChangeSet").never();
 		oModelMock.expects("_submitBatch").never(); // not yet
 		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").callsFake(function (fnCallback) {
 			setTimeout(function () {
 				// make sure that _submitBatch is called within fnCallback
-				oModelMock.expects("_submitBatch").withExactArgs("$parked.groupId")
+				oModelMock.expects("_submitBatch").withExactArgs("groupId")
 					.returns(oSubmitPromise);
 				fnCallback();
 			}, 0);

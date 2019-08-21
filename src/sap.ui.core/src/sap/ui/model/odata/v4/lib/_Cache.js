@@ -1189,7 +1189,7 @@ sap.ui.define([
 				return Promise.resolve();
 			}
 			// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
-			that.oRequestor.relocateAll("$parked." + sGroupId, oEntity, sGroupId);
+			that.oRequestor.relocateAll("$parked." + sGroupId, sGroupId, oEntity);
 			// send and register the PATCH request
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
 			return patch(oGroupLock);
@@ -2238,8 +2238,10 @@ sap.ui.define([
 			throw new Error("Parallel POST requests not allowed");
 		}
 
-		// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
-		this.oRequestor.relocateAll("$parked." + sGroupId, oEntity, sGroupId);
+		if (oEntity) {
+			// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
+			this.oRequestor.relocateAll("$parked." + sGroupId, sGroupId, oEntity);
+		}
 
 		if (oData) {
 			sHttpMethod = oData["X-HTTP-Method"] || sHttpMethod;
