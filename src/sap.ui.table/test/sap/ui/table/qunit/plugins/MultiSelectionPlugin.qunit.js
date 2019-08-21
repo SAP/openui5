@@ -73,7 +73,7 @@ sap.ui.define([
 		assert.strictEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The reference to the delete icon was cleared");
 	});
 
-	QUnit.module("Special multi selection behavior", {
+	QUnit.module("Multi selection behavior", {
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
 			this.oTable = new Table();
@@ -228,39 +228,134 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mouse interaction", function(assert) {
-		var done = assert.async();
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.equal(oSelectionPlugin.getSelectedIndices().length, 10, "rows properly selected");
+		function doSelection(fnSelect) {
+			return Promise.race([
+				new Promise(function(resolve) {
+					oSelectionPlugin.attachEventOnce("selectionChange", resolve);
+					fnSelect();
+				}),
+				new Promise(function(resolve) {
+					// Maximum wait time required if, for example, fnSelect does not trigger a selectionChange event.
+					setTimeout(resolve, 10);
+				})
+			]);
+		}
 
-			oSelectionPlugin.attachSelectionChange(function() {
-				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0, "selection is removed");
-				done();
+		function pressHeaderSelector() {
+			return doSelection(function() {
+				oSelectionPlugin.onHeaderSelectorPress();
 			});
+		}
 
-			oSelectionPlugin.onHeaderSelectorPress(false);
+		return pressHeaderSelector().then(function() {
+			assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+				"Limit enabled: Pressing the header selector does not change the selection if nothing is selected");
+		}).then(function() {
+			return doSelection(function() {
+				oSelectionPlugin.addSelectionInterval(0, 5);
+			}).then(pressHeaderSelector).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit enabled: Pressing the header selector deselects everything if something is selected");
+			});
+		}).then(function() {
+			oSelectionPlugin.setLimit(0);
+
+			return pressHeaderSelector().then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding("rows").getLength(),
+					"Limit disabled: Pressing the header selector selects everything if not everything is selected");
+			}).then(pressHeaderSelector).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit disabled: Pressing the header selector deselects everything if everything is selected");
+			});
+		}).then(function() {
+			oSelectionPlugin.setShowHeaderSelector(false);
+
+			return doSelection(function() {
+				oSelectionPlugin.addSelectionInterval(0, 5);
+			}).then(pressHeaderSelector).then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Limit disabled, header selector hidden: Pressing the header selector does not change the selection");
+			});
+		}).then(function() {
+			oSelectionPlugin.setLimit(200);
+
+			return pressHeaderSelector().then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Limit enabled, header selector hidden: Pressing the header selector does not change the selection");
+			});
 		});
-
-		oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Keyboard interaction", function(assert) {
-		var done = assert.async();
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.equal(oSelectionPlugin.getSelectedIndices().length, 10, "rows properly selected");
+		function doSelection(fnSelect) {
+			return Promise.race([
+				new Promise(function(resolve) {
+					oSelectionPlugin.attachEventOnce("selectionChange", resolve);
+					fnSelect();
+				}),
+				new Promise(function(resolve) {
+					// Maximum wait time required if, for example, fnSelect does not trigger a selectionChange event.
+					setTimeout(resolve, 10);
+				})
+			]);
+		}
 
-			oSelectionPlugin.attachSelectionChange(function() {
-				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0, "selection is removed");
-				done();
+		function pressKeyboardShortcut(sType) {
+			return doSelection(function() {
+				oSelectionPlugin.onKeyboardShortcut(sType);
 			});
+		}
 
-			oSelectionPlugin.onKeyboardShortcut("toggle");
+		return doSelection(function() {
+			oSelectionPlugin.addSelectionInterval(0, 5);
+		}).then(function() {
+			return pressKeyboardShortcut("toggle").then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Limit enabled: The \"toggle\" shortcut does not change the selection if the limit is enabled");
+			});
+		}).then(function() {
+			return pressKeyboardShortcut("clear").then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit enabled: The \"clear\" shortcut deselects everything");
+			}).then(function() {
+				return pressKeyboardShortcut("clear").then(function() {
+					assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+						"Limit enabled: The \"clear\" shortcut does not change the selection if nothing is selected");
+				});
+			});
+		}).then(function() {
+			oSelectionPlugin.setLimit(0);
+
+			return pressKeyboardShortcut("toggle").then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding("rows").getLength(),
+					"Limit disabled: The \"toggle\" shortcut selects everything if not everything is selected");
+			}).then(function() {
+				return pressKeyboardShortcut("toggle");
+			}).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit disabled: The \"toggle\" shortcut deselects everything if everything is selected");
+			});
+		}).then(function() {
+			return doSelection(function() {
+				oSelectionPlugin.addSelectionInterval(0, 5);
+			}).then(function() {
+				return pressKeyboardShortcut("clear");
+			}).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit disabled: The \"clear\" shortcut deselects everything");
+			}).then(function() {
+				return pressKeyboardShortcut("clear").then(function() {
+					assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+						"Limit disabled: The \"clear\" shortcut does not change the selection if nothing is selected");
+				});
+			});
 		});
-
-		oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Select All", function(assert) {
@@ -297,7 +392,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("showHeaderSelector is false", function(assert) {
-		var done = assert.async();
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setShowHeaderSelector(false);
@@ -308,18 +402,6 @@ sap.ui.define([
 		assert.ok(!oCell.hasAttribute("role"), "role is not set");
 		assert.ok(!oCell.hasAttribute("title"), "title is not set");
 		assert.ok(!oCell.hasChildNodes(), "No icon");
-
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			jQuery(oCell).trigger("click");
-			assert.equal(oSelectionPlugin.getSelectedCount(), 10, "the selection is not cleared");
-
-			qutils.triggerKeydown(oCell, KeyCodes.A, false, false, true);
-			assert.equal(oSelectionPlugin.getSelectedCount(), 0, "the selection is cleared");
-
-			done();
-		});
-
-		oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Scroll position", function(assert) {
