@@ -62,6 +62,20 @@ sap.ui.define([
 				]
 			});
 			this.getView().setModel(oModel);
+
+			// Use smaller margin around grid when on smaller screens
+			var oGrid = this.getView().byId("demoGrid");
+			oGrid.attachLayoutChange(function (oEvent) {
+				var sLayout = oEvent.getParameter("layout");
+
+				if (sLayout === "layoutXS" || sLayout === "layoutS") {
+					oGrid.removeStyleClass("sapUiSmallMargin");
+					oGrid.addStyleClass("sapUiTinyMargin");
+				} else {
+					oGrid.removeStyleClass("sapUiTinyMargin");
+					oGrid.addStyleClass("sapUiSmallMargin");
+				}
+			});
 		},
 		onSnapToRowChange: function (oEvent) {
 			this.getView().byId("demoGrid").setSnapToRow(oEvent.getParameter("state"));
