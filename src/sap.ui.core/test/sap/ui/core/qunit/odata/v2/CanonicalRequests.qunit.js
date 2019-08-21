@@ -16,7 +16,7 @@ sap.ui.define([
     };
 
     // Set in before Each
-    var mNavTargets = {};
+    var mResponseParameter = {};
 
     // Simulate data changed on server
     var changeNavigationTargets = function (oMockServer) {
@@ -36,26 +36,27 @@ sap.ui.define([
                     oXhr._fnOrignalXHRRespond = oXhr.respond;
                     oXhr.respond = function (status, headers, content) {
                         var oC = JSON.parse(content);
+                        var oMessages;
 
-                        if (mNavTargets.bRemoveProduct) {
+                        if (mResponseParameter.bRemoveProduct) {
                             oC.d.ToProduct = null;
                         } else {
-                            if (oC.d.ToLineItems && mNavTargets.sProductId) {
-                                oC.d.ToLineItems.results[0].ProductID = mNavTargets.sProductId;
-                                oC.d.ToLineItems.results[0].ToProduct.ProductID = mNavTargets.sProductId;
-                                oC.d.ToLineItems.results[0].ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + mNavTargets.sProductId + "')";
-                            } else if (oC.d.ToProduct && mNavTargets.sProductId && mNavTargets.sBusinessPartnerID) {
-                                oC.d.ProductID = mNavTargets.sProductId;
-                                oC.d.ToProduct.ProductID = mNavTargets.sProductId;
-                                oC.d.ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + mNavTargets.sProductId + "')";
-                                oC.d.ToProduct.SupplierID = mNavTargets.sBusinessPartnerID;
-                                oC.d.ToProduct.ToSupplier.BusinessPartnerID = mNavTargets.sBusinessPartnerID;
-                                oC.d.ToProduct.ToSupplier.__metadata.uri = "/SalesOrderSrv/BusinessPartnerSet('" + mNavTargets.sBusinessPartnerID + "')";
+                            if (oC.d.ToLineItems && mResponseParameter.sProductId) {
+                                oC.d.ToLineItems.results[0].ProductID = mResponseParameter.sProductId;
+                                oC.d.ToLineItems.results[0].ToProduct.ProductID = mResponseParameter.sProductId;
+                                oC.d.ToLineItems.results[0].ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + mResponseParameter.sProductId + "')";
+                            } else if (oC.d.ToProduct && mResponseParameter.sProductId && mResponseParameter.sBusinessPartnerID) {
+                                oC.d.ProductID = mResponseParameter.sProductId;
+                                oC.d.ToProduct.ProductID = mResponseParameter.sProductId;
+                                oC.d.ToProduct.__metadata.uri = "/SalesOrderSrv/ProductSet('" + mResponseParameter.sProductId + "')";
+                                oC.d.ToProduct.SupplierID = mResponseParameter.sBusinessPartnerID;
+                                oC.d.ToProduct.ToSupplier.BusinessPartnerID = mResponseParameter.sBusinessPartnerID;
+                                oC.d.ToProduct.ToSupplier.__metadata.uri = "/SalesOrderSrv/BusinessPartnerSet('" + mResponseParameter.sBusinessPartnerID + "')";
                             }
                         }
 
                         if (oXhr.url.indexOf("ContactSet") >= 0) {
-                            if (mNavTargets.bCreateRequestFailure) {
+                            if (mResponseParameter.bCreateRequestFailure) {
                                 status = 400;
                                 oC = {
                                     error: {
@@ -65,7 +66,7 @@ sap.ui.define([
                                     }
                                 };
                             } else {
-                                var oMessages = {
+                                oMessages = {
                                     code: "MESSAGE/CODE",
                                     message: "Operation failed",
                                     severity: "warning",
@@ -73,6 +74,20 @@ sap.ui.define([
                                 };
                                 headers["sap-message"] = JSON.stringify(oMessages);
                             }
+                        }
+
+                        if (mResponseParameter.mDeepSalesOrderMsg !== "NoMsg" && oXhr.url.indexOf("/BusinessPartnerSet('0100000000')" >= 0)) {
+                            oMessages = {
+                                code: "MESSAGE/CODE",
+                                message: "Operation failed",
+                                severity: "error",
+                                target: "ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')"
+                            };
+                            if (mResponseParameter.mDeepSalesOrderMsg === "MsgWithProperty"){
+                                oMessages.target += "/CurrencyCode";
+                            }
+
+                            headers["sap-message"] = JSON.stringify(oMessages);
                         }
 
                         content = JSON.stringify(oC);
@@ -93,11 +108,12 @@ sap.ui.define([
 
         },
         beforeEach: function () {
-            mNavTargets = {
+            mResponseParameter = {
                 sProductId: "",
                 sBusinessPartnerID: "",
                 bRemoveProduct: false,
-                bCreateRequestFailure: true
+                bCreateRequestFailure: false,
+                mDeepSalesOrderMsg: "NoMsg"
             };
             this.sServiceUri = "/SalesOrderSrv/";
             var sDataRootPath = "test-resources/sap/ui/core/qunit/testdata/SalesOrder/";
@@ -453,8 +469,8 @@ sap.ui.define([
                 assert.equal(that.oModel.resolve("ToProduct/ToSupplier", oSalesOrderLineItemSetContext, true),
                     "/ProductSet('HT-1000')/ToSupplier", "Path was resolved correctly.");
 
-                mNavTargets.sProductId = "HT-1004";
-                mNavTargets.sBusinessPartnerID = "0100000099";
+                mResponseParameter.sProductId = "HT-1004";
+                mResponseParameter.sBusinessPartnerID = "0100000099";
 
                 var fnBatchCompleted1 = function () {
                     that.oModel.detachBatchRequestCompleted(fnBatchCompleted1);
@@ -486,8 +502,8 @@ sap.ui.define([
                         assert.equal(that.oStubGetEntitySetByPath.callCount, 4, "Check number of cache misses.");
                         assert.equal(that.iInvalidationCounter, 1, "Check number of cache invalidations necessary.");
 
-                        mNavTargets.sProductId = "HT-1000";
-                        mNavTargets.sBusinessPartnerID = "0100000000";
+                        mResponseParameter.sProductId = "HT-1000";
+                        mResponseParameter.sBusinessPartnerID = "0100000000";
 
                         var fnBatchCompleted3 = function () {
                             that.oModel.detachBatchRequestCompleted(fnBatchCompleted3);
@@ -600,7 +616,7 @@ sap.ui.define([
                 oObject = that.oModel.getObject("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct");
                 assert.strictEqual(oObject["ProductID"], "HT-1000", "Navigation property is set correctly.");
                 changeNavigationTargets(that.oMockServer);
-                mNavTargets.bRemoveProduct = true;
+                mResponseParameter.bRemoveProduct = true;
 
                 that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", { urlParameters: { $expand: "ToProduct" } });
 
@@ -629,7 +645,7 @@ sap.ui.define([
             }
         };
         changeNavigationTargets(this.oMockServer);
-        mNavTargets.bCreateRequestFailure = true;
+        mResponseParameter.bCreateRequestFailure = true;
 
         this.oModel.metadataLoaded().then(function () {
 
@@ -653,7 +669,7 @@ sap.ui.define([
                 };
 
                 that.oModel.attachBatchRequestCompleted(fnRequestCompleted2);
-                mNavTargets.bCreateRequestFailure = false;
+                mResponseParameter.bCreateRequestFailure = false;
                 that.oModel.submitChanges();
             };
 
@@ -734,14 +750,14 @@ sap.ui.define([
                 that.oModel.resolve("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/Description", undefined, true);
                 that.oModel.invalidateEntry("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')");
                 changeNavigationTargets(that.oMockServer);
-                mNavTargets.bRemoveProduct = true;
+                mResponseParameter.bRemoveProduct = true;
                 that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", { urlParameters: { $expand: "ToProduct" } });
                 var fnBatchCompleted2 = function () {
                     that.oModel.detachBatchRequestCompleted(fnBatchCompleted2);
                     assert.deepEqual(mInvalidatedPaths, { "(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct": null }, "Set nav prop to null - Path invalidation necessary.");
                     // Scenario 3
                     that.oModel.invalidateEntry("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')");
-                    mNavTargets.bRemoveProduct = false;
+                    mResponseParameter.bRemoveProduct = false;
                     that.oModel.read("/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", { urlParameters: { $expand: "ToProduct" } });
                     var fnBatchCompleted3 = function () {
                         that.oModel.detachBatchRequestCompleted(fnBatchCompleted3);
@@ -803,6 +819,55 @@ sap.ui.define([
             that.oModel.resetChanges();
             assert.ok("Reset works as expected");
             done();
+        });
+    });
+
+
+    QUnit.test("ODataMessageParser: Deep Path with multiple nav props and without property", function (assert) {
+        var that = this;
+        var done = assert.async();
+        changeNavigationTargets(that.oMockServer);
+
+        this.oModel.metadataLoaded().then(function () {
+            // fill path cache
+            that.oModel.read("/BusinessPartnerSet('0100000000')", {
+                urlParameters: { "$expand": "ToSalesOrders" },
+                success: function(){
+                    mResponseParameter.mDeepSalesOrderMsg = "Msg";
+                    that.oModel.read("/BusinessPartnerSet('0100000000')", {
+                        success: function(){
+                            var oMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData()[0];
+                            assert.equal(oMsg.target, "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message target is correctly set.");
+                            assert.equal(oMsg.fullTarget, "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message full target is correctly set.");
+                            done();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    QUnit.test("ODataMessageParser: Deep Path with multiple nav props and property", function (assert) {
+        var that = this;
+        var done = assert.async();
+        changeNavigationTargets(that.oMockServer);
+
+        this.oModel.metadataLoaded().then(function () {
+            // fill path cache
+            that.oModel.read("/BusinessPartnerSet('0100000000')", {
+                urlParameters: { "$expand": "ToSalesOrders" },
+                success: function(){
+                    mResponseParameter.mDeepSalesOrderMsg = "MsgWithProperty";
+                    that.oModel.read("/BusinessPartnerSet('0100000000')", {
+                        success: function(){
+                            var oMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData()[0];
+                            assert.equal(oMsg.target, "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message target is correctly set.");
+                            assert.equal(oMsg.fullTarget, "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message full target is correctly set.");
+                            done();
+                        }
+                    });
+                }
+            });
         });
     });
 
@@ -935,5 +1000,8 @@ sap.ui.define([
             that.oModel.attachRequestCompleted(fnRequestCompleted);
         });
     });
+
+
+
 
 });
