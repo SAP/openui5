@@ -2,6 +2,7 @@
 src/*/.gitignore
 src/*/target/
 src/*/dist/
+src/*/coverage/
 /target
 /tmp
 
