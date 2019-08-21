@@ -390,15 +390,6 @@ function(
 			}, this);
 		};
 
-		MessagePopover.getMetadata().forwardAggregation(
-			"items",
-			{
-				getter: function(){ return this._oMessageView; },
-				aggregation: "items",
-				forwardBinding: true
-			}
-		);
-
 		MessagePopover.prototype.onBeforeRendering = function () {
 			if (this.getDependents().indexOf(this._oPopover) === -1) {
 				this.addDependent(this._oPopover);
@@ -768,6 +759,39 @@ function(
 				}
 			};
 		});
+
+		// The following inherited methods of this control are extended because this control uses ResponsivePopover for rendering
+		["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
+			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+				// First, they are saved for later reference
+				MessagePopover.prototype["_" + sFuncName + "Old"] = MessagePopover.prototype[sFuncName];
+
+				// Once they are called
+				MessagePopover.prototype[sFuncName] = function () {
+					// We immediately call the saved method first
+					var result = MessagePopover.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+
+					// Then there is additional logic
+
+					// Mark items aggregation as changed and invalidate popover to trigger rendering
+					// See 'MessagePopover.prototype.onBeforeRenderingPopover'
+					this._bItemsChanged = true;
+
+					// If Popover dependency has already been instantiated ...
+					if (this._oPopover) {
+						// ... invalidate it
+						this._oPopover.invalidate();
+					}
+
+					// If the called method is 'removeAggregation' or 'removeAllAggregation' ...
+					if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+						// ... return the result of the operation
+						return result;
+					}
+
+					return this;
+				};
+			});
 
 		return MessagePopover;
 
