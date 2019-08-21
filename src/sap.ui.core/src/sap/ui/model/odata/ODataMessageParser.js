@@ -541,7 +541,17 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 	oMessageObject.canonicalTarget = sTarget;
 	if (this._processor){
-		oMessageObject.canonicalTarget = this._processor.resolve(sTarget, undefined, true) || sTarget;
+
+		var sCanonicalTarget = this._processor.resolve(sTarget, undefined, true);
+
+		// Multiple resolve steps are necessary for paths containing multiple navigation properties
+		// with to 0 or 1 to n relation, e.g. /SalesOrder(1)/toItem(2)/toSubItem(3)
+		var iNumberOfParts = sTarget.split(")").length - 1; // number of parts is decreased by one thus last part is the property or empty string
+		for (var i = 2; i < iNumberOfParts; i++){ // e.g. path: "/SalesOrder(1)/toItem(2)/toSubItem(3)" => 3 parts = 2 nav properties
+			sCanonicalTarget = this._processor.resolve(sCanonicalTarget, undefined, true);
+		}
+
+		oMessageObject.canonicalTarget = sCanonicalTarget || sTarget;
 		oMessageObject.deepPath = sDeepPath || oMessageObject.canonicalTarget;
 	}
 };
@@ -586,7 +596,7 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 			}
 		}
 	} catch (ex) {
-		Log.error("The message string returned by the back-end could not be parsed");
+		Log.error("The message string returned by the back-end could not be parsed: '" + ex.message + "'");
 		return;
 	}
 };
