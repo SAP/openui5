@@ -1698,7 +1698,29 @@ sap.ui.define([
 		aFilters.push(this._getVisibleFilter());
 
 		if (this.getShowFavorites()) {
-			aFilters.push(this._getFilterFavorites());
+			var oFavorites = this._getFilterFavorites();
+
+			// in case the defaultVariant is marked as non
+			// favorite, it should still appears in the variant
+			// list
+			if (this.getDefaultVariantKey() === this.getCurrentVariantKey()) {
+				var oItem = this._getItemByKey(this.getCurrentVariantKey());
+				if (oItem && !oItem.favorite) {
+					var oShowDefault = new Filter({
+						path: "key",
+						operator: FilterOperator.EQ,
+						value1: this.getCurrentVariantKey()
+					});
+
+					aFilters.push(new Filter([
+						oFavorites, oShowDefault
+					], false));
+				} else {
+					aFilters.push(oFavorites);
+				}
+			} else {
+				aFilters.push(oFavorites);
+			}
 		}
 
 		return aFilters;

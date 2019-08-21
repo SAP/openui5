@@ -273,6 +273,52 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
 		});
 
+		QUnit.test("Create Variants List with favorited Standard", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			assert.ok(!this.oVariantManagement.oVariantPopOver);
+			this.oVariantManagement._createVariantList();
+
+			assert.ok(this.oVariantManagement.oVariantPopOver);
+			sinon.stub(this.oVariantManagement.oVariantPopOver, "openBy");
+
+			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
+
+			this.oVariantManagement._openVariantList();
+
+			assert.equal(this.oVariantManagement._oVariantList.getItems()[0].getText(), "Standard");
+
+			var aFilters = this.oVariantManagement._getFilters();
+			assert.equal(aFilters.length, 2);
+			assert.equal(aFilters[0].sPath, "visible");
+			assert.equal(aFilters[1].sPath, "favorite");
+		});
+
+		QUnit.test("Create Variants List with non favorited Standard", function(assert) {
+			oModel.oData.One.variants[0].favorite = false;
+
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			assert.ok(!this.oVariantManagement.oVariantPopOver);
+			this.oVariantManagement._createVariantList();
+
+			assert.ok(this.oVariantManagement.oVariantPopOver);
+			sinon.stub(this.oVariantManagement.oVariantPopOver, "openBy");
+
+			assert.equal(this.oVariantManagement.getCurrentVariantKey(), this.oVariantManagement.getStandardVariantKey());
+
+			this.oVariantManagement._openVariantList();
+
+			assert.equal(this.oVariantManagement._oVariantList.getItems()[0].getText(), "Standard");
+
+			var aFilters = this.oVariantManagement._getFilters();
+			assert.equal(aFilters.length, 2);
+			assert.equal(aFilters[0].sPath, "visible");
+			assert.equal(aFilters[1].aFilters.length, 2);
+			assert.equal(aFilters[1].aFilters[0].sPath, "favorite");
+			assert.equal(aFilters[1].aFilters[1].sPath, "key");
+		});
+
 		QUnit.test("Check 'variantsEditable'", function(assert) {
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oVariantManagement._openVariantList();
