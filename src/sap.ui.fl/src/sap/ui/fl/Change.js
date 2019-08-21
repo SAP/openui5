@@ -709,14 +709,14 @@ sap.ui.define([
 	/**
 	 * Sets valid app versions for an app(variant).
 	 *
-	 * @param {string} mPropertyBag - Object with parameters as properties
-	 * @param {string} mPropertyBag.creation - Creation app(variant) version
-	 * @param {string} mPropertyBag.from - From app(variant) version
-	 * @param {string} [mPropertyBag.to] - To app(variant) version
+	 * @param {string} mValidAppVersions - Object with parameters as properties
+	 * @param {string} mValidAppVersions.creation - Creation app(variant) version
+	 * @param {string} mValidAppVersions.from - From app(variant) version
+	 * @param {string} [mValidAppVersions.to] - To app(variant) version
 	 * @public
 	 */
-	Change.prototype.setValidAppVersions = function (mPropertyBag) {
-		this._oDefinition.validAppVersions = mPropertyBag;
+	Change.prototype.setValidAppVersions = function (mValidAppVersions) {
+		this._oDefinition.validAppVersions = mValidAppVersions;
 	};
 
 	/**
