@@ -146,8 +146,8 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		var oManifest = new CardManifest("sap.card");
 
 		// Act & Assert
-		oManifest.load().catch(function () {
-			assert.ok(true, "Should reject the loading promise when no manifestUrl and no base URL");
+		oManifest.load().then(function () {
+			assert.ok(true, "Should load successfully when no manifestUrl and no base URL");
 
 			// Cleanup
 			oManifest.destroy();
