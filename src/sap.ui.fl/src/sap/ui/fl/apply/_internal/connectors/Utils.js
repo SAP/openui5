@@ -199,7 +199,7 @@ sap.ui.define([
 		 * Sending a xhr request and handling the response according to the status code of the response.
 		 *
 		 * @param {string} sUrl Url of the sent request
-		 * @param {string} sMethod Desired action to be performed for a given resource
+		 * @param {string} [sMethod="GET"] Desired action to be performed for a given resource
 		 * @param {object} [mPropertyBag] Object with parameters as properties
 		 * @param {string} [mPropertyBag.token] Existing X-CSRF token of the connector which triggers the request
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
