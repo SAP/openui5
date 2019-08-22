@@ -24,6 +24,9 @@ sap.ui.define([
 				entityType: {type: "string", defaultValue: ""}
 			}
 		},
+		setDeprecated: function (bDeprecated) {
+			return this.setProperty("deprecated", !!bDeprecated);
+		},
 		getHref: function () {
 			return this.getSection() + '/' +
 				(this.getEncodeTarget() ? encodeURIComponent(this.getTarget()) : this.getTarget());

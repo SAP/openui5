@@ -40,7 +40,7 @@
                         entityType="{treeData>kind}"
 						section="api"
 						class="sapDemokitTreeItem"
-						deprecated="{treeData>bIsDeprecated}"/>
+						deprecated="{treeData>deprecated}"/>
 			</Tree>
 
 		</content>
