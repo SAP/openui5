@@ -5290,13 +5290,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[0, 2].forEach(function (iTransient, i) {
-	QUnit.test("requestSideEffects: all contexts transient => no refresh, " + i, function (assert) {
+	QUnit.test("requestSideEffects: all contexts transient => no refresh", function (assert) {
 		var oCacheMock = this.getCacheMock(),
 			oBinding = this.bindList("/Set"),
 			j;
 
-		for (j = 0; j < iTransient; j += 1) {
+		for (j = 0; j < 2; j += 1) {
 			oBinding.aContexts.push({isTransient : function () {} });
 			this.mock(oBinding.aContexts[j]).expects("isTransient").withExactArgs().returns(true);
 		}
@@ -5307,7 +5306,19 @@ sap.ui.define([
 		// code under test
 		return oBinding.requestSideEffects("group", ["n/a", ""]);
 	});
-});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects: no contexts => do refresh", function (assert) {
+		var oCacheMock = this.getCacheMock(),
+			oBinding = this.bindList("/Set");
+
+		this.mock(this.oModel).expects("lockGroup").never();
+		oCacheMock.expects("requestSideEffects").never();
+		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", false, true);
+
+		// code under test
+		return oBinding.requestSideEffects("group", ["n/a", ""]);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getQueryOptions: with system query options", function (assert) {

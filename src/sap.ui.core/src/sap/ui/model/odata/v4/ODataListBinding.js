@@ -2051,11 +2051,13 @@ sap.ui.define([
 			if (bSingle) {
 				return that.refreshSingle(oContext, oModel.lockGroup(sGroupId), false);
 			}
-			bAllContextsTransient = that.aContexts.every(function (oContext) {
-				return oContext.isTransient();
-			});
-			if (bAllContextsTransient) {
-				return SyncPromise.resolve();
+			if (that.aContexts.length) {
+				bAllContextsTransient = that.aContexts.every(function (oContext) {
+					return oContext.isTransient();
+				});
+				if (bAllContextsTransient) {
+					return SyncPromise.resolve();
+				}
 			}
 			return that.refreshInternal("", sGroupId, false, true);
 		});
