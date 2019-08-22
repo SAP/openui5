@@ -50,13 +50,18 @@ sap.ui.define([
 						viewName : sViewName0 || sViewName
 					});
 				},
-				enterStepInputValue : function (sId, nValue) {
+				enterStepInputValue : function (sId, fValue) {
+					this.waitFor({
+						actions : new EnterText({clearTextFirst : true, text : fValue}),
+						controlType : "sap.m.StepInput",
+						id : sId,
+						viewName : sViewName
+					});
 					return this.waitFor({
 						controlType : "sap.m.StepInput",
 						id : sId,
 						success : function (oControl) {
-							oControl.setValue(nValue);// StepInput does not support EnterText action
-							Opa5.assert.strictEqual(oControl.getValue(), nValue,
+							Opa5.assert.strictEqual(oControl.getValue(), fValue,
 								"Control: " + sId + " Value is: " + oControl.getValue());
 						},
 						viewName : sViewName

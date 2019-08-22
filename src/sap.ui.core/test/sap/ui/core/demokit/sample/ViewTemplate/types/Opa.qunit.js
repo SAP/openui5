@@ -60,11 +60,10 @@ sap.ui.getCore().attachInit(function () {
 			When.onTheMainPage.enterInputValue("decimalInput", "101");
 			Then.onTheMainPage.checkInputValueState("decimalInput", MessageType.None);
 
-			// TODO: checks skipped because StepInput ValueState is not as expected
-			// When.onTheMainPage.enterStepInputValue("stepInput", 102);
-			// Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.Error);
-			// When.onTheMainPage.enterStepInputValue("stepInput", 99);
-			// Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.None);
+			When.onTheMainPage.enterStepInputValue("stepInput", 102);
+			Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.Error);
+			When.onTheMainPage.enterStepInputValue("stepInput", 99);
+			Then.onTheMainPage.checkStepInputValueState("stepInput", MessageType.None);
 
 			When.onTheMainPage.enterInputValue("booleanInput", "XXX");
 			Then.onTheMainPage.checkInputIsDirty("booleanInput", true);
