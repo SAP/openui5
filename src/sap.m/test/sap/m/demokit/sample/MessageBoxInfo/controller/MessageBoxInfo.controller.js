@@ -24,7 +24,7 @@ sap.ui.define([
 			MessageBox.show("Unable to load data.", {
 				icon: MessageBox.Icon.ERROR,
 				title: "Error",
-				actions: [sap.m.MessageBox.Action.CLOSE],
+				actions: [MessageBox.Action.CLOSE],
 				id: "messageBoxId2",
 				details: '<p><strong>This can happen if:</strong></p>\n' +
 						'<ul>' +
@@ -46,9 +46,9 @@ sap.ui.define([
 						};
 			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
 			sap.m.MessageBox.show("Error message", {
-				icon: sap.m.MessageBox.Icon.ERROR,
+				icon: MessageBox.Icon.ERROR,
 				title: "Error",
-				actions: [sap.m.MessageBox.Action.CLOSE],
+				actions: [MessageBox.Action.CLOSE],
 				id: "messageBoxId1",
 				details: JSON,
 				styleClass: bCompact ? "sapUiSizeCompact" : "",
