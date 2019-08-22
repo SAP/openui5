@@ -13,10 +13,6 @@
 		},
 		"commands": {
 			"Save": {
-				"name": "Save",
-				"icon": "sap-icon://save",
-				"caption": "test",
-				"tooltip": "test",
 				"shortcut": "Ctrl+S"
 			}
 		},
