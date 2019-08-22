@@ -215,6 +215,10 @@ sap.ui.define([
 		return this._reference;
 	};
 
+	DescriptorVariant.prototype.getVersion = function() {
+		return this._version;
+	};
+
 	DescriptorVariant.prototype.getNamespace = function() {
 		return this._getMap().namespace;
 	};

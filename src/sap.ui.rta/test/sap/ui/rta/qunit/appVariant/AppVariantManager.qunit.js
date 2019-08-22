@@ -405,42 +405,45 @@ function (
 
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
 
-			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", false).then(function() {
+			return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", false, "1.0.0").then(function() {
 				assert.ok("then the promise is resolved");
 			});
 		});
 
 		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed", function (assert) {
-			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
+			sandbox.stub(this.oAppVariantManager.getCommandSerializer(), "saveAsCommands").returns(Promise.reject("Saving error"));
+			var fnTakeOverDirtyChangesStub = sandbox.spy(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant");
 			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").resolves();
 			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
 
 			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Saving error").returns();
 
 			return new Promise(function(resolve, reject) {
-				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
+				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true, "1.0.0").then(reject, function () {
 					assert.ok(true, "a rejection took place");
-					assert.equal(fnTakeOverDirtyChanges.callCount, 1, "then the _takeOverDirtyChangesByAppVariant() method is called once");
+					assert.equal(fnTakeOverDirtyChangesStub.callCount, 1, "then the _takeOverDirtyChangesByAppVariant() method is called once");
 					assert.equal(fnDeleteAppVariant.callCount, 1, "then the _deleteAppVariantFromLREP() method is called once");
 					assert.equal(fnShowRelevantDialog.callCount, 1, "then the showRelevantDialog() method is called once");
+					assert.ok(fnTakeOverDirtyChangesStub.calledWithExactly("AppVariantId", "1.0.0"), "then _takeOverDirtyChangesByAppVariant is called with right parameters");
 					resolve();
 				});
 			}.bind(this));
 		});
 
 		QUnit.test("When copyUnsavedChangesToLREP() method is called, taking over dirty changes failed and then the deleting of app variants is also failed", function (assert) {
-			var fnTakeOverDirtyChanges = sandbox.stub(this.oAppVariantManager, "_takeOverDirtyChangesByAppVariant").returns(Promise.reject("Saving error"));
+			var fnSaveAsCommandsStub = sandbox.stub(this.oAppVariantManager.getCommandSerializer(), "saveAsCommands").returns(Promise.reject("Saving error"));
 			var fnDeleteAppVariant = sandbox.stub(this.oAppVariantManager, "_deleteAppVariantFromLREP").returns(Promise.reject("Delete Error"));
 			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.reject());
 
 			sandbox.stub(Log,"error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
 
 			return new Promise(function(resolve, reject) {
-				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true).then(reject, function () {
+				return this.oAppVariantManager.copyUnsavedChangesToLREP("AppVariantId", true, "1.0.0").then(reject, function () {
 					assert.ok(true, "a rejection took place");
-					assert.equal(fnTakeOverDirtyChanges.callCount, 1, "then the _takeOverDirtyChangesByAppVariant() method is called once");
+					assert.equal(fnSaveAsCommandsStub.callCount, 1, "then the saveAsCommands() method is called once");
 					assert.equal(fnDeleteAppVariant.callCount, 1, "then the _deleteAppVariantFromLREP() method is called once");
 					assert.equal(fnShowRelevantDialog.callCount, 1, "then the showRelevantDialog() method is called once");
+					assert.ok(fnSaveAsCommandsStub.calledWithExactly("AppVariantId", "1.0.0"), "then saveAsCommands is called with right parameters");
 					resolve();
 				});
 			}.bind(this));

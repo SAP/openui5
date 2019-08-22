@@ -240,8 +240,8 @@ sap.ui.define([
 	/**
 	 * Dirty changes get taken over by an app variant
 	 */
-	AppVariantManager.prototype._takeOverDirtyChangesByAppVariant = function(sReferenceAppIdForChanges) {
-		return this.getCommandSerializer().saveAsCommands(sReferenceAppIdForChanges);
+	AppVariantManager.prototype._takeOverDirtyChangesByAppVariant = function(sReferenceAppIdForChanges, sAppVariantVersion) {
+		return this.getCommandSerializer().saveAsCommands(sReferenceAppIdForChanges, sAppVariantVersion);
 	};
 
 	/**
@@ -256,13 +256,14 @@ sap.ui.define([
 	 *
 	 * @param {String} sAppVariantId
 	 * @param {Boolean} bCopyUnsavedChanges
+	 * @param {String} sAppVariantVersion
 	 * @returns {Promise} returns the server response
 	 * @description Books the unsaved changes for the new app variant and persist these changes in the layered repository
 	 */
-	AppVariantManager.prototype.copyUnsavedChangesToLREP = function(sAppVariantId, bCopyUnsavedChanges) {
+	AppVariantManager.prototype.copyUnsavedChangesToLREP = function(sAppVariantId, bCopyUnsavedChanges, sAppVariantVersion) {
 		var oCommandStack = this.getCommandSerializer().getCommandStack();
 		if (bCopyUnsavedChanges && oCommandStack.getAllExecutedCommands().length) {
-			return this._takeOverDirtyChangesByAppVariant(sAppVariantId).catch(function(oError) {
+			return this._takeOverDirtyChangesByAppVariant(sAppVariantId, sAppVariantVersion).catch(function(oError) {
 				return this._deleteAppVariantFromLREP(sAppVariantId).catch(function(oError) {
 					BusyIndicator.hide();
 					var oErrorInfo = AppVariantUtils.buildErrorInfo("SAVE_AS_MSG_DELETE_APP_VARIANT", oError, sAppVariantId);

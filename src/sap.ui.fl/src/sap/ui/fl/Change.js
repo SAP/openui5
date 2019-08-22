@@ -671,6 +671,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets valid app versions for an app(variant).
+	 *
+	 * @param {string} mValidAppVersions - Object with parameters as properties
+	 * @param {string} mValidAppVersions.creation - Creation app(variant) version
+	 * @param {string} mValidAppVersions.from - From app(variant) version
+	 * @param {string} [mValidAppVersions.to] - To app(variant) version
+	 * @public
+	 */
+	Change.prototype.setValidAppVersions = function (mValidAppVersions) {
+		this._oDefinition.validAppVersions = mValidAppVersions;
+	};
+
+	/**
 	 * Gets the creation timestamp
 	 *
 	 * @returns {String} creation timestamp
