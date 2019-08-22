@@ -60,7 +60,6 @@ sap.ui.define([
 					aggregationLengthEquals: {name: "myAggregation", length: 1},
 					propertyStrictEquals: {name: "myProp1", value: "myValue1"}
 				}, {
-					unsupportedProperty: {name: "myProp", value: "myValue"},
 					propertyStrictEquals: [{name: "myProp2", value: "myValue2"}, {name: "myProp3", value: "myValue3"}]
 				}
 			]
@@ -86,7 +85,6 @@ sap.ui.define([
 	QUnit.test("Should create filter sequence from object declaration", function (assert) {
 		var oMatcherFactory = new MatcherFactory();
 		var aMatchers = oMatcherFactory.getFilteringMatchers({
-			unsupportedProperty: {name: "myProp", value: "myValue"},
 			propertyStrictEquals: [{name: "myProp1", value: "myValue1"}, {name: "myProp2", value: "myValue2"}],
 			aggregationLengthEquals: {name: "myAggregation", length: 1}
 		});
@@ -112,6 +110,42 @@ sap.ui.define([
 
 		sinon.assert.calledWith(sap.ui.test.matchers.Ancestor, "ancestorId", true);
 		sap.ui.test.matchers.Ancestor = fnAncestorMatcher;
+	});
+
+	QUnit.test("Should throw error with unsupported matcher", function (assert) {
+		var oMatcherFactory = new MatcherFactory();
+		assert.throws(function () {
+			oMatcherFactory.getFilteringMatchers({
+				matchers: [{
+					unsupportedProperty: {name: "myProp", value: "myValue"},
+					aggregationLengthEquals: {name: "myAggregation", length: 1}
+				}]
+			});
+		}, /Matcher is not supported.*unsupportedProperty/);
+
+		assert.throws(function () {
+			oMatcherFactory.getFilteringMatchers({
+				unsupportedProperty: {name: "myProp", value: "myValue"},
+				aggregationLengthEquals: {name: "myAggregation", length: 1}
+			});
+		}, /Matcher is not supported.*unsupportedProperty/);
+	});
+
+	QUnit.test("Should support internal matching properties", function (assert) {
+		var oMatcherFactory = new MatcherFactory();
+		var mOptions = {
+			aggregationLengthEquals: {name: "myAggregation", length: 1},
+			matchers: {}
+		};
+		oMatcherFactory._IMPLICIT_MATCHERS.forEach(function (sProperty) {
+			if (sProperty !== "matchers") {
+				mOptions[sProperty] = "test-0-" + sProperty;
+				mOptions.matchers[sProperty] = "test-1-" + sProperty;
+			}
+		});
+		var aMatchers = oMatcherFactory.getFilteringMatchers(mOptions);
+
+		assert.strictEqual(aMatchers.length, 1, "Should create sequence of matcher instances");
 	});
 
 });
