@@ -87,9 +87,12 @@ sap.ui.define([
 			properties : {
 				/**
 				 * Whether the control is currently in blocked state.
-				 * @ui5-restricted sap.ui.core, sap.m, sap.viz
+				 *
+				 * @deprecated since version 1.69 The blocked property is deprecated.
+				 * There is <b>no accessibility</b> support for this property.
+				 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
 				 */
-				"blocked" : {type: "boolean", defaultValue: false, visibility : "hidden"},
+				"blocked" : {type: "boolean", defaultValue: false},
 				/**
 				 * Whether the control is currently in busy state.
 				 */
@@ -896,17 +899,6 @@ sap.ui.define([
 			delete this._oBusyBlockState;
 		}
 	}
-
-	/**
-	 * Get the controls block state.
-	 *
-	 * @return {boolean} <code>true</code> when blocked
-	 * @private
-	 * @ui5-restricted sap.ui.core, sap.m, sap.viz
-	 */
-	Control.prototype.getBlocked = function() {
-		return this.getProperty("blocked");
-	};
 
 	/**
 	 * Set the controls block state.
