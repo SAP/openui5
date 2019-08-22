@@ -3169,8 +3169,8 @@
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendarWithLegend",
-		  "name": "Single Planning Calendar with Legend",
-		  "description": "SinglePlanningCalendar and PlanningCalendarLegend controls used as main and side parts of an sap.ui.layout.DynamicSideContent control."
+		  "name": "Single Planning Calendar with Legend and defined working hours",
+		  "description": "SinglePlanningCalendar and PlanningCalendarLegend controls used as main and side parts of an sap.ui.layout.DynamicSideContent control. The calendar also shows the daily working hours."
 		},
 		{
 		  "id": "sap.m.sample.SinglePlanningCalendarDND",

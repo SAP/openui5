@@ -18,6 +18,9 @@
 			id="SPC1"
 			class="sapUiSmallMarginTop"
 			title= "My Calendar"
+			startHour="8"
+			endHour="20"
+			fullDay="false"
 			appointmentSelect="handleAppointmentSelect"
 			headerDateSelect="handleHeaderDateSelect"
 			startDateChange="handleStartDateChange"
@@ -26,6 +29,7 @@
 			specialDates="{path: '/specialDates'}"
 			legend="SinglePlanningCalendarLegend">
 			<actions>
+				<ToggleButton text="Full Day" pressed="true" press="toggleFullDay"/>
 				<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
 			</actions>
 			<views>

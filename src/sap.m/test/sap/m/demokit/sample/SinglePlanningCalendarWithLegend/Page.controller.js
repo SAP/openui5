@@ -299,6 +299,11 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary) {
 				legendShown: false
 			});
 			this.getView().setModel(oStateModel, "stateModel");
+		},
+
+		toggleFullDay: function () {
+			var oSPC = this.getView().byId("SPC1");
+			oSPC.setFullDay(!oSPC.getFullDay());
 		}
 
 	});
