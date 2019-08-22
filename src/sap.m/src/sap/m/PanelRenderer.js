@@ -90,13 +90,13 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			oRm.renderControl(oHeaderTBar);
 
 		} else if (sHeaderText || bIsExpandable) {
-			oRm.write("<h1");
+			oRm.write("<h2");
 			oRm.addClass("sapMPanelHdr");
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oControl.getId() + "-header");
 			oRm.write(">");
 			oRm.writeEscaped(sHeaderText);
-			oRm.write("</h1>");
+			oRm.write("</h2>");
 		}
 
 		if (bIsExpandable) {
