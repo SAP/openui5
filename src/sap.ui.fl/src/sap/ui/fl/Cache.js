@@ -306,7 +306,7 @@ function(
 		}
 
 		var oConfiguration = sap.ui.getCore().getConfiguration();
-		if (oConfiguration.getDebug() || oConfiguration.isFlexBundleRequestForced()) {
+		if (oConfiguration.getDebug() || oConfiguration.getComponentPreload() === "off" || oConfiguration.isFlexBundleRequestForced()) {
 			// try to load the source in case a debugging takes place and the component could have no Component-preload
 			try {
 				return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
