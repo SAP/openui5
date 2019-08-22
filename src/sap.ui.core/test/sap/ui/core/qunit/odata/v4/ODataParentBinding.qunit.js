@@ -365,12 +365,16 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("changeParameters: try to delete non-existing parameters", function (assert) {
 		var oBinding = new ODataParentBinding({
+				applyParameters : function () {},
 				oModel : {},
 				mParameters : {},
 				sPath : "/EMPLOYEES"
 			});
 
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		// refreshing the binding is unnecessary, if the binding parameters are unchanged
+		this.mock(oBinding).expects("createReadGroupLock").never();
+		this.mock(oBinding).expects("applyParameters").never();
 
 		// code under test
 		oBinding.changeParameters({$apply : undefined});
