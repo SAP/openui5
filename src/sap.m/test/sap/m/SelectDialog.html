@@ -67,7 +67,7 @@
 			// cancel function to display a message
 			var fnCancelDialog = function (oEvent) {
 				sap.m.MessageBox.alert("Cancel Selected on " + (oEvent.oSource ? oEvent.oSource : oEvent.srcControl));
-			}
+			};
 
 			/* dummy list data */
 			var oListData = {
@@ -133,14 +133,14 @@
 				description: "{description}",
 				icon: "{icon}",
 				type: "Active"
-			})
+			});
 
 			var oItemTemplateSelection = new sap.m.StandardListItem({
 				title: "{title}",
 				description: "{description}",
 				icon: "{icon}",
 				selected: "{selected}"
-			})
+			});
 
 			/* dialog data */
 			var oDialogData = {
@@ -218,7 +218,7 @@
 				type: "Text",
 				placeholder: "Open SelectDialog with Dialog Binding & List Binding & width set to 30rem",
 				showValueHelp: true
-			})
+			});
 			var oButton2 = new sap.m.Button("Button2", {
 				text: "Open SelectDialog with Dialog Binding & List Binding & prefiltered by \"ad\"",
 				press: function (oEvent) {
@@ -799,6 +799,96 @@
 				}
 			});
 
+			var oSingleListData = {
+				superheroes: [{
+					title: "Darth Vader",
+					description: "The force",
+					icon: "sap-icon://alert",
+					selected: false
+				}, {
+					title: "Agent Smith",
+					description: "Matrix virus",
+					icon: "sap-icon://attachment",
+					selected: false
+				}]
+			};
+			var oSingleModel = new sap.ui.model.json.JSONModel(oSingleListData);
+
+			var oSelectDialog14 = new sap.m.SelectDialog("SelectDialog14", {
+				title: "Single Select with Remember Selection",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: false,
+				rememberSelections: true,
+				contentWidth: "400px",
+				search : fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			// attach confirm listener
+			oSelectDialog14.attachConfirm(function (oEvent) {
+				sap.m.MessageToast.show("Selected item: " + oEvent.getParameter("selectedItem").getTitle());
+			});
+
+			// attach cancel listener
+			oSelectDialog14.attachCancel(fnCancelDialog);
+
+			var oButton14 = new sap.m.Button("Button14", {
+				text: "Single Select Dialog with Remember Selection",
+				press: function () {
+					// initiate model
+					oSelectDialog14.setModel(oSingleModel);
+
+					// bind aggregation with filters
+					oSelectDialog14.bindAggregation("items", {
+						path: "/superheroes",
+						filters: [],
+						template: oItemTemplateSelection
+					});
+
+					// open dialog
+					oSelectDialog14.open();
+				}
+			});
+
+			var oSelectDialog15 = new sap.m.SelectDialog("SelectDialog15", {
+				title: "Multi Select with Remember Selection",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: true,
+				rememberSelections: true,
+				contentWidth: "400px",
+				search : fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			// attach confirm listener
+			oSelectDialog15.attachConfirm(function (oEvent) {
+				sap.m.MessageToast.show("Selected items: " + oEvent.getParameter("selectedItems").reduce(function (acc, oItem) {
+					return acc += oItem.getTitle() + ", ";
+				}, ""));
+			});
+
+			// attach cancel listener
+			oSelectDialog15.attachCancel(fnCancelDialog);
+
+			var oButton15 = new sap.m.Button("Button15", {
+				text: "Multi Select Dialog with Remember Selection",
+				press: function () {
+					// initiate model
+					oSelectDialog15.setModel(oModelList);
+
+					// bind aggregation with filters
+					oSelectDialog15.bindAggregation("items", {
+						path: "/superheros",
+						filters: [],
+						template: oItemTemplateSelection
+					});
+
+					// open dialog
+					oSelectDialog15.open();
+				}
+			});
+
+
 			var oPage = new sap.m.Page("page", {
 				title:"Mobile SelectDialog Control",
 				content:[
@@ -816,7 +906,9 @@
 							oButton10,
 							oButton11,
 							oButton12,
-							oButton13
+							oButton13,
+							oButton14,
+							oButton15
 						]
 					})
 				],
