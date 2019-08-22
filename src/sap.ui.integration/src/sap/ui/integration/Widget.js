@@ -228,9 +228,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Widget} Pointer to the control instance to allow method chaining.
 	 */
 	Widget.prototype.setConfiguration = function (vValue) {
-		//ensure to apply the configuration only if there is a valid manifest json
-		//setting true here led to issues if setConfiguration was called while the manifest is created, but is still loading
-		this._bApplyManifest = !!(this._oWidgetManifest && this._oWidgetManifest.oJson);
+		this._bApplyManifest = true;
 		this.setBusy(true);
 		this.setProperty("configuration", vValue);
 		return this;
