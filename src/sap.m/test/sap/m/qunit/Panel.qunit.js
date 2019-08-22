@@ -326,7 +326,7 @@ sap.ui.define([
 		var $panel = this.oPanel.$();
 
 		assert.ok($panel.hasClass("sapMPanel"), "should have sapMPanel class on root element");
-		assert.ok(jQuery("h1:first-of-type", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first header");
+		assert.ok(jQuery("h2:first-of-type", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first header");
 	});
 
 	QUnit.test("Expandable panel with headerText", function(assert) {
