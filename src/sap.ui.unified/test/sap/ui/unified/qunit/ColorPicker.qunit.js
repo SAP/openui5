@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/unified/ColorPicker",
+	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/m/InputBase",
 	"sap/m/Label",
 	"sap/m/RadioButtonGroup",
@@ -10,7 +11,18 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/waitForThemeApplied"
-], function(ColorPicker, InputBase, Label, RadioButtonGroup, RadioButton, Slider, InvisibleText, qutils, waitForThemeApplied) {
+], function(
+	ColorPicker,
+	ColorPickerDisplayMode,
+	InputBase,
+	Label,
+	RadioButtonGroup,
+	RadioButton,
+	Slider,
+	InvisibleText,
+	qutils,
+	waitForThemeApplied
+) {
 	"use strict";
 
 	(function () {
@@ -815,13 +827,13 @@ sap.ui.define([
 			oAssert.strictEqual(this.oCP.getDisplayMode(), "Default", "The ColorPicker's default displayMode is 'Default'");
 
 			// Act
-			this.oCP.setDisplayMode(sap.ui.unified.ColorPickerDisplayMode.Simplified);
+			this.oCP.setDisplayMode(ColorPickerDisplayMode.Simplified);
 
 			// Assert
 			oAssert.strictEqual(this.oCP.getDisplayMode(), "Simplified", "The ColorPicker's displayMode is Simplified");
 
 			// Act
-			this.oCP.setDisplayMode(sap.ui.unified.ColorPickerDisplayMode.Large);
+			this.oCP.setDisplayMode(ColorPickerDisplayMode.Large);
 
 			// Assert
 			oAssert.strictEqual(this.oCP.getDisplayMode(), "Large", "The ColorPicker's displayMode is Large");

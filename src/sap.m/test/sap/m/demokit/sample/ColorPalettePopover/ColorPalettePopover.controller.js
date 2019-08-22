@@ -2,8 +2,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/m/ColorPalettePopover',
-	'sap/m/MessageToast'
-], function (jQuery, Controller, ColorPalettePopover, MessageToast) {
+	'sap/m/MessageToast',
+	'sap/ui/unified/ColorPickerDisplayMode'
+], function (jQuery, Controller, ColorPalettePopover, MessageToast, ColorPickerDisplayMode) {
 	"use strict";
 
 	var ColorPaletteController = Controller.extend("sap.m.sample.ColorPalettePopover.ColorPalettePopover", {
@@ -95,6 +96,24 @@ sap.ui.define([
 			}
 
 			this.oColorPalettePopoverMin.openBy(oEvent.getSource());
+		},
+
+		/**
+		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
+		 *  - "More Colors.." button is visible
+		 *  - "displayMode" is set to 'Simplified'
+		 * @param oEvent
+		 */
+		openSampleWithDisplayModeSet: function (oEvent) {
+			if (!this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode = new ColorPalettePopover("oColorPaletteDisplayMode", {
+					showDefaultColorButton: false,
+					displayMode: ColorPickerDisplayMode.Simplified,
+					colorSelect: this.handleColorSelect
+				});
+			}
+
+			this.oColorPaletteDisplayMode.openBy(oEvent.getSource());
 		},
 
 		handleColorSelect: function (oEvent) {

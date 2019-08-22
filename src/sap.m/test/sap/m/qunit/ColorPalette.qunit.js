@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ColorPalette",
 	"sap/m/ColorPalettePopover",
+	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/m/Dialog",
 	"sap/m/ResponsivePopover",
 	"sap/ui/Device",
@@ -17,6 +18,7 @@ sap.ui.define([
 	Button,
 	ColorPalette,
 	ColorPalettePopover,
+	ColorPickerDisplayMode,
 	Dialog,
 	ResponsivePopover,
 	Device,
@@ -257,6 +259,68 @@ sap.ui.define([
 
 			// Act & Assert
 			assert.equal(oCP._getDefaultColor(), "orange", ".. uses the private variable _oDefaultColor");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("_setDisplayMode calls ColorPicker.prototype.setDisplayMode", function (assert) {
+			// Prepare
+			var oColorPalette = new ColorPalette(),
+				oColorPicker = oColorPalette._getColorPicker(),
+				oSpyColorPickerSetDisplayMode = this.spy(oColorPicker, "setDisplayMode");
+
+			// Act
+			oColorPalette._setDisplayMode(ColorPickerDisplayMode.Simplified);
+
+			// Assert
+			assert.ok(oSpyColorPickerSetDisplayMode.calledOnce, "..should call the setDisplayMode to the ColorPicker");
+			assert.ok(oSpyColorPickerSetDisplayMode.calledWithExactly(ColorPickerDisplayMode.Simplified),"ColorPicker setDisplayMode is called with correct parameters");
+
+			// Cleanup
+			oSpyColorPickerSetDisplayMode.restore();
+			oColorPalette.destroy();
+		});
+
+		QUnit.test("_setDisplayMode - invalid value", function (assert) {
+			// Prepare
+			var oColorPalette = new ColorPalette();
+
+			// Act & Assert
+			assert.throws(function () {
+					oColorPalette._setDisplayMode("myDisplayMode");
+				},
+				Error("\"myDisplayMode\" is of type string, expected sap.ui.unified.ColorPickerDisplayMode for property \"displayMode\" of Element sap.ui.unified.ColorPicker#__picker1"),
+				"..should throw a certain exception");
+			assert.equal(oColorPalette._oDisplayMode, ColorPickerDisplayMode.Default, "displayMode should have its default value");
+
+			// Cleanup
+			oColorPalette.destroy();
+		});
+
+		QUnit.test("_setDisplayMode - valid value", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			// Pre-assert
+			assert.ok(oCP._oDisplayMode, ColorPickerDisplayMode.Default, "displayMode initially have its default value");
+
+			// Act & Assert
+			assert.deepEqual(oCP._setDisplayMode(ColorPickerDisplayMode.Simplified), oCP, "..setter return this");
+			assert.strictEqual(oCP._oDisplayMode, ColorPickerDisplayMode.Simplified, "ColorPalette internal _oDisplayMode property is set");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("_getDisplayMode", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			oCP._oDisplayMode = ColorPickerDisplayMode.Simplified;
+
+			// Act & Assert
+			assert.equal(oCP._getDisplayMode(), ColorPickerDisplayMode.Simplified, ".. uses the private variable _oDefaultColor");
 
 			// Cleanup
 			oCP.destroy();
@@ -1705,6 +1769,30 @@ sap.ui.define([
 				assert.deepEqual(oSpyColorSelectParams.defaultAction, true, "..and has the expected parameter 'defaultAction'");
 
 				// Cleanup
+				oCPP.destroy();
+			});
+
+			QUnit.test("Property displayMode", function (assert) {
+				// Prepare
+				var oCP = new ColorPalette(),
+					oCPP = new ColorPalettePopover(),
+					oStubGetPalette = this.stub(oCPP, "_getPalette").returns(oCP),
+					oSpyCPsetDisplayMode = this.spy(ColorPalette.prototype._setDisplayMode, "call");
+
+				// Act
+				oCPP.setDisplayMode(ColorPickerDisplayMode.Simplified);
+
+				// Assert
+				assert.ok(oSpyCPsetDisplayMode.calledOnce, "..should call the _setDisplayMode to the ColorPalette");
+				assert.deepEqual(oSpyCPsetDisplayMode.getCall(0).args[1],
+					/*first param is the instance, second is the value*/ColorPickerDisplayMode.Simplified,
+					"ColorPalette internal method _setDisplayMode is called with correct parameters");
+				assert.ok(oCPP.getDisplayMode(), ColorPickerDisplayMode.Simplified, "Correct displayMode is set to the ColorPalettePopover");
+
+				// Cleanup
+				oStubGetPalette.restore();
+				oSpyCPsetDisplayMode.restore();
+				oCP.destroy();
 				oCPP.destroy();
 			});
 		});

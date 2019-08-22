@@ -38,7 +38,12 @@
 					<Button press="openMinimalSampleWithDefaultColorButton" icon="sap-icon://palette"/>
 				</cells>
 			</ColumnListItem>
-
+			<ColumnListItem>
+				<cells>
+					<Label text='Default set of colors with "More Colors..." button and displayMode set to "Simplified"'/>
+					<Button press="openSampleWithDisplayModeSet" icon="sap-icon://color-fill"/>
+				</cells>
+			</ColumnListItem>
 		</items>
 	</Table>
 </mvc:View>

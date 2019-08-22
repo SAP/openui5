@@ -453,6 +453,17 @@
 									oCPPop.setShowMoreColorsButton(oEvent.getParameter("selected"))
 								}
 							}),
+							new Select("settingsDisplayModeoCPPop", {
+								selectedKey: "Default",
+								items: [
+									new Item({key: "Default", text: "Default"}),
+									new Item({key: "Simplified", text: "Simplified"}),
+									new Item({key: "Large", text: "Large"})
+								],
+								change: function (oEvent) {
+									oCPPop.setDisplayMode(oEvent.getParameter("selectedItem").getKey());
+								}
+							}),
 							new Button({
 								text: "Open",
 								press: function () {
@@ -478,6 +489,17 @@
 									oCPPop2Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
 								}
 							}),
+							new Select("settingsDisplayModeoCPPop2Colors", {
+								selectedKey: "Default",
+								items: [
+									new Item({key: "Default", text: "Default"}),
+									new Item({key: "Simplified", text: "Simplified"}),
+									new Item({key: "Large", text: "Large"})
+								],
+								change: function (oEvent) {
+									oCPPop2Colors.setDisplayMode(oEvent.getParameter("selectedItem").getKey());
+								}
+							}),
 							new Button({
 								text: "Open 2",
 								press: function () {
@@ -501,6 +523,17 @@
 								selected: false,
 								select: function (oEvent) {
 									oCPPop7Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new Select("settingsDisplayModeoCPPop7Colors", {
+								selectedKey: "Default",
+								items: [
+									new Item({key: "Default", text: "Default"}),
+									new Item({key: "Simplified", text: "Simplified"}),
+									new Item({key: "Large", text: "Large"})
+								],
+								change: function (oEvent) {
+									oCPPop7Colors.setDisplayMode(oEvent.getParameter("selectedItem").getKey());
 								}
 							}),
 							new Button({

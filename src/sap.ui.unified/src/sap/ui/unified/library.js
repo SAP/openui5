@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.ui.unified.
  */
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/library'], function(Core, BaseObject) {
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', "./ColorPickerDisplayMode", 'sap/ui/core/library'], function(Core, BaseObject, ColorPickerDisplayMode) {
 
 	"use strict";
 
@@ -456,27 +456,7 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/base/Object', 'sap/ui/core/library'],
 	 * @since 1.58.0
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.ColorPickerDisplayMode = {
-
-		/**
-		 * Default display mode.
-		 * @public
-		 */
-		Default : "Default",
-
-		/**
-		 * Large display mode.
-		 * @public
-		 */
-		Large : "Large",
-
-		/**
-		 * Simplified display mode.
-		 * @public
-		 */
-		Simplified : "Simplified"
-
-	};
+	thisLib.ColorPickerDisplayMode = ColorPickerDisplayMode;
 
 	/**
 	 * Marker interface for controls that process instances of <code>window.Blob</code>, such as <code>window.File</code>.
