@@ -14,6 +14,9 @@
 		"commands": {
 			"Save": {
 				"shortcut": "Ctrl+S"
+			},
+			"Delete": {
+				"shortcut": "Ctrl+D"
 			}
 		},
 		"models": {

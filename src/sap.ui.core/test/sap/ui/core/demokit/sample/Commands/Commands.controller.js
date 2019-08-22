@@ -42,6 +42,22 @@ sap.ui.define([
 			MessageToast.show("CTRL+S: save triggered on controller");
 		},
 
+		onDelete: function () {
+			MessageToast.show("CTRL+D: Delete triggered on controller");
+		},
+
+		onToggleSave: function(oEvent)  {
+			this.getView().byId("CE_SAVE").setEnabled(oEvent.getParameter("state"));
+		},
+
+		onToggleDelete: function(oEvent)  {
+			this.getView().byId("CE_DELETE").setEnabled(oEvent.getParameter("state"));
+		},
+
+		onTogglePopoverSave: function(oEvent)  {
+			this.getView().byId("CE_SAVE_POPOVER").setEnabled(oEvent.getParameter("state"));
+		},
+
 		onPopoverOpen: function(oEvent) {
 			this.byId("popover").openBy(oEvent.getSource());
 		},
