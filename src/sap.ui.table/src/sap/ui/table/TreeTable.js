@@ -151,7 +151,9 @@ sap.ui.define([
 
 			// If the number of expanded levels is not specified in the binding parameters, we use the corresponding table property
 			// to determine the value.
-			oBindingInfo.parameters.numberOfExpandedLevels = oBindingInfo.parameters.numberOfExpandedLevels || (this.getExpandFirstLevel() ? 1 : 0);
+			if (!("numberOfExpandedLevels" in oBindingInfo.parameters)) {
+				oBindingInfo.parameters.numberOfExpandedLevels = this.getExpandFirstLevel() ? 1 : 0;
+			}
 		}
 
 		return Table.prototype.bindRows.call(this, oBindingInfo);
