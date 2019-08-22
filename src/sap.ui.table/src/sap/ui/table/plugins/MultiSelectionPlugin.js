@@ -243,40 +243,48 @@ sap.ui.define([
 	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo) {
 		var iLimit = oMultiSelectionPlugin.getLimit();
 		var bReverse = iIndexTo < iIndexFrom;
-		var iLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 		var oBinding = oMultiSelectionPlugin._getBinding();
+		var iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
+		var iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 
 		if (!oMultiSelectionPlugin._bLimitDisabled) {
-			// in case iIndexFrom is already selected the range starts from the next index
-			if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
-				if (iIndexTo > iIndexFrom) {
-					iIndexFrom++;
-				} else if (bReverse) {
-					iIndexFrom--;
-				}
-			}
+			oMultiSelectionPlugin.setLimitReached(iGetContextsLength > iLimit);
 
-			oMultiSelectionPlugin.setLimitReached(false);
-			if (iLength > iLimit) {
+			if (oMultiSelectionPlugin.isLimitReached()) {
 				if (!bReverse) {
 					iIndexTo = iIndexFrom + iLimit - 1;
 				} else {
 					iIndexTo = iIndexFrom - iLimit + 1;
 				}
 
-				// the table will be scrolled one row further to make it transparent for the user where the selection ends
+				// If the start index is already selected, the range starts from the next index.
+				if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
+					if (!bReverse) {
+						iIndexTo++;
+						iGetContextsStartIndex++;
+					} else {
+						iIndexTo--;
+					}
+				}
+
+				// In case of reverse range selection, the start index for the getContexts call is defined by "iIndexTo".
+				// As this value might have changed, the start index needs to be updated.
+				if (bReverse) {
+					iGetContextsStartIndex = iIndexTo;
+				}
+
+				// The table will be scrolled one row further to make it transparent for the user where the selection ends.
 				// load the extra row here to avoid additional batch request.
-				iLength = iLimit + 1;
-				oMultiSelectionPlugin.setLimitReached(true);
+				iGetContextsLength = iLimit + 1;
 			}
 		}
 
-		var iStartIndex = bReverse ? iIndexTo : iIndexFrom;
-		if (oBinding && iStartIndex >= 0 && iLength > 0) {
-			return loadMultipleContexts(oBinding, iStartIndex, iLength).then(function () {
+		if (oBinding && iGetContextsStartIndex >= 0 && iGetContextsLength > 0) {
+			return loadMultipleContexts(oBinding, iGetContextsStartIndex, iGetContextsLength).then(function () {
 				return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 			});
 		}
+
 		return Promise.resolve();
 	}
 

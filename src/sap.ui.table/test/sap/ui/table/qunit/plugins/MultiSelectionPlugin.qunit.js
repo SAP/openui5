@@ -80,7 +80,7 @@ sap.ui.define([
 			this.oTable.addPlugin(new MultiSelectionPlugin());
 			this.oTable.placeAt("qunit-fixture");
 
-			this.oTable.bindRows({path : "/Products"});
+			this.oTable.bindRows({path: "/Products"});
 			var oModel = new ODataModel(sServiceURI, {
 				json: true
 			});
@@ -153,13 +153,13 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Range selection is possible for number of items below limit");
 			assert.notOk(oSelectionPlugin.isLimitReached(), "Selection limit is not reached");
 
-			oSelectionPlugin.attachSelectionChange(function(oEvent){
+			oSelectionPlugin.attachSelectionChange(function(oEvent) {
 				assert.deepEqual(oEvent.getParameters().rowIndices, [5, 6, 7, 8, 9], "rowIndices parameter is correct");
 				assert.ok(!oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Multiple selections are possible");
@@ -181,12 +181,12 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, 1), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "First row is selected");
 
-			oSelectionPlugin.attachSelectionChange(function(oEvent){
+			oSelectionPlugin.attachSelectionChange(function(oEvent) {
 				assert.ok(fnGetContexts.calledWithExactly(1, 6), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
@@ -211,18 +211,31 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function() {
+		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 			assert.ok(fnGetContexts.calledWithExactly(0, 6), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Selection is cut down to the possible limit");
+			assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 
-			oSelectionPlugin.attachSelectionChange(function(oEvent) {
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 				assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "rowIndices parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "Selection is cut down to the possible limit");
-				done();
+
+				var oSelectionChangeSpy = sinon.spy();
+
+				oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+				fnGetContexts.reset();
+				oSelectionPlugin.setSelectionInterval(5, 9);
+
+				setTimeout(function() {
+					assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts is called with the correct parameters");
+					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
+					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event is not fired");
+					done();
+				}, 100);
 			});
 
 			fnGetContexts.reset();
@@ -386,7 +399,7 @@ sap.ui.define([
 			oSelectionPlugin.selectAll();
 		});
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, that.oTable.getBinding("rows").getLength()),
 				"getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
@@ -423,7 +436,7 @@ sap.ui.define([
 		setTimeout(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function() {
 
-				that.oTable.attachEventOnce("_rowsUpdated", function () {
+				that.oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 4, "Table is scrolled at the correct position");
 					done();
@@ -452,7 +465,7 @@ sap.ui.define([
 		setTimeout(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function() {
 
-				that.oTable.attachEventOnce("_rowsUpdated", function () {
+				that.oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 3, "Table is scrolled at the correct position");
 					done();
@@ -483,12 +496,12 @@ sap.ui.define([
 		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
 		assert.ok(!oCell.hasChildNodes(), "No DeselectAll icon");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [9], "Only one item is selected (iIndexTo)");
 
-			oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			oSelectionPlugin.attachEventOnce("selectionChange", function() {
 				assert.ok(fnGetContexts.calledWithExactly(4, 1), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [4], "Only one item is selected (iIndexTo)");
