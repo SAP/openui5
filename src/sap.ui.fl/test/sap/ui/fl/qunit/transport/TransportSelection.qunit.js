@@ -228,9 +228,20 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when preparing and checking for transport without local UI changes", function(assert) {
-			return this.oTransportSelection._prepareChangesForTransport({}, []).then(function() {
-				assert.ok(true, "it doesn't fail");
+		QUnit.test("when preparing changes for transport is called the reference is added", function(assert) {
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			var aMockLocalChanges = [];
+			var aAppVariantDescriptors = [];
+			var sReference = "MyComponent";
+
+			sandbox.stub(Utils, "getClient").returns('');
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			var oConnectorStub = sandbox.stub(this.oLrepConnector, "send").resolves();
+			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, sReference).then(function() {
+				assert.equal(oConnectorStub.getCall(0).args[2].reference, sReference, "the reference is added to the request");
 			});
 		});
 	});
