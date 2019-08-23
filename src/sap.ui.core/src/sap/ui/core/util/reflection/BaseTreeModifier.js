@@ -150,26 +150,14 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Control|string} vControl - Control instance or ID
 		 * @param {sap.ui.core.Component} oAppComponent - <code>oAppComponent</code> application component, needed only if vControl is a string (ID)
-		 * @param {boolean} [bSuppressLogging] bSuppressLogging - Flag to suppress the warning in the console
-		 * @param {string} [sLoggingSeverity="warning"] - Severity for logging error, e.g. error|info|debug|warning, etc. See sap/base/Log for more options.
 		 * @returns {boolean} <code>true</code> if the ID is maintained by the application
 		 * @protected
 		 */
-		checkControlId: function (vControl, oAppComponent, bSuppressLogging, sLoggingSeverity) {
+		checkControlId: function (vControl, oAppComponent) {
 			var sControlId = vControl instanceof ManagedObject ? vControl.getId() : vControl;
 			var bIsGenerated = ManagedObjectMetadata.isGeneratedId(sControlId);
-			sLoggingSeverity = sLoggingSeverity || "warning";
 
-			if (!bIsGenerated || this.hasLocalIdSuffix(vControl, oAppComponent)) {
-				return true;
-			} else {
-
-				var sHasConcatenatedId = sControlId.indexOf("--") !== -1;
-				if (!bSuppressLogging && !sHasConcatenatedId) {
-					Log[sLoggingSeverity]("Control ID was generated dynamically by SAPUI5. To support SAPUI5 flexibility, a stable control ID is needed to assign the changes to.", sControlId);
-				}
-				return false;
-			}
+			return !bIsGenerated || this.hasLocalIdSuffix(vControl, oAppComponent);
 		},
 
 		/**

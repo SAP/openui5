@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/base/util/ObjectPath",
 	"sap/ui/rta/util/hasStableId",
-	"sap/ui/rta/util/showMessageBox"
+	"sap/ui/rta/util/showMessageBox",
+	"sap/base/Log"
 ], function (
 	FlUtils,
 	MessageBox,
 	ObjectPath,
 	hasStableId,
-	showMessageBox
+	showMessageBox,
+	Log
 ) {
 	"use strict";
 
@@ -55,7 +57,13 @@ sap.ui.define([
 							return !oElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable();
 						})
 						.forEach(function (oElementOverlay) {
-							bValid = hasStableId(oElementOverlay, /* Suppress = */false, "error", /* Flush Cache = */ true) && bValid;
+							var bCurrentValid = hasStableId(oElementOverlay);
+
+							if (!bCurrentValid) {
+								Log.error("Control ID was generated dynamically by SAPUI5. To support SAPUI5 flexibility, a stable control ID is needed to assign the changes to.", oElementOverlay.getElement().getId());
+							}
+
+							bValid = bCurrentValid && bValid;
 						});
 
 					if (!bValid) {
