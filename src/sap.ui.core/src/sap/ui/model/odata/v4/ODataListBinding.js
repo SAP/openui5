@@ -685,6 +685,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.createContexts = function (iStart, iLength, aResults) {
 		var bChanged = false,
+			oContext,
 			sContextPath,
 			i,
 			iCount = aResults.$count,
@@ -725,14 +726,16 @@ sap.ui.define([
 				i$skipIndex = i - this.iCreatedContexts; // index on server ($skip)
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
-				if (sContextPath in this.mPreviousContextsByPath) {
-					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
+				oContext = this.mPreviousContextsByPath[sContextPath];
+				if (oContext && !oContext.created()) {
+					// reuse the previous context
 					delete this.mPreviousContextsByPath[sContextPath];
-					this.aContexts[i].iIndex = i$skipIndex;
-					this.aContexts[i].checkUpdate();
+					oContext.iIndex = i$skipIndex;
+					oContext.checkUpdate();
 				} else {
-					this.aContexts[i] = Context.create(oModel, this, sContextPath, i$skipIndex);
+					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
 				}
+				this.aContexts[i] = oContext;
 			}
 		}
 		// destroy previous contexts which are not reused
@@ -2091,10 +2094,6 @@ sap.ui.define([
 
 		if (this.aContexts) {
 			this.aContexts.forEach(function (oContext) {
-				if (oContext.created()) {
-					oContext.oCreatePromise = undefined;
-					oContext.oSyncCreatePromise = undefined;
-				}
 				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 			});
 		}
