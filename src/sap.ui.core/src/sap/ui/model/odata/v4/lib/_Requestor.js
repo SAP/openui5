@@ -784,18 +784,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if there are pending changes.
+	 * Returns <code>true</code> if there are pending changes for the given group ID.
 	 *
+	 * @param {string} [sGroupId]
+	 *   The ID of the group to be checked; if not supplied all groups are checked for pending
+	 *   changes (since 1.70.0)
 	 * @returns {boolean} <code>true</code> if there are pending changes
 	 *
 	 * @public
 	 */
-	Requestor.prototype.hasPendingChanges = function () {
+	Requestor.prototype.hasPendingChanges = function (sGroupId) {
 		var that = this;
 
-		return Object.keys(this.mRunningChangeRequests).length > 0
-			|| Object.keys(this.mBatchQueue).some(function (sGroupId) {
-				return that.mBatchQueue[sGroupId].some(function (vRequests) {
+		function filter (mMap) {
+			var aKeys = Object.keys(mMap);
+
+			return sGroupId === undefined
+				? aKeys
+				: aKeys.filter(function (sGroupId0) {
+					return sGroupId === sGroupId0;
+				});
+		}
+
+		return filter(this.mRunningChangeRequests).length > 0
+			|| filter(this.mBatchQueue).some(function (sGroupId0) {
+				return that.mBatchQueue[sGroupId0].some(function (vRequests) {
 					return Array.isArray(vRequests) && vRequests.some(function (oRequest) {
 						return oRequest.$cancel;
 					});

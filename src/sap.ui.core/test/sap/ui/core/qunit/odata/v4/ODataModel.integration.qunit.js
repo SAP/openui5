@@ -19694,13 +19694,17 @@ sap.ui.define([
 	// Scenario: requestSideEffects must not refresh a dependent list binding in case it is a
 	// "creation row" which means it only contains transient contexts.
 	// JIRA: CPOUI5UISERVICESV3-1943
+	// JIRA: CPOUI5UISERVICESV3-1946 ODataModel#hasPendingChanges with group ID
 	QUnit.test("requestSideEffects does not refresh creation row", function (assert) {
 		var oCreationRowContext,
-			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
 			oTableBinding,
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
-	<Text id="soCurrencyCode" text="{CurrencyCode}"/>\
+	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
 	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
 		<columns><Column/></columns>\
 		<items>\
@@ -19732,10 +19736,48 @@ sap.ui.define([
 			.expectChange("creationRow::note");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oError = createError({
+					code : "Code",
+					message : "Invalid currency code"
+				});
+
+			that.oLogMock.expects("error")
+				.withArgs("Failed to update path /SalesOrderList('1')/CurrencyCode");
+			that.expectRequest({
+					method : "PATCH",
+					payload : {CurrencyCode : "invalid"},
+					url : "SalesOrderList('1')"
+				}, oError)
+				.expectChange("soCurrencyCode", "invalid")
+				.expectMessages([{
+					code : "Code",
+					descriptionUrl : undefined,
+					message : "Invalid currency code",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+
+			// trigger error to see that hasPendingChanges finds also parked changes
+			that.oView.byId("soCurrencyCode").getBinding("value").setValue("invalid");
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges("$auto"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("soCurrencyCode", "EUR");
+
+			// remove parked changes
+			oModel.resetChanges("$auto");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			var oCreationRowListBinding;
 
 			oTableBinding = that.oView.byId("table").getBinding("items");
-			oCreationRowListBinding = that.oModel.bindList(oTableBinding.getPath(),
+			oCreationRowListBinding = oModel.bindList(oTableBinding.getPath(),
 				oTableBinding.getContext(), undefined, undefined,
 				{$$updateGroupId : "doNotSubmit"});
 
@@ -19747,6 +19789,12 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			//TODO: has to be checked async because creation row cachePromise is pending and
+			// hasPendingChanges returns false in that case
+			assert.ok(oModel.hasPendingChanges(), "consider all groups");
+			assert.notOk(oModel.hasPendingChanges("$auto"));
+			assert.ok(oModel.hasPendingChanges("doNotSubmit"), "creation row has changes");
+
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{

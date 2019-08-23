@@ -1146,14 +1146,28 @@ sap.ui.define([
 	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) that have not yet been
 	 * successfully sent to the server.
 	 *
+	 * @param {string} [sGroupId]
+	 *   A group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}, except group IDs
+	 *   having {@link sap.ui.model.odata.v4.SubmitMode.Direct}; if specified, only pending changes
+	 *   related to that group ID are considered (since 1.70.0)
 	 * @returns {boolean}
 	 *   <code>true</code> if there are pending changes
+	 * @throws {Error}
+	 *   If the given group ID is invalid, or has {@link sap.ui.model.odata.v4.SubmitMode.Direct}
 	 *
 	 * @public
 	 * @since 1.39.0
 	 */
-	ODataModel.prototype.hasPendingChanges = function () {
-		return this.oRequestor.hasPendingChanges();
+	ODataModel.prototype.hasPendingChanges = function (sGroupId) {
+		if (sGroupId !== undefined) {
+			this.checkBatchGroupId(sGroupId);
+			if (this.isAutoGroup(sGroupId)
+					&& this.oRequestor.hasPendingChanges("$parked." + sGroupId)) {
+				return true;
+			}
+		}
+
+		return this.oRequestor.hasPendingChanges(sGroupId);
 	};
 
 	/**
