@@ -134,15 +134,31 @@ sap.ui.define([
 
 		this.multiInput1.addToken(token1);
 
+		var oDetachSuggestionItemSelectedFireSpy = this.spy(this.multiInput1, "detachSuggestionItemSelected"),
+			oDetachLiveChangeireSpy = this.spy(this.multiInput1, "detachLiveChange"),
+			oDetachTokenChangeFireSpy = this.spy(this.multiInput1._tokenizer, "detachTokenChange"),
+			oDetachTokenUpdateFireSpy = this.spy(this.multiInput1._tokenizer, "detachTokenUpdate"),
+			oDetachValueHelpRequestSpy = this.spy(this.multiInput1, "detachValueHelpRequest");
+
+
 		//act
 		multiInputClone = this.multiInput1.clone();
 
 		//assert
+		assert.ok(oDetachSuggestionItemSelectedFireSpy.calledOnce, "detachSuggestionItemSelected should be called");
+		assert.ok(oDetachLiveChangeireSpy.calledOnce, "detachSuggestionItemSelected should be called");
+		assert.ok(oDetachTokenChangeFireSpy.calledOnce, "detachSuggestionItemSelected should be called");
+		assert.ok(oDetachTokenUpdateFireSpy.calledOnce, "detachSuggestionItemSelected should be called");
+		assert.ok(oDetachValueHelpRequestSpy.calledOnce, "detachValueHelpRequest should be called");
 		assert.equal(multiInputClone.getTokens().length, 1, "Cloned MultiInput contains 1 token");
 		assert.equal(multiInputClone.getTokens()[0].getText(), TEXT, "Cloned token has correct text");
 
 		//clean-up
 		multiInputClone.destroy();
+		oDetachSuggestionItemSelectedFireSpy.restore();
+		oDetachLiveChangeireSpy.restore();
+		oDetachTokenChangeFireSpy.restore();
+		oDetachTokenUpdateFireSpy.restore();
 	});
 
 	QUnit.test("check base class prerequisites", function(assert) {
