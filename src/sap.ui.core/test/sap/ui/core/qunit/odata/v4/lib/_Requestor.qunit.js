@@ -1827,6 +1827,7 @@ sap.ui.define([
 			oBatchRequest1,
 			oBatchRequest2,
 			oBatchRequest3,
+			fnCancel = function () {},
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
@@ -1859,23 +1860,31 @@ sap.ui.define([
 			});
 		}
 
-		assert.strictEqual(oRequestor.hasPendingChanges(), false);
+		assert.notOk(oRequestor.hasPendingChanges());
+		assert.notOk(oRequestor.hasPendingChanges("groupId"));
+		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"));
 
 		// add a GET request and submit the queue
 		oRequestor.request("GET", "Products", new _GroupLock("groupId"));
 		oBatchRequest1 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId"));
-		assert.strictEqual(oRequestor.hasPendingChanges(), false,
-			"a running GET request is not a pending change");
+		assert.notOk(oRequestor.hasPendingChanges(), "running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
 		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : {/* product 0 */}}, {Name : "foo"});
+			{"If-Match" : {/* product 0 */}}, {Name : "foo"}, undefined, fnCancel);
 		oBatchRequest2 = expectBatch();
+		assert.ok(oRequestor.hasPendingChanges("groupId"), "one for groupId");
+		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"), "nothing in anotherGroupId");
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
-			assert.strictEqual(oRequestor.hasPendingChanges(), true,
+			assert.ok(oRequestor.hasPendingChanges(),
 				"the batch with the second PATCH is still running");
+			// code under test
+			assert.ok(oRequestor.hasPendingChanges("groupId"), "groupId");
+			// code under test
+			assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"),
+				"anotherGroupId after submitBatch");
 			resolveBatch(oBatchRequest3);
 		}));
 
