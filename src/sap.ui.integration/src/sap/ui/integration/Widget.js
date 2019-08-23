@@ -333,16 +333,24 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolves after the designtime configuration is loaded.
 	 */
 	Widget.prototype.loadDesigntime = function() {
+		if (!this._oWidgetManifest) {
+			return Promise.reject("Manifest not yet available");
+		}
+		var sAppId = this._oWidgetManifest.get("/sap.app/id");
+		if (!sAppId) {
+			return Promise.reject("App id not maintained");
+		}
+		var sModulePath = sAppId.replace(/\./g,"/");
 		return new Promise(function(resolve, reject) {
 			//build the module path to load as part of the widgets module path
-			var sModule = this._sModulePath + "/" + (this._oWidgetManifest.get("/sap.widget/designtime") || "designtime/Widget.designtime");
+			var sModule = sModulePath + "/" + (this._oWidgetManifest.get("/sap.widget/designtime") || "designtime/Widget.designtime");
 			if (sModule) {
-				sap.ui.require([sModule], function(oDesigntime) {
+				sap.ui.require([sModule, "sap/base/util/deepClone"], function(oDesigntime, deepClone) {
 					//successfully loaded
 					resolve({
-						configuration: this._oWidgetManifest.get("/sap.widget"),
+						configuration: deepClone(this._oWidgetManifest.get("/sap.widget"), 30),
 						designtime: oDesigntime,
-						manifest: this._oWidgetManifest.oJson
+						manifest: deepClone(this._oWidgetManifest.oJson, 30)
 					});
 				}.bind(this), function () {
 					//error
