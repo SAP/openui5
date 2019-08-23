@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/base/ManagedObject",
-	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -17,7 +16,6 @@ function(
 	Control,
 	UIComponent,
 	ManagedObject,
-	Log,
 	sinon
 ) {
 	"use strict";
@@ -436,14 +434,6 @@ function(
 			this.oControlWithGeneratedId = new Control();
 			this.oControlWithPrefix = new Control(this.oComponent.createId("myButton"));
 			this.oControlWithoutPrefix = new Control("myButtonWithoutAppPrefix");
-			this.oLogStub = sandbox.stub(Log, "warning")
-				.callThrough()
-				.withArgs(
-					sinon.match(function (sMessage) {
-						return sMessage.includes("Control ID was generated dynamically by SAPUI5");
-					})
-				)
-				.returns();
 		},
 
 		afterEach: function () {
@@ -456,30 +446,6 @@ function(
 	}, function () {
 		QUnit.test("checkControlId shall return false if the ID was generated", function (assert) {
 			assert.equal(BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent), false);
-		});
-
-		QUnit.test("checkControlId shall throw a warning if the ID was generated", function (assert) {
-			BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent);
-			assert.strictEqual(this.oLogStub.callCount, 1);
-		});
-
-		QUnit.test("checkControlId shall throw an error if the ID was generated", function (assert) {
-			this.oLogStub = sandbox.stub(Log, "error")
-				.callThrough()
-				.withArgs(
-					sinon.match(function (sMessage) {
-						return sMessage.includes("Control ID was generated dynamically by SAPUI5");
-					})
-				)
-				.returns();
-
-			BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent, /* Suppress = */false, "error");
-			assert.strictEqual(this.oLogStub.callCount, 1);
-		});
-
-		QUnit.test("checkControlId does not throw an error if the ID was generated, but the logging was suppressed", function (assert) {
-			BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent, true);
-			assert.strictEqual(this.oLogStub.callCount, 0);
 		});
 
 		QUnit.test("checkControlId shall return true if control ID was not generated", function (assert) {
