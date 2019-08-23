@@ -742,7 +742,7 @@ sap.ui.define([
 	 *   If the group ID is not valid, if this context has pending changes or does not represent a
 	 *   single entity (see {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext}), if the
 	 *   binding is not refreshable, if its root binding is suspended, or if the parameter
-	 *   <code>bAllowRemoval/code> is set for a context belonging to a context binding.
+	 *   <code>bAllowRemoval</code> is set for a context belonging to a context binding.
 	 *
 	 * @public
 	 * @since 1.53.0

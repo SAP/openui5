@@ -1792,7 +1792,7 @@ sap.ui.define([
 	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
 	 * @returns {boolean}
-	 *   If <code>true</true> the length is determined by server side data
+	 *   If <code>true</code> the length is determined by server side data
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#isLengthFinal
