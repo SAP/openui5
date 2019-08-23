@@ -4,8 +4,10 @@ sap.ui.define([
 	"use strict";
 
 	return new JSONModel({
-		autoRun:true,
-		splitViewVertically:false,
-		editable:true
+		autoRun: true,
+		splitViewVertically: false,
+		editable: true,
+		editorType: "text",
+		designtime: sap.ui.version.includes('SNAPSHOT')
 	});
 });

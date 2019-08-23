@@ -242,18 +242,20 @@ sap.ui.define([
     BaseEditor.prototype._createI18nModel = function() {
         var oConfig = this.getConfig();
         oConfig.i18n.forEach(function(sI18nPath) {
-            var oBundle = ResourceBundle.create({
-                url: sap.ui.require.toUrl(sI18nPath)
-            });
-            if (!this._oI18nModel) {
-                this._oI18nModel = new ResourceModel({
-                    bundle: oBundle
-                });
-                this.setModel(this._oI18nModel, "i18n");
-                this._oI18nModel.setDefaultBindingMode(BindingMode.OneWay);
-            } else {
-                this._oI18nModel.enhance(oBundle);
-            }
+            ResourceBundle.create({
+                url: sap.ui.require.toUrl(sI18nPath),
+                async: true
+            }).then(function (oBundle) {
+	            if (!this._oI18nModel) {
+	                this._oI18nModel = new ResourceModel({
+	                    bundle: oBundle
+	                });
+	                this.setModel(this._oI18nModel, "i18n");
+	                this._oI18nModel.setDefaultBindingMode(BindingMode.OneWay);
+	            } else {
+	                this._oI18nModel.enhance(oBundle);
+	            }
+            }.bind(this));
         }.bind(this));
     };
 
