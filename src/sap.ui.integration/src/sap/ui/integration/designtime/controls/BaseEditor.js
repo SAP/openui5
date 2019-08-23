@@ -83,6 +83,7 @@ sap.ui.define([
             oRm.write(">");
 
             oEditor.getPropertyEditors().forEach(function(oPropertyEditor) {
+                oPropertyEditor.addStyleClass("sapUiSmallMargin");
                 oRm.renderControl(oPropertyEditor);
             });
 
@@ -108,23 +109,10 @@ sap.ui.define([
             );
         },
 
-        _mergeConfig: function(oTarget, oSource) {
-            var oResult = merge({}, oTarget, oSource);
-            // concat i18n properties to avoid override
-            oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
-            return oResult;
-        },
-
         setConfig: function(oConfig) {
             return this._setConfig(
                 this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
             );
-        },
-
-        _setConfig: function(oConfig) {
-            var vReturn = this.setProperty("config", oConfig, false);
-            this._initialize();
-            return vReturn;
         },
 
         addConfig: function(oNewConfig) {
@@ -159,6 +147,20 @@ sap.ui.define([
             }
         }
     });
+
+    BaseEditor.prototype._mergeConfig = function(oTarget, oSource) {
+        var oResult = deepClone(oTarget);
+        merge(oResult, oSource);
+        // concat i18n properties to avoid override
+        oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
+        return oResult;
+    };
+
+    BaseEditor.prototype._setConfig = function(oConfig) {
+        var vReturn = this.setProperty("config", oConfig, false);
+        this._initialize();
+        return vReturn;
+    };
 
     BaseEditor.prototype._cleanup = function(oConfig) {
         if (this._oContextModel) {
