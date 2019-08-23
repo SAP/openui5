@@ -19360,6 +19360,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectChange("valueHelp::currencyCode", null);
+
 			// delete creation row to avoid errors in destroy
 			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
 			oCreationRowContext.delete("$auto");
@@ -19770,6 +19772,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectChange("creationRow::note", null);
+
 			// cleanup: delete creation row to avoid error on view destruction
 			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
 			oCreationRowContext.delete("$auto");

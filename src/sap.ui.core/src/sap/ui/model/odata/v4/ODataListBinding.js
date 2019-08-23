@@ -737,14 +737,7 @@ sap.ui.define([
 		}
 		// destroy previous contexts which are not reused
 		if (Object.keys(this.mPreviousContextsByPath).length) {
-			sap.ui.getCore().addPrerenderingTask(function () {
-				if (that.mPreviousContextsByPath) { // binding might be destroyed already
-					Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
-						that.mPreviousContextsByPath[sPath].destroy();
-						delete that.mPreviousContextsByPath[sPath];
-					});
-				}
-			});
+			sap.ui.getCore().addPrerenderingTask(this.destroyPreviousContexts.bind(this));
 		}
 		if (iCount !== undefined) {
 			this.bLengthFinal = true;
@@ -786,6 +779,7 @@ sap.ui.define([
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
+		this.destroyPreviousContexts();
 		if (this.oHeaderContext) {
 			this.oHeaderContext.destroy();
 		}
@@ -829,15 +823,32 @@ sap.ui.define([
 			this.bCreatedAtEnd = undefined;
 		}
 		this.aContexts.splice(iIndex, 1);
-		if (bDestroyLater) {
+		if (bDestroyLater && this.iCurrentEnd) {
 			// Add the context to mPreviousContextsByPath although it definitely won't be reused.
-			// Then it is destroyed later.
+			// Then it is destroyed later, but only if there is a listener (iCurrentEnd is set by
+			// getContexts and mPreviousContextsByPath is only cleared when getContexts is called)
 			this.mPreviousContextsByPath[oContext.getPath()] = oContext;
 		} else {
 			oContext.destroy();
 		}
 		// The path of all contexts in aContexts after the removed one is untouched, still points to
 		// the same data, hence no checkUpdate is needed.
+	};
+
+	/**
+	 * Clears mPreviousContextsByPath, destroying all contexts.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.destroyPreviousContexts = function () {
+		var mPreviousContextsByPath = this.mPreviousContextsByPath;
+
+		if (mPreviousContextsByPath) { // binding may have been destroyed already
+			Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
+				mPreviousContextsByPath[sPath].destroy();
+			});
+			this.mPreviousContextsByPath = {};
+		}
 	};
 
 	/**
