@@ -29,6 +29,7 @@ sap.ui.define([
 	 * applied on <code>XMLViews</code> and normal <code>ManagedObject</code> instances.
 	 *
 	 * @namespace sap.ui.core.util.reflection.BaseTreeModifier
+	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.model.meta, control change handler and provider
 	 * @since 1.56.0
 	 */
@@ -335,7 +336,7 @@ sap.ui.define([
 		 * Recursively goes through an XML tree and calls a callback function for every control inside.
 		 * Does not call the callback function for aggregations.
 		 *
-		 * @param {function} fnCallback - Function that will be called for every control with the following arguments: <code>fnCallback(<Element>)</code>
+		 * @param {function} fnCallback - Function that will be called for every control with the following arguments: <code>fnCallback(&lt;Element>)</code>
 		 * @param {Element} oRootNode - Root node from which we start traversing the tree
 		 */
 		_traverseXmlTree: function(fnCallback, oRootNode) {

@@ -482,7 +482,7 @@ sap.ui.define([
 	 * Returns the internal ace editor instance
 	 * @returns {object} the internal ace editor instance
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	CodeEditor.prototype._getEditorInstance = function() {
 		return this._oEditor;

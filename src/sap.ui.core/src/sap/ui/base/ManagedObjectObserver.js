@@ -105,9 +105,9 @@ sap.ui.define([
 	 *
 	 * @param {function} fnCallback Callback function for this observer, to be called whenever a change happens
 	 *
-	 * @private
 	 * @since 1.50.0
-	 * @sap-restricted sap.ui.model.base
+	 * @private
+	 * @ui5-restricted sap.ui.model.base
 	 * @constructor
 	 * @alias sap.ui.base.ManagedObjectObserver
 	 */
@@ -146,7 +146,7 @@ sap.ui.define([
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
 	 * @private
-	 * @sap-restricted sap.ui.model.base
+	 * @ui5-restricted sap.ui.model.base
 	 */
 	ManagedObjectObserver.prototype.observe = function (oObject, oConfiguration) {
 		if (!(oObject instanceof ManagedObject)) {
@@ -186,7 +186,7 @@ sap.ui.define([
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
 	 * @private
-	 * @sap-restricted sap.ui.model.base
+	 * @ui5-restricted sap.ui.model.base
 	 */
 	ManagedObjectObserver.prototype.unobserve = function (oObject, oConfiguration) {
 		if (!(oObject instanceof ManagedObject)) {
@@ -223,7 +223,7 @@ sap.ui.define([
 	 * @throws {TypeError} if the given object is not a ManagedObject and not <code>null</code> or <code>undefined</code>
 	 *
 	 * @private
-	 * @sap-restricted sap.ui.model.base
+	 * @ui5-restricted sap.ui.model.base
 	 */
 	ManagedObjectObserver.prototype.isObserved = function (oObject, oConfiguration) {
 		if (!(oObject instanceof ManagedObject)) {
@@ -239,7 +239,7 @@ sap.ui.define([
 	/**
 	 * Disconnect the observer from all objects.
 	 * @private
-	 * @sap-restricted sap.ui.model.base
+	 * @ui5-restricted sap.ui.model.base
 	 */
 	ManagedObjectObserver.prototype.disconnect = function () {
 		destroy(this);
@@ -269,7 +269,7 @@ sap.ui.define([
 	 * @param {any} vOld the old value of the property
 	 * @param {any} vNew the new value of the property
 	 * @private
-	 * @sap-restricted sap.ui.base.ManagedObject
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
 	Observer.propertyChange = function (oManagedObject, sName, vOld, vNew) {
 		// managed object does a propertyChange.call(this, sName, vOld, vNew)
@@ -290,7 +290,7 @@ sap.ui.define([
 	 * @param {string} sMutation "remove" or "insert"
 	 * @param {sap.ui.base.ManagedObject|sap.ui.base.ManagedObject[]} vObjects the removed or inserted object or objects array
 	 * @private
-	 * @sap-restricted sap.ui.base.ManagedObject
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
 	Observer.aggregationChange = function (oManagedObject, sName, sMutation, vObjects) {
 		// managed object does an aggregationChange.call(this, sName, sMutation, vObjects)
@@ -312,7 +312,7 @@ sap.ui.define([
 	 * @param {string} sMutation "set" or "unset"
 	 * @param {sap.ui.base.ManagedObject} oParent the changed parent
 	 * @private
-	 * @sap-restricted sap.ui.base.ManagedObject
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
 	Observer.parentChange = function(oManagedObject, sName, sMutation, oParent) {
 		//managed object does a parent change handle this
@@ -338,7 +338,7 @@ sap.ui.define([
 	 * @param {string} sMutation "remove" or "insert"
 	 * @param {string|string[]} vIds the removed or inserted id or list of ids
 	 * @private
-	 * @sap-restricted sap.ui.base.ManagedObject
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
 	Observer.associationChange = function (oManagedObject, sName, sMutation, vIds) {
 		// managed object does an associationChange.call(this, sName, sMutation, vIds)
@@ -400,7 +400,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.ManagedObject} oManagedObject Object that reports a change
 	 * @private
-	 * @sap-restricted sap.ui.base.ManagedObject
+	 * @ui5-restricted sap.ui.base.ManagedObject
 	 */
 	Observer.objectDestroyed = function(oManagedObject) {
 		handleChange("destroy", oManagedObject, null, function () {

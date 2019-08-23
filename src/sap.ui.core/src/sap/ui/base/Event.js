@@ -14,9 +14,9 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 * @class An Event object consisting of an ID, a source and a map of parameters.
 	 * Implements {@link sap.ui.base.Poolable} and therefore an event object in the event handler will be reset by {@link sap.ui.base.ObjectPool} after the event handler is done.
 	 *
-	 * @param {string} sId The id of the event
-	 * @param {sap.ui.base.EventProvider} oSource The source of the event
-	 * @param {object} mParameters A map of parameters for this event
+	 * @param {string} sId The ID of the event
+	 * @param {sap.ui.base.EventProvider} oSource Source of the event
+	 * @param {object} oParameters Parameters for this event
 	 *
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
@@ -26,12 +26,12 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 * @public
 	 */
 	var Event = BaseObject.extend("sap.ui.base.Event", /** @lends sap.ui.base.Event.prototype */ {
-		constructor : function(sId, oSource, mParameters) {
+		constructor : function(sId, oSource, oParameters) {
 
 			BaseObject.apply(this);
 
 			if (arguments.length > 0) {
-				this.init(sId, oSource, mParameters);
+				this.init(sId, oSource, oParameters);
 			}
 
 		}
@@ -43,23 +43,23 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	 * The <code>init</code> method is called by an object pool when the
 	 * object is (re-)activated for a new caller.
 	 *
-	 * When no <code>mParameters</code> are given, an empty object is used instead.
+	 * When no <code>oParameters</code> are given, an empty object is used instead.
 	 *
-	 * @param {string} sId The id of the event
-	 * @param {sap.ui.base.EventProvider} oSource The source of the event
-	 * @param {object} [mParameters] The event parameters
+	 * @param {string} sId ID of the event
+	 * @param {sap.ui.base.EventProvider} oSource Source of the event
+	 * @param {object} [oParameters] The event parameters
 	 *
 	 * @private
 	 *
 	 * @see sap.ui.base.Poolable.prototype#init
 	 */
-	Event.prototype.init = function(sId, oSource, mParameters) {
+	Event.prototype.init = function(sId, oSource, oParameters) {
 		assert(typeof sId === "string", "Event.init: sId must be a string");
 		assert(sap.ui.require('sap/ui/base/EventProvider') && oSource instanceof sap.ui.require('sap/ui/base/EventProvider'), "Event.init: oSource must be an EventProvider");
 
 		this.sId = sId;
 		this.oSource = oSource;
-		this.mParameters = mParameters || {};
+		this.mParameters = oParameters || {};
 		this.bCancelBubble = false;
 		this.bPreventDefault = false;
 	};
@@ -81,7 +81,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	/**
 	 * Returns the id of the event.
 	 *
-	 * @return {string} The id of the event
+	 * @returns {string} The ID of the event
 	 * @public
 	 */
 	Event.prototype.getId = function() {
@@ -93,7 +93,7 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	/**
 	 * Returns the event provider on which the event was fired.
 	 *
-	 * @return {sap.ui.base.EventProvider} The source of the event
+	 * @returns {sap.ui.base.EventProvider} The source of the event
 	 * @public
 	 */
 	Event.prototype.getSource = function() {
@@ -103,8 +103,9 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	};
 
 	/**
-	 * Returns all parameter values of the event keyed by their names.
-	 * @return {map} All parameters of the event keyed by name
+	 * Returns an object with all parameter values of the event.
+	 *
+	 * @returns {object} All parameters of the event
 	 * @public
 	 */
 	Event.prototype.getParameters = function() {
@@ -114,10 +115,10 @@ sap.ui.define(['./Object', "sap/base/assert"],
 	};
 
 	/**
-	 * Returns the value of the parameter with the given sName.
+	 * Returns the value of the parameter with the given name.
 	 *
-	 * @param {string} sName The name of the parameter to return
-	 * @return {any} The value for the named parameter
+	 * @param {string} sName Name of the parameter to return
+	 * @return {any} Value of the named parameter
 	 * @public
 	 */
 	Event.prototype.getParameter = function(sName) {

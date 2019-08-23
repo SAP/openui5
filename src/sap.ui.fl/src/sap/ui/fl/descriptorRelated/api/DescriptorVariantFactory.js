@@ -312,7 +312,7 @@ sap.ui.define([
 
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
-	 * @public
+	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createNew = function(mParameters) {
@@ -332,7 +332,7 @@ sap.ui.define([
 
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
-	 * @public
+	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createAppVariant = function(mParameters) {
@@ -374,7 +374,7 @@ sap.ui.define([
 	 * @param {string} sId the id of the app variant
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
-	 * @public
+	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createForExisting = function(sId) {
@@ -388,7 +388,7 @@ sap.ui.define([
 	 *
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
-	 * @public
+	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createFromJson = function(mParameters) {
@@ -407,7 +407,7 @@ sap.ui.define([
 	 *
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
-	 * @public
+	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createDeletion = function(sId) {
@@ -421,7 +421,7 @@ sap.ui.define([
 	 * @param {boolean} bDeletion required for deletion
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
-	 * @public
+	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion) {

@@ -1847,7 +1847,7 @@ sap.ui.define([
 	 * @param {function} fnListener listener function
 	 * @param {object} [oContext=RenderManager] context for the listener function
 	 * @private
-	 * @sap-restricted sap.ui.richtexteditor.RichTextEditor
+	 * @ui5-restricted sap.ui.richtexteditor.RichTextEditor
 	 */
 	RenderManager.attachPreserveContent = function(fnListener, oContext) {
 		// discard duplicates first
@@ -1863,7 +1863,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnListener listener function
 	 * @private
-	 * @sap-restricted sap.ui.richtexteditor.RichTextEditor
+	 * @ui5-restricted sap.ui.richtexteditor.RichTextEditor
 	 */
 	RenderManager.detachPreserveContent = function(fnListener) {
 		aPreserveContentListeners = aPreserveContentListeners.filter(function(oListener) {

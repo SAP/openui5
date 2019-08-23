@@ -19,6 +19,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.apply.api.FlexRuntimeInfoAPI
 	 * @experimental Since 1.67
 	 * @since 1.67
+	 * @private
 	 * @ui5-restricted ui5 controls, tests
 	 */
 	var FlexRuntimeInfoAPI = /** @lends sap.ui.fl.apply.api.FlexRuntimeInfoAPI */{
@@ -32,6 +33,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<boolean>} Promise resolving to a boolean that indicates if personalization changes exist
 		 *
+		 * @private
 		 * @ui5-restricted
 		 */
 		isPersonalized: function(mPropertyBag) {
@@ -67,6 +69,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element which should be tested for an encompassing variant management control
 		 * @returns {boolean} <code>true</code> if a variant management control encompasses the given control
 		 *
+		 * @private
 		 * @ui5-restricted
 		 */
 		hasVariantManagement: function(mPropertyBag) {

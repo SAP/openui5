@@ -169,7 +169,7 @@ sap.ui.define([
 			 * Optional:
 			 * In case <code>multiSelect</code> is set to <code>true</code>, the selection can be easily cleared with one click.
 			 *
-			 * <b>Note:</b> When used with oData, only the loaded selections will be cleared.
+			 * <b>Note:</b> When used with OData, only the loaded selections will be cleared.
 			 * @since 1.58
 			 */
 			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false},

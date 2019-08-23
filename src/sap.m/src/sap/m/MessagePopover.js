@@ -47,7 +47,7 @@ function(
 		 * It provides a handy and systemized way to navigate and explore details for every message.
 		 * It is adaptive and responsive.
 		 * It renders as a dialog with a Close button in the header on phones, and as a popover on tablets and higher resolution devices.
-		 * It also exposes an event {@link sap.m.MessagePopover#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
+		 * It also exposes an event {@link sap.m.MessagePopover#event:activeTitlePress}, which can be used for navigation from a message to the source of the issue.
 		 * <h3>Notes:</h3>
 		 * <ul>
 		 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>.</li>
@@ -111,7 +111,7 @@ function(
 					 * @callback sap.m.MessagePopover~asyncURLHandler
 					 * @param {object} config A single parameter object
 					 * @param {string} config.url URL to validate
-					 * @param {string|Int} config.id ID of the validation job
+					 * @param {string|int} config.id ID of the validation job
 					 * @param {object} config.promise Object grouping a promise's reject and resolve methods
 					 * @param {function} config.promise.resolve Method to resolve promise
 					 * @param {function} config.promise.reject Method to reject promise

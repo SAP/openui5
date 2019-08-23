@@ -8,7 +8,8 @@ sap.ui.define([], function () {
 	 * Base class for all services.
 	 * To inherit use the extend method <code>Service.extend</code>
 	 * @class Service
-	 * @sap-restricted sap.ushell
+	 * @private
+	 * @ui5-restricted sap.ushell
 	 * @experimental
 	 */
 	var Service = function () {

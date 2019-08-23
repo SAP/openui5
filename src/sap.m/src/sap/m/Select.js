@@ -118,7 +118,7 @@ function(
 					 * to <code>false</code>, the control appears as disabled and CANNOT be focused.
 					 *
 					 * <b>Note:</b> When both <code>enabled</code> and <code>editable</code> properties
-					 * are set to <code>false<code>, <code>enabled</code> has priority over
+					 * are set to <code>false</code>, <code>enabled</code> has priority over
 					 * <code>editable</code>.
 					 */
 					enabled: {
@@ -132,7 +132,7 @@ function(
 					 * to <code>false</code>, the control appears as disabled but CAN still be focused.
 					 *
 					 * <b>Note:</b> When both <code>enabled</code> and <code>editable</code> properties
-					 * are set to <code>false<code>, <code>enabled</code> has priority over
+					 * are set to <code>false</code>, <code>enabled</code> has priority over
 					 * <code>editable</code>.
 					 *
 					 * @since 1.66.0
@@ -2379,7 +2379,7 @@ function(
 		/**
 		 * Whether or not the value state message should be opened.
 		 *
-		 * @returns {boolean} <code>false</true> if the field is disabled, read-only or the default value state is set,
+		 * @returns {boolean} <code>false</code> if the field is disabled, read-only or the default value state is set,
 		 * otherwise it returns <code>true</code>.
 		 * @since 1.40.5
 		 */

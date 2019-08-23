@@ -169,7 +169,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	 * Changes the selection to be equal to the range <code>iFromIndex</code> and <code>iToIndex</code>
 	 * inclusive. If <code>iFromIndex</code> is smaller than <code>iToIndex</code>, both parameters are swapped.
 	 *
-	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToIndex</iToIndex> is used.
+	 * In <code>SINGLE_SELECTION</code> selection mode, only <code>iToIndex</code> is used.
 	 *
 	 * If this call results in a change to the current selection, then a
 	 * <code>SelectionChanged</code> event is fired.
@@ -432,15 +432,20 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'selectionChanged' event of this <code>sap.ui.model.SelectionModel</code>.<br/>
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:selectionChanged selectionChanged} event of this
+	 * <code>sap.ui.model.SelectionModel</code>.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to this <code>sap.ui.model.SelectionModel</code> itself.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event.
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Context object to call the event handler with. Defaults to this
+	 *            <code>SelectionModel</code> itself
 	 *
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @public
@@ -451,15 +456,16 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'selectionChanged' event of this <code>sap.ui.model.SelectionModel</code>.<br/>
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:selectionChanged selectionChanged} event of this
+	 * <code>sap.ui.model.SelectionModel</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.model.SelectionModel} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	SelectionModel.prototype.detachSelectionChanged = function(fnFunction, oListener) {
@@ -468,7 +474,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	};
 
 	/**
-	 * Fire event 'selectionChanged' to attached listeners.
+	 * Fires event {@link #event:selectionChanged selectionChanged} to attached listeners.
 	 *
 	 * Expects following event parameters:
 	 * <ul>
@@ -476,14 +482,14 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	 * <li>'rowIndices' of type <code>int[]</code> Other selected indices (if available)</li>
 	 * </ul>
 	 *
-	 * @param {object} mArguments the arguments to pass along with the event.
-	 * @param {int} mArguments.leadIndex Lead selection index
-	 * @param {int[]} [mArguments.rowIndices] Other selected indices (if available)
-	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @param {object} oParameters Parameters to pass along with the event.
+	 * @param {int} oParameters.leadIndex Lead selection index
+	 * @param {int[]} [oParameters.rowIndices] Other selected indices (if available)
+	 * @returns {sap.ui.model.SelectionModel} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	SelectionModel.prototype.fireSelectionChanged = function(mArguments) {
-		this.fireEvent("selectionChanged", mArguments);
+	SelectionModel.prototype.fireSelectionChanged = function(oParameters) {
+		this.fireEvent("selectionChanged", oParameters);
 		return this;
 	};
 
@@ -525,7 +531,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/assert"],
 	};
 
 	/**
-	 * Selects all rows up to the <code>iToIndex</iToIndex>.
+	 * Selects all rows up to the <code>iToIndex</code>.
 	 *
 	 * If this call results in a change to the current selection, then a
 	 * <code>SelectionChanged</code> event is fired.

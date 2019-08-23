@@ -255,7 +255,7 @@ function(
 			 * Currently only implemented to work with the following controls:
 			 * <code>sap.m.Text, sap.m.Label, sap.m.Link, sap.m.Input,
 			 * sap.ui.commons.TextView, sap.ui.commons.Label, sap.ui.commons.Link and sap.ui.commons.TextField,
-			 * sap.ui.commons.Checkbox, sap.m.Checkbox</code>
+			 * sap.ui.commons.Checkbox, sap.m.CheckBox</code>
 			 * @since 1.21.1
 			 */
 			autoResizable : {type : "boolean", group : "Behavior", defaultValue : false}

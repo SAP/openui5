@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @alias sap.ui.core.util.serializer.delegate.XML
 	 * @private
-	 * @sap-restricted sap.watt com.sap.webide
+	 * @ui5-restricted sap.watt com.sap.webide
 	 */
 	var XML = Delegate.extend("sap.ui.core.util.serializer.delegate.XML", /** @lends sap.ui.core.util.serializer.delegate.XML.prototype */
 	{

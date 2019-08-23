@@ -933,8 +933,8 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', './CalendarType
 		 *     "EUR": "EUR",
 		 *     "GBP": "GBP",
 		 * }
-		 * @sap-restricted sap.ui.core.format.NumberFormat
 		 * @private
+		 * @ui5-restricted sap.ui.core.format.NumberFormat
 		 * @since 1.63
 		 */
 		getCustomCurrencyCodes: function () {

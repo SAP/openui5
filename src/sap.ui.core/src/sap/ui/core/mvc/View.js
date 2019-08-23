@@ -957,8 +957,8 @@ sap.ui.define([
 	 * Some internal use-cases need the View instance synchronously instead of the wrapping Promises
 	 * of the [...]View.create() factories: e.g. root-view creation in sap/ui/core/UIComponent
 	 * Internally, the views might still be loaded and processed asynchronously.
-	 * @sap-restricted sap.ui.core
 	 * @private
+	 * @ui5-restricted sap.ui.core
 	 * @see {sap.ui.view}
 	 */
 	View._legacyCreate = viewFactory;

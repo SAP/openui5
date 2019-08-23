@@ -18,12 +18,12 @@ sap.ui.define([
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @private
 	 * @class
 	 * TODO: Class description
 	 * @extends sap.ui.table.rowmodes.RowMode
 	 * @constructor
 	 * @alias sap.ui.table.rowmodes.FixedRowMode
+	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 *
 	 * @author SAP SE

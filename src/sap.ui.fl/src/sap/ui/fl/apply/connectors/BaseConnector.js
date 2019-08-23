@@ -29,6 +29,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] - Configured url for the connector
 		 * @param {string} [mPropertyBag.cacheKey] - Key which can be used to etag / cachebuster the request
 		 * @returns {Promise<Object>} Promise resolving with an object containing a flex data response
+		 * @private
 		 * @ui5-restricted
 		 */
 		loadFlexData:function (/* mPropertyBag */) {

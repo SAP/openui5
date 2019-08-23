@@ -13,7 +13,6 @@ sap.ui.define(["sap/base/Log"], function (Log) {
 	 * @param {string} option.maxBufferLength Number of entries in the stack before the beacon is send
 	 * @private
 	 * @ui5-restricted sap.ui.core
-	 *
 	 */
 	var BeaconRequest = function (option) {
 		option = option || {};

@@ -139,8 +139,8 @@ sap.ui.define([
 	 * @param {object} oData
 	 * @param {object} bAsync whether the resource bundle should be loaded asynchronously
 	 * @returns {jQuery.sap.util.ResourceBundle|Promise} loaded resource bundle or Promise in async case
-	 * @sap-restricted sap.ui.core.Component
 	 * @private
+	 * @ui5-restricted sap.ui.core.Component
 	 */
 	ResourceModel.loadResourceBundle = function(oData, bAsync) {
 		var oConfiguration = sap.ui.getCore().getConfiguration(),

@@ -64,7 +64,7 @@ sap.ui.define([
 
 		/**
 		 * Creates a simple object with all URL parameters.
-		 * @returns {Object<string,string[]} Map of parameter value arrays keyed by parameter names
+		 * @returns {Object<string,string[]>} Map of parameter value arrays keyed by parameter names
 		 */
 		function getURLParameters() {
 			var oParams = UriParameters.fromQuery(window.location.search);

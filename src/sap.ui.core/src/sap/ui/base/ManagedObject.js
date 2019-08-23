@@ -1025,7 +1025,7 @@ sap.ui.define([
 	 * @param {Object} [oThisArg=undefined] Value to use as <code>this</code> when executing <code>fn</code>
 	 * @returns {any} Returns the value that <code>fn</code> returned after execution
 	 * @private
-	 * @sap-restricted sap.ui.base,sap.ui.core
+	 * @ui5-restricted sap.ui.base,sap.ui.core
 	 */
 	ManagedObject.runWithPreprocessors = function(fn, oPreprocessors, oThisArg) {
 		assert(typeof fn === "function", "fn must be a function");
@@ -2432,10 +2432,19 @@ sap.ui.define([
 
 
 	/**
-	 * This triggers rerendering of itself and its children.
+	 * Marks this object and its aggregated children as 'invalid'.
 	 *
-	 * As <code>sap.ui.base.ManagedObject</code> "bubbles up" the invalidate, changes to
-	 * child-<code>Elements</code> will also result in rerendering of the whole sub tree.
+	 * The term 'invalid' originally was introduced by controls where a change to the object's state made the
+	 * rendered DOM <i>invalid</i>. Later, the concept of invalidation was moved up in the inheritance hierarchy
+	 * to <code>ManagedObject</code>, but the term was kept for compatibility reasons.
+	 *
+	 * Managed settings (properties, aggregations, associations) invalidate the corresponding object automatically.
+	 * Changing the state via the standard mutators, therefore, does not require an explicit call to <code>invalidate</code>.
+	 * The same applies to changes made via data binding, as it internally uses the standard mutators.
+	 *
+	 * By default, a <code>ManagedObject</code> propagates any invalidation to its parent. Controls or UIAreas
+	 * handle invalidation on their own by triggering a re-rendering.
+	 *
 	 * @protected
 	 */
 	ManagedObject.prototype.invalidate = function() {
@@ -2679,7 +2688,7 @@ sap.ui.define([
 	/**
 	 * Hook method to let descendants of ManagedObject know when propagated contextual settings have changed
 	 * @private
-	 * @sap-restricted sap.ui.core.Element
+	 * @ui5-restricted sap.ui.core.Element
 	 */
 	ManagedObject.prototype._onContextualSettingsChanged = function () {};
 
@@ -4613,7 +4622,7 @@ sap.ui.define([
 	 * @param {function} listener function
 	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @private
-	 * @sap-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 */
 	ManagedObject.prototype.addPropagationListener = function(listener) {
 		assert(typeof listener === 'function', "listener must be a function");
@@ -4629,7 +4638,7 @@ sap.ui.define([
 	 * @param {function} listener function
 	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @private
-	 * @sap-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 */
 	ManagedObject.prototype.removePropagationListener = function(listener) {
 		assert(typeof listener === 'function', "listener must be a function");
@@ -4646,7 +4655,7 @@ sap.ui.define([
 	 * get propagation listeners
 	 * @returns {array} aPropagationListeners Returns registered propagationListeners
 	 * @private
-	 * @sap-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 */
 	ManagedObject.prototype.getPropagationListeners = function() {
 		return this.oPropagatedProperties.aPropagationListeners.concat(this.aPropagationListeners);

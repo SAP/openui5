@@ -79,7 +79,7 @@ sap.ui.define([
 	 * It is meant to be embedded into container controls (such as {@link sap.m.Popover}, {@link sap.m.ResponsivePopover}, {@link sap.m.Dialog}).
 	 * It provides a handy and systemized way to navigate and explore details for every message.
 	 * If the MessageView contains only one item, which has either description, markupDescription or longTextUrl, its details page will be displayed initially.
-	 * It also exposes an event {@link sap.m.MessageView#activeTitlePress}, which can be used for navigation from a message to its source.
+	 * It also exposes an event {@link sap.m.MessageView#event:activeTitlePress}, which can be used for navigation from a message to its source.
 	 * <h3>Notes:</h3>
 	 * <ul>
 	 * <li>If your application changes its model between two interactions with the MessageView, this could lead to outdated messages being shown.
@@ -491,8 +491,8 @@ sap.ui.define([
 	/**
 	 * If there's no items binding, attach the MessageView to the sap.ui.getCore().getMessageManager().getMessageModel()
 	 *
-	 * @sap-restricted sap.m.MessagePopover
 	 * @private
+	 * @ui5-restricted sap.m.MessagePopover
 	 */
 	MessageView.prototype._makeAutomaticBinding = function () {
 		var aItems = this.getItems();

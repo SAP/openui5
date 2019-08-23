@@ -18,6 +18,7 @@ sap.ui.define([
 	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @version ${version}
+	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 	 */
 
