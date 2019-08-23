@@ -1560,8 +1560,8 @@ sap.ui.define([
 		}
 
 		if (this.getShowFavorites() && !oItem.favorite && oRadioButton) {
-			this._setFavoriteIcon(oRadioButton.getParent().getCells()[VariantManagement.COLUMN_FAV_IDX], oItem.favorite);
-			oItem.favorite = !oItem.favorite;
+			oItem.favorite = true;
+			this._setFavoriteIcon(oRadioButton.getParent().getCells()[VariantManagement.COLUMN_FAV_IDX], true);
 		}
 
 		this.setDefaultVariantKey(sKey);
@@ -1604,6 +1604,21 @@ sap.ui.define([
 		this._setFavoriteIcon(oIcon, oItem.favorite);
 	};
 
+	VariantManagement.prototype._getRowForKey = function(sKey) {
+		var oRowForKey = null;
+		if (this.oManagementTable) {
+			this.oManagementTable.getItems().some(function(oRow) {
+				if (sKey === oRow.getCells()[0].getBindingContext(this._sModelName).getObject().key) {
+					oRowForKey = oRow;
+				}
+
+				return oRowForKey !== null;
+			}.bind(this));
+		}
+
+		return oRowForKey;
+	};
+
 	VariantManagement.prototype._handleManageDeletePressed = function(oItem) {
 		var oModel;
 		var sKey = oItem.key;
@@ -1622,6 +1637,16 @@ sap.ui.define([
 
 		if ((sKey === this.getDefaultVariantKey())) {
 			this.setDefaultVariantKey(this.getStandardVariantKey());
+			if (this.getShowFavorites()) {
+				var oNewDefaultItem = this._getItemByKey(this.getStandardVariantKey());
+				if (oNewDefaultItem && !oNewDefaultItem.favorite) {
+					var oRow = this._getRowForKey(this.getStandardVariantKey());
+					if (oRow) {
+						oNewDefaultItem.favorite = true;
+						this._setFavoriteIcon(oRow.getCells()[VariantManagement.COLUMN_FAV_IDX], true);
+					}
+				}
+			}
 		}
 
 		oModel = this.getModel(this._sModelName);
@@ -1698,29 +1723,7 @@ sap.ui.define([
 		aFilters.push(this._getVisibleFilter());
 
 		if (this.getShowFavorites()) {
-			var oFavorites = this._getFilterFavorites();
-
-			// in case the defaultVariant is marked as non
-			// favorite, it should still appears in the variant
-			// list
-			if (this.getDefaultVariantKey() === this.getCurrentVariantKey()) {
-				var oItem = this._getItemByKey(this.getCurrentVariantKey());
-				if (oItem && !oItem.favorite) {
-					var oShowDefault = new Filter({
-						path: "key",
-						operator: FilterOperator.EQ,
-						value1: this.getCurrentVariantKey()
-					});
-
-					aFilters.push(new Filter([
-						oFavorites, oShowDefault
-					], false));
-				} else {
-					aFilters.push(oFavorites);
-				}
-			} else {
-				aFilters.push(oFavorites);
-			}
+			aFilters.push(this._getFilterFavorites());
 		}
 
 		return aFilters;
