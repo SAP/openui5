@@ -786,6 +786,22 @@ function(
 		},
 
 		/**
+		 * Determines if the new Connector functionality should be used.
+		 *
+		 * @returns {boolean} A boolean indicates if the new functionality must be used
+		 * @private
+		 * @ui5-restricted sap.ui.fl
+		 */
+		areNewConnectorsNecessary: function () {
+			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
+			var bOnlyLrepConnectorConfigured = aFlexibilityServices.every(function (oServiceConfig) {
+				return oServiceConfig.connectorName === "LrepConnector";
+			});
+
+			return !bOnlyLrepConnectorConfigured;
+		},
+
+		/**
 		 * Returns the current language in ISO 639-1 format.
 		 *
 		 * @returns {String} Language in ISO 639-1. Empty string if language cannot be determined
