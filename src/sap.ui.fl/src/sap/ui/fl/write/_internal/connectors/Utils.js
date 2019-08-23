@@ -42,6 +42,37 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Adds entities of one object into another; depending of the type and presence of entries the behaviour differs:
+	 * * not present: it is just added
+	 * * present and an array: it is merged
+	 * * present and an object: it is merged (recursion)
+	 * This function changes the object directly without returning it.
+	 *
+	 * @param {object} oSource Object providing the data to merge
+	 * @param {object} oTarget Object which got the data added provided by the source
+	 * @param {string} sKey Key of the property which should be added
+	 */
+	function addToObject(oSource, oTarget, sKey) {
+		if (!oTarget[sKey]) {
+			oTarget[sKey] = oSource[sKey];
+			return; // continue
+		}
+
+		if (Array.isArray(oTarget[sKey])) {
+			oTarget[sKey] = oTarget[sKey].concat(oSource[sKey]);
+			return; // continue
+		}
+
+		if (typeof oTarget[sKey] === 'object') {
+			Object.keys(oSource[sKey]).forEach(function (sInnerKey) {
+				addToObject(oSource[sKey], oTarget[sKey], sInnerKey);
+			});
+		}
+		// simple entities are just overwritten
+		oTarget[sKey] = oSource[sKey];
+	}
+
 	return {
 		/**
 		 * Provides all mandatory connectors to write data; these are the connector mentioned in the core-Configuration.
@@ -112,6 +143,22 @@ sap.ui.define([
 			.catch(function(oError) {
 				return Promise.reject(oError);
 			});
+		},
+
+		/**
+		 * Merges the results from all involved connectors.
+		 *
+		 * @param {object[]} aResponses All responses provided by the different connectors
+		 * @returns {object} Merged result
+		 */
+		mergeResults: function(aResponses) {
+			var oResult = {};
+			aResponses.forEach(function (oResponse) {
+				Object.keys(oResponse).forEach(function (sKey) {
+					addToObject(oResponse, oResult, sKey);
+				});
+			});
+			return oResult;
 		}
 	};
 });

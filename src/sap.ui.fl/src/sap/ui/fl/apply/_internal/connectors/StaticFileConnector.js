@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/connectors/BaseConnector",
+	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions"
 ], function(
 	merge,
 	BaseConnector,
+	Utils,
 	Log,
 	LoaderExtensions
 ) {
@@ -19,25 +21,17 @@ sap.ui.define([
 	 * Connector for requesting data from an LRep based back end.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.StaticFileConnector
-	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Connector
 	 */
 	var StaticFileConnector = merge({}, BaseConnector, /** sap.ui.fl.apply._internal.connectors.StaticFileConnector */ {
 		/**
-		 * Configuration used in the sap.ui.fl.Connector to always load the static files
-		 */
-		CONFIGURATION: {
-			layerFilter: [],
-			connectorName: "StaticFileConnector"
-		},
-
-		/**
 		 * Provides the flex data stored in the build changes-bundle JSON file.
 		 *
-		 * @param {string} mPropertyBag.Reference reference of the application
-		 * @returns {Promise<Object>} resolving with an object containing a data contained in the changes-bundle
+		 * @param {object} mPropertyBag Properties needed by the connector
+		 * @param {string} mPropertyBag.reference Reference of the application
+		 * @returns {Promise<Object>} Resolving with an object containing a data contained in the changes-bundle
 		 */
 		loadFlexData: function (mPropertyBag) {
 			var sReference = mPropertyBag.reference;
@@ -55,7 +49,7 @@ sap.ui.define([
 				}
 			}
 
-			return Promise.resolve({});
+			return Promise.resolve(Utils.getEmptyFlexDataResponse());
 		}
 	});
 

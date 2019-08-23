@@ -2,9 +2,7 @@
  * ! ${copyright}
  */
 
-sap.ui.define([
-], function(
-) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -23,16 +21,16 @@ sap.ui.define([
 		/**
 		 * Interface called to get the flex data, including changes and variants.
 		 *
-		 * @param {map} mPropertyBag - Properties needed by the connectors
-		 * @param {string} mPropertyBag.flexReference - Reference of the application
-		 * @param {string} [mPropertyBag.appVersion] - Version of the application
-		 * @param {string} [mPropertyBag.url] - Configured url for the connector
-		 * @param {string} [mPropertyBag.cacheKey] - Key which can be used to etag / cachebuster the request
+		 * @param {object} mPropertyBag Properties needed by the connectors
+		 * @param {string} mPropertyBag.flexReference Reference of the application
+		 * @param {string} [mPropertyBag.appVersion] Version of the application
+		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @param {string} [mPropertyBag.cacheKey] Key which can be used to etag / cachebuster the request
 		 * @returns {Promise<Object>} Promise resolving with an object containing a flex data response
 		 * @private
-		 * @ui5-restricted
+		 * @ui5-restricted sap.ui.fl.apply._internal.Connector
 		 */
-		loadFlexData:function (/* mPropertyBag */) {
+		loadFlexData: function (/* mPropertyBag */) {
 			return Promise.reject("loadFlexData is not implemented");
 		}
 	};
