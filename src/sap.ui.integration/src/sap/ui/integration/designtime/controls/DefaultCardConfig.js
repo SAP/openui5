@@ -14,6 +14,7 @@ function () {
         "context": "sap.card",
         "properties" : {
             "headerType": {
+                "tags": ["header"],
                 "label": "{i18n>CARD_EDITOR.HEADERTYPE}",
                 "path": "header/type",
                 "type": "enum",
@@ -24,43 +25,51 @@ function () {
                 "defaultValue": "Default"
             },
             "title": {
+                "tags": ["header"],
                 "label": "{i18n>CARD_EDITOR.TITLE}",
                 "type": "string",
                 "path": "header/title"
             },
             "subTitle": {
+                "tags": ["header"],
                 "label": "{i18n>CARD_EDITOR.SUBTITLE}",
                 "type": "string",
                 "path": "header/subTitle"
             },
             "icon": {
+                "tags": ["header"],
                 "label": "{i18n>CARD_EDITOR.ICON}",
                 "type": "icon",
                 "path": "header/icon/src",
                 "visible": "{= ${context>/header/type} !== 'Numeric' }"
             },
             "statusText": {
+                "tags": ["header"],
                 "label": "{i18n>CARD_EDITOR.STATUS}",
                 "type": "string",
                 "path": "header/status/text"
             },
             "kpiNumber": {
+                "tags": ["header"],
                 "label": "{i18n>CARD_EDITOR.KPI}",
                 "type": "string",
                 "path": "data/json/kpiInfos/kpi/number",
                 "visible": "{= ${context>/header/type} === 'Numeric' }"
             },
             "listItemTitle": {
+                "tags": ["content"],
                 "label": "{i18n>CARD_EDITOR.TITLE}",
                 "type": "string",
                 "path": "content/item/title"
             },
             "listItemDescription" : {
+                "tags": ["content"],
                 "label": "{i18n>CARD_EDITOR.DESCRIPTION}",
                 "type": "string",
                 "path": "content/item/description"
             },
             "listItemHighlight": {
+                "tags": ["content"],
                 "label": "{i18n>CARD_EDITOR.HIGHLIGHT}",
                 "type": "string",
                 "path": "content/item/highlight"
