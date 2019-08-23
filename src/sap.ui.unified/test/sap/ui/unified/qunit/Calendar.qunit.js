@@ -601,12 +601,12 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent($January.get(0), KeyCodes.ENTER, false, false, false);
 
 		qutils.triggerEvent("click", "Cal3--Head-prev");
-		assert.equal(jQuery("#Cal3--Head-B1").text(), "November", "November shown");
+		assert.equal(jQuery("#Cal3--Head-B1").text(), "Dezember", "Dezember shown");
 		assert.equal(jQuery("#Cal3--Head-B2").text(), "2014", "year 2014 shown");
 		aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
-		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141028", "first displayed day");
+		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141125", "first displayed day");
 		aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
-		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150105", "last displayed day");
+		assert.equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20150202", "last displayed day");
 		qutils.triggerEvent("click", "Cal3--Head-next");
 		assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar", "january shown again");
 		assert.equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown again");

@@ -1545,10 +1545,11 @@ sap.ui.define([
 		case 0: // day picker
 			if (iMonths > 1) {
 				oFirstMonthDate = CalendarDate.fromLocalJSDate(this.getAggregation("month")[0].getDate(), this.getPrimaryCalendarType());
+				oFirstMonthDate.setMonth(oFirstMonthDate.getMonth(),1);
 				this._setFocusedDate(oFirstMonthDate);
 				oFocusedDate = this._getFocusedDate();
 			}
-			oFocusedDate.setMonth(oFocusedDate.getMonth() + iMonths, 1);
+			oFocusedDate.setMonth(oFocusedDate.getMonth() + 1, 1);
 			this._renderMonth();
 			break;
 
@@ -1729,19 +1730,20 @@ sap.ui.define([
 	 */
 	Calendar.prototype._renderMonth = function (bSkipFocus, bInLastMonth, bNoEvent){
 
-		var oDate = this._getFocusedDate();
-		var aMonths = this.getAggregation("month");
-		var bFound = false;
-		var oMonth;
-		var oMonthDate;
-		var oFirstDate;
-		var i = 0;
+		var oDate = this._getFocusedDate(),
+			aMonths = this.getAggregation("month"),
+			bIsDateInFirstMonth = false,
+			oMonth,
+			oMonthDate,
+			oFirstDate,
+			i = 0;
+
 		for (i = 0; i < aMonths.length; i++) {
 			oMonth = aMonths[i];
-			if (oMonth.checkDateFocusable(oDate.toLocalJSDate())) {
-				bFound = true;
+			if (oMonth.checkDateFocusable(oDate.toLocalJSDate()) && aMonths[0].getDate() && oDate.getMonth() === aMonths[0].getDate().getMonth()) {
+				bIsDateInFirstMonth = true;
 			}
-			if (bFound || aMonths.length == 1) {
+			if (bIsDateInFirstMonth || aMonths.length == 1) {
 				// if only 1 month, date must be set in it any way
 				if (!bSkipFocus) {
 					oMonth.setDate(oDate.toLocalJSDate());
@@ -1752,7 +1754,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!bFound) {
+		if (!bIsDateInFirstMonth) {
 			// date not found in existing months - render new ones
 
 			oFirstDate = new CalendarDate(oDate, this.getPrimaryCalendarType());
@@ -2119,7 +2121,11 @@ sap.ui.define([
 		var oFirstDate = new CalendarDate(oDate, sPrimaryCalendarType);
 		oFirstDate.setDate(1); // always use the first of the month to have stable year in Japanese calendar
 		sYear = this._oYearFormat.format(oFirstDate.toUTCJSDate(), true);
-		this._updateHeadersYearPrimaryText(sYear);
+		if (oFirstDate.getMonth() === 11){
+			this._updateHeadersYearPrimaryText(sYear, (parseInt(sYear) + 1).toString() );
+		} else {
+			this._updateHeadersYearPrimaryText(sYear, sYear);
+		}
 
 		if (sSecondaryCalendarType) {
 			oFirstDate = new CalendarDate(oFirstDate, sSecondaryCalendarType);
@@ -2417,17 +2423,18 @@ sap.ui.define([
 		return this._getColumns() === 2 && iMonths === 2;
 	};
 
-	Calendar.prototype._updateHeadersYearPrimaryText = function (sYear) {
+	Calendar.prototype._updateHeadersYearPrimaryText = function (sFirstHeaderYear, sSecondHeaderYear) {
 		var oYearPicker = this.getAggregation("yearPicker"),
 			oHeader = this.getAggregation("header"),
 			oSecondMonthHeader = this.getAggregation("secondMonthHeader"),
-			sAriaLabel = sYear,
-			sText = sYear,
+			sFirstHeaderAriaLabel = sFirstHeaderYear,
+			sFirstHeaderText = sFirstHeaderYear,
+			sSecondHeaderText = sSecondHeaderYear || sFirstHeaderYear,
 			sPrimaryCalendarType = this.getPrimaryCalendarType();
 
 		if (!this._getSecondaryCalendarType()) {
 			// If secondary type is set, than placing the hint should be done in the end.
-			sAriaLabel += (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
+			sFirstHeaderAriaLabel += (this._getSucessorsPickerPopup() ? "" : ". " + oLibraryResourceBundle.getText("CALENDAR_YEAR_PICKER_OPEN_HINT"));
 		}
 
 		if (this._iMode === 2 && oYearPicker && oYearPicker.getDomRef()) {
@@ -2446,15 +2453,16 @@ sap.ui.define([
 				// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
 				sFirstYear = this._oYearFormat.format(UniversalDate.getInstance(oFirstDate.toUTCJSDate(), oFirstDate.getCalendarType()), true);
 				sSecondYear = this._oYearFormat.format(UniversalDate.getInstance(oSecondDate.toUTCJSDate(), oSecondDate.getCalendarType()), true);
-				sText = sFirstYear + " - " + sSecondYear;
+				sFirstHeaderText = sFirstYear + " - " + sSecondYear;
+				sSecondHeaderText = sFirstYear + " - " + sSecondYear;
 		}
 
-		oHeader._setTextButton4(sText);
-		oHeader._setAriaLabelButton4(sText);
-		oSecondMonthHeader.setTextButton2(sText);
-		oSecondMonthHeader.setAriaLabelButton2(sText);
-		oHeader.setTextButton2(sText);
-		oHeader.setAriaLabelButton2(sAriaLabel);
+		oHeader._setTextButton4(sFirstHeaderText);
+		oHeader._setAriaLabelButton4(sFirstHeaderText);
+		oSecondMonthHeader.setTextButton2(sSecondHeaderText);
+		oSecondMonthHeader.setAriaLabelButton2(sSecondHeaderText);
+		oHeader.setTextButton2(sFirstHeaderText);
+		oHeader.setAriaLabelButton2(sFirstHeaderAriaLabel);
 	};
 
 	Calendar.prototype._updateHeadersYearAdditionalText = function (sYear) {
@@ -2616,7 +2624,6 @@ sap.ui.define([
 		if (iMonths <= 12) {
 			// only if intervals fit into a year -> otherwise just display the months according to the date
 			var iMonth = oDate.getMonth();
-			iMonth = iMonth - iMonth % iMonths;
 			if (12 % iMonths > 0 && iMonth + iMonths > 11) {
 				// do not show months over year borders if possible
 				iMonth = 12 - iMonths;
