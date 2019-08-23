@@ -1257,10 +1257,20 @@ sap.ui.define([
 					BusyIndicator.show(0);
 					return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
 						.then(function(aAllLocalChanges) {
-							return this._oTransportSelection._prepareChangesForTransport(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors)
-								.then(function() {
-									BusyIndicator.hide();
-								});
+							var oContentParameters = {
+								reference: this.getComponentName(),
+								appVersion: this._mComponent.appVersion,
+								layer: sLayer
+							};
+
+							return this._oTransportSelection._prepareChangesForTransport(
+								oTransportInfo,
+								aAllLocalChanges,
+								aAppVariantDescriptors,
+								oContentParameters
+							).then(function() {
+								BusyIndicator.hide();
+							});
 						}.bind(this));
 				} else {
 					return "Cancel";
