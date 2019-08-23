@@ -202,6 +202,14 @@ sap.ui.define([
 					}
 				};
 
+				var _fnIsCustomAction = function (mOptions) {
+					if (mOptions && mOptions.actions && mOptions.actions.length > 0) {
+						return true;
+					}
+
+					return false;
+				};
+
 				/**
 				 * Creates and displays an sap.m.Dialog with type sap.m.DialogType.Message with the given text and buttons, and optionally other parts.
 				 * After the user has tapped a button, the <code>onClose</code> function is invoked when given.
@@ -265,8 +273,7 @@ sap.ui.define([
 								verticalScrolling: true,
 								horizontalScrolling: true,
 								details: "",
-								contentWidth: null,
-								isCustomAction: true
+								contentWidth: null
 							},
 							//set the information icon according to the used theme
 							bInformationIconUsed = Parameters.get("_sap_m_Message_Box_Information_Icon") === "true",
@@ -308,10 +315,13 @@ sap.ui.define([
 						};
 					}
 
+					if (mOptions && mOptions.isCustomAction === undefined) {
+						mOptions.isCustomAction = _fnIsCustomAction(mOptions);
+					}
+
 					if (mOptions && mOptions.hasOwnProperty("details")) {
 						mDefaults.icon = Icon.INFORMATION;
 						mDefaults.actions = [Action.OK, Action.CANCEL];
-						mOptions.isCustomAction = !mOptions.actions || mOptions.actions.length === 0 ? false : true;
 						mOptions = jQuery.extend({}, mDefaults, mOptions);
 					}
 
@@ -328,9 +338,8 @@ sap.ui.define([
 					}
 
 					/** creates a button for the given action */
-					function button(sAction) {
-						var sText,
-						sButtonType = !mOptions.isCustomAction && Action.OK === sAction ? ButtonType.Emphasized : ButtonType.Default;
+					function button(sAction, sButtonType) {
+						var sText;
 
 						// Don't check in ResourceBundle library if the button is with custom text
 						if (MessageBox.Action.hasOwnProperty(sAction)) {
@@ -349,8 +358,11 @@ sap.ui.define([
 						return oButton;
 					}
 
+					var sButtonType;
+
 					for (i = 0; i < mOptions.actions.length; i++) {
-						aButtons.push(button(mOptions.actions[i]));
+						sButtonType = !mOptions.isCustomAction && Action.OK === mOptions.actions[i] ? ButtonType.Emphasized : ButtonType.Default;
+						aButtons.push(button(mOptions.actions[i], sButtonType));
 					}
 
 					function getInformationLayout(mOptions, oMessageText) {
@@ -534,8 +546,7 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_ALERT"),
 						actions: Action.OK,
 						id: ElementMetadata.uid("alert"),
-						initialFocus: null,
-						isCustomAction: false
+						initialFocus: null
 					}, fnCallback, sTitle, sDialogId, sStyleClass;
 
 					if (typeof mOptions === "function" || arguments.length > 2) {
@@ -551,6 +562,10 @@ sap.ui.define([
 							id: sDialogId,
 							styleClass: sStyleClass
 						};
+					}
+
+					if (mOptions) {
+						mOptions.isCustomAction = _fnIsCustomAction(mOptions);
 					}
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
@@ -610,8 +625,7 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_CONFIRM"),
 						actions: [Action.OK, Action.CANCEL],
 						id: ElementMetadata.uid("confirm"),
-						initialFocus: null,
-						isCustomAction: false
+						initialFocus: null
 					}, fnCallback, sTitle, sDialogId, sStyleClass;
 
 					if (typeof mOptions === "function" || arguments.length > 2) {
@@ -627,6 +641,10 @@ sap.ui.define([
 							id: sDialogId,
 							styleClass: sStyleClass
 						};
+					}
+
+					if (mOptions) {
+						mOptions.isCustomAction = _fnIsCustomAction(mOptions);
 					}
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
@@ -683,9 +701,12 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_ERROR"),
 						actions: [Action.CLOSE],
 						id: ElementMetadata.uid("error"),
-						initialFocus: null,
-						isCustomAction: false
+						initialFocus: null
 					};
+
+					if (mOptions) {
+						mOptions.isCustomAction = _fnIsCustomAction(mOptions);
+					}
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
 
@@ -740,9 +761,12 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_INFO"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("info"),
-						initialFocus: null,
-						isCustomAction: false
+						initialFocus: null
 					};
+
+					if (mOptions) {
+						mOptions.isCustomAction = _fnIsCustomAction(mOptions);
+					}
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
 
@@ -797,9 +821,12 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_WARNING"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("warning"),
-						initialFocus: null,
-						isCustomAction: false
+						initialFocus: null
 					};
+
+					if (mOptions) {
+						mOptions.isCustomAction = _fnIsCustomAction(mOptions);
+					}
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
 
@@ -854,9 +881,12 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_SUCCESS"),
 						actions: [Action.OK],
 						id: ElementMetadata.uid("success"),
-						initialFocus: null,
-						isCustomAction: false
+						initialFocus: null
 					};
+
+					if (mOptions) {
+						mOptions.isCustomAction = _fnIsCustomAction(mOptions);
+					}
 
 					mOptions = jQuery.extend({}, mDefaults, mOptions);
 

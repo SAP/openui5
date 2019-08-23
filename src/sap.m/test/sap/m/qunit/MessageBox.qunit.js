@@ -1053,4 +1053,110 @@ sap.ui.define([
 		// clean
 		oMessageBox.destroy();
 	});
+
+	QUnit.test("Check button type on success method call with custom actions", function (assert) {
+		// Act
+		MessageBox.success(undefined, {
+			id: "messageboxButtonType10",
+			actions: [MessageBox.Action.OK]
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType10");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button type on alert method call with custom actions", function (assert) {
+		// Act
+		MessageBox.alert(undefined, {
+			id: "messageboxButtonType11",
+			actions: [MessageBox.Action.OK]
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType11");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button type on confirm method call with custom actions", function (assert) {
+		// Act
+		MessageBox.confirm(undefined, {
+			id: "messageboxButtonType12",
+			actions: [MessageBox.Action.OK]
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType12");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button type on information method call with custom actions", function (assert) {
+		// Act
+		MessageBox.information(undefined, {
+			id: "messageboxButtonType13",
+			actions: [MessageBox.Action.OK]
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType13");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button type on warning method call with custom actions", function (assert) {
+		// Act
+		MessageBox.warning(undefined, {
+			id: "messageboxButtonType14",
+			actions: [MessageBox.Action.OK]
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType14");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button type on warning method call with custom actions and details", function (assert) {
+		// Act
+		MessageBox.warning(undefined, {
+			id: "messageboxButtonType15",
+			actions: [MessageBox.Action.OK],
+			details: "Lorem ipsum"
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType15");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Default, "Button should be with 'Default' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
+
+	QUnit.test("Check button type on warning method call with custom details", function (assert) {
+		// Act
+		MessageBox.warning(undefined, {
+			id: "messageboxButtonType16",
+			details: "Lorem ipsum"
+		});
+		var oMessageBox = sap.ui.getCore().byId("messageboxButtonType16");
+
+		// assert
+		assert.equal(oMessageBox.getButtons()[0].getType(), ButtonType.Emphasized, "Button should be with 'Emphasized' type.");
+
+		// clean
+		oMessageBox.destroy();
+	});
 });
