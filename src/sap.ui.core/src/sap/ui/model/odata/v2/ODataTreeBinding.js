@@ -2104,8 +2104,8 @@ sap.ui.define([
 			this.detachEvent("selectionChanged", fnFunction, oListener);
 			return this;
 		};
-		this.fireSelectionChanged = this.fireSelectionChanged || function(mArguments) {
-			this.fireEvent("selectionChanged", mArguments);
+		this.fireSelectionChanged = this.fireSelectionChanged || function(oParameters) {
+			this.fireEvent("selectionChanged", oParameters);
 			return this;
 		};
 

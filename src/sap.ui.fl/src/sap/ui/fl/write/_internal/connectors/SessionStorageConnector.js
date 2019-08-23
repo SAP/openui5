@@ -17,6 +17,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write._internal.connectors.SessionStorageConnector
 	 * @experimental Since 1.70
 	 * @since 1.70
+	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var SessionStorageConnector = merge({}, BrowserStorageConnector, /** @lends sap.ui.fl.write._internal.connectors.SessionStorageConnector */ {

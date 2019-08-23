@@ -3154,7 +3154,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Return am object with all instances of <code>sap.ui.core.Component</code>,
+	 * Return an object with all instances of <code>sap.ui.core.Component</code>,
 	 * keyed by their ID.
 	 *
 	 * Each call creates a new snapshot object. Depending on the size of the UI,
@@ -3185,7 +3185,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Calls the given <code>callback</code> for each Component.
+	 * Calls the given <code>callback</code> for each existing component.
 	 *
 	 * The expected signature of the callback is
 	 * <pre>
@@ -3193,6 +3193,9 @@ sap.ui.define([
 	 * </pre>
 	 * where <code>oComponent</code> is the currently visited component instance and <code>sID</code>
 	 * is the ID of that instance.
+	 *
+	 * The order in which the callback is called for components is not specified and might change between
+	 * calls (over time and across different versions of UI5).
 	 *
 	 * If components are created or destroyed within the <code>callback</code>, then the behavior is
 	 * not specified. Newly added objects might or might not be visited. When a component is destroyed during

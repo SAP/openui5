@@ -133,8 +133,8 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 		 * Possible contexts are header, footer, subheader.
 		 * @param {string} sContext allowed values are header, footer, subheader.
 		 * @returns {sap.m.IBar} <code>this</code> for chaining
-		 * @sap-restricted
 		 * @private
+		 * @ui5-restricted
 		 */
 		_applyContextClassFor : function (sContext) {
 			var oOptions = this._getContextOptions(sContext);
@@ -166,8 +166,8 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 		 * Possible contexts are header, footer, subheader.
 		 * @param {string} sContext allowed values are header, footer, subheader.
 		 * @returns {sap.m.IBar} <code>this</code> for chaining
-		 * @sap-restricted
 		 * @private
+		 * @ui5-restricted
 		 */
 		_applyTag : function (sContext) {
 			var oOptions = this._getContextOptions(sContext);

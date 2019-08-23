@@ -4491,14 +4491,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Suggestion helper for sap.m.Input fields: Creates a multi-column suggest list for an sap.m.Input field based on a ValueList
-	 * annotation. The ValueList annotation will be resolved via the binding information of the Input field.
+	 * Suggestion helper for <code>sap.m.Input</code> fields when used with an OData model.
 	 *
-	 * If the annotation describes multiple input parameter the suggest provider will resolve all of these relative to the
-	 * context of the Input filed and use them for the suggestion query. The suggest provider will write all values that are
-	 * described as output parameters back to the model (relative to the context of the Input field). This can only be done if
-	 * the model runs in "TwoWay" binding mode. Both features can be switched of via the bResolveInput/bResolveOutput parameter
-	 * of the suggest function:
+	 * Creates a multi-column suggest list for an <code>sap.m.Input</code> field based on a <code>ValueList</code>
+	 * annotation. The <code>ValueList</code> annotation will be resolved via the binding information of the input field.
+	 *
+	 * If the annotation describes multiple input parameters, the suggest provider will resolve all of these relative
+	 * to the context of the input field and use them for the suggest query. The suggest provider will write all
+	 * values that are described as output parameters back to the model (relative to the context of the input field).
+	 * This can only be done if the model runs in "TwoWay" binding mode. Both features can be switched off via the
+	 * <code>bResolveInput/bResolveOutput</code> parameter of the suggest function.
 	 *
 	 * @namespace
 	 * @since 1.21.2

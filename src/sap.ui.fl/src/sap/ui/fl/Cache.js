@@ -101,8 +101,8 @@ function(
 	/**
 	 * Clears whole entries stored in the cache.
 	 *
-	 * @protected
-	 * @sap-restricted sap.ui.fl
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	Cache.clearEntries = function () {
 		Cache._entries = {};
@@ -142,8 +142,8 @@ function(
 	 * @param {string} sComponentName - Name of the application component
 	 * @param {string} sAppVersion - Current running version of application
 	 *
-	 * @protected
-	 * @sap-restricted sap.ui.fl
+	 * @private
+	 * @ui5-restricted sap.ui.fl
 	 */
 	Cache.clearEntry = function (sComponentName, sAppVersion) {
 		Cache.getEntry(sComponentName, sAppVersion);
@@ -157,7 +157,7 @@ function(
 	 * @param {string} sAppVersion - Current running version of application
 	 *
 	 * @private
-	 * @sap-restricted sap.ui.fl
+	 * @ui5-restricted sap.ui.fl
 	 */
 	Cache._deleteEntry = function (sComponentName, sAppVersion) {
 		if (Cache._entries[sComponentName] && Cache._entries[sComponentName][sAppVersion]) {

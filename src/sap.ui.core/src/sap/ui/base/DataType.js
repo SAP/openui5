@@ -623,7 +623,7 @@ sap.ui.define([
 	 * Only purpose is to enable the {@link #isInterfaceType} check.
 	 * @param {string[]} aTypes interface types to be registered
 	 * @private
-	 * @sap-restricted sap.ui.base,sap.ui.core.Core
+	 * @ui5-restricted sap.ui.base,sap.ui.core.Core
 	 */
 	DataType.registerInterfaceTypes = function(aTypes) {
 		for (var i = 0; i < aTypes.length; i++) {
@@ -635,7 +635,7 @@ sap.ui.define([
 	 * @param {string} sType name of type to check
 	 * @returns {boolean} whether the given type is known to be an interface type
 	 * @private
-	 * @sap-restricted sap.ui.base,sap.ui.core.Core
+	 * @ui5-restricted sap.ui.base,sap.ui.core.Core
 	 */
 	DataType.isInterfaceType = function(sType) {
 		return mInterfaces.hasOwnProperty(sType) && ObjectPath.get(sType) === mInterfaces[sType];

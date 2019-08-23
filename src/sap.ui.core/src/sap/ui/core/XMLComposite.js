@@ -6,9 +6,9 @@
  * This class provides the possibility to declare the "view" part of a composite control
  * in an XML fragment which will automatically define the rendering accordingly.
  *
- * <b>Note:</b> If you use aggregation forwarding with <code>idSuffix</<code> as defined
+ * <b>Note:</b> If you use aggregation forwarding with <code>idSuffix</code> as defined
  * in {@link sap.ui.base.ManagedObject ManagedObject} and refer to IDs defined in the XML fragment
- * of the XML composite control, then these types of <code>idSuffix</<code> have the form
+ * of the XML composite control, then these types of <code>idSuffix</code> have the form
  * "--ID" where ID is the ID that you have defined in the XML fragment.
  *
  */

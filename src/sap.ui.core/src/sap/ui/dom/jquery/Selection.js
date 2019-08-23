@@ -13,7 +13,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	 * @namespace
 	 * @name module:sap/ui/dom/jquery/Selection
 	 * @private
-	 * @sap-restricted sap.ui.core
+	 * @ui5-restricted sap.ui.core
 	 * @since 1.58
 	 */
 

@@ -259,11 +259,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Allows setting the Root Node hosting this instance of <code>UIArea</code>.<br/> The Dom Ref must have an Id that
-	 * will be used as Id for this instance of <code>UIArea</code>.
+	 * Allows setting the root node hosting this instance of <code>UIArea</code>.
+	 *
+	 * The node must have an ID that will be used as ID for this instance of <code>UIArea</code>.
 	 *
 	 * @param {object}
-	 *            oRootNode the hosting Dom Ref for this instance of <code>UIArea</code>.
+	 *            oRootNode the hosting DOM node for this instance of <code>UIArea</code>.
 	 * @public
 	 */
 	UIArea.prototype.setRootNode = function(oRootNode) {
@@ -485,8 +486,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Will be used as end-point for invalidate-bubbling from controls up their hierarchy.<br/> Triggers re-rendering of
-	 * the UIAreas content.
+	 * Triggers asynchronous re-rendering of the <code>UIArea</code>'s content.
+	 *
+	 * Serves as an end-point for the bubbling of invalidation requests along the
+	 * element/control aggregation hierarchy.
+	 *
 	 * @protected
 	 */
 	UIArea.prototype.invalidate = function() {
@@ -494,13 +498,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Notifies the UIArea about an invalidated control.
+	 * Notifies the <code>UIArea</code> about an invalidated descendant control.
 	 *
-	 * The UIArea internally decides whether to re-render just the modified
-	 * controls or the complete content. It also informs the Core when it
-	 * becomes invalid the first time.
+	 * During re-rendering, the <code>UIArea</code> internally decides whether to re-render just the modified
+	 * controls or the complete content. It also informs the <code>Core</code> when it becomes invalid
+	 * for the first time.
 	 *
-	 * @param {object} oControl
+	 * @param {object} oControl Descendant control that got invalidated
 	 * @private
 	 */
 	UIArea.prototype.addInvalidatedControl = function(oControl){
@@ -535,12 +539,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Renders any pending UI updates.
+	 * Synchronously renders any pending UI updates.
 	 *
-	 * Either renders the whole UIArea or a set of descendent controls that have been invalidated.
+	 * Either renders the whole <code>UIArea</code> or a set of descendant controls that have been invalidated.
 	 *
-	 * @param {boolean} force true, if the rerendering of the UI area should be forced
-	 * @return {boolean} whether a redraw was necessary or not
+	 * @param {boolean} force Whether a re-rendering of the <code>UIArea</code> should be enforced
+	 * @return {boolean} Whether a redraw was necessary or not
 	 * @private
 	 */
 	UIArea.prototype.rerender = function(force){

@@ -52,7 +52,7 @@ sap.ui.define([
 		 *
 		 * @class
 		 *
-		 * Displays a grid for the <code>SinglePlanningCalendarMonthView/code> in which appointments are rendered.
+		 * Displays a grid for the <code>SinglePlanningCalendarMonthView</code> in which appointments are rendered.
 		 *
 		 * <h3>Overview</h3>
 		 *

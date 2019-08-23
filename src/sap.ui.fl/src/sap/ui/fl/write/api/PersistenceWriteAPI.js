@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
 	 * @experimental Since 1.68
 	 * @since 1.68
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
@@ -94,6 +95,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.upToLayer] - Layer to compare with
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
 		 * @returns {Promise<boolean>} Promise that resolves to a boolean, indicating if a personalization change that was created during runtime is active in the application
+		 * @private
 		 * @ui5-restricted
 		 */
 		hasHigherLayerChanges: function (mPropertyBag) {
@@ -109,6 +111,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipUpdateCache] - Indicates if cache update should be skipped
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
+		 * @private
 		 * @ui5-restricted
 		 */
 		save: function (mPropertyBag) {
@@ -133,6 +136,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant save response
+		 * @private
 		 * @ui5-restricted
 		 */
 		saveAs: function(mPropertyBag) {
@@ -149,6 +153,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the package
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
+		 * @private
 		 * @ui5-restricted
 		 */
 		deleteAppVariant: function(mPropertyBag) {
@@ -242,6 +247,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+		 * @private
 		 * @ui5-restricted
 		 */
 		add: function (mPropertyBag) {
@@ -259,6 +265,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be removed
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 *
+		 * @private
 		 * @ui5-restricted
 		 */
 		remove: function (mPropertyBag) {

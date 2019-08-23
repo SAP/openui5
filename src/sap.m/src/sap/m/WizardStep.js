@@ -146,8 +146,8 @@ sap.ui.define([
 	/**
 	 * Updates the step's properties in the current context of the wizard
 	 * @param {object} [mSettings] Wizard step settings
-	 * @sap-restricted sap.m.Wizard
 	 * @private
+	 * @ui5-restricted sap.m.Wizard
 	 */
 	WizardStep.prototype.setWizardContext = function (mSettings) {
 		["bLast", "bReviewStep", "sButtonText", "bParentAllowsButtonShow"].forEach(function(sProperty){
@@ -165,8 +165,8 @@ sap.ui.define([
 	 * Gets the invisible text, which describes the title and position of the step
 	 * @param {int} iNumber The position of the step inside the wizard
 	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
-	 * @sap-restricted sap.m.Wizard
 	 * @private
+	 * @ui5-restricted sap.m.Wizard
 	 */
 	WizardStep.prototype._getNumberInvisibleText = function () {
 		return this._oNumberInvisibleText;
@@ -176,8 +176,8 @@ sap.ui.define([
 	 * Sets the text, which describes the title and position of the step
 	 * @param {int} iNumber The position of the step inside the wizard
 	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
-	 * @sap-restricted sap.m.Wizard
 	 * @private
+	 * @ui5-restricted sap.m.Wizard
 	 */
 	WizardStep.prototype._setNumberInvisibleText = function (iNumber) {
 		return this._oNumberInvisibleText.setText(this._resourceBundle.getText("WIZARD_STEP") + iNumber + " "  + this.getTitle());

@@ -19,6 +19,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.apply._internal.connectors.BrowserStorageConnector
 	 * @experimental Since 1.70
 	 * @since 1.70
+	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector, sap.ui.fl.apply._internal.Connector
 	 */
 	var BrowserStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.apply._internal.connectors.BrowserStorageConnector */ {

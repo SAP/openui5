@@ -8,7 +8,8 @@ sap.ui.define(['./Service'], function (Service) {
 	 * @class Navigation
 	 * Implements the abstract base class for a Navigation Service
 	 * @experimental
-	 * @sap-restricted sap.ushell
+	 * @private
+	 * @ui5-restricted sap.ushell
 	 * @extends Service
 	 */
 	var Navigation = Service.extend();

@@ -188,7 +188,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * @param {string}
 	 *            sEventId The identifier of the event to fire
 	 * @param {object}
-	 *            [mParameters] The parameters which should be carried by the event
+	 *            [oParameters] Parameters which should be carried by the event
 	 * @param {boolean}
 	 *            [bAllowPreventDefault] Defines whether function <code>preventDefault</code> is supported on the fired event
 	 * @param {boolean}
@@ -198,12 +198,12 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 *                                             the function returns <code>true</code> if the default action should be executed, <code>false</code> otherwise.
 	 * @protected
 	 */
-	EventProvider.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
+	EventProvider.prototype.fireEvent = function(sEventId, oParameters, bAllowPreventDefault, bEnableEventBubbling) {
 
 		// get optional parameters right
-		if (typeof mParameters === "boolean") {
+		if (typeof oParameters === "boolean") {
 			bEnableEventBubbling = bAllowPreventDefault;
-			bAllowPreventDefault = mParameters;
+			bAllowPreventDefault = oParameters;
 		}
 
 		/* eslint-disable consistent-this */
@@ -219,7 +219,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 
 				// avoid issues with 'concurrent modification' (e.g. if an event listener unregisters itself).
 				aEventListeners = aEventListeners.slice();
-				oEvent = oEvent || this.oEventPool.borrowObject(sEventId, this, mParameters); // borrow event lazily
+				oEvent = oEvent || this.oEventPool.borrowObject(sEventId, this, oParameters); // borrow event lazily
 
 				for (i = 0, iL = aEventListeners.length; i < iL; i++) {
 					oInfo = aEventListeners[i];

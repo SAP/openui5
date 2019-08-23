@@ -566,8 +566,8 @@ sap.ui.define([
 	 * @param {object} mParameters The parameters which complement the event. Hooks must not modify the parameters.
 	 * @function
 	 * @private
-	 * @experimental Since 1.58
 	 * @ui5-restricted
+	 * @experimental Since 1.58
 	 */
 	Element._interceptEvent = undefined;
 
@@ -1370,7 +1370,7 @@ sap.ui.define([
 	 * @returns {Element} The first matching DOM Element for the setting or <code>null</code>
 	 * @throws {SyntaxError} When the selector string in the metadata is not a valid CSS selector group
 	 * @private
-	 * @sap-restricted internal usage for drag and drop and sap.ui.dt
+	 * @ui5-restricted internal usage for drag and drop and sap.ui.dt
 	 */
 	Element.prototype.getDomRefForSetting = function (sSettingsName) {
 		var oSetting = this.getMetadata().getAllSettings()[sSettingsName];
@@ -1393,7 +1393,7 @@ sap.ui.define([
 	 * Returns the contextual width of an element, if set, or <code>undefined</code> otherwise
 	 * @returns {*}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._getMediaContainerWidth = function () {
 		if (typeof this._oContextualSettings === "undefined") {
@@ -1409,7 +1409,7 @@ sap.ui.define([
 	 * @param {string} sName
 	 * @returns {object}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._getCurrentMediaContainerRange = function (sName) {
 		var iWidth = this._getMediaContainerWidth();
@@ -1463,7 +1463,7 @@ sap.ui.define([
 	 * @param {object} oListener
 	 * @param {string} sName
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._attachMediaContainerWidthChange = function (fnFunction, oListener, sName) {
 		sName = sName || Device.media.RANGESETS.SAP_STANDARD;
@@ -1489,7 +1489,7 @@ sap.ui.define([
 	 * @param {object} oListener
 	 * @param {string} sName
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Element.prototype._detachMediaContainerWidthChange = function (fnFunction, oListener, sName) {
 		var oL;
@@ -1572,6 +1572,9 @@ sap.ui.define([
 	 * </pre>
 	 * where <code>oElement</code> is the currently visited element instance and <code>sID</code>
 	 * is the ID of that instance.
+	 *
+	 * The order in which the callback is called for elements is not specified and might change between
+	 * calls (over time and across different versions of UI5).
 	 *
 	 * If elements are created or destroyed within the <code>callback</code>, then the behavior is
 	 * not specified. Newly added objects might or might not be visited. When an element is destroyed during

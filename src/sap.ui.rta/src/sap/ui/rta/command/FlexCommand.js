@@ -170,7 +170,7 @@ sap.ui.define([
 	 * @param {object} mChangeSpecificData - Map containing change specific data
 	 * @param {object} mFlexSettings - Map containing flex settings
 	 * @param {string} sVariantManagementReference - Reference to the variant management
-	 * @returns {promise.<object>} Change object wrapped in a promise.
+	 * @returns {Promise.<object>} Change object wrapped in a promise.
 	 * @private
 	 */
 	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementReference) {

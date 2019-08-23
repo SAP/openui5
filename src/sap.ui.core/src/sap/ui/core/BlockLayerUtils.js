@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.BlockLayerUtils
 	 * @static
 	 * @private
-	 * @sap-restricted sap.ui.core.Control
+	 * @ui5-restricted sap.ui.core.Control
 	 */
 	var BlockLayerUtils = {},
 		aPreventedEvents = ["focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "touchstart", "touchmove", "mouseup", "touchend", "click"],

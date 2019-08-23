@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @namespace sap.ui.core.util.reflection.JsControlTreeModifier
 	 * @extends sap.ui.core.util.reflection.BaseTreeModifier
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 * @since 1.56.0
 	 */
 	var JsControlTreeModifier = /** @lends sap.ui.core.util.reflection.JsControlTreeModifier */ {

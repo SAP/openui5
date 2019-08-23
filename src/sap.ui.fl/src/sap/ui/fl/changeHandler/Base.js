@@ -13,6 +13,7 @@ sap.ui.define([
 	 * Base functionality for all change handlers, which provides some reuse methods
 	 * @namespace sap.ui.fl.changeHandler.Base
 	 * @version ${version}
+	 * @private
 	 * @ui5-restricted change handlers
 	 */
 	var Base = /** @lends sap.ui.fl.changeHandler.Base */{
@@ -24,6 +25,7 @@ sap.ui.define([
 		 * @param {string} sText - Text value
 		 * @param {string} sType - Translation text type, e.g. XBUT, XTIT, XTOL, XFLD
 		 *
+		 * @private
 		 * @ui5-restricted
 		 */
 		setTextInChange: function(oChange, sKey, sText, sType) {

@@ -2096,9 +2096,10 @@ sap.ui.define([
 
 
 		/**
-		 * Returns the duration for the Popover's closing animation
-		 * @sap-restricted sap.ui.dt.plugin.MiniMenu
+		 * Returns the duration for the Popover's closing animation.
+		 *
 		 * @private
+		 * @ui5-restricted sap.ui.dt.plugin.MiniMenu
 		 */
 		Popover.prototype._getAnimationDuration = function () {
 			return 300;

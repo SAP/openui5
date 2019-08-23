@@ -1439,7 +1439,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Core.prototype.lock = function () {
-		// TODO clarify it the documentation is really (stil?) true
+		// TODO clarify it the documentation is really (still?) true
 		this.bLocked = true;
 	};
 
@@ -1851,7 +1851,10 @@ sap.ui.define([
 	}
 
 	/**
-	 * Loads the given library and its dependencies and makes it available to the application.
+	 * Loads the given library and its dependencies and makes its content available to the application.
+	 *
+	 *
+	 * <h3>What it does</h3>
 	 *
 	 * When library preloads are not suppressed for the given library, then a library-preload bundle
 	 * will be loaded for it. By default, the bundle will be loaded synchronously (for compatibility
@@ -1884,6 +1887,33 @@ sap.ui.define([
 	 * When the given library has been loaded already, no further action will be taken, especially, a given
 	 * URL will not be registered! In the case of asynchronous loading, a Promise will be returned, but will be
 	 * resolved immediately.
+	 *
+	 *
+	 * <h3>When to use</h3>
+	 *
+	 * For applications that follow the best practices and use components with component descriptors (manifest.json),
+	 * the framework will load all declared mandatory libraries and their dependencies automatically before instantiating
+	 * the application component.
+	 *
+	 * The same is true for libraries that are listed in the bootstrap configuration (e.g. with the attribute
+	 * <code>data-sap-ui-libs</code>). They will be loaded before the <code>init</code> event of the UI5 Core is fired.
+	 *
+	 * Only when an app declares a library to be a lazy library dependency or when code does not use descriptors at all,
+	 * then an explicit call to <code>loadLibrary</code> becomes necessary. The call should be made before artifacts
+	 * (controls, elements, types, helpers, modules etc.) from the library are used or required. This allows the framework
+	 * to optimize access to those artifacts.
+	 *
+	 * For example, when an app uses a heavy-weight charting library that shouldn't be loaded during startup, it can
+	 * declare it as "lazy" and load it just before it loads and displays a view that uses the charting library:
+	 * <pre>
+	 *   sap.ui.getCore().loadLibrary("heavy.charting", {async: true})
+	 *     .then(function() {
+	 *       View.create({
+	 *         name: "myapp.views.HeavyChartingView",
+	 *         type: ViewType.XML
+	 *       });
+	 *     });
+	 * </pre>
 	 *
 	 * @param {string} sLibrary name of the library to load
 	 * @param {string|boolean|object} [vUrl] URL to load the library from or the async flag or a complex configuration object
@@ -1962,7 +1992,7 @@ sap.ui.define([
 	 * @experimental Since 1.27.0 This API is not mature yet and might be changed or removed completely.
 	 * Productive code should not use it, except code that is delivered as part of UI5.
 	 * @private
-	 * @sap-restricted sap.ui.core,sap.ushell
+	 * @ui5-restricted sap.ui.core,sap.ushell
 	 */
 	Core.prototype.loadLibraries = function(aLibraries, mOptions) {
 
@@ -2756,13 +2786,17 @@ sap.ui.define([
 	 */
 
 	 /**
-	 * Attach event-handler <code>fnFunction</code> to the <code>ThemeChanged</code> event of this <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:ThemeChanged ThemeChanged} event
+	 * of this <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 * @public
 	 */
 	Core.prototype.attachThemeChanged = function(fnFunction, oListener) {
@@ -2770,12 +2804,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the <code>ThemeChanged</code> event of this <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:ThemeChanged ThemeChanged} event
+	 * of this <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Object on which the given function had to be called.
 	 * @public
@@ -2787,29 +2822,29 @@ sap.ui.define([
 	/**
 	 * Fires event <code>ThemeChanged</code> to attached listeners.
 	 *
-	 * @param {object} [mParameters] Parameters to pass along with the event
-	 * @param {object} [mParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
+	 * @param {object} [oParameters] Parameters to pass along with the event
+	 * @param {string} [oParameters.theme] Theme name (default is <code>sap.ui.getCore().getConfiguration().getTheme()</code>)
 	 */
-	Core.prototype.fireThemeChanged = function(mParameters) {
+	Core.prototype.fireThemeChanged = function(oParameters) {
 		getScrollbarSize(true);
 
 		// special hook for resetting theming parameters before the controls get
 		// notified (lightweight coupling to static Parameters module)
-		var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
-		if (Parameters) {
-			Parameters.reset(/* bOnlyWhenNecessary= */ true);
+		var ThemeParameters = sap.ui.require("sap/ui/core/theming/Parameters");
+		if (ThemeParameters) {
+			ThemeParameters.reset(/* bOnlyWhenNecessary= */ true);
 		}
 
-		mParameters = mParameters || {};
+		oParameters = oParameters || {};
 		// set the current theme name as default if omitted
-		if (!mParameters.theme) {
-			mParameters.theme = this.getConfiguration().getTheme();
+		if (!oParameters.theme) {
+			oParameters.theme = this.getConfiguration().getTheme();
 		}
 
 		// notify all elements/controls via a pseudo browser event
 		var sEventId = Core.M_EVENTS.ThemeChanged;
 		var oEvent = jQuery.Event(sEventId);
-		oEvent.theme = mParameters.theme;
+		oEvent.theme = oParameters.theme;
 		Element.registry.forEach(function(oElement) {
 			oElement._handleEvent(oEvent);
 		});
@@ -2817,7 +2852,7 @@ sap.ui.define([
 		ActivityDetection.refresh();
 
 		// notify the listeners via a control event
-		_oEventProvider.fireEvent(sEventId, mParameters);
+		_oEventProvider.fireEvent(sEventId, oParameters);
 	};
 
 	/**
@@ -2879,10 +2914,13 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Register a listener for the <code>localizationChanged</code> event.
+	 * Register a listener for the {@link #event:localizationChanged localizationChanged} event.
 	 *
-	 * @param {function} fnFunction callback to be called
-	 * @param {object} oListener context object to cal lthe function on.
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
+	 *
+	 * @param {function} fnFunction Callback to be called when the event occurs
+	 * @param {object} [oListener] Context object to call the function on
 	 * @public
 	 */
 	Core.prototype.attachLocalizationChanged = function(fnFunction, oListener) {
@@ -2890,13 +2928,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Unregister a listener from the <code>localizationChanged</code> event.
+	 * Unregister a listener from the {@link #event:localizationChanged localizationChanged} event.
 	 *
 	 * The listener will only be unregistered if the same function/context combination
 	 * is given as in the call to <code>attachLocalizationListener</code>.
 	 *
-	 * @param {function} fnFunction callback to be deregistered
-	 * @param {object} oListener context object given in a previous call to attachLocalizationChanged.
+	 * @param {function} fnFunction Callback to be deregistered
+	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @public
 	 */
 	Core.prototype.detachLocalizationChanged = function(fnFunction, oListener) {
@@ -3229,8 +3267,11 @@ sap.ui.define([
 	/**
 	 * Registers a listener to the central interval timer.
 	 *
-	 * @param {function} fnFunction callback to be called periodically
-	 * @param {object} [oListener] optional context object to call the callback on.
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to the interval timer instance.
+	 *
+	 * @param {function} fnFunction Callback to be called periodically
+	 * @param {object} [oListener] Optional context object to call the callback on
 	 * @since 1.16.0
 	 * @deprecated Since 1.61. Use <code>IntervalTrigger.addListener()</code> from "sap/ui/core/IntervalTrigger" module.
 	 * @public
@@ -3246,7 +3287,7 @@ sap.ui.define([
 	 * Unregisters a listener for the central interval timer.
 	 *
 	 * A listener will only be unregistered if the same function/context combination
-	 * is given as in the attachIntervalTimer call.
+	 * is given as in the <code>attachIntervalTimer</code> call.
 	 *
 	 * @param {function} fnFunction function to unregister
 	 * @param {object} [oListener] context object given during registration
@@ -3263,8 +3304,11 @@ sap.ui.define([
 	/**
 	 * Registers a listener for control events.
 	 *
-	 * @param {function} fnFunction callback to be called for each control event
-	 * @param {object} [oListener] optional context object to call the callback on.
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
+	 *
+	 * @param {function} fnFunction Callback to be called for each control event
+	 * @param {object} [oListener] Optional context object to call the callback on
 	 * @public
 	 */
 	Core.prototype.attachControlEvent = function(fnFunction, oListener) {
@@ -3274,11 +3318,10 @@ sap.ui.define([
 	/**
 	 * Unregisters a listener for control events.
 	 *
-	 * A listener will only be unregistered if the same function/context combination
-	 * is given as in the attachControlEvent call.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
-	 * @param {function} fnFunction function to unregister
-	 * @param {object} [oListener] context object given during registration
+	 * @param {function} fnFunction Function to unregister
+	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @public
 	 */
 	Core.prototype.detachControlEvent = function(fnFunction, oListener) {
@@ -3286,12 +3329,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Notifies the listeners that an event on a control occurs
-	 * @param {map} mParameters { browserEvent: jQuery.Event }
+	 * Notifies the listeners that an event on a control occurs.
+	 *
+	 * @param {object} oParameters Parameters to pass along with the event, e.g. <code>{ browserEvent: jQuery.Event }</code>
 	 * @private
 	 */
-	Core.prototype.fireControlEvent = function(mParameters) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, mParameters);
+	Core.prototype.fireControlEvent = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ControlEvent, oParameters);
 	};
 
 	/**
@@ -3446,7 +3490,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
 	 * @param {string} [sName] the name of the model or <code>undefined</code>
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.setModel = function(oModel, sName) {
@@ -3579,20 +3623,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'validationError' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:validationError validationError} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
-	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachValidationError = function(oData, fnFunction, oListener) {
@@ -3606,15 +3653,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'validationError' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:validationError validationError} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachValidationError = function(fnFunction, oListener) {
@@ -3623,20 +3671,24 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'parseError' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:parseError parseError} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
-	 *            [oData] The object, that should be passed along with the event-object when firing the event
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachParseError = function(oData, fnFunction, oListener) {
@@ -3650,15 +3702,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'parseError' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:parseError parseError} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
 	 *            fnFunction The callback function to unregister.
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachParseError = function(fnFunction, oListener) {
@@ -3667,18 +3720,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'formatError' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:formatError formatError} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachFormatError = function(oData, fnFunction, oListener) {
@@ -3692,15 +3748,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'formatError' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:formatError formatError} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachFormatError = function(fnFunction, oListener) {
@@ -3709,20 +3766,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Attach event-handler <code>fnFunction</code> to the 'validationSuccess' event of <code>sap.ui.core.Core</code>.
+	 * Attaches event handler <code>fnFunction</code> to the {@link #event:validationSuccess validationSuccess} event
+	 * of <code>sap.ui.core.Core</code>.
+	 *
+	 * When called, the context of the listener (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * Please note that this event is a bubbling event and may already be canceled before reaching the core.
 	 *
 	 * @param {object}
 	 *            [oData] The object, that should be passed along with the event-object when firing the event
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function.
-	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 *
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachValidationSuccess = function(oData, fnFunction, oListener) {
@@ -3736,15 +3796,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detach event-handler <code>fnFunction</code> from the 'validationSuccess' event of <code>sap.ui.core.Core</code>.
+	 * Detaches event handler <code>fnFunction</code> from the {@link #event:validationSuccess validationSuccess} event
+	 * of <code>sap.ui.core.Core</code>.
 	 *
-	 * The passed function and listener object must match the ones previously used for event registration.
+	 * The passed function and listener object must match the ones used for event registration.
 	 *
 	 * @param {function}
-	 *            fnFunction The function to call, when the event occurs.
+	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
-	 *            oListener Object on which the given function had to be called.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 *            [oListener] Context object on which the given function had to be called
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachValidationSuccess = function(fnFunction, oListener) {
@@ -3754,16 +3815,16 @@ sap.ui.define([
 
 
 	/**
-	 * Fire event <code>parseError</code> to attached listeners.
+	 * Fires event {@link #event:parseError parseError} to attached listeners.
 	 *
-	 * @param {object} [oParameters] the arguments to pass along with the event.
-	 * @param {sap.ui.core.Element} oParameters.element The Element where the parse error occurred
-	 * @param {string}oParameters.property The property name of the element where the parse error occurred
-	 * @param {sap.ui.model.Type} oParameters.type The type of the property
-	 * @param {object} oParameters.newValue The value of the property which was entered when the parse error occurred
-	 * @param {object} oParameters.oldValue The value of the property which was present before a new value was entered (before the parse error)
-	 * @param {object} oParameters.exception The exception object which occurred and has more information about the parse error
-	 * @returns {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event.
+	 * @param {sap.ui.core.Element} oParameters.element Element where the parse error occurred
+	 * @param {string} oParameters.property Name of the property of the element where the parse error occurred
+	 * @param {sap.ui.model.Type} oParameters.type Type of the property
+	 * @param {object} oParameters.newValue Value of the property which was entered when the parse error occurred
+	 * @param {object} oParameters.oldValue Value of the property which was present before a new value was entered (before the parse error)
+	 * @param {object} oParameters.exception Exception object which occurred and has more information about the parse error
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Core.prototype.fireParseError = function(oParameters) {
@@ -3772,33 +3833,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'parseError' event is fired when input parsing fails.
+	 * The <code>parseError</code> event is fired when input parsing fails.
 	 *
 	 * @name sap.ui.core.Core#parseError
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the parse error occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the parse error occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the parse error occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the parse error)
-	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the parse error
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the parse error occurred
+	 * @param {string} oControlEvent.getParameters.property Name of the property of the element where the parse error occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the parse error occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the parse error)
+	 * @param {object} oControlEvent.getParameters.exception Exception object which occurred and has more information about the parse error
 	 * @public
 	 */
 
 	/**
-	 * Fire event <code>validationError</code> to attached listeners.
+	 * Fires event {@link #event:validationError validationError} to attached listeners.
 	 *
-	 * @param {object} [oParameters] the arguments to pass along with the event.
+	 * @param {object} [oParameters] Parameters to pass along with the event.
 	 * @param {sap.ui.core.Element} oParameters.element The Element where the validation error occurred
-	 * @param {string}oParameters.property The property name of the element where the validation error occurred
-	 * @param {sap.ui.model.Type} oParameters.type The type of the property
-	 * @param {object} oParameters.newValue The value of the property which was entered when the validation error occurred
-	 * @param {object} oParameters.oldValue The value of the property which was present before a new value was entered (before the validation error)
-	 * @param {object} oParameters.exception The exception object which occurred and has more information about the validation error
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {string} oParameters.property Property name of the element where the validation error occurred
+	 * @param {sap.ui.model.Type} oParameters.type Type of the property
+	 * @param {object} oParameters.newValue Value of the property which was entered when the validation error occurred
+	 * @param {object} oParameters.oldValue Value of the property which was present before a new value was entered (before the validation error)
+	 * @param {object} oParameters.exception Exception object which occurred and has more information about the validation error
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Core.prototype.fireValidationError = function(oParameters) {
@@ -3807,33 +3868,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'validationError' event is fired when validation of the input fails.
+	 * The <code>validationError</code> event is fired when validation of the input fails.
 	 *
 	 * @name sap.ui.core.Core#validationError
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the validation error occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the validation error occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the validation error occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the validation error)
-	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the validation error
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the validation error occurred
+	 * @param {string} oControlEvent.getParameters.property Property name of the element where the validation error occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the validation error occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the validation error)
+	 * @param {object} oControlEvent.getParameters.exception Exception object which occurred and has more information about the validation error
 	 * @public
 	 */
 
 	/**
-	 * Fire event <code>formatError</code> to attached listeners.
+	 * Fires event {@link #event:formatError formatError} to attached listeners.
 	 *
 	 * @param {object} [oParameters] Parameters to pass along with the event.
-	 * @param {sap.ui.core.Element} oParameters.element The Element where the format error occurred
-	 * @param {string} oParameters.property The property name of the element where the format error occurred
-	 * @param {sap.ui.model.Type} oParameters.type The type of the property
-	 * @param {any} oParameters.newValue The value of the property which was entered when the format error occurred
-	 * @param {any} oParameters.oldValue The value of the property which was present before a new value was entered (before the format error)
-	 * @param {object} oParameters.exception The exception object which occurred and has more information about the format error
-	 * @returns {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {sap.ui.core.Element} oParameters.element Element where the format error occurred
+	 * @param {string} oParameters.property Name of the property of the element where the format error occurred
+	 * @param {sap.ui.model.Type} oParameters.type Type of the property
+	 * @param {any} oParameters.newValue Value of the property which was entered when the format error occurred
+	 * @param {any} oParameters.oldValue Value of the property which was present before a new value was entered (before the format error)
+	 * @param {object} oParameters.exception Exception object which occurred and has more information about the format error
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Core.prototype.fireFormatError = function(oParameters) {
@@ -3842,24 +3903,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'formatError' event is fired when a value formatting fails. This can happen when a value stored in the model cannot be formatted to be displayed in an element property.
+	 * The <code>formatError</code> event is fired when a value formatting fails.
+	 *
+	 * This can happen when a value stored in the model cannot be formatted to be displayed in an element property.
 	 *
 	 * @name sap.ui.core.Core#formatError
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the format error occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the format error occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the format error occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the format error)
-	 * @param {object} oControlEvent.getParameters.exception The exception object which occurred and has more information about the format error
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the format error occurred
+	 * @param {string} oControlEvent.getParameters.property Name of the property of the element where the format error occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the format error occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the format error)
+	 * @param {object} oControlEvent.getParameters.exception Exception object which occurred and has more information about the format error
 	 * @public
 	 */
 
 	/**
-	 * Fire event validationSuccess to attached listeners.
+	 * Fires event {@link #event:validationSuccess validationSuccess} to attached listeners.
 	 *
 	 * Expects following event parameters:
 	 * <ul>
@@ -3870,29 +3933,28 @@ sap.ui.define([
 	 * <li>'oldValue' of type <code>object</code> </li>
 	 * </ul>
 	 *
-	 * @param {Map} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
+	 * @param {object} [oParameters] Parameters to pass along with the event
+	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
-	Core.prototype.fireValidationSuccess = function(mArguments) {
-		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationSuccess, mArguments);
+	Core.prototype.fireValidationSuccess = function(oParameters) {
+		_oEventProvider.fireEvent(Core.M_EVENTS.ValidationSuccess, oParameters);
 		return this;
 	};
 
 	/**
-	 * The 'validationSuccess' event is fired when a value validation was successfully completed.
+	 * The <code>validationSuccess</code> event is fired when a value validation was successfully completed.
 	 *
 	 * @name sap.ui.core.Core#validationSuccess
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-
-	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element The Element where the successful validation occurred
-	 * @param {string} oControlEvent.getParameters.property The property name of the element where the successfull validation occurred
-	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type The type of the property
-	 * @param {object} oControlEvent.getParameters.newValue The value of the property which was entered when the validation occurred
-	 * @param {object} oControlEvent.getParameters.oldValue The value of the property which was present before a new value was entered (before the validation)
+	 * @param {sap.ui.core.Element} oControlEvent.getParameters.element Element where the successful validation occurred
+	 * @param {string} oControlEvent.getParameters.property Name of the property of the element where the successful validation occurred
+	 * @param {sap.ui.model.Type} oControlEvent.getParameters.type Type of the property
+	 * @param {object} oControlEvent.getParameters.newValue Value of the property which was entered when the validation occurred
+	 * @param {object} oControlEvent.getParameters.oldValue Value of the property which was present before a new value was entered (before the validation)
 	 * @public
 	 */
 
@@ -3906,8 +3968,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Friendly function to access the provider from outside the core
-	 * This is needed for UIArea to set the core as the top level eventing parent
+	 * Friendly function to access the provider from outside the core.
+	 *
+	 * This is needed for UIArea to set the core as the top level eventing parent.
+	 *
 	 * @returns {*}
 	 * @private
 	 */
@@ -3961,14 +4025,15 @@ sap.ui.define([
 
 	/**
 	 * Called by the Core after it has been initialized.
+	 *
 	 * If a plugin is added to the core after its initialization, then
 	 * this method is called during registration of the plugin.
 	 *
 	 * Implementing this method is optional for a plugin.
 	 *
 	 * @name sap.ui.core.CorePlugin.prototype.startPlugin
-	 * @param {sap.ui.core.Core} oCore reference to the core
-	 * @param {boolean} bOnInit whether the hook is called during Core.init() or later
+	 * @param {sap.ui.core.Core} oCore Reference to the core
+	 * @param {boolean} bOnInit Whether the hook is called during Core.init() or later
 	 * @function
 	 */
 
@@ -3979,7 +4044,7 @@ sap.ui.define([
 	 * Implementing this method is optional for a plugin.
 	 *
 	 * @name sap.ui.core.CorePlugin.prototype.stopPlugin
-	 * @param {sap.ui.core.Core} oCore reference to the core
+	 * @param {sap.ui.core.Core} oCore Reference to the core
 	 * @function
 	 */
 

@@ -856,7 +856,7 @@ sap.ui.define([
 	* Returns all the controls from the <code>sap.m.OverflowToolbar</code>,
 	* that are not in the overflow area and their <code>visible</code> property is <code>true</code>.
 	* @private
-	* @sap-restricted
+	* @ui5-restricted
 	* @returns {*|Array.<sap.ui.core.Control>}
 	*/
 	OverflowToolbar.prototype._getVisibleAndNonOverflowContent = function () {

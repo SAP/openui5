@@ -38,7 +38,6 @@ sap.ui.define([
 			 * @link{sap.ui.test.pipelines.PipelineFactory.constructor} functionName
 			 * Example:
 			 *
-			 * <code>
 			 * <pre>
 			 * oFactory = new PipelineFactory({
 			 *      name: "myName",
@@ -55,7 +54,6 @@ sap.ui.define([
 			 * })
 			 *
 			 * </pre>
-			 * </code>
 			 *
 			 * @param {function|function[]|object|object[]} input or several functions or objects all of them will have a uniform structure after the create
 			 * @returns {object[]} result - an array of objects implementing the given functionName

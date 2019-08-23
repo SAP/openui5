@@ -296,8 +296,7 @@ sap.ui.define([
 			 * @param {boolean} [oOptions.searchOpenDialogs] Only controls in the static UI area of UI5 are searched.
 			 * @param {string|function} [oOptions.controlType] @since 1.40 match all controls of a certain type
 			 * It is usually combined with viewName or searchOpenDialogs. If no control matches the type, an empty array will be returned. Examples:
-			 * <code>
-			 *     <pre>
+			 * <pre>
 			 *         // will return an array of all visible buttons
 			 *         new OpaPlugin().getMatchingControls({
 			 *             controlType: "sap.m.Button"
@@ -316,8 +315,7 @@ sap.ui.define([
 			 *             viewName: "my.View"
 			 *             controlType: "sap.m.Input"
 			 *         });
-			 *     </pre>
-			 * </code>
+			 * </pre>
 			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|null}
 			 * <ul>
 			 *     <li>if a oOptions.id is a string, will return the single matching control or null if no controls match</li>

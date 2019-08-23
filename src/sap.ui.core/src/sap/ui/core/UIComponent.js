@@ -107,30 +107,15 @@ sap.ui.define([
 	}, /* Metadata constructor */ UIComponentMetadata);
 
 	/**
-	 * Creates a new subclass of class <code>sap.ui.core.UIComponent</code> with name
-	 * <code>sClassName</code> and enriches it with the information contained in <code>oClassInfo</code>.
-	 * <code>oClassInfo</code> might contain the same kind of information as described in
-	 * {@link sap.ui.core.Element.html#.extend}.
+	 * An object containing the routing-relevant configurations, routes, targets, config.
 	 *
-	 * @alias {sap.ui.core.UIComponent.extend}
-	 * @public
-	 * @param {string} sClassName Name of the class to be created
+	 * <h3>Example for a config:</h3>
 	 *
-	 * @param {object} [oClassInfo] Object literal with information about the class
-	 *
-	 * @param {object} [oClassInfo.metadata] See {@link sap.ui.core.Element.html#.extend} for the values allowed in every extend.
-	 *
-	 * @param {object} [oClassInfo.metadata.routing]
-	 * @since 1.16
-	 * An object containing he routing-relevant configurations, routes, targets, config
-	 * <b>Example for a config:</b><br/>
 	 * <pre>
-	 * <code>
-	 * metadata : {
-	 *     "routing": {
+	 *     routing: {
 	 *         "routes": {
 	 *             "welcome": {
-	 *                 // If the url has no hash e.g.: index.html or index.html# , this route will be matched.
+	 *                 // If the URL has no hash e.g.: index.html or index.html# , this route will be matched.
 	 *                 "pattern": "",
 	 *                 // Displays the target called "welcome" specified in metadata.routing.targets.welcome.
 	 *                 "target": "welcome"
@@ -173,52 +158,76 @@ sap.ui.define([
 	 *             }
 	 *         }
 	 *     }
-	 * }
-	 * </code>
+	 *
 	 * </pre>
 	 *
-	 * Later you can retrieve the Router with {@link #getRouter} to register on callbacks when routes have matched. You can also retrieve Targets with {@link #getTargets} to display views without changing the hash.
+	 * @property {object} [routes]
+	 * An object containing the routes that should be added to the router. See {@link sap.ui.core.routing.Route}
+	 * for the allowed properties.
 	 *
-	 * @param {object} [oClassInfo.metadata.routing.routes]
-	 * @since 1.16
-	 * An object containing the routes that should be added to the Router. See {@link sap.ui.core.routing.Route} for the allowed properties.
+	 * @property {object} [targets]
+	 * Since 1.28.1. An object containing the targets that will be available for the router and the <code>Targets</code>
+	 * instance. See {@link sap.ui.core.routing.Targets} for the allowed values.
 	 *
-	 * @param {object} [oClassInfo.metadata.routing.targets]
-	 * @since 1.28.1
-	 * An object containing the targets that will be available for the router and the Targets instance.
-	 * Read {@link sap.ui.core.routing.Targets} for the allowed values.
-	 *
-	 * @param {object} [oClassInfo.metadata.routing.config]
-	 * @since 1.16
-	 * An object containing default values used for routes and targets.
+	 * @property {object} [config]
+	 * Since 1.16. An object containing default values used for routes and targets.
 	 * See {@link sap.ui.core.routing.Router#constructor} and {@link sap.ui.core.routing.Targets} for more documentation.
 	 *
-	 * @param {string|function} [oClassInfo.metadata.routing.config.routerClass] Default: "sap.ui.core.routing.Router".
-	 * @since 1.20
-	 * The namespace of the router that is used in the component.
-	 * If you are using an own router extension, it has to be required before the constructor of the component is invoked.
-	 * If you use <code>sap.m.routing.Router</code> the component will automatically create a {@link sap.m.routing.Targets} instance.
-	 * If you pass a function, it has to be a constructor function extending a router.
+	 * @property {string|function} [config.routerClass="sap.ui.core.routing.Router"]
+	 * Since 1.20. The qualified name (in dot notation) or the constructor of the router class that should be used for the
+	 * component's router. If you are using an own router extension, it has to be required before the constructor of the
+	 * component is invoked. If you use <code>sap.m.routing.Router</code>, the component will automatically create an
+	 * {@link sap.m.routing.Targets} instance. If you pass a function, it has to be the constructor of a class
+	 * that extends a router.
 	 *
-	 * @param {string|function} [oClassInfo.metadata.routing.config.targetsClass]
-	 * @since 1.28.1
-	 * default: "sap.ui.core.routing.Targets".
-	 * The namespace of the targets that are used in the component.
-	 * If you are using an own Targets extension, it has to be required before the constructor of the component is invoked.
-	 * If you define routes in your routing section, this parameter will be ignored and the Targets instance of the router will be taken see {@lint #sap.ui.core.routing.Router#getTargets}.
+	 * @property {string|function} [config.targetsClass="sap.ui.core.routing.Targets"]
+	 * Since 1.28.1. The qualified name (in dot notation) or the constructor of the <code>Targets</code> class that
+	 * should be used by the component's router. If you are using an own <code>Targets</code> extension, it has to be
+	 * required before the constructor of the component is invoked. If you define routes in your routing section, this
+	 * parameter will be ignored and the <code>Targets</code> instance of the router will be taken, see
+	 * {@lint #sap.ui.core.routing.Router#getTargets}.
 	 *
+	 * @property {string} [config.rootView]
+	 * By default, the root view will be set to the ID of the view returned by the {@link sap.ui.core.UIComponent#getRootView}
+	 * function. You should not set this parameter if you create a view with the UIComponent.
 	 *
-	 * @param {string} [oClassInfo.metadata.routing.config.rootView]
-	 * By default the rootView will be set to the ID of the view returned by the {@link #getRootView} function.
-	 * You should not set this parameter if you create a view with the UIComponent.
-	 *
-	 * @param {function} [FNMetaImpl} Constructor function for the metadata object. If not given, it defaults to {@link sap.ui.core.ElementMetadata}.
+	 * @typedef sap.ui.core.UIComponent.RoutingMetadata
+	 * @public
 	 */
 
 	/**
-	 * Callback handler which will be executed once a new Component instance is
-	 * initialized.
-	 * <p>
+	 * Creates a new subclass of class <code>sap.ui.core.UIComponent</code> with name
+	 * <code>sClassName</code> and enriches it with the information contained in <code>oClassInfo</code>.
+	 * <code>oClassInfo</code> might contain the same kind of information as described in
+	 * {@link sap.ui.core.Component.extend}.
+	 *
+	 * @param {string} sClassName
+	 *            Qualified name of the newly created class
+	 * @param {object} [oClassInfo]
+	 *            Object literal with information about the class
+	 * @param {object} [oClassInfo.metadata]
+	 *            See {@link sap.ui.core.Element.extend} for the values allowed in every extend.
+	 * @param {sap.ui.core.UIComponent.RoutingMetadata} [oClassInfo.metadata.routing]
+	 *            Since 1.16. An object containing the routing-relevant configurations, routes, targets, config.
+	 *
+	 *            After creating a component instance, you can retrieve the router with {@link #getRouter}
+	 *            to register a callback to be notified when routes have matched etc. You can also retrieve
+	 *            targets with {@link #getTargets} to display views without changing the hash.
+	 *
+	 *            <b>Note: Configuring the routing in the metadata in the source code is deprecated.
+	 *            Better create an application descriptor (manifest.json) instead for your component.</b>
+	 *
+	 * @param {function} [FNMetaImpl}
+	 *            Constructor function for the metadata object. If not given, it defaults to
+	 *            <code>sap.ui.core.UIComponentMetadata</code> (which is not public).
+	 * @name sap.ui.core.UIComponent.extend
+	 * @function
+	 * @public
+	 */
+
+	/**
+	 * Callback handler which will be executed once a new Component instance is initialized.
+	 *
 	 * Example usage:
 	 * <pre>
 	 * sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
@@ -227,19 +236,18 @@ sap.ui.define([
 	 *   }
 	 * });
 	 * </pre>
-	 * <p>
+	 *
 	 * <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
 	 *
-	 * @sap-restricted sap.ushell
 	 * @private
+	 * @ui5-restricted sap.ushell
 	 * @since 1.37.0
 	 */
 	UIComponent._fnOnInstanceInitialized = null;
 
 	/**
-	 * Callback handler which will be executed when a Component instance is
-	 * destroyed.
-	 * <p>
+	 * Callback handler which will be executed when a Component instance is destroyed.
+	 *
 	 * Example usage:
 	 * <pre>
 	 * sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
@@ -248,24 +256,24 @@ sap.ui.define([
 	 *   }
 	 * });
 	 * </pre>
-	 * <p>
+	 *
 	 * <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
 	 *
-	 * @sap-restricted sap.ushell
 	 * @private
+	 * @ui5-restricted sap.ushell
 	 * @since 1.40
 	 */
 	UIComponent._fnOnInstanceDestroy = null;
 
 	/**
-	 * Initializes the Component instance after creation.
+	 * Initializes the component instance after creation.
 	 *
 	 * Applications must not call this hook method directly, it is called by the
 	 * framework while the constructor of a Component is executed.
 	 *
-	 * Subclasses of Component should override this hook to implement any necessary
+	 * Subclasses of <code>UIComponent</code> should override this hook to implement any necessary
 	 * initialization. <b>When overriding this function make sure to invoke the
-	 * init function of the UIComponent as well!</b>
+	 * <code>init</code> function of the <code>UIComponent</code> as well!</b>
 	 *
 	 * @protected
 	 */
@@ -384,17 +392,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the reference to the router instance. The passed controller or view
-	 * has to be created in the context of a UIComponent to return the router
+	 * Returns the reference to the router instance.
+	 *
+	 * The passed controller or view has to be created in the context of a UIComponent to return the router
 	 * instance. Otherwise this function will return undefined.
 	 * You may define the routerClass property in the config section of the routing to make the Component create your router extension.
+	 *
 	 * Example:
+	 * <pre>
 	 * routing: {
 	 * 	config: {
 	 * 		routerClass : myAppNamespace.MyRouterClass
 	 * 		...
 	 * }
 	 * ...
+	 * </pre>
 	 * @param {sap.ui.core.mvc.View|sap.ui.core.mvc.Controller} oControllerOrView either a view or controller
 	 * @return {sap.ui.core.routing.Router} the router instance
 	 * @since 1.16.1
@@ -561,7 +573,6 @@ sap.ui.define([
 	 * you will get the instance of the root view.
 	 * This getter will only return something if the {@link sap.ui.core.UIComponent#init} function was invoked.
 	 * If <code>createContent</code> is not implemented, and there is no root view, it will return <code>null</code>. Here is an example:
-	 * <code>
 	 *     <pre>
 	 *          var MyExtension = UIComponent.extend("my.Component", {
 	 *               metadata: {
@@ -574,7 +585,6 @@ sap.ui.define([
 	 *               }
 	 *          });
 	 *     </pre>
-	 * </code>
 	 * @protected
 	 * @since 1.44.0
 	 * @returns {sap.ui.core.Control} the control created by {@link sap.ui.core.UIComponent#createContent}
@@ -665,8 +675,8 @@ sap.ui.define([
 	/**
 	 * Determines the router class name by checking the "routing" configuration manifest entry.
 	 * Override to change the criteria for determining the router class.
-	 * @sap-restricted sap.suite.ui.generic.template
 	 * @private
+	 * @ui5-restricted sap.suite.ui.generic.template
 	 * @returns {string|undefined} Name of the router class to be used, or <code>undefined</code> for the default router.
 	 */
 	UIComponent.prototype._getRouterClassName = function() {

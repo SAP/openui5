@@ -24,6 +24,7 @@ sap.ui.define([
 	 *
 	 * @class sap.ui.fl.Change
 	 * @extends sap.ui.base.ManagedObject
+	 * @private
 	 * @ui5-restricted
 	 * @experimental Since 1.25.0
 	 */

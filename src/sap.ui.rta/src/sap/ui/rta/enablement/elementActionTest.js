@@ -43,13 +43,13 @@ function (
 	/**
 	 * Utility function which builds and registers QUnit tests to check if a SAPUI5 control is ready for UI adaptation at runtime (RTA)
 	 *
-	 * See <code>RTAControlEnabling.qunit.html<\code> and <code>RTAControlEnabling.qunit.js<\code> as an example on how to use.
+	 * See <code>RTAControlEnabling.qunit.html</code> and <code>RTAControlEnabling.qunit.js</code> as an example on how to use.
 	 *
 	 * During development you may insert ".skip" to ommit processing of a specific control enabling check:
-	 * <code>controlEnablingCheck.skip(...);<\code> instead of <code>controlEnablingCheck(...);<\code>.
+	 * <code>controlEnablingCheck.skip(...);</code> instead of <code>controlEnablingCheck(...);</code>.
 	 *
-	 * Use <code>controlEnablingCheck.only( sMsgSubstring );<\code> to specify that only some tests are to be executed:
-	 * E.g. <code>controlEnablingCheck.only("Remove");<\code>
+	 * Use <code>controlEnablingCheck.only( sMsgSubstring );</code> to specify that only some tests are to be executed:
+	 * E.g. <code>controlEnablingCheck.only("Remove");</code>
 	 *
 	 * @author SAP SE
 	 * @version ${version}

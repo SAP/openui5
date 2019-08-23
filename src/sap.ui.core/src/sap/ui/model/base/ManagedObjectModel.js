@@ -462,11 +462,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ManagedObjectModel.prototype.firePropertyChange = function (mArguments) {
-		if (mArguments.reason === ChangeReason.Binding) {
-			mArguments.resolvedPath = this.resolve(mArguments.path, mArguments.context);
+	ManagedObjectModel.prototype.firePropertyChange = function (oParameters) {
+		if (oParameters.reason === ChangeReason.Binding) {
+			oParameters.resolvedPath = this.resolve(oParameters.path, oParameters.context);
 		}
-		JSONModel.prototype.firePropertyChange.call(this, mArguments);
+		JSONModel.prototype.firePropertyChange.call(this, oParameters);
 	};
 
 	/**

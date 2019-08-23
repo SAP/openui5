@@ -463,7 +463,6 @@ sap.ui.define([
 		 * @param {string} [options.controlType] Selects all control by their type.
 		 * It is usually combined with a viewName or searchOpenDialogs. If no control is matching the type, an empty
 		 * array will be returned. Here are some samples:
-		 * <code>
 		 *     <pre>
 		 *         this.waitFor({
 		 *             controlType: "sap.m.Button",
@@ -491,7 +490,6 @@ sap.ui.define([
 		 *             }
 		 *         });
 		 *     </pre>
-		 * </code>
 		 * @param {boolean} [options.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [options.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
 		 * @param {boolean} [options.enabled=false] @since 1.66 If set to false, Opa5 will also look for disabled controls.
@@ -559,7 +557,6 @@ sap.ui.define([
 		 * since 1.42 an Action may add other waitFors.
 		 * The next action or the success handler will not be executed until the waitFor of the action has finished.
 		 * An example:
-		 * <code>
 		 *     <pre>
 		 *     this.waitFor({
 		 *         id: "myButton",
@@ -581,7 +578,6 @@ sap.ui.define([
 		 *         }
 		 *     });
 		 *     </pre>
-		 * </code>
 		 * Executing multiple actions will not wait between actions for a control to become "Interactable" again.
 		 * If you need waiting between actions you need to split the actions into multiple 'waitFor' statements.
 		 * @param {boolean} [options.autoWait=false] @since 1.42 Only has an effect if set to true. Since 1.53 it can also be a plain object.
@@ -590,13 +586,11 @@ sap.ui.define([
 		 * In addition, the control must be {@link sap.ui.test.matchers.Interactable}
 		 * So when autoWait is enabled, success behaves like an action in terms of waiting.
 		 * It is recommended to set this value to true for all your waitFor statements using:
-		 * <code>
-		 *     <pre>
+		 * <pre>
 		 *     Opa5.extendConfig({
 		 *         autoWait: true
 		 *     });
-		 *     </pre>
-		 * </code>
+		 * </pre>
 		 * Why it is recommended:
 		 * When writing a huge set of tests and executing them frequently you might face tests that are sometimes successful but sometimes they are not.
 		 * Setting the autoWait to true should stabilize most of those tests.
@@ -604,8 +598,7 @@ sap.ui.define([
 		 * There are cases where you do not want to wait for controls to be "Interactable":
 		 * For example when you are testing the Busy indication of your UI during the sending of a request.
 		 * But these cases are the exception so it is better to explicitly adding autoWait: false to this waitFor.
-		 * <code>
-		 *     <pre>
+		 * <pre>
 		 *     this.waitFor({
 		 *         id: "myButton",
 		 *         autoWait: false,
@@ -613,8 +606,7 @@ sap.ui.define([
 		 *              Opa5.assert.ok(oButton.getBusy(), "My Button was busy");
 		 *         }
 		 *     });
-		 *     </pre>
-		 * </code>
+		 * </pre>
 		 * This is also the easiest way of migrating existing tests. First extend the config, then see which waitFors
 		 * will time out and finally disable autoWait in these Tests.
 		 *

@@ -21,6 +21,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.apply._internal.connectors.StaticFileConnector
 	 * @experimental Since 1.67
 	 * @since 1.67
+	 * @private
 	 * @ui5-restricted sap.ui.fl.apply._internal.Connector
 	 */
 	var StaticFileConnector = merge({}, BaseConnector, /** sap.ui.fl.apply._internal.connectors.StaticFileConnector */ {
