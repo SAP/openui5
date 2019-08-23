@@ -79,12 +79,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reads the transports of the current user from the back end.
+	 * Reads the transports of the current user from the back end;
 	 * The "locked" attribute indicates that the provided file (package/name/type) is already locked on this transport.
 	 *
-	 * @param {object} mParameters map of parameters, see below
-	 * @param {string} mParameters.transportId - ABAP transport ID
-	 * @param {string} mParameters.changeIds - array of change ID objects with attributes "namespace", "fileName", "fileType"
+	 * @param {object} mParameters Map of parameters, see below
+	 * @param {string} mParameters.transportId ABAP transport ID
+	 * @param {string} mParameters.changeIds Array of change ID objects with attributes "namespace", "fileName", "fileType"
+	 * @param {string} mParameters.reference Application ID of the changes which should be transported
 	 * @returns {Promise} without parameters
 	 * @public
 	 */
