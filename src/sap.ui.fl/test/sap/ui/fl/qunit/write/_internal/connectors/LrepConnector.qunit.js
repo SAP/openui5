@@ -26,7 +26,7 @@ sap.ui.define([
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
-		QUnit.skip("given a mock server, when get flex info is triggered", function (assert) {
+		QUnit.test("given a mock server, when get flex info is triggered", function (assert) {
 			var oExpectedResponse = {
 				isResetEnabled: false,
 				isPublishEnabled: false
@@ -38,7 +38,7 @@ sap.ui.define([
 			return LrepConnector.getFlexInfo(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a flex info request is send containing the reference in the url and the app version and the layer as query parameters");
-				assert.deepEqual(oResponse, oExpectedResponse, "getFlexInfo response flow is correct");
+				assert.deepEqual(oResponse.response, oExpectedResponse, "getFlexInfo response flow is correct");
 			});
 		});
 		QUnit.test("given a mock server, when publish is triggered", function (assert) {
@@ -51,7 +51,7 @@ sap.ui.define([
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a make changes transportable request is send containing the reference, the app version, the layer, the changelist and the package as query parameters");
 			});
 		});
-		QUnit.skip("given a mock server, when reset is triggered", function (assert) {
+		QUnit.test("given a mock server, when reset is triggered", function (assert) {
 			var aExpectedResponse = [
 				{
 					appComponent: "sap.ui.demoapps.rta.freestyle.Component",
@@ -67,10 +67,10 @@ sap.ui.define([
 			return LrepConnector.reset(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "DELETE", "request method is DELETE");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a delete request is send containing the reference, the app version, the layer, the changelist, the generator, the selector Ids and the change types as query parameters");
-				assert.deepEqual(oResponse, aExpectedResponse, "reset response flow is correct");
+				assert.deepEqual(oResponse.response, aExpectedResponse, "reset response flow is correct");
 			});
 		});
-		QUnit.skip("given a mock server, when loadFeatures is triggered", function (assert) {
+		QUnit.test("given a mock server, when loadFeatures is triggered", function (assert) {
 			var oExpectedResponse = {
 				isKeyUser: true
 			};
@@ -81,7 +81,7 @@ sap.ui.define([
 			return LrepConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
 				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
 				assert.equal(sandbox.server.getRequest(0).url, sUrl, "Url is correct");
-				assert.deepEqual(oResponse, oExpectedResponse, "loadFeatures response flow is correct");
+				assert.deepEqual(oResponse.response, oExpectedResponse, "loadFeatures response flow is correct");
 			});
 		});
 	});
