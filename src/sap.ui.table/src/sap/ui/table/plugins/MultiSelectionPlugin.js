@@ -128,7 +128,8 @@ sap.ui.define([
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
 				icon: this.oDeselectAllIcon,
-				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector()
+				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector(),
+				enabled: this._bLimitDisabled || this.getSelectedCount() > 0
 			}
 		};
 	};
@@ -141,7 +142,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
 		var mRenderConfig = this.getRenderConfig();
 
-		if (!mRenderConfig.headerSelector.visible) {
+		if (!mRenderConfig.headerSelector.visible || !mRenderConfig.headerSelector.enabled) {
 			return;
 		}
 
