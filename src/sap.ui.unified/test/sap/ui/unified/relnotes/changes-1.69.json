@@ -5,24 +5,41 @@
       {
         "id": "c782ce9be8cbd71201e19ba3cb4c0e81e439b71f",
         "type": "FIX",
-        "text": " All libraries: apply migration tooling again",
-        "references": []
+        "text": "All libraries: apply migration tooling again",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2584"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2585"
+          }
+        ]
       },
       {
         "id": "f2f4e41730aa57458ebb540dbb57a3e94267e948",
         "type": "FIX",
-        "text": " sap.ui.unified.calendar.TimesRow: Now custom data is respected over locale\u0027s one",
+        "text": "sap.ui.unified.calendar.TimesRow: Now custom data is respected over locale's one",
         "references": [
           {
             "type": "BCP",
             "reference": "324698"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2540"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003246982019"
           }
         ]
       },
       {
         "id": "ae17fbeb435361bd4df78972aa1451697ae87023",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: Appointment selection now properly indicated",
+        "text": "sap.m.PlanningCalendar: Appointment selection now properly indicated",
         "references": [
           {
             "type": "BCP",
@@ -33,18 +50,22 @@
       {
         "id": "9375d005f0b629e2f4fd8415745e448fd3de85a0",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: appointments with start date later that end date are not rendered",
+        "text": "sap.m.PlanningCalendar: appointments with start date later that end date are not rendered",
         "references": [
           {
             "type": "BCP",
             "reference": "376892"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400003768922019"
           }
         ]
       },
       {
         "id": "033f6353856625273c8612f7186ab669d9a92f0d",
         "type": "FEATURE",
-        "text": " sap.ui.unified.Calendar: Year optimization for mobile phone",
+        "text": "sap.ui.unified.Calendar: Year optimization for mobile phone",
         "references": []
       }
     ]

@@ -5,19 +5,24 @@
       {
         "id": "344ff6c027330e4897c9e25ffd921350f4dbdd4a",
         "type": "FIX",
-        "text": " sap.m.Toolbar: Active toolbar focus outline corrected",
-        "references": []
+        "text": "sap.m.Toolbar: Active toolbar focus outline corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970271277"
+          }
+        ]
       },
       {
         "id": "95c3b0bd53d82a7fc58808dddb2ae57d3da55b35",
         "type": "FEATURE",
-        "text": " sap.f: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
+        "text": "sap.f: new sap_fiori_3_hcb and sap_fiori_3_hcw themes",
         "references": []
       },
       {
         "id": "4df1622db18581a22951aaa2479a2b0e61b189d4",
         "type": "FIX",
-        "text": " sap.m.Button: correct design in Bar",
+        "text": "sap.m.Button: correct design in Bar",
         "references": [
           {
             "type": "BCP",
@@ -32,19 +37,19 @@
       {
         "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
         "type": "FEATURE",
-        "text": " sap.f.Avatar: Added option to change the background color",
+        "text": "sap.f.Avatar: Added option to change the background color",
         "references": []
       },
       {
         "id": "71d638bee3f0453f42e5fe4813dc45057b7d44dc",
         "type": "FEATURE",
-        "text": " sap.m.SinglePlanningCalendar: Added one month view",
+        "text": "sap.m.SinglePlanningCalendar: Added one month view",
         "references": []
       },
       {
         "id": "6bbb15baf541804673f751076fb9acb39bf9961c",
         "type": "FIX",
-        "text": " sap.m.PullToRefresh: Focus aligned with Global Focus Concept",
+        "text": "sap.m.PullToRefresh: Focus aligned with Global Focus Concept",
         "references": [
           {
             "type": "BCP",
@@ -55,7 +60,7 @@
       {
         "id": "17c43d58472134da12588e023fd2db1017b4a8bf",
         "type": "FIX",
-        "text": " sap.m.ScrollContainer: Default focus outline removed",
+        "text": "sap.m.ScrollContainer: Default focus outline removed",
         "references": [
           {
             "type": "BCP",
@@ -66,7 +71,7 @@
       {
         "id": "176ca4d911cba1b17924353d54d50a09cd590def",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: Clickable area is wider",
+        "text": "sap.m.SegmentedButton: Clickable area is wider",
         "references": [
           {
             "type": "BCP",
@@ -77,7 +82,7 @@
       {
         "id": "d98e40ee2e995e156c9e576d7cf104215d77c834",
         "type": "FEATURE",
-        "text": " sap.f.Avatar: Introduced ability to display border",
+        "text": "sap.f.Avatar: Introduced ability to display border",
         "references": []
       }
     ]

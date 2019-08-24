@@ -5,7 +5,7 @@
       {
         "id": "e882e0f9da860549ca3b29bf199bee613f47a65e",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: all settings in samples are shown on mobile",
+        "text": "sap.ui.unified.Calendar: all settings in samples are shown on mobile",
         "references": [
           {
             "type": "BCP",

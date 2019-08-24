@@ -5,7 +5,7 @@
       {
         "id": "19d54c4c1c7c06da67c250de7e83861ed7f94ce5",
         "type": "FIX",
-        "text": " sap.ui.integration.widgets.Card: maxItems can be set through parameters now",
+        "text": "sap.ui.integration.widgets.Card: maxItems can be set through parameters now",
         "references": [
           {
             "type": "BCP",
@@ -16,19 +16,19 @@
       {
         "id": "7c639d2ff5a37df47f82ecdfcac3cb93647e87a8",
         "type": "FEATURE",
-        "text": " Widget for UI Integration of Components",
+        "text": "Widget for UI Integration of Components",
         "references": []
       },
       {
         "id": "b96ec6c41ecb66bf9e01a5473b7b84e2d74534b1",
         "type": "FEATURE",
-        "text": " sap.f.GridListItem: New control implemented",
+        "text": "sap.f.GridListItem: New control implemented",
         "references": []
       },
       {
         "id": "18f1e90f51eccf3515efc5398c4763df070a6867",
         "type": "FIX",
-        "text": " sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
+        "text": "sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
         "references": [
           {
             "type": "BCP",
