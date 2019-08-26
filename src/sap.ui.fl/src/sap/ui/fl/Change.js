@@ -543,7 +543,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.isReadOnly = function () {
-		return this._isReadOnlyDueToLayer() || this._isReadOnlyWhenNotKeyUser() || this._isChangeFromOtherSystem();
+		return this._isReadOnlyDueToLayer() || this._isReadOnlyWhenNotKeyUser() || this.isChangeFromOtherSystem();
 	};
 
 	/**
@@ -600,9 +600,9 @@ sap.ui.define([
 	 * Checks if change is read only because of its source system.
 	 * @returns {boolean} <code>true</code> if the change is from another system
 	 *
-	 * @private
+	 * @public
 	 */
-	Change.prototype._isChangeFromOtherSystem = function () {
+	Change.prototype.isChangeFromOtherSystem = function () {
 		var sSourceSystem = this.getSourceSystem();
 		var sSourceClient = this.getSourceClient();
 		if (!sSourceSystem || !sSourceClient) {

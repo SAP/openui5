@@ -595,49 +595,49 @@ function(
 			//false false false
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(false);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
 			assert.strictEqual(oChange.isReadOnly(), false);
 
 			//true false false
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(false);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
 			assert.strictEqual(oChange.isReadOnly(), true);
 
 			//false true false
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(false);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
 			assert.strictEqual(oChange.isReadOnly(), true);
 
 			//false false true
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(true);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
 			assert.strictEqual(oChange.isReadOnly(), true);
 
 			//true true false
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(false);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(false);
 			assert.strictEqual(oChange.isReadOnly(), true);
 
 			//true false true
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(false);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(true);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
 			assert.strictEqual(oChange.isReadOnly(), true);
 
 			//false true true
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(false);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(true);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
 			assert.strictEqual(oChange.isReadOnly(), true);
 
 			//true true true
 			oChange._isReadOnlyDueToLayer = sinon.stub().returns(true);
 			oChange._isReadOnlyWhenNotKeyUser = sinon.stub().returns(true);
-			oChange._isChangeFromOtherSystem = sinon.stub().returns(true);
+			oChange.isChangeFromOtherSystem = sinon.stub().returns(true);
 			assert.strictEqual(oChange.isReadOnly(), true);
 		});
 
@@ -685,77 +685,77 @@ function(
 			assert.strictEqual(oChange._isReadOnlyWhenNotKeyUser(), true);
 		});
 
-		QUnit.test("_isChangeFromOtherSystem shall return true when settings cannot be read", function(assert) {
+		QUnit.test("isChangeFromOtherSystem shall return true when settings cannot be read", function(assert) {
 			var oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "someSystem";
 			oChange._oDefinition.sourceClient = "someClient";
 			var oSettings;
 			sandbox.stub(Settings, "getInstanceOrUndef").returns(oSettings);
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), true);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), true);
 		});
 
-		QUnit.test("_isChangeFromOtherSystem shall return false when in settings no system and client info is maintained", function(assert) {
+		QUnit.test("isChangeFromOtherSystem shall return false when in settings no system and client info is maintained", function(assert) {
 			var oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "someSystem";
 			oChange._oDefinition.sourceClient = "someClient";
 			// no system and client info
 			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({isKeyUser: true}));
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), false);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), false);
 		});
 
-		QUnit.test("_isChangeFromOtherSystem shall return false when in settings no system info is maintained", function(assert) {
+		QUnit.test("isChangeFromOtherSystem shall return false when in settings no system info is maintained", function(assert) {
 			var oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "someSystem";
 			oChange._oDefinition.sourceClient = "someClient";
 			// no system info
 			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({client: "someClient"}));
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), false);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), false);
 		});
 
-		QUnit.test("_isChangeFromOtherSystem shall return false when in settings no client info is maintained", function(assert) {
+		QUnit.test("isChangeFromOtherSystem shall return false when in settings no client info is maintained", function(assert) {
 			var oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "someSystem";
 			oChange._oDefinition.sourceClient = "someClient";
 			// no client info
 			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({system: "someSystem"}));
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), false);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), false);
 		});
 
-		QUnit.test("_isChangeFromOtherSystem shall return false when change has no source system/client info", function(assert) {
+		QUnit.test("isChangeFromOtherSystem shall return false when change has no source system/client info", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({system: "someSystem", client: "someClient"}));
 			// change has no source system and client info
 			var oChange = new Change(this.oChangeDef);
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), false);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), false);
 			// change has source system but no source client info
 			oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "someSystem";
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), false);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), false);
 			// change has source client but no source system info
 			oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceClient = "someClient";
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), false);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), false);
 		});
 
-		QUnit.test("_isChangeFromOtherSystem shall return true when there is a mismatch between system/client info in the settings and the source system/client of the change", function(assert) {
+		QUnit.test("isChangeFromOtherSystem shall return true when there is a mismatch between system/client info in the settings and the source system/client of the change", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({system: "someSystem", client: "someClient"}));
 			// mismatch between system in settings and source system of change
 			var oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "anotherSystem";
 			oChange._oDefinition.sourceClient = "someClient";
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), true);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), true);
 			// mismatch between client in settings and source client of change
 			oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "someSystem";
 			oChange._oDefinition.sourceClient = "anotherClient";
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), true);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), true);
 		});
 
-		QUnit.test("_isChangeFromOtherSystem shall return false when system/client info in the settings and the source system/client of the change match", function(assert) {
+		QUnit.test("isChangeFromOtherSystem shall return false when system/client info in the settings and the source system/client of the change match", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({system: "someSystem", client: "someClient"}));
 			var oChange = new Change(this.oChangeDef);
 			oChange._oDefinition.sourceSystem = "someSystem";
 			oChange._oDefinition.sourceClient = "someClient";
-			assert.strictEqual(oChange._isChangeFromOtherSystem(), false);
+			assert.strictEqual(oChange.isChangeFromOtherSystem(), false);
 		});
 
 		QUnit.test("addDependentControl raises error when alias already exists", function(assert) {
