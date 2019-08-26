@@ -1912,12 +1912,8 @@ sap.ui.define([
 			oModel.setData(oData);
 
 			setTimeout(function () {
-
-				var iWindowScrollTop = jQuery(window).scrollTop(),
-					oDialogOffset = this.oDialog.$().offset();
-
 				// assert
-				assert.ok(iWindowScrollTop < oDialogOffset.top, "Dialog should NOT be out of the viewport");
+				assert.ok(this.oDialog.$().offset().top > 0, "Dialog should NOT be out of the viewport");
 				done();
 
 			}.bind(this), 1000);
