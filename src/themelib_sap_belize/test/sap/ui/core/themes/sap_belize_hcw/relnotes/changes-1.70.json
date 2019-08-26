@@ -23,6 +23,56 @@
             "reference": "1970422781"
           }
         ]
+      },
+      {
+        "id": "58b5b0958b030c1b669c251c722d7c07c1d17ab7",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: non-working hours introduced",
+        "references": []
+      },
+      {
+        "id": "967daf83e483c984270f2425b560d7a3540c81cc",
+        "type": "FIX",
+        "text": " @sapList_TableGroupHeaderBackground for HC themes corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970362383"
+          }
+        ]
+      },
+      {
+        "id": "d7ff4161bddff543e0fddf2a11e7059123395d94",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Corrected focus thickness",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970238768"
+          }
+        ]
+      },
+      {
+        "id": "bf668139a6102777aba64801ba7883511fcb9400",
+        "type": "FIX",
+        "text": " sap.m.MultiInput,MultiComboBox: Tooltips in disabled state now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980173700"
+          }
+        ]
+      },
+      {
+        "id": "99cd08d7b040a52bed732a125e1e876843430826",
+        "type": "FIX",
+        "text": " sap_belize: @sapButton_Emphasized_TextShadow fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980277403"
+          }
+        ]
       }
     ]
   }

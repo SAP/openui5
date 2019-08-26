@@ -7,6 +7,40 @@
         "type": "FEATURE",
         "text": "fl.VariantManagement: enhance unit test",
         "references": []
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "bc68eac773b587b9c951299e5b4bc3da238393b1",
+        "type": "FIX",
+        "text": " Flag change as read only when there is a source system mismatch",
+        "references": []
+      },
+      {
+        "id": "4acd74cecb7a47b9d31f06524d5868beb8272a30",
+        "type": "FIX",
+        "text": " VariantManagement: show default variant even when marked as non-favorite",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980318849"
+          }
+        ]
+      },
+      {
+        "id": "5a2865573a0036c191fe1e10227fc31c9343ef2a",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fixing the version of UI changes (dirty) relevant for",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980319377"
+          }
+        ]
       }
     ]
   }

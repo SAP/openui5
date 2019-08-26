@@ -22,6 +22,39 @@
             "reference": "002075129400004683712019"
           }
         ]
+      },
+      {
+        "id": "1193846f264574a4f0bf8d2889ed0bdb30ccf1c8",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Overlapping issue of the last item fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970364898"
+          }
+        ]
+      },
+      {
+        "id": "a7ad68acc064b7eee57937af8d51a14c319ed46d",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: RTL is now correct in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970431813"
+          }
+        ]
+      },
+      {
+        "id": "c6cc0c50d0e00124b1fba0be8a0f347dddf03d48",
+        "type": "FIX",
+        "text": " sap.f.GridList: GridBoxLayout resizing optimizations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1930410831"
+          }
+        ]
       }
     ]
   }

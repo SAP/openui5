@@ -12,6 +12,29 @@
             "reference": "1970370491"
           }
         ]
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "ba356bcdf28c04c4616ffb3a5d3ae4215dec00f4",
+        "type": "FIX",
+        "text": " sap.ui.rta: Placehoder for successful app variant deletion dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980318508"
+          }
+        ]
+      },
+      {
+        "id": "7f85937ce730c797c25155cbd19194dcd3d35f24",
+        "type": "FIX",
+        "text": ": RTA runtime authoring eslint fix",
+        "references": []
       }
     ]
   }

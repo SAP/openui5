@@ -121,7 +121,7 @@
       {
         "id": "6b5f7e6870f20519cefbe21c38d9bd6f8967c123",
         "type": "FIX",
-        "text": "sap.m.MultiInput: Picker now remains open after token's deletion",
+        "text": "sap.m.MultiInput: Picker now remains open after token\u0027s deletion",
         "references": [
           {
             "type": "BCP",
@@ -277,7 +277,7 @@
       {
         "id": "67caf20ad8ddf852a31911be3e44bf054a3c9b75",
         "type": "FIX",
-        "text": "sap.m.SinglePlanningCalendar: Cell's start/end information enhanced",
+        "text": "sap.m.SinglePlanningCalendar: Cell\u0027s start/end information enhanced",
         "references": [
           {
             "type": "BCP",
@@ -321,6 +321,210 @@
           {
             "type": "BCP",
             "reference": "1970263638"
+          }
+        ]
+      },
+      {
+        "id": "58b5b0958b030c1b669c251c722d7c07c1d17ab7",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: non-working hours introduced",
+        "references": []
+      },
+      {
+        "id": "b73ad89b9cf2073da594dab3f8c85a6f8e3483b5",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: clearButtonPressed parameter added to the Search event",
+        "references": []
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "10b2498cc0b77a791668553fd82e4e86d72dba57",
+        "type": "FIX",
+        "text": " P13nConditionPanel, P13nFilterPanel: use autoAddNewRow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "446848"
+          }
+        ]
+      },
+      {
+        "id": "ebc9d9591a6502ecd0e6f228ddcdc58e588bfe33",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Corrected alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448907"
+          }
+        ]
+      },
+      {
+        "id": "194d76d2d094f32523e83416fff1776121635824",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: doesn\u0027t show button if the list is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970373220"
+          }
+        ]
+      },
+      {
+        "id": "47f27791dc36d62ddb6dfb742f5f3282a2e65977",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Collapsed mode disabled for one item only",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970377699"
+          }
+        ]
+      },
+      {
+        "id": "2d0b354c4c22f240130ab44d11f9e03fc2b47ca9",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Items aggregation properly forwarded to MessageView",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970404487"
+          }
+        ]
+      },
+      {
+        "id": "9b2fe79d78c3afca41edd53da7c5cc6fe2099cd6",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Layout corrected when icon is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970432452"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970441822"
+          }
+        ]
+      },
+      {
+        "id": "bf668139a6102777aba64801ba7883511fcb9400",
+        "type": "FIX",
+        "text": " sap.m.MultiInput,MultiComboBox: Tooltips in disabled state now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980173700"
+          }
+        ]
+      },
+      {
+        "id": "231612a7d440a108eda451f8dd08a8876af31d2b",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent deletion of disabled token from N-more popup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970388683"
+          }
+        ]
+      },
+      {
+        "id": "02b72cb9dc1ac88f4ccb274b0a64e09db50ca729",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Prevent further handling of the tokenizer onsapprevious event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970409427"
+          }
+        ]
+      },
+      {
+        "id": "6f6cb04ecf7f23df06c25482ea3644c1819c8d2a",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Expand/collapse improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "421659"
+          }
+        ]
+      },
+      {
+        "id": "b6c1cb399add27e71dfefc7cd5b5f26bdcd6d559",
+        "type": "FIX",
+        "text": " sap.m.Page: Subheader padding fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970365105"
+          }
+        ]
+      },
+      {
+        "id": "cafab6ac613be89418adbd6e1f807223d7a6a810",
+        "type": "FIX",
+        "text": " sap.m.Panel: Heading level is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "507397"
+          }
+        ]
+      },
+      {
+        "id": "d0d334cb603bd05294132a4e797370ccaf4d0d45",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: End date of the resized appointment is correct now in 1 Month view, when the appointment starts in previous month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970307618"
+          }
+        ]
+      },
+      {
+        "id": "9541969aa0509caf81d67602f088709e33f1ae57",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Sample update",
+        "references": []
+      },
+      {
+        "id": "11638ef722545b164ac4937095279728c79413c8",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Value is updated first time on arrow up or down",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970440722"
+          }
+        ]
+      },
+      {
+        "id": "0b89ae6acf94c474b2a7b4720628f45afd3b8e65",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Keyboard handling in IE enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970333132"
+          }
+        ]
+      },
+      {
+        "id": "b880e1f22c9832050c02496e72f5216fad325633",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageDynamicHeaderContent: Facet color fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970318351"
           }
         ]
       }
