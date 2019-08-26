@@ -142,6 +142,18 @@ sap.ui.define([
 		return observer;
 	}
 
+	function isJSON(text) {
+		if (typeof text !== "string") {
+			return false;
+		}
+		try {
+			JSON.parse(text);
+			return true;
+		} catch (error) {
+			return false;
+		}
+	}
+
 	function createTagClass(prefixedTagName, TagImpl) {
 		if (document.createCustomElement[prefixedTagName]) {
 			return document.createCustomElement[prefixedTagName];
@@ -261,6 +273,11 @@ sap.ui.define([
 				var oType = oSetting.getType();
 				var vValue = oType.parseValue(newValue);
 				var vOldValue = oSetting.get(oTagImpl);
+
+				if (property === "manifest" && oType.getName() === "any" && isJSON(vValue)) {
+					vValue = JSON.parse(vValue);
+				}
+
 				if (oType.isValid(vValue)) {
 					oSetting.set(oTagImpl, vValue);
 				} else {
