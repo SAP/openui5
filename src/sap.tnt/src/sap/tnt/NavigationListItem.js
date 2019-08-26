@@ -428,15 +428,15 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		 * Renders the item.
 		 * @private
 		 */
-		NavigationListItem.prototype.render = function (rm, control, index, length) {
+		NavigationListItem.prototype.render = function (rm, control) {
 			if (!this.getVisible()) {
 			    return;
 			}
 
 			if (this.getLevel() === 0) {
-				this.renderFirstLevelNavItem(rm, control, index, length);
+				this.renderFirstLevelNavItem(rm, control);
 			} else {
-				this.renderSecondLevelNavItem(rm, control, index, length);
+				this.renderSecondLevelNavItem(rm, control);
 			}
 		};
 
@@ -444,7 +444,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		 * Renders the group item.
 		 * @private
 		 */
-		NavigationListItem.prototype.renderGroupItem = function (rm, control, index, length) {
+		NavigationListItem.prototype.renderGroupItem = function (rm, control) {
 
 			var isListExpanded = control.getExpanded(),
 				isNavListItemExpanded = this.getExpanded(),
@@ -460,21 +460,21 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				ariaProps.expanded = isNavListItemExpanded;
 			}
 
-			rm.write('<div');
+			rm.openStart("div");
 
-			rm.addClass("sapTntNavLIItem");
-			rm.addClass("sapTntNavLIGroup");
+			rm.class("sapTntNavLIItem");
+			rm.class("sapTntNavLIGroup");
 
 			if (!this.getEnabled()) {
-				rm.addClass("sapTntNavLIItemDisabled");
+				rm.class("sapTntNavLIItemDisabled");
 			} else {
-				rm.write(' tabindex="-1"');
+				rm.attr("tabindex", "-1");
 			}
 
 			if (!isListExpanded || control.hasStyleClass("sapTntNavLIPopup")) {
 				tooltip = this.getTooltip_AsString() || text;
 				if (tooltip) {
-					rm.writeAttributeEscaped("title", tooltip);
+					rm.attr("title", tooltip);
 				}
 
 				ariaProps.role = 'menuitem';
@@ -485,23 +485,20 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				ariaProps.role = 'treeitem';
 			}
 
-			rm.writeAccessibilityState(ariaProps);
+			rm.accessibilityState(ariaProps);
 
 			if (control.getExpanded()) {
 				tooltip = this.getTooltip_AsString() || text;
 				if (tooltip) {
-					rm.writeAttributeEscaped("title", tooltip);
+					rm.attr("title", tooltip);
 				}
 			}
 
-			rm.writeClasses();
-
-			rm.write(">");
+			rm.openEnd();
 
 			this._renderIcon(rm);
 
 			if (control.getExpanded()) {
-
 				var expandIconControl = this._getExpandIconControl();
 				expandIconControl.setVisible(this.getItems().length > 0 && this.getHasExpander());
 				expandIconControl.setSrc(this.getExpanded() ? NavigationListItem.collapseIcon : NavigationListItem.expandIcon);
@@ -511,97 +508,90 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 				rm.renderControl(expandIconControl);
 			}
 
-			rm.write("</div>");
+			rm.close("div");
 		};
 
 		/**
 		 * Renders the first-level navigation item.
 		 * @private
 		 */
-		NavigationListItem.prototype.renderFirstLevelNavItem = function (rm, control, index, length) {
+		NavigationListItem.prototype.renderFirstLevelNavItem = function (rm, control) {
 			var item,
 				items = this._getVisibleItems(this),
 				childrenLength = items.length,
 				expanded = this.getExpanded(),
 				isListExpanded = control.getExpanded();
 
-			rm.write('<li ');
-			rm.writeElementData(this);
+			rm.openStart("li", this);
 
 			if (this.getEnabled() && !isListExpanded) {
-				rm.write(' tabindex="-1"');
+				rm.attr('tabindex', '-1');
 			}
 
-			rm.write(">");
+			rm.openEnd();
 
-			this.renderGroupItem(rm, control, index);
+			this.renderGroupItem(rm, control);
 
 			if (isListExpanded) {
 
-				rm.write('<ul aria-hidden="true" ');
+				rm.openStart('ul');
+				rm.attr('aria-hidden', 'true');
 
-				rm.writeAttribute("role", "group");
-				rm.addClass("sapTntNavLIGroupItems");
-
+				rm.attr('role', 'group');
+				rm.class("sapTntNavLIGroupItems");
 				if (!expanded) {
-					rm.addClass("sapTntNavLIHiddenGroupItems");
+					rm.class("sapTntNavLIHiddenGroupItems");
 				}
 
-				rm.writeClasses();
-				rm.write(">");
+				rm.openEnd();
 
 				for (var i = 0; i < childrenLength; i++) {
 					item = items[i];
 					item.render(rm, control, i, childrenLength);
 				}
 
-				rm.write("</ul>");
+				rm.close("ul");
 			}
 
-			rm.write("</li>");
+			rm.close("li");
 		};
 
 		/**
 		 * Renders the second-level navigation item.
 		 * @private
 		 */
-		NavigationListItem.prototype.renderSecondLevelNavItem = function (rm, control, index, length) {
+		NavigationListItem.prototype.renderSecondLevelNavItem = function (rm, control) {
 
 			var group = this.getParent();
 
-			rm.write('<li');
-
-			rm.writeElementData(this);
-
-			rm.addClass("sapTntNavLIItem");
-			rm.addClass("sapTntNavLIGroupItem");
+			rm.openStart('li', this);
+			rm.class("sapTntNavLIItem");
+			rm.class("sapTntNavLIGroupItem");
 
 			if (!this.getEnabled() || !group.getEnabled()) {
-				rm.addClass("sapTntNavLIItemDisabled");
+				rm.class("sapTntNavLIItemDisabled");
 			} else {
-				rm.write(' tabindex="-1"');
+				rm.attr('tabindex', '-1');
 			}
 
 			var text = this.getText();
 
 			var tooltip = this.getTooltip_AsString() || text;
 			if (tooltip) {
-				rm.writeAttributeEscaped("title", tooltip);
+				rm.attr("title", tooltip);
 			}
 
 			// ARIA
-			rm.writeAccessibilityState({
+			rm.accessibilityState({
 				role: control.hasStyleClass("sapTntNavLIPopup") ? 'menuitem' : 'treeitem',
 				level: '2'
 			});
 
-			rm.writeClasses();
-
-			rm.write(">");
+			rm.openEnd();
 
 			this._renderText(rm);
 
-			rm.write("</li>");
+			rm.close('li');
 		};
 
 		/**
@@ -615,30 +605,31 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			if (icon) {
 				// Manually rendering the icon instead of using RenderManager's writeIcon. In this way title
 				// attribute is not rendered and the tooltip of the icon does not override item's tooltip
-				rm.write('<span');
+				rm.openStart('span');
+				rm.class("sapUiIcon");
+				rm.class("sapTntNavLIGroupIcon");
 
-				rm.addClass("sapUiIcon");
-				rm.addClass("sapTntNavLIGroupIcon");
-
-				rm.writeAttribute("aria-hidden", true);
+				rm.attr("aria-hidden", true);
 
 				if (iconInfo && !iconInfo.suppressMirroring) {
-					rm.addClass("sapUiIconMirrorInRTL");
+					rm.class("sapUiIconMirrorInRTL");
 				}
 
 				if (iconInfo) {
-					rm.writeAttribute("data-sap-ui-icon-content", iconInfo.content);
-					rm.addStyle("font-family", "'" + iconInfo.fontFamily + "'");
+					rm.attr("data-sap-ui-icon-content", iconInfo.content);
+					rm.style("font-family", "'" + iconInfo.fontFamily + "'");
 				}
 
-				rm.writeClasses();
-				rm.writeStyles();
-
-				rm.write("></span>");
+				rm.openEnd();
+				rm.close('span');
 			} else {
-				rm.write('<span class="sapUiIcon sapTntNavLIGroupIcon" aria-hidden="true"></span>');
+				rm.openStart('span');
+				rm.class('sapUiIcon');
+				rm.class('sapTntNavLIGroupIcon');
+				rm.attr('aria-hidden', true);
+				rm.openEnd();
+				rm.close('span');
 			}
-
 		};
 
 		/**
@@ -646,28 +637,24 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 		 * @private
 		 */
 		NavigationListItem.prototype._renderText =  function(rm) {
-			rm.write('<span');
-
-			rm.addClass("sapMText");
-			rm.addClass("sapTntNavLIText");
-			rm.addClass("sapMTextNoWrap");
-
-			rm.writeClasses();
+			rm.openStart('span');
+			rm.class("sapMText");
+			rm.class("sapTntNavLIText");
+			rm.class("sapMTextNoWrap");
 
 			var textDir = this.getTextDirection();
 			if (textDir !== TextDirection.Inherit){
-				rm.writeAttribute("dir", textDir.toLowerCase());
+				rm.attr("dir", textDir.toLowerCase());
 			}
 
 			var textAlign = Renderer.getTextAlign(TextAlign.Begin, textDir);
 			if (textAlign) {
-				rm.addStyle("text-align", textAlign);
-				rm.writeStyles();
+				rm.style("text-align", textAlign);
 			}
 
-			rm.write(">");
-			rm.writeEscaped(this.getText());
-			rm.write("</span>");
+			rm.openEnd();
+			rm.text(this.getText());
+			rm.close('span');
 		};
 
 		/**
@@ -798,7 +785,6 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			invisibleText.setText(text);
 
-			// jQuery Plugin "addAriaLabelledBy"
 			$focusedItem.addAriaLabelledBy(invisibleText.getId());
 		};
 
