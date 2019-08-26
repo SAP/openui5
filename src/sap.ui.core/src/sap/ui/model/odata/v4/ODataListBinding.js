@@ -723,7 +723,8 @@ sap.ui.define([
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
 				i$skipIndex = i - this.iCreatedContexts; // index on server ($skip)
-				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate");
+				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate")
+					|| _Helper.getPrivateAnnotation(aResults[i - iStart], "transientPredicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				if (sContextPath in this.mPreviousContextsByPath) {
 					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
