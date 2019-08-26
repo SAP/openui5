@@ -159,12 +159,6 @@ sap.ui.define([
 			 */
 			secondsStep: {type: "int", group: "Misc", defaultValue: 1 }
 		},
-		aggregations: {
-			/**
-			 * Internal aggregation that contains the inner _picker pop-up.
-			 */
-			_popup: { type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden" }
-		},
 		designtime: "sap/m/designtime/DateTimePicker.designtime",
 		dnd: { draggable: false, droppable: true }
 	}});
@@ -569,7 +563,7 @@ sap.ui.define([
 
 		if (bNoCalendar) {
 			this._oPopupContent.setCalendar(this._oCalendar);
-			this._oCalendar.attachSelect(_selectDate, this);
+			this._oCalendar.attachSelect(_handleCalendarSelect, this);
 
 			var that = this,
 				oHideMonthPicker = this._oCalendar._hideMonthPicker,
@@ -690,7 +684,7 @@ sap.ui.define([
 
 	function _handleOkPress(oEvent){
 
-		this._selectDate();
+		this._handleCalendarSelect();
 
 	}
 
@@ -772,7 +766,7 @@ sap.ui.define([
 
 	}
 
-	function _selectDate(oEvent) {
+	function _handleCalendarSelect(oEvent) {
 
 		this._oPopupContent.switchToTime();
 

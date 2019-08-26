@@ -18,7 +18,8 @@
 			id="DP8"
 			placeholder="Enter Date ..."
 			change="handleChange"
-			class="sapUiSmallMarginBottom"/>
+			class="sapUiSmallMarginBottom"
+			showFooter="true"/>
 		<Label text="DatePicker with given Value and Formatter" labelFor="DP2"/>
 		<DatePicker
 			id="DP2"

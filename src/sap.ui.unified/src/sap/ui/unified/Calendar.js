@@ -340,6 +340,9 @@ sap.ui.define([
 
 		this._resizeProxy = jQuery.proxy(_handleResize, this);
 		this._oSelectedMonth; //needed to transfer the selected month from _handleSelect to getFocusDomRef
+		//marker, controlled from the DatePicker & checked in the CalendarRenderer
+		//when used in a DatePicker, in mobile there is no cancel button
+		this._bSkipCancelButtonRendering = false;
 	};
 
 	Calendar.prototype.exit = function(){
@@ -546,6 +549,17 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the parent control instance which contains the specialDates
+	 * to the Calendar control instance
+	 * @ui5-restricted sap.m.DatePicker
+	 * @private
+	 * @param {*} oControl containing the special dates
+	 */
+	Calendar.prototype._setSpecialDatesControlOrigin = function (oControl) {
+		this._oSpecialDatesControlOrigin = oControl;
+	};
+
 	/*
 	 * if used inside DatePicker get the value from the parent
 	 * To don't have sync issues...
@@ -553,6 +567,10 @@ sap.ui.define([
 	Calendar.prototype.getSpecialDates = function(){
 
 		var oParent = this.getParent();
+
+		if (this._oSpecialDatesControlOrigin) {
+			return this._oSpecialDatesControlOrigin.getSpecialDates();
+		}
 
 		if (oParent && oParent.getSpecialDates) {
 			return oParent.getSpecialDates();
@@ -1077,7 +1095,7 @@ sap.ui.define([
 		var iKC = oEvent.which || oEvent.keyCode,
 			bShift = oEvent.shiftKey;
 
-		// if there is a a popup for picking dates, we should not handle F4
+		// if there is a popup for picking dates, we should not handle F4
 		if (this._getSucessorsPickerPopup() || iKC !== KeyCodes.F4) {
 			return;
 		}

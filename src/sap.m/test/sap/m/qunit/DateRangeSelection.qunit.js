@@ -968,7 +968,7 @@ sap.ui.define([
 			//Act
 			oDRS.$().find(".sapUiIcon").click(); //to open the calendar popoup
 			//Simulate the user has selected 10 - 20 Dec 2017.
-			oCalendar = oDRS._oPopup.getContent();
+			oCalendar = oDRS._oPopup.getContent()[0];
 			var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),
 				$EventTarget2 = oCalendar.$().find("[data-sap-day='20171220']"),
 				oEvent1 = { clientX: 100, clientY: 100, target: $EventTarget1.children().get(0) },
@@ -1363,7 +1363,13 @@ sap.ui.define([
 			oDP = new DateRangeSelection(),
 			oDPStoreInputSelectionSpy = this.spy(oDP, "_storeInputSelection");
 
-		oDP._oPopup = { setAutoCloseAreas: fn, open: fn, isOpen: fn }; // simulate that there is a popup
+		oDP._oPopup = {
+			openBy: fn,
+			isOpen: fn,
+			_getPopup: function() {
+				return { setAutoCloseAreas: fn, open: fn, isOpen: fn };
+			}
+		}; // simulate that there is a popup
 		oDP.placeAt("uiArea2");
 		sap.ui.getCore().applyChanges();
 
