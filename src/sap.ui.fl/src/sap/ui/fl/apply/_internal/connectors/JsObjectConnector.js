@@ -14,13 +14,19 @@ sap.ui.define([
 	var oMyStorage = {
 		_items: {},
 		setItem: function(sKey, vValue) {
-			this._items[sKey] = vValue;
+			oMyStorage._items[sKey] = vValue;
+		},
+		removeItem: function(sKey) {
+			delete oMyStorage._items[sKey];
 		},
 		clear: function() {
-			this._items = {};
+			oMyStorage._items = {};
 		},
 		getItem: function(sKey) {
-			return this._items[sKey];
+			return oMyStorage._items[sKey];
+		},
+		getItems: function() {
+			return oMyStorage._items;
 		}
 	};
 

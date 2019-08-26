@@ -20,8 +20,10 @@ sap.ui.define([
 	function loadDataFromStorage (oStorage, sReference) {
 		var aFlexObjects = [];
 		var oFlexObject;
-		// _items is used in the internal keys of the JsObjectStorage
-		BrowserStorageUtils.forEachChangeInStorage(oStorage._items || oStorage, function(sKey) {
+		// getItems() is used in the internal keys of the JsObjectStorage
+		var oRealStorage = oStorage.getItems && oStorage.getItems() || oStorage;
+
+		BrowserStorageUtils.forEachChangeInStorage(oRealStorage, function(sKey) {
 			oFlexObject = JSON.parse(oStorage.getItem(sKey));
 			var bSameReference = oFlexObject.reference === sReference || oFlexObject.reference + ".Component" === sReference;
 			if (bSameReference) {

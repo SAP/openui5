@@ -188,6 +188,18 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/_internal/Connector"]
 				}
 			},
+			"write/_internal/CompatibilityConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/api/_internal/CompatibilityConnector"]
+				},
+				ui5: {
+					resourceroots: {
+						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
+					},
+					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": ["ALL"]}]'
+				}
+			},
 			"write/_internal/connectors/Utils": {
 				group: "Write Internal",
 				coverage: {

@@ -24,18 +24,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var JsObjectConnector = merge({}, BrowserStorageConnector, /** @lends sap.ui.fl.write._internal.connectors.JsObjectConnector */ {
-		oStorage: {
-			setItem: function(sKey, vValue) {
-				LocalObjectConnectorApply.oStorage.setItem(sKey, vValue);
-			},
-			clear: function() {
-				LocalObjectConnectorApply.oStorage.clear();
-			},
-			getItem: function(sKey) {
-				return LocalObjectConnectorApply.oStorage.getItem(sKey);
-			},
-			_items: LocalObjectConnectorApply.oStorage._items
-		}
+		oStorage: LocalObjectConnectorApply.oStorage
 	});
 
 	return JsObjectConnector;

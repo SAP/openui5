@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/base/util/merge",
 	"sap/ui/dom/includeScript"
 ], function(
 	jQuery,
 	uri,
 	FlexUtils,
+	CompatibilityConnector,
 	fnBaseMerge,
 	fnIncludeScript
 ) {
@@ -39,6 +41,9 @@ sap.ui.define([
 	};
 
 	LrepConnector.createConnector = function(mParameters) {
+		if (FlexUtils.areNewConnectorsNecessary()) {
+			return new CompatibilityConnector(mParameters);
+		}
 		return new LrepConnector(mParameters);
 	};
 
