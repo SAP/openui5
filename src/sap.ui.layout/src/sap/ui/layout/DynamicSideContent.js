@@ -8,10 +8,9 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/layout/library',
-	'./DynamicSideContentRenderer',
-	"sap/ui/Device"
+	'./DynamicSideContentRenderer'
 ],
-	function(jQuery, Control, ResizeHandler, library, DynamicSideContentRenderer, Device) {
+	function(jQuery, Control, ResizeHandler, library, DynamicSideContentRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -102,6 +101,9 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the side content is visible or hidden.
+				 *
+				 * <b>Note:</b> If both <code>DynamicSideContent</code> and <code>showMainContent</code> properties are set to <code>true</code>,
+				 * use the <code>toggle</code> method for showing the side content on phone.
 				 */
 				showSideContent : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -690,14 +692,6 @@ sap.ui.define([
 				}
 			} else if (!this._SCVisible && !this._MCVisible) {
 				$mainContent.addClass(HIDDEN_CLASS);
-				$sideContent.addClass(HIDDEN_CLASS);
-			//BCP: 1980254677
-			} else if (Device.system.phone && !this._SCVisible && this._MCVisible && bSideContentVisibleProperty && bMainContentVisibleProperty) {
-				$sideContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
-				$mainContent.addClass(HIDDEN_CLASS);
-			//BCP: 1970185680
-			} else if (Device.system.phone && !this._MCVisible && this._SCVisible && bSideContentVisibleProperty && bMainContentVisibleProperty) {
-				$mainContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
 			} else if (this._MCVisible && bMainContentVisibleProperty) {
 				$mainContent.removeClass().addClass(SPAN_SIZE_12_CLASS);

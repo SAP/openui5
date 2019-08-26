@@ -536,8 +536,8 @@ sap.ui.define([
 			assert.ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
 			assert.ok(!$mainContent.hasClass("test2"), "Main content should not have 'test2' class");
 
-			assert.ok($mainContent.hasClass(SPAN_SIZE_12_CLASS), "Main content has class '" + SPAN_SIZE_12_CLASS + "' if only side content is visible");
-			assert.ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if main content is hidden");
+			assert.ok($mainContent.hasClass(SPAN_SIZE_12_CLASS), "Main content has class '" + SPAN_SIZE_12_CLASS + "' if only main content is visible");
+			assert.ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if side content is hidden");
 
 			// only side content is visible
 			this._oDSC._SCVisible = true;
@@ -563,28 +563,7 @@ sap.ui.define([
 			assert.ok($mainContent.hasClass(MC_FIXED_CLASS), "Main content has class '" + MC_FIXED_CLASS + "' if side content is fixed size");
 			assert.ok($sideContent.hasClass(SC_FIXED_CLASS), "Side content has class '" + SC_FIXED_CLASS + "' if main content is fixed size");
 
-			checkPhone(this._oDSC, $mainContent, $sideContent, HIDDEN_CLASS, assert);
 		});
-
-		function checkPhone(_oDSC, $mainContent, $sideContent, HIDDEN_CLASS, assert) {
-			Device.system.phone = true;
-			_oDSC._bFixedSideContent = false;
-			_oDSC._SCVisible = false;
-			_oDSC._MCVisible = true;
-			$sideContent.addClass("test1");
-			_oDSC._changeGridState();
-
-			assert.ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
-			assert.ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "'");
-
-			_oDSC._SCVisible = true;
-			_oDSC._MCVisible = false;
-			$mainContent.addClass("test1");
-			_oDSC._changeGridState();
-
-			assert.ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
-			assert.ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "'");
-		}
 
 		QUnit.test("Check if height should be set",function(assert) {
 			this._oDSC._iScSpan = SPAN_SIZE_6;
