@@ -38,37 +38,6 @@ function(
 
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function() {
-			this.oData = {
-				variantMgmtId1: {
-					defaultVariant: "variant1",
-					originalDefaultVariant: "variant1",
-					variants: [
-						{
-							author: "SAP",
-							key: "variantMgmtId1",
-							layer: "VENDOR",
-							title: "Standard",
-							favorite: true,
-							visible: true
-						}, {
-							author: "Me",
-							key: "variant0",
-							layer: "CUSTOMER",
-							title: "variant A",
-							favorite: true,
-							visible: true
-						}, {
-							author: "Me",
-							key: "variant1",
-							layer: "CUSTOMER",
-							title: "variant B",
-							favorite: false,
-							visible: true
-						}
-					]
-				}
-			};
-
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
@@ -95,6 +64,38 @@ function(
 			sandbox.stub(URLHandler, "attachHandlers");
 
 			this.oFlexController = FlexControllerFactory.createForControl(this.oComponent, oManifest);
+			this.oData = {
+				variantMgmtId1: {
+					defaultVariant: "variant1",
+					originalDefaultVariant: "variant1",
+					variants: [
+						{
+							author: this.oFlexController._oChangePersistence._oVariantController.DEFAULT_AUTHOR,
+							key: "variantMgmtId1",
+							layer: "VENDOR",
+							title: "Standard",
+							favorite: true,
+							visible: true
+						}, {
+							author: "Me",
+							key: "variant0",
+							layer: "CUSTOMER",
+							title: "variant A",
+							favorite: true,
+							visible: true
+						}, {
+							author: "Me",
+							key: "variant1",
+							layer: "CUSTOMER",
+							title: "variant B",
+							favorite: false,
+							visible: true
+						}
+					]
+				}
+			};
+
+
 			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl").resolves();
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
 			this.fnDeleteChangeStub = sandbox.stub(this.oFlexController, "deleteChange");
@@ -160,7 +161,7 @@ function(
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {
-			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"SAP","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"CUSTOMER","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"CUSTOMER","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"title":"variant B","visible":true}]}}';
+			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + this.oModel.oVariantController.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"CUSTOMER","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"CUSTOMER","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"title":"variant B","visible":true}]}}';
 			var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 			assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 			assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
@@ -1178,7 +1179,7 @@ function(
 							visible: true
 						},
 						support: {
-							user: "SAP"
+							user: this.oModel.oVariantController.DEFAULT_AUTHOR
 						}
 					},
 					controlChanges: [],
@@ -1201,7 +1202,8 @@ function(
 					favorite: true,
 					originalFavorite: true,
 					visible: true,
-					originalVisible: true
+					originalVisible: true,
+					author: this.oModel.oVariantController.DEFAULT_AUTHOR
 				}]
 			};
 
