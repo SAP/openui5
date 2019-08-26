@@ -46,6 +46,78 @@
             "reference": "1970422781"
           }
         ]
+      },
+      {
+        "id": "67a34d85abc53a800e2b45917adefb1c4c066c31",
+        "type": "FEATURE",
+        "text": "sap.m.Bar: Visual Enhacement",
+        "references": []
+      },
+      {
+        "id": "967daf83e483c984270f2425b560d7a3540c81cc",
+        "type": "FIX",
+        "text": " @sapList_TableGroupHeaderBackground for HC themes corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970362383"
+          }
+        ]
+      },
+      {
+        "id": "89be48cb34c1030de9fce2d4be6a5f453da5f46e",
+        "type": "FIX",
+        "text": " sap.m.Button: border parameter changed in context of bar and toolbar",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324066"
+          }
+        ]
+      },
+      {
+        "id": "1ada323a7488247583ff6702740c38e2a8b7fc6f",
+        "type": "FIX",
+        "text": " sap.m.GenericTag: Fixed incorrect icon color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970423590"
+          }
+        ]
+      },
+      {
+        "id": "bf668139a6102777aba64801ba7883511fcb9400",
+        "type": "FIX",
+        "text": " sap.m.MultiInput,MultiComboBox: Tooltips in disabled state now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980173700"
+          }
+        ]
+      },
+      {
+        "id": "b6c1cb399add27e71dfefc7cd5b5f26bdcd6d559",
+        "type": "FIX",
+        "text": " sap.m.Page: Subheader padding fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970365105"
+          }
+        ]
+      },
+      {
+        "id": "7026a31e146960d7262bce970c43e77bd94d0a93",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Corrected sections spacing for Fiori3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970420265"
+          }
+        ]
       }
     ]
   }

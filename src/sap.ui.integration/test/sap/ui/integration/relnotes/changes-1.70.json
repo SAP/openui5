@@ -18,6 +18,23 @@
         "type": "FEATURE",
         "text": "Widget for UI Integration of Components",
         "references": []
+      },
+      {
+        "id": "bfa56381ee2766324fb94a4c3e7c49429cabffce",
+        "type": "FIX",
+        "text": " CardExplorer: Code editor disappearing is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970449484"
+          }
+        ]
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
       }
     ]
   }
