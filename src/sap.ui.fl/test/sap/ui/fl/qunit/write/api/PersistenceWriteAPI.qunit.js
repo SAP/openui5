@@ -434,9 +434,9 @@ sap.ui.define([
 						.then(function() {
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
-							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 							// Get the UI change to be saved to backend
 							var oChangePayload = fnSendBackendCall.secondCall.args[2];
 							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
@@ -515,9 +515,9 @@ sap.ui.define([
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then Descriptor changes are still present in the persistence");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still present in the persistence but the reference has been changed");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
-							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 							// Delete dirty inline changes from persistence
 							var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges();
 							aDescrChanges = aDescrChanges.slice();
@@ -596,9 +596,9 @@ sap.ui.define([
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then the Descriptor changes are still present in persistence");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still in the persistence");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
-							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 							// Get the UI change to be saved to backend
 							var oChangePayload = fnSendBackendCall.secondCall.args[2];
 							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
@@ -665,9 +665,9 @@ sap.ui.define([
 						.then(function() {
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
-							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 							assert.equal(oUIChange.getRequest(), "ATO_NOTIFICATION", "the request has been set correctly");
 							// Get the UI change to be saved to backend
 							var oChangePayload = fnSendBackendCall.secondCall.args[2];
