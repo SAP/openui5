@@ -169,10 +169,8 @@ sap.ui.define([
 			node._control = this;
 			Tag.initCloneNode(node);
 			Tag.defineProperties(node);
-			this._controlImpl = this._controlImpl || new TagImpl(node.id);
+			this._controlImpl = this._controlImpl || new TagImpl();
 			this._changeProperties(node);
-			//TODO: How to avoid the UI Area?
-			node.setAttribute("id", this._controlImpl.getId() + "-area");
 			this._uiArea = oInterface.coreInstance.createUIArea(node);
 			this._uiArea.addContent(this._controlImpl);
 			if (Tag.isInActiveDocument(node)) {
