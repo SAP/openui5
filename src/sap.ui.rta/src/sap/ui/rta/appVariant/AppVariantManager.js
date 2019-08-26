@@ -154,14 +154,7 @@ sap.ui.define([
 			id: sAppVariantId,
 			layer: this.getLayer()
 		};
-		return AppVariantUtils.createAppVariant(this.getRootControl(), mPropertyBag)
-			.catch(function(oError) {
-				var sMessageKey = oError.messageKey;
-				if (!sMessageKey) {
-					sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
-				}
-				return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
-			});
+		return AppVariantUtils.createAppVariant(this.getRootControl(), mPropertyBag);
 	};
 
 	/**
@@ -172,14 +165,7 @@ sap.ui.define([
 	AppVariantManager.prototype.deleteAppVariant = function(sAppVariantId) {
 		return AppVariantUtils.deleteAppVariant({
 			appId: sAppVariantId
-		})
-			.catch(function(oError) {
-				var sMessageKey = oError.messageKey;
-				if (!sMessageKey) {
-					sMessageKey = "MSG_DELETE_APP_VARIANT_FAILED";
-				}
-				return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
-			});
+		});
 	};
 
 	/**
@@ -244,10 +230,10 @@ sap.ui.define([
 	AppVariantManager.prototype.triggerCatalogPublishing = function(sAppVariantId, sReferenceAppId, bSaveAs) {
 		var fnTriggerCatalogOperation = bSaveAs ? AppVariantUtils.triggerCatalogAssignment : AppVariantUtils.triggerCatalogUnAssignment;
 		return fnTriggerCatalogOperation(sAppVariantId, sReferenceAppId)
-		.catch(function(oError) {
-			var sMessageKey = bSaveAs ? "MSG_CATALOG_ASSIGNMENT_FAILED" : "MSG_DELETE_APP_VARIANT_FAILED";
-			return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
-		});
+			.catch(function(oError) {
+				var sMessageKey = bSaveAs ? "MSG_CATALOG_ASSIGNMENT_FAILED" : "MSG_DELETE_APP_VARIANT_FAILED";
+				return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
+			});
 	};
 
 	/**

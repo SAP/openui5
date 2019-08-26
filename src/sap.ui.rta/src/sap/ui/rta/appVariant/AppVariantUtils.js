@@ -252,9 +252,23 @@ function(
 		return ChangesWriteAPI.create({changeSpecificData: oChangeSpecificData, selector: oRootControl});
 	};
 
-	AppVariantUtils.addChangesToPersistence = function(aAllInlineChanges) {
+	AppVariantUtils.addChangesToPersistence = function(aAllInlineChanges, oRootControl) {
 		aAllInlineChanges.forEach(function(oChange) {
-			return PersistenceWriteAPI.add({change: oChange});
+			return PersistenceWriteAPI.add({
+				change: oChange,
+				selector: oRootControl
+			});
+		});
+
+		return Promise.resolve();
+	};
+
+	AppVariantUtils.removeChangesFromPersistence = function(aAllInlineChanges, oRootControl) {
+		aAllInlineChanges.forEach(function(oChange) {
+			return PersistenceWriteAPI.remove({
+				change: oChange,
+				selector: oRootControl
+			});
 		});
 
 		return Promise.resolve();
@@ -425,10 +439,10 @@ function(
 					resolve();
 				} else if (oInfo.deleteAppVariant && sAction === sRightButtonText) {
 					// Do you really want to delete this app? => Close
-					reject();
+					reject(oInfo.deleteAppVariant);
 				} else if (oInfo.error) {
 					// Error: Deletion/Creation failed => Close or CopyID & Close
-					reject();
+					reject(oInfo.error);
 				} else {
 					resolve();
 				}

@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/api/ChangesWriteAPI"
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/m/MessageBox"
 ], function (
 	jQuery,
 	sinon,
@@ -33,7 +34,8 @@ sap.ui.define([
 	UriParameters,
 	Manifest,
 	PersistenceWriteAPI,
-	ChangesWriteAPI
+	ChangesWriteAPI,
+	MessageBox
 ) {
 	"use strict";
 
@@ -392,6 +394,68 @@ sap.ui.define([
 			return oAppComponent;
 		};
 
+		QUnit.test("when onSaveAs() method is called and saving an app variant failed", function(assert) {
+			var oSelectedAppVariant = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				}
+			};
+
+			var oAppVariantData = {
+				idRunningApp: "TestId",
+				title: "Title",
+				subTitle: "Subtitle",
+				description: "Description",
+				icon: "sap-icon://history",
+				inbounds: {}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
+				})
+			);
+
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").rejects();
+
+			var oAppComponent = fnCreateAppComponent();
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
+			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
+
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").returns(Promise.reject({saveAsFailed: true}));
+			var fnCatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
+
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
+			});
+
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", {saveAsFailed: true}).returns();
+
+			var fnPersistenceRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove").resolves();
+
+			var fnOnGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+
+			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
+				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
+				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.equal(fnPersistenceRemoveStub.callCount, 10, "then PersistenceWriteAPI.remove method is called " + fnPersistenceRemoveStub.callCount + " times");
+				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.saveAs method is called once");
+				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview opens only once after the new app variant has been saved to LREP");
+				assert.strictEqual(fnCatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the fnCatchErrorDialog method is called with correct message key");
+			});
+		});
+
 		QUnit.test("when onSaveAs() method is called on S/4HANA on Premise from Overview dialog", function(assert) {
 			var oSelectedAppVariant = {
 				"sap.app" : {
@@ -649,6 +713,50 @@ sap.ui.define([
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReadySpy.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
 				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the _navigateToFLPHomepage method is called once");
+			});
+		});
+
+		QUnit.test("when onDeleteFromOverviewDialog() method is called and failed", function(assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
+				})
+			);
+
+			var oDescriptor = {reference: "someReference", id: "AppVarId"};
+			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+
+			var oPublishingResponse = {
+				response: {
+					IAMId : "IAMId",
+					inProgress : true
+				}
+			};
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "testId"}});
+			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
+			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
+			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").returns(Promise.reject("Delete Error"));
+
+			var fnCatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
+
+			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
+				mParameters.onClose("Close");
+			});
+
+			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
+
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
+				assert.ok(fnShowMessageStub.calledOnce, "then the showMessage method is called once");
+				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is called once");
+				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is called once");
+				assert.strictEqual(fnCatchErrorDialog.getCall(0).args[1], "MSG_DELETE_APP_VARIANT_FAILED", "then the fnCatchErrorDialog method is called with correct message key");
+				assert.strictEqual(fnCatchErrorDialog.getCall(0).args[2], "AppVarId", "then the fnCatchErrorDialog method is called with correct app var id");
 			});
 		});
 
