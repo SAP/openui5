@@ -1,7 +1,6 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/dt/DesignTime",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -9,7 +8,6 @@ sap.ui.define([
 ], function(
 	RuntimeAuthoring,
 	Plugin,
-	DesignTime,
 	FlexUtils,
 	FlexSettings,
 	PersistenceWriteAPI,
@@ -48,7 +46,6 @@ sap.ui.define([
 	};
 
 	var Util = {
-
 		_createStartRtaFunction: function(oRuntimeAuthoring) {
 			return function() {
 				return Promise.all([
@@ -65,7 +62,7 @@ sap.ui.define([
 				isProductiveSystem: function() { return false; }
 			}));
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(false);
 		},
 
 		startRta: function(oHorizontalLayout, aPlugins) {
