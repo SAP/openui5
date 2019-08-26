@@ -264,6 +264,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Role option should be set", function(assert) {
+		assert.strictEqual(this.token1.$().attr("role"), "option", "Token has role option.");
+	});
+
 	QUnit.test("ARIA Read only attribyte is not present", function(assert) {
 		// aria-readonly is not valid for the current role of the token.
 		assert.ok(!this.token1.$().attr("aria-readonly"), "Token has no aria-readonly attribute set.");

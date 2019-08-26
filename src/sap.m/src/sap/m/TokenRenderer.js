@@ -31,7 +31,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 		var sTooltip = oControl._getTooltip(oControl, oControl.getEditable() && oControl.getProperty("editableParent")),
 			aAccDescribebyValues = [], // additional accessibility attributes
 			oAccAttributes = {
-				role: "listitem"
+				role: "option"
 			};
 
 		// write the HTML into the render manager
