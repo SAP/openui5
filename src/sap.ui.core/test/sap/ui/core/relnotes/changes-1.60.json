@@ -1109,5 +1109,59 @@
         "references": []
       }
     ]
+  },
+  "1.60.16": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "9b30fc2b2844d58f394886bb92ca5acdb59eb416",
+        "type": "FIX",
+        "text": " Improve jQuery.parseHTML implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "7f71d09c433a3952aaec2c39a1ff2f17b942d66b",
+        "type": "FIX",
+        "text": " Opa: iframe size and position in Chrome 75",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970223441"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.17": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "a82151926f2b0ed68fa31dd5c85c1f425830c3bf",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Prevent exception when setting context to null",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "315554"
+          }
+        ]
+      },
+      {
+        "id": "a544c9a484c996c25e170794d5d73f9f4dc8bdda",
+        "type": "FIX",
+        "text": " odata/ODataUtils: Convert deprecated ODataFilter to model/Filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "362147"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1036,5 +1036,80 @@
         ]
       }
     ]
+  },
+  "1.65.7": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "094a21865e50e14c3da9cc7bfcd431d3d7b204ef",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Items grouping is now working properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970414804"
+          }
+        ]
+      },
+      {
+        "id": "06c68dd0feec695fb5b33924c4070839fc7253f3",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: string notation pattern works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970280504"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970192284"
+          }
+        ]
+      },
+      {
+        "id": "b04642d63f4f759e083ce0009262ff30bce32828",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Items aggregation properly forwarded to MessageView",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970404487"
+          }
+        ]
+      },
+      {
+        "id": "f84c120be1b492564246676a021dac823953b92e",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Expand/collapse improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "421659"
+          }
+        ]
+      },
+      {
+        "id": "6d59275e79e4725b73d319fd4dd652dfde2eec5b",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Changing visibility of content is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970072029"
+          }
+        ]
+      },
+      {
+        "id": "3d16e679f1bb553fcca06b0d1045113ce09ebea1",
+        "type": "FIX",
+        "text": " sap.m.Panel: Heading level is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "507397"
+          }
+        ]
+      }
+    ]
   }
 }

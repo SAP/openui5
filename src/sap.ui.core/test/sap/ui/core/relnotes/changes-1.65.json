@@ -529,5 +529,43 @@
         ]
       }
     ]
+  },
+  "1.65.7": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "a1d5eed1019c41aa0787a3a393e9f0cc136d59f2",
+        "type": "FIX",
+        "text": " odata/ODataUtils: Convert deprecated ODataFilter to model/Filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "362147"
+          }
+        ]
+      },
+      {
+        "id": "a430b52633ec4b4b653511fb2a40ec4c7f0b3cee",
+        "type": "FIX",
+        "text": " sap.ui.core.hyphenation.Hyphenation: Out of memory errors fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "369369"
+          }
+        ]
+      },
+      {
+        "id": "8ee47b00b05b1f24f79784db4ea079cb7888b90a",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Don\u0027t use expanded data, if custom parameters are set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980011792"
+          }
+        ]
+      }
+    ]
   }
 }
