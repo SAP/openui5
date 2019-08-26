@@ -61,6 +61,13 @@ sap.ui.define([
 
 	});
 
+	CompositeBinding.prototype.destroy = function() {
+		PropertyBinding.prototype.destroy.apply(this);
+		this.aBindings.forEach(function(oBinding) {
+			oBinding.destroy();
+		});
+	};
+
 	CompositeBinding.prototype.getPath = function() {
 		assert(null, "Composite Binding has no path!");
 		return null;
