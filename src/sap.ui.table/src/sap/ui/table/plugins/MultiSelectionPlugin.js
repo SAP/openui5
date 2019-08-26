@@ -239,12 +239,32 @@ sap.ui.define([
 		}
 	};
 
-
-	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo) {
+	/**
+	 * Calculates the correct start and end index for the range selection and loads the corresponding contexts.
+	 *
+	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oMultiSelectionPlugin The selection plugin.
+	 * @param {int} iIndexFrom The start index of the range selection.
+	 * @param {int} iIndexTo The end index of the range selection.
+	 * @param {boolean} [bAddSelection=false] Whether to prepare for adding or setting the selection.
+	 * @return {Promise|Promise<{indexTo: *, indexFrom: *}>} A promise that resolves with the corrected start and end index when the contexts are
+	 * loaded.
+	 */
+	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo, bAddSelection) {
 		var iLimit = oMultiSelectionPlugin.getLimit();
 		var bReverse = iIndexTo < iIndexFrom;
 		var oBinding = oMultiSelectionPlugin._getBinding();
 		var iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
+
+		// If the start index is already selected, the range starts from the next index.
+		if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom) && bAddSelection) {
+			if (!bReverse) {
+				iIndexFrom++;
+				iGetContextsStartIndex++;
+			} else {
+				iIndexFrom--;
+			}
+		}
+
 		var iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 
 		if (!oMultiSelectionPlugin._bLimitDisabled) {
@@ -255,22 +275,6 @@ sap.ui.define([
 					iIndexTo = iIndexFrom + iLimit - 1;
 				} else {
 					iIndexTo = iIndexFrom - iLimit + 1;
-				}
-
-				// If the start index is already selected, the range starts from the next index.
-				if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
-					if (!bReverse) {
-						iIndexTo++;
-						iGetContextsStartIndex++;
-					} else {
-						iIndexTo--;
-					}
-				}
-
-				// In case of reverse range selection, the start index for the getContexts call is defined by "iIndexTo".
-				// As this value might have changed, the start index needs to be updated.
-				if (bReverse) {
-					iGetContextsStartIndex = iIndexTo;
 				}
 
 				// The table will be scrolled one row further to make it transparent for the user where the selection ends.
@@ -308,12 +312,22 @@ sap.ui.define([
 			iIndexFrom = iIndexTo;
 		}
 
-		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
+		prepareSelection(this, iIndexFrom, iIndexTo, false).then(function(mIndices) {
 			if (mIndices) {
 				this.oInnerSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
 				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
 			}
 		}.bind(this));
+	};
+
+	/**
+	 * Requests the context and sets the selected index to <code>iIndex</code>.
+	 *
+	 * @param {int} iIndex The index to select
+	 * @public
+	 */
+	MultiSelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
+		this.setSelectionInterval(iIndex, iIndex);
 	};
 
 	/**
@@ -338,7 +352,7 @@ sap.ui.define([
 			return;
 		}
 
-		prepareSelection(this, iIndexFrom, iIndexTo).then(function(mIndices) {
+		prepareSelection(this, iIndexFrom, iIndexTo, true).then(function(mIndices) {
 			if (mIndices) {
 				this.oInnerSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
 				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
@@ -489,27 +503,6 @@ sap.ui.define([
 		if (this.oInnerSelectionPlugin) {
 			this.setLimitReached(false);
 			this.oInnerSelectionPlugin.removeSelectionInterval(iIndexFrom, iIndexTo);
-		}
-	};
-
-	/**
-	 * @override
-	 * @inheritDoc
-	 */
-	MultiSelectionPlugin.prototype.setSelectedIndex = function(iIndex) {
-		if (this.getSelectionMode() === SelectionMode.None) {
-			return;
-		}
-
-		if (this.oInnerSelectionPlugin) {
-			var that = this;
-			this.setLimitReached(false);
-			var oBinding = this._getBinding();
-			if (oBinding && iIndex >= 0) {
-				loadMultipleContexts(oBinding, iIndex, 1).then(function () {
-					that.oInnerSelectionPlugin.setSelectedIndex(iIndex);
-				});
-			}
 		}
 	};
 
