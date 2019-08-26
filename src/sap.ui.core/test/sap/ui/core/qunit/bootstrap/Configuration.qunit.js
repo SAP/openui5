@@ -746,6 +746,121 @@
 			assert.equal(this.getHtmlAttribute("data-sap-ui-animation-mode"), AnimationMode.full, "Default animation mode should stay the same.");
 		});
 
+
+		QUnit.module("ThemeRoot Validation");
+
+		[
+			{
+				caption: "Relative URL, All Origins",
+				url: location.origin + "?sap-theme=custom@custom-theme/",
+				allowedOrigins: "*",
+				expectedThemeRoot: location.origin + "/custom-theme/UI5/"
+			},
+			{
+				caption: "Relative URL, no valid origins",
+				url: location.origin + "?sap-theme=custom@custom-theme/",
+				allowedOrigins: null,
+				expectedThemeRoot: location.origin + "/custom-theme/UI5/"
+			},
+			{
+				caption: "Relative URL, baseURI on different domain, no valid origins",
+				url: location.origin + "?sap-theme=custom@custom-theme/",
+				allowedOrigins: null,
+				expectedThemeRoot: location.origin + "/custom-theme/UI5/",
+				baseURI: "http://example.org"
+			},
+			{
+				caption: "Relative URL, baseURI on different domain, All origins",
+				url: location.origin + "?sap-theme=custom@custom-theme/",
+				allowedOrigins: "*",
+				expectedThemeRoot: location.origin + "/custom-theme/UI5/",
+				baseURI: "http://example.org"
+			},
+			{
+				caption: "Relative URL, relative baseURI",
+				url: location.origin + "/foo/bar/?sap-theme=custom@../custom-theme",
+				allowedOrigins: null,
+				expectedThemeRoot: location.origin + "/foo/custom-theme/UI5/",
+				baseURI: "/some/other/path/"
+			},
+			{
+				caption: "Absolute URL, All Origins",
+				url: location.origin + "?sap-theme=custom@ftp://example.org/theming/custom-theme/",
+				allowedOrigins: "*",
+				expectedThemeRoot: "ftp://example.org/theming/custom-theme/UI5/"
+			},
+			{
+				caption: "Absolute URL, Same Domain",
+				url: location.origin + "?sap-theme=custom@" + location.origin + "/theming/custom-theme/",
+				allowedOrigins: location.origin,
+				expectedThemeRoot: location.origin + "/theming/custom-theme/UI5/"
+			},
+			{
+				caption: "Absolute URL, Valid, but Different Domain",
+				url: location.origin + "?sap-theme=custom@https://example.com/theming/custom-theme/",
+				allowedOrigins: "https://example.com",
+				expectedThemeRoot: "https://example.com/theming/custom-theme/UI5/"
+			},
+			{
+				caption: "Absolute URL, no valid origins",
+				url: location.origin + "?sap-theme=custom@https://example.com/theming/custom-theme/",
+				allowedOrigins: null,
+				expectedThemeRoot: location.origin + "/theming/custom-theme/UI5/"
+			},
+			{
+				caption: "Absolute URL, empty valid origins",
+				url: location.origin + "?sap-theme=custom@https://example.com/theming/custom-theme/",
+				allowedOrigins: "",
+				expectedThemeRoot: location.origin + "/theming/custom-theme/UI5/"
+			},
+			{
+				caption: "Absolute URL with same protocol, Valid",
+				url: location.origin + "?sap-theme=custom@//example.com/theming/custom-theme/",
+				allowedOrigins: "example.com",
+				expectedThemeRoot: "//example.com/theming/custom-theme/UI5/"
+			}
+		].forEach(function(oSetup) {
+
+			QUnit.test(oSetup.caption, function(assert) {
+				var oMeta = null, oBase = null, sExistingBaseHref;
+				browserUrl.change(oSetup.url);
+				if ( oSetup.allowedOrigins != null ) {
+					oMeta = document.createElement("meta");
+					oMeta.setAttribute("name", "sap-allowedThemeOrigins");
+					oMeta.setAttribute("content", oSetup.allowedOrigins);
+					document.head.appendChild(oMeta);
+				}
+				if ( oSetup.baseURI != null ) {
+					oBase = document.querySelector("base");
+					if (oBase) {
+						sExistingBaseHref = oBase.getAttribute("href");
+					} else {
+						oBase = document.createElement("base");
+						document.head.appendChild(oBase);
+					}
+					oBase.setAttribute("href", oSetup.baseURI);
+				}
+				try {
+					var oCfg = new Configuration();
+					assert.equal(oCfg.theme, "custom", "Configuration 'theme'");
+					assert.equal(oCfg.themeRoot, oSetup.expectedThemeRoot, "Configuration 'themeRoot'");
+				} finally {
+					browserUrl.reset();
+					if ( oMeta ) {
+						document.head.removeChild(oMeta);
+					}
+					if ( oBase ) {
+						if ( sExistingBaseHref ) {
+							oBase.setAttribute("href", sExistingBaseHref);
+						} else {
+							document.head.removeChild(oBase);
+						}
+					}
+				}
+			});
+
+		});
+
 		QUnit.start();
 
 	});
