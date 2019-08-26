@@ -92,7 +92,7 @@ function(
 	 * Check if the element is editable for the move
 	 * @param  {sap.ui.dt.Overlay}  oOverlay The overlay being moved or the aggregation overlay
 	 * @param  {boolean} bOnRegistration if embedded, false if not
-	 * @return {promise.<boolean>} promise with true value if editable
+	 * @return {Promise.<boolean>} promise with true value if editable
 	 */
 	function fnIsValidForMove(oOverlay, bOnRegistration) {
 		var	oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
@@ -203,7 +203,7 @@ function(
 	/**
 	 * Checks drop ability for aggregation overlays
 	 * @param  {sap.ui.dt.Overlay} oAggregationOverlay aggregation overlay object
-	 * @return {promise.<boolean>} Promise with true value if aggregation overlay is droppable or false value if not.
+	 * @return {Promise.<boolean>} Promise with true value if aggregation overlay is droppable or false value if not.
 	 * @override
 	 */
 	RTAElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
@@ -217,6 +217,12 @@ function(
 				var oMovedElement = oMovedOverlay.getElement();
 				var oTargetOverlay = oAggregationOverlay.getParent();
 				var oMovedRelevantContainer = oMovedOverlay.getRelevantContainer();
+
+				// the element or the parent overlay might be destroyed or not available
+				if (!oMovedElement || !oTargetOverlay) {
+					return false;
+				}
+
 				var oTargetElement = oTargetOverlay.getElement();
 				var oAggregationDtMetadata = oAggregationOverlay.getDesignTimeMetadata();
 
@@ -250,7 +256,7 @@ function(
 	/**
 	 * Checks if move is available on relevantcontainer
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
-	 * @return {promise.<boolean>} Promise with true value if move available on relevantContainer.
+	 * @return {Promise.<boolean>} Promise with true value if move available on relevantContainer.
 	 */
 	RTAElementMover.prototype.isMoveAvailableOnRelevantContainer = function(oOverlay) {
 		var oChangeHandlerRelevantElement;
@@ -271,7 +277,7 @@ function(
 	/**
 	 * Checks if move is available for child overlays
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay overlay object
-	 * @return {promise.<boolean>} Promise with true value if move available for at least one child overlay.
+	 * @return {Promise.<boolean>} Promise with true value if move available for at least one child overlay.
 	 */
 	RTAElementMover.prototype.isMoveAvailableForChildren = function(oOverlay) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();

@@ -58,7 +58,7 @@ sap.ui.define([
 
 	/**
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay to be checked for editable
-	 * @return {promise.<boolean>|booolean} <code>true</code> if it's editable wrapped in a promise.
+	 * @return {Promise.<boolean>|booolean} <code>true</code> if it's editable wrapped in a promise.
 	 * @private
 	 */
 	Remove.prototype._isEditable = function (oElementOverlay) {

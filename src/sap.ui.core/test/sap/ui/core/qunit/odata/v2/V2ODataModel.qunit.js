@@ -7241,4 +7241,86 @@ sap.ui.define([
 			}});
 		});
 	});
+
+	QUnit.module("ODataContextBinding", {
+		beforeEach : function() {
+			initServer();
+			oModel = initModel({preliminaryContext:true});
+		},
+		afterEach : function() {
+			oModel.destroy();
+			oModel = undefined;
+			cleanSharedData();
+			stopServer();
+		}
+	});
+	QUnit.test("Master detail - refresh both (master + detail) and detail binding creates preliminary context", function(assert) {
+		var done = assert.async();
+		assert.expect(3);
+
+		sap.ui.getCore().setModel(oModel);
+		oModel.metadataLoaded().then(function() {
+			function fnSuccess() {
+				var oPanel =  new Panel({
+					content: [
+						new Table({ // create Table UI
+							rows: {
+								path: "/ProductSet",
+								filters: [
+									new Filter("ProductID", "EQ", "AD-1000")
+								]
+							},
+							columns : [
+								{label: "ProductID", template: "ProductID"}
+							]
+						})
+					]
+				}).placeAt("qunit-fixture");
+
+				oPanel.getContent()[0].attachEvent('_rowsUpdated', fnReload);
+
+				var oPanel2 =  new Panel({
+					objectBindings: {path: "/ProductSet('AD-1000')"},
+					content: [
+						new Input({
+							value: "{ProductID}"
+						})
+					]
+				}).placeAt("qunit-fixture");
+
+				function fnReload() {
+					oPanel.getContent()[0].detachEvent('_rowsUpdated', fnReload);
+					var fnOrig = sap.ui.model.odata.v2.ODataModel.prototype.read;
+					sap.ui.model.odata.v2.ODataModel.prototype.read = function() {
+						var that = this;
+						var args = arguments;
+						setTimeout(function() {
+							fnOrig.apply(that,args);
+						},10);
+					};
+
+					oPanel2.bindElement("/ProductSet('HT-1000')");
+					setTimeout(function() {
+						sap.ui.model.odata.v2.ODataModel.prototype.read = fnOrig;
+						var oTable = oPanel.getContent()[0];
+						oTable.bindAggregation("rows", {
+							path:"/ProductSet",
+							filters: [
+								new Filter("ProductID", "EQ", "HT-1000")
+							]
+						});
+						oTable.attachEvent('_rowsUpdated', function() {
+							assert.ok(!oTable.getRows()[0].getBindingContext().isPreliminary(), "Context must not be preliminary");
+							assert.strictEqual(oTable.getRows()[0].getCells()[0].getBindingContext().getPath(), "/ProductSet('HT-1000')", "Context propagated correctly");
+							assert.strictEqual(oTable.getRows()[0].getCells()[0].getBinding("text").getContext().getPath(), "/ProductSet('HT-1000')", "Context propagated correctly");
+							done();
+						});
+					}, 1);
+				}
+			}
+			oModel.read("/ProductSet('AD-1000')", {
+				success: fnSuccess.bind(this)
+			});
+		}.bind(this));
+	});
 });

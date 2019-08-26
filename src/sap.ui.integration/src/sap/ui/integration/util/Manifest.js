@@ -57,12 +57,23 @@ sap.ui.define([
 	 * @alias sap.ui.integration.util.Manifest
 	 */
 	var Manifest = BaseObject.extend("sap.ui.integration.util.Manifest", {
-		constructor: function(sSection, oManifestJson) {
+		constructor: function(sSection, oManifestJson, sBaseUrl) {
 			BaseObject.call(this);
-			this.PARAMETERS = MANIFEST_PARAMETERS.replace("{SECTION}",sSection);
-			this.CONFIGURATION = MANIFEST_CONFIGURATION.replace("{SECTION}",sSection);
+			this.PARAMETERS = MANIFEST_PARAMETERS.replace("{SECTION}", sSection);
+			this.CONFIGURATION = MANIFEST_CONFIGURATION.replace("{SECTION}", sSection);
+
 			if (oManifestJson) {
-				this._oManifest = new CoreManifest(oManifestJson, { process: false });
+				var mOptions = {};
+				mOptions.process = false;
+
+				if (sBaseUrl) {
+					mOptions.baseUrl = sBaseUrl;
+					this._sBaseUrl = sBaseUrl;
+				} else {
+					Log.warning("If no base URL is provided when the manifest is an object static resources cannot be loaded.");
+				}
+
+				this._oManifest = new CoreManifest(oManifestJson, mOptions);
 				this.oJson = this._oManifest.getRawJson();
 			}
 		}
@@ -83,6 +94,13 @@ sap.ui.define([
 	 */
 	Manifest.prototype.get = function (sPath) {
 		return this._unfreeze(getObject(this.oJson, sPath));
+	};
+
+	/**
+	 * @returns {string} The URL of the manifest.
+	 */
+	Manifest.prototype.getUrl = function () {
+		return this._oManifest.resolveUri("./", "manifest");
 	};
 
 	/**
@@ -124,7 +142,17 @@ sap.ui.define([
 	 */
 	Manifest.prototype.load = function (mSettings) {
 		if (!mSettings || !mSettings.manifestUrl) {
-			throw new Error("manifestUrl is mandatory!");
+
+			// When the manifest JSON is already set and there is a base URL, try to load i18n files.
+			if (this._sBaseUrl && this._oManifest) {
+				return this.loadI18n().then(function () {
+					this.processManifest();
+				}.bind(this));
+			} else {
+				return new Promise(function (resolve, reject) {
+					reject("Cannot load manifest.");
+				});
+			}
 		}
 
 		return CoreManifest.load({
@@ -340,18 +368,24 @@ sap.ui.define([
 		var oParams = this._syncParameters(oParameters, oManifestParams);
 		this.processManifest(oParams);
 	};
+
 	/**
 	 * Merges passed configuration to the current section.
 	 *
 	 * @param {Object} oConfiguration Configuration set in the manifest for the {SECTION} property.
 	 * @private
 	 */
-	Manifest.prototype.mergeConfiguration = function (oConfiguration) {
+	Manifest.prototype._mergeConfiguration = function (oConfiguration) {
 		if (!this._oManifest) {
 			return;
 		}
-		var oManifestConf = this.get(this.CONFIGURATION);
-		var oJson = deepClone(this.oJson, 30, 30);
+
+		if (!oConfiguration) {
+		    return;
+        }
+		var oManifestConf = this.get(this.CONFIGURATION),
+		    oJson = deepClone(this.oJson, 30, 30);
+
 		oJson[this.CONFIGURATION.substring(1)] = merge({}, oManifestConf, oConfiguration);
 		this._oManifest._oManifest = oJson;
 		this.oJson = oJson;

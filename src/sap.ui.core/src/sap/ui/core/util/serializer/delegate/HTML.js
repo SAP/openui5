@@ -20,7 +20,7 @@ sap.ui.define(['./Delegate', "sap/base/strings/hyphenate", "sap/base/util/deepEq
 	 * @version ${version}
 	 * @alias sap.ui.core.util.serializer.delegate.HTML
 	 * @private
-	 * @sap-restricted sap.watt com.sap.webide
+	 * @ui5-restricted sap.watt com.sap.webide
 	 */
 	var HTML = Delegate.extend("sap.ui.core.util.serializer.delegate.HTML", /** @lends sap.ui.core.util.serializer.delegate.HTML.prototype */
 	{

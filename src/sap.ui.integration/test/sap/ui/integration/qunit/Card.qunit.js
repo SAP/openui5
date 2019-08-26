@@ -1423,8 +1423,8 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(oCard.getAggregation("_header"), "Card header shouldn't be empty.");
-			assert.ok(oCard.getAggregation("_content"), "Card content shouldn't be empty.");
+			assert.notOk(oCard.getAggregation("_header"), "Card header should be empty.");
+			assert.notOk(oCard.getAggregation("_content"), "Card content should be empty.");
 			assert.ok(oCard.getDomRef(), "Card should be rendered.");
 			assert.equal(oCard.getDomRef().clientWidth, 400, "Card should have width set to 400px.");
 			assert.equal(oCard.getDomRef().clientHeight, 600, "Card should have height set to 600px.");
@@ -1529,7 +1529,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assert
-			assert.ok(this.oCard.getAggregation("_header"), "Card header shouldn't be empty.");
+			assert.notOk(this.oCard.getAggregation("_header"), "Card header should be empty.");
 			assert.notOk(this.oCard.getAggregation("_content"), "Card content should be empty.");
 		});
 
@@ -2440,19 +2440,20 @@ sap.ui.define([
 				};
 
 			this.oCard.attachEventOnce("_ready", function () {
+				this.oCard.attachEventOnce("_ready", function () {
+					Core.applyChanges();
 
-				// Act
-				this.oCard.setParameters(oData.location);
-				this.oCard.placeAt(DOM_RENDER_LOCATION);
-				Core.applyChanges();
-				setTimeout(function () {
+					// Assert
 					var oListItems = this.oCard.getCardContent()._getList().getItems();
 					assert.ok(oListItems[0].getDescription().indexOf("Waldorf") > -1, "Card parameter 'city' should be replaced in rendered html with 'Waldorf'");
 					assert.ok(oListItems[0].getDescription().indexOf("Germany") > -1, "Card parameter 'country' should be replaced in rendered html  with 'Germany'");
 					done();
-				}.bind(this), 100);
+				}.bind(this));
 
+				// Act
+				this.oCard.setParameters(oData.location);
 			}.bind(this));
+
 			this.oCard.setManifest(oManifest_DefaultParameters);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -2464,6 +2465,8 @@ sap.ui.define([
 			var done = assert.async();
 			this.oCard.attachEventOnce("_ready", function () {
 
+				Core.applyChanges();
+
 				// Act
 				var sSubtitle = this.oCard.getCardHeader()._getSubtitle().getText();
 				assert.ok(sSubtitle !== "", "Card should have a subtitle with the now Date");
@@ -2472,7 +2475,6 @@ sap.ui.define([
 
 			this.oCard.setManifest(oManifest_Today_Parameter);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		});
 
 		QUnit.module("Refreshing", {

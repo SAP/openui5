@@ -2931,34 +2931,48 @@ sap.ui.define([
 			return;
 		}
 
+		var mRenderConfig = this._getSelectionPlugin().getRenderConfig();
+		var sSelectAllResourceTextID;
+		var sDisabledResourceTextID;
+		var sSelectAllText;
+		var $SelectAll = this.$("selall");
 		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
 		var mTooltipTexts = this._getAccExtension().getAriaTextsForSelectionMode(true);
-
 		// trigger the rows to update their selection
 		var aRows = this.getRows();
+
 		for (var i = 0; i < aRows.length; i++) {
 			var oRow = aRows[i];
 			oRow._updateSelection(this, mTooltipTexts);
 		}
 
-		var mRenderConfig = this._getSelectionPlugin().getRenderConfig();
-
 		if (mRenderConfig.headerSelector.visible) {
 			var $SelectAll = this.$("selall");
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
-			var sSelectAllResourceTextID;
 
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
 			if (mRenderConfig.headerSelector.type === "toggle") {
 				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-			} else if (mRenderConfig.headerSelector.type === "clear") {
-				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 			}
+		}
 
-			var sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
-			if (this._getShowStandardTooltips()) {
+		if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.visible) {
+			$SelectAll.attr("disabled", !mRenderConfig.headerSelector.enabled);
+			sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+
+			if (!mRenderConfig.headerSelector.enabled) {
+				sDisabledResourceTextID = "TBL_CTRL_STATE_DISABLED";
+			}
+		}
+
+		if (sSelectAllResourceTextID) {
+			sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
+			if (this._getShowStandardTooltips() && mRenderConfig.headerSelector.visible) {
+				if (sDisabledResourceTextID) {
+					sSelectAllText = sSelectAllText + " " + TableUtils.getResourceText(sDisabledResourceTextID);
+				}
 				$SelectAll.attr('title', sSelectAllText);
 			} else if (mRenderConfig.headerSelector.type === "toggle") {
 				this.getDomRef("ariaselectall").innerText = sSelectAllText;
@@ -4010,7 +4024,7 @@ sap.ui.define([
 	 *                                      columns, otherwise as index in the <code>columns</code> aggregation
 	 * @returns {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Table.prototype.getCellControl = function(iRowIndex, iColumnIndex, bVisibleColumnIndex) {
 		var oInfo = TableUtils.getRowColCell(this, iRowIndex, iColumnIndex, !bVisibleColumnIndex);
@@ -4073,7 +4087,7 @@ sap.ui.define([
 	 * @see sap.ui.table.TableSyncExtension#getInterface
 	 * @returns {Promise} Returns a promise that resolves with the synchronization interface, and rejects with an error object.
 	 * @private
-	 * @sap-restricted sap.gantt
+	 * @ui5-restricted sap.gantt
 	 */
 	Table.prototype._enableSynchronization = function() {
 		var that = this;
@@ -4091,7 +4105,7 @@ sap.ui.define([
 	 *
 	 * @throws {Error} If a selection plugin is applied
 	 * @private
-	 * @sap-restricted sap.watt.hanaplugins.editor.plugin.hdbcalculationview
+	 * @ui5-restricted sap.watt.hanaplugins.editor.plugin.hdbcalculationview
 	 */
 	Table.prototype._enableLegacyMultiSelection = function() {
 		if (this._hasSelectionPlugin()) {

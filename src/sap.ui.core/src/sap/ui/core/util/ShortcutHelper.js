@@ -195,6 +195,7 @@ sap.ui.define([
 		 * Check whether the key combination to be registered is allowed.
 		 *
 		 * @param {string} sShortcut The shortcut string
+		 * @throws {Error} Throws an Error if shortcut string is not valid
 		 * @private
 		 */
 		validateShortcutString: function(sShortcut) {
@@ -208,6 +209,7 @@ sap.ui.define([
 		 * Check whether the key combination to be registered is allowed.
 		 *
 		 * @param {object} oNormalizedShortcutSpec Normalized shortcut data
+		 * @throws {Error} Throws an Error if shortcut is not allowed
 		 * @private
 		 */
 		validateKeyCombination: function(oNormalizedShortcutSpec) {

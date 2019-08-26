@@ -188,7 +188,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 			 * @param {boolean} bDeserialize  whether to deserialize the content or not
 			 * @returns {Promise} a promise that would be resolved in case of successful operation or rejected with
 			 * value of the error message if the operation fails. When resolved the Promise will return the array of all
-			 * entries in the following format: <code>{key: <myKey>, value: <myValue>}</code>
+			 * entries in the following format: <code>{key: &lt;myKey>, value: &lt;myValue>}</code>
 			 * @private
 			 */
 			_getAll: function (bDeserialize) {

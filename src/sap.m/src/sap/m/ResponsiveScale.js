@@ -188,7 +188,7 @@ sap.ui.define([
 		 *
 		 * @param {jQuery.Event} oEvent The event object passed.
 		 * @private
-		 * @sap-restricted sap.m.Slider
+		 * @ui5-restricted sap.m.Slider
 		 */
 		Scale.prototype.handleResize = function (oEvent) {
 			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels, oSiblingTickmark,

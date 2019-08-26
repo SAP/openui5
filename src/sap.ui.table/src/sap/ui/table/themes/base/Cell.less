@@ -8,6 +8,11 @@
 @_sap_ui_table_Cell_Padding: 0 0.5rem;
 @_sap_ui_table_Cell_TouchMenuIconSize: 1.375rem;
 @_sap_ui_table_Cell_ColumnIconSize: 0.75rem;
+@_sap_ui_table_Cell_BorderColorSelected: @sapUiListBorderColor;
+@_sap_ui_table_Cell_ShadowColorSelected: transparent;
+@_sap_ui_table_Cell_BorderColorFixedSelected: @sapUiListTableFixedBorder;
+@_sap_ui_table_Cell_ShadowColorFixed: transparent;
+@_sap_ui_table_Cell_BorderBottomFocus: @sapUiListTableFixedBorder;
 
 /*
  * Focus visualization
@@ -102,6 +107,16 @@
 	.sapUiTableRowLastFixedTop > &,
 	.sapUiTableRowLastScrollable > & {
 		border-bottom-color: @sapUiListTableFixedBorder;
+		box-shadow: 0 -@_sap_ui_table_BaseBorderWidth @_sap_ui_table_Cell_ShadowColorFixed inset;
+
+		.sapUiTableRowSel& {
+			border-bottom-color: @_sap_ui_table_Cell_BorderColorFixedSelected;
+			box-shadow: 0 -@_sap_ui_table_BaseBorderWidth @_sap_ui_table_Cell_ShadowColorSelected inset;
+		}
+
+		&:focus {
+			border-bottom-color: @_sap_ui_table_Cell_BorderBottomFocus;
+		}
 	}
 
 	// Last row border
@@ -112,6 +127,10 @@
 
 	> .sapUiTableCellInner {
 		box-sizing: border-box;
+	}
+
+	.sapUiTableRowSel > & {
+		border-bottom-color: @_sap_ui_table_Cell_BorderColorSelected;
 	}
 }
 
@@ -167,6 +186,13 @@
 
 	&:active {
 		background-color: @sapUiListActiveBackground;
+	}
+
+	&[disabled] {
+		pointer-events: none;
+		& > * {
+			opacity: 0.3;
+		}
 	}
 }
 

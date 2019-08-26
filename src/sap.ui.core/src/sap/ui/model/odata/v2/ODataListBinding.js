@@ -380,7 +380,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (bUpdated && this.bUsePreliminaryContext) {
+		if (bUpdated && this.bUsePreliminaryContext && this.oContext === oContext) {
 			this._fireChange({ reason: ChangeReason.Context });
 			return;
 		}

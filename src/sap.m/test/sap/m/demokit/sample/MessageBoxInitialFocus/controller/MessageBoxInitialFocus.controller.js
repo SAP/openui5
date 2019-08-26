@@ -25,7 +25,7 @@ sap.ui.define([
 					{
 						icon: MessageBox.Icon.WARNING,
 						title: "Focus on a Button",
-						actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+						actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 						styleClass: bCompact ? "sapUiSizeCompact" : "",
 						initialFocus: MessageBox.Action.CANCEL
 					}

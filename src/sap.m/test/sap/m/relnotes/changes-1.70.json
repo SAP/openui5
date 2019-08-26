@@ -5,19 +5,19 @@
       {
         "id": "3a5a84025eed8885cc1b1b89d986ffafd2de1775",
         "type": "FEATURE",
-        "text": " sap.m.Button: Now ignores keys on Space key hold",
+        "text": "sap.m.Button: Now ignores keys on Space key hold",
         "references": []
       },
       {
         "id": "581c985378cfe3ca4c5ac6b6d63b0276e20979fe",
         "type": "FIX",
-        "text": " ListItemBase: range selection fix",
+        "text": "ListItemBase: range selection fix",
         "references": []
       },
       {
         "id": "beb0ee0f3227fa02d8b406bbc62bf8bfb57b8ef6",
         "type": "FIX",
-        "text": " P13nColumnsPanel: Do not set the focus manually",
+        "text": "P13nColumnsPanel: Do not set the focus manually",
         "references": [
           {
             "type": "BCP",
@@ -28,29 +28,37 @@
       {
         "id": "d297fc6c3a7f46752dc9f4dc958720142b8ec603",
         "type": "FIX",
-        "text": " sap.m.DatePicker: handles correctly dd/MM/YYYYY",
+        "text": "sap.m.DatePicker: handles correctly dd/MM/YYYYY",
         "references": [
           {
             "type": "BCP",
             "reference": "1970397249"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2613"
           }
         ]
       },
       {
         "id": "bb44d66d96c60498973c98a3012a8ffd86ccd6ae",
         "type": "FIX",
-        "text": " sap.m.Input: vertical alignment issue fixed",
+        "text": "sap.m.Input: vertical alignment issue fixed",
         "references": [
           {
             "type": "BCP",
             "reference": "1970315739"
+          },
+          {
+            "type": "GitHub",
+            "reference": "2577"
           }
         ]
       },
       {
         "id": "a831ecee25f39494258abf3de0eb95dba0a150ba",
         "type": "FIX",
-        "text": " sap.m.Link: cancels action on pressed SPACE + SHIFT or ESCAPE",
+        "text": "sap.m.Link: cancels action on pressed SPACE + SHIFT or ESCAPE",
         "references": [
           {
             "type": "BCP",
@@ -61,7 +69,7 @@
       {
         "id": "dd548492b2e00c06f05937d9467a21d53a6a5748",
         "type": "FIX",
-        "text": " sap.m.MessageBox: Icons are now set in show method",
+        "text": "sap.m.MessageBox: Icons are now set in show method",
         "references": [
           {
             "type": "BCP",
@@ -72,7 +80,7 @@
       {
         "id": "25eecc971d31f05cf9dfe9126f90a27171502ae9",
         "type": "FIX",
-        "text": " sap.m.MessageView: Navigation between pages is now possible",
+        "text": "sap.m.MessageView: Navigation between pages is now possible",
         "references": [
           {
             "type": "BCP",
@@ -83,7 +91,7 @@
       {
         "id": "e6df7f60efd76a116b418a41dbd3318437926595",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: QUnit fixed",
+        "text": "sap.m.MultiComboBox: QUnit fixed",
         "references": [
           {
             "type": "BCP",
@@ -94,7 +102,7 @@
       {
         "id": "2346d5a7a9b960b47377803a5026b2b214c10e92",
         "type": "FIX",
-        "text": " sap.m.MultiComboBox: Update properly selectedKeys",
+        "text": "sap.m.MultiComboBox: Update properly selectedKeys",
         "references": [
           {
             "type": "BCP",
@@ -113,7 +121,7 @@
       {
         "id": "6b5f7e6870f20519cefbe21c38d9bd6f8967c123",
         "type": "FIX",
-        "text": " sap.m.MultiInput: Picker now remains open after token\u0027s deletion",
+        "text": "sap.m.MultiInput: Picker now remains open after token's deletion",
         "references": [
           {
             "type": "BCP",
@@ -124,19 +132,19 @@
       {
         "id": "c2e38f5b768bf65a048dec78c4d8219b5d4f01d7",
         "type": "FIX",
-        "text": " sap.m.NavContainer: Corrected qunit test for IE11",
+        "text": "sap.m.NavContainer: Corrected qunit test for IE11",
         "references": []
       },
       {
         "id": "414850baccdd48f7fe917763de4d6e950c7af109",
         "type": "FIX",
-        "text": " sap.m.ObjectAttribute: renders correctly space between title and text",
+        "text": "sap.m.ObjectAttribute: renders correctly space between title and text",
         "references": []
       },
       {
         "id": "17e36a095ce1b825c6bacf52c586e99a78343d82",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: Changing visibility of content is fixed",
+        "text": "sap.m.OverflowToolbar: Changing visibility of content is fixed",
         "references": [
           {
             "type": "BCP",
@@ -147,13 +155,13 @@
       {
         "id": "6e3f71f7fe675c0f9d932d73c8a3fd368391838e",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: headers have now correct paddings",
+        "text": "sap.m.PlanningCalendar: headers have now correct paddings",
         "references": []
       },
       {
         "id": "2d8a09b8817e9c2c6edeb4200f53fbb008771e3a",
         "type": "FIX",
-        "text": " sap.m.TextArea: Paddings are corrected",
+        "text": "sap.m.TextArea: Paddings are corrected",
         "references": [
           {
             "type": "BCP",
@@ -164,7 +172,7 @@
       {
         "id": "ff6e42321d6e64b7bd4cf7faebdb278e87ea58a1",
         "type": "FIX",
-        "text": " sap.m.TimePickerSlider: does not react to mouse wheel when drag and drop",
+        "text": "sap.m.TimePickerSlider: does not react to mouse wheel when drag and drop",
         "references": [
           {
             "type": "BCP",
@@ -175,7 +183,7 @@
       {
         "id": "d4c06c690205f8c4d405e2e44fa53488fe78fcb2",
         "type": "FIX",
-        "text": " sap.m.ActionSheet: cancelButtonPress event documentation improved",
+        "text": "sap.m.ActionSheet: cancelButtonPress event documentation improved",
         "references": [
           {
             "type": "BCP",
@@ -186,7 +194,7 @@
       {
         "id": "ab538edbec0c8c53b9a2cf4f29231a6b92af6302",
         "type": "FIX",
-        "text": " sap.m.ComboBox: Items grouping is now working properly",
+        "text": "sap.m.ComboBox: Items grouping is now working properly",
         "references": [
           {
             "type": "BCP",
@@ -197,7 +205,7 @@
       {
         "id": "02987f51eebec816e0a80a5962c9144739b3655a",
         "type": "FIX",
-        "text": " sap.m.Input: Selection in tabular suggestions fixed",
+        "text": "sap.m.Input: Selection in tabular suggestions fixed",
         "references": [
           {
             "type": "BCP",
@@ -208,7 +216,7 @@
       {
         "id": "fd5f5e1ae43b96f6969a7ca3c9d3a31393c89a27",
         "type": "FIX",
-        "text": " sap.m.MenuItem: function name is correct now",
+        "text": "sap.m.MenuItem: function name is correct now",
         "references": [
           {
             "type": "BCP",
@@ -219,7 +227,7 @@
       {
         "id": "cd084ff6090d427135b10df65de3257de46f0b27",
         "type": "FIX",
-        "text": " sap.m.MultiInput: Documentation for showValueHelp property updated",
+        "text": "sap.m.MultiInput: Documentation for showValueHelp property updated",
         "references": [
           {
             "type": "BCP",
@@ -230,7 +238,7 @@
       {
         "id": "5f1fe094576307366679ec658c3ee4cde1440d21",
         "type": "FIX",
-        "text": " sap.m.NavContainer: Documentation about autoFocus is updated",
+        "text": "sap.m.NavContainer: Documentation about autoFocus is updated",
         "references": [
           {
             "type": "BCP",
@@ -241,7 +249,7 @@
       {
         "id": "597ccff3908324543d64530e8095526fce9ce1e5",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: Fixed calculation of overflow button",
+        "text": "sap.m.OverflowToolbar: Fixed calculation of overflow button",
         "references": [
           {
             "type": "BCP",
@@ -252,13 +260,13 @@
       {
         "id": "8929d0e809cd470f0cb3ec442c59ef9f8750b85a",
         "type": "FIX",
-        "text": " sap.m.PlanningCalender: Sample issue solved",
+        "text": "sap.m.PlanningCalender: Sample issue solved",
         "references": []
       },
       {
         "id": "18f1e90f51eccf3515efc5398c4763df070a6867",
         "type": "FIX",
-        "text": " sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
+        "text": "sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
         "references": [
           {
             "type": "BCP",
@@ -269,7 +277,7 @@
       {
         "id": "67caf20ad8ddf852a31911be3e44bf054a3c9b75",
         "type": "FIX",
-        "text": " sap.m.SinglePlanningCalendar: Cell\u0027s start/end information enhanced",
+        "text": "sap.m.SinglePlanningCalendar: Cell's start/end information enhanced",
         "references": [
           {
             "type": "BCP",
@@ -280,13 +288,13 @@
       {
         "id": "20e88c97c6beda059bf06dce4e7570b6bf76d39b",
         "type": "FIX",
-        "text": " sap.m.TabStrip: Modified star symbol screen reader issue solved",
+        "text": "sap.m.TabStrip: Modified star symbol screen reader issue solved",
         "references": []
       },
       {
         "id": "fc6cc3e370f2a2aaf20facf17eccc65e43e9dca4",
         "type": "FIX",
-        "text": " sap.m.TextArea: Sync properties growing + width + cols",
+        "text": "sap.m.TextArea: Sync properties growing + width + cols",
         "references": [
           {
             "type": "BCP",
@@ -297,7 +305,7 @@
       {
         "id": "6a0c3aa72024dbf879f748cc770e79b6bff1f8e8",
         "type": "FIX",
-        "text": " sap.m.Tokenizer: Adjust properly accessibility title",
+        "text": "sap.m.Tokenizer: Adjust properly accessibility title",
         "references": [
           {
             "type": "BCP",
@@ -308,7 +316,7 @@
       {
         "id": "9efdf04b6e1c5735986d80b80dfa07248679dc78",
         "type": "FIX",
-        "text": " sap.m.Tokenizer: Handle properly not visible tokens",
+        "text": "sap.m.Tokenizer: Handle properly not visible tokens",
         "references": [
           {
             "type": "BCP",

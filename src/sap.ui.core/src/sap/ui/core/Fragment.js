@@ -493,7 +493,7 @@ function(
 	 * <li><code>sName</code> is the name by which this fragment later can be found and instantiated. If defined in
 	 *   its own file, in order to be found by the module loading system, the file location and name must correspond
 	 *   to <code>sName</code> (path + file name must be: fragmentName + ".fragment.js"). </li>
-	 * <li><code>oFragmentDefinition</code> is an object at least holding the <code>createContent(oController)<code>
+	 * <li><code>oFragmentDefinition</code> is an object at least holding the <code>createContent(oController)</code>
 	 *   method which defines the fragment content. If given during instantiation, the <code>createContent</code>
 	 *   method receives a controller instance (otherwise, parameter <code>oController</code> will be undefined)
 	 *   and the return value must be one <code>sap.ui.core.Control</code> (which could have any number of children).</li>

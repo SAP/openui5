@@ -94,7 +94,7 @@ sap.ui.define([
 	 * Retrieves change handler settings from the mediated list
 	 * @param  {Object} mKey Collection of keys
 	 * @param  {boolean} bSkipInitialization If true, the scenario should not be initialized
-	 * @return {promise.<Object>} Returns a Promise with ChangeHandlerSettings included.
+	 * @return {Promise.<Object>} Returns a Promise with ChangeHandlerSettings included.
 	 */
 	ChangeHandlerMediator.getChangeHandlerSettings = function(mKey, bSkipInitialization) {
 		var aKeys = Object.keys(mKey);
@@ -170,7 +170,7 @@ sap.ui.define([
 		var sGetterName = 'get' + capitalize(mChangeHandlerSettings.key.scenario) + 'Settings';
 		if (!ChangeHandlerMediator[sGetterName]) {
 			/**
-			 * Retrieves the settings for the specified scenario, getting the oData
+			 * Retrieves the settings for the specified scenario, getting the OData
 			 * service version from the control and ensures that a create function is
 			 * available for the change handler
 			 * @param  {sap.ui.core.Control} oControl The control for the scenario

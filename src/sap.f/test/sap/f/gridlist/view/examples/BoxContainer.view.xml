@@ -13,7 +13,7 @@
             <grid:GridBoxLayout boxMinWidth="17rem"/>
         </f:customLayout>
 
-		<CustomListItem blocked="{blocked}">
+		<CustomListItem>
 			<VBox height="100%">
 				<VBox class="sapUiSmallMargin">
 					<layoutData>
@@ -34,7 +34,7 @@
             <grid:GridBoxLayout boxWidth="17rem"/>
         </f:customLayout>
 
-		<CustomListItem busy="{busy}">
+		<CustomListItem>
 			<VBox height="100%">
 				<VBox class="sapUiSmallMargin">
 					<layoutData>

@@ -1164,6 +1164,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 *
 	 * @enum {string}
 	 * @public
+	 * @since 1.10
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.MessageType = {
@@ -1691,6 +1692,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.0
 	 */
 	thisLib.ValueState = {
 
@@ -1715,6 +1717,7 @@ sap.ui.define(['sap/ui/base/DataType', './CalendarType', './Core'],
 		/**
 		 * State is informative.
 		 * @public
+		 * @since 1.61
 		 */
 		Information : "Information",
 

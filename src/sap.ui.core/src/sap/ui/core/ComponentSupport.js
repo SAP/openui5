@@ -72,7 +72,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Find all DOM elements with the attribute <code>data-sap-ui-component</div>
+	 * Find all DOM elements with the attribute <code>data-sap-ui-component</code>
 	 * and parse the attributes from these DOM elements for the settings of the
 	 * <code>ComponentContainer</code> which will be placed into these DOM elements.
 	 *

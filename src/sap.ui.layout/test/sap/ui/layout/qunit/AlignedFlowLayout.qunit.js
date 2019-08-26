@@ -9,7 +9,13 @@ sap.ui.require([
 	"sap/ui/Device",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem"
-], function(Core, Control, Device, AlignedFlowLayout, Rem) {
+], function(
+	Core,
+	Control,
+	Device,
+	AlignedFlowLayout,
+	Rem
+) {
 	"use strict";
 
 	var CONTENT_ID = "content";
@@ -52,6 +58,10 @@ sap.ui.require([
 				width: {
 					type: "sap.ui.core.CSSSize",
 					defaultValue: ""
+				},
+				height: {
+					type: "sap.ui.core.CSSSize",
+					defaultValue: ""
 				}
 			}
 		},
@@ -59,6 +69,7 @@ sap.ui.require([
 			oRm.write("<button");
 			oRm.writeControlData(oControl);
 			oRm.addStyle("width", oControl.getWidth());
+			oRm.addStyle("height", oControl.getHeight());
 			oRm.addStyle("box-sizing", "border-box");
 			oRm.writeStyles();
 			oRm.write(">");
@@ -396,7 +407,7 @@ sap.ui.require([
 		oButton.destroy();
 	});
 
-	QUnit.test("it should set maximum width to the end item", function(assert) {
+	QUnit.test("it should not set maximum width to the end item", function(assert) {
 
 		// system under test
 		var oButton = new Button({
@@ -409,10 +420,10 @@ sap.ui.require([
 		// arrange
 		Core.applyChanges();
 		var oEndItem = oButton.getDomRef().parentElement;
-		var sMaxItemWidth = "30rem"; // this value is specified in the QUnit module above
+		var sMaxItemWidth = "60rem";
 
 		// assert
-		assert.strictEqual(oEndItem.style.maxWidth, sMaxItemWidth);
+		assert.strictEqual(oEndItem.style.maxWidth, "");
 		assert.strictEqual(Rem.fromPx(oEndItem.offsetWidth) + "rem", sMaxItemWidth);
 
 		// cleanup
@@ -758,6 +769,291 @@ sap.ui.require([
 				done();
 			}
 		});
+
+		// BCP: 1970364898
+		QUnit.test("the end item should not overlap other items (first line mode)", function(assert) {
+			var done = assert.async();
+
+			// system under test
+			var oInput1;
+			var oInput2;
+			var oInput3;
+			var oAdaptFiltersButton;
+			var oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "12rem", // default 192px
+				maxItemWidth: "24rem", // default 384px
+				content: [
+					oInput1 = new Input({
+						width: "100%"
+					}),
+
+					oInput2 = new Input({
+						width: "100%"
+					}),
+
+					oInput3 = new Input({
+						width: "100%"
+					})
+				],
+				endContent: [
+					oAdaptFiltersButton = new Button({
+						text: "Dostosowanie filtrów (1)",
+						width: "135px" // set a fixed width for reliable testing
+					}),
+
+					new Button({
+						text: "Rozpoczęcie",
+						width: "80px" // set a fixed width for reliable testing
+					})
+				]
+			});
+
+			// set the container's width of the AlignedFlowLayout control
+			this.oContentDomRef.style.width = "791px";
+
+			// puts the AlignFlowLayout control into the specified parent DOM element (container)
+			oAlignedFlowLayout.placeAt(CONTENT_ID);
+
+			// enforces a sync rendering of the AlignedFlowLayout control
+			Core.applyChanges();
+
+			// Attach an event listener to the central core interval timeout timer to wait
+			// for the first resize event after the layout is made visible.
+			Core.attachIntervalTimer(fnAfterResize, this);
+
+			function fnAfterResize() {
+				var oItemDomRef1 = oInput1.getDomRef().parentElement,
+					oItemDomRef2 = oInput2.getDomRef().parentElement,
+					oItemDomRef3 = oInput3.getDomRef().parentElement,
+					oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement,
+					bOverlapX;
+
+				if (Core.getConfiguration().getRTL()) {
+					bOverlapX = oItemDomRef3.offsetLeft < (oEndContendItemDomRef.offsetLeft + oEndContendItemDomRef.offsetWidth);
+				} else {
+					bOverlapX = oEndContendItemDomRef.offsetLeft < (oItemDomRef3.offsetLeft + oItemDomRef3.offsetWidth);
+				}
+
+				// - the available container width is 791px
+				// - the min item width is set to 192px (default) and there are 3 flexible item (192 * 3) = 576px
+				// - the the end content item width is set to 135px + 80px = 215px
+				// So, it should be possible to display all items in the first line without overlapping
+				var iItemsComputedWidth = oItemDomRef1.offsetWidth + oItemDomRef2.offsetWidth + oItemDomRef3.offsetWidth + oEndContendItemDomRef.offsetWidth;
+
+				// assert
+				assert.strictEqual(oItemDomRef1.offsetWidth, 192, "the item should have the minimum specified width");
+				assert.strictEqual(oItemDomRef2.offsetWidth, 192, "the item should have the minimum specified width");
+				assert.strictEqual(oItemDomRef3.offsetWidth, 192, "the item should have the minimum specified width");
+				assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
+				assert.strictEqual(iItemsComputedWidth, 791, "the computed width of the items should be equal to the container width");
+				assert.strictEqual(oAlignedFlowLayout.checkItemsWrapping(), false, "the items should fit into a single line (no wrapping onto multiple lines)");
+				assert.strictEqual(bOverlapX, false, "the last items two items should not overlap");
+
+				// cleanup
+				Core.detachIntervalTimer(fnAfterResize, this);
+				oAlignedFlowLayout.destroy();
+				done();
+			}
+		});
+
+		QUnit.test("the end item should not overlap other items (multiple lines mode)", function(assert) {
+			var done = assert.async();
+
+			// system under test
+			var oInput1;
+			var oInput2;
+			var oInput3;
+			var oAdaptFiltersButton;
+			var oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "12rem", // default 192px
+				maxItemWidth: "24rem", // default 384px
+				content: [
+					oInput1 = new Input({
+						width: "100%",
+						height: "20px"
+					}),
+
+					oInput2 = new Input({
+						width: "100%",
+						height: "20px"
+					}),
+
+					oInput3 = new Input({
+						width: "100%",
+						height: "20px"
+					})
+				],
+				endContent: [
+					oAdaptFiltersButton = new Button({
+						text: "Dostosowanie filtrów (1)",
+						width: "135px", // set a fixed width for reliable testing
+						height: "20px"
+					}),
+
+					new Button({
+						text: "Rozpoczęcie",
+						width: "80px", // set a fixed width for reliable testing
+						height: "20px"
+					})
+				]
+			});
+
+			// set the container's width of the AlignedFlowLayout control
+			this.oContentDomRef.style.width = "390px";
+
+			// puts the AlignFlowLayout control into the specified parent DOM element (container)
+			oAlignedFlowLayout.placeAt(CONTENT_ID);
+
+			// enforces a sync rendering of the AlignedFlowLayout control
+			Core.applyChanges();
+
+			// Attach an event listener to the central core interval timeout timer to wait
+			// for the first resize event after the layout is made visible.
+			Core.attachIntervalTimer(fnAfterResize, this);
+
+			function fnAfterResize() {
+				var oItemDomRef1 = oInput1.getDomRef().parentElement,
+					oItemDomRef2 = oInput2.getDomRef().parentElement,
+					oItemDomRef3 = oInput3.getDomRef().parentElement,
+					oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement;
+
+				// assert
+				assert.strictEqual(oItemDomRef1.offsetWidth, 195, "the item should have a computed width of 195px");
+				assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 195, "the item should be aligned to the upper right corner");
+				} else {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
+				}
+
+				assert.strictEqual(oItemDomRef2.offsetWidth, 195, "the item should have a computed width of 195px");
+				assert.strictEqual(oItemDomRef2.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef2.offsetLeft, 0, "the item should be aligned to the left of the first item");
+				} else {
+					assert.strictEqual(oItemDomRef2.offsetLeft, 195, "the item should be aligned to the right of the first item");
+				}
+
+				assert.strictEqual(oItemDomRef3.offsetWidth, 195, "the item should have a computed width of 195px");
+				assert.strictEqual(oItemDomRef3.offsetTop, 20, "the item should be in the second line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 195, "the item should be aligned to the right corner");
+				} else {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the left corner");
+				}
+
+				assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
+				assert.strictEqual(oEndContendItemDomRef.offsetTop, 40, "the end content item should be in the third line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oEndContendItemDomRef.offsetLeft, 0, "the item should be aligned to the right");
+				} else {
+					assert.strictEqual(oEndContendItemDomRef.offsetLeft, 175, "the item should be aligned to the left");
+				}
+
+				// cleanup
+				Core.detachIntervalTimer(fnAfterResize, this);
+				oAlignedFlowLayout.destroy();
+				done();
+			}
+		});
+
+		QUnit.test("the end item should not overlap other items (multiple lines mode)", function(assert) {
+			var done = assert.async();
+
+			// system under test
+			var oInput1;
+			var oInput2;
+			var oInput3;
+			var oAdaptFiltersButton;
+			var oAlignedFlowLayout = new AlignedFlowLayout({
+				minItemWidth: "12rem", // default 192px
+				maxItemWidth: "24rem", // default 384px
+				content: [
+					oInput1 = new Input({
+						width: "100%",
+						height: "20px"
+					}),
+
+					oInput2 = new Input({
+						width: "100%",
+						height: "20px"
+					}),
+
+					oInput3 = new Input({
+						width: "100%",
+						height: "20px"
+					})
+				],
+				endContent: [
+					oAdaptFiltersButton = new Button({
+						text: "Dostosowanie filtrów (1)",
+						width: "500px", // set a fixed width for reliable testing
+						height: "20px"
+					}),
+
+					new Button({
+						text: "Rozpoczęcie",
+						width: "500px", // set a fixed width for reliable testing
+						height: "20px"
+					})
+				]
+			});
+
+			// set the container's width of the AlignedFlowLayout control
+			this.oContentDomRef.style.width = "960px";
+
+			// puts the AlignFlowLayout control into the specified parent DOM element (container)
+			oAlignedFlowLayout.placeAt(CONTENT_ID);
+
+			// enforces a sync rendering of the AlignedFlowLayout control
+			Core.applyChanges();
+
+			// Attach an event listener to the central core interval timeout timer to wait
+			// for the first resize event after the layout is made visible.
+			Core.attachIntervalTimer(fnAfterResize, this);
+
+			function fnAfterResize() {
+				var oItemDomRef1 = oInput1.getDomRef().parentElement,
+					oItemDomRef2 = oInput2.getDomRef().parentElement,
+					oItemDomRef3 = oInput3.getDomRef().parentElement,
+					oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement;
+
+				// assert
+				assert.strictEqual(oItemDomRef1.offsetWidth, 320, "the item should have a computed width of 320px");
+				assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 640, "the item should be aligned to the upper right corner");
+				} else {
+					assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
+				}
+
+				assert.strictEqual(oItemDomRef2.offsetWidth, 320, "the item should have a computed width of 320px");
+				assert.strictEqual(oItemDomRef2.offsetTop, 0, "the item should be in the first line");
+				assert.strictEqual(oItemDomRef2.offsetLeft, 320, "the item should be aligned to the left of the first item");
+
+				assert.strictEqual(oItemDomRef3.offsetWidth, 320, "the item should have a computed width of 320px");
+				assert.strictEqual(oItemDomRef3.offsetTop, 0, "the item should be in the first line");
+
+				if (Core.getConfiguration().getRTL()) {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the upper left corner");
+				} else {
+					assert.strictEqual(oItemDomRef3.offsetLeft, 640, "the item should be aligned to the upper right corner");
+				}
+
+				assert.strictEqual(oEndContendItemDomRef.offsetLeft + oEndContendItemDomRef.offsetWidth, 960, "the end content item should be aligned to the right corner");
+				assert.strictEqual(oEndContendItemDomRef.offsetTop, 20, "the end content item should be in the second line");
+
+				// cleanup
+				Core.detachIntervalTimer(fnAfterResize, this);
+				oAlignedFlowLayout.destroy();
+				done();
+			}
+		});
 	}
 
 	QUnit.test("it should adapt the position of the absolute-positioned end item when a standard CSS padding class is added", function(assert) {
@@ -815,7 +1111,7 @@ sap.ui.require([
 		oInput2.destroy();
 	});
 
-	QUnit.test('it should not set the "sapUiAFLayoutOneLine" CSS class', function(assert) {
+	QUnit.test('it should wrap the items onto multiple lines', function(assert) {
 
 		// system under test
 		var oInput1 = new Input();
@@ -838,9 +1134,20 @@ sap.ui.require([
 		this.oAlignedFlowLayout.setMinItemWidth("200px");
 		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
 		Core.applyChanges();
+		var oItemDomRef1 = oInput1.getDomRef().parentElement,
+			oItemDomRef2 = oInput2.getDomRef().parentElement,
+			oItemDomRef3 = oInput3.getDomRef().parentElement,
+			oItemDomRef4 = oInput3.getDomRef().parentElement,
+			oEndContendItemDomRef = oButton.getDomRef().parentElement;
 
 		// assert
-		assert.notOk(this.oAlignedFlowLayout.getDomRef().classList.contains(this.CSS_CLASS_ONE_LINE));
+		assert.strictEqual(oItemDomRef1.offsetWidth, 200, "the item should have the minimum specified width");
+		assert.strictEqual(oItemDomRef2.offsetWidth, 200, "the item should have the minimum specified width");
+		assert.strictEqual(oItemDomRef3.offsetWidth, 200, "the item should have the minimum specified width");
+		assert.strictEqual(oItemDomRef4.offsetWidth, 200, "the item should have the minimum specified width");
+		assert.strictEqual(oEndContendItemDomRef.offsetWidth, 200, "the end content item should have the specified width");
+		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(), true, "the items should wraps onto multiple lines");
+		assert.strictEqual(this.oAlignedFlowLayout.checkItemsWrapping(undefined, { excludeEndItem: true }), false, "the items (excluding the end content item) should fit into a single line (no wrapping onto multiple lines)");
 
 		// cleanup
 		oInput1.destroy();

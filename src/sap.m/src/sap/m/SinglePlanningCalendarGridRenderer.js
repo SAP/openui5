@@ -681,7 +681,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/
 			oRm.addStyle("top", oControl._calculateTopPosition(oDate) + "px");
 			oRm.addClass("sapMSinglePCNowMarker");
 
-			if (oControl._isOutsideVisibleHours(oDate.getHours())) {
+			if (!oControl._isVisibleHour(oDate.getHours())) {
 				oRm.addClass("sapMSinglePCNowMarkerHidden");
 			}
 

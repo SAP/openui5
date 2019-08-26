@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/model/CompositeBinding",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Integer",
@@ -15,6 +16,7 @@ sap.ui.define([
 	CompositeBinding,
 	ParseException,
 	ValidateException,
+	BindingMode,
 	JSONModel,
 	TypeFloat,
 	TypeInteger,
@@ -570,4 +572,86 @@ sap.ui.define([
 			return e.message === "Type EvilType has both 'bUseRawValues' & 'bUseInternalValues' set to true. Only one of them is allowed to be true";
 		});
 	});
+
+	QUnit.module("Use mixed binding modes", {
+		beforeEach: function() {
+			this.model = new JSONModel({
+				a: "1",
+				b: "2",
+				c: "3"
+			});
+			this.binding1 = this.model.bindProperty("/a");
+			this.binding1.setBindingMode(BindingMode.TwoWay);
+			this.model.addBinding(this.binding1);
+
+			this.binding2 = this.model.bindProperty("/b");
+			this.binding2.setBindingMode(BindingMode.OneWay);
+			this.model.addBinding(this.binding2);
+
+			this.binding3 = this.model.bindProperty("/c");
+			this.binding3.setBindingMode(BindingMode.OneTime);
+			this.model.addBinding(this.binding3);
+
+			this.composite = new CompositeBinding([this.binding1, this.binding2, this.binding3]);
+			this.composite.setBindingMode(BindingMode.TwoWay);
+			this.composite.attachChange(function() {});
+			this.composite.initialize();
+
+		},
+		afterEach: function() {
+			this.model = null;
+			this.binding1 = null;
+			this.binding2 = null;
+			this.binding3 = null;
+			this.composite = null;
+		}
+	});
+
+	QUnit.test("Call setExtermalValue", function(assert) {
+		this.composite.setExternalValue("4 5 6");
+
+		assert.equal(this.model.getProperty("/a"), "4", "Property a gets updated");
+		assert.equal(this.model.getProperty("/b"), "2", "Property b stays unchanged");
+		assert.equal(this.model.getProperty("/c"), "3", "Property b stays unchanged");
+		assert.equal(this.composite.getExternalValue(), "4 2 3", "Composite returns matching value");
+	});
+
+	QUnit.test("Call setInternalValue", function(assert) {
+		this.composite.setInternalValue(["4", "5", "6"]);
+
+		assert.equal(this.model.getProperty("/a"), "4", "Property a gets updated");
+		assert.equal(this.model.getProperty("/b"), "2", "Property b stays unchanged");
+		assert.equal(this.model.getProperty("/c"), "3", "Property b stays unchanged");
+		assert.equal(this.composite.getExternalValue(), "4 2 3", "Composite returns matching value");
+	});
+
+	QUnit.test("Call setRawValue", function(assert) {
+		this.composite.setRawValue(["4", "5", "6"]);
+
+		assert.equal(this.model.getProperty("/a"), "4", "Property a gets updated");
+		assert.equal(this.model.getProperty("/b"), "2", "Property b stays unchanged");
+		assert.equal(this.model.getProperty("/c"), "3", "Property b stays unchanged");
+		assert.equal(this.composite.getExternalValue(), "4 2 3", "Composite returns matching value");
+	});
+
+	QUnit.test("Binding update dependent on mode", function(assert) {
+		var oSpy = this.spy(this.composite, "_fireChange");
+		assert.equal(this.composite.getExternalValue(), "1 2 3", "Initial value");
+
+		this.model.setProperty("/a", "4");
+		assert.ok(oSpy.calledOnce, "fireChange has been called on composite binding");
+		assert.equal(this.composite.getExternalValue(), "4 2 3", "Value is updated for TwoWay");
+		oSpy.reset();
+
+		this.model.setProperty("/b", "5");
+		assert.ok(oSpy.calledOnce, "fireChange has been called on composite binding");
+		assert.equal(this.composite.getExternalValue(), "4 5 3", "Value is updated for OneWay");
+		oSpy.reset();
+
+		this.model.setProperty("/c", "6");
+		assert.ok(oSpy.notCalled, "fireChange has not been called on composite binding");
+		assert.equal(this.composite.getExternalValue(), "4 5 3", "Value is not updated for OneTime");
+		oSpy.reset();
+	});
+
 });

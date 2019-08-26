@@ -564,7 +564,7 @@ function (
 	Overlay.prototype.applyStyles = function (bForceScrollbarSync) {
 		this.fireBeforeGeometryChanged();
 
-		if (!this.isRendered()) {
+		if (!this.isRendered() || this._bIsBeingDestroyed || this.getShouldBeDestroyed()) {
 			return;
 		}
 

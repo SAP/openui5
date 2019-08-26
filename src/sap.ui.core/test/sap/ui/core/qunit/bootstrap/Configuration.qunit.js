@@ -788,6 +788,56 @@ sap.ui.define([
 		assert.deepEqual(sFlexibilityService, aConfig);
 	});
 
+	function _getNumberOfFlModules(oCfg) {
+		return oCfg.modules.filter(function(sModule) {
+			return sModule === "sap.ui.fl.library";
+		}).length;
+	}
+
+	QUnit.test("Set flexibilityServices enforces the loading of sap.ui.fl", function(assert) {
+		window["sap-ui-config"]["flexibilityservices"] = '[{"connectorName": "KeyUser", "url": "/some/url", laverFilters: []}]';
+
+		var oCfg = new Configuration();
+		assert.equal(_getNumberOfFlModules(oCfg), 1);
+	});
+
+	QUnit.test("Set flexibilityServices URL enforces the loading of sap.ui.fl", function(assert) {
+
+		var sEncodedConfig = encodeURI('[{"connectorName":"KeyUser","url": "/some/url","laverFilters":[]}]');
+		browserUrl.change(location.origin + "?sap-ui-flexibilityServices="  + sEncodedConfig);
+
+		try {
+			var oCfg = new Configuration();
+			assert.equal(_getNumberOfFlModules(oCfg), 1);
+		} finally {
+			browserUrl.reset();
+		}
+	});
+
+	QUnit.test("Default flexibilityServices does NOT enforces the loading of sap.ui.fl", function(assert) {
+		var oCfg = new Configuration();
+		assert.equal(_getNumberOfFlModules(oCfg), 0);
+	});
+
+	QUnit.test("Cleared flexibilityServices does NOT enforces the loading of sap.ui.fl", function(assert) {
+		var oCfg = new Configuration();
+		assert.equal(_getNumberOfFlModules(oCfg), 0);
+	});
+
+	QUnit.test("Set flexibilityServices does NOT add the loading of sap.ui.fl an additional time if it is already set", function(assert) {
+		window["sap-ui-config"]["flexibilityservices"] = "";
+		window["sap-ui-config"]["libs"] = 'sap.ui.fl';
+		var oCfg = new Configuration();
+		assert.equal(_getNumberOfFlModules(oCfg), 1);
+	});
+
+	QUnit.test("Cleared flexibilityServices does NOT remove the loading of sap.ui.fl if it is set", function(assert) {
+		window["sap-ui-config"]["flexibilityservices"] = "";
+		window["sap-ui-config"]["libs"] = 'sap.ui.fl';
+		var oCfg = new Configuration();
+		assert.equal(_getNumberOfFlModules(oCfg), 1);
+	});
+
 	QUnit.module("ThemeRoot Validation");
 
 	[

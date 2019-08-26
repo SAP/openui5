@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/base/Log",
@@ -44,6 +44,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise|sap.ui.fl.Change} In case of a descriptor change, promise resolves to the created change.
 		 * In case of a flex change, the created change object is returned.
+		 * @private
 		 * @ui5-restricted
 		 */
 		create: function(mPropertyBag) {
@@ -93,6 +94,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.util.reflection.BaseTreeModifier} [mPropertyBag.modifier] - Modifier used to apply the change; if not provided, {@link sap.ui.core.util.reflection.JsControlTreeModifier} is used
 		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were applied in asynchronous case, or FakePromise for the synchronous processing scenario
+		 * @private
 		 * @ui5-restricted
 		 */
 		apply: function(mPropertyBag) {
@@ -116,6 +118,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object that should be reverted from the passed element
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which the change should be reverted
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case, or FakePromise for the synchronous processing scenario
+		 * @private
 		 * @ui5-restricted
 		 */
 		revert: function(mPropertyBag) {

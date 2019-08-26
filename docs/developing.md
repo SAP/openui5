@@ -168,7 +168,7 @@ npm run serve-sdk
 Within the testsuite project:
 - You can **build and serve** the SDK using this command:  
 `npm run sdk`
-- You can **update** and already built SDK using this command:  
+- You can **update** an already built SDK using this command:  
 `npm run update-sdk` *(followed by `npm run serve-sdk` to start the server if necessary)*
 
 
@@ -184,5 +184,51 @@ npm run lint
 ```
 
 ### Running Tests
-Automated test execution is not yet possible with UI5 Tooling.  
-Please refer to the [legacy Grunt development environment documentation](developing_legacy_grunt.md).
+
+Test can be executed automatically with the Karma Test-Runner.
+
+To run tests of a library, the `--lib` needs to be passed.  
+The `<library-name>` corresponds to the folder within `./src/`, e.g. `sap.m`.
+```
+npm run karma -- --lib=<library-name>
+```
+
+This executes all tests of that library in watch mode, which will automatically re-run tests in case of file changes.
+
+**Example:** `npm run karma -- --lib=sap.m`
+
+#### Run a specific test
+
+Instead of executing all tests of a library, it is also possible to only run one test or testsuite.  
+
+In order to find the URL, you can open [http://localhost:8080/test.html](http://localhost:8080/test.html) and search for the test.
+Copy the URL and remove the origin part (http://localhost:8080/), so that it begins with `resources` or `test-resources`.
+
+```
+npm run karma -- --lib=<library-name> --ui5.testpage="<testpage-url>"
+```
+
+**Note:** The corresponding `--lib` option needs to still be provided accordingly
+
+**Example:**
+
+```
+npm run karma -- --lib=sap.m --ui5.testpage="resources/sap/ui/test/starter/Test.qunit.html?testsuite=test-resources/sap/m/qunit/testsuite.mobile.qunit&test=Button"
+```
+
+#### Coverage
+
+Coverage reporting can be enabled by additionally passing the `--coverage` option
+```
+npm run karma -- --lib=<library-name> --coverage
+```
+
+#### Continuous integration (CI)
+
+The continuous integration mode can be enabled by additionally passing the `--ci` option.  
+This will enable Chrome headless and disable watch mode so the execution stops after all tests have been executed.
+```
+npm run karma -- --lib=<library-name> --ci
+```
+
+The options `--ci` and `--coverage` can be combined.

@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @class
 	 * Handles hierarchical navigation between Pages or other fullscreen controls.
 	 *
-	 * All children of this control receive navigation events, such as {@link sap.m.NavContainerChild#beforeShow beforeShow},
+	 * All children of this control receive navigation events, such as {@link sap.m.NavContainerChild#event:beforeShow beforeShow},
 	 * they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 	 *
 	 * @see {@link topic:a4afb138acf64a61a038aa5b91a4f082 Nav Container}
@@ -101,7 +101,7 @@ sap.ui.define([
 				/**
 				 * The content entities between which this NavContainer navigates. These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
 				 *
-				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}
+				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}
 				 */
 				pages: {type: "sap.ui.core.Control", multiple: true, singularName: "page"}
 			},
@@ -1622,8 +1622,8 @@ sap.ui.define([
 	 * Removes a page.
 	 *
 	 * @param {int | string | sap.ui.core.Control}
-	 *            vPage the position or ID of the <code>Control</control> that should be removed
-	 *            or that <code>Control</control> itself;
+	 *            vPage the position or ID of the <code>Control</code> that should be removed
+	 *            or that <code>Control</code> itself;
 	 *            if <code>vPage</code> is invalid, a negative value or a value greater or equal than the current size
 	 *            of the aggregation, nothing is removed.
 	 * @return {sap.ui.core.Control} the removed page or null

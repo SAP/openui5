@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/core/Control', './library', "./HexagonButtonGroupRenderer
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @alias sap.ui.demokit.HexagonButtonGroup
 	 */
 	var HexagonButtonGroup = Control.extend("sap.ui.demokit.HexagonButtonGroup", /** @lends sap.ui.demokit.HexagonButtonGroup.prototype */ { metadata : {

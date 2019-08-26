@@ -341,6 +341,11 @@ sap.ui.define([
 		this._aKeyFields = aKeyFields;
 
 		if (this._oIncludeFilterPanel) {
+			aKeyFields.some(function(oKeyField){
+				if (oKeyField.isDefault){
+					this._oIncludeFilterPanel.setAutoAddNewRow(true);
+				}
+			}.bind(this));
 			this._oIncludeFilterPanel.setKeyFields(this._aKeyFields);
 		}
 		if (this._oExcludeFilterPanel) {
@@ -466,7 +471,6 @@ sap.ui.define([
 		}).addStyleClass("sapMFilterPadding");
 
 		this._oIncludeFilterPanel = new P13nConditionPanel({
-			autoAddNewRow: true,
 			maxConditions: this.getMaxIncludes(),
 			alwaysShowAddIcon: false,
 			layoutMode: this.getLayoutMode(),

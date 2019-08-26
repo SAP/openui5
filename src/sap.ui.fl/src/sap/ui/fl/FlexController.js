@@ -185,7 +185,7 @@ sap.ui.define([
 	 * @param {string} oControl.id - ID of the control in case a map has been used to specify the control
 	 * @param {sap.ui.core.Component} [oControl.appComponent] - Application component of the control at runtime in case a map has been used
 	 * @param {string} oControl.controlType - Control type of the control in case a map has been used
-	 * @returns {promise.<sap.ui.fl.Change>} Created change wrapped in a promise
+	 * @returns {Promise.<sap.ui.fl.Change>} Created change wrapped in a promise
 	 * @public
 	 */
 	FlexController.prototype.createChange = function (oChangeSpecificData, oControl) {
@@ -276,7 +276,7 @@ sap.ui.define([
 	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
 	 * The property "oPropertyBag.packageName" is set to $TMP internally since flex changes are always local when they are created.
 	 * @param {sap.ui.core.Control} oControl control for which the change will be added
-	 * @returns {promise.<sap.ui.fl.Change>} the created change
+	 * @returns {Promise.<sap.ui.fl.Change>} the created change
 	 * @public
 	 */
 	FlexController.prototype.addChange = function (oChangeSpecificData, oControl) {
@@ -892,7 +892,7 @@ sap.ui.define([
 	 * @param {string} sControlType - Mame of the ui5 control type i.e. sap.m.Button
 	 * @param {sap.ui.core.Control} oControl - Control for which to retrieve the change handler
 	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
-	 * @returns {promise.<sap.ui.fl.changeHandler.Base>} Change handler or undefined if not found, wrapped in a promise.
+	 * @returns {Promise.<sap.ui.fl.changeHandler.Base>} Change handler or undefined if not found, wrapped in a promise.
 	 * @private
 	 */
 	FlexController.prototype._getChangeHandler = function (oChange, sControlType, oControl, oModifier) {
@@ -1222,7 +1222,7 @@ sap.ui.define([
 	 * @param {object} oChange - Change object
 	 * @param {object} vControl - Control instance or selector object with id, appComponent and controlType
 	 * @param {object} [oChangeHandler] - Change handler of the control and change
-	 * @returns {promise.<boolean>} <code>true</code> if change handler has revertChange function. Wrapped in a promise.
+	 * @returns {Promise.<boolean>} <code>true</code> if change handler has revertChange function. Wrapped in a promise.
 	 * @public
 	 */
 	FlexController.prototype.isChangeHandlerRevertible = function(oChange, vControl, oChangeHandler) {

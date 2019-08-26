@@ -262,6 +262,9 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		if (oControl.getAlternateRowColors()) {
 			rm.class(oControl._getAlternateRowColorsClass());
 		}
+		if (oControl.hasPopin()) {
+			rm.class("sapMListTblHasPopin");
+		}
 		rm.openEnd();
 	};
 

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"sap/m/TextArea",
 	"sap/ui/core/ListItem",
+	"sap/m/StepInput",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/m/library",
@@ -17,6 +18,7 @@ sap.ui.define([
 		DatePicker,
 		TextArea,
 		ListItem,
+		StepInput,
 		Opa5,
 		opaTest,
 		mobileLibrary,
@@ -308,6 +310,32 @@ sap.ui.define([
 
 		// Act
 		oEnterText.executeOn(this.oControl);
+	});
+
+	QUnit.module("EnterText - interact with StepInput", {
+		beforeEach: function() {
+			this.oStepInput = new StepInput();
+			this.oStepInput.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oStepInput.destroy();
+		}
+	});
+
+	QUnit.test("Should enter text in StepInput - enter text adapter", function (assert) {
+		// Arrange
+		var fnChangeTriggered = assert.async();
+		var sTextInControl = 12;
+		var oEnterText = new EnterText({text: sTextInControl});
+
+		this.oStepInput.attachEvent("change", function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("value"), sTextInControl, "Number is entered correctly");
+			fnChangeTriggered();
+		});
+
+		// Act
+		oEnterText.executeOn(this.oStepInput);
 	});
 
 });

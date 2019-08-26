@@ -626,54 +626,20 @@ sap.ui.define([
 					that._getSelectionPlugin().clearSelection();
 				}
 			}));
-			if (UriParameters.fromQuery(window.location.search).get("sap-ui-xx-table-expand-menu")) {
-				this._oGroupHeaderMenu.addItem(new MenuItem({
-					text: "Expand Level (#expandToLevel)",
-					select: function() {
-						that.getBinding("rows").expandToLevel(that._iGroupedLevel);
-						that.setFirstVisibleRow(0);
-						that._getSelectionPlugin().clearSelection();
-					}
-				}));
-				this._oGroupHeaderMenu.addItem(new MenuItem({
-					text: "Expand All (#expandToLevel)",
-					select: function() {
-						that.getBinding("rows").expandToLevel(that._aGroupedColumns.length);
-						that.setFirstVisibleRow(0);
-						that._getSelectionPlugin().clearSelection();
-					}
-				}));
-				this._oGroupHeaderMenu.addItem(new MenuItem({
-					text: "Expand Level (#setNumberOfExpandedLevels)",
-					select: function() {
-						that.getBinding("rows").setNumberOfExpandedLevels(that._iGroupedLevel);
-
-						// setNumberOfExpandedLevels does not trigger an update. The table has to request contexts.
-						var iFirstVisibleRow = that.getFirstVisibleRow();
-						if (iFirstVisibleRow > 0) {
-							that.setFirstVisibleRow(0);
-						} else {
-							that._getRowContexts();
-						}
-						that._getSelectionPlugin().clearSelection();
-					}
-				}));
-				this._oGroupHeaderMenu.addItem(new MenuItem({
-					text: "Expand All (#setNumberOfExpandedLevels)",
-					select: function() {
-						that.getBinding("rows").setNumberOfExpandedLevels(that._aGroupedColumns.length);
-
-						// setNumberOfExpandedLevels does not trigger an update. The table has to request contexts.
-						var iFirstVisibleRow = that.getFirstVisibleRow();
-						if (iFirstVisibleRow > 0) {
-							that.setFirstVisibleRow(0);
-						} else {
-							that._getRowContexts();
-						}
-						that._getSelectionPlugin().clearSelection();
-					}
-				}));
-			}
+			this._oGroupHeaderMenu.addItem(new MenuItem({
+				text: TableUtils.getResourceText("TBL_EXPAND_LEVEL"),
+				select: function() {
+					that.getBinding("rows").expandToLevel(that._iGroupedLevel);
+					that.setFirstVisibleRow(0);
+					that._getSelectionPlugin().clearSelection();
+				}
+			}));
+			this._oGroupHeaderMenu.addItem(new MenuItem({
+				text: TableUtils.getResourceText("TBL_EXPAND_ALL"),
+				select: function() {
+					that.expandAll();
+				}
+			}));
 		}
 
 		var oGroupColumnInfo = getGroupColumnInfo();
@@ -1161,7 +1127,7 @@ sap.ui.define([
 	 * Expands one or more rows.
 	 *
 	 * @param {int|int[]} vRowIndex A single index or an array of indices of the rows to be expanded
-	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1172,7 +1138,7 @@ sap.ui.define([
 	 * Collapses one or more rows.
 	 *
 	 * @param {int|int[]} vRowIndex A single index, or an array of indices of the rows to be collapsed
-	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function
@@ -1180,9 +1146,29 @@ sap.ui.define([
 	AnalyticalTable.prototype.collapse = TreeTable.prototype.collapse;
 
 	/**
+	 * Expands all nodes. The current selection is removed, and the table scrolls back to the top.
+	 * If this method is called, not all groups might be loaded. If the user then scrolls to the bottom of the table,
+	 * additional groups are loaded, which increases the scroll range, and the scroll thumb moves up.
+	 *
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
+	 * @public
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.70
+	 */
+	AnalyticalTable.prototype.expandAll = function() {
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			oBinding.expandToLevel(this._aGroupedColumns.length);
+			this.setFirstVisibleRow(0);
+			this._getSelectionPlugin().clearSelection();
+		}
+		return this;
+	};
+
+	/**
 	 * Collapses all nodes (and their child nodes if collapseRecursive is activated).
 	 *
-	 * @returns {sap.ui.table.AnalyticalTable} <code>this</code> to allow method chaining
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @function

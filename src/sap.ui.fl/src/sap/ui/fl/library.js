@@ -16,6 +16,7 @@ sap.ui.define([
 	 * @property {string} elementId - Control ID
 	 * @property {string} elementType - Control type
 	 * @property {sap.ui.core.Component} appComponent - Instance of the app component in which the control is running
+	 * @private
 	 * @ui5-restricted
 	 */
 
@@ -25,6 +26,7 @@ sap.ui.define([
 	 * @typedef {object} sap.ui.fl.ComponentSelector
 	 * @property {string} appId - Control object to be used as the selector for the change
 	 * @property {string} appVersion - Control object to be used as the selector for the change
+	 * @private
 	 * @ui5-restricted
 	 */
 
@@ -34,6 +36,7 @@ sap.ui.define([
 	 *
 	 * @typedef {sap.ui.core.Element | sap.ui.core.Component | sap.ui.fl.ElementSelector | sap.ui.fl.ComponentSelector} sap.ui.fl.Selector
 	 * @since 1.69
+	 * @private
 	 * @ui5-restricted
 	 */
 
@@ -44,6 +47,7 @@ sap.ui.define([
 	 * @name sap.ui.fl
 	 * @author SAP SE
 	 * @version ${version}
+	 * @private
 	 * @ui5-restricted UI5 controls and tools creating flexibility changes
 	 */
 	sap.ui.getCore().initLibrary({

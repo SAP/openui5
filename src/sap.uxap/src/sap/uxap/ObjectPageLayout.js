@@ -1833,7 +1833,7 @@ sap.ui.define([
 	 * to the existing object, since it's layout might have changed and the app
 	 * needs to react to the new subsections in view.
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	ObjectPageLayout.prototype._triggerVisibleSubSectionsEvents = function () {
 		this._bDelayDOMBasedCalculations = false;
@@ -4247,8 +4247,8 @@ sap.ui.define([
 	 * Sets a flag to [temporarily] deactivate any scrolling requested with the <code>sap.uxap.ObjectPageLayout.prototype._scrollTo</code> function
 	 * This flag is used by RTA for the purpose of postponing the auto-scrolling of the ObjectPage to its selected section
 	 * so that the scrolling does not start before RTA operation fully completed
-	 * @sap-restricted
 	 * @private
+	 * @ui5-restricted
 	 */
 	ObjectPageLayout.prototype._suppressScroll = function () {
 		this._bSuppressScroll = true;
@@ -4258,8 +4258,8 @@ sap.ui.define([
 	 * Un-sets the flag that deactivates scrolling requested with the <code>sap.uxap.ObjectPageLayout.prototype._scrollTo</code> function
 	 * This flag is used by RTA for the purpose of postponing/resuming the auto-scrolling of the ObjectPage to its selected section
 	 * so that the scrolling does not start before RTA operation fully completed
-	 * @sap-restricted
 	 * @private
+	 * @ui5-restricted
 	 */
 	ObjectPageLayout.prototype._resumeScroll = function () {
 		this._bSuppressScroll = false;

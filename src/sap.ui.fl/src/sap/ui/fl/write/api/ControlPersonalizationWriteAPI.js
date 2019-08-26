@@ -17,6 +17,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write.api.ControlPersonalizationWriteAPI
 	 * @experimental Since 1.69
 	 * @since 1.69
+	 * @private
 	 * @ui5-restricted UI5 controls that allow personalization
 	 */
 
@@ -29,6 +30,7 @@ sap.ui.define([
 	 * @property {string} changeSpecificData.changeType - Change type for which a change handler is registered
 	 * @property {object} changeSpecificData.content - Content for the change, see {@link sap.ui.fl.Change#createInitialFileContent}
 	 * @since 1.69
+	 * @private
 	 * @ui5-restricted UI5 controls that allow personalization
 	 */
 
@@ -42,6 +44,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.ignoreVariantManagement=false] - If flag is set to <code>true</code>, the changes will not belong to any variant, otherwise it will be detected if the changes are done in the context of variant mangement
 		 *
 		 * @returns {Promise} Promise resolving to an array of successfully applied changes, after the changes have been written to the map of dirty changes and applied to the control
+		 * @private
 		 * @ui5-restricted
 		 */
 		add: function(mPropertyBag) {
@@ -62,6 +65,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Promise that resolves after the deletion took place and changes are reverted
 		 *
+		 * @private
 		 * @ui5-restricted
 		 */
 		reset: function(mPropertyBag) {
@@ -78,6 +82,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Promise that is resolved when the changes have been saved
 		 *
+		 * @private
 		 * @ui5-restricted
 		 */
 		save: function(mPropertyBag) {
@@ -93,6 +98,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.elementId - ID of the selector
 		 * @param {string} mPropertyBag.elementType - Type of the selector
 		 * @returns {sap.ui.fl.ElementSelector} - Object that can be used as a {@link sap.ui.fl.Selector}
+		 * @private
 		 * @ui5-restricted
 		 */
 		buildSelectorFromElementIdAndType: function(mPropertyBag) {

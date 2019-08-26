@@ -5,7 +5,7 @@
       {
         "id": "19d54c4c1c7c06da67c250de7e83861ed7f94ce5",
         "type": "FIX",
-        "text": " sap.ui.integration.widgets.Card: maxItems can be set through parameters now",
+        "text": "sap.ui.integration.widgets.Card: maxItems can be set through parameters now",
         "references": [
           {
             "type": "BCP",
@@ -16,7 +16,7 @@
       {
         "id": "7c639d2ff5a37df47f82ecdfcac3cb93647e87a8",
         "type": "FEATURE",
-        "text": " Widget for UI Integration of Components",
+        "text": "Widget for UI Integration of Components",
         "references": []
       }
     ]

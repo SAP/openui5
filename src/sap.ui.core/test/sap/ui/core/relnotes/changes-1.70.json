@@ -5,18 +5,22 @@
       {
         "id": "cb380954f9cbb15e8b8fe3e19809a975c72182c4",
         "type": "FIX",
-        "text": " odata/ODataUtils: Convert deprecated ODataFilter to model/Filter",
+        "text": "odata/ODataUtils: Convert deprecated ODataFilter to model/Filter",
         "references": [
           {
             "type": "BCP",
             "reference": "362147"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003621472019"
           }
         ]
       },
       {
         "id": "8dc411bca8c1fe22eb04fe2f16dd5b3f257ef1c5",
         "type": "FIX",
-        "text": " routing.history: make qunit tests run across browsers",
+        "text": "routing.history: make qunit tests run across browsers",
         "references": [
           {
             "type": "BCP",
@@ -27,18 +31,22 @@
       {
         "id": "f042624fa620f109efed0bb2427939e61ea7e2aa",
         "type": "FIX",
-        "text": " sap.ui.core.hyphenation.Hyphenation: Out of memory errors fixed",
+        "text": "sap.ui.core.hyphenation.Hyphenation: Out of memory errors fixed",
         "references": [
           {
             "type": "BCP",
             "reference": "369369"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500003693692019"
           }
         ]
       },
       {
         "id": "7db61961c3bac325fa200ae9e55b9d29c4218c4e",
         "type": "FIX",
-        "text": " v2.ODataListBinding: Don\u0027t use expanded data, if custom parameters are set",
+        "text": "v2.ODataListBinding: Don't use expanded data, if custom parameters are set",
         "references": [
           {
             "type": "BCP",

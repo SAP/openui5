@@ -954,6 +954,43 @@ sap.ui.define([
 			"The input's value is decreasing with 5 after arrow up");
 	});
 
+	QUnit.test("up/down increases/decreases the value when in warning value state", function (assert) {
+		//arrange
+		this.stepInput.setValueState("Warning");
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		this.clock.tick(1000);
+
+		//assert
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 5,
+			"The input's value is increasing with 1 after arrow up");
+
+		//arrange
+		this.stepInput.setValueState("Warning");
+
+		//act
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		this.clock.tick(1000);
+
+		//assert
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 4,
+			"The input's value is decreasing with 1 after arrow down");
+
+		//arrange
+		this.stepInput.setValueState("Warning");
+
+		//act
+		this.stepInput.setStep(5);
+		this.clock.tick(1000);
+		qutils.triggerKeydown(this.stepInput.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+		this.clock.tick(1000);
+
+		//assert
+		assert.equal(this.stepInput.getAggregation("_input")._getInputValue(), 9,
+			"The input's value is decreasing with 5 after arrow up");
+	});
+
 	QUnit.test("if the value is out of min/max range, pressing increase/decrease button the value will be set to min/max", function (assert) {
 		//prepare
 		var oIncrementBtn = this.stepInput._getIncrementButton(),

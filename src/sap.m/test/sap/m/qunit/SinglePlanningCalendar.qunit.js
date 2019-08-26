@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/SinglePlanningCalendarGrid",
 	"sap/m/SinglePlanningCalendarDayView",
 	"sap/m/SinglePlanningCalendarWeekView",
+	"sap/m/SinglePlanningCalendarMonthView",
 	"sap/m/PlanningCalendarLegend",
 	"sap/ui/unified/CalendarAppointment",
 	"sap/ui/unified/CalendarLegendItem",
@@ -23,6 +24,7 @@ sap.ui.define([
 	SinglePlanningCalendarGrid,
 	SinglePlanningCalendarDayView,
 	SinglePlanningCalendarWeekView,
+	SinglePlanningCalendarMonthView,
 	PlanningCalendarLegend,
 	CalendarAppointment,
 	CalendarLegendItem,
@@ -227,6 +229,23 @@ sap.ui.define([
 
 		// cleanup
 		oGridSetEnableAppointmentsCreateSpy.restore();
+		oSPC.destroy();
+	});
+
+	QUnit.test("When the setStartHour/setEndHour is set, it is passed to the Grid", function (assert) {
+		// arrange
+		var oSPC = new SinglePlanningCalendar(),
+			oSPCGrid = oSPC._getCurrentGrid();
+
+		// act
+		oSPC.setStartHour(8);
+		oSPC.setEndHour(20);
+
+		// assert
+		assert.equal(oSPCGrid.getStartHour(), 8, "The start hour is passed to the grid.");
+		assert.equal(oSPCGrid.getEndHour(), 20, "The end hour is passed to the grid.");
+
+		// cleanup
 		oSPC.destroy();
 	});
 

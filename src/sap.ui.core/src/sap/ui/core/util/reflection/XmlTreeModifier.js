@@ -31,8 +31,8 @@ sap.ui.define([
 	 *
 	 * @namespace sap.ui.core.util.reflection.XmlTreeModifier
 	 * @extends sap.ui.core.util.reflection.BaseTreeModifier
-	 * @protected
-	 * @sap-restricted
+	 * @private
+	 * @ui5-restricted
 	 * @since 1.56.0
 	 */
 	var XmlTreeModifier = /** @lends sap.ui.core.util.reflection.XmlTreeModifier */{

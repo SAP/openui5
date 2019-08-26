@@ -36,7 +36,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @alias sap.ui.demokit.UI5EntityCueCard
 	 */
 	var UI5EntityCueCard = Control.extend("sap.ui.demokit.UI5EntityCueCard", /** @lends sap.ui.demokit.UI5EntityCueCard.prototype */ { metadata : {

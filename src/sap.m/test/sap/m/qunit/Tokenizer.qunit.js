@@ -480,6 +480,45 @@ sap.ui.define([
 		spy.restore();
 	});
 
+	QUnit.test("setEnabled", function(assert) {
+		// act
+		this.tokenizer.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(jQuery(this.tokenizer.getDomRef()).hasClass("sapMTokenizerDisabled"), "Tokenizer's dom has class sapMTokenizerDisabled");
+	});
+
+	QUnit.module("Disabled state", {
+		beforeEach : function() {
+			this.tokenizer = new Tokenizer("t1");
+			this.tokenizer.placeAt("content");
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("Pressing delete icon when Tokenizer is disabled", function(assert) {
+		// arrange
+		var fnFireDeleteSpy,
+			oToken = new Token({text: "test"}),
+			oTokenIcon = jQuery("#t1-icon")[0];
+
+		fnFireDeleteSpy = this.spy(oToken, "fireDelete");
+		this.tokenizer.addToken(oToken);
+		this.tokenizer.setEnabled(false);
+
+		// act
+		oToken._tokenIconPress({preventDefault: function () {}});
+
+		// assert
+		assert.equal(fnFireDeleteSpy.callCount, 0, "delete event was NOT fired");
+		assert.ok(!oToken.bIsDestroyed, "Token1 is NOT destroyed");
+
+		fnFireDeleteSpy.restore();
+	});
+
 	QUnit.module("Scrolling public API", {
 		beforeEach : function() {
 			this.tokenizer = new Tokenizer({
@@ -547,6 +586,24 @@ sap.ui.define([
 		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
 	});
 
+	QUnit.test("delete with enabled=false", function(assert) {
+		// arrange
+		var oFakeEvent = {
+			preventDefault: function () {},
+			setMarked: function () {},
+			keyCode: KeyCodes.DELETE,
+			which: KeyCodes.DELETE
+		};
+
+		this.tokenizer.setEnabled(false);
+
+		// act
+		this.tokenizer.onkeydown(oFakeEvent);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
+	});
+
 	QUnit.test("delete with editable=true", function(assert) {
 		// act
 		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.DELETE);
@@ -571,10 +628,35 @@ sap.ui.define([
 
 	QUnit.test("backspace with editable=false", function(assert) {
 		// arrange
+		var oFakeEvent = {
+			preventDefault: function () {},
+			setMarked: function () {},
+			keyCode: KeyCodes.BACKSPACE,
+			which: KeyCodes.BACKSPACE
+		};
+
 		this.tokenizer.setEditable(false);
 
 		// act
-		sap.ui.test.qunit.triggerKeyboardEvent("t", KeyCodes.BACKSPACE);
+		this.tokenizer.onsapbackspace(oFakeEvent);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
+	});
+
+	QUnit.test("backspace with enabled=false", function(assert) {
+		// arrange
+		var oFakeEvent = {
+			preventDefault: function () {},
+			setMarked: function () {},
+			keyCode: KeyCodes.BACKSPACE,
+			which: KeyCodes.BACKSPACE
+		};
+
+		this.tokenizer.setEnabled(false);
+
+		// act
+		this.tokenizer.onsapbackspace(oFakeEvent);
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
@@ -623,6 +705,29 @@ sap.ui.define([
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
 	});
 
+	QUnit.test("Ctrl + X (cut) Disabled Tokenizer", function(assert) {
+		var fnCutSpy = this.spy(this.tokenizer, "_cut"),
+			oFakeEvent = {
+				preventDefault: function () {},
+				setMarked: function () {},
+				keyCode: KeyCodes.BACKSPACE,
+				which: KeyCodes.BACKSPACE,
+				metaKey: true
+			};
+
+		// arrange
+		this.tokenizer.setEnabled(false);
+
+		// act
+		this.tokenizer.onkeydown(oFakeEvent);
+
+		// assert
+		assert.equal(fnCutSpy.callCount, 0, "Cut was NOT triggered");
+
+		// clean
+		fnCutSpy.restore();
+	});
+
 	QUnit.test("Ctrl + X (copy)", function(assert) {
 		// arrange
 		var fnCopySpy = this.spy(this.tokenizer, "_copy");
@@ -644,6 +749,25 @@ sap.ui.define([
 
 		// assert
 		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
+	});
+
+	QUnit.test("Shift + DELETE (cut) Disabled Tokenizer", function(assert) {
+		var fnCutSpy = this.spy(this.tokenizer, "_cut"),
+			oFakeEvent = {
+				preventDefault: function () {},
+				setMarked: function () {},
+				keyCode: KeyCodes.DELETE,
+				which: KeyCodes.DELETE
+			};
+
+		// arrange
+		this.tokenizer.setEnabled(false);
+
+		// act
+		this.tokenizer.onkeydown(oFakeEvent);
+
+		// assert
+		assert.equal(fnCutSpy.callCount, 0, "Cut was NOT triggered");
 	});
 
 	QUnit.test("Shift + DELETE (copy)", function(assert) {
@@ -815,7 +939,7 @@ sap.ui.define([
 	QUnit.test("onsapend", function() {
 		var oEvent = new jQuery.Event(),
 			aTokens,
-			oTokenizer = new sap.m.Tokenizer({
+			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
 
@@ -835,7 +959,7 @@ sap.ui.define([
 
 	QUnit.test("onsaphome", function() {
 		var oEvent = new jQuery.Event(),
-			oTokenizer = new sap.m.Tokenizer({
+			oTokenizer = new Tokenizer({
 				tokens: [new Token(), new Token(), new Token()]
 			}).placeAt("content");
 

@@ -31,7 +31,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (

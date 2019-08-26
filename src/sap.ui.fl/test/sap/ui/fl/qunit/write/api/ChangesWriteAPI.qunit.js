@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",

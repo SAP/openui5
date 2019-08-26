@@ -35,7 +35,13 @@ sap.ui.define([
             },
             events: {
                 propertyChanged: {
-                    type: "object"
+                    parameters: {
+                        /**
+                         * Path in context object where the change should happen
+                         */
+                        path: {type: "string"},
+                        value: {type: "any"}
+                    }
                 }
             }
         },

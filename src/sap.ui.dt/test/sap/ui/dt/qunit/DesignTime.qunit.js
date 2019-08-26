@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/dt/AggregationOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/DesignTimeStatus",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/plugin/TabHandling",
@@ -42,6 +43,7 @@ function(
 	AggregationOverlay,
 	OverlayRegistry,
 	DesignTime,
+	DesignTimeStatus,
 	ElementUtil,
 	Plugin,
 	TabHandling,
@@ -185,8 +187,8 @@ function(
 			});
 		},
 		afterEach : function () {
-			this.oOuterLayout.destroy();
 			this.oDesignTime.destroy();
+			this.oOuterLayout.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -380,6 +382,44 @@ function(
 			oElementOverlay.setEditable(!oElementOverlay.getEditable());
 		});
 
+		QUnit.test("when an existing element overlay's editable property is changed and designtime is synced later and this overlay is destroyed in the meantime", function (assert) {
+			var fnDone = assert.async();
+			var oButton = new Button("button3");
+			var fnPromiseResolve;
+
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
+				.callThrough()
+				.withArgs(oButton)
+				.callsFake(function () {
+					return new Promise(function (fnResolve) {
+						fnPromiseResolve = fnResolve;
+					});
+				});
+
+			var oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+
+			var oElementOverlayEditableChangedSpy = sandbox.spy();
+			this.oDesignTime.attachEventOnce("elementOverlayEditableChanged", oElementOverlayEditableChangedSpy);
+
+			// Set DesignTime in syncing state
+			this.oInnerLayout.addContent(oButton);
+			assert.strictEqual(this.oDesignTime.getStatus(), DesignTimeStatus.SYNCING);
+
+			// Trigger editable property change
+			oButton1Overlay.setEditable(!oButton1Overlay.getEditable());
+
+			// In between "syncing" and "synced" events the overlay is destroyed
+			this.oButton1.destroy();
+
+			// Continue execution (this will fire sync)
+			fnPromiseResolve({});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.ok(oElementOverlayEditableChangedSpy.notCalled, "then event listeners for property changed was not called");
+				fnDone();
+			});
+		});
+
 		QUnit.test("when a new element overlay's editable property is changed during synchronization process", function (assert) {
 			assert.expect(4);
 			var fnDone = assert.async();
@@ -430,6 +470,42 @@ function(
 			});
 
 			this.oOuterLayout.setVisible(false);
+		});
+
+		QUnit.test("when a property on an element with an overlay was changed and designtime is synced later and this overlay is destroyed in the meantime", function (assert) {
+			var fnDone = assert.async();
+			var oButton = new Button("button3");
+			var fnPromiseResolve;
+
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
+				.callThrough()
+				.withArgs(oButton)
+				.callsFake(function () {
+					return new Promise(function (fnResolve) {
+						fnPromiseResolve = fnResolve;
+					});
+				});
+
+			var oElementPropertyChangedSpy = sandbox.spy();
+			this.oDesignTime.attachEventOnce("elementPropertyChanged", oElementPropertyChangedSpy);
+
+			// Set DesignTime in syncing state
+			this.oInnerLayout.addContent(oButton);
+			assert.strictEqual(this.oDesignTime.getStatus(), DesignTimeStatus.SYNCING);
+
+			// Trigger property change
+			this.oButton1.setVisible(false);
+
+			// In between "syncing" and "synced" events the overlay is destroyed
+			this.oButton1.destroy();
+
+			// Continue execution (this will fire sync)
+			fnPromiseResolve({});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.ok(oElementPropertyChangedSpy.notCalled, "then event listeners for property changed was not called");
+				fnDone();
+			});
 		});
 
 		QUnit.test("when a property on an element is changed during the creation of its overlay", function (assert) {

@@ -13,7 +13,7 @@ sap.ui.define([ "sap/ui/core/Core", "sap/ui/model/ParseException", "sap/ui/model
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted sap.ui.table.Table, sap.m.Table
+	 * @ui5-restricted sap.ui.table.Table, sap.m.Table
 	 * @alias sap.ui.core.util.PasteHelper
 	 */
 

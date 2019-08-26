@@ -5,7 +5,7 @@
       {
         "id": "18f1e90f51eccf3515efc5398c4763df070a6867",
         "type": "FIX",
-        "text": " sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
+        "text": "sap.m.ScrollBar: Fixed incorrect rendering on 80% browser zoom",
         "references": [
           {
             "type": "BCP",
@@ -16,7 +16,7 @@
       {
         "id": "65cc42ebc8dedd4d2aac6108831f887ad3030988",
         "type": "FIX",
-        "text": " sap.uxap.HierarchicalSelect: Fixed incorrect alignment in FCL",
+        "text": "sap.uxap.HierarchicalSelect: Fixed incorrect alignment in FCL",
         "references": [
           {
             "type": "BCP",

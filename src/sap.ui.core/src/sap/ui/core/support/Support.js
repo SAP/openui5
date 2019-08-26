@@ -184,7 +184,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 * Returns all plugins for the diagnostics tool window
 	 * @returns {sap.ui.core.support.Plugin[]}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Support.getToolPlugins = function() {
 		var aResult = [];
@@ -200,7 +200,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 * Returns all plugins for the application window
 	 * @returns {sap.ui.core.support.Plugin[]}
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Support.getAppPlugins = function() {
 		var aResult = [];
@@ -229,7 +229,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 *
 	 * @returns {boolean} true if this stub is running on the diagnostics tool window, otherwise, false
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Support.prototype.isToolStub = function() {
 		return this._sType === Support.StubType.TOOL;
@@ -240,7 +240,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 *
 	 * @returns {boolean} true if this stub is running on the application window, otherwise, false
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	Support.prototype.isAppStub = function() {
 		return this._sType === Support.StubType.APPLICATION;
@@ -286,8 +286,8 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 *
 	 * @param {string} sEventId the event id
 	 * @param {Object} [mParams] the parameter map (JSON)
-	 * @sap-restricted
 	 * @private
+	 * @ui5-restricted
 	 */
 	Support.prototype.sendEvent = function(sEventId, mParams) {
 		if (!this._oRemoteWindow) {
@@ -399,7 +399,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 * @param {Object} [mParameters] the parameter map (JSON)
 	 * @return {sap.ui.core.support.Support} Returns <code>this</code> to allow method chaining
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 
 
@@ -409,7 +409,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 * @name sap.ui.core.support.Support.prototype.detachEvent
 	 * @function
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 
 
@@ -419,7 +419,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 	 * @name sap.ui.core.support.Support.prototype.attachEvent
 	 * @function
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 
 

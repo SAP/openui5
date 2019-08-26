@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/core/Control', './library', "./TagCloudRenderer"],
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @alias sap.ui.demokit.TagCloud
 	 */
 	var TagCloud = Control.extend("sap.ui.demokit.TagCloud", /** @lends sap.ui.demokit.TagCloud.prototype */ { metadata : {

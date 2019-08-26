@@ -53,7 +53,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 */
 	var thisLibrary = sap.ui.demokit;
 	/* eslint-enable no-undef */
@@ -63,7 +63,7 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 */
 	thisLibrary.UI5EntityCueCardStyle = {
 

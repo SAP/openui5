@@ -2,7 +2,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/base/Log",
-	"sap/ui/fl/write/internal/SaveAs",
+	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -358,42 +358,6 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when hasChanges is called", function(assert) {
-			var mPropertyBag = {
-				selector: this.vSelector,
-				invalidateCache: true
-			};
-
-			var fnPersistenceStub = getMethodStub([{includeCtrlVariants: true}, false], Promise.resolve(["change1"]));
-
-			mockFlexController(mPropertyBag.selector, { _oChangePersistence: { getChangesForComponent : fnPersistenceStub } });
-
-			return PersistenceWriteAPI.hasChanges(mPropertyBag)
-				.then(function(bHasChanges) {
-					assert.ok(bHasChanges, "then the flex persistence was called correctly");
-				});
-		});
-
-		QUnit.test("when hasChangesToPublish is called and flex dirty changes exist", function(assert) {
-			var mPropertyBag = {
-				selector: this.vSelector,
-				invalidateCache: true
-			};
-
-			sandbox.stub(PersistenceWriteAPI, "hasChanges")
-				.withArgs(mPropertyBag)
-				.resolves(false);
-
-			var fnPersistenceStub = getMethodStub([], ["change1"]);
-
-			mockFlexController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnPersistenceStub } });
-
-			return PersistenceWriteAPI.hasChangesToPublish(mPropertyBag)
-				.then(function(bHasChanges) {
-					assert.ok(bHasChanges, "then the flex persistence was called correctly");
-				});
-		});
-
 		QUnit.test("when add is called with a flex change", function(assert) {
 			var mPropertyBag = {
 				change: {
@@ -466,11 +430,13 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id"})
+					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0"})
 						.then(function() {
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							// Get the UI change to be saved to backend
 							var oChangePayload = fnSendBackendCall.secondCall.args[2];
 							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
@@ -542,7 +508,7 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id"})
+					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0"})
 						.catch(function(oError) {
 							assert.ok("then the promise got rejected");
 							assert.equal(oError.messageKey, "MSG_SAVE_APP_VARIANT_FAILED", "then the messagekey is correct");
@@ -550,6 +516,8 @@ sap.ui.define([
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still present in the persistence but the reference has been changed");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							// Delete dirty inline changes from persistence
 							var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges();
 							aDescrChanges = aDescrChanges.slice();
@@ -621,7 +589,7 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id"})
+					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0"})
 						.catch(function(oError) {
 							assert.ok("then the promise got rejected");
 							assert.equal(oError.messageKey, "MSG_COPY_UNSAVED_CHANGES_FAILED", "then the messagekey is correct");
@@ -629,6 +597,8 @@ sap.ui.define([
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still in the persistence");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							// Get the UI change to be saved to backend
 							var oChangePayload = fnSendBackendCall.secondCall.args[2];
 							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
@@ -691,11 +661,13 @@ sap.ui.define([
 				.then(function() {
 					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
-					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id"})
+					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0"})
 						.then(function() {
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().namespace, "apps/reference.app/appVariants/customer.reference.app.id/", "the namespace of the UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
+							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							assert.equal(oUIChange.getRequest(), "ATO_NOTIFICATION", "the request has been set correctly");
 							// Get the UI change to be saved to backend
 							var oChangePayload = fnSendBackendCall.secondCall.args[2];
@@ -1186,81 +1158,123 @@ sap.ui.define([
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
 		});
 
-		QUnit.test("get flex/info isResetEnabale: has backend changes true, has persistence changes false", function(assert) {
+		QUnit.test("get flex/info isResetEnabale, check hasChanges: persistence has NO changes, backend has changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
 			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
 
 			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
 				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
 			});
 		});
 
-		QUnit.test("get flex/info isResetEnabale: has backend changes false, has persistence changes true", function(assert) {
+		QUnit.test("get flex/info isResetEnabale, check hasChanges: persistence has changes, backend has NO changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
 			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves(sReturnValue);
 
 			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
 				assert.equal(bResetEnabled, true, "flex/info resetEnable is true");
 			});
 		});
 
-		QUnit.test("get flex/info isResetEnabale: has backend changes false, has persistence changes false", function(assert) {
+		QUnit.test("get flex/info isResetEnabale, check hasChanges: persistence has NO changes, backend has NO changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
 			mockFlexController(mPropertyBag.selector, { isResetEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "hasChanges").withArgs(mPropertyBag).resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
 
 			return PersistenceWriteAPI.isResetEnabled(mPropertyBag).then(function (bResetEnabled) {
 				assert.equal(bResetEnabled, false, "flex/info resetEnable is false");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled: has backend changes true, has persistence changes false", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes, backend has changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(true));
-			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(false);
+			var fnPersistenceStub2 = getMethodStub([], Promise.resolve({}));
+			var fnDescriptorStub = getMethodStub([], Promise.resolve({}));
+
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
+			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
 
 			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
 				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled: has backend changes false, has persistence changes true", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes, backend has NO changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
 			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves(sReturnValue);
 
 			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
 				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
 			});
 		});
 
-		QUnit.test("get flex/info isPublishEnabled: has backend changes false, has persistence changes false", function(assert) {
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes (dirty changes), backend has NO changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
 			};
 			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
-			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub });
-			sandbox.stub(PersistenceWriteAPI, "hasChangesToPublish").withArgs(mPropertyBag).resolves(false);
+			var fnPersistenceStub2 = getMethodStub([], Promise.resolve({}));
+			var fnDescriptorStub = getMethodStub([], Promise.resolve({}))
+
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
+			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
 
 			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
 				assert.equal(bPublishEnabled, false, "flex/info publishEnable is false");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes (dirty changes), backend has NO changes", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			var fnPersistenceStub2 = getMethodStub([], sReturnValue);
+			var fnDescriptorStub = getMethodStub([], {})
+
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
+			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence descriptor has changes (dirty changes), backend has NO changes, ", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve(false));
+			var fnPersistenceStub2 = getMethodStub([], {});
+			var fnDescriptorStub = getMethodStub([], sReturnValue)
+
+			mockFlexController(mPropertyBag.selector, { isPublishEnabled : fnPersistenceStub, _oChangePersistence: { getDirtyChanges : fnPersistenceStub2 } });
+			mockDescriptorController(mPropertyBag.selector, { _oChangePersistence: { getDirtyChanges : fnDescriptorStub } });
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves({});
+
+			return PersistenceWriteAPI.isPublishEnabled(mPropertyBag).then(function (bPublishEnabled) {
+				assert.equal(bPublishEnabled, true, "flex/info publishEnable is true");
 			});
 		});
 	});

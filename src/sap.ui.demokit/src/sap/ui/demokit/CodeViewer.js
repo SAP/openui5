@@ -30,7 +30,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @alias sap.ui.demokit.CodeViewer
 	 */
 	var CodeViewer = Control.extend("sap.ui.demokit.CodeViewer", /** @lends sap.ui.demokit.CodeViewer.prototype */ { metadata : {

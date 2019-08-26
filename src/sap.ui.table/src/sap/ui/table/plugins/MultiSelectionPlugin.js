@@ -34,7 +34,8 @@ sap.ui.define([
 	 * <li>Dedicated Deselect All button to clear the selection</li>
 	 * <li>The number of indices which can be selected in a range is defined by the <code>limit</code> property by the application.
 	 * If the user tries to select more indices, the selection is automatically limited, and the table scrolls to the last selected index.</li>
-	 * <li>The plugin makes sure that the corresponding binding contexts up to the given limit are available, by requesting them from the binding.</li>
+	 * <li>The plugin makes sure that the corresponding binding contexts up to the given limit are available, by requesting them from the
+	 *     binding.</li>
 	 * <li>Multiple consecutive selections are possible</li>
 	 * </ul>
 	 *
@@ -52,7 +53,8 @@ sap.ui.define([
 		properties : {
 			/**
 			 * Number of indices which can be selected in a range.
-			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All button.
+			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All
+			 * button.
 			 * <b>Note:</b> To avoid severe performance problems, the limit should only be set to 0 in the following cases:
 			 * <ul>
 			 * <li>With client-side models</li>
@@ -66,8 +68,8 @@ sap.ui.define([
 			 */
 			showHeaderSelector : {type : "boolean", group : "Appearance", defaultValue : true},
 			/**
-			 * Selection mode of the plugin. This property controls whether single or multiple rows can be selected. It also influences the visual appearance.
-			 * When the selection mode is changed, the current selection is removed.
+			 * Selection mode of the plugin. This property controls whether single or multiple rows can be selected. It also influences the visual
+			 * appearance. When the selection mode is changed, the current selection is removed.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle}
 		},
@@ -126,39 +128,59 @@ sap.ui.define([
 			headerSelector: {
 				type: this._bLimitDisabled ? "toggle" : "clear",
 				icon: this.oDeselectAllIcon,
-				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector()
+				visible: this.getSelectionMode() === SelectionMode.MultiToggle && this.getShowHeaderSelector(),
+				enabled: this._bLimitDisabled || this.getSelectedCount() > 0
 			}
 		};
 	};
 
 	/**
-	 * This hook is called by the table when the header selector is pressed.
+	 * This hook is called when the header selector is pressed.
 	 *
-	 * @return {boolean}
+	 * @private
 	 */
 	MultiSelectionPlugin.prototype.onHeaderSelectorPress = function() {
-		if (this.getRenderConfig().headerSelector.visible) {
-			if (this._bLimitDisabled && this.getSelectableCount() > this.getSelectedCount()) {
-				this.selectAll();
-			} else {
-				this.clearSelection();
-			}
-			return true;
+		var mRenderConfig = this.getRenderConfig();
+
+		if (!mRenderConfig.headerSelector.visible || !mRenderConfig.headerSelector.enabled) {
+			return;
+		}
+
+		if (mRenderConfig.headerSelector.type === "toggle") {
+			toggleSelection(this);
+		} else if (mRenderConfig.headerSelector.type === "clear") {
+			this.clearSelection();
 		}
 	};
 
 	/**
-	 * This hook is called by the table when the "select all" keyboard shortcut is pressed.
+	 * This hook is called when a keyboard shortcut relevant for selection is pressed.
 	 *
-	 * @param sType
-	 * @return {boolean}
+	 * @param {string} sType Type of the keyboard shortcut.
+	 * @private
 	 */
 	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType) {
-		this.clearSelection();
 		if (sType === "toggle") {
-			return true;
+			if (this._bLimitDisabled) {
+				toggleSelection(this);
+			}
+		} else if (sType === "clear") {
+			this.clearSelection();
 		}
 	};
+
+	/**
+	 * If not all indices are selected, all indices are selected, otherwise the selection is removed.
+	 *
+	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oPlugin The plugin to toggle the selection on.
+	 */
+	function toggleSelection(oPlugin) {
+		if (oPlugin.getSelectableCount() > oPlugin.getSelectedCount()) {
+			oPlugin.selectAll();
+		} else {
+			oPlugin.clearSelection();
+		}
+	}
 
 	MultiSelectionPlugin.prototype.setSelectionMode = function(sSelectionMode) {
 		var sOldSelectionMode = this.getSelectionMode();
@@ -221,40 +243,48 @@ sap.ui.define([
 	function prepareSelection(oMultiSelectionPlugin, iIndexFrom, iIndexTo) {
 		var iLimit = oMultiSelectionPlugin.getLimit();
 		var bReverse = iIndexTo < iIndexFrom;
-		var iLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 		var oBinding = oMultiSelectionPlugin._getBinding();
+		var iGetContextsStartIndex = bReverse ? iIndexTo : iIndexFrom;
+		var iGetContextsLength = Math.abs(iIndexTo - iIndexFrom) + 1;
 
 		if (!oMultiSelectionPlugin._bLimitDisabled) {
-			// in case iIndexFrom is already selected the range starts from the next index
-			if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
-				if (iIndexTo > iIndexFrom) {
-					iIndexFrom++;
-				} else if (bReverse) {
-					iIndexFrom--;
-				}
-			}
+			oMultiSelectionPlugin.setLimitReached(iGetContextsLength > iLimit);
 
-			oMultiSelectionPlugin.setLimitReached(false);
-			if (iLength > iLimit) {
+			if (oMultiSelectionPlugin.isLimitReached()) {
 				if (!bReverse) {
 					iIndexTo = iIndexFrom + iLimit - 1;
 				} else {
 					iIndexTo = iIndexFrom - iLimit + 1;
 				}
 
-				// the table will be scrolled one row further to make it transparent for the user where the selection ends
+				// If the start index is already selected, the range starts from the next index.
+				if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom)) {
+					if (!bReverse) {
+						iIndexTo++;
+						iGetContextsStartIndex++;
+					} else {
+						iIndexTo--;
+					}
+				}
+
+				// In case of reverse range selection, the start index for the getContexts call is defined by "iIndexTo".
+				// As this value might have changed, the start index needs to be updated.
+				if (bReverse) {
+					iGetContextsStartIndex = iIndexTo;
+				}
+
+				// The table will be scrolled one row further to make it transparent for the user where the selection ends.
 				// load the extra row here to avoid additional batch request.
-				iLength = iLimit + 1;
-				oMultiSelectionPlugin.setLimitReached(true);
+				iGetContextsLength = iLimit + 1;
 			}
 		}
 
-		var iStartIndex = bReverse ? iIndexTo : iIndexFrom;
-		if (oBinding && iStartIndex >= 0 && iLength > 0) {
-			return loadMultipleContexts(oBinding, iStartIndex, iLength).then(function () {
+		if (oBinding && iGetContextsStartIndex >= 0 && iGetContextsLength > 0) {
+			return loadMultipleContexts(oBinding, iGetContextsStartIndex, iGetContextsLength).then(function () {
 				return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 			});
 		}
+
 		return Promise.resolve();
 	}
 
@@ -495,7 +525,7 @@ sap.ui.define([
 			this.oInnerSelectionPlugin = null;
 		}
 		if (oParent) {
-			this.oInnerSelectionPlugin = new oParent._createLegacySelectionPlugin();
+			this.oInnerSelectionPlugin = oParent._createLegacySelectionPlugin();
 			this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
 			oParent.setProperty("selectionMode", this.getSelectionMode());
 		}

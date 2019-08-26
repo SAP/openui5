@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/f/dnd/GridDropInfo",
+	"sap/f/dnd/GridDragOver",
 	"sap/f/GridContainer",
 	"sap/f/GridList",
 	"sap/m/CustomListItem",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
 	"sap/ui/Device"
-], function(jQuery, DropInfo, GridDropInfo, GridContainer, GridList, CustomListItem, Text, ManagedObject, Core, Device) {
+], function(jQuery, DropInfo, GridDropInfo, GridDragOver, GridContainer, GridList, CustomListItem, Text, ManagedObject, Core, Device) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
@@ -181,7 +182,9 @@ sap.ui.define([
 	QUnit.test("fireDragEnter", function(assert) {
 		// Arrange
 		var oFakeEvent = createFakeEvent("dragenter"),
-			fnStub = sinon.stub();
+			fnStub = sinon.stub(),
+			gridDragOver = GridDragOver.getInstance(),
+			attachDragOverSpy = sinon.spy(gridDragOver, "handleDragOver");
 
 		oFakeEvent.dragSession = this.oFakeSession;
 
@@ -194,6 +197,35 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(fnStub.called, "Drag enter is called");
+
+		assert.ok(attachDragOverSpy.called, "'gridDragOver.handleDragOver' is called");
+
+		attachDragOverSpy.restore();
+	});
+
+	QUnit.test("fireDragEnter - preventDefault", function(assert) {
+
+		// Arrange
+		var oFakeEvent = createFakeEvent("dragenter"),
+			fnStub = sinon.stub(),
+			gridDragOver = GridDragOver.getInstance(),
+			attachDragOverSpy = sinon.spy(gridDragOver, "handleDragOver");
+
+		oFakeEvent.dragSession = this.oFakeSession;
+
+		this.oGridDropInfo.attachDragEnter(function (oEvent) {
+			fnStub(oEvent);
+
+			oEvent.preventDefault();
+		});
+
+		// Act
+		this.oGridDropInfo.fireDragEnter(oFakeEvent);
+
+		// Assert
+		assert.ok(fnStub.called, "Drag enter is called");
+
+		assert.notOk(attachDragOverSpy.called, "'gridDragOver.handleDragOver' is not called");
 	});
 
 	QUnit.test("fireDragOver", function(assert) {

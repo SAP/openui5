@@ -35,7 +35,7 @@ sap.ui.define([
 	 * @return {int} The generated hash-code
 	 * @since 1.39
 	 * @private
-	 * @sap-restricted sap.ui.core
+	 * @ui5-restricted sap.ui.core
 	 * @function
 	 * @deprecated since 1.58 use {@link module:sap/base/strings/hash} instead
 	 */

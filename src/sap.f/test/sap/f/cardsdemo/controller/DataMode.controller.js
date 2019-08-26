@@ -8,7 +8,8 @@ sap.ui.define([
 	var oCardManifest = {
 		"_version": "1.8.0",
 		"sap.app": {
-			"type": "card"
+			"type": "card",
+			"i18n": "i18n/i18n.properties"
 		},
 		"sap.ui5": {
 			"services": {
@@ -27,7 +28,7 @@ sap.ui.define([
 					},
 					"path": "/kpiInfos/kpi"
 				},
-				"title": "Project Cloud Transformation",
+				"title": "{{contactDetails}}",
 				"subTitle": "Revenue",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
@@ -99,6 +100,7 @@ sap.ui.define([
 
 		onBeforeRendering: function () {
 			this.getView().byId("card").setManifest(oCardManifest);
+			this.getView().byId("card").setBaseUrl("./cardcontent/objectcontent/");
 		},
 
 		onSelectionChange: function (oEvent) {

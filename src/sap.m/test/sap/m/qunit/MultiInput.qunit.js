@@ -829,6 +829,25 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	QUnit.test("onsapprevious when MultiInput has a token and value in the input field", function(assert) {
+		var oPreventSpy = this.spy(),
+			oFakeEvent = {
+				preventDefault: oPreventSpy,
+				keyCode: KeyCodes.ARROW_UP
+			},
+			token1 = new Token({text: "Token"});
+
+		this.multiInput1.addToken(token1);
+		this.multiInput1.setValue("text");
+
+		this.multiInput1._$input.focus();
+
+		this.multiInput1.onsapprevious(oFakeEvent);
+
+		// assert
+		assert.strictEqual(oPreventSpy.called, true, "Arrow up was prevented.");
+	});
+
 	QUnit.test("onsapdelete", function(assert) {
 		this.multiInput1.setValue("text123");
 		this.multiInput1.setTokens([new Token()]);
@@ -1701,6 +1720,34 @@ sap.ui.define([
 		}
 		//assert
 		assert.strictEqual(oPicker.getContent()[0].getItems().length, 3, "The items in the list are updated");
+	});
+
+	QUnit.test("Popover's interaction - try to delete non editable token", function(assert) {
+		// Arrange
+		var oFakeEvent, oItem,
+			oList = this.multiInput._getTokensList(),
+			oTokenDeleteSpy = this.spy(this.multiInput._tokenizer, "_onTokenDelete"),
+			oListRemoveItemSpy = this.spy(oList, "removeItem");
+
+		this.multiInput.setWidth("200px");
+		this.multiInput.setTokens([
+			new Token({text: "XXXX", editable: false})
+		]);
+
+		sap.ui.getCore().applyChanges();
+
+		oItem = oList.getItems()[0];
+		oFakeEvent = {
+			getParameter: function () { return oItem; }
+		};
+
+		// Act
+		this.multiInput._handleNMoreItemDelete(oFakeEvent);
+
+		// Assert
+		assert.strictEqual(oTokenDeleteSpy.callCount, 0, "Token was not deleted.");
+		assert.strictEqual(oListRemoveItemSpy.callCount, 0, "List item was not removed.");
+		assert.strictEqual(this.multiInput.getTokens().length, 1, "There is still one token in the multi input.");
 	});
 
 	QUnit.test("onfocusin", function(assert) {

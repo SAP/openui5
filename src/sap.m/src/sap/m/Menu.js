@@ -298,8 +298,8 @@ sap.ui.define([
 		 * The function is called once per MenuItem
 		 *
 		 * @param {function} fn The callback function
-		 * @protected
-		 * @sap-restricted ObjectPageLayoutABHelper
+		 * @private
+		 * @ui5-restricted ObjectPageLayoutABHelper
 		 * @returns void
 		 */
 		Menu.prototype._setCustomEnhanceAccStateFunction = function(fn) {

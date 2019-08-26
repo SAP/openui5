@@ -120,6 +120,26 @@ function(
 			startDate: { type : "object", group : "Data" },
 
 			/**
+			 * Determines the start hour of the grid to be shown if the <code>fullDay</code> property is set to
+			 * <code>false</code>. Otherwise the previous hours are displayed as non-working. The passed hour is
+			 * considered as 24-hour based.
+			 */
+			startHour: {type: "int", group: "Data", defaultValue: 0},
+
+			/**
+			 * Determines the end hour of the grid to be shown if the <code>fullDay</code> property is set to
+			 * <code>false</code>. Otherwise the next hours are displayed as non-working. The passed hour is
+			 * considered as 24-hour based.
+			 */
+			endHour: {type: "int", group: "Data", defaultValue: 24},
+
+			/**
+			 * Determines if all of the hours in a day are displayed. If set to <code>false</code>, the hours shown are
+			 * between the <code>startHour</code> and <code>endHour</code>.
+			 */
+			fullDay: {type: "boolean", group: "Data", defaultValue: true},
+
+			/**
 			 * Determines which part of the control will remain fixed at the top of the page during vertical scrolling
 			 * as long as the control is in the viewport.
 			 *
@@ -513,6 +533,27 @@ function(
 	SinglePlanningCalendar.prototype.setStartDate = function (oDate) {
 		this.setProperty("startDate", oDate, true /*Suppressing because _alignColumns will do the rendering.*/ );
 		this._alignColumns();
+
+		return this;
+	};
+
+	SinglePlanningCalendar.prototype.setStartHour = function (iHour) {
+		this.getAggregation("_grid").setStartHour(iHour);
+		this.setProperty("startHour", iHour, true /*Suppressing because the gird will do the rendering as its setStartHour is called.*/ );
+
+		return this;
+	};
+
+	SinglePlanningCalendar.prototype.setEndHour = function (iHour) {
+		this.getAggregation("_grid").setEndHour(iHour);
+		this.setProperty("endHour", iHour, true /*Suppressing because the gird will do the rendering as its setEndHour is called.*/ );
+
+		return this;
+	};
+
+	SinglePlanningCalendar.prototype.setFullDay = function (bFullDay) {
+		this.getAggregation("_grid").setFullDay(bFullDay);
+		this.setProperty("fullDay", bFullDay, true /*Suppressing because the gird will do the rendering as its setFullDay is called.*/ );
 
 		return this;
 	};

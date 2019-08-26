@@ -40,7 +40,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @alias sap.ui.demokit.CodeSampleContainer
 	 */
 	var CodeSampleContainer = Control.extend("sap.ui.demokit.CodeSampleContainer", /** @lends sap.ui.demokit.CodeSampleContainer.prototype */ { metadata : {

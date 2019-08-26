@@ -5,17 +5,21 @@
       {
         "id": "f808faaa64e7fee52cd64bc06840a2214726a663",
         "type": "FEATURE",
-        "text": " AlignedFlowLayout: Update to semantic rendering API and engine",
+        "text": "AlignedFlowLayout: Update to semantic rendering API and engine",
         "references": []
       },
       {
         "id": "41d4d4016f0e4fb69cac94b05a687cea00827ada",
         "type": "FIX",
-        "text": " sap.ui.layout.ResponsiveSplitter: Pagination tap handling improved",
+        "text": "sap.ui.layout.ResponsiveSplitter: Pagination tap handling improved",
         "references": [
           {
             "type": "BCP",
             "reference": "468371"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400004683712019"
           }
         ]
       }
