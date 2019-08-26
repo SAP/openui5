@@ -94,7 +94,7 @@ function(
 			oGroupElementOverlay.setSelected(true);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
@@ -114,7 +114,7 @@ function(
 			sandbox.stub(oAdditionalElementsPlugin, "getAllElements").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), false, "add field Button is disabled, because there are no available fields");
 				sandbox.restore();
@@ -132,7 +132,7 @@ function(
 			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
 				assert.equal(oContextMenuControl.getButtons()[1].getEnabled(), true, "add field Button is enabled, because custom fields creation is available");
 				sandbox.restore();
@@ -143,7 +143,7 @@ function(
 			var oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupOverlay, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a group");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "add field Button is visible");
@@ -161,7 +161,7 @@ function(
 
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 1, "1 Menu Buttons is available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "we can create group");
 			}.bind(this));
@@ -173,7 +173,7 @@ function(
 			this.oRta._oDesignTime.getSelectionManager().set([oGroupElementOverlay1, oGroupElementOverlay2]);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay1, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
@@ -193,7 +193,7 @@ function(
 			this.oRta._oDesignTime.getSelectionManager().set([oGroupElementOverlay1, oGroupElementOverlay2]);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay1, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
@@ -212,7 +212,7 @@ function(
 			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oMultipleFieldTwoBoundGroupElements);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
@@ -228,7 +228,7 @@ function(
 			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oMultipleBoundFieldGroupElement);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 6, "6 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "we can rename a label");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
@@ -244,7 +244,7 @@ function(
 			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oFieldInGroupWithoutStableId);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 2, "2 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "and rename is enabled");
@@ -283,7 +283,7 @@ function(
 					oGroupOverlay.setSelected(true);
 					return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupOverlay).then(function() {
 						var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-						assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+						assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 						assert.equal(oContextMenuControl.getButtons()[oContextMenuControl.getButtons().length - 1].data("id"), "CTX_SETTINGS", "Settings is available");
 					}.bind(this));
 				}.bind(this));
@@ -297,7 +297,7 @@ function(
 			oPageOverlay.setSelected(true);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oPageOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 1, "1 Menu Button is available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename Page is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), false, "but rename Page is disabled");
@@ -312,7 +312,7 @@ function(
 			oFormElementOverlay.setSelected(true);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormElementOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename label is available");
 				assert.equal(oContextMenuControl.getButtons()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field Button is visible");
@@ -329,7 +329,7 @@ function(
 			oFormOverlay.setSelected(true);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 1, "1 Menu Button is available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "create group is available");
 			}.bind(this));
@@ -343,7 +343,7 @@ function(
 			oFormContainerOverlay.setSelected(true);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormContainerOverlay).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "the contextMenu is open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "the contextMenu is open");
 				assert.equal(oContextMenuControl.getButtons().length, 5, "5 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename title is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "and rename title is enabled");
@@ -454,7 +454,7 @@ function(
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection1);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "then Menu gets opened");
 				assert.equal(oContextMenuControl.getButtons().length, 5, " and 5 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename section is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "rename section is enabled");
@@ -523,7 +523,7 @@ function(
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageSection1);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "then Menu gets opened");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "then Menu gets opened");
 				assert.equal(oContextMenuControl.getButtons().length, 2, " and 2 Menu Buttons are available");
 				assert.equal(oContextMenuControl.getButtons()[0].data("id"), "CTX_RENAME", "rename section is available");
 				assert.equal(oContextMenuControl.getButtons()[0].getEnabled(), true, "add section is enabled");
@@ -581,7 +581,7 @@ function(
 			var oOverlay = OverlayRegistry.getOverlay(this.oObjectPageLayout);
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
 				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
-				assert.notOk(oContextMenuControl.bOpen, "then the context menu (context menu) opens");
+				assert.notOk(oContextMenuControl.isPopupOpen(true), "then the context menu (context menu) opens");
 				assert.notOk(oOverlay.isEditable(), "then the overlay is not editable");
 			}.bind(this));
 		});
