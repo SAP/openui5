@@ -116,6 +116,38 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
+		 * Checks whether a sap.m.Input control has an expected value state and value state message.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sId
+		 *  The ID of a "sap.m.Input" control inside the view sViewName
+		 * @param {sap.ui.core.ValueState} sValueState
+		 *  The expected value state of the control
+		 * @param {string} sMessage
+		 *  The expected value state message of the control
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		checkInputValueState : function (oOpa5, sViewName, sId, sValueState, sMessage) {
+			return oOpa5.waitFor({
+				controlType : "sap.m.Input",
+				id : sId,
+				success : function (oInput) {
+					Opa5.assert.strictEqual(oInput.getValueState(), sValueState,
+						"checkInputValueState('" + sId + "', '" + sValueState + "')");
+					if (sMessage) {
+						Opa5.assert.strictEqual(oInput.getValueStateText(), sMessage,
+							"ValueStateText: " + sMessage);
+					}
+				},
+				viewName : sViewName
+			});
+		},
+
+		/**
 		 * Decides whether given log is related to OData V4 topic and has a log level which is at
 		 * least WARNING
 		 *

@@ -89,16 +89,9 @@ sap.ui.define([
 				checkInputValue : function (sId, vValue, sViewName0) {
 					return Helper.checkInputValue(this, sViewName0 || sViewName, sId, vValue);
 				},
-				checkInputValueState : function (sId, sState, sViewName0) {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : sId,
-						success : function (oInput) {
-							Opa5.assert.strictEqual(oInput.getValueState(), sState,
-								"checkInputValueState('" + sId + "', '" + sState + "')");
-						},
-						viewName : sViewName0 || sViewName
-					});
+				checkInputValueState : function (sId, sState, sMessage, sViewName0) {
+					return Helper.checkInputValueState(this, sViewName0 || sViewName, sId, sState,
+						sMessage);
 				},
 				checkStepInputValueState : function (sId, sState) {
 					return this.waitFor({

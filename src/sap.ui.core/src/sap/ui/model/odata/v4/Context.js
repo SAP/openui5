@@ -742,7 +742,7 @@ sap.ui.define([
 	 *   If the group ID is not valid, if this context has pending changes or does not represent a
 	 *   single entity (see {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext}), if the
 	 *   binding is not refreshable, if its root binding is suspended, or if the parameter
-	 *   <code>bAllowRemoval/code> is set for a context belonging to a context binding.
+	 *   <code>bAllowRemoval</code> is set for a context belonging to a context binding.
 	 *
 	 * @public
 	 * @since 1.53.0
@@ -868,6 +868,8 @@ sap.ui.define([
 	 * will happen if a different group ID is provided, and the side effects affect properties for
 	 * which there are pending changes.
 	 *
+	 * All failed updates or creates for the group ID are repeated within the same batch request.
+	 *
 	 * The events 'dataRequested' and 'dataReceived' are not fired. Whatever should happen in the
 	 * event handler attached to...
 	 * <ul>
@@ -941,8 +943,13 @@ sap.ui.define([
 				+ JSON.stringify(oPath));
 		});
 
+		sGroupId = sGroupId || this.getUpdateGroupId();
+		if (this.oModel.isAutoGroup(sGroupId)) {
+			this.oModel.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
+		}
+
 		return Promise.resolve(
-				this.oBinding.requestSideEffects(sGroupId || this.getUpdateGroupId(), aPaths, this)
+				this.oBinding.requestSideEffects(sGroupId, aPaths, this)
 			).then(function () {
 				// return undefined;
 			});

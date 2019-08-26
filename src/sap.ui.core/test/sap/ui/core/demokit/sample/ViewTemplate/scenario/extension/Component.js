@@ -33,7 +33,7 @@ sap.ui.define([
 								// TODO remove the line below if file list handling is fixed
 								// List of files inherited from parent component; overwrite list
 								// entries to avoid links to files that cannot be accessed
-								" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "
+								" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "
 							]
 						}
 					},

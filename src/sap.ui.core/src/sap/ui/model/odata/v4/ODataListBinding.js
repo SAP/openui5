@@ -723,7 +723,8 @@ sap.ui.define([
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
 				i$skipIndex = i - this.iCreatedContexts; // index on server ($skip)
-				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate");
+				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate")
+					|| _Helper.getPrivateAnnotation(aResults[i - iStart], "transientPredicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				if (sContextPath in this.mPreviousContextsByPath) {
 					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
@@ -737,14 +738,7 @@ sap.ui.define([
 		}
 		// destroy previous contexts which are not reused
 		if (Object.keys(this.mPreviousContextsByPath).length) {
-			sap.ui.getCore().addPrerenderingTask(function () {
-				if (that.mPreviousContextsByPath) { // binding might be destroyed already
-					Object.keys(that.mPreviousContextsByPath).forEach(function (sPath) {
-						that.mPreviousContextsByPath[sPath].destroy();
-						delete that.mPreviousContextsByPath[sPath];
-					});
-				}
-			});
+			sap.ui.getCore().addPrerenderingTask(this.destroyPreviousContexts.bind(this));
 		}
 		if (iCount !== undefined) {
 			this.bLengthFinal = true;
@@ -786,6 +780,7 @@ sap.ui.define([
 		this.aContexts.forEach(function (oContext) {
 			oContext.destroy();
 		});
+		this.destroyPreviousContexts();
 		if (this.oHeaderContext) {
 			this.oHeaderContext.destroy();
 		}
@@ -829,15 +824,32 @@ sap.ui.define([
 			this.bCreatedAtEnd = undefined;
 		}
 		this.aContexts.splice(iIndex, 1);
-		if (bDestroyLater) {
+		if (bDestroyLater && this.iCurrentEnd) {
 			// Add the context to mPreviousContextsByPath although it definitely won't be reused.
-			// Then it is destroyed later.
+			// Then it is destroyed later, but only if there is a listener (iCurrentEnd is set by
+			// getContexts and mPreviousContextsByPath is only cleared when getContexts is called)
 			this.mPreviousContextsByPath[oContext.getPath()] = oContext;
 		} else {
 			oContext.destroy();
 		}
 		// The path of all contexts in aContexts after the removed one is untouched, still points to
 		// the same data, hence no checkUpdate is needed.
+	};
+
+	/**
+	 * Clears mPreviousContextsByPath, destroying all contexts.
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.destroyPreviousContexts = function () {
+		var mPreviousContextsByPath = this.mPreviousContextsByPath;
+
+		if (mPreviousContextsByPath) { // binding may have been destroyed already
+			Object.keys(mPreviousContextsByPath).forEach(function (sPath) {
+				mPreviousContextsByPath[sPath].destroy();
+			});
+			this.mPreviousContextsByPath = {};
+		}
 	};
 
 	/**
@@ -1781,7 +1793,7 @@ sap.ui.define([
 	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
 	 * @returns {boolean}
-	 *   If <code>true</true> the length is determined by server side data
+	 *   If <code>true</code> the length is determined by server side data
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#isLengthFinal
@@ -1961,20 +1973,35 @@ sap.ui.define([
 	 *   The number of contexts to retrieve beginning from the start index; defaults to the model's
 	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}; must be greater than 0,
 	 *   <code>Infinity</code> may be used to retrieve all data
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used for the request; if not specified, the group ID for this binding is
+	 *   used, see {@link sap.ui.model.odata.v4.ODataListBinding#constructor}.
+	 *   Valid values are <code>undefined</code>, '$auto', '$auto.*', '$direct' or application group
+	 *   IDs as specified in {@link sap.ui.model.odata.v4.ODataModel}.
 	 * @returns {Promise<sap.ui.model.odata.v4.Context[]>}
 	 *   A promise which is resolved with the array of the contexts, the first entry containing the
 	 *   context for <code>iStart</code>; it is rejected if <code>iStart</code> or
 	 *   <code>iLength</code> are less than 0 or when requesting the data fails
+	 * @throws {Error} If the binding is relative and has no context, if the binding's root binding
+	 *   is suspended or if the given group ID is invalid
 	 *
 	 * @public
 	 * @since 1.70.0
 	 */
-	ODataListBinding.prototype.requestContexts = function (iStart, iLength) {
+	ODataListBinding.prototype.requestContexts = function (iStart, iLength, sGroupId) {
 		var that = this;
+
+		if (this.bRelative && !this.oContext) {
+			throw new Error("Unresolved binding: " + this.sPath);
+		}
+		this.checkSuspended();
+		this.oModel.checkGroupId(sGroupId);
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
-		return Promise.resolve(this.fetchContexts(iStart, iLength, 0).then(function (bChanged) {
+		return Promise.resolve(this.fetchContexts(iStart, iLength, 0,
+			this.lockGroup(sGroupId, true)
+		).then(function (bChanged) {
 			if (bChanged) {
 				that._fireChange({reason : ChangeReason.Change});
 			}
