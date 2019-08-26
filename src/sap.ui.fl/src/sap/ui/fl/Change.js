@@ -464,6 +464,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the source system of the change.
+	 *
+	 * @returns {String} Source system of the change file
+	 *
+	 * @public
+	 */
+	Change.prototype.getSourceSystem = function () {
+		return this._oDefinition.sourceSystem;
+	};
+
+	/**
+	 * Returns the source client of the change.
+	 *
+	 * @returns {String} Source client of the change file
+	 *
+	 * @public
+	 */
+	Change.prototype.getSourceClient = function () {
+		return this._oDefinition.sourceClient;
+	};
+
+	/**
 	 * Returns the user ID of the owner.
 	 * @returns {string} ID of the owner
 	 *
@@ -521,7 +543,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.isReadOnly = function () {
-		return this._isReadOnlyDueToLayer() || this._isReadOnlyWhenNotKeyUser();
+		return this._isReadOnlyDueToLayer() || this._isReadOnlyWhenNotKeyUser() || this._isChangeFromOtherSystem();
 	};
 
 	/**
@@ -544,8 +566,8 @@ sap.ui.define([
 		if (!oSettings) {
 			return true; // without settings the right to edit or delete a change cannot be determined
 		}
-
-		return !oSettings.isKeyUser(); // a key user can edit changes
+		// a key user can edit changes
+		return !oSettings.isKeyUser();
 	};
 
 	/**
@@ -572,6 +594,30 @@ sap.ui.define([
 		var sCurrentLayer;
 		sCurrentLayer = Utils.getCurrentLayer(this._bUserDependent);
 		return (this._oDefinition.layer !== sCurrentLayer);
+	};
+
+	/**
+	 * Checks if change is read only because of its source system.
+	 * @returns {boolean} <code>true</code> if the change is from another system
+	 *
+	 * @private
+	 */
+	Change.prototype._isChangeFromOtherSystem = function () {
+		var sSourceSystem = this.getSourceSystem();
+		var sSourceClient = this.getSourceClient();
+		if (!sSourceSystem || !sSourceClient) {
+			return false;
+		}
+		var oSettings = Settings.getInstanceOrUndef();
+		if (!oSettings) {
+			return true; // without settings the right to edit or delete a change cannot be determined
+		}
+		var sSystem = oSettings.getSystem();
+		var sClient = oSettings.getClient();
+		if (!sSystem || !sClient) {
+			return false;
+		}
+		return (sSourceSystem !== sSystem || sSourceClient !== sClient);
 	};
 
 	/**
