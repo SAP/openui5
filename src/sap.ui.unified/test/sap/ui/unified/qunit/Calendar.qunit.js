@@ -12,9 +12,10 @@ sap.ui.define([
 	'sap/ui/events/KeyCodes',
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/library",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/unified/CalendarMonthInterval"
 ], function(qutils, Calendar, DateRange, DateTypeRange, CalendarLegend,
-	CalendarLegendItem, Locale, HTML, KeyCodes, CalendarDate, unifiedLibrary, waitForThemeApplied) {
+	CalendarLegendItem, Locale, HTML, KeyCodes, CalendarDate, unifiedLibrary, waitForThemeApplied, CalendarMonthInterval) {
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
 	sap.ui.getCore().getConfiguration().setLanguage("en_US");
@@ -2037,6 +2038,33 @@ QUnit.module("Misc");
 
 		// clean
 		oCalendar.destroy();
+	});
+
+	//================================================================================
+	// CalendarMonthInterval Accessibility
+	//================================================================================
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("CalendarMonthInterval has Calendar aggregation which is wrapped in popup with role dialog where aria-modal attribute value should be true", function(assert) {
+		// Arrange
+		var oCalP = new CalendarMonthInterval("CalP", {
+			pickerPopup: true
+		}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		qutils.triggerEvent("click", "CalP--Head-B2");
+
+		// Assert
+		assert.strictEqual(jQuery("#CalP--Cal").attr("aria-modal"), "true", "aria-modal attribute is true");
+
+		// close calendarPicker
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
+
+		// Clean
+		oCalP.destroy();
 	});
 
 	return waitForThemeApplied();

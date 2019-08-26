@@ -366,6 +366,7 @@ function(
 				}
 			}).addStyleClass(CSS_CLASS);
 
+			this._oPopover._setAriaModal(false);
 			this._oPopover.addContent(this._oMessageView);
 			this._oPopover.addAssociation("ariaLabelledBy", this.getId() + "-messageView-HeadingDescr", true);
 

@@ -1537,4 +1537,31 @@ sap.ui.define([
 		assert.ok(!this.oMessagePopover.isOpen(), "Popover is now closed");
 		assert.ok(true, "No exception has been thrown");
 	});
+
+	//================================================================================
+	// MessagePopover accessibility
+	//================================================================================
+
+	QUnit.module("Accessibility", {
+		beforeEach: function() {
+			this.oMessagePopover = new MessagePopover();
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oMessagePopover.close();
+			this.oMessagePopover.destroy();
+
+			this.oButton.destroy();
+		}
+	});
+
+	QUnit.test("MessagePopover should have accessibility attribute aria-modal set to false", function(assert) {
+		// act
+		this.oMessagePopover.openBy(this.oButton);
+
+		// assert
+		assert.strictEqual(this.oMessagePopover.getDomRef().getAttribute('aria-modal'), "false", 'aria-modal attribute is false');
+	});
 });

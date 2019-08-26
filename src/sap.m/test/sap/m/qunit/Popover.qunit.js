@@ -2105,6 +2105,23 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("ARIA aria-modal attribute should be true", function (assert){
+		var oButton = new Button({
+			text: "Open Popover"
+		});
+		oButton.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = new Popover();
+		oPopover.openBy(oButton);
+		this.clock.tick(400);
+
+		assert.strictEqual(oPopover.$().attr('aria-modal'), "true", 'Popover aria-modal attribute is set to true');
+
+		oPopover.destroy();
+		oButton.destroy();
+	});
+
 	QUnit.module("Integration");
 
 	QUnit.test("Focus should be taken out of Popover after closed on tablet", function (assert) {
