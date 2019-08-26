@@ -18,6 +18,7 @@ sap.ui.define(["./library"],
 	 * @static
 	 */
 	var ActionBarRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -32,35 +33,32 @@ sap.ui.define(["./library"],
 
 		// render ActionBar
 		// result: <div id="<id>" data-sap-ui="<id>" class="sapUiUx3ActionBar" role="toolbar">
-		rm.write("<div");
-		rm.writeControlData(oControl);
-		rm.addClass("sapUiUx3ActionBar");
-		rm.writeClasses();
+		rm.openStart("div", oControl);
+		rm.class("sapUiUx3ActionBar");
 		if ( sap.ui.getCore().getConfiguration().getAccessibility()) {
-			rm.writeAttribute('role', 'toolbar');
+			rm.attr('role', 'toolbar');
 		}
-		rm.write(">");
+		rm.openEnd();
 
 		// render list for social actions
-		rm.write("<ul");
-		rm.writeAttribute('id', oControl.getId() + "-socialActions");
-		rm.addClass("sapUiUx3ActionBarSocialActions");
-		rm.writeClasses();
+		rm.openStart("ul", oControl.getId() + "-socialActions");
+		rm.class("sapUiUx3ActionBarSocialActions");
 
-		rm.addStyle("min-width", oControl._getSocialActionListMinWidth() + "px");
-		rm.writeStyles();
+		rm.style("min-width", oControl._getSocialActionListMinWidth() + "px");
 
-		rm.write(">");
+		rm.openEnd();
 		this.renderSocialActions(rm, oControl);
-		rm.write("</ul>");
+		rm.close("ul");
 
 		// render list for business actions
-		rm.write("<ul  id='" + oControl.getId() + "-businessActions' class='sapUiUx3ActionBarBusinessActions'>");
+		rm.openStart("ul", oControl.getId() + '-businessActions');
+		rm.class("sapUiUx3ActionBarBusinessActions");
+		rm.openEnd();
 		this.renderBusinessActionButtons(rm, oControl);
-		rm.write("</ul>");
+		rm.close("ul");
 
 		// closing tag for toolbar
-		rm.write("</div>");
+		rm.close("div");
 
 	};
 
@@ -86,12 +84,11 @@ sap.ui.define(["./library"],
 			//both arrow and tab will work, which is wrong
 			for ( var i = 0; i < actionButtons.length; i++) {
 				var oButton = actionButtons[i];
-				rm.write("<li");
-				rm.addClass("sapUiUx3ActionBarItemRight");
-				rm.writeClasses();
-				rm.write(">");
+				rm.openStart("li");
+				rm.class("sapUiUx3ActionBarItemRight");
+				rm.openEnd();
 				rm.renderControl(oButton);
-				rm.write("</li>");
+				rm.close("li");
 			}
 			this._renderMoreMenuButton(rm, oMoreMenuButton);
 		} else if (oMoreMenuButton) {
@@ -113,13 +110,12 @@ sap.ui.define(["./library"],
 	ActionBarRenderer._renderMoreMenuButton = function (rm, oMoreMenuButton) {
 
 		if (oMoreMenuButton) {
-			rm.write("<li");
-			rm.addClass("sapUiUx3ActionBarItemRight");
-			rm.addClass("sapUiUx3ActionBarMoreButton");
-			rm.writeClasses();
-			rm.write(">");
+			rm.openStart("li");
+			rm.class("sapUiUx3ActionBarItemRight");
+			rm.class("sapUiUx3ActionBarMoreButton");
+			rm.openEnd();
 			rm.renderControl(oMoreMenuButton);
-			rm.write("</li>");
+			rm.close("li");
 		}
 	};
 
@@ -189,12 +185,11 @@ sap.ui.define(["./library"],
 	  */
 	  ActionBarRenderer._renderSocialActionListItem = function(rm, oControl, action) {
 		if (action && !action.hide) {
-			rm.write("<li");
-			rm.addClass("sapUiUx3ActionBarItem");
-			rm.writeClasses();
-			rm.write(">");
+			rm.openStart("li");
+			rm.class("sapUiUx3ActionBarItem");
+			rm.openEnd();
 			this._renderSocialAction(rm, oControl, action);
-			rm.write("</li>");
+			rm.close("li");
 		}
 	  };
 
@@ -214,30 +209,29 @@ sap.ui.define(["./library"],
 	 *  @private
 	 */
 	 ActionBarRenderer._renderSocialAction = function(rm, oControl, action) {
-		if (action.isMenu && action.isMenu(oControl)) {
-			rm.write("<a role=\"button\" aria-disabled=\"false\" aria-haspopup=\"true\"");
-		} else {
-			rm.write("<a  role=\"button\" aria-disabled=\"false\" aria-haspopup=\"false\"");
+		 rm.openStart("a", action);
+		 rm.attr("role", "button");
+		 rm.attr("aria-disabled", "false");
+		 rm.attr("aria-haspopup", action.isMenu && action.isMenu(oControl) ? "true" : "false");
+
+		if (action.name === oControl.mActionKeys.Flag || action.name === oControl.mActionKeys.Favorite) {
+			rm.attr("aria-pressed", action.fnCalculateState(oControl) === "Selected" ? "true" : "false");
 		}
-		if (action.name == oControl.mActionKeys.Flag || action.name == oControl.mActionKeys.Favorite) {
-			rm.writeAttribute("aria-pressed", action.fnCalculateState(oControl) == "Selected" ? "true" : "false");
-		}
-		rm.writeAttribute("tabindex", "0");
-		rm.writeElementData(action);
-		rm.addClass(action.cssClass);
+		rm.attr("tabindex", "0");
+		rm.class(action.cssClass);
 		if (action.fnCalculateState) {
-			rm.addClass(action.fnCalculateState(oControl));
+			rm.class(action.fnCalculateState(oControl));
 		}
-		rm.addClass("sapUiUx3ActionBarAction");
-		rm.writeClasses();
+		rm.class("sapUiUx3ActionBarAction");
 
 		if (action.getTooltip()) {
-			rm.writeAttributeEscaped("title", action.getTooltip());
+			rm.attr("title", action.getTooltip());
 		}
 		if (action.text) {
-			rm.writeAttributeEscaped("text", oControl.getLocalizedText(action.getText()));
+			rm.attr("text", oControl.getLocalizedText(action.getText()));
 		}
-		rm.write("></a>");
+		rm.openEnd();
+		rm.close("a");
 	 };
 
 
