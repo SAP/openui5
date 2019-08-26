@@ -32,22 +32,17 @@ sap.ui.define([
 			assert.equal(JsObjectConnector.oStorage.getItem("key2"), "value2", "the value was set and retrieved");
 
 			JsObjectConnector.oStorage.clear();
-			assert.equal(Object.keys(JsObjectConnector.oStorage._items).length, 0, "the object again has no items");
+			assert.equal(Object.keys(JsObjectConnector.oStorage.getItems()).length, 0, "the object again has no items");
 
 			JsObjectConnector.oStorage.setItem("key1", "value1");
 			JsObjectWriteConnector.oStorage.clear();
-			assert.equal(Object.keys(JsObjectConnector.oStorage._items).length, 0, "the object again has no items");
+			assert.equal(Object.keys(JsObjectConnector.oStorage.getItems()).length, 0, "the object again has no items");
 		});
 	});
 
 	function parameterizedTest(oConnectorStorage, sConnector) {
 		QUnit.module("Storage functions - " + sConnector, function() {
 			QUnit.test("setItem / getItem / clear", function(assert) {
-				assert.equal(Object.keys(oConnectorStorage).length, 4, "initially the object has 3 entries");
-				assert.equal(typeof oConnectorStorage.setItem, "function", "the storage has the setItem function");
-				assert.equal(typeof oConnectorStorage.clear, "function", "the storage has the clear function");
-				assert.equal(typeof oConnectorStorage.getItem, "function", "the storage has the clear function");
-
 				oConnectorStorage.setItem("key1", "value1");
 				oConnectorStorage.setItem("key2", "value2");
 
@@ -55,7 +50,7 @@ sap.ui.define([
 				assert.equal(oConnectorStorage.getItem("key2"), "value2", "the value was set and retrieved");
 
 				oConnectorStorage.clear();
-				assert.equal(Object.keys(oConnectorStorage._items).length, 0, "the object again has no items");
+				assert.equal(Object.keys(oConnectorStorage.getItems()).length, 0, "the object again has no items");
 				assert.equal(typeof oConnectorStorage.setItem, "function", "the storage has the setItem function");
 				assert.equal(typeof oConnectorStorage.clear, "function", "the storage has the clear function");
 				assert.equal(typeof oConnectorStorage.getItem, "function", "the storage has the clear function");

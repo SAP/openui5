@@ -90,7 +90,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 		 */
 		getFlexInfo: function (/* mPropertyBag */) {
-			return Promise.reject("getFlexInfo is not implemented");
+			return Promise.resolve({});
 		},
 
 		/**

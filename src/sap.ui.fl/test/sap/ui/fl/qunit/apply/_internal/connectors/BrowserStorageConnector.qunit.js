@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	BrowserStorageUtils,
@@ -21,8 +19,6 @@ sap.ui.define([
 	JsObjectWriteConnector,
 	SessionStorageWriteConnector,
 	LocalStorageWriteConnector,
-	sinon,
-	merge,
 	jQuery
 ) {
 	"use strict";
@@ -205,12 +201,6 @@ sap.ui.define([
 		}
 	};
 
-	function saveListWithConnector(oConnector, aList) {
-		aList.forEach(function (oFlexObject) {
-			oConnector.write(oFlexObject.fileName, oFlexObject);
-		});
-	}
-
 	function removeListFromStorage(oStorage, aList) {
 		aList.forEach(function (sObjectId) {
 			var sKey = BrowserStorageUtils.createChangeKey(sObjectId);
@@ -226,23 +216,25 @@ sap.ui.define([
 	function parameterizedTest(oApplyStorageConnector, oWriteStorageConnector, sStorage) {
 		QUnit.module("loadFlexData: Given some changes in the " + sStorage, {
 			before: function() {
-				saveListWithConnector(oWriteStorageConnector, [
-					oTestData.change1,
-					oTestData.change2,
-					oTestData.change3,
-					oTestData.change4,
-					oTestData.variant1,
-					oTestData.variant2,
-					oTestData.variantChange,
-					oTestData.variantManagementChange,
-					oTestData.anotherAppChange1,
-					oTestData.anotherAppChange2,
-					oTestData.anotherAppChange3,
-					oTestData.anotherAppChange4,
-					oTestData.anotherAppVariant,
-					oTestData.anotherAppVariantChange,
-					oTestData.anotherAppVariantManagementChange
-				]);
+				oWriteStorageConnector.write({
+					flexObjects : [
+						oTestData.change1,
+						oTestData.change2,
+						oTestData.change3,
+						oTestData.change4,
+						oTestData.variant1,
+						oTestData.variant2,
+						oTestData.variantChange,
+						oTestData.variantManagementChange,
+						oTestData.anotherAppChange1,
+						oTestData.anotherAppChange2,
+						oTestData.anotherAppChange3,
+						oTestData.anotherAppChange4,
+						oTestData.anotherAppVariant,
+						oTestData.anotherAppVariantChange,
+						oTestData.anotherAppVariantManagementChange
+					]
+				});
 			},
 			after: function () {
 				removeListFromStorage(oWriteStorageConnector.oStorage, [
@@ -296,13 +288,15 @@ sap.ui.define([
 
 		QUnit.module("loadFlexData: Given entries were present in different layers " + sStorage, {
 			before: function() {
-				saveListWithConnector(oWriteStorageConnector, [
-					oTestData.baseChange,
-					oTestData.vendorVariant,
-					oTestData.partnerVariantChange,
-					oTestData.customerBaseVariantDependentChange,
-					oTestData.customerVariantManagementChange
-				]);
+				oWriteStorageConnector.write({
+					flexObjects : [
+						oTestData.baseChange,
+						oTestData.vendorVariant,
+						oTestData.partnerVariantChange,
+						oTestData.customerBaseVariantDependentChange,
+						oTestData.customerVariantManagementChange
+					]
+				});
 			},
 			after: function () {
 				removeListFromStorage(oWriteStorageConnector.oStorage, [

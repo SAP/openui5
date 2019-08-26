@@ -17,30 +17,52 @@ sap.ui.define([
 	 * Base Connector for requesting data from session or local storage
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.BrowserStorageConnector
-	 * @experimental Since 1.70
+	 * @extends sap.ui.fl.write.connectors.BaseConnector
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var BrowserStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.BrowserStorageConnector */ {
 		/**
-		 * can be either window.sessionStorage or window.localStorage
+		 * can be either window.sessionStorage or window.localStorage or just a JS map
 		 */
 		oStorage: undefined,
 
-		write: function(sId, oChange) {
-			var sChangeKey;
-			var sChange;
-
-			if (sId && oChange) {
-				if (oChange.fileType === "ctrl_variant" && oChange.variantManagementReference) {
+		/**
+		 * @inheritDoc
+		 */
+		write: function(mPropertyBag) {
+			mPropertyBag.flexObjects.forEach(function(mFlexObject) {
+				var sId = mFlexObject.fileName;
+				var sChangeKey;
+				var sChange;
+				if (mFlexObject.fileType === "ctrl_variant" && mFlexObject.variantManagementReference) {
 					sChangeKey = BrowserStorageUtils.createVariantKey(sId);
 				} else {
 					sChangeKey = BrowserStorageUtils.createChangeKey(sId);
 				}
-				sChange = JSON.stringify(oChange);
+				sChange = JSON.stringify(mFlexObject);
 				this.oStorage.setItem(sChangeKey, sChange);
-				return sChangeKey;
+			}.bind(this));
+			return Promise.resolve();
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		reset: function(mPropertyBag) {
+			//TODO implement other selectors
+			if (mPropertyBag.changeTypes) {
+				BrowserStorageUtils.forEachChangeInStorage(function(sKey) {
+					var mChange = JSON.parse(this.oStorage.getItem(sKey));
+					if (mPropertyBag.changeTypes) {
+						if (mPropertyBag.changeTypes.indexOf(mChange.changeType) !== -1) {
+							this.oStorage.removeItem(sKey);
+						}
+					}
+				});
+			} else {
+				this.oStorage.clear();
 			}
 		}
 	});
