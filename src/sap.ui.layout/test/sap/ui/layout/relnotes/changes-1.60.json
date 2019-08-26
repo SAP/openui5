@@ -215,5 +215,21 @@
         "references": []
       }
     ]
+  },
+  "1.60.18": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "52c20ddb21e8d56895f511315f078402da267d76",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Pagination tap handling improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "468371"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -2441,5 +2441,65 @@
         "references": []
       }
     ]
+  },
+  "1.44.42": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "e80764ec05efad896249c9ac0eb956f9596e24ba",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "620c9b35efd41147955f260281eb2782894ce078",
+        "type": "FIX",
+        "text": " Improve jQuery.parseHTML implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "51d480d84560c6eee00582256f9c93741c8593ee",
+        "type": "FIX",
+        "text": " date.Japanese: adapt unit test to era change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "587bfde57c0bbeaa2b988fb67ec367ac9b54272e",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding#_createMultiUnitRepresentativeEntry",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880292532"
+          }
+        ]
+      },
+      {
+        "id": "a3ec4c7ebf23be8f6575c44d629640dd19d25875",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      }
+    ]
   }
 }
