@@ -146,6 +146,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/Connector"]
 				}
 			},
+			"apply/_internal/variants/URLHandler": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/variants/URLHandler"]
+				}
+			},
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {
@@ -468,12 +474,6 @@ sap.ui.define(function () {
 			},
 
 			// Variant tests:
-			"variants/util/URLHandler": {
-				group: "Variants",
-				coverage: {
-					only: ["sap/ui/fl/variants/URLHandler"]
-				}
-			},
 			"variants/VariantController": {
 				group: "Variants",
 				coverage: {

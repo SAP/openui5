@@ -265,9 +265,7 @@ sap.ui.define([
 			var oAppComponentMock = {
 				getComponentData: function() {
 					return {
-						technicalParameters: {
-							"sap-ui-fl-control-variant-id" : ["control-variant-id-0"]
-						}
+						technicalParameters: {}
 					};
 				}
 			};

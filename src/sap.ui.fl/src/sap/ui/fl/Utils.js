@@ -927,38 +927,6 @@ function(
 		},
 
 		/**
-		 * Sets the values for url hash and technical parameters for the component data.
-		 * Deactivates hash based navigation while performing the operations, which is then re-activated upon completion.
-		 * If the passed doesn't exist in the url hash or technical parameters, then a new object is added respectively.
-		 *
-		 * @param {object} oComponent Component instance used to get the technical parameters
-		 * @param {string} sParameterName Name of the parameter (e.g. "sap-ui-fl-control-variant-id")
-		 * @param {string[]} aValues Array of values for the technical parameter
-		 */
-		setTechnicalURLParameterValues: function (oComponent, sParameterName, aValues) {
-			var oParsedHash = Utils.getParsedURLHash(sParameterName);
-
-			if (oParsedHash.params) {
-				hasher.changed.active = false; //disable changed signal
-
-				var mTechnicalParameters = Utils.getTechnicalParametersForComponent(oComponent);
-					// if mTechnicalParameters are not available we write a warning and continue updating the hash
-				if (!mTechnicalParameters) {
-					Log.warning("Component instance not provided, so technical parameters in component data and browser history remain unchanged");
-				}
-				if (aValues.length === 0) {
-					delete oParsedHash.params[sParameterName];
-					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
-				} else {
-					oParsedHash.params[sParameterName] = aValues;
-					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
-				}
-				hasher.replaceHash(Utils.getUshellContainer().getService("URLParsing").constructShellHash(oParsedHash)); // Set hash without dispatching changed signal nor writing history
-				hasher.changed.active = true; // Re-enable signal
-			}
-		},
-
-		/**
 		 * Checks the SAPUI5 debug settings to determine whether all or at least the <code>sap.ui.fl</code> library is debugged.
 		 *
 		 * @returns {boolean} Returns a flag if the flexibility library is debugged

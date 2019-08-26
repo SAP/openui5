@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/apply/_internal/variants/URLHandler",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/merge"
 ],
@@ -29,6 +30,7 @@ function (
 	Component,
 	Log,
 	jQuery,
+	URLHandler,
 	sinon,
 	fnBaseUtilMerge
 ) {
@@ -331,11 +333,10 @@ function (
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 			var mPropertyBag = {
 				componentData : {
-					technicalParameters : {
-						"sap-ui-fl-control-variant-id" : ["variantID"]
-					}
+					technicalParameters : {}
 				}
 			};
+			mPropertyBag.componentData.technicalParameters[URLHandler.variantTechnicalParameterName] = ["variantID"];
 
 			return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function () {
 				assert.strictEqual(fnSetChangeFileContentStub.getCall(0).args[1], mPropertyBag.componentData.technicalParameters, "then technical parameters were passed if present");
@@ -355,14 +356,12 @@ function (
 			var fnSetChangeFileContentStub = sandbox.stub(this.oChangePersistence._oVariantController, "checkAndSetVariantContent");
 			sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+			var oReturnObject = { technicalParameters: {}};
+			oReturnObject.technicalParameters[URLHandler.variantTechnicalParameterName] = ["variantID"];
 			var mPropertyBag = {
 				component : {
 					getComponentData : function() {
-						return {
-							technicalParameters: {
-								"sap-ui-fl-control-variant-id": ["variantID"]
-							}
-						};
+						return oReturnObject;
 					}
 				}
 			};

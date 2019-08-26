@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/includes",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/variants/util/URLHandler",
+	"sap/ui/fl/apply/_internal/variants/URLHandler",
 	"sap/ui/core/Component",
 	"sap/base/Log",
+	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Utils,
@@ -27,6 +28,7 @@ sap.ui.define([
 	URLHandler,
 	Component,
 	Log,
+	merge,
 	jQuery
 ) {
 	"use strict";
@@ -55,8 +57,6 @@ sap.ui.define([
 	 * @property {object} changeSpecificData The map of change-specific data to perform a flex change
 	 * @property {string} changeSpecificData.changeType The change type for which a change handler is registered
 	 */
-
-	var VARIANT_TECHNICAL_PARAMETER_NAME = "sap-ui-fl-control-variant-id";
 
 	var ControlPersonalizationAPI = {
 
@@ -127,31 +127,31 @@ sap.ui.define([
 		 * @public
 		 */
 		clearVariantParameterInURL : function (oControl) {
-			var aUrlParameters = [];
+			var aUpdatedVariantParameters;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel(Utils.VARIANT_MODEL_NAME) : undefined;
 			if (!oVariantModel) {
 				//technical parameters are not updated, only URL hash is updated
-				URLHandler._setTechnicalURLParameterValues(undefined, aUrlParameters, /*bSilent*/ true);
-				return Log.warning("Variant model could not be found on the provided control");
+				Log.warning("Variant model could not be found on the provided control");
 			}
 
 			//check if variant for the passed variant management control is present
 			if (oControl instanceof VariantManagement) {
 				var sVariantManagementReference = oVariantModel.getLocalId(oControl.getId(), oAppComponent);
-				var mVariantParametersInURL = oVariantModel.getVariantIndexInURL(sVariantManagementReference);
-
-				if (mVariantParametersInURL.index > -1) {
-					mVariantParametersInURL.parameters[VARIANT_TECHNICAL_PARAMETER_NAME].splice(mVariantParametersInURL.index, 1);
-					aUrlParameters = mVariantParametersInURL.parameters[VARIANT_TECHNICAL_PARAMETER_NAME].slice(0);
-				}
+				var mCleansedParametersWithIndex = URLHandler.removeURLParameterForVariantManagement({
+					model: oVariantModel,
+					vmReference: sVariantManagementReference
+				});
+				aUpdatedVariantParameters = mCleansedParametersWithIndex.parameters;
 			}
 
 			//both technical parameters and URL hash updated
-			oVariantModel.updateEntry({
-				parameters: aUrlParameters,
+			URLHandler.update({
+				parameters: aUpdatedVariantParameters || [],
 				updateURL: true,
-				updateHashEntry: true
+				updateHashEntry: !!oVariantModel,
+				model: oVariantModel || {},
+				silent: !oVariantModel
 			});
 		},
 
