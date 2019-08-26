@@ -191,7 +191,7 @@ sap.ui.define([
 				var fnTriggerCopyUnsavedChangesToLREP = function() {
 					if (bCopyUnsavedChanges) {
 						// If there are any unsaved changes, should be taken away for the new created app variant
-						return oAppVariantManager.copyUnsavedChangesToLREP(oDescriptorVariantClosure.getId(), bCopyUnsavedChanges);
+						return oAppVariantManager.copyUnsavedChangesToLREP(oDescriptorVariantClosure.getId(), bCopyUnsavedChanges, oDescriptorVariantClosure.getVersion());
 					}
 					return Promise.resolve();
 				};

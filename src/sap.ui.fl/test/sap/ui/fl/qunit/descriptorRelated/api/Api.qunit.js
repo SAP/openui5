@@ -768,6 +768,16 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("getVersion", function(assert) {
+			return DescriptorVariantFactory.createNew({
+				id : "a.id",
+				reference: "a.reference",
+				version: "1.0.0"
+			}).then(function(oDescriptorVariant) {
+				assert.strictEqual(oDescriptorVariant.getVersion(), "1.0.0");
+			});
+		});
+
 		QUnit.test("getSettings", function(assert) {
 			return DescriptorVariantFactory.createNew({
 				"id" : "a.id",

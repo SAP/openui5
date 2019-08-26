@@ -207,7 +207,7 @@ sap.ui.define([
 		return FlexControllerFactory.create(sComponentName, sAppVersion);
 	};
 
-	LREPSerializer.prototype._moveChangeToAppVariant = function(sReferenceAppIdForChanges, oFlexController) {
+	LREPSerializer.prototype._moveChangeToAppVariant = function(sReferenceAppIdForChanges, sAppVariantVersion, oFlexController) {
 		return Settings.getInstance().then(function(oSettings) {
 			var oPropertyBag = {
 				reference: sReferenceAppIdForChanges
@@ -231,6 +231,13 @@ sap.ui.define([
 						}
 						oChange.setNamespace(sNamespace);
 						oChange.setComponent(sReferenceAppIdForChanges);
+						if (sAppVariantVersion) {
+							// Only needed for RTA tool, Smart business might not pass the version
+							oChange.setValidAppVersions({
+								creation: sAppVariantVersion,
+								from: sAppVariantVersion
+							});
+						}
 					});
 				}
 			});
@@ -280,9 +287,10 @@ sap.ui.define([
 	 * Since we detached the commandExecuted event, therefore LRepSerializer would not talk with FlexController and ChangePersistence.
 	 * In the last when user presses 'Save and Exit', there will be no change registered for the current app.
 	 * @param {string} sReferenceAppIdForChanges - ApplicationId
+	 * @param {string} sAppVariantVersion - App Variant version
 	 * @returns {Promise} returns a promise with true or false
 	 */
-	LREPSerializer.prototype.saveAsCommands = function(sReferenceAppIdForChanges) {
+	LREPSerializer.prototype.saveAsCommands = function(sReferenceAppIdForChanges, sAppVariantVersion) {
 		if (!sReferenceAppIdForChanges) {
 			throw new Error("The id of the new app variant is required");
 		}
@@ -302,7 +310,7 @@ sap.ui.define([
 		var oFlexController = FlexControllerFactory.createForControl(oRootControl);
 
 		var oCommandStack = this.getCommandStack();
-		return this._moveChangeToAppVariant(sReferenceAppIdForChanges, oFlexController)
+		return this._moveChangeToAppVariant(sReferenceAppIdForChanges, sAppVariantVersion, oFlexController)
 			.then(function() {
 				// Detach the event 'commandExecuted' here to stop the communication of LREPSerializer with Flex
 				oCommandStack.detachCommandExecuted(this.handleCommandExecuted.bind(this));
