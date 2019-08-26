@@ -45,7 +45,8 @@ sap.ui.define([
 				singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
 				singleBindableAggr : { type : "sap.ui.core.TestManagedObject", multiple : false, bindable: "bindable" },
 				subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"},
-				elements : { type : "sap.ui.core.Element", multiple : true, bindable: "bindable"}
+				elements : { type : "sap.ui.core.Element", multiple : true, bindable: "bindable"},
+				skippedPropagation : { type: "sap.ui.core.Element", multiple: false }
 			},
 			associations : {
 				selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
@@ -69,6 +70,9 @@ sap.ui.define([
 
 		init : function() {
 			mObjects[this.getId()] = this;
+			this.mSkipPropagation = {
+				skippedPropagation: true
+			};
 		},
 
 		exit : function() {
@@ -2472,4 +2476,48 @@ sap.ui.define([
 		this.oFixture.firePress();
 		assert.strictEqual(oSpy.callCount, 1);
 	});
+
+	QUnit.module("Skip propagation", {
+		beforeEach: function() {
+			this.model = new JSONModel({});
+			this.parent = new TestManagedObject();
+			this.parent.setModel(this.model);
+		},
+		afterEach: function() {
+			this.model.destroy();
+			this.parent.destroy();
+		}
+	});
+
+	QUnit.test("With inherited model and inline child", function(assert) {
+		var obj = new TestManagedObject({
+			skippedPropagation: new Control()
+		});
+		this.parent.setSingleAggr(obj);
+		assert.ok(obj.getSkippedPropagation().getModel() === undefined, "Model not propagated");
+	});
+
+	QUnit.test("With local model and inline child", function(assert) {
+		var obj = new TestManagedObject({
+			models: this.model,
+			skippedPropagation: new Control()
+		});
+		assert.ok(obj.getSkippedPropagation().getModel() === undefined, "Model not propagated");
+	});
+
+	QUnit.test("With inherited model and added child", function(assert) {
+		var obj = new TestManagedObject();
+		this.parent.setSingleAggr(obj);
+		obj.setSkippedPropagation(new Control());
+		assert.ok(obj.getSkippedPropagation().getModel() === undefined, "Model not propagated");
+	});
+
+	QUnit.test("With local model and added child", function(assert) {
+		var obj = new TestManagedObject({
+			models: this.model
+		});
+		obj.setSkippedPropagation(new Control());
+		assert.ok(obj.getSkippedPropagation().getModel() === undefined, "Model not propagated");
+	});
+
 });
