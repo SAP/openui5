@@ -130,21 +130,21 @@ sap.ui.define([
 				 * The content entities between which the <code>FlexibleColumnLayout</code> navigates in the <code>Begin</code> column.
 				 *
 				 * These should be any control with page semantics.
-				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
+				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 				 */
 				beginColumnPages: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getBeginColumn", aggregation: "pages"}},
 				/**
 				 * The content entities between which the <code>FlexibleColumnLayout</code> navigates in the <code>Mid</code> column.
 				 *
 				 * These should be any control with page semantics.
-				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
+				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 				 */
 				midColumnPages: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getMidColumn", aggregation: "pages"}},
 				/**
 				 * The content entities between which the <code>FlexibleColumnLayout</code> navigates in the <code>End</code> column.
 				 *
 				 * These should be any control with page semantics.
-				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
+				 * These aggregated controls will receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 				 */
 				endColumnPages: {type: "sap.ui.core.Control", multiple: true, forwarding: {getter: "_getEndColumn", aggregation: "pages"}},
 
@@ -1717,8 +1717,8 @@ sap.ui.define([
 	/**
 	 * Returns the layout history object
 	 * @returns {LayoutHistory}
-	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 * @private
+	 * @ui5-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
 	FlexibleColumnLayout.prototype._getLayoutHistory = function () {
 		return this._oLayoutHistory;
@@ -1729,8 +1729,8 @@ sap.ui.define([
 	 * @param {string} sLayout - the layout
 	 * @param {boolean} bAsArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
 	 * @returns {string|array}
-	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 * @private
+	 * @ui5-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
 	FlexibleColumnLayout.prototype._getColumnWidthDistributionForLayout = function (sLayout, bAsArray, iMaxColumnsCount) {
 		var oMap = {},

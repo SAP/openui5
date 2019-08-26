@@ -103,25 +103,25 @@ sap.ui.define(["sap/ui/fl/Change"], function(Change) {
 	};
 
 	/**
-	 * Updates the execute on select variant , if the given list of changes contains a default variant change.
+	 * Updates the execute on select variant, if the given list of changes contains a default variant change.
 	 * Only the newest is updated, the rest is marked for deletion.
 	 *
-	 * @param {object} mChanges map of changes
-	 * @param {boolean} bNewExecuteOnSelect the new execute on select flag
-	 * @returns {object} the updated change, undefined if non was found
+	 * @param {object} mChanges Map of changes
+	 * @param {boolean} bNewExecuteOnSelect The new execute on select flag
+	 * @returns {object} The updated change, undefined if non was found
 	 *
 	 * @public
 	 */
 	StandardVariant.prototype.updateExecuteOnSelect = function(mChanges, bNewExecuteOnSelect) {
-		var oNewsetChange = this.getNewestStandardVariantChangeDeleteTheRest(mChanges);
+		var oNewestChange = this.getNewestStandardVariantChangeDeleteTheRest(mChanges);
 
-		if (oNewsetChange) {
-			var oContent = oNewsetChange.getContent();
+		if (oNewestChange) {
+			var oContent = oNewestChange.getContent();
 			oContent.executeOnSelect = bNewExecuteOnSelect;
-			oNewsetChange.setContent(oContent);
+			oNewestChange.setContent(oContent);
 		}
 
-		return oNewsetChange;
+		return oNewestChange;
 	};
 
 	/**

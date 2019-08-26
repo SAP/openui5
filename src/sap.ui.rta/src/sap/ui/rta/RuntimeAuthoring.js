@@ -629,7 +629,7 @@ function(
 				.then(function(aPromiseResults) {
 					this.bInitialPublishEnabled = aPromiseResults[0];
 					this.bInitialResetEnabled = aPromiseResults[1];
-				}.bind(this))
+				}.bind(this));
 			}.bind(this))
 			.then(function () {
 				if (this.getShowToolbars()) {

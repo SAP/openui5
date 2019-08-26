@@ -30,8 +30,11 @@
 						<f:GridContainerSettings columns="6" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
 					</f:layoutM>
 					<f:layoutS>
-						<f:GridContainerSettings columns="4" rowSize="70px" minColumnSize="70px" maxColumnSize="105px" gap="8px" />
+						<f:GridContainerSettings columns="4" rowSize="84px" minColumnSize="84px" maxColumnSize="105px" gap="8px" />
 					</f:layoutS>
+					<f:layoutXS>
+						<f:GridContainerSettings columns="4" rowSize="70px" minColumnSize="70px" maxColumnSize="105px" gap="8px" />
+					</f:layoutXS>
 					<f:items>
 						<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
 							<layoutData>

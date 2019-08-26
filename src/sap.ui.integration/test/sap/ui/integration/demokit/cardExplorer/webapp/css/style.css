@@ -5,7 +5,7 @@
 	background: transparent;
 }
 /*This is fixes broken wrapping of the timeline card. The problem is caused by splitter's styles when its in Horizontal mode.*/
-.sapUiLoSplitterH.sapUiLoSplitter {
+.sapUiLoSplitterH.sapUiLoSplitter .sapUiLoSplitterContent {
     white-space: normal;
 }
 

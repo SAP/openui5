@@ -20,15 +20,13 @@
 		"title": "Box title 3",
 		"subtitle": "Subtitle 3",
 		"group": "Group A",
-		"counter": 15734,
-		"busy": true
+		"counter": 15734
 	},
 	{
 		"title": "Box title 4",
 		"subtitle": "Subtitle 4",
 		"group": "Group A",
 		"counter": 2,
-		"blocked": true,
 		"highlight": "Error"
 	},
 	{
@@ -129,7 +127,6 @@
 		"subtitle": "Subtitle 20",
 		"group": "Group B",
 		"counter": 1,
-		"busy": true,
 		"highlight": "Success",
 		"type": "Inactive"
 	},
@@ -145,7 +142,6 @@
 		"subtitle": "Subtitle 22",
 		"group": "Group B",
 		"counter": 5,
-		"blocked": true,
 		"unread": true
 	},
 	{

@@ -5,9 +5,9 @@
 sap.ui.define([
 	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/apply/internal/ChangesController",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/fl/write/internal/SaveAs",
+	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/Utils"
 ], function(
 	includes,
@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
 	 * @experimental Since 1.68
 	 * @since 1.68
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
@@ -43,6 +44,48 @@ sap.ui.define([
 			|| (oChange.getChangeType && includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType()));
 	}
 
+	/**
+	 * Checks if changes exist for the flex persistence associated with the selector control;
+	 * If the optional layer parameter is passed, changes are checked on only that layer.
+	 *
+	 * @param {object} mPropertyBag Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
+	 * @param {string} [mPropertyBag.currentLayer] Layer on which changes should be checked
+	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist on the optionally passed layer
+	 * @private
+	 */
+	function hasChanges(mPropertyBag) {
+		mPropertyBag.includeCtrlVariants = true;
+		mPropertyBag.invalidateCache = false;
+		return PersistenceWriteAPI._getUIChanges(mPropertyBag)
+			.then(function(aChanges) {
+				return aChanges.length > 0;
+			});
+	}
+
+	/**
+	 * Check if changes exist to be published;
+	 * If the optional layer parameter is passed, the changes are checked on only that layer.
+	 *
+	 * @param {object} mPropertyBag Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
+	 * @param {string} [mPropertyBag.currentLayer] Layer on which changes should be checked
+	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist on the optionally passed layer
+	 * @private
+	 */
+	function hasChangesToPublish(mPropertyBag) {
+		return hasChanges(mPropertyBag)
+			.then(function(bChangesExist) {
+				if (!bChangesExist) {
+					return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
+						._oChangePersistence.getDirtyChanges().length > 0
+					|| ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector)
+						._oChangePersistence.getDirtyChanges().length > 0;
+				}
+				return true;
+			});
+	}
+
 	var PersistenceWriteAPI = /**@lends sap.ui.fl.write.api.PersistenceWriteAPI */{
 		/**
 		 * Determines if user-specific changes or variants are present in the flex persistence.
@@ -52,6 +95,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.upToLayer] - Layer to compare with
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
 		 * @returns {Promise<boolean>} Promise that resolves to a boolean, indicating if a personalization change that was created during runtime is active in the application
+		 * @private
 		 * @ui5-restricted
 		 */
 		hasHigherLayerChanges: function (mPropertyBag) {
@@ -67,6 +111,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipUpdateCache] - Indicates if cache update should be skipped
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
+		 * @private
 		 * @ui5-restricted
 		 */
 		save: function (mPropertyBag) {
@@ -91,6 +136,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant save response
+		 * @private
 		 * @ui5-restricted
 		 */
 		saveAs: function(mPropertyBag) {
@@ -107,6 +153,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the package
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
+		 * @private
 		 * @ui5-restricted
 		 */
 		deleteAppVariant: function(mPropertyBag) {
@@ -126,7 +173,7 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be reset
 		 */
 		isResetEnabled: function (mPropertyBag) {
-			return PersistenceWriteAPI.hasChanges(mPropertyBag)
+			return hasChanges(mPropertyBag)
 				.then(function(bResetEnabled) {
 					return bResetEnabled || ChangesController.getFlexControllerInstance(mPropertyBag.selector).isResetEnabled(mPropertyBag);
 				});
@@ -142,7 +189,7 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be publish
 		 */
 		isPublishEnabled: function (mPropertyBag) {
-			return PersistenceWriteAPI.hasChangesToPublish(mPropertyBag)
+			return hasChangesToPublish(mPropertyBag)
 				.then(function(bPublishEnabled) {
 					return bPublishEnabled || ChangesController.getFlexControllerInstance(mPropertyBag.selector).isPublishEnabled(mPropertyBag);
 				});
@@ -200,6 +247,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+		 * @private
 		 * @ui5-restricted
 		 */
 		add: function (mPropertyBag) {
@@ -217,6 +265,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be removed
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
 		 *
+		 * @private
 		 * @ui5-restricted
 		 */
 		remove: function (mPropertyBag) {
@@ -233,48 +282,6 @@ sap.ui.define([
 			oFlexController._removeChangeFromControl(oElement, mPropertyBag.change, JsControlTreeModifier);
 			// delete from flex persistence map
 			oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
-		},
-
-		/**
-		 * Checks if changes exist for the flex persistence associated with the selector control.
-		 * If the optional layer parameter is passed, changes are checked on only that layer.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-		 * @param {string} [mPropertyBag.currentLayer] - Layer on which changes should be checked
-		 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist on the optionally passed layer
-		 * @ui5-restricted
-		 */
-		hasChanges: function(mPropertyBag) {
-			mPropertyBag.includeCtrlVariants = true;
-			mPropertyBag.invalidateCache = false;
-			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
-				.then(function(aChanges) {
-					return aChanges.length > 0;
-				});
-		},
-
-		/**
-		 * Check if changes exist to be published.
-		 * If the optional layer parameter is passed, the changes are checked on only that layer.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-		 * @param {string} [mPropertyBag.currentLayer] - Layer on which changes should be checked
-		 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist on the optionally passed layer
-		 * @ui5-restricted
-		 */
-		hasChangesToPublish: function(mPropertyBag) {
-			return PersistenceWriteAPI.hasChanges(mPropertyBag)
-				.then(function(bChangesExist) {
-					if (!bChangesExist) {
-						return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
-							._oChangePersistence.getDirtyChanges().length > 0
-						|| ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector)
-							._oChangePersistence.getDirtyChanges().length > 0;
-					}
-					return true;
-				});
 		},
 
 		/**

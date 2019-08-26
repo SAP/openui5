@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @alias sap.ui.demokit.UIAreaSubstitute
 	 */
 	var UIAreaSubstitute = Element.extend("sap.ui.demokit.UIAreaSubstitute", /** @lends sap.ui.demokit.UIAreaSubstitute.prototype */ { metadata : {

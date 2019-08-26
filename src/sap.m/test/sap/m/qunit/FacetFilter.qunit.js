@@ -77,8 +77,8 @@ sap.ui.define([
 		// The aggregations below are created programatically by FacetFilter when it is initialized, so make sure they are created.
 		var oFF = new FacetFilter("someid");
 		oFF.setShowPersonalization(true);
-		oFF.addList(new FacetFilterList("list1"));
-		oFF.addList(new FacetFilterList("list2"));
+		oFF.addList(new FacetFilterList("list1", {items: [new FacetFilterItem({text: "Val"})]}));
+		oFF.addList(new FacetFilterList("list2", {items: [new FacetFilterItem({text: "Val"})]}));
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -127,13 +127,30 @@ sap.ui.define([
 
 			//test
 			assert.equal(oFF.getLists().length, 105, "Expected 105 lists");
-			assert.ok(jQuery("#__item0-__list1-104").size(), "There should be at element 105 rendered");
+			// item2, since we've created two items in the previous test
+			assert.ok(jQuery("#__item2-__list1-104").size(), "There should be element at 105 rendered");
 
 			destroyFF(oFF);
 
 			done();
 		});
 		oFF.getAggregation("summaryBar").firePress();
+	});
+
+	QUnit.test("Buttons aggregation is not created if the lists are empty", function(assert) {
+		// Arrange
+		var oFF = new FacetFilter();
+		oFF.setShowPersonalization(true);
+		oFF.addList(new FacetFilterList());
+		oFF.addList(new FacetFilterList());
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oFF.getAggregation("buttons"), "There shouldn't be any buttons in the 'buttons' aggregation if the lists are empty");
+
+		// Clean up
+		destroyFF(oFF);
 	});
 
 	QUnit.test("Default Property Values & Override", function(assert) {
@@ -221,7 +238,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
-		var oFFL = new FacetFilterList();
+		var oFFL = new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]});
 
 		oFFL.setWordWrap(true);
 
@@ -250,7 +267,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
-		var oFFL = new FacetFilterList();
+		var oFFL = new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -797,7 +814,7 @@ sap.ui.define([
 
 		var sListTitle = "List";
 		var oFF = new FacetFilter();
-		var oFFL = new FacetFilterList({title: sListTitle});
+		var oFFL = new FacetFilterList({title: sListTitle, items: [new FacetFilterItem({text: "Val"})] });
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges(); //_getButtonForList is implicitly called upon rendering
@@ -815,7 +832,7 @@ sap.ui.define([
 		var oFF = new FacetFilter({
 			showPersonalization: true
 		});
-		var oFFL = new FacetFilterList({title: "List"});
+		var oFFL = new FacetFilterList({title: "List", items: [new FacetFilterItem({text: "Val"})] });
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
@@ -832,7 +849,7 @@ sap.ui.define([
 		var oFF = new FacetFilter({
 			showPersonalization: true
 		});
-		var oFFL = new FacetFilterList({title: "List"});
+		var oFFL = new FacetFilterList({title: "List", items: [new FacetFilterItem({text: "Val"})] });
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -857,7 +874,7 @@ sap.ui.define([
 		var oFF = new FacetFilter({
 			showPersonalization: true
 		});
-		var oFFL = new FacetFilterList({title: "List"});
+		var oFFL = new FacetFilterList({title: "List", items: [new FacetFilterItem({text: "Val"})] });
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -895,7 +912,7 @@ sap.ui.define([
 		   var oFF = new FacetFilter({
 		   showPersonalization: true
 		   });
-		   var oFFL = new FacetFilterList({title: "List",showRemoveFacetIcon:true});
+		   var oFFL = new FacetFilterList({title: "List", showRemoveFacetIcon:true, items: [new FacetFilterItem({text: "Val"})]});
 		   oFF.addList(oFFL);
 		   oFF.placeAt("content");
 		   sap.ui.getCore().applyChanges();
@@ -913,7 +930,7 @@ sap.ui.define([
 		 var oFF = new FacetFilter({
 		 showPersonalization: true
 		 });
-		 var oFFL = new FacetFilterList({title: "List",showRemoveFacetIcon:false});
+		 var oFFL = new FacetFilterList({title: "List", showRemoveFacetIcon:false, items: [new FacetFilterItem({text: "Val"})]});
 		 oFF.addList(oFFL);
 		 oFF.placeAt("content");
 		 sap.ui.getCore().applyChanges();
@@ -1688,9 +1705,9 @@ sap.ui.define([
 		var oFF = new FacetFilter({
 			showPersonalization : true
 		});
-		oFF.addList(new FacetFilterList());
-		oFF.addList(new FacetFilterList());
-		oFF.addList(new FacetFilterList());
+		oFF.addList(new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]}));
+		oFF.addList(new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]}));
+		oFF.addList(new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]}));
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
@@ -2743,7 +2760,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oFF = new FacetFilter();
-		var oFFL = new FacetFilterList();
+		var oFFL = new FacetFilterList({items: [new FacetFilterItem({text: "Val"})]});
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -2778,10 +2795,12 @@ sap.ui.define([
 		var oFFSimple = new FacetFilter();
 		oFFSimple.setShowPersonalization(true);
 		oFFSimple.addList(new FacetFilterList({
-			title : sFFL1Title
+			title : sFFL1Title,
+			items: [new FacetFilterItem({text: "Val"})]
 		}));
 		oFFSimple.addList(new FacetFilterList({
-			title : sFFL2Title
+			title : sFFL2Title,
+			items: [new FacetFilterItem({text: "Val"})]
 		}));
 		oFFSimple.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -2832,10 +2851,12 @@ sap.ui.define([
 		});
 		oFFLight.setShowPersonalization(true);
 		oFFLight.addList(new FacetFilterList({
-			title : sFFL1Title
+			title : sFFL1Title,
+			items: [new FacetFilterItem({text: "Val"})]
 		}));
 		oFFLight.addList(new FacetFilterList({
-			title : sFFL2Title
+			title : sFFL2Title,
+			items: [new FacetFilterItem({text: "Val"})]
 		}));
 
 		oFFLight.placeAt("content");
@@ -3605,9 +3626,9 @@ sap.ui.define([
 
 		//one of list is inactive
 		var oFF = createFF(oFF, [
-			new FacetFilterList("list101"),
-			new FacetFilterList("list102", {active: false}),
-			new FacetFilterList("list103")]);
+			new FacetFilterList("list101", { items: [new FacetFilterItem({text: "Val"})] }),
+			new FacetFilterList("list102", {active: false, items: [new FacetFilterItem({text: "Val"})]}),
+			new FacetFilterList("list103", { items: [new FacetFilterItem({text: "Val"})] })]);
 
 		oEvent.target = oFF.$().find(":sapTabbable")[1];//this should be the 3th list, as the second is not active
 		oFF.onsapdelete(oEvent);
@@ -3636,8 +3657,8 @@ sap.ui.define([
 		var oFF = new FacetFilter("someid");
 		oFF.setShowPersonalization(true);
 		if (!aLists) {
-			oFF.addList(new FacetFilterList("list1"));
-			oFF.addList(new FacetFilterList("list2"));
+			oFF.addList(new FacetFilterList("list1", { items: [new FacetFilterItem({text: "Val"})] } ));
+			oFF.addList(new FacetFilterList("list2", { items: [new FacetFilterItem({text: "Val"})] } ));
 		} else {
 			aLists.forEach(function(oList) {
 				oFF.addList(oList);

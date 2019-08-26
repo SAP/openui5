@@ -330,8 +330,7 @@ sap.ui.define([
 
 					var fnDeleteSuccessMessage = function() {
 						AppVariantUtils.closeOverviewDialog();
-						var oSuccessInfo = AppVariantUtils.buildDeleteSuccessMessage();
-						oSuccessInfo.appVariantId = sAppVariantId;
+						var oSuccessInfo = AppVariantUtils.buildDeleteSuccessMessage(sAppVariantId);
 						return oAppVariantManager.showSuccessMessage(oSuccessInfo);
 					};
 

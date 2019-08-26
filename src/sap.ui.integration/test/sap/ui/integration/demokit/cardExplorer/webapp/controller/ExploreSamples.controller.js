@@ -54,7 +54,7 @@ sap.ui.define([
 		},
 
 		onManifestEdited: function (oEvent) {
-			var sValue = oEvent.getParameter("value");
+			var sValue = oEvent.getParameter("value") || oEvent.getParameter("json");
 
 			if (exploreSettingsModel.getProperty("/autoRun")) {
 				this._updateSample(sValue);
@@ -63,6 +63,15 @@ sap.ui.define([
 		onRunPressed: function (oEvent) {
 			var sValue = this.getView().byId("editor").getValue();
 			this._updateSample(sValue);
+		},
+
+		onChangeEditorClick: function() {
+			var sEditorType = exploreSettingsModel.getProperty("/editorType");
+			if (sEditorType === "text") {
+				exploreSettingsModel.setProperty("/editorType", "card");
+			} else {
+				exploreSettingsModel.setProperty("/editorType", "text");
+			}
 		},
 
 		onChangeSplitterOrientation: function (oEvent) {
@@ -250,20 +259,23 @@ sap.ui.define([
 				dataType: "text",
 				success: function (sValue) {
 					this.byId("editor").setValue(sValue);
+					this.byId("cardEditor").setJson(sValue);
 				}.bind(this)
 			});
 		},
 
-		_updateSample: function (sValue) {
-			if (!sValue) {
+		_updateSample: function (aValue) {
+			if (!aValue) {
 				// TODO hide the card or something like that. Currently it shows busy indicator which might be confusing
 				this.byId("cardSample").setManifest(null);
 				return;
 			}
 
 			try {
-				var oData = JSON.parse(sValue);
-				this.byId("cardSample").setManifest(oData);
+				if (typeof aValue === "string") {
+					aValue = JSON.parse(aValue);
+				}
+				this.byId("cardSample").setManifest(aValue);
 				this._errorMessageStrip.setVisible(false);
 				this.byId("cardSample").refresh();
 			} catch (oException) {

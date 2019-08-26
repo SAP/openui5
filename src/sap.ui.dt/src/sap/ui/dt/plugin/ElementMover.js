@@ -164,7 +164,7 @@ sap.ui.define([
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - Aggregation overlay to be checked for target zone
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay being moved
 	 * @param {boolean} bOverlayNotInDom - Flag defining if overlay is not in DOM
-	 * @returns {promise.<boolean>} Resolved promise with <code>true</code> if the aggregation overlay is a valid target zone for the overlay
+	 * @returns {Promise.<boolean>} Resolved promise with <code>true</code> if the aggregation overlay is a valid target zone for the overlay
 	 * @protected
 	 */
 	ElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {

@@ -238,6 +238,94 @@ sap.ui.define([
 		oGrid.destroy();
 	});
 
+	QUnit.test("_getVisibleStartHour returns the proper start hour", function (assert) {
+		// Prepare
+		var oGrid = new SinglePlanningCalendarGrid();
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleStartHour(), 0, "Correct when there is no value set to the startHour property and fullDay is set to true");
+
+		// Act
+		oGrid.setFullDay(false);
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleStartHour(), 0, "Correct when there is no value set to the startHour property and fullDay is set to false");
+
+		// Act
+		oGrid.setStartHour(8);
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleStartHour(), 8, "Correct when there is a value set to the startHour property and fullDay is set to false");
+
+		// Act
+		oGrid.setFullDay(true);
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleStartHour(), 0, "Correct when there is a value set to the startHour property and fullDay is set to true");
+
+		// Destroy
+		oGrid.destroy();
+	});
+
+	QUnit.test("_getVisibleEndHour returns the proper end hour", function (assert) {
+		// Prepare
+		var oGrid = new SinglePlanningCalendarGrid();
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleEndHour(), 23, "Correct when there is no value set to the endHour property and fullDay is set to true");
+
+		// Act
+		oGrid.setFullDay(false);
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleEndHour(), 23, "Correct when there is no value set to the endHour property and fullDay is set to false");
+
+		// Act
+		oGrid.setEndHour(20);
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleEndHour(), 19, "Correct when there is a value set to the endHour property and fullDay is set to false");
+
+		// Act
+		oGrid.setFullDay(true);
+
+		// Assert
+		assert.strictEqual(oGrid._getVisibleEndHour(), 23, "Correct when there is a value set to the endHour property and fullDay is set to true");
+
+		// Destroy
+		oGrid.destroy();
+	});
+
+	QUnit.test("_isVisibleHour works correctly", function (assert) {
+		// Prepare
+		var oGrid = new SinglePlanningCalendarGrid();
+
+		// Assert
+		assert.strictEqual(oGrid._isVisibleHour(5), true, "valid hour and neither start nor end hour set");
+		assert.strictEqual(oGrid._isVisibleHour(25), false, "invalid hour passed");
+
+		// Prepare
+		oGrid.setStartHour(8);
+
+		// Assert
+		assert.strictEqual(oGrid._isVisibleHour(5), false, "start hour set, the passed value is outside visible range");
+		assert.strictEqual(oGrid._isVisibleHour(8), true, "start hour set, the passed value is the same as the start hour");
+		assert.strictEqual(oGrid._isVisibleHour(20), true, "start hour set, the passed value is inside visible range");
+
+		// Prepare
+		oGrid.setEndHour(20);
+
+		// Assert
+		assert.strictEqual(oGrid._isVisibleHour(5), false, "start and end hour set, the passed value is outside visible range");
+		assert.strictEqual(oGrid._isVisibleHour(8), true, "start and end hour set, the passed value is the same as the start hour");
+		assert.strictEqual(oGrid._isVisibleHour(12), true, "start and end hour set, the passed value is inside visible range");
+		assert.strictEqual(oGrid._isVisibleHour(20), false, "start and end hour set, the passed value is the same as the end hour");
+		assert.strictEqual(oGrid._isVisibleHour(21), false, "start and end hour set, the passed value is outside visible range");
+
+		// Destroy
+		oGrid.destroy();
+	});
+
 	QUnit.module("Events");
 
 	QUnit.test("appointmentSelect: select single appointment", function (assert) {

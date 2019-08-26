@@ -5,31 +5,41 @@
       {
         "id": "c88b7d1a1a97e230cf7cc80227fe1d08965fb6a2",
         "type": "FIX",
-        "text": " Add missing library definition for elements in sub-namespace",
+        "text": "Add missing library definition for elements in sub-namespace",
         "references": []
       },
       {
         "id": "d77f9fc36bb5e198c3164ac5e9faa950dcea9250",
         "type": "FIX",
-        "text": " sap.f.Avatar: Improved fallback logic",
-        "references": []
+        "text": "sap.f.Avatar: Improved fallback logic",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970295045"
+          }
+        ]
       },
       {
         "id": "42a4d59a29426e820ee1a514004a8f4798790e23",
         "type": "FIX",
-        "text": " sap.f.ShellBar: Randomly failing QUnit on Firefox is fixed",
-        "references": []
+        "text": "sap.f.ShellBar: Randomly failing QUnit on Firefox is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970332893"
+          }
+        ]
       },
       {
         "id": "68a318cc0e7bd4cca064cfec33937df3017d1776",
         "type": "FIX",
-        "text": " sap.f.cards.BaseContent: Content of \"parameters\" model now updated",
+        "text": "sap.f.cards.BaseContent: Content of \"parameters\" model now updated",
         "references": []
       },
       {
         "id": "2f663e59942f69d247a389d7a66bdccb0363450b",
         "type": "FIX",
-        "text": " sap.f.FlexibleColumnLayout: Mid column does not disappear now",
+        "text": "sap.f.FlexibleColumnLayout: Mid column does not disappear now",
         "references": [
           {
             "type": "BCP",
@@ -40,13 +50,13 @@
       {
         "id": "750f099bb6e1a598b79333d6bf8a6efed5b80fb4",
         "type": "FEATURE",
-        "text": " sap.f.Avatar: Added option to change the background color",
+        "text": "sap.f.Avatar: Added option to change the background color",
         "references": []
       },
       {
         "id": "d6ac114c36ba84712a5577a4c71c076a1911f3ef",
         "type": "FIX",
-        "text": " sap.f.Avatar: Fixed tooltip",
+        "text": "sap.f.Avatar: Fixed tooltip",
         "references": [
           {
             "type": "BCP",
@@ -57,7 +67,7 @@
       {
         "id": "d98e40ee2e995e156c9e576d7cf104215d77c834",
         "type": "FEATURE",
-        "text": " sap.f.Avatar: Introduced ability to display border",
+        "text": "sap.f.Avatar: Introduced ability to display border",
         "references": []
       }
     ]

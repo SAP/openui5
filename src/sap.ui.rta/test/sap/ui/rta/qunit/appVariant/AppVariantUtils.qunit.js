@@ -892,17 +892,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("When buildDeleteSuccessMessage() method is called for S/4HANA Cloud after catalog unassignment finished succesfully", function(assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
-				})
-			);
 			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
-			AppVariantUtils.buildDeleteSuccessMessage();
-			assert.ok(fnGetText.calledOnce, "then the getText() method is called once");
+			AppVariantUtils.buildDeleteSuccessMessage("APP_VAR_ID");
+			assert.ok(fnGetText.calledWithExactly("DELETE_APP_VARIANT_SUCCESS_MESSAGE", "APP_VAR_ID"), "then the getText() method is called with correct parameters");
 		});
 	});
 

@@ -604,7 +604,7 @@ function(
 	};
 
 	/**
-	 * Calculates the correct width of the visible pages, rendered in the <code>Carousel>/code> control.
+	 * Calculates the correct width of the visible pages, rendered in the <code>Carousel</code> control.
 	 *
 	 * @param {int} iNumberOfItemsToShow number of items to be shown from 'pages' aggregation.
 	 * @returns {float} width of each page in percentage

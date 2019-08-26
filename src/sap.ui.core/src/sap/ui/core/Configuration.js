@@ -492,6 +492,13 @@ sap.ui.define([
 				config["frameOptions"] = "allow";
 			}
 
+			// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
+			if (config.flexibilityServices
+					&& config.flexibilityServices !== M_SETTINGS.flexibilityServices.defaultValue
+					&& config.modules.indexOf("sap.ui.fl.library") == -1) {
+				config.modules.push("sap.ui.fl.library");
+			}
+
 			var aCSSLibs = config['preloadLibCss'];
 			if ( aCSSLibs.length > 0 ) {
 				// a leading "!" denotes that the application has loaded the file already
@@ -527,7 +534,6 @@ sap.ui.define([
 					Log.info("  " + n + " = " + config[n]);
 				}
 			}
-
 
 			// Setup animation mode. If no animation mode is provided
 			// the value is set depending on the animation setting.
@@ -1165,8 +1171,8 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} whether the design mode is active or not.
 		 * @since 1.13.2
-		 * private
-	 	 * @sap-restricted sap.watt com.sap.webide
+		 * @private
+	 	 * @ui5-restricted sap.watt com.sap.webide
 		 */
 		getDesignMode : function() {
 			return this["xx-designMode"];
@@ -1177,8 +1183,8 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.13.2
-		 * private
-	 	 * @sap-restricted sap.watt com.sap.webide
+		 * @private
+	 	 * @ui5-restricted sap.watt com.sap.webide
 		 */
 		getSuppressDeactivationOfControllerCode : function() {
 			return this["xx-suppressDeactivationOfControllerCode"];
@@ -1189,8 +1195,8 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.26.4
-		 * private
-	 	 * @sap-restricted sap.watt com.sap.webide
+		 * @private
+	 	 * @ui5-restricted sap.watt com.sap.webide
 		 */
 		getControllerCodeDeactivated : function() {
 			return this.getDesignMode() && !this.getSuppressDeactivationOfControllerCode();
@@ -1243,7 +1249,8 @@ sap.ui.define([
 		 * <code>handleURL</code>, <code>onIndexLoad</code> or <code>onIndexLoaded</code>.
 		 *
 		 * @returns {object} object containing the callback functions for the AppCacheBuster
-		 * @sap-restricted
+		 * @private
+		 * @ui5-restricted
 		 */
 		getAppCacheBusterHooks : function() {
 			return this["xx-appCacheBusterHooks"];
@@ -1254,7 +1261,7 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} true if customizing is disabled
 		 * @private
-		 * @sap-restricted
+		 * @ui5-restricted
 		 */
 		getDisableCustomizing : function() {
 			return this["xx-disableCustomizing"];

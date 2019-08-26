@@ -6918,7 +6918,7 @@ sap.ui.define([
 		 *
 		 * @param {int} iRowIndex Row index.
 		 * @param {int} iColumnIndex Column index. Set -1 for the row headers and -2 for the row actions column.
-		 * @param {boolean} [bInteractiveElement=false] If <code>true</true>, the first interactive element inside the cell will be returned.
+		 * @param {boolean} [bInteractiveElement=false] If <code>true</code>, the first interactive element inside the cell will be returned.
 		 * @returns {jQuery} The jQuery object containing the element.
 		 */
 		getElement: function(iRowIndex, iColumnIndex, bInteractiveElement) {

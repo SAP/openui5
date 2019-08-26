@@ -47,7 +47,7 @@ function(
 		 * It provides a handy and systemized way to navigate and explore details for every message.
 		 * It is adaptive and responsive.
 		 * It renders as a dialog with a Close button in the header on phones, and as a popover on tablets and higher resolution devices.
-		 * It also exposes an event {@link sap.m.MessagePopover#activeTitlePress}, which can be used for navigation from a message to the source of the issue.
+		 * It also exposes an event {@link sap.m.MessagePopover#event:activeTitlePress}, which can be used for navigation from a message to the source of the issue.
 		 * <h3>Notes:</h3>
 		 * <ul>
 		 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>.</li>
@@ -111,7 +111,7 @@ function(
 					 * @callback sap.m.MessagePopover~asyncURLHandler
 					 * @param {object} config A single parameter object
 					 * @param {string} config.url URL to validate
-					 * @param {string|Int} config.id ID of the validation job
+					 * @param {string|int} config.id ID of the validation job
 					 * @param {object} config.promise Object grouping a promise's reject and resolve methods
 					 * @param {function} config.promise.resolve Method to resolve promise
 					 * @param {function} config.promise.reject Method to reject promise
@@ -390,15 +390,6 @@ function(
 				}
 			}, this);
 		};
-
-		MessagePopover.getMetadata().forwardAggregation(
-			"items",
-			{
-				getter: function(){ return this._oMessageView; },
-				aggregation: "items",
-				forwardBinding: true
-			}
-		);
 
 		MessagePopover.prototype.onBeforeRendering = function () {
 			if (this.getDependents().indexOf(this._oPopover) === -1) {
@@ -769,6 +760,39 @@ function(
 				}
 			};
 		});
+
+		// The following inherited methods of this control are extended because this control uses ResponsivePopover for rendering
+		["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
+			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+				// First, they are saved for later reference
+				MessagePopover.prototype["_" + sFuncName + "Old"] = MessagePopover.prototype[sFuncName];
+
+				// Once they are called
+				MessagePopover.prototype[sFuncName] = function () {
+					// We immediately call the saved method first
+					var result = MessagePopover.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+
+					// Then there is additional logic
+
+					// Mark items aggregation as changed and invalidate popover to trigger rendering
+					// See 'MessagePopover.prototype.onBeforeRenderingPopover'
+					this._bItemsChanged = true;
+
+					// If Popover dependency has already been instantiated ...
+					if (this._oPopover) {
+						// ... invalidate it
+						this._oPopover.invalidate();
+					}
+
+					// If the called method is 'removeAggregation' or 'removeAllAggregation' ...
+					if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+						// ... return the result of the operation
+						return result;
+					}
+
+					return this;
+				};
+			});
 
 		return MessagePopover;
 

@@ -83,7 +83,7 @@ sap.ui.define([
 			MessageBox.error(
 				"Product A does not exist.",
 				{
-					actions: ["Manage Products", sap.m.MessageBox.Action.CLOSE],
+					actions: ["Manage Products", MessageBox.Action.CLOSE],
 					styleClass: bCompact ? "sapUiSizeCompact" : "",
 					onClose: function(sAction) {
 						MessageToast.show("Action selected: " + sAction);
@@ -97,7 +97,7 @@ sap.ui.define([
 			MessageBox.warning(
 				"The quantity you have reported exceeds the quantity planned.",
 				{
-					actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 					styleClass: bCompact ? "sapUiSizeCompact" : "",
 					onClose: function(sAction) {
 						MessageToast.show("Action selected: " + sAction);

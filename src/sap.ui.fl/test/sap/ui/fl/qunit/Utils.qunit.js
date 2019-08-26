@@ -1815,6 +1815,42 @@ function(
 		});
 	});
 
+	QUnit.module("Utils.useNewConnectors", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("by default new connectors are not necessary", function (assert) {
+			var bNewConnectorsNecessary = Utils.areNewConnectorsNecessary();
+			assert.equal(bNewConnectorsNecessary, false, "new connectors are not necessary");
+		});
+
+		QUnit.test("a set url for the LRepConnector does not require the new connectors", function (assert) {
+			var aConnectorConfiguration = [{
+				connectorName: "LrepConnector",
+				url: "/another/url"
+			}];
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns(aConnectorConfiguration);
+			var bNewConnectorsNecessary = Utils.areNewConnectorsNecessary();
+			assert.equal(bNewConnectorsNecessary, false, "new connectors are not necessary");
+		});
+
+		QUnit.test("a set object does  require the new connectors", function (assert) {
+			var aConnectorConfiguration = [
+				{
+					connectorName: "LrepConnector",
+					url: "/another/url"
+				},
+				{
+					connectorName: "JsObjectConnector"
+				}
+			];
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns(aConnectorConfiguration);
+			var bNewConnectorsNecessary = Utils.areNewConnectorsNecessary();
+			assert.equal(bNewConnectorsNecessary, true, "new connectors are necessary");
+		});
+	});
+
 	QUnit.module("Utils.buildLrepRootNamespace", {
 		beforeEach: function() {
 			this.sErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: ";

@@ -182,10 +182,7 @@ sap.ui.define([
 
 		// Select/Deselect all.
 		if (oCellInfo.isOfType(CellType.COLUMNROWHEADER)) {
-			var oSelectionPlugin = oTable._getSelectionPlugin();
-			if (!oSelectionPlugin.onHeaderSelectorPress || oSelectionPlugin.onHeaderSelectorPress()) {
-				oTable._toggleSelectAll();
-			}
+			oTable._getSelectionPlugin().onHeaderSelectorPress();
 
 		// Expand/Collapse group.
 		} else if (TableKeyboardDelegate._isElementGroupToggler(oTable, oEvent.target)) {
@@ -946,15 +943,13 @@ sap.ui.define([
 			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
-				if (!oSelectionPlugin.onKeyboardShortcut || oSelectionPlugin.onKeyboardShortcut("toggle")) {
-					this._toggleSelectAll();
-				}
+				oSelectionPlugin.onKeyboardShortcut("toggle");
 			}
 
 		// Ctrl+Shift+A: Deselect all.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT)) {
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER)) {
-				oSelectionPlugin.clearSelection();
+				oSelectionPlugin.onKeyboardShortcut("clear");
 			}
 
 		// F4: Enter the action mode.

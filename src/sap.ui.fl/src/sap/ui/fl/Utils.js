@@ -786,6 +786,22 @@ function(
 		},
 
 		/**
+		 * Determines if the new Connector functionality should be used.
+		 *
+		 * @returns {boolean} A boolean indicates if the new functionality must be used
+		 * @private
+		 * @ui5-restricted sap.ui.fl
+		 */
+		areNewConnectorsNecessary: function () {
+			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
+			var bOnlyLrepConnectorConfigured = aFlexibilityServices.every(function (oServiceConfig) {
+				return oServiceConfig.connectorName === "LrepConnector";
+			});
+
+			return !bOnlyLrepConnectorConfigured;
+		},
+
+		/**
 		 * Returns the current language in ISO 639-1 format.
 		 *
 		 * @returns {String} Language in ISO 639-1. Empty string if language cannot be determined
@@ -852,12 +868,12 @@ function(
 		/**
 		 * See {@link sap.ui.core.BaseTreeModifier#checkControlId} method
 		 */
-		checkControlId: function (vControl, oAppComponent, bSuppressLogging, sLoggingSeverity) {
+		checkControlId: function (vControl, oAppComponent) {
 			if (!oAppComponent) {
 				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
 				oAppComponent = Utils.getAppComponentForControl(vControl);
 			}
-			return BaseTreeModifier.checkControlId(vControl, oAppComponent, bSuppressLogging, sLoggingSeverity);
+			return BaseTreeModifier.checkControlId(vControl, oAppComponent);
 		},
 
 		/**
@@ -1357,6 +1373,7 @@ function(
 		 * @param {any} vError - value on reject FakePromise
 		 * @param {string} sInitialPromiseIdentifier - value identifies previous promise in chain. If the identifier is passed to the function and don't match with the FakePromiseIdentifier then native Promise execution is used for further processing
 		 * @returns {sap.ui.fl.Utils.FakePromise|Promise} Returns instantiated FakePromise only if no Promise is passed by value parameter
+		 * @private
 		 * @ui5-restricted
 		 */
 		FakePromise : function(vInitialValue, vError, sInitialPromiseIdentifier) {

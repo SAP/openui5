@@ -19,7 +19,7 @@
             </grid:GridBasicLayout>
         </f:customLayout>
 
-		<CustomListItem blocked="{blocked}" busy="{busy}">
+		<CustomListItem>
 			<VBox height="100%">
 				<VBox class="sapUiSmallMargin">
 					<layoutData>

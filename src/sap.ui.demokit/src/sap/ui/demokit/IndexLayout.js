@@ -31,7 +31,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @since 1.17.0
 	 * @experimental Since version 1.17.0.
 	 * API is not yet finished and might change completely

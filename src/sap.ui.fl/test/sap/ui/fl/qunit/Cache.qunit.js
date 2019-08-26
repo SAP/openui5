@@ -508,10 +508,25 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-
-		QUnit.test("can retrieve a changes-bundle if a core configuration is set", function (assert) {
+		QUnit.test("can retrieve a changes-bundle if a core configuration 'flexBundleRequestForced' is set", function (assert) {
 			var oConfiguration = sap.ui.getCore().getConfiguration();
 			sandbox.stub(oConfiguration, "isFlexBundleRequestForced").returns(true);
+			fnStubBackend.call(this, true, [this.oChangeFromBackend]); // backend call is successful and returns a change
+
+			var mPropertyBag = {
+				appName: "sap.app.name"
+			};
+
+			var oLoadResourceSpy = sandbox.spy(LoaderExtensions, "loadResource");
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function () {
+				assert.equal(1, oLoadResourceSpy.callCount, "the changes-bundle was requested");
+			});
+		});
+
+		QUnit.test("can retrieve a changes-bundle if a core configuration 'xx-componentPreload' is set ot false", function (assert) {
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+			sandbox.stub(oConfiguration, "getComponentPreload").returns("off");
 			fnStubBackend.call(this, true, [this.oChangeFromBackend]); // backend call is successful and returns a change
 
 			var mPropertyBag = {

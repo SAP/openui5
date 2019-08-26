@@ -5,9 +5,10 @@
 sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridSettings",
+	"sap/ui/layout/cssgrid/GridBoxLayoutStyleHelper",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function (GridLayoutBase, GridSettings, Device, jQuery) {
+], function (GridLayoutBase, GridSettings, GridBoxLayoutStyleHelper, Device, jQuery) {
 	"use strict";
 
 	var SPAN_PATTERN = /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
@@ -245,34 +246,16 @@ sap.ui.define([
 	GridBoxLayout.prototype._flattenHeight = function (oControl) {
 		var iMaxHeight = 0;
 
-		// We should set every item's height to auto and measure its value. If this is done on the real item this will result in flickering of the grid list.
-		// In order to avoid this we create one "hidden" container, which we will use for those measurements.
-		var $measuringContainer =  jQuery('<div style="position:absolute;top=-10000px;left=-10000px"></div>').appendTo(document.body);
+		oControl.$().removeClass('sapUiLayoutCSSGridBoxLayoutFlattenHeight');
 
 		this._loopOverGridItems(oControl, function (oGridItem) {
-			// Collect max height of all items (except group headers)
-			if (!oGridItem.classList.contains("sapMGHLI")) {
-				var $oClonedItem = jQuery(jQuery.clone(oGridItem)).appendTo($measuringContainer);
-				$oClonedItem.css({
-					height: 'auto',
-					width: oGridItem.getBoundingClientRect().width
-				});
-
-				iMaxHeight = Math.max($oClonedItem.outerHeight(), iMaxHeight);
-				$oClonedItem.remove();
-			}
+			iMaxHeight = Math.max(jQuery(oGridItem).outerHeight(), iMaxHeight);
 		});
 
-		$measuringContainer.remove();
+		GridBoxLayoutStyleHelper.setItemHeight(oControl.getId(), iMaxHeight);
 
-		this._loopOverGridItems(oControl, function (oGridItem) {
-			// Apply height to all items
-			if (!oGridItem.classList.contains("sapMGHLI")) { // the item is not group header
-				oGridItem.style.height = iMaxHeight + "px";
-			}
-		});
+		oControl.$().addClass('sapUiLayoutCSSGridBoxLayoutFlattenHeight');
 	};
-
 
 	GridBoxLayout.prototype._applyClassForLastItem = function (oControl) {
 		var iCurrentNumberPerRow = 0;

@@ -1063,6 +1063,9 @@ sap.ui.define([
 
 	Month.prototype.onsapselect = function(oEvent){
 
+		if (this.bSpaceButtonPressed){
+			return;
+		}
 		// focused item must be selected
 		var bSelected = this._selectDay(this._getSelectedDateFromEvent(oEvent));
 		if (bSelected) {
@@ -1073,6 +1076,17 @@ sap.ui.define([
 		oEvent.stopPropagation();
 		oEvent.preventDefault();
 
+	};
+
+	Month.prototype.onkeydown = function(oEvent){
+		if (oEvent.which === KeyCodes.SPACE){
+			this.bSpaceButtonPressed = true;
+		}
+	};
+	Month.prototype.onkeyup = function(oEvent){
+		if (oEvent.which === KeyCodes.SPACE){
+			this.bSpaceButtonPressed = false;
+		}
 	};
 
 	Month.prototype.onsapselectmodifiers = function(oEvent){

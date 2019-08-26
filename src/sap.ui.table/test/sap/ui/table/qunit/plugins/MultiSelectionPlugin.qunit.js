@@ -73,14 +73,14 @@ sap.ui.define([
 		assert.strictEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The reference to the delete icon was cleared");
 	});
 
-	QUnit.module("Special multi selection behavior", {
+	QUnit.module("Multi selection behavior", {
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
 			this.oTable = new Table();
 			this.oTable.addPlugin(new MultiSelectionPlugin());
 			this.oTable.placeAt("qunit-fixture");
 
-			this.oTable.bindRows({path : "/Products"});
+			this.oTable.bindRows({path: "/Products"});
 			var oModel = new ODataModel(sServiceURI, {
 				json: true
 			});
@@ -103,26 +103,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("Display and accessibility", function(assert) {
+		var done = assert.async();
+		var that = this;
+
 		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialised");
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectClear").length, 1, "Deselect All button exists");
-		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
-		assert.strictEqual((this.oTable.$("selall").attr("aria-labelledby") || "").trim(), this.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
-
+		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All Disabled", "Tooltip exists");
 		this.oTable.setEnableSelectAll(false);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
-		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectClear").length, 1, "Deselect All button exists");
-		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
-		assert.strictEqual((this.oTable.$("selall").attr("aria-labelledby") || "").trim(), this.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
+		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All Disabled", "Tooltip exists");
+		assert.equal(this.oTable.$("selall").attr("disabled"), "disabled", "Deselect All is disabled");
 
-		this.oTable.setEnableSelectAll(true);
-		this.oTable._getSelectionPlugin().setLimit(0);
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 1, "When the limit is set to -1 the Select All checkbox is rendered");
-		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectClear").length, 0, "When the limit is set to -1 the Deselect All button is not rendered");
-		assert.strictEqual(this.oTable.$("selall").attr("title"), "Select All", "Tooltip exists");
-		assert.strictEqual((this.oTable.$("selall").attr("aria-labelledby") || "").trim(), this.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
+		this.oTable._getSelectionPlugin().attachSelectionChange(function(){
+			assert.strictEqual(that.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
+			assert.ok(!that.oTable.$("selall").attr("disabled"), "Deselect All is enabled");
+			assert.strictEqual((that.oTable.$("selall").attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
+			that.oTable.setEnableSelectAll(true);
+			that.oTable._getSelectionPlugin().setLimit(0);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(that.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 1, "When the limit is set to -1 the Select All checkbox is rendered");
+			assert.strictEqual(that.oTable.$("selall").find(".sapUiTableSelectClear").length, 0, "When the limit is set to -1 the Deselect All button is not rendered");
+			assert.strictEqual(that.oTable.$("selall").attr("title"), "Select All", "Tooltip exists");
+			assert.strictEqual((that.oTable.$("selall").attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
+			done();
+		});
+		this.oTable._getSelectionPlugin().setSelectedIndex(0);
 	});
 
 	QUnit.test("Change SelectionMode", function(assert) {
@@ -148,13 +153,13 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Range selection is possible for number of items below limit");
 			assert.notOk(oSelectionPlugin.isLimitReached(), "Selection limit is not reached");
 
-			oSelectionPlugin.attachSelectionChange(function(oEvent){
+			oSelectionPlugin.attachSelectionChange(function(oEvent) {
 				assert.deepEqual(oEvent.getParameters().rowIndices, [5, 6, 7, 8, 9], "rowIndices parameter is correct");
 				assert.ok(!oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "Multiple selections are possible");
@@ -176,12 +181,12 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, 1), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "First row is selected");
 
-			oSelectionPlugin.attachSelectionChange(function(oEvent){
+			oSelectionPlugin.attachSelectionChange(function(oEvent) {
 				assert.ok(fnGetContexts.calledWithExactly(1, 6), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
@@ -206,18 +211,31 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function() {
+		oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 			assert.ok(fnGetContexts.calledWithExactly(0, 6), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Selection is cut down to the possible limit");
+			assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 
-			oSelectionPlugin.attachSelectionChange(function(oEvent) {
+			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 				assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "rowIndices parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "Selection is cut down to the possible limit");
-				done();
+
+				var oSelectionChangeSpy = sinon.spy();
+
+				oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+				fnGetContexts.reset();
+				oSelectionPlugin.setSelectionInterval(5, 9);
+
+				setTimeout(function() {
+					assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts is called with the correct parameters");
+					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
+					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event is not fired");
+					done();
+				}, 100);
 			});
 
 			fnGetContexts.reset();
@@ -228,39 +246,134 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mouse interaction", function(assert) {
-		var done = assert.async();
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.equal(oSelectionPlugin.getSelectedIndices().length, 10, "rows properly selected");
+		function doSelection(fnSelect) {
+			return Promise.race([
+				new Promise(function(resolve) {
+					oSelectionPlugin.attachEventOnce("selectionChange", resolve);
+					fnSelect();
+				}),
+				new Promise(function(resolve) {
+					// Maximum wait time required if, for example, fnSelect does not trigger a selectionChange event.
+					setTimeout(resolve, 10);
+				})
+			]);
+		}
 
-			oSelectionPlugin.attachSelectionChange(function() {
-				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0, "selection is removed");
-				done();
+		function pressHeaderSelector() {
+			return doSelection(function() {
+				oSelectionPlugin.onHeaderSelectorPress();
 			});
+		}
 
-			oSelectionPlugin.onHeaderSelectorPress(false);
+		return pressHeaderSelector().then(function() {
+			assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+				"Limit enabled: Pressing the header selector does not change the selection if nothing is selected");
+		}).then(function() {
+			return doSelection(function() {
+				oSelectionPlugin.addSelectionInterval(0, 5);
+			}).then(pressHeaderSelector).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit enabled: Pressing the header selector deselects everything if something is selected");
+			});
+		}).then(function() {
+			oSelectionPlugin.setLimit(0);
+
+			return pressHeaderSelector().then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding("rows").getLength(),
+					"Limit disabled: Pressing the header selector selects everything if not everything is selected");
+			}).then(pressHeaderSelector).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit disabled: Pressing the header selector deselects everything if everything is selected");
+			});
+		}).then(function() {
+			oSelectionPlugin.setShowHeaderSelector(false);
+
+			return doSelection(function() {
+				oSelectionPlugin.addSelectionInterval(0, 5);
+			}).then(pressHeaderSelector).then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Limit disabled, header selector hidden: Pressing the header selector does not change the selection");
+			});
+		}).then(function() {
+			oSelectionPlugin.setLimit(200);
+
+			return pressHeaderSelector().then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Limit enabled, header selector hidden: Pressing the header selector does not change the selection");
+			});
 		});
-
-		oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Keyboard interaction", function(assert) {
-		var done = assert.async();
-		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			assert.equal(oSelectionPlugin.getSelectedIndices().length, 10, "rows properly selected");
+		function doSelection(fnSelect) {
+			return Promise.race([
+				new Promise(function(resolve) {
+					oSelectionPlugin.attachEventOnce("selectionChange", resolve);
+					fnSelect();
+				}),
+				new Promise(function(resolve) {
+					// Maximum wait time required if, for example, fnSelect does not trigger a selectionChange event.
+					setTimeout(resolve, 10);
+				})
+			]);
+		}
 
-			oSelectionPlugin.attachSelectionChange(function() {
-				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0, "selection is removed");
-				done();
+		function pressKeyboardShortcut(sType) {
+			return doSelection(function() {
+				oSelectionPlugin.onKeyboardShortcut(sType);
 			});
+		}
 
-			oSelectionPlugin.onKeyboardShortcut("toggle");
+		return doSelection(function() {
+			oSelectionPlugin.addSelectionInterval(0, 5);
+		}).then(function() {
+			return pressKeyboardShortcut("toggle").then(function() {
+				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
+					"Limit enabled: The \"toggle\" shortcut does not change the selection if the limit is enabled");
+			});
+		}).then(function() {
+			return pressKeyboardShortcut("clear").then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit enabled: The \"clear\" shortcut deselects everything");
+			}).then(function() {
+				return pressKeyboardShortcut("clear").then(function() {
+					assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+						"Limit enabled: The \"clear\" shortcut does not change the selection if nothing is selected");
+				});
+			});
+		}).then(function() {
+			oSelectionPlugin.setLimit(0);
+
+			return pressKeyboardShortcut("toggle").then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding("rows").getLength(),
+					"Limit disabled: The \"toggle\" shortcut selects everything if not everything is selected");
+			}).then(function() {
+				return pressKeyboardShortcut("toggle");
+			}).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit disabled: The \"toggle\" shortcut deselects everything if everything is selected");
+			});
+		}).then(function() {
+			return doSelection(function() {
+				oSelectionPlugin.addSelectionInterval(0, 5);
+			}).then(function() {
+				return pressKeyboardShortcut("clear");
+			}).then(function() {
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+					"Limit disabled: The \"clear\" shortcut deselects everything");
+			}).then(function() {
+				return pressKeyboardShortcut("clear").then(function() {
+					assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
+						"Limit disabled: The \"clear\" shortcut does not change the selection if nothing is selected");
+				});
+			});
 		});
-
-		oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Select All", function(assert) {
@@ -286,7 +399,7 @@ sap.ui.define([
 			oSelectionPlugin.selectAll();
 		});
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, that.oTable.getBinding("rows").getLength()),
 				"getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
@@ -297,7 +410,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("showHeaderSelector is false", function(assert) {
-		var done = assert.async();
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
 		oSelectionPlugin.setShowHeaderSelector(false);
@@ -308,18 +420,6 @@ sap.ui.define([
 		assert.ok(!oCell.hasAttribute("role"), "role is not set");
 		assert.ok(!oCell.hasAttribute("title"), "title is not set");
 		assert.ok(!oCell.hasChildNodes(), "No icon");
-
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
-			jQuery(oCell).trigger("click");
-			assert.equal(oSelectionPlugin.getSelectedCount(), 10, "the selection is not cleared");
-
-			qutils.triggerKeydown(oCell, KeyCodes.A, false, false, true);
-			assert.equal(oSelectionPlugin.getSelectedCount(), 0, "the selection is cleared");
-
-			done();
-		});
-
-		oSelectionPlugin.addSelectionInterval(0, 9);
 	});
 
 	QUnit.test("Scroll position", function(assert) {
@@ -336,7 +436,7 @@ sap.ui.define([
 		setTimeout(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function() {
 
-				that.oTable.attachEventOnce("_rowsUpdated", function () {
+				that.oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 4, "Table is scrolled at the correct position");
 					done();
@@ -365,7 +465,7 @@ sap.ui.define([
 		setTimeout(function() {
 			oSelectionPlugin.attachEventOnce("selectionChange", function() {
 
-				that.oTable.attachEventOnce("_rowsUpdated", function () {
+				that.oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 3, "Table is scrolled at the correct position");
 					done();
@@ -396,12 +496,12 @@ sap.ui.define([
 		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
 		assert.ok(!oCell.hasChildNodes(), "No DeselectAll icon");
 
-		oSelectionPlugin.attachEventOnce("selectionChange", function(){
+		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts is called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [9], "Only one item is selected (iIndexTo)");
 
-			oSelectionPlugin.attachEventOnce("selectionChange", function(){
+			oSelectionPlugin.attachEventOnce("selectionChange", function() {
 				assert.ok(fnGetContexts.calledWithExactly(4, 1), "getContexts is called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [4], "Only one item is selected (iIndexTo)");

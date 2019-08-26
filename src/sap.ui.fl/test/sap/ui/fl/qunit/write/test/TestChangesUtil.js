@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/internal/ChangesController"
+	"sap/ui/fl/apply/_internal/ChangesController"
 ], function(
 	ChangesController
 ) {
@@ -19,6 +19,7 @@ sap.ui.define([
 		 * @param {mPropertyBag}
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
 		 * @returns {array} Array of dirty changes
+		 * @private
 		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getDirtyChanges: function(mPropertyBag) {

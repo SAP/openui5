@@ -106,7 +106,7 @@ function(
 	 * <li>The user needs to choose between two options such as ON or OFF and YES or NO. In this case, consider using a {@link sap.m.Switch switch} control instead</li>
 	 * <li>You need to display more that one attribute. In this case, consider using the {@link sap.m.SelectDialog select dialog} or value help dialog instead.</li>
 	 * <li>The user needs to search on multiple attributes. In this case, consider using the {@link sap.m.SelectDialog select dialog} or value help dialog instead.</li>
-	 * <li>Your use case requires all available options to be displayed right away, without any user interaction. In this case, consider using the {@link sap.m.Checkbox checkboxes} instead.</li>
+	 * <li>Your use case requires all available options to be displayed right away, without any user interaction. In this case, consider using the {@link sap.m.CheckBox checkboxes} instead.</li>
 	 * </ul>
 	 * <h3>Responsive Behavior</h3>
 	 * If there are many tokens, the control shows only the last selected tokens that fit and for the others a label N-more is provided.
@@ -1020,6 +1020,8 @@ function(
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._bInitialSettersCompleted = true;
+
+		this._oTokenizer.setEnabled(this.getEnabled());
 
 		this.setEditable(this.getEditable());
 
@@ -3292,7 +3294,7 @@ function(
 	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
 		if (this.getDomRef()) {
 			var iSpace,
-				iControlWidth = this.getDomRef().clientWidth,
+				iControlWidth = this.getDomRef().offsetWidth,
 				iSummedIconsWidth = this._calculateIconsSpace(),
 				oInputRef = this.$().find(".sapMInputBaseInner"),
 				aInputRelevantCss = ["min-width", "padding-right", "padding-left"],
@@ -3336,8 +3338,8 @@ function(
 	 *
 	 * @since 1.64
 	 * @experimental Since 1.64
-	 * @protected
-	 * @sap-restricted
+	 * @private
+	 * @ui5-restricted
 	 */
 	MultiComboBox.prototype.applyShowItemsFilters = function () {
 		this.syncPickerContent();

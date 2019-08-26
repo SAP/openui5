@@ -60,7 +60,7 @@ sap.ui.define([
 	 * The 'best' selector is the one with which it is most likely to uniquely identify a control with the least possible inspection of the control tree.
 	 * @param {object} oOptions Options to influence the generation of the selector
 	 * @param {Element} oOptions.domElement DOM element that was pointed out by the user
-	 * @returns {Promise<ControlSelector|Error>} Promise for control selector or error
+	 * @returns {Promise<sap.ui.test.RecordReplay.ControlSelector|Error>} Promise for control selector or error
 	 * @public
 	 */
 	RecordReplay.findControlSelectorByDOMElement = function(oOptions) {
@@ -93,7 +93,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oOptions Options for the search
 	 * @param {sap.ui.test.RecordReplay.ControlSelector} oOptions.selector Control selector for this control
-	 * Could be the result of {@link sap.ui.test.RecordReplay.findControlSelectorByElement}
+	 * Could be the result of {@link sap.ui.test.RecordReplay.findControlSelectorByDOMElement}
 	 * If the selector matches multiple controls, only the first one will be used
 	 * If the selector contains ID suffix for a DOM element, the 'first' relevant DOM element will be located
 	 * Otherwise, the result will be the 'first' DOM element with ID matching the control's or the one that usually receives focus events

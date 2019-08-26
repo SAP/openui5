@@ -109,6 +109,9 @@ sap.ui.define([
 				sinon: {
 					useFakeTimers: true
 				},
+				ui5: {
+					language: "en"
+				},
 				coverage: {
 					only: [
 						"sap/m/Carousel",

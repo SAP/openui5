@@ -18,10 +18,41 @@
 	padding-left: 0.5rem;
 }
 
+.sapMBar .sapMBarRight .sapMBarContainer > *:first-child,
+.sapMBar .sapMBarLeft .sapMBarContainer > *:first-child,
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:first-child{
+	margin: 0 0.25rem 0 0;
+}
+
+.sapMBar .sapMBarRight .sapMBarContainer > *:last-child,
+.sapMBar .sapMBarLeft .sapMBarContainer > *:last-child,
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:last-child{
+	margin: 0 0 0 0.25rem;
+}
+
+.sapMBar .sapMBarRight .sapMBarContainer > *:not(:first-child):not(:last-child),
+.sapMBar .sapMBarLeft .sapMBarContainer > *:not(:first-child):not(:last-child),
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:not(:first-child):not(:last-child){
+	margin: 0 0.25rem;
+}
+
+.sapMBar .sapMBarRight .sapMBarContainer > *:first-child:last-child,
+.sapMBar .sapMBarLeft .sapMBarContainer > *:first-child:last-child,
+.sapMBar .sapMBarMiddle .sapMBarContainer > *:first-child:last-child{
+	margin: 0;
+}
+
+.sapMBar .sapMBarLeft .sapMBarChild.sapMSlt,
+.sapMBar .sapMBarRight .sapMBarChild.sapMSlt,
+.sapMBar .sapMBarMiddle .sapMBarChild.sapMSlt{
+	margin-top: 0.25rem;
+}
+
 .sapMBar {
 	height: 2.75rem;
 	line-height: 2.75rem;
 }
+
 .sapMBarLeft, .sapMBarRight, .sapMBarPH {
 	height: 2.75rem;
 	line-height: 2.75rem;

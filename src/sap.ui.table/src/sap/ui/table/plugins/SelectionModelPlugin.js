@@ -92,6 +92,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * This hook is called by the table when the header selector is pressed.
+	 *
+	 * @private
+	 */
+	SelectionModelPlugin.prototype.onHeaderSelectorPress = function() {
+		if (this.getRenderConfig().headerSelector.visible) {
+			this._oTable._toggleSelectAll();
+		}
+	};
+
+	/**
+	 * This hook is called by the table when the "select all" keyboard shortcut is pressed.
+	 *
+	 * @param {string} sType Type of the keyboard shortcut.
+	 * @private
+	 */
+	SelectionModelPlugin.prototype.onKeyboardShortcut = function(sType) {
+		if (sType === "toggle") {
+			this._oTable._toggleSelectAll();
+		} else if (sType === "clear") {
+			this.clearSelection();
+		}
+	};
+
+	/**
 	 * @override
 	 * @inheritDoc
 	 */

@@ -2621,8 +2621,8 @@ function (
 				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
 				assert.ok(fnGetChangesForComponentStub.calledOnce, "then getChangesForComponent called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
-				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors), "then _prepareChangesForTransport called with the transport info and changes array");
-			});
+				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, this._mComponentProperties.name), "then _prepareChangesForTransport called with the transport info and changes array");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling transportAllUIChanges unsuccessfully", function(assert) {

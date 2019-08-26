@@ -21,12 +21,13 @@ sap.ui.define([
 	 * aggregation of a control. The shortcut information is retrieved from the
 	 * owner components manifest entry that matches the command.
 	 *
+	 * @class
 	 * @alias sap.ui.core.CommandExecution
 	 * @since 1.70
 	 *
 	 * @public
 	 */
-	var CommandExecution = Element.extend("sap.ui.core.CommandExecution", /** @lends sap.ui.core.Element.prototype */ {
+	var CommandExecution = Element.extend("sap.ui.core.CommandExecution", /** @lends sap.ui.core.CommandExecution.prototype */ {
 		metadata: {
 			library: "sap.ui.core",
 			properties: {
@@ -70,9 +71,7 @@ sap.ui.define([
 			return Object.assign({}, oCommand);
 		},
 
-		/**
-		 * @see sap.ui.core.Element.setParent
-		 */
+		/** @inheritdoc */
 		setParent: function (oParent) {
 			var oCommand = this.getCommandInfo();
 
@@ -91,9 +90,7 @@ sap.ui.define([
 			return Element.prototype.setParent.apply(this, arguments);
 		},
 
-		/**
-		 * @see sap.ui.core.Element.destroy
-		 */
+		/** @inheritdoc */
 		destroy: function () {
 			if (this.getParent()) {
 				var oCommand = this.getCommandInfo();
@@ -117,13 +114,11 @@ sap.ui.define([
 	CommandExecution.find = function(oControl, sCommand) {
 		var i, oCommandExecution, oAggregation;
 
-		if (oControl.isA("sap.ui.core.Element")) {
-			oAggregation = oControl.getDependents();
-			if (oAggregation) {
-				for (i = 0; i < oAggregation.length; i++) {
-					if (oAggregation[i].isA("sap.ui.core.CommandExecution") && oAggregation[i].getCommand() === sCommand) {
-						oCommandExecution = oAggregation[i];
-					}
+		oAggregation = oControl.getDependents();
+		if (oAggregation) {
+			for (i = 0; i < oAggregation.length; i++) {
+				if (oAggregation[i].isA("sap.ui.core.CommandExecution") && oAggregation[i].getCommand() === sCommand) {
+					oCommandExecution = oAggregation[i];
 				}
 			}
 		}

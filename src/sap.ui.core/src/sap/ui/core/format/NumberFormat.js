@@ -669,8 +669,8 @@ sap.ui.define([
 	 *
 	 * @param {string} sShortName the short name of the unit used in the created pattern
 	 * @returns {string} a pattern, which can be used for formatting and parsing a custom unit of measure
-	 * @sap-restricted sap.ui.model.odata.type
 	 * @private
+	 * @ui5-restricted sap.ui.model.odata.type
 	 */
 	NumberFormat.getDefaultUnitPattern = function(sShortName) {
 		return "{0} " + sShortName;

@@ -139,18 +139,20 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 		oManifest.destroy();
 	});
 
-	QUnit.test("load without manifestUrl", function (assert) {
+	QUnit.test("load without manifestUrl and base URL", function (assert) {
 
 		// Arrange
+		var done = assert.async();
 		var oManifest = new CardManifest("sap.card");
 
 		// Act & Assert
-		assert.throws(function () {
-			oManifest.load();
-		}, "Should throw an error when no manifestUrl is passed.");
+		oManifest.load().catch(function () {
+			assert.ok(true, "Should reject the loading promise when no manifestUrl and no base URL");
 
-		// Cleanup
-		oManifest.destroy();
+			// Cleanup
+			oManifest.destroy();
+			done();
+		});
 	});
 
 	QUnit.test("load", function (assert) {

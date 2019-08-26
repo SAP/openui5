@@ -28,150 +28,148 @@
 			</HBox>
 		</Panel>
 
-		<Panel headerText="Grid Container">
-			<f:GridContainer id="demoGrid" class="sapUiSmallMargin">
-				<f:layout>
-					<f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="1rem" />
-				</f:layout>
-				<f:layoutS>
-					<f:GridContainerSettings rowSize="4.25rem" columnSize="4.25rem" gap="0.75rem" />
-				</f:layoutS>
-				<f:items>
-					<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
-						<layoutData>
-							<f:GridContainerItemLayoutData minRows="2" columns="2" />
-						</layoutData>
-						<TileContent unit="EUR" footer="Current Quarter">
-							<ImageContent src="sap-icon://home-share" />
-						</TileContent>
-					</GenericTile>
+		<f:GridContainer id="demoGrid" class="sapUiSmallMargin">
+			<f:layout>
+				<f:GridContainerSettings rowSize="84px" columnSize="84px" gap="8px" />
+			</f:layout>
+			<f:layoutXS>
+				<f:GridContainerSettings rowSize="70px" columnSize="70px" gap="8px" />
+			</f:layoutXS>
+			<f:items>
+				<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
+					<layoutData>
+						<f:GridContainerItemLayoutData minRows="2" columns="2" />
+					</layoutData>
+					<TileContent unit="EUR" footer="Current Quarter">
+						<ImageContent src="sap-icon://home-share" />
+					</TileContent>
+				</GenericTile>
 
-					<GenericTile header="Manage Activity Master Data Type" subheader="Subtitle">
-						<layoutData>
-							<f:GridContainerItemLayoutData minRows="2" columns="2" />
-						</layoutData>
-						<TileContent>
-							<ImageContent src="sap-icon://activities" />
-						</TileContent>
-					</GenericTile>
+				<GenericTile header="Manage Activity Master Data Type" subheader="Subtitle">
+					<layoutData>
+						<f:GridContainerItemLayoutData minRows="2" columns="2" />
+					</layoutData>
+					<TileContent>
+						<ImageContent src="sap-icon://activities" />
+					</TileContent>
+				</GenericTile>
 
-					<f:Card>
-						<f:layoutData>
-							<f:GridContainerItemLayoutData columns="4" />
-						</f:layoutData>
-						<f:header>
-							<card:Header
-								title="Buy bus ticket on-line"
-								subtitle="Buy a single drive ticket for a date"
-								iconSrc="sap-icon://bus-public-transport"/>
-						</f:header>
-						<f:content>
-							<VBox
-								height="115px"
-								class="sapUiSmallMargin"
-								justifyContent="SpaceBetween">
-								<HBox justifyContent="SpaceBetween">
-									<ComboBox
-										width="120px"
-										placeholder="From City"
-										items="{
-											path: '/cities',
-											sorter: { path: 'text' }
-										}">
-										<core:Item key="{key}" text="{text}" />
-									</ComboBox>
-									<ComboBox
-										width="120px"
-										placeholder="To City"
-										items="{
-											path: '/cities',
-											sorter: { path: 'text' }
-										}">
-										<core:Item key="{key}" text="{text}" />
-									</ComboBox>
+				<f:Card>
+					<f:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</f:layoutData>
+					<f:header>
+						<card:Header
+							title="Buy bus ticket on-line"
+							subtitle="Buy a single drive ticket for a date"
+							iconSrc="sap-icon://bus-public-transport"/>
+					</f:header>
+					<f:content>
+						<VBox
+							height="115px"
+							class="sapUiSmallMargin"
+							justifyContent="SpaceBetween">
+							<HBox justifyContent="SpaceBetween">
+								<ComboBox
+									width="120px"
+									placeholder="From City"
+									items="{
+										path: '/cities',
+										sorter: { path: 'text' }
+									}">
+									<core:Item key="{key}" text="{text}" />
+								</ComboBox>
+								<ComboBox
+									width="120px"
+									placeholder="To City"
+									items="{
+										path: '/cities',
+										sorter: { path: 'text' }
+									}">
+									<core:Item key="{key}" text="{text}" />
+								</ComboBox>
+							</HBox>
+							<HBox justifyContent="SpaceBetween">
+								<DatePicker width="186px" placeholder="Choose Date ..."/>
+								<Button text="Book" type="Emphasized" />
+							</HBox>
+						</VBox>
+					</f:content>
+				</f:Card>
+
+				<GenericTile header="Cumulative Totals" subheader="Subtitle">
+					<layoutData>
+						<f:GridContainerItemLayoutData minRows="2" columns="2" />
+					</layoutData>
+						<TileContent unit="Unit" footer="Footer Text">
+							<NumericContent value="12" />
+						</TileContent>
+				</GenericTile>
+
+				<GenericTile header="Travel and Expenses" subheader="Access Concur">
+					<layoutData>
+						<f:GridContainerItemLayoutData minRows="2" columns="2" />
+					</layoutData>
+					<TileContent>
+						<ImageContent src="sap-icon://travel-expense" />
+					</TileContent>
+				</GenericTile>
+
+				<f:Card>
+					<f:layoutData>
+						<f:GridContainerItemLayoutData minRows="4" columns="4" />
+					</f:layoutData>
+					<f:header>
+						<card:Header
+							title="Project Cloud Transformation"
+							subtitle="Revenue per Product | EUR"/>
+					</f:header>
+					<f:content>
+						<List
+							showSeparators="None"
+							items="{path: '/productItems'}" >
+							<CustomListItem>
+								<HBox
+									alignItems="Center"
+									justifyContent="SpaceBetween">
+									<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+										<Title level="H3" text="{title}" />
+										<Text text="{subtitle}"/>
+									</VBox>
+									<ObjectStatus
+										class="sapUiTinyMargin"
+										text="{revenue}"
+										state= "{statusSchema}"/>
 								</HBox>
-								<HBox justifyContent="SpaceBetween">
-									<DatePicker width="186px" placeholder="Choose Date ..."/>
-									<Button text="Book" type="Emphasized" />
-								</HBox>
-							</VBox>
-						</f:content>
-					</f:Card>
+							</CustomListItem>
+						</List>
+					</f:content>
+				</f:Card>
 
-					<GenericTile header="Cumulative Totals" subheader="Subtitle">
-						<layoutData>
-							<f:GridContainerItemLayoutData minRows="2" columns="2" />
-						</layoutData>
-							<TileContent unit="Unit" footer="Footer Text">
-								<NumericContent value="12" />
-							</TileContent>
-					</GenericTile>
+				<GenericTile header="Success Map" subheader="Access Success Map">
+					<layoutData>
+						<f:GridContainerItemLayoutData minRows="2" columns="2" />
+					</layoutData>
+					<TileContent unit="EUR" footer="Current Quarter">
+						<ImageContent src="sap-icon://map-3" />
+					</TileContent>
+				</GenericTile>
 
-					<GenericTile header="Travel and Expenses" subheader="Access Concur">
-						<layoutData>
-							<f:GridContainerItemLayoutData minRows="2" columns="2" />
-						</layoutData>
-						<TileContent>
-							<ImageContent src="sap-icon://travel-expense" />
-						</TileContent>
-					</GenericTile>
+				<GenericTile header="My Team Calendar">
+					<layoutData>
+						<f:GridContainerItemLayoutData minRows="2" columns="2" />
+					</layoutData>
+					<TileContent unit="EUR" footer="Current Quarter">
+						<ImageContent src="sap-icon://check-availability" />
+					</TileContent>
+				</GenericTile>
 
-					<f:Card>
-						<f:layoutData>
-							<f:GridContainerItemLayoutData minRows="4" columns="4" />
-						</f:layoutData>
-						<f:header>
-							<card:Header
-								title="Project Cloud Transformation"
-								subtitle="Revenue per Product | EUR"/>
-						</f:header>
-						<f:content>
-							<List
-								showSeparators="None"
-								items="{path: '/productItems'}" >
-								<CustomListItem>
-									<HBox
-										alignItems="Center"
-										justifyContent="SpaceBetween">
-										<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
-											<Title level="H3" text="{title}" />
-											<Text text="{subtitle}"/>
-										</VBox>
-										<ObjectStatus
-											class="sapUiTinyMargin"
-											text="{revenue}"
-											state= "{statusSchema}"/>
-									</HBox>
-								</CustomListItem>
-							</List>
-						</f:content>
-					</f:Card>
-
-					<GenericTile header="Success Map" subheader="Access Success Map">
-						<layoutData>
-							<f:GridContainerItemLayoutData minRows="2" columns="2" />
-						</layoutData>
-						<TileContent unit="EUR" footer="Current Quarter">
-							<ImageContent src="sap-icon://map-3" />
-						</TileContent>
-					</GenericTile>
-
-					<GenericTile header="My Team Calendar">
-						<layoutData>
-							<f:GridContainerItemLayoutData minRows="2" columns="2" />
-						</layoutData>
-						<TileContent unit="EUR" footer="Current Quarter">
-							<ImageContent src="sap-icon://check-availability" />
-						</TileContent>
-					</GenericTile>
-
-					<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat">
-						<layoutData>
-							<f:GridContainerItemLayoutData columns="4" />
-						</layoutData>
-					</Text>
-				</f:items>
-			</f:GridContainer>
-		</Panel>
+				<Text text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat">
+					<layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</layoutData>
+				</Text>
+			</f:items>
+		</f:GridContainer>
 	</ScrollContainer>
 </mvc:View>

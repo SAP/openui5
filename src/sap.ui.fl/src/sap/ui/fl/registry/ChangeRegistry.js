@@ -168,7 +168,7 @@ sap.ui.define([
 	 * @param  {string} sChangeType - Change type of a <code>sap.ui.fl.Change</code> change
 	 * @param  {sap.ui.core.Control} oControl - Control instance for which the registry item will be retrieved
 	 * @param  {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
-	 * @return {promise.<sap.ui.fl.registry.ChangeRegistryItem>|sap.ui.fl.Utils.FakePromise.<undefined>} Registry item wrapped in a promise or undefined wrapped in a FakePromise if not found
+	 * @return {Promise.<sap.ui.fl.registry.ChangeRegistryItem>|sap.ui.fl.Utils.FakePromise.<undefined>} Registry item wrapped in a promise or undefined wrapped in a FakePromise if not found
 	 * @private
 	 */
 	ChangeRegistry.prototype._getInstanceSpecificChangeRegistryItem = function (sChangeType, oControl, oModifier) {
@@ -268,7 +268,7 @@ sap.ui.define([
 	 * @param  {sap.ui.core.Control} oControl - Control instance for which the change handler will be retrieved
 	 * @param  {sap.ui.core.util.reflection.BaseTreeModifier} oModifier - Control tree modifier
 	 * @param  {string} sLayer - Layer to be considered when getting the change handlers
-	 * @return {promise.<object>|sap.ui.fl.Utils.FakePromise.<object>} Change handler object wrapped in a promise or FakePromise
+	 * @return {Promise.<object>|sap.ui.fl.Utils.FakePromise.<object>} Change handler object wrapped in a promise or FakePromise
 	 */
 	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer) {
 		return this._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, oModifier)

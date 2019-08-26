@@ -98,13 +98,27 @@ sap.ui.define([
 		// hide the original indicator
 		this._hideDefaultIndicator(oEvent);
 
-		var mDropPosition = this._suggestDropPosition(oEvent);
+		var gridDragOver = GridDragOver.getInstance();
 
-		return this.fireEvent("dragEnter", {
+		gridDragOver.setCurrentContext(
+			oEvent.dragSession.getDragControl(),
+			this.getDropTarget(),
+			this.getTargetAggregation()
+		);
+
+		var mDropPosition = gridDragOver.getSuggestedDropPosition();
+
+		var eventResult = this.fireEvent("dragEnter", {
 			dragSession: oEvent.dragSession,
 			browserEvent: oEvent.originalEvent,
 			target: mDropPosition ? mDropPosition.targetControl : null
 		}, true);
+
+		if (eventResult) {
+			gridDragOver.handleDragOver(oEvent);
+		}
+
+		return eventResult;
 	};
 
 	GridDropInfo.prototype.fireDragOver = function(oEvent) {

@@ -38,10 +38,10 @@ sap.ui.define([
 	* The control is related to the <code>YearPicker</code> control through a
 	* <code>sap.ui.unified.Calendar</code> instance.
 	*
-	* The default value of the <code>rangeSize<code> property should be equal to the
+	* The default value of the <code>rangeSize</code> property should be equal to the
 	* default value of the <code>years</code> property in <code>YearPicker</code>.
 	*
-	* As in all date-time controls, all pubic JS Date objects that are given
+	* As in all date-time controls, all public JS Date objects that are given
 	* (<code>setDate()</code>) or read (<code>getFirstRenderedDate</code>) have values
 	* which are considered as date objects in browser (local) timezone.
 	 * @extends sap.ui.unified.calendar.YearPicker

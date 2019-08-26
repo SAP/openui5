@@ -24,6 +24,7 @@ sap.ui.define([
 	 *
 	 * @class sap.ui.fl.Change
 	 * @extends sap.ui.base.ManagedObject
+	 * @private
 	 * @ui5-restricted
 	 * @experimental Since 1.25.0
 	 */
@@ -657,6 +658,19 @@ sap.ui.define([
 	 */
 	Change.prototype.setComponent = function (sComponent) {
 		this._oDefinition.reference = sComponent;
+	};
+
+	/**
+	 * Sets valid app versions for an app(variant).
+	 *
+	 * @param {string} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.creation - Creation app(variant) version
+	 * @param {string} mPropertyBag.from - From app(variant) version
+	 * @param {string} [mPropertyBag.to] - To app(variant) version
+	 * @public
+	 */
+	Change.prototype.setValidAppVersions = function (mPropertyBag) {
+		this._oDefinition.validAppVersions = mPropertyBag;
 	};
 
 	/**

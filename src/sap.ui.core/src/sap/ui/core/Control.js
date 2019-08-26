@@ -87,9 +87,12 @@ sap.ui.define([
 			properties : {
 				/**
 				 * Whether the control is currently in blocked state.
-				 * @ui5-restricted sap.ui.core, sap.m, sap.viz
+				 *
+				 * @deprecated since version 1.69 The blocked property is deprecated.
+				 * There is <b>no accessibility</b> support for this property.
+				 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
 				 */
-				"blocked" : {type: "boolean", defaultValue: false, visibility : "hidden"},
+				"blocked" : {type: "boolean", defaultValue: false},
 				/**
 				 * Whether the control is currently in busy state.
 				 */
@@ -117,7 +120,7 @@ sap.ui.define([
 				 * control in the DOM of the current page. The placeholder will be hidden and have
 				 * zero dimensions (<code>display: none</code>).
 				 *
-				 * See {@link sap.ui.core.RenderManager#writeInvisiblePlaceholderData RenderManager#writeInvisiblePlaceholderData} for details.
+				 * Also see {@link module:sap/ui/core/InvisibleRenderer InvisibleRenderer}.
 				 */
 				"visible" : { type: "boolean", group : "Appearance", defaultValue: true },
 
@@ -287,17 +290,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Triggers rerendering of this element and its children.
+	 * Marks this control and its children for a re-rendering, usually because its state has changed and now differs
+	 * from the rendered DOM.
 	 *
-	 * As <code>sap.ui.core.Element</code> "bubbles up" the invalidate, changes to children
-	 * potentially result in rerendering of the whole sub tree.
+	 * Managed settings (properties, aggregations, associations) automatically invalidate the corresponding object.
+	 * Changing the state via the standard mutators, therefore, does not require an explicit call to <code>invalidate</code>.
 	 *
-	 * The <code>oOrigin</code> parameter was introduced to allow parent controls to limit
-	 * their rerendering to certain areas that have been invalidated by their children.
-	 * As there is no strong guideline for control developers to provide the parameter, it is
-	 * not a reliable source of information. It is therefore not recommended in general to use
-	 * it, only in scenarios where a control and its descendants know each other very well
-	 * (e.g. complex controls where parent and children have the same code owner).
+	 * By default, all invalidations are buffered and processed together (asynchronously) in a new browser task.
+	 *
+	 * The <code>oOrigin</code> parameter was introduced to allow parent controls to limit their re-rendering to
+	 * certain areas that have been invalidated by their children. As there is no strong guideline for control
+	 * developers whether or not to provide the parameter, it is not a reliable source of information. It is,
+	 * therefore, not recommended in general to use it, only in scenarios where a control and its descendants
+	 * know each other very well (e.g. complex controls where parent and children have the same code owner).
 	 *
 	 * @param {sap.ui.base.ManagedObject} [oOrigin] Child control for which the method was called
 	 * @protected
@@ -347,7 +352,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Tries to replace its DOM reference by re-rendering.
+	 * Synchronously updates the DOM of this control to reflect the current object state.
+	 *
+	 * Note that this method can only be called when the control already has a DOM representation (it has
+	 * been rendered before) and when the control still is assigned to a UIArea.
+	 *
+	 * @deprecated As of 1.70, using this method is no longer recommended, but still works. Synchronous DOM
+	 *   updates via this method have several drawbacks: they only work when the control has been rendered
+	 *   before (no initial rendering possible), multiple state changes won't be combined automatically into
+	 *   a single re-rendering, they might cause additional layout trashing, standard invalidation might
+	 *   cause another async re-rendering.
+	 *
+	 *   The recommended alternative is to rely on invalidation and standard re-rendering.
 	 * @protected
 	 */
 	Control.prototype.rerender = function() {
@@ -896,17 +912,6 @@ sap.ui.define([
 			delete this._oBusyBlockState;
 		}
 	}
-
-	/**
-	 * Get the controls block state.
-	 *
-	 * @return {boolean} <code>true</code> when blocked
-	 * @private
-	 * @ui5-restricted sap.ui.core, sap.m, sap.viz
-	 */
-	Control.prototype.getBlocked = function() {
-		return this.getProperty("blocked");
-	};
 
 	/**
 	 * Set the controls block state.

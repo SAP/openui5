@@ -49,7 +49,7 @@ sap.ui.define([
 			},
 			events : {
 				/**
-				* See {@link sap.m.Button#press}
+				* See {@link sap.m.Button#event:press}
 				*/
 				press : {}
 			}

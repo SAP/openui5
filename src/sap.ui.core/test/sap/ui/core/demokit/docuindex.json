@@ -83,11 +83,11 @@
 				"samples" : [ "sap.ui.core.sample.InvisibleText" ]
 			},
 			{
-				"id" : "sap.ui.core.sample.Shortcuts",
-				"name" : "Shortcuts",
-				"category" : "Display",
+				"id" : "sap.ui.core.sample.Commands",
+				"name" : "Commands",
+				"category" : "Action",
 				"since" : "1.70",
-				"samples" : [ "sap.ui.core.sample.Shortcuts" ]
+				"samples" : [ "sap.ui.core.sample.Commands" ]
 			},
 			{
 				"id" : "sap.ui.core.mvc.View",
@@ -769,9 +769,9 @@
 				"description": "This sample demonstrates usage of the Hyphenation API"
 			},
 			{
-				"id" : "sap.ui.core.sample.Shortcuts",
-				"name" : "Shortcuts",
-				"description": "This example demonstrates how to define shortcuts in your application"
+				"id" : "sap.ui.core.sample.Commands",
+				"name" : "Commands",
+				"description": "This example demonstrates how to define shortcuts using commands in your application"
 			}
 		]
 	}

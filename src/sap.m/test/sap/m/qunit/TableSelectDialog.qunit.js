@@ -628,6 +628,29 @@ sap.ui.define([
 		}, 10);
 	});
 
+	QUnit.test("Search event 'cancelButtonPressed' parameter", function (assert) {
+		var done = assert.async(),
+			bClearButtonPressed = true,
+			oTableSelectDialog = new TableSelectDialog({
+				search: function (oEvent) {
+
+					// assert
+					assert.strictEqual(bClearButtonPressed, oEvent.getParameter("clearButtonPressed"),
+										"clearButtonPressed parameter has the value from the SearchField event.");
+
+					// clean up
+					oTableSelectDialog.destroy();
+					done();
+				}
+			});
+
+			// act
+			oTableSelectDialog.open();
+			oTableSelectDialog._oSearchField.fireSearch({
+				clearButtonPressed: bClearButtonPressed
+			});
+	});
+
 	QUnit.module("Test Dialog Live Change");
 
 	QUnit.test("TableSelectDialog1 SearchField Simulate Live Chnage Clear Text", function(assert){

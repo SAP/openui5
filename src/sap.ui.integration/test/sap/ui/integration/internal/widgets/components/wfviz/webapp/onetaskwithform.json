@@ -49,7 +49,6 @@
 		}
 	},
 	"sap.widget": {
-		"preferedStyle": "transparent",
 		"sample": {
 			"tasks": [
 				{

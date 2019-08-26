@@ -25,6 +25,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.apply.api.SmartVariantManagementApplyAPI
 	 * @experimental
 	 * @since 1.69.0
+	 * @private
 	 * @ui5-restricted sap.ui.comp
 	 */
 	var SmartVariantManagementApplyAPI = /** @lends sap.ui.fl.apply.api.SmartVariantManagementApplyAPI */{
@@ -37,6 +38,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @returns {Promise<Object<string,sap.ui.fl.Change>>} Map with key <code>changeId</code> and value instance of <code>sap.ui.fl.Change</code>
+		 * @private
 		 * @ui5-restricted
 		 */
 		loadChanges: function(mPropertyBag) {
@@ -63,6 +65,7 @@ sap.ui.define([
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @param {string} mPropertyBag.id - ID of the change or variant
 		 * @returns {sap.ui.fl.Change} Change or variant object
+		 * @private
 		 * @ui5-restricted
 		 */
 		getChangeById: function (mPropertyBag) {
@@ -80,6 +83,7 @@ sap.ui.define([
 		/**
 		 * Checks whether sharing of variants is enabled.
 		 *
+		 * @private
 		 * @ui5-restricted
 		 * @returns {boolean} <code>true</code> if sharing of variants is enabled
 		 */
@@ -95,6 +99,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @returns {boolean} <code>true</code> if it's an application variant
+		 * @private
 		 * @ui5-restricted
 		 */
 		isApplicationVariant: function(mPropertyBag) {
@@ -121,6 +126,7 @@ sap.ui.define([
 		 * Indicates if the VENDOR layer is selected.
 		 *
 		 * @returns {boolean} <code>true</code> if VENDOR layer is enabled
+		 * @private
 		 * @ui5-restricted
 		 */
 		isVendorLayer: function() {
@@ -132,6 +138,7 @@ sap.ui.define([
 		 * and the URL parameter hotfix is set to <code>true</code>.
 		 *
 		 * @returns {boolean} <code>true</code> if the variant downport scenario is enabled
+		 * @private
 		 * @ui5-restricted
 		 */
 		isVariantDownport: function() {
@@ -146,6 +153,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @returns {String} ID of the default variant
+		 * @private
 		 * @ui5-restricted
 		 */
 		getDefaultVariantId: function(mPropertyBag) {
@@ -162,6 +170,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @returns {boolean} <code>ExecuteOnSelect</code> flag
+		 * @private
 		 * @ui5-restricted
 		 */
 		getExecuteOnSelect: function(mPropertyBag) {

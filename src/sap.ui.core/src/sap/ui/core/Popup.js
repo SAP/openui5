@@ -65,32 +65,34 @@ sap.ui.define([
 	 *
 	 * @class Popup Class is a helper class for controls that want themselves or
 	 * parts of themselves or even other aggregated or composed controls
-	 * or plain HTML content to popup on the screen like menues, dialogs, drop down boxes.
+	 * or plain HTML content to popup on the screen like menus, dialogs, drop down boxes.
 	 *
-	 * It allows the controls to be aligned to other dom elements
+	 * It allows the controls to be aligned to other DOM elements
 	 * using the {@link sap.ui.core.Popup.Dock} method. With it you can define where
-	 * the popup should be docked. One can dock the popup to the top bottom left or right side
-	 * of a dom ref.
+	 * the popup should be docked. One can dock the popup to the top, bottom, left or right side
+	 * of another DOM element.
 	 *
 	 * In the case that the popup has no space to show itself in the view port
-	 * of the current window it tries to open itself to
-	 * the inverted direction.
+	 * of the current window, it tries to open itself to the inverted direction.
 	 *
-	 * <strong>Since 1.12.3</strong> it is possible to add further DOM-element-ids that can get the focus
-	 * when 'autoclose' is enabled. E.g. the RichTextEditor with running TinyMCE uses this method to
-	 * be able to focus the Popups of the TinyMCE if the RichTextEditor runs within a Popup/Dialog etc.
+	 * <strong>Since 1.12.3</strong>, it is possible to add further DOM-element-IDs that can get the focus
+	 * when <code>autoclose</code> is enabled. E.g. the <code>RichTextEditor</code> with running TinyMCE
+	 * uses this method to be able to focus the popups of the TinyMCE if the <code>RichTextEditor</code>
+	 * runs within a <code>Popup</code>/<code>Dialog</code> etc.
 	 *
-	 *  To provide an additional DOM-element that can get the focus the following should be done:
-	 * 	// create an object with the corresponding DOM-id
-	 * 	var oObject = {
-	 *		id : "this_is_the_most_valuable_id_of_the_DOM_element"
-	 *	};
+	 * To provide an additional DOM element that can get the focus the following should be done:
+	 * <pre>
+	 *   // create an object with the corresponding DOM-ID
+	 *   var oObject = {
+	 *     id : "this_is_the_most_valuable_id_of_the_DOM_element"
+	 *   };
 	 *
-	 *	// add the event prefix for adding an element to the ID of the corresponding Popup
-	 *	var sEventId = "sap.ui.core.Popup.addFocusableContent-" + oPopup.getId();
+	 *   // add the event prefix for adding an element to the ID of the corresponding Popup
+	 *   var sEventId = "sap.ui.core.Popup.addFocusableContent-" + oPopup.getId();
 	 *
-	 *	// fire the event with the created event-id and the object with the DOM-id
-	 *	sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oObject);
+	 *   // fire the event with the created event-ID and the object with the DOM-ID
+	 *   sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oObject);
+	 * </pre>
 	 *
 	 * @param {sap.ui.core.Control | sap.ui.core.Element | DOMNode} oContent the content to render in the popup. In case of sap.ui.core.Element or DOMNode, the content must be present in the page (i.e. rendered). In case of sap.ui.core.Control, the Popup ensures rendering before opening.
 	 * @param {boolean} [bModal=false] whether the popup should be opened in a modal way (i.e. with blocking background). Setting this to "true" effectively blocks all attempts to focus content outside the modal popup. A modal popup also automatically sets the focus back to whatever was focused when the popup opened.
@@ -249,6 +251,7 @@ sap.ui.define([
 
 	/**
 	 * Enumeration providing options for docking of some element to another.
+	 *
 	 * "Right" and "Left" will stay the same in RTL mode, but "Begin" and "End" will flip to the other side ("Begin" is "Right" in RTL).
 	 *
 	 * @public
@@ -333,7 +336,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * This property changes how the autoClose behaves on the Popup. When it's set to true, the Popup will be closed when tap outside of the Popup. Otherwise it will close as soon as the focus leaves the Popup.
+	 * This property changes how the autoClose behaves on the Popup.
+	 *
+	 * When it's set to true, the Popup will be closed when tap outside of the Popup.
+	 * Otherwise it will close as soon as the focus leaves the Popup.
 	 *
 	 * The default value of this property is true when running in touchable environments.
 	 *
@@ -443,7 +449,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Must be overwritten by sub class
+	 * Must be overwritten by sub class.
+	 *
 	 * @name sap.ui.core.Popup.Layer#getDomString
 	 * @function
 	 */
@@ -578,7 +585,7 @@ sap.ui.define([
 			return Popup.getNextZIndex();
 		};
 	}());
-	// End of Popup-Stacking facilites
+	// End of Popup-Stacking facilities
 
 	/**
 	 * This function compares two different objects (created via jQuery(DOM-ref).rect()).
@@ -705,10 +712,10 @@ sap.ui.define([
 		// save current focused element to restore the focus after closing
 		this._oPreviousFocus = Popup.getCurrentFocusInfo();
 
-		// It is mandatroy to check if the new Popup runs within another Popup because
+		// It is mandatory to check if the new Popup runs within another Popup because
 		// if this new Popup is rendered via 'this._$(true)' and focused (happens e.g. if
 		// the Datepicker runs in a Popup and the corresponding Calendar will also open
-		// in a Popup. Then the corresponding date will be focused immediatelly. If the
+		// in a Popup. Then the corresponding date will be focused immediately. If the
 		// Calendar-Popup wasn't added to the previous Popup as child it is impossible to
 		// check in 'onFocusEvent' properly if the focus is being set to a Calendar-Popup which is
 		// a child of a Popup.
@@ -882,13 +889,13 @@ sap.ui.define([
 		var $Ref = this._$(/* force rendering */false, /* getter only */true),
 			oDomRefToFocus;
 
-		// shield layer is needed for mobile devices whose browser fires the mosue
+		// shield layer is needed for mobile devices whose browser fires the mouse
 		// events with delay after touch events to prevent the delayed mouse events
 		// from reaching the dom element in popup while it's being open.
 		if (isMouseEventDelayed()) {
 			if (this._oTopShieldLayer) {
 				// very extreme case where the same popop is opened and closed again
-				// before the 500ms timed out. Reuse the same shieldlayer and clear
+				// before the 500ms timed out. Reuse the same shield layer and clear
 				// the timeout
 				clearTimeout(this._iTopShieldRemoveTimer);
 				this._iTopShieldRemoveTimer = null;
@@ -913,14 +920,14 @@ sap.ui.define([
 			this._showBlockLayer();
 		}
 
-		// IE 11 fires a focus event on the html body tag when another element blurs. This
+		// IE 11 fires a focus event on the HTML body tag when another element blurs. This
 		// causes the onfocusevent function to be called synchronously within the current
 		// call stack. Therefore the blur of the previous focused element should be done
 		// at the end of this open method to first show the block layer which changes the
 		// top most displayed popup
 		if (this._shouldGetFocusAfterOpen() && document.activeElement && !this.isInPopup(document.activeElement)) {
-			// when the current active element is in a popup, it's not blured at this position
-			// because the focus isn't set to the new popup yet and bluring in the previous popup
+			// when the current active element is in a popup, it's not blurred at this position
+			// because the focus isn't set to the new popup yet and blurring in the previous popup
 			// will mess up the modal or autoclose in the previous popup
 			oDomRefToFocus = this._getDomRefToFocus();
 
@@ -946,7 +953,7 @@ sap.ui.define([
 
 		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
 
-		//  register resize handler for blindlayer resizing
+		//  register resize handler for blind layer resizing
 		if (this._oBlindLayer) {
 			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
 		}
@@ -1039,7 +1046,7 @@ sap.ui.define([
 								// autoclose popup is cancelled by setting the focus here.
 								//
 								// Suppose an autoclose popup is opened within a modal popup. Clicking
-								// on the blocklayer should wait the autoclose popup to first close then
+								// on the block layer should wait the autoclose popup to first close then
 								// set the focus back to the lasted blurred element.
 								setTimeout(function() {
 									if (this.oLastBlurredElement) {
@@ -1068,7 +1075,7 @@ sap.ui.define([
 				// create timeout for closing the popup if there is no focus immediately returning to the popup
 				if (!this.touchEnabled && !this._sTimeoutId) {
 					// If Popup has focus and we click outside of the browser, in Chrome the blur event is fired, but the focused element is still in the Popup and is the same as the focused that triggers the blur event.
-					// if the dom element that fires the blur event is the same as the currently focused element, just return
+					// if the DOM element that fires the blur event is the same as the currently focused element, just return
 					// because in Chrome when the browser looses focus, it fires the blur event of the
 					// dom element that has the focus before, but document.activeElement is still this element
 					if (oEvent.target === document.activeElement) {
@@ -1200,13 +1207,13 @@ sap.ui.define([
 		}
 		this._oBlindLayer = null;
 
-		// shield layer is needed for mobile devices whose browser fires the mosue events with delay after touch events
-		//  to prevent the delayed mouse events from reaching the underneath dom element.
+		// shield layer is needed for mobile devices whose browser fires the mouse events with delay after touch events
+		//  to prevent the delayed mouse events from reaching the underneath DOM element.
 		if (isMouseEventDelayed()) {
 			if (this._oBottomShieldLayer) {
 
 				// very extreme case where the same popop is opened and closed again before the 500ms timed out.
-				// reuse the same shieldlayer and clear the timeout
+				// reuse the same shield layer and clear the timeout
 				clearTimeout(this._iBottomShieldRemoveTimer);
 				this._iBottomShieldRemoveTimer = null;
 			} else {
@@ -1290,7 +1297,7 @@ sap.ui.define([
 				oDomRef.style.right = "";
 			}
 
-			// update the DomRef because it could have been rerendered during closing
+			// update the DomRef because it could have been re-rendered during closing
 			$Ref = this._$(/* forceRerender */ false, /* only get DOM */ true);
 			oDomRef = $Ref.length ? $Ref[0] : null;
 
@@ -1487,7 +1494,7 @@ sap.ui.define([
 
 	Popup.prototype._createPosition = function(my, at, of, offset, collision) {
 
-		// check if new jQuery-Ui (>1.9) offset is used
+		// check if new jQuery-UI (>1.9) offset is used
 		var bNewOffset = false;
 		if (my && (my.indexOf("+") >= 0 || my.indexOf("-") >= 0)) {
 			bNewOffset = true;
@@ -1910,7 +1917,7 @@ sap.ui.define([
 	/**
 	 * Used to specify whether the Popup should close as soon as
 	 * - for non-touch environment: the focus leaves
-	 * - for touch environment: user clicks the area which is outside the popup itself, the dom elemnt which popup aligns to (except document),
+	 * - for touch environment: user clicks the area which is outside the popup itself, the DOM element which popup aligns to (except document),
 	 *  and one of the autoCloseAreas set by calling setAutoCloseAreas.
 	 * @param {boolean} bAutoClose whether the Popup should close as soon as the focus leaves
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
@@ -2133,7 +2140,7 @@ sap.ui.define([
 
 	/**
 	 * This returns true/false if the default followOf method should be used. If a separate followOf-handler was previously added
-	 * the correspodning function is returned.
+	 * the corresponding function is returned.
 	 *
 	 * @returns {boolean | function} if a function was set it is returned otherwise a boolean value whether the follow of is activated
 	 * @since 1.13.0
@@ -2160,7 +2167,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the Popup is currently open, closed, or transitioning between these states.
+	 * Returns whether the Popup is currently open, closed, or in a transition between these states.
 	 *
 	 * @returns {sap.ui.core.OpenState} whether the Popup is opened
 	 * @public
@@ -2387,14 +2394,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * This listener is called by the EventBus when an element-id should be removed from the
+	 * This listener is called by the EventBus when an element-ID should be removed from the
 	 * focusable area. The event is fired when a control publishes the corresponding event
-	 * according to the channel id "sap.ui" with the event id:
-	 * "sap.ui.core.Popup.removeFocusableContent-<Popup-ID>". The Popup-id can be obtained by this._popupUID.
+	 * according to the channel ID "sap.ui" with the event ID:
+	 * "sap.ui.core.Popup.removeFocusableContent-<Popup-ID>". The Popup-ID can be obtained by this._popupUID.
 	 *
 	 * @param {string} sChannel channel of the EventBus
 	 * @param {string} sEvent name of the event
-	 * @param {Object} oFocusable object with an id-property and if an autoClose mechanism should occur
+	 * @param {Object} oFocusable object with a property <code>id</code> and if an autoClose mechanism should occur
 	 * @since 1.17.0
 	 * @private
 	 */
@@ -2420,11 +2427,11 @@ sap.ui.define([
 	 *
 	 * Additionally the corresponding event-listener is registered to the EventBus. The event is registered
 	 * to the reserved channel "sap.ui" and is called "sap.ui.core.Popup.addFocusableContent-"
-	 * with the corresponding Popup-id.
-	 * This event can be published via the EventBus to add a focusable DOM-element-id to the focusable area when
+	 * with the corresponding Popup-ID.
+	 * This event can be published via the EventBus to add a focusable DOM-element-ID to the focusable area when
 	 * the Popup looses its focus.
 	 *
-	 * @param {jQuery} $Ref to which DOM-reference the Popup-id should be added to
+	 * @param {jQuery} $Ref to which DOM-reference the Popup-ID should be added to
 	 * @private
 	 */
 	Popup.prototype._setIdentity = function($Ref) {
@@ -2507,15 +2514,21 @@ sap.ui.define([
 	}
 
 	/**
-	 * Attaches an event-handler <code>fnFunction</code> to the static 'blockLayerStateChange' event.
+	 * Attaches event handler <code>fnFunction</code> to the static {@link #.blockLayerStateChange blockLayerStateChange} event.
+	 *
+	 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+	 * if specified, otherwise it will be bound to a dummy event provider object.
 	 *
 	 * The event gets triggered in case of modal popups when the first of multiple popups opens and closes.
 	 *
-	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
-	 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
-	 *            oListener-instance (if present) or in a 'static way'.
-	 * @param {object} [oListener] Object on which to call the given function.
-	 *
+	 * @param {object}
+	 *            [oData] An application-specific payload object that will be passed to the event handler
+	 *            along with the event object when firing the event
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
+	 *            provider object
 	 * @public
 	 */
 	Popup.attachBlockLayerStateChange = function (oData, fnFunction, oListener) {
@@ -2526,12 +2539,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes a previously attached event handler <code>fnFunction</code> from the static 'blockLayerStateChange' event.
+	 * Removes a previously attached event handler <code>fnFunction</code> from the static
+	 * {@link #.blockLayerStateChange blockLayerStateChange} event.
 	 *
 	 * The event gets triggered in case of modal popups when the first of multiple popups opens and closes.
 	 *
-	 * @param {function} fnFunction The function to call, when the event occurs.
-	 * @param {object} [oListener] Object on which the given function had to be called.
+	 * @param {function}
+	 *            fnFunction The function to be called, when the event occurs
+	 * @param {object}
+	 *            [oListener] Context object on which the given function had to be called
 	 *
 	 * @public
 	 */
@@ -2584,12 +2600,12 @@ sap.ui.define([
 		var $oBlockLayer = jQuery("#sap-ui-blocklayer-popup");
 		if ($oBlockLayer.length) {
 			// if there are more z-indices this means there are more dialogs stacked
-			// up. So redisplay the blocklayer (with new z-index) under the new
+			// up. So redisplay the block layer (with new z-index) under the new
 			// current dialog which should be displayed.
 			var oBlockLayerDomRef = $oBlockLayer.get(0);
 
 			if (Popup.blStack.length > 0) {
-				// set the blocklayer z-index to the last z-index in the stack and show it
+				// set the block layer z-index to the last z-index in the stack and show it
 				oBlockLayerDomRef.style.zIndex = Popup.blStack[Popup.blStack.length - 1].zIndex;
 				oBlockLayerDomRef.style.visibility = "visible";
 				oBlockLayerDomRef.style.display = "block";
@@ -2644,8 +2660,8 @@ sap.ui.define([
 					oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 				} else if (oCurrentOfRef.id) {
 					// Otherwise when the Of reference has an id,
-					// the 'of' was rerendered so the newest DOM-element has to be updated for the corresponding rect-object.
-					// Because the id of the 'of' may be still the same but due to its rerendering the reference changed and has to be updated
+					// the 'of' was re-rendered so the newest DOM-element has to be updated for the corresponding rect-object.
+					// Because the id of the 'of' may be still the same but due to its re-rendering the reference changed and has to be updated
 					var oNewestOf = window.document.getElementById(oCurrentOfRef.id);
 					var oNewestOfRect = jQuery(oNewestOf).rect();
 
@@ -2665,7 +2681,7 @@ sap.ui.define([
 			} else if (oCurrentOfRect.left === 0 && oCurrentOfRect.top === 0 &&
 					oCurrentOfRect.height === 0 && oCurrentOfRect.height === 0 &&
 					this._oLastPosition.of.id) {
-				// sometimes the "of" was rerendered and therefore the new DOM-reference must be used for the checks.
+				// sometimes the "of" was re-rendered and therefore the new DOM-reference must be used for the checks.
 				// An id is only ensured for controls and only those can be re-rendered
 				this._oLastPosition.of = window.document.getElementById(this._oLastPosition.of.id);
 				oCurrentOfRef = this._getOfDom(this._oLastPosition.of);
@@ -2816,7 +2832,7 @@ sap.ui.define([
 			"z-index" : this._iZIndex
 		});
 
-		// register resize handler for blindlayer resizing
+		// register resize handler for blind layer resizing
 		if (this._oBlindLayer) {
 			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
 		}
@@ -2849,7 +2865,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resize handler listening to the popup. If the Popup changes its size the blindlayer
+	 * Resize handler listening to the popup. If the Popup changes its size the blind layer
 	 * should be updated as well. For example necessary when popup content has absolute positions.
 	 *
 	 * @private
@@ -2926,7 +2942,7 @@ sap.ui.define([
 	 * @param [string]
 	 *            sParentPopupId to which the id will be added
 	 * @param [string]
-	 *            sChildPopupId that will be added to the perant Popup
+	 *            sChildPopupId that will be added to the parent Popup
 	 */
 	Popup.prototype.addChildToPopup = function(sParentPopupId, sChildPopupId) {
 		var sEventId = "sap.ui.core.Popup.addFocusableContent-" + sParentPopupId;

@@ -120,13 +120,30 @@ sap.ui.define([
 				assert.equal(that.table._getTotalRowCount(), 6, "ExpandFirstLevel=true: Row count is correct");
 			}
 		}).then(function() {
-			that.testAsync({
+			return that.testAsync({
 				act: function() {
 					that.table.setExpandFirstLevel(false);
 					that.table.unbindRows().bindRows("/root");
 				},
 				test: function() {
 					assert.equal(that.table._getTotalRowCount(), 3, "ExpandFirstLevel=false: Row count is correct");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					that.table.setExpandFirstLevel(true);
+					that.table.setModel(new JSONModel(getData()));
+					that.table.unbindRows().bindRows({
+						path: "/root",
+						parameters: {
+							numberOfExpandedLevels: 0
+						}
+					});
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 3, "ExpandFirstLevel=true and numberOfExpandedLevels=0: Row count is correct");
+					assert.equal(that.table.isExpanded(0), false, "Expanded state is correct");
 					done();
 				}
 			});

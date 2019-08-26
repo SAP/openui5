@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 *
 	 * @constructor
 	 * @private
-	 * @sap-restricted sdk
+	 * @ui5-restricted sdk
 	 * @alias sap.ui.demokit.Tag
 	 */
 	var Tag = Element.extend("sap.ui.demokit.Tag", /** @lends sap.ui.demokit.Tag.prototype */ { metadata : {

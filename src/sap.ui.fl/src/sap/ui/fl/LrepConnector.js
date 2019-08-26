@@ -26,7 +26,7 @@ sap.ui.define([
 	 * @constructor
 	 * @alias sap.ui.fl.LrepConnector
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 * @author SAP SE
 	 * @version ${version}
 	 */
@@ -134,7 +134,7 @@ sap.ui.define([
 	 *
 	 * @param {String} sRequestUrlPrefix - request URL prefix which must start with a (/) and must not end with a (/)
 	 * @private
-	 * @sap-restricted
+	 * @ui5-restricted
 	 */
 	LrepConnector.prototype.setRequestUrlPrefix = function(sRequestUrlPrefix) {
 		this._sRequestUrlPrefix = sRequestUrlPrefix;

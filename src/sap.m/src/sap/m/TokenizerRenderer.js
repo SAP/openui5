@@ -35,6 +35,10 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			oRm.class("sapMTokenizerReadonly");
 		}
 
+		if (!oControl.getEnabled()) {
+			oRm.class("sapMTokenizerDisabled");
+		}
+
 		var aTokens = oControl.getTokens();
 		if (!aTokens.length) {
 			oRm.class("sapMTokenizerEmpty");

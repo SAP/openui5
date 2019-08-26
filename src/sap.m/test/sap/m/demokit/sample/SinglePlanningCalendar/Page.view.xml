@@ -5,10 +5,8 @@
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
-		<HBox wrap="Wrap">
-			<VBox class="sapUiSmallMarginEnd">
+			<OverflowToolbar height="100%" width="100%">
 				<Label text="Select sticky mode" labelFor="stickyModeSelect" />
-
 				<Select id="stickyModeSelect" selectedKey="{settings>/stickyMode}">
 					<items>
 						<core:ListItem text="None" key="None" />
@@ -16,26 +14,13 @@
 						<core:ListItem text="NavBarAndColHeaders" key="NavBarAndColHeaders" />
 					</items>
 				</Select>
-			</VBox>
+				<ToolbarSeparator/>
+				<Label text="Appointment Actions : "/>
+				<ToggleButton text="Drag and Drop" id="enableAppointmentsDragAndDrop" pressed="{settings>/enableAppointmentsDragAndDrop}"/>
+				<ToggleButton text="Drag and Create" id="enableAppointmentsCreate" pressed="{settings>/enableAppointmentsCreate}"/>
+				<ToggleButton text="Resize" id="enableAppointmentsResize" pressed="{settings>/enableAppointmentsResize}"/>
+			</OverflowToolbar>
 
-			<VBox class="sapUiSmallMarginEnd">
-				<Label text="Drag and Drop" labelFor="enableAppointmentsDragAndDrop" />
-
-				<Switch id="enableAppointmentsDragAndDrop" state="{settings>/enableAppointmentsDragAndDrop}"/>
-			</VBox>
-
-			<VBox class="sapUiSmallMarginEnd">
-				<Label text="Resize Appointments" labelFor="enableAppointmentsResize" />
-
-				<Switch id="enableAppointmentsResize" state="{settings>/enableAppointmentsResize}"/>
-			</VBox>
-
-			<VBox>
-				<Label text="Create Appointments" labelFor="enableAppointmentsCreate" />
-
-				<Switch id="enableAppointmentsCreate" state="{settings>/enableAppointmentsCreate}"/>
-			</VBox>
-		</HBox>
 		<SinglePlanningCalendar
 			id="SPC1"
 			class="sapUiSmallMarginTop"

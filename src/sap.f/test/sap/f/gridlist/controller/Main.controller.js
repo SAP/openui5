@@ -7,7 +7,8 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.gridlist.controller.Main", {
 		onInit: function () {
-			var model = new JSONModel("./model/data.json");
+			var sDataUrl = sap.ui.require.toUrl("sap/f/gridlist/model/data.json"); // resolve the correct path for GridListVisualTests
+			var model = new JSONModel(sDataUrl);
 			this.getView().setModel(model);
 		},
         onLayoutChange: function (oEvent) {

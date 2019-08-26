@@ -281,6 +281,32 @@ sap.ui.define([
 			headerDynamicVisibilityChange(assert, oDynamicPage);
 		});
 
+		QUnit.module("DynamicPage sticky content position while scrolling and rerendering iconTabBar");
+
+		QUnit.test("DynamicPage which has header and title", function (assert) {
+			var oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(false /*preserveHeaderStateOnScroll*/, true  /*has header*/, true /*header visible*/, true /*has title*/),
+				oIconTabBar = oDynamicPage.getContent();
+
+			assert.expect(2);
+
+			oUtil.renderObject(oDynamicPage);
+
+			oDynamicPage._setScrollPosition(BIG_SCROLL_POSITION);
+			oDynamicPage._adjustStickyContent();
+
+			// Verify init state
+			assert.ok(oIconTabBar._getStickySubheaderSticked(), "Sticky content is in sticky area");
+
+			//Act: rerender
+			oIconTabBar.rerender();
+
+			// Check
+			assert.ok(oIconTabBar._getStickySubheaderSticked(), "Sticky content is still in sticky area");
+
+			// Cleanup
+			oDynamicPage.destroy();
+		});
+
 		QUnit.module("DynamicPage with preservedHeaderStateOnScroll sticky content position while scrolling");
 
 		QUnit.test("DynamicPage which has header and title", function (assert) {

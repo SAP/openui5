@@ -1257,7 +1257,7 @@ sap.ui.define([
 					BusyIndicator.show(0);
 					return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
 						.then(function(aAllLocalChanges) {
-							return this._oTransportSelection._prepareChangesForTransport(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors)
+							return this._oTransportSelection._prepareChangesForTransport(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors, this.getComponentName())
 								.then(function() {
 									BusyIndicator.hide();
 								});

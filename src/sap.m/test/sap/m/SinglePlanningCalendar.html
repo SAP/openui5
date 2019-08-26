@@ -35,6 +35,7 @@
 					'sap/m/PlanningCalendarLegend',
 					'sap/m/Dialog',
 					'sap/m/Button',
+					'sap/m/ToggleButton',
 					'sap/ui/core/Item',
 					'sap/ui/unified/CalendarAppointment',
 					'sap/ui/unified/CalendarLegendItem',
@@ -48,7 +49,7 @@
 				],
 				function (JSONModel, SinglePlanningCalendar, SinglePlanningCalendarDayView,
 							SinglePlanningCalendarWorkWeekView, SinglePlanningCalendarWeekView, SinglePlanningCalendarMonthView,
-							PlanningCalendarLegend, Dialog, Button, Item, CalendarAppointment,
+							PlanningCalendarLegend, Dialog, Button, ToggleButton, Item, CalendarAppointment,
 							CalendarLegendItem, MessageToast, MessageView, MessageItem, MessageType, PlacementType, App, Page) {
 					var aAppointments = [
 						{
@@ -500,9 +501,18 @@
 					oSPC = new SinglePlanningCalendar("SinglePlanningCalendar", {
 						title: "SinglePlanningCalendar",
 						startDate: new Date(2018, 6, 9),
-						enableAppointmentsDragAndDrop: true,
+						startHour: 8,
+						endHour: 20,
+						fullDay: false,
 						views: [oDayView, oWorkWeekView,oWeekView, oCustomView, oMonthView],
 						actions: [
+							new ToggleButton("fullDay", {
+								text: "Full day",
+								press: function () {
+									var oSPC = sap.ui.getCore().byId("SinglePlanningCalendar");
+									oSPC.setFullDay(!oSPC.getFullDay());
+								}
+							}),
 							new Button("overrideTime", {
 								text: "Override current time",
 								press: function () {

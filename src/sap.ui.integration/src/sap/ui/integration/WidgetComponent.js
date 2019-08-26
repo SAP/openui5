@@ -11,8 +11,8 @@ sap.ui.define([
 	"use strict";
 	var WidgetComponent = UIComponent.extend("sap.ui.integration.WidgetComponent");
 
-	WidgetComponent.prototype.createContent = function() {
-		var result = UIComponent.prototype.createContent.apply(this, arguments);
+	WidgetComponent.prototype.init = function() {
+		var result = UIComponent.prototype.init.apply(this, arguments);
 		this._applyWidgetModel();
 		return result;
 	};
@@ -24,11 +24,11 @@ sap.ui.define([
 	};
 
 	WidgetComponent.prototype.fireAction = function(mParameters) {
-		this.oContainer.getParent().getParent().fireAction(mParameters);
+		this.oContainer.getParent().fireAction(mParameters);
 	};
 
 	WidgetComponent.prototype.getWidgetConfiguration = function(sPath) {
-		return this.getModel("sap.widget").getProperty(sPath);
+		return this.getModel("sap.widget").getProperty(sPath || "/");
 	};
 
 	//should be called from the Widget whenever configuration/parameters change

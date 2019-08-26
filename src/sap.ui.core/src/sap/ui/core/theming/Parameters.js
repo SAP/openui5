@@ -316,7 +316,7 @@ sap.ui.define([
 		 * Returns the scopes from current theming parameters.
 		 *
 		 * @private
-		 * @sap-restricted sap.ui.core
+		 * @ui5-restricted sap.ui.core
 		 * @param {boolean} [bAvoidLoading] Whether loading of parameters should be avoided
 		 * @return {array} Scope names
 		 */
@@ -338,7 +338,7 @@ sap.ui.define([
 		 * root elements.
 		 *
 		 * @private
-		 * @sap-restricted sap.viz
+		 * @ui5-restricted sap.viz
 		 * @param {object} oElement element/control instance
 		 * @return {Array.<Array.<string>>} Two dimensional array with scopes in bottom up order
 		 */

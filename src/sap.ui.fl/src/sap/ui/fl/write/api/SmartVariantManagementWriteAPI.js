@@ -23,6 +23,7 @@ sap.ui.define([
 	 * @namespace sap.ui.fl.write.api.SmartVariantManagementWriteAPI
 	 * @experimental
 	 * @since 1.69.0
+	 * @private
 	 * @ui5-restricted sap.ui.comp
 	 */
 	var SmartVariantManagementWriteAPI = /** @lends sap.ui.fl.write.api.SmartVariantManagementWriteAPI */{
@@ -42,6 +43,7 @@ sap.ui.define([
 		 * @param {boolean} mPropertyBag.changeSpecificData.isUserDependent - Indicates if a change is only valid for the current user
 		 * @param {boolean} [mPropertyBag.changeSpecificData.id] - ID of the change; the ID has to be globally unique and should only be set in exceptional cases for example downport of variants
 		 * @returns {string} ID of the newly created change
+		 * @private
 		 * @ui5-restricted
 		 */
 		add: function(mPropertyBag) {
@@ -59,6 +61,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @returns {Promise<object[]>} Promise that resolves with an array of responses or is rejected with the first error
+		 * @private
 		 * @ui5-restricted
 		 */
 		save: function(mPropertyBag) {
@@ -77,6 +80,7 @@ sap.ui.define([
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @param {string} mPropertyBag.defaultVariantId - ID of the new default variant
 		 * @returns {object} Default variant change
+		 * @private
 		 * @ui5-restricted
 		 */
 		setDefaultVariantId: function(mPropertyBag) {
@@ -119,6 +123,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
 		 * @param {boolean} mPropertyBag.executeOnSelect - New <code>ExecuteOnSelect</code> flag for standard variant
+		 * @private
 		 * @ui5-restricted
 		 * @returns {object} Default variant change
 		 */

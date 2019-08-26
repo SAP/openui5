@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/test/actions/Action",
-	"sap/ui/events/KeyCodes"
-], function(Action, KeyCodes) {
+	"sap/ui/events/KeyCodes",
+	"sap/ui/thirdparty/jquery"
+], function(Action, KeyCodes, jQueryDOM) {
 	"use strict";
 
 	/**
@@ -25,7 +26,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @since 1.34
 	 */
-	return Action.extend("sap.ui.test.actions.EnterText", /** @lends sap.ui.test.actions.EnterText.prototype */  {
+	var EnterText = Action.extend("sap.ui.test.actions.EnterText", /** @lends sap.ui.test.actions.EnterText.prototype */  {
 
 		metadata : {
 			properties: {
@@ -56,6 +57,11 @@ sap.ui.define([
 				}
 			},
 			publicMethods : [ "executeOn" ]
+		},
+
+		init: function () {
+			Action.prototype.init.apply(this, arguments);
+			this.controlAdapters = jQueryDOM.extend(this.controlAdapters, EnterText.controlAdapters);
 		},
 
 		/**
@@ -111,4 +117,64 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * A map of ID suffixes for controls that require a special DOM reference for
+	 * <code>EnterText</code> interaction.
+	 *
+	 * Here is a sublist of supported controls and their <code>EnterText</code> control adapter:
+	 * <ul>
+	 *  <li>sap.m.StepInput - internal Input</li>
+	 * </ul>
+	 *
+	 * @since 1.70 a control adapter can also be a function.
+	 * This is useful for controls with different modes where a different control adapter makes sense in different modes.
+	 *
+	 * When you extended a UI5 controls the adapter of the control will be taken.
+	 * If you need an adapter for your own control you can add it here. For example:
+	 * You wrote a control with the namespace my.Control it renders two inputs and you want the EnterText action to enter text in the second one by default.
+	 *
+	 * <pre>
+	 * <code>
+	 *     new my.Control("myId");
+	 * </code>
+	 * </pre>
+	 *
+	 * It contains two input tags in its dom.
+	 * When you render your control it creates the following dom:
+	 *
+	 *
+	 * <pre>
+	 * <code>
+	 *     &lt;div id="myId"&gt;
+	 *         &lt;input id="myId-firstInput"/&gt;
+	 *         &lt;input id="myId-secondInput"/&gt;
+	 *     &lt;/div&gt;
+	 * </code>
+	 * </pre>
+	 *
+	 * Then you may add a control adapter like this
+	 *
+	 * <pre>
+	 * <code>
+	 *     EnterText.controlAdapters["my.control"] = "secondInput"; //This can be used by setting the Target Property of an action
+	 *
+	 *     // Example usage
+	 *     new EnterText(); // executes on second Input since it is set as default
+	 *     new EnterText({ idSuffix: "firstInput"}); // executes on the first input has to be the same as the last part of the id in the dom
+	 * </code>
+	 * </pre>
+	 *
+	 *
+	 * @public
+	 * @static
+	 * @name sap.ui.test.actions.EnterText.controlAdapters
+	 * You can specify an Id suffix for specific controls in this map.
+	 * The enter text action will be triggered on the DOM element with the specified suffix
+	 * @type map
+	 */
+	EnterText.controlAdapters = {};
+	EnterText.controlAdapters["sap.m.StepInput"] = "input-inner"; // focusDomRef: <input>
+
+
+	return EnterText;
 });
