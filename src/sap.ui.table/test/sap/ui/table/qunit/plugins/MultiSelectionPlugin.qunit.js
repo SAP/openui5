@@ -109,13 +109,16 @@ sap.ui.define([
 		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialised");
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectClear").length, 1, "Deselect All button exists");
-		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All Disabled", "Tooltip exists");
+		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
+		assert.ok(this.oTable.$("selall").attr("aria-disabled"), "aria-disabled is set to true");
 		this.oTable.setEnableSelectAll(false);
-		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All Disabled", "Tooltip exists");
+		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
+		assert.ok(this.oTable.$("selall").attr("aria-disabled"), "aria-disabled is set to true");
 		assert.equal(this.oTable.$("selall").attr("disabled"), "disabled", "Deselect All is disabled");
 
 		this.oTable._getSelectionPlugin().attachSelectionChange(function(){
 			assert.strictEqual(that.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
+			assert.ok(!that.oTable.$("selall").attr("aria-disabled"), "aria-disabled is removed");
 			assert.ok(!that.oTable.$("selall").attr("disabled"), "Deselect All is enabled");
 			assert.strictEqual((that.oTable.$("selall").attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
 			that.oTable.setEnableSelectAll(true);
