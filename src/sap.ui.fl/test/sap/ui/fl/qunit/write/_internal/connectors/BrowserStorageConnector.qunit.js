@@ -2,10 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector"
+	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"
 ], function(
 	SessionStorageWriteConnector,
-	LocalStorageWriteConnector
+	LocalStorageWriteConnector,
+	BrowserStorageUtils
 ) {
 	"use strict";
 
@@ -23,27 +25,27 @@ sap.ui.define([
 			layer: "USER"
 		},
 		oChange3: {
-			fileName: "id_1445517849455_17",
+			fileName: "oChange3",
 			fileType: "change",
 			reference: "sap.ui.fl.test.1",
 			layer: "CUSTOMER"
 		},
 		oVariant1: {
-			fileName: "id_1445501120486_27",
+			fileName: "oVariant1",
 			fileType: "ctrl_variant",
 			variantManagementReference: "variantManagement0",
 			variantReference: "variantManagement0"
 		},
 		oVariantChange1: {
-			fileName: "id_1507716136285_38_setTitle",
+			fileName: "oVariantChange1",
 			fileType: "ctrl_variant_change",
 			changeType: "setTitle",
 			selector: {
-				id: "id_1445501120486_27"
+				id: "oVariant1"
 			}
 		},
 		oVariantManagementChange: {
-			fileName: "id_1510920910626_29_setDefault",
+			fileName: "oVariantManagementChange",
 			fileType: "ctrl_variant_management_change",
 			changeType: "setDefault",
 			selector: {
@@ -52,33 +54,63 @@ sap.ui.define([
 		}
 	};
 
-	function parameterizedTest(oWriteStorage, sStorage) {
+	function saveListWithConnector(oStorage, aList) {
+		aList.forEach(function (oFlexObject) {
+			oStorage.saveChange(oFlexObject.fileName, oFlexObject);
+		});
+	}
+
+	function removeListFromStorage(oStorage, aList) {
+		aList.forEach(function (sObjektId) {
+			var sKey = BrowserStorageUtils.createChangeKey(sObjektId);
+			if (oStorage.removeItem) {
+				oStorage.removeItem(sKey);
+			} else {
+				// function for the JsObjectStorage
+				delete oStorage._items[sKey];
+			}
+		});
+	}
+
+	function assertFileWritten(assert, oStorage, oFile, sMessage) {
+		var sKey;
+		if (oFile.fileType === "ctrl_variant") {
+			sKey = BrowserStorageUtils.createVariantKey(oFile.fileName);
+		} else {
+			sKey = BrowserStorageUtils.createChangeKey(oFile.fileName);
+		}
+		var oItem = JSON.parse(oStorage.getItem(sKey));
+		assert.deepEqual(oFile, oItem, sMessage);
+	}
+
+	function parameterizedTest(oConnector, sStorage) {
 		QUnit.module("loadFlexData: Given some changes in the " + sStorage, {
-			before: function() {
-				this.oOriginalStorageState = {};
-				Object.keys(oWriteStorage.oStorage).forEach(function(sKey) {
-					this.oOriginalStorageState[sKey] = oWriteStorage.oStorage[sKey];
-				}.bind(this));
-				oWriteStorage.oStorage.clear();
-			},
-			after: function() {
-				oWriteStorage.oStorage.clear();
-				Object.keys(this.oOriginalStorageState).forEach(function(sKey) {
-					oWriteStorage.oStorage.setItem(sKey, this.oOriginalStorageState[sKey]);
-				}.bind(this));
+			afterEach: function() {
+				removeListFromStorage(oConnector.oStorage, [
+					oTestData.oChange1.fileName,
+					oTestData.oChange2.fileName,
+					oTestData.oChange3.fileName,
+					oTestData.oVariant1.fileName,
+					oTestData.oVariantChange1.fileName,
+					oTestData.oVariantManagementChange.fileName
+				]);
 			}
 		}, function () {
 			QUnit.test("when saveChange is called with various changes", function (assert) {
-				assert.equal(oWriteStorage.oStorage.length, 0, "initially there are no entries in the storage");
-
-				oWriteStorage.saveChange(oTestData.oChange1.fileName, oTestData.oChange1);
-				oWriteStorage.saveChange(oTestData.oChange2.fileName, oTestData.oChange2);
-				oWriteStorage.saveChange(oTestData.oChange3.fileName, oTestData.oChange3);
-				oWriteStorage.saveChange(oTestData.oVariant1.fileName, oTestData.oVariant1);
-				oWriteStorage.saveChange(oTestData.oVariantChange1.fileName, oTestData.oVariantChange1);
-				oWriteStorage.saveChange(oTestData.oVariantManagementChange.fileName, oTestData.oVariantManagementChange);
-
-				assert.equal(oWriteStorage.oStorage.length, 6, "6 changes were saved");
+				saveListWithConnector(oConnector, [
+					oTestData.oChange1,
+					oTestData.oChange2,
+					oTestData.oChange3,
+					oTestData.oVariant1,
+					oTestData.oVariantChange1,
+					oTestData.oVariantManagementChange
+				]);
+				assertFileWritten(assert, oConnector.oStorage, oTestData.oChange1, "change1 was written");
+				assertFileWritten(assert, oConnector.oStorage, oTestData.oChange2, "change2 was written");
+				assertFileWritten(assert, oConnector.oStorage, oTestData.oChange3, "change3 was written");
+				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariant1, "variant1 was written");
+				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantChange1, "variant change1 was written");
+				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantManagementChange, "variant management change was written");
 			});
 		});
 	}

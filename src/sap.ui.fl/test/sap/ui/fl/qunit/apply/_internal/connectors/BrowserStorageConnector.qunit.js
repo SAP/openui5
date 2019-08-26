@@ -26,7 +26,6 @@ sap.ui.define([
 	jQuery
 ) {
 	"use strict";
-	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Loading of Connector", {}, function() {
 		QUnit.test("given a custom connector is configured", function(assert) {
@@ -40,139 +39,329 @@ sap.ui.define([
 
 	var oTestData = {
 		change1: {
-			fileName: "id_1445501120486_15",
+			fileName: "change1",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER"
+			layer: "CUSTOMER",
+			creation: "2019-08-21T13:52:40.4754350Z"
 		},
 		change2: {
-			fileName: "id_1445517849455_16",
+			fileName: "change2",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "USER"
+			layer: "USER",
+			creation: "2019-08-20T13:52:40.4754350Z"
 		},
 		change3: {
-			fileName: "id_1445517849455_17",
+			fileName: "change3",
 			fileType: "change",
-			reference: "sap.ui.fl.test.1",
-			layer: "CUSTOMER"
+			reference: "sap.ui.fl.test",
+			layer: "CUSTOMER",
+			creation: "2019-08-19T13:52:40.4754350Z"
+		},
+		change4: {
+			fileName: "change4",
+			fileType: "change",
+			reference: "sap.ui.fl.test",
+			layer: "CUSTOMER",
+			variantReference: "variant1",
+			creation: "2019-08-19T13:52:40.4754350Z"
 		},
 		variant1: {
-			fileName: "id_1445501120486_27",
+			fileName: "variant1",
 			fileType: "ctrl_variant",
 			variantManagementReference: "variantManagement0",
-			variantReference: "variantManagement0"
+			variantReference: "variantManagement0",
+			reference: "sap.ui.fl.test",
+			layer: "CUSTOMER",
+			creation: "2019-08-19T13:52:40.4754350Z"
 		},
 		variant2: {
-			fileName: "id_1445501120486_28",
+			fileName: "variant2",
 			fileType: "ctrl_variant",
 			variantManagementReference: "variantManagement0",
-			variantReference: "variantManagement0"
+			variantReference: "variantManagement0",
+			reference: "sap.ui.fl.test",
+			layer: "CUSTOMER",
+			creation: "2019-08-20T13:52:40.4754350Z"
 		},
-		variantChange1: {
-			fileName: "id_1507716136285_38_setTitle",
+		variantChange: {
+			fileName: "variantChange",
 			fileType: "ctrl_variant_change",
 			changeType: "setTitle",
+			reference: "sap.ui.fl.test",
 			selector: {
-				id: "id_1445501120486_27"
-			}
+				id: "variant1"
+			},
+			layer: "CUSTOMER"
 		},
 		variantManagementChange: {
-			fileName: "id_1510920910626_29_setDefault",
+			fileName: "variantManagementChange",
 			fileType: "ctrl_variant_management_change",
 			changeType: "setDefault",
+			reference: "sap.ui.fl.test",
 			selector: {
 				id: "variantManagement0"
-			}
+			},
+			layer: "CUSTOMER"
+		},
+		anotherAppChange1: {
+			fileName: "anotherAppChange1",
+			fileType: "change",
+			reference: "sap.ui.fl.test.another.app",
+			layer: "CUSTOMER"
+		},
+		anotherAppChange2: {
+			fileName: "anotherAppChange2",
+			fileType: "change",
+			reference: "sap.ui.fl.test.another.app",
+			layer: "USER"
+		},
+		anotherAppChange3: {
+			fileName: "anotherAppChange3",
+			fileType: "change",
+			reference: "sap.ui.fl.test.another.app",
+			layer: "CUSTOMER"
+		},
+		anotherAppChange4: {
+			fileName: "anotherAppChange4",
+			fileType: "change",
+			reference: "sap.ui.fl.test.another.app",
+			layer: "CUSTOMER",
+			variantReference: "anotherAppVariant",
+			creation: "2019-08-19T13:52:40.4754350Z"
+		},
+		anotherAppVariant: {
+			fileName: "anotherAppVariant",
+			fileType: "ctrl_variant",
+			variantManagementReference: "variantManagement0",
+			variantReference: "variantManagement0",
+			reference: "sap.ui.fl.test.another.app",
+			layer: "CUSTOMER"
+		},
+		anotherAppVariantChange: {
+			fileName: "anotherAppVariantChange",
+			fileType: "ctrl_variant_change",
+			changeType: "setTitle",
+			reference: "sap.ui.fl.test.another.app",
+			selector: {
+				id: "anotherAppVariant"
+			},
+			layer: "CUSTOMER"
+		},
+		anotherAppVariantManagementChange: {
+			fileName: "anotherAppVariantManagementChange",
+			fileType: "ctrl_variant_management_change",
+			changeType: "setDefault",
+			reference: "sap.ui.fl.test.another.app",
+			selector: {
+				id: "variantManagement0"
+			},
+			layer: "CUSTOMER"
+		},
+		baseChange: {
+			fileName: "baseChange",
+			fileType: "change",
+			reference: "sap.ui.fl.test.module2",
+			layer: "BASE",
+			creation: "2019-08-21T13:52:40.4754350Z"
+		},
+		vendorVariant: {
+			fileName: "vendorVariant",
+			fileType: "ctrl_variant",
+			variantManagementReference: "variantManagement0",
+			variantReference: "variantManagement0",
+			reference: "sap.ui.fl.test.module2",
+			layer: "VENDOR",
+			creation: "2019-08-19T13:52:40.4754350Z"
+		},
+		partnerVariantChange: {
+			fileName: "partnerVariantChange",
+			fileType: "ctrl_variant_change",
+			changeType: "setTitle",
+			reference: "sap.ui.fl.test.module2",
+			selector: {
+				id: "vendorVariant"
+			},
+			layer: "PARTNER"
+		},
+		customerBaseVariantDependentChange: {
+			fileName: "customerBaseVariantDependentChange",
+			fileType: "change",
+			reference: "sap.ui.fl.test.module2",
+			layer: "CUSTOMER_BASE",
+			variantReference: "id_1445501120486_27",
+			creation: "2019-08-19T13:52:40.4754350Z"
+		},
+		customerVariantManagementChange: {
+			fileName: "customerVariantManagementChange",
+			fileType: "ctrl_variant_management_change",
+			changeType: "setDefault",
+			reference: "sap.ui.fl.test.module2",
+			selector: {
+				id: "variantManagement0"
+			},
+			layer: "CUSTOMER"
 		}
 	};
+
+	function saveListWithConnector(oStorage, aList) {
+		aList.forEach(function (oFlexObject) {
+			oStorage.saveChange(oFlexObject.fileName, oFlexObject);
+		});
+	}
+
+	function removeListFromStorage(oStorage, aList) {
+		aList.forEach(function (sObjektId) {
+			var sKey = BrowserStorageUtils.createChangeKey(sObjektId);
+			if (oStorage.removeItem) {
+				oStorage.removeItem(sKey);
+			} else {
+				// function for the JsObjectStorage
+				delete oStorage._items[sKey];
+			}
+		});
+	}
 
 	function parameterizedTest(oApplyStorageConnector, oWriteStorageConnector, sStorage) {
 		QUnit.module("loadFlexData: Given some changes in the " + sStorage, {
 			before: function() {
-				this.oOriginalStorageState = {};
-				this.oOriginalStorageState = merge({}, oApplyStorageConnector.oStorage);
-				oApplyStorageConnector.oStorage.clear();
-
-				oWriteStorageConnector.saveChange(oTestData.change1.fileName, oTestData.change1);
-				oWriteStorageConnector.saveChange(oTestData.change2.fileName, oTestData.change2);
-				oWriteStorageConnector.saveChange(oTestData.change3.fileName, oTestData.change3);
-				oWriteStorageConnector.saveChange(oTestData.variant1.fileName, oTestData.variant1);
-				oWriteStorageConnector.saveChange(oTestData.variant2.fileName, oTestData.variant2);
-				oWriteStorageConnector.saveChange(oTestData.variantChange1.fileName, oTestData.variantChange1);
-				oWriteStorageConnector.saveChange(oTestData.variantManagementChange.fileName, oTestData.variantManagementChange);
+				saveListWithConnector(oWriteStorageConnector, [
+					oTestData.change1,
+					oTestData.change2,
+					oTestData.change3,
+					oTestData.change4,
+					oTestData.variant1,
+					oTestData.variant2,
+					oTestData.variantChange,
+					oTestData.variantManagementChange,
+					oTestData.anotherAppChange1,
+					oTestData.anotherAppChange2,
+					oTestData.anotherAppChange3,
+					oTestData.anotherAppChange4,
+					oTestData.anotherAppVariant,
+					oTestData.anotherAppVariantChange,
+					oTestData.anotherAppVariantManagementChange
+				]);
 			},
-			beforeEach: function() {
-				this.oCreateMapStub = sandbox.stub(BrowserStorageUtils, "createChangesMapWithVariants").returns("returnValue");
-				this.oAddChangesStub = sandbox.stub(BrowserStorageUtils, "addChangesToMap");
-				this.oSortChangesStub = sandbox.stub(BrowserStorageUtils, "sortChanges");
-				this.oAssignReferencedChangesStub = sandbox.stub(BrowserStorageUtils, "assignVariantReferenceChanges");
-			},
-			after: function() {
-				oApplyStorageConnector.oStorage.clear();
-				oApplyStorageConnector = this.oOriginalStorageState;
-			},
-			afterEach: function() {
-				sandbox.restore();
+			after: function () {
+				removeListFromStorage(oWriteStorageConnector.oStorage, [
+					oTestData.change1.fileName,
+					oTestData.change2.fileName,
+					oTestData.change3.fileName,
+					oTestData.change4.fileName,
+					oTestData.variant1.fileName,
+					oTestData.variant2.fileName,
+					oTestData.variantChange.fileName,
+					oTestData.variantManagementChange.fileName,
+					oTestData.anotherAppChange1.fileName,
+					oTestData.anotherAppChange2.fileName,
+					oTestData.anotherAppChange3.fileName,
+					oTestData.anotherAppChange4.fileName,
+					oTestData.anotherAppVariant.fileName,
+					oTestData.anotherAppVariantChange.fileName,
+					oTestData.anotherAppVariantManagementChange.fileName
+				]);
 			}
 		}, function () {
-			QUnit.test("when loadFlexData is called without filter parameters", function(assert) {
-				return oApplyStorageConnector.loadFlexData({}).then(function(vValue) {
-					assert.equal(vValue, "returnValue", "the return value of the Utils methods is returned");
-					assert.equal(this.oCreateMapStub.callCount, 1, "createChangesMapWithVariants was called");
-					assert.deepEqual(this.oCreateMapStub.lastCall.args[0].length, 2, "2 variants were passed");
-					assert.equal(this.oAddChangesStub.callCount, 1, "addChangesToMap was called");
-					assert.deepEqual(this.oAddChangesStub.lastCall.args[0], "returnValue", "the just created changes map was passed");
+			QUnit.test("when loadFlexData is called without filter parameters", function (assert) {
+				return oApplyStorageConnector.loadFlexData({reference : "sap.ui.fl.test"}).then(function (vValue) {
+					assert.ok(Array.isArray(vValue), "an array is returned");
+					assert.equal(vValue.length, 2, "two responses were created");
 
-					var oGroupedChanges = this.oAddChangesStub.lastCall.args[1];
-					assert.equal(oGroupedChanges.uiChanges.length, 3, "there are 3 ui changes");
-					assert.equal(oGroupedChanges.controlVariantChanges.length, 1, "there is 1 control variant change");
-					assert.equal(oGroupedChanges.controlVariantManagementChanges.length, 1, "there is 1 control variant management change");
+					var mCustomerLayerData = vValue[0];
+					assert.equal(mCustomerLayerData.changes.length, 2, "two CUSTOMER change were returned");
+					assert.deepEqual(mCustomerLayerData.changes[0], oTestData.change3, "the first CUSTOMER change was returned");
+					assert.deepEqual(mCustomerLayerData.changes[1], oTestData.change1, "the second CUSTOMER change was returned");
+					assert.equal(mCustomerLayerData.variantChanges.length, 1, "one CUSTOMER variant change was returned");
+					assert.deepEqual(mCustomerLayerData.variantChanges[0], oTestData.variantChange, "the CUSTOMER variant change was returned");
+					assert.equal(mCustomerLayerData.variants.length, 2, "two CUSTOMER variants were returned");
+					assert.deepEqual(mCustomerLayerData.variants[0], oTestData.variant1, "the first CUSTOMER variant was returned");
+					assert.deepEqual(mCustomerLayerData.variants[1], oTestData.variant2, "the second CUSTOMER variant was returned");
+					assert.equal(mCustomerLayerData.variantManagementChanges.length, 1, "one CUSTOMER variant change was returned");
+					assert.deepEqual(mCustomerLayerData.variantManagementChanges[0], oTestData.variantManagementChange, "the CUSTOMER variant management change was returned");
+					assert.equal(mCustomerLayerData.variantDependentControlChanges.length, 1, "one CUSTOMER variant change was returned");
+					assert.deepEqual(mCustomerLayerData.variantDependentControlChanges[0], oTestData.change4, "the CUSTOMER variant dependent change was returned");
 
-					assert.equal(this.oSortChangesStub.callCount, 1, "sortChanges was called");
-					assert.equal(this.oAssignReferencedChangesStub.callCount, 1, "assignVariantReferenceChanges was called");
-				}.bind(this));
+					var mUserLayerData = vValue[1];
+					assert.equal(mUserLayerData.changes.length, 1, "one USER change was returned");
+					assert.deepEqual(mUserLayerData.changes[0], oTestData.change2, "the USER change was returned");
+					assert.deepEqual(mUserLayerData.variantChanges.length, 0, "no USER variant changes were returned");
+					assert.deepEqual(mUserLayerData.variants.length, 0, "no USER variants were returned");
+					assert.deepEqual(mUserLayerData.variantManagementChanges.length, 0, "no USER variant management changes were returned");
+					assert.deepEqual(mUserLayerData.variantDependentControlChanges.length, 0, "no USER variant dependent control changes were returned");
+				});
 			});
+		});
 
-			QUnit.test("when loadFlexData is called with a layer", function(assert) {
-				return oApplyStorageConnector.loadFlexData({layer: "USER"}).then(function() {
-					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 1, "1 change is passed");
+		QUnit.module("loadFlexData: Given entries were present in different layers " + sStorage, {
+			before: function() {
+				saveListWithConnector(oWriteStorageConnector, [
+					oTestData.baseChange,
+					oTestData.vendorVariant,
+					oTestData.partnerVariantChange,
+					oTestData.customerBaseVariantDependentChange,
+					oTestData.customerVariantManagementChange
+				]);
+			},
+			after: function () {
+				removeListFromStorage(oWriteStorageConnector.oStorage, [
+					oTestData.baseChange.fileName,
+					oTestData.vendorVariant.fileName,
+					oTestData.partnerVariantChange.fileName,
+					oTestData.customerBaseVariantDependentChange.fileName,
+					oTestData.customerVariantManagementChange.fileName
+				]);
+			}
+		}, function () {
+			QUnit.test("when loadFlexData is called without filter parameters", function (assert) {
+				return oApplyStorageConnector.loadFlexData({reference : "sap.ui.fl.test.module2"}).then(function (vValue) {
+					assert.ok(Array.isArray(vValue), "an array is returned");
+					assert.equal(vValue.length, 5, "five responses are returned");
 
-					return oApplyStorageConnector.loadFlexData({layer: "CUSTOMER"});
-				}.bind(this)).then(function() {
-					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 2, "2 changes are passed");
+					assert.equal(vValue[0].changes.length, 1, "one change is included");
+					assert.deepEqual(vValue[0].changes[0], oTestData.baseChange, "the BASE change is included");
+					assert.equal(vValue[0].variants.length, 0, "no variants are included");
+					assert.equal(vValue[0].variantChanges.length, 0, "no variant changes are included");
+					assert.equal(vValue[0].variantDependentControlChanges.length, 0, "no variant dependent control changes are included");
+					assert.equal(vValue[0].variantManagementChanges.length, 0, "no variant management changes are included");
 
-					return oApplyStorageConnector.loadFlexData({layer: "VENDOR"});
-				}.bind(this)).then(function() {
-					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 0, "no changes are passed");
-				}.bind(this));
-			});
+					assert.equal(vValue[1].changes.length, 0, "no changes are included");
+					assert.equal(vValue[1].variants.length, 1, "one variants is included");
+					assert.deepEqual(vValue[1].variants[0], oTestData.vendorVariant, "the VENDOR variant is included");
+					assert.equal(vValue[1].variantChanges.length, 0, "no variant changes are included");
+					assert.equal(vValue[1].variantDependentControlChanges.length, 0, "no variant dependent control changes are included");
+					assert.equal(vValue[1].variantManagementChanges.length, 0, "no variant management changes are included");
 
-			QUnit.test("when loadFlexData is called with a reference", function(assert) {
-				return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test"}).then(function() {
-					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 2, "2 changes are passed");
+					assert.equal(vValue[2].changes.length, 0, "no changes are included");
+					assert.equal(vValue[2].variants.length, 0, "no variants are included");
+					assert.equal(vValue[2].variantChanges.length, 1, "one variant changes is included");
+					assert.deepEqual(vValue[2].variantChanges[0], oTestData.partnerVariantChange, "the PARTNER variant change is included");
+					assert.equal(vValue[2].variantDependentControlChanges.length, 0, "no variant dependent control changes are included");
+					assert.equal(vValue[2].variantManagementChanges.length, 0, "no variant management changes are included");
 
-					return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test.1"});
-				}.bind(this)).then(function() {
-					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 1, "1 change is passed");
+					assert.equal(vValue[3].changes.length, 0, "no changes are included");
+					assert.equal(vValue[3].variants.length, 0, "no variants are included");
+					assert.equal(vValue[3].variantChanges.length, 0, "no variant changes are included");
+					assert.equal(vValue[3].variantDependentControlChanges.length, 1, "one variant dependent control changes is included");
+					assert.deepEqual(vValue[3].variantDependentControlChanges[0], oTestData.customerBaseVariantDependentChange, "the CUSTOMER_BASE variant dependent change is included");
+					assert.equal(vValue[3].variantManagementChanges.length, 0, "no variant management changes are included");
 
-					return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test.2"});
-				}.bind(this)).then(function() {
-					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 0, "no changes are passed");
-				}.bind(this));
-			});
-
-			QUnit.test("when loadFlexData is called with a layer and a reference", function(assert) {
-				return oApplyStorageConnector.loadFlexData({layer: "CUSTOMER", reference: "sap.ui.fl.test"}).then(function() {
-					assert.equal(this.oAddChangesStub.lastCall.args[1].uiChanges.length, 1, "1 change is passed");
-				}.bind(this));
+					assert.equal(vValue[4].changes.length, 0, "no changes are included");
+					assert.equal(vValue[4].variants.length, 0, "no variants are included");
+					assert.equal(vValue[4].variantChanges.length, 0, "no variant changes are included");
+					assert.equal(vValue[4].variantDependentControlChanges.length, 0, "no variant dependent control changes are included");
+					assert.equal(vValue[4].variantManagementChanges.length, 1, "one variant management changes is included");
+					assert.deepEqual(vValue[4].variantManagementChanges[0], oTestData.customerVariantManagementChange, "the CUSTOMER variant management change is included");
+				});
 			});
 		});
 	}
 
-	parameterizedTest(SessionStorageConnector, SessionStorageWriteConnector, "SessionStorage");
-	parameterizedTest(LocalStorageConnector, LocalStorageWriteConnector, "LocalStorage");
 	parameterizedTest(JsObjectConnector, JsObjectWriteConnector, "JsObjectStorage");
+	parameterizedTest(SessionStorageConnector, SessionStorageWriteConnector, "SessionStorage");
+	// LocalStorage behaves similar to Session storage and we rely on this to not run into issues with parallel tests interfering in the LocalStorageTests
+	//parameterizedTest(LocalStorageConnector, LocalStorageWriteConnector, "LocalStorage");
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();

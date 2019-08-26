@@ -92,263 +92,54 @@ sap.ui.define([
 		}
 	};
 
-	var mGroupedChanges = {
-		uiChanges: [oTestData.change1, oTestData.change2, oTestData.change3, oTestData.change4],
-		variants: [oTestData.variant1, oTestData.variant2, oTestData.variant3],
-		controlVariantChanges: [oTestData.variantChange1],
-		controlVariantManagementChanges: [oTestData.variantManagementChange]
-	};
-
-	var mExpectedChangesMapWithoutChanges = {
-		changes: [],
-		variantSection: {
-			variantManagement0: {
-				variantManagementChanges: {},
-				variants: [
-					{
-						content: {
-							content: {
-								title: "Standard"
-							},
-							fileName: "variantManagement0",
-							fileType: "ctrl_variant",
-							variantManagementReference: "variantManagement0",
-							variantReference: ""
-						},
-						controlChanges: [],
-						variantChanges: {}
-					},
-					{
-						content: oTestData.variant1,
-						controlChanges: [],
-						variantChanges: {}
-					},
-					{
-						content: oTestData.variant2,
-						controlChanges: [],
-						variantChanges: {}
-					}
-				]
-			},
-			variantManagement1: {
-				variantManagementChanges: {},
-				variants: [
-					{
-						content: {
-							content: {
-								title: "Standard"
-							},
-							fileName: "variantManagement1",
-							fileType: "ctrl_variant",
-							variantManagementReference: "variantManagement1",
-							variantReference: ""
-						},
-						controlChanges: [],
-						variantChanges: {}
-					},
-					{
-						content: oTestData.variant3,
-						controlChanges: [],
-						variantChanges: {}
-					}
-				]
-			}
-		}
-	};
-
-	QUnit.module("createChangesMapWithVariants", {}, function () {
-		QUnit.test("without variant", function(assert) {
-			var mExpectedResult = {
-				changes: [],
-				variantSection: {}
-			};
-			assert.deepEqual(BrowserStorageUtils.createChangesMapWithVariants(), mExpectedResult, "the map was created correctly without variants");
-		});
-
-		QUnit.test("with 3 variants, 2 of them belonging to the same variant management controls", function(assert) {
-			assert.deepEqual(BrowserStorageUtils.createChangesMapWithVariants([oTestData.variant1, oTestData.variant2, oTestData.variant3]), mExpectedChangesMapWithoutChanges, "the map was created correctly with variants");
-		});
-	});
-
-	QUnit.module("addChangesToMap", {}, function() {
-		QUnit.test("without a complete changes map", function(assert) {
-			assert.throws(function() {
-				BrowserStorageUtils.addChangesToMap({}, mGroupedChanges);
-			}, "with an empty changes map an Error is thrown");
-
-			assert.throws(function() {
-				BrowserStorageUtils.addChangesToMap({changes: []}, mGroupedChanges);
-			}, "with the variantSection missing an Error is thrown");
-
-			assert.throws(function() {
-				BrowserStorageUtils.addChangesToMap({variantSection: {}}, mGroupedChanges);
-			}, "with the changes array missing an Error is thrown");
-		});
-
-		QUnit.test("with a valid changes map with variants", function(assert) {
-			var mChangesMap = BrowserStorageUtils.addChangesToMap(mExpectedChangesMapWithoutChanges, mGroupedChanges);
-			// ui changes
-			assert.equal(mChangesMap.changes.length, 3, "all 3 ui changes were added");
-			assert.equal(mChangesMap.changes[0].fileName, "fileNameChange1", "the fileName is correct");
-			assert.equal(mChangesMap.changes[1].fileName, "fileNameChange2", "the fileName is correct");
-			assert.equal(mChangesMap.changes[2].fileName, "fileNameChange3", "the fileName is correct");
-
-			// variant specific ui change
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[2].controlChanges.length, 1, "a controlChange was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[2].controlChanges[0].fileName, "fileNameChange4", "the fileName is correct");
-
-			// controlVariantChanges
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[1].variantChanges.setTitle.length, 1, "a variantChange was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[1].variantChanges.setTitle[0].fileName, "id_1507716136285_38_setTitle", "the fileName is correct");
-
-			// controlVariantManagementChanges
-			assert.equal(mChangesMap.variantSection.variantManagement0.variantManagementChanges.setDefault.length, 1, "a variantChange was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variantManagementChanges.setDefault[0].fileName, "id_1510920910626_29_setDefault", "the fileName is correct");
-		});
-
-		QUnit.test("with a valid changes map without variants", function(assert) {
-			var mEmptyChangesMap = BrowserStorageUtils.createChangesMapWithVariants();
-			var mChangesMap = BrowserStorageUtils.addChangesToMap(mEmptyChangesMap, mGroupedChanges);
-
-			// ui changes
-			assert.equal(mChangesMap.changes.length, 3, "all 3 ui changes were added");
-			assert.equal(mChangesMap.changes[0].fileName, "fileNameChange1", "the fileName is correct");
-			assert.equal(mChangesMap.changes[1].fileName, "fileNameChange2", "the fileName is correct");
-			assert.equal(mChangesMap.changes[2].fileName, "fileNameChange3", "the fileName is correct");
-
-			// variant specific ui change
-			assert.equal(mChangesMap.variantSection.fileNameVariant2.variants[0].controlChanges.length, 1, "a controlChange was added");
-			assert.equal(mChangesMap.variantSection.fileNameVariant2.variants[0].controlChanges[0].fileName, "fileNameChange4", "the fileName is correct");
-
-			// controlVariantChanges
-			assert.equal(mChangesMap.variantSection.fileNameVariant1.variants[0].variantChanges.setTitle.length, 1, "a variantChange was added");
-			assert.equal(mChangesMap.variantSection.fileNameVariant1.variants[0].variantChanges.setTitle[0].fileName, "id_1507716136285_38_setTitle", "the fileName is correct");
-
-			// controlVariantManagementChanges
-			assert.equal(mChangesMap.variantSection.variantManagement0.variantManagementChanges.setDefault.length, 1, "a variantChange was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variantManagementChanges.setDefault[0].fileName, "id_1510920910626_29_setDefault", "the fileName is correct");
-		});
-	});
-
 	QUnit.module("sortChanges", {
-		beforeEach: function() {
-			sandbox.stub(Utils, "getLayerIndex").callsFake(function(sLayer) {
-				if (sLayer === "CUSTOMER") {
-					return 1;
-				} else if (sLayer === "OTHER_LAYER") {
-					return 3;
-				} else if (sLayer === "USER") {
-					return 6;
-				}
-			});
-		},
+		beforeEach: function() {},
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("with ui changes", function(assert) {
 			var mChangesMap = {
-				changes: [oTestData.change1, oTestData.change2, oTestData.change3, oTestData.change4, oTestData.change5]
+				changes: [oTestData.change1, oTestData.change3, oTestData.change4],
+				variants: [],
+				variantChanges: [],
+				variantDependentControlChanges: [],
+				variantManagementChanges: []
 			};
-			BrowserStorageUtils.sortChanges(mChangesMap);
+			BrowserStorageUtils.sortGroupedFlexObjects(mChangesMap);
+			assert.equal(mChangesMap.changes.length, 3, "3 changes are included");
 			assert.equal(mChangesMap.changes[0].fileName, "fileNameChange3", "the changes are in the correct order");
 			assert.equal(mChangesMap.changes[1].fileName, "fileNameChange1", "the changes are in the correct order");
 			assert.equal(mChangesMap.changes[2].fileName, "fileNameChange4", "the changes are in the correct order");
-			assert.equal(mChangesMap.changes[3].fileName, "fileNameChange5", "the changes are in the correct order");
-			assert.equal(mChangesMap.changes[4].fileName, "fileNameChange2", "the changes are in the correct order");
 		});
 
-		QUnit.test("with various variant changes", function(assert) {
+		QUnit.test("sorts all sections", function(assert) {
+			var aChanges = [];
+			var oChangesStub = sandbox.stub(aChanges, "sort");
+			var aVariants = [];
+			var oVariantsStub = sandbox.stub(aVariants, "sort");
+			var aVariantChanges = [];
+			var oVariantChangesStub = sandbox.stub(aVariantChanges, "sort");
+			var aVariantDependentControlChanges = [];
+			var oVariantDependentControlChangesStub = sandbox.stub(aVariantDependentControlChanges, "sort");
+			var aVariantManagementChanges = [];
+			var oVariantManagementChangesStub = sandbox.stub(aVariantManagementChanges, "sort");
+
 			var mChangesMap = {
-				variantSection: {
-					varMngt1: {
-						variants: [
-							{
-								controlChanges: [oTestData.change2, oTestData.change1]
-							},
-							{
-								controlChanges: [oTestData.change4, oTestData.change3]
-							}
-						]
-					},
-					varMngt2: {
-						variants: [
-							{
-								controlChanges: [oTestData.change2, oTestData.change4]
-							},
-							{
-								controlChanges: [oTestData.change5, oTestData.change3]
-							}
-						]
-					}
-				}
+				changes: aChanges,
+				variants: aVariants,
+				variantChanges: aVariantChanges,
+				variantDependentControlChanges: aVariantDependentControlChanges,
+				variantManagement: aVariantDependentControlChanges,
+				variantManagementChanges: aVariantManagementChanges
 			};
-			BrowserStorageUtils.sortChanges(mChangesMap);
-			assert.equal(mChangesMap.variantSection.varMngt1.variants[0].controlChanges[0].fileName, "fileNameChange1", "the changes are in the correct order");
-			assert.equal(mChangesMap.variantSection.varMngt1.variants[0].controlChanges[1].fileName, "fileNameChange2", "the changes are in the correct order");
-			assert.equal(mChangesMap.variantSection.varMngt1.variants[1].controlChanges[0].fileName, "fileNameChange3", "the changes are in the correct order");
-			assert.equal(mChangesMap.variantSection.varMngt1.variants[1].controlChanges[1].fileName, "fileNameChange4", "the changes are in the correct order");
-			assert.equal(mChangesMap.variantSection.varMngt2.variants[0].controlChanges[0].fileName, "fileNameChange4", "the changes are in the correct order");
-			assert.equal(mChangesMap.variantSection.varMngt2.variants[0].controlChanges[1].fileName, "fileNameChange2", "the changes are in the correct order");
-			assert.equal(mChangesMap.variantSection.varMngt2.variants[1].controlChanges[0].fileName, "fileNameChange3", "the changes are in the correct order");
-			assert.equal(mChangesMap.variantSection.varMngt2.variants[1].controlChanges[1].fileName, "fileNameChange5", "the changes are in the correct order");
-		});
-	});
 
-	QUnit.module("assignVariantReferenceChanges", {
-		beforeEach: function() {
-			sandbox.stub(Utils, "getLayerIndex").callsFake(function(sLayer) {
-				if (sLayer === "CUSTOMER") {
-					return 1;
-				} else if (sLayer === "OTHER_LAYER") {
-					return 3;
-				} else if (sLayer === "USER") {
-					return 6;
-				}
-			});
-		},
-		afterEach: function() {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("a", function(assert) {
-			var mChangesMap = {
-				variantSection: {
-					variantManagement0: {
-						variants: [
-							{
-								content: {
-									fileName: "variantManagement0",
-									variantManagementReference: "variantManagement0"
-								},
-								controlChanges: [oTestData.change3]
-							},
-							{
-								content: oTestData.variant2,
-								controlChanges: [oTestData.change4, oTestData.change1],
-								layer: "OTHER_LAYER"
-							},
-							{
-								content: oTestData.variant4,
-								controlChanges: [oTestData.change5],
-								layer: "USER"
-							}
-						]
-					}
-				}
-			};
-			BrowserStorageUtils.assignVariantReferenceChanges(mChangesMap);
-
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[1].controlChanges.length, 3, "a referenced change was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[1].controlChanges[0].fileName, "fileNameChange3", "a referenced change was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[1].controlChanges[1].fileName, "fileNameChange4", "a referenced change was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[1].controlChanges[2].fileName, "fileNameChange1", "a referenced change was added");
-
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[2].controlChanges.length, 4, "a referenced change was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[2].controlChanges[0].fileName, "fileNameChange3", "a referenced change was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[2].controlChanges[1].fileName, "fileNameChange4", "a referenced change was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[2].controlChanges[2].fileName, "fileNameChange1", "a referenced change was added");
-			assert.equal(mChangesMap.variantSection.variantManagement0.variants[2].controlChanges[3].fileName, "fileNameChange5", "a referenced change was added");
+			BrowserStorageUtils.sortGroupedFlexObjects(mChangesMap);
+			assert.equal(oChangesStub.callCount, 1, "the changes were sorted");
+			assert.equal(oVariantsStub.callCount, 1, "the variants were sorted");
+			assert.equal(oVariantChangesStub.callCount, 1, "the variant changes were sorted");
+			assert.equal(oVariantDependentControlChangesStub.callCount, 1, "the ui changes dependent on variants were sorted");
+			assert.equal(oVariantManagementChangesStub.callCount, 1, "the variant management changes were sorted");
 		});
 	});
 

@@ -29,6 +29,7 @@ function(
 	"use strict";
 	//Stack of layers in the layered repository
 	var aLayers = [
+		"BASE",
 		"VENDOR",
 		"PARTNER",
 		"CUSTOMER_BASE",
