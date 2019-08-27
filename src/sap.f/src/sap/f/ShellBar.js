@@ -660,6 +660,26 @@ function(
 	 */
 	ShellBar.prototype._getRootAccessibilityRole = BarInPageEnabler.prototype._getRootAccessibilityRole;
 
+
+	/**
+	 * Sets accessibility aria-level attribute of the Root HTML element.
+	 *
+	 * This is only needed if <code>sap.m.Bar</code> has role="heading"
+	 * @param {string} sLevel aria-level attribute of the root Element
+	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+	 * @private
+	 */
+	ShellBar.prototype._setRootAriaLevel = BarInPageEnabler.prototype._setRootAriaLevel;
+
+	/**
+	 * Gets accessibility aria-level attribute of the Root HTML element.
+	 *
+	 * This is only needed if <code>sap.m.Bar</code> has role="heading"
+	 * @returns {string} aria-level
+	 * @private
+	 */
+	ShellBar.prototype._getRootAriaLevel = BarInPageEnabler.prototype._getRootAriaLevel;
+
 	return ShellBar;
 
 }, /* bExport= */ true);
