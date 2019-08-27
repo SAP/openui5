@@ -2636,19 +2636,21 @@ sap.ui.define([
 		this.oParent = oParent;
 		this.sParentAggregationName = sAggregationName;
 
-		//get properties to propagate - get them from the original API parent in case this control was moved by aggregation forwarding
-		var oPropagatedProperties = this.aAPIParentInfos ? this.aAPIParentInfos[0].parent._getPropertiesToPropagate() : oParent._getPropertiesToPropagate();
+		if (!oParent.mSkipPropagation[sAggregationName]) {
+			//get properties to propagate - get them from the original API parent in case this control was moved by aggregation forwarding
+			var oPropagatedProperties = this.aAPIParentInfos ? this.aAPIParentInfos[0].parent._getPropertiesToPropagate() : oParent._getPropertiesToPropagate();
 
-		if (oPropagatedProperties !== this.oPropagatedProperties) {
-			this.oPropagatedProperties = oPropagatedProperties;
-			// update bindings
-			if (this.hasModel()) {
-				this.updateBindings(true, null); // TODO could be restricted to models that changed
-				this.updateBindingContext(false, undefined, true);
-				this.propagateProperties(true);
+			if (oPropagatedProperties !== this.oPropagatedProperties) {
+				this.oPropagatedProperties = oPropagatedProperties;
+				// update bindings
+				if (this.hasModel()) {
+					this.updateBindings(true, null); // TODO could be restricted to models that changed
+					this.updateBindingContext(false, undefined, true);
+					this.propagateProperties(true);
+				}
+				this._callPropagationListener();
+				this.fireModelContextChange();
 			}
-			this._callPropagationListener();
-			this.fireModelContextChange();
 		}
 
 		this._applyContextualSettings(oParent._oContextualSettings);
