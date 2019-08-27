@@ -7,17 +7,20 @@
 	<App id="commands">
 		<Page id="page" title="Commands">
 			<dependents>
-				<core:CommandExecution command="Save" execute=".onSave" />
+				<core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".onSave" />
+				<core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".onDelete" />
 				<Popover
 					id="popoverCommand"
 					title="Popover"
 					class="sapUiContentPadding">
 					<dependents>
-						<core:CommandExecution command="Save" execute=".onSave" />
+						<core:CommandExecution id="CE_SAVE_POPOVER" enabled="true" command="Save" execute=".onSave" />
 					</dependents>
 					<footer>
 						<Toolbar>
+							<Button text="Delete" press="cmd:Delete" enabled="{$cmd>Delete/enabled}" />
 							<ToolbarSpacer/>
+							<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />
 						</Toolbar>
 					</footer>
 					<Input value="{viewModel>/value}" />
@@ -28,7 +31,9 @@
 					class="sapUiContentPadding">
 					<footer>
 						<Toolbar>
+							<Button text="Delete" press="cmd:Delete" enabled="{$cmd>Delete/enabled}" />
 							<ToolbarSpacer/>
+							<Button text="Save" press="cmd:Save" enabled="{$cmd>Save/enabled}" />
 						</Toolbar>
 					</footer>
 					<Input value="{viewModel>/value}" />
@@ -63,6 +68,16 @@
 			</Panel>
 			<Panel headerText="Popover - CommandExecution defined in Popup content">
 			<Button press=".onCommandPopoverOpen" text="Open Popover"/>
+			</Panel>
+			<Panel headerText="toggle CommandExecution enable for Page">
+				<Label text="Save:"/>
+				<Switch state="true" change=".onToggleSave"/>
+				<Label text="Delete:"/>
+				<Switch state="true" change=".onToggleDelete"/>
+			</Panel>
+			<Panel headerText="toggle CommandExecution enable for Popover">
+				<Label text="Save:"/>
+				<Switch state="true" change=".onTogglePopoverSave"/>
 			</Panel>
 		</Page>
 	</App>

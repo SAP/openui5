@@ -819,7 +819,6 @@ sap.ui.define([
 			// apply the model to the component with provided name ("" as key means unnamed model)
 			this.setModel(oModel, sModelName || undefined);
 		}
-
 	};
 
 
@@ -1695,7 +1694,13 @@ sap.ui.define([
 			mModelConfigurations[sModelName] = oModelConfig;
 
 		}
-
+		// add $cmd model
+		if (oManifest.getEntry("/sap.ui5/commands")) {
+			// Model for CommandExecution
+			mModelConfigurations["$cmd"] = {
+				type: 'sap.ui.model.json.JSONModel'
+			};
+		}
 		return mModelConfigurations;
 	};
 
