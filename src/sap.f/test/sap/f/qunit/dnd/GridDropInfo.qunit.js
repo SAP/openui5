@@ -78,70 +78,68 @@ sap.ui.define([
 		fnFireDropSpy.restore();
 	});
 
-	if (!Device.browser.msie) {
-		QUnit.module("Integration in GridContainer", {
-			beforeEach: function () {
-				this.oGridDropInfo = new GridDropInfo({
-					targetAggregation: "items",
-					dropPosition: "Between",
-					dropLayout: "Horizontal"
-				});
-				this.oGrid = new GridContainer({
-					dragDropConfig: this.oGridDropInfo
-				});
-			},
-			afterEach: function () {
-				this.oGridDropInfo.destroy();
-				this.oGrid.destroy();
-			}
-		});
+	QUnit.module("Integration in GridContainer", {
+		beforeEach: function () {
+			this.oGridDropInfo = new GridDropInfo({
+				targetAggregation: "items",
+				dropPosition: "Between",
+				dropLayout: "Horizontal"
+			});
+			this.oGrid = new GridContainer({
+				dragDropConfig: this.oGridDropInfo
+			});
+		},
+		afterEach: function () {
+			this.oGridDropInfo.destroy();
+			this.oGrid.destroy();
+		}
+	});
 
-		QUnit.test("isDroppable should be false for unknown controls", function(assert) {
-			var oFakeEvent = createFakeEvent("dragover");
+	QUnit.test("isDroppable should be false for unknown controls", function(assert) {
+		var oFakeEvent = createFakeEvent("dragover");
 
-			assert.notOk(this.oGridDropInfo.isDroppable(new ManagedObject(), oFakeEvent), "Not droppable on control which is unknown to the grid drop info");
-		});
+		assert.notOk(this.oGridDropInfo.isDroppable(new ManagedObject(), oFakeEvent), "Not droppable on control which is unknown to the grid drop info");
+	});
 
-		QUnit.test("isDroppable on correct parent control", function(assert) {
-			var oFakeEvent = createFakeEvent("dragover");
-			assert.ok(this.oGridDropInfo.isDroppable(this.oGrid, oFakeEvent), "Droppable when whole parent should be droppable");
+	QUnit.test("isDroppable on correct parent control", function(assert) {
+		var oFakeEvent = createFakeEvent("dragover");
+		assert.ok(this.oGridDropInfo.isDroppable(this.oGrid, oFakeEvent), "Droppable when whole parent should be droppable");
 
-			this.oGridDropInfo.setEnabled(false);
-			assert.notOk(this.oGridDropInfo.isDroppable(this.oGrid, oFakeEvent), "Not droppable when not enabled");
-		});
+		this.oGridDropInfo.setEnabled(false);
+		assert.notOk(this.oGridDropInfo.isDroppable(this.oGrid, oFakeEvent), "Not droppable when not enabled");
+	});
 
-		QUnit.module("Target aggregation in List", {
-			beforeEach: function () {
-				this.oGridDropInfo = new GridDropInfo({
-					targetAggregation: "items",
-					dropPosition: "Between",
-					dropLayout: "Horizontal"
-				});
+	QUnit.module("Target aggregation in List", {
+		beforeEach: function () {
+			this.oGridDropInfo = new GridDropInfo({
+				targetAggregation: "items",
+				dropPosition: "Between",
+				dropLayout: "Horizontal"
+			});
 
-				this.oGridList = new GridList({
-					dragDropConfig: this.oGridDropInfo
-				});
-			},
-			afterEach: function () {
-				this.oGridDropInfo.destroy();
-				this.oGridList.destroy();
-			}
-		});
+			this.oGridList = new GridList({
+				dragDropConfig: this.oGridDropInfo
+			});
+		},
+		afterEach: function () {
+			this.oGridDropInfo.destroy();
+			this.oGridList.destroy();
+		}
+	});
 
-		QUnit.test("isDroppable", function(assert) {
-			var oTestControl = new CustomListItem(),
-				oFakeEvent = createFakeEvent("dragover");
+	QUnit.test("isDroppable", function(assert) {
+		var oTestControl = new CustomListItem(),
+			oFakeEvent = createFakeEvent("dragover");
 
-			this.oGridList.addItem(oTestControl);
-			this.oGridList.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+		this.oGridList.addItem(oTestControl);
+		this.oGridList.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 
-			assert.notOk(this.oGridDropInfo.isDroppable(this.oGridList, oFakeEvent), "Not droppable outside the target aggregation");
+		assert.notOk(this.oGridDropInfo.isDroppable(this.oGridList, oFakeEvent), "Not droppable outside the target aggregation");
 
-			oFakeEvent.target = oTestControl.getDomRef();
-			assert.ok(this.oGridDropInfo.isDroppable(oTestControl, oFakeEvent), "Droppable when inside the target aggregation dom ref");
-		});
-	}
+		oFakeEvent.target = oTestControl.getDomRef();
+		assert.ok(this.oGridDropInfo.isDroppable(oTestControl, oFakeEvent), "Droppable when inside the target aggregation dom ref");
+	});
 
 	QUnit.module("Events", {
 		beforeEach: function () {
