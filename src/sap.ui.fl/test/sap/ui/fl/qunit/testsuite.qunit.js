@@ -654,19 +654,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/transport/TransportSelection"]
 				}
 			},
-
-			"core/EventDelegate": {
-				group: "core",
-				coverage: {
-					only: ["sap/ui/fl/core/EventDelegate"]
-				}
-			},
-			"core/FlexVisualizer": {
-				group: "core",
-				coverage: {
-					only: ["sap/ui/fl/core/FlexVisualizer"]
-				}
-			},
 			"designtime/Library": {
 				group: "designTime"
 			},
