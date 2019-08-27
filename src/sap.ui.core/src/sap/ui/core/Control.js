@@ -89,7 +89,7 @@ sap.ui.define([
 				 * Whether the control is currently in blocked state.
 				 *
 				 * @deprecated since version 1.69 The blocked property is deprecated.
-				 * There is <b>no accessibility</b> support for this property.
+				 * There is no accessibility support for this property.
 				 * Blocked controls should not be used inside Controls, which rely on keyboard navigation, e.g. List controls.
 				 */
 				"blocked" : {type: "boolean", defaultValue: false},
