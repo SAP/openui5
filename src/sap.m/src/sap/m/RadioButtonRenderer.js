@@ -69,7 +69,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		// ARIA
 		oRm.writeAccessibilityState(oRadioButton, {
 			role: "radio",
-			readonly: bNonEditableParent || undefined,
+			readonly: null,
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected(), // aria-checked must be set explicitly
 			disabled: bNonEditable ? true : undefined, // Avoid output aria-disabled=false when the button is editable
@@ -135,6 +135,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		oRm.write("<svg xmlns='http://www.w3.org/2000/svg' version='1.0'");
 		oRm.addClass('sapMRbSvg');
 		oRm.writeClasses();
+		oRm.writeAttribute("role", "presentation");
 		oRm.write(">");
 
 		oRm.write('<circle stroke="black" r="50%" stroke-width="2" fill="none"');

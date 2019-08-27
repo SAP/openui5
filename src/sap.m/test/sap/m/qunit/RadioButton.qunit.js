@@ -145,7 +145,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.ok(oRadioButton.getDomRef().getAttribute("aria-readonly"), "Readonly should be set to true");
+		assert.ok(!oRadioButton.getDomRef().getAttribute("aria-readonly"), "Readonly should not be present");
 		assert.ok(oRadioButton.getDomRef().getAttribute("aria-disabled"), "Disabled should be set to true");
 
 		// cleanup
@@ -895,6 +895,18 @@ sap.ui.define([
 		assert.strictEqual(oAccInfo.type, sExpectedType, "input type set correctly");
 		assert.strictEqual(oAccInfo.role, sExpectedRole, "role set correctly");
 		assert.strictEqual(oAccInfo.description, sExpectedDescription, "description set correctly");
+
+		oRadioButton.destroy();
+	});
+
+	QUnit.test("SVG aria", function(assert) {
+		var oRadioButton = new RadioButton({ text: "test" });
+
+		oRadioButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSvg = oRadioButton.getDomRef().getElementsByClassName('sapMRbSvg')[0];
+
+		assert.strictEqual(oSvg.getAttribute('role'), "presentation", "The SVG icon should have a role=presentation");
 
 		oRadioButton.destroy();
 	});
