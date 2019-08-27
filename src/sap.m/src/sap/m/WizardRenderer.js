@@ -17,7 +17,7 @@ sap.ui.define([], function () {
 	WizardRenderer.startWizard = function (oRm, oWizard) {
 		var sWizardLabelText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("WIZARD_LABEL");
 
-		oRm.write("<article");
+		oRm.write("<div");
 		oRm.writeControlData(oWizard);
 		oRm.addClass("sapMWizard");
 		oRm.writeClasses();
@@ -31,9 +31,7 @@ sap.ui.define([], function () {
 	};
 
 	WizardRenderer.renderProgressNavigator = function (oRm, oWizard) {
-		oRm.write("<header class='sapMWizardHeader'>");
 		oRm.renderControl(oWizard.getAggregation("_progressNavigator"));
-		oRm.write("</header>");
 	};
 
 	WizardRenderer.renderWizardSteps = function (oRm, oWizard) {
@@ -48,7 +46,7 @@ sap.ui.define([], function () {
 	};
 
 	WizardRenderer.endWizard = function (oRm) {
-		oRm.write("</article>");
+		oRm.write("</div>");
 	};
 
 	/**
