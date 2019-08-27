@@ -376,10 +376,13 @@ sap.ui.define([
 	 * @param {string} oTransportInfo.transport ID of the transport
 	 * @param {Array} aAllLocalChanges Array that includes all local changes
 	 * @param {Array} [aAppVariantDescriptors] Array that includes all app variant descriptors
-	 * @param {string} sReference Application ID of the changes which should be transported
+	 * @param {object} oContentParameters Object containing parameters added into the publish request
+	 * @param {string} oContentParameters.reference Application ID of the changes which should be transported
+	 * @param {string} oContentParameters.appVersion Version of the application for which the changes should be transported
+	 * @param {string} oContentParameters.layer Layer in which the changes are stored
 	 * @returns {Promise} Returns a Promise which resolves without parameters
 	 */
-	TransportSelection.prototype._prepareChangesForTransport = function(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors, sReference) {
+	TransportSelection.prototype._prepareChangesForTransport = function(oTransportInfo, aAllLocalChanges, aAppVariantDescriptors, oContentParameters) {
 		// Pass list of changes to be transported with transport request to backend
 		var oTransports = new Transports();
 		var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges, aAppVariantDescriptors);
@@ -388,7 +391,9 @@ sap.ui.define([
 		oTransportParams.package = oTransportInfo.packageName;
 		oTransportParams.transportId = oTransportInfo.transport;
 		oTransportParams.changeIds = aTransportData;
-		oTransportParams.reference = sReference;
+		oTransportParams.reference = oContentParameters.reference;
+		oTransportParams.appVersion = oContentParameters.appVersion;
+		oTransportParams.layer = oContentParameters.layer;
 
 		return oTransports.makeChangesTransportable(oTransportParams).then(function() {
 			// remove the $TMP package from all changes; has been done on the server as well,

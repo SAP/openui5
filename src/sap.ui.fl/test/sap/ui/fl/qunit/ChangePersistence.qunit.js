@@ -2607,6 +2607,8 @@ function (
 				}
 			};
 
+			var sLayer = "CUSTOMER";
+
 			var aMockLocalChanges = [oMockNewChange];
 			var aAppVariantDescriptors = [oAppVariantDescriptor];
 
@@ -2616,12 +2618,16 @@ function (
 			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aMockLocalChanges));
 			var fnPrepareChangesForTransportStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "_prepareChangesForTransport").returns(Promise.resolve());
 
-			return this.oChangePersistence.transportAllUIChanges(null, null, null, aAppVariantDescriptors).then(function() {
+			return this.oChangePersistence.transportAllUIChanges(null, null, sLayer, aAppVariantDescriptors).then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
 				assert.ok(fnGetChangesForComponentStub.calledOnce, "then getChangesForComponent called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
-				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, this._mComponentProperties.name), "then _prepareChangesForTransport called with the transport info and changes array");
+				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {
+					reference: this._mComponentProperties.name,
+					appVersion: this._mComponentProperties.appVersion,
+					layer: sLayer
+				}), "then _prepareChangesForTransport called with the transport info and changes array");
 			}.bind(this));
 		});
 
