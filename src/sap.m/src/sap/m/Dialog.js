@@ -1028,6 +1028,7 @@ function(
 				// set parent of header to detect changes on title
 				this._header = new Bar(this.getId() + "-header");
 				this._header._setRootAccessibilityRole("heading");
+				this._header._setRootAriaLevel("2");
 				this.setAggregation("_header", this._header, false);
 			}
 		};
@@ -1311,6 +1312,7 @@ function(
 			var oCustomHeader = this.getCustomHeader();
 
 			if (oCustomHeader) {
+				oCustomHeader._setRootAriaLevel("2");
 				return oCustomHeader._setRootAccessibilityRole("heading");
 			} else {
 				var bShowHeader = this.getShowHeader();
