@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ControlPersonalizationAPI"
-], function(
+], function (
 	Controller,
 	Utils,
 	ControlPersonalizationAPI
@@ -64,17 +64,17 @@ sap.ui.define([
 		},
 
 		switchToAdaptionMode: function () {
-			if (this.getView().getModel("app").getProperty("/showAdaptButton"))	{
+			if (this.getView().getModel("app").getProperty("/showAdaptButton")) {
 				sap.ui.require([
 					"sap/ui/rta/RuntimeAuthoring"
-				], function(RuntimeAuthoring) {
+				], function (RuntimeAuthoring) {
 					var oRta = new RuntimeAuthoring({
 						rootControl: this.getOwnerComponent(),
 						flexSettings: {
 							developerMode: false
 						}
 					});
-					oRta.attachEvent('stop', function() {
+					oRta.attachEvent('stop', function () {
 						oRta.destroy();
 					});
 					oRta.start();
@@ -82,7 +82,7 @@ sap.ui.define([
 			}
 		},
 
-		createChanges: function(oEvent) {
+		createChanges: function (oEvent) {
 			var oButton = oEvent.getSource();
 			var oAppComponent = Utils.getAppComponentForControl(sap.ui.core.Component.getOwnerComponentFor(this.getView()));
 			var mChangeSpecificData = {};
@@ -97,14 +97,14 @@ sap.ui.define([
 					icon: sap.m.MessageBox.Icon.INFORMATION,
 					title: "Personalization Dialog",
 					actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-					onClose: function(oAction) {
+					onClose: function (oAction) {
 						if (oAction === "YES") {
 							if (this.iCounter === 0) {
 								// on first press of "Personalization Changes button"
-								// add changes and save -> not in dirty state
-								// change1: move sections to standard variant
+								// add dirty changes2
+								// change1: move sections with simple form
 								var oMoveChangeData = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
+									selectorControl: sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
 									changeSpecificData: {
 										changeType: "moveControls",
 										movedElements: [{
@@ -122,45 +122,19 @@ sap.ui.define([
 										}
 									}
 								};
-
-								ControlPersonalizationAPI.addPersonalizationChanges({
-									controlChanges: [oMoveChangeData]
-								})
-									.then(function (aAppliedChanges) {
-										ControlPersonalizationAPI.saveChanges(aAppliedChanges, oAppComponent);
-
-										// change2: create new personalized variant
-										var oPersonalizedVariantParameters = {
-											def: false,
-											execute: false,
-											id: "application-masterDetail-display-component---idMain1--variantManagementOrdersTable",
-											key: null,
-											name: "Personalized Variant",
-											overwrite: false
-										};
-
-										var oVariantManagementControl = sap.ui.getCore().byId("application-masterDetail-display-component---idMain1--variantManagementOrdersTable");
-										oVariantManagementControl.fireEvent("save", oPersonalizedVariantParameters);
-
-										// change3: remove section to personalized variant
-										var oRemoveChangeData = {
-											selectorControl : sap.ui.getCore().byId("application-masterDetail-display-component---idMain1--ObjectPageSectionWithSmartForm"),
-											changeSpecificData: {
-												changeType: "stashControl"
-											}
-										};
-										return ControlPersonalizationAPI.addPersonalizationChanges({controlChanges: [oRemoveChangeData]});
-									})
-									.then(function (aAppliedChanges) {
-										// save change1, change2, change3
-										ControlPersonalizationAPI.saveChanges(aAppliedChanges, oAppComponent);
-									});
+								// change2: remove section with smart form
+								var oRemoveChangeData = {
+									selectorControl: sap.ui.getCore().byId("application-masterDetail-display-component---idMain1--ObjectPageSectionWithSmartForm"),
+									changeSpecificData: {
+										changeType: "stashControl"
+									}
+								};
+								ControlPersonalizationAPI.addPersonalizationChanges({controlChanges: [oMoveChangeData, oRemoveChangeData]});
 								this.iCounter++;
 							} else if (this.iCounter === 1) {
 								// on second press of "Personalization Changes button"
-								// add change but not save -> dirty state
 								var oMoveChangeData2 = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
+									selectorControl: sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
 									changeSpecificData: {
 										changeType: "moveControls",
 										movedElements: [{
