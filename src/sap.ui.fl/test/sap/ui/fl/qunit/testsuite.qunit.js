@@ -188,6 +188,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/_internal/Connector"]
 				}
 			},
+			"write/_internal/connectors/Utils": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/connectors/Utils"]
+				}
+			},
 			"write/_internal/connectors/PersonalizationConnector": {
 				group: "Write Internal",
 				coverage: {
@@ -222,6 +228,12 @@ sap.ui.define(function () {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/LrepConnector"]
+				}
+			},
+			"write/_internal/connectors/KeyUserConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/connectors/KeyUserConnector"]
 				}
 			},
 			// Team Gravity tests

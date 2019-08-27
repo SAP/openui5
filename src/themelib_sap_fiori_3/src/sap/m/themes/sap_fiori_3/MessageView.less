@@ -5,9 +5,11 @@
 
 .sapMMsgView {
 	.sapMMsgViewItem {
-		padding-top: 0.5rem;
-		padding-bottom: 0.5rem;
 		padding-left: 0;
+		&.sapMSLIWithDescription {
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+		}
 	}
 	.sapMLIBActive .sapMLIBImgNav {
 		background: none;
@@ -18,6 +20,11 @@
 		font-family: @sapUiFontHeaderFamily;
 		font-size: @sapMFontHeader6Size;
 		font-weight: @sapUiFontHeaderWeight;
+	}
+
+	.sapMSLITitleOnly {
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
 	}
 
 	.sapMSLITitle {
@@ -49,6 +56,10 @@
 		font-size: @sapMFontMediumSize;
 		font-weight: normal;
 		color: @sapUiLink;
+	}
+
+	.sapMSLIWithDescription > .sapMLIBContent > .sapMSLIDiv > .sapMSLIDescription {
+		margin-top: 0.25rem;
 	}
 }
 

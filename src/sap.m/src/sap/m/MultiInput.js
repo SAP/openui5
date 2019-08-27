@@ -260,10 +260,7 @@ function(
 
 		this.attachLiveChange(this._onLiveChange, this);
 
-		this.attachValueHelpRequest(function () {
-			// Register the click on value help.
-			this._bValueHelpOpen = true;
-		}, this);
+		this.attachValueHelpRequest(this._onValueHelpRequested, this);
 
 		this._getValueHelpIcon().setProperty("visible", true, true);
 		this._modifySuggestionPicker();
@@ -457,6 +454,11 @@ function(
 
 			this._oSuggPopover._oPopupInput.focus();
 		}
+	};
+
+	MultiInput.prototype._onValueHelpRequested = function () {
+		// Register the click on value help.
+		this._bValueHelpOpen = true;
 	};
 
 	MultiInput.prototype._onLiveChange = function (eventArgs) {
@@ -1272,6 +1274,26 @@ function(
 			});
 		}
 		return item;
+	};
+
+	/**
+	 * Clones the <code>sap.m.MultiInput</code> control.
+	 *
+	 * @public
+	 * @return {sap.ui.core.Element} reference to the newly created clone
+	 */
+	MultiInput.prototype.clone = function () {
+		var oClone;
+
+		this.detachSuggestionItemSelected(this._onSuggestionItemSelected, this);
+		this.detachLiveChange(this._onLiveChange, this);
+		this._tokenizer.detachTokenChange(this._onTokenChange, this);
+		this._tokenizer.detachTokenUpdate(this._onTokenUpdate, this);
+		this.detachValueHelpRequest(this._onValueHelpRequested, this);
+
+		oClone = Input.prototype.clone.apply(this, arguments);
+
+		return oClone;
 	};
 
 	MultiInput.getMetadata().forwardAggregation(

@@ -76,6 +76,32 @@
 						value="false" />
 				</customData>
 			</Button>
+			<Button
+				class="sapUiSmallMarginBottom"
+				text="Show Select Dialog (draggable=true)"
+				press="handleSelectDialogPress">
+				<customData>
+					<core:CustomData
+						key="multi"
+						value="true" />
+					<core:CustomData
+						key="draggable"
+						value="true" />
+				</customData>
+			</Button>
+			<Button
+				class="sapUiSmallMarginBottom"
+				text="Show Select Dialog (resizable=true)"
+				press="handleSelectDialogPress">
+				<customData>
+					<core:CustomData
+						key="multi"
+						value="true" />
+					<core:CustomData
+						key="resizable"
+						value="true" />
+				</customData>
+			</Button>
 			<Input
 				id="productInput"
 				type="Text"

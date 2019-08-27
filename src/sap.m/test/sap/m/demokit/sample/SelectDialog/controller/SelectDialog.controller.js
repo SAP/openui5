@@ -67,6 +67,14 @@ sap.ui.define([
 				this._oDialog.setGrowingThreshold(parseInt(sGrowingThreshold));
 			}
 
+			// Set draggable property
+			var bDraggable = oButton.data("draggable");
+			this._oDialog.setDraggable(bDraggable == "true");
+
+			// Set draggable property
+			var bResizable = oButton.data("resizable");
+			this._oDialog.setResizable(bResizable == "true");
+
 			// clear the old search filter
 			this._oDialog.getBinding("items").filter([]);
 

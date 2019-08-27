@@ -1398,6 +1398,21 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Dialog should have accessibility attribute aria-modal set to true", function(assert) {
+		// arrange
+		var oDialog = new Dialog();
+
+		// act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(oDialog.$().attr('aria-modal'), "true", 'aria-modal attribute is true');
+
+		// cleanup
+		oDialog.destroy();
+	});
+
 	QUnit.module("Dragging");
 
 	QUnit.test("Check if dialog size remain unchanged after dragging it", function(assert) {
@@ -1912,12 +1927,8 @@ sap.ui.define([
 			oModel.setData(oData);
 
 			setTimeout(function () {
-
-				var iWindowScrollTop = jQuery(window).scrollTop(),
-					oDialogOffset = this.oDialog.$().offset();
-
 				// assert
-				assert.ok(iWindowScrollTop < oDialogOffset.top, "Dialog should NOT be out of the viewport");
+				assert.ok(this.oDialog.$().offset().top > 0, "Dialog should NOT be out of the viewport");
 				done();
 
 			}.bind(this), 1000);

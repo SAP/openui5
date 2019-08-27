@@ -142,6 +142,18 @@ sap.ui.define([
 		return observer;
 	}
 
+	function isJSON(text) {
+		if (typeof text !== "string") {
+			return false;
+		}
+		try {
+			JSON.parse(text);
+			return true;
+		} catch (error) {
+			return false;
+		}
+	}
+
 	function createTagClass(prefixedTagName, TagImpl) {
 		if (document.createCustomElement[prefixedTagName]) {
 			return document.createCustomElement[prefixedTagName];
@@ -169,10 +181,8 @@ sap.ui.define([
 			node._control = this;
 			Tag.initCloneNode(node);
 			Tag.defineProperties(node);
-			this._controlImpl = this._controlImpl || new TagImpl(node.id);
+			this._controlImpl = this._controlImpl || new TagImpl();
 			this._changeProperties(node);
-			//TODO: How to avoid the UI Area?
-			node.setAttribute("id", this._controlImpl.getId() + "-area");
 			this._uiArea = oInterface.coreInstance.createUIArea(node);
 			this._uiArea.addContent(this._controlImpl);
 			if (Tag.isInActiveDocument(node)) {
@@ -263,6 +273,11 @@ sap.ui.define([
 				var oType = oSetting.getType();
 				var vValue = oType.parseValue(newValue);
 				var vOldValue = oSetting.get(oTagImpl);
+
+				if (property === "manifest" && oType.getName() === "any" && isJSON(vValue)) {
+					vValue = JSON.parse(vValue);
+				}
+
 				if (oType.isValid(vValue)) {
 					oSetting.set(oTagImpl, vValue);
 				} else {

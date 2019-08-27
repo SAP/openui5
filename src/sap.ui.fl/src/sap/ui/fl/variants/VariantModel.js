@@ -678,8 +678,16 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype._ensureStandardVariantExists = function(sVariantManagementReference) {
+		if (!this.oVariantController) {
+			throw new Error("An sap.ui.fl.variants.VariantController instance was not found.");
+		}
+
+		// variant model data
 		var oData = this.getData();
-		if (!oData[sVariantManagementReference]) { /*Ensure standard variant exists*/
+		if (!oData[sVariantManagementReference]) { // Ensure standard variant exists
+			// Standard Variant should always contain the value: "SAP" in "author" / "Created by" field
+			// case when standard variant does not exist in the backend response
+
 			// Set Standard Data to VariantModel
 			oData[sVariantManagementReference] = {
 				currentVariant: sVariantManagementReference,
@@ -694,38 +702,40 @@ sap.ui.define([
 						favorite: true,
 						originalFavorite: true,
 						visible: true,
-						originalVisible: true
+						originalVisible: true,
+						author : this.oVariantController.DEFAULT_AUTHOR
 					}
 				]
 			};
 			this.setData(oData);
 
-			if (this.oVariantController) {
-				var oVariantControllerData = {changes: { variantSection: {}}};
-
-				var oDefaultObj = {
-					defaultVariant: sVariantManagementReference,
-					variantManagementChanges: {},
-					variants: [
-						{
-							content: {
-								fileName: sVariantManagementReference,
-								fileType: "ctrl_variant",
-								variantManagementReference: sVariantManagementReference,
-								variantReference: "",
-								content: {
-									title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE")
-								}
+			// variant controller map
+			var oVariantControllerData = {changes: {variantSection: {}}};
+			var oDefaultObj = {
+				defaultVariant: sVariantManagementReference,
+				variantManagementChanges: {},
+				variants: [
+					{
+						content: {
+							fileName: sVariantManagementReference,
+							fileType: "ctrl_variant",
+							variantManagementReference: sVariantManagementReference,
+							variantReference: "",
+							support: {
+								user: this.oVariantController.DEFAULT_AUTHOR
 							},
-							controlChanges: [],
-							variantChanges: {}
-						}
-					]
-				};
-				// Set Standard Data to VariantController
-				oVariantControllerData.changes.variantSection[sVariantManagementReference] = oDefaultObj;
-				this.oVariantController.setChangeFileContent(oVariantControllerData, {});
-			}
+							content: {
+								title: this._oResourceBundle.getText("STANDARD_VARIANT_TITLE")
+							}
+						},
+						controlChanges: [],
+						variantChanges: {}
+					}
+				]
+			};
+			// Set Standard Data to VariantController
+			oVariantControllerData.changes.variantSection[sVariantManagementReference] = oDefaultObj;
+			this.oVariantController.setChangeFileContent(oVariantControllerData, {});
 		}
 	};
 

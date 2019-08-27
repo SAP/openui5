@@ -121,6 +121,8 @@ sap.ui.define([
 			assert.strictEqual(this.oSelectDialog.getGrowingThreshold(), 50, 'The growing threshold should be "50"');
 			assert.strictEqual(this.oSelectDialog.getMultiSelect(), true, 'The multiSelect mode should be "true"');
 			assert.strictEqual(this.oSelectDialog.getShowClearButton(), false, 'There is no clear button');
+			assert.strictEqual(this.oSelectDialog.getDraggable(), false, 'The draggable property should be false');
+			assert.strictEqual(this.oSelectDialog.getResizable(), false, 'The resizable property should be false');
 		});
 
 		QUnit.test("setBusy", function (assert) {
@@ -192,6 +194,74 @@ sap.ui.define([
 				"The selected items, should be equal to the number of the selected items in the list");
 			assert.strictEqual(this.oSelectDialog.getItems().length, 10,
 				"The number of items, should be equal to the number of items in the list");
+		});
+
+		QUnit.test("draggable: true on desktop", function (assert) {
+			// Arrange
+			var oSystem = {
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
+			this.stub(Device, "system", oSystem);
+
+			// Act
+			this.oSelectDialog.setDraggable(true);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog.getDraggable(), true, "draggable is set correctly in the SelectDialog");
+			assert.strictEqual(this.oSelectDialog._oDialog.getDraggable(), true, "draggable is set correctly in the Dialog");
+		});
+
+		QUnit.test("draggable: true on mobile device", function (assert) {
+			// Arrange
+			var oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+			this.stub(Device, "system", oSystem);
+
+			// Act
+			this.oSelectDialog.setDraggable(true);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog.getDraggable(), true, "draggable is set correctly in the SelectDialog");
+			assert.strictEqual(this.oSelectDialog._oDialog.getDraggable(), false, "draggable is set correctly in the Dialog");
+		});
+
+		QUnit.test("resizable: true on desktop device", function (assert) {
+			// Arrange
+			var oSystem = {
+				desktop: true,
+				phone: false,
+				tablet: false
+			};
+			this.stub(Device, "system", oSystem);
+
+			// Act
+			this.oSelectDialog.setResizable(true);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog.getResizable(), true, "resizable is set correctly in the SelectDialog");
+			assert.strictEqual(this.oSelectDialog._oDialog.getResizable(), true, "resizable is set correctly in the Dialog");
+		});
+
+		QUnit.test("resizable: true on desktop device", function (assert) {
+			// Arrange
+			var oSystem = {
+				desktop: false,
+				phone: true,
+				tablet: false
+			};
+			this.stub(Device, "system", oSystem);
+
+			// Act
+			this.oSelectDialog.setResizable(true);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog.getResizable(), true, "resizable is set correctly in the SelectDialog");
+			assert.strictEqual(this.oSelectDialog._oDialog.getResizable(), false, "resizable is set correctly in the Dialog");
 		});
 
 		QUnit.test("confirmButtonText", function(assert) {

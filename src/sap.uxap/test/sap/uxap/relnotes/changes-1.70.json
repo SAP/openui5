@@ -23,6 +23,18 @@
             "reference": "1970422781"
           }
         ]
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "6f88099b730e15d7184db9350dec1d1dcf7e3f73",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Removed computationally expensive check",
+        "references": []
       }
     ]
   }

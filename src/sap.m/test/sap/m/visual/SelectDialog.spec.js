@@ -72,4 +72,9 @@ describe("sap.m.SelectDialog", function () {
 		element(by.id("SelectDialog12-ok")).click();
 	});
 
+	it("Should open resizable SelectDialog", function () {
+		element(by.id("Button13")).click();
+		expect(takeScreenshot(element(by.id("SelectDialog13-dialog")))).toLookAs("select-dialog-12");
+		element(by.id("SelectDialog13-cancel")).click();
+	});
 });

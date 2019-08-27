@@ -35,6 +35,68 @@
             "reference": "1970285385"
           }
         ]
+      },
+      {
+        "id": "5531bda46e5feb3fe9a60418055bdaa137b6f933",
+        "type": "FEATURE",
+        "text": " sap.f.GridContainer: XS breakpoint added",
+        "references": []
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "edd02e823863f4b78999d8ca497784ea620fc1cd",
+        "type": "FIX",
+        "text": " Remove sap.tnt.InfoLabel from sap.f.ShellBar",
+        "references": []
+      },
+      {
+        "id": "6a0ebe6851c3b3835047145e853c6f00343b2218",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected header adjustment on rerender",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970424557"
+          }
+        ]
+      },
+      {
+        "id": "c7166f04683e720ef70856b90e05a6839c7fa505",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: GridDropInfo placeholder is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970411441"
+          }
+        ]
+      },
+      {
+        "id": "a7ad68acc064b7eee57937af8d51a14c319ed46d",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: RTL is now correct in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970431813"
+          }
+        ]
+      },
+      {
+        "id": "c6cc0c50d0e00124b1fba0be8a0f347dddf03d48",
+        "type": "FIX",
+        "text": " sap.f.GridList: GridBoxLayout resizing optimizations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1930410831"
+          }
+        ]
       }
     ]
   }

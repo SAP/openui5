@@ -309,14 +309,7 @@ sap.ui.define([
 
 			this.oVariantManagement._openVariantList();
 
-			assert.equal(this.oVariantManagement._oVariantList.getItems()[0].getText(), "Standard");
-
-			var aFilters = this.oVariantManagement._getFilters();
-			assert.equal(aFilters.length, 2);
-			assert.equal(aFilters[0].sPath, "visible");
-			assert.equal(aFilters[1].aFilters.length, 2);
-			assert.equal(aFilters[1].aFilters[0].sPath, "favorite");
-			assert.equal(aFilters[1].aFilters[1].sPath, "key");
+			assert.equal(this.oVariantManagement._oVariantList.getItems()[0].getText(), "One");
 		});
 
 		QUnit.test("Check 'variantsEditable'", function(assert) {
@@ -856,12 +849,31 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.oManagementSave.getEnabled());
 		});
 
-		QUnit.test("Checking _handleManageExecuteOnSelectionChanged ", function(assert) {
-			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
-			this.oVariantManagement._createManagementDialog();
+		QUnit.test("Checking _handleManageSavePressed; deleted item is default variant and Standard marked as non favorite", function(assert) {
+			oModel.oData.One.variants[0].favorite = false;
+			oModel.oData.One.currentVariant = "1";
+			oModel.oData.One.defaultVariant = "1";
 
-			this.oVariantManagement._handleManageExecuteOnSelectionChanged({});
-			assert.ok(this.oVariantManagement.oManagementSave.getEnabled());
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement._createManagementDialog();
+			assert.ok(this.oVariantManagement.oManagementDialog);
+			sinon.stub(this.oVariantManagement.oManagementDialog, "open");
+
+
+			this.oVariantManagement._openManagementDialog();
+
+			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "1");
+			var oItem = this.oVariantManagement._getItemByKey("Standard");
+			assert.ok(oItem);
+			assert.ok(!oItem.favorite);
+
+			this.oVariantManagement._handleManageDeletePressed(this.oVariantManagement._getItemByKey("1"));
+
+			assert.equal(this.oVariantManagement.getDefaultVariantKey(), "Standard");
+			oItem = this.oVariantManagement._getItemByKey("Standard");
+			assert.ok(oItem);
+			assert.ok(oItem.favorite);
 		});
 	});
 

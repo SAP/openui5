@@ -261,6 +261,62 @@ sap.ui.define([
 		oDatePicker.destroy();
 	});
 
+	QUnit.test("Footer is correctly displayed on dekstop", function(assert) {
+		// Prepare
+		var oDP = new DatePicker({
+				valueFormat: "yyyyMMdd",
+				showFooter: true
+			}),
+			oRP;
+
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.toggleOpen();
+		oRP = oDP._oPopup;
+
+		// Assert
+		assert.ok(oRP.getBeginButton().getVisible(), "Begin button is visible");
+		assert.notOk(oRP.getShowHeader(), "Header is not visible");
+		assert.ok(oRP.getEndButton().getVisible(), "End button is visible");
+
+		// Cleanup
+		oDP.destroy();
+	});
+
+	QUnit.test("Footer is correctly displayed on mobile", function(assert) {
+		// Prepare
+		var oTouchStub = this.stub(Device, "support", {touch: true}),
+			oSystemStub = this.stub(Device, "system", {phone: true}),
+			sLabelText = "DatePicker with showFooter property set to 'true'",
+			oLabel = new sap.m.Label({text: sLabelText, labelFor: "uniqueId"}),
+			oDP = new DatePicker("uniqueId", {
+				valueFormat: "yyyyMMdd",
+				showFooter: true
+			}),
+			oRP;
+
+		oLabel.placeAt("qunit-fixture");
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDP.toggleOpen();
+		oRP = oDP._oPopup;
+
+		// Assert
+		assert.ok(oRP.getBeginButton().getVisible(), "Begin button is visible");
+		assert.ok(oRP.getShowHeader(), "Header is visible");
+		assert.strictEqual(oRP.getTitle(), sLabelText, "Dialog title text is correct");
+		assert.notOk(oRP.getEndButton(), "End button is destroyed");
+
+		// Cleanup
+		oDP.destroy();
+		oTouchStub.restore();
+		oSystemStub.restore();
+	});
+
 	QUnit.module("data binding");
 
 	QUnit.test("data binding with sap.ui.model.type.Date", function(assert) {
@@ -1016,6 +1072,7 @@ sap.ui.define([
 		// On a desktop (non-touch) device
 		sap.ui.Device.support.touch = false;
 		sap.ui.Device.system.desktop = true;
+		sap.ui.getCore().byId("DP5").focus();
 		qutils.triggerEvent("click", "DP5-icon");
 		jQuery("#DP5-cal--Month0-20151124").focus();
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -1606,7 +1663,14 @@ sap.ui.define([
 			oDP = new DatePicker(),
 			oDPStoreInputSelectionSpy = this.spy(oDP, "_storeInputSelection");
 
-		oDP._oPopup = { setAutoCloseAreas: fn, open: fn, isOpen: fn }; // simulate that there is a popup
+		oDP._oPopup = {
+			openBy: fn,
+			isOpen: fn,
+			_getPopup: function() {
+				return { setAutoCloseAreas: fn, open: fn, isOpen: fn };
+			}
+		}; // simulate that there is a popup
+
 		oDP.placeAt("uiArea2");
 		sap.ui.getCore().applyChanges();
 
@@ -1621,7 +1685,6 @@ sap.ui.define([
 		oDPStoreInputSelectionSpy.restore();
 		oDP.destroy();
 	});
-
 
 	QUnit.test("Instance manager detects popup state changes", function (assert) {
 		// Prepare
@@ -1840,36 +1903,78 @@ sap.ui.define([
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oDP = new DatePicker("EDP").placeAt("uiArea6");
-			sap.ui.getCore().applyChanges();
-
 			this.oSpy = sinon.spy();
+			this.fnHandleCalendarSelect = sinon.spy(this.oDP, "_handleCalendarSelect");
+			this.fnHandleOKButton = sinon.spy(this.oDP, "_handleOKButton");
+			this.fnFireNavigate = sinon.spy(this.oDP, "fireNavigate");
+
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.oSpy = null;
+			this.fnHandleCalendarSelect.restore();
+			this.fnHandleOKButton.restore();
+			this.fnFireNavigate.restore();
 
 			this.oDP.destroy();
 			this.oDP = null;
 		}
 	});
 
-	QUnit.test("navigate", function (assert) {
-		// Arrange
-		var fnFireNavigate = this.spy(this.oDP, "fireNavigate");
+	QUnit.test("Compare pressing OK button against pressing a date in the calendar", function(assert) {
+		// Prepare
+		var oOkButton;
 
+		// Act
+		this.oDP.setShowFooter(true);
+		this.oDP.toggleOpen();
+		oOkButton = this.oDP._oPopup.getBeginButton();
+
+		// Assert
+		assert.notOk(oOkButton.getEnabled(), "Ok button is disabled");
+
+		this.oDP._oCalendar.fireSelect();
+
+		// Assert
+		assert.ok(this.fnHandleCalendarSelect.calledOnce, "_handleCalendarSelect handle is called when a date is pressed");
+		assert.ok(this.oDP._oPopup.isOpen(), "Popover is opened");
+		assert.ok(oOkButton.getEnabled(), "Ok button is enabled");
+
+		// Act
+		oOkButton.firePress();
+
+		// Assert
+		assert.ok(this.fnHandleOKButton.calledOnce, "_handleOKButton handler is called when OK button is pressed");
+		assert.notOk(this.oDP._oPopup.isOpen(), "Popover is closed");
+	});
+
+	QUnit.test("Press footer cancel button", function(assert) {
+
+		// Act
+		this.oDP.setShowFooter(true);
+		this.oDP.toggleOpen();
+		this.oDP._oPopup.getEndButton().firePress();
+
+		// Assert
+		assert.ok(this.fnHandleCalendarSelect.notCalled, "_handleCalendarSelect handler is not called when 'Cancel' button is pressed");
+		assert.notOk(this.oDP._oPopup.isOpen(), "Popover is closed");
+	});
+
+	QUnit.test("navigate", function (assert) {
 		// Act
 		qutils.triggerEvent("click", "EDP-icon");
 
 		// Assert
-		assert.ok(fnFireNavigate.callCount, 1, "Event handler should be called once after opening picker");
-		assert.ok(fnFireNavigate.getCall(0).args[0].afterPopupOpened,
+		assert.ok(this.fnFireNavigate.callCount, 1, "Event handler should be called once after opening picker");
+		assert.ok(this.fnFireNavigate.getCall(0).args[0].afterPopupOpened,
 			"Event indicates that it has been fired after popup opening");
 
 		// Act
 		qutils.triggerEvent("click", "EDP-cal--Head-next");
 
 		// Assert
-		assert.ok(fnFireNavigate.callCount, 2, "Event handler should be called a second time after navigating in the calendar");
-		assert.notOk(fnFireNavigate.getCall(1).args[0].afterPopupOpened, "Event isn't fired after opening");
+		assert.ok(this.fnFireNavigate.callCount, 2, "Event handler should be called a second time after navigating in the calendar");
+		assert.notOk(this.fnFireNavigate.getCall(1).args[0].afterPopupOpened, "Event isn't fired after opening");
 	});
 
 	QUnit.module("SpecialDates - lazy loading", {

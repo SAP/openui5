@@ -196,6 +196,9 @@ sap.ui.define([
 		 * @param {string} [sMethod="GET"] Desired action to be performed for a given resource
 		 * @param {object} [mPropertyBag] Object with parameters as properties
 		 * @param {string} [mPropertyBag.token] Existing X-CSRF token of the connector which triggers the request
+		 * @param {string} [mPropertyBag.payload] Payload of the request
+		 * @param {string} [mPropertyBag.contentType] Content type of the request
+		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
@@ -206,13 +209,23 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				var xhr = new XMLHttpRequest();
 				xhr.open(sMethod, sUrl);
-				if ((sMethod === "GET" || sMethod === "HEAD") && mPropertyBag && !mPropertyBag.token) {
+				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || !mPropertyBag.token)) {
 					xhr.setRequestHeader("X-CSRF-Token", "fetch");
 				}
 				if ((sMethod === "POST" || sMethod === "PUT" || sMethod === "DELETE") && mPropertyBag && mPropertyBag.token) {
 					xhr.setRequestHeader("X-CSRF-Token", mPropertyBag.token);
 				}
-				xhr.send();
+				if (mPropertyBag && mPropertyBag.contentType) {
+					xhr.setRequestHeader("Content-Type", mPropertyBag.contentType);
+				}
+				if (mPropertyBag && mPropertyBag.dataType) {
+					xhr.responseType = mPropertyBag.dataType;
+				}
+				if (mPropertyBag && mPropertyBag.payload) {
+					xhr.send(mPropertyBag.payload);
+				} else {
+					xhr.send();
+				}
 				xhr.onload = function() {
 					if (xhr.status >= 200 && xhr.status < 400) {
 						var oResult = {};

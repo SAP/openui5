@@ -412,4 +412,20 @@ sap.ui.define([
 
 		assert.ok(true, "Assertion has done");
 	});
+
+	//================================================================================
+	// ResponsivePopover accessibility
+	//================================================================================
+
+	QUnit.test("ResponsivePopover with aria-modal attribute set to true", function (assert) {
+		// Arrange
+		var oResponsivePopover = new ResponsivePopover();
+
+		// Act
+		oResponsivePopover.openBy(this.oButton);
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(oResponsivePopover.getDomRef().getAttribute('aria-modal'), "true", 'aria-modal attribute is true');
+	});
 });

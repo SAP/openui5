@@ -27,8 +27,23 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		writeFlexData:function (/* mPropertyBag */) {
+		writeFlexData: function (/* mPropertyBag */) {
 			return Promise.reject("writeFlexData is not implemented");
+		},
+
+		/**
+		 * Interface called to delete flex data.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.name Name of the file to be deleted
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be deleted
+		 * @param {string} mParameters.namespace The namespace of the change file
+		 * @param {string} [mParameters.changeList] The transport ID
+		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @returns {Promise} Promise resolves when the writing was completed
+		 */
+		deleteFlexData: function (/* mPropertyBag */) {
+			return Promise.reject("deleteFlexData is not implemented");
 		},
 
 		/**

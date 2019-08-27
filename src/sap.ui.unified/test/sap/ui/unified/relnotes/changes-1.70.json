@@ -12,6 +12,18 @@
             "reference": "1970240395"
           }
         ]
+      },
+      {
+        "id": "9a56dbd77a5d8ede57fc6b0ac22b26779e2f044a",
+        "type": "FIX",
+        "text": " Core: incorporate feedback from SDK feedback channel (2019/4-7)",
+        "references": []
+      },
+      {
+        "id": "f94d862fe60bbea11fe93e034cb0b8a6db50dc6e",
+        "type": "FIX",
+        "text": " sap.m.CalendarDateInterval: Space auto-repeat on date selection removed",
+        "references": []
       }
     ]
   }

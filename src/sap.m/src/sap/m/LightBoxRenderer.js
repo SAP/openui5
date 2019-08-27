@@ -66,6 +66,7 @@ sap.ui.define(["sap/m/library"], function (library) {
 
 		oRm.writeAccessibilityState({
 			role: 'dialog',
+			modal: true,
 			labelledby: invisiblePopupText && invisiblePopupText.getId()
 		});
 

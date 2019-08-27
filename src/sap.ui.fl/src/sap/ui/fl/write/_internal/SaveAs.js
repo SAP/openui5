@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/base/util/includes",
 	"sap/base/util/merge"
@@ -15,6 +16,7 @@ sap.ui.define([
 	TransportSelection,
 	DescriptorInlineChangeFactory,
 	ChangesController,
+	FlUtils,
 	Log,
 	includes,
 	merge
@@ -93,7 +95,11 @@ sap.ui.define([
 				// TODO: This behavior needs to be changed in the future
 				oChange.setRequest("ATO_NOTIFICATION");
 			}
-			oChange.setNamespace(oAppVariant.getNamespace());
+			var oPropertyBag = {
+				reference: oAppVariant.getId()
+			};
+			var sChangesNamespace = FlUtils.createNamespace(oPropertyBag, "changes");
+			oChange.setNamespace(sChangesNamespace);
 			oChange.setComponent(oAppVariant.getId());
 			if (oAppVariant.getVersion()) {
 				// Only needed for RTA tool, Smart business might not pass the version

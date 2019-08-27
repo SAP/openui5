@@ -39,7 +39,8 @@ sap.ui.define([],
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
 		if (oCal._bPoupupMode) {
-			mAccProps["role"] = "dialog";
+			mAccProps.role = "dialog";
+			mAccProps.modal = true;
 		}
 		oRm.writeAccessibilityState(oCal, mAccProps);
 
@@ -87,9 +88,12 @@ sap.ui.define([],
 
 		oRm.write("</div>");
 
-		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
-		oRm.write(rb.getText("CALENDAR_CANCEL"));
-		oRm.write("</button>");
+		//when used in a DatePicker, in mobile there is no cancel button
+		if (!oCal._bSkipCancelButtonRendering) {
+			oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
+			oRm.write(rb.getText("CALENDAR_CANCEL"));
+			oRm.write("</button>");
+		}
 
 		// dummy element to catch tabbing in from next element
 		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");

@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/m/Bar',
 	'sap/m/Title',
 	'sap/ui/core/theming/Parameters',
-	'./SelectDialogRenderer'
+	'./SelectDialogRenderer',
+	"sap/base/Log"
 ],
 function(
 	Button,
@@ -35,7 +36,8 @@ function(
 	Bar,
 	Title,
 	Parameters,
-	SelectDialogRenderer
+	SelectDialogRenderer,
+	Log
 	) {
 	"use strict";
 
@@ -81,11 +83,13 @@ function(
 	 * when the dialog is opened again. </li>
 	 * <li> When cancelling the selection, the event <code>change</code> will be fired and the selection is restored
 	 * to the state when the dialog was opened. </li>
+	 * <li>The SelectDialog is usually displayed at the center of the screen. Its size and position can be changed by the user.
+	 * To enable this you need to set the <code>resizable</code> and <code>draggable</code> properties. Both properties are available only in desktop mode.</li>
 	 * </ul>
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
 	 * <ul>
-	 * <li>You  need to select one or more entries from a comprehensive list that contains multiple attributes or values. </li>
+	 * <li>You need to select one or more entries from a comprehensive list that contains multiple attributes or values. </li>
 	 * </ul>
 	 * <h4>When not to use:</h4>
 	 * <ul>
@@ -182,7 +186,17 @@ function(
 			 * Overwrites the default text for the confirmation button.
 			 * @since 1.68
 			 */
-			confirmButtonText: {type : "string", group : "Appearance"}
+			confirmButtonText: {type : "string", group : "Appearance"},
+			/**
+			 * When set to <code>true</code>, the SelectDialog is draggable by its header. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be draggable only in desktop mode.
+			 * @since 1.70
+			 */
+			draggable: {type: "boolean", group: "Behavior", defaultValue: false},
+			/**
+			 * When set to <code>true</code>, the SelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be resizable only in desktop mode.
+			 * @since 1.70
+			 */
+			resizable: {type: "boolean", group: "Behavior", defaultValue: false}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -396,7 +410,9 @@ function(
 			subHeader: this._oSubHeader,
 			content: [this._oBusyIndicator, this._oList],
 			leftButton: this._getCancelButton(),
-			initialFocus: (Device.system.desktop ? this._oSearchField : null)
+			initialFocus: (Device.system.desktop ? this._oSearchField : null),
+			draggable: this.getDraggable() && Device.system.desktop,
+			resizable: this.getResizable() && Device.system.desktop
 		}).addStyleClass("sapMSelectDialog", true);
 		// for downward compatibility reasons
 		this._dialog = this._oDialog;
@@ -438,6 +454,49 @@ function(
 		this.setProperty("growing", bValue, true);
 
 		return this;
+	};
+
+	/**
+	 * Sets the draggable property.
+	 * @public
+	 * @param {boolean} bValue Value for the draggable property
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 */
+	SelectDialog.prototype.setDraggable = function (bValue) {
+		this._setInteractionProperty(bValue, "draggable", this._oDialog.setDraggable);
+
+		return this;
+	};
+
+	/**
+	 * Sets the resizable property.
+	 * @public
+	 * @param {boolean} bValue Value for the resizable property
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 */
+	SelectDialog.prototype.setResizable = function (bValue) {
+		this._setInteractionProperty(bValue, "resizable", this._oDialog.setResizable);
+
+		return this;
+	};
+
+	/**
+	 * @private
+	 * @param {boolean} bValue Value for the property
+	 * @param {string} sPropertyType Property type
+	 * @param {function} fnCallback Callback function
+	 */
+	SelectDialog.prototype._setInteractionProperty = function(bValue, sPropertyType, fnCallback) {
+		this.setProperty(sPropertyType, bValue, true);
+
+		if (!Device.system.desktop && bValue) {
+			Log.warning(sPropertyType + " property works only on desktop devices!");
+			return;
+		}
+
+		if (Device.system.desktop && this._oDialog) {
+			fnCallback.call(this._oDialog, bValue);
+		}
 	};
 
 	SelectDialog.prototype.setBusy = function () {
@@ -1181,7 +1240,6 @@ function(
 			}, this);
 		}
 	};
-
 
 	/* =========================================================== */
 	/*           end: internal methods                             */

@@ -2933,7 +2933,6 @@ sap.ui.define([
 
 		var mRenderConfig = this._getSelectionPlugin().getRenderConfig();
 		var sSelectAllResourceTextID;
-		var sDisabledResourceTextID;
 		var sSelectAllText;
 		var $SelectAll = this.$("selall");
 		// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
@@ -2947,7 +2946,6 @@ sap.ui.define([
 		}
 
 		if (mRenderConfig.headerSelector.visible) {
-			var $SelectAll = this.$("selall");
 			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
 
 			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
@@ -2962,17 +2960,16 @@ sap.ui.define([
 			$SelectAll.attr("disabled", !mRenderConfig.headerSelector.enabled);
 			sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 
-			if (!mRenderConfig.headerSelector.enabled) {
-				sDisabledResourceTextID = "TBL_CTRL_STATE_DISABLED";
+			if (mRenderConfig.headerSelector.enabled) {
+				$SelectAll.removeAttr("aria-disabled");
+			} else {
+				$SelectAll.attr("aria-disabled", "true");
 			}
 		}
 
 		if (sSelectAllResourceTextID) {
 			sSelectAllText = TableUtils.getResourceText(sSelectAllResourceTextID);
 			if (this._getShowStandardTooltips() && mRenderConfig.headerSelector.visible) {
-				if (sDisabledResourceTextID) {
-					sSelectAllText = sSelectAllText + " " + TableUtils.getResourceText(sDisabledResourceTextID);
-				}
 				$SelectAll.attr('title', sSelectAllText);
 			} else if (mRenderConfig.headerSelector.type === "toggle") {
 				this.getDomRef("ariaselectall").innerText = sSelectAllText;

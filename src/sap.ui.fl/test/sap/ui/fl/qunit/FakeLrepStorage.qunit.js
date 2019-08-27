@@ -33,10 +33,10 @@ sap.ui.define([
 			FakeLrepSessionStorage.deleteChanges();
 		}
 	}, function() {
-		QUnit.test("when in INITAL status", function(assert) {
-			var aInitalChanges = FakeLrepSessionStorage.getChanges();
+		QUnit.test("when in INITIAL status", function(assert) {
+			var aInitialChanges = FakeLrepSessionStorage.getChanges();
 
-			assert.equal(aInitalChanges.length, 0, "there are no inital changes");
+			assert.equal(aInitialChanges.length, 0, "there are no initIal changes");
 		});
 
 		QUnit.test("when I want to prefix change and variant IDs", function(assert) {
