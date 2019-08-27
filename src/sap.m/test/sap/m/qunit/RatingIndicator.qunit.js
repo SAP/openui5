@@ -176,6 +176,7 @@ sap.ui.define([
 			init(aRatings[i].getId());
 			if (oRating.getVisible()) {
 				assert.ok($RatingContainer.attr('role') == 'slider', "ARIA role is 'slider' on " + oRating);
+				assert.ok(!$RatingContainer.attr('aria-readonly'), "aria-readonly should not be present");
 				assert.ok($RatingContainer.attr('aria-valuenow') == oRating.getValue(), "aria-valuenow is correct on " + oRating);
 				assert.ok($RatingContainer.attr('aria-valuemin') == 0, "aria-valuemin is correct on " + oRating);
 				assert.ok($RatingContainer.attr('aria-valuemax') == oRating.getMaxValue(), "aria-valuemax is correct on " + oRating);
@@ -241,7 +242,6 @@ sap.ui.define([
 		assert.strictEqual(oRating.getEditable(), true, 'The Editable property is false on ' + oRating);
 		assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), false, 'Initially the control does not have class "sapMRIReadOnly" on ' + oRating);
 		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to false on " + oRating);
-		assert.strictEqual(oRating.$().attr('aria-readonly'), "false", "aria-readonly is set to false on " + oRating);
 		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
 
 		// act
@@ -252,7 +252,6 @@ sap.ui.define([
 		assert.strictEqual(oRating.getEditable(), false, 'The Editable property is true on ' + oRating);
 		assert.strictEqual(oRating.$().hasClass("sapMRIReadOnly"), true, 'The control have class "sapMRIReadOnly" on ' + oRating);
 		assert.strictEqual(oRating.$().attr('aria-disabled'), "false", "aria-disabled is set to true on " + oRating);
-		assert.strictEqual(oRating.$().attr('aria-readonly'), "true", "aria-readonly is set to false on " + oRating);
 		assert.strictEqual(oRating.$().attr("tabindex"), "0", "The control is in the tab chain");
 
 		// clean
