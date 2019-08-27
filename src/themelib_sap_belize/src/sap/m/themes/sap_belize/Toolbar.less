@@ -4,8 +4,12 @@
 /* ============================== */
 @_sap_m_Toolbar_MarginRight: 0.25rem;
 
-.sapMIBar.sapMTB .sapMBarChild:last-child:not(:only-child) {
+.sapMIBar.sapMTB .sapMBarChild:last-child {
 	margin-right: @_sap_m_Toolbar_MarginRight;
+
+	&:only-child {
+		margin-right: 0px;
+	}
 }
 
 html.sap-desktop .sapMTBActive:focus {
