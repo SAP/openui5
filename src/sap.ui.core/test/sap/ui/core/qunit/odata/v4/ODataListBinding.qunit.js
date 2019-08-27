@@ -552,7 +552,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/0"], aPreviousContexts[0]);
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/1"], aPreviousContexts[1]);
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES/3"], aPreviousContexts[3]);
-		// reset is only possible when this context has been POSTed and has the key predicate
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES($uid=id-1-23)"],
 			oCreatedContext);
 		assert.deepEqual(oBinding.aContexts, []);
@@ -562,8 +561,6 @@ sap.ui.define([
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
 		assert.strictEqual(oBinding.iCreatedContexts, 0);
 		assert.strictEqual(oBinding.bCreatedAtEnd, undefined);
-		assert.strictEqual(oCreatedContext.oCreatePromise, undefined);
-		assert.strictEqual(oCreatedContext.oSyncCreatePromise, undefined);
 	});
 
 	//*********************************************************************************************
@@ -2657,18 +2654,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("createContexts, reuse previous contexts", function (assert) {
-		var oBinding,
+		var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES/1", 1),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES/2", 2),
 			oContext3 = {},
 			oContextMock = this.mock(Context),
 			mPreviousContextsByPath = {
-				"/EMPLOYEES/0" : {destroy : function () {}},
+				"/EMPLOYEES/0" : {},
 				"/EMPLOYEES/1" : oContext1,
 				"/EMPLOYEES/2" : oContext2
 			};
 
-		oBinding = this.bindList("/EMPLOYEES", {/*oContext*/});
 		oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
 		this.mock(oContext1).expects("checkUpdate").withExactArgs();
 		this.mock(oContext2).expects("checkUpdate").withExactArgs();
@@ -2720,6 +2716,7 @@ sap.ui.define([
 			oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
 			this.mock(oContext1).expects("destroy").never();
 			this.mock(oContext2).expects("destroy").never();
+			this.mock(oContext2).expects("isTransient").withExactArgs().returns(true);
 			this.mock(oContext1).expects("checkUpdate").withExactArgs();
 			this.mock(oContext2).expects("checkUpdate").withExactArgs();
 			oContextMock.expects("create")
@@ -2779,6 +2776,32 @@ sap.ui.define([
 		assert.deepEqual(oBinding.aContexts, []);
 		assert.strictEqual(oBinding.bLengthFinal, true);
 		assert.strictEqual(oBinding.iMaxLength, 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createContexts: do not reuse a created context", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('1')", -1,
+				{/*createdPromise*/}),
+			oNewContext = {};
+
+		oBinding.mPreviousContextsByPath = {
+			"/EMPLOYEES('1')" : oCreatedContext
+		};
+
+		this.mock(Context).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"/EMPLOYEES('1')", 0)
+			.returns(oNewContext);
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+			.withExactArgs(sinon.match.func).callsArg(0);
+		this.mock(oCreatedContext).expects("destroy").withExactArgs();
+
+		oBinding.createContexts(0, 1, [{
+			"@$ui5._" : {"predicate" : "('1')"}
+		}]);
+
+		assert.strictEqual(oBinding.aContexts[0], oNewContext);
 	});
 
 	//*********************************************************************************************
