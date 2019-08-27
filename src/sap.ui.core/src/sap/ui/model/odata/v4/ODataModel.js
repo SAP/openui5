@@ -1672,7 +1672,8 @@ sap.ui.define([
 	 * subsequent calls to this method for the same group ID may be combined in one batch request
 	 * using separate change sets. For group IDs with {@link sap.ui.model.odata.v4.SubmitMode.Auto},
 	 * only a single change set is used; this method is useful to repeat failed updates or creates
-	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}).
+	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) together with all other requests
+	 * for the given group ID in one batch request.
 	 *
 	 * @param {string} sGroupId
 	 *   A valid group ID as specified in {@link sap.ui.model.odata.v4.ODataModel}.
@@ -1692,7 +1693,7 @@ sap.ui.define([
 
 		this.checkBatchGroupId(sGroupId);
 		if (this.isAutoGroup(sGroupId)) {
-			sGroupId = "$parked." + sGroupId;
+			this.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
 		} else {
 			this.oRequestor.addChangeSet(sGroupId);
 		}

@@ -41,6 +41,7 @@
 					"FormattedText.fragment.xml",
 					"Helper.js",
 					"Main.view.xml",
+					"../../../common/Controller.js",
 					"../../../common/ValueHelp.js"
 				]
 			}

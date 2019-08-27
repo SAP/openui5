@@ -1091,7 +1091,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 					oEntityMatcher, sinon.match.same(oUpdateData));
 			this.oRequestorMock.expects("relocateAll")
-				.withExactArgs("$parked.group", oEntityMatcher, "group");
+				.withExactArgs("$parked.group", "group", oEntityMatcher);
 			oHelperMock.expects("buildPath")
 				.withExactArgs("~original~", oFixture.sEntityPath)
 				.returns("~");
@@ -6094,7 +6094,7 @@ sap.ui.define([
 
 			this.oRequestorMock.expects("isActionBodyOptional").withExactArgs().returns(bOptional);
 			this.oRequestorMock.expects("relocateAll")
-				.withExactArgs("$parked.group", sinon.match.same(oEntity), "group");
+				.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
 			this.oRequestorMock.expects("request")
 				.withExactArgs("PUT", sResourcePath, sinon.match.same(oGroupLock),
 					{"If-Match" : sinon.match.same(oEntity)},
@@ -6112,23 +6112,17 @@ sap.ui.define([
 	QUnit.test("SingleCache: post w/o arguments", function (assert) {
 		var sResourcePath = "LeaveRequest('1')/Submit",
 			oCache = this.createSingle(sResourcePath, undefined, true),
-			oGroupLock = new _GroupLock("group"),
-			oRelocateAllSpy,
-			oRequestSpy;
+			oGroupLock = new _GroupLock("group");
 
 		this.oRequestorMock.expects("isActionBodyOptional").never();
-		oRelocateAllSpy = this.oRequestorMock.expects("relocateAll")
-			.withExactArgs("$parked.group", undefined, "group");
-		oRequestSpy = this.oRequestorMock.expects("request")
+		this.oRequestorMock.expects("relocateAll").never();
+		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock),
 				{"If-Match" : undefined}, undefined)
 			.resolves();
 
 		// code under test
-		return oCache.post(oGroupLock).then(function () {
-			assert.ok(oRelocateAllSpy.calledImmediatelyBefore(oRequestSpy),
-				"relocateAll calledImmediatelyBefore request");
-		});
+		return oCache.post(oGroupLock);
 	});
 
 	//*********************************************************************************************

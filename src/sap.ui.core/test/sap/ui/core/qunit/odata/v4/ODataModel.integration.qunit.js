@@ -55,7 +55,10 @@ sap.ui.define([
 	 * defining the relevant <code>error</code> property of this JSON. It should contain the
 	 * properties "code" and "message".
 	 *
-	 * @param {object} oErrorResponse
+	 * When used without parameter, the function creates an error that makes the complete $batch
+	 * fail with status code 500.
+	 *
+	 * @param {object} [oErrorResponse]
 	 *   The <code>error</code> property of the simulated error response from the server
 	 * @returns {Error}
 	 *   The error object for {@link #expectRequest}
@@ -140,7 +143,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="id" text="{ID}" />\
 			<Text id="text" text="{Name}" />\
@@ -1091,11 +1094,18 @@ sap.ui.define([
 		 *
 		 * A failure response (with status code 500) is mocked if <code>oResponse</code> is an
 		 * Error. This error must be created with {@link #createError}. It is immediately used to
-		 * reject the promise of _Requestor#request for a $direct request. If the request is part of
-		 * a $batch, {@link #checkBatch} converts it to a response and inserts it into the $batch
-		 * response. If the request is part of a change set, the error is used as a response for the
-		 * complete change set (the following requests do not need a response). GET requests
-		 * following an error request are rejected automatically and do not need a response.
+		 * reject the promise of _Requestor#request for a $direct request.
+		 *
+		 * If the request is part of a $batch, there are two possibilities.
+		 * <ul>
+		 *   <li> If the error was created with an error object, {@link #checkBatch} converts it to
+		 *     a response and inserts it into the $batch response. If the request is part of a
+		 *     change set, the error is used as a response for the complete change set (the
+		 *     following requests do not need a response). GET requests following an error request
+		 *     are rejected automatically and do not need a response.
+	     *   <li> If the error was created without an error object, the complete $batch fails with
+		 *     status code 500.
+		 * </ul>
 		 *
 		 * <code>oResponse</code> may also be a promise resolving with the response or the error. In
 		 * this case you can control the response time (typically to control the order of the
@@ -1386,7 +1396,7 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({groupId : "$auto"}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}" >\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="id" text="{SalesOrderID}" />\
 		<Input id="note" value="{Note}" />\
@@ -1581,21 +1591,14 @@ sap.ui.define([
 	// Scenario: Request contexts from an ODataListBinding not bound to any control
 	// JIRA: CPOUI5UISERVICESV3-1396
 	QUnit.test("OLDB#requestContexts standalone", function (assert) {
-		var that = this;
+		var oPromise,
+			that = this;
 
 		return this.createView(assert, "", createSalesOrdersModel()).then(function () {
 			var oBinding = that.oModel.bindList("/SalesOrderList");
 
-			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
-				value : [
-					{SalesOrderID : "01"},
-					{SalesOrderID : "02"},
-					{SalesOrderID : "03"}
-				]
-			});
-
 			// code under test
-			return oBinding.requestContexts(0, 3).then(function (aContexts) {
+			oPromise = oBinding.requestContexts(0, 3, "group").then(function (aContexts) {
 				assert.deepEqual(aContexts.map(function (oContext) {
 					return oContext.getPath();
 				}), [
@@ -1604,6 +1607,59 @@ sap.ui.define([
 					"/SalesOrderList('03')"
 				]);
 			});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList?$skip=0&$top=3", {
+				value : [
+					{SalesOrderID : "01"},
+					{SalesOrderID : "02"},
+					{SalesOrderID : "03"}
+				]
+			});
+
+			return Promise.all([
+				oPromise,
+				that.oModel.submitBatch("group"),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request contexts from an ODataListBinding not bound to any control, Request
+	// creation is async and submitBatch must wait for the request.
+	// JIRA: CPOUI5UISERVICESV3-1396
+	QUnit.test("OLDB#requestContexts standalone: submitBatch must wait", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "").then(function () {
+			var oBinding = that.oModel.bindList(
+					"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT", undefined, undefined,
+					[new Filter("Name", FilterOperator.GE, "M")]);
+
+			that.expectRequest("Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT"
+				+ "?$filter=Name ge 'M'&$skip=0&$top=3", {
+				value : [
+					{ID : 1},
+					{ID : 2},
+					{ID : 3}
+				]
+			});
+
+			// code under test
+			return Promise.all([
+				oBinding.requestContexts(0, 3, "group").then(function (aContexts) {
+					assert.deepEqual(aContexts.map(function (oContext) {
+						return oContext.getPath();
+					}), [
+						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(1)",
+						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(2)",
+						"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT(3)"
+					]);
+				}),
+				that.oModel.submitBatch("group")
+			]);
 		});
 	});
 
@@ -1857,7 +1913,7 @@ sap.ui.define([
 			sorter : {path : \'AGE\'},\
 			parameters : {foo : \'bar\'}\
 		}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Input id="age" value="{AGE}" />\
@@ -2121,7 +2177,7 @@ sap.ui.define([
 		QUnit.test("refresh: No drill-down error for deleted data #" + i, function (assert) {
 			var sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', templateShareable : false}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="age" text="{AGE}" />\
@@ -3385,7 +3441,7 @@ sap.ui.define([
 			oTable,
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="salesOrderID" text="{SalesOrderID}" />\
 		<Input id="note" value="{Note}" />\
@@ -3542,7 +3598,7 @@ sap.ui.define([
 				}),
 				sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="note" value="{Note}" />\
 		<Text id="companyName" binding="{SO_2_BP}" text="{CompanyName}"/>\
@@ -6233,7 +6289,7 @@ sap.ui.define([
 	QUnit.test("Create with default value in a currency/unit", function (assert) {
 		var sView = '\
 <Table id="table" items="{/SalesOrderList(\'42\')/SO_2_SOITEM}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="quantity" value="{Quantity}" />\
 		<Text id="unit" text="{QuantityUnit}" />\
@@ -6559,7 +6615,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="amount" value="{GrossAmount}"/>\
 		<Input id="note" value="{Note}"/>\
@@ -6648,7 +6704,7 @@ sap.ui.define([
 			}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Input id="amount" value="{GrossAmount}"/>\
 	</ColumnListItem>\
@@ -7749,7 +7805,7 @@ sap.ui.define([
 			oReturnValueContext,
 			sView = '\
 <Table id="table" items="{path : \'/Artists\', parameters : {$select : \'Messages\'}}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="name" text="{Name}" />\
 	</ColumnListItem>\
@@ -7965,7 +8021,7 @@ sap.ui.define([
 			filters : {path : \'TEAM_ID\', operator : \'EQ\', value1 : \'77\'},\
 			parameters : {$count : true}\
 		}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="teamId" text="{TEAM_ID}" />\
@@ -8593,9 +8649,9 @@ sap.ui.define([
 		<Text id="employeeId" text="{ID}" />\
 	</ColumnListItem>\
 </Table>\
-<VBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
+<FlexBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
 	<Input id="employeeName" value="{Name}"/>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
@@ -9377,7 +9433,7 @@ sap.ui.define([
 	//   that collection; inspired by https://github.com/SAP/openui5/issues/1763
 	QUnit.test("Filter collection provided via object binding", function (assert) {
 		var sView = '\
-<VBox id="vbox" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
+<FlexBox id="form" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
 		path : \'/TEAMS(\\\'42\\\')\'}">\
 	<Table items="{TEAM_2_EMPLOYEES}">\
 		<columns><Column/></columns>\
@@ -9385,7 +9441,7 @@ sap.ui.define([
 			<Text id="id" text="{ID}" />\
 		</ColumnListItem>\
 	</Table>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
 		// Note: for simplicity, autoExpandSelect : false but still most properties are omitted
@@ -9404,7 +9460,7 @@ sap.ui.define([
 				})
 				.expectChange("id", ["2"]);
 
-			that.oView.byId("vbox").getObjectBinding()
+			that.oView.byId("form").getObjectBinding()
 				.changeParameters({$expand : "TEAM_2_EMPLOYEES($filter=ID eq '2')"});
 
 			return that.waitForChanges(assert);
@@ -10901,7 +10957,7 @@ sap.ui.define([
 <FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="idMemberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="idAge" text="{AGE}" />\
 			<Text id="idName" text="{Name}" />\
@@ -10973,7 +11029,7 @@ sap.ui.define([
 	<Text id="idMemberCount" text="{MEMBER_COUNT}" />\
 	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : false,\
 			parameters : {$$ownRequest : true}}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="idAge" text="{AGE}" />\
 			<Text id="idName" text="{Name}" />\
@@ -11521,7 +11577,7 @@ sap.ui.define([
 			sView = '\
 <FlexBox binding="{/MANAGERS(\'1\')/' + sFunctionName + '()}" id="function">\
 	<Table items="{value}">\
-		<columns><Column/><Column/></columns>\
+		<columns><Column/></columns>\
 		<items>\
 			<ColumnListItem>\
 				<Text id="id" text="{ID}" />\
@@ -12971,7 +13027,7 @@ sap.ui.define([
 			}],
 			sView = '\
 <Table id="table" items="{path : \'/EMPLOYEES\', suspended : true}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="text" text="{Name}" />\
 		<Text id="age" text="{AGE}" />\
@@ -14213,7 +14269,7 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>\
 <Table id="LineItems" items="{SO_2_SOITEM}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
 		<Text id="ItemPosition" text="{ItemPosition}" />\
@@ -14833,10 +14889,10 @@ sap.ui.define([
 		<Text id="id" text="{ID}" />\
 	</ColumnListItem>\
 </Table>\
-<VBox id="employeeDetails"\
+<FlexBox id="employeeDetails"\
 		binding="{path : \'EQUIPMENT_2_EMPLOYEE\', parameters : {$$updateGroupId : \'foo\'\}}">\
 	<Input id="employeeName" value="{Name}"/>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("Equipments?$select=Category,ID&$skip=0&$top=100", {
@@ -16489,7 +16545,7 @@ sap.ui.define([
 	<Text id="id" text="{ArtistID}" />\
 	<FlexBox binding="{BestFriend}" id="section">\
 		<Table id="table" items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
-			<columns><Column/><Column/></columns>\
+			<columns><Column/></columns>\
 			<ColumnListItem>\
 				<Text id="price" text="{Price}" />\
 				<Text id="currency" text="{CurrencyCode}" />\
@@ -16503,7 +16559,7 @@ sap.ui.define([
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
 </FlexBox>\
 <Table id="detailTable" items="{_Artist/_Friend}">\
-	<columns><Column/><Column/></columns>\
+	<columns><Column/></columns>\
 	<ColumnListItem>\
 		<Text id="idDetail" text="{ArtistID}" />\
 		<Text id="nameDetail" text="{Name}" />\
@@ -17219,6 +17275,35 @@ sap.ui.define([
 		assert.strictEqual(this.oView.byId("form").getObjectBinding().hasPendingChanges(), false);
 
 		return this.oModel.submitBatch("$auto");
+	}, function (assert) {
+		// failed PATCH is retried within the same $batch as the side effect
+		var oEmployeeBinding = this.oView.byId("form").getObjectBinding();
+
+		this.expectRequest({
+				batchNo : 2,
+				headers : {"If-Match" : "ETag0"},
+				method : "PATCH",
+				payload : {
+					ROOM_ID : "42" // <-- retry
+				},
+				url : "EMPLOYEES('3')"
+			}, {/* don't care */})
+			.expectRequest({
+				batchNo : 2,
+				method : "GET",
+				url : "EMPLOYEES('3')?$select=STATUS"
+			}, {
+				STATUS : "Busy"
+			})
+			.expectChange("status", "Busy");
+
+		assert.strictEqual(this.oModel.hasPendingChanges(), true);
+		assert.strictEqual(oEmployeeBinding.hasPendingChanges(), true);
+
+		return Promise.all([
+			oEmployeeBinding.getBoundContext().requestSideEffects([{$PropertyPath : "STATUS"}]),
+			this.oModel.submitBatch("$auto")
+		]);
 	}].forEach(function (fnCodeUnderTest, i) {
 		QUnit.test("Later retry failed PATCHes for $auto, " + i, function (assert) {
 			var oModel = createTeaBusiModel({updateGroupId : "$auto"}),
@@ -19275,6 +19360,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectChange("valueHelp::currencyCode", null);
+
 			// delete creation row to avoid errors in destroy
 			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
 			oCreationRowContext.delete("$auto");
@@ -19565,7 +19652,7 @@ sap.ui.define([
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			that.expectRequest("SalesOrderList('1')/NetAmount", { value : 42});
+			that.expectRequest("SalesOrderList('1')/NetAmount", {value : 42});
 
 			// code under test
 			return oPropertyBinding.requestValue().then(function (vValue) {
@@ -19584,15 +19671,16 @@ sap.ui.define([
 				SalesOrderID : "1",
 				TaxAmount : 117
 			},
+			oSalesOrderResponse = Object.assign({}, oSalesOrder),
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			that.expectRequest("SalesOrderList('1')", Object.assign({}, oSalesOrder));
+			that.expectRequest("SalesOrderList('1')", oSalesOrderResponse);
 
 			// code under test
 			return oContextBinding.requestObject().then(function (oResponse) {
-				assert.deepEqual(oSalesOrder, oResponse);
-				assert.notStrictEqual(oSalesOrder, oResponse);
+				assert.deepEqual(oResponse, oSalesOrder);
+				assert.notStrictEqual(oResponse, oSalesOrderResponse);
 
 				return oContextBinding.requestObject("TaxAmount").then(function (vValue) {
 					assert.strictEqual(vValue, 117);
@@ -19732,6 +19820,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectChange("creationRow::note", null);
+
 			// cleanup: delete creation row to avoid error on view destruction
 			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
 			oCreationRowContext.delete("$auto");
@@ -19739,4 +19829,296 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Creation of an entity fails due to a network error. A subsequent call to
+	// requestSideEffects repeats the failed POST in the same $batch.
+	// JIRA: CPOUI5UISERVICESV3-1936
+[{
+	expectations : function (that) {
+		that.expectRequest({
+				batchNo : 3,
+				method : "POST",
+				payload : {Note : "Created"},
+				url : "BusinessPartnerList('4711')/BP_2_SO"
+			}, {
+				Note : "Created",
+				SalesOrderID : "43"
+			})
+			.expectRequest({
+				batchNo : 3,
+				method : "GET",
+				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
+					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
+			}, {
+				BusinessPartnerID : "4711",
+				BP_2_SO : [{
+					Note : "Unrealistic",
+					SalesOrderID : "43"
+				}, {
+					Note : "Side Effect",
+					SalesOrderID : "0500000001"
+				}]
+			})
+			//.expectChange("id", ["43"]);
+			.expectChange("id", "43", -1) //TODO fix Context#getIndex to not return -1;
+			// this is caused by ODLB#reset which sets iCreatedContexts = 0 and parks all
+			// contexts without changing the index;
+			// this conflicts with the _Cache#create success handler that changes values
+			// corresponding to the context with iIndex === -1
+			.expectChange("note", ["Unrealistic", "Side Effect"]);
+	},
+	text : "Repeated POST succeeds"
+}, {
+	expectations : function (that) {
+		var oCausingError = createError(); // a technical error -> let the $batch itself fail
+
+		that.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
+			+ " failed; will be repeated automatically");
+		that.oLogMock.expects("error").withArgs("$batch failed");
+		that.oLogMock.expects("error").withArgs("Failed to request side effects");
+
+		that.expectRequest({
+				batchNo : 3,
+				method : "POST",
+				payload : {Note : "Created"},
+				url : "BusinessPartnerList('4711')/BP_2_SO"
+			}, oCausingError)
+			.expectRequest({
+				batchNo : 3,
+				method : "GET",
+				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
+					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
+			})  // no response required
+			.expectMessages([{
+				code : undefined,
+				message : "Communication error: 500 ",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}, {
+				code : undefined,
+				message : "HTTP request was not processed because $batch failed",
+				persistent : true,
+				target : "",
+				technical : true,
+				type : "Error"
+			}]);
+
+		return oCausingError;
+	},
+	text : "Repeated POST fails"
+}].forEach(function (oFixture) {
+	QUnit.test("requestSideEffects repeats failed POST -" + oFixture.text, function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oTableBinding,
+			sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" items="{BP_2_SO}">\
+		<columns><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="id" text="{SalesOrderID}" />\
+			<Text id="note" text="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		that.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				BusinessPartnerID : "4711",
+				BP_2_SO : [{
+					Note : "Test",
+					SalesOrderID : '0500000001'
+				}]
+			})
+			.expectChange("id", ["0500000001"])
+			.expectChange("note", ["Test"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
+				+ " failed; will be repeated automatically");
+			that.oLogMock.expects("error").withArgs("$batch failed");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "BusinessPartnerList('4711')/BP_2_SO"
+				}, createError()) // a technical error -> let the $batch itself fail
+				.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("id", ["", "0500000001"])
+				.expectChange("note", ["Created", "Test"]);
+
+			oTableBinding = that.oView.byId("table").getBinding("items");
+			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oCausingError;
+
+			assert.equal(oTableBinding.getLength(), 2);
+
+			// remove persistent, technical messages from above
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+			that.expectMessages([]);
+
+			oCausingError = oFixture.expectations(that);
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : "BP_2_SO"
+				}]).catch(function (oError) {
+					if (!(oCausingError && oError.cause === oCausingError)) {
+						throw oError;
+					}
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.equal(oTableBinding.getLength(), 2);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Creation of an entity fails due to a network error. A subsequent call to
+	// requestSideEffects repeats the failed POST in the same $batch but fails again. All transient
+	// contexts are kept, even if not visible.
+	// JIRA: CPOUI5UISERVICESV3-1764
+	QUnit.skip("requestSideEffects keeps invisible transient contexts", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oTableBinding,
+			sView = '\
+<t:Table id="table" rows="{/SalesOrderList}" threshold="0" visibleRowCount="2">\
+	<t:Column>\
+		<t:template><Text id="id" text="{SalesOrderID}" /></t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template><Text id="note" text="{Note}" /></t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2", {
+				value : [
+					{Note : "Test 1", SalesOrderID : '0500000001'},
+					{Note : "Test 2", SalesOrderID : '0500000002'}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002"])
+			.expectChange("note", ["Test 1", "Test 2"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").withArgs("POST on 'SalesOrderList' failed; will be"
+				+ " repeated automatically");
+			that.oLogMock.expects("error").withArgs("$batch failed");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "SalesOrderList"
+				}, createError()) // a technical error -> let the $batch itself fail
+				.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}])
+				.expectChange("id", ["", "0500000001"])
+				.expectChange("note", ["Created", "Test 1"]);
+
+			oTableBinding = that.oView.byId("table").getBinding("rows");
+			oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", [, "0500000001", "0500000002"])
+				.expectChange("note", [, "Test 1", "Test 2"]);
+
+			// scroll down
+			that.oView.byId("table").setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oCausingError = createError(); // a technical error -> let the $batch itself fail
+
+			// remove persistent, technical messages from above
+			sap.ui.getCore().getMessageManager().removeAllMessages();
+
+			that.oLogMock.expects("error").withArgs("POST on 'SalesOrderList' failed; will be"
+				+ " repeated automatically");
+			that.oLogMock.expects("error").withArgs("Failed to get contexts for "
+				+ "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList"
+				+ " with start index 1 and length 2");
+			that.oLogMock.expects("error").withArgs("$batch failed");
+			that.oLogMock.expects("error").withArgs("Failed to request side effects");
+
+			that.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "SalesOrderList"
+				}, oCausingError)
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					// Because of the transient row in the first context the skip has to be adapted
+					// to 0 => CPOUI5UISERVICESV3-1764
+					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=2"
+				})  // no response required
+				.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}]);
+
+			return Promise.all([
+				// code under test
+				oTableBinding.getHeaderContext().requestSideEffects([{
+					$NavigationPropertyPath : ""
+				}]).catch(function (oError) {
+					if (!(oCausingError && oError.cause === oCausingError)) {
+						throw oError;
+					}
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
 });

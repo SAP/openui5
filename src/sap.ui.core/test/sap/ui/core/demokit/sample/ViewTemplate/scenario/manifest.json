@@ -37,7 +37,8 @@
 					"Main.view.xml",
 					"ODataMetaModel.json",
 					"Table.fragment.xml",
-					"TableFacet.fragment.xml"
+					"TableFacet.fragment.xml",
+					"../../common/Controller.js"
 				]
 			}
 		},
