@@ -38,6 +38,9 @@ sap.ui.define(['./ColumnPopoverItem'], function(ColumnPopoverItem) {
 				text    : { type : "string", group : "Misc", defaultValue : null }
 			},
 			aggregations: {
+				/**
+				 * Note that the content created inside ColumnPopoverCustomItem can not be used more than once.
+				 */
 				content: { type: "sap.ui.core.Control", multiple: false, singularName: "content" }
 			},
 			events : {

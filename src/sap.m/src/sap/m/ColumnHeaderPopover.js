@@ -58,6 +58,9 @@ sap.ui.define([
 
 			},
 			aggregations: {
+				/**
+				 * Note that the content created inside ColumnPopoverCustomItem can not be used more than once.
+				 */
 				items: {type : "sap.m.ColumnPopoverItem",  multiple : true, singularName : "item", bindable: true},
 				_popover: {type : "sap.m.ResponsivePopover", multiple : false, visibility : "hidden"}
 			},
