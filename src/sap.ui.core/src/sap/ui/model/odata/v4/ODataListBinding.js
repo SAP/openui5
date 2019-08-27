@@ -728,8 +728,8 @@ sap.ui.define([
 					|| _Helper.getPrivateAnnotation(aResults[i - iStart], "transientPredicate");
 				sContextPath = sPath + (sPredicate || "/" + i$skipIndex);
 				oContext = this.mPreviousContextsByPath[sContextPath];
-				if (oContext && !oContext.created()) {
-					// reuse the previous context
+				if (oContext && (!oContext.created() || oContext.isTransient())) {
+					// reuse the previous context, unless it is created and persisted
 					delete this.mPreviousContextsByPath[sContextPath];
 					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();

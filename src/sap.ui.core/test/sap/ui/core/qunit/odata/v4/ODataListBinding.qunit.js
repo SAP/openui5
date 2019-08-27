@@ -2716,6 +2716,7 @@ sap.ui.define([
 			oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
 			this.mock(oContext1).expects("destroy").never();
 			this.mock(oContext2).expects("destroy").never();
+			this.mock(oContext2).expects("isTransient").withExactArgs().returns(true);
 			this.mock(oContext1).expects("checkUpdate").withExactArgs();
 			this.mock(oContext2).expects("checkUpdate").withExactArgs();
 			oContextMock.expects("create")
