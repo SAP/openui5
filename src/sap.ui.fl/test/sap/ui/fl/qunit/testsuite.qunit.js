@@ -523,11 +523,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/LrepConnector"]
 				}
 			},
-			Persistence: {
-				coverage: {
-					only: ["sap/ui/fl/Persistence"]
-				}
-			},
 			PreprocessorImpl: {
 				coverage: {
 					only: ["sap/ui/fl/PreprocessorImpl"]
