@@ -8,27 +8,18 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/_internal/SaveAs",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/api/FeaturesAPI"
 ], function(
 	includes,
 	JsControlTreeModifier,
 	ChangesController,
 	DescriptorInlineChangeFactory,
 	SaveAs,
-	flexUtils
+	flexUtils,
+	FeaturesAPI
 ) {
 	"use strict";
-
-	/**
-	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.Change}s.
-	 *
-	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
-	 * @experimental Since 1.68
-	 * @since 1.68
-	 * @private
-	 * @ui5-restricted sap.ui.rta, similar tools
-	 *
-	 */
 
 	/**
 	 * Retrieves the changes from the flex persistence for the selector.
@@ -36,7 +27,6 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} oChange - Change instance
 	 *
 	 * @returns {boolean} Returns a boolean value if it is a descriptor change
-	 * @private
 	 */
 	function isDescriptorChange(oChange) {
 		return (oChange._getMap
@@ -46,13 +36,10 @@ sap.ui.define([
 
 	/**
 	 * Checks if changes exist for the flex persistence associated with the selector control;
-	 * If the optional layer parameter is passed, changes are checked on only that layer.
 	 *
 	 * @param {object} mPropertyBag Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
-	 * @param {string} [mPropertyBag.currentLayer] Layer on which changes should be checked
-	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist on the optionally passed layer
-	 * @private
+	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist
 	 */
 	function hasChanges(mPropertyBag) {
 		mPropertyBag.includeCtrlVariants = true;
@@ -64,28 +51,34 @@ sap.ui.define([
 	}
 
 	/**
-	 * Check if changes exist to be published;
-	 * If the optional layer parameter is passed, the changes are checked on only that layer.
+	 * Checks if one of the existing changes can be published;
 	 *
 	 * @param {object} mPropertyBag Object with parameters as properties
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
-	 * @param {string} [mPropertyBag.currentLayer] Layer on which changes should be checked
-	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist on the optionally passed layer
-	 * @private
+	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist and are not yet published
 	 */
 	function hasChangesToPublish(mPropertyBag) {
-		return hasChanges(mPropertyBag)
-			.then(function(bChangesExist) {
-				if (!bChangesExist) {
-					return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
-						._oChangePersistence.getDirtyChanges().length > 0
-					|| ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector)
-						._oChangePersistence.getDirtyChanges().length > 0;
-				}
-				return true;
+		mPropertyBag.includeCtrlVariants = true;
+		mPropertyBag.invalidateCache = false;
+		return PersistenceWriteAPI._getUIChanges(mPropertyBag)
+			.then(function(aChanges) {
+				return aChanges.some(function(oChange) {
+					return oChange.packageName === "$TMP" || oChange.packageName === "";
+				});
 			});
 	}
 
+
+	/**
+	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.Change}s.
+	 *
+	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
+	 * @experimental Since 1.68
+	 * @since 1.68
+	 * @private
+	 * @ui5-restricted sap.ui.rta, similar tools
+	 *
+	 */
 	var PersistenceWriteAPI = /**@lends sap.ui.fl.write.api.PersistenceWriteAPI */{
 		/**
 		 * Determines if user-specific changes or variants are present in the flex persistence.
@@ -95,8 +88,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.upToLayer] - Layer to compare with
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
 		 * @returns {Promise<boolean>} Promise that resolves to a boolean, indicating if a personalization change that was created during runtime is active in the application
-		 * @private
-		 * @ui5-restricted
+
 		 */
 		hasHigherLayerChanges: function (mPropertyBag) {
 			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
@@ -111,8 +103,6 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipUpdateCache] - Indicates if cache update should be skipped
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
-		 * @private
-		 * @ui5-restricted
 		 */
 		save: function (mPropertyBag) {
 			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
@@ -136,8 +126,6 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant save response
-		 * @private
-		 * @ui5-restricted
 		 */
 		saveAs: function(mPropertyBag) {
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
@@ -153,8 +141,6 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the package
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
-		 * @private
-		 * @ui5-restricted
 		 */
 		deleteAppVariant: function(mPropertyBag) {
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
@@ -164,34 +150,37 @@ sap.ui.define([
 		},
 
 		/**
-		 * Provides information whether content in an application can be reset.
+		 * Provides information if content from backend and persistence in an application can be published/reset.
 		 *
 		 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-		 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
+		 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
 		 *
-		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be reset
+		 * @returns {Promise<object>} Resolves the information if the application to which the selector belongs has content that can be published/reset
 		 */
-		isResetEnabled: function (mPropertyBag) {
-			return hasChanges(mPropertyBag)
-				.then(function(bResetEnabled) {
-					return bResetEnabled || ChangesController.getFlexControllerInstance(mPropertyBag.selector).isResetEnabled(mPropertyBag);
-				});
-		},
+		getResetAndPublishInfo: function(mPropertyBag) {
+			return Promise.all([
+				hasChanges(mPropertyBag),
+				hasChangesToPublish(mPropertyBag),
+				FeaturesAPI.isPublishAvailable()
+			])
+				.then(function(aResetPublishInfo) {
+					var oFlexInfo = {
+						isResetEnabled: aResetPublishInfo[0],
+						isPublishEnabled: aResetPublishInfo[1]
+					};
+					var bPublishAvailable = aResetPublishInfo[2];
 
-		/**
-		 * Provides information if content from backend and persistence in an application can be publish.
-		 *
-		 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-		 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
-		 *
-		 * @returns {Promise<boolean>} Resolves the information if the application to which the selector belongs has content that can be publish
-		 */
-		isPublishEnabled: function (mPropertyBag) {
-			return hasChangesToPublish(mPropertyBag)
-				.then(function(bPublishEnabled) {
-					return bPublishEnabled || ChangesController.getFlexControllerInstance(mPropertyBag.selector).isPublishEnabled(mPropertyBag);
+					var bIsBackEndCallNeeded = !oFlexInfo.isResetEnabled || (bPublishAvailable && !oFlexInfo.isPublishEnabled);
+					if (bIsBackEndCallNeeded) {
+						return ChangesController.getFlexControllerInstance(mPropertyBag.selector).getResetAndPublishInfo(mPropertyBag)
+							.then(function(oResponse) {
+								oFlexInfo.isResetEnabled = oFlexInfo.isResetEnabled || oResponse.isResetEnabled;
+								oFlexInfo.isPublishEnabled = oFlexInfo.isPublishEnabled || oResponse.isPublishEnabled;
+								return oFlexInfo;
+							});
+					}
+					return oFlexInfo;
 				});
 		},
 
@@ -231,7 +220,6 @@ sap.ui.define([
 		 *
 		 * @returns {Promise} Promise that resolves when all the artifacts are successfully transported
 		 * TODO: Must be changed in future.
-		 * @private
 		 */
 		publish: function(mPropertyBag) {
 			mPropertyBag.styleClass = mPropertyBag.styleClass || "";
@@ -247,8 +235,6 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-		 * @private
-		 * @ui5-restricted
 		 */
 		add: function (mPropertyBag) {
 			if (isDescriptorChange(mPropertyBag.change)) {
@@ -264,9 +250,6 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be removed
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
-		 *
-		 * @private
-		 * @ui5-restricted
 		 */
 		remove: function (mPropertyBag) {
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
@@ -297,8 +280,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
 		 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
 		 *
-		 * @returns {Promise} Promise resolves with a map of all change instances {@see sap.ui.fl.Change}
-		 * @private
+		 * @returns {Promise} Promise resolves with an array of all change instances {@see sap.ui.fl.Change}
 		 */
 		_getUIChanges: function(mPropertyBag) {
 			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)

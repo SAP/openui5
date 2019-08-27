@@ -135,8 +135,10 @@ function(
 
 	QUnit.module("Given RTA instance is initialized", {
 		beforeEach : function() {
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
@@ -555,8 +557,10 @@ function(
 	//when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach : function() {
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl")
@@ -645,8 +649,10 @@ function(
 	//Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
 		beforeEach : function(assert) {
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 
 			this.oDialog = new Dialog("testDialog");
 			oView.addDependent(this.oDialog);
@@ -738,8 +744,10 @@ function(
 	//_isComponentInsidePopup
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach: function (assert) {
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 
 			var oCompContInDialog = new ComponentContainer("CompCont2", {
 				component : new MockComponent("compInContainer")
@@ -789,8 +797,10 @@ function(
 
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
 		beforeEach: function (assert) {
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({

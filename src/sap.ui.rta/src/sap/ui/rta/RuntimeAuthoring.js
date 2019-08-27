@@ -619,16 +619,13 @@ function(
 			}.bind(this))
 			.then(function () {
 				var mPropertyBag = {
-					selector : this.getRootControlInstance(),
-					currentLayer : this.getLayer()
+					selector: this.getRootControlInstance(),
+					layer: this.getLayer()
 				};
-				return Promise.all([
-					PersistenceWriteAPI.isPublishEnabled(mPropertyBag),
-					PersistenceWriteAPI.isResetEnabled(mPropertyBag)
-				])
-				.then(function(aPromiseResults) {
-					this.bInitialPublishEnabled = aPromiseResults[0];
-					this.bInitialResetEnabled = aPromiseResults[1];
+				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
+				.then(function(oPublishAndResetInfo) {
+					this.bInitialResetEnabled = oPublishAndResetInfo.isResetEnabled;
+					this.bInitialPublishEnabled = oPublishAndResetInfo.isPublishEnabled;
 				}.bind(this));
 			}.bind(this))
 			.then(function () {

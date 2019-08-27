@@ -55,8 +55,10 @@ function(
 				}
 			});
 
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "isResetEnabled").resolves(true);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: true
+			});
 
 			this.oComp = new MockComponent("testComponent");
 

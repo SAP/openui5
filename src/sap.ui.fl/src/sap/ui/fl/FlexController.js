@@ -1393,41 +1393,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check if there are UI or Descriptor changes on the server.
-	 *
-	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
-	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
-	 *
-	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset
-	 */
-	FlexController.prototype.isResetEnabled = function (mPropertyBag) {
-		mPropertyBag.reference = this._sComponentName;
-		mPropertyBag.appVersion = this._sAppVersion;
-		return LrepConnector.createConnector().getFlexInfo(mPropertyBag)
-			.then(function (oInfo) {
-				return !!oInfo.isResetEnabled;
-			});
-	};
-
-	/**
-	 * The changes can be publish, when publish is available and there are changes in the backend which are not yet publish.
+	 * Send a flex/info request to the backend.
 	 *
 	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-	 * @param {string} mPropertyBag.currentLayer Current layer on which the request is sent to the the backend
+	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
 	 *
-	 * @returns {Promise<boolean>} Resolves the information if the application has changes which can be publish
+	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset and/or published
 	 */
-	FlexController.prototype.isPublishEnabled = function (mPropertyBag) {
+	FlexController.prototype.getResetAndPublishInfo = function(mPropertyBag) {
 		mPropertyBag.reference = this._sComponentName;
 		mPropertyBag.appVersion = this._sAppVersion;
-		return FeaturesAPI.isPublishAvailable()
-			.then(function (bPublishAvailable) {
-				return bPublishAvailable && LrepConnector.createConnector().getFlexInfo(mPropertyBag)
-					.then(function (oInfo) {
-						return !!oInfo.isPublishEnabled;
-					});
-			});
+		return LrepConnector.createConnector().getFlexInfo(mPropertyBag);
 	};
 
 	return FlexController;

@@ -62,7 +62,10 @@ sap.ui.define([
 				isProductiveSystem: function() { return false; }
 			}));
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-			sandbox.stub(PersistenceWriteAPI, "isPublishEnabled").resolves(false);
+			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+				isResetEnabled: true,
+				isPublishEnabled: false
+			});
 		},
 
 		startRta: function(oHorizontalLayout, aPlugins) {
