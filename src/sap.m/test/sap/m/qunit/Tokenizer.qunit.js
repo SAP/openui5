@@ -1364,6 +1364,10 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Role listbox should be applied", function(assert) {
+		assert.strictEqual(this.tokenizer.$().attr("role"), "listbox", "Tokenizer has role listbox");
+	});
+
 	QUnit.test("ARIA Read only attribute is not present", function(assert) {
 		// aria-readonly is not valid for the current role of the tokenizer.
 		assert.ok(!this.tokenizer.$().attr("aria-readonly"), "Tokenizer has no aria-readonly attribute");
