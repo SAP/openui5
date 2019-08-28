@@ -312,16 +312,33 @@ sap.ui.define([
 			if (mResult.changes.changes) {
 				sortByLayerThenCreation(mResult.changes.changes);
 			}
+			// variantManagementChanges
+			forEachVariantManagementReference(mResult, function(oVariantManagement) {
+				Object.keys(oVariantManagement.variantManagementChanges || {})
+					.forEach(function(sVariantManagementChange) {
+						sortByLayerThenCreation(oVariantManagement.variantManagementChanges[sVariantManagementChange]);
+					});
+			});
 			forEachVariant(mResult, function (oVariant) {
+				// variantChanges
+				Object.keys(oVariant.variantChanges).forEach(function(sVariantChangeType) {
+					sortByLayerThenCreation(oVariant.variantChanges[sVariantChangeType]);
+				});
+				// controlChanges
 				sortByLayerThenCreation(oVariant.controlChanges);
 			});
 			return mResult;
 		};
 
+		function forEachVariantManagementReference(mResult, fnCallBack) {
+			Object.keys(mResult.changes.variantSection).forEach(function(sVariantManagementReference) {
+				fnCallBack(mResult.changes.variantSection[sVariantManagementReference]);
+			});
+		}
+
 		function forEachVariant(mResult, fnCallback) {
-			Object.keys(mResult.changes.variantSection).forEach(function (sVariantManagementReference) {
-				var aVariants = mResult.changes.variantSection[sVariantManagementReference].variants;
-				aVariants.forEach(fnCallback);
+			forEachVariantManagementReference(mResult, function (oVariantManagement) {
+				oVariantManagement.variants.forEach(fnCallback);
 			});
 		}
 
