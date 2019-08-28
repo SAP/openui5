@@ -947,11 +947,25 @@ sap.ui.define([
 	 * Get messages for a given path.
 	 *
 	 * @param {string} sPath The binding path
+	 * @param {boolean} bStartsWithMatching The set of relevant messages is found through a String#startsWith matching
 	 * @protected
 	 */
-	Model.prototype.getMessagesByPath = function(sPath) {
+	Model.prototype.getMessagesByPath = function(sPath, bStartsWithMatching) {
+		var aMessages = [], that = this;
+
 		if (this.mMessages) {
-			return this.mMessages[sPath] || [];
+			if (bStartsWithMatching){
+				Object.keys(this.mMessages).forEach(function(sMessagePath){
+					that.mMessages[sMessagePath].forEach(function(oMessage){
+						if (oMessage.fullTarget.startsWith(sPath)){
+							aMessages.push(oMessage);
+						}
+					});
+				});
+				return aMessages;
+			} else {
+				return this.mMessages[sPath] || [];
+			}
 		}
 		return null;
 	};

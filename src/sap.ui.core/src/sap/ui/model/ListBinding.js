@@ -432,34 +432,40 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	 * @since 1.58
 	 */
 	ListBinding.prototype.checkDataState = function(mPaths) {
-		var oDataState = this.getDataState(),
-			sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null,
-			that = this;
+		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null,
+		oDataState = this.getDataState();
 
+		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+			if (sResolvedPath) {
+				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
+			}
+			this._fireDateStateChange(oDataState);
+
+		}
+	};
+
+	ListBinding.prototype._fireDateStateChange = function(oDataState){
+		var that = this;
 		function fireChange() {
 			that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
 			oDataState.changed(false);
 			that._sDataStateTimout = null;
 		}
 
-		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
+		if (oDataState && oDataState.changed()) {
+			if (this.mEventRegistry["DataStateChange"]) {
+				this.fireEvent("DataStateChange", { dataState: oDataState });
 			}
-			if (oDataState && oDataState.changed()) {
-				if (this.mEventRegistry["DataStateChange"]) {
-					this.fireEvent("DataStateChange", { dataState: oDataState });
-				}
-				if (this.bIsBeingDestroyed) {
-					fireChange();
-				} else if (this.mEventRegistry["AggregatedDataStateChange"]) {
-					if (!this._sDataStateTimout) {
-						this._sDataStateTimout = setTimeout(fireChange, 0);
-					}
+			if (this.bIsBeingDestroyed) {
+				fireChange();
+			} else if (this.mEventRegistry["AggregatedDataStateChange"]) {
+				if (!this._sDataStateTimout) {
+					this._sDataStateTimout = setTimeout(fireChange, 0);
 				}
 			}
 		}
 	};
+
 
 	return ListBinding;
 
