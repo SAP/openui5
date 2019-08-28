@@ -527,6 +527,68 @@
             "reference": "1970318351"
           }
         ]
+      },
+      {
+        "id": "eb9217179697445140c599830e7209fb981eab31",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalettePopover: ColorPicker displayMode can now be controlled",
+        "references": []
+      },
+      {
+        "id": "da1ae41180ac64cf937c18c6a2ae6114f17497f0",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: showFooter property added",
+        "references": []
+      },
+      {
+        "id": "2e10bdbc7a649861ccc0ed436ecf28fd295c5fc6",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog: Draggable and resizable properties added",
+        "references": []
+      },
+      {
+        "id": "30a126f7dd060f31d64e18e9e1be304013a5fe9e",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Cloning is now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970441377"
+          }
+        ]
+      },
+      {
+        "id": "54fecfff02fbd3ef04edaa432271b6923894debb",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Layout corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980318980"
+          }
+        ]
+      },
+      {
+        "id": "ffaa981dadaa51116191c792c52ae7a8aca39774",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Delete button showed on Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980323341"
+          }
+        ]
+      },
+      {
+        "id": "83d5b8a6814a57c5497a79e782389badb8c5bac8",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Misalignment in Form is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "N/A"
+          }
+        ]
       }
     ]
   }

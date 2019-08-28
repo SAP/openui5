@@ -41,6 +41,39 @@
             "reference": "1980319377"
           }
         ]
+      },
+      {
+        "id": "2dd7a64a81c48b3245891c382ab8b42109d1c386",
+        "type": "FIX",
+        "text": " Inline changes only relevant for Save As will be removed from",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324271"
+          }
+        ]
+      },
+      {
+        "id": "63421667b94108535e8191716f31992b1c9a8fda",
+        "type": "FIX",
+        "text": " fl.VM : default variant always also marked as favorite",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980318849"
+          }
+        ]
+      },
+      {
+        "id": "2bf7a2f08ece725d7e31c45de23c732599d90200",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixed the namespace for UI changes(dirty) relevant for",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324226"
+          }
+        ]
       }
     ]
   }

@@ -118,6 +118,12 @@
             "reference": "1970420265"
           }
         ]
+      },
+      {
+        "id": "7618d0980272735dadde67bf869b4184da67c716",
+        "type": "FIX",
+        "text": " sap.m.Bar: Items in bar now displayed with correct distance",
+        "references": []
       }
     ]
   }

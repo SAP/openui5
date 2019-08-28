@@ -24,6 +24,24 @@
         "type": "FIX",
         "text": " sap.m.CalendarDateInterval: Space auto-repeat on date selection removed",
         "references": []
+      },
+      {
+        "id": "eb9217179697445140c599830e7209fb981eab31",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalettePopover: ColorPicker displayMode can now be controlled",
+        "references": []
+      },
+      {
+        "id": "da1ae41180ac64cf937c18c6a2ae6114f17497f0",
+        "type": "FEATURE",
+        "text": " sap.m.DatePicker: showFooter property added",
+        "references": []
+      },
+      {
+        "id": "69c71bac58793cb62a68221c35e6148f66650ac8",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Multiple months view navigation changed",
+        "references": []
       }
     ]
   }

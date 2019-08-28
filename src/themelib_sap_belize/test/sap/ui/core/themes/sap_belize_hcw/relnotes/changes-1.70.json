@@ -73,6 +73,17 @@
             "reference": "1980277403"
           }
         ]
+      },
+      {
+        "id": "83d5b8a6814a57c5497a79e782389badb8c5bac8",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Misalignment in Form is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "N/A"
+          }
+        ]
       }
     ]
   }

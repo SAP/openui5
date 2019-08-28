@@ -120,6 +120,23 @@
             "reference": "1980317417"
           }
         ]
+      },
+      {
+        "id": "acb32db24a253621b727ffbb67c635a83a001e0a",
+        "type": "FEATURE",
+        "text": " CommandExecution: add enable property",
+        "references": []
+      },
+      {
+        "id": "0f259a39755bd37a1238153c4e25b38abb2fdb09",
+        "type": "FIX",
+        "text": " ManagedObject: Fixed issue with mSkipPropagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980338076"
+          }
+        ]
       }
     ]
   }

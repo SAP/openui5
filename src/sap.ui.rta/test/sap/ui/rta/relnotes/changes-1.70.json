@@ -35,6 +35,17 @@
         "type": "FIX",
         "text": ": RTA runtime authoring eslint fix",
         "references": []
+      },
+      {
+        "id": "2dd7a64a81c48b3245891c382ab8b42109d1c386",
+        "type": "FIX",
+        "text": " Inline changes only relevant for Save As will be removed from",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980324271"
+          }
+        ]
       }
     ]
   }

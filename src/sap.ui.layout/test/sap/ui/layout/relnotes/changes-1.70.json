@@ -55,6 +55,17 @@
             "reference": "1930410831"
           }
         ]
+      },
+      {
+        "id": "28b250b702a56594019017d8c8f198316febbd97",
+        "type": "FIX",
+        "text": " sap.ui.layout.CSSGrid: GridBoxLayout in IE is with wrapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980317947"
+          }
+        ]
       }
     ]
   }
