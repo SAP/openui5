@@ -1,0 +1,65 @@
+/******************************************************************
+	Style of the RTA Overlays - sap_fiori_3_hcw Theme
+*******************************************************************/
+@_sap_ui_rta_Overlay_HoverBG : fade(@sapUiAccent6, 40%);
+@_sap_ui_rta_Overlay_ActiveBG : fade(@sapUiAccent6, 40%);
+@_sap_ui_rta_Overlay_Border : @sapUiAccent6;
+@_sap_ui_rta_Overlay_HoverBorder : @sapUiBlackBG;
+@_sap_ui_rta_Overlay_BaseColor : @sapUiBlackBG;
+
+.sapUiDtOverlay {
+	&:focus {
+		outline: none;
+		&:before {
+			border-width: 2px;
+		}
+	}
+}
+
+.sapUiRta {
+	.sapUiRtaOverlayHover {
+		&:after {
+			border: none;
+			transition: none;
+			box-shadow: none;
+			outline: 2px dotted @_sap_ui_rta_Overlay_Border;
+			outline-offset: -2px;
+		}
+	}
+	.sapUiDtOverlaySelected {
+		transition: none;
+		box-shadow: none;
+
+		&:after {
+			border: 2px solid @_sap_ui_rta_Overlay_Border;
+			outline: none;
+		}
+
+		&.sapUiRtaOverlayHover {
+			&:after {
+				border: 2px solid @_sap_ui_rta_Overlay_Border!important;
+				outline: 2px dotted @_sap_ui_rta_Overlay_Border!important;
+				outline-offset: -4px;
+				transition: none;
+				box-shadow: none;
+			}
+		}
+	}
+	.sapUiDtOverlayTargetZone {
+		&:after {
+			transition: none;
+			box-shadow: none;
+		}
+	}
+}
+
+.sapUiRtaMode .sapUiShellBackgroundImage.sapUiGlobalBackgroundImageForce.sapUshellShellBG{
+	background-color: @sapBackgroundColor;
+	background-image:  none;
+}
+
+.sapUiRtaMode .sapUshellViewPortCenter,
+.sapUiRtaMode .sapMShellBG,
+.sapUiRtaMode .sapUiRtaToolbar{
+	background-color: @sapBackgroundColor;
+}
