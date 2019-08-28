@@ -743,7 +743,6 @@ sap.ui.define([
 		this.assertResolvedUri("../../../relative/3/uri",             "path/to/base/",          "relative/3/uri");
 		this.assertResolvedUri("../../../../relative/4/uri",          "path/to/base/",          "../relative/4/uri");
 		this.assertResolvedUri("../../../../../relative/5/uri",       "path/to/base/",          "../../relative/5/uri");
-		this.assertResolvedUri("../../../../../../relative/6/uri",    "path/to/base/",          "../../../relative/6/uri");
 
 		this.assertResolvedUri("local/uri",                           "../../../path/to/base/", "../../../path/to/base/local/uri");
 		this.assertResolvedUri("./local/uri",                         "../../../path/to/base/", "../../../path/to/base/local/uri");
@@ -752,7 +751,6 @@ sap.ui.define([
 		this.assertResolvedUri("../../../relative/3/uri",             "../../../path/to/base/", "../../../relative/3/uri");
 		this.assertResolvedUri("../../../../relative/4/uri",          "../../../path/to/base/", "../../../../relative/4/uri");
 		this.assertResolvedUri("../../../../../relative/5/uri",       "../../../path/to/base/", "../../../../../relative/5/uri");
-		this.assertResolvedUri("../../../../../../relative/6/uri",    "../../../path/to/base/", "../../../../../../relative/6/uri");
 	});
 
 	QUnit.test("absolute", function(assert){
