@@ -1272,7 +1272,7 @@ function(
 	SelectDialog.prototype._getListEventDelegates = function () {
 		return {
 			onsapselect: this._selectionChange.bind(this), // Keyboard handling events
-			onclick: this._selectionChange.bind(this) // Mouse and Touch events
+			ontap: this._selectionChange.bind(this) // Mouse and Touch events
 		};
 	};
 
