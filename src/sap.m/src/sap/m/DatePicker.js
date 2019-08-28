@@ -1055,7 +1055,7 @@ sap.ui.define([
 				showArrow: false,
 				showHeader: false,
 				placement: library.PlacementType.VerticalPreferedBottom
-			});
+			}).addStyleClass("sapMRPCalendar");
 
 			this._oPopup._getPopup().setAutoClose(true);
 			this._oPopup.attachAfterOpen(_handleOpened, this);
