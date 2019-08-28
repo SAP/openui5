@@ -10,13 +10,17 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/core/Component",
-	"sap/ui/fl/registry/ChangeRegistry"
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/rta/util/validateStableIds",
+	"sap/base/util/ObjectPath"
 ], function (
 	SupportLib,
 	Utils,
 	DesignTime,
 	Component,
-	ChangeRegistry
+	ChangeRegistry,
+	validateStableIds,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -24,22 +28,15 @@ sap.ui.define([
 	var Audiences = SupportLib.Audiences;
 	var Severity = SupportLib.Severity;
 
-	function isClonedElementFromListBinding(oControl) {
-		var sParentAggregationName = oControl.sParentAggregationName;
-		var oParent = oControl.getParent();
+	function findAppComponent(aElements) {
+		var oAppComponent;
 
-		if (oParent && sParentAggregationName) {
-			var oBindingInfo = oParent.getBindingInfo(sParentAggregationName);
-			if (
-				oBindingInfo
-				&& oBindingInfo.template
-				&& oControl instanceof oBindingInfo.template.getMetadata().getClass()
-			) {
-				return true;
-			}
-			return isClonedElementFromListBinding(oParent);
-		}
-		return false;
+		aElements.some(function (oElement) {
+			oAppComponent = Utils.getAppComponentForControl(oElement);
+			return !!oAppComponent;
+		});
+
+		return oAppComponent;
 	}
 
 	var oStableIdRule = {
@@ -57,17 +54,18 @@ sap.ui.define([
 		}],
 		async: true,
 		check: function (issueManager, oCoreFacade, oScope, resolve) {
-			var aElements = oScope.getElements();
-			var oElement;
 			var oAppComponent;
+			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
 
-			for (var i = 0; i < aElements.length; i++) {
-				oElement = aElements[i];
-				oAppComponent = Utils.getAppComponentForControl(oElement);
+			if (oUshellContainer) {
+				var mRunningApp = oUshellContainer.getService("AppLifeCycle").getCurrentApplication();
 
-				if (oAppComponent) {
-					break;
+				// Disable this rule for ushell home page (where tiles are located)
+				if (!mRunningApp.homePage) {
+					oAppComponent = mRunningApp.componentInstance;
 				}
+			} else {
+				oAppComponent = findAppComponent(oScope.getElements());
 			}
 
 			if (!oAppComponent) {
@@ -79,37 +77,31 @@ sap.ui.define([
 			});
 
 			oDesignTime.attachEventOnce("synced", function () {
-				var aOverlays = oDesignTime.getElementOverlays();
+				var aUnstableOverlays = validateStableIds(oDesignTime.getElementOverlays(), oAppComponent);
 
-				aOverlays.forEach(function (oOverlay) {
-					var oElement = oOverlay.getElementInstance();
-					var sControlId = oElement.getId();
-					var sClassName = oElement.getMetadata().getName();
-					var sHasConcatenatedId = sControlId.indexOf("--") !== -1;
+				aUnstableOverlays.forEach(function (oElementOverlay) {
+					var oElement = oElementOverlay.getElement();
+					var sElementId = oElement.getId();
+					var bHasConcatenatedId = sElementId.includes("--");
 
-					// check only elements who have an registered change handler and any actions (to exclude cloned elements) - for components we have to check if its an instance of sap.ui.core.Component
-					if ((ChangeRegistry.getInstance().hasRegisteredChangeHandlersForControl(sClassName) && oOverlay.getDesignTimeMetadata().getData().actions) || oElement instanceof Component) {
-						if (!Utils.checkControlId(sControlId, oAppComponent, true) && !isClonedElementFromListBinding(oElement)) {
-							if (!sHasConcatenatedId) {
-								issueManager.addIssue({
-									severity: Severity.High,
-									details: "The ID '" + sControlId + "' for the control was generated and flexibility features " +
-									"cannot support controls with generated IDs.",
-									context: {
-										id: sControlId
-									}
-								});
-							} else {
-								issueManager.addIssue({
-									severity: Severity.Low,
-									details: "The ID '" + sControlId + "' for the control was concatenated and has a generated onset.\n" +
-									"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
-									context: {
-										id: sControlId
-									}
-								});
+					if (!bHasConcatenatedId) {
+						issueManager.addIssue({
+							severity: Severity.High,
+							details: "The ID '" + sElementId + "' for the control was generated and flexibility features " +
+							"cannot support controls with generated IDs.",
+							context: {
+								id: sElementId
 							}
-						}
+						});
+					} else {
+						issueManager.addIssue({
+							severity: Severity.Low,
+							details: "The ID '" + sElementId + "' for the control was concatenated and has a generated onset.\n" +
+							"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
+							context: {
+								id: sElementId
+							}
+						});
 					}
 				});
 				oDesignTime.destroy();
