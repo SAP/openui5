@@ -10,15 +10,15 @@ sap.ui.define([],
 		 * SideNavigation renderer.
 		 * @namespace
 		 */
-		var SideNavigationRenderer = {};
+		var SideNavigationRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
-		 * @param {sap.ui.core.RenderManager}
-		 *		  rm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.core.Control}
-		 *		  control an object representation of the control that should be rendered
+		 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} control an object representation of the control that should be rendered
 		 */
 		SideNavigationRenderer.render = function (rm, control) {
 			this.startSideNavigation(rm, control);
@@ -41,17 +41,17 @@ sap.ui.define([],
 			var fixedItemAggregation = control.getAggregation('fixedItem');
 			var isExpanded = control.getExpanded();
 
-			rm.write('<div');
-			rm.writeControlData(control);
+			rm.openStart('div', control);
 
-			rm.writeAttribute("role", 'navigation');
+			rm.attr("role", 'navigation');
 
-			rm.addClass('sapTntSideNavigation');
-			rm.addClass("sapContrast sapContrastPlus");
+			rm.class('sapTntSideNavigation');
+			rm.class("sapContrast");
+			rm.class("sapContrastPlus");
 
 			if (!isExpanded) {
-				rm.addClass('sapTntSideNavigationNotExpanded');
-				rm.addClass('sapTntSideNavigationNotExpandedWidth');
+				rm.class('sapTntSideNavigationNotExpanded');
+				rm.class('sapTntSideNavigationNotExpandedWidth');
 			}
 
 			if (!isExpanded && itemAggregation) {
@@ -62,12 +62,11 @@ sap.ui.define([],
 				fixedItemAggregation.setExpanded(false);
 			}
 
-			rm.writeClasses();
-			rm.write('>');
+			rm.openEnd();
 		};
 
 		SideNavigationRenderer.endSideNavigation = function (rm, control) {
-			rm.write('</div>');
+			rm.close('div');
 		};
 
 		SideNavigationRenderer.renderArrowUp = function (rm, control){
@@ -83,10 +82,20 @@ sap.ui.define([],
 		SideNavigationRenderer.renderItem = function (rm, control) {
 			var itemAggregation = control.getAggregation('item');
 
-			rm.write('<div id="' + control.getId() + '-Flexible" tabindex="-1" class="sapTntSideNavigationFlexible sapTntSideNavigationVerticalScrolling">');
-			rm.write('<div id="' + control.getId() + '-Flexible-Content" class="sapTntSideNavigationFlexibleContent">');
+			rm.openStart('div', control.getId() + '-Flexible');
+			rm.attr('tabindex', '-1');
+			rm.class('sapTntSideNavigationFlexible');
+			rm.class('sapTntSideNavigationVerticalScrolling');
+			rm.openEnd();
+
+			rm.openStart('div', control.getId() + '-Flexible-Content');
+			rm.class('sapTntSideNavigationFlexibleContent');
+			rm.openEnd();
+
 			rm.renderControl(itemAggregation);
-			rm.write('</div></div>');
+
+			rm.close('div');
+			rm.close('div');
 		};
 
 		SideNavigationRenderer.renderFixedItem = function (rm, control) {
@@ -100,18 +109,28 @@ sap.ui.define([],
 				fixedItemAggregation.setExpanded(false);
 			}
 
-			rm.write('<div class="sapTntSideNavigationSeparator" role="separator" aria-orientation="horizontal"></div>');
+			rm.openStart('div');
+			rm.attr('role', 'separator');
+			rm.attr('aria-orientation', 'horizontal');
+			rm.class('sapTntSideNavigationSeparator');
+			rm.openEnd();
+			rm.close('div');
 
-			rm.write('<div class="sapTntSideNavigationFixed">');
+			rm.openStart('div');
+			rm.class('sapTntSideNavigationFixed');
+			rm.openEnd();
+
 			rm.renderControl(fixedItemAggregation);
-			rm.write('</div>');
+			rm.close('div');
 		};
 
 		SideNavigationRenderer.renderFooter = function (rm, control) {
 			if (control.getAggregation('footer')) {
-				rm.write('<footer class="sapTntSideNavigationFooter">');
+				rm.openStart('footer');
+				rm.class('sapTntSideNavigationFooter');
+				rm.openEnd();
 				rm.renderControl(control.getAggregation('footer'));
-				rm.write('</footer>');
+				rm.close('footer');
 			}
 		};
 

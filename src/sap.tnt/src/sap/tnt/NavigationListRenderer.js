@@ -3,8 +3,8 @@
  */
 
 // Provides the default renderer for control sap.tnt.NavigationList
-sap.ui.define(['sap/ui/core/Renderer'],
-	function(Renderer) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
@@ -13,7 +13,9 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		 * @author SAP SE
 		 * @namespace
 		 */
-		var NavigationListRenderer = {};
+		var NavigationListRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -23,7 +25,6 @@ sap.ui.define(['sap/ui/core/Renderer'],
 		 */
 		NavigationListRenderer.render = function (rm, control) {
 			var role,
-				visibleGroupsCount,
 				groups = control.getItems(),
 				expanded = control.getExpanded(),
 				visibleGroups = [],
@@ -40,40 +41,36 @@ sap.ui.define(['sap/ui/core/Renderer'],
 				}
 			});
 
-			rm.write("<ul");
-			rm.writeControlData(control);
+			rm.openStart("ul", control);
 
 			var width = control.getWidth();
 			if (width && expanded) {
-				rm.addStyle("width", width);
+				rm.style("width", width);
 			}
-			rm.writeStyles();
 
-			rm.addClass("sapTntNavLI");
+			rm.class("sapTntNavLI");
 
 			if (!expanded) {
-				rm.addClass("sapTntNavLICollapsed");
+				rm.class("sapTntNavLICollapsed");
 			}
 
 			if (!hasGroupWithIcon) {
-				rm.addClass("sapTntNavLINoIcons");
+				rm.class("sapTntNavLINoIcons");
 			}
-
-			rm.writeClasses();
 
 			// ARIA
 			role = !expanded || control.hasStyleClass("sapTntNavLIPopup") ? 'menubar' : 'tree';
 
-			rm.writeAttribute("role", role);
+			rm.attr("role", role);
+			rm.openEnd();
 
-			rm.write(">");
-
-			// Rendering the visible groups
-			visibleGroups.forEach(function(group, index) {
-				group.render(rm, control, index, visibleGroupsCount);
+			// Rendering visible groups
+			visibleGroups.forEach(function(group) {
+				group.render(rm, control);
 			});
 
-			rm.write("</ul>");
+
+			rm.close("ul");
 		};
 
 		return NavigationListRenderer;
