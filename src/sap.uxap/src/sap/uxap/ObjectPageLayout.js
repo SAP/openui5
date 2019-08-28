@@ -3160,7 +3160,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	ObjectPageLayout.prototype.invalidate = function (oOrigin) {
-		if (this.getUseIconTabBar() && oOrigin && (oOrigin instanceof ObjectPageSection) && !oOrigin.isActive()) {
+		if (this.getUseIconTabBar() && oOrigin && (oOrigin instanceof ObjectPageSection) && !oOrigin.isActive() && this._oSectionInfo[oOrigin.getId()]) {
 			return; // no need to invalidate when an inactive tab is changed
 		}
 
