@@ -54,32 +54,40 @@ sap.ui.define([
 	 */
 	var ChangePersistence = function(mComponent) {
 		this._mComponent = mComponent;
-		//_mChanges contains:
-		// - mChanges: map of changes (selector id)
-		// - mDependencies: map of changes (change key) that need to be applied before any change. Used to check if a change can be applied. Format:
-		//		mDependencies: {
-		//			"fileNameChange2USERnamespace": {
-		//				"changeObject": oChange2,
-		//				"dependencies": ["fileNameChange1USERnamespace"]
-		//			},
-		//			"fileNameChange3USERnamespace": {
-		//				"changeObject": oChange3,
-		//				"dependencies": ["fileNameChange2USERnamespace"]
-		//			}
-		//		}
-		// - mDependentChangesOnMe: map of changes (change key) that cannot be applied before the change. Used to remove dependencies faster. Format:
-		//		mDependentChangesOnMe: {
-		//			"fileNameChange1USERnamespace": [oChange2],
-		//			"fileNameChange2USERnamespace": [oChange3]
-		//		}
-		// - aChanges: array of changes ordered by layer and creation time
-		//		aChanges: [oChange1, oChange2, oChange3]
-		this._mChanges = {
-			mChanges: {},
-			mDependencies: {},
-			mDependentChangesOnMe: {},
-			aChanges: []
-		};
+		/**
+		_mChanges contains:
+			- mChanges: map of changes (selector id)
+			- mDependencies: map of changes (change key) and controls (selectors) that need to be applied before any change. Used to check if a change can be applied.
+				Format:
+				mDependencies: {
+					"fileNameChange2USERnamespace": {
+						"changeObject": oChange2,
+						"dependencies": ["fileNameChange1USERnamespace"],
+						"controlsDependencies": [<selector of other control>]
+					},
+					"fileNameChange3USERnamespace": {
+						"changeObject": oChange3,
+						"dependencies": ["fileNameChange2USERnamespace"],
+						"controlsDependencies": [<selector of other control>]
+					}
+				}
+			- mDependentChangesOnMe: map of changes (change key) that cannot be applied before the change. Used to remove dependencies faster. Format:
+				mDependentChangesOnMe: {
+					"fileNameChange1USERnamespace": [oChange2],
+					"fileNameChange2USERnamespace": [oChange3]
+				}
+			- mControlsWithDependenciesOn: map of controls IDs for which a change has a dependency on (excluding selectors).
+				All IDs that are listed in the controlsDependencies in any dependency will be saved here for faster processing.
+				Because of the way changes are applied the selectors are currently not needed, only the additional dependencies to controls.
+					Format:
+					mControlsWithDependenciesOn: {
+						<controlId>: true
+					}
+			- aChanges: array of changes ordered by layer and creation time
+				aChanges: [oChange1, oChange2, oChange3]
+		*/
+
+		this._mChanges = initializeChangesMap();
 
 		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
 		this._mChangesInitial = merge({}, this._mChanges);
@@ -100,6 +108,16 @@ sap.ui.define([
 		this._bHasChangesOverMaxLayer = false;
 		this.HIGHER_LAYER_CHANGES_EXIST = "higher_layer_changes_exist";
 	};
+
+	function initializeChangesMap () {
+		return {
+			mChanges: {},
+			mDependencies: {},
+			mDependentChangesOnMe: {},
+			mControlsWithDependenciesOn: {},
+			aChanges: []
+		};
+	}
 
 	/**
 	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
@@ -653,6 +671,10 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	};
 
+	function _getCompleteIdFromSelector(oSelector, oAppComponent) {
+		return oSelector.idIsLocal ? oAppComponent.createId(oSelector.id) : oSelector.id;
+	}
+
 	/**
 	 * @param {sap.ui.core.Component} oAppComponent - Application component containing the control for which the change should be added
 	 * @param {sap.ui.fl.Change} oChange change which should be added into the mapping
@@ -663,10 +685,7 @@ sap.ui.define([
 	ChangePersistence.prototype._addChangeIntoMap = function (oAppComponent, oChange) {
 		var oSelector = oChange.getSelector();
 		if (oSelector && oSelector.id) {
-			var sSelectorId = oSelector.id;
-			if (oSelector.idIsLocal) {
-				sSelectorId = oAppComponent.createId(sSelectorId);
-			}
+			var sSelectorId = _getCompleteIdFromSelector(oSelector, oAppComponent);
 
 			this._addMapEntry(sSelectorId, oChange);
 
@@ -723,7 +742,7 @@ sap.ui.define([
 		mChanges.mDependentChangesOnMe[oChange.getId()].push(oDependentChange.getId());
 	};
 
-	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, aControlSelectorList, bRunTimeCreatedChange) {
+	ChangePersistence.prototype._addControlsDependencies = function (oDependentChange, oAppComponent, aControlSelectorList, bRunTimeCreatedChange) {
 		var mChanges = bRunTimeCreatedChange ? this._mChangesInitial : this._mChanges;
 		if (aControlSelectorList.length > 0) {
 			if (!mChanges.mDependencies[oDependentChange.getId()]) {
@@ -734,6 +753,12 @@ sap.ui.define([
 				};
 			}
 			mChanges.mDependencies[oDependentChange.getId()].controlsDependencies = aControlSelectorList;
+
+			var sSelectorId;
+			aControlSelectorList.forEach(function(oSelector) {
+				sSelectorId = _getCompleteIdFromSelector(oSelector, oAppComponent);
+				mChanges.mControlsWithDependenciesOn[sSelectorId] = true;
+			});
 		}
 	};
 
@@ -754,12 +779,7 @@ sap.ui.define([
 
 		function createChangeMap(aChanges) {
 			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
-			this._mChanges = {
-				mChanges: {},
-				mDependencies: {},
-				mDependentChangesOnMe: {},
-				aChanges: []
-			};
+			this._mChanges = initializeChangesMap();
 
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oAppComponent));
 
@@ -795,7 +815,7 @@ sap.ui.define([
 	 * @param {function} fnDependencyValidation this function is called to check if the dependency is still valid
 	 * @returns {object} Returns the mChanges object with the updated dependencies
 	 */
-	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation) {
+	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation, oAppComponent) {
 		var mInitialDependencies = merge({}, this._mChangesInitial.mDependencies);
 		var oInitialDependency = mInitialDependencies[oChange.getId()];
 
@@ -808,6 +828,10 @@ sap.ui.define([
 					aNewValidDependencies.push(sChangeId);
 				}
 			}.bind(this));
+
+			oChange.getDependentControlSelectorList().forEach(function(oSelector) {
+				this._mChanges.mControlsWithDependenciesOn[_getCompleteIdFromSelector(oSelector, oAppComponent)] = true;
+			}.bind(this));
 			oInitialDependency.dependencies = aNewValidDependencies;
 			this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;
 		}
@@ -819,20 +843,20 @@ sap.ui.define([
 		// if the component gets recreated the status of the change might not be initial
 		oChange.setInitialApplyState();
 		this._addChangeIntoMap(oAppComponent, oChange);
-		this._updateDependencies(oChange, false);
+		this._updateDependencies(oChange, oAppComponent, false);
 	};
 
 	ChangePersistence.prototype._addRunTimeCreatedChangeAndUpdateDependencies = function(oAppComponent, oChange) {
 		this._addChangeIntoMap(oAppComponent, oChange);
-		this._updateDependencies(oChange, true);
+		this._updateDependencies(oChange, oAppComponent, true);
 	};
 
-	ChangePersistence.prototype._updateDependencies = function (oChange, bRunTimeCreatedChange) {
+	ChangePersistence.prototype._updateDependencies = function (oChange, oAppComponent, bRunTimeCreatedChange) {
 		//create dependencies map
 		var aChanges = this.getChangesMapForComponent().aChanges;
 		var aDependentSelectorList = oChange.getDependentSelectorList();
 		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-		this._addControlsDependencies(oChange, aDependentControlSelectorList, bRunTimeCreatedChange);
+		this._addControlsDependencies(oChange, oAppComponent, aDependentControlSelectorList, bRunTimeCreatedChange);
 
 		// start from last change in map, excluding the recently added change
 		aChanges.slice(0, aChanges.length - 1).reverse().forEach(function(oExistingChange) {

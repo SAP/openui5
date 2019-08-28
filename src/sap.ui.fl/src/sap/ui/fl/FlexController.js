@@ -1114,11 +1114,12 @@ sap.ui.define([
 	 */
 	FlexController.prototype._applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
 		var aPromiseStack = [];
+		var sControlId = oControl.getId();
 		var mChangesMap = fnGetChangesMap();
 		var mChanges = mChangesMap.mChanges;
 		var mDependencies = mChangesMap.mDependencies;
-		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
-		var aChangesForControl = mChanges[oControl.getId()] || [];
+		var mControlsWithDependenciesOn = mChangesMap.mControlsWithDependenciesOn;
+		var aChangesForControl = mChanges[sControlId] || [];
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent,
@@ -1132,10 +1133,10 @@ sap.ui.define([
 			if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
 				// if a change was already processed and is not applied anymore,
 				// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
-				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier));
+				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier), oAppComponent);
 
 				mDependencies = mChangesMap.mDependencies;
-				mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
+				mControlsWithDependenciesOn = mChangesMap.mControlsWithDependenciesOn;
 				oChange.setInitialApplyState();
 			} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 				// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
@@ -1149,7 +1150,7 @@ sap.ui.define([
 				aPromiseStack.push(function() {
 					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 					.then(function() {
-						this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
+						this._updateDependencies(mChangesMap, oChange.getId());
 					}.bind(this));
 				}.bind(this));
 			} else {
@@ -1158,10 +1159,14 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		if (aChangesForControl.length) {
+		// TODO improve handling of mControlsWithDependenciesOn when change applying gets refactored
+		// 		- save the IDs of the waiting changes in the map
+		// 		- only try to apply those changes first
+		if (aChangesForControl.length || mControlsWithDependenciesOn[sControlId]) {
+			delete mControlsWithDependenciesOn[sControlId];
 			return Utils.execPromiseQueueSequentially(aPromiseStack)
 				.then(function () {
-					return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
+					return this._processDependentQueue(mChangesMap, oAppComponent);
 				}.bind(this));
 		}
 		return new Utils.FakePromise();
@@ -1284,10 +1289,10 @@ sap.ui.define([
 		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, false);
 	};
 
-	FlexController.prototype._updateControlsDependencies = function (mDependencies, oAppComponent) {
+	FlexController.prototype._updateControlsDependencies = function (mChangesMap, oAppComponent) {
 		var oControl;
-		Object.keys(mDependencies).forEach(function(sChangeKey) {
-			var oDependency = mDependencies[sChangeKey];
+		Object.keys(mChangesMap.mDependencies).forEach(function(sChangeKey) {
+			var oDependency = mChangesMap.mDependencies[sChangeKey];
 			if (oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) {
 				var iLength = oDependency.controlsDependencies.length;
 				while (iLength--) {
@@ -1295,16 +1300,17 @@ sap.ui.define([
 					oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 					if (oControl) {
 						oDependency.controlsDependencies.splice(iLength, 1);
+						delete mChangesMap.mControlsWithDependenciesOn[oControl.getId()];
 					}
 				}
 			}
 		});
 	};
 
-	FlexController.prototype._updateDependencies = function (mDependencies, mDependentChangesOnMe, sChangeKey) {
-		if (mDependentChangesOnMe[sChangeKey]) {
-			mDependentChangesOnMe[sChangeKey].forEach(function (sKey) {
-				var oDependency = mDependencies[sKey];
+	FlexController.prototype._updateDependencies = function (mChangesMap, sChangeKey) {
+		if (mChangesMap.mDependentChangesOnMe[sChangeKey]) {
+			mChangesMap.mDependentChangesOnMe[sChangeKey].forEach(function (sKey) {
+				var oDependency = mChangesMap.mDependencies[sKey];
 
 				// oDependency might be undefined, since initial dependencies were not copied yet from _applyChangesOnControl() for change with ID sKey
 				var iIndex = oDependency ? oDependency.dependencies.indexOf(sChangeKey) : -1;
@@ -1312,28 +1318,29 @@ sap.ui.define([
 					oDependency.dependencies.splice(iIndex, 1);
 				}
 			});
-			delete mDependentChangesOnMe[sChangeKey];
+			delete mChangesMap.mDependentChangesOnMe[sChangeKey];
 		}
 	};
 
 	/**
 	 * Iterating over <code>mDependencies</code> once, executing relevant dependencies, and clearing dependencies queue.
 	 *
-	 * @param {object} mDependencies - Dependencies map
-	 * @param {object} mDependentChangesOnMe - map of changes that cannot be applied with higher priority
+	 * @param {object} mChangesMap - Changes map
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise for asynchronous or FakePromise for synchronous processing scenario
 	 * @private
 	 */
-	FlexController.prototype._iterateDependentQueue = function(mDependencies, mDependentChangesOnMe, oAppComponent) {
+	FlexController.prototype._iterateDependentQueue = function(mChangesMap, oAppComponent) {
 		var aCoveredChanges = [];
 		var aDependenciesToBeDeleted = [];
 		var aPromises = [];
-		this._updateControlsDependencies(mDependencies, oAppComponent);
-		Object.keys(mDependencies).forEach(function(sDependencyKey) {
-			var oDependency = mDependencies[sDependencyKey];
-			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0 &&
-				!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0)
+		this._updateControlsDependencies(mChangesMap, oAppComponent);
+		Object.keys(mChangesMap.mDependencies).forEach(function(sDependencyKey) {
+			var oDependency = mChangesMap.mDependencies[sDependencyKey];
+			if (
+				oDependency[FlexController.PENDING]
+				&& oDependency.dependencies.length === 0
+				&& !(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0)
 			) {
 				aPromises.push(
 					function() {
@@ -1351,12 +1358,12 @@ sap.ui.define([
 
 		.then(function () {
 			for (var j = 0; j < aDependenciesToBeDeleted.length; j++) {
-				delete mDependencies[aDependenciesToBeDeleted[j]];
+				delete mChangesMap.mDependencies[aDependenciesToBeDeleted[j]];
 			}
 
 			// dependencies should be updated after all processing functions are executed and dependencies are deleted
 			for (var k = 0; k < aCoveredChanges.length; k++) {
-				this._updateDependencies(mDependencies, mDependentChangesOnMe, aCoveredChanges[k]);
+				this._updateDependencies(mChangesMap, aCoveredChanges[k]);
 			}
 
 			return aCoveredChanges;
@@ -1366,18 +1373,17 @@ sap.ui.define([
 	/**
 	 * Recursive iterations, which are processed sequentially, as long as dependent changes can be applied.
 	 *
-	 * @param {object} mDependencies - Dependencies map
-	 * @param {object} mDependentChangesOnMe - map of changes that cannot be applied with higher priority
+	 * @param {object} mChangesMap - Changes map
 	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
 	 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all dependencies were processed for asynchronous or FakePromise for the synchronous processing scenario
 	 * @private
 	 */
-	FlexController.prototype._processDependentQueue = function (mDependencies, mDependentChangesOnMe, oAppComponent) {
-		return this._iterateDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent)
+	FlexController.prototype._processDependentQueue = function (mChangesMap, oAppComponent) {
+		return this._iterateDependentQueue(mChangesMap, oAppComponent)
 
 		.then(function(aCoveredChanges) {
 			if (aCoveredChanges.length > 0) {
-				return this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
+				return this._processDependentQueue(mChangesMap, oAppComponent);
 			}
 		}.bind(this));
 	};

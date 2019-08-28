@@ -1882,6 +1882,11 @@ function (
 					fileNameChange1: ["fileNameChange2"],
 					fileNameChange2: ["fileNameChange3"]
 				},
+				mControlsWithDependenciesOn: {
+					group1: true,
+					"mockAppComponent---group2": true,
+					"mockAppComponent---group3": true
+				},
 				aChanges: [oChange1, oChange2, oChange3, oChange4]
 			};
 
@@ -1967,6 +1972,11 @@ function (
 					fileNameChange0: ["fileNameChange2"],
 					fileNameChange1: ["fileNameChange2"]
 				},
+				mControlsWithDependenciesOn: {
+					group1: true,
+					group2: true,
+					group3: true
+				},
 				aChanges: [oChange0, oChange1, oChange2]
 			};
 
@@ -2030,6 +2040,10 @@ function (
 				mDependentChangesOnMe: {
 					fileNameChange1: ["fileNameChange2"]
 				},
+				mControlsWithDependenciesOn: {
+					group2: true,
+					group3: true
+				},
 				aChanges: [oChange1, oChange2]
 			};
 
@@ -2088,6 +2102,10 @@ function (
 				mDependentChangesOnMe: {
 					fileNameChange1: ["fileNameChange2"]
 				},
+				mControlsWithDependenciesOn: {
+					group2: true,
+					group3: true
+				},
 				aChanges: [oChange1, oChange2]
 			};
 
@@ -2141,6 +2159,7 @@ function (
 				mDependentChangesOnMe: {
 					fileNameChange1: ["fileNameChange2"]
 				},
+				mControlsWithDependenciesOn: {},
 				aChanges: [oChange1, oChange2]
 			};
 
@@ -2252,18 +2271,32 @@ function (
 			var oChange1 = {
 				getId: function() {
 					return "fileNameChange1";
+				},
+				getDependentControlSelectorList: function() {
+					return [{
+						id: "group3"
+					}, {
+						id: "group2"
+					}];
 				}
 			};
 			var oChange2 = {
 				getId: function() {
 					return "fileNameChange2";
+				},
+				getDependentControlSelectorList: function() {
+					return [{
+						id: "group2"
+					}, {
+						id: "group1"
+					}];
 				}
 			};
 			var mChanges = {
 				"field3-2": [oChange1, oChange2],
 				group1: [oChange0]
 			};
-			var mInitialDependenciesMap = {
+			var mInitialChangesMap = {
 				mChanges: mChanges,
 				mDependencies: {
 					fileNameChange1: {
@@ -2280,12 +2313,18 @@ function (
 				mDependentChangesOnMe: {
 					fileNameChange0: ["fileNameChange2"],
 					fileNameChange1: ["fileNameChange2"]
+				},
+				mControlsWithDependenciesOn: {
+					group1: true,
+					group2: true,
+					group3: true
 				}
 			};
-			var mCurrentDependenciesMap = {
+			var mCurrentChangesMap = {
 				mChanges: mChanges,
 				mDependencies: {},
-				mDependentChangesOnMe: {}
+				mDependentChangesOnMe: {},
+				mControlsWithDependenciesOn: {}
 			};
 			var mExpectedDependenciesMapAfterFirstChange = {
 				mChanges: mChanges,
@@ -2296,7 +2335,11 @@ function (
 						controlsDependencies: ["group3", "group2"]
 					}
 				},
-				mDependentChangesOnMe: {}
+				mDependentChangesOnMe: {},
+				mControlsWithDependenciesOn: {
+					group2: true,
+					group3: true
+				}
 			};
 
 			var mExpectedDependenciesMapAfterSecondChange = {
@@ -2313,11 +2356,16 @@ function (
 						controlsDependencies: ["group2", "group1"]
 					}
 				},
-				mDependentChangesOnMe: {}
+				mDependentChangesOnMe: {},
+				mControlsWithDependenciesOn: {
+					group1: true,
+					group2: true,
+					group3: true
+				}
 			};
 
-			this.oChangePersistence._mChangesInitial = mInitialDependenciesMap;
-			this.oChangePersistence._mChanges = mCurrentDependenciesMap;
+			this.oChangePersistence._mChangesInitial = mInitialChangesMap;
+			this.oChangePersistence._mChanges = mCurrentChangesMap;
 			function fnCallbackTrue() {
 				return true;
 			}
@@ -2326,7 +2374,7 @@ function (
 			}
 
 			var mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange0, fnCallbackTrue);
-			assert.deepEqual(mUpdatedDependenciesMap, mCurrentDependenciesMap, "no dependencies got copied");
+			assert.deepEqual(mUpdatedDependenciesMap, mCurrentChangesMap, "no dependencies got copied");
 
 			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange1, fnCallbackTrue);
 			assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterFirstChange, "all dependencies from change1 got copied");
@@ -2335,7 +2383,7 @@ function (
 			assert.deepEqual(mUpdatedDependenciesMap, mExpectedDependenciesMapAfterSecondChange, "no dependencies from change2 got copied");
 
 			mUpdatedDependenciesMap = this.oChangePersistence.copyDependenciesFromInitialChangesMap(oChange2, fnCallbackTrue);
-			assert.deepEqual(mUpdatedDependenciesMap, mInitialDependenciesMap, "all dependencies from change2 got copied");
+			assert.deepEqual(mUpdatedDependenciesMap, mInitialChangesMap, "all dependencies from change2 got copied");
 
 			assert.deepEqual(mUpdatedDependenciesMap, this.oChangePersistence._mChanges, "the updated dependencies map is saved in the internal changes map");
 		});

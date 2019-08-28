@@ -76,6 +76,17 @@ function (
 		}
 	});
 
+	function getInitialChangesMap(mPropertyBag) {
+		mPropertyBag = mPropertyBag || {};
+		return {
+			mChanges: mPropertyBag.mChanges || {},
+			mDependencies: mPropertyBag.mDependencies || {},
+			mDependentChangesOnMe: mPropertyBag.mDependentChangesOnMe || {},
+			mControlsWithDependenciesOn: mPropertyBag.mControlsWithDependenciesOn || {},
+			aChanges: mPropertyBag.aChanges || []
+		};
+	}
+
 	function getLabelChangeContent(sFileName, sSelectorId) {
 		return {
 			fileType: "change",
@@ -1555,16 +1566,13 @@ function (
 			var oGetChangeHandlerSpy = sandbox.spy(this.oFlexController, "_getChangeHandler");
 			var oApplyChangeSpy = sandbox.spy(oHideControl, "applyChange");
 			var oModifierUpdateAggregationSpy = sandbox.spy(JsControlTreeModifier, "updateAggregation");
-			var mChanges = {
-				list: [this.oChange]
-			};
 			var fnGetChangesMap = function () {
-				return {
-					mChanges: mChanges,
-					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
-			};
+				return getInitialChangesMap({
+					mChanges: {
+						list: [this.oChange]
+					}
+				});
+			}.bind(this);
 			var oAppComponent = {};
 
 			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oList)
@@ -1588,11 +1596,7 @@ function (
 			var oProcessDependentQueueSpy = sandbox.spy(this.oFlexController, "_processDependentQueue");
 			var oExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
 			var fnGetChangesMap = function () {
-				return {
-					mChanges: {},
-					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
+				return getInitialChangesMap();
 			};
 			var oAppComponent = {};
 
@@ -1657,15 +1661,12 @@ function (
 		QUnit.test("_applyChangesOnControl does not call anything if there is no change for the control", function (assert) {
 			var oSomeOtherChange = {};
 
-			var mChanges = {
-				someOtherId: [oSomeOtherChange]
-			};
 			var fnGetChangesMap = function () {
-				return {
-					mChanges: mChanges,
-					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
+				return getInitialChangesMap({
+					mChanges: {
+						someOtherId: [oSomeOtherChange]
+					}
+				});
 			};
 			var oAppComponent = {};
 
@@ -1681,15 +1682,13 @@ function (
 			oChange0.markFinished();
 			var oChange1 = new Change(labelChangeContent);
 			oChange1.markFinished();
-			var mChanges = {
-				someId: [oChange0, oChange1]
-			};
+
 			var fnGetChangesMap = function () {
-				return {
-					mChanges: mChanges,
-					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0, oChange1]
+					}
+				});
 			};
 			var oAppComponent = {};
 			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
@@ -1707,15 +1706,12 @@ function (
 		QUnit.test("updates change status if change was already applied (viewCache)", function(assert) {
 			var oChange0 = new Change(labelChangeContent);
 			var oChange1 = new Change(labelChangeContent);
-			var mChanges = {
-				someId: [oChange0, oChange1]
-			};
 			var fnGetChangesMap = function () {
-				return {
-					mChanges: mChanges,
-					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0, oChange1]
+					}
+				});
 			};
 			var oAppComponent = {};
 			var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "copyDependenciesFromInitialChangesMap");
@@ -1743,16 +1739,14 @@ function (
 			var oChange2 = new Change(labelChangeContent);
 			var oChange3 = new Change(labelChangeContent);
 			var oSomeOtherChange = new Change(labelChangeContent);
-			var mChanges = {
-				someId: [oChange0, oChange1, oChange2, oChange3],
-				someOtherId: [oSomeOtherChange]
-			};
+
 			var fnGetChangesMap = function () {
-				return {
-					mChanges: mChanges,
-					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0, oChange1, oChange2, oChange3],
+						someOtherId: [oSomeOtherChange]
+					}
+				});
 			};
 
 			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, this.oAppComponent, this.oControl)
@@ -1796,11 +1790,11 @@ function (
 			};
 
 			var fnGetChangesMap = function () {
-				return {
+				return getInitialChangesMap({
 					mChanges: mChanges,
 					mDependencies: mDependencies,
 					mDependentChangesOnMe: mDependentChangesOnMe
-				};
+				});
 			};
 			var oAppComponent = {};
 
@@ -1841,11 +1835,11 @@ function (
 			};
 
 			var fnGetChangesMap = function () {
-				return {
+				return getInitialChangesMap({
 					mChanges: mChanges,
 					mDependencies: mDependencies,
 					mDependentChangesOnMe: mDependentChangesOnMe
-				};
+				});
 			};
 			var oAppComponent = {};
 
@@ -1899,12 +1893,12 @@ function (
 				fileNameChange4: ["fileNameChange5"]
 			};
 
-			return {
+			return getInitialChangesMap({
 				mChanges: mChanges,
 				mDependencies: mDependencies,
 				mDependentChangesOnMe: mDependentChangesOnMe,
 				aChanges: [oChange1, oChange2, oChange3, oChange4, oChange5]
-			};
+			});
 		}
 
 		QUnit.test("when _applyChangesOnControl is called for three re-created controls with dependent changes processed successfully and unsuccessfully", function (assert) {
@@ -1920,7 +1914,7 @@ function (
 			oProcessedChange.markFinished();
 			oNotProcessedChange.markFinished();
 
-			this.oFlexController._oChangePersistence._mChangesInitial = {
+			this.oFlexController._oChangePersistence._mChangesInitial = getInitialChangesMap({
 				aChanges: [oAppliedChange, oProcessedChange, oNotProcessedChange],
 				mChanges: {
 					appliedControl: [oAppliedChange],
@@ -1936,11 +1930,13 @@ function (
 						changeObject: oNotProcessedChange,
 						dependencies: ["appliedChange", "processedChange"]
 					}
-				}, mDependentChangesOnMe: {
+				},
+				mDependentChangesOnMe: {
 					appliedChange: ["processedChange", "notProcessedChange"]
-				}};
+				}
+			});
 
-			this.oFlexController._oChangePersistence._mChanges = {
+			this.oFlexController._oChangePersistence._mChanges = getInitialChangesMap({
 				aChanges: [oAppliedChange, oProcessedChange, oNotProcessedChange],
 				mChanges: {
 					appliedControl: [oAppliedChange],
@@ -1949,7 +1945,7 @@ function (
 				},
 				mDependencies: {},
 				mDependentChangesOnMe: {}
-			};
+			});
 
 			var fnGetChangesMap = function() {
 				return this.oFlexController._oChangePersistence._mChanges;
@@ -2038,8 +2034,8 @@ function (
 				oControlForm1.destroy();
 				oControlField1.destroy();
 				oControlField2.destroy();
-				this.oFlexController._oChangePersistence._mChangesInitial = {mChanges: {}, mDependencies: {}, mDependentChangesOnMe: {}};
-				this.oFlexController._oChangePersistence._mChanges = {mChanges: {}, mDependencies: {}, mDependentChangesOnMe: {}, aChanges: []};
+				this.oFlexController._oChangePersistence._mChangesInitial = getInitialChangesMap();
+				this.oFlexController._oChangePersistence._mChanges = getInitialChangesMap();
 			}.bind(this));
 		});
 
@@ -2146,11 +2142,11 @@ function (
 			};
 
 			var fnGetChangesMap = function () {
-				return {
+				return getInitialChangesMap({
 					mChanges: mChanges,
 					mDependencies: mDependencies,
 					mDependentChangesOnMe: mDependentChangesOnMe
-				};
+				});
 			};
 			var oAppComponent = {};
 
@@ -2165,7 +2161,7 @@ function (
 			}.bind(this));
 		});
 
-		QUnit.test("_applyChangesOnControl dependency test 5 (with controlDependencies)", function (assert) {
+		QUnit.test("_applyChangesOnControl dependency test 5 (with controlsDependencies)", function (assert) {
 			var oControlForm1 = new Control("form6-1");
 			var oControlGroup1 = new Control("group6-1");
 
@@ -2197,11 +2193,11 @@ function (
 			};
 
 			var fnGetChangesMap = function () {
-				return {
+				return getInitialChangesMap({
 					mChanges: mChanges,
 					mDependencies: mDependencies,
 					mDependentChangesOnMe: mDependentChangesOnMe
-				};
+				});
 			};
 			var oAppComponent = {};
 
@@ -2215,11 +2211,11 @@ function (
 
 				var mChangesMap = fnGetChangesMap();
 				var oMissingControl1 = new Control("missingControl1");
-				this.oFlexController._iterateDependentQueue(mChangesMap.mDependencies, mChangesMap.mDependentChangesOnMe);
+				this.oFlexController._iterateDependentQueue(mChangesMap);
 				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "now two changes were processed");
 
 				var oMissingControl2 = new Control("missingControl2");
-				this.oFlexController._iterateDependentQueue(mChangesMap.mDependencies, mChangesMap.mDependentChangesOnMe);
+				this.oFlexController._iterateDependentQueue(mChangesMap);
 				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "now all changes are processed");
 
 				oMissingControl1.destroy();
@@ -2255,11 +2251,11 @@ function (
 			};
 
 			var fnGetChangesMap = function () {
-				return {
+				return getInitialChangesMap({
 					mChanges: mChanges,
 					mDependencies: mDependencies,
 					mDependentChangesOnMe: mDependentChangesOnMe
-				};
+				});
 			};
 			var oAppComponent = {};
 
@@ -2293,13 +2289,14 @@ function (
 			oChange0._oDefinition.layer = "CUSTOMER";
 
 			var fnGetChangesMap = function () {
-				return {
+				return getInitialChangesMap({
 					mChanges: {
 						"group8-1": [oChange0]
 					},
 					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
+					mDependentChangesOnMe: {},
+					mControlsWithDependenciesOn: {}
+				});
 			};
 			var applyChangeSpy = sandbox.spy();
 			var oMockedLibraryChangedEvent = {
@@ -2360,6 +2357,57 @@ function (
 				assert.equal(applyChangeSpy.callCount, 1, "then the change is applied once");
 			});
 		});
+
+		QUnit.test("_applyChangesOnControl dependency test - with dependent controls without changes that get rendered later", function (assert) {
+			var oProcessDependentQueueSpy = sandbox.spy(this.oFlexController, "_processDependentQueue");
+			this.oRandomControl = new Control("randomId");
+			var oChange0 = new Change(getLabelChangeContent("fileNameChange0"));
+
+			var mChanges = {
+				someId: [oChange0]
+			};
+
+			var mDependencies = {
+				fileNameChange0: {
+					changeObject: oChange0,
+					dependencies: [],
+					controlsDependencies: ["anotherId"]
+				}
+			};
+
+			var fnGetChangesMap = function () {
+				return getInitialChangesMap({
+					mChanges: mChanges,
+					mDependencies: mDependencies,
+					mDependentChangesOnMe: {},
+					mControlsWithDependenciesOn: {
+						anotherId: true
+					}
+				});
+			};
+			var oAppComponent = {};
+
+			return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl)
+			.then(function() {
+				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 0, "the change was not applied yet");
+				assert.equal(oProcessDependentQueueSpy.callCount, 1, "the dependent changes queue was updated");
+
+				this.oLaterRenderedControl = new Control("anotherId");
+				return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oLaterRenderedControl);
+			}.bind(this))
+			.then(function() {
+				assert.equal(oProcessDependentQueueSpy.callCount, 3, "the dependent changes queue was updated again");
+				assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 1, "the change was applied");
+
+				return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oRandomControl);
+			}.bind(this))
+			.then(function() {
+				assert.equal(oProcessDependentQueueSpy.callCount, 3, "the dependent changes queue was not updated again");
+
+				this.oLaterRenderedControl.destroy();
+				this.oRandomControl.destroy();
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with one change for a label", {
@@ -2368,11 +2416,7 @@ function (
 			this.sLabelId = oLabelChangeContent.selector.id;
 			this.oControl = new Label(this.sLabelId);
 			this.oChange = new Change(oLabelChangeContent);
-			this.mChanges = {
-				mChanges: {},
-				mDependencies: {},
-				mDependentChangesOnMe: {}
-			};
+			this.mChanges = getInitialChangesMap();
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange];
 			this.fnGetChangesMap = function () {
 				return this.mChanges;
@@ -2731,11 +2775,7 @@ function (
 			this.oControl = new Label(this.sLabelId);
 			this.oChange = new Change(labelChangeContent);
 			this.oChange2 = new Change(labelChangeContent2);
-			this.mChanges = {
-				mChanges: {},
-				mDependencies: {},
-				mDependentChangesOnMe: {}
-			};
+			this.mChanges = getInitialChangesMap();
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2];
 			this.fnGetChangesMap = function () {
 				return this.mChanges;
@@ -2850,11 +2890,7 @@ function (
 			this.oChange = new Change(labelChangeContent);
 			this.oChange2 = new Change(labelChangeContent2);
 			this.oChange3 = new Change(labelChangeContent3);
-			this.mChanges = {
-				mChanges: {},
-				mDependencies: {},
-				mDependentChangesOnMe: {}
-			};
+			this.mChanges = getInitialChangesMap();
 			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
 			this.fnGetChangesMap = function () {
 				return this.mChanges;
@@ -3260,14 +3296,12 @@ function (
 			};
 			this.oChange0 = new Change(labelChangeContent);
 			this.oChange1 = new Change(labelChangeContent2);
-			var mChanges = {};
-			mChanges[sLabelId] = [this.oChange0, this.oChange1];
+			var mChangesMap = getInitialChangesMap({
+				mChanges: {}
+			});
+			mChangesMap.mChanges[sLabelId] = [this.oChange0, this.oChange1];
 			this.fnGetChangesMap = function () {
-				return {
-					mChanges: mChanges,
-					mDependencies: {},
-					mDependentChangesOnMe: {}
-				};
+				return mChangesMap;
 			};
 		},
 		afterEach: function() {
@@ -3369,11 +3403,7 @@ function (
 			this.oChange3 = new Change(labelChangeContent3);
 			this.oChange4 = new Change(labelChangeContent4); // Selector of this change points to no control
 			this.oChange5 = new Change(labelChangeContent5); // already failed changed (mocked with a stub)
-			this.mChanges = {
-				mChanges: {},
-				mDependencies: {},
-				mDependentChangesOnMe: {}
-			};
+			this.mChanges = getInitialChangesMap();
 			this.fnGetChangesMap = function () {
 				return this.mChanges;
 			}.bind(this);
