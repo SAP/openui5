@@ -231,9 +231,11 @@ sap.ui.define([
 				Shortcut.unregister(this.getParent(), oCommand.shortcut);
 				if (oParent.getBindingContext("$cmd")) {
 					var oCommandData = oParent.getBindingContext("$cmd").getObject();
-					delete oCommandData[this.getCommand()];
+					if (oCommandData) {
+						delete oCommandData[this.getCommand()];
+					}
 					if (isEmptyObject(oCommandData)) {
-						oParent.unbindElement();
+						oParent.unbindElement("$cmd");
 					}
 				}
 			}
