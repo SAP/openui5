@@ -912,7 +912,7 @@ function(
 					selector: this.oRootControl,
 					appVariantDescriptors: aAppVariantDescriptors,
 					layer: "CUSTOMER",
-					styleClass: "sapContrast sapContrastPlus"
+					styleClass: "sapUiRTABorder"
 				}, "then appVariantDescriptors, layer and styleClass parameters were passed correctly");
 			}.bind(this));
 		});

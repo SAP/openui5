@@ -490,7 +490,7 @@ function(
 
 	QUnit.module("setRtaStyleClassName", function () {
 		QUnit.test("when setRtaStyleClassName is called", function(assert) {
-			var sExpectedStyleClass = "sapContrast sapContrastPlus";
+			var sExpectedStyleClass = "sapUiRTABorder";
 			Utils._sRtaStyleClassName = "";
 
 			Utils.setRtaStyleClassName("Invalid Layer");

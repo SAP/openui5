@@ -633,7 +633,8 @@ sap.ui.define([
 		oModel.manageVariants(
 			oVariantManagementControl,
 			sVariantManagementReference,
-			this.getCommandFactory().getFlexSettings().layer)
+			this.getCommandFactory().getFlexSettings().layer,
+			Utils.getRtaStyleClassName())
 
 		.then(function(aConfiguredChanges) {
 			return this.getCommandFactory().getCommandFor(

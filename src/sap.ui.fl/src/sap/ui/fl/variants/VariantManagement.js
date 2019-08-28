@@ -1211,12 +1211,12 @@ sap.ui.define([
 	 * @public
 	 * @param {boolean} bCreateAlways - Indicates that if this is set to <code>true</code>, the former dialog will be destroyed before a new one is created
 	 */
-	VariantManagement.prototype.openManagementDialog = function(bCreateAlways) {
+	VariantManagement.prototype.openManagementDialog = function(bCreateAlways, sClass) {
 		if (bCreateAlways && this.oManagementDialog) {
 			this.oManagementDialog.destroy();
 			this.oManagementDialog = undefined;
 		}
-		this._openManagementDialog();
+		this._openManagementDialog(sClass);
 	};
 
 	VariantManagement.prototype._triggerSearchInManageDialog = function(oEvent, oManagementTable) {
@@ -1509,7 +1509,7 @@ sap.ui.define([
 		return oTemplate;
 	};
 
-	VariantManagement.prototype._openManagementDialog = function() {
+	VariantManagement.prototype._openManagementDialog = function(sClass) {
 		this._createManagementDialog();
 
 		if (this.oVariantPopOver) {
@@ -1534,7 +1534,9 @@ sap.ui.define([
 				filters: this._getVisibleFilter()
 			});
 		}
-
+		if (sClass) {
+			this.oManagementDialog.addStyleClass(sClass);
+		}
 		this.oManagementDialog.open();
 	};
 

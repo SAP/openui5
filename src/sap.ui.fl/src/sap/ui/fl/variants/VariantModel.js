@@ -528,7 +528,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise which resolves when "manage" event is fired from the variant management control
 	 * @public
 	 */
-	VariantModel.prototype.manageVariants = function(oVariantManagementControl, sVariantManagementReference, sLayer) {
+	VariantModel.prototype.manageVariants = function(oVariantManagementControl, sVariantManagementReference, sLayer, sClass) {
 		// called from the ControlVariant plugin in Adaptation mode
 		return new Promise(function(resolve) {
 			oVariantManagementControl.attachEventOnce("manage", {
@@ -536,7 +536,7 @@ sap.ui.define([
 				variantManagementReference: sVariantManagementReference,
 				layer: sLayer
 			}, this.fnManageClickRta, this);
-			oVariantManagementControl.openManagementDialog(true);
+			oVariantManagementControl.openManagementDialog(true, sClass);
 		}.bind(this));
 	};
 
