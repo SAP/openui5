@@ -25,13 +25,11 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/SimpleChanges",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Change",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -59,13 +57,11 @@ function (
 	PropertyChange,
 	ChangeRegistry,
 	SimpleChanges,
-	PersistenceWriteAPI,
 	ChangesWriteAPI,
 	Change,
 	JSONModel,
 	flUtils,
 	RtaControlTreeModifier,
-	ChangesController,
 	sinon
 ) {
 	"use strict";
@@ -103,7 +99,7 @@ function (
 		},
 		getModel: function () {},
 		createId : function(sId) {
-			return 'testcomponent---' + sId;
+			return "testcomponent---" + sId;
 		}
 	};
 
@@ -156,7 +152,7 @@ function (
 			})
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -184,7 +180,7 @@ function (
 			})
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -213,20 +209,19 @@ function (
 					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
 				}.bind(this))
 				.catch(function (oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
+					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 
-		QUnit.test("when executing a command that fails because of dependencies", function(assert) {
-			var oFlexController = ChangesController.getFlexControllerInstance(oMockedAppComponent);
-			sandbox.stub(oFlexController, "checkForOpenDependenciesForControl").returns(true);
+		QUnit.test("when executing a command that fails", function(assert) {
+			sandbox.stub(ChangesWriteAPI, "apply").rejects();
 			return prepareAndExecute(this.oFlexCommand)
 				.then(function() {
-					assert.ok(false, 'then must never be called. An Exception should be thrown');
+					assert.ok(false, "then must never be called. An Exception should be thrown");
 				})
-				.catch(function(oError) {
-					assert.deepEqual(oError.message, "The following Change cannot be applied because of a dependency: " + this.oFlexCommand.getPreparedChange().getId(), "the execute promise got rejected with the correct error message");
-				}.bind(this));
+				.catch(function() {
+					assert.ok(true, "the promise gets rejected if the apply fails");
+				});
 		});
 	});
 
@@ -258,7 +253,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -273,7 +268,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -303,12 +298,12 @@ function (
 				var oTopCommand = this.stack.pop();
 				assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
 				assert.equal(this.stack.getCommands().length, 1, "  only first commmand is on the stack");
-				assert.equal(this.stack.getCommands()[0].getId(), this.command.getId(), "  only first commmand is on the stack");
+				assert.equal(this.stack.getCommands()[0].getId(), this.command.getId(), "only first commmand is on the stack");
 				assert.equal(oTopCommand.getId(), this.command2.getId(), " the correct command is returned");
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -362,7 +357,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -377,7 +372,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -392,7 +387,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -410,7 +405,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -428,8 +423,8 @@ function (
 				layer: "VENDOR"
 			};
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
-			this.OLD_VALUE = '2px';
-			this.NEW_VALUE = '5px';
+			this.OLD_VALUE = "2px";
+			this.NEW_VALUE = "5px";
 			this.oControl = new Column(oMockedAppComponent.createId("control"), {
 				width : this.OLD_VALUE
 			});
@@ -473,7 +468,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -542,7 +537,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		},
 		afterEach : function() {
@@ -575,7 +570,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -600,7 +595,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -725,7 +720,7 @@ function (
 			.then(this.stack.pushAndExecute.bind(this.stack, this.command2))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		},
 		afterEach : function() {
@@ -757,7 +752,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -783,7 +778,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -817,7 +812,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -891,7 +886,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -922,7 +917,7 @@ function (
 			}.bind(this))
 
 			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -1016,7 +1011,7 @@ function (
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 
@@ -1131,7 +1126,7 @@ function (
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		});
 	});
@@ -1208,7 +1203,7 @@ function (
 						}.bind(this));
 				}.bind(this))
 				.catch(function(oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
+					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 
@@ -1236,7 +1231,7 @@ function (
 				}.bind(this))
 
 				.catch(function(oError) {
-					assert.ok(false, 'catch must never be called - Error: ' + oError);
+					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
 		});
 
@@ -1289,7 +1284,7 @@ function (
 				}
 			}).setModel(oModel);
 
-			this.oList.placeAt('qunit-fixture');
+			this.oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oVBox31 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0];
@@ -1551,7 +1546,7 @@ function (
 				}
 			}).setModel(oModel);
 
-			this.oList.placeAt('qunit-fixture');
+			this.oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -1648,7 +1643,7 @@ function (
 				return oItem;
 			});
 
-			this.oList.placeAt('qunit-fixture');
+			this.oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0];
@@ -1658,7 +1653,7 @@ function (
 
 			oDesignTime.attachEventOnce("synced", function() {
 				done();
-			}.bind(this));
+			});
 		},
 		afterEach : function() {
 			sandbox.restore();

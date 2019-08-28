@@ -15,7 +15,6 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CommandFactory,
@@ -32,7 +31,6 @@ sap.ui.define([
 	Input,
 	Panel,
 	PersistenceWriteAPI,
-	ChangesController,
 	sinon
 ) {
 	"use strict";
@@ -118,7 +116,6 @@ sap.ui.define([
 	};
 
 	var oModel = new VariantModel(oData, undefined, oMockedAppComponent);
-	sandbox.stub(ChangesController.getFlexControllerInstance(oMockedAppComponent), "checkForOpenDependenciesForControl").returns(false);
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach : function(assert) {
@@ -1018,8 +1015,7 @@ sap.ui.define([
 		}.bind(this))
 
 		.then(function() {
-			var aUIChanges = ChangesController.getFlexControllerInstance(oMockedAppComponent)
-				._oChangePersistence.getDirtyChanges();
+			var aUIChanges = [oRemoveCommand1.getPreparedChange(), oRemoveCommand2.getPreparedChange()];
 			aUIChanges.forEach(function(oChange) {
 				// Change the reference of UI changes
 				oChange.setNamespace("APP_VARIANT_NAMESPACE");
@@ -1166,8 +1162,9 @@ sap.ui.define([
 			oControlVariantSetTitleCommand = oCommand;
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {
 				if (oEvent.getParameters().command === oControlVariantSetTitleCommand) {
-					var aUIChanges = ChangesController.getFlexControllerInstance(oMockedAppComponent)
-						._oChangePersistence.getDirtyChanges();
+					var aUIChanges = oControlVariantConfigureCommand.getPreparedChange()
+						.concat(oControlVariantDuplicateCommand.getPreparedChange())
+						.concat([oControlVariantSetTitleCommand.getPreparedChange()]);
 					aUIChanges.forEach(function(oChange) {
 						// Change the reference of UI changes
 						oChange.setNamespace("APP_VARIANT_NAMESPACE");
