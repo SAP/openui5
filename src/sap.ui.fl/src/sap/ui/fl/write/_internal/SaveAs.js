@@ -169,6 +169,7 @@ sap.ui.define([
 					return oAppVariantClosure.submit()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_SAVE_APP_VARIANT_FAILED";
+							oError.saveAsFailed = true;
 							throw oError;
 						});
 				})

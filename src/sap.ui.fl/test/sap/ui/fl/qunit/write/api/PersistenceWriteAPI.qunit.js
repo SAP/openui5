@@ -194,6 +194,24 @@ sap.ui.define([
 				}
 			};
 
+			this.oDescrChangeSpecificData3 = {
+				changeType: 'appdescr_app_setTitle',
+				content: {},
+				texts: {
+					"reference.app_sap.app.ovp.cards.customer.acard.title": {
+						type: "XTIT",
+						maxLength: 20,
+						comment: "example",
+						value: {
+							"": "Title example default text",
+							en: "Title example text in en",
+							de: "Titel Beispieltext in de",
+							en_US: "Title example text in en_US"
+						}
+					}
+				}
+			};
+
 			this.oUIChangeSpecificData = {
 				variantReference:"",
 				fileName:"id_1445501120486_26",
@@ -421,6 +439,14 @@ sap.ui.define([
 					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
 				})
 				.then(function() {
+					// Creates a second descriptor change
+					return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData3, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a second descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
 					// Creates a UI change
 					return ChangesWriteAPI.create({changeSpecificData: this.oUIChangeSpecificData, selector: oAppComponent});
 				}.bind(this))
@@ -430,7 +456,7 @@ sap.ui.define([
 					return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 3, "then Descriptor changes have been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
 					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0"})
 						.then(function() {
@@ -499,6 +525,14 @@ sap.ui.define([
 					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
 				})
 				.then(function() {
+					// Creates a second descriptor change
+					return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData3, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a second descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
 					// Creates a UI change
 					return ChangesWriteAPI.create({changeSpecificData: this.oUIChangeSpecificData, selector: oAppComponent});
 				}.bind(this))
@@ -508,13 +542,13 @@ sap.ui.define([
 					return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 3, "then a Descriptor change has been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
 					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0"})
 						.catch(function(oError) {
 							assert.ok("then the promise got rejected");
 							assert.equal(oError.messageKey, "MSG_SAVE_APP_VARIANT_FAILED", "then the messagekey is correct");
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then Descriptor changes are still present in the persistence");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 3, "then Descriptor changes are still present in the persistence and will be removed");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still present in the persistence but the reference has been changed");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
@@ -580,6 +614,14 @@ sap.ui.define([
 					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
 				})
 				.then(function() {
+					// Creates a second descriptor change
+					return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData3, selector: oAppComponent});
+				}.bind(this))
+				.then(function(oDescriptorInlineChange) {
+					// Adds a second descriptor change to its own persistence
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+				})
+				.then(function() {
 					// Creates a UI change
 					return ChangesWriteAPI.create({changeSpecificData: this.oUIChangeSpecificData, selector: oAppComponent});
 				}.bind(this))
@@ -589,13 +631,13 @@ sap.ui.define([
 					return PersistenceWriteAPI.add({change: oUIChange, selector: oAppComponent});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 3, "then the Descriptor changes have been added to the persistence");
 					assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change has been added to the persistence");
 					return PersistenceWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0"})
 						.catch(function(oError) {
 							assert.ok("then the promise got rejected");
 							assert.equal(oError.messageKey, "MSG_COPY_UNSAVED_CHANGES_FAILED", "then the messagekey is correct");
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 2, "then the Descriptor changes are still present in persistence");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 3, "then the Descriptor changes are still present in persistence and will be removed");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a UI change is still in the persistence");
 							assert.equal(oUIChange.getDefinition().reference, "customer.reference.app.id", "the reference of the UI Change has been changed with the app variant id");
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");

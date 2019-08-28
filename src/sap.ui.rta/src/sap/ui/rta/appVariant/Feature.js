@@ -201,6 +201,7 @@ sap.ui.define([
 		 */
 		onSaveAs: function(bSaveAsTriggeredFromRtaToolbar, sCurrentLayer, oSelectedAppVariant) {
 			var bIsS4HanaCloud;
+			var aAllInlineChanges = [];
 			var bCopyUnsavedChanges = false;
 			var oAppVariantSaveClosure;
 			var oDescriptor = fnGetDescriptor();
@@ -222,12 +223,26 @@ sap.ui.define([
 				};
 
 				var fnAddChangesToPersistence = function(aChanges) {
-					return AppVariantUtils.addChangesToPersistence(aChanges);
+					aAllInlineChanges = aChanges.slice();
+					return AppVariantUtils.addChangesToPersistence(aChanges, oRootControlRunningApp);
 				};
 
 				var fnCreateAppVariant = function() {
+					var sAppVariantId = AppVariantUtils.getNewAppVariantId();
 					// Based on the key user provided info, app variant descriptor is created
-					return oAppVariantManager.createAppVariant(AppVariantUtils.getNewAppVariantId());
+					return oAppVariantManager.createAppVariant(sAppVariantId)
+						.catch(function(oError) {
+							var sMessageKey = oError.messageKey;
+							if (!sMessageKey) {
+								sMessageKey = "MSG_SAVE_APP_VARIANT_FAILED";
+							}
+
+							// Since the saving of app variant failed, the descriptor inline changes which were created internally specific to the app variant, will now be removed from persistence
+							if (oError.saveAsFailed) {
+								AppVariantUtils.removeChangesFromPersistence(aAllInlineChanges, oRootControlRunningApp);
+							}
+							return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
+						});
 				};
 
 				var fnClearRTACommandStack = function(oAppVariant) {
@@ -300,7 +315,7 @@ sap.ui.define([
 								// Cancelling Save As Dialog
 								return false;
 							}
-							return fnTriggerActionFlow.call(this, null, bIsS4HanaCloud, sCurrentLayer);
+							return fnTriggerActionFlow.call(this, null, bIsS4HanaCloud, sCurrentLayer).then(resolve);
 						}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -325,7 +340,14 @@ sap.ui.define([
 					}
 
 					var fnDeleteAppVariant = function() {
-						return oAppVariantManager.deleteAppVariant(sAppVariantId);
+						return oAppVariantManager.deleteAppVariant(sAppVariantId)
+							.catch(function(oError) {
+								var sMessageKey = oError.messageKey;
+								if (!sMessageKey) {
+									sMessageKey = "MSG_DELETE_APP_VARIANT_FAILED";
+								}
+								return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);
+							});
 					};
 
 					var fnDeleteSuccessMessage = function() {
@@ -377,7 +399,7 @@ sap.ui.define([
 						.then(fnDeleteSuccessMessage)
 						.then(fnTriggerS4HanaRefresh.bind(this))
 						.catch(function() {
-							return fnTriggerActionFlow.call(this, null, bIsS4HanaCloud, sCurrentLayer);
+							return fnTriggerActionFlow.call(this, null, bIsS4HanaCloud, sCurrentLayer).then(resolve);
 						}.bind(this));
 				}.bind(this));
 			}.bind(this));

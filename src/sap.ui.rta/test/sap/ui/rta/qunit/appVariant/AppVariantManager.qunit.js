@@ -259,27 +259,6 @@ function (
 				}.bind(this));
 		});
 
-		QUnit.test("When createAppVariant() method is called and failed", function (assert) {
-			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").returns(Promise.reject("Saving error"));
-			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
-
-			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
-				mParameters.onClose("Close");
-			});
-
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Saving error").returns();
-
-			return new Promise(function(resolve, reject) {
-				return this.oAppVariantManager.createAppVariant("customer.appvar.id").then(reject, function () {
-					assert.ok(true, "a rejection took place");
-					assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oRootControl, id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}), "then PeristenceWriteApi.saveAs method is called with correct parameters");
-					assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
-					assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.appvar.id", "then the fncatchErrorDialog method is called with correct app var id");
-					resolve();
-				}.bind(this));
-			}.bind(this));
-		});
-
 		QUnit.test("When deleteAppVariant() method is called", function (assert) {
 			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
 			var vAppIdSelector = {appId: "customer.appvar.id"};
@@ -287,28 +266,6 @@ function (
 				.then(function() {
 					assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: vAppIdSelector}), "then PersistenceWriteApi.deleteAppVariant method is called with correct parameters");
 				});
-		});
-
-		QUnit.test("When deleteAppVariant() method is called and failed", function (assert) {
-			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").returns(Promise.reject("Delete Error"));
-			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
-			var vAppIdSelector = {appId: "customer.appvar.id"};
-
-			sandbox.stub(MessageBox, "show").callsFake(function(sText, mParameters) {
-				mParameters.onClose("Close");
-			});
-
-			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "Delete Error").returns();
-
-			return new Promise(function(resolve, reject) {
-				return this.oAppVariantManager.deleteAppVariant(vAppIdSelector.appId).then(reject, function () {
-					assert.ok(true, "a rejection took place");
-					assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: vAppIdSelector}), "then PeristenceWriteApi.deleteAppVariant method is called with correct parameters");
-					assert.strictEqual(fncatchErrorDialog.getCall(0).args[1], "MSG_DELETE_APP_VARIANT_FAILED", "then the fncatchErrorDialog method is called with correct message key");
-					assert.strictEqual(fncatchErrorDialog.getCall(0).args[2], "customer.appvar.id", "then the fncatchErrorDialog method is called with correct app var id");
-					resolve();
-				});
-			}.bind(this));
 		});
 
 		QUnit.test("When clearRTACommandStack() method is called without any unsaved changes", function (assert) {
