@@ -11,6 +11,19 @@ sap.ui.define([
 ], function(Table, Column, CreationRow, JSONModel, Menu, Label, Text) {
 	"use strict";
 
+	QUnit.module("Basics");
+
+	QUnit.test("Initialize skip propagation", function(assert) {
+		var oColumn = new Column();
+
+		assert.deepEqual(oColumn.mSkipPropagation, {
+			template: true,
+			creationTemplate: true
+		}, "Skip propagation is correctly initialized for template aggregations");
+
+		oColumn.destroy();
+	});
+
 	QUnit.module("API", {
 		beforeEach: function() {
 			this._oColumn = new Column();

@@ -340,13 +340,13 @@ function(
 	 * called when the column is initialized
 	 */
 	Column.prototype.init = function() {
-		this._oSorter = null;
-
-		// Skip propagation of properties (models and bindingContext).
+		// Skip propagation of properties (models and bindingContexts).
 		this.mSkipPropagation = {
 			template: true,
 			creationTemplate: true
 		};
+
+		this._oSorter = null;
 
 		// for performance reasons, the cloned column templates shall be stored for later reuse
 		this._initTemplateClonePool();
