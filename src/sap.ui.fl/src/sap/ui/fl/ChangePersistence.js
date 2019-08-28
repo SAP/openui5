@@ -76,11 +76,11 @@ sap.ui.define([
 					"fileNameChange1USERnamespace": [oChange2],
 					"fileNameChange2USERnamespace": [oChange3]
 				}
-			- mControlsWithDependenciesOn: map of controls IDs for which a change has a dependency on (excluding selectors).
+			- mControlsWithDependencies: map of controls IDs for which a change has a dependency on (excluding selectors).
 				All IDs that are listed in the controlsDependencies in any dependency will be saved here for faster processing.
 				Because of the way changes are applied the selectors are currently not needed, only the additional dependencies to controls.
 					Format:
-					mControlsWithDependenciesOn: {
+					mControlsWithDependencies: {
 						<controlId>: true
 					}
 			- aChanges: array of changes ordered by layer and creation time
@@ -114,7 +114,7 @@ sap.ui.define([
 			mChanges: {},
 			mDependencies: {},
 			mDependentChangesOnMe: {},
-			mControlsWithDependenciesOn: {},
+			mControlsWithDependencies: {},
 			aChanges: []
 		};
 	}
@@ -757,7 +757,7 @@ sap.ui.define([
 			var sSelectorId;
 			aControlSelectorList.forEach(function(oSelector) {
 				sSelectorId = _getCompleteIdFromSelector(oSelector, oAppComponent);
-				mChanges.mControlsWithDependenciesOn[sSelectorId] = true;
+				mChanges.mControlsWithDependencies[sSelectorId] = true;
 			});
 		}
 	};
@@ -830,7 +830,7 @@ sap.ui.define([
 			}.bind(this));
 
 			oChange.getDependentControlSelectorList().forEach(function(oSelector) {
-				this._mChanges.mControlsWithDependenciesOn[_getCompleteIdFromSelector(oSelector, oAppComponent)] = true;
+				this._mChanges.mControlsWithDependencies[_getCompleteIdFromSelector(oSelector, oAppComponent)] = true;
 			}.bind(this));
 			oInitialDependency.dependencies = aNewValidDependencies;
 			this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;

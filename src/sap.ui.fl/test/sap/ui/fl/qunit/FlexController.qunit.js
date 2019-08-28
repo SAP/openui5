@@ -82,7 +82,7 @@ function (
 			mChanges: mPropertyBag.mChanges || {},
 			mDependencies: mPropertyBag.mDependencies || {},
 			mDependentChangesOnMe: mPropertyBag.mDependentChangesOnMe || {},
-			mControlsWithDependenciesOn: mPropertyBag.mControlsWithDependenciesOn || {},
+			mControlsWithDependencies: mPropertyBag.mControlsWithDependencies || {},
 			aChanges: mPropertyBag.aChanges || []
 		};
 	}
@@ -2295,7 +2295,7 @@ function (
 					},
 					mDependencies: {},
 					mDependentChangesOnMe: {},
-					mControlsWithDependenciesOn: {}
+					mControlsWithDependencies: {}
 				});
 			};
 			var applyChangeSpy = sandbox.spy();
@@ -2380,7 +2380,7 @@ function (
 					mChanges: mChanges,
 					mDependencies: mDependencies,
 					mDependentChangesOnMe: {},
-					mControlsWithDependenciesOn: {
+					mControlsWithDependencies: {
 						anotherId: true
 					}
 				});
