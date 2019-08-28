@@ -1191,7 +1191,7 @@ function(
 			} else {
 				this._getSelectedItemsPicker().addContent(oTokensList);
 			}
-			oTokensList.setMode(ListMode.MultiSelect);
+			oTokensList.setMode(ListMode.Delete);
 		} else {
 			oTokensList.setMode(ListMode.None);
 			this._getReadOnlyPopover().addContent(oTokensList);
