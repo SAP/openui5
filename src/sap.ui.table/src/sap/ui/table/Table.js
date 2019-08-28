@@ -858,7 +858,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.init = function() {
-		// Skip propagation of properties (models and bindingContext).
+		// Skip propagation of properties (models and bindingContexts).
 		this.mSkipPropagation = {
 			rowActionTemplate: true,
 			rowSettingsTemplate: true

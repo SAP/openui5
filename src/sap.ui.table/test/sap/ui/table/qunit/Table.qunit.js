@@ -270,14 +270,25 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Initialize skip propagation", function(assert) {
+		var oTable = new Table();
+
+		assert.deepEqual(oTable.mSkipPropagation, {
+			rowActionTemplate: true,
+			rowSettingsTemplate: true
+		}, "Skip propagation is correctly initialized for template aggregations");
+
+		oTable.destroy();
+	});
+
 	QUnit.test("Properties", function(assert) {
 		assert.equal(oTable.$().find(".sapUiTableHdr").text(), "TABLEHEADER", "Title of Table is correct!");
-		assert.equal(jQuery("#__toolbar0").find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
+		assert.equal(oTable.getToolbar().$().find("button").text(), "Modify Table Properties...", "Toolbar and toolbar button are correct!");
 		assert.equal(oTable.$().find(".sapUiTableFtr").text(), "Footer", "Title of Table is correct!");
 		assert.equal(oTable.getSelectionMode(), "Single", "Selection mode is Single!");
 		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
-		assert.equal(jQuery(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
-		assert.equal(jQuery(".sapUiTableRowSelectionCell").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
+		assert.equal(oTable.$().find(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
+		assert.equal(oTable.$().find(".sapUiTableRowSelectionCell").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
 		assert.ok(oTable.getContextMenu() instanceof MenuM, "Context menu created as specified by the application");
 	});
@@ -4640,69 +4651,5 @@ sap.ui.define([
 		this.oTable._enableLegacyMultiSelection();
 		assert.throws(this.oTable._legacyMultiSelection, "Table#_legacyMultiSelection throws an error if a selection plugin is applied");
 
-	});
-
-	QUnit.module("Model and context propagation", {
-		beforeEach: function() {
-			var oModel = new JSONModel();
-
-			this.oTable = new Table({
-				rowActionTemplate: new RowAction(),
-				rowSettingsTemplate: new RowSettings(),
-				columns: [
-					new Column({
-						label: new Text(),
-						template: new Text()
-					}).setCreationTemplate(new Text())
-				],
-				models: {
-					modelInConstructor: oModel
-				},
-				bindingContexts: {
-					modelInConstructor: oModel.createBindingContext("/path")
-				}
-			});
-			this.oTable.setModel(new JSONModel());
-			this.oTable.setModel(new JSONModel(), "modelName");
-			this.oTable.setBindingContext(this.oTable.getModel().createBindingContext("/path"));
-			this.oTable.setBindingContext(this.oTable.getModel("modelName").createBindingContext("/path"), "modelName");
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		assertModelAndContext: function(assert, oObject, sObjectName, bShouldHaveModelsAndContexts, bDirectChild) {
-			assert.strictEqual(oObject.getModel() != null, bShouldHaveModelsAndContexts,
-				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has unnamed model"
-																   : "Has no unnamed model"));
-			assert.strictEqual(oObject.getModel("modelName") != null, bShouldHaveModelsAndContexts,
-				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has named model"
-																   : "Has no named model"));
-			assert.strictEqual(oObject.getBindingContext() != null, bShouldHaveModelsAndContexts,
-				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has binding context for unnamed model"
-																   : "Has no binding context for unnamed model"));
-			assert.strictEqual(oObject.getBindingContext("modelName") != null, bShouldHaveModelsAndContexts,
-				sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has binding context for named model"
-																   : "Has no binding context for named model"));
-
-			// Unfortunately, propagation to direct children of models and binding contexts passed to the constructor cannot be skipped.
-			if (!bDirectChild) {
-				assert.strictEqual(oObject.getModel("modelInConstructor") != null, bShouldHaveModelsAndContexts,
-					sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has model that was passed to the constructor"
-																	   : "Has no model that was passed to the constructor"));
-				assert.strictEqual(oObject.getBindingContext("modelInConstructor") != null, bShouldHaveModelsAndContexts,
-					sObjectName + ": " + (bShouldHaveModelsAndContexts ? "Has binding context model that was passed to the constructor"
-																	   : "Has no binding context model that was passed to the constructor"));
-			}
-		}
-	});
-
-	QUnit.test("Templates", function(assert) {
-		this.assertModelAndContext(assert, this.oTable, "Table", true);
-		this.assertModelAndContext(assert, this.oTable.getColumns()[0], "Column", true, true);
-		this.assertModelAndContext(assert, this.oTable.getRowActionTemplate(), "RowActionTemplate", false, true);
-		this.assertModelAndContext(assert, this.oTable.getRowSettingsTemplate(), "RowSettingsTemplate", false, true);
-		this.assertModelAndContext(assert, this.oTable.getColumns()[0].getLabel(), "Column label", true);
-		this.assertModelAndContext(assert, this.oTable.getColumns()[0].getTemplate(), "Column template", false, false);
-		this.assertModelAndContext(assert, this.oTable.getColumns()[0].getCreationTemplate(), "Column creationTemplate", false, false);
 	});
 });
