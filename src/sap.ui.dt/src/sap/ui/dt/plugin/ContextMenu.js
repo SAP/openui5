@@ -223,13 +223,9 @@ sap.ui.define([
 			});
 
 			if (aMenuItems.length > 0) {
-				this.oContextMenuControl._bUseExpPop = !!bContextMenu;
 				aMenuItems = this._sortMenuItems(aMenuItems);
 				this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), aSelectedOverlays);
 				this.oContextMenuControl.setStyleClass(this.getStyleClass());
-				if (bIsSubMenu) {
-					this.oContextMenuControl.setOpenNew(true);
-				}
 
 				this.oContextMenuControl.show(oOverlay, bContextMenu, {
 					x: mPosition.clientX,
@@ -375,7 +371,6 @@ sap.ui.define([
 					if (bLockOpening) {
 						this.lockMenuOpening();
 					}
-					this.oContextMenuControl.setOpenNew(true);
 					this.open(
 						{
 							clientX: oEvent.clientX,
@@ -535,7 +530,6 @@ sap.ui.define([
 			this._ensureSelection(oOverlay);
 
 			this.lockMenuOpening();
-			this.oContextMenuControl.setOpenNew(true);
 			this.open(mPosition, oOverlay, true);
 			if (oEvent.stopPropagation) {
 				oEvent.stopPropagation();

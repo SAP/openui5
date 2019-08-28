@@ -247,24 +247,6 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Calling the _popupClosed function", function (assert) {
-			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
-				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-				oContextMenuControl.bOpenNew = false;
-				oContextMenuControl._popupClosed();
-				assert.ok(!oContextMenuControl.bOpen, "ContextMenu should be closed");
-			}.bind(this));
-		});
-
-		QUnit.test("Calling the _popupClosed function in expanded mode", function (assert) {
-			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
-				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
-				oContextMenuControl._popupClosed();
-				assert.ok(!oContextMenuControl.bOpen, "ContextMenu should be closed");
-			}.bind(this));
-		});
-
 		QUnit.test("When a context menu is open and selection changes", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
@@ -552,7 +534,7 @@ sap.ui.define([
 		QUnit.test("Testing onClick function", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay, true).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
+				assert.ok(oContextMenuControl.isPopupOpen(false), "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
 				oContextMenuControl = null;
 			}.bind(this));
@@ -561,7 +543,7 @@ sap.ui.define([
 		QUnit.test("Testing onClick function with ctrl key pressed", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay, true).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
+				assert.ok(oContextMenuControl.isPopupOpen(false), "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
 				oContextMenuControl = null;
 			}.bind(this));
@@ -573,7 +555,7 @@ sap.ui.define([
 			this.oContextMenuPlugin.lockMenuOpening();
 			return openContextMenu.call(this, this.oButton2Overlay, true).then(function() {
 				assert.equal(oUnlockMenuOpeningSpy.callCount, 1, "then 'unlockMenuOpening' should be called once");
-				assert.ok(oContextMenuControl.bOpen, "then after opening delay ContextMenu should be open");
+				assert.ok(oContextMenuControl.isPopupOpen(false), "then after opening delay ContextMenu should be open");
 			});
 		});
 
@@ -583,7 +565,7 @@ sap.ui.define([
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.oButton2Overlay.setSelected(false);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
-			assert.notOk(oContextMenuControl.bOpen, "then after click the ContextMenu should not be opened");
+			assert.notOk(oContextMenuControl.isPopupOpen(true), "then after click the ContextMenu should not be opened");
 		});
 
 		QUnit.test("Testing onTouch function", function (assert) {
@@ -643,7 +625,7 @@ sap.ui.define([
 		QUnit.test("Clicking on a button in the ContextMenu", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
+				assert.ok(oContextMenuControl.isPopupOpen(true), "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
 				this.oContextMenuPlugin._oCurrentOverlay = this.oButton2Overlay;
 				oContextMenuControl.getFlexbox().getItems()[0].firePress();
@@ -1395,7 +1377,7 @@ sap.ui.define([
 			assert.strictEqual(oLastButton.getIcon(), "sap-icon://overflow", "Last Button should be the Overflow Button.");
 		});
 
-		QUnit.test("calling _setButtonsForContextMenu with 3 disabled Buttons", function (assert) {
+		QUnit.test("calling _setButtonsForCollapsedMenu with 3 disabled Buttons", function (assert) {
 			var aButtons = [
 				new OverflowToolbarButton({
 					text: "Button 0",
@@ -1415,7 +1397,7 @@ sap.ui.define([
 			var oHideInOverflowSpy = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
 			var oReplaceLastSpy = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
 			var oAddOverflowButtonSpy = sinon.spy(this.oContextMenuControl, "addOverflowButton");
-			this.oContextMenuControl._setButtonsForContextMenu(aButtons, new Button({
+			this.oContextMenuControl._setButtonsForCollapsedMenu(aButtons, new Button({
 				id: "btn0_"
 			}));
 			for (var i = 0; i < aButtons.length; i++) {
@@ -1428,7 +1410,7 @@ sap.ui.define([
 			assert.ok(oAddOverflowButtonSpy.notCalled);
 		});
 
-		QUnit.test("calling _setButtonsForContextMenu with 2 enabled and 2 disabled buttons", function (assert) {
+		QUnit.test("calling _setButtonsForCollapsedMenu with 2 enabled and 2 disabled buttons", function (assert) {
 			var aButtons = [
 				new OverflowToolbarButton({
 					text: "Button 0",
@@ -1452,7 +1434,7 @@ sap.ui.define([
 			var oHideInOverflowSpy = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
 			var oReplaceLastSpy = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
 			var oAddOverflowButtonSpy = sinon.spy(this.oContextMenuControl, "addOverflowButton");
-			this.oContextMenuControl._setButtonsForContextMenu(aButtons, new Button({
+			this.oContextMenuControl._setButtonsForCollapsedMenu(aButtons, new Button({
 				id: "btn1_"
 			}));
 			assert.ok(oEnabledButtonsSpy.calledOnce);
@@ -1462,7 +1444,7 @@ sap.ui.define([
 			assert.ok(oAddOverflowButtonSpy.calledOnce);
 		});
 
-		QUnit.test("calling _setButtonsForContextMenu with 3 enabled and 1 disabled buttons", function (assert) {
+		QUnit.test("calling _setButtonsForCollapsedMenu with 3 enabled and 1 disabled buttons", function (assert) {
 			this.oContextMenuControl.setMaxButtonsDisplayed(3);
 			var aButtons = [
 				new OverflowToolbarButton({
@@ -1487,7 +1469,7 @@ sap.ui.define([
 			var oHideInOverflowSpy = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
 			var oReplaceLastSpy = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
 			var oAddOverflowButtonSpy = sinon.spy(this.oContextMenuControl, "addOverflowButton");
-			this.oContextMenuControl._setButtonsForContextMenu(aButtons, new Button({
+			this.oContextMenuControl._setButtonsForCollapsedMenu(aButtons, new Button({
 				id: "btn2_"
 			}));
 			assert.ok(oEnabledButtonsSpy.calledOnce);
@@ -1498,7 +1480,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("calling show with contextMenu = true and contextMenu = false", function (assert) {
-			var spyColapsedContextMenu = sinon.spy(this.oContextMenuControl, "_setButtonsForContextMenu");
+			var spyColapsedContextMenu = sinon.spy(this.oContextMenuControl, "_setButtonsForCollapsedMenu");
 			var spyExpandedContextMenu = sinon.spy(this.oContextMenuControl, "_makeAllButtonsVisible");
 			var oBtn = new Button({}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1510,7 +1492,7 @@ sap.ui.define([
 			assert.ok(spyExpandedContextMenu.calledOnce);
 			spyColapsedContextMenu.reset();
 			spyExpandedContextMenu.reset();
-			this.oContextMenuControl.show(oBtn, false);
+			this.oContextMenuControl.show(oBtn, false, {});
 			assert.ok(spyColapsedContextMenu.calledOnce);
 			assert.ok(spyExpandedContextMenu.notCalled);
 		});

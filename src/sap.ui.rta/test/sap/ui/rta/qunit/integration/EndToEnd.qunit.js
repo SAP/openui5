@@ -366,9 +366,7 @@ sap.ui.define([
 				var oOverlayCreated = oEvent.getParameters().elementOverlay;
 				if (oOverlayCreated.getElement().getId() === oData.controlId) {
 					this.oRta._oDesignTime.detachEvent("elementOverlayCreated", checkOverlay, this);
-					oOverlayCreated.attachEventOnce("geometryChanged", function() {
-						oData.resolve(oOverlayCreated);
-					});
+					oData.resolve(oOverlayCreated);
 				}
 			}
 
@@ -485,7 +483,7 @@ sap.ui.define([
 
 			var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
 			oContextMenuControl.attachOpened(function () {
-				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
+				assert.ok(oContextMenuControl.getPopover(false).isOpen(), "ContextMenu is open");
 				// press rename button
 				var oRenameButton = oContextMenuControl.getButtons()[0];
 				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameButton, 'TestCompactMenu').then(fnDone);
