@@ -684,7 +684,7 @@ sap.ui.define([
 			assert.ok(typeof mResult.changes.variantSection["varMgmt1"].variants[1].content === 'object', "then the newly added variant contains a content object");
 		});
 
-		QUnit.test("when _sortChanges is called with a mix of changes and variants", function (assert) {
+		QUnit.test("when _addChangesToMap is called with a mix of changes and variants", function (assert) {
 			var mResult = {
 				changes: {
 					changes: [
@@ -759,6 +759,108 @@ sap.ui.define([
 			assert.ok(mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"][1].fileName === "Change6", "then both variant changes passed as a parameter exist in order");
 			assert.equal(mResult.changes.changes.length, 2, "then two global changes exist");
 			assert.equal(mResult.changes.variantSection["varMgmt1"].variantManagementChanges.setDefault[0].fileName, "Change7", "then one setDefault variantManagement exist");
+		});
+
+		QUnit.test("when _sortChanges is called with a combination of variants and changes", function (assert) {
+			var mResult = {
+				changes: {
+					changes: [
+						{
+							fileName: "Change1",
+							variantReference: ""
+						}
+					],
+					variantSection: {
+						varMgmt1: {
+							variantManagementChanges: {
+								setDefault: [
+									{
+										layer: "USER",
+										creation: "1995-01-02",
+										fileName: "setDefault1",
+										selector: {id: "varMgmt1"}
+									},
+									{
+										layer: "USER",
+										creation: "1995-01-01",
+										fileName: "setDefault2",
+										selector: {id: "varMgmt1"}
+									},
+									{
+										layer: "CUSTOMER",
+										creation: "1995-01-01",
+										fileName: "setDefault3",
+										selector: {id: "varMgmt1"}
+									},
+									{
+										layer: "VENDOR",
+										creation: "1995-01-02",
+										fileName: "setDefault4",
+										selector: {id: "varMgmt1"}
+									}
+								]
+							},
+							variants: [
+								{
+									content: {
+										fileName: "ExistingVariant1"
+									},
+									controlChanges: [
+										{
+											fileName: "Change2",
+											variantReference: "varMgmt1"
+										}
+									],
+									variantChanges: {
+										setTitle: [
+											{
+												layer: "USER",
+												creation: "1995-01-02",
+												fileName: "setTitle1",
+												selector: {id: "varMgmt1"}
+											},
+											{
+												layer: "USER",
+												creation: "1995-01-01",
+												fileName: "setTitle2",
+												selector: {id: "varMgmt1"}
+											},
+											{
+												layer: "CUSTOMER",
+												creation: "1995-01-01",
+												fileName: "setTitle3",
+												selector: {id: "varMgmt1"}
+											},
+											{
+												layer: "VENDOR",
+												creation: "1995-01-02",
+												fileName: "setTitle4",
+												selector: {id: "varMgmt1"}
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				}
+			};
+
+			this.oFakeLrepConnectorSessionStorage._sortChanges(mResult);
+
+			// check sorting of variantManagementChanges
+			var aVariantManagementChanges = mResult.changes.variantSection["varMgmt1"].variantManagementChanges["setDefault"];
+			assert.strictEqual(aVariantManagementChanges[3].fileName, "setDefault1");
+			assert.strictEqual(aVariantManagementChanges[2].fileName, "setDefault2");
+			assert.strictEqual(aVariantManagementChanges[1].fileName, "setDefault3");
+			assert.strictEqual(aVariantManagementChanges[0].fileName, "setDefault4");
+
+			// check sorting of variantChanges
+			var aSetTitleChanges = mResult.changes.variantSection["varMgmt1"].variants[0].variantChanges["setTitle"];
+			assert.strictEqual(aSetTitleChanges[3].fileName, "setTitle1");
+			assert.strictEqual(aSetTitleChanges[2].fileName, "setTitle2");
+			assert.strictEqual(aSetTitleChanges[1].fileName, "setTitle3");
+			assert.strictEqual(aSetTitleChanges[0].fileName, "setTitle4");
 		});
 
 		QUnit.test("when _assignVariantReferenceChanges with _getReferencedChanges is called with a valid variantReference", function (assert) {
