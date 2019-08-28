@@ -11,7 +11,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	//Check if related binding template has stable id
 	function checkAggregationBindingTemplateID(oOverlay, vStableElement) {
 		var mAggregationInfo = OverlayUtil.getAggregationInformation(oOverlay, oOverlay.getElement().sParentAggregationName);
 		if (!mAggregationInfo.templateId) {
@@ -33,18 +32,16 @@ sap.ui.define([
 
 		if (typeof oElementOverlay.data("hasStableId") !== "boolean") {
 			var aStableElements = oElementOverlay.getDesignTimeMetadata().getStableElements(oElementOverlay);
-			var bUnstable = (
-				aStableElements.length > 0
-				? (
-					aStableElements.some(function(vStableElement) {
-						var oControl = vStableElement.id || vStableElement;
-						if (!FlUtils.checkControlId(oControl, vStableElement.appComponent)) {
-							return checkAggregationBindingTemplateID(oElementOverlay, vStableElement);
-						}
-					})
-				)
-				: true
-			);
+			var bUnstable = false;
+
+			if (aStableElements.length > 0) {
+				bUnstable = aStableElements.some(function(vStableElement) {
+					var oControl = vStableElement.id || vStableElement;
+					if (!FlUtils.checkControlId(oControl, vStableElement.appComponent)) {
+						return checkAggregationBindingTemplateID(oElementOverlay, vStableElement);
+					}
+				});
+			}
 
 			oElementOverlay.data("hasStableId", !bUnstable);
 		}

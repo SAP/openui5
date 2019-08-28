@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
 	"sap/base/util/ObjectPath",
-	"sap/ui/rta/util/hasStableId",
+	"sap/ui/rta/util/validateStableIds",
 	"sap/ui/rta/util/showMessageBox",
 	"sap/base/Log",
 	"sap/ui/rta/Utils"
@@ -14,7 +14,7 @@ sap.ui.define([
 	FlUtils,
 	MessageBox,
 	ObjectPath,
-	hasStableId,
+	validateStableIds,
 	showMessageBox,
 	Log,
 	Utils
@@ -38,11 +38,7 @@ sap.ui.define([
 		if (oComponent) {
 			var oManifest = oComponent.getManifest();
 
-			if (
-				oManifest
-				&& ObjectPath.get(["sap.app", "id"], oManifest) !== "sap.ui.documentation.sdk"
-				&& !ObjectPath.get(["sap.ui.generic.app"], oManifest) && !ObjectPath.get(["sap.ovp"], oManifest)
-			) {
+			if (oManifest) {
 				var vFlexEnabled = ObjectPath.get(["sap.ui5", "flexEnabled"], oManifest);
 				if (typeof vFlexEnabled !== "boolean") {
 					showMessageBox(
@@ -54,22 +50,13 @@ sap.ui.define([
 						}
 					);
 				} else {
-					var bValid = true;
-					oRta._oDesignTime.getElementOverlays()
-						.filter(function (oElementOverlay) {
-							return !oElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable();
-						})
-						.forEach(function (oElementOverlay) {
-							var bCurrentValid = hasStableId(oElementOverlay);
+					var aUnstableOverlays = validateStableIds(oRta._oDesignTime.getElementOverlays(), oComponent);
 
-							if (!bCurrentValid) {
-								Log.error("Control ID was generated dynamically by SAPUI5. To support SAPUI5 flexibility, a stable control ID is needed to assign the changes to.", oElementOverlay.getElement().getId());
-							}
-
-							bValid = bCurrentValid && bValid;
+					if (aUnstableOverlays.length) {
+						aUnstableOverlays.forEach(function (oElementOverlay) {
+							Log.error("Control ID was generated dynamically by SAPUI5. To support SAPUI5 flexibility, a stable control ID is needed to assign the changes to.", oElementOverlay.getElement().getId());
 						});
 
-					if (!bValid) {
 						showMessageBox(
 							oRta._getTextResources().getText("MSG_UNSTABLE_ID_FOUND"),
 							{

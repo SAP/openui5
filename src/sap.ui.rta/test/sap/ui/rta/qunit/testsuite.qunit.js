@@ -474,6 +474,11 @@ sap.ui.define([
 						only: ["sap/ui/rta/util/hasStableId"]
 					}
 				},
+				"util/validateStableIds": {
+					coverage: {
+						only: ["sap/ui/rta/util/validateStableIds"]
+					}
+				},
 				"util/showMessageBox": {
 					coverage: {
 						only: ["sap/ui/rta/util/showMessageBox"]
