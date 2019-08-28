@@ -1882,7 +1882,7 @@ function (
 					fileNameChange1: ["fileNameChange2"],
 					fileNameChange2: ["fileNameChange3"]
 				},
-				mControlsWithDependenciesOn: {
+				mControlsWithDependencies: {
 					group1: true,
 					"mockAppComponent---group2": true,
 					"mockAppComponent---group3": true
@@ -1972,7 +1972,7 @@ function (
 					fileNameChange0: ["fileNameChange2"],
 					fileNameChange1: ["fileNameChange2"]
 				},
-				mControlsWithDependenciesOn: {
+				mControlsWithDependencies: {
 					group1: true,
 					group2: true,
 					group3: true
@@ -2040,7 +2040,7 @@ function (
 				mDependentChangesOnMe: {
 					fileNameChange1: ["fileNameChange2"]
 				},
-				mControlsWithDependenciesOn: {
+				mControlsWithDependencies: {
 					group2: true,
 					group3: true
 				},
@@ -2102,7 +2102,7 @@ function (
 				mDependentChangesOnMe: {
 					fileNameChange1: ["fileNameChange2"]
 				},
-				mControlsWithDependenciesOn: {
+				mControlsWithDependencies: {
 					group2: true,
 					group3: true
 				},
@@ -2159,7 +2159,7 @@ function (
 				mDependentChangesOnMe: {
 					fileNameChange1: ["fileNameChange2"]
 				},
-				mControlsWithDependenciesOn: {},
+				mControlsWithDependencies: {},
 				aChanges: [oChange1, oChange2]
 			};
 
@@ -2314,7 +2314,7 @@ function (
 					fileNameChange0: ["fileNameChange2"],
 					fileNameChange1: ["fileNameChange2"]
 				},
-				mControlsWithDependenciesOn: {
+				mControlsWithDependencies: {
 					group1: true,
 					group2: true,
 					group3: true
@@ -2324,7 +2324,7 @@ function (
 				mChanges: mChanges,
 				mDependencies: {},
 				mDependentChangesOnMe: {},
-				mControlsWithDependenciesOn: {}
+				mControlsWithDependencies: {}
 			};
 			var mExpectedDependenciesMapAfterFirstChange = {
 				mChanges: mChanges,
@@ -2336,7 +2336,7 @@ function (
 					}
 				},
 				mDependentChangesOnMe: {},
-				mControlsWithDependenciesOn: {
+				mControlsWithDependencies: {
 					group2: true,
 					group3: true
 				}
@@ -2357,7 +2357,7 @@ function (
 					}
 				},
 				mDependentChangesOnMe: {},
-				mControlsWithDependenciesOn: {
+				mControlsWithDependencies: {
 					group1: true,
 					group2: true,
 					group3: true

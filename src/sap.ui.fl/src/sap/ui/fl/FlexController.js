@@ -1118,7 +1118,7 @@ sap.ui.define([
 		var mChangesMap = fnGetChangesMap();
 		var mChanges = mChangesMap.mChanges;
 		var mDependencies = mChangesMap.mDependencies;
-		var mControlsWithDependenciesOn = mChangesMap.mControlsWithDependenciesOn;
+		var mControlsWithDependencies = mChangesMap.mControlsWithDependencies;
 		var aChangesForControl = mChanges[sControlId] || [];
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
@@ -1136,7 +1136,7 @@ sap.ui.define([
 				mChangesMap = this._oChangePersistence.copyDependenciesFromInitialChangesMap(oChange, this._checkIfDependencyIsStillValid.bind(this, oAppComponent, mPropertyBag.modifier), oAppComponent);
 
 				mDependencies = mChangesMap.mDependencies;
-				mControlsWithDependenciesOn = mChangesMap.mControlsWithDependenciesOn;
+				mControlsWithDependencies = mChangesMap.mControlsWithDependencies;
 				oChange.setInitialApplyState();
 			} else if (!bChangeStatusAppliedFinished && bIsCurrentlyAppliedOnControl) {
 				// if a change is already applied on the control, but the status does not reflect that, the status has to be updated
@@ -1159,11 +1159,11 @@ sap.ui.define([
 			}
 		}.bind(this));
 
-		// TODO improve handling of mControlsWithDependenciesOn when change applying gets refactored
+		// TODO improve handling of mControlsWithDependencies when change applying gets refactored
 		// 		- save the IDs of the waiting changes in the map
 		// 		- only try to apply those changes first
-		if (aChangesForControl.length || mControlsWithDependenciesOn[sControlId]) {
-			delete mControlsWithDependenciesOn[sControlId];
+		if (aChangesForControl.length || mControlsWithDependencies[sControlId]) {
+			delete mControlsWithDependencies[sControlId];
 			return Utils.execPromiseQueueSequentially(aPromiseStack)
 				.then(function () {
 					return this._processDependentQueue(mChangesMap, oAppComponent);
@@ -1300,7 +1300,7 @@ sap.ui.define([
 					oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 					if (oControl) {
 						oDependency.controlsDependencies.splice(iLength, 1);
-						delete mChangesMap.mControlsWithDependenciesOn[oControl.getId()];
+						delete mChangesMap.mControlsWithDependencies[oControl.getId()];
 					}
 				}
 			}
