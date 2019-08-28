@@ -851,6 +851,10 @@ sap.ui.define([
 		if (this.getHeight()) {
 			var $Table = this.getDomRef().querySelector("table");
 
+			if (this.getHeight().indexOf("%") > -1){
+				$Table.style.height = this.getHeight();
+				return;
+			}
 			// Table height is the PlanningCalendar height minus the height of the toolbars
 			var sStyle = this.$().height() - this._oInfoToolbar.$().height() - this._getTableHeaderToolbar().$().height() + "px";
 			$Table.style.height = sStyle;
