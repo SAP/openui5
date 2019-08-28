@@ -40,7 +40,6 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		var fValue,
 			aRange = oControl.getRange(),
 			bEnabled = oControl.getEnabled(),
-			oHandleTooltip = oControl._mHandleTooltip[mOptions.position].tooltip,
 			bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		oRM.write("<span");
@@ -54,8 +53,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 			oRM.writeAttribute("data-range-val", mOptions.position);
 			oRM.writeAttribute("aria-labelledby", (mOptions.forwardedLabels + " " + oControl._mHandleTooltip[mOptions.position].label.getId()).trim());
 
-			if (oControl.getInputsAsTooltips() && oHandleTooltip) {
-				oRM.writeAttribute("aria-controls", oHandleTooltip.getId());
+			if (oControl.getInputsAsTooltips()) {
 				oRM.writeAttribute("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
 			}
 		}
@@ -192,7 +190,6 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 			orientation: "horizontal",
 			valuemin: oSlider.toFixed(oSlider.getMin()),
 			valuemax: oSlider.toFixed(oSlider.getMax()),
-			valuenow: aRange.join("-"),
 			valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(oSlider._formatValueByCustomElement, oSlider)),
 			labelledby: (sForwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[2].getId()).trim() // range label
 		});

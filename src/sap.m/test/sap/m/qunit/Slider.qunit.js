@@ -2200,7 +2200,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("Slider with inputs as tooltip should add an aria-describedby", function(assert) {
+	QUnit.test("Slider with inputs as tooltip should add an aria", function(assert) {
 		var sInvisibleTextId,
 			oSlider = new Slider({
 				step: 1,
@@ -2218,6 +2218,13 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(sap.ui.getCore().byId(sInvisibleTextId).getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
+		assert.ok(!oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
+
+		oSlider.focus();
+		this.clock.tick(1);
+
+		assert.ok(oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should be set');
+
 
 		// cleanup
 		oSlider.destroy();
@@ -2310,6 +2317,7 @@ sap.ui.define([
 		oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
 
 		// assert
+		assert.ok(!oHandleDomRef.attr("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
 		assert.strictEqual(oHandleDomRef.attr("title"), undefined, "The title should be undefined if there's a tooltip.");
 		assert.strictEqual(oHandleDomRef.attr("aria-valuenow"), "0", "The aria-valuenow should be 0.");
 		assert.strictEqual(oHandleDomRef.attr("aria-valuetext"), "XXXXXXX-0", "The aria-valuetext should be XXXXXXX-0.");

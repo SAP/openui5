@@ -80,6 +80,8 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 				this.renderInput(oRm, oSlider);
 			}
 
+			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl, oRm);
+
 			oRm.write("</div>");
 		};
 
@@ -106,8 +108,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 		};
 
 		SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
-			var bEnabled = oSlider.getEnabled(),
-				oFirstTooltip = oSlider.getUsedTooltips()[0];
+			var bEnabled = oSlider.getEnabled();
 
 			oRm.write("<span");
 
@@ -119,8 +120,7 @@ sap.ui.define(['./SliderUtilities', "sap/ui/core/InvisibleText"],
 				this.writeHandleTooltip(oRm, oSlider);
 			}
 
-			if (oSlider.getInputsAsTooltips() && oFirstTooltip) {
-				oRm.writeAttribute("aria-controls", oFirstTooltip.getId());
+			if (oSlider.getInputsAsTooltips()) {
 				oRm.writeAttribute("aria-describedby", InvisibleText.getStaticId("sap.m", "SLIDER_INPUT_TOOLTIP"));
 			}
 
