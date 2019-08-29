@@ -3151,7 +3151,7 @@ sap.ui.define([
 			if (bNoAbort) {
 				return that._executeRestoreTreeState(oOptimizedChanges).then(function(aData) {
 					if (aData) {
-						that._fireRefresh({reason: ChangeReason.Refresh});
+						that._fireChange({reason: ChangeReason.Change});
 						that.fireDataReceived({data: aData});
 						return aData;
 					}
