@@ -955,14 +955,13 @@ function(
 			// Browsers except chrome do not increase the width of the container to include scrollbar (when width is auto). So we need to compensate
 			if (Device.system.desktop && !oBrowser.chrome) {
 
-				var bHasVerticalScrollbar = $dialogContent[0].clientHeight < $dialogContent[0].scrollHeight,
-					iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height(),
+				var iCurrentWidthAndHeight = $dialogContent.width() + "x" + $dialogContent.height(),
 					bMinWidth = $dialog.css("min-width") !== $dialog.css("width");
 
 				// Apply the fix only if width or height did actually change.
 				// And when the width is not equal to the min-width.
 				if (iCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll && bMinWidth) {
-					if (bHasVerticalScrollbar &&						// - there is a vertical scroll
+					if (this._hasVerticalScrollbar() &&					// - there is a vertical scroll
 						(!sContentWidth || sContentWidth == 'auto') &&	// - when the developer hasn't set it explicitly
 						!this.getStretch() && 							// - when the dialog is not stretched
 						$dialogContent.width() < maxDialogWidth) {		// - if the dialog can't grow anymore
@@ -981,6 +980,23 @@ function(
 			if (!this.getStretch() && !this._oManuallySetSize && !this._bDisableRepositioning) {
 				this._applyCustomTranslate();
 			}
+		};
+
+		/**
+		 * Checks if the dialog has a vertical scrollbar.
+		 * @private
+		 * @return {boolean} True if there is a vertical scrollbar, false otherwise
+		 */
+		Dialog.prototype._hasVerticalScrollbar = function() {
+			var $dialogContent = this.$('cont');
+
+			if (Device.browser.msie) {
+				// The scrollHeight property may return incorrect value in IE
+				// so we do the check based on the width of the vertical scrollbar
+				return $dialogContent[0].clientWidth < $dialogContent.outerWidth();
+			}
+
+			return $dialogContent[0].clientHeight < $dialogContent[0].scrollHeight;
 		};
 
 		/**
