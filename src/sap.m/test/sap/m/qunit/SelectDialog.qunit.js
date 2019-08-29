@@ -853,6 +853,34 @@ sap.ui.define([
 			oDialogCloseSpy.restore();
 		});
 
+		QUnit.test("Event delegates returned by _getListEventDelegates should be the correct ones", function (assert) {
+			// Arrange
+			var oSelectionChangeSpy = this.spy(this.oSelectDialog, "_selectionChange"),
+				oDelegates;
+
+			// Act
+			oDelegates = this.oSelectDialog._getListEventDelegates();
+
+			// Assert
+			assert.strictEqual(oDelegates.hasOwnProperty("onsapselect"), true, "onsapselect is present in the returned delegates object.");
+			assert.strictEqual(oDelegates.hasOwnProperty("ontap"), true, "ontap is present in the returned delegates object.");
+
+			// Act
+			oDelegates.onsapselect();
+
+			// Assert
+			assert.strictEqual(oSelectionChangeSpy.calledOnce, true, "Correct method was attached to onsapselect");
+
+			// Act
+			oDelegates.ontap();
+
+			// Assert
+			assert.deepEqual(oSelectionChangeSpy.calledTwice, true, "Correct method was attached to ontap");
+
+			// Clean
+			oSelectionChangeSpy.restore();
+		});
+
 		QUnit.module("Destroy", {
 			beforeEach: function() {
 
