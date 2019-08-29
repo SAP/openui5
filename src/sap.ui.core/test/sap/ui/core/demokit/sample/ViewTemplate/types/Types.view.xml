@@ -196,6 +196,8 @@
 			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 7, isDigitSequence: true}}" id="I52"/>
 			<Label text="DigitSequence (NUMC)" labelFor="I53"/>
 			<Input value="{path: 'DigitSequence', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 7, isDigitSequence: true}}" id="I53"/>
+			<Label text="DigitSequence (NUMC, nullable: false)" labelFor="I59"/>
+			<Input value="{path: 'DigitSequence', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 7, isDigitSequence: true, nullable: false}}" id="I59"/>
 		</form:SimpleForm>
 		<HBox id="identificationBox"/>
 	</VBox>
