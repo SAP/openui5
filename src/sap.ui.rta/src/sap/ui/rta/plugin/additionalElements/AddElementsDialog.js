@@ -441,7 +441,8 @@ sap.ui.define([
 	 */
 	AddElementsDialog.prototype._removeBusinessContexts = function () {
 		var nIndex;
-		for (nIndex = 0; nIndex < this._oBCContainer.getContent().length; nIndex++) {
+		var nElementsCount = this._oBCContainer.getContent().length;
+		for (nIndex = 0; nIndex < nElementsCount; nIndex++) {
 			this._oBCContainer.removeContent(1);
 		}
 	};
