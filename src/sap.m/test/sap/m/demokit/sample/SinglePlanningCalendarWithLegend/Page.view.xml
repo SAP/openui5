@@ -29,7 +29,7 @@
 			specialDates="{path: '/specialDates'}"
 			legend="SinglePlanningCalendarLegend">
 			<actions>
-				<ToggleButton text="Full Day" pressed="true" press="toggleFullDay"/>
+				<ToggleButton text="Full Day" press="toggleFullDay"/>
 				<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
 			</actions>
 			<views>
