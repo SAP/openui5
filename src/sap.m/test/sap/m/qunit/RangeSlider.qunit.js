@@ -444,7 +444,7 @@ sap.ui.define([
 
 	QUnit.test('Slider with decimal values, should apply all dom element attributes correctly', function (assert) {
 		// arrange
-		var oSliderInputElement, oProgressHandle,
+		var oSliderInputElement,
 			oSlider = new RangeSlider({
 				min: -10,
 				max: 10,
@@ -460,12 +460,10 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oSliderInputElement = oSlider.$().find('.sapMSliderInput')[0];
-		oProgressHandle = oSlider.getDomRef("progress");
 
 		// assert
 		assert.strictEqual(parseFloat(oSliderInputElement.getAttribute('start')), 1.25, "Range[0] to be set properly");
 		assert.strictEqual(parseFloat(oSliderInputElement.getAttribute('end')), 3.40, "Range[1] to be set properly");
-		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), '1.25-3.40', "The aria-valuenow of the progress handle should be 0-1.");
 
 		// cleanup
 		oSlider.destroy();
@@ -1246,8 +1244,9 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("RangeSlider with inputs as tooltip should add an aria-describedby", function(assert) {
-		var sFirstHandleAriaId,
+	QUnit.test("RangeSlider with inputs as tooltip should add an aria", function(assert) {
+		var clock = sinon.useFakeTimers(),
+			sFirstHandleAriaId,
 			sSecondHandleAriaId,
 			sResourceBundleText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"),
 			oSlider = new RangeSlider({
@@ -1267,15 +1266,25 @@ sap.ui.define([
 		assert.strictEqual(sap.ui.getCore().byId(sFirstHandleAriaId).getText(), sResourceBundleText);
 		assert.strictEqual(sap.ui.getCore().byId(sSecondHandleAriaId).getText(), sResourceBundleText);
 
+		assert.ok(!oSlider.getDomRef("handle1").getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
+		assert.ok(!oSlider.getDomRef("handle2").getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
+
+		oSlider.focus();
+		clock.tick(1);
+
+		assert.ok(oSlider.getDomRef("handle1").getAttribute("aria-controls"), 'The "aria-controls" should be set');
+		assert.ok(oSlider.getDomRef("handle2").getAttribute("aria-controls"), 'The "aria-controls" should be set');
+
 		// cleanup
 		oSlider.destroy();
+		clock.restore();
 	});
 
 	QUnit.test("RangeSlider with custom scale should change handle title html attribute accordingly", function(assert) {
 		var clock = sinon.useFakeTimers(),
 			oSlider,
 			oScale = new ResponsiveScale({tickmarksBetweenLabels: 1}),
-			oHandleDomRef, oProgressHandle, aRange, oSecondHandleDomRef;
+			oHandleDomRef, oProgressHandle, oSecondHandleDomRef;
 
 		oScale.getLabel = function (fCurValue, oSlider) {
 			var monthList = ["Zero", "One", "2", "3"];
@@ -1298,13 +1307,12 @@ sap.ui.define([
 		oHandleDomRef = oSlider.getDomRef("handle1");
 		oSecondHandleDomRef = oSlider.getDomRef("handle2");
 		oProgressHandle = oSlider.getDomRef("progress");
-		aRange = oSlider.getRange();
 
 		// assert
 		assert.strictEqual(oHandleDomRef.getAttribute("title"), "Zero", "The title should be Zero.");
 		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0", "The aria-valuenow should be 0.");
 		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuetext"), "Zero", "The aria-valuetext should be Zero.");
-		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), aRange.join('-'), "The aria-valuenow of the progress handle should be 0-1.");
+		assert.ok(!oHandleDomRef.getAttribute("aria-controls"), "aria-controls should not be present before the tooltip is in the DOM.");
 		assert.strictEqual(oProgressHandle.getAttribute("aria-valuetext"), oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', ["Zero", "One"]),
 			"The aria-valuetext of the progress handle should be From Zero to One.");
 
@@ -1315,6 +1323,7 @@ sap.ui.define([
 		assert.strictEqual(oSecondHandleDomRef.getAttribute("title"), "2", "The title should be 2.");
 		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuenow"), "2", "The aria-valuenow should be 2, since the label is numeric.");
 		assert.notOk(oSecondHandleDomRef.getAttribute("aria-valuetext"), "The aria-valuetext should not be defined.");
+		assert.ok(!oSecondHandleDomRef.getAttribute("aria-controls"), "aria-controls should not be present before the tooltip is in the DOM.");
 
 		// cleanup
 		clock.restore();
@@ -1374,8 +1383,6 @@ sap.ui.define([
 		assert.ok(!oSecondHandleDomRef.getAttribute("title"), "The title should be undefined if there's a tooltip.");
 		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuenow"), "2", "The aria-valuenow should be 0.");
 		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuetext"), "XXXXXXX-2", "The aria-valuetext should be XXXXXXX-2.");
-
-		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), "0-2", "The aria-valuenow should be 0-2.");
 		assert.strictEqual(oProgressHandle.getAttribute("aria-valuetext"), "From XXXXXXX-0 to XXXXXXX-2", "The aria-valuetext should be 'From XXXXXXX-0 to XXXXXXX-2'.");
 
 		// Act
@@ -1395,7 +1402,6 @@ sap.ui.define([
 		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuenow"), "2", "The aria-valuenow should be 0.");
 		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuetext"), "XXXXXXX-2", "The aria-valuetext should be XXXXXXX-2.");
 
-		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), "1-2", "The aria-valuenow should be 1-2.");
 		assert.strictEqual(oProgressHandle.getAttribute("aria-valuetext"), "From XXXXXXX-1 to XXXXXXX-2", "The aria-valuetext should be 'From XXXXXXX-1 to XXXXXXX-2'.");
 
 

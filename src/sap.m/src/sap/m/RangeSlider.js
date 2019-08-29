@@ -343,7 +343,6 @@ sap.ui.define([
             this._updateHandleAriaAttributeValues(oHandle, sValue, sScaleLabel);
 
             if (oProgressHandle) {
-                oProgressHandle.setAttribute("aria-valuenow", aRange.join("-"));
                 oProgressHandle.setAttribute("aria-valuetext",
                     this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(this._formatValueByCustomElement, this)));
             }
@@ -372,6 +371,25 @@ sap.ui.define([
                 }
 
                 this._mHandleTooltip.bAriaHandlesSwapped = !this._mHandleTooltip.bAriaHandlesSwapped;
+            }
+        };
+
+        /**
+         * Adds aria-controls attribute, when the tooltips are rendered.
+         *
+         * @private
+         */
+        RangeSlider.prototype._setAriaControls = function () {
+            if (!this.getShowAdvancedTooltip()) {
+                return;
+            }
+
+            if (!this._mHandleTooltip.start.handle.getAttribute('aria-controls') && this._mHandleTooltip.start.tooltip) {
+                this._mHandleTooltip.start.handle.setAttribute('aria-controls', this._mHandleTooltip.start.tooltip.getId());
+            }
+
+            if (!this._mHandleTooltip.end.handle.getAttribute('aria-controls') && this._mHandleTooltip.end.tooltip) {
+                this._mHandleTooltip.end.handle.setAttribute('aria-controls', this._mHandleTooltip.end.tooltip.getId());
             }
         };
 
@@ -880,6 +898,7 @@ sap.ui.define([
             if (this.getShowAdvancedTooltip()) {
                 oTooltipsContainer.show(this);
                 this._adjustTooltipsContainer();
+                this._setAriaControls();
             }
 
             // remember the initial focus range so when esc key is pressed we can return to it

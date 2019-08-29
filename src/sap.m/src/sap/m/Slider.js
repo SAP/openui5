@@ -1149,7 +1149,22 @@ function(
 
 			if (this.getShowAdvancedTooltip()) {
 				this.getAggregation("_tooltipContainer").show(this);
+				this._setAriaControls();
 				this.updateAdvancedTooltipDom(this.getValue());
+			}
+		};
+
+		/**
+		 * Adds aria-controls attribute, when the tooltips are rendered.
+		 *
+		 * @private
+		 */
+		Slider.prototype._setAriaControls = function () {
+			var oTooltip = this.getUsedTooltips()[0],
+				oHandle = this.getFocusDomRef();
+
+			if (this.getInputsAsTooltips() && oTooltip && oTooltip.getDomRef()) {
+				oHandle.setAttribute("aria-controls", oTooltip.getId());
 			}
 		};
 
@@ -1182,6 +1197,7 @@ function(
 
 				oTooltipContainer = this.getAggregation("_tooltipContainer");
 				bTooltipFocused = jQuery.contains(oTooltipContainer.getDomRef(), document.activeElement);
+				this._setAriaControls();
 
 				// do not update Tooltip's value if it is already focused
 				if (bTooltipFocused) {
