@@ -22,13 +22,13 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 
-	function findConnectorForLayer(sLayer, aConnectors) {
+	function findConnectorConfigForLayer(sLayer, aConnectors) {
 		var aFilteredConnectors = aConnectors.filter(function (oConnector) {
 			return oConnector.layerFilter.indexOf("ALL") !== -1 || oConnector.layerFilter.indexOf(sLayer) !== -1;
 		});
 
 		if (aFilteredConnectors.length === 1) {
-			return aFilteredConnectors[0].connector;
+			return aFilteredConnectors[0];
 		}
 
 		if (aFilteredConnectors.length === 0) {
@@ -36,21 +36,14 @@ sap.ui.define([
 		}
 
 		if (aFilteredConnectors.length > 1) {
-			throw new Error("sap.ui.core.Configuration 'xx-flexibilityConnectors' has a misconfiguration: Multiple Connectors were found to write into layer: " + sLayer);
+			throw new Error("sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: Multiple Connectors were found to write into layer: " + sLayer);
 		}
 	}
 
-	function sendLoadFeaturesToConnector (mPropertyBag, aConnectors) {
-		mPropertyBag.urls = {};
+	function sendLoadFeaturesToConnector(aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			if (oConnectorConfig.url) {
-				mPropertyBag.urls[oConnectorConfig.connectorName] = oConnectorConfig.url;
-			}
-
-			return new Promise(function (resolve) {
-				return oConnectorConfig.connector.loadFeatures(mPropertyBag)
-					.then(resolve, ApplyUtils.logAndResolveDefault.bind(null, resolve, {}, oConnectorConfig, "loadFeatures"));
-			});
+			return oConnectorConfig.connector.loadFeatures({url: oConnectorConfig.url})
+				.catch(ApplyUtils.logAndResolveDefault.bind(null, {}, oConnectorConfig, "loadFeatures"));
 		});
 
 		return Promise.all(aConnectorPromises);
@@ -63,13 +56,9 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.fl.write.connectors.BaseConnector>} Returns the connector in charge for the layer or rejects in case no connector can be determined
 	 * @private
 	 */
-	function getConnectorByLayer(sLayer) {
+	function getConnectorConfigByLayer(sLayer) {
 		return WriteUtils.getWriteConnectors()
-			.then(findConnectorForLayer.bind(this, sLayer));
-	}
-
-	function sendWriteFlexDataToConnector (mPropertyBag, oConnector) {
-		return oConnector.writeFlexData(mPropertyBag);
+			.then(findConnectorConfigForLayer.bind(this, sLayer));
 	}
 
 	var Connector = {};
@@ -78,13 +67,17 @@ sap.ui.define([
 	 * Stores the flex data by calling the according write of the connector in charge of the passed layer;
 	 * The promise is rejected in case the writing failed or no connector is configured to handle the layer.
 	 *
+	 * @param {object} mPropertyBag Property bag
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the file should be stored
 	 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Connector.writeFlexData = function(mPropertyBag) {
-		return getConnectorByLayer(mPropertyBag.layer)
-			.then(sendWriteFlexDataToConnector.bind(this, mPropertyBag));
+	Connector.write = function(mPropertyBag) {
+		return getConnectorConfigByLayer(mPropertyBag.layer)
+			.then(function (oConnectorConfig) {
+				mPropertyBag.url = oConnectorConfig.url;
+				oConnectorConfig.connector.writeFlexData(mPropertyBag);
+			});
 	};
 
 	/**
@@ -95,7 +88,7 @@ sap.ui.define([
 	Connector.loadFeatures = function() {
 		return WriteUtils.getWriteConnectors()
 			.then(sendLoadFeaturesToConnector)
-			.then(ApplyUtils.mergeResults);
+			.then(WriteUtils.mergeResults);
 	};
 
 	return Connector;
