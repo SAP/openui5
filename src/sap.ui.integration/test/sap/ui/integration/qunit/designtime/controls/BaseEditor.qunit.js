@@ -174,5 +174,60 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		});
+
+		QUnit.test("When config contains arrays", function (assert) {
+			var done = assert.async();
+			var aArray = [
+				{
+					a: "test1",
+					b: "Default"
+				},
+				{
+					a: "test2",
+					b: "Bold"
+				}
+			];
+			this.oBaseEditor.setJson({
+				context: {
+					prop: aArray
+				},
+				fooPath: {
+					foo1: "bar1"
+				}
+			});
+			this.oBaseEditor.setConfig({
+				context: "context",
+				properties: {
+					"prop": {
+						path: "prop",
+						type: "array",
+						template: {
+							a: {
+								path: "prop/:index/a",
+								type: "string"
+							},
+							b: {
+								path: "prop/:index/b",
+								type: "enum",
+								"enum": ["Default", "Bold"]
+							}
+						}
+					}
+				},
+				propertyEditors: {
+					"string": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor",
+					"array": "sap/ui/integration/designtime/controls/propertyEditors/ArrayEditor",
+					"enum": "sap/ui/integration/designtime/controls/propertyEditors/EnumStringEditor"
+				}
+			});
+			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
+				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop").getPropertyInfo().items.length, 2, "Then configuration for array items is created from template");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop").getPropertyInfo().items[0].a.path, "prop/0/a", "Then path index in array item is resolved");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop").getPropertyInfo().items[1].b.value, "Bold", "Then value in array item is correct");
+				assert.deepEqual(this.oBaseEditor.getPropertyEditor("prop").getPropertyInfo().value, aArray, "Then array value is set correctly");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop").getContent().length, 2, "Then array editor is created correctly");
+				done();
+			}.bind(this));
+		});
 	}
 );

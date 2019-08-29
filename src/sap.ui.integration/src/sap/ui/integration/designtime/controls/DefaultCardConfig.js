@@ -110,6 +110,32 @@ function () {
                 "visible": "{= ${context>/header/type} === 'Numeric' }"
             },
 
+            "sideIndicators" : {
+                "tags": ["header numericHeader"],
+                "label": "{i18n>CARD_EDITOR.SIDE_INDICATORS}",
+                "path": "header/sideIndicators",
+                "type": "array",
+                "template": {
+                    "title" : {
+                        "label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.TITLE}",
+                        "type": "string",
+                        "path": "header/sideIndicators/:index/title"
+                    },
+                    "number" : {
+                        "label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.NUMBER}",
+                        "type": "string",
+                        "path": "header/sideIndicators/:index/number"
+                    },
+                    "unit" : {
+                        "label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.UNIT}",
+                        "type": "string",
+                        "path": "header/sideIndicators/:index/unit"
+                    }
+                },
+                "maxItems": 2,
+                "visible": "{= ${context>/header/type} === 'Numeric' }"
+            },
+
             // List Card Item
             "listItemTitle": {
                 "tags": ["content listItem"],
@@ -133,7 +159,8 @@ function () {
         "propertyEditors": {
             "enum" : "sap/ui/integration/designtime/controls/propertyEditors/EnumStringEditor",
             "string" : "sap/ui/integration/designtime/controls/propertyEditors/StringEditor",
-            "icon" : "sap/ui/integration/designtime/controls/propertyEditors/IconEditor"
+            "icon" : "sap/ui/integration/designtime/controls/propertyEditors/IconEditor",
+            "array" : "sap/ui/integration/designtime/controls/propertyEditors/ArrayEditor"
         },
         "i18n" : "sap/ui/integration/designtime/controls/i18n/i18n.properties"
     };
