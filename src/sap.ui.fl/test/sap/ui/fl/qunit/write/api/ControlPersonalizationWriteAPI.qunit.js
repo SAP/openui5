@@ -121,37 +121,6 @@ sap.ui.define([
 					assert.equal(oError.message, "No valid ChangeHandler", "the function returns an error");
 				});
 		});
-
-		QUnit.test("when _checkChangeSpecificData is called without valid revertChange function in changeHandler", function(assert) {
-			var oChange = {
-				changeSpecificData: {
-					changeType: "foo"
-				},
-				selectorControl: this.oElement
-			};
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.core.Element" : {
-					foo : function() {
-						return {
-							applyChange: function() {},
-							completeChangeContent: function() {}
-						};
-					}
-				}
-			})
-			.then(function() {
-				return ControlPersonalizationAPI._checkChangeSpecificData(oChange);
-			})
-			.catch(function(oError) {
-				assert.equal(oError.message, "ChangeHandler has no revertChange function", "the function returns an error");
-				// remove registry item after test is complete
-				oChangeRegistry.removeRegistryItem({
-					changeTypeName: "foo",
-					controlType: "sap.ui.core.Element"
-				});
-			});
-		});
 	});
 
 	QUnit.module("Given dirty changes in change persistence are required to be saved", {

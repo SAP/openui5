@@ -234,9 +234,6 @@ sap.ui.define([
 					if (!oChangeHandler) {
 						throw new Error("No valid ChangeHandler");
 					}
-					if (!oChangeHandler.revertChange) {
-						throw new Error("ChangeHandler has no revertChange function");
-					}
 				});
 		},
 

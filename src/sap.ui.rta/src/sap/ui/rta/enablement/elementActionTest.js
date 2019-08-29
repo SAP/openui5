@@ -14,8 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/model/Model",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/rta/ControlTreeModifier",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4",
@@ -32,8 +30,6 @@ function (
 	ChangePersistence,
 	Model,
 	Settings,
-	ControlTreeModifier,
-	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	Cache,
 	sinon
@@ -249,7 +245,7 @@ function (
 					return mOptions.after.call(this.hookContext, assert);
 				},
 				beforeEach: function () {
-					sandbox.stub(Settings, "getInstance").resolves({_oSettings: {recordUndo: false}});
+					sandbox.stub(Settings, "getInstance").resolves({_oSettings: {}});
 				},
 				afterEach: function () {
 					this.oUiComponentContainer.destroy();
@@ -373,7 +369,7 @@ function (
 				//no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
 				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Cache.NOTAG); //no cache key => no xml view processing
-				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {recordUndo: false}}));
+				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
 
 				return createViewInComponent.call(this, SYNC).then(function() {
 					return buildCommand.call(this, assert);

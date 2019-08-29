@@ -75,7 +75,21 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangeTypeMetadata.prototype.getChangeHandler = function() {
-		return this._changeHandler;
+		if (typeof this._changeHandler === "string") {
+			// load the module synchronously
+			this._changeHandler = sap.ui.requireSync(this._changeHandler.replace(/\./g, "/"));
+		}
+
+		if (
+			this._changeHandler
+			&& typeof this._changeHandler.completeChangeContent === "function"
+			&& typeof this._changeHandler.applyChange === "function"
+			&& typeof this._changeHandler.revertChange === "function"
+		) {
+			return this._changeHandler;
+		}
+		Log.error("The ChangeHandler is either not available or does not fulfill all needed requirements");
+		return null;
 	};
 
 	/**

@@ -101,7 +101,8 @@ function(
 				"sap.ui.layout.form.Form": {
 					addGroup : {
 						applyChange: this.fnApplyChangeSpy,
-						completeChangeContent: this.fnCompleteChangeContentSpy
+						completeChangeContent: this.fnCompleteChangeContentSpy,
+						revertChange: function() {}
 					}
 				}
 			})

@@ -80,7 +80,11 @@ function (
 
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					splitStuff : { completeChangeContent: function() {} }
+					splitStuff: {
+						completeChangeContent: function() {},
+						applyChange: function() {},
+						revertChange: function() {}
+					}
 				}
 			})
 			.then(function() {

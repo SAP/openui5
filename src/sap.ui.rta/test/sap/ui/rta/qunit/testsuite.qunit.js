@@ -29,16 +29,6 @@ sap.ui.define([
 		},
 		tests: {
 			AggregationBinding: {},
-			ControlTreeModifier: {
-				coverage: {
-					only: ["sap/ui/rta/ControlTreeModifier"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.rta.test": "test-resources/sap/ui/rta/testdata/ObjectPage/"
-					}
-				}
-			},
 			"enablement/elementActionTest": {
 				coverage: {
 					only: ["sap/ui/rta/enablement/elementActionTest"]

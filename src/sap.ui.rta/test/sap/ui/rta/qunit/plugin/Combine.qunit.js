@@ -146,15 +146,20 @@ function(
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
 		beforeEach : function(assert) {
+			var oChangeHandler = {
+				completeChangeContent: function() {},
+				applyChange: function() {},
+				revertChange: function() {}
+			};
 			var done = assert.async();
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					combineStuff : { completeChangeContent: function() {} }
+					combineStuff : oChangeHandler
 				},
 				"sap.m.OverflowToolbar": {
-					combineStuff : { completeChangeContent: function() {} },
-					combineOtherStuff : { completeChangeContent: function() {} }
+					combineStuff : oChangeHandler,
+					combineOtherStuff : oChangeHandler
 				}
 			})
 			.then(function() {

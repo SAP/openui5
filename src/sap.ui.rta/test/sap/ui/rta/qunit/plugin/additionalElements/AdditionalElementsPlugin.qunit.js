@@ -57,6 +57,9 @@ sap.ui.define([
 		},
 		completeChangeContent : function() {
 			return true;
+		},
+		revertChange: function() {
+			return true;
 		}
 	};
 

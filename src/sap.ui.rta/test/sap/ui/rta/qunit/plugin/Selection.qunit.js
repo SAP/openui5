@@ -53,6 +53,11 @@ sap.ui.define([
 		beforeEach : function(assert) {
 			var done = assert.async();
 
+			var oChangeHandler = {
+				completeChangeContent: function() {},
+				applyChange: function() {},
+				revertChange: function() {}
+			};
 			this.oComponent = new UIComponent();
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(this.oComponent);
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -61,14 +66,14 @@ sap.ui.define([
 					SimpleChanges.hideControl,
 					{
 						changeType: "combineChange",
-						changeHandler : {}
+						changeHandler : oChangeHandler
 					}
 				],
 				"sap.m.HBox": [
 					SimpleChanges.hideControl,
 					{
 						changeType: "combineChange",
-						changeHandler : {}
+						changeHandler : oChangeHandler
 					}
 				],
 				"sap.m.Button": [],

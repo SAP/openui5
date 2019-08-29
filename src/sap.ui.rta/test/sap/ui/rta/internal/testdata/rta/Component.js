@@ -72,7 +72,7 @@ sap.ui.define([
 		 */
 		_createFakeLrep: function () {
 			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				this.FakeLrepConnectorStorage.enableFakeConnector({recordUndo: true});
+				this.FakeLrepConnectorStorage.enableFakeConnector();
 			}
 		}
 

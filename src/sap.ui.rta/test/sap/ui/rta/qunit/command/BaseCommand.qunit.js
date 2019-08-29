@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -61,7 +60,6 @@ function (
 	Change,
 	JSONModel,
 	flUtils,
-	RtaControlTreeModifier,
 	sinon
 ) {
 	"use strict";
@@ -1145,11 +1143,6 @@ function (
 				changeType: "hideControl"
 			});
 			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
-			this.fnRtaStartRecordingStub = sandbox.stub(RtaControlTreeModifier, "startRecordingUndo");
-			this.fnPerformUndoStub = sandbox.stub(RtaControlTreeModifier, "performUndo");
-			this.fnRtaStopRecordingStub = sandbox.stub(RtaControlTreeModifier, "stopRecordingUndo").callsFake(function() {
-				return ["undoOperation1", "undoOperation2"];
-			});
 
 			this.fnChangeHandler = {
 				applyChange: function (oChange) {
@@ -1176,8 +1169,8 @@ function (
 			this.oLayout.destroy();
 		}
 	}, function() {
-		QUnit.test("when change handler is revertible and command is executed", function (assert) {
-			assert.expect(10);
+		QUnit.test("when command is executed and undo is called", function (assert) {
+			assert.expect(8);
 			var fnRevertChangesOnControlStub = sandbox.spy(ChangesWriteAPI, "revert");
 			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").resolves(this.fnChangeHandler);
 
@@ -1198,38 +1191,8 @@ function (
 						.then(function () {
 							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
 							assert.ok(fnRevertChangesOnControlStub.calledWithExactly({change: oChange, element: this.oButton}), "then PersistenceWriteAPI.remove called with required parameters");
-							assert.equal(this.fnRtaStartRecordingStub.callCount, 0, "then recording of rta undo operations not started");
-							assert.equal(this.fnRtaStopRecordingStub.callCount, 0, "then recording of rta undo operations not stopped");
 						}.bind(this));
 				}.bind(this))
-				.catch(function(oError) {
-					assert.ok(false, "catch must never be called - Error: " + oError);
-				});
-		});
-
-		QUnit.test("when change handler is not revertible and command is executed", function (assert) {
-			assert.expect(8);
-			delete this.fnChangeHandler.revertChange;
-			sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(this.fnChangeHandler);
-			this.oCommandStack.push(this.oFlexCommand);
-
-			return Promise.resolve()
-				.then(this.oFlexCommand.prepare.bind(this.oFlexCommand))
-				.then(this.oCommandStack.execute.bind(this.oCommandStack))
-				.then(function () {
-					var oChange = this.oFlexCommand.getPreparedChange();
-					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then Command._applyChange called once");
-					assert.notOk(oChange.getRevertData(), "then no revert data set for change");
-
-					return this.oCommandStack.undo()
-						.then(function () {
-							assert.ok(true, "then a Promise.resolve() is returned on Stack.undo()");
-							assert.equal(this.fnRtaStartRecordingStub.callCount, 1, "then recording of rta undo operations is started");
-							assert.equal(this.fnRtaStopRecordingStub.callCount, 1, "then recording of rta undo operations is stopped");
-							assert.ok(this.fnPerformUndoStub.calledWith(["undoOperation1", "undoOperation2"]), "then undo operation is performed with the correct operations");
-						}.bind(this));
-				}.bind(this))
-
 				.catch(function(oError) {
 					assert.ok(false, "catch must never be called - Error: " + oError);
 				});
@@ -1241,11 +1204,9 @@ function (
 			this.oCommandStack.push(this.oFlexCommand);
 
 			return this.oCommandStack.execute()
-				.then(
-					function () {},
-					function () {
-						assert.ok(true, "then Promise reject returned");
-					});
+				.catch(function () {
+					assert.ok(true, "then Promise reject returned");
+				});
 		});
 	});
 
@@ -1651,9 +1612,7 @@ function (
 				rootElements : [this.oList]
 			});
 
-			oDesignTime.attachEventOnce("synced", function() {
-				done();
-			});
+			oDesignTime.attachEventOnce("synced", done);
 		},
 		afterEach : function() {
 			sandbox.restore();

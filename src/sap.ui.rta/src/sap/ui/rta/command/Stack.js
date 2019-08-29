@@ -6,14 +6,14 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/command/Settings",
 	"sap/ui/rta/command/CompositeCommand",
-	"sap/ui/rta/ControlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/write/api/PersistenceWriteAPI"
 ], function(
 	ManagedObject,
 	FlUtils,
 	Settings,
 	CompositeCommand,
-	ControlTreeModifier,
+	JsControlTreeModifier,
 	PersistenceWriteAPI
 ) {
 	"use strict";
@@ -86,7 +86,7 @@ sap.ui.define([
 					var oCommand = new Settings({
 						selector : oSelector,
 						changeType : oChange.getDefinition().changeType,
-						element : ControlTreeModifier.bySelector(oSelector, oComponent)
+						element : JsControlTreeModifier.bySelector(oSelector, oComponent)
 					});
 					oCommand._oPreparedChange = oChange;
 					if (oChange.getUndoOperations()) {

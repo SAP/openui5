@@ -129,28 +129,6 @@ sap.ui.define([
 			};
 			return ChangesController.getFlexControllerInstance(mPropertyBag.element)
 				._revertChange(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
-		},
-
-		/**
-		 * Check if change handler applicable to the passed change and control has <code>revertChange()</code>.
-		 * If no change handler is given, it will get the change handler from the change and control.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector object
-		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object
-		 *
-		 * @returns {boolean} <code>true</code> if change handler has <code>revertChange</code> function
-		 * @private
-		 */
-		_isChangeHandlerRevertible: function(mPropertyBag) {
-			// TODO: Remove function after RTA undo logic is removed
-			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-			var sControlType = JsControlTreeModifier.getControlType(mPropertyBag.selector);
-			var mControl = oFlexController._getControlIfTemplateAffected(mPropertyBag.change, mPropertyBag.selector, sControlType, {
-				modifier: JsControlTreeModifier,
-				appComponent: ChangesController.getAppComponentForSelector(mPropertyBag.selector)
-			});
-			return oFlexController.isChangeHandlerRevertible(mPropertyBag.change, mControl.control);
 		}
 	};
 	return ChangesWriteAPI;

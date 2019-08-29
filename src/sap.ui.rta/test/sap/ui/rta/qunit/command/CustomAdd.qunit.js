@@ -94,7 +94,8 @@ function(
 			var oCustomAddChangeHandler = {
 				customAdd: {
 					completeChangeContent: this.fnCompleteChangeContentSpy,
-					applyChange: this.fnApplyChangeSpy
+					applyChange: this.fnApplyChangeSpy,
+					revertChange: function() {}
 				}
 			};
 			oChangeRegistry.registerControlsForChanges({

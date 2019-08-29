@@ -3,22 +3,18 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
-	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/base/util/merge",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI"
+	"sap/ui/fl/write/api/ChangesWriteAPI"
 ], function(
 	BaseCommand,
-	RtaControlTreeModifier,
 	JsControlTreeModifier,
 	flUtils,
 	Log,
 	merge,
-	ChangesWriteAPI,
-	PersistenceWriteAPI
+	ChangesWriteAPI
 ) {
 	"use strict";
 
@@ -205,29 +201,10 @@ sap.ui.define([
 	 * @override
 	 */
 	FlexCommand.prototype.undo = function() {
-		function enhanceErrorMessage(sMessage, vControl) {
-			var sControlType = vControl.controlType ? vControl.controlType : JsControlTreeModifier.getControlType(vControl);
-			var sErrorMessage = "Undo is not possible for control type: " + sControlType + ". Reason: " + sMessage;
-			return sErrorMessage;
-		}
+		var vControl = this.getElement() || this.getSelector();
+		var oChange = this.getPreparedChange();
 
-		return Promise.resolve()
-		.then(function() {
-			var vControl = this.getElement() || this.getSelector();
-			var oChange = this.getPreparedChange();
-
-			if (oChange.getRevertData()) {
-				var oAppComponent = this.getAppComponent(true);
-				return ChangesWriteAPI.revert({change: oChange, element: vControl})
-					.then(function() {
-						PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent});
-					});
-			} else if (this._aRecordedUndo) {
-				RtaControlTreeModifier.performUndo(this._aRecordedUndo);
-			} else {
-				Log.error(enhanceErrorMessage("Undo is not available.", vControl));
-			}
-		}.bind(this));
+		return ChangesWriteAPI.revert({change: oChange, element: vControl});
 	};
 
 	/**
@@ -240,46 +217,21 @@ sap.ui.define([
 		var oChange = vChange.change || vChange;
 
 		var oAppComponent = this.getAppComponent();
-		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		var oSelectorElement = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 
 
-		var bRevertible;
-		var mPropertyBag;
-		// TODO: Remove this function while removing RTA Undo logic
-		return ChangesWriteAPI._isChangeHandlerRevertible({selector: oSelectorElement, change: oChange})
-			.then(function(bRevertibleResult) {
-				bRevertible = bRevertibleResult;
-				mPropertyBag = {
-					modifier: bRevertible ? JsControlTreeModifier : RtaControlTreeModifier,
-					appComponent: oAppComponent,
-					view: flUtils.getViewForControl(oSelectorElement)
-				};
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent,
+			view: flUtils.getViewForControl(oSelectorElement)
+		};
+		return ChangesWriteAPI.apply(Object.assign({change: oChange, element: oSelectorElement}, mPropertyBag))
 
-				if (!bRevertible) {
-					// TODO: Remove RTA undo logic
-					RtaControlTreeModifier.startRecordingUndo();
-				}
-
-				return Promise.resolve();
-			})
-
-			.then(function() {
-				return ChangesWriteAPI.apply(Object.assign({change: oChange, element: oSelectorElement}, mPropertyBag));
-			})
-
-			.then(function(oResult) {
-				if (!bRevertible) {
-					if (!oChange.getUndoOperations()) {
-						this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
-					} else {
-						this._aRecordedUndo = oChange.getUndoOperations();
-						oChange.resetUndoOperations();
-					}
-				}
-				if (!oResult.success) {
-					return Promise.reject(oResult.error);
-				}
-			}.bind(this));
+		.then(function(oResult) {
+			if (!oResult.success) {
+				return Promise.reject(oResult.error);
+			}
+		});
 	};
 
 	FlexCommand.prototype._validateControlForChange = function(mFlexSettings) {
