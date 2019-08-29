@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/ConnectorResultMerger",
+	"sap/ui/fl/apply/_internal/ConnectorResultDisassembler"
 ], function(
-	ApplyUtils
+	ApplyUtils,
+	ConnectorResultMerger,
+	ConnectorResultDisassembler
 ) {
 	"use strict";
 
@@ -20,22 +24,68 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 
-	/* Default responses for not implemented functions / needed response on error handling. */
-	var RESPONSES = {
-		FLEX_DATA : {
-			changes : [],
-			variantSection : {}
-		}
-	};
-
 	function loadFlexDataFromConnectors (mPropertyBag, aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
 			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url});
 			return oConnectorConfig.connector.loadFlexData(oConnectorSpecificPropertyBag)
-				.catch(ApplyUtils.logAndResolveDefault.bind(undefined, RESPONSES.FLEX_DATA, oConnectorConfig, "loadFlexData"));
+				.catch(ApplyUtils.logAndResolveDefault.bind(undefined, ApplyUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
 		});
 
 		return Promise.all(aConnectorPromises);
+	}
+
+	function flattenResponses(aResponses) {
+		var aFlattenedResponses = [];
+
+		aResponses.forEach(function (oResponse) {
+			if (Array.isArray(oResponse)) {
+				aFlattenedResponses = aFlattenedResponses.concat(oResponse);
+			} else {
+				aFlattenedResponses.push(oResponse);
+			}
+		});
+
+		return aFlattenedResponses;
+	}
+
+	function containsVariantData(aResponses) {
+		return aResponses.some(function(oResponse) {
+			return oResponse.variants && oResponse.variants.length > 0
+				|| oResponse.variantChanges && oResponse.variantChanges.length > 0
+				|| oResponse.variantDependentControlChanges && oResponse.variantDependentControlChanges.length > 0
+				|| oResponse.variantManagementChanges && oResponse.variantManagementChanges.length > 0;
+		});
+	}
+
+	function countVariantProvidingResponses(aResponses) {
+		var iVariantProvidingResponses = 0;
+		aResponses.forEach(function(oResponse) {
+			if (oResponse.variantSection && Object.keys(oResponse.variantSection).length > 0) {
+				iVariantProvidingResponses++;
+			}
+		});
+
+		return iVariantProvidingResponses;
+	}
+
+	function disassembleVariantSectionsIfNecessary(aResponses) {
+		var aDisassembledResponses = [];
+		var bResponseContainingFilledVariantPropertyExists = containsVariantData(aResponses);
+		var nNumberOfVariantProvidingResponses = countVariantProvidingResponses(aResponses);
+		var bVariantSectionSufficient = !bResponseContainingFilledVariantPropertyExists && nNumberOfVariantProvidingResponses <= 1;
+
+		if (bVariantSectionSufficient) {
+			aDisassembledResponses = aResponses;
+		} else {
+			aDisassembledResponses = aResponses.map(function (oResponse) {
+				return oResponse.variantSection ? ConnectorResultDisassembler.disassemble(oResponse) : oResponse;
+			});
+		}
+
+		return {
+			responses: aDisassembledResponses,
+			variantSectionSufficient: bVariantSectionSufficient
+		};
 	}
 
 	var Connector = {};
@@ -47,7 +97,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
-	 * @returns {Promise<Object>}
+	 * @returns {Promise<Object>} Resolves with the responses from all configured connectors merged into one object
 	 */
 	Connector.loadFlexData = function (mPropertyBag) {
 		if (!mPropertyBag || !mPropertyBag.reference) {
@@ -56,7 +106,9 @@ sap.ui.define([
 
 		return ApplyUtils.getApplyConnectors()
 			.then(loadFlexDataFromConnectors.bind(this, mPropertyBag))
-			.then(ApplyUtils.mergeResults);
+			.then(flattenResponses)
+			.then(disassembleVariantSectionsIfNecessary)
+			.then(ConnectorResultMerger.merge);
 	};
 
 	return Connector;

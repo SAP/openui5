@@ -5,11 +5,9 @@
 /* global XMLHttpRequest */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/base/security/encodeURLParameters",
 	"sap/base/Log"
 ], function (
-	StaticFileConnector,
 	encodeURLParameters,
 	Log
 ) {
@@ -26,40 +24,12 @@ sap.ui.define([
 	 */
 
 	var APPLY_CONNECTOR_NAME_SPACE = "sap/ui/fl/apply/_internal/connectors/";
-
-	/**
-	 * Adds entities of one object into another; depending of the type and presence of entries the behaviour differs:
-	 * * not present: it is just added
-	 * * present and an array: it is merged
-	 * * present and an object: it is merged (recursion)
-	 * This function changes the object directly without returning it.
-	 *
-	 * @param {object} oSource Object providing the data to merge
-	 * @param {object} oTarget Object which got the data added provided by the source
-	 * @param {string} sKey Key of the property which should be added
-	 */
-	function addToObject(oSource, oTarget, sKey) {
-		if (!oTarget[sKey]) {
-			oTarget[sKey] = oSource[sKey];
-			return; // continue
-		}
-
-		if (Array.isArray(oTarget[sKey])) {
-			oTarget[sKey] = oTarget[sKey].concat(oSource[sKey]);
-			return; // continue
-		}
-
-		if (typeof oTarget[sKey] === 'object') {
-			Object.keys(oSource[sKey]).forEach(function (sInnerKey) {
-				addToObject(oSource[sKey], oTarget[sKey], sInnerKey);
-			});
-		}
-		// simple entities are just overwritten
-		oTarget[sKey] = oSource[sKey];
-	}
+	var STATIC_FILE_CONNECTOR_CONFIGURATION = {
+		layerFilter: [],
+		connectorName: "StaticFileConnector"
+	};
 
 	return {
-
 		/**
 		 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
 		 *
@@ -71,7 +41,7 @@ sap.ui.define([
 			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 			var mConnectors = [];
 			if (bIncludingStaticFileConnector) {
-				mConnectors = [StaticFileConnector.CONFIGURATION];
+				mConnectors = [STATIC_FILE_CONNECTOR_CONFIGURATION];
 			}
 
 			mConnectors = mConnectors.concat(aConfiguredConnectors);
@@ -117,42 +87,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Merges the results from all involved connectors.
-		 *
-		 * @param {object[]} aResponses All responses provided by the different connectors
-		 * @returns {object} Merged result
-		 */
-		mergeResults: function(aResponses) {
-			var oResult = {};
-			aResponses.forEach(function (oResponse) {
-				Object.keys(oResponse).forEach(function (sKey) {
-					addToObject(oResponse, oResult, sKey);
-				});
-			});
-			return oResult;
-		},
-
-		/**
-		 * Takes a source object and returns a target object that has a subset of properties of the source object
-		 * specified in 'aKeys'.
-		 *
-		 * @param {object} oSource Object containing the information needed for filling oTarget
-		 * @param {array<string>} aKeys Keys which should be added to oTarget
-		 * @returns {object} oTarget Object containing all key-value pairs which where found in oSource
-		 */
-		getSubsetOfObject: function(oSource, aKeys) {
-			var oTarget = {};
-			if (Array.isArray(aKeys)) {
-				aKeys.forEach(function (sKey) {
-					if (oSource[sKey]) {
-						oTarget[sKey] = oSource[sKey];
-					}
-				});
-			}
-			return oTarget;
-		},
-
-		/**
 		 * Creating a full request url. Generic Method for all Connectors.
 		 * This includes the url prefix and optional cache buster token, flex reference and query parameters.
 		 *
@@ -163,6 +97,8 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
+		 * @private
+		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		getUrl: function(sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
@@ -190,6 +126,26 @@ sap.ui.define([
 		},
 
 		/**
+		 * Takes a source object and returns a target object that has a subset of properties of the source object
+		 * specified in 'aKeys'.
+		 *
+		 * @param {object} oSource Object containing the information needed for filling oTarget
+		 * @param {array<string>} aKeys Keys which should be added to oTarget
+		 * @returns {object} oTarget Object containing all key-value pairs which where found in oSource
+		 */
+		getSubsetOfObject: function(oSource, aKeys) {
+			var oTarget = {};
+			if (Array.isArray(aKeys)) {
+				aKeys.forEach(function (sKey) {
+					if (oSource[sKey]) {
+						oTarget[sKey] = oSource[sKey];
+					}
+				});
+			}
+			return oTarget;
+		},
+
+		/**
 		 * Sending a xhr request and handling the response according to the status code of the response.
 		 *
 		 * @param {string} sUrl Url of the sent request
@@ -200,7 +156,6 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.contentType] Content type of the request
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
-		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
 		sendRequest: function(sUrl, sMethod, mPropertyBag) {
 			sMethod = sMethod || "GET";
@@ -240,6 +195,22 @@ sap.ui.define([
 						});
 					}
 				};
+			});
+		},
+
+		/**
+		 * Internal function to allow the connectors to generate a response object with all needed properties;
+		 * Also usable for tests to generate these responses.
+		 *
+		 * @returns {object} Object containing an empty flex data response
+		 */
+		getEmptyFlexDataResponse: function () {
+			return Object.assign({}, {
+				changes: [],
+				variants: [],
+				variantChanges: [],
+				variantDependentChanges: [],
+				variantManagementChanges: []
 			});
 		}
 	};
