@@ -76,7 +76,7 @@ sap.ui.define([
 		return getConnectorConfigByLayer(mPropertyBag.layer)
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
-				oConnectorConfig.connector.writeFlexData(mPropertyBag);
+				oConnectorConfig.connector.write(mPropertyBag);
 			});
 	};
 

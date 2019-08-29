@@ -27,7 +27,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		writeFlexData: function (/* mPropertyBag */) {
+		write: function (/* mPropertyBag */) {
 			return Promise.reject("writeFlexData is not implemented");
 		},
 

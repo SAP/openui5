@@ -54,9 +54,9 @@ sap.ui.define([
 		}
 	};
 
-	function saveListWithConnector(oStorage, aList) {
+	function saveListWithConnector(oConnector, aList) {
 		aList.forEach(function (oFlexObject) {
-			oStorage.saveChange(oFlexObject.fileName, oFlexObject);
+			oConnector.write(oFlexObject.fileName, oFlexObject);
 		});
 	}
 
@@ -96,7 +96,7 @@ sap.ui.define([
 				]);
 			}
 		}, function () {
-			QUnit.test("when saveChange is called with various changes", function (assert) {
+			QUnit.test("when write is called with various changes", function (assert) {
 				saveListWithConnector(oConnector, [
 					oTestData.oChange1,
 					oTestData.oChange2,

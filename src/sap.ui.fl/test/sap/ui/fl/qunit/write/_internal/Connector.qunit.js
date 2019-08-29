@@ -20,7 +20,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("THEN it calls writeFlexData of the connector", function(assert) {
+		QUnit.test("THEN it calls write of the connector", function(assert) {
 			var oPayload = {};
 
 			var mPropertyBag = {
@@ -32,7 +32,7 @@ sap.ui.define([
 				{connectorName: "LrepConnector", layerFilter: ["VENDOR"], url: sUrl}
 			]);
 
-			var oWriteStub = sandbox.stub(LrepConnector, "writeFlexData").resolves();
+			var oWriteStub = sandbox.stub(LrepConnector, "write").resolves();
 
 			return Connector.write(mPropertyBag).then(function () {
 				assert.equal(oWriteStub.callCount, 1, "the write was triggered once");

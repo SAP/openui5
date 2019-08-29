@@ -35,11 +35,11 @@ sap.ui.define([
 				}), "a send request with correct parameters and options is sent");
 			});
 		});
-		QUnit.test("given a mock server, when writeFlexData is triggered", function (assert) {
+		QUnit.test("given a mock server, when write is triggered", function (assert) {
 			var mPropertyBag = {url: "/flex/keyuser", payload: []};
 			var sUrl = "/flex/keyuser/v1/changes/";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
-			return KeyUserConnector.writeFlexData(mPropertyBag).then(function () {
+			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
 					token: ApplyConenctor.sXsrfToken,
 					tokenUrl: "/v1/settings",

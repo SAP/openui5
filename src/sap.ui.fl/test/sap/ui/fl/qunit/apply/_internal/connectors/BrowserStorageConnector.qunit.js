@@ -205,15 +205,15 @@ sap.ui.define([
 		}
 	};
 
-	function saveListWithConnector(oStorage, aList) {
+	function saveListWithConnector(oConnector, aList) {
 		aList.forEach(function (oFlexObject) {
-			oStorage.saveChange(oFlexObject.fileName, oFlexObject);
+			oConnector.write(oFlexObject.fileName, oFlexObject);
 		});
 	}
 
 	function removeListFromStorage(oStorage, aList) {
-		aList.forEach(function (sObjektId) {
-			var sKey = BrowserStorageUtils.createChangeKey(sObjektId);
+		aList.forEach(function (sObjectId) {
+			var sKey = BrowserStorageUtils.createChangeKey(sObjectId);
 			if (oStorage.removeItem) {
 				oStorage.removeItem(sKey);
 			} else {

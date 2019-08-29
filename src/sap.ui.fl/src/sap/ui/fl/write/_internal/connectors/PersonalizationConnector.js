@@ -43,7 +43,7 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolving with the result from the request
 		 * @public
 		 */
-		writeFlexData: function (mPropertyBag) {
+		write: function (mPropertyBag) {
 			var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
 			// TODO: add the csrf token handling - check if its even needed in perso because of proxy
 			return ApplyUtils.sendRequest(sWriteUrl, "POST", mPropertyBag.payload);

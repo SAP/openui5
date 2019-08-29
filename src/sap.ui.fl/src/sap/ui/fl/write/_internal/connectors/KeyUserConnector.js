@@ -71,7 +71,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		writeFlexData:function (mPropertyBag) {
+		write:function (mPropertyBag) {
 			var sWriteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag);
 			var oRequestOption = WriteUtils.getRequestOptions(ApplyConnector, API_VERSION + ROUTES.SETTINGS, mPropertyBag.payload, "application/json; charset=utf-8", "json");
 

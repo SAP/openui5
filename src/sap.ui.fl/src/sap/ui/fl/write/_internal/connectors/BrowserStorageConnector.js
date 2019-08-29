@@ -28,7 +28,7 @@ sap.ui.define([
 		 */
 		oStorage: undefined,
 
-		saveChange: function(sId, oChange) {
+		write: function(sId, oChange) {
 			var sChangeKey;
 			var sChange;
 
