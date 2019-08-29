@@ -20,7 +20,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("given writeChanges is called", function (assert) {
+		QUnit.test("given write is called", function (assert) {
 			var mPropertyBag = {
 				url: "/sap/bc/lrep",
 				payload: {}
@@ -31,7 +31,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves();
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
-			return PersonalizationConnector.writeFlexData(mPropertyBag).then(function() {
+			return PersonalizationConnector.write(mPropertyBag).then(function() {
 				assert.equal(oSpyGetUrl.getCall(0).args[0], "/changes/", "with correct route path");
 				assert.equal(oSpyGetUrl.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
