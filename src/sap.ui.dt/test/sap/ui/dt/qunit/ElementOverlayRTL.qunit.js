@@ -63,7 +63,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created on RTL mode and scrolling is present", {
 		beforeEach : function(assert) {
-			var fnDone = assert.async();
+			var done = assert.async();
 			this.oButton = new Button({
 				text : "Button"
 			});
@@ -98,7 +98,12 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				fnDone();
+				// FIXME: when synced event is resolved including scrollbar synchronization
+				if (this.oButtonOverlay.$().css("transform") === "none") {
+					this.oButtonOverlay.attachEventOnce("geometryChanged", done);
+				} else {
+					done();
+				}
 			}.bind(this));
 		},
 		afterEach : function() {
