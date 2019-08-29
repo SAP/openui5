@@ -19,7 +19,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "http://api.apixu.com/v1/forecast.json?key=4fbdcdb5a8c24190bc3145021191302&q={{parameters.city}}&days=7"
+					"url": "//api.apixu.com/v1/forecast.json?key=4fbdcdb5a8c24190bc3145021191302&q={{parameters.city}}&days=7"
 				},
 				"path": "/forecast/forecastday"
 			},
