@@ -682,8 +682,6 @@ sap.ui.define([
 	TableQUnitUtils.wait = function(iMilliseconds) {
 		var bUseRequestAnimationFrame = iMilliseconds == null;
 
-		iMilliseconds = iMilliseconds == null ? 0 : iMilliseconds;
-
 		return new Promise(function(resolve) {
 			if (bUseRequestAnimationFrame) {
 				window.requestAnimationFrame(resolve);
