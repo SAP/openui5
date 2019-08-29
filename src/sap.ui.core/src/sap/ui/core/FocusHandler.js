@@ -178,6 +178,8 @@ sap.ui.define([
 				Log.debug("Apply focus info of control " + oInfo.id, null, "sap.ui.core.FocusHandler");
 				oInfo.control = oControl;
 				this.oLastFocusedControlInfo = oInfo;
+				// Do not store dom patch info in the last focused control info
+				delete this.oLastFocusedControlInfo.patching;
 				oControl.applyFocusInfo(oInfo.info);
 			} else {
 				Log.debug("Apply focus info of control " + oInfo.id + " not possible", null, "sap.ui.core.FocusHandler");
