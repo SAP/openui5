@@ -149,7 +149,7 @@ sap.ui.define([
 				oContainerData = oData[oParent.getId()];
 
 			if (!oContainerData) {
-				oParentData = oParentContext ? oParentContext.getObject() : null;
+				oParentData = oParentContext && oParentContext.getObject() ? oParentContext.getObject() : null;
 				oContainerData = Object.create(oParentData);
 			} else if (oParentData && oParentData !== Object.getPrototypeOf(oContainerData)) {
 				oContainerData = Object.create(oParentData);
@@ -235,6 +235,7 @@ sap.ui.define([
 						delete oCommandData[this.getCommand()];
 					}
 					if (isEmptyObject(oCommandData)) {
+						oParent._propagateProperties = oParent._propagateProperties._sapui_fnOrig;
 						oParent.unbindElement("$cmd");
 					}
 				}
@@ -257,11 +258,9 @@ sap.ui.define([
 		var i, oCommandExecution, oAggregation;
 
 		oAggregation = oControl.getDependents();
-		if (oAggregation) {
-			for (i = 0; i < oAggregation.length; i++) {
-				if (oAggregation[i].isA("sap.ui.core.CommandExecution") && oAggregation[i].getCommand() === sCommand) {
-					oCommandExecution = oAggregation[i];
-				}
+		for (i = 0; i < oAggregation.length; i++) {
+			if (oAggregation[i].isA("sap.ui.core.CommandExecution") && oAggregation[i].getCommand() === sCommand) {
+				oCommandExecution = oAggregation[i];
 			}
 		}
 		if (!oCommandExecution && oControl.getParent()) {
