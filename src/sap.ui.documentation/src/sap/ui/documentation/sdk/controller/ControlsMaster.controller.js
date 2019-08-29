@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/UriParameters",
-	"sap/ui/util/Storage"
+	"sap/ui/util/Storage",
+	"sap/ui/core/Core"
 ], function(
 	jQuery,
 	Device,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Version,
 	jQueryDOM,
 	UriParameters,
-	Storage
+	Storage,
+	Core
 ) {
 		"use strict";
 
@@ -168,6 +170,9 @@ sap.ui.define([
 				this._oDefaultSettings.rtl = this._oViewSettings.rtl;
 
 				this._initListSettings();
+
+				this.bus = Core.getEventBus();
+
 			},
 
 			_viewSettingsResetOnNavigation: function (oEvent) {
@@ -249,6 +254,7 @@ sap.ui.define([
 
 					this._oViewSettings.themeActive = sThemeActive;
 					bThemeChanged = true;
+					this.bus.publish("themeChanged", "onDemoKitThemeChanged", {sThemeActive: sThemeActive});
 				} else if (bContentDensityChanged) {
 					// NOTE: We notify for content density change only if no theme change is applied because both
 					// methods fire the same event which may lead to unpredictable result.

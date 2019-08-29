@@ -17,7 +17,8 @@ sap.ui.define([
     "sap/base/Log",
     "sap/base/util/Version",
 	"sap/ui/core/syncStyleClass",
-	"sap/ui/documentation/sdk/controls/WebPageTitleUtil"
+	"sap/ui/documentation/sdk/controls/WebPageTitleUtil",
+	"sap/ui/core/Core"
 ], function(
     jQuery,
 	BaseController,
@@ -33,7 +34,8 @@ sap.ui.define([
 	Log,
 	Version,
 	syncStyleClass,
-	WebPageTitleUtil
+	WebPageTitleUtil,
+	Core
 ) {
 		"use strict";
 
@@ -58,6 +60,19 @@ sap.ui.define([
 			FEEDBACK_TEXT = "Feedback",
 			CHANGE_VERSION_TEXT = "Change version",
 			DEMOKIT_COOKIE_NAME = "dkc";
+
+		// We need to hardcode theme depending height of Toolbar to calculate ScrollContainer
+		// height more precisely on the home page
+		var oToolbarHeights = {
+			sap_belize: {
+				iMobileHeight: "5rem",
+				iDesktopHeight: "3rem"
+			},
+			sap_fiori_3: {
+				iMobileHeight: "4.75rem",
+				iDesktopHeight: "2.75rem"
+			}
+		};
 
 		function setCookie(sCookieName, sValue) {
 			var sExpiresDate,
@@ -90,7 +105,7 @@ sap.ui.define([
 			onInit : function () {
 				BaseController.prototype.onInit.call(this);
 
-				var oViewModel = new JSONModel({
+				var	oViewModel = new JSONModel({
 					busy : false,
 					delay : 0,
 					bPhoneSize: false,
@@ -110,7 +125,8 @@ sap.ui.define([
 					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>"
+					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>",
+					oThemeScrollContainerHeight: oToolbarHeights[this.extractThemeSettings()]
 				});
 
 				this.MENU_LINKS_MAP = {
@@ -160,6 +176,9 @@ sap.ui.define([
 				this.byId("splitApp").attachEvent("afterMasterClose", function (oEvent) {
 					oViewModel.setProperty("/bIsShownMaster", false);
 				}, this);
+
+				this.bus = Core.getEventBus();
+				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 			},
 
 			onBeforeRendering: function() {
@@ -427,7 +446,7 @@ sap.ui.define([
 			onChangeVersionDialogSearch: function (oEvent) {
 				var sSearchedValue = oEvent.getParameter("newValue"),
 					oFilter = new sap.ui.model.Filter("version", sap.ui.model.FilterOperator.Contains, sSearchedValue),
-					oBinding = sap.ui.getCore().byId("versionList").getBinding("items");
+					oBinding = Core.byId("versionList").getBinding("items");
 
 				oBinding.filter([oFilter]);
 			},
@@ -823,6 +842,17 @@ sap.ui.define([
 						Log.warning("No neo-app.json was detected");
 					}
 				);
+			},
+
+
+			onDemoKitThemeChanged: function() {
+				this.getModel("appView").setProperty("/oThemeScrollContainerHeight",
+					oToolbarHeights[this.extractThemeSettings()]);
+			},
+
+			extractThemeSettings: function() {
+				return Core.getConfiguration().getTheme() === "sap_fiori_3" ?
+					"sap_fiori_3" : "sap_belize";
 			},
 
 			_getUI5Version: function () {
