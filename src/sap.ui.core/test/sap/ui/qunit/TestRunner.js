@@ -305,6 +305,7 @@
 					$frame.appendTo($framediv);
 					$framediv.appendTo("div.test-execution");
 
+					var iTestTimeout = parseInt(this.getUrlParameter("test-timeout")) || 300000;
 					var tBegin = new Date();
 					var oContext;
 					var fnCheckSuccess = function() {
@@ -329,14 +330,14 @@
 							return;
 						}
 
-						if (new Date() - tBegin < 300000) {
+						if (new Date() - tBegin < iTestTimeout) {
 							setTimeout(fnCheckSuccess, 100);
 						} else {
 							var QUnit = $frame[0].contentWindow.QUnit;
 							if (QUnit) {
 								// push a failure and add the results that where run to the report
 								oContext = oInst.fnGetTestResults(sTestName, $results);
-								oContext.tests[0].header = "Testsuite was not completed after 5 minutes : " + sTestName;
+								oContext.tests[0].header = "Testsuite was not completed after " + Math.round(iTestTimeout / 1000) + " seconds : " + sTestName;
 								oContext.tests[0].outcome = "fail";
 								oContext.tests[0].results.push(
 									{
