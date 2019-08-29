@@ -1293,6 +1293,12 @@ function(
 
 		oClone = Input.prototype.clone.apply(this, arguments);
 
+		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
+		this.attachLiveChange(this._onLiveChange, this);
+		this._tokenizer.attachTokenChange(this._onTokenChange, this);
+		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
+		this.attachValueHelpRequest(this._onValueHelpRequested, this);
+
 		return oClone;
 	};
 
