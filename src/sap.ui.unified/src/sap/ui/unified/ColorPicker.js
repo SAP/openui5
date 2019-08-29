@@ -1767,6 +1767,16 @@ sap.ui.define([
 
 		// set the new cursor position
 		this.$CPCur.css("left", iX).css("top", iY);
+
+		// fixes Edge rendering glitches on (x50%) zoom: 50%, 150%, 250%, etc...
+		if (sap.ui.Device.browser.edge) {
+			var oBox = document.getElementById(this.oCPBox.getId());
+			oBox.style.verticalAlign = "top";
+			setTimeout( function() {
+				oBox.style.verticalAlign = "initial";
+			}, 0);
+		}
+
 	};
 
 	/**
