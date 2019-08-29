@@ -347,6 +347,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[undefined, false, true].forEach(function (bNullable) {
+	QUnit.test("isDigitSequence: empty string, nullable=" + bNullable, function (assert) {
+		var oType = new StringType({}, {isDigitSequence : true, nullable : bNullable});
+
+		assert.strictEqual(oType.parseValue("", "string"), bNullable === false ? "0" : null);
+		assert.strictEqual(oType.formatValue(null, "string"), "");
+		assert.strictEqual(oType.formatValue("0", "string"), "0");
+
+		oType = new StringType({},
+			{isDigitSequence : true, maxLength : 7, nullable : bNullable});
+
+		assert.strictEqual(oType.parseValue("", "string"), bNullable === false ? "0000000" : null);
+		assert.strictEqual(oType.formatValue(null, "string"), "");
+		assert.strictEqual(oType.formatValue("0000000", "string"), "0");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("isDigitSequence: validate", function (assert) {
 		TestUtils.withNormalizedMessages(function () {
 			var oType = new StringType({}, {isDigitSequence : true, maxLength : 7});
