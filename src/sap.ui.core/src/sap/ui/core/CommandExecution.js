@@ -116,7 +116,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_getCommandInfo: function () {
-			var oCommand = {},
+			var oCommand,
 				oControl = this.getParent(),
 				oComponent = Component.getOwnerComponentFor(this);
 
@@ -128,8 +128,6 @@ sap.ui.define([
 
 			if (oComponent) {
 				oCommand = oComponent.getCommand(this.getCommand());
-			} else {
-				Log.error("No owner component. CommandInfo for command - " + this.getCommand() + " not found");
 			}
 			return oCommand ? Object.assign({}, oCommand) : null;
 		},
@@ -149,8 +147,8 @@ sap.ui.define([
 				oContainerData = oData[oParent.getId()];
 
 			if (!oContainerData) {
-				oParentData = oParentContext && oParentContext.getObject() ? oParentContext.getObject() : null;
-				oContainerData = Object.create(oParentData);
+				oParentData = oParentContext && oParentContext.getObject();
+				oContainerData = Object.create(oParentData || null);
 			} else if (oParentData && oParentData !== Object.getPrototypeOf(oContainerData)) {
 				oContainerData = Object.create(oParentData);
 			} else if (oContainerData[this.getCommand()]) {
@@ -180,8 +178,8 @@ sap.ui.define([
 
 			function fnModelChange() {
 				if (oParent.getModel("$cmd")) {
-					this._createCommandData();
-					this.getParent().detachModelContextChange(fnModelChange);
+					that._createCommandData();
+					that.getParent().detachModelContextChange(fnModelChange);
 				}
 			}
 
@@ -190,13 +188,13 @@ sap.ui.define([
 					//register Shortcut
 					sShortcut = oCommand.shortcut;
 					bIsRegistered = Shortcut.isRegistered(this.getParent(), sShortcut);
-					if (!bIsRegistered && this.getEnabled()) {
+					if (!bIsRegistered) {
 						Shortcut.register(oParent, sShortcut, this.trigger.bind(this));
 					}
 					if (oParent.getModel("$cmd")) {
 						this._createCommandData();
 					} else {
-						oParent.attachModelContextChange(fnModelChange.bind(this));
+						oParent.attachModelContextChange(fnModelChange);
 					}
 					var fnOriginalPropagate = oParent._propagateProperties;
 					oParent._propagateProperties = function() {
@@ -217,10 +215,23 @@ sap.ui.define([
 					if (bIsRegistered) {
 						Shortcut.unregister(oOldParent, oCommand.shortcut);
 					}
-					oOldParent._propagateProperties = oOldParent._propagateProperties._sapui_fnOrig;
+					this._cleanupContext(oOldParent);
 				}
 			}
 			return this;
+		},
+
+		_cleanupContext: function(oControl) {
+			if (oControl.getBindingContext("$cmd")) {
+				var oCommandData = oControl.getBindingContext("$cmd").getObject();
+				if (oCommandData) {
+					delete oCommandData[this.getCommand()];
+				}
+				if (isEmptyObject(Object.assign({}, oCommandData))) {
+					oControl._propagateProperties = oControl._propagateProperties._sapui_fnOrig;
+					oControl.unbindElement("$cmd");
+				}
+			}
 		},
 
 		/** @inheritdoc */
@@ -229,16 +240,7 @@ sap.ui.define([
 			if (oParent) {
 				var oCommand = this._getCommandInfo();
 				Shortcut.unregister(this.getParent(), oCommand.shortcut);
-				if (oParent.getBindingContext("$cmd")) {
-					var oCommandData = oParent.getBindingContext("$cmd").getObject();
-					if (oCommandData) {
-						delete oCommandData[this.getCommand()];
-					}
-					if (isEmptyObject(oCommandData)) {
-						oParent._propagateProperties = oParent._propagateProperties._sapui_fnOrig;
-						oParent.unbindElement("$cmd");
-					}
-				}
+				this._cleanupContext(oParent);
 			}
 			Element.prototype.destroy.apply(this, arguments);
 		}

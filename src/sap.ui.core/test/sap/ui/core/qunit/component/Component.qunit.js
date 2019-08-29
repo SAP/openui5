@@ -1168,17 +1168,9 @@ sap.ui.define([
 					"sap.ui5" : {
 						"commands": {
 							"Save": {
-								"name": "Save",
-								"icon": "sap-icon://save",
-								"caption": "test",
-								"tooltip": "test",
 								"shortcut": "Ctrl+S"
 							},
 							"Cancel": {
-								"name": "Cancel",
-								"icon": "sap-icon://save",
-								"caption": "test",
-								"tooltip": "test",
 								"shortcut": "Ctrl+C"
 							}
 						}
@@ -1999,8 +1991,21 @@ sap.ui.define([
 			manifest: false
 		}).then(function(oComponent) {
 			assert.equal(Object.keys(oComponent.getCommand()).length, 2, "Two commands found");
-			assert.equal(oComponent.getCommand("Save").name, "Save", "Save command found");
-			assert.equal(oComponent.getCommand("Cancel").name, "Cancel", "Save command found");
+			assert.equal(oComponent.getCommand("Save").shortcut, "Ctrl+S", "Save command found");
+			assert.equal(oComponent.getCommand("Cancel").shortcut, "Ctrl+C", "Cancel command found");
+			done();
+		});
+	});
+
+	QUnit.test("$cmd model", function(assert) {
+		assert.expect(1);
+		var done = assert.async();
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(oComponent) {
+			assert.ok(oComponent.getModel("$cmd"), "$cmd model created successfully");
 			done();
 		});
 	});
