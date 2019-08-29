@@ -246,6 +246,8 @@ function(
 			 * which are part of the header will be moved. The <code>headerSpan</code> can be either an integer or an array of
 			 * integers (if you use the multi header feature of the table). If you only specify an integer, this span is
 			 * applied for all header rows, with multiple integers you can specify a separate span for each header row.
+			 * <b>Note:</b> Only columns with a span equal to 1 can have a column menu. When setting a column to fixed, all
+			 * columns which are part of the header with the greatest span will be set to fixed.
 			 */
 			headerSpan : {type : "any", group : "Behavior", defaultValue : 1},
 
