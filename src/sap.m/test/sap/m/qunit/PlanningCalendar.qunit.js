@@ -1306,6 +1306,7 @@ sap.ui.define([
 		var aTest = sStyle.match(/height:(\s?)(\d+(.?)(\d+))/);
 		var iheight = aTest ? aTest[2] : 0;
 		assert.equal(iheight, 90 + "", "height set on DOM");
+		assert.ok(sStyle.indexOf("height: 90%;") > -1 , "The height is kept in percents");
 
 		// set fixed height because when in percent computed initially value in pixels
 		// differs with 1 or 2 pixels from the "final" value
