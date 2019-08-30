@@ -20,6 +20,10 @@ sap.ui.define([
 	 * @returns {int} The size in 'px'. The result is rounded up with Math.ceil(). Returns NaN if the size can not be parsed.
 	 */
 	function cssSizeToPx(sCssSize) {
+		if (sCssSize === null || sCssSize === undefined) {
+			return sCssSize;
+		}
+
 		if (sCssSize === 0 || sCssSize === "0") {
 			return 0;
 		}
@@ -127,6 +131,14 @@ sap.ui.define([
 	 */
 	GridContainerSettings.prototype.getColumnSizeInPx = function () {
 		return cssSizeToPx(this.getColumnSize());
+	};
+
+	/**
+	 * Gets the minimum column size, converted to its 'px' value.
+	 * @returns {int} The 'px' value. NaN if 'px' value can not be calculated.
+	 */
+	GridContainerSettings.prototype.getMinColumnSizeInPx = function () {
+		return cssSizeToPx(this.getMinColumnSize());
 	};
 
 	/**

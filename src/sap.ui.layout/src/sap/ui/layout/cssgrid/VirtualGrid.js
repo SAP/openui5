@@ -134,8 +134,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * The total width of the grid in the configured unit of measure.
+	 * @returns {int} Total width in the configured unit of measure
+	 */
+	VirtualGrid.prototype.getWidth = function () {
+		if (!this.virtualGridMatrix[0]) {
+			return 0;
+		}
+
+		var columns = this.virtualGridMatrix[0].length;
+		return columns * this.cellWidth + (columns - 1) * this.iGapSize;
+	};
+
+	/**
 	 * The total height of the grid in the configured unit of measure.
-	 * @returns {*} Total height in the configured unit of measure
+	 * @returns {int} Total height in the configured unit of measure
 	 */
 	VirtualGrid.prototype.getHeight = function () {
 		var rows = 0;

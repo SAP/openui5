@@ -495,6 +495,32 @@ function (
 		assertGridSettings(this.oGrid, oSettings, "layout", assert);
 	});
 
+	QUnit.test("Item width when we have breathing", function (assert) {
+		// Arrange
+		var oSettings = new GridContainerSettings({columns: 1, rowSize: "80px", minColumnSize: "80px", maxColumnSize: "150px", gap: "16px"}),
+			oItem = new Card({
+				layoutData: new GridContainerItemLayoutData({ columns: 1 })
+			});
+
+		this.oGrid.setAggregation("layout", oSettings);
+		this.oGrid.addItem(oItem);
+
+		// Act
+		Core.applyChanges();
+
+		// Assert
+		var $itemWrapper = oItem.$().parent();
+
+		if (bIsGridSupported) {
+			assert.strictEqual($itemWrapper.width(), 150, "Item width is stretched to max column size when there is space.");
+			this.oGrid.$().width("80px");
+			assert.strictEqual($itemWrapper.width(), 80, "Item width is equal to min column size when there is not enough space.");
+		} else {
+			// on IE we fallback to min column size for now
+			assert.strictEqual($itemWrapper.width(), 80, "Item width is equal to min column size for IE.");
+		}
+	});
+
 	QUnit.test("If breakpoint XS is not defined, fallback to S", function (assert) {
 		// Arrange
 		var oLayoutS = new GridContainerSettings({rowSize: "40px", columnSize: "40px", gap: "4px"});
@@ -622,5 +648,30 @@ function (
 		sap.ui.core.ResizeHandler.resume(this.oGrid.getDomRef());
 
 		assert.ok(fnApplyLayout.called, "ApplyLayout is called");
+	});
+
+	QUnit.test("Dimensions of the grid", function (assert) {
+		// Arrange
+		var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"}),
+			oItem = new Card({
+				layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
+			});
+
+		this.oGrid.setAggregation("layout", oSettings);
+		this.oGrid.addItem(oItem);
+
+		// Act
+		Core.applyChanges();
+
+		// Assert
+		// 2*80px + 1*16px = 176
+		assert.strictEqual(this.oGrid.$().height(), 176, "Grid height is correct. Equal to two rows and one gap.");
+
+		if (bIsGridSupported) {
+			assert.strictEqual(this.oGrid.$().width(), this.oGrid.$().parent().width(), "Grid width is 100%.");
+		} else {
+			// the width on IE depends on number of columns
+			assert.strictEqual(this.oGrid.$().width(), 176, "Grid width is correct. Equal to two columns and one gap for IE.");
+		}
 	});
 });
