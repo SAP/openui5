@@ -323,13 +323,13 @@ sap.ui.define([
 							// deviation shall be considered as defective.
 							if (nHeightDeviation > 1) {
 								bUnexpectedRowHeightDetected = true;
-							} else if (nHeightDeviationFixedPart > 1) {
+							} else if (nActualRowHeightFixedPart != null && nHeightDeviationFixedPart > 1) {
 								bUnexpectedRowHeightDetected = true;
 								nHeightToReport = nActualRowHeightFixedPart;
 							}
 						} else if (nActualRowHeight !== iExpectedRowHeight) {
 							bUnexpectedRowHeightDetected = true;
-						} else if (nActualRowHeightFixedPart !== iExpectedRowHeight) {
+						} else if (nActualRowHeightFixedPart != null && nActualRowHeightFixedPart !== iExpectedRowHeight) {
 							bUnexpectedRowHeightDetected = true;
 							nHeightToReport = nActualRowHeightFixedPart;
 						}
