@@ -302,7 +302,7 @@ sap.ui.define([
 
 	/**
 	 * Handler for onBeforeRendering for each item.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._onBeforeItemRendering = function () {
 		var container = this.getParent(),
@@ -317,7 +317,7 @@ sap.ui.define([
 
 	/**
 	 * Handler for onAfterRendering for each item.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._onAfterItemRendering = function () {
 		var container = this.getParent();
@@ -336,7 +336,7 @@ sap.ui.define([
 
 	/**
 	 * Handler for any change in the items aggregation.
-	 * @protected
+	 * @private
 	 * @param {object} changes What was changed
 	 */
 	GridContainer.prototype._onItemChange = function (changes) {
@@ -353,7 +353,7 @@ sap.ui.define([
 
 	/**
 	 * Removes any resize listeners. Both for the grid and for all items.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._deregisterResizeListeners = function () {
 		var key,
@@ -373,7 +373,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the DOM references for the items navigation.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._setItemNavigationItems = function () {
 		if (!this._isRenderingFinished) {
@@ -388,7 +388,7 @@ sap.ui.define([
 
 	/**
 	 * Detects what is the current layout breakpoint.
-	 * @protected
+	 * @private
 	 * @returns {boolean} True if the layout settings were changed.
 	 */
 	GridContainer.prototype._detectActiveLayout = function () {
@@ -417,7 +417,7 @@ sap.ui.define([
 
 	/**
 	 * Gets a map of the CSS styles that should be applied to the grid, based on the current layout.
-	 * @protected
+	 * @private
 	 * @returns {object} The current CSS styles
 	 */
 	GridContainer.prototype._getActiveGridStyles = function () {
@@ -447,7 +447,7 @@ sap.ui.define([
 
 	/**
 	 * Initialization hook.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype.init = function () {
 		this.setAggregation("_defaultLayout", new GridContainerSettings());
@@ -544,7 +544,7 @@ sap.ui.define([
 
 	/**
 	 * Before rendering hook.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype.onBeforeRendering = function () {
 		this._detectActiveLayout();
@@ -559,7 +559,7 @@ sap.ui.define([
 
 	/**
 	 * After rendering hook.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype.onAfterRendering = function () {
 		this._resizeListeners[this.getId()] = ResizeHandler.register(this.getDomRef(), this._resizeHandler);
@@ -572,7 +572,7 @@ sap.ui.define([
 
 	/**
 	 * Destroy hook.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype.exit = function () {
 		this._deregisterResizeListeners();
@@ -604,7 +604,7 @@ sap.ui.define([
 
 	/**
 	 * Handler for resize of the grid or the viewport
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._resize = function () {
 		if (!this._isWidthChanged()) {
@@ -618,7 +618,7 @@ sap.ui.define([
 	/**
 	 * Checks if the width of the grid or the viewport is different from the last time when it was checked.
 	 * Use to avoid resize handling when not needed.
-	 * @protected
+	 * @private
 	 * @returns {boolean} True if the width of the grid or of the viewport is changed since last check.
 	 */
 	GridContainer.prototype._isWidthChanged = function () {
@@ -636,7 +636,7 @@ sap.ui.define([
 
 	/**
 	 * Handler for resize of a grid's item.
-	 * @protected
+	 * @private
 	 * @param {Object} oEvent ResizeHandler resize event
 	 */
 	GridContainer.prototype._resizeItem = function (oEvent) {
@@ -650,7 +650,7 @@ sap.ui.define([
 
 	/**
 	 * Applies the current layout to the grid DOM element.
-	 * @protected
+	 * @private
 	 * @param {boolean} bSettingsAreChanged Are the grid settings changed after passing a breakpoint.
 	 */
 	GridContainer.prototype._applyLayout = function (bSettingsAreChanged) {
@@ -673,7 +673,7 @@ sap.ui.define([
 
 	/**
 	 * Increase rows span for item if it needs more space, based on it's height.
-	 * @protected
+	 * @private
 	 * @param {sap.ui.core.Control} oItem The item for which to calculate
 	 */
 	GridContainer.prototype._applyItemAutoRows = function (oItem) {
@@ -704,7 +704,7 @@ sap.ui.define([
 	/**
 	 * If one item has more columns than the total columns in the grid, it brakes the whole layout.
 	 * Prevent this by reducing this item's column span.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._enforceMaxColumns = function () {
 		var oSettings = this.getActiveLayoutSettings(),
@@ -769,7 +769,7 @@ sap.ui.define([
 
 	/**
 	 * Schedules the application of the IE polyfill for the next tick.
-	 * @protected
+	 * @private
 	 * @param {boolean} bImmediately If set to true - apply the polyfill immediately.
 	 */
 	GridContainer.prototype._scheduleIEPolyfill = function (bImmediately) {
@@ -787,7 +787,7 @@ sap.ui.define([
 
 	/**
 	 * Calculates absolute positions for items, so it mimics a css grid.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._applyIEPolyfillLayout = function () {
 		if (!this._isRenderingFinished) {
@@ -907,7 +907,7 @@ sap.ui.define([
 	/**
 	 * Implements polyfill for IE after drag over.
 	 * @param {Object} oEvent After drag over event
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._polyfillAfterDragOver = function (oEvent) {
 		var $indicator = oEvent.getParameter("indicator");
@@ -925,7 +925,7 @@ sap.ui.define([
 	/**
 	 * Implements polyfill for IE after drag end.
 	 * @param {Object} oEvent After drag end event
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._polyfillAfterDragEnd = function (oEvent) {
 		this._polyfillDropIndicator = null;
@@ -933,7 +933,7 @@ sap.ui.define([
 
 	/**
 	 * Attaches polyfill methods for drag and drop for IE.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._attachDndPolyfill = function () {
 		this.attachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
@@ -942,7 +942,7 @@ sap.ui.define([
 
 	/**
 	 * Detaches polyfill methods for drag and drop for IE.
-	 * @protected
+	 * @private
 	 */
 	GridContainer.prototype._detachDndPolyfill = function () {
 		this.detachEvent("_gridPolyfillAfterDragOver", this._polyfillAfterDragOver, this);
