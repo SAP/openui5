@@ -112,6 +112,23 @@ sap.ui.define([
 		}
 	}
 
+	function tabAndWaitFocusChange(bBackward, bScrolled) {
+		return new Promise(function(resolve) {
+			simulateTabEvent(document.activeElement, bBackward);
+			if (bScrolled) {
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						resolve();
+					}, 10);
+				});
+			} else {
+				setTimeout(function() {
+					resolve();
+				}, 10);
+			}
+		});
+	}
+
 	/**
 	 * Checks whether the complete text in an text input element is selected.
 	 *
@@ -6508,8 +6525,6 @@ sap.ui.define([
 			}).length;
 			var iLastColumnIndex = iColumnCount + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
 			var iRowCount = oTable._getTotalRowCount();
-			var iDelayAfterInRowTabbing = 100;
-			var iDelayAfterScrollTabbing = 300;
 			var oElem, i, j;
 
 			if (bShowInfo == null) {
@@ -6693,19 +6708,15 @@ sap.ui.define([
 									}
 								}
 
+								var oRow = oTable.getRows()[iRowIndex];
+								var bScrolled = bIsLastElementInRow && TableUtils.isLastScrollableRow(oTable, TableUtils.getCell(oTable, oElem))
+												&& oRow.getIndex() + oTable.getFixedBottomRowCount() !== iRowCount - 1;
 								if (bShowInfo) {
 									assert.ok(true, "[INFO] Simulating TAB event on: " + document.activeElement.id);
-								}
-
-								simulateTabEvent(document.activeElement);
-
-								var bScrolled = bIsLastElementInRow && TableUtils.isLastScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
-
-								if (bShowInfo) {
 									assert.ok(true, "[INFO] Scrolling will be performed: " + bScrolled);
 								}
 
-								setTimeout(function() {
+								tabAndWaitFocusChange(false, bScrolled).then(function() {
 									if (iAbsoluteRowIndex === iRowCount - 1 && bIsLastElementInRow) {
 										var oRowActionElementCell = getRowAction(iVisibleRowCount - 1);
 
@@ -6720,7 +6731,7 @@ sap.ui.define([
 										assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
 									}
 									resolve();
-								}, bScrolled ? iDelayAfterScrollTabbing : iDelayAfterInRowTabbing);
+								});
 							});
 						});
 					}());
@@ -6876,20 +6887,16 @@ sap.ui.define([
 									return;
 								}
 
+								var bIsFirstScrollableRow = TableUtils.isFirstScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
+								var oRow = oTable.getRows()[iRowIndex];
+								var bScrolled = iColumnIndex === (bTableHasRowHeader ? -1 : 0) && bIsFirstScrollableRow
+												&& oRow.getIndex() - oTable.getFixedRowCount() !== 0;
 								if (bShowInfo) {
 									assert.ok(true, "[INFO] Simulating Shift+TAB event on: " + document.activeElement.id);
-								}
-
-								simulateTabEvent(document.activeElement, true);
-
-								var bIsFirstScrollableRow = TableUtils.isFirstScrollableRow(oTable, TableUtils.getCell(oTable, oElem));
-								var bScrolled = iColumnIndex === (bTableHasRowHeader ? -1 : 0) && bIsFirstScrollableRow;
-
-								if (bShowInfo) {
 									assert.ok(true, "[INFO] Scrolling will be performed: " + bScrolled);
 								}
 
-								setTimeout(function() {
+								tabAndWaitFocusChange(true, bScrolled).then(function() {
 									if (iAbsoluteRowIndex === 0 && iColumnIndex === (bTableHasRowHeader ? -1 : 0)) {
 										if (bTableHasRowHeader) {
 											checkFocus(getRowHeader(0), assert);
@@ -6901,7 +6908,7 @@ sap.ui.define([
 										assert.ok(oKeyboardExtension.isInActionMode(), "Table is in Action Mode");
 									}
 									resolve();
-								}, bScrolled ? iDelayAfterScrollTabbing : iDelayAfterInRowTabbing);
+								});
 							});
 						});
 					}());
