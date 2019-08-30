@@ -27,7 +27,7 @@ sap.ui.define([
 			if (bSameReference) {
 				aFlexObjects.push(oFlexObject);
 			}
-		}.bind(this));
+		});
 
 		return aFlexObjects;
 	}
