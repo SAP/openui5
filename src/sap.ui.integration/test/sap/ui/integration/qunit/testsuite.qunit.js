@@ -49,6 +49,9 @@ sap.ui.define(function () {
 				}
 			},
 			"util/CustomElements": {
+				ui5: {
+					libs: ["sap.ui.integration"]
+				},
 				coverage: {
 					only: [
 						"sap/ui/integration/util/CustomElements"

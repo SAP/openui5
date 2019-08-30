@@ -9,3 +9,4 @@ src/sap.ui.demokit/src/sap/ui/demokit/js
 src/sap.ui.codeeditor/src/sap/ui/codeeditor/js
 src/sap.ui.fl/test/sap/ui/fl/qunit/registry/TestChangeHandlersBROKEN.flexibility.js
 src/testsuite-utils
+src/sap.ui.integration/src/sap/ui/integration/thirdparty
