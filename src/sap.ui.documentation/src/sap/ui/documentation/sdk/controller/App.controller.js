@@ -17,6 +17,12 @@ sap.ui.define([
 	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary) {
 		"use strict";
 
+		var oNewPatternNames = {
+			sampleLegacyRoute: "sample",
+			codeLegacyRoute: "code",
+			codeFileLegacyRoute: "code_file"
+		};
+
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper;
 
@@ -79,8 +85,26 @@ sap.ui.define([
 				this.oRouter.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType:"events"}, this._forwardToAPIRef, this);
 				this.oRouter.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType:"methods"}, this._forwardToAPIRef, this);
 
+				this.oRouter.getRoute("sampleLegacyRoute").attachPatternMatched(this._onNewSampleRouteMatched, this);
+				this.oRouter.getRoute("codeLegacyRoute").attachPatternMatched(this._onNewSampleRouteMatched, this);
+				this.oRouter.getRoute("codeFileLegacyRoute").attachPatternMatched(this._onNewSampleRouteMatched, this);
+
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
+			},
+
+			_onNewSampleRouteMatched: function(oEvent) {
+				var sPatterName = oEvent.getParameter("name"),
+					oArguments = oEvent.getParameter("arguments"),
+					oNavigationObject = {
+						id: oArguments.sampleId
+					};
+
+				if (sPatterName === "codeFileLegacyRoute") {
+					oNavigationObject.fileName = oArguments.fileName;
+				}
+
+				this.getRouter().navTo(oNewPatternNames[sPatterName], oNavigationObject);
 			},
 
 			onBeforeRendering: function() {

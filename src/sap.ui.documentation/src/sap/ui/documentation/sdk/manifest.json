@@ -169,6 +169,18 @@
 			"target": ["controlsMaster", "code"]
 		  },
 		  {
+			"pattern": "entity/{entityId}/sample/{sampleId}",
+			"name": "sampleLegacyRoute"
+		  },
+		  {
+			  "pattern": "entity/{entityId}/sample/{sampleId}/code",
+			  "name": "codeLegacyRoute"
+		  },
+		  {
+			  "pattern": "entity/{entityId}/sample/{sampleId}/code/{fileName}",
+			  "name": "codeFileLegacyRoute"
+		  },
+		  {
 			"pattern": "downloads",
 			"name": "downloads",
 			"target": ["downloads"]
