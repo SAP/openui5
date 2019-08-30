@@ -781,7 +781,7 @@ function (
 
 	QUnit.test("DynamicPage On Snap Header when not enough scrollHeight to snap with scroll and scrollTop > 0", function (assert) {
 		/* TODO remove after 1.62 version */
-		var sHeight = this.oDynamicPage._bMSBrowser  ? "300px" : "400px",
+		var sHeight = Device.browser.msie  ? "300px" : "400px",
 			aAcceptableValues = Device.browser.edge ? [0, 1] : [0]; // due to different MS browsers calculation
 
 		this.oDynamicPage.setContent(oFactory.getContent(1)); // not enough content to snap on scroll
