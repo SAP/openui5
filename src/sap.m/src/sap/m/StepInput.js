@@ -321,6 +321,7 @@ function(
 		var NumericInputRenderer = Renderer.extend(InputRenderer);
 
 		NumericInputRenderer.writeInnerAttributes = function(oRm, oControl) {
+			var oStepInput = oControl.getParent();
 			// inside the Input this function also sets explicitly textAlign to "End" if the type
 			// of the Input is Numeric (our case)
 			// so we have to overwrite it by leaving only the text direction
@@ -329,6 +330,7 @@ function(
 			if (sap.ui.getCore().getConfiguration().getRTL()) {
 				oRm.writeAttribute("dir", "ltr");
 			}
+			oRm.writeAccessibilityState(oStepInput);
 		};
 
 		//Accessibility behavior of the Input needs to be extended
