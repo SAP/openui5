@@ -4,12 +4,13 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, _Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
+], function (jQuery, Log, SyncPromise,_Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1826,8 +1827,6 @@ sap.ui.define([
 		var oBatchMock = this.mock(_Batch),
 			oBatchRequest1,
 			oBatchRequest2,
-			oBatchRequest3,
-			fnCancel = function () {},
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
@@ -1860,6 +1859,7 @@ sap.ui.define([
 			});
 		}
 
+		// code under test
 		assert.notOk(oRequestor.hasPendingChanges());
 		assert.notOk(oRequestor.hasPendingChanges("groupId"));
 		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"));
@@ -1868,43 +1868,42 @@ sap.ui.define([
 		oRequestor.request("GET", "Products", new _GroupLock("groupId"));
 		oBatchRequest1 = expectBatch();
 		aPromises.push(oRequestor.submitBatch("groupId"));
+
+		// code under test
 		assert.notOk(oRequestor.hasPendingChanges(), "running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
 		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : {/* product 0 */}}, {Name : "foo"}, undefined, fnCancel);
+			{"If-Match" : {/* product 0 */}}, {Name : "foo"});
 		oBatchRequest2 = expectBatch();
-		assert.ok(oRequestor.hasPendingChanges("groupId"), "one for groupId");
-		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"), "nothing in anotherGroupId");
 		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
 			// code under test
-			assert.ok(oRequestor.hasPendingChanges(),
-				"the batch with the second PATCH is still running");
-			// code under test
-			assert.ok(oRequestor.hasPendingChanges("groupId"), "groupId");
-			// code under test
-			assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"),
-				"anotherGroupId after submitBatch");
-			resolveBatch(oBatchRequest3);
+			assert.notOk(oRequestor.hasPendingChanges());
+			assert.notOk(oRequestor.hasPendingChanges("groupId"));
 		}));
 
 		// code under test
-		assert.strictEqual(oRequestor.hasPendingChanges(), true);
+		assert.ok(oRequestor.hasPendingChanges());
+		assert.ok(oRequestor.hasPendingChanges("groupId"), "one for groupId");
+		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"), "nothing in anotherGroupId");
+
 		assert.throws(function () {
+			// code under test
 			oRequestor.cancelChanges("groupId");
 		}, new Error("Cannot cancel the changes for group 'groupId', "
 			+ "the batch request is running"));
-		oRequestor.cancelChanges("anotherGroupId"); // the other groups are not affected
+
+		// code under test - the other groups are not affected
+		oRequestor.cancelChanges("anotherGroupId");
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
 		oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
 			{"If-Match" : {/* product 0 */}}, {Name : "bar"});
-		oBatchRequest3 = expectBatch();
-		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
+		assert.throws(function () {
 			// code under test
-			assert.strictEqual(oRequestor.hasPendingChanges(), false);
-			oRequestor.cancelChanges("groupId");
-		}));
+			oRequestor.submitBatch("groupId");
+		}, new Error("Unexpected second $batch")); // CPOUI5UISERVICESV3-1450
+
 
 		resolveBatch(oBatchRequest1);
 		resolveBatch(oBatchRequest2);
@@ -3577,6 +3576,26 @@ sap.ui.define([
 			oRequestor.destroy();
 			oClock.restore();
 		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("waitForRunningChangeRequests", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		assert.strictEqual(oRequestor.waitForRunningChangeRequests("groupId"),
+			SyncPromise.resolve());
+
+		oRequestor.batchRequestSent("groupId", /*bHasChanges*/true);
+
+		oPromise = oRequestor.waitForRunningChangeRequests("groupId");
+
+		assert.strictEqual(oPromise.isPending(), true);
+
+		oRequestor.batchResponseReceived("groupId", /*bHasChanges*/true);
+
+		assert.strictEqual(oPromise.isFulfilled(), true);
+		assert.strictEqual(oPromise.getResult(), undefined);
 	});
 });
 // TODO: continue-on-error? -> flag on model

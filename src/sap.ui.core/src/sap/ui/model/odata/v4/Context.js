@@ -869,6 +869,8 @@ sap.ui.define([
 	 * which there are pending changes.
 	 *
 	 * All failed updates or creates for the group ID are repeated within the same batch request.
+	 * If the group ID has submit mode {@link sap.ui.model.odata.v4.SubmitMode.Auto} and there are
+	 * currently running updates or creates this method first waits for them to be processed.
 	 *
 	 * The events 'dataRequested' and 'dataReceived' are not fired. Whatever should happen in the
 	 * event handler attached to...
@@ -915,7 +917,8 @@ sap.ui.define([
 	 */
 	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
 		var oCache = this.oBinding.oCachePromise.getResult(),
-			aPaths;
+			aPaths,
+			that = this;
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
@@ -944,15 +947,17 @@ sap.ui.define([
 		});
 
 		sGroupId = sGroupId || this.getUpdateGroupId();
-		if (this.oModel.isAutoGroup(sGroupId)) {
-			this.oModel.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
-		}
 
 		return Promise.resolve(
-				this.oBinding.requestSideEffects(sGroupId, aPaths, this)
-			).then(function () {
-				// return undefined;
-			});
+			this.oModel.isAutoGroup(sGroupId)
+				? this.oModel.oRequestor.waitForRunningChangeRequests(sGroupId).then(function () {
+					that.oModel.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
+					return that.oBinding.requestSideEffects(sGroupId, aPaths, that);
+				})
+				: this.oBinding.requestSideEffects(sGroupId, aPaths, this)
+		).then(function () {
+			// return undefined;
+		});
 	};
 
 	/**

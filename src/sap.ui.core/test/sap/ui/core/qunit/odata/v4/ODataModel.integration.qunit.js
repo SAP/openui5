@@ -19978,4 +19978,217 @@ sap.ui.define([
 		});
 	});
 
+	//*********************************************************************************************
+	// Scenario: Creating an entity and POST is still pending while requestSideEffects is called.
+	// requestSideEffect must wait for the POST.
+	// JIRA: CPOUI5UISERVICESV3-1936
+	QUnit.test("requestSideEffects waits for pending POST", function (assert) {
+		var oCreatedRowContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oRequestSideEffectsPromise,
+			fnRespond,
+			oTableBinding,
+			sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
+	<Table id="table" items="{BP_2_SO}">\
+		<columns><Column/><Column/></columns>\
+		<ColumnListItem>\
+			<Text id="id" text="{SalesOrderID}" />\
+			<Text id="note" text="{Note}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				BusinessPartnerID : "4711",
+				BP_2_SO : [{
+					Note : "Test",
+					SalesOrderID : '0500000001'
+				}]
+			})
+			.expectChange("id", ["0500000001"])
+			.expectChange("note", ["Test"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO' failed; "
+					+ "will be repeated automatically", sinon.match.string,
+					"sap.ui.model.odata.v4.ODataListBinding");
+			that.oLogMock.expects("error")
+				.withExactArgs("$batch failed", sinon.match.string,
+					"sap.ui.model.odata.v4.ODataModel");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "BusinessPartnerList('4711')/BP_2_SO"
+				}, new Promise(function (resolve, reject) {
+					fnRespond = reject.bind(null, createError()); // take care of timing
+				}))
+				.expectChange("id", ["", "0500000001"])
+				.expectChange("note", ["Created", "Test"]);
+
+			oTableBinding = that.oView.byId("table").getBinding("items");
+			oCreatedRowContext = oTableBinding.create({Note : "Created"}, /*bSkipRefresh*/true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oFormContext = that.oView.byId("form").getBindingContext();
+
+			// expect no requests as fnRespond not invoked yet
+
+			// code under test - requestSideEffects has to wait for POST to finish
+			oRequestSideEffectsPromise = oFormContext.requestSideEffects([{
+				$NavigationPropertyPath : "BP_2_SO"
+			}]);
+
+			return that.waitForChanges(assert); // no real changes but for sake of consistency
+		}).then(function () {
+			that.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}])
+				.expectRequest({
+					batchNo : 3,
+					method : "POST",
+					payload : {Note : "Created"},
+					url : "BusinessPartnerList('4711')/BP_2_SO"
+				}, {
+					Note : "Created",
+					SalesOrderID : "43"
+				})
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "BusinessPartnerList('4711')?$select=BP_2_SO"
+						+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
+				}, {
+					BusinessPartnerID : "4711",
+					BP_2_SO : [{
+						Note : "Created",
+						SalesOrderID : "43"
+					}, {
+						Note : "Test",
+						SalesOrderID : "0500000001"
+					}]
+				})
+				//.expectChange("id", ["43"]);
+				.expectChange("id", "43", -1); //TODO see test above
+
+			// invocation here shall trigger all requests
+			fnRespond();
+
+			return Promise.all([
+				// code under test
+				oRequestSideEffectsPromise,
+				oCreatedRowContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Change an entity and PATCH is still pending while requestSideEffects is called.
+	// requestSideEffect must wait for the PATCH.
+	// JIRA: CPOUI5UISERVICESV3-1936
+	QUnit.test("requestSideEffects waits for pending PATCH", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			oName,
+			oRequestSideEffectsPromise,
+			fnRespond,
+			sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
+	<Input id="name" value="{CompanyName}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID,CompanyName", {
+				BusinessPartnerID : "4711",
+				CompanyName : "SAP AG"
+			})
+			.expectChange("name", "SAP AG");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error").withArgs("Failed to update path "
+				+ "/BusinessPartnerList('4711')/CompanyName");
+			that.oLogMock.expects("error").withArgs("$batch failed");
+
+			that.expectRequest({
+					method : "PATCH",
+					payload : {CompanyName : "SAP SE"},
+					url : "BusinessPartnerList('4711')"
+				}, new Promise(function (resolve, reject) {
+					fnRespond = reject.bind(null, createError()); // take care of timing
+				}))
+				.expectChange("name", "SAP SE");
+
+			oName = that.oView.byId("name");
+			oName.getBinding("value").setValue("SAP SE");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oFormContext = that.oView.byId("form").getBindingContext();
+
+			// expect no requests as fnRespond not invoked yet
+
+			// code under test - requestSideEffects has to wait for POST to finish
+			oRequestSideEffectsPromise = oFormContext.requestSideEffects([{
+				$NavigationPropertyPath : ""
+			}]);
+
+			return that.waitForChanges(assert); // no real changes but for sake of consistency
+		}).then(function () {
+			that.expectMessages([{
+					code : undefined,
+					message : "Communication error: 500 ",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}, {
+					code : undefined,
+					message : "HTTP request was not processed because $batch failed",
+					persistent : true,
+					target : "",
+					technical : true,
+					type : "Error"
+				}])
+				.expectRequest({
+					batchNo : 3,
+					method : "PATCH",
+					payload : {CompanyName : "SAP SE"},
+					url : "BusinessPartnerList('4711')"
+				}, {/*response does not matter here*/})
+				.expectRequest({
+					batchNo : 3,
+					method : "GET",
+					url : "BusinessPartnerList('4711')?$select=BusinessPartnerID,CompanyName"
+				}, {
+					BusinessPartnerID : "4711",
+					CompanyName : "SAP SE"
+				});
+
+			// invocation here shall trigger all requests
+			fnRespond();
+
+			return Promise.all([
+				// code under test
+				oRequestSideEffectsPromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });

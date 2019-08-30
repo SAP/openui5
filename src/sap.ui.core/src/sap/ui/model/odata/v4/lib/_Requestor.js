@@ -82,7 +82,7 @@ sap.ui.define([
 		this.mHeaders = mHeaders || {};
 		this.oModelInterface = oModelInterface;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
-		this.mRunningChangeRequests = {};
+		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.iSessionTimer = 0;
 		this.iSerialNumber = 0;
@@ -131,43 +131,57 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when a batch request has been sent to count the number of running change requests.
+	 * Called when a batch request for the given group ID has been sent.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @param {boolean} bHasChanges
-	 *   Whether the batch contains change requests; when <code>true</code> the number is increased
+	 *   Whether the batch contains change requests; when <code>true</code> this is memorized in an
+	 *   internal map
+	 * @throws {Error}
+	 *   If there is already a batch request containing change requests
 	 *
 	 * @private
+	 * @see #batchResponseReceived
+	 * @see #hasPendingChanges
+	 * @see #waitForRunningChangeRequests
 	 */
 	Requestor.prototype.batchRequestSent = function (sGroupId, bHasChanges) {
+		var oPromise,
+			fnResolve;
+
 		if (bHasChanges) {
-			if (sGroupId in this.mRunningChangeRequests) {
-				this.mRunningChangeRequests[sGroupId] += 1;
-			} else {
-				this.mRunningChangeRequests[sGroupId] = 1;
+			if (this.mRunningChangeRequests[sGroupId]) {
+				throw new Error("Unexpected second $batch");
 			}
+			// The resolving of this promise is truly async
+			oPromise = new SyncPromise(function (resolve) {
+				fnResolve = resolve;
+			});
+			oPromise.$resolve = fnResolve;
+			this.mRunningChangeRequests[sGroupId] = oPromise;
 		}
 	};
 
 	/**
-	 * Called when a batch response has been received to count the number of running change
-	 * requests.
+	 * Called when a batch response for the given has been received.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @param {boolean} bHasChanges
-	 *   Whether the batch contained change requests; when <code>true</code> the number is
-	 *   decreased
+	 *   Whether the batch contained change requests; when <code>true</code> the entry memorized in
+	 *   the internal map is deleted
 	 *
 	 * @private
+	 * @see #batchResponseSent
+	 * @see #hasPendingChanges
+	 * @see #waitForRunningChangeRequests
 	 */
 	Requestor.prototype.batchResponseReceived = function (sGroupId, bHasChanges) {
 		if (bHasChanges) {
-			this.mRunningChangeRequests[sGroupId] -= 1;
-			if (this.mRunningChangeRequests[sGroupId] === 0) {
-				delete this.mRunningChangeRequests[sGroupId];
-			}
+			// no handler can run synchronously
+			this.mRunningChangeRequests[sGroupId].$resolve();
+			delete this.mRunningChangeRequests[sGroupId];
 		}
 	};
 
@@ -931,7 +945,8 @@ sap.ui.define([
 	/**
 	 * Finds all requests identified by the given group and entity, removes them from that group
 	 * and triggers new requests with the new group ID, based on each found request.
-	 * The result of each new request is delegated to the corresponding found request.
+	 * The result of each new request is delegated to the corresponding found request. If no entity
+	 * is given, all requests for that group are triggered again.
 	 *
 	 * @param {string} sCurrentGroupId
 	 *   The ID of the group in which to search
@@ -1324,6 +1339,8 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails
+	 * @throws {Error}
+	 *   If there is already a batch request containing change requests
 	 *
 	 * @public
 	 */
@@ -1423,7 +1440,6 @@ sap.ui.define([
 		this.batchRequestSent(sGroupId, bHasChanges);
 		return this.sendBatch(_Requestor.cleanBatch(aRequests))
 			.then(function (aResponses) {
-				that.batchResponseReceived(sGroupId, bHasChanges);
 				visit(aRequests, aResponses);
 			}).catch(function (oError) {
 				var oRequestError = new Error(
@@ -1444,11 +1460,29 @@ sap.ui.define([
 					});
 				}
 
-				that.batchResponseReceived(sGroupId, bHasChanges);
 				oRequestError.cause = oError;
 				rejectAll(aRequests);
 				throw oError;
+			}).finally(function () {
+				that.batchResponseReceived(sGroupId, bHasChanges);
 			});
+	};
+
+	/**
+	 * Waits for all running change requests for the given group ID.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that resolves when all change requests for the given group ID have been processed
+	 *   completely, no matter if they succeed or fail
+	 *
+	 * @public
+	 * @see #batchResponseReceived
+	 * @see #batchResponseSent
+	 */
+	Requestor.prototype.waitForRunningChangeRequests = function (sGroupId) {
+		return this.mRunningChangeRequests[sGroupId] || SyncPromise.resolve();
 	};
 
 	/**
