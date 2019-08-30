@@ -22,13 +22,13 @@ sap.ui.define([
 		 * control variants, variant changes and variant management changes.
 		 *
 		 * @param {object} mPropertyBag Property bag
-		 * @param {sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
+		 * @param {object[]} mPropertyBag.flexObjects Objects to be written (i.e. change definitions, variant definitions etc.)
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be stored
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
-		 * @returns {Promise} Promise resolves as soon as the writing was completed
+		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
 		write: function (/* mPropertyBag */) {
-			return Promise.reject("writeFlexData is not implemented");
+			return Promise.reject("write is not implemented");
 		},
 
 		/**
@@ -37,13 +37,12 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Property bag
 		 * @param {string} mPropertyBag.name Name of the file to be deleted
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be deleted
-		 * @param {string} mParameters.namespace The namespace of the change file
-		 * @param {string} [mParameters.changeList] The transport ID
+		 * @param {string} [mParameters.namespace] The namespace of the file
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
-		 * @returns {Promise} Promise resolves when the writing was completed
+		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
-		deleteFlexData: function (/* mPropertyBag */) {
-			return Promise.reject("deleteFlexData is not implemented");
+		remove: function (/* mPropertyBag */) {
+			return Promise.reject("remove is not implemented");
 		},
 
 		/**
@@ -53,12 +52,11 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
-		 * @param {string} [mPropertyBag.changelist] Transport Id
 		 * @param {string} [mPropertyBag.appVersion] Version of the application for which the reset takes place
 		 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
 		 * @param {string} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter (comma-separated list)
 		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset (comma-separated list)
-		 * @returns {Promise} Promise resolves as soon as the reset has completed
+		 * @returns {Promise} Resolves as soon as the reset is completed without data
 		 */
 		reset: function (/* mPropertyBag */) {
 			return Promise.reject("reset is not implemented");
@@ -72,9 +70,8 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} mPropertyBag.changelist Transport Id
-		 * @param {string} [mPropertyBag.package] ABAP package (mandatory when layer is 'VENDOR')
 		 * @param {string} [mPropertyBag.appVersion] Version of the application
-		 * @returns {Promise} Promise resolves as soon as the publish has completed
+		 * @returns {Promise} Resolves as soon as the publish is completed without data
 		 */
 		publish: function (/* mPropertyBag */) {
 			return Promise.reject("publish is not implemented");
@@ -89,8 +86,8 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 		 * @param {string} mPropertyBag.reference Flex reference
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
-		 * @param {string} [mPropertyBag.appVersion] Version of the application
-		 * @returns {Promise} Promise resolves as soon as the writing was completed
+		 * @param {string} [mPropertyBag.appVersion] Versio1n of the application
+		 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 		 */
 		getFlexInfo: function (/* mPropertyBag */) {
 			return Promise.reject("getFlexInfo is not implemented");
@@ -99,7 +96,7 @@ sap.ui.define([
 		/**
 		 * Interface called to get the flex feature.
 		 *
-		 * @returns {Promise<Object>} Promise resolves with an object containing a flex features response
+		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features
 		 */
 		loadFeatures: function () {
 			return Promise.reject("loadFeatures is not implemented");
