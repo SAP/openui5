@@ -19991,7 +19991,6 @@ sap.ui.define([
 			sView = '\
 <FlexBox id="form" binding="{/BusinessPartnerList(\'4711\')}">\
 	<Table id="table" items="{BP_2_SO}">\
-		<columns><Column/><Column/></columns>\
 		<ColumnListItem>\
 			<Text id="id" text="{SalesOrderID}" />\
 			<Text id="note" text="{Note}" />\
