@@ -9,6 +9,12 @@ sap.ui.define([
 ], function(Router, History, Hasher) {
 	"use strict";
 
+	var oNewPatternNames = {
+			sampleLegacyRoute: "sample",
+			codeLegacyRoute: "code",
+			codeFileLegacyRoute: "code_file"
+		};
+
 	// We need to set the global hasher instance to not encode URL's. This is specific for the SDK
 	// and it enables the application to handle module URL's which need to be encoded.
 	Hasher.raw = true;
@@ -28,6 +34,24 @@ sap.ui.define([
 
 			this.getRoute("topicIdLegacyRoute").attachPatternMatched(this._onOldTopicRouteMatched, this);
 			this.getRoute("apiIdLegacyRoute").attachPatternMatched(this._onOldApiRouteMatched, this);
+
+			this.getRoute("sampleLegacyRoute").attachPatternMatched(this._onNewSampleRouteMatched, this);
+			this.getRoute("codeLegacyRoute").attachPatternMatched(this._onNewSampleRouteMatched, this);
+			this.getRoute("codeFileLegacyRoute").attachPatternMatched(this._onNewSampleRouteMatched, this);
+		},
+
+		_onNewSampleRouteMatched: function(oEvent) {
+			var sPatterName = oEvent.getParameter("name"),
+				oArguments = oEvent.getParameter("arguments"),
+				oNavigationObject = {
+					id: oArguments.sampleId
+				};
+
+			if (sPatterName === "codeFileLegacyRoute") {
+				oNavigationObject.fileName = oArguments.fileName;
+			}
+
+			this.navTo(oNewPatternNames[sPatterName], oNavigationObject);
 		},
 
 		_onEntityOldRouteMatched: function(oEvent) {
