@@ -1,127 +1,137 @@
 {
-  "_version": "1.12.0",
-  "sap.app": {
-	"id": "sap.ui.demo.cardExplorer",
-	"type": "application",
-	"i18n": "i18n/i18n.properties",
-	"title": "{{appTitle}}",
-	"description": "{{appDescription}}",
-	"applicationVersion": {
-	  "version": "1.0.0"
+	"_version": "1.12.0",
+	"sap.app": {
+		"id": "sap.ui.demo.cardExplorer",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://image-viewer",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.cardExplorer.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.60.0",
+			"libs": {
+				"sap.ui.core": {
+				},
+				"sap.m": {
+				},
+				"sap.f": {
+				},
+				"sap.ui.layout": {
+				},
+				"sap.tnt": {
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.cardExplorer.i18n.i18n"
+				}
+			}
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.cardExplorer.view",
+				"controlId": "navContainer",
+				"controlAggregation": "pages",
+				"bypassed": {
+					"target": "learnDetail"
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "default",
+					"target": "learnDetail"
+				},
+				{
+					"pattern": "learn/:key:",
+					"name": "learnDetail",
+					"target": "learnDetail"
+				},
+				{
+					"pattern": "explore/:key:/:subSampleKey:",
+					"name": "exploreSamples",
+					"target": "exploreSamples"
+				},
+				{
+					"pattern": "exploreOverview/:key:",
+					"name": "exploreOverview",
+					"target": "exploreOverview"
+				},
+				{
+					"pattern": "integrate/:key:",
+					"name": "integrate",
+					"target": "integrate"
+				}
+			],
+			"targets": {
+				"learnDetail": {
+					"viewName": "LearnDetail",
+					"viewId": "learnDetail",
+					"viewLevel": 2
+				},
+				"exploreSamples": {
+					"viewName": "ExploreSamples",
+					"viewId": "exploreSamples",
+					"viewLevel": 2
+				},
+				"exploreOverview": {
+					"viewName": "ExploreOverview",
+					"viewId": "exploreOverview",
+					"viewLevel": 2
+				},
+				"integrate": {
+					"viewName": "Integrate",
+					"viewId": "Integrate",
+					"viewLevel": 2
+				},
+				"notFound": {
+					"viewName": "NotFound",
+					"viewId": "notFound"
+				}
+			}
+		}
 	}
-  },
-  "sap.ui": {
-	"technology": "UI5",
-	"icons": {
-	  "icon": "sap-icon://image-viewer",
-	  "favIcon": "",
-	  "phone": "",
-	  "phone@2": "",
-	  "tablet": "",
-	  "tablet@2": ""
-	},
-	"deviceTypes": {
-	  "desktop": true,
-	  "tablet": true,
-	  "phone": true
-	}
-  },
-  "sap.ui5": {
-	"rootView": {
-	  "viewName": "sap.ui.demo.cardExplorer.view.App",
-	  "type": "XML",
-	  "async": true,
-	  "id": "app"
-	},
-	"dependencies": {
-	  "minUI5Version": "1.60.0",
-	  "libs": {
-		"sap.ui.core": {
-		},
-		"sap.m": {
-		},
-		"sap.f": {
-		},
-		"sap.ui.layout": {
-		},
-		"sap.tnt": {
-		}
-	  }
-	},
-	"resources": {
-	  "css": [
-		{
-		  "uri": "css/style.css"
-		}
-	  ]
-	},
-	"contentDensities": {
-	  "compact": true,
-	  "cozy": true
-	},
-	"models": {
-	  "i18n": {
-		"type": "sap.ui.model.resource.ResourceModel",
-		"settings": {
-		  "bundleName": "sap.ui.demo.cardExplorer.i18n.i18n"
-		}
-	  }
-	},
-	"routing": {
-	  "config": {
-		"routerClass": "sap.m.routing.Router",
-		"viewType": "XML",
-		"viewPath": "sap.ui.demo.cardExplorer.view",
-		"controlId": "navContainer",
-		 "controlAggregation": "pages",
-		"bypassed": {
-		  "target": "learnDetail"
-		},
-		"async": true
-	  },
-	  "routes": [
-		{
-		  "pattern": "",
-		  "name": "default",
-		  "target": "learnDetail"
-		},
-		{
-		  "pattern": "learn/:key:",
-		  "name": "learnDetail",
-		  "target": "learnDetail"
-		},
-		{
-		  "pattern": "explore/:key:/:subSampleKey:",
-		  "name": "exploreSamples",
-		  "target": "exploreSamples"
-		},
-		  {
-			  "pattern": "exploreOverview/:key:",
-			  "name": "exploreOverview",
-			  "target": "exploreOverview"
-		  }
-	  ],
-	  "targets": {
-		"learnDetail": {
-		  "viewName": "LearnDetail",
-		  "viewId": "learnDetail",
-		  "viewLevel": 2
-		},
-		"exploreSamples": {
-		  "viewName": "ExploreSamples",
-		  "viewId": "exploreSamples",
-		  "viewLevel": 2
-		},
-	    "exploreOverview": {
-		  "viewName": "ExploreOverview",
-		  "viewId": "exploreOverview",
-		  "viewLevel": 2
-	    },
-		"notFound": {
-		  "viewName": "NotFound",
-		  "viewId": "notFound"
-		}
-	  }
-	}
-  }
 }
