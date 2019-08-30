@@ -150,24 +150,60 @@ sap.ui.define([
 			this.oAddElementsDialog.open();
 		});
 
-		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and two Bussiness Contexts are available", function(assert) {
+		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and three Bussiness Contexts are available", function(assert) {
 			var done = assert.async();
 
 			this.oAddElementsDialog = createDialog(true);
 
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
-				assert.equal(this._oBCContainer.getContent().length, 3, "and the Business Context Container has three entries");
+				assert.equal(this._oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
 				assert.equal(this._oBCContainer.getContent()[0].getText(), oTextResources.getText("BUSINESS_CONTEXT_TITLE"), "and the first entry is the Title");
 				assert.equal(this._oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
 				assert.equal(this._oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
+				assert.equal(this._oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
 				done();
 			});
 			var aBusinessContexts = [
 				{BusinessContextDescription : "Business Context 1"},
-				{BusinessContextDescription : "Business Context 2"}
+				{BusinessContextDescription : "Business Context 2"},
+				{BusinessContextDescription : "Business Context 3"}
 			];
 			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
+			this.oAddElementsDialog.open();
+		});
+
+		QUnit.test("when AddElementsDialog gets closed and opened again with customFieldsEnabled set and available Business Contexts", function(assert) {
+			function fnOnClose() {
+				this.oAddElementsDialog.attachEventOnce("opened", fnOnOpen);
+			}
+			function fnOnOpen() {
+				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
+				assert.equal(this._oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
+				assert.equal(this._oBCContainer.getContent()[0].getText(), oTextResources.getText("BUSINESS_CONTEXT_TITLE"), "and the first entry is the Title");
+				assert.equal(this._oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
+				assert.equal(this._oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
+				assert.equal(this._oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
+				done();
+			}
+			var done = assert.async();
+
+			this.oAddElementsDialog = createDialog(true);
+			var aBusinessContexts = [
+				{BusinessContextDescription : "Business Context 1"},
+				{BusinessContextDescription : "Business Context 2"},
+				{BusinessContextDescription : "Business Context 3"}
+			];
+			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
+			this.oAddElementsDialog._oDialog.attachEventOnce("afterClose", fnOnClose, this);
+
+			// Open the first time and close it
+			this.oAddElementsDialog.open();
+			this.oAddElementsDialog._submitDialog();
+
+			// Add Business Context again
+			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
+			// Open the second time
 			this.oAddElementsDialog.open();
 		});
 
