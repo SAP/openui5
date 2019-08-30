@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/ui/fl/apply/_internal/ConnectorResultMerger"
 ],
 function(
 	LrepConnector,
@@ -18,7 +19,8 @@ function(
 	Log,
 	jQuery,
 	LoaderExtensions,
-	ObjectPath
+	ObjectPath,
+	ConnectorResultMerger
 ) {
 	"use strict";
 
@@ -248,7 +250,6 @@ function(
 			return Promise.resolve({
 				changes: {
 					changes: [],
-					contexts: [],
 					variantSection: {},
 					ui2personalization: {}
 				}
@@ -260,13 +261,9 @@ function(
 			var mChanges = aValues[1];
 
 			if (mChanges && mChanges.changes) {
-				if (mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
-					mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function (sValue) {
-						Cache._switches[sValue] = true;
-					});
-				}
-
-				mChanges.changes.changes = aChangesFromBundle.concat(mChanges.changes.changes);
+				// remove duplicate changes by using the same functionality for the Connectors
+				var aChangesArrays = [{changes: aChangesFromBundle}, Object.assign({}, mChanges.changes)];
+				mChanges.changes.changes = ConnectorResultMerger._concatChanges(aChangesArrays);
 			}
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;

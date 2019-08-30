@@ -21,15 +21,6 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	function createLoadChangesResponse() {
-		return Promise.resolve({
-			changes: {
-				changes: [{something: "1"}],
-				settings: {switchedOnBusinessFunctions: ["bFunction1", "bFunction2"]}
-			}
-		});
-	}
-
 	function createLoadChangesErrorResponse() {
 		return Promise.reject({
 			code: 500,
@@ -68,18 +59,6 @@ sap.ui.define([
 			Cache._entries = {};
 			Cache._switches = {};
 			sandbox.restore();
-		});
-
-		QUnit.test('getSwitches shall return the list of switched-on business functions', function(assert) {
-			var sComponentName = "test";
-
-			sandbox.stub(this.oLrepConnector, 'loadChanges').callsFake(createLoadChangesResponse);
-
-			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}).then(function() {
-				var mSwitches = Cache.getSwitches();
-				var mSwitchesExp = {bFunction1: true, bFunction2: true};
-				assert.deepEqual(mSwitchesExp, mSwitches);
-			});
 		});
 
 		QUnit.test('getEntry shall create an empty entry if it is not initiated', function(assert) {
@@ -309,12 +288,11 @@ sap.ui.define([
 				name : "testComponent",
 				appVersion : "testApplicationVersion"
 			};
-			var oAppComponentMock;
 			var oLogWarningSpy = sandbox.spy(Log, "warning");
-			return Cache.getCacheKey(mComponentMock, oAppComponentMock)
+			return Cache.getCacheKey(mComponentMock)
 			.then(function(sCacheKey) {
-				assert.ok(sCacheKey, "then cachekey is returned");
-				assert.equal(sCacheKey, Cache.NOTAG, "then cachekey returns <NoTag>");
+				assert.ok(sCacheKey, "then cacheKey is returned");
+				assert.equal(sCacheKey, Cache.NOTAG, "then cacheKey returns <NoTag>");
 				assert.ok(oLogWarningSpy.calledOnce, "then warning message called once");
 			})
 			.catch(function(oErr) {
@@ -413,10 +391,8 @@ sap.ui.define([
 			sandbox.stub(Cache, "getEntry").returns(oCacheEntry);
 
 			return Cache.getChangesFillingCache(this.oLrepConnector, {name: sComponentName}, {}, bInvalidateCache)
-
 				.then(function(oResult) {
 					assert.ok(Array.isArray(oResult.changes.changes), "an array of changes was returned");
-					assert.ok(Array.isArray(oResult.changes.contexts), "an array of contexts was returned");
 					assert.equal(oLoadChangesSpy.callCount, 1, "then LrepConnector loadChanges is called once");
 				});
 		});
@@ -439,7 +415,7 @@ sap.ui.define([
 
 	QUnit.module("getChangesFillingCache and level0-changes", function (hooks) {
 		hooks.beforeEach(function() {
-			this.oChangeFromBackend = {};
+			this.oChangeFromBackend = {fileName: "rename_id_456"};
 			this.sComponentName = "testComponent";
 			this.oLrepConnector = LrepConnector.createConnector();
 			this.mComponent = {
@@ -491,7 +467,7 @@ sap.ui.define([
 
 		QUnit.test("can retrieve a preloaded changes-bundle in addition to the changes from the connector", function (assert) {
 			fnStubDebug.call(this, false); // debug is off
-			var oChangeFromBundle = {};
+			var oChangeFromBundle = {fileName: "rename_id_123"};
 			var oLoadResourceStub = fnStubBundle.call(this, true, [oChangeFromBundle]); // bundle is loaded and has a change
 			fnStubBackend.call(this, true, [this.oChangeFromBackend]); // backend call is successful and returns a change
 
@@ -506,6 +482,25 @@ sap.ui.define([
 				assert.equal(oChangeFromBundle, aLoadedChanges[0], "the change form the changes-bundle is returned");
 				assert.equal(this.oChangeFromBackend, aLoadedChanges[1], "the change form the back end is returned");
 			}.bind(this));
+		});
+
+		QUnit.test("filters changes which are duplicates", function (assert) {
+			fnStubDebug.call(this, false); // debug is off
+			var oChange = {fileName: "rename_id_123"};
+			var oChangeFromBundle = {fileName: "rename_id_123"};
+			var oLoadResourceStub = fnStubBundle.call(this, true, [oChange]); // bundle is loaded and has a change
+			fnStubBackend.call(this, true, [oChange]); // backend call is successful and returns a change
+
+			var mPropertyBag = {
+				appName: "sap.app.name"
+			};
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function (oResponse) {
+				var aLoadedChanges = oResponse.changes.changes;
+				assert.equal(1, oLoadResourceStub.callCount, "the changes-bundle was requested");
+				assert.equal(1, aLoadedChanges.length, "only one change was returned");
+				assert.deepEqual(oChangeFromBundle, oChange, "the change form the changes-bundle is returned");
+			});
 		});
 
 		QUnit.test("can retrieve a changes-bundle if a core configuration 'flexBundleRequestForced' is set", function (assert) {
@@ -1019,7 +1014,7 @@ sap.ui.define([
 
 			return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey, sItemName).then(
 				function(oResponse) {
-					assert.strictEqual(oResponse, oExpectedItem);
+					assert.deepEqual(oResponse, oExpectedItem);
 				}
 			);
 		});
@@ -1042,7 +1037,7 @@ sap.ui.define([
 
 			return Cache.getPersonalization(this.sComponentName, this.sAppVersion, this.sContainerKey).then(
 				function(oResponse) {
-					assert.strictEqual(oResponse, aEntries);
+					assert.deepEqual(oResponse, aEntries);
 				}
 			);
 		});
