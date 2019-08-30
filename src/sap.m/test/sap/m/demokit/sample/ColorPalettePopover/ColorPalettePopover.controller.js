@@ -27,6 +27,10 @@ sap.ui.define([
 			if (this.oColorPalettePopoverMin) {
 				this.oColorPalettePopoverMin.destroy();
 			}
+
+			if (this.oColorPaletteDisplayMode) {
+				this.oColorPaletteDisplayMode.destroy();
+			}
 		},
 
 		/**
