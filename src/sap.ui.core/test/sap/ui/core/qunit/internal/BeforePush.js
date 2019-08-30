@@ -2,7 +2,8 @@
  * ${copyright}
  */
 /*
-  Test page that runs all (QUnit and OPA) tests of the UI services team within an inline frame.
+  Test page that runs all (QUnit and OPA) tests of the UI services team within a hidden inline
+  frame (well, not actually hidden, but out of sight).
 
   The page has two modes. As a default ("full mode") it runs all tests. For 1Ring.qunit.html the
   test coverage is measured. A coverage of 100% is expected.
@@ -21,6 +22,11 @@
 
   With "realOData=true" run only tests having "realOData=true" in URL.
   With "realOData=false" run all tests with stripped off "realOData=true".
+
+  With "frames=n" you can run several tests in parallel to speed it up. When running only the
+  verification "frames=4" seems a valid option in Chrome and Firefox. In IE and Edge you should not
+  use this option. When testing with multiple browsers at once, it is better to run only one frame
+  in each browser. When "frames=n" is given, all tests are run invisible.
 
   BeforePush expects all tests to use QUnit 2.
 */
@@ -91,20 +97,38 @@
 		return aTests;
 	}
 
+	function getFrameCount() {
+		var iCount,
+			aMatches = /[?&]frames=(\d+)(&|$)/.exec(location.search);
+
+		if (!aMatches) {
+			return 0;
+		}
+		iCount = parseInt(aMatches[1]);
+		if (iCount < 1 || iCount > 4) {
+			setStatus("Frames set to 1. Use 1 up to 4 frames.");
+			iCount = 1;
+		}
+		return iCount;
+	}
+
 	/**
 	 * Runs the tests.
 	 *
-	 * @param {boolean} bRealOData
+	 * @param {boolean} [bRealOData]
 	 *   if undefined, run all tests; if true, run only tests with "realOData=true"; if false, run
 	 *   all tests without realOData (it is stripped off)
 	 */
 	function runTests(bRealOData) {
-		var oActiveFrame,
-			oFirstFailedTest,
+		var oFirstFailedTest,
+			iFrames,
+			iRunningTests = 0,
 			oSelectedTest,
 			iStart = Date.now(),
 			aTests = filterTests(/integrationTestsOnly/i.test(location.href), bRealOData),
-			oTotal;
+			iTop = 10000,
+			oTotal,
+			bVisible;
 
 		function createTest(sText, sUrl) {
 			var oTest = {
@@ -117,26 +141,19 @@
 			oTest.element.appendChild(oDiv);
 			oDiv.addEventListener("click", select.bind(null, oTest));
 			oDiv.appendChild(oText);
+			oTest.infoNode = document.createTextNode("");
+			oTest.element.appendChild(oTest.infoNode);
 			document.getElementById("results").appendChild(oTest.element);
 			return oTest;
 		}
 
-		function newActiveFrame() {
-			if (oActiveFrame) {
-				oActiveFrame.classList.add("hidden");
-			}
-			oActiveFrame = document.createElement("iframe");
-			oActiveFrame.setAttribute("height", "900");
-			oActiveFrame.setAttribute("width", "1600");
-			document.body.appendChild(oActiveFrame);
-		}
-
+		// starts another test or shows the summary
 		function next() {
 			if (aTests.length) {
 				return runTest(aTests.shift());
-			} else {
+			} else if (!iRunningTests) {
 				oTotal.element.classList.remove("hidden");
-				start(oTotal);
+				oTotal.element.firstChild.classList.add("running");
 				summary(Date.now() - iStart);
 				if (oFirstFailedTest) {
 					select(oFirstFailedTest);
@@ -144,80 +161,112 @@
 			}
 		}
 
+		// runs a test: creates its frame (out of sight), registers first at the frame's page, then
+		// at the frame's QUnit to observe the progress and notice when it's finished
 		function runTest(oTest) {
 			function onLoad() {
-				oActiveFrame.removeEventListener("load", onLoad);
+				var oQUnit = oTest.frame.contentWindow.QUnit;
+
+				oTest.frame.removeEventListener("load", onLoad);
 				// see https://github.com/js-reporters/js-reporters (@since QUnit 2)
-				oActiveFrame.contentWindow.QUnit.on("runEnd", function (oDetails) {
+				oQUnit.on("runStart", function (oDetails) {
+					oTest.testCounts = oDetails.testCounts;
+					oTest.testCounts.finished = 0;
+					oTest.infoNode.data = ": 0/" + oTest.testCounts.total;
+				});
+				oQUnit.on("testEnd", function () {
+					oTest.testCounts.finished += 1;
+					oTest.infoNode.data = ": " + oTest.testCounts.finished + "/"
+						+ oTest.testCounts.total;
+				});
+				oQUnit.on("runEnd", function (oDetails) {
 					oTest.testCounts = oDetails.testCounts;
 					summary(oDetails.runtime, oTest);
 					oTest.element.firstChild.classList.remove("running");
 					if (oDetails.status === "failed") {
 						oTest.element.firstChild.classList.add("failed");
 						oFirstFailedTest = oFirstFailedTest || oTest;
-						newActiveFrame();
 					} else {
+						document.body.removeChild(oTest.frame);
 						oTest.frame = undefined;
 					}
+					if (bVisible && oTest === oSelectedTest) {
+						select(oTest); // unselect the test to make it invisible
+					}
+					iRunningTests -= 1;
 					next();
 				});
 			}
 
-			start(oTest);
-			oActiveFrame.addEventListener("load", onLoad);
-		}
-
-		function select(oTest) {
-			if (oTest.frame) {
-				if (oSelectedTest) {
-					oSelectedTest.element.classList.remove("selected");
-					if (oSelectedTest.frame && oSelectedTest.frame !== oTest.frame) {
-						oSelectedTest.frame.classList.add("hidden");
-						oTest.frame.classList.remove("hidden");
-					}
-				}
-				oSelectedTest = oTest;
-				oTest.element.classList.add("selected");
+			oTest.top = iTop;
+			iTop += 1000;
+			oTest.frame = document.createElement("iframe");
+			oTest.frame.src = oTest.url;
+			oTest.frame.setAttribute("height", "900");
+			oTest.frame.setAttribute("width", "1600");
+			oTest.frame.style.position = "fixed";
+			oTest.frame.style.top = oTest.top + "px";
+			document.body.appendChild(oTest.frame);
+			oTest.element.firstChild.classList.add("running");
+			iRunningTests += 1;
+			oTest.frame.addEventListener("load", onLoad);
+			if (bVisible) {
+				select(oTest);
 			}
 		}
 
-		function start(oTest) {
-			oTest.frame = oActiveFrame;
-			select(oTest);
-			oActiveFrame.src = oTest.url || "about:blank";
-			oTest.element.firstChild.classList.add("running");
+		// handler for a click on a test title, showing or hiding the frame
+		function select(oTest) {
+			var bSelect = oTest !== oSelectedTest;
+
+			if (oSelectedTest) {
+				oSelectedTest.element.classList.remove("selected");
+				if (oSelectedTest.frame) {
+					oSelectedTest.frame.style.position = "fixed";
+					oSelectedTest.frame.style.top = oSelectedTest.top + "px";
+				}
+				oSelectedTest = null;
+			}
+			if (bSelect) {
+				oSelectedTest = oTest;
+				oTest.element.classList.add("selected");
+				if (oTest.frame) {
+					oTest.frame.style.position = null;
+					oTest.frame.style.top = null;
+				}
+			}
 		}
 
 		// Adds the summary for a test or the total when no test is given
 		function summary(iRuntime, oTest) {
-			var oElement, iMinutes, iSeconds, oTestCounts, sText;
+			var oElement, iMinutes, iSeconds, sText;
 
 			function count(iCount, sWhat) {
 				return iCount ? ", " + iCount + " " + sWhat : "";
 			}
 
 			if (oTest) {
-				oTestCounts = oTest.testCounts;
-				oTotal.testCounts.failed += oTestCounts.failed;
-				oTotal.testCounts.skipped += oTestCounts.skipped;
-				oTotal.testCounts.todo += oTestCounts.todo;
-				oTotal.testCounts.total += oTestCounts.total;
+				oTotal.testCounts.failed += oTest.testCounts.failed;
+				oTotal.testCounts.skipped += oTest.testCounts.skipped;
+				oTotal.testCounts.todo += oTest.testCounts.todo;
+				oTotal.testCounts.total += oTest.testCounts.total;
 			} else {
-				oTestCounts = oTotal.testCounts;
+				oTest = oTotal;
 			}
 			iRuntime = Math.round(iRuntime / 1000);
 			iMinutes = Math.floor(iRuntime / 60);
 			iSeconds = iRuntime - iMinutes * 60;
-			sText = ": " + oTestCounts.total + " tests in " + (iMinutes ? iMinutes + " min " : "")
+			sText = ": " + oTest.testCounts.total + " tests in "
+				+ (iMinutes ? iMinutes + " min " : "")
 				+ iSeconds + " sec"
-				+ count(oTestCounts.failed, "failed")
-				+ count(oTestCounts.skipped, "skipped")
-				+ count(oTestCounts.todo, "todo")
+				+ count(oTest.testCounts.failed, "failed")
+				+ count(oTest.testCounts.skipped, "skipped")
+				+ count(oTest.testCounts.todo, "todo")
 				+ " ";
 
-			(oTest || oTotal).element.appendChild(document.createTextNode(sText));
+			oTest.infoNode.data = sText;
 
-			if (oTest) {
+			if (oTest.url) {
 				oElement = document.createElement("a");
 				oElement.setAttribute("href", oTest.url);
 				oElement.setAttribute("target", "_blank");
@@ -227,7 +276,10 @@
 		}
 
 		setStatus();
+		iFrames = getFrameCount();
+		bVisible = !iFrames;
 		document.getElementById("buttons").classList.add("hidden");
+		document.getElementById("list").classList.remove("hidden");
 		aTests = aTests.map(function (sUrl) {
 			return createTest(sUrl, "../../" + sUrl);
 		});
@@ -239,8 +291,14 @@
 			total : 0
 		};
 		oTotal.element.classList.add("hidden");
-		newActiveFrame();
-		next();
+		if (bVisible) {
+			next();
+		} else {
+			while (iFrames) {
+				next();
+				iFrames -= 1;
+			}
+		}
 	}
 
 	function setStatus(sText) {
