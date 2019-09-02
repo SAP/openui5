@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/Utils"
 ], function(
-	Log
+	Log,
+	Utils
 ) {
 	"use strict";
 
@@ -70,26 +72,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get the full qualified name of the change handler function
-	 * @returns {String} Returns the full qualified name of the change handler function
+	 * Get the change handler object.
+	 * @returns {Promise<object>} Full qualified name of the change handler object wrapped into a Promise/FakePromise
 	 * @public
 	 */
 	ChangeTypeMetadata.prototype.getChangeHandler = function() {
+		var oPromise = new Utils.FakePromise();
 		if (typeof this._changeHandler === "string") {
-			// load the module synchronously
-			this._changeHandler = sap.ui.requireSync(this._changeHandler.replace(/\./g, "/"));
+			// load the module asynchronously
+			oPromise = Utils.requireAsync(this._changeHandler.replace(/\./g, "/"))
+				.then(function (oChangeHandlerImpl) {
+					this._changeHandler = oChangeHandlerImpl;
+				}.bind(this));
 		}
 
-		if (
-			this._changeHandler
-			&& typeof this._changeHandler.completeChangeContent === "function"
-			&& typeof this._changeHandler.applyChange === "function"
-			&& typeof this._changeHandler.revertChange === "function"
-		) {
+		return oPromise.then(function () {
+			if (
+				!this._changeHandler
+				|| typeof this._changeHandler.completeChangeContent !== "function"
+				|| typeof this._changeHandler.applyChange !== "function"
+				|| typeof this._changeHandler.revertChange !== "function"
+			) {
+				// FakePromise catch is not compatible to Promise catch.
+				// When FakePromise is called in a Promise scope then Async reject is required.
+				return Promise.reject(
+					new Error("The ChangeHandler is either not available or does not fulfill all needed requirements")
+				);
+			}
 			return this._changeHandler;
-		}
-		Log.error("The ChangeHandler is either not available or does not fulfill all needed requirements");
-		return null;
+		}.bind(this));
 	};
 
 	/**

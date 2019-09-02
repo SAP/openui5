@@ -185,11 +185,10 @@ function(
 				controlType: "sap.ui.fl.DummyControl",
 				changeTypeName: "myChangeType1"
 			};
-			var result = this.instance.getRegistryItems(mParam);
-
+			var mResult = this.instance.getRegistryItems(mParam);
 			//Assert
-			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl"], {myChangeType1: registryItem1});
+			assert.strictEqual(Object.keys(mResult).length, 1);
+			assert.deepEqual(mResult["sap.ui.fl.DummyControl"], {myChangeType1: registryItem1});
 		});
 
 		QUnit.test("getRegistryItem - identified by controlType", function (assert) {
@@ -209,13 +208,12 @@ function(
 			this.instance.addRegistryItem(registryItem2);
 
 			//Act
-			var result = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl1"});
-
+			var mResult = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl1"});
 			//Assert
-			assert.ok(result);
-			assert.strictEqual(Object.keys(result).length, 1);
-			assert.strictEqual(Object.keys(result["sap.ui.fl.DummyControl1"]).length, 4);
-			assert.deepEqual(result["sap.ui.fl.DummyControl1"]["myChangeType1"], registryItem1);
+			assert.ok(mResult);
+			assert.strictEqual(Object.keys(mResult).length, 1);
+			assert.strictEqual(Object.keys(mResult["sap.ui.fl.DummyControl1"]).length, 4);
+			assert.deepEqual(mResult["sap.ui.fl.DummyControl1"]["myChangeType1"], registryItem1);
 		});
 
 		QUnit.test("getRegistryItem - identified by controlType, filter by layer", function (assert) {
@@ -236,21 +234,19 @@ function(
 
 			//Act
 			//Will be found because CUSTOMER is part of the default <code>Layers</code>
-			var result = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl1", layer: "CUSTOMER"});
-
+			var mResult = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl1", layer: "CUSTOMER"});
 			//Assert
-			assert.ok(result);
-			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
+			assert.ok(mResult);
+			assert.strictEqual(Object.keys(mResult).length, 1);
+			assert.deepEqual(mResult["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
 
 			//Act
 			//Will not be found because it will be filtered by the default <code>Layers</code>
-			result = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl2", layer: "USER"});
-
+			mResult = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl2", layer: "USER"});
 			//Assert
-			assert.ok(result);
-			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl2"], {});
+			assert.ok(mResult);
+			assert.strictEqual(Object.keys(mResult).length, 1);
+			assert.deepEqual(mResult["sap.ui.fl.DummyControl2"], {});
 			assert.deepEqual(this.instance._registeredItems["sap.ui.fl.DummyControl2"], {myChangeType2: registryItem2});
 		});
 
@@ -276,21 +272,19 @@ function(
 
 			//Act
 			//Will be found becuase USER is part of the layers
-			var result = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl1", layer: "USER"});
-
+			var mResult = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl1", layer: "USER"});
 			//Assert
-			assert.ok(result);
-			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
+			assert.ok(mResult);
+			assert.strictEqual(Object.keys(mResult).length, 1);
+			assert.deepEqual(mResult["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
 
 			//Act
 			//Will not be found because it will be filtered by the default layers
-			result = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl2", layer: "USER"});
-
+			mResult = this.instance.getRegistryItems({controlType: "sap.ui.fl.DummyControl2", layer: "USER"});
 			//Assert
-			assert.ok(result);
-			assert.strictEqual(Object.keys(result).length, 1);
-			assert.deepEqual(result["sap.ui.fl.DummyControl2"], {});
+			assert.ok(mResult);
+			assert.strictEqual(Object.keys(mResult).length, 1);
+			assert.deepEqual(mResult["sap.ui.fl.DummyControl2"], {});
 			assert.deepEqual(this.instance._registeredItems["sap.ui.fl.DummyControl2"], {myChangeType2: registryItem2});
 
 			var mDefaultLayers = this.instance._oSettings.getDefaultLayerPermissions();
@@ -322,11 +316,10 @@ function(
 			var mParam = {
 				changeTypeName: "myChangeType1"
 			};
-			var result = this.instance.getRegistryItems(mParam);
-
+			var mResult = this.instance.getRegistryItems(mParam);
 			//Assert
-			assert.strictEqual(Object.keys(result).length, 2);
-			assert.deepEqual(result["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
+			assert.strictEqual(Object.keys(mResult).length, 2);
+			assert.deepEqual(mResult["sap.ui.fl.DummyControl1"], {myChangeType1: registryItem1});
 		});
 
 		QUnit.test("getRegistryItem - developerMode ChangeHandlers", function(assert) {
@@ -484,19 +477,20 @@ function(
 				controlA: [SimpleChanges.unhideControl, SimpleChanges.hideControl],
 				controlB: [SimpleChanges.unhideControl, SimpleChanges.hideControl]
 			})
-			.then(function() {
-				var oRegistryItemsA = this.instance.getRegistryItems({
+				.then(this.instance.getRegistryItems.bind(this.instance, {
 					controlType: "controlA"
-				});
-				var oRegistryItemsB = this.instance.getRegistryItems({
+				}))
+				.then(function (oRegistryItemsA) {
+					assert.ok(oRegistryItemsA.controlA.unhideControl);
+					assert.ok(oRegistryItemsA.controlA.hideControl);
+				})
+				.then(this.instance.getRegistryItems.bind(this.instance, {
 					controlType: "controlB"
+				}))
+				.then(function (oRegistryItemsB) {
+					assert.ok(oRegistryItemsB.controlB.unhideControl);
+					assert.ok(oRegistryItemsB.controlB.hideControl);
 				});
-
-				assert.ok(oRegistryItemsA.controlA.unhideControl);
-				assert.ok(oRegistryItemsA.controlA.hideControl);
-				assert.ok(oRegistryItemsB.controlB.unhideControl);
-				assert.ok(oRegistryItemsB.controlB.hideControl);
-			}.bind(this));
 		});
 
 		QUnit.test("registerControlsForChanges: when adding a propertyChange or propertyBindingChange without 'default' changeHandler", function (assert) {
@@ -538,7 +532,6 @@ function(
 			var oRegistryItems = this.instance.getRegistryItems({
 				controlType: "ganttChart"
 			});
-
 			assert.ok(oRegistryItems);
 			assert.ok(oRegistryItems.ganttChart);
 		});
@@ -682,9 +675,8 @@ function(
 			var sControlType = "aControlType";
 			var sPropertyChangeType = "propertyChange";
 
-			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
-
-			assert.equal(oChangeHandler, this.instance._oDefaultActiveChangeHandlers.propertyChange, "the default property change handler was retrieved");
+			var mRegistryItem = this.instance._getSingleRegistryItem(sControlType, sPropertyChangeType);
+			assert.equal(mRegistryItem, this.instance._oDefaultActiveChangeHandlers.propertyChange, "the default property change handler was retrieved");
 		});
 
 		QUnit.test("returns the property change handler for a control having other registered change handlers", function (assert) {
@@ -695,9 +687,8 @@ function(
 				someOtherChange: {}
 			};
 
-			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
-
-			assert.equal(oChangeHandler, this.instance._oDefaultActiveChangeHandlers.propertyChange, "the default property change handler was retrieved");
+			var mRegistryItem = this.instance._getSingleRegistryItem(sControlType, sPropertyChangeType);
+			assert.equal(mRegistryItem, this.instance._oDefaultActiveChangeHandlers.propertyChange, "the default property change handler was retrieved");
 		});
 
 		QUnit.test("returns the explicit for a given control type registered change handler for the property changes", function (assert) {
@@ -716,18 +707,16 @@ function(
 				propertyChange: oChangeRegistryItem
 			};
 
-			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyChangeType);
-
-			assert.equal(oChangeHandler, oChangeRegistryItem, "the explicit registered change handler item was retrieved");
+			var mRegistryItem = this.instance._getSingleRegistryItem(sControlType, sPropertyChangeType);
+			assert.equal(mRegistryItem, oChangeRegistryItem, "the explicit registered change handler item was retrieved");
 		});
 
 		QUnit.test("returns the property binding change handler for a control not having any explicit registered change handlers", function (assert) {
 			var sControlType = "aControlType";
 			var sPropertyBindingChangeType = "propertyBindingChange";
 
-			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyBindingChangeType);
-
-			assert.equal(oChangeHandler, this.instance._oDefaultActiveChangeHandlers.propertyBindingChange, "the default property binding change handler was retrieved");
+			var mRegistryItem = this.instance._getSingleRegistryItem(sControlType, sPropertyBindingChangeType);
+			assert.equal(mRegistryItem, this.instance._oDefaultActiveChangeHandlers.propertyBindingChange, "the default property binding change handler was retrieved");
 		});
 
 		QUnit.test("returns the property change handler for a control having other registered change handlers", function (assert) {
@@ -738,9 +727,8 @@ function(
 				someOtherChange: {}
 			};
 
-			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyBindingChangeType);
-
-			assert.equal(oChangeHandler, this.instance._oDefaultActiveChangeHandlers.propertyBindingChange, "the default property binding change handler was retrieved");
+			var mRegistryItem = this.instance._getSingleRegistryItem(sControlType, sPropertyBindingChangeType);
+			assert.equal(mRegistryItem, this.instance._oDefaultActiveChangeHandlers.propertyBindingChange, "the default property binding change handler was retrieved");
 		});
 
 		QUnit.test("returns the explicit for a given control type registered change handler for the property binding changes", function (assert) {
@@ -759,9 +747,8 @@ function(
 				propertyBindingChange: oChangeRegistryItem
 			};
 
-			var oChangeHandler = this.instance._getOrLoadChangeHandler(sControlType, sPropertyBindingChangeType);
-
-			assert.equal(oChangeHandler, oChangeRegistryItem, "the explicit registered change handler item was retrieved");
+			var mRegistryItem = this.instance._getSingleRegistryItem(sControlType, sPropertyBindingChangeType);
+			assert.equal(mRegistryItem, oChangeRegistryItem, "the explicit registered change handler item was retrieved");
 		});
 
 		QUnit.test("when _getInstanceSpecificChangeRegistryItem is called without flexibility path defined on given control", function (assert) {

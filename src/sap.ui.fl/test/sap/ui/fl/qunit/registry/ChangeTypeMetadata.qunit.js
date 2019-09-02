@@ -22,7 +22,12 @@ sap.ui.define([
 		completeChangeContent: function() {}
 	};
 
-	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", function() {
+	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", {
+		beforeEach: function () {
+			this.sErrorMessageInMissingChangeHandlerCase =
+				"The ChangeHandler is either not available or does not fulfill all needed requirements";
+		}
+	}, function() {
 		QUnit.test("constructor - required params and their getter", function(assert) {
 			//Arrange
 			var mParam = {
@@ -35,7 +40,10 @@ sap.ui.define([
 
 			//Assert
 			assert.equal(oChangeTypeMetadata.getName(), "ABC");
-			assert.equal(oChangeTypeMetadata.getChangeHandler(), oValidChangeHandler);
+			return oChangeTypeMetadata.getChangeHandler()
+				.then(function (oReturnedChangeHandler) {
+					assert.equal(oReturnedChangeHandler, oValidChangeHandler);
+				});
 		});
 
 		QUnit.test("constructor - shall log error messages for missing mandatory parameters", function(assert) {
@@ -74,35 +82,57 @@ sap.ui.define([
 			assert.equal(oChangeTypeMetadata.getSortIndex(), 5);
 		});
 
-		QUnit.test("getChangeHandler", function(assert) {
+		QUnit.test("getChangeHandler without applyChange function", function (assert) {
 			var oMissingApply = {
 				revertChange: function() {},
 				completeChangeContent: function() {}
 			};
+			var oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingApply});
+			return oChangeTypeMetadata.getChangeHandler()
+				.catch(function (oError) {
+					assert.equal(this.sErrorMessageInMissingChangeHandlerCase, oError.message, "then the change handler is not returned");
+				}.bind(this));
+		});
+
+		QUnit.test("getChangeHandler without revertChange function", function (assert) {
 			var oMissingRevert = {
 				applyChange: function() {},
 				completeChangeContent: function() {}
 			};
+			var oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingRevert});
+			return oChangeTypeMetadata.getChangeHandler()
+				.catch(function (oError) {
+					assert.equal(this.sErrorMessageInMissingChangeHandlerCase, oError.message, "then the change handler is not returned");
+				}.bind(this));
+		});
+
+		QUnit.test("getChangeHandler without completeChangeContent function", function (assert) {
 			var oMissingCompleteContent = {
 				applyChange: function() {},
 				revertChange: function() {}
 			};
+			var oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingCompleteContent});
+			return oChangeTypeMetadata.getChangeHandler()
+				.catch(function (oError) {
+					assert.equal(this.sErrorMessageInMissingChangeHandlerCase, oError.message, "then the change handler is not returned");
+				}.bind(this));
+		});
 
-			var oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingApply});
-			assert.equal(undefined, oChangeTypeMetadata.getChangeHandler(), "without applyChange function the change handler is not returned");
+		QUnit.test("getChangeHandler with all functions", function (assert) {
+			var oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oValidChangeHandler});
+			return oChangeTypeMetadata.getChangeHandler()
+				.then(function (oReturnedChangeHandler) {
+					assert.equal(oReturnedChangeHandler, oValidChangeHandler, "then the correct change handler is returned");
+				});
+		});
 
-			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingRevert});
-			assert.equal(undefined, oChangeTypeMetadata.getChangeHandler(), "without revertChange function the change handler is not returned");
-
-			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oMissingCompleteContent});
-			assert.equal(undefined, oChangeTypeMetadata.getChangeHandler(), "without completeChangeContent function the change handler is not returned");
-
-			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: oValidChangeHandler});
-			assert.equal(oChangeTypeMetadata.getChangeHandler(), oValidChangeHandler, "with all functions the correct change handler is returned");
-
+		QUnit.test("getChangeHandler with explicit registered changeHandler path", function(assert) {
 			var sExplicitRegisteredChangeHandlerPath = 'sap.ui.fl.changeHandler.MoveControls';
-			oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: sExplicitRegisteredChangeHandlerPath});
-			assert.equal(oChangeTypeMetadata.getChangeHandler(), MoveControlsChangeHandler, "then correct loaded changehandler is returned");
+			var oChangeTypeMetadata = new ChangeTypeMetadata({changeHandler: sExplicitRegisteredChangeHandlerPath});
+			return oChangeTypeMetadata.getChangeHandler()
+				.then(function (oReturnedChangeHandler) {
+					assert.equal(oReturnedChangeHandler, MoveControlsChangeHandler, "then correct loaded changehandler is returned");
+				});
 		});
 	});
 
