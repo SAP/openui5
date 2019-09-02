@@ -64,7 +64,7 @@ sap.ui.define([
 
 			oFirstChild = oBinding.findNode(1);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
@@ -78,13 +78,13 @@ sap.ui.define([
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
 			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
-				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after refresh");
+				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after change event");
 			}
 
 			assert.ok(oFirstChild !== oBinding.findNode(1), "Instance of first child object changed");
@@ -132,7 +132,7 @@ sap.ui.define([
 
 			oFirstChild = oBinding.findNode(2);
 
-			oBinding.attachRefresh(handler4);
+			oBinding.attachChange(handler4);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				// Success: Promise resolved
@@ -146,13 +146,13 @@ sap.ui.define([
 			});
 		}
 		function handler4 (oEvent) {
-			oBinding.detachRefresh(handler4);
+			oBinding.detachChange(handler4);
 
 			var oParent = oBinding.findNode(1),
 				oChild;
 
 			oChild = oBinding.findNode(2);
-			assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after refresh");
+			assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after change event");
 
 			var oSecondRootNode = oBinding.findNode(3);
 			assert.ok(oSecondRootNode, "Successfully found a node outside the first root nodes magnitude range");
@@ -194,7 +194,7 @@ sap.ui.define([
 
 			oBinding.findNode(1);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 			ODataTreeBindingFakeService.setServiceStatus({ batch: 500 });
 			oBinding._restoreTreeState().catch(function(err) {
 				assert.ok(true, "Promise got rejected");
@@ -203,7 +203,7 @@ sap.ui.define([
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 
 			var oParent = oBinding.findNode(0);
 			assert.notOk(oParent, "There is no node available.");
@@ -244,12 +244,12 @@ sap.ui.define([
 
 			oBinding.findNode(1);
 
-			oBinding.attachRefresh(oChangeSpy);
+			oBinding.attachChange(oChangeSpy);
 			ODataTreeBindingFakeService.setServiceStatus({ batch: "abort" });
 			oBinding._restoreTreeState().then(function() {
 				ODataTreeBindingFakeService.resetServiceStatus();
-				assert.deepEqual(oChangeSpy.callCount, 0, "No refresh event fired");
-				oBinding.detachRefresh(oChangeSpy);
+				assert.deepEqual(oChangeSpy.callCount, 0, "No Change event fired");
+				oBinding.detachChange(oChangeSpy);
 				done();
 			}, function (err) {
 				assert.notOk(true, "Promise should not reject with error " + err.message);
@@ -290,7 +290,7 @@ sap.ui.define([
 
 			oBinding.findNode(1);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 
 			// let the loading of deep nodes fail
 			ODataTreeBindingFakeService.setServiceStatus({
@@ -308,7 +308,7 @@ sap.ui.define([
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 
 			var oParent = oBinding.findNode(0);
 			var oNextNode = oBinding.findNode(1);
@@ -349,7 +349,7 @@ sap.ui.define([
 
 			oBinding.findNode(1);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 
 			// let the loading of deep nodes fail
 			ODataTreeBindingFakeService.setServiceStatus({
@@ -367,7 +367,7 @@ sap.ui.define([
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 
 			var oParent = oBinding.findNode(0);
 			assert.notOk(oParent, "Nothing is restored in binding");
@@ -406,7 +406,7 @@ sap.ui.define([
 
 			oBinding.findNode(1);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 
 			// let the loading of deep nodes fail
 			ODataTreeBindingFakeService.setServiceStatus({
@@ -425,7 +425,7 @@ sap.ui.define([
 			});
 		}
 		function handler3 (oEvent) {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 
 			var oParent = oBinding.findNode(0);
 			assert.notOk(oParent, "Nothing is restored in binding");
@@ -467,7 +467,7 @@ sap.ui.define([
 
 			oFirstChild = oBinding._aNodes[1];
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
@@ -480,7 +480,7 @@ sap.ui.define([
 			});
 		}
 		function handler2 (oEvent) {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 
 			assert.ok(!oBinding.isExpanded(0), "Collapsed node is still collapsed after restore");
 
@@ -534,7 +534,7 @@ sap.ui.define([
 			oBinding.collapse(1, true);
 			assert.notOk(oBinding.isExpanded(1), "First child node is collapsed");
 
-			oBinding.attachRefresh(handler4);
+			oBinding.attachChange(handler4);
 			var oLogSpy = sinon.spy(jQuery.sap.log, "error");
 			oBinding._restoreTreeState().then(function(aResponseData) {
 				assert.ok(Array.isArray(aResponseData), "The promise should be resolved");
@@ -548,13 +548,13 @@ sap.ui.define([
 		}
 
 		function handler4(oEvent) {
-			oBinding.detachRefresh(handler4);
+			oBinding.detachChange(handler4);
 
 			var oParent = oBinding.findNode(0),
 				oChild, i;
 			for (i = 1; i < 7; i++) {
 				oChild = oBinding.findNode(i);
-				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after refresh");
+				assert.ok(oBinding._isInSubtree(oParent, oChild), "Children are re-loaded after change event");
 			}
 
 			var oFirstChildNode = oBinding.findNode(1);
@@ -583,7 +583,7 @@ sap.ui.define([
 			oBinding.collapse(0, true); // Collapse
 			assert.ok(!oBinding.isExpanded(0), "Collapsed node is collapsed");
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 
 			// let the loading of deep nodes fail
 			ODataTreeBindingFakeService.setServiceStatus({
@@ -601,7 +601,7 @@ sap.ui.define([
 			});
 		}
 		function handler2 (oEvent) {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 			assert.ok(!oBinding.findNode(0), "No node available");
 		}
 
@@ -742,12 +742,12 @@ sap.ui.define([
 
 			oBinding.removeContext(oDeleteNode.context);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 			oBinding.submitChanges();
 		}
 
 		function handler3() {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 
 			assert.ok(oBinding.findNode(116), "The loaded section is adapted");
 			assert.ok(!oBinding.findNode(117), "The loaded section is adapted with the deleted node's magnitude");
@@ -788,12 +788,12 @@ sap.ui.define([
 			var oNode = oBinding.findNode(17);
 			oBinding.removeContext(oNode.context);
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			oBinding.submitChanges();
 		}
 
 		function handler2() {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength, "New binding length is equal to old length (a generated node replaced the removed node)");
@@ -992,12 +992,12 @@ sap.ui.define([
 				}
 			});
 			oBinding.addContexts(oParent.context, [oContext]);
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			oBinding.submitChanges();
 		}
 
 		function handler2() {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus one");
 
@@ -1050,12 +1050,12 @@ sap.ui.define([
 
 			oBinding.addContexts(oParent.context, [oContext]);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 			oBinding.submitChanges();
 		}
 
 		function handler3() {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus one");
 
@@ -1118,12 +1118,12 @@ sap.ui.define([
 			});
 			oBinding.addContexts(oContext1, [oContext2]);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 			oBinding.submitChanges();
 		}
 
 		function handler3() {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus one");
 
@@ -1196,12 +1196,12 @@ sap.ui.define([
 			assert.equal(oBinding.getLength(), iOldLength + 4, "length is correct after adding 4 new nodes");
 			iOldLength = oBinding.getLength();
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			oBinding.submitChanges();
 		}
 
 		function handler2() {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength, "New binding length should stay the same after new nodes are saved");
@@ -1279,12 +1279,12 @@ sap.ui.define([
 			assert.equal(oBinding.getLength(), iOldLength + 4, "length is correct after adding 4 new nodes");
 			iOldLength = oBinding.getLength();
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			oBinding.submitChanges();
 		}
 
 		function handler2() {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength, "New binding length should stay the same after new nodes are saved");
@@ -1329,12 +1329,12 @@ sap.ui.define([
 			});
 			oBinding.addContexts(oParent.context, [oContext1]);
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			oBinding.submitChanges();
 		}
 
 		function handler2() {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength + 1, "New binding length is old length plus 1 (server side generated node is a deep node)");
@@ -1378,12 +1378,12 @@ sap.ui.define([
 			});
 			oBinding.addContexts(oParent.context, [oContext1]);
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			oBinding.submitChanges();
 		}
 
 		function handler2() {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength + 2, "New binding length is old length plus two (server side generated node)");
@@ -1558,12 +1558,12 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(6);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.attachRefresh(handler3);
+			oBinding.attachChange(handler3);
 			oBinding.submitChanges();
 		}
 
 		function handler3() {
-			oBinding.detachRefresh(handler3);
+			oBinding.detachChange(handler3);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength - 4, "New binding length is equal to old length minus four (child nodes of moved node)");
@@ -1603,12 +1603,12 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(13);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.attachRefresh(handler2);
+			oBinding.attachChange(handler2);
 			oBinding.submitChanges();
 		}
 
 		function handler2() {
-			oBinding.detachRefresh(handler2);
+			oBinding.detachChange(handler2);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength - 1, "New binding length is equal to old length minus one (child node of moved node)");
@@ -1673,12 +1673,12 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(1);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.attachRefresh(handler6);
+			oBinding.attachChange(handler6);
 			oBinding.submitChanges();
 		}
 
 		function handler6() {
-			oBinding.detachRefresh(handler6);
+			oBinding.detachChange(handler6);
 
 			var iNewLength = oBinding.getLength();
 			assert.equal(iNewLength, iOldLength, "New binding length is equal to old length");
