@@ -211,8 +211,7 @@ sap.ui.define([
 	var oConnectorResultMerger = {};
 
 	/**
-	 * Concatenates all changes from a list of flex data request responses into a passed result object;
-	 * The changes section of the passed object will be cleared.
+	 * Concatenates all changes from a list of flex data request responses into a passed result object and removed duplicates.
 	 *
 	 * @param {object[]} aResponses List of responses containing a changes property to be concatenated
 	 * @param {object[]} aResponses.changes List of the change definitions
