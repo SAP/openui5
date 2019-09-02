@@ -141,7 +141,7 @@ sap.ui.define([
 
 	CreationRow.prototype.onkeydown = function(oEvent) {
 		// TODO: don't hardcode keycodes. maybe move #isKeyCombination of keyboard delegate to utils and use that.
-		if (this.getApplyEnabled() && oEvent.ctrlKey && oEvent.keyCode === 13 /* Enter */) {
+		if (this.getApplyEnabled() &&  (oEvent.metaKey || oEvent.ctrlKey) && oEvent.keyCode === 13 /* Enter */) {
 			// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
 			// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), the "apply" event is fired asynchronously.
 			var oFocusedElement = document.activeElement;
@@ -168,7 +168,6 @@ sap.ui.define([
 				new ToolbarSpacer(),
 				new Button({
 					text: TableUtils.getResourceText("TBL_CREATIONROW_APPLY"),
-					type: MLibrary.ButtonType.Emphasized,
 					enabled: oCreationRow.getApplyEnabled(),
 					press: function() {
 						oCreationRow._fireApply();
