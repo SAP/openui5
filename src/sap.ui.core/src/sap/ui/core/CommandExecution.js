@@ -65,7 +65,12 @@ sap.ui.define([
 				/**
 				 * Whether the CommandExecution is enabled or not. By default, it is enabled
 				 */
-				enabled: { type: "boolean" , defaultValue: true}
+				enabled: { type: "boolean" , defaultValue: true},
+				/**
+				 * Whether the CommandExecution is visible, or not. By default, it is visible.
+				 * If not visible, the CommandExecution will not be triggered even if it is enabled.
+				 */
+				visible: { type: "boolean" , defaultValue: true}
 			},
 			events: {
 				 /**
@@ -81,7 +86,7 @@ sap.ui.define([
 		 * @public
 		 */
 		trigger: function () {
-			if (this.getEnabled()) {
+			if (this.getVisible() && this.getEnabled()) {
 				this.fireExecute({});
 			}
 		},
@@ -157,9 +162,13 @@ sap.ui.define([
 
 			oContainerData[this.getCommand()] = {};
 			oContainerData[this.getCommand()].enabled = this.getEnabled();
+			oContainerData[this.getCommand()].visible = this.getVisible();
 			oModel.setProperty("/" + oParent.getId(), oContainerData);
 			this.bindProperty("enabled", {
 				path: "$cmd>" + this.getCommand() + "/enabled"
+			});
+			this.bindProperty("visible", {
+				path: "$cmd>" + this.getCommand() + "/visible"
 			});
 			oParent.bindElement("$cmd>/" + oParent.getId());
 		},
@@ -183,7 +192,7 @@ sap.ui.define([
 				}
 			}
 
-			if (oCommand) {
+			if (oCommand && this.getVisible()) {
 				if (oParent && oParent !== oOldParent) {
 					//register Shortcut
 					sShortcut = oCommand.shortcut;
@@ -221,6 +230,12 @@ sap.ui.define([
 			return this;
 		},
 
+		/**
+		 * Cleanup of command data, binding context and propagation wrapper
+		 *
+		 * @param {sap.ui.core.Control} oControl The Control to cleanup
+		 * @private
+		*/
 		_cleanupContext: function(oControl) {
 			if (oControl.getBindingContext("$cmd")) {
 				var oCommandData = oControl.getBindingContext("$cmd").getObject();
@@ -232,6 +247,35 @@ sap.ui.define([
 					oControl.unbindElement("$cmd");
 				}
 			}
+		},
+
+		/**
+		 * Sets whether the Commandexecution is visible, or not. If set to
+		 * false, the CommandExecution will unregister the shortcut. If not visible,
+		 * the CommandExecution will not be triggered even if it is enabled.
+		 *
+		 * @param {boolean} bValue Whether the CommandExecution is visible, or not.
+		 * @returns {sap.ui.core.Element} The commandExecution
+		 *
+		 * @public
+		 */
+		setVisible: function(bValue) {
+			var oParent = this.getParent();
+
+			this.setProperty("visible", bValue, true);
+
+			if (oParent) {
+				var oCommand = this._getCommandInfo();
+				var sShortcut = oCommand.shortcut;
+				var bIsRegistered = Shortcut.isRegistered(this.getParent(), sShortcut);
+
+				if (bValue && !bIsRegistered) {
+					Shortcut.register(oParent, sShortcut, this.trigger.bind(this));
+				} else if (!bValue && bIsRegistered) {
+					Shortcut.unregister(oParent, sShortcut);
+				}
+			}
+			return this;
 		},
 
 		/** @inheritdoc */

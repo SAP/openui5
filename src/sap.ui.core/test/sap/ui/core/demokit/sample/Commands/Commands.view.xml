@@ -69,15 +69,29 @@
 			<Panel headerText="Popover - CommandExecution defined in Popup content">
 			<Button press=".onCommandPopoverOpen" text="Open Popover"/>
 			</Panel>
-			<Panel headerText="toggle CommandExecution enable for Page">
-				<Label text="Save:"/>
-				<Switch state="true" change=".onToggleSave"/>
-				<Label text="Delete:"/>
-				<Switch state="true" change=".onToggleDelete"/>
+			<Panel headerText="toggle enable/visibility for CommandExecution in Page">
+				<Panel headerText="enable">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onToggleSave"/>
+					<Label text="Delete:"/>
+					<Switch state="true" change=".onToggleDelete"/>
+				</Panel>
+				<Panel headerText="visible">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onToggleSaveVisibility"/>
+					<Label text="Delete:"/>
+					<Switch state="true" change=".onToggleDeleteVisibility"/>
+				</Panel>
 			</Panel>
-			<Panel headerText="toggle CommandExecution enable for Popover">
-				<Label text="Save:"/>
-				<Switch state="true" change=".onTogglePopoverSave"/>
+			<Panel headerText="toggle enable/visibility for CommandExecution in Popover">
+				<Panel headerText="enable">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onTogglePopoverSave"/>
+				</Panel>
+				<Panel headerText="visible">
+					<Label text="Save:"/>
+					<Switch state="true" change=".onTogglePopoverSaveVisibility"/>
+				</Panel>
 			</Panel>
 		</Page>
 	</App>

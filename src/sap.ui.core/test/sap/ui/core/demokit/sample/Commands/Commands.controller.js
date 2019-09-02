@@ -58,6 +58,18 @@ sap.ui.define([
 			this.getView().byId("CE_SAVE_POPOVER").setEnabled(oEvent.getParameter("state"));
 		},
 
+		onToggleSaveVisibility: function(oEvent)  {
+			this.getView().byId("CE_SAVE").setVisible(oEvent.getParameter("state"));
+		},
+
+		onToggleDeleteVisibility: function(oEvent)  {
+			this.getView().byId("CE_DELETE").setVisible(oEvent.getParameter("state"));
+		},
+
+		onTogglePopoverSaveVisibility: function(oEvent)  {
+			this.getView().byId("CE_SAVE_POPOVER").setVisible(oEvent.getParameter("state"));
+		},
+
 		onPopoverOpen: function(oEvent) {
 			this.byId("popover").openBy(oEvent.getSource());
 		},
