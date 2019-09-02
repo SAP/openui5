@@ -8,14 +8,18 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/dt/Util",
 	"sap/ui/core/Element",
-	"sap/ui/core/Component"
+	"sap/ui/core/Component",
+	"sap/base/util/isPlainObject",
+	"sap/ui/core/UIArea"
 ],
 function(
 	jQuery,
 	BaseObject,
 	Util,
 	Element,
-	Component
+	Component,
+	isPlainObject,
+	UIArea
 ) {
 	"use strict";
 
@@ -391,13 +395,13 @@ function(
 
 	/**
 	 * Returns for a given element the corresponding element id of the element inside of a binding template
-	 * This function uses the information gathered in the output of OverlayUtil.getAggregationInformation
+	 * This function uses the information gathered in the output of ElementUtil.getAggregationInformation
 	 * The check is done recursively
-	 * @param  {sap.ui.dt.OverlayUtil.AggregationBindingStack}  mBoundControl {@link sap.ui.dt.OverlayUtil.AggregationBindingStack}
+	 * @param  {sap.ui.dt.OverlayUtil.AggregationBindingStack}  mBoundControl {@link sap.ui.dt.ElementUtil.AggregationBindingStack}
 	 * @return {string}                                         Returns the element id of the corresponding element inside of a template
 	 */
 	ElementUtil.extractTemplateId = function(mBoundControl) {
-		if (mBoundControl.templateId) {
+		if (isPlainObject(mBoundControl) && mBoundControl.templateId) {
 			if (mBoundControl.stack.length > 1) {
 				var oResultControl;
 				var oAggregatedControl = sap.ui.getCore().byId(mBoundControl.templateId);
@@ -416,6 +420,79 @@ function(
 		} else {
 			return undefined;
 		}
+	};
+
+	/**
+	 * The AggregationBindingStack contains element id and aggregation name of the bound control together with a stack containing
+	 * information about the traversed elements for an Overlay which is part of an aggregation binding.
+	 * @typedef {Object} sap.ui.dt.ElementUtil.AggregationBindingStack
+	 * @property {string} elementId - id of the bound control.
+	 * @property {string} aggregation - name of the bound aggregation.
+	 * @property {string} templateId - id of the binding template.
+	 * @property {Object[]} stack - array of objects containing element, element type, aggregation name and index of the element in
+	 *                              the aggregation for each traversed aggregation.
+	 * @property {string} stack.element - element id
+	 * @property {string} stack.type - element type
+	 * @property {string} stack.aggregation - aggregation name
+	 * @property {number} stack.index - index of the element in parent aggregation
+	 */
+
+	/**
+	 * Returns the element id and the aggregation name of the bound control for an Overlay which is part of an aggregation binding
+	 * The check is done recursively
+	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay Overlay being checked
+	 * @return {AggregationBindingStack}  Returns the {@link sap.ui.dt.ElementUtil.AggregationBindingStack} object
+	 */
+	ElementUtil.getAggregationInformation = function(oElement) {
+		var aStack = [];
+		return this._evaluateBinding(oElement, aStack);
+	};
+
+	ElementUtil._evaluateBinding = function(oElement, aStack) {
+		// var oElement = oElementOverlay.getElement();
+		var sAggregationName;
+		var iIndex;
+		var oParent = oElement.getParent();
+
+		if (oParent) {
+			sAggregationName = oElement.sParentAggregationName;
+			iIndex = Util.castArray(oParent.getAggregation(sAggregationName)).indexOf(oElement);
+		} else {
+			iIndex = -1;
+		}
+
+		aStack.push({
+			element: oElement.getId(),
+			type: oElement.getMetadata().getName(),
+			aggregation: sAggregationName,
+			index: iIndex
+		});
+
+		if (sAggregationName && oParent.getBinding(sAggregationName)) {
+			var oBinding = oParent.getBindingInfo(sAggregationName);
+			var oTemplate = oBinding && oBinding.template;
+
+			return {
+				elementId: oParent.getId(),
+				aggregation: sAggregationName,
+				templateId: oTemplate ? oTemplate.getId() : undefined,
+				stack: aStack
+			};
+		}
+
+		return !oParent || oParent instanceof UIArea
+			? {
+				elementId: undefined,
+				aggregation: undefined,
+				templateId: undefined,
+				stack: aStack
+			}
+			: (
+				this._evaluateBinding(
+					oParent,
+					aStack
+				)
+			);
 	};
 
 	/**

@@ -4,15 +4,15 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
-	"sap/ui/dt/OverlayUtil"
+	"sap/ui/dt/ElementUtil"
 ], function (
 	FlUtils,
-	OverlayUtil
+	ElementUtil
 ) {
 	"use strict";
 
 	function checkAggregationBindingTemplateID(oOverlay, vStableElement) {
-		var mAggregationInfo = OverlayUtil.getAggregationInformation(oOverlay, oOverlay.getElement().sParentAggregationName);
+		var mAggregationInfo = ElementUtil.getAggregationInformation(oOverlay.getElement());
 		if (!mAggregationInfo.templateId) {
 			return true;
 		}
