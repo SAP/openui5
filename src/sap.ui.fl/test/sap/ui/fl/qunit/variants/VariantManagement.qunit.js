@@ -522,7 +522,7 @@ sap.ui.define([
 							"ICON"
 						];
 					}
-				}
+				};
 			};
 
 			assert.ok(oItem.favorite);
