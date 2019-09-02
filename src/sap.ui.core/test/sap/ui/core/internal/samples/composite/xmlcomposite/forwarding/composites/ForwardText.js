@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/core/XMLComposite'],
 	function (XMLComposite) {
 		"use strict";
-		var ForwardText = sap.ui.core.XMLComposite.extend("composites.ForwardText", {
+		var ForwardText = XMLComposite.extend("composites.ForwardText", {
 			metadata: {
 				aggregations: {
 					textItems: {
@@ -21,4 +21,4 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 		});
 
 		return ForwardText;
-	}, /* bExport= */true);
+	});

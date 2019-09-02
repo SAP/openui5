@@ -105,7 +105,7 @@ sap.ui.define([
 				if (aRequest.method === "GET" && aRequest.path.toString().indexOf("Employees") > -1) {
 					//we simply return always the first entry
 					fnGetEntityResponse(aRequest);
-				}else if (aRequest.method === "PUT" && aRequest.path.toString().indexOf("Employees") > -1){
+				} else if (aRequest.method === "PUT" && aRequest.path.toString().indexOf("Employees") > -1) {
 					fnUpdateEntityResponse(aRequest);
 				}
 			});

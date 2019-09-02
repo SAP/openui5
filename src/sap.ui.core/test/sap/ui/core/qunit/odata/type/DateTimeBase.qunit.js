@@ -375,8 +375,8 @@ sap.ui.define([
 			function (assert) {
 					var oType = new DateTime(oFixture.oFormatOptions, oFixture.oConstraints),
 					oSpy = (oFixture.oConstraints) ?
-						this.spy(sap.ui.core.format.DateFormat, "getDateInstance") :
-						this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+						this.spy(DateFormat, "getDateInstance") :
+						this.spy(DateFormat, "getDateTimeInstance");
 
 				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
@@ -465,7 +465,7 @@ sap.ui.define([
 		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
 			function (assert) {
 				var oType = new DateTimeOffset(oFixture.oFormatOptions, {}),
-					oSpy = this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
+					oSpy = this.spy(DateFormat, "getDateTimeInstance");
 
 				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");

@@ -38,15 +38,13 @@ sap.ui.define(["jquery.sap.unicode", "sap/ui/Device"], function(jQuery, Device) 
 			assert.ok(UNorm, "unorm is loaded");
 			assert.ok(UNorm.UChar.udata, "unormdata is loaded");
 			assert.ok(String.prototype.normalize, "String.prototype.normalize is polyfilled");
-		} else {
-			if (Device.browser.mobile) {
+		} else if (Device.browser.mobile) {
 				// polyfill should not be loaded for mobile browsers
 				assert.ok(!UNorm, "unorm not loaded");
 			} else {
 				assert.ok(String.prototype.normalize, "String.prototype.normalize browser implementation");
 				// browser implementation, no further testing is required
 			}
-		}
 	});
 
 	if (UNorm) {

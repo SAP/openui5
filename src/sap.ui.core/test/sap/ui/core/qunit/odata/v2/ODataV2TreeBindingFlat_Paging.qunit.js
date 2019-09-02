@@ -1,9 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
+	"sap/ui/model/Filter",
 	"sap/ui/model/odata/v2/ODataModel"
 ], function(
 	MockServer,
+	Filter,
 	ODataModel
 ) {
 	"use strict";
@@ -39,7 +41,7 @@ sap.ui.define([
 	QUnit.module("ODataTreeBinding - AutoExpand", {
 		beforeEach: function() {
 			fnSetupNewMockServer();
-			oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {useBatch:false});
+			oModel = new ODataModel(sServiceUrl, {useBatch:false});
 			return oModel.metadataLoaded();
 		},
 		afterEach: function() {
@@ -658,7 +660,7 @@ sap.ui.define([
 
 		var done = assert.async();
 		createTreeBinding("/orgHierarchy", null,
-			[new sap.ui.model.Filter("DESCRIPTION", "Contains", "x")],
+			[new Filter("DESCRIPTION", "Contains", "x")],
 			{
 				threshold: 10,
 				countMode: "Inline",
@@ -697,7 +699,7 @@ sap.ui.define([
 
 			// refilter the tree binding --> leads to a refresh
 			oBinding.attachRefresh(refreshHandler);
-			oBinding.filter(new sap.ui.model.Filter("DESCRIPTION", "Contains", "w"), "Application");
+			oBinding.filter(new Filter("DESCRIPTION", "Contains", "w"), "Application");
 		}
 
 		function refreshHandler (oEvent) {

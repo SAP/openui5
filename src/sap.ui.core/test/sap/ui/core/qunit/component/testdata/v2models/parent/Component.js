@@ -6,7 +6,7 @@
 sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 	"use strict";
 
-	return sap.ui.core.UIComponent.extend("sap.ui.test.v2models.parent.Component", {
+	return UIComponent.extend("sap.ui.test.v2models.parent.Component", {
 
 		metadata: {
 

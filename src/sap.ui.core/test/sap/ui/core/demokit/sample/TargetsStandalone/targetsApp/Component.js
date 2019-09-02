@@ -14,4 +14,4 @@ sap.ui.define( ["sap/ui/core/UIComponent"], function (UIComponent) {
 		}
 
 	});
-}, /* bExport= */ true);
+});

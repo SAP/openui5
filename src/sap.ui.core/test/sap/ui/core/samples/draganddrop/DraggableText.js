@@ -17,4 +17,4 @@ sap.ui.define(['sap/m/Text'], function(Text) {
 
 	return DraggableText;
 
-}, /* bExport= */ true);
+});

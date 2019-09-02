@@ -23,8 +23,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/UIComponent'],
 					if (query) {
 						queryAsString += ". Retrieved additional query data:";
 						for ( var key in query) {
-							if(query.hasOwnProperty(key)) {
-								queryAsString += " " + key + " = "+ query[key];
+							if (query.hasOwnProperty(key)) {
+								queryAsString += " " + key + " = " + query[key];
 							}
 						}
 					}
@@ -54,7 +54,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/UIComponent'],
 
 		handleBtn2Press : function() {
 			this.getRouter().navTo("detail", { from : "View 2"});
-		},
+		}
 
 		/**
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.

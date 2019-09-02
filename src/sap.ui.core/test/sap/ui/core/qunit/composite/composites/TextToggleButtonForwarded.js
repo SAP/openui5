@@ -33,4 +33,4 @@ sap.ui.define([
 		this.fireRefreshed();
 	};
 	return TextToggleButtonForwarded;
-}, /* bExport= */true);
+});

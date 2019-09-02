@@ -1,4 +1,10 @@
-sap.ui.define([], function() {
+sap.ui.define([
+	'sap/m/Button',
+	'sap/m/Label',
+	'sap/m/Switch',
+	'sap/ui/core/mvc/HTMLView',
+	'sap/ui/core/mvc/XMLView' // sap.ui.xmlview
+], function(Button, Label, Switch, HTMLView) {
 	"use strict";
 
 	sap.ui.jsview("sap.ui.core.sample.View.async.Root", {
@@ -11,7 +17,7 @@ sap.ui.define([], function() {
 
 			var oButton, oLabel, oSwitch, oView;
 
-			oButton = new sap.m.Button({
+			oButton = new Button({
 				text: "RELOAD",
 				icon: "sap-icon://refresh",
 				press: function() {
@@ -24,7 +30,7 @@ sap.ui.define([], function() {
 					oView.removeContent(oSampleView);
 					oSampleView.destroy();
 					// delete the html view from cache to achieve a real refresh
-					delete sap.ui.core.mvc.HTMLView._mTemplates["test-resources/sap/ui/core/demokit/sample/View/async/Async.view.html"];
+					delete HTMLView._mTemplates["test-resources/sap/ui/core/demokit/sample/View/async/Async.view.html"];
 					// add the newly loaded view
 					oView.addContent(sap.ui.xmlview({
 						id: sId,
@@ -33,11 +39,11 @@ sap.ui.define([], function() {
 				}
 			});
 
-			oSwitch = new sap.m.Switch({
+			oSwitch = new Switch({
 				id: this.createId("switch")
 			});
 
-			oLabel = new sap.m.Label({
+			oLabel = new Label({
 				text: "SYNC:"
 			});
 			oLabel.addStyleClass("sapUiSmallMargin");

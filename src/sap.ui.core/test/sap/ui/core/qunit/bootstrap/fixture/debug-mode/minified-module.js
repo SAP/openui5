@@ -1,1 +1,1 @@
-sap.ui.define(function(){"use strict";return {};});
+sap.ui.define(function(){"use strict"; return {};});

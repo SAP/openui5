@@ -103,16 +103,12 @@ sap.ui.define([
 				} else {
 					oPopup.open(0);
 				}
+			} else if (oPopup.isOpen()) {
+				oPopup.close(0);
+			} else if (bDock) {
+				oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
 			} else {
-				if (oPopup.isOpen()) {
-					oPopup.close(0);
-				} else {
-					if (bDock) {
-						oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftBottom, $Button);
-					} else {
-						oPopup.open(0);
-					}
-				}
+				oPopup.open(0);
 			}
 		});
 

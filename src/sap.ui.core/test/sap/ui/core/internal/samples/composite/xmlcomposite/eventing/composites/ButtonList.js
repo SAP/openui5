@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/XMLComposite'],
-	function(jQuery, XMLComposite, XML) {
+	'sap/ui/core/XMLComposite'],
+	function(XMLComposite) {
 	"use strict";
 	var ButtonList = XMLComposite.extend("composites.ButtonList", {
 		metadata: {
@@ -36,4 +36,4 @@ sap.ui.define([
 	};
 
 	return ButtonList;
-}, /* bExport= */true);
+});

@@ -1,12 +1,12 @@
-sap.ui.define(['jquery.sap.global', 'samples/components/ext/sap/Main.controller'],
-	function(jQuery, Controller) {
+sap.ui.define(['sap/base/Log', 'samples/components/ext/sap/Main.controller'],
+	function(Log, Controller) {
 	"use strict";
 
 	var MainController = Controller.extend("samples.components.ext.customer.Main", {
 
 		onInit : function () {
 			Controller.prototype.onInit.apply(this, arguments);
-			jQuery.sap.log.info("samples.components.ext.customer.Main - onInit");
+			Log.info("samples.components.ext.customer.Main - onInit");
 		},
 
 		formatNumber: function(iNumber) {

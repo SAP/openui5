@@ -154,8 +154,7 @@ sap.ui.define([
 				var end = jQuery('#testsel').get(0).selectionEnd;
 				assert.equal(start, 0);
 				assert.equal(end, 0);
-			} else {
-				if (document.selection.createRange) {	// Internet Explorer
+			} else if (document.selection.createRange) {	// Internet Explorer
 					var seltext;
 					jQuery('#testsel').selectText(2, 5);
 					seltext = document.selection.createRange().text;
@@ -169,7 +168,6 @@ sap.ui.define([
 					seltext = document.selection.createRange().text;
 					assert.equal(seltext, "");
 				}
-			}
 		});
 
 		QUnit.test("selectText()/getSelectedText(): The input element's type 'number' does not support selection", function (assert) {

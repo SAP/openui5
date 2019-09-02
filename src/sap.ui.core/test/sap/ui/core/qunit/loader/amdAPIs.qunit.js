@@ -20,7 +20,7 @@
 
 			define("sap/test/MockModule2", [], function () {
 				return {};
-			}, /* bExport = */ false);
+			});
 
 			// ------ Optional dependencies -------
 			define("sap/test/MockModule3", function () {
@@ -29,7 +29,7 @@
 
 			define("sap/test/MockModule4", function () {
 				return {};
-			}, /* bExport = */ false);
+			});
 
 
 			// Waiting for loader queue to be processed

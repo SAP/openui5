@@ -717,7 +717,7 @@ sap.ui.define([
 	QUnit.test("Service setting - lazy false (immediate service start)", function(assert) {
 
 		// setup - local component to be able to place the spy
-		var oSpy = this.spy(sap.ui.core.Component.prototype, "getService");
+		var oSpy = this.spy(Component.prototype, "getService");
 		var oComponent = sap.ui.component({
 			manifestUrl : "/anylocation/manifest.json"
 		});

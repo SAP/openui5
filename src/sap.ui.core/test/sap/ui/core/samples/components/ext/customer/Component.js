@@ -1,9 +1,9 @@
-sap.ui.define(['jquery.sap.global', 'samples/components/ext/sap/Component'],
-	function(jQuery, Component1) {
+sap.ui.define(['samples/components/ext/sap/Component'],
+	function(ExtSapComponent) {
 	"use strict";
 
 
-	var Component = Component1.extend("samples.components.ext.customer.Component", {
+	var Component = ExtSapComponent.extend("samples.components.ext.customer.Component", {
 
 		metadata : {
 			version : "1.0",

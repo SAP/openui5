@@ -10,6 +10,7 @@
 /*eslint-env es6*/
 sap.ui.define([
 	"sap/m/App",
+	"sap/m/Bar",
 	"sap/m/HBox",
 	"sap/m/Label",
 	"sap/m/Link",
@@ -30,7 +31,7 @@ sap.ui.define([
 	"require",
 	"./discovery",
 	"./filter"
-], function(App, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
+], function(App, Bar, HBox, Label, Link, Page, SearchField, SegmentedButton, SegmentedButtonItem, Text, Toolbar, Table, Column, Filter, JSONModel, Log, includeStylesheet, Storage, _utils, require, discovery, makeFilterFunction) {
 	"use strict";
 
 	function compare(s1,s2) {
@@ -153,7 +154,7 @@ sap.ui.define([
 					enableScrolling: false,
 					showHeader: true,
 					//title: "Find Test",
-					customHeader: new sap.m.Bar({
+					customHeader: new Bar({
 						contentLeft: [
 							new Label({
 								text: "Find Test Case",

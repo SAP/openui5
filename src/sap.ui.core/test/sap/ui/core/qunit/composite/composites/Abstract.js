@@ -10,4 +10,4 @@ sap.ui.define([
 			"abstract": true
 		}
 	});
-}, /* bExport= */true);
+});

@@ -721,6 +721,7 @@ sap.ui.define([
 		sap.ui.getCore().loadLibrary("sap.m");
 		assert.equal(true, true, "Not activted");
 		return;
+		/*
 		// this generic test loops over all controls in sap.m and checks whether a property binding in the model causes a change.
 		// currently there are some controls and properties blacklisted.
 
@@ -839,7 +840,7 @@ sap.ui.define([
 			}
 
 			jQuery.sap.require(sControlName);
-			var oControl = new (jQuery.sap.getObject(sControlName));
+			var oControl = new (jQuery.sap.getObject(sControlName))();
 			var oModel = new ManagedObjectModel(oControl);
 			var iBindingCount = 0;
 			var mProperties = oControl.getMetadata().getProperties();
@@ -878,7 +879,7 @@ sap.ui.define([
 			oModel.destroy();
 			assert.equal(oModel.getBindings().length, 0, "No more bindings after destroy");
 		}
-
+		*/
 	});
 
 	QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function (assert) {
@@ -957,7 +958,7 @@ sap.ui.define([
 		assert.deepEqual(aTrueBindings[0], oBinding1, "And this is exactly the first binding");
 	});
 
-	QUnit.test("ManagedObject Model - handle object properties", function() {
+	QUnit.test("ManagedObject Model - handle object properties", function(assert) {
 		var oData = {value: "A string", text: "A text"};
 		var oModel = new JSONModel({
 			data: oData
@@ -1076,7 +1077,7 @@ sap.ui.define([
 					oText2.destroy();
 					oInput.destroy();
 					fnDone();
-				}.bind(this), 0);
+				}, 0);
 			}.bind(this), 0);
 		}.bind(this), 0);
 	});
@@ -1162,7 +1163,7 @@ sap.ui.define([
 							path: "items",
 							template: new sap.ui.test.TestItem({
 								key: "{key}",
-								text: "{text}",
+								text: "{text}"
 							})
 						}
 					})
@@ -1225,7 +1226,7 @@ sap.ui.define([
 					text: aItems[i].getText()
 				});
 			}
-			;
+
 
 			return aArray;
 		}

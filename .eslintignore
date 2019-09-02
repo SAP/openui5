@@ -1,8 +1,4 @@
 src/*/target
-# temporary excludes until eslint issues in these files/folders have been resolved
-src/sap.ui.core/test/sap/ui/core/samples
-src/sap.ui.core/test/sap/ui/core/qunit/ManagedObjectModel.qunit.js
-src/sap.ui.core/test/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService.js
 
 # library specific excludes - need to be consistent with the library-local .eslintignore files
 src/sap.ui.core/src/sap/ui/thirdparty

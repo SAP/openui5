@@ -38,7 +38,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/UIComponent'],
 
 		handleBtn1Press : function() {
 			this.getRouter().navTo("view2", { from : "View 1"});
-		},
+		}
 
 		/**
 		 * Called when the View has been rendered (so its HTML is part of the document). Post-rendering manipulations of the HTML could be done here.

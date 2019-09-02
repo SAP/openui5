@@ -15,4 +15,4 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 	});
 
 	return FfText;
-}, /* bExport= */true);
+});

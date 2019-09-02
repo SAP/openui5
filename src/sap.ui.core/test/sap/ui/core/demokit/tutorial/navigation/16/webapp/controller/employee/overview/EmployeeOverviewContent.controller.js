@@ -49,7 +49,7 @@ sap.ui.define([
 				this._applySorter(this._oRouterArgs.query.sortField, this._oRouterArgs.query.sortDescending);
 
 				// show dialog via url hash
-				if (!!this._oRouterArgs.query.showDialog) {
+				if (this._oRouterArgs.query.showDialog) {
 					this._oVSD.open();
 				}
 

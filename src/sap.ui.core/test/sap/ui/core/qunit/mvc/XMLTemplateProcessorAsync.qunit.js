@@ -1,11 +1,16 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/m/Button",
+	"sap/ui/core/library",
 	'sap/ui/core/Component',
 	'sap/ui/core/UIComponent',
 	"sap/ui/core/XMLTemplateProcessor",
-	"jquery.sap.xml"
-], function(Component, UIComponent, XMLTemplateProcessor, jQuery) {
+	"sap/ui/thirdparty/jquery"
+], function(Button, coreLibrary, Component, UIComponent, XMLTemplateProcessor, jQuery) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	QUnit.module("enrichTemplateIdsPromise", {
 		beforeEach: function(assert) {
@@ -105,7 +110,7 @@ sap.ui.define([
 		};
 		var oView = sap.ui.view({
 			viewName: "my.View",
-			type: sap.ui.core.mvc.ViewType.XML
+			type: ViewType.XML
 		});
 		sap.ui.getCore().getConfiguration().getDesignMode = fnOrigGetDesignMode;
 		oView.loaded().then(function () {
@@ -129,7 +134,7 @@ sap.ui.define([
 		var done = assert.async();
 		sap.ui.view({
 			viewName: "my.View",
-			type: sap.ui.core.mvc.ViewType.XML
+			type: ViewType.XML
 		}).loaded().then(function(oView) {
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");
@@ -154,10 +159,10 @@ sap.ui.define([
 
 		sap.ui.view({
 			viewName: "my.View",
-			type: sap.ui.core.mvc.ViewType.XML
+			type: ViewType.XML
 		}).loaded().then(function (oView) {
 			var oButton = oView.byId("button");
-			assert.ok(oButton instanceof sap.m.Button, "Button found.");
+			assert.ok(oButton instanceof Button, "Button found.");
 			assert.ok(mMetadataContexts,"XMLTemplateProcessorAsync._preprocessMetadataContexts is called");
 			XMLTemplateProcessor._preprocessMetadataContexts = null;
 			oView.destroy();

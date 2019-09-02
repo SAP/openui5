@@ -10,9 +10,9 @@ function main() {
 		"test3/Component": "./Component3",
 		"test3": "./"
 	}});
-	sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
+	sap.ui.require(['sap/ui/core/ComponentContainer', 'sap/ui/core/UIComponent'], function(ComponentContainer, UIComponent) {
 
-		var oCompCont = new sap.ui.core.ComponentContainer({
+		var oCompCont = new ComponentContainer({
 			name: 'test1'
 		});
 
@@ -28,7 +28,7 @@ function main() {
 
 			setTimeout(function() {
 				// Create new component
-				oCompCont = new sap.ui.core.ComponentContainer({
+				oCompCont = new ComponentContainer({
 					name: 'test2'
 				});
 				oCompCont.placeAt("target");
@@ -50,7 +50,7 @@ function main() {
 							manifestUrl: "manifest.json",
 							async: true
 						}).then(function(oComponent) {
-							oCompCont = new sap.ui.core.ComponentContainer({
+							oCompCont = new ComponentContainer({
 								component: oComponent
 							});
 							oCompCont.placeAt("target");
@@ -69,7 +69,7 @@ function main() {
 										manifestUrl: "manifest.appdescr",
 										async: true
 									}).then(function(oComponent) {
-										oCompCont = new sap.ui.core.ComponentContainer({
+										oCompCont = new ComponentContainer({
 											component: oComponent
 										});
 										oCompCont.placeAt("target");

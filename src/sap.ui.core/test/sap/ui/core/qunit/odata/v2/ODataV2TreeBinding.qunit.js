@@ -1,5 +1,15 @@
 /*global QUnit, sinon */
-sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odata/v2/ODataModel"], function(Log, MockServer, ODataModel){
+sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/odata/CountMode",
+	"sap/ui/model/odata/OperationMode",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/v2/ODataTreeBinding"
+], function(Log, MockServer, Filter, FilterOperator, Sorter, CountMode, OperationMode, ODataModel, ODataTreeBinding) {
 	"use strict";
 
 	//Initialize mock servers
@@ -66,7 +76,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		});
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
-		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof ODataTreeBinding, "treeBinding class check");
 	});
 
 	QUnit.test("TreeBinding getTreeAnnotation", function(assert){
@@ -158,7 +168,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 	});
 
 	QUnit.test("Check if CountMode can be set", function(assert) {
-		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
+		oModel.setDefaultCountMode(CountMode.Inline);
 
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {
@@ -168,7 +178,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 			displayRootNode: true
 		});
 
-		assert.equal(oBinding.sCountMode, sap.ui.model.odata.CountMode.Inline, "CountMode propagation works. CountMode.Inline was set.");
+		assert.equal(oBinding.sCountMode, CountMode.Inline, "CountMode propagation works. CountMode.Inline was set.");
 
 	});
 
@@ -226,7 +236,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 	QUnit.test("Display root node - CountMode.Inline", function (assert) {
 		var done = assert.async();
-		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
+		oModel.setDefaultCountMode(CountMode.Inline);
 
 		createTreeBinding("/Employees(2)", null, [], {
 			navigation: {
@@ -492,7 +502,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				Employees1: "Employees1"
 			},
 			groupId: "PONY",
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 
 		var handler1 = function(oEvent) {
@@ -563,7 +573,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 	QUnit.test("Application filtering allowed", function(assert) {
 		var done = assert.async();
 
-		createTreeBinding("/Employees", null, [new sap.ui.model.Filter("FirstName", "EQ", "Nancy")], {
+		createTreeBinding("/Employees", null, [new Filter("FirstName", "EQ", "Nancy")], {
 			navigation: {}
 		});
 
@@ -594,7 +604,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 			navigation: {}
 		});
 
-		oBinding.filter(new sap.ui.model.Filter("FirstName", "EQ", "Tom"));
+		oBinding.filter(new Filter("FirstName", "EQ", "Tom"));
 
 		assert.equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
 		Log.warning.restore();
@@ -662,7 +672,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 	QUnit.test("Paging - CountMode.Inline", function(assert) {
 		var done = assert.async();
-		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
+		oModel.setDefaultCountMode(CountMode.Inline);
 		createTreeBinding("/Employees", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -722,7 +732,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 	QUnit.test("Paging - CountMode.InlineRepeat", function(assert) {
 		var done = assert.async();
-		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.InlineRepeat);
+		oModel.setDefaultCountMode(CountMode.InlineRepeat);
 		createTreeBinding("/Employees", null, [], {
 			navigation: {
 				Employees: "Employees1",
@@ -789,7 +799,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				},
 				displayRootNode: true
 			},
-			[new sap.ui.model.Sorter("FirstName", true)]
+			[new Sorter("FirstName", true)]
 		);
 
 		//change handler for getRootContexts() call
@@ -902,7 +912,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 		oBinding.attachRefresh(handler0);
 		//sorting descending
-		oBinding.sort(new sap.ui.model.Sorter("FirstName", true));
+		oBinding.sort(new Sorter("FirstName", true));
 	});
 
 	QUnit.module("ODataTreeBinding with annotations", {
@@ -921,7 +931,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
 			navigation: {}
 		});
-		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+		assert.ok(oBinding instanceof ODataTreeBinding, "treeBinding class check");
 		assert.equal(oBinding.getPath(), "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
 		assert.equal(oBinding.bHasTreeAnnotations, true, "TreeBinding Metadata should be available");
@@ -1041,7 +1051,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 	QUnit.test("Display root node - CountMode.Inline", function(assert){
 		var done = assert.async();
-		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
+		oModel.setDefaultCountMode(CountMode.Inline);
 
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 			displayRootNode: true,
@@ -1557,7 +1567,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 	QUnit.test("Paging - CountMode.Inline", function(assert) {
 		var done = assert.async();
-		oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.Inline);
+		oModel.setDefaultCountMode(CountMode.Inline);
 
 		var oContext;
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
@@ -1642,7 +1652,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
 			rootLevel: 2
 		},
-		[new sap.ui.model.Sorter("HierarchyNode", true)]);
+		[new Sorter("HierarchyNode", true)]);
 
 		//change handler after first getRootContexts()
 		function handler1() {
@@ -1725,7 +1735,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 		//call sort() and attach refresh handler
 		oBinding.attachRefresh(handler0);
-		oBinding.sort([new sap.ui.model.Sorter("HierarchyNode", true)]);
+		oBinding.sort([new Sorter("HierarchyNode", true)]);
 
 	});
 
@@ -1740,7 +1750,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				{rootLevel: 2}
 		);
 
-		var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+		var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 		var handler1 = function (oEvent) {
 			oBinding.detachChange(handler1);
@@ -1784,7 +1794,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				{rootLevel: 2}
 		);
 
-		var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+		var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 		/**
 		 * Change handler after the initial data request
@@ -1860,7 +1870,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		});
 
 		// should not break, even though no data is there
-		var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+		var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 		oBinding.filter(aFilters, "Control");
 
 		assert.equal(iWarningCount, 1, "Exactly one warning logged.");
@@ -1885,7 +1895,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				}
 		);
 
-		var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+		var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 		var handler1 = function (oEvent) {
 			var oContext;
@@ -1936,7 +1946,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				}
 		);
 
-		var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+		var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 		var handler1 = function (oEvent) {
 			var oContext;
@@ -1963,7 +1973,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		// should not break, even though no data is there
 		oBinding.filter(aFilters, "Application");
 		//apply also control filters -> should be applied after the loading on the client
-		oBinding.filter([new sap.ui.model.Filter("HierarchyNode", "EQ", "001131")], "Control");
+		oBinding.filter([new Filter("HierarchyNode", "EQ", "001131")], "Control");
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts(0, 10);
@@ -1999,7 +2009,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 			assert.equal(aContexts.length, 9, "TreeBinding returned rootContexts length 9 -> unfiltered tree");
 
 			// now filter on the complete tree, clientside
-			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+			var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 			// should not break, even though no data is there
 			oBinding.attachRefresh(handler2);
@@ -2066,7 +2076,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				}
 		);
 
-		var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+		var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 		var handler1 = function (oEvent) {
 			var oContext;
@@ -2122,7 +2132,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				}
 		);
 
-		var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+		var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 		var handler1 = function (oEvent) {
 			var oContext;
@@ -2158,7 +2168,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		// should not break, even though no data is there
 		oBinding.filter(aFilters, "Application");
 		//apply also control filters -> should be applied after the loading on the client
-		oBinding.filter([new sap.ui.model.Filter("FinancialStatementItemText", "EndsWith", "n")], "Control");
+		oBinding.filter([new Filter("FinancialStatementItemText", "EndsWith", "n")], "Control");
 
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts(0, 10);
@@ -2195,7 +2205,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 			// now filter on the complete tree, clientside
 			oBinding.attachChange(handler2);
-			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+			var aFilters = [new Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 			// should not break, even though no data is there
 			oBinding.filter(aFilters, "Control");
@@ -2242,8 +2252,8 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 				[]
 		);
 
-		var aAppFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "Po"),
-						new sap.ui.model.Filter("FinancialStatementItemText", "EndsWith", "ny")];
+		var aAppFilters = [new Filter("FinancialStatementItemText", "StartsWith", "Po"),
+						new Filter("FinancialStatementItemText", "EndsWith", "ny")];
 
 		var sExpectedFilterParams = "(startswith(FinancialStatementItemText,%27Po%27)%20or%20endswith(FinancialStatementItemText,%27ny%27))";
 
@@ -2275,7 +2285,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		});
 
 		//should log warning
-		oBinding.filter(new sap.ui.model.Filter("ParentNode", "EQ", "000000"));
+		oBinding.filter(new Filter("ParentNode", "EQ", "000000"));
 
 		assert.equal(iErrorCount, 1, "One error logged, if no navigation path properties are given, and hierarchy annotations are missing/incomplete.");
 		assert.equal(iWarningCount, 2, "One warning (that filtering is not enabled) and One for the incomplete annotations.");
@@ -2308,7 +2318,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 			displayRootNode: true,
 			rootLevel: 1,
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		});
 
 		//trigger initial loading of the complete tree
@@ -2353,9 +2363,9 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		var done = assert.async();
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 			rootLevel: 2,
-			operationMode: sap.ui.model.odata.OperationMode.Client
+			operationMode: OperationMode.Client
 		},
-		[new sap.ui.model.Sorter("HierarchyNode", true)]);
+		[new Sorter("HierarchyNode", true)]);
 
 		//trigger initial loading
 		oBinding.attachChange(fnChangeHandler);
@@ -2387,7 +2397,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		var done = assert.async();
 		createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
 			rootLevel: 2,
-			operationMode: sap.ui.model.odata.OperationMode.Auto,
+			operationMode: OperationMode.Auto,
 			threshold: 20000
 		});
 
@@ -2427,7 +2437,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 
 			//apply clientside sorter -> NO request anymore
 			assert.ok(true, "Sorting on the client");
-			oBinding.sort([new sap.ui.model.Sorter("HierarchyNode", true)]);
+			oBinding.sort([new Sorter("HierarchyNode", true)]);
 			aRootContexts = oBinding.getRootContexts();
 			assert.equal(aRootContexts.length, 9, "Still exactly 9 contexts after sorting - No Request sent");
 			assert.equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
@@ -2437,7 +2447,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 			done();
 		}
 
-		//[new sap.ui.model.Sorter("HierarchyNode", true)]
+		//[new Sorter("HierarchyNode", true)]
 	});
 
 	// Test if MockServer supports filtering on properties of type Edm.Guid!
@@ -2735,14 +2745,14 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 	QUnit.test("constructor - Any/All are rejected", function(assert) {
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				oModel.bindTree("/teamMembers", undefined, [oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -2753,53 +2763,53 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 		// "Any"" at last position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.GT, "Wallace");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.GT, "Wallace");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 				oTreeBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// "All" at first position fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id2", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Rush");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id2", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Rush");
 				oTreeBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id3", condition: new sap.ui.model.Filter()});
-				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Bar");
+				var oFilter = new Filter({path: "lastName", operator: FilterOperator.All, variable: "id3", condition: new Filter()});
+				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Bar");
 
-				var oMultiFilter = new sap.ui.model.Filter({
+				var oMultiFilter = new Filter({
 					filters: [oFilter, oFilter2],
 					and: false
 				});
 
 				oTreeBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
 		// Multifilter containing "All" or "Any" fails
 		assert.throws(
 			function() {
-				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
-				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id4", condition: new sap.ui.model.Filter()});
+				var oFilter = new Filter("lastName", FilterOperator.NE, "Foo");
+				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id4", condition: new Filter()});
 
-				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+				var oMultiFilter = new Filter([oFilter, oFilter2], true);
 
 				oTreeBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			this.getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -2807,18 +2817,18 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 	QUnit.test("Multi Filters (Complex) 1 - Unsupported are not OK", function(assert) {
 		var oTreeBinding = oModel.bindTree("/teamMembers", undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({path: "y", operator: sap.ui.model.FilterOperator.All, variable: "id1", condition: new sap.ui.model.Filter()});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({path: "y", operator: FilterOperator.All, variable: "id1", condition: new Filter()});
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -2827,7 +2837,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 			function() {
 				oTreeBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -2835,26 +2845,26 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 	QUnit.test("Multi Filters (Complex) 2 - Unsupported are not OK", function(assert) {
 		var oTreeBinding = oModel.bindTree("/teamMembers", undefined, []);
 
-		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
-		var oFilter2 = new sap.ui.model.Filter({
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({
 			path: "y",
-			operator: sap.ui.model.FilterOperator.All,
+			operator: FilterOperator.All,
 			variable: "id1",
-			condition: new sap.ui.model.Filter([
-				new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.GT, 66),
-				new sap.ui.model.Filter({path: "g", operator: sap.ui.model.FilterOperator.Any, variable: "id2", condition: new sap.ui.model.Filter("f", sap.ui.model.FilterOperator.NE, "hello")})
+			condition: new Filter([
+				new Filter("t", FilterOperator.GT, 66),
+				new Filter({path: "g", operator: FilterOperator.Any, variable: "id2", condition: new Filter("f", FilterOperator.NE, "hello")})
 			], true)
 		});
-		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
-		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
 
-		var oMultiFilter1 = new sap.ui.model.Filter({
+		var oMultiFilter1 = new Filter({
 			filters: [oFilter1, oFilter2],
 			and: true
 		});
-		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
 
-		var oMultiFilter3 = new sap.ui.model.Filter({
+		var oMultiFilter3 = new Filter({
 			filters: [oMultiFilter2, oFilter4],
 			and: true
 		});
@@ -2863,7 +2873,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/util/MockServer", "sap/ui/model/odat
 			function() {
 				oTreeBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			this.getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});

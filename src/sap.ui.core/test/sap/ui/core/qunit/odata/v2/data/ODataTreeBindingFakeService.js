@@ -1,4 +1,4 @@
-/*global sinon */
+/*global sinon, sCategoriesXML, sCategoriesJSON */
 sap.ui.define("ODataTreeBindingFakeService", [], function() {
 
 	"use strict";

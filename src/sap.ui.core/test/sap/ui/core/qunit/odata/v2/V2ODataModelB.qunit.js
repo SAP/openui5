@@ -1017,7 +1017,6 @@ sap.ui.define([
 
 	QUnit.test("test oDataModel update", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
 		oModel = initModel();
 		oModel.setRefreshAfterChange(false);
 		var fnTest = function() {
@@ -1026,7 +1025,6 @@ sap.ui.define([
 			}, {
 				success : function(oData, oResponse) {
 					assert.ok(true, "request succeeded");
-					iCount++;
 					done();
 				},
 				error : function(oError) {
@@ -3661,9 +3659,9 @@ sap.ui.define([
 		var iReceived = 0;
 		var oInput1, oInput2;
 		oModel = initModel();
-		oInput1 = new sap.m.Input();
+		oInput1 = new Input();
 		oInput1.setModel(oModel);
-		oInput2 = new sap.m.Input();
+		oInput2 = new Input();
 		oInput2.setModel(oModel);
 
 		var fnChange = function(oEvent) {
@@ -3699,9 +3697,9 @@ sap.ui.define([
 		var iChange = 0;
 		var oInput1, oInput2;
 		oModel = initModel();
-		oInput1 = new sap.m.Input();
+		oInput1 = new Input();
 		oInput1.setModel(oModel);
-		oInput2 = new sap.m.Input();
+		oInput2 = new Input();
 		oInput2.setModel(oModel);
 
 		var fnChange = function(oEvent) {
@@ -4035,7 +4033,7 @@ sap.ui.define([
 				urlParameters: {"SalesOrderID": "test"}
 			});
 
-			var oInput = new sap.m.Input();
+			var oInput = new Input();
 			oInput.bindValue("SalesOrderID");
 			oInput.setModel(oModel);
 
@@ -4074,7 +4072,7 @@ sap.ui.define([
 				urlParameters: {"SalesOrderID": "test"}
 			});
 
-			oInput = new sap.m.Input();
+			oInput = new Input();
 			oInput.bindValue("SalesOrderID");
 			oInput.setModel(oModel);
 		};
@@ -4115,7 +4113,7 @@ sap.ui.define([
 				urlParameters: {"SalesOrderID": "test"}
 			});
 
-			var oInput = new sap.m.Input();
+			var oInput = new Input();
 			oInput.bindValue("SalesOrderID");
 			oInput.setModel(oModel);
 

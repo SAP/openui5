@@ -434,7 +434,7 @@ sap.ui.define([
 	QUnit.module("Nav property reference info", {
 		beforeEach: function() {
 			this.oServer = initServer(sServiceUri, "model/GWSAMPLE_BASIC.metadata.xml", sDataRootPath);
-			this.oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceUri + "$metadata", {});
+			this.oMetadata = new ODataMetadata(sServiceUri + "$metadata", {});
 		},
 		afterEach: function() {
 			this.oServer.destroy();

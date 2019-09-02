@@ -1,9 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"test-resources/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService",
+	"sap/ui/model/odata/UpdateMethod",
 	"sap/ui/model/odata/v2/ODataModel"
 ], function(
 	ODataTreeBindingFakeService,
+	UpdateMethod,
 	ODataModel
 ) {
 	"use strict";
@@ -1406,7 +1408,7 @@ sap.ui.define([
 		beforeEach: function() {
 			ODataTreeBindingFakeService.setup();
 			oModel = new ODataModel("ZTJ_SFIN_HIERARCHY_02_SRV", {
-				defaultUpdateMethod: sap.ui.model.odata.UpdateMethod.Put
+				defaultUpdateMethod: UpdateMethod.Put
 			});
 			return oModel.metadataLoaded(); // Wait for metadata loaded promise
 		},

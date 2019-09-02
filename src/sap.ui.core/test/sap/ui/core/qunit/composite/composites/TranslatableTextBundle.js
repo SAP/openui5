@@ -13,4 +13,4 @@ sap.ui.define([
 		},
 		messageBundle: "bundles.messagebundle"
 	});
-}, /* bExport= */true);
+});

@@ -2,8 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Component', 'sap/ui/core/ComponentContainer', 'sap/ui/core/UIComponent', 'sap/ui/core/util/MockServer', 'sap/ui/model/odata/ODataModel', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell'],
-	function(jQuery, Component1, ComponentContainer, UIComponent, MockServer, ODataModel, NavigationItem, Shell) {
+sap.ui.define([
+	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/UIComponent',
+	'sap/ui/core/util/MockServer',
+	'sap/ui/model/odata/ODataModel',
+	'sap/ui/ux3/NavigationItem',
+	'sap/ui/ux3/Shell',
+	'sap/ui/core/Component' // provides sap.ui.component
+], function(ComponentContainer, UIComponent, MockServer, ODataModel, NavigationItem, Shell) {
 	"use strict";
 
 
@@ -37,14 +44,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Component', 'sap/ui/core/Compon
 
 		var sServiceUrl = "http://epmdemo.corp/sap/bc/sepm_odata_srv/purchase";
 
-		jQuery.sap.require("sap.ui.core.util.MockServer");
 		var oMockServer = new MockServer({
-			rootUri: sServiceUrl+"/"
+			rootUri: sServiceUrl + "/"
 		});
 
 		var path = sap.ui.require.toUrl("samples/epmdata/");
 
-		oMockServer.simulate(path+"metadata.xml", path);
+		oMockServer.simulate(path + "metadata.xml", path);
 		oMockServer.start();
 
 		// Data Model
@@ -54,8 +60,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Component', 'sap/ui/core/Compon
 			paneWidth: 300});
 
 		//NAVIGATION ITEMS
-		var WI = NavigationItem;
-
 		var oSecondLevelNav = new NavigationItem({text:"{text}", key:"{key}"});
 		var oFirstLevelNav = new NavigationItem({text:"{text}", key:"{group}"});
 
@@ -121,8 +125,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Component', 'sap/ui/core/Compon
 			});
 	// if the master component has an eventBus channel to publish to _and_ the dependent component also has a corresponding subscription property
 	// connect the two initially
-			this.oEventBusPub = this.masterComponent.getProperty("eventBusPublication")||null;
-			if(!!this.oEventBusPub && oComp.setEventBusSubscription){
+			this.oEventBusPub = this.masterComponent.getProperty("eventBusPublication") || null;
+			if (!!this.oEventBusPub && oComp.setEventBusSubscription){
 				oComp.setEventBusSubscription(this.oEventBusPub);
 				// Pass the selection from master to the other
 				var bus = sap.ui.getCore().getEventBus();

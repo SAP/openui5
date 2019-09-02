@@ -2,10 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/table/Table'],
-	function(jQuery, UIComponent, View, ResourceModel, Table) {
+sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/library', 'sap/ui/core/mvc/View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/table/Table'],
+	function(UIComponent, coreLibrary, View, ResourceModel, Table) {
 	"use strict";
 
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	// new Component
 	var Component = UIComponent.extend("samples.components.productlist.Component", {
@@ -33,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/
 	 * create the content
 	 */
 	Component.prototype.createContent = function(){
-		this.view = sap.ui.view({id:this.createId("myView"),viewName:"samples.components.productlist.views.Products",type:sap.ui.core.mvc.ViewType.XML});
+		this.view = sap.ui.view({id:this.createId("myView"),viewName:"samples.components.productlist.views.Products",type:ViewType.XML});
 		return this.view;
 	};
 

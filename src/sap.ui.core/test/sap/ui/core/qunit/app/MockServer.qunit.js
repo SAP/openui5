@@ -3389,7 +3389,7 @@ sap.ui.define([
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
 		var oModel = new ODataModel(sUri, true);
-		// 				var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
+		// 				var oModel = new v2ODataModel(sUri, true);
 
 		oModel.setUseBatch(true);
 
@@ -4578,7 +4578,7 @@ sap.ui.define([
 		oMockServer.setRequests(aRequests);
 		oMockServer.start();
 
-		var oModel = new sap.ui.model.odata.v2.ODataModel(sUri, true);
+		var oModel = new v2ODataModel(sUri, true);
 		oModel.setDeferredBatchGroups(["myId"]);
 
 		oModel.update("/LeaveItemCollection(employeeid='JSMITH',itemid='1',type='Vacation')", {
