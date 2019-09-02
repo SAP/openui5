@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Component",
@@ -11,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/util/XMLHelper"
-], function (jQuery, Log, MessageBox, Component, library, ListItem, View, Controller, XMLHelper) {
+], function (Log, MessageBox, Component, library, ListItem, View, Controller, XMLHelper) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType

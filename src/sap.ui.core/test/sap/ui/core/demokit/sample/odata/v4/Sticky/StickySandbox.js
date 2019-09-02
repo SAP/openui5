@@ -12,10 +12,10 @@
 //   from the component's manifest. Add it as "js" resource to sap.ui5/resources in the
 //   manifest.json to achieve that.
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/util/UriParameters",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon"
-], function (jQuery, TestUtils, sinon) {
+], function (UriParameters, TestUtils, sinon) {
 	"use strict";
 
 	var oSandbox = sinon.sandbox.create();
@@ -55,10 +55,10 @@ sap.ui.define([
 		var Constructor = sap.ui.model.odata.v4.ODataModel;
 
 		oSandbox.stub(sap.ui.model.odata.v4, "ODataModel", function (mParameters) {
-			var b$Direct = !!jQuery.sap.getUriParameters().get("$direct");
+			var b$Direct = UriParameters.fromQuery(window.location.search).has("$direct");
 
 			// clone: do not modify constructor call parameter
-			mParameters = jQuery.extend({}, mParameters, {
+			mParameters = Object.assign({}, mParameters, {
 				groupId : b$Direct ? "$direct" : "$auto",
 				serviceUrl : TestUtils.proxy(mParameters.serviceUrl),
 				updateGroupId : b$Direct ? "$direct" : "$auto"
@@ -74,4 +74,4 @@ sap.ui.define([
 	}
 
 	TestUtils.setData("sap.ui.core.sample.odata.v4.Sticky.sandbox", oSandbox);
-}, /* bExport= */false);
+});
