@@ -67,7 +67,7 @@ sap.ui.define([
 			executionScopeType: "global",
 			libName: "sap.ui.fl",
 			ruleId: "stableId",
-			expectedNumberOfIssues: 4
+			expectedNumberOfIssues: 5
 		});
 	});
 

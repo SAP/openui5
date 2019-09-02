@@ -8,6 +8,9 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/List",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -18,11 +21,20 @@ function (
 	DesignTime,
 	OverlayRegistry,
 	VerticalLayout,
+	JSONModel,
+	List,
+	XMLView,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("Default parameters", function () {
+		QUnit.test("when hasStableId is called without parameters", function (assert) {
+			assert.strictEqual(hasStableId(), false);
+		});
+	});
 
 	QUnit.module("Control with unstable ID", {
 		beforeEach: function (assert) {
@@ -117,6 +129,10 @@ function (
 	}, function () {
 		QUnit.test("when hasStableId is called", function (assert) {
 			assert.strictEqual(hasStableId(this.oLayoutOverlay), true);
+		});
+		QUnit.test("when Overlay is destroyed", function (assert) {
+			this.oLayoutOverlay.destroy();
+			assert.strictEqual(hasStableId(this.oLayoutOverlay), false);
 		});
 	});
 
