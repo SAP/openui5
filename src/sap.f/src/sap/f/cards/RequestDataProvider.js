@@ -77,7 +77,10 @@ sap.ui.define([
 				"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
 				"data": oRequestConfig.parameters,
 				"headers": oRequestConfig.headers,
-				"timeout": 15000
+				"timeout": 15000,
+				"xhrFields": {
+					"withCredentials": true
+				}
 			};
 
 			if (oRequest.method === "GET") {
