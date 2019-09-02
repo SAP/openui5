@@ -151,8 +151,8 @@ sap.ui.define([
 		 * @param {string} sUrl Url of the sent request
 		 * @param {string} [sMethod="GET"] Desired action to be performed for a given resource
 		 * @param {object} [mPropertyBag] Object with parameters as properties
-		 * @param {string} [mPropertyBag.token] Existing X-CSRF token of the connector which triggers the request
-		 * @param {string} [mPropertyBag.payload] Payload of the request
+		 * @param {string} [mPropertyBag.xsrfToken] Existing X-CSRF token of the connector which triggers the request
+		 * @param {string} [mPropertyBag.flexObjects] Payload of the request
 		 * @param {string} [mPropertyBag.contentType] Content type of the request
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
@@ -164,11 +164,11 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				var xhr = new XMLHttpRequest();
 				xhr.open(sMethod, sUrl);
-				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || !mPropertyBag.token)) {
+				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || !mPropertyBag.xsrfToken)) {
 					xhr.setRequestHeader("X-CSRF-Token", "fetch");
 				}
-				if ((sMethod === "POST" || sMethod === "PUT" || sMethod === "DELETE") && mPropertyBag && mPropertyBag.token) {
-					xhr.setRequestHeader("X-CSRF-Token", mPropertyBag.token);
+				if ((sMethod === "POST" || sMethod === "PUT" || sMethod === "DELETE") && mPropertyBag && mPropertyBag.xsrfToken) {
+					xhr.setRequestHeader("X-CSRF-Token", mPropertyBag.xsrfToken);
 				}
 				if (mPropertyBag && mPropertyBag.contentType) {
 					xhr.setRequestHeader("Content-Type", mPropertyBag.contentType);
@@ -176,17 +176,20 @@ sap.ui.define([
 				if (mPropertyBag && mPropertyBag.dataType) {
 					xhr.responseType = mPropertyBag.dataType;
 				}
-				if (mPropertyBag && mPropertyBag.payload) {
-					xhr.send(mPropertyBag.payload);
+				if (mPropertyBag && mPropertyBag.flexObjects) {
+					xhr.send(mPropertyBag.flexObjects);
 				} else {
 					xhr.send();
 				}
 				xhr.onload = function() {
 					if (xhr.status >= 200 && xhr.status < 400) {
 						var oResult = {};
-						oResult.response = JSON.parse(xhr.response);
+						var sContentType = xhr.getResponseHeader("Content-Type");
+						if (sContentType && sContentType.startsWith("application/json")) {
+							oResult.response = JSON.parse(xhr.response);
+						}
 						oResult.status = xhr.status;
-						oResult.token = xhr.getResponseHeader("X-CSRF-Token");
+						oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
 						resolve(oResult);
 					} else {
 						reject({
@@ -209,7 +212,7 @@ sap.ui.define([
 				changes: [],
 				variants: [],
 				variantChanges: [],
-				variantDependentChanges: [],
+				variantDependentControlChanges: [],
 				variantManagementChanges: []
 			});
 		}

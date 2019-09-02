@@ -97,7 +97,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
-	 * @returns {Promise<Object>} Resolves with the responses from all configured connectors merged into one object
+	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
 	Connector.loadFlexData = function (mPropertyBag) {
 		if (!mPropertyBag || !mPropertyBag.reference) {

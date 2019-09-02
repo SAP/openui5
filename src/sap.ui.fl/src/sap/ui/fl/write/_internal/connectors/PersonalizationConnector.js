@@ -5,17 +5,22 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
+	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	merge,
 	BaseConnector,
-	ApplyUtils
+	ApplyPersonalizationConnector,
+	ApplyUtils,
+	WriteUtils
 ) {
 	"use strict";
 
 	var ROUTES = {
 		CHANGES: "/changes/",
-		VARIANTS: "/variants/"
+		VARIANTS: "/variants/",
+		TOKEN: "/actions/getcsrftoken"
 	};
 
 	var FEATURES = {
@@ -39,14 +44,15 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag Object with parameters as properties
 		 * @param {string} mPropertyBag.url Configured url for the connector
-		 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
+		 * @param {object[]} mPropertyBag.flexObjects Data to be stored
 		 * @returns {Promise} Promise resolving with the result from the request
 		 * @public
 		 */
 		write: function (mPropertyBag) {
 			var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
-			// TODO: add the csrf token handling - check if its even needed in perso because of proxy
-			return ApplyUtils.sendRequest(sWriteUrl, "POST", mPropertyBag.payload);
+			mPropertyBag = WriteUtils.setTokenAndAddApplyConnector(mPropertyBag, ROUTES, ApplyPersonalizationConnector);
+			mPropertyBag.flexObjects = JSON.stringify(mPropertyBag.flexObjects);
+			return WriteUtils.sendRequest(sWriteUrl, "POST", mPropertyBag);
 		},
 
 		/**
@@ -78,9 +84,8 @@ sap.ui.define([
 			// Delete this property because it should not be part of the url
 			delete mPropertyBag.reference;
 			var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
-
-			//TODO: add the csrf token handling - currently this function is not working
-			return ApplyUtils.sendRequest(sResetUrl, "DELETE");
+			mPropertyBag = WriteUtils.setTokenAndAddApplyConnector(mPropertyBag, ROUTES, ApplyPersonalizationConnector);
+			return WriteUtils.sendRequest(sResetUrl, "DELETE", mPropertyBag);
 		},
 
 

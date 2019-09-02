@@ -30,17 +30,23 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} Promise resolves when new token is retrieved from response header
 	 */
-	var updateTokenInPropertyBagAndConnector = function (mPropertyBag) {
+	function updateTokenInPropertyBagAndConnector (mPropertyBag) {
 		return ApplyUtils.sendRequest(mPropertyBag.tokenUrl, "HEAD").then(function (oResult) {
-			if (oResult && oResult.token) {
-				mPropertyBag.applyConnector.sXsrfToken = oResult.token;
-				mPropertyBag.token = oResult.token;
+			if (oResult && oResult.xsrfToken) {
+				mPropertyBag.applyConnector.xsrfToken = oResult.xsrfToken;
+				mPropertyBag.xsrfToken = oResult.xsrfToken;
 				return mPropertyBag;
 			}
-		}, function (oError) {
-			return Promise.reject(oError);
 		});
-	};
+	}
+
+	function updateTokenInPropertyBagAndConnectorAndSendRequest (mPropertyBag, sUrl, sMethod) {
+		return updateTokenInPropertyBagAndConnector(mPropertyBag)
+			.then(ApplyUtils.sendRequest.bind(undefined, sUrl, sMethod))
+			.then(function(oResult) {
+				return oResult.response;
+			});
+	}
 
 	/**
 	 * Adds entities of one object into another; depending of the type and presence of entries the behaviour differs:
@@ -88,19 +94,19 @@ sap.ui.define([
 		 *
 		 * @param {object} oApplyConnector Corresponding apply connector which stores an existing X-CSRF token
 		 * @param {string} sTokenUrl The url to be called when new token fetching is necessary
-		 * @param {sap.ui.fl.Change[]} [aPayload] Array of flexibility object to be stored
+		 * @param {sap.ui.fl.Change[]} [aFlexObjects] Array of flexibility object to be stored
 		 * @param {string} [sContentType] Content type of the request
 		 * @param {string} [sDataType] Expected data type of the response
 		 * @returns {object} Resolving with an object of options
 		 */
-		getRequestOptions: function (oApplyConnector, sTokenUrl, aPayload, sContentType, sDataType) {
+		getRequestOptions: function (oApplyConnector, sTokenUrl, aFlexObjects, sContentType, sDataType) {
 			var oOptions = {
-				token : oApplyConnector.sXsrfToken,
+				xsrfToken : oApplyConnector.xsrfToken,
 				tokenUrl : sTokenUrl,
 				applyConnector : oApplyConnector
 			};
-			if (aPayload) {
-				oOptions.payload = JSON.stringify(aPayload);
+			if (aFlexObjects) {
+				oOptions.flexObjects = JSON.stringify(aFlexObjects);
 			}
 			if (sContentType) {
 				oOptions.contentType = sContentType;
@@ -118,31 +124,36 @@ sap.ui.define([
 		 * @param {string} sUrl Url of the request
 		 * @param {string} sMethod Desired action to be performed for a given resource
 		 * @param {object} mPropertyBag Object with parameters as properties
-		 * @param {string} mPropertyBag.token Existing X-CSRF token of the connector which triggers the request
 		 * @param {object} mPropertyBag.applyConnector Corresponding apply connector which stores an existing X-CSRF token
 		 * @param {string} mPropertyBag.tokenUrl The url to be called when new token fetching is necessary
-		 * @param {string} [mPropertyBag.payload] Payload of the request
+		 * @param {string} [mPropertyBag.flexObjects] Payload of the request
 		 * @param {string} [mPropertyBag.contentType] Content type of the request
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
 		sendRequest:function (sUrl, sMethod, mPropertyBag) {
+			if (!mPropertyBag.applyConnector || !mPropertyBag.applyConnector.xsrfToken) {
+				return updateTokenInPropertyBagAndConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
+			}
+
 			return ApplyUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResult) {
 				return oResult.response;
-			}, function (oFirstError) {
+			})
+			.catch(function (oFirstError) {
 				if (oFirstError.status === 403) {
 					//token is invalid, get a new token and retry
-					return updateTokenInPropertyBagAndConnector(mPropertyBag)
-						.then(ApplyUtils.sendRequest.bind(undefined, sUrl, sMethod))
-						.then(function(oResult) {
-							return oResult.response;
-						});
+					return updateTokenInPropertyBagAndConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
 				}
 				throw oFirstError;
-			})
-			.catch(function(oError) {
-				return Promise.reject(oError);
 			});
+		},
+
+
+		setTokenAndAddApplyConnector: function(mPropertyBag, mRoutes, ApplyConnector) {
+			mPropertyBag.tokenUrl = mPropertyBag.url + mRoutes.TOKEN;
+			mPropertyBag.xsrfToken = ApplyConnector.xsrfToken;
+			mPropertyBag.applyConnector = ApplyConnector;
+			return mPropertyBag;
 		},
 
 		/**

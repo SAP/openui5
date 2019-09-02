@@ -20,7 +20,8 @@ sap.ui.define([
 	var API_VERSION = "/v1";
 	var ROUTES = {
 		CHANGES: "/changes/",
-		SETTINGS: "/settings"
+		SETTINGS: "/settings",
+		TOKEN: "/settings"
 	};
 
 	/**
@@ -33,6 +34,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var KeyUserConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
+
+		xsrfToken: null,
 
 		/**
 		 * Resets flexibility files for a given application.
@@ -57,8 +60,15 @@ sap.ui.define([
 			}
 			delete mPropertyBag.reference;
 
-			var sResetUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag, mParameters);
-			var oRequestOption = WriteUtils.getRequestOptions(ApplyConnector, API_VERSION + ROUTES.SETTINGS);
+			var sResetUrl = ApplyUtils.getUrl(
+				API_VERSION + ROUTES.CHANGES,
+				mPropertyBag,
+				mParameters
+			);
+			var oRequestOption = WriteUtils.getRequestOptions(
+				ApplyConnector,
+				API_VERSION + ROUTES.SETTINGS
+			);
 			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
 		},
 
@@ -72,9 +82,16 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
 		write:function (mPropertyBag) {
-			var sWriteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag);
-			var oRequestOption = WriteUtils.getRequestOptions(ApplyConnector, API_VERSION + ROUTES.SETTINGS, mPropertyBag.payload, "application/json; charset=utf-8", "json");
-
+			var sWriteUrl = ApplyUtils.getUrl(
+				API_VERSION + ROUTES.CHANGES,
+				mPropertyBag
+			);
+			var oRequestOption = WriteUtils.getRequestOptions(
+				ApplyConnector,
+				API_VERSION + ROUTES.SETTINGS,
+				mPropertyBag.flexObjects,
+				"application/json; charset=utf-8", "json"
+			);
 			return WriteUtils.sendRequest(sWriteUrl, "POST", oRequestOption);
 		}
 	});

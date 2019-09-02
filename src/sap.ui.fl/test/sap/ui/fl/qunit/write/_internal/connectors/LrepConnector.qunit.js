@@ -31,7 +31,7 @@ sap.ui.define([
 				isResetEnabled: false,
 				isPublishEnabled: false
 			};
-			fnReturnData(200, {}, JSON.stringify(oExpectedResponse));
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0", layer: "VENDOR"};
 			var sUrl = "/sap/bc/lrep/flex/info/reference?layer=VENDOR&appVersion=1.0.0";
@@ -42,7 +42,7 @@ sap.ui.define([
 			});
 		});
 		QUnit.test("given a mock server, when publish is triggered", function (assert) {
-			fnReturnData(204, {}, '[]');
+			fnReturnData(204, { }, '[]');
 
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "flexReference", appVersion: "1.0.0", layer: "VENDOR", changelist: "transportId", "package": "somePackage"};
 			var sUrl = "/sap/bc/lrep/actions/make_changes_transportable/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&package=somePackage";
@@ -61,7 +61,7 @@ sap.ui.define([
 					userName: "test.test@test.com"
 				}
 			];
-			fnReturnData(200, {}, JSON.stringify(aExpectedResponse));
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(aExpectedResponse));
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "flexReference", appVersion: "1.0.0", layer: "VENDOR", changelist: "transportId", generator: "someGenerator", selectorIds:"someSelectors", changeTypes:"someChangeTypes"};
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=someGenerator&selector=someSelectors&changeType=someChangeTypes";
 			return LrepConnector.reset(mPropertyBag).then(function (oResponse) {
@@ -74,7 +74,7 @@ sap.ui.define([
 			var oExpectedResponse = {
 				isKeyUser: true
 			};
-			fnReturnData(200, {}, JSON.stringify(oExpectedResponse));
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
 			var mPropertyBag = {url: "/sap/bc/lrep"};
 			var sUrl = "/sap/bc/lrep/flex/settings";
 

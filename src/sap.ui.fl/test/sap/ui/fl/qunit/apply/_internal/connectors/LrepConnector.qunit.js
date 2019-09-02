@@ -18,7 +18,7 @@ sap.ui.define([
 	var _loadModulesResponse = {changes: [], loadModules: true};
 
 	function fnReturnData(oServer, sData) {
-		sandbox.server.respondWith(sData);
+		sandbox.server.respondWith([200, { "Content-Type": "application/json" }, sData]);
 	}
 
 	QUnit.module("Connector", {
