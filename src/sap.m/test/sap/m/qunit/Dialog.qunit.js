@@ -1208,6 +1208,7 @@ sap.ui.define([
 		var oFocusedControl = jQuery(document.activeElement).control(0);
 		assert.equal(oFocusedControl.getId(), "initialFocusButton", "Initial focus should be set correctly");
 
+		assert.strictEqual(oDialog.getCustomHeader().$().attr("aria-level"), "2", "Customer header should have aria-level= '2'");
 		oDialog.$("lastfe").focus();
 		oFocusedControl = jQuery(document.activeElement).control(0);
 		assert.equal(oFocusedControl.getId(), "tabChainButton", "Focus should be set to the button in custom header");
@@ -1375,6 +1376,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oDialog.$('header').attr('role'), "heading", "The role of the header should be set to 'heading'");
+		assert.strictEqual(oDialog.$('header').attr('aria-level'), "2", "aria-level  should be set to the header");
 
 		// cleanup
 		oDialog.destroy();

@@ -948,4 +948,27 @@ sap.ui.define([
 		sut.destroy();
 		jQuery("#qunit-fixture").width("");
 	});
+
+	QUnit.module("Accessibility",{
+		beforeEach: function() {
+			this.Bar = new Bar({
+				contentMiddle: [ new Label("myLabel", {text: "my Bar"})]
+			});
+			this.Bar.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.Bar.destroy();
+			this.Bar = null;
+
+		}
+	});
+
+	QUnit.test("Accessibility role should be set correctly", function(assert) {
+		assert.strictEqual(this.Bar.$().attr("role"), "toolbar", "Default role is set correctly");
+	});
+
+	QUnit.test("aria-level should not be set", function(assert) {
+		assert.strictEqual(this.Bar.$().attr("aria-level"), undefined, "aria-level is not set");
+	});
 });

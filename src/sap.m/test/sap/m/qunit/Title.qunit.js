@@ -270,7 +270,19 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("Accessibility");
+	QUnit.module("Accessibility", {
+		beforeEach : function() {
+			this.title = new Title({
+				text : "Hello"
+			});
+			this.title.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.title.destroy();
+			this.title = null;
+		}
+	});
 	QUnit.test("getAccessibilityInfo", function(assert){
 		var oTitle = new Title({text: "Text"});
 		assert.ok(!!oTitle.getAccessibilityInfo, "Title has a getAccessibilityInfo function");
@@ -288,5 +300,9 @@ sap.ui.define([
 		oInfo = oTitle.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, "Text2", "Description");
 		oTitle.destroy();
+	});
+
+	QUnit.test("Aria-level should be set", function(assert){
+		assert.strictEqual(this.title.$().attr("aria-level"), "2", "The aria-level of a non semantically states title should be 2");
 	});
 });
