@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
@@ -13,7 +12,6 @@ sap.ui.define([
 function(
 	ManagedObject,
 	ElementUtil,
-	OverlayUtil,
 	OverlayRegistry,
 	FlexUtils,
 	DtUtil,
@@ -22,13 +20,13 @@ function(
 	"use strict";
 
 	function evaluateTemplateBinding(oElementOverlay) {
-		var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay);
+		var mBoundControl = ElementUtil.getAggregationInformation(oElementOverlay.getElement());
 		if (mBoundControl.elementId) {
 			//check for additional binding
 			var oBoundControlOverlay = OverlayRegistry.getOverlay(mBoundControl.elementId);
 			var oParentElementOverlay = oBoundControlOverlay.getParentElementOverlay();
 			var bAdditionalBinding = oParentElementOverlay ?
-				!!OverlayUtil.getAggregationInformation(oParentElementOverlay).templateId : false;
+				!!ElementUtil.getAggregationInformation(oParentElementOverlay.getElement()).templateId : false;
 
 			if (bAdditionalBinding) {
 				throw DtUtil.createError("CommandFactory#evaluateTemplateBinding", "Multiple template bindings are not supported", "sap.ui.rta");
@@ -54,7 +52,7 @@ function(
 		var oElement = (typeof vElementOrId === "string") ? sap.ui.getCore().byId(vElementOrId) : vElementOrId;
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElementOverlay) {
-			var mBoundControl = OverlayUtil.getAggregationInformation(oElementOverlay);
+			var mBoundControl = ElementUtil.getAggregationInformation(oElement);
 			if (typeof iIndex === "number") {
 				mBoundControl.stack[0].index = iIndex;
 			}
