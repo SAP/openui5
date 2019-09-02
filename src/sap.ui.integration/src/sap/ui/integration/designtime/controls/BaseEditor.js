@@ -68,6 +68,8 @@ sap.ui.define([
 
         init: function() {
             this.setConfig({});
+            // TODO: control styling via editor properties?
+            this.addStyleClass("sapUiSizeCompact");
         },
 
         exit: function() {
@@ -77,13 +79,11 @@ sap.ui.define([
         renderer: function(oRm, oEditor) {
             oRm.write("<div");
             oRm.writeElementData(oEditor);
-            oRm.addClass("sapUiIntegrationEditor");
             oRm.writeClasses();
             oRm.writeStyles();
             oRm.write(">");
 
             oEditor.getPropertyEditors().forEach(function(oPropertyEditor) {
-                oPropertyEditor.addStyleClass("sapUiSmallMargin");
                 oRm.renderControl(oPropertyEditor);
             });
 
@@ -131,7 +131,7 @@ sap.ui.define([
             };
 
             if (!vTag) {
-                return this.getAggregation("_propertyEditors");
+                return this.getAggregation("_propertyEditors") || [];
             } else if (typeof vTag === "string") {
                 return this.getPropertyEditors().filter(function(oPropertyEditor) {
                     return hasTag(oPropertyEditor, vTag);
@@ -149,8 +149,7 @@ sap.ui.define([
     });
 
     BaseEditor.prototype._mergeConfig = function(oTarget, oSource) {
-        var oResult = deepClone(oTarget);
-        merge(oResult, oSource);
+        var oResult = merge({}, oTarget, oSource);
         // concat i18n properties to avoid override
         oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
         return oResult;
@@ -179,6 +178,7 @@ sap.ui.define([
             this._oPropertyObjectBinding.destroy();
             delete this._oPropertyObjectBinding;
         }
+        delete this._mEditorClasses;
         this._mPropertyEditors = {};
         this.destroyAggregation("_propertyEditors");
     };
@@ -274,6 +274,27 @@ sap.ui.define([
         if (typeof oProperty.value === "undefined") {
             oProperty.value = oProperty.defaultValue;
         }
+
+        if (oProperty.type === "array") {
+            this._createArrayPropertyItems(oProperty);
+        }
+    };
+
+    BaseEditor.prototype._createArrayPropertyItems = function(oProperty) {
+        if (oProperty.value && oProperty.template) {
+            oProperty.items = [];
+            oProperty.value.forEach(function(oValue, iIndex) {
+                var mItem = deepClone(oProperty.template);
+                Object.keys(mItem).forEach(function(sKey) {
+                    var oItemProperty = mItem[sKey];
+                    if (oItemProperty.path) {
+                        oItemProperty.path = oItemProperty.path.replace(":index", iIndex);
+                    }
+                    this._syncPropertyValue(oItemProperty);
+                }.bind(this));
+                oProperty.items.push(mItem);
+            }.bind(this));
+        }
     };
 
     /**
@@ -286,20 +307,20 @@ sap.ui.define([
             return oConfig.propertyEditors[sType];
         });
 
-        var mEditorClasses = {};
+        this._mEditorClasses = {};
 
-        this.__createEditorsCallCount = (this.__createEditorsCallCount || 0) + 1;
-        var iCurrentCall = this.__createEditorsCallCount;
+        this._iCreateEditorsCallCount = (this._iCreateEditorsCallCount || 0) + 1;
+        var iCurrentCall = this._iCreateEditorsCallCount;
         sap.ui.require(aModules, function() {
             // check whether this is still the most recent call of _createEditors (otherwise config is invalid)
-            if (this.__createEditorsCallCount === iCurrentCall) {
+            if (this._iCreateEditorsCallCount === iCurrentCall) {
                 Array.from(arguments).forEach(function(Editor, iIndex) {
-                    mEditorClasses[aTypes[iIndex]] = Editor;
-                });
+                    this._mEditorClasses[aTypes[iIndex]] = Editor;
+                }.bind(this));
 
                 Object.keys(oConfig.properties).forEach(function(sPropertyName) {
                     var oPropertyContext = this._oPropertyModel.getContext("/" + sPropertyName);
-                    var Editor = mEditorClasses[oPropertyContext.getObject().type];
+                    var Editor = this._mEditorClasses[oPropertyContext.getObject().type];
                     if (Editor) {
                         this._mPropertyEditors[sPropertyName] = this._createPropertyEditor(Editor, oPropertyContext);
                         this.addAggregation("_propertyEditors", this._mPropertyEditors[sPropertyName]);
@@ -311,13 +332,22 @@ sap.ui.define([
         }.bind(this));
     };
 
+    BaseEditor.prototype.createPropertyEditor = function(oPropertyContext) {
+        var Editor = this._mEditorClasses[oPropertyContext.getObject().type];
+        if (Editor) {
+            return this._createPropertyEditor(Editor, oPropertyContext);
+        }
+    };
+
     BaseEditor.prototype._createPropertyEditor = function(Editor, oPropertyContext) {
         var oPropertyEditor = new Editor({
             visible: typeof oPropertyContext.getObject().visible !== undefined
-                ? oPropertyContext.getObject().visible
-                : true
+            ? oPropertyContext.getObject().visible
+            : true
         });
-
+        // TODO: control styling via editor properties?
+        oPropertyEditor.addStyleClass("sapUiTinyMargin");
+        oPropertyEditor.setEditor(this);
         oPropertyEditor.setModel(this._oPropertyModel);
         oPropertyEditor.setBindingContext(oPropertyContext);
         oPropertyEditor.setModel(this._oContextModel, "context");
@@ -330,7 +360,7 @@ sap.ui.define([
         var sPath = oEvent.getParameter("path");
         this._oContextModel.setProperty("/" + sPath, oEvent.getParameter("value"));
 
-        this._updatePropertyModel(sPath);
+        this._updatePropertyValue(sPath);
 
         this.fireJsonChanged({
             json: deepClone(this.getJson()) // to avoid manipulations with the json outside of the editor
@@ -341,7 +371,7 @@ sap.ui.define([
      * Updates values of properties in the property model, which are connected to sPath in the context object
      * @param  {} sPath where change happened in context model
      */
-    BaseEditor.prototype._updatePropertyModel = function(sPath) {
+    BaseEditor.prototype._updatePropertyValue = function(sPath) {
         var mProperties = this._oPropertyModel.getData();
         Object.keys(mProperties).filter(function(sKey) {
             return mProperties[sKey].path === sPath;

@@ -33,6 +33,12 @@ sap.ui.define([
                     type: "sap.ui.core.Control"
                 }
             },
+            associations: {
+                "editor": {
+                    type: "sap.ui.integration.designtime.BaseEditor",
+                    multiple: false
+                }
+            },
             events: {
                 propertyChanged: {
                     parameters: {
@@ -46,6 +52,10 @@ sap.ui.define([
             }
         },
 
+        getEditor: function() {
+            return sap.ui.getCore().byId(this.getAssociation("editor"));
+        },
+
         getPropertyInfo: function() {
             return this.getBindingContext().getObject();
         },
@@ -53,7 +63,10 @@ sap.ui.define([
         getLabel: function() {
             var oLabel = this.getAggregation("_label");
             if (!oLabel) {
-                oLabel = new Label({text: this.getPropertyInfo().label});
+                oLabel = new Label({
+                    text: this.getPropertyInfo().label,
+                    design: "Bold"
+                });
                 this.setAggregation("_label", oLabel);
             }
 
