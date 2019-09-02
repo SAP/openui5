@@ -5,11 +5,11 @@
 
 /* background color class for Shell header */
 .sapMShellBackgroundColorOnlyIfDefaultMixin() when not (@sapUiGlobalBackgroundImage = '') {
-	background-color: transparent; /* custom BG image... just hide the background */
+	background-color: @sapUiShellBackgroundImage; /* custom BG image... just hide the background */
 }
 
 .sapMShellBackgroundColorOnlyIfDefaultMixin() when (@sapUiGlobalBackgroundImage = '') {
-	background-color: mix(@sapUiHighlight, #fff, 5); /* default BG image - display the default background color */
+	background-color: @sapUiShellBackgroundGradient; /* default BG image - display the default background color */
 }
 
 .sapMShellBackgroundColorOnlyIfDefault {
