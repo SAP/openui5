@@ -118,6 +118,65 @@ sap.ui.define([
 		assert.strictEqual(aResult[0], oObjectNumber, "Should match the correct element");
 	});
 
+	QUnit.test("Should apply descendant matcher", function (assert) {
+		var oListItem = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectListItem"
+		})[0];
+		var aResult = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectListItem",
+			descendant: {
+				controlType: "sap.m.ObjectNumber"
+			}
+		});
+
+		assert.strictEqual(aResult.length, 1, "Should match the correct element");
+		assert.strictEqual(aResult[0], oListItem);
+	});
+
+	QUnit.test("Should expand matchers recursively", function (assert) {
+		var fnOriginal =  _ControlFinder._findControls;
+		var aCalls = [];
+		_ControlFinder._findControls = function () {
+			aCalls.push(Array.prototype.slice.call(arguments)[0]);
+			return fnOriginal.apply(this, arguments);
+		};
+		var oListItem = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectListItem"
+		})[0];
+		var aResult = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectListItem",
+			descendant: {
+				controlType: "sap.m.ObjectNumber",
+				ancestor: {
+					controlType: "sap.m.ObjectListItem",
+					descendant: {
+						controlType: "sap.m.ObjectNumber"
+					}
+				}
+			}
+		});
+
+		assert.strictEqual(aResult.length, 1, "Should match the correct element");
+		assert.strictEqual(aResult[0], oListItem);
+		assert.strictEqual(aCalls.length, 8, "Should call _findControls recursively");
+		// go down 3 levels to the selector of the bottom-most descendant
+		// and then go up and build up "expanded" selectors along the way
+		assert.ok(aCalls[7].matchers.descendant && aCalls[6].matchers.ancestor && aCalls[5].matchers.descendant);
+
+		_ControlFinder._findControls = fnOriginal;
+	});
+
+	QUnit.test("Should not find any control if descendant is not found", function (assert) {
+		var aResult = _ControlFinder._findControls({
+			controlType: "sap.m.ObjectListItem",
+			descendant: {
+				controlType: "sap.m.Input"
+			}
+		});
+
+		assert.strictEqual(aResult.length, 0, "Should not find any controls with non-existent descendant");
+	});
+
 	QUnit.test("Should collect logs while searching for elements", function (assert) {
 		var fnStartSpy = sinon.spy(_LogCollector.prototype, "start");
 		var fnStopSpy = sinon.spy(_LogCollector.prototype, "stop");
