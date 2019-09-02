@@ -6,8 +6,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
+	"sap/base/util/uid",
 	"sap/ui/thirdparty/URI"
-], function (Log, isEmptyObject, URI) {
+], function (Log, isEmptyObject, uid, URI) {
 	"use strict";
 
 	var rAmpersand = /&/g,
@@ -1183,6 +1184,10 @@ sap.ui.define([
 			}
 			return [vElement];
 		},
+
+		// Trampoline property to allow for mocking function module in unit tests.
+		// @see sap.base.util.uid
+		uid : uid,
 
 		/**
 		 * Updates the old object with the new object. Only existing properties of the old object
