@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "tableCard2",
 		"type": "card"
 	},
 	"sap.card": {

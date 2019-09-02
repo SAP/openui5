@@ -1,6 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
+		"id": "listCardWithActions1",
 		"type": "card"
 	},
 	"sap.card": {
