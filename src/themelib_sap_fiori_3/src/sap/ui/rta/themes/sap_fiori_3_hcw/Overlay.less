@@ -1,28 +1,32 @@
 /******************************************************************
 	Style of the RTA Overlays - sap_fiori_3_hcw Theme
 *******************************************************************/
-@_sap_ui_rta_Overlay_HoverBG : fade(@sapUiAccent6, 40%);
-@_sap_ui_rta_Overlay_ActiveBG : fade(@sapUiAccent6, 40%);
-@_sap_ui_rta_Overlay_Border : @sapUiAccent6;
-@_sap_ui_rta_Overlay_HoverBorder : @sapUiBlackBG;
-@_sap_ui_rta_Overlay_BaseColor : @sapUiBlackBG;
-
-.sapUiDtOverlay {
-	&:focus {
-		outline: none;
-		&:before {
-			border-width: 2px;
-		}
-	}
-}
+@_sap_ui_rta_Overlay_BorderColor : @sapUiAccent6; // #004ccb
+@_sap_ui_rta_Overlay_BoxShadowColor: @sapUiWhite; // #ffffff
+@_sap_ui_rta_Overlay_BGColor: @sapUiWhite; // #ffffff
+@_sap_ui_rta_Overlay_HoverBorder : @sapUiBlackBG; // #000000
 
 .sapUiRta {
+	.sapUiDtOverlay {
+		&:focus {
+			outline: none;
+			/* We create inner white shadow to make sure black border is in contrast with element */
+			box-shadow: 0 0 0 2px @_sap_ui_rta_Overlay_BoxShadowColor inset;
+
+			&:before {
+				border: none;
+				outline: 2px dotted @_sap_ui_rta_Overlay_HoverBorder;
+				outline-offset: -4px;
+			}
+		}
+	}
+
 	.sapUiRtaOverlayHover {
 		&:after {
 			border: none;
 			transition: none;
 			box-shadow: none;
-			outline: 2px dotted @_sap_ui_rta_Overlay_Border;
+			outline: 2px dotted @_sap_ui_rta_Overlay_BorderColor;
 			outline-offset: -2px;
 		}
 	}
@@ -31,14 +35,21 @@
 		box-shadow: none;
 
 		&:after {
-			border: 2px solid @_sap_ui_rta_Overlay_Border;
+			border: 2px solid @_sap_ui_rta_Overlay_BorderColor;
 			outline: none;
+		}
+
+		&.sapUiDtOverlayFocusable {
+			&:focus {
+				/* Same trick as described above but doubled thickness */
+				box-shadow: 0 0 0 4px @_sap_ui_rta_Overlay_BoxShadowColor inset;
+			}
 		}
 
 		&.sapUiRtaOverlayHover {
 			&:after {
-				border: 2px solid @_sap_ui_rta_Overlay_Border!important;
-				outline: 2px dotted @_sap_ui_rta_Overlay_Border!important;
+				border: 2px solid @_sap_ui_rta_Overlay_BorderColor!important;
+				outline: 2px dotted @_sap_ui_rta_Overlay_BorderColor!important;
 				outline-offset: -4px;
 				transition: none;
 				box-shadow: none;
@@ -54,12 +65,12 @@
 }
 
 .sapUiRtaMode .sapUiShellBackgroundImage.sapUiGlobalBackgroundImageForce.sapUshellShellBG{
-	background-color: @sapBackgroundColor;
+	background-color: @_sap_ui_rta_Overlay_BGColor;
 	background-image:  none;
 }
 
 .sapUiRtaMode .sapUshellViewPortCenter,
 .sapUiRtaMode .sapMShellBG,
 .sapUiRtaMode .sapUiRtaToolbar{
-	background-color: @sapBackgroundColor;
+	background-color: @_sap_ui_rta_Overlay_BGColor;
 }

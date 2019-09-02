@@ -97,13 +97,13 @@ function(
 			.then(function() {
 				this.oToolbar.getDomRef().style.padding = 0;
 				var aContent = this.oToolbar.getItems();
-				assert.equal(aContent[0].getDomRef().offsetWidth, 450);
-				assert.equal(aContent[1].getDomRef().offsetWidth, 450);
+				assert.equal(aContent[0].getDomRef().offsetWidth, 448);
+				assert.equal(aContent[1].getDomRef().offsetWidth, 448);
 
 				oModeSwitcher.setVisible(true);
 				setTimeout(function() {
-					assert.equal(aContent[0].getDomRef().offsetWidth, 425);
-					assert.equal(aContent[1].getDomRef().offsetWidth, 475);
+					assert.equal(aContent[0].getDomRef().offsetWidth, 423);
+					assert.equal(aContent[1].getDomRef().offsetWidth, 473);
 					done();
 				}, 0);
 			}.bind(this));

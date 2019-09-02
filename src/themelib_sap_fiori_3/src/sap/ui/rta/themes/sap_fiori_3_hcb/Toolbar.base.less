@@ -1,9 +1,9 @@
 /******************************************************************
 	Style of the RTA Toolbar (all types) - sap_fiori_3_hcb Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Base_BaseColor : @sapUiBlackBG;	//#000
-@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite;	// #fff
-
+@_sap_ui_rta_Toolbar_Base_BaseColor : @sapUiBlackBG;	// #000000
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiWhite;	// #ffffff
+@_sap_ui_rta_Toolbar_Base_HoverColor: @sapHC_HighlightBackground; // #7a5100
 
 .sapUiRtaToolbar {
 
@@ -11,7 +11,7 @@
 
 		&:hover .sapMSegBBtnInner,
 		&.sapMSegBBtnSel:hover .sapMSegBBtnInner {
-			background-color: @sapHC_HighlightBackground;
+			background-color: @_sap_ui_rta_Toolbar_Base_HoverColor;
 			color: @_sap_ui_rta_Toolbar_Base_TextColor;
 		}
 
@@ -36,8 +36,18 @@
 		border-right: none;
 	}
 
-		.sapMSegBBtnFocusable:active + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner,
+	.sapMSegBBtnFocusable:active + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner,
 	.sapMSegBBtnFocusable:focus + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner {
 		border-left: none;
+	}
+}
+
+.sapUiSizeCozy{
+	.sapUiRtaToolbar {
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&:focus .sapMSegBBtnInner{
+				outline-offset: -2px;
+			}
+		}
 	}
 }
