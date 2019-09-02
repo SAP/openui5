@@ -1,0 +1,35 @@
+{
+  "1.71.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "19c0134ffb5794ba982cde52f8b5e464bd25948a",
+        "type": "FIX",
+        "text": " CommandExecution fails on destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346096"
+          }
+        ]
+      },
+      {
+        "id": "004bf53f29a745d9b1fa2e0d787202ce8a454870",
+        "type": "FIX",
+        "text": " CommandExecution: fix exception during destroy",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346096"
+          }
+        ]
+      },
+      {
+        "id": "d7c0b7bbe4835d8ef03d1fc942e2bf3d786b3305",
+        "type": "FIX",
+        "text": " ODataMessageParser: Resolve multiple nav props",
+        "references": []
+      }
+    ]
+  }
+}
