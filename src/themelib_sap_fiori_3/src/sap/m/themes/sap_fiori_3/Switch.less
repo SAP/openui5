@@ -31,7 +31,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	width: 3.75rem;
 	height: 1.25rem;
 	overflow: visible;
-	border: 1px solid;
+	border: @sapUiButtonBorderWidth solid;
 	border-top-left-radius: 0.75rem;
 	border-top-right-radius: 0.75rem;
 	border-bottom-right-radius: 0.75rem;
@@ -89,13 +89,14 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	border-top-right-radius: 1rem;
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
-	border: 1px solid;
+	border: @sapUiButtonBorderWidth solid;
 	left: 1.95rem;
 }
 
 //on
 .sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
 	background: lighten(@sapUiButtonSelectedBackground,63);
+	border-color: @sapUiButtonSelectedBorderColor;
 	.sapMSwtHandle {
 		box-sizing: border-box;
 		background: @sapUiButtonSelectedBackground;
@@ -103,6 +104,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	}
 	&.sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
 	  background: lighten(@sapUiButtonSelectedBackground,63);
+	  border-color: @sapUiButtonSelectedHoverBorderColor;
 		.sapMSwtHandle {
 			background: @sapUiButtonSelectedHoverBackground;
 			border-color: @sapUiButtonSelectedHoverBorderColor;
@@ -113,6 +115,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 //off
 .sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) {
 	background: darken(@sapUiButtonBackground,7);
+	border-color: @sapUiContentForegroundBorderColor;
 	.sapMSwtHandle {
 		background: @sapUiButtonBackground;
 		border-color: @sapUiContentForegroundBorderColor;
@@ -193,6 +196,16 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 
 .sapMSwt.sapMSwtAcceptReject.sapMSwtOn.sapMSwtHoverable:hover {
 	background: @sapUiSuccessBG;
+}
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOn .sapMSwtLabel {
+	color: @sapUiPositiveElement;
+	font-size: 0.75rem;
+}
+
+.sapMSwt.sapMSwtAcceptReject.sapMSwtOff .sapMSwtLabel {
+	color: @sapUiNegativeElement;
+	font-size: 0.75rem;
 }
 
 /* ------------------------------ */
