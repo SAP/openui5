@@ -575,6 +575,34 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("data binding with sap.ui.model.odata.type.DateTime when UTC is set in FormatOptions source", function(assert) {
+		var dateValue,
+			actualValue,
+			oDate = "2018-08-15T13:07:47.000Z",
+			oFormatter = sap.ui.core.format.DateFormat.getDateTimeInstance({
+				pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+				UTC: true //setting it to true should give me the original date ("2018-08-15T13:07:47.000Z") in UTC again
+			}),
+			oModel = new JSONModel({
+				myDate: oDate
+			}),
+			oDateTimePicker = new DateTimePicker({
+				value: {
+					path: "/myDate",
+					type:'sap.ui.model.type.DateTime',
+					formatOptions:{
+						source: {pattern:'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'', UTC:true},
+						style:'medium',
+						strictParsing:true
+					}
+				}
+			}).setModel(oModel);
+
+		dateValue = oDateTimePicker.getDateValue();
+		actualValue = oFormatter.format(dateValue);
+		assert.equal(oDate, actualValue, "Date is formatted and parsed correctly");
+	});
+
 	QUnit.module("Private");
 
 	QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
