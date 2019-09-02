@@ -56,24 +56,6 @@ sap.ui.define([
 		return aViewExtensions;
 	}
 
-	function isCloneFromAggregationBinding(oControl) {
-		var sParentAggregationName = oControl.sParentAggregationName;
-		var oParent = oControl.getParent();
-
-		if (oParent && sParentAggregationName) {
-			var oBindingInfo = oParent.getBindingInfo(sParentAggregationName);
-			if (
-				oBindingInfo
-				&& oBindingInfo.template
-				&& oControl instanceof oBindingInfo.template.getMetadata().getClass()
-			) {
-				return true;
-			}
-			return isCloneFromAggregationBinding(oParent);
-		}
-		return false;
-	}
-
 	function getExtensionOverlays(aExtensionList, aElementOverlays) {
 		var aExtensionOverlays = [];
 
@@ -140,8 +122,7 @@ sap.ui.define([
 
 			aResult = aRelevantOverlays.filter(function (oElementOverlay) {
 				return (
-					!isCloneFromAggregationBinding(oElementOverlay.getElement())
-					&& !oElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable()
+					!oElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable()
 					&& !hasStableId(oElementOverlay)
 				);
 			});
