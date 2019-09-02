@@ -40,7 +40,7 @@ sap.ui.define([
 		}
 		args[2].async = true;
 
-		return new (Function.prototype.bind.apply(Router, args));
+		return new (Function.prototype.bind.apply(Router, args))();
 	};
 
 	function createView (aContent, sId) {

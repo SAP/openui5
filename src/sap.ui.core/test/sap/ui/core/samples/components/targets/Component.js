@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'samples/components/routing/RouterExtension', 'sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/JSView'],
-	function(jQuery, RouterExtension, Button, UIComponent, Controller, JSView) {
+sap.ui.define(['samples/components/routing/RouterExtension', 'sap/ui/commons/Button', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/JSView'],
+	function(RouterExtension, Button, UIComponent, Controller, JSView) {
 	"use strict";
 
 

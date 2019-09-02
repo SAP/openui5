@@ -19,4 +19,4 @@ sap.ui.define([
 		},
 		alias: "forwardtext"
 	});
-}, /* bExport= */true);
+});

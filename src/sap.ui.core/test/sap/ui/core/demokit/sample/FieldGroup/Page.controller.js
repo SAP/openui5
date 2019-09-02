@@ -1,5 +1,5 @@
-sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel', 'jquery.sap.global', 'jquery.sap.script'],
-	function(MessageToast, Controller, JSONModel, jQuery/*, jQuerySapScript*/) {
+sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
+	function(MessageToast, Controller, JSONModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.FieldGroup.Page", {

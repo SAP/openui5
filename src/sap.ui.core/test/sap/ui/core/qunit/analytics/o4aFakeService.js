@@ -177,4 +177,4 @@ sap.ui.define([
 		}
 	};
 	return o4aFakeService;
-}, /* bExport= */ false);
+});

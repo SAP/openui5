@@ -631,7 +631,7 @@ sap.ui.define([
 		setTimeout(function() {
 			var aMessages = oInput.getBinding("value").getDataState().getMessages();
 			assert.equal(aMessages.length, 1, "The message was propagated through the binding");
-			assert.ok(aMessages[0].getMessageProcessor() instanceof sap.ui.model.Model, "The message is processed by a model");
+			assert.ok(aMessages[0].getMessageProcessor() instanceof Model, "The message is processed by a model");
 
 			var oMessage = aMessages[0];
 

@@ -1,11 +1,11 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
-	function(jQuery, Controller, JSONModel) {
+sap.ui.define(['sap/base/Log', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast'],
+	function(Log, Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	var Sub2Controller = Controller.extend("samples.components.ext.sap.Sub2", {
 
 		onInit: function() {
-			jQuery.sap.log.info("Sub2 Controller onInit()");
+			Log.info("Sub2 Controller onInit()");
 
 
 			// create some dummy JSON data
@@ -25,20 +25,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 		},
 
 		onExit: function() {
-			jQuery.sap.log.info("Sub2 Controller onExit()");
+			Log.info("Sub2 Controller onExit()");
 		},
 
 		onBeforeRendering: function() {
-			jQuery.sap.log.info("Sub2 Controller onBeforeRendering()");
+			Log.info("Sub2 Controller onBeforeRendering()");
 		},
 
 		onAfterRendering: function() {
-			jQuery.sap.log.info("Sub2 Controller onAfterRendering()");
+			Log.info("Sub2 Controller onAfterRendering()");
 		},
 
 
 		originalSAPAction: function() {
-			alert("This is an original SAP Action");
+			MessageToast.show("This is an original SAP Action");
 		},
 
 		formatNumber: function(iNumber) {

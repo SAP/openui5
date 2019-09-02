@@ -1,6 +1,11 @@
-sap.ui.controller("sap.ui.core.mvctest.controller.Dummy", {
+(function() {
+	"use strict";
 
-	onInit: function() {
-		// Do nothing
-	}
-});
+	sap.ui.controller("sap.ui.core.mvctest.controller.Dummy", {
+
+		onInit: function() {
+			// Do nothing
+		}
+	});
+
+}());

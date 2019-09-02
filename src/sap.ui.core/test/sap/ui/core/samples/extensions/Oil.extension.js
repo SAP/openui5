@@ -1,4 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/ControllerExtension', 'sap/m/Button'], function (Controller, ControllerExtension, Button) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/mvc/ControllerExtension',
+	'sap/m/Button',
+	'sap/m/MessageToast'
+], function (Controller, ControllerExtension, Button, MessageToast) {
+	"use strict";
+
 	return ControllerExtension.extend('com.sap.industry.oil.OilExtension', {
 		//adding a life cycle method
 		onInit: function() {
@@ -17,14 +24,14 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/mvc/ControllerExtensio
 		//add a method
 		sayHello : function() {
 			this._sayHello();
-			alert("OIL says Hello" + this.formatButtonText("sdfsdf"));
+			MessageToast.show("OIL says Hello" + this.formatButtonText("sdfsdf"));
 		},
 		_sayHello : function() {
-			alert("OIL says Hello" + this.formatButtonText("sdfsdf"));
+			MessageToast.show("OIL says Hello" + this.formatButtonText("sdfsdf"));
 		},
 		//add a formatter
 		formatButtonText : function(sTxt) {
-			alert(this.setting);
+			MessageToast.show(this.setting);
 			this.setting = this.setting + this.base.getView().getId();
 			return "OIL " + sTxt + " -> " + this.base.formatButtonText("");
 		},

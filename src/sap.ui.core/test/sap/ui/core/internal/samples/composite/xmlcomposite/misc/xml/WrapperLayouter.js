@@ -24,4 +24,4 @@ sap.ui.define([
 		});
 
 		return WrapperLayouter;
-	}, /* bExport= */true);
+	});

@@ -16,9 +16,9 @@ sap.ui.define(['sap/ui/core/Control'],
 				oRm.writeControlData(oControl);
 				oRm.writeClasses();
 				oRm.write(">");
-                oRm.renderControl(oControl.getContent());
+				oRm.renderControl(oControl.getContent());
 				oRm.write("</div>");
 			}
 		});
 		return ControlContainer;
-	}, /* bExport= */true);
+	});

@@ -427,7 +427,8 @@ sap.ui.testfwk.TestFWK.detachContentWillChange = function(fnCallback) {
 		} else {
 			i++;
 		}
-	}};
+	}
+};
 
 sap.ui.testfwk.TestFWK.fireContentWillChange = function(sLibName) {
 	for (var i = 0; i < this.mContentListeners.length; i++) {

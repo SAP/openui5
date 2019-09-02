@@ -211,7 +211,7 @@ sap.ui.define([
 
 		// Act - combo box is a lazy stub
 		var aRetrievedControls = this.oPlugin.getMatchingControls({
-			controlType : sap.m.ComboBox
+			controlType : sap.m.ComboBox // must remain a global to test against lazy stubs
 		});
 
 		// Assert

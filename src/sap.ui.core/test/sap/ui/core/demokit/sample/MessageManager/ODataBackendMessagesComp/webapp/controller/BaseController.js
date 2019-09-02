@@ -1,13 +1,14 @@
 sap.ui.define([
+	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History"
-], function (Controller, History) {
+], function (UIComponent, Controller, History) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.controller.BaseController", {
 
 		getRouter : function () {
-			return sap.ui.core.UIComponent.getRouterFor(this);
+			return UIComponent.getRouterFor(this);
 		},
 
 		onNavBack: function (oEvent) {

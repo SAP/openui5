@@ -21,4 +21,4 @@ sap.ui.define(['sap/ui/core/XMLComposite'], function(XMLComposite) {
 		}
 	});
 	return oSearchField;
-}, /* bExport= */ true);
+});

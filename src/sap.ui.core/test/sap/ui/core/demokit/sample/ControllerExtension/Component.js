@@ -14,7 +14,7 @@ sap.ui.define([
 		},
 		constructor: function () {
 			//Only needed to simulate changes
-			FakeLrepConnectorLocalStorage.enableFakeConnector(null, sap.ui.core.sample.ControllerExtension.Component, "1.56.0");
+			FakeLrepConnectorLocalStorage.enableFakeConnector(null, this.getMetadata().getClass(), "1.56.0");
 			UIComponent.prototype.constructor.apply(this, arguments);
 		}
 	});

@@ -1,4 +1,4 @@
-/*global QUnit, testresults, jQuery */
+/*global QUnit, testresults */
 sap.ui.define([
 
 ], function() {

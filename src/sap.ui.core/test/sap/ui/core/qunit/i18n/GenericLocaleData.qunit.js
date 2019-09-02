@@ -94,7 +94,7 @@ sap.ui.define([
 				assert.equal(typeof oLocaleData.getDisplayName("minute", sStyle), "string", "getDisplayName(\"minute\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 				assert.equal(typeof oLocaleData.getDisplayName("second", sStyle), "string", "getDisplayName(\"second\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 				assert.equal(typeof oLocaleData.getDisplayName("zone", sStyle), "string", "getDisplayName(\"zone\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
-				for (j = -2 ; j <= 2 ; j++) {
+				for (j = -2; j <= 2; j++) {
 					assert.equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 					if (j === 0) {
 						assert.strictEqual(oLocaleData.getRelativeMinute(j), null, "getRelativeMinute(" + j + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");

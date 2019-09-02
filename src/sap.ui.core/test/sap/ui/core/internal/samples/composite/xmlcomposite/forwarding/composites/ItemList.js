@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/Control'],
-	function (jQuery, Control, XML) {
+	'sap/ui/core/Control'],
+	function (Control) {
 		"use strict";
 		var ItemList = Control.extend("composites.ItemList", {
 			metadata: {
@@ -28,4 +28,4 @@ sap.ui.define([
 			}
 		});
 		return ItemList;
-	}, /* bExport= */true);
+	});

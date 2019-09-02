@@ -1,8 +1,10 @@
 sap.ui.define([
+	"sap/ui/core/Locale",
+	"sap/ui/core/LocaleData",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/NumberFormat"
-], function (Controller, JSONModel, NumberFormat) {
+], function (Locale, LocaleData, Controller, JSONModel, NumberFormat) {
 	"use strict";
 	return Controller.extend("sap.ui.core.samples.UnitTable", {
 
@@ -160,13 +162,13 @@ sap.ui.define([
 		localeChanged: function (oEvent) {
 			var sParam = oEvent.getParameter("selectedItem").getKey();
 			this.getView().getModel("loc").setProperty("/currentLocale", sParam);
-			this.setupFormatters(new sap.ui.core.Locale(sParam));
+			this.setupFormatters(new Locale(sParam));
 			sap.ui.getCore().getConfiguration().setLanguage(sParam);
 		},
 
 		getLocaleData: function(sLocale) {
-			var oLocale = new sap.ui.core.Locale(sLocale);
-			return sap.ui.core.LocaleData.getInstance(oLocale);
+			var oLocale = new Locale(sLocale);
+			return LocaleData.getInstance(oLocale);
 		},
 
 		formatUnit: function (v, u) {

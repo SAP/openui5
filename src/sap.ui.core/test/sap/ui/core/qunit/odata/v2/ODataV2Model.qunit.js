@@ -3,31 +3,49 @@
 sap.ui.define([
 		"sap/base/Log",
 		"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+		"sap/ui/model/odata/ODataUtils",
 		"sap/ui/model/odata/v2/ODataModel",
+		"sap/ui/model/ChangeReason",
+		"sap/ui/model/ClientModel",
+		"sap/ui/model/Context",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
-		"sap/m/Panel",
-		"sap/m/Label",
+		"sap/ui/model/Sorter",
+		"sap/ui/model/json/JSONModel",
+		"sap/m/Button",
+		"sap/m/DisplayListItem",
+		"sap/m/HBox",
 		"sap/m/Input",
+		"sap/m/Label",
+		"sap/m/List",
+		"sap/m/Panel",
+		"sap/m/Text",
 		"sap/ui/table/Column",
 		"sap/ui/table/Table",
-		"sap/m/List",
-		"sap/m/DisplayListItem",
 		"sap/ui/core/message/Message"
 	],
 	function(
 		Log,
 		fakeService,
+		ODataUtils,
 		ODataModel,
+		ChangeReason,
+		ClientModel,
+		Context,
 		Filter,
 		FilterOperator,
-		Panel,
-		Label,
+		Sorter,
+		JSONModel,
+		Button,
+		ListItem,
+		HBox,
 		Input,
+		Label,
+		List,
+		Panel,
+		Text,
 		Column,
 		Table,
-		List,
-		ListItem,
 		Message
 	) {
 
@@ -489,7 +507,7 @@ sap.ui.define([
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
+		var oFilter = new Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(1)").ProductName, "Chai", "test property");
@@ -509,7 +527,7 @@ sap.ui.define([
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
+		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter]).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -536,7 +554,7 @@ sap.ui.define([
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
+		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category,ProductName", expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -567,7 +585,7 @@ sap.ui.define([
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
+		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category/CategoryName,ProductName", expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -602,7 +620,7 @@ sap.ui.define([
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chang");
+		var oFilter = new Filter("ProductName", "EQ", "Chang");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {select : "Category/CategoryName,ProductName", expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.getProperty("/Products(2)").ProductName, "Chang", "test property");
@@ -644,13 +662,13 @@ sap.ui.define([
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
 			assert.ok(!oContext, "Reload needed for category expand");
@@ -684,7 +702,7 @@ sap.ui.define([
 			assert.ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
 			assert.ok(!oContext, "Reload needed for category expand");
@@ -712,22 +730,22 @@ sap.ui.define([
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -752,16 +770,16 @@ sap.ui.define([
 			assert.ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
 			assert.ok(!oContext, "Reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category", expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -786,7 +804,7 @@ sap.ui.define([
 			assert.ok(!oContext, "Reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
 			assert.ok(!oContext, "Reload needed for category expand");
@@ -795,7 +813,7 @@ sap.ui.define([
 			assert.ok(!oContext, "Reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -814,19 +832,19 @@ sap.ui.define([
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for category expand");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName,Category", expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select and category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for property select and category expand");
 
 			oContext = oModel.createBindingContext("/Products(4)", null, {select: "ProductName,Category/CategoryName", expand: "Category"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property, expand property select and category expand");
+			assert.ok(oContext instanceof Context, "No reload needed for property, expand property select and category expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -845,25 +863,25 @@ sap.ui.define([
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier", select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
+			assert.ok(oContext instanceof Context, "No reload needed for unselected supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
 			assert.ok(!oContext, "Reload needed for supplier/products expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/Products"});
 			assert.ok(!oContext, "Reload needed for supplier/products expand");
@@ -885,28 +903,28 @@ sap.ui.define([
 			assert.equal(spy.callCount, 1, "get request should be send");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier", select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for unselected supplier expand");
+			assert.ok(oContext instanceof Context, "No reload needed for unselected supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
+			assert.ok(oContext instanceof Context, "No reload needed for supplier/products expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier expand");
+			assert.ok(oContext instanceof Context, "No reload needed for supplier expand");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Supplier/Products", select: "Supplier/Products"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for supplier/products expand");
+			assert.ok(oContext instanceof Context, "No reload needed for supplier/products expand");
 
 			OData.defaultHttpClient.request.restore();
 			done();
@@ -963,13 +981,13 @@ sap.ui.define([
 			oModel.invalidateEntry("Categories(2)");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
 			assert.ok(!oContext, "Reload needed for category expand");
@@ -999,13 +1017,13 @@ sap.ui.define([
 			oModel.invalidateEntityType("NorthwindModel.Category");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for full entity");
+			assert.ok(oContext instanceof Context, "No reload needed for full entity");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "*"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for all properties");
+			assert.ok(oContext instanceof Context, "No reload needed for all properties");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {select: "ProductName"});
-			assert.ok(oContext instanceof sap.ui.model.Context, "No reload needed for property select");
+			assert.ok(oContext instanceof Context, "No reload needed for property select");
 
 			oContext = oModel.createBindingContext("/Products(3)", null, {expand: "Category"});
 			assert.ok(!oContext, "Reload needed for category expand");
@@ -1150,7 +1168,7 @@ sap.ui.define([
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
+		var oFilter = new Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.oData["Products(1)"].Category.__ref, "Categories(1)", "test property data with refs directly.");
@@ -1211,7 +1229,7 @@ sap.ui.define([
 		var oModel = initModel(sURI);
 		sap.ui.getCore().setModel(oModel);
 
-		var oFilter = new sap.ui.model.Filter("ProductName", "EQ", "Chai");
+		var oFilter = new Filter("ProductName", "EQ", "Chai");
 		var oBinding = oModel.bindList("/Products", null, null, [oFilter], {expand : "Category" }).initialize();
 		var handler1 = function() { // delay the following test
 			assert.equal(oModel.oData["Products(1)"].Category.__ref, "Categories(1)", "test property data with refs directly.");
@@ -1814,14 +1832,14 @@ sap.ui.define([
 			done();
 		};
 		oModel.createBindingContext("/Products(2)", function(oContext) {
-			oPanel = new sap.m.Panel({
+			oPanel = new Panel({
 				models: oModel,
 				bindingContexts: oContext,
 				content: [
-					new sap.m.HBox({
+					new HBox({
 						objectBindings: {path: "Category"},
 						items: [
-							new sap.m.Text({
+							new Text({
 								text: "{Name}"
 							})
 						]
@@ -1840,7 +1858,7 @@ sap.ui.define([
 		var done = assert.async();
 		cleanSharedData();
 		var oODataModel = initModel(sURI, {json:false});
-		var oJSONModel = new sap.ui.model.json.JSONModel();
+		var oJSONModel = new JSONModel();
 		sap.ui.getCore().setModel(oODataModel);
 		var oTestContextOData = oODataModel.getContext("/Products(2)");
 		var oTestContextJSON = oJSONModel.getContext("/");
@@ -2103,7 +2121,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
@@ -2141,7 +2159,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
@@ -2179,7 +2197,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
@@ -2227,7 +2245,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
@@ -2305,7 +2323,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
@@ -2320,7 +2338,7 @@ sap.ui.define([
 				assert.equal(sPath, "/Categories(2)/CategoryName", "path check!");
 				assert.equal(oContext, undefined, "context check!");
 				assert.equal(oValue, "blubb", "property value check!");
-				assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 				oInput.destroy();
 				done();
 			});
@@ -2338,7 +2356,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			value: "{CategoryName}"
 		});
 		oInput.setModel(oModel);
@@ -2353,7 +2371,7 @@ sap.ui.define([
 				assert.equal(sPath, "CategoryName", "path check!");
 				assert.equal(oContext.getPath(), "/Categories(2)", "context check!");
 				assert.equal(oValue, "blubb", "property value check!");
-				assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+				assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 				oInput.destroy();
 				done();
 			});
@@ -2372,7 +2390,7 @@ sap.ui.define([
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setDefaultBindingMode("TwoWay");
-		var oInput = new sap.m.Input({
+		var oInput = new Input({
 			value: "{/Categories(2)/CategoryName}"
 		});
 		oInput.setModel(oModel);
@@ -2389,14 +2407,14 @@ sap.ui.define([
 					assert.equal(sPath, "/Categories(2)/CategoryName", "path check!");
 					assert.equal(oContext, undefined, "context check!");
 					assert.equal(oValue, "blubb", "property value check!");
-					assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+					assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 					oInput.setValue("Condiments");
 
 				} else if (iCount === 2) {
 					assert.equal(sPath, "/Categories(2)/CategoryName", "path check!");
 					assert.equal(oContext, undefined, "context check!");
 					assert.equal(oValue, "Condiments", "property value check!");
-					assert.equal(sReason, sap.ui.model.ChangeReason.Binding, "property reason check!");
+					assert.equal(sReason, ChangeReason.Binding, "property reason check!");
 				}
 			});
 			var oBinding = oInput.getBinding("value");
@@ -2990,7 +3008,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oModel = initModel(sURI, {json:false});
-		var oBinding = oModel.bindList("Products", new sap.ui.model.Context(oModel, "/Categories(7)")).initialize();
+		var oBinding = oModel.bindList("Products", new Context(oModel, "/Categories(7)")).initialize();
 		var handler = function() { // delay the following test
 			var oResult = oBinding.oEntityType;
 			assert.equal(oResult.name, "Product", "entity type name check");
@@ -4761,7 +4779,7 @@ sap.ui.define([
 		var that = this;
 		var aSorters = [
 			"should be ignored",
-			new sap.ui.model.Sorter("CategoryName", true),
+			new Sorter("CategoryName", true),
 			{ foo: "bar" },
 			false
 		];
@@ -4784,7 +4802,7 @@ sap.ui.define([
 		var done = assert.async();
 		var that = this;
 		var aFilters = [
-			new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages")
+			new Filter("CategoryName", FilterOperator.EQ, "Beverages")
 		];
 		that.oModel.read("/Categories", {
 			urlParameters: {"$skip": "0","$top":"1"},
@@ -4805,9 +4823,9 @@ sap.ui.define([
 		var done = assert.async();
 		var that = this;
 		var aFilters = [
-			new sap.ui.model.Filter({
+			new Filter({
 				path: "CategoryName",
-				operator: sap.ui.model.FilterOperator.EQ,
+				operator: FilterOperator.EQ,
 				value1: "Beverages",
 				caseSensitive: false
 			})
@@ -6166,7 +6184,7 @@ sap.ui.define([
 		var oModelBatch = initModel(sURI, {json:false, useBatch: true, bindableResponseHeaders: ["age", "cache-control"]});
 		oModelBatch.setUseBatch(true);
 
-		var oButton = new sap.m.Text({
+		var oButton = new Text({
 			text: {
 				path: "/Products(1)/__metadata/headers/age"
 			}
@@ -6177,7 +6195,7 @@ sap.ui.define([
 		var oModelSingle = initModel(sURI, {json:false, useBatch: false, bindableResponseHeaders: ["age", "cache-control"]});
 		oModelSingle.setUseBatch(false);
 
-		var oButton2 = new sap.m.Button({
+		var oButton2 = new Button({
 			text: {
 				parts: [ { path: "__metadata/headers/age" }, { path: "__metadata/headers/invalid" } ]
 			}
@@ -6334,17 +6352,16 @@ sap.ui.define([
 	QUnit.module("Model: Key normalization");
 
 	QUnit.test("Normalize key", function(assert) {
-		var oODataUtils = sap.ui.model.odata.ODataUtils;
-		assert.equal(oODataUtils._normalizeKey("Entity(123M)"), "Entity(123m)", "Number types normalized, single key");
-		assert.equal(oODataUtils._normalizeKey("Entity(a=123M,b=123F,c=123L,d=123D)"), "Entity(a=123m,b=123f,c=123l,d=123d)", "Number types normalized, mutiple keys");
-		assert.equal(oODataUtils._normalizeKey("Entity(':/?')"), "Entity('%3A%2F%3F')", "String encoding normalized, single key");
-		assert.equal(oODataUtils._normalizeKey("Entity(a=':/?',b='test',c=':/?',d='test')"), "Entity(a='%3A%2F%3F',b='test',c='%3A%2F%3F',d='test')", "String encoding normalized, multiple keys");
-		assert.equal(oODataUtils._normalizeKey("Entity(a='test',b=123F,c=':::',e=123D)"), "Entity(a='test',b=123f,c='%3A%3A%3A',e=123d)", "Number types and strings normalized, mixed keys");
-		assert.equal(oODataUtils._normalizeKey("Entity('Entity(a=123M,b=123F,c=123L,d=123D)')"), "Entity('Entity(a%3D123M%2Cb%3D123F%2Cc%3D123L%2Cd%3D123D)')", "Number inside string not normalized");
-		assert.equal(oODataUtils._normalizeKey("Entity('%2FTEST%2FTEST')"), "Entity('%2FTEST%2FTEST')", "No double encoding");
-		assert.equal(oODataUtils._normalizeKey("Entity('%2FTEST%2FTEST=123M')"), "Entity('%2FTEST%2FTEST%3D123M')", "No double encoding");
-		assert.equal(oODataUtils._normalizeKey("Entity(%2FTEST%2FTEST=123M)"), "Entity(%2FTEST%2FTEST=123m)", "No double encoding");
-		assert.equal(oODataUtils._normalizeKey("Entity(X'AFFE')"), "Entity(binary'AFFE')", "Binary normalized");
+		assert.equal(ODataUtils._normalizeKey("Entity(123M)"), "Entity(123m)", "Number types normalized, single key");
+		assert.equal(ODataUtils._normalizeKey("Entity(a=123M,b=123F,c=123L,d=123D)"), "Entity(a=123m,b=123f,c=123l,d=123d)", "Number types normalized, mutiple keys");
+		assert.equal(ODataUtils._normalizeKey("Entity(':/?')"), "Entity('%3A%2F%3F')", "String encoding normalized, single key");
+		assert.equal(ODataUtils._normalizeKey("Entity(a=':/?',b='test',c=':/?',d='test')"), "Entity(a='%3A%2F%3F',b='test',c='%3A%2F%3F',d='test')", "String encoding normalized, multiple keys");
+		assert.equal(ODataUtils._normalizeKey("Entity(a='test',b=123F,c=':::',e=123D)"), "Entity(a='test',b=123f,c='%3A%3A%3A',e=123d)", "Number types and strings normalized, mixed keys");
+		assert.equal(ODataUtils._normalizeKey("Entity('Entity(a=123M,b=123F,c=123L,d=123D)')"), "Entity('Entity(a%3D123M%2Cb%3D123F%2Cc%3D123L%2Cd%3D123D)')", "Number inside string not normalized");
+		assert.equal(ODataUtils._normalizeKey("Entity('%2FTEST%2FTEST')"), "Entity('%2FTEST%2FTEST')", "No double encoding");
+		assert.equal(ODataUtils._normalizeKey("Entity('%2FTEST%2FTEST=123M')"), "Entity('%2FTEST%2FTEST%3D123M')", "No double encoding");
+		assert.equal(ODataUtils._normalizeKey("Entity(%2FTEST%2FTEST=123M)"), "Entity(%2FTEST%2FTEST=123m)", "No double encoding");
+		assert.equal(ODataUtils._normalizeKey("Entity(X'AFFE')"), "Entity(binary'AFFE')", "Binary normalized");
 	});
 
 	QUnit.test("Normalize key, model access", function(assert) {
@@ -6390,7 +6407,7 @@ sap.ui.define([
 
 	QUnit.module("Unsupported Filter Operators", {
 		beforeEach: function() {
-			this.oModel = new sap.ui.model.ClientModel();
+			this.oModel = new ClientModel();
 		},
 
 		getErrorWithMessage: function(sFilter) {

@@ -11,9 +11,9 @@
 		<content>
 			<f:SimpleForm title="Product Details">
 				<f:content>
-					<Label text="Prduct ID"/>
+					<Label text="Product ID"/>
 					<Text text="{productId}" />
-					<Label text="Prduct Name"/>
+					<Label text="Product Name"/>
 					<Text text="{productName}" />
 				</f:content>
 			</f:SimpleForm>

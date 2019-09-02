@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/core/XMLComposite'],
 	function (XMLComposite) {
 		"use strict";
-		var MySelect3 = sap.ui.core.XMLComposite.extend("composites.MySelect3", {
+		var MySelect3 = XMLComposite.extend("composites.MySelect3", {
 			metadata: {
 				aggregations: {
 					myItems: {
@@ -16,4 +16,4 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 		});
 
 		return MySelect3;
-	}, /* bExport= */true);
+	});

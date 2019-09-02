@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/message/Message',
 	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/type/String',
 	'jquery.sap.global'
-], function(MessageToast, Controller, Message, JSONModel, jQuery) {
+], function(MessageToast, Controller, Message, JSONModel, TypeString, jQuery) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.DataState.Page", {
@@ -38,7 +39,7 @@ sap.ui.define([
 			//override experimental refreshDataState method on Email Input
 			this.addRefreshDataStateMethod(this.byId("Email"));
 
-			var oEmailType = new sap.ui.model.type.String();
+			var oEmailType = new TypeString();
 			oEmailType.setConstraints({contains:"@"});
 			this.byId("Email").bindProperty("value",{path:"SampleData>/Email",type:oEmailType});
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
@@ -235,7 +236,7 @@ sap.ui.define([
 	});
 
 	//Create a simulated server model for a JSON Model
-	var SimulatedServerModel = JSONModel.extend("SimulatedServerModel", /** @lends sap.ui.model.json.JSONModel.prototype */ {
+	var SimulatedServerModel = JSONModel.extend("SimulatedServerModel", /** @lends SimulatedServerModel.prototype */ {
 		constructor : function(oData) {
 			JSONModel.apply(this, arguments);
 			this.iDelay = 0;

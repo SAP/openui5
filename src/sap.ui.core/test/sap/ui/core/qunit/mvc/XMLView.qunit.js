@@ -14,6 +14,9 @@ sap.ui.define([
 ], function(ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, Button, Panel, testsuite) {
 	"use strict";
 
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
+
 	// shortcut
 	function isPreserved(oDomRef) {
 		return RenderManager.isPreservedContent(oDomRef);
@@ -72,7 +75,7 @@ sap.ui.define([
 
 	// run the full testset for a view created via the generic factory method
 	testsuite(oConfig, "XMLView creation using generic view factory", function() {
-		return sap.ui.view({type:sap.ui.core.mvc.ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
+		return sap.ui.view({type:ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
 	}, true);
 
 

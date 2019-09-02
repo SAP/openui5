@@ -171,7 +171,7 @@ sap.ui.define([
 	QUnit.test("Mixing Helpers and Controls", function(assert) {
 
 		sap.ui.define("my/Control", ["sap/ui/core/Control"], function(Control) {
-			 sap.ui.core.Control.extend("my.Control", {
+			 Control.extend("my.Control", {
 				metadata: {
 					properties: {
 						text: "string"

@@ -7,8 +7,10 @@ sap.ui.define([
 	"sap/ui/model/analytics/ODataModelAdapter",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
-	"sap/base/Log"
-], function (jQuery, odata4analytics, ODataModelAdapter, ODataModel, o4aFakeService, Log) {
+	"sap/base/Log",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (jQuery, odata4analytics, ODataModelAdapter, ODataModel, o4aFakeService, Log, Filter, FilterOperator) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -436,11 +438,11 @@ sap.ui.define([
 			sRefEntriesURI,
 			sEntriesURI;
 
-		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000");
+		oFilterExpression.addCondition("CostCenter", FilterOperator.EQ, "100-1000");
 		oFilterExpression.addSetCondition("Currency", [
 			"EUR", "USD", "GBP"
 		]);
-		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.BT, "100-1000",
+		oFilterExpression.addCondition("CostCenter", FilterOperator.BT, "100-1000",
 			"200-3000");
 
 		sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or (CostCenter ge %27100-1000%27"
@@ -499,7 +501,7 @@ sap.ui.define([
 
 		oFilterExpression = oParamValueSetRequest.getFilterExpression();
 		assert.ok(oFilterExpression, "Filter expression found.");
-		oFilterExpression.addCondition(oBaseParameter.getName(), sap.ui.model.FilterOperator.EQ,
+		oFilterExpression.addCondition(oBaseParameter.getName(), FilterOperator.EQ,
 			"US01");
 		sRefFilterOptionString = "(P_ControllingArea eq %27US01%27)";
 		sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
@@ -543,7 +545,7 @@ sap.ui.define([
 		// 2. filtered list
 		oBaseDim = oQueryResult.findDimensionByName("ControllingArea");
 		oFilterExpression = oDimMemberSetRequest.getFilterExpression();
-		oFilterExpression.addCondition(oBaseDim.getName(), sap.ui.model.FilterOperator.EQ, "US01");
+		oFilterExpression.addCondition(oBaseDim.getName(), FilterOperator.EQ, "US01");
 		sRefURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,"
 			+ "P_CostCenterTo=%27%27)/Results?$select=CostCenter,CostCenterText&$"
 			+ "filter=(ControllingArea eq %27US01%27)";
@@ -579,7 +581,7 @@ sap.ui.define([
 		oFilterExpression.addSetCondition("Currency", [
 			"EUR", "USD", "GBP"
 		]);
-		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.BT, "100-1000",
+		oFilterExpression.addCondition("CostCenter", FilterOperator.BT, "100-1000",
 			"200-3000");
 
 		sRefBaseURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,"
@@ -694,7 +696,7 @@ sap.ui.define([
 		oFilterExpression.addSetCondition("Currency", [
 			"EUR", "USD", "GBP"
 		]);
-		oFilterExpression.addCondition("CostCenter", sap.ui.model.FilterOperator.BT, "100-1000",
+		oFilterExpression.addCondition("CostCenter", FilterOperator.BT, "100-1000",
 			"200-3000");
 
 		sRefBaseURI = "/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,"
@@ -749,10 +751,10 @@ sap.ui.define([
 	QUnit.test("Combining with some simple condition", function (assert) {
 		var oQueryResultRequest = this.oQueryResultRequest,
 			oFilterExpression = oQueryResultRequest.getFilterExpression(),
-			oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP"),
-			oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD"),
-			oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR"),
-			oMultiFilter = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false),
+			oFilter1 = new Filter("Currency", FilterOperator.EQ, "GBP"),
+			oFilter2 = new Filter("Currency", FilterOperator.EQ, "USD"),
+			oFilter3 = new Filter("Currency", FilterOperator.EQ, "EUR"),
+			oMultiFilter = new Filter([oFilter1, oFilter2, oFilter3], false),
 			aUI5FilterArray,
 			sRefFilterOptionString,
 			sFilterOptionString;
@@ -766,7 +768,7 @@ sap.ui.define([
 
 		aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
 		assert.ok((aUI5FilterArray instanceof Array
-			&& aUI5FilterArray[0] instanceof sap.ui.model.Filter),
+			&& aUI5FilterArray[0] instanceof Filter),
 			"UI5 filter array correctly constructed.");
 
 		sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27)"
@@ -781,10 +783,10 @@ sap.ui.define([
 	QUnit.test("Combining with other UI5 filters on same sPath", function (assert) {
 		var oQueryResultRequest = this.oQueryResultRequest,
 			oFilterExpression = oQueryResultRequest.getFilterExpression(),
-			oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP"),
-			oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD"),
-			oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR"),
-			oMultiFilter = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false),
+			oFilter1 = new Filter("Currency", FilterOperator.EQ, "GBP"),
+			oFilter2 = new Filter("Currency", FilterOperator.EQ, "USD"),
+			oFilter3 = new Filter("Currency", FilterOperator.EQ, "EUR"),
+			oMultiFilter = new Filter([oFilter1, oFilter2, oFilter3], false),
 			aUI5FilterArray,
 			sRefFilterOptionString,
 			sFilterOptionString,
@@ -795,13 +797,13 @@ sap.ui.define([
 			oMultiFilter
 		]);
 		oFilterExpression.addUI5FilterConditions([
-			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"),
-			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1100")
+			new Filter("CostCenter", FilterOperator.EQ, "100-1000"),
+			new Filter("CostCenter", FilterOperator.EQ, "100-1100")
 		]);
 
 		aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
 		assert.ok((aUI5FilterArray instanceof Array
-			&& aUI5FilterArray[0] instanceof sap.ui.model.Filter),
+			&& aUI5FilterArray[0] instanceof Filter),
 			"UI5 filter array correctly constructed.");
 
 		sRefFilterOptionString = "(CostCenter eq %27100-1000%27 or CostCenter eq %27100-1100%27)"
@@ -823,10 +825,10 @@ sap.ui.define([
 	QUnit.test("Combining with other UI5 filters on different sPaths", function (assert) {
 		var oQueryResultRequest = this.oQueryResultRequest,
 			oFilterExpression = oQueryResultRequest.getFilterExpression(),
-			oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP"),
-			oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD"),
-			oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR"),
-			oMultiFilter = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false),
+			oFilter1 = new Filter("Currency", FilterOperator.EQ, "GBP"),
+			oFilter2 = new Filter("Currency", FilterOperator.EQ, "USD"),
+			oFilter3 = new Filter("Currency", FilterOperator.EQ, "EUR"),
+			oMultiFilter = new Filter([oFilter1, oFilter2, oFilter3], false),
 			aUI5FilterArray,
 			sRefFilterOptionString,
 			sFilterOptionString,
@@ -837,13 +839,13 @@ sap.ui.define([
 			oMultiFilter
 		]);
 		oFilterExpression.addUI5FilterConditions([
-			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"),
-			new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US01")
+			new Filter("CostCenter", FilterOperator.EQ, "100-1000"),
+			new Filter("ControllingArea", FilterOperator.EQ, "US01")
 		]);
 
 		aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
 		assert.ok((aUI5FilterArray instanceof Array
-				&& aUI5FilterArray[0] instanceof sap.ui.model.Filter),
+				&& aUI5FilterArray[0] instanceof Filter),
 				"UI5 filter array correctly constructed.");
 
 		sRefFilterOptionString = "(ControllingArea eq %27US01%27) and"
@@ -865,10 +867,10 @@ sap.ui.define([
 	QUnit.test("Tests 1-3 together", function (assert) {
 		var oQueryResultRequest = this.oQueryResultRequest,
 			oFilterExpression = oQueryResultRequest.getFilterExpression(),
-			oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP"),
-			oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD"),
-			oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR"),
-			oMultiFilter = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false),
+			oFilter1 = new Filter("Currency", FilterOperator.EQ, "GBP"),
+			oFilter2 = new Filter("Currency", FilterOperator.EQ, "USD"),
+			oFilter3 = new Filter("Currency", FilterOperator.EQ, "EUR"),
+			oMultiFilter = new Filter([oFilter1, oFilter2, oFilter3], false),
 			aUI5FilterArray,
 			sRefFilterOptionString,
 			sFilterOptionString,
@@ -879,14 +881,14 @@ sap.ui.define([
 			oMultiFilter
 		]);
 		oFilterExpression.addUI5FilterConditions([
-			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"),
-			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1100"),
-			new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US01")
+			new Filter("CostCenter", FilterOperator.EQ, "100-1000"),
+			new Filter("CostCenter", FilterOperator.EQ, "100-1100"),
+			new Filter("ControllingArea", FilterOperator.EQ, "US01")
 		]);
 		aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
 
 		assert.ok((aUI5FilterArray instanceof Array
-			&& aUI5FilterArray[0] instanceof sap.ui.model.Filter),
+			&& aUI5FilterArray[0] instanceof Filter),
 			"UI5 filter array correctly constructed.");
 
 		sRefFilterOptionString =
@@ -910,10 +912,10 @@ sap.ui.define([
 	QUnit.test("Multiple UI5 filter arrays are combined with AND", function (assert) {
 		var oQueryResultRequest = this.oQueryResultRequest,
 			oFilterExpression = oQueryResultRequest.getFilterExpression(),
-			oFilter1 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "GBP"),
-			oFilter2 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "USD"),
-			oFilter3 = new sap.ui.model.Filter("Currency", sap.ui.model.FilterOperator.EQ, "EUR"),
-			oMultiFilter = new sap.ui.model.Filter([oFilter1, oFilter2, oFilter3], false),
+			oFilter1 = new Filter("Currency", FilterOperator.EQ, "GBP"),
+			oFilter2 = new Filter("Currency", FilterOperator.EQ, "USD"),
+			oFilter3 = new Filter("Currency", FilterOperator.EQ, "EUR"),
+			oMultiFilter = new Filter([oFilter1, oFilter2, oFilter3], false),
 			aUI5FilterArray,
 			sRefFilterOptionString,
 			sFilterOptionString;
@@ -922,17 +924,17 @@ sap.ui.define([
 			oMultiFilter
 		]);
 		oFilterExpression.addUI5FilterConditions([
-			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1100"),
-			new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US01")
+			new Filter("CostCenter", FilterOperator.EQ, "100-1100"),
+			new Filter("ControllingArea", FilterOperator.EQ, "US01")
 		]);
 		oFilterExpression.addUI5FilterConditions([
-			new sap.ui.model.Filter("CostCenter", sap.ui.model.FilterOperator.EQ, "100-1000"),
-			new sap.ui.model.Filter("ControllingArea", sap.ui.model.FilterOperator.EQ, "US02")
+			new Filter("CostCenter", FilterOperator.EQ, "100-1000"),
+			new Filter("ControllingArea", FilterOperator.EQ, "US02")
 		]);
 
 		aUI5FilterArray = oFilterExpression.getExpressionAsUI5FilterArray();
 		assert.ok((aUI5FilterArray instanceof Array
-			&& aUI5FilterArray[0] instanceof sap.ui.model.Filter),
+			&& aUI5FilterArray[0] instanceof Filter),
 			"UI5 filter array correctly constructed.");
 
 		sRefFilterOptionString = "(ControllingArea eq %27US01%27 or ControllingArea eq %27US02%27)"

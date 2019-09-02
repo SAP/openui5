@@ -150,10 +150,12 @@ sap.ui.define([
 			// we can't instantiate interface types and in general don't know the implementations
 
 			// however... we know SOME
-			if (false && sAggregationType === "sap.m.IBar" || sAggregationType === "sap.ui.core.Toolbar") {
+			if ( /* sAggregationType === "sap.m.IBar" || */ sAggregationType === "sap.ui.core.Toolbar") {
 				sAggregationType = "sap.m.Bar";
+			/*
 			} else if (false && sAggregationType ===  "sap.m.IconTab") {
 				sAggregationType = "sap.m.IconTabFilter";
+			*/
 			} else {
 				return; // really don't know
 			}

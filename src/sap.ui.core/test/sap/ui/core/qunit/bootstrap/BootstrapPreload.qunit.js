@@ -1,4 +1,4 @@
-/*global QUnit, jQuery */
+/*global QUnit */
 sap.ui.define([
 	"jquery.sap.global"
 ], function(jQuery) {

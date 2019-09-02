@@ -1,9 +1,8 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'jquery.sap.script'
-	], function(jQuery, Controller, JSONModel/*, jQuerySapScript*/) {
+	], function(Controller, JSONModel) {
 	"use strict";
 
 	var ThemeCustomClassesController = Controller.extend("sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses", {
@@ -30,7 +29,7 @@ sap.ui.define([
 			// special treatment for border styles
 			var aData = this.oView.getModel().oData.Styles;
 			aData.forEach(function(e,i){
-				var elem = jQuery('.sampling')[i];
+				var elem = document.querySelectorAll('.sampling')[i];
 				if (elem && e.border){
 					elem.style.borderWidth = "1xp";
 					elem.style.borderStyle = "solid";
@@ -78,7 +77,7 @@ sap.ui.define([
 
 		_reloadSample : function(context){
 			// wait until theme is changed
-			jQuery.sap.delayedCall(500,this, function(){
+			setTimeout(function() {
 
 				// load sapTheme classes
 				var oThemeClasses = this._fetchClasses();
@@ -86,7 +85,7 @@ sap.ui.define([
 				// reload the view
 				this.oView.setModel(new JSONModel(oThemeClasses));
 				this.oView.invalidate();
-			});
+			}.bind(this), 500);
 		}
 	});
 

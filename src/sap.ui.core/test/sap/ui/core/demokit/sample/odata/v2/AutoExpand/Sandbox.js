@@ -60,4 +60,4 @@ sap.ui.define([
 	}
 
 	TestUtils.setData("sap.ui.core.sample.odata.v2.AutoExpand.sandbox", oSandbox);
-}, /* bExport= */false);
+});

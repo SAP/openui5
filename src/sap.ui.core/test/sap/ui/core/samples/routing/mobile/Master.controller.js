@@ -1,11 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/routing/HashChanger', 'sap/ui/core/routing/Router'],
+	function(Controller, HashChanger, Router) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.samples.routing.mobile.Master", {
 
 		onInit: function() {
-			var oRouter = sap.ui.core.routing.Router.getRouter("app"),
+			var oRouter = Router.getRouter("app"),
 				that = this;
 
 			oRouter.attachRouteMatched(function(oEvent) {
@@ -22,8 +22,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 
 		select: function(oEvent) {
 			var oListItem = oEvent.getParameter("listItem"),
-				oRouter = sap.ui.core.routing.Router.getRouter("app"),
-				oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
+				oRouter = Router.getRouter("app"),
+				oHashChanger = HashChanger.getInstance();
 
 			oHashChanger.setHash(oRouter.getURL("_testapp_detail", {
 				selectedIndex: oListItem.getParent().indexOfItem(oListItem)

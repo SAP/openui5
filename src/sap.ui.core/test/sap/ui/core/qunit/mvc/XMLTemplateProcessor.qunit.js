@@ -1,11 +1,15 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/XMLTemplateProcessor",
 	"sap/ui/core/mvc/XMLView",
 	"sap/base/Log",
 	"jquery.sap.xml" // jQuery plugin, only used indirectly
-], function (XMLTemplateProcessor, XMLView, Log, jQuery) {
+], function (coreLibrary, XMLTemplateProcessor, XMLView, Log, jQuery) {
 	"use strict";
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	var sRootView =
 		'<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" id="root">' +
@@ -125,7 +129,7 @@ sap.ui.define([
 		};
 		var oView = sap.ui.view({
 			viewName: "my.View",
-			type: sap.ui.core.mvc.ViewType.XML
+			type: ViewType.XML
 		});
 		sap.ui.getCore().getConfiguration().getDesignMode = fnOrigGetDesignMode;
 		return oView.loaded().then(function () {
@@ -146,7 +150,7 @@ sap.ui.define([
 	QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function (assert) {
 		return sap.ui.view({
 			viewName: "my.View",
-			type: sap.ui.core.mvc.ViewType.XML
+			type: ViewType.XML
 		}).loaded().then(function (oView) {
 			var oButton = oView.byId("button");
 			assert.ok(oButton, "button control is created");
@@ -168,7 +172,7 @@ sap.ui.define([
 
 		return sap.ui.view({
 			viewName: "my.View",
-			type: sap.ui.core.mvc.ViewType.XML
+			type: ViewType.XML
 		}).loaded().then(function (oView) {
 			assert.ok(mMetadataContexts,"XMLTemplateProcessor._preprocessMetadataContexts is called");
 			oView.destroy();

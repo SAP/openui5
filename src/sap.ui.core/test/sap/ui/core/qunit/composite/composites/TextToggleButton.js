@@ -37,4 +37,4 @@ sap.ui.define([
 	};
 
 	return TextToggleButton;
-}, /* bExport= */true);
+});

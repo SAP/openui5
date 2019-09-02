@@ -1,9 +1,8 @@
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/UIComponent",
 	"sap/ui/thirdparty/sinon"
 ],
-function(jQuery, UIComponent, sinon) {
+function(UIComponent, sinon) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.sample.View.preprocessor.Component", {

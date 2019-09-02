@@ -24,4 +24,4 @@ sap.ui.define(['sap/base/Log', 'sap/ui/base/Object'],
 
 		return TestPreprocessor;
 
-	}, /* bExport= */ true);
+	});

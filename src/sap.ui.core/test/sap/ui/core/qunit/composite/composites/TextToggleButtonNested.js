@@ -21,4 +21,4 @@ sap.ui.define([
 		this.fireRefreshed();
 	};
 	return TextToggleButtonNested;
-}, /* bExport= */true);
+});

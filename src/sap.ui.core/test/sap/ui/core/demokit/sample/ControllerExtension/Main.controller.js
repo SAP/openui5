@@ -88,14 +88,14 @@ sap.ui.define([
 		//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		addChanges: function(){
 			var sFragment = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName('sap.ui.core.sample.ControllerExtension.CustomerExtension', '.fragment.xml'),
+				"sap/ui/core/sample/ControllerExtension/CustomerExtension.fragment.xml",
 				{
 					dataType: "text"
 				}
 			);
 			this._addFragmentToTableToolbar(sFragment, "sap.my");
 			var sCode = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName("sap.ui.core.sample.ControllerExtension.CustomerExtension"),
+				"sap/ui/core/sample/ControllerExtension/CustomerExtension.js",
 				{
 					dataType: "text"
 				}
@@ -109,14 +109,14 @@ sap.ui.define([
 		},
 		addOtherChanges: function(){
 			var sFragment = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName('sap.ui.core.sample.ControllerExtension.OtherCustomerExtension', '.fragment.xml'),
+				"sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.fragment.xml",
 				{
 					dataType: "text"
 				}
 			);
 			this._addFragmentToTableToolbar(sFragment, "sap.other");
 			var sCode = jQuery.sap.loadResource(
-				jQuery.sap.getResourceName("sap.ui.core.sample.ControllerExtension.OtherCustomerExtension"),
+				"sap/ui/core/sample/ControllerExtension/OtherCustomerExtension.js",
 				{
 					dataType: "text"
 				}

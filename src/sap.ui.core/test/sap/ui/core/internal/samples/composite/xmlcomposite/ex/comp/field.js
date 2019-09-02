@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/XMLComposite'], function(jQuery, XMLComposite) {
+	'sap/ui/core/XMLComposite'], function(XMLComposite) {
 	"use strict";
 	var Field = XMLComposite.extend("sap.ui.core.internal.samples.composite.xmlcomposite.ex.comp.field", {
 		metadata: {
@@ -20,4 +20,4 @@ sap.ui.define([
 		fragment: "sap.ui.core.internal.samples.composite.xmlcomposite.ex.comp.field"
 	});
 	return Field;
-}, /* bExport= */ true);
+});

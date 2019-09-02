@@ -1080,14 +1080,12 @@ sap.ui.define([
 
 	QUnit.test("test oDataModel update", function(assert) {
 		var done = assert.async();
-		var iCount = 0;
 
 		oModel.update("/ProductSet('AD-1000')", {
 			Name : "Test"
 		}, {
 			success : function(oData, oResponse) {
 				assert.ok(true, "request succeeded");
-				iCount++;
 				done();
 			},
 			error : function(oError) {
@@ -7290,8 +7288,8 @@ sap.ui.define([
 
 				function fnReload() {
 					oPanel.getContent()[0].detachEvent('_rowsUpdated', fnReload);
-					var fnOrig = sap.ui.model.odata.v2.ODataModel.prototype.read;
-					sap.ui.model.odata.v2.ODataModel.prototype.read = function() {
+					var fnOrig = ODataModel.prototype.read;
+					ODataModel.prototype.read = function() {
 						var that = this;
 						var args = arguments;
 						setTimeout(function() {
@@ -7301,7 +7299,7 @@ sap.ui.define([
 
 					oPanel2.bindElement("/ProductSet('HT-1000')");
 					setTimeout(function() {
-						sap.ui.model.odata.v2.ODataModel.prototype.read = fnOrig;
+						ODataModel.prototype.read = fnOrig;
 						var oTable = oPanel.getContent()[0];
 						oTable.bindAggregation("rows", {
 							path:"/ProductSet",

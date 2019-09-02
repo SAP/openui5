@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-/*global console, QUnit */
+/*global QUnit */
 sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 	"use strict";
 	var storageType = Storage.Type;

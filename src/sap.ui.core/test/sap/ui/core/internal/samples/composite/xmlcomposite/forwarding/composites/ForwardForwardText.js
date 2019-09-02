@@ -21,4 +21,4 @@ sap.ui.define([
 	});
 
 	return ForwardForwardText;
-}, /* bExport= */true);
+});

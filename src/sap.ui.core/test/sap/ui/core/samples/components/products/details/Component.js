@@ -2,10 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/table/Table'],
-	function(jQuery, UIComponent, View, ResourceModel, Table) {
+sap.ui.define(['sap/ui/core/UIComponent', 'sap/ui/core/library', 'sap/ui/core/mvc/View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/table/Table'],
+	function(UIComponent, coreLibrary, View, ResourceModel, Table) {
 	"use strict";
 
+
+	// shortcut for sap.ui.core.mvc.ViewType
+	var ViewType = coreLibrary.mvc.ViewType;
 
 	// new Component
 	var Component = UIComponent.extend("samples.components.products.details.Component", {
@@ -32,9 +35,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/
 	* sets model for internationalization files and subscribes to the event bus for binding context changes
 	*/
 	Component.prototype.createContent = function(){
-		this.view = sap.ui.view({id:this.createId("myView"),viewName:"samples.components.products.details.view.Details",type:sap.ui.core.mvc.ViewType.JS});
+		this.view = sap.ui.view({id:this.createId("myView"),viewName:"samples.components.products.details.view.Details",type:ViewType.JS});
 		this.view.setModel(new ResourceModel({bundleName: this.getProperty("i18nBundle")}), "texts");
-		var oSubscription= this.getEventBusSubscription();
+		var oSubscription = this.getEventBusSubscription();
 		oSubscription.fn = this.onContextChanged;
 		sap.ui.getCore().getEventBus().subscribe(oSubscription.channel, oSubscription.event, oSubscription.fn, this);
 		return this.view;

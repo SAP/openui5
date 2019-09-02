@@ -1,5 +1,5 @@
-sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/util/MockServer', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/v2/ODataModel', 'jquery.sap.global', 'jquery.sap.script'],
-	function(MessageToast, Controller, MockServer, JSONModel, ODataModel, jQuery/*, jQuerySapScript*/) {
+sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/util/MockServer', 'sap/ui/model/json/JSONModel', 'sap/ui/model/odata/v2/ODataModel', 'sap/ui/model/type/String', 'sap/ui/thirdparty/jquery'],
+	function(MessageToast, Controller, MockServer, JSONModel, ODataModel, TypeString, jQuery) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.DataStateOData.Page", {
@@ -9,9 +9,6 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			this.addHighlightStyle();
 			this.sMockServerBaseUri = "test-resources/sap/ui/core/demokit/sample/DataStateOData/mockdata/";
 			this.sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
-
-			jQuery.sap.require("sap.ui.core.util.MockServer");
-
 			this.oMockServer = new MockServer({rootUri : this.sServiceUri});
 			// configure
 			MockServer.config({
@@ -33,7 +30,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			this.getView().setModel(this.oDataStateModel,"DataState");
 			this.getView().bindElement("/ProductSet('HT-1000')");
 
-			var oNameType = new sap.ui.model.type.String();
+			var oNameType = new TypeString();
 			oNameType.setConstraints({maxlength:15});
 
 			this.byId("Name").bindProperty("value",{path:"Name",type:oNameType});

@@ -5,11 +5,15 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/Control",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/Date",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, CalendarType, DateFormat, DateType, ODataType, TestUtils) {
+], function (jQuery, Log, CalendarType, Control, DateFormat, FormatException, ParseException, ValidateException, DateType, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
@@ -26,10 +30,10 @@ sap.ui.define([
 		TestUtils.withNormalizedMessages(function () {
 			try {
 				if (sAction === "parseValue") {
-					fnExpectedException = sap.ui.model.ParseException;
+					fnExpectedException = ParseException;
 					oType[sAction](oValue, "string");
 				} else if (sAction === "validateValue") {
-					fnExpectedException = sap.ui.model.ValidateException;
+					fnExpectedException = ValidateException;
 					oType[sAction](oValue);
 				}
 				assert.ok(false);
@@ -143,7 +147,7 @@ sap.ui.define([
 				oType.formatValue("2015-12-24", sType);
 				assert.ok(false);
 			} catch (e) {
-				assert.ok(e instanceof sap.ui.model.FormatException);
+				assert.ok(e instanceof FormatException);
 				assert.strictEqual(e.message,
 					"Don't know how to format sap.ui.model.odata.type.Date to " + sType);
 			}
@@ -203,7 +207,7 @@ sap.ui.define([
 				oType.parseValue("foo", sType);
 				assert.ok(false);
 			} catch (e) {
-				assert.ok(e instanceof sap.ui.model.ParseException, sType + ": exception");
+				assert.ok(e instanceof ParseException, sType + ": exception");
 				assert.strictEqual(e.message,
 					"Don't know how to parse " + oType.getName() + " from " + sType,
 					sType + ": message");
@@ -234,7 +238,7 @@ sap.ui.define([
 			oType.validateValue("foo");
 			assert.ok(false);
 		} catch (e) {
-			assert.ok(e instanceof sap.ui.model.ValidateException);
+			assert.ok(e instanceof ValidateException);
 			assert.strictEqual(e.message, "Illegal " + oType.getName() + " value: foo");
 		}
 
@@ -242,7 +246,7 @@ sap.ui.define([
 			oType.validateValue(["0715-11-01"]);
 			assert.ok(false);
 		} catch (e) {
-			assert.ok(e instanceof sap.ui.model.ValidateException);
+			assert.ok(e instanceof ValidateException);
 			assert.strictEqual(e.message, "Illegal " + oType.getName() + " value: 0715-11-01");
 		}
 
@@ -290,7 +294,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("localization change", function (assert) {
-		var oControl = new sap.ui.core.Control(),
+		var oControl = new Control(),
 			oType = new DateType();
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
