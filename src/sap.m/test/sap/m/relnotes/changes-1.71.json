@@ -1,0 +1,103 @@
+{
+  "1.71.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "cc4fc84606241b93e84a05d1b53c41c3a33fe4ee",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Now DatePicker does not override the style of the Dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980344287"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980343246"
+          }
+        ]
+      },
+      {
+        "id": "da997ba896c6e86db9b735c85b35f2ec56e571da",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Scrollbar detection improved for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980317311"
+          }
+        ]
+      },
+      {
+        "id": "83835f17f9e454f54313f1aa6dc8cefa23d5af20",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Formatted text has an inline positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980333336"
+          }
+        ]
+      },
+      {
+        "id": "aa701ca2aa9c533541dbe9ff06535b2ee7e7c9fc",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Cloning is now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980341769"
+          }
+        ]
+      },
+      {
+        "id": "962ff2ec8705f36550122c79e08bdcc99d940747",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Delete list mode is always used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970374013"
+          }
+        ]
+      },
+      {
+        "id": "55af9bb76cd2d6cb98b9fd2337c4bdfad4aeccaf",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Inverted status is shown correctly in ObjectPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980319996"
+          }
+        ]
+      },
+      {
+        "id": "ae170d241142823b1ecdaf32f53fee4d02cb3b84",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Calculating height in percents corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970334751"
+          }
+        ]
+      },
+      {
+        "id": "5d7c8645aa44d5833273bee8f5d3b6f02e8e73cc",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Click delegate changed to tap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346450"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980345532"
+          }
+        ]
+      }
+    ]
+  }
+}
