@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "objectCard2",
 		"type": "card",
 		"i18n": "i18n/i18n.properties"
 	},

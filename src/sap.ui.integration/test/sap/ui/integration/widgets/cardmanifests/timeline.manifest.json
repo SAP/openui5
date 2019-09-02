@@ -1,5 +1,6 @@
 {
 	"sap.app": {
+		"id": "timelineCard1",
 		"type": "card"
 	},
 	"sap.card": {

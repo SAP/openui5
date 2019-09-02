@@ -1,6 +1,7 @@
 {
 	"sap.app": {
-		"type": "card"
+		"type": "card",
+		"id": "listCard1"
 	},
 	"sap.card": {
 		"type": "List",
