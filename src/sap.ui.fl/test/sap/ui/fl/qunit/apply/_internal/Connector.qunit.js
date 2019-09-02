@@ -122,15 +122,15 @@ sap.ui.define([
 			});
 
 			sandbox.stub(JsObjectConnector, "loadFlexData").resolves([{
-				changes : [oChange1]
+				changes : [oChange1.getDefinition()]
 			}, {
-				changes : [oChange2]
+				changes : [oChange2.getDefinition()]
 			}]);
 
 			return Connector.loadFlexData({reference : "app.id"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 2, "both changes were added to the result");
-				assert.deepEqual(oResult.changes[0], oChange1, "the change from the first bundle is the first change in the response");
-				assert.deepEqual(oResult.changes[1], oChange2, "the change from the second bundle is the second change in the response");
+				assert.deepEqual(oResult.changes[0], oChange1.getDefinition(), "the change from the first bundle is the first change in the response");
+				assert.deepEqual(oResult.changes[1], oChange2.getDefinition(), "the change from the second bundle is the second change in the response");
 			});
 		});
 	});
@@ -262,6 +262,36 @@ sap.ui.define([
 				assert.deepEqual(variants[0], oStandardVariant, "the standard variant was generated and is within the response at the first position");
 				assert.deepEqual(variants[1], oVariant1, "the passed variant from the first connector is contained");
 				assert.deepEqual(variants[2], oVariant2, "the passed variant from the second connector is contained");
+			});
+		});
+
+		QUnit.test("Given 2 connectors provide a change with the same id - i.e. not deleted file from changes-bundle.json", function (assert) {
+			var oStaticFileConnectorResponse = merge({}, EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
+			var oLrepConnectorResponse = merge({}, EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
+
+			var oChange1 = new Change({
+				fileName : "rename_id_123",
+				fileType : "ctrl_variant",
+				layer : "VENDOR",
+				reference : "app.id",
+				content: {}
+			});
+			oStaticFileConnectorResponse.changes = [oChange1.getDefinition()];
+
+			var oChange2 = new Change({
+				fileName : "rename_id_123",
+				fileType : "ctrl_variant",
+				layer : "VENDOR",
+				reference : "app.id",
+				content: {}
+			});
+			oLrepConnectorResponse.changes = [oChange2.getDefinition()];
+
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(oLrepConnectorResponse);
+
+			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.equal(oResult.changes.length, 1, "only one change was returned");
 			});
 		});
 

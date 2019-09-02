@@ -207,7 +207,40 @@ sap.ui.define([
 		return oResult;
 	}
 
+
 	var oConnectorResultMerger = {};
+
+	/**
+	 * Concatenates all changes from a list of flex data request responses into a passed result object;
+	 * The changes section of the passed object will be cleared.
+	 *
+	 * @param {object[]} aResponses List of responses containing a changes property to be concatenated
+	 * @param {object[]} aResponses.changes List of the change definitions
+	 * @returns {object[]} Merged array of changes
+	 * @private
+	 * @ui5-restricted sap.ui.fl.apply._internal.ConnectorResultMerger, sap.ui.fl.Cache
+	 */
+	oConnectorResultMerger._concatChanges = function(aResponses) {
+		var aChanges = [];
+
+		aResponses.forEach(function (oResponse) {
+			aChanges = aChanges.concat(oResponse.changes);
+		});
+
+		var aChangeIds = [];
+		aChanges = aChanges.filter(function (oChange) {
+			var sFileName = oChange.fileName;
+			var bChangeAlreadyAdded = aChangeIds.indexOf(sFileName) !== -1;
+			if (bChangeAlreadyAdded) {
+				return false;
+			}
+
+			aChangeIds.push(sFileName);
+			return true;
+		});
+
+		return aChanges;
+	};
 
 	/**
 	 * Merges the results from all involved connectors.
@@ -222,13 +255,9 @@ sap.ui.define([
 	 */
 	oConnectorResultMerger.merge = function(mPropertyBag) {
 		var oResult = {
-			changes: [],
+			changes: oConnectorResultMerger._concatChanges(mPropertyBag.responses),
 			variantSection: {}
 		};
-
-		mPropertyBag.responses.forEach(function (oResponse) {
-			oResult.changes = oResult.changes.concat(oResponse.changes);
-		});
 
 		if (mPropertyBag.variantSectionSufficient) {
 			oResult.variantSection = findVariantSection(mPropertyBag.responses);
