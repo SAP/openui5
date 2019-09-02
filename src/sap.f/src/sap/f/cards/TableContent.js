@@ -18,7 +18,9 @@ sap.ui.define([
 		"sap/f/cards/ActionEnablement",
 		"sap/ui/core/library",
 		"sap/m/library",
-		"sap/f/cards/BindingResolver"
+		"sap/f/cards/BindingResolver",
+		"sap/f/cards/BindingHelper",
+		"sap/f/cards/IconFormatter"
 	], function (
 		library,
 		ManagedObject,
@@ -35,7 +37,9 @@ sap.ui.define([
 		ActionEnablement,
 		coreLibrary,
 		mobileLibrary,
-		BindingResolver
+		BindingResolver,
+		BindingHelper,
+		IconFormatter
 	) {
 		"use strict";
 
@@ -280,11 +284,14 @@ sap.ui.define([
 			}
 
 			if (oColumn.icon) {
-				return new Avatar({
-					src: oColumn.icon.src,
+				var oAvatar = new Avatar({
 					displayShape: oColumn.icon.shape,
 					displaySize: AvatarSize.XS
 				});
+				BindingHelper.bindProperty(oAvatar, "src", oColumn.icon.src, function (sValue) {
+					return IconFormatter.formatSrc(sValue, this._sAppId);
+				}.bind(this));
+				return oAvatar;
 			}
 
 			if (oColumn.progressIndicator) {

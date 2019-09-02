@@ -1,0 +1,49 @@
+{
+	"sap.app": {
+		"id": "card.bundle.timeline",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Timeline",
+		"header": {
+			"title": "{{title}}",
+			"icon": {
+				"src": "sap-icon://group"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./bundles/timelinebundle/mockdata/employees.json"
+				},
+				"path": "/Employees"
+			},
+			"item": {
+				"dateTime": {
+					"label": "{{hireDate_label}}",
+					"value": "{HireDate}"
+				},
+				"description": {
+					"label": "{{jobResponsibilities_label}}",
+					"value": "{JobResponsibilities}"
+				},
+				"title": {
+					"label": "{{jobTitle_label}}",
+					"value": "{JobTitle}"
+				},
+				"owner": {
+					"label": "{{name_label}}",
+					"value": "{Name}"
+				},
+				"ownerImage": {
+					"label": "{{picture_label}}",
+					"value": "{Photo}"
+				},
+				"icon": {
+					"src": "{Icon}"
+				}
+			}
+		}
+	}
+}

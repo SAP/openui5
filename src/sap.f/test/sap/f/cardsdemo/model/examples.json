@@ -175,5 +175,11 @@
 		"description": "Example with card translations and count binding",
 		"route": "translation",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Card bundles",
+		"description": "Example with card bundles with static resources and baseURL usage",
+		"route": "bundle",
+		"group": "Other Card Examples"
 	}
 ]

@@ -1,8 +1,16 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem", "sap/ui/base/ManagedObject", "sap/f/cards/ActionEnablement"],
-	function (BaseContent, sapMList, StandardListItem, ManagedObject, ActionEnablement) {
+sap.ui.define([
+		"sap/f/cards/BaseContent",
+		"sap/m/List",
+		"sap/m/StandardListItem",
+		"sap/ui/base/ManagedObject",
+		"sap/f/cards/ActionEnablement",
+		"sap/f/cards/IconFormatter",
+		"sap/f/cards/BindingHelper"
+	],
+	function (BaseContent, sapMList, StandardListItem, ManagedObject, ActionEnablement, IconFormatter, BindingHelper) {
 		"use strict";
 
 		/**
@@ -121,16 +129,18 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 		 * Attaches all required actions.
 		 *
 		 * @private
-		 * @param {Object} mItem The item template of the configuration object
+		 * @param {Object} mItem The item template of the configuration object.
 		 */
 		ListContent.prototype._setItem = function (mItem) {
 			/* eslint-disable no-unused-expressions */
 			mItem.title && this._bindObjectItemProperty("title", mItem.title);
 			mItem.description && this._bindObjectItemProperty("description", mItem.description);
-			mItem.icon && mItem.icon.src && this._bindItemProperty("icon", mItem.icon.src);
-			mItem.highlight && this._bindItemProperty("highlight", mItem.highlight);
-			mItem.info && this._bindItemProperty("info", mItem.info.value);
-			mItem.info && this._bindItemProperty("infoState", mItem.info.state);
+			mItem.icon && mItem.icon.src && BindingHelper.bindProperty(this._oItemTemplate, "icon", mItem.icon.src, function (sValue) {
+				return IconFormatter.formatSrc(sValue, this._sAppId);
+			}.bind(this));
+			mItem.highlight && BindingHelper.bindProperty(this._oItemTemplate, "highlight", mItem.highlight);
+			mItem.info && BindingHelper.bindProperty(this._oItemTemplate, "info", mItem.info.value);
+			mItem.info && BindingHelper.bindProperty(this._oItemTemplate, "infoState", mItem.info.state);
 			/* eslint-enable no-unused-expressions */
 
 			this._attachActions(mItem, this._oItemTemplate);
@@ -193,36 +203,14 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/List", "sap/m/StandardListItem"
 		 * }
 		 *
 		 * @private
-		 * @param {string} sPropertyName The name of the property
-		 * @param {string|Object} vPropertyValue The value of the property
+		 * @param {string} sPropertyName The name of the property.
+		 * @param {string|Object} vPropertyValue The value of the property.
 		 */
 		ListContent.prototype._bindObjectItemProperty = function (sPropertyName, vPropertyValue) {
 			if (typeof vPropertyValue === "string") {
-				this._bindItemProperty(sPropertyName, vPropertyValue);
+				BindingHelper.bindProperty(this._oItemTemplate, sPropertyName, vPropertyValue);
 			} else {
-				this._bindItemProperty(sPropertyName, vPropertyValue.value);
-			}
-		};
-
-		/**
-		 * Tries to create a binding info object based on sPropertyValue.
-		 * If succeeds the binding info will be used for property binding.
-		 * Else sPropertyValue will be set directly on the item template.
-		 *
-		 * @private
-		 * @param {string} sPropertyName The name of the property
-		 * @param {string} sPropertyValue The value of the property
-		 */
-		ListContent.prototype._bindItemProperty = function (sPropertyName, sPropertyValue) {
-			if (!sPropertyValue) {
-				return;
-			}
-
-			var oBindingInfo = ManagedObject.bindingParser(sPropertyValue);
-			if (oBindingInfo) {
-				this._oItemTemplate.bindProperty(sPropertyName, oBindingInfo);
-			} else {
-				this._oItemTemplate.setProperty(sPropertyName, sPropertyValue);
+				BindingHelper.bindProperty(this._oItemTemplate, sPropertyName, vPropertyValue.value);
 			}
 		};
 

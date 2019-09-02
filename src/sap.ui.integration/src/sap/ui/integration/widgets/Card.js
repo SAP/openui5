@@ -456,10 +456,9 @@ sap.ui.define([
 			return;
 		}
 
-		var sAppId = this._oCardManifest.get("/sap.app/id");
-		if (sAppId) {
-			LoaderExtensions.registerResourcePath(sAppId.replace(/\./g, "/"), this._oCardManifest.getUrl());
-			this.getModel("parameters").setProperty("/appId", sAppId);
+		this._sAppId = this._oCardManifest.get("/sap.app/id");
+		if (this._sAppId) {
+			LoaderExtensions.registerResourcePath(this._sAppId.replace(/\./g, "/"), this._oCardManifest.getUrl());
 		} else {
 			Log.error("Card sap.app/id entry in the manifest is mandatory");
 		}
@@ -648,7 +647,7 @@ sap.ui.define([
 		this._setTemporaryContent();
 
 		BaseContent
-			.create(sCardType, oManifestContent, this._oServiceManager, this._oDataProviderFactory)
+			.create(sCardType, oManifestContent, this._oServiceManager, this._oDataProviderFactory, this._sAppId)
 			.then(function (oContent) {
 				this._setCardContent(oContent);
 			}.bind(this))
@@ -668,7 +667,7 @@ sap.ui.define([
 	 */
 	Card.prototype._setCardHeader = function (CardHeader) {
 		var oSettings = this._oCardManifest.get(MANIFEST_PATHS.HEADER),
-			oHeader = CardHeader.create(oSettings, this._oServiceManager, this._oDataProviderFactory);
+			oHeader = CardHeader.create(oSettings, this._oServiceManager, this._oDataProviderFactory, this._sAppId);
 
 		oHeader.attachEvent("action", function (oEvent) {
 			this.fireEvent("action", {
