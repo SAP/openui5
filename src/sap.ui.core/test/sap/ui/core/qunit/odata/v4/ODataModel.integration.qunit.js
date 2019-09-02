@@ -1328,8 +1328,8 @@ sap.ui.define([
 						continue;
 					}
 					for (i in that.mChanges[sControlId]) {
-						assert.ok(false, sControlId + ": " + that.mChanges[sControlId][i]
-							+ " (not set)");
+						assert.ok(false, sControlId + ": "
+							+ JSON.stringify(that.mChanges[sControlId][i]) + " (not set)");
 					}
 				}
 				for (sControlId in that.mListChanges) {
@@ -1338,7 +1338,7 @@ sap.ui.define([
 					for (i in aExpectedValuesPerRow) {
 						for (j in aExpectedValuesPerRow[i]) {
 							assert.ok(false, sControlId + "[" + i + "]: "
-								+ aExpectedValuesPerRow[i][j] + " (not set)");
+								+ JSON.stringify(aExpectedValuesPerRow[i][j]) + " (not set)");
 						}
 					}
 				}
