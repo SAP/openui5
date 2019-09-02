@@ -12,8 +12,11 @@
 	// centering the content of the ::after element
 	// does not work in IE if directly set on ::after
 	// 1.75rem - 4px (1px border and 1px offset per side)
-	line-height: 1.5rem;
-	border-radius: .2rem;
+	line-height: 1.35rem;
+	border-radius: .25rem;
+	background-color: @sapUiButtonLiteBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
+	color: @sapUiButtonLiteTextColor;
 
 	&:focus::after {
 		border-color: @sapUiContentFocusColor;
@@ -24,12 +27,12 @@
 		left: 1px;
 		bottom: 1px;
 		right: 1px;
-		border: 1px dotted transparent;
+		border: @sapUiButtonBorderWidth dotted transparent;
 	}
 
 	&:hover {
 		background-color: @sapUiButtonLiteHoverBackground;
-		border: @sapUiButtonLiteHoverBorderColor;
+		border-color: @sapUiButtonLiteHoverBorderColor;
 	}
 
 	&:active {
