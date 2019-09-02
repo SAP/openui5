@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
@@ -31,6 +32,7 @@ function (
 	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
+	ElementUtil,
 	Plugin,
 	Remove,
 	Rename,
@@ -167,7 +169,7 @@ function (
 		QUnit.test("when the control has no stable id but is bound and binding template has stable id", function(assert) {
 			//stub list binding
 			var oBindingTemplateControl = new Button("stable");
-			sandbox.stub(OverlayUtil, "getAggregationInformation").returns({
+			sandbox.stub(ElementUtil, "getAggregationInformation").returns({
 				templateId : oBindingTemplateControl.getId()
 			});
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), true, "then ID of the binding template is considered stable");
@@ -177,7 +179,7 @@ function (
 		QUnit.test("when the control has no stable id but is bound and binding template has no stable id", function(assert) {
 			//stub list binding
 			var oBindingTemplateControl = new Button();
-			sandbox.stub(OverlayUtil, "getAggregationInformation").returns({
+			sandbox.stub(ElementUtil, "getAggregationInformation").returns({
 				templateId : oBindingTemplateControl.getId()
 			});
 			assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then ID of the binding template is considered unstable");
