@@ -4,3 +4,9 @@
 /* ============================= */
 
 @_sap_m_Button_EmphasizedFocusColor: @sapUiContentContrastFocusColor;
+
+.sapContrastPlus.sapMBtn:not(.sapMBtnDisabled) .sapMBtnBack > .sapMBtnIcon,
+.sapContrastPlus.sapMBtn:not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon,
+.sapContrastPlus.sapMBtn:not(.sapMBtnDisabled) .sapMBtnGhost > .sapMBtnIcon {
+	color: @sapButton_IconColor;
+}
