@@ -340,4 +340,68 @@ sap.ui.define([
 		oNormalizeFilterValueSpy.restore();
 		oToUpperCaseSpy.restore();
 	});
+
+	QUnit.module("FilterProcessor.groupFilters");
+
+	QUnit.test("groupFilters with same path", function(assert) {
+		var oGroupedFilter;
+		var aFilters = [
+			new Filter({
+				path: 'Price',
+				operator: FilterOperator.EQ,
+				value1: 100
+			}),
+			new Filter({
+				path: 'Price',
+				operator: FilterOperator.LT,
+				value1: 150
+			}),
+			new Filter({
+				path: 'Price',
+				operator: FilterOperator.GT,
+				value1: 1
+			})
+		];
+
+		oGroupedFilter = FilterProcessor.groupFilters(aFilters);
+		assert.ok(oGroupedFilter, "Filter object should be returned.");
+		assert.ok(oGroupedFilter.isA("sap.ui.model.Filter"), "sap.ui.model.Filter object should be returned.");
+		assert.equal(oGroupedFilter.aFilters.length, 3, "Correct number of filters should be returned.");
+		assert.ok(oGroupedFilter._bMultiFilter, "Filter object should be a MultiFilter");
+		assert.equal(oGroupedFilter.bAnd, false, "Filters should be ORed");
+	});
+
+	QUnit.test("groupFilters with different path", function(assert) {
+		var oGroupedFilter;
+		var aFilters = [
+			new Filter({
+				path: 'Price',
+				operator: FilterOperator.EQ,
+				value1: 100
+			}),
+			new Filter({
+				path: 'Price',
+				operator: FilterOperator.LT,
+				value1: 150
+			}),
+			new Filter({
+				path: 'Quantity',
+				operator: FilterOperator.LT,
+				value1: 200
+			})
+		];
+
+		oGroupedFilter = FilterProcessor.groupFilters(aFilters);
+
+		assert.ok(oGroupedFilter, "Filter object should be returned.");
+		assert.ok(oGroupedFilter.isA("sap.ui.model.Filter"), "sap.ui.model.Filter object should be returned.");
+		assert.equal(oGroupedFilter.aFilters.length, 2, "Correct number of filters should be returned.");
+		assert.ok(oGroupedFilter._bMultiFilter, "Filter object should be a MultiFilter");
+		assert.equal(oGroupedFilter.bAnd, true, "Filters should be ANDed");
+
+		assert.ok(oGroupedFilter.aFilters[0]._bMultiFilter, "First Filter object should be a MultiFilter");
+		assert.equal(oGroupedFilter.aFilters[0].bAnd, false, "First Filter object should be ORed");
+
+		assert.notOk(oGroupedFilter.aFilters[1]._bMultiFilter, "Second Filter should not be a MultiFilter");
+	});
 });
