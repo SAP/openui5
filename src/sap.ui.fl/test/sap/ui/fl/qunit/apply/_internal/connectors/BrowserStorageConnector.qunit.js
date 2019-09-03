@@ -4,21 +4,17 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	BrowserStorageUtils,
 	JsObjectConnector,
 	SessionStorageConnector,
-	LocalStorageConnector,
 	ConnectorUtils,
 	JsObjectWriteConnector,
 	SessionStorageWriteConnector,
-	LocalStorageWriteConnector,
 	jQuery
 ) {
 	"use strict";

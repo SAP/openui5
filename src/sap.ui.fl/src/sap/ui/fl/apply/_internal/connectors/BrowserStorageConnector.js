@@ -17,18 +17,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function loadDataFromStorage (oStorage, sReference) {
+	function loadDataFromStorage (mPropertyBag) {
 		var aFlexObjects = [];
-		var oFlexObject;
-		// getItems() is used in the internal keys of the JsObjectStorage
-		var oRealStorage = oStorage.getItems && oStorage.getItems() || oStorage;
 
-		BrowserStorageUtils.forEachChangeInStorage(oRealStorage, function(sKey) {
-			oFlexObject = JSON.parse(oStorage.getItem(sKey));
-			var bSameReference = oFlexObject.reference === sReference || oFlexObject.reference + ".Component" === sReference;
-			if (bSameReference) {
-				aFlexObjects.push(oFlexObject);
-			}
+		BrowserStorageUtils.forEachChangeInStorage(mPropertyBag, function(mFlexObject) {
+			aFlexObjects.push(mFlexObject.changeDefinition);
 		});
 
 		return aFlexObjects;
@@ -121,7 +114,10 @@ sap.ui.define([
 		 * @returns {Promise<Object>} resolving with an object containing a data contained in the changes-bundle
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var aFlexObjects = loadDataFromStorage(this.oStorage, mPropertyBag.reference);
+			var aFlexObjects = loadDataFromStorage({
+				storage: this.oStorage,
+				reference: mPropertyBag.reference
+			});
 			var mGroupedFlexObjects = getGroupedFlexObjects(aFlexObjects);
 			var aResponses = filterAndSortResponses(mGroupedFlexObjects);
 			return Promise.resolve(aResponses);
