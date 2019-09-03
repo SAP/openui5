@@ -16,7 +16,7 @@
 @_sap_m_Token_TokenCompactSize: @sapMFontSmallSize  + @_sap_m_Token_TokenCompactPadding;
 
 .sapMToken {
-	border: 1px solid @_sap_m_Token_BorderColor;
+	border: @sapUiButtonBorderWidth solid @_sap_m_Token_BorderColor;
 	background: @_sap_m_Token_BackgroundColor;
 	font-size: @sapMFontMediumSize;
 	border-radius: 0.25rem;
@@ -30,26 +30,26 @@
 
 .sapMTokenSelected,
 .sapMToken.sapMTokenReadOnly.sapMTokenSelected {
-	color: @sapUiToggleButtonPressedTextColor;
-	background: @sapUiToggleButtonPressedBackground;
-	border: 1px solid @sapUiToggleButtonPressedBorderColor;
+	color: @sapUiButtonSelectedTextColor;
+	background: @sapUiButtonSelectedBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
 	border-radius: 0.25rem;
 }
 
 .sapMTokenSelected .sapMTokenIcon,
 .sapMTokenSelected .sapMTokenText {
-	color: @sapUiToggleButtonPressedTextColor;
+	color: @sapUiButtonSelectedTextColor;
 }
 
 html.sap-desktop .sapMToken:hover {
-	border: 1px solid @_sap_m_Token_HoverBorderColor;
+	border: @sapUiButtonBorderWidth solid @_sap_m_Token_HoverBorderColor;
 	background: @_sap_m_Token_HoverBackgroundColor;
 	border-radius: 0.25rem;
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:hover {
-	background: @sapUiToggleButtonPressedHoverBackground;
-	border: 1px solid @sapUiToggleButtonPressedHoverBorderColor;
+	background: @sapUiButtonSelectedHoverBackground;
+	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedHoverBorderColor;
 	border-radius: 0.25rem;
 }
 
