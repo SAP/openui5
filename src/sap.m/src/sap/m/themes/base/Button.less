@@ -607,3 +607,16 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 		border-radius:    0;
 	}
 }
+
+
+.sapMLIBActive {
+	.sapMBtnTransparent,
+	.sapMBtnTransparent > .sapMBtnIcon,
+	.sapMBtnGhost,
+	.sapMBtnGhost > .sapMBtnIcon {
+		color: @sapUiListActiveTextColor;
+	}
+}
+.sapMLIBActive .sapMBtnGhost {
+	border-color: @sapUiListActiveTextColor;
+}
