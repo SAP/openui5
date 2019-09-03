@@ -1970,6 +1970,70 @@ function(
 		});
 	});
 
+	QUnit.module("Utils.arrayIncludesWith", {
+		beforeEach: function() {
+			this.fnComperator = function (oSource, oTarget) {
+				return oSource.id === oTarget.id;
+			};
+			this.oIncludedObject1 = { id: "id1" };
+			this.oIncludedObject2 = { id: "id2" };
+			this.oExcludedObject1 = { id: "id3" };
+			this.aObjects = [this.oIncludedObject1, this.oIncludedObject2];
+		},
+		afterEach: function() {}
+	}, function () {
+		QUnit.test("when called with empty array", function(assert) {
+			assert.notOk(Utils.arrayIncludesWith([], {}, function() {}), "then 'false' is returned");
+		});
+
+		QUnit.test("when called with target object included in passed array", function(assert) {
+			assert.ok(Utils.arrayIncludesWith(this.aObjects, Object.assign({}, this.oIncludedObject1), this.fnComperator), "then 'true' is returned");
+			assert.ok(Utils.arrayIncludesWith(this.aObjects, Object.assign({}, this.oIncludedObject2), this.fnComperator), "then 'true' is returned");
+		});
+
+		QUnit.test("when called with target object not included in passed array", function(assert) {
+			assert.notOk(Utils.arrayIncludesWith(this.aObjects, this.oExcludedObject1, this.fnComperator), "then 'false' is returned");
+		});
+	});
+
+	QUnit.module("Utils.uniqWith", {
+		beforeEach: function() {
+			this.fnComperator = function (oSource, oTarget) {
+				return oSource.id === oTarget.id;
+			};
+			this.oIncludedObject1 = { id: "id1" };
+			this.oIncludedObject2 = { id: "id2" };
+			this.oIncludedObject2a = { id: "id2" };
+			this.oIncludedObject2b = { id: "id2" };
+			this.oIncludedObject3 = { id: "id3" };
+			this.aWithDuplicates = [
+				this.oIncludedObject1,
+				this.oIncludedObject2,
+				this.oIncludedObject3,
+				this.oIncludedObject2a,
+				this.oIncludedObject2b
+			];
+			this.aWithoutDuplicates = [
+				this.oIncludedObject1,
+				this.oIncludedObject2,
+				this.oIncludedObject3
+			];
+		},
+		afterEach: function() {}
+	}, function () {
+		QUnit.test("when called with empty array", function(assert) {
+			assert.notOk(Utils.uniqWith([], function() {}).length, "then empty array is returned");
+		});
+
+		QUnit.test("when called with array without duplicates", function(assert) {
+			assert.deepEqual(Utils.uniqWith(this.aWithoutDuplicates, this.fnComperator), this.aWithoutDuplicates, "then the passed Array is returned");
+		});
+
+		QUnit.test("when called with array with duplicates", function(assert) {
+			assert.deepEqual(Utils.uniqWith(this.aWithDuplicates, this.fnComperator), this.aWithoutDuplicates, "then array only with uniqe entries is returned ");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});
