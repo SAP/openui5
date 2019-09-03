@@ -1153,14 +1153,14 @@ sap.ui.define([
 		QUnit.test("updateAnalyticalInfo: select causes warnings #" + i, function (assert) {
 			var oBinding,
 				done = assert.async(),
-				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
+				oModel = new ODataModelV2(sServiceURL, {
 					tokenHandling : false,
 					json : true
 				}),
 				that = this;
 
-			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
-			oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, sPath, null, [], [], {
+			ODataModelAdapter.apply(oModel);
+			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
 				useBatchRequests : true,
 				numberOfExpandedLevels : 0,
@@ -1171,7 +1171,7 @@ sap.ui.define([
 			// code under test - constructor initializes aAdditionalSelects
 			assert.deepEqual(oBinding.aAdditionalSelects, []);
 
-			sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
+			AnalyticalTreeBindingAdapter.apply(oBinding);
 
 			oModel.attachMetadataLoaded(function () {
 				var oMeasure;
@@ -1237,20 +1237,20 @@ sap.ui.define([
 		QUnit.test("updateAnalyticalInfo: additional selects - " + i, function (assert) {
 			var oBinding,
 				done = assert.async(),
-				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
+				oModel = new ODataModelV2(sServiceURL, {
 					tokenHandling : false,
 					json : true
 				});
 
-			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
-			oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, sPath, null, [], [], {
+			ODataModelAdapter.apply(oModel);
+			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
 				useBatchRequests : true,
 				numberOfExpandedLevels : 0,
 				noPaging : false,
 				select : oFixture.select
 			});
-			sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
+			AnalyticalTreeBindingAdapter.apply(oBinding);
 
 			oModel.attachMetadataLoaded(function () {
 				// Code under test
@@ -1312,12 +1312,12 @@ sap.ui.define([
 			var oBinding,
 				done = assert.async(),
 				aExpectedSelects = oFixture.expectedSelects.slice(),
-				oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURL, {
+				oModel = new ODataModelV2(sServiceURL, {
 					tokenHandling : false,
 					json : true
 				});
 
-			sap.ui.model.analytics.ODataModelAdapter.apply(oModel);
+			ODataModelAdapter.apply(oModel);
 
 			// mock read to check whether $select is properly computed
 			oModel.read = function () {
@@ -1339,14 +1339,14 @@ sap.ui.define([
 				return {};
 			};
 
-			oBinding = new sap.ui.model.analytics.AnalyticalBinding(oModel, sPath, null, [], [], {
+			oBinding = new AnalyticalBinding(oModel, sPath, null, [], [], {
 				analyticalInfo : oFixture.analyticalInfo,
 				useBatchRequests : oFixture.useBatchRequests,
 				numberOfExpandedLevels : oFixture.numberOfExpandedLevels,
 				noPaging : false,
 				select : oFixture.select
 			});
-			sap.ui.model.analytics.AnalyticalTreeBindingAdapter.apply(oBinding);
+			AnalyticalTreeBindingAdapter.apply(oBinding);
 
 			oModel.attachMetadataLoaded(function () {
 				oBinding.initialize();

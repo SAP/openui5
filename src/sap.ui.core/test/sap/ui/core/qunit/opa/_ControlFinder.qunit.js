@@ -1,7 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/test/_ControlFinder",
-	"sap/ui/thirdparty/jquery",
+	"sap/m/library",
 	"sap/m/Button",
 	"sap/m/SearchField",
 	"sap/m/List",
@@ -10,13 +10,16 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/_LogCollector"
-], function (_ControlFinder, $, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals,
+], function (_ControlFinder,  mobileLibrary, Button, SearchField, List, ObjectListItem, JSONModel, PropertyStrictEquals,
 		AggregationLengthEquals, _LogCollector) {
 	"use strict";
 
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
 	QUnit.module("_ControlFinder - controls", {
 		beforeEach: function () {
-			this.oButton = new Button("myId", {text : "foo", type: sap.m.ButtonType.Emphasized});
+			this.oButton = new Button("myId", {text : "foo", type: ButtonType.Emphasized});
 			this.oButtonWithSpecialId = new Button("test::button.ID");
 			this.oObjectListItem = new ObjectListItem({title: "testItem", number: 8});
 			this.oButton.placeAt("qunit-fixture");
@@ -47,7 +50,7 @@ sap.ui.define([
 			controlType: "sap.m.Button",
 			propertyStrictEquals: [
 				{name: "text", value: "foo"},
-				{name: "type", value: sap.m.ButtonType.Emphasized}
+				{name: "type", value: ButtonType.Emphasized}
 			]
 		});
 
@@ -59,7 +62,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should get control for element", function (assert) {
-		var oControl = _ControlFinder._getControlForElement($("#myId-content")[0]);
+		var oControl = _ControlFinder._getControlForElement(document.getElementById("myId-content"));
 		assert.strictEqual(oControl, this.oButton);
 	});
 
@@ -286,7 +289,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not return unstable element ID suffix", function (assert) {
-		var sControlRelativeID = _ControlFinder._getDomElementIDSuffix($("#myList li")[0]);
+		var sControlRelativeID = _ControlFinder._getDomElementIDSuffix(document.querySelector("#myList li"));
 		assert.ok(!sControlRelativeID, "Should not use unstable relative ID suffix");
 	});
 });

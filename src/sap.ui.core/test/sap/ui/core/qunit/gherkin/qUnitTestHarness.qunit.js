@@ -72,7 +72,7 @@ sap.ui.define([
 		);
 
 		assert.throws( function( ) {
-			qUnitTestHarness.test({steps: new function(){}});
+			qUnitTestHarness.test({steps: new function(){}()});
 		}, function(oError) {
 			return oError.message === sFeaturePathError;
 		},

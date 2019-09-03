@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/Button', 'sap/m/DateTimeInput', 'sap/
 		var oForm = new Form({
 			models: oModel,
 			objectBindings:{path: "/form"},
-			//title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
+			//title: new Title({text: "Form Title", tooltip: "Title tooltip"}),
 			tooltip: "Form tooltip",
 			editable: true,
 			layout: oLayout,

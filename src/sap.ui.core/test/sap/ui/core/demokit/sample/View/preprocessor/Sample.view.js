@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/m/Button",
-	"sap/m/Text"
-], function(Button, Text) {
+	"sap/m/Text",
+	"sap/ui/core/mvc/XMLView" // sap.ui.xmlview
+], function(Button, Text, XMLView) {
 	"use strict";
 
 	sap.ui.jsview("sap.ui.core.sample.View.preprocessor.Sample", {
@@ -66,7 +67,7 @@ sap.ui.define([
 				}).loaded()
 				.then(function(oView) {
 					that.addContent(
-						new sap.m.Text({
+						new Text({
 							text: "XML view with 'xml' preprocessor:"
 						}).addStyleClass("sapUiSmallMargin")
 					);
@@ -84,7 +85,7 @@ sap.ui.define([
 					}).loaded()
 					.then(function(oView) {
 						that.addContent(
-							new sap.m.Text({
+							new Text({
 								text: "XML view instantiated with XML string:"
 							}).addStyleClass("sapUiSmallMargin")
 						);

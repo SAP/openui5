@@ -89,7 +89,7 @@ sap.ui.define([
 		);
 
 		assert.throws( function( ) {
-			opa5TestHarness.test({steps: new function(){}});
+			opa5TestHarness.test({steps: new function(){}()});
 		}, function(oError) {
 			return oError.message === sFeaturePathError;
 		},

@@ -20,4 +20,4 @@ sap.ui.define(['sap/ui/core/Control'],
 			}
 		});
 		return ControlContainer;
-	}, /* bExport= */true);
+	});

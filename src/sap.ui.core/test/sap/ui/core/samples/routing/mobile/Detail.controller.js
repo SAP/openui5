@@ -1,11 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/routing/Router'],
+	function(Controller, Router) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.samples.routing.mobile.Detail", {
 
 		onInit: function() {
-			var oRouter = sap.ui.core.routing.Router.getRouter("app"),
+			var oRouter = Router.getRouter("app"),
 				that = this;
 
 			oRouter.attachRouteMatched(function(oEvent) {

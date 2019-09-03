@@ -1,8 +1,3 @@
 # Note: Changes to this file also must be applied to the top level .eslintignore file.
 src/sap/ui/thirdparty
 target
-
-# temporary excludes until eslint issues in these files/folders have been resolved
-test/sap/ui/core/samples
-test/sap/ui/core/qunit/ManagedObjectModel.qunit.js
-test/sap/ui/core/qunit/odata/v2/data/ODataTreeBindingFakeService.js

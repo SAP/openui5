@@ -812,7 +812,7 @@ function(Press,
 				})
 			];
 
-			var oOverflowToolbar1 = new sap.m.OverflowToolbar("otb1", {
+			var oOverflowToolbar1 = new OverflowToolbar("otb1", {
 				width: 'auto',
 				content : toolbarContent1
 			});

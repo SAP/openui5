@@ -1,5 +1,10 @@
-sap.ui.define(['sap/ui/commons/Label', 'sap/ui/commons/TextField', 'sap/ui/core/mvc/JSView', 'sap/ui/table/Column', 'sap/ui/table/Table'],
-	function(Label, TextField, JSView, Column, Table) {
+sap.ui.define([
+	'sap/ui/commons/Label',
+	'sap/ui/commons/TextField',
+	'sap/ui/core/mvc/JSView',
+	'sap/ui/table/Column',
+	'sap/ui/table/Table'
+], function(Label, TextField, JSView, Column, Table) {
 	"use strict";
 
 	sap.ui.jsview("testdata.complexsyntax", {
@@ -14,7 +19,6 @@ sap.ui.define(['sap/ui/commons/Label', 'sap/ui/commons/TextField', 'sap/ui/core/
 		 * @returns {sap.ui.cre.Control}
 		 */
 		createContent: function(oController) {
-			var c = sap.ui.commons;
 			var aControls = [];
 			var oLabel = new Label({text:"Hello Mr. {path:'/singleEntry/firstName', formatter:'.myFormatter'}, {/singleEntry/lastName}"}, oController);
 			aControls.push(oLabel);

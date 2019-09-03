@@ -491,14 +491,12 @@ sap.ui.define([], function() {
               request.respond(code, headers, data);
             }
           }, responseDelay);
-        } else {
-          if (!request.aborted) {
+        } else if (!request.aborted) {
             if (window.fakeResponded) {
               window.fakeResponded();
             }
             request.respond(code, headers, data);
           }
-        }
       }
 
       // CSRF Token handling

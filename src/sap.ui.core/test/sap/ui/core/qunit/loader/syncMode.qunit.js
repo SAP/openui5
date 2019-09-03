@@ -660,7 +660,7 @@
 				failOnError: true
 			});
 			assert.ok(false, "Resource cannot be found but no error occurred");
-		}catch (e){
+		} catch (e){
 			assert.ok(true, "Resource cannot be found and an error occurred");
 		}
 	});
@@ -1063,8 +1063,8 @@
 		beforeEach: function(assert) {
 
 			// an AMD module that defines a simple class
-			sap.ui.predefine("sap/test/lazy/MyClass", [], function() {
-				var MyClass = sap.ui.base.ManagedObject.extend("sap.test.lazy.MyClass");
+			sap.ui.predefine("sap/test/lazy/MyClass", ["sap/ui/base/ManagedObject"], function(ManagedObject) {
+				var MyClass = ManagedObject.extend("sap.test.lazy.MyClass");
 				return MyClass;
 			});
 

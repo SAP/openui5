@@ -1,9 +1,13 @@
 /*global QUnit */
 sap.ui.define([
+	'sap/ui/core/library',
 	'sap/ui/core/message/Message',
 	'sap/ui/core/message/MessageProcessor'
-], function(Message, MessageProcessor) {
+], function(coreLibrary, Message, MessageProcessor) {
 	"use strict";
+
+	// shortcut for sap.ui.core.MessageType
+	var MessageType = coreLibrary.MessageType;
 
 	QUnit.module("sap/ui/core/message/Message");
 
@@ -23,7 +27,7 @@ sap.ui.define([
 		assert.deepEqual(oMessage.technical, false, "Property 'technical' has expected value");
 		assert.ok(typeof oMessage.date === "number", "Property 'date' has expected Data Type");
 		assert.ok(oMessage.date >= date, "Property 'date' has expected value");
-		assert.ok(oMessage.type === sap.ui.core.MessageType.None, "Property 'type' has expected value");
+		assert.ok(oMessage.type === MessageType.None, "Property 'type' has expected value");
 	});
 
 
@@ -34,7 +38,7 @@ sap.ui.define([
 			id: "Test id",
 			message: "Test message",
 			description: "Test description",
-			type: sap.ui.core.MessageType.Error,
+			type: MessageType.Error,
 			date: new Date(),
 			additionalText: "test",
 			code: 123,

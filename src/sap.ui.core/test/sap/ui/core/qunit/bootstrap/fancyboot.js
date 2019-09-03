@@ -27,7 +27,7 @@
 		xhr.open('GET', url, false);
 		xhr.send();
 
-		window.eval(code);
+		window.eval(code); // eslint-disable-line no-eval
 	}
 
 	if (/(trident|msie)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {

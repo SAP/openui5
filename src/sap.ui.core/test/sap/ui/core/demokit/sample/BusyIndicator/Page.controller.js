@@ -1,25 +1,25 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'jquery.sap.script'],
-	function(jQuery, Controller/*, jQuerySapScript*/) {
+sap.ui.define(['sap/ui/core/Busyindicator', 'sap/ui/core/mvc/Controller'],
+	function(BusyIndicator, Controller) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.BusyIndicator.Page", {
 
 		hideBusyIndicator : function() {
-			sap.ui.core.BusyIndicator.hide();
+			BusyIndicator.hide();
 		},
 
 		showBusyIndicator : function (iDuration, iDelay) {
-			sap.ui.core.BusyIndicator.show(iDelay);
+			BusyIndicator.show(iDelay);
 
 			if (iDuration && iDuration > 0) {
 				if (this._sTimeoutId) {
-					jQuery.sap.clearDelayedCall(this._sTimeoutId);
+					clearTimeout(this._sTimeoutId);
 					this._sTimeoutId = null;
 				}
 
-				this._sTimeoutId = jQuery.sap.delayedCall(iDuration, this, function() {
+				this._sTimeoutId = setTimeout(function() {
 					this.hideBusyIndicator();
-				});
+				}.bind(this), iDuration);
 			}
 		},
 

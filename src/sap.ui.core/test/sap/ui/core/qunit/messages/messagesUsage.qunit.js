@@ -1,5 +1,6 @@
 /* global sinon, QUnit*/
 sap.ui.define([
+	'sap/m/Input',
 	'sap/ui/model/Model',
 	'sap/ui/core/message/Message',
 	'sap/ui/core/library',
@@ -7,7 +8,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/UIComponent',
 	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(Model, Message, library, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
+], function(Input, Model, Message, library, ComponentContainer, JSONModel, UIComponent, createAndAppendDiv){
 	"use strict";
 
 	// create content div
@@ -19,7 +20,7 @@ sap.ui.define([
 				if (oControl.refreshDataState) {
 					var fnRefresh = oControl.refreshDataState;
 					oControl.refreshDataState = function(sName, oDataState) {
-						sap.m.Input.prototype.refreshDataState.apply(oControl, arguments);
+						Input.prototype.refreshDataState.apply(oControl, arguments);
 						fnTest(sName, oDataState);
 						oControl.refreshDataState = fnRefresh;
 					};

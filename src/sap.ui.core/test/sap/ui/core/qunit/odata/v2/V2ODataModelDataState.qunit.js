@@ -549,10 +549,11 @@ sap.ui.define([
 				function(oInfo) {
 					oInfo = jQuery.extend(true, {}, oInfo);
 					pOthers.then(function() {
-					if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
-						assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
-						assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
-					}});
+						if (sRequestId && oInfo.mParameters["ID"] == sRequestId) {
+							assert.equal(oModel.getProperty("/ProductSet('AD-1000')/Name"),"blabla2");
+							assert.equal(oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"),"blabla2", "Original was " + oModel.getOriginalProperty("/ProductSet('AD-1000')/Name"));
+						}
+					});
 				}
 			);
 		}
@@ -594,7 +595,7 @@ sap.ui.define([
 	 */
 	function timeoutPromise(oPromise, iTimeout) {
 		iTimeout = iTimeout === undefined ? 0 : iTimeout;
-		oPromise = !!oPromise ? oPromise : Promise.resolve();
+		oPromise = oPromise ? oPromise : Promise.resolve();
 		return oPromise.then(function() {
 			return new Promise(function(fnResolve, fnReject) {
 				setTimeout(fnResolve, 0);
@@ -1675,7 +1676,7 @@ sap.ui.define([
 		var iCounter1 = 0;
 		var iCounter2 = 0;
 
-		var oButton = new sap.m.Text({
+		var oButton = new Text({
 			text: {
 				path: "/ProductSet('AD-1000')/Price",
 				formatter: function (sValue) {
@@ -1684,7 +1685,7 @@ sap.ui.define([
 				}
 			}
 		});
-		var oButton2 = new sap.m.Button({
+		var oButton2 = new Button({
 			text: {
 				parts: [ { path: "/ProductSet('AD-1000')/Price" }, { path: "/ProductSet('AD-1000')/Price" } ],
 				formatter: function (sValue1, sValue2) {
@@ -1694,7 +1695,7 @@ sap.ui.define([
 			}
 		});
 
-		var oJsonModel = new sap.ui.model.json.JSONModel({
+		var oJsonModel = new JSONModel({
 			"ProductSet('AD-1000')": { }
 		});
 		oButton.setModel(oJsonModel);

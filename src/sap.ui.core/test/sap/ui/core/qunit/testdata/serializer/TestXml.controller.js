@@ -1,10 +1,10 @@
-sap.ui.define([], function() {
+sap.ui.define(['sap/ui/model/json/JSONModel'], function(JSONModel) {
 	"use strict";
 
 	sap.ui.controller("serializer.view.TestXml", {
 
 		onInit : function () {
-			var model = new sap.ui.model.json.JSONModel({
+			var model = new JSONModel({
 				name : "Skoda Fabia",
 				price : "14000"
 			});

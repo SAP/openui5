@@ -20,7 +20,7 @@ sap.ui.define(["sap/base/util/isPlainObject"], function(isPlainObject) {
 
 		//evaluate branch where x.constructor.prototype is null
 		var x = new function() {
-		};
+		}();
 		x.constructor.prototype = null;
 
 		assert.notOk(isPlainObject(x), "created Object is not a plain object and " +

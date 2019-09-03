@@ -1,7 +1,7 @@
 sap.ui.define(['sap/ui/core/XMLComposite'],
 	function (XMLComposite) {
 		"use strict";
-		var MySelectWrapper = sap.ui.core.XMLComposite.extend("composites.MySelectWrapper", {
+		var MySelectWrapper = XMLComposite.extend("composites.MySelectWrapper", {
 			metadata: {
 				aggregations: {
 					fcItems: {
@@ -17,4 +17,4 @@ sap.ui.define(['sap/ui/core/XMLComposite'],
 		});
 
 		return MySelectWrapper;
-	}, /* bExport= */true);
+	});

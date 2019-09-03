@@ -1,5 +1,5 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'jquery.sap.script'],
-	function(jQuery, Controller/*, jQuerySapScript*/) {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.core.sample.ControlBusyIndicator.Page", {
