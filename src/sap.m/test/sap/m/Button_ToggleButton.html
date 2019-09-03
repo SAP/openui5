@@ -1848,6 +1848,127 @@
 		text: "(עִבְרִית‬ עִבְרִית‬ עִבְרִית‬)",
 		enabled: true
 	}).placeAt("RTLBtn");
+
+	// Buttons inside Table
+	var data = aButtonSettings = [{
+			text: "Button"
+	}];
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setProperty("/rows", data);
+
+	var oVBox = new sap.m.VBox();
+
+	var oButtonsTable = new sap.m.Table("ButtonsTable", {
+		backgroundDesign: sap.m.BackgroundDesign.Transparent,
+		showSeparators: sap.m.ListSeparators.All,
+		columns: [
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Button1"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Button2"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Button3"
+				})
+			}),
+			new sap.m.Column("disableTypeColumn", {
+				header: new sap.m.Text("xxx", {
+					text : "Button4"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Button5"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Button6"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Button7"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Toggle Button1"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Toggle Button2"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Toggle Button3"
+				})
+			})
+		]
+	});
+
+
+		// Arrange the table columns according to the cells content width
+		oButtonsTable.setFixedLayout(false);
+
+		oTableRowTemplate = new sap.m.ColumnListItem({
+			type: "Active",
+			cells : [
+				new sap.m.Button({
+					text : "Contract #D1234567890 Ñagçyfox",
+					icon: "sap-icon://alert",
+					type: sap.m.ButtonType.Transparent
+				}), new sap.m.Button({
+					text : "{text}",
+					type: sap.m.ButtonType.Transparent
+				}), new sap.m.Button({
+					icon: "sap-icon://pharmacy",
+					type: sap.m.ButtonType.Transparent
+				}), new sap.m.Button({
+					text : "John Doe Ñagçyfox",
+					type: sap.m.ButtonType.Default
+				}), new sap.m.Button({
+					title : "Some title",
+					icon: "sap-icon://pharmacy",
+					type: sap.m.ButtonType.Reject
+				}), new sap.m.Button({
+					icon: "sap-icon://alert",
+					type: sap.m.ButtonType.Ghost
+				}), new sap.m.Button({
+					icon: "sap-icon://pharmacy",
+					type: sap.m.ButtonType.Emphasized
+				}), new sap.m.ToggleButton({
+					icon: "sap-icon://pharmacy",
+					type: sap.m.ButtonType.Transparent
+				}), new sap.m.ToggleButton({
+					icon: "sap-icon://pharmacy",
+					text: "Toggle Button",
+					type: sap.m.ButtonType.Default
+				}), new sap.m.ToggleButton({
+					icon: "sap-icon://pharmacy",
+					text: "Toggle Button",
+					type: sap.m.ButtonType.Accept
+				})
+			]
+		});
+
+		oButtonsTable.bindAggregation("items", {
+				path : "/rows",
+				template: oTableRowTemplate
+		});
+		oButtonsTable.setModel(oModel);
+
+	oVBox.addItem(oButtonsTable);
+	oVBox.placeAt("TableBtn");
+
 </script>
 
 </head>
@@ -1860,5 +1981,6 @@
 <div id="barBtn"></div>
 <br><br>
 <div id="RTLBtn"></div>
+<div id="TableBtn"></div>
 </body>
 </html>
