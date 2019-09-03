@@ -71,7 +71,7 @@ sap.ui.define([
 			// simulate a component-preload
 			jQuery.sap.registerPreloadedModules({
 				version : "2.0",
-				name : "sap/ui/fl/qunit/_internal/Connector",
+				name : "test.app",
 				modules : {
 					"test/app/changes/changes-bundle.json" : '[{"dummy":true}]'
 				}

@@ -1594,7 +1594,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("the connector reacts on the core configuration 'flexibilityServices'", function () {
+	QUnit.module("the connector reacts on the core configuration 'flexibilityServices'", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
 		QUnit.test("does send a request in case no 'sap-data-ui-flexibilityServices' was set", function (assert) {
 			this.server = sinon.fakeServer.create();
 			this.server.respondWith([200, {
@@ -1607,7 +1611,7 @@ sap.ui.define([
 			var done = assert.async();
 			assert.expect(0);
 
-			new LrepConnector()._sendAjaxRequest("/sap/bc/lrep/flex/data/test", {type: "GET"}).then(function () {
+			LrepConnector.createConnector()._sendAjaxRequest("/sap/bc/lrep/flex/data/test", {type: "GET"}).then(function () {
 				done();
 			});
 		});
@@ -1618,12 +1622,23 @@ sap.ui.define([
 			var done = assert.async();
 			assert.expect(0);
 
-			new LrepConnector()._sendAjaxRequest("/sap/bc/lrep/flex/data/test", {type: "GET"}).then(function () {
+			LrepConnector.createConnector()._sendAjaxRequest("/sap/bc/lrep/flex/data/test", {type: "GET"}).then(function () {
 				assert.ok(false, "if you see this, then no rejection took place. This should not happen.");
 				done();
 			}, function () {
 				done();
 			});
+		});
+
+		QUnit.test("loads the new connector adapter if 'sap-data-ui-flexibilityServices' was set to connect the existing fl-lib with the new connector world", function(assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{
+					connectorName: "JsObjectConnector"
+				}
+			]);
+			var oNewConnectorAdapter = LrepConnector.createConnector();
+
+			assert.notOk(LrepConnector.prototype.isPrototypeOf(oNewConnectorAdapter), "the new connector is not the old one");
 		});
 	});
 

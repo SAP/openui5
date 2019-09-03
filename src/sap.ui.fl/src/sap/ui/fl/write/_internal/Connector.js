@@ -70,7 +70,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Contains additional information for all the Connectors
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the file should be stored
-	 * @param {sap.ui.fl.Change|sap.ui.fl.Change[]} mPropertyBag.payload Data to be stored
+	 * @param {object[]} mPropertyBag.flexObjects Data to be stored
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
 	Connector.write = function(mPropertyBag) {
@@ -99,6 +99,26 @@ sap.ui.define([
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
 				return oConnectorConfig.connector.reset(mPropertyBag);
+			});
+	};
+
+	/**
+	 * Gets the flexibility info for a given application and layer.
+	 * The flexibility info is a JSON string that has boolean properties 'isPublishEnabled' and 'isResetEnabled'
+	 * that indicate if for the given application and layer a publish and reset shall be enabled, respectively
+	 *
+	 * @param {object} mPropertyBag Property bag
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+	 * @param {string} mPropertyBag.reference Flex reference
+	 * @param {string} [mPropertyBag.url] Configured url for the connector
+	 * @param {string} [mPropertyBag.appVersion] Version of the application
+	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
+	 */
+	Connector.getFlexInfo = function (mPropertyBag) {
+		return getConnectorConfigByLayer(mPropertyBag.layer)
+			.then(function (oConnectorConfig) {
+				mPropertyBag.url = oConnectorConfig.url;
+				return oConnectorConfig.connector.getFlexInfo(mPropertyBag);
 			});
 	};
 

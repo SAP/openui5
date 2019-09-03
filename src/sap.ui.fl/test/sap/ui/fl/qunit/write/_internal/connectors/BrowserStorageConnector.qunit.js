@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
+	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"
 ], function(
 	SessionStorageWriteConnector,
 	LocalStorageWriteConnector,
+	JsObjectConnector,
 	BrowserStorageUtils
 ) {
 	"use strict";
@@ -55,8 +57,8 @@ sap.ui.define([
 	};
 
 	function saveListWithConnector(oConnector, aList) {
-		aList.forEach(function (oFlexObject) {
-			oConnector.write(oFlexObject.fileName, oFlexObject);
+		oConnector.write({
+			flexObjects : aList
 		});
 	}
 
@@ -115,8 +117,10 @@ sap.ui.define([
 		});
 	}
 
+	parameterizedTest(JsObjectConnector, "JsObjectStorage");
 	parameterizedTest(SessionStorageWriteConnector, "sessionStorage");
-	parameterizedTest(LocalStorageWriteConnector, "localStorage");
+	// LocalStorage behaves similar to Session storage and we rely on this to not run into issues with parallel tests interfering in the LocalStorageTests
+	//parameterizedTest(LocalStorageWriteConnector, "localStorage");
 
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
