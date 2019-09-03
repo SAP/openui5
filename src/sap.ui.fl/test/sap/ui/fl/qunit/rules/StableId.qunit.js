@@ -116,12 +116,11 @@ sap.ui.define([
 			this.oComponent.destroy();
 		}
 	}, function () {
-		// Controls in bound aggregations should be ignored during the evaluation
 		testRule({
 			executionScopeType: "global",
 			libName: "sap.ui.fl",
 			ruleId: "stableId",
-			expectedNumberOfIssues: 0
+			expectedNumberOfIssues: 3
 		});
 	});
 
