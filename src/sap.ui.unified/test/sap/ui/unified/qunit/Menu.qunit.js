@@ -71,7 +71,7 @@ sap.ui.define([
 	var oButton = new sap.ui.commons.Button("button", {text: "Open Menu", press: function(){
 		oRootMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
 	}});
-	oButton.placeAt("content");
+	oButton.placeAt("qunit-fixture");
 
 	var oSpecialMenu = createMenu(5, false);
 	oSpecialMenu.addItem(createMenuItem(11, "I11", false, -1, -1, null));
@@ -89,12 +89,12 @@ sap.ui.define([
 	oButton = new sap.ui.commons.Button("button3", {text: "Open Menu 2", press: function(){
 		oSpecialMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
 	}});
-	oButton.placeAt("content");
+	oButton.placeAt("qunit-fixture");
 
 	oButton = new sap.ui.commons.Button("button4", {text: "Open Menu 3", press: function(){
 		oLongMenu.open(false, null, eDock.LeftTop, eDock.LeftTop, document, "0 0");
 	}});
-	oButton.placeAt("content");
+	oButton.placeAt("qunit-fixture");
 
 	oButton = new sap.ui.commons.Button("button2", {text: "Toggle Menu Enabling", press: function(){
 		oRootMenu.setEnabled(!oRootMenu.getEnabled());
@@ -102,7 +102,7 @@ sap.ui.define([
 		oLongMenu.setEnabled(!oLongMenu.getEnabled());
 	}});
 
-	oButton.placeAt("content");
+	oButton.placeAt("qunit-fixture");
 
 	oButton = new sap.ui.commons.Button("button5", {text: "Toggle Menu Items Enabling", press: function(){
 		toggleMenuItemsEnabling(oRootMenu);
@@ -110,7 +110,7 @@ sap.ui.define([
 		toggleMenuItemsEnabling(oLongMenu);
 	}});
 
-	oButton.placeAt("content");
+	oButton.placeAt("qunit-fixture");
 
 	/* Expected Menu Structure:
 		------------------------
@@ -173,7 +173,7 @@ sap.ui.define([
 
 	var openMenu = function(oMenu, bWithMouse, assert){
 		var eDock = sap.ui.core.Popup.Dock;
-		var oDomRef = jQuery("#content").get(0);
+		var oDomRef = jQuery("#qunit-fixture").get(0);
 		oMenu.open(!bWithMouse, oDomRef, eDock.LeftTop, eDock.LeftTop, oDomRef, "5 5");
 		assert.ok(oMenu.bOpen, "Menu opened");
 	};
@@ -826,7 +826,7 @@ sap.ui.define([
 	QUnit.module("Auto-Close");
 
 	QUnit.test("Focusleave", function(assert) {
-		jQuery("#content").attr("tabindex", -1);
+		jQuery("#qunit-fixture").attr("tabindex", -1);
 		openRootMenu(false, assert);
 		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 		qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
@@ -836,9 +836,9 @@ sap.ui.define([
 		// if the device supports touches the programmatic focus is not working correctly
 		// so use touch events
 		if (!sap.ui.Device.support.touch) {
-			jQuery("#content").get(0).focus();
+			jQuery("#qunit-fixture").get(0).focus();
 		} else {
-			qutils.triggerEvent("touchstart", "content", {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
+			qutils.triggerEvent("touchstart", "qunit-fixture", {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
 		}
 		checkMenusClosed("after focus leave to outer html", assert);
 
@@ -858,7 +858,7 @@ sap.ui.define([
 		checkMenusClosed("after focus leave to other control", assert);
 
 		closeAllMenusAndCheck(assert);
-		jQuery("#content").removeAttr("tabindex");
+		jQuery("#qunit-fixture").removeAttr("tabindex");
 	});
 
 	QUnit.test("MouseDown", function(assert) {
@@ -868,7 +868,7 @@ sap.ui.define([
 		qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 		checkHoveredItem("item8", oSubMenu, assert);
 		checkFocusedItem("item8", assert);
-		qutils.triggerEvent("mousedown", "content", {});
+		qutils.triggerEvent("mousedown", "qunit-fixture", {});
 		checkMenusClosed("after mousedown", assert);
 
 		closeAllMenusAndCheck(assert);
@@ -1240,7 +1240,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Cozy Mode", function(assert) {
-		jQuery.sap.byId("content").toggleClass("sapUiSizeCozy", true);
+		jQuery.sap.byId("qunit-fixture").toggleClass("sapUiSizeCozy", true);
 
 		var oMenu = new Menu({tooltip: "a tooltip"});
 		for (var i = 0; i < 10; i++) {
@@ -1252,18 +1252,18 @@ sap.ui.define([
 		assert.ok(oMenu.$().hasClass("sapUiSizeCozy"), "Cozy CSS class set");
 
 		oMenu.destroy();
-		jQuery.sap.byId("content").toggleClass("sapUiSizeCozy", false);
+		jQuery.sap.byId("qunit-fixture").toggleClass("sapUiSizeCozy", false);
 	});
 
 	QUnit.test("openAsContextMenu functionality", function(assert) {
 		var oMenu = new Menu({tooltip: "a tooltip"});
 		var fnEventHandler = function (oEvent) {
-			oMenu.openAsContextMenu(oEvent, jQuery("#content").get(0));
+			oMenu.openAsContextMenu(oEvent, jQuery("#qunit-fixture").get(0));
 			assert.ok(oMenu.bOpen, "Menu opened");
 		};
-		jQuery("#content").bind("contextmenu", fnEventHandler);
-		jQuery("#content").contextmenu();
-		jQuery("#content").unbind("contextmenu", fnEventHandler);
+		jQuery("#qunit-fixture").bind("contextmenu", fnEventHandler);
+		jQuery("#qunit-fixture").contextmenu();
+		jQuery("#qunit-fixture").unbind("contextmenu", fnEventHandler);
 		oMenu.destroy();
 	});
 
