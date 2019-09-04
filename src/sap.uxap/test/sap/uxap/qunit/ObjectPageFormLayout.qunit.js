@@ -165,4 +165,17 @@ function($, Core, XMLView) {
 			}.bind(this), 400);
 		}.bind(this), 400);
 	});
+
+	QUnit.test("ObjectPage Fist Editable field focus", function (assert) {
+		var done = assert.async(),
+			oObjectPageLayout = this.oObjectPageFormView.byId("ObjectPageLayout"),
+			oInput;
+
+		setTimeout(function () {
+			oInput = jQuery("#UxAP-SimpleFormLayout--employmentSimpleFormBlock-defaultXML--firstEditableInput-inner")[0];
+			oObjectPageLayout._focusFirstEditableInput("sectionsContainer");
+			assert.equal(document.activeElement, oInput, "The first editable input is focused");
+			done();
+		}, 500);
+	});
 });
