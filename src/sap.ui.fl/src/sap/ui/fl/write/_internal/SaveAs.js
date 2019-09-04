@@ -16,7 +16,7 @@ sap.ui.define([
 	TransportSelection,
 	DescriptorInlineChangeFactory,
 	ChangesController,
-	FlUtils,
+	Utils,
 	Log,
 	includes,
 	merge
@@ -65,50 +65,38 @@ sap.ui.define([
 		return Promise.reject();
 	}
 
-	function _getDirtyDescrChanges(vSelector) {
-		var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(vSelector)
-			._oChangePersistence.getDirtyChanges();
-		aDescrChanges = aDescrChanges.slice();
-		return aDescrChanges;
-	}
 
-	function _gatherInlineDescrChanges(vSelector) {
+	function _getInlineChangesFromDescrChanges(aDescrChanges) {
 		var aInlineChangesPromises = [];
 
-		_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
-			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
-				var oChangeDefinition = oChange.getDefinition();
-				// Change contains only descriptor change information so the descriptor inline change needs to be created again
-				aInlineChangesPromises.push(DescriptorInlineChangeFactory.createNew(oChangeDefinition.changeType, oChangeDefinition.content, oChangeDefinition.texts));
-			}
+		aDescrChanges.forEach(function(oChange) {
+			var oChangeDefinition = oChange.getDefinition();
+			// Change contains only descriptor change information so the descriptor inline change needs to be created again
+			aInlineChangesPromises.push(DescriptorInlineChangeFactory.createNew(oChangeDefinition.changeType, oChangeDefinition.content, oChangeDefinition.texts));
 		});
 		return Promise.all(aInlineChangesPromises);
 	}
 
-	function _moveChangesToNewFlexReference(vSelector, oAppVariant) {
-		var aUIChanges = ChangesController.getFlexControllerInstance(vSelector)
-			._oChangePersistence.getDirtyChanges();
-		aUIChanges.forEach(function(oChange) {
-			// Change the reference of UI changes
-			var oSettings = oAppVariant.getSettings();
-			if (oSettings.isAtoEnabled() && oSettings.isAtoAvailable()) {
-				// TODO: This behavior needs to be changed in the future
-				oChange.setRequest("ATO_NOTIFICATION");
-			}
-			var oPropertyBag = {
-				reference: oAppVariant.getId()
-			};
-			var sChangesNamespace = FlUtils.createNamespace(oPropertyBag, "changes");
-			oChange.setNamespace(sChangesNamespace);
-			oChange.setComponent(oAppVariant.getId());
-			if (oAppVariant.getVersion()) {
-				// Only needed for RTA tool, Smart business might not pass the version
-				oChange.setValidAppVersions({
-					creation: oAppVariant.getVersion(),
-					from: oAppVariant.getVersion()
-				});
-			}
-		});
+	function _moveChangesToNewFlexReference(oChange, oAppVariant) {
+		// Change the reference of UI changes
+		var oSettings = oAppVariant.getSettings();
+		if (oSettings.isAtoEnabled() && oSettings.isAtoAvailable()) {
+			// TODO: This behavior needs to be changed in the future
+			oChange.setRequest("ATO_NOTIFICATION");
+		}
+		var oPropertyBag = {
+			reference: oAppVariant.getId()
+		};
+		var sChangesNamespace = Utils.createNamespace(oPropertyBag, "changes");
+		oChange.setNamespace(sChangesNamespace);
+		oChange.setComponent(oAppVariant.getId());
+		if (oAppVariant.getVersion()) {
+			// Only needed for RTA tool, Smart business might not pass the version
+			oChange.setValidAppVersions({
+				creation: oAppVariant.getVersion(),
+				from: oAppVariant.getVersion()
+			});
+		}
 	}
 
 	function _inlineDescriptorChanges(aAllInlineChanges, oAppVariant) {
@@ -145,10 +133,66 @@ sap.ui.define([
 		return _triggerTransportHandling(oAppVariant);
 	}
 
+	function _getDirtyDescrChanges(vSelector) {
+		var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(vSelector)
+			._oChangePersistence.getDirtyChanges();
+		aDescrChanges = aDescrChanges.slice();
+		return aDescrChanges;
+	}
+
+	function _getDirtyUIChanges(vSelector) {
+		var aUIChanges = ChangesController.getFlexControllerInstance(vSelector)
+			._oChangePersistence.getDirtyChanges();
+		aUIChanges = aUIChanges.slice();
+		return aUIChanges;
+	}
+
+	function _arePersistenciesTheSame(vSelector) {
+		var oFlexControllerPersistence = ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence;
+		var oDescriptorFlexControllerPersistence = ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence;
+		// If the base application is already an app variant, the references and therefore both persistences are same
+		return oFlexControllerPersistence === oDescriptorFlexControllerPersistence;
+	}
+
+	function _reactOnChangesBasedOnPersistences(vSelector, bArePersistencesEqual, oAppVariant) {
+		var aDescrChanges = [];
+		if (bArePersistencesEqual) {
+			_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
+				// UI and Descriptor changes need to be separated here so as to perform different operations on changes
+				if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getDefinition().changeType)) {
+					aDescrChanges.push(oChange);
+				} else {
+					_moveChangesToNewFlexReference(oChange, oAppVariant);
+				}
+			});
+		} else {
+			_getDirtyUIChanges(vSelector).forEach(function(oChange) {
+				_moveChangesToNewFlexReference(oChange, oAppVariant);
+			});
+
+			aDescrChanges = _getDirtyDescrChanges(vSelector);
+		}
+
+		return aDescrChanges;
+	}
+
+	function _deleteDescrChangesFromPersistence(vSelector) {
+		// In case of app variant, both persistences hold descriptor changes and have to be removed from one of the persistences
+		_getDirtyDescrChanges(vSelector).forEach(function(oChange) {
+			if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
+				// In case of app variant, both persistences hold descriptor changes and have to be removed.
+				// In case there are UI changes, they will be sent to the backend in the last rpomise chain and will be removed from the persistence
+				ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence.deleteChange(oChange);
+			}
+		});
+	}
+
 	var SaveAs = {
 		saveAs: function(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
+			var bArePersistencesEqual = false;
+
 			return DescriptorVariantFactory.createAppVariant(mPropertyBag)
 				.then(function(oAppVariant) {
 					oAppVariantClosure = merge({}, oAppVariant);
@@ -158,8 +202,9 @@ sap.ui.define([
 					return _setTransportInfoForAppVariant(oAppVariantClosure, oTransportInfo);
 				})
 				.then(function() {
-					_moveChangesToNewFlexReference(mPropertyBag.selector, oAppVariantClosure);
-					return _gatherInlineDescrChanges(mPropertyBag.selector);
+					bArePersistencesEqual = _arePersistenciesTheSame(mPropertyBag.selector);
+					var aDescrChanges = _reactOnChangesBasedOnPersistences(mPropertyBag.selector, bArePersistencesEqual, oAppVariantClosure);
+					return _getInlineChangesFromDescrChanges(aDescrChanges);
 				})
 				.then(function(aAllInlineChanges) {
 					return _inlineDescriptorChanges(aAllInlineChanges, oAppVariantClosure);
@@ -176,12 +221,22 @@ sap.ui.define([
 				.then(function(oResult) {
 					oAppVariantResultClosure = merge({}, oResult);
 
+					if (bArePersistencesEqual) {
+						_deleteDescrChangesFromPersistence(mPropertyBag.selector);
+					}
+
 					var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 					// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
 					return oFlexController.saveAll(true)
 						.catch(function(oError) {
+							if (bArePersistencesEqual) {
+								_deleteDescrChangesFromPersistence(mPropertyBag.selector);
+							}
+
 							// Delete the inconsistent app variant if the UI changes failed to save
-							return this.deleteAppVar(mPropertyBag.id)
+							return this.deleteAppVar({
+								referenceAppId: mPropertyBag.id
+							})
 								.then(function() {
 									oError.messageKey = "MSG_COPY_UNSAVED_CHANGES_FAILED";
 									throw oError;
@@ -189,12 +244,10 @@ sap.ui.define([
 						}.bind(this));
 				}.bind(this))
 				.then(function() {
-					//Since the UI changes have been successfully saved, the descriptor inline changes will now be removed from persistence
-					_getDirtyDescrChanges(mPropertyBag.selector).forEach(function(oChange) {
-						if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getChangeType())) {
-							ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector)._oChangePersistence.deleteChange(oChange);
-						}
-					});
+					//Reference Application Usecase: Since the UI changes have been successfully saved, the descriptor inline changes will now be removed from persistence
+					if (!bArePersistencesEqual) {
+						_deleteDescrChangesFromPersistence(mPropertyBag.selector);
+					}
 					return oAppVariantResultClosure;
 				})
 				.catch(function(oError) {
