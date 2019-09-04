@@ -11,7 +11,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer",
 	"sap/f/cards/IconFormatter",
-	"sap/f/cards/ActionEnablement",
+	"sap/f/cards/CardActions",
 	"sap/base/strings/formatMessage"
 ], function (
 	library,
@@ -23,12 +23,14 @@ sap.ui.define([
 	JSONModel,
 	HeaderRenderer,
 	IconFormatter,
-	ActionEnablement,
+	CardActions,
 	formatMessage
 ) {
 	"use strict";
 
 	var AvatarShape = library.AvatarShape;
+
+	var AreaType = library.cards.AreaType;
 
 	/**
 	 * Constructor for a new <code>Header</code>.
@@ -149,6 +151,11 @@ sap.ui.define([
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
+		}
+
+		if (this._oActions) {
+			this._oActions.destroy();
+			this._oActions = null;
 		}
 	};
 
@@ -333,7 +340,13 @@ sap.ui.define([
 		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
-		oHeader._attachActions(mConfiguration, oHeader);
+		var oActions = new CardActions({
+			areaType: AreaType.Header
+		});
+
+		oActions.attach(mConfiguration, oHeader);
+		oHeader._oActions = oActions;
+
 		return oHeader;
 	};
 
@@ -437,8 +450,6 @@ sap.ui.define([
 	Header.prototype._handleError = function (sLogMessage) {
 		this.fireEvent("_error", { logMessage: sLogMessage });
 	};
-
-	ActionEnablement.enrich(Header);
 
 	return Header;
 });

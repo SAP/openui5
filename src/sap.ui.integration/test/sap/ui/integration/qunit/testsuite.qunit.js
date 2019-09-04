@@ -72,7 +72,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/util/CustomElements",
-						"sap/f/cards/ActionEnablement",
+						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
 						"sap/f/cards/BindingResolver",
 						"sap/f/cards/ComponentContent",
@@ -100,7 +100,7 @@ sap.ui.define(function () {
 					'./util/CustomElements.qunit',
 					'test-resources/sap/f/qunit/BindingResolver.qunit',
 					'test-resources/sap/f/qunit/DataProvider.qunit',
-					'./ActionEnablement.qunit',
+					'./CardActions.qunit',
 					'./cardbundle/CardStaticResources.qunit'
 				]
 			}

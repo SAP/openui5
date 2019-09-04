@@ -2169,7 +2169,16 @@
 						},
 						"icon": {
 							"src": "{Icon}"
-						}
+						},
+						"actions": [
+						  {
+							"type": "Navigation",
+							"enabled": "{= ${url}}",
+							"parameters": {
+							  "url": "{url}"
+							}
+						  }
+						]
 					}
 				}
 			}

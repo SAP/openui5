@@ -15,7 +15,6 @@ sap.ui.define([
 		"sap/m/ObjectIdentifier",
 		"sap/m/ObjectStatus",
 		"sap/f/Avatar",
-		"sap/f/cards/ActionEnablement",
 		"sap/ui/core/library",
 		"sap/m/library",
 		"sap/f/cards/BindingResolver",
@@ -34,7 +33,6 @@ sap.ui.define([
 		ObjectIdentifier,
 		ObjectStatus,
 		Avatar,
-		ActionEnablement,
 		coreLibrary,
 		mobileLibrary,
 		BindingResolver,
@@ -52,6 +50,8 @@ sap.ui.define([
 		// shortcuts for sap.m.* types
 		var ListSeparators = mobileLibrary.ListSeparators;
 		var ListType = mobileLibrary.ListType;
+
+		var AreaType = library.cards.AreaType;
 
 		/**
 		 * Constructor for a new <code>TableContent</code>.
@@ -154,7 +154,8 @@ sap.ui.define([
 				vAlign: VerticalAlign.Middle
 			});
 
-			this._attachActions(oRow, this._oItemTemplate);
+			this._oActions.setAreaType(AreaType.ContentItem);
+			this._oActions.attach(oRow, this);
 
 			var oBindingInfo = {
 				template: this._oItemTemplate
@@ -184,7 +185,7 @@ sap.ui.define([
 					}
 				}
 
-				// TO DO: move this part to ActionEnablement
+				// TO DO: move this part to CardActions
 				if (oRow.actions && Array.isArray(oRow.actions)) {
 					// for now allow only 1 action of type navigation
 					var oAction = oRow.actions[0];
@@ -244,7 +245,7 @@ sap.ui.define([
 						oIdentifier.setTitleActive(!!oColumn.identifier.url);
 					}
 
-					// TO DO: move this part to ActionEnablement
+					// TO DO: move this part to CardActions
 					oIdentifier.attachTitlePress(function (oEvent) {
 
 						var oSource = oEvent.getSource(),
@@ -310,8 +311,6 @@ sap.ui.define([
 		TableContent.prototype.getInnerList = function () {
 			return this._getTable();
 		};
-
-		ActionEnablement.enrich(TableContent);
 
 		return TableContent;
 });

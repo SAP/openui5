@@ -619,6 +619,18 @@ sap.ui.define(["sap/ui/base/DataType",
 		Bottom: "Bottom"
 	};
 
+	/*
+	 * Specifies different card area types.
+	 *
+	 * @private
+	 */
+	thisLib.cards.AreaType = {
+		None: 'None',
+		ContentItem: 'ContentItem',
+		Content: 'Content',
+		Header: 'Header'
+	};
+
 	return thisLib;
 
 });

@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+		"sap/f/library",
 		"sap/f/cards/BaseContent",
 		"sap/m/HBox",
 		"sap/m/VBox",
@@ -13,11 +14,12 @@ sap.ui.define([
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/layout/AlignedFlowLayout",
 		"sap/ui/dom/units/Rem",
-		"sap/f/cards/ActionEnablement",
 		"sap/f/cards/BindingHelper",
 		"sap/f/cards/IconFormatter"
-	], function (BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, ActionEnablement, BindingHelper, IconFormatter) {
+	], function (library, BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, BindingHelper, IconFormatter) {
 		"use strict";
+
+		var AreaType = library.cards.AreaType;
 
 		/**
 		 * Constructor for a new <code>ObjectContent</code>.
@@ -220,9 +222,9 @@ sap.ui.define([
 				oContainer.addContent(oGroupContainer);
 			}, this);
 
-			this._attachActions(oConfiguration, this);
+			this._oActions.setAreaType(AreaType.Content);
+			this._oActions.attach(oConfiguration, this);
 		};
-		ActionEnablement.enrich(ObjectContent);
 
 		return ObjectContent;
 	});

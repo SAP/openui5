@@ -7,7 +7,6 @@ sap.ui.define([
 		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
 		'sap/ui/base/ManagedObject',
-		"sap/f/cards/ActionEnablement",
 		"sap/f/cards/BindingHelper",
 		"sap/f/cards/IconFormatter"
 	], function (
@@ -16,7 +15,6 @@ sap.ui.define([
 		suiteLibrary,
 		TimelineItem,
 		ManagedObject,
-		ActionEnablement,
 		BindingHelper,
 		IconFormatter
 	) {
@@ -134,7 +132,8 @@ sap.ui.define([
 			mItem.icon && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "icon", mItem.icon.src);
 			/* eslint-enable no-unused-expressions */
 
-			this._attachActions(mItem, this._oTimeLineItemTemplate);
+			this._oActions.attach(mItem, this);
+
 			var oBindingInfo = {
 				template: this._oTimeLineItemTemplate
 			};
@@ -165,11 +164,7 @@ sap.ui.define([
 
 				oTimeline.addContent(oTimelineItem);
 			});
-
-			//workaround until actions refactor
-			this.fireEvent("_actionContentReady");
 		};
-		ActionEnablement.enrich(TimelineContent);
 
 		/**
 		 * @overwrite

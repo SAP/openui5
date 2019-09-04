@@ -2,16 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
+		"sap/f/library",
 		"sap/f/cards/BaseContent",
 		"sap/m/List",
 		"sap/m/StandardListItem",
 		"sap/ui/base/ManagedObject",
-		"sap/f/cards/ActionEnablement",
 		"sap/f/cards/IconFormatter",
 		"sap/f/cards/BindingHelper"
 	],
-	function (BaseContent, sapMList, StandardListItem, ManagedObject, ActionEnablement, IconFormatter, BindingHelper) {
+	function (library, BaseContent, sapMList, StandardListItem, ManagedObject, IconFormatter, BindingHelper) {
 		"use strict";
+
+		var AreaType = library.cards.AreaType;
 
 		/**
 		 * Constructor for a new <code>ListContent</code>.
@@ -143,7 +145,8 @@ sap.ui.define([
 			mItem.info && BindingHelper.bindProperty(this._oItemTemplate, "infoState", mItem.info.state);
 			/* eslint-enable no-unused-expressions */
 
-			this._attachActions(mItem, this._oItemTemplate);
+			this._oActions.setAreaType(AreaType.ContentItem);
+			this._oActions.attach(mItem, this);
 
 			var oBindingInfo = {
 				template: this._oItemTemplate
@@ -221,8 +224,6 @@ sap.ui.define([
 		ListContent.prototype.getInnerList = function () {
 			return this._getList();
 		};
-
-		ActionEnablement.enrich(ListContent);
 
 		return ListContent;
 	}

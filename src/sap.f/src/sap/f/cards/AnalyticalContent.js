@@ -2,16 +2,16 @@
  * ${copyright}
  */
 sap.ui.define([
+		"sap/f/library",
 		"sap/f/cards/BaseContent",
 		"sap/viz/ui5/controls/VizFrame",
 		"sap/viz/ui5/controls/common/feeds/FeedItem",
 		"sap/viz/ui5/data/FlattenedDataset",
 		"sap/base/Log",
 		"sap/ui/core/Core",
-		"jquery.sap.global",
-		"sap/f/cards/ActionEnablement"
+		"jquery.sap.global"
 	],
-	function (BaseContent, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery, ActionEnablement) {
+	function (library, BaseContent, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery) {
 		"use strict";
 
 		/**
@@ -50,6 +50,8 @@ sap.ui.define([
 			"StackedBar": "stacked_bar",
 			"Donut": "donut"
 		};
+
+		var AreaType = library.cards.AreaType;
 
 		/**
 		 * Constructor for a new <code>AnalyticalContent</code>.
@@ -236,7 +238,8 @@ sap.ui.define([
 			var oVizProperties = this._getVizPropertiesObject(oChartObject);
 			oChart.setVizProperties(oVizProperties);
 
-			this._attachActions(oChartObject, this);
+			this._oActions.setAreaType(AreaType.Content);
+			this._oActions.attach(oChartObject, this);
 
 			this.setAggregation("_content", oChart);
 		};
@@ -262,8 +265,6 @@ sap.ui.define([
 				}
 			}
 		};
-
-		ActionEnablement.enrich(AnalyticalContent);
 
 		return AnalyticalContent;
 	});
