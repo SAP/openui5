@@ -1261,6 +1261,12 @@ sap.ui.define([
 		 * the selected properties, then all properties are selected. <code>@odata.etag</code> is
 		 * always selected. Fires change events for all changed properties.
 		 *
+		 * Restrictions:
+		 * - oOldValue and oNewValue are expected to have the same structure; when there is an
+		 *   object at a given path in either of them, the other one must have an object or
+		 *   <code>null</code>.
+		 * - "*" in aSelect does not work correctly if oNewValue contains navigation properties
+		 *
 		 * @param {object} mChangeListeners
 		 *   A map of change listeners by path
 		 * @param {string} sPath
@@ -1270,7 +1276,8 @@ sap.ui.define([
 		 * @param {object} oNewValue
 		 *   The new value
 		 * @param {string[]} [aSelect]
-		 *   The properties to be updated in oOldValue; default is all properties from oNewValue
+		 *   The relative paths to properties to be updated in oOldValue; default is all properties
+		 *   from oNewValue
 		 */
 		updateSelected : function (mChangeListeners, sPath, oOldValue, oNewValue, aSelect) {
 			var sPredicate;
@@ -1278,34 +1285,40 @@ sap.ui.define([
 			/*
 			 * Take over the property value from source to target and fires an event if the property
 			 * is changed
-			 * @param {string} sPath The path of oOldValue in mChangeListeners
-			 * @param {string} sProperty The property
-			 * @param {object} oOldValue The old value
-			 * @param {object} oNewValue The new value
+			 * @param {string} sPropertyPath The property path
+			 * @param {object} oSource The source object
+			 * @param {object} oTarget The target object
 			 */
-			function copyPathValue(sPath, sProperty, oOldValue , oNewValue) {
-				var aSegments = sProperty.split("/");
+			function copyPathValue(sPropertyPath, oSource, oTarget) {
+				var aSegments = sPropertyPath.split("/");
 
 				aSegments.every(function (sSegment, iIndex) {
-					if (oNewValue[sSegment] === null) {
-						oOldValue[sSegment] = null;
-						if (iIndex < aSegments.length - 1) {
-							return false;
-						}
-						_Helper.fireChange(mChangeListeners, _Helper.buildPath(sPath, sProperty),
-							oOldValue[sSegment]);
-					} else if (typeof oNewValue[sSegment] === "object") {
-						oOldValue[sSegment] = oOldValue[sSegment] || {};
-					} else {
-						if (oOldValue[sSegment] !== oNewValue[sSegment]) {
-							oOldValue[sSegment] = oNewValue[sSegment];
+					var vSourceProperty = oSource[sSegment],
+						vTargetProperty = oTarget[sSegment];
+
+					if (vSourceProperty && typeof vSourceProperty === "object") {
+						oTarget[sSegment] = vTargetProperty || {};
+					} else if (vTargetProperty && typeof vTargetProperty === "object") {
+						oTarget[sSegment] = vSourceProperty; // null or undefined
+						_Helper.fireChanges(mChangeListeners,
+							_Helper.buildPath(sPath, aSegments.slice(0, iIndex + 1).join("/")),
+							vTargetProperty, true);
+						return false;
+					} else if (vTargetProperty !== vSourceProperty) {
+						oTarget[sSegment] = vSourceProperty;
+						if (iIndex === aSegments.length - 1) {
 							_Helper.fireChange(mChangeListeners,
-								_Helper.buildPath(sPath, sProperty), oOldValue[sSegment]);
+								_Helper.buildPath(sPath, sPropertyPath), vSourceProperty);
 						}
+						// else a change from undefined to null where an object is expected along a
+						// property path from aSelect
+						return false;
+					} else if (!vTargetProperty) {
 						return false;
 					}
-					oOldValue = oOldValue[sSegment];
-					oNewValue = oNewValue[sSegment];
+
+					oTarget = oTarget[sSegment];
+					oSource = vSourceProperty;
 					return true;
 				});
 			}
@@ -1313,21 +1326,22 @@ sap.ui.define([
 			/*
 			 * Creates an array of all property paths for a given object
 			 * @param {object} oObject
-			 * @param {object} [sObjectName] The name of the complex property
+			 * @param {string} [sPropertyPath] The path of the complex property
 			 */
-			function buildPropertyPaths(oObject, sObjectName) {
+			function buildPropertyPaths(oObject, sPropertyPath) {
 				Object.keys(oObject).forEach(function (sProperty) {
-					var sPropertyPath = _Helper.buildPath(sObjectName, sProperty),
-						vPropertyValue = oObject[sProperty];
+					var sChildPath, vValue;
 
 					if (sProperty === "@$ui5._") {
 						return; // ignore private namespace
 					}
 
-					if (vPropertyValue !== null && typeof vPropertyValue === "object") {
-						buildPropertyPaths(vPropertyValue, sPropertyPath);
+					sChildPath = _Helper.buildPath(sPropertyPath, sProperty);
+					vValue = oObject[sProperty];
+					if (vValue !== null && typeof vValue === "object") {
+						buildPropertyPaths(vValue, sChildPath);
 					} else {
-						aSelect.push(sPropertyPath);
+						aSelect.push(sChildPath);
 					}
 				});
 			}
@@ -1350,7 +1364,7 @@ sap.ui.define([
 
 			// take over properties from the new value and fire change events
 			aSelect.forEach(function (sProperty) {
-				copyPathValue(sPath, sProperty, oOldValue, oNewValue);
+				copyPathValue(sProperty, oNewValue, oOldValue);
 			});
 			// copy key predicate, but do not fire change event
 			sPredicate = _Helper.getPrivateAnnotation(oNewValue, "predicate");

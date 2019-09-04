@@ -19689,6 +19689,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create a row. See that the city (a nested property inside the address) is removed,
+	// when the POST response nulls the address (the complex property containing it).
+	// JIRA: CPOUI5UISERVICESV3-1878
+	QUnit.test("create removes a nested property", function (assert) {
+		var oCreatedContext,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			sView = '\
+<Table id="table" items="{/BusinessPartnerList}">\
+	<ColumnListItem>\
+		<Text id="city" text="{Address/City}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList?$select=Address/City,BusinessPartnerID"
+			+ "&$skip=0&$top=100",
+				{value : []})
+			.expectChange("city", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("city", ["Heidelberg"]);
+
+			oCreatedContext = that.oView.byId("table").getBinding("items").create({
+				Address : {City : "Heidelberg"}
+			}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "BusinessPartnerList",
+					payload : {Address : {City : "Heidelberg"}}
+				}, {
+					BusinessPartnerId : "1",
+					Address : null
+				})
+				.expectChange("city", [null]);
+
+			return Promise.all([
+				oModel.submitBatch("update"),
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Creation of an entity fails due to a network error. A subsequent call to
 	// requestSideEffects repeats the failed POST in the same $batch.
 	// JIRA: CPOUI5UISERVICESV3-1936
