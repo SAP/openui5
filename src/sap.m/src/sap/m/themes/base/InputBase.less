@@ -241,6 +241,21 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	color: @sapUiFieldPlaceholderTextColor;
 }
 
+.sapMInputBaseInner[dir="rtl"]::-webkit-input-placeholder {
+	padding-right: 0.125rem;
+	/* important text dir set to rtl causes some characters to get cut off */
+}
+
+.sapMInputBaseInner[dir="rtl"]::-moz-placeholder {
+	padding-right: 0.125rem;
+	/* important text dir set to rtl causes some characters to get cut off */
+}
+
+.sapMInputBaseInner[dir="rtl"]:-ms-input-placeholder {
+	padding-right: 0.125rem;
+	/* important text dir set to rtl causes some characters to get cut off */
+}
+
 input.sapMInputBaseInner:invalid {
 	/* disable native browser input validation visualization e.g. for type email or number */
 	box-shadow: none;
