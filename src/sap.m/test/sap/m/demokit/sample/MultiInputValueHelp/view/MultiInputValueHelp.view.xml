@@ -9,7 +9,7 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<Label text="Enter a search term, e.g. “Notebook”, and add matching products as tokens" width="100%" labelFor="multiInput"/>
-		<MultiInput width="500px"
+		<MultiInput width="40%"
 			id="multiInput"
 			suggestionItems="{
 				path: '/ProductCollection',
