@@ -322,7 +322,7 @@ sap.ui.define([
 	 * Returns a promise that resolves with an object
 	 * {
 	 *    configuration: the current configuration
-	 *    designtime: the designtime modules responce
+	 *    designtime: the designtime modules response
 	 *    manifest: the complete manifest json
 	 * }
 	 * The promise is rejected if the module cannot be loaded with an object:

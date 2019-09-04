@@ -29,7 +29,8 @@ sap.ui.define(function () {
 				},
 				module: [
 					'./Card.qunit',
-					'./CardDataHandling.qunit'
+					'./CardDataHandling.qunit',
+					'./CardDesigntime.qunit'
 				]
 			},
 			"util/CardManifest": {
