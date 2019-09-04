@@ -101,6 +101,13 @@ sap.ui.require([
 			}
 		}
 
+		function handleTextDirChange(oEvent) {
+			var choice = oEvent.getSource().getText();
+			aInputIds.forEach(function(inp) {
+			 sap.ui.getCore().byId(inp).setTextDirection(choice);
+			});
+		}
+
 		var app = new App("myApp", {initialPage: "inpPage"});
 		app.placeAt("body");
 
@@ -154,6 +161,14 @@ sap.ui.require([
 									buttons: [
 										new RadioButton("rb11", {text: "Visible", select: handleValueHelpChange}),
 										new RadioButton("rb12", {text: "None", select: handleValueHelpChange})
+									]
+								}),
+								new Title({text: "Input Text Direction:"}).addStyleClass("sapUiSmallMargin"),
+								new RadioButtonGroup({
+									selectedIndex: 0,
+									buttons: [
+										new RadioButton("rb13", {text: "LTR", select: handleTextDirChange}),
+										new RadioButton("rb14", {text: "RTL", select: handleTextDirChange})
 									]
 								})
 							]

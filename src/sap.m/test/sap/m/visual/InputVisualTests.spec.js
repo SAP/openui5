@@ -43,7 +43,7 @@ describe("sap.m.InputVisualTests", function() {
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
 
-	var aRadioButtonsOnPage = 12; // dependant of the test page
+	var aRadioButtonsOnPage = 14; // dependant of the test page
 
 	for (var index = 0; index < aRadioButtonsOnPage; index++) {
 		takePictures(index, aRadioButtonsOnPage);
