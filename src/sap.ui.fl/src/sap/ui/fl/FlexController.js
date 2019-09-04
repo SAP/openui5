@@ -1199,19 +1199,26 @@ sap.ui.define([
 	 */
 	FlexController.prototype.applyVariantChanges = function(aChanges, oAppComponent) {
 		var aPromiseStack = [];
-		aChanges.forEach(function(oChange) {
+		var oModifier = JsControlTreeModifier;
+		var aChangeSelectors = aChanges.map(function (oChange) {
 			this._oChangePersistence._addChangeAndUpdateDependencies(oAppComponent, oChange);
-
+			return this._getSelectorOfChange(oChange);
+		}.bind(this));
+		var fnSameSelector = function (oSource, oTarget) {
+			return oSource.id === oTarget.id;
+		};
+		// Remove duplicates. The further execution should be run once per control
+		aChangeSelectors = Utils.uniqWith(aChangeSelectors, fnSameSelector);
+		aChangeSelectors.forEach(function(oSelector) {
 			aPromiseStack.push(function() {
-				var oModifier = JsControlTreeModifier;
-				var oSelector = this._getSelectorOfChange(oChange);
 				var oControl = oModifier.bySelector(oSelector, oAppComponent);
 				if (!oControl) {
 					Log.error("A flexibility change tries to change a nonexistent control.");
 					return new Utils.FakePromise();
 				}
 
-				//Previous changes added as dependencies
+				// TODO: replace _applyChangesOnControl. This is based on the control specific changes. Should be replaced by a function that applies still the changes passed in applyVariantChanges
+				// Previous changes added as dependencies
 				return this._applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
 			}.bind(this));
 		}.bind(this));

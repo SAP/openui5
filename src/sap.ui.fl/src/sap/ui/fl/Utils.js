@@ -1494,15 +1494,34 @@ function(
 			return oNewObject;
 		},
 
-		arrayIncludesWith: function (aObjects, oTarget, fnComperator) {
+		/**
+		 * Checks if the target object is included in the array. The uniformity of the objects is indicated by the comparator function.
+		 * The comparator function is invoked to compare the objects. It accepts two arguments (oObject1, oObject2)
+		 * and has to return <code>true</code> when objects need to be equal.
+		 *
+		 * @param {object[]} aObjects - Array to be checked
+		 * @param {object} oTarget - Target object
+		 * @param {function} fnComparator - Comparator function that defines the criteria for the comparison of objects
+		 * @returns {boolean} <code>true</code> if the target object is available in the passed array of objects
+		 */
+		arrayIncludesWith: function (aObjects, oTarget, fnComparator) {
 			for (var i = 0, n = aObjects.length; i < n; i++) {
-				if (fnComperator(aObjects[i], oTarget)) {
+				if (fnComparator(aObjects[i], oTarget)) {
 					return true;
 				}
 			}
 			return false;
 		},
 
+		/**
+		 * Creates an array of objects from the passed array without duplicates. The duplicates are indicated by the comparator function.
+		 * The comparator function is invoked to compare the objects. It accepts two arguments (oObject1, oObject2)
+		 * and has to return <code>true</code> when objects need to be equal.
+		 *
+		 * @param {array<object>} aObjects - Array of objects
+		 * @param {function} fnComparator - Comparator function that defines the criteria for the comparison of objects
+		 * @returns {array<object>} Array of objects without duplicates indicated by the comparator function
+		 */
 		uniqWith: function (aObjects, fnComparator) {
 			var aUniqObjects = [];
 			for (var i = 0, n = aObjects.length; i < n; i++) {
