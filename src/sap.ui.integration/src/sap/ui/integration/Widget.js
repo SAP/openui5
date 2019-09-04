@@ -72,6 +72,7 @@ sap.ui.define([
 					type: "object",
 					defaultValue: null
 				},
+
 				/**
 				 * The configuration used in the manifest within the sap.widget section
 				 * This data will be merged on to of an already given manifest
@@ -79,6 +80,7 @@ sap.ui.define([
 				configuration: {
 					type: "object"
 				},
+
 				/**
 				 * Base URL
 				 */
@@ -200,10 +202,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Instantiates a Widget Manifest.
+	 * Instantiates a Widget Manifest and applies it.
 	 *
+	 * @private
 	 * @param {Object|string} vManifest The manifest URL or the manifest JSON.
 	 * @param {string} sBaseUrl The base URL of the manifest.
+	 * @returns {Promise} A promise resolved when the manifest is created and applied.
 	 */
 	Widget.prototype.createManifest = function (vManifest, sBaseUrl) {
 		var mOptions = {};
@@ -212,9 +216,13 @@ sap.ui.define([
 			vManifest = null;
 		}
 
+		// Let the Component loading trigger translation loading and processing.
+		mOptions.processI18n = false;
+
 		this.setBusy(true);
 		this._oWidgetManifest = new WidgetManifest("sap.widget", vManifest, sBaseUrl);
-		this._oWidgetManifest
+
+		return this._oWidgetManifest
 			.load(mOptions)
 			.then(this._applyManifest.bind(this))
 			.catch(this._applyManifest.bind(this));
@@ -250,8 +258,11 @@ sap.ui.define([
 
 	/**
 	 * Prepares the manifest and applies all settings.
+	 *
+	 * @returns {Promise} A promise resolved when the manifest is applied.
 	 */
 	Widget.prototype._applyManifest = function () {
+
 		var oParameters = this.getParameters(),
 			sAppType = this._oWidgetManifest.get(MANIFEST_PATHS.APP_TYPE),
 			//in case the manifest is passed as url we need to register the module path
@@ -262,9 +273,9 @@ sap.ui.define([
 		}
 
 		this._oWidgetManifest._mergeConfiguration(oConfiguration);
-		this._createComponent(this._oWidgetManifest.getJson());
 		this._registerManifestModulePath();
 		this._oWidgetManifest.processParameters(oParameters);
+		return this._createComponent(this._oWidgetManifest.getJson(), this.getBaseUrl());
 	};
 
 	/**
@@ -284,32 +295,38 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates component container for Widget
+	 * Creates component container for Widget.
 	 *
 	 * @param {Object} oManifest Manifest that is needed to create the component.
+	 * @param {string} sBaseUrl The base URL to be used for component URL and manifest URL.
+	 * @returns {Promise} A promise resolved when the component is loaded.
 	 * @private
 	 */
-	Widget.prototype._createComponent = function (oManifest) {
-			var oComponent = new ComponentContainer({
-				manifest: oManifest,
-				async: true,
-				componentCreated: function (oEvent) {
-					var oComponent = oEvent.getParameter("component");
-					this.setBusy(false);
-					oComponent.attachEvent("action", function (oEvent) {
-						this.fireEvent("action", {
-							actionSource: oEvent.getParameter("actionSource"),
-							manifestParameters: oEvent.getParameter("manifestParameters")
-						});
-					}.bind(this));
-				}.bind(this),
-				componentFailed: function (oEvent) {
-					this.setBusy(false);
-					Log.error(oEvent.getParameter("reason"));
-				}
-			});
+	Widget.prototype._createComponent = function (oManifest, sBaseUrl) {
+		var mOptions = {
+			manifest: oManifest
+		};
 
-			this.setAggregation("_content", oComponent);
+		if (sBaseUrl) {
+			mOptions.url = sBaseUrl;
+			mOptions.altManifestUrl = sBaseUrl;
+		}
+
+		return sap.ui.core.Component.load(mOptions)
+			.then(function(oComponent) {
+				var oContainer = new ComponentContainer({
+					component: oComponent().getId()
+				});
+				oContainer.attachEvent("action", function (oEvent) {
+					this.fireEvent("action", {
+						actionSource: oEvent.getParameter("actionSource"),
+						manifestParameters: oEvent.getParameter("manifestParameters")
+					});
+				}.bind(this));
+				this.setAggregation("_content", oContainer);
+				this.setBusy(false);
+				this.fireEvent("_ready");
+			}.bind(this));
 	};
 
 	/**

@@ -334,10 +334,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Instantiates a Card Manifest.
+	 * Instantiates a Card Manifest and applies it.
 	 *
+	 * @private
 	 * @param {Object|string} vManifest The manifest URL or the manifest JSON.
 	 * @param {string} sBaseUrl The base URL of the manifest.
+	 * @returns {Promise} A promise resolved when the manifest is created and applied.
 	 */
 	Card.prototype.createManifest = function (vManifest, sBaseUrl) {
 		var mOptions = {};
@@ -348,7 +350,7 @@ sap.ui.define([
 
 		this.setBusy(true);
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl);
-		this._oCardManifest
+		return this._oCardManifest
 			.load(mOptions)
 			.then(this._applyManifest.bind(this))
 			.catch(this._applyManifest.bind(this));

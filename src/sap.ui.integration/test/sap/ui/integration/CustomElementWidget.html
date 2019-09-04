@@ -20,10 +20,11 @@
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" style="margin:2rem">
-		<ui-widget class="sapFCardBase customSize"
+	<ui-widget class="sapFCardBase customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
-		on-action="handleAction(event)"></ui-widget>
-		<ui-widget class="customSize"
+		on-action="handleAction(event)">
+	</ui-widget>
+	<ui-widget class="customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
 		configuration='{
 			"configuration": {
@@ -35,8 +36,8 @@
 		parameters='{
 			"text": "modifiedParameterValue"
 		}'
-		on-action="handleAction(event)"
-		></ui-widget>
-	</body>
+		on-action="handleAction(event)">
+	</ui-widget>
+</body>
 
 </html>
