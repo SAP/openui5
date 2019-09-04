@@ -311,6 +311,7 @@ sap.ui.define([
 				'step': 0xe0fe,
 				'sonography': 0xe0ff,
 				'soccor': 0xe100,
+				'soccer': 0xe100,
 				'physical-activity': 0xe101,
 				'pharmacy': 0xe102,
 				'official-service': 0xe103,
