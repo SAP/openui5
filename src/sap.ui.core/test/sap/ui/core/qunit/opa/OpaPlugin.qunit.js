@@ -312,6 +312,15 @@ sap.ui.define([
 		sinon.assert.calledWith(this.fnLogSpy, "The control type foo.bar.foo is undefined.");
 	});
 
+	QUnit.test("Should retrieve no control for static control type", function (assert) {
+		var oResult = this.oPlugin.getMatchingControls({
+			controlType: "sap.m.MessageToast"
+		});
+
+		assert.strictEqual(oResult.length, 0, "Result was null");
+		sinon.assert.calledWith(this.fnLogSpy, "The control type sap.m.MessageToast must be a function.");
+	});
+
 	QUnit.test("Should retrieve a control by a global id and control type", function(assert) {
 		// Act
 		var oRetrievedButton = this.oPlugin.getMatchingControls({
