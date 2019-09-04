@@ -82,8 +82,10 @@ sap.ui.define([
 		},
 
 		showError: function (sMessage) {
-			this._errorMessageStrip.setVisible(true);
-			this._errorMessageStrip.setText(sMessage);
+			if (sMessage) {
+				this._errorMessageStrip.setVisible(true);
+				this._errorMessageStrip.setText(sMessage);
+			}
 		},
 
 		onSubSampleChange: function (oEvent) {
