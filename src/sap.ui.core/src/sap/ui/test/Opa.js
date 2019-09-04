@@ -10,8 +10,9 @@ sap.ui.define([
 	'sap/ui/test/_OpaLogger',
 	'sap/ui/test/_ParameterValidator',
 	'sap/ui/test/_UsageReport',
-	'sap/ui/test/_OpaUriParameterParser'
-], function(Device, $, _LogCollector, _OpaLogger, _ParameterValidator, _UsageReport, _OpaUriParameterParser) {
+	'sap/ui/test/_OpaUriParameterParser',
+	'sap/ui/test/_ValidationParameters'
+], function(Device, $, _LogCollector, _OpaLogger, _ParameterValidator, _UsageReport, _OpaUriParameterParser, _ValidationParameters) {
 	"use strict";
 
 	///////////////////////////////
@@ -645,7 +646,7 @@ sap.ui.define([
 
 		_validateWaitFor: function (oParameters) {
 			oValidator.validate({
-				validationInfo: Opa._validationInfo,
+				validationInfo: _ValidationParameters.OPA_WAITFOR,
 				inputToValidate: oParameters
 			});
 		}
@@ -688,19 +689,6 @@ sap.ui.define([
 		"_stackDropCount",
 		"asyncPolling"
 	];
-
-	/* all config values  that will be used in waitFor */
-	Opa._validationInfo = {
-		error: "func",
-		check: "func",
-		success: "func",
-		timeout: "numeric",
-		debugTimeout: "numeric",
-		pollingInterval: "numeric",
-		_stackDropCount: "numeric",
-		errorMessage: "string",
-		asyncPolling: "bool"
-	};
 
 
 	return Opa;

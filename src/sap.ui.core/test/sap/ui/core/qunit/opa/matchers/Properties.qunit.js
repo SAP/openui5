@@ -8,7 +8,7 @@ sap.ui.define([
 
 	// loadAndIntercept also loads the module.
 	// I cannot load it with the require above because i need to spy during the loading
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.matchers.Properties")[1];
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.matchers.Properties");
 	var Properties = sap.ui.test.matchers.Properties;
 
 	QUnit.module("Properties", {

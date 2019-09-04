@@ -12,7 +12,6 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/_LogCollector',
 	'../utils/phantomJS',
-	"../utils/loggerInterceptor",
 	'../utils/customQUnitAssertions'
 ], function (Interactable,
 			 $,
@@ -25,8 +24,7 @@ sap.ui.define([
 			 opaTest,
 			 Opa5,
 			 _LogCollector,
-			phantomJSUtils,
-			loggerInterceptor) {
+			phantomJSUtils) {
 	"use strict";
 
 	phantomJSUtils.introduceSinonXHR();

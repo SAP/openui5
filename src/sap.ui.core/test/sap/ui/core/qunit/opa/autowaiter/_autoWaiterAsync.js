@@ -1,12 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.global",
-	"../utils/loggerInterceptor",
 	"sap/ui/test/autowaiter/_autoWaiter",
 	"sap/ui/test/autowaiter/_XHRWaiter",
 	"sap/ui/test/autowaiter/_autoWaiterAsync",
 	"sap/ui/test/_LogCollector"
-], function ($, loggerInterceptor, _autoWaiter, _XHRWaiter, _autoWaiterAsync, _LogCollector) {
+], function ($, _autoWaiter, _XHRWaiter, _autoWaiterAsync, _LogCollector) {
 	"use strict";
 
 	var iPollInterval = 400;

@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"jquery.sap.global",
 	"sap/m/Button",
-	"sap/ui/thirdparty/URI",
-	"../utils/loggerInterceptor"
-], function (Opa, Opa5, opaTest, $, Button, URI, loggerInterceptor) {
+	"sap/ui/thirdparty/URI"
+], function (Opa, Opa5, opaTest, $, Button, URI) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {

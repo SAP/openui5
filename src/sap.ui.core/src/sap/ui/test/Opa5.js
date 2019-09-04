@@ -1,6 +1,6 @@
 /*!
- * ${copyright}
- */
+* ${copyright}
+*/
 
 sap.ui.define([
 		'sap/ui/test/Opa',
@@ -22,28 +22,30 @@ sap.ui.define([
 		'sap/ui/test/autowaiter/_autoWaiter',
 		'sap/ui/dom/includeStylesheet',
 		'sap/ui/thirdparty/jquery',
-		'sap/ui/test/_OpaUriParameterParser'
-	],
-	function(Opa,
-			 OpaPlugin,
-			 PageObjectFactory,
-			 Ui5Object,
-			 iFrameLauncher,
-			 componentLauncher,
-			 HashChanger,
-			 Matcher,
-			 AggregationFilled,
-			 PropertyStrictEquals,
-			 ActionPipeline,
-			 _ParameterValidator,
-			 _OpaLogger,
-			 URI,
-			 EventProvider,
-			 QUnitUtils,
-			 _autoWaiter,
-			 includeStylesheet,
-			 $,
-			 _OpaUriParameterParser) {
+		'sap/ui/test/_OpaUriParameterParser',
+		"sap/ui/test/_ValidationParameters"
+],
+	function (Opa,
+			OpaPlugin,
+			PageObjectFactory,
+			Ui5Object,
+			iFrameLauncher,
+			componentLauncher,
+			HashChanger,
+			Matcher,
+			AggregationFilled,
+			PropertyStrictEquals,
+			ActionPipeline,
+			_ParameterValidator,
+			_OpaLogger,
+			URI,
+			EventProvider,
+			QUnitUtils,
+			_autoWaiter,
+			includeStylesheet,
+			$,
+			_OpaUriParameterParser,
+			_ValidationParameters) {
 		"use strict";
 
 		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
@@ -90,14 +92,14 @@ sap.ui.define([
 			$.extend({},
 				Opa.prototype,
 				{
-					constructor : function() {
+					constructor: function () {
 						Opa.apply(this, arguments);
 					}
 				}
 			)
 		);
 
-		function iStartMyAppInAFrame () {
+		function iStartMyAppInAFrame() {
 			var that = this;
 			var oOptions = {};
 			var aOptions = ["source", "timeout", "autoWait", "width", "height"];
@@ -117,11 +119,11 @@ sap.ui.define([
 			}
 			var uri = new URI(oOptions.source ? oOptions.source : '');
 			uri.search($.extend(
-				uri.search(true),Opa.config.appParams));
+				uri.search(true), Opa.config.appParams));
 
 			// kick starting the frame
 			var oCreateFrameOptions = createWaitForObjectWithoutDefaults();
-			oCreateFrameOptions.success = function() {
+			oCreateFrameOptions.success = function () {
 				addFrame({
 					source: uri.toString(),
 					width: oOptions.width || Opa.config.frameWidth,
@@ -139,7 +141,7 @@ sap.ui.define([
 
 			// load extensions
 			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
-			oLoadExtensionOptions.success = function() {
+			oLoadExtensionOptions.success = function () {
 				that._loadExtensions(iFrameLauncher.getWindow());
 			};
 			this.waitFor(oLoadExtensionOptions);
@@ -169,18 +171,18 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (oOptions){
+		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent(oOptions) {
 			var that = this;
 			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
 			// apply the appParams to this frame URL so the application under test uses appParams
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
-			oParamsWaitForOptions.success = function() {
+			oParamsWaitForOptions.success = function () {
 				var uri = new URI();
 				uri.search($.extend(
-					uri.search(true),Opa.config.appParams));
-				window.history.replaceState({},"",uri.toString());
+					uri.search(true), Opa.config.appParams));
+				window.history.replaceState({}, "", uri.toString());
 			};
 			this.waitFor(oParamsWaitForOptions);
 
@@ -212,7 +214,7 @@ sap.ui.define([
 
 			// load extensions
 			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
-			oLoadExtensionOptions.success = function() {
+			oLoadExtensionOptions.success = function () {
 				that._loadExtensions(window);
 			};
 			this.waitFor(oLoadExtensionOptions);
@@ -238,7 +240,7 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		Opa5.prototype.iTeardownMyUIComponent = function iTeardownMyUIComponent () {
+		Opa5.prototype.iTeardownMyUIComponent = function iTeardownMyUIComponent() {
 
 			var oOptions = createWaitForObjectWithoutDefaults();
 			oOptions.success = function () {
@@ -247,7 +249,7 @@ sap.ui.define([
 
 			// restore URL after component teardown in order to remove any appParams added by extendConfig
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
-			oParamsWaitForOptions.success = function() {
+			oParamsWaitForOptions.success = function () {
 				var uri = new URI();
 				uri.search(allUriParams);
 				window.history.replaceState({}, "", uri.toString());
@@ -355,7 +357,7 @@ sap.ui.define([
 		 */
 		Opa5.prototype.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
-		function iTeardownMyAppFrame () {
+		function iTeardownMyAppFrame() {
 			var oWaitForObject = createWaitForObjectWithoutDefaults();
 			oWaitForObject.success = function () {
 				iFrameLauncher.teardown();
@@ -417,9 +419,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * Takes the same parameters as {@link sap.ui.test.Opa#waitFor}. Also allows you to specify additional parameters:
+		 * Takes a superset of the parameters of {@link sap.ui.test.Opa#waitFor}.
 		 *
 		 * @param {object} options An Object containing conditions for waiting and callbacks
+		 * Can contain declarative matchers. For details, see the options.matchers property.
+		 * Any matchers declared on the root level of options will be merged with thouse declared in options.matchers.
 		 * @param {string|RegExp} [options.id] The global ID of a control, or the ID of a control inside a view.
 		 * If a regex and a viewName is provided, Opa5 will only look for controls in the view with a matching ID.<br/>
 		 * Example of a waitFor:
@@ -454,12 +458,15 @@ sap.ui.define([
 		 * @param {string} [options.viewId] @since 1.62 The ID of a view. Can be used alone or in combination with viewName and viewNamespace.
 		 * Always set view ID if there are multiple views with the same name
 		 * @param {string} [options.fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix
-		 * @param {function|array|sap.ui.test.matchers.Matcher} [options.matchers] A single matcher or an array of matchers {@link sap.ui.test.matchers}.
+		 * @param {function|array|object|sap.ui.test.matchers.Matcher} [options.matchers] matchers used to filter controls.
+		 * Could be a function, a single matcher instance, an array of matcher instances, or, @since 1.72, a plain object to specify matchers declaratively.
+		 * For a full list of built-in matchers see {@link sap.ui.test.matchers}.
 		 * Matchers will be applied to an every control found by the waitFor function.
 		 * The matchers are a pipeline: the first matcher gets a control as an input parameter, each subsequent matcher gets the same input as the previous one, if the previous output is 'true'.
 		 * If the previous output is a truthy value, the next matcher will receive this value as an input parameter.
 		 * If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values.
 		 * Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
+
 		 * @param {string} [options.controlType] Selects all control by their type.
 		 * It is usually combined with a viewName or searchOpenDialogs. If no control is matching the type, an empty
 		 * array will be returned. Here are some samples:
@@ -632,18 +639,34 @@ sap.ui.define([
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (options) {
+			// if there are any declarative matchers, first, find the ancestors and descendants.
+			// do this recursively, until every expanded declaration is resolved,
+			// and then continue to finding the dependant control.
+			// the actual queueing of waitFors will be ensured by sap.ui.test.Opa.waitFor (see function ensureNewlyAddedWaitForStatementsPrepended)
+			var aPath = _getPathToExpansion(options);
+			var mExpansion = _getExpansion(options, aPath);
+			if (mExpansion) {
+				mExpansion.success = function (vControl) {
+					// right now, we assume that every declarative matcher matches exactly one control
+					var oControl = jQuery.isArray(vControl) ? vControl[0] : vControl;
+					var optionsForDependant = _substituteExpansion(options, aPath, oControl);
+					return Opa5.prototype.waitFor.call(this, optionsForDependant);
+				};
+				return Opa5.prototype.waitFor.call(this, mExpansion);
+			}
+
 			var vActions = options.actions,
 				oFilteredConfig = Opa._createFilteredConfig(aConfigValuesForWaitFor),
 				// only take the allowed properties from the config
 				oOptionsPassedToOpa;
 
 			options = $.extend({},
-					oFilteredConfig,
-					options);
+				oFilteredConfig,
+				options);
 			options.actions = vActions;
 
 			oValidator.validate({
-				validationInfo: Opa5._validationInfo,
+				validationInfo: _ValidationParameters.OPA5_WAITFOR,
 				inputToValidate: options
 			});
 
@@ -799,8 +822,8 @@ sap.ui.define([
 		};
 
 		/*
-		* @private
-		*/
+		 * @private
+		 */
 		Opa5._getAutoWaiter = function () {
 			return iFrameLauncher._getAutoWaiter() || _autoWaiter;
 		};
@@ -913,7 +936,7 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		Opa5.extendConfig = function(options) {
+		Opa5.extendConfig = function (options) {
 			Opa.extendConfig(options);
 			// URL app params overwrite extendConfig app params
 			Opa.extendConfig({
@@ -942,17 +965,17 @@ sap.ui.define([
 		 * @public
 		 * @since 1.25
 		 */
-		Opa5.resetConfig = function() {
+		Opa5.resetConfig = function () {
 			Opa.resetConfig();
 			Opa.extendConfig({
-				viewNamespace : "",
-				arrangements : new Opa5(),
-				actions : new Opa5(),
-				assertions : new Opa5(),
-				visible : true,
+				viewNamespace: "",
+				arrangements: new Opa5(),
+				actions: new Opa5(),
+				assertions: new Opa5(),
+				visible: true,
 				enabled: undefined,
-				autoWait : false,
-				_stackDropCount : 1
+				autoWait: false,
+				_stackDropCount: 1
 			});
 			Opa.extendConfig({
 				appParams: appUriParams
@@ -971,7 +994,7 @@ sap.ui.define([
 		 * @since 1.49
 		 * @function
 		 */
-		Opa5.getTestLibConfig = function(sTestLibName) {
+		Opa5.getTestLibConfig = function (sTestLibName) {
 			return Opa.config.testLibs && Opa.config.testLibs[sTestLibName] ?
 				Opa.config.testLibs[sTestLibName] : {};
 		};
@@ -1031,7 +1054,7 @@ sap.ui.define([
 		 * @public
 		 * @static
 		 * @type map
-		*/
+		 */
 
 		/**
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
@@ -1096,7 +1119,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.25
 		 */
-		Opa5.createPageObjects = function(mPageObjects) {
+		Opa5.createPageObjects = function (mPageObjects) {
 			// prevent circular dependency by passing Opa5 as parameter
 			return PageObjectFactory.create(mPageObjects, Opa5);
 		};
@@ -1131,14 +1154,7 @@ sap.ui.define([
 		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa5.waitFor}
 		 */
 		Opa5.prototype.iWaitForPromise = function (oPromise) {
-			var oOptions = {
-				// make sure no controls are searched by the defaults
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				autoWait: false
-			};
+			var oOptions = createWaitForObjectWithoutDefaults();
 			return Opa.prototype._schedulePromiseOnFlow.call(this, oPromise, oOptions);
 		};
 
@@ -1147,7 +1163,7 @@ sap.ui.define([
 		 */
 		Opa5.resetConfig();
 
-		function addFrame (oOptions) {
+		function addFrame(oOptions) {
 			// include styles
 			var sIFrameStyleLocation = sap.ui.require.toUrl("sap/ui/test/OpaCss") + ".css";
 			includeStylesheet(sIFrameStyleLocation);
@@ -1158,7 +1174,7 @@ sap.ui.define([
 			return iFrameLauncher.launch(oFrameLaunchOptions);
 		}
 
-		function createWaitForObjectWithoutDefaults () {
+		function createWaitForObjectWithoutDefaults() {
 			return {
 				// make sure no controls are searched by the defaults
 				viewName: null,
@@ -1178,28 +1194,12 @@ sap.ui.define([
 			$("html").height("100%");
 		});
 
-		Opa5._validationInfo = $.extend({
-			_stack: "string",
-			viewName: "string",
-			viewNamespace: "string",
-			viewId: "string",
-			fragmentId: "string",
-			visible: "bool",
-			enabled: "bool",
-			matchers: "any",
-			actions: "any",
-			id: "any",
-			controlType: "any",
-			searchOpenDialogs: "bool",
-			autoWait: "any"
-		}, Opa._validationInfo);
-
-		Opa5._getEventProvider = function() {
+		Opa5._getEventProvider = function () {
 			return aEventProvider;
 		};
 
 		//// Extensions
-		Opa5.prototype._loadExtensions = function(oAppWindow) {
+		Opa5.prototype._loadExtensions = function (oAppWindow) {
 			var that = this;
 
 			// get extension names from config
@@ -1207,7 +1207,7 @@ sap.ui.define([
 				Opa.config.extensions ? Opa.config.extensions : [];
 
 			// load all required extensions in the app frame
-			var oExtensionsPromise = $.when($.map(aExtensionNames,function(sExtensionName) {
+			var oExtensionsPromise = $.when($.map(aExtensionNames, function (sExtensionName) {
 				var oExtension;
 				var oExtensionDeferred = $.Deferred();
 
@@ -1218,16 +1218,16 @@ sap.ui.define([
 					oExtension.name = sExtensionName;
 
 					// execute the onAfterInit hook
-					that._executeExtensionOnAfterInit(oExtension,oAppWindow)
-						.done(function(){
+					that._executeExtensionOnAfterInit(oExtension, oAppWindow)
+						.done(function () {
 							// notify test framework adapters so it could hook custom assertions
-							Opa5._getEventProvider().fireEvent('onExtensionAfterInit',{
+							Opa5._getEventProvider().fireEvent('onExtensionAfterInit', {
 								extension: oExtension,
 								appWindow: oAppWindow
 							});
 							that._addExtension(oExtension);
 							oExtensionDeferred.resolve();
-						}).fail(function(error) {
+						}).fail(function (error) {
 							// log the error and continue with other extensions
 							oLogger.error(new Error("Error during extension init: " +
 								error), "Opa");
@@ -1244,20 +1244,20 @@ sap.ui.define([
 			return this.iWaitForPromise(oExtensionsPromise);
 		};
 
-		Opa5.prototype._unloadExtensions = function(oAppWindow) {
+		Opa5.prototype._unloadExtensions = function (oAppWindow) {
 			var that = this;
 
-			var oExtensionsPromise = $.when($.map(this._getExtensions(),function(oExtension) {
+			var oExtensionsPromise = $.when($.map(this._getExtensions(), function (oExtension) {
 				var oExtensionDeferred = $.Deferred();
 
-				Opa5._getEventProvider().fireEvent('onExtensionBeforeExit',{
+				Opa5._getEventProvider().fireEvent('onExtensionBeforeExit', {
 					extension: oExtension
 				});
-				that._executeExtensionOnBeforeExit(oExtension,oAppWindow)
-					.done(function() {
+				that._executeExtensionOnBeforeExit(oExtension, oAppWindow)
+					.done(function () {
 						oExtensionDeferred.resolve();
 					})
-					.fail(function(error) {
+					.fail(function (error) {
 						// log the error and continue with other extensions
 						oLogger.error(new Error("Error during extension init: " +
 							error), "Opa");
@@ -1270,23 +1270,23 @@ sap.ui.define([
 			this.iWaitForPromise(oExtensionsPromise);
 		};
 
-		Opa5.prototype._addExtension = function(oExtension) {
+		Opa5.prototype._addExtension = function (oExtension) {
 			aExtensions.push(oExtension);
 		};
 
-		Opa5.prototype._getExtensions = function() {
+		Opa5.prototype._getExtensions = function () {
 			return aExtensions;
 		};
 
-		Opa5.prototype._executeExtensionOnAfterInit = function(oExtension,oAppWindow) {
+		Opa5.prototype._executeExtensionOnAfterInit = function (oExtension, oAppWindow) {
 			var oDeferred = $.Deferred();
 
 			var fnOnAfterInit = oExtension.onAfterInit;
 			if (fnOnAfterInit) {
 				// onAfterInit will return app-frame promise, need to convert it to test-frame promise
-				fnOnAfterInit.bind(oAppWindow)().done(function() {
+				fnOnAfterInit.bind(oAppWindow)().done(function () {
 					oDeferred.resolve();
-				}).fail(function(error) {
+				}).fail(function (error) {
 					oDeferred.reject(
 						new Error("Error while waiting for extension: " + oExtension.name +
 							" to init, details: " + error));
@@ -1297,15 +1297,15 @@ sap.ui.define([
 			return oDeferred.promise();
 		};
 
-		Opa5.prototype._executeExtensionOnBeforeExit = function(oExtension,oAppWindow) {
+		Opa5.prototype._executeExtensionOnBeforeExit = function (oExtension, oAppWindow) {
 			var oDeferred = $.Deferred();
 
 			var fnOnBeforeExit = oExtension.onBeforeExit;
 			if (fnOnBeforeExit) {
 				// onBeforeExit will return app-frame promise, need to convert it to test-frame promise
-				fnOnBeforeExit.bind(oAppWindow)().done(function() {
+				fnOnBeforeExit.bind(oAppWindow)().done(function () {
 					oDeferred.resolve();
-				}).fail(function(error) {
+				}).fail(function (error) {
 					oDeferred.reject(
 						new Error("Error while waiting for extension: " + oExtension.name +
 							" to exit, details: " + error));
@@ -1316,6 +1316,54 @@ sap.ui.define([
 
 			return oDeferred.promise();
 		};
+
+		// in the declarative matcher syntax, there can be two types of expanded declaration: for an ancestor and for a descendant
+		// they can be found on the root level of "options" or under the "matchers" key
+		// return the path to one such expanded declaration, if it exists
+		function _getPathToExpansion(options) {
+			var sMatchers = "matchers";
+			var sAncestor = "ancestor";
+			var sDescendant = "descendant";
+			if (options[sAncestor] && jQuery.isPlainObject(options[sAncestor])) {
+				return [sAncestor];
+			} else if (options[sMatchers] && options[sMatchers][sAncestor] && jQuery.isPlainObject(options[sMatchers][sAncestor])) {
+				return [sMatchers, sAncestor];
+			} else if (options[sDescendant] && jQuery.isPlainObject(options[sDescendant])) {
+				return [sDescendant];
+			} else if (options[sMatchers] && options[sMatchers][sDescendant] && jQuery.isPlainObject(options[sMatchers][sDescendant])) {
+				return [sMatchers, sDescendant];
+			}
+		}
+
+		// gets the value in path "aPath" of object "options"
+		function _getExpansion(options, aPath) {
+			if (aPath) {
+				var oResult = options;
+				aPath.forEach(function (sPath) {
+					if (oResult[sPath] !== undefined) {
+						oResult = oResult[sPath];
+					}
+				});
+				return oResult;
+			}
+		}
+
+		// substitute the value in path "aPath" of object "options" with new value "oControl"
+		// return a new object ("options" remains unchanged)
+		function _substituteExpansion(options, aPath, oControl) {
+			if (aPath) {
+				var oResult = jQuery.extend({}, options);
+				var oPath = oResult;
+				var i = 0;
+				while (i < aPath.length - 1) {
+					oPath = oResult[aPath[i++]];
+				}
+				// this would then be passed as an argument to an Ancestor/Descendant constructor
+				// for details, see sap.ui.test.matchers.MatcherFactory
+				oPath[aPath[i]] = oControl;
+				return oResult;
+			}
+		}
 
 		return Opa5;
 });

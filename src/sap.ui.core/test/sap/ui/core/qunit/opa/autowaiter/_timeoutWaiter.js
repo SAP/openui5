@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.global",
-	"../utils/loggerInterceptor",
 	"sap/ui/test/autowaiter/_timeoutWaiter"
-], function ($, loggerInterceptor,timeoutWaiter) {
+], function ($, timeoutWaiter) {
 	"use strict";
 
 	var fnSetTimeout = window["setTimeout"];

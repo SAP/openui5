@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/_Enabled",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/AggregationLengthEquals",
-	"sap/ui/test/matchers/Ancestor"
-], function (MatcherFactory, Interactable, Visible, _Enabled, PropertyStrictEquals, AggregationLengthEquals, Ancestor) {
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/_ValidationParameters"
+], function (MatcherFactory, Interactable, Visible, _Enabled, PropertyStrictEquals, AggregationLengthEquals, Ancestor, _ValidationParameters) {
 	"use strict";
 
 	QUnit.module("MatcherFactory");
@@ -131,13 +132,13 @@ sap.ui.define([
 		}, /Matcher is not supported.*unsupportedProperty/);
 	});
 
-	QUnit.test("Should support internal matching properties", function (assert) {
+	QUnit.test("Should support internal waitFor properties", function (assert) {
 		var oMatcherFactory = new MatcherFactory();
 		var mOptions = {
 			aggregationLengthEquals: {name: "myAggregation", length: 1},
 			matchers: {}
 		};
-		oMatcherFactory._IMPLICIT_MATCHERS.forEach(function (sProperty) {
+		Object.keys(_ValidationParameters.OPA5_WAITFOR_DECORATED).forEach(function (sProperty) {
 			if (sProperty !== "matchers") {
 				mOptions[sProperty] = "test-0-" + sProperty;
 				mOptions.matchers[sProperty] = "test-1-" + sProperty;
