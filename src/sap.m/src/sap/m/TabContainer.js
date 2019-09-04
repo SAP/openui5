@@ -18,6 +18,9 @@ sap.ui.define([
 		// shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
 
+		// shortcut for PageBackgroundDesign in sap.m library
+		var PageBackgroundDesign = library.PageBackgroundDesign;
+
 		/**
 		 * Constructor for a new <code>TabContainer</code>.
 		 *
@@ -71,7 +74,14 @@ sap.ui.define([
 					/**
 					 * Defines whether an <i>Add New Tab</i> button is displayed in the <code>TabStrip</code>.
 					 */
-					showAddNewButton : {type : "boolean", group : "Misc", defaultValue : false}
+					showAddNewButton : {type : "boolean", group : "Misc", defaultValue : false},
+
+					/**
+					 * Determines the background color of the content in <code>TabContainer</code>.
+					 *
+					 * @since 1.71
+					 */
+					backgroundDesign : {type: "sap.m.PageBackgroundDesign", group: "Appearance", defaultValue: PageBackgroundDesign.List}
 				},
 				aggregations : {
 
