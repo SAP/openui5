@@ -131,6 +131,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds the given change to the given group.
+	 *
+	 * @param {object} oChange The change
+	 * @param {string} sGroupId The group ID
+	 *
+	 * @private
+	 */
+	Requestor.prototype.addChangeToGroup = function (oChange, sGroupId) {
+		var aRequests;
+
+		if (this.getGroupSubmitMode(sGroupId) === "Direct") {
+			oChange.$resolve(
+				this.request(oChange.method, oChange.url, new _GroupLock(sGroupId),
+					oChange.headers, oChange.body, oChange.$submit, oChange.$cancel));
+		} else {
+			aRequests = this.getOrCreateBatchQueue(sGroupId);
+			aRequests[aRequests.iChangeSet].push(oChange);
+		}
+	};
+
+	/**
 	 * Called when a batch request for the given group ID has been sent.
 	 *
 	 * @param {string} sGroupId
@@ -929,9 +950,7 @@ sap.ui.define([
 			that = this,
 			bFound = aRequests && aRequests[0].some(function (oChange, i) {
 				if (oChange.body === oBody) {
-					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
-							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
-						.then(oChange.$resolve, oChange.$reject);
+					that.addChangeToGroup(oChange, sNewGroupId);
 					aRequests[0].splice(i, 1);
 					return true;
 				}
@@ -968,10 +987,8 @@ sap.ui.define([
 		if (aRequests) {
 			aRequests[0].slice().forEach(function (oChange) {
 				if (!oEntity || oChange.headers["If-Match"] === oEntity) {
+					that.addChangeToGroup(oChange, sNewGroupId);
 					aRequests[0].splice(j, 1);
-					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
-							oChange.headers, oChange.body, oChange.$submit, oChange.$cancel)
-						.then(oChange.$resolve, oChange.$reject);
 				} else {
 					j += 1;
 				}

@@ -20240,4 +20240,69 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Unpark a failed patch while requesting side effects. See that the PATCH response is
+	// processed before the GET response.
+	// JIRA: CPOUI5UISERVICESV3-1878
+	QUnit.test("unpark keeps response processing order", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true, groupId : "$auto"}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'4711\')}">\
+	<Input id="note" value="{Note}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('4711')?$select=Note,SalesOrderID", {
+				Note : "original",
+				SalesOrderID : "4711"
+			})
+			.expectChange("note", "original");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectChange("note", "modified")
+				.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('4711')",
+					payload : {Note : "modified"}
+				}, createError({
+					code : "CODE",
+					message : "MESSAGE",
+					target : "Note"
+				}))
+				.expectMessages([{
+					code : "CODE",
+					descriptionUrl : undefined,
+					message : "MESSAGE",
+					persistent : true,
+					target : "/SalesOrderList('4711')/Note",
+					technical : true,
+					type : "Error"
+				}]);
+
+			that.oLogMock.expects("error");
+
+			that.oView.byId("note").getBinding("value").setValue("modified");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "SalesOrderList('4711')",
+					payload : {Note : "modified"}
+				}, {
+					Note : "modified",
+					SalesOrderID : "4711"
+				})
+				.expectRequest("SalesOrderList('4711')?$select=Note", {
+					Note : "side effect"
+				})
+				.expectChange("note", "side effect");
+
+			that.oView.byId("form").getObjectBinding().getBoundContext()
+				.requestSideEffects([{$PropertyPath : "Note"}]);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
