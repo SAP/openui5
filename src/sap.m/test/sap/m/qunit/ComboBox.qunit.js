@@ -2967,6 +2967,49 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("Trigger close only once onItemPress", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: false,
+			tablet: true
+		});
+
+		// system under test
+		var oTextSelectionSpy,
+			oComboBox = new ComboBox({
+				items: [
+					new Item({
+						key: "0",
+						text: "item 0"
+					}),
+					new Item({
+						key: "1",
+						text: "item 1"
+					})
+				]
+			}),
+			oCloseSpy = this.spy(oComboBox, "close");
+		// arrange
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oComboBox.open();
+		this.clock.tick(1000);
+
+		oTextSelectionSpy = this.spy(oComboBox, "selectText");
+		oComboBox._oList.getItems()[1].$().trigger("tap");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1000);
+
+		// Assert
+		assert.strictEqual(oCloseSpy.callCount, 1, "The close() method has been called once");
+		assert.strictEqual(oTextSelectionSpy.callCount, 0, "The selectText() should not be called on tablet");
+
+		// Cleanup
+		oComboBox.destroy();
+	});
+
 	QUnit.module("findFirstEnabledItem()");
 
 	QUnit.test("findFirstEnabledItem()", function (assert) {

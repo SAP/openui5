@@ -791,11 +791,11 @@ sap.ui.define([
 			this.setProperty("value", oItem.getText(), true);
 
 			// deselect the text and move the text cursor at the endmost position
-			if (this.getPickerType() === "Dropdown") {
-				setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
+			if (this.getPickerType() === "Dropdown" && !this.isPlatformTablet()) {
+				this.selectText.bind(this, this.getValue().length, this.getValue().length);
 			}
 
-			setTimeout(this.close.bind(this));
+			this.close();
 		};
 
 		/**
@@ -1463,9 +1463,6 @@ sap.ui.define([
 			}).addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List")
 			.addStyleClass(oRenderer.CSS_CLASS_COMBOBOX + "List")
 			.addEventDelegate({
-				ontap: function(oEvent) {
-					this.close();
-				},
 				onBeforeRendering: this.onBeforeRenderingList,
 				onAfterRendering: this.onAfterRenderingList
 			}, this)
