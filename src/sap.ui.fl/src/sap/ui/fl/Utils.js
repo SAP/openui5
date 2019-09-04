@@ -1492,6 +1492,25 @@ function(
 				delete oNewObject[sProperty];
 			});
 			return oNewObject;
+		},
+
+		arrayIncludesWith: function (aObjects, oTarget, fnComperator) {
+			for (var i = 0, n = aObjects.length; i < n; i++) {
+				if (fnComperator(aObjects[i], oTarget)) {
+					return true;
+				}
+			}
+			return false;
+		},
+
+		uniqWith: function (aObjects, fnComparator) {
+			var aUniqObjects = [];
+			for (var i = 0, n = aObjects.length; i < n; i++) {
+				if (!this.arrayIncludesWith(aUniqObjects, aObjects[i], fnComparator)) {
+					aUniqObjects.push(aObjects[i]);
+				}
+			}
+			return aUniqObjects;
 		}
 	};
 	return Utils;
