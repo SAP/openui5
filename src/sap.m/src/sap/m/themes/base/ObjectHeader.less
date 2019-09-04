@@ -1034,11 +1034,21 @@ html.sap-phone .sapMOHR .sapMITBHead {
 	margin: 0;
 }
 
+.sapMOHTitle.sapMOHTitleActive > h6 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h5 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h4 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h3 .sapMText,
+.sapMOHTitle.sapMOHTitleActive > h2 .sapMText,
 .sapMOHTitle.sapMOHTitleActive > h1 .sapMText {
 	color: @sapUiLink;
 	cursor: pointer;
 }
 
+.sapMOHTitle h6 .sapMText,
+.sapMOHTitle h5 .sapMText,
+.sapMOHTitle h4 .sapMText,
+.sapMOHTitle h3 .sapMText,
+.sapMOHTitle h2 .sapMText,
 .sapMOHTitle h1 .sapMText {
 	color: @sapUiGroupTitleTextColor;
 }
@@ -1104,7 +1114,17 @@ html.sap-desktop .sapMOHTitleArrow .sapUiIcon:hover {
 /*** styles for responsive object header ***/
 .sapMOHRTitle h1 {
 	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader2Size;;
+	font-size: @sapMFontHeader2Size;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiGroupTitleTextColor;
+}
+
+.sapMOHRTitle h6,
+.sapMOHRTitle h5,
+.sapMOHRTitle h4,
+.sapMOHRTitle h3,
+.sapMOHRTitle h2 {
+	font-family: @sapUiFontHeaderFamily;
 	font-weight: @sapUiFontHeaderWeight;
 	color: @sapUiGroupTitleTextColor;
 }
