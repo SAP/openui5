@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
+	"sap/m/StandardListItemRenderer",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -25,7 +26,8 @@ sap.ui.define([
 		JSONModel,
 		qutils,
 		KeyCodes,
-		Device
+		Device,
+		StandardListItemRenderer
 	) {
 		"use strict";
 
@@ -790,6 +792,74 @@ sap.ui.define([
 			this.clock.tick(350);
 		});
 
+		QUnit.test("Single select mode and custom item preventing change", function (assert) {
+			// Setup
+			var done = assert.async(),
+				CustomItem = StandardListItem.extend("sap.my.custom.SelectDialogListItem", {
+					metadata: {},
+					renderer: function () {
+						StandardListItemRenderer.render.apply(this, arguments);
+					}
+				}),
+				oSelectionChangeSpy = this.spy(this.oSelectDialog._oList, "fireSelectionChange");
+
+			CustomItem.prototype.ontap = function (oEvent) {
+				oEvent.preventDefault();
+				return StandardListItem.prototype.ontap.apply(this, arguments);
+			};
+			bindItems(this.oSelectDialog, {
+				oData: this.mockupData,
+				path: "/items",
+				template: new CustomItem({title: "{Title}", description: "{Description}", selected: "{Selected}"})
+			});
+
+			this.oSelectDialog.setRememberSelections(true);
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			this.oSelectDialog.getItems()[0].$().trigger("tap");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(350);
+
+			// Assert
+			assert.ok(this.oSelectDialog._oDialog.isOpen() === false, "The Dialog got closed...");
+			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "...because a new item has been selected");
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			this.oSelectDialog.getItems()[0].$().trigger("tap");
+			this.clock.tick(350);
+
+			// Assert
+			assert.ok(this.oSelectDialog._oDialog.isOpen(), "The Dialog remains open...");
+			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "...because the same item has been selected and preventDefault has been used");
+
+			// Act
+			qutils.triggerKeydown(this.oSelectDialog.getItems()[0].getDomRef(), KeyCodes.ENTER);
+			this.clock.tick(350);
+
+			// Assert
+			assert.ok(this.oSelectDialog._oDialog.isOpen() === false, "Dialog is closed. It was not prevented in the Custom List Item");
+			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "The same item has been selected");
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			qutils.triggerKeydown(this.oSelectDialog.getItems()[1].getDomRef(), KeyCodes.ENTER);
+			this.clock.tick(350);
+
+			// Assert
+			assert.ok(this.oSelectDialog._oDialog.isOpen() === false, "Dialog is closed. It was not prevented in the Custom List Item");
+			assert.strictEqual(oSelectionChangeSpy.callCount, 2, "The same item has been selected");
+			done();
+		});
+
 		QUnit.test("Single select mode and item selection - _selectionChange", function (assert) {
 			// Arrange
 			var oDialogAttachSpy = this.spy(this.oSelectDialog._oDialog, "attachEventOnce");
@@ -853,13 +923,13 @@ sap.ui.define([
 			oDialogCloseSpy.restore();
 		});
 
-		QUnit.test("Event delegates returned by _getListEventDelegates should be the correct ones", function (assert) {
+		QUnit.test("Event delegates returned by _getListItemsEventDelegates should be the correct ones", function (assert) {
 			// Arrange
 			var oSelectionChangeSpy = this.spy(this.oSelectDialog, "_selectionChange"),
 				oDelegates;
 
 			// Act
-			oDelegates = this.oSelectDialog._getListEventDelegates();
+			oDelegates = this.oSelectDialog._getListItemsEventDelegates();
 
 			// Assert
 			assert.strictEqual(oDelegates.hasOwnProperty("onsapselect"), true, "onsapselect is present in the returned delegates object.");

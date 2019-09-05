@@ -321,13 +321,9 @@ function(
 						text: this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [0])
 					})
 				]
-			})
+			}),
+			selectionChange: this._selectionChange.bind(this)
 		});
-
-		// Adding event delegates to the list that will handle:
-		// onsapselect - keyboard interactions on enter and space
-		// onclick - mouse interactions on click and tap
-		this._oList.addEventDelegate(this._getListEventDelegates(), this);
 
 		this._oList.getInfoToolbar().addEventDelegate({
 			onAfterRendering: function () {
@@ -516,11 +512,6 @@ function(
 	 * @private
 	 */
 	SelectDialog.prototype.exit = function () {
-		// Clear list event delegates
-		if (this._oList) {
-			this._oList.removeEventDelegate(this._getListEventDelegates());
-		}
-
 		// internal variables
 		this._oList = null;
 		this._oSearchField = null;
@@ -1022,37 +1013,42 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateFinished = function (oEvent) {
-	// only reset busy mode when we have an OData model
-	this._updateSelectionIndicator();
-	if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
-		this._setBusy(false);
-		this._bInitBusy = false;
-	}
-	if (Device.system.desktop) {
-
-		if (this._oList.getItems()[0]) {
-			this._oDialog.setInitialFocus(this._oList.getItems()[0]);
-		} else {
-			this._oDialog.setInitialFocus(this._oSearchField);
+		// only reset busy mode when we have an OData model
+		this._updateSelectionIndicator();
+		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
+			this._setBusy(false);
+			this._bInitBusy = false;
 		}
+		if (Device.system.desktop) {
 
-		// set initial focus manually after all items are visible
-		if (this._bFirstRequest && !this._bLiveChange) {
-			var oFocusControl = this._oList.getItems()[0];
-			if (!oFocusControl) {
-				oFocusControl = this._oSearchField;
+			if (this._oList.getItems()[0]) {
+				this._oDialog.setInitialFocus(this._oList.getItems()[0]);
+			} else {
+				this._oDialog.setInitialFocus(this._oSearchField);
 			}
 
-			if (oFocusControl.getFocusDomRef()) {
-				oFocusControl.getFocusDomRef().focus();
+			// set initial focus manually after all items are visible
+			if (this._bFirstRequest && !this._bLiveChange) {
+				var oFocusControl = this._oList.getItems()[0];
+				if (!oFocusControl) {
+					oFocusControl = this._oSearchField;
+				}
+
+				if (oFocusControl.getFocusDomRef()) {
+					oFocusControl.getFocusDomRef().focus();
+				}
 			}
 		}
-	}
 
-	this._bFirstRequest = false;
+		this._bFirstRequest = false;
 
-	// we received a request (from this or from another control) so set the counter to 0
-	this._iListUpdateRequested = 0;
+		// we received a request (from this or from another control) so set the counter to 0
+		this._iListUpdateRequested = 0;
+
+		// List items' delegates to handle mouse clicks/taps & keyboard when an item is already selected
+		this._oList.getItems().forEach(function (oItem) {
+			oItem.addEventDelegate(this._getListItemsEventDelegates());
+		}, this);
 	};
 
 	/**
@@ -1264,15 +1260,29 @@ function(
 	};
 
 	/**
-	 * Returns object with the event delegates that will be attached to the internal list control.
+	 * Returns object with the event delegates that will be attached to the list items.
+	 *
+	 * <b>Note</b>: These events could be prevented by calling <code>event.preventDefault()</code> or
+	 * <code>event.setMarked("preventSelectionChange")</code> in the source ListItem.
+	 *
+	 * That way the former behaviour would be kept- close the Dialog only on List item change.
 	 *
 	 * @returns {object} The object containing the delegates
 	 * @private
 	 */
-	SelectDialog.prototype._getListEventDelegates = function () {
+	SelectDialog.prototype._getListItemsEventDelegates = function () {
+		var fnEventDelegate = function (oEvent) {
+			if (oEvent && oEvent.isDefaultPrevented && oEvent.isMarked &&
+				(oEvent.isDefaultPrevented() || oEvent.isMarked("preventSelectionChange"))) {
+				return;
+			}
+
+			this._selectionChange(oEvent); // Mouse and Touch events
+		}.bind(this);
+
 		return {
-			onsapselect: this._selectionChange.bind(this), // Keyboard handling events
-			ontap: this._selectionChange.bind(this) // Mouse and Touch events
+			ontap: fnEventDelegate,
+			onsapselect: fnEventDelegate
 		};
 	};
 
