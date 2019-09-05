@@ -1181,7 +1181,6 @@ sap.ui.define([
 	 */
 	FacetFilter.prototype._getButtonForList = function(oList) {
 
-
 		if (this._buttons[oList.getId()]) {
 
 			this._setButtonText(oList);
@@ -1539,6 +1538,10 @@ sap.ui.define([
 
 						if (oList.getMode() === ListMode.MultiSelect) {
 							oList._updateActiveState();
+							// checkbox might be clicked so in case Button for the list is added
+							// in the bar, we should check if this list has items
+							// the check is done in the renderer
+							that._bCheckForAddListBtn = true;
 						}
 						oList._fireListCloseEvent();
 						oList._search("");
