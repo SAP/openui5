@@ -108,12 +108,9 @@ function(
 		}};
 		var sComponentName = Utils.getFlexReference(oManifest);
 		var sAppVersion = Utils.getAppVersionFromManifest(oManifest);
-		var sMaxLayer;
 		var oStartupParameters;
-		var oTechnicalParameters;
 
 		oStartupParameters = oConfig && oConfig.componentData && oConfig.componentData.startupParameters || {};
-		oTechnicalParameters = oConfig && oConfig.componentData && oConfig.componentData.technicalParameters;
 
 		if (oStartupParameters["sap-app-id"] && oStartupParameters["sap-app-id"].length === 1) {
 			// deprecated app variant id support with no caching
@@ -127,12 +124,6 @@ function(
 				}
 			}
 		}
-		//Checks technicalParameters/startup (old) parameter for sap-ui-fl-max-layer value
-		var oMaxLayerParameters = oTechnicalParameters || oStartupParameters;
-		if (oMaxLayerParameters && oMaxLayerParameters["sap-ui-fl-max-layer"] && oMaxLayerParameters["sap-ui-fl-max-layer"].length === 1) {
-			sMaxLayer = oMaxLayerParameters["sap-ui-fl-max-layer"][0];
-		}
-		Utils.setMaxLayerParameter(sMaxLayer);
 
 		oChangePersistenceWrapper.oRequestOptions.siteId = Utils.getSiteIdByComponentData(oConfig.componentData);
 		oChangePersistenceWrapper.oChangePersistence = this.getChangePersistenceForComponent(sComponentName, sAppVersion);

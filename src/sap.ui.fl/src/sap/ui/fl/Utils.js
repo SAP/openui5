@@ -56,7 +56,6 @@ function(
 		_aLayers : aLayers,
 		_mLayersIndex : mLayersIndex,
 		_sTopLayer : aLayers[aLayers.length - 1],
-		_sMaxLayer : aLayers[aLayers.length - 1],
 		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		APP_ID_AT_DESIGN_TIME : "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
 		VARIANT_MODEL_NAME: "$FlexVariants",
@@ -338,15 +337,15 @@ function(
 		},
 
 		/**
-		 * Sets the top layer that the changes are applied to; if max layer is not specified, the highest layer in the layer stack is used.
+		 * Determine the <code>maxLayer</code> based on the url parameter <code>sap-ui-fl-max-layer</code> or if is not set by <code>topLayer</code>.
 		 *
-		 * @param {string} sMaxLayer (optional) - name of the max layer
-		 * @public
+		 * @ui5-restricted sap.ui.fl.apply._internal.Connector
 		 * @function
-		 * @name sap.ui.fl.Utils.setMaxLayerParameter
+		 * @return {String} maxLayer
+		 * @name sap.ui.fl.Utils._setMaxLayer
 		 */
-		setMaxLayerParameter: function(sMaxLayer) {
-			this._sMaxLayer = sMaxLayer || this._sTopLayer;
+		getMaxLayer: function () {
+			return this._getUriParameters().get("sap-ui-fl-max-layer") || this._sTopLayer;
 		},
 
 		/**
@@ -370,7 +369,7 @@ function(
 		 * @name sap.ui.fl.Utils.isOverMaxLayer
 		 */
 		isOverMaxLayer: function(sLayer) {
-			return (this.getLayerIndex(sLayer) > this.getLayerIndex(this._sMaxLayer));
+			return (this.getLayerIndex(sLayer) > this.getLayerIndex(this.getMaxLayer()));
 		},
 
 		/**
@@ -404,7 +403,7 @@ function(
 		 * @name sap.ui.fl.Utils.isLayerFilteringRequired
 		 */
 		isLayerFilteringRequired: function() {
-			return !(this._sTopLayer === this._sMaxLayer);
+			return !(this._sTopLayer === this.getMaxLayer());
 		},
 
 		/**

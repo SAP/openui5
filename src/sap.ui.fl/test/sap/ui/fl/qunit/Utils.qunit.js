@@ -2034,6 +2034,69 @@ function(
 		});
 	});
 
+	QUnit.module("Utils.isLayerFilteringRequired", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when maxLayer is CUSTOMER", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+
+			assert.equal(Utils.isLayerFilteringRequired(), true, "maxLayer is not equal topLayer");
+		});
+
+		QUnit.test("when maxLayer is USER", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("USER");
+
+			assert.equal(Utils.isLayerFilteringRequired(), false, "maxLayer is equal topLayer");
+		});
+	});
+
+	QUnit.module("Utils.isOverMaxLayer", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("compare maxLayer: CUSTOMER with layer BASE", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+
+			assert.equal(Utils.isOverMaxLayer("BASE"), false, "false");
+		});
+
+		QUnit.test("compare maxLayer: CUSTOMER with layer CUSTOMER", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+
+			assert.equal(Utils.isOverMaxLayer("CUSTOMER"), false, "false");
+		});
+
+		QUnit.test("compare maxLayer: CUSTOMER with layer USER", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
+
+			assert.equal(Utils.isOverMaxLayer("USER"), true, "true");
+		});
+	});
+
+	QUnit.module("Utils.getMaxLayer", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("sap-ui-fl-max-layer is not available", function (assert) {
+			assert.equal(Utils.getMaxLayer(), "USER", "return topLayer");
+		});
+
+		QUnit.test("sap-ui-fl-max-layer is set", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("VENDOR");
+			assert.equal(Utils.getMaxLayer(), "VENDOR", "get UriParamter");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

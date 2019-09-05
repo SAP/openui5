@@ -47,7 +47,6 @@ function (
 			this._oComponentInstance = sap.ui.component({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
 			});
-			Utils.setMaxLayerParameter("USER");
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -652,7 +651,7 @@ function (
 					}
 				}
 			};
-			Utils.setMaxLayerParameter("VENDOR");
+			sandbox.stub(Utils, "getMaxLayer").returns("VENDOR");
 			var mExpectedParameter = jQuery.extend(true, {}, mVariantSection);
 
 			//Deleting all changes below VENDOR layer
@@ -884,7 +883,7 @@ function (
 					}
 				}
 			};
-			Utils.setMaxLayerParameter("CUSTOMER");
+			sandbox.stub(Utils, "getMaxLayer").returns("CUSTOMER");
 			sandbox.spy(this.oChangePersistence, "_filterChangeForMaxLayer");
 			sandbox.spy(this.oChangePersistence, "_getLayerFromChangeOrChangeContent");
 
@@ -1481,7 +1480,7 @@ function (
 				}
 			}));
 
-			Utils.setMaxLayerParameter("CUSTOMER");
+			sandbox.stub(Utils, "getMaxLayer").returns("CUSTOMER");
 			var aMockVariantChangeContent = [
 				{fileName: "mockVarChange0", fileType: "change"},
 				{fileName: "mockVarChange1", fileType: "change"}
@@ -1559,7 +1558,7 @@ function (
 				}
 			]}}));
 
-			Utils.setMaxLayerParameter("CUSTOMER");
+			sandbox.stub(Utils, "getMaxLayer").returns("CUSTOMER");
 
 			return this.oChangePersistence.getChangesForComponent({currentLayer: "CUSTOMER"}).then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 1, "only changes which are under max layer are returned");
@@ -1634,7 +1633,7 @@ function (
 				}
 			]}}));
 
-			Utils.setMaxLayerParameter("CUSTOMER");
+			sandbox.stub(Utils, "getMaxLayer").returns("CUSTOMER");
 
 			return this.oChangePersistence.getChangesForComponent({ignoreMaxLayerParameter : true}).then(function(oChanges) {
 				assert.strictEqual(oChanges.length, 5, "filtering is ignored, all changes are returned");
@@ -3942,7 +3941,7 @@ function (
 				appVersion: "1.2.3"
 			};
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
-			Utils.setMaxLayerParameter("USER");
+			sandbox.stub(Utils, "getMaxLayer").returns("USER");
 			var mDependencies = {};
 			var mDependentChangesOnMe = {};
 
