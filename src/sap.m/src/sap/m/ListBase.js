@@ -1693,9 +1693,12 @@ function(
 	};
 
 	ListBase.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
-		oHeader = oHeader || new GroupHeaderListItem({
-			title: oGroup.text || oGroup.key
-		});
+		if (!oHeader) {
+			oHeader = new GroupHeaderListItem();
+			// setter is used to avoid complex binding parser checks which happens when setting values in constructor (ManagedObject)
+			// i.e., to ignore binding strings "{" "[" from the value being set
+			oHeader.setTitle(oGroup.text || oGroup.key);
+		}
 
 		oHeader._bGroupHeader = true;
 		this.addAggregation("items", oHeader, bSuppressInvalidate);
