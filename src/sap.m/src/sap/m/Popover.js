@@ -2266,13 +2266,14 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._getAccessibilityOptions = function() {
-			var aAriaLabels, mAccOptions = {};
+			var aAriaLabels, mAccOptions = {},
+                            oHeader = this._getAnyHeader();
 
 			mAccOptions.role = "dialog";
 			mAccOptions.modal = this.getProperty("ariaModal");
-			if (this.getShowHeader() && this._getAnyHeader()) {
+			if (this.getShowHeader() && oHeader && oHeader.getVisible()) {
 				// If we have a header/title, we add a reference to it in the beginning of the aria-labelledby attribute
-				aAriaLabels = Array.prototype.concat(this._getAnyHeader().getId(), this.getAssociation("ariaLabelledBy", []));
+				aAriaLabels = Array.prototype.concat(oHeader.getId(), this.getAssociation("ariaLabelledBy", []));
 				mAccOptions.labelledby = aAriaLabels.join(' ');
 			}
 

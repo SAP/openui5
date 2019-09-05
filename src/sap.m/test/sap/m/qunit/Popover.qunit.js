@@ -2105,6 +2105,43 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("Popover with non-visible custom header", function(assert) {
+		//Arrange
+		var sInvTextId = "invisibleText",
+			sCustomHeaderId = "customHeaderId",
+			oInvisibleText = new InvisibleText(sInvTextId, {text: "invisible text"}),
+			oButton = new Button({
+				text: "Open Popover"
+			});
+
+		var oCustomHeader = new Bar(sCustomHeaderId, {
+			contentLeft: [new Title({text: "Just Title"})],
+			visible: false
+		});
+
+		oInvisibleText.placeAt("content");
+		oButton.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = new Popover({
+			ariaLabelledBy: sInvTextId
+		});
+
+		oPopover.setCustomHeader(oCustomHeader);
+		oPopover.getCustomHeader().setVisible(false);
+		oPopover.openBy(oButton);
+		this.clock.tick(400);
+
+		//Assert
+		assert.equal(oPopover.getAriaLabelledBy(), sInvTextId, "should have an ariaLabelledBy association that contains only a reference to the invisible text");
+		assert.equal(oPopover.getDomRef().getAttribute('aria-labelledby'), sInvTextId, "aria-labelledby should still be with one reference, since the custom header is not in the dom");
+
+		//Cleanup
+		oPopover.destroy();
+		oInvisibleText.destroy();
+		oButton.destroy();
+	});
+
 	QUnit.test("ARIA aria-modal attribute should be true", function (assert){
 		var oButton = new Button({
 			text: "Open Popover"
