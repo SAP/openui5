@@ -358,7 +358,7 @@ sap.ui.define([
 						};
 					},
 					setDirtyFlag : function() {
-						return "";
+						return false;
 					}
 				}
 			});
