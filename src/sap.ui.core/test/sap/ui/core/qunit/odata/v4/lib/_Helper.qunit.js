@@ -4,11 +4,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, Log, SyncPromise, _Helper, TestUtils, URI) {
+], function (jQuery, Log, uid, SyncPromise, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -2408,4 +2409,9 @@ sap.ui.define([
 		assert.strictEqual(_Helper.getRelativePath(oFixture.sPath, "/foo/bar"), oFixture.sResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("uid", function (assert) {
+		assert.strictEqual(_Helper.uid, uid);
+	});
 });

@@ -248,7 +248,7 @@ sap.ui.define([
 	 */
 	function _serializeBatchRequest(aRequests, iChangeSetIndex) {
 		var sBatchBoundary = (iChangeSetIndex !== undefined ? "changeset_" : "batch_")
-				+ jQuery.sap.uid(),
+				+ _Helper.uid(),
 			bIsChangeSet = iChangeSetIndex !== undefined,
 			aRequestBody = [];
 
