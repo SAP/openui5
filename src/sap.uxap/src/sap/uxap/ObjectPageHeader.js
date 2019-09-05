@@ -845,6 +845,10 @@ sap.ui.define([
 			$actions = this._findById($headerDomRef, "actions"),
 			$actionButtons = $actions.find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton");
 
+		if (iIdentifierContWidth === 0) {
+			return;
+		}
+
 		if (iActionsContProportion > this._iAvailablePercentageForActions) {
 			this._adaptActions(iAvailableSpaceForActions);
 		} else if (oEvent && oEvent.getSource() instanceof ObjectPageHeaderActionButton) {

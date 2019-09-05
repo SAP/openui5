@@ -545,6 +545,25 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.ok(oSpy.called, "The _adaptObjectPageHeaderIndentifierLine function is called");
 	});
 
+	QUnit.test("_adaptLayoutForDomElement skips calculations if 0 width", function (assert) {
+
+		var oHeader = this.myView.byId("applicationHeader"),
+			$headerDom = oHeader.$(),
+			$headerDomClone,
+			oOverflowButton = oHeader._oOverflowButton;
+
+		// Setup
+		oOverflowButton.getDomRef().style.display = "none"; // ensure overflow button not visible
+		$headerDomClone = $headerDom.clone(); // do not add the clone to DOM => it has 0 width
+		assert.strictEqual($headerDomClone.width(), 0, "dom clone has 0 width"); // assert init state
+
+		// Act
+		oHeader._adaptLayoutForDomElement($headerDomClone);
+
+		// Check
+		assert.strictEqual(oOverflowButton.getDomRef().style.display, "none", "overflow button is still not visible");
+	});
+
 	QUnit.test("_getActionsWidth", function (assert) {
 		this.stub(sap.ui.Device, "system", {
 			desktop: false,
