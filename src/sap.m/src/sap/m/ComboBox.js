@@ -1077,11 +1077,11 @@ sap.ui.define([
 			this.setProperty("value", sText, true);
 
 			// deselect the text and move the text cursor at the endmost position
-			if (this.getPickerType() === "Dropdown") {
-				setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
+			if (this.getPickerType() === "Dropdown" && !this.isPlatformTablet()) {
+				this.selectText.bind(this, this.getValue().length, this.getValue().length);
 			}
 
-			setTimeout(this.close.bind(this));
+			this.close();
 		};
 
 		/**
@@ -1246,21 +1246,6 @@ sap.ui.define([
 
 					// no default
 				}
-			}
-		};
-
-		/**
-		 * Handles the <code>tap</code> event on the list's items.
-		 *
-		 * @param {sap.ui.base.Event} oControlEvent The control event
-		 * @private
-		 */
-		ComboBox.prototype._handleItemTap = function(oControlEvent) {
-			// jQuery Plugin "control"
-			var oTappedControl = jQuery(oControlEvent.target).control(0);
-
-			if (!oTappedControl.isA("sap.m.GroupHeaderListItem")) {
-				this.close();
 			}
 		};
 
@@ -1805,7 +1790,6 @@ sap.ui.define([
 
 			// attach event delegates
 			oList.addEventDelegate({
-				ontap: this._handleItemTap,
 				onBeforeRendering: this.onBeforeRenderingList,
 				onAfterRendering: this.onAfterRenderingList
 			}, this);
