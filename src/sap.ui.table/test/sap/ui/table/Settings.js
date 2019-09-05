@@ -352,30 +352,7 @@
 								var MultiSelectionPlugin = sap.ui.requireSync("sap/ui/table/plugins/MultiSelectionPlugin");
 								var oPlugin = new MultiSelectionPlugin({
 									limit: 20,
-									selectionChange: function(oEvent) {
-										var oPlugin = oEvent.getSource();
-										var bLimitReached = oEvent.getParameters().limitReached;
-										var iIndices = oPlugin.getSelectedIndices();
-										var sMessage = "";
-										if (iIndices.length > 0) {
-											sMessage = iIndices.length + " row(s) selected.";
-											if (bLimitReached) {
-												sMessage = sMessage + " The recently selected range was limited to " + oPlugin.getLimit() + " rows!";
-											}
-										}
-
-										if (!this.message) {
-											this.message = new sap.m.MessageStrip({
-												showCloseButton: true,
-												showIcon: true
-											});
-											oTable.addExtension(this.message);
-										}
-
-										this.message.setText(sMessage);
-										this.message.setVisible(!!sMessage);
-										return this;
-									}
+									enableNotification: true
 								});
 								oTable.addPlugin(oPlugin);
 								sap.ui.getCore().byId("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());

@@ -472,12 +472,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "toggle", "The headerSelector type is toggle");
-
-		this.oTable.attachEventOnce("_rowsUpdated", function() {
-			assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
-			fnGetContexts.reset();
-			oSelectionPlugin.selectAll();
-		});
+		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
 		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, that.oTable.getBinding("rows").getLength()),
@@ -487,6 +482,7 @@ sap.ui.define([
 
 			done();
 		});
+		oSelectionPlugin.selectAll();
 	});
 
 	QUnit.test("showHeaderSelector is false", function(assert) {
@@ -625,6 +621,53 @@ sap.ui.define([
 				assert.ok(fnGetContexts.notCalled, "getContexts is called with the correct parameters");
 				assert.deepEqual(oSelectionPlugin.getSelectedCount(), 0, "Nothing is selected");
 				resolve();
+			}, 100);
+		});
+	});
+
+	QUnit.test("Limit notification", function(assert) {
+		var done = assert.async(),
+			iLimit = 5,
+			oTable = this.oTable,
+			oSelectionPlugin = this.oTable._oSelectionPlugin;
+
+		assert.notOk(oSelectionPlugin._oNotificationPopover, "Notification popover does not exist");
+
+		// Ensures that the Popover control is loaded and initialized
+		this.oTable._oSelectionPlugin.showNotificationPopoverAtIndex(0).then(function() {
+			var oPopover = oSelectionPlugin._oNotificationPopover;
+
+			assert.ok(oPopover, "Notification popover was created");
+			oPopover.close();
+
+			var oPopoverOpenBySpy = sinon.spy(oPopover, "openBy");
+			var oPopoverCloseSpy = sinon.spy(oPopover, "close");
+
+			oSelectionPlugin.setLimit(iLimit);
+			oSelectionPlugin.setEnableNotification(false);
+			oSelectionPlugin.setSelectionInterval(0, iLimit);
+
+			setTimeout(function() {
+				assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because enableNotification is false");
+
+				oSelectionPlugin.setEnableNotification(true);
+				oSelectionPlugin.setSelectionInterval(0, iLimit - 1);
+				setTimeout(function() {
+					assert.ok(oPopoverOpenBySpy.notCalled, "Popover.openBy is not called because the limit is not reached");
+
+					oSelectionPlugin.setSelectionInterval(0, iLimit);
+
+					oPopover.attachEventOnce("afterOpen", function () {
+						assert.ok(oPopoverOpenBySpy.calledOnce, "Popover.openBy is called");
+						assert.ok(oPopoverOpenBySpy.calledWithExactly(oTable.getRows()[iLimit - 1].getDomRefs().rowSelector),
+							"Popover.openBy is called with the correct parameters");
+
+						oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
+						assert.ok(oPopoverCloseSpy.calledOnce, "Notification closes");
+
+						done();
+					});
+				}, 100);
 			}, 100);
 		});
 	});

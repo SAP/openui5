@@ -64,6 +64,12 @@ sap.ui.define([
 			 */
 			limit : {type : "int", group : "Behavior", defaultValue : 200},
 			/**
+			 * Enables notifications that are displayed once a selection has been limited.
+			 *
+			 * @since 1.71
+			 */
+			enableNotification: {type: "boolean", group: "Behavior", defaultValue: false},
+			/**
 			 * Show header selector
 			 */
 			showHeaderSelector : {type : "boolean", group : "Appearance", defaultValue : true},
@@ -115,6 +121,11 @@ sap.ui.define([
 		if (this.oDeselectAllIcon) {
 			this.oDeselectAllIcon.destroy();
 			this.oDeselectAllIcon = null;
+		}
+
+		if (this._oNotificationPopover) {
+			this._oNotificationPopover.destroy();
+			this._oNotificationPopover = null;
 		}
 	};
 
@@ -204,8 +215,14 @@ sap.ui.define([
 			return this;
 		}
 
-		this.setProperty("limit", iLimit);
+		// invalidate only when the limit changes from 0 to a positive value or vice versa
+		this.setProperty("limit", iLimit, !!this.getLimit() !== !!iLimit);
 		this._bLimitDisabled = iLimit === 0;
+		return this;
+	};
+
+	MultiSelectionPlugin.prototype.setEnableNotification = function(bNotify) {
+		this.setProperty("enableNotification", bNotify, true);
 		return this;
 	};
 
@@ -315,7 +332,7 @@ sap.ui.define([
 		prepareSelection(this, iIndexFrom, iIndexTo, false).then(function(mIndices) {
 			if (mIndices) {
 				this.oInnerSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
-				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
+				this._scrollTableToRow(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
 			}
 		}.bind(this));
 	};
@@ -355,7 +372,7 @@ sap.ui.define([
 		prepareSelection(this, iIndexFrom, iIndexTo, true).then(function(mIndices) {
 			if (mIndices) {
 				this.oInnerSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
-				this._scrollTable(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
+				this._scrollTableToRow(mIndices.indexFrom > mIndices.indexTo, mIndices.indexTo);
 			}
 		}.bind(this));
 	};
@@ -366,16 +383,92 @@ sap.ui.define([
 	 * otherwise to <code>iIndex</code> - row count + 2.
 	 * @private
 	 */
-	MultiSelectionPlugin.prototype._scrollTable = function(bReverse, iIndex) {
+	MultiSelectionPlugin.prototype._scrollTableToRow = function(bReverse, iIndex) {
 		var oTable = this.getParent();
 
-		if (oTable && this.isLimitReached()) {
-			if (!bReverse) {
-				oTable.setFirstVisibleRow(Math.max(0, iIndex - oTable.getVisibleRowCount() + 2));
-			} else {
-				oTable.setFirstVisibleRow(Math.max(0, iIndex - 1));
-			}
+		if (!oTable || !this.isLimitReached()) {
+			return;
 		}
+
+		if (!bReverse) {
+			oTable.setFirstVisibleRow(Math.max(0, iIndex - oTable.getVisibleRowCount() + 2));
+		} else {
+			oTable.setFirstVisibleRow(Math.max(0, iIndex - 1));
+		}
+
+		if (this.getEnableNotification()) {
+			this.showNotificationPopoverAtIndex(iIndex);
+		}
+	};
+
+	/**
+	 * Displays a notification Popover beside the row selector that indicates a limited selection. The given index
+	 * references the index of the data context in the binding.
+	 *
+	 * @param {number} iIndex - Index of the data context
+	 * @private
+	 * @returns {Promise} which resolves when the notification Popover has been initialised
+	 */
+	MultiSelectionPlugin.prototype.showNotificationPopoverAtIndex = function(iIndex) {
+		var that = this;
+		var oPopover = this._oNotificationPopover;
+		var oTable = this.getParent();
+		var oRow = oTable.getRows()[iIndex - oTable._getFirstRenderedRowIndex()];
+		var sTitle = TableUtils.getResourceText('TBL_SELECT_LIMIT_TITLE');
+		var sMessage = TableUtils.getResourceText('TBL_SELECT_LIMIT', [this.getLimit()]);
+
+		return new Promise(function(resolve, reject) {
+			sap.ui.require(['sap/m/Popover', 'sap/m/Bar', 'sap/m/Title', 'sap/m/Text', 'sap/m/HBox', 'sap/ui/core/library', 'sap/m/library'],
+							function(Popover, Bar, Title, Text, HBox, coreLib, mLib) {
+
+				if (!oPopover) {
+					oPopover = new Popover(that.getId() + '-notificationPopover', {
+						customHeader: [
+							new Bar({
+								contentMiddle: [
+									new HBox({
+										items: [
+											new Icon({src: 'sap-icon://message-warning', color: coreLib.IconColor.Critical}).addStyleClass("sapUiTinyMarginEnd"),
+											new Title({text: sTitle, level: coreLib.TitleLevel.H2})
+										],
+										renderType: mLib.FlexRendertype.Bare,
+										justifyContent: mLib.FlexJustifyContent.Center,
+										alignItems: mLib.FlexAlignItems.Center
+									})
+								]
+							})
+						],
+						content: new Text({text: sMessage})
+					});
+
+					oPopover.addStyleClass("sapUiContentPadding");
+					that._oNotificationPopover = oPopover;
+				} else {
+					oPopover.getContent()[0].setText(sMessage);
+				}
+
+				oTable.detachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
+				oTable.attachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
+				var oRowSelector = oRow.getDomRefs().rowSelector;
+				if (oRowSelector) {
+					oPopover.openBy(oRowSelector);
+				}
+
+				resolve();
+			});
+		});
+	};
+
+	MultiSelectionPlugin.prototype.onFirstVisibleRowChange = function() {
+		if (!this._oNotificationPopover) {
+			return;
+		}
+
+		var oTable = this.getParent();
+		if (oTable) {
+			oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
+		}
+		this._oNotificationPopover.close();
 	};
 
 	function loadMultipleContexts(oBinding, iStartIndex, iLength){
@@ -511,6 +604,15 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	MultiSelectionPlugin.prototype.setParent = function(oParent) {
+		var oTable = this.getParent();
+		if (oTable) {
+			oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
+		}
+
+		if (this._oNotificationPopover) {
+			this._oNotificationPopover.close();
+		}
+
 		var vReturn = SelectionPlugin.prototype.setParent.apply(this, arguments);
 
 		if (this.oInnerSelectionPlugin) {
