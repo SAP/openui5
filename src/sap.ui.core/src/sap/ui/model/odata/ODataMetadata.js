@@ -67,6 +67,7 @@ sap.ui.define([
 			};
 			var that = this;
 			this.fnResolve;
+
 			// global promise
 			this.pLoaded = new Promise(function(resolve, reject) {
 					that.fnResolve = resolve;
@@ -564,7 +565,7 @@ sap.ui.define([
 				oFuncType = this._getFunctionImportMetadata(sFuncCandName, "POST");
 			}
 			if (oFuncType && oFuncType.entitySet) { // only collections supported which have an entitySet
-				oEntityType = this._getEntityTypeByPath(oFuncType.entitySet);
+				oEntityType = Object.assign({}, this._getEntityTypeByPath(oFuncType.entitySet));
 				if (oEntityType) {
 					// store the type name also in the oEntityType
 					oEntityType.entityType = this._getEntityTypeName(oFuncType.entitySet);
@@ -858,7 +859,6 @@ sap.ui.define([
 				}
 			});
 		}
-		//jQuery.sap.assert(oObject, "ObjectType " + sObjectType + " for name " + sObjectName + " not found!");
 		return oObject;
 	};
 
