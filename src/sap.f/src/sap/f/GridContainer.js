@@ -861,8 +861,9 @@ sap.ui.define([
 		var fnInsertPolyfillDropIndicator = function (iKId) {
 			virtualGrid.fitElement(
 				iKId + '',
-				oSettings.calculateColumnsForItem(Math.round(this._polyfillDropIndicator.width)),
-				oSettings.calculateRowsForItem(Math.round(this._polyfillDropIndicator.height))
+				this._polyfillDropIndicator.columns || oSettings.calculateColumnsForItem(Math.round(this._polyfillDropIndicator.width)),
+				this._polyfillDropIndicator.rows || oSettings.calculateRowsForItem(Math.round(this._polyfillDropIndicator.height))
+
 			);
 			aFittedElements.push({
 				id: iKId + '',
@@ -931,6 +932,8 @@ sap.ui.define([
 		var $indicator = oEvent.getParameter("indicator");
 
 		this._polyfillDropIndicator = {
+			rows: oEvent.getParameter("rows"),
+			columns: oEvent.getParameter("columns"),
 			width: oEvent.getParameter("width"),
 			height: oEvent.getParameter("height"),
 			domRef: $indicator,

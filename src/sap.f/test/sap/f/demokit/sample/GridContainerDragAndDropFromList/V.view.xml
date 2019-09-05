@@ -1,0 +1,49 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:f="sap.f"
+		xmlns:card="sap.f.cards"
+		xmlns:core="sap.ui.core"
+		displayBlock="true"
+		height="100%"
+		controllerName="sap.f.sample.GridContainerDragAndDropFromList.C">
+
+		<HBox renderType="Bare">
+			<List
+				id="list1"
+				class="sapUiSmallMargin"
+				width="400px"
+				items="{ path: '/' }">
+
+				<items>
+					<StandardListItem title="{title}" />
+				</items>
+			</List>
+
+			<f:GridContainer
+				id="grid1"
+				class="sapUiSmallMargin"
+				width="100%"
+				snapToRow="true"
+				items="{ path: '/' }">
+
+				<f:layout>
+					<f:GridContainerSettings rowSize="84px" columnSize="84px" gap="8px" />
+				</f:layout>
+				<f:layoutXS>
+					<f:GridContainerSettings rowSize="70px" columnSize="70px" gap="8px" />
+				</f:layoutXS>
+
+				<f:items>
+					<f:Card>
+						<f:layoutData>
+							<f:GridContainerItemLayoutData minRows="{rows}" columns="{columns}" />
+						</f:layoutData>
+						<f:header>
+							<card:Header title="{title}" />
+						</f:header>
+					</f:Card>
+				</f:items>
+			</f:GridContainer>
+		</HBox>
+</mvc:View>

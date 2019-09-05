@@ -6,14 +6,12 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/dnd/DropInfo",
 	"sap/f/dnd/GridDragOver",
-	"sap/base/Log",
-	"sap/ui/Device"
+	"sap/base/Log"
 ], function(
 	coreLibrary,
 	DropInfo,
 	GridDragOver,
-	Log,
-	Device
+	Log
 ) {
 	"use strict";
 
@@ -49,7 +47,30 @@ sap.ui.define([
 		library: "sap.ui.core",
 		interfaces: [
 			"sap.ui.core.dnd.IDropInfo"
-		]
+		],
+		properties: {
+			/**
+			 * A function which will define the desired drop indicator size. The drop indicator shows the user how the grid will rearrange after drop.
+			 *
+			 * Use when custom size needs to be defined. For example when an item is dragged from outside a grid and is dropped over the grid.
+			 *
+			 * If not specified or if the function returns <code>null</code>, the indicator size will be calculated automatically.
+			 *
+			 * This callback will be called when the indicator is displayed, that happens during the drag over movement.
+			 *
+			 * The callback receives <code>draggedControl</code> as parameter and must return an object of type <code>{rows: <int>, columns: <int>}</code> or <code>null</code>.
+			 */
+			dropIndicatorSize: {
+				type: "function",
+				invalidate: false,
+				parameters: {
+					/**
+					 * The control which is currently being dragged.
+					 */
+					draggedControl: {type: "sap.ui.core.Control"}
+				}
+			}
+		}
 	}});
 
 	GridDropInfo.prototype.isDroppable = function(oControl, oEvent) {
@@ -98,7 +119,12 @@ sap.ui.define([
 		// hide the original indicator
 		this._hideDefaultIndicator(oEvent);
 
-		var gridDragOver = GridDragOver.getInstance();
+		var gridDragOver = GridDragOver.getInstance(),
+			oDragControl = oEvent.dragSession.getDragControl();
+
+		if (this.getDropIndicatorSize()) {
+			gridDragOver.setDropIndicatorSize(this.getDropIndicatorSize()(oDragControl));
+		}
 
 		gridDragOver.setCurrentContext(
 			oEvent.dragSession.getDragControl(),

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
-	function(BaseObject, jQuery) {
+sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"],
+	function(BaseObject, jQuery, Log) {
 	"use strict";
 
 	/**
@@ -122,7 +122,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 			}
 
 			this._hideDraggedItem();
-			this._showIndicator(mDropPosition);
+			this._showIndicator(mDropPosition, oDragEvent);
 			// prevent infinite move of position, caused by rearranging
 			this._freezeCurrentPosition(oDragEvent.pageX, oDragEvent.pageY);
 		}
@@ -141,6 +141,28 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 	 */
 	GridDragOver.prototype.getSuggestedDropPosition = function() {
 		return this._mLastDropPosition;
+	};
+
+	/**
+	 * Sets a custom size in rows and columns for the indicator. Use to override the default one.
+	 * @public
+	 * @param {object} mIndicatorSize The custom indicator size
+	 * @param {int} mIndicatorSize.rows The number of rows to occupy
+	 * @param {int} mIndicatorSize.columns The number of columns to occupy
+	 */
+	GridDragOver.prototype.setDropIndicatorSize = function(mIndicatorSize) {
+		if (!mIndicatorSize) {
+			this._mDropIndicatorSize = null;
+			return;
+		}
+
+		if (!mIndicatorSize.rows || !mIndicatorSize.columns) {
+			Log.error("Custom indicator size for grid drag and drop is not valid. It must be an object with rows and columns properties: '{rows: <int>, columns: <int>}'.");
+			this._mDropIndicatorSize = null;
+			return;
+		}
+
+		this._mDropIndicatorSize = mIndicatorSize;
 	};
 
 	/**
@@ -183,6 +205,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		});
 
 		this._$indicator.attr("style", ""); // VirtualGrid sets position 'absolute' to the indicator, which breaks calculations in other containers, such as GridList
+		this._mDropIndicatorSize = null;
 		this._oDragControl = null;
 		this._oDropContainer = null;
 		this._sTargetAggregation = null;
@@ -203,9 +226,10 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 
 	/**
 	 * Shows the drop indicator at the suggested position.
-	 * @param {DropPosition} mDropPosition The suggested position
+	 * @param {DropPosition} mDropPosition The suggested position.
+	 * @param {jQuery.Event} oDragEvent The jQuery drag event.
 	 */
-	GridDragOver.prototype._showIndicator = function(mDropPosition) {
+	GridDragOver.prototype._showIndicator = function(mDropPosition, oDragEvent) {
 		var $targetGridItem = this._findContainingGridItem(mDropPosition.targetControl),
 			$insertTarget = $targetGridItem || mDropPosition.targetControl.$(),
 			mStyles;
@@ -215,21 +239,22 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 			$insertTarget = $insertTarget.closest(".sapFGridContainerItemWrapper");
 		}
 
-		// indicator should be the same size as dragged item
-		if ($targetGridItem) { // target container is a grid
+		if (this._mDropIndicatorSize) {
+			mStyles = {
+				"grid-row-start": "span " + this._mDropIndicatorSize.rows,
+				"grid-column-start": "span " + this._mDropIndicatorSize.columns
+			};
+		} else if ($targetGridItem) { // target container is a grid
+			// indicator should be the same size as dragged item
 			mStyles = {
 				"grid-column-start": this._mDragItemDimensions.columnsSpan,
 				"grid-row-start": this._mDragItemDimensions.rowsSpan
 			};
-		} else {
-			// this is only preparation for DnD without display:grid
-			mStyles = {
-				width: this._mDragItemDimensions.rect.width,
-				height: this._mDragItemDimensions.rect.height
-			};
 		}
 
-		this._$indicator.css(mStyles);
+		if (mStyles) {
+			this._$indicator.css(mStyles);
+		}
 
 		if (mDropPosition.position == "Before") {
 			this._$indicator.insertBefore($insertTarget);
@@ -242,12 +267,23 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		// when drop indicator is shown, it becomes the new "drag from"
 		this._iDragFromIndex = this._$indicator.index();
 
+		/* IE Polyfill */
+
+		// Let the container decide the dimensions of the indicator.
+		var oEventData = {
+			indicator: this._$indicator
+		};
+
+		if (this._mDropIndicatorSize) {
+			oEventData.rows = this._mDropIndicatorSize.rows;
+			oEventData.columns = this._mDropIndicatorSize.columns;
+		} else {
+			oEventData.width = this._mDragItemDimensions.rect.width;
+			oEventData.height = this._mDragItemDimensions.rect.height;
+		}
+
 		// fire private event for handling IE specific layout fixes
-		this._oDropContainer.fireEvent("_gridPolyfillAfterDragOver", {
-			indicator: this._$indicator,
-			width: this._mDragItemDimensions.rect.width,
-			height: this._mDragItemDimensions.rect.height
-		});
+		this._oDropContainer.fireEvent("_gridPolyfillAfterDragOver", oEventData);
 	};
 
 	/**
@@ -436,8 +472,8 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 
 		return {
 			rect: oControl.getDomRef().getBoundingClientRect(),
-			columnsSpan: "span 2", // fallback to 1 row and 1 column
-			rowsSpan: "span 2"
+			columnsSpan: "span 1", // fallback to 1 row and 1 column
+			rowsSpan: "span 1"
 		};
 	};
 

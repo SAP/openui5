@@ -25,7 +25,9 @@ sap.ui.define([], function() {
 	 * @param {number} iMaxHeight The height to set.
 	 */
 	GridBoxLayoutStyleHelper.setItemHeight = function (sId, iMaxHeight) {
-		var sClassStyle = "#" + sId + ".sapUiLayoutCSSGridBoxLayoutFlattenHeight ul .sapMLIB:not(.sapMGHLI) { height: " + iMaxHeight + "px; }";
+		var sClassStyle = "#" + sId + ".sapUiLayoutCSSGridBoxLayoutFlattenHeight ul " + // container
+							".sapMLIB:not(.sapMGHLI),.sapUiDnDGridIndicator" +			// children
+							"{ height: " + iMaxHeight + "px; }"; 						// styles
 
 		if (this._mInstanceStyles[sId] !== sClassStyle) {
 			this._mInstanceStyles[sId] = sClassStyle;
