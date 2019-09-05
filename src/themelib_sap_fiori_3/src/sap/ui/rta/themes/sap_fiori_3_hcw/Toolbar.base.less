@@ -1,8 +1,8 @@
 /******************************************************************
 	Style of the RTA Toolbar (all types) - sap_fiori_3_hcw Theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Base_BaseColor : @sapUiWhite;	// #fff
-@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiBlackBG;	// #000
+@_sap_ui_rta_Toolbar_Base_BaseColor : @sapUiWhite;	// #ffffff
+@_sap_ui_rta_Toolbar_Base_TextColor: @sapUiBlackBG;	// #000000
 
 
 .sapUiRtaToolbar {
@@ -34,5 +34,20 @@
 	}
 	.sapMSegB .sapMSegBBtn.sapMSegBtnLastVisibleButton:not(.sapMSegBBtnDis) .sapMSegBBtnInner {
 		border-right: none;
+	}
+
+	.sapMSegBBtnFocusable:active + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner,
+	.sapMSegBBtnFocusable:focus + .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner {
+		border-left: none;
+	}
+}
+
+.sapUiSizeCozy{
+	.sapUiRtaToolbar {
+		.sapMSegBBtn.sapMSegBBtnFocusable {
+			&:focus .sapMSegBBtnInner{
+				outline-offset: -2px;
+			}
+		}
 	}
 }
