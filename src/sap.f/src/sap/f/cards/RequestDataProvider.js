@@ -79,7 +79,7 @@ sap.ui.define([
 				"headers": oRequestConfig.headers,
 				"timeout": 15000,
 				"xhrFields": {
-					"withCredentials": true
+					"withCredentials": !!oRequestConfig.withCredentials
 				}
 			};
 
