@@ -94,6 +94,9 @@ sap.ui.define(function() {
 				]
 			},
 			ODataMetadata: {
+				qunit: {
+					reorder: false
+				},
 				title: "sap.ui.model.odata.ODataMetadata - QUnit Tests",
 				module: [
 					"test-resources/sap/ui/core/qunit/odata/ODataMetadata.qunit"
