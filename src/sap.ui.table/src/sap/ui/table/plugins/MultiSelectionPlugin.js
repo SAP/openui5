@@ -216,7 +216,7 @@ sap.ui.define([
 		}
 
 		// invalidate only when the limit changes from 0 to a positive value or vice versa
-		this.setProperty("limit", iLimit, !!this.getLimit() !== !!iLimit);
+		this.setProperty("limit", iLimit, !!this.getLimit() === !!iLimit);
 		this._bLimitDisabled = iLimit === 0;
 		return this;
 	};
@@ -390,10 +390,16 @@ sap.ui.define([
 			return;
 		}
 
-		if (!bReverse) {
-			oTable.setFirstVisibleRow(Math.max(0, iIndex - oTable.getVisibleRowCount() + 2));
-		} else {
-			oTable.setFirstVisibleRow(Math.max(0, iIndex - 1));
+		var iFirstVisibleRow = oTable.getFirstVisibleRow();
+		var iVisibleRowCount = oTable.getVisibleRowCount();
+		var iLastVisibleRow = iFirstVisibleRow + iVisibleRowCount - 1;
+
+		if (iIndex < iFirstVisibleRow || iIndex > iLastVisibleRow) {
+			if (!bReverse) {
+				oTable.setFirstVisibleRow(Math.max(0, iIndex - iVisibleRowCount + 2));
+			} else {
+				oTable.setFirstVisibleRow(Math.max(0, iIndex - 1));
+			}
 		}
 
 		if (this.getEnableNotification()) {

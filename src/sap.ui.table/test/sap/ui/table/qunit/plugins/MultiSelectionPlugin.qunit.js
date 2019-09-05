@@ -105,8 +105,9 @@ sap.ui.define([
 	QUnit.test("Display and accessibility", function(assert) {
 		var done = assert.async();
 		var that = this;
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 
-		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialised");
+		assert.ok(oSelectionPlugin.isA("sap.ui.table.plugins.MultiSelectionPlugin"), "MultiSelectionPlugin is initialised");
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 0, "no Select All checkbox");
 		assert.strictEqual(this.oTable.$("selall").find(".sapUiTableSelectClear").length, 1, "Deselect All button exists");
 		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
@@ -116,14 +117,25 @@ sap.ui.define([
 		assert.ok(this.oTable.$("selall").attr("aria-disabled"), "aria-disabled is set to true");
 		assert.equal(this.oTable.$("selall").attr("disabled"), "disabled", "Deselect All is disabled");
 
-		this.oTable._getSelectionPlugin().attachSelectionChange(function(){
+		oSelectionPlugin.attachSelectionChange(function(){
 			assert.strictEqual(that.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
 			assert.notOk(that.oTable.$("selall").attr("aria-disabled"), "aria-disabled is removed");
 			assert.notOk(that.oTable.$("selall").attr("disabled"), "Deselect All is enabled");
 			assert.strictEqual((that.oTable.$("selall").attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
 			that.oTable.setEnableSelectAll(true);
-			that.oTable._getSelectionPlugin().setLimit(0);
+
+			var oSetPropertySpy = sinon.spy(oSelectionPlugin, "setProperty");
+			oSelectionPlugin.setLimit(5);
 			sap.ui.getCore().applyChanges();
+			assert.ok(oSetPropertySpy.calledOnce, "setProperty is called once");
+			assert.ok(oSetPropertySpy.calledWithExactly("limit", 5, true), "setProperty called with the correct parameters");
+			oSetPropertySpy.reset();
+
+			oSelectionPlugin.setLimit(0);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oSetPropertySpy.calledOnce, "setProperty is called once");
+			assert.ok(oSetPropertySpy.calledWithExactly("limit", 0, false), "setProperty called with the correct parameters");
+
 			assert.strictEqual(that.oTable.$("selall").find(".sapUiTableSelectAllCheckBox").length, 1,
 				"When the limit is set to -1 the Select All checkbox is rendered");
 			assert.strictEqual(that.oTable.$("selall").find(".sapUiTableSelectClear").length, 0,
@@ -133,7 +145,7 @@ sap.ui.define([
 				"accessibility info exists");
 			done();
 		});
-		this.oTable._getSelectionPlugin().setSelectedIndex(0);
+		oSelectionPlugin.setSelectedIndex(0);
 	});
 
 	QUnit.test("Change SelectionMode", function(assert) {
@@ -461,7 +473,6 @@ sap.ui.define([
 		var that = this;
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var fnSelectAll = sinon.spy(oSelectionPlugin, "addSelectionInterval");
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "clear", "The headerSelector type is clear");
 
@@ -474,6 +485,7 @@ sap.ui.define([
 		assert.equal(oSelectionPlugin.getRenderConfig().headerSelector.type, "toggle", "The headerSelector type is toggle");
 		assert.equal(oSelectionPlugin.getSelectedCount(), 0, "no items are selected");
 
+		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
 		oSelectionPlugin.attachEventOnce("selectionChange", function() {
 			assert.ok(fnGetContexts.calledWithExactly(0, that.oTable.getBinding("rows").getLength()),
 				"getContexts is called with the correct parameters");
@@ -499,9 +511,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll position", function(assert) {
-		var done = assert.async();
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
+		var $Cell;
 		var that = this;
 
 		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
@@ -509,28 +521,42 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
-			oSelectionPlugin.attachEventOnce("selectionChange", function() {
-
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				oSelectionPlugin.attachEventOnce("selectionChange", function() {
+					resolve();
+				});
+				$Cell = that.oTable.$("rowsel0");
+				qutils.triggerEvent("click", $Cell);
+			}, 100);
+		}).then(function() {
+			return new Promise(function(resolve) {
 				that.oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 4, "Table is scrolled at the correct position");
-					done();
+					resolve();
 				});
 				that.oTable.setFirstVisibleRow(7);
 				$Cell = that.oTable.$("rowsel1");
 				qutils.triggerEvent("click", $Cell, {shiftKey: true});
 			});
-
-			var $Cell = that.oTable.$("rowsel0");
-			qutils.triggerEvent("click", $Cell);
-		}, 100);
+		}).then(function() {
+			return new Promise(function(resolve) {
+				that.oTable.setVisibleRowCount(10);
+				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
+				oSelectionPlugin.setSelectionInterval(5, 10);
+				setTimeout(function() {
+					assert.ok(oScrollSpy.notCalled, "The table is not scrolled because the last selected row is already visible");
+					resolve();
+				}, 100);
+			});
+		});
 	});
 
 	QUnit.test("Scroll position (reverse range selection)", function(assert) {
-		var done = assert.async();
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
 		var oSelectionSpy = sinon.spy(oSelectionPlugin, "addSelectionInterval");
+		var $Cell;
 		var that = this;
 
 		this.oTable.setVisibleRowCountMode(tableLibrary.VisibleRowCountMode.Fixed);
@@ -538,24 +564,38 @@ sap.ui.define([
 		oSelectionPlugin.setLimit(5);
 		sap.ui.getCore().applyChanges();
 
-		setTimeout(function() {
-			oSelectionPlugin.attachEventOnce("selectionChange", function() {
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				oSelectionPlugin.attachEventOnce("selectionChange", function() {
+					resolve();
+				});
 
+				that.oTable.setFirstVisibleRow(7);
+				var $Cell = that.oTable.$("rowsel2");
+				qutils.triggerEvent("click", $Cell);
+			}, 100);
+		}).then(function() {
+			return new Promise(function(resolve) {
 				that.oTable.attachEventOnce("_rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 3, "Table is scrolled at the correct position");
-					done();
+					resolve();
 				});
-
 				that.oTable.setFirstVisibleRow(0);
 				$Cell = that.oTable.$("rowsel0");
 				qutils.triggerEvent("click", $Cell, {shiftKey: true});
 			});
-
-			that.oTable.setFirstVisibleRow(7);
-			var $Cell = that.oTable.$("rowsel2");
-			qutils.triggerEvent("click", $Cell);
-		}, 100);
+		}).then(function() {
+			return new Promise(function(resolve) {
+				that.oTable.setVisibleRowCount(10);
+				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
+				oSelectionPlugin.setSelectionInterval(10, 5);
+				setTimeout(function() {
+					assert.ok(oScrollSpy.notCalled, "The table is not scrolled because the last selected row is already visible");
+					resolve();
+				}, 100);
+			});
+		});
 	});
 
 	QUnit.test("Selection (selectionMode = Single)", function(assert) {
@@ -582,7 +622,7 @@ sap.ui.define([
 				assert.ok(fnGetContexts.calledOnce, "getContexts called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [4], "Only one item is selected (iIndexTo)");
 
-				jQuery(oCell).trigger("click");
+				qutils.triggerEvent("click", oCell);
 				assert.equal(oSelectionPlugin.getSelectedCount(), 1, "the selection is not cleared");
 
 				done();
