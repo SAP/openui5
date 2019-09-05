@@ -887,5 +887,56 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Loads the module designtime/Card.designtime or the module given in
+	 * "sap.card": {
+	 *    "designtime": "designtime/Own.designtime"
+	 * }
+	 * This file should contain the designtime configuration for the card.
+	 *
+	 * Returns a promise that resolves with an object
+	 * {
+	 *    designtime: the designtime modules response
+	 *    manifest: the complete manifest json
+	 * }
+	 * The promise is rejected if the module cannot be loaded with an object:
+	 * {
+	 *     error: "Card.designtime not found"
+	 * }
+	 *
+	 * @experimental Since 1.71
+	 * @returns {Promise} Promise resolves after the designtime configuration is loaded.
+	 */
+	Card.prototype.loadDesigntime = function() {
+		if (!this._oCardManifest) {
+			return Promise.reject("Manifest not yet available");
+		}
+		var sAppId = this._oCardManifest.get("/sap.app/id");
+		if (!sAppId) {
+			return Promise.reject("App id not maintained");
+		}
+		var sModulePath = sAppId.replace(/\./g,"/");
+		return new Promise(function(resolve, reject) {
+			//build the module path to load as part of the widgets module path
+			var sModule = sModulePath + "/" + (this._oCardManifest.get("/sap.card/designtime") || "designtime/Card.designtime");
+			if (sModule) {
+				sap.ui.require([sModule, "sap/base/util/deepClone"], function(oDesigntime, deepClone) {
+					//successfully loaded
+					resolve({
+						designtime: oDesigntime,
+						manifest: deepClone(this._oCardManifest.oJson, 30)
+					});
+				}.bind(this), function () {
+					//error
+					reject({
+						error: sModule + " not found"
+					});
+				});
+			} else {
+				reject();
+			}
+		}.bind(this));
+	};
+
 	return Card;
 });
