@@ -329,6 +329,7 @@ sap.ui.define([
 		assert.notOk(this.oLabel11.getVisible(), "the label of second FormElement is hidden");
 		assert.notOk(this.oInput10.getVisible(), "the input of second FormElement is hidden");
 		assert.notOk(this.oInput11.getVisible(), "the input of second FormElement is hidden");
+		assert.equal(this.oSimpleForm.getDependents()[0].getId(), this.oChangeWrapper.getContent().elementSelector, "then removed element was added to the dependents aggregation");
 	});
 
 	QUnit.test("when removing a FormContainer in SimpleForm with Toolbars using XmlTreeModifier", function (assert) {
@@ -341,6 +342,11 @@ sap.ui.define([
 		"<Input id='Input0' visible='true' />" +
 		"<Label id='Label1' text='Label 1' visible='true' />" +
 		"<Input id='Input1' visible='true' />" +
+		"<Toolbar id='Toolbar1' text='Title 1' visible='true' />" +
+		"<Label id='Label10' text='Label 10' visible='true' />" +
+		"<Input id='Input10' visible='true' />" +
+		"<Label id='Label11' text='Label 11' visible='true' />" +
+		"<Input id='Input11' visible='true' />" +
 		"</form:content>" +
 		"</form:SimpleForm>" +
 		"</mvc:View>";
@@ -355,13 +361,19 @@ sap.ui.define([
 
 		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
-
-		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
+		var mPropertyBag = {
 			modifier : this.oXmlTreeModifier,
-			appComponent : this.oMockedComponent,
-			view : this.oXmlDocument
-		}), "no errors occur");
+				appComponent : this.oMockedComponent,
+				view : this.oXmlDocument
+		};
+
+		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, mPropertyBag), "no errors occur");
 		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is hidden");
+		assert.ok(Array.prototype.slice.call(this.oXmlSimpleForm.children).some(function(oChildDom) {
+			if (oChildDom.localName === "dependents") {
+				return oChildDom.children[0].id === this.oChangeWrapper.getContent().elementSelector;
+			}
+		}.bind(this)), "then removed element was added to the dependents aggregation");
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {

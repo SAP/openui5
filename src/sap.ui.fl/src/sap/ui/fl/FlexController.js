@@ -1173,6 +1173,10 @@ sap.ui.define([
 			aPromiseStack.push(function() {
 				var oSelector = this._getSelectorOfChange(oChange);
 				var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+				if (!oControl) {
+					Log.warning("A flexibility change tries to revert changes on a nonexistent control with id " + oSelector.id);
+					return Promise.resolve();
+				}
 				var mPropertyBag = {
 					modifier: JsControlTreeModifier,
 					appComponent: oAppComponent,
