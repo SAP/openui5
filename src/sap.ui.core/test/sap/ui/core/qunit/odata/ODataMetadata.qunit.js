@@ -207,7 +207,7 @@ sap.ui.define([
 		},
 
 		"_getEntityTypeByPath method": function(oModel, assert, done) {
-			assert.expect(15);
+			assert.expect(19);
 			var oMetadata = oModel.oMetadata;
 
 			var mEntityType = oMetadata._getEntityTypeByPath(this.flightEntity.path);
@@ -243,6 +243,13 @@ sap.ui.define([
 			var mFunctionEntitySet = oMetadata._getEntitySetByType(mFunctionEntityType);
 			assert.equal(mFunctionEntitySet.entityType, this.flightEntity.fullName, "Full Entity name in EntitySet has correct value");
 			assert.equal(mFunctionEntitySet.name, this.flightEntity.setName, "EntitySet name has correct value");
+
+			var oEntityTypeFunction = oMetadata._getEntityTypeByPath("/Validate2");
+			var oEntityType = oMetadata._getEntityTypeByPath("/FlightCollection");
+			assert.ok(oEntityTypeFunction, "Entity type found");
+			assert.ok(oEntityTypeFunction.isFunction, "flagged as function");
+			assert.ok(oEntityType, "Entity type found");
+			assert.ok(!oEntityType.isFunction, "not flagged as function");
 
 			done();
 		},
