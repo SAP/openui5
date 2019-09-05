@@ -19,6 +19,8 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * Helper class for processing of filter objects
 	 *
 	 * @namespace sap.ui.model.FilterProcessor
+	 * @public
+	 * @since 1.71
 	 */
 	var FilterProcessor = {};
 
@@ -29,8 +31,8 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 *
 	 * @param {sap.ui.model.Filter[]} aFilters the filters to be grouped
 	 * @return {sap.ui.model.Filter} Single Filter containing all filters of the array combined or undefined
-	 * @private
-	 * @since 1.58
+	 * @public
+	 * @since 1.71
 	 */
 	FilterProcessor.groupFilters = function(aFilters) {
 		var sCurPath, mSamePath = {}, aResult = [];
@@ -228,6 +230,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 
 	/**
 	 * Provides a JS filter function for the given filter
+	 * @private
 	 */
 	FilterProcessor.getFilterFunction = function(oFilter){
 		if (oFilter.fnTest) {
