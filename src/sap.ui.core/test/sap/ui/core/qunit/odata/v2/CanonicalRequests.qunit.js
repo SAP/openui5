@@ -867,7 +867,24 @@ sap.ui.define([
 				}
 			});
 		});
-	});
+    });
+
+    QUnit.test("ODataModel.getContext - Synchronous reset changes call", function (assert) {
+        var that = this;
+        var done = assert.async();
+
+        this.oModel.metadataLoaded().then(function () {
+            var oContext = that.oModel.getContext("/ProductSet('HT-1000')");
+            assert.equal(oContext.sDeepPath, oContext.sPath, "Deep path defaults to used path.");
+            that.oModel.createBindingContext("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", undefined, undefined, function(oNewContext){
+                assert.strictEqual(oNewContext, oContext, "Same context reference");
+                assert.equal(oNewContext.sDeepPath,"/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is still set.");
+                oContext = that.oModel.getContext("/ProductSet('HT-1000')");
+                assert.equal(oContext.sDeepPath,"/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is still set");
+                done();
+            });
+        });
+    });
 
 
 	QUnit.module("Message Scope supported", {
