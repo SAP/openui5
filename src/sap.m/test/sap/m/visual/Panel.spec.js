@@ -28,6 +28,11 @@ describe("sap.m.Panel", function() {
 		});
 	});
 
+	it("should show expanded Panel with header and info toolbar", function() {
+		element(by.id("panel4-CollapsedImg")).click();
+		expect(takeScreenshot(element(by.id("panel4")))).toLookAs("panel-expanded-info-toolbar");
+	});
+
 	it("should show Panel with header and info toolbar expanded", function() {
 		expect(takeScreenshot(element(by.id("panel5")))).toLookAs("panel-expanded1");
 	});
