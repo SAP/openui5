@@ -112,8 +112,8 @@ sap.ui.define([
 				layer: "CUSTOMER"
 			})
 			.then(function (mFlexInfo) {
-				assert.equal(mFlexInfo.isResetEnabled, undefined, "default value for publish availability is returned");
-				assert.equal(mFlexInfo.isPublishEnabled, undefined, "default value for reset availability is returned");
+				assert.equal(mFlexInfo.isResetEnabled, false, "value for reset availability is returned");
+				assert.equal(mFlexInfo.isPublishEnabled, undefined, "default value for publish availability is returned");
 			});
 		});
 	});

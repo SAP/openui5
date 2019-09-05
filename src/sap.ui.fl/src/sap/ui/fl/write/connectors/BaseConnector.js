@@ -35,9 +35,7 @@ sap.ui.define([
 		 * Interface called to delete flex data.
 		 *
 		 * @param {object} mPropertyBag Property bag
-		 * @param {string} mPropertyBag.name Name of the file to be deleted
-		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be deleted
-		 * @param {string} [mParameters.namespace] The namespace of the file
+		 * @param {object} [mParameters.flexObject] The definition of the flex Object
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
