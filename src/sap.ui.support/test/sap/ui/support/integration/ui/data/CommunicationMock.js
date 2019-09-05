@@ -3,7 +3,7 @@
  * It allows to focus the tests on the UI part of the tool.
  */
 sap.ui.define([
-	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/IssueManager"
 ], function (CommunicationBus, Channels, IssueManager) {

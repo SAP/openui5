@@ -10,7 +10,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/support/supportRules/RuleSet",
-	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/Constants",

@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/CoreFacade",
 	"sap/ui/support/supportRules/ExecutionScope",
 	"sap/ui/support/supportRules/ui/external/Highlighter",
-	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/History",
 	"sap/ui/support/supportRules/report/DataCollector",
@@ -31,6 +31,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 
 	var IFrameController = null;
 	var oMain = null;
+	var oHighlighter = new Highlighter(constants.HIGHLIGHTER_ID);
 
 	var Main = ManagedObject.extend("sap.ui.support.Main", {
 
@@ -122,22 +123,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 						IFrameController = IFrameCtrl;
 
 						IFrameController.injectFrame(aSupportModeConfig);
-
-						// Validate messages
-						CommunicationBus.onMessageChecks.push(function (msg) {
-							return msg.origin === IFrameController.getFrameOrigin();
-						});
-
-						CommunicationBus.onMessageChecks.push(function (msg) {
-							return msg.data._frameIdentifier === IFrameController.getFrameIdentifier();
-						});
-
-						CommunicationBus.onMessageChecks.push(function (msg) {
-							var frameUrl = IFrameController.getFrameUrl();
-							// remove relative path information
-							frameUrl = frameUrl.replace(/\.\.\//g, '');
-							return msg.data._origin.indexOf(frameUrl) > -1;
-						});
+						CommunicationBus.allowFrame(IFrameController.getCommunicationInfo());
 					});
 				} else {
 					RuleSetLoader.updateRuleSets(function () {
@@ -245,11 +231,11 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.TREE_ELEMENT_MOUSE_ENTER, function (elementId) {
-			Highlighter.highlight(elementId);
+			oHighlighter.highlight(elementId);
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.TREE_ELEMENT_MOUSE_OUT, function () {
-			Highlighter.hideHighLighter();
+			oHighlighter.hideHighLighter();
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.TOGGLE_FRAME_HIDDEN, function (hidden) {

@@ -100,6 +100,14 @@
 				text="{i18n>TechnInfo.DiagnosticsButton.Text}"
 				press="onOpenDiagnostics"/>
 			<Button
+				id="startTestRecorderButton"
+				text="{i18n>TechnInfo.TestRecorderButton.Text}"
+				press="onOpenTestRecorderInIFrame">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+			<Button
 				id="startSupportAssistantButton"
 				text="{i18n>TechnInfo.AssistantButton.Text}"
 				press="onOpenAssistant"

@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html style="height: 100%;">
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+
+		<link type="text/css" rel="stylesheet" data-sap-ui-ready="true"
+			href="../../../../../../resources/sap/ui/support/supportRules/ui/styles/overlay.css" />
+
+		<!-- Load the sap.ui.codeeditor from here to ensure it is loaded from the correct origin. -->
+		<script src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-bindingSyntax="complex"
+				data-sap-ui-libs="sap.m, sap.ui.table, sap.ui.unified, sap.ui.layout, sap.tnt, sap.ui.support"
+				data-sap-ui-theme="sap_belize"
+				data-sap-ui-oninit="module:sap/ui/support/supportRules/ui/Overlay"
+				data-sap-ui-resourceroots='{
+					"sap/ui/support/integration": "test-resources/sap/ui/support/integration/",
+					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
+				}'>
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application" style="height: 100%; background-color: #3f5161; overflow: hidden">
+		<div id="content" style="height: 100%"></div>
+	</body>
+
+</html>

@@ -29,6 +29,7 @@
     "karma:sap.ui.rta": "npm run karma -- --lib=sap.ui.rta",
     "karma:sap.ui.suite": "npm run karma -- --lib=sap.ui.suite",
     "karma:sap.ui.support": "npm run karma -- --lib=sap.ui.support",
+    "karma:sap.ui.testrecorder": "npm run karma -- --lib=sap.ui.testrecorder",
     "karma:sap.ui.table": "npm run karma -- --lib=sap.ui.table",
     "karma:sap.ui.unified": "npm run karma -- --lib=sap.ui.unified",
     "karma:sap.ui.ux3": "npm run karma -- --lib=sap.ui.ux3",

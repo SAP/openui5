@@ -69,18 +69,6 @@ sap.ui.define([
 		};
 	}
 
-	function createPressTreeTableButtonElement(sId, sSuccessMessage, sErrorMessage) {
-		return {
-			viewName: sViewName,
-			viewNamespace: sViewNameSpace,
-			success: function () {
-				document.activeElement.contentDocument.getElementById(sId).click();
-				Opa5.assert.ok(true, sSuccessMessage);
-			},
-			errorMessage: sErrorMessage
-		};
-	}
-
 	Opa5.createPageObjects({
 
 		onTheRulesPage: {
@@ -110,6 +98,20 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Checkbox button was pressed and status checked is: " + bSelectedState);
 						},
 						errorMessage: "Settings button was not found"
+					});
+				},
+
+				iPressDeleteButton: function() {
+					return this.waitFor({
+						viewName: "Main",
+						viewNamespace: sViewNameSpace,
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name:"text", value:"Delete Persisted Data"}),
+						actions: new Press(),
+						success: function () {
+							Opa5.assert.ok(true, "Delete button was pressed");
+						},
+						errorMessage: "Delete button was not found"
 					});
 				},
 
@@ -225,16 +227,24 @@ sap.ui.define([
 					});
 				},
 				iPressSelectAllCheckbox: function () {
-					var SELECT_ALL_ID = "__xmlview0--analysis--ruleList-selall";
-					return this.waitFor(createPressTreeTableButtonElement(SELECT_ALL_ID, "Select all checkbox was pressed", "Select all checkbox was not found"));
+					return this.waitFor({
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						id: "ruleList",
+						actions: new Press({idSuffix: "selall"}),
+						success: function () {
+							Opa5.assert.ok(true, "Select all checkbox was pressed");
+						},
+						errorMessage: "Select all checkbox was not found"
+					});
 				},
 				// works both for rules and rule sets
 				iPressSelectCheckboxOf: function (sTitle, sSuccessMessage, sErrorMessage) {
 					return this.waitFor({
 						id: sTreeTableId,
-						matchers: new AggregationFilled({name: "columns"}),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
+						matchers: new AggregationFilled({name: "columns"}),
 						success: function (oTable) {
 							var oRowElements = getRowElements(oTable, sTitle);
 							oRowElements.checkbox.click();
@@ -380,9 +390,11 @@ sap.ui.define([
 						matchers: new AggregationFilled({ name: "columns" }),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
-						success: function (oTable) {
-							var bResult = isSelectedInView(oTable, iRuleRowIndex);
-							Opa5.assert.ok(!bResult, "Rule is deselected in view");
+						check: function (oTable) {
+							return !isSelectedInView(oTable, iRuleRowIndex);
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Rule is deselected in view");
 						},
 						errorMessage: "Rule is not deselected in view"
 					});
@@ -394,9 +406,11 @@ sap.ui.define([
 						matchers: new AggregationFilled({ name: "columns" }),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
-						success: function (oTable) {
-							var bResult = isSelectedInView(oTable, iLibraryRowIndex);
-							Opa5.assert.ok(!bResult, "Library is deselected in view");
+						check: function (oTable) {
+							return !isSelectedInView(oTable, iLibraryRowIndex);
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Library is deselected in view");
 						},
 						errorMessage: "Library is not deselected in view"
 					});
@@ -436,9 +450,11 @@ sap.ui.define([
 						matchers: new AggregationFilled({ name: "columns" }),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
-						success: function (oTable) {
-							var bResult = isSelectedInView(oTable, iLibraryRowIndex);
-							Opa5.assert.ok(bResult, "Library is selected in view");
+						check: function (oTable) {
+							return isSelectedInView(oTable, iLibraryRowIndex);
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Library is selected in view");
 						},
 						errorMessage: "Library is not selected in view"
 					});
@@ -450,9 +466,11 @@ sap.ui.define([
 						matchers: new AggregationFilled({ name: "columns" }),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
-						success: function (oTable) {
-							var bResult = isSelectedInView(oTable, iRuleRowIndex);
-							Opa5.assert.ok(bResult, "Rule is selected in view");
+						check: function (oTable) {
+							return isSelectedInView(oTable, iRuleRowIndex);
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Rule is selected in view");
 						},
 						errorMessage: "Rule is not selected in view"
 					});

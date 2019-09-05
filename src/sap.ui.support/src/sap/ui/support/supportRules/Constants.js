@@ -124,7 +124,9 @@ sap.ui.define([],
 			/**
 			 * Name of file produced by selection export
 			 */
-			RULE_SELECTION_EXPORT_FILE_NAME: "sa-rule-preset"
+			RULE_SELECTION_EXPORT_FILE_NAME: "sa-rule-preset",
+
+			HIGHLIGHTER_ID: "ui5-highlighter"
 		};
 
 

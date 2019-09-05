@@ -37,6 +37,7 @@
     "@openui5/sap.ui.suite": "1.74.0-SNAPSHOT",
     "@openui5/sap.ui.support": "1.74.0-SNAPSHOT",
     "@openui5/sap.ui.table": "1.74.0-SNAPSHOT",
+    "@openui5/sap.ui.testrecorder": "1.74.0-SNAPSHOT",
     "@openui5/sap.ui.unified": "1.74.0-SNAPSHOT",
     "@openui5/sap.ui.ux3": "1.74.0-SNAPSHOT",
     "@openui5/sap.uxap": "1.74.0-SNAPSHOT",

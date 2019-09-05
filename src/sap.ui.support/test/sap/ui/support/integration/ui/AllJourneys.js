@@ -14,7 +14,7 @@ sap.ui.require([
 
 	Opa5.extendConfig({
 		arrangements: new Arrangement(),
-		autowait: true,
+		autoWait: true,
 		assertions: new Opa5({
 			iTeardownSupportAssistantFrame: function () {
 				this.iTeardownMyAppFrame().done(function () {
@@ -29,7 +29,10 @@ sap.ui.require([
 		"sap/ui/support/integration/ui/journeys/SelectionJourney",
 		"sap/ui/support/integration/ui/journeys/LocalStoragePersistencyJourney",
 		"sap/ui/support/integration/ui/journeys/FilteringAndSortingJourney",
-		"sap/ui/support/integration/ui/journeys/PresetsJourney",
+		"sap/ui/support/integration/ui/journeys/PresetsDialogJourney",
+		"sap/ui/support/integration/ui/journeys/PresetsExportJourney",
+		"sap/ui/support/integration/ui/journeys/PresetsImportJourney",
+		"sap/ui/support/integration/ui/journeys/PresetsPersistenceJourney",
 		"sap/ui/support/integration/ui/journeys/TemporaryRulesJourney"
 	], function () {
 		QUnit.start();

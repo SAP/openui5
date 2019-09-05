@@ -2,12 +2,13 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/thirdparty/sinon",
 	"jquery.sap.sjax", // provides jQuery.sap.syncGet
 	"sap/ui/core/date/Gregorian" // indirect dependency, used by DateFormat for western locales
-], function(Opa5, Press, PropertyStrictEquals, EnterText, DateFormat, sinon, jQuery) {
+], function(Opa5, Press, PropertyStrictEquals, Descendant, EnterText, DateFormat, sinon, jQuery) {
 	"use strict";
 
 	var sViewName = "Analysis",
@@ -43,49 +44,84 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onThePresetsPage: {
 			actions : {
-				iPressPresetsVariantSelect: function() {
+
+				iOpenPresetsPopover: function() {
 					return this.waitFor({
-						viewName: sViewName,
-						viewNamespace: sViewNameSpace,
-						id: "presetVariantBtn",
-						actions: new Press(),
-						success: function() {
-							Opa5.assert.ok(true, "Presets variant select was pressed");
+						check: function () {
+							var oPopover = Opa5.getWindow().sap.ui.getCore().byId("presetsSelect--presetsPopover");
+							if (oPopover && oPopover.isOpen()) {
+								oPopover.close();
+								return false;
+							} else {
+								return true;
+							}
 						},
-						errorMessage: "Was not able to press presets variant select"
+						success: function () {
+							this.waitFor({
+								viewName: sViewName,
+								viewNamespace: sViewNameSpace,
+								id: "presetVariantBtn",
+								actions: new Press(),
+								success: function() {
+									return this.waitFor({
+										searchOpenDialogs: true,
+										viewName: sViewName,
+										viewNamespace: sViewNameSpace,
+										id: "presetsSelect--presetsPopover-popover",
+										matchers: function (oPopover) {
+											return oPopover.isOpen();
+										},
+										success: function () {
+											Opa5.assert.ok(true, "Presets variant select was pressed - presets popover was opened");
+										},
+										errorMessage: "Presets popover was not open"
+									});
+								},
+								errorMessage: "Was not able to press presets variant select - presets popover was not opened"
+							});
+						}
 					});
 				},
 
-				iOpenPresetsPopover: function() {
-					// check if the popover is opened and open it when it is not
-					// for this to work - it has to ensure it is closed, so it closes it first
-					var oPopover = Opa5.getWindow().sap.ui.getCore().byId("presetsSelect--presetsPopover");
-					if (oPopover) {
-						oPopover.close();
-					}
-
+				iClosePresetsPopover: function() {
 					return this.waitFor({
-						check: function() {
-							var isOpen;
-
+						check: function () {
+							var oPopover = Opa5.getWindow().sap.ui.getCore().byId("presetsSelect--presetsPopover");
 							if (!oPopover) {
-								oPopover = Opa5.getWindow().sap.ui.getCore().byId("presetsSelect--presetsPopover");
-								isOpen = false; // oPopover is not initialized, so it is closed
-							} else {
-								isOpen = oPopover.isOpen();
-
-								if (isOpen) {
-									oPopover.close();
-								}
+								return false;
 							}
-
-							return !isOpen;
+							if (oPopover.isOpen() || !oPopover.open) {
+								return true;
+							} else {
+								oPopover.open();
+								return false;
+							}
 						},
-						success: function() {
-							this.iPressPresetsVariantSelect();
-							Opa5.assert.ok(true, "Presets popover was opened");
-						},
-						errorMessage: "Was not able to locate presets variant button"
+						success: function () {
+							return this.waitFor({
+								viewName: sViewName,
+								viewNamespace: sViewNameSpace,
+								id: "presetVariantBtn",
+								actions: new Press(),
+								success: function() {
+									return this.waitFor({
+										searchOpenDialogs: true,
+										viewName: sViewName,
+										viewNamespace: sViewNameSpace,
+										id: "presetsSelect--presetsPopover-popover",
+										visible: false,
+										matchers: function (oPopover) {
+											return !oPopover.isOpen();
+										},
+										success: function () {
+											Opa5.assert.ok(true, "Presets variant select was pressed - presets popover was closed");
+										},
+										errorMessage: "Presets popover was not closed"
+									});
+								},
+								errorMessage: "Was not able to press presets variant select - presets popover was not closed"
+							});
+						}
 					});
 				},
 
@@ -103,17 +139,18 @@ sap.ui.define([
 				iOpenImportDialog: function() {
 					return this.iOpenPresetsPopover()
 						.and.waitFor({
-							id: "presetsSelect--presetImport",
-							success: function() {
-								var dialog = Opa5.getWindow().sap.ui.getCore().byId("presetImport--importDialog");
-
-								if (dialog && dialog.isOpen()) {
-									Opa5.assert.ok(true, "Preset import dialog is already open");
+							check: function () {
+								var oDialog = Opa5.getWindow().sap.ui.getCore().byId("presetImport--importDialog");
+								if (oDialog && oDialog.isOpen()) {
+									oDialog.close();
+									return false;
 								} else {
-									this.iPressImport();
+									return true;
 								}
 							},
-							errorMessage: "Was not able to locate presets import"
+							success: function () {
+								this.iPressImport();
+							}
 						});
 				},
 
@@ -190,71 +227,95 @@ sap.ui.define([
 				},
 
 				iPressExportFinalize: function() {
-					// stub for file save
-					var File = Opa5.getWindow().sap.ui.require("sap/ui/core/util/File");
-					Opa5.getContext().fileSaveStub = sinon.stub(File, "save");
 
 					return this.waitFor({
 						id: "presetExport--exportBtn",
-						actions: new Press(),
-						success: function() {
-							Opa5.assert.ok(true, "Finalize export was pressed");
-							Opa5.getContext().fileSaveStub.restore();
-						},
-						error: function() {
-							Opa5.getContext().fileSaveStub.restore();
-						},
-						errorMessage: "Was not able to press export finalize"
+						success: function () {
+							// stub for file save
+							var File = Opa5.getWindow().sap.ui.require("sap/ui/core/util/File");
+							Opa5.getContext().fileSaveStub = sinon.stub(File, "save");
+
+							return this.waitFor({
+								id: "presetExport--exportBtn",
+								actions: new Press(),
+								success: function() {
+									Opa5.assert.ok(true, "Finalize export was pressed");
+									Opa5.getContext().fileSaveStub.restore();
+								},
+								error: function() {
+									Opa5.getContext().fileSaveStub.restore();
+								},
+								errorMessage: "Was not able to press export finalize"
+							});
+						}
 					});
 				},
 
 				iPressPresetInPopover: function(sTitle) {
 					return this.waitFor({
-						controlType: "sap.m.CustomListItem",
+						controlType: "sap.m.FormattedText",
 						searchOpenDialogs: true,
-						timeout: 3,
-						matchers: function(oListItem) {
-							return oListItem.$().find(".sapMFT").html() == sTitle;
-						},
-						actions: new Press(),
-						success: function() {
-							Opa5.assert.ok(true, "Preset '" + sTitle + "' was pressed");
-						},
-						errorMessage: "Was not able to locate correct preset in popover"
+						matchers: new PropertyStrictEquals({
+							name: "htmlText",
+							value: sTitle
+						}),
+						success: function (aTexts) {
+							return this.waitFor({
+								controlType: "sap.m.CustomListItem",
+								searchOpenDialogs: true,
+								matchers: new Descendant(aTexts[0]),
+								actions: new Press(),
+								success: function() {
+									Opa5.assert.ok(true, "Preset '" + sTitle + "' was pressed");
+								},
+								errorMessage: "Was not able to locate correct preset in popover"
+							});
+						}
 					});
 				},
 
 				iPressDeletePresetInPopover: function(sTitle) {
-					return this.waitFor({
-						controlType: "sap.m.Button",
-						searchOpenDialogs: true,
-						timeout: 3,
-						matchers: function(oButton) {
-							return  oButton.getIcon() === "sap-icon://sys-cancel" && oButton.$().parents("li").find(".sapMFT").html() == sTitle;
-						},
-						actions: new Press(),
-						success: function() {
-							Opa5.assert.ok(true, "Delete for preset '" + sTitle + "' was pressed");
-						},
-						errorMessage: "Was not able to locate delete button for preset '" + sTitle + "'"
-					});
+					return this._pressButtonInPopover(sTitle, "sap-icon://sys-cancel");
 				},
 
 				iPressUndoButton: function(sTitle) {
+					return this._pressButtonInPopover(sTitle, "sap-icon://refresh");
+				},
+
+				_pressButtonInPopover: function (sTitle, sIcon) {
 					return this.waitFor({
-						controlType: "sap.m.Button",
+						controlType: "sap.m.FormattedText",
 						searchOpenDialogs: true,
-						timeout: 3,
-						matchers: function(oButton) {
-							return oButton.getIcon() === "sap-icon://refresh" && oButton.$().parents("li").find(".sapMFT").html() == sTitle;
-						},
-						actions: new Press(),
-						success: function() {
-							Opa5.assert.ok(true, "'Undo' button was pressed");
-						},
-						errorMessage: "Was not able to press 'Undo' button"
+						matchers: new PropertyStrictEquals({
+							name: "htmlText",
+							value: sTitle
+						}),
+						success: function (aTexts) {
+							return this.waitFor({
+								controlType: "sap.m.CustomListItem",
+								searchOpenDialogs: true,
+								matchers: new Descendant(aTexts[0]),
+								success: function (aItems) {
+									return this.waitFor({
+										controlType: "sap.m.Button",
+										searchOpenDialogs: true,
+										matchers: new PropertyStrictEquals({
+											name: "icon",
+											value: sIcon
+										}),
+										actions: new Press(),
+										success: function() {
+											Opa5.assert.ok(true, "Delete for preset '" + sTitle + "' was pressed");
+										},
+										errorMessage: "Was not able to locate delete button for preset '" + sTitle + "'"
+									});
+								},
+								errorMessage: "Was not able to locate correct preset in popover"
+							});
+						}
 					});
 				}
+
 			},
 
 			assertions: {
@@ -273,6 +334,9 @@ sap.ui.define([
 				iShouldSeePresetsPopover: function() {
 					return this.waitFor({
 						id: "presetsSelect--presetsPopover",
+						matchers: function (oPopover) {
+							return oPopover.isOpen();
+						},
 						success: function() {
 							Opa5.assert.ok(true, "I see presets popover");
 						},
@@ -281,20 +345,16 @@ sap.ui.define([
 				},
 
 				iShouldNotSeePresetsPopover: function() {
-					// check if the popover is not opened
-					// achieved by waiting for the button and then do the checking
 					return this.waitFor({
-						viewName: sViewName,
-						viewNamespace: sViewNameSpace,
-						id: "presetVariantBtn",
-						check: function() {
-							var oPopover = Opa5.getWindow().sap.ui.getCore().byId("presetsSelect--presetsPopover");
-							return !(oPopover && oPopover.isOpen());
+						id: "presetsSelect--presetsPopover",
+						visible: false,
+						matchers: function (oPopover) {
+							return !oPopover.isOpen();
 						},
-						success: function() {
-							Opa5.assert.ok(true, "Presets popover is not opened");
+						success: function () {
+							Opa5.assert.ok(true, "Presets popover is closed");
 						},
-						errorMessage: "Was not able to locate presets variant button"
+						errorMessage: "Was not able to locate closed presets popover"
 					});
 				},
 
@@ -442,16 +502,23 @@ sap.ui.define([
 
 				iShouldSeePresetInPopover: function(sTitle) {
 					return this.waitFor({
-						controlType: "sap.m.CustomListItem",
+						controlType: "sap.m.FormattedText",
 						searchOpenDialogs: true,
-						timeout: 3,
-						matchers: function(oListItem) {
-							return oListItem.$().find(".sapMFT").html() == sTitle;
-						},
-						success: function() {
-							Opa5.assert.ok(true, "I see preset '" + sTitle + "' in the popover");
-						},
-						errorMessage: "Was not able to locate correct preset in popover"
+						matchers: new PropertyStrictEquals({
+							name: "htmlText",
+							value: sTitle
+						}),
+						success: function (aTexts) {
+							return this.waitFor({
+								controlType: "sap.m.CustomListItem",
+								searchOpenDialogs: true,
+								matchers: new Descendant(aTexts[0]),
+								success: function() {
+									Opa5.assert.ok(true, "I see preset '" + sTitle + "' in the popover");
+								},
+								errorMessage: "Was not able to locate correct preset in popover"
+							});
+						}
 					});
 				},
 
@@ -459,7 +526,6 @@ sap.ui.define([
 					return this.waitFor({
 						controlType: "sap.m.CustomListItem",
 						searchOpenDialogs: true,
-						timeout: 3,
 						success: function(aListItems) {
 							Opa5.assert.strictEqual(aListItems.length, iExpectedCount, "I see '" + iExpectedCount + "' presets in the popover");
 						},
@@ -469,22 +535,26 @@ sap.ui.define([
 
 				iShouldSeeSelectedPreset: function(sTitle) {
 					return this.waitFor({
-						controlType: "sap.m.CustomListItem",
+						controlType: "sap.m.FormattedText",
 						searchOpenDialogs: true,
-						timeout: 3,
-						matchers: new PropertyStrictEquals({name: "selected", value: true}),
-						success: function(aListItems) {
-							Opa5.assert.ok(
-								aListItems.length == 1,
-								"One preset is selected"
-							);
-
-							Opa5.assert.ok(
-								aListItems[0].$().find(".sapMFT").html() == sTitle,
-								"The selected preset is '" + sTitle + "'"
-							);
-						},
-						errorMessage: "The selected preset is not correct"
+						matchers: new PropertyStrictEquals({
+							name: "htmlText",
+							value: sTitle
+						}),
+						success: function (aTexts) {
+							return this.waitFor({
+								controlType: "sap.m.CustomListItem",
+								searchOpenDialogs: true,
+								matchers: [
+									new Descendant(aTexts[0]),
+									new PropertyStrictEquals({name: "selected", value: true})
+								],
+								success: function(aListItems) {
+									Opa5.assert.strictEqual(aListItems.length, 1, "One preset is selected");
+								},
+								errorMessage: "The selected preset is not correct"
+							});
+						}
 					});
 				},
 
@@ -493,10 +563,11 @@ sap.ui.define([
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
 						id: "ruleList",
-						success: function(oTable) {
-							Opa5.assert.ok(
-								areExactRulesSelected(oTable, aRulesIds),
-								"I see that the expected rules are selected"
+						check: function (oTable) {
+							return areExactRulesSelected(oTable, aRulesIds);
+						},
+						success: function() {
+							Opa5.assert.ok(true,"I see that the expected rules are selected"
 							);
 						},
 						errorMessage: "The expected rules are not selected"

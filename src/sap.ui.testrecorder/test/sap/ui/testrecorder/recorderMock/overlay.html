@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html style="height: 100%;">
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8">
+		<title>Testing Tools</title>
+
+		<link type="text/css" rel="stylesheet" data-sap-ui-ready="true"
+			href="../../../../../resources/sap/ui/testrecorder/ui/styles/overlay.css" />
+
+		<script src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-async="true"
+				data-sap-ui-resourceroots='{
+					"sap/ui/testrecorder/recorderMock": "../../../../../test-resources/sap/ui/testrecorder/recorderMock",
+					"sap/ui/testrecorder/fixture": "../../../../../test-resources/sap/ui/testrecorder/fixture"
+				}'
+				data-sap-ui-bindingSyntax="complex"
+				data-sap-ui-libs="sap.m, sap.ui.table, sap.ui.layout"
+				data-sap-ui-theme="sap_fiori_3"
+				data-sap-ui-oninit="module:sap/ui/testrecorder/recorderMock/Overlay">
+		</script>
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+
+</html>

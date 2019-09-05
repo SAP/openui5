@@ -41,7 +41,7 @@
         return oPlainGeneratorsPromise
             .catch(function (oError) {
                 if (oOptions.shallow) {
-                    throw oError;
+                    return Promise.reject(oError);
                 } else {
                     // if 'plain' generators don't find a selector, search the hierarchy
                     return _ControlSelectorGenerator._generateHierarchicalUp(oOptions.control)
@@ -92,7 +92,7 @@
                     _oLogger.debug("The matching " + (oOptions.multiple ? "non-unique" : "unique") + " selectors are: " + JSON.stringify(aSelectors));
                     return aSelectors;
                 } else {
-                    throw new Error("Could not generate a selector for control " + oOptions.control);
+                    return Promise.reject(new Error("Could not generate a selector for control " + oOptions.control));
                 }
             });
     };
@@ -109,7 +109,7 @@
     _ControlSelectorGenerator._executeTopPlainGenerator = function (aGenerators, oOptions, iIndex) {
         iIndex = iIndex || 0;
         if (iIndex === aGenerators.length) {
-            throw new Error("Could not generate a selector for control " + oOptions.control);
+            return Promise.reject(new Error("Could not generate a selector for control " + oOptions.control));
         }
         return _ControlSelectorGenerator._executeGenerator(aGenerators[iIndex], oOptions)
             .then(function (aSelectors) {
@@ -305,7 +305,7 @@
     _ControlSelectorGenerator._callGenerateUniqueDescendant = function (aChildren, iDepth, iIndex) {
         iIndex = iIndex || 0;
         if (iIndex >= aChildren.length) {
-            throw new Error("Could not generate unique selector for descendant at level " + iDepth);
+            return Promise.reject(new Error("Could not generate unique selector for descendant at level " + iDepth));
         }
         return _ControlSelectorGenerator._generateUniqueDescendantSelector(aChildren[iIndex], iDepth)
             .then(function (mSelector) {
@@ -352,8 +352,8 @@
         iDepth = iDepth || 0;
         var bDepthExceeded = iDepth >= _ControlSelectorGenerator._maxDepth;
         if (!oUniqueAncestor || bDepthExceeded) {
-            throw new Error("Could not generate unique selector for ancestor of " + oControl +
-                (bDepthExceeded ? ". Exceeded limit of " + _ControlSelectorGenerator._maxDepth + " levels" : ""));
+            return Promise.reject(new Error("Could not generate unique selector for ancestor of " + oControl +
+                (bDepthExceeded ? ". Exceeded limit of " + _ControlSelectorGenerator._maxDepth + " levels" : "")));
         }
         return _ControlSelectorGenerator._generate({
             control: oUniqueAncestor,

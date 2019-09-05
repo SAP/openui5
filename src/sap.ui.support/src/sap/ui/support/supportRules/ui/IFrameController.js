@@ -5,7 +5,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/support/supportRules/WindowCommunicationBus",
+	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants"
 ],
@@ -173,16 +173,12 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 		this._oCore = null;
 	};
 
-	IFrameController.prototype.getFrameOrigin = function () {
-		return sFrameOrigin;
-	};
-
-	IFrameController.prototype.getFrameIdentifier = function () {
-		return sFrameIdentifier;
-	};
-
-	IFrameController.prototype.getFrameUrl = function () {
-		return sFrameUrl;
+	IFrameController.prototype.getCommunicationInfo = function () {
+		return {
+			origin: sFrameOrigin,
+			identifier: sFrameIdentifier,
+			url: sFrameUrl
+		};
 	};
 
 	oIFrameController = new IFrameController();

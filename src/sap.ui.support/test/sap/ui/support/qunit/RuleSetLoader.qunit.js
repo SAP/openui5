@@ -385,7 +385,7 @@ sap.ui.define([
 			});
 		});
 
-		sinon.stub(CommunicationBus, "publish", function (sChannel, oLibraries) {
+		sinon.stub(CommunicationBus.prototype, "publish", function (sChannel, oLibraries) {
 
 			if (sChannel !== channelNames.POST_AVAILABLE_LIBRARIES) {
 				return;
@@ -398,7 +398,7 @@ sap.ui.define([
 
 			sap.ui.getVersionInfo.restore();
 			RuleSetLoader._fetchLibraryNamesWithSupportRules.restore();
-			CommunicationBus.publish.restore();
+			CommunicationBus.prototype.publish.restore();
 			that.clock.tick(500);
 			that.clock.restore();
 
