@@ -18,7 +18,8 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	/**
 	 * Helper class for processing of filter objects
 	 *
-	 * @namespace sap.ui.model.FilterProcessor
+	 * @alias sap.ui.model.FilterProcessor
+	 * @namespace
 	 * @public
 	 * @since 1.71
 	 */
