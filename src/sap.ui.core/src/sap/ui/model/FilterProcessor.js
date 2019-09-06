@@ -18,7 +18,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	/**
 	 * Helper class for processing of filter objects
 	 *
-	 * @alias sap.ui.model.FilterProcessor
+	 * @alias module:sap/ui/model/FilterProcessor
 	 * @namespace
 	 * @public
 	 * @since 1.71
@@ -34,6 +34,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * @return {sap.ui.model.Filter} Single Filter containing all filters of the array combined or undefined
 	 * @public
 	 * @since 1.71
+	 * @static
 	 */
 	FilterProcessor.groupFilters = function(aFilters) {
 		var sCurPath, mSamePath = {}, aResult = [];
@@ -83,6 +84,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * @return {sap.ui.model.Filter} Single Filter containing all filters of the array combined or undefined
 	 * @private
 	 * @since 1.58
+	 * @static
 	 */
 	FilterProcessor.combineFilters = function(aFilters, aApplicationFilters) {
 		var oGroupedFilter, oGroupedApplicationFilter, oFilter, aCombinedFilters = [];
@@ -114,6 +116,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * @param {function} fnGetValue the method to get the actual value to filter on
 	 * @return {array} a new array instance containing the filtered data set
 	 * @private
+	 * @static
 	 */
 	FilterProcessor.apply = function(aData, vFilter, fnGetValue){
 		var oFilter = Array.isArray(vFilter) ? this.groupFilters(vFilter) : vFilter,
@@ -142,6 +145,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * @param {function} fnGetValue the function to get the value from the list entry
 	 * @return {boolean} whether the filter matches or not
 	 * @private
+	 * @static
 	 */
 	FilterProcessor._evaluateFilter = function(oFilter, vRef, fnGetValue){
 		var oValue, fnTest;
@@ -169,6 +173,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * @param {function} fnGetValue the function to get the value from the list entry
 	 * @return {boolean} whether the filter matches or not
 	 * @private
+	 * @static
 	 */
 	FilterProcessor._evaluateMultiFilter = function(oMultiFilter, vRef, fnGetValue){
 		var that = this,
@@ -202,6 +207,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * Normalize filter value
 	 *
 	 * @private
+	 * @static
 	 */
 	FilterProcessor.normalizeFilterValue = function(oValue, bCaseSensitive){
 		if (typeof oValue == "string") {
@@ -232,6 +238,7 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	/**
 	 * Provides a JS filter function for the given filter
 	 * @private
+	 * @static
 	 */
 	FilterProcessor.getFilterFunction = function(oFilter){
 		if (oFilter.fnTest) {
