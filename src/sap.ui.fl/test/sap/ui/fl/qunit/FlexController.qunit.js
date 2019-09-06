@@ -1592,6 +1592,21 @@ function (
 				assert.equal(oReturnValue, oHideControl, "and returns the correct change handler");
 			});
 		});
+		QUnit.test("when calling 'revertChangesOnControl' with a change type for a non-existent control", function (assert) {
+			var oAppComponent = {};
+			this.oChange.markFinished();
+			var oHideControl = sap.ui.fl.changeHandler.HideControl;
+			var oRevertChangeSpy = sandbox.spy(oHideControl, "revertChange");
+			// non-existent control
+			sandbox.stub(JsControlTreeModifier, "bySelector");
+			sandbox.spy(Log, "warning");
+
+			return this.oFlexController.revertChangesOnControl([this.oChange], oAppComponent)
+				.then(function() {
+					assert.ok(Log.warning.calledOnce, "then a warning was logged");
+					assert.ok(oRevertChangeSpy.notCalled, "then revertChange() was not called");
+				});
+		});
 	});
 
 	QUnit.module("_applyChangesOnControl", {

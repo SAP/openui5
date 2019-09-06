@@ -111,6 +111,7 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 				});
 				if (oRemovedElement) {
 					oModifier.removeAggregation(oControl, "content", oRemovedElement, oView);
+					oModifier.insertAggregation(oControl, "dependents", oRemovedElement, 0, oView);
 				}
 			}
 
@@ -175,7 +176,14 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 		var oModifier = mPropertyBag.modifier;
 		oModifier.removeAllAggregation(oControl, "content");
 		mState.content.forEach(function(oElementState) {
-			var oElement = oModifier.bySelector(oElementState.elementSelector, oAppComponent);
+			var oElement = oModifier.bySelector(oElementState.elementSelector, oAppComponent, mPropertyBag.view);
+			var aDependents = oModifier.getAggregation(oControl, "dependents");
+			aDependents.some(function(oDependent) {
+				if (oModifier.getProperty(oDependent, "id") === oModifier.getProperty(oElement, "id")) {
+					oModifier.removeAggregation(oControl, "dependents", oDependent, mPropertyBag.view);
+					return true;
+				}
+			});
 			oModifier.insertAggregation(oControl, "content", oElement, oElementState.index, mPropertyBag.view);
 			oModifier.setProperty(oElement, "visible", oElementState.visible);
 		});

@@ -63,7 +63,8 @@ function (
 	 * @param {boolean}   [mOptions.jsOnly] - set to true, if change handler cannot work on xml view
 	 * @param {object}   mOptions.action - action to operate on <code>mOptions.xmlView</code>
 	 * @param {string}   mOptions.action.name - name of the action - e.g. 'remove', 'move', 'rename'
-	 * @param {string}   mOptions.action.controlId - id of the control the action is executed with - may be the parent of the control beeing 'touched'
+	 * @param {string}   [mOptions.action.controlId] - id of the control the action is executed with - may be the parent of the control being 'touched'
+	 * @param {function<sap.ui.core.Control>} [mOptions.action.control] - Control instance on which change is being applied
 	 * @param {function} mOptions.action.parameter - (optional) function(oView) returning the parameter object of the action to be executed
 	 * @param {function} [mOptions.before] - function(assert) hook before test execution is started
 	 * @param {function} [mOptions.after] - function(assert) hook after test execution is finished
@@ -98,7 +99,7 @@ function (
 
 				assert.ok(mOptions.action, "then you provide an action: See the action parameter.");
 				assert.ok(mOptions.action.name, "then you provide an action name: See the action.name parameter.");
-				assert.ok(mOptions.action.controlId, "then you provide the id of the control to operate the action on: See the action.controlId.");
+				assert.ok(mOptions.action.controlId || mOptions.action.control, "then you provide the control or control's id to operate the action on: See the action.controlId.");
 			});
 		});
 
@@ -163,7 +164,11 @@ function (
 		}
 
 		function buildCommand(assert) {
-			this.oControl = this.oView.byId(mOptions.action.controlId);
+			if (typeof mOptions.action.control === "function") {
+				this.oControl = mOptions.action.control(this.oView);
+			} else {
+				this.oControl = this.oView.byId(mOptions.action.controlId);
+			}
 			return this.oControl.getMetadata().loadDesignTime(this.oControl).then(function() {
 				var mParameter;
 				if (mOptions.action.parameter) {

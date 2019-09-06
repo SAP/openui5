@@ -2,7 +2,6 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/rta/util/UrlParser",
-	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/rta/test/variantManagement/SmartLinkUtil",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -12,7 +11,6 @@ sap.ui.define([
 	UIComponent,
 	FakeLrepConnectorLocalStorage,
 	UrlParser,
-	FakeLrepConnector,
 	SmartLinkUtil,
 	MockServer,
 	ODataModel,
@@ -98,7 +96,7 @@ sap.ui.define([
 		destroy: function() {
 			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
 				var mAppManifest = this.getManifestEntry("sap.app");
-				FakeLrepConnector.disableFakeConnector(
+				FakeLrepConnectorLocalStorage.disableFakeConnector(
 					mAppManifest.id + '.Component',
 					mAppManifest.applicationVersion.version
 				);

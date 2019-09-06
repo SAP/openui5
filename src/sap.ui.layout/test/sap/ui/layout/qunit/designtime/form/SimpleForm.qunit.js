@@ -276,6 +276,34 @@ sap.ui.define([
 				afterUndo: fnConfirmNewGroupIsRemoved,
 				afterRedo: fnComfirmGroupIsAddedWithNewLabel
 			});
+
+			function checkIfDependentAdded(oUiComponent, oViewAfterAction, assert) {
+				var oSimpleFormDependents = oViewAfterAction.byId("simpleForm").getDependents();
+				assert.equal(oSimpleFormDependents[0].getId(), oViewAfterAction.createId("title1"), "then stable element of form container was added to the 'dependents' aggregation");
+			}
+
+			function checkIfDependentRemoved(oUiComponent, oViewAfterAction, assert) {
+				var oSimpleFormDependents = oViewAfterAction.byId("simpleForm").getDependents();
+				assert.equal(oSimpleFormDependents.length, 0, "then stable element of form container was removed from the 'dependents' aggregation");
+			}
+
+			elementActionTest("Checking the remove action for SimpleForm with Layout=" + sSimpleFormLayout + "when removing a group", {
+				xmlView: buildXMLForSimpleForm(),
+				action: {
+					name: "Remove",
+					control: function(oView) {
+						return oView.getContent()[0].mAggregations.form.getFormContainers()[1];
+					},
+					parameter: function(oView) {
+						return {
+							removedElement: oView.getContent()[0].mAggregations.form.getFormContainers()[1]
+						};
+					}
+				},
+				afterAction: checkIfDependentAdded,
+				afterUndo: checkIfDependentRemoved,
+				afterRedo: checkIfDependentAdded
+			});
 		}
 
 		fnParameterizedTest(SimpleFormLayout.GridLayout);
