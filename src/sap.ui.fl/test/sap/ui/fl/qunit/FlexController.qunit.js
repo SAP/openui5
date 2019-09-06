@@ -2644,10 +2644,11 @@ function (
 
 	QUnit.module("applyVariantChanges with two changes for a label", {
 		beforeEach: function () {
-			this.sLabelId = labelChangeContent.selector.id;
-			this.oControl = new Label(this.sLabelId);
-			this.oChange = new Change(labelChangeContent);
-			this.oChange2 = new Change(labelChangeContent2);
+			this.oControl = new Label(labelChangeContent.selector.id);
+			this.oControl4 = new Label(labelChangeContent4.selector.id);
+			this.oChange = new Change(labelChangeContent); // selector.id === 'abc123'
+			this.oChange2 = new Change(labelChangeContent2); // selector.id === 'abc123'
+			this.oChange4 = new Change(labelChangeContent4); // selector.id === 'foo'
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
 			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
@@ -2665,23 +2666,24 @@ function (
 			this.oComponent = {
 				name: "testScenarioComponent",
 				appVersion: "1.2.3",
-				getId : function() {return "RTADemoAppMD";},
-				getManifestObject : function() {return oManifest;}
+				getId : function () { return "RTADemoAppMD"; },
+				getManifestObject : function () { return oManifest; }
 			};
 		},
 		afterEach: function () {
 			this.oControl.destroy();
+			this.oControl4.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when applyVariantChanges is called with 2 unapplied changes. One of them has a wrong selector", function (assert) {
-			this.oChangeWithWrongSelector = new Change(labelChangeContent4);
+			this.oChangeWithWrongSelector = new Change(labelChangeContent5);
 			this.oFlexController.applyVariantChanges([this.oChange, this.oChangeWithWrongSelector], this.oComponent);
 
 			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then _applyChangesOnControl after all dependencies have been udpated");
 			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 1, "then 1 change added to map");
-			assert.equal(this.oApplyChangesOnControlStub.callCount, 1, "one change was applied");
-			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 2, "two changes were added to the map and dependencies were updated");
+			assert.equal(this.oApplyChangesOnControlStub.callCount, 1, "then applyChangesOnControl is called once (one control)");
+			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 2, "then two changes were added to the map and dependencies were updated");
 		});
 
 		QUnit.test("when applyVariantChanges is called with 2 unapplied changes", function (assert) {
@@ -2689,8 +2691,18 @@ function (
 
 			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then _applyChangesOnControl after all dependencies have been udpated");
 			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes added to map");
-			assert.equal(this.oApplyChangesOnControlStub.callCount, 2, "both changes were applied");
+			assert.equal(this.oApplyChangesOnControlStub.callCount, 1, "then applyChangesOnControl is called once (one control)");
 			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 2, "both changes were added to the map and dependencies were updated");
+		});
+
+		QUnit.test("when applyVariantChanges is called with 3 unapplied changes with two different controls as selector", function (assert) {
+			this.oFlexController.applyVariantChanges([this.oChange, this.oChange2, this.oChange4], this.oComponent);
+
+			assert.ok(this.oApplyChangesOnControlStub.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then _applyChangesOnControl after all dependencies have been udpated");
+			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes of the first control added to map");
+			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["foo"].length, 1, "then 1 change of the second control added to map");
+			assert.equal(this.oApplyChangesOnControlStub.callCount, 2, "then applyChangesOnControl is called twice (two controls)");
+			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 3, "then three changes were added to the map and dependencies were updated");
 		});
 	});
 
