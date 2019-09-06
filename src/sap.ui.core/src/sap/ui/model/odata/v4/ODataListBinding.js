@@ -2053,7 +2053,7 @@ sap.ui.define([
 
 			if (aPaths.indexOf("") < 0) {
 				iStart = bSingle ? oContext.getModelIndex() : that.iCurrentBegin;
-				oPromise = oCache.requestSideEffects(oModel.lockGroup(sGroupId),
+				oPromise = oCache.requestSideEffects(that.lockGroup(sGroupId),
 					aPaths, mNavigationPropertyPaths, iStart, iLength);
 				if (oPromise) {
 					aPromises = [oPromise];
@@ -2064,7 +2064,7 @@ sap.ui.define([
 				}
 			}
 			if (bSingle) {
-				return that.refreshSingle(oContext, oModel.lockGroup(sGroupId), false);
+				return that.refreshSingle(oContext, that.lockGroup(sGroupId), false);
 			}
 			if (that.aContexts.length) {
 				bAllContextsTransient = that.aContexts.every(function (oContext) {

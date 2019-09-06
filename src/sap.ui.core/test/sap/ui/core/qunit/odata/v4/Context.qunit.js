@@ -1815,9 +1815,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", true)
-			.returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("group", true).returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", vValue, sinon.match.same(oGroupLock), true)
 			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated
@@ -1876,9 +1874,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", true)
-			.returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("group", true).returns(oGroupLock);
 		oGroupLockMock.expects("unlock").never(); // not yet
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
@@ -1912,9 +1908,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", true)
-			.returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("group", true).returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
 			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated

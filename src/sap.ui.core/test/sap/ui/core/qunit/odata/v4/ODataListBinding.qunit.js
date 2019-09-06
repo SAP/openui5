@@ -5181,7 +5181,7 @@ sap.ui.define([
 			sGroupId = "group";
 
 		oBinding.aContexts.push({isTransient : function () {}});
-		this.mock(this.oModel).expects("lockGroup").never();
+		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
@@ -5205,7 +5205,7 @@ sap.ui.define([
 			sGroupId = "group",
 			oGroupLock = {};
 
-		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false)
@@ -5246,7 +5246,7 @@ sap.ui.define([
 			oGroupLock = {},
 			oResult = {};
 
-		this.mock(this.oModel).expects("lockGroup").withExactArgs("group").returns(oGroupLock);
+		this.mock(oBinding).expects("lockGroup").withExactArgs("group").returns(oGroupLock);
 		this.mock(oBinding).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock), false)
 			.resolves(oResult);
@@ -5277,7 +5277,7 @@ sap.ui.define([
 		oBinding.iCurrentBegin = 3;
 		oBinding.iCurrentEnd = 10;
 
-		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 				bHeader ? 3 : 42,
@@ -5320,7 +5320,7 @@ sap.ui.define([
 
 		oBinding.oCachePromise = Promise.resolve(oBinding.oCachePromise); // make this pending
 		oBinding.aContexts.push({isTransient : function () {}});
-		this.mock(this.oModel).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {}, 0, 0)
 			.returns(null); // "Missing key property"
@@ -5346,7 +5346,7 @@ sap.ui.define([
 			oBinding.aContexts.push({isTransient : function () {} });
 			this.mock(oBinding.aContexts[j]).expects("isTransient").withExactArgs().returns(true);
 		}
-		this.mock(this.oModel).expects("lockGroup").never();
+		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").never();
 
@@ -5359,7 +5359,7 @@ sap.ui.define([
 		var oCacheMock = this.getCacheMock(),
 			oBinding = this.bindList("/Set");
 
-		this.mock(this.oModel).expects("lockGroup").never();
+		this.mock(oBinding).expects("lockGroup").never();
 		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", "group", false, true);
 

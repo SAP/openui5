@@ -92,9 +92,6 @@ sap.ui.define([
 					fetchMetadata : function () {
 						return SyncPromise.resolve(null);
 					},
-					lockGroup : function () {
-						throw new Error("Unsupported operation");
-					},
 					reportBoundMessages : function () {}
 				};
 
@@ -120,6 +117,7 @@ sap.ui.define([
 				getServiceUrl : function () { return "/~/"; },
 				hasChanges : function () {},
 				isActionBodyOptional : function () {},
+				lockGroup : function () {},
 				relocate : function () {},
 				relocateAll : function () {},
 				removePatch : function () {},
@@ -1160,7 +1158,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError);
 				});
 
-			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
+			this.mock(this.oRequestor).expects("lockGroup")
 				.withExactArgs(sGroupId, true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1423,7 +1421,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError2);
 				});
 
-			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
+			this.mock(this.oRequestor).expects("lockGroup")
 				.withExactArgs("group", true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1486,7 +1484,7 @@ sap.ui.define([
 				assert.strictEqual(oResult, oError);
 			});
 
-		this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
+		this.mock(this.oRequestor).expects("lockGroup")
 			.withExactArgs("group", true, sinon.match.same(oCache))
 			.returns(oRequestLock);
 

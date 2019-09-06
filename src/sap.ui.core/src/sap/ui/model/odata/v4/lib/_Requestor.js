@@ -80,6 +80,7 @@ sap.ui.define([
 	function Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface) {
 		this.mBatchQueue = {};
 		this.mHeaders = mHeaders || {};
+		this.aLockedGroupLocks = [];
 		this.oModelInterface = oModelInterface;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.mRunningChangeRequests = {}; // map from group ID to a SyncPromise
@@ -875,6 +876,144 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sends an OData batch request containing all requests referenced by the given group ID and
+	 * processes the responses by dispatching them to the appropriate handlers.
+	 *
+	 * @param {string} sGroupId
+	 *   ID of the group which should be sent as an OData batch request
+	 * @returns {Promise}
+	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
+	 *   rejected with an error if the batch request itself fails
+	 * @throws {Error}
+	 *   If there is already a batch request containing change requests
+	 *
+	 * @private
+	 */
+	Requestor.prototype.processBatch = function (sGroupId) {
+		var bHasChanges,
+			aRequests = this.mBatchQueue[sGroupId] || [],
+			that = this;
+
+		/*
+		 * (Recursively) calls $submit on the request(s)
+		 *
+		 * @param {object|object[]} vRequest
+		 */
+		function onSubmit(vRequest) {
+			if (Array.isArray(vRequest)) {
+				vRequest.forEach(onSubmit);
+			} else if (vRequest.$submit) {
+				vRequest.$submit();
+			}
+		}
+
+		/*
+		 * (Recursively) rejects the request(s) with the given error
+		 *
+		 * @param {Error} oError
+		 * @param {object|object[]} vRequest
+		 */
+		function reject(oError, vRequest) {
+			if (Array.isArray(vRequest)) {
+				vRequest.forEach(reject.bind(null, oError));
+			} else {
+				vRequest.$reject(oError);
+			}
+		}
+
+		/*
+		 * Visits the given request/response pairs, rejecting or resolving the corresponding
+		 * promises accordingly.
+		 *
+		 * @param {object[]} aRequests
+		 * @param {object[]} aResponses
+		 */
+		function visit(aRequests, aResponses) {
+			var oCause;
+
+			aRequests.forEach(function (vRequest, index) {
+				var oError,
+					sETag,
+					oResponse,
+					vResponse = aResponses[index];
+
+				if (Array.isArray(vResponse)) {
+					visit(vRequest, vResponse);
+				} else if (!vResponse) {
+					oError = new Error(
+						"HTTP request was not processed because the previous request failed");
+					oError.cause = oCause;
+					oError.$reported = true; // do not create a message for this error
+					vRequest.$reject(oError);
+				} else if (vResponse.status >= 400) {
+					vResponse.getResponseHeader = getResponseHeader;
+					oCause = _Helper.createError(vResponse, "Communication error", vRequest.url,
+						vRequest.$resourcePath);
+					reject(oCause, vRequest);
+				} else {
+					if (vResponse.responseText) {
+						try {
+							that.doCheckVersionHeader(getResponseHeader.bind(vResponse),
+								vRequest.url, true);
+							oResponse = that.doConvertResponse(JSON.parse(vResponse.responseText),
+								vRequest.$metaPath);
+						} catch (oErr) {
+							vRequest.$reject(oErr);
+							return;
+						}
+					} else { // e.g. 204 No Content
+						oResponse = {/*null object pattern*/};
+					}
+					that.reportUnboundMessagesAsJSON(vRequest.url,
+						getResponseHeader.call(vResponse, "sap-messages"));
+					sETag = getResponseHeader.call(vResponse, "ETag");
+					if (sETag) {
+						oResponse["@odata.etag"] = sETag;
+					}
+					vRequest.$resolve(oResponse);
+				}
+			});
+		}
+
+		delete this.mBatchQueue[sGroupId];
+		onSubmit(aRequests);
+		bHasChanges = this.cleanUpChangeSets(aRequests);
+		if (aRequests.length === 0) {
+			return Promise.resolve();
+		}
+
+		this.batchRequestSent(sGroupId, bHasChanges);
+		return this.sendBatch(_Requestor.cleanBatch(aRequests))
+			.then(function (aResponses) {
+				visit(aRequests, aResponses);
+			}).catch(function (oError) {
+				var oRequestError = new Error(
+					"HTTP request was not processed because $batch failed");
+
+				/*
+				 * Rejects all given requests (recursively) with <code>oRequestError</code>.
+				 *
+				 * @param {object[]} aRequests
+				 */
+				function rejectAll(aRequests) {
+					aRequests.forEach(function (vRequest) {
+						if (Array.isArray(vRequest)) {
+							rejectAll(vRequest);
+						} else {
+							vRequest.$reject(oRequestError);
+						}
+					});
+				}
+
+				oRequestError.cause = oError;
+				rejectAll(aRequests);
+				throw oError;
+			}).finally(function () {
+				that.batchResponseReceived(sGroupId, bHasChanges);
+			});
+	};
+
+	/**
 	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
 	 * requestor is ready immediately. Subclasses may behave differently.
 	 *
@@ -884,6 +1023,39 @@ sap.ui.define([
 	 */
 	Requestor.prototype.ready = function () {
 		return SyncPromise.resolve();
+	};
+
+	/**
+	 * Creates a group lock for the given group.
+	 *
+	 * A group lock is a hint that a request is expected which may be added asynchronously.
+	 * If the expected request must be part of the next batch request for that group,
+	 * <code>bLocked</code> needs to be set to <code>true</code>. {@link #submitBatch} waits until
+	 * all group locks for that group are unlocked again. A group lock is automatically unlocked if
+	 * {@link #request} is called with that group lock. If the caller of {@link #lockGroup}
+	 * recognizes that no request needs to be added, the caller must unlock the group lock. In case
+	 * of an error the caller of {@link #lockGroup} must call
+	 * {@link sap.ui.model.odata.v4.lib._GroupLock#unlock} with <code>bForce = true</code>.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {boolean} [bLocked]
+	 *   Whether the created lock is locked
+	 * @param {object} [oOwner]
+	 *   The lock's owner for debugging
+	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
+	 *   The group lock
+	 *
+	 * @public
+	 */
+	Requestor.prototype.lockGroup = function (sGroupId, bLocked, oOwner) {
+		var oGroupLock;
+
+		oGroupLock = new _GroupLock(sGroupId, bLocked, oOwner, this.getSerialNumber());
+		if (bLocked) {
+			this.aLockedGroupLocks.push(oGroupLock);
+		}
+		return oGroupLock;
 	};
 
 	/**
@@ -1349,140 +1521,40 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sends an OData batch request containing all requests referenced by the given group ID.
+	 * Waits until all group locks for the given group ID have been unlocked and submits the
+	 * requests associated with this group ID in one batch request.
 	 *
 	 * @param {string} sGroupId
-	 *   ID of the group which should be sent as an OData batch request
-	 * @returns {Promise}
+	 *   The group ID
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
-	 *   rejected with an error if the batch request itself fails
-	 * @throws {Error}
-	 *   If there is already a batch request containing change requests
+	 *   rejected with an error if the batch request itself fails.
 	 *
 	 * @public
 	 */
 	Requestor.prototype.submitBatch = function (sGroupId) {
-		var bHasChanges,
-			aRequests = this.mBatchQueue[sGroupId] || [],
+		var bBlocked,
+			oPromise,
 			that = this;
 
-		/*
-		 * Visits the given request/response pairs, rejecting or resolving the corresponding
-		 * promises accordingly.
-		 *
-		 * @param {object[]} aRequests
-		 * @param {object[]} aResponses
-		 */
-		function visit(aRequests, aResponses) {
-			var oCause;
-
-			aRequests.forEach(function (vRequest, index) {
-				var oError,
-					sETag,
-					oResponse,
-					vResponse = aResponses[index];
-
-				if (Array.isArray(vResponse)) {
-					visit(vRequest, vResponse);
-				} else if (!vResponse) {
-					oError = new Error(
-						"HTTP request was not processed because the previous request failed");
-					oError.cause = oCause;
-					oError.$reported = true; // do not create a message for this error
-					vRequest.$reject(oError);
-				} else if (vResponse.status >= 400) {
-					vResponse.getResponseHeader = getResponseHeader;
-					oCause = _Helper.createError(vResponse, "Communication error", vRequest.url,
-						vRequest.$resourcePath);
-					reject(oCause, vRequest);
-				} else {
-					if (vResponse.responseText) {
-						try {
-							that.doCheckVersionHeader(getResponseHeader.bind(vResponse),
-								vRequest.url, true);
-							oResponse = that.doConvertResponse(JSON.parse(vResponse.responseText),
-								vRequest.$metaPath);
-						} catch (oErr) {
-							vRequest.$reject(oErr);
-							return;
-						}
-					} else { // e.g. 204 No Content
-						oResponse = {/*null object pattern*/};
-					}
-					that.reportUnboundMessagesAsJSON(vRequest.url,
-						getResponseHeader.call(vResponse, "sap-messages"));
-					sETag = getResponseHeader.call(vResponse, "ETag");
-					if (sETag) {
-						oResponse["@odata.etag"] = sETag;
-					}
-					vRequest.$resolve(oResponse);
-				}
-			});
+		// Use SyncPromise.all to call #processBatch synchronously when there is no lock -> The
+		// batch is sent before the rendering. Rendering and server processing run in parallel.
+		oPromise = SyncPromise.all(this.aLockedGroupLocks.map(function (oGroupLock) {
+			return oGroupLock.waitFor(sGroupId);
+		}));
+		bBlocked = oPromise.isPending();
+		if (bBlocked) {
+			Log.info("submitBatch('" + sGroupId + "') is waiting for locks", null, sClassName);
 		}
-
-		/*
-		 * (Recursively) calls $submit on the request(s)
-		 *
-		 * @param {object|object[]} vRequest
-		 */
-		function onSubmit(vRequest) {
-			if (Array.isArray(vRequest)) {
-				vRequest.forEach(onSubmit);
-			} else if (vRequest.$submit) {
-				vRequest.$submit();
+		return oPromise.then(function () {
+			if (bBlocked) {
+				Log.info("submitBatch('" + sGroupId + "') continues", null, sClassName);
 			}
-		}
-
-		/*
-		 * (Recursively) rejects the request(s) with the given error
-		 *
-		 * @param {Error} oError
-		 * @param {object|object[]} vRequest
-		 */
-		function reject(oError, vRequest) {
-			if (Array.isArray(vRequest)) {
-				vRequest.forEach(reject.bind(null, oError));
-			} else {
-				vRequest.$reject(oError);
-			}
-		}
-
-		delete this.mBatchQueue[sGroupId];
-		onSubmit(aRequests);
-		bHasChanges = this.cleanUpChangeSets(aRequests);
-		if (aRequests.length === 0) {
-			return Promise.resolve();
-		}
-
-		this.batchRequestSent(sGroupId, bHasChanges);
-		return this.sendBatch(_Requestor.cleanBatch(aRequests))
-			.then(function (aResponses) {
-				visit(aRequests, aResponses);
-			}).catch(function (oError) {
-				var oRequestError = new Error(
-					"HTTP request was not processed because $batch failed");
-
-				/*
-				 * Rejects all given requests (recursively) with <code>oRequestError</code>.
-				 *
-				 * @param {object[]} aRequests
-				 */
-				function rejectAll(aRequests) {
-					aRequests.forEach(function (vRequest) {
-						if (Array.isArray(vRequest)) {
-							rejectAll(vRequest);
-						} else {
-							vRequest.$reject(oRequestError);
-						}
-					});
-				}
-
-				oRequestError.cause = oError;
-				rejectAll(aRequests);
-				throw oError;
-			}).finally(function () {
-				that.batchResponseReceived(sGroupId, bHasChanges);
+			that.aLockedGroupLocks = that.aLockedGroupLocks.filter(function (oGroupLock) {
+				return oGroupLock.isLocked();
 			});
+			return that.processBatch(sGroupId);
+		});
 	};
 
 	/**
@@ -1578,8 +1650,6 @@ sap.ui.define([
 		 * @param {function (string)} [oModelInterface.onCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
-		 * @param {function} oModelInterface.lockGroup
-		 *   A function to create or modify a lock for a group
 		 * @param {function} oModelInterface.reportBoundMessages
 		 *   A function to report bound OData messages
 		 * @param {function (object[])} oModelInterface.reportUnboundMessages

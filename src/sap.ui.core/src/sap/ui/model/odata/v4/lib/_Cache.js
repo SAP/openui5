@@ -1074,8 +1074,7 @@ sap.ui.define([
 				 * this request has returned and its response is applied to the cache.
 				 */
 				function onSubmit() {
-					oRequestLock = that.oRequestor.getModelInterface()
-						.lockGroup(sGroupId, true, that);
+					oRequestLock = that.oRequestor.lockGroup(sGroupId, true, that);
 					if (fnPatchSent) {
 						fnPatchSent();
 					}
