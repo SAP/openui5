@@ -1,0 +1,17 @@
+{
+	"unitData": {
+		"valueCustom": "12",
+		"unitCustom": "packs",
+
+		"valueCLDR": "123",
+		"unitCLDR": "mass-kilogram"
+	},
+
+	"currencyData": {
+		"valueCustom": "100",
+		"currencyCustom": "BTC",
+
+		"valueCLDR": "500",
+		"currencyCLDR": "EUR"
+	}
+}

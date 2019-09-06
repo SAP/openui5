@@ -114,6 +114,9 @@ sap.ui.define([
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				vResult = this.oOutputFormat.parse(vValue);
+				// current default error
+				// more specific errors describing the actual issue during parse()
+				// will be introduced with later work on the NumberFormat
 				if (!Array.isArray(vResult) || isNaN(vResult[0])) {
 					oBundle = sap.ui.getCore().getLibraryResourceBundle();
 					throw new ParseException(oBundle.getText("Currency.Invalid", [vValue]));

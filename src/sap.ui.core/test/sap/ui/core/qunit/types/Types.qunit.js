@@ -560,6 +560,271 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(oCurrencyType5.parseValue("", "string"), ["0", undefined], "0 is returned");
 		});
 
+
+		QUnit.module("currency type - strict mode");
+
+		QUnit.test("currency parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: true
+			});
+
+			// OK
+			assert.deepEqual(currencyType.parseValue("123.45 €", "string"), [123.45, "EUR"], "parse valid input");
+			assert.deepEqual(currencyType.parseValue("123.45 EUR", "string"), [123.45, "EUR"], "parse valid input");
+			assert.deepEqual(currencyType.parseValue("123.45 FOO", "string"), [123.45, "FOO"], "parse valid input");
+
+			// null value
+			//assert.throws(function () { currencyType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of null value under showMeature=true in strict mode results in exception");
+			// undefined value
+			//assert.throws(function () { currencyType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of undefined value under showMeature=true in strict mode results in exception");
+			// 0 value
+			//assert.throws(function () { currencyType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse of 0 value under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 F", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 FOOB", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// no unit
+			assert.throws(function () { currencyType.parseValue("3333.555", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string without currency under showMeature=true in strict mode results in exception");
+			// no value
+			assert.throws(function () { currencyType.parseValue("kg", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with only currency under showMeature=true in strict mode results in exception");
+			// no value and no valid currency
+			assert.throws(function () { currencyType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a random string under showMeature=true in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { currencyType.parseValue("", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse empty string under showMeature=true in strict mode results in exception");
+
+			// empty string is set to ""
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: true,
+				emptyString: ""
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: true,
+				emptyString: 0
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+		});
+
+		QUnit.test("currency parseValue with strict mode - CLDR (showMeasure=false)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: false
+			});
+
+			// OK
+			assert.deepEqual(currencyType.parseValue("123.45", "string"), [123.45, undefined], "parse valid input");
+
+			// null value
+			//assert.throws(function () { currencyType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of null value under showMeature=true in strict mode results in exception");
+			// undefined value
+			//assert.throws(function () { currencyType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of undefined value under showMeature=true in strict mode results in exception");
+			// 0 value
+			//assert.throws(function () { currencyType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse of 0 value under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 F", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 FOOB", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// unknown currencies (normally accepted because of 3-letter code --> still invalid in showMeasure=false & strictParsing=true)
+			assert.throws(function () { currencyType.parseValue("3333.555 FOO", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// known currency (invalid in strict mode)
+			assert.throws(function () { currencyType.parseValue("3333.555 EUR", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string without currency under showMeature=true in strict mode results in exception");
+			// known currency symbol (invalid in strict mode)
+			assert.throws(function () { currencyType.parseValue("3333.555 €", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string without currency under showMeature=true in strict mode results in exception");
+			// no value, but currency code
+			assert.throws(function () { currencyType.parseValue("EUR", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with only currency under showMeature=true in strict mode results in exception");
+			// no value, but currency symbol
+			assert.throws(function () { currencyType.parseValue("€", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with only currency under showMeature=true in strict mode results in exception");
+			// no value and no valid currency (random string)
+			assert.throws(function () { currencyType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a random string under showMeature=true in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { currencyType.parseValue("", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse empty string under showMeature=true in strict mode results in exception");
+
+			// empty string is set to ""
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: false,
+				emptyString: ""
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: false,
+				emptyString: 0
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+		});
+
+		QUnit.test("currency parseValue with strict mode - Custom (showMeasure=true)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var mCustomCurrencies = {
+				"BTC": {
+					"symbol": "Ƀ",
+					"decimals": 3
+				},
+				"DOL": {
+					"decimals": 3,
+					"symbol": "$"
+				},
+				"EU": {
+					"decimals": 2,
+					"symbol": "€"
+				},
+				"EURO": {
+					"decimals": 4,
+					"symbol": "€"
+				}
+			};
+
+			var currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: true,
+				customCurrencies: mCustomCurrencies
+			});
+
+			// OK
+			assert.deepEqual(currencyType.parseValue("123.45 Ƀ", "string"), [123.45, "BTC"], "parse valid input");
+			assert.deepEqual(currencyType.parseValue("123.45 DOL", "string"), [123.45, "DOL"], "parse valid input");
+			assert.deepEqual(currencyType.parseValue("123.45 $", "string"), [123.45, "DOL"], "parse valid input");
+
+			// null value
+			//assert.throws(function () { currencyType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of null value under showMeature=true in strict mode results in exception");
+			// undefined value
+			//assert.throws(function () { currencyType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of undefined value under showMeature=true in strict mode results in exception");
+			// 0 value
+			//assert.throws(function () { currencyType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse of 0 value under showMeature=true in strict mode results in exception");
+
+			// valid currency with 3-letter code
+			assert.throws(function () { currencyType.parseValue("3333.555 FOO", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// valid currency in CLDR, unknown in custom currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 USD", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 F", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 FOOB", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// no currency
+			assert.throws(function () { currencyType.parseValue("3333.555", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string without currency under showMeature=true in strict mode results in exception");
+			// ambiguous currency
+			assert.throws(function () { currencyType.parseValue("3333.555 €", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string without currency under showMeature=true in strict mode results in exception");
+			// no value
+			assert.throws(function () { currencyType.parseValue("€", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with only currency under showMeature=true in strict mode results in exception");
+			// no value 2
+			assert.throws(function () { currencyType.parseValue("EU", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with only currency under showMeature=true in strict mode results in exception");
+			// no value and no valid currency
+			assert.throws(function () { currencyType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a random string under showMeature=true in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { currencyType.parseValue("", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse empty string under showMeature=true in strict mode results in exception");
+
+			// empty string is set to ""
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: true,
+				emptyString: "",
+				customCurrencies: mCustomCurrencies
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: true,
+				emptyString: 0,
+				customCurrencies: mCustomCurrencies
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+		});
+
+		QUnit.test("currency parseValue with strict mode - Custom (showMeasure=false)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var mCustomCurrencies = {
+				"BTC": {
+					"symbol": "Ƀ",
+					"decimals": 3
+				},
+				"DOL": {
+					"decimals": 3,
+					"symbol": "$"
+				},
+				"EU": {
+					"decimals": 2,
+					"symbol": "€"
+				},
+				"EURO": {
+					"decimals": 4,
+					"symbol": "€"
+				}
+			};
+
+			var currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: false,
+				customCurrencies: mCustomCurrencies
+			});
+
+			// OK
+			assert.deepEqual(currencyType.parseValue("123.45", "string"), [123.45, undefined], "parse valid input");
+
+			// null value
+			//assert.throws(function () { currencyType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of null value under showMeature=true in strict mode results in exception");
+			// undefined value
+			//assert.throws(function () { currencyType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parsing of undefined value under showMeature=true in strict mode results in exception");
+			// 0 value
+			//assert.throws(function () { currencyType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse of 0 value under showMeature=true in strict mode results in exception");
+
+			// valid currency with 3-letter code
+			assert.throws(function () { currencyType.parseValue("3333.555 FOO", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// valid currency in CLDR, unknown in custom currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 USD", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 F", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// unknown currencies
+			assert.throws(function () { currencyType.parseValue("3333.555 FOOB", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with invalid currency under showMeature=true in strict mode results in exception");
+			// ambiguous currency
+			assert.throws(function () { currencyType.parseValue("3333.555 €", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string ambiguous currency under showMeature=true in strict mode results in exception");
+			// no value
+			assert.throws(function () { currencyType.parseValue("€", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with only currency under showMeature=true in strict mode results in exception");
+			// no value 2
+			assert.throws(function () { currencyType.parseValue("EU", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a string with only currency under showMeature=true in strict mode results in exception");
+			// no value and no valid currency
+			assert.throws(function () { currencyType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse a random string under showMeature=true in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { currencyType.parseValue("", "string"); }, new ParseException(oBundle.getText("Currency.Invalid")), "parse empty string under showMeature=true in strict mode results in exception");
+
+			// empty string is set to ""
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: false,
+				emptyString: "",
+				customCurrencies: mCustomCurrencies
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			currencyType = new CurrencyType({
+				strictParsing: true,
+				showMeasure: false,
+				emptyString: 0,
+				customCurrencies: mCustomCurrencies
+			});
+			assert.deepEqual(currencyType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+		});
+
 		// Unit type tests
 		QUnit.module("unit type");
 
@@ -588,6 +853,10 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.deepEqual(unitType.parseValue("3.555 hr", "string"), [3.555, "duration-hour"], "parse test");
 			assert.deepEqual(unitType.parseValue("-3.555 mph", "string"), [-3.555, "speed-mile-per-hour"], "parse test");
 
+			// The next parseValue should throw exception only when strict mode is set to true
+			// Currently the Unit type has a strict check even when strict mode isn't enabled,
+			//  this will be changed once the strict mode is implemented in
+			//  sap.ui.core.format.NumberFormat
 			assert.throws(function () { unitType.parseValue("3333", "string"); }, ParseException, "parse test");
 			assert.throws(function () { unitType.parseValue(true, "untype"); }, ParseException, "parse test");
 			assert.throws(function () { unitType.parseValue(true, "boolean"); }, ParseException, "parse test");
@@ -1126,6 +1395,240 @@ sap.ui.define(["sap/ui/model/ValidateException",
 			assert.equal(oCustomUnitType3.formatValue([123.456789, "length-meter", oCustomUnitConfig], "string").toString(), "123.4568", "formatted value respects the 'decimals' of custom unit");
 			assert.equal(oCustomUnitTypeInstanceSpy.callCount, 2, "No additional instance is created, 2nd instance is taken from cache");
 
+		});
+
+		QUnit.module("unit type - strict mode");
+
+		QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: true
+			});
+			// OK
+			assert.deepEqual(unitType.parseValue("3333.555 Ω", "string"), [3333.555, "electric-ohm"], "parse valid input");
+
+			// null value
+			assert.throws(function () { unitType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of null value under showMeature=true in strict mode results in exception");
+			// undefined value
+			assert.throws(function () { unitType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of undefined value under showMeature=true in strict mode results in exception");
+			// 0 value
+			assert.throws(function () { unitType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse of 0 value under showMeature=true in strict mode results in exception");
+			// unknown unit
+			assert.throws(function () { unitType.parseValue("3333.555 FOO", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with unknown unit under showMeature=true in strict mode results in exception");
+			// ambiguous unit
+			assert.throws(function () { unitType.parseValue("3333.555 c", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with ambiguous unit under showMeature=true in strict mode results in exception");
+			// no unit
+			assert.throws(function () { unitType.parseValue("3333.555", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string without unit under showMeature=true in strict mode results in exception");
+			// no value
+			assert.throws(function () { unitType.parseValue("kg", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with only unit under showMeature=true in strict mode results in exception");
+			// no value and no valid unit
+			assert.throws(function () { unitType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a random string under showMeature=true in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { unitType.parseValue("", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse empty string under showMeature=true in strict mode results in exception");
+
+			// empty string is set to ""
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: true,
+				emptyString: ""
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: true,
+				emptyString: 0
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+		});
+
+		QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=false)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: false
+			});
+			// OK
+			assert.deepEqual(unitType.parseValue("3333.555", "string"), [3333.555, undefined], "parse valid input");
+
+			// null value
+			assert.throws(function () { unitType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of null value under showMeasure=false in strict mode results in exception");
+			// undefined value
+			assert.throws(function () { unitType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of undefined value under showMeasure=false in strict mode results in exception");
+			// 0 value
+			assert.throws(function () { unitType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse of 0 value under showMeasure=false in strict mode results in exception");
+			// unknown unit
+			assert.throws(function () { unitType.parseValue("3333.555 FOO", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with unknown unit under showMeasure=false in strict mode results in exception");
+			// ambiguous unit
+			assert.throws(function () { unitType.parseValue("3333.555 c", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with ambiguous unit under showMeasure=false in strict mode results in exception");
+			// known unit
+			assert.throws(function () { unitType.parseValue("3333.555 Ω", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with known unit under showMeasure=false in strict mode results in exception");
+			// no value
+			assert.throws(function () { unitType.parseValue("kg", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with only unit under showMeasure=false in strict mode results in exception");
+			// no value and no valid unit
+			assert.throws(function () { unitType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a random string under showMeasure=false in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { unitType.parseValue("", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse empty string under showMeasure=false in strict mode results in exception");
+
+			// empty string is set to ""
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: false,
+				emptyString: ""
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: false,
+				emptyString: 0
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+		});
+
+		QUnit.test("unit parseValue with strict mode - Custom (showMeasure=true)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var mCustomUnits = {
+				"zomb": {
+					"displayName": "ZOMBIES!!",
+					"unitPattern-count-one": "{0} Zombie...",
+					"unitPattern-count-other": "{0} Zombies!!"
+				},
+				"OR": {
+					"displayName": "Orange",
+					"unitPattern-count-one": "{0} Orange",
+					"unitPattern-count-other": "{0} Oranges"
+				},
+				"Citrus": {
+					"displayName": "Orange",
+					"unitPattern-count-one": "{0} Orange",
+					"unitPattern-count-other": "{0} Oranges"
+				}
+			};
+
+			var unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: true,
+				customUnits: mCustomUnits
+			});
+
+			// OK
+			assert.deepEqual(unitType.parseValue("1 Zombie...", "string"), [1, "zomb"], "parse valid input: Zombie... (single)");
+			assert.deepEqual(unitType.parseValue("123.45 Zombies!!", "string"), [123.45, "zomb"], "parse valid input: Zombies!! (multiple)");
+
+			// null value
+			assert.throws(function () { unitType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of null value under showMeature=true in strict mode results in exception");
+			// undefined value
+			assert.throws(function () { unitType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of undefined value under showMeature=true in strict mode results in exception");
+			// 0 value
+			assert.throws(function () { unitType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse of 0 value under showMeature=true in strict mode results in exception");
+			// unknown unit
+			assert.throws(function () { unitType.parseValue("3333.555 FOO", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with unknown unit under showMeature=true in strict mode results in exception");
+			// ambiguous unit
+			assert.throws(function () { unitType.parseValue("3333.555 Oranges", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with ambiguous unit under showMeature=true in strict mode results in exception");
+			// no unit
+			assert.throws(function () { unitType.parseValue("3333.555", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string without unit under showMeature=true in strict mode results in exception");
+			// no value
+			assert.throws(function () { unitType.parseValue("kg", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with only unit under showMeature=true in strict mode results in exception");
+			// no value and no valid unit
+			assert.throws(function () { unitType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a random string under showMeature=true in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { unitType.parseValue("", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse empty string under showMeature=true in strict mode results in exception");
+
+			// empty string is set to ""
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: true,
+				customUnits: mCustomUnits,
+				emptyString: ""
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: true,
+				customUnits: mCustomUnits,
+				emptyString: 0
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+		});
+
+		QUnit.test("unit parseValue with strict mode - Custom (showMeasure=false)", function (assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+			var mCustomUnits = {
+				"zomb": {
+					"displayName": "ZOMBIES!!",
+					"unitPattern-count-one": "{0} Zombie...",
+					"unitPattern-count-other": "{0} Zombies!!"
+				},
+				"OR": {
+					"displayName": "Orange",
+					"unitPattern-count-one": "{0} Orange",
+					"unitPattern-count-other": "{0} Oranges"
+				},
+				"Citrus": {
+					"displayName": "Orange",
+					"unitPattern-count-one": "{0} Orange",
+					"unitPattern-count-other": "{0} Oranges"
+				}
+			};
+			var unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: false,
+				customUnits: mCustomUnits
+			});
+
+			// OK
+			assert.deepEqual(unitType.parseValue("123.45", "string"), [123.45, undefined], "parse valid input, no unit given");
+
+			// null value
+			assert.throws(function () { unitType.parseValue(null, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of null value under showMeature=true in strict mode results in exception");
+			// undefined value
+			assert.throws(function () { unitType.parseValue(undefined, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parsing of undefined value under showMeature=true in strict mode results in exception");
+			// 0 value
+			assert.throws(function () { unitType.parseValue(0, "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse of 0 value under showMeature=true in strict mode results in exception");
+			// valid unit
+			assert.throws(function () { unitType.parseValue("3333.555 Zombies!!", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with a valid unit under showMeature=true in strict mode results in exception");
+			// unknown unit
+			assert.throws(function () { unitType.parseValue("3333.555 FOO", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with unknown unit under showMeature=true in strict mode results in exception");
+			// ambiguous unit
+			assert.throws(function () { unitType.parseValue("3333.555 Oranges", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with ambiguous unit under showMeature=true in strict mode results in exception");
+			// no value
+			assert.throws(function () { unitType.parseValue("kg", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a string with only unit under showMeature=true in strict mode results in exception");
+			// no value and no valid unit
+			assert.throws(function () { unitType.parseValue("foo", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse a random string under showMeature=true in strict mode results in exception");
+
+
+			// empty string is NaN by default
+			assert.throws(function () { unitType.parseValue("", "string"); }, new ParseException(oBundle.getText("Unit.Invalid")), "parse empty string under showMeature=true in strict mode results in exception");
+
+			// empty string is set to ""
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: false,
+				customUnits: mCustomUnits,
+				emptyString: ""
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), ["", undefined], "emptyString option set to '' does not cause ParseException");
+
+			// empty string is set to 0
+			unitType = new UnitType({
+				strictParsing: true,
+				showMeasure: false,
+				customUnits: mCustomUnits,
+				emptyString: 0
+			});
+			assert.deepEqual(unitType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
 		});
 
 		// date type tests

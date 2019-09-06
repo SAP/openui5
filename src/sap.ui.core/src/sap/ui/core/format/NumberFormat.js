@@ -1360,6 +1360,7 @@ sap.ui.define([
 			}
 
 			var oPatternAndResult = parseNumberAndUnit(mUnitPatterns, sValue);
+			var bUnitIsAmbiguous = false;
 
 			aUnitCode = oPatternAndResult.cldrCode;
 			if (aUnitCode.length === 1) {
@@ -1379,6 +1380,20 @@ sap.ui.define([
 				//ambiguous unit
 				assert(aUnitCode.length === 1, "Ambiguous unit [" + aUnitCode.join(", ") + "] for input: '" + (sValue) + "'");
 				sMeasure = undefined;
+				bUnitIsAmbiguous = true;
+			}
+
+			// TODO: better error handling in strict mode
+			// Next steps will be to implement a more helpful error message for these cases.
+			// Right now we simply return null. For now this will force the types to throw
+			// a default ParseException with a non-descriptive error.
+			if (oOptions.strictParsing) {
+				// two cases:
+				// 1. showMeasure is set to false, but still a unit was parsed
+				// 2. no unit (either none could be found OR the unit is ambiguous, should be separate error logs later on)
+				if ((sMeasure && !oOptions.showMeasure) || bUnitIsAmbiguous) {
+					return null;
+				}
 			}
 
 			sValue = oPatternAndResult.numberValue || sValue;
@@ -1396,6 +1411,19 @@ sap.ui.define([
 
 			if (!oResult) {
 				return null;
+			}
+
+			// TODO: better error handling in strict mode
+			// Next steps will be to implement a more helpful error message for these cases.
+			// Right now we simply return null. For now this will force the types to throw
+			// a default ParseException with a non-descriptive error.
+			if (oOptions.strictParsing) {
+				if ((oOptions.showMeasure && !oResult.currencyCode) || oResult.duplicatedSymbolFound) {
+					// here we need an error log for:
+					// 1. missing currency code/symbol (CLDR & custom)
+					// 2. duplicated symbol was found (only custom, CLDR has no duplicates)
+					return null;
+				}
 			}
 
 			sValue = oResult.numberValue;
@@ -2051,15 +2079,18 @@ sap.ui.define([
 
 		// Set currency code to undefined, as the defined custom currencies
 		// contain multiple currencies having the same symbol.
+		var bDuplicatedSymbolFound = false;
 		if (oConfig.duplicatedSymbols && oConfig.duplicatedSymbols[oMatch.symbol]) {
 			oMatch.code = undefined;
+			bDuplicatedSymbolFound = true;
 			Log.error("The parsed currency symbol '" + oMatch.symbol + "' is defined multiple " +
 					"times in custom currencies.Therefore the result is not distinct.");
 		}
 
 		return {
 			numberValue: sValue,
-			currencyCode: oMatch.code || undefined
+			currencyCode: oMatch.code || undefined,
+			duplicatedSymbolFound: bDuplicatedSymbolFound
 		};
 	}
 
