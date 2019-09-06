@@ -119,7 +119,7 @@ sap.ui.define([
 								aPromises.push(
 									oRequestor.request("DELETE",
 										"SalesOrderList('" + sOrderId + "')",
-										oModel.lockGroup("cleanUp"), {"If-Match" : "*"}
+										oModel.lockGroup("cleanUp", "Any.js"), {"If-Match" : "*"}
 									).then(function () {
 										Opa5.assert.ok(true, "cleanUp: deleted SalesOrder: "
 											+ sOrderId);

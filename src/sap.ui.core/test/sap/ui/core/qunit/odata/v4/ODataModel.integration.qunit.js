@@ -319,8 +319,8 @@ sap.ui.define([
 				this.oView.destroy();
 			}
 			if (this.oModel) {
-				if (this.oModel.aLockedGroupLocks) {
-					iLocks = this.oModel.aLockedGroupLocks.filter(function (oGroupLock) {
+				if (this.oModel.oRequestor.aLockedGroupLocks) {
+					iLocks = this.oModel.oRequestor.aLockedGroupLocks.filter(function (oGroupLock) {
 						if (oGroupLock.isLocked()) {
 							assert.ok(false, "GroupLock remained: " + oGroupLock);
 
@@ -980,7 +980,7 @@ sap.ui.define([
 				});
 			}
 
-			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
+			// A wrapper for _Requestor#lockGroup that attaches a stack trace to the lock
 			function lockGroup() {
 				var oError,
 					oLock = fnLockGroup.apply(this, arguments);
@@ -1003,8 +1003,8 @@ sap.ui.define([
 					.atLeast(0).callsFake(checkBatch);
 				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendRequest")
 					.atLeast(0).callsFake(checkRequest);
-				fnLockGroup = this.oModel.lockGroup;
-				this.oModel.lockGroup = lockGroup;
+				fnLockGroup = this.oModel.oRequestor.lockGroup;
+				this.oModel.oRequestor.lockGroup = lockGroup;
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 

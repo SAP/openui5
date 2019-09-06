@@ -12,10 +12,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (jQuery, Log, SyncPromise, Binding, ChangeReason, Context, asODataBinding, ODataModel,
-		asODataParentBinding, SubmitMode, _GroupLock, _Helper) {
+		asODataParentBinding, SubmitMode, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -408,9 +407,7 @@ sap.ui.define([
 	QUnit.test("changeParameters: cloning mParameters", function (assert) {
 		var oBinding = new ODataParentBinding({
 				sGroupId : "myGroup",
-				oModel : {
-					lockGroup : function () { return new _GroupLock(); }
-				},
+				oModel : {bAutoExpandSelect : false},
 				mParameters : {},
 				sPath : "/EMPLOYEES",
 				applyParameters : function (mParameters) {
@@ -426,6 +423,7 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true);
 
 		// code under test
 		oBinding.changeParameters(mParameters);
@@ -1568,9 +1566,10 @@ sap.ui.define([
 			}),
 			fnCallback = {},
 			oETagEntity = {},
-			oGroupLock = new _GroupLock("groupId"),
+			oGroupLock =  {getGroupId : function () {}},
 			oResult = {};
 
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		this.mock(oCache).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
 				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(oETagEntity),
@@ -1603,7 +1602,7 @@ sap.ui.define([
 			}),
 			fnCallback = {},
 			oETagEntity = {},
-			oGroupLock = new _GroupLock("$auto"),
+			oGroupLock = {},
 			oResult = {};
 
 		this.mock(_Helper).expects("buildPath")
@@ -1628,21 +1627,24 @@ sap.ui.define([
 				oModel : {isAutoGroup : function () {}, isDirectGroup : function () {}}
 			}),
 			oETagEntity,
-			oGroupLock = new _GroupLock("$direct"),
+			oGroupLock = {getGroupId : function () {}},
+			oGroupLockMock = this.mock(oGroupLock),
 			oModelMock = this.mock(oBinding.oModel),
 			fnCallback = {};
 
+		oGroupLockMock.expects("getGroupId").withExactArgs().returns("myGroup");
 		oModelMock.expects("isAutoGroup").withExactArgs("myGroup").returns(false);
 		assert.throws(function () {
-			oBinding.deleteFromCache(new _GroupLock("myGroup"));
+			oBinding.deleteFromCache(oGroupLock);
 		}, new Error("Illegal update group ID: myGroup"));
 
+		oGroupLockMock.expects("getGroupId").withExactArgs().returns("$direct");
+		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
+		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "42",
 				sinon.match.same(oETagEntity), sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve());
-		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
-		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 
 		return oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "42", oETagEntity,
 			fnCallback).then();
@@ -1894,11 +1896,11 @@ sap.ui.define([
 				mCacheByResourcePath : undefined,
 				oCachePromise : SyncPromise.resolve(oCache)
 			}),
+			fnCancel = function () {},
 			oCreateResult = {},
 			oCreatePromise = SyncPromise.resolve(oCreateResult),
-			oGroupLock = new _GroupLock("updateGroupId"),
-			fnCancel = function () {},
 			fnError = function () {},
+			oGroupLock = {},
 			oInitialData = {},
 			fnSubmit = function () {},
 			sTransientPredicate = "($uid=id-1-23)";
@@ -1937,7 +1939,7 @@ sap.ui.define([
 			}),
 			fnCancel = {},
 			fnError = {},
-			oGroupLock = new _GroupLock("updateGroupId"),
+			oGroupLock = {},
 			oInitialData = {},
 			oResult = {},
 			fnSubmit = {},
@@ -2247,8 +2249,8 @@ sap.ui.define([
 					}
 				}),
 				oBindingMock = this.mock(oBinding),
-				oGroupLock1 = new _GroupLock(),
-				oGroupLock2 = new _GroupLock();
+				oGroupLock1 = {},
+				oGroupLock2 = {};
 
 			oBindingMock.expects("lockGroup").withExactArgs("groupId", bLocked)
 				.returns(oGroupLock1);
@@ -2277,15 +2279,15 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = new ODataParentBinding({
-					oModel : {
-						lockGroup : function () {}
-					},
 					sPath : "/SalesOrderList('42')"
 				}),
 				oCoreMock = this.mock(sap.ui.getCore()),
 				iCount = bLockIsUsedAndRemoved ? 1 : undefined,
 				oExpectation,
-				oGroupLock = new _GroupLock("groupId", true, oBinding),
+				oGroupLock = {
+					toString: function () { return "~groupLock~"; },
+					unlock : function () {}
+				},
 				oPromiseMock = this.mock(Promise),
 				oThenable1 = {then : function () {}},
 				oThenable2 = {then : function () {}};
@@ -2317,10 +2319,7 @@ sap.ui.define([
 				this.mock(oGroupLock).expects("unlock").never();
 			} else {
 				this.oLogMock.expects("debug")
-					.withExactArgs("Timeout: unlocked sap.ui.model.odata.v4.lib._GroupLock("
-						+ "locked,group=groupId,"
-						+ "owner=sap.ui.model.odata.v4.ODataParentBinding: /SalesOrderList('42'))",
-						null, sClassName);
+					.withExactArgs("Timeout: unlocked ~groupLock~", null, sClassName);
 				this.mock(oBinding).expects("removeReadGroupLock").withExactArgs();
 			}
 
@@ -2338,7 +2337,7 @@ sap.ui.define([
 			}),
 			oCoreMock = this.mock(sap.ui.getCore()),
 			oExpectation,
-			oGroupLock1 = new _GroupLock(),
+			oGroupLock1 = {},
 			oGroupLock2 = {},
 			oPromiseMock = this.mock(Promise),
 			oThenable1 = {then : function () {}};
@@ -2366,12 +2365,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("removeReadGroupLock", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oModel : {
-					lockGroup : function () {}
-				}
-			}),
-			oGroupLock = new _GroupLock();
+		var oBinding = new ODataParentBinding(),
+			oGroupLock = {unlock : function () {}};
 
 		oBinding.oReadGroupLock = oGroupLock;
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);

@@ -1488,8 +1488,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkBatchGroupId: success", function (assert) {
-		var oModel = createModel(),
-			sGroupId = {};
+		var sGroupId = {/*string*/},
+			oModel = createModel();
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId));
 		this.mock(oModel).expects("isDirectGroup").withExactArgs(sinon.match.same(sGroupId))
@@ -1502,8 +1502,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkBatchGroupId: checkGroupId fails", function (assert) {
 		var oError = new Error(),
-			oModel = createModel(),
-			sGroupId = {};
+			sGroupId = {/*string*/},
+			oModel = createModel();
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId))
 			.throws(oError);
@@ -2252,19 +2252,20 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("lockGroup", function (assert) {
-		var sGroupId = {},
+		var sGroupId = {/*string*/},
 			oGroupLock = {},
-			bLocked  = {},
+			bLocked  = {/*boolean*/},
 			oModel = createModel(),
+			bModifying = {/*boolean*/},
 			oOwner = {};
 
 		this.mock(oModel.oRequestor).expects("lockGroup")
-			.withExactArgs(sinon.match.same(sGroupId), sinon.match.same(bLocked),
-				sinon.match.same(oOwner))
+			.withExactArgs(sinon.match.same(sGroupId), sinon.match.same(oOwner),
+				sinon.match.same(bLocked), sinon.match.same(bModifying))
 			.returns(oGroupLock);
 
 		// code under test
-		assert.strictEqual(oModel.lockGroup(sGroupId, bLocked, oOwner), oGroupLock);
+		assert.strictEqual(oModel.lockGroup(sGroupId, oOwner, bLocked, bModifying), oGroupLock);
 	});
 
 	//*********************************************************************************************

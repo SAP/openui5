@@ -613,7 +613,7 @@ sap.ui.define([
 
 		this.checkSuspended();
 
-		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
+		oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true); // only for createInCache
 		oCreatePromise = this.createInCache(oGroupLock, oCreatePathPromise, "", sTransientPredicate,
 			oInitialData,
 			function () { // cancel callback
@@ -2006,21 +2006,21 @@ sap.ui.define([
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
-		return Promise.resolve(this.fetchContexts(iStart, iLength, 0,
-			this.lockGroup(sGroupId, true)
-		).then(function (bChanged) {
-			if (bChanged) {
-				that._fireChange({reason : ChangeReason.Change});
-			}
-			return that.getContextsInViewOrder(iStart, iLength);
-		}, function (oError) {
-			that.oModel.reportError("Failed to get contexts for "
-				+ that.oModel.sServiceUrl
-				+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
-				+ " with start index " + iStart + " and length " + iLength,
-				sClassName, oError);
-			throw oError;
-		}));
+		return Promise.resolve(
+				this.fetchContexts(iStart, iLength, 0, this.lockGroup(sGroupId, true))
+			).then(function (bChanged) {
+				if (bChanged) {
+					that._fireChange({reason : ChangeReason.Change});
+				}
+				return that.getContextsInViewOrder(iStart, iLength);
+			}, function (oError) {
+				that.oModel.reportError("Failed to get contexts for "
+					+ that.oModel.sServiceUrl
+					+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
+					+ " with start index " + iStart + " and length " + iLength,
+					sClassName, oError);
+				throw oError;
+			});
 	};
 
 	/**
@@ -2057,8 +2057,8 @@ sap.ui.define([
 
 			if (aPaths.indexOf("") < 0) {
 				iStart = bSingle ? oContext.getModelIndex() : that.iCurrentBegin;
-				oPromise = oCache.requestSideEffects(that.lockGroup(sGroupId),
-					aPaths, mNavigationPropertyPaths, iStart, iLength);
+				oPromise = oCache.requestSideEffects(that.lockGroup(sGroupId), aPaths,
+					mNavigationPropertyPaths, iStart, iLength);
 				if (oPromise) {
 					aPromises = [oPromise];
 					that.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,

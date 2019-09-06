@@ -1318,17 +1318,19 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {object} oOwner
+	 *   The lock's owner for debugging
 	 * @param {boolean} [bLocked]
 	 *   Whether the created lock is locked
-	 * @param {object} [oOwner]
-	 *   The lock's owner for debugging
+	 * @param {boolean} [bModifying]
+	 *   Whether the reason for the group lock is a modifying request
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.lockGroup = function (sGroupId, bLocked, oOwner) {
-		return this.oRequestor.lockGroup(sGroupId, bLocked, oOwner);
+	ODataModel.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying) {
+		return this.oRequestor.lockGroup(sGroupId, oOwner, bLocked, bModifying);
 	};
 
 	/**

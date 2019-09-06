@@ -126,8 +126,34 @@ sap.ui.define([
 			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
 			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
 			this.mock(sap.ui).expects("getVersionInfo").atLeast(0);
+		},
+
+		/**
+		 *  Returns a fake group lock.
+		 *
+		 *  Expects that <code>getGroupId</code>, <code>getSerialNumber</code> and
+		 *  <code>unlock</code> are called once.
+		 *
+		 * @param {string} [sGroupId="groupId"]
+		 *   The group lock's group ID
+		 * @returns {object}
+		 *   A group lock mock
+		 */
+		createGroupLock : function (sGroupId) {
+			var oGroupLock = {
+					getGroupId : function () {},
+					getSerialNumber : function () {},
+					unlock : function () {}
+				};
+
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs()
+				.returns(sGroupId || "groupId");
+			this.mock(oGroupLock).expects("getSerialNumber").withExactArgs().returns(Infinity);
+			this.mock(oGroupLock).expects("unlock").withExactArgs();
+
+			return oGroupLock;
 		}
-	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Requestor is an object, not a constructor function", function (assert) {
@@ -699,11 +725,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[undefined, new _GroupLock("$direct")].forEach(function (oGroupLock) {
-		QUnit.test("request: oGroupLock=" + oGroupLock, function (assert) {
+	[undefined, "$direct"].forEach(function (sGroupId) {
+		QUnit.test("request: sGroupId=" + sGroupId, function (assert) {
 			var fnCancel = this.spy(),
 				oChangedPayload = {"foo" : 42},
 				oConvertedResponse = {},
+				oGroupLock,
 				oPayload = {},
 				oPromise,
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, {
@@ -712,8 +739,8 @@ sap.ui.define([
 				oResponse = {body : {}, messages : {}, resourcePath : "Employees?custom=value"},
 				fnSubmit = this.spy();
 
-			if (oGroupLock) {
-				this.mock(oGroupLock).expects("unlock").withExactArgs();
+			if (sGroupId) {
+				oGroupLock = this.createGroupLock(sGroupId);
 			}
 			this.mock(oRequestor).expects("convertResourcePath")
 				.withExactArgs("Employees?custom=value")
@@ -820,13 +847,13 @@ sap.ui.define([
 		this.mock(oModelInterface).expects("onCreateGroup").withExactArgs("groupId");
 
 		// code under test
-		oRequestor.request("GET", "SalesOrders", new _GroupLock("groupId"));
-		oRequestor.request("GET", "SalesOrders", new _GroupLock("groupId"));
+		oRequestor.request("GET", "SalesOrders", this.createGroupLock());
+		oRequestor.request("GET", "SalesOrders", this.createGroupLock());
 	});
 
 	//*********************************************************************************************
 	QUnit.test("request, getGroupProperty", function (assert) {
-		var oGroupLock = new _GroupLock("groupId"),
+		var oGroupLock = this.createGroupLock(),
 			oModelInterface = {
 				getGroupProperty : defaultGetGroupProperty,
 				onCreateGroup : null // optional
@@ -851,7 +878,7 @@ sap.ui.define([
 			.returns(aRequests);
 
 		// code under test
-		oRequestor.request("GET", "SalesOrders", new _GroupLock("groupId"));
+		oRequestor.request("GET", "SalesOrders", this.createGroupLock());
 
 		assert.strictEqual(aRequests.length, 1);
 		assert.strictEqual(aRequests[0].method, "GET");
@@ -961,8 +988,8 @@ sap.ui.define([
 			.returns(Promise.resolve({}));
 
 		// code under test
-		return oRequestor.request("POST", "EMPLOYEES", new _GroupLock("$direct"), {}, {}, undefined,
-			undefined, undefined, sOriginalPath);
+		return oRequestor.request("POST", "EMPLOYEES", this.createGroupLock("$direct"), {}, {},
+			undefined, undefined, undefined, sOriginalPath);
 	});
 
 	//*********************************************************************************************
@@ -983,42 +1010,41 @@ sap.ui.define([
 
 		// code under test
 		return Promise.all([
-			oRequestor.request("POST", "EMPLOYEES", new _GroupLock("group"), {}, {}, undefined,
+			oRequestor.request("POST", "EMPLOYEES", this.createGroupLock(), {}, {}, undefined,
 				undefined, undefined, sOriginalPath).catch(function () {}),
-			oRequestor.processBatch("group")
+			oRequestor.processBatch("groupId")
 		]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("request(...): batch group id and change sets", function (assert) {
-		var oGroupLock = new _GroupLock("group"),
-			oGroupLock2,
+		var oGroupLock,
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		this.mock(oGroupLock).expects("unlock").withExactArgs();
-		oRequestor.request("PATCH", "EntitySet1", oGroupLock, {"foo" : "bar"},
-			{"a" : "b"});
-		oRequestor.request("PATCH", "EntitySet2", new _GroupLock("group"), {"bar" : "baz"},
-			{"c" : "d"});
-		oRequestor.request("PATCH", "EntitySet3", new _GroupLock("$auto"), {"header" : "value"},
-			{"e" : "f"});
-		oRequestor.request("PATCH", "EntitySet4", new _GroupLock("$auto"), {"header" : "beAtFront"},
-			{"g" : "h"}, undefined, undefined, undefined, undefined, /*bAtFront*/true);
-		oRequestor.request("GET", "EntitySet5", new _GroupLock("$auto"));
-		oRequestor.request("GET", "EntitySet6", new _GroupLock("$auto"), undefined, undefined,
-			undefined, undefined, undefined, undefined, /*bAtFront*/true);
-		oGroupLock2 = new _GroupLock("group", true, "owner", oRequestor.getSerialNumber());
-		oRequestor.addChangeSet("group");
-		oRequestor.request("PATCH", "EntitySet7",
-			new _GroupLock("group", true, "owner", oRequestor.getSerialNumber()),
+		// Integrative test: use a real group lock because it depends on oRequestor.iSerialNumber
+		oRequestor.request("PATCH", "EntitySet1", oRequestor.lockGroup("groupId", {}),
+			{"foo" : "bar"}, {"a" : "b"});
+		oRequestor.request("PATCH", "EntitySet2", oRequestor.lockGroup("groupId", {}),
+			{"bar" : "baz"}, {"c" : "d"});
+		oRequestor.request("PATCH", "EntitySet3", oRequestor.lockGroup("$auto", {}),
+			{"header" : "value"}, {"e" : "f"});
+		oRequestor.request("PATCH", "EntitySet4", oRequestor.lockGroup("$auto", {}),
+			{"header" : "beAtFront"}, {"g" : "h"}, undefined, undefined, undefined, undefined,
+			/*bAtFront*/true);
+		oRequestor.request("GET", "EntitySet5", oRequestor.lockGroup("$auto", {}));
+		oRequestor.request("GET", "EntitySet6", oRequestor.lockGroup("$auto", {}), undefined,
+			undefined, undefined, undefined, undefined, undefined, /*bAtFront*/true);
+		oGroupLock = oRequestor.lockGroup("groupId", {});
+		oRequestor.addChangeSet("groupId");
+		oRequestor.request("PATCH", "EntitySet7", oRequestor.lockGroup("groupId", {}),
 			{"serialNumber" : "after change set 1"}, {"i" : "j"});
-		oRequestor.request("PATCH", "EntitySet8", oGroupLock2,
+		oRequestor.request("PATCH", "EntitySet8", oGroupLock,
 			{"serialNumber" : "before change set 1"}, {"k" : "l"});
-		oRequestor.request("PATCH", "EntitySet9", new _GroupLock("group"),
+		oRequestor.request("PATCH", "EntitySet9", oRequestor.lockGroup("groupId", {}),
 			{"serialNumber" : "not set -> last change set"}, {"m" : "n"});
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
-			"group" : [
+			"groupId" : [
 				[/*change set 0*/{
 					method : "PATCH",
 					url : "EntitySet1",
@@ -1099,7 +1125,7 @@ sap.ui.define([
 
 		oRequestorMock.expects("doConvertResponse").never();
 		oRequestorMock.expects("reportUnboundMessagesAsJSON").never();
-		oGetProductsPromise = oRequestor.request("GET", "Products", new _GroupLock("group1"))
+		oGetProductsPromise = oRequestor.request("GET", "Products", this.createGroupLock())
 			.then(function () {
 				assert.notOk("Unexpected success");
 			}, function (oError0) {
@@ -1115,7 +1141,7 @@ sap.ui.define([
 			}), "Products", true)
 			.throws(oError);
 
-		return Promise.all([oGetProductsPromise, oRequestor.processBatch("group1")]);
+		return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
 	});
 
 	//*********************************************************************************************
@@ -1199,29 +1225,30 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("processBatch(...): with empty group", function (assert) {
 		var oBody = {},
-			oRequestor = _Requestor.create("/Service/", oModelInterface);
+			oRequestor = _Requestor.create("/Service/", oModelInterface),
+			that = this;
 
 		this.mock(oRequestor).expects("sendBatch").never();
 
 		// code under test
-		return oRequestor.processBatch("testGroupId").then(function (oResult) {
+		return oRequestor.processBatch("groupId").then(function (oResult) {
 			var oPromise;
 
 			assert.deepEqual(oResult, undefined);
 
-			oPromise = oRequestor.request("POST", "Customers", new _GroupLock("testGroupId"), {},
+			oPromise = oRequestor.request("POST", "Customers", that.createGroupLock(), {},
 				oBody, undefined, function () {});
-			oRequestor.removePost("testGroupId", oBody);
-			oRequestor.addChangeSet("testGroupId");
+			oRequestor.removePost("groupId", oBody);
+			oRequestor.addChangeSet("groupId");
 
 			return Promise.all([
 				oPromise.catch(function (oError) {
 					assert.ok(oError.canceled);
 				}),
 				// code under test
-				oRequestor.processBatch("testGroupId")
+				oRequestor.processBatch("groupId")
 			]).then(function () {
-				assert.strictEqual(oRequestor.mBatchQueue["testGroupId"], undefined);
+				assert.strictEqual(oRequestor.mBatchQueue["groupId"], undefined);
 			});
 		});
 	});
@@ -1292,19 +1319,18 @@ sap.ui.define([
 
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Products('23')")
 			.returns("~Products('23')");
-		aPromises.push(oRequestor.request("GET", "Products('23')", new _GroupLock("group1"), {
-			Foo : "bar",
-			Accept : "application/json;odata.metadata=full"
-		}).then(function (oResult) {
-			assert.deepEqual(oResult, {
-				"@odata.etag" : "ETag value",
-				"foo1" : "bar1"
-			});
-			aResults[0] = null;
-		}));
+		aPromises.push(oRequestor.request("GET", "Products('23')", this.createGroupLock("group1"),
+				{Foo : "bar",  Accept : "application/json;odata.metadata=full"})
+			.then(function (oResult) {
+				assert.deepEqual(oResult, {
+					"@odata.etag" : "ETag value",
+					"foo1" : "bar1"
+				});
+				aResults[0] = null;
+			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("Customers")
 			.returns("~Customers");
-		aPromises.push(oRequestor.request("POST", "Customers", new _GroupLock("group1"), {
+		aPromises.push(oRequestor.request("POST", "Customers", this.createGroupLock("group1"), {
 			Foo : "baz"
 		}, {
 			"ID" : 1
@@ -1314,14 +1340,15 @@ sap.ui.define([
 		}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders('42')")
 			.returns("~SalesOrders('42')");
-		aPromises.push(oRequestor.request("DELETE", "SalesOrders('42')", new _GroupLock("group1"))
+		aPromises.push(
+			oRequestor.request("DELETE", "SalesOrders('42')", this.createGroupLock("group1"))
 			.then(function (oResult) {
 				assert.deepEqual(oResult, aResults[2]);
 				aResults[2] = null;
 			}));
 		oRequestorMock.expects("convertResourcePath").withExactArgs("SalesOrders")
 			.returns("~SalesOrders");
-		oRequestor.request("GET", "SalesOrders", new _GroupLock("group2"));
+		oRequestor.request("GET", "SalesOrders", this.createGroupLock("group2"));
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(_Requestor).expects("cleanBatch")
 			.withExactArgs(aExpectedRequests)
@@ -1354,7 +1381,7 @@ sap.ui.define([
 			],
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		oRequestor.request("GET", "Products", new _GroupLock("groupId"));
+		oRequestor.request("GET", "Products", this.createGroupLock());
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs(aExpectedRequests).resolves([
@@ -1416,40 +1443,43 @@ sap.ui.define([
 			fnSubmit3 = this.spy(),
 			fnSubmit4 = this.spy();
 
-		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : oEntityProduct0}, {Name : null}));
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("otherGroupId"),
+		aPromises.push(oRequestor.request("PATCH", "Products('0')",
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : null}));
+		oRequestor.request("PATCH", "Products('0')", oRequestor.lockGroup("otherGroupId", {}),
 			{"If-Match" : oEntityProduct0OtherCache}, {Price : "5.0"});
-		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : oEntityProduct0}, {Name : "bar"}));
-		aPromises.push(oRequestor.request("GET", "Products", new _GroupLock("groupId"), undefined,
-			undefined, fnSubmit0));
-		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : oEntityProduct0}, {Note : "hello, world"}));
+		aPromises.push(oRequestor.request("PATCH", "Products('0')",
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : "bar"}));
+		aPromises.push(oRequestor.request("GET", "Products", oRequestor.lockGroup("groupId", {}),
+			undefined, undefined, fnSubmit0));
+		aPromises.push(oRequestor.request("PATCH", "Products('0')",
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0},
+			{Note : "hello, world"}));
 		// different entity in between
-		aPromises.push(oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
-			{"If-Match" : oEntityProduct1}, {Name : "p1"}));
-		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : oEntityProduct0}, {Name : "bar2"}));
+		aPromises.push(oRequestor.request("PATCH", "Products('1')",
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct1}, {Name : "p1"}));
+		aPromises.push(oRequestor.request("PATCH", "Products('0')",
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {Name : "bar2"}));
 		// same group but different cache
-		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : oEntityProduct0OtherCache}, {Note : "no merge!"}));
+		aPromises.push(oRequestor.request("PATCH", "Products('0')",
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0OtherCache},
+			{Note : "no merge!"}));
 		// a create
-		aPromises.push(oRequestor.request("POST", "Products", new _GroupLock("groupId"), null,
-			{Name : "baz"}, fnSubmit1));
+		aPromises.push(oRequestor.request("POST", "Products", oRequestor.lockGroup("groupId", {}),
+			null, {Name : "baz"}, fnSubmit1));
 		// a bound action
 		aPromises.push(oRequestor.request("POST", "Products('0')/GetCurrentStock",
-			new _GroupLock("groupId"), {"If-Match" : oEntityProduct0}, {}, fnSubmit2));
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oEntityProduct0}, {}, fnSubmit2));
 		// structured property
 		// first set to null: may be merged with each other, but not with PATCHES to properties
 		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
-			new _GroupLock("groupId"), {"If-Match" : oBusinessPartners42}, {Address : null}));
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oBusinessPartners42},
+			{Address : null}));
 		// then two different properties therein: must be merged
 		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
-			new _GroupLock("groupId"), {"If-Match" : oBusinessPartners42},
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oBusinessPartners42},
 			{Address : {City : "Walldorf"}}, fnSubmit3));
 		aPromises.push(oRequestor.request("PATCH", "BusinessPartners('42')",
-			new _GroupLock("groupId"), {"If-Match" : oBusinessPartners42},
+			oRequestor.lockGroup("groupId", {}), {"If-Match" : oBusinessPartners42},
 			{Address : {PostalCode : "69190"}}, fnSubmit4));
 		aExpectedRequests.iChangeSet = 0;
 		this.mock(oRequestor).expects("sendBatch")
@@ -1541,7 +1571,7 @@ sap.ui.define([
 			// not same; it is stringified and parsed
 				.withExactArgs(oFixture.mProductsResponse, sMetaPath)
 				.returns(oConvertedPayload);
-			oGetProductsPromise = oRequestor.request("GET", "Products", new _GroupLock("group1"),
+			oGetProductsPromise = oRequestor.request("GET", "Products", this.createGroupLock(),
 				undefined, undefined, undefined, undefined, sMetaPath)
 				.then(function (oResponse) {
 					assert.strictEqual(oResponse, oConvertedPayload);
@@ -1552,7 +1582,7 @@ sap.ui.define([
 				.withExactArgs(aExpectedRequests)
 				.resolves([createResponse(oFixture.mProductsResponse)]);
 
-			return Promise.all([oGetProductsPromise, oRequestor.processBatch("group1")]);
+			return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
 		});
 	});
 
@@ -1568,7 +1598,7 @@ sap.ui.define([
 		oRequestorMock.expects("doConvertResponse")
 			.withExactArgs(oResponse, undefined)
 			.throws(oError);
-		oGetProductsPromise = oRequestor.request("GET", "Products", new _GroupLock("group1"))
+		oGetProductsPromise = oRequestor.request("GET", "Products", this.createGroupLock())
 			.then(function () {
 				assert.notOk("Unexpected success");
 			}, function (oError0) {
@@ -1577,7 +1607,7 @@ sap.ui.define([
 		oRequestorMock.expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(oResponse)]);
 
-		return Promise.all([oGetProductsPromise, oRequestor.processBatch("group1")]);
+		return Promise.all([oGetProductsPromise, oRequestor.processBatch("groupId")]);
 	});
 
 	//*********************************************************************************************
@@ -1585,15 +1615,14 @@ sap.ui.define([
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			oRequestPromise = oRequestor.request("GET", "Products(42)",
-				new _GroupLock("group1"));
+			oRequestPromise = oRequestor.request("GET", "Products(42)", this.createGroupLock());
 
 		oRequestorMock.expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({id : 42}, mHeaders)]);
 		oRequestorMock.expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.processBatch("group1")]);
+		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")]);
 	});
 
 	//*********************************************************************************************
@@ -1601,15 +1630,14 @@ sap.ui.define([
 		var mHeaders = {"SAP-Messages" : {}, ETag : "ETag"},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			oRequestPromise = oRequestor.request("PATCH", "Products(42)",
-				new _GroupLock("group1"));
+			oRequestPromise = oRequestor.request("PATCH", "Products(42)", this.createGroupLock());
 
 		oRequestorMock.expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(undefined, mHeaders)]);
 		oRequestorMock.expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.processBatch("group1")])
+		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
 			.then(function (aResults) {
 				assert.deepEqual(aResults[0], {"@odata.etag" : "ETag"});
 			});
@@ -1620,15 +1648,14 @@ sap.ui.define([
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			oRequestPromise = oRequestor.request("DELETE", "Products(42)",
-				new _GroupLock("group1"));
+			oRequestPromise = oRequestor.request("DELETE", "Products(42)", this.createGroupLock());
 
 		oRequestorMock.expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(undefined, mHeaders)]);
 		oRequestorMock.expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.processBatch("group1")])
+		return Promise.all([oRequestPromise, oRequestor.processBatch("groupId")])
 			.then(function (aResults) {
 				assert.deepEqual(aResults[0], {});
 			});
@@ -1640,8 +1667,8 @@ sap.ui.define([
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface);
 
-		function unexpectedSuccess() {
-			assert.ok(false, "unexpected success");
+		function unexpected() {
+			assert.ok(false);
 		}
 
 		function assertError(oError) {
@@ -1651,20 +1678,20 @@ sap.ui.define([
 			assert.strictEqual(oError.cause, oBatchError);
 		}
 
-		aPromises.push(oRequestor.request("PATCH", "Products('0')", new _GroupLock("group"),
+		aPromises.push(oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 				{"If-Match" : {/* product 0*/}}, {Name : "foo"})
-			.then(unexpectedSuccess, assertError));
-		aPromises.push(oRequestor.request("PATCH", "Products('1')", new _GroupLock("group"),
+			.then(unexpected, assertError));
+		aPromises.push(oRequestor.request("PATCH", "Products('1')", this.createGroupLock(),
 				{"If-Match" : {/* product 1*/}},{Name : "foo"})
-			.then(unexpectedSuccess, assertError));
-		aPromises.push(oRequestor.request("GET", "Products", new _GroupLock("group"))
-			.then(unexpectedSuccess, assertError));
-		aPromises.push(oRequestor.request("GET", "Customers", new _GroupLock("group"))
-			.then(unexpectedSuccess, assertError));
+			.then(unexpected, assertError));
+		aPromises.push(oRequestor.request("GET", "Products", this.createGroupLock())
+			.then(unexpected, assertError));
+		aPromises.push(oRequestor.request("GET", "Customers", this.createGroupLock())
+			.then(unexpected, assertError));
 
 		this.mock(oRequestor).expects("sendBatch").rejects(oBatchError); // arguments don't matter
 
-		aPromises.push(oRequestor.processBatch("group").then(unexpectedSuccess, function (oError) {
+		aPromises.push(oRequestor.processBatch("groupId").then(unexpected, function (oError) {
 			assert.strictEqual(oError, oBatchError);
 		}));
 
@@ -1702,17 +1729,17 @@ sap.ui.define([
 			assert.strictEqual(oResultError.statusText, "Not found");
 		}
 
-		aPromises.push(oRequestor.request("GET", "ok", new _GroupLock("testGroupId"))
-			.then(function (oResult) {
+		aPromises.push(
+			oRequestor.request("GET", "ok", this.createGroupLock()).then(function (oResult) {
 				assert.deepEqual(oResult, {});
 			}).catch(unexpected));
 
-		aPromises.push(oRequestor.request("GET", "fail", new _GroupLock("testGroupId"))
+		aPromises.push(oRequestor.request("GET", "fail", this.createGroupLock())
 			.then(unexpected, function (oResultError) {
 				assertError(oResultError, oError.error.message);
 			}));
 
-		aPromises.push(oRequestor.request("GET", "ok", new _GroupLock("testGroupId"))
+		aPromises.push(oRequestor.request("GET", "ok", this.createGroupLock())
 			.then(unexpected, function (oResultError) {
 				assert.ok(oResultError instanceof Error);
 				assert.strictEqual(oResultError.message,
@@ -1723,7 +1750,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
 
-		aPromises.push(oRequestor.processBatch("testGroupId").then(function (oResult) {
+		aPromises.push(oRequestor.processBatch("groupId").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));
 
@@ -1754,17 +1781,17 @@ sap.ui.define([
 		}
 
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
-				new _GroupLock("group"), {"If-Match" : oProduct}, {Name : "foo"})
+				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "foo"})
 			.then(undefined, assertError));
 
-		aPromises.push(oRequestor.request("POST", "Unknown", new _GroupLock("group"), undefined, {})
+		aPromises.push(oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
 			.then(undefined, assertError));
 
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
-				new _GroupLock("group"), {"If-Match" : oProduct}, {Name : "bar"})
+				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "bar"})
 			.then(undefined, assertError));
 
-		aPromises.push(oRequestor.request("GET", "ok", new _GroupLock("group"))
+		aPromises.push(oRequestor.request("GET", "ok", this.createGroupLock())
 			.then(undefined, function (oResultError) {
 				assert.ok(oResultError instanceof Error);
 				assert.strictEqual(oResultError.message,
@@ -1775,7 +1802,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
 
-		aPromises.push(oRequestor.processBatch("group").then(function (oResult) {
+		aPromises.push(oRequestor.processBatch("groupId").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));
 
@@ -1871,7 +1898,7 @@ sap.ui.define([
 		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"));
 
 		// add a GET request and submit the queue
-		oRequestor.request("GET", "Products", new _GroupLock("groupId"));
+		oRequestor.request("GET", "Products", this.createGroupLock());
 		oBatchRequest1 = expectBatch();
 		aPromises.push(oRequestor.processBatch("groupId"));
 
@@ -1879,7 +1906,7 @@ sap.ui.define([
 		assert.notOk(oRequestor.hasPendingChanges(), "running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : {/* product 0 */}}, {Name : "foo"});
 		oBatchRequest2 = expectBatch();
 		aPromises.push(oRequestor.processBatch("groupId").then(function () {
@@ -1903,7 +1930,7 @@ sap.ui.define([
 		oRequestor.cancelChanges("anotherGroupId");
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
-		oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
+		oRequestor.request("PATCH", "Products('1')", this.createGroupLock(),
 			{"If-Match" : {/* product 0 */}}, {Name : "bar"});
 		assert.throws(function () {
 			// code under test
@@ -1952,25 +1979,25 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.hasPendingChanges(), false);
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 					{"If-Match" : oProduct0}, {Name : "foo"}, undefined, fnCancel1)
 				.then(unexpected, rejected.bind(null, 3)),
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 					{"If-Match" : oProduct0}, {Name : "bar"}, undefined, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
-			oRequestor.request("GET", "Employees", new _GroupLock("groupId")),
-			oRequestor.request("POST", "ActionImport('42')", new _GroupLock("groupId"), undefined,
+			oRequestor.request("GET", "Employees", this.createGroupLock()),
+			oRequestor.request("POST", "ActionImport('42')", this.createGroupLock(), undefined,
 					{foo : "bar"}),
 			oRequestor.addChangeSet("groupId"),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit",
-					new _GroupLock("groupId"), {"If-Match" : {/* leave requests 42 */}},
-					oPostData, undefined, fnCancelPost)
+					this.createGroupLock(), {"If-Match" : {/* leave requests 42 */}}, oPostData,
+					undefined, fnCancelPost)
 				.then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
 					assert.strictEqual(oError.message, "Request canceled: " +
 						"POST LeaveRequests('42')/name.space.Submit; group: groupId");
 				}),
-			oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
+			oRequestor.request("PATCH", "Products('1')", this.createGroupLock(),
 					{"If-Match" : {/* product 0 */}}, {Name : "baz"}, undefined, fnCancel3)
 				.then(unexpected, rejected.bind(null, 1))
 		]);
@@ -2020,13 +2047,13 @@ sap.ui.define([
 		}
 
 		oPromise = Promise.all([
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 					{"If-Match" : oProduct0}, {Name : "foo"}, undefined, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 					{"If-Match" : oProduct0}, {Name : "bar"}, undefined, fnCancel)
 				.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
+			oRequestor.request("PATCH", "Products('1')", this.createGroupLock(),
 					{"If-Match" : {/* product 1*/}}, {Name : "baz"}, undefined, fnCancel)
 				.then(unexpected, rejected)
 		]);
@@ -2050,10 +2077,10 @@ sap.ui.define([
 		var oEntity = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : {}}, {Name : "foo"});
 		oRequestor.addChangeSet("groupId");
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : oEntity}, {Name : "bar"});
 
 		//code under test
@@ -2066,12 +2093,12 @@ sap.ui.define([
 		var oEntity = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : {}}, {Name : "foo"});
 		oRequestor.addChangeSet("groupId");
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : {}}, {Name : "bar"});
-		oRequestor.request("GET", "Employees", new _GroupLock("groupId"));
+		oRequestor.request("GET", "Employees", this.createGroupLock());
 
 		//code under test
 		assert.strictEqual(oRequestor.hasChanges("groupId", oEntity), false);
@@ -2083,12 +2110,12 @@ sap.ui.define([
 		var fnCancel = this.spy(),
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		oRequestor.request("DELETE", "Products('42')", new _GroupLock("groupId"));
+		oRequestor.request("DELETE", "Products('42')", this.createGroupLock());
 		oRequestor.addChangeSet("groupId");
-		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : {}}, {Name : "foo"}, undefined, fnCancel);
 		oRequestor.addChangeSet("groupId");
-		oRequestor.request("DELETE", "Products('4711')", new _GroupLock("groupId"));
+		oRequestor.request("DELETE", "Products('4711')", this.createGroupLock());
 
 		//code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
@@ -2101,7 +2128,7 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oPromise = oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : {/* product 0 */}}, {Name : "foo"}, undefined, fnCancel);
 		oTestPromise = oPromise.then(function () {
 				assert.ok(false);
@@ -2147,14 +2174,14 @@ sap.ui.define([
 				"Request canceled: PATCH Products('0'); group: groupId");
 		}
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oPromise = oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : oProduct0}, {Name : "foo"}, undefined, fnCancel);
 
 		aPromises = [
 			oPromise.then(unexpected, rejected),
-			oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+			oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 				{"If-Match" : oProduct0}, {Name : "bar"}),
-			oRequestor.request("GET", "Employees", new _GroupLock("groupId"))
+			oRequestor.request("GET", "Employees", this.createGroupLock())
 		];
 
 		aExpectedRequests.iChangeSet = 0;
@@ -2175,7 +2202,7 @@ sap.ui.define([
 		var oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		oPromise = oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
+		oPromise = oRequestor.request("PATCH", "Products('0')", this.createGroupLock(),
 			{"If-Match" : {/* oEntity */}}, {Name : "bar"});
 
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
@@ -2206,14 +2233,14 @@ sap.ui.define([
 
 		this.spy(oRequestor, "cancelChangesByFilter");
 		oTestPromise = Promise.all([
-			oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, oBody, undefined,
+			oRequestor.request("POST", "Products", this.createGroupLock(), {}, oBody, undefined,
 					fnCancel1)
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
 					assert.strictEqual(oError.canceled, true);
 				}),
-			oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, {Name : "bar"},
+			oRequestor.request("POST", "Products", this.createGroupLock(), {}, {Name : "bar"},
 					undefined, fnCancel2)
 		]);
 
@@ -2241,7 +2268,7 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oTestPromise;
 
-		oTestPromise = oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, oBody,
+		oTestPromise = oRequestor.request("POST", "Products", this.createGroupLock(), {}, oBody,
 				undefined, fnCancel)
 			.then(function () {
 					assert.ok(false);
@@ -2264,7 +2291,7 @@ sap.ui.define([
 		var oPayload = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
-		oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, oPayload);
+		oRequestor.request("POST", "Products", this.createGroupLock(), {}, oPayload);
 
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({})]);
@@ -2296,7 +2323,7 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor);
 
-		oRequestor.request("POST", "Products", new _GroupLock("groupId"), {}, {Name : "bar"});
+		oRequestor.request("POST", "Products", this.createGroupLock(), {}, {Name : "bar"});
 		oRequestorMock.expects("isChangeSetOptional").withExactArgs().returns(true);
 		aExpectedRequests.iChangeSet = 0;
 		oRequestorMock.expects("sendBatch")
@@ -2314,9 +2341,9 @@ sap.ui.define([
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor);
 
-		oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
+		oRequestor.request("POST", "Employees", this.createGroupLock("$parked.$auto"),
 			mHeaders, oBody1);
-		oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
+		oRequestor.request("POST", "Employees", this.createGroupLock("$parked.$auto"),
 			mHeaders, oBody2);
 
 		assert.throws(function () {
@@ -2365,11 +2392,11 @@ sap.ui.define([
 			oYetAnotherEntity = {};
 
 		oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1);
+			this.createGroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1);
 		oRequestor.request("DELETE", "Employees('2')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity});
+			this.createGroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity});
 		oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2);
+			this.createGroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2);
 
 		oRequestorMock.expects("addChangeToGroup").never();
 
@@ -2433,11 +2460,11 @@ sap.ui.define([
 			oYetAnotherEntity = {};
 
 		oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1);
+			this.createGroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1);
 		oRequestor.request("DELETE", "Employees('2')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity});
+			this.createGroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity});
 		oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2);
+			this.createGroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2);
 
 		oRequestorMock.expects("addChangeToGroup")
 			.withExactArgs(sinon.match({
@@ -2517,11 +2544,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("request: $cached as groupId fails synchronously", function (assert) {
-		var oRequestor = _Requestor.create("/");
+		var oGroupLock = {getGroupId : function () {}},
+			oRequestor = _Requestor.create("/");
 
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("$cached");
 		assert.throws(function () {
 			//code under test
-			oRequestor.request("GET", "/FOO", new _GroupLock("$cached"));
+			oRequestor.request("GET", "/FOO", oGroupLock);
 		},  function (oError) {
 			assert.strictEqual(oError.message, "Unexpected request: GET /FOO");
 			assert.strictEqual(oError.$cached, true);
@@ -2841,7 +2870,8 @@ sap.ui.define([
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/processBatch (realOData) success", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface),
-				sResourcePath = "TEAMS('TEAM_01')";
+				sResourcePath = "TEAMS('TEAM_01')",
+				that = this;
 
 			function assertResult(oPayload) {
 				delete oPayload["@odata.metadataEtag"];
@@ -2859,11 +2889,11 @@ sap.ui.define([
 			return oRequestor.request("GET", sResourcePath).then(assertResult)
 				.then(function () {
 					return Promise.all([
-						oRequestor.request("GET", sResourcePath, new _GroupLock("group"))
+						oRequestor.request("GET", sResourcePath, that.createGroupLock())
 							.then(assertResult),
-						oRequestor.request("GET", sResourcePath, new _GroupLock("group"))
+						oRequestor.request("GET", sResourcePath, that.createGroupLock())
 							.then(assertResult),
-						oRequestor.processBatch("group")
+						oRequestor.processBatch("groupId")
 					]);
 				});
 		});
@@ -2873,7 +2903,7 @@ sap.ui.define([
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface);
 
 			oRequestor.request(
-				"GET", "TEAMS('TEAM_01')", new _GroupLock("group")
+				"GET", "TEAMS('TEAM_01')", this.createGroupLock()
 			).then(function (oResult) {
 				delete oResult["@odata.metadataEtag"];
 				assert.deepEqual(oResult, {
@@ -2889,7 +2919,7 @@ sap.ui.define([
 				assert.ok(false, oError);
 			});
 
-			oRequestor.request("GET", "fail", new _GroupLock("group")).then(function (oResult) {
+			oRequestor.request("GET", "fail", this.createGroupLock()).then(function (oResult) {
 				assert.ok(false, oResult);
 			}, function (oError) {
 				assert.ok(oError instanceof Error);
@@ -2898,7 +2928,7 @@ sap.ui.define([
 				assert.strictEqual(oError.status, 404);
 			});
 
-			return oRequestor.processBatch("group").then(function (oResult) {
+			return oRequestor.processBatch("groupId").then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
 		});
@@ -2910,13 +2940,13 @@ sap.ui.define([
 				sResourcePath = "ProductList('HT-1001')";
 
 			return Promise.all([
-					oRequestor.request("PATCH", sResourcePath, new _GroupLock("group"), {
+					oRequestor.request("PATCH", sResourcePath, this.createGroupLock(), {
 								"If-Match" : {"@odata.etag" : "*"}
 							}, oBody)
 						.then(function (oResult) {
 							TestUtils.deepContains(oResult, oBody);
 						}),
-					oRequestor.processBatch("group")
+					oRequestor.processBatch("groupId")
 				]);
 		});
 
@@ -2937,21 +2967,21 @@ sap.ui.define([
 			}
 
 			return Promise.all([
-				oRequestor.request("PATCH", "ProductList('HT-1001')", new _GroupLock("group"),
+				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "foo"})
 					.then(undefined, onError),
-				oRequestor.request("POST", "Unknown", new _GroupLock("group"), undefined, {})
+				oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
 					.then(undefined, onError),
-				oRequestor.request("PATCH", "ProductList('HT-1001')", new _GroupLock("group"),
+				oRequestor.request("PATCH", "ProductList('HT-1001')", this.createGroupLock(),
 						{"If-Match" : oEntity}, {Name : "bar"})
 					.then(undefined, onError),
-				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", new _GroupLock("group"))
+				oRequestor.request("GET", "SalesOrderList?$skip=0&$top=10", this.createGroupLock())
 					.then(undefined, function (oError) {
 						assert.strictEqual(oError.message,
 							"HTTP request was not processed because the previous request failed");
 						assert.strictEqual(oError.$reported, true);
 					}),
-				oRequestor.processBatch("group")
+				oRequestor.processBatch("groupId")
 			]);
 		});
 	}
@@ -3544,14 +3574,18 @@ sap.ui.define([
 				headers : {},
 				url : {}
 			},
+			oGroupLock = {},
 			oPromise = {},
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 		this.mock(oRequestor).expects("getGroupSubmitMode")
 			.withExactArgs("direct").returns("Direct");
+		this.mock(oRequestor).expects("lockGroup")
+			.withExactArgs("direct", sinon.match.same(oRequestor), true, true)
+			.returns(oGroupLock);
 		this.mock(oRequestor).expects("request")
 			.withExactArgs(sinon.match.same(oChange.method), sinon.match.same(oChange.url),
-				new _GroupLock("direct"), sinon.match.same(oChange.headers),
+				sinon.match.same(oGroupLock), sinon.match.same(oChange.headers),
 				sinon.match.same(oChange.body), sinon.match.same(oChange.$submit),
 				sinon.match.same(oChange.$cancel))
 			.returns(oPromise);
@@ -3587,35 +3621,48 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("lockGroup: non-blocking", function (assert) {
 		var oGroupLock,
+			aLockedGroupLocks = [],
+			oOwner = {},
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
+		oRequestor.aLockedGroupLocks = aLockedGroupLocks;
 		this.mock(oRequestor).expects("getSerialNumber").returns(42);
 
 		// code under test
-		oGroupLock = oRequestor.lockGroup("foo");
+		oGroupLock = oRequestor.lockGroup("foo", oOwner);
 
 		assert.ok(oGroupLock instanceof _GroupLock);
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-		assert.notOk(oGroupLock.isLocked());
+		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.isLocked(), false);
 		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
+		assert.strictEqual(oRequestor.aLockedGroupLocks, aLockedGroupLocks);
+		assert.strictEqual(oRequestor.aLockedGroupLocks.length, 0);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("lockGroup: blocking", function (assert) {
+[false, true].forEach(function (bModifying) {
+	QUnit.test("lockGroup: blocking, modifying: " + bModifying, function (assert) {
 		var oGroupLock,
+			aLockedGroupLocks = [],
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 			oOwner = {};
 
+		oRequestor.aLockedGroupLocks = aLockedGroupLocks;
 		this.mock(oRequestor).expects("getSerialNumber").returns(42);
 
-		oGroupLock = oRequestor.lockGroup("foo", true, oOwner);
+		oGroupLock = oRequestor.lockGroup("foo", oOwner, true, bModifying);
 
 		assert.ok(oGroupLock instanceof _GroupLock);
 		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-		assert.ok(oGroupLock.isLocked());
+		assert.strictEqual(oGroupLock.isLocked(), true);
 		assert.strictEqual(oGroupLock.oOwner, oOwner);
 		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
+		assert.strictEqual(oGroupLock.isModifying(), bModifying);
+		assert.strictEqual(oRequestor.aLockedGroupLocks, aLockedGroupLocks);
+		assert.deepEqual(oRequestor.aLockedGroupLocks, [oGroupLock]);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch: group locks", function (assert) {
@@ -3630,8 +3677,8 @@ sap.ui.define([
 
 		oRequestorMock.expects("processBatch").never();
 
-		oFooGroupLock = oRequestor.lockGroup("foo", true);
-		oBarGroupLock = oRequestor.lockGroup("bar", true);
+		oFooGroupLock = oRequestor.lockGroup("foo", {/*owner*/}, true);
+		oBarGroupLock = oRequestor.lockGroup("bar", {/*owner*/}, true);
 
 		this.oLogMock.expects("info")
 			.withExactArgs("submitBatch('foo') is waiting for locks", null, sClassName);
