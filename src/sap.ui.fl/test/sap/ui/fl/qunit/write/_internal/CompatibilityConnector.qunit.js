@@ -26,6 +26,13 @@ sap.ui.define([
 
 	//var sandbox = sinon.sandbox.create();
 
+	function writeTestDataToStorage() {
+		aTestData.forEach(function(oChange) {
+			var sKey = BrowserStorageUtils.createChangeKey(oChange.fileName);
+			JsObjectConnector.oStorage.setItem(sKey, JSON.stringify(oChange));
+		});
+	}
+
 	QUnit.module("Given new connector configuration in bootstrap", {
 		beforeEach : function() {
 			JsObjectConnector.oStorage.clear();
@@ -76,9 +83,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when resetting changes", function (assert) {
-			aTestData.forEach(function(oChange) {
-				JsObjectConnector.oStorage.setItem(oChange);
-			});
+			writeTestDataToStorage();
 			return this.oConnector.resetChanges({
 				sReference : oTestData.reference,
 				sLayer: "CUSTOMER"
@@ -89,9 +94,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when resetting specific changes", function (assert) {
-			aTestData.forEach(function(oChange) {
-				JsObjectConnector.oStorage.setItem(oChange);
-			});
+			writeTestDataToStorage();
 			return this.oConnector.resetChanges({
 				sReference : oTestData.reference,
 				sLayer: "CUSTOMER",

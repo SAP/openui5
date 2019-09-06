@@ -51,19 +51,31 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		reset: function(mPropertyBag) {
-			//TODO implement other selectors
-			if (mPropertyBag.changeTypes) {
-				BrowserStorageUtils.forEachChangeInStorage(function(sKey) {
-					var mChange = JSON.parse(this.oStorage.getItem(sKey));
-					if (mPropertyBag.changeTypes) {
-						if (mPropertyBag.changeTypes.indexOf(mChange.changeType) !== -1) {
-							this.oStorage.removeItem(sKey);
-						}
+			BrowserStorageUtils.forEachChangeInStorage({
+				storage: this.oStorage,
+				reference: mPropertyBag.reference,
+				layer: mPropertyBag.layer
+			}, function(mFlexObject) {
+				var bDelete = true;
+
+				if (mPropertyBag.selectorIds) {
+					if (mFlexObject.changeDefinition.selector) {
+						bDelete = mPropertyBag.selectorIds.indexOf(mFlexObject.changeDefinition.selector.id) > -1;
+					} else {
+						bDelete = false;
 					}
-				});
-			} else {
-				this.oStorage.clear();
-			}
+				}
+
+				if (bDelete && mPropertyBag.changeTypes) {
+					bDelete = mPropertyBag.changeTypes.indexOf(mFlexObject.changeDefinition.changeType) > -1;
+				}
+
+				if (bDelete) {
+					this.oStorage.removeItem(mFlexObject.key);
+				}
+			}.bind(this));
+
+			return Promise.resolve();
 		}
 	});
 

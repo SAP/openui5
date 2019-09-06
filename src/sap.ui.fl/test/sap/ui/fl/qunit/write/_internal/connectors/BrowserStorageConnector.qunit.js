@@ -2,12 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"
 ], function(
 	SessionStorageWriteConnector,
-	LocalStorageWriteConnector,
 	JsObjectConnector,
 	BrowserStorageUtils
 ) {
@@ -18,19 +16,31 @@ sap.ui.define([
 			fileName: "id_1445501120486_15",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "CUSTOMER"
+			layer: "CUSTOMER",
+			selector: {
+				id: "selector1"
+			},
+			changeType: "type1"
 		},
 		oChange2: {
 			fileName: "id_1445517849455_16",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
-			layer: "USER"
+			layer: "CUSTOMER",
+			selector: {
+				id: "selector2"
+			},
+			changeType: "type2"
 		},
 		oChange3: {
 			fileName: "oChange3",
 			fileType: "change",
 			reference: "sap.ui.fl.test.1",
-			layer: "CUSTOMER"
+			layer: "USER",
+			selector: {
+				id: "selector2"
+			},
+			changeType: "type1"
 		},
 		oVariant1: {
 			fileName: "oVariant1",
@@ -67,9 +77,6 @@ sap.ui.define([
 			var sKey = BrowserStorageUtils.createChangeKey(sObjektId);
 			if (oStorage.removeItem) {
 				oStorage.removeItem(sKey);
-			} else {
-				// function for the JsObjectStorage
-				delete oStorage._items[sKey];
 			}
 		});
 	}
@@ -85,8 +92,16 @@ sap.ui.define([
 		assert.deepEqual(oFile, oItem, sMessage);
 	}
 
+	function getNumberOfFlexObjects(oConnector) {
+		var iCount = 0;
+		BrowserStorageUtils.forEachChangeInStorage({storage: oConnector.oStorage}, function() {
+			iCount++;
+		});
+		return iCount;
+	}
+
 	function parameterizedTest(oConnector, sStorage) {
-		QUnit.module("loadFlexData: Given some changes in the " + sStorage, {
+		QUnit.module("loadFlexData: Given a " + sStorage, {
 			afterEach: function() {
 				removeListFromStorage(oConnector.oStorage, [
 					oTestData.oChange1.fileName,
@@ -113,6 +128,77 @@ sap.ui.define([
 				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariant1, "variant1 was written");
 				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantChange1, "variant change1 was written");
 				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantManagementChange, "variant management change was written");
+			});
+		});
+
+		QUnit.module("loadFlexData: Given some changes in a " + sStorage, {
+			beforeEach: function() {
+				saveListWithConnector(oConnector, [
+					oTestData.oChange1,
+					oTestData.oChange2,
+					oTestData.oChange3,
+					oTestData.oVariant1,
+					oTestData.oVariantChange1,
+					oTestData.oVariantManagementChange
+				]);
+			},
+			afterEach: function() {
+				removeListFromStorage(oConnector.oStorage, [
+					oTestData.oChange1.fileName,
+					oTestData.oChange2.fileName,
+					oTestData.oChange3.fileName,
+					oTestData.oVariant1.fileName,
+					oTestData.oVariantChange1.fileName,
+					oTestData.oVariantManagementChange.fileName
+				]);
+			}
+		}, function () {
+			QUnit.test("when reset is called", function (assert) {
+				var iInitialCount = getNumberOfFlexObjects(oConnector);
+				return oConnector.reset({
+					reference: "sap.ui.fl.test.1",
+					layer: "USER"
+				}).then(function() {
+					var iNewCount = getNumberOfFlexObjects(oConnector);
+					assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
+				});
+			});
+
+			QUnit.test("when reset is called with selector ids", function (assert) {
+				var iInitialCount = getNumberOfFlexObjects(oConnector);
+				return oConnector.reset({
+					reference: "sap.ui.fl.test",
+					layer: "CUSTOMER",
+					selectorIds: ["selector1"]
+				}).then(function() {
+					var iNewCount = getNumberOfFlexObjects(oConnector);
+					assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
+				});
+			});
+
+			QUnit.test("when reset is called with change types", function (assert) {
+				var iInitialCount = getNumberOfFlexObjects(oConnector);
+				return oConnector.reset({
+					reference: "sap.ui.fl.test",
+					layer: "CUSTOMER",
+					changeTypes: ["type1"]
+				}).then(function() {
+					var iNewCount = getNumberOfFlexObjects(oConnector);
+					assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
+				});
+			});
+
+			QUnit.test("when reset is called with selectors and change types", function (assert) {
+				var iInitialCount = getNumberOfFlexObjects(oConnector);
+				return oConnector.reset({
+					reference: "sap.ui.fl.test",
+					layer: "CUSTOMER",
+					changeTypes: ["type1"],
+					selectorIds: ["selector2"]
+				}).then(function() {
+					var iNewCount = getNumberOfFlexObjects(oConnector);
+					assert.equal(iInitialCount - iNewCount, 0, "no change got reset");
+				});
 			});
 		});
 	}

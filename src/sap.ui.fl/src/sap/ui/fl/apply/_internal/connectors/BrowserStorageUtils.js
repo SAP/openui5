@@ -21,17 +21,45 @@ sap.ui.define([], function () {
 
 	return {
 		/**
-		* The iterator for the fl changes in the given Storage.
-		* @public
-		* @param {Storage} oStorage browser storage, can be either session or local storage
-		* @param {function} fnPredicate The function to apply for each  change
-		*/
-		forEachChangeInStorage: function(oStorage, fnPredicate) {
-			var aKeys = Object.keys(oStorage);
+		 * The iterator for the fl changes in the given Storage. Filters the changes if a reference or layer is passed
+		 * @public
+		 * @param {object} mPropertyBag object with necessary information
+		 * @param {Storage} mPropertyBag.storage browser storage, can be either session or local storage
+		 * @param {string} [mPropertyBag.reference] reference of the application
+		 * @param {string} [mPropertyBag.layer] current layer
+		 * @param {function} fnPredicate The function to apply for each change
+		 */
+		forEachChangeInStorage: function(mPropertyBag, fnPredicate) {
+			// getItems() is used in the internal keys of the JsObjectStorage
+			var oRealStorage = mPropertyBag.storage.getItems && mPropertyBag.storage.getItems() || mPropertyBag.storage;
+
+			var aKeys = Object.keys(oRealStorage);
 			aKeys.forEach(function(sKey) {
-				if (sKey.includes(FL_CHANGE_KEY) || sKey.includes(FL_VARIANT_KEY)) {
-					fnPredicate(sKey);
+				var bIsFlexObject = sKey.includes(FL_CHANGE_KEY) || sKey.includes(FL_VARIANT_KEY);
+
+				if (!bIsFlexObject) {
+					return;
 				}
+
+				var oFlexObject = JSON.parse(oRealStorage[sKey]);
+				var bSameReference = true;
+				if (mPropertyBag.reference) {
+					bSameReference = oFlexObject.reference === mPropertyBag.reference || oFlexObject.reference + ".Component" === mPropertyBag.reference;
+				}
+
+				var bSameLayer = true;
+				if (mPropertyBag.layer) {
+					bSameLayer = oFlexObject.layer === mPropertyBag.layer;
+				}
+
+				if (!bSameReference || !bSameLayer) {
+					return;
+				}
+
+				fnPredicate({
+					changeDefinition: oFlexObject,
+					key: sKey
+				});
 			});
 		},
 
@@ -71,7 +99,6 @@ sap.ui.define([], function () {
 			].forEach(function (sSectionName) {
 				mResult[sSectionName] = mResult[sSectionName].sort(byCreation);
 			});
-
 
 			return mResult;
 		}
