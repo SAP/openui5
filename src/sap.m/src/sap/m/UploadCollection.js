@@ -2663,8 +2663,10 @@ sap.ui.define([
 			if (this.aItems[i] && this.aItems[i].getFileName() === sFileName
 				&& this.aItems[i]._requestIdName === sRequestId
 				&& (this.aItems[i]._status === UploadCollection._uploadingStatus || this.aItems[i]._status === UploadCollection._toBeDeletedStatus)) {
+				if (this.getItems() && this.getItems()[i] === this.aItems[i]) {
+					this.removeItem(i);
+				}
 				this.aItems.splice(i, 1);
-				this.removeItem(i);
 				break;
 			}
 		}
