@@ -13,6 +13,24 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function shouldChangeBeDeleted(mPropertyBag, oChangeDefinition) {
+		var bDelete = true;
+
+		if (mPropertyBag.selectorIds) {
+			if (oChangeDefinition.selector) {
+				bDelete = mPropertyBag.selectorIds.indexOf(oChangeDefinition.selector.id) > -1;
+			} else {
+				bDelete = false;
+			}
+		}
+
+		if (bDelete && mPropertyBag.changeTypes) {
+			bDelete = mPropertyBag.changeTypes.indexOf(oChangeDefinition.changeType) > -1;
+		}
+
+		return bDelete;
+	}
+
 	/**
 	 * Base Connector for requesting data from session or local storage
 	 *
@@ -32,16 +50,10 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		write: function(mPropertyBag) {
-			mPropertyBag.flexObjects.forEach(function(mFlexObject) {
-				var sId = mFlexObject.fileName;
-				var sChangeKey;
+			mPropertyBag.flexObjects.forEach(function(oFlexObject) {
+				var sChangeKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
 				var sChange;
-				if (mFlexObject.fileType === "ctrl_variant" && mFlexObject.variantManagementReference) {
-					sChangeKey = BrowserStorageUtils.createVariantKey(sId);
-				} else {
-					sChangeKey = BrowserStorageUtils.createChangeKey(sId);
-				}
-				sChange = JSON.stringify(mFlexObject);
+				sChange = JSON.stringify(oFlexObject);
 				this.oStorage.setItem(sChangeKey, sChange);
 			}.bind(this));
 			return Promise.resolve();
@@ -56,26 +68,38 @@ sap.ui.define([
 				reference: mPropertyBag.reference,
 				layer: mPropertyBag.layer
 			}, function(mFlexObject) {
-				var bDelete = true;
-
-				if (mPropertyBag.selectorIds) {
-					if (mFlexObject.changeDefinition.selector) {
-						bDelete = mPropertyBag.selectorIds.indexOf(mFlexObject.changeDefinition.selector.id) > -1;
-					} else {
-						bDelete = false;
-					}
-				}
-
-				if (bDelete && mPropertyBag.changeTypes) {
-					bDelete = mPropertyBag.changeTypes.indexOf(mFlexObject.changeDefinition.changeType) > -1;
-				}
-
-				if (bDelete) {
+				if (shouldChangeBeDeleted(mPropertyBag, mFlexObject.changeDefinition)) {
 					this.oStorage.removeItem(mFlexObject.key);
 				}
 			}.bind(this));
 
 			return Promise.resolve();
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		remove: function(mPropertyBag) {
+			var sChangeKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
+			this.oStorage.removeItem(sChangeKey);
+			return Promise.resolve();
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		loadFeatures: function() {
+			return Promise.resolve({});
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		getFlexInfo: function(mPropertyBag) {
+			mPropertyBag.storage = this.oStorage;
+			return Promise.resolve({
+				isResetEnabled: BrowserStorageUtils.getAllFlexObjects(mPropertyBag).length > 0
+			});
 		}
 	});
 

@@ -42,6 +42,13 @@ sap.ui.define([
 			},
 			changeType: "type1"
 		},
+		oChange4: {
+			fileName: "oChange4",
+			fileType: "change",
+			reference: "sap.ui.fl.test",
+			layer: "CUSTOMER",
+			changeType: "type1"
+		},
 		oVariant1: {
 			fileName: "oVariant1",
 			fileType: "ctrl_variant",
@@ -73,23 +80,16 @@ sap.ui.define([
 	}
 
 	function removeListFromStorage(oStorage, aList) {
-		aList.forEach(function (sObjektId) {
-			var sKey = BrowserStorageUtils.createChangeKey(sObjektId);
-			if (oStorage.removeItem) {
-				oStorage.removeItem(sKey);
-			}
+		aList.forEach(function (oFlexObject) {
+			var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
+			oStorage.removeItem(sKey);
 		});
 	}
 
-	function assertFileWritten(assert, oStorage, oFile, sMessage) {
-		var sKey;
-		if (oFile.fileType === "ctrl_variant") {
-			sKey = BrowserStorageUtils.createVariantKey(oFile.fileName);
-		} else {
-			sKey = BrowserStorageUtils.createChangeKey(oFile.fileName);
-		}
+	function assertFileWritten(assert, oStorage, oFlexObject, sMessage) {
+		var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
 		var oItem = JSON.parse(oStorage.getItem(sKey));
-		assert.deepEqual(oFile, oItem, sMessage);
+		assert.deepEqual(oFlexObject, oItem, sMessage);
 	}
 
 	function getNumberOfFlexObjects(oConnector) {
@@ -102,16 +102,6 @@ sap.ui.define([
 
 	function parameterizedTest(oConnector, sStorage) {
 		QUnit.module("loadFlexData: Given a " + sStorage, {
-			afterEach: function() {
-				removeListFromStorage(oConnector.oStorage, [
-					oTestData.oChange1.fileName,
-					oTestData.oChange2.fileName,
-					oTestData.oChange3.fileName,
-					oTestData.oVariant1.fileName,
-					oTestData.oVariantChange1.fileName,
-					oTestData.oVariantManagementChange.fileName
-				]);
-			}
 		}, function () {
 			QUnit.test("when write is called with various changes", function (assert) {
 				saveListWithConnector(oConnector, [
@@ -128,6 +118,47 @@ sap.ui.define([
 				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariant1, "variant1 was written");
 				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantChange1, "variant change1 was written");
 				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantManagementChange, "variant management change was written");
+
+				// clean up
+				removeListFromStorage(oConnector.oStorage, [
+					oTestData.oChange1,
+					oTestData.oChange2,
+					oTestData.oChange3,
+					oTestData.oVariant1,
+					oTestData.oVariantChange1,
+					oTestData.oVariantManagementChange
+				]);
+			});
+
+			QUnit.test("when loadFeatures is called", function(assert) {
+				return oConnector.loadFeatures().then(function(oFeatues) {
+					assert.deepEqual(oFeatues, {}, "the function resolves with an empty object");
+				});
+			});
+
+			QUnit.test("when getFlexInfo is called without changes present", function(assert) {
+				return oConnector.getFlexInfo({storage: oConnector.oStorage}).then(function(oFlexInfo) {
+					var oExpectedFlexInfo = {
+						isResetEnabled: false
+					};
+					assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
+				});
+			});
+
+			QUnit.test("when getFlexInfo is called with changes present", function(assert) {
+				saveListWithConnector(oConnector, [
+					oTestData.oChange1
+				]);
+				return oConnector.getFlexInfo({storage: oConnector.oStorage}).then(function(oFlexInfo) {
+					var oExpectedFlexInfo = {
+						isResetEnabled: true
+					};
+					assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
+
+					removeListFromStorage(oConnector.oStorage, [
+						oTestData.oChange1
+					]);
+				});
 			});
 		});
 
@@ -137,6 +168,7 @@ sap.ui.define([
 					oTestData.oChange1,
 					oTestData.oChange2,
 					oTestData.oChange3,
+					oTestData.oChange4,
 					oTestData.oVariant1,
 					oTestData.oVariantChange1,
 					oTestData.oVariantManagementChange
@@ -144,12 +176,13 @@ sap.ui.define([
 			},
 			afterEach: function() {
 				removeListFromStorage(oConnector.oStorage, [
-					oTestData.oChange1.fileName,
-					oTestData.oChange2.fileName,
-					oTestData.oChange3.fileName,
-					oTestData.oVariant1.fileName,
-					oTestData.oVariantChange1.fileName,
-					oTestData.oVariantManagementChange.fileName
+					oTestData.oChange1,
+					oTestData.oChange2,
+					oTestData.oChange3,
+					oTestData.oChange4,
+					oTestData.oVariant1,
+					oTestData.oVariantChange1,
+					oTestData.oVariantManagementChange
 				]);
 			}
 		}, function () {
@@ -184,7 +217,7 @@ sap.ui.define([
 					changeTypes: ["type1"]
 				}).then(function() {
 					var iNewCount = getNumberOfFlexObjects(oConnector);
-					assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
+					assert.equal(iInitialCount - iNewCount, 2, "two change got reset");
 				});
 			});
 
@@ -198,6 +231,26 @@ sap.ui.define([
 				}).then(function() {
 					var iNewCount = getNumberOfFlexObjects(oConnector);
 					assert.equal(iInitialCount - iNewCount, 0, "no change got reset");
+				});
+			});
+
+			QUnit.test("when remove is called with a saved flex object", function (assert) {
+				var iInitialCount = getNumberOfFlexObjects(oConnector);
+				return oConnector.remove({
+					flexObject: oTestData.oChange1
+				}).then(function() {
+					var iNewCount = getNumberOfFlexObjects(oConnector);
+					assert.equal(iInitialCount - iNewCount, 1, "one change got removed");
+				});
+			});
+
+			QUnit.test("when remove is called with a not existing flex object", function (assert) {
+				var iInitialCount = getNumberOfFlexObjects(oConnector);
+				return oConnector.remove({
+					flexObject: {fileName: "foo"}
+				}).then(function() {
+					var iNewCount = getNumberOfFlexObjects(oConnector);
+					assert.equal(iInitialCount - iNewCount, 0, "no change got removed");
 				});
 			});
 		});

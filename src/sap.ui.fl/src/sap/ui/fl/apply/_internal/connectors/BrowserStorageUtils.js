@@ -64,6 +64,20 @@ sap.ui.define([], function () {
 		},
 
 		/**
+		 * Returns an array with all the flex objects in the storage
+		 *
+		 * @param {object} mPropertyBag - object with the necessary information
+		 * @returns {array} Returns an array with maps with two keys: 'key' and 'changeDefinition'
+		 */
+		getAllFlexObjects: function(mPropertyBag) {
+			var aFlexObjects = [];
+			this.forEachChangeInStorage(mPropertyBag, function(mFlexObject) {
+				aFlexObjects.push(mFlexObject);
+			});
+			return aFlexObjects;
+		},
+
+		/**
 		 * Creates the fl change key
 		 * @param  {string} sId The change id
 		 * @returns {string} the prefixed id
@@ -83,6 +97,19 @@ sap.ui.define([], function () {
 			if (sId) {
 				return FL_VARIANT_KEY + "." + sId;
 			}
+		},
+
+		/**
+		 * Returns the key depending on the fileType
+		 *
+		 * @param {object} oFlexObject The definition of the flex Object
+		 * @returns {string} Returns the prefixed ID
+		 */
+		createFlexObjectKey: function(oFlexObject) {
+			if (oFlexObject.fileType === "ctrl_variant" && oFlexObject.variantManagementReference) {
+				return this.createVariantKey(oFlexObject.fileName);
+			}
+			return this.createChangeKey(oFlexObject.fileName);
 		},
 
 		sortGroupedFlexObjects: function(mResult) {
