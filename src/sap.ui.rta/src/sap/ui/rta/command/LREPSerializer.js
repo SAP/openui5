@@ -190,22 +190,6 @@ sap.ui.define([
 		return FlUtils.execPromiseQueueSequentially(aPromises, false, true);
 	};
 
-	LREPSerializer.prototype._removeCommands = function() {
-		var oCommandStack = this.getCommandStack();
-		var aCommands = oCommandStack.getAllExecutedCommands();
-
-		aCommands.forEach(function(oCommand) {
-			if (oCommand instanceof FlexCommand) {
-				var oChange = oCommand.getPreparedChange();
-				var oAppComponent = oCommand.getAppComponent();
-				PersistenceWriteAPI.remove({change: oChange, selector: oAppComponent});
-			}
-		});
-
-		// Once the changes are undone, all commands shall be removed
-		oCommandStack.removeAllCommands();
-	};
-
 	/**
 	 * @description
 	 * At this point command stack is not aware if the changes have been already booked for the new app variant.
@@ -220,7 +204,7 @@ sap.ui.define([
 		oCommandStack.detachCommandExecuted(this.handleCommandExecuted.bind(this));
 		return this._triggerUndoChanges()
 		.then(function() {
-			this._removeCommands();
+			oCommandStack.removeAllCommands();
 			// Attach the event 'commandExecuted' here to start the communication of LREPSerializer with Flex
 			oCommandStack.attachCommandExecuted(this.handleCommandExecuted.bind(this));
 			return true;

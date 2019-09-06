@@ -836,7 +836,7 @@ sap.ui.define([
 				return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true});
 			})
 
-			.then(this.oSerializer.clearCommandStack.bind(this.oSerializer, "customer.sap.test"))
+			.then(this.oSerializer.clearCommandStack.bind(this.oSerializer))
 
 			.then(function() {
 				assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
@@ -970,7 +970,7 @@ sap.ui.define([
 
 						return PersistenceWriteAPI.save({selector: oMockedAppComponent, skipUpdateCache: true})
 							.then(function() {
-								return this.oSerializer.clearCommandStack("customer.sap.test")
+								return this.oSerializer.clearCommandStack()
 								.then(function() {
 									assert.ok(true, "then the promise for LREPSerializer.clearCommandStack() gets resolved");
 									assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
