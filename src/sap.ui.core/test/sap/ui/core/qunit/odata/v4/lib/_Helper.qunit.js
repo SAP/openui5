@@ -445,14 +445,14 @@ sap.ui.define([
 				oValue = {Foo : null};
 
 			oHelperMock.expects("fireChange")
-				.withExactArgs(sinon.match.same(mChangeListeners), "path/to/property/Foo",
+				.withExactArgs(sinon.match.same(mChangeListeners), "path/to/object/Foo",
 					bRemove ? undefined : null);
 			oHelperMock.expects("fireChange")
-				.withExactArgs(sinon.match.same(mChangeListeners), "path/to/property",
+				.withExactArgs(sinon.match.same(mChangeListeners), "path/to/object",
 					bRemove ? undefined : sinon.match.same(oValue));
 
 			// code under test
-			_Helper.fireChanges(mChangeListeners, "path/to/property", oValue, bRemove);
+			_Helper.fireChanges(mChangeListeners, "path/to/object", oValue, bRemove);
 		});
 	});
 
@@ -1200,6 +1200,157 @@ sap.ui.define([
 			assert.deepEqual(oCacheBefore, oCacheAfter);
 
 		});
+	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bSelected) {
+	QUnit.test("updateSelected: bSelected=" + bSelected, function (assert) {
+		var mChangeListener = {},
+			oHelperMock = this.mock(_Helper),
+			oNewValue = {
+				"@odata.etag" : "new",
+				"@$ui5._" : {
+					predicate : "('1')",
+					ignore : true
+				},
+				changed : "new",
+				unchanged : "same",
+				fromNull : "new",
+				toNull : null,
+				unselected : "new",
+				nested : {
+					changed : "new",
+					unchanged : "same",
+					fromNull : "new",
+					toNull : null,
+					unselected : "new"
+				},
+				complexFromNull : {
+					changed : "new",
+					toNull : null,
+					nested : {
+						changed : "new"
+					},
+					complexToNull : null,
+					unselected : "new"
+				},
+				complexNull : null,
+				complexToNull : null
+			},
+			oOldValue = {
+				"@odata.etag" : "old",
+				changed : "old",
+				unchanged : "same",
+				fromNull : null,
+				toNull : "old",
+				nested : {
+					changed : "old",
+					unchanged : "same",
+					fromNull : null,
+					toNull : "old"
+				},
+				complexFromNull : null,
+				complexNull : null,
+				complexToNull : {
+					changed : "old",
+					fromNull : null,
+					nested : {
+						changed : "old"
+					}
+				}
+			},
+			aSelect = [
+				"changed",
+				"fromNull",
+				"toNull",
+				"unchanged",
+				"nested/changed",
+				"nested/fromNull",
+				"nested/toNull",
+				"nested/unchanged",
+				"complexFromNull/changed",
+				"complexFromNull/toNull",
+				"complexFromNull/complexToNull/unseen",
+				"complexFromNull/nested/changed",
+				"complexNull/unseen",
+				"complexToNull/changed",
+				"complexToNull/fromNull",
+				"complexToNull/nested/changed",
+				"complexToNull/nested/unseen"
+			],
+			oUpdatedValue = {
+				"@odata.etag" : "new",
+				"@$ui5._" : {predicate : "('1')"},
+				changed : "new",
+				unchanged : "same",
+				fromNull : "new",
+				toNull : null,
+				nested : {
+					changed : "new",
+					unchanged : "same",
+					fromNull : "new",
+					toNull : null
+				},
+				complexFromNull : {
+					changed : "new",
+					toNull : null,
+					nested : {
+						changed : "new"
+					},
+					complexToNull : null
+				},
+				complexNull : null,
+				complexToNull : null
+			};
+
+		function expectChange(sPath, vValue) {
+			oHelperMock.expects("fireChange")
+				.withExactArgs(sinon.match.same(mChangeListener), "base/path/" + sPath, vValue);
+		}
+
+		expectChange("@odata.etag", "new");
+		expectChange("changed", "new");
+		expectChange("fromNull", "new");
+		expectChange("toNull", null);
+		expectChange("nested/changed", "new");
+		expectChange("nested/fromNull", "new");
+		expectChange("nested/toNull", null);
+		expectChange("complexFromNull/changed", "new");
+		expectChange("complexFromNull/toNull", null);
+		expectChange("complexFromNull/nested/changed", "new");
+		expectChange("complexToNull", undefined); // side effect from _Helper.fireChanges
+		expectChange("complexToNull/changed", undefined);
+		expectChange("complexToNull/fromNull", undefined);
+		expectChange("complexToNull/nested", undefined); // side effect from _Helper.fireChanges
+		expectChange("complexToNull/nested/changed", undefined);
+		if (!bSelected) {
+			expectChange("unselected", "new");
+			expectChange("nested/unselected", "new");
+			expectChange("complexFromNull/unselected", "new");
+			// fired because it's automatically selected due to its null value
+			expectChange("complexFromNull/complexToNull", null);
+		}
+
+		// code under test
+		_Helper.updateSelected(mChangeListener, "base/path", oOldValue, oNewValue,
+			bSelected ? aSelect : undefined);
+
+		if (!bSelected) {
+			oUpdatedValue.unselected = "new";
+			oUpdatedValue.nested.unselected = "new";
+			oUpdatedValue.complexFromNull.unselected = "new";
+		}
+		assert.deepEqual(oOldValue, oUpdatedValue);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("updateSelected: no predicate", function (assert) {
+		var oCache = {foo : "bar"};
+
+		_Helper.updateSelected({}, "base/path", oCache, {foo : "baz"});
+
+		assert.deepEqual(oCache, {foo : "baz"});
 	});
 
 	//*********************************************************************************************
