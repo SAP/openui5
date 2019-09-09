@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit, sinon*/
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
@@ -74,5 +74,42 @@ sap.ui.define([
 
 			done();
 		}.bind(this), 250);
+	});
+
+	QUnit.test("Simulate drag leave", function(assert) {
+		// Arrange
+		var oFakeEvent = new jQuery.Event("dragleave"),
+			oTargetControl = this.oGrid.getItems()[0],
+			mTargetRect = oTargetControl.getDomRef().getBoundingClientRect(),
+			oSpy = sinon.spy(this.oGridDragOver, "scheduleEndDrag"),
+			oText = new Text({ text: "control outside the grid"});
+
+		oText.placeAt("content");
+		Core.applyChanges();
+
+		oFakeEvent.pageX = Math.ceil(mTargetRect.left); // use Math.ceil because on Edge sometimes the coordinates are fractions
+		oFakeEvent.pageY = Math.ceil(mTargetRect.top);
+
+		// Act
+		this.oGridDragOver._onDragLeave(oFakeEvent);
+
+		// Assert
+		assert.ok(oSpy.notCalled, "Should NOT end the drag when current position is within the container");
+
+		// Arrange
+		this.oGrid._scheduleIEPolyfill(true /* bImmediately */);
+		mTargetRect = oText.getDomRef().getBoundingClientRect();
+		oFakeEvent.pageX = Math.ceil(mTargetRect.left); // use Math.ceil because on Edge sometimes the coordinates are fractions
+		oFakeEvent.pageY = Math.ceil(mTargetRect.top);
+
+		// Act
+		this.oGridDragOver._onDragLeave(oFakeEvent);
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "Should end the drag when current position is outside the container");
+
+		// Clean up
+		oText.destroy();
+		oSpy.restore();
 	});
 });

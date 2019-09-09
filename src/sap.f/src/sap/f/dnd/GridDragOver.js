@@ -34,8 +34,12 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		 */
 		constructor: function() {
 			// prepare drag end delegate for later use
-			this._oDragEndDelegate = {
-				ondragend: this.scheduleEndDrag.bind(this)
+			this._oDragControlDelegate = {
+				ondragend: this.scheduleEndDrag
+			};
+
+			this._oDropContainerDelegate = {
+				ondragleave: this._onDragLeave
 			};
 		},
 
@@ -85,7 +89,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 			oControl.addStyleClass("sapUiDnDGridControl"); // helps with locating the controls later
 		});
 
-		this._attachDragEndDelegate();
+		this._attachEventDelegates();
 
 		return this;
 	};
@@ -171,7 +175,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 		// this._oDragControl.setVisible(true); // todo
 		this._showDraggedItem();
 
-		this._removeDragEndDelegate();
+		this._removeEventDelegates();
 
 		// fire private event for handling IE specific layout fixes
 		this._oDropContainer.fireEvent("_gridPolyfillAfterDragEnd", {
@@ -539,21 +543,42 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery"],
 	};
 
 	/**
-	 * Removes drag end delegate from drop container.
+	 * Removes event delegates from drop container and drag control.
 	 */
-	GridDragOver.prototype._removeDragEndDelegate = function() {
+	GridDragOver.prototype._removeEventDelegates = function() {
 		if (this._oDropContainer) {
-			this._oDropContainer.removeEventDelegate(this._oDragEndDelegate);
+			this._oDropContainer.removeEventDelegate(this._oDropContainerDelegate);
+		}
+
+		if (this._oDragControl) {
+			this._oDragControl.removeEventDelegate(this._oDragControlDelegate);
 		}
 	};
 
 	/**
-	 * Attaches drag end delegate to the container over which we currently drag.
+	 * Attaches event delegates to the container over which we currently drag and the dragged control.
 	 */
-	GridDragOver.prototype._attachDragEndDelegate = function() {
-		this._removeDragEndDelegate(); // make sure we attach only once
-		this._oDropContainer.addEventDelegate(this._oDragEndDelegate);
+	GridDragOver.prototype._attachEventDelegates = function() {
+		this._removeEventDelegates(); // make sure we attach only once
+		this._oDragControl.addEventDelegate(this._oDragControlDelegate, this);
+		this._oDropContainer.addEventDelegate(this._oDropContainerDelegate, this);
 	};
+
+	/**
+	 * Ends the drag on drag leave.
+	 * @param {jQuery.Event} oEvent The jQuery dragleave event.
+	 */
+	GridDragOver.prototype._onDragLeave = function(oEvent) {
+		var oElement = document.elementFromPoint(oEvent.pageX, oEvent.pageY),
+			bIsElementWithinDropContainer = this._oDropContainer.getDomRef().contains(oElement);
+
+		// Check if element from point is inside the drop container, because dragleave
+		// can be fired even when the control is inside the drop container.
+		if (!bIsElementWithinDropContainer) {
+			this.scheduleEndDrag();
+		}
+	};
+
 
 	/**
 	 * Holds the instance of the current drag.
