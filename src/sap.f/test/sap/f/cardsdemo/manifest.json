@@ -216,6 +216,11 @@
 		  "pattern": "translation",
 		  "name": "translation",
 		  "target": "translation"
+		},
+		{
+		  "pattern": "bundle",
+		  "name": "bundle",
+		  "target": "bundle"
 		}
 	  ],
 		"targets": {
@@ -367,6 +372,11 @@
 			"translation": {
 				"viewId": "translation",
 				"viewName": "Translation",
+				"viewLevel": 1
+			},
+			"bundle": {
+				"viewId": "bundle",
+				"viewName": "Bundle",
 				"viewLevel": 1
 			}
 		}

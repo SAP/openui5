@@ -1,0 +1,16 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+    controllerName="sap.f.cardsdemo.controller.Bundle">
+
+	<Page title="Card Bundle">
+		<content>
+			<Button class="sapUiSmallMarginBegin" text="Create cards with manifest URL" press="onCreateCardsWithManifestUrl"></Button>
+			<Button class="sapUiSmallMarginBegin" text="Create cards with preloaded manifest and base URL" press="onCreateCardsWithPreloadedManifest"></Button>
+			<f:GridContainer id="grid" class="sapUiSmallMargin"></f:GridContainer>
+		</content>
+	</Page>
+</mvc:View>

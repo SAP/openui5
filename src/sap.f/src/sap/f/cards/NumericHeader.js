@@ -421,9 +421,12 @@ sap.ui.define([
 	 * @private
 	 * @static
 	 * @param {map} mConfiguration A map containing the header configuration options.
+	 * @param {Object} oServiceManager A service manager instance to handle services.
+	 * @param {Object} oDataProviderFactory A DataProviderFactory instance.
+	 * @param {string} sAppId The sap.app/id from the manifest.
 	 * @return {sap.f.cards.NumericHeader} The created NumericHeader
 	 */
-	NumericHeader.create = function (mConfiguration, oServiceManager, oDataProviderFactory) {
+	NumericHeader.create = function (mConfiguration, oServiceManager, oDataProviderFactory, sAppId) {
 		var mSettings = {
 			title: mConfiguration.title,
 			subtitle: mConfiguration.subTitle,
@@ -449,6 +452,7 @@ sap.ui.define([
 		}
 
 		var oHeader = new NumericHeader(mSettings);
+		oHeader._sAppId = sAppId;
 
 		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
 			NumericHeader._bindStatusText(mConfiguration.status.text.format, oHeader);

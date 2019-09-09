@@ -231,16 +231,17 @@ sap.ui.define([
 
 		// Format the relative icon src for the integration card only.
 		if (this.isInsideIntegrationCard() && this.getIconSrc()) {
-			var sAppId = this.getModel("parameters").getProperty("/appId");
 			var oSrcBindingInfo = this.getBindingInfo("iconSrc");
 
 			if (oSrcBindingInfo) {
-				oSrcBindingInfo.formatter = function (sValue) {
-					return IconFormatter.formatSrc(sValue, sAppId);
-				};
+				if (!oSrcBindingInfo.formatter) {
+					oSrcBindingInfo.formatter = function (sValue) {
+						return IconFormatter.formatSrc(sValue, this._sAppId);
+					}.bind(this);
+				}
 				this._getAvatar().bindProperty("src", oSrcBindingInfo);
 			} else {
-				this._getAvatar().setSrc(IconFormatter.formatSrc(this.getIconSrc(), sAppId));
+				this._getAvatar().setSrc(IconFormatter.formatSrc(this.getIconSrc(), this._sAppId));
 			}
 		} else {
 			this._getAvatar().setSrc(this.getIconSrc());
@@ -304,9 +305,10 @@ sap.ui.define([
 	 * @param {Object} mConfiguration A map containing the header configuration options.
 	 * @param {Object} oServiceManager A service manager instance to handle services.
 	 * @param {Object} oDataProviderFactory A DataProviderFactory instance.
+	 * @param {string} sAppId The sap.app/id from the manifest.
 	 * @return {sap.f.cards.Header} The created Header.
 	 */
-	Header.create = function(mConfiguration, oServiceManager, oDataProviderFactory) {
+	Header.create = function(mConfiguration, oServiceManager, oDataProviderFactory, sAppId) {
 		var mSettings = {
 			title: mConfiguration.title,
 			subtitle: mConfiguration.subTitle
@@ -323,6 +325,7 @@ sap.ui.define([
 		}
 
 		var oHeader = new Header(mSettings);
+		oHeader._sAppId = sAppId;
 		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
 			Header._bindStatusText(mConfiguration.status.text.format, oHeader);
 		}

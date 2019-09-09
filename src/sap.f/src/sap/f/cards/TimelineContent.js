@@ -1,18 +1,25 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/f/cards/BaseContent",
+sap.ui.define([
+		"sap/f/cards/BaseContent",
 		"sap/suite/ui/commons/Timeline",
 		"sap/suite/ui/commons/library",
 		"sap/suite/ui/commons/TimelineItem",
 		'sap/ui/base/ManagedObject',
-		"sap/f/cards/ActionEnablement"],
-	function (BaseContent,
-			  Timeline,
-			  suiteLibrary,
-			  TimelineItem,
-			  ManagedObject,
-			  ActionEnablement) {
+		"sap/f/cards/ActionEnablement",
+		"sap/f/cards/BindingHelper",
+		"sap/f/cards/IconFormatter"
+	], function (
+		BaseContent,
+		Timeline,
+		suiteLibrary,
+		TimelineItem,
+		ManagedObject,
+		ActionEnablement,
+		BindingHelper,
+		IconFormatter
+	) {
 		"use strict";
 
 		/**
@@ -117,14 +124,15 @@ sap.ui.define(["sap/f/cards/BaseContent",
 			});
 
 			/* eslint-disable no-unused-expressions */
-			mItem.title && this._bindItemProperty("title", mItem.title.value);
-			mItem.description && this._bindItemProperty("text", mItem.description.value);
-			mItem.ownerImage && this._bindItemProperty("userPicture", mItem.ownerImage.value);
-			mItem.dateTime && this._bindItemProperty("dateTime", mItem.dateTime.value);
-			mItem.owner && this._bindItemProperty("userName", mItem.owner.value);
-			mItem.icon && this._bindItemProperty("icon", mItem.icon.src);
+			mItem.title && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "title", mItem.title.value);
+			mItem.description && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "text", mItem.description.value);
+			mItem.ownerImage && mItem.ownerImage.value && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "userPicture", mItem.ownerImage.value, function (sValue) {
+				return IconFormatter.formatSrc(sValue, this._sAppId);
+			}.bind(this));
+			mItem.dateTime && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "dateTime", mItem.dateTime.value);
+			mItem.owner && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "userName", mItem.owner.value);
+			mItem.icon && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "icon", mItem.icon.src);
 			/* eslint-enable no-unused-expressions */
-
 
 			this._attachActions(mItem, this._oTimeLineItemTemplate);
 			var oBindingInfo = {
@@ -133,29 +141,6 @@ sap.ui.define(["sap/f/cards/BaseContent",
 			this._bindAggregation("content", this._getTimeline(), oBindingInfo);
 
 			return this;
-		};
-
-		/**
-		 * Tries to create a binding info object based on sPropertyValue.
-		 * If succeeds the binding info will be used for property binding.
-		 * Else sPropertyValue will be set directly on the item template.
-		 *
-		 * @private
-		 * @param {string} sPropertyName The name of the property
-		 * @param {string} sPropertyValue The value of the property
-		 */
-		TimelineContent.prototype._bindItemProperty = function (sPropertyName, sPropertyValue) {
-			var oBindingInfo = ManagedObject.bindingParser(sPropertyValue);
-
-			if (!sPropertyValue) {
-				return;
-			}
-
-			if (oBindingInfo) {
-				this._oTimeLineItemTemplate.bindProperty(sPropertyName, oBindingInfo);
-			} else {
-				this._oTimeLineItemTemplate.setProperty(sPropertyName, sPropertyValue);
-			}
 		};
 
 		/**

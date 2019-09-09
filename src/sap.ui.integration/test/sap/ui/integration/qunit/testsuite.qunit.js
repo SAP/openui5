@@ -33,6 +33,7 @@ sap.ui.define(function () {
 					'./CardDesigntime.qunit'
 				]
 			},
+			"cardbundle/CardStaticResources": {},
 			"util/CardManifest": {
 				coverage: {
 					only: [

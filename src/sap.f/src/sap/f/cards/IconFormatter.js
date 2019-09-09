@@ -4,11 +4,15 @@
 sap.ui.define(["sap/ui/core/IconPool"], function (IconPool) {
 	"use strict";
 
+	/**
+	 * @private
+	 */
 	var IconFormatter = {
 
 		/**
-		 * Format relative icon sources to be relative to the card manifest.
+		 * Format relative icon sources to be relative to the provided sap.app/id.
 		 *
+		 * @private
 		 * @param {string} sUrl The URL to format.
 		 * @param {string} sAppId The ID in the "sap.app" namespace of the manifest.
 		 * @returns {string} The formatted URL.

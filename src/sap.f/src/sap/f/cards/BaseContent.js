@@ -323,10 +323,11 @@ sap.ui.define([
 		return this;
 	};
 
-	BaseContent.create = function (sType, oConfiguration, oServiceManager, oDataProviderFactory) {
+	BaseContent.create = function (sType, oConfiguration, oServiceManager, oDataProviderFactory, sAppId) {
 		return new Promise(function (resolve, reject) {
 			var fnCreateContentInstance = function (Content) {
 				var oContent = new Content();
+				oContent._sAppId = sAppId;
 				oContent.setServiceManager(oServiceManager);
 				oContent.setDataProviderFactory(oDataProviderFactory);
 				oContent.setConfiguration(oConfiguration);

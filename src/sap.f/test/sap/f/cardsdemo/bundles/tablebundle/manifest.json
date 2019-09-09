@@ -1,0 +1,40 @@
+{
+	"sap.app": {
+		"id": "card.bundle.table",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Table",
+		"header": {
+			"title": "{{title}}",
+			"subTitle": "{{subtitle}}"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "./bundles/tablebundle/mockdata/employees.json"
+				}
+			},
+			"row": {
+				"columns": [
+					{
+						"title": "{{image}}",
+						"width": "18%",
+						"icon": {
+							"src": "{Icon}"
+						}
+					},
+					{
+						"title": "{{name}}",
+						"value": "{Title}"
+					},
+					{
+						"title": "{{position}}",
+						"value": "{Position}"
+					}
+				]
+			}
+		}
+	}
+}

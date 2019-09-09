@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "my.test.card.object",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"type": "Object",
+		"header": {
+			"title": "{{appTitle}}"
+		},
+		"content": {
+			"data": {
+				"json": {
+					"firstName": "Dona",
+					"lastName": "Moore",
+					"photo": "./icons/edit.png"
+				}
+			},
+			"groups": [
+				{
+					"title": "Organizational Details",
+					"items": [
+						{
+							"label": "Direct Manager",
+							"value": "{firstName} {lastName}",
+							"icon": {
+								"src": "{photo}"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

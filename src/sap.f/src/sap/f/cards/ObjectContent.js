@@ -1,8 +1,22 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Text", "sap/m/Title", "sap/f/Avatar", "sap/m/Link","sap/m/Label", "sap/ui/core/ResizeHandler", "sap/ui/layout/AlignedFlowLayout", "sap/ui/dom/units/Rem", "sap/f/cards/ActionEnablement"],
-	function (BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, ActionEnablement) {
+sap.ui.define([
+		"sap/f/cards/BaseContent",
+		"sap/m/HBox",
+		"sap/m/VBox",
+		"sap/m/Text",
+		"sap/m/Title",
+		"sap/f/Avatar",
+		"sap/m/Link",
+		"sap/m/Label",
+		"sap/ui/core/ResizeHandler",
+		"sap/ui/layout/AlignedFlowLayout",
+		"sap/ui/dom/units/Rem",
+		"sap/f/cards/ActionEnablement",
+		"sap/f/cards/BindingHelper",
+		"sap/f/cards/IconFormatter"
+	], function (BaseContent, HBox, VBox, Text, Title, Avatar, Link , Label, ResizeHandler, AlignedFlowLayout, Rem, ActionEnablement, BindingHelper, IconFormatter) {
 		"use strict";
 
 		/**
@@ -176,29 +190,35 @@ sap.ui.define(["sap/f/cards/BaseContent", "sap/m/HBox", "sap/m/VBox", "sap/m/Tex
 					}
 
 					if (oItem.icon) {
-						var oHBox = new HBox({
+						var oAvatar = new Avatar({
+							customDisplaySize: "2.5rem",
+							displaySize: "Custom"
+						}).addStyleClass("sapFCardObjectItemAvatar sapFCardObjectItemLabel");
+
+						var oVbox = new VBox({
 							items: [
-								new Avatar({
-									customDisplaySize: "2.5rem",
-									displaySize: "Custom",
-									src: oItem.icon.src
-								}).addStyleClass("sapFCardObjectItemAvatar sapFCardObjectItemLabel"),
-								new VBox({
-									items: [
-										oItemLabel,
-										oItemValue
-									]
-								})
+								oItemLabel,
+								oItemValue
 							]
 						});
+						var oHBox = new HBox({
+							items: [
+								oAvatar,
+								oVbox
+							]
+						});
+
+						BindingHelper.bindProperty(oAvatar, "src", oItem.icon.src, function (sValue) {
+							return IconFormatter.formatSrc(sValue, this._sAppId);
+						}.bind(this));
 						oGroupContainer.addItem(oHBox);
 					} else {
 						oGroupContainer.addItem(oItemLabel);
 						oGroupContainer.addItem(oItemValue);
 					}
-				});
+				}, this);
 				oContainer.addContent(oGroupContainer);
-			});
+			}, this);
 
 			this._attachActions(oConfiguration, this);
 		};
