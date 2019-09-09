@@ -1,6 +1,5 @@
 {
   "1.38.0": {
-    "data": "April 2016",
     "notes": [
       {
         "id": "ccd012e1f3ea146f894dab0f1138186551bb6964",
@@ -49,28 +48,6 @@
         "references": []
       },
       {
-        "id": "8db223d5350a0eb16a83e18112d7abb5097c4beb",
-        "type": "FIX",
-        "text": "[INTERNAL] fixed failing test caused by error in scrolling logic",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680001942"
-          }
-        ]
-      },
-      {
-        "id": "6695e40449db9cad7f26377c39caf82ab55e7b98",
-        "type": "FIX",
-        "text": "[INTERNAL] sap.uxap.ObjectPageSubSection: added doc for insertAggregation method",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670069414"
-          }
-        ]
-      },
-      {
         "id": "f3ec2eb638c6059ce44e2f8bb32c0d38b7a8abb5",
         "type": "FIX",
         "text": "ObjectPageLayout would incorrectly modify its parent height",
@@ -89,6 +66,296 @@
           {
             "type": "BCP",
             "reference": "1670049967"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.1": {
+    "notes": [
+      {
+        "id": "9d94a5d1f99fdb6b2f52901dccf3232ab4d50075",
+        "type": "FIX",
+        "text": "promoted subsection where the parent section has no title wasn't working",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670206923"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.2": {
+    "notes": [
+      {
+        "id": "30fb1ac330f9505f86e3d71925673a51680b9083",
+        "type": "FIX",
+        "text": "ObjectPage section/subsection titles weren't with the appropriate aria-level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670181382"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.3": {
+    "notes": [
+      {
+        "id": "af6c3d5b3bc5b137b0408e37786375792458d854",
+        "type": "FIX",
+        "text": "objectPageLayout's transform css would clash with the one in the Shell",
+        "references": []
+      },
+      {
+        "id": "32e53c8ad046151d962dc8ef1ea7aeaedc4efc44",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: subtitle displayed correctly in Compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670328312"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.4": {
+    "notes": [
+      {
+        "id": "10f1d1c4595b658847f6a2b13a3ed1e34fba3851",
+        "type": "FIX",
+        "text": "ObjectSubSection memory would leak proxied aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670315806"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.5": {
+    "notes": [
+      {
+        "id": "67662e60249092db6fb375ac910c562f5eb3c418",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection - grid data memory leak fixed",
+        "references": []
+      },
+      {
+        "id": "b1b6b5d10d801745220ad8bb2ee6c8d1f53df59a",
+        "type": "FIX",
+        "text": "sap.uxap.HierarchicalSelect: there was a redundant tab stop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680116122"
+          }
+        ]
+      },
+      {
+        "id": "62ae65a60e438b6b828a85f890abbd608e843492",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: couldn't rerender the favIcon since it has moved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680086039"
+          }
+        ]
+      },
+      {
+        "id": "194c323ecb14482319fa9d4238b2d907d8912875",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: would cause an error because _$contentContainer was undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680037307"
+          }
+        ]
+      },
+      {
+        "id": "dda78712df8a632460c3c3c9f347a29f709cd256",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: proxied aggregation needs to invalidate its parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680041065"
+          }
+        ]
+      },
+      {
+        "id": "b481b876f814e48d93bde0297899571c040cbc5b",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeaderActionButton: Wrong padding when no text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680061875"
+          }
+        ]
+      },
+      {
+        "id": "72658a8e52fd05d75ffd6802548195ccf3c147ae",
+        "type": "FIX",
+        "text": "ObjectPageLayout: Typo in ARIA role",
+        "references": []
+      }
+    ]
+  },
+  "1.38.6": {
+    "notes": [
+      {
+        "id": "23dddc0b97aca5f7f3fb43fa8f9e9594cd3943c2",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeaderContent: not responsive when in ResponsiveSplitter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680147601"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.8": {
+    "notes": [
+      {
+        "id": "26ba7cbdac8b1b6761dae18d21c7b7b810fd4fcd",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPage: didn't access map members safely",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670390469"
+          }
+        ]
+      },
+      {
+        "id": "15471d793df490f41cdc6c192757ff8b35655356",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSectionBase - changes to subsections always update the anchor bar",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1102"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670381177"
+          }
+        ]
+      },
+      {
+        "id": "7d1d7f15383ad86c985eed45f4501adad62b9d89",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader - adding an invisible action button does not prevent it from becoming transparent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670355392"
+          }
+        ]
+      },
+      {
+        "id": "eb2c4468da5a9528dcde8ccc56587c01db9b1de7",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: placeholder stays hidden when no image URI",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680188741"
+          }
+        ]
+      },
+      {
+        "id": "9f9bb722bd759f64c64fffb68c88ce9bbe97391c",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: calling scrollToSection before the control is rendered caused an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680204848"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.9": {
+    "notes": [
+      {
+        "id": "df93428cba488f855615a8676c059b4d9b4fc897",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader - IE focus problem fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.38.12": {
+    "notes": [
+      {
+        "id": "99ff4900e4f0db7a57e792773a1bbd60618122e4",
+        "type": "FIX",
+        "text": "sap.uxap: Hybrid devices were incorrectly detected as tablets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670532898"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.17": {
+    "notes": [
+      {
+        "id": "33bda40fad9bed22d59938a4eba22dc7d86b8d06",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: rendering performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004813172016"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.33": {
+    "notes": [
+      {
+        "id": "2d7c7a8b73088fbe8d6bf9f1ef4d015244f76461",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader: Action buttons enabled state fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880065362"
+          }
+        ]
+      }
+    ]
+  },
+  "1.38.38": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "483c0ce60ab5276f8ca081cb9cf1a6bec97e33f5",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: fix forms spacing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670314800"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870391994"
           }
         ]
       }

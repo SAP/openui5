@@ -60,7 +60,7 @@
       {
         "id": "3a20f688956e350dfd83b74a00856d724a8842ab",
         "type": "FIX",
-        "text": "sap.ui.unified.ColorPicker: Now the dialog's style is not broken",
+        "text": "sap.ui.unified.ColorPicker: Now the dialog\u0027s style is not broken",
         "references": [
           {
             "type": "BCP",
@@ -151,6 +151,113 @@
             "reference": "1880570125"
           }
         ]
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "962aa2dc4b2f7feda9cf447a71f32cf45c4a8706",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: aria-label is not encoded twice now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870391389"
+          }
+        ]
+      },
+      {
+        "id": "b3cf3abc354ad80abbe38a5a1f9c9c52b5f1ddbb",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Menu works correctly on combi devices",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2289"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "94108301f880b3a18416a7b3cf0125bb98268e17",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar - API appointment (de)selection works now.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880678579"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "8e544148bb104826b76b96345e6d6effcf4b9cbf",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: month and year displayed in correct order in Japanese and Chinese when the calendar has more months",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000412732019"
+          }
+        ]
+      },
+      {
+        "id": "177994789b92673e9475a98971ee3a4e65592b5d",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarOneMonthInterval: Now arrow navigation is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000617722019"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.10": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "f374c61fe19b877d8f4341ae2ae744791ef2f882",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: Navigates to the correct date",
+        "references": []
+      }
+    ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "76f0179a31aed3bb3d58a969fe78b4ff9b07ef07",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": []
+      }
+    ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "d21b5e15ec8217171afb29ff7bf2f0c60d9fc00b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Two months displayed correctly in Compact mode",
+        "references": []
       }
     ]
   }

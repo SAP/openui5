@@ -5,67 +5,72 @@
       {
         "id": "1770a7001881854c006f7bad8a1fb78c7c9b3249",
         "type": "FEATURE",
-        "text": "sap.m.IconTabHeader: Unselected state is implemented",
+        "text": " sap.m.IconTabHeader: Unselected state is implemented",
         "references": []
       },
       {
         "id": "c37c94c653c7b4f6a7533ffa8314f705f1bd9287",
         "type": "FEATURE",
-        "text": "sap.m.IconTabHeader: Usability on small screens is now improved",
+        "text": " sap.m.IconTabHeader: Usability on small screens is now improved",
         "references": []
       },
       {
         "id": "601e422ff678503da9530011dfe71a0eea717c68",
         "type": "FEATURE",
-        "text": "sap.tnt.IconTabHeader: sap.m.IconTabHeader is now correctly displayed inside sap.tnt.ToolHeader",
+        "text": " sap.tnt.IconTabHeader: sap.m.IconTabHeader is now correctly displayed inside sap.tnt.ToolHeader",
         "references": []
       },
       {
         "id": "e91c49c8853010ac24bc4c9304ff6a4a7c19a7fe",
         "type": "FIX",
-        "text": "Add Improvements to Run sap.tnt.demokit.toolpageapp on Mobile Devices",
+        "text": "  Add Improvements to Run sap.tnt.demokit.toolpageapp on Mobile Devices",
         "references": []
       },
       {
         "id": "a71d0e8706fbb65375fd85503b8f835a98ce62f5",
         "type": "FIX",
-        "text": "sap.m.IconTabHeader, sap.m.RadioButtonGroup, sap.tnt.NavigationList: Alt+Arrow fixed.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770135328"
-          },
-          {
-            "type": "BCP",
-            "reference": "1770135288"
-          },
-          {
-            "type": "BCP",
-            "reference": "1770135282"
-          }
-        ]
+        "text": " sap.m.IconTabHeader, sap.m.RadioButtonGroup, sap.tnt.NavigationList: Alt+Arrow fixed.",
+        "references": []
       },
       {
         "id": "38649781837cac62811fef166f243fb426762c10",
         "type": "FIX",
-        "text": "sap.tnt.ToolHeader: qUnits tests are fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770156561"
-          }
-        ]
+        "text": " sap.tnt.ToolHeader: qUnits tests are fixed",
+        "references": []
       },
       {
         "id": "b25fe9b6de87f97dade3889b57647349f2923b2d",
         "type": "FIX",
-        "text": "sap.tnt.ToolPage: Hidden footer when XmlView's height is 100% now corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770115384"
-          }
-        ]
+        "text": " sap.tnt.ToolPage: Hidden footer when XmlView\u0027s height is 100% now corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "0e3a71a41df6c9d30ba8ca5d4e14f807813b6842",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Item navigation is now correct",
+        "references": []
+      },
+      {
+        "id": "25d9db3927f8049b88895db9c17922ed8e1995be",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
+        "references": []
+      }
+    ]
+  },
+  "1.48.10": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "cc9199be931b698ddf9f7a2dacb3f7ece09f09c6",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
+        "references": []
       }
     ]
   }

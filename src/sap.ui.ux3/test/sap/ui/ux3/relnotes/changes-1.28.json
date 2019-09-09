@@ -1,463 +1,368 @@
 {
-	"1.28.0": {
-		"date": "January 2015",
-		"notes": [
-			{
-				"id": "0fb5ed495267fb1648d545148555fe1e369b8e8f",
-				"type": "FEATURE",
-				"text": "NotificationBar: Provided Property for Toggler",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "648995"
-					}
-				]
-			},
-			{
-				"id": "67786cd8ba9c238f94dc46951901e10f95e37adb",
-				"type": "FEATURE",
-				"text": "ux3.Overlay: New closed Event",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100008075592014"
-					}
-				]
-			},
-			{
-				"id": "54d15647ae6f9261f2ece5fb07f0ec93ae7c66ad",
-				"type": "FEATURE",
-				"text": "ux3/ExactArea: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "b35a16efdd307caf4c1e61b5d153ceb1a715d28f",
-				"type": "FEATURE",
-				"text": "ux3/ExactBrowser: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "e14ff460b6398d08cee4580f2deab8565b46b9e4",
-				"type": "FEATURE",
-				"text": "ux3/FacetFilter: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "bf7623561d1a74afe7cd6f69769b91f86772c001",
-				"type": "FEATURE",
-				"text": "ux3/NavigationBar: Visible property moved to Control",
-				"references": []
-			},
-			{
-				"id": "e5f3fc0ad4f49f20aea57ab01a2408e5b0bb7115",
-				"type": "FIX",
-				"text": "FeedChunk: Fixed tooltip for flag-button",
-				"references": []
-			},
-			{
-				"id": "30231d4398033d24e662742d665f05333fb31d8e",
-				"type": "FIX",
-				"text": "Fixed copyright headers in LESS/CSS resources",
-				"references": []
-			},
-			{
-				"id": "db72e0dd5e923179afdfbd1acb1780b62e19395e",
-				"type": "FIX",
-				"text": "HCB (High-Contrast-Black) Parameters added to ToolPopup.less",
-				"references": []
-			},
-			{
-				"id": "76c4a26c611a82b53ccc6762e3817d187e67a0c4",
-				"type": "FIX",
-				"text": "ToolPopup: Fixed ListBox focus on auto-close",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1398275"
-					}
-				]
-			},
-			{
-				"id": "599c39eadec89779d103fca6d02837e761b3210e",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu: Fixed positioning in NavigationBar",
-				"references": []
-			},
-			{
-				"id": "c283fe8170d2a1433fac2f3637dcfc9f60d8f927",
-				"type": "FIX",
-				"text": "ux3.ActionBar: Update action highlighted",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1427851"
-					}
-				]
-			},
-			{
-				"id": "f6fede3e90b5aa09ab2b23c1216314780c83ba17",
-				"type": "FIX",
-				"text": "ux3.NotificationBar: Severity of messages ie recalculated when NotificationBar is opening",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1168039"
-					}
-				]
-			},
-			{
-				"id": "7c88cdc53deb4042927ba8349e8cb1faf8273c38",
-				"type": "FIX",
-				"text": "ux3/ToolPopup: Fixed Calculation for Arrow",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "787648"
-					}
-				]
-			},
-			{
-				"id": "f132bca0c70116cf21a27d7cb165585ffff3f508",
-				"type": "FIX",
-				"text": "ux3.ToolPopup: TabChaining with TabStrip\"",
-				"references": []
-			},
-			{
-				"id": "9d9ac011f77ca866340d28000db98afa378d8375",
-				"type": "FIX",
-				"text": "ux3.NavigationBar: Overflow is not checked if in inactive state",
-				"references": []
-			},
-			{
-				"id": "3355034ef9193fd69fa4f67789fa42a2b4bc37ad",
-				"type": "FIX",
-				"text": "ux3.NavigationBar: Remove overflow check on exit",
-				"references": []
-			},
-			{
-				"id": "66b38c46797897d8443811b3466e0cab628a0aba",
-				"type": "FIX",
-				"text": "ux3.ToolPopup: TabChaining with TabStrip",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482020289"
-					}
-				]
-			}
-		]
-	},
-	"1.28.1": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "470f235dce80777cdd6800676f1cc9750bc54cd1",
-				"type": "FIX",
-				"text": "Fix JSDoc issues as reported during nightly build",
-				"references": []
-			}
-		]
-	},
-	"1.28.3": {
-		"date": "March 2015",
-		"notes": [
-			{
-				"id": "4c439e27cfb002da3c7478df5d979a000c2a7aeb",
-				"type": "FIX",
-				"text": "DataSet: Multiple setData calls now update Items correctly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580005797"
-					}
-				]
-			},
-			{
-				"id": "2683b995926329bec48699dcd56ac060bf5ca78f",
-				"type": "FIX",
-				"text": "ux3.ThingViewer: Long subtitle in header now has ellipsis (Internet Explorer)",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "811230"
-					}
-				]
-			},
-			{
-				"id": "2fd792d8ca75c75bd5c2eb55892e955e0951fba3",
-				"type": "FIX",
-				"text": "ux3.ToolPopup, commons.Dialog: Focusable elements corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1482020238"
-					}
-				]
-			},
-			{
-				"id": "a98534ed73d6c6324ee07fe2ebd8a3cf9318815d",
-				"type": "FIX",
-				"text": "ux3.ToolPopup: Popup position after changing its size corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500010011972015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.4": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "d2233ccd9fb1d41879bfbff822facbabee01fab2",
-				"type": "FIX",
-				"text": "Overlay: Focus is now restored when closing Overlay",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580009871"
-					}
-				]
-			}
-		]
-	},
-	"1.28.5": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "f8d5997ee056b3c7d4dca7604ba80f6de66aa364",
-				"type": "FIX",
-				"text": "core.Popup: Setting focus in Internet Explorer after open corrected",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570034466"
-					}
-				]
-			}
-		]
-	},
-	"1.28.6": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "9f895fb08971121030ed1f1524a006b37419735b",
-				"type": "FIX",
-				"text": "Existence of namespace ensured during Core.initLibrary()",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570295165"
-					}
-				]
-			},
-			{
-				"id": "30613ae967148bc6ae8e013130b196a4821ed6a1",
-				"type": "FIX",
-				"text": "ToolPopup: Fixed overflow when ToolPopup exceeds window",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580022325"
-					}
-				]
-			},
-			{
-				"id": "4a973f77e7673d74b24a423f331fad43da8bffc1",
-				"type": "FIX",
-				"text": "ToolPopup: ToolPopup is aware when content re-renders",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500010009482015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.7": {
-		"date": "May 2015",
-		"notes": [
-			{
-				"id": "acd6c822f9cd0f31ff1019c2df02065641b26edc",
-				"type": "FIX",
-				"text": "DataSetSimpleView: Suppress view update if not rendered",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002028376500000107722015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.9": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "b7c0c1dcc8201367e0a6c8a5950f511935997750",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Fixes a constant increase in height for the control triggered by first resize",
-				"references": []
-			}
-		]
-	},
-	"1.28.10": {
-		"date": "June 2015",
-		"notes": [
-			{
-				"id": "f84a0f52ed5cf3db08efa2187c36d9e40e857c33",
-				"type": "FIX",
-				"text": "core.Popup: Renew DOM-reference When Used in \"checkDocking\"",
-				"references": []
-			}
-		]
-	},
-	"1.28.11": {
-		"date": "July 2015",
-		"notes": [
-			{
-				"id": "fecca435e47d9d66a1d0cf1d723435dff7256472",
-				"type": "FIX",
-				"text": "ux3.ToolPopup: Remove DOM when hiding ToolPopup",
-				"references": []
-			}
-		]
-	},
-	"1.28.12": {
-		"date": "July 2015",
-		"notes": [
-			{
-				"id": "1922ecc3934e3dfba8013c3f2907988784629616",
-				"type": "FIX",
-				"text": "ux3.Shell: Set a static z-index for NotificationBar",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570523041"
-					}
-				]
-			}
-		]
-	},
-	"1.28.13": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "ce36fbfba29deb916bc6424ca541e7532c61e197",
-				"type": "FIX",
-				"text": "ux3.Shell & NotificationBar: Reducing the z-index if NotificationBar is minimized",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570307085"
-					}
-				]
-			}
-		]
-	},
-	"1.28.18": {
-		"date": "September 2015",
-		"notes": [
-			{
-				"id": "0e4dbbb8ba97d0354d76283bc2fb874bcf71bd28",
-				"type": "FIX",
-				"text": "Respect \"themeroots\" when resolving img URLs in Controls",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100003930322015"
-					}
-				]
-			}
-		]
-	},
-	"1.28.19": {
-		"date": "September 2015",
-		"notes": [
-			{
-				"id": "d1bf6690c649385f67d0116a0cfa9f5af9fff3a5",
-				"type": "FIX",
-				"text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580085080"
-					}
-				]
-			}
-		]
-	},
-	"1.28.20": {
-		"date": "October 2015",
-		"notes": [
-			{
-				"id": "45555ea71edde7de9a95a4bc71896eac7cf27c36",
-				"type": "FIX",
-				"text": "sap.ui.ux3.NavigationBar - late style application would cause a bug in the ux3.Shell",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570784137"
-					}
-				]
-			},
-			{
-				"id": "3beb7e004156c2adf700bf5cf8fed9a035102715",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580068341"
-					}
-				]
-			}
-		]
-	},
-	"1.28.23": {
-		"date": "November 2015",
-		"notes": [
-			{
-				"id": "d99389e13bad5caf49387b7368c59dee2056ae13",
-				"type": "FIX",
-				"text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1580190288"
-					}
-				]
-			}
-		]
-	},
-	"1.28.25": {
-		"date": "December 2015",
-		"notes": [
-			{
-				"id": "64063cb0248590a8a431753c79c26ab7d50e5b2c",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
-				"references": []
-			}
-		]
-	},
-	"1.28.32": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "564698311a75bf531d61364c164d59429f005c4b",
-				"type": "FIX",
-				"text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "012002523100001917542016"
-					}
-				]
-			}
-		]
-	}
+  "1.28.0": {
+    "date": "January 2015",
+    "notes": [
+      {
+        "id": "0fb5ed495267fb1648d545148555fe1e369b8e8f",
+        "type": "FEATURE",
+        "text": "NotificationBar: Provided Property for Toggler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "648995"
+          }
+        ]
+      },
+      {
+        "id": "67786cd8ba9c238f94dc46951901e10f95e37adb",
+        "type": "FEATURE",
+        "text": "ux3.Overlay: New closed Event",
+        "references": []
+      },
+      {
+        "id": "54d15647ae6f9261f2ece5fb07f0ec93ae7c66ad",
+        "type": "FEATURE",
+        "text": "ux3/ExactArea: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "b35a16efdd307caf4c1e61b5d153ceb1a715d28f",
+        "type": "FEATURE",
+        "text": "ux3/ExactBrowser: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "e14ff460b6398d08cee4580f2deab8565b46b9e4",
+        "type": "FEATURE",
+        "text": "ux3/FacetFilter: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "bf7623561d1a74afe7cd6f69769b91f86772c001",
+        "type": "FEATURE",
+        "text": "ux3/NavigationBar: Visible property moved to Control",
+        "references": []
+      },
+      {
+        "id": "e5f3fc0ad4f49f20aea57ab01a2408e5b0bb7115",
+        "type": "FIX",
+        "text": "FeedChunk: Fixed tooltip for flag-button",
+        "references": []
+      },
+      {
+        "id": "30231d4398033d24e662742d665f05333fb31d8e",
+        "type": "FIX",
+        "text": "Fixed copyright headers in LESS/CSS resources",
+        "references": []
+      },
+      {
+        "id": "db72e0dd5e923179afdfbd1acb1780b62e19395e",
+        "type": "FIX",
+        "text": "HCB (High-Contrast-Black) Parameters added to ToolPopup.less",
+        "references": []
+      },
+      {
+        "id": "76c4a26c611a82b53ccc6762e3817d187e67a0c4",
+        "type": "FIX",
+        "text": "ToolPopup: Fixed ListBox focus on auto-close",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1398275"
+          }
+        ]
+      },
+      {
+        "id": "599c39eadec89779d103fca6d02837e761b3210e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Fixed positioning in NavigationBar",
+        "references": []
+      },
+      {
+        "id": "c283fe8170d2a1433fac2f3637dcfc9f60d8f927",
+        "type": "FIX",
+        "text": "ux3.ActionBar: Update action highlighted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1427851"
+          }
+        ]
+      },
+      {
+        "id": "f6fede3e90b5aa09ab2b23c1216314780c83ba17",
+        "type": "FIX",
+        "text": "ux3.NotificationBar: Severity of messages ie recalculated when NotificationBar is opening",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1168039"
+          }
+        ]
+      },
+      {
+        "id": "7c88cdc53deb4042927ba8349e8cb1faf8273c38",
+        "type": "FIX",
+        "text": "ux3/ToolPopup: Fixed Calculation for Arrow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "787648"
+          }
+        ]
+      },
+      {
+        "id": "f132bca0c70116cf21a27d7cb165585ffff3f508",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip\"",
+        "references": []
+      },
+      {
+        "id": "9d9ac011f77ca866340d28000db98afa378d8375",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Overflow is not checked if in inactive state",
+        "references": []
+      },
+      {
+        "id": "3355034ef9193fd69fa4f67789fa42a2b4bc37ad",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Remove overflow check on exit",
+        "references": []
+      },
+      {
+        "id": "66b38c46797897d8443811b3466e0cab628a0aba",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: TabChaining with TabStrip",
+        "references": []
+      }
+    ]
+  },
+  "1.28.1": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "470f235dce80777cdd6800676f1cc9750bc54cd1",
+        "type": "FIX",
+        "text": "Fix JSDoc issues as reported during nightly build",
+        "references": []
+      }
+    ]
+  },
+  "1.28.3": {
+    "date": "March 2015",
+    "notes": [
+      {
+        "id": "4c439e27cfb002da3c7478df5d979a000c2a7aeb",
+        "type": "FIX",
+        "text": "DataSet: Multiple setData calls now update Items correctly",
+        "references": []
+      },
+      {
+        "id": "2683b995926329bec48699dcd56ac060bf5ca78f",
+        "type": "FIX",
+        "text": "ux3.ThingViewer: Long subtitle in header now has ellipsis (Internet Explorer)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "811230"
+          }
+        ]
+      },
+      {
+        "id": "2fd792d8ca75c75bd5c2eb55892e955e0951fba3",
+        "type": "FIX",
+        "text": "ux3.ToolPopup, commons.Dialog: Focusable elements corrected",
+        "references": []
+      },
+      {
+        "id": "a98534ed73d6c6324ee07fe2ebd8a3cf9318815d",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: Popup position after changing its size corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.4": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "d2233ccd9fb1d41879bfbff822facbabee01fab2",
+        "type": "FIX",
+        "text": "Overlay: Focus is now restored when closing Overlay",
+        "references": []
+      }
+    ]
+  },
+  "1.28.5": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "f8d5997ee056b3c7d4dca7604ba80f6de66aa364",
+        "type": "FIX",
+        "text": "core.Popup: Setting focus in Internet Explorer after open corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.6": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "9f895fb08971121030ed1f1524a006b37419735b",
+        "type": "FIX",
+        "text": "Existence of namespace ensured during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "30613ae967148bc6ae8e013130b196a4821ed6a1",
+        "type": "FIX",
+        "text": "ToolPopup: Fixed overflow when ToolPopup exceeds window",
+        "references": []
+      },
+      {
+        "id": "4a973f77e7673d74b24a423f331fad43da8bffc1",
+        "type": "FIX",
+        "text": "ToolPopup: ToolPopup is aware when content re-renders",
+        "references": []
+      }
+    ]
+  },
+  "1.28.7": {
+    "date": "May 2015",
+    "notes": [
+      {
+        "id": "acd6c822f9cd0f31ff1019c2df02065641b26edc",
+        "type": "FIX",
+        "text": "DataSetSimpleView: Suppress view update if not rendered",
+        "references": []
+      }
+    ]
+  },
+  "1.28.9": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "b7c0c1dcc8201367e0a6c8a5950f511935997750",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Fixes a constant increase in height for the control triggered by first resize",
+        "references": []
+      }
+    ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "f84a0f52ed5cf3db08efa2187c36d9e40e857c33",
+        "type": "FIX",
+        "text": "core.Popup: Renew DOM-reference When Used in \"checkDocking\"",
+        "references": []
+      }
+    ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "fecca435e47d9d66a1d0cf1d723435dff7256472",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: Remove DOM when hiding ToolPopup",
+        "references": []
+      }
+    ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "1922ecc3934e3dfba8013c3f2907988784629616",
+        "type": "FIX",
+        "text": "ux3.Shell: Set a static z-index for NotificationBar",
+        "references": []
+      }
+    ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ce36fbfba29deb916bc6424ca541e7532c61e197",
+        "type": "FIX",
+        "text": "ux3.Shell \u0026 NotificationBar: Reducing the z-index if NotificationBar is minimized",
+        "references": []
+      }
+    ]
+  },
+  "1.28.18": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0e4dbbb8ba97d0354d76283bc2fb874bcf71bd28",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      }
+    ]
+  },
+  "1.28.19": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "d1bf6690c649385f67d0116a0cfa9f5af9fff3a5",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
+        "references": []
+      }
+    ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "45555ea71edde7de9a95a4bc71896eac7cf27c36",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NavigationBar: Late style application would cause a bug in the ux3.Shell",
+        "references": []
+      },
+      {
+        "id": "3beb7e004156c2adf700bf5cf8fed9a035102715",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
+        "references": []
+      }
+    ]
+  },
+  "1.28.23": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "d99389e13bad5caf49387b7368c59dee2056ae13",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Content focus issue solved",
+        "references": []
+      }
+    ]
+  },
+  "1.28.25": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "64063cb0248590a8a431753c79c26ab7d50e5b2c",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Toolpoup: Arrow in HCB theme is positioned properly",
+        "references": []
+      }
+    ]
+  },
+  "1.28.32": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "564698311a75bf531d61364c164d59429f005c4b",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Align text selection behavior across browsers",
+        "references": []
+      }
+    ]
+  }
 }

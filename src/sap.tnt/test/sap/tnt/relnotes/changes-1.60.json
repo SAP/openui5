@@ -1,0 +1,34 @@
+{
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "444f1591b83b7f1817d41b9615e4efe013e94de0",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Rendering without SideNavigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880724502"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.7": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "a4d0f4fba6f228ed19a76133d3e268f4ecf3333a",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Visualization on tablet improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970125888"
+          }
+        ]
+      }
+    ]
+  }
+}

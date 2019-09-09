@@ -1,0 +1,36 @@
+{
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "1cefafc4662997371ad56d2c0f11c18b1ca76efa",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "f6fb6dc525c0825b543a481ff720a194ced5aa18",
+        "type": "FIX",
+        "text": "sap.ui.ux3.DataSetSimpleView: correctly destroy items",
+        "references": []
+      }
+    ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "f544526e641b9556f70a3a846621a154a3479dc1",
+        "type": "FIX",
+        "text": " sap.ui.ux3.FeedChunk: tools button icon missing",
+        "references": []
+      },
+      {
+        "id": "5da6f718bdda56009b41505b7b0c2f4ae7c6939c",
+        "type": "FIX",
+        "text": " sap.ui.ux3.OverlayDialog: Corrected positioning values",
+        "references": []
+      }
+    ]
+  }
+}

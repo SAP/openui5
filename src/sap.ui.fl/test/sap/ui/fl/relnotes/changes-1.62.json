@@ -5,36 +5,31 @@
       {
         "id": "796aed587f7e75736ac19c2f348e66e95eb88863",
         "type": "FIX",
-        "text": "Correct error object in case of disabled Flexibility Services",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1870496372"
-          }
-        ]
+        "text": " Correct error object in case of disabled Flexibility Services",
+        "references": []
       },
       {
         "id": "d24c92ce0418124b7130b73408ac4acdf3668d20",
         "type": "FIX",
-        "text": "sap.ui.fl - fixed getCacheKey with ctrl variant id",
+        "text": " sap.ui.fl - fixed getCacheKey with ctrl variant id",
         "references": []
       },
       {
         "id": "f12314c5bb92d6e374f5709d9d08f53cc0fb9022",
         "type": "FEATURE",
-        "text": "Deletion of app variants",
+        "text": " Deletion of app variants",
         "references": []
       },
       {
         "id": "199febe1e715ae148c9ae3ba11902794c836095b",
         "type": "FIX",
-        "text": "sap.ui.fl - jsdoc correction",
+        "text": " sap.ui.fl - jsdoc correction",
         "references": []
       },
       {
         "id": "b8d24a8d2fc346ff173c419beee5401934b3eaf0",
         "type": "FIX",
-        "text": "sap.ui.fl - viewcache test fix",
+        "text": " sap.ui.fl - viewcache test fix",
         "references": []
       }
     ]
