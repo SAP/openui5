@@ -4,6 +4,7 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/core/Element",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
@@ -26,7 +27,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/library"
-], function (jQuery, Log, Message, Binding, BindingMode, BaseContext, Model, ODataUtils,
+], function (jQuery, Log, Element, Message, Binding, BindingMode, BaseContext, Model, ODataUtils,
 		OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding, ODataMetaModel,
 		ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper, _MetadataRequestor,
 		_Parser, _Requestor, TestUtils, library) {
@@ -48,7 +49,7 @@ sap.ui.define([
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
+		TestControl = Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata : {
 				properties : {
 					text : "string"

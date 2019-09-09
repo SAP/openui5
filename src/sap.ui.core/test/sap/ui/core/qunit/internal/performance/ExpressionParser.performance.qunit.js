@@ -2,16 +2,20 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/ExpressionParser"
-], function (ExpressionParser) {
+	"sap/base/Log",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ExpressionParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/model/json/JSONModel"
+], function (Log, BindingParser, ExpressionParser, ManagedObject, JSONModel) {
 	/*global QUnit */
 	"use strict";
 
 	var iCount = 100000,
-		oModel = new sap.ui.model.json.JSONModel({x: 2}),
+		oModel = new JSONModel({x: 2}),
 		sResult = "\tParse expression binding\tEvaluate expression binding\tFormatter"
 			+ "\tBind with expression\tBind with formatter\n", //output in Excel friendly format
-		TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
+		TestControl = ManagedObject.extend("TestControl", {
 			metadata: {
 				properties: {
 					value: "int"
@@ -61,7 +65,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.base.ExpressionParser Performance");
 
 	QUnit.done(function () {
-		jQuery.sap.log.info(sResult);
+		Log.info(sResult);
 	});
 
 	//*********************************************************************************************
@@ -77,12 +81,12 @@ sap.ui.define([
 		QUnit.test("Parse expression binding: " + oFixture.name, function (assert) {
 			sResult += oFixture.name;
 			repeatedTest(assert, function () {
-				sap.ui.base.BindingParser.complexParser(oFixture.expression);
+				BindingParser.complexParser(oFixture.expression);
 			});
 		});
 
 		QUnit.test("Evaluate expression binding: " + oFixture.name, function (assert) {
-			var oBindingInfo = sap.ui.base.BindingParser.complexParser(oFixture.expression);
+			var oBindingInfo = BindingParser.complexParser(oFixture.expression);
 			repeatedTest(assert, function () {
 				oBindingInfo.formatter(2);
 			});
@@ -97,11 +101,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("Bind with expression: " + oFixture.name, function (assert) {
-			bindTest(assert, sap.ui.base.BindingParser.complexParser(oFixture.expression));
+			bindTest(assert, BindingParser.complexParser(oFixture.expression));
 		});
 
 		QUnit.test("Bind with formatter: " + oFixture.name, function (assert) {
-			bindTest(assert, sap.ui.base.BindingParser.complexParser(
+			bindTest(assert, BindingParser.complexParser(
 				"{path: '/x', formatter: 'formatters." + oFixture.name + "'}"));
 			sResult += "\n";
 		});

@@ -111,7 +111,7 @@ sap.ui.define([
 						} else {
 							aNames.push(oBindingInfo.parts[0].path);
 						}
-					} else if (!oCell instanceof sap.m.Label){
+					} else if (!(oCell instanceof Label)){
 						aNames.push("<Not a Text or Input control or composite binding>");
 					}
 					return aNames;
