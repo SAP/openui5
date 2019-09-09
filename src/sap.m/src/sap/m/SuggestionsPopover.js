@@ -1093,7 +1093,10 @@ sap.ui.define([
 
 		if (sNewValue) {
 			sNewValue = this._formatTypedAheadValue(sNewValue);
-			oInput.updateDomValue(sNewValue);
+
+			if (!oInput.isComposingCharacter()) {
+				oInput.updateDomValue(sNewValue);
+			}
 
 			if (Device.system.desktop) {
 				oInput.selectText(sValue.length, sNewValue.length);
@@ -1142,6 +1145,10 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype._finalizeAutocomplete = function () {
+		if (this._oInput.isComposingCharacter()) {
+			return;
+		}
+
 		if (!this._bAutocompleteEnabled) {
 			return;
 		}

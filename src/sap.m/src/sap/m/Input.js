@@ -1165,7 +1165,7 @@ function(
 		this.cancelPendingSuggest();
 
 		if (this._isSuggestionsPopoverOpen()) {
-			if (!this._updateSelectionFromList()) {
+			if (!this._updateSelectionFromList() && !this.isComposingCharacter()) {
 				this._closeSuggestionPopup();
 			}
 		}
@@ -2022,6 +2022,20 @@ function(
 		this._bPopupHasFocus = undefined;
 
 		this._sPrevSuggValue = null;
+	};
+
+	/**
+	 * Called when the composition of a passage of text has been completed or cancelled.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	Input.prototype.oncompositionend = function (oEvent) {
+		InputBase.prototype.oncompositionend.apply(this, arguments);
+
+		if (this._oSuggPopover && !Device.browser.edge && !Device.browser.firefox) {
+			this._oSuggPopover._handleTypeAhead();
+		}
 	};
 
 	/**

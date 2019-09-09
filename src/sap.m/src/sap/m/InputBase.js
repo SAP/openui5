@@ -326,10 +326,47 @@ function(
 
 
 		this._oValueStateMessage = new ValueStateMessage(this);
+		// handle composition events & validation of composition symbols
+		this._bIsComposingCharacter = false;
+	};
+
+	/**
+	 * Called when the composition of a passage of text is started.
+	 *
+	 * @private
+	 */
+	InputBase.prototype.oncompositionstart = function () {
+		this._bIsComposingCharacter = true;
+	};
+
+	/**
+	 * Called when the composition of a passage of text has been completed or cancelled.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	InputBase.prototype.oncompositionend = function (oEvent) {
+		this._bIsComposingCharacter = false;
+
+		// In Firefox and Edge the events are fired correctly
+		// http://blog.evanyou.me/2014/01/03/composition-event/
+		if (!Device.browser.edge && !Device.browser.firefox) {
+			this.handleInput(oEvent);
+		}
+	};
+
+	/**
+	 * indicating if a character is currently composing.
+	 *
+	 * @returns {boolean} Whether or not a character is composing.
+	 * True if after "compositionstart" event and before "compositionend" event.
+	 * @protected
+	 */
+	InputBase.prototype.isComposingCharacter = function() {
+		return this._bIsComposingCharacter;
 	};
 
 	InputBase.prototype.onBeforeRendering = function() {
-
 		// Ignore the input event which is raised by MS Internet Explorer when it has a non-ASCII character
 		if (Device.browser.msie && Device.browser.version > 9 && !/^[\x00-\x7F]*$/.test(this.getValue())){// TODO remove after 1.62 version
 			this._bIgnoreNextInputNonASCII = true;
@@ -348,7 +385,6 @@ function(
 	};
 
 	InputBase.prototype.onAfterRendering = function() {
-
 		// maybe control is invalidated on keystrokes and
 		// even the value property did not change
 		// dom value is still the old value
