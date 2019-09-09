@@ -71,21 +71,21 @@ sap.ui.define([
 		return oWheelEvent;
 	}
 
-	var iTouchPosition;
-	var iTouchYPosition;
+	var iTouchPositionX;
+	var iTouchPositionY;
 
 	function initTouchScrolling(oTargetElement, iPageX, iPageY) {
 		var oTouchEvent;
 
-		iTouchPosition = iPageX;
-		iTouchYPosition = iPageY || 0;
+		iTouchPositionX = iPageX || 0;
+		iTouchPositionY = iPageY || 0;
 
 		if (typeof Event === "function" && typeof window.Touch === "function") {
 			var oTouchObject = new window.Touch({
 				identifier: Date.now(),
 				target: oTargetElement,
-				pageX: iTouchPosition,
-				pageY: iTouchYPosition
+				pageX: iTouchPositionX,
+				pageY: iTouchPositionY
 			});
 
 			oTouchEvent = new window.TouchEvent("touchstart", {
@@ -97,8 +97,8 @@ sap.ui.define([
 			oTouchEvent = document.createEvent("Event");
 			oTouchEvent.touches = [
 				{
-					pageX: iTouchPosition,
-					pageY: iTouchYPosition
+					pageX: iTouchPositionX,
+					pageY: iTouchPositionY
 				}
 			];
 			oTouchEvent.initEvent("touchstart", true, true);
@@ -109,17 +109,18 @@ sap.ui.define([
 		return oTouchEvent;
 	}
 
-	function doTouchScrolling(oTargetElement, iScrollDelta) {
+	function doTouchScrolling(oTargetElement, iScrollDeltaX, iScrollDeltaY) {
 		var oTouchEvent;
 
-		iTouchPosition -= iScrollDelta;
+		iTouchPositionX -= iScrollDeltaX || 0;
+		iTouchPositionY -= iScrollDeltaY || 0;
 
 		if (typeof Event === "function" && typeof window.Touch === "function") {
 			var oTouchObject = new window.Touch({
 				identifier: Date.now(),
 				target: oTargetElement,
-				pageX: iTouchPosition,
-				pageY: iTouchYPosition
+				pageX: iTouchPositionX,
+				pageY: iTouchPositionY
 			});
 
 			oTouchEvent = new window.TouchEvent("touchmove", {
@@ -131,8 +132,8 @@ sap.ui.define([
 			oTouchEvent = document.createEvent("Event");
 			oTouchEvent.touches = [
 				{
-					pageX: iTouchPosition,
-					pageY: iTouchYPosition
+					pageX: iTouchPositionX,
+					pageY: iTouchPositionY
 				}
 			];
 			oTouchEvent.initEvent("touchmove", true, true);
@@ -2082,7 +2083,7 @@ sap.ui.define([
 		}).then(done);
 	});
 
-	QUnit.module("Leave action mode on horizontal scrolling", {
+	QUnit.module("Leave action mode on scrolling", {
 		beforeEach: function() {
 			createTables(false, true);
 			oTable.setFixedColumnCount(0);
@@ -2096,29 +2097,49 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scrollbar", function(assert) {
+		var oEvent;
+
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		// Horizontal
 		oTable.getRows()[0].getCells()[0].focus();
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-		var oEvent = document.createEvent('MouseEvents');
+
+		oEvent = document.createEvent('MouseEvents');
 		oEvent.initEvent("mousedown", true, true);
 		oTable.getDomRef("hsb").dispatchEvent(oEvent);
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Clicked on horizontal scrollbar -> Table is in Navigation Mode again");
 		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
 	});
 
 	QUnit.test("MouseWheel", function(assert) {
+		var oWheelEvent;
+
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		// Horizontal
 		oTable.getRows()[0].getCells()[0].focus();
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-		var oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
+
+		oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
 		getCell(0, 0)[0].dispatchEvent(oWheelEvent);
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode again");
+		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
+
+		// Vertical
+		oTable.getRows()[0].getCells()[0].focus();
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+		oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, false);
+		getCell(0, 0)[0].dispatchEvent(oWheelEvent);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled vertically -> Table is in Navigation Mode again");
 		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
 	});
 
 	QUnit.test("Touch", function(assert) {
 		var bOriginalPointerSupport = Device.support.pointer;
 		var bOriginalTouchSupport = Device.support.touch;
+		var oTargetElement;
 		Device.support.pointer = false;
 		Device.support.touch = true;
 		oTable.invalidate();
@@ -2126,13 +2147,25 @@ sap.ui.define([
 		oTable._getKeyboardExtension()._suspendItemNavigation(); // Touch can set the focus, which can lead to scrolling. Prevent it!
 
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		// Horizontal
 		oTable.getRows()[0].getCells()[0].focus();
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-		var oTargetElement = oTable.getDomRef("tableCCnt");
+		oTargetElement = oTable.getDomRef("tableCCnt");
 		initTouchScrolling(oTargetElement, 200);
 		doTouchScrolling(oTargetElement, 150);
 
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled horizontally -> Table is in Navigation Mode again");
+		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
+
+		// Vertical
+		oTable.getRows()[0].getCells()[0].focus();
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		oTargetElement = oTable.getDomRef("tableCCnt");
+		initTouchScrolling(oTargetElement, 200);
+		doTouchScrolling(oTargetElement, undefined, 150);
+
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled Vertically -> Table is in Navigation Mode again");
 		assert.strictEqual(document.activeElement, getCell(0, 0)[0], "Cell has focus now");
 
 		Device.support.pointer = bOriginalPointerSupport;

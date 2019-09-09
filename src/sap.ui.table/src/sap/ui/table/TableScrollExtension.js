@@ -558,6 +558,8 @@ sap.ui.define([
 					oScrollExtension._bIsScrolledVerticallyByWheel = true;
 					oScrollExtension._bIsScrolledVerticallyByKeyboard = false;
 
+					this._getKeyboardExtension().setActionMode(false);
+
 					oScrollExtension.updateVerticalScrollPosition(nScrollPosition + nPixelsToScroll);
 				}
 			}
@@ -645,6 +647,8 @@ sap.ui.define([
 
 						if (oVSb && (mOptions.scrollDirection === ScrollDirection.VERTICAL
 									 || mOptions.scrollDirection === ScrollDirection.BOTH)) {
+							this._getKeyboardExtension().setActionMode(false);
+
 							if (iTouchDistanceY < 0) { // Scrolling down.
 								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
 							} else { // Scrolling up.
