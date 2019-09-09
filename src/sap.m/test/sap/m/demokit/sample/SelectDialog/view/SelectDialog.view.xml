@@ -14,16 +14,6 @@
 				press="handleSelectDialogPress" />
 			<Button
 				class="sapUiSmallMarginBottom"
-				text="Show Select Dialog (Remember)"
-				press="handleSelectDialogPress" >
-				<customData>
-					<core:CustomData
-						key="remember"
-						value="true" />
-				</customData>
-			</Button>
-			<Button
-				class="sapUiSmallMarginBottom"
 				text="Show Select Dialog (Multi)"
 				press="handleSelectDialogPress">
 				<customData>

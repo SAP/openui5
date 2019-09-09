@@ -300,7 +300,16 @@ function(
 	SelectDialog.prototype.init = function () {
 		var that = this,
 			iLiveChangeTimer = 0,
+			fnResetAfterClose = null,
 			fnDialogEscape = null;
+
+		fnResetAfterClose = function () {
+			that._oSelectedItem = that._oList.getSelectedItem();
+			that._aSelectedItems = that._oList.getSelectedItems();
+
+			that._oDialog.detachAfterClose(fnResetAfterClose);
+			that._fireConfirmAndUpdateSelection();
+		};
 
 		this._bAppendedToUIArea = false;
 		this._bInitBusy = false;
@@ -321,13 +330,19 @@ function(
 						text: this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [0])
 					})
 				]
-			})
+			}),
+			selectionChange: function (oEvent) {
+				if (that._oDialog) {
+					if (!that.getMultiSelect()) {
+						// attach the reset function to afterClose to hide the dialog changes from the end user
+						that._oDialog.attachAfterClose(fnResetAfterClose);
+						that._oDialog.close();
+					} else {
+						that._updateSelectionIndicator();
+					}
+				}
+			}
 		});
-
-		// Adding event delegates to the list that will handle:
-		// onsapselect - keyboard interactions on enter and space
-		// onclick - mouse interactions on click and tap
-		this._oList.addEventDelegate(this._getListEventDelegates(), this);
 
 		this._oList.getInfoToolbar().addEventDelegate({
 			onAfterRendering: function () {
@@ -516,11 +531,6 @@ function(
 	 * @private
 	 */
 	SelectDialog.prototype.exit = function () {
-		// Clear list event delegates
-		if (this._oList) {
-			this._oList.removeEventDelegate(this._getListEventDelegates());
-		}
-
 		// internal variables
 		this._oList = null;
 		this._oSearchField = null;
@@ -1189,38 +1199,6 @@ function(
 	};
 
 	/**
-	 * Handles user interaction on pressing OK, Space or clicking on item in the list.
-	 *
-	 * @private
-	 */
-	SelectDialog.prototype._selectionChange = function () {
-		if (!this._oDialog) {
-			return;
-		}
-
-		if (!this.getMultiSelect()) {
-			// attach the reset function to afterClose to hide the dialog changes from the end user
-			this._oDialog.attachEventOnce("afterClose", this._resetAfterClose, this);
-			this._oDialog.close();
-		} else {
-			this._updateSelectionIndicator();
-		}
-	};
-
-	/**
-	 * Handles the firing of the confirm event with the correct parameters after the dialog is closed.
-	 * The method is called after the dialog is closed via user interaction - pressing enter, ok or clicking on an item in the list.
-	 *
-	 * @private
-	 */
-	SelectDialog.prototype._resetAfterClose = function() {
-		this._oSelectedItem = this._oList.getSelectedItem();
-		this._aSelectedItems = this._oList.getSelectedItems();
-
-		this._fireConfirmAndUpdateSelection();
-	};
-
-	/**
 	 * Internal function to remove/keep the list selection based on property "rememberSelection"
 	 * @private
 	 */
@@ -1261,19 +1239,6 @@ function(
 				}
 			}, this);
 		}
-	};
-
-	/**
-	 * Returns object with the event delegates that will be attached to the internal list control.
-	 *
-	 * @returns {object} The object containing the delegates
-	 * @private
-	 */
-	SelectDialog.prototype._getListEventDelegates = function () {
-		return {
-			onsapselect: this._selectionChange.bind(this), // Keyboard handling events
-			ontap: this._selectionChange.bind(this) // Mouse and Touch events
-		};
 	};
 
 	/* =========================================================== */
