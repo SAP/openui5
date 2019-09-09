@@ -2,6 +2,7 @@ src/*/target
 
 # library specific excludes - need to be consistent with the library-local .eslintignore files
 src/sap.ui.core/src/sap/ui/thirdparty
+src/sap.ui.core/src/sap/base/util/restricted/_
 src/sap.ui.documentation/src/sap/ui/documentation/sdk/model/data/guide
 src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty
 src/sap.ui.demokit/src/sap/ui/demokit/js
