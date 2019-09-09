@@ -31,6 +31,9 @@ sap.ui.define([
 		var ColorPickerMode = library.ColorPickerMode,
 			ColorPickerDisplayMode = library.ColorPickerDisplayMode;
 
+		// shortcut for sap.m.ButtonType
+		var ButtonType = mLibrary.ButtonType;
+
 		/**
 		 *
 		 * Constructor for a new <code>ColorPickerPopover</code>.
@@ -241,6 +244,7 @@ sap.ui.define([
 				showCloseButton: false,
 				beginButton: new Button({
 					text: oLibraryResourceBundle.getText("COLOR_PICKER_SUBMIT"),
+					type: ButtonType.Emphasized,
 					press: function () {
 						that.fireChange(that._oLastChangeCPParams);
 						oPopover.close();
