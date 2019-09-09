@@ -248,10 +248,10 @@ sap.ui.define([
 			oControl.handleListItemsVisualFocus(oListItem);
 
 			if (oControl.isOpen()) {
-				oControl.$().removeClass("sapMFocus");
+				oControl.removeStyleClass("sapMFocus");
 				oControl._getList().addStyleClass("sapMListFocus");
 			} else {
-				oControl.$().addClass("sapMFocus");
+				oControl.addStyleClass("sapMFocus");
 			}
 
 			oControl.scrollToItem(oItem);
@@ -547,7 +547,7 @@ sap.ui.define([
 		ComboBox.prototype.getNextFocusableItem = function (bDirectionDown) {
 			var aAllSelectableItems = this.getSelectableItems(),
 				aSelectableNotSeparatorItems = this.getNonSeparatorSelectableItems(aAllSelectableItems),
-				bFocusInInput = this.$().hasClass("sapMFocus"),
+				bFocusInInput = this.hasStyleClass("sapMFocus"),
 				oItemToUse = this.getSelectedItem() || this._getItemByListItem(this._oLastFocusedListItem),
 				oNextSelectableItem;
 
@@ -902,7 +902,7 @@ sap.ui.define([
 			}
 
 			// always focus input field when typing in it
-			this.$().addClass("sapMFocus");
+			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
 		};
 
@@ -1021,7 +1021,7 @@ sap.ui.define([
 			}
 
 			// always focus input field when typing in it
-			this.$().addClass("sapMFocus");
+			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
 		};
 
@@ -1590,7 +1590,7 @@ sap.ui.define([
 			}
 
 			if (this.getEnabled() && (!this.isOpen() || !this.getSelectedItem() || !this._getList().hasStyleClass("sapMListFocus"))) {
-				this.$().addClass("sapMFocus");
+				this.addStyleClass("sapMFocus");
 			}
 		};
 
@@ -2031,7 +2031,7 @@ sap.ui.define([
 
 			if (this.getSelectedItem()) {
 				oList.addStyleClass("sapMListFocus");
-				this.$().removeClass("sapMFocus");
+				this.removeStyleClass("sapMFocus");
 			}
 
 			return this;
@@ -2085,7 +2085,7 @@ sap.ui.define([
 			var oList = this._getList();
 			ComboBoxBase.prototype.close.call(this);
 
-			this.$().addClass("sapMFocus");
+			this.addStyleClass("sapMFocus");
 			//Remove focusing class from the list
 			oList && oList.removeStyleClass("sapMListFocus");
 
