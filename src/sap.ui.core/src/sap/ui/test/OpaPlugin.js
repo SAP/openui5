@@ -539,6 +539,12 @@ sap.ui.define([
 					return null;
 				}
 
+				// some control types only have static methods and cannot be instanciated (e.g.: sap.m.MessageToast)
+				if (typeof fnControlType !== "function") {
+					this._oLogger.debug("The control type " + sControlType + " must be a function.");
+					return null;
+				}
+
 				return fnControlType;
 			},
 
@@ -611,7 +617,7 @@ sap.ui.define([
 		 * Creates a filter function that returns true when a given element
 		 * has the type <code>fnControlType</code>.
 		 *
-		 * When <code>fnControlType</code> is not a function, the returned
+		 * When <code>fnControlType</code> is not defined, the returned
 		 * filter function will accept any element.
 		 *
 		 * @param {function} [fnControlType] Constructor to use for <code>instanceof</code> checks or null
@@ -619,14 +625,13 @@ sap.ui.define([
 		 * @private
 		 */
 		function makeTypeFilterFn(fnControlType) {
-			if ( fnControlType ) {
-				$.sap.assert(typeof fnControlType === 'function', "fnControlType must be a function or falsy");
-				return function(oElement) {
-					return oElement instanceof fnControlType;
-				};
-			} else {
-				return function() { return true; };
-			}
+			return function (oElement) {
+				if (!fnControlType) {
+					return true;
+				}
+
+				return oElement instanceof fnControlType;
+			};
 		}
 
 		/**
