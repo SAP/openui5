@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/rta/util/PopupManager",
@@ -53,7 +54,6 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/rta/util/validateFlexEnabled"
 ],
 function(
@@ -89,7 +89,8 @@ function(
 	DtUtil,
 	ElementUtil,
 	FlexUtils,
-	FlexSettings,
+	FeaturesAPI,
+	PersistenceWriteAPI,
 	MessageBox,
 	MessageToast,
 	PopupManager,
@@ -106,7 +107,6 @@ function(
 	Measurement,
 	Log,
 	KeyCodes,
-	PersistenceWriteAPI,
 	validateFlexEnabled
 ) {
 	"use strict";
@@ -709,19 +709,16 @@ function(
 	/**
 	 * Checks the Publish button and app variant support (i.e. Save As and Overview of App Variants) availability
 	 * @private
-	 * @returns {boolean[]} Returns an array of boolean values [bPublishAvailable, bAppVariantSupportAvailable]
+	 * @returns {Promise<boolean[]>} Returns a Promise with an array of boolean values [bPublishAvailable, bAppVariantSupportAvailable]
 	 * @description The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
 	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 */
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
-		return FlexSettings.getInstance().then(function(oSettings) {
+		return FeaturesAPI.isPublishAvailable().then(function(bIsPublishAvailabe) {
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
-			return [!oSettings.isProductiveSystem(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
-		}.bind(this))
-		.catch(function () {
-			return false;
-		});
+			return [bIsPublishAvailabe, bIsPublishAvailabe && bIsAppVariantSupported];
+		}.bind(this));
 	};
 
 	var fnShowTechnicalError = function(vError) {
