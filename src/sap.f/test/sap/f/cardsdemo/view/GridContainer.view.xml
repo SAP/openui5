@@ -32,22 +32,22 @@
 			</Panel>
 
 			<Panel headerText="Card Group 1">
-				<HBox justifyContent="Center">
+				<HBox>
 					<f:GridContainer id="grid1">
 						<f:layoutXL>
-							<f:GridContainerSettings columns="14" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+							<f:GridContainerSettings columns="14" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutXL>
 						<f:layoutL>
-							<f:GridContainerSettings columns="10" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+							<f:GridContainerSettings columns="10" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutL>
 						<f:layoutM>
-							<f:GridContainerSettings columns="6" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+							<f:GridContainerSettings columns="6" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutM>
 						<f:layoutS>
-							<f:GridContainerSettings columns="4" rowSize="84px" minColumnSize="84px" maxColumnSize="105px" gap="8px" />
+							<f:GridContainerSettings columns="4" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutS>
 						<f:layoutXS>
-							<f:GridContainerSettings columns="4" rowSize="70px" minColumnSize="70px" maxColumnSize="105px" gap="8px" />
+							<f:GridContainerSettings columns="4" rowSize="70px" columnSize="70px" gap="8px" />
 						</f:layoutXS>
 						<f:items>
 							<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
@@ -167,22 +167,22 @@
 			</Panel>
 
 			<Panel headerText="Card Group 2">
-				<HBox justifyContent="Center">
+				<HBox>
 					<f:GridContainer id="grid2">
 						<f:layoutXL>
-							<f:GridContainerSettings columns="14" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+							<f:GridContainerSettings columns="14" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutXL>
 						<f:layoutL>
-							<f:GridContainerSettings columns="10" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+							<f:GridContainerSettings columns="10" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutL>
 						<f:layoutM>
-							<f:GridContainerSettings columns="6" rowSize="84px" minColumnSize="84px" maxColumnSize="126px" gap="8px" />
+							<f:GridContainerSettings columns="6" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutM>
 						<f:layoutS>
-							<f:GridContainerSettings columns="4" rowSize="84px" minColumnSize="84px" maxColumnSize="105px" gap="8px" />
+							<f:GridContainerSettings columns="4" rowSize="84px" columnSize="84px" gap="8px" />
 						</f:layoutS>
 						<f:layoutXS>
-							<f:GridContainerSettings columns="4" rowSize="70px" minColumnSize="70px" maxColumnSize="105px" gap="8px" />
+							<f:GridContainerSettings columns="4" rowSize="70px" columnSize="70px" gap="8px" />
 						</f:layoutXS>
 						<f:items>
 							<GenericTile header="Comulative Tools" subheader="Expenses">

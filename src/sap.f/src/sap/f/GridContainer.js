@@ -706,7 +706,7 @@ sap.ui.define([
 		if (hasItemAutoHeight(oItem)) {
 			var $item = oItem.$(),
 				oSettings = this.getActiveLayoutSettings(),
-				iRows = oSettings.calculateRowsForItem($item.height());
+				iRows = oSettings.calculateRowsForItem($item.outerHeight());
 
 			if (!iRows) {
 				// if the rows can not be calculated correctly, don't do anything
@@ -887,7 +887,7 @@ sap.ui.define([
 			columns = getItemColumnCount(item);
 
 			if (hasItemAutoHeight(item)) {
-				rows = oSettings.calculateRowsForItem($item.height());
+				rows = this._calcAutoRowsForPolyfill(item, oSettings);
 			} else {
 				rows = getItemRowCount(item);
 			}
@@ -920,6 +920,34 @@ sap.ui.define([
 		});
 
 		$that.css("height", virtualGrid.getHeight() + "px");
+	};
+
+	/**
+	 * Calculates rows count for item depending on its height.
+	 * @param {sap.ui.core.Control} oItem The item to calculate for
+	 * @param {sap.f.GridContainerSettings} oGridSettings The current grid settings
+	 * @returns {int} The number of rows which the item should have
+	 * @private
+	 */
+	GridContainer.prototype._calcAutoRowsForPolyfill = function (oItem, oGridSettings) {
+		var $item = oItem.$(),
+			iItemHeight,
+			iRows;
+
+		// height is explicitly set to 100% for analytical card
+		// so we need to use the scrollHeight for it
+		if ($item.hasClass("sapFCardAnalytical")) {
+			iItemHeight = $item[0].scrollHeight;
+		} else {
+			iItemHeight = $item.outerHeight();
+		}
+
+		iRows = Math.max(
+			oGridSettings.calculateRowsForItem(iItemHeight),
+			getItemRowCount(oItem)
+		);
+
+		return iRows;
 	};
 
 	/**

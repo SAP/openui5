@@ -414,6 +414,27 @@ function (
 		});
 	}
 
+	QUnit.test("Item height should be no less than the minRows", function (assert) {
+		// Arrange
+		var oItem1 = new Card({
+				layoutData: new GridContainerItemLayoutData({minRows: 4})
+			}),
+			oItem2 = new GenericTile({
+				layoutData: new GridContainerItemLayoutData({minRows: 4})
+			}),
+			iExpectedHeight = 4 * 80 + 3 * 10; // 4 rows and 3 gaps
+
+		// Act
+		this.oGrid.setLayout(new GridContainerSettings({ rowSize: "80px", gap: "10px" }));
+		this.oGrid.addItem(oItem1);
+		this.oGrid.addItem(oItem2);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oItem1.$().parent().height(), iExpectedHeight, "Card height is equal to minRows.");
+		assert.strictEqual(oItem1.$().parent().height(), iExpectedHeight, "Tile height is equal to minRows.");
+	});
+
 	QUnit.module("Layout settings", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
