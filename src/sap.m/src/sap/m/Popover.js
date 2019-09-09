@@ -982,7 +982,7 @@ sap.ui.define([
 		Popover.prototype._includeScrollWidth = function () {
 			var sContentWidth = this.getContentWidth(),
 				$popover = this.$(),
-				iMaxWidth =  Math.floor(window.innerWidth * 0.9), //90% of the max screen size
+				iMaxWidth = Math.floor(window.innerWidth * 0.9), //90% of the max screen size
 				$popoverContent = this.$('cont');
 
 			if (!$popoverContent[0]) {
@@ -991,23 +991,17 @@ sap.ui.define([
 
 			// Browsers except chrome do not increase the width of the container to include scrollbar
 			if (Device.system.desktop && !Device.browser.chrome) {
+				var bHasVerticalScrollbar = $popoverContent[0].clientHeight < $popoverContent[0].scrollHeight;
 
-				var bHasVerticalScrollbar = $popoverContent[0].clientHeight < $popoverContent[0].scrollHeight,
-					sCurrentWidthAndHeight = $popoverContent.width() + "x" + $popoverContent.height();
+				if (bHasVerticalScrollbar &&					// - there is a vertical scroll
+					(!sContentWidth || sContentWidth === 'auto') &&	// - when the developer hasn't set it explicitly
+					$popoverContent.width() < iMaxWidth) {		// - if the popover hasn't reached a threshold size
 
-				if (sCurrentWidthAndHeight !== this._iLastWidthAndHeightWithScroll) {
-					if (bHasVerticalScrollbar &&					// - there is a vertical scroll
-						(!sContentWidth || sContentWidth == 'auto') &&	// - when the developer hasn't set it explicitly
-						$popoverContent.width() < iMaxWidth) {		// - if the popover hasn't reached a threshold size
-
-						$popover.addClass("sapMPopoverVerticalScrollIncluded");
-						$popoverContent.css({"padding-right" : iScrollbarWidth});
-						this._iLastWidthAndHeightWithScroll = sCurrentWidthAndHeight;
-					} else {
-						$popover.removeClass("sapMPopoverVerticalScrollIncluded");
-						$popoverContent.css({"padding-right" : ""});
-						this._iLastWidthAndHeightWithScroll = null;
-					}
+					$popover.addClass("sapMPopoverVerticalScrollIncluded");
+					$popoverContent.css({"padding-right": iScrollbarWidth});
+				} else {
+					$popover.removeClass("sapMPopoverVerticalScrollIncluded");
+					$popoverContent.css({"padding-right": ""});
 				}
 			}
 		};
@@ -2118,7 +2112,6 @@ sap.ui.define([
 			setTimeout(function () {
 				$Ref.css("display", "block");
 				that._includeScrollWidth();
-
 				that._animation(function () {
 					if (!that.oPopup || that.oPopup.getOpenState() !== OpenState.OPENING) {
 						return;
