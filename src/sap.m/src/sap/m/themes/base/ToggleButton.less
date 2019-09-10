@@ -16,19 +16,19 @@ html.sap-desktop .sapMIBar-CTX .sapMToggleBtnPressed,
 html.sap-desktop .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed,
 .sapMTB-Transparent-CTX .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
 	background-image: none;
-	background-color: @sapUiToggleButtonPressedBackground;
-	border-color: @sapUiToggleButtonPressedBorderColor;
-	color: @sapUiToggleButtonPressedTextColor;
+	background-color: @sapUiButtonSelectedBackground;
+	border-color: @sapUiButtonSelectedBorderColor;
+	color: @sapUiButtonSelectedTextColor;
 	text-shadow: none;
 	&.sapMBtnReject {
 		background-color: @sapUiButtonRejectActiveBackground;
 		border-color: @sapUiButtonRejectActiveBorderColor;
-		color: @sapUiToggleButtonPressedTextColor;
+		color: contrast(@sapUiButtonRejectActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);;
 	}
 	&.sapMBtnAccept {
 		background-color: @sapUiButtonAcceptActiveBackground;
 		border-color: @sapUiButtonAcceptActiveBorderColor;
-		color: @sapUiToggleButtonPressedTextColor;
+		color: contrast(@sapUiButtonAcceptActiveBackground, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);;
 	}
 }
 
@@ -61,18 +61,18 @@ html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
 /* hover and down on toggled button part 1*/
 .sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive),
 .sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
-	background-color: @sapUiToggleButtonPressedHoverBackground;
-	border-color: @sapUiToggleButtonPressedBorderColor;
-	color: @sapUiToggleButtonPressedTextColor;
+	background-color: @sapUiButtonSelectedHoverBackground;
+	border-color: @sapUiButtonSelectedHoverBorderColor;
+	color: @sapUiButtonSelectedTextColor;
 	text-shadow: none;
 	&.sapMBtnReject {
 		background-color: darken(@sapUiButtonRejectActiveBackground, 5);
 		border-color: @sapUiButtonRejectActiveBorderColor;
-		color: @sapUiToggleButtonPressedTextColor;
+		color: contrast(lighten(@sapUiButtonRejectActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 	}
 	&.sapMBtnAccept {
 		background-color: darken(@sapUiButtonAcceptActiveBackground, 5);
 		border-color: @sapUiButtonAcceptActiveBorderColor;
-		color: @sapUiToggleButtonPressedTextColor;
+		color: contrast(lighten(@sapUiButtonAcceptActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 	}
 }
