@@ -31,7 +31,7 @@
 
 	.sapMInputBaseContentWrapper {
 		min-width: @_InputBase_Control_Tokens_MinWidth;
-		&.sapMInputBaseContentWrapperState {
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 			min-width: @_InputBase_Control_Tokens_State_MinWidth;
 		}
 	}
@@ -79,7 +79,7 @@
 	.sapMMultiInput.sapMMultiInputHasTokens {
 		.sapMInputBaseContentWrapper {
 			min-width: @_InputBase_Control_Tokens_MinWidth_Compact;
-			&.sapMInputBaseContentWrapperState {
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 				min-width: @_InputBase_Control_Tokens_State_MinWidth_Compact;
 			}
 		}
@@ -120,7 +120,7 @@
 .sapMMultiInput.sapMMultiInputHasTokens {
 	.sapMInputDescriptionWrapper {
 		max-width: ~"calc(100% - (@{_InputBase_Control_Tokens_MinWidth}))";
-		.sapMInputBaseState & {
+		.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 			max-width: ~"calc(100% - (@{_InputBase_Control_Tokens_State_MinWidth}))";
 		}
 
@@ -132,7 +132,7 @@
 	.sapUiSizeCompact & {
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_Tokens_MinWidth_Compact}))";
-			.sapMInputBaseState & {
+			.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 				max-width: ~"calc(100% - (@{_InputBase_Control_Tokens_State_MinWidth_Compact}))";
 			}
 

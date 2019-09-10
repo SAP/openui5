@@ -23,7 +23,7 @@
 
 	.sapMInputBaseContentWrapper {
 		min-width: @_InputBase_Control_Tokens_MinWidth;
-		&.sapMInputBaseContentWrapperState {
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 			min-width: @_InputBase_Control_Tokens_State_MinWidth;
 		}
 	}
@@ -115,7 +115,7 @@ html.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
 	.sapMMultiComboBox.sapMMultiComboBoxHasToken {
 		.sapMInputBaseContentWrapper {
 			min-width: @_InputBase_Control_Tokens_MinWidth_Compact;
-			&.sapMInputBaseContentWrapperState {
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 				min-width: @_InputBase_Control_Tokens_State_MinWidth_Compact;
 			}
 		}

@@ -49,7 +49,7 @@
 .sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
 	.sapMInputBaseContentWrapper {
 		min-width: @_InputBase_Control_OneIcon_MinWidth;
-		&.sapMInputBaseContentWrapperState {
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 			min-width: @_InputBase_Control_OneIcon_State_MinWidth;
 		}
 	}
@@ -58,7 +58,7 @@
 .sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
 	.sapMInputBaseContentWrapper {
 		min-width: @_InputBase_Control_TwoIcons_MinWidth;
-		&.sapMInputBaseContentWrapperState {
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 			min-width: @_InputBase_Control_TwoIcons_State_MinWidth;
 		}
 	}
@@ -67,7 +67,7 @@
 .sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
 	.sapMInputBaseContentWrapper {
 		min-width: @_InputBase_Control_MinWidth;
-		&.sapMInputBaseContentWrapperState {
+		&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 			min-width: @_InputBase_Control_State_MinWidth;
 		}
 	}
@@ -156,7 +156,7 @@
 		outline: 1px dotted @sapUiContentFocusColor;
 		outline-offset: -3px;
 	}
-	&.sapMInputBaseState .sapMInputBaseContentWrapper {
+	&.sapMInputBaseState .sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperSuccess) {
 		outline-offset: -4px;
 	}
 }
@@ -341,7 +341,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		line-height: 1.5rem;
 	}
 
-	.sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState .sapMInputBaseIcon {
+	.sapMInputBaseContentWrapper.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) .sapMInputBaseIcon {
 		line-height: 1.375rem;
 	}
 
@@ -357,7 +357,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
 		.sapMInputBaseContentWrapper {
 			min-width: @_InputBase_Control_OneIcon_MinWidth_Compact;
-			&.sapMInputBaseContentWrapperState {
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 				min-width: @_InputBase_Control_OneIcon_State_MinWidth_Compact;
 			}
 		}
@@ -366,7 +366,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
 		.sapMInputBaseContentWrapper {
 			min-width: @_InputBase_Control_TwoIcons_MinWidth_Compact;
-			&.sapMInputBaseContentWrapperState {
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 				min-width: @_InputBase_Control_TwoIcons_State_MinWidth_Compact;
 			}
 		}
@@ -375,7 +375,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
 		.sapMInputBaseContentWrapper {
 			min-width: @_InputBase_Control_MinWidth_Compact;
-			&.sapMInputBaseContentWrapperState {
+			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 				min-width: @_InputBase_Control_State_MinWidth_Compact;
 			}
 		}
@@ -401,7 +401,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMInputBaseInner:not(.sapMInputBaseContentWrapperState) {
 		border-color: transparent;
 	}
-	.sapMInputBaseContentWrapper {
+	.sapMInputBaseContentWrapper:not(.sapMInputBaseContentWrapperSuccess) {
 		height: 1.375rem;
 	}
 }
