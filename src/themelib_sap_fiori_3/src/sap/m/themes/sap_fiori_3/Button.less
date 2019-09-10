@@ -10,12 +10,21 @@
 }
 
 .sapMBtnEmphasized {
-	font-weight: bold;
+	font-weight: @sapUiButtonEmphasizedFontWeight;
 }
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive),
 span.sapMBtnInner.sapMBtnEmphasized {
 	text-shadow: none;
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive) {
+	color: @sapUiButtonEmphasizedHoverTextColor;
+	font-weight: @sapUiButtonEmphasizedFontWeight;
+	.sapMBtnIcon {
+		color: @sapUiButtonEmphasizedHoverTextColor;
+	}
+
 }
 
 /* --------------------- */
