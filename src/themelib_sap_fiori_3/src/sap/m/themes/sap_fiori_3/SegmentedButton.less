@@ -16,12 +16,12 @@
 			padding-right: 0.5625rem;
 			text-align: center;
 			text-shadow: none;
-			color: @sapUiSegmentedButtonTextColor;
-			border-top: 1px solid @sapUiSegmentedButtonBorderColor;
-			border-left: 1px solid @sapUiSegmentedButtonBorderColor;
-			border-bottom: 1px solid @sapUiSegmentedButtonBorderColor;
+			color: @sapUiButtonTextColor;
+			border-top: 1px solid @sapUiButtonBorderColor;
+			border-left: 1px solid @sapUiButtonBorderColor;
+			border-bottom: 1px solid @sapUiButtonBorderColor;
 			border-right: 1px solid transparent;
-			background-color: @sapUiSegmentedButtonBackground;
+			background-color: @sapUiButtonBackground;
 		}
 		&:not(.sapMSegBBtnMixed) .sapMImg {
 			padding-left: 0.5625rem;
@@ -41,7 +41,7 @@
 }
 
 html.sap-desktop .sapMSegBBtnFocusable:hover .sapMSegBBtnInner {
-	background: @sapUiSegmentedButtonHoverBackground;
+	background: @sapUiButtonHoverBackground;
 }
 
 /* Custom focus outline: */
@@ -81,34 +81,55 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapMSegBBtnFocusable.sapMSegBBtnSel
 	}
 }
 
-.sapMSegBBtn.sapMSegBBtnSel {
+.sapMSegBBtn.sapMSegBBtnFocusable:active:hover {
 	.sapMSegBBtnInner {
-		background: @sapUiSegmentedButtonSelectedBackground;
-		color: @sapUiSegmentedButtonSelectedTextColor;
-		border-color: @sapUiSegmentedButtonSelectedHoverBorderColor;
+		background: @sapUiButtonSelectedBackground;
+		color: @sapUiButtonSelectedTextColor;
+		border-color: @sapUiButtonSelectedBorderColor;
 	}
 	.sapUiIcon {
-		color: @sapUiSegmentedButtonSelectedIconColor;
+		color: @sapUiButtonSelectedTextColor;
 	}
 }
+
+.sapMSegBBtn.sapMSegBBtnSel {
+	.sapMSegBBtnInner {
+		background: @sapUiButtonSelectedBackground;
+		color: @sapUiButtonSelectedTextColor;
+		border-color: @sapUiButtonSelectedBorderColor;
+	}
+	.sapUiIcon {
+		color: @sapUiButtonSelectedTextColor;
+	}
+}
+
+.sapMSegBBtn.sapMSegBBtnSel:hover {
+	.sapMSegBBtnInner {
+		border-color: @sapUiButtonSelectedHoverBorderColor;
+	}
+}
+
 .sapMSegBBtnFocusable.sapMBtnActive {
 	.sapMSegBBtnInner {
-		background: @sapUiButtonActiveBackground;
-		color: @sapUiSegmentedButtonActiveTextColor;
+		background: @sapUiButtonSelectedBackground;
+		color: @sapUiButtonSelectedTextColor;
 	}
 	.sapUiIcon{
-		color: @sapUiSegmentedButtonActiveIconColor;
+		color: @sapUiButtonSelectedTextColor;
 	}
 }
 
 html.sap-desktop .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel:hover .sapMSegBBtnInner,
 html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
-	background: @sapUiSegmentedButtonSelectedHoverBackground;
+	background: @sapUiButtonSelectedHoverBackground;
 }
 
 .sapMSegBBtn.sapMSegBBtnFocusable.sapMSegBBtnSel {
 	.sapMSegBBtnInner {
-		border-right: 1px solid @sapUiSegmentedButtonSelectedHoverBorderColor;
+		border-right: 1px solid @sapUiButtonSelectedBorderColor;
+	}
+	.sapMSegBBtnInner:hover {
+		border-right: 1px solid @sapUiButtonSelectedHoverBorderColor;
 	}
 	// Hide next button left border
 	+ .sapMSegBBtn .sapMSegBBtnInner {
@@ -128,7 +149,7 @@ html.sap-desktop .sapMSegBBtnFocusable.sapMBtnActive:hover .sapMSegBBtnInner {
 	font-size: 1rem;
 	line-height: 2.125rem;
 	margin-right: 0;
-	color: @sapUiSegmentedButtonIconColor;
+	color: @sapUiButtonIconColor;
 	vertical-align: top;
 	text-align: center;
 }
@@ -220,7 +241,7 @@ html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"] {
 }
 
 .sapMSegBBtn.sapMSegBtnLastVisibleButton .sapMSegBBtnInner {
-	border-right: 1px solid @sapUiSegmentedButtonBorderColor;
+	border-right: 1px solid @sapUiButtonBorderColor;
 	border-top-right-radius: 0.2rem;
 	border-bottom-right-radius: 0.2rem;
 }
