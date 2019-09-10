@@ -52,8 +52,8 @@ function (
 		beforeEach: function () {
 			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
-			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
-			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: oCommandSerializer, layer: "CUSTOMER"});
+			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
+			this.oAppVariantManager = new AppVariantManager({rootControl: oRootControl, commandSerializer: this.oCommandSerializer, layer: "CUSTOMER"});
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -152,8 +152,8 @@ function (
 			};
 
 			var oRtaCommandStack = new Stack();
-			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oAppComponent});
-			this.oAppVariantManager = new AppVariantManager({rootControl: this.oAppComponent, commandSerializer: oCommandSerializer, layer: "CUSTOMER"});
+			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oAppComponent});
+			this.oAppVariantManager = new AppVariantManager({rootControl: this.oAppComponent, commandSerializer: this.oCommandSerializer, layer: "CUSTOMER"});
 
 			oServer = sinon.fakeServer.create();
 
@@ -240,9 +240,9 @@ function (
 		beforeEach: function () {
 			this.oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
-			var oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
+			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
 
-			this.oAppVariantManager = new AppVariantManager({rootControl: this.oRootControl, commandSerializer: oCommandSerializer, layer: "CUSTOMER"});
+			this.oAppVariantManager = new AppVariantManager({rootControl: this.oRootControl, commandSerializer: this.oCommandSerializer, layer: "CUSTOMER"});
 			oServer = sinon.fakeServer.create();
 		},
 		afterEach: function () {
@@ -269,38 +269,21 @@ function (
 		});
 
 		QUnit.test("When clearRTACommandStack() method is called without any unsaved changes", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
-				})
-			);
-
-			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
-
-			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId",
-					applicationVersion: {
-						version: "1.2.3"
-					}
-				}
-			};
-
-			var oManifest = new Manifest(oDescriptor);
-			var oComponent = {
-				name: "testComponent",
-				getManifest : function() {
-					return oManifest;
-				}
-			};
-
-			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComponent);
-
-			return this.oAppVariantManager.clearRTACommandStack("AppVariantId", false).then(function() {
+			var fnClearCommandStackStub = sandbox.stub(this.oCommandSerializer, "clearCommandStack").resolves();
+			return this.oAppVariantManager.clearRTACommandStack(false).then(function() {
 				assert.ok("then the promise is resolved");
+				assert.ok(fnClearCommandStackStub.notCalled, "then LREPSerializer.clearCommandStack is never called");
+			});
+		});
+
+		QUnit.test("When clearRTACommandStack() method is called with some dirty changes", function (assert) {
+			sandbox.stub(this.oCommandSerializer.getCommandStack(), "getAllExecutedCommands").returns(["firstCommand", "secondCommand"]);
+
+			var fnClearCommandStackStub = sandbox.stub(this.oCommandSerializer, "clearCommandStack").resolves();
+
+			return this.oAppVariantManager.clearRTACommandStack(true).then(function() {
+				assert.ok("then the promise is resolved");
+				assert.ok(fnClearCommandStackStub.calledOnce, "then LREPSerializer.clearCommandStack is called once");
 			});
 		});
 
