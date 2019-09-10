@@ -158,14 +158,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {String} sAppVariantId - Application variant ID
 	 * @returns {Promise} Resolved promise
 	 * @description Deletes the app variant from backend.
 	 */
-	AppVariantManager.prototype.deleteAppVariant = function(sAppVariantId) {
-		return AppVariantUtils.deleteAppVariant({
-			appId: sAppVariantId
-		});
+	AppVariantManager.prototype.deleteAppVariant = function() {
+		return AppVariantUtils.deleteAppVariant(this.getRootControl());
 	};
 
 	/**

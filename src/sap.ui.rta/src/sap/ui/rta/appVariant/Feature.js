@@ -340,7 +340,7 @@ sap.ui.define([
 					}
 
 					var fnDeleteAppVariant = function() {
-						return oAppVariantManager.deleteAppVariant(sAppVariantId)
+						return oAppVariantManager.deleteAppVariant()
 							.catch(function(oError) {
 								var sMessageKey = oError.messageKey;
 								if (!sMessageKey) {
