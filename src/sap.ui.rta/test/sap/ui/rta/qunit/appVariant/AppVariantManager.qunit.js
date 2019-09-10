@@ -262,10 +262,10 @@ function (
 		QUnit.test("When deleteAppVariant() method is called", function (assert) {
 			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
 
-			return this.oAppVariantManager.deleteAppVariant()
+			return this.oAppVariantManager.deleteAppVariant("customer.app.var.id")
 				.then(function() {
-					assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: this.oRootControl}), "then PersistenceWriteApi.deleteAppVariant method is called with correct parameters");
-				}.bind(this));
+					assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: {appId: "customer.app.var.id"}}), "then PersistenceWriteApi.deleteAppVariant method is called with correct parameters");
+				});
 		});
 
 		QUnit.test("When clearRTACommandStack() method is called without any unsaved changes", function (assert) {
