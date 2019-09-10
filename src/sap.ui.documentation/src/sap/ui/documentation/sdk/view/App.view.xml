@@ -147,7 +147,9 @@
 			<ScrollContainer
 					id="contentId"
 					width="100%"
-					height="{= ${appView>/bPhoneSize} &amp;&amp; ${appView>/bHasMaster} ? 'calc(100% - 5rem)' : 'calc(100% - 3rem)'}"
+					height="{= ${appView>/bPhoneSize} &amp;&amp; ${appView>/bHasMaster} ?
+					'calc(100% - ' + ${appView>/oThemeScrollContainerHeight/iMobileHeight} + ')' :
+				 	'calc(100% - ' + ${appView>/oThemeScrollContainerHeight/iDesktopHeight} + ')'}"
 					horizontal="false"
 					vertical="false">
 				<SplitApp id="splitApp"
