@@ -2,18 +2,21 @@ sap.ui.define([
 		"sap/ui/demo/cardExplorer/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/Device",
+		"sap/ui/core/routing/History",
 		"../model/DocumentationNavigationModel",
 		"../model/ExploreNavigationModel",
 		"../model/IntegrateNavigationModel"
 	], function (BaseController,
 				 JSONModel,
 				 Device,
+				 History,
 				 documentationNavigationModel,
 				 exploreNavigationModel,
 				 integrateNavigationModel) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.cardExplorer.controller.App", {
+
 			/**
 			 * Called when the app is started.
 			 */
@@ -33,6 +36,39 @@ sap.ui.define([
 				Device.media.detachHandler(this.onDeviceSizeChange, this);
 			},
 
+			/**
+			 * @param {Array|string} vKey The key or keys to check in the history.
+			 * @returns {string} The first subkey found in the history.
+			 */
+			_findPreviousSubkey: function (vKey) {
+				var aKeys = [];
+				var oHistory = History.getInstance();
+
+				if (typeof vKey === "string") {
+					aKeys[0] = vKey;
+				} else {
+					aKeys = vKey;
+				}
+
+				if (!oHistory.aHistory) {
+					return "";
+				}
+
+				for (var i = oHistory.aHistory.length - 1; i >= 0; i--) {
+					var sHistory = oHistory.aHistory[i];
+
+					for (var k = 0; k < aKeys.length; k++) {
+						var sKey = aKeys[k];
+
+						if (sHistory.startsWith(sKey + "/")) {
+							return sHistory.substring((sKey + "/").length, sHistory.length);
+						}
+					}
+				}
+
+				return "";
+			},
+
 			onTabSelect: function (oEvent) {
 				var item = oEvent.getParameter('item'),
 					key = item.getKey();
@@ -41,13 +77,19 @@ sap.ui.define([
 				switch (key) {
 					case "exploreSamples":
 						// there is no home page for exploreSamples, so navigate to first example
-						this.getRouter().navTo("exploreSamples", {key: "list"});
+						this.getRouter().navTo("exploreSamples", {
+							key: this._findPreviousSubkey(["explore", "exploreOverview"]) || "list"
+						});
 						return;
 					case "learnDetail":
-						this.getRouter().navTo("learnDetail", {key: "overview"});
+						this.getRouter().navTo("learnDetail", {
+							key: this._findPreviousSubkey("learn") || "overview"
+						});
 						return;
 					case "integrate":
-						this.getRouter().navTo("integrate", {key: "overview"});
+						this.getRouter().navTo("integrate", {
+							key: this._findPreviousSubkey("integrate") || "overview"
+						});
 						return;
 					default:
 						this.getRouter().navTo(key);
