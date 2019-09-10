@@ -1031,6 +1031,32 @@
 			],
 			selected : "{selected}"
 		}));
+		
+		/* TableSelectDialog with resizable true */
+
+		var oTableSelectDialog13 = new sap.m.TableSelectDialog("TableSelectDialog13", {
+			title: "Table Select Dialog with resizable and draggable true",
+			noDataText: "Table Select Dialog with resizable and draggable true no data",
+			contentWidth: "1000px",
+			resizable: true,
+			draggable: true
+		});
+
+		// set model & bind Aggregation
+		oTableSelectDialog13.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog13.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+		var oButton13 = new sap.m.Button("Button13", {
+			text: "Open SelectDialog with resizable=true",
+			press: function () {
+				// open dialog
+				oTableSelectDialog13.open();
+			}
+		});
 
 		// create the application page
 		var oPage = new sap.m.Page("page", {
@@ -1049,7 +1075,8 @@
 						oButton9,
 						oButton10,
 						oButton11,
-						oButton12
+						oButton12,
+						oButton13
 					]
 				})
 			]

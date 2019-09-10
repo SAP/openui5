@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/m/Bar',
 	'sap/ui/core/theming/Parameters',
 	'sap/m/Title',
-	'./TableSelectDialogRenderer'
+	'./TableSelectDialogRenderer',
+	'sap/base/Log'
 ],
 	function(
 		Button,
@@ -35,7 +36,8 @@ sap.ui.define([
 		Bar,
 		Parameters,
 		Title,
-		TableSelectDialogRenderer
+		TableSelectDialogRenderer,
+		Log
 	) {
 	"use strict";
 
@@ -88,6 +90,8 @@ sap.ui.define([
 	 * <li>When the property <code>growing</code> is set to <code>true</code> (default value), the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, work only for the currently loaded items.
 	 * To make sure that all items in the table are loaded at once and the above features work properly, set the property to <code>false</code>.
 	 * <li>Since version 1.58, the columns headers and the info toolbar are sticky (remain fixed on top when scrolling). This feature is not supported in all browsers.
+	 * <li>The TableSelectDialog is usually displayed at the center of the screen. Its size and position can be changed by the user.
+	 * To enable this you need to set the <code>resizable</code> and <code>draggable</code> properties. Both properties are available only in desktop mode.</li>
 	 * For more information on browser support limitations, you can refer to the {@link sap.m.ListBase sap.m.ListBase} <code>sticky</code> property.
 	 * </ul>
 	 * <h3>Responsive Behavior</h3>
@@ -177,7 +181,17 @@ sap.ui.define([
 			 * Overwrites the default text for the confirmation button.
 			 * @since 1.68
 			 */
-			confirmButtonText: {type : "string", group : "Appearance"}
+			confirmButtonText: {type : "string", group : "Appearance"},
+						/**
+			 * When set to <code>true</code>, the TableSelectDialog is draggable by its header. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be draggable only in desktop mode.
+			 * @since 1.71
+			 */
+			draggable: {type: "boolean", group: "Behavior", defaultValue: false},
+			/**
+			 * When set to <code>true</code>, the TableSelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be resizable only in desktop mode.
+			 * @since 1.71
+			 */
+			resizable: {type: "boolean", group: "Behavior", defaultValue: false}
 
 		},
 		defaultAggregation : "items",
@@ -393,7 +407,9 @@ sap.ui.define([
 			subHeader: this._oSubHeader,
 			content: [this._oBusyIndicator, this._oTable],
 			endButton: this._getCancelButton(),
-			initialFocus: ((Device.system.desktop && this._oSearchField) ? this._oSearchField : null)
+			initialFocus: ((Device.system.desktop && this._oSearchField) ? this._oSearchField : null),
+			draggable: this.getDraggable() && Device.system.desktop,
+			resizable: this.getResizable() && Device.system.desktop
 		});
 		this._dialog = this._oDialog; // for downward compatibility
 		this.setAggregation("_dialog", this._oDialog);
@@ -577,6 +593,49 @@ sap.ui.define([
 		this.setProperty("growingThreshold", iValue, true);
 
 		return this;
+	};
+
+	/**
+	 * Sets the draggable property.
+	 * @public
+	 * @param {boolean} bValue Value for the draggable property
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 */
+	TableSelectDialog.prototype.setDraggable = function (bValue) {
+		this._setInteractionProperty(bValue, "draggable", this._oDialog.setDraggable);
+
+		return this;
+	};
+
+	/**
+	 * Sets the resizable property.
+	 * @public
+	 * @param {boolean} bValue Value for the resizable property
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
+	 */
+	TableSelectDialog.prototype.setResizable = function (bValue) {
+		this._setInteractionProperty(bValue, "resizable", this._oDialog.setResizable);
+
+		return this;
+	};
+
+	/**
+	 * @private
+	 * @param {boolean} bValue Value for the property
+	 * @param {string} sPropertyType Property type
+	 * @param {function} fnCallback Callback function
+	 */
+	TableSelectDialog.prototype._setInteractionProperty = function(bValue, sPropertyType, fnCallback) {
+		this.setProperty(sPropertyType, bValue, true);
+
+		if (!Device.system.desktop && bValue) {
+			Log.warning(sPropertyType + " property works only on desktop devices!");
+			return;
+		}
+
+		if (Device.system.desktop && this._oDialog) {
+			fnCallback.call(this._oDialog, bValue);
+		}
 	};
 
 	/**

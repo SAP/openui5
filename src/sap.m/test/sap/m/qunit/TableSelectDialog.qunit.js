@@ -385,6 +385,76 @@ sap.ui.define([
 		assert.strictEqual(searchFieldEnabled, true, 'The SearchField should be enabled');
 	});
 
+	QUnit.test("draggable: true on desktop", function (assert) {
+		// Arrange
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
+		this.stub(Device, "system", oSystem);
+
+		// Act
+		oTableSelectDialog.setDraggable(true);
+
+		// Assert
+		assert.strictEqual(oTableSelectDialog.getDraggable(), true, "draggable is set correctly in the TableSelectDialog");
+		assert.strictEqual(oTableSelectDialog._oDialog.getDraggable(), true, "draggable is set correctly in the Dialog");
+	});
+
+	QUnit.test("draggable: true on mobile device", function (assert) {
+		// Arrange
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+		this.stub(Device, "system", oSystem);
+
+		// Act
+		oTableSelectDialog1.setDraggable(true);
+
+		// Assert
+		assert.strictEqual(oTableSelectDialog1.getDraggable(), true, "draggable is set correctly in the TableSelectDialog");
+		assert.strictEqual(oTableSelectDialog1._oDialog.getDraggable(), false, "draggable is set correctly in the Dialog");
+	});
+
+	QUnit.test("resizable: true on desktop device", function (assert) {
+		// Arrange
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
+		this.stub(Device, "system", oSystem);
+
+		// Act
+		oTableSelectDialog.setResizable(true);
+
+		// Assert
+		assert.strictEqual(oTableSelectDialog.getResizable(), true, "resizable is set correctly in the TableSelectDialog");
+		assert.strictEqual(oTableSelectDialog._oDialog.getResizable(), true, "resizable is set correctly in the Dialog");
+	});
+
+	QUnit.test("resizable: true on mobile device", function (assert) {
+		// Arrange
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+		this.stub(Device, "system", oSystem);
+
+		// Act
+		oTableSelectDialog1.setResizable(true);
+
+		// Assert
+		assert.strictEqual(oTableSelectDialog1.getResizable(), true, "resizable is set correctly in the TableSelectDialog");
+		assert.strictEqual(oTableSelectDialog1._oDialog.getResizable(), false, "resizable is set correctly in the Dialog");
+	});
+
+
+
 	QUnit.test("confirmButtonText", function(assert) {
 		// assert
 		assert.equal(oTableSelectDialog._getOkButton().getText(),
