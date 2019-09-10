@@ -1787,6 +1787,9 @@ sap.ui.define([
 					reason : ChangeReason.Change
 				});
 			} else {
+				// ensure that the contexts are not delivered in getContexts for the refresh event,
+				// even if data is available
+				this.sChangeReason = ChangeReason.Refresh;
 				this._fireRefresh({reason : ChangeReason.Refresh});
 			}
 		}

@@ -1629,6 +1629,52 @@ sap.ui.define([
 	);
 
 	//*********************************************************************************************
+	// Scenario: Rebind a table that uses the cache of the form, so that a list binding is created
+	// for which the data is already available in the cache. Ensure that it does not deliver the
+	// contexts in getContexts for the initial refresh event, but fires an additional change event.
+	// BCP: 1980383883
+	QUnit.test("Relative ODLB created on a cache that already has its data", function (assert) {
+		var sView = '\
+<FlexBox id="form"\
+		binding="{path : \'/TEAMS(\\\'1\\\')\', parameters : {$expand : \'TEAM_2_EMPLOYEES\'}}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			oTable,
+			that = this;
+
+		this.expectRequest("TEAMS('1')?$expand=TEAM_2_EMPLOYEES", {
+				TEAM_2_EMPLOYEES : [{
+					ID : "2",
+					Name : "Frederic Fall"
+				}]
+			})
+			.expectChange("name", ["Frederic Fall"]);
+
+		return this.createView(assert, sView).then(function () {
+			var oBindingInfo;
+
+			oTable = that.oView.byId("table");
+			oBindingInfo = oTable.getBindingInfo("items");
+			oTable.unbindAggregation("items");
+
+			assert.strictEqual(oTable.getItems().length, 0);
+
+			that.expectChange("name", ["Frederic Fall"]);
+
+			// code under test
+			oTable.bindItems(oBindingInfo);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 1);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Function import.
 	// This scenario is similar to the "Favorite product ID" in the SalesOrders application. In the
 	// SalesOrders application the binding context is set programmatically. This example directly

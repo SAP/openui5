@@ -215,28 +215,37 @@ sap.ui.define([
 	[false, true].forEach(function (bSuspended) {
 		QUnit.test("initialize: absolute, suspended = " + bSuspended, function (assert) {
 			var oBinding = this.bindList("/absolute"),
-				oBindingMock = this.mock(oBinding);
+				oBindingMock = this.mock(oBinding),
+				sChangeReason = {};
 
 			oBindingMock.expects("getRootBinding").withExactArgs().returns(oBinding);
 			oBindingMock.expects("isSuspended").withExactArgs().returns(bSuspended);
 
+			oBinding.sChangeReason = sChangeReason;
 			oBindingMock.expects("_fireRefresh")
 				.exactly(bSuspended ? 0 : 1)
 				.withExactArgs({reason : ChangeReason.Refresh});
 
 			// code under test
 			oBinding.initialize();
+
+			assert.strictEqual(oBinding.sChangeReason,
+				bSuspended ? sChangeReason : ChangeReason.Refresh);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("initialize: relative, unresolved", function (assert) {
-		var oBinding = this.bindList("relative");
+		var oBinding = this.bindList("relative"),
+			sChangeReason = {};
 
+		oBinding.sChangeReason = sChangeReason;
 		this.mock(oBinding).expects("_fireRefresh").never();
 
 		// code under test
 		oBinding.initialize();
+
+		assert.strictEqual(oBinding.sChangeReason, sChangeReason);
 	});
 
 	//*********************************************************************************************
@@ -260,7 +269,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuspended) {
 		QUnit.test("initialize: relative, resolved, bSuspended = " + bSuspended, function (assert) {
-			var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
+			var sChangeReason = {},
+				oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
 				oBinding = this.bindList("relative", oContext),
 				oBindingMock = this.mock(oBinding),
 				oRootBinding = {isSuspended : function () {}};
@@ -270,9 +280,13 @@ sap.ui.define([
 			oBindingMock.expects("_fireRefresh")
 				.exactly(bSuspended ? 0 : 1)
 				.withExactArgs({reason : ChangeReason.Refresh});
+			oBinding.sChangeReason = sChangeReason;
 
 			// code under test
 			oBinding.initialize();
+
+			assert.strictEqual(oBinding.sChangeReason,
+				bSuspended ? sChangeReason : ChangeReason.Refresh);
 		});
 	});
 
