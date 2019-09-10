@@ -2343,32 +2343,47 @@ sap.ui.define([
 				reference: "a.reference",
 				layer: "CUSTOMER"
 			}).then(function(oDescriptorVariant) {
-				return oDescriptorVariant.submit().then(function(oResponse) {
-					assert.notEqual(oResponse, null);
-					assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION');
-				});
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/');
+			});
+		});
+
+		QUnit.test("Smart Business: new - submit", function(assert) {
+			var that = this;
+			return DescriptorVariantFactory.createNew({
+				id : "a.id",
+				reference: "a.reference",
+				layer: "CUSTOMER",
+				skipIam: true
+			}).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true');
 			});
 		});
 
 		QUnit.test("for existing - submit", function(assert) {
 			var that = this;
-			return DescriptorVariantFactory.createForExisting("a.id"
-					).then(function(oDescriptorVariant) {
-						return oDescriptorVariant.submit().then(function(oResponse) {
-							assert.notEqual(oResponse, null);
-							assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
-						});
-					});
+			return DescriptorVariantFactory.createForExisting("a.id")
+				.then(function(oDescriptorVariant) {
+					return oDescriptorVariant.submit();
+				}).then(function(oResponse) {
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
+				});
 		});
 
 		QUnit.test("delete - submit", function(assert) {
 			var that = this;
 			return DescriptorVariantFactory.createDeletion("a.id")
 				.then(function(oDescriptorVariant) {
-					return oDescriptorVariant.submit().then(function(oResponse) {
-						assert.notEqual(oResponse, null);
-						assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
-					});
+					return oDescriptorVariant.submit();
+				}).then(function(oResponse) {
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
 				});
 		});
 	});

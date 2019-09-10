@@ -40,12 +40,6 @@ sap.ui.define([
 			});
 		}
 
-		// S4/HANA Cloud: In case of save as scenario and smart business usecase, transport will be set as ATO_NOTIFICATION
-		if (oSettings.isAtoEnabled() && oSettings.isAtoAvailable()) {
-			var oTransportSelection = new TransportSelection();
-			return oTransportSelection.openTransportSelection(oAppVariant);
-		}
-
 		// Save As scenario for onPrem systems
 		return Promise.resolve({
 			packageName: "$TMP",
@@ -78,12 +72,6 @@ sap.ui.define([
 	}
 
 	function _moveChangesToNewFlexReference(oChange, oAppVariant) {
-		// Change the reference of UI changes
-		var oSettings = oAppVariant.getSettings();
-		if (oSettings.isAtoEnabled() && oSettings.isAtoAvailable()) {
-			// TODO: This behavior needs to be changed in the future
-			oChange.setRequest("ATO_NOTIFICATION");
-		}
 		var oPropertyBag = {
 			reference: oAppVariant.getId()
 		};
