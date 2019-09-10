@@ -251,6 +251,7 @@ sap.ui.define([
 			this.getModel("settings").setProperty("/editable", bEditable);
 
 			this._loadManifest(sManifestUrl);
+			this._sSampleManifestUrl = sManifestUrl;
 		},
 
 		_loadManifest: function (sManifestUrl) {
@@ -275,6 +276,8 @@ sap.ui.define([
 				if (typeof aValue === "string") {
 					aValue = JSON.parse(aValue);
 				}
+				var sBaseUrl = this._sSampleManifestUrl.substring(0, this._sSampleManifestUrl.length - "manifest.json".length);
+				this.byId("cardSample").setBaseUrl(sBaseUrl);
 				this.byId("cardSample").setManifest(aValue);
 				this._errorMessageStrip.setVisible(false);
 				this.byId("cardSample").refresh();

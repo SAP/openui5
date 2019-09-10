@@ -1,6 +1,7 @@
 {
 	"_version": "1.14.0",
 	"sap.app": {
+		"id": "card.explorer.icon.list.card",
 		"type": "card"
 	},
 	"sap.card": {

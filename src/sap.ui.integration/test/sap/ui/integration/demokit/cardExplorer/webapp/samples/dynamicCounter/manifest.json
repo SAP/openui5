@@ -1,6 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
+		"id": "card.explorer.dynamic.counter.list.card",
 		"type": "card",
 		"i18n": "i18n/i18n.properties"
 	},

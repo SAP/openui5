@@ -1,6 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
+		"id": "card.explorer.members.timeline.card",
 		"type": "card"
 	},
 	"sap.card": {

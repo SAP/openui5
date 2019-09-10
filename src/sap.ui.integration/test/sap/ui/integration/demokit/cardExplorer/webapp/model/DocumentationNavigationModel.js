@@ -127,6 +127,13 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					}
 				]
+			},
+			{
+				title: 'Card Bundle',
+				topicTitle: 'Card Bundle',
+				icon: 'sap-icon://attachment-zip-file',
+				target: 'learnDetail',
+				key: 'bundle'
 			}
 		]
 	});
