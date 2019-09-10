@@ -37,6 +37,9 @@ sap.ui.define([],
 			// render outer content
 			oRm.write("<div id='" + oControl.getId() + "-containerContent' ");
 			oRm.addClass("sapMTabContainerContent");
+			if (oControl.getBackgroundDesign()) {
+				oRm.class("sapMTabContainerContent" + oControl.getBackgroundDesign());
+			}
 
 			oRm.writeClasses();
 			oRm.write(">");
