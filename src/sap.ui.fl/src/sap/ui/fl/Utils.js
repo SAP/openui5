@@ -779,7 +779,7 @@ function(
 		getLrepUrl: function () {
 			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 			var oLrepConfiguration = aFlexibilityServices.find(function (oServiceConfig) {
-				return oServiceConfig.connectorName === "LrepConnector";
+				return oServiceConfig.connector === "LrepConnector";
 			});
 
 			return oLrepConfiguration ? oLrepConfiguration.url : "";
@@ -795,7 +795,7 @@ function(
 		areNewConnectorsNecessary: function () {
 			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 			var bOnlyLrepConnectorConfigured = aFlexibilityServices.every(function (oServiceConfig) {
-				return oServiceConfig.connectorName === "LrepConnector";
+				return oServiceConfig.connector === "LrepConnector";
 			});
 
 			return !bOnlyLrepConnectorConfigured;

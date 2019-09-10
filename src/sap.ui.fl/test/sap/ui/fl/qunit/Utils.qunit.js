@@ -1827,7 +1827,7 @@ function(
 
 		QUnit.test("a set url for the LRepConnector does not require the new connectors", function (assert) {
 			var aConnectorConfiguration = [{
-				connectorName: "LrepConnector",
+				connector: "LrepConnector",
 				url: "/another/url"
 			}];
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns(aConnectorConfiguration);
@@ -1838,11 +1838,11 @@ function(
 		QUnit.test("a set object does  require the new connectors", function (assert) {
 			var aConnectorConfiguration = [
 				{
-					connectorName: "LrepConnector",
+					connector: "LrepConnector",
 					url: "/another/url"
 				},
 				{
-					connectorName: "JsObjectConnector"
+					connector: "JsObjectConnector"
 				}
 			];
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns(aConnectorConfiguration);

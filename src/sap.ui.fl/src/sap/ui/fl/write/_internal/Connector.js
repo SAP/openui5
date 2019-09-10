@@ -41,7 +41,7 @@ sap.ui.define([
 
 	function sendLoadFeaturesToConnector(aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			return oConnectorConfig.connector.loadFeatures({url: oConnectorConfig.url})
+			return oConnectorConfig.connectorModule.loadFeatures({url: oConnectorConfig.url})
 				.catch(ApplyUtils.logAndResolveDefault.bind(null, {}, oConnectorConfig, "loadFeatures"));
 		});
 
@@ -77,7 +77,7 @@ sap.ui.define([
 		return getConnectorConfigByLayer(mPropertyBag.layer)
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
-				oConnectorConfig.connector.write(mPropertyBag);
+				return oConnectorConfig.connectorModule.write(mPropertyBag);
 			});
 	};
 
@@ -98,7 +98,7 @@ sap.ui.define([
 		return getConnectorConfigByLayer(mPropertyBag.layer)
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
-				return oConnectorConfig.connector.reset(mPropertyBag);
+				return oConnectorConfig.connectorModule.reset(mPropertyBag);
 			});
 	};
 
@@ -118,7 +118,7 @@ sap.ui.define([
 		return getConnectorConfigByLayer(mPropertyBag.layer)
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
-				return oConnectorConfig.connector.getFlexInfo(mPropertyBag);
+				return oConnectorConfig.connectorModule.getFlexInfo(mPropertyBag);
 			});
 	};
 

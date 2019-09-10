@@ -29,7 +29,7 @@ sap.ui.define([
 	function loadFlexDataFromConnectors (mPropertyBag, aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
 			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url});
-			return oConnectorConfig.connector.loadFlexData(oConnectorSpecificPropertyBag)
+			return oConnectorConfig.connectorModule.loadFlexData(oConnectorSpecificPropertyBag)
 				.catch(ApplyUtils.logAndResolveDefault.bind(undefined, ApplyUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
 		});
 
