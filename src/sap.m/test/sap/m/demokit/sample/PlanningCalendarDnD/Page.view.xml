@@ -39,7 +39,7 @@
 						appointmentDragEnter="handleAppointmentDragEnter"
 						appointmentResize="handleAppointmentResize"
 						appointmentCreate="handleAppointmentCreate"
-						appointments="{path : 'appointments', templateShareable: 'true'}">
+						appointments="{path : 'appointments', templateShareable: true}">
 					<appointments>
 						<unified:CalendarAppointment
 								startDate="{start}"

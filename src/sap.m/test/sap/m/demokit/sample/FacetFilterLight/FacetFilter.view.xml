@@ -19,7 +19,7 @@
 						key="{key}"
 						mode="MultiSelect"
 						listClose="handleListClose"
-						items="{path: 'values', templateShareable: 'true'}" >
+						items="{path: 'values', templateShareable: true}" >
 						<items>
 							<FacetFilterItem
 								text="{text}"

@@ -8,7 +8,7 @@
 		<PlanningCalendarLegend
 				appointmentItems="{
 					path : '/supportedAppointmentItems',
-					templateShareable: 'true'
+					templateShareable: true
 				}">
 			<appointmentItems>
 				<u:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}"/>
