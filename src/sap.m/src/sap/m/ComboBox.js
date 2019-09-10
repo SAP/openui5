@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./List',
@@ -22,7 +21,6 @@ sap.ui.define([
 	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
-		InputBase,
 		ComboBoxTextField,
 		ComboBoxBase,
 		List,
@@ -904,6 +902,11 @@ sap.ui.define([
 			// always focus input field when typing in it
 			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
+
+			// if recommendations were shown - add the icon pressed style
+			if (this._getItemsShownWithFilter()) {
+				this.toggleIconPressedStyle(true);
+			}
 		};
 
 		/**
@@ -1090,6 +1093,7 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBox.prototype.onBeforeOpen = function() {
+			ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
 				oDomRef = this.getFocusDomRef();
 
@@ -1100,8 +1104,6 @@ sap.ui.define([
 				this.loadItems();
 			}
 
-			// add the active state to the control field
-			this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 			if (oDomRef) {
 
 				// expose a parent/child contextual relationship to assistive technologies,
@@ -1185,7 +1187,7 @@ sap.ui.define([
 			}
 
 			// remove the active state of the control's field
-			this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
+			this.toggleIconPressedStyle(false);
 		};
 
 		/**
