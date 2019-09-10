@@ -598,6 +598,30 @@ function (
 		oContainer.destroy();
 	});
 
+	QUnit.test("Should not trigger layout change when container hides", function (assert) {
+		// Arrange
+		var oContainer = new Panel({ content: this.oGrid }),
+			fnLayoutChangeSpy = sinon.stub();
+
+		this.oGrid.setWidth("100%");
+		this.oGrid.setContainerQuery(true);
+
+		oContainer.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		this.oGrid.attachLayoutChange(fnLayoutChangeSpy);
+
+		// Act
+		oContainer.$().hide();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(fnLayoutChangeSpy.called, false, "Layout change is not called when container hides.");
+
+		// Clean up
+		oContainer.destroy();
+	});
+
 	QUnit.module("Resizing", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer();

@@ -392,11 +392,16 @@ sap.ui.define([
 	 * @returns {boolean} True if the layout settings were changed.
 	 */
 	GridContainer.prototype._detectActiveLayout = function () {
-		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this.$().outerWidth() : Device.resize.width,
+		var iWidth = (this.getContainerQuery() && this.getDomRef()) ? this._getComputedWidth() : Device.resize.width,
 			oRange = Device.media.getCurrentRange("GridContainerRangeSet", iWidth),
 			sLayout = "layout" + oRange.name,
 			oOldSettings = this.getActiveLayoutSettings(),
 			bSettingsAreChanged = false;
+
+		if (!iWidth) {
+			// width is 0 or unknown - can not detect the layout
+			return false;
+		}
 
 		if (this._sActiveLayout !== sLayout) {
 			this.addStyleClass("sapFGridContainer" + capitalize(sLayout));
@@ -622,7 +627,7 @@ sap.ui.define([
 	 * @returns {boolean} True if the width of the grid or of the viewport is changed since last check.
 	 */
 	GridContainer.prototype._isWidthChanged = function () {
-		var iGridWidth = this.getDomRef() ? this.$().outerWidth() : 0,
+		var iGridWidth = this._getComputedWidth(),
 			iViewportWidth = Device.resize.width;
 
 		if (this._lastGridWidth === iGridWidth && this._lastViewportWidth === iViewportWidth) {
@@ -632,6 +637,19 @@ sap.ui.define([
 		this._lastGridWidth = iGridWidth;
 		this._lastViewportWidth = iViewportWidth;
 		return true;
+	};
+
+	/**
+	 * Gets the current computed width of the grid.
+	 * @private
+	 * @returns {int|null} The width in px. Null if the grid is not yet rendered.
+	 */
+	GridContainer.prototype._getComputedWidth = function () {
+		if (!this.getDomRef()) {
+			return null;
+		}
+
+		return this.getDomRef().getBoundingClientRect().width;
 	};
 
 	/**
