@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/base/util/merge"
 ], function(
 	ChangePersistenceFactory,
@@ -14,6 +15,7 @@ sap.ui.define([
 	Utils,
 	Settings,
 	FlexUtils,
+	LayerUtils,
 	fnBaseMerge
 ) {
 	"use strict";
@@ -150,7 +152,7 @@ sap.ui.define([
 
 		if (this._sTransportRequest) {
 			oChange.setRequest(this._sTransportRequest);
-		} else if (this._oSettings.isAtoEnabled() && FlexUtils.isCustomerDependentLayer(this._mChangeFile.layer)) {
+		} else if (this._oSettings.isAtoEnabled() && LayerUtils.isCustomerDependentLayer(this._mChangeFile.layer)) {
 			oChange.setRequest('ATO_NOTIFICATION');
 		}
 		return oChange;
@@ -234,15 +236,8 @@ sap.ui.define([
 		} : {};
 		mPropertyBag.generator = sTool;
 
-		if (!sLayer) {
-			//default to 'CUSTOMER'
-			mPropertyBag.layer = 'CUSTOMER';
-		} else {
-			if (sLayer !== 'VENDOR' && sLayer !== 'PARTNER' && !FlexUtils.isCustomerDependentLayer(sLayer)) {
-				throw new Error("Parameter \"layer\" needs to be 'VENDOR', 'PARTNER' or customer dependent");
-			}
-			mPropertyBag.layer = sLayer;
-		}
+		//default to 'CUSTOMER'
+		mPropertyBag.layer = sLayer || 'CUSTOMER';
 
 		var mChangeFile = Change.createInitialFileContent(mPropertyBag);
 		return Settings.getInstance().then(function(oSettings) {

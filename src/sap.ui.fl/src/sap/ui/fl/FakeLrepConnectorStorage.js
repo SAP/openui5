@@ -7,13 +7,13 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/LayerUtils"
 ], function(
 	FakeLrepConnector,
 	LrepConnector,
 	Cache,
 	ChangePersistenceFactory,
-	Utils
+	LayerUtils
 ) {
 	"use strict";
 
@@ -300,8 +300,8 @@ sap.ui.define([
 		}
 
 		function byLayerThenCreation(oChangeA, oChangeB) {
-			var iLayerA = Utils.getLayerIndex(oChangeA.layer);
-			var iLayerB = Utils.getLayerIndex(oChangeB.layer);
+			var iLayerA = LayerUtils.getLayerIndex(oChangeA.layer);
+			var iLayerB = LayerUtils.getLayerIndex(oChangeB.layer);
 			if (iLayerA !== iLayerB) {
 				return iLayerA - iLayerB;
 			}
@@ -368,7 +368,7 @@ sap.ui.define([
 			var aReferencedChanges = [];
 			withVariant(mResult, oCurrentVariant.content.variantManagementReference, oCurrentVariant.content.variantReference, function (oVariant) {
 				aReferencedChanges = oVariant.controlChanges.filter(function (oReferencedChange) {
-					return Utils.compareAgainstCurrentLayer(oReferencedChange.layer, oCurrentVariant.layer) === -1;
+					return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.layer, oCurrentVariant.layer) === -1;
 				});
 				if (oVariant.content.variantReference) {
 					aReferencedChanges = aReferencedChanges.concat(this._getReferencedChanges(mResult, oVariant));

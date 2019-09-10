@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/FlexCustomData",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Change",
@@ -25,6 +26,7 @@ sap.ui.define([
 	ChangeRegistry,
 	ChangeHandlerRegistration,
 	Utils,
+	LayerUtils,
 	FlexCustomData,
 	FeaturesAPI,
 	Change,
@@ -953,7 +955,7 @@ sap.ui.define([
 	 */
 	FlexController.prototype.hasHigherLayerChanges = function (mPropertyBag) {
 		mPropertyBag = mPropertyBag || {};
-		var sCurrentLayer = mPropertyBag.upToLayer || Utils.getCurrentLayer(false);
+		var sCurrentLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer(false);
 		//Always include smart variants when checking personalization
 		mPropertyBag.includeVariants = true;
 		//Also control variant changes are important
@@ -962,7 +964,7 @@ sap.ui.define([
 			var bHasHigherLayerChanges = vChanges === this._oChangePersistence.HIGHER_LAYER_CHANGES_EXIST
 				|| vChanges.some(function (oChange) {
 					//check layer (needs inverse layer filtering compared to max-layer)
-					return Utils.compareAgainstCurrentLayer(oChange.getLayer(), sCurrentLayer) > 0;
+					return LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sCurrentLayer) > 0;
 				});
 
 			return !!bHasHigherLayerChanges;
@@ -1023,7 +1025,7 @@ sap.ui.define([
 	 * @returns {Promise} Promise that resolves without parameters
 	 */
 	FlexController.prototype.discardChanges = function (aChanges, bDiscardPersonalization) {
-		var sActiveLayer = Utils.getCurrentLayer(!!bDiscardPersonalization);
+		var sActiveLayer = LayerUtils.getCurrentLayer(!!bDiscardPersonalization);
 		var iIndex = 0;
 		var iLength;
 		var oChange;

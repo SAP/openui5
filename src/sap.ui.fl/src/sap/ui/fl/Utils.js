@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/strings/formatMessage",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/mvc/View"
+	"sap/ui/core/mvc/View",
+	"sap/ui/fl/LayerUtils"
 ],
 function(
 	jQuery,
@@ -24,24 +25,10 @@ function(
 	uid,
 	formatMessage,
 	ManagedObject,
-	View
+	View,
+	LayerUtils
 ) {
 	"use strict";
-
-	//Stack of layers in the layered repository
-	var aLayers = [
-		"BASE",
-		"VENDOR",
-		"PARTNER",
-		"CUSTOMER_BASE",
-		"CUSTOMER",
-		"USER"
-	];
-	//Precalculates index of layers
-	var mLayersIndex = {};
-	aLayers.forEach(function(sLayer, iIndex) {
-		mLayersIndex[sLayer] = iIndex;
-	});
 
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
@@ -53,14 +40,9 @@ function(
 	 * @experimental Since 1.25.0
 	 */
 	var Utils = {
-
-		_aLayers : aLayers,
-		_mLayersIndex : mLayersIndex,
-		_sTopLayer : aLayers[aLayers.length - 1],
 		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		APP_ID_AT_DESIGN_TIME : "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
 		VARIANT_MODEL_NAME: "$FlexVariants",
-		FL_MAX_LAYER_PARAM: "sap-ui-fl-max-layer",
 
 		/**
 		 * Formats the log message by replacing placeholders with values and logging the message.
@@ -285,7 +267,7 @@ function(
 		 * @name sap.ui.fl.Utils.isAppVariantMode
 		 */
 		isAppVariantMode: function (oControl) {
-			return (Utils.isVendorLayer() && Utils.isApplicationVariant(oControl));
+			return (LayerUtils.isVendorLayer() && Utils.isApplicationVariant(oControl));
 		},
 
 		/**
@@ -306,23 +288,6 @@ function(
 		},
 
 		/**
-		 * Indicates if the VENDOR is selected
-		 *
-		 * @returns {boolean} true if it's an application variant
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.isVendorLayer
-		 */
-		isVendorLayer: function () {
-			// variant mode only supported for vendor other types are not allowed to change standard control variants
-			if (Utils.getCurrentLayer(false) === "VENDOR") {
-				return true;
-			}
-
-			return false;
-		},
-
-		/**
 		 * Indicates if the current application is a variant of an existing one
 		 *
 		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
@@ -336,81 +301,6 @@ function(
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var sComponentName = Utils.getComponentName(oAppComponent);
 			return sFlexReference !== sComponentName;
-		},
-
-		/**
-		 * Determine the <code>maxLayer</code> based on the url parameter <code>sap-ui-fl-max-layer</code> or if is not set by <code>topLayer</code>.
-		 *
-		 * @ui5-restricted sap.ui.fl.apply._internal.Connector
-		 * @function
-		 * @return {String} maxLayer
-		 * @name sap.ui.fl.Utils._setMaxLayer
-		 */
-		getMaxLayer: function () {
-			var oParsedHash = this.getParsedURLHash();
-			var sParseMaxLayer;
-			if (oParsedHash.params && oParsedHash.params.hasOwnProperty(this.FL_MAX_LAYER_PARAM)) {
-				sParseMaxLayer = oParsedHash.params[this.FL_MAX_LAYER_PARAM][0];
-			}
-			return sParseMaxLayer || this._getUriParameters().get(this.FL_MAX_LAYER_PARAM) || this._sTopLayer;
-		},
-
-		/**
-		 * Converts layer name into index
-		 * @param {string} sLayer - layer name
-		 * @returns {int} index of the layer
-		 * @function
-		 * @name sap.ui.fl.Utils.getLayerIndex
-		 */
-		getLayerIndex: function(sLayer) {
-			return this._mLayersIndex[sLayer];
-		},
-
-		/**
-		 * Determines whether a layer is higher than the max layer.
-		 *
-		 * @param {string} sLayer - Layer name to be evaluated
-		 * @returns {boolean} <code>true</code> if input layer is higher than max layer, otherwise <code>false</code>
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.isOverMaxLayer
-		 */
-		isOverMaxLayer: function(sLayer) {
-			return (this.getLayerIndex(sLayer) > this.getLayerIndex(this.getMaxLayer()));
-		},
-
-		/**
-		 * Compares current layer with a provided layer
-		 * -1: Lower layer, 0: Same layer, 1: Layer above
-		 *
-		 * @param {String} sLayer - Layer name to be evaluated
-		 * @param {String} [sCurrentLayer] - Current layer name to be evaluated, if not provided the layer is taken from URL parameter
-		 * @returns {int} -1: Lower layer, 0: Same layer, 1: Layer above
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.isLayerOverCurrentLayer
-		 */
-		compareAgainstCurrentLayer: function(sLayer, sCurrentLayer) {
-			var sCurrent = sCurrentLayer || Utils.getCurrentLayer(false);
-			// If sLayer is undefined, it is assumed it be on the lowest layer
-			if ((this.getLayerIndex(sCurrent) > this.getLayerIndex(sLayer)) || !sLayer) {
-				return -1;
-			} else if (this.getLayerIndex(sCurrent) === this.getLayerIndex(sLayer)) {
-				return 0;
-			}
-			return 1;
-		},
-
-		/**
-		 * Determines if filtering of changes based on layer is required.
-		 *
-		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.isLayerFilteringRequired
-		 */
-		isLayerFilteringRequired: function() {
-			return !(this._sTopLayer === this.getMaxLayer());
 		},
 
 		/**
@@ -680,47 +570,6 @@ function(
 		 */
 		_getOwnerIdForControl: function (oControl) {
 			return Component.getOwnerIdFor(oControl);
-		},
-
-		/**
-		 * Returns the current layer as defined by the url parameter. If the end user flag is set, it always returns "USER".
-		 *
-		 * @param {boolean} bIsEndUser - the end user flag
-		 * @returns {string} the current layer
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.getCurrentLayer
-		 */
-		getCurrentLayer: function (bIsEndUser) {
-			var oUriParams;
-			var sLayer;
-			if (bIsEndUser) {
-				return "USER";
-			}
-
-			oUriParams = this._getUriParameters();
-			sLayer = oUriParams.get("sap-ui-layer") || "";
-			sLayer = sLayer.toUpperCase();
-			return sLayer || "CUSTOMER";
-		},
-
-		/**
-		 * Checks if a shared newly created variant requires an ABAP package; this is relevant for the VENDOR, PARTNER and CUSTOMER_BASE layers,
-		 * whereas variants in the CUSTOMER layer are client-dependent content and can either be transported or stored as local objects ($TMP).
-		 * A variant in the CUSTOMER layer that will be transported must not be assigned to a package.
-		 *
-		 * @returns {boolean} - Indicates whether a new variant needs an ABAP package
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.doesSharedVariantRequirePackage
-		 */
-		doesSharedVariantRequirePackage: function () {
-			var sCurrentLayer = Utils.getCurrentLayer(false);
-			if ((sCurrentLayer === "VENDOR") || (sCurrentLayer === "PARTNER") || (sCurrentLayer === "CUSTOMER_BASE")) {
-				return true;
-			}
-
-			return false;
 		},
 
 		/**
@@ -1237,17 +1086,6 @@ function(
 				return false;
 			}
 			return true;
-		},
-
-		/**
-		 * Returns whether provided layer is a customer dependent layer
-		 *
-		 * @param {string} sLayerName - layer name
-		 * @returns {boolean} true if provided layer is customer dependent layer else false
-		 * @public
-		 */
-		isCustomerDependentLayer : function(sLayerName) {
-			return (["CUSTOMER", "CUSTOMER_BASE"].indexOf(sLayerName) > -1);
 		},
 
 		/**

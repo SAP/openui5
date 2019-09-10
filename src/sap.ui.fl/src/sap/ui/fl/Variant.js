@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/util/merge",
 	"sap/base/Log"
@@ -13,6 +14,7 @@ sap.ui.define([
 	jQuery,
 	ManagedObject,
 	Utils,
+	LayerUtils,
 	Settings,
 	merge,
 	Log
@@ -379,7 +381,7 @@ sap.ui.define([
 	 */
 	Variant.prototype._isReadOnlyDueToLayer = function () {
 		var sCurrentLayer;
-		sCurrentLayer = Utils.getCurrentLayer(this._bUserDependent);
+		sCurrentLayer = LayerUtils.getCurrentLayer(this._bUserDependent);
 		return (this._oDefinition.content.layer !== sCurrentLayer);
 	};
 
@@ -605,7 +607,7 @@ sap.ui.define([
 				packageName: oPropertyBag.content.packageName || "",
 				content: {title: oPropertyBag.content.content.title || ""},
 				self: sNamespace + sFileName + "." + "ctrl_variant",
-				layer: oPropertyBag.content.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
+				layer: oPropertyBag.content.layer || LayerUtils.getCurrentLayer(oPropertyBag.isUserDependent),
 				texts: oPropertyBag.content.texts || {},
 				namespace: sNamespace, //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 				creation: "",

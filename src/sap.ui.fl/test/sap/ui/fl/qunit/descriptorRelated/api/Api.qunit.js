@@ -1874,13 +1874,6 @@ sap.ui.define([
 					layer : true //wrong type, string expected
 				});
 			});
-			assert.throws(function() {
-				DescriptorVariantFactory.createNew({
-					id : "a.id",
-					reference : "a.reference",
-					layer : "USER"	//"USER" not supported
-				});
-			});
 		});
 
 		QUnit.test("createNew - layer - set to CUSTOMER", function(assert) {

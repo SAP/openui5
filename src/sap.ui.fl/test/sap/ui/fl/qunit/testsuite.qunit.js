@@ -563,6 +563,11 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/Utils"]
 				}
 			},
+			LayerUtils: {
+				coverage: {
+					only: ["sap/ui/fl/LayerUtils"]
+				}
+			},
 			XmlPreprocessorImpl: {
 				coverage: {
 					only: ["sap/ui/fl/XmlPreprocessorImpl"]

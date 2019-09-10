@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/DefaultVariant",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/core/UIComponent",
@@ -20,6 +21,7 @@ sap.ui.define([
 	StandardVariant,
 	DefaultVariant,
 	Utils,
+	LayerUtils,
 	Cache,
 	SmartVariantManagementApplyAPI,
 	UIComponent,
@@ -174,14 +176,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isVendorLayer() is called it calls the corresponding Utils function", function (assert) {
-			sandbox.stub(Utils, "isVendorLayer").withArgs().returns(false);
+			sandbox.stub(LayerUtils, "isVendorLayer").withArgs().returns(false);
 			var bVendorLayer = SmartVariantManagementApplyAPI.isVendorLayer();
 
 			assert.equal(bVendorLayer, false);
 		});
 
 		QUnit.test("When isVariantDownport() is called it calls the corresponding Utils function", function (assert) {
-			sandbox.stub(Utils, "getCurrentLayer").withArgs().returns('VENDOR');
+			sandbox.stub(LayerUtils, "getCurrentLayer").withArgs().returns('VENDOR');
 			sandbox.stub(Utils, "isHotfixMode").withArgs().returns(true);
 			var bVendorLayer = SmartVariantManagementApplyAPI.isVariantDownport();
 

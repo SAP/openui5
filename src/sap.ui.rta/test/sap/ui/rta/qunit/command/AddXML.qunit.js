@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementDesignTimeMetadata",
@@ -22,6 +23,7 @@ function (
 	ChangeRegistry,
 	Change,
 	Utils,
+	LayerUtils,
 	DesignTime,
 	OverlayRegistry,
 	ElementDesignTimeMetadata,
@@ -69,7 +71,7 @@ function (
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
 		beforeEach : function() {
-			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
 		afterEach : function() {
@@ -209,7 +211,7 @@ function (
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
 
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({

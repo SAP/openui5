@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/apply/_internal/variants/URLHandler",
@@ -16,6 +17,7 @@ function(
 	VariantModel,
 	VariantManagement,
 	Utils,
+	LayerUtils,
 	Change,
 	FlexControllerFactory,
 	URLHandler,
@@ -27,7 +29,7 @@ function(
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+	sinon.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
 	sinon.stub(BusyIndicator, "show");
 	sinon.stub(BusyIndicator, "hide");
 	var oDummyControl = {
@@ -721,7 +723,7 @@ function(
 			oSourceVariantCopy.content.content.title = oSourceVariant.content.content.title + " Copy";
 			oSourceVariantCopy.content.fileName = "newVariant";
 			sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([]);
-			sandbox.stub(Utils, "compareAgainstCurrentLayer").returns(0);
+			sandbox.stub(LayerUtils, "compareAgainstCurrentLayer").returns(0);
 			sandbox.stub(this.oModel, "getVariant").returns(oSourceVariant);
 			var oDuplicateVariant = this.oModel._duplicateVariant(mPropertyBag);
 			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy);
@@ -822,13 +824,13 @@ function(
 			assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
-			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), Utils.getCurrentLayer(), "then only the change with the same layer is duplicated");
+			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), LayerUtils.getCurrentLayer(), "then only the change with the same layer is duplicated");
 			assert.equal(oDuplicateVariant.controlChanges[0].getPackage(), "$TMP", "then the package name of the duplicate change was set to $TMP");
 			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from USER layer with reference to a variant on VENDOR layer with one USER, one CUSTOMER, one VENDOR change", function(assert) {
-			Utils.getCurrentLayer.restore();
+			LayerUtils.getCurrentLayer.restore();
 			var oChange0 = new Change({
 				fileName: "change0",
 				selector: {id: "abc123"},
@@ -892,9 +894,9 @@ function(
 			assert.equal(oDuplicateVariant.controlChanges.length, 1, "then only one change duplicated");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().variantReference, "newVariant", "then the change has the correct variantReference");
 			assert.equal(oDuplicateVariant.controlChanges[0].getDefinition().support.sourceChangeFileName, oSourceVariant.controlChanges[0].getDefinition().fileName, "then the fileName of the origin change is written to support object");
-			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), Utils.getCurrentLayer(true), "then only the change with the same layer is duplicated");
+			assert.equal(oDuplicateVariant.controlChanges[0].getLayer(), LayerUtils.getCurrentLayer(true), "then only the change with the same layer is duplicated");
 			assert.equal(oDuplicateVariant.content.variantReference, oSourceVariant.content.fileName, "then the duplicate variant has reference to the source variant from VENDOR layer");
-			sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+			sinon.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant with no layer", function(assert) {
@@ -935,7 +937,7 @@ function(
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from USER layer with reference to a variant with no layer", function(assert) {
-			Utils.getCurrentLayer.restore();
+			LayerUtils.getCurrentLayer.restore();
 			var oSourceVariant = {
 				content: {
 					fileName:"variant0",
@@ -970,7 +972,7 @@ function(
 			oSourceVariantCopy.content.layer = "USER";
 
 			assert.deepEqual(oDuplicateVariant, oSourceVariantCopy, "then the duplicate variant returned with customized properties");
-			sinon.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+			sinon.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
 		});
 
 		QUnit.test("when calling '_duplicateVariant' from CUSTOMER layer with reference to a variant on the same layer", function(assert) {
@@ -1303,7 +1305,7 @@ function(
 				assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
 				assert.ok(fnCopyVariantStub.calledWith({
 					appComponent: this.oComponent,
-					layer: Utils.getCurrentLayer(),
+					layer: LayerUtils.getCurrentLayer(),
 					newVariantReference: sNewVariantReference,
 					sourceVariantReference: oCopiedVariant.getVariantReference(),
 					title: "Test",

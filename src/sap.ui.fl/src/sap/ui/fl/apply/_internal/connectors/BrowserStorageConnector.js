@@ -7,13 +7,13 @@ sap.ui.define([
 	"sap/ui/fl/library",
 	"sap/ui/fl/apply/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/LayerUtils"
 ], function(
 	merge,
 	library,
 	BaseConnector,
 	BrowserStorageUtils,
-	FlUtils
+	LayerUtils
 ) {
 	"use strict";
 
@@ -38,7 +38,7 @@ sap.ui.define([
 				variantManagementChanges: [],
 				variantDependentControlChanges: [],
 				changes: [],
-				index: FlUtils.getLayerIndex(sLayer)
+				index: LayerUtils.getLayerIndex(sLayer)
 			};
 		});
 

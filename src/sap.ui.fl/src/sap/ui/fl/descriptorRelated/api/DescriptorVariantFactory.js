@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge"
 ], function(
-	FlexUtils,
+	LayerUtils,
 	Utils,
 	Settings,
 	jQuery,
@@ -179,7 +179,7 @@ sap.ui.define([
 		if (this._sTransportRequest) {
 		//set to URL-Parameter 'changelist', as done in LrepConnector
 			sRoute += '?changelist=' + this._sTransportRequest;
-		} else if (this._oSettings.isAtoEnabled() && FlexUtils.isCustomerDependentLayer(mMap.layer)) {
+		} else if (this._oSettings.isAtoEnabled() && LayerUtils.isCustomerDependentLayer(mMap.layer)) {
 			sRoute += '?changelist=ATO_NOTIFICATION';
 		}
 		if (this._skipIam) {
@@ -352,11 +352,6 @@ sap.ui.define([
 			mParameters.layer = 'CUSTOMER';
 		} else {
 			Utils.checkParameterAndType(mParameters, "layer", "string");
-			//TODO: is this necessary? already checked in Utils-method? -> checks only type
-			if (mParameters.layer !== 'VENDOR' && mParameters.layer !== 'PARTNER' && !FlexUtils.isCustomerDependentLayer(mParameters.layer)) {
-				//TODO: this should do a reject 	return Promise.reject(oError);
-				throw new Error("Parameter \"layer\" needs to be 'VENDOR', 'PARTNER' or customer dependent");
-			}
 		}
 
 		// isAppVariantRoot

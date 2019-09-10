@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepSessionStorage",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -15,7 +15,7 @@ sap.ui.define([
 	FakeLrepSessionStorage,
 	Cache,
 	ChangePersistenceFactory,
-	Utils,
+	LayerUtils,
 	jQuery,
 	sinon
 ) {
@@ -864,7 +864,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _assignVariantReferenceChanges with _getReferencedChanges is called with a valid variantReference", function (assert) {
-			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
 			var mResult = {
 				changes: {
 					changes: [
