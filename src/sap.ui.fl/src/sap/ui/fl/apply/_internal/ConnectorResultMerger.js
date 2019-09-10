@@ -103,6 +103,7 @@ sap.ui.define([
 	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges) {
 		var oVariantsMapCopy = merge({}, oVariantsMap);
 		aVariantDependentChanges.forEach(function (oChange) {
+			oVariantsMapCopy[oChange.variantReference] = oVariantsMapCopy[oChange.variantReference] || oConnectorResultMerger._createStandardVariant(oChange.variantReference);
 			oVariantsMapCopy[oChange.variantReference].controlChanges.push(oChange);
 		});
 		return oVariantsMapCopy;
@@ -111,6 +112,7 @@ sap.ui.define([
 	function addVariantChanges(oVariantsMap, aVariantChanges) {
 		var oVariantsMapCopy = merge({}, oVariantsMap);
 		aVariantChanges.forEach(function (oChange) {
+			oVariantsMapCopy[oChange.selector.id] = oVariantsMapCopy[oChange.selector.id] || oConnectorResultMerger._createStandardVariant(oChange.selector.id);
 			var aVariantChangesOfTheChangeType = oVariantsMapCopy[oChange.selector.id].variantChanges[oChange.changeType] || [];
 			aVariantChangesOfTheChangeType.push(oChange);
 			oVariantsMapCopy[oChange.selector.id].variantChanges[oChange.changeType] = aVariantChangesOfTheChangeType;

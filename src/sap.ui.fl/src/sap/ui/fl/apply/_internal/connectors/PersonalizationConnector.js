@@ -28,6 +28,8 @@ sap.ui.define([
 	 */
 	var PersonalizationConnector = merge({}, BaseConnector, { /** @lends sap.ui.fl.apply._internal.connectors.PersonalizationConnector */
 
+		xsrfToken: undefined,
+
 		/**
 		 * Loads the data from the back end
 		 *
@@ -41,10 +43,10 @@ sap.ui.define([
 			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_DATA, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl, "GET", { token : this.sXsrfToken }).then(function (oResult) {
+			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken : this.xsrfToken }).then(function (oResult) {
 				var oResponse = oResult.response;
-				if (oResult.token) {
-					this.sXsrfToken = oResult.token;
+				if (oResult.xsrfToken) {
+					this.xsrfToken = oResult.xsrfToken;
 				}
 				return oResponse;
 			}.bind(this));

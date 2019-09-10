@@ -185,8 +185,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Reset changes in the backend.
-		 * If the reset is performed for an entire component, a browser reload is required.
+		 * Reset changes in the backend;
+		 * If the reset is performed for an entire component, a browser reload is required;
 		 * If the reset is performed for a control, this function also triggers a reversion of deleted UI changes.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties

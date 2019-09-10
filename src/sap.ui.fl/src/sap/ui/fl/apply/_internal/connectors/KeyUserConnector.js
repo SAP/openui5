@@ -29,6 +29,8 @@ sap.ui.define([
 	 */
 	var KeyUserConnector = merge({}, BaseConnector, { /** @lends sap.ui.fl.apply.api._internal.connectors.KeyUserConnector */
 
+		xsrfToken: undefined,
+
 		/**
 		 * Loads the data from the KeyUser service
 		 *
@@ -43,11 +45,10 @@ sap.ui.define([
 			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
 
 			var sDataUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.DATA, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl, "GET", { token : this.sXsrfToken }).then(function (oResult) {
-				// TODO(when the cacheKey calculation implementation happens): see that the etag / cacheKey is handled accordingly
+			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken : this.xsrfToken }).then(function (oResult) {
 				var oResponse = oResult.response;
-				if (oResult.token) {
-					this.sXsrfToken = oResult.token;
+				if (oResult.xsrfToken) {
+					this.xsrfToken = oResult.xsrfToken;
 				}
 				return oResponse;
 			}.bind(this));

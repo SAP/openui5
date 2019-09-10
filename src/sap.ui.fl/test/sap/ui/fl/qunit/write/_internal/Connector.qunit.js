@@ -5,24 +5,38 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Connector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
+	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
+	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector"
 ], function(
 	sinon,
 	Connector,
 	ApplyUtils,
 	WriteUtils,
-	LrepConnector,
+	ApplyLrepConnector,
+	WriteLrepConnector,
+	ApplyKeyUserConnector,
 	JsObjectConnector,
-	PersonalizationConnector
+	ApplyPersonalizationConnector,
+	WritePersonalizationConnector
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given Connector when write is called", {
+		beforeEach: function () {
+			ApplyLrepConnector.xsrfToken = "123";
+			ApplyKeyUserConnector.xsrfToken = "123";
+			ApplyPersonalizationConnector.xsrfToken = "123";
+		},
 		afterEach: function() {
+			ApplyLrepConnector.xsrfToken = undefined;
+			ApplyKeyUserConnector.xsrfToken = undefined;
+			ApplyPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
@@ -38,11 +52,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it fails in case no connector is available for the layer", function(assert) {
-			var oPayload = {};
+			var oFlexObjects = [{}];
 
 			var mPropertyBag = {
 				layer: "CUSTOMER",
-				payload: oPayload
+				flexObjects: oFlexObjects
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connectorName: "LrepConnector", layerFilter: ["VENDOR"]}
@@ -55,11 +69,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it fails in case multiple connectors are available for the layer", function(assert) {
-			var oPayload = {};
+			var oFlexObjects = {};
 
 			var mPropertyBag = {
 				layer: "VENDOR",
-				payload: oPayload
+				flexObjects: oFlexObjects
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connectorName: "LrepConnector", layerFilter: ["VENDOR"]},
@@ -74,31 +88,31 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it calls write of the connector", function(assert) {
-			var oPayload = {};
+			var oFlexObjects = {};
 
 			var mPropertyBag = {
 				layer: "VENDOR",
-				payload: oPayload
+				flexObjects: oFlexObjects
 			};
 			var sUrl = "/some/url";
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{connectorName: "LrepConnector", layerFilter: ["VENDOR"], url: sUrl}
 			]);
 
-			var oWriteStub = sandbox.stub(LrepConnector, "write").resolves({});
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "write").resolves({});
 
 			return Connector.write(mPropertyBag).then(function () {
 				assert.equal(oWriteStub.callCount, 1, "the write was triggered once");
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
 				assert.equal(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
-				assert.equal(oWriteCallArgs.payload, oPayload, "the payload was passed in the property bag");
+				assert.equal(oWriteCallArgs.flexObjects, oFlexObjects, "the flexObjects were passed in the property bag");
 			});
 		});
 
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector aiming for USER layer ", function (assert) {
 			var mPropertyBag = {
 				layer: "USER",
-				payload: {}
+				flexObjects: [{}]
 			};
 			var sUrl = "/PersonalizationConnector/url";
 
@@ -124,14 +138,14 @@ sap.ui.define([
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
 				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.deepEqual(oSendRequestCallArgs[2], mPropertyBag.payload, "with correct payload");
+				assert.deepEqual(oSendRequestCallArgs[2], mPropertyBag, "with correct flex objects");
 			});
 		});
 
-		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer ", function (assert) {
+		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer", function (assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER",
-				payload: {}
+				flexObjects: [{}]
 			};
 			var sUrl = "/KeyUserConnector/url";
 
@@ -144,7 +158,6 @@ sap.ui.define([
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
-			sandbox.stub(WriteUtils, "getRequestOptions").returns({});
 
 			return Connector.write(mPropertyBag).then(function() {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
@@ -160,10 +173,10 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for USER layer ", function (assert) {
+		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for USER layer", function (assert) {
 			var mPropertyBag = {
 				layer: "USER",
-				payload: {}
+				flexObjects: [{}]
 			};
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
@@ -196,7 +209,7 @@ sap.ui.define([
 		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector, KeyUserConnector aiming for CUSTOMER layer ", function (assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER",
-				payload: {}
+				flexObjects: [{}]
 			};
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
@@ -211,7 +224,6 @@ sap.ui.define([
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
-			sandbox.stub(WriteUtils, "getRequestOptions").returns({});
 
 			return Connector.write(mPropertyBag).then(function() {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
@@ -231,14 +243,18 @@ sap.ui.define([
 	QUnit.module("Given Connector when loadFeatures is called", {
 		beforeEach : function() {
 			this.url = "/some/url";
+			ApplyLrepConnector.xsrfToken = "123";
+			ApplyPersonalizationConnector.xsrfToken = "123";
 		},
 		afterEach: function() {
+			ApplyLrepConnector.xsrfToken = undefined;
+			ApplyPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("with a failing connector", function (assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({test1 : "test1"});
-			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(PersonalizationConnector, "loadFeatures").resolves({test2 : "test2"});
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({test1 : "test1"});
+			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({test2 : "test2"});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
@@ -260,7 +276,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it calls loadFeatures of the configured connectors", function(assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(LrepConnector, "loadFeatures").resolves({});
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").resolves({});
 			var sUrl = "/some/url";
 
@@ -285,7 +301,7 @@ sap.ui.define([
 				{connectorName: "JsObjectConnector", layerFilter: ["CUSTOMER"]}
 			]);
 
-			sandbox.stub(LrepConnector, "loadFeatures").resolves({
+			sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({
 				isKeyUser: true
 			});
 			sandbox.stub(JsObjectConnector, "loadFeatures").resolves({
@@ -304,7 +320,7 @@ sap.ui.define([
 				{connectorName: "JsObjectConnector", layerFilter: ["CUSTOMER"]}
 			]);
 
-			sandbox.stub(LrepConnector, "loadFeatures").resolves({
+			sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({
 				isProductiveSystem: false
 			});
 			sandbox.stub(JsObjectConnector, "loadFeatures").resolves({
@@ -319,7 +335,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Connector when reset is called", {
+		beforeEach: function () {
+			ApplyLrepConnector.xsrfToken = "123";
+			ApplyKeyUserConnector.xsrfToken = "123";
+			ApplyPersonalizationConnector.xsrfToken = "123";
+		},
 		afterEach: function() {
+			ApplyLrepConnector.xsrfToken = undefined;
+			ApplyKeyUserConnector.xsrfToken = undefined;
+			ApplyPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {

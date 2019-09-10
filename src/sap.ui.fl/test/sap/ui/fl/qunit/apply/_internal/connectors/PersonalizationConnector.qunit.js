@@ -10,9 +10,10 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	var newToken = "newToken";
 
 	function fnReturnData(oServer, sData) {
-		sandbox.server.respondWith(sData);
+		sandbox.server.respondWith([200, { "X-CSRF-Token": newToken, "Content-Type": "application/json" }, sData]);
 	}
 
 	QUnit.module("Connector", {
@@ -20,22 +21,29 @@ sap.ui.define([
 			this.xhr = sinon.fakeServer.create();
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
-			fnReturnData(this.xhr, "{}");
+			fnReturnData(this.xhr, '{}');
 		},
 		afterEach: function() {
+			PersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("given no static changes-bundle.json placed for 'reference' resource roots and a mock server, when loading flex data is triggered and an empty response is returned", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oServer, oResult) {
+			return PersonalizationConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
 				assert.deepEqual(oResult, {}, "the default response resolves the request Promise");
-			}.bind(undefined, sandbox.server));
+			});
 		});
 
 		QUnit.test("given a mock server, when loading flex data is triggered with the correct url", function (assert) {
-			return PersonalizationConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oServer) {
-				assert.equal(oServer.getRequest(0).url, "/sap/bc/lrep/flex/data/reference?appVersion=1.0.0", "url is correct");
-			}.bind(undefined, sandbox.server));
+			return PersonalizationConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function () {
+				assert.equal(sandbox.server.getRequest(0).url, "/sap/bc/lrep/flex/data/reference?appVersion=1.0.0", "url is correct");
+			});
+		});
+
+		QUnit.test("loadFlexData also requests and stores an xsrf token", function (assert) {
+			return PersonalizationConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function () {
+				assert.equal(PersonalizationConnector.xsrfToken, newToken, "the token was stored correct");
+			});
 		});
 	});
 
