@@ -33,7 +33,7 @@
 			</VBox>
 		</content>
 		<beginButton>
-			<Button text="OK" press="handleSaveAppSettings"/>
+			<Button text="OK" press="handleSaveAppSettings" type="Emphasized"/>
 		</beginButton>
 		<endButton>
 			<Button text="Cancel" press="handleCloseAppSettings"/>
