@@ -134,6 +134,17 @@ sap.ui.define([
 		}, this);
 	});
 
+	QUnit.test("getValue __name__", function(assert) {
+		var context = this.oModel.createBindingContext("/teamMembers/0/lastName"),
+			binding = this.oModel.bindProperty("__name__", context);
+
+		assert.equal(binding.getValue(), "lastName", "Property binding __name__ returns key");
+
+		binding = this.oModel.bindProperty("__name__");
+
+		assert.equal(binding.getValue(), undefined, "Property binding __name__ returns undefined without context");
+	});
+
 	QUnit.test("refresh", function(assert) {
 		assert.expect(3);
 		var oBinding = this.oModel.bindProperty("/name");
