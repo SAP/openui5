@@ -56,6 +56,8 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
 
 			/**
 			 * Defines the number of intervals that are displayed for a {@link sap.m.PlanningCalendar} that is less than 600 pixels wide.
+
+			 * <b>Note:</b> On a phone the maximum visible intervals are 8.
 			 */
 			intervalsS : {type : "int", group : "Appearance", defaultValue : 6},
 
