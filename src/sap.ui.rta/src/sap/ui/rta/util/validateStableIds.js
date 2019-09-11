@@ -25,15 +25,6 @@ sap.ui.define([
 		return ObjectPath.get(["sap.ui.generic.app"], oManifest);
 	}
 
-	function isValidApp(oComponent) {
-		var oManifest = oComponent.getManifest();
-
-		return (
-			ObjectPath.get(["sap.app", "id"], oManifest) !== "sap.ui.documentation.sdk"
-			&& !ObjectPath.get(["sap.ovp"], oManifest)
-		);
-	}
-
 	function getFioriElementsExtensions(oComponent) {
 		var oManifest = oComponent.getManifest();
 
@@ -107,26 +98,24 @@ sap.ui.define([
 	return function (aElementOverlays, oComponent) {
 		var aResult = [];
 
-		if (isValidApp(oComponent)) {
-			var aRelevantOverlays = aElementOverlays.slice(0);
+		var aRelevantOverlays = aElementOverlays.slice(0);
 
-			if (isFioriElementsApp(oComponent)) {
-				var aExtensionList = getFioriElementsExtensions(oComponent);
+		if (isFioriElementsApp(oComponent)) {
+			var aExtensionList = getFioriElementsExtensions(oComponent);
 
-				aRelevantOverlays = (
-					aExtensionList.length
-						? getExtensionOverlays(aExtensionList, aRelevantOverlays)
-						: [] // If this is a Fiori Elements application and there are no extensions, then we have nothing to check
-				);
-			}
-
-			aResult = aRelevantOverlays.filter(function (oElementOverlay) {
-				return (
-					!oElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable()
-					&& !hasStableId(oElementOverlay)
-				);
-			});
+			aRelevantOverlays = (
+				aExtensionList.length
+					? getExtensionOverlays(aExtensionList, aRelevantOverlays)
+					: [] // If this is a Fiori Elements application and there are no extensions, then we have nothing to check
+			);
 		}
+
+		aResult = aRelevantOverlays.filter(function (oElementOverlay) {
+			return (
+				!oElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable()
+				&& !hasStableId(oElementOverlay)
+			);
+		});
 
 		return aResult;
 	};
