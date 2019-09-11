@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter",
 	"sap/m/StandardTreeItem",
 	"sap/m/StandardListItem",
 	"sap/m/Tree",
 	"sap/m/library"
-], function(createAndAppendDiv, jQuery, qutils, KeyCodes, JSONModel, StandardTreeItem, StandardListItem, Tree, library) {
+], function(createAndAppendDiv, jQuery, qutils, KeyCodes, JSONModel, Sorter, StandardTreeItem, StandardListItem, Tree, library) {
 	"use strict";
 	createAndAppendDiv("content");
 	var styleElement = document.createElement("style");
@@ -473,6 +474,64 @@ sap.ui.define([
 		oTree.getModel().refresh();
 
 		assert.strictEqual(oTree.getItems().length, 6, "new length is 6.");
+	});
+
+	QUnit.test("Sorting scenario", function(assert) {
+		var aTreeData = [{
+			"title": "C",
+			"titles": [
+				{"title": "Subtitle C"}
+			]
+		}, {
+			"title": "B",
+			"titles": [
+				{"title": "SubTitle B"}
+			]
+		}, {
+			"title": "A"
+		}];
+
+		var oModel = new JSONModel();
+		oModel.setData(aTreeData);
+
+		var oTree = new Tree();
+		oTree.setModel(oModel);
+		var oStandardTreeItem = new StandardTreeItem({
+			title: "{title}"
+		});
+
+		oTree.bindItems({
+			path: "/",
+			template: oStandardTreeItem,
+			parameters: {
+				numberOfExpandedLevels: 1
+			}
+		});
+
+		oTree.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// 2nd tree item is a leaf node
+		var oSecondItem = oTree.getItems()[1];
+		var oSecondItemDomRef = oSecondItem.getDomRef();
+		assert.ok(!oSecondItem.isTopLevel(), "2nd item is not a top level node");
+		assert.ok(oSecondItem.isLeaf(), "2nd item is a leaf node");
+		assert.ok(oSecondItemDomRef.classList.contains("sapMTreeItemBaseChildren"), "Second item is a child node");
+		assert.ok(oSecondItemDomRef.getAttribute("aria-level"), "2", "aria-level = 2");
+
+		// sort tree items in ascending order
+		var oBinding = oTree.getBinding("items");
+		var oSorter = new Sorter("title", false);
+		oBinding.sort(oSorter);
+		sap.ui.getCore().applyChanges();
+
+		// 2nd tree item becomes a top level node after sorting is applied
+		assert.ok(oSecondItem.isTopLevel(), "2nd item is a top level node");
+		assert.ok(!oSecondItem.isLeaf(), "2nd item is not a leaf node");
+		assert.ok(!oSecondItemDomRef.classList.contains("sapMTreeItemBaseChildren"), "Second item is a top level node");
+		assert.ok(oSecondItemDomRef.getAttribute("aria-level"), "1", "aria-level = 1");
+
+		oTree.destroy();
 	});
 
 });

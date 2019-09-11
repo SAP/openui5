@@ -227,12 +227,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets expander information.
+	 * Updates the item by assigning the relavant expander, styles and attributes.
 	 *
 	 * @private
 	 * @since 1.46.0
 	 */
-	TreeItemBase.prototype._updateExpander = function() {
+	TreeItemBase.prototype._updateItem = function() {
 		if (this._bInvalidated) {
 			return;
 		}
@@ -250,17 +250,23 @@ sap.ui.define([
 			this._oExpanderControl.setSrc(sSrc);
 
 			// make the expander visible
+			var $this = this.$();
+			// adapt the tree items styles and the expander
 			if (!this.isLeaf()) {
-				this.$().removeClass("sapMTreeItemBaseLeaf");
-				this.$().attr("aria-expanded", this.getExpanded());
+				$this.removeClass("sapMTreeItemBaseLeaf");
+				$this.attr("aria-expanded", this.getExpanded());
 			} else {
-				this.$().removeAttr("aria-expanded");
+				$this.addClass("sapMTreeItemBaseLeaf");
+				$this.removeAttr("aria-expanded");
 			}
+			$this.toggleClass("sapMTreeItemBaseChildren", !this.isTopLevel());
+			// adapt aria-level (in cases like sorting of the tree items is performed)
+			$this.attr("aria-level", this.getLevel() + 1);
 
 			// update the indentation again
 			var iIndentation = this._getPadding(),
 				sStyleRule = sap.ui.getCore().getConfiguration().getRTL() ? "paddingRight" : "paddingLeft";
-			this.$().css(sStyleRule, iIndentation + "rem");
+			$this.css(sStyleRule, iIndentation + "rem");
 
 		}
 
@@ -278,7 +284,7 @@ sap.ui.define([
 
 	TreeItemBase.prototype.setBindingContext = function() {
 		ListItemBase.prototype.setBindingContext.apply(this, arguments);
-		this._updateExpander();
+		this._updateItem();
 		return this;
 	};
 
