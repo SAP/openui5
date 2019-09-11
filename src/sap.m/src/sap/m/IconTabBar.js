@@ -540,7 +540,15 @@ sap.ui.define([
 	};
 
 	IconTabBar.prototype._getStickyContent = function () {
-		return this._getIconTabHeader();
+		var oIconTabHeader = this._getIconTabHeader();
+
+		IconTabBar._CLASSES_TO_COPY.forEach(function (sClassName) {
+			if (this.hasStyleClass(sClassName)) {
+				oIconTabHeader.addStyleClass(sClassName);
+			}
+		}.bind(this));
+
+		return oIconTabHeader;
 	};
 
 	IconTabBar.prototype._returnStickyContent = function () {
@@ -630,6 +638,9 @@ sap.ui.define([
 	/* =========================================================== */
 	/*           end: reflectors for header properties             */
 	/* =========================================================== */
+
+	// List of classes to copy from IconTabBar to IconTabHeader when used as a sticky header inside a DynamicPage.
+	IconTabBar._CLASSES_TO_COPY = ["sapUiResponsiveContentPadding", "sapUiNoContentPadding", "sapUiContentPadding"];
 
 	return IconTabBar;
 
