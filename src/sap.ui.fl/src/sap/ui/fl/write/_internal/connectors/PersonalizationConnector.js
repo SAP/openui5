@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils"
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/library"
 ], function(
 	merge,
 	BaseConnector,
 	ApplyPersonalizationConnector,
 	ApplyUtils,
-	WriteUtils
+	WriteUtils,
+	flLibrary
 ) {
 	"use strict";
 
@@ -38,6 +40,9 @@ sap.ui.define([
 	 */
 	var PersonalizationConnector = merge({}, BaseConnector, {  /** @lends sap.ui.fl.write._internal.connectors.PersonalizationConnector */
 
+		layers: [
+			flLibrary.Layer.USER
+		],
 
 		/**
 		 * Creates a change or variant via REST call.

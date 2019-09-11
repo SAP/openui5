@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils"
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/library"
 ], function(
 	merge,
 	BaseConnector,
 	ApplyConnector,
 	ApplyUtils,
-	WriteUtils
+	WriteUtils,
+	flLibrary
 ) {
 	"use strict";
 
@@ -36,6 +38,10 @@ sap.ui.define([
 	var KeyUserConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.KeyUserConnector */ {
 
 		xsrfToken: null,
+
+		layers: [
+			flLibrary.Layer.CUSTOMER
+		],
 
 		/**
 		 * Resets flexibility files for a given application.
