@@ -444,6 +444,32 @@ sap.ui.define([
 			},
 
 			/**
+			 * Suspends the targets which are specified by the parameter
+			 *
+			 * @param {string|string[]|object|object[]} vTargets The key of the target
+			 *  or an object which has the key of the target under property 'name' as
+			 *  specified in the {@link #constructor}. To suspend multiple targets you
+			 *  may also pass an array of keys or objects which have the key saved
+			 *  under the 'name' property
+			 * @return {sap.ui.core.routing.Targets} The 'this' for call chaining
+			 * @private
+			 */
+			suspend : function (vTargets) {
+				var aTargetsInfo = this._alignTargetsInfo(vTargets);
+
+				aTargetsInfo.forEach(function(oTargetInfo) {
+					var oTarget = this.getTarget(oTargetInfo.name);
+
+					if (oTarget) {
+						oTarget.suspend();
+					}
+
+				}.bind(this));
+
+				return this;
+			},
+
+			/**
 			 * Will be fired when a target is displayed.
 			 *
 			 * Could be triggered by calling the display function or by the {@link sap.ui.core.routing.Router} when a target is referenced in a matching route.
@@ -581,6 +607,37 @@ sap.ui.define([
 			M_EVENTS : {
 				DISPLAY : "display",
 				TITLE_CHANGED : "titleChanged"
+			},
+
+			/**
+			 * Converts the different format of targets info into the object format
+			 * which has the key of a target saved under the "name" property
+			 *
+			 * @param {string|string[]|object|object[]} vTargetsInfo The key of the target or
+			 *  an object which has the key of the target under property 'name' as specified
+			 *  in the {@link #constructor} or an array of keys or objects
+			 * @return {object[]} Array of objects and each of the objects contains at least
+			 *  the key of the target under the "name" property
+			 * @private
+			 */
+			_alignTargetsInfo: function(vTargetsInfo) {
+				if (!vTargetsInfo) {
+					return [];
+				}
+
+				if (!Array.isArray(vTargetsInfo)) {
+					return (typeof vTargetsInfo === "string") ?
+						[{ name: vTargetsInfo }] : [vTargetsInfo];
+				}
+
+				return vTargetsInfo.map(function(vTargetInfo) {
+					if (typeof vTargetInfo === "string") {
+						vTargetInfo = {
+							name: vTargetInfo
+						};
+					}
+					return vTargetInfo;
+				});
 			},
 
 			/**

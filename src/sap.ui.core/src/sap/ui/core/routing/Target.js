@@ -81,6 +81,7 @@ sap.ui.define([
 				}
 
 				this._bIsDisplayed = false;
+				this._bIsLoaded = false;
 			},
 
 			/**

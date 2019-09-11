@@ -165,6 +165,11 @@ sap.ui.define([
 			},
 
 			_routeSwitched: function() {
+				if (this._oRouter._oTargets) {
+					// suspend the targets which were displayed when the route was matched
+					this._oRouter._oTargets.suspend(this._oConfig.target);
+				}
+
 				this.fireEvent("switched", {
 					name: this._oConfig.name
 				});
