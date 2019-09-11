@@ -373,6 +373,12 @@ sap.ui.define([
 		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
 	};
 
+	MonthPicker.prototype.ontouchstart = function (oEvent){
+		if (!Device.system.desktop && oEvent.target.classList.contains("sapUiCalItem")){
+			oEvent.target.classList.add("sapUiCalItemSel");
+		}
+	};
+
 	function _initItemNavigation(){
 
 		var oRootDomRef = this.getDomRef();
