@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/Device",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/ChangeReason",
@@ -23,9 +24,9 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, Controller, View,
-		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
-		ODataListBinding, ODataModel, TestUtils, XMLHelper) {
+], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise,
+		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
+		AnnotationHelper, ODataListBinding, ODataModel, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -424,10 +425,6 @@ sap.ui.define([
 			if (this.aRequests.length || this.iPendingResponses) {
 				return;
 			}
-			if (sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
-					< this.aMessages.length) {
-				return; // expected messages still missing
-			}
 			for (sControlId in this.mChanges) {
 				if (!this.hasOnlyOptionalChanges(sControlId)) {
 					if (this.mChanges[sControlId].length) {
@@ -447,8 +444,10 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (sap.ui.getCore().getUIDirty()) {
-				setTimeout(this.checkFinish.bind(this, assert), 1);
+			if (sap.ui.getCore().getUIDirty()
+					|| sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
+						< this.aMessages.length) {
+				setTimeout(this.checkFinish.bind(this, assert), 10);
 
 				return;
 			}
@@ -1301,18 +1300,25 @@ sap.ui.define([
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {boolean} [bNullOptional] Whether a non-list change to a null value is optional
+		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded and
 		 *   all expected values for controls have been set
 		 */
-		waitForChanges : function (assert, bNullOptional) {
-			var that = this;
+		waitForChanges : function (assert, bNullOptional, iTimeout) {
+			var oPromise,
+				that = this;
 
-			return new Promise(function (resolve) {
+			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				that.bNullOptional = bNullOptional;
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
-				setTimeout(resolve, 3000);
+				setTimeout(function () {
+					if (oPromise.isPending()) {
+						assert.ok(false, "Timeout in waitForChanges");
+						resolve();
+					}
+				}, iTimeout || 3000);
 				that.checkFinish(assert);
 			}).then(function () {
 				var sControlId, aExpectedValuesPerRow, i, j;
@@ -1344,6 +1350,8 @@ sap.ui.define([
 				}
 				that.checkMessages(assert);
 			});
+
+			return oPromise;
 		}
 	});
 
@@ -9900,7 +9908,8 @@ sap.ui.define([
 				template : new CustomListItem({content : [oText]})
 			});
 
-			return that.waitForChanges(assert);
+			// Increase the timeout for this test to 12 seconds to run also in IE
+			return that.waitForChanges(assert, undefined, 12000);
 		});
 	});
 
