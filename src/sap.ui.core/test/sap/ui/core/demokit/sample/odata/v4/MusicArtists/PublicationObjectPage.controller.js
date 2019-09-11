@@ -1,8 +1,9 @@
 sap.ui.define([
+	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, History, JSONModel) {
+], function (UIComponent, Controller, History, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.MusicArtists.PublicationObjectPage", {
@@ -34,7 +35,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			var oRouter = UIComponent.getRouterFor(this);
 
 			oRouter.getRoute("publicationObjectPage")
 				.attachPatternMatched(this._onObjectMatched, this);

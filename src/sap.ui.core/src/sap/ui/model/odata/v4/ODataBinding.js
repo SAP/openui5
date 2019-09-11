@@ -714,7 +714,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates or modifies a lock for a group at the model with this as owner.
+	 * Creates a lock for a group with this binding as owner.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID; defaults to this binding's group ID

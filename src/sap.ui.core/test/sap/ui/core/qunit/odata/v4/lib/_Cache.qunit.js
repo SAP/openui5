@@ -92,9 +92,6 @@ sap.ui.define([
 					fetchMetadata : function () {
 						return SyncPromise.resolve(null);
 					},
-					lockGroup : function () {
-						throw new Error("Unsupported operation");
-					},
 					reportBoundMessages : function () {}
 				};
 
@@ -120,6 +117,7 @@ sap.ui.define([
 				getServiceUrl : function () { return "/~/"; },
 				hasChanges : function () {},
 				isActionBodyOptional : function () {},
+				lockGroup : function () {},
 				relocate : function () {},
 				relocateAll : function () {},
 				removePatch : function () {},
@@ -214,10 +212,12 @@ sap.ui.define([
 		assert.strictEqual(oCache.bActive, true);
 		assert.deepEqual(oCache.mChangeListeners, {});
 		assert.strictEqual(oCache.fnGetOriginalResourcePath, fnGetOriginalResourcePath);
+		assert.strictEqual(oCache.mLateQueryOptions, null);
 		assert.strictEqual(oCache.sMetaPath, "/TEAMS");
 		assert.deepEqual(oCache.mPatchRequests, {});
 		assert.deepEqual(oCache.mPostRequests, {});
 		assert.strictEqual(oCache.oPendingRequestsPromise, null);
+		assert.deepEqual(oCache.mPropertyRequestByPath, {});
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
 		assert.strictEqual(oCache.sResourcePath, sResourcePath);
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
@@ -711,8 +711,8 @@ sap.ui.define([
 			"0/foo/bar/invalid");
 
 		this.oLogMock.expects("error").withExactArgs(
-				"Failed to drill-down into 0/foo/baz, invalid segment: baz",
-				oCache.toString(), sClassName);
+			"Failed to drill-down into 0/foo/baz, invalid segment: baz",
+			oCache.toString(), sClassName);
 
 		assert.strictEqual(drillDown("0/foo/baz"), undefined, "0/foo/baz");
 		this.oLogMock.expects("error").withExactArgs(
@@ -764,6 +764,103 @@ sap.ui.define([
 		oCacheMock.expects("from$skip")
 			.withExactArgs("1", sinon.match.same(oData[0].foo.list)).returns(3);
 		assert.strictEqual(drillDown("('a')/foo/list/1"), oData[0].foo.list[3], "('a')/foo/list/1");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SingleCache#drillDown: missing property, no group lock", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')"),
+			oData = {
+				"@$ui5._" : {"predicate" : "(42)"}
+			};
+
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/foo")
+			.returns(SyncPromise.resolve({
+				$kind : "Property",
+				$Type : "Edm.String"
+			}));
+		this.mock(oCache).expects("fetchLateProperty").never();
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into foo, invalid segment: foo",
+			oCache.toString(), sClassName);
+
+		return oCache.drillDown(oData, "foo").then(function (vValue) {
+			assert.strictEqual(vValue, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SingleCache#drillDown: missing property, no entity", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')"),
+			oData = {};
+
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/foo")
+			.returns(SyncPromise.resolve({
+				$kind : "Property",
+				$Type : "Edm.String"
+			}));
+		this.mock(oCache).expects("fetchLateProperty").never();
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into foo, invalid segment: foo",
+			oCache.toString(), sClassName);
+
+		return oCache.drillDown(oData, "foo", {}).then(function (vValue) {
+			assert.strictEqual(vValue, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SingleCache#drillDown: missing non-property", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')"),
+			oData = {
+				"@$ui5._" : {"predicate" : "(42)"}
+			};
+
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/foo")
+			.returns(SyncPromise.resolve({
+				$kind : "NavigationProperty"
+			}));
+		this.mock(oCache).expects("fetchLateProperty").never();
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into foo, invalid segment: foo",
+			oCache.toString(), sClassName);
+
+		return oCache.drillDown(oData, "foo", {}).then(function (vValue) {
+			assert.strictEqual(vValue, undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_SingleCache#drillDown: fetch missing property", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Products('42')"),
+			oData = {
+				entity : {
+					"@$ui5._" : {"predicate" : "(23)"},
+					foo : {}
+				}
+			},
+			oGroupLock = {},
+			oValueOfBar = {baz : "qux"};
+
+		this.oModelInterfaceMock.expects("fetchMetadata")
+			.withExactArgs("/Products/entity/foo/bar")
+			.returns(SyncPromise.resolve({
+				$kind : "Property",
+				$Type : "Edm.String"
+			}));
+		this.mock(oCache).expects("fetchLateProperty")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData.entity), "entity",
+				"foo/bar/baz", "foo/bar")
+			.callsFake(function () {
+				oData.entity.foo.bar = oValueOfBar;
+				return SyncPromise.resolve(Promise.resolve(oValueOfBar));
+			});
+
+		return oCache.drillDown(oData, "entity/foo/bar/baz", oGroupLock).then(function (vValue) {
+			assert.strictEqual(vValue, "qux");
+		});
 	});
 
 	//*********************************************************************************************
@@ -1160,7 +1257,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError);
 				});
 
-			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
+			this.mock(this.oRequestor).expects("lockGroup")
 				.withExactArgs(sGroupId, true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1423,7 +1520,7 @@ sap.ui.define([
 					assert.strictEqual(oResult, oError2);
 				});
 
-			this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
+			this.mock(this.oRequestor).expects("lockGroup")
 				.withExactArgs("group", true, sinon.match.same(oCache))
 				.returns(oRequestLock);
 
@@ -1486,7 +1583,7 @@ sap.ui.define([
 				assert.strictEqual(oResult, oError);
 			});
 
-		this.mock(this.oRequestor.getModelInterface()).expects("lockGroup")
+		this.mock(this.oRequestor).expects("lockGroup")
 			.withExactArgs("group", true, sinon.match.same(oCache))
 			.returns(oRequestLock);
 
@@ -2851,6 +2948,153 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#fetchLateProperty", function (assert) {
+		var mQueryOptions = {
+				$apply : "A.P.P.L.E.",
+				$count : true,
+				$expand : {"foo" : null},
+				$filter : "bar eq 42",
+				$orderby : "bar",
+				$search : "search",
+				$select : ["some/other/property"],
+				"sap-client" : "123"
+			},
+			oCache = new _Cache(this.oRequestor, "Employees('31')", mQueryOptions),
+			oData = {
+				foo : {
+					bar: "baz"
+				}
+			},
+			oEntity = {foo : {}},
+			sEntityPath = "entity/path",
+			oGroupLock = {},
+			mLateQueryOptions = {$select : ["qux"]},
+			sMissingPropertyPath = "foo/bar",
+			oPromise,
+			sRequestedPropertyPath = "foo/bar/baz",
+			mQueryOptionsClone = _Helper.clone(mQueryOptions);
+
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
+			.returns(mLateQueryOptions);
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath,
+				{"sap-client" : "123", $select : sRequestedPropertyPath})
+			.returns("?$select=~1");
+		this.mock(_Helper).expects("buildPath")
+			.withExactArgs(oCache.sResourcePath, sEntityPath)
+			.returns("/~/");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "/~/?$select=~1", sinon.match.same(oGroupLock))
+			.resolves(oData);
+		this.mock(_Helper).expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
+				sinon.match.same(oEntity), sinon.match.same(oData));
+		this.mock(_Helper).expects("drillDown")
+			.withExactArgs(sinon.match.same(oEntity), ["foo", "bar"])
+			.returns("baz");
+
+		// code under test
+		oPromise = oCache.fetchLateProperty(oGroupLock, oEntity, sEntityPath,
+			sRequestedPropertyPath, sMissingPropertyPath);
+
+		assert.strictEqual(oCache.mLateQueryOptions, mLateQueryOptions);
+		assert.deepEqual(oCache.mLateQueryOptions.$select, ["qux", sRequestedPropertyPath]);
+
+		return oPromise.then(function (oResult) {
+			assert.deepEqual(oCache.mQueryOptions, mQueryOptionsClone);
+			assert.strictEqual(oResult, "baz");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#fetchLateProperty: parallel calls", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {$select : ["ID"]}),
+			oData = {property : "bar"},
+			oEntity = {},
+			oGroupLock = {},
+			oPromise1,
+			oPromise2;
+
+		oCache.mLateQueryOptions = {$select : ["ID", "baz"]};
+		this.mock(_Helper).expects("merge").never();
+		this.oRequestorMock.expects("buildQueryString").twice()
+			.withExactArgs(oCache.sMetaPath, {$select : "property"})
+			.returns("?$select=property");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees('31')/entity?$select=property",
+				sinon.match.same(oGroupLock))
+			.resolves(oData);
+
+		// code under test
+		oPromise1 = oCache.fetchLateProperty(oGroupLock, oEntity, "entity", "property", "property");
+		oPromise2 = oCache.fetchLateProperty(oGroupLock, oEntity, "entity", "property", "property");
+
+		assert.deepEqual(oCache.mLateQueryOptions.$select, ["ID", "baz", "property"]);
+
+		return Promise.all([oPromise1, oPromise2]).then(function () {
+			assert.deepEqual(oCache.mPropertyRequestByPath, {});
+		});
+	});
+	// TODO non-empty sEntityPath -> $expand -> enhance #fetchTypes
+
+	//*********************************************************************************************
+	QUnit.test("Cache#fetchLateProperty: request failed", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {$select : ["ID"]}),
+			oEntity = {},
+			oError = new Error(),
+			oGroupLock = {};
+
+		oCache.fetchValue = function () {};
+
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, {$select : "property"})
+			.returns("?~");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees('31')/entity?~", sinon.match.same(oGroupLock))
+			.rejects(oError);
+		this.mock(_Helper).expects("updateSelected").never();
+
+		// Code under test
+		return oCache.fetchLateProperty(oGroupLock, oEntity, "entity", "property", "property")
+			.then(function (oResult) {
+				assert.ok(false);
+			}, function (oResult) {
+				assert.strictEqual(oResult, oError);
+				assert.deepEqual(oCache.mPropertyRequestByPath, {});
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#fetchLateProperty: ETag changed", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees('31')", {$select : ["ID"]}),
+			oCacheData = {
+				"@$ui5._" : {predicate : "('1')"},
+				"odata.etag" : "old"
+			},
+			oData = {"@odata.etag" : "new"},
+			oGroupLock = {};
+
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, {$select : "property"})
+			.returns("?~");
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "Employees('31')/entity?~", sinon.match.same(oGroupLock))
+			.resolves(oData);
+		this.mock(_Helper).expects("updateSelected").never();
+
+		// Code under test
+		return oCache.fetchLateProperty(oGroupLock, oCacheData, "entity", "property", "property")
+			.then(function (oResult) {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, "GET " + "Employees('31')/entity?~"
+					+ ": ETag changed");
+				assert.deepEqual(oCache.mPropertyRequestByPath, {});
+			});
+	});
+
+	//*********************************************************************************************
 	[
 		{index : 1, length : 1, result : [{key : "b"}], types : true},
 		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}], types : true},
@@ -4045,24 +4289,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#fetchValue", function (assert) {
+[
+	{bFetchIfMissing : false, oGroupLock1 : undefined, oGroupLock2 : undefined},
+	{bFetchIfMissing : true, oGroupLock1 : {}, oGroupLock2 : {}}
+].forEach(function (oFixture) {
+	var sTitle = "CollectionCache#fetchValue: bFetchIfMissing=" + oFixture.bFetchIfMissing;
+
+	QUnit.test(sTitle, function (assert) {
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
 			oCacheMock = this.mock(oCache),
-			oGroupLock = new _GroupLock("group"),
+			oGroupLock1 = new _GroupLock("group"),
+			oGroupLock2 = new _GroupLock("group"),
 			oListener = {},
 			oReadPromise = this.mockRequest(sResourcePath, 0, 10, undefined, "26"),
 			that = this;
 
-		that.mock(oGroupLock).expects("unlock").withExactArgs();
+		that.mock(oGroupLock1).expects("unlock").withExactArgs();
 
 		oReadPromise.then(function () {
 			// This may only happen when the read is finished
 			oCacheMock.expects("checkActive").twice(); // from read and fetchValue
 			oCacheMock.expects("registerChange")
 				.withExactArgs("('c')/key", sinon.match.same(oListener));
+			that.mock(oGroupLock1).expects("getUnlockedCopy").withExactArgs()
+				.exactly(oFixture.bFetchIfMissing ? 1 : 0)
+				.returns(oFixture.oGroupLock1);
 			oCacheMock.expects("drillDown")
-				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key")
+				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
+					sinon.match.same(oFixture.oGroupLock1))
 				.returns(SyncPromise.resolve("c"));
 		});
 
@@ -4070,21 +4325,29 @@ sap.ui.define([
 			oCache.read(0, 10, 0, new _GroupLock("group")),
 
 			// code under test
-			oCache.fetchValue(oGroupLock, "('c')/key", {}, oListener).then(function (sResult) {
-				assert.strictEqual(sResult, "c");
+			oCache.fetchValue(oGroupLock1, "('c')/key", {}, oListener, oFixture.bFetchIfMissing)
+				.then(function (sResult) {
+					assert.strictEqual(sResult, "c");
 
-				oCacheMock.expects("registerChange").withExactArgs("('c')/key", undefined);
-				oCacheMock.expects("checkActive");
-				oCacheMock.expects("drillDown")
-					.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key")
-					.returns(SyncPromise.resolve("c"));
+					oCacheMock.expects("registerChange").withExactArgs("('c')/key", undefined);
+					oCacheMock.expects("checkActive");
+					that.mock(oGroupLock2).expects("getUnlockedCopy").withExactArgs()
+						.exactly(oFixture.bFetchIfMissing ? 1 : 0)
+						.returns(oFixture.oGroupLock2);
+					oCacheMock.expects("drillDown")
+						.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key",
+							sinon.match.same(oFixture.oGroupLock2))
+						.returns(SyncPromise.resolve("c"));
 
-				// code under test: now it must be delivered synchronously
-				assert.strictEqual(
-					oCache.fetchValue(new _GroupLock("group"), "('c')/key").getResult(), "c");
-			})
+					// code under test: now it must be delivered synchronously
+					assert.strictEqual(
+						oCache.fetchValue(oGroupLock2, "('c')/key", {}, undefined,
+							oFixture.bFetchIfMissing).getResult(),
+						"c");
+				})
 		]);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fetchValue includes $tail", function (assert) {
@@ -4103,7 +4366,7 @@ sap.ui.define([
 			.returns(oSyncPromiseAll);
 		oSyncPromiseAll.then(function () {
 			that.mock(oCache).expects("drillDown")
-				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key")
+				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key", undefined)
 				.returns(SyncPromise.resolve("c"));
 		});
 
@@ -4129,7 +4392,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oCache.aElements))
 			.returns(SyncPromise.resolve());
 		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key")
+			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key", undefined)
 			.returns(SyncPromise.resolve("c"));
 
 		// code under test
@@ -4145,7 +4408,7 @@ sap.ui.define([
 		oCache.oSyncPromiseAll = SyncPromise.resolve();
 		this.mock(SyncPromise).expects("all").never();
 		this.mock(oCache).expects("drillDown")
-			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key")
+			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key", undefined)
 			.returns(SyncPromise.resolve("c"));
 
 		// code under test
@@ -5587,7 +5850,7 @@ sap.ui.define([
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
 								"/TEAMS/Foo", sinon.match.same(mTypeForMetaPath))
 							.callsFake(getKeyFilter);
-						oHelperMock.expects("updateExisting")
+						oHelperMock.expects("updateSelected")
 							.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPredicate,
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
 								sinon.match.same(oFixture.aValues[i]));
@@ -5665,7 +5928,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#requestSideEffects: nothing to do", function (assert) {
+[null, {}].forEach(function(mLateQueryOptions, i) {
+	QUnit.test("CollectionCache#requestSideEffects: nothing to do #" + i, function (assert) {
 		var mByPredicate = { // some dummy content
 				"($uid=id-1-23)" : -1,
 				"('@')" : -1,
@@ -5703,11 +5967,12 @@ sap.ui.define([
 		oCache.aElements = aElements;
 		oCache.aElements.$created = 1;
 		oCache.aElements.$byPredicate = mByPredicate;
+		oCache.mLateQueryOptions = mLateQueryOptions;
 
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve(mTypeForMetaPath));
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(mLateQueryOptions || mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
 				"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths))
 			.returns(null); // "nothing to do"
@@ -5725,6 +5990,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.$created, 1);
 		assert.strictEqual(JSON.stringify(oCache.aElements.$byPredicate), sByPredicateJSON);
 	});
+});
 
 	//*********************************************************************************************
 [1, undefined].forEach(function (iLength) {
@@ -5885,7 +6151,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache#fetchValue", function (assert) {
+[
+	{bFetchIfMissing : false, oGroupLock1 : undefined, oGroupLock2 : undefined},
+	{bFetchIfMissing : true, oGroupLock1 : {}, oGroupLock2 : {}}
+].forEach(function (oFixture) {
+	var sTitle = "SingleCache#fetchValue: bFetchIfMissing=" + oFixture.bFetchIfMissing;
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache,
 			oCacheMock,
 			fnDataRequested1 = {},
@@ -5899,7 +6171,8 @@ sap.ui.define([
 			sMetaPath = "~",
 			mQueryParams = {},
 			sResourcePath = "Employees('1')",
-			mTypeForMetaPath = {};
+			mTypeForMetaPath = {},
+			that = this;
 
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/Employees", sinon.match.same(mQueryParams), false, true)
@@ -5911,32 +6184,45 @@ sap.ui.define([
 			undefined, sMetaPath);
 		oCacheMock = this.mock(oCache);
 
-		oCacheMock.expects("registerChange").withExactArgs(undefined, sinon.match.same(oListener1));
+		oCacheMock.expects("registerChange").withExactArgs(undefined,
+			sinon.match.same(oListener1));
 		this.mock(oGroupLock1).expects("unlock").never();
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
 				undefined, sinon.match.same(fnDataRequested1), undefined, sMetaPath)
 			.returns(Promise.resolve(oExpectedResult).then(function () {
-					oCacheMock.expects("visitResponse")
-						.withExactArgs(sinon.match.same(oExpectedResult),
-							sinon.match.same(mTypeForMetaPath), undefined);
-					oCacheMock.expects("checkActive").twice();
-					oCacheMock.expects("drillDown")
-						.withExactArgs(sinon.match.same(oExpectedResult), undefined)
-						.returns(SyncPromise.resolve(oExpectedResult));
-					oCacheMock.expects("drillDown").twice()
-						.withExactArgs(sinon.match.same(oExpectedResult), "foo")
-						.returns(SyncPromise.resolve("bar"));
-					return oExpectedResult;
-				}));
+				oCacheMock.expects("visitResponse")
+					.withExactArgs(sinon.match.same(oExpectedResult),
+						sinon.match.same(mTypeForMetaPath), undefined);
+				oCacheMock.expects("checkActive").twice();
+				that.mock(oGroupLock1).expects("getUnlockedCopy")
+					.exactly(oFixture.bFetchIfMissing ? 1 : 0)
+					.withExactArgs().returns(oFixture.oGroupLock1);
+				oCacheMock.expects("drillDown")
+					.withExactArgs(sinon.match.same(oExpectedResult), undefined,
+						sinon.match.same(oFixture.oGroupLock1))
+					.returns(SyncPromise.resolve(oExpectedResult));
+				that.mock(oGroupLock2).expects("getUnlockedCopy")
+					.exactly(oFixture.bFetchIfMissing ? 1 : 0)
+					.withExactArgs().returns(oFixture.oGroupLock2);
+				oCacheMock.expects("drillDown")
+					.withExactArgs(sinon.match.same(oExpectedResult), "foo",
+						sinon.match.same(oFixture.oGroupLock2))
+					.returns(SyncPromise.resolve("bar"));
+				oCacheMock.expects("drillDown")
+					.withExactArgs(sinon.match.same(oExpectedResult), "foo")
+					.returns(SyncPromise.resolve("bar"));
+				return oExpectedResult;
+			}));
 
 		// code under test
 		assert.strictEqual(oCache.getValue("foo"), undefined, "before fetchValue");
 		aFetchValuePromises = [
-			oCache.fetchValue(oGroupLock1, undefined, fnDataRequested1, oListener1)
-				.then(function (oResult) {
-					assert.strictEqual(oResult, oExpectedResult);
-				})
+			oCache.fetchValue(oGroupLock1, undefined, fnDataRequested1, oListener1,
+				oFixture.bFetchIfMissing
+			).then(function (oResult) {
+				assert.strictEqual(oResult, oExpectedResult);
+			})
 		];
 
 		assert.ok(oCache.bSentReadRequest);
@@ -5946,17 +6232,19 @@ sap.ui.define([
 
 		// code under test
 		aFetchValuePromises.push(
-			oCache.fetchValue(oGroupLock2, "foo", fnDataRequested2, oListener2)
-				.then(function (oResult) {
-					assert.strictEqual(oResult, "bar");
-					assert.strictEqual(oCache.getValue("foo"), "bar", "data available");
-				})
+			oCache.fetchValue(oGroupLock2, "foo", fnDataRequested2, oListener2,
+				oFixture.bFetchIfMissing
+			).then(function (oResult) {
+				assert.strictEqual(oResult, "bar");
+				assert.strictEqual(oCache.getValue("foo"), "bar", "data available");
+			})
 		);
 
 		assert.strictEqual(oCache.getValue("foo"), undefined, "data not yet available");
 
 		return Promise.all(aFetchValuePromises);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_SingleCache#getValue: drillDown asynchronous", function (assert) {
@@ -6002,7 +6290,7 @@ sap.ui.define([
 						sinon.match.same(mTypeForMetaPath), "~/$Type");
 				oCacheMock.expects("checkActive");
 				oCacheMock.expects("drillDown")
-					.withExactArgs(sinon.match.same(oExpectedResult), "foo")
+					.withExactArgs(sinon.match.same(oExpectedResult), "foo", undefined)
 					.returns(SyncPromise.resolve("bar"));
 				return oExpectedResult;
 			}));
@@ -6377,6 +6665,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[null, {}].forEach(function (mLateQueryOptions) {
 	[undefined, "Me"].forEach(function (sReadPath) {
 		var sTitle = "SingleCache#requestSideEffects, sResourcePath = " + sReadPath;
 
@@ -6395,13 +6684,15 @@ sap.ui.define([
 				aPaths = ["ROOM_ID"],
 				oPromise,
 				mTypeForMetaPath = {},
-				oUpdateExistingExpectation,
+				oUpdateSelectedExpectation,
 				oVisitResponseExpectation;
 
+			oCache.mLateQueryOptions = mLateQueryOptions;
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-					sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-					sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-					"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
+				sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
+				sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+				"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
 				.returns(mMergedQueryOptions);
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/Employees", sinon.match.same(mMergedQueryOptions), false, true)
@@ -6417,7 +6708,7 @@ sap.ui.define([
 				.returns(SyncPromise.resolve(oOldValue));
 			oVisitResponseExpectation = oCacheMock.expects("visitResponse")
 				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath));
-			oUpdateExistingExpectation = this.mock(_Helper).expects("updateExisting")
+			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateSelected")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oOldValue), sinon.match.same(oNewValue))
 				.returns(SyncPromise.resolve(oOldValue));
@@ -6427,7 +6718,7 @@ sap.ui.define([
 					sReadPath)
 				.then(function (vResult) {
 					assert.strictEqual(vResult, oOldValue);
-					assert.ok(oVisitResponseExpectation.calledBefore(oUpdateExistingExpectation));
+					assert.ok(oVisitResponseExpectation.calledBefore(oUpdateSelectedExpectation));
 				});
 
 			assert.ok(!oPromise.isFulfilled());
@@ -6440,11 +6731,12 @@ sap.ui.define([
 				// code under test: check that a "parallel" read waits for oPromise
 				oCache.fetchValue(_GroupLock.$cached, "").then(function (vResult) {
 					assert.strictEqual(vResult, oOldValue);
-					assert.ok(oUpdateExistingExpectation.called, "old value already updated");
+					assert.ok(oUpdateSelectedExpectation.called, "old value already updated");
 				})
 			]);
 		});
 	});
+});
 	//TODO CollectionCache#refreshSingle claims that
 	// "_Helper.updateExisting cannot be used because navigation properties cannot be handled"
 	// --> what does that mean for us?

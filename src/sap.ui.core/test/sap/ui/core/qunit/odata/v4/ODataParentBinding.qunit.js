@@ -1516,7 +1516,7 @@ sap.ui.define([
 	QUnit.test("aggregateQueryOptions: cache is immutable", function (assert) {
 		var mAggregatedQueryOptions = {
 				$expand : {
-					"EMPLOYEE_2_TEAM" : {}
+					"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}
 				},
 				$select : ["Name", "AGE"]
 			},
@@ -1533,13 +1533,20 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(
 			oBinding.aggregateQueryOptions({$select : ["ROOM_ID"]}, true),
-			false, "new $select not allowed");
+			true, "new property accepted, but not added to $select");
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
 
 		// code under test
 		assert.strictEqual(
 			oBinding.aggregateQueryOptions({$expand : {"EMPLOYEE_2_TEAM" : {}}}, true),
 			true, "same $expand as before");
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+
+		// code under test
+		assert.strictEqual(
+			oBinding.aggregateQueryOptions(
+				{$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Name"]}}}, true),
+			false, "new $select in existing $expand");
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
 
 		// code under test

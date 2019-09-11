@@ -12,11 +12,11 @@
 //   from the component's manifest. Add it as "js" resource to sap.ui5/resources in the
 //   manifest.json to achieve that.
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/util/UriParameters",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	'sap/ui/thirdparty/sinon'
-], function (jQuery, ODataModel, TestUtils, sinon) {
+], function (UriParameters, ODataModel, TestUtils, sinon) {
 	"use strict";
 
 	var oSandbox = sinon.sandbox.create();
@@ -25,15 +25,16 @@ sap.ui.define([
 		var Constructor = sap.ui.model.odata.v4.ODataModel;
 
 		oSandbox.stub(sap.ui.model.odata.v4, "ODataModel", function (mParameters) {
-			var sUpdateGroupId = jQuery.sap.getUriParameters().get("updateGroupId")
+			var oUriParameters = UriParameters.fromQuery(window.location.search),
+				sUpdateGroupId = oUriParameters.get("updateGroupId")
 					|| TestUtils.retrieveData(
 						"sap.ui.core.sample.odata.v4.MusicArtists.updateGroupId")
-					|| undefined;
+					|| mParameters.updateGroupId;
 
 			// clone: do not modify constructor call parameter
-			mParameters = jQuery.extend({}, mParameters, {
-				earlyRequests : jQuery.sap.getUriParameters().get("earlyRequests") !== "false",
-				groupId : jQuery.sap.getUriParameters().get("$direct") ? "$direct" : undefined,
+			mParameters = Object.assign({}, mParameters, {
+				earlyRequests : oUriParameters.get("earlyRequests") !== "false",
+				groupId : oUriParameters.get("$direct") ? "$direct" : mParameters.groupId,
 				serviceUrl : TestUtils.proxy(mParameters.serviceUrl),
 				updateGroupId : sUpdateGroupId
 			});
@@ -100,4 +101,4 @@ sap.ui.define([
 	}
 
 	TestUtils.setData("sap.ui.core.sample.odata.v4.MusicArtists.sandbox", oSandbox);
-}, /* bExport= */false);
+});

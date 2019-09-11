@@ -1,4 +1,3 @@
-/* global Promise */
 sap.ui.define([
 	"sap/ui/core/tutorial/odatav4/localService/mockserver",
 	"sap/base/Log",

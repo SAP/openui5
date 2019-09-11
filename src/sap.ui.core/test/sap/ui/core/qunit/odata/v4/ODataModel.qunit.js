@@ -4,6 +4,8 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Element",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
@@ -19,16 +21,15 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/SubmitMode",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/library"
-], function (jQuery, Log, Message, Binding, BindingMode, BaseContext, Model, ODataUtils,
-		OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding, ODataMetaModel,
-		ODataModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper, _MetadataRequestor,
+], function (jQuery, Log, SyncPromise, Element, Message, Binding, BindingMode, BaseContext, Model,
+		ODataUtils, OperationMode, TypeString, Context, ODataContextBinding, ODataListBinding,
+		ODataMetaModel, ODataModel, ODataPropertyBinding, SubmitMode, _Helper, _MetadataRequestor,
 		_Parser, _Requestor, TestUtils, library) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
@@ -48,7 +49,7 @@ sap.ui.define([
 			"TEAMS('UNKNOWN')" : {code : 404, source : "TEAMS('UNKNOWN').json"}
 		},
 		sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
+		TestControl = Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata : {
 				properties : {
 					text : "string"
@@ -161,7 +162,6 @@ sap.ui.define([
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
 		assert.deepEqual(oModel.aAllBindings, []);
-		assert.deepEqual(oModel.aLockedGroupLocks, []);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -401,12 +401,10 @@ sap.ui.define([
 			oExpectedBind2,
 			oExpectedBind3,
 			oExpectedBind4,
-			oExpectedBind5,
 			oExpectedCreate = this.mock(_Requestor).expects("create"),
 			fnFetchEntityContainer = {},
 			fnFetchMetadata = {},
 			fnGetGroupProperty = {},
-			fnLockGroup = {},
 			oModel,
 			oModelInterface,
 			fnReportBoundMessages = {},
@@ -420,7 +418,6 @@ sap.ui.define([
 					fetchMetadata : sinon.match.same(fnFetchMetadata),
 					fireSessionTimeout : sinon.match.func,
 					getGroupProperty : sinon.match.same(fnGetGroupProperty),
-					lockGroup : sinon.match.same(fnLockGroup),
 					onCreateGroup : sinon.match.func,
 					reportBoundMessages : sinon.match.same(fnReportBoundMessages),
 					reportUnboundMessages : sinon.match.same(fnReportUnboundMessages)
@@ -438,8 +435,6 @@ sap.ui.define([
 			.returns(fnReportUnboundMessages);
 		oExpectedBind4 = this.mock(ODataModel.prototype.reportBoundMessages).expects("bind")
 			.returns(fnReportBoundMessages);
-		oExpectedBind5 = this.mock(ODataModel.prototype.lockGroup).expects("bind")
-			.returns(fnLockGroup);
 
 		// code under test
 		oModel = createModel("?sap-client=123");
@@ -451,7 +446,6 @@ sap.ui.define([
 		assert.strictEqual(oExpectedBind2.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind3.firstCall.args[0], oModel);
 		assert.strictEqual(oExpectedBind4.firstCall.args[0], oModel);
-		assert.strictEqual(oExpectedBind5.firstCall.args[0], oModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto", true)
@@ -610,13 +604,15 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_submitBatch: success", function (assert) {
 		var oBatchResult = {},
+			sGroupId = {/*string*/},
 			oModel = createModel();
 
-		this.mock(oModel.oRequestor).expects("submitBatch").withExactArgs("groupId")
-			.returns(Promise.resolve(oBatchResult));
+		this.mock(oModel.oRequestor).expects("submitBatch")
+			.withExactArgs(sinon.match.same(sGroupId))
+			.returns(SyncPromise.resolve(Promise.resolve(oBatchResult)));
 
 		// code under test
-		return oModel._submitBatch("groupId").then(function (oResult) {
+		return oModel._submitBatch(sGroupId).then(function (oResult) {
 			assert.strictEqual(oResult, oBatchResult);
 		});
 	});
@@ -625,22 +621,27 @@ sap.ui.define([
 	[undefined, false, true].forEach(function (bCatch) {
 		QUnit.test("_submitBatch, failure, bCatch: " + bCatch, function (assert) {
 			var oExpectedError = new Error("deliberate failure"),
-				oModel = createModel();
+				oModel = createModel(),
+				oPromise;
 
 			this.mock(oModel.oRequestor).expects("submitBatch")
 				.withExactArgs("groupId")
-				.returns(Promise.reject(oExpectedError));
+				.returns(SyncPromise.resolve(Promise.reject(oExpectedError)));
 			this.mock(oModel).expects("reportError")
 				.withExactArgs("$batch failed", sClassName, oExpectedError);
 
 			// code under test
-			return oModel._submitBatch("groupId", bCatch).then(function (vResult) {
+			oPromise = oModel._submitBatch("groupId", bCatch).then(function (vResult) {
 				assert.ok(bCatch);
 				assert.strictEqual(vResult, undefined);
 			}, function (oError) {
 				assert.notOk(bCatch);
 				assert.strictEqual(oError, oExpectedError);
 			});
+
+			assert.ok(oPromise instanceof SyncPromise);
+
+			return oPromise;
 		});
 	});
 
@@ -666,7 +667,7 @@ sap.ui.define([
 		// code under test
 		return oModel.submitBatch("groupId").then(function (oResult) {
 			// this proves that submitBatch() returns a promise which is resolved with the result
-			// of _submitBatch(), which in reality is of course a promise itself
+			// of _submitBatch(), which in reality is of course a sync promise itself
 			assert.strictEqual(oResult, oSubmitPromise);
 		});
 	});
@@ -710,7 +711,7 @@ sap.ui.define([
 		// code under test
 		return oModel.submitBatch("groupId").then(function (oResult) {
 			// this proves that submitBatch() returns a promise which is resolved with the result
-			// of _submitBatch(), which in reality is of course a promise itself
+			// of _submitBatch(), which in reality is of course a sync promise itself
 			assert.strictEqual(oResult, oSubmitPromise);
 		});
 	});
@@ -1810,100 +1811,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("lockGroup: non-blocking", function (assert) {
-		var oGroupLock,
-			oModel = createModel("");
-
-		this.mock(oModel.oRequestor).expects("getSerialNumber").returns(42);
-
-		// code under test
-		oGroupLock = oModel.lockGroup("foo");
-
-		assert.ok(oGroupLock instanceof _GroupLock);
-		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-		assert.notOk(oGroupLock.isLocked());
-		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("lockGroup: blocking", function (assert) {
-		var oGroupLock,
-			oModel = createModel(""),
-			oOwner = {};
-
-		this.mock(oModel.oRequestor).expects("getSerialNumber").returns(42);
-
-		oGroupLock = oModel.lockGroup("foo", true, oOwner);
-
-		assert.ok(oGroupLock instanceof _GroupLock);
-		assert.strictEqual(oGroupLock.getGroupId(), "foo");
-		assert.ok(oGroupLock.isLocked());
-		assert.strictEqual(oGroupLock.oOwner, oOwner);
-		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_submitBatch: group locks", function (assert) {
-		var oBarGroupLock,
-			oBarPromise,
-			oBazPromise,
-			oFooGroupLock,
-			oFooPromise,
-			oModel = createModel(""),
-			oRequestorMock = this.mock(oModel.oRequestor),
-			that = this;
-
-		oRequestorMock.expects("submitBatch").never();
-
-		oFooGroupLock = oModel.lockGroup("foo", true);
-		oBarGroupLock = oModel.lockGroup("bar", true);
-
-		this.oLogMock.expects("info")
-			.withExactArgs("submitBatch('foo') is waiting for locks", null, sClassName);
-
-		// code under test
-		oFooPromise = oModel._submitBatch("foo");
-
-		assert.ok(oFooPromise instanceof Promise);
-
-		this.oLogMock.expects("info")
-			.withExactArgs("submitBatch('bar') is waiting for locks", null, sClassName);
-
-		// code under test
-		oBarPromise = oModel._submitBatch("bar");
-
-		oRequestorMock.expects("submitBatch").withExactArgs("baz").returns(Promise.resolve());
-
-		// code under test
-		oBazPromise = oModel._submitBatch("baz");
-
-		this.oLogMock.expects("info")
-			.withExactArgs("submitBatch('foo') continues", null, sClassName);
-		oRequestorMock.expects("submitBatch").withExactArgs("foo").returns(Promise.resolve());
-
-		// code under test
-		oFooGroupLock.unlock();
-
-		return Promise.all([
-			oFooPromise.then(function () {
-				assert.deepEqual(oModel.aLockedGroupLocks, [oBarGroupLock]);
-
-				that.oLogMock.expects("info")
-					.withExactArgs("submitBatch('bar') continues", null, sClassName);
-				oRequestorMock.expects("submitBatch").withExactArgs("bar")
-					.returns(Promise.resolve());
-
-				// code under test
-				oBarGroupLock.unlock();
-			}),
-			oBarPromise.then(function () {
-				assert.deepEqual(oModel.aLockedGroupLocks, []);
-			}),
-			oBazPromise
-		]);
-	});
-
-	//*********************************************************************************************
 	[
 		{numericSeverity : 1, type : MessageType.Success},
 		{numericSeverity : 2, type : MessageType.Information},
@@ -2315,6 +2222,23 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oModel.withUnresolvedBindings("anyCallback", vParameter), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("lockGroup", function (assert) {
+		var sGroupId = {},
+			oGroupLock = {},
+			bLocked  = {},
+			oModel = createModel(),
+			oOwner = {};
+
+		this.mock(oModel.oRequestor).expects("lockGroup")
+			.withExactArgs(sinon.match.same(sGroupId), sinon.match.same(bLocked),
+				sinon.match.same(oOwner))
+			.returns(oGroupLock);
+
+		// code under test
+		assert.strictEqual(oModel.lockGroup(sGroupId, bLocked, oOwner), oGroupLock);
 	});
 });
 

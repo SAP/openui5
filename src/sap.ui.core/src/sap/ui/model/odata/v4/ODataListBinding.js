@@ -1195,13 +1195,14 @@ sap.ui.define([
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
-			var sRelativePath;
+			var oGroupLock, sRelativePath;
 
 			if (oCache) {
+				oGroupLock = bCached ? _GroupLock.$cached : that.lockGroup();
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					return oCache.fetchValue(_GroupLock.$cached, sRelativePath, undefined,
-						oListener);
+					return oCache.fetchValue(oGroupLock, sRelativePath, undefined, oListener,
+						that.oModel.bAutoExpandSelect);
 				}
 			}
 			if (that.oContext) {
@@ -2053,7 +2054,7 @@ sap.ui.define([
 
 			if (aPaths.indexOf("") < 0) {
 				iStart = bSingle ? oContext.getModelIndex() : that.iCurrentBegin;
-				oPromise = oCache.requestSideEffects(oModel.lockGroup(sGroupId),
+				oPromise = oCache.requestSideEffects(that.lockGroup(sGroupId),
 					aPaths, mNavigationPropertyPaths, iStart, iLength);
 				if (oPromise) {
 					aPromises = [oPromise];
@@ -2064,7 +2065,7 @@ sap.ui.define([
 				}
 			}
 			if (bSingle) {
-				return that.refreshSingle(oContext, oModel.lockGroup(sGroupId), false);
+				return that.refreshSingle(oContext, that.lockGroup(sGroupId), false);
 			}
 			if (that.aContexts.length) {
 				bAllContextsTransient = that.aContexts.every(function (oContext) {

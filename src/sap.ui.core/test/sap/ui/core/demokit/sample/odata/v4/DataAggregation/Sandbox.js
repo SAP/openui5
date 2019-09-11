@@ -50,4 +50,4 @@ sap.ui.define([
 	}
 
 	TestUtils.setData("sap.ui.core.sample.odata.v4.DataAggregation.sandbox", oSandbox);
-}, /* bExport= */false);
+});

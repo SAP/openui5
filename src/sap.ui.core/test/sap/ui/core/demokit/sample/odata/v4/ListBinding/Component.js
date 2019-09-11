@@ -8,7 +8,7 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/util/UriParameters",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/sample/common/Component",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, library, View, BaseComponent, JSONModel, ODataModel, TestUtils, URI) {
+], function (UriParameters, library, View, BaseComponent, JSONModel, ODataModel, TestUtils, URI) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -43,13 +43,13 @@ sap.ui.define([
 				sQuery = sQuery ? "?" + sQuery : "";
 				oModel.destroy();
 				oModel = new ODataModel({
-					groupId : jQuery.sap.getUriParameters().get("$direct")
+					groupId : UriParameters.fromQuery(window.location.search).get("$direct")
 						? "$direct" // switch off batch
 						: undefined,
 					operationMode : oModel.sOperationMode,
 					serviceUrl : sServiceUrl + sQuery,
 					synchronizationMode : "None",
-					updateGroupId : jQuery.sap.getUriParameters().get("updateGroupId")
+					updateGroupId : UriParameters.fromQuery(window.location.search).get("updateGroupId")
 						|| oModel.getUpdateGroupId()
 				});
 				this.setModel(oModel);
