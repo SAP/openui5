@@ -446,10 +446,7 @@ sap.ui.define([
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.Link": {
-					"hideControl": "default",
-					"unhideControl": "default"
-				},
+				"sap.m.Link": "sap/m/flexibility/Link",
 				"sap.m.List": {
 					"hideControl": "default",
 					"unhideControl": "default",

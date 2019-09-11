@@ -1,11 +1,20 @@
+/*global QUnit */
 sap.ui.define([
 	"sap/m/Link",
+	'sap/m/changeHandler/ChangeLinkTarget',
 	"sap/ui/dt/enablement/elementDesigntimeTest",
-	"sap/ui/rta/enablement/elementActionTest"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/rta/enablement/elementActionTest",
+	"sap/ui/core/mvc/View",
+	"sap/ui/fl/Change"
 ], function (
 	Link,
+	ChangeLinkTarget,
 	elementDesigntimeTest,
-	elementActionTest
+	JsControlTreeModifier,
+	elementActionTest,
+	View,
+	Change
 ) {
 	"use strict";
 
@@ -55,5 +64,55 @@ sap.ui.define([
 			afterUndo: fnConfirmLinkIsInvisible,
 			afterRedo: fnConfirmLinkIsVisible
 		});
+
+
+		QUnit.module("Checking the ChangeLinkTarget action: ", {
+			beforeEach: function () {
+				this.oMockedAppComponent = {
+					getLocalId: function () {
+						return undefined;
+					},
+					createId: function (id) {
+						return id;
+					}
+				};
+			},
+			afterEach: function () {
+			}
+		});
+
+		QUnit.test('Checking the ChangeLinkTarget action', function (assert) {
+			// Arrange
+			this.oLink = new Link({
+				id: "btn1",
+				text: "link",
+				href: "www.sap.com",
+				target: "_self"
+			});
+
+			var oView = new View({content : [
+				this.oLink
+			]});
+
+			var oChange = new Change({"changeType" : "changeLinkTarget", "content" : "_blank"});
+
+			// Act
+			ChangeLinkTarget.applyChange(oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
+			// Assert
+			assert.equal(this.oLink.getTarget(), "_blank", "After applying the change the Link target is _blank");
+
+			// Act
+			ChangeLinkTarget.revertChange(oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
+			// Assert
+			assert.equal(this.oLink.getTarget(), "_self", "After reverting the change the Link target is _self");
+
+			// Act
+			ChangeLinkTarget.applyChange(oChange, this.oLink, {modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent});
+			// Assert
+			assert.equal(this.oLink.getTarget(), "_blank", "After applying the change again the Link target is _blank");
+
+			this.oLink.destroy();
+		});
+
 	});
 });
