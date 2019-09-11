@@ -27,8 +27,12 @@
 			title: "sap.m.MessageBox"
 		});
 
-		var oHL = new sap.ui.layout.HorizontalLayout();
-		var oHL1 = new sap.ui.layout.HorizontalLayout();
+		var oHL = new sap.ui.layout.HorizontalLayout({
+			allowWrapping: true
+		});
+		var oHL1 = new sap.ui.layout.HorizontalLayout({
+			allowWrapping: true
+		});
 		var oVL = new sap.ui.layout.VerticalLayout();
 
 		oVL.addContent(oHL);
