@@ -199,18 +199,6 @@ function(
 		});
 	});
 
-	QUnit.module('curry()', function () {
-		QUnit.test("curry()", function(assert) {
-			var fnOriginalFunction = function(sPar1, sPar2) {
-				return sPar1 + sPar2;
-			};
-			var fnCurriedFunction = Util.curry(fnOriginalFunction);
-
-			assert.ok(jQuery.isFunction(fnCurriedFunction), "function has been returned");
-			assert.equal(fnCurriedFunction("Curried")("Test"), "CurriedTest", "the function has been properly curried");
-		});
-	});
-
 	QUnit.module('objectValues()', function () {
 		QUnit.test("objectValues()", function(assert) {
 			var sValue1 = "test1";
@@ -221,15 +209,6 @@ function(
 			};
 
 			assert.deepEqual(Util.objectValues(mObject), [sValue1, sValue2], "the correct object values were returned");
-		});
-	});
-
-	QUnit.module('intersection()', function () {
-		QUnit.test("basic functionality", function(assert) {
-			var aArray1 = [0, 1, 2, 3];
-			var aArray2 = [1, 3, 5, 6];
-
-			assert.deepEqual(Util.intersection(aArray1, aArray2), [1, 3], "only those, which are presented in both arrays, are returned");
 		});
 	});
 
@@ -287,46 +266,6 @@ function(
 			assert.throws(function () {
 				Util.wrapIntoPromise({});
 			});
-		});
-	});
-
-	QUnit.module('pick()', function () {
-		QUnit.test("basic functionality", function (assert) {
-			assert.deepEqual(Util.pick({ a: 1, b: 2, c: undefined }, 'a'), { a: 1 });
-			assert.deepEqual(Util.pick({ a: 1, b: 2, c: undefined }, ['a', 'c']), { a: 1, c: undefined });
-			assert.deepEqual(Util.pick({ null: 1, b: 2 }, null), {null: 1}); // eslint-disable-line quote-props
-			assert.deepEqual(Util.pick({ undefined: 1, b: 2 }), {});
-			assert.deepEqual(Util.pick({ undefined: 1, b: 2 }, undefined), {undefined: 1});
-		});
-		QUnit.test("when wrong parameters specified", function (assert) {
-			assert.deepEqual(Util.pick(), {});
-			assert.deepEqual(Util.pick(1), {});
-			assert.deepEqual(Util.pick(1, 'a'), {});
-			assert.deepEqual(Util.pick({ 1: 1, b: 2 }, 1), { 1: 1});
-			assert.deepEqual(Util.pick({ a: 1, b: 2 }), {});
-		});
-	});
-
-	QUnit.module('debounce()', function() {
-		QUnit.test("when a function is called with a timeout several times", function(assert) {
-			var clock = sinon.useFakeTimers();
-			var done = assert.async();
-			var iFunctionCalled = 0;
-			var iDebounceCalled = 0;
-			var fnDebounce = Util.debounce(function() {
-				iDebounceCalled++;
-				assert.equal(iFunctionCalled, 5, "the function was called 5 times");
-				assert.equal(iDebounceCalled, 1, "the debounce callback was only called once");
-				clock.restore();
-				done();
-			}, 20);
-
-			for (var i = 0; i < 5; i++) {
-				iFunctionCalled++;
-				fnDebounce();
-				clock.tick(11);
-			}
-			clock.tick(10);
 		});
 	});
 
@@ -447,27 +386,6 @@ function(
 			return fnReturn().catch(function() {
 				assert.ok(true, "then a Promise.reject() was returned");
 			});
-		});
-	});
-
-	QUnit.module('max()', function () {
-		QUnit.test("when called with the array of numbers", function (assert) {
-			assert.strictEqual(Util.max([1, 2, 5, 3, 0]), 5);
-		});
-		QUnit.test("when called with the array of strings", function (assert) {
-			assert.strictEqual(Util.max(['1', '2', '5', '3', '0']), '5');
-		});
-		QUnit.test("when called with 1 element in the array", function (assert) {
-			assert.strictEqual(Util.max([1]), 1);
-		});
-		QUnit.test("when called with empty array", function (assert) {
-			assert.strictEqual(Util.max([]), undefined);
-		});
-		QUnit.test("when called without arguments", function (assert) {
-			assert.strictEqual(Util.max(), undefined);
-		});
-		QUnit.test("when called with non-array argument", function (assert) {
-			assert.strictEqual(Util.max(123), undefined);
 		});
 	});
 

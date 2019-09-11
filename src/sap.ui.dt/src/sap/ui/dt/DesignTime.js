@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/dt/SelectionMode",
 	"sap/base/util/includes",
-	"sap/ui/dt/DesignTimeStatus"
+	"sap/ui/dt/DesignTimeStatus",
+	"sap/base/util/restricted/_curry"
 ],
 function (
 	ManagedObject,
@@ -42,7 +43,8 @@ function (
 	merge,
 	SelectionMode,
 	includes,
-	DesignTimeStatus
+	DesignTimeStatus,
+	_curry
 ) {
 	"use strict";
 
@@ -830,7 +832,7 @@ function (
 					// on ElementOverlay and no Metadata will be loaded from the server for this Element.
 					this.getDesignTimeMetadataFor(oElement) instanceof ElementDesignTimeMetadata
 					? this.getDesignTimeMetadataFor(oElement)
-					: Util.curry(function (mMetadataExtension, mParentMetadata, oElement, mMetadata) {
+					: _curry(function (mMetadataExtension, mParentMetadata, oElement, mMetadata) {
 						mMetadata = merge({}, mMetadata, mMetadataExtension);
 
 						this._mMetadataOriginal = mMetadata;

@@ -8,13 +8,13 @@ sap.ui.define([
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/dt/Util"
+	"sap/base/util/restricted/_intersection"
 ], function(
 	jQuery,
 	OverlayUtil,
 	ManagedObject,
 	DOMUtil,
-	Util
+	_intersection
 ) {
 	"use strict";
 
@@ -137,7 +137,7 @@ sap.ui.define([
 			this._isRelevantNode(this._getTargetNode(oMutation))
 			|| (
 				oMutation.target.id === 'sap-ui-static'
-				&& Util.intersection(
+				&& _intersection(
 					[]
 						.concat(
 							Array.prototype.slice.call(oMutation.addedNodes),

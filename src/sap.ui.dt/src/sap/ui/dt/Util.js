@@ -178,37 +178,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a curried function
-	 *
-	 * Usage:
-	 * var fnSum = function (a, b, c) {
-	 *     return a + b + c;
-	 * };
-	 * var fnCurriedSum = Util.curry(fnSum);
-	 * fnCurriedSum(1)(2)(3)
-	 * => 6
-	 *
-	 * @param {function} fnOriginal - Original function
-	 * @return {function} - Curried function
-	 */
-	Util.curry = function(fnOriginal) {
-		var iArity = fnOriginal.length;
-
-		var fnResolver = function () {
-			var aArguments = Array.prototype.slice.call(arguments);
-			if (aArguments.length >= iArity) {
-				return fnOriginal.apply(this, aArguments);
-			}
-
-			return function () {
-				return fnResolver.apply(this, aArguments.concat(Array.prototype.slice.call(arguments)));
-			};
-		};
-
-		return fnResolver;
-	};
-
-	/**
 	 * Gets values of specified object
 	 * @param {object} mObject - Any plain JavaScript object
 	 * @return {array.<*>} - An array of values of specified object
@@ -216,18 +185,6 @@ sap.ui.define([
 	Util.objectValues = function (mObject) {
 		return jQuery.map(mObject, function(vValue) {
 			return vValue;
-		});
-	};
-
-	/**
-	 * Calculates intersection of two given arrays
-	 * @param {array} aArray1 - First array
-	 * @param {array} aArray2 - Second array
-	 * @return {array} - Always returns a new array with intersected elements
-	 */
-	Util.intersection = function (aArray1, aArray2) {
-		return aArray1.filter(function (vValue) {
-			return aArray2.indexOf(vValue) > -1;
 		});
 	};
 
@@ -287,57 +244,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates an object composed of the picked object properties.
-	 *
-	 * @param {object} mSource - Source object
-	 * @param {string|string[]} vProperties - Property or property list to pick
-	 * @return {object} - new object of the picked object properties.
-	 */
-	Util.pick = function (mSource, vProperties) {
-		mSource = isPlainObject(mSource) ? mSource : {};
-		var aProperties = (
-			Array.isArray(vProperties) // eslint-disable-line no-nested-ternary
-			? vProperties
-			: (
-				arguments.length > 1
-				? [vProperties]
-				: []
-			)
-		);
-
-		aProperties = aProperties.map(function (vValue) {
-			return String(vValue);
-		});
-
-		return Object.keys(mSource).reduce(function (mResult, sPropertyName) {
-			if (includes(aProperties, sPropertyName)) {
-				mResult[sPropertyName] = mSource[sPropertyName];
-			}
-
-			return mResult;
-		}, {});
-	};
-
-	/**
-	 * Returns a function that will be called as soon as it's not being invoked for a specified amount of time
-	 *
-	 * @param {function} fn function that should be called
-	 * @param {number} iWait number of milliseconds the function waits
-	 * @returns {function} Returns the function
-	 */
-	Util.debounce = function(fn, iWait) {
-		iWait = iWait || 0;
-
-		var iTimerId;
-		return function () {
-			if (iTimerId) {
-				clearTimeout(iTimerId);
-			}
-			iTimerId = setTimeout(fn, iWait);
-		};
-	};
-
-	/**
 	 * Checks if the passed designTime instance's status is syncing.
 	 * Returns a promise resolving to the return value of the passed function, when the passed designTime instances's status changes to synced.
 	 *
@@ -360,24 +266,6 @@ sap.ui.define([
 				}
 			});
 		};
-	};
-
-	/**
-	 * Returns the maximum value of array.
-	 *
-	 * @param {Array.<*>} aSource - Source array
-	 * @returns {*} - the maximum value
-	 */
-	Util.max = function (aSource) {
-		if (Array.isArray(aSource) && aSource.length > 0) {
-			var vResult = aSource[0];
-			for (var i = 1, l = aSource.length; i < l; i++) {
-				if (aSource[i] > vResult) {
-					vResult = aSource[i];
-				}
-			}
-			return vResult;
-		}
 	};
 
 	return Util;

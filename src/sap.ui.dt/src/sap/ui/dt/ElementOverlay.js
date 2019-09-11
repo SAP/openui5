@@ -14,7 +14,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/base/util/restricted/_intersection",
+	"sap/base/util/restricted/_max"
 ],
 function (
 	Overlay,
@@ -28,7 +30,9 @@ function (
 	jQuery,
 	Log,
 	isPlainObject,
-	merge
+	merge,
+	_intersection,
+	_max
 ) {
 	"use strict";
 
@@ -554,7 +558,7 @@ function (
 			});
 
 			if (mScrollContainer.aggregations) {
-				Util.intersection( // filters ignored aggregations
+				_intersection( // filters ignored aggregations
 					mScrollContainer.aggregations,
 					this.getAggregationNames()
 				).forEach(function(sAggregationName) {
@@ -933,7 +937,7 @@ function (
 		var iSize;
 
 		if (aScrollContainers.length) {
-			iSize = Util.max(
+			iSize = _max(
 				aScrollContainers.map(function (mScrollContainer, iIndex) {
 					var mGeometry = DOMUtil.getGeometry(this.getScrollContainerById(iIndex).get(0));
 					return mGeometry.size[sType];

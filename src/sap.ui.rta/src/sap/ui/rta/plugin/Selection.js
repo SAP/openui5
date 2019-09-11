@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/Util",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/base/util/restricted/_intersection"
 ],
 function (
 	Plugin,
@@ -18,7 +19,8 @@ function (
 	KeyCodes,
 	Overlay,
 	DtUtil,
-	Device
+	Device,
+	_intersection
 ) {
 	"use strict";
 
@@ -312,7 +314,7 @@ function (
 		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins.slice();
 
 		aElementOverlays.forEach(function (oElementOverlay) {
-			aSharedMultiSelectionPlugins = DtUtil.intersection(aSharedMultiSelectionPlugins, oElementOverlay.getEditableByPlugins());
+			aSharedMultiSelectionPlugins = _intersection(aSharedMultiSelectionPlugins, oElementOverlay.getEditableByPlugins());
 		});
 
 		return aSharedMultiSelectionPlugins.length > 0;

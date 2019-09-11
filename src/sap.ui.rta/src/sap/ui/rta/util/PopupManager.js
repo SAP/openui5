@@ -8,28 +8,28 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/m/InstanceManager",
 	"sap/ui/dt/Overlay",
-	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/m/Dialog",
-	"sap/m/Popover"
+	"sap/m/Popover",
+	"sap/base/util/restricted/_curry"
 ],
 function (
 	jQuery,
 	ManagedObject,
 	InstanceManager,
 	Overlay,
-	dtUtil,
 	flUtils,
 	Component,
 	ComponentContainer,
 	Element,
 	ZIndexManager,
 	Dialog,
-	Popover
+	Popover,
+	_curry
 ) {
 	"use strict";
 
@@ -238,8 +238,8 @@ function (
 		};
 
 		sNewMode === 'navigation'
-			? this._applyPatchesToOpenPopups(dtUtil.curry(fnApplyFocusAndSetModal)(sNewMode))
-			: this._removePatchesToOpenPopups(dtUtil.curry(fnApplyFocusAndSetModal)(sNewMode));
+			? this._applyPatchesToOpenPopups(_curry(fnApplyFocusAndSetModal)(sNewMode))
+			: this._removePatchesToOpenPopups(_curry(fnApplyFocusAndSetModal)(sNewMode));
 	};
 
 	/**

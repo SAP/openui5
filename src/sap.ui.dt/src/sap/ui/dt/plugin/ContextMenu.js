@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/Device",
 	"sap/base/assert",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/restricted/_debounce"
 ], function(
 	jQuery,
 	Plugin,
@@ -18,7 +19,8 @@ sap.ui.define([
 	OverlayRegistry,
 	Device,
 	assert,
-	KeyCodes
+	KeyCodes,
+	_debounce
 ) {
 	"use strict";
 
@@ -311,7 +313,7 @@ sap.ui.define([
 
 	ContextMenu.prototype._onContextMenuOrClick = function(oEvent) {
 		if (!this.fnDebounced) {
-			this.fnDebounced = DtUtil.debounce(function() {
+			this.fnDebounced = _debounce(function() {
 				if (this._oCurrentEvent.type === "contextmenu") {
 					this._onContextMenu(this._oCurrentEvent);
 				} else {
