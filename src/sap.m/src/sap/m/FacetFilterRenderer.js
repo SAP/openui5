@@ -9,7 +9,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 
 	// shortcut for sap.m.FacetFilterType
 	var FacetFilterType = library.FacetFilterType;
-	var ListMode = library.ListMode;
 
 
 	/**
@@ -193,14 +192,11 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 
 		for (i = 0; i < iLength; i++) {
 			// add button only if the list is not empty
-			// this applies only if we have Simple type of facet, Personalization flag is true and we have multiSelect mode of the list
-			var bLight = (oControl.getType() === FacetFilterType.Light),
+			var bListItems = aLists[i].getItems().length > 0,
 				bPersonalization = oControl.getShowPersonalization(),
-				bSingleSelectMaster = (aLists[i].getMode() === ListMode.SingleSelectMaster),
-				bListItems = aLists[i].getItems().length > 0,
-				bAddButton = bLight || !bPersonalization || bSingleSelectMaster || bListItems;
+				bAddButton =  (oControl._bCheckForAddListBtn && bListItems) || !bPersonalization;
 
-			if (bAddButton) {
+			if (!oControl._bCheckForAddListBtn || bAddButton) {
 				oButton = oControl._getButtonForList(aLists[i]);
 
 				//remove all previous InvisibleText(s) related to the positioning
