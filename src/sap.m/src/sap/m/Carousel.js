@@ -1366,6 +1366,10 @@ function(
 
 		oEvent.preventDefault();
 
+		if (this._oMobifyCarousel.hasActiveTransition()) {
+			this._oMobifyCarousel.onTransitionComplete();
+		}
+
 		// Calculate the index of the next page that will be shown
 		if (nIndex !== 0) {
 			nNewIndex = this._getPageNumber(this.getActivePage()) + 1 + nIndex;

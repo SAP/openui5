@@ -1631,5 +1631,105 @@ sap.ui.define([
 		}.bind(this), 1000);
 	});
 
+	QUnit.module("Change pages", {
+		beforeEach: function () {
+			sinon.config.useFakeTimers = false;
+
+			this.oCarousel = new Carousel("myCrsl", {
+				pages: [
+					new Page("keyTestPage_1"),
+					new Page("keyTestPage_2"),
+					new Page("keyTestPage_3"),
+					new Page("keyTestPage_4"),
+					new Page("keyTestPage_5"),
+					new Page("keyTestPage_6"),
+					new Page("keyTestPage_7"),
+					new Page("keyTestPage_8"),
+					new Page("keyTestPage_9")
+				],
+				activePage: "keyTestPage_4"
+			});
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Simulate right arrow twice", function (assert) {
+
+		// arrange
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		};
+
+		var aPageChangedParameters = [];
+		var done = assert.async();
+
+		// await the initial animation
+		setTimeout(function () {
+			this.oCarousel.attachPageChanged(function (oEvent) {
+				aPageChangedParameters.push(oEvent.mParameters);
+			});
+
+			// act
+			this.oCarousel.onsapright(oFakeEvent);
+			this.oCarousel.onsapright(oFakeEvent);
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(aPageChangedParameters[0].oldActivePageId, "keyTestPage_4", "Should have event fired with transition from page #4...");
+				assert.strictEqual(aPageChangedParameters[0].newActivePageId, "keyTestPage_5", "... to page #5");
+
+				assert.strictEqual(aPageChangedParameters[1].oldActivePageId, "keyTestPage_5", "Should have event fired with transition from page #5...");
+				assert.strictEqual(aPageChangedParameters[1].newActivePageId, "keyTestPage_6", "... to page #6");
+
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "Finally the active page should be #6");
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+	QUnit.test("Simulate left arrow twice", function (assert) {
+
+		// arrange
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		};
+
+		var aPageChangedParameters = [];
+		var done = assert.async();
+
+		// await the initial animation
+		setTimeout(function () {
+			this.oCarousel.attachPageChanged(function (oEvent) {
+				aPageChangedParameters.push(oEvent.mParameters);
+			});
+
+			// act
+			this.oCarousel.onsapleft(oFakeEvent);
+			this.oCarousel.onsapleft(oFakeEvent);
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(aPageChangedParameters[0].oldActivePageId, "keyTestPage_4", "Should have event fired with transition from page #4...");
+				assert.strictEqual(aPageChangedParameters[0].newActivePageId, "keyTestPage_3", "... to page #3");
+
+				assert.strictEqual(aPageChangedParameters[1].oldActivePageId, "keyTestPage_3", "Should have event fired with transition from page #3...");
+				assert.strictEqual(aPageChangedParameters[1].newActivePageId, "keyTestPage_2", "... to page #2");
+
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "Finally the active page should be #2");
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+
 	return waitForThemeApplied();
 });
