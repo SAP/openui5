@@ -111,7 +111,6 @@ function(
 ) {
 	"use strict";
 
-	var FL_MAX_LAYER_PARAM = "sap-ui-fl-max-layer";
 	var STARTING = "STARTING";
 	var STARTED = "STARTED";
 	var STOPPED = "STOPPED";
@@ -1356,8 +1355,8 @@ function(
 	RuntimeAuthoring.prototype._hasMaxLayerParameter = function(mParsedHash) {
 		var sCurrentLayer = this.getLayer();
 		return mParsedHash.params &&
-			mParsedHash.params[FL_MAX_LAYER_PARAM] &&
-			mParsedHash.params[FL_MAX_LAYER_PARAM][0] === sCurrentLayer;
+			mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM] &&
+			mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM][0] === sCurrentLayer;
 	};
 
 	/**
@@ -1372,7 +1371,7 @@ function(
 			if (!mParsedHash.params) {
 				mParsedHash.params = {};
 			}
-			mParsedHash.params[FL_MAX_LAYER_PARAM] = [sCurrentLayer];
+			mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM] = [sCurrentLayer];
 			RuntimeAuthoring.enableRestart(sCurrentLayer);
 			// triggers the navigation without leaving FLP
 			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
@@ -1390,7 +1389,7 @@ function(
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash) {
 				if (this._hasMaxLayerParameter(mParsedHash)) {
-					delete mParsedHash.params[FL_MAX_LAYER_PARAM];
+					delete mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM];
 					// triggers the navigation without leaving FLP
 					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 				}
