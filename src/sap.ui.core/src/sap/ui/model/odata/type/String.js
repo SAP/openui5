@@ -127,8 +127,8 @@ sap.ui.define([
 
 				this._sParsedEmptyString = null;
 
-				oConstraints = this.oConstraints || {};
-				if (oConstraints.nullable === false && oConstraints.isDigitSequence) {
+				if (this.oConstraints && this.oConstraints.nullable === false
+						&& this.oConstraints.isDigitSequence) {
 					this._sParsedEmptyString = "0";
 				} else if (vParseKeepsEmptyString !== undefined) {
 					if (vParseKeepsEmptyString === true) {
