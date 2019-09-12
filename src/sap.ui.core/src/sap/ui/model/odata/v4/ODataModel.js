@@ -1203,9 +1203,10 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.lib._Requestor#lockGroup}.
 	 *
 	 * The goal of such a lock is to allow using an API that creates a request in a batch group and
-	 * immediately calling {@link #submitBatch} for this group. In such cases the request has to be
-	 * sent with this submitBatch, even if the request is created later asynchronously. To achieve
-	 * this, the API function creates a lock that blocks submitBatch until the request is created.
+	 * immediately calling {@link #submitBatch} for this group. In such cases that request has to be
+	 * sent with the batch request triggered by {@link #submitBatch}, even if that request is
+	 * created later asynchronously. To achieve this, the API function creates a lock that blocks
+	 * the batch request until that request is created.
 	 *
 	 * For performance reasons it is possible to create a group lock that actually doesn't lock. All
 	 * non-API functions use this group lock instead of the group ID so that a lock is possible. But
