@@ -275,10 +275,10 @@ sap.ui.define([
 			content: {
 				fileName: sVariantId,
 				variantManagementReference: sVariantId,
-				title: "STANDARD_VARIANT_TITLE",
-				originalTitle: "STANDARD_VARIANT_ORIGINAL_TITLE",
+				content: {
+					title: "STANDARD_VARIANT_TITLE"
+				},
 				favorite: true,
-				originalFavorite: true,
 				visible: true
 			},
 			variantChanges: {},
