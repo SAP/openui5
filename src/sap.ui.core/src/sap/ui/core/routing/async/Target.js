@@ -26,7 +26,7 @@ sap.ui.define([
 		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
 		 * @private
 		 */
-		display : function (vData) {
+		display: function (vData) {
 			// Create an immediately resolving promise for parentless Target
 			var oSequencePromise = Promise.resolve();
 			return this._display(vData, oSequencePromise);
@@ -45,6 +45,95 @@ sap.ui.define([
 		},
 
 		/**
+		 * Suspends the object which is loaded by the target.
+		 *
+		 * Currently this function stops the router of the component when
+		 * the object which is loaded by this target is an instance of
+		 * UIComponent
+		 *
+		 * @return {sap.ui.core.routing.Target} The 'this' to chain the call
+		 * @private
+		 */
+		suspend: function() {
+			if (this._isLoaded()) {
+				this._load().then(function(oObject) {
+					if (oObject.isA("sap.ui.core.UIComponent")) {
+						oObject.getRouter().stop();
+					}
+				});
+			}
+
+			return this;
+		},
+
+		/**
+		 * Checks whether the object which this Target loads is already loaded
+		 *
+		 * @return {boolean} Whether the object which this Target loads is already loaded
+		 * @private
+		 */
+		_isLoaded: function() {
+			return this._bIsLoaded;
+		},
+
+		/**
+		 * Loads the object from TargetCache.
+		 *
+		 * @param {object} [oTargetCreateInfo] Additional information for the component creation. Currently the object
+		 *  only contains the prefix for the routerHashChanger
+		 * @return {Promise} A promise which resolves with the loaded object of this Target
+		 * @private
+		 */
+		_load: function(oTargetCreateInfo) {
+			var sName = this._getEffectiveObjectName(this._oOptions.name),
+				oOptions = this._oOptions,
+				oCreateOptions, oObject, pLoaded;
+
+			switch (oOptions.type) {
+				case "View":
+					oCreateOptions = {
+						name: sName,
+						type: oOptions.viewType,
+						id: oOptions.id,
+						async: true
+					};
+					break;
+				case "Component":
+					oCreateOptions = { id: oOptions.id };
+
+					if (oOptions.usage) {
+						oCreateOptions.usage = oOptions.usage;
+					} else {
+						oCreateOptions.name = sName;
+					}
+
+					oCreateOptions = Object.assign({}, oOptions.options || {}, oCreateOptions);
+					break;
+				default:
+					throw new Error("The given type " + oOptions.type + " isn't support by sap.ui.core.routing.Target");
+			}
+
+			oObject = this._oCache._get(oCreateOptions, oOptions.type,
+				// Hook in the route for deprecated global view id, it has to be supported to stay compatible
+				this._bUseRawViewId, oTargetCreateInfo);
+
+			if (!(oObject instanceof Promise)) {
+				if (oObject.isA("sap.ui.core.mvc.View")) {
+					pLoaded = oObject.loaded();
+				} else {
+					pLoaded = Promise.resolve(oObject);
+				}
+			} else {
+				pLoaded = oObject;
+			}
+
+			return pLoaded.then(function(oObject) {
+				this._bIsLoaded = true;
+				return oObject;
+			}.bind(this));
+		},
+
+		/**
 		 * Here the magic happens - recursion + placement + view creation needs to be refactored
 		 *
 		 * @param {object} [vData] an object that will be passed to the display event in the data property. If the
@@ -53,7 +142,7 @@ sap.ui.define([
 		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with an error message
 		 * @private
 		 */
-		_place : function (vData, oSequencePromise, oTargetCreateInfo) {
+		_place: function (vData, oSequencePromise, oTargetCreateInfo) {
 			if (vData instanceof Promise) {
 				oTargetCreateInfo = oSequencePromise;
 				oSequencePromise = vData;
@@ -62,49 +151,11 @@ sap.ui.define([
 
 			var oOptions = this._oOptions,
 				that = this,
-				oObject, sName, oCreateOptions, sErrorMessage, pLoaded;
+				oObject, sErrorMessage, pLoaded;
 
 			if ((oOptions.name || oOptions.usage) && oOptions.type) {
-				// when view information is given
-				sName = this._getEffectiveObjectName(oOptions.name);
-				switch (oOptions.type) {
-					case "View":
-						oCreateOptions = {
-							name: sName,
-							type: oOptions.viewType,
-							id: oOptions.id,
-							async: true
-						};
-						break;
-					case "Component":
-						oCreateOptions = { id: oOptions.id };
-
-						if (oOptions.usage) {
-							oCreateOptions.usage = oOptions.usage;
-						} else {
-							oCreateOptions.name = sName;
-						}
-
-						oCreateOptions = Object.assign({}, oOptions.options || {}, oCreateOptions);
-						break;
-					default:
-						throw new Error("The given type " + oOptions.type + " isn't support by sap.ui.core.routing.Target");
-				}
-
-				oObject = this._oCache._get(oCreateOptions, oOptions.type,
-						// Hook in the route for deprecated global view id, it has to be supported to stay compatible
-						this._bUseRawViewId, oTargetCreateInfo);
-
-				if (!(oObject instanceof Promise)) {
-					if (oObject.isA("sap.ui.core.mvc.View")) {
-						pLoaded = oObject.loaded();
-					} else {
-						pLoaded = Promise.resolve(oObject);
-					}
-				} else {
-					pLoaded = oObject;
-				}
-
+				pLoaded = this._load(oTargetCreateInfo);
+				// when target information is given
 				oSequencePromise = oSequencePromise
 					.then(function(oParentInfo) {
 						return pLoaded
@@ -244,7 +295,7 @@ sap.ui.define([
 							oContainerControl[oAggregationInfo._sRemoveAllMutator]();
 						}
 
-						Log.info("Did place the " + oOptions.type.toLowerCase() + " '" + sName + "' with the id '" + oObject.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oContainerControl.getId() + "'", that);
+						Log.info("Did place the " + oOptions.type.toLowerCase() + " target '" + (oOptions.name ? that._getEffectiveObjectName(oOptions.name) : oOptions.usage) + "' with the id '" + oObject.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oContainerControl.getId() + "'", that);
 						oContainerControl[oAggregationInfo._sMutator](oObject);
 
 						that.fireDisplay({

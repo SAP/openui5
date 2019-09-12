@@ -136,65 +136,78 @@ sap.ui.define([
 
 	HashChanger.prototype._onHashModified = function(oEvent) {
 		var sEventName = oEvent.getId(),
-			sHash = oEvent.getParameter("hash"),
-			sKey = oEvent.getParameter("key"),
+			vHash = oEvent.getParameter("hash"),
+			vKey = oEvent.getParameter("key"),
 			aDeletePrefix = oEvent.getParameter("deletePrefix");
 
+		if (!Array.isArray(vHash)) {
+			vHash = [vHash];
+		}
+
+		if (!Array.isArray(vKey)) {
+			vKey = [vKey];
+		}
+
 		if (sEventName === "hashSet") {
-			this._setSubHash(sKey, sHash, aDeletePrefix);
+			this._setSubHash(vKey, vHash, aDeletePrefix);
 		} else {
-			this._replaceSubHash(sKey, sHash, aDeletePrefix);
+			this._replaceSubHash(vKey, vHash, aDeletePrefix);
 		}
 	};
 
-	HashChanger.prototype._setSubHash = function(sKey, sSubHash, aChildPrefix) {
+	HashChanger.prototype._setSubHash = function(aKeys, aSubHashes, aChildPrefix) {
 		// construct the full hash by replacing the part starts with the sKey
-		var sHash = this._reconstructHash(sKey, sSubHash, aChildPrefix);
+		var sHash = this._reconstructHash(aKeys, aSubHashes, aChildPrefix);
 		this.setHash(sHash);
 	};
 
-	HashChanger.prototype._replaceSubHash = function(sKey, sSubHash, aChildPrefix) {
+	HashChanger.prototype._replaceSubHash = function(aKeys, aSubHashes, aChildPrefix) {
 		// construct the full hash by replacing the part starts with the sKey
-		var sHash = this._reconstructHash(sKey, sSubHash, aChildPrefix);
+		var sHash = this._reconstructHash(aKeys, aSubHashes, aChildPrefix);
 		this.replaceHash(sHash);
 	};
 
 	/**
 	 *
 	 */
-	HashChanger.prototype._reconstructHash = function(sKey, sValue, aDeleteKeys) {
+	HashChanger.prototype._reconstructHash = function(aKeys, aValues, aDeleteKeys) {
 		var aParts = this.getHash().split("&/"),
 			sTopHash = aParts.shift();
 
-		if (sKey === undefined) {
-			// change the top level hash
-			// convert all values to string for compatibility reason (for
-			// example, undefined is converted to "undefined")
-			sTopHash = sValue + "";
-		} else {
-			var bFound = aParts.some(function(sPart, i, aParts) {
-				if (sPart.startsWith(sKey)) {
-					if (sValue) {
-						// replace the subhash
-						aParts[i] =  sKey + "/" + sValue;
-					} else {
-						// remove the subhash
-						aDeleteKeys.push(sKey);
+		aKeys.forEach(function(sKey, index) {
+			var sValue = aValues[index];
+			if (sKey === undefined) {
+				// change the top level hash
+				// convert all values to string for compatibility reason (for
+				// example, undefined is converted to "undefined")
+				sTopHash = sValue + "";
+			} else {
+				var bFound = aParts.some(function(sPart, i, aParts) {
+					if (sPart.startsWith(sKey)) {
+						if (sValue) {
+							// replace the subhash
+							aParts[i] =  sKey + "/" + sValue;
+						} else {
+							// remove the subhash
+							aDeleteKeys.push(sKey);
+						}
+						return true;
 					}
-					return true;
+				});
+				if (!bFound) {
+					// the subhash must be added
+					aParts.push(sKey + "/" + sValue);
 				}
-			});
-			if (!bFound) {
-				// the subhash must be added
-				aParts.push(sKey + "/" + sValue);
 			}
-		}
 
-		// remove dependent subhashes from aDeleteKeys from the hash
-		aParts = aParts.filter(function(sPart) {
-			return !aDeleteKeys.some(function(sPrefix) {
-				return sPart.startsWith(sPrefix);
-			});
+			if (aDeleteKeys && aDeleteKeys.length > 0) {
+				// remove dependent subhashes from aDeleteKeys from the hash
+				aParts = aParts.filter(function(sPart) {
+					return !aDeleteKeys.some(function(sPrefix) {
+						return sPart.startsWith(sPrefix);
+					});
+				});
+			}
 		});
 
 		aParts.unshift(sTopHash);

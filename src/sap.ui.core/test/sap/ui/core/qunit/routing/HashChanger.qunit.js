@@ -384,63 +384,63 @@ sap.ui.define([
 	QUnit.test("Change the top level hash", function(assert) {
 		this.oHashChanger.setHash("oldHash");
 
-		var sHash = this.oHashChanger._reconstructHash(undefined, "newHash", []);
+		var sHash = this.oHashChanger._reconstructHash([undefined], ["newHash"], []);
 		assert.equal(sHash, "newHash");
 	});
 
 	QUnit.test("Change the top level hash to undefined", function(assert) {
 		this.oHashChanger.setHash("oldHash");
 
-		var sHash = this.oHashChanger._reconstructHash(undefined, undefined, []);
+		var sHash = this.oHashChanger._reconstructHash([undefined], [undefined], []);
 		assert.equal(sHash, "undefined");
 	});
 
 	QUnit.test("Change the top level hash and delete sub hash(es)", function(assert) {
 		this.oHashChanger.setHash("root&/comment/0");
 
-		var sHash = this.oHashChanger._reconstructHash(undefined, "newHash", ["comment"]);
+		var sHash = this.oHashChanger._reconstructHash([undefined], ["newHash"], ["comment"]);
 		assert.equal(sHash, "newHash");
 	});
 
 	QUnit.test("Change the top level hash and delete sub hash(es)", function(assert) {
 		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
 
-		var sHash = this.oHashChanger._reconstructHash(undefined, "newHash", ["comment"]);
+		var sHash = this.oHashChanger._reconstructHash([undefined], ["newHash"], ["comment"]);
 		assert.equal(sHash, "newHash&/notification/1");
 	});
 
 	QUnit.test("Add new subhash", function(assert) {
 		this.oHashChanger.setHash("root");
 
-		var sHash = this.oHashChanger._reconstructHash("comment", "123", []);
+		var sHash = this.oHashChanger._reconstructHash(["comment"], ["123"], []);
 		assert.equal(sHash, "root&/comment/123");
 	});
 
 	QUnit.test("Change subHash", function(assert) {
 		this.oHashChanger.setHash("root&/comment/0");
 
-		var sHash = this.oHashChanger._reconstructHash("comment", "123", []);
+		var sHash = this.oHashChanger._reconstructHash(["comment"], ["123"], []);
 		assert.equal(sHash, "root&/comment/123");
 	});
 
 	QUnit.test("Add new subHash and delete sub hash(es)", function(assert) {
 		this.oHashChanger.setHash("notification&/comment/0");
 
-		var sHash = this.oHashChanger._reconstructHash("notification", "234", ["comment"]);
+		var sHash = this.oHashChanger._reconstructHash(["notification"], ["234"], ["comment"]);
 		assert.equal(sHash, "notification&/notification/234");
 	});
 
 	QUnit.test("Change the subHash and delete sub hash(es)", function(assert) {
 		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
 
-		var sHash = this.oHashChanger._reconstructHash("notification", "234", ["comment"]);
+		var sHash = this.oHashChanger._reconstructHash(["notification"], ["234"], ["comment"]);
 		assert.equal(sHash, "notification&/notification/234");
 	});
 
 	QUnit.test("Delete subhash", function(assert) {
 		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
 
-		var sHash = this.oHashChanger._reconstructHash("notification", undefined, []);
+		var sHash = this.oHashChanger._reconstructHash(["notification"], [undefined], []);
 		assert.equal(sHash, "notification&/comment/0");
 	});
 

@@ -440,6 +440,74 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("suspend", {
+		beforeEach: function () {
+			// System under test + Arrange
+			this.oTargets = new Targets({
+				targets: {
+					firstTarget: {
+					},
+					secondTarget: {
+					},
+					thirdTarget: {
+					}
+				},
+				config: {
+					async: true
+				}
+			});
+		},
+		afterEach: function () {
+			this.oTargets.destroy();
+		}
+	});
+
+	QUnit.test("Should suspend the specified target", function(assert) {
+		var oTarget = this.oTargets.getTarget("firstTarget");
+		var oSpy = this.spy(oTarget, "suspend");
+
+		var oUnrelatedTarget = this.oTargets.getTarget("secondTarget");
+		var oUnrelatedTargetSpy = this.spy(oUnrelatedTarget, "suspend");
+
+		this.oTargets.suspend("firstTarget");
+
+		assert.equal(oSpy.callCount, 1, "suspend is called on the target");
+		assert.ok(oUnrelatedTargetSpy.notCalled, "suspend isn't called on the other target");
+	});
+
+	QUnit.test("Should suspend the specified targets", function(assert) {
+		var oTarget1 = this.oTargets.getTarget("firstTarget");
+		var oTarget1Spy = this.spy(oTarget1, "suspend");
+
+		var oTarget2 = this.oTargets.getTarget("secondTarget");
+		var oTarget2Spy = this.spy(oTarget2, "suspend");
+
+		var oTarget3 = this.oTargets.getTarget("thirdTarget");
+		var oTarget3Spy = this.spy(oTarget3, "suspend");
+
+		this.oTargets.suspend(["firstTarget", "secondTarget"]);
+
+		assert.equal(oTarget1Spy.callCount, 1, "suspend is called on the target");
+		assert.equal(oTarget2Spy.callCount, 1, "suspend is called on the target");
+		assert.ok(oTarget3Spy.notCalled, "suspend isn't called on the other target");
+	});
+
+	QUnit.test("Should suspend the specified targets with different type of parameter", function(assert) {
+		var oTarget1 = this.oTargets.getTarget("firstTarget");
+		var oTarget1Spy = this.spy(oTarget1, "suspend");
+
+		var oTarget2 = this.oTargets.getTarget("secondTarget");
+		var oTarget2Spy = this.spy(oTarget2, "suspend");
+
+		var oTarget3 = this.oTargets.getTarget("thirdTarget");
+		var oTarget3Spy = this.spy(oTarget3, "suspend");
+
+		this.oTargets.suspend(["firstTarget", { name: "secondTarget" }]);
+
+		assert.equal(oTarget1Spy.callCount, 1, "suspend is called on the target");
+		assert.equal(oTarget2Spy.callCount, 1, "suspend is called on the target");
+		assert.ok(oTarget3Spy.notCalled, "suspend isn't called on the other target");
+	});
 
 	QUnit.module("Component Targets parent/child", {
 		beforeEach: function () {

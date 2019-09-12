@@ -29,6 +29,21 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 		},
 
 		/**
+		 * Suspends the object which is loaded by the target.
+		 *
+		 * Currently this function doesn't do anything because the sync
+		 * version of the Target can only load Views but no Components.
+		 *
+		 * @return {sap.ui.core.routing.Target} The 'this' to chain the call
+		 * @private
+		 */
+		suspend : function () {
+			// the sync target can only load view and not component
+			// therefore it's not needed to do anything in this function
+			return this;
+		},
+
+		/**
 		 * @private
 		 */
 		_place : function (oParentInfo, vData) {

@@ -32,12 +32,11 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 				target has parents, the data will also be passed to them.
 		 * @param {string} sTitleTarget the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
 		 * @param {Promise} oSequencePromise the promise for chaining
-		 * @param {function} [fnAfterCreate] the function which will be called when the Target View/Component is instantiated
 		 * @return {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
 		 *
 		 * @private
 		 */
-		_display : function (vTargets, vData, sTitleTarget, oSequencePromise, fnAfterCreate) {
+		_display : function (vTargets, vData, sTitleTarget, oSequencePromise) {
 			var that = this,
 				aViewInfos = [];
 
@@ -47,17 +46,8 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 
 			this._attachTitleChanged(vTargets, sTitleTarget);
 
-			return vTargets.reduce(function(oPromise, vTarget) {
-				var oTargetInfo = vTarget;
-
-				if (typeof vTarget === "string") {
-					oTargetInfo = {
-						name: vTarget
-					};
-				}
-
+			return this._alignTargetsInfo(vTargets).reduce(function(oPromise, oTargetInfo) {
 				var oTargetCreateInfo = {
-					afterCreate: fnAfterCreate,
 					prefix: oTargetInfo.prefix
 				};
 
