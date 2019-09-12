@@ -553,6 +553,7 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 
 		oMessageObject.canonicalTarget = sCanonicalTarget || sTarget;
 		oMessageObject.deepPath = sDeepPath || oMessageObject.canonicalTarget;
+
 	}
 };
 

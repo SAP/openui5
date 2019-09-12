@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 /* global QUnit*/
 sap.ui.define([
 	'sap/ui/core/util/MockServer',
@@ -86,7 +87,7 @@ sap.ui.define([
 										Object.assign({ target: "Adress/ZIP" }, oMsgTemplate)
 									]
 								};
-							} else if (oXhr.url.indexOf("SalesOrderSet") >= 0) {
+							} else if (oXhr.url === "/SalesOrderSrv/SalesOrderSet") {
 								oMessages = {
 									code: "MESSAGE/CODE",
 									message: "I'm just a container!",
@@ -116,7 +117,20 @@ sap.ui.define([
 									severity: "error",
 									target: "/BusinessPartnerSet('0100000000')/City"
 								};
-							} if (oMessages) {
+							} else if (oXhr.url === "/SalesOrderSrv/SalesOrderSet?$expand=ToLineItems%2CToLineItems%2FToProduct") {
+								oMessages = {
+									code: "MESSAGE/CODE",
+									message: "I'm just a container!",
+									severity: "warning",
+									target: "",
+									details: [
+										Object.assign({ target: "ID" }, oMsgTemplate),
+										Object.assign({ target: "Adress/ZIP" }, oMsgTemplate)
+									]
+								};
+							}
+
+							if (oMessages) {
 								headers["sap-message"] = JSON.stringify(oMessages);
 							}
 							oXhr._fnOrignalXHRRespond.apply(this, [status, headers, content]);
@@ -291,6 +305,93 @@ sap.ui.define([
 					done();
 			}});
 		});
-    });
+	});
 
+	QUnit.test("ODataListBinding - Deep path is set and updated when context has changed", function(assert){
+		var done = assert.async();
+		var oModelCanonical = new ODataModel(this.sServiceUri, { canonicalRequests: true });
+
+        oModelCanonical.metadataLoaded().then(function(){
+
+			oModelCanonical.read("/SalesOrderSet", {
+				urlParameters: { "$expand": "ToLineItems,ToLineItems/ToProduct" }
+			});
+
+			var fnBatchHandler1 = function(){
+				oModelCanonical.detachBatchRequestCompleted(fnBatchHandler1);
+				oModelCanonical.createBindingContext("/SalesOrderSet('0500000000')", undefined, {}, function(oContext){
+					var oODataListBinding = oModelCanonical.bindList("ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSalesOrderLineItems", oContext);
+					assert.equal(oODataListBinding.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSalesOrderLineItems", "Deep path is set correctly.");
+
+					oModelCanonical.createBindingContext("/SalesOrderSet('0500000001')", undefined, {}, function(oContext){
+						oODataListBinding.initialize();
+						oODataListBinding.setContext(oContext);
+						assert.equal(oODataListBinding.sDeepPath, "/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ToSalesOrderLineItems", "Deep path is set correctly.");
+
+					});
+					done();
+				});
+			};
+			oModelCanonical.attachBatchRequestCompleted(fnBatchHandler1);
+		});
+	});
+
+	QUnit.test("ODataListBinding - Message propagation to list binding", function(assert){
+		var done = assert.async();
+		var oModelCanonical = new ODataModel(this.sServiceUri, { canonicalRequests: true });
+
+        oModelCanonical.metadataLoaded().then(function(){
+
+			oModelCanonical.read("/SalesOrderSet");
+			oModelCanonical.read("/SalesOrderSet('0500000000')/ToLineItems");
+			var oBinding_SalesOrders = oModelCanonical.bindList("/SalesOrderSet");
+			var oBinding_SO_0500000000 = oModelCanonical.bindList("/SalesOrderSet('0500000000')/ToLineItems");
+			var oBinding_SO_0500000001 = oModelCanonical.bindList("/SalesOrderSet('0500000001')/ToLineItems");
+
+			oModelCanonical.addBinding(oBinding_SalesOrders);
+			oModelCanonical.addBinding(oBinding_SO_0500000000);
+			oModelCanonical.addBinding(oBinding_SO_0500000001);
+
+			var fnHandleBatch1 = function(){
+				oModelCanonical.detachBatchRequestCompleted(fnHandleBatch1);
+
+				/**
+				 * message full targets, after first batch:
+				 * /SalesOrderSet
+				 * /SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID
+				 * /SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP
+				 * /SalesOrderSet('0500000000')/ToLineItems
+				 * /SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')
+				 * /SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000040')
+				 *
+				*/
+				assert.equal(oBinding_SalesOrders.getDataState().getModelMessages().length, 6, "Correct number of messages is propagated to the list binding ('" + oBinding_SalesOrders.getPath() + "').");
+				assert.equal(oBinding_SO_0500000000.getDataState().getModelMessages().length, 3, "Correct number of messages is propagated to the list binding ('" + oBinding_SO_0500000000.getPath() + "').");
+				assert.equal(oBinding_SO_0500000001.getDataState().getModelMessages().length, 2, "Correct number of messages is propagated to the list binding ('" + oBinding_SO_0500000001.getPath() + "').");
+				oModelCanonical.read("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct");
+				var fnBatchHandler2 = function(){
+					oModelCanonical.detachBatchRequestCompleted(fnBatchHandler2);
+
+					/**
+					 * message full targets, after second batch:
+					 * /SalesOrderSet
+					 * /SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ID
+					 * /SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/Adress/ZIP
+					 * /SalesOrderSet('0500000000')/ToLineItems
+					 * /SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')
+					 * /SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000040')
+					 * /SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct
+					 *
+					*/
+
+					assert.equal(oBinding_SalesOrders.getDataState().getModelMessages().length, 7, "Correct number of messages is propagated to the list binding ('" + oBinding_SalesOrders.getPath() + "').");
+					assert.equal(oBinding_SO_0500000000.getDataState().getModelMessages().length, 4, "Correct number of messages is propagated to the list binding ('" + oBinding_SO_0500000000.getPath() + "').");
+					assert.equal(oBinding_SO_0500000001.getDataState().getModelMessages().length, 2, "Correct number of messages is propagated to the list binding ('" + oBinding_SO_0500000001.getPath() + "').");
+					done();
+				};
+				oModelCanonical.attachBatchRequestCompleted(fnBatchHandler2);
+			};
+			oModelCanonical.attachBatchRequestCompleted(fnHandleBatch1);
+		});
+	});
 });

@@ -111,6 +111,7 @@ sap.ui.define([
 			this.bSkipDataEvents = false;
 			this.bUseExpandedList = false;
 			this.oCombinedFilter = null;
+			this.sDeepPath = oModel.resolveDeep(sPath, oContext);
 
 			// check filter integrity
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
@@ -303,8 +304,7 @@ sap.ui.define([
 			if (!sKey) {
 				break;
 			}
-			oContext = this.oModel.getContext('/' + sKey);
-			oContext.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext) + sKey.substr(sKey.indexOf("("));
+			oContext = this.oModel.getContext('/' + sKey, this.oModel.resolveDeep(this.sPath, this.oContext) + sKey.substr(sKey.indexOf("(")));
 			aContexts.push(oContext);
 
 		}
@@ -390,6 +390,7 @@ sap.ui.define([
 			this.oContext = oContext;
 
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
 
 			if (!this._checkPathType()) {
 				Log.error("List Binding is not bound against a list for " + sResolvedPath);
@@ -1470,6 +1471,15 @@ sap.ui.define([
 		ListBinding.prototype.suspend.apply(this, arguments);
 	};
 
-	return ODataListBinding;
+	/** @inheritdoc */
+	ODataListBinding.prototype.checkDataState = function(mPaths) {
+		var oDataState = this.getDataState();
+		ListBinding.prototype.checkDataState.apply(this, arguments);
+		if (this.oModel){
+			oDataState.setModelMessages(this.oModel.getMessagesByPath(this.sDeepPath, true));
+			ListBinding.prototype._fireDateStateChange.call(this, oDataState);
+		}
+	};
 
+	return ODataListBinding;
 });
