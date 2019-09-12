@@ -42,20 +42,44 @@ sap.ui.define([
 	 */
 	V4MetadataConverter.prototype.processActionOrFunction = function (oElement) {
 		var sKind = oElement.localName,
-			sQualifiedName = this.namespace + oElement.getAttribute("Name"),
-			oAction = {
+			oOperation = {
 				$kind : sKind
-			};
+			},
+			oParametersCollection,
+			sQualifiedName = this.namespace + oElement.getAttribute("Name"),
+			sSignature = "",
+			that = this;
 
-		this.processAttributes(oElement, oAction, {
+		/*
+		 * Returns the qualified OData type ("foo.Type" or "Collection(foo.Type)") for the given
+		 * parameter, with aliases properly resolved.
+		 *
+		 * @param {object} oParameter
+		 * @returns {string}
+		 */
+		function getType(oParameter) {
+			var oType = {};
+
+			that.processTypedCollection(oParameter.getAttribute("Type"), oType);
+
+			return oType.$isCollection ? "Collection(" + oType.$Type + ")" : oType.$Type;
+		}
+
+		this.processAttributes(oElement, oOperation, {
 			"IsBound" : this.setIfTrue,
 			"EntitySetPath" : this.setValue,
 			"IsComposable" : this.setIfTrue
 		});
+		this.getOrCreateArray(this.result, sQualifiedName).push(oOperation);
+		this.oOperation = oOperation;
 
-		this.getOrCreateArray(this.result, sQualifiedName).push(oAction);
-		this.oOperation = oAction;
-		this.annotatable(oAction);
+		if (oOperation.$IsBound) {
+			oParametersCollection = oElement.getElementsByTagName("Parameter");
+			sSignature = oElement.localName === "Action"
+				? getType(oParametersCollection[0])
+				: Array.prototype.map.call(oParametersCollection, getType).join(",");
+		}
+		this.annotatable(sQualifiedName + "(" + sSignature + ")");
 	};
 
 	/**
@@ -282,7 +306,7 @@ sap.ui.define([
 		this.processFacetAttributes(oElement, oParameter);
 
 		this.getOrCreateArray(oActionOrFunction, "$Parameter").push(oParameter);
-		this.annotatable(oParameter);
+		this.annotatable(oParameter.$Name);
 	};
 
 	/**
@@ -301,7 +325,7 @@ sap.ui.define([
 		this.processFacetAttributes(oElement, oReturnType);
 
 		oActionOrFunction.$ReturnType = oReturnType;
-		this.annotatable(oReturnType);
+		this.annotatable("$ReturnType");
 	};
 
 	/**

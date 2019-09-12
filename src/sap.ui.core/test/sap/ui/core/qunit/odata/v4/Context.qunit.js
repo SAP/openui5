@@ -1368,19 +1368,22 @@ sap.ui.define([
 		var oBinding = {
 				oCachePromise : SyncPromise.resolve({/*oCache*/}),
 				checkSuspended : function () {},
-				bRelative : !!oFixture.context,
 				oContext : oFixture.context,
+				bRelative : !!oFixture.context,
 				requestSideEffects : function () {}
 			},
 			oModel = {
 				checkGroupId : function () {},
 				isAutoGroup : function () {},
 				oRequestor : {
-					relocateAll : function () {}
+					relocateAll : function () {},
+					waitForRunningChangeRequests : function () {}
 				}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
-			sGroupId = oFixture.group || "any";
+			sGroupId = oFixture.group || "any",
+			oPromise = Promise.resolve(),
+			that = this;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
@@ -1388,13 +1391,22 @@ sap.ui.define([
 			.withExactArgs().returns("any");
 		this.mock(oModel).expects("isAutoGroup")
 			.withExactArgs(sGroupId).returns(oFixture.auto);
-		this.mock(oModel.oRequestor).expects("relocateAll").exactly(oFixture.auto ? 1 : 0)
-			.withExactArgs(oFixture.parked, sGroupId);
+		this.mock(oModel.oRequestor).expects("waitForRunningChangeRequests")
+			.exactly(oFixture.auto ? 1 : 0)
+			.withExactArgs(sGroupId).returns(SyncPromise.resolve(oPromise));
+
 		this.mock(oBinding).expects("requestSideEffects")
 			// Note: $select not yet sorted
 			.withExactArgs(sGroupId, ["TEAM_ID", "EMPLOYEE_2_MANAGER", "ROOM_ID", ""],
 				sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({}));
+
+		if (oFixture.auto) {
+			oPromise.then(function () {
+				that.mock(oModel.oRequestor).expects("relocateAll").exactly(oFixture.auto ? 1 : 0)
+					.withExactArgs(oFixture.parked, sGroupId);
+			});
+		}
 
 		// code under test
 		return oContext.requestSideEffects([{
@@ -1452,7 +1464,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: promise rejected", function (assert) {
+[false, true].forEach(function (bAuto) {
+	QUnit.test("requestSideEffects: promise rejected, bAuto = " + bAuto, function (assert) {
 		var oCache = {
 				// currently used to detect a context binding
 				requestSideEffects : function () {}
@@ -1464,19 +1477,26 @@ sap.ui.define([
 			},
 			oModel = {
 				checkGroupId : function () {},
-				isAutoGroup : function () {}
+				isAutoGroup : function () {},
+				oRequestor : {
+					relocateAll : function () {},
+					waitForRunningChangeRequests : function () {}
+				}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 			oError = new Error("Failed intentionally"),
-			oResult,
-			sUpdateGroupId = "update";
+			oResult;
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
-		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns(sUpdateGroupId);
-		this.mock(oModel).expects("isAutoGroup").withExactArgs(sUpdateGroupId).returns(false);
+		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("update");
+		this.mock(oModel.oRequestor).expects("waitForRunningChangeRequests").exactly(bAuto ? 1 : 0)
+			.withExactArgs("update").returns(SyncPromise.resolve());
+		this.mock(oModel.oRequestor).expects("relocateAll").exactly(bAuto ? 1 : 0)
+			.withExactArgs("$parked.update", "update");
+		this.mock(oModel).expects("isAutoGroup").withExactArgs("update").returns(bAuto);
 		this.mock(oBinding).expects("requestSideEffects")
-			.withExactArgs(sUpdateGroupId, ["TEAM_ID"], sinon.match.same(oContext))
+			.withExactArgs("update", ["TEAM_ID"], sinon.match.same(oContext))
 			.returns(SyncPromise.reject(oError));
 
 		// code under test
@@ -1490,6 +1510,7 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: no own cache", function (assert) {
@@ -1794,9 +1815,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", true)
-			.returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("group", true).returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", vValue, sinon.match.same(oGroupLock), true)
 			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated
@@ -1855,9 +1874,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", true)
-			.returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("group", true).returns(oGroupLock);
 		oGroupLockMock.expects("unlock").never(); // not yet
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
@@ -1891,9 +1908,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("group");
-		this.mock(oModel).expects("lockGroup")
-			.withExactArgs("group", true)
-			.returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("group", true).returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
 			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated

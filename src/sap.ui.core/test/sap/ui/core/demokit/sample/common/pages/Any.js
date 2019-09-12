@@ -2,24 +2,26 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/support/RuleAnalyzer",
+	"sap/ui/test/Opa",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
-], function (Helper, QUnitUtils, RuleAnalyzer, Opa5, TestUtils, Properties) {
+], function (Log, Helper, QUnitUtils, RuleAnalyzer, Opa, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
 	 * checks that console log is clean, or only has <code>aExpected</code> log entries
 	 *
 	 * @param {object[]} [aExpected]
-	 *  An array of log entries that are expected {@link jQuery.sap.log.getLogEntries}
+	 *  An array of log entries that are expected {@link Log.getLogEntries}
 	 */
 	function checkLog(aExpected) {
-		var aLogEntries = jQuery.sap.log.getLogEntries(),
-			iStartIndex = sap.ui.test.Opa.getContext().iNextLogIndex || 0;
+		var aLogEntries = Log.getLogEntries(),
+			iStartIndex = Opa.getContext().iNextLogIndex || 0;
 
 		function isExpected(oLog) {
 			if (!aExpected) {
@@ -37,7 +39,7 @@ sap.ui.define([
 			});
 		}
 
-		sap.ui.test.Opa.getContext().iNextLogIndex = aLogEntries.length;
+		Opa.getContext().iNextLogIndex = aLogEntries.length;
 		aLogEntries.splice(iStartIndex).forEach(function (oLog) {
 			var sComponent = oLog.component || "";
 
@@ -59,7 +61,7 @@ sap.ui.define([
 		});
 		if (aExpected) {
 			aExpected.forEach(function (oExpected) {
-				if (jQuery.sap.log.isLoggable(oExpected.level, oExpected.component)) {
+				if (Log.isLoggable(oExpected.level, oExpected.component)) {
 					Opa5.assert.ok(false,
 						"Expected warning or error not logged: " + oExpected.component
 						+ " Level: " + oExpected.level
@@ -96,9 +98,9 @@ sap.ui.define([
 			actions : {
 				applySupportAssistant : function () {
 					// we use support assistant only on-demand and only with mock data
-					sap.ui.test.Opa.getContext().bSupportAssistant =
+					Opa.getContext().bSupportAssistant =
 						TestUtils.isSupportAssistant() && !TestUtils.isRealOData();
-					Opa5.extendConfig(getConfig(sap.ui.test.Opa.getContext().bSupportAssistant));
+					Opa5.extendConfig(getConfig(Opa.getContext().bSupportAssistant));
 				},
 				cleanUp : function(sControlId) {
 					return this.waitFor({
@@ -107,7 +109,7 @@ sap.ui.define([
 						id : sControlId,
 						success : function (oSalesOrderTable) {
 							var oModel = oSalesOrderTable.getModel(),
-								mOrderIDs = sap.ui.test.Opa.getContext().mOrderIDs || {},
+								mOrderIDs = Opa.getContext().mOrderIDs || {},
 								aPromises = [],
 								// use private requestor to prevent additional read requests(ETag)
 								// which need additional mockdata
@@ -127,7 +129,7 @@ sap.ui.define([
 									})
 								);
 							});
-							sap.ui.test.Opa.getContext().mOrderIDs = undefined;
+							Opa.getContext().mOrderIDs = undefined;
 							aPromises.push(oRequestor.submitBatch("cleanUp"));
 
 							// Note: $batch fails only for technical reasons, we should also check
@@ -138,7 +140,7 @@ sap.ui.define([
 								Opa5.assert.ok(false, "cleanUp failed: " + oError.message);
 							});
 						},
-						viewName : sap.ui.test.Opa.getContext().sViewName
+						viewName : Opa.getContext().sViewName
 					});
 				}
 			},
@@ -153,7 +155,7 @@ sap.ui.define([
 				analyzeSupportAssistant: function () {
 					return this.waitFor({
 						success: function () {
-							if (!sap.ui.test.Opa.getContext().bSupportAssistant) {
+							if (!Opa.getContext().bSupportAssistant) {
 								Opa5.assert.ok(true, "Support assistant inactive, - check skipped");
 								return;
 							}
@@ -178,7 +180,7 @@ sap.ui.define([
 									if (oIssues.length) {
 										Opa5.assert.getFinalReport();
 									}
-									sap.ui.test.Opa.getContext().bSupportAssistant = false;
+									Opa.getContext().bSupportAssistant = false;
 									Opa5.extendConfig(getConfig(false));
 								})
 							);

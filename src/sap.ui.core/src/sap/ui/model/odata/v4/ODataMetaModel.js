@@ -261,21 +261,24 @@ sap.ui.define([
 	}
 
 	/**
-	 * Tells whether the given name matches a parameter of at least one of the given overloads.
+	 * Tells whether the given name matches a parameter of at least one of the given overloads, or
+	 * is the special name "$ReturnType" and at least one of the given overloads has a return type.
 	 *
 	 * @param {string} sName
-	 *   A path segment which maybe is a parameter name
+	 *   A path segment which maybe is a parameter name or the special name "$ReturnType"
 	 * @param {object[]} aOverloads
 	 *   Operation overload(s)
 	 * @returns {boolean}
 	 *   <code>true</code> iff at least one of the given overloads has a parameter with the given
-	 *   name.
+	 *   name (incl. the special name "$ReturnType")
 	 */
 	function maybeParameter(sName, aOverloads) {
 		return aOverloads.some(function (oOverload) {
-			return oOverload.$Parameter && oOverload.$Parameter.some(function (oParameter) {
-				return oParameter.$Name === sName;
-			});
+			return sName === "$ReturnType"
+				? oOverload.$ReturnType
+				: oOverload.$Parameter && oOverload.$Parameter.some(function (oParameter) {
+					return oParameter.$Name === sName;
+				});
 		});
 	}
 
@@ -957,63 +960,63 @@ sap.ui.define([
 				vResult = mScope; // current object
 
 			/*
-			 * Handles annotation at action/function parameter, taking care of individual versus all
+			 * Handles annotation at operation or parameter, taking care of individual versus all
 			 * overloads.
 			 *
 			 * @param {string} sSegment
 			 *   The current <code>sSegment</code> of <code>step</code>
-			 * @param {string} sWholeSegment
-			 *   The current <code>aSegments[i]</code> of <code>step</code>
+			 * @param {string} [sTerm=sSegment]
+			 *   The term
+			 * @param {string} [sSuffix=""]
+			 *   A target suffix to address a parameter
 			 * @returns {boolean}
-			 *   <code>undefined</code> if no annotation at action/function parameter was
-			 *   recognized, <code>true</code> if further steps are needed, else <code>false</code>.
+			 *   Whether further steps are needed
 			 */
-			function annotationAtParameter(sSegment, sWholeSegment) {
+			function annotationAtOperationOrParameter(sSegment, sTerm, sSuffix) {
 				var mAnnotationsXAllOverloads,
 					sIndividualOverloadTarget,
 					aOverloads,
-					sSignature = "",
-					sTerm = sWholeSegment.slice(sSegment.length);
+					sSignature = "";
 
-				if (sTerm && maybeParameter(sSegment, vResult)) {
-					// not looking for parameter itself, but for an annotation
-					sName = sSegment;
-					if (vBindingParameterType) {
-						aOverloads = vResult.filter(isRightOverload);
-						if (aOverloads.length !== 1) {
-							return log(WARNING, "Expected a single overload, but found "
-								+ aOverloads.length);
-						}
-						if (vBindingParameterType !== UNBOUND) {
-							sSignature = aOverloads[0].$Parameter[0].$isCollection
-								? "Collection(" + vBindingParameterType + ")"
-								: vBindingParameterType;
-						}
-						sIndividualOverloadTarget = sTarget + "(" + sSignature + ")/" + sSegment;
-						if (mScope.$Annotations[sIndividualOverloadTarget]) {
-							if (sTerm === "@") {
-								vResult = mScope.$Annotations[sIndividualOverloadTarget];
-								mAnnotationsXAllOverloads
-									= mScope.$Annotations[sTarget + "/" + sSegment];
-								if (mAnnotationsXAllOverloads) {
-									vResult = Object.assign({}, mAnnotationsXAllOverloads, vResult);
-								}
-								// sTarget does not matter because no further steps follow
-								return false; // no further steps must happen
+				sTerm = sTerm || sSegment;
+				sSuffix = sSuffix || "";
+				if (vBindingParameterType) {
+					oSchemaChild = aOverloads = vResult.filter(isRightOverload);
+					if (aOverloads.length !== 1) {
+						return log(WARNING, "Expected a single overload, but found "
+							+ aOverloads.length);
+					}
+					if (vBindingParameterType !== UNBOUND) {
+						sSignature = aOverloads[0].$Parameter[0].$isCollection
+							? "Collection(" + vBindingParameterType + ")"
+							: vBindingParameterType;
+					}
+					sIndividualOverloadTarget = sTarget + "(" + sSignature + ")" + sSuffix;
+					if (mScope.$Annotations[sIndividualOverloadTarget]) {
+						if (sTerm === "@") {
+							vResult = mScope.$Annotations[sIndividualOverloadTarget];
+							mAnnotationsXAllOverloads = mScope.$Annotations[sTarget + sSuffix];
+							if (mAnnotationsXAllOverloads) {
+								vResult = Object.assign({}, mAnnotationsXAllOverloads, vResult);
 							}
-							if (mScope.$Annotations[sIndividualOverloadTarget][sTerm]) {
-								// "external targeting of individual action/function overload"
-								sTarget = sIndividualOverloadTarget;
-								return true;
-							}
+							// sTarget does not matter because no further steps follow
+							return false; // no further steps must happen
+						}
+						if (mScope.$Annotations[sIndividualOverloadTarget][sTerm]) {
+							// "external targeting of individual operation overload"
+							sTarget = sIndividualOverloadTarget;
+							vResult = mScope; // see below
+							return true;
 						}
 					}
-
-					// "the annotation applies to [...] all parameters of that name across all
-					// overloads"
-					sTarget += "/" + sSegment;
-					return true;
 				}
+
+				// "the annotation applies to all overloads of the action or function or all
+				// parameters of that name across all overloads" [OData-Part3]
+				sTarget += sSuffix;
+				// any object (no array!) should do here to skip repeated handling of overloads
+				vResult = mScope;
+				return true;
 			}
 
 			/*
@@ -1062,28 +1065,34 @@ sap.ui.define([
 			}
 
 			/*
-			 * Tells whether the given segment matches a parameter of the given overload; changes
+			 * Tells whether the given segment matches a parameter of the given overload, or is the
+			 * special name "$ReturnType" and the given overload has a return type; changes
 			 * <code>vResult</code> etc. accordingly.
 			 *
 			 * @param {string} sSegment
-			 *   A segment
+			 *   A segment (may be empty)
 			 * @param {object} oOverload
 			 *   A single operation overload
 			 * @returns {boolean}
-			 *   <code>true</code> iff the given overload has a parameter with the given name.
+			 *   <code>true</code> iff the given overload has a parameter with the given name
+			 *   (incl. the special name "$ReturnType")
 			 */
 			function isParameter(sSegment, oOverload) {
 				var aMatches;
 
-				if (sSegment && oOverload.$Parameter) {
+				if (sSegment === "$ReturnType") {
+					if (oOverload.$ReturnType) {
+						vResult = oOverload.$ReturnType;
+						return true;
+					}
+				} else if (sSegment && oOverload.$Parameter) {
 					aMatches = oOverload.$Parameter.filter(function (oParameter) {
 						return oParameter.$Name === sSegment;
 					});
 					if (aMatches.length) { // there can be at most one match
-						// Note: annotations at parameter are handled before this method is called
-						// @see annotationAtParameter
+						// Note: annotations at operation or parameter are handled before this
+						// method is called; @see annotationAtOperationOrParameter
 						vResult = aMatches[0];
-
 						return true;
 					}
 				}
@@ -1207,7 +1216,7 @@ sap.ui.define([
 			 *   Whether to continue after this step
 			 */
 			function step(sSegment, i, aSegments) {
-				var bContinue, iIndexOfAt, bSplitSegment;
+				var iIndexOfAt, bSplitSegment;
 
 				if (sSegment === "$Annotations") {
 					return log(WARNING, "Invalid segment: $Annotations");
@@ -1248,11 +1257,14 @@ sap.ui.define([
 					}
 
 					if (bODataMode) {
-						if (sSegment[0] === "$" || rNumber.test(sSegment)) {
+						if (sSegment[0] === "$" && sSegment !== "$ReturnType"
+							|| rNumber.test(sSegment)) {
 							// technical property, switch to pure "JSON" drill-down
 							bODataMode = false;
-						} else if (!bSplitSegment) {
-							if (sSegment[0] !== "@" && sSegment.indexOf(".") > 0) {
+						} else {
+							if (bSplitSegment) {
+								// no special preparations needed, but handle overloads below!
+							} else if (sSegment[0] !== "@" && sSegment.indexOf(".") > 0) {
 								// "17.3 QualifiedName": scope lookup
 								return scopeLookup(sSegment);
 							} else if (vResult && "$Type" in vResult) {
@@ -1272,52 +1284,73 @@ sap.ui.define([
 									return false;
 								}
 								vBindingParameterType = UNBOUND;
-							} else if (i === 0) {
+							} else if (!i) {
 								// "17.2 SimpleIdentifier" (or placeholder):
 								// lookup inside schema child (which is determined lazily)
 								sTarget = sName = sSchemaChildName
 									= sSchemaChildName || mScope.$EntityContainer;
 								vResult = oSchemaChild = oSchemaChild || mScope[sSchemaChildName];
+								if (Array.isArray(vResult) && isParameter(sSegment, vResult[0])) {
+									// path evaluation relative to an operation overload
+									// @see [OData-CSDL-JSON-v4.01] "14.4.1.2 Path Evaluation"
+									return true;
+								}
 								if (sSegment && sSegment[0] !== "@"
 									&& !(sSegment in oSchemaChild)) {
 									return log(WARNING, "Unknown child ", sSegment, " of ",
 										sSchemaChildName);
 								}
 							}
-							if (Array.isArray(vResult)) { // overloads of Action or Function
-								bContinue = annotationAtParameter(sSegment, aSegments[i]);
-								if (bContinue !== undefined) {
-									return bContinue;
+							if (Array.isArray(vResult)) { // operation overloads
+								if (sSegment.startsWith("@$ui5.overload@")) {
+									// useful to force annotation at unbound operation overload
+									sSegment = sSegment.slice(14);
+									bSplitSegment = true;
 								}
-								if (vBindingParameterType) {
-									vResult = vResult.filter(isRightOverload);
-								}
-								if (sSegment === "@$ui5.overload") {
-									return true;
-								}
-								if (vResult.length !== 1) {
-									return log(WARNING, "Expected a single overload, but found "
-										+ vResult.length);
-								}
-								if (isParameter(sSegment, vResult[0])) {
-									return true;
-								}
-								vResult = vResult[0].$ReturnType;
-								sTarget = sTarget + "/0/$ReturnType"; // for logWithLocation() only
-								if (vResult) {
-									if (sSegment === "value"
-										&& !(mScope[vResult.$Type]
-											&& mScope[vResult.$Type].value)) {
-										// symbolic name "value" points to primitive return type
-										sName = undefined; // block "@sapui.name"
-										return true;
-									}
-									if (!scopeLookup(vResult.$Type, "$Type")) {
+								if (bSplitSegment) {
+									if (sSegment[1] !== "@"
+										&& !annotationAtOperationOrParameter(sSegment)) {
 										return false;
 									}
-								}
-								if (!sSegment) { // empty segment forces $ReturnType insertion
-									return true;
+								} else {
+									if (sSegment !== aSegments[i]
+										&& maybeParameter(sSegment, vResult)) { // not looking for
+										// parameter itself, but for annotation at parameter
+										// (incl. the special name "$ReturnType")
+										sName = sSegment;
+										return annotationAtOperationOrParameter(sSegment,
+											aSegments[i].slice(sSegment.length), "/" + sName);
+									}
+									if (vBindingParameterType) {
+										vResult = vResult.filter(isRightOverload);
+									}
+									if (sSegment === "@$ui5.overload") {
+										return true;
+									}
+									if (vResult.length !== 1) {
+										return log(WARNING, "Expected a single overload, but found "
+											+ vResult.length);
+									}
+									if (isParameter(sSegment, vResult[0])) {
+										return true;
+									}
+									vResult = vResult[0].$ReturnType;
+									sTarget += "/0/$ReturnType"; // for logWithLocation() only
+									if (vResult) {
+										if (sSegment === "value"
+											&& !(mScope[vResult.$Type]
+												&& mScope[vResult.$Type].value)) {
+											// symbolic name "value" points to primitive return type
+											sName = undefined; // block "@sapui.name"
+											return true;
+										}
+										if (!scopeLookup(vResult.$Type, "$Type")) {
+											return false;
+										}
+									}
+									if (!sSegment) { // empty segment forces $ReturnType insertion
+										return true;
+									}
 								}
 							}
 						}
@@ -1354,9 +1387,8 @@ sap.ui.define([
 					if (bODataMode && sSegment[0] === "@") {
 						// annotation(s) via external targeting
 						// Note: inline annotations can only be reached via pure "JSON" drill-down,
-						//       e.g. ".../$ReturnType/@..."
+						//       e.g. ".../$ReferentialConstraint/...@..."
 						vResult = mScope.$Annotations[sTarget] || {};
-						bInsideAnnotation = true;
 						bODataMode = false; // switch to pure "JSON" drill-down
 					} else if (sSegment === "$" && i + 1 < aSegments.length) {
 						return log(WARNING, "Unsupported path after $");
@@ -2480,9 +2512,9 @@ sap.ui.define([
 	 * followed step-by-step before the next segment is processed. Except for this, a path must
 	 * not continue if it comes across a non-object value. Such a string value can be a qualified
 	 * name (example path "/$EntityContainer/..."), a simple identifier (example path
-	 * "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/...") or even a path according to
-	 * "14.5.12 Expression edm:Path" etc. (example path
-	 * "/TEAMS/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/...").
+	 * "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/...") including the special name
+	 * "$ReturnType" (since 1.71.0), or even a path according to "14.5.12 Expression edm:Path" etc.
+	 * (example path "/TEAMS/@com.sap.vocabularies.UI.v1.LineItem/0/Value/$Path/...".
 	 *
 	 * Segments starting with an "@" character, for example "@com.sap.vocabularies.Common.v1.Label",
 	 * address annotations at the current object. As the first segment, they refer to the single
@@ -2490,11 +2522,9 @@ sap.ui.define([
 	 * edm:Annotation" minus "14.2.1 Attribute Target"), the object already contains the
 	 * annotations as a property. For objects which can (only or also) be annotated via external
 	 * targeting, the object does not contain any annotation as a property. Such annotations MUST
-	 * be accessed via a path. BEWARE of a special case: Actions, functions and their parameters
-	 * can be annotated inline for a single overload or via external targeting for all overloads at
-	 * the same time. In this case, the object contains all annotations for the single overload as
-	 * a property, but annotations MUST nevertheless be accessed via a path in order to include
-	 * also annotations for all overloads at the same time.
+	 * be accessed via a path. Such objects include operations (that is, actions and functions) and
+	 * their parameters, which can be annotated for a single overload or for all overloads at the
+	 * same time.
 	 *
 	 * Segments starting with an OData name followed by an "@" character, for example
 	 * "/TEAMS@Org.OData.Capabilities.V1.TopSupported", address annotations at an entity set,
@@ -2549,14 +2579,15 @@ sap.ui.define([
 	 * the schema child named "acme.DefaultContainer". This also works indirectly
 	 * ("/$EntityContainer/EMPLOYEES") and implicitly ("/EMPLOYEES", see below).
 	 *
-	 * A segment which represents an OData simple identifier needs special preparations. The same
-	 * applies to the empty segment after a trailing slash.
+	 * A segment which represents an OData simple identifier (or the special name "$ReturnType",
+	 * since 1.71.0) needs special preparations. The same applies to the empty segment after a
+	 * trailing slash.
 	 * <ol>
 	 * <li> If the current object has a "$Action", "$Function" or "$Type" property, it is used for
 	 *    scope lookup first. This way, "/EMPLOYEES/ENTRYDATE" addresses the same object as
 	 *    "/EMPLOYEES/$Type/ENTRYDATE", namely the "ENTRYDATE" child of the entity type
 	 *    corresponding to the "EMPLOYEES" child of the entity container. The other cases jump from
-	 *    an action or function import to the corresponding action or function overloads.
+	 *    an operation import to the corresponding operation overloads.
 	 * <li> Else if the segment is the first one within its path, the last schema child addressed
 	 *    via scope lookup is used instead of the current object. This can only happen indirectly as
 	 *    in "/TEAMS/$NavigationPropertyBinding/TEAM_2_EMPLOYEES/..." where the schema child is the
@@ -2567,29 +2598,39 @@ sap.ui.define([
 	 *    implicitly. In other words, the entity container is used as the initial schema child.
 	 *    This way, "/EMPLOYEES" addresses the same object as "/$EntityContainer/EMPLOYEES", namely
 	 *    the "EMPLOYEES" child of the entity container.
-	 * <li> Afterwards, if the current object is an array, it represents overloads for an action or
-	 *    function. Annotations of a parameter can be immediately addressed, no matter if they apply
-	 *    across all overloads or to a specific overload only, for example
-	 *    "/TEAMS/acme.NewAction/Team_ID@". Action overloads are then filtered by binding parameter;
-	 *    multiple overloads after filtering are invalid except if addressing all overloads via the
-	 *    segment "@$ui5.overload", for example "/acme.NewAction/@$ui5.overload".
+	 * <li> Afterwards, if the current object is an array, it represents overloads for an operation.
+	 *    Annotations of an operation (since 1.71.0) or a parameter (since 1.66.0) can be
+	 *    immediately addressed, no matter if they apply for a single overload or for all overloads
+	 *    at the same time, for example "/TEAMS/acme.NewAction@" or
+	 *    "/TEAMS/acme.NewAction/Team_ID@". Annotations of an unbound operation overload can be
+	 *    addressed like "/OperationImport/@$ui5.overload@", while "/OperationImport/@" addresses
+	 *    annotations of the operation import itself. The special name "$ReturnType" can be used
+	 *    (since 1.71.0) like a parameter to address annotations of the return type instead, for
+	 *    example "/TEAMS/acme.NewAction/$ReturnType@".
+	 *
+	 *    Action overloads are then filtered by binding parameter; multiple overloads after
+	 *    filtering are invalid except if addressing all overloads via the segment "@$ui5.overload",
+	 *    for example "/acme.NewAction/@$ui5.overload".
 	 *
 	 *    Once a single overload has been determined, its parameters can be immediately addressed,
-	 *    for example "/TEAMS/acme.NewAction/Team_ID". For all other names, the overload's
+	 *    for example "/TEAMS/acme.NewAction/Team_ID". The special name "$ReturnType" can be used
+	 *    (since 1.71.0) like a parameter to address the return type instead, for example
+	 *    "/TEAMS/acme.NewAction/$ReturnType". For all other names, the overload's
 	 *    "$ReturnType/$Type" is used for scope lookup. This way, "/GetOldestWorker/AGE" addresses
-	 *    the same object as "/GetOldestWorker/$Function/0/$ReturnType/$Type/AGE", and
+	 *    the same object as "/GetOldestWorker/$ReturnType/AGE" or
+	 *    "/GetOldestWorker/$Function/0/$ReturnType/$Type/AGE", and
 	 *    "/TEAMS/acme.NewAction/MemberCount" (assuming "MemberCount" is not a parameter in this
-	 *    example) addresses the same object as
+	 *    example) addresses the same object as "/TEAMS/acme.NewAction/$ReturnType/MemberCount" or
 	 *    "/TEAMS/acme.NewAction/@$ui5.overload/0/$ReturnType/$Type/MemberCount". In case a name
 	 *    can refer both to a parameter and to a property of the return type, an empty segment can
-	 *    be used instead of "@$ui5.overload/0/$ReturnType/$Type" to force return type lookup,
-	 *    for example "/TEAMS/acme.NewAction//Team_ID".
+	 *    be used instead of "@$ui5.overload/0/$ReturnType/$Type" or "$ReturnType" to force return
+	 *    type lookup, for example "/TEAMS/acme.NewAction//Team_ID".
 	 *
 	 *    For primitive return types, the special segment "value" can be used to refer to the return
 	 *    type itself (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}). This way,
-	 *    "/GetOldestAge/value" addresses the same object as "/GetOldestAge/$Function/0/$ReturnType"
-	 *    or as "/GetOldestAge/@$ui5.overload/0/$ReturnType" (which is needed for automatic type
-	 *    determination, see {@link #requestUI5Type}).
+	 *    "/GetOldestAge/value" addresses the same object as "/GetOldestAge/$ReturnType"
+	 *    or "/GetOldestAge/$Function/0/$ReturnType" or "/GetOldestAge/@$ui5.overload/0/$ReturnType"
+	 *    (which is needed for automatic type determination, see {@link #requestUI5Type}).
 	 * </ol>
 	 *
 	 * A trailing slash can be used to continue a path and thus force scope lookup or OData simple

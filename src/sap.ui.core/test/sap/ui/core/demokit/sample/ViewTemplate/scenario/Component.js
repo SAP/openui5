@@ -8,7 +8,7 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/util/UriParameters",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/sample/common/Component",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (jQuery, library, View, BaseComponent, MockServer, XMLPreprocessor, JSONModel,
+], function (UriParameters, library, View, BaseComponent, MockServer, XMLPreprocessor, JSONModel,
 		ODataModel, ODataModel2) {
 	"use strict";
 
@@ -81,7 +81,7 @@ sap.ui.define([
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/scenario/data/",
 				oModel,
 				sServiceUri,
-				oUriParameters = jQuery.sap.getUriParameters(),
+				oUriParameters = UriParameters.fromQuery(window.location.search),
 				bIsRealOData = oUriParameters.get("realOData") === "true",
 				fnModel = oUriParameters.get("oldOData") === "true" ? ODataModel : ODataModel2;
 

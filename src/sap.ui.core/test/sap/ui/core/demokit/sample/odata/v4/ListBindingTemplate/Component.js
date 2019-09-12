@@ -8,7 +8,7 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/util/UriParameters",
 	"sap/m/HBox",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/View",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, HBox, library, View, BaseComponent, JSONModel, ODataModel, TestUtils) {
+], function (UriParameters, HBox, library, View, BaseComponent, JSONModel, ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -47,7 +47,7 @@ sap.ui.define([
 				oModel = new ODataModel({
 					annotationURI : oMetaModel.aAnnotationUris,
 					autoExpandSelect : true,
-					groupId : jQuery.sap.getUriParameters().get("$direct")
+					groupId : UriParameters.fromQuery(window.location.search).get("$direct")
 						? "$direct" // switch off batch
 						: undefined,
 					operationMode : oModel.sOperationMode, // OK even after oModel was destroyed

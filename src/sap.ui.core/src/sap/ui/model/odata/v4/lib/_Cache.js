@@ -98,12 +98,16 @@ sap.ui.define([
 		this.bActive = true;
 		this.mChangeListeners = {}; // map from path to an array of change listeners
 		this.fnGetOriginalResourcePath = fnGetOriginalResourcePath;
+		// the query options extended by $select for late properties
+		this.mLateQueryOptions = null;
 		this.sMetaPath = _Helper.getMetaPath("/" + sResourcePath);
 		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
 		// a promise with attached properties $count, $resolve existing while DELETEs or POSTs are
 		// being sent
 		this.oPendingRequestsPromise = null;
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
+		// map from resource path to request Promise for pending late property requests
+		this.mPropertyRequestByPath = {};
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath;
 		this.bSortExpandSelect = bSortExpandSelect;
@@ -424,13 +428,19 @@ sap.ui.define([
 	 *   The result from a read or cache lookup
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group to associate a request for late properties with; only if this lock
+	 *   exists, late properties may be requested
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved with the result matching to <code>sPath</code>
 	 *
 	 * @private
 	 */
-	Cache.prototype.drillDown = function (oData, sPath) {
+	Cache.prototype.drillDown = function (oData, sPath, oGroupLock) {
 		var oDataPromise = SyncPromise.resolve(oData),
+			oEntity,
+			iEntityPathLength,
+			aSegments,
 			bTransient = false,
 			that = this;
 
@@ -440,8 +450,15 @@ sap.ui.define([
 			return undefined;
 		}
 
-		// Determine the implicit value if the value is missing in the cache. Report an invalid
-		// segment if there is no implicit value.
+		/*
+		 * Determines the implicit value if the value is missing in the cache. Reports an invalid
+		 * segment if there is no implicit value.
+		 *
+		 * @param {object} oValue The object that is expected to have the value
+		 * @param {string} sSegment The path segment that is missing
+		 * @param {number} iPathLength The lenght of the path of the missing value
+		 * @returns {any} The value if it could be determined or undefined otherwise
+		 */
 		function missingValue(oValue, sSegment, iPathLength) {
 			var sPropertyPath = "",
 				sReadLink,
@@ -463,6 +480,12 @@ sap.ui.define([
 						return sReadLink || sServiceUrl + that.sResourcePath + sPropertyPath;
 					}
 					if (!bTransient) {
+						if (oGroupLock && oEntity && oProperty.$kind === "Property") {
+							return that.fetchLateProperty(oGroupLock, oEntity,
+								aSegments.slice(0, iEntityPathLength).join("/"),
+								aSegments.slice(iEntityPathLength).join("/"),
+								aSegments.slice(iEntityPathLength, iPathLength).join("/"));
+						}
 						return invalidSegment(sSegment);
 					}
 					if (oProperty.$kind === "NavigationProperty") {
@@ -484,7 +507,8 @@ sap.ui.define([
 		if (!sPath) {
 			return oDataPromise;
 		}
-		return sPath.split("/").reduce(function (oPromise, sSegment, i) {
+		aSegments = sPath.split("/");
+		return aSegments.reduce(function (oPromise, sSegment, i) {
 			return oPromise.then(function (vValue) {
 				var aMatches, oParentValue;
 
@@ -500,6 +524,10 @@ sap.ui.define([
 					// Note: protect private namespace against read access just like any missing
 					// object
 					return invalidSegment(sSegment);
+				}
+				if (_Helper.getPrivateAnnotation(vValue, "predicate")) {
+					oEntity = vValue;
+					iEntityPathLength = i;
 				}
 				oParentValue = vValue;
 				bTransient = bTransient || _Helper.getPrivateAnnotation(vValue, "transient");
@@ -520,6 +548,69 @@ sap.ui.define([
 					: vValue;
 			});
 		}, oDataPromise);
+	};
+
+	/**
+	 * Fetches a missing property while drilling down into the cache. Writes it into the cache and
+	 * returns it so that drillDown can continue.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @param {object} oEntity
+	 *   The entity instance in the cache
+	 * @param {string} sEntityPath
+	 *   The path of the entity relative to the cache
+	 * @param {string} sRequestedPropertyPath
+	 *   The path of the requested property relative to the entity
+	 * @param {string} sMissingPropertyPath
+	 *   The path of the missing property relative to the entity
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise resolving with the missing property value; it rejects with an error if the GET
+	 *   request failed or if the ETag has changed
+	 *
+	 * @private
+	 */
+	Cache.prototype.fetchLateProperty = function (oGroupLock, oEntity, sEntityPath,
+			sRequestedPropertyPath, sMissingPropertyPath) {
+		var oPromise,
+			mQueryOptions = Object.assign({}, this.mQueryOptions),
+			sResourcePath,
+			that = this;
+
+		// deep clone needed, because $select is modified in mLateQueryOptions
+		this.mLateQueryOptions = this.mLateQueryOptions || _Helper.merge({}, this.mQueryOptions);
+		if (this.mLateQueryOptions.$select.indexOf(sRequestedPropertyPath) < 0) {
+			this.mLateQueryOptions.$select.push(sRequestedPropertyPath);
+		}
+
+		delete mQueryOptions.$apply;
+		delete mQueryOptions.$count;
+		delete mQueryOptions.$expand;
+		delete mQueryOptions.$filter;
+		delete mQueryOptions.$orderby;
+		delete mQueryOptions.$search;
+		mQueryOptions.$select = sRequestedPropertyPath;
+		sResourcePath = _Helper.buildPath(this.sResourcePath, sEntityPath)
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions);
+		oPromise = this.mPropertyRequestByPath[sResourcePath];
+		if (!oPromise) {
+			oPromise = this.oRequestor.request("GET", sResourcePath, oGroupLock)
+				.then(function (oData) {
+					if (oData["@odata.etag"] !== oEntity["@odata.etag"]) {
+						throw new Error("GET " + sResourcePath + ": ETag changed");
+					}
+
+					_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oData);
+
+					// return the missing property, so that drillDown properly proceeds
+					return _Helper.drillDown(oEntity, sMissingPropertyPath.split("/"));
+				})
+				.finally(function () {
+					delete that.mPropertyRequestByPath[sResourcePath];
+				});
+			this.mPropertyRequestByPath[sResourcePath] = oPromise;
+		}
+		return oPromise;
 	};
 
 	/**
@@ -1074,8 +1165,7 @@ sap.ui.define([
 				 * this request has returned and its response is applied to the cache.
 				 */
 				function onSubmit() {
-					oRequestLock = that.oRequestor.getModelInterface()
-						.lockGroup(sGroupId, true, that);
+					oRequestLock = that.oRequestor.lockGroup(sGroupId, true, that);
 					if (fnPatchSent) {
 						fnPatchSent();
 					}
@@ -1451,6 +1541,8 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
+	 * @param {string} [bFetchIfMissing]
+	 *   If true, the property may be fetched if missing in the cache
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the requested data.
 	 *
@@ -1460,7 +1552,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
-			oListener) {
+			oListener, bFetchIfMissing) {
 		var aElements,
 			that = this;
 
@@ -1478,7 +1570,8 @@ sap.ui.define([
 			// register afterwards to avoid that updateExisting fires updates before the first
 			// response
 			that.registerChange(sPath, oListener);
-			return that.drillDown(that.aElements, sPath);
+			return that.drillDown(that.aElements, sPath,
+				bFetchIfMissing ? oGroupLock.getUnlockedCopy() : undefined);
 		});
 	};
 
@@ -1921,7 +2014,8 @@ sap.ui.define([
 			});
 		}
 
-		mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
+		mQueryOptions = _Helper.intersectQueryOptions(
+			this.mLateQueryOptions || this.mQueryOptions, aPaths,
 			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
 			mNavigationPropertyPaths);
 		if (!mQueryOptions) {
@@ -1979,7 +2073,7 @@ sap.ui.define([
 				for (i = 0, n = oResult.value.length; i < n; i += 1) {
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-					_Helper.updateExisting(that.mChangeListeners, sPredicate,
+					_Helper.updateSelected(that.mChangeListeners, sPredicate,
 						that.aElements.$byPredicate[sPredicate], oElement);
 				}
 			});
@@ -2147,6 +2241,8 @@ sap.ui.define([
 	 *   An optional change listener that is added for the given path. Its method
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
+	 * @param {string} [bFetchIfMissing]
+	 *   If true, the property may be fetched if missing in the cache
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
@@ -2158,7 +2254,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener) {
+	SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
+			bFetchIfMissing) {
 		var sResourcePath = this.sResourcePath + this.sQueryString,
 			that = this;
 
@@ -2185,7 +2282,8 @@ sap.ui.define([
 			if (oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
-			return that.drillDown(oResult, sPath);
+			return that.drillDown(oResult, sPath,
+				bFetchIfMissing ? oGroupLock.getUnlockedCopy() : undefined);
 		});
 	};
 
@@ -2296,7 +2394,8 @@ sap.ui.define([
 	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, sResourcePath) {
 		var oOldValuePromise = this.fetchValue(_GroupLock.$cached, ""),
-			mQueryOptions = _Helper.intersectQueryOptions(this.mQueryOptions, aPaths,
+			mQueryOptions = _Helper.intersectQueryOptions(
+				this.mLateQueryOptions || this.mQueryOptions, aPaths,
 				this.oRequestor.getModelInterface().fetchMetadata,
 				this.sMetaPath + "/$Type", // add $Type because of return value context
 				mNavigationPropertyPaths),
@@ -2319,7 +2418,7 @@ sap.ui.define([
 
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1]);
-			_Helper.updateExisting(that.mChangeListeners, "", oOldValue, oNewValue);
+			_Helper.updateSelected(that.mChangeListeners, "", oOldValue, oNewValue);
 
 			return oOldValue;
 		});
