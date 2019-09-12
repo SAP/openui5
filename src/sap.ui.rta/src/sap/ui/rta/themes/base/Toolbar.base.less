@@ -12,7 +12,8 @@
 	left: 0;
 	right: 0;
 	padding: 0 20px;
-	height: 48px; /* Overrider `.sapUiSizeCompact .sapMTB` */
+	height: 44px; /* Overrider `.sapUiSizeCompact .sapMTB` */
+	background-color: @_sap_ui_rta_Toolbar_Adaptation_BaseColor;
 
 	.sapMBtn {
 		margin: 0 4px;
@@ -87,4 +88,8 @@
 		outline: none;
 		border: 1px dotted @_sap_ui_rta_Toolbar_Base_TextColor;
 	}
+}
+
+.sapUiSizeCozy .sapUiRtaToolbar .sapMSegB .sapMSegBBtn {
+	line-height: 2rem;
 }
