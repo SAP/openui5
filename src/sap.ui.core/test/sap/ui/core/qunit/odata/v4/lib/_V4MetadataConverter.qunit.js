@@ -974,7 +974,7 @@ sap.ui.define([
 					"$Parameter" : [{
 						"$Name" : "_it",
 						"$Type" : "foo.Type",
-						"$isCollection": true
+						"$isCollection" : true
 					}, {
 						"$Name" : "NonBinding",
 						"$Type" : "Edm.Int"
@@ -998,7 +998,7 @@ sap.ui.define([
 					}, {
 						"$Name" : "B",
 						"$Type" : "foo.Int",
-						"$isCollection": true
+						"$isCollection" : true
 					}]
 				}]
 			});
@@ -1189,6 +1189,153 @@ sap.ui.define([
 			jQuery.ajax("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json")
 		]).then(function (aResults) {
 			assert.deepEqual(aResults[0], aResults[1]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("duplicate schema children; last one wins", function (assert) {
+		var that = this;
+
+		[
+			"Duplicate qualified name duplicates.",
+			"Duplicate qualified name $EntityContainer", // caused by "YetAnotherContainer"
+			"Duplicate qualified name duplicates.ArtistsType",
+			"Duplicate qualified name duplicates.Address",
+			"Duplicate qualified name duplicates.Enumeration",
+			"Duplicate qualified name duplicates.Term",
+			"Duplicate qualified name duplicates.TypeDefinition",
+			"Duplicate qualified name duplicates.GetDefaults",
+			"Duplicate qualified name duplicates.Container"
+		].forEach(function (sWarning) {
+			that.oLogMock.expects("warning").withExactArgs(sWarning, undefined,
+				"sap.ui.model.odata.v4.lib._MetadataConverter");
+		});
+
+		testConversion(assert, '\
+<edmx:DataServices>\
+	<Schema Namespace="duplicates"/>\
+	<Schema Namespace="duplicates">\
+		<ComplexType Name="ArtistsType"/>\
+		<EntityType Name="ArtistsType">\
+			<Key>\
+				<PropertyRef Name="ArtistID"/>\
+				<PropertyRef Name="IsActiveEntity"/>\
+			</Key>\
+			<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>\
+			<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>\
+		</EntityType>\
+\
+		<EntityType Name="Address"/>\
+		<ComplexType Name="Address">\
+			<Property Name="City" Type="Edm.String"/>\
+		</ComplexType>\
+\
+		<ComplexType Name="Enumeration"/>\
+		<EnumType Name="Enumeration" UnderlyingType="Edm.Int32">\
+			<Member Name="ENO"/>\
+		</EnumType>\
+\
+		<ComplexType Name="Term"/>\
+		<Term Name="Term" Type="Edm.String"/>\
+\
+		<ComplexType Name="TypeDefinition"/>\
+		<TypeDefinition Name="TypeDefinition" UnderlyingType="Edm.String"/>\
+\
+		<ComplexType Name="GetDefaults"/>\
+		<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">\
+			<Parameter Name="_it" Type="Collection(duplicates.ArtistsType)" Nullable="false"/>\
+			<ReturnType Type="duplicates.ArtistsType" Nullable="false"/>\
+		</Function>\
+		<Function Name="GetDefaults" EntitySetPath="_it" IsBound="true">\
+			<Parameter Name="_it" Type="duplicates.ArtistsType" Nullable="false"/>\
+			<ReturnType Type="duplicates.ArtistsType" Nullable="false"/>\
+		</Function>\
+\
+		<ComplexType Name="Container"/>\
+		<EntityContainer Name="YetAnotherContainer"/>\
+		<EntityContainer Name="Container">\
+			<EntitySet Name="Artists" EntityType="duplicates.ArtistsType"/>\
+		</EntityContainer>\
+	</Schema>\
+</edmx:DataServices>', {
+			"$EntityContainer" : "duplicates.Container",
+			"duplicates." : {
+				"$kind" : "Schema"
+			},
+			"duplicates.Address" : {
+				"$kind" : "ComplexType",
+				"City" : {
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.ArtistsType" : {
+				"$Key" : [
+					"ArtistID",
+					"IsActiveEntity"
+				],
+				"$kind" : "EntityType",
+				"ArtistID" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				},
+				"IsActiveEntity" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.Boolean",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.Container" : {
+				"$kind" : "EntityContainer",
+				"Artists" : {
+					"$Type" : "duplicates.ArtistsType",
+					"$kind" : "EntitySet"
+				}
+			},
+			"duplicates.Enumeration" : {
+				"$kind" : "EnumType",
+				"ENO" : 0
+			},
+			"duplicates.GetDefaults" : [{
+				"$EntitySetPath" : "_it",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType",
+					"$isCollection" : true
+				}],
+				"$ReturnType" : {
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType"
+				},
+				"$kind" : "Function"
+			}, {
+				"$EntitySetPath" : "_it",
+				"$IsBound" : true,
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType"
+				}],
+				"$ReturnType" : {
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType"
+				},
+				"$kind" : "Function"
+			}],
+			"duplicates.Term" : {
+				"$Type" : "Edm.String",
+				"$kind" : "Term"
+			},
+			"duplicates.TypeDefinition" : {
+				"$UnderlyingType" : "Edm.String",
+				"$kind" : "TypeDefinition"
+			},
+			"duplicates.YetAnotherContainer" : {
+				"$kind" : "EntityContainer"
+			}
 		});
 	});
 });
