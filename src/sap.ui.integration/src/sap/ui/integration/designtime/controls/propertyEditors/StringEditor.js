@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/controls/PropertyEditor",
+	"sap/ui/integration/designtime/controls/propertyEditors/BasePropertyEditor",
 	"sap/ui/base/BindingParser"
 ], function (
-	PropertyEditor,
+	BasePropertyEditor,
 	BindingParser
 ) {
 	"use strict";
@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var StringEditor = PropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.StringEditor", {
+	var StringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.StringEditor", {
 		init: function() {
 			this._oInput = new sap.m.Input({value: "{value}"});
 			this._oInput.attachLiveChange(function(oEvent) {
@@ -43,7 +43,7 @@ sap.ui.define([
 				}
 			}
 		},
-		renderer: PropertyEditor.getMetadata().getRenderer().render
+		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
 	return StringEditor;

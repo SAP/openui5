@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/controls/PropertyEditor",
+	"sap/ui/integration/designtime/controls/propertyEditors/BasePropertyEditor",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/deepClone"
 ], function (
-	PropertyEditor,
+	BasePropertyEditor,
 	Fragment,
 	JSONModel,
 	deepClone
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var ParametersEditor = PropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ParametersEditor", {
+	var ParametersEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ParametersEditor", {
 		init: function() {
 			this._oTableModel = new JSONModel([]);
 			Fragment.load({
@@ -49,7 +49,7 @@ sap.ui.define([
 			oRm.close("div");
 		},
 		setBindingContext: function(oContext, sName) {
-			var vReturn = PropertyEditor.prototype.setBindingContext.apply(this, arguments);
+			var vReturn = BasePropertyEditor.prototype.setBindingContext.apply(this, arguments);
 			if (!sName) {
 				var mParams = this.getPropertyInfo().value || {};
 				var aParams = Object.keys(mParams).map(function(sKey) {

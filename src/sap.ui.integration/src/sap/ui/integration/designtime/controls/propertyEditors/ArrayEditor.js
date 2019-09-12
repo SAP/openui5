@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/controls/PropertyEditor",
+	"sap/ui/integration/designtime/controls/propertyEditors/BasePropertyEditor",
 	"sap/m/VBox",
 	"sap/m/Bar",
 	"sap/m/Label",
 	"sap/m/Button"
 ], function (
-	PropertyEditor,
+	BasePropertyEditor,
 	VBox,
 	Bar,
 	Label,
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var ArrayEditor = PropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ArrayEditor", {
+	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ArrayEditor", {
 		init: function() {
 			var oContainer = new VBox();
 			this.addContent(oContainer);
@@ -78,7 +78,7 @@ sap.ui.define([
 				]
 			}));
 		},
-		renderer: PropertyEditor.getMetadata().getRenderer().render
+		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
 	return ArrayEditor;

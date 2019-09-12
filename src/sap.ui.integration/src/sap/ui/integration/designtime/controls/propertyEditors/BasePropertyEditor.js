@@ -15,7 +15,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var PropertyEditor = Control.extend("sap.ui.integration.designtime.controls.PropertyEditor", {
+	var PropertyEditor = Control.extend("sap.ui.integration.designtime.controls.propertyEditors.BasePropertyEditor", {
 		metadata: {
 			properties: {
 				"renderLabel" : {
