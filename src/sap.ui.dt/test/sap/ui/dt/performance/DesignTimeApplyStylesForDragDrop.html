@@ -71,12 +71,12 @@
 			window.measureApplyStylesDragDropOneByOne = function () {
 				sap.ui.require([
 					"sap/ui/dt/OverlayRegistry",
-					"sap/ui/dt/Util",
-					"sap/base/Log"
+					"sap/base/Log",
+					"sap/base/util/restricted/_debounce"
 				], function (
 					OverlayRegistry,
-					Util,
-					BaseLog
+					BaseLog,
+					_debounce
 				){
 					var oSourceElementOverlay = OverlayRegistry.getOverlay("SourcePanel");
 					var oSourceAggregationOverlay = oSourceElementOverlay.getAggregationOverlay("content");
@@ -90,7 +90,7 @@
 					var iCountCall = 0;
 					var bMeasurementDone = false;
 
-					var fnDebouncedFn = Util.debounce(function () {
+					var fnDebouncedFn = _debounce(function () {
 						if (!bMeasurementDone) {
 							bMeasurementDone = true;
 							window.wpp.customMetrics.applyStylesDragDrop = aStack[aStack.length - 1] - aStack[0];
@@ -127,14 +127,14 @@
 			window.measureApplyStylesDragDropAtOnce = function () {
 				sap.ui.require([
 					"sap/ui/dt/OverlayRegistry",
-					"sap/ui/dt/Util",
 					"sap/base/Log",
-					"sap/ui/thirdparty/jquery"
+					"sap/ui/thirdparty/jquery",
+					"sap/base/util/restricted/_debounce"
 				], function (
 					OverlayRegistry,
-					Util,
 					BaseLog,
-					jQuery
+					jQuery,
+					_debounce
 				){
 					var oSourceElementOverlay = OverlayRegistry.getOverlay("SourcePanel");
 					var oSourceAggregationOverlay = oSourceElementOverlay.getAggregationOverlay("content");
@@ -148,7 +148,7 @@
 					var iCountCall = 0;
 					var bMeasurementDone = false;
 
-					var fnDebouncedFn = Util.debounce(function () {
+					var fnDebouncedFn = _debounce(function () {
 						if (!bMeasurementDone) {
 							bMeasurementDone = true;
 							window.wpp.customMetrics.applyStylesDragDrop = aStack[aStack.length - 1] - aStack[0];

@@ -8,14 +8,18 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dt/Util",
 	"sap/m/InstanceManager",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/base/util/restricted/_max",
+	"sap/base/util/restricted/_min"
 ], function (
 	Popup,
 	BusyIndicator,
 	Log,
 	Util,
 	InstanceManager,
-	includes
+	includes,
+	_max,
+	_min
 ) {
 	"use strict";
 
@@ -112,12 +116,12 @@ sap.ui.define([
 
 			// get max Z-Index from validated popups
 			var iMaxValidatedZIndex = aValidatedPopups.length > 0
-				? Math.max.apply(null, getZIndexFromPopups(aValidatedPopups))
+				? _max(getZIndexFromPopups(aValidatedPopups))
 				: -1;
 
 			// get minimum Z-Index from invalidated popups
 			var iMinInvalidatedZIndex = aInvalidatedPopups.length > 0
-				? Math.min.apply(null, getZIndexFromPopups(aInvalidatedPopups))
+				? _min(getZIndexFromPopups(aInvalidatedPopups))
 				: -1;
 
 			// compare Z-Index of adaptable and non-adaptable popups - the higher one wins

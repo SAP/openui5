@@ -7,15 +7,15 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/Util",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/base/util/restricted/_debounce"
 ],
 function (
 	Plugin,
 	OverlayRegistry,
 	OverlayUtil,
-	DtUtil,
-	includes
+	includes,
+	_debounce
 ) {
 	"use strict";
 
@@ -141,7 +141,7 @@ function (
 		if (oParams.type === "afterRendering") {
 			if (!this.fnDebounced) {
 				// the timeout should be changed to 0 as soon as DT refactoring is done
-				this.fnDebounced = DtUtil.debounce(function() {
+				this.fnDebounced = _debounce(function() {
 					this._setStyleClassForAllStretchCandidates(this._getNewStretchCandidates(this._aOverlaysCollected));
 					this._aOverlaysCollected = [];
 					this.fnDebounced = undefined;
@@ -199,7 +199,7 @@ function (
 		}
 
 		var aRelevantOverlays = this._getRelevantOverlays(oOverlay);
-		var fnDebounced = DtUtil.debounce(function () {
+		var fnDebounced = _debounce(function () {
 			if (!this.bIsDestroyed && !oOverlay.bIsDestroyed) {
 				var aNewStretchCandidates = this._getNewStretchCandidates(aRelevantOverlays).concat(this._getRelevantOverlaysOnEditableChange(oOverlay));
 				aNewStretchCandidates = aNewStretchCandidates.filter(function (sId, iPosition, aAllCandidates) {

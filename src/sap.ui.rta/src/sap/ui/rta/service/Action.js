@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/Util"
+	"sap/ui/dt/Util",
+	"sap/base/util/restricted/_pick"
 ], function (
 	OverlayRegistry,
-	DtUtil
+	DtUtil,
+	_pick
 ) {
 	"use strict";
 
@@ -97,7 +99,7 @@ sap.ui.define([
 			return getActions(aElementOverlays)
 				.then(function(aMenuItems) {
 					return aMenuItems.map(function (mMenuItem) {
-						return DtUtil.pick(mMenuItem, ['id', 'icon', 'rank', 'group', 'enabled', 'text']);
+						return _pick(mMenuItem, ['id', 'icon', 'rank', 'group', 'enabled', 'text']);
 					});
 				});
 		}

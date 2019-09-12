@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/Util",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
@@ -16,6 +15,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Button",
 	"sap/base/util/includes",
+	"sap/base/util/restricted/_debounce",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -23,7 +23,6 @@ function (
 	ManagedObject,
 	DesignTime,
 	OverlayRegistry,
-	DtUtil,
 	VerticalLayout,
 	Form,
 	FormContainer,
@@ -34,6 +33,7 @@ function (
 	VBox,
 	Button,
 	includes,
+	_debounce,
 	sinon
 ) {
 	'use strict';
@@ -529,7 +529,7 @@ function (
 
 			this.oVBox.setVisible(false);
 			// wait for the dom to update
-			var fnDebounced = DtUtil.debounce(function() {
+			var fnDebounced = _debounce(function() {
 				assert.notOk(isStretched(this.oHBoxOverlay), "the style class is not there");
 				assert.notOk(isStretched(this.oLayoutOverlay), "the style class is not there");
 				this.oHBoxOverlay.detachEvent("geometryChanged", fnDebounced);
@@ -546,7 +546,7 @@ function (
 
 			this.oHBox.setVisible(false);
 			// wait for the dom to update
-			var fnDebounced = DtUtil.debounce(function() {
+			var fnDebounced = _debounce(function() {
 				assert.notOk(includes(this.oStretchPlugin.getStretchCandidates()), "layout", "the layout is not part of the candidates anymore");
 				assert.notOk(includes(this.oStretchPlugin.getStretchCandidates()), "hbox", "the hbox is not part of the candidates anymore");
 				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
@@ -623,7 +623,7 @@ function (
 		QUnit.test("When the invisible hbox becomes visible", function(assert) {
 			var done = assert.async();
 			// wait for the dom to update
-			var fnDebounced = DtUtil.debounce(function() {
+			var fnDebounced = _debounce(function() {
 				assert.ok(isStretched(this.oLayoutOverlay), "the style class was added");
 				this.oLayoutOverlay.detachEvent("geometryChanged", fnDebounced);
 				done();

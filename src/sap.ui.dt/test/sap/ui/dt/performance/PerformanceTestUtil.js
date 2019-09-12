@@ -1,6 +1,5 @@
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/Util",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/plugin/MouseSelection",
@@ -14,10 +13,10 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/m/Panel",
 	"sap/m/VBox",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/restricted/_debounce"
 ], function(
 	DesignTime,
-	DtUtil,
 	TabHandling,
 	ControlDragDrop,
 	MouseSelection,
@@ -31,7 +30,8 @@ sap.ui.define([
 	RatingIndicator,
 	Panel,
 	VBox,
-	Log
+	Log,
+	_debounce
 ) {
 	"use strict";
 
@@ -152,7 +152,7 @@ sap.ui.define([
 			var iCountCall = 0;
 			var bMeasurementDone = false;
 
-			var fnDebouncedFn = DtUtil.debounce(function () {
+			var fnDebouncedFn = _debounce(function () {
 				if (!bMeasurementDone) {
 					bMeasurementDone = true;
 					window.wpp.customMetrics[sCustomMetricName] = aStack[aStack.length - 1] - aStack[0];
