@@ -30,6 +30,20 @@ sap.ui.define([
 			return Settings.getInstance().then(function (oSettings) {
 				return !oSettings.isProductiveSystem();
 			});
+		},
+
+		/**
+		 * Checks if key user rights are available for the current user.
+		 *
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if key user is available
+		 * @private
+		 * @ui5-restricted sap.ui.rta.api.startKeyUserAdaptation
+		 */
+		isKeyUser: function () {
+			return Settings.getInstance()
+				.then(function (oSettings) {
+					return oSettings.isKeyUser();
+				});
 		}
 	};
 

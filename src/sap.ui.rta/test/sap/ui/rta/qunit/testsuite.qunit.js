@@ -392,8 +392,17 @@ sap.ui.define([
 						"sap.ui.rta.dttool": "test-resources/sap/ui/rta/dttool/"
 					}
 				}
+			},
+
+			// API
+			"api/startKeyUserAdaptation": {
+				group: "API",
+				coverage: {
+					only: ["sap/ui/rta/api/startKeyUserAdaptation"]
+				}
 			}
 		}
+
 	};
 
 	var bCompAvailable = false;
