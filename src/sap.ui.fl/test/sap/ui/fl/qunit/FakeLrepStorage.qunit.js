@@ -76,14 +76,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when I delete a specific change", function(assert) {
-			FakeLrepSessionStorage.deleteChange(oTestData.sChangeId1);
+			FakeLrepSessionStorage.deleteChange(oTestData.oChange1);
 
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "then after deleting 1 change, there schould be 3 changes");
 			assert.equal(FakeLrepSessionStorage.getChange(oTestData.sChangeId1), undefined, "then if I try to get the deleted change it schould be undefined");
 		});
 
 		QUnit.test("when I delete a specific variant change", function(assert) {
-			FakeLrepSessionStorage.deleteChange(oTestData.sVariantId1);
+			FakeLrepSessionStorage.deleteChange(oTestData.oVariant1);
 
 			assert.equal(FakeLrepSessionStorage.getNumChanges(), 3, "then after deleting 1 variant change, there schould be 3 changes");
 			assert.equal(FakeLrepSessionStorage.getChange(oTestData.sVariantId1), undefined, "then if I try to get the deleted change it schould be undefined");

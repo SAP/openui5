@@ -62,6 +62,14 @@ sap.ui.define([
 			.then(findConnectorConfigForLayer.bind(this, sLayer));
 	}
 
+	function executeActionByName(sActionName, mPropertyBag) {
+		return getConnectorConfigByLayer(mPropertyBag.layer)
+			.then(function (oConnectorConfig) {
+				mPropertyBag.url = oConnectorConfig.url;
+				return oConnectorConfig.connectorModule[sActionName](mPropertyBag);
+			});
+	}
+
 	var Connector = {};
 
 	/**
@@ -71,14 +79,40 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Contains additional information for all the Connectors
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the file should be stored
 	 * @param {object[]} mPropertyBag.flexObjects Data to be stored
+	 * @param {string} [mPropertyBag._transport] The transport ID which will be handled internally, so there is no need to be passed
+	 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the update data has file type .variant or not
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
 	Connector.write = function(mPropertyBag) {
-		return getConnectorConfigByLayer(mPropertyBag.layer)
-			.then(function (oConnectorConfig) {
-				mPropertyBag.url = oConnectorConfig.url;
-				return oConnectorConfig.connectorModule.write(mPropertyBag);
-			});
+		return executeActionByName("write", mPropertyBag);
+	};
+
+	/**
+	 * Delete an existing flex data by calling the according remove of the connector in charge of the passed layer;
+	 * The promise is rejected in case the removing failed or no connector is configured to handle the layer.
+	 *
+	 * @param {object} mPropertyBag Contains additional information for all the Connectors
+	 * @param {sap.ui.fl.Change} mPropertyBag.flexObject Flex Object to be deleted
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the data should be deleted
+	 * @param {string} [mPropertyBag._transport] The transport ID which will be handled internally, so there is no need to be passed
+	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
+	 */
+	Connector.remove = function(mPropertyBag) {
+		return executeActionByName("remove", mPropertyBag);
+	};
+
+	/**
+	 * Update an existing flex data by calling the according update of the connector in charge of the passed layer;
+	 * The promise is rejected in case the writing failed or no connector is configured to handle the layer.
+	 *
+	 * @param {object} mPropertyBag Contains additional information for all the Connectors
+	 * @param {object} mPropertyBag.flexObject Flex object to be deleted
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the data should be deleted
+	 * @param {string} [mPropertyBag._transport] The transport ID which will be handled internally, so there is no need to be passed
+	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
+	 */
+	Connector.update = function(mPropertyBag) {
+		return executeActionByName("update", mPropertyBag);
 	};
 
 	/**
@@ -95,11 +129,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves after the reset is completed and rejects in case of an error
 	 */
 	Connector.reset = function (mPropertyBag) {
-		return getConnectorConfigByLayer(mPropertyBag.layer)
-			.then(function (oConnectorConfig) {
-				mPropertyBag.url = oConnectorConfig.url;
-				return oConnectorConfig.connectorModule.reset(mPropertyBag);
-			});
+		return executeActionByName("reset", mPropertyBag);
 	};
 
 	/**
@@ -115,11 +145,7 @@ sap.ui.define([
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
 	Connector.getFlexInfo = function (mPropertyBag) {
-		return getConnectorConfigByLayer(mPropertyBag.layer)
-			.then(function (oConnectorConfig) {
-				mPropertyBag.url = oConnectorConfig.url;
-				return oConnectorConfig.connectorModule.getFlexInfo(mPropertyBag);
-			});
+		return executeActionByName("getFlexInfo", mPropertyBag);
 	};
 
 	/**

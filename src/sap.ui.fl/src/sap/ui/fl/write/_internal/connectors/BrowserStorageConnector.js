@@ -64,6 +64,16 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
+		update: function(mPropertyBag) {
+			var sChangeKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
+			var sChange = JSON.stringify(mPropertyBag.flexObject);
+			this.oStorage.setItem(sChangeKey, sChange);
+			return Promise.resolve();
+		},
+
+		/**
+		 * @inheritDoc
+		 */
 		reset: function(mPropertyBag) {
 			BrowserStorageUtils.forEachChangeInStorage({
 				storage: this.oStorage,

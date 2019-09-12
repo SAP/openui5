@@ -136,7 +136,7 @@ sap.ui.define([
 							namespace: oChangeDefinition.namespace,
 							type: oChangeDefinition.fileType
 						});
-						oFakeLrepStorage.deleteChange(oChangeDefinition.fileName);
+						oFakeLrepStorage.deleteChange(oChangeDefinition);
 					}
 				});
 				return {
@@ -148,12 +148,11 @@ sap.ui.define([
 
 		/**
 		 * Deletes a Fake Lrep change in localStorage
-		 * @param  {Object} oChange The change object
-		 * @param  {Object} oChange.sChangeName File name of the change object
+		 * @param  {Object} oFlexObject The change object
 		 * @returns {Promise} Returns a promise to the result of the request
 		 */
-		FakeLrepConnectorStorage.prototype.deleteChange = function(oChange) {
-			oFakeLrepStorage.deleteChange(oChange.sChangeName);
+		FakeLrepConnectorStorage.prototype.deleteChange = function(oFlexObject) {
+			oFakeLrepStorage.deleteChange(oFlexObject);
 
 			return Promise.resolve({
 				response: undefined,

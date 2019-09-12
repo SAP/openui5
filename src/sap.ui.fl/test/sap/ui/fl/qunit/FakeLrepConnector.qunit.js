@@ -20,6 +20,8 @@ sap.ui.define([
 	var oFakeLrepConnector = new FakeLrepConnector("Dummy path");
 
 	var oTestData = {fileName:"id_1445501120486_25", fileType:"change", changeType:"hideControl", component:"sap.ui.rta.test.Demo.md.Component", packageName:"$TMP", content:{}, selector:{id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"}, layer:"CUSTOMER", texts:{}, namespace:"sap.ui.rta.test.Demo.md.Component", creation:"", originalLanguage:"EN", conditions:{}, support:{generator:"Change.createInitialFileContent", service:"", user:""}};
+	var oTestDataVariant = JSON.parse(JSON.stringify(oTestData));
+	oTestDataVariant.fileType = "variant";
 
 	QUnit.module("Given an instance of FakeLrepConnector", {
 	}, function() {
@@ -102,33 +104,33 @@ sap.ui.define([
 		});
 
 		QUnit.test("when update change which is not variant", function(assert) {
-			return oFakeLrepConnector.update(oTestData, "testChangeName", "testChangeList", false).then(function(result) {
+			return oFakeLrepConnector.update(oTestData, "testChangeList").then(function(result) {
 				assert.equal(result, undefined, "then nothing returned.");
 			});
 		});
 
 		QUnit.test("when update change which is variant", function(assert) {
-			return oFakeLrepConnector.update(oTestData, "testChangeName", "testChangeList", true).then(function(result) {
-				assert.deepEqual(result.response, oTestData, "then an exact payload was returned.");
+			return oFakeLrepConnector.update(oTestDataVariant, "testChangeList").then(function(result) {
+				assert.deepEqual(result.response, oTestDataVariant, "then an exact payload was returned.");
 				assert.equal(result.status, 'success', "successfully.");
 			});
 		});
 
 		QUnit.test("when delete change which is not variant", function(assert) {
-			return oFakeLrepConnector.deleteChange("testParams", false).then(function(result) {
+			return oFakeLrepConnector.deleteChange(oTestData).then(function(result) {
 				assert.equal(result, undefined, "then nothing returned.");
 			});
 		});
 
 		QUnit.test("when delete change which is variant", function(assert) {
-			return oFakeLrepConnector.deleteChange("testParams", true).then(function(result) {
+			return oFakeLrepConnector.deleteChange(oTestDataVariant).then(function(result) {
 				assert.deepEqual(result.response, undefined, "then undefined response was returned.");
 				assert.equal(result.status, 'nocontent', "with nocontent status.");
 			});
 		});
 
 		QUnit.test("when enable fake connector for an app component change which is variant", function(assert) {
-			return oFakeLrepConnector.deleteChange("testParams", true).then(function(result) {
+			return oFakeLrepConnector.deleteChange(oTestDataVariant).then(function(result) {
 				assert.deepEqual(result.response, undefined, "then undefined response was returned.");
 				assert.equal(result.status, 'nocontent', "with nocontent status.");
 			});

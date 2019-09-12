@@ -3886,13 +3886,7 @@ function (
 					assert.ok(jQuery.isArray(aResults));
 					assert.equal(aResults.length, 1);
 					assert.strictEqual(aResults[0], oDeleteResponse);
-					var bIsVariant = true;
-					sinon.assert.calledWith(this.lrepConnectorMock.deleteChange, {
-						sChangeName: "changeId",
-						sChangelist: "",
-						sLayer: "CUSTOMER",
-						sNamespace: "apps/saveChangeScenario/changes/"
-					}, bIsVariant);
+					sinon.assert.calledWith(this.lrepConnectorMock.deleteChange, oChange.getDefinition(), "");
 					assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
 				}.bind(this));
 			}.bind(this));

@@ -266,12 +266,7 @@ sap.ui.define([
 		QUnit.test("when deleting a change", function (assert) {
 			return this.oFakeLrepConnectorSessionStorage.create(aTestData)
 			.then(function () {
-				this.oFakeLrepConnectorSessionStorage.deleteChange({
-					sChangeName: aTestData[0].fileName,
-					sLayer: aTestData[0].layer,
-					sNamespace: aTestData[0].namespace,
-					sChangelist: aTestData[0].packageName
-				});
+				this.oFakeLrepConnectorSessionStorage.deleteChange(aTestData[0]);
 			}.bind(this))
 			.then(function () {
 				assert.equal(FakeLrepSessionStorage.getNumChanges(), aTestData.length - 1, "then the Local Storage has a change less.");

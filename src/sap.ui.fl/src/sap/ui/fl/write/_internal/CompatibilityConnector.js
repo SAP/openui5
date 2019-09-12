@@ -15,7 +15,6 @@ sap.ui.define([
 	 * Adapts the existing @see sap.ui.fl.LrepConnector API to the new apply/write.Connector API
 	 *
 	 * @namespace sap.ui.fl.write._internal.CompatibilityConnector
-	 * @experimental Since 1.71
 	 * @since 1.71
 	 * @version ${version}
 	 * @private
@@ -29,9 +28,9 @@ sap.ui.define([
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.loadChanges
 	 * @see sap.ui.fl.apply._internal.Connector.loadFlexData
-	 * @param {object} mComponent - Contains component data needed for reading changes
-	 * @param {string} mComponent.name - Name of component
-	 * @param {string} [mComponent.appVersion] - Current running version of application
+	 * @param {object} mComponent Contains component data needed for reading changes
+	 * @param {string} mComponent.name Name of component
+	 * @param {string} [mComponent.appVersion] Current running version of application
 	 * @returns {Promise} Returns a Promise with the changes response
 	 */
 	CompatibilityConnector.prototype.loadChanges = function(mComponent) {
@@ -61,53 +60,59 @@ sap.ui.define([
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.create
-	 * @see sap.ui.fl.apply._internal.Connector.write
+	 * @see sap.ui.fl.write._internal.Connector.write
 	 *
-	 * @param {object} oPayload The content which is send to the server
-	 * @param {string} [sChangelist] The transport ID will be handled internally, so there is no need to be passed.
-	 * @param {boolean} bIsVariant - is variant?
+	 * @param {object} vFlexObjects The content which is send to the server
+	 * @param {string} [sChangelist] The transport ID which will be handled internally, so there is no need to be passed
+	 * @param {boolean} [bIsVariant] Whether the data has file type .variant or not
 	 * @returns {Promise} Resolve if successful, rejects with errors
 	 */
-	CompatibilityConnector.prototype.create = function(vFlexObjects /*, sChangelist, bIsVariant */) {
+	CompatibilityConnector.prototype.create = function(vFlexObjects, sChangelist, bIsVariant) {
 		var aFlexObjects = vFlexObjects;
 		if (!Array.isArray(aFlexObjects)) {
 			aFlexObjects = [vFlexObjects];
 		}
 		return WriteConnector.write({
 			layer : aFlexObjects[0].layer,
-			flexObjects: aFlexObjects
+			flexObjects: aFlexObjects,
+			_transport: sChangelist,
+			isLegacyVariant: bIsVariant
 		});
 	};
 
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.update
+	 * @see sap.ui.fl.write._internal.Connector.update
 	 *
-	 * @param {object} oPayload The content which is send to the server
-	 * @param {string} sChangeName Name of the change
-	 * @param {string} sChangelist (optional) The transport ID.
-	 * @param {boolean} bIsVariant - is variant?
+	 * @param {object} oFlexObject Flex object to be updated
+	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.update = function(/* oPayload, sChangeName, sChangelist, bIsVariant */) {
-		return Promise.reject("not implemented");
+	CompatibilityConnector.prototype.update = function(oFlexObject, sChangeList) {
+		return WriteConnector.update({
+			flexObject: oFlexObject,
+			layer: oFlexObject.layer,
+			_transport: sChangeList
+		});
 	};
 
 
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.deleteChange
+	 * @see sap.ui.fl.write._internal.Connector.remove
 	 *
-	 * @param {string} mParameters property bag
-	 * @param {string} mParameters.sChangeName - name of the change
-	 * @param {string} [mParameters.sLayer="USER"] - other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
-	 * @param {string} mParameters.sNamespace - the namespace of the change file
-	 * @param {string} mParameters.sChangelist - The transport ID
-	 * @param {boolean} bIsVariant - is it a variant?
+	 * @param {object} oFlexObject Flex object to be deleted
+	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.deleteChange = function(/* mParameters, bIsVariant */) {
-		return Promise.reject("not implemented");
+	CompatibilityConnector.prototype.deleteChange = function(oFlexObject, sChangeList) {
+		return WriteConnector.remove({
+			flexObject: oFlexObject,
+			layer: oFlexObject.layer,
+			_transport: sChangeList
+		});
 	};
 
 	/**
@@ -130,16 +135,16 @@ sap.ui.define([
 	 *
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.resetChanges
-	 * @see sap.ui.fl.apply._internal.Connector.reset
+	 * @see sap.ui.fl.write._internal.Connector.reset
 	 *
 	 * @param {string} mParameters property bag
-	 * @param {string} mParameters.sReference - flex reference
-	 * @param {string} mParameters.sAppVersion - version of the application for which the reset takes place
-	 * @param {string} [mParameters.sLayer="USER"] - other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
-	 * @param {string} mParameters.sChangelist - The transport ID
-	 * @param {string} mParameters.sGenerator - generator with which the changes were created
-	 * @param {string} mParameters.aSelectorIds - selector IDs of controls for which the reset should filter
-	 * @param {string} mParameters.aChangeTypes - change types of the changes which should be reset
+	 * @param {string} mParameters.sReference Flex reference
+	 * @param {string} mParameters.sAppVersion Version of the application for which the reset takes place
+	 * @param {string} [mParameters.sLayer="USER"] Other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
+	 * @param {string} mParameters.sChangelist The transport ID
+	 * @param {string} mParameters.sGenerator Generator with which the changes were created
+	 * @param {string} mParameters.aSelectorIds Selector IDs of controls for which the reset should filter
+	 * @param {string} mParameters.aChangeTypes Change types of the changes which should be reset
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.prototype.resetChanges = function(mParameters) {
@@ -151,20 +156,6 @@ sap.ui.define([
 			selectorIds: mParameters.aSelectorIds,
 			changeTypes: mParameters.aChangeTypes
 		});
-	};
-
-	/**
-	 * @param {string} sOriginNamespace The abap package goes here. It is needed to identify the change. Default LREP namespace is "localchange".
-	 * @param {string} sName Name of the change
-	 * @param {string} sType File type extension
-	 * @param {string} sOriginLayer File layer
-	 * @param {string} sTargetLayer File where the new Target-Layer
-	 * @param {string} sTargetNamespace target namespace
-	 * @param {string} sChangelist The changelist where the file will be written to
-	 * @returns {Promise<object>} Returns the result from the request
-	 */
-	CompatibilityConnector.prototype.publish = function(/* sOriginNamespace, sName, sType, sOriginLayer, sTargetLayer, sTargetNamespace, sChangelist */) {
-		return Promise.reject("not implemented");
 	};
 
 	return CompatibilityConnector;

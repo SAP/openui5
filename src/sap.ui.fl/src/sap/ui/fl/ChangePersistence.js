@@ -637,7 +637,7 @@ sap.ui.define([
 					}));
 					break;
 				case "UPDATE":
-					aPromises.push(that._oConnector.update(oChange.getDefinition(), oChange.getId(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
+					aPromises.push(that._oConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
 						oChange.setResponse(result.response);
 						if (Cache.isActive()) {
 							Cache.updateChange({ name: that._mComponent.name, appVersion: that._mComponent.appVersion}, result.response);
@@ -646,12 +646,7 @@ sap.ui.define([
 					}));
 					break;
 				case "DELETE":
-					aPromises.push(that._oConnector.deleteChange({
-						sChangeName: oChange.getId(),
-						sLayer: oChange.getLayer(),
-						sNamespace: oChange.getNamespace(),
-						sChangelist: oChange.getRequest()
-					}, oChange.isVariant()).then(function(result) {
+					aPromises.push(that._oConnector.deleteChange(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
 						var oChange = that._mVariantsChanges[sStableId][sChangeId];
 						if (oChange.getPendingAction() === "DELETE") {
 							delete that._mVariantsChanges[sStableId][sChangeId];
@@ -1055,12 +1050,7 @@ sap.ui.define([
 			}
 
 			if (oDirtyChange.getPendingAction() === "DELETE") {
-				return this._oConnector.deleteChange({
-					sChangeName: oDirtyChange.getId(),
-					sLayer: oDirtyChange.getLayer(),
-					sNamespace: oDirtyChange.getNamespace(),
-					sChangelist: oDirtyChange.getRequest()
-				});
+				return this._oConnector.deleteChange(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
 			}
 		}.bind(this);
 	};

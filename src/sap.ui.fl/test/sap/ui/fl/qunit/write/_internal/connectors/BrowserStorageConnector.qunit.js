@@ -238,7 +238,9 @@ sap.ui.define([
 			QUnit.test("when remove is called with a saved flex object", function (assert) {
 				var iInitialCount = getNumberOfFlexObjects(oConnector);
 				return oConnector.remove({
-					flexObject: oTestData.oChange1
+					flexObject: {
+						fileName: oTestData.oChange1.fileName
+					}
 				}).then(function() {
 					var iNewCount = getNumberOfFlexObjects(oConnector);
 					assert.equal(iInitialCount - iNewCount, 1, "one change got removed");
@@ -248,7 +250,9 @@ sap.ui.define([
 			QUnit.test("when remove is called with a not existing flex object", function (assert) {
 				var iInitialCount = getNumberOfFlexObjects(oConnector);
 				return oConnector.remove({
-					flexObject: {fileName: "foo"}
+					flexObject: {
+						fileName: "foo"
+					}
 				}).then(function() {
 					var iNewCount = getNumberOfFlexObjects(oConnector);
 					assert.equal(iInitialCount - iNewCount, 0, "no change got removed");

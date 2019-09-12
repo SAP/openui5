@@ -157,12 +157,12 @@ sap.ui.define(function () {
 		/**
 		 * Delete a specific  Lrep change (localStorage)
 		 * @public
-		 * @param  {String} sId The Lrep change id
+		 * @param  {object} oFlexObject The Flex object to be deleted
 		 */
-		FakeLrepStorage.deleteChange = function(sId) {
-			if (sId) {
-				oStorage.removeItem(this.createChangeKey(sId));
-				oStorage.removeItem(this.createVariantKey(sId));
+		FakeLrepStorage.deleteChange = function(oFlexObject) {
+			if (oFlexObject && oFlexObject.fileName) {
+				oStorage.removeItem(this.createChangeKey(oFlexObject.fileName));
+				oStorage.removeItem(this.createVariantKey(oFlexObject.fileName));
 			}
 
 			this._callModifyCallbacks("delete");
