@@ -2,14 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/controls/PropertyEditor",
+	"sap/ui/integration/designtime/controls/propertyEditors/BasePropertyEditor",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/core/IconPool"
 ], function (
-	PropertyEditor,
+	BasePropertyEditor,
 	Fragment,
 	JSONModel,
 	Filter,
@@ -23,7 +23,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var IconEditor = PropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.IconEditor", {
+	var IconEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.IconEditor", {
 		init: function() {
 			this._oIconModel = new JSONModel(IconPool.getIconNames().map(function(sName) {
 				return {
@@ -50,7 +50,7 @@ sap.ui.define([
 			}.bind(this));
 			this.addContent(this._oInput);
 		},
-		renderer: PropertyEditor.getMetadata().getRenderer().render
+		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
 	IconEditor.prototype._handleValueHelp = function (oEvent) {

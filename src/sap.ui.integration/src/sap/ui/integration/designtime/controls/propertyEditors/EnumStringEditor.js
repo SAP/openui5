@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/integration/designtime/controls/PropertyEditor",
+	"sap/ui/integration/designtime/controls/propertyEditors/BasePropertyEditor",
 	"sap/ui/core/Item",
 	"sap/ui/base/BindingParser"
 ], function (
-	PropertyEditor,
+	BasePropertyEditor,
 	Item,
 	BindingParser
 ) {
@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var EnumStringEditor = PropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.EnumStringEditor", {
+	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.EnumStringEditor", {
 		init: function() {
 			this._oCombo = new sap.m.ComboBox({
 				selectedKey: "{value}",
@@ -60,7 +60,7 @@ sap.ui.define([
 				return true;
 			}
 		},
-		renderer: PropertyEditor.getMetadata().getRenderer().render
+		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 
 	return EnumStringEditor;
