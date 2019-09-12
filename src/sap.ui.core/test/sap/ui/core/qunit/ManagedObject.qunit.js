@@ -699,10 +699,20 @@ sap.ui.define([
 	QUnit.test("Unbind property", function(assert) {
 		this.obj.bindProperty("value", "/value");
 		this.obj.unbindProperty("value");
-		assert.equal(this.obj.isBound("value"), false, "isBound must return false for bound properties");
+		assert.equal(this.obj.isBound("value"), false, "isBound must return false for unbound properties");
 		assert.equal(this.obj.getProperty("value"), "", "Property value must be reset to default");
 	});
 
+	QUnit.test("Unbind property composite binding", function(assert) {
+		var oPartBinding;
+		this.obj.bindProperty("value", {parts: ["/value", "/value"]});
+		oPartBinding = this.obj.getBinding("value").getBindings()[0];
+		var oPartSpy = sinon.spy(oPartBinding, "destroy");
+		this.obj.unbindProperty("value");
+		assert.equal(this.obj.isBound("value"), false, "isBound must return false for unbound properties");
+		assert.equal(this.obj.getProperty("value"), "", "Property value must be reset to default");
+		assert.ok(oPartSpy.calledOnce, "Destructor of part binding has been called");
+	});
 
 	QUnit.test("Bind unknown property", function(assert) {
 		var bThrown = false;

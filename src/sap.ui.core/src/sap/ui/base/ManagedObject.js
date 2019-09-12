@@ -3508,15 +3508,17 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.unbindProperty = function(sName, bSuppressReset){
-		var oBindingInfo = this.mBindingInfos[sName];
+		var oBindingInfo = this.mBindingInfos[sName],
+			oBinding;
 		if (oBindingInfo) {
-			if (oBindingInfo.binding) {
-				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+			oBinding = oBindingInfo.binding;
+			if (oBinding) {
+				oBinding.detachChange(oBindingInfo.modelChangeHandler);
 				if (this.refreshDataState) {
-					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
+					oBinding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 				}
-				oBindingInfo.binding.detachEvents(oBindingInfo.events);
-				oBindingInfo.binding.destroy();
+				oBinding.detachEvents(oBindingInfo.events);
+				oBinding.destroy();
 			}
 
 			if (this._observer) {
@@ -4219,17 +4221,18 @@ sap.ui.define([
 		 * Remove binding, detach all events and destroy binding object
 		 */
 		function removeBinding(oBindingInfo) {
+			var oBinding = oBindingInfo.binding;
 			// Also tell the Control that the messages have been removed (if any)
 			if (that.refreshDataState) {
-				that.refreshDataState(sName, oBindingInfo.binding.getDataState());
+				that.refreshDataState(sName, oBinding.getDataState());
 			}
 
-			oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+			oBinding.detachChange(oBindingInfo.modelChangeHandler);
 			if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
-				oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
+				oBinding.detachRefresh(oBindingInfo.modelRefreshHandler);
 			}
-			oBindingInfo.binding.detachEvents(oBindingInfo.events);
-			oBindingInfo.binding.destroy();
+			oBinding.detachEvents(oBindingInfo.events);
+			oBinding.destroy();
 			// remove all binding related data from the binding info
 			delete oBindingInfo.binding;
 			delete oBindingInfo.modelChangeHandler;
