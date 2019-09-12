@@ -946,6 +946,7 @@ sap.ui.define([
 		var oExpectation,
 			sGetMethodName = sMethodName.replace("fetch", "get"),
 			oMetaModel = oTestContext.oMetaModel,
+			oPromiseMock = oTestContext.mock(Promise),
 			oReason = new Error("rejected"),
 			oRejectedPromise = Promise.reject(oReason),
 			sRequestMethodName = sMethodName.replace("fetch", "request"),
@@ -962,13 +963,18 @@ sap.ui.define([
 
 		// reject...
 		oExpectation.returns(oSyncPromise);
-		oTestContext.mock(Promise).expects("resolve")
+		oPromiseMock.expects("resolve")
 			.withExactArgs(sinon.match.same(oSyncPromise))
 			.returns(oRejectedPromise); // return any promise (this is not unwrapping!)
 
 		// request (promise still pending!)
 		assert.strictEqual(oMetaModel[sRequestMethodName].apply(oMetaModel, aArguments),
 			oRejectedPromise);
+
+		// restore early so that JS coding executed from Selenium Webdriver does not cause
+		// unexpected calls on the mock when it uses Promise.resolve and runs before automatic
+		// mock reset in afterEach
+		oPromiseMock.restore();
 
 		// get: pending
 		if (bThrow) {
