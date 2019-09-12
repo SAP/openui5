@@ -8,7 +8,7 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-				"value": "London"
+					"value": "London"
 				}
 			}
 		},

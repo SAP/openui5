@@ -39,6 +39,9 @@
 				Today the types of actions are limited to <code>navigation</code>. In the future there might be additional types of actions.
 			</p>
 			<p>
+				For all supported parameters, see <a id="linkToAPICardEventsAction" target="_blank">action event API</a>.
+			</p>
+			<p>
 				Adding handler for <code>action</code> event in the XML View
 			</p>
 <pre class="prettyprint">
@@ -62,6 +65,7 @@ onActionLog: function (oEvent) {
 			<h1 id="passingParameters">Passing parameters</h2>
 			<p>
 				A card developer can add parameters to the cards manifest. Such parameters are often optional and allow to influence the cards content. Some parameters are mandatory, because the card relies on this information to work properly. If a card needs to load data, one parameter might be the url that should be used to trigger a data request. Parameters are card specific and are declared in the corresponding cards manifest.
+				For an example with parameters usage in a manifest, see <a target="_top" href="../../index.html#/explore/parameters">parameters in Explore section</a>.
 			</p>
 
 <pre class="prettyprint">
@@ -76,16 +80,6 @@ oCard.setParameters(oParameters);
 
 			<h1 id="managingState">Managing card state</h1>
 
-			<h2 id="refreshingCards">Refreshing cards</h2>
-			<p>
-				In certain cases the host environment knows that the card is no longer showing up to date information and a card refresh is needed.
-				To do that the developer has to call the <code>refresh</code> function of the card. It will re-render the card, reapply the manifest and re-trigger all data requests.
-				This functionality depends on the <code>dataMode</code> property of the card, and will only work if it is set ot <code>Active</code>.
-			</p>
-<pre class="prettyprint">
-oCard.refresh();
-</pre>
-
 			<h2 id="dataMode">Card data mode</h2>
 			<p>
 				To control if the card should make requests or not the developer can set the <code>dataMode</code> property of the card.
@@ -93,12 +87,28 @@ oCard.refresh();
 				Setting the <code>dataMode</code> to <code>Inactive</code> will stop any further requests and loading.
 				Some cards can refresh their data in a certain interval. This property provides control to the host environment to disable/enable any further requests.
 			</p>
+			<p>
+				For more information, see <a id="linkToAPICardDataMode" target="_blank"><code>dataMode</code> property API</a>.
+			</p>
 <pre class="prettyprint">
 // Make card inactive for 10 seconds
 oCard.setDataMode("Inactive");
 setTimeout(function () {
 	oCard.setDataMode("Active");
 }, 10000);
+</pre>
+
+			<h2 id="refreshingCards">Refreshing cards</h2>
+			<p>
+				In certain cases, the host environment detects that the card is no longer displaying up-to-date information and a card refresh is needed.
+				To do that, the developer must call the <code>refresh</code> function of the card. It rerenders the card, reapplies the manifest and retriggers all data requests.
+				This functionality depends on the <code>dataMode</code> property of the card, and only works if set to <code>Active</code>.
+			</p>
+			<p>
+				For more information, see <a id="linkToAPICardMethodsRefresh" target="_blank"><code>refresh</code> method API</a>.
+			</p>
+<pre class="prettyprint">
+oCard.refresh();
 </pre>
 
 		</div>
@@ -110,5 +120,19 @@ setTimeout(function () {
 			<div><a href="#managingState">Managing card state</a></div>
 		</div>
 	</div>
+	<script>
+		var sPathToDemokitLocal = "../../../../../../../../../documentation.html#";
+		var sPathToDemokit = "../../../../../../../../../#";
+
+		if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+			document.getElementById("linkToAPICardEventsAction").href = sPathToDemokitLocal + "/api/sap.ui.integration.widgets.Card/events/action";
+			document.getElementById("linkToAPICardMethodsRefresh").href = sPathToDemokitLocal + "/api/sap.ui.integration.widgets.Card/methods/refresh";
+			document.getElementById("linkToAPICardDataMode").href = sPathToDemokitLocal + "/api/sap.ui.integration.CardDataMode";
+		} else {
+			document.getElementById("linkToAPICardEventsAction").href = sPathToDemokit + "/api/sap.ui.integration.widgets.Card/events/action";
+			document.getElementById("linkToAPICardMethodsRefresh").href = sPathToDemokit + "/api/sap.ui.integration.widgets.Card/methods/refresh";
+			document.getElementById("linkToAPICardDataMode").href = sPathToDemokit + "/api/sap.ui.integration.CardDataMode";
+		}
+	</script>
 </body>
 </html>

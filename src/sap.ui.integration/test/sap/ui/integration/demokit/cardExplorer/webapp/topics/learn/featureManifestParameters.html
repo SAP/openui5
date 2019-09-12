@@ -28,9 +28,13 @@
 		</h1>
 
 		<p>
+			Parameters are means to provide dynamic values for certain card attributes.
 			The manifest parameters are replaced during manifest processing and
 			can be used with a double bracket syntax like: "{{parameters.city}}".
-			There are two types:
+			Parameters can be used inside "sap.card" scope.
+		</p>
+		<p>
+			There are two types of parameters:
 		</p>
 		<ol>
 			<li>User defined manifest parameters</li>
@@ -47,7 +51,7 @@
 			It is possible to assign default values to the input parameters in the manifest.
 			When creating or integrating a card, it is possible to assign values to parameters otherwise they are
 			replaced with their default values.
-			Parameters are described in the configuration section of the manifest.
+			Parameters are described in the "configuration" section of the manifest.
 			All parameters are replaced during manifest processing and changing them will cause re-processing of the
 			manifest.
 		</p>
@@ -83,13 +87,15 @@
 			Examples
 		</h2>
 
-		<p>A card having a user defined city manifest parameter with a default value of "Walldorf" which is used inside
+		<p>A card having a user defined "city" manifest parameter with a default "value" of "Walldorf" which is used inside
 			the request:</p>
 		<pre class="prettyprint">{
 	"sap.card": {
 		"configuration": {
 			"parameters": {
-				"city": "Walldorf"
+				"city": {
+					"value": "Walldorf"
+				}
 			}
 		},
 		"type": "List",
@@ -121,8 +127,11 @@
 			Changing the city parameter can be done by using the API of the card. This will cause manifest
 			re-processing:
 		</p>
-		<pre class="prettyprint">var oParameters = {
-	"city": "Sofia"
+		<pre class="prettyprint">
+var oParameters = {
+	"city": {
+		"value": "Sofia"
+	}
 }
 oCard.setParameters(oParameters);</pre>
 
