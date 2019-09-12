@@ -107,3 +107,15 @@ html .sapUiContainer-Narrow .sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sa
 		padding: 0 0.4375rem;
 	}
 }
+
+/* Phone Size */
+.sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.875rem 0 1rem;
+	}
+
+/* Tablet Size */
+// Needed because on some high-end phones in landscape mode,
+// the width of the viewport is bigger than 600 (Tablet breakpoint).
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 0.375rem 0 2rem;
+	}
