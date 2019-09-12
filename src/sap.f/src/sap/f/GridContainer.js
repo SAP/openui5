@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/layout/cssgrid/VirtualGrid",
 	"sap/f/GridContainerSettings",
-	"sap/base/strings/capitalize"
+	"sap/base/strings/capitalize",
+	"sap/ui/core/InvisibleRenderer"
 ], function (Control,
 			Core,
             ManagedObjectObserver,
@@ -21,7 +22,8 @@ sap.ui.define([
             Device,
 			VirtualGrid,
 			GridContainerSettings,
-			capitalize) {
+			capitalize,
+			InvisibleRenderer) {
 	"use strict";
 
 	var isRtl = Core.getConfiguration().getRTL();
@@ -305,14 +307,13 @@ sap.ui.define([
 	 * @private
 	 */
 	GridContainer.prototype._onBeforeItemRendering = function () {
-		var container = this.getParent(),
-			resizeListenerId = container._resizeListeners[this.getId()];
+		var oContainer = this.getParent();
 
-		if (resizeListenerId) {
-			ResizeHandler.deregister(resizeListenerId);
+		// The item just became invisible. In such cases there won't be _onAfterItemRendering,
+		// so we have to to schedule the polyfill here.
+		if (oContainer._reflectItemVisibilityToWrapper(this) && !isGridSupportedByBrowser()) {
+			oContainer._scheduleIEPolyfill();
 		}
-
-		delete container._resizeListeners[this.getId()];
 	};
 
 	/**
@@ -322,7 +323,10 @@ sap.ui.define([
 	GridContainer.prototype._onAfterItemRendering = function () {
 		var container = this.getParent();
 
-		container._resizeListeners[this.getId()] = ResizeHandler.register(this, container._resizeItemHandler);
+		// register resize listener for that item only once
+		if (!container._resizeListeners[this.getId()]) {
+			container._resizeListeners[this.getId()] = ResizeHandler.register(this, container._resizeItemHandler);
+		}
 
 		container._setItemNavigationItems();
 
@@ -332,6 +336,39 @@ sap.ui.define([
 		}
 
 		container._applyItemAutoRows(this);
+	};
+
+
+	/**
+	 * Reflects "visible" behavior of the control to the wrapper element - sapFGridContainerItemWrapper.
+	 *
+	 * @private
+	 * @param {sap.ui.core.Control} oItem The control of which we will check "visible" property.
+	 * @returns {boolean} Whether the wrapper turned to invisible. Needed to judge whether to trigger IE polyfill.
+	 */
+	GridContainer.prototype._reflectItemVisibilityToWrapper = function (oItem) {
+
+		var oItemDomRef = oItem.getDomRef(),
+			oInvisibleSpan = document.getElementById(InvisibleRenderer.createInvisiblePlaceholderId(oItem)),
+			oItemWrapper,
+			$oItemWrapper;
+
+		if (!oItemDomRef && !oInvisibleSpan) {
+			return false;
+		}
+
+		oItemWrapper = (oItemDomRef ? oItemDomRef : oInvisibleSpan).parentElement;
+		$oItemWrapper = jQuery(oItemWrapper);
+
+		// check if we actually change something. Needed to judge whether to trigger IE polyfill.
+		if (oItem.getVisible() && $oItemWrapper.hasClass("sapFGridContainerInvisiblePlaceholder")) {
+			$oItemWrapper.removeClass("sapFGridContainerInvisiblePlaceholder");
+		} else if (!oItem.getVisible() && !$oItemWrapper.hasClass("sapFGridContainerInvisiblePlaceholder")) {
+			$oItemWrapper.addClass("sapFGridContainerInvisiblePlaceholder");
+			return true;
+		}
+
+		return false;
 	};
 
 	/**

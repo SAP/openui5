@@ -136,6 +136,10 @@ sap.ui.define([],
 				}
 			}
 
+			if (!oItem.getVisible()) {
+				aClasses.push("sapFGridContainerInvisiblePlaceholder");
+			}
+
 			return {
 				styles: mStyles,
 				classes: aClasses
