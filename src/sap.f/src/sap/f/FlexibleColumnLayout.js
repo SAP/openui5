@@ -13,6 +13,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/NavContainer",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/theming/Parameters",
+	'sap/ui/dom/units/Rem',
 	"./FlexibleColumnLayoutRenderer",
 	"sap/base/assert"
 ], function(
@@ -25,6 +27,8 @@ sap.ui.define([
 	Button,
 	NavContainer,
 	Configuration,
+	Parameters,
+	DomUnitsRem,
 	FlexibleColumnLayoutRenderer,
 	assert
 ) {
@@ -602,6 +606,9 @@ sap.ui.define([
 
 		// Indicates if there are rendered pages inside columns
 		this._oRenderedColumnPagesBoolMap = {};
+
+		// We need to have column navigating buttons single width for animations of the layout
+		this._iNavigationArrowWidth = DomUnitsRem.toPx(Parameters.get("_sap_f_FCL_navigation_arrow_width"));
 	};
 
 	/**
@@ -719,9 +726,9 @@ sap.ui.define([
 
 		var vResult = this.setProperty("layout", sNewLayout, true);
 		this._oLayoutHistory.addEntry(sNewLayout);
-
-		this._resizeColumns();
 		this._hideShowArrows();
+		this._resizeColumns();
+
 
 		return vResult;
 	};
@@ -785,6 +792,7 @@ sap.ui.define([
 		var oBeginColumnBackArrow = new Button(this.getId() + "-beginBack", {
 			icon: "sap-icon://slim-arrow-left",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_BEGIN_COLUMN_BACK_ARROW"),
+			type: "Transparent",
 			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_beginColumnBackArrow", oBeginColumnBackArrow, true);
@@ -792,6 +800,7 @@ sap.ui.define([
 		var oMidColumnForwardArrow = new Button(this.getId() + "-midForward", {
 			icon: "sap-icon://slim-arrow-right",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_FORWARD_ARROW"),
+			type: "Transparent",
 			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_midColumnForwardArrow", oMidColumnForwardArrow, true);
@@ -799,6 +808,7 @@ sap.ui.define([
 		var oMidColumnBackArrow = new Button(this.getId() + "-midBack", {
 			icon: "sap-icon://slim-arrow-left",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_MID_COLUMN_BACK_ARROW"),
+			type: "Transparent",
 			press: this._onArrowClick.bind(this, "left")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonRight");
 		this.setAggregation("_midColumnBackArrow", oMidColumnBackArrow, true);
@@ -806,6 +816,7 @@ sap.ui.define([
 		var oEndColumnForwardArrow = new Button(this.getId() + "-endForward", {
 			icon: "sap-icon://slim-arrow-right",
 			tooltip: FlexibleColumnLayout._getResourceBundle().getText("FCL_END_COLUMN_FORWARD_ARROW"),
+			type: "Transparent",
 			press: this._onArrowClick.bind(this, "right")
 		}).addStyleClass("sapFFCLNavigationButton").addStyleClass("sapFFCLNavigationButtonLeft");
 		this.setAggregation("_endColumnForwardArrow", oEndColumnForwardArrow, true);
@@ -852,14 +863,43 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes the width and margins of the columns according to the current layout
+	 * Returns the number of columns that have width > 0.
+	 * @returns {number}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getVisibleArrowsCount = function () {
+		if (!this._$columnButtons || !this._$columnButtons.length) {
+			return 0;
+		}
+
+		return Object.keys(this._$columnButtons).filter(function (sArrow) {
+			return this._$columnButtons[sArrow].data("visible");
+		}, this).length;
+	};
+
+	/**
+	 * Returns the total width available for the columns.
+	 * @param {boolean} bHasInsetColumn
+	 * @returns {number}
+	 * @private
+	 */
+	FlexibleColumnLayout.prototype._getTotalColumnsWidth = function (bHasInsetColumn) {
+		var iSeparatorsCount = this._getVisibleArrowsCount();
+		if (bHasInsetColumn) { // inset column has temporarily hidden nav arrow,
+			// but empty space *in place of* the navigation arrows for visual consistency
+			iSeparatorsCount++;
+		}
+
+		return this._getControlWidth() - iSeparatorsCount * this._iNavigationArrowWidth;
+	};
+
+	/**
+	 * Changes the width
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._resizeColumns = function () {
 		var iPercentWidth,
-			iTotalMargin,
 			iAvailableWidth,
-			bNeedsMargin = false,
 			aColumns = ["begin", "mid", "end"],
 			bRtl = sap.ui.getCore().getConfiguration().getRTL(),
 			bHasAnimations = sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none,
@@ -867,7 +907,8 @@ sap.ui.define([
 			iVisibleColumnsCount,
 			iDefaultVisibleColumnsCount,
 			sLayout,
-			sLastVisibleColumn;
+			sLastVisibleColumn,
+			bInsetMidColumn;
 
 		// Stop here if the control isn't rendered yet
 		if (!this.isActive()) {
@@ -885,11 +926,9 @@ sap.ui.define([
 
 		sLastVisibleColumn = aColumns[iDefaultVisibleColumnsCount - 1];
 
-		// Calculate the total margin between columns (f.e. for 3 columns - 2 * 8px)
-		iTotalMargin = (iVisibleColumnsCount - 1) * FlexibleColumnLayout.COLUMN_MARGIN;
-
+		bInsetMidColumn = (iVisibleColumnsCount === 3) && (sLayout === LT.ThreeColumnsEndExpanded);
 		// Calculate the width available for the columns
-		iAvailableWidth = this._getControlWidth() - iTotalMargin;
+		iAvailableWidth = this._getTotalColumnsWidth(bInsetMidColumn);
 
 		// Animations on - Before resizing pin the columns that should not be animated in order to create the reveal/conceal effect
 		if (bHasAnimations) {
@@ -914,13 +953,12 @@ sap.ui.define([
 			iPercentWidth = this._getColumnSize(sColumn);
 			bShouldConcealColumn = bHasAnimations && this._shouldConcealColumn(iDefaultVisibleColumnsCount, sColumn);
 
-			// Add the left margin if the column has width and there was already a non-zero width column before it (bNeedsMargin = true)
-			oColumn.toggleClass("sapFFCLColumnMargin", bNeedsMargin && iPercentWidth > 0);
-
 			if (!bShouldConcealColumn) {
 				// Add the active class to the column if it shows something
 				oColumn.toggleClass("sapFFCLColumnActive", iPercentWidth > 0);
 			}
+
+			oColumn.toggleClass("sapFFCLColumnInset", bInsetMidColumn && (sColumn === "mid"));
 
 			// Remove all the classes that are used for HCB theme borders, they will be set again later
 			oColumn.removeClass("sapFFCLColumnHidden");
@@ -984,10 +1022,6 @@ sap.ui.define([
 				this._updateColumnCSSClasses(sColumn, iNewWidth);
 			}
 
-			// After the first non-zero width column is shown, set the flag to enable margins for all other non-zero width columns that will follow
-			if (iPercentWidth > 0) {
-				bNeedsMargin = true;
-			}
 
 		}, this);
 
@@ -1297,7 +1331,7 @@ sap.ui.define([
 		bIsNavContainersContentRendered = this._hasAnyColumnPagesRendered();
 
 		Object.keys(this._$columnButtons).forEach(function (key) {
-			this._toggleButton(key, bIsNavContainersContentRendered && aNeededArrows.indexOf(key) !== -1);
+			this._toggleButton(key, aNeededArrows.indexOf(key) !== -1, bIsNavContainersContentRendered);
 		}, this);
 	};
 
@@ -1307,8 +1341,10 @@ sap.ui.define([
 	 * @param {boolean} bShow
 	 * @private
 	 */
-	FlexibleColumnLayout.prototype._toggleButton = function (sButton, bShow) {
-		this._$columnButtons[sButton].toggle(bShow);
+	FlexibleColumnLayout.prototype._toggleButton = function (sButton, bShow, bReveal) {
+
+		this._$columnButtons[sButton].toggle(bShow && bReveal);
+		this._$columnButtons[sButton].data("visible", bShow);
 	};
 
 
@@ -1784,9 +1820,6 @@ sap.ui.define([
 
 
 	//******************************************************** STATIC MEMBERS *****************************************/
-
-	// The margin between columns in pixels
-	FlexibleColumnLayout.COLUMN_MARGIN = 8;
 
 	// The width above which (inclusive) we are in desktop mode
 	FlexibleColumnLayout.DESKTOP_BREAKPOINT = 1280;

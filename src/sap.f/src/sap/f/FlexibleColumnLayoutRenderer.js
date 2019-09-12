@@ -47,16 +47,17 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 			// Begin column content
 			FCLRenderer.renderColumnContentWrapper(oRm);
 
+			oRm.close("div");
+
 			// Arrow - collapse begin
 			FCLRenderer.renderArrow(oRm, oBeginColumnBackArrow);
-
-			oRm.close("div");
 		};
 
 		FCLRenderer.renderMidColumn = function (oRm, oControl) {
 			var oMidColumnForwardArrow = oControl.getAggregation("_midColumnForwardArrow"),
 				oMidColumnBackArrow = oControl.getAggregation("_midColumnBackArrow");
-
+			// Arrow - expand begin
+			FCLRenderer.renderArrow(oRm, oMidColumnForwardArrow);
 			// Mid column
 			oRm.openStart("div", oControl.getId() + "-midColumn");
 			oRm.accessibilityState(oControl, {
@@ -67,21 +68,18 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 			oRm.class("sapFFCLColumnMid");
 			oRm.openEnd();
 
-			// Arrow - expand begin
-			FCLRenderer.renderArrow(oRm, oMidColumnForwardArrow);
-
 			// Mid column content
 			FCLRenderer.renderColumnContentWrapper(oRm);
-
+			oRm.close("div");
 			// Arrow - expand end
 			FCLRenderer.renderArrow(oRm, oMidColumnBackArrow);
 
-			oRm.close("div");
 		};
 
 		FCLRenderer.renderEndColumn = function (oRm, oControl) {
 			var oEndColumnForwardArrow = oControl.getAggregation("_endColumnForwardArrow");
-
+			// Arrow - right
+			FCLRenderer.renderArrow(oRm, oEndColumnForwardArrow);
 			// End column
 			oRm.openStart("div", oControl.getId() + "-endColumn");
 			oRm.accessibilityState(oControl, {
@@ -92,19 +90,21 @@ sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
 			oRm.class("sapFFCLColumnEnd");
 			oRm.openEnd();
 
-			// Arrow - right
-			FCLRenderer.renderArrow(oRm, oEndColumnForwardArrow);
-
 			// End column content
 			FCLRenderer.renderColumnContentWrapper(oRm);
 
 			oRm.close("div");
+
 		};
 
 		FCLRenderer.renderArrow = function (oRm, oArrow) {
 			if (!Device.system.phone) {
-				oArrow.addStyleClass("sapContrastPlus");
+				oRm.openStart("div");
+				oRm.class("sapFFCLArrow");
+				oRm.class("sapContrastPlus");
+				oRm.openEnd();
 				oRm.renderControl(oArrow);
+				oRm.close("div");
 			}
 		};
 
