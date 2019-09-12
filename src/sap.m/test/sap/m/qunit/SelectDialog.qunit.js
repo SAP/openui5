@@ -905,6 +905,50 @@ sap.ui.define([
 			oFireConfirmSpy.restore();
 		});
 
+		QUnit.test("Single select mode and item selection - _resetAfterClose should be attached only once", function (assert) {
+			// Arrange
+			var oAttachEventOnceSpy = this.spy(this.oSelectDialog._oDialog, "attachEventOnce");
+
+			bindItems(this.oSelectDialog, {
+				oData: this.mockupData,
+				path: "/items",
+				template: new StandardListItem({title: "{Title}", description: "{Description}", selected: "{Selected}"})
+			});
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			this.oSelectDialog.getItems()[7].$().trigger("tap");
+			this.clock.tick(350);
+
+			// Assert
+			assert.strictEqual(oAttachEventOnceSpy.callCount, 1, "_resetAfterClose was called once.");
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			this.oSelectDialog.getItems()[7].$().trigger("tap");
+			this.clock.tick(350);
+
+			// Assert
+			assert.strictEqual(oAttachEventOnceSpy.callCount, 2, "_resetAfterClose was called twice.");
+
+			// Act
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			this.oSelectDialog.getItems()[0].$().trigger("tap");
+			this.clock.tick(350);
+
+			// Assert
+			assert.strictEqual(oAttachEventOnceSpy.callCount, 3, "_resetAfterClose was called 3 times.");
+
+			// Cleanup
+			oAttachEventOnceSpy.restore();
+		});
+
 		QUnit.test("Multi select mode and item selection - _selectionChange", function (assert) {
 			// Arrange
 			var oUpdateSelectionSpy = this.spy(this.oSelectDialog, "_updateSelectionIndicator");
