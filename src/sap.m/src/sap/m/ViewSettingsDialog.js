@@ -2731,9 +2731,12 @@ function(
 		}
 		// if empty array, the 'every' call will return true
 		if (aItemsVisible.length !== 0) {
+			this._selectAllCheckBox.setEnabled(true);
 			bAllSelected = aItemsVisible.every(function (oItem) {
 				return oItem.getSelected();
 			});
+		} else {
+			this._selectAllCheckBox.setEnabled(false);
 		}
 
 		this._selectAllCheckBox.setSelected(bAllSelected);
