@@ -376,6 +376,10 @@ sap.ui.define([
 			}
 			this._bPressedSpace = false;
 		}
+
+		if (oEvent.which === KeyCodes.ESCAPE){
+			this._bPressedSpace = false;
+		}
 	};
 
 	Button.prototype._onmouseenter = function(oEvent) {

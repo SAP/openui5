@@ -754,6 +754,25 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
+	QUnit.test("_bPressedSpace is reset on Escape", function(assert) {
+		// System under Test
+		var oButton = new Button().placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		// first keydown on SPACE, keydown on ESCAPE, release ESCAPE then the flag should be set to false
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+
+		// Assert
+		assert.ok(!oButton._bPressedSpace, "_bPressedSpace is set to false once the escape is released");
+
+		// Cleanup
+		oButton.destroy();
+  });
+
 	QUnit.test("Space event should not fire press if SHIFT is pressed and released after the Space is released", function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
