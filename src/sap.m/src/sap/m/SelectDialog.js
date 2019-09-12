@@ -305,6 +305,7 @@ function(
 		this._bAppendedToUIArea = false;
 		this._bInitBusy = false;
 		this._bFirstRender = true;
+		this._bAfterCloseAttached = false;
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		// store a reference to the list for binding management
@@ -1194,13 +1195,20 @@ function(
 			return;
 		}
 
-		if (!this.getMultiSelect()) {
-			// attach the reset function to afterClose to hide the dialog changes from the end user
-			this._oDialog.attachEventOnce("afterClose", this._resetAfterClose, this);
-			this._oDialog.close();
-		} else {
+		// The following logic handles the item tap / select when:
+		// -- the selectDialog is in multi select mode - only update the indicator
+		if (this.getMultiSelect()) {
 			this._updateSelectionIndicator();
+			return; // the SelectDialog should remain open
 		}
+		// -- the selectDialog in single select mode - close and update the selection of the dialog
+		if (!this._bAfterCloseAttached) {
+			// if the resetAfterclose function is not attached already
+			// attach it to afterClose to hide the dialog changes from the end user
+			this._oDialog.attachEventOnce("afterClose", this._resetAfterClose, this);
+			this._bAfterCloseAttached = true;
+		}
+		this._oDialog.close();
 	};
 
 	/**
@@ -1212,6 +1220,7 @@ function(
 	SelectDialog.prototype._resetAfterClose = function() {
 		this._oSelectedItem = this._oList.getSelectedItem();
 		this._aSelectedItems = this._oList.getSelectedItems();
+		this._bAfterCloseAttached = false;
 
 		this._fireConfirmAndUpdateSelection();
 	};
