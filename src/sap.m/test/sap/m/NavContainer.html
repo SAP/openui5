@@ -69,6 +69,10 @@
                             app.to("page2", {payloadInfo:value});
                         }
                     }),
+                    new sap.m.Label({
+                    	text: "Label for input",
+                    	labelFor: "p1input"
+                    }),
                     new sap.m.Input("p1input")
                 ]
             }).addEventDelegate({
@@ -108,7 +112,8 @@
                         }
                     }),
                     new sap.m.Label({
-                        text : "The following field shows the data passed from page 1:"
+                        text : "The following field shows the data passed from page 1:",
+                        labelFor: "p2input"
                     }),
                     new sap.m.Input("p2input", {
                         value : null,
@@ -144,6 +149,10 @@
                     new sap.m.Button({text : "Back to Page 2", press:function(){
                         app.back({myBackPayload:sap.ui.getCore().byId("p3input").getValue()});
                     }}),
+					new sap.m.Label({
+                    	text: "Label for input",
+                    	labelFor: "p3input"
+                    }),
                     new sap.m.Input("p3input", {
                         value : null
                     }),
