@@ -63,12 +63,12 @@
 				sap.ui.require([
 					"rta/performance/RtaPerformanceTestUtil",
 					"sap/ui/dt/OverlayRegistry",
-					"sap/ui/dt/Util",
+					"sap/base/util/restricted/_debounce",
 					"sap/base/Log"
 				], function (
 					RtaPerformanceTestUtil,
 					OverlayRegistry,
-					Util,
+					_debounce,
 					BaseLog
 				) {
 					var aStack = [];
@@ -79,7 +79,7 @@
 						var iCountCall = 0;
 						var bMeasurementDone = false;
 
-						var fnDebouncedFn = Util.debounce(function () {
+						var fnDebouncedFn = _debounce(function () {
 							if (!bMeasurementDone) {
 								bMeasurementDone = true;
 								window.wpp.customMetrics.applyStylesAfterStartWithStretch = aStack[aStack.length - 1] - aStack[0];
@@ -106,12 +106,12 @@
 				sap.ui.require([
 					"rta/performance/RtaPerformanceTestUtil",
 					"sap/ui/dt/OverlayRegistry",
-					"sap/ui/dt/Util",
+					"sap/base/util/restricted/_debounce",
 					"sap/base/Log"
 				], function (
 					RtaPerformanceTestUtil,
 					OverlayRegistry,
-					Util,
+					_debounce,
 					BaseLog
 				) {
 					var aStack = [];
@@ -122,7 +122,7 @@
 						var iCountCall = 0;
 						var bMeasurementDone = false;
 
-						var fnDebouncedFn = Util.debounce(function () {
+						var fnDebouncedFn = _debounce(function () {
 							if (!bMeasurementDone) {
 								bMeasurementDone = true;
 								window.wpp.customMetrics.applyStylesAfterStartWithoutStretch = aStack[aStack.length - 1] - aStack[0];

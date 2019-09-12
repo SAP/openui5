@@ -5,10 +5,12 @@
 sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
+	"sap/base/util/restricted/_castArray",
 	"sap/base/util/restricted/_pick"
 ], function (
 	OverlayRegistry,
 	DtUtil,
+	_castArray,
 	_pick
 ) {
 	"use strict";
@@ -85,7 +87,7 @@ sap.ui.define([
 		}
 
 		function get(vControlIds) {
-			var aControlIds = DtUtil.castArray(vControlIds);
+			var aControlIds = _castArray(vControlIds);
 			var aElementOverlays = aControlIds.map(function (sControlId) {
 				var oElementOverlay = OverlayRegistry.getOverlay(sControlId);
 
@@ -105,7 +107,7 @@ sap.ui.define([
 		}
 
 		function execute(vControlIds, sActionId) {
-			var aControlIds = DtUtil.castArray(vControlIds);
+			var aControlIds = _castArray(vControlIds);
 			var aElementOverlays = aControlIds.map(function (sControlId) {
 				var oElementOverlay = OverlayRegistry.getOverlay(sControlId);
 
