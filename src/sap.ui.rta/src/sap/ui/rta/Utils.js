@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/dt/Util",
 	"sap/m/MessageBox",
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/base/Log"
@@ -19,7 +18,6 @@ function(
 	Settings,
 	OverlayUtil,
 	DOMUtil,
-	DtUtil,
 	MessageBox,
 	BindingsExtractor,
 	Log
@@ -507,43 +505,6 @@ function(
 	};
 
 	/**
-	 * Merging helper (pool analog of lodash.mergeWith) which allows custom function
-	 * for resolving merging conflicts.
-	 *
-	 * TODO: replace with lodash.mergeWith when it's available
-	 *
-	 * @param {Object} mDestination Destination object
-	 * @param {Object} mSource Source object
-	 * @param {function} fnCustomizer The customizer is invoked with the following five arguments:
-	 *                                  vDestinationValue: Value of the property in the destination object
-	 *                                  vSourceValue: Value of the property in the source object
-	 *                                  sProperty: Property being processed
-	 *                                  mDestination: Destination object
-	 *                                  mSourve: Source object
-	 * @return {Object} - Returns <code>mDestination</code> object
-	 */
-	Utils.mergeWith = function (mDestination, mSource, fnCustomizer) {
-		if (!(typeof fnCustomizer === "function")) {
-			throw new Error('In order to use mergeWith() utility function fnCustomizer should be provided!');
-		}
-
-		for (var sSourceProperty in mSource) {
-			if (mSource.hasOwnProperty(sSourceProperty)) {
-				mDestination[sSourceProperty] = mDestination.hasOwnProperty(sSourceProperty)
-					? fnCustomizer(
-						mDestination[sSourceProperty],
-						mSource[sSourceProperty],
-						sSourceProperty,
-						mDestination,
-						mSource
-					) : mSource[sSourceProperty];
-			}
-		}
-
-		return mDestination;
-	};
-
-	/**
 	 * Extending helper which allows custom function
 	 * for extending.
 	 *
@@ -618,27 +579,6 @@ function(
 				styleClass: Utils.getRtaStyleClassName()
 			});
 		});
-	};
-
-	/**
-	 * Returns a new object composed of the own and inherited property paths
-	 * of given object which are not in the given array
-	 *
-	 * Example: for obj = { 'a': 1, 'b': '2', 'c': 3 };
-	 * omit(obj, ['a', 'c']); -> Returns { 'b': '2' }
-	 *
-	 * @param  {Object} oObject - Source object
-	 * @param  {string|string[]} vPropertyName - Property paths to omit
-	 * @return {Object} returns new object
-	 */
-	Utils.omit = function (oObject, vPropertyName) {
-		// TODO: Similar functionality also exists in sap.ui.rta.Utils. Use a common location.
-		var oNewObject = Object.assign({}, oObject);
-		var aPropertyPaths = DtUtil.castArray(vPropertyName);
-		aPropertyPaths.forEach(function (sProperty) {
-			delete oNewObject[sProperty];
-		});
-		return oNewObject;
 	};
 
 	/**

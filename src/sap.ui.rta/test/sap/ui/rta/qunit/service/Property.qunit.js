@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/rta/Utils",
+	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -28,7 +28,7 @@ function(
 	UIComponent,
 	ComponentContainer,
 	FakeLrepConnectorSessionStorage,
-	RtaUtils,
+	_omit,
 	sinon
 ) {
 	"use strict";
@@ -453,7 +453,7 @@ function(
 			// removing DT Properties from response, which are not calculated because of the undefined return value
 			var oExpectedResultWithoutDtProperties = Object.assign(
 				{},
-				RtaUtils.omit(this.oExpectedPropertyData.properties, ["dtMetadataProperty1", "dtMetadataProperty2", "dtMetadataProperty3", "virtualProperty1", "virtualProperty2", "virtualProperty3", "virtualProperty4"])
+				_omit(this.oExpectedPropertyData.properties, ["dtMetadataProperty1", "dtMetadataProperty2", "dtMetadataProperty3", "virtualProperty1", "virtualProperty2", "virtualProperty3", "virtualProperty4"])
 			);
 			// this property was changed within DT properties; restoring to default
 			oExpectedResultWithoutDtProperties["metadataProperty2"].ignore = false;

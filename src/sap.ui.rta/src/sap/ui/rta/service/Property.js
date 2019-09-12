@@ -8,12 +8,12 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/base/util/merge",
-	"sap/ui/rta/Utils"
+	"sap/base/util/restricted/_omit"
 ], function(
 	OverlayRegistry,
 	DtUtil,
 	merge,
-	RtaUtils
+	_omit
 ) {
 	"use strict";
 
@@ -186,7 +186,7 @@ sap.ui.define([
 											} else {
 												// dt-metadata properties
 												mResult[sKey] = {
-													value: validate(RtaUtils.omit(mDtObj[sKey], "ignore")),
+													value: validate(_omit(mDtObj[sKey], "ignore")),
 													virtual: false,
 													ignore: bIgnore
 												};

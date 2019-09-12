@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/Overlay",
-	"sap/ui/dt/Util",
-	"sap/ui/Device",
-	"sap/base/util/restricted/_intersection"
+	"sap/base/util/restricted/_intersection",
+	"sap/ui/Device"
 ],
 function (
 	Plugin,
@@ -18,9 +17,8 @@ function (
 	OverlayRegistry,
 	KeyCodes,
 	Overlay,
-	DtUtil,
-	Device,
-	_intersection
+	_intersection,
+	Device
 ) {
 	"use strict";
 
