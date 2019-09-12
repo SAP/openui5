@@ -2091,9 +2091,31 @@ function(
 			assert.equal(Utils.getMaxLayer(), "USER", "return topLayer");
 		});
 
-		QUnit.test("sap-ui-fl-max-layer is set", function (assert) {
+		QUnit.test("sap-ui-fl-max-layer is set as url parameter", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("VENDOR");
 			assert.equal(Utils.getMaxLayer(), "VENDOR", "get UriParamter");
+		});
+
+		QUnit.test("sap-ui-fl-max-layer is set as hash parameter", function (assert) {
+			var oParameters = {
+				params: {
+					"sap-ui-fl-max-layer": ["CUSTOMER"]
+				}
+			};
+			sandbox.stub(Utils, "getUshellContainer").returns({
+				getService: function () {
+					return {
+						getHash: function () {
+							return "";
+						},
+						parseShellHash: function () {
+							return oParameters;
+						}
+					};
+				}
+			});
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("VENDOR");
+			assert.equal(Utils.getMaxLayer(), "CUSTOMER", "get UriParamter");
 		});
 	});
 

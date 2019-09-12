@@ -27,6 +27,7 @@ function(
 	View
 ) {
 	"use strict";
+
 	//Stack of layers in the layered repository
 	var aLayers = [
 		"BASE",
@@ -59,6 +60,7 @@ function(
 		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		APP_ID_AT_DESIGN_TIME : "${pro" + "ject.art" + "ifactId}", //avoid replaced by content of ${project.artifactId} placeholder at build steps
 		VARIANT_MODEL_NAME: "$FlexVariants",
+		FL_MAX_LAYER_PARAM: "sap-ui-fl-max-layer",
 
 		/**
 		 * Formats the log message by replacing placeholders with values and logging the message.
@@ -345,7 +347,12 @@ function(
 		 * @name sap.ui.fl.Utils._setMaxLayer
 		 */
 		getMaxLayer: function () {
-			return this._getUriParameters().get("sap-ui-fl-max-layer") || this._sTopLayer;
+			var oParsedHash = this.getParsedURLHash();
+			var sParseMaxLayer;
+			if (oParsedHash.params && oParsedHash.params.hasOwnProperty(this.FL_MAX_LAYER_PARAM)) {
+				sParseMaxLayer = oParsedHash.params[this.FL_MAX_LAYER_PARAM][0];
+			}
+			return sParseMaxLayer || this._getUriParameters().get(this.FL_MAX_LAYER_PARAM) || this._sTopLayer;
 		},
 
 		/**
