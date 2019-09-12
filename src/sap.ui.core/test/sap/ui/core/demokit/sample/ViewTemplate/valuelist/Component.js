@@ -8,7 +8,7 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/View",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function (jQuery, Log, library, View, BaseComponent, MockServer, JSONModel, ODataModel) {
+], function (UriParameters, Log, library, View, BaseComponent, MockServer, JSONModel, ODataModel) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -30,7 +30,7 @@ sap.ui.define([
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/valuelist/data/",
 				oModel,
 				sServiceUri = "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/",
-				oUriParameters = jQuery.sap.getUriParameters(),
+				oUriParameters = UriParameters.fromQuery(window.location.search),
 				sClient = oUriParameters.get("sap-client"),
 				sValueList = oUriParameters.get("sap-value-list");
 

@@ -241,7 +241,6 @@ sap.ui.define([
 					this.checkGroupId(mParameters.updateGroupId, false,
 						"Invalid update group ID: ");
 					this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
-					this.aLockedGroupLocks = [];
 					this.mGroupProperties = {};
 					for (sGroupId in mParameters.groupProperties) {
 						that.checkGroupId(sGroupId, true);
@@ -277,7 +276,6 @@ sap.ui.define([
 								that.fireEvent("sessionTimeout");
 							},
 							getGroupProperty : this.getGroupProperty.bind(this),
-							lockGroup : this.lockGroup.bind(this),
 							onCreateGroup : function (sGroupId) {
 								if (that.isAutoGroup(sGroupId)) {
 									sap.ui.getCore().addPrerenderingTask(
@@ -303,14 +301,13 @@ sap.ui.define([
 			});
 
 	/**
-	 * Waits until all group locks for the given group ID have been unlocked and submits the
-	 * requests associated with this group ID in one batch request.
+	 * Submits the requests associated with this group ID in one batch request.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
 	 * @param {boolean} [bCatch=false]
 	 *   Whether the returned promise always resolves and never rejects
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the HTTP request resolving with <code>undefined</code>; it is
 	 *   rejected with an error if the batch request itself fails. Use <code>bCatch</code> to catch
 	 *   that error and make the promise resolve with <code>undefined</code> instead.
@@ -318,33 +315,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitBatch = function (sGroupId, bCatch) {
-		var bBlocked,
-			oPromise,
-			that = this;
+		var that = this;
 
-		// Use SyncPromise.all to call the requestor synchronously when there is no lock -> The
-		// batch is sent before the rendering. Rendering and server processing run in parallel.
-		oPromise = SyncPromise.all(this.aLockedGroupLocks.map(function (oGroupLock) {
-			return oGroupLock.waitFor(sGroupId);
-		}));
-		bBlocked = oPromise.isPending();
-		if (bBlocked) {
-			Log.info("submitBatch('" + sGroupId + "') is waiting for locks", null, sClassName);
-		}
-		return Promise.resolve(oPromise.then(function () {
-			if (bBlocked) {
-				Log.info("submitBatch('" + sGroupId + "') continues", null, sClassName);
+		return this.oRequestor.submitBatch(sGroupId).catch(function (oError) {
+			that.reportError("$batch failed", sClassName, oError);
+			if (!bCatch) {
+				throw oError;
 			}
-			that.aLockedGroupLocks = that.aLockedGroupLocks.filter(function (oGroupLock) {
-				return oGroupLock.isLocked();
-			});
-			return that.oRequestor.submitBatch(sGroupId).catch(function (oError) {
-				that.reportError("$batch failed", sClassName, oError);
-				if (!bCatch) {
-					throw oError;
-				}
-			});
-		}));
+		});
 	};
 
 	/**
@@ -1220,12 +1198,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates or modifies a lock for a group. {@link #_submitBatch} has to wait until all locks for
-	 * <code>sGroupId</code> are unlocked. The goal of such a lock is to allow the user of the
-	 * ODataModel to call an API that creates a request in a batch group and immediately call
-	 * {@link #submitBatch} for this group. In such cases the request has to be sent with this
-	 * submitBatch, even if the request is created later asynchronously. To achieve this, the API
-	 * function creates a lock that blocks _submitBatch until the request is created.
+	 * Creates a lock for a group. {@link sap.ui.model.odata.v4._Requestor#submitBatch} has to wait
+	 * until all locks for <code>sGroupId</code> are unlocked. Delegates to
+	 * {@link sap.ui.model.odata.v4.lib._Requestor#lockGroup}.
+	 *
+	 * The goal of such a lock is to allow using an API that creates a request in a batch group and
+	 * immediately calling {@link #submitBatch} for this group. In such cases the request has to be
+	 * sent with this submitBatch, even if the request is created later asynchronously. To achieve
+	 * this, the API function creates a lock that blocks submitBatch until the request is created.
 	 *
 	 * For performance reasons it is possible to create a group lock that actually doesn't lock. All
 	 * non-API functions use this group lock instead of the group ID so that a lock is possible. But
@@ -1243,13 +1223,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.lockGroup = function (sGroupId, bLocked, oOwner) {
-		var oGroupLock;
-
-		oGroupLock = new _GroupLock(sGroupId, bLocked, oOwner, this.oRequestor.getSerialNumber());
-		if (bLocked) {
-			this.aLockedGroupLocks.push(oGroupLock);
-		}
-		return oGroupLock;
+		return this.oRequestor.lockGroup(sGroupId, bLocked, oOwner);
 	};
 
 	/**

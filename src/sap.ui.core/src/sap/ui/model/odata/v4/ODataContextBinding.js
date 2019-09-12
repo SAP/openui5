@@ -790,7 +790,7 @@ sap.ui.define([
 						oCache.fetchValue(oGroupLock, sRelativePath, function () {
 							bDataRequested = true;
 							that.fireDataRequested();
-						}, oListener)
+						}, oListener, that.oModel.bAutoExpandSelect)
 					).then(function (vValue) {
 						if (bDataRequested) {
 							that.fireDataReceived({data : {}});
@@ -1067,7 +1067,7 @@ sap.ui.define([
 		if (aPaths.indexOf("") < 0) {
 			try {
 				aPromises.push(
-					this.oCachePromise.getResult().requestSideEffects(oModel.lockGroup(sGroupId),
+					this.oCachePromise.getResult().requestSideEffects(this.lockGroup(sGroupId),
 						aPaths, mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
 
 				this.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,

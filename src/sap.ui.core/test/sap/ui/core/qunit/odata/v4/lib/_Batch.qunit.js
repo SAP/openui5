@@ -5,8 +5,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_Batch",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, _Batch, TestUtils) {
+], function (jQuery, Log, _Batch, _Helper, TestUtils) {
 	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -727,15 +728,15 @@ sap.ui.define([
 	}].forEach(function (oFixture) {
 			QUnit.test("serializeBatchRequest: " + oFixture.testTitle, function (assert) {
 				var oBatchRequest,
-					oMock = this.mock(jQuery.sap),
+					oHelperMock = this.mock(_Helper),
 					aRequests = JSON.parse(JSON.stringify(oFixture.requests));
 
 				if (oFixture.expectedBoundaryIDs) {
 					oFixture.expectedBoundaryIDs.forEach(function (oValue) {
-						oMock.expects("uid").returns(oValue);
+						oHelperMock.expects("uid").returns(oValue);
 					});
 				} else {
-					oMock.expects("uid").returns("id-0123456789012-345");
+					oHelperMock.expects("uid").returns("id-0123456789012-345");
 				}
 
 				oBatchRequest = _Batch.serializeBatchRequest(aRequests);

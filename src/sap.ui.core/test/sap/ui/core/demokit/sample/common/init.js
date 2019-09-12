@@ -6,13 +6,13 @@ sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
-		"jquery.sap.script", // jQuery.sap.getUriParameters()
+		"sap/base/util/UriParameters",
 		"sap/ui/core/Component",
 		"sap/ui/core/ComponentContainer"
-	], function (jQuery, Component, ComponentContainer) {
+	], function (UriParameters, Component, ComponentContainer) {
 		/* eslint-disable no-alert */
 
-		var sComponentName = jQuery.sap.getUriParameters().get("component");
+		var sComponentName = UriParameters.fromQuery(window.location.search).get("component");
 
 		if (!sComponentName) {
 			alert("Missing URL parameter 'component', e.g. '?component=ViewTemplate.scenario'");

@@ -4,12 +4,13 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, _Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
+], function (jQuery, Log, SyncPromise,_Batch, _GroupLock, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -147,6 +148,7 @@ sap.ui.define([
 
 		assert.deepEqual(oRequestor.mBatchQueue, {});
 		assert.strictEqual(oRequestor.mHeaders, mHeaders);
+		assert.deepEqual(oRequestor.aLockedGroupLocks, []);
 		assert.strictEqual(oRequestor.oModelInterface, oModelInterface);
 		assert.strictEqual(oRequestor.sQueryParams, "?~");
 		assert.deepEqual(oRequestor.mRunningChangeRequests, {});
@@ -983,7 +985,7 @@ sap.ui.define([
 		return Promise.all([
 			oRequestor.request("POST", "EMPLOYEES", new _GroupLock("group"), {}, {}, undefined,
 				undefined, undefined, sOriginalPath).catch(function () {}),
-			oRequestor.submitBatch("group")
+			oRequestor.processBatch("group")
 		]);
 	});
 
@@ -1082,7 +1084,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch: fail, unsupported OData service version", function (assert) {
+	QUnit.test("processBatch: fail, unsupported OData service version", function (assert) {
 		var oError = {},
 			oGetProductsPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
@@ -1113,7 +1115,7 @@ sap.ui.define([
 			}), "Products", true)
 			.throws(oError);
 
-		return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
+		return Promise.all([oGetProductsPromise, oRequestor.processBatch("group1")]);
 	});
 
 	//*********************************************************************************************
@@ -1190,14 +1192,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): with empty group", function (assert) {
+	QUnit.test("processBatch(...): with empty group", function (assert) {
 		var oBody = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
 		this.mock(oRequestor).expects("sendBatch").never();
 
 		// code under test
-		return oRequestor.submitBatch("testGroupId").then(function (oResult) {
+		return oRequestor.processBatch("testGroupId").then(function (oResult) {
 			var oPromise;
 
 			assert.deepEqual(oResult, undefined);
@@ -1212,7 +1214,7 @@ sap.ui.define([
 					assert.ok(oError.canceled);
 				}),
 				// code under test
-				oRequestor.submitBatch("testGroupId")
+				oRequestor.processBatch("testGroupId")
 			]).then(function () {
 				assert.strictEqual(oRequestor.mBatchQueue["testGroupId"], undefined);
 			});
@@ -1220,7 +1222,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): success", function (assert) {
+	QUnit.test("processBatch(...): success", function (assert) {
 		var aCleanedRequests = [],
 			aExpectedRequests = [[{
 				method : "POST",
@@ -1324,11 +1326,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(aCleanedRequests))
 			.resolves(aBatchResults);
 
-		aPromises.push(oRequestor.submitBatch("group1").then(function (oResult) {
+		aPromises.push(oRequestor.processBatch("group1").then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.deepEqual(aResults, [null, null, null], "all batch requests already resolved");
 		}));
-		aPromises.push(oRequestor.submitBatch("group1")); // must not call request again
+		aPromises.push(oRequestor.processBatch("group1")); // must not call request again
 
 		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
 		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [[/*change set*/], {
@@ -1340,7 +1342,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): single GET", function (assert) {
+	QUnit.test("processBatch(...): single GET", function (assert) {
 		var aExpectedRequests = [
 				// Note: no empty change set!
 				sinon.match({method : "GET", url : "Products"})
@@ -1355,11 +1357,11 @@ sap.ui.define([
 			]);
 
 		// code under test
-		return oRequestor.submitBatch("groupId");
+		return oRequestor.processBatch("groupId");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): merge PATCH requests", function (assert) {
+	QUnit.test("processBatch(...): merge PATCH requests", function (assert) {
 		var oBusinessPartners42 = {},
 			oEntityProduct0 = {},
 			oEntityProduct0OtherCache = {},
@@ -1459,7 +1461,7 @@ sap.ui.define([
 			]);
 
 		// code under test
-		aPromises.push(oRequestor.submitBatch("groupId"));
+		aPromises.push(oRequestor.processBatch("groupId"));
 
 		sinon.assert.calledOnce(fnSubmit0);
 		sinon.assert.calledWithExactly(fnSubmit0);
@@ -1485,7 +1487,7 @@ sap.ui.define([
 				{Address : {City : "Walldorf", PostalCode : "69190"}},
 				{Address : {City : "Walldorf", PostalCode : "69190"}},
 				{Address : {City : "Walldorf", PostalCode : "69190"}},
-				undefined // submitBatch()
+				undefined // processBatch()
 			]);
 		});
 	});
@@ -1506,7 +1508,7 @@ sap.ui.define([
 		},
 		mProductsResponse : {value : [{foo : "bar"}]}
 	}].forEach(function (oFixture) {
-		var sTitle = "submitBatch(...): OData version specific headers; sODataVersion="
+		var sTitle = "processBatch(...): OData version specific headers; sODataVersion="
 			+ oFixture.sODataVersion;
 
 		QUnit.test(sTitle, function (assert) {
@@ -1545,12 +1547,12 @@ sap.ui.define([
 				.withExactArgs(aExpectedRequests)
 				.resolves([createResponse(oFixture.mProductsResponse)]);
 
-			return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
+			return Promise.all([oGetProductsPromise, oRequestor.processBatch("group1")]);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch: fail to convert payload", function (assert) {
+	QUnit.test("processBatch: fail to convert payload", function (assert) {
 		var oError = {},
 			oGetProductsPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface, undefined, undefined,
@@ -1570,11 +1572,11 @@ sap.ui.define([
 		oRequestorMock.expects("sendBatch") // arguments don't matter
 			.resolves([createResponse(oResponse)]);
 
-		return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
+		return Promise.all([oGetProductsPromise, oRequestor.processBatch("group1")]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch: report unbound messages", function (assert) {
+	QUnit.test("processBatch: report unbound messages", function (assert) {
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
@@ -1586,11 +1588,11 @@ sap.ui.define([
 		oRequestorMock.expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")]);
+		return Promise.all([oRequestPromise, oRequestor.processBatch("group1")]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch: support ETag header", function (assert) {
+	QUnit.test("processBatch: support ETag header", function (assert) {
 		var mHeaders = {"SAP-Messages" : {}, ETag : "ETag"},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
@@ -1602,14 +1604,14 @@ sap.ui.define([
 		oRequestorMock.expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")])
+		return Promise.all([oRequestPromise, oRequestor.processBatch("group1")])
 			.then(function (aResults) {
 				assert.deepEqual(aResults[0], {"@odata.etag" : "ETag"});
 			});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch: missing ETag header", function (assert) {
+	QUnit.test("processBatch: missing ETag header", function (assert) {
 		var mHeaders = {"SAP-Messages" : {}},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
@@ -1621,14 +1623,14 @@ sap.ui.define([
 		oRequestorMock.expects("reportUnboundMessagesAsJSON")
 			.withExactArgs("Products(42)", sinon.match.same(mHeaders["SAP-Messages"]));
 
-		return Promise.all([oRequestPromise, oRequestor.submitBatch("group1")])
+		return Promise.all([oRequestPromise, oRequestor.processBatch("group1")])
 			.then(function (aResults) {
 				assert.deepEqual(aResults[0], {});
 			});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): $batch failure", function (assert) {
+	QUnit.test("processBatch(...): $batch failure", function (assert) {
 		var oBatchError = new Error("$batch request failed"),
 			aPromises = [],
 			oRequestor = _Requestor.create("/", oModelInterface);
@@ -1657,7 +1659,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch").rejects(oBatchError); // arguments don't matter
 
-		aPromises.push(oRequestor.submitBatch("group").then(unexpectedSuccess, function (oError) {
+		aPromises.push(oRequestor.processBatch("group").then(unexpectedSuccess, function (oError) {
 			assert.strictEqual(oError, oBatchError);
 		}));
 
@@ -1665,7 +1667,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): failure followed by another request", function (assert) {
+	QUnit.test("processBatch(...): failure followed by another request", function (assert) {
 		var oError = {error : {message : "404 Not found"}},
 			aBatchResult = [{
 				headers : {},
@@ -1716,7 +1718,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
 
-		aPromises.push(oRequestor.submitBatch("testGroupId").then(function (oResult) {
+		aPromises.push(oRequestor.processBatch("testGroupId").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));
 
@@ -1724,7 +1726,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("submitBatch(...): error in change set", function (assert) {
+	QUnit.test("processBatch(...): error in change set", function (assert) {
 		var oError = {error : {message : "400 Bad Request"}},
 			aBatchResult = [{
 				getResponseHeader : function () {
@@ -1768,7 +1770,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
 
-		aPromises.push(oRequestor.submitBatch("group").then(function (oResult) {
+		aPromises.push(oRequestor.processBatch("group").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));
 
@@ -1826,8 +1828,6 @@ sap.ui.define([
 		var oBatchMock = this.mock(_Batch),
 			oBatchRequest1,
 			oBatchRequest2,
-			oBatchRequest3,
-			fnCancel = function () {},
 			oJQueryMock = this.mock(jQuery),
 			aPromises = [],
 			sServiceUrl = "/Service/",
@@ -1860,6 +1860,7 @@ sap.ui.define([
 			});
 		}
 
+		// code under test
 		assert.notOk(oRequestor.hasPendingChanges());
 		assert.notOk(oRequestor.hasPendingChanges("groupId"));
 		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"));
@@ -1867,44 +1868,43 @@ sap.ui.define([
 		// add a GET request and submit the queue
 		oRequestor.request("GET", "Products", new _GroupLock("groupId"));
 		oBatchRequest1 = expectBatch();
-		aPromises.push(oRequestor.submitBatch("groupId"));
+		aPromises.push(oRequestor.processBatch("groupId"));
+
+		// code under test
 		assert.notOk(oRequestor.hasPendingChanges(), "running GET request is not a pending change");
 
 		// add a PATCH request and submit the queue
 		oRequestor.request("PATCH", "Products('0')", new _GroupLock("groupId"),
-			{"If-Match" : {/* product 0 */}}, {Name : "foo"}, undefined, fnCancel);
+			{"If-Match" : {/* product 0 */}}, {Name : "foo"});
 		oBatchRequest2 = expectBatch();
-		assert.ok(oRequestor.hasPendingChanges("groupId"), "one for groupId");
-		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"), "nothing in anotherGroupId");
-		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
+		aPromises.push(oRequestor.processBatch("groupId").then(function () {
 			// code under test
-			assert.ok(oRequestor.hasPendingChanges(),
-				"the batch with the second PATCH is still running");
-			// code under test
-			assert.ok(oRequestor.hasPendingChanges("groupId"), "groupId");
-			// code under test
-			assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"),
-				"anotherGroupId after submitBatch");
-			resolveBatch(oBatchRequest3);
+			assert.notOk(oRequestor.hasPendingChanges());
+			assert.notOk(oRequestor.hasPendingChanges("groupId"));
 		}));
 
 		// code under test
-		assert.strictEqual(oRequestor.hasPendingChanges(), true);
+		assert.ok(oRequestor.hasPendingChanges());
+		assert.ok(oRequestor.hasPendingChanges("groupId"), "one for groupId");
+		assert.notOk(oRequestor.hasPendingChanges("anotherGroupId"), "nothing in anotherGroupId");
+
 		assert.throws(function () {
+			// code under test
 			oRequestor.cancelChanges("groupId");
 		}, new Error("Cannot cancel the changes for group 'groupId', "
 			+ "the batch request is running"));
-		oRequestor.cancelChanges("anotherGroupId"); // the other groups are not affected
+
+		// code under test - the other groups are not affected
+		oRequestor.cancelChanges("anotherGroupId");
 
 		// while the batch with the first PATCH is still running, add another PATCH and submit
 		oRequestor.request("PATCH", "Products('1')", new _GroupLock("groupId"),
 			{"If-Match" : {/* product 0 */}}, {Name : "bar"});
-		oBatchRequest3 = expectBatch();
-		aPromises.push(oRequestor.submitBatch("groupId").then(function () {
+		assert.throws(function () {
 			// code under test
-			assert.strictEqual(oRequestor.hasPendingChanges(), false);
-			oRequestor.cancelChanges("groupId");
-		}));
+			oRequestor.processBatch("groupId");
+		}, new Error("Unexpected second $batch")); // CPOUI5UISERVICESV3-1450
+
 
 		resolveBatch(oBatchRequest1);
 		resolveBatch(oBatchRequest2);
@@ -1993,7 +1993,7 @@ sap.ui.define([
 		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs(aExpectedRequests).resolves([createResponse(), createResponse()]);
 
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 
 		return oPromise;
 	});
@@ -2030,7 +2030,7 @@ sap.ui.define([
 
 		// code under test
 		oRequestor.cancelChanges("groupId");
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 
 		return oPromise;
 	});
@@ -2109,7 +2109,7 @@ sap.ui.define([
 
 		sinon.assert.calledOnce(fnCancel);
 		this.mock(oRequestor).expects("request").never();
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 		return oTestPromise;
 	});
 
@@ -2158,7 +2158,7 @@ sap.ui.define([
 
 		// code under test
 		oRequestor.removePatch(oPromise);
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 
 		sinon.assert.calledOnce(fnCancel);
 
@@ -2166,7 +2166,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("removePatch after submitBatch", function (assert) {
+	QUnit.test("removePatch after processBatch", function (assert) {
 		var oPromise,
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
@@ -2176,7 +2176,7 @@ sap.ui.define([
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({})]);
 
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 
 		// code under test
 		assert.throws(function () {
@@ -2222,7 +2222,7 @@ sap.ui.define([
 			.withExactArgs(aExpectedRequests).resolves([createResponse()]);
 
 		// code under test
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 
 		sinon.assert.calledOnce(fnCancel1);
 		sinon.assert.notCalled(fnCancel2);
@@ -2250,12 +2250,12 @@ sap.ui.define([
 		sinon.assert.calledOnce(fnCancel);
 
 		this.mock(oRequestor).expects("request").never();
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 		return oTestPromise;
 	});
 
 	//*****************************************************************************************
-	QUnit.test("removePost after submitBatch", function (assert) {
+	QUnit.test("removePost after processBatch", function (assert) {
 		var oPayload = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface);
 
@@ -2264,7 +2264,7 @@ sap.ui.define([
 		this.mock(oRequestor).expects("sendBatch") // arguments don't matter
 			.resolves([createResponse({})]);
 
-		oRequestor.submitBatch("groupId");
+		oRequestor.processBatch("groupId");
 
 		// code under test
 		assert.throws(function () {
@@ -2280,7 +2280,7 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
-	QUnit.test("submitBatch: unwrap single change", function (assert) {
+	QUnit.test("processBatch: unwrap single change", function (assert) {
 		var aExpectedRequests = [
 				sinon.match({
 					method : "POST",
@@ -2298,30 +2298,21 @@ sap.ui.define([
 			.withExactArgs(aExpectedRequests).resolves([createResponse()]);
 
 		// code under test
-		return oRequestor.submitBatch("groupId");
+		return oRequestor.processBatch("groupId");
 	});
 
 	//*****************************************************************************************
 	QUnit.test("relocate", function (assert) {
 		var oBody1 = {},
 			oBody2 = {},
-			fnCancel1 = assert.ok.bind(assert, false),
-			fnCancel2 = assert.ok.bind(assert, false),
-			mExpectedHeaders = sinon.match.has("foo", "bar"),
-			mHeaders = {foo : "bar"},
-			oCreatePromise1,
-			oCreatePromise2,
-			oError = new Error("Post failed"),
+			mHeaders = {},
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor),
-			oResult = {},
-			fnSubmit1 = assert.ok.bind(assert, false),
-			fnSubmit2 = assert.ok.bind(assert, false);
+			oRequestorMock = this.mock(oRequestor);
 
-		oCreatePromise1 = oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
-			mHeaders, oBody1, fnSubmit1, fnCancel1);
-		oCreatePromise2 = oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
-			mHeaders, oBody2, fnSubmit2, fnCancel2);
+		oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
+			mHeaders, oBody1);
+		oRequestor.request("POST", "Employees", new _GroupLock("$parked.$auto"),
+			mHeaders, oBody2);
 
 		assert.throws(function () {
 			// code under test
@@ -2333,10 +2324,12 @@ sap.ui.define([
 			oRequestor.relocate("$parked.$auto", {foo : "bar"}, "$auto");
 		}, new Error("Request not found in group '$parked.$auto'"));
 
-		oRequestorMock.expects("request")
-			.withExactArgs("POST", "Employees", new _GroupLock("$auto"), mExpectedHeaders,
-				sinon.match.same(oBody2), sinon.match.same(fnSubmit2), sinon.match.same(fnCancel2))
-			.resolves(oResult);
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "POST",
+				url : "Employees",
+				body : sinon.match.same(oBody2)
+			}), "$auto");
 
 		// code under test
 		oRequestor.relocate("$parked.$auto", oBody2, "$auto");
@@ -2344,48 +2337,36 @@ sap.ui.define([
 		assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"][0].length, 1, "one left");
 		assert.strictEqual(oRequestor.mBatchQueue["$parked.$auto"][0][0].body, oBody1);
 
-		return oCreatePromise2.then(function (oResult0) {
-			assert.strictEqual(oResult0, oResult);
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "POST",
+				url : "Employees",
+				body : sinon.match.same(oBody1)
+			}), "$auto");
 
-			oRequestorMock.expects("request")
-				.withExactArgs("POST", "Employees", new _GroupLock("$auto"), mExpectedHeaders,
-					sinon.match.same(oBody1), sinon.match.same(fnSubmit1),
-					sinon.match.same(fnCancel1))
-				.rejects(oError);
+		// code under test
+		oRequestor.relocate("$parked.$auto", oBody1, "$auto");
 
-			// code under test
-			oRequestor.relocate("$parked.$auto", oBody1, "$auto");
-
-			return oCreatePromise1.then(function () {
-				assert.ok(false);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-				assert.deepEqual(oRequestor.mBatchQueue["$parked.$auto"], [[]]);
-			});
-		});
+		assert.deepEqual(oRequestor.mBatchQueue["$parked.$auto"], [[]]);
 	});
 
 	//*****************************************************************************************
-	QUnit.test("relocateAll, hasChanges", function (assert) {
+	QUnit.test("relocateAll: with entity", function (assert) {
 		var oBody1 = {key : "value 1"},
 			oBody2 = {key : "value 2"},
-			fnCancel1 = assert.ok.bind(assert, false),
-			fnCancel2 = assert.ok.bind(assert, false),
 			oEntity = {},
-			mExpectedHeaders = sinon.match.has("If-Match", sinon.match.same(oEntity)),
-			aPromises = [],
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			fnSubmit1 = assert.ok.bind(assert, false),
-			fnSubmit2 = assert.ok.bind(assert, false),
 			oYetAnotherEntity = {};
 
-		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1, fnSubmit1, fnCancel1));
-		aPromises.push(oRequestor.request("DELETE", "Employees('2')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity}));
-		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2, fnSubmit2, fnCancel2));
+		oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1);
+		oRequestor.request("DELETE", "Employees('2')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity});
+		oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2);
+
+		oRequestorMock.expects("addChangeToGroup").never();
 
 		// code under test
 		oRequestor.relocateAll("$parked.unused", "$auto", oEntity);
@@ -2399,14 +2380,18 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.hasChanges("$parked.unused", oEntity), false);
 
-		oRequestorMock.expects("request")
-			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
-				sinon.match.same(oBody1), sinon.match.same(fnSubmit1), sinon.match.same(fnCancel1))
-			.resolves();
-		oRequestorMock.expects("request")
-			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
-				sinon.match.same(oBody2), sinon.match.same(fnSubmit2), sinon.match.same(fnCancel2))
-			.resolves();
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "PATCH",
+				url : "Employees('1')",
+				body : sinon.match.same(oBody1)
+			}), "$auto");
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "PATCH",
+				url : "Employees('1')",
+				body : sinon.match.same(oBody2)
+			}), "$auto");
 
 		// code under test
 		oRequestor.relocateAll("$parked.$auto", "$auto", oEntity);
@@ -2420,114 +2405,58 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), true);
 
-		oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "Employees('2')", new _GroupLock("$auto"),
-				sinon.match.has("If-Match", sinon.match.same(oYetAnotherEntity)), undefined,
-				undefined, undefined)
-			.resolves();
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "DELETE",
+				url : "Employees('2')"
+			}), "$auto");
 
 		// code under test
 		oRequestor.relocateAll("$parked.$auto", "$auto", oYetAnotherEntity);
 
 		// code under test
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), false);
-
-		return Promise.all(aPromises);
 	});
 
 	//*****************************************************************************************
-	QUnit.test("relocateAll: do not filter by entity", function (assert) {
+	QUnit.test("relocateAll: without entity", function (assert) {
 		var oBody1 = {key : "value 1"},
 			oBody2 = {key : "value 2"},
-			fnCancel1 = assert.ok.bind(assert, false),
-			fnCancel2 = assert.ok.bind(assert, false),
 			oEntity = {},
-			mExpectedHeaders = sinon.match.has("If-Match", sinon.match.same(oEntity)),
-			aPromises = [],
 			oRequestor = _Requestor.create("/Service/", oModelInterface),
 			oRequestorMock = this.mock(oRequestor),
-			fnSubmit1 = assert.ok.bind(assert, false),
-			fnSubmit2 = assert.ok.bind(assert, false),
 			oYetAnotherEntity = {};
 
-		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1, fnSubmit1, fnCancel1));
-		aPromises.push(oRequestor.request("DELETE", "Employees('2')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity}));
-		aPromises.push(oRequestor.request("PATCH", "Employees('1')",
-			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2, fnSubmit2, fnCancel2));
+		oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody1);
+		oRequestor.request("DELETE", "Employees('2')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oYetAnotherEntity});
+		oRequestor.request("PATCH", "Employees('1')",
+			new _GroupLock("$parked.$auto"), {"If-Match" : oEntity}, oBody2);
 
-		oRequestorMock.expects("request")
-			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
-				sinon.match.same(oBody1), sinon.match.same(fnSubmit1), sinon.match.same(fnCancel1))
-			.resolves();
-		oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "Employees('2')", new _GroupLock("$auto"),
-				sinon.match.has("If-Match", sinon.match.same(oYetAnotherEntity)), undefined,
-				undefined, undefined)
-			.resolves();
-		oRequestorMock.expects("request")
-			.withExactArgs("PATCH", "Employees('1')", new _GroupLock("$auto"), mExpectedHeaders,
-				sinon.match.same(oBody2), sinon.match.same(fnSubmit2), sinon.match.same(fnCancel2))
-			.resolves();
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "PATCH",
+				url : "Employees('1')",
+				body : sinon.match.same(oBody1)
+			}), "$auto");
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "PATCH",
+				url : "Employees('1')",
+				body : sinon.match.same(oBody2)
+			}), "$auto");
+		oRequestorMock.expects("addChangeToGroup")
+			.withExactArgs(sinon.match({
+				method : "DELETE",
+				url : "Employees('2')"
+			}), "$auto");
 
 		// code under test
 		oRequestor.relocateAll("$parked.$auto", "$auto");
 
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oEntity), false);
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), false);
-
-		return Promise.all(aPromises);
-	});
-
-	//*****************************************************************************************
-	QUnit.test("relocateAll: original promise resolves just like new one", function (assert) {
-		var oEntity = {},
-			oPromise,
-			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor),
-			oResult = {};
-
-		oPromise = oRequestor.request("DELETE", "Employees('1')", new _GroupLock("$parked.$auto"),
-			{"If-Match" : oEntity});
-		oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "Employees('1')", new _GroupLock("$auto"),
-				sinon.match.has("If-Match", sinon.match.same(oEntity)), undefined,
-				undefined, undefined)
-			.resolves(oResult);
-
-		// code under test
-		oRequestor.relocateAll("$parked.$auto", "$auto", oEntity);
-
-		return oPromise.then(function (oResult0) {
-			assert.strictEqual(oResult0, oResult);
-		});
-	});
-
-	//*****************************************************************************************
-	QUnit.test("relocateAll: original promise rejects just like new one", function (assert) {
-		var oEntity = {},
-			oPromise,
-			oRequestor = _Requestor.create("/Service/", oModelInterface),
-			oRequestorMock = this.mock(oRequestor),
-			oError = {};
-
-		oPromise = oRequestor.request("DELETE", "Employees('1')", new _GroupLock("$parked.$auto"),
-			{"If-Match" : oEntity});
-		oRequestorMock.expects("request")
-			.withExactArgs("DELETE", "Employees('1')", new _GroupLock("$auto"),
-				sinon.match.has("If-Match", sinon.match.same(oEntity)), undefined,
-				undefined, undefined)
-			.rejects(oError);
-
-		// code under test
-		oRequestor.relocateAll("$parked.$auto", "$auto", oEntity);
-
-		return oPromise.then(function () {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.strictEqual(oError0, oError);
-		});
 	});
 
 	//*****************************************************************************************
@@ -2905,7 +2834,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
-		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
+		QUnit.test("request(...)/processBatch (realOData) success", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface),
 				sResourcePath = "TEAMS('TEAM_01')";
 
@@ -2929,13 +2858,13 @@ sap.ui.define([
 							.then(assertResult),
 						oRequestor.request("GET", sResourcePath, new _GroupLock("group"))
 							.then(assertResult),
-						oRequestor.submitBatch("group")
+						oRequestor.processBatch("group")
 					]);
 				});
 		});
 
 		//*****************************************************************************************
-		QUnit.test("request(...)/submitBatch (realOData) fail", function (assert) {
+		QUnit.test("request(...)/processBatch (realOData) fail", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl), oModelInterface);
 
 			oRequestor.request(
@@ -2964,13 +2893,13 @@ sap.ui.define([
 				assert.strictEqual(oError.status, 404);
 			});
 
-			return oRequestor.submitBatch("group").then(function (oResult) {
+			return oRequestor.processBatch("group").then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
 		});
 
 		//*****************************************************************************************
-		QUnit.test("request(ProductList)/submitBatch (realOData) patch", function (assert) {
+		QUnit.test("request(ProductList)/processBatch (realOData) patch", function (assert) {
 			var oBody = {Name : "modified by QUnit test"},
 				oRequestor = _Requestor.create(TestUtils.proxy(sSampleServiceUrl), oModelInterface),
 				sResourcePath = "ProductList('HT-1001')";
@@ -2982,12 +2911,12 @@ sap.ui.define([
 						.then(function (oResult) {
 							TestUtils.deepContains(oResult, oBody);
 						}),
-					oRequestor.submitBatch("group")
+					oRequestor.processBatch("group")
 				]);
 		});
 
 		//*****************************************************************************************
-		QUnit.test("submitBatch (real OData): error in change set", function (assert) {
+		QUnit.test("processBatch (real OData): error in change set", function (assert) {
 			var oCommonError,
 				oEntity = {
 					"@odata.etag" : "*"
@@ -3017,7 +2946,7 @@ sap.ui.define([
 							"HTTP request was not processed because the previous request failed");
 						assert.strictEqual(oError.$reported, true);
 					}),
-				oRequestor.submitBatch("group")
+				oRequestor.processBatch("group")
 			]);
 		});
 	}
@@ -3577,6 +3506,171 @@ sap.ui.define([
 			oRequestor.destroy();
 			oClock.restore();
 		});
+	});
+
+	//*****************************************************************************************
+	QUnit.test("waitForRunningChangeRequests", function (assert) {
+		var oPromise,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		assert.strictEqual(oRequestor.waitForRunningChangeRequests("groupId"),
+			SyncPromise.resolve());
+
+		oRequestor.batchRequestSent("groupId", /*bHasChanges*/true);
+
+		oPromise = oRequestor.waitForRunningChangeRequests("groupId");
+
+		assert.strictEqual(oPromise.isPending(), true);
+
+		oRequestor.batchResponseReceived("groupId", /*bHasChanges*/true);
+
+		assert.strictEqual(oPromise.isFulfilled(), true);
+		assert.strictEqual(oPromise.getResult(), undefined);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("addChangeToGroup: $direct", function (assert) {
+		var oChange = {
+				$cancel : {},
+				$resolve : function () {},
+				$submit : {},
+				body : {},
+				method : {},
+				headers : {},
+				url : {}
+			},
+			oPromise = {},
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(oRequestor).expects("getGroupSubmitMode")
+			.withExactArgs("direct").returns("Direct");
+		this.mock(oRequestor).expects("request")
+			.withExactArgs(sinon.match.same(oChange.method), sinon.match.same(oChange.url),
+				new _GroupLock("direct"), sinon.match.same(oChange.headers),
+				sinon.match.same(oChange.body), sinon.match.same(oChange.$submit),
+				sinon.match.same(oChange.$cancel))
+			.returns(oPromise);
+		this.mock(oChange).expects("$resolve").withExactArgs(sinon.match.same(oPromise));
+
+		// code under test
+		oRequestor.addChangeToGroup(oChange, "direct");
+	});
+
+	//*****************************************************************************************
+	QUnit.test("addChangeToGroup: $batch", function (assert) {
+		var oChange = {},
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			aRequests = [[], [{}]];
+
+		aRequests.iChangeSet = 1;
+		this.mock(oRequestor).expects("getGroupSubmitMode")
+			.withExactArgs("group").returns("API");
+		this.mock(oRequestor).expects("request").never();
+		this.mock(oRequestor).expects("getOrCreateBatchQueue")
+			.withExactArgs("group")
+			.returns(aRequests);
+
+		// code under test
+		oRequestor.addChangeToGroup(oChange, "group");
+
+		assert.strictEqual(aRequests.length, 2);
+		assert.deepEqual(aRequests[0], []);
+		assert.strictEqual(aRequests[1].length, 2);
+		assert.strictEqual(aRequests[1][1], oChange);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("lockGroup: non-blocking", function (assert) {
+		var oGroupLock,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(oRequestor).expects("getSerialNumber").returns(42);
+
+		// code under test
+		oGroupLock = oRequestor.lockGroup("foo");
+
+		assert.ok(oGroupLock instanceof _GroupLock);
+		assert.strictEqual(oGroupLock.getGroupId(), "foo");
+		assert.notOk(oGroupLock.isLocked());
+		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("lockGroup: blocking", function (assert) {
+		var oGroupLock,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			oOwner = {};
+
+		this.mock(oRequestor).expects("getSerialNumber").returns(42);
+
+		oGroupLock = oRequestor.lockGroup("foo", true, oOwner);
+
+		assert.ok(oGroupLock instanceof _GroupLock);
+		assert.strictEqual(oGroupLock.getGroupId(), "foo");
+		assert.ok(oGroupLock.isLocked());
+		assert.strictEqual(oGroupLock.oOwner, oOwner);
+		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: group locks", function (assert) {
+		var oBarGroupLock,
+			oBarPromise,
+			oBazPromise,
+			oFooGroupLock,
+			oFooPromise,
+			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
+			oRequestorMock = this.mock(oRequestor),
+			that = this;
+
+		oRequestorMock.expects("processBatch").never();
+
+		oFooGroupLock = oRequestor.lockGroup("foo", true);
+		oBarGroupLock = oRequestor.lockGroup("bar", true);
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('foo') is waiting for locks", null, sClassName);
+
+		// code under test
+		oFooPromise = oRequestor.submitBatch("foo");
+
+		assert.ok(oFooPromise instanceof SyncPromise);
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('bar') is waiting for locks", null, sClassName);
+
+		// code under test
+		oBarPromise = oRequestor.submitBatch("bar");
+
+		oRequestorMock.expects("processBatch").withExactArgs("baz").returns(Promise.resolve());
+
+		// code under test
+		oBazPromise = oRequestor.submitBatch("baz");
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('foo') continues", null, sClassName);
+		oRequestorMock.expects("processBatch").withExactArgs("foo").returns(Promise.resolve());
+
+		// code under test
+		oFooGroupLock.unlock();
+
+		return Promise.all([
+			oFooPromise.then(function () {
+				assert.deepEqual(oRequestor.aLockedGroupLocks, [oBarGroupLock]);
+
+				that.oLogMock.expects("info")
+					.withExactArgs("submitBatch('bar') continues", null, sClassName);
+				oRequestorMock.expects("processBatch").withExactArgs("bar")
+					.returns(Promise.resolve());
+
+				// code under test
+				oBarGroupLock.unlock();
+			}),
+			oBarPromise.then(function () {
+				assert.deepEqual(oRequestor.aLockedGroupLocks, []);
+			}),
+			oBazPromise
+		]);
 	});
 });
 // TODO: continue-on-error? -> flag on model

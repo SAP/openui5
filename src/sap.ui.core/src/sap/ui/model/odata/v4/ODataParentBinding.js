@@ -143,15 +143,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges the given query options into this binding's aggregated query options. The merge does
-	 * not take place in the following cases
-	 * <ol>
-	 *   <li> the binding's cache is immutable and the merge would change the existing aggregated
-	 *     query options.
-	 *   <li> there are conflicts. A conflict is an option other than $expand, $select and $count
-	 *     which has different values in the aggregate and the options to be merged.
-	 *     This is checked recursively.
-	 * </ol>
+	 * Decides whether the given query options can be fulfilled by this binding and merges them into
+	 * this binding's aggregated query options if necessary.
+	 *
+	 * The query options cannot be fulfilled if there are conflicts. A conflict is an option other
+	 * than $expand, $select and $count which has different values in the aggregate and the options
+	 * to be merged. This is checked recursively.
+	 *
+	 * Merging is not necessary if the binding's cache has already requested its data and the query
+	 * options would extend $select. In this case the binding's cache will request the resp.
+	 * property and add it when it is accessed.
 	 *
 	 * Note: * is an item in $select and $expand just as others, that is it must be part of the
 	 * array of items and one must not ignore the other items if * is provided. See
@@ -160,7 +161,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mQueryOptions The query options to be merged
 	 * @param {boolean} bCacheImmutable Whether the cache of this binding is immutable
-	 * @returns {boolean} Whether the query options could be merged without conflicts
+	 * @returns {boolean} Whether the query options can be fulfilled by this binding
 	 *
 	 * @private
 	 */
@@ -174,7 +175,7 @@ sap.ui.define([
 		 * @param {object} mQueryOptions The query options to merge into the aggregated query
 		 *   options
 		 * @param {boolean} bInsideExpand Whether the given query options are inside a $expand
-		 * @returns {boolean} Whether the query options could be merged
+		 * @returns {boolean} Whether the query options can be fulfilled by this binding
 		 */
 		function merge(mAggregatedQueryOptions, mQueryOptions, bInsideExpand) {
 			var mExpandValue,
@@ -184,7 +185,7 @@ sap.ui.define([
 			 * Recursively merges the expand path into the aggregated query options.
 			 *
 			 * @param {string} sExpandPath The expand path
-			 * @returns {boolean} Whether the query options could be merged
+			 * @returns {boolean} Whether the query options can be fulfilled by this binding
 			 */
 			function mergeExpandPath(sExpandPath) {
 				if (mAggregatedQueryOptions.$expand[sExpandPath]) {
@@ -202,12 +203,12 @@ sap.ui.define([
 			 * Merges the select path into the aggregated query options.
 			 *
 			 * @param {string} sSelectPath The select path
-			 * @returns {boolean} Whether the query options could be merged
+			 * @returns {boolean} Whether the query options can be fulfilled by this binding
 			 */
 			function mergeSelectPath(sSelectPath) {
 				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
 					if (bCacheImmutable) {
-						return false;
+						return !bInsideExpand;
 					}
 					mAggregatedQueryOptions.$select.push(sSelectPath);
 				}

@@ -545,14 +545,14 @@ sap.ui.define([
 					<edmx:DataServices>\
 						<Schema Namespace="foo" Alias="f">\
 							<' + sRunnable + ' Name="Baz" EntitySetPath="Employees"\
-								IsBound="false" >\
+								IsBound="true" >\
 								<Parameter Name="p1" Type="f.Bar" Nullable="false"/>\
 								<Parameter Name="p2" Type="Collection(f.Bar)" MaxLength="10"\
 									Precision="2" Scale="variable" SRID="42"/>\
 								<ReturnType Type="Collection(Edm.String)" Nullable="false"\
 									MaxLength="10" Precision="2" Scale="variable" SRID="42"/>\
 							</' + sRunnable + '>\
-							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="true"/>\
+							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="false"/>\
 						</Schema>\
 					</edmx:DataServices>',
 				{
@@ -561,6 +561,7 @@ sap.ui.define([
 					},
 					"foo.Baz" : [{
 						"$kind" : sRunnable,
+						"$IsBound" : true,
 						"$EntitySetPath" : "Employees",
 						"$Parameter" : [{
 							"$Name" : "p1",
@@ -586,7 +587,6 @@ sap.ui.define([
 						}
 					},{
 						"$kind" : sRunnable,
-						"$IsBound" : true,
 						"$IsComposable" : true
 					}]
 				});
@@ -895,8 +895,8 @@ sap.ui.define([
 		testConversion(assert, '\
 				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
-						<Action Name="Action">\
-							<Parameter Name="Parameter" Type="Edm.String">\
+						<Action IsBound="true" Name="Action">\
+							<Parameter Name="_it" Type="Edm.String">\
 								<Annotation Term="f.Term" String="Parameter"/>\
 							</Parameter>\
 							<ReturnType Type="Edm.String">\
@@ -907,34 +907,99 @@ sap.ui.define([
 						<Action Name="Action">\
 							<Annotation Term="f.Term" String="Action2"/>\
 						</Action>\
+						<Action IsBound="true" Name="Action">\
+							<Parameter Name="_it" Type="Collection(f.Type)"/>\
+							<Parameter Name="NonBinding" Type="Edm.Int"/>\
+							<Annotation Term="f.Term" String="Action3"/>\
+						</Action>\
 						<Function Name="Function">\
-							<Annotation Term="f.Term" String="Function"/>\
+							<Annotation Term="f.Term" String="Function1"/>\
+						</Function>\
+						<Function IsBound="true" Name="Function">\
+							<Parameter Name="Parameter" Type="f.Type"/>\
+							<Annotation Term="f.Term" String="Function2"/>\
+						</Function>\
+						<Function IsBound="true" Name="Function">\
+							<Parameter Name="A" Type="f.Type"/>\
+							<Parameter Name="B" Type="Collection(f.Int)"/>\
+							<Annotation Term="f.Term" String="Function3"/>\
 						</Function>\
 					</Schema>\
 				</edmx:DataServices>',
 			{
 				"foo." : {
+					"$Annotations" : {
+						"foo.Action(Edm.String)" : {
+							"@foo.Term" : "Action1"
+						},
+						"foo.Action(Edm.String)/_it" : {
+							"@foo.Term" : "Parameter"
+						},
+						"foo.Action(Edm.String)/$ReturnType" : {
+							"@foo.Term" : "ReturnType"
+						},
+						"foo.Action()" : {
+							"@foo.Term" : "Action2"
+						},
+						"foo.Action(Collection(foo.Type))" : {
+							"@foo.Term" : "Action3"
+						},
+						"foo.Function()" : {
+							"@foo.Term" : "Function1"
+						},
+						"foo.Function(foo.Type)" : {
+							"@foo.Term" : "Function2"
+						},
+						"foo.Function(foo.Type,Collection(foo.Int))" : {
+							"@foo.Term" : "Function3"
+						}
+					},
 					"$kind" : "Schema"
 				},
 				"foo.Action" : [{
 					"$kind" : "Action",
+					"$IsBound" : true,
 					"$Parameter" : [{
-						"$Name" : "Parameter",
-						"$Type" : "Edm.String",
-						"@foo.Term" : "Parameter"
+						"$Name" : "_it",
+						"$Type" : "Edm.String"
 					}],
 					"$ReturnType" : {
-						"$Type" : "Edm.String",
-						"@foo.Term" : "ReturnType"
-					},
-					"@foo.Term" : "Action1"
+						"$Type" : "Edm.String"
+					}
+				}, {
+					"$kind" : "Action"
 				}, {
 					"$kind" : "Action",
-					"@foo.Term" : "Action2"
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : "_it",
+						"$Type" : "foo.Type",
+						"$isCollection": true
+					}, {
+						"$Name" : "NonBinding",
+						"$Type" : "Edm.Int"
+					}]
 				}],
 				"foo.Function" : [{
+					"$kind" : "Function"
+				}, {
 					"$kind" : "Function",
-					"@foo.Term" : "Function"
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : "Parameter",
+						"$Type" : "foo.Type"
+					}]
+				}, {
+					"$kind" : "Function",
+					"$IsBound" : true,
+					"$Parameter" : [{
+						"$Name" : "A",
+						"$Type" : "foo.Type"
+					}, {
+						"$Name" : "B",
+						"$Type" : "foo.Int",
+						"$isCollection": true
+					}]
 				}]
 			});
 	});
