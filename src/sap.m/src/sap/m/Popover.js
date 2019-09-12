@@ -605,7 +605,7 @@ sap.ui.define([
 				oNavContent = this._getSingleNavContent();
 				oPageContent = this._getSinglePageContent();
 				// TODO: migration not possible. jQuery.sap.simulateMobileOnDesktop is a testing flag which should not be used.
-				if (oNavContent && !this.getModal() && !Device.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
+				if (oNavContent && !this.getModal() && !Device.system.phone && !jQuery.sap.simulateMobileOnDesktop) {
 					//gain the focus back to popover in order to prevent the autoclose of the popover
 					oNavContent.attachEvent("afterNavigate", function (oEvent) {
 						var oDomRef = this.getDomRef();
