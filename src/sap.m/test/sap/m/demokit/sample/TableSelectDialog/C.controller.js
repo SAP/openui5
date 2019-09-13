@@ -28,6 +28,14 @@ sap.ui.define([
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.TableSelectDialog.Dialog", this);
 			}
 
+			// Set draggable property
+			var bDraggable = oEvent.getSource().data("draggable");
+			this._oDialog.setDraggable(bDraggable == "true");
+
+			// Set draggable property
+			var bResizable = oEvent.getSource().data("resizable");
+			this._oDialog.setResizable(bResizable == "true");
+
 			// Multi-select if required
 			var bMultiSelect = !!oEvent.getSource().data("multi");
 			this._oDialog.setMultiSelect(bMultiSelect);

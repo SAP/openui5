@@ -34,6 +34,32 @@
 				</customData>
 			</Button>
 			<Button
+			class="sapUiSmallMarginBottom"
+			text="Show Table Select Dialog (draggable=true)"
+			press="handleTableSelectDialogPress">
+			<customData>
+				<core:CustomData
+					key="multi"
+					value="true" />
+				<core:CustomData
+					key="draggable"
+					value="true" />
+			</customData>
+		</Button>
+		<Button
+			class="sapUiSmallMarginBottom"
+			text="Show Table Select Dialog (resizable=true)"
+			press="handleTableSelectDialogPress">
+			<customData>
+				<core:CustomData
+					key="multi"
+					value="true" />
+				<core:CustomData
+					key="resizable"
+					value="true" />
+			</customData>
+		</Button>
+			<Button
 				class="sapUiSmallMarginBottom"
 				text="Show Table Select Dialog (Remember)"
 				press="handleTableSelectDialogPress">
