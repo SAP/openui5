@@ -32,7 +32,7 @@ sap.ui.define([
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
 					xsrfToken : ApplyConenctor.xsrfToken,
-					tokenUrl : "/v1/settings",
+					tokenUrl : "/flex/keyuser/v1/settings",
 					applyConnector : ApplyConenctor,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
@@ -64,7 +64,7 @@ sap.ui.define([
 			return KeyUserConnector.reset(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : ApplyConenctor.xsrfToken,
-					tokenUrl : "/v1/settings",
+					tokenUrl : "/flex/keyuser/v1/settings",
 					applyConnector : ApplyConenctor
 				}), "a send request with correct parameters and options is sent");
 			});
@@ -94,6 +94,7 @@ sap.ui.define([
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.callCount, 3, "three request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the first request was a POST request");
+				assert.equal(oStubSendRequest.getCall(1).args[0], "/flex/keyuser/v1/settings", "the second request has the correct url");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "HEAD", "the second request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(2).args[1], "POST", "the third request was a POST request");
 				assert.equal(ApplyConenctor.xsrfToken, newToken, "a new token was stored in the apply connector");

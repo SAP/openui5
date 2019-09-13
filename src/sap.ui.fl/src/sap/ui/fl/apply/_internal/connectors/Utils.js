@@ -40,13 +40,13 @@ sap.ui.define([
 		 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
 		 *
 		 * @param {string} sNameSpace Namespace to determine the path to the configured connectors
-		 * @param {boolean} bIncludingStaticFileConnector Flag to determine if StaticFileConnector should be included
+		 * @param {boolean} bLoadApplyConnectors Flag to determine if StaticFileConnector should be included and write layers should be checked
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 		 */
-		getConnectors: function(sNameSpace, bIncludingStaticFileConnector) {
+		getConnectors: function(sNameSpace, bLoadApplyConnectors) {
 			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 			var mConnectors = [];
-			if (bIncludingStaticFileConnector) {
+			if (bLoadApplyConnectors) {
 				mConnectors = [STATIC_FILE_CONNECTOR_CONFIGURATION];
 			}
 
@@ -60,10 +60,12 @@ sap.ui.define([
 
 				sap.ui.require(aConnectors, function () {
 					Array.from(arguments).forEach(function (oConnector, iIndex) {
-						if (!mConnectors[iIndex].layers) {
-							mConnectors[iIndex].layers = oConnector.layers;
-						} else {
-							mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
+						if (!bLoadApplyConnectors) {
+							if (!mConnectors[iIndex].layers) {
+								mConnectors[iIndex].layers = oConnector.layers;
+							} else {
+								mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
+							}
 						}
 						mConnectors[iIndex].connectorModule = oConnector;
 					});
