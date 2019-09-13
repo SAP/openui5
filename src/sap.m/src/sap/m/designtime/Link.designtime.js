@@ -8,9 +8,21 @@ sap.ui.define([],
 		"use strict";
 
 	var oSelectTargetDialog = function(oControl, mPropertyBag) {
+		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.m.designtime");
 		return new Promise(function(fnResolve) {
 
+			var data = {
+				selectedKey : oControl.getTarget(),
+				titleText : oTextResources.getText("LINK_DIALOG_TITLE_CHANGE_TARGET"),
+				cancelBtn : oTextResources.getText("LINK_DIALOG_CANCEL_BTN"),
+				okBtn : oTextResources.getText("LINK_DIALOG_OK_BTN")
+			};
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(data);
+
 			var oDialog = sap.ui.xmlfragment("sap.m.designtime.LinkTargetSelectDialog", this);
+			oDialog.setModel(oModel);
+
 			oDialog.getBeginButton().attachPress(function(oEvent) {
 				var sTargetValue = sap.ui.getCore().byId("targetCombo").getValue();
 
