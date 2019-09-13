@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
 	BaseConnector,
 	ApplyUtils,
-	FlexUtils
+	FlexUtils,
+	_pick
 ) {
 	"use strict";
 
@@ -54,7 +56,7 @@ sap.ui.define([
 		 */
 		reset: function (mPropertyBag) {
 			var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
-			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
+			var mParameters = _pick(mPropertyBag, aParameters);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
 			if (sClient) {
@@ -88,7 +90,7 @@ sap.ui.define([
 		 */
 		publish: function (mPropertyBag) {
 			var aParameters = ["reference", "layer", "appVersion", "changelist", "package"];
-			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
+			var mParameters = _pick(mPropertyBag, aParameters);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
 			if (sClient) {
@@ -114,7 +116,7 @@ sap.ui.define([
 		 */
 		getFlexInfo: function (mPropertyBag) {
 			var aParameters = ["layer", "appVersion"];
-			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
+			var mParameters = _pick(mPropertyBag, aParameters);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
 			if (sClient) {

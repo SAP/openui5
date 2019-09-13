@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/base/security/encodeURLParameters",
 	"sap/ui/fl/apply/connectors/BaseConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
 	encodeURLParameters,
 	BaseConnector,
 	ApplyUtils,
-	FlexUtils
+	FlexUtils,
+	_pick
 ) {
 	"use strict";
 
@@ -45,7 +47,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
+			var mParameters = _pick(mPropertyBag, ["appVersion"]);
 
 			var sClient = FlexUtils.getUrlParameter("sap-client");
 			if (sClient) {

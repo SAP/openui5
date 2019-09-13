@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
 	BaseConnector,
-	ApplyUtils
+	ApplyUtils,
+	_pick
 ) {
 	"use strict";
 
@@ -40,7 +42,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, ["appVersion"]);
+			var mParameters = _pick(mPropertyBag, ["appVersion"]);
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_DATA, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken : this.xsrfToken }).then(function (oResult) {

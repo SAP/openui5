@@ -8,14 +8,16 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/library"
+	"sap/ui/fl/library",
+	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
 	BaseConnector,
 	ApplyConnector,
 	ApplyUtils,
 	WriteUtils,
-	flLibrary
+	flLibrary,
+	_pick
 ) {
 	"use strict";
 
@@ -57,7 +59,7 @@ sap.ui.define([
 		 */
 		reset: function (mPropertyBag) {
 			var aParameters = ["reference", "appVersion", "generator"];
-			var mParameters = ApplyUtils.getSubsetOfObject(mPropertyBag, aParameters);
+			var mParameters = _pick(mPropertyBag, aParameters);
 			if (mPropertyBag.selectorIds) {
 				mParameters.selector = mPropertyBag.selectorIds;
 			}
