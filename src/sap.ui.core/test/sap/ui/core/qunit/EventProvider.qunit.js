@@ -314,11 +314,62 @@ sap.ui.require([
 		var that = this;
 		oEventProvider.attachEventOnce("testOnce", function() {
 			iCount++;
+			// Firing inside handler also should not trigger handler again
+			if (iCount === 1) {
+				oEventProvider.fireEvent("testOnce");
+			}
 			assert.equal(that, this, "Right scope");
 		}, this);
 		oEventProvider.fireEvent("testOnce");
 		oEventProvider.fireEvent("testOnce");
 		assert.equal(iCount, 1, "Handler is only called once");
+	});
+
+	QUnit.test("attachEventOnce, detach before fire", function(assert) {
+		assert.expect(1);
+		var oEventProvider = new EventProvider();
+		var iCount = 0;
+		var handler = function() {
+			iCount++;
+			assert.ok(false, "Should not be called");
+		};
+		oEventProvider.attachEventOnce("testOnce", handler, this);
+		oEventProvider.detachEvent("testOnce", handler, this);
+		oEventProvider.fireEvent("testOnce");
+		oEventProvider.fireEvent("testOnce");
+		assert.equal(iCount, 0, "Handler is never called");
+	});
+
+	QUnit.test("EventHandlerChange", function(assert) {
+		assert.expect(13);
+		var oEventProvider = new EventProvider();
+		var oListener = {};
+		var fnFunction = function(){};
+		var oData = {test: true};
+		var iCount = 0;
+		oEventProvider.attachEvent("EventHandlerChange", function(oEvent) {
+			iCount++;
+			if (iCount === 1) {
+				assert.strictEqual(oEvent.getParameter("EventId"), "EventHandlerChange", "Event ID is provided correctly");
+				assert.strictEqual(oEvent.getParameter("type"), "listenerAttached", "Type is provided correctly");
+			}
+			if (iCount > 1) {
+				assert.strictEqual(oEvent.getParameter("EventId"), "test", "Event ID is provided correctly");
+				assert.strictEqual(oEvent.getParameter("listener"), oListener, "Listener is provided correctly");
+				assert.strictEqual(oEvent.getParameter("func"), fnFunction, "Function is provided correctly");
+				assert.strictEqual(oEvent.getParameter("data"), oData, "Data is provided correctly");
+			}
+			if (iCount === 2) {
+				assert.strictEqual(oEvent.getParameter("type"), "listenerAttached", "Type is provided correctly");
+			}
+			if (iCount === 3) {
+				assert.strictEqual(oEvent.getParameter("type"), "listenerDetached", "Type is provided correctly");
+			}
+
+		});
+		oEventProvider.attachEvent("test", oData, fnFunction, oListener);
+		oEventProvider.detachEvent("test", fnFunction, oListener);
+		assert.equal(iCount, 3, "Handler is called three times");
 	});
 
 });

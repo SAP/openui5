@@ -124,11 +124,16 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 			oData = undefined;
 		}
 		assert(typeof (fnFunction) === "function", "EventProvider.attachEventOnce: fnFunction must be a function");
-		function fnOnce() {
+		var fnOnce = function() {
 			this.detachEvent(sEventId, fnOnce);  // ‘this’ is always the control, due to the context ‘undefined’ in the attach call below
 			fnFunction.apply(oListener || this, arguments);  // needs to do the same resolution as in fireEvent
-		}
-		this.attachEvent(sEventId, oData, fnOnce, undefined);  // a listener of ‘undefined’ enforce a context of ‘this’ even after clone
+		};
+		fnOnce.oOriginal = {
+			fFunction: fnFunction,
+			oListener: oListener,
+			oData: oData
+		};
+		this.attachEvent(sEventId, oData, fnOnce, undefined); // a listener of ‘undefined’ enforce a context of ‘this’ even after clone
 		return this;
 	};
 
@@ -157,16 +162,26 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 			return this;
 		}
 
-		var oListener;
+		var oFound, oOriginal;
 
 		//PERFOPT use array. remember length to not re-calculate over and over again
 		for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
 			//PERFOPT check for identity instead of equality... avoid type conversion
 			if (aEventListeners[i].fFunction === fnFunction && aEventListeners[i].oListener === oListener) {
-				//delete aEventListeners[i];
-				oListener = aEventListeners[i];
+				oFound = aEventListeners[i];
 				aEventListeners.splice(i,1);
 				break;
+			}
+		}
+		// If no listener was found, look for original listeners of attachEventOnce
+		if (!oFound) {
+			for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
+				oOriginal = aEventListeners[i].fFunction.oOriginal;
+				if (oOriginal && oOriginal.fFunction === fnFunction && oOriginal.oListener === oListener) {
+					oFound = oOriginal;
+					aEventListeners.splice(i,1);
+					break;
+				}
 			}
 		}
 		// If we just deleted the last registered EventHandler, remove the whole entry from our map.
@@ -174,9 +189,9 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 			delete mEventRegistry[sEventId];
 		}
 
-		if (oListener && mEventRegistry[EVENT__LISTENERS_CHANGED] ) {
+		if (oFound && mEventRegistry[EVENT__LISTENERS_CHANGED] ) {
 			// Inform interested parties about changed EventHandlers
-			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerDetached', listener: oListener.listener, func: oListener.fFunction, data: oListener.oData});
+			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerDetached', listener: oFound.oListener, func: oFound.fFunction, data: oFound.oData});
 		}
 
 		return this;

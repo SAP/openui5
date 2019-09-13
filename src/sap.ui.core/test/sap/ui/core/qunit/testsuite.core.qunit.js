@@ -247,7 +247,10 @@ sap.ui.define(function() {
 				}
 			},
 			ManagedObjectObserver: {
-				title: "sap.ui.base.ManagedObjectObserver"
+				title: "sap.ui.base.ManagedObjectObserver",
+				qunit: {
+					reorder: false
+				}
 			},
 			ManagedObjectRegistry: {
 				title: "sap.ui.base.ManagedObjectRegistry"
