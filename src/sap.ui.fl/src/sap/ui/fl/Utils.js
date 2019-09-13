@@ -1481,26 +1481,6 @@ function(
 		},
 
 		/**
-		 * Returns a new object composed of the own and inherited property paths
-		 * of given object which are not in the given array
-		 *
-		 * Example: for obj = { 'a': 1, 'b': '2', 'c': 3 };
-		 * omit(obj, ['a', 'c']); -> Returns { 'b': '2' }
-		 *
-		 * @param  {Object} oObject - Source object
-		 * @param  {string|string[]} vPropertyName - Property paths to omit
-		 * @return {Object} returns new object
-		 */
-		omit: function (oObject, vPropertyName) {
-			var oNewObject = Object.assign({}, oObject);
-			var aPropertyPaths = Array.isArray(vPropertyName) ? vPropertyName : [vPropertyName];
-			aPropertyPaths.forEach(function (sProperty) {
-				delete oNewObject[sProperty];
-			});
-			return oNewObject;
-		},
-
-		/**
 		 * Checks if the target object is included in the array. The uniformity of the objects is indicated by the comparator function.
 		 * The comparator function is invoked to compare the objects. It accepts two arguments (oObject1, oObject2)
 		 * and has to return <code>true</code> when objects need to be equal.

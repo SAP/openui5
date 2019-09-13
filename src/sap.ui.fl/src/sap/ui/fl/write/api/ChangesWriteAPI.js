@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/fl/Utils"
+	"sap/base/util/restricted/_omit"
 ], function(
 	ChangesController,
 	DescriptorInlineChangeFactory,
@@ -21,7 +21,7 @@ sap.ui.define([
 	Element,
 	includes,
 	JsControlTreeModifier,
-	flexUtils
+	_omit
 ) {
 	"use strict";
 	/**
@@ -105,7 +105,7 @@ sap.ui.define([
 			}
 			var bDependenciesExist = oFlexController.checkForOpenDependenciesForControl(mPropertyBag.change.getSelector(), mPropertyBag.modifier, mPropertyBag.appComponent);
 			if (!bDependenciesExist && mPropertyBag.element instanceof Element) {
-				return oFlexController.checkTargetAndApplyChange(mPropertyBag.change, mPropertyBag.element, flexUtils.omit(mPropertyBag, ["element", "change"]));
+				return oFlexController.checkTargetAndApplyChange(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]));
 			}
 			// TODO: Descriptor apply function
 			return Promise.reject(new Error("The following Change cannot be applied because of a dependency: " + mPropertyBag.change.getId()));

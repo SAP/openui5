@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/base/Log",
 	"sap/ui/fl/write/_internal/SaveAs",
+	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/api/FeaturesAPI"
@@ -32,6 +33,7 @@ sap.ui.define([
 	ChangesWriteAPI,
 	Log,
 	SaveAs,
+	_omit,
 	jQuery,
 	sinon,
 	FeaturesAPI
@@ -381,7 +383,7 @@ sap.ui.define([
 				selector: this.vSelector,
 				invalidateCache: true
 			};
-			var fnPersistenceStub = getMethodStub([flexUtils.omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache], Promise.resolve(sReturnValue));
+			var fnPersistenceStub = getMethodStub([_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache], Promise.resolve(sReturnValue));
 
 			mockFlexController(mPropertyBag.selector, { _oChangePersistence: { getChangesForComponent : fnPersistenceStub } });
 
