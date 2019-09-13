@@ -917,23 +917,23 @@
 
 			// dialogWithWidthButton
 
-			var endButton = new sap.m.Button('largeButton', {
-				press: function() {
-					dialogWithWidthButton.close();
-				},
-				text: "Close"
-			});
+			// var endButton = new sap.m.Button('largeButton', {
+			// 	press: function() {
+			// 		dialogWithWidthButton.close();
+			// 	},
+			// 	text: "Close"
+			// });
 
-			var dialogWithWidthButton = new sap.m.Dialog({
-				endButton: endButton,
-				content: [
-					new sap.ui.core.HTML({content: '<div>Do you want to start a new world domination campaign?</div>'})
-				]
-			}).addDelegate({
-						onAfterRendering: function() {
-							jQuery('#largeButton').css({ width: '100%' });
-						}
-					});
+			// var dialogWithWidthButton = new sap.m.Dialog({
+			// 	endButton: endButton,
+			// 	content: [
+			// 		new sap.ui.core.HTML({content: '<div>Do you want to start a new world domination campaign?</div>'})
+			// 	]
+			// }).addDelegate({
+			// 			onAfterRendering: function() {
+			// 				jQuery('#largeButton').css({ width: '100%' });
+			// 			}
+			// 		});
 
 			// disabledScrollingDialogWithSplitter
 
@@ -974,7 +974,7 @@
 					new sap.m.Button({
 						text: 'Add EndButton',
 						press: function () {
-							dialogWithHidingFooter.setEndButton(new sap.m.Button({text: 'Generated button.'}));
+							dialogWithHidingFooter.setEndButton(new sap.m.Button({text: 'Generated button'}));
 						}
 					}),
 					new sap.m.Button({
@@ -1308,7 +1308,7 @@
 					})
 				],
 				beginButton: new sap.m.Button({
-					text: 'Begin button with very long, long text',
+					text: 'Begin button with very long text',
 					press: function () {
 						dialogWithButtonsWithLongText.close();
 					}
@@ -1326,6 +1326,13 @@
 			var page1 = new sap.m.Page("page1", {
 				title: "Mobile Dialog Control",
 				content: [
+					new sap.m.CheckBox("compactMode", {
+						text: "Compact Mode",
+						selected : false,
+						select : function() {
+							$("body").toggleClass("sapUiSizeCompact");
+						}
+					}).addStyleClass("sapUiSmallMarginEnd"),
 					new sap.m.Button('simpleDialogButton', {
 						text: "Simple Dialog",
 						width: _buttonWidth,
@@ -1653,13 +1660,13 @@
 						}
 					}),
 
-					new sap.m.Button({
-						text: "Button with w:100% inline style",
-						width: _buttonWidth,
-						press: function () {
-							dialogWithWidthButton.open();
-						}
-					}),
+					// new sap.m.Button({
+					// 	text: "Button with w:100% inline style",
+					// 	width: _buttonWidth,
+					// 	press: function () {
+					// 		dialogWithWidthButton.open();
+					// 	}
+					// }),
 
 					new sap.m.Button({
 						text: "Drag with more than one header",

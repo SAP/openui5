@@ -23,3 +23,10 @@
 .sapMDialogResizeHandler::before {
 	color: @sapUiContentIconColor;
 }
+
+// buttons on phone must be to the right side (in LTR mode)
+html.sap-phone .sapMDialog {
+	& > footer .sapMFooter-CTX {
+		justify-content: flex-end;
+	}
+}

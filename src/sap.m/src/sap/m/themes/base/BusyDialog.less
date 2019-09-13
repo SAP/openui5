@@ -3,6 +3,8 @@
 /* Base theme                        */
 /* ================================= */
 
+@_sap_m_BusyDialog_IndicatorMargin: 1em;
+
 //this selectors need to be more specific from the Dialog's
 .sapMBusyDialog.sapMDialog {
 	min-width: 18.75rem !important;
@@ -10,7 +12,7 @@
 	width: 18.75rem !important;
 
 	.sapMBusyIndicator {
-		margin: 1em;
+		margin: @_sap_m_BusyDialog_IndicatorMargin;
 	}
 
 	&.sapUiPopupWithPadding .sapMDialogScrollCont {
