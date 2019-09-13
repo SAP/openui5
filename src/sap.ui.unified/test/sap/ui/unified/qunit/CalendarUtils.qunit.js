@@ -439,6 +439,29 @@ sap.ui.define([
 		assert.equal(CalendarUtils._isBetween(new CalendarDate(2016, 0, 5), new CalendarDate(2017, 0, 5), new CalendarDate(2017, 0, 5)), false, "the date is not in the range");
 	});
 
+	QUnit.test("_hoursBetween", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._hoursBetween();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._hoursBetween(null, new Date());
+		}, "Without first parameter");
+
+		assert.throws(function() {
+			CalendarUtils._hoursBetween(new Date());
+		}, "Without second parameter");
+
+		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 8, 0, 0), new Date(2017, 0, 1, 9, 0, 0)), 1, "1 hour in the same day");
+		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 23, 0, 0), new Date(2017, 0, 2, 0, 0, 0)), 1, "1 hour in different days");
+		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 31, 23, 0, 0), new Date(2017, 1, 1, 0, 0, 0)), 1, "1 hour in different months");
+		assert.equal(CalendarUtils._hoursBetween(new Date(2016, 11, 31, 23, 0, 0), new Date(2017, 0, 1, 0, 0, 0)), 1, "1 hour in different years");
+		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 9, 0, 0), new Date(2017, 0, 1, 8, 0, 0)), 1, "1 hour negative");
+		assert.equal(CalendarUtils._hoursBetween(new Date(2017, 0, 1, 8, 0, 0), new Date(2017, 0, 1, 8, 0, 0)), 0, "no delta");
+
+	});
+
 	QUnit.test("_daysBetween", function(assert) {
 
 		assert.throws(function() {
@@ -461,6 +484,27 @@ sap.ui.define([
 		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1), new CalendarDate(2017, 0, 1)), 0, "no delta");
 		assert.equal(CalendarUtils._daysBetween(new CalendarDate(2017, 0, 1, sap.ui.core.CalendarType.Islamic),
 			new CalendarDate(2017, 0, 2, sap.ui.core.CalendarType.Islamic)), -1, "1 day negative");
+
+	});
+
+	QUnit.test("_monthsBetween", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._monthsBetween();
+		}, "Without parameters");
+
+		assert.throws(function() {
+			CalendarUtils._monthsBetween(null, new Date());
+		}, "Without first parameter");
+
+		assert.throws(function() {
+			CalendarUtils._monthsBetween(new Date());
+		}, "Without second parameter");
+
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 1, 1)), 1, "1 month in the same year");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2016, 11, 1)), 1, "1 month in different years");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 1, 1), new Date(2017, 0, 1)), 1, "1 month negative");
+		assert.equal(CalendarUtils._monthsBetween(new Date(2017, 0, 1), new Date(2017, 0, 1)), 0, "no delta");
 
 	});
 

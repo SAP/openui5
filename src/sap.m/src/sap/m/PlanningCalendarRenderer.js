@@ -1,8 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([],
-	function() {
+sap.ui.define([
+		"sap/ui/core/InvisibleText"
+	],
+	function(InvisibleText) {
 	"use strict";
 
 	/**
@@ -21,9 +23,14 @@ sap.ui.define([],
 
 		var sId = oPC.getId();
 		var sTooltip = oPC.getTooltip_AsString();
+		var oHeader = oPC._getHeader();
 
 		oRm.write("<div");
 		oRm.writeControlData(oPC);
+		oRm.writeAccessibilityState({
+			role: "region",
+			labelledby: InvisibleText.getStaticId("sap.m", oPC._oRB.getText("PLANNINGCALENDAR"))
+		});
 		oRm.addClass("sapMPlanCal");
 		if (oPC._iSize !== undefined && oPC._iSize !== null) {
 			oRm.addClass("sapMSize" + oPC._iSize);
@@ -64,6 +71,8 @@ sap.ui.define([],
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">"); // div element
+
+		oRm.renderControl(oHeader);
 
 		var oTable = oPC.getAggregation("table");
 		oRm.renderControl(oTable);

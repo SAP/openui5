@@ -172,6 +172,13 @@ sap.ui.define([
 					only: "sap/m/CustomTreeItem"
 				}
 			},
+			DateNavigation: {
+				title: "Test page for sap.m.delegate.DateNavigation",
+				_alternativeTitle: "QUnit tests for sap.m.delegate.DateNavigation",
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			DatePicker: {
 				title: "DatePicker - sap.m",
 				_alternativeTitle: "QUnit tests: sap.m.DatePicker",

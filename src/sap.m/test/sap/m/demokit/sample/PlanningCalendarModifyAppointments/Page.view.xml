@@ -14,7 +14,6 @@
 				intervalSelect="handleAppointmentAddWithContext">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
 				<Button id="addButton" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add"/>
 			</toolbarContent>
 			<rows>

@@ -13,7 +13,6 @@
 				appointmentSelect="handleAppointmentSelect">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
 				<Label text="Logged in as" />
 				<Select
 						id="userRole"

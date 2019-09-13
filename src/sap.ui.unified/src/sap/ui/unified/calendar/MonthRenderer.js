@@ -419,7 +419,9 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 
 		//oMonth.getDate() is a public date object, so it is always considered local timezones.
-		if (oMonth.getParent() && oMonth.getParent().getMetadata().getName() === "sap.ui.unified.CalendarOneMonthInterval" && oDay.getMonth() !== oMonth.getStartDate().getMonth()){
+		if (((oMonth.getParent() && oMonth.getParent().getMetadata().getName() === "sap.ui.unified.CalendarOneMonthInterval")
+			|| (oMonth.getMetadata().getName() === "sap.ui.unified.calendar.OneMonthDatesRow"))
+			&& oMonth.getStartDate() && oDay.getMonth() !== oMonth.getStartDate().getMonth()) {
 			oRm.addClass("sapUiCalItemOtherMonth");
 		}
 

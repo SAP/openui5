@@ -519,6 +519,17 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the parent control instance which contains the legend
+	 * to the MonthsRow control instance
+	 * @ui5-restricted sap.m.PlanningCalendar
+	 * @private
+	 * @param {*} oControl containing the legend
+	 */
+	MonthsRow.prototype._setLegendControlOrigin = function (oControl) {
+		this._oLegendControlOrigin = oControl;
+	};
+
 	/*
 	 * if used inside CalendarMonthInterval get the value from the parent
 	 * To don't have sync issues...
@@ -526,6 +537,10 @@ sap.ui.define([
 	MonthsRow.prototype.getLegend = function(){
 
 		var oParent = this.getParent();
+
+		if (this._oLegendControlOrigin) {
+			return this._oLegendControlOrigin.getLegend();
+		}
 
 		if (oParent && oParent.getLegend) {
 			return oParent.getLegend();

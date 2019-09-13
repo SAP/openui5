@@ -506,6 +506,25 @@ sap.ui.define([
 		};
 
 		/**
+		 * Evaluates hours between two dates.
+		 * @param {object} oFirstDate JavaScript date
+		 * @param {object} oSecondDate JavaScript date
+		 * @return {int} iMinutes
+		 * @private
+		 */
+		CalendarUtils._hoursBetween = function(oFirstDate, oSecondDate) {
+			var oNewFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(),
+				oFirstDate.getUTCMonth(), oFirstDate.getUTCDate(), oFirstDate.getUTCHours()));
+			var oNewSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(),
+				oSecondDate.getUTCMonth(), oSecondDate.getUTCDate(), oSecondDate.getUTCHours()));
+
+			oNewFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
+			oNewSecondDate.setUTCFullYear(oSecondDate.getUTCFullYear());
+
+			return Math.abs((oNewFirstDate.getTime() - oNewSecondDate.getTime()) / (1000 * 60 * 60));
+		};
+
+		/**
 		 * Calculates the difference between two calendar dates in days.
 		 * @param {sap.ui.unified.calendar.CalendarDate} oFirstDate the first date
 		 * @param {sap.ui.unified.calendar.CalendarDate} oSecondDate the second date
@@ -518,6 +537,24 @@ sap.ui.define([
 			this._checkCalendarDate(oSecondDate);
 
 			return Math.ceil((oFirstDate.valueOf() - oSecondDate.valueOf()) / (this.HOURS24));
+		};
+
+		/**
+		 * Evaluates months between two dates.
+		 * @param {object} oFirstDate JavaScript date
+		 * @param {object} oSecondDate JavaScript date
+		 * @return {int} iMinutes
+		 * @private
+		 */
+		CalendarUtils._monthsBetween = function(oFirstDate, oSecondDate) {
+			var oUTCFirstDate = new Date(Date.UTC(oFirstDate.getUTCFullYear(), oFirstDate.getUTCMonth(), oFirstDate.getUTCDate())),
+				oUTCSecondDate = new Date(Date.UTC(oSecondDate.getUTCFullYear(), oSecondDate.getUTCMonth(), oSecondDate.getUTCDate()));
+
+			oUTCFirstDate.setUTCFullYear(oFirstDate.getUTCFullYear());
+			oUTCSecondDate.setUTCFullYear(oSecondDate.getUTCFullYear());
+
+			return Math.abs(oUTCFirstDate.getUTCFullYear() * 12 + oUTCFirstDate.getUTCMonth()
+				- oUTCSecondDate.getUTCFullYear() * 12 - oUTCSecondDate.getUTCMonth());
 		};
 
 		/**

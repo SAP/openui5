@@ -17,7 +17,6 @@
 			viewChange = "handleViewChange">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<ToolbarSpacer/>
 				<Label id="label" text="Select a date from the interval to mark/unmark it as a non-working day."/>
 				<Select id="select" tooltip="Group appointments mode" change="handleGroupModeChange">
 					<items>
