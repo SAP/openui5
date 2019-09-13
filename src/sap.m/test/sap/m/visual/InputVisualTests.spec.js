@@ -5,7 +5,7 @@ describe("sap.m.InputVisualTests", function() {
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.Input';
 
-	var aStartPosition = [4, 4, 4, 9, 9, 9, 9, 9, 11, 11]; // dependant to the number of RadioButtonGroups and their content in the test page
+	var aStartPosition = [4, 4, 4, 9, 9, 9, 9, 9, 11, 11, 13 ,13]; // dependant to the number of RadioButtonGroups and their content in the test page
 
 	 var takePictures = function(n, max) {
 		var inpHolder = element(by.id("inpHolder"));
