@@ -467,6 +467,12 @@ sap.ui.define([
 
 	};
 
+	YearPicker.prototype.ontouchstart = function (oEvent){
+		if (!Device.system.desktop && oEvent.target.classList.contains("sapUiCalItem")){
+			oEvent.target.classList.add("sapUiCalItemSel");
+		}
+	};
+
 	YearPicker.prototype._selectYear = function (iIndex) {
 
 		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
