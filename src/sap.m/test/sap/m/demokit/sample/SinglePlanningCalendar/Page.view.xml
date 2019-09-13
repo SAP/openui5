@@ -25,6 +25,7 @@
 			id="SPC1"
 			class="sapUiSmallMarginTop"
 			title= "My Calendar"
+			viewChange="handleViewChange"
 			appointmentSelect="handleAppointmentSelect"
 			headerDateSelect="handleHeaderDateSelect"
 			startDateChange="handleStartDateChange"

@@ -372,6 +372,10 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 			}
 		},
 
+		handleViewChange: function () {
+			MessageToast.show("'viewChange' event fired.");
+		},
+
 		handleAppointmentSelect: function (oEvent) {
 			var oAppointment = oEvent.getParameter("appointment"),
 				oStartDate,

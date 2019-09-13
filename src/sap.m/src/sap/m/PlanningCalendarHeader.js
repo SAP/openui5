@@ -197,7 +197,12 @@ function(
 			/**
 			 * The calendar picker popup was closed and no date was selected.
 			 */
-			cancel: {}
+			cancel: {},
+
+			/**
+			 * The view was changed by user interaction.
+			 */
+			viewChange : {}
 		},
 
 		associations: {
@@ -437,6 +442,7 @@ function(
 	PlanningCalendarHeader.prototype._getOrCreateViewSwitch = function () {
 		if (!this._oViewSwitch) {
 			this._oViewSwitch = new SegmentedButton(this.getId() + "-ViewSwitch");
+			this._oViewSwitch.attachEvent("selectionChange", this._handleViewSwitchChange, this);
 		}
 
 		return this._oViewSwitch;
@@ -484,6 +490,15 @@ function(
 		// TODO: Focus should be returned to the picker after selection.
 		//oPickerBtnDomRef && oPickerBtnDomRef.focus();
 	};
+
+	/**
+	 * Handler for the change event of the view switch.
+	 * @private
+	 */
+	PlanningCalendarHeader.prototype._handleViewSwitchChange = function () {
+		this.fireViewChange();
+	};
+
 
 	/**
 	 * Opens the picker popup, when the picker button from the _navigationToolbar is pressed.
