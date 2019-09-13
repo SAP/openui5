@@ -2262,6 +2262,13 @@ function(
 			text : this._oRb.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
 			press : function() {
 				if (this.getShowTableSuggestionValueHelp()) {
+
+					// request for value help interrupts autocomplete
+					if (this._oSuggPopover._sTypedInValue) {
+						this.updateDomValue(this._oSuggPopover._sTypedInValue);
+						this._oSuggPopover._resetTypeAhead();
+					}
+
 					this.fireValueHelpRequest({fromSuggestions: true});
 					this._oSuggPopover._iPopupListSelectedIndex = -1;
 					this._closeSuggestionPopup();

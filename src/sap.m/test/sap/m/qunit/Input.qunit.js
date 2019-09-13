@@ -3657,6 +3657,50 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("showTableSuggestionValueHelp", function (assert) {
+		// arrange
+		var oInput = new Input({
+			showValueHelp: true,
+			valueHelpRequest: function() {
+				assert.strictEqual(oInput.getValue(), "p", "The value of the input should be exactly what the user typed.");
+				assert.notOk(oInput.getSelectedRow(), "There shouldn't be a selected row.");
+			},
+			showSuggestion: true,
+			suggestionItemSelected: function () {},
+			suggestionColumns: [ new Column({ header: new Label({ text: "header" })}) ]
+		});
+
+		var oTableItemTemplate = new ColumnListItem({
+			cells : [new Label({ text : "{name}" })]
+		});
+
+		var oSuggestionData = {
+			tabularSuggestionItems : [ { name : "Product1" }, { name : "Product2" }, { name : "Product3" }]
+		};
+
+		var oModel = new JSONModel(oSuggestionData);
+
+		oInput.setModel(oModel);
+		oInput.bindSuggestionRows({
+			path: "/tabularSuggestionItems",
+			template: oTableItemTemplate
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oFakeKeydown = new jQuery.Event("keydown", { which: KeyCodes.P });
+		oInput._oSuggPopover._oPopover.open();
+
+		// act
+		oInput._$input.focus().trigger(oFakeKeydown).val("p").trigger("input");
+		this.clock.tick(300);
+		oInput._getShowMoreButton().firePress();
+
+		// clean up
+		oInput.destroy();
+	});
+
 	QUnit.module("API", {
 		beforeEach: function () {
 			this.oInput = new Input().placeAt("qunit-fixture");
