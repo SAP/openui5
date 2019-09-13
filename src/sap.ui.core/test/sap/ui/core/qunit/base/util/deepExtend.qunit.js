@@ -1,8 +1,8 @@
 /*global QUnit */
-sap.ui.define(["sap/base/util/merge"], function(merge) {
+sap.ui.define(["sap/base/util/deepExtend"], function(deepExtend) {
 	"use strict";
 
-	QUnit.module("sap/base/util/merge");
+	QUnit.module("sap/base/util/deepExtend");
 
 	QUnit.test("tests for deep extend object", function(assert) {
 		var oOrig1 = {m: "c"};
@@ -12,32 +12,22 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 
 
 		//deep clone
-		var oMerged = merge(oBaseObject, oOrig1, oOrig3);
+		var oMerged = deepExtend(oBaseObject, oOrig1, oOrig3);
 		oNested.f = "mod";
 		oMerged.a = 5;
 		assert.ok(oMerged, "should be there");
 		assert.equal(oMerged.m, "c", "oOrig1 property should exist");
 		assert.equal(oMerged.a, 5, "newly created property a should exist");
 		assert.notEqual(oMerged.x, oNested, "Nested object should not be the same as it was cloned");
-		assert.equal(oMerged.x.f, "dh", "Nested object value is independent from further modifications");
+		assert.equal(oMerged.x.f, "dh", "Nested object value changed via reference");
 
 
 		assert.notOk(oOrig1.a, "should not exist");
 	});
 
 	QUnit.test("empty-object target", function(assert) {
-		var oMerged = merge();
+		var oMerged = deepExtend();
 		assert.equal(typeof oMerged, "object", "object should exist");
-	});
-
-	QUnit.test("string target", function(assert) {
-		var oMerged = merge("foo", { a: 1 });
-		assert.deepEqual(oMerged, { a: 1 }, "target should default to object");
-	});
-
-	QUnit.test("null source", function(assert) {
-		var oMerged = merge({}, null, { a: 1 });
-		assert.deepEqual(oMerged, { a: 1 }, "null as source should be ignored");
 	});
 
 	QUnit.test("undefined/null properties", function(assert) {
@@ -55,12 +45,11 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 				prop65: 2
 			}
 		};
-		var oClone = merge({}, oMyObject);
-		assert.equal(Object.keys(oClone).length, 6, "undefined property cloned");
-		assert.equal(oMyObject.prop4, oClone.prop4, "property cloned successfully");
-		assert.equal(oMyObject.prop5, oClone.prop5, "property cloned successfully");
-		assert.equal(oMyObject.prop6.prop63, oClone.prop6.prop63, "property cloned successfully");
-		assert.equal(oMyObject.prop6.prop64, oClone.prop6.prop64, "property cloned successfully");
+		var oClone = deepExtend({}, oMyObject);
+		assert.equal(oClone.prop4, null, "null property cloned");
+		assert.equal(Object.keys(oClone).length, 5, "undefined property not cloned");
+		assert.equal(Object.keys(oClone.prop6).length, 4, "undefined property not cloned (deep copy)");
+		assert.equal(oClone.prop6.prop64, null, "null property cloned");
 	});
 
 	QUnit.test("target with array insert plain object", function(assert) {
@@ -68,7 +57,7 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 		var oOrig3 = {nested: [{}]};
 		var oBaseObject = {nested: [{}]};
 
-		var oMerged = merge(oBaseObject, oOrig3);
+		var oMerged = deepExtend(oBaseObject, oOrig3);
 		assert.ok(oMerged, "should be there");
 		assert.ok(oMerged.nested, "nested should be there");
 		assert.ok(Array.isArray(oMerged.nested), "nested object should be an array");
@@ -81,7 +70,7 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 		var oOrig3 = {x: {nested: [1, "test"]}};
 		var oBaseObject = {};
 
-		var oMerged = merge(oBaseObject, oOrig3);
+		var oMerged = deepExtend(oBaseObject, oOrig3);
 		assert.ok(oMerged, "should be there");
 		assert.ok(oMerged.x, "x should be there");
 		assert.ok(oMerged.x.nested, "nested should be there");
@@ -96,7 +85,7 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 		var oOrig3 = {nested: [1, "test1"]};
 		var oBaseObject = {nested: [2, "test2"]};
 
-		var oMerged = merge(oBaseObject, oOrig3);
+		var oMerged = deepExtend(oBaseObject, oOrig3);
 		assert.ok(oMerged, "should be there");
 		assert.ok(Array.isArray(oMerged.nested), "nested object should be an array");
 		assert.equal(oMerged.nested.length, 2, "nested array should contain 2 values");
@@ -109,7 +98,7 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 		var oOrig3 = {nested: [1, "test", ["inner"]]};
 		var oBaseObject = {};
 
-		var oMerged = merge(oBaseObject, oOrig3);
+		var oMerged = deepExtend(oBaseObject, oOrig3);
 		assert.ok(oMerged, "should be there");
 		assert.ok(oMerged.nested, "nested should be there");
 		assert.ok(Array.isArray(oMerged.nested), "nested object should be an array");
@@ -122,7 +111,7 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 		var src = JSON.parse('{"__proto__": {"x":42}}');
 		var oBaseObject = {};
 
-		merge(oBaseObject, src);
+		deepExtend(oBaseObject, src);
 
 		assert.ok(!("x" in {}), "Object.prototype not polluted");
 	});
@@ -131,7 +120,7 @@ sap.ui.define(["sap/base/util/merge"], function(merge) {
 		var oBaseObject = {};
 		var oObjectWithProto = Object.create({ foo: Object.create({ bar: true }) });
 
-		merge(oBaseObject, oObjectWithProto);
+		deepExtend(oBaseObject, oObjectWithProto);
 
 		assert.deepEqual(oBaseObject, { foo: { bar: true } }, "Properties from prototype is also cloned");
 	});
