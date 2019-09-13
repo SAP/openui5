@@ -115,6 +115,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * OData V4 request headers reserved for internal use.
+	 */
+	Requestor.prototype.mReservedHeaders = {
+		accept : true,
+		"accept-charset" : true,
+		"content-encoding" : true,
+		"content-id" : true,
+		"content-language" : true,
+		"content-length" : true,
+		"content-transfer-encoding" : true,
+		"content-type" : true,
+		"if-match" : true,
+		"if-none-match" : true,
+		isolation : true,
+		"odata-isolation" : true,
+		"odata-maxversion" : true,
+		"odata-version" : true,
+		prefer : true,
+		"sap-contextid" : true
+	};
+
+	/**
 	 * Adds a change set to the batch queue for the given group. All modifying requests created
 	 * until the next call to this method are added to this new change set.
 	 *
@@ -333,6 +355,51 @@ sap.ui.define([
 			}
 		}
 		return bCanceled;
+	};
+
+	/**
+	 * Checks if there are open requests. Open requests are announced, pending, or running change
+	 * requests.
+	 *
+	 * @throws {Error}
+	 *   If there are open requests
+	 *
+	 * @public
+	 */
+	Requestor.prototype.checkForOpenRequests = function () {
+		var that = this;
+
+		if (Object.keys(this.mRunningChangeRequests).length // running change requests
+			|| Object.keys(this.mBatchQueue).some(function (sGroupId) { // pending requests
+				return that.mBatchQueue[sGroupId].some(function (vRequest) {
+					return Array.isArray(vRequest) ? vRequest.length : true;
+				});
+			})
+			|| this.aLockedGroupLocks.some(function (oGroupLock) { // announced requests
+				return oGroupLock.isLocked();
+			})) {
+			throw new Error("Unexpected open requests");
+		}
+	};
+
+	/**
+	 * Checks if the given headers are allowed.
+	 *
+	 * @param {object} mHeaders
+	 *   Map of HTTP header names to their values
+	 * @throws {Error}
+	 *   If <code>mHeaders</code> contains unsupported headers
+	 *
+	 * @public
+	 */
+	Requestor.prototype.checkHeaderNames = function (mHeaders) {
+		var sKey;
+
+		for (sKey in mHeaders) {
+			if (this.mReservedHeaders[sKey.toLowerCase()]) {
+				throw new Error("Unsupported header: " + sKey);
+			}
+		}
 	};
 
 	/**
@@ -1068,9 +1135,7 @@ sap.ui.define([
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
 				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 					method : "HEAD",
-					headers : {
-						"X-CSRF-Token" : "Fetch"
-					}
+					headers : Object.assign({}, that.mHeaders, {"X-CSRF-Token" : "Fetch"})
 				}).then(function (oData, sTextStatus, jqXHR) {
 					that.mHeaders["X-CSRF-Token"] = jqXHR.getResponseHeader("X-CSRF-Token");
 					that.oSecurityTokenPromise = null;

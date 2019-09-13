@@ -1780,4 +1780,26 @@ sap.ui.define([
 		// code under test
 		asV2Requestor0._setDateTimeFormatter();
 	});
+
+	//*****************************************************************************************
+	QUnit.test("checkHeaderNames", function (assert) {
+		var oRequestor = _Requestor.create("/", {}, undefined, undefined, "2.0");
+
+		// code under test
+		oRequestor.checkHeaderNames({allowed : "123"});
+		oRequestor.checkHeaderNames({"OData-Version" : "123"}); // V4 specific headers are allowed
+
+		["Accept", "Content-ID", "Content-Transfer-Encoding", "Content-Type", "DataServiceVersion",
+			"If-Match", "If-None-Match", "MaxDataServiceVersion", "SAP-ContextId", "X-HTTP-Method"
+		].forEach(function (sHeaderName) {
+			var mHeaders = {};
+
+			mHeaders[sHeaderName] = "123";
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.checkHeaderNames(mHeaders);
+			}, new Error("Unsupported header: " + sHeaderName));
+		});
+	});
 });
