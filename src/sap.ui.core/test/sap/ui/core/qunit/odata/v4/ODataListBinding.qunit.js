@@ -2583,7 +2583,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bCreated){
+	[false, true].forEach(function (bCreated) {
 		var sTitle = "createContexts, paging: less data than requested; w/ created: " + bCreated;
 
 		QUnit.test(sTitle, function (assert) {
@@ -2869,13 +2869,15 @@ sap.ui.define([
 					getModelIndex : function () { return 0; }
 				},
 				aData = createData(6, 0, true, undefined, bKeyPredicates),
+				aData2 = aData.slice(4, 6),
 				oETagEntity = {},
 				aPreviousContexts,
 				that = this;
 
 			// [-1, 0, 1, 2, undefined, 4, 5]
 			oBinding.createContexts(0, 3, aData.slice(0, 3));
-			oBinding.createContexts(4, 10, aData.slice(4, 6));
+			aData2.$count = 6; // non-empty short read adds $count
+			oBinding.createContexts(4, 10, aData2);
 			oBinding.aContexts.unshift(oCreatedContext);
 			oBinding.iCreatedContexts = 1;
 			aPreviousContexts = oBinding.aContexts.slice();

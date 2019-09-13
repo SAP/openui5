@@ -743,13 +743,13 @@ sap.ui.define([
 		if (Object.keys(this.mPreviousContextsByPath).length) {
 			sap.ui.getCore().addPrerenderingTask(this.destroyPreviousContexts.bind(this));
 		}
-		if (iCount !== undefined) {
+		if (iCount !== undefined) { // server count is available or "non-empty short read"
 			this.bLengthFinal = true;
 			this.iMaxLength = iCount - this.iCreatedContexts;
 			shrinkContexts();
 		} else {
-			if (aResults.length < iLength) { // "short read"
-				this.iMaxLength = iStart - this.iCreatedContexts + aResults.length;
+			if (!aResults.length) { // "empty short read"
+				this.iMaxLength = iStart - this.iCreatedContexts;
 				shrinkContexts();
 			} else if (this.aContexts.length > this.iMaxLength + this.iCreatedContexts) {
 				// upper boundary obsolete: reset it

@@ -85,6 +85,10 @@ sap.ui.define(function () {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit"]
 			},
+			"OPA.ServerDrivenPaging" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/ServerDrivenPaging/Opa.qunit"]
+			},
 			"OPA.Sticky" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"]

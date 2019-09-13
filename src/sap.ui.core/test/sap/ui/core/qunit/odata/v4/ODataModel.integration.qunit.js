@@ -20885,4 +20885,125 @@ sap.ui.define([
 				return that.waitForChanges(assert);
 			});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with m.Table
+	// We expect a "growing" table to only load data when triggered by the end-user via the "More"
+	// button: There are no repeated requests in case the server-side page size is 2 and thus
+	// smaller than the table's growing threshold and just the first page is displayed with less
+	// data. The next request is only sent when the end user wants to see "More".
+	// JIRA: CPOUI5UISERVICESV3-1908
+	QUnit.test("Server-driven paging with m.Table", function (assert) {
+		var sView = '\
+<Table id="table" items="{/EMPLOYEES}" growing="true" growingThreshold="10">\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=10", {
+				value : [
+					{ID : "1", Name : "Peter Burke"},
+					{ID : "2", Name : "Frederic Fall"}
+				],
+				"@odata.nextLink" : "~nextLink"
+			})
+			.expectChange("text", ["Peter Burke", "Frederic Fall"]);
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES?$skip=2&$top=18", {
+					value : [
+						{ID : "3", Name : "John Field"},
+						{ID : "4", Name : "Susan Bay"}
+					],
+					"@odata.nextLink" : "~nextLink1"
+				})
+				.expectChange("text", [,, "John Field", "Susan Bay"]);
+
+			that.oView.byId("table-trigger").firePress(); // press "More" button in table
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with table.Table
+	// Note: Requests following the first request which returned an @odata.nextLink do not request
+	// the prefetch size to avoid server load.
+	// JIRA: CPOUI5UISERVICESV3-1908
+	//TODO support table.Table in later change
+	QUnit.skip("Server-driven paging with table.Table", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
+	<t:Column>\
+		<t:template><Text id="text" text="{Name}" /></t:template>\
+	</t:Column>\
+</t:Table>';
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=103", {
+				value : [
+					{ID : "1", Name : "Peter Burke"},
+					{ID : "2", Name : "Frederic Fall"}
+				],
+				"@odata.nextLink" : "~nextLink"
+			})
+			// request after response with @odata.nextLink does not consider prefetch size
+			.expectRequest("EMPLOYEES?$skip=2&$top=1", {
+				value : [
+					{ID : "3", Name : "John Field"}
+				]
+			})
+			.expectChange("text", ["Peter Burke", "Frederic Fall", "John Field"]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with requestContexts iterates @odata.nextLink until the
+	// originally requested number of entities has been read.
+	// JIRA: CPOUI5UISERVICESV3-1908
+	//TODO Enhance test to cover the following cases distinguished regarding number of entities
+	// requested by requestContexts
+	// 1. server has less entities
+	// 2. server has more entities
+	// 3. @odata.nextLink sequence from responses results in (a) less or (b) more entities than
+	//    requested
+	QUnit.skip("Server-driven paging with OLDB#requestContexts", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "").then(function () {
+			var oBinding = that.oModel.bindList("/EMPLOYEES"),
+				oPromise;
+
+			that.expectRequest("EMPLOYEES?$skip=0&$top=3", {
+					value : [
+						{ID : "1", Name : "Peter Burke"},
+						{ID : "2", Name : "Frederic Fall"}
+					],
+					"@odata.nextLink" : "~nextLink"
+				})
+				.expectRequest("~nextLink", {
+					value : [
+						{ID : "3", Name : "John Field"}
+					]
+				});
+
+			// code under test
+			oPromise = oBinding.requestContexts(0, 3).then(function (aContexts) {
+				assert.deepEqual(aContexts.map(function (oContext) {
+					return oContext.getPath();
+				}), [
+					"/EMPLOYEES('1')",
+					"/EMPLOYEES('2')",
+					"/EMPLOYEES('3')"
+				]);
+			});
+
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
 });
