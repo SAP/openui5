@@ -1911,7 +1911,7 @@ function(
 
 		// Aria - used to label the sort order list
 		this._ariaSortOrderInvisibleText = new InvisibleText(this.getId() + "-sortOrderLabel", {
-			text: this._rb.getText("VIEWSETTINGS_SORT_DIRECTION").concat(":")
+			text: this._rb.getText("VIEWSETTINGS_SORT_DIRECTION")
 		});
 
 		this._sortOrderList = new List(this.getId() + "-sortorderlist", {
@@ -1934,7 +1934,7 @@ function(
 
 		// Aria - used to label the sort list
 		this._ariaSortListInvisibleText = new InvisibleText(this.getId() + "-sortListLabel", {
-			text: this._rb.getText("VIEWSETTINGS_TITLE_SORT").concat(":")
+			text: this._rb.getText("VIEWSETTINGS_TITLE_SORT")
 		});
 
 		this._sortList.addAriaLabelledBy(this._ariaSortListInvisibleText);
@@ -2010,7 +2010,7 @@ function(
 
 		// Aria - used to label the group order
 		this._ariaGroupOrderInvisibleText = new InvisibleText(this.getId() + "-groupOrderLabel", {
-			text: this._rb.getText("VIEWSETTINGS_GROUP_DIRECTION").concat(":")
+			text: this._rb.getText("VIEWSETTINGS_GROUP_DIRECTION")
 		});
 
 		this._groupOrderList = new List(this.getId() + "-grouporderlist", {
@@ -2032,7 +2032,7 @@ function(
 
 		// Aria - used to label the group list
 		this._ariaGroupListInvisibleText = new InvisibleText(this.getId() + "-groupListLabel", {
-			text: this._rb.getText("VIEWSETTINGS_TITLE_GROUP").concat(":")
+			text: this._rb.getText("VIEWSETTINGS_TITLE_GROUP")
 		});
 
 		this._groupList = new List(this.getId() + "-grouplist",
