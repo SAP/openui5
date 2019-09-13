@@ -413,10 +413,11 @@ sap.ui.define([
 					fileName : "variant2",
 					fileType : "ctrl_variant",
 					layer : "CUSTOMER_BASE",
-					title: "title",
+					content: {
+						title: "title"
+					},
 					reference : "app.id",
 					variantReference: oVariant1.content.fileName,
-					content: {},
 					variantManagementReference : sVariantManagementKey
 				}
 			});
@@ -459,10 +460,11 @@ sap.ui.define([
 					fileName : "variant3",
 					fileType : "ctrl_variant",
 					layer : "CUSTOMER",
-					title: "title",
 					reference : "app.id",
 					variantReference: oVariant1.content.fileName,
-					content: {},
+					content: {
+						title: "title"
+					},
 					variantManagementReference : sVariantManagementKey
 				}
 			});
@@ -519,6 +521,9 @@ sap.ui.define([
 				assert.equal(aVariants.length, 4, "four variants are in the management");
 
 				assert.deepEqual(aVariants[0], oStandardVariant, "the standard variant is the first");
+				assert.deepEqual(aVariants[0].content.content, oStandardVariant.content.content, "content field is present");
+				assert.equal(aVariants[0].content.content.title, oStandardVariant.content.content.title, "title is present in content field");
+
 				assert.equal(aVariants[0].controlChanges.length, 0, "no control changes are present for the standard variant");
 				mVariantChanges = aVariants[0].variantChanges;
 				assert.equal(Object.keys(mVariantChanges).length, 0, "no variant changes are present for the standard variant");
