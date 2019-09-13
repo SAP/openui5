@@ -26,7 +26,7 @@ sap.ui.define([
 	var APPLY_CONNECTOR_NAME_SPACE = "sap/ui/fl/apply/_internal/connectors/";
 	var STATIC_FILE_CONNECTOR_CONFIGURATION = {
 		layerFilter: [],
-		connectorName: "StaticFileConnector"
+		connector: "StaticFileConnector"
 	};
 
 	return {
@@ -47,14 +47,14 @@ sap.ui.define([
 			mConnectors = mConnectors.concat(aConfiguredConnectors);
 
 			return new Promise(function (resolve) {
-				var aConnectorNames = mConnectors.map(function (mConnectorConfiguration) {
-					var sConnectorName = mConnectorConfiguration.connectorName;
-					return mConnectorConfiguration.custom ? sConnectorName : sNameSpace + sConnectorName;
+				var aConnectors = mConnectors.map(function (mConnectorConfiguration) {
+					var sConnector = mConnectorConfiguration.connector;
+					return mConnectorConfiguration.custom ? sConnector : sNameSpace + sConnector;
 				});
 
-				sap.ui.require(aConnectorNames, function () {
+				sap.ui.require(aConnectors, function () {
 					Array.from(arguments).forEach(function (oConnector, iIndex) {
-						mConnectors[iIndex].connector = oConnector;
+						mConnectors[iIndex].connectorModule = oConnector;
 					});
 
 					resolve(mConnectors);
@@ -82,7 +82,7 @@ sap.ui.define([
 		 * @returns {object} oResponse Response from the endpoint
 		 */
 		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
-			Log.error("Connector (" + oConnectorConfig.connectorName + ") failed call '" + sFunctionName + "': " + sErrorMessage);
+			Log.error("Connector (" + oConnectorConfig.connector + ") failed call '" + sFunctionName + "': " + sErrorMessage);
 			return oResponse;
 		},
 

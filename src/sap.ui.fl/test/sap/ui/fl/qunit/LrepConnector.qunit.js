@@ -1268,7 +1268,7 @@ sap.ui.define([
 
 
 		QUnit.test("_getUrlPrefix shall embody the core configuration '' to the path for changes", function(assert) {
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{connectorName: "LrepConnector", url: "/something/else"}]);
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{connector: "LrepConnector", url: "/something/else"}]);
 
 			var sPrefix = this.oLrepConnector._getUrlPrefix();
 			assert.equal(sPrefix, "/something/else/changes/");
@@ -1633,7 +1633,7 @@ sap.ui.define([
 		QUnit.test("loads the new connector adapter if 'sap-data-ui-flexibilityServices' was set to connect the existing fl-lib with the new connector world", function(assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{
-					connectorName: "JsObjectConnector"
+					connector: "JsObjectConnector"
 				}
 			]);
 			var oNewConnectorAdapter = LrepConnector.createConnector();

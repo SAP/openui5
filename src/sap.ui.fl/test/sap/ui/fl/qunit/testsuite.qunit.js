@@ -57,7 +57,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connectorName": "BrowserStorageConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layerFilter": []}]'
 				}
 			},
 			"apply/_internal/connectors/BrowserStorageUtils": {
@@ -91,7 +91,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layerFilter": []}]'
 				}
 			},
 			"apply/_internal/connectors/LrepConnector": {
@@ -120,7 +120,7 @@ sap.ui.define(function () {
 						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
 					},
 					"xx-flexBundleRequestForced": true,
-					flexibilityServices: '[{"connectorName": "my/lib/BrokenConnector", "custom": true, "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "my/lib/BrokenConnector", "custom": true, "layerFilter": []}]'
 				},
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/Connector"]
@@ -197,7 +197,7 @@ sap.ui.define(function () {
 					resourceroots: {
 						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
 					},
-					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": ["ALL"]}]'
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layerFilter": ["ALL"]}]'
 				}
 			},
 			"write/_internal/connectors/Utils": {
@@ -222,7 +222,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connectorName": "BrowserStorageConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layerFilter": []}]'
 				}
 			},
 			"write/_internal/connectors/JsObjectConnector": {
@@ -233,7 +233,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connectorName": "JsObjectConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layerFilter": []}]'
 				}
 			},
 			"write/_internal/connectors/LrepConnector": {

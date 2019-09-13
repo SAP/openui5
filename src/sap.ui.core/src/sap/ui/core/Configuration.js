@@ -1340,7 +1340,7 @@ sap.ui.define([
 					this.flexibilityServices = [{
 						url : this.flexibilityServices,
 						layerFilter : ["ALL"],
-						connectorName : "LrepConnector"
+						connector : "LrepConnector"
 					}];
 				} else {
 					this.flexibilityServices = JSON.parse(this.flexibilityServices);

@@ -756,7 +756,7 @@ sap.ui.define([
 	QUnit.test("Get the Flexibility Services", function(assert) {
 		var oCfg = new Configuration();
 		var sFlexibilityService = oCfg.getFlexibilityServices();
-		assert.deepEqual(sFlexibilityService, [{layerFilter: ["ALL"], connectorName: "LrepConnector", url: "/sap/bc/lrep"}]);
+		assert.deepEqual(sFlexibilityService, [{layerFilter: ["ALL"], connector: "LrepConnector", url: "/sap/bc/lrep"}]);
 	});
 
 	QUnit.test("Get the Flexibility Services - set to an empty string", function(assert) {
@@ -776,8 +776,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Get the Flexibility Services - set to multiple objects", function(assert) {
-		var oFirstConfigObject = {'layerFilter': ['CUSTOMER'], 'connectorName': 'KeyUserConnector', 'url': '/flex/keyUser'};
-		var oSecondConfigObject = {'layerFilter': ['CUSTOMER'], 'connectorName': 'PersonalizationConnector', 'url': '/sap/bc/lrep'};
+		var oFirstConfigObject = {'layerFilter': ['CUSTOMER'], 'connector': 'KeyUserConnector', 'url': '/flex/keyUser'};
+		var oSecondConfigObject = {'layerFilter': ['CUSTOMER'], 'connector': 'PersonalizationConnector', 'url': '/sap/bc/lrep'};
 		var aConfig = [oFirstConfigObject, oSecondConfigObject];
 		var sConfigString = JSON.stringify(aConfig);
 
@@ -795,7 +795,7 @@ sap.ui.define([
 	}
 
 	QUnit.test("Set flexibilityServices enforces the loading of sap.ui.fl", function(assert) {
-		window["sap-ui-config"]["flexibilityservices"] = '[{"connectorName": "KeyUser", "url": "/some/url", laverFilters: []}]';
+		window["sap-ui-config"]["flexibilityservices"] = '[{"connector": "KeyUser", "url": "/some/url", laverFilters: []}]';
 
 		var oCfg = new Configuration();
 		assert.equal(_getNumberOfFlModules(oCfg), 1);
@@ -803,7 +803,7 @@ sap.ui.define([
 
 	QUnit.test("Set flexibilityServices URL enforces the loading of sap.ui.fl", function(assert) {
 
-		var sEncodedConfig = encodeURI('[{"connectorName":"KeyUser","url": "/some/url","laverFilters":[]}]');
+		var sEncodedConfig = encodeURI('[{"connector":"KeyUser","url": "/some/url","laverFilters":[]}]');
 		browserUrl.change(location.origin + "?sap-ui-flexibilityServices="  + sEncodedConfig);
 
 		try {

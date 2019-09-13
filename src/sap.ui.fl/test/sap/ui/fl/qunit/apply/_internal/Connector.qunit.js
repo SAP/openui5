@@ -95,8 +95,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Given a connector provides multiple layers", function (assert) {
 			sandbox.stub(Utils, "getApplyConnectors").resolves([{
-				connectorName : "JsObjectConnector",
-				connector : JsObjectConnector
+				connector : "JsObjectConnector",
+				connectorModule : JsObjectConnector
 			}]);
 
 			var sChangeId1 = "change1";
