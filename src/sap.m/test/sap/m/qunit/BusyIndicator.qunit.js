@@ -197,4 +197,38 @@ sap.ui.define([
 		// assert
 		assert.notEqual(oUpdatedAnimation, oDefaultAnimation, "Animation is changed");
 	});
+
+	QUnit.module("sap.m.BusyIndicator with custom icon", {
+		beforeEach: function () {
+			this.oBusyInd = new BusyIndicator({
+				customIcon:'images/synchronise_48.png',
+				customIconRotationSpeed: 5000
+			});
+
+			this.oBusyInd.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oBusyInd.destroy();
+			this.oBusyInd = null;
+		}
+	});
+
+	QUnit.test("setCustomIconWidth sets the correct width of the custom icon", function (assert) {
+		// arrange
+		this.oBusyInd.setCustomIconWidth("100px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(document.getElementById("__indicator19-icon").style.width, "100px", "should be 100px");
+	});
+
+	QUnit.test("setCustomIconHeight sets the correct height of the custom icon", function (assert) {
+		// arrange
+		this.oBusyInd.setCustomIconHeight("100px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(document.getElementById("__indicator20-icon").style.height, "100px", "should be 100px");
+	});
 });
