@@ -204,7 +204,7 @@ sap.ui.define([
 			bNewSelectedValue = true,
 			oParent;
 
-		if (bCtrlKey) {
+		if (bCtrlKey || (oEvent.which === KeyCodes.SPACE)) {
 			bNewSelectedValue = !bSelected;
 		}
 

@@ -165,6 +165,20 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Space", function(assert) {
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, false);
+
+		// assert
+		assert.equal(this.token1.getSelected(), true, "Token is selected");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, false);
+
+		// assert
+		assert.equal(this.token1.getSelected(), false, "Token is deselected");
+	});
+
 	QUnit.test("Ctrl + Space", function(assert) {
 		// act
 		sap.ui.test.qunit.triggerKeyboardEvent("t1", KeyCodes.SPACE, false, false, true);
