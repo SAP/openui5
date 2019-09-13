@@ -71,6 +71,9 @@ function (jQuery, Core, JSONModel, ObjectPageLayout) {
 			this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
 			this.oView.placeAt('qunit-fixture');
 			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oView.destroy();
 		}
 	});
 
@@ -86,8 +89,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout) {
 		oConfigModel.setData(oData);
 		Core.applyChanges();
 
-		var done = assert.async(),
-		that = this;
+		var done = assert.async();
 		setTimeout(function() {
 			var oFirstSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
 			assert.strictEqual(oFirstSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
@@ -97,7 +99,6 @@ function (jQuery, Core, JSONModel, ObjectPageLayout) {
 
 			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
 			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
-			that.oView.destroy();
 			done();
 		}, iLoadingDelay);
 	});
@@ -116,15 +117,13 @@ function (jQuery, Core, JSONModel, ObjectPageLayout) {
 		oObjectPageLayout.scrollToSection(oObjectPageLayout.getSections()[5].getId());
 		Core.applyChanges();
 
-		var done = assert.async(),
-			that = this;
+		var done = assert.async();
 		setTimeout(function() {
 
 			assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport still not loaded");
 
 			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
 			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, true, "block data if target section loaded");
-			that.oView.destroy();
 			done();
 		}, iLoadingDelay);
 	});
@@ -143,8 +142,7 @@ function (jQuery, Core, JSONModel, ObjectPageLayout) {
 
 		Core.applyChanges();
 
-		var done = assert.async(),
-			that = this;
+		var done = assert.async();
 		setTimeout(function() {
 
 			var oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
@@ -152,7 +150,6 @@ function (jQuery, Core, JSONModel, ObjectPageLayout) {
 
 			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
 			assert.strictEqual(oLastSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, false, "data of last connected blocks is loaded"); // TODO Verify this is correct since these tests were disabled (changed from true)
-			that.oView.destroy();
 			done();
 		}, iLoadingDelay);
 	});
