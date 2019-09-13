@@ -401,7 +401,12 @@ sap.ui.define([
 		    oJson = deepClone(this.oJson, 30, 30);
 
 		oJson[this.CONFIGURATION.substring(1)] = merge({}, oManifestConf, oConfiguration);
+
+		// todo this is a temporary solution to experiment with configuration
 		this._oManifest._oManifest = oJson;
+		this._oManifest._oRawManifest = oJson;
+		deepFreeze(this._oManifest._oRawManifest);
+
 		this.oJson = oJson;
 	};
 
