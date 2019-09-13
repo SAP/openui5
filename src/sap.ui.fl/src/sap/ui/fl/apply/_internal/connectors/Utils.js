@@ -29,6 +29,12 @@ sap.ui.define([
 		connector: "StaticFileConnector"
 	};
 
+	function _filterValidLayers (aLayers, aValidLayers) {
+		return aLayers.filter(function (sLayer) {
+			return aValidLayers.indexOf(sLayer) !== -1 || aValidLayers[0] === "ALL";
+		});
+	}
+
 	return {
 		/**
 		 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
@@ -54,6 +60,11 @@ sap.ui.define([
 
 				sap.ui.require(aConnectors, function () {
 					Array.from(arguments).forEach(function (oConnector, iIndex) {
+						if (!mConnectors[iIndex].layers) {
+							mConnectors[iIndex].layers = oConnector.layers;
+						} else {
+							mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
+						}
 						mConnectors[iIndex].connectorModule = oConnector;
 					});
 

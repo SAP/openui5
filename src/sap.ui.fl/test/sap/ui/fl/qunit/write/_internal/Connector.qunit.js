@@ -59,7 +59,7 @@ sap.ui.define([
 				flexObjects: oFlexObjects
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"]}
+				{connector: "LrepConnector", layers: ["USER"]}
 			]);
 
 			return Connector.write(mPropertyBag)
@@ -76,8 +76,8 @@ sap.ui.define([
 				flexObjects: oFlexObjects
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"]},
-				{connector: "JsObjectConnector", layerFilter: ["VENDOR", "CUSTOMER"]}
+				{connector: "LrepConnector"},
+				{connector: "JsObjectConnector"}
 			]);
 
 			return Connector.write(mPropertyBag)
@@ -96,7 +96,7 @@ sap.ui.define([
 			};
 			var sUrl = "/some/url";
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"], url: sUrl}
+				{connector: "LrepConnector", url: sUrl}
 			]);
 
 			var oWriteStub = sandbox.stub(WriteLrepConnector, "write").resolves({});
@@ -117,7 +117,7 @@ sap.ui.define([
 			var sUrl = "/PersonalizationConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "PersonalizationConnector", layerFilter: ["USER"], url: sUrl}
+				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
 			var sExpectedUrl = sUrl + "/changes/";
@@ -150,7 +150,7 @@ sap.ui.define([
 			var sUrl = "/KeyUserConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "KeyUserConnector", layerFilter: ["CUSTOMER"], url: sUrl}
+				{connector: "KeyUserConnector", url: sUrl}
 			]);
 
 			var sExpectedUrl = sUrl + "/v1/changes/";
@@ -182,8 +182,8 @@ sap.ui.define([
 			var sUrl2 = "/PersonalizationConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "KeyUserConnector", layerFilter: ["CUSTOMER"], url: sUrl1},
-				{connector: "PersonalizationConnector", layerFilter: ["USER"], url: sUrl2}
+				{connector: "KeyUserConnector", url: sUrl1},
+				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
 			var sExpectedUrl = sUrl1 + "/changes/";
@@ -215,8 +215,8 @@ sap.ui.define([
 			var sUrl2 = "/PersonalizationConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "KeyUserConnector", layerFilter: ["CUSTOMER"], url: sUrl1},
-				{connector: "PersonalizationConnector", layerFilter: ["USER"], url: sUrl2}
+				{connector: "KeyUserConnector", url: sUrl1},
+				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
 			var sExpectedUrl = sUrl1 + "/v1/changes/";
@@ -281,8 +281,8 @@ sap.ui.define([
 			var sUrl = "/some/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"], url: sUrl},
-				{connector: "JsObjectConnector", layerFilter: ["CUSTOMER"]}
+				{connector: "LrepConnector", url: sUrl},
+				{connector: "JsObjectConnector"}
 			]);
 
 			return Connector.loadFeatures().then(function () {
@@ -297,8 +297,8 @@ sap.ui.define([
 
 		QUnit.test("then merges the response of the connectors", function(assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"], url: this.url},
-				{connector: "JsObjectConnector", layerFilter: ["CUSTOMER"]}
+				{connector: "LrepConnector", url: this.url},
+				{connector: "JsObjectConnector"}
 			]);
 
 			sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({
@@ -316,8 +316,8 @@ sap.ui.define([
 
 		QUnit.test("then higher layer overrule the lower layer", function(assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"], url: this.url},
-				{connector: "JsObjectConnector", layerFilter: ["CUSTOMER"]}
+				{connector: "LrepConnector", url: this.url},
+				{connector: "JsObjectConnector"}
 			]);
 
 			sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({
@@ -365,7 +365,23 @@ sap.ui.define([
 				appVersion: "1.0.0"
 			};
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"]}
+				{connector: "PersonalizationConnector", layers: ["USER"]}
+			]);
+
+			return Connector.reset(mPropertyBag)
+				.catch(function (oError) {
+					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+				});
+		});
+
+		QUnit.test("then it fails in case no connector is available for the layer by default layer settings of the connector", function(assert) {
+			var mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "reference",
+				appVersion: "1.0.0"
+			};
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+				{connector: "PersonalizationConnector"}
 			]);
 
 			return Connector.reset(mPropertyBag)
@@ -382,8 +398,8 @@ sap.ui.define([
 			};
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["VENDOR"]},
-				{connector: "JsObjectConnector", layerFilter: ["VENDOR", "CUSTOMER"]}
+				{connector: "LrepConnector"},
+				{connector: "JsObjectConnector"}
 			]);
 
 			return Connector.reset(mPropertyBag)
@@ -415,7 +431,7 @@ sap.ui.define([
 			var sUrl = "/LrepConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["ALL"], url: sUrl}
+				{connector: "LrepConnector", url: sUrl}
 			]);
 
 			var sExpectedUrl = sUrl + "/changes/";
@@ -455,7 +471,7 @@ sap.ui.define([
 			var sUrl = "/LrepConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "LrepConnector", layerFilter: ["ALL"], url: sUrl}
+				{connector: "LrepConnector", url: sUrl}
 			]);
 
 			var sExpectedUrl = sUrl + "/changes/";
@@ -494,7 +510,7 @@ sap.ui.define([
 			var sUrl = "/LrepConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "PersonalizationConnector", layerFilter: ["USER"], url: sUrl}
+				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
 			var sExpectedUrl = sUrl + "/changes/";
@@ -534,8 +550,8 @@ sap.ui.define([
 			var sUrl2 = "/KeyUserConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "PersonalizationConnector", layerFilter: ["USER"], url: sUrl},
-				{connector: "KeyUserConnector", layerFilter: ["CUSTOMER"], url: sUrl2}
+				{connector: "PersonalizationConnector", url: sUrl},
+				{connector: "KeyUserConnector", url: sUrl2}
 			]);
 
 			var sExpectedUrl = sUrl + "/changes/";
@@ -575,8 +591,8 @@ sap.ui.define([
 			var sUrl2 = "/KeyUserConnector/url";
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector: "PersonalizationConnector", layerFilter: ["USER"], url: sUrl},
-				{connector: "KeyUserConnector", layerFilter: ["CUSTOMER"], url: sUrl2}
+				{connector: "PersonalizationConnector", url: sUrl},
+				{connector: "KeyUserConnector", url: sUrl2}
 			]);
 
 			var sExpectedUrl = sUrl + "/v1/changes/";

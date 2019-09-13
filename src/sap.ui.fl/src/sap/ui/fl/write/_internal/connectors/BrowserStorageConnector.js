@@ -46,6 +46,8 @@ sap.ui.define([
 		 */
 		oStorage: undefined,
 
+		layers: ["ALL"],
+
 		/**
 		 * @inheritDoc
 		 */

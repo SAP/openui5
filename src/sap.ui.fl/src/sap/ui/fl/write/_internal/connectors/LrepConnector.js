@@ -34,6 +34,10 @@ sap.ui.define([
 	 */
 	var LrepConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.LrepConnector */ {
 
+		layers: [
+			"ALL"
+		],
+
 		/**
 		 * Resets flexibility files for a given application and layer.
 		 *

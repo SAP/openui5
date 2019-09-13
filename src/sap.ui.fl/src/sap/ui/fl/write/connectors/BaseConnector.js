@@ -18,6 +18,11 @@ sap.ui.define([
 	var BaseConnector = /** @lends sap.ui.fl.write.connectors.BaseConnector */{
 
 		/**
+		 * Layers available to make modifying operations.
+		 */
+		layers: [],
+
+		/**
 		 * Interface called to write flex data; This method is called with a list of entities like changes, variants,
 		 * control variants, variant changes and variant management changes.
 		 *

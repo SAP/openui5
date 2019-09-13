@@ -23,7 +23,7 @@ sap.ui.define([
 
 	function findConnectorConfigForLayer(sLayer, aConnectors) {
 		var aFilteredConnectors = aConnectors.filter(function (oConnector) {
-			return oConnector.layerFilter.indexOf("ALL") !== -1 || oConnector.layerFilter.indexOf(sLayer) !== -1;
+			return oConnector.layers.indexOf("ALL") !== -1 || oConnector.layers.indexOf(sLayer) !== -1;
 		});
 
 		if (aFilteredConnectors.length === 1) {
