@@ -602,6 +602,14 @@ Mobify.UI.Carousel = (function($, Utils) {
 
         opts = opts || {};
 
+		// SAP MODIFICATION
+		// prevent loop when carousel shows more pages than 1
+		if (this.getLoop() && this.options.numberOfItemsToShow !== 1 &&
+				(newIndex < 1 || newIndex > this._length)) { // new index out of range - will cause loop
+			return;
+		}
+		// SAP MODIFICATION END
+
         // Bound Values between [1, length];
         if (newIndex < 1) {
         	//SAP MODIFICATION
