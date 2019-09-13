@@ -39,14 +39,28 @@
 	line-height: 2.25rem;
 }
 
-html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
-	outline-offset: -3px;
-	outline: 1px dotted @sapUiContentFocusColor;
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
+	&:before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+	&:hover .sapMSltArrow {
+		z-index: 0;
+	}
 }
 
-html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:focus {
-	outline-offset: -4px;
-	outline: 1px dotted @sapUiContentFocusColor;
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus:before {
+	outline-offset: -2px;
+}
+
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:focus:before {
+	outline-offset: -2px;
 }
 
 html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed:focus {
@@ -68,6 +82,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 			bottom: 1px;
 			left: 1px;
 			pointer-events: none;
+			outline: none;
 		}
 
 		&.sapMSltIconOnly.sapMSltPressed:before {
