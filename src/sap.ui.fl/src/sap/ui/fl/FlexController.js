@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/restricted/_uniqWith"
 ], function(
 	ChangeRegistry,
 	ChangeHandlerRegistration,
@@ -35,7 +36,8 @@ sap.ui.define([
 	XmlTreeModifier,
 	Component,
 	Element,
-	Log
+	Log,
+	_uniqWith
 ) {
 	"use strict";
 
@@ -1212,7 +1214,7 @@ sap.ui.define([
 			return oSource.id === oTarget.id;
 		};
 		// Remove duplicates. The further execution should be run once per control
-		aChangeSelectors = Utils.uniqWith(aChangeSelectors, fnSameSelector);
+		aChangeSelectors = _uniqWith(aChangeSelectors, fnSameSelector);
 		aChangeSelectors.forEach(function(oSelector) {
 			aPromiseStack.push(function() {
 				var oControl = oModifier.bySelector(oSelector, oAppComponent);

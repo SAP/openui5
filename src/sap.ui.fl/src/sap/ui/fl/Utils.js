@@ -1517,25 +1517,6 @@ function(
 				}
 			}
 			return false;
-		},
-
-		/**
-		 * Creates an array of objects from the passed array without duplicates. The duplicates are indicated by the comparator function.
-		 * The comparator function is invoked to compare the objects. It accepts two arguments (oObject1, oObject2)
-		 * and has to return <code>true</code> when objects need to be equal.
-		 *
-		 * @param {array<object>} aObjects - Array of objects
-		 * @param {function} fnComparator - Comparator function that defines the criteria for the comparison of objects
-		 * @returns {array<object>} Array of objects without duplicates indicated by the comparator function
-		 */
-		uniqWith: function (aObjects, fnComparator) {
-			var aUniqObjects = [];
-			for (var i = 0, n = aObjects.length; i < n; i++) {
-				if (!this.arrayIncludesWith(aUniqObjects, aObjects[i], fnComparator)) {
-					aUniqObjects.push(aObjects[i]);
-				}
-			}
-			return aUniqObjects;
 		}
 	};
 	return Utils;
