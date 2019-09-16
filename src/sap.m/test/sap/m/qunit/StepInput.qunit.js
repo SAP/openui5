@@ -10,6 +10,11 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/ResponsiveGridLayout",
+	"sap/ui/layout/GridData",
 	"jquery.sap.keycodes"
 ], function(
 	qutils,
@@ -20,7 +25,12 @@ sap.ui.define([
 	coreLibrary,
 	Device,
 	EventExtension,
-	JSONModel
+	JSONModel,
+	Form,
+	FormContainer,
+	FormElement,
+	ResponsiveGridLayout,
+	GridData
 ) {
 	// shortcut for sap.m.StepInputValidationMode
 	var StepInputValidationMode = mobileLibrary.StepInputValidationMode;
@@ -1619,6 +1629,47 @@ sap.ui.define([
 
 		// Cleanup
 		oLabel.destroy();
+	});
+
+	QUnit.test("labels are redirected to the inner input when used inside of a form", function(assert) {
+		// Prepare
+		var oStepInputOne = new StepInput("first", {
+				value: "36",
+				layoutData: new GridData({span: "L4 M4 S4"})
+			}),
+			oStepInputTwo = new StepInput("second", {
+				value: "75",
+				layoutData: new GridData({span: "L4 M4 S4"})
+			}),
+			oForm = new Form({
+				layout: new ResponsiveGridLayout(),
+				formContainers: [
+					new FormContainer({
+						title: "test",
+						formElements: [
+							new FormElement({
+								label: new sap.m.Label("medium", {text: "Medium"}),
+								fields: [
+									oStepInputOne,
+									oStepInputTwo
+								]
+							})
+						]
+					})
+				]
+			});
+		oForm.placeAt('qunit-fixture');
+		oCore.applyChanges();
+
+		// Act
+		// Assert
+		assert.strictEqual(oStepInputOne.$().find(".sapMInputBaseInner").attr("aria-labelledby"), "medium",
+			"Inner input of the first StepInput has correct aria-lablledby argument");
+		assert.strictEqual(oStepInputTwo.$().find(".sapMInputBaseInner").attr("aria-labelledby"), "medium",
+			"Inner input of the second StepInput has correct aria-lablledby argument");
+
+		// Cleanup
+		oForm.destroy();
 	});
 
 	QUnit.test("Backwards reference to a label is added in aria-labelledby only on the inner input", function () {
