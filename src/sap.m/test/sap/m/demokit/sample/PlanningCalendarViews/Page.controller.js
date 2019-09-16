@@ -330,8 +330,11 @@ sap.ui.define([
 			 */
 			determineControlsVisibility: function () {
 				var bLabelVisible = this.byId("PC1").getViewKey() === "nonWorking",
-					bSelectVisible = this.byId("PC1").getViewKey() === "M";
+					bSelectVisible = false;
 				this.byId("label").setVisible(bLabelVisible);
+				if (sap.ui.Device.system.desktop){
+					bSelectVisible = this.byId("PC1").getViewKey() === "M";
+				}
 				this.byId("select").setVisible(bSelectVisible);
 			},
 
