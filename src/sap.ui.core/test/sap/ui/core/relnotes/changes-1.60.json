@@ -1163,5 +1163,21 @@
         ]
       }
     ]
+  },
+  "1.60.18": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "602fe9aa37fa70e1f921b0bd1d7e4160e6138c32",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Don\u0027t use expanded data, if custom parameters are set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980011792"
+          }
+        ]
+      }
+    ]
   }
 }

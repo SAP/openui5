@@ -2948,5 +2948,43 @@
         ]
       }
     ]
+  },
+  "1.60.18": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "f808d4f91ea2bbeb72ebe6ba9e10e217e800faa5",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Items aggregation properly forwarded to MessageView",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970404487"
+          }
+        ]
+      },
+      {
+        "id": "1518ac4ee11b2e35c3f736b264a17c1c5317ca85",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Expand/collapse improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "421659"
+          }
+        ]
+      },
+      {
+        "id": "071957c2814595b9583c5223d4a8b49e608fa029",
+        "type": "FIX",
+        "text": " sap.m.Panel: Heading level is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "507397"
+          }
+        ]
+      }
+    ]
   }
 }

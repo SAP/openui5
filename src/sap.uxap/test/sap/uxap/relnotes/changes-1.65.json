@@ -224,5 +224,21 @@
         "references": []
       }
     ]
+  },
+  "1.65.8": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "b6cd63327d3f42ff6fdaf8b2b48f44d45d583ac5",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Adding tabs now invalidates the page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970307794"
+          }
+        ]
+      }
+    ]
   }
 }

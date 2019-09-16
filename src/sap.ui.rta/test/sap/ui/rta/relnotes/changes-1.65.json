@@ -67,5 +67,32 @@
         ]
       }
     ]
+  },
+  "1.65.8": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "f80d51d1962754b2cf0d024e2715597ad4940a5e",
+        "type": "FIX",
+        "text": " Fixing the version of UI changes (dirty) relevant for",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980319377"
+          }
+        ]
+      },
+      {
+        "id": "1f74a975eb0de36559e03dc2e9731b4b7ac0e7d4",
+        "type": "FIX",
+        "text": ": RTA Toolbar height fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980393337"
+          }
+        ]
+      }
+    ]
   }
 }

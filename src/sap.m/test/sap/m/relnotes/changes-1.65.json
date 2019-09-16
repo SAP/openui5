@@ -1111,5 +1111,21 @@
         ]
       }
     ]
+  },
+  "1.65.8": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "20d2cae73fdaa5f001fd9510db03625790c2264a",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: binding used in UTC mode specified in source works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448883"
+          }
+        ]
+      }
+    ]
   }
 }
