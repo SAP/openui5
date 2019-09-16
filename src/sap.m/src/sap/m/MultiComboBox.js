@@ -742,6 +742,8 @@ function(
 		// reset the value state
 		if (this.isPickerDialog() && oPickerTextField.getValueState() === ValueState.Error) {
 			oPickerTextField.setValueState(ValueState.None);
+		} else if (this.getValueState() === ValueState.Error) {
+			this.setValueState(ValueState.None);
 		}
 
 		if (!this.getEnabled() || !this.getEditable()) {

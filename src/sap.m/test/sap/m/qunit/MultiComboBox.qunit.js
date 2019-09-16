@@ -6884,6 +6884,17 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValue(), "Brussel", "The value is not deleted");
 	});
 
+	QUnit.test("oninput the value state message should not be visible", function(assert) {
+		// act
+		this.oMultiComboBox._$input.focus().val("Brussel").trigger("input");
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+		this.oMultiComboBox._$input.focus().val("H").trigger("input");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.None, "The value state is reset to none.");
+	});
+
 	QUnit.test("onbackspace should reset the value state", function(assert) {
 		// arrange
 		var oOnBackSpaceSpy = this.spy(this.oMultiComboBox, "_showAlreadySelectedVisualEffect");
