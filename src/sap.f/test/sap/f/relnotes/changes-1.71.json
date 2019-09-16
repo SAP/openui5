@@ -1,0 +1,29 @@
+{
+  "1.71.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "914258a9d41cc677d21a351dd2c0fb1d8eb07a67",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: failing test on EDGE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980355178"
+          }
+        ]
+      },
+      {
+        "id": "65b6e59deddd8413d5e0fd1016d8151da161cb57",
+        "type": "FIX",
+        "text": " sap.f.GridDropInfo: Indicator is now hidden on drag leave",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980360992"
+          }
+        ]
+      }
+    ]
+  }
+}

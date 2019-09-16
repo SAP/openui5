@@ -12,6 +12,28 @@
             "reference": "1980328197"
           }
         ]
+      },
+      {
+        "id": "65e82b5e8b79f1de07c2b658eb4637f62b456bbc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Touch on month or year select now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970314457"
+          }
+        ]
+      },
+      {
+        "id": "f05396c8751e7082541b323c59d6663aa7e0c171",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests pass",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346398"
+          }
+        ]
       }
     ]
   }

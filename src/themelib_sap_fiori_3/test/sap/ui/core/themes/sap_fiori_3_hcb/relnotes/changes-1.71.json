@@ -1,0 +1,30 @@
+{
+  "1.71.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "ab21c3038334a0fd624089ff2bc3d7ca125c873a",
+        "type": "FEATURE",
+        "text": " sap.m.Shell: Theme enhancement",
+        "references": []
+      },
+      {
+        "id": "122d1920ee955fa793fb3064abe66b2678d9ec89",
+        "type": "FEATURE",
+        "text": " sap.m.Switch: Theme enhancement",
+        "references": []
+      },
+      {
+        "id": "9f2f2541759c663f8593b73aa92477374330435c",
+        "type": "FIX",
+        "text": " sap.m.Select: Quartz Light focus lost on hover fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980018771"
+          }
+        ]
+      }
+    ]
+  }
+}

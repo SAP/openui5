@@ -97,6 +97,235 @@
             "reference": "1980345532"
           }
         ]
+      },
+      {
+        "id": "5bde70b2aa75d18358cd52a18a33dc094988098b",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Support of changing the target in adaptation mode",
+        "references": []
+      },
+      {
+        "id": "6d7df19eb16f0b4474480ddb824e06ddf1ed72ee",
+        "type": "FEATURE",
+        "text": " sap.m.TabContainer: Added new background design property",
+        "references": []
+      },
+      {
+        "id": "42b1ba489a6cc06009b6666ffe3f009f64389e67",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: Draggable and resizable properties added. Tests added.",
+        "references": []
+      },
+      {
+        "id": "257872544847bf94cb287e8c55306e84fdb5f76d",
+        "type": "FIX",
+        "text": " SAP-icons: Add \"soccer\" as alias for \"soccor\" (typo)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361059"
+          }
+        ]
+      },
+      {
+        "id": "5bd22d4b6ff7b6fed8b71583865c432ac6482538",
+        "type": "FIX",
+        "text": " UploadCollection: Terminating an upload removes an item from the collection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970277599"
+          }
+        ]
+      },
+      {
+        "id": "484d7447477d051236f1497d14a52649a9e4e3fb",
+        "type": "FIX",
+        "text": " sap.m.Button: Closing button pressed loop on popup opened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970336332"
+          }
+        ]
+      },
+      {
+        "id": "88380137f916f26aaf5acfc6db93f867bf4ebbe3",
+        "type": "FIX",
+        "text": " sap.m.Button: text and icon are visible when the control is inside active list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980335830"
+          }
+        ]
+      },
+      {
+        "id": "32d0e875f50b1410667cf8de624b9674c48bd8e0",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with keys fast is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980357464"
+          }
+        ]
+      },
+      {
+        "id": "563f42c31cca9e8288e7e150dab555f7d10c46f1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Closing after interaction race condition fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "493896"
+          }
+        ]
+      },
+      {
+        "id": "ab3ee7dcfc4f05e8cb761cfccf41e86234d8ce5f",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: documentation is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970418432"
+          }
+        ]
+      },
+      {
+        "id": "0b9d0efbbb88a63e58b5f2a58f67ca1a4e0a033d",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: binding used in UTC mode specified in source works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448883"
+          }
+        ]
+      },
+      {
+        "id": "4c108d0080d10a89741df5f950b4a10706d4c451",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: doesn\u0027t show button if the list is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980317964"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970373220"
+          }
+        ]
+      },
+      {
+        "id": "921fcc1aaae5682a4c92b3d1befdeec250507ba4",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Padding classes are now forwarded to the header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980369748"
+          }
+        ]
+      },
+      {
+        "id": "14cc486681acb76fc7e720a384c3d615babdd8bd",
+        "type": "FIX",
+        "text": " sap.m.Input: Placeholder is now fully visible in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "522859"
+          }
+        ]
+      },
+      {
+        "id": "a67d4a72d794dd7aedf22205455ba58136f1214c",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is now preserved when value help is requested",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980399063"
+          }
+        ]
+      },
+      {
+        "id": "29051646a14ffb43b5f05ffffaf9a75ec1b23793",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Value State Error is reset correctly",
+        "references": []
+      },
+      {
+        "id": "0302f940d8299119d919521f98307b7fed1eb6d4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Demokit sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980363750"
+          }
+        ]
+      },
+      {
+        "id": "2fc5c614ba12ad10e01aeaf2e4523accf74113d6",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Active title with level different than 1 is displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970437354"
+          }
+        ]
+      },
+      {
+        "id": "0cb64b956471fef66cbe2a4c03e9d5b30d5d5007",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: pseudo invisible text for ARIA doesn\u0027t take space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980355059"
+          }
+        ]
+      },
+      {
+        "id": "24601cf5fa5941b5d0af48b03999d9d15387c3eb",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover does not close on navigation",
+        "references": []
+      },
+      {
+        "id": "47aa56dd50b52895f14b23730af70755c0d82301",
+        "type": "FIX",
+        "text": " sap.m.Popover: aria-labelledby improvement",
+        "references": []
+      },
+      {
+        "id": "f470a3addbf98c9eaa91adc106e8db8ff285c19f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: minor fix in a sample",
+        "references": []
+      },
+      {
+        "id": "4ec58467f3a6979227b60555e2fa35bbb881c984",
+        "type": "FIX",
+        "text": " sap.m.Token: Toggle selection on space key adjusted",
+        "references": []
+      },
+      {
+        "id": "3b062fe0bb1deef7b3d0a627b3251079f0bdb06b",
+        "type": "FIX",
+        "text": " sap.m.Tree: No action is needed for dummy leaf expander",
+        "references": []
+      },
+      {
+        "id": "036018d011561789bcfb5317d15f110c91692d36",
+        "type": "FIX",
+        "text": " sap.m.demokit.tutorial.walkthrough: add missing file to config",
+        "references": []
       }
     ]
   }

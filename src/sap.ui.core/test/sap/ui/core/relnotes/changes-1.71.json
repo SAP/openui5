@@ -29,6 +29,102 @@
         "type": "FIX",
         "text": " ODataMessageParser: Resolve multiple nav props",
         "references": []
+      },
+      {
+        "id": "960015d4640002c554aeed4ea71822f021eed963",
+        "type": "FEATURE",
+        "text": " Messaging: Message propagation for lists",
+        "references": []
+      },
+      {
+        "id": "5af4df25a24c3d7efc4f56e0aafda12600720f94",
+        "type": "FEATURE",
+        "text": " sap/base/util: Add extend/deepExtend modules",
+        "references": []
+      },
+      {
+        "id": "a7abf994af0b9514d55b56f90add4c6df431528b",
+        "type": "FIX",
+        "text": " ClientPropertyBinding: Make __name__ work again",
+        "references": []
+      },
+      {
+        "id": "0e2dfb688a012d2e2d5be2e3f9d5293401d6b69e",
+        "type": "FIX",
+        "text": " Device: Touch detection for Firefox desktop",
+        "references": []
+      },
+      {
+        "id": "b60e58cb2ff843a31cc8dd47e9708b41513be9e8",
+        "type": "FIX",
+        "text": " EventProvider: Allow detachEvent after attachEventOnce",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980358991"
+          }
+        ]
+      },
+      {
+        "id": "b3f65deac1841d3bf032157f0212690a53b2843b",
+        "type": "FIX",
+        "text": " ManagedObject: Destroy part bindings when calling unbindProperty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970322502"
+          }
+        ]
+      },
+      {
+        "id": "b3b1525fb7b868cc9474e1acf38354776caf3051",
+        "type": "FIX",
+        "text": " ODataMetadata: isFunction flag is set correctly",
+        "references": []
+      },
+      {
+        "id": "257872544847bf94cb287e8c55306e84fdb5f76d",
+        "type": "FIX",
+        "text": " SAP-icons: Add \"soccer\" as alias for \"soccor\" (typo)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361059"
+          }
+        ]
+      },
+      {
+        "id": "5f7185de4284df5986ed74ec4aa54a52e9c6dcbc",
+        "type": "FIX",
+        "text": " events.PasteEventFix: fix wrongly fired paste event on non-editable elements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970213111"
+          }
+        ]
+      },
+      {
+        "id": "32d0e875f50b1410667cf8de624b9674c48bd8e0",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with keys fast is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980357464"
+          }
+        ]
+      },
+      {
+        "id": "cec7ba1908dc6793850e9c7764c58b09c10c19b1",
+        "type": "FIX",
+        "text": " v2/ODataModel: getContext override deepPath",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970418311"
+          }
+        ]
       }
     ]
   }
