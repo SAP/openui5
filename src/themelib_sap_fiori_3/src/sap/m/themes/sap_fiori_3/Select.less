@@ -37,6 +37,9 @@
 
 .sapMSltArrow {
 	line-height: 2.25rem;
+	.sapMSltPressed & {
+		z-index: 2;
+	}
 }
 
 html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
@@ -50,9 +53,7 @@ html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
 		z-index: 1;
 		outline: 1px dotted @sapUiContentFocusColor;
 	}
-	&:hover .sapMSltArrow {
-		z-index: 0;
-	}
+
 }
 
 html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus:before {
