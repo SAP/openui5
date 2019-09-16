@@ -121,7 +121,8 @@ sap.ui.define([
 			});
 			this.oMockServer.simulate(sDataRootPath + "metadata.xml", sDataRootPath);
 			this.oMockServer.start();
-			this.oModel = new ODataModel(this.sServiceUri, { canonicalRequests: true });
+			this.oModel = new ODataModel(this.sServiceUri, {canonicalRequests: true});
+
 			this.oModel.setMessageScope(MessageScope.BusinessObject);
 			this.oStubGetEntitySetByPath = sinon.spy(this.oModel.oMetadata, "_getEntitySetByPath");
 
@@ -181,33 +182,7 @@ sap.ui.define([
 		return oRelevantRequest;
 	};
 
-	/**
-	 * @param {string} path API call path
-	 * @param {string} expectedURL expected send URL
-	 * @param {object} assert QUnit assert
-	 * @param {object} test QUnit test
-	 * @param {string} testedAPI
-	 */
 
-	var testODataAPI = function (path, expectedURL, assert, test, testedAPI, parameters) {
-		return function () {
-			return new Promise(function (res, rej) {
-				test.oModel[testedAPI](path, parameters);
-				var fnRequestCompleted = function (oEvent) {
-					test.oModel.detachRequestCompleted(fnRequestCompleted);
-					var oRelevantRequest = getLastRequest(test);
-					var sMessageScopeHeader = oRelevantRequest["headers"]["sap-message-scope"];
-					assert.equal(sMessageScopeHeader, MessageScope.BusinessObject);
-					assert.equal(oRelevantRequest.deepPath, path, "Deep path set correctly.");
-					assert.equal(oEvent.getParameters().url.split("?")[0], expectedURL, "ODatamodel." + testedAPI + " - requestedPath:" + path);
-
-					res();
-				};
-
-				test.oModel.attachRequestCompleted(fnRequestCompleted);
-			});
-		};
-	};
 
 	var checkIfCacheEntriesAreValid = function (oModel, assert) {
 
@@ -241,146 +216,196 @@ sap.ui.define([
 			.then(done);
 	});
 
-	QUnit.test("ODataModel.read", function (assert) {
-		var done = assert.async();
-		var that = this;
-		that.oModel.metadataLoaded()
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems",
-					"SalesOrderSet('0500000000')/ToLineItems", assert, that, "read"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')",
-					"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", assert, that, "read"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct",
-					"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
-			.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ProductId",
-					"ProductSet('HT-1000')/ProductId", assert, that, "read")).then(function () {
-						assert.equal(that.oStubGetEntitySetByPath.callCount, 10, "Check number of cache misses.");
-						assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
-						return checkIfCacheEntriesAreValid(that.oModel, assert);
-					})
-			.then(done);
-	});
+	var aVariants = [{
+		Model: true,
+		APICallParameter: undefined
+	},{
+		Model: false,
+		APICallParameter: true
+	}];
+		aVariants.forEach(function (oVariant) {
 
-	QUnit.test("ODataModel.update", function (assert) {
-		var done = assert.async();
-		var that = this;
-		that.oModel.metadataLoaded()
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems",
-					"SalesOrderSet('0500000000')/ToLineItems", assert, that, "update"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')",
-					"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", assert, that, "update"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct",
-					"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
-			.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
-				testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ProductId",
-					"ProductSet('HT-1000')/ProductId", assert, that, "update")).then(function () {
-						assert.equal(that.oStubGetEntitySetByPath.callCount, 11, "Check number of cache misses.");
-						assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
-						return checkIfCacheEntriesAreValid(that.oModel, assert);
-					})
-			.then(done);
-	});
+			/**
+			 * @param {string} path API call path
+			 * @param {string} expectedURL expected send URL
+			 * @param {object} assert QUnit assert
+			 * @param {object} test QUnit test
+			 * @param {string} testedAPI
+			 */
 
-	QUnit.test("ODataModel.remove", function (assert) {
-		var done = assert.async();
-		var that = this;
-		that.oModel.metadataLoaded()
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000005')/ToLineItems",
-					"SalesOrderSet('0500000005')/ToLineItems", assert, that, "remove"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000002')/ToLineItems(SalesOrderID='0500000002',ItemPosition='0000000010')",
-					"SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')", assert, that, "remove"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
-				testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
-					"SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
-			.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
-				testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ProductId",
-					"ProductSet('HT-1030')/ProductId", assert, that, "remove")).then(function () {
-						assert.equal(that.oStubGetEntitySetByPath.callCount, 13, "Check number of cache misses.");
-						assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
-						return checkIfCacheEntriesAreValid(that.oModel, assert);
-					})
-			.then(done);
-	});
+			var testODataAPI = function (path, expectedURL, assert, test, testedAPI, parameters) {
+				return function () {
+					return new Promise(function (res, rej) {
+						parameters = Object.assign({}, parameters, {canonicalRequest: oVariant.APICallParameter});
+						if (testedAPI === "update" || testedAPI === "create" ){
+							test.oModel[testedAPI](path, {}, parameters);
+						} else {
+							test.oModel[testedAPI](path, parameters);
+						}
 
-	QUnit.test("ODataModel.create", function (assert) {
-		var done = assert.async();
-		var that = this;
-		that.oModel.metadataLoaded()
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000005')/ToLineItems",
-					"SalesOrderSet('0500000005')/ToLineItems", assert, that, "create"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000002')/ToLineItems(SalesOrderID='0500000002',ItemPosition='0000000010')",
-					"SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')", assert, that, "create"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
-				testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
-					"SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
-			.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
-				testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ProductId",
-					"ProductSet('HT-1030')/ProductId", assert, that, "create")).then(function () {
-						assert.equal(that.oStubGetEntitySetByPath.callCount, 8, "Check number of cache misses.");
-						assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
-						return checkIfCacheEntriesAreValid(that.oModel, assert);
-					})
-			.then(done);
-	});
+						var fnRequestCompleted = function (oEvent) {
+							test.oModel.detachRequestCompleted(fnRequestCompleted);
+							var oRelevantRequest = getLastRequest(test);
+							var sMessageScopeHeader = oRelevantRequest["headers"]["sap-message-scope"];
+							assert.equal(sMessageScopeHeader, MessageScope.BusinessObject);
+							assert.equal(oRelevantRequest.deepPath, path, "Deep path set correctly.");
+							assert.equal(oEvent.getParameters().url.split("?")[0], expectedURL, "ODatamodel." + testedAPI + " - requestedPath:" + path);
+
+							res();
+						};
+
+						test.oModel.attachRequestCompleted(fnRequestCompleted);
+					});
+				};
+			};
 
 
-	QUnit.test("ODataModel.createEntry", function (assert) {
-		var done = assert.async();
-		var that = this;
+			QUnit.test("ODataModel.read " + "(Model:" + oVariant.Model + ", APICallParameter:" + oVariant.APICallParameter + ")", function (assert) {
+				var done = assert.async();
+				var that = this;
+				this.oModel.bCanonicalRequests = oVariant.Model;
 
-		that.oModel.metadataLoaded()
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
-				testODataAPI("/SalesOrderSet('0500000005')/ToLineItems",
-					"SalesOrderSet('0500000005')/ToLineItems", assert, that, "read"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
-				testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
-					"SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
-			.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
-				testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
-					"ProductSet('HT-1030')", assert, that, "createEntry", oCreateEntryProduct))
-			.then(function(){
-				assert.equal(getLastRequest(that).data.__metadata.deepPath, undefined, "Deep path is not send to back-end.");
-				done();
-			});
-	});
-
-	QUnit.test("ODataModel.submitChanges", function (assert) {
-		var done = assert.async();
-		var that = this;
-		that.oModel.metadataLoaded().then(testODataAPI(
-			"/SalesOrderSet('0500000005')", "SalesOrderSet('0500000005')", assert, that, "read", { urlParameters: { "$expand": "ToLineItems" } }))
-			.then(function () {
-				that.oModel.setProperty("/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "First version.");
-				that.oModel.setProperty("/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "Second version.");
-				that.oModel.submitChanges({
-					success: function () {
-						assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
-
-						var sLastRequest = getLastRequest(that);
-						var sDeepPath = sLastRequest.deepPath;
-						var sMessageScopeHeader = sLastRequest.headers["sap-message-scope"];
-						var sDeepPathMetadata = sLastRequest.data.__metadata.deepPath;
-
-						assert.strictEqual(sDeepPathMetadata, undefined, "Deep path is not send to back-end.");
-						assert.strictEqual(sMessageScopeHeader, MessageScope.BusinessObject, "Message scope set correctly.");
-						assert.strictEqual(sDeepPath, "/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')", "Deep path set correctly.");
-						return checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
-					}
-				});
+				that.oModel.metadataLoaded()
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems",
+							"SalesOrderSet('0500000000')/ToLineItems", assert, that, "read"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')",
+							"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", assert, that, "read"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct",
+							"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
+					.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ProductId",
+							"ProductSet('HT-1000')/ProductId", assert, that, "read")).then(function () {
+								assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+								return checkIfCacheEntriesAreValid(that.oModel, assert);
+							})
+					.then(done);
 			});
 
+			QUnit.test("ODataModel.update " + "(Model:" + oVariant.Model + ", APICallParameter:" + oVariant.APICallParameter + ")", function (assert) {
+				var done = assert.async();
+				var that = this;
+				this.oModel.bCanonicalRequests = oVariant.Model;
 
-	});
+				that.oModel.metadataLoaded()
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems",
+							"SalesOrderSet('0500000000')/ToLineItems", assert, that, "update"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')",
+							"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", assert, that, "update"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct",
+							"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
+					.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
+						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ProductId",
+							"ProductSet('HT-1000')/ProductId", assert, that, "update")).then(function () {
+								assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+								return checkIfCacheEntriesAreValid(that.oModel, assert);
+							})
+					.then(done);
+			});
+
+			QUnit.test("ODataModel.remove " + "(Model:" + oVariant.Model + ", APICallParameter:" + oVariant.APICallParameter + ")", function (assert) {
+				var done = assert.async();
+				var that = this;
+				this.oModel.bCanonicalRequests = oVariant.Model;
+
+				that.oModel.metadataLoaded()
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000005')/ToLineItems",
+							"SalesOrderSet('0500000005')/ToLineItems", assert, that, "remove"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000002')/ToLineItems(SalesOrderID='0500000002',ItemPosition='0000000010')",
+							"SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')", assert, that, "remove"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
+						testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
+							"SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
+					.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
+						testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ProductId",
+							"ProductSet('HT-1030')/ProductId", assert, that, "remove")).then(function () {
+								assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+								return checkIfCacheEntriesAreValid(that.oModel, assert);
+							})
+					.then(done);
+			});
+
+			QUnit.test("ODataModel.create " + "(Model:" + oVariant.Model + ", APICallParameter:" + oVariant.APICallParameter + ")", function (assert) {
+				var done = assert.async();
+				var that = this;
+				this.oModel.bCanonicalRequests = oVariant.Model;
+
+				that.oModel.metadataLoaded()
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000005')/ToLineItems",
+							"SalesOrderSet('0500000005')/ToLineItems", assert, that, "create"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000002')/ToLineItems(SalesOrderID='0500000002',ItemPosition='0000000010')",
+							"SalesOrderLineItemSet(SalesOrderID='0500000002',ItemPosition='0000000010')", assert, that, "create"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
+						testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
+							"SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
+					.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
+						testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct/ProductId",
+							"ProductSet('HT-1030')/ProductId", assert, that, "create")).then(function () {
+								assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+								return checkIfCacheEntriesAreValid(that.oModel, assert);
+							})
+					.then(done);
+			});
+
+
+			QUnit.test("ODataModel.createEntry " + "(Model:" + oVariant.Model + ", APICallParameter:" + oVariant.APICallParameter + ")", function (assert) {
+				var done = assert.async();
+				var that = this;
+				this.oModel.bCanonicalRequests = oVariant.Model;
+
+				that.oModel.metadataLoaded()
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet
+						testODataAPI("/SalesOrderSet('0500000005')/ToLineItems",
+							"SalesOrderSet('0500000005')/ToLineItems", assert, that, "read"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
+						testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
+							"SalesOrderLineItemSet(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
+					.then( // SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product
+						testODataAPI("/SalesOrderSet('0500000001')/ToLineItems(SalesOrderID='0500000001',ItemPosition='0000000010')/ToProduct",
+							"ProductSet('HT-1030')", assert, that, "createEntry", oCreateEntryProduct))
+					.then(function () {
+						assert.equal(getLastRequest(that).data.__metadata.deepPath, undefined, "Deep path is not send to back-end.");
+						done();
+					});
+			});
+
+
+			QUnit.test("ODataModel.submitChanges " + "(Model:" + oVariant.Model + ", APICallParameter:" + oVariant.APICallParameter + ")", function (assert) {
+				var done = assert.async();
+				var that = this;
+
+				that.oModel.metadataLoaded().then(testODataAPI(
+					"/SalesOrderSet('0500000005')", "SalesOrderSet('0500000005')", assert, that, "read", { urlParameters: { "$expand": "ToLineItems" } }))
+					.then(function () {
+						that.oModel.setProperty("/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "First version.");
+						that.oModel.setProperty("/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')/Note", "Second version.");
+						that.oModel.submitChanges({
+							success: function () {
+								assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+
+								var sLastRequest = getLastRequest(that);
+								var sDeepPath = sLastRequest.deepPath;
+								var sMessageScopeHeader = sLastRequest.headers["sap-message-scope"];
+								var sDeepPathMetadata = sLastRequest.data.__metadata.deepPath;
+
+								assert.strictEqual(sDeepPathMetadata, undefined, "Deep path is not send to back-end.");
+								assert.strictEqual(sMessageScopeHeader, MessageScope.BusinessObject, "Message scope set correctly.");
+								assert.strictEqual(sDeepPath, "/SalesOrderSet('0500000005')/ToLineItems(SalesOrderID='0500000005',ItemPosition='0000000010')", "Deep path set correctly.");
+								return checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
+							}
+						});
+					});
+			});
+		});
 
 
 	QUnit.test("ODataModel.resolve", function (assert) {

@@ -112,6 +112,7 @@ sap.ui.define([
 			this.bUseExpandedList = false;
 			this.oCombinedFilter = null;
 			this.sDeepPath = oModel.resolveDeep(sPath, oContext);
+			this.bCanonicalRequest = mParameters && mParameters.bCanonicalRequest;
 
 			// check filter integrity
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
@@ -690,7 +691,9 @@ sap.ui.define([
 			this.bSkipDataEvents = false;
 			//if load is triggered by a refresh we have to check the refreshGroup
 			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.mRequestHandles[sGuid] = this.oModel.read(this.sPath, {context: this.oContext, groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
+			this.mRequestHandles[sGuid] = this.oModel.read(this.sPath, {
+				context: this.oContext, groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError, canonicalRequest: this.bCanonicalRequest
+			});
 		}
 
 	};
@@ -790,7 +793,8 @@ sap.ui.define([
 				groupId: sGroupId,
 				urlParameters:aParams,
 				success: _handleSuccess,
-				error: _handleError
+				error: _handleError,
+				canonicalRequest: this.bCanonicalRequest
 			});
 		}
 	};

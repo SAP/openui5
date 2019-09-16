@@ -1926,7 +1926,7 @@ sap.ui.define([
 			oNewContext,
 			sGroupId,
 			sDeepPath,
-			that = this;
+			that = this, bCanonical;
 
 		// optional parameter handling
 		if (oContext !== null && typeof oContext === "object" && !(oContext instanceof sap.ui.model.Context)) {
@@ -1962,9 +1962,14 @@ sap.ui.define([
 			fnCallBack = undefined;
 		}
 
+		if (mParameters){
+			bCanonical = mParameters.canonicalRequest;
+		}
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+
 		// if path cannot be resolved, call the callback function and return null
-		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
-		if (!sResolvedPath && this.bCanonicalRequests) {
+		sResolvedPath = this.resolve(sPath, oContext, bCanonical);
+		if (!sResolvedPath && bCanonical) {
 			sResolvedPath = this.resolve(sPath, oContext);
 		}
 		sDeepPath = this.resolveDeep(sPath, oContext);
@@ -2049,7 +2054,7 @@ sap.ui.define([
 				if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 					sGroupId = mParameters.groupId || mParameters.batchGroupId;
 				}
-				this.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError, context: oContext});
+				this.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError, context: oContext, canonicalRequest: bCanonical});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
 			}
@@ -3741,7 +3746,7 @@ sap.ui.define([
 			if (!sPath.startsWith('/')) {
 				sPath = '/' + sPath;
 			}
-			sPath = this._normalizePath(sPath);
+			sPath = this._normalizePath(sPath, undefined, true);
 			// decrease laundering
 			this.decreaseLaundering(sPath, oRequest.data);
 			this._decreaseDeferredRequestCount(oRequest);
@@ -4407,7 +4412,7 @@ sap.ui.define([
 		var fnSuccess, fnError, oRequest, sUrl, oContext, sETag,
 			aUrlParams, sGroupId, sChangeSetId,
 			mUrlParams, mHeaders, sMethod, mRequests, bRefreshAfterChange,
-			bDeferred, that = this, sNormalizedPath, sDeepPath;
+			bDeferred, that = this, sNormalizedPath, sDeepPath, bCanonical;
 
 		if (mParameters) {
 			sGroupId = mParameters.groupId || mParameters.batchGroupId;
@@ -4419,12 +4424,14 @@ sap.ui.define([
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
+			bCanonical = mParameters.canonicalRequest;
 			// ensure merge parameter backwards compatibility
 			if (mParameters.merge !== undefined) {
 				sMethod =  mParameters.merge ? "MERGE" : "PUT";
 			}
 		}
 
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
 		bDeferred = sGroupId in that.mDeferredGroups;
 
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
@@ -4434,7 +4441,7 @@ sap.ui.define([
 		sMethod = sMethod ? sMethod : this.sDefaultUpdateMethod;
 		sETag = sETag || this._getETag(sPath, oContext, oData);
 
-		sNormalizedPath = this._normalizePath(sPath, oContext);
+		sNormalizedPath = this._normalizePath(sPath, oContext, bCanonical);
 		sDeepPath = this.resolveDeep(sPath, oContext);
 
 		return this._processRequest(function(requestHandle) {
@@ -4484,7 +4491,7 @@ sap.ui.define([
 		var oRequest, sUrl, oEntityMetadata,
 		oContext, fnSuccess, fnError, mUrlParams, mRequests,
 		mHeaders, aUrlParams, sEtag, sGroupId, sMethod, sChangeSetId, bRefreshAfterChange,
-		bDeferred, that = this, sNormalizedPath, sDeepPath;
+		bDeferred, that = this, sNormalizedPath, sDeepPath, bCanonical;
 
 		// The object parameter syntax has been used.
 		if (mParameters) {
@@ -4497,7 +4504,11 @@ sap.ui.define([
 			sEtag		= mParameters.eTag;
 			mHeaders	= mParameters.headers;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
+			bCanonical = mParameters.canonicalRequest;
 		}
+
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
@@ -4506,7 +4517,7 @@ sap.ui.define([
 
 		bDeferred = sGroupId in that.mDeferredGroups;
 
-		sNormalizedPath = that._normalizePath(sPath, oContext);
+		sNormalizedPath = that._normalizePath(sPath, oContext, bCanonical);
 		sDeepPath = this.resolveDeep(sPath, oContext);
 
 		return this._processRequest(function(requestHandle) {
@@ -4558,7 +4569,7 @@ sap.ui.define([
 		var oContext, sKey, fnSuccess, fnError, oRequest, sUrl, sGroupId,
 		sChangeSetId, sETag, bRefreshAfterChange,
 		mUrlParams, mHeaders, aUrlParams, sMethod, mRequests,
-		bDeferred, that = this, sNormalizedPath, sDeepPath;
+		bDeferred, that = this, sNormalizedPath, sDeepPath, bCanonical = this.bCanonicalRequests;
 
 		if (mParameters) {
 			sGroupId = mParameters.groupId || mParameters.batchGroupId;
@@ -4570,7 +4581,11 @@ sap.ui.define([
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
+			bCanonical = mParameters.canonicalRequest;
 		}
+
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
 
 		aUrlParams = ODataUtils._createUrlParamsArray(mUrlParams);
@@ -4580,7 +4595,7 @@ sap.ui.define([
 
 		bDeferred = sGroupId in that.mDeferredGroups;
 
-		sNormalizedPath = this._normalizePath(sPath, oContext);
+		sNormalizedPath = this._normalizePath(sPath, oContext, bCanonical);
 		sDeepPath = this.resolveDeep(sPath, oContext);
 
 		function handleSuccess(oData, oResponse) {
@@ -4814,7 +4829,8 @@ sap.ui.define([
 		oFilter, oEntityType,
 		aUrlParams, mHeaders, sMethod,
 		sGroupId, sETag,
-		mRequests, sNormalizedTempPath, sDeepPath, sNormalizedPath,
+		mRequests, sNormalizedTempPath, sDeepPath,
+		sNormalizedPath, bCanonical,
 		that = this;
 
 		// The object parameter syntax has been used.
@@ -4827,7 +4843,11 @@ sap.ui.define([
 			aSorters	= mParameters.sorters;
 			sGroupId 	= mParameters.groupId || mParameters.batchGroupId;
 			mHeaders 	= mParameters.headers;
+			bCanonical  = mParameters.canonicalRequest;
 		}
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+
+
 		//if the read is triggered via a refresh we should use the refreshGroupId instead
 		if (this.sRefreshGroupId) {
 			sGroupId = this.sRefreshGroupId;
@@ -4854,9 +4874,9 @@ sap.ui.define([
 		if (iIndex !== -1) {
 			sTempPath = sPath.substring(0, iIndex - 1);
 		}
-		sNormalizedTempPath = that._normalizePath(sTempPath, oContext);
+		sNormalizedTempPath = that._normalizePath(sTempPath, oContext, bCanonical);
 
-		sNormalizedPath = this._normalizePath(sPath, oContext);
+		sNormalizedPath = this._normalizePath(sPath, oContext, bCanonical);
 		sDeepPath = this.resolveDeep(sPath, oContext);
 
 
@@ -5742,7 +5762,7 @@ sap.ui.define([
 			mUrlParams, mHeaders, mRequests, vProperties, oEntity = {},
 			fnCreated,
 			sMethod = "POST",
-			that = this, sDeepPath, sNormalizedPath;
+			that = this, sDeepPath, sNormalizedPath, bCanonical;
 
 		if (mParameters) {
 			vProperties = mParameters.properties;
@@ -5756,7 +5776,10 @@ sap.ui.define([
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
+			bCanonical = mParameters.canonicalRequest;
 		}
+		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+
 		mHeaders = mHeaders || {};
 
 		bRefreshAfterChange = this._getRefreshAfterChange(bRefreshAfterChange, sGroupId);
@@ -5776,7 +5799,7 @@ sap.ui.define([
 			sPath = "/" + sPath;
 		}
 
-		sNormalizedPath = that._normalizePath(sPath, oContext);
+		sNormalizedPath = that._normalizePath(sPath, oContext, bCanonical);
 		sDeepPath = that.resolveDeep(sPath, oContext);
 
 		function create() {
@@ -5923,7 +5946,7 @@ sap.ui.define([
 	 * @returns {string} The resolved path
 	 * @private
 	 */
-	ODataModel.prototype._normalizePath = function(sPath, oContext) {
+	ODataModel.prototype._normalizePath = function(sPath, oContext, bCanonical) {
 		// remove query params from path if any
 		if (sPath && sPath.indexOf('?') !== -1 ) {
 			sPath = sPath.substr(0, sPath.indexOf('?'));
@@ -5931,7 +5954,7 @@ sap.ui.define([
 		if (!oContext && !sPath.startsWith("/")) {
 			Log.fatal(this + " path " + sPath + " must be absolute if no Context is set");
 		}
-		return this.resolve(sPath, oContext, this.bCanonicalRequests) || this.resolve(sPath, oContext);
+		return this.resolve(sPath, oContext, bCanonical) || this.resolve(sPath, oContext);
 	};
 
 	/**
@@ -6754,6 +6777,18 @@ sap.ui.define([
 			delete oEntityData.__metadata.deepPath;
 		}
 		return {created: sCreated, deepPath: sDeepPath};
+	};
+
+	/**
+	 * Checks whether canonical requests are necessary.
+	 * @param {boolean} [bCanonicalRequest] is regarded with priority when checking whether canonical requests are required.
+	 */
+	ODataModel.prototype._isCanonicalRequestNeeded = function(bCanonicalRequest){
+		if (bCanonicalRequest !== undefined){
+			return !!bCanonicalRequest;
+		} else {
+			return !!this.bCanonicalRequests;
+		}
 	};
 
 	return ODataModel;
