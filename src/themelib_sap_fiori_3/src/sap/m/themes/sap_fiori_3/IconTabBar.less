@@ -121,10 +121,15 @@
 @_sap_m_IconTabBar_SelectedTextColor: @sapUiSelected;
 @_sap_m_IconTabBar_SelectedTextHoverColor: darken(@sapUiSelected, 10);
 
+.sapMITB {
+	overflow: hidden; // hides top, left and right shadows of the ITHeader
+}
+
 /* Head Container */
 .sapMITH {
+	z-index: 1; // shows the bottom shadow of the ITHeader over the content of the ITB
 	background-color: @sapUiObjectHeaderBackground;
-	border-bottom: 0.0625rem solid @sapUiObjectHeaderBackground;
+	border-bottom: none;
 
 	.sapMITBHead {
 
