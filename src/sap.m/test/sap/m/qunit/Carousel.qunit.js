@@ -1730,6 +1730,115 @@ sap.ui.define([
 		}.bind(this), sinonClockTickValue);
 	});
 
+	QUnit.test("Looping right with keys when visiblePagesCount is different than 1", function (assert) {
+		// arrange
+		this.oCarousel.setLoop(true);
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 2
+		}));
+		sap.ui.getCore().applyChanges();
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		};
+		var done = assert.async();
+		var oLastActivePage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 2];
+
+		// await the initial animation
+		setTimeout(function () {
+
+			// act - press right arrow 10 times
+			for (var i = 0; i < 10; i++) {
+				this.oCarousel.onsapright(oFakeEvent);
+			}
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), oLastActivePage.getId(), "Active page should be keyTestPage_8 and a loop should NOT have happened.");
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+	QUnit.test("Looping left with keys when visiblePagesCount is different than 1", function (assert) {
+		// arrange
+		this.oCarousel.setLoop(true);
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 2
+		}));
+		sap.ui.getCore().applyChanges();
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		};
+		var done = assert.async();
+		var oFirstActivePage = this.oCarousel.getPages()[0];
+
+		// await the initial animation
+		setTimeout(function () {
+
+			// act - press left arrow 10 times
+			for (var i = 0; i < 10; i++) {
+				this.oCarousel.onsapleft(oFakeEvent);
+			}
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), oFirstActivePage.getId(), "Active page should be keyTestPage_1 and a loop should NOT have happened.");
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+	QUnit.test("Looping right with mouse when visiblePagesCount is different than 1", function (assert) {
+		// arrange
+		this.oCarousel.setLoop(true);
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 2
+		}));
+		var oLastActivePage = this.oCarousel.getPages()[this.oCarousel.getPages().length - 2];
+		this.oCarousel.setActivePage(oLastActivePage);
+		sap.ui.getCore().applyChanges();
+		var done = assert.async();
+
+		setTimeout(function () {
+			// act - press right arrow
+			this.oCarousel.$().find("a.sapMCrslNext").click();
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), oLastActivePage.getId(), "Active page should be keyTestPage_8 and a loop should NOT have happened.");
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+	QUnit.test("Looping left with mouse when visiblePagesCount is different than 1", function (assert) {
+		// arrange
+		this.oCarousel.setLoop(true);
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 2
+		}));
+		var oFirstActivePage = this.oCarousel.getPages()[0];
+		this.oCarousel.setActivePage(oFirstActivePage);
+		sap.ui.getCore().applyChanges();
+		var done = assert.async();
+
+		setTimeout(function () {
+			// act - press left arrow
+			this.oCarousel.$().find("a.sapMCrslPrev").click();
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), oFirstActivePage.getId(), "Active page should be keyTestPage_1 and a loop should NOT have happened.");
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
 
 	return waitForThemeApplied();
 });
