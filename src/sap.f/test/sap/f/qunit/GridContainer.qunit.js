@@ -368,6 +368,40 @@ function (
 		}.bind(this));
 	});
 
+	QUnit.test("Visible/Invisible items", function (assert) {
+		// Arrange
+		var oVisibleItem = new GenericTile({id: "tile1", header: "Comulative Tools"}),
+			oInvisibleItem = new GenericTile({id: "tile2", header: "Comulative Tools", visible: false});
+
+		// Act
+		this.oGrid.addItem(oVisibleItem);
+		this.oGrid.addItem(oInvisibleItem);
+		Core.applyChanges();
+
+		var aWrappers = this.oGrid.$().children();
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(aWrappers[0].offsetWidth > 0, "Initially visible item wrapper should take width.");
+		assert.notOk(aWrappers[1].offsetWidth > 0, "Initially invisible item wrapper should NOT take any width.");
+
+		// Act
+		oInvisibleItem.setVisible(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(aWrappers[0].offsetWidth > 0, "Wrapper of visible item should take width.");
+		assert.ok(aWrappers[1].offsetWidth > 0, "When item is turned to visible, its wrapper should take width.");
+
+		// Act
+		oVisibleItem.setVisible(false);
+		Core.applyChanges();
+
+		// Assert
+		assert.notOk(aWrappers[0].offsetWidth > 0, "When item is turned to invisible, its wrapper should NOT take width.");
+		assert.ok(aWrappers[1].offsetWidth > 0, "Wrapper of visible item should take width.");
+	});
+
 	if (bIsGridSupported) {
 		QUnit.test("Item with more columns than the grid with columns auto-fill", function (assert) {
 			// Arrange
