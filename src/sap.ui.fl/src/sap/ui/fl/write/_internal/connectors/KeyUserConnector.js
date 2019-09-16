@@ -71,9 +71,15 @@ sap.ui.define([
 				mPropertyBag,
 				mParameters
 			);
+
+			var sTokenUrl = ApplyUtils.getUrl(
+				API_VERSION + ROUTES.SETTINGS,
+				mPropertyBag
+			);
+
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyConnector,
-				API_VERSION + ROUTES.SETTINGS
+				sTokenUrl
 			);
 			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
 		},
@@ -92,9 +98,15 @@ sap.ui.define([
 				API_VERSION + ROUTES.CHANGES,
 				mPropertyBag
 			);
+
+			var sTokenUrl = ApplyUtils.getUrl(
+				API_VERSION + ROUTES.SETTINGS,
+				mPropertyBag
+			);
+
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyConnector,
-				API_VERSION + ROUTES.SETTINGS,
+				sTokenUrl,
 				mPropertyBag.flexObjects,
 				"application/json; charset=utf-8", "json"
 			);
