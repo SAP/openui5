@@ -139,26 +139,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Takes a source object and returns a target object that has a subset of properties of the source object
-		 * specified in 'aKeys'.
-		 *
-		 * @param {object} oSource Object containing the information needed for filling oTarget
-		 * @param {array<string>} aKeys Keys which should be added to oTarget
-		 * @returns {object} oTarget Object containing all key-value pairs which where found in oSource
-		 */
-		getSubsetOfObject: function(oSource, aKeys) {
-			var oTarget = {};
-			if (Array.isArray(aKeys)) {
-				aKeys.forEach(function (sKey) {
-					if (oSource[sKey]) {
-						oTarget[sKey] = oSource[sKey];
-					}
-				});
-			}
-			return oTarget;
-		},
-
-		/**
 		 * Sending a xhr request and handling the response according to the status code of the response.
 		 *
 		 * @param {string} sUrl Url of the sent request
