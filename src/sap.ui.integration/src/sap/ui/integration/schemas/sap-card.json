@@ -1143,6 +1143,13 @@
 					"description": "Represents HTTP headers",
 					"type": "object",
 					"additionalProperties": true
+				},
+				"withCredentials": {
+					"description": "Indicates whether or not cross-site requests should be made using credentials.",
+					"oneOf": [
+						{ "type": "boolean", "default": true },
+						{ "$ref": "#/definitions/simpleBinding" }
+					]
 				}
 			}
 		},
