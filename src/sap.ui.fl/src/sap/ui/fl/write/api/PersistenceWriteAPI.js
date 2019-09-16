@@ -8,16 +8,16 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/_internal/SaveAs",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/FeaturesAPI"
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/base/util/restricted/_omit"
 ], function(
 	includes,
 	JsControlTreeModifier,
 	ChangesController,
 	DescriptorInlineChangeFactory,
 	SaveAs,
-	flexUtils,
-	FeaturesAPI
+	FeaturesAPI,
+	_omit
 ) {
 	"use strict";
 
@@ -92,7 +92,7 @@ sap.ui.define([
 		 */
 		hasHigherLayerChanges: function (mPropertyBag) {
 			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
-				.hasHigherLayerChanges(flexUtils.omit(mPropertyBag, "selector"));
+				.hasHigherLayerChanges(_omit(mPropertyBag, "selector"));
 		},
 
 		/**
@@ -110,7 +110,7 @@ sap.ui.define([
 			mPropertyBag.invalidateCache = true;
 			return oFlexController.saveAll(mPropertyBag.skipUpdateCache)
 				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, mPropertyBag.skipUpdateCache))
-				.then(PersistenceWriteAPI._getUIChanges.bind(null, flexUtils.omit(mPropertyBag, "skipUpdateCache")));
+				.then(PersistenceWriteAPI._getUIChanges.bind(null, _omit(mPropertyBag, "skipUpdateCache")));
 		},
 
 		/**
@@ -284,7 +284,7 @@ sap.ui.define([
 		 */
 		_getUIChanges: function(mPropertyBag) {
 			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
-				._oChangePersistence.getChangesForComponent(flexUtils.omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
+				._oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
 		}
 	};
 	return PersistenceWriteAPI;
