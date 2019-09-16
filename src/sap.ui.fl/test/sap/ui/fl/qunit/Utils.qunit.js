@@ -1988,44 +1988,6 @@ function(
 		});
 	});
 
-	QUnit.module("Utils.uniqWith", {
-		beforeEach: function() {
-			this.fnComparator = function (oSource, oTarget) {
-				return oSource.id === oTarget.id;
-			};
-			this.oIncludedObject1 = { id: "id1" };
-			this.oIncludedObject2 = { id: "id2" };
-			this.oIncludedObject2a = { id: "id2" };
-			this.oIncludedObject2b = { id: "id2" };
-			this.oIncludedObject3 = { id: "id3" };
-			this.aWithDuplicates = [
-				this.oIncludedObject1,
-				this.oIncludedObject2,
-				this.oIncludedObject3,
-				this.oIncludedObject2a,
-				this.oIncludedObject2b
-			];
-			this.aWithoutDuplicates = [
-				this.oIncludedObject1,
-				this.oIncludedObject2,
-				this.oIncludedObject3
-			];
-		},
-		afterEach: function() {}
-	}, function () {
-		QUnit.test("when called with empty array", function(assert) {
-			assert.notOk(Utils.uniqWith([], function() {}).length, "then empty array is returned");
-		});
-
-		QUnit.test("when called with array without duplicates", function(assert) {
-			assert.deepEqual(Utils.uniqWith(this.aWithoutDuplicates, this.fnComparator), this.aWithoutDuplicates, "then the passed Array is returned");
-		});
-
-		QUnit.test("when called with array with duplicates", function(assert) {
-			assert.deepEqual(Utils.uniqWith(this.aWithDuplicates, this.fnComparator), this.aWithoutDuplicates, "then array only with uniqe entries is returned ");
-		});
-	});
-
 	QUnit.module("Utils.isLayerFilteringRequired", {
 		beforeEach: function () {
 		},
