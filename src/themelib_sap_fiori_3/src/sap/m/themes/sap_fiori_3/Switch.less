@@ -36,6 +36,13 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	border-top-right-radius: 0.75rem;
 	border-bottom-right-radius: 0.75rem;
 	border-bottom-left-radius: 0.75rem;
+	&.sapMSwtNoLabel {
+		width: 3.25rem;
+		height: 1.25rem;
+		&.sapMSwtOn .sapMSwtHandle {
+			left: 1.5rem;
+		}
+	}
 }
 
 /* background */
@@ -60,7 +67,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 /* Text                           */
 /* ------------------------------ */
 .sapMSwtText {
-	line-height: 1.375rem;
+	line-height: 1.25rem;
 	width: 1.75rem;
 	&.sapMSwtTextOn {
 		margin: 0 0 0 0.125rem;
@@ -72,6 +79,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 		left: 3.8rem;
 	}
 	.sapMSwtLabel {
+		height: 1.25rem;
 		padding: 0;
 	}
 }
@@ -90,7 +98,7 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
 	border: @sapUiButtonBorderWidth solid;
-	left: 1.95rem;
+	left: 1.9375rem;
 }
 
 //on
@@ -220,14 +228,25 @@ html.sap-desktop .sapMSwtCont:focus > .sapMSwt {
 		.sapMSwt {
 			width: 3.375rem;
 			height: 1.25rem;
+			&.sapMSwtNoLabel {
+				width: 2.5rem;
+				height: 1rem;
+				&.sapMSwtOn .sapMSwtHandle {
+					left: 1rem;
+				}
+			}
 			.sapMSwtHandle {
-				height: 1.5rem;
-				width: 1.5rem;
+				height: 1.625rem;
+				width: 1.625rem;
+				left: 1.88rem;
 			}
 			.sapMSwtText {
-				line-height: 1.425rem;
+				line-height: 1.25rem;
 				&.sapMSwtTextOff {
 					left: 3.5rem;
+				}
+				.sapMSwtLabel {
+					width: 1.75rem;
 				}
 			}
 		}

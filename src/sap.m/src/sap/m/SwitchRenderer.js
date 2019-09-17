@@ -76,6 +76,10 @@ sap.ui.define(["sap/ui/Device", "sap/m/library"], function(Device, library) {
 				oRm.class(CSS_CLASS + "Disabled");
 			}
 
+			if (oSwitch._sOn === " " && oSwitch._sOff === " ") {
+				oRm.class(CSS_CLASS + "NoLabel");
+			}
+
 			oRm.openEnd();
 			oRm.openStart("div", oSwitch.getId() + "-inner");
 			oRm.class(CSS_CLASS + "Inner");
