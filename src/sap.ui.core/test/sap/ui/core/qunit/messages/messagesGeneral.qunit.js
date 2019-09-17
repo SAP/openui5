@@ -425,7 +425,7 @@ sap.ui.define([
 		oMessageManager.addMessages(oMessage);
 	});
 
-	QUnit.test("Update when adding ControlId", function(assert) {
+	QUnit.test("Update when adding control id and removing control id", function(assert) {
 		var count = 0;
 		var done = assert.async();
 		var oMessageManager = sap.ui.getCore().getMessageManager();
@@ -442,6 +442,8 @@ sap.ui.define([
 				assert.equal(oBinding.getValue().length, 0);
 			} else if (count === 2) {
 				assert.equal(oBinding.getValue().length, 1);
+			} else if (count === 3) {
+				assert.equal(oBinding.getValue().length, 0);
 				done();
 			}
 		};
@@ -449,6 +451,8 @@ sap.ui.define([
 		oBinding.attachChange(fnChange);
 		oBinding.checkUpdate();
 		oMessage.addControlId("/" + sControlId + "/value");
+		oBinding.checkUpdate();
+		oMessage.removeControlId("/" + sControlId + "/value");
 		oBinding.checkUpdate();
 	});
 
