@@ -10,7 +10,7 @@ sap.ui.define([
 		"sap/f/cards/Header",
 		"sap/base/Log",
 		"sap/ui/core/ComponentContainer",
-		"sap/f/cards/ActionEnablement",
+		"sap/f/cards/CardActions",
 		"sap/ui/qunit/QUnitUtils",
 		"./services/SampleServices"
 	],
@@ -24,7 +24,7 @@ sap.ui.define([
 		Header,
 		Log,
 		ComponentContainer,
-		ActionEnablement,
+		CardActions,
 		qutils,
 		SampleServices
 	) {
@@ -863,8 +863,8 @@ sap.ui.define([
 		function testNavigationServiceListContent(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {
 					Log.error(LOG_MESSAGE);
 				}),
 				oCard = new Card({
@@ -903,8 +903,8 @@ sap.ui.define([
 		function testActionOnContentService(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {}),
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {}),
 				oCard = new Card({
 					width: "400px",
 					height: "600px",
@@ -940,8 +940,8 @@ sap.ui.define([
 		function testActionOnContentUrl(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {}),
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {}),
 				oCard = new Card({
 					width: "400px",
 					height: "600px",
@@ -992,7 +992,7 @@ sap.ui.define([
 		QUnit.test("Service navigation", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
 				oLogSpy = sinon.spy(Log, "error");
 
 			// Act
@@ -1024,8 +1024,8 @@ sap.ui.define([
 
 		QUnit.test("Action URL should navigate", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {
 					Log.error(LOG_MESSAGE);
 				});
 
@@ -1056,7 +1056,7 @@ sap.ui.define([
 
 		QUnit.test("Enabled property of actions is set to false", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction");
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
 
 			// Act
 			this.oCard.setManifest(oManifest__Action_Disabled);
@@ -1066,16 +1066,15 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 				var oCardHeader = this.oCard.getCardHeader();
-
 				// Assert
-				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header has a  clickable style is added");
+				assert.notOk(oCardHeader.hasStyleClass("sapFCardClickable"), "Card Header doesn't have a clickable style");
 
 				//Act
 				oCardHeader.firePress();
 				Core.applyChanges();
 
 				// Assert
-				assert.ok(oActionSpy.callCount === 0, "Card Header is clicked");
+				assert.notOk(oActionSpy.callCount, "Card Header is not clicked");
 
 				//Clean up
 				oActionSpy.restore();
@@ -1086,7 +1085,7 @@ sap.ui.define([
 
 		QUnit.test("No actions available", function (assert) {
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(ActionEnablement, "_attachNavigationAction");
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Actions);
@@ -1109,7 +1108,7 @@ sap.ui.define([
 
 		QUnit.test("No action type available", function (assert) {
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(ActionEnablement, "_attachNavigationAction");
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
@@ -1132,7 +1131,7 @@ sap.ui.define([
 
 		QUnit.test("Actions 'enabled' is set to false", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction");
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_CONTENT_ACTION);
@@ -1173,7 +1172,7 @@ sap.ui.define([
 		QUnit.test("No service URL in navigation actions", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
 				oLogSpy = sinon.spy(Log, "error"),
 				oCard = new Card({
 					manifest: oManifest_List_Bindend_Items,
@@ -1213,8 +1212,8 @@ sap.ui.define([
 		QUnit.test("Action disabled in template, no service", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {
 					Log.error(LOG_MESSAGE);
 				}),
 				oCard = new Card({
@@ -1251,7 +1250,7 @@ sap.ui.define([
 		QUnit.test("No actions available", function (assert) {
 
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(ActionEnablement, "_attachNavigationAction"),
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction"),
 				oCard = new Card({
 					manifest: oManifest_ListCard_No_Actions,
 					width: "400px",
@@ -1280,7 +1279,7 @@ sap.ui.define([
 		QUnit.test("No action type available", function (assert) {
 
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(ActionEnablement, "_attachNavigationAction"),
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachNavigationAction"),
 				oCard = new Card({
 					manifest: oManifest_ListCard_Actions_Missing_Type,
 					width: "400px",
@@ -1323,7 +1322,7 @@ sap.ui.define([
 		QUnit.test("List should be actionable ", function (assert) {
 
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction");
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
 
 			// Act
 			this.oCard.setManifest(oManifest_ListCard_No_Request);
@@ -1378,8 +1377,8 @@ sap.ui.define([
 		QUnit.test("Analytical Card should be not actionable", function (assert) {
 			// Arrange
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction"),
-				oStubOpenUrl = sinon.stub(ActionEnablement, "openUrl").callsFake( function () {});
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions.prototype, "openUrl").callsFake( function () {});
 
 			this.oCard.setManifest(oManifest_Analytical_No_Actions);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -1435,7 +1434,7 @@ sap.ui.define([
 
 		QUnit.test("On pressing link, action should not be fired", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(ActionEnablement, "_fireAction");
+				oActionSpy = sinon.spy(CardActions.prototype, "_fireAction");
 
 			this.oCard.setManifest(objectContent_service);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);

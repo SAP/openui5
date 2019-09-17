@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
+	'sap/f/library',
 	'sap/ui/core/Control',
-	"sap/f/cards/ActionEnablement",
+	"sap/f/cards/CardActions",
 	'sap/m/NumericContent',
 	'sap/m/Text',
 	'sap/ui/model/json/JSONModel',
@@ -11,8 +12,9 @@ sap.ui.define([
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/base/strings/formatMessage"
 ], function (
+		library,
 		Control,
-		ActionEnablement,
+		CardActions,
 		NumericContent,
 		Text,
 		JSONModel,
@@ -21,6 +23,8 @@ sap.ui.define([
 		formatMessage
 	) {
 		"use strict";
+
+	var AreaType = library.cards.AreaType;
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.
@@ -177,6 +181,11 @@ sap.ui.define([
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
+		}
+
+		if (this._oActions) {
+			this._oActions.destroy();
+			this._oActions = null;
 		}
 	};
 
@@ -462,7 +471,12 @@ sap.ui.define([
 		oHeader.setDataProviderFactory(oDataProviderFactory);
 		oHeader._setData(mConfiguration.data);
 
-		oHeader._attachActions(mConfiguration, oHeader);
+		var oActions = new CardActions({
+			areaType: AreaType.Header
+		});
+		oActions.attach(mConfiguration, oHeader);
+		oHeader._oActions = oActions;
+
 		return oHeader;
 	};
 
@@ -598,8 +612,6 @@ sap.ui.define([
 
 		return sSideIndicatorIds;
 	};
-
-	ActionEnablement.enrich(NumericHeader);
 
 	return NumericHeader;
 });

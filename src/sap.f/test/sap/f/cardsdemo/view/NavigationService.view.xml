@@ -49,6 +49,13 @@
 						<w:Card action="onAction" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationAction.json" width="400px" height="auto"/>
 						<w:Card action="onAction" class="sapUiMediumMargin" manifest="./cardcontent/navigationService/manifest_navigationActionTable.json" width="400px" height="auto"/>
 					</HBox>
+
+					<VBox class="sapUiMediumMarginLeft">
+						<Text text="Cards using navigation service. - Timeline Content"/>
+					</VBox>
+					<HBox>
+						<w:Card id="timeline" class="sapUiMediumMargin" manifest="{manifests>/timelineContent/card0}" width="300px" height="auto"/>
+					</HBox>
 				</VBox>
 			</Panel>
 		</content>

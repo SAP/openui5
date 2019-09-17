@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/Core"
-], function (Control, JSONModel, Log, ManagedObjectObserver, Core) {
+	"sap/ui/core/Core",
+	"sap/f/cards/CardActions"
+], function (Control, JSONModel, Log, ManagedObjectObserver, Core, CardActions) {
 	"use strict";
 
 	/**
@@ -99,6 +100,8 @@ sap.ui.define([
 		}.bind(this));
 
 		this.setBusyIndicatorDelay(0);
+
+		this._oActions = new CardActions();
 	};
 
 	/**
@@ -119,6 +122,11 @@ sap.ui.define([
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
+		}
+
+		if (this._oActions) {
+			this._oActions.destroy();
+			this._oActions = null;
 		}
 	};
 
