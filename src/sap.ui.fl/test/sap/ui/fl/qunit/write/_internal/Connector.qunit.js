@@ -264,12 +264,12 @@ sap.ui.define([
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector : "LrepConnector", layerFilter : ["VENDOR"], url : this.url},
-				{connector : "PersonalizationConnector", layerFilter : ["USER"], url : this.url},
-				{connector : "JsObjectConnector", layerFilter : ["VENDOR"]}
+				{connector: "LrepConnector", url: this.url},
+				{connector: "PersonalizationConnector", url: this.url},
+				{connector: "JsObjectConnector"}
 			]);
 
-			var oExpectedResponse = {test1 : "test1", test2 : "test2"};
+			var oExpectedResponse = {test1: "test1", test2: "test2"};
 			var oLogResolveSpy = sandbox.spy(ApplyUtils, "logAndResolveDefault");
 
 			return Connector.loadFeatures().then(function (oResponse) {
