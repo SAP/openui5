@@ -822,9 +822,8 @@ sap.ui.define([
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.mEntityContainersOfSchema[sQualifiedName]
-			= this.result[sQualifiedName] = this.entityContainer = {
-			"$kind" : "EntityContainer"
-		};
+			= this.entityContainer = {"$kind" : "EntityContainer"};
+		this.addToResult(sQualifiedName, this.entityContainer);
 		if (oElement.getAttributeNS(sMicrosoftNamespace, "IsDefaultEntityContainer") === "true") {
 			this.defaultEntityContainer = sQualifiedName;
 		}
@@ -957,7 +956,7 @@ sap.ui.define([
 			}
 
 			// add operation to the result
-			this.result[sQualifiedName] = [oOperation];
+			this.addToResult(sQualifiedName, [oOperation]);
 
 			sAnnotationActionFor = this.consumeSapAnnotation("action-for");
 			if (sAnnotationActionFor) {
@@ -1051,9 +1050,8 @@ sap.ui.define([
 		var sSchemaVersion = this.consumeSapAnnotation("schema-version");
 
 		this.namespace = oElement.getAttribute("Namespace") + ".";
-		this.result[this.namespace] = this.schema = {
-			"$kind" : "Schema"
-		};
+		this.schema = {"$kind" : "Schema"};
+		this.addToResult(this.namespace, this.schema);
 		if (sSchemaVersion) {
 			this.schema["@Org.Odata.Core.V1.SchemaVersion"] = sSchemaVersion;
 		}
@@ -1069,7 +1067,8 @@ sap.ui.define([
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
 		this.sTypeName = sQualifiedName;
-		this.result[sQualifiedName] = this.type = oType;
+		this.type = oType;
+		this.addToResult(sQualifiedName, oType);
 		this.v2annotatable(sQualifiedName);
 	};
 
