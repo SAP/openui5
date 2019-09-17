@@ -276,7 +276,8 @@ function(
 				content : this.mSingleMoveChangeContentWithLocalId
 			});
 
-			sandbox.stub(JsControlTreeModifier, "findIndexInParentAggregation").returns(2);
+			// the second .applyChange call overwrites the revert data and simulates the change already being done on the UI
+			assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
 
 			assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
