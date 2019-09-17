@@ -7,13 +7,17 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/base/util/ObjectPath",
-	"sap/base/Log"
+	"sap/base/util/includes",
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/variants/URLHandler"
 ], function (
 	Utils,
 	Change,
 	Variant,
 	ObjectPath,
-	Log
+	includes,
+	Log,
+	URLHandler
 ) {
 	"use strict";
 
@@ -37,7 +41,6 @@ sap.ui.define([
 		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
 		this._mVariantManagement = {};
 		this.setChangeFileContent(oChangeFileContent, {});
-		this.sVariantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 		this.DEFAULT_AUTHOR = "SAP";
 	};
@@ -105,14 +108,10 @@ sap.ui.define([
 
 					this._applyChangesOnVariant(oVariant);
 
-					if (mTechnicalParameters && Array.isArray(mTechnicalParameters[this.sVariantTechnicalParameterName])) {
+					if (!sVariantFromUrl) {
 						// Only the first valid reference for that variant management id passed in the parameters is used to load the changes
-						mTechnicalParameters[this.sVariantTechnicalParameterName].some(function (sURLVariant) {
-							if (oVariant.content.fileName === sURLVariant) {
-								sVariantFromUrl = oVariant.content.fileName;
-								return true;
-							}
-						});
+						sVariantFromUrl = includes(mTechnicalParameters && mTechnicalParameters[URLHandler.variantTechnicalParameterName], oVariant.content.fileName)
+							&& oVariant.content.fileName;
 					}
 				}.bind(this));
 				if (iIndex > -1) {

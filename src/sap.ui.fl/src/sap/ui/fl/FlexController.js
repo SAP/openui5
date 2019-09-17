@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
 	"sap/base/Log",
-	"sap/base/util/restricted/_uniqWith"
+	"sap/base/util/restricted/_uniqWith",
+	"sap/ui/fl/apply/_internal/variants/URLHandler"
 ], function(
 	ChangeRegistry,
 	ChangeHandlerRegistration,
@@ -37,7 +38,8 @@ sap.ui.define([
 	Component,
 	Element,
 	Log,
-	_uniqWith
+	_uniqWith,
+	URLHandler
 ) {
 	"use strict";
 
@@ -63,7 +65,6 @@ sap.ui.define([
 	};
 
 	FlexController.PENDING = "sap.ui.fl:PendingChange";
-	FlexController.variantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 
 	/**
 	 * Sets the component name of the FlexController
@@ -1003,10 +1004,11 @@ sap.ui.define([
 				if (oComponent) {
 					var oModel = oComponent.getModel(Utils.VARIANT_MODEL_NAME);
 					if (oModel) {
-						oModel.updateEntry({
+						URLHandler.update({
 							parameters: [],
 							updateURL: true,
-							updateHashEntry: true
+							updateHashEntry: true,
+							model: oModel
 						});
 					}
 				}

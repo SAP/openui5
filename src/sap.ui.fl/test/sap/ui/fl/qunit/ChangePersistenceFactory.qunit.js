@@ -405,7 +405,7 @@ sap.ui.define([
 				name: "theComponentName",
 				componentData : {
 					technicalParameters : {
-						"sap-ui-fl-control-variant-id" : ["variantID"]
+						technicalParameter : ["variantID"]
 					}
 				}
 			};

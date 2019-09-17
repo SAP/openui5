@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexCustomData",
 	"sap/m/Text",
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/variants/URLHandler",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -28,11 +29,11 @@ sap.ui.define([
 	FlexCustomData,
 	Text,
 	Component,
+	URLHandler,
 	jQuery,
 	sinon
 ) {
 	"use strict";
-
 	var sandbox = sinon.sandbox.create();
 
 	sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
@@ -716,9 +717,8 @@ sap.ui.define([
 				}
 			};
 
-			var oTechnicalParameters = {
-				"sap-ui-fl-control-variant-id": ["variant0"]
-			};
+			var oTechnicalParameters = {};
+			oTechnicalParameters[URLHandler.variantTechnicalParameterName] = ["variant0"];
 			var oVariantController = new VariantController("MyComponent", "1.2.3", {});
 			var fnApplyChangesOnVariantSpy = sandbox.spy(oVariantController, "_applyChangesOnVariant");
 
@@ -1231,9 +1231,8 @@ sap.ui.define([
 
 	QUnit.module("Given a VariantController with variants", {
 		beforeEach : function() {
-			this.oTechnicalParameters = {
-				"sap-ui-fl-control-variant-id" : ["variant0"]
-			};
+			this.oTechnicalParameters = {};
+			this.oTechnicalParameters[URLHandler.variantTechnicalParameterName] = ["variant0"];
 
 			this.oChangeContent0 = {fileName:"change0", variantReference: "variant0"};
 			this.oChangeContent1 = {fileName:"change1", variantReference: "variant0"};
@@ -1338,9 +1337,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'setChangeFileContent' & 'loadInitialChanges' with a Component containing two valid URL parameters for the same variant id", function(assert) {
-			var oTechnicalParameters = {
-				"sap-ui-fl-control-variant-id": ["variant0", "variantdefault"]
-			};
+			var oTechnicalParameters = {};
+			oTechnicalParameters[URLHandler.variantTechnicalParameterName] = ["variant0", "variantdefault"];
 			this.oVariantController._mVariantManagement = {};
 			this.oVariantController.setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 			var aInitialChanges = this.oVariantController.loadInitialChanges();
@@ -1350,9 +1348,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'setChangeFileContent' & 'loadInitialChanges' with a Component containing an invalid URL parameter for the variant", function(assert) {
-			var	oTechnicalParameters = {
-				"sap-ui-fl-control-variant-id": ["trash"]
-			};
+			var oTechnicalParameters = {};
+			oTechnicalParameters[URLHandler.variantTechnicalParameterName] = ["trash"];
 			this.oVariantController._mVariantManagement = {};
 			this.oVariantController.setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 			var aInitialChanges = this.oVariantController.loadInitialChanges();
@@ -1373,7 +1370,7 @@ sap.ui.define([
 				"then the control changes for the default variant are retrieved");
 		});
 
-		QUnit.test("when calling 'setChangeFileContent' & 'loadInitialChanges' with valid URL parameters for two different variant management ids", function(assert) {
+		QUnit.test("when calling 'setChangeFileContent' & 'loadInitialChanges' for valid URL parameters for two different variant management ids, with multiple variant URL parameters for one variant management id", function(assert) {
 			this.oChangeContent4 = {fileName:"change4"};
 			this.oChangeContent5 = {fileName:"change5"};
 
@@ -1401,15 +1398,16 @@ sap.ui.define([
 				variantManagementChanges : {}
 			};
 
-			var oTechnicalParameters = {
-				"sap-ui-fl-control-variant-id": ["variant0", "variant02", "variantManagementId2"]
-			};
+			var oTechnicalParameters = {};
+			oTechnicalParameters[URLHandler.variantTechnicalParameterName] = ["variant0", "variant02", "variantManagementId2"];
 			this.oVariantController._mVariantManagement = {};
 			this.oVariantController.setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 			var aInitialChanges = this.oVariantController.loadInitialChanges();
 
-			var aExpectedChanges = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges.concat(
-				this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[1].controlChanges);
+			var aControlChangesForVM1 = this.oFakeVariantResponse.changes.variantSection.variantManagementId.variants[0].controlChanges;
+			// since "variantManagementId2" contains multiple variant URL parameters, only first one is considered
+			var aControlChangesForVM2 = this.oFakeVariantResponse.changes.variantSection.variantManagementId2.variants[0].controlChanges;
+			var aExpectedChanges = aControlChangesForVM1.concat(aControlChangesForVM2);
 
 			assert.deepEqual(aExpectedChanges, aInitialChanges, "then the combined control changes are retrieved, loading changes for the last variant that matches a URL parameter");
 		});
@@ -1442,9 +1440,8 @@ sap.ui.define([
 				variantManagementChanges : {}
 			};
 
-			var oTechnicalParameters = {
-				"sap-ui-fl-control-variant-id": ["variant0", "trash"]
-			};
+			var oTechnicalParameters = {};
+			oTechnicalParameters[URLHandler.variantTechnicalParameterName] = ["variant0", "trash"];
 			this.oVariantController._mVariantManagement = {};
 			this.oVariantController.setChangeFileContent(this.oFakeVariantResponse, oTechnicalParameters);
 			var aInitialChanges = this.oVariantController.loadInitialChanges();
