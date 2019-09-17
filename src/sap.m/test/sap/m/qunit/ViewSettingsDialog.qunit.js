@@ -1707,6 +1707,60 @@ sap.ui.define([
 		}, 1000);
 	});
 
+	QUnit.test("Select All checkbox is disabled when no items matched the search query", function (assert) {
+		var done = assert.async(),
+			that = this;
+
+		this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+		this.oVSD.open();
+
+		jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+		setTimeout(function() {
+			var oSearchField = that.oVSD._filterSearchField,
+				oSelectAllCheckbox = that.oVSD._selectAllCheckBox,
+				aVisibleItems,
+				bAllEnabled;
+
+			// Initial state: nothing in the Search box
+			aVisibleItems = that.oVSD._filterDetailList.getItems().filter(function (oItem) {
+				return oItem.getVisible();
+			});
+			bAllEnabled = oSelectAllCheckbox.getEnabled();
+
+			// Assert
+			assert.equal(aVisibleItems.length, 7, "At first the displayed items are 7.");
+			assert.equal(bAllEnabled, true, "At first the Select all checkbox is enabled.");
+
+			// Act: Type "Z" in the Search box
+			oSearchField.fireLiveChange({ newValue: "Z" }); // Matches: (nothing)
+			aVisibleItems = that.oVSD._filterDetailList.getItems().filter(function (oItem) {
+				return oItem.getVisible();
+			});
+			bAllEnabled = oSelectAllCheckbox.getEnabled();
+
+			// Assert
+			assert.equal(aVisibleItems.length, 0, "Now the displayed items are 0.");
+			assert.equal(bAllEnabled, false, "Now the Select all checkbox is disabled.");
+
+			// Back to initial state: nothing in the Search box
+			oSearchField.fireLiveChange({ newValue: "" }); // Matches: All items
+			aVisibleItems = that.oVSD._filterDetailList.getItems().filter(function (oItem) {
+				return oItem.getVisible();
+			});
+			bAllEnabled = oSelectAllCheckbox.getEnabled();
+
+			// Assert
+			assert.equal(aVisibleItems.length, 7, "Now the displayed items are 7 again.");
+			assert.equal(bAllEnabled, true, "Now the Select all checkbox is enabled again.");
+
+			done();
+		}, 1000);
+	});
+
+
 	QUnit.module("Filter only checks", {
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
