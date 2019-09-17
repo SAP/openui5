@@ -381,7 +381,7 @@ sap.ui.define([
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : sut
+					columns : [sut, new Column()]
 				}),
 				page = new Page({}); // we want the page to be empty so we can insert the table later
 
@@ -413,7 +413,7 @@ sap.ui.define([
 					minScreenWidth : "tablet"
 				}),
 				parent = new Table({
-					columns : sut
+					columns : [sut, new Column()]
 				}),
 				page = new Page({}); // we want the page to be empty so we can insert the table later
 
