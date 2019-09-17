@@ -88,8 +88,6 @@ sap.ui.define([
             // we should be sure that at the first run they are set  properly and then to be validated.
             this._bInitialRangeChecks = true;
 
-            this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
-
             // the initial focus range which should be used
             this._aInitialFocusRange = this.getRange();
 
@@ -143,6 +141,8 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.onBeforeRendering = function () {
+            this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
+
             var aRange = this.getRange();
 
             if (this.getShowAdvancedTooltip()) {
