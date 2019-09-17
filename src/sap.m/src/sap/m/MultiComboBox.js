@@ -1021,7 +1021,7 @@ function(
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 
-		this._bInitialSettersCompleted = true;
+		this._bInitialSelectedKeysSettersCompleted = true;
 
 		this._oTokenizer.setEnabled(this.getEnabled());
 
@@ -2712,11 +2712,15 @@ function(
 	 * @public
 	 */
 	MultiComboBox.prototype.setSelectedKeys = function (aKeys) {
-		if (this._bInitialSettersCompleted) {
+		if (this._bInitialSelectedKeysSettersCompleted) {
 			this.setProperty("selectedKeys", [], true);
 			this.removeAllSelectedItems();
 		}
+
 		this.addSelectedKeys(aKeys);
+
+		this._bInitialSelectedKeysSettersCompleted = true;
+
 		return this;
 	};
 
@@ -3093,7 +3097,7 @@ function(
 
 		// Flag to mark that all the initial setters have completed.
 		// This would help with the synchronisation within dependent properties.
-		this._bInitialSettersCompleted = false;
+		this._bInitialSelectedKeysSettersCompleted = false;
 
 		// To detect whether the List's item navigation is inited
 		this._bListItemNavigationInvalidated = false;

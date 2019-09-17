@@ -7350,4 +7350,132 @@ sap.ui.define([
 
 		oMultiComboBox.destroy();
 	});
+
+	QUnit.test("Sync selectedKeys' items before MultiComboBox has been rendered", function (assert) {
+		// Setup
+		var oMultiComboBox = new MultiComboBox(),
+			oOnBeforeRenderingSpy = this.spy(oMultiComboBox, "onBeforeRendering");
+
+		oMultiComboBox.addItem(new Item({ key: "A", text: "A" }));
+		oMultiComboBox.addItem(new Item({ key: "B", text: "B" }));
+		oMultiComboBox.addItem(new Item({ key: "C", text: "C" }));
+		oMultiComboBox.setSelectedKeys(["B", "C"]);
+		oMultiComboBox.setSelectedKeys(["A"]);
+
+		// Assert
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "Only the last setter should be applied");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items association should be in sync");
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 0, "onBeforeRendering has not been called yet. No real sync.");
+
+		// Act
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "Only the last setter should be applied");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items association should be in sync");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "A", "Tokens should correspond to the actual selection");
+
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Sync selectedItems' items before MultiComboBox has been rendered", function (assert) {
+		// Setup
+		var oMultiComboBox = new MultiComboBox(),
+			oOnBeforeRenderingSpy = this.spy(oMultiComboBox, "onBeforeRendering"),
+			aItems = [
+				new Item({ key: "A", text: "A" }),
+				new Item({ key: "B", text: "B" }),
+				new Item({ key: "C", text: "C" })
+			];
+
+		oMultiComboBox.addItem(aItems[0]);
+		oMultiComboBox.addItem(aItems[1]);
+		oMultiComboBox.addItem(aItems[2]);
+		oMultiComboBox.setSelectedItems([aItems[1], aItems[2]]);
+		oMultiComboBox.setSelectedItems([aItems[0]]);
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Only the last setter should be applied");
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "selectedKeys is not in sync yet");
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 0, "onBeforeRendering has not been called yet. No real sync.");
+
+		// Act
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["A"], "Only the last setter should be applied");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items association should be in sync");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "A", "Tokens should correspond to the actual selection");
+
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Sync selectedItems & selectedKeys", function (assert) {
+		// Setup
+		var oMultiComboBox = new MultiComboBox(),
+			oOnBeforeRenderingSpy = this.spy(oMultiComboBox, "onBeforeRendering"),
+			aItems = [
+				new Item({ key: "A", text: "A" }),
+				new Item({ key: "B", text: "B" }),
+				new Item({ key: "C", text: "C" })
+			];
+
+		oMultiComboBox.addItem(aItems[0]);
+		oMultiComboBox.addItem(aItems[1]);
+		oMultiComboBox.addItem(aItems[2]);
+
+		// Act
+		oMultiComboBox.setSelectedItems([aItems[1], aItems[2]]);
+		oMultiComboBox.setSelectedKeys(["A"]);
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 3, "Selected items are properly set");
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["B", "C", "A"], "selectedKeys are properly set");
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 0, "onBeforeRendering has not been called yet. No real sync.");
+
+		// Act
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "onBeforeRendering has been called and items should be in sync");
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["B", "C", "A"], "Only the last setter should be applied");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 3, "Selected Items association should be in sync");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 3, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "B", "Tokens should correspond to the actual selection");
+
+		// Act
+		oMultiComboBox.setSelectedItems([aItems[1]]);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "The MultiComboBox was not invalidated");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "Selected Items should be adjusted");
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["B"], "SelectedKeys should be in sync");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 1, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "B", "Tokens should correspond to the actual selection");
+
+		// Act
+		oMultiComboBox.setSelectedKeys(["C", "A"]);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		assert.strictEqual(oOnBeforeRenderingSpy.callCount, 1, "The MultiComboBox was not invalidated");
+		assert.deepEqual(oMultiComboBox.getSelectedKeys(), ["C", "A"], "SelectedKeys should be adjusted");
+		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "Selected Items should be in sync");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "Tokens should correspond to the actual selection");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getKey(), "C", "Tokens should correspond to the actual selection");
+
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
 });
