@@ -318,10 +318,10 @@ sap.ui.define([
 
 			// custom function for appointments sort by alphabetical order
 			fnAlphabeticalOrder : function(oApp1, oApp2) {
-				if (oApp1.getTitle() > oApp2.getTitle()) {
+				if (oApp1.getTitle().toLowerCase() > oApp2.getTitle().toLowerCase()) {
 					return 1;
 				}
-				if (oApp1.getTitle() < oApp2.getTitle()) {
+				if (oApp1.getTitle().toLowerCase() < oApp2.getTitle().toLowerCase()) {
 					return -1;
 				}
 				return 0;
