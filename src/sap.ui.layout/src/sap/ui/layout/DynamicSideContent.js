@@ -84,6 +84,10 @@ sap.ui.define([
 		 * side content disappears on screen widths of less than 720 px and can only be
 		 * viewed by triggering it.
 		 *
+		 * <b>Note:</b> If the control that has property sticky inside the <code>DynamicSideContent</code> the stickiness of that control will not work.
+		 * <code>DynamicSideContent</code> has the overflow: auto style definition and this prevents the sticky elements of the control from becoming fixed at the top of the viewport.
+		 * This applies for example to {@link sap.m.Table} and {@link sap.m.PlanningCalendar}.
+		 *
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
