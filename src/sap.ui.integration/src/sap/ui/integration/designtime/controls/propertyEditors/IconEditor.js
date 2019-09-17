@@ -24,7 +24,8 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var IconEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.IconEditor", {
-		init: function() {
+		constructor: function() {
+			var vReturn = BasePropertyEditor.prototype.constructor.apply(this, arguments);
 			this._oIconModel = new JSONModel(IconPool.getIconNames().map(function(sName) {
 				return {
 					name: sName,
@@ -49,6 +50,7 @@ sap.ui.define([
 				this.firePropertyChanged(oEvent.getParameter("selectedItem").getText());
 			}.bind(this));
 			this.addContent(this._oInput);
+			return vReturn;
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});

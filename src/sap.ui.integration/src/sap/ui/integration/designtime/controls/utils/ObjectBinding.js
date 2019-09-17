@@ -3,51 +3,141 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
+	"sap/base/util/deepClone",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/BindingParser"
 ], function (
 	ManagedObject,
+	deepClone,
+	ObjectPath,
 	BindingParser
 ) {
 	"use strict";
 
 	/**
+	 * This class allows to resolve bindings stings in JSON.
+	 * Only one-way binding is supported.
 	 * @private
 	 * @experimental
 	 */
-
 	return ManagedObject.extend("sap.ui.integration.designtime.controls.utils.ObjectBinding", {
-		constructor: function (oObject, oModel, sModelName) {
-			this._aBindings = [];
-
-			var updateObject = function(oContext, sPath, oPropertyBinding) {
-				oContext[sPath] = oPropertyBinding.getValue();
-				oModel.checkUpdate();
-			};
-
-			var createPropertyBindings = function(oObject) {
-				Object.keys(oObject).forEach(function(sKey) {
-					if (typeof oObject[sKey] === "string") {
-						var oBindingInfo = BindingParser.simpleParser(oObject[sKey]);
-						if (oBindingInfo && oBindingInfo.model === sModelName) {
-							var oBinding = oModel.bindProperty(oBindingInfo.path);
-							updateObject(oObject, sKey, oBinding);
-							oBinding.attachChange(function(oEvent) {
-								updateObject(oObject, sKey, oBinding);
-							});
-							this._aBindings.push(oBinding);
-						}
-					} else if (oObject[sKey] && typeof oObject[sKey] === "object") {
-						createPropertyBindings(oObject[sKey]);
+		metadata: {
+			properties: {
+				object: {
+					type: "object"
+				},
+				_value: {
+					type: "any",
+					hidden: true
+				}
+			},
+			events: {
+				change: {
+					parameters: {
+						path: {type: "string"},
+						value: {type: "any"}
 					}
-				}.bind(this));
-			}.bind(this);
-
-			createPropertyBindings(oObject);
+				}
+			}
 		},
 		exit: function() {
-			this._aBindings.forEach(function(oBinding) {
-				oBinding.destroy();
-			});
+			this._cleanup();
+		},
+		setObject: function (oObject) {
+			var vReturn = this.setProperty("object", oObject);
+			this._originalObject = deepClone(oObject);
+			this._init();
+			return vReturn;
+		},
+		setModel: function () {
+			var vReturn = ManagedObject.prototype.setModel.apply(this, arguments);
+			this._init();
+			return vReturn;
+		},
+		setBindingContext: function () {
+			var vReturn = ManagedObject.prototype.setBindingContext.apply(this, arguments);
+			this._init();
+			return vReturn;
+		},
+		_init: function() {
+			this._cleanup();
+			var oObject = this.getObject();
+			if (oObject) {
+				// restore original binding strings
+				Object.keys(oObject).forEach(function(sKey) {
+					oObject[sKey] = deepClone(this._originalObject[sKey]);
+				}.bind(this));
+				this._createPropertyBindings(oObject);
+			}
+		},
+		_cleanup: function() {
+			if (this._aSimpleBindings) {
+				this._aSimpleBindings.forEach(function(oBinding) {
+					oBinding.destroy();
+				});
+			}
+			this._aSimpleBindings = [];
+		},
+		_createPropertyBindings: function(oObject, sPath) {
+			Object.keys(oObject).forEach(function(sKey) {
+				var sCurPath = sPath ? sPath + "/" + sKey : sKey;
+				if (typeof oObject[sKey] === "string") {
+					var oBindingInfo = BindingParser.complexParser(oObject[sKey]);
+					if (oBindingInfo) {
+						if (oBindingInfo.parts) {
+							// first check that all models for all parts are available
+							if (!oBindingInfo.parts.find(
+									function(oPart) {
+										return !this.getModel(oPart.model);
+									}.bind(this))
+								) {
+								oBindingInfo.parts.forEach(function(oPart) {
+									var oBinding = this._createSimpleBinding(oPart, sCurPath, oBindingInfo);
+									oBinding.attachChange(function(oEvent) {
+										this._updateValue(sCurPath, oBindingInfo);
+									}.bind(this));
+								}.bind(this));
+							} else {
+								return;
+							}
+						} else if (this.getModel(oBindingInfo.model)) {
+							var oBinding = this._createSimpleBinding(oBindingInfo, sCurPath, oBindingInfo);
+							oBinding.attachChange(function(oEvent) {
+								this._updateValue(sCurPath, oBindingInfo);
+							}.bind(this));
+						} else {
+							return;
+						}
+						this._updateValue(sCurPath, oBindingInfo);
+					}
+				} else if (oObject[sKey] && typeof oObject[sKey] === "object") {
+					this._createPropertyBindings(oObject[sKey], sCurPath);
+				}
+			}.bind(this));
+		},
+		_updateValue: function(sPath, oBindingInfo) {
+			var oObject = this.getObject();
+			var aParts = sPath.split("/");
+			var sKey = aParts.pop();
+			if (aParts.length) {
+				oObject = ObjectPath.get(aParts, oObject);
+			}
+			this.bindProperty("_value", oBindingInfo);
+			// to avoid changes influencing the model, if oValue is an object (since it is one-way only binding)
+			var oValue = deepClone(this.getProperty("_value"));
+			if (oValue !== oObject[sKey]) {
+				oObject[sKey] = oValue;
+				this.fireChange({
+					path: sPath,
+					value: oValue
+				});
+			}
+		},
+		_createSimpleBinding: function(oSimpleBindingInfo) {
+			var oContext = this.getBindingContext(oSimpleBindingInfo.model);
+			var oBinding = this.getModel(oSimpleBindingInfo.model).bindProperty(oSimpleBindingInfo.path, oContext);
+			this._aSimpleBindings.push(oBinding);
+			return oBinding;
 		}
 	});
 });

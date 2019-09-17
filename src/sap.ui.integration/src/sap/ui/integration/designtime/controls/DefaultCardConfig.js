@@ -43,14 +43,14 @@ function () {
 				"label": "{i18n>CARD_EDITOR.ICON}",
 				"type": "icon",
 				"path": "header/icon/src",
-				"visible": "{= ${context>/header/type} !== 'Numeric' }"
+				"visible": "{= ${context>header/type} !== 'Numeric' }"
 			},
 			"statusText": {
 				"tags": ["header defaultHeader"],
 				"label": "{i18n>CARD_EDITOR.STATUS}",
 				"type": "string",
 				"path": "header/status/text",
-				"visible": "{= ${context>/header/type} !== 'Numeric' }"
+				"visible": "{= ${context>header/type} !== 'Numeric' }"
 			},
 
 			// Numeric header type only
@@ -59,21 +59,21 @@ function () {
 				"label": "{i18n>CARD_EDITOR.UOM}",
 				"type": "string",
 				"path": "header/unitOfMeasurement",
-				"visible": "{= ${context>/header/type} === 'Numeric' }"
+				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorNumber": {
 				"tags": ["header numericHeader mainIndicator"],
 				"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.NUMBER}",
 				"type": "string",
 				"path": "header/mainIndicator/number",
-				"visible": "{= ${context>/header/type} === 'Numeric' }"
+				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorUnit": {
 				"tags": ["header numericHeader mainIndicator"],
 				"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.UNIT}",
 				"type": "string",
 				"path": "header/mainIndicator/unit",
-				"visible": "{= ${context>/header/type} === 'Numeric' }"
+				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorTrend": {
 				"tags": ["header numericHeader mainIndicator"],
@@ -86,7 +86,7 @@ function () {
 				],
 				"allowBinding": true,
 				"path": "header/mainIndicator/trend",
-				"visible": "{= ${context>/header/type} === 'Numeric' }"
+				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorState": {
 				"tags": ["header numericHeader mainIndicator"],
@@ -100,14 +100,14 @@ function () {
 				],
 				"allowBinding": true,
 				"path": "header/mainIndicator/state",
-				"visible": "{= ${context>/header/type} === 'Numeric' }"
+				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"details": {
 				"tags": ["header numericHeader"],
 				"label": "{i18n>CARD_EDITOR.DETAILS}",
 				"type": "string",
 				"path": "header/details",
-				"visible": "{= ${context>/header/type} === 'Numeric' }"
+				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 
 			"sideIndicators" : {
@@ -134,7 +134,7 @@ function () {
 					}
 				},
 				"maxItems": 2,
-				"visible": "{= ${context>/header/type} === 'Numeric' }"
+				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 
 			// List Card Item
@@ -143,21 +143,21 @@ function () {
 				"label": "{i18n>CARD_EDITOR.LIST_ITEM.TITLE}",
 				"type": "string",
 				"path": "content/item/title",
-				"visible": "{= ${context>/type} === 'List' }"
+				"visible": "{= ${context>type} === 'List' }"
 			},
 			"listItemDescription" : {
 				"tags": ["content listItem"],
 				"label": "{i18n>CARD_EDITOR.LIST_ITEM.DESCRIPTION}",
 				"type": "string",
 				"path": "content/item/description",
-				"visible": "{= ${context>/type} === 'List' }"
+				"visible": "{= ${context>type} === 'List' }"
 			},
 			"listItemHighlight": {
 				"tags": ["content listItem"],
 				"label": "{i18n>CARD_EDITOR.LIST_ITEM.HIGHLIGHT}",
 				"type": "string",
 				"path": "content/item/highlight",
-				"visible": "{= ${context>/type} === 'List' }"
+				"visible": "{= ${context>type} === 'List' }"
 			},
 			"parameters": {
 				"tags": ["parameters"],

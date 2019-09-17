@@ -20,7 +20,8 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var ParametersEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ParametersEditor", {
-		init: function() {
+		constructor: function() {
+			var vReturn = BasePropertyEditor.prototype.constructor.apply(this, arguments);
 			this._oTableModel = new JSONModel([]);
 			Fragment.load({
 				name: "sap.ui.integration.designtime.controls.propertyEditors.ParametersTable",
@@ -33,6 +34,7 @@ sap.ui.define([
 				}
 				this.addContent(oTable);
 			}.bind(this));
+			return vReturn;
 		},
 		renderer: function (oRm, oParametersEditor) {
 			oRm.openStart("div", oParametersEditor);
@@ -48,17 +50,15 @@ sap.ui.define([
 
 			oRm.close("div");
 		},
-		setBindingContext: function(oContext, sName) {
-			var vReturn = BasePropertyEditor.prototype.setBindingContext.apply(this, arguments);
-			if (!sName) {
-				var mParams = this.getPropertyInfo().value || {};
-				var aParams = Object.keys(mParams).map(function(sKey) {
-					var oObject = mParams[sKey];
-					oObject._key = sKey;
-					return oObject;
-				});
-				this._oTableModel.setData(aParams);
-			}
+		onValueChange: function() {
+			var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
+			var mParams = this.getConfig().value || {};
+			var aParams = Object.keys(mParams).map(function(sKey) {
+				var oObject = mParams[sKey];
+				oObject._key = sKey;
+				return oObject;
+			});
+			this._oTableModel.setData(aParams);
 			return vReturn;
 		},
 		_syncParameters: function() {
@@ -71,7 +71,7 @@ sap.ui.define([
 			this.firePropertyChanged(mParams);
 		},
 		_addParameter: function() {
-			var mParams = this.getPropertyInfo().value || {};
+			var mParams = this.getConfig().value || {};
 			var sKey = "key";
 			var iIndex = 0;
 			while (mParams[sKey]) {
@@ -91,7 +91,7 @@ sap.ui.define([
 			this._syncParameters(aParams);
 		},
 		_onKeyChange: function(oEvent) {
-			var mParams = this.getPropertyInfo().value;
+			var mParams = this.getConfig().value;
 			var oInput = oEvent.getSource();
 			var sNewKey = oEvent.getParameter("value");
 			var oParam  = oInput.getBindingContext().getObject();

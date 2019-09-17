@@ -16,7 +16,8 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var StringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.StringEditor", {
-		init: function() {
+		constructor: function() {
+			var vReturn = BasePropertyEditor.prototype.constructor.apply(this, arguments);
 			this._oInput = new sap.m.Input({value: "{value}"});
 			this._oInput.attachLiveChange(function(oEvent) {
 				if (this._validate()) {
@@ -24,6 +25,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 			this.addContent(this._oInput);
+			return vReturn;
 		},
 		_validate: function(params) {
 			var oValue = this._oInput.getValue();

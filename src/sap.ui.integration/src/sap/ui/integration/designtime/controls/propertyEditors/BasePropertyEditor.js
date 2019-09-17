@@ -3,9 +3,15 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
+	"./../utils/ObjectBinding",
+	"sap/ui/model/json/JSONModel",
+	"sap/base/util/ObjectPath",
 	"sap/m/Label"
 ], function (
 	Control,
+	ObjectBinding,
+	JSONModel,
+	ObjectPath,
 	Label
 ) {
 	"use strict";
@@ -21,6 +27,9 @@ sap.ui.define([
 				"renderLabel" : {
 					type: "boolean",
 					defaultValue: true
+				},
+				"config": {
+					type: "any"
 				}
 			},
 			aggregations: {
@@ -52,17 +61,76 @@ sap.ui.define([
 			}
 		},
 
-		getEditor: function() {
-			return sap.ui.getCore().byId(this.getAssociation("editor"));
+		constructor: function() {
+			var vReturn = Control.prototype.constructor.apply(this, arguments);
+			this._oConfigModel = new JSONModel({});
+			this._oConfigModel.setDefaultBindingMode("OneWay");
+			this.setModel(this._oConfigModel);
+			this.setBindingContext(this._oConfigModel.getContext("/"));
+			return vReturn;
 		},
 
-		getPropertyInfo: function() {
-			var oBindingContext = this.getBindingContext();
-			if (oBindingContext) {
-				return oBindingContext.getObject();
-			} else {
-				return {};
+		clone: function() {
+			// as content is a public aggregation (to simplify creation of the property editors), we ensure it is not cloned
+			// otherwise if PropertyEditor is used as template for the list binding,
+			// constructor will be called once for the template and once for the cloned instance
+			this.destroyContent();
+			return Control.prototype.clone.apply(this, arguments);
+		},
+
+		exit: function() {
+			this._oConfigModel.destroy();
+			if (this._oConfigBinding) {
+				this._oConfigBinding.destroy();
 			}
+		},
+
+		setConfig: function(oConfig) {
+			var vReturn = this.setProperty("config", oConfig);
+			this._oConfigModel.setData(this.getConfig());
+			this._initialize();
+			return vReturn;
+		},
+
+		setModel: function(oModel, sName) {
+			var vReturn = Control.prototype.setModel.apply(this, arguments);
+			this._initialize();
+			return vReturn;
+		},
+
+		onValueChange: function(vValue) {
+			var oConfig = this.getConfig();
+			if (typeof oConfig.value === "undefined" && oConfig.defaultValue) {
+				oConfig.value = oConfig.defaultValue;
+				this._oConfigModel.checkUpdate();
+			}
+		},
+
+		_initialize: function() {
+			var oConfig = this.getConfig();
+			var oJsonModel = this.getModel("_context");
+			if (oJsonModel && oConfig) {
+				if (oConfig.path && !oConfig.value) {
+					oConfig.value = "{context>" + oConfig.path + "}";
+				}
+				this._oConfigBinding = new ObjectBinding();
+				this._oConfigBinding.setObject(oConfig);
+				this._oConfigBinding.setModel(oJsonModel, "context");
+				this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
+				this._oConfigModel.checkUpdate();
+				this.onValueChange(oConfig.value);
+				this.bindProperty("visible", "visible");
+				this._oConfigBinding.attachChange(function(oEvent) {
+					this._oConfigModel.checkUpdate();
+					if (oEvent.getParameter("path") === "value") {
+						this.onValueChange(oEvent.getParameter("value"));
+					}
+				}.bind(this));
+			}
+		},
+
+		getEditor: function() {
+			return sap.ui.getCore().byId(this.getAssociation("editor"));
 		},
 
 		getI18nProperty: function(sName) {
@@ -73,7 +141,7 @@ sap.ui.define([
 			var oLabel = this.getAggregation("_label");
 			if (!oLabel) {
 				oLabel = new Label({
-					text: this.getPropertyInfo().label,
+					text: this.getConfig().label,
 					design: "Bold"
 				});
 				this.setAggregation("_label", oLabel);
@@ -98,7 +166,7 @@ sap.ui.define([
 
 		firePropertyChanged: function(vValue) {
 			this.fireEvent("propertyChanged", {
-				path: this.getPropertyInfo().path,
+				path: this.getConfig().path,
 				value: vValue
 			});
 		}

@@ -3,12 +3,14 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/controls/propertyEditors/BasePropertyEditor",
+	"sap/base/util/deepClone",
 	"sap/m/VBox",
 	"sap/m/Bar",
 	"sap/m/Label",
 	"sap/m/Button"
 ], function (
 	BasePropertyEditor,
+	deepClone,
 	VBox,
 	Bar,
 	Label,
@@ -22,20 +24,20 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ArrayEditor", {
-		init: function() {
+		constructor: function() {
+			var vReturn = BasePropertyEditor.prototype.constructor.apply(this, arguments);
 			var oContainer = new VBox();
 			this.addContent(oContainer);
 
 			oContainer.bindAggregation("items", "items", function(sId, oItemContext) {
-				var oPropertyModel = oItemContext.getModel();
 				var oItem = oItemContext.getObject();
-				var iIndex = this.getPropertyInfo().items.indexOf(oItem);
+				var iIndex = this.getConfig().items.indexOf(oItem);
 
 				var oGroup = new VBox({
 					items: new Bar({
 						contentLeft: [
 							new Label({
-								text: this.getPropertyInfo().itemLabel || "{i18n>CARD_EDITOR.ARRAY.ITEM_LABEL}"
+								text: this.getConfig().itemLabel || "{i18n>CARD_EDITOR.ARRAY.ITEM_LABEL}"
 							})
 						],
 						contentRight: [
@@ -43,7 +45,7 @@ sap.ui.define([
 								icon: "sap-icon://less",
 								tooltip: "{i18n>CARD_EDITOR.ARRAY.REMOVE}",
 								press: function(iIndex) {
-									var aValue = this.getPropertyInfo().value;
+									var aValue = this.getConfig().value;
 									aValue.splice(iIndex, 1);
 									this.firePropertyChanged(aValue);
 								}.bind(this, iIndex)
@@ -52,8 +54,8 @@ sap.ui.define([
 					})
 				});
 				Object.keys(oItem).forEach(function(sItemProperty) {
-					var oItemPropertyContext = oPropertyModel.getContext(oItemContext.getPath(sItemProperty));
-					var oSubEditor = this.getEditor().createPropertyEditor(oItemPropertyContext);
+					var oItemConfig = oItem[sItemProperty];
+					var oSubEditor = this.getEditor().createPropertyEditor(oItemConfig);
 					oSubEditor.getLabel().setDesign("Standard");
 
 					oGroup.addItem(oSubEditor);
@@ -70,13 +72,33 @@ sap.ui.define([
 						tooltip: "{i18n>CARD_EDITOR.ARRAY.ADD}",
 						enabled: "{= ${items} ? ${items}.length < ${maxItems} : false}",
 						press: function() {
-							var aValue = this.getPropertyInfo().value;
+							var aValue = this.getConfig().value;
 							aValue.push({});
 							this.firePropertyChanged(aValue);
 						}.bind(this)
 					})
 				]
 			}));
+			return vReturn;
+		},
+		onValueChange: function() {
+			var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
+			var oConfig = this.getConfig();
+			if (oConfig.value && oConfig.template) {
+				oConfig.items = [];
+				oConfig.value.forEach(function(oValue, iIndex) {
+					var mItem = deepClone(oConfig.template);
+					Object.keys(mItem).forEach(function(sKey) {
+						var oItemProperty = mItem[sKey];
+						if (oItemProperty.path) {
+							oItemProperty.path = oItemProperty.path.replace(":index", iIndex);
+						}
+					});
+					oConfig.items.push(mItem);
+				});
+				this.getModel().checkUpdate();
+			}
+			return vReturn;
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
