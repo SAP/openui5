@@ -52,10 +52,30 @@ sap.ui.define([
 		assert.strictEqual(oTarget._oCache, this.oViews, "Did pass the views instance");
 	});
 
+	QUnit.test("Should be able to get an existing target by key which is set in an object", function (assert) {
+		// Act
+		var oTarget = this.oTargets.getTarget({name: "myTarget"});
+
+		// Assert
+		assert.strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
+		assert.strictEqual(oTarget._oCache, this.oViews, "Did pass the views instance");
+	});
+
 	QUnit.test("Should return undefined if a target does not exist", function (assert) {
 		// Act
 		var oTarget = this.oTargets.getTarget("foo");
 
+		// Assert
+		assert.strictEqual(oTarget, undefined, "Did not find such a target");
+	});
+
+	QUnit.test("Should return undefined if the given target name is invalid (false, undefined)", function (assert) {
+		// Act
+		var oTarget = this.oTargets.getTarget(undefined);
+		// Assert
+		assert.strictEqual(oTarget, undefined, "Did not find such a target");
+
+		oTarget = this.oTargets.getTarget(false);
 		// Assert
 		assert.strictEqual(oTarget, undefined, "Did not find such a target");
 	});
@@ -82,6 +102,14 @@ sap.ui.define([
 		assert.strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
 		// check if error for non-existing target "foo" is thrown
 		sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
+
+		// Act
+		aTargets = this.oTargets.getTarget([undefined, "myTarget", false, {name: "myParent"}, "foo", {name: "myTarget"}]);
+		// Assert
+		assert.strictEqual(aTargets.length, 3, "Should return three targets");
+		assert.strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
+		assert.strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
+		assert.strictEqual(aTargets[2], this.oTargets.getTarget("myTarget"), "The third target should be myTarget");
 	});
 
 	QUnit.test("Should be able to add a new target", function (assert) {

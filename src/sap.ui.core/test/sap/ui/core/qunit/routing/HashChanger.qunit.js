@@ -430,11 +430,39 @@ sap.ui.define([
 		assert.equal(sHash, "notification&/notification/234");
 	});
 
+	QUnit.test("Add new subHash and delete sub hash(es) with overlap in between", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0");
+
+		var sHash = this.oHashChanger._reconstructHash(["notification"], ["234"], ["comment", "notification"]);
+		assert.equal(sHash, "notification&/notification/234");
+	});
+
 	QUnit.test("Change the subHash and delete sub hash(es)", function(assert) {
 		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
 
 		var sHash = this.oHashChanger._reconstructHash(["notification"], ["234"], ["comment"]);
 		assert.equal(sHash, "notification&/notification/234");
+	});
+
+	QUnit.test("Change the subHash and delete sub hash(es) with overlap in between", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0&/notification/1");
+
+		var sHash = this.oHashChanger._reconstructHash(["notification"], ["234"], ["comment", "notification"]);
+		assert.equal(sHash, "notification&/notification/234");
+	});
+
+	QUnit.test("Add new subHash, change existing subHash and delete sub hash(es)", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0");
+
+		var sHash = this.oHashChanger._reconstructHash(["notification", "comment"], ["234", "commentId"]);
+		assert.equal(sHash, "notification&/comment/commentId&/notification/234");
+	});
+
+	QUnit.test("Add new subHash, change existing subHash and delete sub hash(es) with overlap in between", function(assert) {
+		this.oHashChanger.setHash("notification&/comment/0&/comment1/1");
+
+		var sHash = this.oHashChanger._reconstructHash(["notification", "comment"], ["234", "commentId"], ["comment1", "comment"]);
+		assert.equal(sHash, "notification&/comment/commentId&/notification/234");
 	});
 
 	QUnit.test("Delete subhash", function(assert) {
@@ -601,6 +629,58 @@ sap.ui.define([
 		assert.strictEqual(this.oChildHashChangedSpy.args[0][0].getParameter("newHash"), "Child1", "The new hash is included in the event for RouterHashChanger");
 	});
 
+	QUnit.test("set hash on the child with collecting hash from the deeper nested children - no active prefix collection", function(assert) {
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested1"),
+			aDeletePrefixes = ["foo"],
+			oSetSubHashSpy = sinon.spy(this.oHashChanger, "_setSubHash");
+
+		oNestedRHC._collectActiveDescendantPrefix = function() {
+			return aDeletePrefixes;
+		};
+		// attach a dummy event handler to let the RouterHashChanger propagate the hashSet to HashChanger
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.setHash("child1", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		}), /* suppress active prefix collection */true).then(function() {
+			assert.equal(oSetSubHashSpy.callCount, 1, "Top level hashChanger received the hash change info");
+			assert.deepEqual(oSetSubHashSpy.args[0][0], [undefined, "nested1"]);
+			assert.deepEqual(oSetSubHashSpy.args[0][1], ["child1", "nestedHash"]);
+			assert.deepEqual(oSetSubHashSpy.args[0][2], aDeletePrefixes);
+
+			oNestedRHC.destroy();
+		});
+	});
+
+	QUnit.test("set hash on the child with collecting hash from the deeper nested children - with active prefix collection", function(assert) {
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested1"),
+			aDeletePrefixes = ["foo"],
+			oSetSubHashSpy = sinon.spy(this.oHashChanger, "_setSubHash");
+
+		oNestedRHC._collectActiveDescendantPrefix = function() {
+			return aDeletePrefixes;
+		};
+		// attach a dummy event handler to let the RouterHashChanger propagate the hashSet to HashChanger
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.setHash("child1", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		})).then(function() {
+			assert.equal(oSetSubHashSpy.callCount, 1, "Top level hashChanger received the hash change info");
+			assert.deepEqual(oSetSubHashSpy.args[0][0], [undefined, "nested1"]);
+			assert.deepEqual(oSetSubHashSpy.args[0][1], ["child1", "nestedHash"]);
+			assert.deepEqual(oSetSubHashSpy.args[0][2], ["nested1"].concat(aDeletePrefixes));
+
+			oNestedRHC.destroy();
+		});
+	});
+
 	QUnit.test("replace hash on the child", function(assert) {
 		this.oRHC.replaceHash("Child1");
 		assert.equal(this.oHashChangedSpy.callCount, 1, "hashChanged event is fired on HashChanger");
@@ -609,7 +689,57 @@ sap.ui.define([
 		assert.strictEqual(this.oChildHashChangedSpy.args[0][0].getParameter("newHash"), "Child1", "The new hash is included in the event for RouterHashChanger");
 	});
 
+	QUnit.test("replace hash on the child with collecting hash from the deeper nested children - no active prefix collection", function(assert) {
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested1"),
+			aDeletePrefixes = ["foo"],
+			oReplaceSubHashSpy = sinon.spy(this.oHashChanger, "_replaceSubHash");
 
+		oNestedRHC._collectActiveDescendantPrefix = function() {
+			return aDeletePrefixes;
+		};
+		// attach a dummy event handler to let the RouterHashChanger propagate the hashSet to HashChanger
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.replaceHash("child1", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		}), /* suppress active prefix collection */true).then(function() {
+			assert.equal(oReplaceSubHashSpy.callCount, 1, "Top level hashChanger received the hash change info");
+			assert.deepEqual(oReplaceSubHashSpy.args[0][0], [undefined, "nested1"]);
+			assert.deepEqual(oReplaceSubHashSpy.args[0][1], ["child1", "nestedHash"]);
+			assert.deepEqual(oReplaceSubHashSpy.args[0][2], aDeletePrefixes);
+
+			oNestedRHC.destroy();
+		});
+	});
+
+	QUnit.test("replace hash on the child with collecting hash from the deeper nested children - with active prefix collection", function(assert) {
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested1"),
+			aDeletePrefixes = ["foo"],
+			oReplaceSubHashSpy = sinon.spy(this.oHashChanger, "_replaceSubHash");
+
+		oNestedRHC._collectActiveDescendantPrefix = function() {
+			return aDeletePrefixes;
+		};
+		// attach a dummy event handler to let the RouterHashChanger propagate the hashSet to HashChanger
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.replaceHash("child1", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		})).then(function() {
+			assert.equal(oReplaceSubHashSpy.callCount, 1, "Top level hashChanger received the hash change info");
+			assert.deepEqual(oReplaceSubHashSpy.args[0][0], [undefined, "nested1"]);
+			assert.deepEqual(oReplaceSubHashSpy.args[0][1], ["child1", "nestedHash"]);
+			assert.deepEqual(oReplaceSubHashSpy.args[0][2], ["nested1"].concat(aDeletePrefixes));
+
+			oNestedRHC.destroy();
+		});
+	});
 	QUnit.module("Destroy: RouterHashChanger and HashChanger", {
 		beforeEach: function(assert) {
 			this.oHashChanger = new HashChanger();

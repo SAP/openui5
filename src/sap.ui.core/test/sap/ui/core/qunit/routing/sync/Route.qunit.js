@@ -309,4 +309,62 @@ sap.ui.define([
 		assert.strictEqual(this.oGetParentRouteSpy.args[0][0], "parent.component:category", "parameter is correctly given");
 		assert.strictEqual(this.oGetParentRouteSpy.returnValues[0], oParentRouter.getRoute("category"), "The parent route instance is fetched from the component");
 	});
+
+	QUnit.module("_alignTargetsConfig", {
+		beforeEach: function() {
+			this.oRoute = new Route({
+				_isAsync: function() {
+					return false;
+				}
+			}, {
+				name: "testRoute"
+			});
+		},
+		afterEach: function() {
+			this.oRoute.destroy();
+		}
+	});
+
+	QUnit.test("Get target config with string", function(assert) {
+		var aConfig = this.oRoute._alignTargetsConfig("target1");
+
+		assert.ok(Array.isArray(aConfig), "The return value is an array");
+		assert.deepEqual(aConfig, [{name: "target1"}], "Correct config is returned");
+	});
+
+	QUnit.test("Get targets config with array of strings", function(assert) {
+		var aConfig = this.oRoute._alignTargetsConfig(["target1", "target2", "target3"]);
+
+		assert.ok(Array.isArray(aConfig), "The return value is an array");
+		assert.deepEqual(aConfig, [{name: "target1"}, {name: "target2"}, {name: "target3"}], "Correct config is returned");
+	});
+
+	QUnit.test("Get target config with object", function(assert) {
+		var aConfig = this.oRoute._alignTargetsConfig({name: "target1"});
+
+		assert.ok(Array.isArray(aConfig), "The return value is an array");
+		assert.deepEqual(aConfig, [{name: "target1"}], "Correct config is returned");
+	});
+
+	QUnit.test("Get targets config with array of objects", function(assert) {
+		var aConfig = this.oRoute._alignTargetsConfig([{name: "target1"}, {name: "target2"}, {name: "target3"}]);
+
+		assert.ok(Array.isArray(aConfig), "The return value is an array");
+		assert.deepEqual(aConfig, [{name: "target1"}, {name: "target2"}, {name: "target3"}], "Correct config is returned");
+	});
+
+	QUnit.test("Get target config with invalid arguments", function(assert) {
+		var aConfig = this.oRoute._alignTargetsConfig();
+		assert.deepEqual(aConfig, [], "Empty array is returned");
+
+		aConfig = this.oRoute._alignTargetsConfig(false);
+		assert.deepEqual(aConfig, [], "Empty array is returned");
+	});
+
+	QUnit.test("Get targets config with mixture of arguments", function(assert) {
+		var aConfig = this.oRoute._alignTargetsConfig(["target1", {name: "target2"}, "target3"]);
+
+		assert.ok(Array.isArray(aConfig), "The return value is an array");
+		assert.deepEqual(aConfig, [{name: "target1"}, {name: "target2"}, {name: "target3"}], "Correct config is returned");
+	});
 });

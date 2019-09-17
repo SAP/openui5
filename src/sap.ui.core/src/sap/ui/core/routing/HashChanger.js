@@ -136,22 +136,30 @@ sap.ui.define([
 
 	HashChanger.prototype._onHashModified = function(oEvent) {
 		var sEventName = oEvent.getId(),
-			vHash = oEvent.getParameter("hash"),
-			vKey = oEvent.getParameter("key"),
-			aDeletePrefix = oEvent.getParameter("deletePrefix");
+			aHashes = [oEvent.getParameter("hash")],
+			aKeys = [oEvent.getParameter("key")],
+			aNestedHashInfo = oEvent.getParameter("nestedHashInfo"),
+			aDeletePrefix = oEvent.getParameter("deletePrefix") || [];
 
-		if (!Array.isArray(vHash)) {
-			vHash = [vHash];
-		}
+		if (Array.isArray(aNestedHashInfo)) {
+			aNestedHashInfo.forEach(function(oHashInfo) {
+				aHashes.push(oHashInfo.hash);
+				aKeys.push(oHashInfo.key);
 
-		if (!Array.isArray(vKey)) {
-			vKey = [vKey];
+				if (Array.isArray(oHashInfo.deletePrefix)) {
+					oHashInfo.deletePrefix.forEach(function(sDeletePrefix) {
+						if (aDeletePrefix.indexOf(sDeletePrefix) === -1) {
+							aDeletePrefix.push(sDeletePrefix);
+						}
+					});
+				}
+			});
 		}
 
 		if (sEventName === "hashSet") {
-			this._setSubHash(vKey, vHash, aDeletePrefix);
+			this._setSubHash(aKeys, aHashes, aDeletePrefix);
 		} else {
-			this._replaceSubHash(vKey, vHash, aDeletePrefix);
+			this._replaceSubHash(aKeys, aHashes, aDeletePrefix);
 		}
 	};
 
@@ -175,6 +183,14 @@ sap.ui.define([
 			sTopHash = aParts.shift();
 
 		aKeys.forEach(function(sKey, index) {
+			// remove sKey from aDeleteKeys because sKey should have a part in the final browser hash
+			// when sValue is falsy, the sKey will be inserted into aDeleteKeys later
+			if (aDeleteKeys) {
+				aDeleteKeys = aDeleteKeys.filter(function(sDeleteKey) {
+					return sDeleteKey !== sKey;
+				});
+			}
+
 			var sValue = aValues[index];
 			if (sKey === undefined) {
 				// change the top level hash
@@ -200,15 +216,16 @@ sap.ui.define([
 				}
 			}
 
-			if (aDeleteKeys && aDeleteKeys.length > 0) {
-				// remove dependent subhashes from aDeleteKeys from the hash
-				aParts = aParts.filter(function(sPart) {
-					return !aDeleteKeys.some(function(sPrefix) {
-						return sPart.startsWith(sPrefix);
-					});
-				});
-			}
 		});
+
+		if (aDeleteKeys && aDeleteKeys.length > 0) {
+			// remove dependent subhashes from aDeleteKeys from the hash
+			aParts = aParts.filter(function(sPart) {
+				return !aDeleteKeys.some(function(sPrefix) {
+					return sPart.startsWith(sPrefix);
+				});
+			});
+		}
 
 		aParts.unshift(sTopHash);
 
