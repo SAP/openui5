@@ -15,7 +15,7 @@ sap.ui.define([
 				iShouldSeeHighIssueInTemporaryLib: function () {
 					return this.waitFor({
 						id: sIssuesTableId,
-						matchers: new AggregationFilled({name: "columns"}),
+						matchers: new AggregationFilled({name: "rows"}),
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
 						success: function (oTable) {

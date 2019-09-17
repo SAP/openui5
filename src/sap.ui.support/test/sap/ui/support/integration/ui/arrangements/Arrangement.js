@@ -15,8 +15,17 @@ sap.ui.define([
 		},
 
 		iStartMyAppAndDeletePersistedData: function () {
-			this.iStartMyApp()
-				.done(function () {
+			// first start the app
+			this.iStartMyApp();
+			// then clear the persistent storage
+			this.waitFor({
+				check: function() {
+					// wait for the support assistant classes to be loaded (not covered by iStartMyApp)
+					return Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Storage") != null
+						&& Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Constants") != null
+						&& Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/ui/models/SharedModel") != null;
+				},
+				success: function() {
 					var Storage = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Storage"),
 						Constants = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/Constants"),
 						SharedModel = Opa5.getWindow().sap.ui.require("sap/ui/support/supportRules/ui/models/SharedModel");
@@ -24,7 +33,8 @@ sap.ui.define([
 					Storage.deletePersistenceCookie(Constants.COOKIE_NAME);
 					Storage.removeAllData();
 					SharedModel.setProperty("/persistingSettings", false);
-				});
+				}
+			});
 		}
 
 	});
