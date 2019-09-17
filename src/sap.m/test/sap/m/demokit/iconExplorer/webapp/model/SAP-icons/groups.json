@@ -540,7 +540,7 @@
 				{ "name" : "value-help" },
 				{ "name" : "overflow" },
 				{ "name" : "multi-select" },
-				{ "name" : "exit-full-screen"},
+				{ "name" : "exit-full-screen" },
 				{ "name" : "sys-add" },
 				{ "name" : "sys-minus" },
 				{ "name" : "dropdown" },
@@ -908,7 +908,8 @@
 				{ "name" : "hello-world" },
 				{ "name" : "message-popup" },
 				{ "name" : "comment" },
-				{ "name" : "ui-notifications" }
+				{ "name" : "ui-notifications" },
+				{ "name" : "feedback" }
 			]
 		},
 		{

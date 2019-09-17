@@ -706,7 +706,8 @@ sap.ui.define([
 				'collapse-all': 0xe284,
 				'combine': 0xe285,
 				'split': 0xe286,
-				'megamenu': 0xe287
+				'megamenu': 0xe287,
+				"feedback": 0xe288
 			}
 		};
 
