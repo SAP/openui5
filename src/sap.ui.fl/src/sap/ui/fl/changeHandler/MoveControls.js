@@ -157,27 +157,29 @@ function(
 		this._checkConditions(oChange, oModifier, oView, oAppComponent);
 
 		var oChangeContent = oChange.getContent();
+		// mPropertyBag.sourceAggregation and targetAggregation should always be used when available
 		var sSourceAggregation = mPropertyBag.sourceAggregation || oChangeContent.source.selector.aggregation;
-		var oTargetParent = oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
 		var sTargetAggregation = mPropertyBag.targetAggregation || oChangeContent.target.selector.aggregation;
+		var oSourceParent = oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView);
+		var oTargetParent = oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
 
 		var aRevertData = [];
 		oChangeContent.movedElements.forEach(function(mMovedElement) {
 			var oMovedElement = this._getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView);
 
-			var oSourceParent = oModifier.getParent(oMovedElement);
-			var iInsertIndex = mMovedElement.targetIndex;
-
 			// save the current index, sourceParent and sourceAggregation for revert
 			var iIndex = oModifier.findIndexInParentAggregation(oMovedElement);
-			if (iIndex > -1) {
-				// mPropertyBag.sourceAggregation should always be used when available
-				sSourceAggregation = mPropertyBag.sourceAggregation || oModifier.getParentAggregationName(oMovedElement, oSourceParent);
+			var iInsertIndex = mMovedElement.targetIndex;
 
-				// if iIndex === iInsertIndex the operation was already performed
-				// in this case we need the sourceIndex that is saved in the change in order to revert it to the correct index
+			if (iIndex > -1) {
+				// if iIndex === iInsertIndex the operation was already performed (e.g. drag&drop in RTA)
+				// in this case we need the sourceIndex and sourceParent that is saved in the change in order to revert it to the correct index
+				// and we can't use the current aggregations/parents
 				if (iIndex === iInsertIndex) {
 					iIndex = mMovedElement.sourceIndex;
+				} else {
+					sSourceAggregation = mPropertyBag.sourceAggregation || oModifier.getParentAggregationName(oMovedElement, oSourceParent);
+					oSourceParent = oModifier.getParent(oMovedElement);
 				}
 
 				aRevertData.unshift({
