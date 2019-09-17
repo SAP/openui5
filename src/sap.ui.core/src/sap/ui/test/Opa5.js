@@ -492,7 +492,13 @@ sap.ui.define([
 		 *     </pre>
 		 * @param {boolean} [options.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [options.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
-		 * @param {boolean} [options.enabled=false] @since 1.66 If set to false, Opa5 will also look for disabled controls.
+		 * @param {boolean} [options.enabled=false] @since 1.66 If set to false, Opa5 will look for both enabled and disabled controls.
+		 * Note that this option's default value is related to the autoWait mechanism:
+		 * <ul>
+		 *     <li> When autoWait is enabled globally or in the current waitFor, the default value for options.enabled is true. </li>
+		 *     <li> When autoWait is not used, the default value for options.enabled is false.</li>
+		 * </ul>
+		 * This means that if you use autoWait and you want to find a disabled control, you need to explicitly set options.enabled to false.
 		 * @param {int} [options.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
 		 * @param {int} [options.debugTimeout=0] @since 1.47 (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
