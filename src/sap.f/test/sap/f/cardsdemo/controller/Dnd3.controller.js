@@ -27,6 +27,14 @@ sap.ui.define([
 					targetAggregation: "items",
 					dropPosition: "Between",
 					dropLayout: oGrid.isA("sap.m.List") ? "Vertical" : "Horizontal",
+					dropIndicatorSize: function (oDraggedControl) {
+						if (oDraggedControl.isA("sap.m.CustomListItem")) {
+							return {
+								rows: 2,
+								columns: 2
+							};
+						}
+					},
 					drop: function (oInfo) {
 						var oDragged = oInfo.getParameter("draggedControl"),
 							oDropped = oInfo.getParameter("droppedControl"),

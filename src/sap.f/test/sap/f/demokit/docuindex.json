@@ -119,7 +119,8 @@
 		  "since": "1.65",
 		  "samples": [
 				"sap.f.sample.GridContainer",
-				"sap.f.sample.GridContainerDragAndDrop"
+				"sap.f.sample.GridContainerDragAndDrop",
+				"sap.f.sample.GridContainerDragAndDropFromList"
 			]
 		}
 	  ],
@@ -248,7 +249,12 @@
 			"id": "sap.f.sample.GridContainerDragAndDrop",
 			"name": "Grid Container (Experimental) - Drag and Drop",
 			"description": "This sample represents GridContainer with enabled Drag and Drop functionality."
-		  }
+		},
+		{
+			"id": "sap.f.sample.GridContainerDragAndDropFromList",
+			"name": "Grid Container (Experimental) - Drag and Drop From List to GridContainer",
+			"description": "This sample represents how items from a control which is not GridContainer can be dragged and dropped over a GridContainer."
+		}
 	  ]
 	}
 }

@@ -454,6 +454,8 @@ sap.ui.define([
 	GridBoxLayout.prototype._polyfillAfterDragOver = function (oEvent, oGrid) {
 		oEvent.getParameter("indicator").addClass("sapUiLayoutCSSGridItem");
 
+		this._calcWidth(oGrid);
+		this._flattenHeight(oGrid);
 		this._applyClassForLastItem(oGrid);
 	};
 
