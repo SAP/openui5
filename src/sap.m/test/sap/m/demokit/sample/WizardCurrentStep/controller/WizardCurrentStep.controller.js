@@ -11,6 +11,7 @@ sap.ui.define([
 			this.linearWizard = this.byId("wizardViewLinear").byId("CreateProductWizard");
 			this.branchingWizard = this.byId("wizardViewBranching").byId("BranchingWizard");
 			this.model = new JSONModel({
+				selectedBackgroundDesign: "Standard",
 				selectedShowCase: "linear",
 				linearWizardSelectedStep: "PricingStep"
 			});
@@ -19,6 +20,11 @@ sap.ui.define([
 
 		onCurrentStepChangeLinear: function (event) {
 			this.linearWizard.setCurrentStep(this.byId("wizardViewLinear").byId(event.getParameter("selectedItem").getKey()));
+		},
+
+		onBackgroundDesignChange: function (event) {
+			this.linearWizard.setBackgroundDesign(event.getParameter("selectedItem").getKey());
+			this.branchingWizard.setBackgroundDesign(event.getParameter("selectedItem").getKey());
 		},
 
 		onCurrentStepChangeBranching: function (event) {

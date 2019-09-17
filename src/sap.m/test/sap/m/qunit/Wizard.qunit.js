@@ -5,11 +5,13 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
-	"sap/ui/base/ObjectPool"
-], function(QUnitUtils, Core, Wizard, WizardStep, ObjectPool) {
+	"sap/ui/base/ObjectPool",
+	"sap/m/library"
+], function(QUnitUtils, Core, Wizard, WizardStep, ObjectPool, library) {
 	var Log = sap.ui.require("sap/base/Log");
 
-
+	// shortcut for sap.m.PageBackgroundDesign
+	var PageBackgroundDesign = library.PageBackgroundDesign;
 
 	QUnit.module("Wizard Public API", {
 		sWizardId: "wizard-id",
@@ -438,6 +440,59 @@ sap.ui.define([
 
 		// clean up
 		oWizard.destroy();
+	});
+
+	QUnit.test("default backgroundDesign should be 'Standard'", function (assert) {
+		// Arrange
+		var $oDomRef = this.oWizard.$();
+
+		// Assert
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgSolid"), "HTML class for Solid is not set");
+		assert.ok($oDomRef.hasClass("sapMWizardBgStandard"), "HTML class for Standard is set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgTransparent"), "HTML class for Transparent is not set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgList"), "HTML class for List is not set");
+	});
+
+	QUnit.test("backgroundDesign should be set to 'Solid'", function (assert) {
+		// Arrange
+		var $oDomRef = this.oWizard.$();
+
+		// Act
+		this.oWizard.setBackgroundDesign(PageBackgroundDesign.Solid);
+
+		// Assert
+		assert.ok($oDomRef.hasClass("sapMWizardBgSolid"), "HTML class for Solid is set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgStandard"), "HTML class for Standard is not set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgTransparent"), "HTML class for Transparent is not set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgList"), "HTML class for List is not set");
+	});
+
+	QUnit.test("backgroundDesign should be set to 'Transparent'", function (assert) {
+		// Arrange
+		var $oDomRef = this.oWizard.$();
+
+		// Act
+		this.oWizard.setBackgroundDesign(PageBackgroundDesign.Transparent);
+
+		// Assert
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgSolid"), "HTML class for Solid is not set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgStandard"), "HTML class for Standard is not set");
+		assert.ok($oDomRef.hasClass("sapMWizardBgTransparent"), "HTML class for Transparent is set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgList"), "HTML class for List is not set");
+	});
+
+	QUnit.test("backgroundDesign should be set to 'List'", function (assert) {
+		// Arrange
+		var $oDomRef = this.oWizard.$();
+
+		// Act
+		this.oWizard.setBackgroundDesign(PageBackgroundDesign.List);
+
+		// Assert
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgSolid"), "HTML class for Solid is not set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgStandard"), "HTML class for Standard is not set");
+		assert.ok(!$oDomRef.hasClass("sapMWizardBgTransparent"), "HTML class for Transparent is not set");
+		assert.ok($oDomRef.hasClass("sapMWizardBgList"), "HTML class for List is set");
 	});
 
 	QUnit.module("Methods");

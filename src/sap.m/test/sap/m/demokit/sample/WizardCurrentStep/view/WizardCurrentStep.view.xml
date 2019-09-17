@@ -20,6 +20,13 @@
 								</SegmentedButton>
 							</contentLeft>
 							<contentRight>
+								<Label text="Set background design: " />
+								<Select change="onBackgroundDesignChange" selectedKey="{/selectedBackgroundDesign}">
+									<core:Item text="Standard" key="Standard" />
+									<core:Item text="Solid" key="Solid" />
+									<core:Item text="List" key="List" />
+									<core:Item text="Transparent" key="Transparent" />
+								</Select>
 								<Label text="Set current step: " />
 								<Select change="onCurrentStepChangeLinear" selectedKey="{/linearWizardSelectedStep}" visible="{= ${/selectedShowCase} === 'linear'}">
 									<core:Item text="ProductTypeStep" key="ProductTypeStep" />

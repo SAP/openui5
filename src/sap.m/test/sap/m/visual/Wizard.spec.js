@@ -77,4 +77,19 @@ describe("sap.m.Wizard", function() {
 
 		expect(takeScreenshot(element(by.id("wiz-dialog")))).toLookAs("wizard-in-dialog-initial-focus");
 	});
+
+	it("should change background design", function () {
+		element(by.id("background-change-wiz-sel")).click();
+		element(by.id("change-theme")).click();
+		expect(takeScreenshot()).toLookAs("change-background-standard");
+
+		element(by.id("change-background-solid")).click();
+		expect(takeScreenshot()).toLookAs("change-background-solid");
+
+		element(by.id("change-background-list")).click();
+		expect(takeScreenshot()).toLookAs("change-background-list");
+
+		element(by.id("change-background-transparent")).click();
+		expect(takeScreenshot()).toLookAs("change-background-transparent");
+    });
 });
