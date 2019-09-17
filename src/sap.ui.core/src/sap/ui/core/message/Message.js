@@ -144,6 +144,8 @@ sap.ui.define([
 	Message.prototype.removeControlId = function(sControlId) {
 		var iIndex = this.controlIds.indexOf(sControlId);
 		if (iIndex != -1) {
+			//clone array to get update working.
+			this.controlIds = this.controlIds.slice();
 			this.controlIds.splice(iIndex, 1);
 		}
 	};
