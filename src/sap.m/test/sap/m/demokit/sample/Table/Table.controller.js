@@ -33,12 +33,18 @@ sap.ui.define([
 			}
 		},
 
-		onSelectionFinish: function(oEvent) {
-			var aSelectedItems = oEvent.getParameter("selectedItems");
-			var oTable = this.byId("idProductsTable");
-			var aSticky = aSelectedItems.map(function(oItem) {
-				return oItem.getKey();
-			});
+		onSelect: function(oEvent) {
+			var bSelected = oEvent.getParameter("selected"),
+				sText = oEvent.getSource().getText(),
+				oTable = this.byId("idProductsTable"),
+				aSticky = oTable.getSticky() || [];
+
+			if (bSelected) {
+				aSticky.push(sText);
+			} else if (aSticky.length) {
+				var iElementIndex = aSticky.indexOf(sText);
+				aSticky.splice(iElementIndex, 1);
+			}
 
 			oTable.setSticky(aSticky);
 		},
