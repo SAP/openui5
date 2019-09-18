@@ -6422,5 +6422,15 @@
 			"down",
 			"shell"
 		]
+	},
+	"feedback": {
+		"tags": [
+			"feedback",
+			"smiley",
+			"comment",
+			"shell",
+			"callout",
+			"speech"
+		]
 	}
 }
