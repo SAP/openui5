@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.Image.ImageGroup",
+			"viewName": "sap.m.sample.Image.view.ImageGroup",
 			"type": "XML",
 			"async": true
 		},
@@ -19,8 +19,9 @@
 		"config": {
 			"sample": {
 				"files": [
-					"ImageGroup.view.xml",
-					"ImageGroup.controller.js",
+					"view/ImageGroup.view.xml",
+					"controller/ImageGroup.controller.js",
+					"images/sap-logo.svg",
 					"manifest.json"
 				]
 			}

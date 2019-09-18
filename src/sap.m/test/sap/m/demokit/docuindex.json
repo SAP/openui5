@@ -1913,7 +1913,7 @@
 		{
 		  "id": "sap.m.sample.Image",
 		  "name": "Image",
-		  "description": "Images are faster than words and attract people's attention. Images can also have an active state like the last image in this example."
+		  "description": "Images are faster than words and attract people's attention. Images can also have an active state or be used in SVG format."
 		},
 		{
 		  "id": "sap.m.sample.ImageModeBackground",

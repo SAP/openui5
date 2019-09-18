@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.Image.controller.ImageGroup"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<VBox class="sapUiSmallMarginTopBottom sapUiLargeMarginBeginEnd">
+		<HBox justifyContent="SpaceBetween">
+			<VBox>
+				<Text text="Image:" class="sapUiSmallMarginBottom" />
+				<Image src="{img>/products/pic1}" width="{/imageWidth}" />
+			</VBox>
+			<VBox>
+				<Text text="Active state image:" class="sapUiSmallMarginBottom" />
+				<Image src="{img>/products/pic3}"
+					width="{/imageWidth}"
+					decorative="false"
+					press="handleImage3Press" />
+			</VBox>
+			<VBox>
+				<Text text="Image using SVG format:" class="sapUiSmallMarginBottom" />
+				<Image src="{/svgLogo}"/>
+			</VBox>
+		</HBox>
+	</VBox>
+</mvc:View>
