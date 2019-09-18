@@ -906,6 +906,40 @@ function(
 
 			this.oInnerLayout.insertAggregation("content", oButton, 2);
 		});
+
+		QUnit.test("when designTime goes to 'syncing' status before the previous 'synced' event was asynchronously fired", function(assert) {
+			var fnDone = assert.async();
+			var oButton3 = new Button("button3");
+			var oButton4 = new Button("button4");
+
+			function sendDesignTimeToSyncing() {
+				var oOverlayForButton3 = OverlayRegistry.getOverlay(oButton3);
+				if (this.oDesignTime.getStatus() === DesignTimeStatus.SYNCED && oOverlayForButton3) {
+					var oClock = sinon.useFakeTimers();
+					// this will send the designTime back to 'syncing'
+					this.oInnerLayout.insertAggregation("content", oButton4, 3);
+					oClock.tick(0);
+					oClock.restore();
+					this.oDesignTime._oTaskManager.detachEvent("complete", sendDesignTimeToSyncing, this);
+				}
+			}
+
+			this.oDesignTime._oTaskManager.attachEvent("complete", sendDesignTimeToSyncing, this);
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				var aInnerLayoutContent = this.oInnerLayout.getContent();
+				var bChildrenHaveRegisteredOverlays = aInnerLayoutContent.every(function (oChild) {
+					return OverlayRegistry.getOverlay(oChild) instanceof ElementOverlay;
+				});
+
+				assert.strictEqual(this.oDesignTime.getStatus(), "synced", "then DesignTime status was 'synced'");
+				assert.strictEqual(aInnerLayoutContent.length, 4, "then 4 children are present in the internal layout");
+				assert.strictEqual(bChildrenHaveRegisteredOverlays, true, "then all inner layout children have registered overlays");
+				fnDone();
+			}.bind(this));
+
+			this.oInnerLayout.insertAggregation("content", oButton3, 2);
+		});
 	});
 
 	QUnit.module("Given a layout and a button", {
