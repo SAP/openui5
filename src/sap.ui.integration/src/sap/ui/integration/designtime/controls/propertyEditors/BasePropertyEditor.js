@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 */
-	var PropertyEditor = Control.extend("sap.ui.integration.designtime.controls.propertyEditors.BasePropertyEditor", {
+	var BasePropertyEditor = Control.extend("sap.ui.integration.designtime.controls.propertyEditors.BasePropertyEditor", {
 		metadata: {
 			properties: {
 				"renderLabel" : {
@@ -62,12 +62,11 @@ sap.ui.define([
 		},
 
 		constructor: function() {
-			var vReturn = Control.prototype.constructor.apply(this, arguments);
-			this._oConfigModel = new JSONModel({});
+			Control.prototype.constructor.apply(this, arguments);
+			this._oConfigModel = new JSONModel(this.getConfig());
 			this._oConfigModel.setDefaultBindingMode("OneWay");
 			this.setModel(this._oConfigModel);
 			this.setBindingContext(this._oConfigModel.getContext("/"));
-			return vReturn;
 		},
 
 		clone: function() {
@@ -87,7 +86,6 @@ sap.ui.define([
 
 		setConfig: function(oConfig) {
 			var vReturn = this.setProperty("config", oConfig);
-			this._oConfigModel.setData(this.getConfig());
 			this._initialize();
 			return vReturn;
 		},
@@ -113,10 +111,13 @@ sap.ui.define([
 				if (oConfig.path && !oConfig.value) {
 					oConfig.value = "{context>" + oConfig.path + "}";
 				}
+				// resolve binding strings
 				this._oConfigBinding = new ObjectBinding();
-				this._oConfigBinding.setObject(oConfig);
 				this._oConfigBinding.setModel(oJsonModel, "context");
 				this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
+				this._oConfigBinding.setObject(oConfig);
+				//
+				this._oConfigModel.setData(oConfig);
 				this._oConfigModel.checkUpdate();
 				this.onValueChange(oConfig.value);
 				this.bindProperty("visible", "visible");
@@ -172,5 +173,5 @@ sap.ui.define([
 		}
 	});
 
-	return PropertyEditor;
+	return BasePropertyEditor;
 });

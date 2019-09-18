@@ -25,7 +25,7 @@ sap.ui.define([
 	 */
 	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ArrayEditor", {
 		constructor: function() {
-			var vReturn = BasePropertyEditor.prototype.constructor.apply(this, arguments);
+			BasePropertyEditor.prototype.constructor.apply(this, arguments);
 			var oContainer = new VBox();
 			this.addContent(oContainer);
 
@@ -79,7 +79,6 @@ sap.ui.define([
 					})
 				]
 			}));
-			return vReturn;
 		},
 		onValueChange: function() {
 			var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
