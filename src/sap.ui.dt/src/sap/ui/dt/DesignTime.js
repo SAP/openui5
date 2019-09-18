@@ -262,7 +262,10 @@ function (
 						if (this._oTaskManager.isEmpty() && this._sStatus !== DesignTimeStatus.SYNCED) {
 							this._sStatus = DesignTimeStatus.SYNCED;
 							setTimeout(function () {
-								this.fireSynced();
+								// checks if designTime status is still synced, due to asynchronity from setTimeout()
+								if (this._sStatus === DesignTimeStatus.SYNCED) {
+									this.fireSynced();
+								}
 							}.bind(this), 0);
 						}
 					}
