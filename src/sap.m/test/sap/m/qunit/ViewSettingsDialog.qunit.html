@@ -600,7 +600,7 @@
 			QUnit.test("Last Opened Page is correct on Cancel on second opening of the filter detail view", function (assert) {
 				function openAndNavigateToFilterDetailsPage(oVSD) {
 					oVSD.open("filter");
-					var oItem = oVSD._filterList.getItems()[0].data("item");
+					var oItem = oVSD._filterList.getItems()[1].data("item"); //since the header is the 0 element, get the actual first item
 					//this is a simulation of click on the single filter item, that provokes slide to the nav container's page2
 					oVSD._switchToPage(3, oItem);
 					oVSD._prevSelectedFilterItem = oItem;
@@ -1730,7 +1730,7 @@
 			assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Sub-header with segmented button is not set on first page");
 			assert.ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 			assert.ok(jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should be rendered");
-			assert.strictEqual(this.oVSD._filterList.getItems()[0].getCounter(), 4, "Filter counter for name is 4");
+			assert.strictEqual(this.oVSD._filterList.getItems()[1].getCounter(), 4, "Filter counter for name is 4"); //since the header is the 0 element, get the actual first item
 
 			this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[2]); // value details page
 			assert.strictEqual(this.oVSD._filterDetailList.getMode(), sap.m.ListMode.SingleSelectLeft, "The value detail list is in single select left mode");
@@ -1800,11 +1800,11 @@
 			this.oVSD.open();
 			setTimeout(function () {
 				var list 						= that.oVSD._getPage1().getContent()[1];
-				var listOfSortItems 			= list.getItems()[1];
-				var listOfSortDirectionItems	= that.oVSD._getPage1().getContent()[3];
+				var listOfSortItems 			= list.getItems()[2]; //get the "descending" item
+				var listOfSortDirectionItems	= that.oVSD._getPage1().getContent()[3]; //get the "Other" item
 
 				var vsdSortItem 				= that.oVSD.getSortItems()[1];
-				var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[1];
+				var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[2];
 				var spySortItem 				= sinon.spy(vsdSortItem, "setProperty");
 				var spyVsd 					    = sinon.spy(that.oVSD, "setProperty");
 
@@ -1821,9 +1821,9 @@
 				that.oVSD._switchToPage(1);
 				setTimeout(function () {
 					var list 						= that.oVSD._getPage1().getContent()[1];
-					var listOfGroupItems 			= list.getItems()[1];
+					var listOfGroupItems 			= list.getItems()[2];
 					var listOfGroupDirectionItems	= that.oVSD._getPage1().getContent()[3];
-					var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[1];
+					var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[2];
 					var vsdGroupItem 				= that.oVSD.getGroupItems()[1];
 					var spyGroupItem 				= sinon.spy(vsdGroupItem, "setProperty");
 
@@ -2178,7 +2178,7 @@
 			// navigates to the details page of the first filter item and calls the given callback once navigation completes
 			function navigateToFirstFilterItemsDetailPage(fnCallback) {
 				that.oVSD._getNavContainer().attachEventOnce("afterNavigate", fnCallback);
-				that.oVSD._filterList.getItems()[0].$().trigger('tap');
+				that.oVSD._filterList.getItems()[1].$().trigger('tap'); //since the header is the 0 element, get the actual first item
 			}
 
 			that.oVSD.addFilterItem(oVSDFilterItem);
@@ -2514,7 +2514,7 @@
 			this.oVSD.open();
 
 			var aItems = this.oVSD._sortList.getItems();
-			var oItem = aItems[0];
+			var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
 			var sFirstItemId = oItem.getId();
 			var sTitleSelector = "#" + this.oVSD._getDialog().getId() + " .sapMSLITitleOnly";
 
@@ -2527,7 +2527,7 @@
 
 				setTimeout(function () {
 					var aItems = this.oVSD._sortList.getItems();
-					var oItem = aItems[0];
+					var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
 					var sSecondItemId = oItem.getId();
 
 					assert.strictEqual(oItem.getTitle(), 'Sort text 1 B', 'Correct item is being asserted.');
@@ -2564,7 +2564,7 @@
 			this.oVSD._switchToPage(2);
 
 			var aItems = this.oVSD._filterList.getItems();
-			var oItem = aItems[0];
+			var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
 			var sFirstItemId = oItem.getId();
 			var sTitleSelector = "#" + this.oVSD._getDialog().getId() + " .sapMSLITitleOnly";
 
@@ -2577,7 +2577,7 @@
 
 				setTimeout(function () {
 					var aItems = this.oVSD._filterList.getItems();
-					var oItem = aItems[0];
+					var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
 					var sSecondItemId = oItem.getId();
 
 					assert.strictEqual(oItem.getTitle(), 'Filter text B', 'Correct item is being asserted.');
@@ -2704,7 +2704,7 @@
 			this.oVSD._switchToPage(1);
 
 			var aItems = this.oVSD._groupList.getItems();
-			var oItem = aItems[0];
+			var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
 			var sFirstItemId = oItem.getId();
 			var sTitleSelector = "#" + this.oVSD._getDialog().getId() + " .sapMSLITitleOnly";
 
@@ -2717,7 +2717,7 @@
 
 				setTimeout(function () {
 					var aItems = this.oVSD._groupList.getItems();
-					var oItem = aItems[0];
+					var oItem = aItems[1]; //since the header is the 0 element, get the actual first item
 					var sSecondItemId = oItem.getId();
 
 					assert.strictEqual(oItem.getTitle(), 'Group text B', 'Correct item is being asserted.');
@@ -2989,7 +2989,8 @@
 			oViewSettingsDialog._initFilterItems();
 
 			// Assert
-			assert.equal(aResult[0].getTooltip(), oViewSettingsItem.getTooltip(), "Tooltip from ViewSettingsItem is passed to StandardListItem");
+			assert.equal(aResult[2].getTooltip(), oViewSettingsItem.getTooltip(),
+					"Tooltip from ViewSettingsItem is passed to StandardListItem"); //since the header is the 0 element, get the actual first item
 
 			// Cleanup
 			oViewSettingsDialog.destroy();
@@ -3017,7 +3018,8 @@
 			oViewSettingsDialog._initFilterItems();
 
 			// Assert
-			assert.equal(aResult[0].getTooltip(), oViewSettingsItem.getTooltip(), "Tooltip from ViewSettingsItem is passed to StandardListItem");
+			assert.equal(aResult[1].getTooltip(), oViewSettingsItem.getTooltip(),
+					"Tooltip from ViewSettingsItem is passed to StandardListItem"); //since the header is the 0 element, get the actual first item
 
 			// Cleanup
 			oViewSettingsDialog.destroy();
@@ -3045,7 +3047,8 @@
 			oViewSettingsDialog._initGroupItems();
 
 			// Assert
-			assert.equal(aResult[0].getTooltip(), oViewSettingsItem.getTooltip(), "Tooltip from ViewSettingsItem is passed to StandardListItem");
+			assert.equal(aResult[1].getTooltip(), oViewSettingsItem.getTooltip(),
+					"Tooltip from ViewSettingsItem is passed to StandardListItem"); //since the header is the 0 element, get the actual first item
 
 			// Cleanup
 			oViewSettingsDialog.destroy();
