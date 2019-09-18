@@ -3900,11 +3900,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Unbind the aggregation from the model
+	 * Unbind the aggregation from the model.
 	 *
-	 * @param {string} sName the name of the aggregation
-	 * @param {boolean} bSuppressReset whether the reset to empty aggregation when unbinding should be suppressed
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * After unbinding, the current content of the aggregation is destroyed by default.
+	 * When the <code>bSuppressReset</code> parameter is set, it is however retained.
+	 *
+	 * @param {string} sName Name of the aggregation
+	 * @param {boolean} bSuppressReset Indicates whether destroying the content of the aggregation is skipped
+	 * @returns {sap.ui.base.ManagedObject} Reference to this instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset){
