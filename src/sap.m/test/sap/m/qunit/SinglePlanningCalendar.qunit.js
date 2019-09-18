@@ -348,6 +348,21 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("viewChange", function (assert) {
+		var oSPC = new SinglePlanningCalendar({}),
+			fnFireViewChange = this.spy(oSPC, "fireViewChange");
+
+		//act
+		oSPC._getHeader().fireViewChange();
+
+		//assert
+		assert.ok(fnFireViewChange.calledOnce, "Event was fired");
+
+		//clean up
+		oSPC.destroy();
+	});
+
+
 	QUnit.test("startDateChange: on next button press", function (assert) {
 		var oSPC = new SinglePlanningCalendar(),
 			oSPCHeader = oSPC._getHeader(),

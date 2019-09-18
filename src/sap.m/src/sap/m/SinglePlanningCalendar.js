@@ -428,7 +428,13 @@ function(
 					 */
 					date: { type: "object" }
 				}
-			}
+			},
+
+			/**
+			 * The view was changed by user interaction.
+			 * @since 1.71.0
+			 */
+			viewChange : {}
 		}
 
 	}});
@@ -970,6 +976,7 @@ function(
 	SinglePlanningCalendar.prototype._attachHeaderEvents = function () {
 		var oHeader = this._getHeader();
 
+		oHeader.attachEvent("viewChange", this._handleViewChange, this);
 		oHeader.attachEvent("pressPrevious", this._handlePressArrow, this);
 		oHeader.attachEvent("pressToday", this._handlePressToday, this);
 		oHeader.attachEvent("pressNext", this._handlePressArrow, this);
@@ -1106,6 +1113,14 @@ function(
 		oGridMV.attachEvent("borderReached", fnHandleBorderReachedMonthView, this);
 
 		return this;
+	};
+
+	/**
+	 * Handler for the viewChange event in the _header aggregation.
+	 * @private
+	 */
+	SinglePlanningCalendar.prototype._handleViewChange = function () {
+		this.fireViewChange();
 	};
 
 	/**
