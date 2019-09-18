@@ -3899,7 +3899,7 @@ sap.ui.define([
 	 * Unbind the aggregation from the model
 	 *
 	 * @param {string} sName the name of the aggregation
-	 * @param {boolean} bSuppressReset whether the reset to empty aggregation when unbinding should be suppressed
+	 * @param {boolean} bSuppressReset Whether the reset, to empty aggregation when unbinding, should be suppressed
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
