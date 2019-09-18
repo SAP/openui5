@@ -15,11 +15,11 @@ sap.ui.define([
 	"sap/ui/core/InvisibleRenderer"
 ], function (Control,
 			Core,
-            ManagedObjectObserver,
-            ResizeHandler,
-            ItemNavigation,
-            GridContainerRenderer,
-            Device,
+			ManagedObjectObserver,
+			ResizeHandler,
+			ItemNavigation,
+			GridContainerRenderer,
+			Device,
 			VirtualGrid,
 			GridContainerSettings,
 			capitalize,
@@ -94,6 +94,10 @@ sap.ui.define([
 	 *
 	 * All rows have the same height and all columns have the same width. Their sizes can be configured with the use of the <code>layout</code> aggregation and <code>{@link sap.f.GridContainerSettings}</code>.
 	 *
+	 * <h3>Disclaimer</h3>
+	 *
+	 * The control has limited support for accessibility(keyboard handling and accessibility).
+	 *
 	 * <h3>Usage</h3>
 	 *
 	 * <i>When to use</i>
@@ -144,7 +148,7 @@ sap.ui.define([
 	 * Both <code>{@link sap.ui.core.dnd.DropInfo}</code> and <code>{@link sap.f.dnd.GridDropInfo}</code> can be used to configure drag and drop.
 	 * The difference is that the <code>{@link sap.f.dnd.GridDropInfo}</code> will provide a drop indicator, which mimics the size of the dragged item and shows the potential drop position inside the grid.
 	 *
-	 * @see {@link topic:cca5ee5d63ca44c89318f8496a58f9f2 Grid Container (Experimental)}
+	 * @see {@link topic:cca5ee5d63ca44c89318f8496a58f9f2 Grid Container}
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}
 	 * @see {@link topic:5b46b03f024542ba802d99d67bc1a3f4 Cards}
 	 * @see {@link sap.f.dnd.GridDropInfo}
@@ -154,7 +158,6 @@ sap.ui.define([
 	 *
 	 * @extends sap.ui.core.Control
 	 *
-	 * @experimental Since 1.65 This class is experimental. The API may change.
 	 * @since 1.65
 	 * @public
 	 * @constructor
@@ -193,7 +196,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> The order of the items is ignored. An item which is normally at the bottom, can appear on top.
 				 *
-				 * @experimental As of version 1.66
+				 * @experimental As of version 1.66 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				allowDenseFill: {type: "boolean", group: "Appearance", defaultValue: false},
 
@@ -204,7 +207,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> Not supported in IE11, Edge 15.
 				 *
-				 * @experimental As of version 1.66
+				 * @experimental As of version 1.66 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				inlineBlockLayout: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
@@ -226,6 +229,7 @@ sap.ui.define([
 
 				/**
 				 * The sap.f.GridContainerSettings applied for size "XS". Range: up to 374px.
+                 * @experimental As of version 1.71 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
 				layoutXS: { type: "sap.f.GridContainerSettings", multiple: false },
 

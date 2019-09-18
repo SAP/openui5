@@ -113,7 +113,7 @@
 		},
 		{
 		  "id": "sap.f.GridContainer",
-		  "name": "Grid Container (Experimental)",
+		  "name": "Grid Container",
 		  "category": "Container",
 			"formFactors" : "-",
 		  "since": "1.65",
@@ -242,17 +242,17 @@
 		},
 		{
 		  "id": "sap.f.sample.GridContainer",
-		  "name": "Grid Container (Experimental)",
+		  "name": "Grid Container",
 		  "description": "This sample represents the general usage of GridContainer."
 		},
 		{
 			"id": "sap.f.sample.GridContainerDragAndDrop",
-			"name": "Grid Container (Experimental) - Drag and Drop",
+			"name": "Grid Container - Drag and Drop",
 			"description": "This sample represents GridContainer with enabled Drag and Drop functionality."
 		},
 		{
 			"id": "sap.f.sample.GridContainerDragAndDropFromList",
-			"name": "Grid Container (Experimental) - Drag and Drop From List to GridContainer",
+			"name": "Grid Container - Drag and Drop From List to GridContainer",
 			"description": "This sample represents how items from a control which is not GridContainer can be dragged and dropped over a GridContainer."
 		}
 	  ]
