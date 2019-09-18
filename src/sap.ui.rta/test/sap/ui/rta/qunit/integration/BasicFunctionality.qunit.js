@@ -7,7 +7,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/FakeLrepSessionStorage",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
@@ -20,7 +20,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	FakeLrepConnectorSessionStorage,
 	FakeLrepSessionStorage,
-	Utils,
+	LayerUtils,
 	OverlayRegistry,
 	Device,
 	QUnitUtils,
@@ -124,7 +124,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when renaming a form title using a property change command", function(assert) {
-			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
 
 			var oInitialTitle = this.oForm.getTitle();
 

@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/transport/Transports",
 	"sap/ui/fl/transport/TransportDialog",
 	"sap/ui/fl/registry/Settings"
 ], function(
-	Utils,
+	LayerUtils,
 	Transports,
 	TransportDialog,
 	FlexSettings
@@ -56,7 +56,7 @@ sap.ui.define([
 		var that = this;
 
 		if (oObjectInfo) {
-			var sLayerType = Utils.getCurrentLayer(false);
+			var sLayerType = LayerUtils.getCurrentLayer(false);
 
 			// if object layer are known and layer is CUSTOMER
 			// check in settings if the adaptation transport organizer (ATO) is enabled
@@ -101,7 +101,7 @@ sap.ui.define([
 
 				if (that._checkDialog(oGetTransportsResult)) {
 					that._openDialog({
-						hidePackage: !Utils.doesSharedVariantRequirePackage(),
+						hidePackage: !LayerUtils.doesCurrentLayerRequirePackage(),
 						pkg: oObjectInfo.package,
 						transports: oGetTransportsResult.transports,
 						lrepObject: that._toLREPObject(oObjectInfo)

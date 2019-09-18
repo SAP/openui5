@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/base/util/ObjectPath",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/variants/URLHandler"
 ], function (
 	Utils,
+	LayerUtils,
 	Change,
 	Variant,
 	ObjectPath,
@@ -207,7 +209,7 @@ sap.ui.define([
 		if (oCurrentVariant.content.variantReference) {
 			aReferencedVariantChanges = this.getVariantChanges(sVariantManagementReference, oCurrentVariant.content.variantReference, true);
 			return aReferencedVariantChanges.filter(function(oReferencedChange) {
-				return Utils.compareAgainstCurrentLayer(oReferencedChange.getDefinition().layer, oCurrentVariant.content.layer) === -1; /* Referenced change layer below current layer*/
+				return LayerUtils.compareAgainstCurrentLayer(oReferencedChange.getDefinition().layer, oCurrentVariant.content.layer) === -1; /* Referenced change layer below current layer*/
 			});
 		}
 		return aReferencedVariantChanges;

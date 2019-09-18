@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/FlexCustomData",
 	"sap/m/Text",
 	"sap/ui/core/Component",
@@ -26,6 +27,7 @@ sap.ui.define([
 	VariantModel,
 	FlexControllerFactory,
 	Utils,
+	LayerUtils,
 	FlexCustomData,
 	Text,
 	Component,
@@ -36,7 +38,7 @@ sap.ui.define([
 	"use strict";
 	var sandbox = sinon.sandbox.create();
 
-	sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+	sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
 
 	var oFakeLrepConnector = new FakeLrepConnector("Dummy path");
 

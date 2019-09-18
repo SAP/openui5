@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/base/Log"
 ], function(
 	DefaultVariant,
@@ -15,6 +16,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	Settings,
 	Utils,
+	LayerUtils,
 	Log
 ) {
 	"use strict";
@@ -130,7 +132,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 */
 		isVendorLayer: function() {
-			return Utils.isVendorLayer();
+			return LayerUtils.isVendorLayer();
 		},
 
 		/**

@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/fl/codeExt/CodeExtManager",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CodeExtManager,
 	Utils,
+	LayerUtils,
 	jQuery,
 	sinon
 ) {
@@ -167,7 +169,7 @@ sap.ui.define([
 			var sLanguage = "EN";
 
 			sandbox.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
-			sandbox.stub(Utils, "getCurrentLayer").returns(sLayer);
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns(sLayer);
 			sandbox.stub(Utils, "createNamespace").returns(sNamespace);
 			sandbox.stub(Utils, "getCurrentLanguage").returns(sLanguage);
 

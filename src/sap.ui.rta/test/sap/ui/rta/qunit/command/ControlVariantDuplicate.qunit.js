@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/core/Manifest",
 	"sap/ui/rta/command/CommandFactory",
@@ -19,6 +20,7 @@ sap.ui.define([
 ],
 function (
 	FlUtils,
+	FlLayerUtils,
 	Change,
 	Manifest,
 	CommandFactory,
@@ -116,7 +118,7 @@ function (
 				controlChanges : [oChange1, oChange2]
 			};
 
-			this.oGetCurrentLayerStub = sinon.stub(FlUtils, "getCurrentLayer").returns("CUSTOMER");
+			this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns("CUSTOMER");
 			sinon.stub(VariantController.prototype, "getVariantChanges").returns([oChange1, oChange2]);
 			sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
 			sinon.stub(this.oModel.oVariantController, "getVariants").returns([this.oVariant]);

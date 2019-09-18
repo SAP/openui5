@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/base/Log"
 ], function (
 	jQuery,
 	ManagedObject,
 	Utils,
+	LayerUtils,
 	Settings,
 	Log
 ) {
@@ -592,7 +594,7 @@ sap.ui.define([
 	 */
 	Change.prototype._isReadOnlyDueToLayer = function () {
 		var sCurrentLayer;
-		sCurrentLayer = Utils.getCurrentLayer(this._bUserDependent);
+		sCurrentLayer = LayerUtils.getCurrentLayer(this._bUserDependent);
 		return (this._oDefinition.layer !== sCurrentLayer);
 	};
 
@@ -1037,7 +1039,7 @@ sap.ui.define([
 			content: oPropertyBag.content || {},
 			// TODO: Is an empty selector allowed?
 			selector: oPropertyBag.selector || {},
-			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
+			layer: oPropertyBag.layer || LayerUtils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
 			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 			projectId: oPropertyBag.projectId || (oPropertyBag.reference && oPropertyBag.reference.replace(".Component", "")) || "",

@@ -36,6 +36,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/m/MessageBox",
@@ -89,6 +90,7 @@ function(
 	DtUtil,
 	ElementUtil,
 	FlexUtils,
+	LayerUtils,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	MessageBox,
@@ -1355,8 +1357,8 @@ function(
 	RuntimeAuthoring.prototype._hasMaxLayerParameter = function(mParsedHash) {
 		var sCurrentLayer = this.getLayer();
 		return mParsedHash.params &&
-			mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM] &&
-			mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM][0] === sCurrentLayer;
+			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] &&
+			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM][0] === sCurrentLayer;
 	};
 
 	/**
@@ -1371,7 +1373,7 @@ function(
 			if (!mParsedHash.params) {
 				mParsedHash.params = {};
 			}
-			mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM] = [sCurrentLayer];
+			mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM] = [sCurrentLayer];
 			RuntimeAuthoring.enableRestart(sCurrentLayer);
 			// triggers the navigation without leaving FLP
 			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
@@ -1389,7 +1391,7 @@ function(
 			var mParsedHash = FlexUtils.getParsedURLHash();
 			if (oCrossAppNav.toExternal && mParsedHash) {
 				if (this._hasMaxLayerParameter(mParsedHash)) {
-					delete mParsedHash.params[FlexUtils.FL_MAX_LAYER_PARAM];
+					delete mParsedHash.params[LayerUtils.FL_MAX_LAYER_PARAM];
 					// triggers the navigation without leaving FLP
 					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
 				}

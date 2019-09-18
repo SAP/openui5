@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Utils,
+	LayerUtils,
 	ChangeRegistry,
 	FlexControllerFactory,
 	JsControlTreeModifier,
@@ -252,7 +254,7 @@ sap.ui.define([
 		 */
 		addPersonalizationChanges: function(mPropertyBag) {
 			var aSuccessfulChanges = [];
-			var sLayer = Utils.getCurrentLayer(true);
+			var sLayer = LayerUtils.getCurrentLayer(true);
 			var aPromises = [];
 
 			mPropertyBag.controlChanges.forEach(function(oChange) {

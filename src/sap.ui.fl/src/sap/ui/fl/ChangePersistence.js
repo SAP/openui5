@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/context/ContextManager",
@@ -24,6 +25,7 @@ sap.ui.define([
 	Change,
 	Variant,
 	Utils,
+	LayerUtils,
 	LRepConnector,
 	Cache,
 	ContextManager,
@@ -273,7 +275,7 @@ sap.ui.define([
 			if (sCurrentLayer) {
 				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(this, sCurrentLayer));
 				aVariantFilterArguments.push(/*bFilterMaxLayer*/false, sCurrentLayer);
-			} else if (Utils.isLayerFilteringRequired() && bFilterMaxLayer) {
+			} else if (LayerUtils.isLayerFilteringRequired() && bFilterMaxLayer) {
 				//If layer filtering required, excludes changes in higher layer than the max layer
 				aChanges = aChanges.filter(this._filterChangeForMaxLayer.bind(this));
 				aVariantFilterArguments.push(/*bFilterMaxLayer*/true);
@@ -366,7 +368,7 @@ sap.ui.define([
 	};
 
 	ChangePersistence.prototype._filterChangeForMaxLayer = function(oChangeOrChangeContent) {
-		if (Utils.isOverMaxLayer(this._getLayerFromChangeOrChangeContent(oChangeOrChangeContent))) {
+		if (LayerUtils.isOverMaxLayer(this._getLayerFromChangeOrChangeContent(oChangeOrChangeContent))) {
 			if (!this._bHasChangesOverMaxLayer) {
 				this._bHasChangesOverMaxLayer = true;
 			}

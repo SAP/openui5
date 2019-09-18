@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	JSONModel,
 	Utils,
+	LayerUtils,
 	JsControlTreeModifier,
 	Change,
 	BaseChangeHandler,
@@ -286,7 +288,7 @@ sap.ui.define([
 			variantChanges: {}
 		};
 
-		var iCurrentLayerComp = Utils.compareAgainstCurrentLayer(oSourceVariant.content.layer, !this._bDesignTimeMode ? "USER" : "");
+		var iCurrentLayerComp = LayerUtils.compareAgainstCurrentLayer(oSourceVariant.content.layer, !this._bDesignTimeMode ? "USER" : "");
 
 		Object.keys(oSourceVariant.content).forEach(function(sKey) {
 			if (sKey === "fileName") {
@@ -311,7 +313,7 @@ sap.ui.define([
 		var oDuplicateChangeData = {};
 		var oDuplicateChangeContent;
 		oDuplicateVariant.controlChanges = aVariantChanges.reduce(function (aSameLayerChanges, oChange) {
-			if (Utils.compareAgainstCurrentLayer(oChange.layer, !this._bDesignTimeMode ? "USER" : "") === 0) {
+			if (LayerUtils.compareAgainstCurrentLayer(oChange.layer, !this._bDesignTimeMode ? "USER" : "") === 0) {
 				oDuplicateChangeData = fnBaseMerge({}, oChange);
 				oDuplicateChangeData.variantReference = oDuplicateVariant.content.fileName;
 				if (!oDuplicateChangeData.support) {
@@ -671,7 +673,7 @@ sap.ui.define([
 
 	VariantModel.prototype.setModelPropertiesForControl = function(sVariantManagementReference, bDesignTimeModeToBeSet, oControl) {
 		var fnRemove = function(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet) {
-			if ((oVariant.layer === Utils.getCurrentLayer(!bDesignTimeModeToBeSet)) && (oVariant.key !== sVariantManagementReference)) {
+			if ((oVariant.layer === LayerUtils.getCurrentLayer(!bDesignTimeModeToBeSet)) && (oVariant.key !== sVariantManagementReference)) {
 				return true;
 			}
 			return false;
@@ -726,7 +728,7 @@ sap.ui.define([
 				this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 					oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet);
 					// Check for end-user variant
-					if (oVariant.layer === Utils.getCurrentLayer(true)) {
+					if (oVariant.layer === LayerUtils.getCurrentLayer(true)) {
 						oVariant.rename = true;
 						oVariant.change = true;
 					} else {
@@ -755,7 +757,7 @@ sap.ui.define([
 			if (!this.oFlexController || !this.oVariantController) {
 				return;
 			}
-			var aConfigurationChanges = this.collectModelChanges(oData.variantManagementReference, Utils.getCurrentLayer(true));
+			var aConfigurationChanges = this.collectModelChanges(oData.variantManagementReference, LayerUtils.getCurrentLayer(true));
 			aConfigurationChanges.forEach(function(oChangeProperties) {
 				oChangeProperties.appComponent = this.oAppComponent;
 				this.setVariantProperties(oData.variantManagementReference, oChangeProperties, true);
@@ -817,7 +819,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			variantManagementReference: sVariantManagementReference,
 			appComponent: oAppComponent,
-			layer: Utils.getCurrentLayer(true),
+			layer: LayerUtils.getCurrentLayer(true),
 			title: oEvent.getParameter("name"),
 			sourceVariantReference: sSourceVariantReference,
 			newVariantReference: sNewVariantReference
@@ -831,7 +833,7 @@ sap.ui.define([
 					defaultVariant: sNewVariantReference,
 					originalDefaultVariant: this.oData[sVariantManagementReference].defaultVariant,
 					appComponent: oAppComponent,
-					layer: Utils.getCurrentLayer(true),
+					layer: LayerUtils.getCurrentLayer(true),
 					variantManagementReference: sVariantManagementReference
 				};
 				var oSetDefaultChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);

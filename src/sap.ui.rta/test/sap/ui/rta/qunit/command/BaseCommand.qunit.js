@@ -29,6 +29,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -60,6 +61,7 @@ function (
 	Change,
 	JSONModel,
 	flUtils,
+	flLayerUtils,
 	sinon
 ) {
 	"use strict";
@@ -71,7 +73,7 @@ function (
 	});
 
 	var sandbox = sinon.sandbox.create();
-	sinon.stub(flUtils, "getCurrentLayer").returns("VENDOR");
+	sinon.stub(flLayerUtils, "getCurrentLayer").returns("VENDOR");
 	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");
 
 	var oMockedAppComponent = {

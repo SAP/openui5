@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
@@ -15,6 +16,7 @@ sap.ui.define([
 function(
 	jQuery,
 	FlexUtils,
+	FlexLayerUtils,
 	Settings,
 	OverlayUtil,
 	DOMUtil,
@@ -65,7 +67,7 @@ function(
 	Utils.setRtaStyleClassName = function(sLayer) {
 		if (sLayer === "USER") {
 			Utils._sRtaStyleClassName = "";
-		} else if (FlexUtils.getLayerIndex(sLayer) > -1) {
+		} else if (FlexLayerUtils.getLayerIndex(sLayer) > -1) {
 			Utils._sRtaStyleClassName = "sapUiRTABorder";
 		}
 	};

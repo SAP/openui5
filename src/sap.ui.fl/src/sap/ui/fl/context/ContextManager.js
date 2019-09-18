@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/context/Context",
 	"sap/base/Log"
 ], function(
 	LrepConnector,
 	Utils,
+	LayerUtils,
 	Context,
 	Log
 ) {
@@ -253,7 +255,7 @@ sap.ui.define([
 				fileType: "context",
 				reference: oPropertyBag.reference || "",
 				packageName: oPropertyBag.packageName || "",
-				layer: oPropertyBag.layer || Utils.getCurrentLayer(false),
+				layer: oPropertyBag.layer || LayerUtils.getCurrentLayer(false),
 				namespace: oPropertyBag.namespace,
 				creation: oPropertyBag.creation || "",
 				originalLanguage: oPropertyBag.originalLanguage || Utils.getCurrentLanguage(),

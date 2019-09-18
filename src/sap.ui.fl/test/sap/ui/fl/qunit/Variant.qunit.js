@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/base/EventProvider",
@@ -9,6 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
+	LayerUtils,
 	Variant,
 	Settings,
 	EventProvider,
@@ -137,12 +139,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when _isReadOnlyDueToLayer is called for different layer", function(assert) {
-			sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
 			assert.equal(this.oVariant._isReadOnlyDueToLayer(), true);
 		});
 
 		QUnit.test("when _isReadOnlyDueToLayer is called for same layer", function(assert) {
-			sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns("VENDOR");
 			this.oVariant = new Variant(this.oVariantDef);
 			assert.equal(this.oVariant._isReadOnlyDueToLayer(), false);
 		});
