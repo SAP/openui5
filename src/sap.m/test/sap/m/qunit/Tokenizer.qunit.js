@@ -39,6 +39,21 @@ sap.ui.define([
 		assert.equal(fnDeactivateScrollSpy.callCount, 0, "_deactivateScrollToEnd was not called");
 	});
 
+	QUnit.test("scrollToEnd after tokenizer is rendered", function(assert) {
+		var fnScrollToEndSpy = this.spy(this.tokenizer, "scrollToEnd");
+
+		//arrange
+		this.tokenizer.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(fnScrollToEndSpy.callCount, "scrollToEnd was called");
+		assert.ok(this.tokenizer._sResizeHandlerId, "Tokenizer has resize handler.");
+
+		//clean
+		fnScrollToEndSpy.restore();
+	});
+
 	QUnit.module("Basic", {
 		beforeEach : function() {
 			this.tokenizer = new Tokenizer("t1");
