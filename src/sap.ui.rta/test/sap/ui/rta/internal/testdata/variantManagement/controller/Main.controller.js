@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/ControlPersonalizationAPI"
+	"sap/ui/fl/ControlPersonalizationAPI",
+	"sap/ui/rta/api/startKeyUserAdaptation"
 ], function (
 	Controller,
 	Utils,
-	ControlPersonalizationAPI
+	ControlPersonalizationAPI,
+	startKeyUserAdaptation
 ) {
 	"use strict";
 
@@ -41,13 +43,6 @@ sap.ui.define([
 					});
 				})
 			);
-
-			//TO scroll to Vertical Layout - Causes Flicker
-			//var oView = this.getView()
-			//jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY + 1, this, function() {
-			//	oView.byId("page").scrollToElement(oView.byId("OutsideObjectPageForm"));
-			//	oView.byId("page").setEnableScrolling(false);
-			//});
 		},
 
 		_getUrlParameter: function (sParam) {
@@ -64,22 +59,7 @@ sap.ui.define([
 		},
 
 		switchToAdaptionMode: function () {
-			if (this.getView().getModel("app").getProperty("/showAdaptButton")) {
-				sap.ui.require([
-					"sap/ui/rta/RuntimeAuthoring"
-				], function (RuntimeAuthoring) {
-					var oRta = new RuntimeAuthoring({
-						rootControl: this.getOwnerComponent(),
-						flexSettings: {
-							developerMode: false
-						}
-					});
-					oRta.attachEvent('stop', function () {
-						oRta.destroy();
-					});
-					oRta.start();
-				}.bind(this));
-			}
+			startKeyUserAdaptation({rootControl: this.getOwnerComponent()});
 		},
 
 		createChanges: function (oEvent) {

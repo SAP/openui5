@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
+	Cache,
 	sinon
 ) {
 	"use strict";
@@ -15,29 +17,35 @@ sap.ui.define([
 
 	QUnit.module("Given FeaturesAPI", {
 		afterEach : function () {
+			Settings._instance = undefined;
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when isPublishAvailable is called with a NOT productive system", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves({
-				isProductiveSystem: function () {
-					return false;
-				}
+		[true, false].forEach(function (bValueToBeSet) {
+			QUnit.test("when isPublishAvailable() is called for " + (bValueToBeSet ? "a" : "not a") + " productive system", function (assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isProductiveSystem: function () {
+						return bValueToBeSet;
+					}
+				});
+
+				return FeaturesAPI.isPublishAvailable().then(function (bReturnValue) {
+					assert.strictEqual(bReturnValue, !bValueToBeSet, "then " + !bValueToBeSet + " is returned");
+				});
 			});
 
-			return FeaturesAPI.isPublishAvailable().then(function (bIsPublishAvailable) {
-				assert.equal(bIsPublishAvailable, true, "then publish is  available");
-			});
-		});
-		QUnit.test("when isPublishAvailable is called with a productive system", function (assert) {
-			sandbox.stub(Settings, "getInstance").resolves({
-				isProductiveSystem: function () {
-					return true;
-				}
-			});
-
-			return FeaturesAPI.isPublishAvailable().then(function (bIsPublishAvailable) {
-				assert.equal(bIsPublishAvailable, false, "then publish is not available");
+			QUnit.test("when isKeyUser() is called for " + (bValueToBeSet ? "a" : "not a") + " key user", function (assert) {
+				sandbox.stub(Cache, "getFlexDataPromise").resolves({
+					changes: {
+						settings: {
+							isKeyUser: bValueToBeSet
+						}
+					}
+				});
+				return FeaturesAPI.isKeyUser()
+					.then(function (bReturnValue) {
+						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
+					});
 			});
 		});
 	});
