@@ -499,12 +499,7 @@ sap.ui.define([
 		var aTokens = this.getTokens(),
 			iTokensSize = aTokens.length;
 
-		if (!this._sResizeHandlerId) {
-			var that = this;
-			this._sResizeHandlerId = ResizeHandler.register(this.getDomRef(), function() {
-				that.scrollToEnd();
-			});
-		}
+		this.scrollToEnd();
 
 		this._oIndicator = this.$().find(".sapMTokenizerIndicator");
 
