@@ -18,7 +18,8 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.EnumStringEditor", {
-		init: function() {
+		constructor: function() {
+			var vReturn = BasePropertyEditor.prototype.constructor.apply(this, arguments);
 			this._oCombo = new sap.m.ComboBox({
 				selectedKey: "{value}",
 				value: "{value}",
@@ -36,6 +37,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 			this.addContent(this._oCombo);
+			return vReturn;
 		},
 		_validate: function() {
 			var sSelectedKey = this._oCombo.getSelectedKey();

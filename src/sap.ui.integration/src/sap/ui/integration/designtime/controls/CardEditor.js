@@ -16,9 +16,10 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var CardEditor = BaseEditor.extend("sap.ui.integration.designtime.controls.CardEditor", {
-		init: function() {
+		constructor: function() {
+			var vReturn = BaseEditor.prototype.constructor.apply(this, arguments);
 			this.addDefaultConfig(oDefaultCardConfig);
-			return BaseEditor.prototype.init.apply(this, arguments);
+			return vReturn;
 		},
 		renderer: BaseEditor.getMetadata().getRenderer()
 	});
