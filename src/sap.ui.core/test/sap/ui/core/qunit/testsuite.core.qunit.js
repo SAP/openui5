@@ -528,6 +528,9 @@ sap.ui.define(function() {
 			},
 			"support/usage/EventBroadcaster": {
 				title: "Event Broadcaster"
+			},
+			"support/RuleEngineOpaExtension": {
+				title: "Rule Engine OPA Extension"
 			}
 		}
 	};
