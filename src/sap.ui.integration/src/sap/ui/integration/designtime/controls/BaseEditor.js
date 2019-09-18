@@ -76,12 +76,15 @@ sap.ui.define([
 			this._cleanup();
 		},
 
-		setJson: function(oJSON) {
-			if (typeof oJSON === "string") {
-				oJSON = JSON.parse(oJSON);
+		setJson: function(vJson) {
+			var oJson;
+			if (typeof vJson === "string") {
+				oJson = JSON.parse(vJson);
+			} else {
+				// to avoid that object is changed outside of the editor
+				oJson = deepClone(vJson);
 			}
-			// to avoid that object is changed outside of the editor
-			var vReturn = this.setProperty("json", deepClone(oJSON), false);
+			var vReturn = this.setProperty("json", oJson, false);
 			this._initialize();
 			return vReturn;
 		},

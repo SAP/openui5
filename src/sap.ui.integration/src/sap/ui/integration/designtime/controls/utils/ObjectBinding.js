@@ -71,12 +71,15 @@ sap.ui.define([
 			}
 		},
 		_cleanup: function() {
-			if (this._aSimpleBindings) {
-				this._aSimpleBindings.forEach(function(oBinding) {
+			if (this._mSimpleBindings) {
+				Object.keys(this._mSimpleBindings).forEach(function(sKey) {
+					var oBinding = this._mSimpleBindings[sKey];
+					// destroy is not removing binding from the model's list of bindings
+					oBinding.getModel().removeBinding(oBinding);
 					oBinding.destroy();
-				});
+				}.bind(this));
 			}
-			this._aSimpleBindings = [];
+			this._mSimpleBindings = {};
 		},
 		_createPropertyBindings: function(oObject, sPath) {
 			Object.keys(oObject).forEach(function(sKey) {
@@ -92,19 +95,13 @@ sap.ui.define([
 									}.bind(this))
 								) {
 								oBindingInfo.parts.forEach(function(oPart) {
-									var oBinding = this._createSimpleBinding(oPart, sCurPath, oBindingInfo);
-									oBinding.attachChange(function(oEvent) {
-										this._updateValue(sCurPath, oBindingInfo);
-									}.bind(this));
+									this._createSimpleBinding(oPart, sCurPath, oBindingInfo);
 								}.bind(this));
 							} else {
 								return;
 							}
 						} else if (this.getModel(oBindingInfo.model)) {
-							var oBinding = this._createSimpleBinding(oBindingInfo, sCurPath, oBindingInfo);
-							oBinding.attachChange(function(oEvent) {
-								this._updateValue(sCurPath, oBindingInfo);
-							}.bind(this));
+							this._createSimpleBinding(oBindingInfo, sCurPath, oBindingInfo);
 						} else {
 							return;
 						}
@@ -125,6 +122,7 @@ sap.ui.define([
 			this.bindProperty("_value", oBindingInfo);
 			// to avoid changes influencing the model, if oValue is an object (since it is one-way only binding)
 			var oValue = deepClone(this.getProperty("_value"));
+			this.unbindProperty("_value");
 			if (oValue !== oObject[sKey]) {
 				oObject[sKey] = oValue;
 				this.fireChange({
@@ -133,10 +131,17 @@ sap.ui.define([
 				});
 			}
 		},
-		_createSimpleBinding: function(oSimpleBindingInfo) {
+		_createSimpleBinding: function(oSimpleBindingInfo, sCurPath, oBindingInfo) {
 			var oContext = this.getBindingContext(oSimpleBindingInfo.model);
-			var oBinding = this.getModel(oSimpleBindingInfo.model).bindProperty(oSimpleBindingInfo.path, oContext);
-			this._aSimpleBindings.push(oBinding);
+			var sHash = oSimpleBindingInfo.model + ">" + oSimpleBindingInfo.path;
+			var oBinding = this._mSimpleBindings[sHash];
+			if (!oBinding) {
+				oBinding = this.getModel(oSimpleBindingInfo.model).bindProperty(oSimpleBindingInfo.path, oContext);
+				this._mSimpleBindings[sHash] = oBinding;
+			}
+			oBinding.attachChange(function(oEvent) {
+				this._updateValue(sCurPath, oBindingInfo);
+			}.bind(this));
 			return oBinding;
 		}
 	});

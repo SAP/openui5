@@ -21,7 +21,7 @@ sap.ui.define([
 	 */
 	var ParametersEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.controls.propertyEditors.ParametersEditor", {
 		constructor: function() {
-			var vReturn = BasePropertyEditor.prototype.constructor.apply(this, arguments);
+			BasePropertyEditor.prototype.constructor.apply(this, arguments);
 			this._oTableModel = new JSONModel([]);
 			Fragment.load({
 				name: "sap.ui.integration.designtime.controls.propertyEditors.ParametersTable",
@@ -34,7 +34,6 @@ sap.ui.define([
 				}
 				this.addContent(oTable);
 			}.bind(this));
-			return vReturn;
 		},
 		renderer: function (oRm, oParametersEditor) {
 			oRm.openStart("div", oParametersEditor);
