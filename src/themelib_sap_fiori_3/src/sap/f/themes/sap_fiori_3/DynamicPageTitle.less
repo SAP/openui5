@@ -13,6 +13,12 @@
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
 		padding: 0.5rem 2rem;
 	}
+
+	// Needed because on some high-end phones in landscape mode,
+	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 2rem;
+	}
 }
 
 .sapFDynamicPage-Std-Phone {
@@ -20,6 +26,10 @@
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
 		padding: 0.5rem 1rem;
+	}
+
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
+		padding: 0 1rem;
 	}
 }
 
