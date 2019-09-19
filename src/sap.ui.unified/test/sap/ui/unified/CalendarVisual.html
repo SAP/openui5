@@ -31,9 +31,15 @@
 			               ]
 		});
 
+		function _changeLocale(oCalendar, sLocale, sLanguage) {
+			sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
+			oCalendar.setLocale(sLocale);
+		}
+
 		var oButton1 = new sap.m.Button("B1", {
 			text : "Single",
 			press : function(){
+				_changeLocale(oCalendar1, "en_US", "en-US");
 				oCalendar1.destroySelectedDates();
 				oCalendar1.destroyDisabledDates();
 				oCalendar1.addSelectedDate(new sap.ui.unified.DateRange("DR1",{startDate: new Date(2015, 0, 2)}));
@@ -50,6 +56,7 @@
 		var oButton2 = new sap.m.Button("B2", {
 			text : "Interval",
 			press : function(){
+				_changeLocale(oCalendar1, "en_US", "en-US");
 				oCalendar1.destroySelectedDates();
 				oCalendar1.destroyDisabledDates();
 				oCalendar1.addSelectedDate(new sap.ui.unified.DateRange("DR1",{startDate: new Date(2015, 0, 2), endDate: new Date(2015, 0, 7)}));
@@ -66,6 +73,7 @@
 		var oButton3 = new sap.m.Button("B3", {
 			text : "Multi",
 			press : function(){
+				_changeLocale(oCalendar1, "en_US", "en-US");
 				oCalendar1.destroySelectedDates();
 				oCalendar1.destroyDisabledDates();
 				oCalendar1.addSelectedDate(new sap.ui.unified.DateRange("DR1",{startDate: new Date(2015, 0, 2)}));
@@ -82,6 +90,7 @@
 		var oButton4 = new sap.m.Button("B4", {
 			text : "2 Types",
 			press : function(){
+				_changeLocale(oCalendar1, "en_US", "en-US");
 				oCalendar1.destroySelectedDates();
 				oCalendar1.destroyDisabledDates();
 				oCalendar1.addSelectedDate(new sap.ui.unified.DateRange("DR1",{startDate: new Date(2015, 0, 2)}));
@@ -98,6 +107,7 @@
 		var oButton5 = new sap.m.Button("B5", {
 			text : "Width",
 			press : function(){
+				_changeLocale(oCalendar1, "en_US", "en-US");
 				oCalendar1.destroySelectedDates();
 				oCalendar1.addSelectedDate(new sap.ui.unified.DateRange("DR1",{startDate: new Date(2015, 0, 2)}));
 				oCalendar1.setIntervalSelection(false);
@@ -120,6 +130,7 @@
 		var oButton6 = new sap.m.Button("B6", {
 			text : "4 Months",
 			press : function(){
+				_changeLocale(oCalendar1, "en_US", "en-US");
 				oCalendar1.destroySelectedDates();
 				oCalendar1.destroyDisabledDates();
 				oCalendar1.addSelectedDate(new sap.ui.unified.DateRange("DR1",{startDate: new Date(2015, 0, 2)}));
@@ -130,6 +141,19 @@
 				oCalendar1.setMonths(4);
 				sap.ui.getCore().applyChanges();
 				oCalendar1.focusDate(new Date(2015, 0, 31));
+			}
+		});
+
+		var oButton7 = new sap.m.Button("B7", {
+			text : "2 Months Chinese calendar",
+			press : function() {
+				_changeLocale(oCalendar1, "zh_CN", "zh-CN");
+				oCalendar1.destroySelectedDates();
+				oCalendar1.destroyDisabledDates();
+				oCalendar1.setSecondaryCalendarType(null);
+				oCalendar1.setWidth();
+				oCalendar1.setMonths(2);
+				sap.ui.getCore().applyChanges();
 			}
 		});
 
@@ -144,7 +168,8 @@
 				oButton3,
 				oButton4,
 				oButton5,
-				oButton6
+				oButton6,
+				oButton7
 			]
 		});
 
