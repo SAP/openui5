@@ -856,18 +856,13 @@ sap.ui.define([
 		var $that = this.$(),
 			innerWidth = $that.innerWidth(),
 			oSettings = this.getActiveLayoutSettings(),
-			columnSize = oSettings.getColumnSizeInPx(),
+			columnSize = oSettings.getMinColumnSizeInPx() || oSettings.getColumnSizeInPx(),
 			rowSize = oSettings.getRowSizeInPx(),
 			gapSize = oSettings.getGapInPx(),
 			columnsCount = oSettings.getComputedColumnsCount(innerWidth),
 			topOffset = parseInt($that.css("padding-top").replace("px", "")),
 			leftOffset = parseInt($that.css("padding-left").replace("px", "")),
 			items = this.getItems();
-
-		if (oSettings.getMinColumnSize()) {
-			// Breathing not supported for IE.
-			return;
-		}
 
 		if (!columnSize || !rowSize) {
 			return;
@@ -961,7 +956,13 @@ sap.ui.define([
 			});
 		});
 
+		// width and height has to be set for the grid because the items inside are absolute positioned and the grid will not have dimensions
 		$that.css("height", virtualGrid.getHeight() + "px");
+
+		if (!this.getWidth() && oSettings.getColumns()) {
+			// use virtual grid width only if grid width is not specified and we know the columns count
+			$that.css("width", virtualGrid.getWidth() + "px");
+		}
 	};
 
 	/**
