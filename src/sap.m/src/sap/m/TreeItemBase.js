@@ -175,11 +175,10 @@ sap.ui.define([
 
 		// update the binding context
 		var oTree = this.getTree();
-		var oBinding = null;
+		var oBinding = oTree ? oTree.getBinding("items") : null;
 		var iIndex = -1;
 
-		if (oTree) {
-			oBinding = oTree.getBinding("items");
+		if (oTree && oBinding) {
 			iIndex = oTree.indexOfItem(this);
 			if (oTree.getMode() === ListMode.SingleSelect) {
 				oBinding.setSelectedIndex(iIndex);
