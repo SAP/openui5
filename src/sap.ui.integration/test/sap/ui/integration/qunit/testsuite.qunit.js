@@ -61,13 +61,13 @@ sap.ui.define(function () {
 			"designtime": {
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/controls/BaseEditor",
-						"sap/ui/integration/designtime/controls/ObjectBinding"
+						"sap/ui/integration/designtime/baseEditor/BaseEditor",
+						"sap/ui/integration/designtime/baseEditor/ObjectBinding"
 					]
 				},
 				module: [
-					'./designtime/controls/BaseEditor.qunit',
-					'./designtime/controls/ObjectBinding.qunit'
+					'./designtime/baseEditor/BaseEditor.qunit',
+					'./designtime/baseEditor/ObjectBinding.qunit'
 				]
 			},
 			"AllCards": {
