@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/strings/formatMessage",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/mvc/View",
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/core/mvc/View"
 ],
 function(
 	jQuery,
@@ -25,8 +24,7 @@ function(
 	uid,
 	formatMessage,
 	ManagedObject,
-	View,
-	LayerUtils
+	View
 ) {
 	"use strict";
 
@@ -255,19 +253,6 @@ function(
 			sSiteId = this._getStartUpParameter(oComponentData, "hcpApplicationId");
 
 			return sSiteId;
-		},
-
-		/**
-		 * Indicates if the current application is a variant of an existing one and the VENDOR layer is selected
-		 *
-		 * @param {sap.ui.core.Control} oControl - SAPUI5 control
-		 * @returns {boolean} true if application is a variant and the VENDOR layer selected
-		 * @public
-		 * @function
-		 * @name sap.ui.fl.Utils.isAppVariantMode
-		 */
-		isAppVariantMode: function (oControl) {
-			return (LayerUtils.isVendorLayer() && Utils.isApplicationVariant(oControl));
 		},
 
 		/**
@@ -1284,25 +1269,6 @@ function(
 					fnReject(oError);
 				});
 			});
-		},
-
-		/**
-		 * Checks if the target object is included in the array. The uniformity of the objects is indicated by the comparator function.
-		 * The comparator function is invoked to compare the objects. It accepts two arguments (oObject1, oObject2)
-		 * and has to return <code>true</code> when objects need to be equal.
-		 *
-		 * @param {object[]} aObjects - Array to be checked
-		 * @param {object} oTarget - Target object
-		 * @param {function} fnComparator - Comparator function that defines the criteria for the comparison of objects
-		 * @returns {boolean} <code>true</code> if the target object is available in the passed array of objects
-		 */
-		arrayIncludesWith: function (aObjects, oTarget, fnComparator) {
-			for (var i = 0, n = aObjects.length; i < n; i++) {
-				if (fnComparator(aObjects[i], oTarget)) {
-					return true;
-				}
-			}
-			return false;
 		}
 	};
 	return Utils;

@@ -1900,32 +1900,6 @@ function(
 		});
 	});
 
-	QUnit.module("Utils.arrayIncludesWith", {
-		beforeEach: function() {
-			this.fnComparator = function (oSource, oTarget) {
-				return oSource.id === oTarget.id;
-			};
-			this.oIncludedObject1 = { id: "id1" };
-			this.oIncludedObject2 = { id: "id2" };
-			this.oExcludedObject1 = { id: "id3" };
-			this.aObjects = [this.oIncludedObject1, this.oIncludedObject2];
-		},
-		afterEach: function() {}
-	}, function () {
-		QUnit.test("when called with empty array", function(assert) {
-			assert.notOk(Utils.arrayIncludesWith([], {}, function() {}), "then 'false' is returned");
-		});
-
-		QUnit.test("when called with target object included in passed array", function(assert) {
-			assert.ok(Utils.arrayIncludesWith(this.aObjects, Object.assign({}, this.oIncludedObject1), this.fnComparator), "then 'true' is returned");
-			assert.ok(Utils.arrayIncludesWith(this.aObjects, Object.assign({}, this.oIncludedObject2), this.fnComparator), "then 'true' is returned");
-		});
-
-		QUnit.test("when called with target object not included in passed array", function(assert) {
-			assert.notOk(Utils.arrayIncludesWith(this.aObjects, this.oExcludedObject1, this.fnComparator), "then 'false' is returned");
-		});
-	});
-
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});
