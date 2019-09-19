@@ -102,8 +102,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("get instance from flex settings request when flex data promise is not available", function(assert) {
-			var done = assert.async();
-
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true
@@ -115,7 +113,7 @@ sap.ui.define([
 				}
 			});
 			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").returns(undefined);
-			Settings.getInstance().then(function(oSettings) {
+			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oStubCreateConnector.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
@@ -123,16 +121,11 @@ sap.ui.define([
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oStubCreateConnector.callCount, 1);
 					assert.equal(oSettings, oSettings2);
-					oStubCreateConnector.restore();
-					oStubGetFlexDataPromise.restore();
-					done();
 				});
 			});
 		});
 
 		QUnit.test("get instance from flex settings request when flex data promise is rejected", function(assert) {
-			var done = assert.async();
-
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true
@@ -143,7 +136,7 @@ sap.ui.define([
 				}
 			});
 			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").rejects();
-			Settings.getInstance().then(function(oSettings) {
+			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oStubCreateConnector.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
@@ -151,16 +144,11 @@ sap.ui.define([
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oStubCreateConnector.callCount, 1);
 					assert.equal(oSettings, oSettings2);
-					oStubCreateConnector.restore();
-					oStubGetFlexDataPromise.restore();
-					done();
 				});
 			});
 		});
 
 		QUnit.test("get instance from cache when flex data promise is resolved", function(assert) {
-			var done = assert.async();
-
 			var oFileContent = {
 				changes: {
 					settings: {
@@ -170,21 +158,29 @@ sap.ui.define([
 				}
 			};
 			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").resolves(oFileContent);
-			Settings.getInstance().then(function(oSettings) {
+			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
 				assert.equal(oSettings.isModelS(), true);
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oSettings, oSettings2);
-					oStubGetFlexDataPromise.restore();
-					done();
 				});
 			});
 		});
 
-		QUnit.test("getInstanceOrUndef", function(assert) {
-			var done = assert.async();
+		QUnit.test("get instance from flex data when cache settings is not set", function(assert) {
+			var oFileContent = {
+				changes: {}
+			};
+			var oStubSendRequest = sandbox.stub(Settings, "_loadSettings");
+			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").resolves(oFileContent);
+			return Settings.getInstance().then(function() {
+				assert.equal(oStubGetFlexDataPromise.callCount, 1);
+				assert.equal(oStubSendRequest.callCount, 1, "call _loadSettings once");
+			});
+		});
 
+		QUnit.test("getInstanceOrUndef", function(assert) {
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true
@@ -196,14 +192,12 @@ sap.ui.define([
 			});
 			var oSettings0 = Settings.getInstanceOrUndef();
 			assert.ok(!oSettings0);
-			Settings.getInstance().then(function(oSettings1) {
+			return Settings.getInstance().then(function(oSettings1) {
 				assert.ok(oSettings1);
 				assert.equal(oStubCreateConnector.callCount, 1);
 				var oSettings2 = Settings.getInstanceOrUndef();
 				assert.equal(oSettings1, oSettings2);
 				assert.equal(oStubCreateConnector.callCount, 1);
-				oStubCreateConnector.restore();
-				done();
 			});
 		});
 	});
