@@ -828,6 +828,9 @@ sap.ui.define([
 				title: "Test page for sap.m.Page",
 				_alternativeTitle: "QUnit tests for sap.m.Page"
 			},
+			PageResponsivePaddingsEnablement: {
+				title: "QUnit Page for responsive paddings in sap.m.Page"
+			},
 			PagingButton: {
 				title: "QUnit Page for sap.m.PagingButton",
 				qunit: {
