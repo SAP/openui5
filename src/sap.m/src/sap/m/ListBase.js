@@ -1390,6 +1390,7 @@ function(
 
 	ListBase.prototype.onItemKeyDown = function (oItem, oEvent) {
 		if (!oEvent.shiftKey || this.getMode() !== ListMode.MultiSelect || !oItem.isSelectable()) {
+			this._mRangeSelection = null;
 			return;
 		}
 
@@ -2255,8 +2256,19 @@ function(
 		// range seleection with shift + arrow up/down only works with visible items
 		var aVisibleItems = this.getVisibleItems(),
 			iItemIndex = aVisibleItems.indexOf(oItem),
-			oItemToSelect = aVisibleItems[iItemIndex + iDirection],
-			bItemSelected = oItemToSelect.getSelected();
+			oItemToSelect = aVisibleItems[iItemIndex + iDirection];
+
+		if (!oItemToSelect) {
+			if (this._mRangeSelection) {
+				this._mRangeSelection = null;
+			}
+			// onItemSelect causes unexpected selection when the item is selected by space key (see ListItemBase.onsapspace)
+			// hence marking the event
+			oEvent.setMarked();
+			return;
+		}
+
+		var bItemSelected = oItemToSelect.getSelected();
 
 		if (this._mRangeSelection.direction === undefined) {
 			// store the direction when first called

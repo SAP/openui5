@@ -232,6 +232,79 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Range Selection - rangeSelection object should be cleared if the shift key is released on the table header row or footer row", function(assert) {
+		var sut = createSUT('idRangeSelection', true, false, "MultiSelect");
+		sut.placeAt("qunit-fixture");
+		var fnFireSelectionChangeEvent = this.spy(sut, "_fireSelectionChangeEvent");
+		sap.ui.getCore().applyChanges();
+
+		// test for table header row
+		sut.getVisibleItems()[1].focus();
+		// select the item
+		qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+		sap.ui.getCore().applyChanges();
+		assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
+
+		// trigger shift keydown so that sut._mRangeSelection object is available
+		qutils.triggerKeydown(document.activeElement, "", true, false, false);
+		assert.ok(sut._mRangeSelection, "Range selection mode enabled");
+		// trigger SHIFT + Arrow Up to perform range selection
+		qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+		assert.ok(sut.getVisibleItems()[0], "Item at position 1 is selected via keyboard range selection");
+		assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
+
+		// trigger SHIFT + Arrow Up to perform range selection
+		qutils.triggerKeydown(document.activeElement, "ARROW_UP", true, false, false);
+		assert.ok(document.activeElement.classList.contains("sapMListTblHeader"), "Table header row is focused");
+		assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event not fired, call count is the same");
+
+		// sut._mRangeSelection object is cleared as focus reached the table header row and no selectable item is found
+		assert.ok(!sut._mRangeSelection, "Range selection mode cleared");
+
+		// clear sut._mRangeSelection object
+		qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
+
+		// deselect all items
+		sut.getItems().forEach(function(oItem) {
+			oItem.setSelected(false);
+		});
+		sap.ui.getCore().applyChanges();
+
+		// test for table footer row
+		sut.getColumns()[2].setFooter(new Text({text: "4.758"}));
+		sap.ui.getCore().applyChanges();
+		fnFireSelectionChangeEvent.reset();
+
+		assert.ok(!sut._mRangeSelection, "rangeSelection object not available");
+
+		sut.getVisibleItems()[1].focus();
+		// select the item
+		qutils.triggerKeydown(document.activeElement, "SPACE", false, false, false);
+		sap.ui.getCore().applyChanges();
+		assert.equal(fnFireSelectionChangeEvent.callCount, 1, "selectionChange event fired");
+
+		// trigger shift keydown so that sut._mRangeSelection object is available
+		qutils.triggerKeydown(document.activeElement, "", true, false, false);
+		assert.ok(sut._mRangeSelection, "Range selection mode enabled");
+		// trigger SHIFT + Arrow Down to perform range selection
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+		assert.ok(sut.getVisibleItems()[2], "Item at position 3 is selected via keyboard range selection");
+		assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event fired");
+
+		// trigger SHIFT + Arrow Down to perform range selection
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN", true, false, false);
+		assert.ok(document.activeElement.classList.contains("sapMListTblFooter"), "Table footer row is focused");
+		assert.equal(fnFireSelectionChangeEvent.callCount, 2, "selectionChange event not fired, call count is the same");
+
+		// sut._mRangeSelection object is cleared as focus reached the table footer row and no selectable item is found
+		assert.ok(!sut._mRangeSelection, "Range selection mode cleared");
+
+		// clear sut._mRangeSelection object
+		qutils.triggerKeyup(document.activeElement, "SHIFT", false, false, false);
+
+		sut.destroy();
+	});
+
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new Table(),
