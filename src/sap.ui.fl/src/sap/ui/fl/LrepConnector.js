@@ -722,64 +722,54 @@ sap.ui.define([
 	/**
 	 * Update a change or variant via REST call.
 	 *
-	 * @param {Object} oPayload The content which is send to the server
-	 * @param {String} sChangeName Name of the change
-	 * @param {String} sChangelist (optional) The transport ID.
-	 * @param {Boolean} bIsVariant - is variant?
+	 * @param {object} oFlexObject The flex object to be updated
+	 * @param {string} [sChangeList] The transport ID
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	LrepConnector.prototype.update = function(oPayload, sChangeName, sChangelist, bIsVariant) {
-		var sRequestPath = this._getUrlPrefix(bIsVariant);
-		sRequestPath += sChangeName;
+	LrepConnector.prototype.update = function(oFlexObject, sChangeList) {
+		var sRequestPath = this._getUrlPrefix(oFlexObject.fileType === "variant");
+		sRequestPath += oFlexObject.fileName;
 
 		var aParams = [];
-		if (sChangelist) {
+		if (sChangeList) {
 			aParams.push({
 				name: "changelist",
-				value: sChangelist
+				value: sChangeList
 			});
 		}
 
 		sRequestPath += this._buildParams(aParams);
 
-		return this.send(sRequestPath, "PUT", oPayload, null);
+		return this.send(sRequestPath, "PUT", oFlexObject, null);
 	};
 
 	/**
 	 * Delete a change or variant via REST call.
 	 *
-	 * @param {String} mParameters property bag
-	 * @param {String} mParameters.sChangeName - name of the change
-	 * @param {String} [mParameters.sLayer="USER"] - other possible layers: VENDOR,PARTNER,CUSTOMER_BASE,CUSTOMER
-	 * @param {String} mParameters.sNamespace - the namespace of the change file
-	 * @param {String} mParameters.sChangelist - The transport ID
-	 * @param {Boolean} bIsVariant - is it a variant?
+	 * @param {object} oFlexObject The flex object to be updated
+	 * @param {string} [sChangeList] The transport ID
 	 * @returns {Object} Returns the result from the request
 	 * @public
 	 */
-	LrepConnector.prototype.deleteChange = function(mParameters, bIsVariant) {
+	LrepConnector.prototype.deleteChange = function(oFlexObject, sChangeList) {
 		// REVISE rename to deleteFile
-		var sRequestPath = this._getUrlPrefix(bIsVariant);
-		sRequestPath += mParameters.sChangeName;
+		var sRequestPath = this._getUrlPrefix(oFlexObject.fileType === "variant");
+		sRequestPath += oFlexObject.fileName;
 
 		var aParams = [];
-		if (mParameters.sLayer) {
-			aParams.push({
-				name: "layer",
-				value: mParameters.sLayer
-			});
-		}
-		if (mParameters.sNamespace) {
-			aParams.push({
-				name: "namespace",
-				value: mParameters.sNamespace
-			});
-		}
-		if (mParameters.sChangelist) {
+		aParams.push({
+			name: "layer",
+			value: oFlexObject.layer
+		});
+		aParams.push({
+			name: "namespace",
+			value: oFlexObject.namespace
+		});
+		if (sChangeList) {
 			aParams.push({
 				name: "changelist",
-				value: mParameters.sChangelist
+				value: sChangeList
 			});
 		}
 		sRequestPath += this._buildParams(aParams);

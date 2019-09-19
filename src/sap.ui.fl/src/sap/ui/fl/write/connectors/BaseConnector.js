@@ -23,12 +23,14 @@ sap.ui.define([
 		layers: [],
 
 		/**
-		 * Interface called to write flex data; This method is called with a list of entities like changes, variants,
+		 * Interface called to write new flex data; This method is called with a list of entities like changes, variants,
 		 * control variants, variant changes and variant management changes.
 		 *
 		 * @param {object} mPropertyBag Property bag
 		 * @param {object[]} mPropertyBag.flexObjects Objects to be written (i.e. change definitions, variant definitions etc.)
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be stored
+		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
@@ -37,10 +39,26 @@ sap.ui.define([
 		},
 
 		/**
-		 * Interface called to delete flex data.
+		 * Interface called to update an existing flex data.
 		 *
 		 * @param {object} mPropertyBag Property bag
-		 * @param {object} [mParameters.flexObject] The definition of the flex Object
+		 * @param {object} mPropertyBag.flexObject Flex Object to be updated
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the data should be updated
+		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @returns {Promise} Resolves as soon as the writing is completed without data
+		 */
+		update: function (/* mPropertyBag */) {
+			return Promise.reject("write is not implemented");
+		},
+
+		/**
+		 * Interface called to delete an existing flex data.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object} mPropertyBag.flexObject Flex Object to be deleted
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the data should be deleted
+		 * @param {string} [mPropertyBag.transport] The transport ID
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
@@ -89,7 +107,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
 		 * @param {string} mPropertyBag.reference Flex reference
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
-		 * @param {string} [mPropertyBag.appVersion] Versio1n of the application
+		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 		 */
 		getFlexInfo: function (/* mPropertyBag */) {

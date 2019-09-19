@@ -16,6 +16,8 @@ sap.ui.define([
 	"use strict";
 
 	var oTestData = { fileName: "id_1445501120486_25", fileType: "change", changeType: "hideControl", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: {}, selector: { id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, layer: "CUSTOMER", texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } };
+	var oTestDataNew = JSON.parse(JSON.stringify(oTestData));
+	oTestDataNew.content.isNewContent = true;
 
 	var aTestData = [
 		{ fileName: "id_1449484290389_26", fileType: "change", changeType: "moveFields", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: { moveFields: [{ id: "RTADemoAppMD---detail--GroupElementGeneralDataAddressStreet", index: 1 }] }, selector: { id: "RTADemoAppMD---detail--GroupGeneralData" }, layer: "CUSTOMER", texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } },
@@ -65,11 +67,19 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when creating single change", function (assert) {
+		QUnit.test("when creating single change, update it and then delete it", function (assert) {
+			var sId = BrowserStorageUtils.createChangeKey(oTestData.fileName);
 			return this.oConnector.create(oTestData)
 			.then(function () {
-				var sId = BrowserStorageUtils.createChangeKey(oTestData.fileName);
 				assert.ok(JsObjectConnector.oStorage.getItem(sId), "JsObjectConnector got the change");
+				return this.oConnector.update(oTestDataNew);
+			}.bind(this))
+			.then(function () {
+				assert.ok(JSON.parse(JsObjectConnector.oStorage.getItem(sId)).content.isNewContent, "the change content got updated");
+				return this.oConnector.deleteChange(oTestDataNew);
+			}.bind(this))
+			.then(function () {
+				assert.notOk(JsObjectConnector.oStorage.getItem(sId), "the change got deleted");
 			});
 		});
 

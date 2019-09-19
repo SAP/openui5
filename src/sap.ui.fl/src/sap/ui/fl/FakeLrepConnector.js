@@ -148,21 +148,21 @@ sap.ui.define([
 		});
 	};
 
-	FakeLrepConnector.prototype.update = function(payload, changeName, changelist, isVariant) {
+	FakeLrepConnector.prototype.update = function(oFlexObject) {
 		// REVISE ensure old behavior for now, but check again for changes
-		if (!isVariant) {
+		if (!oFlexObject.fileType || (oFlexObject.fileType !== "variant")) {
 			return Promise.resolve();
 		}
 
 		return Promise.resolve({
-			response: payload,
+			response: oFlexObject,
 			status: 'success'
 		});
 	};
 
-	FakeLrepConnector.prototype.deleteChange = function(params, isVariant) {
+	FakeLrepConnector.prototype.deleteChange = function(oFlexObject) {
 		// REVISE ensure old behavior for now, but check again for changes
-		if (!isVariant) {
+		if (!oFlexObject.fileType || (oFlexObject.fileType !== "variant")) {
 			return Promise.resolve();
 		}
 

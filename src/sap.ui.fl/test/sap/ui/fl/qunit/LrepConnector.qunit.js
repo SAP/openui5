@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	LrepConnector,
+	Change,
 	Utils,
 	ContextManager,
 	sinon,
@@ -967,60 +969,56 @@ sap.ui.define([
 
 		QUnit.test("update - all params", function(assert) {
 			//Arrange
+			var oInfo = {
+				id: "myChangeName",
+				namespace: "myNamespace"
+			};
+			var oFile = Change.createInitialFileContent(oInfo);
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?changelist=myChangelist";
 			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
-			return this.oLrepConnector.update({}, "myChangeName", "myChangelist").then(function(result) {
+			return this.oLrepConnector.update(oFile, "myChangelist").then(function(result) {
 				//Assert
-				assert.ok(sendStub.calledWith(expectedUrl, "PUT", {}, null));
+				assert.ok(sendStub.calledWith(expectedUrl, "PUT", oFile, null));
 				assert.deepEqual(result, expectedResult);
 			});
 		});
 
 		QUnit.test("update - required only", function(assert) {
 			//Arrange
+			var oInfo = {
+				id: "myChangeName",
+				namespace: "myNamespace"
+			};
+			var oFile = Change.createInitialFileContent(oInfo);
 			var expectedResult = {abc: 123};
 			var expectedUrl = "/sap/bc/lrep/changes/myChangeName";
 			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
 			//Act
-			return this.oLrepConnector.update({}, "myChangeName").then(function(result) {
+			return this.oLrepConnector.update(oFile).then(function(result) {
 				//Assert
-				assert.ok(sendStub.calledWith(expectedUrl, "PUT", {}, null));
-				assert.deepEqual(result, expectedResult);
-			});
-		});
-
-		QUnit.test("update - required and optional (changelist only)", function(assert) {
-			//Arrange
-			var expectedResult = {abc: 123};
-			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
-
-			//Act
-			return this.oLrepConnector.update({}, "myChangeName", "myChangelist").then(function(result) {
-				//Assert
-				assert.ok(sendStub.calledWith(expectedUrl, "PUT", {}, null));
+				assert.ok(sendStub.calledWith(expectedUrl, "PUT", oFile, null));
 				assert.deepEqual(result, expectedResult);
 			});
 		});
 
 		QUnit.test("deleteChange - all params", function(assert) {
 			//Arrange
+			var oInfo = {
+				id: "myChangeName",
+				namespace: "myNamespace",
+				layer: "CUSTOMER",
+				fileType: "variant"
+			};
+			var oFile = Change.createInitialFileContent(oInfo);
 			var expectedResult = {abc: 123};
-			var expectedUrl = "/sap/bc/lrep/variants/myChangeName?layer=myLayer&namespace=myNamespace&changelist=myChangelist";
+			var expectedUrl = "/sap/bc/lrep/variants/myChangeName?layer=CUSTOMER&namespace=myNamespace&changelist=myChangelist";
 			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
 
-			//Act
-			var mParameter = {
-				sChangeName: "myChangeName",
-				sLayer: "myLayer",
-				sNamespace: "myNamespace",
-				sChangelist: "myChangelist"
-			};
-			return this.oLrepConnector.deleteChange(mParameter, true).then(function(result) {
+			return this.oLrepConnector.deleteChange(oFile, "myChangelist").then(function(result) {
 				//Assert
 				assert.ok(sendStub.calledWith(expectedUrl, "DELETE", {}, null));
 				assert.deepEqual(result, expectedResult);
@@ -1029,48 +1027,17 @@ sap.ui.define([
 
 		QUnit.test("deleteChange - required only", function(assert) {
 			//Arrange
-			var expectedResult = {abc: 123};
-			var expectedUrl = "/sap/bc/lrep/changes/myChangeName";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
-
-			//Act
-			var mParameter = {sChangeName: "myChangeName"};
-			return this.oLrepConnector.deleteChange(mParameter).then(function(result) {
-				//Assert
-				assert.ok(sendStub.calledWith(expectedUrl, "DELETE", {}, null));
-				assert.deepEqual(result, expectedResult);
-			});
-		});
-
-		QUnit.test("deleteChange - required and optional (layer)", function(assert) {
-			//Arrange
-			var expectedResult = {abc: 123};
-			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?layer=myLayer";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
-
-			//Act
-			var mParameter = {sChangeName: "myChangeName", sLayer: "myLayer"};
-			return this.oLrepConnector.deleteChange(mParameter).then(function(result) {
-				//Assert
-				assert.ok(sendStub.calledWith(expectedUrl, "DELETE", {}, null));
-				assert.deepEqual(result, expectedResult);
-			});
-		});
-
-		QUnit.test("deleteChange - required and optional (namespace, changelist)", function(assert) {
-			//Arrange
-			var expectedResult = {abc: 123};
-			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?namespace=myNamespace&changelist=myChangelist";
-			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
-
-			//Act
-			var mParameter = {
-				sChangeName: "myChangeName",
-				sLayer: null,
-				sNamespace: "myNamespace",
-				sChangelist: "myChangelist"
+			var oInfo = {
+				id: "myChangeName",
+				namespace: "myNamespace",
+				layer: "CUSTOMER"
 			};
-			return this.oLrepConnector.deleteChange(mParameter).then(function(result) {
+			var oFile = Change.createInitialFileContent(oInfo);
+			var expectedResult = {abc: 123};
+			var expectedUrl = "/sap/bc/lrep/changes/myChangeName?layer=CUSTOMER&namespace=myNamespace";
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
+
+			return this.oLrepConnector.deleteChange(oFile).then(function(result) {
 				//Assert
 				assert.ok(sendStub.calledWith(expectedUrl, "DELETE", {}, null));
 				assert.deepEqual(result, expectedResult);
