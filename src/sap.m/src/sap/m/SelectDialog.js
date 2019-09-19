@@ -660,6 +660,7 @@ function(
 			this._oList.setMode(ListMode.SingleSelectMaster);
 			this._oDialog.setEndButton(this._getCancelButton());
 			this._oDialog.destroyBeginButton();
+			delete this._oOkButton;
 		}
 
 		return this;

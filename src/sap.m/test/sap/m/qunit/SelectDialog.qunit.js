@@ -967,6 +967,25 @@ sap.ui.define([
 			oDialogCloseSpy.restore();
 		});
 
+		QUnit.test("Destroy beginButton on selection mode change", function (assert) {
+			// Arrange
+			var oDialogDestroyBeginButtonSpy = this.spy(this.oSelectDialog._oDialog, "destroyBeginButton");
+			this.oSelectDialog.setMultiSelect(true);
+
+			// Assert
+			assert.ok(this.oSelectDialog._oOkButton, "internal property _oOkButton should exist before deletion.");
+
+			//Arrange
+			this.oSelectDialog.setMultiSelect(false);
+
+			// Assert
+			assert.strictEqual(this.oSelectDialog._oOkButton, undefined, "internal property _oOkButton is undefined");
+			assert.strictEqual(oDialogDestroyBeginButtonSpy.callCount, 1, "DestroyBeginButton method was called.");
+
+			// Cleanup
+			oDialogDestroyBeginButtonSpy.restore();
+		});
+
 		QUnit.test("Event delegates returned by _getListItemsEventDelegates should be the correct ones", function (assert) {
 			// Arrange
 			var oSelectionChangeSpy = this.spy(this.oSelectDialog, "_selectionChange"),
