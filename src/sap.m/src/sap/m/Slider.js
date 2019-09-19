@@ -756,6 +756,31 @@ function(
 			this._fireChangeAndLiveChange({ value: fNewValue });
 		};
 
+		/**
+		 * Register the ResizeHandler
+		 *
+		 * @private
+		 */
+		Slider.prototype._registerResizeHandler = function () {
+			if (!this._parentResizeHandler) {
+				setTimeout(function () {
+					this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
+				}.bind(this), 0);
+			}
+		};
+
+		/**
+		 * Deregister the ResizeHandler
+		 *
+		 * @private
+		 */
+		Slider.prototype._deregisterResizeHandler = function () {
+			if (this._parentResizeHandler) {
+				ResizeHandler.deregister(this._parentResizeHandler);
+				this._parentResizeHandler = null;
+			}
+		};
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -790,10 +815,7 @@ function(
 				this._oResourceBundle = null;
 			}
 
-			if (this._parentResizeHandler) {
-				ResizeHandler.deregister(this._parentResizeHandler);
-				this._parentResizeHandler = null;
-			}
+			this._deregisterResizeHandler();
 		};
 
 		Slider.prototype.onBeforeRendering = function () {
@@ -811,6 +833,8 @@ function(
 			if (this.getShowAdvancedTooltip()) {
 				this.initAndSyncTooltips(["leftTooltip"]);
 			}
+
+			this._deregisterResizeHandler();
 
 			// set the correct scale aggregation, if needed
 			this._syncScaleUsage();
@@ -954,16 +978,8 @@ function(
 				this._recalculateStyles();
 				this._handleTooltipContainerResponsiveness();
 			}
-
-			if (!this._parentResizeHandler) {
-				setTimeout(function () {
-					this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
-				}.bind(this), 0);
-			} else {
-				setTimeout(function () {
-					this._handleSliderResize({control: this});
-				}.bind(this), 0);
-			}
+			this._handleSliderResize({control: this});
+			this._registerResizeHandler();
 		};
 
 		/* =========================================================== */

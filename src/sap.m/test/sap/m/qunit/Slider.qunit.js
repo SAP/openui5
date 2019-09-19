@@ -374,6 +374,51 @@ sap.ui.define([
 		oSlider.destroy();
 	});
 
+	QUnit.test("Register and deregister the ResizeHandler", function(assert) {
+		var oSlider = new Slider({
+			width: "300px"
+		});
+		var fnRegisterResizeHandlerSpy = this.spy(oSlider, "_registerResizeHandler");
+		var fnDeregisterResizeHandlerSpy = this.spy(oSlider, "_deregisterResizeHandler");
+		oSlider.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(fnDeregisterResizeHandlerSpy.callCount, 1, "_deregisterResizeHandler should be called");
+		assert.strictEqual(fnRegisterResizeHandlerSpy.callCount, 1, "_registerResizeHandler should be called");
+
+		// act
+		oSlider.destroy();
+
+		//assert
+		assert.strictEqual(fnDeregisterResizeHandlerSpy.callCount, 2, "_deregisterResizeHandler should be called twice");
+
+		//clean
+		oSlider.destroy();
+		fnRegisterResizeHandlerSpy.restore();
+		fnDeregisterResizeHandlerSpy.restore();
+	});
+
+	QUnit.test("_handleSliderResize is called after Slider is rendered", function(assert) {
+		var oSlider = new Slider({
+			width: "300px"
+		});
+
+		//arrange
+		var fnHandleSliderResizeSpy = this.spy(oSlider, "_handleSliderResize");
+		oSlider.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(1);
+
+		// assert
+		assert.ok(fnHandleSliderResizeSpy.callCount, "_handleSliderResize was called");
+		assert.ok(oSlider._parentResizeHandler, "Slider has resize handler.");
+
+		//clean
+		oSlider.destroy();
+		fnHandleSliderResizeSpy.restore();
+	});
+
 	/* ------------------------------ */
 	/* getWidth()                     */
 	/* ------------------------------ */
