@@ -449,18 +449,12 @@ sap.ui.define([
 			oDateDateFormat = DateFormat.getDateInstance({pattern: "d"}),
 			oMonthDateFormat = DateFormat.getDateInstance({pattern: "MMMM"}),
 			oYearDateFormat = DateFormat.getDateInstance({pattern: "YYYY"}),
-			oLocaleData = new LocaleData(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
-			sExpectedFirstDateName = oDateDateFormat.format(oFirstDate),
-			sExpectedLastDateName = oDateDateFormat.format(oLastDate),
-			sExpectedFirstMonthName = oMonthDateFormat.format(oFirstDate),
-			sExpectedLastMonthName = oMonthDateFormat.format(oLastDate),
-			sExpectedYear = oYearDateFormat.format(oLastDate),
 			sResult;
 
 		sMessagePrefix += ": expected dates: " + sExpectedDateRange;
 
 		assert.equal(iAvailableDays, aDates.length, sMessagePrefix + ": Planning Calendar should show certain amount of days: ");
-		sResult = sExpectedFirstDateName + " " + sExpectedFirstMonthName + " " + sExpectedYear + " - " + sExpectedLastDateName + " " + sExpectedLastMonthName + " " + sExpectedYear;
+		sResult = DateFormat.getDateInstance({format: "yMMMMd"}).format(oFirstDate) + " - " + DateFormat.getDateInstance({format: "yMMMMd"}).format(oLastDate);
 
 		assert.equal(_getChangeMonthButtonText.call(this, oPC), sResult, sMessagePrefix + ": Change month button should have certain text of " +
 			sResult + ", current text: " + _getChangeMonthButtonText.call(this, oPC));

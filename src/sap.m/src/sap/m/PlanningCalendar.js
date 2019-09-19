@@ -868,7 +868,7 @@ sap.ui.define([
 
 		switch (sViewType) {
 			case CalendarIntervalType.Hour:
-				oDateFormat = DateFormat.getDateInstance({pattern: "d MMMM y"});
+				oDateFormat = DateFormat.getDateInstance({format: "yMMMMd"});
 				sBeginningResult = oDateFormat.format(oStartDate);
 				if (oStartDate.getDate() !== oEndDate.getDate()) {
 					sEndResult = oDateFormat.format(oEndDate);
@@ -877,7 +877,7 @@ sap.ui.define([
 
 			case CalendarIntervalType.Day:
 			case CalendarIntervalType.Week:
-				oDateFormat = DateFormat.getDateInstance({pattern: "d MMMM y"});
+				oDateFormat = DateFormat.getDateInstance({format: "yMMMMd"});
 				sBeginningResult = oDateFormat.format(oStartDate);
 				sEndResult = oDateFormat.format(oEndDate);
 				break;

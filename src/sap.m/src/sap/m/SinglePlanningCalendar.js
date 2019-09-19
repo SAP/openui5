@@ -1231,7 +1231,7 @@ function(
 		var oRangeDates = this._getFirstAndLastRangeDate(),
 			oStartDate = oRangeDates.oStartDate.toLocalJSDate(),
 			oEndDate = oRangeDates.oEndDate.toLocalJSDate(),
-			oLongDateFormat = DateFormat.getDateInstance({style: "long"}),
+			oLongDateFormat = DateFormat.getDateInstance({format: "yMMMMd"}),
 			oResult = oLongDateFormat.format(oStartDate);
 
 		if (oStartDate.getTime() !== oEndDate.getTime()) {
