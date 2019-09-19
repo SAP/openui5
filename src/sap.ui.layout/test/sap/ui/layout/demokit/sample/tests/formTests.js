@@ -17,64 +17,11 @@ sap.ui.define([
 					componentConfig: {
 						name: sSampleName,
 						manifest: true
-					},
-					autoWait: true
+					}
 				});
 			}
-		})
-	});
-
-	QUnit.module("EditSave");
-
-	opaTest("Should go to the edit page", function(Given, When, Then) {
-
-		// Arrange
-		Given.iStartTheFormSample();
-
-		// Act
-		When.iPressOnEdit();
-
-		// Assert
-		Then.iShouldBeOnTheEditPage();
-	});
-
-	opaTest("Should persist the values", function(Given, When, Then) {
-
-		// Act
-		When.iChangeValuesInTheForm().
-			and.iPressOnSave();
-
-		// Assert
-		Then.theValuesShouldBePersisted().
-			and.iTeardownMyUIComponent();
-	});
-
-	QUnit.module("EditCancel");
-
-	opaTest("Should go to the edit page", function(Given, When, Then) {
-
-		// Arrange
-		Given.iStartTheFormSample();
-
-		// Act
-		When.iPressOnEdit();
-
-		// Assert
-		Then.iShouldBeOnTheEditPage();
-	});
-
-	opaTest("Should restore the values", function(Given, When, Then) {
-
-		// Act
-		When.iChangeValuesInTheForm().
-			and.iPressOnCancel();
-
-		// Assert
-		Then.theValuesShouldNotBePersisted().
-			and.iTeardownMyUIComponent();
-	});
-
-	Opa5.extendConfig({
+		}),
+		autoWait: true,
 		viewName : "Page",
 		actions : new Opa5({
 			_pressOnButton : function (sId) {
@@ -182,5 +129,53 @@ sap.ui.define([
 		})
 	});
 
+	QUnit.module("EditSave");
 
+	opaTest("Should go to the edit page", function(Given, When, Then) {
+
+		// Arrange
+		Given.iStartTheFormSample();
+
+		// Act
+		When.iPressOnEdit();
+
+		// Assert
+		Then.iShouldBeOnTheEditPage();
+	});
+
+	opaTest("Should persist the values", function(Given, When, Then) {
+
+		// Act
+		When.iChangeValuesInTheForm().
+			and.iPressOnSave();
+
+		// Assert
+		Then.theValuesShouldBePersisted().
+			and.iTeardownMyUIComponent();
+	});
+
+	QUnit.module("EditCancel");
+
+	opaTest("Should go to the edit page", function(Given, When, Then) {
+
+		// Arrange
+		Given.iStartTheFormSample();
+
+		// Act
+		When.iPressOnEdit();
+
+		// Assert
+		Then.iShouldBeOnTheEditPage();
+	});
+
+	opaTest("Should restore the values", function(Given, When, Then) {
+
+		// Act
+		When.iChangeValuesInTheForm().
+			and.iPressOnCancel();
+
+		// Assert
+		Then.theValuesShouldNotBePersisted().
+			and.iTeardownMyUIComponent();
+	});
 });
