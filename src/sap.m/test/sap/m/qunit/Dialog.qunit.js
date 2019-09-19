@@ -24,6 +24,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/ColumnListItem",
 	"sap/m/Column",
+	"sap/m/InstanceManager",
 	"sap/ui/model/json/JSONModel",
 	"jquery.sap.keycodes"
 ], function(
@@ -50,6 +51,7 @@ sap.ui.define([
 	Table,
 	ColumnListItem,
 	Column,
+	InstanceManager,
 	JSONModel
 ) {
 	// shortcut for sap.ui.core.ValueState
@@ -943,6 +945,39 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oDialog.$().attr("role"), DialogRoleType.AlertDialog, "Should be able to set the role of the dialog.");
+
+		// Clean up
+		oDialog.destroy();
+	});
+
+	QUnit.test("Set closeOnNavigation", function (assert) {
+		// Arrange
+		var oDialog = new Dialog();
+
+		// Act
+		oDialog.open();
+		this.clock.tick(500);
+
+		assert.ok(oDialog.isOpen(), "Dialog is opened");
+
+		InstanceManager.closeAllDialogs();
+		this.clock.tick(500);
+
+		// Assert
+		assert.notOk(oDialog.isOpen(), "Dialog is closed");
+
+		oDialog.setCloseOnNavigation(false);
+
+		// Act
+		oDialog.open();
+		this.clock.tick(500);
+
+		assert.ok(oDialog.isOpen(), "Dialog is opened");
+
+		InstanceManager.closeAllDialogs();
+		this.clock.tick(500);
+
+		assert.ok(oDialog.isOpen(), "Dialog remains opened when closeOnNavigation=false");
 
 		// Clean up
 		oDialog.destroy();

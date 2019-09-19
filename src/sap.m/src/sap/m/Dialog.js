@@ -240,7 +240,13 @@ function(
 					 * @since 1.65
 					 * @private
 					 */
-					role: {type: "sap.m.DialogRoleType", group: "Data", defaultValue: DialogRoleType.Dialog, visibility: "hidden"}
+					role: {type: "sap.m.DialogRoleType", group: "Data", defaultValue: DialogRoleType.Dialog, visibility: "hidden"},
+
+					/**
+					 * Indicates whether the Dialog will be closed automatically when a routing navigation occurs.
+					 * @since 1.72
+					 */
+					closeOnNavigation: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
 				defaultAggregation: "content",
 				aggregations: {

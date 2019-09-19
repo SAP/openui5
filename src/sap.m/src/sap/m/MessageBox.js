@@ -260,6 +260,7 @@ sap.ui.define([
 				 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
 				 * @param {string} [mOptions.details] Added since version 1.28.0. If 'details' is set in the MessageBox, a 'Show detail' link is added. When you click the link, the text area containing 'details' information is then displayed. The initial visibility is not configurable and the details are hidden by default.
 				 * @param {sap.ui.core.CSSSize} [mOptions.contentWidth] The width of the MessageBox
+				 * @param {boolean} [mOptions.closeOnNavigation=true] Whether the MessageBox will be closed automatically when a routing navigation occurs.
 				 * @public
 				 * @static
 				 */
@@ -479,7 +480,8 @@ sap.ui.define([
 						afterClose: onclose,
 						buttons: aButtons,
 						ariaLabelledBy: oMessageText ? oMessageText.getId() : undefined,
-						contentWidth: mOptions.contentWidth
+						contentWidth: mOptions.contentWidth,
+						closeOnNavigation: mOptions.closeOnNavigation
 					});
 
 					oDialog.setProperty("role",  DialogRoleType.AlertDialog);
@@ -535,6 +537,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.closeOnNavigation=true] Whether the MessageBox will be closed automatically when a routing navigation occurs.
 				 * @public
 				 * @static
 				 */
@@ -578,6 +581,9 @@ sap.ui.define([
 				 * and a Cancel button. If a callback is given, it is called after the confirmation box
 				 * has been closed by the user with one of the buttons.
 				 *
+				 * The confirmation dialog is not closed automatically when a routing navigation occurs.
+				 * This behavior can be overwritten by setting the <code>closeOnNavigation</code> option to true.
+				 *
 				 * <pre>
 				 * sap.m.MessageBox.confirm("This message should appear in the confirmation", {
 				 *     title: "Confirm",                                    // default
@@ -614,6 +620,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Added since version 1.28. Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.closeOnNavigation=false] Whether the MessageBox will be closed automatically when a routing navigation occurs.
 				 * @public
 				 * @static
 				 */
@@ -625,7 +632,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_CONFIRM"),
 						actions: [Action.OK, Action.CANCEL],
 						id: ElementMetadata.uid("confirm"),
-						initialFocus: null
+						initialFocus: null,
+						closeOnNavigation: false
 					}, fnCallback, sTitle, sDialogId, sStyleClass;
 
 					if (typeof mOptions === "function" || arguments.length > 2) {
@@ -653,9 +661,12 @@ sap.ui.define([
 				};
 
 				/**
-				 *Displays an error dialog with the given message, an ERROR icon, a CLOSE button..
+				 * Displays an error dialog with the given message, an ERROR icon, a CLOSE button..
 				 * If a callback is given, it is called after the error box
 				 * has been closed by the user with one of the buttons.
+				 *
+				 * The error dialog is not closed automatically when a routing navigation occurs.
+				 * This behavior can be overwritten by setting the <code>closeOnNavigation</code> option to true.
 				 *
 				 * <pre>
 				 * sap.m.MessageBox.error("This message should appear in the error message box", {
@@ -689,6 +700,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.closeOnNavigation=false] Whether the MessageBox will be closed automatically when a routing navigation occurs.
 				 * @public
 				 * @since 1.30
 				 * @static
@@ -701,7 +713,8 @@ sap.ui.define([
 						title: MessageBox._rb.getText("MSGBOX_TITLE_ERROR"),
 						actions: [Action.CLOSE],
 						id: ElementMetadata.uid("error"),
-						initialFocus: null
+						initialFocus: null,
+						closeOnNavigation: false
 					};
 
 					if (mOptions) {
@@ -749,6 +762,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.closeOnNavigation=true] Whether the MessageBox will be closed automatically when a routing navigation occurs.
 				 * @public
 				 * @since 1.30
 				 * @static
@@ -809,6 +823,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.closeOnNavigation=true] Whether the MessageBox will be closed automatically when a routing navigation occurs.
 				 * @public
 				 * @since 1.30
 				 * @static
@@ -869,6 +884,7 @@ sap.ui.define([
 				 * @param {sap.ui.core.TextDirection} [mOptions.textDirection] Specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @param {boolean} [mOptions.verticalScrolling] verticalScrolling is deprecated since version 1.30.4. VerticalScrolling, this option indicates if the user can scroll vertically inside the MessageBox when the content is larger than the content area.
 				 * @param {boolean} [mOptions.horizontalScrolling] horizontalScrolling is deprecated since version 1.30.4. HorizontalScrolling, this option indicates if the user can scroll horizontally inside the MessageBox when the content is larger than the content area.
+				 * @param {boolean} [mOptions.closeOnNavigation=true] Whether the MessageBox will be closed automatically when a routing navigation occurs.
 				 * @public
 				 * @since 1.30
 				 * @static
