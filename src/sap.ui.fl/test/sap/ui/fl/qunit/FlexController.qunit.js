@@ -1594,6 +1594,7 @@ function (
 				assert.equal(oReturnValue, oHideControl, "and returns the correct change handler");
 			});
 		});
+
 		QUnit.test("when calling 'revertChangesOnControl' with a change type for a non-existent control", function (assert) {
 			var oAppComponent = {};
 			this.oChange.markFinished();
@@ -1608,6 +1609,21 @@ function (
 					assert.ok(Log.warning.calledOnce, "then a warning was logged");
 					assert.ok(oRevertChangeSpy.notCalled, "then revertChange() was not called");
 				});
+		});
+
+		QUnit.test("when calling '_revertChange' with a non-existent control", function(assert) {
+			var oPropertyBag = {
+				modifier: JsControlTreeModifier
+			};
+
+			return this.oFlexController._revertChange(this.oChange, undefined, oPropertyBag)
+			.catch(function() {
+				assert.ok(false, "should never go here");
+			})
+			.then(function(bResult) {
+				assert.ok(true, "the function resolves");
+				assert.equal(bResult, false, "the undo was not successful");
+			});
 		});
 	});
 
