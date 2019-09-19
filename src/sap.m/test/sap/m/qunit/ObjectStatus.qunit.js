@@ -462,13 +462,17 @@ sap.ui.define([
 
 	QUnit.module("Screen reader ARIA support");
 
-	QUnit.test("Has the appropriate ARIA attributes", function (assert) {
-		//Arange
-		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.Success});
+	QUnit.test("General ARIA attributes", function (assert) {
+		//Arrange
+		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.Success}),
+			oCore = sap.ui.getCore();
+
 		oObjectStatus.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		oCore.applyChanges();
 
 		//Act
+		assert.strictEqual(oObjectStatus.$().attr("aria-roledescription"), oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS"),
+			"Custom control name is in aria-roledescription");
 		assert.ok(oObjectStatus.$().attr("aria-describedby"), "aria-describedby attribute is present");
 		assert.notOk(oObjectStatus.$().children(":last-child").attr("aria-hidden"), "hidden element doesn't have aria-hidden attribute");
 
@@ -494,8 +498,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.test("Active ObjectStatus has role 'link'", function(assert) {
-
+	QUnit.test("Active ObjectStatus specific ARIA", function(assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
 			title: "Title",
@@ -503,15 +506,31 @@ sap.ui.define([
 			active: true
 		});
 
-		// Act
 		oObjectStatus.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oObjectStatus.$().attr("role"), "link", "Active ObjectStatus has link role.");
+		// Assert
+		assert.equal(oObjectStatus.$().attr("role"), "button", "Active ObjectStatus has button role");
 
 		// Clean up
 		oObjectStatus.destroy();
+	});
 
+	QUnit.test("Inactive ObjectStatus specific ARIA", function (assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus({
+			title: "Title",
+			text: "Contract #D1234567890"
+		});
+
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oObjectStatus.$().attr("role"), "group", "Inactive ObjectStatus has group role");
+
+		// Cleanup
+		oObjectStatus.destroy();
 	});
 
 	QUnit.test("Hidden state element invisibility class", function (assert) {
