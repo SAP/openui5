@@ -4,8 +4,8 @@ describe("sap.ui.unified.CalendarVisual", function() {
 	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.unified.Calendar';
 
-	var sCalId = "Cal1";
-	var oCal = element(by.id(sCalId));
+	var sCalId = "Cal1",
+		oCal = element(by.id(sCalId));
 
 	singleDaySelection();
 	twoTypes();
@@ -188,9 +188,9 @@ describe("sap.ui.unified.CalendarVisual", function() {
 		});
 
 		it("YearRangePicker looks OK", function() {
-			element(by.id("Cal1--Head-B2")).click(); //click the year button to open YearPicker
-			element(by.id("Cal1--Head-B2")).click(); //click the year button again to open YearRangePicker
-			expect(takeScreenshot(oCal)).toLookAs("year_range_picker_opened");
+			_pressYearPicker(sCalId); // click the year button to open YearPicker
+			_pressYearPicker(sCalId); // click the year button again to open YearRangePicker
+			expect(takeScreenshot(oCal)).toLookAs("045_year_range_picker_displayed");
 		});
 	}
 
@@ -298,6 +298,13 @@ describe("sap.ui.unified.CalendarVisual", function() {
 				browser.actions().sendKeys(protractor.Key.PAGE_DOWN).perform();  // switch to January-April, focus on January 30
 				expect(takeScreenshot(oCal)).toLookAs("103_multiple_month_keyboard_Page_Down2");
 			}
+		});
+
+		it("sap.ui.unified.calendar.Header looks OK when chinese language is set and calendar has two months", function() {
+			_initCalendar("7");
+			expect(takeScreenshot(oCal)).toLookAs("104_month_displayed");
+			_pressYearPicker(sCalId); // click the year button to open YearPicker
+			expect(takeScreenshot(oCal)).toLookAs("105_year_picker_displayed");
 		});
 	}
 

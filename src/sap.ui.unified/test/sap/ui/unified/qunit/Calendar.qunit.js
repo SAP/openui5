@@ -1689,7 +1689,7 @@ QUnit.module("Misc");
 		// assert
 		assert.equal(oAddStyleClassSpy.callCount, 1, "addStyleClass is called once");
 		assert.equal(oAddStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsTwoColumns", "addStyleClass is called with sapUiCalTwoMonthsTwoColumns param");
-		assert.equal(oRemoveStyleClassSpy.callCount, 0, "removeStyleClass is not called");
+		assert.equal(oRemoveStyleClassSpy.callCount, 1, "removeStyleClass is called once");
 
 		// cleanup
 		oCalendar.destroy();
@@ -1710,8 +1710,9 @@ QUnit.module("Misc");
 
 		// assert
 		assert.equal(oAddStyleClassSpy.callCount, 0, "addStyleClass is not called");
-		assert.equal(oRemoveStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsTwoColumns", "removeStyleClass is called with sapUiCalTwoMonthsTwoColumns param");
-		assert.equal(oRemoveStyleClassSpy.callCount, 1, "removeStyleClass is called once");
+		assert.equal(oRemoveStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsTwoColumnsJaZh", "removeStyleClass is called with sapUiCalTwoMonthsTwoColumnsJaZh param");
+		assert.equal(oRemoveStyleClassSpy.getCall(1).args[0], "sapUiCalTwoMonthsTwoColumns", "removeStyleClass is called with sapUiCalTwoMonthsTwoColumns param");
+		assert.equal(oRemoveStyleClassSpy.callCount, 2, "removeStyleClass is called twice");
 
 		// cleanup
 		oCalendar.destroy();
