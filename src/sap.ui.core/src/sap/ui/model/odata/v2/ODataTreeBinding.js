@@ -197,6 +197,8 @@ sap.ui.define([
 			this.aSorters = aSorters || [];
 			this.sFilterParams = "";
 
+			this.mNormalizeCache = {};
+
 			// The ODataTreeBinding expects there to be only an array in this.aApplicationFilters later on.
 			// Wrap the given application filters inside an array if necessary
 			if (aApplicationFilters instanceof Filter) {
@@ -1650,7 +1652,7 @@ sap.ui.define([
 			var aFiltered = FilterProcessor.apply([sKey], oCombinedFilter, function(vRef, sPath) {
 				var oContext = that.oModel.getContext('/' + vRef);
 				return that.oModel.getProperty(sPath, oContext);
-			});
+			}, that.mNormalizeCache);
 			return aFiltered.length > 0;
 		};
 

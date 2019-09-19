@@ -53,6 +53,7 @@ sap.ui.define([
 			this.filterInfo.aFilteredContexts = [];
 			this.filterInfo.oParentContext = {};
 			this.oCombinedFilter = null;
+			this.mNormalizeCache = {};
 
 			if (aApplicationFilters) {
 				this.oModel.checkFilterOperation(aApplicationFilters);
@@ -343,7 +344,7 @@ sap.ui.define([
 
 			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.oCombinedFilter, function (oContext, sPath) {
 				return that.oModel.getProperty(sPath, oContext);
-			});
+			}, this.mNormalizeCache);
 
 			if (aFilteredContexts.length > 0) {
 				jQuery.merge(this.filterInfo.aFilteredContexts, aFilteredContexts);
