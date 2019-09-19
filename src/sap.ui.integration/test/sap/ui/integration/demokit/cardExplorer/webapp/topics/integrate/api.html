@@ -41,6 +41,8 @@
 			<p>
 				For all supported parameters, see <a id="linkToAPICardEventsAction" target="_blank">action event API</a>.
 			</p>
+
+			<h2>When using UI5</h2>
 			<p>
 				Adding handler for <code>action</code> event in the XML View
 			</p>
@@ -62,12 +64,28 @@ onActionLog: function (oEvent) {
 ...
 </pre>
 
+			<h2>When using &lt;ui-integration-card&gt; custom element</h2>
+<pre class="prettyprint">
+&lt;body&gt;
+	&lt;ui-integration-card id="cardWithActions"
+		manifest="./some/location/my/card/manifest.json"&gt;
+	&lt;/ui-integration-card&gt;
+
+	&lt;script&gt;
+		document.getElementById("cardWithActions").addEventListener("action", function (event) {
+			console.log(event.detail.getParameter("type") + " Action triggered! for card with ID cardWithActions");
+		});
+	&lt;/script&gt;
+&lt;/body&gt;
+</pre>
+
 			<h1 id="passingParameters">Passing parameters</h2>
 			<p>
 				A card developer can add parameters to the cards manifest. Such parameters are often optional and allow to influence the cards content. Some parameters are mandatory, because the card relies on this information to work properly. If a card needs to load data, one parameter might be the url that should be used to trigger a data request. Parameters are card specific and are declared in the corresponding cards manifest.
 				For an example with parameters usage in a manifest, see <a target="_top" href="../../index.html#/explore/parameters">parameters in Explore section</a>.
 			</p>
 
+			<h2>When using UI5</h2>
 <pre class="prettyprint">
 var oCard = new Card();
 // This manifest expects a city parameter to render a card with information for that city.
@@ -76,6 +94,18 @@ var oParameters = {
 	"city": "Waldorf,de"
 };
 oCard.setParameters(oParameters);
+</pre>
+
+			<h2>When using &lt;ui-integration-card&gt; custom element</h2>
+<pre class="prettyprint">
+var parameters = {
+	"city": "Waldorf,de"
+};
+var card = document.createElement("ui-integration-card");
+card.setAttribute('id', "myCard");
+card.setAttribute("manifest", "./some/location/my/card/manifest.json");
+card.setAttribute("parameters", JSON.stringify(parameters));
+document.body.appendChild(card);
 </pre>
 
 			<h1 id="managingState">Managing card state</h1>
@@ -90,11 +120,24 @@ oCard.setParameters(oParameters);
 			<p>
 				For more information, see <a id="linkToAPICardDataMode" target="_blank"><code>dataMode</code> property API</a>.
 			</p>
+
+			<h3>When using UI5</h3>
 <pre class="prettyprint">
 // Make card inactive for 10 seconds
+var oCard = sap.ui.getCore().byId("myCard");
 oCard.setDataMode("Inactive");
 setTimeout(function () {
 	oCard.setDataMode("Active");
+}, 10000);
+</pre>
+
+			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
+<pre class="prettyprint">
+// Make card inactive for 10 seconds
+var card = document.getElementById("myCard");
+card.setAttribute("data-mode", "Inactive");
+setTimeout(function () {
+	card.setAttribute("data-mode", "Active");
 }, 10000);
 </pre>
 
@@ -107,9 +150,16 @@ setTimeout(function () {
 			<p>
 				For more information, see <a id="linkToAPICardMethodsRefresh" target="_blank"><code>refresh</code> method API</a>.
 			</p>
+
+			<h3>When using UI5</h3>
 <pre class="prettyprint">
 oCard.refresh();
 </pre>
+
+			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
+			<p>
+				NOTE: Currently refreshing is not possible when using the custom element.
+			</p>
 
 		</div>
 		<div class="navigation">
