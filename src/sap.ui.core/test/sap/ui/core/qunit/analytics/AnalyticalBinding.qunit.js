@@ -2485,8 +2485,7 @@ sap.ui.require([
 						"setMeasures");
 
 				oBinding.aSorter = oFixture.aSorter;
-				oBindingMock.expects("_addSorters")
-					.withExactArgs(sinon.match.instanceOf(odata4analytics.SortExpression), []);
+				oBindingMock.expects("_addSorters").never();
 				oBindingMock.expects("_canApplySortersToGroups")
 					.withExactArgs()
 					.returns(oFixture.bApplySorters);
