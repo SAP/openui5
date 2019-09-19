@@ -28,7 +28,7 @@
 .sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
 	.sapMInputDescriptionWrapper {
 		max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_MinWidth}))";
-		.sapMInputBaseState & {
+		.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 			max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_State_MinWidth}))";
 		}
 	}
@@ -37,7 +37,7 @@
 .sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
 	.sapMInputDescriptionWrapper {
 		max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_MinWidth}))";
-		.sapMInputBaseState & {
+		.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 			max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_State_MinWidth}))";
 		}
 	}
@@ -46,7 +46,7 @@
 .sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
 	.sapMInputDescriptionWrapper {
 		max-width: ~"calc(100% - (@{_InputBase_Control_MinWidth}))";
-		.sapMInputBaseState & {
+		.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 			max-width: ~"calc(100% - (@{_InputBase_Control_State_MinWidth}*2))";
 		}
 	}
@@ -56,7 +56,7 @@
 	.sapMInputBaseHasEndIcons, .sapMInputBaseHasBeginIcons {
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_MinWidth_Compact}))";
-			.sapMInputBaseState & {
+			.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 				max-width: ~"calc(100% - (@{_InputBase_Control_OneIcon_State_MinWidth_Compact}))";
 			}
 		}
@@ -65,7 +65,7 @@
 	.sapMInputBaseHasEndIcons.sapMInputBaseHasBeginIcons {
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_MinWidth_Compact}))";
-			.sapMInputBaseState & {
+			.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 				max-width: ~"calc(100% - (@{_InputBase_Control_TwoIcons_State_MinWidth_Compact}))";
 			}
 		}
@@ -74,7 +74,7 @@
 	.sapMInputBase:not(.sapMInputBaseHasEndIcons):not(.sapMInputBaseHasBeginIcons) {
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_MinWidth_Compact}))";
-			.sapMInputBaseState & {
+			.sapMInputBaseState:not(.sapMInputBaseContentWrapperSuccess) & {
 				max-width: ~"calc(100% - (@{_InputBase_Control_State_MinWidth_Compact}*2))";
 			}
 		}

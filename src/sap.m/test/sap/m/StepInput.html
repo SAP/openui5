@@ -110,6 +110,9 @@
 		var oLabelDisabledAndError = new Label({
 			text: "Disabled and error state"
 		});
+		var oLabelSuccess = new Label({
+			text: "Success"
+		});
 		var oLabelError = new Label({
 			text: "Error"
 		});
@@ -219,7 +222,11 @@
 						press: fnGetChangePropertyValueFunction(sap.ui.getCore().byId("visual_test_step_input"), "width", ['12rem', '100%', '130px'])
 					}),
 
-
+					oLabelSuccess,
+					new sap.m.StepInput({
+						valueState: "Success",
+						ariaLabelledBy: oLabelSuccess
+					}),
 					oLabelError,
 					new sap.m.StepInput({
 						valueState: "Error",
