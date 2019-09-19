@@ -1055,7 +1055,9 @@ sap.ui.define([
 					vResult = fnAnnotation(vResult, {
 						$$valueAsPromise : mParameters && mParameters.$$valueAsPromise,
 						context : new BaseContext(that, sPath),
-						schemaChildName : sSchemaChildName
+						schemaChildName : sSchemaChildName,
+						// Note: length === 1 implies Array.isArray(oSchemaChild)
+						overload : oSchemaChild.length === 1 ? oSchemaChild[0] : undefined
 					});
 				} catch (e) {
 					log(WARNING, "Error calling ", sSegment, ": ", e);
@@ -2568,6 +2570,9 @@ sap.ui.define([
 	 * <li><code>{boolean} $$valueAsPromise</code> Whether the computed annotation may return a
 	 *   <code>Promise</code> resolving with its value (since 1.57.0)
 	 * <li><code>{@link sap.ui.model.Context} context</code> Points to the current object
+	 * <li><code>{object} overload</code> In case of annotations of an operation or a parameter, if
+	 *   filtering by binding parameter determines a single operation overload, that overload is
+	 *   passed (since 1.71.0), else <code>undefined</code>
 	 * <li><code>{string} schemaChildName</code> The qualified name of the schema child where the
 	 *   computed annotation has been found
 	 * </ul>
@@ -2609,7 +2614,7 @@ sap.ui.define([
 	 *    (since 1.71.0) like a parameter to address annotations of the return type instead, for
 	 *    example "/TEAMS/acme.NewAction/$ReturnType@".
 	 *
-	 *    Action overloads are then filtered by binding parameter; multiple overloads after
+	 *    Operation overloads are then filtered by binding parameter; multiple overloads after
 	 *    filtering are invalid except if addressing all overloads via the segment "@$ui5.overload",
 	 *    for example "/acme.NewAction/@$ui5.overload".
 	 *
