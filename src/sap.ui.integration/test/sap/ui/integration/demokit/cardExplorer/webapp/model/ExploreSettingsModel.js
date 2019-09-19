@@ -8,6 +8,6 @@ sap.ui.define([
 		splitViewVertically: false,
 		editable: true,
 		editorType: "text",
-		designtime: sap.ui.version.includes('SNAPSHOT')
+		designtime: sap.ui.version.includes('SNAPSHOT') && !window.location.host.includes("openui5nightly")
 	});
 });
