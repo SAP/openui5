@@ -141,12 +141,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectStatus.prototype._getImageControl = function() {
-		var sImgId = this.getId() + '-icon';
-		var mProperties = {
-			src : this.getIcon(),
-			densityAware : this.getIconDensityAware(),
-			useIconTooltip : false
-		};
+		var sImgId = this.getId() + '-icon',
+			bIsIconOnly = !this.getText() && !this.getTitle(),
+			mProperties = {
+				src : this.getIcon(),
+				densityAware : this.getIconDensityAware(),
+				useIconTooltip : false
+			};
+
+		if (bIsIconOnly) {
+			mProperties.decorative = false;
+			mProperties.alt = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ICON");
+		}
 
 		this._oImageControl = ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties);
 
