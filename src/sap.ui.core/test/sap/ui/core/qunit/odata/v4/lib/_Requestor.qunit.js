@@ -1944,6 +1944,71 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
+[
+	{bLocked : false, sGroupId : "simpleRead", bModifying : false, bPendingChanges : false},
+	{bLocked : false, sGroupId : "modifyingUnlocked", bModifying : true, bPendingChanges : false},
+	{bLocked : true, sGroupId : "lockedRead", bModifying : false, bPendingChanges : false},
+	{bLocked : true, sGroupId : "modifyingLocked", bModifying : true, bPendingChanges : true}
+].forEach(function (oFixture, i) {
+	QUnit.test("hasPendingChanges: locked modifying group:" + oFixture.sGroupId, function (assert) {
+		var j,
+			oGroupLockForFixture = {
+				getGroupId : function () {},
+				isLocked : function () {},
+				isModifying : function () {}
+			},
+			oRequestor = _Requestor.create("/Service/"),
+			that = this;
+
+		// Adds a group lock with corresponding mocks to oRequestor.aLockedGroupLocks. With these
+		// group locks it is checked that the position of the modifying locked group lock is not
+		// relevant and that the group ID is only checked if it has been passed to
+		// hasPendingChanges, and that isModifying is checked before isLocked.
+		// @param {boolean} bIsModifying - Whether the group lock is modifying
+		function addDummyGoupLock(bIsModifying) {
+			var oGroupLock = {
+					getGroupId : function () {},
+					isLocked : function () {},
+					isModifying : function () {}
+				};
+
+			that.mock(oGroupLock).expects("getGroupId").withExactArgs()
+				.twice() // once for oFixture.sGroupId and once for "otherGroup"
+				.returns("foo");
+			that.mock(oGroupLock).expects("isModifying").withExactArgs() // without group ID
+				.returns(bIsModifying);
+			that.mock(oGroupLock).expects("isLocked").withExactArgs()
+				.exactly(bIsModifying ? 1 : 0) // without group ID and modifying
+				.returns(false);
+
+			oRequestor.aLockedGroupLocks.push(oGroupLock);
+		}
+
+		oRequestor.aLockedGroupLocks = [];
+		for (j = 0; j < i + 2; j += 1) {
+			addDummyGoupLock(j % 2 === 0); // some are modifying but all are unlocked
+		}
+		this.mock(oGroupLockForFixture).expects("getGroupId").withExactArgs()
+			.twice() // once for oFixture.sGroupId and once for "otherGroup"
+			.returns(oFixture.sGroupId);
+		this.mock(oGroupLockForFixture).expects("isModifying").withExactArgs()
+			.twice() // once without group ID and once for oFixture.sGroupId
+			.returns(oFixture.bModifying);
+		this.mock(oGroupLockForFixture).expects("isLocked").withExactArgs()
+			// if bModifying then once without group ID and once for oFixture.sGroupId
+			.exactly(oFixture.bModifying ? 2 : 0)
+			.returns(oFixture.bLocked);
+		oRequestor.aLockedGroupLocks.push(oGroupLockForFixture);
+
+		// code under test
+		assert.strictEqual(oRequestor.hasPendingChanges(), oFixture.bPendingChanges);
+		assert.strictEqual(oRequestor.hasPendingChanges(oFixture.sGroupId),
+			oFixture.bPendingChanges);
+		assert.strictEqual(oRequestor.hasPendingChanges("otherGroup"), false);
+	});
+});
+
+	//*****************************************************************************************
 	QUnit.test("cancelChanges: various requests", function (assert) {
 		var fnCancel1 = this.spy(),
 			fnCancel2 = this.spy(),
@@ -3644,7 +3709,7 @@ sap.ui.define([
 [false, true].forEach(function (bModifying) {
 	QUnit.test("lockGroup: blocking, modifying: " + bModifying, function (assert) {
 		var oGroupLock,
-			aLockedGroupLocks = [],
+			aLockedGroupLocks = [{}, {}],
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface),
 			oOwner = {};
 
@@ -3660,7 +3725,7 @@ sap.ui.define([
 		assert.strictEqual(oGroupLock.getSerialNumber(), 42);
 		assert.strictEqual(oGroupLock.isModifying(), bModifying);
 		assert.strictEqual(oRequestor.aLockedGroupLocks, aLockedGroupLocks);
-		assert.deepEqual(oRequestor.aLockedGroupLocks, [oGroupLock]);
+		assert.deepEqual(oRequestor.aLockedGroupLocks, [{}, {}, oGroupLock]);
 	});
 });
 

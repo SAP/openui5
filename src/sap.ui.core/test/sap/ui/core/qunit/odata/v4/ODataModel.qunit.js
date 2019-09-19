@@ -759,11 +759,13 @@ sap.ui.define([
 			oBinding2 = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oBinding3 = oModel.bindContext("/EMPLOYEES('1')", undefined, {
 				$$updateGroupId : "anotherGroup"
-			});
+			}),
+			oRequestorMock = this.mock(oModel.oRequestor);
 
 		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("$auto");
 		this.mock(oModel).expects("isAutoGroup").withExactArgs("$auto").returns(true);
-		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("$parked.$auto");
+		oRequestorMock.expects("cancelChanges").withExactArgs("$parked.$auto");
+		oRequestorMock.expects("cancelChanges").withExactArgs("$auto");
 		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oBinding3).expects("resetInvalidDataState").never();
