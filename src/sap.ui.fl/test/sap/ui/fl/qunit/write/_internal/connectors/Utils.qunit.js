@@ -38,7 +38,7 @@ sap.ui.define([
 				applyConnector : oApplyConnector
 			};
 			assert.deepEqual(WriteUtils.getRequestOptions(oApplyConnector, sTokenUrl), oExpectedOptions);
-			oExpectedOptions.flexObjects = "[]";
+			oExpectedOptions.payload = "[]";
 			oExpectedOptions.contentType = "contentType";
 			oExpectedOptions.dataType = "dataType";
 			assert.deepEqual(WriteUtils.getRequestOptions(oApplyConnector, sTokenUrl, [], "contentType", "dataType"), oExpectedOptions);

@@ -35,6 +35,8 @@ sap.ui.define([
 	 */
 	var LrepConnector = merge({}, BaseConnector,  /** @lends sap.ui.fl.apply._internal.connectors.LrepConnector */ {
 
+		xsrfToken: undefined,
+
 		/**
 		 * Loads the data from the back end and triggers a second request for modules in case the back end responses with
 		 * a flag that such modules are present.
@@ -56,11 +58,11 @@ sap.ui.define([
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
 
-			return ApplyUtils.sendRequest(sDataUrl, "GET", { token : this.sXsrfToken }).then(function (oResult) {
+			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken : this.xsrfToken }).then(function (oResult) {
 				// TODO(when the cacheKey calculation implementation happens): see that the etag / cacheKey is handled accordingly
 				var oResponse = oResult.response;
 				if (oResult.token) {
-					this.sXsrfToken = oResult.token;
+					this.xsrfToken = oResult.token;
 				}
 				if (!oResponse.loadModules) {
 					return oResponse;

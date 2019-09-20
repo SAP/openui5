@@ -13,7 +13,7 @@ sap.ui.define([
 ], function(
 	merge,
 	BaseConnector,
-	ApplyPersonalizationConnector,
+	ApplyConnector,
 	ApplyUtils,
 	WriteUtils,
 	flLibrary,
@@ -23,12 +23,40 @@ sap.ui.define([
 
 	var ROUTES = {
 		CHANGES: "/changes/",
-		VARIANTS: "/variants/",
 		TOKEN: "/actions/getcsrftoken"
 	};
 
 	var FEATURES = {
 		isProductiveSystem: true
+	};
+
+	/**
+	 * Write flex data into Personalization service or update an existing an existing flex data stored in Personalization service
+	 *
+	 * @param {object} mPropertyBag Property bag
+	 * @param {string} mPropertyBag.method POST for writing new data and PUT for update an existing data
+	 * @param {object[]} [mPropertyBag.flexObjects] Objects to be written (i.e. change definitions, variant definitions etc.)
+	 * @param {object} [mPropertyBag.flexObject] Object to be updated
+	 * @param {string} mPropertyBag.url Configured url for the connector
+	 * @private
+	 * @returns {Promise} Promise resolves as soon as the writing was completed
+	 */
+	var doWrite = function(mPropertyBag) {
+		//single update --> fileName needs to be in the url
+		if (mPropertyBag.flexObject) {
+			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
+		}
+		var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
+		delete mPropertyBag.fileName;
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			sTokenUrl,
+			mPropertyBag.flexObjects || mPropertyBag.flexObject,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sWriteUrl, mPropertyBag.method, oRequestOption);
 	};
 
 	/**
@@ -56,10 +84,47 @@ sap.ui.define([
 		 * @public
 		 */
 		write: function (mPropertyBag) {
-			var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
-			mPropertyBag = WriteUtils.setTokenAndAddApplyConnector(mPropertyBag, ROUTES, ApplyPersonalizationConnector);
-			mPropertyBag.flexObjects = JSON.stringify(mPropertyBag.flexObjects);
-			return WriteUtils.sendRequest(sWriteUrl, "POST", mPropertyBag);
+			mPropertyBag.method = "POST";
+			return doWrite(mPropertyBag);
+		},
+
+		/**
+		 * Update an existing flex data stored in Personalization service.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object} mPropertyBag.flexObject Flex Object to be updated
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @returns {Promise} Resolves as soon as the writing is completed without data
+		 */
+		update: function (mPropertyBag) {
+			mPropertyBag.method = "PUT";
+			return doWrite(mPropertyBag);
+		},
+
+		/**
+		 * Delete an existing flex data stored in Personalization service.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object} mPropertyBag.flexObject Flex Object to be deleted
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @returns {Promise} Resolves as soon as the deletion is completed without data
+		 */
+		remove: function (mPropertyBag) {
+			var mParameters = {
+				namespace: mPropertyBag.flexObject.namespace
+			};
+			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
+			var sDeleteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+			delete mPropertyBag.fileName;
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+
+			var oRequestOption = WriteUtils.getRequestOptions(
+				ApplyConnector,
+				sTokenUrl,
+				undefined,
+				"application/json; charset=utf-8", "json"
+			);
+			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		},
 
 		/**
@@ -91,8 +156,9 @@ sap.ui.define([
 			// Delete this property because it should not be part of the url
 			delete mPropertyBag.reference;
 			var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
-			mPropertyBag = WriteUtils.setTokenAndAddApplyConnector(mPropertyBag, ROUTES, ApplyPersonalizationConnector);
-			return WriteUtils.sendRequest(sResetUrl, "DELETE", mPropertyBag);
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+			var oRequestOption = WriteUtils.getRequestOptions(ApplyConnector, sTokenUrl);
+			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
 		},
 
 

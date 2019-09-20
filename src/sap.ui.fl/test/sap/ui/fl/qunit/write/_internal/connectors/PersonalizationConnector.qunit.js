@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	sinon,
 	ApplyPersonalizationConnector,
 	WritePersonalizationConnector,
-	ApplyUtils
+	ApplyUtils,
+	WriteUtils
 ) {
 	"use strict";
 
@@ -41,7 +43,57 @@ sap.ui.define([
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], sExpectedMethod, "with correct method");
-				assert.equal(oStubSendRequest.getCall(0).args[2], mPropertyBag, "with correct flexObjects");
+				assert.equal(oStubSendRequest.getCall(0).args[2].payload, "{}", "with correct payload");
+				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, "123", "with correct token");
+				assert.equal(oStubSendRequest.getCall(0).args[2].contentType, "application/json; charset=utf-8", "with correct contentType");
+				assert.equal(oStubSendRequest.getCall(0).args[2].dataType, "json", "with correct dataType");
+			});
+		});
+
+		QUnit.test("given a mock server, when update is triggered", function (assert) {
+			var oFlexObject = {
+				fileType: "change",
+				fileName: "myFileName"
+			};
+			var mPropertyBag = {url : "/sap/bc/lrep", flexObject : oFlexObject};
+			var sUrl = "/sap/bc/lrep/changes/myFileName";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			return WritePersonalizationConnector.update(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
+					xsrfToken : ApplyPersonalizationConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken",
+					applyConnector : ApplyPersonalizationConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					payload : JSON.stringify(oFlexObject)
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
+		QUnit.test("given a mock server, when remove is triggered", function (assert) {
+			var oFlexObject = {
+				fileType: "variant",
+				fileName: "myFileName",
+				namespace: "myNamespace",
+				layer: "VENDOR"
+			};
+			var mPropertyBag = {
+				flexObject: oFlexObject,
+				url: "/sap/bc/lrep"
+			};
+			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=myNamespace";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+
+			return WritePersonalizationConnector.remove(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyPersonalizationConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken",
+					applyConnector : ApplyPersonalizationConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json"
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
 			});
 		});
 

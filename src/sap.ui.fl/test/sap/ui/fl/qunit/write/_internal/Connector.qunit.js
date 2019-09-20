@@ -109,7 +109,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector aiming for USER layer ", function (assert) {
+		QUnit.test("with valid mPropertyBag and Connector: PersonalizationConnector aiming for USER layer when writing", function (assert) {
 			var mPropertyBag = {
 				layer: "USER",
 				flexObjects: [{}]
@@ -125,24 +125,27 @@ sap.ui.define([
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
-			sandbox.stub(WriteUtils, "getRequestOptions").returns({});
+			//sandbox.stub(WriteUtils, "getRequestOptions").returns({});
 
 			return Connector.write(mPropertyBag).then(function() {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.ok(oStubGetUrl.calledOnce, "getUrl is called once");
+				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
 				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
 				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the correct url was added");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
 				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.deepEqual(oSendRequestCallArgs[2], mPropertyBag, "with correct flex objects");
+				assert.equal(oSendRequestCallArgs[2].payload, "[{}]", "with correct payload");
+				assert.equal(oSendRequestCallArgs[2].xsrfToken, "123", "with correct token");
+				assert.equal(oSendRequestCallArgs[2].contentType, "application/json; charset=utf-8", "with correct contentType");
+				assert.equal(oSendRequestCallArgs[2].dataType, "json", "with correct dataType");
 			});
 		});
 
-		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer", function (assert) {
+		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer when writing", function (assert) {
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				flexObjects: [{}]
@@ -199,7 +202,7 @@ sap.ui.define([
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 1, "getUrl is called once");
+				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
 				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
 				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl2, "the correct url was added");
@@ -529,7 +532,7 @@ sap.ui.define([
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.ok(oStubGetUrl.calledOnce, "getUrl is called once");
+				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
 				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
@@ -570,7 +573,7 @@ sap.ui.define([
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.ok(oStubGetUrl.calledOnce, "getUrl is called once");
+				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
 				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
