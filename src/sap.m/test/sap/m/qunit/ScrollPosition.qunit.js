@@ -359,7 +359,8 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(4);
 
-		jQuery("#content").css("height", "3000px");
+		// the height of the StandardListItem has increased according to the visual specs, hence setting the #content height to 5000px
+		jQuery("#content").css("height", "5000px");
 
 		window.setTimeout(function(){
 			assert.equal(getScrollPos(), 0, "Page should be scrolled to position 0");
@@ -392,7 +393,8 @@ sap.ui.define([
 		var done = assert.async();
 		assert.expect(2);
 
-		jQuery("#content").css("height", "3000px");
+		// the height of the StandardListItem has increased according to the visual specs, hence setting the #content height to 5000px
+		jQuery("#content").css("height", "5000px");
 		page1.scrollTo(50, 100); // try to scroll when it should not be possible
 
 		window.setTimeout(function(){
