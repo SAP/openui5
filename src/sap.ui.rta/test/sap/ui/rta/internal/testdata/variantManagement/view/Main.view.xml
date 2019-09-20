@@ -12,203 +12,194 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
 	controllerName="sap.ui.rta.test.variantManagement.controller.Main">
 	<!--The view is is bound to EntityType01 in the controller -->
-	<Page title="{i18n>appTitleMain}" id="page" enableScrolling="false">
-		<headerContent>
-				<Button visible = "{app>/showAdaptButton}" text="{= ${app>/showAdaptButton} ? ${i18n>btnAdapt} : ${i18n>btnNonAdapt} }"  press=".switchToAdaptionMode" />
-		</headerContent>
-		<content>
-
-			<uxap:ObjectPageLayout id="ObjectPageLayout">
-				<uxap:headerTitle>
-					<uxap:ObjectPageHeader
-							id="obheader0"
-							objectTitle="{VMTitle}"
-							objectSubtitle="{VMSubtitle}"
-							objectImageURI="">
-						<uxap:navigationBar>
-							<Bar>
-								<contentLeft>
-									<Button text="Personalization Changes" press=".createChanges" ariaDescribedBy="defaultButtonDescription genericButtonDescription"></Button>
-								</contentLeft>
-								<contentRight>
-									<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout" updateVariantInURL="true"></vm:VariantManagement>
-								</contentRight>
-							</Bar>
-						</uxap:navigationBar>
-					</uxap:ObjectPageHeader>
-
-				</uxap:headerTitle>
-				<uxap:sections>
-					<uxap:ObjectPageSection id="ObjectPageSectionWithForm">
-						<uxap:ObjectPageSubSection  id="ObjectPageSubSectionWithForm" title="{SubSectionTitle1}">
-							<form:SimpleForm class="sapUiSmallMargin"
-											 title="Simple Form bound to EntityType02" id="MainForm"
-											 maxContainerCols="3"
-											 editable="true"
-											 adjustLabelSpan="false"
-											 layout="ResponsiveGridLayout"
-											 labelSpanXL="4"
-											 labelSpanL="4"
-											 labelSpanM="4"
-											 emptySpanXL="0"
-											 emptySpanL="0"
-											 emptySpanM="0"
-											 columnsXL="3"
-											 columnsL="2"
-											 columnsM="2"
-											 singleContainerFullSize="false">
-								<form:content>
-									<core:Title id="EntityType02.Title1" text="EntityType02 Title 1" />
-									<Label id="EntityType02.Label1" text="{/#EntityType02/EntityType02_Property01/@sap:label}" />
-									<Text id="EntityType02.Text1" text="{EntityType02_Property01}" />
-									<Label id="EntityType02.Label2" text="{/#EntityType02/EntityType02_Property02/@sap:label}" />
-									<Text id="EntityType02.Text2" text="{EntityType02_Property02}" />
-
-									<core:Title id="EntityType02.Title2" text="EntityType02 Title 2 Complex" />
-									<Label id="EntityType02.Label3" text="{/#EntityType02/EntityType02_Complex/ComplexProperty01/@sap:label}" />
-									<Text id="EntityType02.Text3" text="{EntityType02_Complex/ComplexProperty01}" />
-									<Label id="EntityType02.Label4" text="{/#EntityType02/EntityType02_Complex/ComplexProperty02/@sap:label}" />
-									<Text id="EntityType02.Text4" text="{EntityType02_Complex/ComplexProperty02}" />
-								</form:content>
-							</form:SimpleForm>
-						</uxap:ObjectPageSubSection>
-					</uxap:ObjectPageSection>
-
-					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="{SectionTitle2}">
-						<uxap:ObjectPageSubSection>
-							<form:SimpleForm title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
-											 maxContainerCols="3"
-											 editable="true"
-											 adjustLabelSpan="false"
-											 layout="ResponsiveGridLayout"
-											 labelSpanXL="4"
-											 labelSpanL="4"
-											 labelSpanM="4"
-											 emptySpanXL="0"
-											 emptySpanL="0"
-											 emptySpanM="0"
-											 columnsXL="3"
-											 columnsL="2"
-											 columnsM="2"
-											 singleContainerFullSize="false">
-								<form:content>
-									<core:Title id="NavTitle1" text="Navigation Title 1" />
-									<Label id="NavProperty.Label1" text="{/#EntityTypeNav/NavProperty/@sap:label}" />
-									<Text id="NavProperty.Text1" text="{to_EntityType01Nav/NavProperty}" />
-									<Label id="NavProperty.Label2" text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
-									<Text id="NavProperty.Text2" text="{to_EntityType01Nav/EntityTypeNav_Property01}" />
-
-									<core:Title id="NavTitle2" text="Navigation Title 2" />
-									<Label id="NavProperty.Label3" text="{/#EntityType01/Property01/@sap:label}" />
-									<Text id="NavProperty.Text3" text="{Property01}" />
-									<Label id="NavProperty.Label4" text="{/#EntityType01/Property02/@sap:label}" />
-									<Text id="NavProperty.Text4" text="{Property02}" />
-								</form:content>
-							</form:SimpleForm>
-						</uxap:ObjectPageSubSection>
-						<uxap:ObjectPageSubSection>
-							<form:Form id="FormDisplay480_12120-2"
-								editable="true">
-								<form:title>
-									<core:Title text="Form" />
-								</form:title>
-								<form:layout>
-									<form:ResponsiveGridLayout
-										labelSpanXL="4"
-										labelSpanL="4"
-										labelSpanM="12"
-										labelSpanS="12"
-										adjustLabelSpan="false"
-										emptySpanXL="0"
-										emptySpanL="0"
-										emptySpanM="0"
-										emptySpanS="0"
-										columnsXL="2"
-										columnsL="2"
-										columnsM="1"
-										singleContainerFullSize="false" />
-								</form:layout>
-								<form:formContainers>
-									<form:FormContainer id="FormContainer1" title="Contact data">
-										<form:formElements>
-											<form:FormElement id ="FormElement1" label="Email">
-												<form:fields>
-													<Text id ="FormElement1.Text" text="john.doe@company.com" />
-												</form:fields>
-											</form:FormElement>
-											<form:FormElement id ="FormElement2" label="Tel.">
-												<form:fields>
-													<Text id ="FormElement2.Text" text="0815/123456" />
-												</form:fields>
-											</form:FormElement>
-											<form:FormElement id ="FormElement3" label="SMS">
-												<form:fields>
-													<Text id ="FormElement3.Text" text="Sms" />
-												</form:fields>
-											</form:FormElement>
-										</form:formElements>
-									</form:FormContainer>
-								</form:formContainers>
-							</form:Form>
-						</uxap:ObjectPageSubSection>
-					</uxap:ObjectPageSection>
-
-					<uxap:ObjectPageSection id="ObjectPageSectionWithSmartForm" title="{SectionTitle4}">
-						<uxap:ObjectPageSubSection>
-							<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
-								<smartForm:Group id="MainFormExpandable.FirstGroup" label="1. Group">
-									<smartForm:GroupElement label="One Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton" >
-										<TextArea id="textarea1" value="CreatedByUser"></TextArea>
-									</smartForm:GroupElement>
-									<smartForm:GroupElement label="No-Bound-Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton34" >
-										<Button id="button1" text="buttonText 1"></Button>
-										<TextArea id="textarea2" value="Some Text"></TextArea>
-									</smartForm:GroupElement>
-									<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.UnboundButton" >
-										<Button id="button2" text="No Binding"></Button>
-									</smartForm:GroupElement>
-								</smartForm:Group>
-								<smartForm:Group label="2. Group" id="MainFormExpandable.SecondGroup">
-									<smartForm:GroupElement label="Two Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
-										<Button id="button3" text="buttontext 2"></Button>
-										<TextArea id="textarea3" value="Some Text"></TextArea>
-									</smartForm:GroupElement>
-									<smartForm:GroupElement label="With/without stable ID" id="Dates.StableIDField">
-										<Input value="I have an ID" id="InputFieldWithID" />
-										<Input value="I have no ID" />
-									</smartForm:GroupElement>
-									<smartForm:GroupElement label="With horizontal layout inside" id="Dates.HorizontalLayoutInside">
-										<l:HorizontalLayout id="GroupElementHorizontalLayout">
-											<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
-											<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
-										</l:HorizontalLayout>
-									</smartForm:GroupElement>
-								</smartForm:Group>
-							</smartForm:SmartForm>
-						</uxap:ObjectPageSubSection>
-					</uxap:ObjectPageSection>
-
-					<uxap:ObjectPageSection id="ObjectPageSectionWithVM" title="{SectionTitle3}">
-						<uxap:ObjectPageSubSection id="ObjectPageSubSectionWithVM">
-							<l:Grid
-									hSpacing="0"
-									defaultSpan="L12 M12 S12">
+	<App id="app">
+		<Page title="{i18n>appTitleMain}" id="page" enableScrolling="false">
+			<headerContent>
+					<Button visible="{app>/showAdaptButton}" text="{= ${app>/showAdaptButton} ? ${i18n>btnAdapt} : ${i18n>btnNonAdapt} }" press=".switchToAdaptionMode" />
+			</headerContent>
+			<content>
+				<uxap:ObjectPageLayout id="ObjectPageLayout">
+					<uxap:headerTitle>
+						<uxap:ObjectPageHeader id="obheader0" objectTitle="{VMTitle}" objectSubtitle="{VMSubtitle}" objectImageURI="">
+							<uxap:navigationBar>
 								<Bar>
+									<contentLeft>
+										<Button text="Personalization Changes" press=".createChanges" ariaDescribedBy="defaultButtonDescription genericButtonDescription" />
+									</contentLeft>
 									<contentRight>
-										<vm:VariantManagement id="variantManagementContained" for="ObjectPageSubSectionWithVM" updateVariantInURL="true"></vm:VariantManagement>
+										<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout" updateVariantInURL="true" />
 									</contentRight>
 								</Bar>
-								<html:div style="height:auto;min-height:4em;min-width:100%;background-color:#A9EAFF;line-height:2em;display:inline-grid">
-									<Title id = "TitleForVM1" text="{to_EntityType01Nav/NavTitle01}"></Title>
-									<Title id = "TitleForVM2" text="{to_EntityType01Nav/NavTitle02}"></Title>
-								</html:div>
-							</l:Grid>
-						</uxap:ObjectPageSubSection>
-					</uxap:ObjectPageSection>
+							</uxap:navigationBar>
+						</uxap:ObjectPageHeader>
+					</uxap:headerTitle>
+					<uxap:sections>
+						<uxap:ObjectPageSection id="ObjectPageSectionWithForm">
+							<uxap:ObjectPageSubSection  id="ObjectPageSubSectionWithForm" title="{SubSectionTitle1}">
+								<form:SimpleForm class="sapUiSmallMargin"
+												title="Simple Form bound to EntityType02" id="MainForm"
+												maxContainerCols="3"
+												editable="true"
+												adjustLabelSpan="false"
+												layout="ResponsiveGridLayout"
+												labelSpanXL="4"
+												labelSpanL="4"
+												labelSpanM="4"
+												emptySpanXL="0"
+												emptySpanL="0"
+												emptySpanM="0"
+												columnsXL="3"
+												columnsL="2"
+												columnsM="2"
+												singleContainerFullSize="false">
+									<form:content>
+										<core:Title id="EntityType02.Title1" text="EntityType02 Title 1" />
+										<Label id="EntityType02.Label1" text="{/#EntityType02/EntityType02_Property01/@sap:label}" />
+										<Text id="EntityType02.Text1" text="{EntityType02_Property01}" />
+										<Label id="EntityType02.Label2" text="{/#EntityType02/EntityType02_Property02/@sap:label}" />
+										<Text id="EntityType02.Text2" text="{EntityType02_Property02}" />
 
-				</uxap:sections>
-			</uxap:ObjectPageLayout>
+										<core:Title id="EntityType02.Title2" text="EntityType02 Title 2 Complex" />
+										<Label id="EntityType02.Label3" text="{/#EntityType02/EntityType02_Complex/ComplexProperty01/@sap:label}" />
+										<Text id="EntityType02.Text3" text="{EntityType02_Complex/ComplexProperty01}" />
+										<Label id="EntityType02.Label4" text="{/#EntityType02/EntityType02_Complex/ComplexProperty02/@sap:label}" />
+										<Text id="EntityType02.Text4" text="{EntityType02_Complex/ComplexProperty02}" />
+									</form:content>
+								</form:SimpleForm>
+							</uxap:ObjectPageSubSection>
+						</uxap:ObjectPageSection>
 
-		</content>
-	</Page>
+						<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="{SectionTitle2}">
+							<uxap:ObjectPageSubSection>
+								<form:SimpleForm title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
+												maxContainerCols="3"
+												editable="true"
+												adjustLabelSpan="false"
+												layout="ResponsiveGridLayout"
+												labelSpanXL="4"
+												labelSpanL="4"
+												labelSpanM="4"
+												emptySpanXL="0"
+												emptySpanL="0"
+												emptySpanM="0"
+												columnsXL="3"
+												columnsL="2"
+												columnsM="2"
+												singleContainerFullSize="false">
+									<form:content>
+										<core:Title id="NavTitle1" text="Navigation Title 1" />
+										<Label id="NavProperty.Label1" text="{/#EntityTypeNav/NavProperty/@sap:label}" />
+										<Text id="NavProperty.Text1" text="{to_EntityType01Nav/NavProperty}" />
+										<Label id="NavProperty.Label2" text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
+										<Text id="NavProperty.Text2" text="{to_EntityType01Nav/EntityTypeNav_Property01}" />
+
+										<core:Title id="NavTitle2" text="Navigation Title 2" />
+										<Label id="NavProperty.Label3" text="{/#EntityType01/Property01/@sap:label}" />
+										<Text id="NavProperty.Text3" text="{Property01}" />
+										<Label id="NavProperty.Label4" text="{/#EntityType01/Property02/@sap:label}" />
+										<Text id="NavProperty.Text4" text="{Property02}" />
+									</form:content>
+								</form:SimpleForm>
+							</uxap:ObjectPageSubSection>
+							<uxap:ObjectPageSubSection>
+								<form:Form id="FormDisplay480_12120-2" editable="true">
+									<form:title>
+										<core:Title text="Form" />
+									</form:title>
+									<form:layout>
+										<form:ResponsiveGridLayout
+											labelSpanXL="4"
+											labelSpanL="4"
+											labelSpanM="12"
+											labelSpanS="12"
+											adjustLabelSpan="false"
+											emptySpanXL="0"
+											emptySpanL="0"
+											emptySpanM="0"
+											emptySpanS="0"
+											columnsXL="2"
+											columnsL="2"
+											columnsM="1"
+											singleContainerFullSize="false" />
+									</form:layout>
+									<form:formContainers>
+										<form:FormContainer id="FormContainer1" title="Contact data">
+											<form:formElements>
+												<form:FormElement id ="FormElement1" label="Email">
+													<form:fields>
+														<Text id ="FormElement1.Text" text="john.doe@company.com" />
+													</form:fields>
+												</form:FormElement>
+												<form:FormElement id ="FormElement2" label="Tel.">
+													<form:fields>
+														<Text id ="FormElement2.Text" text="0815/123456" />
+													</form:fields>
+												</form:FormElement>
+												<form:FormElement id ="FormElement3" label="SMS">
+													<form:fields>
+														<Text id ="FormElement3.Text" text="Sms" />
+													</form:fields>
+												</form:FormElement>
+											</form:formElements>
+										</form:FormContainer>
+									</form:formContainers>
+								</form:Form>
+							</uxap:ObjectPageSubSection>
+						</uxap:ObjectPageSection>
+
+						<uxap:ObjectPageSection id="ObjectPageSectionWithSmartForm" title="{SectionTitle4}">
+							<uxap:ObjectPageSubSection>
+								<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
+									<smartForm:Group id="MainFormExpandable.FirstGroup" label="1. Group">
+										<smartForm:GroupElement label="One Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton" >
+											<TextArea id="textarea1" value="CreatedByUser" />
+										</smartForm:GroupElement>
+										<smartForm:GroupElement label="No-Bound-Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton34" >
+											<Button id="button1" text="buttonText 1" />
+											<TextArea id="textarea2" value="Some Text" />
+										</smartForm:GroupElement>
+										<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.UnboundButton" >
+											<Button id="button2" text="No Binding" />
+										</smartForm:GroupElement>
+									</smartForm:Group>
+									<smartForm:Group label="2. Group" id="MainFormExpandable.SecondGroup">
+										<smartForm:GroupElement label="Two Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
+											<Button id="button3" text="buttontext 2" />
+											<TextArea id="textarea3" value="Some Text" />
+										</smartForm:GroupElement>
+										<smartForm:GroupElement label="With/without stable ID" id="Dates.StableIDField">
+											<Input value="I have an ID" id="InputFieldWithID" />
+											<Input value="I have no ID" />
+										</smartForm:GroupElement>
+										<smartForm:GroupElement label="With horizontal layout inside" id="Dates.HorizontalLayoutInside">
+											<l:HorizontalLayout id="GroupElementHorizontalLayout">
+												<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+												<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
+											</l:HorizontalLayout>
+										</smartForm:GroupElement>
+									</smartForm:Group>
+								</smartForm:SmartForm>
+							</uxap:ObjectPageSubSection>
+						</uxap:ObjectPageSection>
+
+						<uxap:ObjectPageSection id="ObjectPageSectionWithVM" title="{SectionTitle3}">
+							<uxap:ObjectPageSubSection id="ObjectPageSubSectionWithVM">
+								<l:Grid hSpacing="0" defaultSpan="L12 M12 S12">
+									<Bar>
+										<contentRight>
+											<vm:VariantManagement id="variantManagementContained" for="ObjectPageSubSectionWithVM" updateVariantInURL="true" />
+										</contentRight>
+									</Bar>
+									<html:div style="height:auto;min-height:4em;min-width:100%;background-color:#A9EAFF;line-height:2em;display:inline-grid">
+										<Title id = "TitleForVM1" text="{to_EntityType01Nav/NavTitle01}" />
+										<Title id = "TitleForVM2" text="{to_EntityType01Nav/NavTitle02}" />
+									</html:div>
+								</l:Grid>
+							</uxap:ObjectPageSubSection>
+						</uxap:ObjectPageSection>
+					</uxap:sections>
+				</uxap:ObjectPageLayout>
+			</content>
+		</Page>
+	</App>
 </mvc:View>

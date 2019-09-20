@@ -36,7 +36,6 @@ sap.ui.define([
 			SmartLinkUtil.mockUShellServices();
 			this._setModels(this._startMockServer());
 			UIComponent.prototype.init.apply(this, arguments);
-			this.getRouter().initialize();
 		},
 
 		_startMockServer: function () {
