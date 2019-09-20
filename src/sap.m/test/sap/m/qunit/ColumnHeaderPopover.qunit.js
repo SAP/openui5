@@ -345,4 +345,47 @@ QUnit.test("ColumnPopoverSortItem", function(assert){
 	oPopover.destroy();
 });
 
+QUnit.test("item visibility", function(assert){
+	var oPopover = createCHP("test6");
+	var oItem1 = oPopover.getItems()[0];
+
+	var oButton = new Button({
+		text : "open columnHeaderPopover",
+		press: function(){
+			oPopover.openBy(this);
+		}
+	});
+
+	oButton.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	oPopover.openBy(oButton);
+	this.clock.tick(2000);
+
+	assert.equal(oPopover.getAggregation("_popover").$().find("button").length, 4, "Popover has 4 buttons");
+
+	oPopover.getAggregation("_popover").close();
+	this.clock.tick(2000);
+
+	oItem1.setVisible(true);
+
+	oPopover.openBy(oButton);
+	this.clock.tick(2000);
+
+	assert.equal(oPopover.getAggregation("_popover").$().find("button").length, 5, "Popover has 5 buttons");
+
+	oPopover.getAggregation("_popover").close();
+	this.clock.tick(2000);
+
+	oItem1.setVisible(false);
+
+	oPopover.openBy(oButton);
+	this.clock.tick(2000);
+
+	assert.equal(oPopover.getAggregation("_popover").$().find("button").length, 4, "Popover has 4 buttons");
+
+	oButton.destroy();
+	oPopover.destroy();
+});
+
 });
