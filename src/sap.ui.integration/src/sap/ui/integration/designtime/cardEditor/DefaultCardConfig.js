@@ -171,7 +171,7 @@ sap.ui.define(function () {
 			"array" : "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 			"parameters" : "sap/ui/integration/designtime/baseEditor/propertyEditor/parametersEditor/ParametersEditor"
 		},
-		"i18n" : "sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
+		"i18n" : "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 	};
 
 	return DefaultConfig;
