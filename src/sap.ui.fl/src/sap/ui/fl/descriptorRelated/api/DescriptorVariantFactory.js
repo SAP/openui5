@@ -179,7 +179,8 @@ sap.ui.define([
 		if (this._sTransportRequest) {
 		//set to URL-Parameter 'changelist', as done in LrepConnector
 			sRoute += '?changelist=' + this._sTransportRequest;
-		} else if (this._oSettings.isAtoEnabled() && LayerUtils.isCustomerDependentLayer(mMap.layer)) {
+		} else if (this._oSettings.isAtoEnabled() && this._skipIam && LayerUtils.isCustomerDependentLayer(mMap.layer)) {
+			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
 			sRoute += '?changelist=ATO_NOTIFICATION';
 		}
 		if (this._skipIam) {

@@ -752,17 +752,17 @@ sap.ui.define([
 							assert.equal(oUIChange.getDefinition().validAppVersions.creation, "1.0.0", "the app variant creation version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							assert.equal(oUIChange.getDefinition().namespace, "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
-							assert.equal(oUIChange.getRequest(), "ATO_NOTIFICATION", "the request has been set correctly");
+							assert.equal(oUIChange.getRequest(), "", "the request has been set correctly");
 							// Get the UI change to be saved to backend
 							var oChangePayload = fnSendBackendCall.secondCall.args[2];
-							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/?changelist=ATO_NOTIFICATION", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
+							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/changes/", "POST", oChangePayload, null), "then backend call is triggered with correct parameters");
 							// Get the app variant to be saved to backend
 							var oAppVariant = fnSendBackendCall.firstCall.args[2];
 							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION", "POST", oAppVariant), "then backend call is triggered with correct parameters");
+							assert.ok(fnSendBackendCall.calledWithExactly("/sap/bc/lrep/appdescr_variants/", "POST", oAppVariant), "then backend call is triggered with correct parameters");
 							assert.equal(ChangesController.getFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a UI change has been removed from the persistence");
 						});
 				});
