@@ -206,6 +206,24 @@ function($, Core, KeyCodes, QUtils, Device, XMLView) {
 		this.oObjectPage.getSections()[0].setVisible(true);
 	});
 
+	QUnit.test("Focus of stickyAnchorBar menu buttons", function (assert) {
+		var iSectionIndex = 7,
+			oAncorBar = getAnchorBar(),
+			oSectionAnchor = oAncorBar.getContent()[iSectionIndex];
+
+		oSectionAnchor.focus =  function fakeFn() {
+			// Check
+			assert.strictEqual(this.oObjectPage._bStickyAnchorBar, true, "anchorBar is snapped");
+		}.bind(this);
+
+		// Setup
+		// assert init state
+		assert.equal(oSectionAnchor.isA("sap.m.MenuButton"), true, "anchor is a menu button");
+
+		// Act
+		oSectionAnchor.getAggregation("_button").firePress();
+	});
+
 	QUnit.module("Section/Subsection", {
 		beforeEach: function (assert) {
 			var done = assert.async();
