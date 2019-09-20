@@ -6,6 +6,7 @@
 @_sap_m_Dialog_MarginHeight: 7%;
 @_sap_m_Dialog_BarHeight: 3rem;
 @_sap_m_Dialog_BarCompactHeight: 2.5rem;
+@_sap_m_Dialog_SubHeaderCompactHeight: 2.5rem;
 @_sap_m_Dialog_Padding: 1rem;
 @_sap_m_Dialog_InfoDesignBarHeight : 2rem;
 
@@ -146,13 +147,6 @@ html.sap-phone .sapMDialog {
 
 		.sapMTBSpacer {
 			display: none;
-		}
-
-		.sapMBtn {
-			-webkit-box-flex: 1; /* OLD - iOS 6-, Safari 3.1-6 */
-			-webkit-flex: 1; /* Chrome */
-			flex: 1;
-			min-width: 31%;
 		}
 	}
 }
@@ -348,7 +342,7 @@ html.sap-desktop .sapMDialog {
 		padding-top: @_sap_m_Dialog_BarCompactHeight;
 
 		&.sapMDialogWithSubHeader {
-			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_BarCompactHeight;
+			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_SubHeaderCompactHeight;
 
 			&.sapMDialog-NoHeader {
 				padding-top: @_sap_m_Dialog_BarCompactHeight;
@@ -384,11 +378,11 @@ html.sap-desktop .sapMDialog {
 		}
 
 		& header.sapMDialogSubHeader {
-			height: @_sap_m_Dialog_BarCompactHeight;
+			height: @_sap_m_Dialog_SubHeaderCompactHeight;
 			top: @_sap_m_Dialog_BarCompactHeight;
 
 			.sapMIBar {
-				height: @_sap_m_Dialog_BarCompactHeight;
+				height: @_sap_m_Dialog_SubHeaderCompactHeight;
 			}
 		}
 	}

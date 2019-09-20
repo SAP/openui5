@@ -9,6 +9,7 @@
 
 @_sap_m_Dialog_MarginHeight: 6%;
 @_sap_m_Dialog_BarHeight: 2.75rem;
+@_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
 
 // ==========================================================================
 // Variables
@@ -46,4 +47,31 @@
 
 .sapMDialogBeginButton, .sapMDialogEndButton {
 	min-width: 4rem;
+}
+
+// ==========================================================================
+// header, sub-header, footer
+// ==========================================================================
+
+.sapMDialog {
+	.sapMBarLeft,
+	.sapMBarPH {
+		padding-left: 1rem;
+	}
+
+	.sapMBarRight,
+	.sapMBarPH {
+		padding-right: 1rem;
+	}
+
+	.sapMTB {
+		padding: 0 1rem;
+	}
+}
+
+// buttons on phone must be to the right side (in LTR mode)
+html.sap-phone .sapMDialog {
+	& > footer .sapMFooter-CTX {
+		justify-content: flex-end;
+	}
 }
