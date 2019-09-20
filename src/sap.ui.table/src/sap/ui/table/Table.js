@@ -386,7 +386,19 @@ sap.ui.define([
 			columns : {type : "sap.ui.table.Column", multiple : true, singularName : "column", bindable : "bindable", dnd : { layout: "Horizontal" } },
 
 			/**
-			 * Rows of the Table
+			 * This aggregation is managed by the table itself. It can only be used with data binding, is read-only, and does not support templates or
+			 * factories.
+			 *
+			 * Rows are created and rendered only for a subset of the available data and reused for performance reasons. When scrolling, only the
+			 * binding contexts are updated to show the correct section of the data. This makes it possible to bind the rows to large data sets.
+			 * But you must not change rows and their children programmatically, as these changes might get lost when the table updates the rows
+			 * the next time. Also, properties must not be set to static values, as these would not change when scrolling.
+			 *
+			 * The cells of rows can be defined with the {@link sap.ui.table.Column#setTemplate template} aggregation of the columns in the
+			 * {@link sap.ui.table.Table#setColumns columns} aggregation of the table.
+			 * The actions of rows can be defined with the {@link sap.ui.table.Table#setRowActionTemplate rowActionTemplate} aggregation of the table.
+			 * Furthermore, row-specific settings can be defined with the {@link sap.ui.table.Table#setRowSettingsTemplate rowSettingsTemplate}
+			 * aggregation of the table.
 			 */
 			rows : {type : "sap.ui.table.Row", multiple : true, singularName : "row", bindable : "bindable", selector : "#{id}-tableCCnt", dnd : true},
 
