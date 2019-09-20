@@ -554,6 +554,49 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
+	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", function (assert) {
+		// Arrange
+		var oCore = sap.ui.getCore(),
+			oObjectStatus = new ObjectStatus({
+				icon: "sap-icon://status-inactive"
+			}),
+			$oInternalIcon;
+
+		oObjectStatus.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		$oInternalIcon = oObjectStatus._oImageControl.$();
+
+		// Assert
+		assert.strictEqual($oInternalIcon.attr("role"), "img", "Icon isn't decorative in icon-only ObjectStatus");
+		assert.strictEqual($oInternalIcon.attr("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ICON"),
+			"Icon has alternative text in icon-only ObjectStatus");
+
+		// Cleanup
+		oObjectStatus.destroy();
+	});
+
+	QUnit.test("Internal icon ARIA for non-icon-only ObjectStatus", function (assert) {
+		// Arrange
+		var oObjectStatus = new ObjectStatus({
+				icon: "sap-icon://status-inactive",
+				text: "Something"
+			}),
+			$oInternalIcon;
+
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$oInternalIcon = oObjectStatus._oImageControl.$();
+
+		// Assert
+		assert.strictEqual($oInternalIcon.attr("role"), "presentation", "Icon is decorative in non-icon-only ObjectStatus");
+		assert.notOk($oInternalIcon.attr("aria-label"), "Icon doesn't have alternative text in non-icon-only ObjectStatus");
+
+		// Cleanup
+		oObjectStatus.destroy();
+	});
+
 	QUnit.module("textDirection");
 
 	QUnit.test("Title and Text has dir set to LTR when Inherit", function (assert) {
