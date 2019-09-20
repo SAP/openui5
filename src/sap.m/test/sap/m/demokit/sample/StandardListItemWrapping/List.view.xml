@@ -4,6 +4,7 @@
 	xmlns="sap.m">
 	<List
 		id="myList"
+		mode="MultiSelect"
 		headerText="Wrapping texts"
 		items="{
 			path: '/names'
@@ -17,6 +18,7 @@
 				highlight="{highlight}"
 				info="{info}"
 				infoState="{highlight}"
+				type="Detail"
 				wrapping="true" />
 		</items>
 	</List>
