@@ -211,6 +211,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 			var oButton = new AccButton({
 				type: ButtonType.Transparent,
 				icon: IconPool.getIconURI("decline"),
+				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TABSTRIP_ITEM_CLOSE_BTN"),
 				tabIndex: "-1",
 				ariaHidden: "true"
 			}).addStyleClass(TabStripItem.CSS_CLASS_CLOSE_BUTTON);
