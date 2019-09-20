@@ -1054,12 +1054,13 @@ sap.ui.define([
 
 	/**
 	 * Upon Control's update, move it in the suitable collections and remove it from where it is not needed any more
-	 * @param oControl
 	 * @private
 	 */
-	OverflowToolbar.prototype._updateContentInfoInControlsCollections = function (oControl) {
-		this._removeContentFromControlsCollections(oControl);
-		this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+	OverflowToolbar.prototype._updateContentInfoInControlsCollections = function () {
+		this.getContent().forEach(function (oControl) {
+			this._removeContentFromControlsCollections(oControl);
+			this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+		}.bind(this));
 	};
 
 	/**
@@ -1112,7 +1113,7 @@ sap.ui.define([
 
 	OverflowToolbar.prototype.onLayoutDataChange = function (oEvent) {
 		this._resetAndInvalidateToolbar(true);
-		oEvent && this._updateContentInfoInControlsCollections(oEvent.srcControl);
+		oEvent && this._updateContentInfoInControlsCollections();
 	};
 
 	OverflowToolbar.prototype.addContent = function (oControl) {
@@ -1236,7 +1237,7 @@ sap.ui.define([
 			sParameterName;
 
 		// Move control in suitable collections if one of its properties has changed between the init and doLayout functions execution
-		this._updateContentInfoInControlsCollections(oSourceControl);
+		this._updateContentInfoInControlsCollections();
 
 		// Listening for property changes is turned off during layout recalculation to avoid infinite loops
 		if (!this._bListenForControlPropertyChanges) {

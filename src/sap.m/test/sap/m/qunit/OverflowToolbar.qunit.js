@@ -1490,6 +1490,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("Layout");
+
+	QUnit.test("Changing a control'с property does not change the order in controls' collections", function (assert) {
+		// Arrange
+		var aContent = getDefaultContent(),
+			oOverflowTB,
+			oLabel;
+
+		oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
+		oLabel = aContent[0];
+
+		// Act
+		oLabel.setText("New text");
+
+		// Assert
+		assert.strictEqual(oOverflowTB._aMovableControls.indexOf(oLabel), 0, "Labels is still on index 0 in movable controls collection");
+
+		// Clean-up
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("Changing a control property that affects control size(visibility) forces a recalculation of the layout", function (assert) {
 		var aContent = getDefaultContent(),
 				oOverflowTB,
