@@ -201,7 +201,7 @@ sap.ui.define([
 	 * @override
 	 */
 	FlexCommand.prototype.undo = function() {
-		var vControl = this.getElement() || this.getSelector();
+		var vControl = this.getElement() || JsControlTreeModifier.bySelector(this.getSelector());
 		var oChange = this.getPreparedChange();
 
 		return ChangesWriteAPI.revert({change: oChange, element: vControl});

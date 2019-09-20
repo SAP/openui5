@@ -733,82 +733,92 @@ sap.ui.define([
 	 */
 	FlexController.prototype._revertChange = function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
-		var sControlType = oModifier.getControlType(oControl);
-		var mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
 		var bStashed;
+		var sControlType;
 		var bIsCurrentlyApplied;
 		var oChangeHandler;
+		var mControl = {};
 
-		return this._getChangeHandler(oChange, mControl.controlType, mControl.control, oModifier)
-			.then(function(oReturnedChangeHandler) {
-				oChangeHandler = oReturnedChangeHandler;
-				// check change handler is revertible
-				var sMessage;
-				if (!oChangeHandler) {
-					sMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
-				} else if (!(typeof oChangeHandler.revertChange === "function")) {
-					sMessage = "No revert change function available to handle revert data for control type " + mControl.controlType;
+		return new Utils.FakePromise().then(function() {
+			if (!oControl) {
+				throw Error("A flexibility change tries to revert changes on a nonexistent control");
+			}
+
+			sControlType = oModifier.getControlType(oControl);
+			mControl = this._getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
+		}.bind(this))
+
+		.then(this._getChangeHandler.bind(this, oChange, mControl.controlType, mControl.control, oModifier))
+
+		.then(function(oReturnedChangeHandler) {
+			oChangeHandler = oReturnedChangeHandler;
+			// check change handler is revertible
+			var sMessage;
+			if (!oChangeHandler) {
+				sMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
+			} else if (!(typeof oChangeHandler.revertChange === "function")) {
+				sMessage = "No revert change function available to handle revert data for control type " + mControl.controlType;
+			}
+
+			if (sMessage) {
+				Log.error(sMessage);
+				oChange.markRevertFinished(new Error(sMessage));
+				return new Utils.FakePromise(false);
+			}
+
+			// The stashed control does not have custom data in Runtime,
+			// so we have to assume that it is stashed so we can perform the revert
+			if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl") {
+				bStashed = true;
+
+				// if we want to revert we also have to fake the revertData when it is not available
+				if (!oChange.getRevertData()) {
+					oChangeHandler.setChangeRevertData(oChange, false);
+				}
+			}
+
+			bIsCurrentlyApplied = oChange.isApplyProcessFinished();
+			if (!bIsCurrentlyApplied && oChange.hasApplyProcessStarted()) {
+				// wait for the change to be applied
+				return oChange.addPromiseForApplyProcessing()
+					.then(function(oResult) {
+						if (oResult && oResult.error) {
+							oChange.markRevertFinished(oResult.error);
+							throw Error(oResult.error);
+						}
+						return true;
+					});
+			}
+			return false;
+		})
+		.then(function(bPending) {
+			if (bPending || (!bPending && bIsCurrentlyApplied) || bStashed) {
+				// if the change has no revertData attached to it they may be saved in the custom data
+				if (!oChange.getRevertData()) {
+					oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, oModifier));
 				}
 
-				if (sMessage) {
-					Log.error(sMessage);
-					oChange.markRevertFinished(new Error(sMessage));
-					return new Utils.FakePromise(false);
-				}
-
-				// The stashed control does not have custom data in Runtime,
-				// so we have to assume that it is stashed so we can perform the revert
-				if (oChange.getChangeType() === "stashControl" && sControlType === "sap.ui.core._StashedControl") {
-					bStashed = true;
-
-					// if we want to revert we also have to fake the revertData when it is not available
-					if (!oChange.getRevertData()) {
-						oChangeHandler.setChangeRevertData(oChange, false);
-					}
-				}
-
-				bIsCurrentlyApplied = oChange.isApplyProcessFinished();
-				if (!bIsCurrentlyApplied && oChange.hasApplyProcessStarted()) {
-					// wait for the change to be applied
-					return oChange.addPromiseForApplyProcessing()
-						.then(function(oResult) {
-							if (oResult && oResult.error) {
-								oChange.markRevertFinished(oResult.error);
-								throw Error(oResult.error);
-							}
-							return true;
-						});
-				}
-				return false;
-			})
-			.then(function(bPending) {
-				if (bPending || (!bPending && bIsCurrentlyApplied) || bStashed) {
-					// if the change has no revertData attached to it they may be saved in the custom data
-					if (!oChange.getRevertData()) {
-						oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, oModifier));
-					}
-
-					oChange.startReverting();
-					return oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
-				}
-				throw Error("Change was never applied");
-			})
-			.then(function() {
-				// After being unstashed the relevant control for the change is no longer sap.ui.core._StashedControl,
-				// therefore it must be retrieved again
-				mControl.control = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
-				if (mControl.bTemplateAffected) {
-					oModifier.updateAggregation(mControl.control, oChange.getContent().boundAggregation);
-				}
-				oChange.markRevertFinished();
-				return true;
-			})
-			.catch(function(oError) {
-				var sErrorMessage = "Change could not be reverted: " + oError.message;
-				Log.error(sErrorMessage);
-				oChange.markRevertFinished(sErrorMessage);
-				return false;
-			});
+				oChange.startReverting();
+				return oChangeHandler.revertChange(oChange, mControl.control, mPropertyBag);
+			}
+			throw Error("Change was never applied");
+		})
+		.then(function() {
+			// After being unstashed the relevant control for the change is no longer sap.ui.core._StashedControl,
+			// therefore it must be retrieved again
+			mControl.control = mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent, mPropertyBag.view);
+			if (mControl.bTemplateAffected) {
+				oModifier.updateAggregation(mControl.control, oChange.getContent().boundAggregation);
+			}
+			oChange.markRevertFinished();
+			return true;
+		})
+		.catch(function(oError) {
+			var sErrorMessage = "Change could not be reverted: " + oError.message;
+			Log.error(sErrorMessage);
+			oChange.markRevertFinished(sErrorMessage);
+			return false;
+		});
 	};
 
 	/**
