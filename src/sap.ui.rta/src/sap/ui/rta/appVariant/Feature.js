@@ -192,6 +192,7 @@ sap.ui.define([
 		},
 		/**
 		 * @param {boolean} bSaveAsTriggeredFromRtaToolbar - Boolean value which tells if 'Save As' is triggered from the UI adaptation header bar
+		 * @param {boolean} bCopyUnsavedChanges - Boolean value which tells if the UI changes needs to be copied
 		 * @param {string} sCurrentLayer - Current working layer
 		 * @param {Object} oSelectedAppVariant - Contains the selected app variant from app variant overview dialog
 		 * @returns {Promise} Resolved promise
@@ -199,10 +200,9 @@ sap.ui.define([
 		 * When 'Save As' triggered from the UI adaptation header bar, we set both flags <code>bSaveAsTriggeredFromRtaToolbar</code> and <code>bCopyUnsavedChanges</code> equal to <code>true</code>.
 		 * The flag <code>bCopyUnsavedChanges</code> is <code>true</code> if a key user presses 'Save As' from the running app entry in the app variant overview dialog.
 		 */
-		onSaveAs: function(bSaveAsTriggeredFromRtaToolbar, sCurrentLayer, oSelectedAppVariant) {
+		onSaveAs: function(bSaveAsTriggeredFromRtaToolbar, bCopyUnsavedChanges, sCurrentLayer, oSelectedAppVariant) {
 			var bIsS4HanaCloud;
 			var aAllInlineChanges = [];
-			var bCopyUnsavedChanges = false;
 			var oAppVariantSaveClosure;
 			var oDescriptor = fnGetDescriptor();
 
