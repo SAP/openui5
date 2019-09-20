@@ -73,7 +73,7 @@ sap.ui.define([
 			return sPath === "@sapui.name"
 				? vRef
 				: that.oModel.getProperty(sPath, that.oList[vRef]);
-		});
+		}, this.mNormalizeCache);
 		this.iLength = this.aIndices.length;
 	};
 

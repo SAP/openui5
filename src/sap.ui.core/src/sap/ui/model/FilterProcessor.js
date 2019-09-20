@@ -114,14 +114,27 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * @param {array} aData the data array to be filtered
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} vFilter the filter or array of filters
 	 * @param {function} fnGetValue the method to get the actual value to filter on
+	 * @param {object} [mNormalizeCache] cache for normalized filter values
 	 * @return {array} a new array instance containing the filtered data set
 	 * @private
 	 * @static
 	 */
-	FilterProcessor.apply = function(aData, vFilter, fnGetValue){
+	FilterProcessor.apply = function(aData, vFilter, fnGetValue, mNormalizeCache){
 		var oFilter = Array.isArray(vFilter) ? this.groupFilters(vFilter) : vFilter,
 			aFiltered,
 			that = this;
+
+		if (mNormalizeCache) {
+			if (!mNormalizeCache[true]) {
+				mNormalizeCache[true] = {};
+				mNormalizeCache[false] = {};
+			}
+		} else {
+			mNormalizeCache = {
+				"true": {}, "false": {}
+			};
+		}
+		this._normalizeCache = mNormalizeCache;
 
 		if (!aData) {
 			return [];
@@ -211,23 +224,30 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 */
 	FilterProcessor.normalizeFilterValue = function(oValue, bCaseSensitive){
 		if (typeof oValue == "string") {
+			var sResult;
 			if (bCaseSensitive === undefined) {
 				bCaseSensitive = false;
 			}
+			sResult = this._normalizeCache[bCaseSensitive][oValue];
+			if (sResult !== undefined) {
+				return sResult;
+			}
+			sResult = oValue;
 			if (!bCaseSensitive) {
 				// Internet Explorer and Edge cannot uppercase properly on composed characters
 				if (String.prototype.normalize && (Device.browser.msie || Device.browser.edge)) {
-					oValue = oValue.normalize("NFKD");
+					sResult = sResult.normalize("NFKD");
 				}
-				oValue = oValue.toUpperCase();
+				sResult = sResult.toUpperCase();
 			}
 
 			// use canonical composition as recommended by W3C
 			// http://www.w3.org/TR/2012/WD-charmod-norm-20120501/#sec-ChoiceNFC
 			if (String.prototype.normalize) {
-				oValue = oValue.normalize("NFC");
+				sResult = sResult.normalize("NFC");
 			}
-			return oValue;
+			this._normalizeCache[bCaseSensitive][oValue] = sResult;
+			return sResult;
 		}
 		if (oValue instanceof Date) {
 			return oValue.getTime();

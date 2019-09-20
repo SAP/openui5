@@ -113,6 +113,7 @@ sap.ui.define([
 			this.oCombinedFilter = null;
 			this.sDeepPath = oModel.resolveDeep(sPath, oContext);
 			this.bCanonicalRequest = mParameters && mParameters.bCanonicalRequest;
+			this.mNormalizeCache = {};
 
 			// check filter integrity
 			this.oModel.checkFilterOperation(this.aApplicationFilters);
@@ -1416,7 +1417,7 @@ sap.ui.define([
 		this.aKeys = FilterProcessor.apply(this.aAllKeys, this.oCombinedFilter, function(vRef, sPath) {
 			oContext = that.oModel.getContext('/' + vRef);
 			return that.oModel.getProperty(sPath, oContext);
-		});
+		}, this.mNormalizeCache);
 		this.iLength = this.aKeys.length;
 	};
 
