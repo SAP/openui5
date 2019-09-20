@@ -36,7 +36,15 @@
 				url: "./docs/api/api-index.json",
 				async:false,
 				success: function() {
-					window['sap-ui-documentation-config'].apiInfoRoot = "./test-resources";
+					window['sap-ui-documentation-config'].apiInfoRoot = "./test-resources/";
+				}
+			});
+			jQuery.ajax({
+				method: "HEAD",
+				url: "./docs/topics/index.json",
+				async:false,
+				success: function() {
+					window['sap-ui-documentation-config'].docuPath = "./docs/topics/";
 				}
 			});
 		}
