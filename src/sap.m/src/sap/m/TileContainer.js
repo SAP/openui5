@@ -844,7 +844,7 @@ function(
 			}, oTile);
 
 			var fnOnFocusIn = function(oEvent) {
-				var iIndex = that.indexOfAggregation("tiles", this),
+				var iIndex = that._getVisibleTiles().indexOf(this),
 					iExpectedPage = Math.floor(iIndex / that._iMaxTiles),
 					iPageDelta = iExpectedPage - that._oPagesInfo.getCurrentPage();
 
