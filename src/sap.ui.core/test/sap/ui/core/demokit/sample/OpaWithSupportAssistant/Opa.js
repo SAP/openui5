@@ -236,7 +236,7 @@ sap.ui.require([
 		Then.waitFor({
 			success: function () {
 				Opa5.assert.getReportAsFileInFormat({
-					fileName: "AppTestReport.json"
+					fileName: "AppTestReport.support-assistant.json"
 				});
 			}
 		});
