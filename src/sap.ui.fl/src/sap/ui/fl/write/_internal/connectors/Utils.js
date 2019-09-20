@@ -94,19 +94,19 @@ sap.ui.define([
 		 *
 		 * @param {object} oApplyConnector Corresponding apply connector which stores an existing X-CSRF token
 		 * @param {string} sTokenUrl The url to be called when new token fetching is necessary
-		 * @param {sap.ui.fl.Change[]} [aFlexObjects] Array of flexibility object to be stored
+		 * @param {object} [vFlexObjects] The content which is send to the server
 		 * @param {string} [sContentType] Content type of the request
 		 * @param {string} [sDataType] Expected data type of the response
 		 * @returns {object} Resolving with an object of options
 		 */
-		getRequestOptions: function (oApplyConnector, sTokenUrl, aFlexObjects, sContentType, sDataType) {
+		getRequestOptions: function (oApplyConnector, sTokenUrl, vFlexObjects, sContentType, sDataType) {
 			var oOptions = {
 				xsrfToken : oApplyConnector.xsrfToken,
 				tokenUrl : sTokenUrl,
 				applyConnector : oApplyConnector
 			};
-			if (aFlexObjects) {
-				oOptions.flexObjects = JSON.stringify(aFlexObjects);
+			if (vFlexObjects) {
+				oOptions.payload = JSON.stringify(vFlexObjects);
 			}
 			if (sContentType) {
 				oOptions.contentType = sContentType;
@@ -146,14 +146,6 @@ sap.ui.define([
 				}
 				throw oFirstError;
 			});
-		},
-
-
-		setTokenAndAddApplyConnector: function(mPropertyBag, mRoutes, ApplyConnector) {
-			mPropertyBag.tokenUrl = mPropertyBag.url + mRoutes.TOKEN;
-			mPropertyBag.xsrfToken = ApplyConnector.xsrfToken;
-			mPropertyBag.applyConnector = ApplyConnector;
-			return mPropertyBag;
 		},
 
 		/**

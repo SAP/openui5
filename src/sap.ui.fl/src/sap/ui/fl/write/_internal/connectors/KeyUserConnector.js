@@ -29,6 +29,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Write flex data into KeyUser service or update an existing an existing flex data stored in KeyUser service
+	 *
+	 * @param {object} mPropertyBag Property bag
+	 * @param {string} mPropertyBag.method POST for writing new data and PUT for update an existing data
+	 * @param {object[]} [mPropertyBag.flexObjects] Objects to be written (i.e. change definitions, variant definitions etc.)
+	 * @param {object} [mPropertyBag.flexObject] Object to be updated
+	 * @param {string} mPropertyBag.url Configured url for the connector
+	 * @private
+	 * @returns {Promise} Promise resolves as soon as the writing was completed
+	 */
+	var doWrite = function(mPropertyBag) {
+		//single update --> fileName needs to be in the url
+		if (mPropertyBag.flexObject) {
+			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
+		}
+		var sWriteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag);
+		delete mPropertyBag.fileName;
+		var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
+
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			sTokenUrl,
+			mPropertyBag.flexObjects || mPropertyBag.flexObject,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sWriteUrl, mPropertyBag.method, oRequestOption);
+	};
+
+	/**
 	 * Connector for saving and deleting data from SAPUI5 Flexibility KeyUser service.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.KeyUserConnector
@@ -96,23 +125,47 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
 		write:function (mPropertyBag) {
-			var sWriteUrl = ApplyUtils.getUrl(
-				API_VERSION + ROUTES.CHANGES,
-				mPropertyBag
-			);
+			mPropertyBag.method = "POST";
+			return doWrite(mPropertyBag);
+		},
 
-			var sTokenUrl = ApplyUtils.getUrl(
-				API_VERSION + ROUTES.SETTINGS,
-				mPropertyBag
-			);
+		/**
+		 * Update an existing flex data stored in KeyUser service.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object[]} mPropertyBag.flexObjects Objects to be written (i.e. change definitions, variant definitions etc.)
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @returns {Promise} Resolves as soon as the writing is completed without data
+		 */
+		update: function (mPropertyBag) {
+			mPropertyBag.method = "PUT";
+			return doWrite(mPropertyBag);
+		},
+
+		/**
+		 * Delete an existing flex data stored in KeyUser service.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object} mPropertyBag.flexObject Flex Object to be deleted
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @returns {Promise} Resolves as soon as the deletion is completed without data
+		 */
+		remove: function (mPropertyBag) {
+			var mParameters = {
+				namespace: mPropertyBag.flexObject.namespace
+			};
+			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
+			var sDeleteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag, mParameters);
+			delete mPropertyBag.fileName;
+			var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
 
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyConnector,
 				sTokenUrl,
-				mPropertyBag.flexObjects,
+				undefined,
 				"application/json; charset=utf-8", "json"
 			);
-			return WriteUtils.sendRequest(sWriteUrl, "POST", oRequestOption);
+			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		}
 	});
 

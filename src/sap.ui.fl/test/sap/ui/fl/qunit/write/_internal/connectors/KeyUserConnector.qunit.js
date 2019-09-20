@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(
 	sinon,
 	KeyUserConnector,
-	ApplyConenctor,
+	ApplyConnector,
 	ApplyUtils,
 	WriteUtils
 ) {
@@ -17,7 +17,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("KeyUserConnector write", {
+	QUnit.module("KeyUserConnector", {
 		beforeEach : function () {
 		},
 		afterEach: function() {
@@ -31,25 +31,61 @@ sap.ui.define([
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : ApplyConenctor.xsrfToken,
+					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/flex/keyuser/v1/settings",
-					applyConnector : ApplyConenctor,
+					applyConnector : ApplyConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
-					flexObjects : "[]"
+					payload : "[]"
 				}), "a send request with correct parameters and options is sent");
 			});
 		});
-	});
 
-	QUnit.module("KeyUserConnector reset", {
-		beforeEach : function () {
-		},
-		afterEach: function() {
-			WriteUtils.sendRequest.restore();
-			sandbox.restore();
-		}
-	}, function() {
+		QUnit.test("given a mock server, when update is triggered", function (assert) {
+			var oFlexObject = {
+				fileType: "change",
+				fileName: "myFileName"
+			};
+			var mPropertyBag = {url : "/flex/keyuser", flexObject : oFlexObject};
+			var sUrl = "/flex/keyuser/v1/changes/myFileName";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+			return KeyUserConnector.update(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/flex/keyuser/v1/settings",
+					applyConnector : ApplyConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json",
+					payload : JSON.stringify(oFlexObject)
+				}), "a send request with correct parameters and options is sent");
+			});
+		});
+
+		QUnit.test("given a mock server, when remove is triggered", function (assert) {
+			var oFlexObject = {
+				fileType: "variant",
+				fileName: "myFileName",
+				namespace: "myNamespace",
+				layer: "VENDOR"
+			};
+			var mPropertyBag = {
+				flexObject: oFlexObject,
+				url: "/flex/keyuser"
+			};
+			var sUrl = "/flex/keyuser/v1/changes/myFileName?namespace=myNamespace";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+
+			return KeyUserConnector.remove(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/flex/keyuser/v1/settings",
+					applyConnector : ApplyConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json"
+				}), "a send request with correct parameters and options is sent");
+			});
+		});
+
 		QUnit.test("given a mock server, when reset is triggered", function (assert) {
 			var mPropertyBag = {
 				url : "/flex/keyuser",
@@ -63,9 +99,9 @@ sap.ui.define([
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
 			return KeyUserConnector.reset(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyConenctor.xsrfToken,
+					xsrfToken : ApplyConnector.xsrfToken,
 					tokenUrl : "/flex/keyuser/v1/settings",
-					applyConnector : ApplyConenctor
+					applyConnector : ApplyConnector
 				}), "a send request with correct parameters and options is sent");
 			});
 		});
@@ -75,7 +111,7 @@ sap.ui.define([
 		beforeEach : function () {
 		},
 		afterEach: function() {
-			ApplyConenctor.xsrfToken = undefined;
+			ApplyConnector.xsrfToken = undefined;
 			ApplyUtils.sendRequest.restore();
 			sandbox.restore();
 		}
@@ -83,7 +119,7 @@ sap.ui.define([
 		QUnit.test("given a mock server, when write is triggered and the apply connectors xsrf token is outdated", function (assert) {
 			var newToken = "newToken456";
 
-			ApplyConenctor.xsrfToken = "oldToken123";
+			ApplyConnector.xsrfToken = "oldToken123";
 
 			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
 			oStubSendRequest.onCall(0).rejects({status : 403});
@@ -97,7 +133,7 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(1).args[0], "/flex/keyuser/v1/settings", "the second request has the correct url");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "HEAD", "the second request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(2).args[1], "POST", "the third request was a POST request");
-				assert.equal(ApplyConenctor.xsrfToken, newToken, "a new token was stored in the apply connector");
+				assert.equal(ApplyConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
 				assert.equal(oStubSendRequest.getCall(2).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});
@@ -105,7 +141,7 @@ sap.ui.define([
 		QUnit.test("given a mock server, when write is triggered and the apply connectors has no token", function (assert) {
 			var newToken = "newToken456";
 
-			ApplyConenctor.xsrfToken = undefined;
+			ApplyConnector.xsrfToken = undefined;
 
 			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
 			oStubSendRequest.onCall(0).resolves({xsrfToken : newToken});
@@ -117,7 +153,7 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "HEAD", "the first request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "POST", "the second request was a POST request");
-				assert.equal(ApplyConenctor.xsrfToken, newToken, "a new token was stored in the apply connector");
+				assert.equal(ApplyConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
 				assert.equal(oStubSendRequest.getCall(1).args[2].xsrfToken, newToken, "and the new token was used to resend the request");
 			});
 		});

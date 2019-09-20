@@ -108,6 +108,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} [mPropertyBag.reference] Flexibility reference
 		 * @param {string} [mPropertyBag.cacheKey] Cache-Buster token
+		 * @param {string} [mPropertyBag.fileName] Filename of an existing flex object
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
 		 * @private
@@ -125,6 +126,8 @@ sap.ui.define([
 			}
 			if (mPropertyBag.reference) {
 				sUrl += mPropertyBag.reference;
+			} else if (mPropertyBag.fileName) {
+				sUrl += mPropertyBag.fileName;
 			}
 
 			// Adding Query-Parameters to the Url
@@ -145,7 +148,7 @@ sap.ui.define([
 		 * @param {string} [sMethod="GET"] Desired action to be performed for a given resource
 		 * @param {object} [mPropertyBag] Object with parameters as properties
 		 * @param {string} [mPropertyBag.xsrfToken] Existing X-CSRF token of the connector which triggers the request
-		 * @param {string} [mPropertyBag.flexObjects] Payload of the request
+		 * @param {string} [mPropertyBag.payload] Payload of the request
 		 * @param {string} [mPropertyBag.contentType] Content type of the request
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
@@ -169,8 +172,8 @@ sap.ui.define([
 				if (mPropertyBag && mPropertyBag.dataType) {
 					xhr.responseType = mPropertyBag.dataType;
 				}
-				if (mPropertyBag && mPropertyBag.flexObjects) {
-					xhr.send(mPropertyBag.flexObjects);
+				if (mPropertyBag && mPropertyBag.payload) {
+					xhr.send(mPropertyBag.payload);
 				} else {
 					xhr.send();
 				}

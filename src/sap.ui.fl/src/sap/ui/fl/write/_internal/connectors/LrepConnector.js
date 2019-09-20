@@ -5,13 +5,17 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
+	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/Utils",
 	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
 	BaseConnector,
+	ApplyConnector,
 	ApplyUtils,
+	WriteUtils,
 	FlexUtils,
 	_pick
 ) {
@@ -20,8 +24,42 @@ sap.ui.define([
 	var ROUTES = {
 		FLEX_INFO: "/flex/info/",
 		PUBLISH: "/actions/make_changes_transportable/",
-		RESET: "/changes/",
+		CHANGES: "/changes/",
+		VARIANTS: "/variants/",
 		SETTINGS: "/flex/settings"
+	};
+
+	/**
+	 * Write flex data into LRep back end or update an existing an existing flex data stored in LRep back end
+	 *
+	 * @param {object} mPropertyBag Property bag
+	 * @param {string} mPropertyBag.method POST for writing new data and PUT for update an existing data
+	 * @param {object[]} [mPropertyBag.flexObjects] Objects to be written (i.e. change definitions, variant definitions etc.)
+	 * @param {object} [mPropertyBag.flexObject] Object to be updated
+	 * @param {string} mPropertyBag.url Configured url for the connector
+	 * @param {string} [mPropertyBag.transport] The transport ID
+	 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
+	 * @private
+	 * @returns {Promise} Promise resolves as soon as the writing was completed
+	 */
+	var doWrite = function(mPropertyBag) {
+		var sRoute = mPropertyBag.isLegacyVariant ? ROUTES.VARIANTS : ROUTES.CHANGES;
+		var mParameters = mPropertyBag.transport ? {changelist : mPropertyBag.transport} : undefined;
+		//single update --> fileName needs to be in the url
+		if (mPropertyBag.flexObject) {
+			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
+		}
+		var sWriteUrl = ApplyUtils.getUrl(sRoute, mPropertyBag, mParameters);
+		delete mPropertyBag.fileName;
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag);
+
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			sTokenUrl,
+			mPropertyBag.flexObjects || mPropertyBag.flexObject,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sWriteUrl, mPropertyBag.method, oRequestOption);
 	};
 
 	/**
@@ -71,7 +109,7 @@ sap.ui.define([
 			}
 
 			delete mPropertyBag.reference;
-			var sDataUrl = ApplyUtils.getUrl(ROUTES.RESET, mPropertyBag, mParameters);
+			var sDataUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl, "DELETE");
 		},
 
@@ -144,6 +182,70 @@ sap.ui.define([
 
 			var sFeaturesUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sFeaturesUrl);
+		},
+
+		/**
+		 * Write flex data into LRep back end; This method is called with a list of entities like changes, variants,
+		 * control variants, variant changes and variant management changes.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object[]} mPropertyBag.flexObjects Objects to be written (i.e. change definitions, variant definitions etc.)
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
+		 * @returns {Promise} Promise resolves as soon as the writing was completed
+		 */
+		write:function (mPropertyBag) {
+			mPropertyBag.method = "POST";
+			return doWrite(mPropertyBag);
+		},
+
+		/**
+		 * Update an existing flex data stored in LRep back end.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object} mPropertyBag.flexObject Flex Object to be updated
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @returns {Promise} Resolves as soon as the writing is completed without data
+		 */
+		update: function (mPropertyBag) {
+			if (mPropertyBag.flexObject.fileType === "variant") {
+				mPropertyBag.isLegacyVariant = true;
+			}
+			mPropertyBag.method = "PUT";
+			return doWrite(mPropertyBag);
+		},
+
+		/**
+		 * Delete an existing flex data stored in LRep back end.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {object} mPropertyBag.flexObject Flex Object to be deleted
+		 * @param {string} [mPropertyBag.transport] The transport ID
+		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @returns {Promise} Resolves as soon as the deletion is completed without data
+		 */
+		remove: function (mPropertyBag) {
+			var mParameters = {
+				namespace: mPropertyBag.flexObject.namespace,
+				layer: mPropertyBag.flexObject.layer
+			};
+			if (mPropertyBag.transport) {
+				mParameters.changelist = mPropertyBag.transport;
+			}
+			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
+			var sDeleteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+			delete mPropertyBag.fileName;
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag);
+
+			var oRequestOption = WriteUtils.getRequestOptions(
+				ApplyConnector,
+				sTokenUrl,
+				undefined,
+				"application/json; charset=utf-8", "json"
+			);
+			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		}
 	});
 
