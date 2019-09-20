@@ -66,7 +66,6 @@ sap.ui.define([
 	 * Connector for requesting data from an LRep-based back end.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.LrepConnector
-	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
 	 * @private
