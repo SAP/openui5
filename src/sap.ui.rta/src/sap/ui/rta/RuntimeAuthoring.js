@@ -987,7 +987,7 @@ function(
 					modeChange: this._onModeChange.bind(this),
 					manageApps: RtaAppVariantFeature.onGetOverview.bind(null, true, this.getLayer()),
 					appVariantOverview: this._onGetAppVariantOverview.bind(this),
-					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, this.getLayer(), null)
+					saveAs: RtaAppVariantFeature.onSaveAs.bind(null, true, true, this.getLayer(), null)
 				}), 'toolbar');
 			}
 

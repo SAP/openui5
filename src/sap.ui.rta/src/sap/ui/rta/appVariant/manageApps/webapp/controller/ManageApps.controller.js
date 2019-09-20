@@ -221,7 +221,7 @@ sap.ui.define([
 			BusyIndicator.show();
 			return AppVariantOverviewUtils.getDescriptor(sDescriptorUrl).then(function(oAppVariantDescriptor) {
 				BusyIndicator.hide();
-				return RtaAppVariantFeature.onSaveAs(false, _sLayer, oAppVariantDescriptor);
+				return RtaAppVariantFeature.onSaveAs(false, false, _sLayer, oAppVariantDescriptor);
 			});
 		},
 

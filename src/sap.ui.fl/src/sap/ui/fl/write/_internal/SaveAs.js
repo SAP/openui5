@@ -257,10 +257,8 @@ sap.ui.define([
 				.then(function(oTransportInfo) {
 					// Sets the transport info for app variant
 					if (oTransportInfo) {
-						if (oTransportInfo.transport && oTransportInfo.packageName !== "$TMP") {
-							if (oTransportInfo.transport) {
-								return oAppVariantClosure.setTransportRequest(oTransportInfo.transport);
-							}
+						if (oTransportInfo.transport) {
+							return oAppVariantClosure.setTransportRequest(oTransportInfo.transport);
 						}
 						return oTransportInfo;
 					}
