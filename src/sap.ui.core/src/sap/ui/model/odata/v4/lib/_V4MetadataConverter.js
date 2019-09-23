@@ -45,6 +45,7 @@ sap.ui.define([
 			oOperation = {
 				$kind : sKind
 			},
+			aOverloads,
 			oParametersCollection,
 			sQualifiedName = this.namespace + oElement.getAttribute("Name"),
 			sSignature = "",
@@ -70,7 +71,12 @@ sap.ui.define([
 			"EntitySetPath" : this.setValue,
 			"IsComposable" : this.setIfTrue
 		});
-		this.getOrCreateArray(this.result, sQualifiedName).push(oOperation);
+		aOverloads = this.getOrCreateArray(this.result, sQualifiedName);
+		if (!Array.isArray(aOverloads)) {
+			aOverloads = []; // overwrite old value, "last one wins" in case of duplicate names
+			this.addToResult(sQualifiedName, aOverloads);
+		}
+		aOverloads.push(oOperation);
 		this.oOperation = oOperation;
 
 		if (oOperation.$IsBound) {
@@ -124,10 +130,9 @@ sap.ui.define([
 	V4MetadataConverter.prototype.processEntityContainer = function (oElement) {
 		var sQualifiedName = this.namespace + oElement.getAttribute("Name");
 
-		this.result[sQualifiedName] = this.entityContainer = {
-			"$kind" : "EntityContainer"
-		};
-		this.result.$EntityContainer = sQualifiedName;
+		this.entityContainer = {"$kind" : "EntityContainer"};
+		this.addToResult(sQualifiedName, this.entityContainer);
+		this.addToResult("$EntityContainer", sQualifiedName);
 		this.annotatable(sQualifiedName);
 	};
 
@@ -198,7 +203,8 @@ sap.ui.define([
 			}
 		});
 
-		this.result[sQualifiedName] = this.enumType = oEnumType;
+		this.enumType = oEnumType;
+		this.addToResult(sQualifiedName, oEnumType);
 		this.enumTypeMemberCounter = 0;
 		this.annotatable(sQualifiedName);
 	};
@@ -335,9 +341,8 @@ sap.ui.define([
 	 */
 	V4MetadataConverter.prototype.processSchema = function (oElement) {
 		this.namespace = oElement.getAttribute("Namespace") + ".";
-		this.result[this.namespace] = this.schema = {
-			"$kind" : "Schema"
-		};
+		this.schema = {"$kind" : "Schema"};
+		this.addToResult(this.namespace, this.schema);
 		this.annotatable(this.schema);
 	};
 
@@ -377,7 +382,7 @@ sap.ui.define([
 		});
 		this.processFacetAttributes(oElement, oTerm);
 
-		this.result[sQualifiedName] = oTerm;
+		this.addToResult(sQualifiedName, oTerm);
 		this.annotatable(sQualifiedName);
 	};
 
@@ -400,7 +405,8 @@ sap.ui.define([
 			}
 		});
 
-		this.result[sQualifiedName] = this.type = oType;
+		this.type = oType;
+		this.addToResult(sQualifiedName, oType);
 		this.annotatable(sQualifiedName);
 	};
 
@@ -433,7 +439,7 @@ sap.ui.define([
 				"$UnderlyingType" : oElement.getAttribute("UnderlyingType")
 			};
 
-		this.result[sQualifiedName] = oTypeDefinition;
+		this.addToResult(sQualifiedName, oTypeDefinition);
 		this.processFacetAttributes(oElement, oTypeDefinition);
 		this.annotatable(sQualifiedName);
 	};

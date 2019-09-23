@@ -5,9 +5,12 @@
 //Provides class sap.ui.model.odata.v4.lib._MetadataConverter
 sap.ui.define([
 	"./_Helper",
+	"sap/base/Log",
 	"sap/ui/performance/Measurement"
-], function (_Helper, Measurement) {
+], function (_Helper, Log, Measurement) {
 	"use strict";
+
+	var sClassName = "sap.ui.model.odata.v4.lib._MetadataConverter";
 
 	/**
 	 * Creates the base class for the metadata converters.
@@ -37,6 +40,22 @@ sap.ui.define([
 	// namespaces
 	MetadataConverter.prototype.sEdmNamespace = "http://docs.oasis-open.org/odata/ns/edm";
 	MetadataConverter.prototype.sEdmxNamespace = "http://docs.oasis-open.org/odata/ns/edmx";
+
+	/**
+	 * Adds a name/value pair with the given qualified name and given value to the result. Warns
+	 * about duplicate names.
+	 *
+	 * @param {string} sQualifiedName
+	 *   Qualified name
+	 * @param {any} vValue
+	 *   Value
+	 */
+	MetadataConverter.prototype.addToResult = function (sQualifiedName, vValue) {
+		if (sQualifiedName in this.result) {
+			Log.warning("Duplicate qualified name " + sQualifiedName, undefined, sClassName);
+		}
+		this.result[sQualifiedName] = vValue;
+	};
 
 	/**
 	 * This function is called by each annotatable entity to define a place for the

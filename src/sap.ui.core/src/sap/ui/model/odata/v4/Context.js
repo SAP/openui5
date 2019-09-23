@@ -4,12 +4,11 @@
 
 //Provides class sap.ui.model.odata.v4.Context
 sap.ui.define([
-	"./lib/_GroupLock",
 	"./lib/_Helper",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context"
-], function (_GroupLock, _Helper, Log, SyncPromise, BaseContext) {
+], function (_Helper, Log, SyncPromise, BaseContext) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.Context",
@@ -262,7 +261,7 @@ sap.ui.define([
 			throw new Error("Cannot delete due to pending changes");
 		}
 
-		oGroupLock = this.oBinding.lockGroup(sGroupId, true);
+		oGroupLock = this.oBinding.lockGroup(sGroupId, true, true);
 
 		return this._delete(oGroupLock).then(function () {
 			var sResourcePathPrefix = that.sPath.slice(1);
@@ -991,7 +990,7 @@ sap.ui.define([
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw new Error("Not a primitive value");
 		}
-		oGroupLock = this.oModel.lockGroup(sGroupId || this.getUpdateGroupId(), true);
+		oGroupLock = this.oModel.lockGroup(sGroupId || this.getUpdateGroupId(), this, true, true);
 
 		return this.doSetProperty(sPath, vValue, oGroupLock, true).catch(function (oError) {
 				oGroupLock.unlock(true);

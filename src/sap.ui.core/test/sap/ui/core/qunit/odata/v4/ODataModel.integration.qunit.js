@@ -319,8 +319,8 @@ sap.ui.define([
 				this.oView.destroy();
 			}
 			if (this.oModel) {
-				if (this.oModel.aLockedGroupLocks) {
-					iLocks = this.oModel.aLockedGroupLocks.filter(function (oGroupLock) {
+				if (this.oModel.oRequestor.aLockedGroupLocks) {
+					iLocks = this.oModel.oRequestor.aLockedGroupLocks.filter(function (oGroupLock) {
 						if (oGroupLock.isLocked()) {
 							assert.ok(false, "GroupLock remained: " + oGroupLock);
 
@@ -980,7 +980,7 @@ sap.ui.define([
 				});
 			}
 
-			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
+			// A wrapper for _Requestor#lockGroup that attaches a stack trace to the lock
 			function lockGroup() {
 				var oError,
 					oLock = fnLockGroup.apply(this, arguments);
@@ -1003,8 +1003,8 @@ sap.ui.define([
 					.atLeast(0).callsFake(checkBatch);
 				this.mock(Object.getPrototypeOf(this.oModel.oRequestor)).expects("sendRequest")
 					.atLeast(0).callsFake(checkRequest);
-				fnLockGroup = this.oModel.lockGroup;
-				this.oModel.lockGroup = lockGroup;
+				fnLockGroup = this.oModel.oRequestor.lockGroup;
+				this.oModel.oRequestor.lockGroup = lockGroup;
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 
@@ -1627,6 +1627,52 @@ sap.ui.define([
 		},
 		{name : "Frederic Fall", category : ["Electronics", "Furniture"]}
 	);
+
+	//*********************************************************************************************
+	// Scenario: Rebind a table that uses the cache of the form, so that a list binding is created
+	// for which the data is already available in the cache. Ensure that it does not deliver the
+	// contexts in getContexts for the initial refresh event, but fires an additional change event.
+	// BCP: 1980383883
+	QUnit.test("Relative ODLB created on a cache that already has its data", function (assert) {
+		var sView = '\
+<FlexBox id="form"\
+		binding="{path : \'/TEAMS(\\\'1\\\')\', parameters : {$expand : \'TEAM_2_EMPLOYEES\'}}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', templateShareable : true}">\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			oTable,
+			that = this;
+
+		this.expectRequest("TEAMS('1')?$expand=TEAM_2_EMPLOYEES", {
+				TEAM_2_EMPLOYEES : [{
+					ID : "2",
+					Name : "Frederic Fall"
+				}]
+			})
+			.expectChange("name", ["Frederic Fall"]);
+
+		return this.createView(assert, sView).then(function () {
+			var oBindingInfo;
+
+			oTable = that.oView.byId("table");
+			oBindingInfo = oTable.getBindingInfo("items");
+			oTable.unbindAggregation("items");
+
+			assert.strictEqual(oTable.getItems().length, 0);
+
+			that.expectChange("name", ["Frederic Fall"]);
+
+			// code under test
+			oTable.bindItems(oBindingInfo);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 1);
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Function import.
@@ -20467,5 +20513,35 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// The application sets a custom header via model API and the following request contains the
+	// custom header. Note that the integration test framework only allows for observing headers for
+	// individual requests inside the $batch but not for the $batch itself.
+	QUnit.test("ODataModel#changeHttpHeaders", function (assert) {
+		var mHeaders = {Authorization : "Bearer xyz"},
+			oModel = createTeaBusiModel({groupId : "$auto", autoExpandSelect : true}),
+			sView = '<Text id="name" text="{/EMPLOYEES(0)/Name}" />',
+			that = this;
+
+		this.expectRequest("EMPLOYEES(0)/Name", {value : "Frederic Fall"})
+			.expectChange("name", "Frederic Fall");
+
+		return this.createView(assert, sView, oModel)
+			.then(function () {
+				that.expectRequest({
+						headers : mHeaders,
+						method: "GET",
+						url : "EMPLOYEES(0)/Name"
+					}, {value : "Frederic Fall"});
+
+				// code under test
+				oModel.changeHttpHeaders(mHeaders);
+
+				that.oView.byId("name").getBinding("text").refresh();
+
+				return that.waitForChanges(assert);
+			});
 	});
 });

@@ -115,6 +115,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * OData V4 request headers reserved for internal use.
+	 */
+	Requestor.prototype.mReservedHeaders = {
+		accept : true,
+		"accept-charset" : true,
+		"content-encoding" : true,
+		"content-id" : true,
+		"content-language" : true,
+		"content-length" : true,
+		"content-transfer-encoding" : true,
+		"content-type" : true,
+		"if-match" : true,
+		"if-none-match" : true,
+		isolation : true,
+		"odata-isolation" : true,
+		"odata-maxversion" : true,
+		"odata-version" : true,
+		prefer : true,
+		"sap-contextid" : true
+	};
+
+	/**
 	 * Adds a change set to the batch queue for the given group. All modifying requests created
 	 * until the next call to this method are added to this new change set.
 	 *
@@ -144,7 +166,8 @@ sap.ui.define([
 
 		if (this.getGroupSubmitMode(sGroupId) === "Direct") {
 			oChange.$resolve(
-				this.request(oChange.method, oChange.url, new _GroupLock(sGroupId),
+				this.request(oChange.method, oChange.url,
+					this.lockGroup(sGroupId, this, true, true),
 					oChange.headers, oChange.body, oChange.$submit, oChange.$cancel));
 		} else {
 			aRequests = this.getOrCreateBatchQueue(sGroupId);
@@ -333,6 +356,51 @@ sap.ui.define([
 			}
 		}
 		return bCanceled;
+	};
+
+	/**
+	 * Checks if there are open requests. Open requests are announced, pending, or running change
+	 * requests.
+	 *
+	 * @throws {Error}
+	 *   If there are open requests
+	 *
+	 * @public
+	 */
+	Requestor.prototype.checkForOpenRequests = function () {
+		var that = this;
+
+		if (Object.keys(this.mRunningChangeRequests).length // running change requests
+			|| Object.keys(this.mBatchQueue).some(function (sGroupId) { // pending requests
+				return that.mBatchQueue[sGroupId].some(function (vRequest) {
+					return Array.isArray(vRequest) ? vRequest.length : true;
+				});
+			})
+			|| this.aLockedGroupLocks.some(function (oGroupLock) { // announced requests
+				return oGroupLock.isLocked();
+			})) {
+			throw new Error("Unexpected open requests");
+		}
+	};
+
+	/**
+	 * Checks if the given headers are allowed.
+	 *
+	 * @param {object} mHeaders
+	 *   Map of HTTP header names to their values
+	 * @throws {Error}
+	 *   If <code>mHeaders</code> contains unsupported headers
+	 *
+	 * @public
+	 */
+	Requestor.prototype.checkHeaderNames = function (mHeaders) {
+		var sKey;
+
+		for (sKey in mHeaders) {
+			if (this.mReservedHeaders[sKey.toLowerCase()]) {
+				throw new Error("Unsupported header: " + sKey);
+			}
+		}
 	};
 
 	/**
@@ -990,23 +1058,8 @@ sap.ui.define([
 				var oRequestError = new Error(
 					"HTTP request was not processed because $batch failed");
 
-				/*
-				 * Rejects all given requests (recursively) with <code>oRequestError</code>.
-				 *
-				 * @param {object[]} aRequests
-				 */
-				function rejectAll(aRequests) {
-					aRequests.forEach(function (vRequest) {
-						if (Array.isArray(vRequest)) {
-							rejectAll(vRequest);
-						} else {
-							vRequest.$reject(oRequestError);
-						}
-					});
-				}
-
 				oRequestError.cause = oError;
-				rejectAll(aRequests);
+				reject(oRequestError, aRequests);
 				throw oError;
 			}).finally(function () {
 				that.batchResponseReceived(sGroupId, bHasChanges);
@@ -1039,19 +1092,23 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {object} oOwner
+	 *   The lock's owner for debugging
 	 * @param {boolean} [bLocked]
 	 *   Whether the created lock is locked
-	 * @param {object} [oOwner]
-	 *   The lock's owner for debugging
+	 * @param {boolean} [bModifying]
+	 *   Whether the reason for the group lock is a modifying request
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
+	 * @throws {Error}
+	 *   If <code>bModifying</code> is set but <code>bLocked</code> is unset.
 	 *
 	 * @public
 	 */
-	Requestor.prototype.lockGroup = function (sGroupId, bLocked, oOwner) {
+	Requestor.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying) {
 		var oGroupLock;
 
-		oGroupLock = new _GroupLock(sGroupId, bLocked, oOwner, this.getSerialNumber());
+		oGroupLock = new _GroupLock(sGroupId, oOwner, bLocked, bModifying, this.getSerialNumber());
 		if (bLocked) {
 			this.aLockedGroupLocks.push(oGroupLock);
 		}
@@ -1083,9 +1140,7 @@ sap.ui.define([
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
 				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 					method : "HEAD",
-					headers : {
-						"X-CSRF-Token" : "Fetch"
-					}
+					headers : Object.assign({}, that.mHeaders, {"X-CSRF-Token" : "Fetch"})
 				}).then(function (oData, sTextStatus, jqXHR) {
 					that.mHeaders["X-CSRF-Token"] = jqXHR.getResponseHeader("X-CSRF-Token");
 					that.oSecurityTokenPromise = null;

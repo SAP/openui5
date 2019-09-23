@@ -1952,14 +1952,19 @@ sap.ui.define([
 		var oBinding = new ODataBinding({
 				oModel : {lockGroup : function () {}}
 			}),
-			bLocked = {/*boolean*/};
+			oGroupLock = {},
+			bLocked = {/*boolean*/},
+			bModifying = {/*boolean*/};
 
 		this.mock(oBinding).expects("getGroupId").exactly(sGroupId ? 0 : 1)
 			.withExactArgs().returns("group");
 		this.mock(oBinding.oModel).expects("lockGroup")
-			.withExactArgs("group", sinon.match.same(bLocked), sinon.match.same(oBinding));
+			.withExactArgs("group", sinon.match.same(oBinding), sinon.match.same(bLocked),
+				sinon.match.same(bModifying))
+			.returns(oGroupLock);
 
-		oBinding.lockGroup(sGroupId, bLocked);
+		// code under test
+		assert.strictEqual(oBinding.lockGroup(sGroupId, bLocked, bModifying), oGroupLock);
 	});
 });
 
