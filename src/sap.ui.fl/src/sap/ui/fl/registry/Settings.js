@@ -113,7 +113,6 @@ sap.ui.define([
 		if (Settings._instance) {
 			return Promise.resolve(Settings._instance);
 		}
-
 		var oPromise = Cache.getFlexDataPromise();
 		if (oPromise) {
 			return oPromise.then(
@@ -121,8 +120,9 @@ sap.ui.define([
 					var oSettings = {};
 					if (oFileContent.changes && oFileContent.changes.settings) {
 						oSettings = oFileContent.changes.settings;
+						return Settings._storeInstance(oSettings);
 					}
-					return Settings._storeInstance(oSettings);
+					return Settings._loadSettings();
 				},
 				function () {
 					// In case /flex/data request failed, send /flex/settings as a fallback

@@ -262,8 +262,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with a failing connector", function (assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({test1 : "test1"});
-			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({test2 : "test2"});
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({isKeyUser : true});
+			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled : false});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
@@ -272,7 +272,16 @@ sap.ui.define([
 				{connector: "JsObjectConnector"}
 			]);
 
-			var oExpectedResponse = {test1: "test1", test2: "test2"};
+			var oExpectedResponse = {
+				isKeyUser: true,
+				isVariantSharingEnabled: false,
+				isAtoAvailable: false,
+				isAtoEnabled: false,
+				isProductiveSystem: true,
+				isZeroDowntimeUpgradeRunning: false,
+				system: "",
+				client: ""
+			};
 			var oLogResolveSpy = sandbox.spy(ApplyUtils, "logAndResolveDefault");
 
 			return Connector.loadFeatures().then(function (oResponse) {
@@ -314,12 +323,12 @@ sap.ui.define([
 				isKeyUser: true
 			});
 			sandbox.stub(JsObjectConnector, "loadFeatures").resolves({
-				someProperty: "foo"
+				system: "foo"
 			});
 
 			return Connector.loadFeatures().then(function (mFeatures) {
 				assert.equal(mFeatures.isKeyUser, true, "the property of the LrepConnector was added");
-				assert.equal(mFeatures.someProperty, "foo", "the property of the JsObjectConnector was added");
+				assert.equal(mFeatures.system, "foo", "the property of the JsObjectConnector was added");
 			});
 		});
 
@@ -336,8 +345,19 @@ sap.ui.define([
 				isProductiveSystem: true
 			});
 
+			var DEFAULT_FEATURES = {
+				isKeyUser: false,
+				isVariantSharingEnabled: false,
+				isAtoAvailable: false,
+				isAtoEnabled: false,
+				isProductiveSystem: true,
+				isZeroDowntimeUpgradeRunning: false,
+				system: "",
+				client: ""
+			};
+
 			return Connector.loadFeatures().then(function (mFeatures) {
-				assert.equal(Object.keys(mFeatures).length, 1, "only 1 feature was provided");
+				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 8 feature was provided");
 				assert.equal(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
 			});
 		});

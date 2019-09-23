@@ -218,6 +218,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/_internal/connectors/PersonalizationConnector"]
 				}
 			},
+			"write/_internal/connectors/ConnectorFeaturesMerger": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/connectors/ConnectorFeaturesMerger"]
+				}
+			},
 			"write/_internal/connectors/BrowserStorageConnector": {
 				group: "Write Internal",
 				coverage: {

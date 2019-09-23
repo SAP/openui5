@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/Utils"
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/ConnectorFeaturesMerger"
 ], function(
 	ApplyUtils,
-	WriteUtils
+	WriteUtils,
+	ConnectorFeaturesMerger
 ) {
 	"use strict";
 
@@ -156,7 +158,7 @@ sap.ui.define([
 	Connector.loadFeatures = function() {
 		return WriteUtils.getWriteConnectors()
 			.then(sendLoadFeaturesToConnector)
-			.then(WriteUtils.mergeResults);
+			.then(ConnectorFeaturesMerger.mergeResults);
 	};
 
 	return Connector;
