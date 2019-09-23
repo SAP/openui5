@@ -555,12 +555,11 @@ sap.ui.define([
 	["DELETE", "GET", "MERGE", "PATCH", "POST", "PUT"].forEach(function (sHttpMethod) {
 		QUnit.test("convert: FunctionImport, Method=" + sHttpMethod, function (assert) {
 			var sWhat = sHttpMethod !== "GET" ? "Action" : "Function",
-				sMethodAttribute = sHttpMethod ? ' m:HttpMethod="' + sHttpMethod + '"' : "",
 				sXml = '\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
 							<FunctionImport Name="Baz" ReturnType="Collection(Edm.String)"'
-									+ sMethodAttribute + '>\
+									+ ' m:HttpMethod="' + sHttpMethod + '">\
 								<Parameter Name="p1" Type="f.Bar" Nullable="false"/>\
 								<Parameter Name="p2" Type="Collection(f.Bar)" MaxLength="10"\
 									Precision="2" FixedLength="false"/>\
@@ -675,29 +674,29 @@ sap.ui.define([
 					</EntityType>\
 				</Schema>',
 			{
-				"$EntityContainer": "foo.Container",
-				"foo.": {
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
 					// Note: no "$Annotations"!
-					"$kind": "Schema"
+					"$kind" : "Schema"
 				},
 				"foo.Bar" : [{
 					"$kind" : "Function"
 				}],
-				"foo.SalesOrderLineItem": {
-					"$Key": [
+				"foo.SalesOrderLineItem" : {
+					"$Key" : [
 						"SalesOrderID",
 						"ItemPosition"
 					],
-					"$kind": "EntityType",
-					"ItemPosition": {
-						"$Nullable": false,
-						"$Type": "Edm.String",
-						"$kind": "Property"
+					"$kind" : "EntityType",
+					"ItemPosition" : {
+						"$Nullable" : false,
+						"$Type" : "Edm.String",
+						"$kind" : "Property"
 					},
-					"SalesOrderID": {
-						"$Nullable": false,
-						"$Type": "Edm.String",
-						"$kind": "Property"
+					"SalesOrderID" : {
+						"$Nullable" : false,
+						"$Type" : "Edm.String",
+						"$kind" : "Property"
 					}
 				},
 				"foo.SalesOrderLineItemAction" : [{
@@ -2329,6 +2328,107 @@ sap.ui.define([
 				$kind : "Schema",
 				"@Org.Odata.Core.V1.SchemaVersion" : "1"
 			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("duplicate schema children; last one wins", function (assert) {
+		var that = this;
+
+		[
+			"Duplicate qualified name duplicates.",
+			"Duplicate qualified name duplicates.ArtistsType",
+			"Duplicate qualified name duplicates.Address",
+			"Duplicate qualified name duplicates.GetDefaults",
+			"Duplicate qualified name duplicates.Container"
+		].forEach(function (sWarning) {
+			that.oLogMock.expects("warning").withExactArgs(sWarning, undefined,
+				"sap.ui.model.odata.v4.lib._MetadataConverter");
+		});
+
+		testConversion(assert, '\
+<Schema Namespace="duplicates"/>\
+<Schema Namespace="duplicates">\
+	<ComplexType Name="ArtistsType"/>\
+	<EntityType Name="ArtistsType">\
+		<Key>\
+			<PropertyRef Name="ArtistID"/>\
+			<PropertyRef Name="IsActiveEntity"/>\
+		</Key>\
+		<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>\
+		<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>\
+	</EntityType>\
+	<EntityType Name="Address"/>\
+	<ComplexType Name="Address">\
+		<Property Name="City" Type="Edm.String"/>\
+	</ComplexType>\
+	<ComplexType Name="GetDefaults"/>\
+	<ComplexType Name="Container"/>\
+	<EntityContainer Name="Container">\
+		<EntitySet Name="Artists" EntityType="duplicates.ArtistsType"/>\
+		<FunctionImport Name="GetDefaults" ReturnType="duplicates.ArtistsType" m:HttpMethod="GET">\
+			<Parameter Name="_it" Type="Collection(duplicates.ArtistsType)" Nullable="false"/>\
+		</FunctionImport>\
+	</EntityContainer>\
+</Schema>', {
+			"$EntityContainer" : "duplicates.Container",
+			"duplicates." : {
+				"$Annotations" : {
+					"duplicates.Container/Artists" : {
+						"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+							"Searchable" : false
+						}
+					}
+				},
+				"$kind" : "Schema"
+			},
+			"duplicates.Address" : {
+				"$kind" : "ComplexType",
+				"City" : {
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.ArtistsType" : {
+				"$Key" : [
+					"ArtistID",
+					"IsActiveEntity"
+				],
+				"$kind" : "EntityType",
+				"ArtistID" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.String",
+					"$kind" : "Property"
+				},
+				"IsActiveEntity" : {
+					"$Nullable" : false,
+					"$Type" : "Edm.Boolean",
+					"$kind" : "Property"
+				}
+			},
+			"duplicates.Container" : {
+				"$kind" : "EntityContainer",
+				"Artists" : {
+					"$Type" : "duplicates.ArtistsType",
+					"$kind" : "EntitySet"
+				},
+				"GetDefaults" : {
+					"$Function" : "duplicates.GetDefaults",
+					"$kind" : "FunctionImport"
+				}
+			},
+			"duplicates.GetDefaults" : [{
+				"$Parameter" : [{
+					"$Name" : "_it",
+					"$Nullable" : false,
+					"$Type" : "duplicates.ArtistsType",
+					"$isCollection" : true
+				}],
+				"$ReturnType" : {
+					"$Type" : "duplicates.ArtistsType"
+				},
+				"$kind" : "Function"
+			}]
 		});
 	});
 });

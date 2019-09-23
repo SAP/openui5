@@ -711,7 +711,7 @@ sap.ui.define([
 		}
 
 		if (this.vValue !== vValue) {
-			oGroupLock = that.lockGroup(sGroupId || this.getUpdateGroupId(), true);
+			oGroupLock = that.lockGroup(sGroupId || this.getUpdateGroupId(), true, true);
 			this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					reportError(new Error("Cannot set value on this binding as it is not relative"

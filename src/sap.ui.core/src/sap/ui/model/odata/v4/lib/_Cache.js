@@ -368,9 +368,9 @@ sap.ui.define([
 				}
 				that.removePendingRequest();
 				fnErrorCallback(oError);
-				return request(sPostPath, new _GroupLock(
+				return request(sPostPath, that.oRequestor.lockGroup(
 					that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
-						sPostGroupId : "$parked." + sPostGroupId));
+						sPostGroupId : "$parked." + sPostGroupId, that, true, true));
 			});
 		}
 
@@ -1165,7 +1165,7 @@ sap.ui.define([
 				 * this request has returned and its response is applied to the cache.
 				 */
 				function onSubmit() {
-					oRequestLock = that.oRequestor.lockGroup(sGroupId, true, that);
+					oRequestLock = that.oRequestor.lockGroup(sGroupId, that, true);
 					if (fnPatchSent) {
 						fnPatchSent();
 					}
@@ -1224,7 +1224,7 @@ sap.ui.define([
 					oRequestLock.unlock();
 					oRequestLock = undefined;
 
-					return patch(new _GroupLock(sRetryGroupId), true);
+					return patch(that.oRequestor.lockGroup(sRetryGroupId, that, true, true), true);
 				}).finally(function () {
 					if (oRequestLock) {
 						oRequestLock.unlock();
@@ -2322,7 +2322,7 @@ sap.ui.define([
 	 * @public
 	 */
 	SingleCache.prototype.post = function (oGroupLock, oData, oEntity) {
-		var sGroupId = oGroupLock.getGroupId(),
+		var sGroupId,
 			sHttpMethod = "POST",
 			that = this;
 
@@ -2337,6 +2337,7 @@ sap.ui.define([
 		}
 
 		if (oEntity) {
+			sGroupId = oGroupLock.getGroupId();
 			// Note: there should be only *one* parked PATCH per entity, but we don't rely on that
 			this.oRequestor.relocateAll("$parked." + sGroupId, sGroupId, oEntity);
 		}
