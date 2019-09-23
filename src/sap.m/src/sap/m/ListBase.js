@@ -1390,7 +1390,6 @@ function(
 
 	ListBase.prototype.onItemKeyDown = function (oItem, oEvent) {
 		if (!oEvent.shiftKey || this.getMode() !== ListMode.MultiSelect || !oItem.isSelectable()) {
-			this._mRangeSelection = null;
 			return;
 		}
 
