@@ -117,17 +117,22 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change object that should be reverted from the passed element
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Element instance on which the change should be reverted
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case, or FakePromise for the synchronous processing scenario
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} A resolved promise when the change was reverted successfully or unsuccessfully in asynchronous case, or FakePromise for synchronous processing scenario
 		 * @private
 		 * @ui5-restricted
 		 */
 		revert: function(mPropertyBag) {
-			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
+			var oAppComponent;
+			if (mPropertyBag.element instanceof Element) {
+				oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.element);
+			}
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
 			};
-			return ChangesController.getFlexControllerInstance(mPropertyBag.element)
+			// if the element is not present we just pass an empty object, so that revert will not throw an error
+			// and the status of the change will be updated
+			return ChangesController.getFlexControllerInstance(mPropertyBag.element || {})
 				._revertChange(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
 		}
 	};

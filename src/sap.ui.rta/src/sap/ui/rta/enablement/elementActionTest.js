@@ -230,12 +230,11 @@ function (
 		 * The original Change doesn't get deleted there, and therefore can't be applied again without this
 		 *
 		 * @param {sap.ui.rta.command.BaseCommand} oCommand Command whose change should be cleaned up
-		 * @returns {sap.ui.fl.Utils.FakePromise} Returns a FakePromise
 		 */
 		function cleanUpAfterUndo(oCommand) {
 			var oChange = oCommand.getPreparedChange();
 			if (oCommand.getAppComponent) {
-				return PersistenceWriteAPI.remove({change: oChange, selector: oCommand.getAppComponent()});
+				PersistenceWriteAPI.remove({change: oChange, selector: oCommand.getAppComponent()});
 			}
 		}
 

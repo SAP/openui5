@@ -264,14 +264,15 @@ function(
 	};
 
 	AppVariantUtils.removeChangesFromPersistence = function(aAllInlineChanges, oRootControl) {
-		aAllInlineChanges.forEach(function(oChange) {
-			return PersistenceWriteAPI.remove({
-				change: oChange,
-				selector: oRootControl
+		return Promise.resolve()
+			.then(function() {
+				aAllInlineChanges.forEach(function(oChange) {
+					PersistenceWriteAPI.remove({
+						change: oChange,
+						selector: oRootControl
+					});
+				});
 			});
-		});
-
-		return Promise.resolve();
 	};
 
 	AppVariantUtils.getTransportInput = function(sPackageName, sNameSpace, sName, sType) {

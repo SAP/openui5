@@ -275,7 +275,13 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		remove: function (mPropertyBag) {
+			if (!mPropertyBag.selector) {
+				throw new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId());
+			}
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			if (!oAppComponent) {
+				throw new Error("Invalid application component for selector, change could not be removed with id: " + mPropertyBag.change.getId());
+			}
 			// descriptor change
 			if (isDescriptorChange(mPropertyBag.change)) {
 				var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
@@ -283,9 +289,11 @@ sap.ui.define([
 				return;
 			}
 			var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
-			var oFlexController = ChangesController.getFlexControllerInstance(oElement);
+			var oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
 			// remove custom data for flex change
-			oFlexController._removeChangeFromControl(oElement, mPropertyBag.change, JsControlTreeModifier);
+			if (oElement) {
+				oFlexController._removeChangeFromControl(oElement, mPropertyBag.change, JsControlTreeModifier);
+			}
 			// delete from flex persistence map
 			oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
 		},
