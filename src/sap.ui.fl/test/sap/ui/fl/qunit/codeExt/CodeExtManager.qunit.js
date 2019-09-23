@@ -203,6 +203,7 @@ sap.ui.define([
 
 			var aExpectedPayload = [
 				{
+					appDescriptorChange: false,
 					fileName: sGeneratedId,
 					fileType: "change",
 					changeType: "codeExt",
@@ -238,6 +239,7 @@ sap.ui.define([
 					variantReference: ""
 				},
 				{
+					appDescriptorChange: false,
 					fileName: sGeneratedId,
 					fileType: "change",
 					changeType: "codeExt",
