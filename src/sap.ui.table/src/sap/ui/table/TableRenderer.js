@@ -614,6 +614,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			if (iIndex == mRowCounts.fixedTop - 1) {
 				rm.class("sapUiTableRowLastFixedTop");
 			}
+			if (iIndex == mRowCounts.fixedTop) {
+				rm.class("sapUiTableRowFirstScrollable");
+			}
 		}
 
 		if (iFirstFixedBottomRowIndex >= 0 && iFirstFixedBottomRowIndex === iIndex) {
