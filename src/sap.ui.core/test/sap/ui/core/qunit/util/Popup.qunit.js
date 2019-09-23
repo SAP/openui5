@@ -259,8 +259,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial Focus in non-modal mode, auto", function(assert) {
-		assert.expect(2);
-
 		var done = assert.async();
 		var fnOpened = function() {
 			this.oPopup.detachOpened(fnOpened, this);
@@ -284,11 +282,13 @@ sap.ui.define([
 
 
 	QUnit.test("Initial Focus in non-modal mode, set", function(assert) {
-		assert.expect(2);
-
 		var done = assert.async();
+		var oFocusedElement = document.getElementById("focusableElement2");
+
 		var fnOpened = function() {
 			this.oPopup.detachOpened(fnOpened, this);
+
+			assert.equal(oBlurSpy.callCount, 0, "The previous focused element isn't blurred");
 
 			assert.equal(this.oPopup.isOpen(), true, "Popup should be open after opening");
 			// initial focus should be on second element
@@ -302,20 +302,25 @@ sap.ui.define([
 			done();
 		};
 
+		var oBlurSpy = this.spy(oFocusedElement, "blur");
+		oFocusedElement.focus();
+
 		this.oPopup.attachOpened(fnOpened, this);
 		this.oPopup.attachClosed(fnClosed, this);
 		this.oPopup.setInitialFocusId("secondpopupcontent");
 		this.oPopup.open(50);
-		Core.applyChanges();
+
+		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
 	});
 
 
 	QUnit.test("Initial Focus in modal mode, auto", function(assert) {
-		assert.expect(3);
-
 		var done = assert.async();
+		var oFocusedElement = document.getElementById("focusableElement2");
 		var fnOpened = function() {
 			this.oPopup.detachOpened(fnOpened, this);
+
+			assert.equal(oBlurSpy.callCount, 0, "The previous focused element isn't blurred");
 
 			assert.equal(this.oPopup.isOpen(), true, "Popup should be open after opening");
 			// initial focus should be on first element
@@ -332,17 +337,46 @@ sap.ui.define([
 		this.oPopup.attachClosed(fnClosed, this);
 		this.oPopup.setModal(true);
 
-		jQuery.sap.domById("focusableElement2").focus();
+		var oBlurSpy = this.spy(oFocusedElement, "blur");
+		oFocusedElement.focus();
 
 		this.oPopup.open();
 
 		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
 	});
 
+	QUnit.test("Initial Focus in modal mode with no open animation, auto", function(assert) {
+		var done = assert.async();
+		var oFocusedElement = document.getElementById("focusableElement2");
+		var fnOpened = function() {
+			this.oPopup.detachOpened(fnOpened, this);
+
+			assert.equal(oBlurSpy.callCount, 0, "The previous focused element isn't blurred");
+
+			assert.equal(this.oPopup.isOpen(), true, "Popup should be open after opening");
+			// initial focus should be on first element
+			assert.equal(this.getFocusedElementId(), "popupcontent", "first popup content element should be focused");
+
+			this.oPopup.close();
+		};
+		var fnClosed = function() {
+			this.oPopup.detachClosed(fnClosed, this);
+			done();
+		};
+
+		this.oPopup.attachOpened(fnOpened, this);
+		this.oPopup.attachClosed(fnClosed, this);
+		this.oPopup.setModal(true);
+
+		var oBlurSpy = this.spy(oFocusedElement, "blur");
+		oFocusedElement.focus();
+
+		this.oPopup.open(0);
+
+		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+	});
 
 	QUnit.test("Initial Focus in modal mode, set", function(assert) {
-		assert.expect(2);
-
 		var done = assert.async();
 		var fnOpened = function() {
 			this.oPopup.detachOpened(fnOpened, this);
@@ -364,6 +398,37 @@ sap.ui.define([
 		this.oPopup.attachClosed(fnClosed, this);
 		this.oPopup.setInitialFocusId("secondpopupcontent");
 		this.oPopup.open();
+	});
+
+	QUnit.test("Initial Focus in autoclose mode, auto", function(assert) {
+		var done = assert.async();
+		var oFocusedElement = document.getElementById("focusableElement2");
+		var fnOpened = function() {
+			this.oPopup.detachOpened(fnOpened, this);
+
+			assert.equal(oBlurSpy.callCount, 0, "The previous focused element isn't blurred");
+
+			assert.equal(this.oPopup.isOpen(), true, "Popup should be open after opening");
+			// initial focus should be on first element
+			assert.equal(this.getFocusedElementId(), "popupcontent", "first popup content element should be focused");
+
+			this.oPopup.close();
+		};
+		var fnClosed = function() {
+			this.oPopup.detachClosed(fnClosed, this);
+			done();
+		};
+
+		this.oPopup.attachOpened(fnOpened, this);
+		this.oPopup.attachClosed(fnClosed, this);
+		this.oPopup.setAutoClose(true);
+
+		var oBlurSpy = this.spy(oFocusedElement, "blur");
+		oFocusedElement.focus();
+
+		this.oPopup.open();
+
+		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
 	});
 
 	QUnit.test("Check if focus is inside the Popup", function(assert) {
