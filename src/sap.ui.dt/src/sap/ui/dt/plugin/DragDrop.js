@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/Device"
 ],
 function(
 	BaseObject,
