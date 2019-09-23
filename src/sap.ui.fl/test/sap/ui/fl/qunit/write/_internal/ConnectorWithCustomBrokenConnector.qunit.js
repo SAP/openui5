@@ -10,14 +10,16 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/Connector",
 	"sap/ui/fl/apply/connectors/BaseConnector",
-	"my/lib/BrokenConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"my/lib/apply/BrokenConnector",
+	"sap/ui/fl/apply/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	sinon,
 	Connector,
 	BaseConnector,
 	BrokenConnector,
-	ConnectorUtils
+	ApplyUtils,
+	WriteUtils
 ) {
 	"use strict";
 
@@ -30,12 +32,20 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("given a custom connector is configured", function(assert) {
-			return ConnectorUtils.getApplyConnectors().then(function (aConnectors) {
+		QUnit.test("given a custom connector is configured when loading apply connectors", function(assert) {
+			return ApplyUtils.getApplyConnectors().then(function (aConnectors) {
 				assert.equal(aConnectors.length, 2, "two connectors are loaded");
 				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
-				assert.equal(aConnectors[1].connector, "my/lib/BrokenConnector", "the BrokenConnector is the second connector");
-				assert.equal(aConnectors[1].connectorModule.testCheckProperty, true, "the test property identifying the BrokenConnector is present");
+				assert.equal(aConnectors[1].applyConnector, "my/lib/apply/BrokenConnector", "the BrokenConnector is the second connector");
+				assert.equal(aConnectors[1].connectorModule.testApplyCheckProperty, true, "the test property identifying the BrokenConnector is present");
+			});
+		});
+
+		QUnit.test("given a custom connector is configured when loading write connectors", function(assert) {
+			return WriteUtils.getWriteConnectors().then(function (aConnectors) {
+				assert.equal(aConnectors.length, 1, "one connector is loaded");
+				assert.equal(aConnectors[0].writeConnector, "my/lib/write/BrokenConnector", "the BrokenConnector is the connector");
+				assert.equal(aConnectors[0].connectorModule.testWriteCheckProperty, true, "the test property identifying the BrokenConnector is present");
 			});
 		});
 
