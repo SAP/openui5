@@ -197,6 +197,16 @@ sap.ui.define([
 				fnGetContexts.reset();
 				oSelectionPlugin.addSelectionInterval(0, 5);
 			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				var oSelectionChangeSpy = sinon.spy();
+				oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+				oSelectionPlugin.addSelectionInterval(5, 5);
+				setTimeout(function () {
+					assert.ok(oSelectionChangeSpy.notCalled, "The selection is not changed because the index was already selected");
+					resolve();
+				}, 100);
+			});
 		});
 	});
 
@@ -331,6 +341,18 @@ sap.ui.define([
 					assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts is called with the correct parameters");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
 					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event is not fired");
+					resolve();
+				}, 100);
+			});
+		}).then(function() {
+			return new Promise(function(resolve) {
+				var oSelectionChangeSpy = sinon.spy();
+				oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
+				oSelectionPlugin.setSelectionInterval(9, 9);
+				setTimeout(function () {
+					assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts is called with the correct parameters");
+					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [9], "The correct index is selected");
+					assert.ok(oSelectionChangeSpy.calledOnce, "The selectionChange event is fired once");
 					resolve();
 				}, 100);
 			});

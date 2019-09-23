@@ -275,8 +275,10 @@ sap.ui.define([
 		// If the start index is already selected, the range starts from the next index.
 		if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom) && bAddSelection) {
 			if (!bReverse) {
-				iIndexFrom++;
-				iGetContextsStartIndex++;
+				if (iIndexFrom !== iIndexTo) {
+					iIndexFrom++;
+					iGetContextsStartIndex++;
+				}
 			} else {
 				iIndexFrom--;
 			}
