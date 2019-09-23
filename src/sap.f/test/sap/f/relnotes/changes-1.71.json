@@ -23,6 +23,23 @@
             "reference": "1980360992"
           }
         ]
+      },
+      {
+        "id": "9fa6c5a3867cf038855adbc470680baa167ffc0c",
+        "type": "FEATURE",
+        "text": " sap.f.GridDropInfo: Setting dimensions of the indicator is now possible",
+        "references": []
+      },
+      {
+        "id": "ed0d97a8750cd322e6723a53b343ae4e1463700b",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Hidden controls now don\u0027t take space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980391002"
+          }
+        ]
       }
     ]
   }
