@@ -63,6 +63,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * OData V2 request headers reserved for internal use.
+	 */
+	_V2Requestor.prototype.mReservedHeaders = {
+		accept : true,
+		"content-id" : true,
+		"content-transfer-encoding" : true,
+		"content-type" : true,
+		dataserviceversion : true,
+		"if-match" : true,
+		"if-none-match" : true,
+		maxdataserviceversion : true,
+		"sap-contextid" : true,
+		"x-http-method" : true
+	};
+
+	/**
 	 * Converts an OData V2 value {@link https://tools.ietf.org/html/rfc3548#section-3} of type
 	 * Edm.Binary to the corresponding OData V4 value
 	 * {@link https://tools.ietf.org/html/rfc4648#section-5}.

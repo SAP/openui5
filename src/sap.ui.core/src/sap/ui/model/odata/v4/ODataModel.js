@@ -64,6 +64,7 @@ sap.ui.define([
 			earlyRequests : true,
 			groupId : true,
 			groupProperties : true,
+			httpHeaders : true,
 			odataVersion : true,
 			operationMode : true,
 			serviceUrl : true,
@@ -110,6 +111,8 @@ sap.ui.define([
 	 *   group IDs having an object with exactly one property <code>submit</code>. Valid values are
 	 *   'API', 'Auto', 'Direct' see {@link sap.ui.model.odata.v4.SubmitMode}.
 	 *   Supported since 1.51.0
+	 * @param {object} [mParameters.httpHeaders]
+	 *   Map of HTTP header names to their values, see {@link #changeHttpHeaders}
 	 * @param {string} [mParameters.odataVersion="4.0"]
 	 *   The version of the OData service. Supported values are "2.0" and "4.0".
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
@@ -262,9 +265,12 @@ sap.ui.define([
 					}
 					this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
 
+					this.mHeaders = {"Accept-Language" : sLanguageTag};
+					this.mMetadataHeaders = {"Accept-Language" : sLanguageTag};
+
 					// BEWARE: do not share mHeaders between _MetadataRequestor and _Requestor!
 					this.oMetaModel = new ODataMetaModel(
-						_MetadataRequestor.create({"Accept-Language" : sLanguageTag}, sODataVersion,
+						_MetadataRequestor.create(this.mMetadataHeaders, sODataVersion,
 							this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
@@ -284,7 +290,8 @@ sap.ui.define([
 							},
 							reportBoundMessages : this.reportBoundMessages.bind(this),
 							reportUnboundMessages : this.reportUnboundMessages.bind(this)
-						}, {"Accept-Language" : sLanguageTag}, this.mUriParameters, sODataVersion);
+						}, this.mHeaders, this.mUriParameters, sODataVersion);
+					this.changeHttpHeaders(mParameters.httpHeaders);
 					if (mParameters.earlyRequests) {
 						this.oMetaModel.fetchEntityContainer(true);
 						this.initializeSecurityToken();
@@ -762,6 +769,81 @@ sap.ui.define([
 	};
 
 	/**
+	 * Changes the HTTP headers used for data and metadata requests sent by this model.
+	 *
+	 * If batch requests are used, the headers will be set for the batch itself, as well as for the
+	 * individual requests within the batch. The headers are changed according to the given map of
+	 * headers: Headers with an <code>undefined</code> value are removed, the other headers are set,
+	 * and missing headers remain unchanged. The following headers must not be used:
+	 * <ul>
+	 * <li> OData V4 requests headers as specified in "8.1 Common Headers" and
+	 *   "8.2 Request Headers" of the specification "OData Version 4.0 Part 1: Protocol"
+	 * <li> OData V2 request headers as specified in "2.2.5 HTTP Header Fields" of the specification
+	 *   "OData Version 2 v10.1"
+	 * <li> The headers "Content-Id" and "Content-Transfer-Encoding"
+	 * <li> The header "SAP-ContextId"
+	 * </ul>
+	 * Note: The "X-CSRF-Token" header will not be used for metadata requests.
+	 *
+	 * @param {object} [mHeaders]
+	 *   Map of HTTP header names to their values
+	 * @throws {Error}
+	 *   If <code>mHeaders</code> contains unsupported headers, the same header occurs more than
+	 *   once, the header values are not strings or undefined, or there are open requests.
+	 *
+	 * @public
+	 * @since 1.71.0
+	 */
+	ODataModel.prototype.changeHttpHeaders = function (mHeaders) {
+		var oHeaderCopy,
+			sHeaderName,
+			mHeadersCopy = {},
+			sHeaderValue,
+			sKey;
+
+		this.oRequestor.checkHeaderNames(mHeaders);
+		for (sKey in mHeaders) {
+			sHeaderName = sKey.toLowerCase();
+			sHeaderValue = mHeaders[sKey];
+			if (mHeadersCopy[sHeaderName]) {
+				throw new Error("Duplicate header " + sKey);
+			} else if (!(typeof sHeaderValue === "string" || sHeaderValue === undefined)) {
+				throw new Error("Unsupported value for header '" + sKey + "': " + sHeaderValue);
+			} else {
+				if (sHeaderName === "x-csrf-token") {
+					sKey = "X-CSRF-Token";
+				}
+				mHeadersCopy[sHeaderName] = {key : sKey, value: sHeaderValue};
+			}
+		}
+		this.oRequestor.checkForOpenRequests();
+
+		for (sKey in this.mHeaders) {
+			sHeaderName = sKey.toLowerCase();
+			oHeaderCopy = mHeadersCopy[sHeaderName];
+			if (oHeaderCopy) {
+				delete this.mHeaders[sKey];
+				delete this.mMetadataHeaders[sKey];
+				if (oHeaderCopy.value !== undefined) {
+					this.mHeaders[oHeaderCopy.key] = oHeaderCopy.value;
+					this.mMetadataHeaders[oHeaderCopy.key] = oHeaderCopy.value;
+				}
+				delete mHeadersCopy[sHeaderName];
+			}
+		}
+
+		for (sKey in mHeadersCopy) {
+			oHeaderCopy = mHeadersCopy[sKey];
+			if (oHeaderCopy.value !== undefined) {
+				this.mHeaders[oHeaderCopy.key] = oHeaderCopy.value;
+				if (sKey !== "x-csrf-token") {
+					this.mMetadataHeaders[oHeaderCopy.key] = oHeaderCopy.value;
+				}
+			}
+		}
+	};
+
+	/**
 	 * Checks whether the given group ID is valid (see {@link #checkGroupId}) and does not have
 	 * {@link sap.ui.model.odata.v4.SubmitMode.Direct}.
 	 *
@@ -914,8 +996,10 @@ sap.ui.define([
 	 */
 	// @override
 	ODataModel.prototype.destroy = function () {
-		this.oRequestor.destroy();
 		this.oMetaModel.destroy();
+		this.oRequestor.destroy();
+		this.mHeaders = undefined;
+		this.mMetadataHeaders = undefined;
 		return Model.prototype.destroy.apply(this, arguments);
 	};
 
@@ -1033,6 +1117,26 @@ sap.ui.define([
 			default:
 				throw new Error("Unsupported group property: '" + sPropertyName + "'");
 		}
+	};
+
+	/**
+	 * Returns a map of HTTP headers used for data and metadata requests.
+	 *
+	 * @returns {object}
+	 *   The map of HTTP headers
+	 *
+	 * @public
+	 * @since 1.71
+	 */
+	ODataModel.prototype.getHttpHeaders = function () {
+		var mHeadersCopy = Object.assign({}, this.mHeaders);
+
+		delete mHeadersCopy["SAP-ContextId"];
+		if (mHeadersCopy["X-CSRF-Token"] === null) { // no security token available
+			delete mHeadersCopy["X-CSRF-Token"];
+		}
+
+		return mHeadersCopy;
 	};
 
 	/**
@@ -1203,9 +1307,10 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.lib._Requestor#lockGroup}.
 	 *
 	 * The goal of such a lock is to allow using an API that creates a request in a batch group and
-	 * immediately calling {@link #submitBatch} for this group. In such cases the request has to be
-	 * sent with this submitBatch, even if the request is created later asynchronously. To achieve
-	 * this, the API function creates a lock that blocks submitBatch until the request is created.
+	 * immediately calling {@link #submitBatch} for this group. In such cases that request has to be
+	 * sent with the batch request triggered by {@link #submitBatch}, even if that request is
+	 * created later asynchronously. To achieve this, the API function creates a lock that blocks
+	 * the batch request until that request is created.
 	 *
 	 * For performance reasons it is possible to create a group lock that actually doesn't lock. All
 	 * non-API functions use this group lock instead of the group ID so that a lock is possible. But
@@ -1213,17 +1318,19 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {object} oOwner
+	 *   The lock's owner for debugging
 	 * @param {boolean} [bLocked]
 	 *   Whether the created lock is locked
-	 * @param {object} [oOwner]
-	 *   The lock's owner for debugging
+	 * @param {boolean} [bModifying]
+	 *   Whether the reason for the group lock is a modifying request
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.lockGroup = function (sGroupId, bLocked, oOwner) {
-		return this.oRequestor.lockGroup(sGroupId, bLocked, oOwner);
+	ODataModel.prototype.lockGroup = function (sGroupId, oOwner, bLocked, bModifying) {
+		return this.oRequestor.lockGroup(sGroupId, oOwner, bLocked, bModifying);
 	};
 
 	/**

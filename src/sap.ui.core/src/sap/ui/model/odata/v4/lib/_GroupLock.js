@@ -15,20 +15,32 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @param {object} oOwner
+	 *   The lock's owner for debugging
 	 * @param {boolean} [bLocked=false]
 	 *   Whether the lock is locked
-	 * @param {object} [oOwner]
-	 *   The lock's owner for debugging
+	 * @param {boolean} [bModifying]
+	 *   Whether the reason for the group lock is a modifying request
 	 * @param {number} [iSerialNumber=Infinity]
 	 *   A serial number which may be used on unlock
+	 * @throws {Error}
+	 *   If <code>oOwner</code> is missing, or if <code>bModifying</code> is set but
+	 *   <code>bLocked</code> is unset
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._GroupLock
 	 * @constructor
 	 * @private
 	 */
-	function _GroupLock(sGroupId, bLocked, oOwner, iSerialNumber) {
+	function _GroupLock(sGroupId, oOwner, bLocked, bModifying, iSerialNumber) {
+		if (!oOwner) {
+			throw new Error("Missing owner");
+		}
+		if (bModifying && !bLocked) {
+			throw new Error("A modifying group lock has to be locked");
+		}
 		this.sGroupId = sGroupId;
-		this.bLocked = !!bLocked; // whether it is locked; explicitely unlocked if undefined
+		this.bLocked = !!bLocked; // whether it is locked; explicitly unlocked if undefined
+		this.bModifying = !!bModifying; // whether this lock belongs to a modifying request
 		this.oOwner = oOwner;
 		this.oPromise = null; // the promise resolving when the lock is unlocked
 		this.iSerialNumber = iSerialNumber === undefined ? Infinity : iSerialNumber;
@@ -67,7 +79,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_GroupLock.prototype.getUnlockedCopy = function () {
-		return new _GroupLock(this.sGroupId, undefined, this.oOwner, this.iSerialNumber);
+		return new _GroupLock(this.sGroupId, this.oOwner, false, false, this.iSerialNumber);
 	};
 
 	/**
@@ -82,24 +94,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a string representation of this object including the lock status and the owner.
+	 * Whether this lock was issued for a modifying request.
 	 *
-	 * @returns {string} A string description of this lock
+	 * @returns {boolean}
+	 *   Whether this lock was issued for a modifying request
+	 *
+	 * @public
+	 */
+	_GroupLock.prototype.isModifying = function () {
+		return this.bModifying;
+	};
+
+	/**
+	 * Returns a string representation of this object.
+	 *
+	 * @returns {string} A string description of this group lock
 	 *
 	 * @public
 	 */
 	_GroupLock.prototype.toString = function () {
-		var sDescription = "sap.ui.model.odata.v4.lib._GroupLock("
-				+ (this.isLocked() ? "locked" : "unlocked")
-				+ ",group=" + this.sGroupId;
-
-		if (this.oOwner) {
-			sDescription += ",owner=" + this.oOwner;
-		}
-		if (this.iSerialNumber !== Infinity) {
-			sDescription += ",serialNumber=" + this.iSerialNumber;
-		}
-		return sDescription + ")";
+		return "sap.ui.model.odata.v4.lib._GroupLock(group=" + this.sGroupId
+			+ ", owner=" + this.oOwner
+			+ (this.isLocked() ? ", locked" : "")
+			+ (this.isModifying() ? ", modifying" : "")
+			+ (this.iSerialNumber !== Infinity ? ", serialNumber=" + this.iSerialNumber : "")
+			+ ")";
 	};
 
 	/**
@@ -151,7 +170,7 @@ sap.ui.define([
 	 *
 	 * @type {sap.ui.model.odata.v4.lib._GroupLock}
 	 */
-	_GroupLock.$cached = new _GroupLock("$cached");
+	_GroupLock.$cached = new _GroupLock("$cached", "sap.ui.model.odata.v4.lib._GroupLock");
 
 	// avoid "unlocked twice" for this instance
 	_GroupLock.$cached.unlock = function () {};

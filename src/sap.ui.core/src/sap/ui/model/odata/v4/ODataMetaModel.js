@@ -2028,14 +2028,13 @@ sap.ui.define([
 			oSharedModel = new this.oModel.constructor({
 				autoExpandSelect : bAutoExpandSelect,
 				groupId : sGroupId,
+				httpHeaders : this.oModel.getHttpHeaders(),
 				operationMode : OperationMode.Server,
 				serviceUrl : sUrl,
 				synchronizationMode : "None"
 			});
 			oSharedModel.setDefaultBindingMode(BindingMode.OneWay);
 			mSharedModelByUrl.set(sCacheKey, oSharedModel);
-			oSharedModel.oRequestor.mHeaders["X-CSRF-Token"]
-				= this.oModel.oRequestor.mHeaders["X-CSRF-Token"];
 		}
 		return oSharedModel;
 	};
@@ -2385,7 +2384,9 @@ sap.ui.define([
 
 	/**
 	 * Request currency customizing based on the code list reference given in the entity container's
-	 * <code>com.sap.vocabularies.CodeList.v1.CurrencyCodes</code> annotation.
+	 * <code>com.sap.vocabularies.CodeList.v1.CurrencyCodes</code> annotation. The corresponding
+	 * HTTP request uses the HTTP headers obtained via
+	 * {@link sap.ui.model.odata.v4.ODataModel#getHttpHeaders} from this meta model's data model.
 	 *
 	 * @param {any} [vRawValue]
 	 *   If present, it must be this meta model's root entity container
@@ -2695,7 +2696,9 @@ sap.ui.define([
 
 	/**
 	 * Request unit customizing based on the code list reference given in the entity container's
-	 * <code>com.sap.vocabularies.CodeList.v1.UnitOfMeasure</code> annotation.
+	 * <code>com.sap.vocabularies.CodeList.v1.UnitOfMeasure</code> annotation. The corresponding
+	 * HTTP request uses the HTTP headers obtained via
+	 * {@link sap.ui.model.odata.v4.ODataModel#getHttpHeaders} from this meta model's data model.
 	 *
 	 * @param {any} [vRawValue]
 	 *   If present, it must be this meta model's root entity container
@@ -2749,7 +2752,9 @@ sap.ui.define([
 	 *   structured as defined by <code>com.sap.vocabularies.Common.v1.ValueListType</code>;
 	 *   the map entry with key "" represents the mapping without qualifier. Each entry has an
 	 *   additional property "$model" which is the {@link sap.ui.model.odata.v4.ODataModel} instance
-	 *   to read value list data via this mapping.
+	 *   to read value list data via this mapping; this model is constructed with the HTTP headers
+	 *   obtained via {@link sap.ui.model.odata.v4.ODataModel#getHttpHeaders} from this meta model's
+	 *   data model.
 	 *
 	 *   For fixed values, only one mapping is expected and the qualifier is ignored. The mapping
 	 *   is available with key "".

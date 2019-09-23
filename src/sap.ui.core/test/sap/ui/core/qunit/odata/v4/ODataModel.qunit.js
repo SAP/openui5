@@ -202,7 +202,10 @@ sap.ui.define([
 			fnRequestorCreateSpy = this.mock(_Requestor).expects("create")
 				.withExactArgs(getServiceUrl(), sinon.match.object, {"Accept-Language" : "ab-CD"},
 					sinon.match.object, sODataVersion)
-				.returns({});
+				.returns({
+					checkForOpenRequests : function () {},
+					checkHeaderNames : function () {}
+				});
 			fnMetadataRequestorCreateSpy = this.mock(_MetadataRequestor).expects("create")
 				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, sinon.match.object)
 				.returns({});
@@ -213,6 +216,8 @@ sap.ui.define([
 			assert.strictEqual(oModel.getODataVersion(), sODataVersion);
 			assert.notStrictEqual(fnRequestorCreateSpy.args[0][2],
 				fnMetadataRequestorCreateSpy.args[0][0]);
+			assert.strictEqual(fnRequestorCreateSpy.args[0][2], oModel.mHeaders);
+			assert.strictEqual(fnMetadataRequestorCreateSpy.args[0][0], oModel.mMetadataHeaders);
 		});
 	});
 
@@ -395,6 +400,21 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Model construction with headers", function (assert) {
+		var mHeaders = {"abc" : "123", "accept-language" : "wx-YZ"},
+			oModel;
+
+		this.mock(ODataModel.prototype).expects("changeHttpHeaders")
+			.withExactArgs(mHeaders).callThrough();
+
+		// code under test
+		oModel = createModel("", {httpHeaders : mHeaders});
+
+		assert.deepEqual(oModel.mHeaders, mHeaders);
+		assert.deepEqual(oModel.mMetadataHeaders, mHeaders);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
 		var oExpectedBind0,
 			oExpectedBind1,
@@ -409,7 +429,10 @@ sap.ui.define([
 			oModelInterface,
 			fnReportBoundMessages = {},
 			fnReportUnboundMessages = {},
-			oRequestor = {},
+			oRequestor = {
+				checkForOpenRequests : function () {},
+				checkHeaderNames : function () {}
+			},
 			fnSubmitAuto = function () {};
 
 		oExpectedCreate
@@ -1182,6 +1205,9 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oModel.destroy(1, 2, 3), "foo");
+
+		assert.strictEqual(oModel.mHeaders, undefined);
+		assert.strictEqual(oModel.mMetadataHeaders, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1462,8 +1488,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkBatchGroupId: success", function (assert) {
-		var oModel = createModel(),
-			sGroupId = {};
+		var sGroupId = {/*string*/},
+			oModel = createModel();
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId));
 		this.mock(oModel).expects("isDirectGroup").withExactArgs(sinon.match.same(sGroupId))
@@ -1476,8 +1502,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkBatchGroupId: checkGroupId fails", function (assert) {
 		var oError = new Error(),
-			oModel = createModel(),
-			sGroupId = {};
+			sGroupId = {/*string*/},
+			oModel = createModel();
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs(sinon.match.same(sGroupId))
 			.throws(oError);
@@ -2226,19 +2252,157 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("lockGroup", function (assert) {
-		var sGroupId = {},
+		var sGroupId = {/*string*/},
 			oGroupLock = {},
-			bLocked  = {},
+			bLocked  = {/*boolean*/},
 			oModel = createModel(),
+			bModifying = {/*boolean*/},
 			oOwner = {};
 
 		this.mock(oModel.oRequestor).expects("lockGroup")
-			.withExactArgs(sinon.match.same(sGroupId), sinon.match.same(bLocked),
-				sinon.match.same(oOwner))
+			.withExactArgs(sinon.match.same(sGroupId), sinon.match.same(oOwner),
+				sinon.match.same(bLocked), sinon.match.same(bModifying))
 			.returns(oGroupLock);
 
 		// code under test
-		assert.strictEqual(oModel.lockGroup(sGroupId, bLocked, oOwner), oGroupLock);
+		assert.strictEqual(oModel.lockGroup(sGroupId, oOwner, bLocked, bModifying), oGroupLock);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("changeHttpHeaders", function (assert) {
+		var oModel = createModel(),
+			mHeaders = oModel.mHeaders,
+			mMetadataHeaders = oModel.mMetadataHeaders,
+			mMyHeaders = {abc : undefined, def : undefined, "x-CsRf-ToKeN" : "abc123"},
+			oRequestorMock = this.mock(oModel.oRequestor);
+
+		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD"});
+		oRequestorMock.expects("checkHeaderNames").withExactArgs(sinon.match.object);
+		oRequestorMock.expects("checkForOpenRequests").withExactArgs().exactly(5);
+
+		// code under test
+		oModel.changeHttpHeaders({aBc : "xyz"});
+
+		assert.strictEqual(oModel.mHeaders, mHeaders);
+		assert.strictEqual(oModel.mMetadataHeaders, mMetadataHeaders);
+		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD", aBc : "xyz"});
+		assert.deepEqual(mMetadataHeaders, {"Accept-Language" : "ab-CD", aBc : "xyz"});
+
+		oRequestorMock.expects("checkHeaderNames").withExactArgs(sinon.match.object);
+
+		// code under test
+		oModel.changeHttpHeaders({AbC : "123"});
+
+		assert.deepEqual(mMetadataHeaders, {AbC : "123", "Accept-Language" : "ab-CD"});
+		assert.deepEqual(mHeaders, {AbC : "123", "Accept-Language" : "ab-CD"});
+
+		oRequestorMock.expects("checkHeaderNames").withExactArgs(sinon.match.same(mMyHeaders));
+
+		// code under test
+		oModel.changeHttpHeaders(mMyHeaders);
+
+		assert.deepEqual(mMetadataHeaders, {"Accept-Language" : "ab-CD"});
+		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "abc123"});
+		assert.deepEqual(mMyHeaders, {abc : undefined, def : undefined, "x-CsRf-ToKeN" : "abc123"});
+
+		oRequestorMock.expects("checkHeaderNames").withExactArgs(undefined);
+
+		// code under test
+		oModel.changeHttpHeaders();
+
+		assert.deepEqual(mMetadataHeaders, {"Accept-Language" : "ab-CD"});
+		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "abc123"});
+
+		oRequestorMock.expects("checkHeaderNames").withExactArgs(null);
+
+		// code under test
+		oModel.changeHttpHeaders(null);
+
+		assert.deepEqual(mMetadataHeaders, {"Accept-Language" : "ab-CD"});
+		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "abc123"});
+	});
+
+	//*********************************************************************************************
+[true, 42, NaN, {}, null, function () {}].forEach(function (vValue) {
+	QUnit.test("changeHttpHeaders: unsupported header value: " + vValue, function (assert) {
+		var oModel = createModel();
+
+		oModel.changeHttpHeaders({def : "123"});
+
+		// code under test
+		assert.throws(function () {
+			oModel.changeHttpHeaders({def : undefined, abc : vValue});
+		}, new Error("Unsupported value for header 'abc': " + vValue));
+
+		assert.deepEqual(oModel.mHeaders, {"Accept-Language" : "ab-CD", def : "123"});
+		assert.deepEqual(oModel.mMetadataHeaders, {"Accept-Language" : "ab-CD", def : "123"});
+	});
+});
+
+	//*********************************************************************************************
+["123", undefined].forEach(function (sValue) {
+	QUnit.test("changeHttpHeaders: duplicate header name, value: " + sValue, function (assert) {
+		var oModel = createModel();
+
+		// code under test
+		assert.throws(function () {
+			oModel.changeHttpHeaders({aBc : sValue, AbC : "456"});
+		}, new Error("Duplicate header AbC"));
+
+		assert.deepEqual(oModel.mHeaders, {"Accept-Language" : "ab-CD"});
+		assert.deepEqual(oModel.mMetadataHeaders, {"Accept-Language" : "ab-CD"});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("changeHttpHeaders: error on open requests", function (assert) {
+		var oError = new Error("message"),
+			oModel = createModel();
+
+		this.mock(oModel.oRequestor).expects("checkForOpenRequests").withExactArgs().throws(oError);
+
+		// code under test
+		assert.throws(function () {
+			oModel.changeHttpHeaders({abc : "123"});
+		}, oError);
+
+		assert.deepEqual(oModel.mHeaders, {"Accept-Language" : "ab-CD"});
+		assert.deepEqual(oModel.mMetadataHeaders, {"Accept-Language" : "ab-CD"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getHttpHeaders", function (assert) {
+		var oModel = createModel(),
+			mHeaders;
+
+		// SAP-ContextId is the only header not changeable via #changeHttpHeaders,
+		// that is set to oModel.mHeaders in our coding
+		oModel.mHeaders["SAP-ContextId"] = "123";
+		// X-CSRF-Token header is set to null if the response does not contain this header
+		oModel.mHeaders["X-CSRF-Token"] = null;
+
+		// code under test
+		mHeaders = oModel.getHttpHeaders();
+
+		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD"});
+		assert.deepEqual(oModel.mHeaders, {
+			"Accept-Language" : "ab-CD",
+			"SAP-ContextId" : "123",
+			"X-CSRF-Token" : null
+		});
+		assert.notStrictEqual(mHeaders, oModel.mHeaders);
+
+		oModel.mHeaders["X-CSRF-Token"] = "xyz";
+
+		// code under test
+		mHeaders = oModel.getHttpHeaders();
+
+		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"});
+		assert.deepEqual(oModel.mHeaders, {
+			"Accept-Language" : "ab-CD",
+			"SAP-ContextId" : "123",
+			"X-CSRF-Token" : "xyz"
+		});
 	});
 });
 

@@ -16,12 +16,11 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, BaseContext,
 		PropertyBinding, TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding,
-		_Cache, _GroupLock, _Helper, TestUtils) {
+		_Cache, _Helper, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -514,6 +513,7 @@ sap.ui.define([
 				oCacheMock = bAbsolute && this.getPropertyCacheMock(),
 				oContext = Context.create(this.oModel, {}, "/EntitySet('foo')"),
 				oBinding = this.oModel.bindProperty(oFixture.path, oContext),
+				oGroupLock = {},
 				oMetaContext = {},
 				sResolvedPath = this.oModel.resolve(oFixture.path, oContext),
 				vValue = {/* non-primitive */};
@@ -521,9 +521,11 @@ sap.ui.define([
 			oBinding.setBindingMode(oFixture.mode);
 			oBinding.setType(null, oFixture.internalType);
 			if (bAbsolute) {
+				this.mock(oBinding).expects("getGroupId").withExactArgs().returns("$auto");
+				this.mock(oBinding).expects("lockGroup").withExactArgs("$auto").returns(oGroupLock);
 				oCacheMock.expects("fetchValue")
-					.withExactArgs(new _GroupLock("$auto", undefined, oBinding, 1), undefined,
-						sinon.match.func, sinon.match.same(oBinding))
+					.withExactArgs(sinon.match.same(oGroupLock), undefined, sinon.match.func,
+						sinon.match.same(oBinding))
 					.returns(SyncPromise.resolve(vValue));
 			} else if (oFixture.path.startsWith("##")) { // meta binding
 				this.mock(this.oModel.getMetaModel()).expects("getMetaContext")
@@ -699,13 +701,14 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal(): absolute with sGroupId", function (assert) {
 		var oBinding,
-			oCacheMock = this.getPropertyCacheMock();
+			oCacheMock = this.getPropertyCacheMock(),
+			oGroupLock = {};
 
 		oBinding = this.oModel.bindProperty("/EntitySet('foo')/property");
 		oBinding.setType(null, "any"); // avoid fetchUI5Type()
+		this.mock(oBinding).expects("lockGroup").withExactArgs("group").returns(oGroupLock);
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(new _GroupLock("group", undefined, oBinding, 1), undefined,
-				sinon.match.func, oBinding)
+			.withExactArgs(sinon.match.same(oGroupLock), undefined, sinon.match.func, oBinding)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -1348,16 +1351,24 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[undefined, "$direct"].forEach(function (sGroupId) {
-		QUnit.test("getGroupId, binding group ID " + sGroupId , function (assert) {
+		QUnit.test("initialize, binding group ID " + sGroupId , function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
+				sExpectedGroupId = sGroupId,
+				oGroupLock = {},
 				oReadPromise = SyncPromise.resolve(),
 				oTypePromise = SyncPromise.resolve(new TypeString());
 
 			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.returns(oTypePromise);
+			if (!sGroupId) {
+				this.mock(oBinding).expects("getGroupId").withExactArgs().returns("$auto");
+				sExpectedGroupId = "$auto";
+			}
+			this.mock(oBinding).expects("lockGroup").withExactArgs(sExpectedGroupId)
+				.returns(oGroupLock);
 			this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-				.withExactArgs(new _GroupLock(sGroupId || "$auto", undefined, oBinding, 1),
-					undefined, sinon.match.func, sinon.match.object)
+				.withExactArgs(sinon.match.same(oGroupLock), undefined, sinon.match.func,
+					sinon.match.object)
 				.callsArg(2)
 				.returns(oReadPromise);
 
@@ -1569,7 +1580,7 @@ sap.ui.define([
 		var oParentBinding = this.oModel.bindContext("/BusinessPartnerList('0100000000')"),
 			oContext = oParentBinding.getBoundContext(),
 			oBinding = this.oModel.bindProperty("Address/City", oContext),
-			oGroupLock = new _GroupLock();
+			oGroupLock = {};
 
 		oBinding.vValue = ""; // simulate a read - intentionally use a falsy value
 
@@ -1577,11 +1588,12 @@ sap.ui.define([
 		this.mock(this.oModel).expects("checkGroupId")
 			.withExactArgs(oFixture.updateGroupId);
 		if (oFixture.updateGroupId) {
-			this.mock(oBinding).expects("lockGroup").withExactArgs(oFixture.updateGroupId, true)
+			this.mock(oBinding).expects("lockGroup")
+				.withExactArgs(oFixture.updateGroupId, true, true)
 				.returns(oGroupLock);
 		} else {
 			this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("update");
-			this.mock(oBinding).expects("lockGroup").withExactArgs("update", true)
+			this.mock(oBinding).expects("lockGroup").withExactArgs("update", true, true)
 				.returns(oGroupLock);
 		}
 		this.mock(oContext).expects("doSetProperty")
@@ -1597,14 +1609,14 @@ sap.ui.define([
 	QUnit.test("setValue (relative binding): error handling", function (assert) {
 		var oContext = Context.create(this.oModel, {/*oParentBinding*/}, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed"),
-			oGroupLock = new _GroupLock(),
+			oGroupLock = {unlock : function () {}},
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext),
 			oUpdatePromise = Promise.reject(oError);
 
 		oPropertyBinding.vValue = "fromServer"; // simulate a read
 
 		this.mock(oPropertyBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oPropertyBinding).expects("lockGroup").withExactArgs("up", true)
+		this.mock(oPropertyBinding).expects("lockGroup").withExactArgs("up", true, true)
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("Name", "foo", sinon.match.same(oGroupLock))

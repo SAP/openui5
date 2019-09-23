@@ -619,8 +619,8 @@ sap.ui.define([
 		var oBinding,
 			oBindingMock,
 			oContext = Context.create(this.oModel, null, "/TEAMS('TEAM_01')"),
-			oGroupLock1 = new _GroupLock(),
-			oGroupLock2 = new _GroupLock(),
+			oGroupLock1 = {unlock : function () {}},
+			oGroupLock2 = {},
 			oPromise;
 
 		this.mock(ODataContextBinding.prototype).expects("lockGroup")
@@ -638,6 +638,7 @@ sap.ui.define([
 			"Failed to read path /EMPLOYEES(ID='1')", sClassName, sinon.match({canceled : true}));
 		oBindingMock = this.mock(oBinding);
 		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
+		this.mock(oGroupLock1).expects("unlock").withExactArgs(true);
 
 		// trigger read before refresh
 		oPromise = oBinding.fetchValue("/EMPLOYEES(ID='1')/ID").then(function () {
@@ -687,11 +688,11 @@ sap.ui.define([
 	QUnit.test("fetchValue: absolute binding (no read required)", function (assert) {
 		var oBinding = this.bindContext("/absolute"),
 			oBindingMock = this.mock(oBinding),
-			oGroupLock = new _GroupLock("group");
+			oGroupLock = {};
 
 		oBinding.oModel.bAutoExpandSelect = {};
 		oBinding.oReadGroupLock = undefined; // not interested in the initial case
-		this.mock(oBinding).expects("lockGroup").withExactArgs().returns(oGroupLock);
+		oBindingMock.expects("lockGroup").withExactArgs().returns(oGroupLock);
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
@@ -747,8 +748,8 @@ sap.ui.define([
 		var oBinding,
 			oCacheMock,
 			oExpectedError = new Error("Expected read failure"),
-			oGroupLock1 = new _GroupLock(),
-			oGroupLock2 = new _GroupLock(),
+			oGroupLock1 = {unlock : function () {}},
+			oGroupLock2 = {unlock : function () {}},
 			oODataContextBindingMock = this.mock(ODataContextBinding.prototype),
 			oRejectedPromise = SyncPromise.reject(oExpectedError);
 
@@ -925,7 +926,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("read uses group ID", function (assert) {
 		var oBinding = this.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oGroupLock = new _GroupLock();
+			oGroupLock = {};
 
 		oBinding.oReadGroupLock = oGroupLock;
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
@@ -1054,14 +1055,18 @@ sap.ui.define([
 			+ " /EntitySet(ID='1')/schema.OverloadedFunction(...)"
 	}].forEach(function (oFixture) {
 		QUnit.test("_execute: " + oFixture.error, function (assert) {
-			var oGroupLock = new _GroupLock();
+			var oGroupLock = {
+					getGroupId :  function () {},
+					unlock : function () {}
+				};
 
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 				.withExactArgs(oFixture.request)
 				.returns(Promise.resolve(oFixture.metadata));
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
+			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to execute " + oFixture.path, sClassName, sinon.match.instanceOf(Error));
-			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 
 			return this.bindContext(oFixture.path)
 				._execute(oGroupLock) // code under test
@@ -1121,19 +1126,13 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oBaseContext = this.oModel.createBindingContext("/"),
-				oGroupLock = new _GroupLock("groupId"),
+				oGroupLock = {getGroupId : function () {}},
 				oOperationMetadata = {},
 				sPath = (bRelative ? "" : "/") + "OperationImport(...)",
 				sResolvedPath = "/OperationImport(...)",
 				oPromise,
 				oBinding = this.bindContext(sPath, oBaseContext),
 				oBindingMock = this.mock(oBinding);
-
-			function expectChangeAndRefreshDependent() {
-				oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
-				oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
-					.returns(SyncPromise.resolve(Promise.resolve()));
-			}
 
 			oBindingMock.expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
@@ -1143,7 +1142,10 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oGroupLock), "/OperationImport(...)",
 					sinon.match.same(oOperationMetadata), undefined)
 				.returns(SyncPromise.resolve({/*oResult*/}));
-			expectChangeAndRefreshDependent();
+			oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
+			oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
+				.returns(SyncPromise.resolve(Promise.resolve()));
 
 			// code under test
 			oPromise = oBinding._execute(oGroupLock);
@@ -1168,7 +1170,7 @@ sap.ui.define([
 				var that = this,
 					oEntity = {},
 					oExpectation,
-					oGroupLock = new _GroupLock("groupId"),
+					oGroupLock0 = {getGroupId : function () {}},
 					oOperationMetadata = {},
 					oRootBinding = {
 						getRootBinding : function () { return oRootBinding; },
@@ -1187,9 +1189,10 @@ sap.ui.define([
 						: Context.create(that.oModel, oRootBinding, sPath);
 				}
 
-				function expectChangeAndRefreshDependent() {
+				function expectChangeAndRefreshDependent(oGroupLock) {
 					oBindingMock.expects("_fireChange")
 						.withExactArgs({reason : ChangeReason.Change});
+					that.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 					oBindingMock.expects("refreshDependentBindings")
 						.withExactArgs("", "groupId", true)
 						.returns(SyncPromise.resolve(Promise.resolve()));
@@ -1210,21 +1213,23 @@ sap.ui.define([
 
 				if (bBaseContext) {
 					oBindingMock.expects("createCacheAndRequest")
-						.withExactArgs(sinon.match.same(oGroupLock),
+						.withExactArgs(sinon.match.same(oGroupLock0),
 							"/EntitySet(ID='1')/navigation1/" + sOperation + "(...)",
 							sinon.match.same(oOperationMetadata), undefined);
 				} else {
 					oExpectation = oBindingMock.expects("createCacheAndRequest")
-						.withExactArgs(sinon.match.same(oGroupLock),
+						.withExactArgs(sinon.match.same(oGroupLock0),
 							"/EntitySet(ID='1')/navigation1/" + sOperation + "(...)",
 							sinon.match.same(oOperationMetadata), sinon.match.func);
 					this.mock(oParentContext1).expects("getValue").on(oParentContext1)
 						.withExactArgs(sPathPrefix).returns(oEntity);
 				}
-				expectChangeAndRefreshDependent();
+				expectChangeAndRefreshDependent(oGroupLock0);
 
 				// code under test
-				return oBinding._execute(oGroupLock).then(function (oReturnValueContext) {
+				return oBinding._execute(oGroupLock0).then(function (oReturnValueContext) {
+					var oGroupLock1 = {getGroupId : function () {}};
+
 					assert.strictEqual(oReturnValueContext, undefined);
 					if (oExpectation) {
 						//TODO avoid to trigger a request via getObject, which does not wait for
@@ -1241,21 +1246,21 @@ sap.ui.define([
 
 					if (bBaseContext) {
 						oBindingMock.expects("createCacheAndRequest")
-							.withExactArgs(sinon.match.same(oGroupLock),
+							.withExactArgs(sinon.match.same(oGroupLock1),
 								"/EntitySet(ID='2')/navigation1/" + sOperation + "(...)",
 								sinon.match.same(oOperationMetadata), undefined);
 					} else {
 						oExpectation = oBindingMock.expects("createCacheAndRequest")
-							.withExactArgs(sinon.match.same(oGroupLock),
+							.withExactArgs(sinon.match.same(oGroupLock1),
 								"/EntitySet(ID='2')/navigation1/" + sOperation + "(...)",
 								sinon.match.same(oOperationMetadata), sinon.match.func);
 						that.mock(oParentContext2).expects("getValue").on(oParentContext2)
 							.withExactArgs(sPathPrefix).returns(oEntity);
 					}
-					expectChangeAndRefreshDependent();
+					expectChangeAndRefreshDependent(oGroupLock1);
 
 					// code under test: execute creates a new cache with the new path
-					return oBinding.setParameter("foo", "bar")._execute(oGroupLock)
+					return oBinding.setParameter("foo", "bar")._execute(oGroupLock1)
 						.then(function (oReturnValueContext) {
 							assert.strictEqual(oReturnValueContext, undefined);
 							if (oExpectation) {
@@ -1276,7 +1281,11 @@ sap.ui.define([
 			var oContextMock = this.mock(Context),
 				bDependentsRefreshed,
 				oError = {},
-				oGroupLock = new _GroupLock("groupId"),
+				oGroupLock = {
+					getGroupId : function () {},
+					unlock : function () {}
+				},
+				oGroupLockMock = this.mock(oGroupLock),
 				oOperationMetadata = {},
 				oRootBinding = {
 					getRootBinding : function () { return oRootBinding; },
@@ -1320,6 +1329,7 @@ sap.ui.define([
 				.returns(Promise.resolve(oResponseEntity));
 			oBindingMock.expects("_fireChange")
 				.withExactArgs({reason : ChangeReason.Change});
+			oGroupLockMock.expects("getGroupId").withExactArgs().returns("groupId");
 			oBindingMock.expects("refreshDependentBindings")
 				.withExactArgs("", "groupId", true).returns(asyncRefresh());
 			oBindingMock.expects("isReturnValueLikeBindingParameter")
@@ -1350,6 +1360,7 @@ sap.ui.define([
 					.returns(Promise.resolve(oResponseEntity));
 				oBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
+				oGroupLockMock.expects("getGroupId").withExactArgs().returns("groupId");
 				oBindingMock.expects("refreshDependentBindings")
 					.withExactArgs("", "groupId", true).returns(asyncRefresh());
 				oBindingMock.expects("isReturnValueLikeBindingParameter")
@@ -1381,6 +1392,7 @@ sap.ui.define([
 					.returns(Promise.reject(oError));
 				oBindingMock.expects("_fireChange")
 					.withExactArgs({reason : ChangeReason.Change});
+				oGroupLockMock.expects("getGroupId").withExactArgs().returns("groupId");
 				oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 					.returns(SyncPromise.resolve(Promise.resolve()));
 				that.mock(oReturnValueContextSecondExecute).expects("destroy").withExactArgs();
@@ -1415,7 +1427,7 @@ sap.ui.define([
 				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
 					{$$groupId : "groupId"}),
 				oBindingMock = this.mock(oBinding),
-				oGroupLock = new _GroupLock("groupId"),
+				oGroupLock = {getGroupId : function () {}},
 				oOperationMetadata = {},
 				oParentEntity = {},
 				oResponseEntity = {};
@@ -1431,6 +1443,7 @@ sap.ui.define([
 					"/TEAMS('42')/name.space.Operation(...)",
 					sinon.match.same(oOperationMetadata), sinon.match.func)
 				.returns(Promise.resolve(oResponseEntity));
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 			oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
 			oBindingMock.expects("isReturnValueLikeBindingParameter")
 				.withExactArgs(sinon.match.same(oOperationMetadata))
@@ -1464,7 +1477,7 @@ sap.ui.define([
 				oBinding = this.bindContext("name.space.Operation(...)", oParentContext,
 					{$$groupId : "groupId"}),
 				oBindingMock = this.mock(oBinding),
-				oGroupLock = new _GroupLock("groupId"),
+				oGroupLock = {getGroupId : function () {}},
 				oOperationMetadata = {},
 				oParentEntity = {},
 				oResponseEntity = {};
@@ -1479,6 +1492,7 @@ sap.ui.define([
 					"/TEAMS('42')/TEAM_2_MANAGER/name.space.Operation(...)",
 					sinon.match.same(oOperationMetadata), sinon.match.func)
 				.returns(Promise.resolve(oResponseEntity));
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 			oBindingMock.expects("getDependentBindings").withExactArgs().returns([]);
 			oBindingMock.expects("isReturnValueLikeBindingParameter")
 				.withExactArgs(sinon.match.same(oOperationMetadata))
@@ -1506,7 +1520,10 @@ sap.ui.define([
 			oBinding = this.bindContext(sPath),
 			oBindingMock = this.mock(oBinding),
 			oError = new Error("deliberate failure"),
-			oGroupLock = new _GroupLock("groupId"),
+			oGroupLock = {
+				getGroupId : function () {},
+				unlock : function () {}
+			},
 			oModelMock = this.mock(this.oModel),
 			oOperationMetadata = {};
 
@@ -1517,6 +1534,7 @@ sap.ui.define([
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.reject(oError));
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
 		oBindingMock.expects("refreshDependentBindings").withExactArgs("", "groupId", true)
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
@@ -1543,7 +1561,7 @@ sap.ui.define([
 			oBinding = this.bindContext(sPath),
 			oBindingMock = this.mock(oBinding),
 			oError = new Error("deliberate failure"),
-			oGroupLock = new _GroupLock(),
+			oGroupLock = {unlock : function () {}},
 			oModelMock = this.mock(this.oModel),
 			oOperationMetadata = {};
 
@@ -1555,6 +1573,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve({/*oResult*/}));
 		// Note: if control's handler fails, we don't care about state of dependent bindings
 		oBindingMock.expects("getDependentBindings").never();
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oError));
 
@@ -1609,7 +1628,10 @@ sap.ui.define([
 					{$$groupId : "groupId"}),
 				oBindingMock = this.mock(oBinding),
 				oError = new Error("Operation failed"),
-				oGroupLock = new _GroupLock("groupId"),
+				oGroupLock = {
+					getGroupId : function () {},
+					unlock : function () {}
+				},
 				oOperationMetadata = {
 					$IsBound : true,
 					$Parameter : [{
@@ -1626,6 +1648,8 @@ sap.ui.define([
 					"/TEAMS('42')/name.space.Operation(...)",
 					sinon.match.same(oOperationMetadata), sinon.match.func)
 				.rejects(oError);
+			this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("groupId");
+			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError")
 				.withExactArgs("Failed to execute /TEAMS('42')/name.space.Operation(...)",
 					sClassName, sinon.match.same(oError))
@@ -2103,7 +2127,7 @@ sap.ui.define([
 	QUnit.test("_delete: empty path, ODCB - call deleteFromCache", function (assert) {
 		var oBinding = this.bindContext(""),
 			oContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
-			oGroupLock = new _GroupLock("myGroup"),
+			oGroupLock = {},
 			oParent = {execute : {}, _destroyContextAfterDelete : function () {}},
 			oResult = {};
 
@@ -2129,7 +2153,7 @@ sap.ui.define([
 		var oBinding = this.bindContext(""),
 			oContext = Context.create(this.oModel, null, "/SalesOrders('42')"),
 			oETagEntity = {},
-			oGroupLock = new _GroupLock("myGroup"),
+			oGroupLock = {},
 			oParent = {},
 			oResult = {};
 
@@ -2156,7 +2180,7 @@ sap.ui.define([
 	QUnit.test("_delete: empty path, base context", function (assert) {
 		var oContext = this.oModel.createBindingContext("/SalesOrders('42')"),
 			oBinding = this.bindContext("", oContext),
-			oGroupLock = new _GroupLock("myGroup"),
+			oGroupLock = {},
 			oResult = {};
 
 		this.mock(oBinding).expects("_findEmptyPathParentContext")
@@ -2464,7 +2488,7 @@ sap.ui.define([
 						resolve({/*oReturnValueContext*/});
 					});
 				}),
-				oGroupLock = new _GroupLock("myGroup"),
+				oGroupLock = {},
 				oPromise;
 
 			oBinding.oCachePromise = SyncPromise.resolve({});
