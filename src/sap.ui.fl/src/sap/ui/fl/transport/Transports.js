@@ -37,6 +37,11 @@ sap.ui.define([
 	 * @public
 	 */
 	Transports.prototype.getTransports = function(mParameters) {
+		if (FlexUtils.areNewConnectorsNecessary()) {
+			return Promise.resolve({
+				localonly: true
+			});
+		}
 		var sUri;
 		var sClient;
 		var oLrepConnector;

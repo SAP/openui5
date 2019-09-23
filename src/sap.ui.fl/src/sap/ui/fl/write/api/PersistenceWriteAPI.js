@@ -274,7 +274,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the associated flex persistence
 		 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to the current running component
 		 * @param {string} [mPropertyBag.siteId] - ID of the site belonging to the current running component
-		 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
+		 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes are to be loaded without layer filtering
 		 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants are to be included
 		 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
@@ -283,6 +283,10 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves with an array of all change instances {@see sap.ui.fl.Change}
 		 */
 		_getUIChanges: function(mPropertyBag) {
+			if (mPropertyBag.layer) {
+				//TODO: sync the layer parameter name with new persistence and remove this line
+				mPropertyBag.currentLayer = mPropertyBag.layer;
+			}
 			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
 				._oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
 		}

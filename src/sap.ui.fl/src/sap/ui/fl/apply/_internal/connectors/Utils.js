@@ -182,7 +182,8 @@ sap.ui.define([
 						var oResult = {};
 						var sContentType = xhr.getResponseHeader("Content-Type");
 						if (sContentType && sContentType.startsWith("application/json")) {
-							oResult.response = JSON.parse(xhr.response);
+							//HEAD request for token does not have body response
+							oResult.response = xhr.response ? JSON.parse(xhr.response) : undefined;
 						}
 						oResult.status = xhr.status;
 						oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
