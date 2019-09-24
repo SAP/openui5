@@ -132,6 +132,11 @@ sap.ui.define([
 
 			// Adding Query-Parameters to the Url
 			if (mParameters) {
+				Object.keys(mParameters).forEach(function(sKey) {
+					if (mParameters[sKey] === undefined) {
+						delete mParameters[sKey];
+					}
+				});
 				var sQueryParameters = encodeURLParameters(mParameters);
 
 				if (sQueryParameters.length > 0) {

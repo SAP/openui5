@@ -121,6 +121,31 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("given reset is called with optional parameters", function (assert) {
+			var mPropertyBag = {
+				url: "/flex/personalization",
+				reference: "reference",
+				generator: undefined,
+				selectorIds: undefined,
+				appVersion: "1.0.1",
+				changeTypes: undefined,
+				somethingNotNecessary: "somethingNotNecessary"
+			};
+			var sExpectedUrl = "/flex/personalization/v1/changes/?reference=reference&appVersion=1.0.1";
+			var sExpectedMethod = "DELETE";
+
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
+			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+
+			return WritePersonalizationConnector.reset(mPropertyBag).then(function() {
+				assert.equal(oSpyGetUrl.getCall(0).args[0], "/v1/changes/", "with correct route path");
+				assert.equal(oSpyGetUrl.getCall(0).args[1], mPropertyBag, "with correct property bag");
+				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], sExpectedMethod, "with correct method");
+			});
+		});
+
 		QUnit.test("given load features is called", function (assert) {
 			var mExpectedFeatures = {
 				isProductiveSystem: true
