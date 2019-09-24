@@ -22,14 +22,14 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("loadFlexData trigger the correct request to back end", function (assert) {
 			var mPropertyBag = {
-				url: "/flex/keyuser",
+				url: "/flexKeyuser",
 				reference: "reference",
 				appVersion: "1.0.0"
 			};
 			var mParameter = {
 				appVersion: "1.0.0"
 			};
-			var sExpectedUrl = "/flex/keyuser/v1/data/reference?appVersion=1.0.0";
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response : {},
@@ -38,7 +38,7 @@ sap.ui.define([
 			});
 			return KeyUserConnector.loadFlexData(mPropertyBag).then(function () {
 				assert.ok(oStubGetUrlWithQueryParameters.calledOnce, "getUrl is called once");
-				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/v1/data/", "with correct route path");
+				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/flex/keyuser/v1/data/", "with correct route path");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[2], mParameter, "with correct parameters input");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");

@@ -21,10 +21,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var PREFIX = "/flex/personalization";
 	var API_VERSION = "/v1";
 	var ROUTES = {
-		CHANGES: "/changes/",
-		TOKEN: "/actions/getcsrftoken"
+		CHANGES: PREFIX + API_VERSION + "/changes/",
+		TOKEN: PREFIX + API_VERSION + "/actions/getcsrftoken"
 	};
 
 	var FEATURES = {
@@ -42,14 +43,14 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
 	 */
-	var doWrite = function(mPropertyBag) {
+	function _doWrite(mPropertyBag) {
 		//single update --> fileName needs to be in the url
 		if (mPropertyBag.flexObject) {
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
 		}
-		var sWriteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag);
+		var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
 		delete mPropertyBag.fileName;
-		var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
 			ApplyConnector,
@@ -58,7 +59,7 @@ sap.ui.define([
 			"application/json; charset=utf-8", "json"
 		);
 		return WriteUtils.sendRequest(sWriteUrl, mPropertyBag.method, oRequestOption);
-	};
+	}
 
 	/**
 	 * Connector for communication with SAPUI5 Flexibility Personalization Service
@@ -86,7 +87,7 @@ sap.ui.define([
 		 */
 		write: function (mPropertyBag) {
 			mPropertyBag.method = "POST";
-			return doWrite(mPropertyBag);
+			return _doWrite(mPropertyBag);
 		},
 
 		/**
@@ -99,7 +100,7 @@ sap.ui.define([
 		 */
 		update: function (mPropertyBag) {
 			mPropertyBag.method = "PUT";
-			return doWrite(mPropertyBag);
+			return _doWrite(mPropertyBag);
 		},
 
 		/**
@@ -115,9 +116,9 @@ sap.ui.define([
 				namespace: mPropertyBag.flexObject.namespace
 			};
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
-			var sDeleteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sDeleteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
 			delete mPropertyBag.fileName;
-			var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyConnector,
@@ -156,8 +157,8 @@ sap.ui.define([
 
 			// Delete this property because it should not be part of the url
 			delete mPropertyBag.reference;
-			var sResetUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag, mParameters);
-			var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
+			var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 			var oRequestOption = WriteUtils.getRequestOptions(ApplyConnector, sTokenUrl);
 			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
 		},

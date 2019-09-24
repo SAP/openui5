@@ -15,9 +15,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var PREFIX = "/flex/keyuser";
 	var API_VERSION = "/v1";
 	var ROUTES = {
-		DATA: "/data/"
+		DATA: PREFIX + API_VERSION + "/data/"
 	};
 
 	/**
@@ -45,7 +46,7 @@ sap.ui.define([
 		loadFlexData: function(mPropertyBag) {
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);
 
-			var sDataUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.DATA, mPropertyBag, mParameters);
+			var sDataUrl = ApplyUtils.getUrl(ROUTES.DATA, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken: this.xsrfToken }).then(function (oResult) {
 				var oResponse = oResult.response;
 				if (oResult.xsrfToken) {
