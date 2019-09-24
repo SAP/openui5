@@ -1324,7 +1324,7 @@ sap.ui.define([
 		var oBinding = {
 				oCachePromise : SyncPromise.resolve({/*oCache*/}),
 				checkSuspended : function () {},
-				bRelative : false
+				isRelative : function () { return false; }
 			},
 			oModel = {
 				checkGroupId : function () {}
@@ -1369,8 +1369,8 @@ sap.ui.define([
 		var oBinding = {
 				oCachePromise : SyncPromise.resolve({/*oCache*/}),
 				checkSuspended : function () {},
-				oContext : oFixture.context,
-				bRelative : !!oFixture.context,
+				getContext : function () { return oFixture.context; },
+				isRelative : function () { return !!oFixture.context; },
 				requestSideEffects : function () {}
 			},
 			oModel = {
@@ -1474,6 +1474,7 @@ sap.ui.define([
 			oBinding = {
 				oCachePromise : SyncPromise.resolve(oCache),
 				checkSuspended : function () {},
+				isRelative : function () { return false; },
 				requestSideEffects : function () {}
 			},
 			oModel = {
@@ -1514,20 +1515,122 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: no own cache", function (assert) {
+[false, true].forEach(function (bAuto) {
+	QUnit.test("requestSideEffects: no own cache with auto group: " + bAuto, function (assert) {
 		var oBinding = {
 				oCachePromise : SyncPromise.resolve(),
-				checkSuspended : function () {}
+				checkSuspended : function () {},
+				getBoundContext : function () {},
+				getContext : function () {},
+				getPath : function () {},
+				isRelative : function () {}
+			},
+			oHelperMock = this.mock(_Helper),
+			oModel = {
+				checkGroupId : function () {},
+				isAutoGroup : function () {},
+				oRequestor : {
+					relocateAll : function (sCurrentGroupId, sGroupId) {},
+					waitForRunningChangeRequests : function (sGroupId) {}
+				}
+			},
+			oContext = Context.create(oModel, oBinding,
+				"/TEAMS('1')/TEAM_2_MANAGER/Manager_to_Team"),
+			oParentBinding = {
+				oCachePromise : SyncPromise.resolve(),
+				getBoundContext : function () {},
+				getContext : function () {},
+				getPath : function () {}
+			},
+			oParentContext = Context.create(oModel, oParentBinding, "/TEAMS('1')/TEAM_2_MANAGER"),
+			oRootBinding = {
+				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				requestSideEffects : function () {}
+			},
+			oRootContext = Context.create(oModel, oRootBinding, "/TEAMS('1')"),
+			oPromise;
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oModel).expects("checkGroupId").withExactArgs("group");
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getContext").twice().withExactArgs().returns(oParentContext);
+		this.mock(oParentBinding).expects("getContext").withExactArgs().returns(oRootContext);
+		this.mock(oBinding).expects("getPath").returns("Manager_to_Team");
+		oHelperMock.expects("buildPath")
+			.withExactArgs("Manager_to_Team", "")
+			.returns("Manager_to_Team");
+		this.mock(oParentBinding).expects("getPath").returns("TEAM_2_MANAGER");
+		oHelperMock.expects("buildPath")
+			.withExactArgs("TEAM_2_MANAGER", "Manager_to_Team")
+			.returns("TEAM_2_MANAGER/Manager_to_Team");
+		this.mock(oModel).expects("isAutoGroup").withExactArgs("group").returns(bAuto);
+		this.mock(oModel.oRequestor).expects("waitForRunningChangeRequests").exactly(bAuto ? 1 : 0)
+			.withExactArgs("group").returns(SyncPromise.resolve());
+		this.mock(oModel.oRequestor).expects("relocateAll").exactly(bAuto ? 1 : 0)
+			.withExactArgs("$parked.group", "group");
+		this.mock(oRootBinding).expects("requestSideEffects")
+			.withExactArgs("group", [
+					"TEAM_2_MANAGER/Manager_to_Team/TEAM_ID",
+					"TEAM_2_MANAGER/Manager_to_Team/NAME",
+					"TEAM_2_MANAGER/Manager_to_Team"
+				], oRootContext)
+			.returns(SyncPromise.resolve(42));
+
+		// code under test
+		oPromise = oContext.requestSideEffects([
+				{$PropertyPath : "TEAM_ID"},
+				{$PropertyPath : "NAME"},
+				{$NavigationPropertyPath : ""}
+			], "group");
+
+		assert.ok(oPromise instanceof Promise);
+
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects without own cache: error case unsupported list binding",
+			function (assert) {
+		var oListBinding = {
+				oCachePromise : SyncPromise.resolve(),
+				checkSuspended : function () {},
+//				getBoundContext : function () {},
+				getContext : function () { return {}; },
+				isRelative : function () { return true; },
+				toString : function () { return "Foo Bar"; }
 			},
 			oModel = {
 				checkGroupId : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+			oContext = Context.create(oModel, oListBinding, "/TEAMS('1')/TEAM_2_EMPLOYEES('2')");
 
 		assert.throws(function () {
 			// code under test
-			oContext.requestSideEffects();
-		}, new Error("Unsupported context: " + oContext));
+			oContext.requestSideEffects([{$PropertyPath : "ID"}]);
+		}, new Error("Not a context binding: " + oListBinding));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestSideEffects without own cache: error case cache promise is pending",
+			function (assert) {
+		var oListBinding = {
+				oCachePromise : new SyncPromise(function () {}),
+				checkSuspended : function () {},
+				getContext : function () { return {}; },
+				isRelative : function () { return true; }
+			},
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext = Context.create(oModel, oListBinding, "/TEAMS('1')/TEAM_2_MANAGER");
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects([{$PropertyPath : "ID"}]);
+		}, new Error("Illegal state: auto-$expand/$select still computing"));
 	});
 
 	//*********************************************************************************************
@@ -1556,7 +1659,8 @@ sap.ui.define([
 		var oBinding = {
 				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
 				checkSuspended : function () {},
-				bRelative : true
+				getContext : function () { return undefined; },
+				isRelative : function () { return true; }
 			},
 			oModel = {
 				checkGroupId : function () {}
