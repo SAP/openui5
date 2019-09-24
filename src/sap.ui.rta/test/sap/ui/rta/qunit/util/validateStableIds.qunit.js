@@ -31,7 +31,7 @@ function (
 	QUnit.module("Freestyle application", {
 		beforeEach: function (assert) {
 			var fnDone = assert.async();
-			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
+			var CustomComponent = UIComponent.extend("sap.ui.rta.test.Component", {
 				createContent: function() {
 					return new VerticalLayout({
 						id: this.createId("layoutId"),
