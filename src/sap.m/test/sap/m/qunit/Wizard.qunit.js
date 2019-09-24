@@ -922,4 +922,38 @@ sap.ui.define([
 		this.oWizard.nextStep();
 		assert.strictEqual(this.oWizard.isStepFinal(), true, "The third step is the final one");
 	});
+
+	QUnit.test("Move steps trough Wizards", function (assert) {
+		// Setup
+		var oNewWizard, oNewWizardCompleteSpy,
+			oStep = new WizardStep({
+				validated: true,
+				title: "Step 1"
+			}),
+			oWizard = new Wizard({steps: [oStep]}).placeAt("qunit-fixture"),
+			oWizardCompleteSpy = sinon.spy(oWizard, "fireComplete");
+
+		// Act
+		oStep._complete();
+		// Assert
+		assert.strictEqual(oWizardCompleteSpy.callCount, 1, "The Next button press logic is fired properly");
+
+		// Act
+		oWizard.removeAllSteps();
+		oNewWizard = new Wizard({steps: [oStep]}).placeAt("qunit-fixture");
+		oNewWizardCompleteSpy = sinon.spy(oNewWizard, "fireComplete");
+		oStep._complete();
+
+
+		// Assert
+		assert.strictEqual(oWizardCompleteSpy.callCount, 1, "The Next button press logic is not called again with the old context");
+		assert.strictEqual(oNewWizardCompleteSpy.callCount, 1, "The Next button press logic is fired properly");
+
+		// Cleanup
+		oStep = null;
+		oWizard.destroy();
+		oNewWizard.destroy();
+		oWizardCompleteSpy.restore();
+		oNewWizardCompleteSpy.restore();
+	});
 });
