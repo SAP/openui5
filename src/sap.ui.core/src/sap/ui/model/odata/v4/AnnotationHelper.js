@@ -145,6 +145,11 @@ sap.ui.define([
 			 * @param {sap.ui.model.Context} oDetails.context
 			 *   Points to the given raw value, that is
 			 *   <code>oDetails.context.getProperty("") === vRawValue</code>
+			 * @param {object} [oDetails.overload]
+			 *   The single operation overload that was targeted by annotations of an operation or
+			 *   a parameter; needed to strip off the binding parameter's name from any dynamic
+			 *   "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath" where it
+			 *   might be used as a first segment (since 1.71.0)
 			 * @returns {string|Promise}
 			 *   A data binding, or a fixed text, or a sequence thereof, or a <code>Promise</code>
 			 *   resolving with that string, for example if not all type information is already
@@ -171,6 +176,9 @@ sap.ui.define([
 					return Expression.getExpression({
 							asExpression : false,
 							complexBinding : true,
+							ignoreAsPrefix : oDetails.overload && oDetails.overload.$IsBound
+								? oDetails.overload.$Parameter[0].$Name + "/"
+								: "",
 							model : oModel,
 							path : sPath,
 							prefix : sPrefix, // prefix for computing paths
@@ -209,8 +217,7 @@ sap.ui.define([
 
 						if (!bIsAnnotationPath && aMatches[3]) {
 							sPrefix = sPrefix + "/";
-						}
-						if (!sPrefix.endsWith("/")) {
+						} else if (!sPrefix.endsWith("/")) {
 							i = sPrefix.lastIndexOf("/");
 							sPrefix = i < 0 ? "" : sPrefix.slice(0, i + 1);
 						}

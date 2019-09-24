@@ -859,7 +859,8 @@ sap.ui.define([
 	 * </ul>
 	 * Key predicates must be available in this context's path. Avoid
 	 * navigation properties as part of a binding's $select system query option as they may trigger
-	 * pointless requests.
+	 * pointless requests. There must be only context bindings between this context and its first
+	 * ancestor binding which uses own data service requests.
 	 *
 	 * By default, the request uses the update group ID for this context's binding; this way, it can
 	 * easily be part of the same batch request as the corresponding update. <b>Caution:</b> If a
@@ -902,10 +903,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If <code>aPathExpressions</code> contains objects other than
 	 *   "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath",
-	 *   or if this context is neither the return value context of an operation binding nor belongs
-	 *   to a binding which uses own data service requests, or if the root binding of this context's
-	 *   binding is suspended, or if the context is transient, or if the binding of this context is
-	 *   unresolved, or for invalid group IDs
+	 *   or if this context is not supported, or if the root binding of this context's binding is
+	 *   suspended, or if the context is transient, or if the binding of this context is unresolved,
+	 *   or for invalid group IDs, or if auto-$expand/$select is still computing
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
@@ -915,20 +915,33 @@ sap.ui.define([
 	 * @since 1.61.0
 	 */
 	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
-		var oCache = this.oBinding.oCachePromise.getResult(),
+		var oContext,
 			aPaths,
+			sPrefix = "",
 			that = this;
+
+		/*
+		 * @param {sap.ui.model.odata.v4.ODataParentBinding} oBinding - A binding
+		 * @returns {boolean} Whether the given binding has an own cache
+		 * @throws {Error} If the given binding's cache promise is pending
+		 */
+		function hasOwnCache(oBinding) {
+			if (!oBinding.oCachePromise.isFulfilled()) {
+				throw new Error("Illegal state: auto-$expand/$select still computing");
+			}
+			return oBinding.oCachePromise.getResult();
+		}
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
-		if (!oCache || this.isTransient()) {
+		if (this.isTransient()) {
 			throw new Error("Unsupported context: " + this);
 		}
 		if (!aPathExpressions || !aPathExpressions.length) {
 			throw new Error("Missing edm:(Navigation)PropertyPath expressions");
 		}
 		// Fail fast with a specific error for unresolved bindings
-		if (this.oBinding.bRelative && !this.oBinding.oContext) {
+		if (this.oBinding.isRelative() && !this.oBinding.getContext()) {
 			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
 
@@ -945,15 +958,28 @@ sap.ui.define([
 				+ JSON.stringify(oPath));
 		});
 
+		for (oContext = this; !hasOwnCache(oContext.getBinding());
+				oContext = oContext.getBinding().getContext()) {
+			if (!oContext.getBinding().getBoundContext) {
+				throw new Error("Not a context binding: " + oContext.getBinding());
+			}
+			sPrefix = _Helper.buildPath(oContext.getBinding().getPath(), sPrefix);
+		}
+		if (sPrefix) {
+			aPaths = aPaths.map(function (sPath) {
+				return sPath ? sPrefix + "/" + sPath : sPrefix;
+			});
+		}
+
 		sGroupId = sGroupId || this.getUpdateGroupId();
 
 		return Promise.resolve(
 			this.oModel.isAutoGroup(sGroupId)
 				? this.oModel.oRequestor.waitForRunningChangeRequests(sGroupId).then(function () {
 					that.oModel.oRequestor.relocateAll("$parked." + sGroupId, sGroupId);
-					return that.oBinding.requestSideEffects(sGroupId, aPaths, that);
+					return oContext.getBinding().requestSideEffects(sGroupId, aPaths, oContext);
 				})
-				: this.oBinding.requestSideEffects(sGroupId, aPaths, this)
+				: oContext.getBinding().requestSideEffects(sGroupId, aPaths, oContext)
 		).then(function () {
 			// return undefined;
 		});

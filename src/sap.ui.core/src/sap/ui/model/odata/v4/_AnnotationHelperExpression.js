@@ -110,6 +110,8 @@ sap.ui.define([
 	 *    binding and not a composite binding.
 	 *  <li><code>complexBinding</code>: {boolean} parser state: if this property is
 	 *    <code>true</code>, bindings shall have type and constraints information
+	 *  <li><code>ignoreAsPrefix</code>: {string} an optional prefix to be ignored in a path
+	 *    expression (for example, binding parameter name)
 	 *  <li><code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the metamodel
 	 *  <li><code>path</code>: {string} the path in the metamodel that leads to the value
 	 *  <li><code>prefix</code>: {string} used in a path expression as a prefix for the
@@ -425,22 +427,23 @@ sap.ui.define([
 		 * customizing as parts is returned.
 		 *
 		 * @param {object} oPathValue
-		 *   model, path and value information pointing to the path (see Expression object)
+		 *   model, path (and value) information pointing to the path (see Expression object)
+		 * @param {string} sValue
+		 *   use this value instead of <code>oPathValue.value</code>!
 		 * @param {string} sType
 		 *   the type of the property referenced by <code>oPathValue.path</code>
 		 * @param {object} mConstraints
 		 *   the type constraints for the property referenced by <code>oPathValue.path</code>
 		 * @returns {sap.ui.base.SyncPromise}
-		 *   a sync promise which resolves with a result object for the currency or unit;
-		 *   returns <code>undefined</code> if there are no unit and currency annotations for the
-		 *   property referenced by <code>oPathValue.path</code>; or it is rejected with an error
+		 *   a sync promise which resolves with a result object for the currency or unit, or is
+		 *   rejected with an error; <code>undefined</code> if there are no unit and currency
+		 *   annotations for the property referenced by <code>oPathValue.path</code>
 		 */
-		fetchCurrencyOrUnit : function (oPathValue, sType, mConstraints) {
+		fetchCurrencyOrUnit : function (oPathValue, sValue, sType, mConstraints) {
 			var sCompositeType = "sap.ui.model.odata.type.Unit",
 				sComputedAnnotation = "@@requestUnitsOfMeasure",
 				oModel = oPathValue.model,
 				sPath = oPathValue.path + "@Org.OData.Measures.V1.Unit/$Path",
-				sPrefix = oPathValue.prefix,
 				sTargetPath = oModel.getObject(sPath);
 
 			function getBinding(mConstraints0, sType0, sPath0) {
@@ -448,7 +451,7 @@ sap.ui.define([
 						constraints : mConstraints0,
 						result : "binding",
 						type : sType0,
-						value : sPrefix + sPath0
+						value : oPathValue.prefix + sPath0
 					}, false, true);
 			}
 
@@ -469,7 +472,7 @@ sap.ui.define([
 							? "{formatOptions:{parseAsString:false},"
 							: "{")
 						+ "mode:'TwoWay',parts:["
-						+ getBinding(mConstraints, sType, oPathValue.value)
+						+ getBinding(mConstraints, sType, sValue)
 						+ ","
 						+ getBinding(oModel.getConstraints(oTarget, sPath), oTarget.$Type,
 							sTargetPath)
@@ -718,8 +721,14 @@ sap.ui.define([
 		 *   a sync promise which resolves with the result object or is rejected with an error
 		 */
 		path : function (oPathValue) {
-			var oModel = oPathValue.model,
-				oPromise;
+			var sIgnoreAsPrefix = oPathValue.ignoreAsPrefix,
+				oModel = oPathValue.model,
+				oPromise,
+				sValue = oPathValue.value;
+
+			if (sIgnoreAsPrefix && sValue.startsWith(sIgnoreAsPrefix)) {
+				sValue = sValue.slice(sIgnoreAsPrefix.length);
+			}
 
 			Basics.expectType(oPathValue, "string");
 			oPromise = oModel.fetchObject(oPathValue.path + "/$");
@@ -736,7 +745,7 @@ sap.ui.define([
 				if (oProperty && oPathValue.complexBinding) {
 					mConstraints = oModel.getConstraints(oProperty, oPathValue.path);
 					oCurrencyOrUnitPromise
-						= Expression.fetchCurrencyOrUnit(oPathValue, sType, mConstraints);
+						= Expression.fetchCurrencyOrUnit(oPathValue, sValue, sType, mConstraints);
 				}
 				return oCurrencyOrUnitPromise || {
 					constraints : mConstraints,
@@ -745,7 +754,7 @@ sap.ui.define([
 						: undefined,
 					result : "binding",
 					type : sType,
-					value : oPathValue.prefix + oPathValue.value
+					value : oPathValue.prefix + sValue
 				};
 			});
 		},

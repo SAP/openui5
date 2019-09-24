@@ -1476,6 +1476,7 @@ sap.ui.define([
 			: sinon.match.array.deepEquals([aOverloadedBoundFunction[2]]),
 		"/OverloadedFunctionImport/@$ui5.overload/0" : aOverloadedBoundFunction[2],
 		"/OverloadedFunctionImport/" : mScope["tea_busi.ComplexType_Salary"],
+		//TODO this is the only case where we filter overloads twice - still it could be avoided!
 		"/OverloadedFunctionImport/@$ui5.overload/AMOUNT"
 			: mScope["tea_busi.ComplexType_Salary"].AMOUNT,
 		"/OverloadedFunctionImport/AMOUNT" : mScope["tea_busi.ComplexType_Salary"].AMOUNT,
@@ -2024,21 +2025,26 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	["@@computedAnnotation", "@@.computedAnnotation"].forEach(function (sSuffix) {
-		var sPath,
-			sPathPrefix,
+		var mPathPrefix2Overload = {
+				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable" : aOverloadedAction[1],
+				"/T€AMS/name.space.OverloadedAction/_it@Common.Label" : aOverloadedAction[1]
+			},
 			mPathPrefix2SchemaChildName = {
 				"/EMPLOYEES/@UI.Facets/1/Target/$AnnotationPath" : "tea_busi.Worker",
+				"/OverloadedAction/@$ui5.overload" : "name.space.OverloadedAction",
 				"/T€AMS/@UI.LineItem/0/Value/$Path@Common.Label" : "tea_busi.TEAM",
 				"/T€AMS/@UI.LineItem/0/Value/$Path/@Common.Label" : "name.space.Id",
 				"/T€AMS/name.space.OverloadedAction" : "name.space.OverloadedAction",
 				"/T€AMS/name.space.OverloadedAction/@$ui5.overload" : "name.space.OverloadedAction",
-				"/OverloadedAction/@$ui5.overload" : "name.space.OverloadedAction"
-			},
-			sSchemaChildName;
+				"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
+					: "name.space.OverloadedAction",
+				"/T€AMS/name.space.OverloadedAction/_it@Common.Label"
+					: "name.space.OverloadedAction"
+			};
 
-		for (sPathPrefix in mPathPrefix2SchemaChildName) {
-			sPath = sPathPrefix + sSuffix;
-			sSchemaChildName = mPathPrefix2SchemaChildName[sPathPrefix];
+		Object.keys(mPathPrefix2SchemaChildName).forEach(function (sPathPrefix) {
+			var sPath = sPathPrefix + sSuffix,
+				sSchemaChildName = mPathPrefix2SchemaChildName[sPathPrefix];
 
 			QUnit.test("fetchObject: " + sPath, function (assert) {
 				var $$valueAsPromise = {/*false, true*/},
@@ -2060,6 +2066,7 @@ sap.ui.define([
 					.withExactArgs(oInput, sinon.match({
 						$$valueAsPromise : sinon.match.same($$valueAsPromise),
 						context : sinon.match.object,
+						overload : sinon.match.same(mPathPrefix2Overload[sPathPrefix]),
 						schemaChildName : sSchemaChildName
 					})).returns(oResult);
 
@@ -2083,7 +2090,7 @@ sap.ui.define([
 					assert.strictEqual(oObject, oInput);
 				}
 			});
-		}
+		});
 	});
 
 	//*********************************************************************************************
@@ -2114,19 +2121,29 @@ sap.ui.define([
 	//*********************************************************************************************
 ["", "/"].forEach(function (sSeparator, i) {
 	QUnit.test("AnnotationHelper.format and operation overloads, " + i, function (assert) {
-		var oSyncPromise;
+		var sPath = "/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
+				+ sSeparator, // optional
+			oSyncPromise;
 
 		this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(mScope));
+		this.mock(AnnotationHelper).expects("format")
+			.withExactArgs({$Path : "_it/Name"}, sinon.match({
+				$$valueAsPromise : undefined,
+				context : sinon.match({
+					oModel : this.oMetaModel,
+					sPath : sPath
+				}),
+				overload : sinon.match.same(aOverloadedAction[1]),
+				schemaChildName : "name.space.OverloadedAction"
+			})).callThrough(); // this is an integrative test
 
 		// code under test
-		oSyncPromise = this.oMetaModel.fetchObject(
-			"/T€AMS/name.space.OverloadedAction@Core.OperationAvailable"
-			+ sSeparator // optional
+		oSyncPromise = this.oMetaModel.fetchObject(sPath
 			+ "@@sap.ui.model.odata.v4.AnnotationHelper.format");
 
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
-		assert.strictEqual(oSyncPromise.getResult(), "{path:'_it/Name'"
+		assert.strictEqual(oSyncPromise.getResult(), "{path:'Name'" // Note: "_it/" removed!
 			+ ",type:'sap.ui.model.odata.type.String'"
 			+ ",constraints:{'maxLength':40,'nullable':false}"
 			+ ",formatOptions:{'parseKeepsEmptyString':true}}");

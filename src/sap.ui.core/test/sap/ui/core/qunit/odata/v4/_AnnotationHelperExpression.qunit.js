@@ -128,9 +128,9 @@ sap.ui.define([
 		QUnit.test("path: sync; bComplexBinding = " + bComplexBinding, function (assert) {
 			var mConstraints = {},
 				oMetaModel = {
+					fetchObject : function () {},
 					getConstraints : function () {},
-					getObject : function () {},
-					fetchObject : function () {}
+					getObject : function () {}
 				},
 				oMetaModelMock = this.mock(oMetaModel),
 				sPath = "/BusinessPartnerList/@UI.LineItem/0/Value/$Path",
@@ -157,7 +157,7 @@ sap.ui.define([
 				.returns(mConstraints);
 			this.mock(Expression).expects("fetchCurrencyOrUnit")
 				.exactly(bComplexBinding ? 1 : 0)
-				.withExactArgs(sinon.match.same(oPathValue), "Edm.String",
+				.withExactArgs(sinon.match.same(oPathValue), oPathValue.value, "Edm.String",
 					sinon.match.same(mConstraints))
 				.returns(undefined);
 
@@ -186,7 +186,7 @@ sap.ui.define([
 				model : oModel,
 				path : "~path~",
 				prefix : "~prefix~",
-				value : "~value~"
+				value : "n/a" // sValue must be used instead!
 			};
 
 		oModelMock.expects("getObject")
@@ -197,7 +197,8 @@ sap.ui.define([
 			.returns(undefined);
 
 		// code under test
-		assert.strictEqual(Expression.fetchCurrencyOrUnit(oPathValue, "foo", {}), undefined);
+		assert.strictEqual(Expression.fetchCurrencyOrUnit(oPathValue, "~value~", "foo", {}),
+			undefined);
 	});
 
 	//*********************************************************************************************
@@ -225,7 +226,7 @@ sap.ui.define([
 						model : oModel,
 						path : "~path~",
 						prefix : "~prefix~",
-						value : "~value~"
+						value : "n/a" // sValue must be used instead!
 					},
 					oResult,
 					oTarget = {
@@ -286,7 +287,7 @@ sap.ui.define([
 					.returns("~binding1~");
 
 				// code under test
-				Expression.fetchCurrencyOrUnit(oPathValue, sType, mConstraints)
+				Expression.fetchCurrencyOrUnit(oPathValue, "~value~", sType, mConstraints)
 					.then(function (oResult0) {
 						assert.deepEqual(oResult0, oResult);
 					});
@@ -299,8 +300,8 @@ sap.ui.define([
 		QUnit.test("path: with Currency/Unit, bAsync = " + bAsync, function (assert) {
 			var mConstraints = {},
 				oMetaModel = {
-					getConstraints : function () {},
-					fetchObject : function () {}
+					fetchObject : function () {},
+					getConstraints : function () {}
 				},
 				sPath = "/ProductList/@UI.LineItem/0/Value/$Path",
 				oPathValue = {
@@ -321,7 +322,8 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oProperty), sPath)
 				.returns(mConstraints);
 			this.mock(Expression).expects("fetchCurrencyOrUnit")
-				.withExactArgs(sinon.match.same(oPathValue), "type", sinon.match.same(mConstraints))
+				.withExactArgs(sinon.match.same(oPathValue), oPathValue.value, "type",
+					sinon.match.same(mConstraints))
 				.returns(SyncPromise.resolve(bAsync ? Promise.resolve(oResult) : oResult));
 
 			// code under test
@@ -390,6 +392,7 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("fetchObject")
 			.withExactArgs(oPathValue.path + "/$")
 			.returns(SyncPromise.resolve(Promise.reject(new Error("foo"))));
+		this.mock(Expression).expects("fetchCurrencyOrUnit").never();
 
 		// code under test
 		oResult = Expression.path(oPathValue).unwrap();
@@ -421,6 +424,7 @@ sap.ui.define([
 			this.mock(oMetaModel).expects("fetchObject")
 				.withExactArgs("/BusinessPartnerList/@UI.LineItem/0/Value/$Path/$")
 				.returns(SyncPromise.resolve(Promise.resolve({$Type : "Edm.Foo"})));
+			this.mock(Expression).expects("fetchCurrencyOrUnit").never();
 
 			// code under test
 			oPromise = Expression.path(oPathValue).unwrap();
@@ -436,6 +440,68 @@ sap.ui.define([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+[{
+	sInputValue : "_it/_ShipToParty/isHidden",
+	sOutputValue : "~prefix~/_ShipToParty/isHidden",
+	sValue : "_ShipToParty/isHidden"
+}, {
+	sInputValue : "_its/_ShipToParty/isHidden",
+	sOutputValue : "~prefix~/_its/_ShipToParty/isHidden",
+	sValue : "_its/_ShipToParty/isHidden"
+// Note: AH.format is used for property bindings only, not for context bindings; thus an empty path
+// (behind the binding parameter's name) is not supported
+//}, {
+//	sInputValue : "_it",
+//	sOutputValue : "~prefix~",
+//	sValue : ""
+}].forEach(function (oFixture) {
+	var sTitle = "path: add prefix, but ignore first segment; " + oFixture.sInputValue;
+
+	QUnit.test(sTitle, function (assert) {
+		var mConstraints = {},
+			oMetaModel = {
+				fetchObject : function () {},
+				getConstraints : function () {}
+			},
+			oPathValue = {
+				complexBinding : true,
+				ignoreAsPrefix : "_it/",
+				model : oMetaModel,
+				path : "/T€AMS/name.space.OverloadedAction@Core.OperationAvailable/$Path",
+				prefix : "~prefix~/",
+				value : oFixture.sInputValue,
+				$$valueAsPromise : true
+			},
+			oPromise,
+			oProperty = {$Type : "Edm.Foo"};
+
+		this.mock(oMetaModel).expects("fetchObject")
+			.withExactArgs("/T€AMS/name.space.OverloadedAction@Core.OperationAvailable/$Path/$")
+			.returns(SyncPromise.resolve(Promise.resolve(oProperty)));
+		this.mock(oMetaModel).expects("getConstraints")
+			.withExactArgs(sinon.match.same(oProperty), oPathValue.path)
+			.returns(mConstraints);
+		this.mock(Expression).expects("fetchCurrencyOrUnit")
+			.withExactArgs(sinon.match.same(oPathValue), oFixture.sValue, "Edm.Foo",
+				sinon.match.same(mConstraints))
+			.returns(undefined); // no currency/unit found
+
+		// code under test
+		oPromise = Expression.path(oPathValue).unwrap();
+
+		return oPromise.then(function (oResult) {
+			assert.deepEqual(oResult, {
+				constraints : mConstraints,
+				formatOptions : undefined,
+				result : "binding",
+				type : "Edm.Foo",
+				value : oFixture.sOutputValue
+			});
+		});
+	});
+});
 
 	//*********************************************************************************************
 	//TODO $AnnotationPath, $NavigationPropertyPath
