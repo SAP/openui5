@@ -1064,6 +1064,7 @@ sap.ui.define([
 			validAppVersions: oPropertyBag.validAppVersions || {},
 			jsOnly: oPropertyBag.jsOnly || false,
 			variantReference: oPropertyBag.variantReference || "",
+			// since not all storage implementations know about all app descriptor change types, we store a flag if this change type changes a descriptor
 			appDescriptorChange: includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oPropertyBag.changeType)
 		};
 
