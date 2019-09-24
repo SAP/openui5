@@ -1972,7 +1972,10 @@ sap.ui.define([
 		}
 
 		// (6) set sort order
-		this._addSorters(oAnalyticalQueryRequest.getSortExpression(), aGroupingSorters);
+		// Prevent sorter for grand total request
+		if (sGroupId) {
+			this._addSorters(oAnalyticalQueryRequest.getSortExpression(), aGroupingSorters);
+		}
 
 		// (7) set result page boundaries
 		if (iLength == 0) {
