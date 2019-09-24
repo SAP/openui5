@@ -34,6 +34,17 @@
             "reference": "1980346398"
           }
         ]
+      },
+      {
+        "id": "f1505e57cc0ef328c029721e8ff8cac2dab8390d",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: change event is not fired when the cancel button is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970298708"
+          }
+        ]
       }
     ]
   }

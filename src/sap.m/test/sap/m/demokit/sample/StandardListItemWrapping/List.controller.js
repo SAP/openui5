@@ -20,6 +20,13 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 						icon: "sap-icon://employee",
 						highlight: "Error",
 						info: "Incomplete"
+					},
+					{
+						title: "Title text",
+						desc: "Description text",
+						icon: "sap-icon://accept",
+						highlight: "Information",
+						info: "Information"
 					}
 				]
 			};

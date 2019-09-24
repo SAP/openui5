@@ -125,6 +125,34 @@
             "reference": "1970418311"
           }
         ]
+      },
+      {
+        "id": "9aff9caa4ffd5fbfe249c0a911b86e47112d0e8c",
+        "type": "FEATURE",
+        "text": " SAP Icons v4.5 update",
+        "references": []
+      },
+      {
+        "id": "9974cb10c80446923b813be6970ed4b83db56fb5",
+        "type": "FIX",
+        "text": " FilterProcessor: Cache normalized values for better performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980413848"
+          }
+        ]
+      },
+      {
+        "id": "7ccb18e11a03d6703fd47889ce030b5be3a7a523",
+        "type": "FIX",
+        "text": " sap.m.Carousel: visiblePagesCount now stops loop in all directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980360836"
+          }
+        ]
       }
     ]
   }

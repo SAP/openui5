@@ -159,6 +159,26 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("KeyUserConnector loadFeatures", {
+		beforeEach : function () {
+		},
+		afterEach: function() {
+			ApplyConnector.xsrfToken = undefined;
+			ApplyUtils.sendRequest.restore();
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("get Response", function (assert) {
+			var mPropertyBag = {
+				url : "/flex/keyuser"
+			};
+			sinon.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+				assert.deepEqual(oResponse, "something", "the settings object is returned correctly");
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

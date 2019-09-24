@@ -52,6 +52,17 @@
         "type": "FIX",
         "text": " sap.ui.fl - replace requireSync with async call",
         "references": []
+      },
+      {
+        "id": "982237a1ce5a2aca86d43712f8ff3c71e443f5bf",
+        "type": "FIX",
+        "text": " Fixing incorrect rolling back of visual UI changes when app",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980407138"
+          }
+        ]
       }
     ]
   }

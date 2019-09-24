@@ -166,6 +166,18 @@ sap.ui.define([
 				"application/json; charset=utf-8", "json"
 			);
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
+		},
+
+		/**
+		 * Called to get the flex features.
+		 *
+		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
+		 */
+		loadFeatures: function (mPropertyBag) {
+			var sFeaturesUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.SETTINGS, mPropertyBag);
+			return ApplyUtils.sendRequest(sFeaturesUrl).then(function (oResult) {
+				return oResult.response;
+			});
 		}
 	});
 

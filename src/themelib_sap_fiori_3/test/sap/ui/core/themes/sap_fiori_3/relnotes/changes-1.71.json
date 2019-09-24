@@ -24,6 +24,40 @@
             "reference": "1980018771"
           }
         ]
+      },
+      {
+        "id": "35cde730498d4ec64ce7d6defc149559de1eab4b",
+        "type": "FEATURE",
+        "text": " StandardListItem: visual adaptation",
+        "references": []
+      },
+      {
+        "id": "acd876257937666c5f458e024b4d0d190449bfaf",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage/sap.uxap.ObjectPageLayout: Visual improvements",
+        "references": []
+      },
+      {
+        "id": "bc44bc1834494102eb7f4b6f3b50fa897078fb18",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed failing picker in SAP Quartz theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405308"
+          }
+        ]
+      },
+      {
+        "id": "474a44fa5929322c22d522ab22fc768b873220ab",
+        "type": "FIX",
+        "text": " sap.m.Switch: Fiori 3 VD changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980313633"
+          }
+        ]
       }
     ]
   }

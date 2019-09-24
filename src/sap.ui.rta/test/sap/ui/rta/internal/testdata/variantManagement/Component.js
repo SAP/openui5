@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/write/api/FeaturesAPI"
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/Utils"
 ], function(
 	UIComponent,
 	FakeLrepConnectorLocalStorage,
@@ -15,7 +16,8 @@ sap.ui.define([
 	MockServer,
 	ODataModel,
 	JSONModel,
-	FeaturesAPI
+	FeaturesAPI,
+	Utils
 ) {
 	"use strict";
 
@@ -75,12 +77,17 @@ sap.ui.define([
 		},
 
 		_adaptButtonConfiguration: function() {
-			FeaturesAPI.isKeyUser()
-				.then(function(bIsKeyUser) {
-					this.setModel(new JSONModel({
-						showAdaptButton: bIsKeyUser
-					}), "app");
-				}.bind(this));
+			var oAppModel = new JSONModel({
+				showAdaptButton: false
+			});
+			this.setModel(oAppModel, "app");
+
+			if (!Utils.getUshellContainer()) {
+				FeaturesAPI.isKeyUser()
+					.then(function (bIsKeyUser) {
+						oAppModel.setProperty("/showAdaptButton", bIsKeyUser);
+					});
+			}
 		},
 
 		_createFakeLrep: function () {
