@@ -21,6 +21,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var API_VERSION = "/v1";
 	var ROUTES = {
 		CHANGES: "/changes/",
 		TOKEN: "/actions/getcsrftoken"
@@ -46,9 +47,9 @@ sap.ui.define([
 		if (mPropertyBag.flexObject) {
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
 		}
-		var sWriteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag);
+		var sWriteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag);
 		delete mPropertyBag.fileName;
-		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+		var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
 			ApplyConnector,
@@ -63,10 +64,10 @@ sap.ui.define([
 	 * Connector for communication with SAPUI5 Flexibility Personalization Service
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.PersonalizationConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
+	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var PersonalizationConnector = merge({}, BaseConnector, {  /** @lends sap.ui.fl.write._internal.connectors.PersonalizationConnector */
 
@@ -114,9 +115,9 @@ sap.ui.define([
 				namespace: mPropertyBag.flexObject.namespace
 			};
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
-			var sDeleteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sDeleteUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag, mParameters);
 			delete mPropertyBag.fileName;
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+			var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
 
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyConnector,
@@ -136,8 +137,8 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
-		 * @param {string[]} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter
-		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset
+		 * @param {string[]} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter (comma-separated list)
+		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset (comma-separated list)
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 * @public
 		 */
@@ -155,8 +156,8 @@ sap.ui.define([
 
 			// Delete this property because it should not be part of the url
 			delete mPropertyBag.reference;
-			var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+			var sResetUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sTokenUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.TOKEN, mPropertyBag);
 			var oRequestOption = WriteUtils.getRequestOptions(ApplyConnector, sTokenUrl);
 			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
 		},

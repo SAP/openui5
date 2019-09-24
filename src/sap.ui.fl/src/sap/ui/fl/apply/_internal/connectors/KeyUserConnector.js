@@ -17,8 +17,7 @@ sap.ui.define([
 
 	var API_VERSION = "/v1";
 	var ROUTES = {
-		DATA: "/data/",
-		SETTINGS: "/settings"
+		DATA: "/data/"
 	};
 
 	/**
@@ -37,17 +36,17 @@ sap.ui.define([
 		 * Loads the data from the KeyUser service
 		 *
 		 * @param {object} mPropertyBag Further properties
-		 * @param {string} mPropertyBag.url configured url for the connector
-		 * @param {string} mPropertyBag.reference flexibility reference
-		 * @param {string} [mPropertyBag.appVersion] version of the application
-		 * @param {string} [mPropertyBag.cacheKey] cache buster token
+		 * @param {string} mPropertyBag.url Configured url for the connector
+		 * @param {string} mPropertyBag.reference Flexibility reference
+		 * @param {string} [mPropertyBag.appVersion] Version of the application
+		 * @param {string} [mPropertyBag.cacheKey] Cache buster token
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
-		loadFlexData : function(mPropertyBag) {
+		loadFlexData: function(mPropertyBag) {
 			var mParameters = _pick(mPropertyBag, ["appVersion"]);
 
 			var sDataUrl = ApplyUtils.getUrl(API_VERSION + ROUTES.DATA, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken : this.xsrfToken }).then(function (oResult) {
+			return ApplyUtils.sendRequest(sDataUrl, "GET", { xsrfToken: this.xsrfToken }).then(function (oResult) {
 				var oResponse = oResult.response;
 				if (oResult.xsrfToken) {
 					this.xsrfToken = oResult.xsrfToken;

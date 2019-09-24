@@ -132,7 +132,7 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
+				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
 				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the correct url was added");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
@@ -192,7 +192,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl1 + "/changes/";
+			var sExpectedUrl = sUrl1 + "/v1/changes/";
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
@@ -203,7 +203,7 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
+				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
 				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl2, "the correct url was added");
 				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
@@ -542,7 +542,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
-			var sExpectedUrl = sUrl + "/changes/";
+			var sExpectedUrl = sUrl + "/v1/changes/";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
@@ -553,7 +553,7 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
+				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
 				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
@@ -583,7 +583,7 @@ sap.ui.define([
 				{connector: "KeyUserConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl + "/changes/";
+			var sExpectedUrl = sUrl + "/v1/changes/";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
@@ -594,7 +594,7 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
+				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
 				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
