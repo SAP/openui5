@@ -15,6 +15,6 @@ sap.ui.define([
 	 * Test Connector which breaks on every call to test failing behavior as well as custom connector registration
 	 */
 	return merge({}, BaseConnector, {
-		testCheckProperty: true
+		testApplyCheckProperty: true
 	});
 });

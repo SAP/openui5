@@ -112,20 +112,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
 				}
 			},
-			"apply/_internal/ConnectorWithCustomBrokenConnector": {
-				group: "Apply Internal",
-				ui5: {
-					resourceroots: {
-						"my.lib": "./test-resources/sap/ui/fl/qunit/apply/_internal/",
-						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
-					},
-					"xx-flexBundleRequestForced": true,
-					flexibilityServices: '[{"connector": "my/lib/BrokenConnector", "custom": true, "layerFilter": []}]'
-				},
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Connector"]
-				}
-			},
 			"apply/_internal/ConnectorWithDebugEnabled": {
 				group: "Apply Internal",
 				ui5: {
@@ -258,6 +244,23 @@ sap.ui.define(function () {
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/connectors/KeyUserConnector"]
+				}
+			},
+			"write/_internal/ConnectorWithCustomBrokenConnector": {
+				group: "Write Internal",
+				ui5: {
+					resourceroots: {
+						"my.lib": "./test-resources/sap/ui/fl/qunit/write/_internal/",
+						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
+					},
+					"xx-flexBundleRequestForced": true,
+					flexibilityServices: '[{"applyConnector": "my/lib/apply/BrokenConnector",' +
+						'"writeConnector": "my/lib/write/BrokenConnector",' +
+						'"custom": true,' +
+						'"layerFilter": []}]'
+				},
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/Connector"]
 				}
 			},
 			// Team Gravity tests

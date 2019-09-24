@@ -55,7 +55,15 @@ sap.ui.define([
 			return new Promise(function (resolve) {
 				var aConnectors = mConnectors.map(function (mConnectorConfiguration) {
 					var sConnector = mConnectorConfiguration.connector;
-					return mConnectorConfiguration.custom ? sConnector : sNameSpace + sConnector;
+					var sConnectorModuleName;
+
+					if (!mConnectorConfiguration.custom) {
+						sConnectorModuleName = sNameSpace + sConnector;
+					} else {
+						sConnectorModuleName = bLoadApplyConnectors ? mConnectorConfiguration.applyConnector : mConnectorConfiguration.writeConnector;
+					}
+
+					return sConnectorModuleName;
 				});
 
 				sap.ui.require(aConnectors, function () {
