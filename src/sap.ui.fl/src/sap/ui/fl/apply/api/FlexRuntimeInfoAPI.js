@@ -46,6 +46,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Control whose changes are being waited for
 		 * @returns {Promise} Promise that resolves when all changes on the control are processed
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 		waitForChanges: function(mPropertyBag) {
 			return ChangesController.getFlexControllerInstance(mPropertyBag.element).waitForChangesToBeApplied(mPropertyBag.element);
@@ -57,6 +60,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Control to be checked
 		 * @returns {boolean} <code>true</code> if flexibility features are supported
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 		isFlexSupported: function(mPropertyBag) {
 			return !!Utils.getAppComponentForControl(mPropertyBag.element);
