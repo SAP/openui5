@@ -132,7 +132,7 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
+				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the correct url was added");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
@@ -168,10 +168,10 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetWriteUrlCallArgs[0], "/v1/changes/", "with correct route path");
+				assert.equal(oGetWriteUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
 				assert.equal(oGetWriteUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetWriteUrlCallArgs[1].url, sUrl, "the correct url was added");
-				assert.equal(oGetTokenUrlCallArgs[0], "/v1/settings", "with correct route path");
+				assert.equal(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
 				assert.equal(oGetTokenUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.equal(oSendRequestCallArgs[0], sExpectedWriteUrl, "with correct url");
@@ -203,7 +203,7 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
+				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.equal(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl2, "the correct url was added");
 				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
@@ -225,7 +225,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl1 + "/v1/changes/";
+			var sExpectedUrl = sUrl1 + "/flex/keyuser/v1/changes/";
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
@@ -237,10 +237,10 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetWriteUrlCallArgs[0], "/v1/changes/", "with correct route path");
+				assert.equal(oGetWriteUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
 				assert.equal(oGetWriteUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetWriteUrlCallArgs[1].url, sUrl1, "the correct url was added");
-				assert.equal(oGetTokenUrlCallArgs[0], "/v1/settings", "with correct route path");
+				assert.equal(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
 				assert.equal(oGetTokenUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
 				assert.equal(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
@@ -542,18 +542,17 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
-			var sExpectedUrl = sUrl + "/v1/changes/";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return Connector.reset(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
+				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
+				assert.equal(oSpyGetUrl.callCount, 2, "getUrl is called twice");
+				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
 				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
@@ -583,18 +582,17 @@ sap.ui.define([
 				{connector: "KeyUserConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl + "/v1/changes/";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return Connector.reset(mPropertyBag).then(function () {
-				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
+				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetUrlCallArgs[0], "/v1/changes/", "with correct route path");
+				assert.equal(oSpyGetUrl.callCount, 2, "getUrl is called twice");
+				assert.equal(oGetUrlCallArgs[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
 				assert.deepEqual(oGetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
@@ -624,11 +622,10 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl1 + "/v1/changes/";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
-			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			var oStubGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return Connector.reset(mPropertyBag).then(function () {
 				var oGetResetUrlCallArgs = oStubGetUrl.getCall(0).args;
@@ -636,10 +633,10 @@ sap.ui.define([
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
 				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
-				assert.equal(oGetResetUrlCallArgs[0], "/v1/changes/", "with correct route path");
+				assert.equal(oGetResetUrlCallArgs[0], "/flex/keyuser/v1/changes/", "with correct route path");
 				assert.equal(oGetResetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetResetUrlCallArgs[1].url, sUrl1, "the correct url was added");
-				assert.equal(oGetTokenUrlCallArgs[0], "/v1/settings", "with correct route path");
+				assert.equal(oGetTokenUrlCallArgs[0], "/flex/keyuser/v1/settings", "with correct route path");
 				assert.deepEqual(oGetResetUrlCallArgs[1].reference, undefined, "reference was deleted from mPropertyBag");
 				assert.deepEqual(oGetResetUrlCallArgs[2], mParameter, "with correct parameters input");
 				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
