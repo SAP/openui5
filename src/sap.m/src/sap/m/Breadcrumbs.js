@@ -104,7 +104,24 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * STATIC MEMBERS
+	 */
+
+	Breadcrumbs.STYLE_MAPPER = {
+		Slash: "&#047;",
+		BackSlash: "&#092;",
+		DoubleSlash: "&#047;&#047;",
+		DoubleBackSlash: "&#092;&#092;",
+		GreaterThan: "&gt;",
+		DoubleGreaterThan: "&#187;"
+	};
+
 	/*************************************** Framework lifecycle events ******************************************/
+
+	Breadcrumbs.prototype.init = function () {
+		this._sSeparatorSymbol = Breadcrumbs.STYLE_MAPPER[this.getSeparatorStyle()];
+	};
 
 	Breadcrumbs.prototype.onBeforeRendering = function () {
 		this.bRenderingPhase = true;
@@ -576,6 +593,24 @@ sap.ui.define([
 		}
 
 		return vResult;
+	};
+
+	/**
+	* Custom setter for the <code>Breadcrumbs</code> separator style.
+	*
+	* @returns {object} this
+	* @param {string} sSeparatorStyle
+	* @public
+	* @since 1.71
+	*/
+	Breadcrumbs.prototype.setSeparatorStyle = function (sSeparatorStyle) {
+		var sSeparatorSymbol = Breadcrumbs.STYLE_MAPPER[sSeparatorStyle];
+		if (!sSeparatorSymbol){
+			return this;
+		}
+
+		this._sSeparatorSymbol = sSeparatorSymbol;
+		return this.setProperty("separatorStyle", sSeparatorStyle);
 	};
 
 	/**

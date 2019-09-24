@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/m/library"
 ],
-function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
+function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 	"use strict";
 	var core, oFactory, helpers, $ = jQuery;
 
@@ -243,11 +244,36 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text) {
 		assert.ok(oStandardBreadCrumbsControl._getSelectWidth() === 0, "Select is not rendered");
 	});
 
+	// Helper method to convert HTML Entity sybol to its numeric character
+	var entityToCharCode = function (sEntity) {
+		return sEntity.replace(/&#(\d{0,4});/g,
+			function(sFullEntity, sNumericPart) { return String.fromCharCode(sNumericPart); });
+	};
+
+	var testSeparatorStyleSymbols = function (oControl, sStyle, assert) {
+		//arrange
+		var sAppliedSymbol,
+			sExpectedSymbol;
+
+		oControl.setSeparatorStyle(sStyle);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		sAppliedSymbol = oControl.$().find(".sapMBreadcrumbsSeparator").first().html();
+		sExpectedSymbol = entityToCharCode(Breadcrumbs.STYLE_MAPPER[oControl.getSeparatorStyle()]);
+
+		// assert
+		assert.equal(sExpectedSymbol, sAppliedSymbol, sStyle + " separator loaded");
+	};
+
 	QUnit.test("Custom separator", function (assert) {
 		//arrange
-		var sSeparator = "/";
-		// assert
-		assert.equal(this.oStandardBreadCrumbsControl.getSeparatorStyle(), sSeparator, "Default separtor loaded");
+		var oControl = this.oStandardBreadCrumbsControl;
+		oControl.placeAt("qunit-fixture");
+		//assert
+		Object.keys(library.BreadcrumbsSeparatorStyle).forEach( function (sStyle) {
+			testSeparatorStyleSymbols(oControl, sStyle, assert);
+		} );
 	});
 
 	/*------------------------------------------------------------------------------------*/
