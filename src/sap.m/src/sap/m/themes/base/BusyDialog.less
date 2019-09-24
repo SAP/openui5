@@ -4,6 +4,7 @@
 /* ================================= */
 
 @_sap_m_BusyDialog_IndicatorMargin: 1em;
+@_sap_m_BusyDialog_IndicatorMarginCompact: 0.5rem;
 
 //this selectors need to be more specific from the Dialog's
 .sapMBusyDialog.sapMDialog {
@@ -51,6 +52,6 @@
 	}
 
 	.sapMBusyIndicator {
-		margin: 0.5rem;
+		margin: @_sap_m_BusyDialog_IndicatorMarginCompact;
 	}
 }
