@@ -911,6 +911,12 @@ sap.ui.define([
 		}
 
 		return filter(this.mRunningChangeRequests).length > 0
+			|| this.aLockedGroupLocks.some(function (oGroupLock) {
+				if (sGroupId === undefined || oGroupLock.getGroupId() === sGroupId) {
+					return oGroupLock.isModifying() && oGroupLock.isLocked();
+				}
+				return false;
+			})
 			|| filter(this.mBatchQueue).some(function (sGroupId0) {
 				return that.mBatchQueue[sGroupId0].some(function (vRequests) {
 					return Array.isArray(vRequests) && vRequests.some(function (oRequest) {
