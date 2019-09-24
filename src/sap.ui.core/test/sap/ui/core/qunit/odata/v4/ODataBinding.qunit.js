@@ -28,7 +28,7 @@ sap.ui.define([
 	function ODataBinding(oTemplate) {
 		asODataBinding.call(this);
 
-		jQuery.extend(this, {
+		Object.assign(this, {
 			getDependentBindings : function () {}, // implemented by all sub-classes
 			//Returns the metadata for the class that this object belongs to.
 			getMetadata : function () {
@@ -64,7 +64,8 @@ sap.ui.define([
 
 		assert.ok(oBinding.hasOwnProperty("mCacheByResourcePath"));
 		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.ok(oBinding.hasOwnProperty("mCacheQueryOptions"));
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 		assert.ok(oBinding.hasOwnProperty("oFetchCacheCallToken"));
@@ -84,6 +85,7 @@ sap.ui.define([
 			oPromise = Promise.resolve(oCache);
 
 		oBinding.mCacheByResourcePath = {};
+		oBinding.oCache = oCache;
 		oBinding.oCachePromise = SyncPromise.resolve(oPromise);
 		oBinding.mCacheQueryOptions = {};
 		oBinding.oContext = {}; // @see sap.ui.model.Binding's c'tor
@@ -94,7 +96,8 @@ sap.ui.define([
 		oBinding.destroy();
 
 		assert.strictEqual(oBinding.mCacheByResourcePath, undefined);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 		assert.strictEqual(oBinding.oContext, undefined);
@@ -110,7 +113,7 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
 	});
 
@@ -174,7 +177,7 @@ sap.ui.define([
 		// code under test
 		oBinding.destroy();
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), true);
 	});
 
@@ -888,7 +891,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCache: no own cache", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : {
@@ -903,24 +907,31 @@ sap.ui.define([
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
 			.withExactArgs(sinon.match.same(oContext))
-			.returns(SyncPromise.resolve({
+			.returns(SyncPromise.resolve(Promise.resolve({
 				mQueryOptions : undefined,
 				sReducedPath : "/resolved/path"
-			}));
+			})));
 		oBindingMock.expects("doCreateCache").never();
 
 		// code under test
 		oBinding.fetchCache(oContext);
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
-		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
-		assert.strictEqual(oBinding.sReducedPath, "/resolved/path");
+		assert.strictEqual(oBinding.oCache, undefined);
+		assert.ok(oBinding.oCachePromise.isPending());
+
+		return oBinding.oCachePromise.then(function () {
+			assert.strictEqual(oBinding.oCache, null);
+			assert.strictEqual(oBinding.oCachePromise.getResult(), null);
+			assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
+			assert.strictEqual(oBinding.sReducedPath, "/resolved/path");
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: absolute binding", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : {
@@ -938,10 +949,10 @@ sap.ui.define([
 			mResultingQueryOptions = {};
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(undefined)
-			.returns(SyncPromise.resolve({
+			.returns(SyncPromise.resolve(Promise.resolve({
 				mQueryOptions : mLocalQueryOptions,
 				sReducedPath : "/resolved/path"
-			}));
+			})));
 		oBindingMock.expects("fetchResourcePath").withExactArgs(undefined)
 			.returns(SyncPromise.resolve("absolute"));
 		this.mock(jQuery).expects("extend")
@@ -955,10 +966,16 @@ sap.ui.define([
 		// code under test
 		oBinding.fetchCache(oContext);
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
-		assert.strictEqual(oCache.$resourcePath, undefined);
-		assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
-		assert.strictEqual(oBinding.sReducedPath, "/resolved/path");
+		assert.strictEqual(oBinding.oCache, undefined);
+		assert.ok(oBinding.oCachePromise.isPending());
+
+		return oBinding.oCachePromise.then(function () {
+			assert.strictEqual(oBinding.oCache, oCache);
+			assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
+			assert.strictEqual(oCache.$resourcePath, undefined);
+			assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
+			assert.strictEqual(oBinding.sReducedPath, "/resolved/path");
+		});
 	});
 
 	//*********************************************************************************************
@@ -966,7 +983,8 @@ sap.ui.define([
 	[[false, false], [false, true], [true, false], [true, true]].forEach(function (aFixture) {
 		QUnit.test("fetchCache: relative binding with context, " + aFixture, function (assert) {
 			var oBinding = new ODataBinding({
-					oCachePromise : SyncPromise.resolve(),
+					oCache : null,
+					oCachePromise : SyncPromise.resolve(null),
 					doCreateCache : function () {},
 					oModel : {
 						oRequestor : {
@@ -1015,8 +1033,11 @@ sap.ui.define([
 			// code under test
 			oBinding.fetchCache(oContext);
 
+			assert.strictEqual(oBinding.oCache,
+				!bQueryOptionsAsync && !bResourcePathAsync ? oCache : undefined);
 			assert.strictEqual(oBinding.oCachePromise.isFulfilled(),
 				!bQueryOptionsAsync && !bResourcePathAsync);
+
 			return oBinding.oCachePromise.then(function (oCache0) {
 				assert.strictEqual(oCache0, oCache);
 				assert.strictEqual(oCache0.$deepResourcePath, "built/path");
@@ -1047,7 +1068,8 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = new ODataBinding({
-					oCachePromise : SyncPromise.resolve(),
+					oCache : null,
+					oCachePromise : SyncPromise.resolve(null),
 					doCreateCache : function () {},
 					oModel : {
 						oRequestor : {
@@ -1094,6 +1116,7 @@ sap.ui.define([
 			oBinding.fetchCache(oContext0);
 
 			return oBinding.oCachePromise.then(function (oCache0) {
+				assert.strictEqual(oBinding.oCache, oCache);
 				assert.strictEqual(oCache0.$returnValueContextId, 42);
 
 				return oCache0;
@@ -1132,6 +1155,7 @@ sap.ui.define([
 
 				return oBinding.oCachePromise;
 			}).then(function (oCache0) {
+				assert.strictEqual(oBinding.oCache, oContext ? oCache1 : oCache);
 				assert.strictEqual(oCache0, oContext ? oCache1 : oCache);
 				assert.strictEqual(oBinding.sReducedPath, "/reduced/path");
 			});
@@ -1144,7 +1168,8 @@ sap.ui.define([
 				ready : function () {}
 			},
 			oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : oRequestor,
@@ -1181,9 +1206,11 @@ sap.ui.define([
 		oBinding.fetchCache();
 
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), false);
+		assert.strictEqual(oBinding.oCache, undefined);
 		return oBinding.oCachePromise.then(function (oResult) {
 			assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
 			assert.strictEqual(oResult, oCache);
+			assert.strictEqual(oBinding.oCache, oCache);
 			assert.strictEqual(oBinding.sReducedPath, "/reduced/path");
 		});
 	});
@@ -1193,7 +1220,8 @@ sap.ui.define([
 		QUnit.skip("fetchCache: auto-$expand/$select, parent binding " + bIsParentBinding,
 			function (assert) {
 				var oBinding = new ODataBinding({
-						oCachePromise : SyncPromise.resolve(),
+						oCache : null,
+						oCachePromise : SyncPromise.resolve(null),
 						doCreateCache : function () {},
 						oModel : {
 							bAutoExpandSelect : true,
@@ -1232,7 +1260,9 @@ sap.ui.define([
 				// code under test
 				oBinding.fetchCache(oContext);
 
-				// property bindings can't have dependent bindings and do not wait for dependent options
+				// property bindings can't have dependent bindings and do not wait for dependent
+				// options
+				assert.strictEqual(oBinding.oCache, !bIsParentBinding ? oCache : undefined);
 				assert.strictEqual(oBinding.oCachePromise.isFulfilled(), !bIsParentBinding);
 				if (bIsParentBinding) {
 					// dependent query options computation requires metadata => set asynchronously
@@ -1247,6 +1277,7 @@ sap.ui.define([
 				}
 				return oBinding.oCachePromise.then(function (oCache0) {
 					assert.strictEqual(oCache0, oCache);
+					assert.strictEqual(oBinding.oCache, oCache);
 					if (bIsParentBinding) {
 						assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
 						assert.strictEqual(oBinding.mAggregatedQueryOptions.$select[0],
@@ -1261,7 +1292,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCache: quasi-absolute binding", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : {
@@ -1300,6 +1332,7 @@ sap.ui.define([
 		// code under test
 		oBinding.fetchCache(oContext);
 
+		assert.strictEqual(oBinding.oCache, oCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 		assert.strictEqual(oCache.$resourcePath, "resourcePath/quasiAbsolute");
 		assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
@@ -1308,7 +1341,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCache: relative to virtual context", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
@@ -1327,7 +1361,8 @@ sap.ui.define([
 		// code under test
 		oBinding.fetchCache(oContext);
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 	});
 
@@ -1337,6 +1372,7 @@ sap.ui.define([
 				setActive : function () {}
 			}),
 			oBinding = new ODataBinding({
+				oCache : null,
 				oCachePromise : oCachePromise,
 				oModel : {
 					oRequestor : {
@@ -1354,21 +1390,23 @@ sap.ui.define([
 		// code under test
 		oBinding.fetchCache({/*oContext: not needed*/});
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		assert.strictEqual(oBinding.sReducedPath, "/Operation(...)");
 		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 	});
 
 	//*********************************************************************************************
 	[
-		undefined,
+		null,
 		{ setActive : function () {} }
 	].forEach(function (oCache, i) {
 		QUnit.test("fetchCache: previous cache, " + i, function (assert) {
 			var oBinding = new ODataBinding({
+					oCache : oCache,
 					oCachePromise : SyncPromise.resolve(oCache),
 					fetchQueryOptionsForOwnCache : function () {
-						return SyncPromise.resolve({/*don't care*/});
+						return SyncPromise.resolve({/*don't care, no own cache*/});
 					},
 					oModel : {
 						oRequestor : {
@@ -1383,13 +1421,16 @@ sap.ui.define([
 
 			// code under test
 			oBinding.fetchCache();
+
+			assert.strictEqual(oBinding.oCache, null);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: use same cache for same path", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : {
@@ -1423,7 +1464,11 @@ sap.ui.define([
 		// code under test
 		oBinding.fetchCache(oContext);
 
+		assert.strictEqual(oBinding.oCache, undefined);
+
 		return oBinding.oCachePromise.then(function () {
+			assert.strictEqual(oBinding.oCache, oCache);
+
 			oCacheMock.expects("setActive").withExactArgs(false);
 			oCacheMock.expects("setActive").withExactArgs(true);
 
@@ -1432,6 +1477,7 @@ sap.ui.define([
 
 			return oBinding.oCachePromise.then(function (oCache1) {
 				assert.strictEqual(oCache1, oCache);
+				assert.strictEqual(oBinding.oCache, oCache);
 			});
 		});
 	});
@@ -1439,7 +1485,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("fetchCache: no cache reuse for absolute bindings", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : {
@@ -1461,14 +1508,19 @@ sap.ui.define([
 		// code under test
 		oBinding.fetchCache();
 
+		assert.strictEqual(oBinding.oCache, oCache);
+
 		// code under test
 		oBinding.fetchCache();
+
+		assert.strictEqual(oBinding.oCache, oCache);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: later calls to fetchCache exist => discard cache", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				doCreateCache : function () {},
 				oModel : {
 					oRequestor : {
@@ -1543,13 +1595,15 @@ sap.ui.define([
 			})
 		]).then(function () {
 			assert.strictEqual(oBinding.sReducedPath, "/reduced/path/2");
+			assert.strictEqual(oBinding.oCache, oCache);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: fetchResourcePath fails", function (assert) {
 		var oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				mCacheQueryOptions : {},
 				oModel : {
 					oRequestor : {
@@ -1585,6 +1639,7 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 				assert.strictEqual(oBinding.mCacheQueryOptions, undefined,
 					"cache query options stored at binding are reset");
+				assert.strictEqual(oBinding.oCache, undefined);
 			}
 		);
 	});
@@ -1664,6 +1719,7 @@ sap.ui.define([
 		QUnit.test("withCache: cache hit, async=" + bAsync, function (assert) {
 			var oCache = {},
 				oBinding = new ODataBinding({
+					oCache : bAsync ? undefined : oCache,
 					oCachePromise : bAsync ? SyncPromise.resolve(Promise.resolve(oCache))
 						: SyncPromise.resolve(oCache)
 				}),
@@ -1679,13 +1735,15 @@ sap.ui.define([
 				.returns(oCallbackResult);
 
 			// code under test
-			oPromise = oBinding.withCache(oProcessor.fnCallback, "foo").then(function (oResult) {
-				assert.strictEqual(oResult, oCallbackResult);
-			});
+			oPromise = oBinding.withCache(oProcessor.fnCallback, "foo");
+
 			if (!bAsync) {
 				assert.strictEqual(oPromise.isFulfilled(), true);
+				assert.strictEqual(oPromise.getResult(), oCallbackResult);
 			}
-			return oPromise;
+			return oPromise.then(function (oResult) {
+				assert.strictEqual(oResult, oCallbackResult);
+			});
 		});
 	});
 
@@ -1696,6 +1754,7 @@ sap.ui.define([
 				withCache : function () {}
 			},
 			oBinding = new ODataBinding({
+				oCache : undefined,
 				oCachePromise : SyncPromise.resolve(Promise.resolve(oCache)),
 				oContext : oContext
 			}),
@@ -1722,7 +1781,8 @@ sap.ui.define([
 				withCache : function () {}
 			},
 			oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				oContext : oContext,
 				sPath : "binding/path"
 			}),
@@ -1747,7 +1807,8 @@ sap.ui.define([
 				withCache : function () {}
 			},
 			oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				oContext : oContext
 			}),
 			fnCallback = {},
@@ -1767,11 +1828,13 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("withCache: cache miss, but context", function (assert) {
-		var oContext = {
+		var oCache = {},
+			oContext = {
 				withCache : function () {}
 			},
 			oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve({}),
+				oCache : oCache,
+				oCachePromise : SyncPromise.resolve(oCache),
 				oContext : oContext,
 				sPath : "binding/path"
 			}),
@@ -1796,7 +1859,8 @@ sap.ui.define([
 			},
 			fnCallback = {},
 			oBinding = new ODataBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				oContext : oContext,
 				oOperation : {}
 			}),
@@ -1816,7 +1880,8 @@ sap.ui.define([
 
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = new ODataBinding({
-					oCachePromise : SyncPromise.resolve(),
+					oCache : null,
+					oCachePromise : SyncPromise.resolve(null),
 					oContext : bBaseContext ? {} : undefined
 				}),
 				fnCallback = {};

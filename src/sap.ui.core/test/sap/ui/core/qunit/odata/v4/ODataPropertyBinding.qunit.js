@@ -180,7 +180,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.hasOwnProperty("oCachePromise"), true);
-			assert.strictEqual(oBinding.oCachePromise.getResult(), bAbsolute ? oCache : undefined);
+			assert.strictEqual(oBinding.oCachePromise.getResult(), bAbsolute ? oCache : null);
 			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 			assert.strictEqual(oBinding.sGroupId, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("oCheckUpdateCallToken"), true);
@@ -301,7 +301,7 @@ sap.ui.define([
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 				this.mock(oCache).expects("setActive").withExactArgs(false);
 			} else {
-				assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+				assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 			}
 			if (oFixture.sTarget) {
 				this.mock(oBinding).expects("checkUpdateInternal")
@@ -313,7 +313,7 @@ sap.ui.define([
 			oBinding.setContext(oTargetContext);
 
 			assert.strictEqual(oBinding.oCachePromise.getResult(),
-				oFixture.sTarget === "base" ? oCache : undefined);
+				oFixture.sTarget === "base" ? oCache : null);
 
 			// code under test
 			// #deregisterChange is not called again, if #setContext is called with the same context
