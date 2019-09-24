@@ -23,7 +23,7 @@ sap.ui.define([
 			this.xhr = sinon.fakeServer.create();
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
-			_returnData(this.xhr, '{}');
+			_returnData(this.xhr, '{"changes": []}');
 		},
 		afterEach: function() {
 			PersonalizationConnector.xsrfToken = undefined;
@@ -32,7 +32,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("given no static changes-bundle.json placed for 'reference' resource roots and a mock server, when loading flex data is triggered and an empty response is returned", function (assert) {
 			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
-				assert.deepEqual(oResult, {}, "the default response resolves the request Promise");
+				assert.deepEqual(oResult, {changes: []}, "the default response resolves the request Promise");
 			});
 		});
 
@@ -60,7 +60,9 @@ sap.ui.define([
 			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/data/reference?appVersion=1.0.0";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({
-				response : {},
+				response : {
+					changes: []
+				},
 				xsrfToken : "newToken",
 				status: "200"
 			});
@@ -74,6 +76,29 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], {xsrfToken: undefined}, "with correct token");
 				assert.equal(PersonalizationConnector.xsrfToken, "newToken", "new token is set");
+			});
+		});
+
+		QUnit.test("loadFlexData merges the compVariants in the changes", function (assert) {
+			var mPropertyBag = {
+				url: "/flexPersonalization",
+				reference: "reference",
+				appVersion: "1.0.0"
+			};
+			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/data/reference?appVersion=1.0.0";
+			sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
+			sandbox.stub(ApplyUtils, "sendRequest").resolves({
+				response : {
+					changes: [1],
+					compVariants: [2]
+				},
+				xsrfToken : "newToken",
+				status: "200"
+			});
+			return PersonalizationConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
+				assert.equal(oFlexData.changes.length, 2, "two entries are in the change section");
+				assert.equal(oFlexData.changes[0], 1, "the change entry is contained");
+				assert.equal(oFlexData.changes[1], 2, "the compVariant entry is contained");
 			});
 		});
 	});

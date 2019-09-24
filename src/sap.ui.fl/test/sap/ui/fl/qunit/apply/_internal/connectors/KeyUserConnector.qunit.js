@@ -32,7 +32,9 @@ sap.ui.define([
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
-				response : {},
+				response : {
+					changes: []
+				},
 				xsrfToken : "newToken",
 				status: "200"
 			});
@@ -46,6 +48,29 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], {xsrfToken: undefined}, "with correct token");
 				assert.equal(KeyUserConnector.xsrfToken, "newToken", "new token is set");
+			});
+		});
+
+		QUnit.test("loadFlexData merges the compVariants in the changes", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				reference: "reference",
+				appVersion: "1.0.0"
+			};
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
+			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
+			sandbox.stub(Utils, "sendRequest").resolves({
+				response : {
+					changes: [1],
+					compVariants: [2]
+				},
+				xsrfToken : "newToken",
+				status: "200"
+			});
+			return KeyUserConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
+				assert.equal(oFlexData.changes.length, 2, "two entries are in the change section");
+				assert.equal(oFlexData.changes[0], 1, "the change entry is contained");
+				assert.equal(oFlexData.changes[1], 2, "the compVariant entry is contained");
 			});
 		});
 	});
