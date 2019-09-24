@@ -51,6 +51,7 @@ sap.ui.define([
 				if (oResult.xsrfToken) {
 					this.xsrfToken = oResult.xsrfToken;
 				}
+				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
 				return oResponse;
 			}.bind(this));
 		}
