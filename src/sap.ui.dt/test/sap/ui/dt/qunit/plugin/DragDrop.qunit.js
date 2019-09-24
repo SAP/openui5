@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/QUnitUtils"
 ], function (
 	ElementOverlay,
 	DragDrop,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Button,
 	Device,
 	sinon,
-	jQuery
+	jQuery,
+	QUnitUtils
 ) {
 	"use strict";
 
@@ -40,16 +42,8 @@ sap.ui.define([
 
 		if (aDomDragEvents.length) {
 			for (var i = 0; i < aDomDragEvents.length; i++) {
-				if (mFakeTouchEvents) {
-					var oEventData = mFakeTouchEvents[aDomDragEvents[i]];
-					var oEvent;
-					if (oEventData) {
-						oEvent = jQuery.Event(aDomDragEvents[i], oEventData);
-						oOverlay.$().trigger(oEvent);
-					}
-				} else {
-					oOverlay.$().trigger(aDomDragEvents[i]);
-				}
+				var oEventData = mFakeTouchEvents && mFakeTouchEvents[aDomDragEvents[i]];
+				QUnitUtils.triggerEvent(aDomDragEvents[i], oOverlay.$(), oEventData);
 			}
 		}
 	}
