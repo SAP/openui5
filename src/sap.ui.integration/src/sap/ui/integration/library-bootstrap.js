@@ -22,8 +22,6 @@
 				Core.attachInit(function () {
 					initTags();
 				});
-				//pass on the core instance to Customelements interface
-				CustomElements.coreInstance = coreInstance;
 			});
 
 	}
@@ -31,8 +29,8 @@
 	function registerLibraryTags(sLibrary) {
 		var oLibrary = coreInstance.getLoadedLibraries()[sLibrary];
 		//collect the prefix and the relevant tags
-		var sPrefix = scriptTag.getAttribute("prefix") || oLibrary.defaultTagPrefix,
-			aTags = Object.keys(oLibrary.customTags),
+		var sPrefix = scriptTag.getAttribute("prefix") || oLibrary.defaultCustomElementsPrefix,
+			aTags = Object.keys(oLibrary.customElements),
 			sTags = scriptTag.getAttribute("tags");
 		if (sTags) {
 			aTags = sTags.split(",");
@@ -41,7 +39,7 @@
 		window.sap.ui.require(
 			aTags.map(
 				function (o, i) {
-					return oLibrary.customTags[aTags[i]];
+					return oLibrary.customElements[aTags[i]];
 				}
 			),
 			function () {
@@ -49,22 +47,20 @@
 				var args = arguments;
 				aTags.forEach(
 					function (o, i) {
-						CustomElements.registerTag(aTags[i], sPrefix, args[i]);
+						CustomElements.registerTag(sPrefix + "-" + aTags[i], args[i]);
 					}
 				);
 			});
 	}
 
 	function initTags() {
-		//need to wait for the onload event of the window to ensure that the MutationObserver reacts
-		//load the lib(s) and register
 		coreInstance.loadLibraries(["sap/ui/integration"], {
 			async: true
 		}).then(function () {
 			//register the tags for this library
 			registerLibraryTags("sap.ui.integration");
 		});
-
 	}
+
 	boot();
 })(window);

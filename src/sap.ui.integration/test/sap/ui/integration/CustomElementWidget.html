@@ -6,11 +6,7 @@
 	<meta charset="utf-8">
 	<title>Custom Elements for sap.ui.integration</title>
 	<script src="../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3"></script>
-	<script>
-		function handleAction(event) {
-			sap.m.MessageToast.show("Event Type: " + event.type);
-		}
-	</script>
+
 	<style>
 		.customSize{
 			width: 400px;
@@ -20,11 +16,10 @@
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" style="margin:2rem">
-	<ui-widget class="sapFCardBase customSize"
-		manifest="./widgets/components/component1/webapp/manifest.json"
-		on-action="handleAction(event)">
-	</ui-widget>
-	<ui-widget class="customSize"
+
+	<ui-integration-widget class="sapFCardBase customSize" manifest="./widgets/components/component1/webapp/manifest.json"></ui-integration-widget>
+
+	<ui-integration-widget class="customSize"
 		manifest="./widgets/components/component1/webapp/manifest.json"
 		configuration='{
 			"configuration": {
@@ -35,9 +30,20 @@
 		}'
 		parameters='{
 			"text": "modifiedParameterValue"
-		}'
-		on-action="handleAction(event)">
-	</ui-widget>
+		}'>
+	</ui-integration-widget>
+	
+	<script>
+
+		function handleAction(event) {
+			sap.m.MessageToast.show("Event Type: " + event.type);
+		}
+
+		document.querySelectorAll("ui-integration-widget").forEach(function (oWidget) {
+			oWidget.addEventListener("action", handleAction);
+		});
+	</script>
+
 </body>
 
 </html>

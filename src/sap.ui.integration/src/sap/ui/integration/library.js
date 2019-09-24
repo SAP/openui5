@@ -32,13 +32,13 @@ sap.ui.define(["sap/ui/base/DataType",
 			elements: [],
 			noLibraryCSS: true,
 
-			//define the custom tags that can be used in this library
-			customTags: {
+			// define the custom elements that can be used in this library
+			customElements: {
 				"card": "sap/ui/integration/widgets/Card",
 				"widget": "sap/ui/integration/Widget",
 				"host-configuration": "sap/ui/integration/host/HostConfiguration"
 			},
-			defaultTagPrefix: "ui"
+			defaultCustomElementsPrefix: "ui-integration"
 		});
 
 		/**
