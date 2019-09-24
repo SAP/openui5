@@ -4062,7 +4062,6 @@ sap.ui.define([
 	Table.prototype.onRowsUpdated = function(mParameters) {
 		if (this.getRows().length > 0) {
 			this._updateTableContent();
-			this._updateSelection();
 			this._getAccExtension().updateAccForCurrentCell(mParameters.reason);
 
 			this._resetRowHeights();
@@ -4070,6 +4069,7 @@ sap.ui.define([
 			this._updateRowHeights(this._aRowHeights, false);
 		}
 
+		this._updateSelection();
 		this._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
 		this._getScrollExtension().updateVerticalScrollbarVisibility();
 	};
