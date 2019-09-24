@@ -1679,8 +1679,10 @@ sap.ui.define([
 		sGroupId = sGroupId || this.sUpdateGroupId;
 		this.checkBatchGroupId(sGroupId);
 
-		this.oRequestor.cancelChanges(
-			this.isAutoGroup(sGroupId) ? "$parked." + sGroupId : sGroupId);
+		if (this.isAutoGroup(sGroupId)) {
+			this.oRequestor.cancelChanges("$parked." + sGroupId);
+		}
+		this.oRequestor.cancelChanges(sGroupId);
 
 		this.aAllBindings.forEach(function (oBinding) {
 			if (sGroupId === oBinding.getUpdateGroupId()) {

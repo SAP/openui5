@@ -646,6 +646,7 @@ sap.ui.define([
 				.withExactArgs({
 					asExpression : false,
 					complexBinding : true,
+					ignoreAsPrefix : "",
 					model : sinon.match.same(oMetaModel),
 					path : "/my/path", // trailing slash removed!
 					prefix : "",
@@ -670,6 +671,7 @@ sap.ui.define([
 			.withExactArgs({
 				asExpression : false,
 				complexBinding : true,
+				ignoreAsPrefix : "",
 				model : sinon.match.same(oMetaModel),
 				path : sPath,
 				prefix : "",
@@ -733,6 +735,7 @@ sap.ui.define([
 				.withExactArgs({
 					asExpression : false,
 					complexBinding : true,
+					ignoreAsPrefix : "",
 					model : sinon.match.same(oMetaModel),
 					path : oFixture.sPathForGetExpression || oFixture.sPath,
 					prefix : oFixture.sPrefix,
@@ -808,6 +811,7 @@ sap.ui.define([
 		this.mock(Expression).expects("getExpression").withExactArgs({
 				asExpression : false,
 				complexBinding : true,
+				ignoreAsPrefix : "",
 				model : sinon.match.same(oModel),
 				path : "/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value",
 				prefix : "",
@@ -834,6 +838,43 @@ sap.ui.define([
 			"{path:'EQUIPMENT_2_PRODUCT/Name',type:'sap.ui.model.odata.type.String',"
 			+ "constraints:{'maxLength':10},formatOptions:{'parseKeepsEmptyString':true}}");
 	});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bIsBound) {
+	QUnit.test("format: overload; $IsBound : " + bIsBound, function (assert) {
+		var sPath = "/T€AMS/name.space.OverloadedAction@Core.OperationAvailable",
+			oMetaModel = {},
+			oContext = new BaseContext(oMetaModel, sPath),
+			vRawValue = {},
+			vResult = {/*string or Promise*/};
+
+		this.mock(Expression).expects("getExpression")
+			.withExactArgs({
+				asExpression : false,
+				complexBinding : true,
+				ignoreAsPrefix : bIsBound ? "_it/" : "",
+				model : sinon.match.same(oMetaModel),
+				path : sPath,
+				prefix : "",
+				value : sinon.match.same(vRawValue),
+				$$valueAsPromise : true
+			})
+			.returns(vResult);
+
+		assert.strictEqual(
+			AnnotationHelper.format(vRawValue, {
+				context : oContext,
+				overload : {
+					$IsBound : bIsBound,
+					$Parameter : [{
+						$Name : "_it"
+					}]
+				}
+			}),
+			vResult
+		);
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("resolve$Path: no $Path, just $P...", function (assert) {

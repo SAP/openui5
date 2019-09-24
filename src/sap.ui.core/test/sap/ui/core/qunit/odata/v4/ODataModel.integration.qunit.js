@@ -16973,6 +16973,235 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Request side effects on a context binding without an own cache, relative to a
+	// context binding with a cache.
+	// CPOUI5UISERVICESV3-1707
+	QUnit.test("requestSideEffects: relative to a context binding", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="form">\
+	<FlexBox binding="{BestFriend}" id="bestFriend">\
+		<Text id="name" text="{Name}" />\
+		<FlexBox binding="{BestPublication}" id="bestPublication">\
+			<Text id="bestPublication::currency" text="{CurrencyCode}" />\
+		</FlexBox>\
+		<Table id="publication" \
+				items="{path : \'_Publication\', parameters : {$$ownRequest : true}}">\
+			<ColumnListItem>\
+				<Text id="currency" text="{CurrencyCode}" />\
+			</ColumnListItem>\
+		</Table>\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+				+ "?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name;"
+					+ "$expand=BestPublication($select=CurrencyCode,PublicationID))", {
+				ArtistID : "42",
+				IsActiveEntity : true,
+				BestFriend : {
+					ArtistID : "23",
+					BestPublication : {
+						CurrencyCode : "JPY",
+						PublicationID : "13"
+					},
+					IsActiveEntity : true,
+					Name : "Best Friend"
+				}
+			})
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+				+ "?$select=CurrencyCode,PublicationID&$skip=0&$top=100", {
+				value : [{
+					CurrencyCode : "EUR",
+					PublicationID : "1"
+				}, {
+					CurrencyCode : "USD",
+					PublicationID : "2"
+				}]
+			})
+			.expectChange("currency", ["EUR",  "USD"])
+			.expectChange("bestPublication::currency", "JPY")
+			.expectChange("name", "Best Friend");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=Name;"
+						+ "$expand=BestPublication($select=CurrencyCode))", {
+					BestFriend : {
+						BestPublication : {
+							CurrencyCode : "JPY2"
+						},
+						Name : "Best Friend2"
+					}
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend/_Publication"
+					+ "?$select=CurrencyCode,PublicationID&$skip=0&$top=100", {
+					value : [{
+						CurrencyCode : "EUR2",
+						PublicationID : "1"
+					}, {
+						CurrencyCode : "USD2",
+						PublicationID : "2"
+					}]
+				})
+				.expectChange("currency", ["EUR2",  "USD2"])
+				.expectChange("bestPublication::currency", "JPY2")
+				.expectChange("name", "Best Friend2");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("bestFriend").getBindingContext().requestSideEffects([{
+					$PropertyPath : "BestPublication/CurrencyCode"
+				}, {
+					$PropertyPath : "Name"
+				}, {
+					$NavigationPropertyPath : "_Publication"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=BestPublication;"
+						+ "$expand=BestPublication($select=CurrencyCode))", {
+					BestFriend : {
+						BestPublication : {
+							CurrencyCode : "USD"
+						}
+					}
+				})
+				.expectChange("bestPublication::currency", "USD");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("bestPublication").getBindingContext().requestSideEffects([{
+					$PropertyPath : "CurrencyCode"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request side effects on a context binding without an own cache, relative to a list
+	// binding with a cache.
+	// CPOUI5UISERVICESV3-1707
+	QUnit.test("requestSideEffects: relative to a list binding", function (assert) {
+		var oBestFriendBox,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/Artists}">\
+	<ColumnListItem>\
+		<FlexBox binding="{BestFriend}"> \
+			<Text id="name" text="{Name}" />\
+			<FlexBox binding="{BestPublication}" id="bestPublication">\
+				<Text id="currency" text="{CurrencyCode}" />\
+			</FlexBox>\
+		</FlexBox>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Artists"
+				+ "?$select=ArtistID,IsActiveEntity"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name;"
+					+ "$expand=BestPublication($select=CurrencyCode,PublicationID))"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					ArtistID : "23",
+					BestFriend : {
+						ArtistID : "43",
+						BestPublication : {
+							CurrencyCode : "GBP",
+							PublicationID : "13"
+						},
+						IsActiveEntity : true,
+						Name : "Best Friend of 23"
+					},
+					IsActiveEntity : true
+				}, {
+					ArtistID : "24",
+					BestFriend : {
+						ArtistID : "44",
+						BestPublication : {
+							CurrencyCode : "JPY",
+							PublicationID : "14"
+						},
+						IsActiveEntity : true,
+						Name : "Best Friend of 24"
+					},
+					IsActiveEntity : true
+				}]
+			})
+			.expectChange("currency", "GBP")
+			.expectChange("currency", "JPY")
+			.expectChange("name", "Best Friend of 23")
+			.expectChange("name", "Best Friend of 24");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBestFriendBox = that.oView.byId("table").getItems()[1].getCells()[0];
+
+			//TODO CPOUI5UISERVICESV3-1980: avoid BestFriend
+			that.expectRequest("Artists?$select=ArtistID,BestFriend,IsActiveEntity"
+					+ "&$expand=BestFriend($select=Name;"
+						+ "$expand=BestPublication($select=CurrencyCode))"
+					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {
+					value : [{
+						ArtistID : "24",
+						BestFriend : {
+							BestPublication : {
+								CurrencyCode : "JPY2"
+							},
+							Name : "New Best Friend of 24"
+						},
+						IsActiveEntity : true
+					}]
+				})
+				.expectChange("currency", "JPY2")
+				.expectChange("name", "New Best Friend of 24");
+
+			return Promise.all([
+				// code under test
+				oBestFriendBox.getBindingContext()
+					.requestSideEffects([{
+						$PropertyPath : "BestPublication/CurrencyCode"
+					}, {
+						$PropertyPath : "Name"
+					}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			var oBestPublicationBox = oBestFriendBox.getItems()[1];
+
+			//TODO CPOUI5UISERVICESV3-1980: avoid BestFriend
+			that.expectRequest("Artists?$select=ArtistID,BestFriend,IsActiveEntity"
+					+ "&$expand=BestFriend($select=BestPublication;"
+						+ "$expand=BestPublication($select=CurrencyCode))"
+					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {
+					value : [{
+						ArtistID : "24",
+						BestFriend : {
+							BestPublication : {
+								CurrencyCode : "JPY3"
+							}
+						},
+						IsActiveEntity : true
+					}]
+				})
+				.expectChange("currency", "JPY3");
+
+			return Promise.all([
+				// code under test
+				oBestPublicationBox.getBindingContext().requestSideEffects([{
+					$PropertyPath : "CurrencyCode"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Check that the failure to refresh a complete table using requestSideEffects leads
 	// to a rejected promise, but no changes in data.
 	// JIRA: CPOUI5UISERVICESV3-1828
@@ -19764,9 +19993,105 @@ sap.ui.define([
 	// Scenario: requestSideEffects must not refresh a dependent list binding in case it is a
 	// "creation row" which means it only contains transient contexts.
 	// JIRA: CPOUI5UISERVICESV3-1943
-	// JIRA: CPOUI5UISERVICESV3-1946 ODataModel#hasPendingChanges with group ID
 	QUnit.test("requestSideEffects does not refresh creation row", function (assert) {
 		var oCreationRowContext,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			oTableBinding,
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Input id="soCurrencyCode" value="{CurrencyCode}"/>\
+	<Table id="table" items="{path: \'SO_2_SOITEM\', parameters: {$$ownRequest: true}}">\
+		<ColumnListItem>\
+			<Text id="note" text="{Note}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="creationRow">\
+	<Input id="creationRow::note" value="{Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID", {
+				CurrencyCode : "EUR",
+				SalesOrderID : "1"
+			})
+			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+				value : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"])
+			.expectChange("soCurrencyCode", "EUR")
+			.expectChange("creationRow::note");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCreationRowListBinding;
+
+			oTableBinding = that.oView.byId("table").getBinding("items");
+			oCreationRowListBinding = oModel.bindList(oTableBinding.getPath(),
+				oTableBinding.getContext(), undefined, undefined,
+				{$$updateGroupId : "doNotSubmit"});
+
+			that.expectChange("creationRow::note", "New item note");
+
+			// initialize creation row
+			oCreationRowContext = oCreationRowListBinding.create({Note : "New item note"});
+			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						ItemPosition : "10",
+						Note : "Foo - side effect",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("note", ["Foo - side effect"]);
+
+			// code under test: requestSideEffects promise resolves, "creationRow::note" unchanged
+			return Promise.all([
+				oTableBinding.getContext().requestSideEffects([{
+					$NavigationPropertyPath : "SO_2_SOITEM"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("creationRow::note", "Changed item note");
+
+			// code under test: no error on edit in transient context after requestSideEffects
+			that.oView.byId("creationRow::note").getBinding("value").setValue("Changed item note");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("creationRow::note", null);
+
+			return Promise.all([
+				// cleanup: delete creation row to avoid error on view destruction
+				oCreationRowContext.delete("$auto"),
+				oCreationRowContext.created()
+					.catch(function () {/* avoid "Uncaught (in promise)" */}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODataModel#hasPendingChanges works synchronously as expected:
+	//  - it detects pending parked changes
+	//  - it considers reset changes
+	//  - changing a value and immediately resetting it
+	//  - in combination with creation row and late property bindings
+	// JIRA: CPOUI5UISERVICESV3-1946 ODataModel#hasPendingChanges with group ID
+	// JIRA: CPOUI5UISERVICESV3-1955 ODataModel#hasPendingChanges does also work for new entities
+	QUnit.test("ODataModel#hasPendingChanges: late properties and creation row", function (assert) {
+		var oCreationRowContext,
+			oCreationRowListBinding,
+			oFormBinding,
 			oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "$auto"
@@ -19808,6 +20133,7 @@ sap.ui.define([
 					message : "Invalid currency code"
 				});
 
+			oFormBinding = that.oView.byId("form").getObjectBinding();
 			that.oLogMock.expects("error")
 				.withArgs("Failed to update path /SalesOrderList('1')/CurrencyCode");
 			that.expectRequest({
@@ -19831,6 +20157,7 @@ sap.ui.define([
 
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges("$auto"));
+			assert.ok(oFormBinding.hasPendingChanges(), "form is dirty");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -19839,10 +20166,26 @@ sap.ui.define([
 			// remove parked changes
 			oModel.resetChanges("$auto");
 
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oModel.hasPendingChanges("$auto"));
+
 			return that.waitForChanges(assert);
 		}).then(function () {
-			var oCreationRowListBinding;
+			that.expectChange("soCurrencyCode", "USD")
+				.expectChange("soCurrencyCode", "EUR");
 
+			that.oView.byId("soCurrencyCode").getBinding("value").setValue("USD");
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oModel.hasPendingChanges("$auto"));
+
+			oModel.resetChanges("$auto");
+
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oModel.hasPendingChanges("$auto"));
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			oTableBinding = that.oView.byId("table").getBinding("items");
 			oCreationRowListBinding = oModel.bindList(oTableBinding.getPath(),
 				oTableBinding.getContext(), undefined, undefined,
@@ -19854,46 +20197,29 @@ sap.ui.define([
 			oCreationRowContext = oCreationRowListBinding.create({Note : "New item note"});
 			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			//TODO: has to be checked async because creation row cachePromise is pending and
-			// hasPendingChanges returns false in that case
+			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oFormBinding.hasPendingChanges());
+			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oCreationRowListBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges(), "consider all groups");
 			assert.notOk(oModel.hasPendingChanges("$auto"));
 			assert.ok(oModel.hasPendingChanges("doNotSubmit"), "creation row has changes");
-
-			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
-					value : [{
-						ItemPosition : "10",
-						Note : "Foo - side effect",
-						SalesOrderID : "1"
-					}]
-				})
-				.expectChange("note", ["Foo - side effect"]);
-
-			// code under test: requestSideEffects promise resolves, "creationRow::note" unchanged
-			return Promise.all([
-				oTableBinding.getContext().requestSideEffects([{
-					$NavigationPropertyPath : "SO_2_SOITEM"
-				}]),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			that.expectChange("creationRow::note", "Changed item note");
-
-			// code under test: no error on edit in transient context after requestSideEffects
-			that.oView.byId("creationRow::note").getBinding("value").setValue("Changed item note");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("creationRow::note", null);
 
-			// cleanup: delete creation row to avoid error on view destruction
-			oCreationRowContext.created().catch(function () {/* avoid "Uncaught (in promise)" */});
-			oCreationRowContext.delete("$auto");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// cleanup: delete creation row to avoid error on view destruction
+				oCreationRowContext.delete("$auto"),
+				oCreationRowContext.created()
+					.catch(function () {/* avoid "Uncaught (in promise)" */}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.notOk(oFormBinding.hasPendingChanges());
+			assert.notOk(oCreationRowListBinding.hasPendingChanges());
+			assert.notOk(oModel.hasPendingChanges(), "consider all groups");
+			assert.notOk(oModel.hasPendingChanges("$auto"));
+			assert.notOk(oModel.hasPendingChanges("doNotSubmit"), "creation row has changes");
 		});
 	});
 
@@ -20532,7 +20858,7 @@ sap.ui.define([
 			.then(function () {
 				that.expectRequest({
 						headers : mHeaders,
-						method: "GET",
+						method : "GET",
 						url : "EMPLOYEES(0)/Name"
 					}, {value : "Frederic Fall"});
 
