@@ -64,7 +64,7 @@ sap.ui.define([
 
 			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
-				assert.equal(oResponse, "something", "correct response is returned");
+				assert.deepEqual(oResponse, {response : "something"}, "correct response is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
 			});
 		});
