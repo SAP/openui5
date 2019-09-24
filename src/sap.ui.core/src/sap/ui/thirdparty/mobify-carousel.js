@@ -197,7 +197,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     Carousel.prototype.initAnimation = function() {
         this.animating = false;
         this.dragging = false;
-        this.hasActiveTransition = false;
+        this._hasActiveTransition = false;
         this._needsUpdate = false;
         this._sTransitionEvents = 'transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd';
         this._enableAnimation();
@@ -542,11 +542,16 @@ Mobify.UI.Carousel = (function($, Utils) {
 			}
 		}
 
-        this.hasActiveTransition = false;
+        this._hasActiveTransition = false;
 
 		// Trigger afterSlide event
 		this.$element.trigger('afterSlide', [this._prevIndex, this._index]);
     };
+
+    Carousel.prototype.hasActiveTransition = function() {
+		return this._hasActiveTransition;
+    };
+
     // SAP MODIFICATION ENDS
 
 	Carousel.prototype.destroy = function() {
@@ -564,7 +569,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     Carousel.prototype.move = function(newIndex, opts) {
     	//if list is empty or transition is in process , return
     	//SAP MODIFICATION
-    	if(this._length === 0 || this.hasActiveTransition == true) {
+    	if(this._length === 0 || this._hasActiveTransition == true) {
     		return;
     	}
 
@@ -629,7 +634,7 @@ Mobify.UI.Carousel = (function($, Utils) {
         //SAP MODIFICATION
         if(bTriggerEvents) {
             // This indicate that transition has started
-            this.hasActiveTransition = true;
+            this._hasActiveTransition = true;
             $inner.bind(this._sTransitionEvents, jQuery.proxy(this.onTransitionComplete, this));
         }
     };
