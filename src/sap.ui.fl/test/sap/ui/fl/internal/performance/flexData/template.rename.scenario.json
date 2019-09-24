@@ -10,13 +10,13 @@
 				"originalControlType": "sap.m.Label"
 			},
 			"selector": {
-				"id": "initialLabel",
+				"id": "idMain1--initialLabel",
 				"idIsLocal": false
 			},
 			"layer": "CUSTOMER",
 			"texts": {
 				"newText": {
-					"value": "rename_0",
+					"value": "initialLabel.renamed",
 					"type": "XFLD"
 				}
 			},
