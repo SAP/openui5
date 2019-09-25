@@ -47,6 +47,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 
 	var oCustomizationMap = null;
 
+	// Currently those are the two supported Islamic Calendar types in the ABAP
+	var aSupportedIslamicCalendarTypes = ["A", "B"];
+
 	/**
 	 * Calculate islamic date from gregorian.
 	 *
@@ -208,17 +211,12 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 		oCustomizationMap = {};
 
 		sDateFormat = sap.ui.getCore().getConfiguration().getFormatSettings().getLegacyDateFormat();
+		sDateFormat = _isSupportedIslamicCalendarType(sDateFormat) ? sDateFormat : "A"; // set "A" as a fall-back format always
 		oCustomizationJSON = sap.ui.getCore().getConfiguration().getFormatSettings().getLegacyDateCalendarCustomizing();
 		oCustomizationJSON = oCustomizationJSON || [];
 
-		if (!sDateFormat && !oCustomizationJSON.length) {//working with no customization
-			jQuery.sap.log.info("No calendar customizations.");
-			return;
-		}
-
-		if ((sDateFormat && !oCustomizationJSON.length) || (!sDateFormat && oCustomizationJSON.length)) {
-			jQuery.sap.log.warning("There is an inconsistency between customization data [" + JSON.stringify(oCustomizationJSON) +
-			"] and the date format [" + sDateFormat + "]. Calendar customization won't be used.");
+		if (!oCustomizationJSON.length) {
+			jQuery.sap.log.warning("No calendar customizations.");
 			return;
 		}
 
@@ -269,6 +267,10 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 
 	function isGregorianLeapYear(iYear) {
 		return !(iYear % 400) || (!(iYear % 4) && !!(iYear % 100));
+	}
+
+	function _isSupportedIslamicCalendarType (sCalendarType) {
+		return aSupportedIslamicCalendarTypes.indexOf(sCalendarType) !== -1;
 	}
 
 	/**

@@ -908,7 +908,8 @@
 
 		function prepare() {
 			this.sandbox = sinon.sandbox.create();
-			this.sandbox.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getLegacyDateFormat").returns("A");
+			// set to "1" and it will fall-back to "A"
+			this.sandbox.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getLegacyDateFormat").returns("1");
 			this.oSpyFormatSettings = this.sandbox.stub(sap.ui.getCore().getConfiguration().getFormatSettings(), "getLegacyDateCalendarCustomizing");
 			this.oSpyFormatSettings.returns(customizingInfo);
 		}
