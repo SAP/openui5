@@ -476,6 +476,67 @@
             "reference": "1980335666"
           }
         ]
+      },
+      {
+        "id": "9ab45a7312645a7bf1732bc0227bf726d42c3b2a",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Scrollbar is now visible on tablet",
+        "references": []
+      },
+      {
+        "id": "fdd2c011058cf5f257bf3d5a6d7631c525fae395",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: separatorStyle key-value pair names are now matching",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980398504"
+          }
+        ]
+      },
+      {
+        "id": "51654e2c08f95b2cf4eaa66831ddae4f7f7aec38",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: No exception when content is undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970454120"
+          }
+        ]
+      },
+      {
+        "id": "ccb221b3956501fe5767fa18566aa24f7912768c",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: focus index is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970415298"
+          }
+        ]
+      },
+      {
+        "id": "e505e87e363cde63222df9b6024122e81c05bf84",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Corrected vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405356"
+          }
+        ]
+      },
+      {
+        "id": "581803189b28b3a510205a2bbacc4653c7fe5c90",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Detach event listeners from the step when removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980424260"
+          }
+        ]
       }
     ]
   }
