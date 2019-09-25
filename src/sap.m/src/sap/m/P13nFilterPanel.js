@@ -70,6 +70,15 @@ sap.ui.define([
 					type: "string",
 					group: "Misc",
 					defaultValue: null
+				},
+
+				/**
+				 * Should empty operation be enabled for certain data types. This is also based on their nullable setting.
+				 */
+				enableEmptyOperations: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -336,8 +345,9 @@ sap.ui.define([
 	 * @private
 	 * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
 	 * @param {array} aKeyFields - array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
+	 * @param {array} aKeyFieldsExclude - array of exclude KeyFields
 	 */
-	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields) {
+	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields, aKeyFieldsExclude) {
 		this._aKeyFields = aKeyFields;
 
 		if (this._oIncludeFilterPanel) {
@@ -346,10 +356,10 @@ sap.ui.define([
 					this._oIncludeFilterPanel.setAutoAddNewRow(true);
 				}
 			}.bind(this));
-			this._oIncludeFilterPanel.setKeyFields(this._aKeyFields);
+			this._oIncludeFilterPanel.setKeyFields(aKeyFields);
 		}
 		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.setKeyFields(this._aKeyFields);
+			this._oExcludeFilterPanel.setKeyFields(aKeyFieldsExclude ? aKeyFieldsExclude : aKeyFields);
 		}
 
 	};
@@ -530,27 +540,38 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.onBeforeRendering = function() {
-		// P13nPanel.prototype.onBeforeRendering.apply(this, arguments); does not exist!!!!
+		var aKeyFieldsExclude,
+			aKeyFields,
+			sModelName,
+			bEnableEmptyOperations = this.getEnableEmptyOperations();
 
 		if (this._bUpdateRequired) {
 			this._bUpdateRequired = false;
 
-			var aKeyFields = [];
-			var sModelName = (this.getBindingInfo("items") || {}).model;
+			aKeyFields = [];
+			aKeyFieldsExclude = [];
+			sModelName = (this.getBindingInfo("items") || {}).model;
 			var fGetValueOfProperty = function(sName, oContext, oItem) {
-				var oBinding = oItem.getBinding(sName);
+				var oBinding = oItem.getBinding(sName),
+					oMetadata;
+
 				if (oBinding && oContext) {
 					return oContext.getObject()[oBinding.getPath()];
 				}
-				return oItem.getMetadata().getProperty(sName) ? oItem.getProperty(sName) : oItem.getAggregation(sName);
+				oMetadata = oItem.getMetadata();
+				return oMetadata.hasProperty(sName) ? oMetadata.getProperty(sName).get(oItem) : oMetadata.getAggregation(sName).get(oItem);
 			};
 			this.getItems().forEach(function(oItem_) {
-				var oContext = oItem_.getBindingContext(sModelName);
+				var oContext = oItem_.getBindingContext(sModelName),
+					oField,
+					bNullable,
+					oFieldExclude;
+
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
 				if (oItem_.getBinding("key")) {
 					oContext.getObject()[oItem_.getBinding("key").getPath()] = oItem_.getKey();
 				}
-				aKeyFields.push({
+				aKeyFields.push(oField = {
 					key: oItem_.getColumnKey(),
 					text: fGetValueOfProperty("text", oContext, oItem_),
 					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_),
@@ -564,24 +585,28 @@ sap.ui.define([
 					values: fGetValueOfProperty("values", oContext, oItem_)
 				});
 
-				// check if maxLength is 1 and remove contains, start and ends with operations
-				var n = aKeyFields.length;
-				if (aKeyFields[n - 1].maxLength === 1 || aKeyFields[n - 1].maxLength === "1") {
-					// Take the operations from the string type (because maxLength is only supported by type string) and remove Contains, StartsWith and EndsWith
-					// This operations array on the keyFields will overwrite the type operations which are defined by the type!
-					// We could also handle this in the P13nConditionPanel and remove all the not supported operations (e.g. Contains, StartsWith and EndsWith when maxLength == 1)
-					// BCP 1970047060
-					var oKeyField = aKeyFields[n - 1];
-					var aOperations = this._oIncludeFilterPanel.getOperations(oKeyField.type);
-					oKeyField.operations = [];
-					aOperations.forEach(function(sOperation) {
-						if ([P13nConditionOperation.Contains, P13nConditionOperation.StartsWith, P13nConditionOperation.EndsWith].indexOf(sOperation) === -1) {
-							oKeyField.operations.push(sOperation);
-						}
-					}, this);
+				if (bEnableEmptyOperations) {
+					bNullable = oItem_.getNullable();
+
+					// Copy the oField object and add it to the exclude array - we need this only when exclude
+					// operations are enabled
+					oFieldExclude = {};
+					Object.keys(oField).forEach(function (sKey) {
+						oFieldExclude[sKey] = oField[sKey];
+					});
+					aKeyFieldsExclude.push(oFieldExclude);
+
+					// Manage empty operations for include and exclude scenario
+					this._enhanceFieldOperationsWithEmpty(oFieldExclude, bNullable, true);
+					this._enhanceFieldOperationsWithEmpty(oField, bNullable);
+
+					this._modifyFieldOperationsBasedOnMaxLength(oFieldExclude);
 				}
+
+				this._modifyFieldOperationsBasedOnMaxLength(oField);
 			}, this);
-			this.setKeyFields(aKeyFields);
+
+			this.setKeyFields(aKeyFields, aKeyFieldsExclude);
 
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("filterItems") || {}).model;
@@ -603,6 +628,77 @@ sap.ui.define([
 				});
 			});
 			this.setConditions(aConditions);
+		}
+	};
+
+	/**
+	 * Modifies field own operations based on it's maxLength setting some operations are not supported and have to be
+	 * removed.
+	 * @param {object} oField the field that has to be modified
+	 * @private
+	 */
+	P13nFilterPanel.prototype._modifyFieldOperationsBasedOnMaxLength = function (oField) {
+		var aOperations;
+
+		// check if maxLength is 1 and remove contains, start and ends with operations
+		if (oField.maxLength === 1 || oField.maxLength === "1") {
+			// Take the operations from the string type (because maxLength is only supported by type string) and remove Contains, StartsWith and EndsWith
+			// This operations array on the keyFields will overwrite the type operations which are defined by the type!
+			// We could also handle this in the P13nConditionPanel and remove all the not supported operations (e.g. Contains, StartsWith and EndsWith when maxLength == 1)
+			// BCP 1970047060
+			aOperations = oField.operations ? oField.operations : this._oIncludeFilterPanel.getOperations(oField.type);
+			oField.operations = [];
+			aOperations.forEach(function(sOperation) {
+				if ([
+					P13nConditionOperation.Contains,
+					P13nConditionOperation.StartsWith,
+					P13nConditionOperation.EndsWith
+				].indexOf(sOperation) === -1) {
+					oField.operations.push(sOperation);
+				}
+			}, this);
+		}
+	};
+
+	/**
+	 * Enhance one field own operations set with empty operation based on the field type and it's nullable setting
+	 * @param {object} oField the object that would be enhanced
+	 * @param {boolean} bNullable this is used to determine if empty operation will be added
+	 * @param {boolean} [bExclude=false] handle include or exclude operations
+	 * @private
+	 */
+	P13nFilterPanel.prototype._enhanceFieldOperationsWithEmpty = function (oField, bNullable, bExclude) {
+		var oFilterPanel,
+			aOperations;
+
+		if (
+			["string", "stringdate"].indexOf(oField.type) > -1 || // For these field types we aways add the empty operation
+			(["date", "datetime"].indexOf(oField.type) > -1 && bNullable) // For date types we add it only if nullable=true
+		) {
+			oFilterPanel = this[bExclude ? "_oExcludeFilterPanel" : "_oIncludeFilterPanel"];
+
+			// Load operations from the conditions panel
+			aOperations = oFilterPanel.getOperations(oField.type);
+			if (!aOperations) {
+				// Load default operations in case type based are missing
+				// For exclude operations we add only the EQ operation
+				aOperations = oFilterPanel.getOperations();
+			}
+
+			// Make sure we have operations array available on the field object
+			if (!Array.isArray(oField.operations)) {
+				oField.operations = [];
+			}
+
+			// Add the operations to the field own operations set so we can customize them per field
+			aOperations.forEach(function (sOperation) {
+				oField.operations.push(sOperation);
+			});
+
+			// And we add the "Empty" operation if it's not added before
+			if (oField.operations.indexOf(P13nConditionOperation.Empty) === -1) {
+				oField.operations.push(P13nConditionOperation.Empty);
+			}
 		}
 	};
 

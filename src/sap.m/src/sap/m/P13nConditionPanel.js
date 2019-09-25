@@ -496,7 +496,7 @@ sap.ui.define([
 	 * returns the default array of operations
 	 *
 	 * @public
-	 * @param {string} sType defines the type for which the operations should be returned.
+	 * @param {string} [sType=default] defines the type for which the operations should be returned.
 	 * @returns {sap.m.P13nConditionOperation[]} array of operations
 	 */
 	P13nConditionPanel.prototype.getOperations = function(sType) {

@@ -205,6 +205,15 @@ sap.ui.define([
 				description: {
 					type: "string",
 					defaultValue: null
+				},
+
+				/**
+				 * Defines if the item is nullable
+				 */
+				nullable: {
+					type: "boolean",
+					group: "Misc",
+					defaultValue: false
 				}
 			}
 		}

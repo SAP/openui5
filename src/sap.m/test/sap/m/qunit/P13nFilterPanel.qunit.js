@@ -407,6 +407,32 @@ sap.ui.define([
 
 		// cleanup
 		oP13nFilterPanel.destroy();
+
+		QUnit.test("Include and Exclude operations list", function (assert) {
+			// Arrange
+			var oP13nFilterPanel = new P13nFilterPanel();
+
+			// Assert
+			assert.strictEqual(
+				JSON.stringify(oP13nFilterPanel._aIncludeOperations),
+				'{"default":["EQ","BT","LT","LE","GT","GE"],' +
+				'"string":["Contains","EQ","BT","StartsWith","EndsWith","LT","LE","GT","GE"],' +
+				'"date":["EQ","BT","LT","LE","GT","GE"],' +
+				'"time":["EQ","BT","LT","LE","GT","GE"],"datetime":["EQ","BT","LT","LE","GT","GE"],' +
+				'"numeric":["EQ","BT","LT","LE","GT","GE"],' +
+				'"numc":["Contains","EQ","BT","EndsWith","LT","LE","GT","GE"],' +
+				'"boolean":["EQ"]}',
+				"Include operations list should match"
+			);
+			assert.strictEqual(
+				JSON.stringify(oP13nFilterPanel._aExcludeOperations),
+				'{"default":["EQ"]}',
+				"Exclude operations list should match"
+			);
+
+			// Cleanup
+			oP13nFilterPanel.destroy();
+		});
 	});
 
 });
