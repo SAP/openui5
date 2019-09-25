@@ -640,9 +640,9 @@ sap.ui.define([
 	TableQUnitUtils.addEventDelegateOnce = function(oTable, sEventName, fnHandler) {
 		var oDelegate = {};
 
-		oDelegate[sEventName] = function(oEvent) {
+		oDelegate[sEventName] = function() {
 			this.removeEventDelegate(oDelegate);
-			fnHandler.call(this, oEvent);
+			fnHandler.apply(this, arguments);
 		};
 
 		oTable.addEventDelegate(oDelegate, oTable);
