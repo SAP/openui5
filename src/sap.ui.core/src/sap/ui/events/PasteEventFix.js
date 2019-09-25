@@ -11,7 +11,8 @@ sap.ui.define(function() {
 	/*global ClipboardEvent, HTMLElement*/
 
 	document.documentElement.addEventListener("paste", function(oEvent) {
-		var oActiveElement = document.activeElement;
+		var oActiveElement = document.activeElement,
+			oNewEvent;
 		if (oActiveElement instanceof HTMLElement &&
 			// The paste event should always be fired on or within
 			// the active element because the corresponding key board
@@ -22,10 +23,20 @@ sap.ui.define(function() {
 			// event should be dispatched on the active element again.
 			!oActiveElement.contains(oEvent.target)) {
 
-			var oNewEvent = new ClipboardEvent("paste", {
-				bubbles: true,
-				clipboardData: oEvent.clipboardData
-			});
+			if (typeof ClipboardEvent === "function") {
+				oNewEvent = new ClipboardEvent("paste", {
+					bubbles: true,
+					cancelable: true,
+					clipboardData: oEvent.clipboardData
+				});
+			} else {
+				// Fallback to the legacy way of event creation when
+				// ClipboardEvent class doesn't exist, for example in IE11
+				oNewEvent = document.createEvent('Event');
+				oNewEvent.initEvent("paste", true, true);
+				oNewEvent.clipboardData = oEvent.clipboardData;
+			}
+
 			oActiveElement.dispatchEvent(oNewEvent);
 
 			// prevent this event from being processed by other handlers
