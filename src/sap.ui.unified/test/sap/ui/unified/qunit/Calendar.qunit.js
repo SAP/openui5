@@ -449,25 +449,38 @@ sap.ui.define([
 		}, 100);
 	});
 
+	QUnit.test("_adjustYearRangeDisplay is called in setPrimaryCalendarType", function(assert) {
+		// Prepare
+		var oCal = new Calendar().placeAt("qunit-fixture"),
+			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+
+		// Act
+		oCal.setPrimaryCalendarType("Islamic");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called once");
+
+		// Clean
+		oCal.destroy();
+	});
+
 	QUnit.test("YearRangePicker has three columns and 9 year ranges when the calendar type is Gregorian", function (assert) {
 		// Prepare
 		var oCal = new Calendar({
 				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
 			}).placeAt("qunit-fixture"),
-			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
-			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+			oYearRangePicker = oCal.getAggregation("yearRangePicker");
 
 		sap.ui.getCore().applyChanges();
 
 		// Act
 		// Assert
-		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called");
 		assert.ok(oYearRangePicker.getColumns(), 3, "YearRangePicker has three columns");
 		assert.ok(oYearRangePicker.getYears(), 9, "YearRangePicker has display nine year ranges");
 
 		// Clean
 		oCal.destroy();
-		oAdjustYearRangeDisplaySpy.restore();
 	});
 
 	QUnit.test("YearRangePicker has two columns and 8 year ranges when the calendar type is Islamic", function (assert) {
@@ -475,19 +488,19 @@ sap.ui.define([
 		var oCal = new Calendar({
 				primaryCalendarType: sap.ui.core.CalendarType.Islamic
 			}).placeAt("qunit-fixture"),
-			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
-			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+			oYearRangePicker;
 
-		sap.ui.getCore().applyChanges();
 		// Act
+		sap.ui.getCore().applyChanges();
+
+		oYearRangePicker = oCal.getAggregation("yearRangePicker");
+
 		// Assert
-		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called once");
 		assert.ok(oYearRangePicker.getColumns(), 2, "YearRangePicker has two columns");
 		assert.ok(oYearRangePicker.getYears(), 8, "YearRangePicker has display eight year ranges");
 
 		// Clean
 		oCal.destroy();
-		oAdjustYearRangeDisplaySpy.restore();
 	});
 
 	QUnit.test("YearRangePicker has one column and four year ranges when the calendar type is Japanese", function (assert) {
@@ -495,19 +508,16 @@ sap.ui.define([
 		var oCal = new Calendar({
 				primaryCalendarType: sap.ui.core.CalendarType.Japanese
 			}).placeAt("qunit-fixture"),
-			oYearRangePicker = oCal.getAggregation("yearRangePicker"),
-			oAdjustYearRangeDisplaySpy = this.spy(oCal, "_adjustYearRangeDisplay");
+			oYearRangePicker = oCal.getAggregation("yearRangePicker");
 
 		sap.ui.getCore().applyChanges();
 		// Act
 		// Assert
-		assert.ok(oAdjustYearRangeDisplaySpy.calledOnce, "_adjustYearRangeDisplay is called once");
 		assert.ok(oYearRangePicker.getColumns(), 1, "YearRangePicker has one column");
 		assert.ok(oYearRangePicker.getYears(), 4, "YearRangePicker has display four year ranges");
 
 		// Clean
 		oCal.destroy();
-		oAdjustYearRangeDisplaySpy.restore();
 	});
 
 	QUnit.test("Calendar type affects YearRangePicker rendering", function (assert) {
