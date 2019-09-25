@@ -115,7 +115,7 @@ sap.ui.define([
 
 		// holder for UIArea
 		if (!this.firstElementChild) {
-			var oUiArea = document.createElement("span");
+			var oUiArea = document.createElement("div");
 			oUiArea.style.display = "block"; // display: contents looks like the best choice, but it is not supported on all browsers
 			this.appendChild(oUiArea);
 		}
