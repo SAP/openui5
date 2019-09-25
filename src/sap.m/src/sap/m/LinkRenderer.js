@@ -30,10 +30,11 @@
 		var sTextDir = oControl.getTextDirection(),
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
+			sHref = oControl.getHref(),
 			oAccAttributes =  {
+				role: sHref ? "" : "button",
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			},
-			sHref = oControl.getHref(),
 			bIsValid = sHref && oControl._isHrefValid(sHref),
 			bEnabled = oControl.getEnabled();
 
