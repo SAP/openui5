@@ -4,17 +4,21 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/api/startKeyUserAdaptation",
-	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RuntimeAuthoring,
 	startKeyUserAdaptation,
-	ManagedObject,
+	Element,
+	UIComponent,
 	Settings,
 	Cache,
+	FlexUtils,
 	Log,
 	sinon
 ) {
@@ -46,12 +50,42 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("when called with a managed object instance as root control", function(assert) {
-		var oManagedObject = new ManagedObject("rootControl");
-		this.aObjectsToBeDestroyed.push(oManagedObject);
+	[Element, UIComponent].forEach(function(oRootControlType) {
+		QUnit.test("when called with " + oRootControlType.getMetadata().getName() + " instance as root control", function(assert) {
+			var done = assert.async();
+			setIsKeyUser(true);
+			var oRootControl = new oRootControlType("rootControl");
+			this.aObjectsToBeDestroyed.push(oRootControl);
+			return startKeyUserAdaptation({rootControl: oRootControl})
+				.then(function() {
+					var oRta = this.fnRtaStartStub.getCall(0).thisValue;
+					sandbox.stub(oRta, "destroy");
+					oRta.attachEventOnce("stop", function() {
+						assert.ok(oRta.destroy.calledOnce, "then destroy() was called when stop() was called");
+						done();
+					});
+					assert.strictEqual(oRta.getLayer(), "CUSTOMER", "then correct layer was passed");
+					assert.strictEqual(oRta.getValidateAppVersion(), true, "then validate app version check was enabled");
+					assert.strictEqual(oRta.getRootControl(), oRootControl.getId(), "then correct root control was set");
+					assert.strictEqual(oRta.getFlexSettings().developerMode, false, "then developer mode was set to false");
+					sandbox.stub(oRta, "_handleReloadOnExit").resolves();
+					oRta.stop(true);
+				}.bind(this));
+		});
+	});
+
+	QUnit.test("when called with 'adaptWholeApp' parameter set", function(assert) {
 		var done = assert.async();
 		setIsKeyUser(true);
-		return startKeyUserAdaptation({rootControl: oManagedObject})
+		var oRootControl = new Element("rootControl");
+		var oAppComponent = new UIComponent("appComponent");
+		sandbox.stub(FlexUtils, "getAppComponentForControl")
+			.callThrough()
+			.withArgs(oRootControl)
+			.returns(oAppComponent);
+		this.aObjectsToBeDestroyed.push(oRootControl, oAppComponent);
+
+		return startKeyUserAdaptation({rootControl: oRootControl, adaptWholeApp: true})
 			.then(function() {
 				var oRta = this.fnRtaStartStub.getCall(0).thisValue;
 				sandbox.stub(oRta, "destroy");
@@ -59,16 +93,13 @@ sap.ui.define([
 					assert.ok(oRta.destroy.calledOnce, "then destroy() was called when stop() was called");
 					done();
 				});
-				assert.strictEqual(oRta.getLayer(), "CUSTOMER", "then correct layer was passed");
-				assert.strictEqual(oRta.getValidateAppVersion(), true, "then validate app version check was enabled");
-				assert.strictEqual(oRta.getRootControl(), oManagedObject.getId(), "then correct root control was set");
-				assert.strictEqual(oRta.getFlexSettings().developerMode, false, "then developer mode was set to false");
+				assert.strictEqual(oRta.getRootControl(), oAppComponent.getId(), "then correct root control was set");
 				sandbox.stub(oRta, "_handleReloadOnExit").resolves();
 				oRta.stop(true);
 			}.bind(this));
 	});
 
-	QUnit.test("when called with an invalid managed object instance as root control", function(assert) {
+	QUnit.test("when called with an invalid root control", function(assert) {
 		setIsKeyUser(true);
 		return startKeyUserAdaptation({rootControl: {}})
 			.catch(function(oError) {
@@ -79,9 +110,9 @@ sap.ui.define([
 
 	QUnit.test("when called and the user is not a key user", function(assert) {
 		setIsKeyUser(false);
-		var oManagedObject = new ManagedObject("rootControl");
-		this.aObjectsToBeDestroyed.push(oManagedObject);
-		return startKeyUserAdaptation({rootControl: oManagedObject})
+		var oRootControl = new Element("rootControl");
+		this.aObjectsToBeDestroyed.push(oRootControl);
+		return startKeyUserAdaptation({rootControl: oRootControl})
 			.catch(function(oError) {
 				assert.ok(this.fnRtaStartStub.notCalled, "then RuntimeAuthoring.start() was not called");
 				assert.ok(Log.error.calledOnce, "then an error was logged");
@@ -91,9 +122,9 @@ sap.ui.define([
 
 	QUnit.test("when called and flex settings could not be loaded", function(assert) {
 		sandbox.stub(Settings, "getInstance").rejects();
-		var oManagedObject = new ManagedObject("rootControl");
-		this.aObjectsToBeDestroyed.push(oManagedObject);
-		return startKeyUserAdaptation({rootControl: oManagedObject})
+		var oRootControl = new Element("rootControl");
+		this.aObjectsToBeDestroyed.push(oRootControl);
+		return startKeyUserAdaptation({rootControl: oRootControl})
 			.catch(function(oError) {
 				assert.ok(this.fnRtaStartStub.notCalled, "then RuntimeAuthoring.start() was not called");
 				assert.ok(Log.error.calledOnce, "then an error was logged");

@@ -4,13 +4,17 @@
 
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/Utils",
+	"sap/ui/core/UIComponent",
 	"sap/base/Log"
 ], function(
 	RuntimeAuthoring,
-	ManagedObject,
+	Element,
 	FeaturesAPI,
+	FlexUtils,
+	UIComponent,
 	Log
 ) {
 	"use strict";
@@ -28,30 +32,35 @@ sap.ui.define([
 	 * @alias module:sap/ui/rta/startKeyUserAdaptation
 	 *
 	 * @param {object} mPropertyBag - Object with properties
-	 * @param {sap.ui.base.ManagedObject} mPropertyBag.rootControl - Root control instance from where key user adaptation should be started
+	 * @param {sap.ui.core.Element | sap.ui.core.UIComponent} mPropertyBag.rootControl - Control instance from where key user adaptation should be started
+	 * @param {boolean} [mPropertyBag.adaptWholeApp] - Indicates if adaptation should start from the passed control's application component
 	 *
 	 * @returns {Promise} Resolves when adaptation was successfully started
 	 */
 	return function (mPropertyBag) {
-		if (!(mPropertyBag.rootControl instanceof ManagedObject)) {
+		if (!(mPropertyBag.rootControl instanceof Element) && !(mPropertyBag.rootControl instanceof UIComponent)) {
 			return Promise.reject(new Error("An invalid root control was passed"));
 		}
 		return FeaturesAPI.isKeyUser()
 			.then(function (bIsKeyUser) {
 				if (!bIsKeyUser) {
-					throw new Error("Key user rights are not available");
+					throw new Error("Key user rights have not been granted to the current user");
 				}
 
-				Object.assign(mPropertyBag,
-					{
-						flexSettings: {
-							developerMode: false,
-							layer: "CUSTOMER"
-						},
-						validateAppVersion: true
-					});
+				var oRootControl = mPropertyBag.rootControl;
+				if (mPropertyBag.adaptWholeApp) {
+					oRootControl = FlexUtils.getAppComponentForControl(mPropertyBag.rootControl);
+				}
 
-				var oRta = new RuntimeAuthoring(mPropertyBag);
+				var oRta = new RuntimeAuthoring({
+					rootControl: oRootControl,
+					flexSettings: {
+						developerMode: false,
+						layer: "CUSTOMER"
+					},
+					validateAppVersion: true
+				});
+
 				oRta.attachEvent('stop', function () {
 					oRta.destroy();
 				});
