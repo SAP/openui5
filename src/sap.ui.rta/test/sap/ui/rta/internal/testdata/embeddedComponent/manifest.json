@@ -53,8 +53,9 @@
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
-				"uri": "i18n/i18n.properties",
-				"async": true
+				"settings": {
+					"bundleName": "sap.ui.rta.test.embeddedComponent.i18n.i18n"
+				}
 			}
 		},
 		"routing": {

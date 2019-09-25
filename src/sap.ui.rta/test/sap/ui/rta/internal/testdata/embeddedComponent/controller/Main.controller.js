@@ -2,16 +2,16 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/ControlPersonalizationAPI",
-	"sap/m/MessageBox",
-	"sap/ui/core/Component"
+	"sap/ui/rta/api/startKeyUserAdaptation"
 ], function(
 	Controller,
 	RuntimeAuthoring,
 	Utils,
+	LayerUtils,
 	ControlPersonalizationAPI,
-	MessageBox,
-	Component
+	startKeyUserAdaptation
 ) {
 	"use strict";
 
@@ -48,120 +48,8 @@ sap.ui.define([
 			);
 		},
 
-		onComponentCreated: function(oEvent) {
-			var oComponentContainer = oEvent.getSource();
-			var oModel = oComponentContainer .getModel();
-			oComponentContainer.getComponentInstance().setModel(oModel);
-		},
-
-		_getUrlParameter: function (sParam) {
-			var sReturn = "";
-			var sPageURL = window.location.search.substring(1);
-			var sURLVariables = sPageURL.split('&');
-			for (var i = 0; i < sURLVariables.length; i++) {
-				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] === sParam) {
-					sReturn = sParameterName[1];
-				}
-			}
-			return sReturn;
-		},
-
 		switchToAdaptionMode: function () {
-			if (this.getView().getModel("app").getProperty("/showOuterAdaptButton"))	{
-				var oRta = new RuntimeAuthoring({
-					rootControl: this.getOwnerComponent(),
-					flexSettings: {
-						developerMode: false
-					}
-				});
-				oRta.attachEvent('stop', function() {
-					oRta.destroy();
-				});
-				oRta.start();
-			}
-		},
-
-		createChanges: function(oEvent) {
-			var oButton = oEvent.getSource();
-			var oAppComponent = Utils.getAppComponentForControl(Component.getOwnerComponentFor(this.getView()));
-			var mChangeSpecificData = {};
-
-			jQuery.extend(mChangeSpecificData, {
-				developerMode: false,
-				layer: Utils.getCurrentLayer()
-			});
-
-			MessageBox.show(
-				"Do you want to create personalization changes?", {
-					icon: MessageBox.Icon.INFORMATION,
-					title: "Personalization Dialog",
-					actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-					onClose: function(oAction) {
-						if (oAction === "YES") {
-							if (this.iCounter === 0) {
-								var mMoveChangeData = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
-									changeSpecificData: {
-										changeType: "moveControls",
-										movedElements: [{
-											id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm"),
-											sourceIndex: 0,
-											targetIndex: 1
-										}],
-										source: {
-											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
-											aggregation: "sections"
-										},
-										target: {
-											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
-											aggregation: "sections"
-										}
-									}
-								};
-								var mRenameChangeData1 = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
-									changeSpecificData: {
-										changeType: "rename",
-										renamedElement: {
-											id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
-										},
-										value : "Personalization Test"
-									}
-								};
-								var mRenameChangeData2 = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--TitleForVM1")),
-									changeSpecificData: {
-										changeType: "rename",
-										renamedElement: {
-											id: oAppComponent.createId("idMain1--TitleForVM1")
-										},
-										value : "Change for the inner variant"
-									}
-								};
-								ControlPersonalizationAPI.addPersonalizationChanges([mMoveChangeData, mRenameChangeData1, mRenameChangeData2]);
-
-								this.iCounter++;
-							} else if (this.iCounter === 1) {
-								var mRenameChangeData3 = {
-									selectorControl : sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageSectionWithForm")),
-									changeSpecificData: {
-										changeType: "rename",
-										renamedElement: {
-											id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm")
-										},
-										value : "Personalization Test (2. Change)"
-									}
-								};
-								ControlPersonalizationAPI.addPersonalizationChanges([mRenameChangeData3]);
-
-								oButton.setEnabled(false);
-								this.iCounter++;
-							}
-						}
-					}.bind(this)
-				}
-			);
+			startKeyUserAdaptation({rootControl: this.getOwnerComponent()});
 		},
 
 		isDataReady: function () {
