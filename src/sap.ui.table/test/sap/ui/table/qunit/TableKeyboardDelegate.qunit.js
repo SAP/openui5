@@ -1376,13 +1376,14 @@ sap.ui.define([
 		oElem = checkFocus(getCell(1, 1, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
-		checkFocus(oElem, assert);
+		oElem = checkFocus(getCell(2, 1), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
-		checkFocus(oElem, assert);
-		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-		checkFocus(oElem, assert);
+		oElem = checkFocus(getCell(1, 1), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
-		checkFocus(oElem, assert);
+		oElem = checkFocus(getCell(1, 2), assert);
+		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
+		oElem = checkFocus(getCell(1, 1), assert);
+		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
 		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowOnly);
 		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
@@ -1473,13 +1474,14 @@ sap.ui.define([
 		oElem = checkFocus(getRowAction(1, true), assert);
 		qutils.triggerKeydown(oElem, Key.SHIFT, false, false, false); // Start selection mode.
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, true, false, false);
-		checkFocus(oElem, assert);
+		oElem = checkFocus(getRowAction(2), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, true, false, false);
-		checkFocus(oElem, assert);
+		oElem = checkFocus(getRowAction(1), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, true, false, false);
-		checkFocus(oElem, assert);
+		oElem = checkFocus(getCell(1, 4), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, true, false, false);
-		checkFocus(oElem, assert);
+		oElem = checkFocus(getRowAction(1), assert);
+		qutils.triggerKeyup(oElem, Key.SHIFT, false, false, false); // End selection mode.
 
 		oTable.setSelectionBehavior(tableLibrary.SelectionBehavior.RowOnly);
 		oTable.setSelectionMode(tableLibrary.SelectionMode.Single);
@@ -4836,6 +4838,8 @@ sap.ui.define([
 		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
 		this.assertSelection(assert, 0, false);
 		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
 		this.assertSelection(assert, 0, false);
 
 		// Enter
@@ -4865,6 +4869,20 @@ sap.ui.define([
 		this.assertSelection(assert, 0, false);
 		this.assertSelection(assert, 1, true);
 
+		qutils.triggerKeydown(oElem2, Key.SHIFT, false, false, false); // Start selection mode.
+		qutils.triggerKeydown(oElem2, Key.Arrow.UP, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, true);
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, true);
+		qutils.triggerKeydown(oElem2, Key.Arrow.DOWN, true, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeyup(oElem2, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, true);
+
 		//Enter
 		qutils.triggerKeydown(oElem2, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
@@ -4886,7 +4904,7 @@ sap.ui.define([
 		this.assertSelection(assert, 1, true);
 	});
 
-	QUnit.test("On a Data Cell - Row selection possible", function(assert) {
+	QUnit.test("On a Data Cell - SelectionBehavior = Row", function(assert) {
 		var iCallCount = 0;
 		var bPreventDefault = false;
 
@@ -4915,8 +4933,12 @@ sap.ui.define([
 		assert.strictEqual(iCallCount, 1, "Click handler called");
 		iCallCount = 0;
 		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		assert.strictEqual(iCallCount, 0, "Click handler called");
+		iCallCount = 0;
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
 		this.assertSelection(assert, 0, false);
-		assert.strictEqual(iCallCount, 0, "Click handler not called");
+		assert.strictEqual(iCallCount, 0, "Click handler called");
 		iCallCount = 0;
 		bPreventDefault = true;
 		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
@@ -4957,11 +4979,27 @@ sap.ui.define([
 		this.assertSelection(assert, 0, false);
 		this.assertSelection(assert, 1, true);
 		assert.strictEqual(iCallCount, 1, "Click handler called");
-		iCallCount = 0;
+
+		qutils.triggerKeydown(oElem2, Key.SHIFT, false, false, false); // Start selection mode.
+		qutils.triggerKeydown(oElem2, Key.Arrow.UP, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, true);
 		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
 		this.assertSelection(assert, 0, false);
 		this.assertSelection(assert, 1, true);
-		assert.strictEqual(iCallCount, 0, "Click handler not called");
+		qutils.triggerKeydown(oElem2, Key.Arrow.DOWN, true, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, true);
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, true);
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, true);
+
 		iCallCount = 0;
 		bPreventDefault = true;
 		qutils.triggerKeyup(oElem2, Key.SPACE, false, false, true);
@@ -4991,49 +5029,99 @@ sap.ui.define([
 		bPreventDefault = false;
 	});
 
-	QUnit.test("On a Data Cell - Row selection not possible", function(assert) {
+	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector", function(assert) {
 		var cellClickEventHandler = this.spy();
 
 		oTable.clearSelection();
 		oTable.attachCellClick(cellClickEventHandler);
 		sap.ui.getCore().applyChanges();
 
-		var oElem = checkFocus(getCell(0, 0, true), assert);
+		var oElem2 = checkFocus(getCell(1, 0, true), assert);
+		var oElem1 = checkFocus(getCell(0, 0, true), assert);
 
 		// Space
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 0, "Click handler not called");
-		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
+		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 1, "Click handler called: 1");
-		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
+		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 2, "Click handler called: 2");
 
 		// Enter
-		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
+		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 3, "Click handler called: 3");
-		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
+		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 4, "Click handler called: 4");
 
 		oTable._enableLegacyMultiSelection();
 		// Space
-		qutils.triggerKeyup(oElem, Key.SPACE, false, false, false);
+		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, false);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 5, "Click handler called: 5");
-		qutils.triggerKeyup(oElem, Key.SPACE, false, false, true);
+		qutils.triggerKeyup(oElem1, Key.SPACE, false, false, true);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 6, "Click handler called: 6");
 
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, false);
+
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeydown(oElem1, Key.SHIFT, false, false, false); // Start selection mode.
+		qutils.triggerKeydown(oElem1, Key.Arrow.DOWN, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, true);
+		qutils.triggerKeyup(oElem2, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeydown(oElem2, Key.Arrow.UP, true, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, false);
+
 		// Enter
-		qutils.triggerKeydown(oElem, Key.ENTER, false, false, false);
+		qutils.triggerKeydown(oElem1, Key.ENTER, false, false, false);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 7, "Click handler called: 7");
-		qutils.triggerKeyup(oElem, Key.ENTER, false, false, true);
+		qutils.triggerKeyup(oElem1, Key.ENTER, false, false, true);
 		this.assertSelection(assert, 0, false);
 		assert.strictEqual(cellClickEventHandler.callCount, 8, "Click handler called: 8");
+	});
+
+	QUnit.test("On a Row Action Cell - SelectionBehavior = RowSelector", function(assert) {
+		var cellClickEventHandler = this.spy();
+
+		oTable.clearSelection();
+		oTable.attachCellClick(cellClickEventHandler);
+		sap.ui.getCore().applyChanges();
+
+		var oElem2 = checkFocus(getCell(1, 0, true), assert);
+		var oElem1 = checkFocus(getCell(0, 0, true), assert);
+
+		// Shift + Space, Shift + UP/DOWN
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeyup(oElem1, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeydown(oElem1, Key.SHIFT, false, false, false); // Start selection mode.
+		qutils.triggerKeydown(oElem1, Key.Arrow.DOWN, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, true);
+		qutils.triggerKeyup(oElem2, Key.SPACE, true, false, false);
+		this.assertSelection(assert, 0, true);
+		this.assertSelection(assert, 1, false);
+		qutils.triggerKeydown(oElem2, Key.Arrow.UP, true, false, false);
+		this.assertSelection(assert, 0, false);
+		this.assertSelection(assert, 1, false);
 	});
 
 	QUnit.test("On a Group Header Row", function(assert) {
