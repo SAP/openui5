@@ -276,16 +276,18 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 			}
 		}
 
-		.sapMSLIThumbnail .sapMSLIDiv,
-		.sapMSLIImgIcon + .sapMSLIDiv {
-			box-sizing: border-box;
-			position: absolute;
-			padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
-			width: 100%;
+		.sapMSLIThumbnail,
+		.sapMSLIImgIcon {
+			&:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv {
+				box-sizing: border-box;
+				position: absolute;
+				padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
+				width: 100%;
 
-			html[data-sap-ui-browser^="ie"] & {
-				top: .5rem;
-				left: 0;
+				html[data-sap-ui-browser^="ie"] & {
+					top: .5rem;
+					left: 0;
+				}
 			}
 		}
 	}
