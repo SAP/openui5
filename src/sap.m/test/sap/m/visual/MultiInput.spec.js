@@ -119,4 +119,10 @@ describe('sap.m.MultiInput', function() {
 			expect(takeScreenshot(element(by.id("condensed-table")))).toLookAs("table-in-condensed-mode");
 		});
 	});
+
+	it("should visualize MultiInput with cropped tokens and focus outline", function () {
+		var oMultiInputInner = element(by.id("multiInput7-inner"));
+		oMultiInputInner.click();
+		expect(takeScreenshot(element(by.id("multiInput7")))).toLookAs("cropped_focused_tokens");
+	});
 });
