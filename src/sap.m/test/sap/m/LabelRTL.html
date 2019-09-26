@@ -10,6 +10,7 @@
 		</script>
 		<script>
 			jQuery.sap.initMobile({preventScroll : false});
+			sap.ui.getCore().getConfiguration().setRTL(true);
 			var oModel = new sap.ui.model.json.JSONModel({
 				"globalRequired": false
 			});

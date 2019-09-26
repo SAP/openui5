@@ -115,9 +115,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 
 		rm.openEnd();
 
+		// wrap the label text
+		rm.openStart("span", oLabel.getId() + "-text");
+		rm.class("sapMLabelTextWrapper");
+		rm.openEnd();
+
 		// write the label text
-		rm.openStart("bdi");
-		rm.attr("id", oLabel.getId() + "-bdi");
+		rm.openStart("bdi", oLabel.getId() + "-bdi");
 		rm.openEnd();
 
 		if (sLabelText) {
@@ -125,6 +129,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 			rm.text(sLabelText);
 		}
 		rm.close("bdi");
+		rm.close("span");
+
+		// shows the colon and the required asterisk
+		rm.openStart("span");
+		rm.class("sapMLabelColonAndRequired");
+		rm.openEnd();
+		rm.close("span");
 
 		rm.close(sHtmlTagToRender);
 	};
