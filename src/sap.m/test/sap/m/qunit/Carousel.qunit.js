@@ -1840,5 +1840,57 @@ sap.ui.define([
 		}.bind(this), sinonClockTickValue);
 	});
 
+	QUnit.test("Simulate right arrow fast click twice", function (assert) {
+		// arrange
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		},
+		done = assert.async();
+
+		// await the initial animation
+		setTimeout(function () {
+			// act
+			this.oCarousel.$().find("a.sapMCrslNext").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+			this.oCarousel.$().find("a.sapMCrslNext").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_6", "Should have the active page set to page #4...");
+
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
+	QUnit.test("Simulate left arrow fast click twice", function (assert) {
+		// arrange
+		var oFakeEvent = {
+			target: this.oCarousel.getDomRef(),
+			preventDefault: function () {}
+		},
+		done = assert.async();
+
+		// await the initial animation
+		setTimeout(function () {
+			// act
+			this.oCarousel.$().find("a.sapMCrslPrev").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+			this.oCarousel.$().find("a.sapMCrslPrev").click();
+			this.oCarousel.ontouchend(oFakeEvent);
+
+			setTimeout(function () {
+				// assert
+				assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage_2", "Should have the active page set to page #2...");
+
+				done();
+			}.bind(this), sinonClockTickValue);
+
+		}.bind(this), sinonClockTickValue);
+	});
+
 	return waitForThemeApplied();
 });
