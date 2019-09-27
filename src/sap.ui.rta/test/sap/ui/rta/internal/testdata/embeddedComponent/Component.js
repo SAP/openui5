@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Utils"
 ], function(
 	UIComponent,
@@ -15,6 +16,7 @@ sap.ui.define([
 	MockServer,
 	ODataModel,
 	JSONModel,
+	FeaturesAPI,
 	FlexUtils
 ) {
 	"use strict";
@@ -77,10 +79,17 @@ sap.ui.define([
 		},
 
 		_adaptButtonConfiguration: function() {
-			this.setModel(new JSONModel({
-				showOuterAdaptButton: !FlexUtils.getUshellContainer(),
+			var oAppModel = new JSONModel({
 				showAdaptButton: false // for embedded app
-			}), "app");
+			});
+			this.setModel(oAppModel, "app");
+
+			if (!FlexUtils.getUshellContainer()) {
+				FeaturesAPI.isKeyUser()
+					.then(function (bIsKeyUser) {
+						oAppModel.setProperty("/showOuterAdaptButton", bIsKeyUser);
+					});
+			}
 		},
 
 		_createFakeLrep: function () {

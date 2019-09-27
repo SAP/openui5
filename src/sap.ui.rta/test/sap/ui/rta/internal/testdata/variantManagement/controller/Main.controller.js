@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/rta/api/startKeyUserAdaptation"
 ], function (
 	Controller,
 	Utils,
+	LayerUtils,
 	ControlPersonalizationAPI,
 	startKeyUserAdaptation
 ) {
@@ -45,31 +47,18 @@ sap.ui.define([
 			);
 		},
 
-		_getUrlParameter: function (sParam) {
-			var sReturn = "";
-			var sPageURL = window.location.search.substring(1);
-			var sURLVariables = sPageURL.split('&');
-			for (var i = 0; i < sURLVariables.length; i++) {
-				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] === sParam) {
-					sReturn = sParameterName[1];
-				}
-			}
-			return sReturn;
-		},
-
 		switchToAdaptionMode: function () {
 			startKeyUserAdaptation({rootControl: this.getOwnerComponent()});
 		},
 
 		createChanges: function (oEvent) {
 			var oButton = oEvent.getSource();
-			var oAppComponent = Utils.getAppComponentForControl(sap.ui.core.Component.getOwnerComponentFor(this.getView()));
+			var oComponent = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 			var mChangeSpecificData = {};
 
 			jQuery.extend(mChangeSpecificData, {
 				developerMode: false,
-				layer: sap.ui.fl.Utils.getCurrentLayer()
+				layer: LayerUtils.getCurrentLayer()
 			});
 
 			sap.m.MessageBox.show(
@@ -84,27 +73,27 @@ sap.ui.define([
 								// add dirty changes2
 								// change1: move sections with simple form
 								var oMoveChangeData = {
-									selectorControl: sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
+									selectorControl: sap.ui.getCore().byId(oComponent.createId("idMain1--ObjectPageLayout")),
 									changeSpecificData: {
 										changeType: "moveControls",
 										movedElements: [{
-											id: oAppComponent.createId("idMain1--ObjectPageSectionWithForm"),
+											id: oComponent.createId("idMain1--ObjectPageSectionWithForm"),
 											sourceIndex: 0,
 											targetIndex: 1
 										}],
 										source: {
-											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											id: oComponent.createId("idMain1--ObjectPageLayout"),
 											aggregation: "sections"
 										},
 										target: {
-											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											id: oComponent.createId("idMain1--ObjectPageLayout"),
 											aggregation: "sections"
 										}
 									}
 								};
 								// change2: remove section with smart form
 								var oRemoveChangeData = {
-									selectorControl: sap.ui.getCore().byId("application-masterDetail-display-component---idMain1--ObjectPageSectionWithSmartForm"),
+									selectorControl: sap.ui.getCore().byId(oComponent.createId("idMain1--ObjectPageSectionWithSmartForm")),
 									changeSpecificData: {
 										changeType: "stashControl"
 									}
@@ -114,20 +103,20 @@ sap.ui.define([
 							} else if (this.iCounter === 1) {
 								// on second press of "Personalization Changes button"
 								var oMoveChangeData2 = {
-									selectorControl: sap.ui.getCore().byId(oAppComponent.createId("idMain1--ObjectPageLayout")),
+									selectorControl: sap.ui.getCore().byId(oComponent.createId("idMain1--ObjectPageLayout")),
 									changeSpecificData: {
 										changeType: "moveControls",
 										movedElements: [{
-											id: oAppComponent.createId("idMain1--ObjectPageSectionWithVM"),
+											id: oComponent.createId("idMain1--ObjectPageSectionWithVM"),
 											sourceIndex: 2,
 											targetIndex: 0
 										}],
 										source: {
-											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											id: oComponent.createId("idMain1--ObjectPageLayout"),
 											aggregation: "sections"
 										},
 										target: {
-											id: oAppComponent.createId("idMain1--ObjectPageLayout"),
+											id: oComponent.createId("idMain1--ObjectPageLayout"),
 											aggregation: "sections"
 										}
 									}
