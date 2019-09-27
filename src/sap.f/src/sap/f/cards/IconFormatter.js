@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/core/IconPool"], function (IconPool) {
 			}
 
 			// Do not format absolute icon sources.
-			if (IconPool.isIconURI(sUrl) || sUrl.startsWith("http://") || sUrl.startsWith("https://")) {
+			if (IconPool.isIconURI(sUrl) || sUrl.startsWith("http://") || sUrl.startsWith("https://") || sUrl.startsWith("//")) {
 				return sUrl;
 			}
 

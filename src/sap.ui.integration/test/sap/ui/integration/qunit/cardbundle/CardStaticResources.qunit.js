@@ -247,6 +247,52 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.test("ListContent item icon with protocol-relative url" , function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			var oManifest = {
+				"sap.app": {
+					"id": "my.test.card.list",
+					"type": "card",
+					"i18n": "i18n/i18n.properties"
+				},
+				"sap.card": {
+					"type": "List",
+					"content": {
+						"data": {
+							"json": [
+								{
+									"Icon": "//icons/edit.png"
+								}
+							]
+						},
+						"item": {
+							"icon": {
+								"src": "{Icon}"
+							}
+						}
+					}
+				}
+			};
+
+			// Act
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+
+				// Assert
+				assert.equal(oListItem.getIcon(), "//icons/edit.png", "Should NOT format protocol-relative URL.");
+
+				// Clean up
+				done();
+			}.bind(this));
+			this.oCard.setManifest(oManifest);
+			this.oCard.setBaseUrl("test-resources/sap/ui/integration/qunit/cardbundle/bundle/");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.module("Card Static Resources with manifest URL", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -345,6 +391,27 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				done();
 			}.bind(this));
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/objectmanifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("ListContent header icon with protocol-relative url", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+
+			// Act
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oAvatar = this.oCard.getCardHeader().getAggregation("_avatar");
+
+				// Assert
+				assert.equal(oAvatar.getSrc(), "//icons/edit.png", "Should NOT format protocol-relative URL.");
+
+				// Clean up
+				done();
+			}.bind(this));
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/cardbundle/bundle/listmanifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 	}
