@@ -2,8 +2,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 		<VBox class="sapUiSmallMargin">
-			<Text text="An example with 'matrix' layout" textAlign="Center"/>
-			<RadioButtonGroup columns="3" width="100%" class="sapUiMediumMarginBottom">
+			<Label labelFor="rbg1" text="An example with 'matrix' layout" />
+			<RadioButtonGroup id="rbg1" columns="3" width="100%" class="sapUiMediumMarginBottom">
 				<buttons>
 					<RadioButton id="RB1-1" text="Long Option Number 1"/>
 					<RadioButton id="RB1-2" text="Option 2" enabled="false"/>
@@ -13,24 +13,24 @@
 					<RadioButton id="RB1-6" text="Nr. 6"/>
 				</buttons>
 			</RadioButtonGroup>
-			<Text text="An example with 3 buttons and 2 columns"/>
-			<RadioButtonGroup columns="2" selectedIndex="2" class="sapUiMediumMarginBottom">
+			<Label labelFor="rbg2" text="An example with 3 buttons and 2 columns"/>
+			<RadioButtonGroup id="rbg2" columns="2" selectedIndex="2" class="sapUiMediumMarginBottom">
 				<buttons>
 					<RadioButton id="RB2-1" text="Option 1"/>
 					<RadioButton id="RB2-2" text="Option 2" editable="false"/>
 					<RadioButton id="RB2-3" text="Option 3"/>
 				</buttons>
 			</RadioButtonGroup>
-			<Text text="If the number of columns is equal to or exceeds the number of radio buttons they align horizontally"/>
-			<RadioButtonGroup columns="5" valueState="Error" class="sapUiMediumMarginBottom">
+			<Label labelFor="rbg3" text="If the number of columns is equal to or exceeds the number of radio buttons they align horizontally"/>
+			<RadioButtonGroup id="rbg3" columns="5" valueState="Error" class="sapUiMediumMarginBottom">
 				<buttons>
 					<RadioButton id="RB3-1" text="Option 1"/>
 					<RadioButton id="RB3-2" text="Option 2"/>
 					<RadioButton id="RB3-3" text="Option 3"/>
 				</buttons>
 			</RadioButtonGroup>
-			<Text text="An example of a group in warning state"/>
-			<RadioButtonGroup valueState="Warning">
+			<Label labelFor="rbg4" text="An example of a group in warning state"/>
+			<RadioButtonGroup id="rbg4" valueState="Warning">
 				<buttons>
 					<RadioButton id="RB4-1" text="Option 1"/>
 					<RadioButton id="RB4-2" text="Option 2"/>
