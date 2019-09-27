@@ -7,7 +7,8 @@
 	xmlns="sap.m">
 	<Page
 		id="idPage"
-		title=" Product XY" >
+		title=" Product XY"
+		class= "sapUiResponsivePadding--header" >
 		<!-- this CSS class add a standard spacing to all the page content -->
 
 		<content>

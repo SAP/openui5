@@ -4,7 +4,7 @@
 	xmlns:t="sap.ui.table"
 	xmlns:f="sap.ui.layout.form"
 	height="100%">
-	<Page enableScrolling="true" title="Title">
+	<Page enableScrolling="true" title="Title" class="sapUiResponsivePadding--header sapUiResponsivePadding--footer">
 		<content>
 			<VBox fitContainer="true">
 				<f:SimpleForm id="SimpleFormDisplay480"
