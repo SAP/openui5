@@ -248,6 +248,15 @@ sap.ui.define([
 				this.focus();
 				oEvent.preventDefault();
 			}
+			if (!sap.ui.Device.browser.msie) {
+				// set the tag ID where the touch event started
+				this._sStartingTagId = oEvent.target.id.replace(this.getId(), '');
+			}
+		} else {
+			if (!sap.ui.Device.browser.msie) {
+				// clear the starting tag ID in case the button is not enabled and visible
+				this._sStartingTagId = '';
+			}
 		}
 	};
 
@@ -269,6 +278,16 @@ sap.ui.define([
 				this.ontap(oEvent);
 			}
 		}
+
+		if (!sap.ui.Device.browser.msie) {
+			// get the tag ID where the touch event ended
+			this._sEndingTagId = oEvent.target.id.replace(this.getId(), '');
+			// there are some cases when tap event won't come. Simulate it:
+			if (this._buttonPressed === 0 && ((this._sStartingTagId === "-BDI-content" && (this._sEndingTagId === '-content' || this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sStartingTagId === "-content" && (this._sEndingTagId === '-inner' || this._sEndingTagId === '-img')) || (this._sStartingTagId === '-img' && this._sEndingTagId !== '-img'))) {
+				this.ontap(oEvent);
+			}
+		}
+
 	};
 
 	/**
@@ -287,7 +306,6 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype.ontap = function(oEvent) {
-
 		// mark the event for components that needs to know if the event was handled by the button
 		oEvent.setMarked();
 

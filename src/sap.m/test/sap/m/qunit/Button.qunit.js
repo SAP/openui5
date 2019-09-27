@@ -49,10 +49,11 @@ sap.ui.define([
 	createAndAppendDiv("contentBtnInvisible").className = "ButtonSpace";
 	createAndAppendDiv("contentBtnTextDirectionRTL").className = "ButtonSpace";
 	createAndAppendDiv("contentBtnTextDirectionLTR").className = "ButtonSpace";
+	createAndAppendDiv("contentBtnIconTap").className = "ButtonSpace";
 
 
 
-	var b1, b2, b4, b5, b6, b7, b8, b9, b10, msg;
+	var b1, b2, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, msg;
 
 	var sText = "Button Text",
 		sButtonTypeDefault = ButtonType.Default,
@@ -67,6 +68,7 @@ sap.ui.define([
 		bDisabled = false,
 		sIcon = "../images/analytics_64.png",
 		sPressMessage = "Button Tapped Event!";
+		sTapMessage = "There is Tap Event on a Button!";
 
 	function tabEventHandler1() {
 		throw sPressMessage + " - Exception";
@@ -178,6 +180,15 @@ sap.ui.define([
 	oBtnLtr.setIcon(IconPool.getIconURI("employee"));
 	oBtnLtr.setTextDirection(TextDirection.LTR);
 	oBtnLtr.placeAt("contentBtnTextDirectionLTR");
+
+	// Icon Button for tap test
+	var oBtnIconTap = new Button("b15");
+	oBtnIconTap.setText("Tap Button");
+	oBtnIconTap.setType(sButtonTypeDefault);
+	oBtnIconTap.setEnabled(bEnabled);
+	oBtnIconTap.setIcon(IconPool.getIconURI("employee"));
+	oBtnIconTap.placeAt("contentBtnIconTap");
+	oBtnIconTap.attachPress(tabEventHandler2);
 
 
 	QUnit.module("Basic", {
@@ -426,7 +437,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Act
-		oButton.ontouchstart({ setMarked: jQuery.noop, preventDefault: jQuery.noop, targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }});
+		oButton.ontouchstart({ setMarked: jQuery.noop, preventDefault: jQuery.noop, targetTouches: { length: 1 }, originalEvent: { type: "mousedown" }, target: { id: 'fake-button-id' }});
 		this.clock.tick(1000);
 
 		// Assert
@@ -900,4 +911,63 @@ sap.ui.define([
 		// Cleanup
 		oButton.destroy();
 	});
+
+	QUnit.module("Tap Event Checking", {
+		beforeEach : function() {
+			b15 = sap.ui.getCore().byId("b15");
+		},
+		afterEach : function() {
+			b15 = null;
+		}
+	});
+
+	QUnit.test("Trigger TAP event in some cases missed by the core", function(assert) {
+		var spy = this.spy(b15, "ontap");
+
+		// events needed
+		var oEventDown = new Event("mousedown", {bubbles: true, cancelable: true});
+		var oEventUp = new Event("mouseup", {bubbles: true, cancelable: true});
+
+		// cases where we don't get tap, check if artificial tap is working
+		document.getElementById("b15-BDI-content").dispatchEvent(oEventDown);
+		document.getElementById("b15-content").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-content");
+		spy.reset();
+
+		document.getElementById("b15-BDI-content").dispatchEvent(oEventDown);
+		document.getElementById("b15-inner").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-inner");
+		spy.reset();
+
+		document.getElementById("b15-BDI-content").dispatchEvent(oEventDown);
+		document.getElementById("b15-img").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-img");
+		spy.reset();
+
+		document.getElementById("b15-content").dispatchEvent(oEventDown);
+		document.getElementById("b15-inner").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-inner");
+		spy.reset();
+
+		document.getElementById("b15-content").dispatchEvent(oEventDown);
+		document.getElementById("b15-img").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-img");
+		spy.reset();
+
+		document.getElementById("b15-img").dispatchEvent(oEventDown);
+		document.getElementById("b15-BDI-content").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
+		spy.reset();
+
+		document.getElementById("b15-img").dispatchEvent(oEventDown);
+		document.getElementById("b15-content").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
+		spy.reset();
+
+		document.getElementById("b15-img").dispatchEvent(oEventDown);
+		document.getElementById("b15-inner").dispatchEvent(oEventUp);
+		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-inner");
+
+	});
+
 });
