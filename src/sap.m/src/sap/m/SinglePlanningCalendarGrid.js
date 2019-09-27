@@ -334,7 +334,8 @@ sap.ui.define([
 					showWeekNumbers: false,
 					startDate: oStartDate
 				}).addStyleClass("sapMSinglePCColumnHeader"),
-				iDelay = (60 - oStartDate.getSeconds()) * 1000;
+				iDelay = (60 - oStartDate.getSeconds()) * 1000,
+				sTimePattern = this._getCoreLocaleData().getTimePattern("medium");
 
 			this.setAggregation("_columnHeaders", oDatesRow);
 			this.setStartDate(oStartDate);
@@ -345,14 +346,11 @@ sap.ui.define([
 			this._configureAppointmentsCreate();
 
 			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-			this._oFormatAriaApp = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"
+			this._oFormatStartEndInfoAria = DateFormat.getDateTimeInstance({
+				pattern: "EEEE dd/MM/YYYY 'at' " + sTimePattern
 			});
 			this._oFormatAriaFullDayCell = DateFormat.getDateTimeInstance({
 				pattern: "EEEE dd/MM/YYYY"
-			});
-			this._oFormatAriaCell = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY 'at' HH a"
 			});
 
 			//the id of the SPC's legend if any
@@ -1918,8 +1916,8 @@ sap.ui.define([
 		SinglePlanningCalendarGrid.prototype._getAppointmentAnnouncementInfo = function (oAppointment) {
 			var sStartTime = this._oUnifiedRB.getText("CALENDAR_START_TIME"),
 				sEndTime = this._oUnifiedRB.getText("CALENDAR_END_TIME"),
-				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment.getStartDate()),
-				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate()),
+				sFormattedStartDate = this._oFormatStartEndInfoAria.format(oAppointment.getStartDate()),
+				sFormattedEndDate = this._oFormatStartEndInfoAria.format(oAppointment.getEndDate()),
 				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
 			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(sap.ui.getCore().byId(this._sLegendId), oAppointment);
@@ -1957,7 +1955,7 @@ sap.ui.define([
 			if (bFullDay) {
 				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate) + "; ";
 			}
-			return sStartTime + ": " + this._oFormatAriaCell.format(oStartDate) + "; " + sEndTime + ": " + this._oFormatAriaCell.format(oEndDate);
+			return sStartTime + ": " + this._oFormatStartEndInfoAria.format(oStartDate) + "; " + sEndTime + ": " + this._oFormatStartEndInfoAria.format(oEndDate);
 		};
 
 		/**
