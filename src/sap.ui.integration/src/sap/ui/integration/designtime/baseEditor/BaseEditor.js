@@ -120,10 +120,15 @@ sap.ui.define([
 					}
 				}
 			},
+			defaultAggregation : "content",
 			aggregations: {
 				"_propertyEditors": {
 					type: "sap.ui.core.Control",
 					visibility: "hidden"
+				},
+				content: {
+					type: "sap.ui.core.Control",
+					multiple : true
 				}
 			},
 			events: {
@@ -146,13 +151,21 @@ sap.ui.define([
 			}
 		},
 
-		renderer: function(oRm, oEditor) {
-			oRm.openStart("div", oEditor);
+		renderer: function(oRm, oControl) {
+			var aContent = oControl.getContent();
+
+			oRm.openStart("div", oControl);
 			oRm.openEnd();
 
-			oEditor.getPropertyEditors().forEach(function(oPropertyEditor) {
-				oRm.renderControl(oPropertyEditor);
-			});
+			if (aContent.length) {
+				aContent.forEach(function(oChildControl) {
+					oRm.renderControl(oChildControl);
+				});
+			} else {
+				oControl.getPropertyEditorsSync().forEach(function(oPropertyEditor) {
+					oRm.renderControl(oPropertyEditor);
+				});
+			}
 
 			oRm.close("div");
 		},
@@ -191,32 +204,6 @@ sap.ui.define([
 			return this._setConfig(
 				this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
 			);
-		},
-
-		getPropertyEditor: function(sPropertyName) {
-			return this._mPropertyEditors[sPropertyName];
-		},
-
-		getPropertyEditors: function(vTag) {
-			var hasTag = function(oPropertyEditor, sTag) {
-				return oPropertyEditor.getConfig().tags && (oPropertyEditor.getConfig().tags.indexOf(sTag) !== -1);
-			};
-
-			if (!vTag) {
-				return this.getAggregation("_propertyEditors") || [];
-			} else if (typeof vTag === "string") {
-				return this.getPropertyEditors().filter(function(oPropertyEditor) {
-					return hasTag(oPropertyEditor, vTag);
-				});
-			} else if (Array.isArray(vTag)) {
-				return this.getPropertyEditors().filter(function(oPropertyEditor) {
-					return vTag.every(function(sTag) {
-						return hasTag(oPropertyEditor, sTag);
-					});
-				});
-			} else {
-				return [];
-			}
 		}
 	});
 
@@ -258,8 +245,7 @@ sap.ui.define([
 			}
 			this._oContextModel = new JSONModel(oContext);
 			this._oContextModel.setDefaultBindingMode("OneWay");
-			this._createI18nModel();
-			this._createEditors();
+			this._createI18nModel().then(this._createEditors.bind(this));
 		}
 	};
 
@@ -270,22 +256,30 @@ sap.ui.define([
 	 */
 	BaseEditor.prototype._createI18nModel = function() {
 		var oConfig = this.getConfig();
-		oConfig.i18n.forEach(function(sI18nPath) {
-			ResourceBundle.create({
-				url: sap.ui.require.toUrl(sI18nPath),
-				async: true
-			}).then(function (oBundle) {
-				if (!this._oI18nModel) {
-					this._oI18nModel = new ResourceModel({
-						bundle: oBundle
-					});
-					this.setModel(this._oI18nModel, "i18n");
-					this._oI18nModel.setDefaultBindingMode("OneWay");
-				} else {
-					this._oI18nModel.enhance(oBundle);
-				}
-			}.bind(this));
-		}.bind(this));
+
+		return Promise.all(
+			oConfig.i18n.map(function (sI18nPath) {
+				return new Promise(function (fnResolve, fnReject) {
+					ResourceBundle.create({
+						url: sap.ui.require.toUrl(sI18nPath),
+						async: true
+					})
+						.then(function (oBundle) {
+							if (!this._oI18nModel) {
+								this._oI18nModel = new ResourceModel({
+									bundle: oBundle
+								});
+								this.setModel(this._oI18nModel, "i18n");
+								this._oI18nModel.setDefaultBindingMode("OneWay");
+							} else {
+								this._oI18nModel.enhance(oBundle);
+							}
+							fnResolve();
+						}.bind(this))
+						.catch(fnReject);
+				}.bind(this));
+			}.bind(this))
+		);
 	};
 
 	/**
@@ -318,7 +312,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 
-				this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditors()});
+				this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
 			}
 		}.bind(this));
 	};
@@ -330,12 +324,65 @@ sap.ui.define([
 				editor: this
 			});
 			oPropertyEditor.setModel(this._oContextModel, "_context");
+			oPropertyEditor.setModel(this._oI18nModel, "i18n");
 			// deepClone to avoid editor modifications to influence the outer config
 			oPropertyEditor.setConfig(deepClone(oPropertyConfig));
 			oPropertyEditor.attachPropertyChanged(this._onPropertyChanged.bind(this));
 			// TODO: control styling via editor properties?
 			oPropertyEditor.addStyleClass("sapUiTinyMargin");
 			return oPropertyEditor;
+		}
+	};
+
+	BaseEditor.prototype.getPropertyEditor = function (sPropertyName) {
+		return new Promise(function (fnResolve) {
+			if (!this._mPropertyEditors || Object.keys(this._mPropertyEditors).length === 0) {
+				this.attachEventOnce("propertyEditorsReady", fnResolve);
+			} else {
+				fnResolve();
+			}
+		}.bind(this))
+		.then(function () {
+			return this.getPropertyEditorSync(sPropertyName);
+		}.bind(this));
+	};
+
+	BaseEditor.prototype.getPropertyEditorSync = function(sPropertyName) {
+		return this._mPropertyEditors[sPropertyName];
+	};
+
+	BaseEditor.prototype.getPropertyEditors = function(vTag) {
+		return new Promise(function (fnResolve) {
+			if (!this._mPropertyEditors || Object.keys(this._mPropertyEditors).length === 0) {
+				this.attachEventOnce("propertyEditorsReady", fnResolve);
+			} else {
+				fnResolve();
+			}
+		}.bind(this))
+		.then(function () {
+			return this.getPropertyEditorsSync(vTag);
+		}.bind(this));
+	};
+
+	BaseEditor.prototype.getPropertyEditorsSync = function(vTag) {
+		var hasTag = function(oPropertyEditor, sTag) {
+			return oPropertyEditor.getConfig().tags && (oPropertyEditor.getConfig().tags.indexOf(sTag) !== -1);
+		};
+
+		if (!vTag) {
+			return this.getAggregation("_propertyEditors") || [];
+		} else if (typeof vTag === "string") {
+			return this.getPropertyEditorsSync().filter(function(oPropertyEditor) {
+				return hasTag(oPropertyEditor, vTag);
+			});
+		} else if (Array.isArray(vTag)) {
+			return this.getPropertyEditorsSync().filter(function(oPropertyEditor) {
+				return vTag.every(function(sTag) {
+					return hasTag(oPropertyEditor, sTag);
+				});
+			});
+		} else {
+			return [];
 		}
 	};
 
