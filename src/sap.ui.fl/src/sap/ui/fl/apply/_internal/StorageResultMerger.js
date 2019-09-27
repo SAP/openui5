@@ -12,11 +12,11 @@ sap.ui.define([
 	/**
 	 * Merging results from different connectors or layers.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.ConnectorResultMerger
+	 * @namespace sap.ui.fl.apply._internal.StorageResultMerger
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl._internal.apply.Connector
+	 * @ui5-restricted sap.ui.fl._internal.apply.Storage
 	 */
 
 	function findVariantSection(aResponses) {
@@ -42,7 +42,7 @@ sap.ui.define([
 		var oReferencedVariant = oVariantsMap[sVariantId];
 
 		if (!oReferencedVariant) {
-			oReferencedVariant = oConnectorResultMerger._createStandardVariant(sVariantId);
+			oReferencedVariant = oStorageResultMerger._createStandardVariant(sVariantId);
 			oVariantsMap[sVariantId] = oReferencedVariant;
 		}
 
@@ -103,7 +103,7 @@ sap.ui.define([
 	function addVariantDependentControlChanges(oVariantsMap, aVariantDependentChanges) {
 		var oVariantsMapCopy = merge({}, oVariantsMap);
 		aVariantDependentChanges.forEach(function (oChange) {
-			oVariantsMapCopy[oChange.variantReference] = oVariantsMapCopy[oChange.variantReference] || oConnectorResultMerger._createStandardVariant(oChange.variantReference);
+			oVariantsMapCopy[oChange.variantReference] = oVariantsMapCopy[oChange.variantReference] || oStorageResultMerger._createStandardVariant(oChange.variantReference);
 			oVariantsMapCopy[oChange.variantReference].controlChanges.push(oChange);
 		});
 		return oVariantsMapCopy;
@@ -112,7 +112,7 @@ sap.ui.define([
 	function addVariantChanges(oVariantsMap, aVariantChanges) {
 		var oVariantsMapCopy = merge({}, oVariantsMap);
 		aVariantChanges.forEach(function (oChange) {
-			oVariantsMapCopy[oChange.selector.id] = oVariantsMapCopy[oChange.selector.id] || oConnectorResultMerger._createStandardVariant(oChange.selector.id);
+			oVariantsMapCopy[oChange.selector.id] = oVariantsMapCopy[oChange.selector.id] || oStorageResultMerger._createStandardVariant(oChange.selector.id);
 			var aVariantChangesOfTheChangeType = oVariantsMapCopy[oChange.selector.id].variantChanges[oChange.changeType] || [];
 			aVariantChangesOfTheChangeType.push(oChange);
 			oVariantsMapCopy[oChange.selector.id].variantChanges[oChange.changeType] = aVariantChangesOfTheChangeType;
@@ -168,7 +168,7 @@ sap.ui.define([
 			var oStandardVariant;
 
 			if (iStandardVariantIndex === -1) {
-				oStandardVariant = oConnectorResultMerger._createStandardVariant(sVariantManagementId);
+				oStandardVariant = oStorageResultMerger._createStandardVariant(sVariantManagementId);
 			} else {
 				oStandardVariant = oVariantManagementSection.variants[iStandardVariantIndex];
 				oVariantManagementSection.variants.splice(iStandardVariantIndex, 1);
@@ -210,7 +210,7 @@ sap.ui.define([
 	}
 
 
-	var oConnectorResultMerger = {};
+	var oStorageResultMerger = {};
 
 	/**
 	 * Concatenates all changes from a list of flex data request responses into a passed result object and removed duplicates.
@@ -219,9 +219,9 @@ sap.ui.define([
 	 * @param {object[]} aResponses.changes List of the change definitions
 	 * @returns {object[]} Merged array of changes
 	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal.ConnectorResultMerger, sap.ui.fl.Cache
+	 * @ui5-restricted sap.ui.fl.Cache
 	 */
-	oConnectorResultMerger._concatChanges = function(aResponses) {
+	oStorageResultMerger._concatChanges = function(aResponses) {
 		var aChanges = [];
 
 		aResponses.forEach(function (oResponse) {
@@ -252,11 +252,11 @@ sap.ui.define([
 	 * @returns {object} Merged result
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.fl._internal.Connector
+	 * @ui5-restricted sap.ui.fl._internal.Storage
 	 */
-	oConnectorResultMerger.merge = function(mPropertyBag) {
+	oStorageResultMerger.merge = function(mPropertyBag) {
 		var oResult = {
-			changes: oConnectorResultMerger._concatChanges(mPropertyBag.responses),
+			changes: oStorageResultMerger._concatChanges(mPropertyBag.responses),
 			variantSection: {}
 		};
 
@@ -270,7 +270,7 @@ sap.ui.define([
 		return oResult;
 	};
 
-	oConnectorResultMerger._createStandardVariant = function (sVariantId) {
+	oStorageResultMerger._createStandardVariant = function (sVariantId) {
 		return {
 			content: {
 				fileName: sVariantId,
@@ -286,5 +286,5 @@ sap.ui.define([
 		};
 	};
 
-	return oConnectorResultMerger;
+	return oStorageResultMerger;
 });

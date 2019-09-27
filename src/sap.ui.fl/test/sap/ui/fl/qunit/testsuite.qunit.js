@@ -72,7 +72,7 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
-			"apply/_internal/Connector": {
+			"apply/_internal/Storage": {
 				group: "Apply Internal",
 				ui5: {
 					resourceroots: {
@@ -80,7 +80,7 @@ sap.ui.define(function () {
 					}
 				},
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Connector"]
+					only: ["sap/ui/fl/apply/_internal/Storage"]
 				}
 			},
 			"apply/_internal/connectors/JsObjectConnector": {
@@ -112,24 +112,24 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
 				}
 			},
-			"apply/_internal/ConnectorWithDebugEnabled": {
+			"apply/_internal/StorageWithDebugEnabled": {
 				group: "Apply Internal",
 				ui5: {
 					debug: true,
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"}
 				},
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Connector"]
+					only: ["sap/ui/fl/apply/_internal/Storage"]
 				}
 			},
-			"apply/_internal/ConnectorWithForcedFlexBundle": {
+			"apply/_internal/StorageWithForcedFlexBundle": {
 				group: "Apply Internal",
 				ui5: {
 					"xx-flexBundleRequestForced": true,
 					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"}
 				},
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Connector"]
+					only: ["sap/ui/fl/apply/_internal/Storage"]
 				}
 			},
 			"apply/_internal/variants/URLHandler": {
@@ -174,10 +174,10 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/SmartVariantManagementWriteAPI"]
 				}
 			},
-			"write/_internal/Connector": {
+			"write/_internal/Storage": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/api/_internal/Connector"]
+					only: ["sap/ui/fl/write/api/_internal/Storage"]
 				}
 			},
 			"write/_internal/CompatibilityConnector": {
@@ -204,10 +204,10 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/_internal/connectors/PersonalizationConnector"]
 				}
 			},
-			"write/_internal/connectors/ConnectorFeaturesMerger": {
+			"write/_internal/StorageFeaturesMerger": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/_internal/connectors/ConnectorFeaturesMerger"]
+					only: ["sap/ui/fl/write/_internal/StorageFeaturesMerger"]
 				}
 			},
 			"write/_internal/connectors/BrowserStorageConnector": {
@@ -246,7 +246,7 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/_internal/connectors/KeyUserConnector"]
 				}
 			},
-			"write/_internal/ConnectorWithCustomBrokenConnector": {
+			"write/_internal/StorageWithCustomBrokenConnector": {
 				group: "Write Internal",
 				ui5: {
 					resourceroots: {
@@ -260,7 +260,7 @@ sap.ui.define(function () {
 						'"layerFilter": []}]'
 				},
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Connector"]
+					only: ["sap/ui/fl/apply/_internal/Storage"]
 				}
 			},
 			// Team Gravity tests

@@ -4,13 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/ui/fl/apply/_internal/ConnectorResultMerger",
-	"sap/ui/fl/apply/_internal/ConnectorResultDisassembler",
+	"sap/ui/fl/apply/_internal/StorageResultMerger",
+	"sap/ui/fl/apply/_internal/StorageResultDisassembler",
 	"sap/ui/fl/LayerUtils"
 ], function(
 	ApplyUtils,
-	ConnectorResultMerger,
-	ConnectorResultDisassembler,
+	StorageResultMerger,
+	StorageResultDisassembler,
 	LayerUtils
 ) {
 	"use strict";
@@ -18,7 +18,7 @@ sap.ui.define([
 	/**
 	 * Abstraction providing an API to handle communication with persistence like back ends, local & session storage or work spaces.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.Connector
+	 * @namespace sap.ui.fl.apply._internal.Storage
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
@@ -80,7 +80,7 @@ sap.ui.define([
 			aDisassembledResponses = aResponses;
 		} else {
 			aDisassembledResponses = aResponses.map(function (oResponse) {
-				return oResponse.variantSection ? ConnectorResultDisassembler.disassemble(oResponse) : oResponse;
+				return oResponse.variantSection ? StorageResultDisassembler.disassemble(oResponse) : oResponse;
 			});
 		}
 
@@ -111,7 +111,7 @@ sap.ui.define([
 		return aResponses;
 	}
 
-	var Connector = {};
+	var Storage = {};
 
 	/**
 	 * Provides the flex data for a given application based on the configured connectors, the application reference and its version.
@@ -122,7 +122,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
-	Connector.loadFlexData = function (mPropertyBag) {
+	Storage.loadFlexData = function (mPropertyBag) {
 		if (!mPropertyBag || !mPropertyBag.reference) {
 			return Promise.reject("loadFlexData: No reference was provided.");
 		}
@@ -132,8 +132,8 @@ sap.ui.define([
 			.then(flattenResponses)
 			.then(disassembleVariantSectionsIfNecessary)
 			.then(filterByMaxLayerIfNecessary)
-			.then(ConnectorResultMerger.merge);
+			.then(StorageResultMerger.merge);
 	};
 
-	return Connector;
+	return Storage;
 }, true);

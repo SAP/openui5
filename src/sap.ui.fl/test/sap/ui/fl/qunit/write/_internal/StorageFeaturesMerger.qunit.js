@@ -2,10 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/_internal/connectors/ConnectorFeaturesMerger"
+	"sap/ui/fl/write/_internal/StorageFeaturesMerger"
 ], function(
 	sinon,
-	ConnectorFeaturesMerger
+	StorageFeaturesMerger
 ) {
 	"use strict";
 
@@ -31,7 +31,7 @@ sap.ui.define([
 			};
 			var aResponse = [];
 
-			var oResult = ConnectorFeaturesMerger.mergeResults(aResponse);
+			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
 
 			assert.deepEqual(oResult, DEFAULT_FEATURES, "get default values");
 		});
@@ -42,7 +42,7 @@ sap.ui.define([
 			var oResponse_3 = {newKey: true};
 			var aResponse = [oResponse_1, oResponse_2, oResponse_3];
 
-			var oResult = ConnectorFeaturesMerger.mergeResults(aResponse);
+			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
 
 			assert.equal(oResult.newKey, true, "get new key");
 			assert.equal(oResult.isKeyUser, true, "last isKeyuser is true");

@@ -3,16 +3,16 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/Connector",
-	"sap/ui/fl/write/_internal/Connector"
+	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/write/_internal/Storage"
 ], function(
-	ApplyConnector,
-	WriteConnector
+	ApplyStorage,
+	WriteStorage
 ) {
 	"use strict";
 
 	/**
-	 * Adapts the existing @see sap.ui.fl.LrepConnector API to the new apply/write.Connector API
+	 * Adapts the existing @see sap.ui.fl.LrepConnector API to the new apply/write.Storage API
 	 *
 	 * @namespace sap.ui.fl.write._internal.CompatibilityConnector
 	 * @since 1.71
@@ -27,14 +27,14 @@ sap.ui.define([
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.loadChanges
-	 * @see sap.ui.fl.apply._internal.Connector.loadFlexData
+	 * @see sap.ui.fl.apply._internal.Storage.loadFlexData
 	 * @param {object} mComponent Contains component data needed for reading changes
 	 * @param {string} mComponent.name Name of component
 	 * @param {string} [mComponent.appVersion] Current running version of application
 	 * @returns {Promise} Returns a Promise with the changes response
 	 */
 	CompatibilityConnector.prototype.loadChanges = function(mComponent) {
-		return ApplyConnector.loadFlexData({
+		return ApplyStorage.loadFlexData({
 			reference: mComponent.name,
 			appVersion: mComponent.appVersion
 			//,cacheKey: "" //read from async hints
@@ -50,17 +50,17 @@ sap.ui.define([
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.loadSettings
-	 * @see sap.ui.fl.apply._internal.Connector.loadFlexData
+	 * @see sap.ui.fl.apply._internal.Storage.loadFlexData
 	 * @returns {Promise} Returns a Promise with the settings response
 	 */
 	CompatibilityConnector.prototype.loadSettings = function() {
-		return WriteConnector.loadFeatures();
+		return WriteStorage.loadFeatures();
 	};
 
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.create
-	 * @see sap.ui.fl.write._internal.Connector.write
+	 * @see sap.ui.fl.write._internal.Storage.write
 	 *
 	 * @param {object} vFlexObjects The content which is send to the server
 	 * @param {string} [sChangelist] The transport ID which will be handled internally, so there is no need to be passed
@@ -72,7 +72,7 @@ sap.ui.define([
 		if (!Array.isArray(aFlexObjects)) {
 			aFlexObjects = [vFlexObjects];
 		}
-		return WriteConnector.write({
+		return WriteStorage.write({
 			layer : aFlexObjects[0].layer,
 			flexObjects: aFlexObjects,
 			_transport: sChangelist,
@@ -83,14 +83,14 @@ sap.ui.define([
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.update
-	 * @see sap.ui.fl.write._internal.Connector.update
+	 * @see sap.ui.fl.write._internal.Storage.update
 	 *
 	 * @param {object} oFlexObject Flex object to be updated
 	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.prototype.update = function(oFlexObject, sChangeList) {
-		return WriteConnector.update({
+		return WriteStorage.update({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
 			_transport: sChangeList
@@ -101,14 +101,14 @@ sap.ui.define([
 	/**
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.deleteChange
-	 * @see sap.ui.fl.write._internal.Connector.remove
+	 * @see sap.ui.fl.write._internal.Storage.remove
 	 *
 	 * @param {object} oFlexObject Flex object to be deleted
 	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.prototype.deleteChange = function(oFlexObject, sChangeList) {
-		return WriteConnector.remove({
+		return WriteStorage.remove({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
 			_transport: sChangeList
@@ -119,7 +119,7 @@ sap.ui.define([
 	 *
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.getFlexInfo
-	 * @see sap.ui.fl.apply._internal.Connector.getFlexInfo
+	 * @see sap.ui.fl.apply._internal.Storage.getFlexInfo
 	 *
 	 * @param {object} mPropertyBag Contains additional data needed for flex/info request
 	 * @param {string} mPropertyBag.reference Name of Component
@@ -128,14 +128,14 @@ sap.ui.define([
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
 	CompatibilityConnector.prototype.getFlexInfo = function(mParameters) {
-		return WriteConnector.getFlexInfo(mParameters);
+		return WriteStorage.getFlexInfo(mParameters);
 	};
 
 	/**
 	 *
 	 * Maps the existing API to the new API
 	 * @see sap.ui.fl.LrepConnector.prototype.resetChanges
-	 * @see sap.ui.fl.write._internal.Connector.reset
+	 * @see sap.ui.fl.write._internal.Storage.reset
 	 *
 	 * @param {string} mParameters property bag
 	 * @param {string} mParameters.sReference Flex reference
@@ -148,7 +148,7 @@ sap.ui.define([
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
 	CompatibilityConnector.prototype.resetChanges = function(mParameters) {
-		return WriteConnector.reset({
+		return WriteStorage.reset({
 			reference: mParameters.sReference,
 			layer: mParameters.sLayer,
 			appVersion: mParameters.sAppVersion,

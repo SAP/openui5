@@ -2,20 +2,20 @@
 
 /*
  This qunit test is targeting
- sap/ui/fl/apply/_internal/Connector.js
+ sap/ui/fl/apply/_internal/Storage.js
  since the test setup requires a specific ui5 bootstrapping the testsuite.qunit.js contains specific parameters for these tests.
 */
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/_internal/Connector",
+	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/apply/connectors/BaseConnector",
 	"my/lib/apply/BrokenConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils"
 ], function(
 	sinon,
-	Connector,
+	Storage,
 	BaseConnector,
 	BrokenConnector,
 	ApplyUtils,
@@ -25,7 +25,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Connector", {
+	QUnit.module("Storage", {
 		beforeEach : function() {
 		},
 		afterEach: function() {
@@ -59,7 +59,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given the BrokenConnector is registered and a changes-bundle.json is present for the application when Connector.loadFlexData is called", function(assert) {
-			return Connector.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "then one change is returned");
 				assert.deepEqual(oResult.changes[0], {dummy: true}, "and the data from the changes bundle is included");
 			});
