@@ -422,6 +422,8 @@ sap.ui.define([
 		this._cacheDomElements();
 		this._toggleState(this._bExpandedState);
 		this._doNavigationActionsLayout();
+		// Needs update in order to determine its visibility by visibility of its content.
+		this._updateTopAreaVisibility();
 	};
 
 	DynamicPageTitle.prototype.exit = function () {
