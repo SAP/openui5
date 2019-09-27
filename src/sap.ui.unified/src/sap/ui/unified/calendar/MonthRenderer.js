@@ -264,6 +264,26 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		for (i = 0; i < iLength; i++) {
 			this.renderDay(oRm, oMonth, aDays[i], oHelper, true, bWeekNum, -1);
 		}
+		if (iLength === 28) {
+			// there are only 4 full weeks (28 days), add one hidden 'day' div in order to open space for 5-th week
+			this.renderDummyDay(oRm);
+		}
+	};
+
+	/**
+	 * Generates empty 'day' div that adds space for one more week in the calendar, in case of 4 full weeks only (28 days)
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @private
+	 */
+	MonthRenderer.renderDummyDay = function(oRm) {
+		oRm.write("<div");
+		oRm.addClass("sapUiCalItem");
+		oRm.addStyle("visibility", "hidden");
+		oRm.writeAttribute("tabindex", "-1");
+		oRm.writeClasses();
+		oRm.writeStyles();
+		oRm.write(">");
+		oRm.write('</div>');
 	};
 
 	/**
