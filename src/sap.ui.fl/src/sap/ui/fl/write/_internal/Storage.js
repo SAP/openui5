@@ -5,18 +5,18 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/connectors/ConnectorFeaturesMerger"
+	"sap/ui/fl/write/_internal/StorageFeaturesMerger"
 ], function(
 	ApplyUtils,
 	WriteUtils,
-	ConnectorFeaturesMerger
+	StorageFeaturesMerger
 ) {
 	"use strict";
 
 	/**
 	 * Abstraction providing an API to handle communication with persistencies like back ends, local & session storage or work spaces.
 	 *
-	 * @namespace sap.ui.fl.write._internal.Connector
+	 * @namespace sap.ui.fl.write._internal.Storage
 	 * @since 1.67
 	 * @version ${version}
 	 * @private
@@ -72,7 +72,7 @@ sap.ui.define([
 			});
 	}
 
-	var Connector = {};
+	var Storage = {};
 
 	/**
 	 * Stores the flex data by calling the according write of the connector in charge of the passed layer;
@@ -85,7 +85,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the update data has file type .variant or not
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Connector.write = function(mPropertyBag) {
+	Storage.write = function(mPropertyBag) {
 		return executeActionByName("write", mPropertyBag);
 	};
 
@@ -99,7 +99,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag._transport] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Connector.remove = function(mPropertyBag) {
+	Storage.remove = function(mPropertyBag) {
 		return executeActionByName("remove", mPropertyBag);
 	};
 
@@ -113,7 +113,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag._transport] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise} Promise resolving as soon as the writing was completed or rejects in case of an error
 	 */
-	Connector.update = function(mPropertyBag) {
+	Storage.update = function(mPropertyBag) {
 		return executeActionByName("update", mPropertyBag);
 	};
 
@@ -130,7 +130,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset
 	 * @returns {Promise} Resolves after the reset is completed and rejects in case of an error
 	 */
-	Connector.reset = function (mPropertyBag) {
+	Storage.reset = function (mPropertyBag) {
 		return executeActionByName("reset", mPropertyBag);
 	};
 
@@ -146,7 +146,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.appVersion] Version of the application
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
-	Connector.getFlexInfo = function (mPropertyBag) {
+	Storage.getFlexInfo = function (mPropertyBag) {
 		return executeActionByName("getFlexInfo", mPropertyBag);
 	};
 
@@ -155,11 +155,11 @@ sap.ui.define([
 	 *
 	 * @returns {Promise<Object>} Map feature flags and additional provided information from the connectors
 	 */
-	Connector.loadFeatures = function() {
+	Storage.loadFeatures = function() {
 		return WriteUtils.getWriteConnectors()
 			.then(sendLoadFeaturesToConnector)
-			.then(ConnectorFeaturesMerger.mergeResults);
+			.then(StorageFeaturesMerger.mergeResults);
 	};
 
-	return Connector;
+	return Storage;
 }, true);

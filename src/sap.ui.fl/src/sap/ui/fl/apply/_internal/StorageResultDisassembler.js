@@ -8,11 +8,11 @@ sap.ui.define([], function() {
 	/**
 	 * Disassembles a response with a variant section into one or more plain responses.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.ConnectorResultDisassembler
+	 * @namespace sap.ui.fl.apply._internal.StorageResultDisassembler
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl._internal.apply.Connector
+	 * @ui5-restricted sap.ui.fl._internal.apply.Storage
 	 */
 
 	return {
@@ -21,9 +21,6 @@ sap.ui.define([], function() {
 		 *
 		 * @param {object} oResponse Flex data response from a <code>sap.ui.connectors.BaseConnector</code> implementation
 		 * @returns {Object} Disassembled result
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.fl._internal.Connector
 		 */
 		disassemble: function(oResponse) {
 			return oResponse;

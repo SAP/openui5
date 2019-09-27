@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/apply/_internal/Connector",
+	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/StandardVariant",
-	"sap/ui/fl/apply/_internal/ConnectorResultMerger",
+	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
@@ -15,11 +15,11 @@ sap.ui.define([
 	"sap/base/util/UriParameters"
 ], function(
 	sinon,
-	Connector,
+	Storage,
 	Change,
 	Variant,
 	StandardVariant,
-	ConnectorResultMerger,
+	StorageResultMerger,
 	Utils,
 	StaticFileConnector,
 	LrepConnector,
@@ -45,7 +45,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Connector checks the input parameters", {
+	QUnit.module("Storage checks the input parameters", {
 		beforeEach : function () {
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 		},
@@ -54,17 +54,17 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("given no property bag was passed on loadFlexData", function (assert) {
-			return assert.throws(Connector.loadFlexData());
+			return assert.throws(Storage.loadFlexData());
 		});
 
 		QUnit.test("given no reference within the property bag was passed on loadFlexData", function (assert) {
-			return assert.throws(Connector.loadFlexData({}));
+			return assert.throws(Storage.loadFlexData({}));
 		});
 	});
 
-	QUnit.module("Connector handles changes-bundle.json", {}, function () {
+	QUnit.module("Storage handles changes-bundle.json", {}, function () {
 		QUnit.test("given no static changes-bundle.json placed for 'reference' resource roots, when loading flex data", function (assert) {
-			return Connector.loadFlexData({reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "reference", appVersion: "1.0.0"}).then(function (oResult) {
 				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT, "the default response was returned");
 			});
 		});
@@ -78,7 +78,7 @@ sap.ui.define([
 					"test/app/changes/changes-bundle.json" : '[{"dummy":true}]'
 				}
 			});
-			return Connector.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
@@ -86,7 +86,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Connector merges results from a single connector", {
+	QUnit.module("Storage merges results from a single connector", {
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -129,7 +129,7 @@ sap.ui.define([
 				changes : [oChange2.getDefinition()]
 			}]);
 
-			return Connector.loadFlexData({reference : "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference : "app.id"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 2, "both changes were added to the result");
 				assert.deepEqual(oResult.changes[0], oChange1.getDefinition(), "the change from the first bundle is the first change in the response");
 				assert.deepEqual(oResult.changes[1], oChange2.getDefinition(), "the change from the second bundle is the second change in the response");
@@ -137,7 +137,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Connector merges results from different connectors", {
+	QUnit.module("Storage merges results from different connectors", {
 		beforeEach : function () {
 		},
 		afterEach: function() {
@@ -148,7 +148,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
 			});
 		});
@@ -157,7 +157,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
 			});
 		});
@@ -166,7 +166,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
 			});
 		});
@@ -188,7 +188,7 @@ sap.ui.define([
 				}
 			});
 
-			var oStandardVariant = ConnectorResultMerger._createStandardVariant(sVariantManagementKey);
+			var oStandardVariant = StorageResultMerger._createStandardVariant(sVariantManagementKey);
 
 			oStaticFileConnectorResponse.variantSection[sVariantManagementKey] = {
 				variants: [oStandardVariant, oVariant],
@@ -198,7 +198,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({changes: []});
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				var oResultKeys = Object.keys(oResult);
 				assert.equal(oResultKeys.length, 2, "two entries are in the result");
 				assert.ok(oResultKeys.indexOf("changes") !== -1, "the changes section was included");
@@ -246,12 +246,12 @@ sap.ui.define([
 			});
 			oLrepConnectorResponse.variants = [oVariant2.content];
 
-			var oStandardVariant = ConnectorResultMerger._createStandardVariant(sVariantManagementKey);
+			var oStandardVariant = StorageResultMerger._createStandardVariant(sVariantManagementKey);
 
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oLrepConnectorResponse);
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				var oResultKeys = Object.keys(oResult);
 				assert.equal(oResultKeys.length, 2, "two entries are in the result");
 				assert.ok(oResultKeys.indexOf("changes") !== -1, "the changes section was included");
@@ -292,7 +292,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(oLrepConnectorResponse);
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "only one change was returned");
 			});
 		});
@@ -329,7 +329,7 @@ sap.ui.define([
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
 
 			var sVariantManagementKey = "management1";
-			var oStandardVariant = ConnectorResultMerger._createStandardVariant(sVariantManagementKey);
+			var oStandardVariant = StorageResultMerger._createStandardVariant(sVariantManagementKey);
 
 			// Static File Connector
 
@@ -500,7 +500,7 @@ sap.ui.define([
 
 			// TEST RUN
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				var oVariantSection = oResult.variantSection;
 				assert.equal(Object.keys(oVariantSection).length, 1, "only one variant management subsection was created");
 				assert.equal(Object.keys(oVariantSection)[0], sVariantManagementKey, "the variant management key was set correct");
@@ -564,7 +564,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
 			sandbox.stub(LrepConnector, "loadFlexData").resolves();
 
-			return Connector.loadFlexData({reference: "app.id"}).then(function (/*oResult*/) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (/*oResult*/) {
 				assert.ok(false);
 			});
 		});
@@ -583,7 +583,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 
-			return Connector.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
+			return Storage.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
 				assert.ok(false);
 			});
 		});
@@ -592,7 +592,7 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_DATA);
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 
-			return Connector.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
+			return Storage.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
 				assert.ok(false);
 			});
 		});

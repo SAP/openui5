@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/ObjectPath",
-	"sap/ui/fl/apply/_internal/ConnectorResultMerger"
+	"sap/ui/fl/apply/_internal/StorageResultMerger"
 ],
 function(
 	LrepConnector,
@@ -20,7 +20,7 @@ function(
 	jQuery,
 	LoaderExtensions,
 	ObjectPath,
-	ConnectorResultMerger
+	StorageResultMerger
 ) {
 	"use strict";
 
@@ -263,7 +263,7 @@ function(
 			if (mChanges && mChanges.changes) {
 				// remove duplicate changes by using the same functionality for the Connectors
 				var aChangesArrays = [{changes: aChangesFromBundle}, Object.assign({}, mChanges.changes)];
-				mChanges.changes.changes = ConnectorResultMerger._concatChanges(aChangesArrays);
+				mChanges.changes.changes = StorageResultMerger._concatChanges(aChangesArrays);
 			}
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;

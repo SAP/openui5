@@ -10,11 +10,11 @@ sap.ui.define([
 	/**
 	 * ConnectorFeaturesMerger class for Connector implementations (write).
 	 *
-	 * @namespace sap.ui.fl.write._internal.connectors.ConnectorFeaturesMerger
+	 * @namespace sap.ui.fl.write._internal.StorageFeaturesMerger
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.write._internal
+	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 
 	var DEFAULT_FEATURES = {

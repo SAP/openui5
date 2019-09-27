@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/_internal/Connector",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector"
 ], function(
 	sinon,
-	Connector,
+	Storage,
 	ApplyUtils,
 	WriteUtils,
 	ApplyLrepConnector,
@@ -27,7 +27,7 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given Connector when write is called", {
+	QUnit.module("Given Storage when write is called", {
 		beforeEach: function () {
 			ApplyLrepConnector.xsrfToken = "123";
 			ApplyKeyUserConnector.xsrfToken = "123";
@@ -46,7 +46,7 @@ sap.ui.define([
 				appVersion: "1.0.0"
 			};
 
-			return Connector.write(mPropertyBag).catch(function (sErrorMessage) {
+			return Storage.write(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
@@ -62,7 +62,7 @@ sap.ui.define([
 				{connector: "LrepConnector", layers: ["USER"]}
 			]);
 
-			return Connector.write(mPropertyBag)
+			return Storage.write(mPropertyBag)
 				.catch(function (oError) {
 					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
 				});
@@ -80,7 +80,7 @@ sap.ui.define([
 				{connector: "JsObjectConnector"}
 			]);
 
-			return Connector.write(mPropertyBag)
+			return Storage.write(mPropertyBag)
 				.catch(function (oError) {
 					assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
 						"Multiple Connector configurations were found to write into layer: VENDOR");
@@ -101,7 +101,7 @@ sap.ui.define([
 
 			var oWriteStub = sandbox.stub(WriteLrepConnector, "write").resolves({});
 
-			return Connector.write(mPropertyBag).then(function () {
+			return Storage.write(mPropertyBag).then(function () {
 				assert.equal(oWriteStub.callCount, 1, "the write was triggered once");
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
 				assert.equal(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
@@ -127,7 +127,7 @@ sap.ui.define([
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 			//sandbox.stub(WriteUtils, "getRequestOptions").returns({});
 
-			return Connector.write(mPropertyBag).then(function() {
+			return Storage.write(mPropertyBag).then(function() {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
@@ -162,7 +162,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedWriteUrl);
 
-			return Connector.write(mPropertyBag).then(function() {
+			return Storage.write(mPropertyBag).then(function() {
 				var oGetWriteUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oGetTokenUrlCallArgs = oStubGetUrl.getCall(1).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
@@ -198,7 +198,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 
-			return Connector.write(mPropertyBag).then(function() {
+			return Storage.write(mPropertyBag).then(function() {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
@@ -231,7 +231,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 
-			return Connector.write(mPropertyBag).then(function() {
+			return Storage.write(mPropertyBag).then(function() {
 				var oGetWriteUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oGetTokenUrlCallArgs = oStubGetUrl.getCall(1).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
@@ -249,7 +249,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given Connector when loadFeatures is called", {
+	QUnit.module("Given Storage when loadFeatures is called", {
 		beforeEach : function() {
 			this.url = "/some/url";
 			ApplyLrepConnector.xsrfToken = "123";
@@ -284,7 +284,7 @@ sap.ui.define([
 			};
 			var oLogResolveSpy = sandbox.spy(ApplyUtils, "logAndResolveDefault");
 
-			return Connector.loadFeatures().then(function (oResponse) {
+			return Storage.loadFeatures().then(function (oResponse) {
 				assert.equal(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
 				assert.equal(oJsObjectConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
 				assert.equal(oPersonalizationConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
@@ -303,7 +303,7 @@ sap.ui.define([
 				{connector: "JsObjectConnector"}
 			]);
 
-			return Connector.loadFeatures().then(function () {
+			return Storage.loadFeatures().then(function () {
 				assert.equal(oLrepConnectorLoadFeaturesStub.callCount, 1, "the loadFeatures was triggered once");
 				var oLrepConnectorCallArgs = oLrepConnectorLoadFeaturesStub.getCall(0).args[0];
 				assert.deepEqual(oLrepConnectorCallArgs, {url: sUrl}, "the url was passed");
@@ -326,7 +326,7 @@ sap.ui.define([
 				system: "foo"
 			});
 
-			return Connector.loadFeatures().then(function (mFeatures) {
+			return Storage.loadFeatures().then(function (mFeatures) {
 				assert.equal(mFeatures.isKeyUser, true, "the property of the LrepConnector was added");
 				assert.equal(mFeatures.system, "foo", "the property of the JsObjectConnector was added");
 			});
@@ -356,14 +356,14 @@ sap.ui.define([
 				client: ""
 			};
 
-			return Connector.loadFeatures().then(function (mFeatures) {
+			return Storage.loadFeatures().then(function (mFeatures) {
 				assert.equal(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 8 feature was provided");
 				assert.equal(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
 			});
 		});
 	});
 
-	QUnit.module("Given Connector when reset is called", {
+	QUnit.module("Given Storage when reset is called", {
 		beforeEach: function () {
 			ApplyLrepConnector.xsrfToken = "123";
 			ApplyKeyUserConnector.xsrfToken = "123";
@@ -382,7 +382,7 @@ sap.ui.define([
 				appVersion: "1.0.0"
 			};
 
-			return Connector.reset(mPropertyBag).catch(function (sErrorMessage) {
+			return Storage.reset(mPropertyBag).catch(function (sErrorMessage) {
 				assert.equal(sErrorMessage, "No layer was provided", "then an Error is thrown");
 			});
 		});
@@ -397,7 +397,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector", layers: ["USER"]}
 			]);
 
-			return Connector.reset(mPropertyBag)
+			return Storage.reset(mPropertyBag)
 				.catch(function (oError) {
 					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
 				});
@@ -413,7 +413,7 @@ sap.ui.define([
 				{connector: "PersonalizationConnector"}
 			]);
 
-			return Connector.reset(mPropertyBag)
+			return Storage.reset(mPropertyBag)
 				.catch(function (oError) {
 					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
 				});
@@ -431,7 +431,7 @@ sap.ui.define([
 				{connector: "JsObjectConnector"}
 			]);
 
-			return Connector.reset(mPropertyBag)
+			return Storage.reset(mPropertyBag)
 				.catch(function (oError) {
 					assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
 						"Multiple Connector configurations were found to write into layer: VENDOR");
@@ -469,7 +469,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 
-			return Connector.reset(mPropertyBag).then(function () {
+			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
@@ -509,7 +509,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 
-			return Connector.reset(mPropertyBag).then(function () {
+			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
@@ -547,7 +547,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
-			return Connector.reset(mPropertyBag).then(function () {
+			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
@@ -587,7 +587,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
-			return Connector.reset(mPropertyBag).then(function () {
+			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oSpyGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
@@ -627,7 +627,7 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
-			return Connector.reset(mPropertyBag).then(function () {
+			return Storage.reset(mPropertyBag).then(function () {
 				var oGetResetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oGetTokenUrlCallArgs = oStubGetUrl.getCall(1).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
