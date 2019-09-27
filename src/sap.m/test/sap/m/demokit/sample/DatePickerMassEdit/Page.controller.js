@@ -1,15 +1,17 @@
-sap.ui.define(['sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel',
-		'jquery.sap.global',
-		'sap/m/Button',
-		'sap/m/Dialog'],
-	function(Controller, JSONModel, jQuery, Button, Dialog) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/Button',
+	'sap/m/Dialog',
+	"sap/ui/unified/Calendar",
+	"sap/ui/core/format/DateFormat"
+], function(Controller, JSONModel, Button, Dialog, Calendar, DateFormat) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.DatePickerMassEdit.Page", {
+		return Controller.extend("sap.m.sample.DatePickerMassEdit.Page", {
 			onInit: function () {
 				// create model
-				var oCalendar = new sap.ui.unified.Calendar({
+				var oCalendar = new Calendar({
 						width: "100%",
 						select: this.handleCalendarSelect.bind(this)
 					}),
@@ -19,7 +21,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller',
 					aSelectedItems,
 					sBindingContext,
 					sDate,
-					oDateFormat = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd"});
+					oDateFormat = DateFormat.getInstance({pattern: "yyyy-MM-dd"});
 
 				this.oProductModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 				this.oProductModel.setSizeLimit(10);
@@ -57,12 +59,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller',
 				this.getView().setModel(this.oProductModel, "products");
 			},
 
-			onChangeDatesPress: function(oEvent) {
+			onChangeDatesPress: function() {
 				this._oSelectNewDateDialog.open();
 			},
 
 
-			handleTableSelectionChange: function (oEvent) {
+			handleTableSelectionChange: function () {
 				var oTable = this.byId('selectionTable'),
 					iSelectedItemsCount = oTable.getSelectedItems().length,
 					oButton = this.byId("changeDatesButton");
@@ -79,7 +81,5 @@ sap.ui.define(['sap/ui/core/mvc/Controller',
 				}
 			}
 		});
-
-		return PageController;
 
 	});

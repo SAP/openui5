@@ -2,14 +2,12 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.DateRangeSelection.Component", {
+	return UIComponent.extend("sap.m.sample.DateRangeSelection.Component", {
 
 		metadata : {
 			manifest: "json"
 		}
 
 	});
-
-	return Component;
 
 });

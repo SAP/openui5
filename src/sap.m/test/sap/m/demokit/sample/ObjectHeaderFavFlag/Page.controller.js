@@ -1,14 +1,13 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, Controller, JSONModel) {
+], function(MessageToast, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ObjectHeaderFavFlag.Page", {
+	return Controller.extend("sap.m.sample.ObjectHeaderFavFlag.Page", {
 
-		onInit : function (evt) {
+		onInit : function () {
 
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
@@ -40,8 +39,9 @@ sap.ui.define([
 		},
 
 		_updateFFModel : function (fav, flag) {
-			var model = this.getView().getModel("ff");
-			var data = model.getData();
+			var model = this.getView().getModel("ff"),
+				data = model.getData();
+
 			if (fav !== null) {
 				data.isFavorite = fav;
 				data.isNoFavorite = !fav;
@@ -53,8 +53,5 @@ sap.ui.define([
 			model.setData(data);
 		}
 	});
-
-
-	return PageController;
 
 });

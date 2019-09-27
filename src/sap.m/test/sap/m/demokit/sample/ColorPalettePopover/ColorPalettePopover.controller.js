@@ -1,13 +1,12 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/m/ColorPalettePopover',
 	'sap/m/MessageToast',
 	'sap/ui/unified/ColorPickerDisplayMode'
-], function (jQuery, Controller, ColorPalettePopover, MessageToast, ColorPickerDisplayMode) {
+], function (Controller, ColorPalettePopover, MessageToast, ColorPickerDisplayMode) {
 	"use strict";
 
-	var ColorPaletteController = Controller.extend("sap.m.sample.ColorPalettePopover.ColorPalettePopover", {
+	return Controller.extend("sap.m.sample.ColorPalettePopover.ColorPalettePopover", {
 
 		onExit: function () {
 			// Destroy popovers if any
@@ -125,7 +124,5 @@ sap.ui.define([
 				", \n defaultAction - " + oEvent.getParameter("defaultAction"));
 		}
 	});
-
-	return ColorPaletteController;
 
 });

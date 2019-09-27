@@ -1,21 +1,27 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	"sap/ui/core/Library"
+], function(Controller, JSONModel, CoreLibrary) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.DateRangeSelection.C", {
+	var ValueState = CoreLibrary.ValueState;
+
+	return Controller.extend("sap.m.sample.DateRangeSelection.C", {
 
 		onInit: function () {
-			var dateFrom = new Date();
+			var dateFrom = new Date(),
+				dateTo = new Date(),
+				oModel = new JSONModel();
+
 			dateFrom.setUTCDate(2);
 			dateFrom.setUTCMonth(1);
 			dateFrom.setUTCFullYear(2014);
 
-			var dateTo = new Date();
 			dateTo.setUTCDate(17);
 			dateTo.setUTCMonth(1);
 			dateTo.setUTCFullYear(2014);
 
-			var oModel = new JSONModel();
 			oModel.setData({
 				delimiterDRS1: "@",
 				dateValueDRS1: dateFrom,
@@ -32,25 +38,23 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 		},
 
 		handleChange: function (oEvent) {
-			var sFrom = oEvent.getParameter("from");
-			var sTo = oEvent.getParameter("to");
-			var bValid = oEvent.getParameter("valid");
-			var oEventSource = oEvent.getSource();
+			var sFrom = oEvent.getParameter("from"),
+				sTo = oEvent.getParameter("to"),
+				bValid = oEvent.getParameter("valid"),
+				oEventSource = oEvent.getSource(),
+				oText = this.byId("TextEvent");
 
 			this._iEvent++;
 
-			var oText = this.byId("TextEvent");
 			oText.setText("Id: " + oEventSource.getId() + "\nFrom: " + sFrom + "\nTo: " + sTo);
 
 			if (bValid) {
-				oEventSource.setValueState(sap.ui.core.ValueState.None);
+				oEventSource.setValueState(ValueState.None);
 			} else {
-				oEventSource.setValueState(sap.ui.core.ValueState.Error);
+				oEventSource.setValueState(ValueState.Error);
 			}
 		}
 
 	});
-
-	return CController;
 
 });

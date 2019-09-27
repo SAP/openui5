@@ -1,17 +1,29 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/Button',
 		'sap/m/Dialog',
 		'sap/m/MessageToast',
 		'sap/m/RatingIndicator',
 		'sap/m/TextArea',
-		'sap/m/VBox',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Button, Dialog, MessageToast, RatingIndicator, TextArea, VBox, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		"sap/m/Library",
+		"sap/ui/core/Popup"
+], function(
+	Button,
+	Dialog,
+	MessageToast,
+	RatingIndicator,
+	TextArea,
+	Controller,
+	JSONModel,
+	MLibrary,
+	Popup
+) {
 	"use strict";
+	var URLHelper = MLibrary.URLHelper,
+		ButtonType = MLibrary.ButtonType;
 
-	var CController = Controller.extend("sap.m.sample.ObjectAttributes.C", {
+	return Controller.extend("sap.m.sample.ObjectAttributes.C", {
 
 		onInit: function(evt) {
 			// set explored app's demo model on this sample
@@ -20,7 +32,7 @@ sap.ui.define([
 		},
 
 		handleSAPLinkPressed: function(oEvent) {
-			sap.m.URLHelper.redirect("http://www.sap.com", true);
+			URLHelper.redirect("http://www.sap.com", true);
 		},
 
 		handleFeedbacklinkPressed: function(oEvent) {
@@ -46,8 +58,8 @@ sap.ui.define([
 						setTimeout(function() {
 							MessageToast.show("Feedback sent.", {
 								duration: 2000,
-								my: sap.ui.core.Popup.Dock.CenterCenter,
-								at: sap.ui.core.Popup.Dock.CenterCenter,
+								my: Popup.Dock.CenterCenter,
+								at: Popup.Dock.CenterCenter,
 								of: oDialog,
 								onClose: function() {
 									oDialog.close();
@@ -59,7 +71,7 @@ sap.ui.define([
 				}),
 				endButton: new Button({
 					text: "Cancel",
-					type: sap.m.ButtonType.Reject,
+					type: ButtonType.Reject,
 					press: function(oEvent) {
 						oDialog.close();
 					}
@@ -68,8 +80,5 @@ sap.ui.define([
 			oDialog.open();
 		}
 	});
-
-
-	return CController;
 
 });

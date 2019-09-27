@@ -1,24 +1,22 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		"sap/m/Library"
+], function(Controller, JSONModel, MLibrary) {
 	"use strict";
+	var URLHelper = MLibrary.URLHelper;
 
-	var CController = Controller.extend("sap.m.sample.ObjectHeader.C", {
+	return Controller.extend("sap.m.sample.ObjectHeader.C", {
 
-		onInit : function (evt) {
+		onInit : function () {
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			this.getView().setModel(oModel);
 		},
 
 		handleLinkObjectAttributePress : function (oEvent) {
-			sap.m.URLHelper.redirect("http://www.sap.com", true);
+			URLHelper.redirect("http://www.sap.com", true);
 		}
 	});
-
-
-	return CController;
 
 });

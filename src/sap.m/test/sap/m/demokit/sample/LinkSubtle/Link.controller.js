@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageBox',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageBox, Controller, JSONModel) {
+	], function(MessageBox, Controller, JSONModel) {
 	"use strict";
 
-	var LinkController = Controller.extend("sap.m.sample.LinkSubtle.Link", {
+	return Controller.extend("sap.m.sample.LinkSubtle.Link", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
@@ -23,8 +22,5 @@ sap.ui.define([
 		}
 
 	});
-
-
-	return LinkController;
 
 });

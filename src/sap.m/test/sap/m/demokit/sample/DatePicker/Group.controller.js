@@ -1,8 +1,16 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel',
+	"sap/ui/core/Core",
+	"sap/ui/core/Library",
+	"sap/ui/unified/Library",
+	"sap/ui/unified/DateTypeRange"
+], function(Controller, JSONModel, Core, CoreLbrary, UnifiedLibrary, DateTypeRange) {
 	"use strict";
+	var CalendarDayType = UnifiedLibrary.CalendarDayType,
+		ValueState = CoreLbrary.ValueState;
 
-	var GroupController = Controller.extend("sap.m.sample.DatePicker.Group", {
+	return Controller.extend("sap.m.sample.DatePicker.Group", {
 
 		onInit: function () {
 			// create model
@@ -17,10 +25,10 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			this.byId("DP6").setMinDate(new Date(2016, 0, 1));
 			this.byId("DP6").setMaxDate(new Date(2016, 11, 31));
 			this.byId("DP6").setDateValue(new Date(2016, 1, 16));
-			this.byId("DP7").addSpecialDate(new sap.ui.unified.DateTypeRange({
+			this.byId("DP7").addSpecialDate(new DateTypeRange({
 				startDate: new Date(2015, 10, 5),
 				endDate: new Date(2015, 10, 25),
-				type: sap.ui.unified.CalendarDayType.NonWorking
+				type: CalendarDayType.NonWorking
 			}));
 
 			this.byId("DP9").setMinDate(new Date(2016, 0, 1));
@@ -29,47 +37,47 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			this._iEvent = 0;
 
 			// for the data binding example do not use the change event for check but the data binding parsing events
-			sap.ui.getCore().attachParseError(
+			Core.attachParseError(
 					function(oEvent) {
 						var oElement = oEvent.getParameter("element");
 
 						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.Error);
+							oElement.setValueState(ValueState.Error);
 						}
 					});
 
-			sap.ui.getCore().attachValidationSuccess(
+			Core.attachValidationSuccess(
 					function(oEvent) {
 						var oElement = oEvent.getParameter("element");
 
 						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.None);
+							oElement.setValueState(ValueState.None);
 						}
 					});
 		},
 
 		handleChange: function (oEvent) {
-			var oText = this.byId("textResult");
-			var oDP = oEvent.getSource();
-			var sValue = oEvent.getParameter("value");
-			var bValid = oEvent.getParameter("valid");
+			var oText = this.byId("textResult"),
+				oDP = oEvent.getSource(),
+				sValue = oEvent.getParameter("value"),
+				bValid = oEvent.getParameter("valid");
+
 			this._iEvent++;
 			oText.setText("Change - Event " + this._iEvent + ": DatePicker " + oDP.getId() + ":" + sValue);
 
 			if (bValid) {
-				oDP.setValueState(sap.ui.core.ValueState.None);
+				oDP.setValueState(ValueState.None);
 			} else {
-				oDP.setValueState(sap.ui.core.ValueState.Error);
+				oDP.setValueState(ValueState.Error);
 			}
 		},
 
 		handleBtnPress: function (oEvent) {
-			var oText = this.byId("textResult2");
-			var oDP = this.byId("DP9");
+			var oText = this.byId("textResult2"),
+				oDP = this.byId("DP9");
+
 			oText.setText("Value is: " + ((oDP.isValidValue()) ? "valid" : "not valid"));
 		}
 	});
-
-	return GroupController;
 
 });

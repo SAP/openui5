@@ -1,24 +1,20 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageBox',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageBox, Controller, JSONModel) {
+], function(MessageBox, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ObjectHeaderResponsiveV.Page", {
+	return Controller.extend("sap.m.sample.ObjectHeaderResponsiveV.Page", {
 
 		onInit: function() {
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			this.getView().setModel(oModel);
 		},
 
-		onPress: function (evt) {
+		onPress: function () {
 			MessageBox.alert("Link was clicked!");
 		}
 	});
-
-
-	return PageController;
 
 });

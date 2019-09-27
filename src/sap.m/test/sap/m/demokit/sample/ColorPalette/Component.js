@@ -2,13 +2,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.ColorPalette.Component", {
+	return UIComponent.extend("sap.m.sample.ColorPalette.Component", {
 
 		metadata : {
 			manifest: "json"
 		}
 	});
-
-	return Component;
 
 });

@@ -17,18 +17,14 @@
 					<Text text="Supplier (active)" />
 				</Column>
 			</columns>
-			<items>
 				<ColumnListItem>
-					<cells>
-						<ObjectIdentifier
-							text="{product}"/>
-						<ObjectAttribute
-								text="{supplier}"/>
-						<ObjectAttribute
-								text="{supplier}"
-								active="true"/>
-					</cells>
+					<ObjectIdentifier
+						text="{product}"/>
+					<ObjectAttribute
+						text="{supplier}"/>
+					<ObjectAttribute
+						text="{supplier}"
+						active="true"/>
 				</ColumnListItem>
-			</items>
 		</Table>
 </mvc:View>

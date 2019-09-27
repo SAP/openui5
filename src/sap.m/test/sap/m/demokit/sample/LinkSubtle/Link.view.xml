@@ -2,7 +2,6 @@
 	controllerName="sap.m.sample.LinkSubtle.Link"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-
 	<Table id="idProductsTable"
 		inset="false"
 		items="{
@@ -42,30 +41,26 @@
 				<Text text="Picture" />
 			</Column>
 		</columns>
-		<items>
-			<ColumnListItem>
-				<cells>
-					<Link
-						text="{Name}"
-						href="{ProductPicUrl}" />
-					<ObjectIdentifier
-						title="{ProductId}"
-						titleActive = "true"
-						titlePress="handleObjectIdentifierPress" />
-					<Link
-						text="{SupplierName}"
-						subtle="true"
-						press="handleLinkPress"/>
-					<Link
-						text="{Category}"
-						subtle="true"
-						press="handleLinkPress" />
-					<Link
-						text="picture"
-						subtle="true"
-						href="{ProductPicUrl}" />
-				</cells>
-			</ColumnListItem>
-		</items>
+		<ColumnListItem>
+			<Link
+				text="{Name}"
+				href="{ProductPicUrl}" />
+			<ObjectIdentifier
+				title="{ProductId}"
+				titleActive = "true"
+				titlePress="handleObjectIdentifierPress" />
+			<Link
+				text="{SupplierName}"
+				subtle="true"
+				press="handleLinkPress"/>
+			<Link
+				text="{Category}"
+				subtle="true"
+				press="handleLinkPress" />
+			<Link
+				text="picture"
+				subtle="true"
+				href="{ProductPicUrl}" />
+		</ColumnListItem>
 	</Table>
 </mvc:View>

@@ -5,43 +5,39 @@
 	<List
 		items="{/ProductCollection}"
 		headerText="Products">
-		<items>
 			<ObjectListItem
-					title="{Name}"
-					type="Active"
-					press="onListItemPress"
-					number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
+				title="{Name}"
+				type="Active"
+				press="onListItemPress"
+				number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+				numberUnit="{CurrencyCode}"
+				showMarkers="true"
+				markFlagged="{
+						path: 'Quantity',
+						formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.intBoolRandomizer'
 					}"
-					numberUnit="{CurrencyCode}"
-					showMarkers="true"
-					markFlagged="{
-							path: 'Quantity',
-							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.intBoolRandomizer'
-						}"
-					markFavorite="{
-							path: 'Status',
-							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.favorite'
-						}"
-					markLocked="{
-							path: 'WeightMeasure',
-							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.intBoolRandomizer'
-						}">
-				<firstStatus>
-					<ObjectStatus
-						text="{Status}"
-						state="{
-							path: 'Status',
-							formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.status'
-						}" />
-				</firstStatus>
-				<attributes>
-					<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-					<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-				</attributes>
-			</ObjectListItem>
-		</items>
+				markFavorite="{
+						path: 'Status',
+						formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.favorite'
+					}"
+				markLocked="{
+						path: 'WeightMeasure',
+						formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.intBoolRandomizer'
+					}">
+			<firstStatus>
+				<ObjectStatus
+					text="{Status}"
+					state="{
+						path: 'Status',
+						formatter: 'sap.m.sample.ObjectListItemMarkLocked.Formatter.status'
+					}" />
+			</firstStatus>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+		</ObjectListItem>
 	</List>
 </mvc:View>

@@ -2,7 +2,6 @@
 	height="100%"
 	controllerName="sap.m.sample.ObjectHeaderResponsiveIV.Page"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
 	<ObjectHeader
 		id="oh1"
@@ -28,23 +27,21 @@
 		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent">
-		<attributes>
-			<ObjectAttribute
-				title="ProductID"
-				text="{ProductId}"/>
-			<ObjectAttribute
-				title="Manufacturer"
-				text="{SupplierName}"/>
-			<ObjectAttribute
-				title="Category"
-				text="{Category}"/>
-			<ObjectAttribute
-				title="Weight per unit"
-				text="{WeightMeasure} {WeightUnit}"/>
-			<ObjectAttribute
-				title="Dimension per unit"
-				text="{Width} x {Depth} x {Height} {DimUnit}"/>
-		</attributes>
+		<ObjectAttribute
+			title="ProductID"
+			text="{ProductId}"/>
+		<ObjectAttribute
+			title="Manufacturer"
+			text="{SupplierName}"/>
+		<ObjectAttribute
+			title="Category"
+			text="{Category}"/>
+		<ObjectAttribute
+			title="Weight per unit"
+			text="{WeightMeasure} {WeightUnit}"/>
+		<ObjectAttribute
+			title="Dimension per unit"
+			text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		<statuses>
  			<ObjectStatus
 				title="Approval"

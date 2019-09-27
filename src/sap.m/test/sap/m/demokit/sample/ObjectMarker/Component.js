@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/UIComponent','sap/ui/core/mvc/XMLView'],
 	function(UIComponent, XMLView) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.ObjectMarker.Component", {
+	var Component =  UIComponent.extend("sap.m.sample.ObjectMarker.Component", {
 
 		metadata : {
 		    publicMethods : [

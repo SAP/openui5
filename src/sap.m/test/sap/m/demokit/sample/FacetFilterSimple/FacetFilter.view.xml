@@ -2,36 +2,27 @@
 	controllerName="sap.m.sample.FacetFilterSimple.FacetFilter"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<VBox
-		id="idVBox">
-		<items>
+	<VBox id="idVBox">
+		<FacetFilter
+			id="idFacetFilter"
+			type="Simple"
+			showPersonalization="true"
+			showReset="true"
+			reset="handleFacetFilterReset"
+			confirm="handleConfirm"
+			lists="{/ProductCollectionStats/Filters}">
+				<FacetFilterList
+					title="{type}"
+					key="{key}"
+					mode="MultiSelect"
+					items="{path:'values', templateShareable: true}" >
+						<FacetFilterItem
+							text="{text}"
+							key="{key}"
+							count="{data}" />
+				</FacetFilterList>
+		</FacetFilter>
 
-			<FacetFilter
-				id="idFacetFilter"
-				type="Simple"
-				showPersonalization="true"
-				showReset="true"
-				reset="handleFacetFilterReset"
-				confirm="handleConfirm"
-				lists="{/ProductCollectionStats/Filters}">
-				<lists>
-					<FacetFilterList
-						title="{type}"
-						key="{key}"
-						mode="MultiSelect"
-						items="{path:'values', templateShareable: true}" >
-						<items>
-							<FacetFilterItem
-								text="{text}"
-								key="{key}"
-								count="{data}" />
-						</items>
-					</FacetFilterList>
-				</lists>
-			</FacetFilter>
-
-			<!-- A demo table will be appended here -->
-
-		</items>
+		<!-- A demo table will be appended here -->
 	</VBox>
 </mvc:View>
