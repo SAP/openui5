@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/test/Opa",
 	"sap/ui/test/TestUtils"
-], function (Log, TestUtils) {
+], function (Log, Opa, TestUtils) {
 	"use strict";
 
 	return {
@@ -23,7 +24,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 			// Create, modify and delete of an unsaved sales order
 			When.onTheMainPage.firstSalesOrderIsVisible();
