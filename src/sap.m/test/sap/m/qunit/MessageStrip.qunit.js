@@ -404,6 +404,16 @@ sap.ui.define([
 			}
 	});
 
+	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {
+		var sCloseButtonLabelId = this.oMessageStrip.$().find(".sapMMsgStripCloseButton").attr("aria-labelledby"),
+			sCloseButtonLabelText = jQuery.sap.byId(sCloseButtonLabelId)[0].innerText,
+			sInvisibleText = this.oMessageStrip.getType() + " " + sap.ui.getCore()
+			.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON");
+
+		assert.strictEqual(sCloseButtonLabelText, sInvisibleText,
+			"the aria-labelledby of the close button should indicate the type of the message strip");
+	});
+
 	QUnit.test("When we have a close button it should indicate that it closes a message strip", function (assert) {
 		var oCore = sap.ui.getCore();
 		assert.strictEqual(jQuery(CLASS_CLOSE_BUTTON).attr('title'),
