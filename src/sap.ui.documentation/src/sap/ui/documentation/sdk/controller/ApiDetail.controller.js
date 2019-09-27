@@ -180,7 +180,7 @@ sap.ui.define([
 					bIsInternal = oVersionModel.getProperty("/isInternal");
 
 				if (!bIsInternal) {
-					aLibsData = aLibsData.filter(function (aNode) {
+					aLibsData = (aLibsData || []).filter(function (aNode) {
 						return !aNode.hasOwnProperty('visibility') || aNode.visibility !== 'restricted';
 					});
 				}
