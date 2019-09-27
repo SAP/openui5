@@ -94,6 +94,17 @@ sap.ui.define(function () {
 					flexibilityServices: '[{"connector": "JsObjectConnector", "layerFilter": []}]'
 				}
 			},
+			"apply/_internal/connectors/StaticFileConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/StaticFileConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "StaticFileConnector", "layerFilter": []}]'
+				}
+			},
 			"apply/_internal/connectors/LrepConnector": {
 				group: "Apply Internal",
 				coverage: {
