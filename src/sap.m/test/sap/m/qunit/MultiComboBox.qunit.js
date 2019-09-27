@@ -7478,4 +7478,50 @@ sap.ui.define([
 		// Cleanup
 		oMultiComboBox.destroy();
 	});
+
+	QUnit.test("When setSelectedKeys is called before the model selected Tokens text should be syncronized", function (assert) {
+		// Arrange
+		var oModel = new JSONModel();
+		oModel.setData({
+			a: "Test A",
+			b: "Test B",
+			c: "Test C"
+		});
+		var oMultiComboBox = new MultiComboBox({
+			items : [
+				new Item({ key: "A", text: "{test>/a}" }),
+				new Item({ key: "B", text: "{test>/b}" }),
+				new Item({ key: "C", text: "{test>/c}" })
+			]
+		});
+
+		// Act
+		oMultiComboBox.setSelectedKeys(["A", "B"]);
+
+		// Assert
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getText(), "", "Token text should be empty");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[1].getText(), "", "Token text should be empty");
+
+		// Act
+		oMultiComboBox.setModel(oModel, "test");
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens().length, 2, "The MultiComboBox was not invalidated");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getText(), "Test A", "Token text should correspond to the model");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[1].getText(), "Test B", "Token text should correspond to the model");
+
+		// Act
+		oMultiComboBox.getModel("test").setProperty("/a", "A Test");
+		oMultiComboBox.getModel("test").setProperty("/b", "B Test");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[0].getText(), "A Test", "Token text should be updated");
+		assert.strictEqual(oMultiComboBox._oTokenizer.getTokens()[1].getText(), "B Test", "Token text should be updated");
+
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
 });

@@ -1930,8 +1930,14 @@ function(
 			oPropertyInfo = oControlEvent.getParameters(),
 			oToken = this._getTokenByItem(oItem);
 
-		if (oPropertyInfo.name === "enabled" && oToken) {
+		if (!oToken) {
+			return;
+		}
+
+		if (oPropertyInfo.name === "enabled") {
 			oToken.setVisible(oPropertyInfo.newValue);
+		} else if (oToken.getMetadata().hasProperty(oPropertyInfo.name)) {
+			oToken.setProperty(oPropertyInfo.name, oPropertyInfo.newValue, false);
 		}
 	};
 
