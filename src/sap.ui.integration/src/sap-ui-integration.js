@@ -16,7 +16,7 @@
  *   <script src="https://some/path/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3">
  *   </script>
  *
- *   <ui-card manifest="./path/to/manifest" />
+ *   <ui-integration-card manifest="./path/to/manifest"></ui-integration-card>
  */
 
 (function (window) {
@@ -32,8 +32,7 @@
 
 	//extract base URL from script tag
 	var oScriptTag, mMatch, sBaseUrl;
-	var coreInstance,
-		CustomElements;
+	var coreInstance;
 	//identify the own script include
 	oScriptTag = document.getElementById("sap-ui-bootstrap");
 
@@ -114,9 +113,8 @@
 			coreInstance = window.sap.ui.getCore();
 			return initTags();
 		}
-		window.sap.ui.require(['/ui5loader-autoconfig', 'sap/ui/core/Core', 'sap/ui/integration/util/CustomElements'],
-			function (config, Core, CE) {
-				CustomElements = CE;
+		window.sap.ui.require(['/ui5loader-autoconfig', 'sap/ui/core/Core'],
+			function (config, Core) {
 				Core.boot();
 				coreInstance = Core;
 				initTags();
@@ -127,8 +125,7 @@
 	function registerLibraryTags(sLibrary) {
 		var oLibrary = coreInstance.getLoadedLibraries()[sLibrary];
 		//collect the prefix and the relevant tags
-		var sPrefix = oLibrary.defaultCustomElementsPrefix,
-			aTags = Object.keys(oLibrary.customElements);
+		var aTags = Object.keys(oLibrary.customElements);
 
 		//collect all the implementation classes and require them
 		window.sap.ui.require(
@@ -136,16 +133,8 @@
 				function (o, i) {
 					return oLibrary.customElements[aTags[i]];
 				}
-			),
-			function () {
-				//after require, register the tags via CustomElements
-				var args = arguments;
-				aTags.forEach(
-					function (o, i) {
-						CustomElements.registerTag(sPrefix + "-" + aTags[i], args[i]);
-					}
-				);
-			});
+			)
+		);
 	}
 
 	function initTags() {

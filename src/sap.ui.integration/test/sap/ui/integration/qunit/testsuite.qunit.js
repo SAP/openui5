@@ -48,13 +48,13 @@ sap.ui.define(function () {
 					]
 				}
 			},
-			"util/CustomElements": {
+			"customElements/CustomElements": {
 				ui5: {
 					libs: ["sap.ui.integration"]
 				},
 				coverage: {
 					only: [
-						"sap/ui/integration/util/CustomElements"
+						"sap/ui/integration/customElements/"
 					]
 				}
 			},
@@ -71,12 +71,15 @@ sap.ui.define(function () {
 				]
 			},
 			"AllCards": {
+				ui5: {
+					libs: ["sap.ui.integration"]
+				},
 				coverage: {
 					only: [
 						"sap/ui/integration/widgets/Card",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
-						"sap/ui/integration/util/CustomElements",
+						"sap/ui/integration/customElements/",
 						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
 						"sap/f/cards/BindingResolver",
@@ -102,7 +105,7 @@ sap.ui.define(function () {
 					'./CardDataHandling.qunit',
 					'./util/CardManifest.qunit',
 					'./util/ServiceManager.qunit',
-					'./util/CustomElements.qunit',
+					'./customElements/CustomElements.qunit',
 					'test-resources/sap/f/qunit/BindingResolver.qunit',
 					'test-resources/sap/f/qunit/DataProvider.qunit',
 					'./CardActions.qunit',

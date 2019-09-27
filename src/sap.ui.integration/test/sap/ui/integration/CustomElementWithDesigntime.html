@@ -66,14 +66,14 @@
 		};
 
 		function configure(sId) {
-			var oCard = document.getElementById(sId).getControl();
+			var oCard = document.getElementById(sId)
 			oCard.loadDesigntime().then(function (oResult) {
-				sap.ui.require(["sap/ui/integration/designtime/editor/BaseEditor"], function (Editor) {
+				sap.ui.require(["sap/ui/integration/designtime/baseEditor/BaseEditor"], function (Editor) {
 					var oEditor = new Editor();
 					oEditor.setConfig(oResult.designtime);
 					oEditor.setJson(oResult.manifest);
 					oEditor.attachJsonChanged(function (oEvent) {
-						oCard.setManifest(oEvent.getParameter("json"));
+						oCard.setAttribute("manifest", JSON.stringify(oEvent.getParameter("json")));
 
 						// save the whole modified manifest for later use
 					});

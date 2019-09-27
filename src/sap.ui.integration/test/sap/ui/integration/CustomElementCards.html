@@ -24,11 +24,10 @@
 
 <body>
 	<script>
-		// getControl() gives access to the underlying control.
-		// This API is experimental for now and can change.
 		customElements.whenDefined("ui-integration-card").then(function () {
-			var oControl = document.createElement("ui-integration-card").getControl();
-			// oControl.loadDesigntime() ...
+			var oCard = document.createElement("ui-integration-card");
+			// oCard.loadDesigntime();
+			// oCard.refresh() ...
 		});
 	</script>
 
