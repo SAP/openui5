@@ -1889,6 +1889,10 @@ function(
 		if (bMultiSelectMode) {
 			this._selectAllCheckBox = this._createSelectAllCheckbox(aSubFilters, this._filterDetailList);
 
+			if (this._filterDetailList.getItems().length === 0) {
+				this._selectAllCheckBox.setEnabled(false);
+			}
+
 			this._filterDetailList.setHeaderToolbar(new Toolbar({
 				content: [ this._selectAllCheckBox ]
 			}).addStyleClass('sapMVSDFilterHeaderToolbar'));
