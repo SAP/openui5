@@ -11,8 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
-	"sap/base/util/merge",
-	"sap/base/util/UriParameters"
+	"sap/base/util/merge"
 ], function(
 	sinon,
 	Storage,
@@ -20,12 +19,11 @@ sap.ui.define([
 	Variant,
 	StandardVariant,
 	StorageResultMerger,
-	Utils,
+	ApplyUtils,
 	StaticFileConnector,
 	LrepConnector,
 	JsObjectConnector,
-	merge,
-	UriParameters
+	merge
 ) {
 	"use strict";
 
@@ -92,7 +90,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given a connector provides multiple layers", function (assert) {
-			sandbox.stub(Utils, "getApplyConnectors").resolves([{
+			sandbox.stub(ApplyUtils, "getApplyConnectors").resolves([{
 				connector : "JsObjectConnector",
 				connectorModule : JsObjectConnector
 			}]);
@@ -326,7 +324,6 @@ sap.ui.define([
 			 *
 			 * ----------------------------------------
 			 */
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-fl-max-layer").returns("CUSTOMER");
 
 			var sVariantManagementKey = "management1";
 			var oStandardVariant = StorageResultMerger._createStandardVariant(sVariantManagementKey);
@@ -511,8 +508,6 @@ sap.ui.define([
 				assert.equal(aVariantManagementChangeTypes.length, 1, "only one type of variant management changes was added");
 				assert.equal(aVariantManagementChangeTypes[0], "setDefault", "the variant management change type was set correct");
 				var aVariants = oVariantManagementSubSection.variants;
-
-				assert.equal(oVariantManagementChanges.setDefault.length, 1, "USER changes are deleted because maxLayer is CUSTOMER");
 
 				var mVariantChanges;
 
