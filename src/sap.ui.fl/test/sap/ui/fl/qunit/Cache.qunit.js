@@ -482,6 +482,22 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("does not load the preloaded changes-bundle if new connectors are necessary", function (assert) {
+			fnStubDebug.call(this, true); // debug is on
+			var oChangeFromBundle = {fileName: "rename_id_123"};
+			var oLoadResourceStub = fnStubBundle.call(this, true, [oChangeFromBundle]); // bundle is loaded and has a change
+			fnStubBackend.call(this, true, [this.oChangeFromBackend]); // backend call is successful and returns a change
+			sandbox.stub(Utils, "areNewConnectorsNecessary").returns(true);
+
+			var mPropertyBag = {
+				appName: "sap.app.name"
+			};
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function () {
+				assert.equal(0, oLoadResourceStub.callCount, "the changes-bundle was NOT requested");
+			});
+		});
+
 		QUnit.test("filters changes which are duplicates", function (assert) {
 			fnStubDebug.call(this, false); // debug is off
 			var oChange = {fileName: "rename_id_123"};

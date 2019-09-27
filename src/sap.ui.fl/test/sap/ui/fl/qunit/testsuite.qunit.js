@@ -123,26 +123,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
 				}
 			},
-			"apply/_internal/StorageWithDebugEnabled": {
-				group: "Apply Internal",
-				ui5: {
-					debug: true,
-					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"}
-				},
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Storage"]
-				}
-			},
-			"apply/_internal/StorageWithForcedFlexBundle": {
-				group: "Apply Internal",
-				ui5: {
-					"xx-flexBundleRequestForced": true,
-					resourceroots: {"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"}
-				},
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/Storage"]
-				}
-			},
 			"apply/_internal/variants/URLHandler": {
 				group: "Apply Internal",
 				coverage: {
@@ -264,7 +244,7 @@ sap.ui.define(function () {
 						"my.lib": "./test-resources/sap/ui/fl/qunit/write/_internal/",
 						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
 					},
-					"xx-flexBundleRequestForced": true,
+					"xx-componentPreload": "off",
 					flexibilityServices: '[{"applyConnector": "my/lib/apply/BrokenConnector",' +
 						'"writeConnector": "my/lib/write/BrokenConnector",' +
 						'"custom": true,' +

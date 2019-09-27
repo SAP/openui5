@@ -290,25 +290,28 @@ function(
 	 * @private
 	 */
 	Cache._getChangesFromBundle = function (mPropertyBag) {
-		var bChangesBundleDeterminable = mPropertyBag.appName;
+		// in case the new connectors are used the sap.ui.fl.apply._internal.connectors.StaticFileConnector is handling this
+		if (!Utils.areNewConnectorsNecessary()) {
+			var bChangesBundleDeterminable = mPropertyBag.appName;
 
-		if (!bChangesBundleDeterminable) {
-			return Promise.resolve([]);
-		}
+			if (!bChangesBundleDeterminable) {
+				return Promise.resolve([]);
+			}
 
-		var sResourcePath = mPropertyBag.appName.replace(/\./g, "/") + "/changes/changes-bundle.json";
-		var bChangesBundleLoaded = !!sap.ui.loader._.getModuleState(sResourcePath);
-		if (bChangesBundleLoaded) {
-			return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
-		}
-
-		var oConfiguration = sap.ui.getCore().getConfiguration();
-		if (oConfiguration.getDebug() || oConfiguration.getComponentPreload() === "off" || oConfiguration.isFlexBundleRequestForced()) {
-			// try to load the source in case a debugging takes place and the component could have no Component-preload
-			try {
+			var sResourcePath = mPropertyBag.appName.replace(/\./g, "/") + "/changes/changes-bundle.json";
+			var bChangesBundleLoaded = !!sap.ui.loader._.getModuleState(sResourcePath);
+			if (bChangesBundleLoaded) {
 				return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
-			} catch (e) {
-				Log.warning("flexibility did not find a changesBundle.json  for the application");
+			}
+
+			var oConfiguration = sap.ui.getCore().getConfiguration();
+			if (oConfiguration.getDebug() || oConfiguration.getComponentPreload() === "off" || oConfiguration.isFlexBundleRequestForced()) {
+				// try to load the source in case a debugging takes place and the component could have no Component-preload
+				try {
+					return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
+				} catch (e) {
+					Log.warning("flexibility did not find a changesBundle.json  for the application");
+				}
 			}
 		}
 
