@@ -287,9 +287,6 @@ sap.ui.define([
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("sortItems") || {}).model;
 			this.getSortItems().forEach(function(oSortItem_) {
-				// Note: current implementation assumes that the length of sortItems aggregation is equal
-				// to the number of corresponding model items.
-				// Currently the model data is up-to-date so we need to resort to the Binding Context;
 				// the "sortItems" aggregation data - obtained via getSortItems() - has the old state !
 				var oContext = oSortItem_.getBindingContext(sModelName);
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)

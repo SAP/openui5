@@ -586,9 +586,7 @@ sap.ui.define([
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("filterItems") || {}).model;
 			this.getFilterItems().forEach(function(oFilterItem_) {
-				// Note: current implementation assumes that the length of filterItems aggregation is equal
-				// to the number of corresponding model items.
-				// Currently the model data is up-to-date so we need to resort to the Binding Context;
+
 				// the "filterItems" aggregation data - obtained via getFilterItems() - has the old state !
 				var oContext = oFilterItem_.getBindingContext(sModelName);
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
