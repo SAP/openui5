@@ -622,9 +622,7 @@ sap.ui
 					}
 
 					var aExp1Parts = rExp1.exec(sODataQueryValue);
-					// remove brackets around values
 					if (aExp1Parts === null) {
-						sODataQueryValue = sODataQueryValue.replace(/[\(\)]/g, "");
 						return this._getOdataQueryFilter(aDataSet, this._trim(sODataQueryValue));
 					}
 					var sExpression = aExp1Parts[1];
@@ -709,6 +707,10 @@ sap.ui
 						aODataFilterValues = rStringFilterExpr.exec(sODataQueryValue);
 						sValue = that._trim(aODataFilterValues[iValueIndex + 2]);
 						sPath = that._trim(aODataFilterValues[iPathIndex + 2]);
+					}
+					// remove brackets around value (if value is present)
+					if (/^\(.+\)$/.test(sValue)) {
+						sValue = sValue.replace(/^\(|\)$/g, "");
 					}
 					//TODO do the check using the property type and not value
 					// remove number suffixes from EDM types decimal, Int64, Single
