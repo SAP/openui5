@@ -1008,10 +1008,6 @@ sap.ui.define([
 		}
 	};
 
-	if (!window["sap-ui-optimized"]) {
-		Log.setLevel(Log.Level.DEBUG);
-	}
-
 	// evaluate configuration
 	oCfgData.loglevel = (function() {
 		var m = /(?:\?|&)sap-ui-log(?:L|-l)evel=([^&]*)/.exec(window.location.search);
@@ -1019,6 +1015,8 @@ sap.ui.define([
 	}()) || oCfgData.loglevel;
 	if ( oCfgData.loglevel ) {
 		Log.setLevel(Log.Level[oCfgData.loglevel.toUpperCase()] || parseInt(oCfgData.loglevel));
+	} else if (!window["sap-ui-optimized"]) {
+		Log.setLevel(Log.Level.DEBUG);
 	}
 
 	Log.info("SAP Logger started.");
@@ -1535,11 +1533,14 @@ sap.ui.define([
 	var getModuleSystemInfo = (function() {
 
 		/**
-		 * Local logger, by default only logging errors. Can be configured to DEBUG via config parameter.
+		 * Local logger for messages related to module loading.
+		 *
+		 * By default, the log level is the same as for the standard log, but not higher than <code>INFO</code>.
+		 * With the experimental config option <code>xx-debugModuleLoading</code>, it can be raised to <code>DEBUG</code>.
 		 * @private
 		 */
 		var oLog = _ui5loader.logger = Log.getLogger("sap.ui.ModuleSystem",
-				(/sap-ui-xx-debug(M|-m)odule(L|-l)oading=(true|x|X)/.test(location.search) || oCfgData["xx-debugModuleLoading"]) ? Log.Level.DEBUG : Log.Level.INFO
+				(/sap-ui-xx-debug(M|-m)odule(L|-l)oading=(true|x|X)/.test(location.search) || oCfgData["xx-debugModuleLoading"]) ? Log.Level.DEBUG : Math.min(Log.getLevel(), Log.Level.INFO)
 			),
 
 			mKnownSubtypes = LoaderExtensions.getKnownSubtypes(),
