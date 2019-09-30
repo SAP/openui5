@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/ConnectorResultMerger",
-	"sap/ui/fl/apply/_internal/ConnectorResultDisassembler",
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/fl/apply/_internal/ConnectorResultDisassembler"
 ], function(
 	ApplyUtils,
 	ConnectorResultMerger,
-	ConnectorResultDisassembler,
-	LayerUtils
+	ConnectorResultDisassembler
 ) {
 	"use strict";
 
@@ -90,27 +88,6 @@ sap.ui.define([
 		};
 	}
 
-	function filterByMaxLayer(sMaxLayer, oChange) {
-		if (oChange && oChange.length > 0) {
-			oChange = oChange.filter(function(oContent) {
-				return LayerUtils.compareAgainstCurrentLayer(oContent.layer, sMaxLayer) < 1;
-			});
-		}
-		return oChange;
-	}
-
-	function filterByMaxLayerIfNecessary(aResponses) {
-		if (LayerUtils.isLayerFilteringRequired()) {
-			var sMaxLayer = LayerUtils.getMaxLayer();
-			aResponses.responses.forEach(function(oResponse) {
-				for (var sKey in oResponse) {
-					oResponse[sKey] = filterByMaxLayer(sMaxLayer, oResponse[sKey]);
-				}
-			});
-		}
-		return aResponses;
-	}
-
 	var Connector = {};
 
 	/**
@@ -131,7 +108,6 @@ sap.ui.define([
 			.then(loadFlexDataFromConnectors.bind(this, mPropertyBag))
 			.then(flattenResponses)
 			.then(disassembleVariantSectionsIfNecessary)
-			.then(filterByMaxLayerIfNecessary)
 			.then(ConnectorResultMerger.merge);
 	};
 
