@@ -3962,7 +3962,7 @@ sap.ui.define([
 
 		this._createCalendar();
 		//assert
-		assert.strictEqual(oTimelineRendererSpy.callCount, 2, "'renderSingleDayInterval()' is called as expected"); //Two rows
+		assert.strictEqual(oTimelineRendererSpy.callCount, 4, "'renderSingleDayInterval()' is called as expected"); //Two rows
 		//clean
 		oTimelineRendererSpy.restore();
 	});

@@ -443,6 +443,7 @@ function(
 		if (!this._oViewSwitch) {
 			this._oViewSwitch = new SegmentedButton(this.getId() + "-ViewSwitch");
 			this._oViewSwitch.attachEvent("selectionChange", this._handleViewSwitchChange, this);
+			this.addDependent(this._oViewSwitch);
 		}
 
 		return this._oViewSwitch;
