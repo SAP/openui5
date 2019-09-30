@@ -1,0 +1,18 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "c2bfdf8076695f78963069907d40de0d16864aef",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Fixes an issue in the DatePicker with display format for months and years.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970378886"
+          }
+        ]
+      }
+    ]
+  }
+}

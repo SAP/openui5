@@ -1,0 +1,29 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "e75674b37bc723679f85632c4d52ec73198e275f",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect click behaviour in Quartz Light",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970456784"
+          }
+        ]
+      },
+      {
+        "id": "35b2fc1eda70a234420300f05868a15c2736c1b8",
+        "type": "FIX",
+        "text": " sap.m.Switch: width set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980424023"
+          }
+        ]
+      }
+    ]
+  }
+}
