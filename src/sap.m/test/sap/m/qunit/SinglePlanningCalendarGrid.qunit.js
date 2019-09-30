@@ -175,14 +175,35 @@ sap.ui.define([
 		assert.equal(sLineClamp, "8", "Eight lines of appointment text will be shown");
 	});
 
-	QUnit.test("_getCellStartEndInfo formats start/end info correctly", function (assert) {
+	QUnit.test("_getCellStartEndInfo start/end format for 12-hour clocks", function (assert) {
 		// Prepare
+		sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
+
 		var oGrid = new SinglePlanningCalendarGrid(),
 			oMockStardDate = new Date(2019, 7, 5, 10),
-			oMockEndDate = new Date(2019, 7, 5, 11),
-			// Should be something like "Start Time: day-name DD/MM/YYYY at HH AM/PM; End Time: day-name DD/MM/YYYY at HH AM/PM"
-			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday 05/08/2019 at 10 AM; " +
-				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 11 AM";
+			oMockEndDate = new Date(2019, 7, 5, 15),
+			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday 05/08/2019 at 10:00:00 AM; " +
+				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 3:00:00 PM";
+
+		oGrid.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oGrid._getCellStartEndInfo(oMockStardDate, oMockEndDate), sExpectedInfo, "Cell's start/end info is properly formatted");
+
+		// Destroy
+		oGrid.destroy();
+	});
+
+	QUnit.test("_getCellStartEndInfo start/end format for 24-hour clocks", function (assert) {
+		// Prepare
+		sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
+
+		var oGrid = new SinglePlanningCalendarGrid(),
+			oMockStardDate = new Date(2019, 7, 5, 10),
+			oMockEndDate = new Date(2019, 7, 5, 15),
+			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday 05/08/2019 at 10:00:00; " +
+				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 15:00:00";
 
 		oGrid.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();

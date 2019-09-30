@@ -1231,6 +1231,36 @@ QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
 	});
 });
 
+QUnit.test("_oFormatAria start/end format for 12-hour clocks", function (assert) {
+	// Prepare
+	sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
+
+	var oCalendarRow = new CalendarRow(),
+		oMockedDate = new Date(2019, 7, 5, 15),
+		sExpectedResult = "Monday 05/08/2019 at 3:00:00 PM";
+
+	// Assert
+	assert.strictEqual(oCalendarRow._oFormatAria.format(oMockedDate), sExpectedResult, "Cell's start/end info is properly formatted");
+
+	// Cleanup
+	oCalendarRow.destroy();
+});
+
+QUnit.test("_oFormatAria start/end format for 24-hour clocks", function (assert) {
+	// Prepare
+	sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
+
+	var oCalendarRow = new CalendarRow(),
+		oMockedDate = new Date(2019, 7, 5, 15),
+		sExpectedResult = "Monday 05/08/2019 at 15:00:00";
+
+	// Assert
+	assert.strictEqual(oCalendarRow._oFormatAria.format(oMockedDate), sExpectedResult, "Cell's start/end info is properly formatted");
+
+	// Cleanup
+	oCalendarRow.destroy();
+});
+
 QUnit.module("Pure unit testing");
 	QUnit.test("CalendarRowRender.getAriaTextForType", function (assert) {
 		//Prepare

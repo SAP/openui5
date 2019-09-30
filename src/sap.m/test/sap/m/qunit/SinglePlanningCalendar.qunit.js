@@ -1225,9 +1225,9 @@ sap.ui.define([
 			oSPCGrid = oSPC.getAggregation("_grid"),
 			// Expecting start/end information to look like this: "Start Time: *date here*; End Time: *date here*"
 			sAnnouncement = oSPCGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": " +
-							oSPCGrid._oFormatAriaApp.format(oStartDate) + "; " +
+							oSPCGrid._oFormatStartEndInfoAria.format(oStartDate) + "; " +
 							oSPCGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": " +
-							oSPCGrid._oFormatAriaApp.format(oEndDate) + "; ";
+							oSPCGrid._oFormatStartEndInfoAria.format(oEndDate) + "; ";
 
 		oSPC.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
