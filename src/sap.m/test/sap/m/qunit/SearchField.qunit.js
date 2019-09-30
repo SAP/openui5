@@ -589,4 +589,38 @@ sap.ui.define([
 			}, 500);
 		}, 300); // requires that timeout to work on IE
 	});
+
+	QUnit.module("Suggestions aria-selected", {
+		beforeEach: function () {
+			this.oSearchField = new SearchField("sf8", {
+				enableSuggestions: true,
+				suggestionItems: [
+					this.oSuggestionItem1 = new SuggestionItem({key: "suggest1", text: "suggest1"}),
+					new SuggestionItem({key: "suggest2", text: "suggest2"})
+				],
+				suggest: function () {
+					this.oSearchField.suggest();
+				}.bind(this)
+			});
+			this.oSearchField.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSearchField.destroy();
+		}
+	});
+
+	QUnit.test("Aria-selected is false when non of the items are selected", function (assert) {
+		// Act
+		var done = assert.async(),
+			oSuggestionItems = this.oSearchField.getSuggestionItems();
+		this.oSearchField.focus();
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function () {
+			assert.strictEqual(oSuggestionItems[0].getDomRef().getAttribute("aria-selected"), "false", "Aria-selected is set to false");
+			done();
+		}, 300); // requires that timeout to work on IE
+	});
 });
