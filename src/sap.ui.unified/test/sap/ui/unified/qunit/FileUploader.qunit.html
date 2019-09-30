@@ -244,6 +244,27 @@
 		oFileUploader.destroy();
 	});
 
+	//BCP: 1970125350
+	//https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept
+	QUnit.test("input has the correct accept attribute", function(assert) {
+		//Setup
+		var oFileUploader = createFileUploader({
+			mimeType: ["image/png", "image/jpeg"],
+			fileType: ["txt", "pdf"]
+		});
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oFileUploader.$().find("input[type='file']").attr("accept"),
+			".txt,.pdf,image/png,image/jpeg",
+			"accept attribute is correct");
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
+
 	QUnit.test("Test valueStateText property - setter/getter", function (assert) {
 		var oFileUploader = createFileUploader(),
 			VALUE_STATE_TEXT = "Test";
