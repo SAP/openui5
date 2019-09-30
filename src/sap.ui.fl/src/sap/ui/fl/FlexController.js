@@ -400,12 +400,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resolves with a Promise after all the changes for this control are processed.
+	 * Resolves with a promise after all the changes for all controls that are passed have been processed.
 	 *
-	 * @param {sap.ui.core.Control} oControl The control whose changes are being waited for
-	 * @returns {Promise} Returns a promise when all changes on the control are processed
+	 * @param {sap.ui.fl.Selector[]} vSelectors The control or an array of controls whose changes are being waited for
+	 * @returns {Promise} Returns a promise when all changes on the controls have been processed
 	 */
-	FlexController.prototype.waitForChangesToBeApplied = function(oControl) {
+	FlexController.prototype.waitForChangesToBeApplied = function(vSelectors) {
+		var aSelectors;
+		if (Array.isArray(vSelectors)) {
+			aSelectors = vSelectors;
+		} else {
+			aSelectors = [vSelectors];
+		}
+		var aPromises = aSelectors.map(function(vSelector) {
+			return this._waitForChangesToBeApplied(vSelector);
+		}.bind(this));
+		return Promise.all(aPromises)
+		.then(function() {
+			// the return value is not important in this function, only that it resolves
+			return undefined;
+		});
+	};
+	/**
+	 * Resolves with a Promise after all the changes for this control have been processed.
+	 *
+	 * @param {sap.ui.fl.Selector} vSelector The control whose changes are being waited for
+	 * @returns {Promise} Returns a promise when all changes on the control have been processed
+	 */
+	FlexController.prototype._waitForChangesToBeApplied = function(vSelector) {
+		var oControl = vSelector.id && sap.ui.getCore().byId(vSelector.id) || vSelector;
 		var mChangesMap = this._oChangePersistence.getChangesMapForComponent();
 		var aPromises = [];
 		var mDependencies = Object.assign({}, mChangesMap.mDependencies);
@@ -414,7 +437,7 @@ sap.ui.define([
 		var aNotYetProcessedChanges = aChangesForControl.filter(function(oChange) {
 			return !oChange.isCurrentProcessFinished();
 		}, this);
-		var oAppComponent = Utils.getAppComponentForControl(oControl);
+		var oAppComponent = vSelector.appComponent || Utils.getAppComponentForControl(oControl);
 		var aRelevantChanges = [];
 		aNotYetProcessedChanges.forEach(function(oChange) {
 			var aChanges = this._checkDependencies(oChange, mDependencies, mChangesMap.mChanges, oAppComponent, []);
@@ -433,11 +456,7 @@ sap.ui.define([
 		// also wait for a potential variant switch to be done
 		aPromises.push(this.waitForVariantSwitch());
 
-		return Promise.all(aPromises)
-		.then(function() {
-			// the return value is not important in this function, only that it resolves
-			return undefined;
-		});
+		return Promise.all(aPromises);
 	};
 
 	/**

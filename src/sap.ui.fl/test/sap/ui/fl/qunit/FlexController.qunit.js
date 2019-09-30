@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/variants/URLHandler",
 	"sap/ui/core/mvc/XMLView",
+	"sap/base/util/deepClone",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -57,6 +58,7 @@ function (
 	Log,
 	URLHandler,
 	XMLView,
+	deepClone,
 	jQuery,
 	sinon
 ) {
@@ -3339,14 +3341,20 @@ function (
 			this.sLabelId = labelChangeContent.selector.id;
 			this.sLabelId2 = labelChangeContent5.selector.id;
 			this.sLabelId3 = "foobar";
+			this.sOtherControlId = "independent-control-with-change";
 			this.oControl = new Label(this.sLabelId);
 			this.oControl2 = new Label(this.sLabelId2);
 			this.oControl3 = new Label(this.sLabelId3);
+			this.oOtherControl = new Label(this.sOtherControlId);
 			this.oChange = new Change(labelChangeContent);
 			this.oChange2 = new Change(labelChangeContent2);
 			this.oChange3 = new Change(labelChangeContent3);
 			this.oChange4 = new Change(labelChangeContent4); // Selector of this change points to no control
 			this.oChange5 = new Change(labelChangeContent5); // already failed changed (mocked with a stub)
+			var mChangeOnOtherControl = deepClone(labelChangeContent3);
+			mChangeOnOtherControl.selector.id = this.sOtherControlId;
+			mChangeOnOtherControl.fileName = "independentChange";
+			this.oChangeOnOtherControl = new Change(mChangeOnOtherControl);
 			this.mChanges = getInitialChangesMap();
 			this.fnGetChangesMap = function () {
 				return this.mChanges;
@@ -3400,26 +3408,61 @@ function (
 			this.oControl.destroy();
 			this.oControl2.destroy();
 			this.oControl3.destroy();
+			this.oOtherControl.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("with no changes", function(assert) {
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
-			.then(function(oReturn) {
-				assert.ok(true, "then the function resolves");
-				assert.equal(oReturn, undefined, "the return value is undefined");
+		function getControl(thiz, oControl, bAsInstance) {
+			var vReturnValue;
+			if (bAsInstance) {
+				vReturnValue = oControl;
+			} else {
+				vReturnValue = {
+					id: oControl.getId(),
+					controlType: oControl.getMetadata().getName(),
+					appComponent: thiz.oComponent
+				};
+			}
+			return vReturnValue;
+		}
+		//a few checks for the selector/instance handling should be sufficient
+		[true, false].forEach(function(bAsInstance) {
+			var sPrefix = bAsInstance ? "as instance" : "as selector";
+			QUnit.test(sPrefix + "with no changes", function(assert) {
+				return this.oFlexController.waitForChangesToBeApplied(getControl(this, this.oControl, bAsInstance))
+				.then(function(oReturn) {
+					assert.ok(true, "then the function resolves");
+					assert.equal(oReturn, undefined, "the return value is undefined");
+				});
 			});
-		});
 
-		QUnit.test("with 3 async queued changes", function(assert) {
-			assert.expect(2);
-			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
-			this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
-			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
-			.then(function(oReturn) {
-				assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
-				assert.equal(oReturn, undefined, "the return value is undefined");
-			}.bind(this));
+			QUnit.test(sPrefix + "with 3 async queued changes", function(assert) {
+				assert.expect(2);
+				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
+				this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
+				return this.oFlexController.waitForChangesToBeApplied(getControl(this, this.oControl, bAsInstance))
+				.then(function(oReturn) {
+					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 3, "addCustomData was called 3 times");
+					assert.equal(oReturn, undefined, "the return value is undefined");
+				}.bind(this));
+			});
+
+
+			QUnit.test(sPrefix + "together with another control, with 3 async queued changes and another independent control with a change", function(assert) {
+				assert.expect(2);
+				this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
+				this.mChanges.mChanges[this.sOtherControlId] = [this.oChangeOnOtherControl];
+				this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oControl);
+				var pWaiting = this.oFlexController.waitForChangesToBeApplied([
+					getControl(this, this.oControl, bAsInstance),
+					getControl(this, this.oOtherControl, bAsInstance)
+				]);
+				this.oFlexController._applyChangesOnControl(this.fnGetChangesMap, this.oComponent, this.oOtherControl);
+				return pWaiting.then(function(oReturn) {
+					assert.equal(this.oAddAppliedCustomDataSpy.callCount, 4, "addCustomData was called 4 times");
+					assert.equal(oReturn, undefined, "the return value is undefined");
+				}.bind(this));
+			});
 		});
 
 		QUnit.test("with 3 async queued changes dependend on each other and the first throwing an error", function(assert) {
