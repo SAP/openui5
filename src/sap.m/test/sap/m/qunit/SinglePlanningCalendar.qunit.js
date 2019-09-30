@@ -1538,6 +1538,19 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
+	QUnit.test("View Switch is dependent on the header", function (assert) {
+		// Prepare
+		var oSPC = new SinglePlanningCalendar(),
+			oHeader = oSPC._getHeader(),
+			oViewSwitch = oHeader._getOrCreateViewSwitch();
+
+		// Assert
+		assert.ok(oHeader.getAggregation("dependents").indexOf(oViewSwitch) !== -1, "The view switch is added as dependent");
+
+		// Cleanup
+		oSPC.destroy();
+	});
+
 	QUnit.module("Visibility of actions toolbar", {
 		beforeEach: function () {
 			this.oSPC = new SinglePlanningCalendar().placeAt("qunit-fixture");
