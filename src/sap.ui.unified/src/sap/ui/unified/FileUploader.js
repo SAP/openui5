@@ -1835,7 +1835,7 @@ sap.ui.define([
 			// sink the load event of the upload iframe
 			var that = this;
 			this._bUploading = false; // flag for uploading
-			jQuery(oIFrameRef).load(function(oEvent) {
+			jQuery(oIFrameRef).on( "load", function(oEvent) {
 				if (that._bUploading) {
 					Log.info("File uploaded to " + that.getUploadUrl());
 					var sResponse;
