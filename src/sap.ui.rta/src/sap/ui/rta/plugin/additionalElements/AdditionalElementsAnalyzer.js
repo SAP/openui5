@@ -139,7 +139,7 @@ sap.ui.define([
 	function _assignCustomItemIds(sParentId, oCustomItem) {
 		oCustomItem.type = "custom";
 		if (oCustomItem.id) {
-			oCustomItem.itemId = sParentId + "--" + oCustomItem.id;
+			oCustomItem.itemId = sParentId + "-" + oCustomItem.id;
 			oCustomItem.key = oCustomItem.itemId;
 		}
 		return oCustomItem;

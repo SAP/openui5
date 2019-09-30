@@ -530,7 +530,7 @@ sap.ui.define([
 							if (iIndex === 0) {
 								assert.notEqual(aCompleteChangeContentArgs[1].customItemId.indexOf(oCommand.getElement().getId()), -1, "then the correct customItemId was passed to changeHandler.completeChangeContent() with changeOnRelevantContainer");
 							} else {
-								assert.deepEqual(aCompleteChangeContentArgs[1].customItemId, oCommand.getElement().getParent().getId() + "--" + aCustomItems[iIndex].id, "then the correct customItemId was passed to changeHandler.completeChangeContent() without changeOnRelevantContainer");
+								assert.deepEqual(aCompleteChangeContentArgs[1].customItemId, oCommand.getElement().getParent().getId() + "-" + aCustomItems[iIndex].id, "then the correct customItemId was passed to changeHandler.completeChangeContent() without changeOnRelevantContainer");
 							}
 							if (test.sibling) {
 								assert.equal(oCommand.getIndex(), 1, "then the customAdd command has the right index");
