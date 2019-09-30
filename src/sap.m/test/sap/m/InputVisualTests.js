@@ -33,7 +33,7 @@ sap.ui.require([
 
 		"use strict";
 
-		var aInputIds = ["inpText", "inpPlaceholder", "inpEmpty"];
+		var aInputIds = ["inpText", "inpPlaceholder", "inpEmpty", "inpMinWidth"];
 
 		function handleStateChange(oEvent) {
 			var choice = oEvent.getSource().getText();
@@ -180,7 +180,8 @@ sap.ui.require([
 					items: [
 						new Input(aInputIds[0], {value: "some text"}),
 						new Input(aInputIds[1], {placeholder: "placeholder"}),
-						new Input(aInputIds[2], {})
+						new Input(aInputIds[2], {}),
+						new Input(aInputIds[3], { value: "min width", width: "2rem"})
 					]
 				}),
 				new SimpleForm("sf", {
