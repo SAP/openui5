@@ -508,6 +508,11 @@ sap.ui.define(function () {
 			},
 			"variants/VariantModel": {
 				group: "Variants",
+				ui5: {
+					resourceroots: {
+						"sap.ui.test": "test-resources/sap/ui/fl/qunit/testResources/"
+					}
+				},
 				coverage: {
 					only: ["sap/ui/fl/variants/VariantModel"]
 				}
