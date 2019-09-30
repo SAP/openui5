@@ -37,14 +37,14 @@ sap.ui.define(function () {
 
 			// Default header type only
 			"icon": {
-				"tags": ["header defaultHeader"],
+				"tags": ["header", "defaultHeader"],
 				"label": "{i18n>CARD_EDITOR.ICON}",
 				"type": "icon",
 				"path": "header/icon/src",
 				"visible": "{= ${context>header/type} !== 'Numeric' }"
 			},
 			"statusText": {
-				"tags": ["header defaultHeader"],
+				"tags": ["header", "defaultHeader"],
 				"label": "{i18n>CARD_EDITOR.STATUS}",
 				"type": "string",
 				"path": "header/status/text",
@@ -53,28 +53,28 @@ sap.ui.define(function () {
 
 			// Numeric header type only
 			"unitOfMeasurement": {
-				"tags": ["header numericHeader"],
+				"tags": ["header", "numericHeader"],
 				"label": "{i18n>CARD_EDITOR.UOM}",
 				"type": "string",
 				"path": "header/unitOfMeasurement",
 				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorNumber": {
-				"tags": ["header numericHeader mainIndicator"],
+				"tags": ["header", "numericHeader", "mainIndicator"],
 				"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.NUMBER}",
 				"type": "string",
 				"path": "header/mainIndicator/number",
 				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorUnit": {
-				"tags": ["header numericHeader mainIndicator"],
+				"tags": ["header", "numericHeader", "mainIndicator"],
 				"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.UNIT}",
 				"type": "string",
 				"path": "header/mainIndicator/unit",
 				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorTrend": {
-				"tags": ["header numericHeader mainIndicator"],
+				"tags": ["header", "numericHeader", "mainIndicator"],
 				"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.TREND}",
 				"type": "enum",
 				"enum": [
@@ -87,7 +87,7 @@ sap.ui.define(function () {
 				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"mainIndicatorState": {
-				"tags": ["header numericHeader mainIndicator"],
+				"tags": ["header", "numericHeader", "mainIndicator"],
 				"label": "{i18n>CARD_EDITOR.MAIN_INDICATOR.STATE}",
 				"type": "enum",
 				"enum": [
@@ -101,7 +101,7 @@ sap.ui.define(function () {
 				"visible": "{= ${context>header/type} === 'Numeric' }"
 			},
 			"details": {
-				"tags": ["header numericHeader"],
+				"tags": ["header", "numericHeader"],
 				"label": "{i18n>CARD_EDITOR.DETAILS}",
 				"type": "string",
 				"path": "header/details",
@@ -109,7 +109,7 @@ sap.ui.define(function () {
 			},
 
 			"sideIndicators" : {
-				"tags": ["header numericHeader"],
+				"tags": ["header", "numericHeader"],
 				"label": "{i18n>CARD_EDITOR.SIDE_INDICATORS}",
 				"path": "header/sideIndicators",
 				"type": "array",
@@ -137,21 +137,21 @@ sap.ui.define(function () {
 
 			// List Card Item
 			"listItemTitle": {
-				"tags": ["content listItem"],
+				"tags": ["content", "listItem"],
 				"label": "{i18n>CARD_EDITOR.LIST_ITEM.TITLE}",
 				"type": "string",
 				"path": "content/item/title",
 				"visible": "{= ${context>type} === 'List' }"
 			},
 			"listItemDescription" : {
-				"tags": ["content listItem"],
+				"tags": ["content", "listItem"],
 				"label": "{i18n>CARD_EDITOR.LIST_ITEM.DESCRIPTION}",
 				"type": "string",
 				"path": "content/item/description",
 				"visible": "{= ${context>type} === 'List' }"
 			},
 			"listItemHighlight": {
-				"tags": ["content listItem"],
+				"tags": ["content", "listItem"],
 				"label": "{i18n>CARD_EDITOR.LIST_ITEM.HIGHLIGHT}",
 				"type": "string",
 				"path": "content/item/highlight",

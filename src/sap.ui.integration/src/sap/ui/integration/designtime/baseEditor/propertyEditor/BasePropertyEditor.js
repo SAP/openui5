@@ -135,7 +135,7 @@ sap.ui.define([
 		},
 
 		getI18nProperty: function(sName) {
-			return	this.getModel("i18n").getProperty(sName);
+			return this.getModel("i18n").getProperty(sName);
 		},
 
 		getLabel: function() {

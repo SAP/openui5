@@ -7,7 +7,8 @@
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
 	xmlns:w="sap.ui.integration.widgets"
-	xmlns:cardEditor="sap.ui.integration.designtime.cardEditor">
+	xmlns:cardEditor="sap.ui.integration.designtime.cardEditor"
+>
 	<l:ResponsiveSplitter id="splitView">
 		<l:PaneContainer orientation="Horizontal">
 			<l:SplitPane id="cardPane" requiredParentWidth="1">

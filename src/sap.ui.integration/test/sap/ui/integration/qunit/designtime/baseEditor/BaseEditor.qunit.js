@@ -42,8 +42,8 @@ sap.ui.define([
 				}
 			});
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors().length, 1, "Then 1 property editor is created");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors()[0].getBindingContext().getObject().value, "value1", "Then value of the property is correctly retrieved from the context object");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[0].getBindingContext().getObject().value, "value1", "Then value of the property is correctly retrieved from the context object");
 				done();
 			}.bind(this));
 		});
@@ -69,11 +69,11 @@ sap.ui.define([
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
 				this.oBaseEditor.attachJsonChanged(function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("json").context.prop1, "test", "Then the value is updated in JSON");
-					assert.strictEqual(this.oBaseEditor.getPropertyEditors()[1].getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
+					assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
 					done();
 				}.bind(this));
 
-				this.oBaseEditor.getPropertyEditors()[0].firePropertyChanged("test");
+				this.oBaseEditor.getPropertyEditorsSync()[0].firePropertyChanged("test");
 			}.bind(this));
 		});
 
@@ -100,8 +100,8 @@ sap.ui.define([
 				}
 			});
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors()[1].getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors()[1].getBindingContext().getObject().i18n, "{i18n>prop}", "Then binding against other models is untouched");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "{i18n>prop}", "Then binding against other models is untouched");
 				done();
 			}.bind(this));
 		});
@@ -137,14 +137,14 @@ sap.ui.define([
 				}
 			});
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop2").getConfig().path, "prop2", "Then property editor getter works with property name");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop2").getConfig().path, "prop2", "Then property editor getter works with property name");
 
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors("commonTag")[0].getConfig().path, "prop1", "Then property editor getter works with one tag (2/3)");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors("commonTag")[1].getConfig().path, "prop2", "Then property editor getter works with one tag (3/3)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag")[0].getConfig().path, "prop1", "Then property editor getter works with one tag (2/3)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag")[1].getConfig().path, "prop2", "Then property editor getter works with one tag (3/3)");
 
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors(["commonTag", "tag1"]).length, 1, "Then property editor getter works with multiple tags (1/2)");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditors(["commonTag", "tag1"])[0].getConfig().path, "prop1", "Then property editor getter works with multiple tags (2/2)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync(["commonTag", "tag1"]).length, 1, "Then property editor getter works with multiple tags (1/2)");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync(["commonTag", "tag1"])[0].getConfig().path, "prop1", "Then property editor getter works with multiple tags (2/2)");
 				done();
 			}.bind(this));
 		});
@@ -195,10 +195,10 @@ sap.ui.define([
 				}
 			});
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop").getConfig().items.length, 2, "Then configuration for array items is created from template");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop").getConfig().items[0].a.path, "prop/0/a", "Then path index in array item is resolved");
-				assert.deepEqual(this.oBaseEditor.getPropertyEditor("prop").getConfig().value, aArray, "Then array value is set correctly");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditor("prop").getContent().length, 2, "Then array editor is created correctly");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items.length, 2, "Then configuration for array items is created from template");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items[0].a.path, "prop/0/a", "Then path index in array item is resolved");
+				assert.deepEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().value, aArray, "Then array value is set correctly");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getContent().length, 2, "Then array editor is created correctly");
 				done();
 			}.bind(this));
 		});
