@@ -344,8 +344,12 @@ html.sap-desktop .sapMDialog {
 		&.sapMDialogWithSubHeader {
 			padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_SubHeaderCompactHeight;
 
+			&.sapMDialogSubHeaderInfoBar {
+				padding-top: @_sap_m_Dialog_BarCompactHeight + @_sap_m_Dialog_InfoDesignBarHeight;
+			}
+
 			&.sapMDialog-NoHeader {
-				padding-top: @_sap_m_Dialog_BarCompactHeight;
+				padding-top: @_sap_m_Dialog_SubHeaderCompactHeight;
 
 				& > .sapMDialogSubHeader {
 					top: 0;

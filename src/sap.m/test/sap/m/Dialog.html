@@ -757,6 +757,42 @@
 				})
 			});
 
+			var oDialogSubHeaderInfoBar = new sap.m.Dialog('subHeaderInfoBarDialog', {
+				title: "Dialog with SubHeader",
+				content: new sap.m.Text({
+					text: 'Content'
+				}),
+				subHeader: new sap.m.Toolbar({
+					design: "Info",
+					content: new sap.m.Text().setText("Sub Header"),
+				}),
+				beginButton: new sap.m.Button("oDialogSubHeaderInfoBarClose", {
+					text: "OK", press: function () {
+						oDialogSubHeaderInfoBar.close();
+					}
+				}),
+			});
+
+			var oDialogSubHeaderNoHeader = new sap.m.Dialog('subHeaderNoHeaderDialog', {
+				showHeader: false,
+				content: new sap.m.Text({
+					text: 'Content'
+				}),
+				subHeader: new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.SearchField({
+							placeholder: "Search ...",
+							width: "100%"
+						})
+					]
+				}),
+				beginButton: new sap.m.Button("oDialogSubHeaderNoHeaderClose", {
+					text: "OK", press: function () {
+						oDialogSubHeaderNoHeader.close();
+					}
+				}),
+			});
+
 			var oDialogStretched = new sap.m.Dialog('stretchedDialog', {
 				title: "Stretched Dialog",
 				stretch: true,
@@ -1727,6 +1763,22 @@
 							dialogWithTable.open();
 						}
 					}),
+
+					new sap.m.Button("SubHeaderInfoBarButton", {
+						text : "Dialog with SubHeader with InfoBar",
+						width: _buttonWidth,
+						press: function() {
+							oDialogSubHeaderInfoBar.open();
+						}
+					}),
+
+					new sap.m.Button("SubHeaderNoHeaderButton", {
+						text : "Dialog with SubHeader and no Header",
+						width: _buttonWidth,
+						press: function() {
+							oDialogSubHeaderNoHeader.open();
+						}
+					})
 				]
 			});
 			app.addPage(page1).placeAt("content");
