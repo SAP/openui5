@@ -1985,6 +1985,38 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("intersectQueryOptions with empty $select allowed", function (assert) {
+		var mCacheQueryOptions = {
+				$expand : {
+					"toA" : null
+				},
+				$select : ["A"],
+				"sap-client" : "123"
+			},
+			sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
+			fnFetchMetadata = getFetchMetadata({
+				"/Me/toA" : "1"
+			}),
+			mNavigationPropertyPaths = {};
+
+		assert.deepEqual(
+			// code under test
+			_Helper.intersectQueryOptions(mCacheQueryOptions, ["toA"], fnFetchMetadata, "/Me",
+				mNavigationPropertyPaths, "", true),
+			{
+				$expand : {
+					"toA" : null
+				},
+				$select : [],
+				"sap-client" : "123"
+			});
+
+		assert.strictEqual(JSON.stringify(mCacheQueryOptions), sCacheQueryOptions,
+			"unmodified");
+		assert.deepEqual(mNavigationPropertyPaths, {});
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bPrefix) {
 		var sPrefix = bPrefix ? "~" : undefined;
 

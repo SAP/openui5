@@ -17142,8 +17142,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oBestFriendBox = that.oView.byId("table").getItems()[1].getCells()[0];
 
-			//TODO CPOUI5UISERVICESV3-1980: avoid BestFriend
-			that.expectRequest("Artists?$select=ArtistID,BestFriend,IsActiveEntity"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
 					+ "&$expand=BestFriend($select=Name;"
 						+ "$expand=BestPublication($select=CurrencyCode))"
 					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {
@@ -17174,8 +17173,7 @@ sap.ui.define([
 		}).then(function () {
 			var oBestPublicationBox = oBestFriendBox.getItems()[1];
 
-			//TODO CPOUI5UISERVICESV3-1980: avoid BestFriend
-			that.expectRequest("Artists?$select=ArtistID,BestFriend,IsActiveEntity"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
 					+ "&$expand=BestFriend($select=BestPublication;"
 						+ "$expand=BestPublication($select=CurrencyCode))"
 					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {

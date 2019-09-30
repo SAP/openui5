@@ -6175,7 +6175,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions")
 						.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths))
+							"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
 						.returns(mMergedQueryOptions);
 					// Note: fetchTypes() would have been triggered by read() already
 					that.mock(oCache).expects("fetchTypes").withExactArgs()
@@ -6310,7 +6310,7 @@ sap.ui.define([
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mLateQueryOptions || mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths))
+				"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
 			.returns(null); // "nothing to do"
 		this.mock(_Helper).expects("getKeyFilter").never();
 		this.mock(_Helper).expects("selectKeyProperties").never();
@@ -6412,7 +6412,7 @@ sap.ui.define([
 					that.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 							sinon.match.same(mQueryOptions), sinon.match.same(aPaths),
 							sinon.match.same(that.oRequestor.getModelInterface().fetchMetadata),
-							"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths))
+							"/TEAMS/Foo", sinon.match.same(mNavigationPropertyPaths), "", true)
 						.returns(mMergedQueryOptions);
 					that.mock(_Helper).expects("getKeyFilter")
 						.withExactArgs(sinon.match.same(oCache.aElements[2]), "/TEAMS/Foo",
