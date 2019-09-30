@@ -219,6 +219,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if the suggestions popover is currently opened.
+	 *
+	 * @return {boolean} whether the suggestions popover is currently opened
+	 * @public
+	 */
+	SuggestionsPopover.prototype.isOpen = function () {
+		return this._oPopover && this._oPopover.isOpen();
+	};
+
+	/**
 	 * Helper function that creates suggestion popup.
 	 */
 		SuggestionsPopover.prototype._createSuggestionPopup = function () {
