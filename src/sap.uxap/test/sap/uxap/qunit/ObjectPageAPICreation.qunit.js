@@ -2753,8 +2753,44 @@ function (
 
 	QUnit.module("Private methods");
 
-	QUnit.test("BCP:1870298358 - cloned header should not introduce scrollbar - " +
-		"_obtainSnappedTitleHeight and _obtainExpandedTitleHeight", function (assert) {
+	QUnit.test("BCP:1870298358 - cloned header should not introduce scrollbar - _appendTitleCloneToDOM", function (assert) {
+
+		// Arrange
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 2, true),
+			oClone,
+			oWrapperElement,
+			done = assert.async();
+
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			oWrapperElement = oObjectPage._$opWrapper.get(0);
+
+			// Act: obtain snapped title height
+			oClone = oObjectPage._appendTitleCloneToDOM(true /* snap title */);
+
+			// Assert
+			assert.strictEqual(oWrapperElement.offsetHeight, oWrapperElement.scrollHeight, "no scrolling");
+
+			oClone.remove();
+
+			// ACT: obtain expanded title height
+			oObjectPage._appendTitleCloneToDOM(false /* do not snap title */);
+
+			// Assert
+			assert.strictEqual(oWrapperElement.offsetHeight, oWrapperElement.scrollHeight, "no scrolling");
+
+			// Cleanup
+			oObjectPage.destroy();
+			done();
+		});
+
+		oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+	});
+
+	QUnit.test("_obtainExpandedTitleHeight does not change element overflow", function (assert) {
 
 		// Arrange
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
@@ -2766,21 +2802,10 @@ function (
 		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
 
 		// Act - render OP and call method
-		oObjectPage._obtainSnappedTitleHeight(true/* via clone */);
+		oObjectPage._obtainExpandedTitleHeight(false/* snap directly */);
 
 		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 3, "jQuery object css method is called three times");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.thirdCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper returned to auto");
-
-		// ACT - Reset spy and call method
-		oCSSSpy.reset();
-		oObjectPage._obtainExpandedTitleHeight(true/* via clone */);
-
-		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 3, "jQuery object css method is called three times");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.thirdCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper returned to auto");
+		assert.notOk(oCSSSpy.calledWith("overflow-y", "hidden"), "no disabling of scrolling of the wrapper (BCP 002075129400005875712019)");
 
 		// Cleanup
 		oCSSSpy.restore();
