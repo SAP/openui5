@@ -1,12 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/rta/api/startKeyUserAdaptation"
 ], function (
 	Controller,
-	Utils,
 	LayerUtils,
 	ControlPersonalizationAPI,
 	startKeyUserAdaptation
@@ -53,7 +51,6 @@ sap.ui.define([
 
 		createChanges: function (oEvent) {
 			var oButton = oEvent.getSource();
-			var oComponent = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 			var mChangeSpecificData = {};
 
 			jQuery.extend(mChangeSpecificData, {
@@ -73,27 +70,27 @@ sap.ui.define([
 								// add dirty changes2
 								// change1: move sections with simple form
 								var oMoveChangeData = {
-									selectorControl: sap.ui.getCore().byId(oComponent.createId("idMain1--ObjectPageLayout")),
+									selectorControl: this.byId("ObjectPageLayout"),
 									changeSpecificData: {
 										changeType: "moveControls",
 										movedElements: [{
-											id: oComponent.createId("idMain1--ObjectPageSectionWithForm"),
+											id: this.createId("ObjectPageSectionWithForm"),
 											sourceIndex: 0,
 											targetIndex: 1
 										}],
 										source: {
-											id: oComponent.createId("idMain1--ObjectPageLayout"),
+											id: this.createId("ObjectPageLayout"),
 											aggregation: "sections"
 										},
 										target: {
-											id: oComponent.createId("idMain1--ObjectPageLayout"),
+											id: this.createId("ObjectPageLayout"),
 											aggregation: "sections"
 										}
 									}
 								};
 								// change2: remove section with smart form
 								var oRemoveChangeData = {
-									selectorControl: sap.ui.getCore().byId(oComponent.createId("idMain1--ObjectPageSectionWithSmartForm")),
+									selectorControl: this.byId("ObjectPageSectionWithSmartForm"),
 									changeSpecificData: {
 										changeType: "stashControl"
 									}
@@ -103,20 +100,20 @@ sap.ui.define([
 							} else if (this.iCounter === 1) {
 								// on second press of "Personalization Changes button"
 								var oMoveChangeData2 = {
-									selectorControl: sap.ui.getCore().byId(oComponent.createId("idMain1--ObjectPageLayout")),
+									selectorControl: this.byId("ObjectPageLayout"),
 									changeSpecificData: {
 										changeType: "moveControls",
 										movedElements: [{
-											id: oComponent.createId("idMain1--ObjectPageSectionWithVM"),
+											id: this.createId("ObjectPageSectionWithVM"),
 											sourceIndex: 2,
 											targetIndex: 0
 										}],
 										source: {
-											id: oComponent.createId("idMain1--ObjectPageLayout"),
+											id: this.createId("ObjectPageLayout"),
 											aggregation: "sections"
 										},
 										target: {
-											id: oComponent.createId("idMain1--ObjectPageLayout"),
+											id: this.createId("ObjectPageLayout"),
 											aggregation: "sections"
 										}
 									}
