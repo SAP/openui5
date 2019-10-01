@@ -3,12 +3,12 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:HorizontalLayout class="sapUiContentPadding" >
+
 		<l:VerticalLayout
 			class="sapUiContentPadding"
 			width="100%">
 			<l:content>
-				<Label text="ObjectStatus with different value states" class="sapUiSmallMarginTop"/>
+				<Label text="ObjectStatus with different value states" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
 				<ObjectStatus
 					class="sapUiSmallMarginBottom"
 					text="Unknown"
@@ -59,7 +59,7 @@
 			class="sapUiContentPadding"
 			width="100%">
 			<l:content>
-				<Label text="ObjectStatus with different indication states" class="sapUiSmallMarginTop"/>
+				<Label text="ObjectStatus with different indication states" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
 				<ObjectStatus
 					class="sapUiSmallMarginBottom"
 					text="Indication 1"
@@ -87,8 +87,8 @@
 			class="sapUiContentPadding"
 			width="100%">
 			<l:content>
-				<Label text="Inverted ObjectStatus with different states and indication states. " class="sapUiSmallMarginTop"/>
-				<Label text="Note: Inverted ObjectStatus, looks as none-inverted status in HCW and HCB themes"/>
+				<Label text="Inverted ObjectStatus with different states and indication states." design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
+				<Label text="Note: Inverted ObjectStatus, looks as none-inverted status in HCW and HCB themes" design="Bold" wrapping="true"/>
 				<ObjectStatus
 					class="sapUiSmallMarginBottom"
 					text="Unknown"
@@ -126,12 +126,12 @@
 					icon="sap-icon://alert" />
 			</l:content>
 		</l:VerticalLayout>
-	</l:HorizontalLayout>
+
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<Label text="ObjectStatus with style sapMObjectStatusLarge applied" class="sapUiSmallMarginTop"/>
+			<Label text="ObjectStatus with style sapMObjectStatusLarge applied" design="Bold" wrapping="true" class="sapUiSmallMarginTop"/>
 			<ObjectStatus
 				class="sapMObjectStatusLarge"
 				title="Product status"
