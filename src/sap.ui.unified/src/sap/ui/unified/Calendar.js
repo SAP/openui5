@@ -52,10 +52,9 @@ sap.ui.define([
 	"use strict";
 
 	// get resource translation bundle;
-	var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-	var sLanguage = sap.ui.getCore().getConfiguration().getLocale().getLanguage();
-
-	var CalendarType = sap.ui.core.CalendarType;
+	var oCore = sap.ui.getCore(),
+		oLibraryResourceBundle = oCore.getLibraryResourceBundle("sap.ui.unified"),
+		CalendarType = sap.ui.core.CalendarType;
 	/*
 	 * Inside the Calendar CalendarDate objects are used. But in the API JS dates are used.
 	 * So conversion must be done on API functions.
@@ -351,6 +350,16 @@ sap.ui.define([
 			clearTimeout(this._sInvalidateMonth);
 		}
 
+		if (this._afterHeaderRenderAdjustCSS) {
+			this.removeDelegate(this._afterHeaderRenderAdjustCSS);
+			this._afterHeaderRenderAdjustCSS = null;
+		}
+
+		if (this._afterSecondHeaderRenderAdjustCSS) {
+			this.removeDelegate(this._afterSecondHeaderRenderAdjustCSS);
+			this._afterSecondHeaderRenderAdjustCSS = null;
+		}
+
 		if (this._sResizeListener) {
 			ResizeHandler.deregister(this._sResizeListener);
 			this._sResizeListener = undefined;
@@ -368,6 +377,18 @@ sap.ui.define([
 		oHeader.attachEvent("pressButton2", this._handleButton2, this);
 		oHeader.attachEvent("pressButton3", this._handleButton1, this);
 		oHeader.attachEvent("pressButton4", this._handleButton2, this);
+
+		this._afterHeaderRenderAdjustCSS = {
+			onAfterRendering: function() {
+				if (!oHeader.getVisibleButton1()) {
+					oHeader.$().find(".sapUiCalHeadB2").addClass("sapUiCalYearRangeButton");
+					this._isTwoMonthsInTwoColumns() && oHeader.$().find(".sapUiCalHeadB4").addClass("sapUiCalYearRangeButton");
+				}
+			}.bind(this)
+		};
+
+		oHeader.addDelegate(this._afterHeaderRenderAdjustCSS);
+
 		this.setAggregation("header",oHeader);
 	};
 
@@ -381,6 +402,17 @@ sap.ui.define([
 		oSecondMonthHeader.attachEvent("pressNext", this._handleNext, this);
 		oSecondMonthHeader.attachEvent("pressButton1", this._handleButton1, this);
 		oSecondMonthHeader.attachEvent("pressButton2", this._handleButton2, this);
+
+		this._afterSecondHeaderRenderAdjustCSS = {
+			onAfterRendering: function() {
+				if (oSecondMonthHeader.getVisible() && !oSecondMonthHeader.getVisibleButton1()) {
+					oSecondMonthHeader.$().find(".sapUiCalHeadB2").addClass("sapUiCalYearRangeButton");
+				}
+			}
+		};
+
+		oSecondMonthHeader.addDelegate(this._afterSecondHeaderRenderAdjustCSS);
+
 		this.setAggregation("secondMonthHeader", oSecondMonthHeader);
 	};
 
@@ -607,6 +639,7 @@ sap.ui.define([
 			this._sLocale = sLocale;
 			this._oLocaleData = undefined;
 			this.invalidate();
+			this._toggleTwoMonthsInTwoColumnsCSS();
 		}
 
 		return this;
@@ -2259,11 +2292,20 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._updateHeadersButtonsHelper = function (bButton1, bButton2, bButton3, bButton4) {
-		var oHeader = this.getAggregation("header");
+		var oHeader = this.getAggregation("header"),
+			oSecondMonthHeader = this.getAggregation("secondMonthHeader");
+
 		oHeader.setVisibleButton1(bButton1);
 		oHeader.setVisibleButton2(bButton2);
 		oHeader._setVisibleButton3(bButton3);
 		oHeader._setVisibleButton4(bButton4);
+
+		if (oSecondMonthHeader.getVisible()) {
+			oSecondMonthHeader.setVisibleButton1(bButton1);
+			oSecondMonthHeader.setVisibleButton2(bButton2);
+			oSecondMonthHeader._setVisibleButton3(bButton3);
+			oSecondMonthHeader._setVisibleButton4(bButton4);
+		}
 	};
 
 	/**
@@ -2336,17 +2378,17 @@ sap.ui.define([
 	 */
 	Calendar.prototype._toggleTwoMonthsInTwoColumnsCSS = function () {
 		if (this._isTwoMonthsInTwoColumns()) {
-			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
+			if (oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "ja" ||
+				oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "zh") {
 				this.addStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
+				this.removeStyleClass("sapUiCalTwoMonthsTwoColumns");
 			} else {
 				this.addStyleClass("sapUiCalTwoMonthsTwoColumns");
+				this.removeStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
 			}
 		} else {
-			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
-				this.removeStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
-			} else {
-				this.removeStyleClass("sapUiCalTwoMonthsTwoColumns");
-			}
+			this.removeStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
+			this.removeStyleClass("sapUiCalTwoMonthsTwoColumns");
 		}
 	};
 
