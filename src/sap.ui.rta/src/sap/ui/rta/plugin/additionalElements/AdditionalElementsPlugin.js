@@ -1076,8 +1076,7 @@ sap.ui.define([
 							}.bind(this, bOverlayIsSibling),
 							enabled: this.isEnabled.bind(this, bOverlayIsSibling),
 							rank: iRank,
-							icon: sIcon,
-							group: "Add"
+							icon: sIcon
 						});
 					}
 
