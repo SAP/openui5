@@ -20287,8 +20287,8 @@ sap.ui.define([
 	// requestSideEffects repeats the failed POST in the same $batch.
 	// JIRA: CPOUI5UISERVICESV3-1936
 [{
-	expectations : function (that) {
-		that.expectRequest({
+	expectations : function () {
+		this.expectRequest({
 				batchNo : 3,
 				method : "POST",
 				payload : {Note : "Created"},
@@ -20322,15 +20322,15 @@ sap.ui.define([
 	},
 	text : "Repeated POST succeeds"
 }, {
-	expectations : function (that) {
+	expectations : function () {
 		var oCausingError = createError(); // a technical error -> let the $batch itself fail
 
-		that.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
+		this.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
 			+ " failed; will be repeated automatically");
-		that.oLogMock.expects("error").withArgs("$batch failed");
-		that.oLogMock.expects("error").withArgs("Failed to request side effects");
+		this.oLogMock.expects("error").withArgs("$batch failed");
+		this.oLogMock.expects("error").withArgs("Failed to request side effects");
 
-		that.expectRequest({
+		this.expectRequest({
 				batchNo : 3,
 				method : "POST",
 				payload : {Note : "Created"},
@@ -20428,7 +20428,7 @@ sap.ui.define([
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 			that.expectMessages([]);
 
-			oCausingError = oFixture.expectations(that);
+			oCausingError = oFixture.expectations.call(that);
 
 			return Promise.all([
 				// code under test
