@@ -20,7 +20,9 @@ sap.ui.define([
 	"sap/ui/model/SimpleType",
 	"sap/ui/core/ListItem",
 	"sap/m/ComboBoxBase",
-	"sap/ui/core/SeparatorItem"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/core/SeparatorItem",
+	"sap/ui/core/InvisibleText"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -41,7 +43,9 @@ sap.ui.define([
 	SimpleType,
 	ListItem,
 	ComboBoxBase,
-	SeparatorItem
+	containsOrEquals,
+	SeparatorItem,
+	InvisibleText
 ) {
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
@@ -3300,6 +3304,40 @@ sap.ui.define([
 		this.clock.reset();
 	});
 
+	QUnit.test("Read-only popover should be opened on ENTER keypress", function (assert) {
+		// arrange
+		var aItems = [
+				new Item("it1", {text: "this is a long text"}),
+				new Item("it2", {text: "this is another long text"})
+			], oMCB = new MultiComboBox({
+				width: "8rem",
+				editable: false,
+				items: aItems,
+				selectedItems: ["it1", "it2"]
+			});
+
+		// act
+		oMCB.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		var oHandleIndicatorPressSpy = sinon.spy(oMCB, "_handleIndicatorPress");
+
+		// assert
+		assert.ok(oMCB._getReadOnlyPopover(), "Readonly Popover should be created");
+
+		// act
+		qutils.triggerKeydown(oMCB.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(containsOrEquals(oMCB._oReadOnlyPopover.getDomRef(), document.activeElement),
+			"Popover should be on focus when opened");
+		assert.ok(oHandleIndicatorPressSpy.called, "MultiComboBox's _handleIndicatorPress is called");
+
+		// delete
+		oHandleIndicatorPressSpy.restore();
+		oMCB.destroy();
+	});
+
 	QUnit.test("Scenario 'EVENT_VALUE_ENTER_OPENLIST': 'alg' + ALT+DOWNKEY + ENTER + ALT+UPKEY Case insensitive", function(assert) {
 		var oSystem = {
 			desktop : true,
@@ -5164,6 +5202,19 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", 2), "'MultiComboBox contains N tokens' text is set.");
+
+		//arrange
+		sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
+
+		// act
+		oMultiComboBox.setEditable(false);
+		oMultiComboBox.setWidth("50px");
+
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		//assert
+		assert.ok(oMultiComboBox.getFocusDomRef().getAttribute('aria-labelledBy').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
 
 		// destroy
 		oItem1.destroy();

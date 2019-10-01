@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/core/Core",
+	'sap/ui/core/InvisibleText',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos",
@@ -58,6 +59,7 @@ function(
 	assert,
 	Log,
 	core,
+	InvisibleText,
 	jQuery
 ) {
 	"use strict";
@@ -491,6 +493,12 @@ function(
 		if (this.getValue()) {
 			this._selectItemByKey(oEvent);
 		}
+
+		//Open popover with items if in readonly mode and has Nmore indicator
+		if (!this.getEditable() && this._oTokenizer._hasMoreIndicator() && oEvent.target === this.getFocusDomRef()) {
+			this._handleIndicatorPress(oEvent);
+		}
+
 	};
 
 	/**
@@ -1103,6 +1111,7 @@ function(
 	MultiComboBox.prototype._onResize = function () {
 		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._syncInputWidth(this._oTokenizer);
+		this._handleNMoreAccessibility();
 	};
 
 	/**
@@ -2013,6 +2022,7 @@ function(
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
 		setTimeout(this._syncInputWidth.bind(this, this._oTokenizer), 0);
+		setTimeout(this._handleNMoreAccessibility.bind(this), 0);
 		setTimeout(this._oTokenizer["scrollToEnd"].bind(this._oTokenizer), 0);
 	};
 
@@ -3354,6 +3364,23 @@ function(
 		iTokenizerWidth = Math.ceil(oTokenizer.getDomRef().getBoundingClientRect().width);
 		oFocusDomRef.style.width = 'calc(100% - ' + Math.floor(iSummedIconsWidth + iTokenizerWidth) + "px";
 	};
+
+	/**
+	 * Adds or removes aria-labelledby attribute to indicate that you can interact with Nmore.
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._handleNMoreAccessibility = function () {
+		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
+		var bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1;
+
+		if (!this.getEditable() && this._oTokenizer._hasMoreIndicator()) {
+			!bHasAriaLabelledBy && this.addAriaLabelledBy(sInvisibleTextId);
+		} else {
+			bHasAriaLabelledBy && this.removeAriaLabelledBy(sInvisibleTextId);
+		}
+	};
+
 
 	/**
 	 * Applies <code>MultiComboBox</code> specific filtering over the list items.
