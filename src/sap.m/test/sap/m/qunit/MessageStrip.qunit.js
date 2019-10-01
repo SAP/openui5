@@ -411,4 +411,12 @@ sap.ui.define([
 			"the title of the close button should indicate what it closes");
 	});
 
+	QUnit.test("Decorative icon should have aria-hidden set to true", function(assert) {
+		//Act
+		this.oMessageStrip.setShowIcon(true);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(jQuery(".sapUiIcon").attr("aria-hidden"), "true", "The icon has an aria-hidden attribute set to true");
+	});
 });
