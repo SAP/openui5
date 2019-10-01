@@ -460,13 +460,13 @@ sap.ui.define([
 		if (this.getDomRef()) {
 			if (iDays > this._getDaysLarge()) {
 				this.$().addClass("sapUiCalIntLarge");
-			}else {
+			} else {
 				this.$().removeClass("sapUiCalIntLarge");
 			}
 
 			if (iDays > this._iDaysMonthHead) {
 				this.$().addClass("sapUiCalIntHead");
-			}else {
+			} else {
 				this.$().removeClass("sapUiCalIntHead");
 			}
 		}

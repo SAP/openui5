@@ -12,11 +12,12 @@ sap.ui.define(['sap/ui/core/Renderer', './CalendarDateIntervalRenderer'],
 	 * @namespace
 	 */
 	var CalendarOneMonthIntervalRenderer = Renderer.extend(CalendarDateIntervalRenderer);
+	CalendarOneMonthIntervalRenderer.apiVersion = 2;
 
 	CalendarOneMonthIntervalRenderer.addAttributes = function(oRm, oCal) {
 
 		CalendarDateIntervalRenderer.addAttributes.apply(this, arguments);
-		oRm.addClass("sapUiCalOneMonthInt");
+		oRm.class("sapUiCalOneMonthInt");
 	};
 
 	return CalendarOneMonthIntervalRenderer;

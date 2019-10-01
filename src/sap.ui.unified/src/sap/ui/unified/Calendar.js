@@ -477,8 +477,6 @@ sap.ui.define([
 			oHeader.setVisibleButton1(true);
 			oHeader.setVisibleButton2(true);
 		}
-
-		this._adjustYearRangeDisplay();
 	};
 
 	Calendar.prototype.onAfterRendering = function(oEvent){
@@ -778,19 +776,13 @@ sap.ui.define([
 	Calendar.prototype.setPrimaryCalendarType = function(sCalendarType){
 
 		var aMonths = this.getAggregation("month"),
-			bRerender = false,
 			oMonth,
 			oMonthPicker,
 			oYearPicker,
 			oYearRangePicker,
 			i;
 
-
-		if (aMonths.length > 1) {
-			bRerender = true; // as start dates of month can change
-		}
-
-		this.setProperty("primaryCalendarType", sCalendarType, !bRerender);
+		this.setProperty("primaryCalendarType", sCalendarType);
 		this._adjustYearRangeDisplay();
 
 		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
@@ -818,26 +810,6 @@ sap.ui.define([
 			oYearRangePicker.setPrimaryCalendarType(sCalendarType);
 		}
 
-		if (this.getDomRef()) {
-			this._updateHeader(this._oFocusedDate);
-
-			if (!this._getSucessorsPickerPopup()) {
-				if (this.iMode != 1 && oMonthPicker.getDomRef()) {
-					// remove DOM as rerendering only needed if displayed
-					oMonthPicker.$().remove();
-				}
-				if (this.iMode != 2 && oYearPicker.getDomRef()) {
-					// remove DOM as rerendering only needed if displayed
-					oYearPicker.$().remove();
-				}
-
-				if (this.iMode != 3 && oYearRangePicker.getDomRef()) {
-					// remove DOM as rerendering only needed if displayed
-					oYearRangePicker.$().remove();
-				}
-			}
-		}
-
 		return this;
 
 	};
@@ -845,7 +817,7 @@ sap.ui.define([
 	Calendar.prototype.setSecondaryCalendarType = function(sCalendarType){
 
 		this._bSecondaryCalendarTypeSet = true; // as property can not be empty but we use it only if set
-		this.setProperty("secondaryCalendarType", sCalendarType, true);
+		this.setProperty("secondaryCalendarType", sCalendarType);
 
 		this._oYearFormatSecondary = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 
@@ -854,11 +826,6 @@ sap.ui.define([
 		for (var i = 0; i < aMonths.length; i++) {
 			var oMonth = aMonths[i];
 			oMonth.setSecondaryCalendarType(sCalendarType);
-		}
-
-		if (this.getDomRef()) {
-			this._updateHeader(this._getFocusedDate());
-			this.$().toggleClass("sapUiCalSecType", !!this._getSecondaryCalendarType());
 		}
 
 		return this;
@@ -1024,24 +991,6 @@ sap.ui.define([
 		}else {
 			return false;
 		}
-
-	};
-
-	Calendar.prototype.setWidth = function(sWidth){
-
-		this.setProperty("width", sWidth, true);
-		if (this.getDomRef()) {
-			sWidth = this.getWidth(); // to get in right type
-			this.$().css("width", sWidth);
-
-			if (sWidth) {
-				this.$().addClass("sapUiCalWidth");
-			} else {
-				this.$().removeClass("sapUiCalWidth");
-			}
-		}
-
-		return this;
 
 	};
 
