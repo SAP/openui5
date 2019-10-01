@@ -133,6 +133,13 @@ function(
 				}
 			};
 
+			this.oDTForInstanceFunction = function(oInstance) {
+				return {
+					metaProp2: "2-instanceDTFunction",
+					instance: oInstance
+				};
+			};
+
 			this.oDTForPredefinedDefaultDT = {
 				metaProp2: "2-defaultDT"
 			};
@@ -145,6 +152,7 @@ function(
 			this.oRequireStub.withArgs(["sap/test/DTManagedObjectChild4.designtime"]).callsArgWithAsync(1, this.oDTForManagedObjectModule);
 			this.oRequireStub.withArgs(["sap/test/instanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForInstance);
 			this.oRequireStub.withArgs(["sap/test/otherInstanceSpecific.designtime"]).callsArgWithAsync(1, this.oDTForOtherInstance);
+			this.oRequireStub.withArgs(["sap/test/instanceSpecificFunction.designtime"]).callsArgWithAsync(1, this.oDTForInstanceFunction);
 			this.oRequireStub.withArgs(["sap/ui/dt/defaultDesigntime/defaultDT.designtime"]).callsArgWithAsync(1, this.oDTForPredefinedDefaultDT);
 
 			this.oInstanceWithoutSpecificDTMetadata = new Element();
@@ -164,6 +172,17 @@ function(
 					value : {
 						"sap.ui.dt" : {
 							designtime : "sap/test/otherInstanceSpecific.designtime"
+						}
+					}
+				})]
+			});
+			this.oInstanceWithSpecificDTMetadataFunction = new Element({
+				id: "elementWithFunction",
+				customData : [new CustomData({
+					key : "sap-ui-custom-settings",
+					value : {
+						"sap.ui.dt" : {
+							designtime : "sap/test/instanceSpecificFunction.designtime"
 						}
 					}
 				})]
@@ -209,6 +228,7 @@ function(
 			this.oInstanceWithoutSpecificDTMetadata.destroy();
 			this.oInstanceWithSpecificDTMetadata.destroy();
 			this.oOtherInstanceWithSpecificDTMetadata.destroy();
+			this.oInstanceWithSpecificDTMetadataFunction.destroy();
 			this.oInstanceWithPredefinedDefaultDTMetadata.destroy();
 
 			this.oRequireStub.restore();
@@ -353,6 +373,21 @@ function(
 				assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2-overwritten", "DesignTime data was overwritten");
+				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
+				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
+			});
+		});
+
+		QUnit.test("loadDesignTime - with instance that has specific metadata as function", function(assert) {
+			return DTManagedObjectModule.getMetadata().loadDesignTime(this.oInstanceWithSpecificDTMetadataFunction).then(function(oDesignTime) {
+				assert.strictEqual(oDesignTime.instance.getId(), "elementWithFunction", "DesignTime data was added from instance module");
+				assert.strictEqual(oDesignTime.metaProp1, "1", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaProp2, "2-instanceDTFunction", "DesignTime data was overritten");
+				assert.strictEqual(oDesignTime.metaProp3, "3", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaProp4, "4", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep1, "deep1", "DesignTime data was inherited");
+				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep2, "deep2", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.metaPropDeep.metaPropDeep3, "deep3", "DesignTime data was inherited");
 				assert.strictEqual(oDesignTime.templates.create, null, "create template is not inherited");
 				assert.strictEqual(oDesignTime.designtimeModule, "sap/test/DTManagedObjectChild4.designtime", "DesignTime module path defined");
