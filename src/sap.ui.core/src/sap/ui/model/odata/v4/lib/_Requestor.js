@@ -900,14 +900,12 @@ sap.ui.define([
 	Requestor.prototype.hasPendingChanges = function (sGroupId) {
 		var that = this;
 
-		function filter (mMap) {
-			var aKeys = Object.keys(mMap);
+		function filter(mMap) {
+			if (!sGroupId) {
+				return Object.keys(mMap);
+			}
 
-			return sGroupId === undefined
-				? aKeys
-				: aKeys.filter(function (sGroupId0) {
-					return sGroupId === sGroupId0;
-				});
+			return sGroupId in mMap ? [sGroupId] : [];
 		}
 
 		return filter(this.mRunningChangeRequests).length > 0
