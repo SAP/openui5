@@ -405,6 +405,13 @@ sap.ui.define([
 					assert.notOk(bMoveable, "then the movedButton is no longer movable");
 				});
 		});
+
+		QUnit.test("when the button has 'not-adaptable' as actions in DT", function(assert) {
+			sandbox.stub(this.oMovedButton1Overlay.getDesignTimeMetadata(), "markedAsNotAdaptable").returns(true);
+			return this.oElementMover.checkMovable(this.oMovedButton1Overlay).then(function(bMoveable) {
+				assert.notOk(bMoveable, "then the movedButton is not movable");
+			});
+		});
 	});
 
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
