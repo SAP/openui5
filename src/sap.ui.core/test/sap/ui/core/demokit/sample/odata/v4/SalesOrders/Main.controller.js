@@ -264,24 +264,25 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrderLineItem : function () {
-			var sMessage,
+			var sGroupId = this.getView().getModel().getGroupId(),
+				sMessage,
 				sSalesOrderLineItem,
-				oTable = this.byId("SO_2_SOITEM"),
-				oSOLineItemContext = oTable.getSelectedItem().getBindingContext(),
+				oSOLineItemContext = this.byId("SO_2_SOITEM").getSelectedItem().getBindingContext(),
 				that = this;
 
 			function onConfirm(sCode) {
 				if (sCode !== 'OK') {
 					return;
 				}
+
 				// Use "$auto" or "$direct" just like selected when creating the model
-				oSOLineItemContext.delete(oSOLineItemContext.getModel().getGroupId())
+				oSOLineItemContext.delete(sGroupId)
 					.then(function () {
 						MessageBox.success("Deleted Sales Order " + sSalesOrderLineItem);
 						// item removed, remove context of dependent bindings and hide details
 						that._setSalesOrderLineItemBindingContext();
-						that.requestSideEffects();
 					});
+				that.requestSideEffects(sGroupId, "SO_2_SCHDL");
 			}
 
 			sSalesOrderLineItem = oSOLineItemContext.getProperty("SalesOrderID", true)
@@ -300,6 +301,9 @@ sap.ui.define([
 			oTable.getSelectedContexts().forEach(function (oContext) {
 				aPromises.push(oContext.delete(sGroupId));
 			});
+
+			this.requestSideEffects(sGroupId, "SO_2_SOITEM");
+
 			Promise.all(aPromises).then(function () {
 				oTable.removeSelections();
 				oUiModel.setProperty("/bScheduleSelected", false);
@@ -391,14 +395,10 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			var that = this;
+			var sGroupId = "SalesOrderUpdateGroup";
 
-			this.submitBatch("SalesOrderUpdateGroup").then(function () {
-				// wait until created handler (if any) is processed
-				return that.oSalesOrderLineItemCreated;
-			}).then(function () {
-				that.requestSideEffects();
-			});
+			this.requestSideEffects(sGroupId, "SO_2_SCHDL");
+			this.submitBatch(sGroupId);
 		},
 
 		onSaveSalesOrderList : function () {
@@ -523,22 +523,18 @@ sap.ui.define([
 		},
 
 		/**
-		 * Request side effects for the selected sales order if there are no pending changes.
+		 * Request side effects (and ETag) for the selected sales order plus the side effects
+		 * specified by the given sNavigationPropertyPath.
 		 */
-		requestSideEffects : function () {
-			var oContext = this.byId("objectPage").getObjectBinding().getContext();
-
-			if (oContext.hasPendingChanges()) {
-				MessageToast.show("Cannot refresh due to unsaved changes, reset changes before"
-					+ " refresh");
-			} else {
-				// Request side effects (and ETag) of the corresponding entry in the SalesOrderList
-				oContext.requestSideEffects([
+		requestSideEffects : function (sGroupId, sNavigationPropertyPath) {
+			this.byId("objectPage").getObjectBinding().getContext().requestSideEffects([
+					{$NavigationPropertyPath : sNavigationPropertyPath},
 					{$PropertyPath : "ChangedAt"},
 					{$PropertyPath : "GrossAmount"},
-					{$PropertyPath : "Note"}]);
-				this.submitBatch("UpdateGroup");
-			}
+					{$PropertyPath : "Note"}
+				],
+				sGroupId
+			).catch(function () {/*may fail because of previous requests*/});
 		},
 
 		/**
