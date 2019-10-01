@@ -20,6 +20,7 @@ sap.ui.define([], function () {
 		oRm.write("<div");
 		oRm.writeControlData(oWizard);
 		oRm.addClass("sapMWizard");
+		oRm.addClass("sapMWizardBg" + oWizard.getBackgroundDesign());
 		oRm.writeClasses();
 		oRm.addStyle("width", oWizard.getWidth());
 		oRm.addStyle("height", oWizard.getHeight());

@@ -13,7 +13,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		var splitAppContainer = new SplitApp(),
 			wizard, bindableWizard, branchingWizard,
 			currentStepTest, iconOnlyWizard,
-			dialogIntegrationTest;
+			dialogIntegrationTest, wizardBackgroundChange;
 
 		(function () {
 			var checkStep4 = function() {
@@ -575,6 +575,57 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		(function () {
 			var step1 = new WizardStep({
 				validated : true,
+				icon: "sap-icon://person-placeholder",
+				content: [
+					new Button({
+						id: "change-theme",
+						text: "Change theme to sap_fiori_3",
+						press: function() {
+							sap.ui.getCore().applyTheme("sap_fiori_3");
+						}
+					}),
+					new Button({
+						id: "change-background-solid",
+						text: "Change theme and backgroundDesign to Solid",
+						press: function() {
+							wizardBackgroundChange.setBackgroundDesign("Solid");
+						}
+					}),
+					new Button({
+						id: "change-background-list",
+						text: "Change backgroundDesign to List",
+						press: function() {
+							wizardBackgroundChange.setBackgroundDesign("List");
+						}
+					}),
+					new Button({
+						id: "change-background-transparent",
+						text: "Change backgroundDesign to Transparent",
+						press: function() {
+							wizardBackgroundChange.setBackgroundDesign("Transparent");
+						}
+					})
+				]
+			});
+			var step2 = new WizardStep({
+				validated : true,
+				icon: "sap-icon://person-placeholder",
+				content: [
+					new Text({text: ""})
+				]
+			});
+
+			wizardBackgroundChange = new Wizard({
+				width:"100%",
+				showNextButton: true,
+				currentStep: step1,
+				steps: [step1, step2]
+			});
+		})();
+
+		(function () {
+			var step1 = new WizardStep({
+				validated : true,
 				icon: "sap-icon://permission",
 				content: [new VBox({
 					items: [
@@ -733,6 +784,13 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 							press : function () {
 								splitAppContainer.toDetail("dialog-integration-wiz-page");
 							}
+						}),
+						new StandardListItem('background-change-wiz-sel',{
+							title: "Background change test",
+							type: "Active",
+							press : function () {
+								splitAppContainer.toDetail("background-wiz-page");
+							}
 						})
 					]
 				})
@@ -792,6 +850,15 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 				splitAppContainer.backDetail();
 			},
 			content: [dialogIntegrationTest]
+		}));
+
+		splitAppContainer.addDetailPage(new Page("background-wiz-page", {
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				splitAppContainer.backDetail();
+			},
+			content: [wizardBackgroundChange]
 		}));
 
 		splitAppContainer.placeAt("content");
