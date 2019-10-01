@@ -179,6 +179,37 @@ sap.ui.define([
 						target: 'exploreSamples',
 						title: 'Dynamic Counter',
 						manifestUrl: '/samples/dynamicCounter/manifest.json'
+					},
+					{
+						key: 'htmlConsumption',
+						target: 'exploreSamples',
+						title: 'Consumption in HTML',
+						files: [
+							{
+								url: "/samples/htmlConsumption/indexTemplate.html",
+								name: "index.html",
+								key: "index.html",
+								content: ""
+							},
+							{
+								url: "/samples/htmlConsumption/manifest.json",
+								name: "manifest.json",
+								key: "manifest.json",
+								content: ""
+							},
+							{
+								url: "/samples/htmlConsumption/i18n/i18n.properties",
+								name: "i18n.properties",
+								key: "i18n.properties",
+								content: ""
+							},
+							{
+								url: "/samples/htmlConsumption/items.json",
+								name: "items.json",
+								key: "items.json",
+								content: ""
+							}
+						]
 					}
 				]
 			}

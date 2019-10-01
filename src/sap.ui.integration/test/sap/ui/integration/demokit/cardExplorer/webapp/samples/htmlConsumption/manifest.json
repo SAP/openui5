@@ -1,0 +1,36 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "card.explorer.translation.list.card",
+		"type": "card",
+		"i18n": "i18n/i18n.properties"
+	},
+	"sap.card": {
+		"data": {
+			"request": {
+				"url": "./items.json"
+			}
+		},
+		"type": "List",
+		"header": {
+			"title": "{{TITLE}}",
+			"subTitle": "Translation with model. {i18n>SUBTITLE}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/"
+			},
+			"item": {
+				"title": {
+					"value": "{Name}"
+				},
+				"description": {
+					"value": "{Description}"
+				}
+			}
+		}
+	}
+}

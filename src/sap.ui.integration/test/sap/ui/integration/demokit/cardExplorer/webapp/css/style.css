@@ -42,3 +42,7 @@ a.appTitle .sapMTitle {
 html.sap-phone .sapFGridContainer { /* in "Explore" section */
 	padding: 0.25rem;
 }
+
+.sapUiTopicsIframe {
+	border: none;
+}
