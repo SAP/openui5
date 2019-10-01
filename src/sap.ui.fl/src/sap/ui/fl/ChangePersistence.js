@@ -1404,5 +1404,19 @@ sap.ui.define([
 	ChangePersistence.prototype.resetVariantMap = function (bResetAtRuntime) {
 		return this._oVariantController.resetMap(bResetAtRuntime);
 	};
+
+	/**
+	 * Send a flex/info request to the backend.
+	 *
+	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
+	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
+	 *
+	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset and/or published
+	 */
+	ChangePersistence.prototype.getResetAndPublishInfo = function(mPropertyBag) {
+		return this._oConnector.getFlexInfo(mPropertyBag);
+	};
+
 	return ChangePersistence;
 }, true);
