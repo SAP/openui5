@@ -61,10 +61,18 @@
 							}),
 						],
 			contentRight: [
-				new sap.m.SearchField( "SFB1", {
-					search: onSearch,
-					liveChange: onLiveChange,
- 					layoutData: new sap.m.FlexItemData({growFactor: 1})
+				new sap.m.HBox({
+					items:[
+						new sap.m.Label({
+						labelFor: "SFB1",
+						text: "Global search:"
+					}).addStyleClass("sapUiSmallMarginEnd"),
+						new sap.m.SearchField( "SFB1", {
+							search: onSearch,
+							liveChange: onLiveChange,
+							layoutData: new sap.m.FlexItemData({growFactor: 1})
+						})
+					]
 				})
 			]
 		}),
@@ -107,6 +115,11 @@
 					enabled: false,
 					showRefreshButton: true, refreshButtonTooltip: "Reload..",
 					search:onSearch, liveChange:onLiveChange
+				}),
+			new sap.m.SearchField("SF35", {
+					value: "not editable (read-only)...",
+					ariaDescribedBy: ["SF_AD"],
+					editable: false
 				}),
 			new sap.m.SearchField("SF4", {
 					placeholder: "maxLength=5..", maxLength: 5, ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange:onLiveChange

@@ -685,7 +685,7 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
-		assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
+		assert.strictEqual(oInput.getFocusDomRef().getAttribute("disabled"), "disabled");
 
 		// cleanup
 		oInput.destroy();
@@ -704,7 +704,7 @@ sap.ui.define([
 
 		// assertions
 		assert.ok(oInput.$().hasClass("sapMInputBaseDisabled"), 'If the input is disabled, it should have the CSS class "sapMInputBaseDisabled"');
-		assert.strictEqual(oInput.getFocusDomRef().getAttribute("aria-disabled"), "true");
+		assert.strictEqual(oInput.getFocusDomRef().getAttribute("disabled"), "disabled");
 
 		// cleanup
 		oInput.destroy();
@@ -720,7 +720,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assertions
-		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("aria-disabled"), undefined);
+		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("disabled"), undefined);
 
 		// cleanup
 		oInput.destroy();
@@ -1827,8 +1827,8 @@ sap.ui.define([
 		var $Input = jQuery(oInput.getFocusDomRef());
 		assert.strictEqual($Input.attr("role"), "textbox", "Textbox role set correctly");
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "No aria-invalid set for valueState=None");
-		assert.strictEqual($Input.attr("aria-readonly"), undefined, "No aria-readonly set for editable=true");
-		assert.strictEqual($Input.attr("aria-disabled"), undefined, "No aria-disabled set for enabled=true");
+		assert.strictEqual($Input.attr("readonly"), undefined, "No readonly attribute set for editable=true");
+		assert.strictEqual($Input.attr("disabled"), undefined, "No disabled attribute set for enabled=true");
 		assert.strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
 
 		oInput.setValueState(ValueState.Warning);
@@ -1851,12 +1851,12 @@ sap.ui.define([
 		oInput.setEditable(false);
 		sap.ui.getCore().applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
-		assert.strictEqual($Input.attr("aria-readonly"), "true", "aria-readonly set for editable=false");
+		assert.strictEqual($Input.attr("readonly"), "readonly", "readonly attribute is set for editable=false");
 
 		oInput.setEnabled(false);
 		sap.ui.getCore().applyChanges();
 		$Input = jQuery(oInput.getFocusDomRef());
-		assert.strictEqual($Input.attr("aria-disabled"), "true", "aria-disabled set for enabled=false");
+		assert.strictEqual($Input.attr("disabled"), "disabled", "disabled attribute is set for enabled=false");
 
 		var oText = new Text("text");
 		oInput.addAriaLabelledBy(oText);
@@ -2028,7 +2028,6 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "Base functionality still works");
 		assert.strictEqual($Input.attr("aria-labelledby"), "internal_labelledby_id", "Internal aria labelledby is set");
 		assert.strictEqual($Input.attr("aria-describedby"), "internal_describedby_id", "Internal aria describedby is set");
-		assert.strictEqual($Input.attr("aria-autocomplete"), "true", "autocomplete aria attribute is set");
 		assert.strictEqual(oInput.$("labelledby").text(), "my labelledby text", "labelledby announcement is set");
 		assert.strictEqual(oInput.$("describedby").text(), "my describedby text", "describedby announcement is set");
 
