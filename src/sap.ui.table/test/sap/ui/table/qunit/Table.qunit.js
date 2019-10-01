@@ -3446,7 +3446,7 @@ sap.ui.define([
 			renderer: {
 				apiVersion: 2,
 				render: function(oRm, oControl) {
-					oRm.openStart(oControl.getTagName(), oControl).openEnd();
+					oRm.openStart(oControl.getTagName(), oControl).attr("tabindex", "-1").openEnd();
 					oRm.close(oControl.getTagName());
 				}
 			},
@@ -3462,21 +3462,36 @@ sap.ui.define([
 		createPasteEvent: function(sData) {
 			var oEvent;
 
+			function getData() {
+				return sData;
+			}
+
+			var oClipboardData = {getData: getData};
+
 			if (typeof Event === "function") {
-				oEvent = new Event("paste", {
-					bubbles: true,
-					cancelable: true
-				});
+
+				if (Device.browser.chrome) {
+					oClipboardData = new DataTransfer();
+					oClipboardData.setData("text/plain", sData);
+
+					oEvent = new ClipboardEvent("paste", {
+						bubbles: true,
+						cancelable: true,
+						clipboardData: oClipboardData
+					});
+				} else {
+					oEvent = new Event("paste", {
+						bubbles: true,
+						cancelable: true
+					});
+					oEvent.clipboardData = oClipboardData;
+				}
+
 			} else { // IE
 				oEvent = document.createEvent("Event");
 				oEvent.initEvent("paste", true, true);
+				oEvent.clipboardData = oClipboardData;
 			}
-
-			oEvent.clipboardData = {
-				getData: function() {
-					return sData;
-				}
-			};
 
 			return oEvent;
 		},
@@ -3484,6 +3499,7 @@ sap.ui.define([
 			var sData = "data";
 			sTestTitle = sTestTitle == null ? "" : sTestTitle + ": ";
 
+			oHTMLElement.focus();
 			oHTMLElement.dispatchEvent(this.createPasteEvent(sData));
 
 			assert.strictEqual(this.oPasteSpy.callCount, bShouldFireOnce ? 1 : 0,
@@ -3507,6 +3523,7 @@ sap.ui.define([
 
 	QUnit.test("NoData", function(assert) {
 		oTable.unbindRows();
+		sap.ui.getCore().applyChanges();
 		this.test(assert, null, oTable.getDomRef("noDataCnt"), true);
 	});
 
