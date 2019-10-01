@@ -112,8 +112,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given all connectors provide empty variant properties", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
@@ -131,7 +131,7 @@ sap.ui.define([
 
 		QUnit.test("Given the first connector provide an empty variant section and the second provides variant data in separate properties", function (assert) {
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
@@ -181,8 +181,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide variant data in variants properties", function (assert) {
-			var oStaticFileConnectorResponse = merge({}, Utils.getEmptyFlexDataResponse());
-			var oLrepConnectorResponse = merge({}, Utils.getEmptyFlexDataResponse());
+			var oStaticFileConnectorResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
+			var oLrepConnectorResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
 			var sVariantManagementKey = "management1";
 
 			var oVariant1 = Variant.createInitialFileContent({
@@ -235,8 +235,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given 2 connectors provide a change with the same id - i.e. not deleted file from changes-bundle.json", function (assert) {
-			var oStaticFileConnectorResponse = merge({}, Utils.getEmptyFlexDataResponse());
-			var oLrepConnectorResponse = merge({}, Utils.getEmptyFlexDataResponse());
+			var oStaticFileConnectorResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
+			var oLrepConnectorResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
 
 			var oChange1 = new Change({
 				fileName : "rename_id_123",
@@ -299,7 +299,7 @@ sap.ui.define([
 
 			// Static File Connector
 
-			var oStaticFileConnectorResponse = merge({}, Utils.getEmptyFlexDataResponse());
+			var oStaticFileConnectorResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 
 			var oVariant1 = Variant.createInitialFileContent({
@@ -331,10 +331,10 @@ sap.ui.define([
 
 			// Lrep Connector
 
-			var oLrepConnectorVendorResponse = merge({}, Utils.getEmptyFlexDataResponse());
-			var oLrepConnectorCustomerBaseResponse = merge({}, Utils.getEmptyFlexDataResponse());
-			var oLrepConnectorCustomerResponse = merge({}, Utils.getEmptyFlexDataResponse());
-			var oLrepConnectorUserResponse = merge({}, Utils.getEmptyFlexDataResponse());
+			var oLrepConnectorVendorResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
+			var oLrepConnectorCustomerBaseResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
+			var oLrepConnectorCustomerResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
+			var oLrepConnectorUserResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
 			var oLrepConnectorResponse = [
 				oLrepConnectorVendorResponse,
 				oLrepConnectorCustomerBaseResponse,
@@ -544,7 +544,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.skip("Given the first connector provide an variant in a variant property and the second provides a variant section", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 
 			return Storage.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
@@ -553,7 +553,7 @@ sap.ui.define([
 		});
 
 		QUnit.skip("Given two connectors provide variants in the variant section", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(Utils.getEmptyFlexDataResponse());
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 
 			return Storage.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
