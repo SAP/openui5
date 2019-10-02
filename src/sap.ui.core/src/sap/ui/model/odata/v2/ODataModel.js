@@ -4369,7 +4369,9 @@ sap.ui.define([
 
 			oRequest = fnProcessRequest(oRequestHandle);
 
-			oRequest.deferred = !!bDeferred;
+			if (oRequest) {
+				oRequest.deferred = !!bDeferred;
+			}
 
 			that._processRequestQueueAsync(that.mRequests);
 

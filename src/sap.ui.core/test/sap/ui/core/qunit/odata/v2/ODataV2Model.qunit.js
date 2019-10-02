@@ -5714,6 +5714,30 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	/**
+	 * Calling a non existing function import should neither result in success nor in error handler since there has no request been created.
+	 */
+	QUnit.test("callFunction:non existing", function(assert) {
+		var done = assert.async();
+		this.oModel.metadataLoaded().then(function() {
+			var oRequestHandle = this.oModel.callFunction("/UpdateProductsNonExisting", {method: "POST", success: function() {
+					assert.ok(false, "no request should be created, therefore it can neither succeed nor fail");
+					done();
+				}, error: function() {
+					assert.ok(false, "no request should be created, therefore it can neither succeed nor fail");
+					done();
+				}});
+			assert.ok(oRequestHandle, "Request Handle should be created");
+			oRequestHandle.contextCreated().then(function() {
+				assert.ok(false, "no request should be created, therefore it can neither succeed nor fail");
+				done();
+			}, function() {
+				assert.ok(true, "Should reject");
+				done();
+			});
+		}.bind(this));
+	});
+
 	QUnit.test("callFunction:check eTag", function(assert) {
 		var done = assert.async();
 		var that = this;
