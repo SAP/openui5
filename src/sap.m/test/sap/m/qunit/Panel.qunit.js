@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Label",
 	"sap/ui/Device",
-	"sap/m/Title"
+	"sap/m/Title",
+	"sap/m/OverflowToolbar"
 ], function(
 	qutils,
 	Panel,
@@ -19,7 +20,8 @@ sap.ui.define([
 	Toolbar,
 	Label,
 	Device,
-	Title
+	Title,
+	OverflowToolbar
 ) {
 	// shortcut for sap.m.PanelAccessibleRole
 	var PanelAccessibleRole = mobileLibrary.PanelAccessibleRole;
@@ -372,9 +374,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var $panel = this.oPanel.$();
+		var oInfoToolbarWrapper = jQuery(".sapMPanelExpandablePart")[0];
 
 		assert.strictEqual($panel.find(".sapMPanelWrappingDivTb").length, 1, "should have wrapping div with sapMPanelWrappingDivTb class");
 		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 2, "should have infoToolbar and content area with sapMPanelExpandablePart class");
+		assert.strictEqual(jQuery(oInfoToolbarWrapper).is("div"), true, "InfoToolbar should be wrapped in div");
 		assert.strictEqual($panel.find(".sapMPanelHeaderTB").length, 1, "should have a toolbar with sapMPanelHeaderToolbar class");
 		assert.strictEqual($panel.find(".sapMPanelInfoTB").length, 1, "should have a toolbar with sapMPanelInfoToolbar class");
 	});
@@ -427,6 +431,37 @@ sap.ui.define([
 		var $panel = this.oPanel.$();
 
 		assert.strictEqual($panel.find(".sapMPanelBGTranslucent").length, 1, "should have sapMPanelBGTranslucent class present once");
+	});
+
+	QUnit.test("Overflow should be hidden with expandable = true and expanded = false", function (assert) {
+
+		// Arrange
+		var oPanel = new Panel({
+			headerText: "Panel Header",
+			expandable: true,
+			expanded: false,
+			infoToolbar: new OverflowToolbar({
+				id: "OverflowToolbar1",
+				content: new Button({
+					text: "In toolbar"
+				})
+			}),
+			content: new Button({
+				text: "In toolbar"
+			 })
+		});
+
+		// Act
+		oPanel.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oInfoToolbarWrapper = jQuery("#OverflowToolbar1");
+
+		// Assert
+		assert.strictEqual(jQuery(oInfoToolbarWrapper).is(":visible"), false, "OverflowToolbar should be hidden");
+
+		// cleanup
+		oPanel.destroy();
 	});
 
 	QUnit.module("Computed styles", {
