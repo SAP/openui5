@@ -196,7 +196,7 @@ sap.ui.define([
 			}
 
 			oRm.write("<span");
-			oRm.writeAttribute("id", "fullDay-" + oFormat.format(oDay.toLocalJSDate()) + "-Descr");
+			oRm.writeAttribute("id", oFormat.format(oDay.toLocalJSDate()) + "-Descr");
 			oRm.addClass("sapUiInvisibleText");
 			oRm.writeClasses();
 			oRm.write(">");
