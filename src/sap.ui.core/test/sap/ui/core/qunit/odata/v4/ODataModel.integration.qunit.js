@@ -1925,8 +1925,8 @@ sap.ui.define([
 						}
 					}
 				})
-				.expectChange("longitude1", "8.7") // TODO CPOUI5UISERVICESV3-1950
-				.expectChange("longitude2", "8.7");
+				.expectChange("longitude1", "8.700000000000")
+				.expectChange("longitude2", "8.700000000000");
 
 			// code under test - Longitude is requested once
 			oFormContext = that.oView.byId("form").getBindingContext();
@@ -1951,8 +1951,8 @@ sap.ui.define([
 						}
 					}
 				})
-				.expectChange("longitude1", "8.71") // TODO CPOUI5UISERVICESV3-1950
-				.expectChange("longitude2", "8.71")
+				.expectChange("longitude1", "8.710000000000")
+				.expectChange("longitude2", "8.710000000000")
 				.expectChange("longitude3", "8.710000000000");
 
 			return Promise.all([
@@ -1999,7 +1999,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE", {AGE : 42})
-				.expectChange("age1", 42); // TODO CPOUI5UISERVICESV3-1950
+				.expectChange("age1", "42");
 
 			// code under test - AGE is requested
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
@@ -2034,7 +2034,7 @@ sap.ui.define([
 						{AGE : 36, ID : "4", Name : "Peter Burke"}
 					]
 				})
-				.expectChange("age1", 43)  // TODO CPOUI5UISERVICESV3-1950
+				.expectChange("age1", "43")
 				.expectChange("age2", "43");
 
 			// see that requestSideEffects updates AGE, too
