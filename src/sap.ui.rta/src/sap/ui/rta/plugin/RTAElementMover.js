@@ -97,8 +97,10 @@ function(
 	function fnIsValidForMove(oOverlay, bOnRegistration) {
 		var	oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
 		var oParentElementOverlay = oOverlay.getParentElementOverlay();
+		// if the overlay has 'not-adaptable' as action it should also not be movable
+		var bNotAdaptable = oDesignTimeMetadata.markedAsNotAdaptable();
 
-		if (!oDesignTimeMetadata || !oParentElementOverlay) {
+		if (!oDesignTimeMetadata || !oParentElementOverlay || bNotAdaptable) {
 			return Promise.resolve(false);
 		}
 
