@@ -102,7 +102,7 @@ sap.ui.define([
 				this._syncParameters();
 			} else {
 				oInput.setValueState("Error");
-				oInput.setValueStateText(this.getI18nProperty("CARD_EDITOR.PARAMETERS.DUPLICATE_KEY"));
+				oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.PARAMETERS.DUPLICATE_KEY"));
 			}
 		},
 		_onValueChange: function(oEvent) {

@@ -116,7 +116,7 @@ sap.ui.define([
 					visibility: "hidden",
 					// do not override during inheritance, use this.addDefaultConfig instead!
 					defaultValue: {
-						i18n: "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
+						i18n: "sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"
 					}
 				}
 			},
