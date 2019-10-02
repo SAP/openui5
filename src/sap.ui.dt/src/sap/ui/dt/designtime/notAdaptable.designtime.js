@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-// Provides default Designtime for 'not-adaptable' scenario
+// Provides default design time for 'not-adaptable' scenario
 sap.ui.define([], function() {
 	"use strict";
 

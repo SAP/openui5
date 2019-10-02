@@ -2,13 +2,14 @@
  * ${copyright}
  */
 
-// Provides default Designtime for 'not-adaptable' scenario
+// Provides default design time for 'not-adaptable-visibility' scenario
 sap.ui.define([], function() {
 	"use strict";
 
 	return {
 		actions: {
-			remove: null
+			remove: null,
+			reveal: null
 		}
 	};
 }, /* bExport= */ false);

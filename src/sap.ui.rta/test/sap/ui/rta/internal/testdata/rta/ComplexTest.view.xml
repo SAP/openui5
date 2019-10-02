@@ -140,10 +140,16 @@
 					</smartForm:Group>
 					<smartForm:Group label="Dates" id="MainFormExpandable.Dates" expandable="true">
 						<smartForm:GroupElement label="Not Adaptable" id="Dates.NotAdaptable" sap.ui.dt:designtime="not-adaptable">
-							<Input value="My field can't be renamed or removed" id="NotAdaptable" />
+							<Text text="My field can't be adapted" id="NotAdaptable" />
 						</smartForm:GroupElement>
 						<smartForm:GroupElement label="Not Removable" id="Dates.NotRemovable" sap.ui.dt:designtime="not-removable">
-							<Input value="My field can't be removed" id="NotRemovable" />
+							<Text text="My field can't be added or removed" id="NotRemovable" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="No visibility changes (visible)" id="Dates.NoVisibilityChanges1" sap.ui.dt:designtime="not-adaptable-visibility">
+							<Text text="My field can't be added or removed" id="NoVisibilityChanges1" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="No visibility changes (invisible)" visible="false" id="Dates.NoVisibilityChanges2" sap.ui.dt:designtime="not-adaptable-visibility">
+							<Text text="My field can't be added or removed" id="NoVisibilityChanges2" />
 						</smartForm:GroupElement>
 						<smartForm:GroupElement label="Two-Bound-Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
 							<Button text="{PostingDate}"></Button>

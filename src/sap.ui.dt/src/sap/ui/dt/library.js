@@ -42,7 +42,9 @@ function (
 	ManagedObjectMetadata.setDesignTimeDefaultMapping({
 		"not-adaptable": "sap/ui/dt/designtime/notAdaptable.designtime",
 		"not-adaptable-tree": "sap/ui/dt/designtime/notAdaptableTree.designtime",
-		"not-removable": "sap/ui/dt/designtime/notRemovable.designtime"
+		"not-adaptable-visibility": "sap/ui/dt/designtime/notAdaptableVisibility.designtime",
+		// legacy, should not be used anymore
+		"not-removable": "sap/ui/dt/designtime/notAdaptableVisibility.designtime"
 	});
 
 	return sap.ui.dt;
