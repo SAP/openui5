@@ -1,0 +1,142 @@
+.sapFPSItemContainer {
+	border-radius: @sapUiElementBorderCornerRadius;
+	background: @sapUiListBackground;
+	padding: 0.5rem;
+	width: 11.25rem;
+	height: 7rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	color: @sapUiContentIconColor;
+	box-sizing: border-box;
+	text-decoration: none;
+	cursor: pointer;
+	user-select: none;
+
+	.sapFPSItemMainTitle {
+		font-size: @sapMFontHeader6Size;
+		color: @sapUiGroupTitleTextColor;
+	}
+
+	.sapFPSItemIconPlaceholder {
+		height: 3rem;
+	}
+
+	.sapFPSItemTitle {
+		line-height: 1.25rem;
+		max-width: 10.25rem;
+		cursor: pointer;
+	}
+
+	.sapUiIcon {
+		cursor: pointer;
+	}
+
+	.sapMText {
+		text-align: center !important;
+	}
+
+	.sapFPSItemSubTitle {
+		font-size: @sapMFontSmallSize;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		color: @sapUiContentLabelColor;
+	}
+
+	&:hover {
+		background: @sapUiListHoverBackground;
+	}
+
+	&.sapFPSItemActive,
+	&.sapFPSItemSelected.sapFPSItemActive,
+	&:active,
+	&.sapFPSItemSelected:active,
+	&.sapFPSItemSelected:hover:active  {
+		background: @sapUiListActiveBackground;
+		color: @sapUiListActiveTextColor;
+		border: none;
+
+		.sapFPSItemMainTitle,
+		.sapFPSItemSubTitle {
+			color: @sapUiListActiveTextColor;
+		}
+	}
+
+	&.sapFPSItemSelected.sapFPSItemActive,
+	&.sapFPSItemSelected:hover:active,
+	&.sapFPSItemSelected:active {
+		padding: 0.5rem;
+	}
+
+	&.sapFPSItemSelected {
+		background: @sapUiListSelectionBackgroundColor;
+		border: 0.125rem solid @sapUiListSelectionBorderColor;
+		padding: 0.375rem;;
+	}
+}
+
+.sapUiMedia-Std-Phone .sapFPSItemContainer {
+	flex-direction: row;
+	height: 5rem;
+	padding: 0 1rem;
+	width: 100%;
+	border-radius: 0;
+
+	&.sapFPSItemWithoutIcon .sapFPSItemMainContent {
+		margin-left: 0;
+	}
+
+	.sapFPSItemMainContent {
+		align-items: flex-start;
+		margin-left: 0.75rem;
+		box-sizing: border-box;
+		width: ~"calc(100% - 2.25rem)";
+
+		.sapMText {
+			text-align: left !important;
+		}
+	}
+
+	.sapFPSItemTitle {
+		width: 100%;
+		max-width: 100%;
+	}
+
+	&.sapFPSItemSelected {
+		border: none;
+		border-bottom: 0.0625rem solid @sapUiListSelectionBorderColor;
+	}
+
+	&.sapFPSItemSelected:hover:active,
+	&.sapFPSItemSelected:active {
+		padding: 1rem;
+	}
+}
+
+.sapFPSItemContainer:focus {
+	outline-width: @sapUiContentFocusWidth;
+	outline-color: @sapUiContentFocusColor;
+	outline-offset: -2px;
+	outline-style: @sapUiContentFocusStyle;
+}
+
+.sapFPSItemContainer.sapFPSItemSelected:focus {
+	outline-offset: -4px;
+}
+
+.sapFPSItemSelected.sapFPSItemActive:focus,
+.sapFPSItemActive:focus,
+.sapFPSItemContainer:active:focus {
+	outline-color: @sapUiContentContrastFocusColor;
+	outline-offset: -2px;
+}
+
+.sapUiMedia-Std-Phone .sapFPSItemContainer.sapFPSItemSelected:focus {
+	outline-offset: -2px;
+}
+
+
+html[data-sap-ui-browser^="ed"].sap-desktop .sapFPSItemContainer:focus {
+	outline-style: dashed;
+}
