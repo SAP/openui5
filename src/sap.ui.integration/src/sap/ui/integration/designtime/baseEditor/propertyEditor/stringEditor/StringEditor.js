@@ -36,7 +36,7 @@ sap.ui.define([
 			} finally {
 				if (bInvalidBindingString) {
 					this._oInput.setValueState("Error");
-					this._oInput.setValueStateText(this.getI18nProperty("CARD_EDITOR.STRING.INVALID_BINDING"));
+					this._oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.STRING.INVALID_BINDING"));
 					return false;
 				} else {
 					this._oInput.setValueState("None");

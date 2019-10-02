@@ -49,7 +49,7 @@ sap.ui.define([
 				} finally {
 					if (!oParsedValue) {
 						this._oCombo.setValueState("Error");
-						this._oCombo.setValueStateText(this.getI18nProperty("CARD_EDITOR.ENUM.INVALID_SELECTION_OR_BINDING"));
+						this._oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.ENUM.INVALID_SELECTION_OR_BINDING"));
 						return false;
 					} else {
 						this._oCombo.setValueState("None");

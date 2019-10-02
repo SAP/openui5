@@ -37,13 +37,13 @@ sap.ui.define([
 					items: new Bar({
 						contentLeft: [
 							new Label({
-								text: this.getConfig().itemLabel || "{i18n>CARD_EDITOR.ARRAY.ITEM_LABEL}"
+								text: this.getConfig().itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}"
 							})
 						],
 						contentRight: [
 							new Button({
 								icon: "sap-icon://less",
-								tooltip: "{i18n>CARD_EDITOR.ARRAY.REMOVE}",
+								tooltip: "{i18n>BASE_EDITOR.ARRAY.REMOVE}",
 								press: function(iIndex) {
 									var aValue = this.getConfig().value;
 									aValue.splice(iIndex, 1);
@@ -69,7 +69,7 @@ sap.ui.define([
 				contentRight: [
 					new Button({
 						icon: "sap-icon://add",
-						tooltip: "{i18n>CARD_EDITOR.ARRAY.ADD}",
+						tooltip: "{i18n>BASE_EDITOR.ARRAY.ADD}",
 						enabled: "{= ${items} ? ${items}.length < ${maxItems} : false}",
 						press: function() {
 							var aValue = this.getConfig().value;
