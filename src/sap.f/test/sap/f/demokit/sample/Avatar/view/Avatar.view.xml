@@ -401,12 +401,12 @@
 							class="sapUiMediumMarginBottom sapUiMediumMarginTop">
 					</m:Text>
 					<l:Grid
-						defaultSpan="XL3 L4 M6 S6">
+						defaultSpan="XL4 L4 M6 S6">
 						<l:content>
 							<m:VBox
 								alignItems="Center">
 								<f:Avatar
-										displaySize="XL"
+										displaySize="L"
 										displayShape="Square"
 										backgroundColor="Random">
 								</f:Avatar>
@@ -418,7 +418,7 @@
 							<m:VBox
 									alignItems="Center">
 								<f:Avatar
-										displaySize="XL"
+										displaySize="L"
 										backgroundColor="Random">
 								</f:Avatar>
 								<m:Text
@@ -429,7 +429,7 @@
 							<m:VBox
 									alignItems="Center">
 								<f:Avatar
-										displaySize="XL"
+										displaySize="L"
 										displayShape="Square"
 										fallbackIcon="sap-icon://accelerated"
 										backgroundColor="Random">
@@ -442,7 +442,7 @@
 							<m:VBox
 									alignItems="Center">
 								<f:Avatar
-										displaySize="XL"
+										displaySize="L"
 										initials="PB"
 										src="images/cannotfind_Woman_avatar_01.png"
 										backgroundColor="Random">
