@@ -997,4 +997,31 @@ sap.ui.define([
 		activeObjectIdentifier.destroy();
 		inactiveObjectIdentifier.destroy();
 	});
+
+	QUnit.test("ariaLabelledBy references placement", function(assert) {
+		// Prepare
+		var oLabel = new Label({ text: "The label" }),
+			oObjectIdentifier = new ObjectIdentifier({
+				title: "Some title",
+				titleActive: true,
+				ariaLabelledBy: oLabel
+			}),
+			oInternalLink;
+
+		oLabel.placeAt("qunit-fixture");
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		oInternalLink = oObjectIdentifier.getAggregation("_titleControl");
+		assert.ok(oObjectIdentifier.getAriaLabelledBy().length > 0, "The label is added in ObjectIdentifier's ariaLabelledBy");
+		assert.ok(oInternalLink.getAriaLabelledBy().length > 0, "The label is propagated to the internal link");
+
+		assert.notOk(oObjectIdentifier.$().attr("aria-labelledby"), "There is no aria-labelledby on the root element");
+		assert.ok(oInternalLink.$().attr("aria-labelledby"), "The aria-labelledby is placed on the internal link instead");
+
+		// Cleanup
+		oLabel.destroy();
+		oObjectIdentifier.destroy();
+	});
 });

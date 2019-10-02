@@ -36,8 +36,6 @@ sap.ui.define([],
 
 		// write the HTML into the render manager
 		oRm.openStart("div", oOI); // Identifier begins
-		//WAI ARIA support
-		oRm.accessibilityState(oOI);
 		oRm.class("sapMObjectIdentifier");
 
 		sTooltip = oOI.getTooltip_AsString();
