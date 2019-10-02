@@ -171,7 +171,6 @@ sap.ui.define([
 		// Fields of the List
 		var oFieldName = new Label({
 			design: LabelDesign.Standard,
-			tooltip: "{tooltip}",
 			text: {
 				parts: [{path: "label"}, {path: "referencedComplexPropertyName"}, {path: "duplicateComplexName"}],
 				formatter: function(sLabel, sReferencedComplexPropertyName, bDuplicateComplexName) {
@@ -221,8 +220,9 @@ sap.ui.define([
 		var oListItem = new ListItem({
 			type: ListType.Active,
 			selected : "{selected}",
+			tooltip: "{tooltip}",
 			content : [oVBox]
-		});
+		}).addStyleClass("sapUIRtaListItem");
 
 		this._oList.bindItems({
 			path:"/elements",
