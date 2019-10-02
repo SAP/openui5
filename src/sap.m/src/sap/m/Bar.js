@@ -338,9 +338,10 @@ sap.ui.define([
 			iMidBarEndPoint = (iBarWidth / 2) + (iMidBarPlaceholderWidth / 2),
 			bRightContentIsOverlapping = (iBarWidth - iRightBarWidth) < iMidBarEndPoint;
 
-		if (iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping)) {
+			if (this._$MidBarPlaceHolder.closest(".sapMBarTitleStart").length > 0 ||
+				(iSpaceBetweenLeftAndRight > 0 && (bLeftContentIsOverlapping || bRightContentIsOverlapping))) {
 
-			//Left or Right content is overlapping the Middle content
+			//Left or Right content is overlapping the Middle content or there is Title alignment class (sapMBarTitleStart) set
 
 			// place the middle positioned element directly next to the end of left content area
 			oMidBarCss.position = "absolute";

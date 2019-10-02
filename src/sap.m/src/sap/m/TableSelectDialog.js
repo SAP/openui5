@@ -9,6 +9,7 @@ sap.ui.define([
 	'./SearchField',
 	'./Table',
 	'./library',
+	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
@@ -27,6 +28,7 @@ sap.ui.define([
 		SearchField,
 		Table,
 		library,
+		TitleAlignmentMixin,
 		Control,
 		Device,
 		ManagedObject,
@@ -49,6 +51,8 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = library.TitleAlignment;
 
 	/**
 	 * Constructor for a new TableSelectDialog.
@@ -191,8 +195,16 @@ sap.ui.define([
 			 * When set to <code>true</code>, the TableSelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be resizable only in desktop mode.
 			 * @since 1.71
 			 */
-			resizable: {type: "boolean", group: "Behavior", defaultValue: false}
+			resizable: {type: "boolean", group: "Behavior", defaultValue: false},
 
+			/**
+			 * Specifies the Title alignment (theme specific).
+			 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+			 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+			 * @since 1.72
+			 * @public
+			 */
+			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -398,6 +410,9 @@ sap.ui.define([
 				})
 			]
 		});
+
+		// call the method that registers this Bar for alignment
+		this._setupBarTitleAlignment(oCustomHeader, this.getId() + "_customHeader");
 
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
@@ -1259,6 +1274,8 @@ sap.ui.define([
 	/*           end: internal methods                             */
 	/* =========================================================== */
 
+	// enrich the control functionality with TitleAlignmentMixin
+	TitleAlignmentMixin.mixInto(TableSelectDialog.prototype);
 
 	return TableSelectDialog;
 

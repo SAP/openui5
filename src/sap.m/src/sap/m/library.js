@@ -120,6 +120,7 @@ sap.ui.define([
 			"sap.m.SwitchType",
 			"sap.m.TileSizeBehavior",
 			"sap.m.TimePickerMaskMode",
+			"sap.m.TitleAlignment",
 			"sap.m.ToolbarDesign",
 			"sap.m.ToolbarStyle",
 			"sap.m.UploadState",
@@ -3784,6 +3785,35 @@ sap.ui.define([
 		 * @public
 		 */
 		NavBarAndColHeaders: "NavBarAndColHeaders"
+	};
+
+	/**
+	 * Declares the type of title alignment for some controls
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.TitleAlignment = {
+
+		/**
+		 * The default type (if specified in the theme)
+		 * @public
+		 */
+		Auto : "Auto",
+
+		/**
+		 * Explicitly sets the alignment to the start (left or right depending on LTR/RTL)
+		 * @public
+		 */
+		Start : "Start",
+
+		/**
+		 * Explicitly sets the alignment to the start (left or right depending on LTR/RTL)
+		 * @public
+		 */
+		Center : "Center"
+
 	};
 
 	//lazy imports for MessageToast

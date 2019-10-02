@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Button",
 	"sap/m/Bar",
+	'sap/m/TitleAlignmentMixin',
 	"sap/ui/core/ContextMenuSupport",
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/core/library",
@@ -26,6 +27,7 @@ function(
 	Title,
 	Button,
 	Bar,
+	TitleAlignmentMixin,
 	ContextMenuSupport,
 	ResponsivePaddingsEnablement,
 	coreLibrary,
@@ -49,6 +51,9 @@ function(
 
 		// shortcut for sap.ui.core.TitleLevel
 		var TitleLevel = coreLibrary.TitleLevel;
+
+		// shortcut for sap.m.TitleAlignment
+		var TitleAlignment = library.TitleAlignment;
 
 		var DIV = "div";
 		var HEADER = "header";
@@ -197,7 +202,16 @@ function(
 					 * Decides whether the footer can float.
 					 * When set to true, the footer is not fixed below the content area anymore, but rather floats over it with a slight offset from the bottom.
 					 */
-					floatingFooter: {type: "boolean", group:"Appearance", defaultValue: false }
+					floatingFooter: {type: "boolean", group:"Appearance", defaultValue: false },
+
+					/**
+					 * Specifies the Title alignment (theme specific).
+					 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+					 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+					 * @since 1.72
+					 * @public
+					 */
+					titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -558,6 +572,9 @@ function(
 				this.setAggregation("_internalHeader", new Bar(this.getId() + "-intHeader"), true); // don"t invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
 				oInternalHeader = this.getAggregation("_internalHeader");
 
+				// call the method that registers this Bar for alignment
+				this._setupBarTitleAlignment(oInternalHeader, this.getId() + "_internalHeader");
+
 				if (this.getShowNavButton() && this._navBtn) {
 					this._updateHeaderContent(this._navBtn, "left", 0);
 				}
@@ -743,6 +760,9 @@ function(
 		Page.prototype._getAdaptableContent = function () {
 			return this._getAnyHeader();
 		};
+
+		// enrich the control functionality with TitleAlignmentMixin
+		TitleAlignmentMixin.mixInto(Page.prototype);
 
 		return Page;
 	});

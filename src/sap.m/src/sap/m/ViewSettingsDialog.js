@@ -5,6 +5,7 @@
 // Provides control sap.m.ViewSettingsDialog.
 sap.ui.define([
 	'./library',
+	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'./Toolbar',
@@ -33,6 +34,7 @@ sap.ui.define([
 ],
 function(
 	library,
+	TitleAlignmentMixin,
 	Control,
 	IconPool,
 	Toolbar,
@@ -67,6 +69,9 @@ function(
 
 	// shortcut for sap.m.StringFilterOperator
 	var StringFilterOperator = library.StringFilterOperator;
+
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = library.TitleAlignment;
 
 	var LIST_ITEM_SUFFIX = "-list-item";
 
@@ -164,7 +169,17 @@ function(
 			 * This property will be ignored if a custom callback is provided through <code>setFilterSearchCallback</code> method.
 			 * @since 1.42
 			 */
-			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behavior", defaultValue: StringFilterOperator.StartsWith }
+			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behavior", defaultValue: StringFilterOperator.StartsWith },
+
+			/**
+			 * Specifies the Title alignment (theme specific).
+			 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+			 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+			 * @since 1.72
+			 * @public
+			 */
+			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
+
 		},
 		aggregations : {
 
@@ -1647,6 +1662,7 @@ function(
 				contentWidth        : this._sDialogWidth,
 				contentHeight       : this._sDialogHeight,
 				content             : this._getNavContainer(),
+				titleAlignment		: this.getTitleAlignment(),
 				beginButton         : new Button(this.getId() + "-acceptbutton", {
 					text : this._rb.getText("VIEWSETTINGS_ACCEPT"),
 					type: sap.m.ButtonType.Emphasized
@@ -1774,6 +1790,10 @@ function(
 				contentMiddle : [ this._getTitleLabel() ]
 			}).addStyleClass("sapMVSDBar");
 		}
+
+		// call the method that registers this Bar for alignment
+		this._setupBarTitleAlignment(this._header, this.getId() + '_header');
+
 		return this._header;
 	};
 
@@ -1917,6 +1937,10 @@ function(
 				contentMiddle   : [ this._getDetailTitleLabel() ],
 				contentRight    : [ oDetailResetButton ]
 			}).addStyleClass("sapMVSDBar");
+
+			// call the method that registers this Bar for alignment
+			this._setupBarTitleAlignment(oDetailHeader, this.getId() + "_page2_header");
+
 			this._page2 = new Page(this.getId() + '-page2', {
 				title           : this._rb.getText("VIEWSETTINGS_TITLE_FILTERBY"),
 				customHeader    : oDetailHeader
@@ -3431,6 +3455,10 @@ function(
 		var rAnyWordStartsWith = new RegExp(".*\\b" + sQuery + ".*");
 		return rAnyWordStartsWith.test(sValue);
 	}
+
+
+	// enrich the control functionality with TitleAlignmentMixin
+	TitleAlignmentMixin.mixInto(ViewSettingsDialog.prototype);
 
 	return ViewSettingsDialog;
 
