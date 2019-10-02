@@ -502,6 +502,15 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("General ARIA", function (assert) {
+			// Arrange
+			this.oSut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			assert.notOk(this.oSut.$().attr("aria-readonly"), "Month doesn't have aria-readonly on it");
+		});
+
 		QUnit.test("Day cells have role gridcell", function (assert) {
 			// Arrange
 			this.oSut.placeAt('qunit-fixture');
