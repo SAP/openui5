@@ -62,7 +62,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 		oRm.writeAccessibilityState(oMonth, {
 			role: "grid",
-			readonly: "true",
 			multiselectable: !oMonth.getSingleSelection() || oMonth.getIntervalSelection(),
 			labelledby: oAriaLabel
 		});
