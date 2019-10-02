@@ -10,11 +10,12 @@ sap.ui.define([
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/Item',
 	'./SelectListRenderer',
+	'sap/base/Log',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-	function(library, Core, Control, ItemNavigation, Item, SelectListRenderer, jQuery) {
+	function(library, Core, Control, ItemNavigation, Item, SelectListRenderer, Log, jQuery) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -573,7 +574,13 @@ sap.ui.define([
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
 			} else if (bForceSelection && this.getDefaultSelectedItem() && (!this.isBound("items") || this.bItemsUpdated)) {
-				this.setSelection(this.getDefaultSelectedItem());
+				try {
+					this.setSelection(this.getDefaultSelectedItem());
+				} catch (e) {
+					Log.warning('Update failed due to exception. Loggable in support mode log', null, null, function () {
+						return { exception: e };
+					});
+				}
 			}
 		};
 
