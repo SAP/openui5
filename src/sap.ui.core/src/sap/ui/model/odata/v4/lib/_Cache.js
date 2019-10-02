@@ -2017,7 +2017,7 @@ sap.ui.define([
 		mQueryOptions = _Helper.intersectQueryOptions(
 			this.mLateQueryOptions || this.mQueryOptions, aPaths,
 			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
-			mNavigationPropertyPaths);
+			mNavigationPropertyPaths, "", true);
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
