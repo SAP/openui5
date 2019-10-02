@@ -22,18 +22,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			this.iRenderCounter = 0;
-			var that = this;
-			var oDelegate = {
+			this.rowAction.addEventDelegate({
 				onAfterRendering: function() {
-					that.iRenderCounter++;
+					this.iRenderCounter++;
 				}
-			};
-
-			this.rowAction.addEventDelegate(oDelegate);
-			var aIcons = this.rowAction.getAggregation("_icons");
-			for (var i = 0; i < aIcons.length; i++) {
-				aIcons[i].addEventDelegate(oDelegate);
-			}
+			}, this);
 		},
 		afterEach: function() {
 			this.rowAction.destroy();
