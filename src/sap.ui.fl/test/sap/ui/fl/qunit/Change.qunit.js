@@ -90,7 +90,7 @@ function(
 		}
 	}, function() {
 		QUnit.test("constructor ", function(assert) {
-			var oInstance = new sap.ui.fl.Change(this.oChangeDef);
+			var oInstance = new Change(this.oChangeDef);
 			assert.ok(oInstance);
 		});
 
@@ -513,7 +513,6 @@ function(
 
 			assert.equal(oCreatedFile.appDescriptorChange, true, "the flag for descriptor changes is set to true");
 		});
-
 
 		QUnit.test("createInitialFileContent when generator is pre-set", function(assert) {
 			var oInfo = {
@@ -984,6 +983,28 @@ function(
 			assert.equal(aDependentIdList.length, 8);
 			aDependentIdList = oInstance.getDependentControlSelectorList(oAppComponent);
 			assert.equal(aDependentIdList.length, 7);
+		});
+
+		QUnit.test("revertData", function(assert) {
+			var oChange = new Change(this.oChangeDef);
+			assert.notOk(oChange.hasRevertData(), "initially hasRevertData returns false");
+			assert.equal(oChange.getRevertData(), null, "initially the revert data is null");
+
+			oChange.setRevertData("revertData");
+			assert.ok(oChange.hasRevertData(), "hasRevertData returns true");
+			assert.equal(oChange.getRevertData(), "revertData", "getRevertData returns the correct data");
+
+			oChange.resetRevertData();
+			assert.notOk(oChange.hasRevertData(), "hasRevertData returns false");
+			assert.equal(oChange.getRevertData(), null, "initially the revert data is null");
+
+			oChange.setRevertData("");
+			assert.ok(oChange.hasRevertData(), "hasRevertData returns true");
+			assert.equal(oChange.getRevertData(), "", "getRevertData returns the correct data");
+
+			oChange.setRevertData(undefined);
+			assert.ok(oChange.hasRevertData(), "hasRevertData returns true");
+			assert.equal(oChange.getRevertData(), undefined, "getRevertData returns the correct data");
 		});
 	});
 
