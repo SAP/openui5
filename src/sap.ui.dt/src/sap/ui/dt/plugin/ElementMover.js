@@ -306,8 +306,9 @@ sap.ui.define([
 	 * metadata for the relevant aggregation.
 	 * @param  {sap.ui.dt.Overlay} oMovedOverlay The overlay of the element being moved
 	 * @param  {sap.ui.dt.Overlay} oTargetAggregationOverlay The overlay of the target aggregation for the move
+	 * @param  {boolean} bInsertAtEnd Flag defining if the Element should be inserted at the End of an Aggregation
 	 */
-	ElementMover.prototype.insertInto = function(oMovedOverlay, oTargetAggregationOverlay) {
+	ElementMover.prototype.insertInto = function(oMovedOverlay, oTargetAggregationOverlay, bInsertAtEnd) {
 		var oMovedElement = oMovedOverlay.getElement();
 		var oTargetParentElement = oTargetAggregationOverlay.getElement();
 		var oAggregationDesignTimeMetadata;
@@ -323,13 +324,16 @@ sap.ui.define([
 
 		var aTargetAggregationItems = ElementUtil.getAggregation(oTargetAggregationOverlay.getElement(), oTargetAggregationOverlay.getAggregationName());
 		var iIndex = aTargetAggregationItems.indexOf(oMovedElement);
-		// Don't do anything when the element is already in the aggregation and is the first element
-		if (!(iIndex > -1 && iIndex === 0)) {
+		// insert as first element (index=0) or AFTER the last element (Index=length)
+		var iInsertIndex = bInsertAtEnd ? aTargetAggregationItems.length : 0;
+		// check if element already on desired position
+		// for checking last position, we have to reduce the iInsertIndex by one
+		if (!(iIndex > -1 && iIndex === (iInsertIndex === 0 ? iInsertIndex : iInsertIndex - 1))) {
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove) {
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
 			var sTargetAggregationName = oTargetAggregationOverlay.getAggregationName();
-			ElementUtil.insertAggregation(oTargetParentElement, sTargetAggregationName, oMovedElement, 0);
+			ElementUtil.insertAggregation(oTargetParentElement, sTargetAggregationName, oMovedElement, iInsertIndex);
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.afterMove) {
 				oAggregationDesignTimeMetadata.afterMove(oRelevantContainerElement, oMovedElement);
 			}

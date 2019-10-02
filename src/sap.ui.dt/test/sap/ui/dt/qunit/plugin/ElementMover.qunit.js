@@ -184,12 +184,28 @@ sap.ui.define([
 			assert.strictEqual(aContent.indexOf(this.oButton3), 1, "then button3 is moved to position 1");
 		});
 
+		QUnit.test("Calling repositionOn method with button3 as source and button2 as target overlay and InsertAfterElement is TRUE", function(assert) {
+			this.oElementMover.repositionOn(this.oButton3Overlay, this.oButton2Overlay, true);
+			var aContent = this.oVerticalLayout.getContent();
+			assert.strictEqual(aContent.indexOf(this.oButton1), 0, "then button1 is moved to position 0");
+			assert.strictEqual(aContent.indexOf(this.oButton2), 1, "then button2 is moved to position 1");
+			assert.strictEqual(aContent.indexOf(this.oButton3), 2, "then button3 is moved to position 2");
+		});
+
 		QUnit.test("Calling insertInto method with button1 as source and verticalLayout as target overlay", function(assert) {
 			this.oElementMover.insertInto(this.oButton1Overlay, this.oButton1Overlay.getParentAggregationOverlay());
 			var aContent = this.oVerticalLayout.getContent();
 			assert.strictEqual(aContent.indexOf(this.oButton1), 0, "then button1 is moved to position 0");
 			assert.strictEqual(aContent.indexOf(this.oButton2), 1, "then button2 is moved to position 1");
 			assert.strictEqual(aContent.indexOf(this.oButton3), 2, "then button3 is moved to position 2");
+		});
+
+		QUnit.test("Calling insertInto method with button1 as source and verticalLayout as target overlay and InsertAfterElement is TRUE", function(assert) {
+			this.oElementMover.insertInto(this.oButton1Overlay, this.oButton1Overlay.getParentAggregationOverlay(), true);
+			var aContent = this.oVerticalLayout.getContent();
+			assert.strictEqual(aContent.indexOf(this.oButton1), 2, "then button1 is moved to position 2");
+			assert.strictEqual(aContent.indexOf(this.oButton2), 0, "then button2 is moved to position 0");
+			assert.strictEqual(aContent.indexOf(this.oButton3), 1, "then button3 is moved to position 1");
 		});
 	});
 
