@@ -60,7 +60,8 @@ sap.ui.define(["./MessageStripUtilities"],
 		oRm.class(MSUtils.CLASSES.ICON);
 		oRm.openEnd();
 		oRm.icon(MSUtils.getIconURI.call(oControl), null, {
-			"title": null // prevent the icon title (icon is only decorative)
+			"title": null, // prevent the icon title (icon is only decorative)
+			"aria-hidden": true
 		});
 		oRm.close("div");
 	};
