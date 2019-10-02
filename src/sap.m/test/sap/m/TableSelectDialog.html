@@ -1,18 +1,16 @@
 
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>TableSelectDialog - sap.m</title>
-		<script src="shared-config.js"></script>
-		<script src="../../../resources/sap-ui-core.js"
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>TableSelectDialog - sap.m</title>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-compatVersion="1.16">
-		</script>
-		<script>
-
-		var sButtonWidth =  sap.ui.Device.system.phone ? "100%" : "";
+	</script>
+	<script>
 
 		jQuery.sap.require("sap.ui.core.util.MockServer");
 		jQuery.sap.require("sap.ui.model.odata.ODataModel");
@@ -41,8 +39,8 @@
 		// filter function for the list search
 		var fnDoSearch = function (oEvent, bProductSearch) {
 			var aFilters = [],
-				sSearchValue = oEvent.getParameter("value"),
-				itemsBinding = oEvent.getParameter("itemsBinding");
+					sSearchValue = oEvent.getParameter("value"),
+					itemsBinding = oEvent.getParameter("itemsBinding");
 
 			// create the local filter to apply
 			if(sSearchValue !== undefined && sSearchValue.length > 0) {
@@ -89,7 +87,7 @@
 		var fnPrefilterDialog = function (sSearchValue){
 			// create an array to hold the filters we create
 			var aFilters = fnCreatePrefilter(sSearchValue),
-				itemsBinding = oTableSelectDialog1.getBinding("items");
+					itemsBinding = oTableSelectDialog1.getBinding("items");
 
 			itemsBinding.filter(aFilters, "Application");
 		};
@@ -105,7 +103,7 @@
 
 		// create the data to be shown in the table
 		var oProductData1 = {
-		items : [{
+			items : [{
 				name : "Headphone",
 				quantity : "10 EA",
 				limit : "15.00 Eur",
@@ -469,7 +467,9 @@
 		});
 
 		var oButton3 = new sap.m.Button("Button3", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with destroy call in close event & late binding",
 			press: function (evt) {
 				oTableSelectDialog3.open();
@@ -517,7 +517,9 @@
 		});
 
 		var oButton4 = new sap.m.Button("tsdWithMultiSelectButton", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode",
 			press: function () {
 				// open dialog
@@ -614,7 +616,9 @@
 		});
 
 		var oButton5 = new sap.m.Button("tsdWithLargeDataAndMultiSelectButton", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode with large data",
 			press: function () {
 				// open dialog
@@ -744,7 +748,9 @@
 		});
 
 		var oButton6 = new sap.m.Button("tsdWithVeryLargeDataButton", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with very large data",
 			press: function () {
 				// open dialog
@@ -754,7 +760,9 @@
 		});
 
 		var oButton7 = new sap.m.Button("Button7", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with multi Select and very large data",
 			press: function () {
 				// open dialog
@@ -847,7 +855,9 @@
 		});
 
 		var oButton8 = new sap.m.Button("Button8", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, prefiltered by \"id_1\" with web service binding and no fixed width",
 			press: function () {
 				// initiate model
@@ -913,7 +923,9 @@
 		});
 
 		var oButton9 = new sap.m.Button("Button9", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog in MultiSelect mode, Web service binding, late binding, with web service binding and 400px width",
 			press: function () {
 				// open dialog
@@ -934,7 +946,9 @@
 		});
 
 		var oButton10 = new sap.m.Button("Button10", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with default property growing (true)",
 			press: function () {
 				oTableSelectDialog10.open();
@@ -942,7 +956,9 @@
 		});
 
 		var oButton11 = new sap.m.Button("Button11", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with property growing false",
 			press: function () {
 				oTableSelectDialog11.open();
@@ -1004,7 +1020,9 @@
 		}));
 
 		var oButton12 = new sap.m.Button("Button12", {
-			width: sButtonWidth,
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open TableSelectDialog with Reset Button and long title",
 			press: function () {
 				oTableSelectDialog12.open();
@@ -1031,7 +1049,7 @@
 			],
 			selected : "{selected}"
 		}));
-		
+
 		/* TableSelectDialog with resizable true */
 
 		var oTableSelectDialog13 = new sap.m.TableSelectDialog("TableSelectDialog13", {
@@ -1051,6 +1069,9 @@
 			selected : "{selected}"
 		}));
 		var oButton13 = new sap.m.Button("Button13", {
+			layoutData: new sap.m.FlexItemData({
+				maxWidth: "100%"
+			}),
 			text: "Open SelectDialog with resizable=true",
 			press: function () {
 				// open dialog
@@ -1063,6 +1084,8 @@
 			title:"Mobile TableSelectDialog Control",
 			content:[
 				new sap.m.VBox({
+					renderType: "Bare",
+					alignItems: "Start",
 					items: [
 						oInput1,
 						oInput2,
@@ -1086,8 +1109,8 @@
 		oApp.addPage(oPage).placeAt("content");
 
 	</script>
-	</head>
-	<body id="body" class="sapUiBody">
-		<div id="content"></div>
-	</body>
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
 </html>
