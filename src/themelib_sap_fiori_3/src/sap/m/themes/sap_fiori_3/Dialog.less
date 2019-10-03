@@ -9,7 +9,7 @@
 
 @_sap_m_Dialog_MarginHeight: 6%;
 @_sap_m_Dialog_BarHeight: 2.75rem;
-@_sap_m_Dialog_SubHeaderCompactHeight: 2rem;
+@_sap_m_Dialog_SubHeaderHeight: 2.75rem;
 
 // ==========================================================================
 // Variables
@@ -49,6 +49,10 @@
 	min-width: 4rem;
 }
 
+.sapMDialogTitle {
+	z-index: 3; // to hide the shadow from the header when there is sub-header
+}
+
 // ==========================================================================
 // header, sub-header, footer
 // ==========================================================================
@@ -64,6 +68,7 @@
 		padding-right: 1rem;
 	}
 
+	header .sapMTB,
 	footer .sapMTB {
 		padding: 0 1rem;
 	}
