@@ -33,7 +33,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			/**
 			 * The time of the slide changing in milliseconds.
 			 */
-			"transitionTime" : {type : "int", group : "Appearance", defaultValue : 500}
+			"transitionTime" : {type : "int", group : "Appearance", defaultValue : 500},
+			/**
+			 * Width of the control.
+			 * @since 1.44.50
+			 */
+			"width": {type: "sap.ui.core.CSSSize", group: "Appearance"}
 		},
 		defaultAggregation : "tiles",
 		aggregations : {

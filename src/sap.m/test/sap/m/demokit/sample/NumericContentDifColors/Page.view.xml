@@ -1,15 +1,22 @@
 <mvc:View controllerName="sap.m.sample.NumericContentDifColors.Page"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+	<NumericContent value="888.8" scale="MM" class="sapUiSmallMargin"
+					press="press" truncateValueTo="4" />
 	<NumericContent value="65.5" scale="MM"
-		valueColor="Neutral" indicator="None" state="Loaded" class="sapUiSmallMargin"
-		press="press" />
-	<NumericContent value="65.5" scale="MM"
-		valueColor="Good" indicator="Up" state="Loaded" class="sapUiSmallMargin"
-		press="press" />
+					valueColor="Good" indicator="Up" class="sapUiSmallMargin"
+					press="press" />
 	<NumericContent value="6666" scale="MM"
-		valueColor="Critical" indicator="Up" state="Loaded" class="sapUiSmallMargin"
-		press="press" />
-	<NumericContent value="65.5" scale="MM"
-		valueColor="Error" indicator="Down" state="Loaded" class="sapUiSmallMargin"
-		press="press" />
+					valueColor="Critical" indicator="Up" class="sapUiSmallMargin"
+					press="press" />
+	<NumericContent value="65.5" scale="MMill"
+					valueColor="Error" indicator="Down" class="sapUiSmallMargin"
+					press="press" />
+
+	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" size="L" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
+		<tileContent>
+		<TileContent unit="EUR" footer="Current Quarter">
+			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" withMargin="false" />
+		</TileContent>
+		</tileContent>
+	</GenericTile>
 </mvc:View>

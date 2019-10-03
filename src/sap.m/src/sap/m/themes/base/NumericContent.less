@@ -13,6 +13,21 @@
 		width: auto;
 		height: auto;
 	}
+
+	.sapMNCLargeFontSize {
+		font-size: 2.25rem;
+		line-height: 3.075rem;
+	}
+
+	.sapMNCMediumFontSize {
+		font-size: 2rem;
+		line-height: 3.275rem;
+	}
+
+	.sapMNCSmallFontSize {
+		font-size: 1.75rem;
+		line-height: 3.475rem;
+	}
 }
 
 .sapMNCInner {
@@ -29,14 +44,14 @@
 		position: relative;
 		overflow: visible;
 		white-space: nowrap;
-		display: inline-block;
+		display: flex;
 	}
 }
 
 .sapMNCIconImage {
 	position: relative;
 	float: left;
-	padding-right: 0.625rem;
+	padding-right: 0.375rem;
 
 	font-size: 1.75rem;
 	line-height: 1.65rem;
@@ -47,6 +62,14 @@
 
 	&.WithoutMargin {
 		display: inline-block;
+	}
+
+	&.sapMNCIconImageMediumTopMargin {
+		margin-top: 0.7667rem;
+	}
+
+	&.sapMNCIconImageSmallTopMargin {
+		margin-top: 0.8667rem;
 	}
 }
 
@@ -85,10 +108,9 @@ html[dir=rtl] .sapMNCValueScr {
 
 	height: 2.875rem;
 	min-width: 1rem;
-	max-width: 2.5rem;
 
 	padding-top: 0.5rem;
-	margin-left: 0.625rem;
+	margin-left: 0.5rem;
 
 	&.WithoutMargin {
 		float: left;
@@ -98,6 +120,7 @@ html[dir=rtl] .sapMNCValueScr {
 
 .sapMNCIndicator {
 	position: absolute;
+	top: 10px;
 	left: 0;
 	right: 0;
 	display: block;
@@ -140,7 +163,7 @@ html[dir=rtl] .sapMNCValueScr {
 		height: 1.5rem;
 		line-height: 1.4rem;
 		width: 1.5rem;
-		margin-top: 0.375rem;
+		margin-top: 0.55rem;
 		padding-right: 0.5rem;
 	}
 
@@ -149,9 +172,9 @@ html[dir=rtl] .sapMNCValueScr {
 	}
 
 	.sapMNCValue {
-		font-size: 2rem;
+		font-size:  1.5rem;
 		height: 2.5rem;
-		line-height: normal;
+		line-height: 2.6rem;
 	}
 
 	.sapMNCIndScale {
