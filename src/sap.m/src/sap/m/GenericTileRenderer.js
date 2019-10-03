@@ -61,12 +61,17 @@ sap.ui.define(["sap/m/library", "jquery.sap.global"],
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
-		if (oControl.getBackgroundImage()) {
-			oRm.write(" style='background-image:url(");
-			oRm.writeEscaped(oControl.getBackgroundImage());
-			oRm.write(");'");
-			oRm.addClass("sapMGTBackgroundImage");
-		}
+        if (oControl.getWidth()) {
+            oRm.write(" style=\"width: " + oControl.getWidth() + ";");
+        }
+        if (oControl.getBackgroundImage()) {
+            oRm.write(oControl.getWidth() ? " background-image:url('" : " style=\"background-image:url('");
+            oRm.writeEscaped(oControl.getBackgroundImage());
+            oRm.write("');\"");
+            oRm.addClass("sapMGTBackgroundImage");
+        } else {
+            oRm.write("\"");
+        }
 		if (oControl.getMode() === GenericTileMode.HeaderMode) {
 			oRm.addClass("sapMGTHeaderMode");
 		}

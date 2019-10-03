@@ -38,7 +38,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			 * Changes the visualization in order to enable additional actions with the SlideTile control.
 			 * @since 1.46.0
 			 */
-			"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: "Display" }
+			"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: "Display" },
+			/**
+			* Width of the control.
+			* @since 1.52.37
+			*/
+			"width": {type: "sap.ui.core.CSSSize", group: "Appearance"}
 		},
 		defaultAggregation : "tiles",
 		aggregations : {

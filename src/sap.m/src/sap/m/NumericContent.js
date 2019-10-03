@@ -2,9 +2,85 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/m/Image', 'jquery.sap.keycodes'],
-	function(jQuery, library, Control, IconPool, Image) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/ResizeHandler', 'sap/m/Image', 'jquery.sap.keycodes'],
+	function(jQuery, library, Control, IconPool, ResizeHandler, Image) {
 	"use strict";
+
+	var LANG_MAP = {
+		"ar": 4,
+		"ar_EG": 4,
+		"ar_SA": 4,
+		"bg": 4,
+		"ca": 6,
+		"cs": 4,
+		"da": 4,
+		"de": 8,
+		"de_AT": 8,
+		"de_CH": 8,
+		"el": 4,
+		"el_CY": 4,
+		"en": 4,
+		"en_AU": 4,
+		"en_GB": 4,
+		"en_HK": 4,
+		"en_IE": 4,
+		"en_IN": 4,
+		"en_NZ": 4,
+		"en_PG": 4,
+		"en_SG": 4,
+		"en_ZA": 4,
+		"es": 6,
+		"es_AR": 4,
+		"es_BO": 4,
+		"es_CL": 4,
+		"es_CO": 4,
+		"es_MX": 6,
+		"es_PE": 4,
+		"es_UY": 4,
+		"es_VE": 4,
+		"et": 4,
+		"fa": 4,
+		"fi": 4,
+		"fr": 4,
+		"fr_BE": 4,
+		"fr_CA": 4,
+		"fr_CH": 4,
+		"fr_LU": 4,
+		"he": 4,
+		"hi": 4,
+		"hr": 4,
+		"hu": 4,
+		"id": 4,
+		"it": 8,
+		"it_CH": 8,
+		"ja": 6,
+		"kk": 4,
+		"ko": 6,
+		"lt": 4,
+		"lv": 4,
+		"ms": 4,
+		"nb": 4,
+		"nl": 4,
+		"nl_BE": 4,
+		"pl": 4,
+		"pt": 4,
+		"pt_PT": 4,
+		"ro": 4,
+		"ru": 4,
+		"ru_UA": 4,
+		"sk": 4,
+		"sl": 4,
+		"sr": 4,
+		"sv": 4,
+		"th": 4,
+		"tr": 4,
+		"uk": 4,
+		"vi": 4,
+		"zh_CN": 6,
+		"zh_HK": 6,
+		"zh_SG": 6,
+		"zh_TW": 6
+	};
 
 	/**
 	 * Constructor for a new sap.m.GenericTile control.
@@ -114,11 +190,59 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	NumericContent.prototype.init = function() {
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this.setTooltip("{AltText}");
+        sap.ui.getCore().attachInit(this._registerResizeHandler.bind(this));
 	};
 
+	NumericContent.prototype._getParentTile = function () {
+		var oParent = this.getParent();
+		while (oParent) {
+			if (oParent instanceof sap.m.GenericTile) {
+				return oParent;
+			}
+
+			oParent = oParent.getParent();
+		}
+		return null;
+	};
+
+	NumericContent.prototype._getMaxDigitsData = function () {
+		var oTile = this._getParentTile(),
+		iMaxLength = null,
+		sFontClass = null;
+
+		if (oTile) {
+			var sLang = sap.ui.getCore().getConfiguration().getLanguage();
+
+			iMaxLength = LANG_MAP[sLang] || iMaxLength;
+			switch (iMaxLength) {
+				case 6:
+					sFontClass = "sapMNCMediumFontSize";
+					break;
+				case 8:
+					sFontClass = "sapMNCSmallFontSize";
+					break;
+				default:
+					sFontClass = "sapMNCLargeFontSize";
+					break;
+			}
+		}
+		return {
+			fontClass: sFontClass,
+			maxLength: iMaxLength
+		};
+	};
+
+	/**
+	* Registers resize handler.
+	* @private
+	*/
+	NumericContent.prototype._registerResizeHandler = function () {
+		ResizeHandler.register(this, this.invalidate.bind(this));
+	};
 	NumericContent.prototype.onBeforeRendering = function() {
 		this.$().unbind("mouseenter", this._addTooltip);
 		this.$().unbind("mouseleave", this._removeTooltip);
+        this._iMaxLength = null;
 	};
 
 	NumericContent.prototype.onAfterRendering = function() {
@@ -130,6 +254,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				opacity : "1"
 			}, 1000);
 		}
+
+		if (!sap.ui.getCore().isThemeApplied()) {
+			sap.ui.getCore().attachThemeChanged(this._checkIfIconFits, this);
+		} else {
+			this._checkIfIconFits();
+		}
 	};
 
 	/**
@@ -138,6 +268,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	NumericContent.prototype._addTooltip = function() {
 		this.$().attr("title", this.getTooltip_AsString());
+	};
+
+	/**
+	* Shows/hides icon depending if it fits or not.
+	* @private
+	*/
+	NumericContent.prototype._checkIfIconFits = function() {
+
+		var $icon = this.$("icon-image"),
+		$value = this.$("value-inner"),
+		$wrapper = this.$("value-scr");
+
+		var iSize = $icon.outerWidth() + $value.width(),
+		iWrapperSize = $wrapper.width();
+
+		iSize > iWrapperSize ? $icon.hide() : $icon.show();
 	};
 
 	/**
