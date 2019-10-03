@@ -174,8 +174,10 @@ sap.ui.define([
 
 						// prevent the tabstrip from closing the item by default
 						oEvent.preventDefault();
-						if (this.fireItemClose({item: oRemovedItem})) {
-							this.removeItem(oRemovedItem); // the tabstrip item will also get removed
+						if (this.fireItemClose({ item: oRemovedItem })) {
+							if (!this.getBinding("items")) {
+								this.removeItem(oRemovedItem); // the tabstrip item will also get removed
+							}
 						}
 
 					}.bind(this)
