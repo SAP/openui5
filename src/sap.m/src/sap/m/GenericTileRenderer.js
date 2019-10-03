@@ -31,7 +31,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		// Write the HTML into the render manager.
 		var sTooltipText = oControl._getTooltipText();
 		var sAriaText = oControl._getAriaText();
-        sAriaText = "GenericTile" + "\n" + sAriaText;
+		sAriaText = "GenericTile" + "\n" + sAriaText;
 		var sHeaderImage = oControl.getHeaderImage();
 		var bHasPress = oControl.hasListeners("press");
 		var sState = oControl.getState();
@@ -44,6 +44,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (sTooltipText) {
 			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
+
 		oRm.addClass("sapMGT");
 		oRm.addClass(sStateClass);
 		oRm.addClass(sScopeClass);
@@ -62,11 +63,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
+		if (oControl.getWidth()) {
+			oRm.write(" style=\"width: " + oControl.getWidth() + ";");
+		}
 		if (oControl.getBackgroundImage()) {
-			oRm.write(" style='background-image:url(");
+			oRm.write(oControl.getWidth() ? " background-image:url('" : " style=\"background-image:url('");
 			oRm.writeEscaped(oControl.getBackgroundImage());
-			oRm.write(");'");
+			oRm.write("');\"");
 			oRm.addClass("sapMGTBackgroundImage");
+		} else {
+			oRm.write("\"");
 		}
 		if (oControl.getMode() === GenericTileMode.HeaderMode) {
 			oRm.addClass("sapMGTHeaderMode");
