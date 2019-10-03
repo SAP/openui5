@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/FlexItemData",
 	"sap/ui/Device",
+	"sap/m/Button",
 	"sap/m/VBox"
-], function(FlexBox, HTML, jQuery, Image, FlexItemData, Device, VBox) {
+], function(FlexBox, HTML, jQuery, Image, FlexItemData, Device, Button, VBox) {
 	/*global document, jQuery, sap, QUnit*/
 	"use strict";
 
@@ -800,6 +801,54 @@ sap.ui.define([
 		var iClassesLengthWithoutDuplicate = Array.from(new Set(aClassesList)).toString().split(",").length;
 
 		assert.equal(iClassesLength, iClassesLengthWithoutDuplicate, "There are no duplicated class names" );
+	});
+
+	QUnit.module("FlexItemData", {
+		beforeEach: function() {
+
+			this.oLayoutData = new FlexItemData({
+				styleClass: "class1"
+			});
+
+			this.oBox = new FlexBox({
+				items: [
+					new sap.m.Button({
+						text : "Text",
+						layoutData: this.oLayoutData
+					})
+				]
+			});
+
+			this.oBox.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+
+			this.oLayoutData = null;
+
+			this.oBox.destroy();
+			this.oBox = null;
+		}
+	});
+
+	QUnit.test("FlexItemData properties", function(assert) {
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class1'), "class1 is added");
+
+		this.oLayoutData.setStyleClass('class2');
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class2'), "class2 is added");
+
+		this.oBox.setRenderType("Bare");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class2'), "class2 is added");
+
+		this.oLayoutData.setStyleClass('class3');
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.oBox.$()[0].firstChild.classList.contains('class3'), "class3 is added");
 	});
 
 	QUnit.module("Accessibility", {
