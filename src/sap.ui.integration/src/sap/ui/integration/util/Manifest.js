@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/core/Manifest",
 	"sap/base/util/deepClone",
 	"sap/base/util/merge",
-	"sap/base/Log"
+	"sap/base/Log",
+	"./ParameterMap"
 	], function (
 	BaseObject,
 	CoreManifest,
 	deepClone,
 	merge,
-	Log
+	Log,
+	ParameterMap
 ) {
 	"use strict";
 
@@ -266,9 +268,7 @@ sap.ui.define([
 	 * @returns {string} The string with replaced placeholders.
 	 */
 	function processPlaceholder (sPlaceholder, oParam) {
-		var sISODate = new Date().toISOString();
-		var sProcessed = sPlaceholder.replace("{{parameters.NOW_ISO}}", sISODate);
-		sProcessed = sProcessed.replace("{{parameters.TODAY_ISO}}", sISODate.slice(0, 10));
+	   var sProcessed = ParameterMap.processPredefinedParameter(sPlaceholder);
 
 		if (oParam) {
 			for (var oProperty in oParam) {
@@ -395,10 +395,10 @@ sap.ui.define([
 		}
 
 		if (!oConfiguration) {
-		    return;
-        }
+			return;
+		}
 		var oManifestConf = this.get(this.CONFIGURATION),
-		    oJson = deepClone(this.oJson, 30, 30);
+			oJson = deepClone(this.oJson, 30, 30);
 
 		oJson[this.CONFIGURATION.substring(1)] = merge({}, oManifestConf, oConfiguration);
 
