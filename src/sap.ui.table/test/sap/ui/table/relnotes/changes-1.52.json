@@ -221,5 +221,565 @@
         ]
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "06e2f12f22f59814db430de326a62135ca77df3d",
+        "type": "FIX",
+        "text": "Table: Correct height adjustment when used inside a splitter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770446860"
+          }
+        ]
+      },
+      {
+        "id": "5bea1fdce0e12fed953b82e5a28eba41403d329f",
+        "type": "FIX",
+        "text": "Table: Improved busy handling in case of parallel requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004287602017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.2": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "8934873c2a17381155a136e01018a190a3982ef2",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Table renders even if column was destroyed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770533228"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.3": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "e524ed8e04f21dc70e920f848c4942eb844718ba",
+        "type": "FIX",
+        "text": "AnalyticalTable: Remove limitations of SelectionMode/Behavior",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770617264"
+          }
+        ]
+      },
+      {
+        "id": "cebba45aaddfead794eb2c3314a8bc106f8c1a62",
+        "type": "FIX",
+        "text": "GridTable: Hide Selection tooltip on empty rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780429261"
+          }
+        ]
+      },
+      {
+        "id": "c2bc35b57a1b297d6817646f35d52530438409f8",
+        "type": "FIX",
+        "text": "Table: Correctly calculate the number of displayed rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770615846"
+          }
+        ]
+      },
+      {
+        "id": "1efc2e6560520f56ff746879512cf85607fc95e2",
+        "type": "FIX",
+        "text": "Table: Vertical scrollbar becomes visible if height is decreased",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770578177"
+          }
+        ]
+      },
+      {
+        "id": "61cdacd7e959feb15bbeee3b964db8486d7a4679",
+        "type": "FIX",
+        "text": "sap.ui.table.Table - wrong number of displayed rows",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770593977"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "9f1328dd1e5537d4f080a31a4f043568cba07265",
+        "type": "FIX",
+        "text": "GridTable: Keyboard Behavior on RowActions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780429522"
+          }
+        ]
+      },
+      {
+        "id": "1b3b69cd3d9d46cc3d28751aa501a2bf17e9bb80",
+        "type": "FIX",
+        "text": "Table: Horizontal scrolling with the touchpad",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006225252017"
+          }
+        ]
+      },
+      {
+        "id": "20f2dbde28e1ffb8f6a03280fd34ffc7c02e0e98",
+        "type": "FIX",
+        "text": "TreeTable: ACC Anouncement of selection state on data cells",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770546860"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "383394649ccd0363a2efeba49736dd1bf17f73a7",
+        "type": "FIX",
+        "text": "Control: refactor fnHandleInteraction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770370091"
+          }
+        ]
+      },
+      {
+        "id": "16086f1fb2884210517affa65f6ff5ce6676b5fd",
+        "type": "FIX",
+        "text": "GridTable: No event default prevention on non-table DOM elements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780534163"
+          }
+        ]
+      },
+      {
+        "id": "206ac003ad7e669d8a3f6d2724f280f3f6fa053b",
+        "type": "FIX",
+        "text": "Table: Role \"row\" added to tr elements in the table header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000475622017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "0b809a348a443843e72c1102d67df3f3b8a601f6",
+        "type": "FIX",
+        "text": "TreeTable: Outline offset of tree icon in zoom levels \u003c 100%",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880073947"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "d16698c00a969d3cc95fa37d23d271e0fa70dbc1",
+        "type": "FIX",
+        "text": "GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770561123"
+          }
+        ]
+      },
+      {
+        "id": "2316912d94a55d5918b9cf3af417ec6c309cbcbb",
+        "type": "FIX",
+        "text": "GridTable: Fix up/down navigation with arrow keys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870020326"
+          }
+        ]
+      },
+      {
+        "id": "cf0477dd46d7b0d7b8427839da54305dc53c0a0b",
+        "type": "FIX",
+        "text": "GridTable: Scrollbar styling in base theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880229317"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.10": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "16d51d3f352906264a3b7e2fb135b7af112678f2",
+        "type": "FIX",
+        "text": "AnalyticalTable: Sum Row indent and hover effect corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770584241"
+          }
+        ]
+      },
+      {
+        "id": "5e7285fdc5ad609ac8cc8d4552ef5a0d4de29c1e",
+        "type": "FIX",
+        "text": "GridTable: Attribute headers for gridcell corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880221690"
+          }
+        ]
+      },
+      {
+        "id": "7cad63b6569b31899d4ececedaed2b79cc10e179",
+        "type": "FIX",
+        "text": "GridTable: Disable visibility menu item of last visible column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880228660"
+          }
+        ]
+      },
+      {
+        "id": "c1ccb85d96b1fd1497b8619444262022910271c8",
+        "type": "FIX",
+        "text": "GridTable: Move before/after tab elements out of scrollable CCnt",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770275775"
+          }
+        ]
+      },
+      {
+        "id": "3cb6fad0012179ebb510d97e94afb0165706eccc",
+        "type": "FIX",
+        "text": "Table: Correct number of rows in visibleRowCountMode\u003dAuto",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770572342"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001084932018"
+          }
+        ]
+      },
+      {
+        "id": "e965d9a8ab350d19ec0bbb8010ea27bf6dfed56f",
+        "type": "FIX",
+        "text": "Table: Stabilized scroll position on cell focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001295152018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.11": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "974ff7ab7d3a684e87c8bce40e5f7c7c5ddbb895",
+        "type": "FIX",
+        "text": "GridTable: Avoid refocus of cell while scrolling for ACC",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005523482017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b923901a78fbfbeaf4d59c4353e124cf05f18ee6",
+        "type": "FIX",
+        "text": "GridTable: applyFocusInfo handling corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870153705"
+          }
+        ]
+      },
+      {
+        "id": "f5a82817f31dfbd7189c948c024f024ddb525e22",
+        "type": "FIX",
+        "text": "Table: Correctly update the visibility of the NoData overlay",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770364678"
+          }
+        ]
+      },
+      {
+        "id": "149821e16aef9ad4f46bea3162f362bb399c527a",
+        "type": "FIX",
+        "text": "TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1998"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870194953"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.14": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "ce9772b10f238d95871bc2f0539cd0e6e78249a5",
+        "type": "FIX",
+        "text": "GridTable: NoData handling for $expand(ed) lists corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870263895"
+          }
+        ]
+      },
+      {
+        "id": "a94dc7611a7df7c24ce875b00b5bd8438139dede",
+        "type": "FIX",
+        "text": "Table: Correct positioning of the action column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870279506"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "050bd9183c3ada0d22d62f47606e76b0cd1a5ed9",
+        "type": "FIX",
+        "text": "Table: Avoid infinite re-rendering if fixed columns are available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880301265"
+          }
+        ]
+      },
+      {
+        "id": "2e441c8aa7897c8dbf78105717d5f741df0fffa1",
+        "type": "FIX",
+        "text": "Table: Avoid layout and row updates if the table is invisible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870063832"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "8bb4f5c2f833a0c908e2171c0dcaec442e5524e0",
+        "type": "FIX",
+        "text": "Table: Avoid horizontal scrolling of cell content on focus in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880453585"
+          }
+        ]
+      },
+      {
+        "id": "ddcea9a3b07ce1ea3a7d6ab1780421c0beff65f1",
+        "type": "FIX",
+        "text": "Table: Correctly set firstVisibleRow if zoomed in Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880323124"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.23": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "eb520a8b76e51b5250d7089d678c0e2d472efcff",
+        "type": "FIX",
+        "text": "Table: Apply input values when scrolling by edit mode navigation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005540862018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.24": {
+    "date": "January 2019",
+    "notes": [
+      {
+        "id": "433742a70ee121abf9780d43b8a0669c33b657b1",
+        "type": "FIX",
+        "text": "Table: Avoid infinite rendering loop with fixed columns in Edge 44",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2334"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400006440602018"
+          }
+        ]
+      },
+      {
+        "id": "c250176cb2a9a01814832a103b89c2f5f2a90d11",
+        "type": "FIX",
+        "text": "Table: Vertical scrollbar not visible in table with OData model",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780502832"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.25": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "f1085e25514b154d0ad8571bb5ff6d4d960918be",
+        "type": "FIX",
+        "text": "Table: Fixed column layout corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970042745"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.27": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "f4a58d5dd06e60d8237c3d4b98b9aae9caad1cc2",
+        "type": "FIX",
+        "text": " AnalyticalTable: Correctly open group row context menu",
+        "references": []
+      },
+      {
+        "id": "f9c7c01b801f91f4502468fc69fc2a70e11493ff",
+        "type": "FIX",
+        "text": " Table: Open cell filter menus on correct cell",
+        "references": []
+      }
+    ]
+  },
+  "1.52.28": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "41d551614df2e4e78afd22643c29e0f7e58a5230",
+        "type": "FIX",
+        "text": " Table: Mouse wheel scrolling for delta modes \"Line\" and \"Page\"",
+        "references": []
+      },
+      {
+        "id": "32fc074dcb066f2edaad25c1a24698c5dc1bd9c6",
+        "type": "FIX",
+        "text": " Table: Update column menu visibility to match actual state",
+        "references": []
+      }
+    ]
+  },
+  "1.52.32": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "046871181d582ad5f9bb4209c22a486c52b2433a",
+        "type": "FIX",
+        "text": " GridTable: Replaced IE incompatible function(s)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880365356"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -45,6 +45,50 @@
             "reference": "1970298708"
           }
         ]
+      },
+      {
+        "id": "65e82b5e8b79f1de07c2b658eb4637f62b456bbc",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Touch on month or year select now shown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970314457"
+          }
+        ]
+      },
+      {
+        "id": "057dd6c0477f618842d981d327d8dd9f8f80b787",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Fixes visual artict in Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980328197"
+          }
+        ]
+      },
+      {
+        "id": "f1505e57cc0ef328c029721e8ff8cac2dab8390d",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: change event is not fired when the cancel button is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970298708"
+          }
+        ]
+      },
+      {
+        "id": "f05396c8751e7082541b323c59d6663aa7e0c171",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: qunit tests pass",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346398"
+          }
+        ]
       }
     ]
   }

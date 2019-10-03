@@ -79,57 +79,37 @@
       {
         "id": "8615e1f34e3b644ca9282f303f42c082032307d4",
         "type": "FEATURE",
-        "text": "sap/base/util/UriParameters: expose as public API",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "2567"
-          }
-        ]
+        "text": " sap/base/util/UriParameters: expose as public API",
+        "references": []
       },
       {
         "id": "d4aef5d676d132d2fd360cf7804ceee5f4c0fdc3",
         "type": "FIX",
-        "text": "ODataMessageParser: Technical message lifecycle",
+        "text": " ODataMessageParser: Technical message lifecycle",
         "references": []
       },
       {
         "id": "136cd4078e08ec0ce5b904597a2388bb44e072a3",
         "type": "FIX",
-        "text": "TreeBindingAdapter: correctly clear selectAllMode",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970285916"
-          }
-        ]
+        "text": " TreeBindingAdapter: correctly clear selectAllMode",
+        "references": []
       },
       {
         "id": "8579c0a1334a8b2745f10685bfc8423c70f9a216",
         "type": "FIX",
-        "text": "core.routing: event parameters of routeMatched event",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970211166"
-          }
-        ]
+        "text": " core.routing: event parameters of routeMatched event",
+        "references": []
       },
       {
         "id": "5c800dbfc2a33f13423fcb1cfa24b44e2014ffa4",
         "type": "FIX",
-        "text": "core:routing: correctly handle parent target which loads component",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1970211062"
-          }
-        ]
+        "text": " core:routing: correctly handle parent target which loads component",
+        "references": []
       },
       {
         "id": "7f6f744f50b5c83fbf038450fc80c6b788bda4f0",
         "type": "FIX",
-        "text": "performance/trace/FESR: Beacon strategy adaptations",
+        "text": " performance/trace/FESR: Beacon strategy adaptations",
         "references": []
       }
     ]

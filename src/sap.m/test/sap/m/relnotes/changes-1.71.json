@@ -537,6 +537,553 @@
             "reference": "1980424260"
           }
         ]
+      },
+      {
+        "id": "9aff9caa4ffd5fbfe249c0a911b86e47112d0e8c",
+        "type": "FEATURE",
+        "text": " SAP Icons v4.5 update",
+        "references": []
+      },
+      {
+        "id": "35cde730498d4ec64ce7d6defc149559de1eab4b",
+        "type": "FEATURE",
+        "text": " StandardListItem: visual adaptation",
+        "references": []
+      },
+      {
+        "id": "5bde70b2aa75d18358cd52a18a33dc094988098b",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Support of changing the target in adaptation mode",
+        "references": []
+      },
+      {
+        "id": "e470a26aa981c5a398c2e1e194087849d5dfa692",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: fires viewChange event",
+        "references": []
+      },
+      {
+        "id": "6d7df19eb16f0b4474480ddb824e06ddf1ed72ee",
+        "type": "FEATURE",
+        "text": " sap.m.TabContainer: Added new background design property",
+        "references": []
+      },
+      {
+        "id": "42b1ba489a6cc06009b6666ffe3f009f64389e67",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: Draggable and resizable properties added. Tests added.",
+        "references": []
+      },
+      {
+        "id": "ed6a9eda35ec1aa6f60834caa505a890c008639f",
+        "type": "FIX",
+        "text": " P13nConditionPanel: improve date validation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970269196"
+          }
+        ]
+      },
+      {
+        "id": "257872544847bf94cb287e8c55306e84fdb5f76d",
+        "type": "FIX",
+        "text": " SAP-icons: Add \"soccer\" as alias for \"soccor\" (typo)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980361059"
+          }
+        ]
+      },
+      {
+        "id": "fa649cbcbec0fecb06909ed8f45853800d59ffdc",
+        "type": "FIX",
+        "text": " TreeItemBase: selection handling on model reset enhanced",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980419900"
+          }
+        ]
+      },
+      {
+        "id": "5bd22d4b6ff7b6fed8b71583865c432ac6482538",
+        "type": "FIX",
+        "text": " UploadCollection: Terminating an upload removes an item from the collection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970277599"
+          }
+        ]
+      },
+      {
+        "id": "9ab45a7312645a7bf1732bc0227bf726d42c3b2a",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Scrollbar is now visible on tablet",
+        "references": []
+      },
+      {
+        "id": "fdd2c011058cf5f257bf3d5a6d7631c525fae395",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: separatorStyle key-value pair names are now matching",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980398504"
+          }
+        ]
+      },
+      {
+        "id": "484d7447477d051236f1497d14a52649a9e4e3fb",
+        "type": "FIX",
+        "text": " sap.m.Button: Closing button pressed loop on popup opened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970336332"
+          }
+        ]
+      },
+      {
+        "id": "88380137f916f26aaf5acfc6db93f867bf4ebbe3",
+        "type": "FIX",
+        "text": " sap.m.Button: text and icon are visible when the control is inside active list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980335830"
+          }
+        ]
+      },
+      {
+        "id": "32d0e875f50b1410667cf8de624b9674c48bd8e0",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with keys fast is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980357464"
+          }
+        ]
+      },
+      {
+        "id": "7ccb18e11a03d6703fd47889ce030b5be3a7a523",
+        "type": "FIX",
+        "text": " sap.m.Carousel: visiblePagesCount now stops loop in all directions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980360836"
+          }
+        ]
+      },
+      {
+        "id": "563f42c31cca9e8288e7e150dab555f7d10c46f1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Closing after interaction race condition fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "493896"
+          }
+        ]
+      },
+      {
+        "id": "cc4fc84606241b93e84a05d1b53c41c3a33fe4ee",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Now DatePicker does not override the style of the Dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980344287"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980343246"
+          }
+        ]
+      },
+      {
+        "id": "ab3ee7dcfc4f05e8cb761cfccf41e86234d8ce5f",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: documentation is updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970418432"
+          }
+        ]
+      },
+      {
+        "id": "0b9d0efbbb88a63e58b5f2a58f67ca1a4e0a033d",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: binding used in UTC mode specified in source works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970448883"
+          }
+        ]
+      },
+      {
+        "id": "da997ba896c6e86db9b735c85b35f2ec56e571da",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Scrollbar detection improved for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980317311"
+          }
+        ]
+      },
+      {
+        "id": "4c108d0080d10a89741df5f950b4a10706d4c451",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: doesn\u0027t show button if the list is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980317964"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970373220"
+          }
+        ]
+      },
+      {
+        "id": "921fcc1aaae5682a4c92b3d1befdeec250507ba4",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Padding classes are now forwarded to the header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980369748"
+          }
+        ]
+      },
+      {
+        "id": "14cc486681acb76fc7e720a384c3d615babdd8bd",
+        "type": "FIX",
+        "text": " sap.m.Input: Placeholder is now fully visible in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "522859"
+          }
+        ]
+      },
+      {
+        "id": "a67d4a72d794dd7aedf22205455ba58136f1214c",
+        "type": "FIX",
+        "text": " sap.m.Input: Value is now preserved when value help is requested",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980399063"
+          }
+        ]
+      },
+      {
+        "id": "b5a816f81e81fff8b728ed33f2d7ead4f40a82ee",
+        "type": "FIX",
+        "text": " sap.m.Link: Accessibility improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980410527"
+          }
+        ]
+      },
+      {
+        "id": "78f93b76d06ccca80ab0ca1e14989930908f3b23",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Disabled button is no longer highlighted on press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980394088"
+          }
+        ]
+      },
+      {
+        "id": "83835f17f9e454f54313f1aa6dc8cefa23d5af20",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Formatted text has an inline positioning",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980333336"
+          }
+        ]
+      },
+      {
+        "id": "f8f07837eb02f50930e150552ea923790c58a5dd",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Sync selectedKeys \u0026 selectedItems",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980392874"
+          }
+        ]
+      },
+      {
+        "id": "29051646a14ffb43b5f05ffffaf9a75ec1b23793",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Value State Error is reset correctly",
+        "references": []
+      },
+      {
+        "id": "aa701ca2aa9c533541dbe9ff06535b2ee7e7c9fc",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Cloning is now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980341769"
+          }
+        ]
+      },
+      {
+        "id": "962ff2ec8705f36550122c79e08bdcc99d940747",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Delete list mode is always used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970374013"
+          }
+        ]
+      },
+      {
+        "id": "0302f940d8299119d919521f98307b7fed1eb6d4",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Demokit sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980363750"
+          }
+        ]
+      },
+      {
+        "id": "2fc5c614ba12ad10e01aeaf2e4523accf74113d6",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Active title with level different than 1 is displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970437354"
+          }
+        ]
+      },
+      {
+        "id": "ffca4be0fb7ee25cc0646d56861cc86dc019c252",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Accessibility improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970268346"
+          }
+        ]
+      },
+      {
+        "id": "55af9bb76cd2d6cb98b9fd2337c4bdfad4aeccaf",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Inverted status is shown correctly in ObjectPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980319996"
+          }
+        ]
+      },
+      {
+        "id": "0cb64b956471fef66cbe2a4c03e9d5b30d5d5007",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: pseudo invisible text for ARIA doesn\u0027t take space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980355059"
+          }
+        ]
+      },
+      {
+        "id": "51654e2c08f95b2cf4eaa66831ddae4f7f7aec38",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: No exception when content is undefined",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970454120"
+          }
+        ]
+      },
+      {
+        "id": "9cfe22572525fc469af0f88187469f6459f18f6e",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Order in controls\u0027 collection is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980359991"
+          }
+        ]
+      },
+      {
+        "id": "ae170d241142823b1ecdaf32f53fee4d02cb3b84",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Calculating height in percents corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970334751"
+          }
+        ]
+      },
+      {
+        "id": "0b3c9fcd49acadd9be431273ee239ee61a5ee69f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Expand functionality select removed for mobile devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970417958"
+          }
+        ]
+      },
+      {
+        "id": "4ba0579427840d342bff4dab195d0ae87ff61df2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Sorting sample corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970418085"
+          }
+        ]
+      },
+      {
+        "id": "cf9a2967123a289ac04b45b4d073f4918b8a52d5",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: formats picker text properly in foreign languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980404883"
+          }
+        ]
+      },
+      {
+        "id": "24601cf5fa5941b5d0af48b03999d9d15387c3eb",
+        "type": "FIX",
+        "text": " sap.m.Popover: Popover does not close on navigation",
+        "references": []
+      },
+      {
+        "id": "47aa56dd50b52895f14b23730af70755c0d82301",
+        "type": "FIX",
+        "text": " sap.m.Popover: aria-labelledby improvement",
+        "references": []
+      },
+      {
+        "id": "5d7c8645aa44d5833273bee8f5d3b6f02e8e73cc",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Click delegate changed to tap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980346450"
+          },
+          {
+            "type": "BCP",
+            "reference": "1980345532"
+          }
+        ]
+      },
+      {
+        "id": "f470a3addbf98c9eaa91adc106e8db8ff285c19f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: minor fix in a sample",
+        "references": []
+      },
+      {
+        "id": "474a44fa5929322c22d522ab22fc768b873220ab",
+        "type": "FIX",
+        "text": " sap.m.Switch: Fiori 3 VD changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980313633"
+          }
+        ]
+      },
+      {
+        "id": "bd89d4e391581d4a85a2168e4db351841dd8a3ae",
+        "type": "FIX",
+        "text": " sap.m.TabStripItem: Close button has tooltip now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980335666"
+          }
+        ]
+      },
+      {
+        "id": "ccb221b3956501fe5767fa18566aa24f7912768c",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: focus index is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970415298"
+          }
+        ]
+      },
+      {
+        "id": "4ec58467f3a6979227b60555e2fa35bbb881c984",
+        "type": "FIX",
+        "text": " sap.m.Token: Toggle selection on space key adjusted",
+        "references": []
+      },
+      {
+        "id": "e505e87e363cde63222df9b6024122e81c05bf84",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Corrected vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405356"
+          }
+        ]
+      },
+      {
+        "id": "3b062fe0bb1deef7b3d0a627b3251079f0bdb06b",
+        "type": "FIX",
+        "text": " sap.m.Tree: No action is needed for dummy leaf expander",
+        "references": []
+      },
+      {
+        "id": "581803189b28b3a510205a2bbacc4653c7fe5c90",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Detach event listeners from the step when removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980424260"
+          }
+        ]
+      },
+      {
+        "id": "036018d011561789bcfb5317d15f110c91692d36",
+        "type": "FIX",
+        "text": " sap.m.demokit.tutorial.walkthrough: add missing file to config",
+        "references": []
       }
     ]
   }

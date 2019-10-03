@@ -23,6 +23,39 @@
             "reference": "1980336508"
           }
         ]
+      },
+      {
+        "id": "dc46258a8937665ae512fdab79550d6ff5b03bcb",
+        "type": "FIX",
+        "text": " REG: Adapt UI ObjectPageLayout exception is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980328772"
+          }
+        ]
+      },
+      {
+        "id": "12da1543908689e75266015a727889216e2a7637",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Prevent redundant calculations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980336508"
+          }
+        ]
+      },
+      {
+        "id": "7f331306ee78abcf353d814bf171d0607134022f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Ensured correct scroll position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980365632"
+          }
+        ]
       }
     ]
   }

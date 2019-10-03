@@ -51,5 +51,80 @@
         "references": []
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "9afe492517b95f935181a949790fade574639ef9",
+        "type": "FIX",
+        "text": "Add function buildStableChangeInfo to MoveControls Changehandler",
+        "references": []
+      }
+    ]
+  },
+  "1.44.9": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "d5e678763d5c4888008842cdfb8f19b4880a7469",
+        "type": "FIX",
+        "text": "Variant loading fails if server sends correct content type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770061095"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.18": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "344151c6943eaf1d94e7666ac6e584177267fe5f",
+        "type": "FIX",
+        "text": "sap.ui.fl changeHandler needs to store dependencies",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002419772017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.30": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "8ed9f5ddd1f76d6073d178c4e1a54eb3fc52fd4d",
+        "type": "FIX",
+        "text": "sap.ui.fl: enable propertyChange for CUSTOMER_BASE layer",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500000439172018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "82db22733fd0940dc17cd2209235603ca96b4730",
+        "type": "FIX",
+        "text": "sap.ui.fl: Stores flex setting from Persistence class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000830522018"
+          }
+        ]
+      }
+    ]
   }
 }

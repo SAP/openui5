@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.ui.dt: Cleanup of unnecessary lib in DragDrop plugin",
         "references": []
+      },
+      {
+        "id": "b74942cd5fe9aa6ef7f190098d075173f67df0b0",
+        "type": "FIX",
+        "text": " sap.ui.dt: Cleanup of unnecessary lib in DragDrop plugin",
+        "references": []
       }
     ]
   }

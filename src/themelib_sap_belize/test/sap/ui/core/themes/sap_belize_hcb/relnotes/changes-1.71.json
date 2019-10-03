@@ -12,6 +12,17 @@
             "reference": "1880460732"
           }
         ]
+      },
+      {
+        "id": "075faf0aa3084f1eb68890ea600b83e66f450540",
+        "type": "FIX",
+        "text": " sap.m.Button: icon shown correctly in belize deep",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880460732"
+          }
+        ]
       }
     ]
   }

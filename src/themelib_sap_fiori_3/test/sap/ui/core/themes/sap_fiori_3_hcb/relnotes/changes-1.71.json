@@ -70,6 +70,101 @@
         "type": "FEATURE",
         "text": " sap.ui.unified.Menu: Fiori 3 visual design update",
         "references": []
+      },
+      {
+        "id": "35cde730498d4ec64ce7d6defc149559de1eab4b",
+        "type": "FEATURE",
+        "text": " StandardListItem: visual adaptation",
+        "references": []
+      },
+      {
+        "id": "368fdecd1f193b832bbe467065bf1043dc016845",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPage: Aligned with Quartz Light specification",
+        "references": []
+      },
+      {
+        "id": "ab21c3038334a0fd624089ff2bc3d7ca125c873a",
+        "type": "FEATURE",
+        "text": " sap.m.Shell: Theme enhancement",
+        "references": []
+      },
+      {
+        "id": "122d1920ee955fa793fb3064abe66b2678d9ec89",
+        "type": "FEATURE",
+        "text": " sap.m.Switch: Theme enhancement",
+        "references": []
+      },
+      {
+        "id": "40a60acc6ad200c50d651254a29a75e168f6f574",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Menu: Fiori 3 visual design update",
+        "references": []
+      },
+      {
+        "id": "acd876257937666c5f458e024b4d0d190449bfaf",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage/sap.uxap.ObjectPageLayout: Visual improvements",
+        "references": []
+      },
+      {
+        "id": "e0adacff5ff2c02851899d8ffca78816d798fb2b",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Scrolling and \"sticky headers\" are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467496"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970467937"
+          }
+        ]
+      },
+      {
+        "id": "bc44bc1834494102eb7f4b6f3b50fa897078fb18",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed failing picker in SAP Quartz theme",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405308"
+          }
+        ]
+      },
+      {
+        "id": "f46de1d509ce1a950959a2fcbe9520aa21d24004",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed incorrect click behaviour in Quartz Light",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970456784"
+          }
+        ]
+      },
+      {
+        "id": "9f2f2541759c663f8593b73aa92477374330435c",
+        "type": "FIX",
+        "text": " sap.m.Select: Quartz Light focus lost on hover fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980018771"
+          }
+        ]
+      },
+      {
+        "id": "474a44fa5929322c22d522ab22fc768b873220ab",
+        "type": "FIX",
+        "text": " sap.m.Switch: Fiori 3 VD changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980313633"
+          }
+        ]
       }
     ]
   }

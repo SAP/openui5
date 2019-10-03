@@ -40,6 +40,45 @@
             "reference": "1980391002"
           }
         ]
+      },
+      {
+        "id": "9fa6c5a3867cf038855adbc470680baa167ffc0c",
+        "type": "FEATURE",
+        "text": " sap.f.GridDropInfo: Setting dimensions of the indicator is now possible",
+        "references": []
+      },
+      {
+        "id": "914258a9d41cc677d21a351dd2c0fb1d8eb07a67",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: failing test on EDGE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980355178"
+          }
+        ]
+      },
+      {
+        "id": "ed0d97a8750cd322e6723a53b343ae4e1463700b",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Hidden controls now don\u0027t take space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980391002"
+          }
+        ]
+      },
+      {
+        "id": "65b6e59deddd8413d5e0fd1016d8151da161cb57",
+        "type": "FIX",
+        "text": " sap.f.GridDropInfo: Indicator is now hidden on drag leave",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980360992"
+          }
+        ]
       }
     ]
   }

@@ -86,5 +86,106 @@
         "references": []
       }
     ]
+  },
+  "1.58.1": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "93d9da777d87e1d3568f97c17861e0b4f11c2783",
+        "type": "FIX",
+        "text": "ResponsiveGridLayout: Form cells must have overflow hidden",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880503047"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.2": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "2a2797e56a366a8f87f94ddb6846cb497679d6a8",
+        "type": "FIX",
+        "text": "sap.ui.layout - Flexibility: Check actions based on form layout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880536682"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.3": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "2bc732670f8e5463c134d47623b6d24a7ae88265",
+        "type": "FIX",
+        "text": "AlignedFlowLayout: Accessibility issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870364846"
+          }
+        ]
+      },
+      {
+        "id": "d171b6a7d1aa32aea72cfa28d6767e8e3e78eebd",
+        "type": "FIX",
+        "text": "HideSimpleForm change handler doesn't perform revert after restart",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880498309"
+          }
+        ]
+      },
+      {
+        "id": "a4f6fe5f1af769519fb6246f00a50ebd901fabc4",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveSplitter minSize property is now working correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870320649"
+          }
+        ]
+      }
+    ]
+  },
+  "1.58.6": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "1c37b09d72f71e9e0fd1306682e25fd2ea53dace",
+        "type": "FIX",
+        "text": "ColumnElementData and ColumnContainerData @since wrong",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "2287"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880718434"
+          }
+        ]
+      },
+      {
+        "id": "df33d5784668adc68658faf09b6e2b76457e3e9d",
+        "type": "FIX",
+        "text": "SimpleForm: Layout rendered wrong if set late",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610321"
+          }
+        ]
+      }
+    ]
   }
 }

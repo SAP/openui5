@@ -35,6 +35,40 @@
             "reference": "1980407138"
           }
         ]
+      },
+      {
+        "id": "982237a1ce5a2aca86d43712f8ff3c71e443f5bf",
+        "type": "FIX",
+        "text": " Fixing incorrect rolling back of visual UI changes when app",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980407138"
+          }
+        ]
+      },
+      {
+        "id": "a22c28ef5baae3a382904e4f123870038239f30a",
+        "type": "FIX",
+        "text": " Fixing the incorrect behavior of descr and UI changes when app",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980347814"
+          }
+        ]
+      },
+      {
+        "id": "af7c3c4e68523cf453bc5612c739ec7da020a676",
+        "type": "FIX",
+        "text": " sap.ui.fl - performance - apply on variant change",
+        "references": []
+      },
+      {
+        "id": "92816c75da2b59cf6f67c58c765e9b799c1089cd",
+        "type": "FIX",
+        "text": " sap.ui.fl - replace requireSync with async call",
+        "references": []
       }
     ]
   }

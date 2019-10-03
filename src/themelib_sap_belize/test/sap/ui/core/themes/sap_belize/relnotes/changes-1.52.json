@@ -241,5 +241,321 @@
         ]
       }
     ]
+  },
+  "1.52.1": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "bcdf069024b3a349a6fe1a9de5a00a5e2c44cfb3",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
+        "references": []
+      }
+    ]
+  },
+  "1.52.4": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "bb7444f6ee090f51027e7d56ae03fbc597b5b646",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: focus fixed for HCB",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780424189"
+          }
+        ]
+      },
+      {
+        "id": "043be754b7dd77fcd97a81434e1ae80cb326c082",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1804"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780488929"
+          }
+        ]
+      },
+      {
+        "id": "985af8bc3467e84c4691afbbdeffdb31d09cadbe",
+        "type": "FIX",
+        "text": "sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780409611"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.5": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "61fca7cdef5ef47488003b97aac082fc01d3ff2b",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Contrast ratio on focus is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770577693"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.6": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "7ee98473da416ba687395addf61237861014462a",
+        "type": "FIX",
+        "text": "sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770617033"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000248662018"
+          }
+        ]
+      },
+      {
+        "id": "c0df344767c21d7361a3df8acc8b3fb7ca3b81f5",
+        "type": "FIX",
+        "text": "sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880134146"
+          }
+        ]
+      },
+      {
+        "id": "56a9873149db90b609689c575894233da12ccb6b",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: correct font color when select appointments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880116466"
+          }
+        ]
+      },
+      {
+        "id": "5f5d25980c8fd489e8f4ca9c1940169422486591",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: align currency labels properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880111590"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.7": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "a6137757cd60a1194b30183b31913b861eee639f",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Fix tile border",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000246872018"
+          }
+        ]
+      },
+      {
+        "id": "2227c7803a66def36c5f0bc411f4646fcbc4bc79",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880161005"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.8": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "8cead6161fc959eaba64fe26f318dc3d37ff1333",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has correct focus outline color on its down state in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880211223"
+          }
+        ]
+      },
+      {
+        "id": "6e38f9c97112f0d7049bf46131fd5094eaab0e1e",
+        "type": "FIX",
+        "text": "sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880188519"
+          }
+        ]
+      },
+      {
+        "id": "152a8ce5d94e5166edcfadec0e9ae15745c8bb82",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: focus outline clearly visible in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880222226"
+          }
+        ]
+      },
+      {
+        "id": "7fb160fe302461280e5cc88ac4cedbe522437d15",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880240603"
+          }
+        ]
+      },
+      {
+        "id": "de43570d16130563ded422368c32433d0a677720",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Focus outline fixed for HCB and HCW",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880169680"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "d16698c00a969d3cc95fa37d23d271e0fa70dbc1",
+        "type": "FIX",
+        "text": "GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770561123"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.13": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "c5454e3527379e5674753760386dfb5f51512ad8",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002008472018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.15": {
+    "date": "June 2018",
+    "notes": [
+      {
+        "id": "1c8c9c12549f9fd1077332de5c2e5a3dab1b8a73",
+        "type": "FIX",
+        "text": "sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002116352018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.16": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "5a393b1439c0cb39547fb45294d28995e084c1c5",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Selection now visible in print",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003242382018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.18": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "dd7456cd18ebe851f7df97613b9f81d38875a79c",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880494891"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.19": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "813aa26e5fa70bd872cba7f344c2191a097185a6",
+        "type": "FIX",
+        "text": "Calendar: Picker's selected month/year style overriding focus in HC fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870394831"
+          }
+        ]
+      },
+      {
+        "id": "c6a30262574141def43477473b8ddbc85688257f",
+        "type": "FIX",
+        "text": "sap.m.Input: Value help icon is now properly displayed in compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870411149"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -29,6 +29,34 @@
             "reference": "1980345458"
           }
         ]
+      },
+      {
+        "id": "9fa6c5a3867cf038855adbc470680baa167ffc0c",
+        "type": "FEATURE",
+        "text": " sap.f.GridDropInfo: Setting dimensions of the indicator is now possible",
+        "references": []
+      },
+      {
+        "id": "c7658d8224b4a97310da376a7e32cc7e81445c2a",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: documentation updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980345458"
+          }
+        ]
+      },
+      {
+        "id": "0a43e8f48596645c85a4135629663f5d7e00784d",
+        "type": "FIX",
+        "text": " sap.ui.layout.DynamicSideContent: works correctly on phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970221870"
+          }
+        ]
       }
     ]
   }

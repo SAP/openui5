@@ -332,5 +332,781 @@
         ]
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "45062452e3e0a78657a60c13821fa3de93c0ff3c",
+        "type": "FIX",
+        "text": "sap.m.Bar: sap.m.Text and sap.m.Lable has correct color and shadow in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670533540"
+          }
+        ]
+      },
+      {
+        "id": "c728fbdb29342fc0e580985adc37ea4ab744e83b",
+        "type": "FIX",
+        "text": "sap.m.Input: Text selection on tablets is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670540585"
+          }
+        ]
+      },
+      {
+        "id": "f40cb410ecf29c0e3f6959983b5ef1afc02306ec",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: context selector in the button caused focus to not appear in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670530375"
+          }
+        ]
+      },
+      {
+        "id": "d9215394e7e17e25f39c29098c6f645b0bd41e6b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670528009"
+          }
+        ]
+      },
+      {
+        "id": "a1e1f545c84fdab0482b1268fcb9050ea8bc4c36",
+        "type": "FIX",
+        "text": "uxap.ObjectPageHeaderContent: fix placeholder icon representation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670419469"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "2dc7362e955b79f64ab500f53d83a09e17fd034e",
+        "type": "FEATURE",
+        "text": "sap.m.ListItemBase: highlight property is added.",
+        "references": []
+      },
+      {
+        "id": "8c6cf6bf9f22fa01f47c7cc1e21fa2916581f978",
+        "type": "FIX",
+        "text": "sap.m.Button, sap.m.ToggleButton: Css selectors fixed in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680283462"
+          }
+        ]
+      },
+      {
+        "id": "f73ab38901d7682857d0760a19c35f8031e96b72",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005040900000439602016"
+          }
+        ]
+      },
+      {
+        "id": "b2068a6d8a753d6d408ada5df3312c28284dcbae",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Focus outline corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680343890"
+          }
+        ]
+      },
+      {
+        "id": "cd0f532d4b568836182dacb13f5a35b920f14f28",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670403860"
+          }
+        ]
+      },
+      {
+        "id": "4bd95c49ccca52c193b9c1b7943e2f68dd101cd0",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Layout no longer breaks on resize",
+        "references": []
+      },
+      {
+        "id": "75a27f0cb10e2092653d1eb8005f2db7ea453c37",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: SetEditable no longer modifies its tokens",
+        "references": []
+      },
+      {
+        "id": "d582038572b6c9c531f3e3169645896082badf81",
+        "type": "FIX",
+        "text": "sap.m.NotificationListGroup: Focus outline in IE corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670513149"
+          }
+        ]
+      },
+      {
+        "id": "e0b4d60b3629a7a88e1a6476fcb4a0de2f52e373",
+        "type": "FIX",
+        "text": "sap.m.Page: rendering performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004749982016"
+          }
+        ]
+      },
+      {
+        "id": "f5590bdda3c6995375b6750119f008c6fca9ccb2",
+        "type": "FIX",
+        "text": "sap.m.Panel: corrected focus for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670565588"
+          }
+        ]
+      },
+      {
+        "id": "a44407c9238bba1e399f04c14f3cf61671321b16",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Appointments focus corrected for Belize on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680343985"
+          }
+        ]
+      },
+      {
+        "id": "b698ab4a9822eb276d4fbb821ccd737bd1c90624",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Arrows' click behaviour in firefox is now handled properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680297522"
+          }
+        ]
+      },
+      {
+        "id": "dfad6390163d38ca766b3be91c5cc3a338404245",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: Correctly displayed in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680295834"
+          }
+        ]
+      },
+      {
+        "id": "2817e9221747b80b96753d193ae79c34499130ac",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus contrast ratio in IE is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680335613"
+          }
+        ]
+      },
+      {
+        "id": "672a5d4a08704e2e40c8f73fc5074ba87dd0d68e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Shell/sap.m.Toolbar: Fix focus contrast issues in IE/Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680344097"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680344152"
+          }
+        ]
+      },
+      {
+        "id": "a2986dc362136020cf21e0e457fae2ece33e6426",
+        "type": "FIX",
+        "text": ": sap.m.ColumnListItem: focus outline workaround for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680334526"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680058319"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680344337"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "6b964ccc303ce93e7518760a15571952c8cf08df",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Focus with background image improved",
+        "references": []
+      },
+      {
+        "id": "a87567375bda8f8454145dae161522be94cfd115",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780009120"
+          }
+        ]
+      },
+      {
+        "id": "48ad0bfd98eb60e6c7202fbef9fc1d116e6a7d5a",
+        "type": "FIX",
+        "text": "sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780012486"
+          }
+        ]
+      },
+      {
+        "id": "3dfc0669f981d0e3ac488aecc84e4050282811cb",
+        "type": "FIX",
+        "text": "sap.m.RangeSlider: Fixes progress line visual design",
+        "references": []
+      },
+      {
+        "id": "fa971c0afcd25d81e816742b617e4772c8aac958",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Focus contrast ratio in IE/Edge is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680343826"
+          }
+        ]
+      },
+      {
+        "id": "aba02cc292af508617e288f9ef9b211b21982b1b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Focus has sufficient contrast ratio in IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680343905"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "db324f687ec270c1c3fed3eb29d04113c5b49a3b",
+        "type": "FIX",
+        "text": "sap.m.MenuButton: Focus fixed for Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680343825"
+          }
+        ]
+      },
+      {
+        "id": "883c41171e0dfcd7991791fe2fbf90544a42e624",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004765332016"
+          }
+        ]
+      },
+      {
+        "id": "698e5ebaa5e7dc37790d937dd39927db1dd75c14",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Belize Deep theme fixed for 1.44",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680334939"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.8": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "629c228feb9f62d334d443c224b9d4e59c49163d",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Now the control is displayed correctly in a Bar.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780108066"
+          }
+        ]
+      },
+      {
+        "id": "81939abd6c15e2e0e6076e8562ef01d2fab6a1a3",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: Now the corresponding hover state on a pressed toggleButton is applied in belize for IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780125364"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.9": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "566f8ddb4f4ad51d0074cbb381bc3751e22befb4",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: ObjectNumber has correct styling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770022229"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "fc12c15ab574552665ef357663bdabf045959487",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: One Month view",
+        "references": []
+      },
+      {
+        "id": "ac957989efaddf51830be280ed0799e208f48fc6",
+        "type": "FIX",
+        "text": "ListBase: Growing button color in Belize Plus fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780091796"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "d06f118d1bac4ef8ecd36ffdafca368cd7f71d70",
+        "type": "FIX",
+        "text": "sap.m.ToggleButton: correct hover style when \"Accept\"/\"Reject\" type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770077452"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "769a4c10db9a9eca5eddf06499487372a4905b41",
+        "type": "FIX",
+        "text": "unified.Calendar: On IE selected days focus outline is dashed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770207956"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "7068fbaa912efa9d897c0f88df06865eb3e38f43",
+        "type": "FIX",
+        "text": "core.Icon: make the focus outline stay within the DOM area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780089678"
+          }
+        ]
+      },
+      {
+        "id": "49ca2b57adc97f4834e564e952acf4b03ea5fe9b",
+        "type": "FIX",
+        "text": "core.Popup: BlockLayer should always use position:fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780096668"
+          }
+        ]
+      },
+      {
+        "id": "aabff69e26836af35f82d6820653db157e2f93d5",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: Align dashboard styles with the specs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780142355"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.16": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "85cacfb605b0be2ea10c0bd1b2dde8404b566f84",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: Styling of span tags corrected for the text area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780215050"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.18": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "92cea4ddf5fda4a3a5236c0a9d5d04cbb935331f",
+        "type": "FIX",
+        "text": "sap.m.TileContent: Semantic color of footer corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003416502017"
+          }
+        ]
+      },
+      {
+        "id": "d01d9ffe4fc3770d220184d057b836beead162e1",
+        "type": "FIX",
+        "text": "sap.ui.commons.Checkbox: the check is visible in belize plus now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780250020"
+          }
+        ]
+      },
+      {
+        "id": "ab1b5fbda5d6ac7ffa7d1b5dc604f734bad826c0",
+        "type": "FIX",
+        "text": "sap.ui.layout.BlockLayout: Add missing sapContrast for Light background",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780229220"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.19": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "4e1780836046ae72c1ca5b6d3c89423a7ee4e139",
+        "type": "FIX",
+        "text": "core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780147610"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780280317"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.20": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "99ad0b12d32ce63fefc3896b3878e9e9b53b48b6",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004077882017"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770230851"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.21": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "b46a61df8b47c453fc6114c72a739f274bb14e93",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Value help icon is now rendered correctly in compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770362627"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.22": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "82f25b9def2f7877a34e0122ec7608c0668c597c",
+        "type": "FIX",
+        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they're used in (i.e. header, footer, etc.)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770116282"
+          }
+        ]
+      },
+      {
+        "id": "5f4e3d08231df650b8512df709c9a1b4980d6b08",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400004969412017"
+          }
+        ]
+      },
+      {
+        "id": "579cd32b2b4126a17019bf60333600cf390c2992",
+        "type": "FIX",
+        "text": "sap_belize_plus Token: remove wrong Unicode characters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004371212017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.23": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "9ea6159fe1ec4b4558a614bd802ac37affb1df19",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770468315"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.25": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "a93ab5f07168d4ba3d9a62e54b90f3514b1e999b",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780414532"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "3c1fb975dfdab80fdd91d124b36b1522c13b9db3",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: correct font color when select appointments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880116466"
+          }
+        ]
+      },
+      {
+        "id": "3e1601aaf487a515f881728cc6a5743d79de8b16",
+        "type": "FIX",
+        "text": "sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      }
+    ]
+  },
+  "1.44.29": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "df8c3da92e85d00f63953b2edb6bcf3a0f2493c3",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has correct focus outline color on its down state in Belize",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880211223"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "83230b9468b22adf285f01360289ddf99b6eccd5",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: Extract base styles and fix padding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870073542"
+          }
+        ]
+      },
+      {
+        "id": "53177967f9daf7157a6effdfe4b4270715b722bf",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Selected text now has correct contrast",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002008472018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "db36416f2ae5c3369e44adfc1e67bb2153f11004",
+        "type": "FIX",
+        "text": "sap_belize: @sapPositiveColor contrast ratio fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002116352018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "faf19561cdcd4000946b961eff691def0612224f",
+        "type": "FIX",
+        "text": "@sapUiShadowText updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500002115262018"
+          }
+        ]
+      },
+      {
+        "id": "b8caab4c4a8164d02dbb17dd615829990e0b708f",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Selection now visible in print",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003242382018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.36": {
+    "date": "September 2018",
+    "notes": [
+      {
+        "id": "14a7633e1bc8261108242a51d52321cb5069e54b",
+        "type": "FIX",
+        "text": "sap.m.Input: Value help icon is now properly displayed in compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870411149"
+          }
+        ]
+      }
+    ]
   }
 }
