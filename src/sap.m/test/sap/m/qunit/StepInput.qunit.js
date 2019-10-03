@@ -2359,6 +2359,21 @@ sap.ui.define([
 			"the decrement button is enabled after the StepInput is enabled again");
 	});
 
+	QUnit.test("_verifyValue does not touch the value", function(assert) {
+		// arrange
+		this.stepInput.setMin(2);
+		this.stepInput.setDisplayValuePrecision(2);
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.stepInput._getInput().setValue("1");
+		this.stepInput._verifyValue(); // it shouldn't invalidate
+		sap.ui.getCore().applyChanges(); // so here should not re-render
+
+		// assert
+		assert.strictEqual(this.stepInput._getInput().getValue(), "1", "value has not been touched");
+	});
+
 	QUnit.module("Misc");
 
 	QUnit.test("increment/decrement buttons enabled state", function (assert) {
