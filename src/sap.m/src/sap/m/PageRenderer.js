@@ -61,7 +61,7 @@ sap.ui.define(["sap/m/library"],
 		}
 
 		if (oPage.getFloatingFooter()) {
-			oRm.addClass("sapMPageFloatingFooter");
+			oRm.addClass("sapMPageWithFloatingFooter");
 		}
 
 		oRm.writeClasses();
@@ -147,6 +147,9 @@ sap.ui.define(["sap/m/library"],
 			oRm.addClass("sapMPageFooter");
 			if (!oPage.getShowFooter()) {
 				oRm.addClass("sapUiHidden");
+			}
+			if (oPage.getFloatingFooter()) {
+				oRm.addClass("sapMPageFloatingFooter");
 			}
 			oRm.writeAccessibilityState(oPage, oPage._formatLandmarkInfo(oLandmarkInfo, "Footer"));
 			oRm.writeClasses();
