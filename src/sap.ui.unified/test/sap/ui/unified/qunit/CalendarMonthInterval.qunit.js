@@ -210,6 +210,7 @@ sap.ui.define([
 
 		//Act
 		oCalendarMonthInt.rerender();
+		sap.ui.getCore().applyChanges();
 
 		//Assert
 		_assertFocus(aMonths[1], "Calendar: after rerendering  second month still has focus", assert);
@@ -268,9 +269,11 @@ sap.ui.define([
 	QUnit.test("year switch", function(assert) {
 		bStartDateChanged = false;
 		qutils.triggerEvent("click", "Cal1--Head-B2");
+		sap.ui.getCore().applyChanges();
 		var $NewYear = jQuery("#Cal1--YP-y20130101"); // use keybord to select year to prevent event processing from ItemNavigation
 		$NewYear.focus();
-		qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker not visible after selecting year");
 		assert.equal(jQuery("#Cal1--Head-B2").text(), "2013 – 2014", "Calendar1: year 2013 - 2014 shown");
 		var $MonthsRow = sap.ui.getCore().byId("Cal1").getAggregation("monthsRow").$();
@@ -284,22 +287,28 @@ sap.ui.define([
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
 		qutils.triggerEvent("click", "Cal1--Head-next");
+		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled on max month");
 		assert.ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button disabled on max month");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
+		sap.ui.getCore().applyChanges();
 		var aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[aYears.length - 1]).text(), "9999", "Max Year is last rendered year");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
+		sap.ui.getCore().applyChanges();
 
 		var oDate = new Date(2,1,1);
 		oDate.setFullYear(2);
 		oCal1.focusDate(oDate);
+		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
 		qutils.triggerEvent("click", "Cal1--Head-prev");
+		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button disabled on min month");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled on min month");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
+		sap.ui.getCore().applyChanges();
 		aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
 		assert.equal(jQuery(aYears[0]).text(), "0001", "Min Year is first rendered year");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
@@ -379,6 +388,7 @@ sap.ui.define([
 
 		// open year picker
 		qutils.triggerEvent("click", "CalP--Head-B2");
+		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery("#CalP--Cal--Head").children().length, 3, "Only arrows and year picker button are rendered");
 		assert.equal(jQuery("#CalP--Cal--Head-B2").get(0).innerHTML, "2005 - 2024", "Correct year range is shown on the button");
 

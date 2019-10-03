@@ -481,6 +481,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
+		sap.ui.getCore().applyChanges();
 		var $MonthPicker = sap.ui.getCore().byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -507,6 +508,7 @@ sap.ui.define([
 
 		qutils.triggerEvent("click", "myCal--Head-B1");
 		qutils.triggerEvent("click", "myCal--Head-prev");
+		sap.ui.getCore().applyChanges();
 		var $MonthPicker = sap.ui.getCore().byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -534,6 +536,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
 		qutils.triggerEvent("click", "myCal--Head-next");
+		sap.ui.getCore().applyChanges();
 		var $MonthPicker = sap.ui.getCore().byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -545,6 +548,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-next");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
@@ -678,6 +682,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
+		sap.ui.getCore().applyChanges();
 		var $MonthPicker = sap.ui.getCore().byId("myCal").getAggregation("monthPicker").$();
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -689,6 +694,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
+		sap.ui.getCore().applyChanges();
 		var $YearPicker = sap.ui.getCore().byId("myCal").getAggregation("yearPicker").$();
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -700,13 +706,15 @@ sap.ui.define([
 		// act
 		var $Date = jQuery("#myCal--YP-y20000101");
 		$Date.focus();
-		qutils.triggerKeyboardEvent($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		qutils.triggerEvent("click", "myCal--Head-prev");
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button disabled");
 
 		// act
 		oCal.setStartDate(new Date(2050, 7, 17));
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
@@ -714,6 +722,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B1");
+		sap.ui.getCore().applyChanges();
 		$MonthPicker = sap.ui.getCore().byId("myCal").getAggregation("monthPicker").$();
 		aMonths = $MonthPicker.find(".sapUiCalItem");
 
@@ -725,6 +734,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
+		sap.ui.getCore().applyChanges();
 		$YearPicker = sap.ui.getCore().byId("myCal").getAggregation("yearPicker").$();
 		aYears = $YearPicker.find(".sapUiCalItem");
 
@@ -736,6 +746,7 @@ sap.ui.define([
 		// act
 		qutils.triggerEvent("click", "myCal--Head-B2");
 		qutils.triggerEvent("click", "myCal--Head-next");
+		sap.ui.getCore().applyChanges();
 
 		assert.ok(jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button disabled");
 
@@ -1076,12 +1087,13 @@ sap.ui.define([
 		// click on December
 		$Date = jQuery("#CalP--Cal--MP-m11");
 		$Date.focus();
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		// click on 11 of December
 		$Date = jQuery("#CalP--Cal--Month0-20171211");
 		$Date.focus();
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(jQuery("#CalP--Head-B1").text(), "December 2017", "button text is correct");
 
