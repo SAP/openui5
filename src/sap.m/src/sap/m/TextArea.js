@@ -416,14 +416,12 @@ function(
 
 		var oTextAreaRef = this.getFocusDomRef(),
 			sValue = oTextAreaRef.value,
+			bShowExceededText = this.getShowExceededText(),
 			iMaxLength = this.getMaxLength();
 
-		if (this.getShowExceededText() === false && this._getInputValue().length < this.getMaxLength()) {
-			// some browsers do not respect to maxlength property of textarea
-			if (iMaxLength > 0 && sValue.length > iMaxLength) {
-				sValue = sValue.substring(0, iMaxLength);
-				oTextAreaRef.value = sValue;
-			}
+		if (!bShowExceededText && iMaxLength && sValue.length > iMaxLength) {
+			sValue = sValue.substring(0, iMaxLength);
+			oTextAreaRef.value = sValue;
 		}
 
 		// update value property if needed

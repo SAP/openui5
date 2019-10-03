@@ -822,4 +822,39 @@ sap.ui.define([
 		oTA.destroy();
 	});
 
+	QUnit.test("showExceededText = false on phone", function (assert) {
+		// system under test
+		var oDeviceStub = this.stub(Device, "system",  {
+				desktop: false,
+				phone: true,
+				tablet: false
+			});
+
+		// Arrange
+		var iMaxLength = 6,
+			sInitValue = "This is test text.",
+			oTextArea = new TextArea({
+				showExceededText: false,
+				maxLength: 6,
+				width: "100%"
+			});
+
+		oTextArea.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var $textarea = $("textarea");
+
+		//Act
+		$textarea.val(sInitValue).trigger("input");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oTextArea.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
+		assert.strictEqual(oTextArea.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
+
+		// cleanup
+		oTextArea.destroy();
+		oDeviceStub.restore();
+    });
+
 });
