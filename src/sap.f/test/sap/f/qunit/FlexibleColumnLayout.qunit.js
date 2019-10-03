@@ -1041,6 +1041,40 @@ function (
 		assert.ok(!FlexibleColumnLayoutSemanticHelper._oInstances[sId], "Semantic helper no longer has an entry for this FCL");
 	});
 
+	QUnit.test("SemanticHelper whenDOMReady", function (assert) {
+		assert.expect(3);
+		var fnDone = assert.async();
+
+		var sId = "myFCL";
+
+		// setup
+		var oFCL = new FlexibleColumnLayout(sId);
+
+
+		var oFlexibleColumnLayoutSemanticHelper = FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL);
+
+		oFlexibleColumnLayoutSemanticHelper.whenDOMReady()
+			.then(function () {
+				assert.ok(oFlexibleColumnLayoutSemanticHelper.isDOMReady(), 'The FlexibleColumnLayout instance is now rendered');
+
+				oFCL.destroy();
+
+				oFlexibleColumnLayoutSemanticHelper.whenDOMReady()
+					.catch(function () {
+						assert.notOk(oFlexibleColumnLayoutSemanticHelper.isDOMReady(), 'The FlexibleColumnLayout was destroyed and its DOM was removed');
+
+						fnDone();
+					});
+
+			});
+
+		assert.notOk(oFlexibleColumnLayoutSemanticHelper.isDOMReady(), 'The FlexibleColumnLayout instance is not yet rendered');
+
+		// act
+		oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+	});
+
 	QUnit.module("Private API", {
 		afterEach: function () {
 			this.oFCL.destroy();
