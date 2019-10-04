@@ -9916,8 +9916,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: read all data w/o a control on top
 	QUnit.test("read all data w/o a control on top", function (assert) {
-		var done = assert.async(),
-			i, n = 10000,
+		var i, n = 10000,
 			aIDs = new Array(n),
 			aValues = new Array(n),
 			that = this;
@@ -9928,7 +9927,8 @@ sap.ui.define([
 		}
 
 		return this.createView(assert, "").then(function () {
-			var oListBinding = that.oModel.bindList("/TEAMS");
+			var fnDone,
+				oListBinding = that.oModel.bindList("/TEAMS");
 
 			that.expectRequest("TEAMS", {value : aValues});
 
@@ -9942,10 +9942,18 @@ sap.ui.define([
 						assert.strictEqual(sId, aIDs[i]);
 					}
 				});
-				done();
+				fnDone();
 			});
 
-			return that.waitForChanges(assert);
+
+			return Promise.all([
+				// wait until change event is processed
+				new Promise(function (resolve, reject) {
+					fnDone = resolve;
+				}),
+				// Increase the timeout for this test to 12 seconds to run also in IE
+				that.waitForChanges(assert, undefined, 12000)
+			]);
 		});
 	});
 
