@@ -1066,7 +1066,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 
 			return +(aExpParts[0] + "e" + iStep);
 		} else if (typeof vValue === "string") {
-			if (parseInt(vValue, 10) === 0 && iStep >= 0) {
+			if (parseFloat(vValue) === 0 && iStep >= 0) {
 				return vValue;
 			}
 
