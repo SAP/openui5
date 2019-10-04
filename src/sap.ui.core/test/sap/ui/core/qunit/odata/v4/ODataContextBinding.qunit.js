@@ -672,7 +672,6 @@ sap.ui.define([
 			oListener = {},
 			oPromise;
 
-		oBinding.oModel.bAutoExpandSelect = {};
 		oBinding.oReadGroupLock = undefined; // not interested in the initial case
 		oBindingMock.expects("lockGroup").withExactArgs().returns(oGroupLock);
 		oBindingMock.expects("getRelativePath").withExactArgs("/absolute/bar").returns("bar");
@@ -680,7 +679,7 @@ sap.ui.define([
 		oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock), "bar", sinon.match.func,
-				sinon.match.same(oListener), sinon.match.same(oBinding.oModel.bAutoExpandSelect))
+				sinon.match.same(oListener))
 			.callsArg(2)
 			.returns(SyncPromise.resolve("value"));
 
@@ -697,14 +696,12 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oGroupLock = {};
 
-		oBinding.oModel.bAutoExpandSelect = {};
 		oBinding.oReadGroupLock = undefined; // not interested in the initial case
 		oBindingMock.expects("lockGroup").withExactArgs().returns(oGroupLock);
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock), "bar", sinon.match.func, undefined,
-				sinon.match.same(oBinding.oModel.bAutoExpandSelect))
+			.withExactArgs(sinon.match.same(oGroupLock), "bar", sinon.match.func, undefined)
 			// no read required! .callsArg(2)
 			.returns(SyncPromise.resolve("value"));
 
@@ -723,15 +720,13 @@ sap.ui.define([
 				oReadGroupLock = {},
 				oReadPromise = bSuccess ? SyncPromise.resolve("value") : SyncPromise.reject(oError);
 
-			oBinding.oModel.bAutoExpandSelect = {};
 			oBinding.oReadGroupLock = oReadGroupLock;
 			this.mock(oBinding).expects("lockGroup").never();
 			this.mock(this.oModel).expects("reportError").never();
 			oBindingMock.expects("fireDataRequested").never();
 			oBindingMock.expects("fireDataReceived").never();
 			this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-				.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null,
-					sinon.match.same(oBinding.oModel.bAutoExpandSelect))
+				.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null)
 				// no read required! .callsArg(2)
 				.returns(oReadPromise);
 			this.mock(oBinding).expects("resolveRefreshPromise")
@@ -763,16 +758,13 @@ sap.ui.define([
 		oODataContextBindingMock.expects("lockGroup").withExactArgs("$direct", true)
 			.returns(oGroupLock1);
 		oBinding = this.bindContext("/absolute", undefined, {$$groupId : "$direct"});
-		oBinding.oModel.bAutoExpandSelect = {};
 		oCacheMock = this.mock(oBinding.oCachePromise.getResult());
 		oODataContextBindingMock.expects("lockGroup").withExactArgs().returns(oGroupLock2);
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock1), "foo", sinon.match.func, undefined,
-				sinon.match.same(oBinding.oModel.bAutoExpandSelect))
+			.withExactArgs(sinon.match.same(oGroupLock1), "foo", sinon.match.func, undefined)
 			.callsArg(2).returns(oRejectedPromise);
 		oCacheMock.expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock2), "bar", sinon.match.func, undefined,
-				sinon.match.same(oBinding.oModel.bAutoExpandSelect))
+			.withExactArgs(sinon.match.same(oGroupLock2), "bar", sinon.match.func, undefined)
 			.returns(oRejectedPromise);
 		this.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
@@ -938,7 +930,7 @@ sap.ui.define([
 
 		oBinding.oReadGroupLock = oGroupLock;
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock), "foo", sinon.match.func, undefined, false)
+			.withExactArgs(sinon.match.same(oGroupLock), "foo", sinon.match.func, undefined)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -2368,8 +2360,7 @@ sap.ui.define([
 			oBinding.refreshInternal("", "myGroup", true);
 
 			this.mock(oCache).expects("fetchValue")
-				.withExactArgs(sinon.match.same(oReadGroupLock), "", sinon.match.func, undefined,
-					false)
+				.withExactArgs(sinon.match.same(oReadGroupLock), "", sinon.match.func, undefined)
 				.returns(SyncPromise.resolve({}));
 
 			// code under test
