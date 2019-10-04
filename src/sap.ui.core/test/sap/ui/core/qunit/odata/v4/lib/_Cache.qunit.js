@@ -1247,7 +1247,7 @@ sap.ui.define([
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
-			oHelperMock.expects("updateSelected")
+			oHelperMock.expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 					oEntityMatcher, sinon.match.same(oUpdateData));
 			this.oRequestorMock.expects("relocateAll")
@@ -1371,7 +1371,7 @@ sap.ui.define([
 				oStaticCacheMock.expects("makeUpdateData")
 					.withExactArgs(["ProductInfo", "Amount"], "123")
 					.returns(oUpdateData);
-				oHelperMock.expects("updateSelected")
+				oHelperMock.expects("updateAll")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
 						sinon.match.same(oEntity), sinon.match.same(oUpdateData));
 				oCacheMock.expects("getValue").withExactArgs("path/to/entity/Pricing/Currency")
@@ -1498,7 +1498,7 @@ sap.ui.define([
 			oStaticCacheMock.expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
-			oHelperMock.expects("updateSelected")
+			oHelperMock.expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
 			oHelperMock.expects("buildPath").twice()
@@ -3069,7 +3069,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "/~/?$select=~1", sinon.match.same(oGroupLock))
 			.resolves(oData);
-		this.mock(_Helper).expects("updateSelected")
+		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sEntityPath,
 				sinon.match.same(oEntity), sinon.match.same(oData));
 		this.mock(_Helper).expects("drillDown")
@@ -5409,7 +5409,7 @@ sap.ui.define([
 				});
 			});
 		// called from update
-		oHelperMock.expects("updateSelected")
+		oHelperMock.expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
 				sinon.match(transientCacheData), {bar : "baz"});
 		// called from the POST's success handler
@@ -6310,7 +6310,7 @@ sap.ui.define([
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
 								"/TEAMS/Foo", sinon.match.same(mTypeForMetaPath))
 							.callsFake(getKeyFilter);
-						oHelperMock.expects("updateSelected")
+						oHelperMock.expects("updateAll")
 							.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPredicate,
 								sinon.match.same(oCache.aElements.$byPredicate[sPredicate]),
 								sinon.match.same(oFixture.aValues[i]));
@@ -7227,7 +7227,7 @@ sap.ui.define([
 				.returns(SyncPromise.resolve(oOldValue));
 			oVisitResponseExpectation = oCacheMock.expects("visitResponse")
 				.withExactArgs(sinon.match.same(oNewValue), sinon.match.same(mTypeForMetaPath));
-			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateSelected")
+			oUpdateSelectedExpectation = this.mock(_Helper).expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oOldValue), sinon.match.same(oNewValue))
 				.returns(SyncPromise.resolve(oOldValue));

@@ -459,11 +459,9 @@ sap.ui.define([
 				pressRefreshSalesOrdersButton : function () {
 					return pressButton(this, "refreshSalesOrders");
 				},
-
 				pressRefreshSelectedSalesOrdersButton : function () {
 					return pressButton(this, "refreshSelectedSalesOrder");
 				},
-
 				pressSaveSalesOrderButton : function () {
 					return pressButton(this, "saveSalesOrder");
 				},
@@ -472,6 +470,9 @@ sap.ui.define([
 				},
 				pressSetBindingContextButton : function () {
 					return pressButton(this, "setBindingContext");
+				},
+				pressShowSalesOrderSchedules : function () {
+					return pressButton(this, "showSalesOrderSchedules");
 				},
 				pressValueHelpOnProductCategory : function () {
 					return this.waitFor({
@@ -906,34 +907,6 @@ sap.ui.define([
 			assertions : {}
 		},
 		/*
-		 * Actions and assertions for the "ValueHelp" Popover
-		 */
-		onTheValueHelpPopover : {
-			actions : {
-				close : function () {
-					return this.waitFor({
-						controlType : "sap.m.Popover",
-						success : function (aControls) {
-							aControls[0].close();
-							Opa5.assert.ok(true, "ValueHelp Popover closed");
-						}
-					});
-				}
-			},
-			assertions : {
-				checkTitle : function (sTitle) {
-					return this.waitFor({
-						controlType : "sap.m.Title",
-						id : /-popover-title$/,
-						success : function (aTitles) {
-							Opa5.assert.strictEqual(aTitles[0].getText(), sTitle,
-								"Expected popover title '" + sTitle + "'");
-						}
-					});
-				}
-			}
-		},
-		/*
 		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog
 		 */
 		onTheSalesOrderDeletionConfirmation : {
@@ -974,6 +947,73 @@ sap.ui.define([
 				}
 			},
 			assertions : {}
+		},
+		/*
+		 * Actions and assertions for the "Sales Order Schedules" dialog
+		 */
+		onTheSalesOrderSchedulesDialog : {
+			actions : {
+				close : function () {
+					return pressButton(this, "closeSalesOrderSchedules");
+				},
+				deleteSalesOrderSchedules : function () {
+					return pressButton(this, "deleteSalesOrderSchedules");
+				},
+				selectAll : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.CheckBox",
+						id : "SO_2_SCHDL-sa",
+						success : function (oCheckBox) {
+							Opa5.assert.ok(true, "All schedule lines selected");
+						},
+						viewName : sViewName
+					});
+				}
+			},
+			assertions : {
+				checkLength : function (iLength) {
+					this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SO_2_SCHDL",
+						searchOpenDialogs : true,
+						success : function (oControl) {
+							Opa5.assert.strictEqual(oControl.getItems().length, iLength,
+								iLength + " schedule lines");
+						},
+						viewName : sViewName
+					});
+				}
+			}
+		},
+		/*
+		 * Actions and assertions for the "ValueHelp" Popover
+		 */
+		onTheValueHelpPopover : {
+			actions : {
+				close : function () {
+					return this.waitFor({
+						controlType : "sap.m.Popover",
+						success : function (aControls) {
+							aControls[0].close();
+							Opa5.assert.ok(true, "ValueHelp Popover closed");
+						}
+					});
+				}
+			},
+			assertions : {
+				checkTitle : function (sTitle) {
+					return this.waitFor({
+						controlType : "sap.m.Title",
+						id : /-popover-title$/,
+						success : function (aTitles) {
+							Opa5.assert.strictEqual(aTitles[0].getText(), sTitle,
+								"Expected popover title '" + sTitle + "'");
+						}
+					});
+				}
+			}
 		}
+
 	});
 });

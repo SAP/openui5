@@ -3452,6 +3452,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete multiple entities in a table w/o own cache.
+	QUnit.test("Delete multiple entities in a table w/o own cache", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="position" text="{ItemPosition}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				// SalesOrderId : "1,
+				SO_2_SOITEM : [
+					{SalesOrderID : "1", "ItemPosition" : "0010"},
+					{SalesOrderID : "1", "ItemPosition" : "0020"},
+					{SalesOrderID : "1", "ItemPosition" : "0030"},
+					{SalesOrderID : "1", "ItemPosition" : "0040"}
+				]
+			})
+			.expectChange("position", ["0010", "0020", "0030", "0040"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aItems = that.oView.byId("table").getItems();
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0020')"
+				})
+				.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')"
+				})
+				.expectChange("position", [, "0040"]);
+
+			// code under test
+			return Promise.all([
+				aItems[1].getBindingContext().delete(),
+				aItems[2].getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: SalesOrders app
 	// * Select a sales order
 	// * Refresh the sales order list
@@ -16249,6 +16297,57 @@ sap.ui.define([
 				}]),
 				that.waitForChanges(assert)
 			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: requestSideEffects delivers a new entity. See that it can be patched later on.
+	// JIRA: CPOUI5UISERVICESV3-1992
+	QUnit.test("requestSideEffects delivers a new entity", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
+	<Input id="company" value="{SO_2_BP/CompanyName}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+			+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				SalesOrderID : "1",
+				SO_2_BP : null
+			})
+			.expectChange("company", null);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+					SO_2_BP : {
+						"@odata.etag" : "ETag",
+						BusinessPartnerID : "42",
+						CompanyName : "Company"
+					}
+				})
+				.expectChange("company", "Company");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : "SO_2_BP"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("company", "changed")
+				.expectRequest({
+					headers : {"If-Match" : "ETag"},
+					method : "PATCH",
+					payload : {CompanyName : "changed"},
+					url : "BusinessPartnerList('42')"
+				});
+
+			that.oView.byId("company").getBinding("value").setValue("changed");
+
+			return that.waitForChanges(assert);
 		});
 	});
 
