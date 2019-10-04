@@ -4018,6 +4018,40 @@ function (
 		});
 	});
 
+	QUnit.module("getResetAndPublishInfo", {
+		beforeEach: function () {
+			sandbox.stub(LrepConnector, "createConnector").returns({
+				getFlexInfo: function() {
+					return Promise.resolve({
+						isResetEnabled: true,
+						isPublishEnabled: true
+					});
+				}
+			});
+			this._mComponentProperties = {
+				name: "testScenarioComponent",
+				appVersion: "1.2.3"
+			};
+			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
+			this.mPropertyBag = {
+				layer: "CUSTOMER",
+				reference: "testScenarioComponent",
+				appVersion: "1.2.3"
+			};
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("call getResetAndPublishInfo", function (assert) {
+			return this.oChangePersistence.getResetAndPublishInfo(this.mPropertyBag)
+			.then(function (oResetAndPublishInfo) {
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
+			});
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 		QUnit.dump.maxDepth = iOriginalMaxDepth;

@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -32,7 +31,6 @@ sap.ui.define([
 	Change,
 	Variant,
 	FlexSettings,
-	LrepConnector,
 	ChangePersistenceFactory,
 	ContextManager,
 	JsControlTreeModifier,
@@ -1404,7 +1402,7 @@ sap.ui.define([
 	FlexController.prototype.getResetAndPublishInfo = function(mPropertyBag) {
 		mPropertyBag.reference = this._sComponentName;
 		mPropertyBag.appVersion = this._sAppVersion;
-		return LrepConnector.createConnector().getFlexInfo(mPropertyBag);
+		return this._oChangePersistence.getResetAndPublishInfo(mPropertyBag);
 	};
 
 	return FlexController;

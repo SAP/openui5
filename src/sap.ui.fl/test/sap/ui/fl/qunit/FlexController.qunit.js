@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/FlexCustomData",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/core/Control",
@@ -15,7 +14,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -35,7 +33,6 @@ function (
 	FlexController,
 	FlexCustomData,
 	Change,
-	LrepConnector,
 	ChangeRegistry,
 	ChangeHandlerRegistration,
 	Control,
@@ -46,7 +43,6 @@ function (
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	ContextManager,
-	FeaturesAPI,
 	CustomData,
 	Manifest,
 	UIComponent,
@@ -115,7 +111,6 @@ function (
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 			this.oControl = new Control("existingId");
 			this.oChange = new Change(labelChangeContent);
-			this.oLrepConnector = LrepConnector.createConnector();
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -3978,34 +3973,6 @@ function (
 			return this.oFlexController.hasHigherLayerChanges().then(function (bHasHigherLayerChanges) {
 				assert.ok(bHasHigherLayerChanges, "personalization was determined");
 			});
-		});
-	});
-
-	QUnit.module("getFlexInfo", {
-		beforeEach: function () {
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-			this.oLrepConnector = LrepConnector.createConnector();
-			this.mPropertyBag = {
-				layer: "CUSTOMER"
-			};
-		},
-		afterEach: function () {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("call getResetAndPublishInfo", function (assert) {
-			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
-			var oGetFlexInfoStub = sandbox.stub(this.oLrepConnector, "getFlexInfo").resolves({
-				isResetEnabled: true,
-				isPublishEnabled: true
-			});
-			sandbox.stub(FeaturesAPI, "isPublishAvailable").resolves(true);
-			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag)
-				.then(function (oResetAndPublishInfo) {
-					assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
-					assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
-					assert.equal(oGetFlexInfoStub.callCount, 1, "one request to flex/info");
-				});
 		});
 	});
 
