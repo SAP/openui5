@@ -5,29 +5,151 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 	<title>Custom Elements for sap.ui.integration</title>
-	<script src="../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap" data-sap-ui-theme="sap_fiori_3"></script>
+
+	<script src="../../../../resources/sap-ui-integration.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_fiori_3">
+	</script>
+
+	<style>
+		.styledCard {
+			display: block;
+			width: 30rem;
+			border: 2px solid red;
+			margin: 0.5rem;
+		}
+	</style>
 </head>
 
-<body>
-	<ui-host-configuration config="./host/sampleHostConfigDark.json" id="myStyle">
-	</ui-host-configuration>
-	<ui-card id="cardWithActions" manifest="./widgets/cardmanifests/list.actions.manifest.json"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/table.manifest.json"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/analytical.manifest.json"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/object.manifest.json"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/numeric.good.manifest.json"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/list.manifest.json" hostConfiguration="myStyle"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/table.manifest.json" hostConfiguration="myStyle"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/analytical.manifest.json" hostConfiguration="myStyle"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/object.manifest.json" hostConfiguration="myStyle"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/numeric.good.manifest.json" hostConfiguration="myStyle"></ui-card>
-	<ui-card manifest="./widgets/cardmanifests/numeric.good.manifest.json" hostConfiguration="myStyle"></ui-card>
 
+<body>
 	<script>
-		document.getElementById("cardWithActions").addEventListener("action", function () {
-			alert("Action triggered!")
+		// getControl() gives access to the underlying control.
+		// This API is experimental for now and can change.
+		customElements.whenDefined("ui-integration-card").then(function () {
+			var oControl = document.createElement("ui-integration-card").getControl();
+			// oControl.loadDesigntime() ...
 		});
 	</script>
+
+	<ui-integration-card id="cardWithActions" manifest="./widgets/cardmanifests/list.actions.manifest.json" data-mode="Active"></ui-integration-card>
+	<ui-integration-card manifest="./widgets/cardmanifests/table.manifest.json"></ui-integration-card>
+	<ui-integration-card class="styledCard" manifest="./widgets/cardmanifests/analytical.manifest.json" height="15rem" ></ui-integration-card>
+	<ui-integration-card manifest="./widgets/cardmanifests/object.manifest.json"></ui-integration-card>
+	<ui-integration-card manifest="./widgets/cardmanifests/numeric.good.manifest.json"></ui-integration-card>
+	<ui-integration-card manifest='{
+								"sap.app": {
+									"type": "card",
+									"id": "tableCardAsAttribute"
+								},
+								"sap.card": {
+									"type": "Table",
+									"header": { "title": "Table Card with Top 5 Products" },
+									"content": {
+										"data": {
+											"json": [
+												{ "Name": "Comfort Easy", "Category": "PDA & Organizers" },
+												{ "Name": "ITelO Vault", "Category": "PDA & Organizers" }
+											]
+										},
+										"row": {
+											"columns": [
+												{ "title": "Name", "value": "{Name}" },
+												{ "title": "Category", "value": "{Category}" }
+											]
+										}
+									}
+								}
+							}'>
+	</ui-integration-card>
+	<script>
+
+		// set up a card through attributes
+		var oCardThroughAttributes = document.createElement("ui-integration-card");
+		oCardThroughAttributes.setAttribute('id', "dynamicCard");
+		oCardThroughAttributes.setAttribute("manifest", "./widgets/cardmanifests/list.actions.manifest.json");
+		document.body.appendChild(oCardThroughAttributes);
+
+		// set up a card through properties
+		var oCardThroughProperties = document.createElement("ui-integration-card");
+		var manifest = {
+			"sap.app": {
+				"type": "card",
+				"id": "tableCardAsProperty"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Table Card with Top 5 Products",
+					"subTitle": "These are the top sellers this month",
+					"icon": {
+						"src": "sap-icon://sales-order"
+					},
+					"status": {
+						"text": "5 of 100"
+					}
+				},
+				"content": {
+					"data": {
+						"json": [{
+								"Name": "Comfort Easy",
+								"Category": "PDA & Organizers"
+							},
+							{
+								"Name": "ITelO Vault",
+								"Category": "PDA & Organizers"
+							},
+							{
+								"Name": "Notebook Professional 15",
+								"Category": "Notebooks"
+							},
+							{
+								"Name": "Ergo Screen E-I",
+								"Category": "Monitors"
+							},
+							{
+								"Name": "Laser Professional Eco",
+								"Category": "Printers"
+							}
+						]
+					},
+					"row": {
+						"columns": [{
+								"title": "Name",
+								"value": "{Name}"
+							},
+							{
+								"title": "Category",
+								"value": "{Category}"
+							}
+						]
+					}
+				}
+			}
+		};
+
+		oCardThroughProperties.manifest = manifest
+		document.body.appendChild(oCardThroughProperties);
+
+		// event listeners
+		document.getElementById("dynamicCard").addEventListener("action", function (oEvent) {
+			sap.m.MessageToast.show(oEvent.detail.getParameter("type") + " Action triggered! for card with Id dynamicCard")
+		});
+
+		document.body.addEventListener("action", function (oEvent) {
+			sap.m.MessageToast.show(oEvent.detail.getParameter("type") + " Action triggered! Event bubbled to the body")
+		});
+
+	</script>
+
+	<!-- Host Configuration is POC for now -->
+	<ui-integration-host-configuration config="./host/sampleHostConfigDark.json" id="myStyle"></ui-integration-host-configuration>
+	<ui-integration-card id="listCardHostConfig" manifest="./widgets/cardmanifests/list.manifest.json" host-configuration-id="myStyle"></ui-integration-card>
+	<ui-integration-card manifest="./widgets/cardmanifests/table.manifest.json" host-configuration-id="myStyle"></ui-integration-card>
+	<ui-integration-card manifest="./widgets/cardmanifests/analytical.manifest.json" height="15rem" host-configuration-id="myStyle"></ui-integration-card>
+	<ui-integration-card manifest="./widgets/cardmanifests/object.manifest.json" host-configuration-id="myStyle"></ui-integration-card>
+	<ui-integration-card manifest="./widgets/cardmanifests/numeric.good.manifest.json" host-configuration-id="myStyle"></ui-integration-card>
+
 </body>
 
 </html>

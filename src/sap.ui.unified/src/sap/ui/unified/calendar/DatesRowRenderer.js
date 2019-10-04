@@ -17,6 +17,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 	 */
 	var DatesRowRenderer = Renderer.extend(MonthRenderer);
 
+	DatesRowRenderer.apiVersion = 2;
+
 	DatesRowRenderer.getStartDate = function(oDatesRow){
 
 		return oDatesRow._getStartDate();
@@ -25,10 +27,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 
 	DatesRowRenderer.getClass = function(oRm, oDatesRow){
 
-		var sClasses = "sapUiCalDatesRow sapUiCalRow";
+		var sClasses = ["sapUiCalDatesRow", "sapUiCalRow"];
 
 		if (!oDatesRow.getShowDayNamesLine()) {
-			sClasses = sClasses + " sapUiCalNoNameLine";
+			sClasses.push("sapUiCalNoNameLine");
 		}
 
 		return sClasses;
@@ -38,8 +40,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 	DatesRowRenderer.addWrapperAdditionalStyles = function(oRm, oDatesRow){
 
 		if (oDatesRow._iTopPosition) {
-			oRm.addStyle("top", oDatesRow._iTopPosition + "px");
-			oRm.writeStyles();
+			oRm.style("top", oDatesRow._iTopPosition + "px");
 		}
 
 	};
@@ -64,30 +65,25 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 		if (oDatesRow.getShowWeekNumbers() && oDatesRow.getPrimaryCalendarType() === CalendarType.Gregorian) {
 			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
-			oRm.write("<div id=\"" + oDatesRow.getId() + "-weeks\"");
-			oRm.addClass("sapUiCalRowWeekNumbers");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oDatesRow.getId() + "-weeks");
+			oRm.class("sapUiCalRowWeekNumbers");
+			oRm.openEnd(">");
 
 			iDays = oDatesRow.getDays();
 			iDaysWidth = 100 / iDays;
 			aWeekNumbers = oDatesRow.getWeekNumbers();
 
 			aWeekNumbers.forEach(function(oWeek) {
-				oRm.write("<div");
-
-				oRm.addClass('sapUiCalRowWeekNumber');
-				oRm.writeClasses();
-
-				oRm.addStyle("width", oWeek.len * iDaysWidth + "%");
-				oRm.writeStyles();
-
-				oRm.writeAttribute("data-sap-ui-week", oWeek.number);
-
-				oRm.write(">" + oResourceBundle.getText('CALENDAR_DATES_ROW_WEEK_NUMBER', [oWeek.number]) + "</div>");
+				oRm.openStart("div");
+				oRm.class('sapUiCalRowWeekNumber');
+				oRm.style("width", oWeek.len * iDaysWidth + "%");
+				oRm.attr("data-sap-ui-week", oWeek.number);
+				oRm.openEnd();
+				oRm.text(oResourceBundle.getText('CALENDAR_DATES_ROW_WEEK_NUMBER', [oWeek.number]));
+				oRm.close("div");
 			});
 
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 	};
 
@@ -105,16 +101,19 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 
 		// header
 		if (oDatesRow._getShowHeader()) {
-			oRm.write("<div id=\"" + sId + "-Head\">");
+			oRm.openStart("div", sId + "-Head");
+			oRm.openEnd();
 			this.renderHeaderLine(oRm, oDatesRow, oLocaleData, oDate);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
 		sWidth = ( 100 / iDays ) + "%";
 		if (oDatesRow.getShowDayNamesLine()) {
-			oRm.write("<div id=\"" + sId + "-Names\" style=\"display: inline;\">");
+			oRm.openStart("div", sId + "-Names");
+			oRm.style("display", "inline");
+			oRm.openEnd();
 			this.renderDayNames(oRm, oDatesRow, oLocaleData, oDate.getDay(), iDays, false, sWidth);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
 	};
@@ -149,9 +148,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/unified/calendar/CalendarDate', '
 		for (i = 0; i < aMonthDays.length; i++) {
 			var oMonthDays = aMonthDays[i];
 			sWidth = ( 100 / iDays * oMonthDays.iDays) + "%";
-			oRm.write("<div id=\"" + sId + "-Head" + i + "\"class=\"sapUiCalHeadText\" style=\"width:" + sWidth + "\">");
-			oRm.write(aMonthNames[oMonthDays.iMonth]);
-			oRm.write("</div>");
+			oRm.openStart("div", sId + "-Head" + i);
+			oRm.class("sapUiCalHeadText");
+			oRm.style("width", sWidth);
+			oRm.openEnd();
+			oRm.text(aMonthNames[oMonthDays.iMonth]);
+			oRm.close("div");
 		}
 
 	};

@@ -21,10 +21,12 @@
     <!-- excludes for the JSDoc -->
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
         <exclude name="sap.ui.integration.js." />
+        <exclude name="sap.ui.integration.thirdparty." />
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
         <exclude name="sap.ui.integration.js." />
+        <exclude name="sap.ui.integration.thirdparty." />
     </jscoverage>
 
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
@@ -33,6 +35,16 @@
         <raw-module name="sap/ui/integration/sap-ui-integration-define-nojQuery.js" depends="ui5loader-autoconfig.js" />
       </module-infos>
     </packaging>
+
+    <!-- Thirdparty references -->
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+        <lib name="webcomponentsjs" displayName="Webcomponentsjs" homepage="https://github.com/webcomponents/webcomponentsjs">
+            <license url="https://github.com/webcomponents/webcomponentsjs/blob/master/LICENSE.md" type="BSD License" file="./thirdparty/licenses/CustomElements-BSD-LICENSE.txt"></license>
+        </lib>
+        <lib name="custom-event-polyfill" displayName="CustomEvent Polyfill" homepage="https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill">
+            <license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="./thirdparty/licenses/CustomEvent-polyfill-LICENSE.txt"></license>
+        </lib>
+    </thirdparty>
 
     <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
         indexUrl="../../../../test-resources/sap/ui/integration/demokit/docuindex.json"

@@ -30,8 +30,8 @@
 				}
 			},
 			propertyEditors: {
-				"enum" : "sap/ui/integration/designtime/controls/propertyEditors/EnumStringEditor",
-				"string" : "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"
+				"enum" : "sap/ui/integration/designtime/editor/propertyEditor/enumStringEditor/EnumStringEditor",
+				"string" : "sap/ui/integration/designtime/editor/propertyEditor/stringEditor/StringEditor"
 			}
 		};
 	}

@@ -373,7 +373,6 @@ sap.ui.define([
 
 	ControlVariant.prototype.stopEdit = function (bRestoreFocus) {
 		if (this._oEditedOverlay._triggerDuplicate) {
-			this._oEditedOverlay.getElementInstance().getTitle().getBinding("text").refresh(true);
 			if (!this._oEditedOverlay.hasStyleClass("sapUiRtaErrorBg")) {
 				delete this._oEditedOverlay._triggerDuplicate;
 			}

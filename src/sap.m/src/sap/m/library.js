@@ -602,42 +602,42 @@ sap.ui.define([
 		 * @public
 		 */
 
-		Slash: "/",
+		Slash: "Slash",
 
 		/**
 		 * The separator will appear as "\"
 		 * @public
 		 */
 
-		BackSlash: "\\",
+		BackSlash: "BackSlash",
 
 		/**
 		 * The separator will appear as "//"
 		 * @public
 		 */
 
-		DoubleSlash: "//",
+		DoubleSlash: "DoubleSlash",
 
 		/**
 		 * The separator will appear as "\\"
 		 * @public
 		 */
 
-		DoubleBackSlash: "\\\\",
+		DoubleBackSlash: "DoubleBackSlash",
 
 		/**
 		 * The separator will appear as ">"
 		 * @public
 		 */
 
-		GreaterThan: ">",
+		GreaterThan: "GreaterThan",
 
 		/**
 		 * The separator will appear as ">>"
 		 * @public
 		 */
 
-		DoubleGreaterThan: ">>"
+		DoubleGreaterThan: "DoubleGreaterThan"
 
 	};
 

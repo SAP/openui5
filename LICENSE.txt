@@ -637,7 +637,18 @@ License: MIT License
 <year> = 2013-2015
 <copyright holders> = Wei Song and Oliver Nightingale
 
+Component: CustomEvent Polyfill
+Licensor: Mozilla Developer Network
+Website: https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent#Polyfill
+License: CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
+Component: Webcomponentsjs 1.0.2
+Licensor: The Polymer Project
+Website: https://github.com/webcomponents/webcomponentsjs
+License: BSD 3-clause "New" or "Revised" License
+<OWNER> = The Polymer Authors
+<ORGANIZATION>: Polymer Project
+<YEAR> = 2015
 
 --------------------------------------------------------------------------------------------------------------------------
 

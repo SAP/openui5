@@ -216,7 +216,8 @@ sap.ui.define([
 		// click on December
 		$Date = jQuery("#CalP--Cal--MP-m11");
 		$Date.focus();
-		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(jQuery("#CalP--Head-B1").text(), "December 2017", "button text is correct");
 

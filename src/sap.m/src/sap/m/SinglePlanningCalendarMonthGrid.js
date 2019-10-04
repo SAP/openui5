@@ -188,7 +188,7 @@ sap.ui.define([
 			this._handleMorePress = this._handleMorePress.bind(this);
 			this._oDateFormat = DateFormat.getDateTimeInstance({ pattern: "YYYYMMdd" });
 			this._oFormatAriaApp = DateFormat.getDateTimeInstance({
-				pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"
+				pattern: "EEEE dd/MM/YYYY 'at' " + this._getCoreLocaleData().getTimePattern("medium")
 			});
 			this._oFormatAriaFullDayCell = DateFormat.getDateTimeInstance({
 				pattern: "EEEE dd/MM/YYYY"

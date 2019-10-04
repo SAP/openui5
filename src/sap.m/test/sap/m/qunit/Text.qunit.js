@@ -1,13 +1,22 @@
 /*global QUnit */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
+	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Text",
 	"jquery.sap.global"
-], function(QUnitUtils, createAndAppendDiv, coreLibrary, JSONModel, Text, jQuery) {
+], function(
+	createAndAppendDiv,
+	coreLibrary,
+	mobileLibrary,
+	JSONModel,
+	Text,
+	jQuery
+) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -16,6 +25,9 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.mvc.ViewType
 	var ViewType = coreLibrary.mvc.ViewType;
+
+	// shortcut for sap.ui.core.TextDirection
+	var WrappingType = mobileLibrary.WrappingType;
 
 	createAndAppendDiv("content1");
 	createAndAppendDiv("content2");
@@ -200,10 +212,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("New line characters in XML view", function(assert) {
-		myText64a = sap.ui.getCore().byId("__xmlview0--xmltext1");
+		var myText64a = sap.ui.getCore().byId("__xmlview0--xmltext1");
 		assert.equal(countLines(myText64a), 2, "Text from XML view should be in 2 lines");
 
-		myText64b = sap.ui.getCore().byId("__xmlview0--xmltext2");
+		var myText64b = sap.ui.getCore().byId("__xmlview0--xmltext2");
 		assert.equal(countLines(myText64b), 2, "Text from XML view with binding should be in 2 lines");
 	});
 
@@ -369,6 +381,20 @@ sap.ui.define([
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text should not have a class sapMTextRenderWhitespace");
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text should not have a class sapMTextRenderWhitespaceWrap");
 		oText.destroy();
+	});
+
+	QUnit.test("Break words when wrapping type is 'Hyphenated'", function (assert) {
+		var oText = new Text({
+			text: "singlewordwithoutspacesbutwithhyphenationenabled",
+			wrapping: true,
+			width: "100px",
+			wrappingType: WrappingType.Hyphenated
+		});
+
+		oText.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oText.$().hasClass("sapMTextBreakWord"));
 	});
 
 	QUnit.module("Accessibility");

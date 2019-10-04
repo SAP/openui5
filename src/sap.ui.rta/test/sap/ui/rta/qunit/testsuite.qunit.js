@@ -483,6 +483,11 @@ sap.ui.define([
 						only: ["sap/ui/rta/util/hasStableId"]
 					}
 				},
+				"util/validateFlexEnabled": {
+					coverage: {
+						only: ["sap/ui/rta/util/validateFlexEnabled"]
+					}
+				},
 				"util/validateStableIds": {
 					coverage: {
 						only: ["sap/ui/rta/util/validateStableIds"]

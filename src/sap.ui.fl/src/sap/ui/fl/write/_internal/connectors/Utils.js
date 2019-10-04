@@ -137,7 +137,7 @@ sap.ui.define([
 			}
 
 			return ApplyUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function(oResult) {
-				return oResult.response;
+				return oResult;
 			})
 			.catch(function (oFirstError) {
 				if (oFirstError.status === 403) {

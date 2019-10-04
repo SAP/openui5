@@ -153,6 +153,28 @@
             "reference": "1980360836"
           }
         ]
+      },
+      {
+        "id": "b9c90b420926d85d7e0b7203d4113bb8bac3262e",
+        "type": "FIX",
+        "text": " sap.ui.core.date.Islamic: Customization fall-back format is always A",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "364899"
+          }
+        ]
+      },
+      {
+        "id": "6109672602f34fc93d0ea4eace25fb22ffa43d03",
+        "type": "FIX",
+        "text": " v2/ODataModel: Canonical resolving of preliminary context paths",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970399395"
+          }
+        ]
       }
     ]
   }

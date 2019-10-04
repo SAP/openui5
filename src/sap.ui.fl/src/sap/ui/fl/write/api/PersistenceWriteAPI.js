@@ -89,6 +89,8 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
 		 * @returns {Promise<boolean>} Promise that resolves to a boolean, indicating if a personalization change that was created during runtime is active in the application
 
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		hasHigherLayerChanges: function (mPropertyBag) {
 			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
@@ -103,6 +105,9 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipUpdateCache] - Indicates if cache update should be skipped
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		save: function (mPropertyBag) {
 			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
@@ -126,6 +131,9 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant save response
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		saveAs: function(mPropertyBag) {
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
@@ -141,6 +149,9 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the package
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		deleteAppVariant: function(mPropertyBag) {
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
@@ -157,6 +168,9 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
 		 *
 		 * @returns {Promise<object>} Resolves the information if the application to which the selector belongs has content that can be published/reset
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		getResetAndPublishInfo: function(mPropertyBag) {
 			return Promise.all([
@@ -197,6 +211,9 @@ sap.ui.define([
 		 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes
 		 *
 		 * @returns {Promise} Promise that resolves after the deletion took place
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		reset: function (mPropertyBag) {
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
@@ -235,6 +252,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change instance
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		add: function (mPropertyBag) {
 			if (isDescriptorChange(mPropertyBag.change)) {
@@ -250,9 +270,18 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Change} mPropertyBag.change - Change to be removed
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - To retrieve the associated flex persistence
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		remove: function (mPropertyBag) {
+			if (!mPropertyBag.selector) {
+				throw new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId());
+			}
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+			if (!oAppComponent) {
+				throw new Error("Invalid application component for selector, change could not be removed with id: " + mPropertyBag.change.getId());
+			}
 			// descriptor change
 			if (isDescriptorChange(mPropertyBag.change)) {
 				var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
@@ -260,9 +289,11 @@ sap.ui.define([
 				return;
 			}
 			var oElement = JsControlTreeModifier.bySelector(mPropertyBag.change.getSelector(), oAppComponent);
-			var oFlexController = ChangesController.getFlexControllerInstance(oElement);
+			var oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
 			// remove custom data for flex change
-			oFlexController._removeChangeFromControl(oElement, mPropertyBag.change, JsControlTreeModifier);
+			if (oElement) {
+				oFlexController._removeChangeFromControl(oElement, mPropertyBag.change, JsControlTreeModifier);
+			}
 			// delete from flex persistence map
 			oFlexController.deleteChange(mPropertyBag.change, oAppComponent);
 		},
@@ -274,7 +305,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the associated flex persistence
 		 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to the current running component
 		 * @param {string} [mPropertyBag.siteId] - ID of the site belonging to the current running component
-		 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
+		 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes are to be loaded without layer filtering
 		 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants are to be included
 		 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
@@ -283,6 +314,10 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolves with an array of all change instances {@see sap.ui.fl.Change}
 		 */
 		_getUIChanges: function(mPropertyBag) {
+			if (mPropertyBag.layer) {
+				//TODO: sync the layer parameter name with new persistence and remove this line
+				mPropertyBag.currentLayer = mPropertyBag.layer;
+			}
 			return ChangesController.getFlexControllerInstance(mPropertyBag.selector)
 				._oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
 		}

@@ -1787,6 +1787,10 @@ sap.ui.define([
 		}
 
 		function _submit() {
+			// Make sure requests not requiring a CSRF token don't send one.
+			if (that.bTokenHandling) {
+				delete oRequest.headers["x-csrf-token"];
+			}
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
 			if (that.bTokenHandling && oRequest.method !== "GET") {

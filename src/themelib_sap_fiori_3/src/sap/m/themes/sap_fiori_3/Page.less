@@ -3,22 +3,26 @@
 /* Fiori 3 theme                       */
 /* =================================== */
 
+.sapMPage {
+	overflow: hidden;
+}
+
+.sapMPage > .sapMPageHeader {
+	position: relative;
+	box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
+	border-bottom: none;
+}
+
 .sapMPage.sapMPageWithSubHeader {
 	> .sapMPageHeader,
 	> .sapMPageHeader .sapMIBar-CTX {
-		border-bottom: none;
 		box-shadow: none;
 	}
 
 	> .sapMPageSubHeader {
+		box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
 		border-bottom: none;
-		box-shadow: 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
 	}
-}
-
-.sapMPage > .sapMPageHeader {
-	box-shadow: inset 0 -0.0625rem @sapUiPageHeaderBorderColor, 0 0 0.25rem 0 fade(@sapUiContentShadowColor, 15);
-	border-bottom: none;
 }
 
 .sapMPageBgStandard {
@@ -58,7 +62,7 @@
 	}
 }
 
-.sapMPageFloatingFooter .sapMIBar-CTX.sapMFooter-CTX {
+.sapMPageWithFloatingFooter .sapMIBar-CTX.sapMFooter-CTX {
 	box-shadow: @sapUiShadowLevel1;
 }
 
@@ -120,6 +124,30 @@
 	}
 	&.sapMPageWithSubHeader.sapFShellBar-CTX > section {
 		top: 5.5rem;
+	}
+}
+
+.sapMPageHeader, .sapMPageSubHeader, .sapMPageFooter {
+	.sapM-Std-PaddingS, .sapM-Std-PaddingM,
+	.sapM-Std-PaddingL, .sapM-Std-PaddingXL {
+		&.sapMBar {
+			box-sizing: border-box;
+			.sapMBarLeft {
+				padding-left: inherit;
+			}
+			.sapMBarRight {
+				padding-right: inherit;
+			}
+		}
+	}
+}
+.sapM-Std-PaddingS,
+.sapM-Std-PaddingM,
+.sapM-Std-PaddingL,
+.sapM-Std-PaddingXL {
+	&.sapMFloatingFooter.sapMPageFooter {
+		margin: 0.5rem 0;
+		width: initial;
 	}
 }
 

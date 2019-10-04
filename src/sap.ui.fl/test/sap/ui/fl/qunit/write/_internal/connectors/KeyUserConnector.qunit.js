@@ -26,13 +26,13 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("given a mock server, when write is triggered", function (assert) {
-			var mPropertyBag = {url : "/flex/keyuser", flexObjects : []};
-			var sUrl = "/flex/keyuser/v1/changes/";
+			var mPropertyBag = {url : "/flexKeyuser", flexObjects : []};
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
 					xsrfToken : ApplyConnector.xsrfToken,
-					tokenUrl : "/flex/keyuser/v1/settings",
+					tokenUrl : "/flexKeyuser/flex/keyuser/v1/settings",
 					applyConnector : ApplyConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
@@ -46,13 +46,13 @@ sap.ui.define([
 				fileType: "change",
 				fileName: "myFileName"
 			};
-			var mPropertyBag = {url : "/flex/keyuser", flexObject : oFlexObject};
-			var sUrl = "/flex/keyuser/v1/changes/myFileName";
+			var mPropertyBag = {url : "/flexKeyuser", flexObject : oFlexObject};
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/myFileName";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 			return KeyUserConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
 					xsrfToken : ApplyConnector.xsrfToken,
-					tokenUrl : "/flex/keyuser/v1/settings",
+					tokenUrl : "/flexKeyuser/flex/keyuser/v1/settings",
 					applyConnector : ApplyConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json",
@@ -70,15 +70,15 @@ sap.ui.define([
 			};
 			var mPropertyBag = {
 				flexObject: oFlexObject,
-				url: "/flex/keyuser"
+				url: "/flexKeyuser"
 			};
-			var sUrl = "/flex/keyuser/v1/changes/myFileName?namespace=myNamespace";
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/myFileName?namespace=myNamespace";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return KeyUserConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : ApplyConnector.xsrfToken,
-					tokenUrl : "/flex/keyuser/v1/settings",
+					tokenUrl : "/flexKeyuser/flex/keyuser/v1/settings",
 					applyConnector : ApplyConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"
@@ -88,19 +88,19 @@ sap.ui.define([
 
 		QUnit.test("given a mock server, when reset is triggered", function (assert) {
 			var mPropertyBag = {
-				url : "/flex/keyuser",
+				url : "/flexKeyuser",
 				reference : "flexReference",
 				appVersion : "1.0.0",
 				generator : "someGenerator",
 				selectorIds : ["selector1", "selector2"],
 				changeTypes : ["changeType1", "changeType2"]
 			};
-			var sUrl = "/flex/keyuser/v1/changes/?reference=flexReference&appVersion=1.0.0&generator=someGenerator&selector=selector1,selector2&changeType=changeType1,changeType2";
+			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/?reference=flexReference&appVersion=1.0.0&generator=someGenerator&selector=selector1,selector2&changeType=changeType1,changeType2";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
 			return KeyUserConnector.reset(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : ApplyConnector.xsrfToken,
-					tokenUrl : "/flex/keyuser/v1/settings",
+					tokenUrl : "/flexKeyuser/flex/keyuser/v1/settings",
 					applyConnector : ApplyConnector
 				}), "a send request with correct parameters and options is sent");
 			});
@@ -126,11 +126,11 @@ sap.ui.define([
 			oStubSendRequest.onCall(1).resolves({xsrfToken : newToken});
 			oStubSendRequest.onCall(2).resolves({response : "something"});
 
-			var mPropertyBag = {url : "/flex/keyuser", flexObjects : []};
+			var mPropertyBag = {url : "/flexKeyuser", flexObjects : []};
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.callCount, 3, "three request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the first request was a POST request");
-				assert.equal(oStubSendRequest.getCall(1).args[0], "/flex/keyuser/v1/settings", "the second request has the correct url");
+				assert.equal(oStubSendRequest.getCall(1).args[0], "/flexKeyuser/flex/keyuser/v1/settings", "the second request has the correct url");
 				assert.equal(oStubSendRequest.getCall(1).args[1], "HEAD", "the second request was a HEAD request");
 				assert.equal(oStubSendRequest.getCall(2).args[1], "POST", "the third request was a POST request");
 				assert.equal(ApplyConnector.xsrfToken, newToken, "a new token was stored in the apply connector");
@@ -147,7 +147,7 @@ sap.ui.define([
 			oStubSendRequest.onCall(0).resolves({xsrfToken : newToken});
 			oStubSendRequest.onCall(1).resolves({response : "something"});
 
-			var mPropertyBag = {url : "/flex/keyuser", flexObjects : []};
+			var mPropertyBag = {url : "/flexKeyuser", flexObjects : []};
 			return KeyUserConnector.write(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.callCount, 2, "two request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "HEAD", "the first request was a HEAD request");
@@ -170,7 +170,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("get Response", function (assert) {
 			var mPropertyBag = {
-				url : "/flex/keyuser"
+				url : "/flexKeyuser"
 			};
 			sinon.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
 			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {

@@ -1058,8 +1058,10 @@ sap.ui.define([
 	 */
 	OverflowToolbar.prototype._updateContentInfoInControlsCollections = function () {
 		this.getContent().forEach(function (oControl) {
-			this._removeContentFromControlsCollections(oControl);
-			this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+			if (oControl) {
+				this._removeContentFromControlsCollections(oControl);
+				this._moveControlInSuitableCollection(oControl, OverflowToolbar._getControlPriority(oControl));
+			}
 		}.bind(this));
 	};
 

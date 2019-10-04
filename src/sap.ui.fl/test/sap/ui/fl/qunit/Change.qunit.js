@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
+	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -19,6 +20,7 @@ function(
 	EventProvider,
 	JsControlTreeModifier,
 	Control,
+	DescriptorInlineChangeFactory,
 	jQuery,
 	sinon
 ) {
@@ -456,6 +458,7 @@ function(
 			assert.equal(oCreatedFile.projectId, "smartFilterBar");
 			assert.equal(oCreatedFile.packageName, "/UIF/LREP");
 			assert.equal(oCreatedFile.support.generator, "Change.createInitialFileContent");
+			assert.equal(oCreatedFile.appDescriptorChange, false, "the flag for descriptor changes is set to false");
 			assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 			assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
 			assert.deepEqual(oCreatedFile.selector, {id: "control1"});
@@ -464,6 +467,53 @@ function(
 			assert.deepEqual(oCreatedFile.oDataInformation, {propertyName: "propertyName", entityType: "entityType", oDataServiceUri: "oDataServiceUri"});
 			assert.ok(oCreatedFile.jsOnly);
 		});
+
+		QUnit.test("createInitialFileContent with descriptor change", function(assert) {
+			var oInfo = {
+				service: "someService",
+				reference: "smartFilterBar.Component",
+				componentName: "smartFilterBar",
+				changeType: DescriptorInlineChangeFactory.getDescriptorChangeTypes()[5],
+				texts: {
+					variantName: {
+						type: "myTextType",
+						value: "myVariantName"
+					}
+				},
+				content: {something: "createNewVariant"},
+				isVariant: true,
+				packageName: "/UIF/LREP",
+				namespace: "apps/smartFilterBar/adapt/oil/changes/",
+				selector: {id: "control1"},
+				id: "0815_1",
+				dependentSelector: {
+					source: {
+						id: "controlSource1",
+						idIsLocal: true
+					},
+					target: {
+						id: "controlTarget1",
+						idIsLocal: true
+					}
+				},
+				validAppVersions: {
+					creation: "1.0.0",
+					from: "1.0.0",
+					to: "1.0.0"
+				},
+				oDataInformation: {
+					propertyName: "propertyName",
+					entityType: "entityType",
+					oDataServiceUri: "oDataServiceUri"
+				},
+				jsOnly: true
+			};
+
+			var oCreatedFile = Change.createInitialFileContent(oInfo);
+
+			assert.equal(oCreatedFile.appDescriptorChange, true, "the flag for descriptor changes is set to true");
+		});
+
 
 		QUnit.test("createInitialFileContent when generator is pre-set", function(assert) {
 			var oInfo = {

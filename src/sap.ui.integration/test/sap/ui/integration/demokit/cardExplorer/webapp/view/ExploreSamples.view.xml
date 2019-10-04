@@ -7,7 +7,8 @@
 	xmlns:core="sap.ui.core"
 	xmlns:editor="sap.ui.codeeditor"
 	xmlns:w="sap.ui.integration.widgets"
-	xmlns:dtcontrols="sap.ui.integration.designtime.controls">
+	xmlns:cardEditor="sap.ui.integration.designtime.cardEditor"
+>
 	<l:ResponsiveSplitter id="splitView">
 		<l:PaneContainer orientation="Horizontal">
 			<l:SplitPane id="cardPane" requiredParentWidth="1">
@@ -83,7 +84,7 @@
 						editable="{settings>/editable}"
 						liveChange="onManifestEdited"
 					/>
-					<dtcontrols:CardEditor
+					<cardEditor:CardEditor
 						id="cardEditor"
 						visible="{= ${settings>/editorType} === 'card' }"
 						jsonChanged="onManifestEdited"

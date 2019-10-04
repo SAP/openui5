@@ -55,7 +55,15 @@ sap.ui.define([
 			return new Promise(function (resolve) {
 				var aConnectors = mConnectors.map(function (mConnectorConfiguration) {
 					var sConnector = mConnectorConfiguration.connector;
-					return mConnectorConfiguration.custom ? sConnector : sNameSpace + sConnector;
+					var sConnectorModuleName;
+
+					if (!mConnectorConfiguration.custom) {
+						sConnectorModuleName = sNameSpace + sConnector;
+					} else {
+						sConnectorModuleName = bLoadApplyConnectors ? mConnectorConfiguration.applyConnector : mConnectorConfiguration.writeConnector;
+					}
+
+					return sConnectorModuleName;
 				});
 
 				sap.ui.require(aConnectors, function () {
@@ -132,6 +140,11 @@ sap.ui.define([
 
 			// Adding Query-Parameters to the Url
 			if (mParameters) {
+				Object.keys(mParameters).forEach(function(sKey) {
+					if (mParameters[sKey] === undefined) {
+						delete mParameters[sKey];
+					}
+				});
 				var sQueryParameters = encodeURLParameters(mParameters);
 
 				if (sQueryParameters.length > 0) {
@@ -182,7 +195,8 @@ sap.ui.define([
 						var oResult = {};
 						var sContentType = xhr.getResponseHeader("Content-Type");
 						if (sContentType && sContentType.startsWith("application/json")) {
-							oResult.response = JSON.parse(xhr.response);
+							//HEAD request for token does not have body response
+							oResult.response = xhr.response ? JSON.parse(xhr.response) : undefined;
 						}
 						oResult.status = xhr.status;
 						oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");

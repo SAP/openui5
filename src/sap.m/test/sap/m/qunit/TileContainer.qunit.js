@@ -147,14 +147,13 @@ sap.ui.define([
 	QUnit.test("ShouldMoveATile", function(assert) {
 		var done = assert.async();
 		// Arrange
-		var m = sap.m,
-			tile0 = new m.StandardTile(),
-			tile1 = new m.CustomTile(),
+		var tile0 = new StandardTile(),
+			tile1 = new CustomTile(),
 			tiles = [tile0,tile1],
 			sut;
 
 		// SUT
-		sut = new m.TileContainer({tiles : tiles});
+		sut = new TileContainer({tiles : tiles});
 
 		// Act
 		sut.placeAt("qunit-fixture");
@@ -176,11 +175,10 @@ sap.ui.define([
 	QUnit.test("ShouldInsertATile", function(assert) {
 		// Arrange
 		var sut,
-			m = sap.m,
-			tileToAdd = new m.StandardTile();
+			tileToAdd = new StandardTile();
 
 		// SUT
-		sut = new m.TileContainer();
+		sut = new TileContainer();
 
 		// Act
 		sut.placeAt("qunit-fixture");
@@ -197,11 +195,10 @@ sap.ui.define([
 	QUnit.test("ShouldDeleteATile", function(assert) {
 		// Arrange
 		var sut,
-			m = sap.m,
-			tileToDelete = new m.StandardTile();
+			tileToDelete = new StandardTile();
 
 		// SUT
-		sut = new m.TileContainer({
+		sut = new TileContainer({
 			tiles : tileToDelete
 		});
 
@@ -227,12 +224,11 @@ sap.ui.define([
 			$leftEdge,
 			$scroll,
 			pagerHeight,
-			m = sap.m,
 			expectedOffset = is.phone ? 2 : 0,
-			tile = new m.StandardTile();
+			tile = new StandardTile();
 
 		// SUT
-		sut = new m.TileContainer({
+		sut = new TileContainer({
 			tiles : tile
 		});
 
@@ -275,12 +271,11 @@ sap.ui.define([
 		var done = assert.async();
 		//Arrange
 		var sut,
-			m = sap.m,
 			lastTile;
 
 
 		//SUT
-		sut = new m.TileContainer({tiles : new m.StandardTile()});
+		sut = new TileContainer({tiles : new StandardTile()});
 		sut.placeAt("uiArea1"); //with of uiArea1 is 600px, will fit 2 tiles x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
 		core.applyChanges();
 		setTimeout(function() {
@@ -288,7 +283,7 @@ sap.ui.define([
 
 			//Add one more Tile than total amount of Tiles fitting in the current container
 			while (sut._iMaxTiles + 1 > sut.getTiles().length){
-				lastTile = new m.StandardTile();
+				lastTile = new StandardTile();
 				sut.addTile(lastTile);
 				sut._calculatePageSize();
 			}
@@ -317,12 +312,11 @@ sap.ui.define([
 		var done = assert.async();
 		//Arrange
 		var sut,
-			m = sap.m,
 			lastTile;
 
 
 		//SUT
-		sut = new m.TileContainer({tiles : new m.StandardTile()});
+		sut = new TileContainer({tiles : new StandardTile()});
 		sut.placeAt("uiArea1"); //with of uiArea1 is 600px, will fit 2 tiles x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
 		core.applyChanges();
 		setTimeout(function() {
@@ -330,7 +324,7 @@ sap.ui.define([
 
 			//Add one more Tile than total amount of Tiles fitting in the current container
 			while (sut._iMaxTiles + 1 > sut.getTiles().length){
-				lastTile = new m.StandardTile();
+				lastTile = new StandardTile();
 				sut.addTile(lastTile);
 				sut._calculatePageSize();
 			}
@@ -359,12 +353,11 @@ sap.ui.define([
 		var done = assert.async();
 		//Arrange
 		var sut,
-			m = sap.m,
 			lastTile;
 
 
 		//SUT
-		sut = new m.TileContainer({tiles : new m.StandardTile()});
+		sut = new TileContainer({tiles : new StandardTile()});
 		sut.placeAt("uiArea1"); //with of uiArea1 is 600px, will fit 2 tiles x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
 		core.applyChanges();
 		setTimeout(function() {
@@ -372,7 +365,7 @@ sap.ui.define([
 
 			//Add one more Tile than total amount of Tiles fitting in the current container
 			while (sut._iMaxTiles + 1 > sut.getTiles().length){
-				lastTile = new m.StandardTile();
+				lastTile = new StandardTile();
 				sut.addTile(lastTile);
 			}
 			core.applyChanges();
@@ -382,8 +375,8 @@ sap.ui.define([
 			sut.scrollIntoView(lastTile,false);
 
 			//Add 2 more tiles so that a third page appears (second is active)
-			sut.addTile(new m.StandardTile());
-			sut.addTile(new m.StandardTile());
+			sut.addTile(new StandardTile());
+			sut.addTile(new StandardTile());
 
 			sut.setVisible(false);
 			core.applyChanges();
@@ -403,15 +396,14 @@ sap.ui.define([
 	QUnit.test('TilesShouldHaveTheSameOrderInTheDomAsInTheAggregation', function (assert) {
 		var done = assert.async();
 		// SUT
-		var m 	  	= sap.m,
-			sut 	= new m.TileContainer('testOrder', {
+		var sut = new TileContainer('testOrder', {
 					tiles : [
-						new m.StandardTile({id: 'first'}),
-						new m.StandardTile({id: 'second'}),
-						new m.StandardTile({id: 'third'}),
-						new m.StandardTile({id: 'fourth'}),
-						new m.StandardTile({id: 'fifth'}),
-						new m.StandardTile({id: 'sixth'})
+						new StandardTile({id: 'first'}),
+						new StandardTile({id: 'second'}),
+						new StandardTile({id: 'third'}),
+						new StandardTile({id: 'fourth'}),
+						new StandardTile({id: 'fifth'}),
+						new StandardTile({id: 'sixth'})
 					]
 				});
 
@@ -434,12 +426,11 @@ sap.ui.define([
 	QUnit.test('Test setting first tile to visible false', function (assert) {
 		var done = assert.async();
 		// SUT
-		var m 	= sap.m,
-			sut 	= new m.TileContainer('testOrderVis', {
+		var sut = new TileContainer('testOrderVis', {
 					tiles : [
-						new m.StandardTile({id: 'first', visible: false}),
-						new m.StandardTile({id: 'second'}),
-						new m.StandardTile({id: 'third'})
+						new StandardTile({id: 'first', visible: false}),
+						new StandardTile({id: 'second'}),
+						new StandardTile({id: 'third'})
 					]
 				});
 
@@ -459,6 +450,28 @@ sap.ui.define([
 			sut.destroy();
 			done();
 		}, delay);
+	});
+
+	QUnit.test("fnOnFocusIn sets the correct currentFocusIndex when one of the tiles is hidden", function(assert) {
+		var done = assert.async();
+
+		this.sut = new TileContainer('testOrderVis', {
+				tiles : [
+					new StandardTile({id: 'first', visible: false}),
+					new StandardTile({id: 'second'}),
+					new StandardTile({id: 'third'}),
+					new StandardTile({id: 'forth'})
+				]
+			});
+
+		this.sut.placeAt("qunit-fixture");
+
+		setTimeout(function() {
+			sap.ui.getCore().byId("third").focus();
+			assert.equal(this.sut._iCurrentFocusIndex, 1, "currentFocusIndex is correct");
+			this.sut.destroy();
+			done();
+		}.bind(this), delay);
 	});
 
 	QUnit.module("Tile common dimension calculation", {
@@ -568,15 +581,14 @@ sap.ui.define([
 			});
 		},
 		beforeEach: function() {
-			var m = sap.m;
-			this.sut = new m.TileContainer("tcAcc", {
+			this.sut = new TileContainer("tcAcc", {
 				tiles: [
-					new m.StandardTile({id: 'first'}).addStyleClass("small_60x100"),
-					new m.StandardTile({id: 'second'}).addStyleClass("small_60x100"),
-					new m.StandardTile({id: 'third'}).addStyleClass("small_60x100"),
-					new m.StandardTile({id: 'fourth'}).addStyleClass("small_60x100"),
-					new m.StandardTile({id: 'fifth'}).addStyleClass("small_60x100"),
-					new m.StandardTile({id: 'sixth'}).addStyleClass("small_60x100")
+					new StandardTile({id: 'first'}).addStyleClass("small_60x100"),
+					new StandardTile({id: 'second'}).addStyleClass("small_60x100"),
+					new StandardTile({id: 'third'}).addStyleClass("small_60x100"),
+					new StandardTile({id: 'fourth'}).addStyleClass("small_60x100"),
+					new StandardTile({id: 'fifth'}).addStyleClass("small_60x100"),
+					new StandardTile({id: 'sixth'}).addStyleClass("small_60x100")
 				]
 			});
 

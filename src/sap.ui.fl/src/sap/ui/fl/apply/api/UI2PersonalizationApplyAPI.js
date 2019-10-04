@@ -11,7 +11,16 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var UI2PersonalizationApplyAPI = {
+	/**
+	 * Provides an API to access UI2 personalization.
+	 *
+	 * @namespace sap.ui.fl.apply.api.UI2PersonalizationApplyAPI
+	 * @experimental Since 1.71
+	 * @since 1.71
+	 * @private
+	 * @ui5-restricted
+	 */
+	var UI2PersonalizationApplyAPI = /** @lends sap.ui.fl.apply.api.UI2PersonalizationApplyAPI */{
 		/**
 		 * Retrieves a personalization object stored for an application under a given container ID and item name;
 		 * in case no itemName is given all items for the given container key are returned.
@@ -23,6 +32,9 @@ sap.ui.define([
 		 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
 		 * or undefined in case no entry was stored for these;
 		 * in case no sItemName was passed all entries known for the container key
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		load: function(mPropertyBag) {
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);

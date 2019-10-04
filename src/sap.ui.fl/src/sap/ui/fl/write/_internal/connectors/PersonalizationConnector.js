@@ -21,9 +21,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var PREFIX = "/flex/personalization";
+	var API_VERSION = "/v1";
 	var ROUTES = {
-		CHANGES: "/changes/",
-		TOKEN: "/actions/getcsrftoken"
+		CHANGES: PREFIX + API_VERSION + "/changes/",
+		TOKEN: PREFIX + API_VERSION + "/actions/getcsrftoken"
 	};
 
 	var FEATURES = {
@@ -41,7 +43,7 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
 	 */
-	var doWrite = function(mPropertyBag) {
+	function _doWrite(mPropertyBag) {
 		//single update --> fileName needs to be in the url
 		if (mPropertyBag.flexObject) {
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
@@ -57,16 +59,16 @@ sap.ui.define([
 			"application/json; charset=utf-8", "json"
 		);
 		return WriteUtils.sendRequest(sWriteUrl, mPropertyBag.method, oRequestOption);
-	};
+	}
 
 	/**
 	 * Connector for communication with SAPUI5 Flexibility Personalization Service
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.PersonalizationConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
+	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
 	var PersonalizationConnector = merge({}, BaseConnector, {  /** @lends sap.ui.fl.write._internal.connectors.PersonalizationConnector */
 
@@ -85,7 +87,7 @@ sap.ui.define([
 		 */
 		write: function (mPropertyBag) {
 			mPropertyBag.method = "POST";
-			return doWrite(mPropertyBag);
+			return _doWrite(mPropertyBag);
 		},
 
 		/**
@@ -98,7 +100,7 @@ sap.ui.define([
 		 */
 		update: function (mPropertyBag) {
 			mPropertyBag.method = "PUT";
-			return doWrite(mPropertyBag);
+			return _doWrite(mPropertyBag);
 		},
 
 		/**
@@ -136,8 +138,8 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @param {string} [mPropertyBag.generator] Generator with which the changes were created
-		 * @param {string[]} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter
-		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset
+		 * @param {string[]} [mPropertyBag.selectorIds] Selector IDs of controls for which the reset should filter (comma-separated list)
+		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset (comma-separated list)
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 * @public
 		 */

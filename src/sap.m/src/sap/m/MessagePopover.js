@@ -78,7 +78,7 @@ function(
 		 * <h3>Responsive Behavior</h3>
 		 * On mobile phones, the message popover is automatically shown in full screen mode.<br>
 		 * On desktop and tablet, the message popover opens in a popover.<br>
-		 * On desktop the opened popover is resizable if it is placed in a {@link sap.m.Toolbar}, {@link sap.m.Bar} or used in {@link sap.f.semantic.SemanticPage}
+		 * On desktop the opened popover is resizable if it is placed in a {@link sap.m.Toolbar}, {@link sap.m.Bar} or used in {@link sap.m.semantic.SemanticPage}
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE

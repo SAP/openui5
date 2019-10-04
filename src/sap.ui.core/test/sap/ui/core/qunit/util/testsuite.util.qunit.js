@@ -189,6 +189,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			PasteHelper: {},
+			ResponsivePaddingsEnablement: {},
 			"reflection/BaseTreeModifier": {
 				sinon: {
 					version: 4,

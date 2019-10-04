@@ -28,17 +28,17 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("given write is called", function (assert) {
 			var mPropertyBag = {
-				url: "/sap/bc/lrep",
+				url: "/flexPersonalization",
 				flexObjects: {}
 			};
-			var sExpectedUrl = "/sap/bc/lrep/changes/";
+			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/";
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return WritePersonalizationConnector.write(mPropertyBag).then(function() {
-				assert.equal(oSpyGetUrl.getCall(0).args[0], "/changes/", "with correct route path");
+				assert.equal(oSpyGetUrl.getCall(0).args[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.equal(oSpyGetUrl.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
@@ -55,17 +55,17 @@ sap.ui.define([
 				fileType: "change",
 				fileName: "myFileName"
 			};
-			var mPropertyBag = {url : "/sap/bc/lrep", flexObject : oFlexObject};
-			var sUrl = "/sap/bc/lrep/changes/myFileName";
+			var mPropertyBag = {url: "/flexPersonalization", flexObject: oFlexObject};
+			var sUrl = "/flexPersonalization/flex/personalization/v1/changes/myFileName";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 			return WritePersonalizationConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : ApplyPersonalizationConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken",
-					applyConnector : ApplyPersonalizationConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : JSON.stringify(oFlexObject)
+					xsrfToken: ApplyPersonalizationConnector.xsrfToken,
+					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
+					applyConnector: ApplyPersonalizationConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: JSON.stringify(oFlexObject)
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -80,18 +80,18 @@ sap.ui.define([
 			};
 			var mPropertyBag = {
 				flexObject: oFlexObject,
-				url: "/sap/bc/lrep"
+				url: "/flexPersonalization"
 			};
-			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=myNamespace";
+			var sUrl = "/flexPersonalization/flex/personalization/v1/changes/myFileName?namespace=myNamespace";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return WritePersonalizationConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : ApplyPersonalizationConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken",
-					applyConnector : ApplyPersonalizationConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json"
+					xsrfToken: ApplyPersonalizationConnector.xsrfToken,
+					tokenUrl: "/flexPersonalization/flex/personalization/v1/actions/getcsrftoken",
+					applyConnector: ApplyPersonalizationConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json"
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -99,21 +99,46 @@ sap.ui.define([
 
 		QUnit.test("given reset is called", function (assert) {
 			var mPropertyBag = {
-				url: "/sap/bc/lrep",
+				url: "/flexPersonalization",
 				reference: "reference",
 				generator: "generator",
 				selectorIds: ["id1", "id2"],
 				appVersion: "1.0.1",
 				changeTypes: "rename"
 			};
-			var sExpectedUrl = "/sap/bc/lrep/changes/?reference=reference&appVersion=1.0.1&generator=generator&selector=id1,id2&changeType=rename";
+			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference&appVersion=1.0.1&generator=generator&selector=id1,id2&changeType=rename";
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return WritePersonalizationConnector.reset(mPropertyBag).then(function() {
-				assert.equal(oSpyGetUrl.getCall(0).args[0], "/changes/", "with correct route path");
+				assert.equal(oSpyGetUrl.getCall(0).args[0], "/flex/personalization/v1/changes/", "with correct route path");
+				assert.equal(oSpyGetUrl.getCall(0).args[1], mPropertyBag, "with correct property bag");
+				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
+				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
+				assert.equal(oStubSendRequest.getCall(0).args[1], sExpectedMethod, "with correct method");
+			});
+		});
+
+		QUnit.test("given reset is called with optional parameters", function (assert) {
+			var mPropertyBag = {
+				url: "/flexPersonalization",
+				reference: "reference",
+				generator: undefined,
+				selectorIds: undefined,
+				appVersion: "1.0.1",
+				changeTypes: undefined,
+				somethingNotNecessary: "somethingNotNecessary"
+			};
+			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/changes/?reference=reference&appVersion=1.0.1";
+			var sExpectedMethod = "DELETE";
+
+			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
+			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
+
+			return WritePersonalizationConnector.reset(mPropertyBag).then(function() {
+				assert.equal(oSpyGetUrl.getCall(0).args[0], "/flex/personalization/v1/changes/", "with correct route path");
 				assert.equal(oSpyGetUrl.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
@@ -134,7 +159,7 @@ sap.ui.define([
 
 
 
-	QUnit.module("PersonalizationrConnector handing xsrf token in combination of the apply connector", {
+	QUnit.module("PersonalizationConnector handing xsrf token in combination of the apply connector", {
 		beforeEach : function () {
 		},
 		afterEach: function() {
@@ -148,11 +173,11 @@ sap.ui.define([
 			ApplyPersonalizationConnector.xsrfToken = "oldToken123";
 
 			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
-			oStubSendRequest.onCall(0).rejects({status : 403});
-			oStubSendRequest.onCall(1).resolves({xsrfToken : newToken});
-			oStubSendRequest.onCall(2).resolves({response : "something"});
+			oStubSendRequest.onCall(0).rejects({status: 403});
+			oStubSendRequest.onCall(1).resolves({xsrfToken: newToken});
+			oStubSendRequest.onCall(2).resolves({response: "something"});
 
-			var mPropertyBag = {url : "/flex/keyuser", flexObjects : []};
+			var mPropertyBag = {url: "/flexPersonalization", flexObjects: []};
 			return WritePersonalizationConnector.write(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.callCount, 3, "three request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "POST", "the first request was a POST request");
@@ -169,10 +194,10 @@ sap.ui.define([
 			ApplyPersonalizationConnector.xsrfToken = undefined;
 
 			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest");
-			oStubSendRequest.onCall(0).resolves({xsrfToken : newToken});
-			oStubSendRequest.onCall(1).resolves({response : "something"});
+			oStubSendRequest.onCall(0).resolves({xsrfToken: newToken});
+			oStubSendRequest.onCall(1).resolves({response: "something"});
 
-			var mPropertyBag = {url : "/flex/keyuser", flexObjects : []};
+			var mPropertyBag = {url: "/flexPersonalization", flexObjects: []};
 			return WritePersonalizationConnector.write(mPropertyBag).then(function () {
 				assert.equal(oStubSendRequest.callCount, 2, "two request were sent");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "HEAD", "the first request was a HEAD request");

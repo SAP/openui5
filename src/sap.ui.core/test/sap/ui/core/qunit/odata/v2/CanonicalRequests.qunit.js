@@ -909,7 +909,29 @@ sap.ui.define([
                 done();
             });
         });
-    });
+	});
+
+
+	QUnit.test("ODataModel.createBindingContext - Canonical Request withs preliminary contexts", function (assert) {
+        var that = this;
+        var done = assert.async();
+
+        this.oModel.metadataLoaded().then(function () {
+			var sPathCanonicalResolvable = "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')";
+			var sPathNotCanonicalResolvable = "/SalesOrderSet('0500000000')/ToBusinessPartner";
+
+			var oContext = that.oModel.createBindingContext(sPathCanonicalResolvable, undefined, {createPreliminaryContext: true, canonicalRequest: true});
+			assert.equal(oContext.getPath(), "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", "Canonical path is set.");
+			assert.strictEqual(that.oModel.mContexts["/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')"], oContext, "Context is stored correctly.");
+
+			oContext = that.oModel.createBindingContext(sPathNotCanonicalResolvable, undefined, {createPreliminaryContext: true, canonicalRequest: true});
+			assert.equal(oContext.getPath(), "/SalesOrderSet('0500000000')/ToBusinessPartner", "Canonical path is set.");
+			assert.strictEqual(that.oModel.mContexts["/SalesOrderSet('0500000000')/ToBusinessPartner"], oContext, "Context is stored correctly.");
+			oContext.getPath();
+
+			done();
+		});
+	});
 
 
 	QUnit.module("Message Scope supported", {

@@ -1852,7 +1852,8 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset, bIsTabClicked, bRedirectScroll) {
-		var oSection = this.oCore.byId(sId);
+		var oSection = this.oCore.byId(sId),
+			iSnapPosition;
 
 		if (!this.getDomRef()){
 			Log.warning("scrollToSection can only be used after the ObjectPage is rendered", this);
@@ -1952,12 +1953,16 @@ sap.ui.define([
 			iScrollTo += iOffset;
 
 			if (!this._bStickyAnchorBar && this._shouldSnapHeaderOnScroll(iScrollTo)) {
+				iSnapPosition = this._getSnapPosition();
 				// <code>scrollTo</code> position is the one with *snapped* header
 				// (because the header will snap DURING scroll,
 				// EXCEPT on slow machines, where it will snap only AFTER scroll)
 				// => snap the header in advance (before scrolling)
 				// to ensure page arrives at *correct* scroll position even on slow machines
-				this._scrollTo(this._getSnapPosition(), 0);
+				this._scrollTo(iSnapPosition, 0);
+				if (iSnapPosition === 0) {
+					this._toggleHeader(true); // ensure header is toggled even if no scroll
+				}
 			}
 
 			this._scrollTo(iScrollTo, iDuration);
@@ -3383,7 +3388,7 @@ sap.ui.define([
 		var $headerTitle = this.getHeaderTitle().$(),
 			$headerTitleClone = $headerTitle.clone();
 		//prepare: make sure it won't be visible ever and fix width to the original headerTitle which is 100%
-		$headerTitleClone.css({left: "-10000px", top: "-10000px", width: $headerTitle.width() + "px"});
+		$headerTitleClone.css({left: "-10000px", top: "-10000px", width: $headerTitle.width() + "px", position:"absolute"});
 		$headerTitleClone.toggleClass("sapUxAPObjectPageHeaderStickied", bEnableStickyMode);
 		$headerTitleClone.appendTo(this._$titleArea.parent());
 
@@ -3437,14 +3442,9 @@ sap.ui.define([
 		}
 
 		if (bViaClone) {
-			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
-			// scrollbar appearing during measurement of cloned header
-			var sOrigOverflow = this._$opWrapper.css("overflow-y");
-			this._$opWrapper.css("overflow-y", "hidden");
 			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
-			this._$opWrapper.css("overflow-y", sOrigOverflow);
 		} else if (oTitle && oTitle.unSnap) {
 			iSectionsContainerHeight = this._$sectionsContainer.height();
 

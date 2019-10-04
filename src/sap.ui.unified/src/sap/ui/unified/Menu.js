@@ -1009,7 +1009,7 @@ sap.ui.define([
 			// Open the sub menu
 			this.oOpenedSubMenu = oSubMenu;
 			var eDock = Popup.Dock;
-			oSubMenu.open(bWithKeyboard, oItem, eDock.BeginTop, eDock.EndTop, oItem, "0 0");
+			oSubMenu.open(bWithKeyboard, oItem, eDock.BeginTop, eDock.EndTop, oItem, "-4 4");
 		}
 	};
 

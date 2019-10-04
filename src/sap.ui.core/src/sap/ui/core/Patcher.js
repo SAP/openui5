@@ -39,14 +39,19 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	}
 
 	/**
-	 * Creates an HTML element from the given tag name
+	 * Creates an HTML element from the given tag name and parent namespace
 	 */
-	function createElement(sTagName) {
+	function createElement(sTagName, oParent) {
 		if (sTagName == "svg") {
 			return document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		}
 
-		return document.createElement(sTagName);
+		var sNamespaceURI = oParent.namespaceURI;
+		if (sNamespaceURI == "http://www.w3.org/1999/xhtml" || oParent.localName == "foreignObject") {
+			return document.createElement(sTagName);
+		}
+
+		return document.createElementNS(sNamespaceURI, sTagName);
 	}
 
 	/**
@@ -304,7 +309,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			this._getAttributes();
 			this._iTagOpenState = 2; /* Existing */
 		} else {
-			this._oCurrent = createElement(sTagName);
+			this._oCurrent = createElement(sTagName, this._oParent);
 			this._setNewElement(this._oCurrent);
 			this._iTagOpenState = 1; /* Created */
 		}

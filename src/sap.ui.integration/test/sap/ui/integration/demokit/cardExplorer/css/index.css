@@ -236,7 +236,7 @@ b {
 	background: #eff2f6;
 }
 
-.example-section ui-card {
+.example-section ui-integration-card {
 	width: 448px;
 	display: inline-block;
 }
@@ -627,6 +627,10 @@ b {
 	line-height: 1.1;
 }
 
+.prettyprint.small.fontWeightSmall {
+	font-size: 14px;
+}
+
 .prettyprint.small::-webkit-scrollbar {
 	background-color: transparent;
 	width: 8px;
@@ -731,7 +735,7 @@ b {
 		margin-right: 0;
 	}
 
-	.cards > ui-card {
+	.cards > ui-integration-card {
 		width: auto;
 	}
 
@@ -784,7 +788,7 @@ b {
 		padding-top: 0;
 	}
 
-	.example-section ui-card {
+	.example-section ui-integration-card {
 		width: 320px;
 	}
 

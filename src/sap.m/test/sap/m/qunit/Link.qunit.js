@@ -342,6 +342,10 @@ sap.ui.define([
 		// ARIA role
 		assert.notOk($oLink.attr("role"), "Attribute 'role' is redundant on an anchor tag");
 
+		oLink1.setHref("");
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual($oLink.attr("role"), "button","Links without href should have a button role");
+
 		// ARIA disabled
 		oLink1.setEnabled(false);
 		sap.ui.getCore().applyChanges();

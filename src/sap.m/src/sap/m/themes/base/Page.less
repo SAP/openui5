@@ -10,6 +10,7 @@
 .sapMPage,
 .sapMPage > section {
 	width: 100%;
+	box-sizing: border-box;
 }
 
 .sapMPage {
@@ -102,7 +103,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   border-bottom-width: 0;
 }
 
-.sapMPageFloatingFooter .sapMPageFooter .sapMIBar-CTX.sapMFooter-CTX.sapMTB {
+.sapMPageWithFloatingFooter .sapMPageFooter .sapMIBar-CTX.sapMFooter-CTX.sapMTB {
   border-top-width: 0;
 }
 
@@ -156,7 +157,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   bottom: 3rem;
 }
 
-.sapMPageFloatingFooter {
+.sapMPageWithFloatingFooter {
   > .sapMPageFooter {
     border-radius: 0.25rem;
     margin: 0.5rem;
@@ -169,7 +170,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   }
 }
 
-.sapMPageFloatingFooter.sapMPageWithFooter > section {
+.sapMPageWithFloatingFooter.sapMPageWithFooter > section {
     bottom: 0;
 
     &:after {
@@ -181,12 +182,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
     }
 }
 
-.sapUiSizeCompact .sapMPageWithFooter.sapMPageFloatingFooter > section {
+.sapUiSizeCompact .sapMPageWithFooter.sapMPageWithFloatingFooter > section {
   bottom: 0;
   padding-bottom: 3.5rem;
 }
 
-html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
+html[data-sap-ui-animation='on'] .sapMPageWithFloatingFooter {
   .sapMPageFooterControlShow {
     -webkit-animation: bounceShow 0.35s forwards ease-in-out;
     animation: bounceShow 0.35s forwards ease-in-out;

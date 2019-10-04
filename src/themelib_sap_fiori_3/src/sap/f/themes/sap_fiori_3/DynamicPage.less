@@ -45,7 +45,6 @@
 	bottom: -0.95rem; // needs refactoring in the base file
 
 	.sapMBtnInner {
-		border-color: @sapUiObjectHeaderBorderColor;
 		min-width: 1.5rem;
 		width: 1.5rem;
 		height: 1.5rem;
@@ -56,6 +55,27 @@
 			padding: 0;
 			line-height: 1.5rem;
 		}
+	}
+
+	overflow: visible; // enforcement needed for IE11
+
+	&:before,
+	&:after {
+		content: "";
+		position: absolute;
+		width: 4rem;
+		top: 50%; // enforcement needed for IE11
+		height: 0.0625rem;
+	}
+
+	&:before {
+		background-image: linear-gradient(to left, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		right: 100%;
+	}
+
+	&:after {
+		background-image: linear-gradient(to right, @sapUiHighlight, fade(@sapUiHighlight, 0));
+		left: 100%;
 	}
 }
 

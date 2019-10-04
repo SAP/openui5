@@ -82,10 +82,25 @@
 				]
 			});
 
+			var oVLayout2 = new sap.m.VBox("switch_page2", {
+				renderType: "Bare",
+				items:[
+					new sap.ui.core.HTML({ content: "<h3>In VBox with renderType Bare </h3>" }),
+					new sap.m.Switch({
+						id: "switch_vbox",
+						change: function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'change' state property " + this.getState() + " on", this);
+						}
+					}),
+					new sap.ui.core.HTML({ content: "<hr>" })
+				]
+			});
+
 			new sap.m.App().addPage(new sap.m.Page({
 				title: "sap.m.Switch",
 				content: [
-					oVLayout
+					oVLayout,
+					oVLayout2
 				]
 			}).addStyleClass("sapUiContentPadding")).placeAt("body");
 		</script>

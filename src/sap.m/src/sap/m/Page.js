@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Bar",
 	"sap/ui/core/ContextMenuSupport",
+	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
@@ -26,6 +27,7 @@ function(
 	Button,
 	Bar,
 	ContextMenuSupport,
+	ResponsivePaddingsEnablement,
 	coreLibrary,
 	Device,
 	Element,
@@ -77,7 +79,10 @@ function(
 		 * This is enabled with the <code>floatingFooter</code> property.
 		 *
 		 * <b>Note:</b> All accessibility information for the different areas and their corresponding ARIA roles is set in the aggregation <code>landmarkInfo</code> of type {@link sap.m.PageAccessibleLandmarkInfo}
-		 *
+		 * <h3>Responsive Behavior</h3>
+		 * When using the sap.m.Page in SAP Quartz theme, the breakpoints and layout paddings could be determined by the container's width.
+		 * To enable this concept and add responsive paddings to an element of the Page control, you may add the following classes depending on your use case:
+		 * <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>, <code>sapUiResponsivePadding--floatingFooter</code>.
 		 * @extends sap.ui.core.Control
 		 * @mixes sap.ui.core.ContextMenuSupport
 		 * @author SAP SE
@@ -258,6 +263,14 @@ function(
 
 		ContextMenuSupport.apply(Page.prototype);
 
+		ResponsivePaddingsEnablement.call(Page.prototype, {
+			header: {suffix: "intHeader"},
+			subHeader: {selector: ".sapMPageSubHeader .sapMIBar"},
+			content: {suffix: "cont"},
+			footer: {selector: ".sapMPageFooter:not(.sapMPageFloatingFooter) .sapMIBar"},
+			floatingFooter: {selector: ".sapMPageFloatingFooter.sapMPageFooter"}
+		});
+
 		// Add title propagation support
 		TitlePropagationSupport.call(Page.prototype, "content", function () {
 			return this._headerTitle ? this._headerTitle.getId() : false;
@@ -267,6 +280,7 @@ function(
 
 		Page.prototype.init = function () {
 			this._initTitlePropagationSupport();
+			this._initResponsivePaddingsEnablement();
 		};
 
 		// Return true if scrolling is allowed

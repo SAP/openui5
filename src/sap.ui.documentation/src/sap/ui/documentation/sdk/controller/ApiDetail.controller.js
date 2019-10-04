@@ -168,6 +168,27 @@ sap.ui.define([
 			},
 
 			/**
+			 * Omit nodes that are marked with visibility: restricted
+			 * but only when we are in an internal version of the Demo Kit
+			 * @param {array} aLibsData data from api.json
+			 * @returns {array} filtered aLibsData
+			 * @private
+			 */
+			_filterEntityByVisibilityInApiJsonData: function (aLibsData) {
+
+				var oVersionModel = this.getModel("versionData"),
+					bIsInternal = oVersionModel.getProperty("/isInternal");
+
+				if (!bIsInternal) {
+					aLibsData = (aLibsData || []).filter(function (aNode) {
+						return !aNode.hasOwnProperty('visibility') || aNode.visibility !== 'restricted';
+					});
+				}
+
+				return aLibsData;
+			},
+
+			/**
 			 * Extract current symbol data from api.json file for the current library
 			 * @param {array} aLibsData data from api.json file for the current library
 			 * @returns {object} current symbol data
@@ -237,6 +258,8 @@ sap.ui.define([
 						oMasterController = this.getOwnerComponent().getConfigUtil().getMasterView("apiId").getController();
 						oMasterController.selectDeprecatedSymbol(this._sTopicid);
 					}
+
+					oEntityData.nodes = this._filterEntityByVisibilityInApiJsonData(oEntityData.nodes);
 
 					// Load API.json only for selected lib
 					return APIInfo.getLibraryElementsJSONPromise(oEntityData.lib).then(function (aData) {

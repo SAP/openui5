@@ -45,6 +45,8 @@ sap.ui.define([
 		}
 	});
 
+	OneMonthDatesRow.apiVersion = 2;
+
 	OneMonthDatesRow.prototype.init = function() {
 		DatesRow.prototype.init.apply(this, arguments);
 		this.iMode = 2; //default corresponds to size L
@@ -64,7 +66,7 @@ sap.ui.define([
 			}
 
 			//clear or set to first of the month
-			oSelectedDates[0].setProperty('startDate', oStartDate, true);
+			oSelectedDates[0].setProperty('startDate', oStartDate);
 		}
 
 		return this;

@@ -155,8 +155,10 @@ sap.ui.define([
 		 * @since 1.60
 		 */
 		AlignedFlowLayout.prototype.reflow = function(oSettings) {
+			var aContent = this.getContent();
 
-			if (this.getContent().length === 0) {
+			// skip unnecessary style recalculations if the items are not rendered or are rendered async
+			if ((aContent.length === 0) || !aContent[0].isActive()) {
 				return;
 			}
 
@@ -194,7 +196,8 @@ sap.ui.define([
 				if (Core.getConfiguration().getRTL()) {
 					iAvailableWidthForEndItem = iLastItemOffsetLeft;
 				} else {
-					var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth;
+					var iLastItemMarginRight = Number.parseFloat(window.getComputedStyle(oLastItemDomRef).marginRight);
+					var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth + iLastItemMarginRight;
 					iAvailableWidthForEndItem = oDomRef.offsetWidth - iRightBorderOfLastItem;
 				}
 

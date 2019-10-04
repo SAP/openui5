@@ -22,23 +22,25 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("loadFlexData trigger the correct request to back end", function (assert) {
 			var mPropertyBag = {
-				url: "/flex/keyuser",
+				url: "/flexKeyuser",
 				reference: "reference",
 				appVersion: "1.0.0"
 			};
 			var mParameter = {
 				appVersion: "1.0.0"
 			};
-			var sExpectedUrl = "/flex/keyuser/v1/data/reference?appVersion=1.0.0";
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
-				response : {},
+				response : {
+					changes: []
+				},
 				xsrfToken : "newToken",
 				status: "200"
 			});
 			return KeyUserConnector.loadFlexData(mPropertyBag).then(function () {
 				assert.ok(oStubGetUrlWithQueryParameters.calledOnce, "getUrl is called once");
-				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/v1/data/", "with correct route path");
+				assert.equal(oStubGetUrlWithQueryParameters.getCall(0).args[0], "/flex/keyuser/v1/data/", "with correct route path");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[1], mPropertyBag, "with correct property bag");
 				assert.deepEqual(oStubGetUrlWithQueryParameters.getCall(0).args[2], mParameter, "with correct parameters input");
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
@@ -46,6 +48,29 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.deepEqual(oStubSendRequest.getCall(0).args[2], {xsrfToken: undefined}, "with correct token");
 				assert.equal(KeyUserConnector.xsrfToken, "newToken", "new token is set");
+			});
+		});
+
+		QUnit.test("loadFlexData merges the compVariants in the changes", function (assert) {
+			var mPropertyBag = {
+				url: "/flexKeyuser",
+				reference: "reference",
+				appVersion: "1.0.0"
+			};
+			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?appVersion=1.0.0";
+			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
+			sandbox.stub(Utils, "sendRequest").resolves({
+				response : {
+					changes: [1],
+					compVariants: [2]
+				},
+				xsrfToken : "newToken",
+				status: "200"
+			});
+			return KeyUserConnector.loadFlexData(mPropertyBag).then(function (oFlexData) {
+				assert.equal(oFlexData.changes.length, 2, "two entries are in the change section");
+				assert.equal(oFlexData.changes[0], 1, "the change entry is contained");
+				assert.equal(oFlexData.changes[1], 2, "the compVariant entry is contained");
 			});
 		});
 	});

@@ -8,14 +8,14 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-					"value": "London"
+					"value": "New York"
 				}
 			}
 		},
 		"type": "List",
 		"header": {
 			"title": "Weather forecast for {{parameters.city}}",
-			"subTitle": "{{parameters.TODAY_ISO}}"
+			"subTitle": "{{parameters.NOW_ISO}}, locale: {{parameters.LOCALE}}"
 		},
 		"content": {
 			"data": {

@@ -89,6 +89,8 @@ function(
 	 * <h3>Overview</h3>
 	 * The MultiComboBox control is commonly used to enable users to select one or more options from a predefined list. The control provides an editable input field to filter the list, and a dropdown arrow of available options.
 	 * The select options in the list have checkboxes that permit multi-selection. Entered values are displayed as {@link sap.m.Token tokens}.
+	 *
+	 * When an invalid character is typed into the text field of the MultiComboBox control, the value state is changed to <code>sap.ui.core.ValueState.Error</code> only for a second, as the invalid value is immediately deleted from the input field.
 	 * <h3>Structure</h3>
 	 * The MultiComboBox consists of the following elements:
 	 * <ul>
@@ -1930,8 +1932,14 @@ function(
 			oPropertyInfo = oControlEvent.getParameters(),
 			oToken = this._getTokenByItem(oItem);
 
-		if (oPropertyInfo.name === "enabled" && oToken) {
+		if (!oToken) {
+			return;
+		}
+
+		if (oPropertyInfo.name === "enabled") {
 			oToken.setVisible(oPropertyInfo.newValue);
+		} else if (oToken.getMetadata().hasProperty(oPropertyInfo.name)) {
+			oToken.setProperty(oPropertyInfo.name, oPropertyInfo.newValue, false);
 		}
 	};
 

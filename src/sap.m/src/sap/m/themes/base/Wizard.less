@@ -11,7 +11,7 @@
 	position: relative;
 	counter-reset: steps-counter;
 	overflow: hidden;
-	background-color: @sapUiGroupContentBackground;
+	background-color: transparent;
 
 	.sapMWizardStepContainer {
 		position: relative;
@@ -53,6 +53,23 @@
 
 	.sapMDialogSection {
 		height: auto;
+	}
+
+
+	&.sapMWizardBgStandard .sapMWizardStepContainer {
+		background-color: @sapUiBaseBG;
+	}
+
+	&.sapMWizardBgSolid .sapMWizardStepContainer {
+		background-color: @sapUiBaseBG;
+	}
+
+	&.sapMWizardBgTransparent .sapMWizardStepContainer {
+		background-color: transparent;
+	}
+
+	&.sapMWizardBgList .sapMWizardStepContainer {
+		background-color: @sapUiGroupContentBackground;
 	}
 }
 

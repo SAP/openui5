@@ -5,6 +5,7 @@
 
 .sapMIBar.sapMTB .sapMBarChild {
 	margin-right: 0.25rem;
+	margin-bottom: 0;
 }
 
 .sapMIBar.sapMTB .sapMBarChild:only-child {
@@ -66,7 +67,7 @@
 	display: flex;
 }
 
-.sapMTBNewFlex > * {
+.sapMTBNewFlex > *:not(.sapUiHiddenPlaceholder) {
 	-webkit-flex-shrink: 0;
 	flex-shrink: 0;
 }

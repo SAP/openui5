@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"./library",
+	"sap/m/library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/delegate/ScrollEnablement",
@@ -27,6 +27,9 @@ sap.ui.define([
 	jQuery
 ) {
 		"use strict";
+
+		// shortcut for sap.m.PageBackgroundDesign
+		var WizardBackgroundDesign = library.PageBackgroundDesign;
 
 		/**
 		 * Constructor for a new Wizard.
@@ -106,7 +109,16 @@ sap.ui.define([
 					 * associations of the WizardStep control are ignored.
 					 * @since 1.32
 					 */
-					enableBranching : {type: "boolean", group: "Behavior", defaultValue : false}
+					enableBranching : {type: "boolean", group: "Behavior", defaultValue : false},
+					/**
+					 * This property is used to set the background color of a Wizard content.
+					 * The <code>Standard</code> option with the default background color is used, if not specified.
+					 */
+					backgroundDesign: {
+						type: "sap.m.PageBackgroundDesign",
+						group: "Appearance",
+						defaultValue: WizardBackgroundDesign.Standard
+					}
 				},
 				defaultAggregation: "steps",
 				aggregations: {
@@ -172,6 +184,7 @@ sap.ui.define([
 			this._scrollLocked = false;
 			this._scroller = this._initScrollEnablement();
 			this._resourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this._handleNextButtonPressListener = this._handleNextButtonPress.bind(this);
 			this._initProgressNavigator();
 		};
 
@@ -215,6 +228,7 @@ sap.ui.define([
 			this._stepCount = null;
 			this._scrollLocked = null;
 			this._resourceBundle = null;
+			this._handleNextButtonPressListener = null;
 		};
 
 		/**************************************** PUBLIC METHODS ***************************************/
@@ -472,10 +486,24 @@ sap.ui.define([
 			}
 
 			wizardStep.setWizardContext({bParentAllowsButtonShow: this.getShowNextButton()});
-			wizardStep.attachComplete(this._handleNextButtonPress.bind(this));
+			wizardStep.attachComplete(this._handleNextButtonPressListener);
 			this._incrementStepCount();
 
 			return this.addAggregation("steps", wizardStep);
+		};
+
+		/**
+		 * Sets background design.
+		 *
+		 * @param {string} sBgDesign The new background design parameter.
+		 * @returns {sap.m.Wizard} <code>this</code> to facilitate method chaining.
+		 */
+		Wizard.prototype.setBackgroundDesign = function (sBgDesign) {
+			var sBgDesignOld = this.getBackgroundDesign();
+
+			this.setProperty("backgroundDesign", sBgDesign, true);
+			this.$().removeClass("sapMWizardBg" + sBgDesignOld).addClass("sapMWizardBg" + this.getBackgroundDesign());
+			return this;
 		};
 
 		/**
@@ -506,7 +534,11 @@ sap.ui.define([
 		 */
 		Wizard.prototype.removeAllSteps = function () {
 			this._resetStepCount();
-			return this.removeAllAggregation("steps");
+			return this.removeAllAggregation("steps")
+				.map(function (oStep) {
+					oStep.detachComplete(this._handleNextButtonPressListener);
+					return oStep;
+				}, this);
 		};
 
 		/**

@@ -139,14 +139,14 @@ sap.ui.define([
 		return bFocusSet;
 	};
 
-	CreationRow.prototype.onkeydown = function(oEvent) {
-		// TODO: don't hardcode keycodes. maybe move #isKeyCombination of keyboard delegate to utils and use that.
-		if (this.getApplyEnabled() &&  (oEvent.metaKey || oEvent.ctrlKey) && oEvent.keyCode === 13 /* Enter */) {
+	CreationRow.prototype.onsapentermodifiers = function(oEvent) {
+		if (this.getApplyEnabled() &&  (oEvent.metaKey || oEvent.ctrlKey)) {
 			// The FocusHandler triggers the "sapfocusleave" event in a timeout of 0ms after a blur event. To give the control in the cell
 			// enough time to react to the "sapfocusleave" event (e.g. sap.m.Input - changes its value), the "apply" event is fired asynchronously.
 			var oFocusedElement = document.activeElement;
 
 			oFocusedElement.blur();
+			oEvent.setMarked();
 
 			window.setTimeout(function() {
 				if (!this._fireApply()) {

@@ -3,10 +3,11 @@
 sap.ui.define([
 	'sap/ui/core/util/MockServer',
 	'sap/ui/model/odata/v2/ODataModel',
-	'sap/m/Input'
-], function (MockServer, ODataModel, Input) {
+	'sap/m/Input',
+	"sap/ui/core/message/Message",
+	"sap/ui/core/Item"
+], function (MockServer, ODataModel, Input, Message, Item) {
 	"use strict";
-
 
 	QUnit.module("Messaging End2End", {
 		before: function () {
@@ -69,7 +70,7 @@ sap.ui.define([
 									code: "MESSAGE/CODE",
 									message: "I'm just a container!",
 									severity: "warning",
-									target: "",
+									target: "CustomerName",
 									details: [
 										oMsgTemplate,
 										Object.assign({ target: "ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')" }, oMsgTemplate),
@@ -128,6 +129,19 @@ sap.ui.define([
 										Object.assign({ target: "Adress/ZIP" }, oMsgTemplate)
 									]
 								};
+							} else if (oXhr.url.startsWith("/SalesOrderSrv/BusinessPartnerSet")){
+
+								oMessages = {
+									code: "MESSAGE/CODE",
+									message: "Correct text",
+									severity: "warning",
+									target: "('0100000000')/EmailAddress",
+									details: [
+										Object.assign({ target: "" , message: "Unrelevant text"}, oMsgTemplate),
+										Object.assign({ target: "('0100000000')/ToSalesOrders('0500000001')/Note", message: "Unrelevant text"}, oMsgTemplate)
+									]
+								};
+
 							}
 
 							if (oMessages) {
@@ -392,6 +406,43 @@ sap.ui.define([
 				oModelCanonical.attachBatchRequestCompleted(fnBatchHandler2);
 			};
 			oModelCanonical.attachBatchRequestCompleted(fnHandleBatch1);
+		});
+	});
+
+
+	QUnit.test("MessageMixin: Ignore list bindings", function(assert) {
+		var done = assert.async();
+		assert.expect(4);
+		var oModel = new ODataModel(this.sServiceUri);
+
+        oModel.metadataLoaded().then(function(){
+			var oInput = new Input({
+				value: {path: "/BusinessPartnerSet('0100000000')/EmailAddress"},
+				suggestionItems: {path: "/BusinessPartnerSet", template: new Item({text: "{EmailAddress}"})}
+			});
+			oInput.setModel(oModel);
+			sap.ui.getCore().getMessageManager().registerObject(oInput);
+
+			var bCall1, bCall2;
+			var orginalFunction = oInput.refreshDataState;
+			oInput.refreshDataState = function(sName, oDataState){
+				orginalFunction.apply(this, arguments);
+				if (sName === "value"){
+					assert.equal(oInput.getValueStateText(), "Correct text", "Correct message text was set and other messages texts were ignored");
+					assert.equal(oInput.getValueState(), "Warning", "Warning state was set.");
+					bCall1 = true;
+				} else if (sName === "suggestionItems"){
+					assert.equal(oInput.getValueStateText(), "Correct text", "Correct message text was set and other messages texts were ignored");
+					assert.equal(oInput.getValueState(), "Warning", "Warning state was not set to error.");
+					bCall2 = true;
+				}
+				if (bCall1 && bCall2){
+					oInput.destroy();
+					sap.ui.getCore().getMessageManager().removeAllMessages();
+					done();
+				}
+
+			};
 		});
 	});
 });

@@ -1,4 +1,5 @@
-/* global QUnit */
+/* global QUnit, customElements */
+/* eslint max-nested-callbacks: 0 */
 
 sap.ui.define([
 		"sap/ui/integration/util/CustomElements",
@@ -12,20 +13,18 @@ sap.ui.define([
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
-		var aTags, sPrefix;
+		var oLibrary = Core.getLoadedLibraries()["sap.ui.integration"];
+		var sPrefix = oLibrary.defaultCustomElementsPrefix;
+		var aCustomElements = Object.keys(oLibrary.customElements).map(function (sCustomElementName) { return sPrefix + "-" + sCustomElementName; }); // prefix custom elements names
 
 		/* Helper functions */
-		function registerLibraryTags(sLibrary, done) {
-			CustomElements.coreInstance = Core;
-			var oLibrary = Core.getLoadedLibraries()[sLibrary];
-			//collect the prefix and the relevant tags
-			sPrefix = oLibrary.defaultTagPrefix;
-			aTags = Object.keys(oLibrary.customTags);
+		function registerLibraryTags() {
+			var aTags = Object.keys(oLibrary.customElements);
 			//collect all the implementation classes and require them
 			sap.ui.require(
 				aTags.map(
 					function (o, i) {
-						return oLibrary.customTags[aTags[i]];
+						return oLibrary.customElements[aTags[i]];
 					}
 				),
 				function () {
@@ -33,215 +32,219 @@ sap.ui.define([
 					var args = arguments;
 					aTags.forEach(
 						function (o, i) {
-							CustomElements.registerTag(aTags[i], sPrefix, args[i]);
+							CustomElements.registerTag(sPrefix + "-" + aTags[i], args[i]);
 						}
 					);
-					done();
 				}
 			);
 		}
 
-		function initTags(done) {
-			//need to wait for the onload event of the window to ensure that the MutationObserver reacts
-			//load the lib(s) and register
+		function initTags() {
 			Core.loadLibraries(["sap/ui/integration"], {
 				async: true
 			}).then(function () {
 				//register the tags for this library
-				registerLibraryTags("sap.ui.integration", done);
+				registerLibraryTags("sap.ui.integration");
 			});
-
 		}
 
-		QUnit.module("Initialize tags", {
-			beforeEach: function (assert) {
-				var done = assert.async();
-				initTags(done);
-			}
-		});
+		// await the registration of all known custom elements
+		function whenDefinedAll() {
+			var aPromises = aCustomElements.map(function (sCustomElementName) {
+				return customElements.whenDefined(sCustomElementName);
+			});
+
+			return Promise.all(aPromises);
+		}
+
+		// wrapper for safe and convenient assertions
+		function testWhenDefined(fnCb) {
+			return whenDefinedAll().then(fnCb);
+		}
+
+		initTags(); // init the library custom elements
+
+		QUnit.module("Initialize tags");
 
 		QUnit.test("Initialization", function (assert) {
 			var done = assert.async();
-			// setTimeout until everything is initialized.
-			setTimeout(function () {
-				assert.ok(Object.keys(document.createCustomElement).length === aTags.length, "All tags of the library are registered");
-				aTags.forEach(function (sTag) {
-					var sPrefixedTag = sPrefix + "-" + sTag;
-					assert.ok(document.createCustomElement.hasOwnProperty(sPrefixedTag), "Tag <" + sPrefixedTag + "> registered");
+
+			testWhenDefined().then(function () {
+				aCustomElements.map(function (sCustomElementName) {
+					assert.ok(customElements.get(sCustomElementName), sCustomElementName + " custom element of the library is registered.");
 				});
 				done();
-			}, 100);
+			});
 		});
 
-		QUnit.module("Direct create", {
-			beforeEach: function (assert) {
-				var done = assert.async();
-				initTags(done);
-			}
-		});
+		QUnit.module("Direct create");
+
 		QUnit.test("Create and remove tags directly and check whether they are connected/disconnected correctly", function (assert) {
-			var done = assert.async(),
-				aElements = [];
-			aTags.forEach(function (sTag) {
-				var sPrefixedTag = sPrefix + "-" + sTag,
-					oElement = document.createElement(sPrefixedTag);
-				aElements.push(oElement);
+			// arrange
+			var done = assert.async();
+
+			aCustomElements.forEach(function (sName) {
+				var oElement = document.createElement(sName);
+				// act
 				document.getElementById(DOM_RENDER_LOCATION).appendChild(oElement);
 			});
-			setTimeout(function () {
-				aTags.forEach(function (sTag) {
-					var sPrefixedTag = sPrefix + "-" + sTag,
-						oElement = document.querySelector(sPrefixedTag.replace(/\-/g, "\\-"));
-					assert.ok(oElement._control, "The control is connected to the element <" + sPrefixedTag + ">");
-					var Tag = document.createCustomElement[sPrefixedTag];
-					assert.ok(Tag.isInActiveDocument(oElement) === true, "The element <" + sPrefixedTag + "> is in the active dom ");
-				});
-				aTags.forEach(function (sTag) {
-					var sPrefixedTag = sPrefix + "-" + sTag;
-					var oElement = document.querySelector(sPrefixedTag.replace(/\-/g, "\\-"));
+
+			testWhenDefined(function () {
+				aCustomElements.forEach(function (sName) {
+					var oElement = document.querySelector(sName.replace(/\-/g, "\\-"));
+
+					// assert
+					assert.ok(oElement._oControlInstance, "The control is connected to the element <" + sName + ">.");
+					assert.ok(document.body.contains(oElement), "The element <" + sName + "> is in the active dom.");
+
+					// act
 					oElement.parentNode.removeChild(oElement);
+
+					// assert
+					assert.notOk(oElement._oControlInstance, "The control instance is destroyed from the element <" +  oElement.tagName.toLowerCase() + ">.");
+					assert.notOk(document.body.contains(oElement), "The element <" + oElement.tagName.toLowerCase() + "> is NOT in the active dom.");
 				});
-				setTimeout(function () {
-					aElements.forEach(function (oElement) {
-						assert.ok(oElement._control, "The control is still connected to the element <" + oElement.tagName.toLowerCase() + ">");
-						var Tag = document.createCustomElement[oElement.tagName.toLowerCase()];
-						assert.ok(Tag.isInActiveDocument(oElement) === false, "The element <" + oElement.tagName.toLowerCase() + "> is not in the active dom ");
-					});
-					done();
-				}, 100);
-			}, 100);
+
+				done();
+			});
 		});
 
-		QUnit.module("InnerHTML create", {
-			beforeEach: function (assert) {
-				var done = assert.async();
-				initTags(done);
-			}
-		});
 		QUnit.test("Create and remove tags and check whether they are connected/disconnected correctly via innerHTML", function (assert) {
+			// arrange
 			var done = assert.async(),
 				aElements = [],
 				oDiv = document.createElement("div");
-			aTags.forEach(function (sTag) {
-				var sPrefixedTag = sPrefix + "-" + sTag;
-				oDiv.innerHTML = oDiv.innerHTML + "<" + sPrefixedTag + "></" + sPrefixedTag + ">";
 
-			});
-			document.getElementById(DOM_RENDER_LOCATION).appendChild(oDiv);
-			setTimeout(function () {
-				aTags.forEach(function (sTag) {
-					var sPrefixedTag = sPrefix + "-" + sTag;
-					var oElement = document.querySelector(sPrefixedTag.replace(/\-/g, "\\-"));
-					aElements.push(oElement);
-					assert.ok(oElement._control, "The control is connected to the element <" + sPrefixedTag + ">");
-					var Tag = document.createCustomElement[sPrefixedTag];
-					assert.ok(Tag.isInActiveDocument(oElement) === true, "The element <" + sPrefixedTag + "> is in the active dom ");
-				});
-				oDiv.innerHTML = "";
-				setTimeout(function () {
-					aElements.forEach(function (oElement) {
-						assert.ok(oElement._control, "The control is still connected to the element <" + oElement.tagName.toLowerCase() + ">");
-						var Tag = document.createCustomElement[oElement.tagName.toLowerCase()];
-						assert.ok(Tag.isInActiveDocument(oElement) === false, "The element <" + oElement.tagName.toLowerCase() + "> is not in the active dom ");
-					});
-					done();
-				}, 100);
-			}, 100);
-		});
-
-		QUnit.module("Change attributes", {
-			beforeEach: function (assert) {
-				var done = assert.async();
-				initTags(done);
-			}
-		});
-		QUnit.test("Create a card tag and change attributes", function (assert) {
-			var done = assert.async(),
-				oElement = document.createCustomElement("ui-card");
-			oElement.setAttribute("height", "100px");
-			oElement.setAttribute("width", 100); //invalid value
-			assert.notOk(oElement._control._controlImpl.getProperty("height") === "100px", "Property height not yet set correctly on the control, waitng for mutation observer to chip in");
-			assert.ok(oElement.getAttribute("height") === "100px", "Attribute height set correctly on the element");
-			setTimeout(function () {
-				assert.ok(oElement._control._controlImpl.getProperty("height") === "100px", "Property height set correctly on the control to 100px");
-				assert.notOk(oElement._control._controlImpl.getProperty("width") === "100", "Property width not set correctly on the control because it has an invalid value");
-				done();
-			}, 100);
-		});
-		QUnit.test("Create a card tag and change property", function (assert) {
-			var done = assert.async(),
-				oElement = document.createCustomElement("ui-card");
-			oElement.height = "100px";
-			oElement.width = 100;
-			setTimeout(function () {
-				assert.ok(oElement._control._controlImpl.getProperty("height") === "100px", "Property height set correctly on the control to 100px");
-				assert.notOk(oElement._control._controlImpl.getProperty("width") === "100", "Property width not set correctly on the control because it has an invalid value");
-				assert.ok(oElement.height === "100px", "Property height set correctly on the control to 100px");
-				assert.ok(oElement.width === "100%", "Property width still 100%");
-				done();
-			}, 100);
-		});
-
-		QUnit.module("Clone a node", {
-			beforeEach: function (assert) {
-				var done = assert.async();
-				initTags(done);
-			}
-		});
-		QUnit.test("Clone a card tag and change attributes", function (assert) {
-			var done = assert.async(),
-				oElement = document.createCustomElement("ui-card");
-			oElement.setAttribute("height", "100px");
-			oElement.setAttribute("width", 100); //invalid value
-			var oClone = oElement.cloneNode();
-			assert.ok(oClone !== oElement, "A new node reference was created");
-			assert.ok(oClone._control._controlImpl !== oElement._control._controlImpl, "A new control instance was created");
-			setTimeout(function () {
-				assert.ok(oClone._control._controlImpl.getProperty("height") === "100px", "Property height set correctly on the control to 100px");
-				assert.notOk(oClone._control._controlImpl.getProperty("width") === "100", "Property width not set correctly on the control because it has an invalid value");
-				done();
-			}, 100);
-		});
-
-		QUnit.module("Add/remove classes", {
-			beforeEach: function (assert) {
-				var done = assert.async();
-				initTags(done);
-			}
-		});
-		QUnit.test("Add and remove a classes and check whether it is correctly added to the control", function (assert) {
-			var done = assert.async(),
-				oElement = document.createCustomElement("ui-card");
-			oElement.className = "test1 test2";
-			setTimeout(function () {
-				assert.ok(oElement._control._controlImpl.hasStyleClass("test1"), "Class test1 added to the control correctly");
-				assert.ok(oElement._control._controlImpl.hasStyleClass("test2"), "Class test2 added to the control correctly");
-				oElement.className = "test1";
-			}, 100);
-			setTimeout(function () {
-				assert.ok(oElement._control._controlImpl.hasStyleClass("test2") === false, "Class test2 removed from the control correctly");
-				done();
-			}, 200);
-		});
-
-		QUnit.module("Events", {
-			beforeEach: function (assert) {
-				var done = assert.async();
-				initTags(done);
-			}
-		});
-
-		QUnit.test("Add event listener dynamically", function (assert) {
-			var done = assert.async(),
-				oElement = document.createCustomElement("ui-card");
-
-			assert.expect(1);
-			oElement.addEventListener("action", function (oEvent) {
-				assert.strictEqual(oEvent.type, "action", "The proper event is fired.");
-				done();
+			aCustomElements.forEach(function (sName) {
+				oDiv.innerHTML = oDiv.innerHTML + "<" + sName + "></" + sName + ">";
 			});
 
 			// act
-			oElement._control._controlImpl.fireAction();
+			document.getElementById(DOM_RENDER_LOCATION).appendChild(oDiv);
+
+			testWhenDefined(function () {
+
+				aCustomElements.forEach(function (sName) {
+					var oElement = document.querySelector(sName.replace(/\-/g, "\\-"));
+					aElements.push(oElement);
+
+					// assert
+					assert.ok(oElement._oControlInstance, "The control is connected to the element <" + sName + ">.");
+					assert.ok(document.body.contains(oElement), "The element <" + sName + "> is in the active dom.");
+				});
+
+				// act
+				oDiv.innerHTML = "";
+
+				aElements.forEach(function (oElement) {
+					// assert
+					assert.notOk(oElement._oControlInstance,  "The control instance is destroyed from the element <" +  oElement.tagName.toLowerCase() + ">.");
+					assert.notOk(document.body.contains(oElement), "The element <" + oElement.tagName.toLowerCase() + "> is NOT in the active dom.");
+				});
+
+				done();
+			});
+		});
+
+		QUnit.module("Attributes");
+
+		QUnit.test("Create a card tag and change attributes", function (assert) {
+			// arrange
+			var done = assert.async(),
+				oElement = document.createElement("ui-integration-card");
+
+			// act
+			oElement.setAttribute("height", "100px");
+
+			testWhenDefined(function () {
+				// assert
+				assert.ok(oElement.getAttribute("height") === "100px", "Attribute height set correctly on the element.");
+				assert.ok(oElement._oControlInstance.getProperty("height") === "100px", "Property height is set correctly on the control.");
+				done();
+			});
+		});
+
+		QUnit.test("Create a card tag and change property", function (assert) {
+			// arrange
+			var done = assert.async(),
+				oElement = document.createElement("ui-integration-card");
+
+			// act
+			oElement.height = "100px";
+
+			testWhenDefined(function () {
+				// assert
+				assert.ok(oElement._oControlInstance.getProperty("height") === "100px", "Property height set correctly on the control to 100px.");
+				assert.ok(oElement.height === "100px", "Property height set correctly on the control to 100px.");
+
+				done();
+			});
+		});
+
+		QUnit.module("Clone a node");
+
+		QUnit.test("Clone a card tag and change attributes", function (assert) {
+			// arrange
+			var done = assert.async(),
+				oElement = document.createElement("ui-integration-card");
+
+			// act
+			oElement.setAttribute("height", "100px");
+			var oClone = oElement.cloneNode();
+			oClone.id = "clonedElementId";
+
+			testWhenDefined(function () {
+				// assert
+				assert.ok(oClone !== oElement, "A new node reference was created.");
+				assert.ok(oClone._oControlInstance !== oElement._oControlInstance, "A new control instance was created.");
+				assert.strictEqual(oClone._oControlInstance.getProperty("height"), "100px", "Property height set correctly on the control to 100px.");
+
+				done();
+			});
+		});
+
+		// TO DO: clarify if we want to pass classes to the control
+
+		// QUnit.module("Add/remove classes");
+
+		// QUnit.test("Add and remove a classes and check whether it is correctly added to the control", function (assert) {
+		// 	var done = assert.async(),
+		// 		oElement = document.createElement("ui-card");
+
+		// 	document.getElementById(DOM_RENDER_LOCATION).appendChild(oElement);
+
+		// 	oElement.className = "test1 test2";
+		// 	testWhenDefined(function () {
+		// 		assert.ok(oElement._oControlInstance.hasStyleClass("test1"), "Class test1 added to the control correctly");
+		// 		assert.ok(oElement._oControlInstance.hasStyleClass("test2"), "Class test2 added to the control correctly");
+		// 		oElement.className = "test1";
+		// 		assert.ok(oElement._control._controlImpl.hasStyleClass("test2") === false, "Class test2 removed from the control correctly");
+		// 		done();
+		// 	});
+		// });
+
+		QUnit.module("Events");
+
+		QUnit.test("Add event listener dynamically", function (assert) {
+			// arrange
+			var done = assert.async(),
+				oElement = document.createElement("ui-integration-card");
+
+			assert.expect(1);
+
+			testWhenDefined(function () {
+				oElement.addEventListener("action", function (oEvent) {
+					// assert
+					assert.strictEqual(oEvent.type, "action", "The proper event is fired.");
+
+					// clean up
+					document.getElementById(DOM_RENDER_LOCATION).removeChild(oElement);
+					done();
+				});
+
+				// act
+				document.getElementById(DOM_RENDER_LOCATION).appendChild(oElement);
+				oElement.getControl().fireAction();
+			});
 		});
 	});

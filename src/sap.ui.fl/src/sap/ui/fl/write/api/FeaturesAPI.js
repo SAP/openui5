@@ -25,6 +25,9 @@ sap.ui.define([
 		 * Determines if the current runtime can publish flexibility content in the connected backend.
 		 *
 		 * @returns {Promise<boolean>} Promise resolving with a flag if publishing is available
+		 *
+		 * @private
+	 	 * @ui5-restricted
 		 */
 		isPublishAvailable: function () {
 			return Settings.getInstance().then(function (oSettings) {
@@ -34,10 +37,12 @@ sap.ui.define([
 
 		/**
 		 * Checks if key user rights are available for the current user.
+		 * Application developers can use this API to decide if the key user adaptation
+		 * feature should be visible to the current user. This only applies if key user adaptation
+		 * should be handled standalone without an SAP Fiori launchpad.
 		 *
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if key user is available
-		 * @private
-		 * @ui5-restricted sap.ui.rta.api.startKeyUserAdaptation
+		 * @public
 		 */
 		isKeyUser: function () {
 			return Settings.getInstance()

@@ -17,7 +17,7 @@ sap.ui.define([
 	ODataModel,
 	JSONModel,
 	FeaturesAPI,
-	Utils
+	FlexUtils
 ) {
 	"use strict";
 
@@ -36,7 +36,6 @@ sap.ui.define([
 			SmartLinkUtil.mockUShellServices();
 			this._setModels(this._startMockServer());
 			UIComponent.prototype.init.apply(this, arguments);
-			this.getRouter().initialize();
 		},
 
 		_startMockServer: function () {
@@ -82,7 +81,7 @@ sap.ui.define([
 			});
 			this.setModel(oAppModel, "app");
 
-			if (!Utils.getUshellContainer()) {
+			if (!FlexUtils.getUshellContainer()) {
 				FeaturesAPI.isKeyUser()
 					.then(function (bIsKeyUser) {
 						oAppModel.setProperty("/showAdaptButton", bIsKeyUser);

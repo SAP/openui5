@@ -36,4 +36,10 @@ describe("sap.m.Switch", function() {
 		expect(takeScreenshot(element(by.id('switch_semantic')))).toLookAs('switch_semantic_after_click');
 	});
 
+	// verify switch in "bare" vBox
+	it('should click on bare_vbox switch', function() {
+		expect(takeScreenshot(element(by.id('switch_vbox')))).toLookAs('switch_bare_vbox_before_click');
+		element(by.id('switch_vbox')).click();
+		expect(takeScreenshot(element(by.id('switch_vbox')))).toLookAs('switch_bare_vbox_after_click');
+	});
 });

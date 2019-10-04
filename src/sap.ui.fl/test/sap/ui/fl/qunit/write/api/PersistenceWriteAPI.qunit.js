@@ -1208,11 +1208,60 @@ sap.ui.define([
 			var fnRemoveChangeStub = sandbox.stub();
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockFlexController(oElement, { _removeChangeFromControl : fnRemoveChangeStub, deleteChange : fnDeleteChangeStub });
+			mockFlexController(oAppComponent, { _removeChangeFromControl : fnRemoveChangeStub, deleteChange : fnDeleteChangeStub });
 
 			PersistenceWriteAPI.remove(mPropertyBag);
 			assert.ok(fnRemoveChangeStub.calledWith(oElement, mPropertyBag.change, JsControlTreeModifier), "then the flex persistence was called with correct parameters");
 			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change, oAppComponent), "then the flex persistence was called with correct parameters");
+		});
+
+		QUnit.test("when remove is called for a flex change with an invalid selector", function(assert) {
+			var mPropertyBag = {
+				change: {
+					getSelector: function () {
+						return this.selector;
+					}.bind(this)
+				},
+				selector: this.vSelector
+			};
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector");
+
+			var fnRemoveChangeStub = sandbox.stub();
+			var fnDeleteChangeStub = sandbox.stub();
+
+			mockFlexController(undefined, { _removeChangeFromControl : fnRemoveChangeStub, deleteChange : fnDeleteChangeStub });
+			try {
+				PersistenceWriteAPI.remove(mPropertyBag);
+			} catch (oError) {
+				assert.ok(oError instanceof Error, "then an error was thrown");
+			}
+			assert.ok(fnRemoveChangeStub.notCalled, "then the flex persistence was not called to delete change from control");
+			assert.ok(fnDeleteChangeStub.notCalled, "then the flex persistence was not called to remove change from persistence");
+		});
+
+		QUnit.test("when remove is called for a flex change with an invalid app component", function(assert) {
+			var mPropertyBag = {
+				change: {
+					getSelector: function () {
+						return this.selector;
+					}.bind(this)
+				}
+			};
+
+			sandbox.stub(ChangesController, "getAppComponentForSelector");
+
+			var fnRemoveChangeStub = sandbox.stub();
+			var fnDeleteChangeStub = sandbox.stub();
+
+			mockFlexController(undefined, { _removeChangeFromControl : fnRemoveChangeStub, deleteChange : fnDeleteChangeStub });
+			try {
+				PersistenceWriteAPI.remove(mPropertyBag);
+			} catch (oError) {
+				assert.ok(oError instanceof Error, "then an error was thrown");
+			}
+			assert.ok(fnRemoveChangeStub.notCalled, "then the flex persistence was not called to remove change from control");
+			assert.ok(fnDeleteChangeStub.notCalled, "then the flex persistence was not called to delete change from persistence");
 		});
 
 		QUnit.test("when remove is called for a descriptor change", function(assert) {

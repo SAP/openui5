@@ -3,12 +3,24 @@
  */
 
 // Provides default renderer for control sap.m.Text
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/HyphenationSupport'],
-	function(Renderer, coreLibrary, HyphenationSupport) {
+sap.ui.define([
+	'sap/ui/core/Renderer',
+	'sap/ui/core/library',
+	'sap/m/HyphenationSupport',
+	'./library'
+], function(
+	Renderer,
+	coreLibrary,
+	HyphenationSupport,
+	mobileLibrary
+) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection
 		var TextDirection = coreLibrary.TextDirection;
+
+		// shortcut for sap.ui.core.TextDirection
+		var WrappingType = mobileLibrary.WrappingType;
 
 		/**
 		 * Text renderer.
@@ -34,6 +46,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 				sTooltip = oText.getTooltip_AsString(),
 				nMaxLines = oText.getMaxLines(),
 				bWrapping = oText.getWrapping(),
+				sWrappingType = oText.getWrappingType(),
 				sTextAlign = oText.getTextAlign(),
 				bRenderWhitespace = oText.getRenderWhitespace();
 
@@ -45,7 +58,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/m/Hyphenation
 			// set classes for wrapping
 			if (!bWrapping || nMaxLines == 1) {
 				oRm.class("sapMTextNoWrap");
-			} else if (bWrapping) {
+			} else if (bWrapping && sWrappingType !== WrappingType.Hyphenated) {
 				// no space text must break
 				if (sText && sText.length > 0 && !/\s/.test(sText)) {
 					oRm.class("sapMTextBreakWord");

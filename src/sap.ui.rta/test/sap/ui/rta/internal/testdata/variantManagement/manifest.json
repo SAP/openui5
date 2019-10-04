@@ -23,12 +23,16 @@
 	},
 
 	"sap.ui5": {
-		"flexEnabled": true,
 		"rootView": {
-			"viewName": "sap.ui.rta.test.variantManagement.view.Root",
+			"viewName": "sap.ui.rta.test.variantManagement.view.Main",
 			"type": "XML",
 			"async": true,
-			"id": "app"
+			"id": "app",
+			"cache": {
+				"keys": [
+					"sap.ui.rta.test.variantManagement"
+				]
+			}
 		},
 		"handleValidation": true,
 		"dependencies": {
@@ -43,43 +47,9 @@
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
-				"uri": "i18n/i18n.properties",
-				"async": true
-			}
-		},
-		"routing": {
-			"config": {
-				"routerClass": "sap.m.routing.Router",
-				"viewType": "XML",
-				"async": true,
-				"viewPath": "sap.ui.rta.test.variantManagement.view",
-				"controlId": "app",
-				"controlAggregation": "pages",
-				"bypassed": {
-					"target": [
-						"main"
-					]
+				"settings": {
+					"bundleName": "sap.ui.rta.test.variantManagement.i18n.i18n"
 				}
-			},
-			"routes": [
-				{
-					"pattern": "",
-					"name": "main",
-					"target": [
-						"main"
-					]
-				}
-			],
-			"targets": {
-				"main": {
-					"viewName": "Main",
-					"viewId": "idMain1",
-					"viewLevel": 1
-				}
-			},
-			"contentDensities": {
-				"compact": true,
-				"cozy": false
 			}
 		}
 	}

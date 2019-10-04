@@ -2061,7 +2061,11 @@ sap.ui.define([
 		}
 
 		if (mParameters && mParameters.createPreliminaryContext) {
-			sResolvedPath = this.resolve(sPath, oContext);
+			sResolvedPath = this.resolve(sPath, oContext, bCanonical);
+			if (!sResolvedPath && bCanonical) {
+				sResolvedPath = this.resolve(sPath, oContext);
+			}
+
 			oNewContext = this.getContext(sResolvedPath, sDeepPath);
 			return oNewContext;
 		}
@@ -4365,7 +4369,9 @@ sap.ui.define([
 
 			oRequest = fnProcessRequest(oRequestHandle);
 
-			oRequest.deferred = !!bDeferred;
+			if (oRequest) {
+				oRequest.deferred = !!bDeferred;
+			}
 
 			that._processRequestQueueAsync(that.mRequests);
 

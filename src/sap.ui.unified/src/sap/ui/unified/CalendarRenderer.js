@@ -12,6 +12,7 @@ sap.ui.define([],
 	 * @namespace
 	 */
 	var CalendarRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -29,11 +30,10 @@ sap.ui.define([],
 		var aMonths = oCal.getAggregation("month");
 		var sWidth = oCal.getWidth();
 
-		oRm.write("<div");
-		oRm.writeControlData(oCal);
-		oRm.addClass("sapUiCal");
+		oRm.openStart("div", oCal);
+		oRm.class("sapUiCal");
 		if (aMonths.length > 1) {
-			oRm.addClass("sapUiCalMulti");
+			oRm.class("sapUiCalMulti");
 		}
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
@@ -42,34 +42,34 @@ sap.ui.define([],
 			mAccProps.role = "dialog";
 			mAccProps.modal = true;
 		}
-		oRm.writeAccessibilityState(oCal, mAccProps);
+		oRm.accessibilityState(oCal, mAccProps);
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		if (sWidth) {
-			oRm.addClass("sapUiCalWidth");
-			oRm.addStyle("width", sWidth);
-			oRm.writeStyles();
+			oRm.class("sapUiCalWidth");
+			oRm.style("width", sWidth);
 		}
 
 		if (oCal._getSecondaryCalendarType()) {
-			oRm.addClass("sapUiCalSecType");
+			oRm.class("sapUiCalSecType");
 		}
 
 		if (this.addAttributes) {
 			// additional stuff by inherited controls
 			this.addAttributes(oRm, oCal);
 		}
-		oRm.writeClasses();
-		oRm.write(">"); // div element
+		oRm.openEnd(); // div element
 
 		var oHeader = oCal.getAggregation("header");
 		oRm.renderControl(oHeader);
 
 		var iMonthsCount = aMonths.length;
-		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
+		oRm.openStart("div", sId + "-content");
+		oRm.class("sapUiCalContent");
+		oRm.openEnd();
 		for (var i = 0; i < iMonthsCount; i++) {
 			var oMonth = aMonths[i];
 			oRm.renderControl(oMonth);
@@ -86,25 +86,40 @@ sap.ui.define([],
 			oRm.renderControl(oMonthPicker);
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 
 		//when used in a DatePicker, in mobile there is no cancel button
 		if (!oCal._bSkipCancelButtonRendering) {
-			oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
-			oRm.write(rb.getText("CALENDAR_CANCEL"));
-			oRm.write("</button>");
+			oRm.openStart("button", sId + "-cancel");
+			oRm.class("sapUiCalCancel");
+			oRm.attr("tabindex", "-1");
+			oRm.openEnd();
+			oRm.text(rb.getText("CALENDAR_CANCEL"));
+			oRm.close("button");
 		}
 
 		// dummy element to catch tabbing in from next element
-		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");
+		oRm.openStart("div", sId + "-end");
+		oRm.attr("tabindex", "0");
+		oRm.style("position", "absolute");
+		oRm.style("width", "0");
+		oRm.style("height", "0");
+		oRm.style("right", "0");
+		oRm.style("bottom", "0");
+		oRm.openEnd();
+		oRm.close("div");
 
 		this.renderCalContentAndArrowsOverlay(oRm, oCal, sId);
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	CalendarRenderer.renderCalContentOverlay = function(oRm, oCal, sId) {
-		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+		oRm.openStart("div", sId + "-contentOver");
+		oRm.class("sapUiCalContentOver");
+		oRm.style("display", "none");
+		oRm.openEnd();
+		oRm.close("div");
 	};
 
 	CalendarRenderer.renderCalContentAndArrowsOverlay = function(oRm, oCal, sId) {

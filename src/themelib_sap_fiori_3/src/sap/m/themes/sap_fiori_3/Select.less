@@ -37,13 +37,11 @@
 
 .sapMSltArrow {
 	line-height: 2.25rem;
-	.sapMSltPressed & {
-		z-index: 2;
-	}
 }
 
 html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
 	&:before {
+		pointer-events: none;
 		content: "";
 		position: absolute;
 		left: 0;

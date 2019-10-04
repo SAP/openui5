@@ -129,6 +129,10 @@
 		}
 	}
 
+	&.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMTokenizer {
+		left: 0.125rem;
+	}
+
 	.sapUiSizeCompact & {
 		.sapMInputDescriptionWrapper {
 			max-width: ~"calc(100% - (@{_InputBase_Control_Tokens_MinWidth_Compact}))";

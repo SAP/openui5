@@ -8,14 +8,18 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/registry/Settings",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/base/util/includes"
 ], function (
 	jQuery,
 	ManagedObject,
 	Utils,
 	LayerUtils,
 	Settings,
-	Log
+	Log,
+	DescriptorInlineChangeFactory,
+	includes
 ) {
 	"use strict";
 
@@ -1038,7 +1042,7 @@ sap.ui.define([
 			packageName: oPropertyBag.packageName || "",
 			content: oPropertyBag.content || {},
 			// TODO: Is an empty selector allowed?
-			selector: oPropertyBag.selector || {},
+			selector: oPropertyBag.selector || { id: "" },
 			layer: oPropertyBag.layer || LayerUtils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
 			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
@@ -1059,7 +1063,9 @@ sap.ui.define([
 			dependentSelector: oPropertyBag.dependentSelector || {},
 			validAppVersions: oPropertyBag.validAppVersions || {},
 			jsOnly: oPropertyBag.jsOnly || false,
-			variantReference: oPropertyBag.variantReference || ""
+			variantReference: oPropertyBag.variantReference || "",
+			// since not all storage implementations know about all app descriptor change types, we store a flag if this change type changes a descriptor
+			appDescriptorChange: includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oPropertyBag.changeType)
 		};
 
 		return oNewFile;

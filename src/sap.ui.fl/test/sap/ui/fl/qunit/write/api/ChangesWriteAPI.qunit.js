@@ -239,10 +239,12 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when revert is called", function(assert) {
+		QUnit.test("when revert is called with a valid element", function(assert) {
+			var oElement = new Element();
+			this.aObjectsToDestroy.push(oElement);
 			var mPropertyBag = {
 				change: {type: "change"},
-				element: {type: "element"}
+				element: new Element()
 			};
 			var oAppComponent = {type: "appComponent"};
 
@@ -263,10 +265,30 @@ sap.ui.define([
 					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
 				});
 		});
+
+		QUnit.test("when revert is called with an invalid element", function(assert) {
+			var mPropertyBag = {
+				change: {type: "change"}
+			};
+
+			var mRevertSettings = {
+				modifier: JsControlTreeModifier,
+				appComponent: undefined
+			};
+
+			var fnPersistenceStub = getMethodStub([mPropertyBag.change, undefined, mRevertSettings], Promise.resolve(sReturnValue));
+
+			mockFlexController({}, {_revertChange: fnPersistenceStub});
+
+			return ChangesWriteAPI.revert(mPropertyBag)
+				.then(function (sValue) {
+					assert.strictEqual(sValue, sReturnValue, "the return value from the revert function was passed");
+				});
+		});
 	});
 
 	QUnit.module("Given ChangesWriteAPI for smart business", {
-		beforeEach: function () {
+		beforeEach: function() {
 			this.vSelector = {
 				appId: "reference.app"
 			};

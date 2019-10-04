@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
-	 * @ui5-restricted ui5 controls, tests
+	 * @ui5-restricted ui5 controls, OVP, tests
 	 */
 	var FlexRuntimeInfoAPI = /** @lends sap.ui.fl.apply.api.FlexRuntimeInfoAPI */{
 
@@ -28,7 +28,7 @@ sap.ui.define([
 		 * Checks if personalization changes exist for controls.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector[]} mPropertyBag.selectors - an array of {@link sap.ui.fl.Selector}s for which personalization should exist
+		 * @param {sap.ui.fl.Selector[]} mPropertyBag.selectors - An array of {@link sap.ui.fl.Selector}s for which personalization should exist
 		 * @param {array} [mPropertyBag.changeTypes] - Additional filter for types of changes that should have existing personalization
 		 *
 		 * @returns {Promise<boolean>} Promise resolving to a boolean that indicates if personalization changes exist
@@ -41,14 +41,21 @@ sap.ui.define([
 		},
 
 		/**
-		 * Resolves with a promise after all the changes for this control are processed.
+		 * Resolves with a promise after all the changes for all controls that are passed have been processed.
+		 * You can either pass a single control or multiple, don't mix selectors and element parameters.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.core.Element} mPropertyBag.element - Control whose changes are being waited for
+		 * @param {sap.ui.fl.Selector} mPropertyBag.element - Control whose changes are being waited for, the control has to exist
+		 * @param {sap.ui.fl.Selector[]} mPropertyBag.selectors - An array of {@link sap.ui.fl.Selector}s, whose changes are being waited for, the controls have to exist
 		 * @returns {Promise} Promise that resolves when all changes on the control are processed
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 		waitForChanges: function(mPropertyBag) {
-			return ChangesController.getFlexControllerInstance(mPropertyBag.element).waitForChangesToBeApplied(mPropertyBag.element);
+			var oFirstElement = mPropertyBag.element || mPropertyBag.selectors[0];
+			var vWaitForSelector = mPropertyBag.element || mPropertyBag.selectors;
+			return ChangesController.getFlexControllerInstance(oFirstElement).waitForChangesToBeApplied(vWaitForSelector);
 		},
 
 		/**
@@ -57,6 +64,9 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.core.Element} mPropertyBag.element - Control to be checked
 		 * @returns {boolean} <code>true</code> if flexibility features are supported
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 		isFlexSupported: function(mPropertyBag) {
 			return !!Utils.getAppComponentForControl(mPropertyBag.element);

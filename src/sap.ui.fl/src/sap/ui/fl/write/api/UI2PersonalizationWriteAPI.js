@@ -11,7 +11,16 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var UI2PersonalizationWriteAPI = {
+	/**
+	 * Provides an API to write UI2 personalization.
+	 *
+	 * @namespace sap.ui.fl.write.api.UI2PersonalizationWriteAPI
+	 * @experimental Since 1.71
+	 * @since 1.71
+	 * @private
+	 * @ui5-restricted
+	 */
+	var UI2PersonalizationWriteAPI = /** @lends sap.ui.fl.write.api.UI2PersonalizationWriteAPI */{
 		/**
 		 * Stores a personalization object for an application under a given container key and item name pair.
 		 *
@@ -22,6 +31,9 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.content The personalization content to be stored
 		 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
 		 * or undefined in case no entry was stored for these
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 		create: function (mPropertyBag) {
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
@@ -52,6 +64,9 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.containerKey The key of the container for which the personalization should be deleted
 		 * @param {string} mPropertyBag.itemName The name under which the personalization should be deleted
 		 * @returns {Promise} Promise resolving in case the deletion request was successful
+		 *
+		 * @private
+		 * @ui5-restricted
 		 */
 		deletePersonalization: function(mPropertyBag) {
 			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);

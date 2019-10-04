@@ -1,0 +1,18 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "00a0877bef1636612d7a2d1ad076dbd02d5f6540",
+        "type": "FIX",
+        "text": " AlignedFlowLayout: Collision detection algorithm extended to support custom margins",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970452866"
+          }
+        ]
+      }
+    ]
+  }
+}

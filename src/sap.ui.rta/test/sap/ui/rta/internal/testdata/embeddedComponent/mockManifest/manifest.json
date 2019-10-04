@@ -5,6 +5,7 @@
 		"id": "sap.ui.rta.test.embeddedComponent.mockManifest",
 		"type": "component",
 		"title": "{{appTitle}}",
+		"i18n": "i18n/i18n.properties",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -38,7 +39,14 @@
 				"sap.ui.rta": {}
 			}
 		},
-		"models": { },
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.rta.test.variantManagement.i18n.i18n"
+				}
+			}
+		},
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",

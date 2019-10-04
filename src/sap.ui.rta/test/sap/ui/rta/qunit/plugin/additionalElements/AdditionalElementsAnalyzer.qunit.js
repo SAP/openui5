@@ -650,8 +650,8 @@ function(
 				}
 			};
 
-			sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "--" + oActionsObject.custom.items[0].id);
-			sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "--" + oActionsObject.custom.items[1].id);
+			sandbox.stub(oGroupElement1, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.custom.items[0].id);
+			sandbox.stub(oGroupElement2, "getId").returns(oGroup.getParent().getId() + "-" + oActionsObject.custom.items[1].id);
 
 			oGroupElement1.setLabel(sRenamedLabel);
 
@@ -693,16 +693,16 @@ function(
 
 			sandbox.stub(ElementUtil, "getElementInstance")
 				.callThrough()
-				.withArgs(oGroup.getParent().getId() + "--" + mAction.items[0].id).returns({sId: "ElementExists"})
-				.withArgs(oGroup.getParent().getId() + "--" + mAction.items[1].id); // element doesn't exist
+				.withArgs(oGroup.getParent().getId() + "-" + mAction.items[0].id).returns({sId: "ElementExists"})
+				.withArgs(oGroup.getParent().getId() + "-" + mAction.items[1].id); // element doesn't exist
 			sandbox.stub(Log, "error");
 
 			return AdditionalElementsAnalyzer.getCustomAddItems(oGroup, mAction)
 				.then(function(aReturnValues) {
 					assert.ok(ElementUtil.getElementInstance.callCount, 3, "then ElementUtil.getElementInstance called thrice for each custom item");
 					assert.strictEqual(aReturnValues.length, 1, "then one custom item2 are returned");
-					assert.strictEqual(aReturnValues[0].itemId, oGroup.getParent().getId() + "--" + mAction.items[1].id, "then the returned custom item has the itemId property correctly set");
-					assert.strictEqual(aReturnValues[0].key, oGroup.getParent().getId() + "--" + mAction.items[1].id, "then the returned custom item has the key property correctly set");
+					assert.strictEqual(aReturnValues[0].itemId, oGroup.getParent().getId() + "-" + mAction.items[1].id, "then the returned custom item has the itemId property correctly set");
+					assert.strictEqual(aReturnValues[0].key, oGroup.getParent().getId() + "-" + mAction.items[1].id, "then the returned custom item has the key property correctly set");
 					assert.ok(Log.error.calledWith("CustomAdd item with label " + mAction.items[2].label + " does not contain an 'id' property", "sap.ui.rta.plugin.AdditionalElementsAnalyzer#showAvailableElements"),
 						"then an error was logged for the item without an id property");
 				});

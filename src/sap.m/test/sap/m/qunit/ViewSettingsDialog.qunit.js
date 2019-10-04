@@ -1760,6 +1760,28 @@ sap.ui.define([
 		}, 1000);
 	});
 
+	QUnit.test("Select All checkbox is disabled when there are no detail items", function (assert) {
+		// prepare
+		var oFilterItem = new  sap.m.ViewSettingsFilterItem({
+				text: "oFixedFilter",
+				key: "oFixedFilter",
+				multiSelect: true
+			}),
+			oVSD = new ViewSettingsDialog({
+				title: "Filter",
+				filterItems: [oFilterItem]
+			});
+
+		//act
+		oVSD._initFilterDetailItems(oFilterItem);
+
+		//assert
+		assert.equal(oVSD._selectAllCheckBox.getEnabled(), false, "When there are no items, Select All is disabled");
+
+		//destroy
+		oVSD.destroy();
+	});
+
 
 	QUnit.module("Filter only checks", {
 		beforeEach : function () {

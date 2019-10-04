@@ -58,6 +58,18 @@
             "reference": "1980313633"
           }
         ]
+      },
+      {
+        "id": "368fdecd1f193b832bbe467065bf1043dc016845",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPage: Aligned with Quartz Light specification",
+        "references": []
+      },
+      {
+        "id": "40a60acc6ad200c50d651254a29a75e168f6f574",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Menu: Fiori 3 visual design update",
+        "references": []
       }
     ]
   }

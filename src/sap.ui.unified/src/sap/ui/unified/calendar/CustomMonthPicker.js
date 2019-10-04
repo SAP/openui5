@@ -21,8 +21,12 @@ sap.ui.define([
 	) {
 	"use strict";
 
+
+	var CustomMonthPickerRenderer = Renderer.extend(CalendarRenderer);
+	CustomMonthPickerRenderer.apiVersion = 2;
+
 	var CustomMonthPicker = Calendar.extend("sap.ui.unified.internal.CustomMonthPicker", {
-		renderer: Renderer.extend(CalendarRenderer)
+		renderer: CustomMonthPickerRenderer
 	});
 
 	CustomMonthPicker.prototype._initializeHeader = function() {

@@ -18,6 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	var oManifest = {
 		"sap.app" : {
+			id : "sap.ui.rta.test",
 			applicationVersion : {
 				version : "1.2.3"
 			}

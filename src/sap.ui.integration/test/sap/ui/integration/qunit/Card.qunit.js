@@ -1328,6 +1328,16 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_Today_And_Location_Parameter = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Default manifest parameters",
+					"subTitle": "{{parameters.TODAY_ISO}} and {{parameters.LOCALE}}"
+				}
+			}
+		};
+
 		var oManifest_ListCard_maxItems_Parameters = {
 			"sap.card": {
 				"configuration": {
@@ -2474,6 +2484,25 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oCard.setManifest(oManifest_Today_Parameter);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
+		QUnit.test("Only TODAY_ISO and LOCALE are used", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachEventOnce("_ready", function () {
+
+				Core.applyChanges();
+
+				// Act
+				var sSubtitle = this.oCard.getCardHeader()._getSubtitle().getText();
+				assert.ok(sSubtitle.indexOf(new Date().toISOString().slice(0, 10)) > -1 , "Card should have a subtitle with the now Date");
+				assert.ok(sSubtitle.indexOf(Core.getConfiguration().getLocale().toString()) > -1 , "Card should have a subtitle with the locale");
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest_Today_And_Location_Parameter);
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 

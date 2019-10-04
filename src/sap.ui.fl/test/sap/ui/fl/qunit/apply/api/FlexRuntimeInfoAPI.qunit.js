@@ -244,7 +244,7 @@ sap.ui.define([
 			this.aObjectsToDestroy.forEach(function(oObject) {oObject.destroy();});
 		}
 	}, function() {
-		QUnit.test("PersistenceApplyAPI.waitForChanges", function(assert) {
+		QUnit.test("FlexRuntimeInfoAPI.waitForChanges", function(assert) {
 			var oControl = new Control();
 			this.aObjectsToDestroy.push(oControl);
 			var oWaitForChangesStub = sandbox.stub().resolves();
@@ -252,6 +252,19 @@ sap.ui.define([
 
 			return FlexRuntimeInfoAPI.waitForChanges({element: oControl}).then(function() {
 				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
+				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(oControl), "the controls are passed as parameter");
+			});
+		});
+		QUnit.test("FlexRuntimeInfoAPI.waitForChanges on multiple controls", function(assert) {
+			var oControl = new Control();
+			this.aObjectsToDestroy.push(oControl);
+			var aControls = [oControl];
+			var oWaitForChangesStub = sandbox.stub().resolves();
+			mockFlexController(oControl, {waitForChangesToBeApplied: oWaitForChangesStub});
+
+			return FlexRuntimeInfoAPI.waitForChanges({selectors: aControls}).then(function() {
+				assert.equal(oWaitForChangesStub.callCount, 1, "the waitForChanges method was called");
+				assert.ok(oWaitForChangesStub.alwaysCalledWithExactly(aControls), "the controls are passed as parameter");
 			});
 		});
 	});

@@ -275,8 +275,10 @@ sap.ui.define([
 		// If the start index is already selected, the range starts from the next index.
 		if (oMultiSelectionPlugin.isIndexSelected(iIndexFrom) && bAddSelection) {
 			if (!bReverse) {
-				iIndexFrom++;
-				iGetContextsStartIndex++;
+				if (iIndexFrom !== iIndexTo) {
+					iIndexFrom++;
+					iGetContextsStartIndex++;
+				}
 			} else {
 				iIndexFrom--;
 			}
@@ -391,14 +393,14 @@ sap.ui.define([
 		}
 
 		var iFirstVisibleRow = oTable.getFirstVisibleRow();
-		var iVisibleRowCount = oTable.getVisibleRowCount();
-		var iLastVisibleRow = iFirstVisibleRow + iVisibleRowCount - 1;
+		var mRowCounts = oTable._getRowCounts();
+		var iLastVisibleRow = iFirstVisibleRow + mRowCounts.scrollable - 1;
 
 		if (iIndex < iFirstVisibleRow || iIndex > iLastVisibleRow) {
 			if (!bReverse) {
-				oTable.setFirstVisibleRow(Math.max(0, iIndex - iVisibleRowCount + 2));
+				oTable.setFirstVisibleRow(Math.max(0, iIndex - mRowCounts.scrollable - mRowCounts.fixedTop + 2));
 			} else {
-				oTable.setFirstVisibleRow(Math.max(0, iIndex - 1));
+				oTable.setFirstVisibleRow(Math.max(0, iIndex - mRowCounts.fixedTop - 1));
 			}
 		}
 

@@ -721,9 +721,11 @@ function(
 			if ((this._isNumericLike(max) && value > max) ||
 				(this._isNumericLike(min) && value < min) ||
 				(this._areFoldChangeRequirementsFulfilled() && (value % this.getStep() !== 0))) {
-				this.setValueState(ValueState.Error);
+				this.setProperty("valueState", ValueState.Error, true);
+				this._getInput().setValueState(this.getValueState());
 			} else {
-				this.setValueState(ValueState.None);
+				this.setProperty("valueState", ValueState.None, true);
+				this._getInput().setValueState(this.getValueState());
 			}
 		};
 

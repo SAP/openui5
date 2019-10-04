@@ -249,7 +249,8 @@ sap.ui.define([
 
 	QUnit.test("Fire apply with CTRL+Enter", function(assert) {
 		var done = assert.async();
-		var oCreationRow = this.oTable.getCreationRow();
+		var oTable = this.oTable;
+		var oCreationRow = oTable.getCreationRow();
 		var oFormElement = oCreationRow.getCells()[0].getDomRef();
 		var oFireApplySpy = sinon.spy(oCreationRow, "_fireApply");
 		var aEvents = [];
@@ -267,6 +268,12 @@ sap.ui.define([
 			});
 		}
 
+		function expectKeyboardEventMarked(bExpectMarked) {
+			TableQUnitUtils.addEventDelegateOnce(oTable, "onsapentermodifiers", function(oEvent) {
+				assert.strictEqual(oEvent.isMarked(), bExpectMarked, "The event is" + (bExpectMarked ? " " : " not ") + "marked");
+			});
+		}
+
 		oFormElement.focus();
 
 		oCreationRow.getCells()[0].addEventDelegate({
@@ -279,6 +286,7 @@ sap.ui.define([
 		});
 
 		test(function() {
+			expectKeyboardEventMarked(true);
 			QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 		}, function() {
 			assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
@@ -289,6 +297,7 @@ sap.ui.define([
 				oCreationRow.attachEventOnce("apply", function(oEvent) {
 					oEvent.preventDefault();
 				});
+				expectKeyboardEventMarked(true);
 				QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.calledOnce, "CreationRow#_fireApply was called once");
@@ -299,6 +308,7 @@ sap.ui.define([
 		}).then(function() {
 			return test(function() {
 				oCreationRow.setApplyEnabled(false);
+				expectKeyboardEventMarked(false);
 				QUnitUtils.triggerKeydown(oFormElement, KeyCodes.ENTER, false, false, true);
 			}, function() {
 				assert.ok(oFireApplySpy.notCalled, "CreationRow#_fireApply was not called");

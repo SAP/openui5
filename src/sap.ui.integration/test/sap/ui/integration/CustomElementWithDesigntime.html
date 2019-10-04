@@ -66,9 +66,9 @@
 		};
 
 		function configure(sId) {
-			var oCard = sap.ui.getCore().byId(document.getElementById(sId).firstElementChild.id);
+			var oCard = document.getElementById(sId).getControl();
 			oCard.loadDesigntime().then(function (oResult) {
-				sap.ui.require(["sap/ui/integration/designtime/controls/BaseEditor"], function (Editor) {
+				sap.ui.require(["sap/ui/integration/designtime/editor/BaseEditor"], function (Editor) {
 					var oEditor = new Editor();
 					oEditor.setConfig(oResult.designtime);
 					oEditor.setJson(oResult.manifest);
@@ -88,7 +88,7 @@
 </head>
 
 <body>
-	<ui-card id="card1" baseUrl="./widgets/cardmanifests/cardWithDesigntime/"></ui-card>
+	<ui-integration-card id="card1" base-url="./widgets/cardmanifests/cardWithDesigntime/"></ui-integration-card>
 
 	<br>
 	<br>

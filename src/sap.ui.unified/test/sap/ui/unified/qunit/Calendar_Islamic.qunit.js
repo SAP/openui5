@@ -24,8 +24,8 @@ sap.ui.define([
 		var oDate = oFormat.parse(sSelectedDate, true);
 		oCal1.destroySelectedDates();
 		oCal1.addSelectedDate(new DateRange({startDate : oDate}));
-		sap.ui.getCore().applyChanges();
 		oCal1.displayDate(oDate);
+		sap.ui.getCore().applyChanges();
 	}
 
 	function checkDate(sSelectedDate, iExpectedDay, iExpectedMonth, iExpectedYear,
@@ -79,6 +79,7 @@ sap.ui.define([
 			assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpMonth - 1], "Islamic Month is correct before navigation: " + aMonthNames[iExpMonth - 1]);
 
 			oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
+			sap.ui.getCore().applyChanges();
 
 			var iNextMonthIdx = bForwardNavigation ? iExpMonth : iExpMonth - 2;
 			if (iNextMonthIdx < 0) {

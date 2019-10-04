@@ -1,0 +1,95 @@
+{
+  "1.72.0": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "fcef2dc0fff21f6606540779cdeed934f4ffb2c5",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Changing pages with fast clicks is now possible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980415583"
+          }
+        ]
+      },
+      {
+        "id": "089ff92f358009d34062b49e1d81e9c99293508b",
+        "type": "FIX",
+        "text": " sap.m.Link: Accessibility improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980410527"
+          }
+        ]
+      },
+      {
+        "id": "ced2a790144fd753265947b7202db3b1ee971ee8",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Documentation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980407709"
+          }
+        ]
+      },
+      {
+        "id": "209d360769829ec49c920f2d8acb93a9620b32d7",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Shift tokenizer a bit to leave a place for focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980290869"
+          }
+        ]
+      },
+      {
+        "id": "b2b7c645f6397b7919f4db812b8e46885a6352f0",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Shift tokenizer a bit to leave a place for focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980290869"
+          }
+        ]
+      },
+      {
+        "id": "ca704e04cd5f7b5a1dd085c9441a3b8c48762ff0",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Demokit example now has correct ACC",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980423520"
+          }
+        ]
+      },
+      {
+        "id": "35b2fc1eda70a234420300f05868a15c2736c1b8",
+        "type": "FIX",
+        "text": " sap.m.Switch: width set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980424023"
+          }
+        ]
+      },
+      {
+        "id": "5ae79422ad5991348b5cd0aada45f4ce9d09dd5a",
+        "type": "FIX",
+        "text": " sap.m.Text: Hyphenation for single words fixed in IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970355420"
+          }
+        ]
+      }
+    ]
+  }
+}

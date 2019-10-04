@@ -26,8 +26,8 @@ sap.ui.define([
 		var oDate = oFormat.parse(sSelectedDate, true);
 		oCal1.destroySelectedDates();
 		oCal1.addSelectedDate(new DateRange({startDate : oDate}));
-		sap.ui.getCore().applyChanges();
 		oCal1.displayDate(oDate);
+		sap.ui.getCore().applyChanges();
 	}
 
 	function checkDate(sSelectedDate, iExpectedDay, iExpectedMonth, iExpectedYear, iExpectedEra, sExpectedEra,
@@ -79,6 +79,7 @@ sap.ui.define([
 
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth], "Month is correct after navigation: " + aMonthNames[iExpectedMonth]);
 		assert.equal(oCal1.$("-Head-B2").text(), sExpectedYear, "Year is correct after navigation " + sExpectedYear);
@@ -88,6 +89,7 @@ sap.ui.define([
 	function checkYearPicker(sSelectedDate, sExpectedStartYear, sExpectedEndYear, sExpectedSelYear, assert) {
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-B2").click();
+		sap.ui.getCore().applyChanges();
 
 		var aYears = oCal1.$("-YP").find(".sapUiCalItem"),
 			$Year;
@@ -105,7 +107,8 @@ sap.ui.define([
 		}
 
 		aYears[0].focus();
-		qutils.triggerKeyboardEvent(aYears[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(aYears[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
 		assert.equal(oCal1.$("-Head-B2").text(), sExpectedStartYear, "Year is correct after navigation");
 	}
 

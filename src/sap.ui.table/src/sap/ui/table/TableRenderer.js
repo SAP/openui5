@@ -411,6 +411,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 				sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
 			} else if (mRenderConfig.headerSelector.type === "clear") {
 				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
+
+				if (!mRenderConfig.headerSelector.enabled) {
+					rm.attr("disabled", "true");
+					rm.attr("aria-disabled", "true");
+				}
 			}
 
 			if (oTable._getShowStandardTooltips() && sSelectAllResourceTextID) {
@@ -613,6 +618,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (mRowCounts.fixedTop > 0) {
 			if (iIndex == mRowCounts.fixedTop - 1) {
 				rm.class("sapUiTableRowLastFixedTop");
+			}
+			if (iIndex == mRowCounts.fixedTop) {
+				rm.class("sapUiTableRowFirstScrollable");
 			}
 		}
 

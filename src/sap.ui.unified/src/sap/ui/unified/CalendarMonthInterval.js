@@ -307,7 +307,7 @@ sap.ui.define([
 					oDomRefB2.focus();
 				}
 			}, this);
-			this.setAggregation("calendarPicker", oCalPicker);
+			this.setAggregation("calendarPicker", oCalPicker, true);
 		}
 		return oCalPicker;
 	};
