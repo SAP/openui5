@@ -40,10 +40,13 @@ sap.ui.define([
 			});
 
 			var oLogSpy = sandbox.spy(Log, "error");
+			var oLogWarning = sandbox.spy(Log, "warning");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.broken", appVersion: "1.0.0"}).then(function (oResult) {
 				assert.deepEqual(oResult, Utils.getEmptyFlexDataResponse(), "the default response was returned");
-				assert.equal(oLogSpy.callCount, 1, "an error was logged");
+				if (oLogSpy.callCount !== 1) {
+					assert.equal(oLogWarning.callCount, 1, "an error or warning was logged");
+				}
 			});
 		});
 

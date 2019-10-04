@@ -25,9 +25,11 @@ sap.ui.define([
 			try {
 				return LoaderExtensions.loadResource(sBundleResourcePath);
 			} catch (e) {
-				if (e.message.startsWith("Unexpected token")) {
+				//JSON parse error of bundle file --> log error
+				if (e.name.includes("SyntaxError")) {
 					Log.error(e);
 				}
+				//Could not find the bundle file --> log warning
 				Log.warning("flexibility did not find a " + sBundleName + "-bundle.json for the application: " + sReference);
 			}
 		}
