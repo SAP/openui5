@@ -514,7 +514,7 @@ sap.ui.define([
 
 				if (this._rows) {
 					for (var i = 0; i < this._rows.length; i++) {
-						var $Row = this._$DomRef.find("#" + sId + "-row" + i);
+						var $Row = jQuery(document.getElementById(sId + "-row" + i));
 
 						var oTargetWrapping = getTargetWrapping(this._rows[i], iInnerWidth);
 						var oCurrentWrapping = getCurrentWrapping(this._rows[i], $Row, this);
