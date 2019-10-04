@@ -271,12 +271,13 @@ sap.ui.define([
 	};
 
 	oStorageResultMerger._createStandardVariant = function (sVariantId) {
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 		return {
 			content: {
 				fileName: sVariantId,
 				variantManagementReference: sVariantId,
 				content: {
-					title: "STANDARD_VARIANT_TITLE"
+					title: oResourceBundle.getText("STANDARD_VARIANT_TITLE")
 				},
 				favorite: true,
 				visible: true
