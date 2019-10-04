@@ -905,7 +905,7 @@ sap.ui.define([
 	 *   "14.5.11 Expression edm:NavigationPropertyPath" or "14.5.13 Expression edm:PropertyPath",
 	 *   or if this context is not supported, or if the root binding of this context's binding is
 	 *   suspended, or if the context is transient, or if the binding of this context is unresolved,
-	 *   or for invalid group IDs, or if auto-$expand/$select is still computing
+	 *   or for invalid group IDs
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.ODataContextBinding#execute
@@ -919,18 +919,6 @@ sap.ui.define([
 			aPaths,
 			sPrefix = "",
 			that = this;
-
-		/*
-		 * @param {sap.ui.model.odata.v4.ODataParentBinding} oBinding - A binding
-		 * @returns {boolean} Whether the given binding has an own cache
-		 * @throws {Error} If the given binding's cache promise is pending
-		 */
-		function hasOwnCache(oBinding) {
-			if (!oBinding.oCachePromise.isFulfilled()) {
-				throw new Error("Illegal state: auto-$expand/$select still computing");
-			}
-			return oBinding.oCachePromise.getResult();
-		}
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
@@ -958,7 +946,7 @@ sap.ui.define([
 				+ JSON.stringify(oPath));
 		});
 
-		for (oContext = this; !hasOwnCache(oContext.getBinding());
+		for (oContext = this; !oContext.getBinding().oCache;
 				oContext = oContext.getBinding().getContext()) {
 			if (!oContext.getBinding().getBoundContext) {
 				throw new Error("Not a context binding: " + oContext.getBinding());

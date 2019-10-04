@@ -1848,6 +1848,7 @@ sap.ui.define([
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
 					oPromise.catch(function (oError) {
+						that.oCache = oCache;
 						that.oCachePromise = SyncPromise.resolve(oCache);
 						oCache.setActive(true);
 						that._fireChange({reason : ChangeReason.Change});

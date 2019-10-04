@@ -527,19 +527,18 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.deleteFromCache = function (oGroupLock, sEditUrl, sPath,
 			oETagEntity, fnCallback) {
-		var oCache = this.oCachePromise.getResult(),
-			sGroupId;
+		var sGroupId;
 
-		if (!this.oCachePromise.isFulfilled()) {
+		if (this.oCache === undefined) {
 			throw new Error("DELETE request not allowed");
 		}
 
-		if (oCache) {
+		if (this.oCache) {
 			sGroupId = oGroupLock.getGroupId();
 			if (!this.oModel.isAutoGroup(sGroupId) && !this.oModel.isDirectGroup(sGroupId)) {
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
-			return oCache._delete(oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback);
+			return this.oCache._delete(oGroupLock, sEditUrl, sPath, oETagEntity, fnCallback);
 		}
 		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
 			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), oETagEntity, fnCallback);
@@ -638,8 +637,8 @@ sap.ui.define([
 
 		// Note: this.oCachePromise exists for all bindings except operation bindings
 		bCacheImmutable = this.oCachePromise.isRejected()
-			|| this.oCachePromise.isFulfilled() && !this.oCachePromise.getResult()
-			|| this.oCachePromise.isFulfilled() && this.oCachePromise.getResult().bSentReadRequest;
+			// "this.oCache !== undefined" cannot be used; oCachePromise might become pending again
+			|| this.oCachePromise.isFulfilled() && (!this.oCache || this.oCache.bSentReadRequest);
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sFullMetaPath = oMetaModel.getMetaPath(sResolvedChildPath);
 		aPromises = [
@@ -796,11 +795,11 @@ sap.ui.define([
 		var aDependents = this.getDependentBindings();
 
 		return aDependents.some(function (oDependent) {
-			var oCache, bHasPendingChanges;
+			var oCache = oDependent.oCache,
+				bHasPendingChanges;
 
-			if (oDependent.oCachePromise.isFulfilled()) {
+			if (oCache !== undefined) {
 				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
 				if (oCache && oCache.hasPendingChangesForPath("")) {
 					return true;
 				}
@@ -934,11 +933,10 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.resetChangesInDependents = function () {
 		this.getDependentBindings().forEach(function (oDependent) {
-			var oCache;
+			var oCache = oDependent.oCache;
 
-			if (oDependent.oCachePromise.isFulfilled()) {
+			if (oCache !== undefined) {
 				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
 				if (oCache) {
 					oCache.resetChangesForPath("");
 				}
@@ -1117,7 +1115,7 @@ sap.ui.define([
 					_Helper.getMetaPath(oDependentBinding.getPath())),
 				aStrippedPaths;
 
-			if (oDependentBinding.oCachePromise.getResult()) {
+			if (oDependentBinding.oCache) {
 				// dependent binding which has its own cache => not an ODataPropertyBinding
 				aStrippedPaths = _Helper.stripPathPrefix(sPath, aPaths);
 				if (aStrippedPaths.length) {

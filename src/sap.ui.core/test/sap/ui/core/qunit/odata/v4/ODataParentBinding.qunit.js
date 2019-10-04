@@ -42,7 +42,7 @@ sap.ui.define([
 	function ODataParentBinding(oTemplate) {
 		asODataParentBinding.call(this);
 
-		jQuery.extend(this, {
+		Object.assign(this, {
 			getDependentBindings : function () {}, // implemented by all sub-classes
 			//Returns the metadata for the class that this object belongs to.
 			getMetadata : function () {
@@ -562,7 +562,8 @@ sap.ui.define([
 		QUnit.test("aggregateQueryOptions returns true: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
 					mAggregatedQueryOptions : oFixture.aggregatedQueryOptions,
-					oCachePromise : SyncPromise.resolve(Promise.resolve()) // pending!
+					oCache : undefined,
+					oCachePromise : SyncPromise.resolve(Promise.resolve(null)) // pending!
 				}),
 				bMergeSuccess;
 
@@ -706,9 +707,10 @@ sap.ui.define([
 						oBinding = new ODataParentBinding({
 							bAggregatedQueryOptionsInitial : oFixture.initial,
 							mAggregatedQueryOptions : mAggregatedQueryOptions,
+							oCache : bCacheCreationPending ? undefined : null,
 							oCachePromise : bCacheCreationPending
-								? SyncPromise.resolve(Promise.resolve())
-								: SyncPromise.resolve(undefined),
+								? SyncPromise.resolve(Promise.resolve(null))
+								: SyncPromise.resolve(null),
 							oContext : {},
 							doFetchQueryOptions : function () {},
 							oModel : {
@@ -813,22 +815,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[
-		SyncPromise.reject.bind(SyncPromise, {}), // "Failed to create cache..."
-		SyncPromise.resolve.bind(SyncPromise, { // cache sent read request
-			bSentReadRequest : true,
-			setQueryOptions : function () {}
-		})
-	].forEach(function (fnCachePromise, i) {
+	[true, false].forEach(function (bRejected, i) {
 		QUnit.test("fetchIfChildCanUseCache, immutable cache, " + i, function (assert) {
 			var oMetaModel = {
 					fetchObject : function () {},
 					getMetaPath : function () {},
 					getReducedPath : function () {}
 				},
-				oCachePromise = fnCachePromise(),
+				oCache = { // cache sent read request
+					bSentReadRequest : true,
+					setQueryOptions : function () {}
+				},
+				oCachePromise = bRejected
+					? SyncPromise.reject({}) // "Failed to create cache..."
+					: SyncPromise.resolve(oCache),
 				oBinding = new ODataParentBinding({
 					bAggregatedQueryOptionsInitial : false,
+					oCache : bRejected ? undefined : oCache,
 					oCachePromise : oCachePromise,
 					doFetchQueryOptions : function () {},
 					oModel : {
@@ -929,6 +932,7 @@ sap.ui.define([
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$select : "foo"},
 				bAggregatedQueryOptionsInitial : false,
+				oCache : oCache,
 				oCachePromise : oCachePromise,
 				doFetchQueryOptions : function () {},
 				oModel : {
@@ -1019,7 +1023,8 @@ sap.ui.define([
 				fetchMetadata : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(Promise.resolve()),
+				oCache : undefined,
+				oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
 				oContext : {},
 				wrapChildQueryOptions : function () {},
 				doFetchQueryOptions : function () {},
@@ -1111,7 +1116,8 @@ sap.ui.define([
 					mAggregatedQueryOptions : mOriginalAggregatedQueryOptions,
 					bAggregatedQueryOptionsInitial : false,
 					// cache will be created, waiting for child bindings
-					oCachePromise : SyncPromise.resolve(Promise.resolve()),
+					oCache : undefined,
+					oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
 					oContext : {},
 					doFetchQueryOptions : function () {
 						return SyncPromise.resolve({});
@@ -1192,6 +1198,7 @@ sap.ui.define([
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$expand : { "foo" : {$select : ["bar"]}}},
 				bAggregatedQueryOptionsInitial : false,
+				oCache : bImmutable ? oCache : undefined,
 				oCachePromise : SyncPromise.resolve(bImmutable ? oCache : Promise.resolve(oCache)),
 				oContext : {},
 				doFetchQueryOptions : function () {
@@ -1338,6 +1345,7 @@ sap.ui.define([
 				setQueryOptions : function () {}
 			},
 			oBinding = new ODataParentBinding({
+				oCache : bImmutable ? oCache : undefined,
 				oCachePromise : SyncPromise.resolve(bImmutable ? oCache : Promise.resolve(oCache)),
 				doFetchQueryOptions : function () {},
 				oModel : {
@@ -1442,7 +1450,8 @@ sap.ui.define([
 			},
 			oParentBinding = new ODataParentBinding(),
 			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(Promise.resolve()),
+				oCache : undefined,
+				oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
 				oContext : {
 					getBinding : function () { return oParentBinding; },
 					getPath : function () { return "/SalesOrderList('42')"; }
@@ -1560,7 +1569,7 @@ sap.ui.define([
 				_delete : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(oCache),
+				oCache : oCache,
 				getUpdateGroupId : function () {},
 				oModel : {isAutoGroup : function () {return true;}}
 			}),
@@ -1594,7 +1603,7 @@ sap.ui.define([
 				iIndex : 42
 			},
 			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
 				oContext : oContext,
 				getUpdateGroupId : function () {},
 				oModel : {isAutoGroup : function () {return true;}},
@@ -1621,8 +1630,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("deleteFromCache: check submit mode", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve({_delete : function () {}}),
+		var oCache = {_delete : function () {}},
+			oBinding = new ODataParentBinding({
+				oCache : oCache,
 				getUpdateGroupId : function () {},
 				oModel : {isAutoGroup : function () {}, isDirectGroup : function () {}}
 			}),
@@ -1641,7 +1651,7 @@ sap.ui.define([
 		oGroupLockMock.expects("getGroupId").withExactArgs().returns("$direct");
 		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
 		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
-		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
+		this.mock(oCache).expects("_delete")
 			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "42",
 				sinon.match.same(oETagEntity), sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve());
@@ -1654,7 +1664,7 @@ sap.ui.define([
 	QUnit.test("deleteFromCache: cache is not yet available", function (assert) {
 		var oBinding = new ODataParentBinding({
 				// simulate pending cache creation
-				oCachePromise : SyncPromise.resolve(Promise.resolve({ /* cache */}))
+				oCache : undefined
 			});
 
 		assert.throws(function () {
@@ -1671,9 +1681,10 @@ sap.ui.define([
 	].forEach(function (oFixture) {
 		QUnit.test("checkUpdateInternal: " + JSON.stringify(oFixture), function (assert) {
 			var bRelative = oFixture.sPath[0] !== '/',
+				oCache = bRelative ? null : { /* cache */},
 				oBinding = new ODataParentBinding({
-					oCachePromise : SyncPromise.resolve(
-						bRelative ? undefined : { /* cache */}),
+					oCache : oCache,
+					oCachePromise : SyncPromise.resolve(oCache),
 					oContext : oFixture.oContext,
 					sPath : oFixture.sPath,
 					bRelative : bRelative
@@ -1751,10 +1762,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal: relative binding with cache, parent binding data has changed",
 			function (assert) {
-		var oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve({
-					$resourcePath : "TEAMS('4711')/TEAM_2_MANAGER"
-				}),
+		var oCache = {
+				$resourcePath : "TEAMS('4711')/TEAM_2_MANAGER"
+			},
+			oBinding = new ODataParentBinding({
+				oCache : oCache,
+				oCachePromise : SyncPromise.resolve(oCache),
 				oContext : {},
 				sPath : "Manager_to_Team",
 				refreshInternal : function () {},
@@ -1785,10 +1798,12 @@ sap.ui.define([
 	QUnit.test("checkUpdateInternal: relative binding with cache, parent binding not changed",
 			function (assert) {
 		var sPath = "/TEAMS('4711')/TEAM_2_MANAGER",
+			oCache = {
+				$resourcePath : sPath
+			},
 			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve({
-					$resourcePath : sPath
-				}),
+				oCache : oCache,
+				oCachePromise : SyncPromise.resolve(oCache),
 				oContext : {
 					fetchCanonicalPath : function () {}
 				},
@@ -1852,6 +1867,7 @@ sap.ui.define([
 				},
 				oCreateError = new Error("canceled"),
 				oBinding = new ODataParentBinding({
+					oCache : oCache,
 					mCacheByResourcePath : {},
 					oCachePromise : SyncPromise.resolve(oCache)
 				}),
@@ -1893,6 +1909,7 @@ sap.ui.define([
 				create : function () {}
 			},
 			oBinding = new ODataParentBinding({
+				oCache : oCache,
 				mCacheByResourcePath : undefined,
 				oCachePromise : SyncPromise.resolve(oCache)
 			}),
@@ -1932,7 +1949,8 @@ sap.ui.define([
 				iIndex : 42
 			},
 			oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(),
+				oCache : null,
+				oCachePromise : SyncPromise.resolve(null),
 				oContext : oContext,
 				//getUpdateGroupId : function () {},
 				sPath : "SO_2_SCHEDULE"
@@ -2654,17 +2672,17 @@ sap.ui.define([
 				hasPendingChangesForPath : function () {}
 			},
 			oChild1 = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(oCache1)
+				oCache : oCache1
 			}),
 			oChild2 = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve()
+				oCache : null
 			}),
 			oChild3 = new ODataParentBinding({
 				mCacheByResourcePath : {
 					"/Foo/1" : oCache31,
 					"/Foo/2" : oCache32
 				},
-				oCachePromise : SyncPromise.resolve(Promise.resolve())
+				oCache : undefined
 			}),
 			oBinding = new ODataParentBinding({
 				oContext : {},
@@ -2768,13 +2786,13 @@ sap.ui.define([
 				resetChangesForPath : function () {}
 			},
 			oChild1 = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(oCache)
+				oCache : oCache
 			}),
 			oChild2 = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve()
+				oCache : null
 			}),
 			oChild3 = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(Promise.resolve()),
+				oCache : undefined,
 				mCacheByResourcePath : {
 					"/Foo/1" : oCache31,
 					"/Foo/2" : oCache32
@@ -2811,26 +2829,26 @@ sap.ui.define([
 		QUnit.test("visitSideEffects, " + i, function (assert) {
 			var oBinding = new ODataParentBinding(),
 				oChild0 = {
-					oCachePromise : SyncPromise.resolve({}), //TODO what if this is still pending?
+					oCache : {}, //TODO what if this is still pending?
 					getPath : function () { return "foo(0)"; },
 					requestSideEffects : function () {}
 				},
 				oChild1 = {
-					oCachePromise : SyncPromise.resolve({}),
+					oCache : {},
 					getPath : function () { return "bar(1)"; }
 				},
 				oChild2 = {
-					oCachePromise : SyncPromise.resolve(), // no own cache
+					oCache : null, // no own cache
 					getPath : function () { return "n/a/toN"; },
 					visitSideEffects : function () {}
 				},
 				oChild3 = {
-					oCachePromise : SyncPromise.resolve({}),
+					oCache : {},
 					getPath : function () { return "baz(3)"; },
 					requestSideEffects : function () {}
 				},
 				oChild4 = {
-					oCachePromise : SyncPromise.resolve(), // no own cache
+					oCache : null, // no own cache
 					getPath : function () { return "refresh(4)/toN"; },
 					refreshInternal : function () {}
 				},
