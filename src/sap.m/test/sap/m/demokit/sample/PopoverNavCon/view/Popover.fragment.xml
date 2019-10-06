@@ -10,6 +10,7 @@
 			id="navCon">
 			<Page
 				id="master"
+				class="sapUiResponsivePadding--header"
 				title="Products">
 				<List
 					id="list"
@@ -26,6 +27,7 @@
 			</Page>
 			<Page
 				id="detail"
+				class="sapUiResponsivePadding--header"
 				showNavButton="true"
 				navButtonPress="onNavBack"
 				title="Product">
