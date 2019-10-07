@@ -25,7 +25,6 @@ sap.ui.define([
 
 	var APPLY_CONNECTOR_NAME_SPACE = "sap/ui/fl/apply/_internal/connectors/";
 	var STATIC_FILE_CONNECTOR_CONFIGURATION = {
-		layerFilter: [],
 		connector: "StaticFileConnector"
 	};
 

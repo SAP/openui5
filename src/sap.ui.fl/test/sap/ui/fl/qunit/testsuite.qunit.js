@@ -57,7 +57,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layers": []}]'
 				}
 			},
 			"apply/_internal/connectors/BrowserStorageUtils": {
@@ -91,7 +91,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": []}]'
 				}
 			},
 			"apply/_internal/connectors/StaticFileConnector": {
@@ -102,7 +102,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "StaticFileConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "StaticFileConnector", "layers": []}]'
 				}
 			},
 			"apply/_internal/connectors/LrepConnector": {
@@ -200,7 +200,7 @@ sap.ui.define(function () {
 					resourceroots: {
 						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
 					},
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layerFilter": ["ALL"]}]'
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]}]'
 				}
 			},
 			"write/_internal/connectors/Utils": {
@@ -231,7 +231,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layers": []}]'
 				}
 			},
 			"write/_internal/connectors/JsObjectConnector": {
@@ -242,7 +242,7 @@ sap.ui.define(function () {
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "JsObjectConnector", "layerFilter": []}]'
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": []}]'
 				}
 			},
 			"write/_internal/connectors/LrepConnector": {
@@ -268,7 +268,7 @@ sap.ui.define(function () {
 					flexibilityServices: '[{"applyConnector": "my/lib/apply/BrokenConnector",' +
 						'"writeConnector": "my/lib/write/BrokenConnector",' +
 						'"custom": true,' +
-						'"layerFilter": []}]'
+						'"layers": []}]'
 				},
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/Storage"]

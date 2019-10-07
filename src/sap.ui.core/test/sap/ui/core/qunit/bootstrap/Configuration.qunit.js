@@ -756,7 +756,7 @@ sap.ui.define([
 	QUnit.test("Get the Flexibility Services", function(assert) {
 		var oCfg = new Configuration();
 		var sFlexibilityService = oCfg.getFlexibilityServices();
-		assert.deepEqual(sFlexibilityService, [{layerFilter: ["ALL"], connector: "LrepConnector", url: "/sap/bc/lrep"}]);
+		assert.deepEqual(sFlexibilityService, [{layers: ["ALL"], connector: "LrepConnector", url: "/sap/bc/lrep"}]);
 	});
 
 	QUnit.test("Get the Flexibility Services - set to an empty string", function(assert) {
@@ -776,8 +776,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Get the Flexibility Services - set to multiple objects", function(assert) {
-		var oFirstConfigObject = {'layerFilter': ['CUSTOMER'], 'connector': 'KeyUserConnector', 'url': '/flex/keyUser'};
-		var oSecondConfigObject = {'layerFilter': ['CUSTOMER'], 'connector': 'PersonalizationConnector', 'url': '/sap/bc/lrep'};
+		var oFirstConfigObject = {'layers': ['CUSTOMER'], 'connector': 'KeyUserConnector', 'url': '/flex/keyUser'};
+		var oSecondConfigObject = {'layers': ['USER'], 'connector': 'PersonalizationConnector', 'url': '/sap/bc/lrep'};
 		var aConfig = [oFirstConfigObject, oSecondConfigObject];
 		var sConfigString = JSON.stringify(aConfig);
 

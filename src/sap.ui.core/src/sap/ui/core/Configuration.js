@@ -1339,7 +1339,7 @@ sap.ui.define([
 				if (this.flexibilityServices[0] === "/") {
 					this.flexibilityServices = [{
 						url : this.flexibilityServices,
-						layerFilter : ["ALL"],
+						layers : ["ALL"],
 						connector : "LrepConnector"
 					}];
 				} else {
