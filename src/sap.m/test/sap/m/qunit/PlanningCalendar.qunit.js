@@ -2742,6 +2742,31 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_adjustColumnHeadersTopOffset called from onThemeChanged", function(assert) {
+		// arrange
+		var iAdjustCallCount,
+			oPC = createPlanningCalendar(
+				"adjustSticky",
+				new SearchField(),
+				new Button(),
+				new Date(Date.UTC(2015, 0, 7)),
+				CalendarIntervalType.Hours
+			),
+			fnAdjustColumnHeader = sinon.spy(oPC, "_adjustColumnHeadersTopOffset");
+
+		// act
+		oPC.placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
+		iAdjustCallCount = fnAdjustColumnHeader.callCount;
+		oPC.onThemeChanged();
+
+		// assert
+		assert.strictEqual(fnAdjustColumnHeader.callCount, (iAdjustCallCount + 1), "_adjustColumnHeadersTopOffset() called from onThemeChanged()");
+
+		// cleanup
+		oPC.destroy();
+	});
+
 	QUnit.module("Interaction", {
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
