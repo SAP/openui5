@@ -9,6 +9,7 @@
 		"dependencies": {
 			"libs": {
 				"sap.ui.unified": {},
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},

@@ -1,11 +1,11 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
-	function(jQuery, Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device'],
+	function(Controller, Device) {
 	"use strict";
 
-	var DynamicSideContent = Controller.extend("sap.ui.layout.sample.DynamicSideContent.DynamicSideContent", {
+	return Controller.extend("sap.ui.layout.sample.DynamicSideContent.DynamicSideContent", {
 		onBeforeRendering: function() {
-			this.byId("DSCWidthSlider").setVisible(!sap.ui.Device.system.phone);
-			this.byId("DSCWidthHintText").setVisible(!sap.ui.Device.system.phone);
+			this.byId("DSCWidthSlider").setVisible(!Device.system.phone);
+			this.byId("DSCWidthHintText").setVisible(!Device.system.phone);
 		},
 		handleSliderChange: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
@@ -31,6 +31,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 			this.byId("DynamicSideContent").toggle();
 		}
 	});
-
-	return DynamicSideContent;
 });

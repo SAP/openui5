@@ -1,8 +1,8 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/Device'],
-	function(jQuery, Controller, JSONModel, Device) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/Device'],
+	function(Controller, JSONModel, Device) {
 	"use strict";
 
-	var DynamicSideContent = Controller.extend("sap.ui.layout.sample.DynamicSideContentProduct.DynamicSideContent", {
+	return Controller.extend("sap.ui.layout.sample.DynamicSideContentProduct.DynamicSideContent", {
 		onInit : function () {
 			this._oDSC = this.byId("DynamicSideContent");
 			this._showSideContentButton = this.byId("showSideContentButton");
@@ -59,7 +59,5 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this.updateShowSideContentButtonVisibility(this._oDSC.getCurrentBreakpoint());
 		}
 	});
-
-	return DynamicSideContent;
 
 });

@@ -1,29 +1,30 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller'
-	], function(jQuery, Fragment, Controller) {
+	], function(Fragment, Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.SegmentedButtonDialog.C", {
+	return Controller.extend("sap.m.sample.SegmentedButtonDialog.C", {
 
-		onOpenDialog: function (oEvent) {
+		onOpenDialog: function () {
 			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.SegmentedButtonDialog.Dialog", this);
-				this.getView().addDependent(this._oDialog);
+				Fragment.load({
+					id: "dialogFrag",
+					name: "sap.m.sample.SegmentedButtonDialog.Dialog",
+					controller: this
+				}).then(function(oDialog){
+					this._oDialog = oDialog;
+					this.getView().addDependent(this._oDialog);
+					this._oDialog.open();
+				}.bind(this));
+			} else {
+				this._oDialog.open();
 			}
-
-			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialog);
-			this._oDialog.open();
 		},
 
-		onCloseDialog: function (oEvent) {
+		onCloseDialog: function () {
 			this._oDialog.close();
 		}
 	});
-
-
-	return CController;
 
 });

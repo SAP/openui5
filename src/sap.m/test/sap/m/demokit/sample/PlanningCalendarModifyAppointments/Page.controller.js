@@ -6,10 +6,10 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/base/Log'],
-	function(Label, Popover, DateFormat, Fragment, Controller, JSONModel,Log) {
+	function(Label, Popover, DateFormat, Fragment, Controller, JSONModel, Log) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendarModifyAppointments.Page", {
+		return Controller.extend("sap.m.sample.PlanningCalendarModifyAppointments.Page", {
 
 			onInit: function () {
 				var oModel = new JSONModel();
@@ -900,7 +900,5 @@ sap.ui.define([
 			}
 
 		});
-
-		return PageController;
 
 	});

@@ -20,12 +20,12 @@
 				infoState="{infoState}" />
 		</TileContainer>
 		<footer>
-			<Toolbar>
+			<OverFlowToolbar>
 				<ToolbarSpacer/>
 					<Button text="Edit" press="handleEditPress" />
 					<Button text="Busy state" press="handleBusyPress" />
 				<ToolbarSpacer/>
-			</Toolbar>
+			</OverFlowToolbar>
 		</footer>
 	</Page>
 </mvc:View>

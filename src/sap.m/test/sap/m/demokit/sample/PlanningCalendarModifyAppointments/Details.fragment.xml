@@ -13,20 +13,16 @@
 		<endButton>
 			<Button text="Delete" press="handleDeleteAppointment"/>
 		</endButton>
-		<content>
-			<f:SimpleForm
-					editable="false"
-					layout="ResponsiveGridLayout"
-					singleContainerFullSize="false">
-				<f:content>
-					<Label text="Additional information" labelFor="moreInfo"/>
-					<Text id="moreInfo" text="{text}"/>
-					<Label text="From" labelFor="startDate"/>
-					<Text id="startDate" text="{'startDate'}"/>
-					<Label text="To" labelFor="endDate"/>
-					<Text id="endDate" text="{'endDate'}"/>
-				</f:content>
-			</f:SimpleForm>
-		</content>
+		<f:SimpleForm
+				editable="false"
+				layout="ResponsiveGridLayout"
+				singleContainerFullSize="false">
+			<Label text="Additional information" labelFor="moreInfo"/>
+			<Text id="moreInfo" text="{text}"/>
+			<Label text="From" labelFor="startDate"/>
+			<Text id="startDate" text="{'startDate'}"/>
+			<Label text="To" labelFor="endDate"/>
+			<Text id="endDate" text="{'endDate'}"/>
+		</f:SimpleForm>
 	</ResponsivePopover>
 </core:FragmentDefinition>

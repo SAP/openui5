@@ -12,7 +12,10 @@
 			"async": true
 		},
 		"libs": {
-			"sap.ui.unified": {}
+			"sap.ui.unified": {},
+			"sap.ui.layout": {},
+			"sap.ui.core": {},
+			"sap.m": {}
 		},
 		"config": {
 			"sample": {

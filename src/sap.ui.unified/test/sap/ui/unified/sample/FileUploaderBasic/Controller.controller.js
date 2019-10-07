@@ -2,7 +2,7 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 	function(MessageToast, Controller) {
 	"use strict";
 
-	var ControllerController = Controller.extend("sap.ui.unified.sample.FileUploaderBasic.Controller", {
+	return Controller.extend("sap.ui.unified.sample.FileUploaderBasic.Controller", {
 		handleUploadComplete: function(oEvent) {
 			var sResponse = oEvent.getParameter("response");
 			if (sResponse) {
@@ -19,12 +19,10 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 			}
 		},
 
-		handleUploadPress: function(oEvent) {
+		handleUploadPress: function() {
 			var oFileUploader = this.byId("fileUploader");
 			oFileUploader.upload();
 		}
 	});
-
-	return ControllerController;
 
 });

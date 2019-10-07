@@ -6,19 +6,17 @@
 		xmlns="sap.m"
 		class="viewPadding">
 	<l:VerticalLayout>
-		<l:content>
-			<u:Calendar
-					id="calendar"
-					select="handleCalendarSelect" />
-			<l:HorizontalLayout>
-				<Label
-						text="Selected Date (yyyy-mm-dd):"
-						class="labelMarginLeft" />
-				<Text
-						id="selectedDate"
-						text="No Date Selected"
-						class="labelMarginLeft"/>
-			</l:HorizontalLayout>
-		</l:content>
+		<u:Calendar
+				id="calendar"
+				select="handleCalendarSelect" />
+		<l:HorizontalLayout>
+			<Label
+					text="Selected Date (yyyy-mm-dd):"
+					class="labelMarginLeft" />
+			<Text
+					id="selectedDate"
+					text="No Date Selected"
+					class="labelMarginLeft"/>
+		</l:HorizontalLayout>
 	</l:VerticalLayout>
 </mvc:View>

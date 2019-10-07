@@ -13,53 +13,49 @@
 		<l:VerticalLayout
 				class="sapUiContentPadding"
 				width="100%">
-			<l:content>
-				<f:SimpleForm
-						id="appointmentCreateForm"
-						editable="true"
-						layout="ResponsiveGridLayout"
-						singleContainerFullSize="false">
-					<f:content>
-						<Label text="Title" labelFor="appTitle"/>
-						<Input id="appTitle"/>
-						<Label text="Additional information" labelFor="inputInfo"/>
-						<Input id="moreInfo"/>
-						<Label text="From" labelFor="startDate"/>
-						<DateTimePicker
-								id="DTPStartDate"
-								required="true"
-								visible="{= !${allDay>/allDay}}"
-								change="handleDateTimePickerChange"/>
-						<DatePicker
-								id="DPStartDate"
-								required="true"
-								visible="{= ${allDay>/allDay}}"
-								change="handleDatePickerChange"/>
-						<Label text="To" labelFor="endDate"/>
-						<DateTimePicker
-								id="DTPEndDate"
-								required="true"
-								visible="{= !${allDay>/allDay}}"
-								change="handleDateTimePickerChange"/>
-						<DatePicker
-								id="DPEndDate"
-								required="true"
-								visible="{= ${allDay>/allDay}}"
-								change="handleDatePickerChange"/>
-						<CheckBox
-								id="allDay"
-								text="All-day"
-								selected="{allDay>/allDay}"
-								select="handleCheckBoxSelect"/>
-						<Label text="Type" labelFor="appType"/>
-						<Select
-								id="appType"
-								items="{/types}">
-							<core:Item key="{type}" text="{type}" />
-						</Select>
-					</f:content>
-				</f:SimpleForm>
-			</l:content>
+			<f:SimpleForm
+					id="appointmentCreateForm"
+					editable="true"
+					layout="ResponsiveGridLayout"
+					singleContainerFullSize="false">
+					<Label text="Title" labelFor="appTitle"/>
+					<Input id="appTitle"/>
+					<Label text="Additional information" labelFor="inputInfo"/>
+					<Input id="moreInfo"/>
+					<Label text="From" labelFor="startDate"/>
+				<DateTimePicker
+						id="DTPStartDate"
+						required="true"
+						visible="{= !${allDay>/allDay}}"
+						change="handleDateTimePickerChange"/>
+				<DatePicker
+						id="DPStartDate"
+						required="true"
+						visible="{= ${allDay>/allDay}}"
+						change="handleDatePickerChange"/>
+				<Label text="To" labelFor="endDate"/>
+				<DateTimePicker
+						id="DTPEndDate"
+						required="true"
+						visible="{= !${allDay>/allDay}}"
+						change="handleDateTimePickerChange"/>
+				<DatePicker
+						id="DPEndDate"
+						required="true"
+						visible="{= ${allDay>/allDay}}"
+						change="handleDatePickerChange"/>
+				<CheckBox
+						id="allDay"
+						text="All-day"
+						selected="{allDay>/allDay}"
+						select="handleCheckBoxSelect"/>
+				<Label text="Type" labelFor="appType"/>
+				<Select
+						id="appType"
+						items="{/types}">
+					<core:Item key="{type}" text="{type}" />
+				</Select>
+			</f:SimpleForm>
 		</l:VerticalLayout>
 	</Dialog>
 </core:FragmentDefinition>

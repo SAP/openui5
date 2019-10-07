@@ -6,7 +6,7 @@ sap.ui.define([
 	function (Controller, JSONModel, MessageBox) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendarMinMax.Page", {
+		return Controller.extend("sap.m.sample.PlanningCalendarMinMax.Page", {
 
 			onInit: function () {
 				// create model
@@ -340,7 +340,5 @@ sap.ui.define([
 			}
 
 		});
-
-		return PageController;
 
 	});

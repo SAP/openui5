@@ -7,7 +7,6 @@
 			<ViewSettingsCustomTab id="app-settings" icon="sap-icon://action-settings" title="Settings" tooltip="Application Settings">
 				<content>
 					<Panel height="386px">
-						<content>
 						<Label text="Theme" design="Bold" id="VSDThemeLabel"/>
 						<SegmentedButton
 								class="vsdSetting"
@@ -34,7 +33,6 @@
 							<Button text="On" id="VSDRTLOn" />
 							<Button text="Off" id="VSDRTLOff" />
 						</SegmentedButton>
-						</content>
 					</Panel>
 				</content>
 			</ViewSettingsCustomTab>

@@ -15,7 +15,8 @@
 			"libs": {
 				"sap.ui.unified": {},
 				"sap.m": {},
-				"sap.ui.layout": {}
+				"sap.ui.layout": {},
+				"sap.ui.core": {}
 			}
 		},
 		"resources": {

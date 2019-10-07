@@ -6,69 +6,67 @@
 	<l:VerticalLayout
 		class="sapUiContentPadding"
 		width="100%">
-		<l:content>
-			<ObjectNumber
-				class="sapUiSmallMarginBottom"
-				binding="{/ProductCollection/0}"
-				number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
-					}"
-				unit="{CurrencyCode}" />
-			<ObjectNumber
-				class="sapUiSmallMarginBottom"
-				binding="{/ProductCollection/1}"
-				number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
-					}"
-				unit="{CurrencyCode}"
-				state="Error" />
-			<ObjectNumber
-				class="sapUiSmallMarginBottom"
-				binding="{/ProductCollection/2}"
-				number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
-					}"
-				unit="{CurrencyCode}"
-				state="Warning" />
-			<ObjectNumber
-				class="sapUiSmallMarginBottom"
-				binding="{/ProductCollection/3}"
-				number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
-					}"
-				unit="{CurrencyCode}"
-				state="Success" />
-			<ObjectNumber
-				class="sapUiSmallMarginBottom"
-				binding="{/ProductCollection/4}"
-				number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
-					}"
-				unit="{CurrencyCode}"
-				state="Information" />
+		<ObjectNumber
+			class="sapUiSmallMarginBottom"
+			binding="{/ProductCollection/0}"
+			number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+			unit="{CurrencyCode}" />
+		<ObjectNumber
+			class="sapUiSmallMarginBottom"
+			binding="{/ProductCollection/1}"
+			number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+			unit="{CurrencyCode}"
+			state="Error" />
+		<ObjectNumber
+			class="sapUiSmallMarginBottom"
+			binding="{/ProductCollection/2}"
+			number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+			unit="{CurrencyCode}"
+			state="Warning" />
+		<ObjectNumber
+			class="sapUiSmallMarginBottom"
+			binding="{/ProductCollection/3}"
+			number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+			unit="{CurrencyCode}"
+			state="Success" />
+		<ObjectNumber
+			class="sapUiSmallMarginBottom"
+			binding="{/ProductCollection/4}"
+			number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+			unit="{CurrencyCode}"
+			state="Information" />
 
-			<Label text="ObjectNumber with style sapMObjectNumberLarge applied" class="sapUiSmallMarginTop"/>
-			<ObjectNumber
-				class="sapMObjectNumberLarge"
-				binding="{/ProductCollection/5}"
-				number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
-					}"
-				unit="{CurrencyCode}"
-				emphasized="false"
-				state="None" />
-		</l:content>
+		<Label text="ObjectNumber with style sapMObjectNumberLarge applied" class="sapUiSmallMarginTop"/>
+		<ObjectNumber
+			class="sapMObjectNumberLarge"
+			binding="{/ProductCollection/5}"
+			number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+			unit="{CurrencyCode}"
+			emphasized="false"
+			state="None" />
 	</l:VerticalLayout>
 </mvc:View>

@@ -8,11 +8,9 @@
 			<OverflowToolbar height="100%" width="100%">
 				<Label text="Select sticky mode" labelFor="stickyModeSelect" />
 				<Select id="stickyModeSelect" selectedKey="{settings>/stickyMode}">
-					<items>
-						<core:ListItem text="None" key="None" />
-						<core:ListItem text="All" key="All" />
-						<core:ListItem text="NavBarAndColHeaders" key="NavBarAndColHeaders" />
-					</items>
+					<core:ListItem text="None" key="None" />
+					<core:ListItem text="All" key="All" />
+					<core:ListItem text="NavBarAndColHeaders" key="NavBarAndColHeaders" />
 				</Select>
 				<ToolbarSeparator/>
 				<Label text="Appointment Actions : "/>
@@ -20,7 +18,6 @@
 				<ToggleButton text="Drag and Create" id="enableAppointmentsCreate" pressed="{settings>/enableAppointmentsCreate}"/>
 				<ToggleButton text="Resize" id="enableAppointmentsResize" pressed="{settings>/enableAppointmentsResize}"/>
 			</OverflowToolbar>
-
 		<SinglePlanningCalendar
 			id="SPC1"
 			class="sapUiSmallMarginTop"

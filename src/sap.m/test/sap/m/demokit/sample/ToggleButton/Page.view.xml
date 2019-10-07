@@ -28,25 +28,23 @@
 				</contentRight>
 			</Bar>
 		</subHeader>
-		<content>
-			<HBox>
-				<ToggleButton text="Disabled" enabled="false" press="onPress" >
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</ToggleButton>
-				<ToggleButton text="Pressed" enabled="true" pressed="true" press="onPress" >
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</ToggleButton>
-				<ToggleButton icon="sap-icon://action" enabled="true" press="onPress" >
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</ToggleButton>
-			</HBox>
-		</content>
+		<HBox>
+			<ToggleButton text="Disabled" enabled="false" press="onPress" >
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</ToggleButton>
+			<ToggleButton text="Pressed" enabled="true" pressed="true" press="onPress" >
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</ToggleButton>
+			<ToggleButton icon="sap-icon://action" enabled="true" press="onPress" >
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</ToggleButton>
+		</HBox>
 		<footer>
 			<Bar>
 				<contentRight>

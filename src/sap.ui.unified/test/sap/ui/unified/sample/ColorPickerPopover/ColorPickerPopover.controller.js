@@ -1,13 +1,15 @@
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/unified/ColorPickerPopover',
 	'sap/m/MessageToast'
-], function (jQuery, coreLibrary, Controller, ColorPickerPopover, MessageToast) {
+], function (coreLibrary, Controller, ColorPickerPopover, MessageToast) {
 	"use strict";
 
-	var ColorPickerController = Controller.extend("sap.ui.unified.sample.ColorPickerPopover.ColorPickerPopover", {
+	var ColorPickerMode = sap.ui.unified.ColorPickerMode,
+		ColorPickerDisplayMode = sap.ui.unified.ColorPickerDisplayMode;
+
+	return Controller.extend("sap.ui.unified.sample.ColorPickerPopover.ColorPickerPopover", {
 
 		onInit: function () {
 			// the input id from which the ColorPickerPopover was opened
@@ -30,50 +32,38 @@ sap.ui.define([
 
 		},
 
-		/**
-		 * Opens a Default <code>ColorPicker</code> in a <code>sap.m.ResponsivePopover</code>
-		 * @param oEvent
-		 */
 		openDefaultModeSample: function (oEvent) {
 			this.inputId = oEvent.getSource().getId();
 			if (!this.oColorPickerPopover) {
 				this.oColorPickerPopover = new ColorPickerPopover("oColorPickerPopover", {
 					colorString: "blue",
-					mode: sap.ui.unified.ColorPickerMode.HSL,
+					mode: ColorPickerMode.HSL,
 					change: this.handleChange.bind(this)
 				});
 			}
 			this.oColorPickerPopover.openBy(oEvent.getSource());
 		},
 
-		/**
-		 * Opens a Large <code>ColorPicker</code> in a <code>sap.m.ResponsivePopover</code>
-		 * @param oEvent
-		 */
 		openLargeModeSample: function (oEvent) {
 			this.inputId = oEvent.getSource().getId();
 			if (!this.oColorPickerLargePopover) {
 				this.oColorPickerLargePopover = new ColorPickerPopover("oColorPickerLargePopover", {
 					colorString: "green",
-					displayMode: sap.ui.unified.ColorPickerDisplayMode.Large,
-					mode: sap.ui.unified.ColorPickerMode.HSL,
+					displayMode: ColorPickerDisplayMode.Large,
+					mode: ColorPickerMode.HSL,
 					change: this.handleChange.bind(this)
 				});
 			}
 			this.oColorPickerLargePopover.openBy(oEvent.getSource());
 		},
 
-		/**
-		 * Opens a Large <code>ColorPicker</code> in a <code>sap.m.ResponsivePopover</code>
-		 * @param oEvent
-		 */
 		openSimplifiedModeSample: function (oEvent) {
 			this.inputId = oEvent.getSource().getId();
 			if (!this.oColorPickerSimplifiedPopover) {
 				this.oColorPickerSimplifiedPopover = new ColorPickerPopover("oColorPickerSimpplifiedPopover", {
 					colorString: "pink",
-					displayMode: sap.ui.unified.ColorPickerDisplayMode.Simplified,
-					mode: sap.ui.unified.ColorPickerMode.HSL,
+					displayMode: ColorPickerDisplayMode.Simplified,
+					mode: ColorPickerMode.HSL,
 					change: this.handleChange.bind(this)
 				});
 			}
@@ -98,7 +88,5 @@ sap.ui.define([
 			oInput.setValueState(sState);
 		}
 	});
-
-	return ColorPickerController;
 
 });

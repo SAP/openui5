@@ -6,39 +6,35 @@
 		xmlns="sap.m"
 		class="viewPadding">
 	<l:VerticalLayout>
-		<l:content>
-			<u:Calendar
-					id="calendar"
-					select="handleCalendarSelect"
-					minDate="{path: '/minDate'}"
-					maxDate="{path: '/maxDate'}"
-					disabledDates="{path: '/disabled'}">
-					<u:disabledDates>
-						<u:DateRange
-							startDate="{start}"
-							endDate="{end}"/>
-					</u:disabledDates>
-			</u:Calendar>
-			<l:HorizontalLayout>
+		<u:Calendar
+				id="calendar"
+				select="handleCalendarSelect"
+				minDate="{path: '/minDate'}"
+				maxDate="{path: '/maxDate'}"
+				disabledDates="{path: '/disabled'}">
+				<u:disabledDates>
+					<u:DateRange
+						startDate="{start}"
+						endDate="{end}"/>
+				</u:disabledDates>
+		</u:Calendar>
+		<l:HorizontalLayout>
+			<Label
+					text="Selected Date:"/>
+			<Text
+					id="selectedDate"
+					text="No Date Selected"/>
+		</l:HorizontalLayout>
+		<l:HorizontalLayout>
+			<FlexBox
+					height="100px"
+					alignItems="Center"
+					justifyContent="Start">
 				<Label
-						text="Selected Date:"/>
-				<Text
-						id="selectedDate"
-						text="No Date Selected"/>
-			</l:HorizontalLayout>
-			<l:HorizontalLayout>
-				<FlexBox
-						height="100px"
-						alignItems="Center"
-						justifyContent="Start">
-					<items>
-						<Label
-								text="Toggle week numbers:"/>
-						<Switch
-								state="true" change="handleShowWeekNumbers"/>
-					</items>
-				</FlexBox>
-			</l:HorizontalLayout>
-		</l:content>
+						text="Toggle week numbers:"/>
+				<Switch
+						state="true" change="handleShowWeekNumbers"/>
+			</FlexBox>
+		</l:HorizontalLayout>
 	</l:VerticalLayout>
 </mvc:View>

@@ -2,7 +2,7 @@ sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Control
 	function(jQuery, MessageToast, Controller) {
 	"use strict";
 
-	var ControllerController = Controller.extend("sap.ui.unified.sample.FileUploaderComplex.Controller", {
+	return Controller.extend("sap.ui.unified.sample.FileUploaderComplex.Controller", {
 		handleUploadComplete: function(oEvent) {
 			var sResponse = oEvent.getParameter("response");
 			if (sResponse) {
@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Control
 			}
 		},
 
-		handleUploadPress: function(oEvent) {
+		handleUploadPress: function() {
 			var oFileUploader = this.byId("fileUploader");
 			if (!oFileUploader.getValue()) {
 				MessageToast.show("Choose a file first");
@@ -42,7 +42,5 @@ sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Control
 									oEvent.getParameter("newValue") + "'");
 		}
 	});
-
-	return ControllerController;
 
 });

@@ -12,36 +12,34 @@
 		<l:VerticalLayout
 			class="sapUiContentPadding"
 			width="100%">
-			<l:content>
-				<CheckBox id="isIntervalAppointment" text="Interval appointment" select="handleAppointmentTypeChange"/>
-				<Label text="Select person: " labelFor="selectPerson"/>
-				<Select
-						id="selectPerson"
-						forceSelection="false"
-						change="handleChangeSelect"
-						width="100%"
-						items="{
-							path: '/people'
-						}">
-					<core:Item key="{name}" text="{name}"/>
-				</Select>
-				<Label text="Title: " labelFor="inputTitle"/>
-				<Input id="inputTitle"/>
-				<Label text="Start date: " labelFor="startDate"/>
-				<DateTimePicker
-						id="startDate"
-						displayFormat="short"
-						required="true"
-						change="handleCreateChange"/>
-				<Label text="End date: " labelFor="endDate"/>
-				<DateTimePicker
-						id="endDate"
-						displayFormat="short"
-						required="true"
-						change="handleCreateChange"/>
-				<Label text="More information: " labelFor="inputInfo"/>
-				<Input id="moreInfo"/>
-			</l:content>
+			<CheckBox id="isIntervalAppointment" text="Interval appointment" select="handleAppointmentTypeChange"/>
+			<Label text="Select person: " labelFor="selectPerson"/>
+			<Select
+					id="selectPerson"
+					forceSelection="false"
+					change="handleChangeSelect"
+					width="100%"
+					items="{
+						path: '/people'
+					}">
+				<core:Item key="{name}" text="{name}"/>
+			</Select>
+			<Label text="Title: " labelFor="inputTitle"/>
+			<Input id="inputTitle"/>
+			<Label text="Start date: " labelFor="startDate"/>
+			<DateTimePicker
+					id="startDate"
+					displayFormat="short"
+					required="true"
+					change="handleCreateChange"/>
+			<Label text="End date: " labelFor="endDate"/>
+			<DateTimePicker
+					id="endDate"
+					displayFormat="short"
+					required="true"
+					change="handleCreateChange"/>
+			<Label text="More information: " labelFor="inputInfo"/>
+			<Input id="moreInfo"/>
 		</l:VerticalLayout>
 	</Dialog>
 </core:FragmentDefinition>

@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
 		'sap/m/MessageToast'
-	], function(jQuery, Controller, JSONModel, MessageToast) {
+	], function(Controller, JSONModel, MessageToast) {
 	"use strict";
 
-	var StepInputController = Controller.extend("sap.m.sample.StepInput.StepInput", {
+	return Controller.extend("sap.m.sample.StepInput.StepInput", {
 
 		onInit: function () {
 			var oModel,
@@ -32,15 +31,9 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		/**
-		 * Change event handler.
-		 * @param {sap.ui.base.Event} oEvent the event
-		 */
 		onChange: function (oEvent) {
 			MessageToast.show("Value changed to '" + oEvent.getParameter("value") + "'");
 		}
 	});
-
-	return StepInputController;
 
 });

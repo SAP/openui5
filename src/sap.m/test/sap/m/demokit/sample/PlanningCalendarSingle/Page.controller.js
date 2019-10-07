@@ -6,7 +6,7 @@ sap.ui.define([
 	function (Controller, JSONModel, MessageBox) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendarSingle.Page", {
+		return Controller.extend("sap.m.sample.PlanningCalendarSingle.Page", {
 
 			onInit: function () {
 				// create model
@@ -210,28 +210,32 @@ sap.ui.define([
 			},
 
 			handleAppointmentSelect: function (oEvent) {
-				var oAppointment = oEvent.getParameter("appointment");
+				var oAppointment = oEvent.getParameter("appointment"),
+					sSelected,
+					aAppointments,
+					sValue;
+
 				if (oAppointment) {
-					var sSelected = oAppointment.getSelected() ? "selected" : "deselected";
+					sSelected = oAppointment.getSelected() ? "selected" : "deselected";
 					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
-					var aAppointments = oEvent.getParameter("appointments");
-					var sValue = aAppointments.length + " Appointments selected";
+					aAppointments = oEvent.getParameter("appointments");
+					sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
 			},
 
 			handleIntervalSelect: function (oEvent) {
-				var oStartDate = oEvent.getParameter("startDate");
-				var oEndDate = oEvent.getParameter("endDate");
-				var oModel = this.getView().getModel();
-				var oData = oModel.getData();
-				var oAppointment = {
-					start: oStartDate,
-					end: oEndDate,
-					title: "new appointment",
-					type: "Type09"
-				};
+				var oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate"),
+					oModel = this.getView().getModel(),
+					oData = oModel.getData(),
+					oAppointment = {
+						start: oStartDate,
+						end: oEndDate,
+						title: "new appointment",
+						type: "Type09"
+					};
 
 				oData.people[0].appointments.push(oAppointment);
 				oModel.setData(oData);
@@ -243,7 +247,5 @@ sap.ui.define([
 			}
 
 		});
-
-		return PageController;
 
 	});
