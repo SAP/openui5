@@ -420,6 +420,33 @@ sap.ui.define([
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is bound: Returned true");
 	});
 
+	QUnit.test("hasRowNavigatedIndicators", function(assert) {
+		assert.ok(!TableUtils.hasRowNavigatedIndicators(), "No table instance passed: Returned false");
+
+		oTable.setRowSettingsTemplate(null);
+		assert.ok(!TableUtils.hasRowNavigatedIndicators(oTable), "No row settings configured: Returned false");
+
+		oTable.setRowSettingsTemplate(new RowSettings({
+			navigated: null
+		}));
+		assert.ok(!TableUtils.hasRowNavigatedIndicators(oTable), "No row navigated configured: Returned false");
+
+		oTable.setRowSettingsTemplate(new RowSettings({
+			navigated: false
+		}));
+		assert.ok(!TableUtils.hasRowNavigatedIndicators(oTable), "Returned false");
+
+		oTable.setRowSettingsTemplate(new RowSettings({
+			navigated: true
+		}));
+		assert.ok(TableUtils.hasRowNavigatedIndicators(oTable), "Returned true");
+
+		oTable.setRowSettingsTemplate(new RowSettings({
+			navigated: "{bindingPath}"
+		}));
+		assert.ok(TableUtils.hasRowNavigatedIndicators(oTable), "Row navigated is bound: Returned true");
+	});
+
 	QUnit.test("getVisibleColumnCount", function(assert) {
 		assert.equal(TableUtils.getVisibleColumnCount(oTable), oTable.columnCount, "All columns visible");
 

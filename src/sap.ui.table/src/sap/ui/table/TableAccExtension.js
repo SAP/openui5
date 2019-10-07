@@ -307,7 +307,8 @@ sap.ui.define([
 		performCellModifications: function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions, aLabels, aDescriptions, sText, fAdapt) {
 			ExtensionHelper.storeDefaultsBeforeCellModifications(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions);
 			var oCountChangeInfo = ExtensionHelper.updateRowColCount(oExtension);
-			oExtension.getTable().$("cellacc").text(sText || " "); //set the custom text to the prepared hidden element
+			var oTable = oExtension.getTable();
+			oTable.$("cellacc").text(sText || " "); //set the custom text to the prepared hidden element
 
 			if (fAdapt) { //Allow to adapt the labels / descriptions based on the changed row / column count
 				fAdapt(aLabels, aDescriptions, oCountChangeInfo.rowChange, oCountChangeInfo.colChange, oCountChangeInfo.initial);
@@ -315,10 +316,21 @@ sap.ui.define([
 
 			var sLabel = "";
 			if (oCountChangeInfo.initial) {
-				var oTable = oExtension.getTable();
 				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount";
 				if (oTable.getSelectionMode() !== SelectionMode.None) {
 					sLabel = sLabel + " " + oTable.getId() + "-ariaselection";
+				}
+			}
+
+			if (oCountChangeInfo.initial || oCountChangeInfo.rowChange) {
+				if (TableUtils.hasRowNavigatedIndicators(oTable)) {
+					var oCellInfo = TableUtils.getCellInfo($Cell);
+					if (oCellInfo.type !== TableUtils.CELLTYPE.COLUMNHEADER && oCellInfo.type !== TableUtils.CELLTYPE.COLUMNROWHEADER) {
+						var oRowSettings = oTable.getRows()[oCellInfo.rowIndex].getAggregation("_settings");
+						if (oRowSettings.getNavigated()) {
+							sLabel = sLabel + " " + oTable.getId() + "-rownavigatedtext";
+						}
+					}
 				}
 			}
 

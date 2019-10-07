@@ -24,6 +24,7 @@
 						<m:Select id="select" items="{modes>/items}" selectedKey="Navigation" change="onBehaviourModeChange">
 							<c:Item key="{modes>key}" text="{modes>text}"/>
 						</m:Select>
+						<m:ToggleButton text="Toggle Navigated Indicators" pressed="false" press="onNavIndicatorsToggle"/>
 					</m:OverflowToolbar>
 				</toolbar>
 				<columns>

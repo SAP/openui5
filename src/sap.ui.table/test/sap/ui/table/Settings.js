@@ -9,7 +9,7 @@
 
 	window.TABLESETTINGS.listTestData = [
 		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
-		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning", highlightState: "Warning"},
+		{lastName: "Friese", name: "Andrew", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/JobPosition.png", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", objStatusText: "Name partly OK Text", objStatusTitle: "Name partly OK Title", objStatusState: "Warning", highlightState: "Warning", navigatedState: true},
 		{lastName: "Mann", name: "Sarah", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "images/Person.png", gender: "female", rating: 3, money: 1345.212, birthday: "1987-04-01", currency: "EUR", objStatusText: "Name not OK Text", objStatusTitle: "Name not OK Title", objStatusState: "Error", highlightState: "Error"},
 		{lastName: "Berry", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 4, money: 1.1, birthday: "2001-05-09", currency: "USD", objStatusText: "Status unknown Text", objStatusTitle: "Status unknown Title", objStatusState: "None", highlightState: "Information"},
 		{lastName: "Open", name: "Jenny", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "images/Person.png", gender: "female", rating: 2, money: 55663.1, birthday: "1953-03-03", currency: "USD", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "None", highlightState: "None"},
@@ -824,15 +824,23 @@
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
-						if (bValue) {
-							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-								highlight: "{highlightState}"
-							}));
-						} else {
-							oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-								highlight: sap.ui.core.MessageType.None
-							}));
-						}
+						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+							highlight: bValue ? "{highlightState}" : sap.ui.core.MessageType.None,
+							navigated: sap.ui.table.TableUtils.hasRowNavigatedIndicators(oTable) ? "{navigatedState}" : false
+						}));
+					}
+				},
+				NAVINDICATORS: {
+					text: "Navigated Indicators",
+					value: function(oTable) {
+						return sap.ui.table.TableUtils.hasRowNavigatedIndicators(oTable);
+					},
+					input: "boolean",
+					action: function(oTable, bValue) {
+						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+							highlight: sap.ui.table.TableUtils.hasRowHighlights(oTable) ? "{highlightState}" : sap.ui.core.MessageType.None,
+							navigated: bValue ? "{navigatedState}" : false
+						}));
 					}
 				}
 			}

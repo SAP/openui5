@@ -272,6 +272,28 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns whether the table has navigation indicators for rows.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @returns {boolean} Whether the table has navigation indicators for rows
+		 */
+		hasRowNavigatedIndicators: function(oTable) {
+			if (!oTable) {
+				return false;
+			}
+
+			var oRowSettingsTemplate = oTable.getRowSettingsTemplate();
+
+			if (!oRowSettingsTemplate) {
+				return false;
+			}
+
+			var bNavigated = oRowSettingsTemplate.getNavigated();
+
+			return oRowSettingsTemplate.isBound("navigated") || bNavigated;
+		},
+
+		/**
 		 * Returns the number of row actions in case the table has a row action column, <code>0</code> otherwise.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.

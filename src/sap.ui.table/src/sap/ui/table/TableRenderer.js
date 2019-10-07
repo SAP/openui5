@@ -675,6 +675,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			var oAction = oRow.getRowAction();
 			if (oAction) {
 				rm.renderControl(oAction);
+				this.writeRowNavigatedContent(rm, oTable, oRow, iRowIndex);
 			}
 		}
 		rm.close("div");
@@ -932,6 +933,29 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.class(sHighlightClass);
 		rm.openEnd();
 		oTable._getAccRenderExtension().writeAccRowHighlightText(rm, oTable, oRow, iRowIndex);
+		rm.close("div");
+	};
+
+	/**
+	 * Writes the navigation indicator for a row (including the accessibility text element) to the render manager.
+	 *
+	 * @param {sap.ui.core.RenderManager} rm The render manager to which the indicator is written
+	 * @param {sap.ui.table.Table} oTable Instance of the table
+	 * @param {sap.ui.table.Row} oRow Instance of the row
+	 * @param {int} iRowIndex Index of the row
+	 */
+	TableRenderer.writeRowNavigatedContent = function(rm, oTable, oRow, iRowIndex) {
+		if (!TableUtils.hasRowNavigatedIndicators(oTable)) {
+			return;
+		}
+
+		var oRowSettings = oRow.getAggregation("_settings");
+
+		rm.openStart("div",  oRow.getId() + "-navIndicator");
+		if (oRowSettings.getNavigated()) {
+			rm.class("sapUiTableRowNavigated");
+		}
+		rm.openEnd();
 		rm.close("div");
 	};
 
