@@ -317,7 +317,13 @@
 /* Compact size */
 .sapUiSizeCompact .sapMLIBSelectS,
 .sapUiSizeCompact .sapMLIBSelectM {
-	width: 3rem;
+	width: 2rem;
+}
+
+// adding margin-right 1rem so that width + margin-right = 3rem (according to the specs)
+.sapUiSizeCompact .sapMLIBSelectM,
+.sapUiSizeCompact .sapMListModeSingleSelectLeft > .sapMLIB > .sapMLIBSelectS {
+	margin-right: 1rem;
 }
 
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectS:first-child,
