@@ -1,0 +1,18 @@
+{
+  "1.72.0": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "1bd8a21bb7c44ad4506e174b527feeb990da879a",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Icon focus is now correct in contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980423718"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -89,6 +89,181 @@
             "reference": "1970355420"
           }
         ]
+      },
+      {
+        "id": "e1d5b6f21238cd320b0c9ddda583266315cf1a67",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "0882ccba6743f1f5c4f43ee015596464e562dd4a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Gap between sub header and content in Quartz theme removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970470631"
+          }
+        ]
+      },
+      {
+        "id": "7032c3b552cae898a1fa34f836da5578713277a2",
+        "type": "FIX",
+        "text": " sap.m.FlexItemData: property changes are correctly applied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980413669"
+          }
+        ]
+      },
+      {
+        "id": "dbfc0d51e582b21a5805b637150f71549bb758eb",
+        "type": "FIX",
+        "text": " sap.m.Input: The field is now fully visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970225549"
+          }
+        ]
+      },
+      {
+        "id": "4fdaa99c1934f5da7647006716688624477c6b68",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: aria-hidden attribute added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980401980"
+          }
+        ]
+      },
+      {
+        "id": "890dfb2a27b53a6ad75fc4c019007e319d4f9480",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Offset documentation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980365313"
+          }
+        ]
+      },
+      {
+        "id": "21649a7ab4a3f1274da27d5f1f15e5853f8aba59",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Tokenizer and model syncronized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980347222"
+          }
+        ]
+      },
+      {
+        "id": "488fbb34a70eebd6fa6a0ce959004b82b07f7003",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: ACC state placement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970267397"
+          }
+        ]
+      },
+      {
+        "id": "fc6d80ac5fb2c8f92702c1a9f10a97f5b927ec02",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: demokit example correctly displayed on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970473049"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970480000"
+          }
+        ]
+      },
+      {
+        "id": "ded3b17899d38cf7c399a3bc48242df8c0ae8b96",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fixed flickering on input livechange",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980416492"
+          }
+        ]
+      },
+      {
+        "id": "c95dd68bc9d73c2633937117c95ce901597a318e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: ViewSwitch is properly invalidated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970413019"
+          }
+        ]
+      },
+      {
+        "id": "94876f7d049783f3af3a777d029dc5e392a813a9",
+        "type": "FIX",
+        "text": " sap.m.Select: Intercept OData v4 model exception",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980424399"
+          }
+        ]
+      },
+      {
+        "id": "d0ca5e87b65ca99b6d21c96d8fe67c0654feaede",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: Reference ID fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970413018"
+          }
+        ]
+      },
+      {
+        "id": "8fea5206856f11b49c64e617cb9738143d91412d",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Validation does not change the value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970453557"
+          }
+        ]
+      },
+      {
+        "id": "5c2781f952ee119e1b0cb8601596dee2968edb80",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: Improved documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980407122"
+          }
+        ]
+      },
+      {
+        "id": "f4dbe021cb43ff72a35d90259050758562860aa6",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Select All is disabled when no items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980313804"
+          }
+        ]
       }
     ]
   }

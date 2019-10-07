@@ -1,0 +1,51 @@
+{
+  "1.72.0": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "320534f8ee73440120dbd86730ece057db59960c",
+        "type": "FIX",
+        "text": " MessageMixin: Ignore messages for sub-entities",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970472060"
+          }
+        ]
+      },
+      {
+        "id": "d25173ad5b276f92fdb57d1d745a9a79be451720",
+        "type": "FIX",
+        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "529036"
+          }
+        ]
+      },
+      {
+        "id": "2bc14ddaadec72c57803d61fbdb0bb5871cbe812",
+        "type": "FIX",
+        "text": " jquery.sap.global: adapt log level of sap.ui.ModuleSystem logger",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970468023"
+          }
+        ]
+      },
+      {
+        "id": "617acff761b94e04173d9620824a7bb2c2e0dc70",
+        "type": "FIX",
+        "text": " sap/ui/core/MockServer: remove brackets from filter query values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980009856"
+          }
+        ]
+      }
+    ]
+  }
+}
