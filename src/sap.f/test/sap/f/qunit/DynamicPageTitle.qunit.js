@@ -89,6 +89,21 @@ function (
 		assert.equal(oTitle.$("top").length > 0, false, "Title top DOM element is not rendered");
 	});
 
+	QUnit.test("DynamicPage - Rendering - Title with Invisible Breadcrumbs", function (assert) {
+		//Arrange
+		var oTitle = this.oDynamicPage.getTitle(),
+			oBreadcrumbs = oTitle.getAggregation("breadcrumbs");
+
+		// Act
+		oBreadcrumbs.setVisible(false);
+		this.oDynamicPage.setVisible(false);
+		this.oDynamicPage.setVisible(true);
+		Core.applyChanges();
+
+		//
+		assert.ok(oTitle.$("top").hasClass("sapUiHidden"));
+	});
+
 	QUnit.module("DynamicPage - Rendering - Title with navigationActions", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithNavigationActions();
