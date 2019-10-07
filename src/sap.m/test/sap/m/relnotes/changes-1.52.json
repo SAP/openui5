@@ -4602,5 +4602,32 @@
         ]
       }
     ]
+  },
+  "1.52.33": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "97b5683d61b31a3b200fa72fd7c642c0be12fb5f",
+        "type": "FIX",
+        "text": " sap.m.Panel: Heading level is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "507397"
+          }
+        ]
+      },
+      {
+        "id": "3953402c7d36283ea6b88939b7b31535be6c7eb2",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Now the control implements its current visual specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "468362"
+          }
+        ]
+      }
+    ]
   }
 }

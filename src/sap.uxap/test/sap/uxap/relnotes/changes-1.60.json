@@ -333,5 +333,21 @@
         "references": []
       }
     ]
+  },
+  "1.60.19": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "1a2dabfb15c2bc1b55545242893d08d50cd7f21a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLazyLoading: Corrected qunit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980351962"
+          }
+        ]
+      }
+    ]
   }
 }

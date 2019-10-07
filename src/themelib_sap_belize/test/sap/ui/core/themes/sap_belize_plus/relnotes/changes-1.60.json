@@ -197,5 +197,21 @@
         "references": []
       }
     ]
+  },
+  "1.60.19": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "92a323f57783a69c4cd64798e77138429223c12b",
+        "type": "FIX",
+        "text": " sap.m.Button: icon shown correctly in belize deep",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880460732"
+          }
+        ]
+      }
+    ]
   }
 }

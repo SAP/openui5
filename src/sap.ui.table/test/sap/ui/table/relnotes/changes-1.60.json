@@ -331,5 +331,21 @@
         ]
       }
     ]
+  },
+  "1.60.19": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "540e5adab255011e08cf1eb04d472d05cd442b4b",
+        "type": "FIX",
+        "text": " Table: Apply input values when scrolling with mouse or touch",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970149245"
+          }
+        ]
+      }
+    ]
   }
 }

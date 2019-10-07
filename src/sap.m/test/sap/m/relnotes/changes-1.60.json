@@ -2986,5 +2986,32 @@
         ]
       }
     ]
+  },
+  "1.60.19": {
+    "date": "September 2019",
+    "notes": [
+      {
+        "id": "ef4f968b109eec0d00289b4cef14e9d68f423192",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Closing after interaction race condition fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "493896"
+          }
+        ]
+      },
+      {
+        "id": "dddf164d24fa9cbfc03c30021912d5e7d27919da",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarRow: tooltip now updates correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "117300"
+          }
+        ]
+      }
+    ]
   }
 }
