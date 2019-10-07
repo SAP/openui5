@@ -921,53 +921,65 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Trigger TAP event in some cases missed by the core", function(assert) {
-		var spy = this.spy(b15, "ontap");
+	if (!sap.ui.Device.browser.msie) { // this test is needed only on non-IE browsers
 
-		// events needed
-		var oEventDown = new Event("mousedown", {bubbles: true, cancelable: true});
-		var oEventUp = new Event("mouseup", {bubbles: true, cancelable: true});
+		QUnit.test("Trigger TAP event in some cases missed by the core (for non-IE browsers only)", function(assert) {
+			var spy = this.spy(b15, "ontap");
 
-		// cases where we don't get tap, check if artificial tap is working
-		document.getElementById("b15-BDI-content").dispatchEvent(oEventDown);
-		document.getElementById("b15-content").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-content");
-		spy.reset();
+			// events needed
+			var oEventDown = new Event("mousedown", {bubbles: true, cancelable: true});
+			var oEventUp = new Event("mouseup", {bubbles: true, cancelable: true});
 
-		document.getElementById("b15-BDI-content").dispatchEvent(oEventDown);
-		document.getElementById("b15-inner").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-inner");
-		spy.reset();
+			var oBdiContent = document.getElementById("b15-BDI-content");
+			var oContent = document.getElementById("b15-content");
+			var oInner = document.getElementById("b15-inner");
+			var oImg = document.getElementById("b15-img");
 
-		document.getElementById("b15-BDI-content").dispatchEvent(oEventDown);
-		document.getElementById("b15-img").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-img");
-		spy.reset();
+			// cases where we don't get tap, check if artificial tap is working
 
-		document.getElementById("b15-content").dispatchEvent(oEventDown);
-		document.getElementById("b15-inner").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-inner");
-		spy.reset();
+			if (oBdiContent) {
+				// do the following 4 test only if <BDI> tag exists (in Edge it is missing)
+				oBdiContent.dispatchEvent(oEventDown);
+				oContent.dispatchEvent(oEventUp);
+				assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-content");
+				spy.reset();
 
-		document.getElementById("b15-content").dispatchEvent(oEventDown);
-		document.getElementById("b15-img").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-img");
-		spy.reset();
+				oBdiContent.dispatchEvent(oEventDown);
+				oInner.dispatchEvent(oEventUp);
+				assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-inner");
+				spy.reset();
 
-		document.getElementById("b15-img").dispatchEvent(oEventDown);
-		document.getElementById("b15-BDI-content").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
-		spy.reset();
+				oBdiContent.dispatchEvent(oEventDown);
+				oImg.dispatchEvent(oEventUp);
+				assert.equal(spy.callCount, 1, "TAP on a button works from b15-BDI-content to b15-img");
+				spy.reset();
 
-		document.getElementById("b15-img").dispatchEvent(oEventDown);
-		document.getElementById("b15-content").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
-		spy.reset();
+				oImg.dispatchEvent(oEventDown);
+				oBdiContent.dispatchEvent(oEventUp);
+				assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-BDI-content");
+				spy.reset();
+			}
 
-		document.getElementById("b15-img").dispatchEvent(oEventDown);
-		document.getElementById("b15-inner").dispatchEvent(oEventUp);
-		assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-inner");
+			oContent.dispatchEvent(oEventDown);
+			oInner.dispatchEvent(oEventUp);
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-inner");
+			spy.reset();
 
-	});
+			oContent.dispatchEvent(oEventDown);
+			oImg.dispatchEvent(oEventUp);
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-content to b15-img");
+			spy.reset();
+
+			oImg.dispatchEvent(oEventDown);
+			oContent.dispatchEvent(oEventUp);
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-content");
+			spy.reset();
+
+			oImg.dispatchEvent(oEventDown);
+			oInner.dispatchEvent(oEventUp);
+			assert.equal(spy.callCount, 1, "TAP on a button works from b15-img to b15-inner");
+
+		});
+	}
 
 });
