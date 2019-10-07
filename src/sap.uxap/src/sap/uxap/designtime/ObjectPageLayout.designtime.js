@@ -47,7 +47,7 @@ sap.ui.define(["sap/uxap/library"],
 			},
 			headerContent : {
 				domRef : function(oElement) {
-					return oElement._getHeaderContent().getDomRef();
+					return oElement._getHeaderContent() ? oElement._getHeaderContent().getDomRef() : null;
 				},
 				actions : {
 					move : function(oElement){
