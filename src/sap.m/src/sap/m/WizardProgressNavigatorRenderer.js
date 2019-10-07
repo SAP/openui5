@@ -93,7 +93,7 @@ sap.ui.define([], function () {
 	WizardProgressNavigatorRenderer.renderSteps = function (oRm, oControl) {
 		var iStepCount = oControl.getStepCount(),
 			aStepTitles = oControl.getStepTitles(),
-			aStepOptionalIndication = oControl._stepOptionalIndication,
+			aStepOptionalIndication = oControl._aStepOptionalIndication,
 			aStepIcons = oControl.getStepIcons(),
 			sOptionalLabel = oResourceBundle.getText("WIZARD_STEP_OPTIONAL_STEP_TEXT");
 
@@ -118,7 +118,7 @@ sap.ui.define([], function () {
 	};
 
 	WizardProgressNavigatorRenderer.renderAnchor = function (oRm, oControl, iStepNumber, sStepTitle, sIconUri, sOptionalLabel) {
-		var aSteps = oControl._cachedSteps,
+		var aSteps = oControl._aCachedSteps,
 			oCurrentStep = aSteps[iStepNumber];
 
 		// write link opening tag
