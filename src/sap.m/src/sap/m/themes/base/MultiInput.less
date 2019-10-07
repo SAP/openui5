@@ -81,6 +81,14 @@
 			min-width: @_InputBase_Control_Tokens_MinWidth_Compact;
 			&.sapMInputBaseContentWrapperState:not(.sapMInputBaseContentWrapperSuccess) {
 				min-width: @_InputBase_Control_Tokens_State_MinWidth_Compact;
+				outline-offset: -3px;
+				.sapMToken {
+					margin-top: 0.0625rem;
+					margin-bottom: 0.0625rem;
+				}
+				.sapMTokenizerIndicator {
+					line-height: 1rem;
+				}
 			}
 		}
 
