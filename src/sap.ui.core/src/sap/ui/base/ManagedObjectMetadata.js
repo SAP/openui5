@@ -1855,8 +1855,12 @@ function(
 			sInstanceSpecificModule = mPredefinedDesignTimeModules[sInstanceSpecificModule] || sInstanceSpecificModule;
 
 			return new Promise(function(fnResolve) {
-				sap.ui.require([sInstanceSpecificModule], function(oDesignTime) {
-					fnResolve(oDesignTime);
+				sap.ui.require([sInstanceSpecificModule], function(vDesignTime) {
+					if (typeof vDesignTime === "function") {
+						fnResolve(vDesignTime(oInstance));
+					} else {
+						fnResolve(vDesignTime);
+					}
 				});
 			});
 		} else {
