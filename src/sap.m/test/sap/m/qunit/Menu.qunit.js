@@ -208,6 +208,8 @@ sap.ui.define([
 	});
 
 	QUnit.test('Opening/closing/reopening', function (assert) {
+		var fnFireCloseSpy = sinon.spy(this.sut, "fireClosed");
+
 		//Assert
 		assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
 
@@ -219,6 +221,9 @@ sap.ui.define([
 
 		this.sut.close();
 		this.clock.tick(1000);
+
+		//Assert if the close event is fired
+		assert.strictEqual(fnFireCloseSpy.calledOnce, true, "Close event is fired menu is closed");
 
 		//Assert
 		assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "close"');

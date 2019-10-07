@@ -262,6 +262,7 @@ sap.ui.define([
 			// remove padding for the menu on phone
 			oDialog.removeStyleClass("sapUiPopupWithPadding");
 			this.setAggregation("_dialog", oDialog, true);
+			oDialog.attachAfterClose(this._menuClosed, this);
 		};
 
 		/**
