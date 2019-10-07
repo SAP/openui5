@@ -106,15 +106,21 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 		var oInfoTBar = oControl.getInfoToolbar();
 
 		if (oInfoTBar) {
-			if (bIsExpandable) {
-				// use this class as marker class to ease selection later in onAfterRendering
-				oInfoTBar.addStyleClass("sapMPanelExpandablePart");
-			}
-
 			// render infoBar
 			oInfoTBar.setDesign(ToolbarDesign.Info, true);
 			oInfoTBar.addStyleClass("sapMPanelInfoTB");
-			oRm.renderControl(oInfoTBar);
+
+			if (bIsExpandable) {
+				oRm.write("<div");
+				// use this class as marker class to ease selection later in onAfterRendering
+				oRm.addClass("sapMPanelExpandablePart");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.renderControl(oInfoTBar);
+				oRm.write("</div>");
+			} else {
+				oRm.renderControl(oInfoTBar);
+			}
 		}
 	};
 
