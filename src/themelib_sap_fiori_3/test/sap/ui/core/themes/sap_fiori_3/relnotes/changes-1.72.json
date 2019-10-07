@@ -23,6 +23,49 @@
             "reference": "1980424023"
           }
         ]
+      },
+      {
+        "id": "e1d5b6f21238cd320b0c9ddda583266315cf1a67",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: backgroundDesign property added",
+        "references": []
+      },
+      {
+        "id": "5951be854154d27e1f87352e8213537a7249d2a0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Styles are more specific now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970465987"
+          }
+        ]
+      },
+      {
+        "id": "b482453bda4405b2a92f8fd5d2a1b30900f500b2",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Scrolling and \"sticky headers\" are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970467496"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970467937"
+          }
+        ]
+      },
+      {
+        "id": "1bd8a21bb7c44ad4506e174b527feeb990da879a",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Icon focus is now correct in contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980423718"
+          }
+        ]
       }
     ]
   }

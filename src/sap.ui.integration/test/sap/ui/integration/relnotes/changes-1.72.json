@@ -1,0 +1,13 @@
+{
+  "1.72.0": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "083540175a7ce48a249fac453f794070604946a7",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Predefined parameter LOCALE is available now",
+        "references": []
+      }
+    ]
+  }
+}

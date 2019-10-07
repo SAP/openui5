@@ -1,0 +1,19 @@
+{
+  "1.72.0": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "aefe1f55e08db34b80edb82d2f19786916eae387",
+        "type": "FIX",
+        "text": " sap.ui.rta - removed warning on start rta in performance test",
+        "references": []
+      },
+      {
+        "id": "0c791a67ec84bd9127241763f8533f1c6f16cac3",
+        "type": "FIX",
+        "text": " sap.ui.rta: Revision of concatenation of custom id",
+        "references": []
+      }
+    ]
+  }
+}
