@@ -527,6 +527,26 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("When there are only buttons with priority Disappear the overflow button should not be shown", function (assert) {
+
+		// Arrange
+		var aDefaultContent = [
+					getButton('1', OverflowToolbarPriority.Disappear),
+					getButton('2', OverflowToolbarPriority.Disappear),
+					getButton('3', OverflowToolbarPriority.Disappear)
+				],
+				oOverflowTB = createOverflowToolbar({
+					width: "100px"
+				}, aDefaultContent);
+
+		// Assert
+		assert.strictEqual(oOverflowTB._getOverflowButton().$().is(":visible"), false, "The overflow button is not visible");
+		assert.strictEqual(oOverflowTB._hasControlsToBeShownInPopover(), false, "_hasControlsToBeShownInPopover returns false");
+
+		// Clean up
+		oOverflowTB.destroy();
+	});
+
 	QUnit.test("Changing piority from Low to High should move the button from the overflow area back to the toolbar", function (assert) {
 
 		// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
