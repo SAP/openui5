@@ -1070,6 +1070,10 @@ sap.ui.define([
 		this._adjustColumnHeadersTopOffset();
 	};
 
+	PlanningCalendar.prototype.onThemeChanged = function() {
+		this._adjustColumnHeadersTopOffset();
+	};
+
 	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
 		if (oContent && oContent.isA("sap.m.Title")) {
 			this._getHeader().setTitle(oContent.getText());
