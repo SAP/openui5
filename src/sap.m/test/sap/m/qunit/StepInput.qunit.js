@@ -2374,6 +2374,65 @@ sap.ui.define([
 		assert.strictEqual(this.stepInput._getInput().getValue(), "1", "value has not been touched");
 	});
 
+	QUnit.test("_verifyValue respects binding min/max constraints", function(assert) {
+		// arrange
+		this.stepInput.setModel(new JSONModel({ value: 11 }));
+		this.stepInput.bindProperty("value", {
+			path: "/value",
+			type: new sap.ui.model.type.Float(null, {
+				maximum: 10
+			})
+		});
+
+		// act
+		this.stepInput._verifyValue();
+
+		// assert
+		assert.strictEqual(this.stepInput._getInput().getValueState(), ValueState.Error, "value state is correct");
+		assert.strictEqual(this.stepInput._getInput().getValueStateText(), "Enter a number with a maximum value of 10", "value state text is correct");
+	});
+
+	QUnit.test("_verifyValue prefers binding max constraint over max property setting", function(assert) {
+		// arrange
+		this.stepInput.setMax(13);
+		this.stepInput.setModel(new JSONModel({ value: 11 }));
+		this.stepInput.bindProperty("value", {
+			path: "/value",
+			type: new sap.ui.model.type.Float(null, {
+				maximum: 10
+			})
+		});
+
+		// act
+		this.stepInput._verifyValue();
+
+		// assert
+		assert.strictEqual(this.stepInput._getInput().getValueStateText(), "Enter a number with a maximum value of 10", "value state text is correct");
+	});
+
+	QUnit.test("_disableButtons is called with respect of min/max binding constraints", function(assert) {
+		// arrange
+		var oSpyDisableButtons;
+
+		this.stepInput.setModel(new JSONModel({ value: 9 }));
+		this.stepInput.bindProperty("value", {
+			path: "/value",
+			type: new sap.ui.model.type.Float(null, {
+				maximum: 10
+			})
+		});
+
+		oSpyDisableButtons = this.spy(this.stepInput, "_disableButtons");
+
+		// act
+		this.stepInput.setValue(11);
+
+		// assert
+		assert.strictEqual(oSpyDisableButtons.getCall(0).args[1], 10,
+			"_disableButtons called with the max argument as the maximum binding cnonstraint");
+		assert.strictEqual(this.stepInput._getIncrementButton().getEnabled(), false, "increment is disabled");
+	});
+
 	QUnit.module("Misc");
 
 	QUnit.test("increment/decrement buttons enabled state", function (assert) {
