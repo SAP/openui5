@@ -400,6 +400,16 @@ function(
 			this._deregisterEvents();
 		};
 
+		NumericInput.prototype.setValue = function(sValue) {
+			Input.prototype.setValue.apply(this, arguments);
+
+			if (this.getDomRef()) {
+				document.getElementById(this.getId() + "-inner").setAttribute("aria-valuenow", sValue);
+			}
+
+			return this;
+		};
+
 		/**
 		 * Initializes the control.
 		 */
@@ -749,8 +759,9 @@ function(
 			}
 
 			this._getInput().setValue(this._getFormatedValue(oValue));
+			this._disableButtons(this._getInput().getValue(), this.getMax(), this.getMin());
 
-			oResult = this.setProperty("value", parseFloat(oValue));
+			oResult = this.setProperty("value", parseFloat(oValue), true);
 
 			this._iRealPrecision = this._getRealValuePrecision();
 
@@ -1373,7 +1384,9 @@ function(
 						// Context menu is shown on "long-touch"
 						// so prevent of showing it while "long-touching" on the button
 						oEvent.stopImmediatePropagation(true);
-						oEvent.preventDefault();
+						if (oEvent.originalEvent && oEvent.originalEvent.cancelable) {
+							oEvent.preventDefault();
+						}
 						oEvent.stopPropagation();
 					}
 				};
