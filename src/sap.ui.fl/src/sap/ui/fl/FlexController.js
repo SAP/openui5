@@ -789,7 +789,7 @@ sap.ui.define([
 				bStashed = true;
 
 				// if we want to revert we also have to fake the revertData when it is not available
-				if (!oChange.getRevertData()) {
+				if (!oChange.hasRevertData()) {
 					oChangeHandler.setChangeRevertData(oChange, false);
 				}
 			}
@@ -811,7 +811,7 @@ sap.ui.define([
 		.then(function(bPending) {
 			if (bPending || (!bPending && bIsCurrentlyApplied) || bStashed) {
 				// if the change has no revertData attached to it they may be saved in the custom data
-				if (!oChange.getRevertData()) {
+				if (!oChange.hasRevertData()) {
 					oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oControl, oChange, oModifier));
 				}
 

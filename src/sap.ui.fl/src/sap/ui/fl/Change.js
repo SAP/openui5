@@ -941,6 +941,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if the change has revert data and returns a boolean;
+	 * For falsy revert data also true is returned.
+	 *
+	 * @returns {boolean} Returns wheather the change has revert data
+	 */
+	Change.prototype.hasRevertData = function() {
+		return this._vRevertData !== null;
+	};
+
+	/**
 	 * Sets the revert-specific data.
 	 *
 	 * @param {*} vData - Revert-specific data
