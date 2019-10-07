@@ -1075,6 +1075,40 @@ function (
 		Core.applyChanges();
 	});
 
+	QUnit.test("SemanticHelper whenReady", function (assert) {
+		assert.expect(3);
+		var fnDone = assert.async();
+
+		var sId = "myFCL";
+
+		// setup
+		var oFCL = new FlexibleColumnLayout(sId);
+
+
+		var oFlexibleColumnLayoutSemanticHelper = FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL);
+
+		oFlexibleColumnLayoutSemanticHelper.whenReady()
+			.then(function () {
+				assert.ok(oFlexibleColumnLayoutSemanticHelper.isReady(), 'The FlexibleColumnLayout instance is now ready');
+
+				oFCL.destroy();
+
+				oFlexibleColumnLayoutSemanticHelper.whenReady()
+					.catch(function () {
+						assert.notOk(oFlexibleColumnLayoutSemanticHelper.isReady(), 'The FlexibleColumnLayout was destroyed and is not ready any more');
+
+						fnDone();
+					});
+
+			});
+
+		assert.notOk(oFlexibleColumnLayoutSemanticHelper.isReady(), 'The FlexibleColumnLayout instance is not yet ready');
+
+		// act
+		oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+	});
+
 	QUnit.module("Private API", {
 		afterEach: function () {
 			this.oFCL.destroy();
