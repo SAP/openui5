@@ -23,21 +23,21 @@ sap.ui.define([
 	 * It subsequently extends to all valid child controls.
 	 *
 	 * Example: If the whole application needs to be adapted,
-	 * then this application component's container {@see sap.ui.core.ComponentContainer} should be passed as the root control to this function.
+	 * then this application's components container {@see sap.ui.core.ComponentContainer} should be passed as the root control to this function.
 	 *
 	 * @function
-	 * @experimental
+	 * @experimental since 1.71
 	 * @since 1.71
-	 * @public
-	 * @alias module:sap/ui/rta/startKeyUserAdaptation
+	 * @alias module:sap/ui/rta/api/startKeyUserAdaptation
 	 *
 	 * @param {object} mPropertyBag - Object with properties
-	 * @param {sap.ui.core.Element | sap.ui.core.UIComponent} mPropertyBag.rootControl - Control instance from where key user adaptation should be started
+	 * @param {sap.ui.core.Element|sap.ui.core.UIComponent} mPropertyBag.rootControl - Control instance from where key user adaptation should be started
 	 * @param {boolean} [mPropertyBag.adaptWholeApp] - Indicates if adaptation should start from the passed control's application component
 	 *
 	 * @returns {Promise} Resolves when adaptation was successfully started
+	 * @public
 	 */
-	return function (mPropertyBag) {
+	function startKeyUserAdaptation(mPropertyBag) {
 		if (!(mPropertyBag.rootControl instanceof Element) && !(mPropertyBag.rootControl instanceof UIComponent)) {
 			return Promise.reject(new Error("An invalid root control was passed"));
 		}
@@ -61,7 +61,7 @@ sap.ui.define([
 					validateAppVersion: true
 				});
 
-				oRta.attachEvent('stop', function () {
+				oRta.attachEvent("stop", function () {
 					oRta.destroy();
 				});
 
@@ -71,5 +71,6 @@ sap.ui.define([
 				Log.error("UI Adaptation could not be started", oError.message);
 				throw oError;
 			});
-	};
+	}
+	return startKeyUserAdaptation;
 });
