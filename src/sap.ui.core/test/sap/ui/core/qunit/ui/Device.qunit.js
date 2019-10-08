@@ -432,8 +432,29 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			versionStr: undefined,
 			android: true
 		}
-	}
-	];
+	},
+	{
+		name: "Safari (Request Desktop Sites) on iOS 13 with iPad",
+		ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.1 Safari/605.1.15",
+		platform: "MacIntel",
+		expected: {
+			msie: undefined,
+			webkit: true,
+			mozilla: undefined,
+			chrome: undefined,
+			safari: true,
+			firefox: undefined,
+			edge: undefined,
+			version: 13,
+			versionStr: "13"
+		},
+		os : {
+			name: "mac",
+			version: -1,
+			versionStr: "",
+			macintosh: true
+		}
+	}];
 
 	var fnUATest = function (oUserAgentAndResult) {
 
@@ -464,7 +485,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				var bOldSupportTouch = Device.support.touch,
 					oOldBrowserInfo = Device.browser;
 
-				Device._setOS(currentTest.ua);
+				Device._setOS(currentTest.ua, currentTest.platform);
 				Device.support.touch = currentTest.touch;
 				Device.browser = actualResult;
 
