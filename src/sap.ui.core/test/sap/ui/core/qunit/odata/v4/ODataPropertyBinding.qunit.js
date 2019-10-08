@@ -539,11 +539,10 @@ sap.ui.define([
 					.withExactArgs(oBinding.sReducedPath, sinon.match.same(oBinding))
 					.returns(SyncPromise.resolve(vValue));
 			}
-			if (oFixture.internalType !== "any") {
-				this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
-					.withExactArgs(sResolvedPath)
-					.returns(SyncPromise.resolve());
-			}
+			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+				.exactly(oFixture.internalType !== "any" ? 1 : 0)
+				.withExactArgs(sResolvedPath)
+				.returns(SyncPromise.resolve());
 			this.oLogMock.expects("error")
 				.withExactArgs("Accessed value is not primitive",
 					sResolvedPath, sClassName);
@@ -734,11 +733,15 @@ sap.ui.define([
 		QUnit.test("checkUpdateInternal(): with vValue parameter: " + vValue, function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute"),
 				oPromise,
+				oType = {getName : function () {}},
 				done = assert.async();
 
+			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+				.withExactArgs("/absolute")
+				.returns(SyncPromise.resolve(oType));
 			oBinding.vValue = ""; // simulate a read
-			oBinding.setType(null, "any"); // avoid fetchUI5Type()
 			oBinding.attachChange(function () {
+				assert.strictEqual(oBinding.getType(), oType);
 				assert.strictEqual(oBinding.getValue(), vValue);
 				done();
 			});
