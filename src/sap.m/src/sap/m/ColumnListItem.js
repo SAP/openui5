@@ -239,11 +239,14 @@ sap.ui.define([
 	};
 
 	ColumnListItem.prototype.onfocusin = function(oEvent) {
-		if (oEvent.isMarked() || oEvent.srcControl !== this) {
+		if (oEvent.isMarked()) {
 			return;
 		}
 
-		this.$().children(".sapMListTblCellDup").find(":sapTabbable").attr("tabindex", -1);
+		if (oEvent.srcControl === this) {
+			this.$().children(".sapMListTblCellDup").find(":sapTabbable").attr("tabindex", -1);
+		}
+
 		ListItemBase.prototype.onfocusin.apply(this, arguments);
 	};
 
