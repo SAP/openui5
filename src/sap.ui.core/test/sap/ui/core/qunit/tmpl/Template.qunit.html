@@ -249,6 +249,65 @@
 
 			});
 
+			QUnit.test("Context Stacking (fix for migration from 3.x to 4.x)", function(assert) {
+
+				sap.ui.define("my/Control", ["sap/ui/core/Control"], function(Control) {
+					 Control.extend("my.Control", {
+						metadata: {
+							properties: {
+								text: "string"
+							}
+						},
+						renderer: function(oRM, oControl) {
+							oRM.write("<div");
+							oRM.writeControlData(oControl);
+							oRM.writeClasses();
+							oRM.writeStyles();
+							oRM.write(">");
+							oRM.writeEscaped(oControl.getText());
+							oRM.write("</div>");
+						}
+					});
+				});
+
+				var done = assert.async();
+
+				sap.ui.require(["my/Control"], function() {
+					// create a model to validate data binding
+					jQuery.sap.require("sap.ui.model.json.JSONModel");
+					var oModel = new sap.ui.model.json.JSONModel({
+						"subvalues": [{
+							"value": "First subvalue",
+							"visible": true
+						}, {
+							"value": "Second subvalue",
+							"visible": true
+						}]
+					});
+					sap.ui.getCore().setModel(oModel, "other");
+
+					// parse the template
+					sap.ui.template({
+						id: "templateWithListBindingAndControls",
+						type: "text/x-handlebars-template"
+					});
+
+					// force the re-rendering
+					sap.ui.getCore().applyChanges();
+
+					var $tmpl = jQuery("#templateWithListBindingAndControls");
+					assert.equal($tmpl.find("[data-sap-ui]").length, 2, "Found 2 UI5 controls!");
+					assert.equal($tmpl.find("[data-sap-ui]").control(0).getText(), "First subvalue", "Text for 1st control is correct!");
+					assert.equal($tmpl.find("[data-sap-ui]").control(1).getText(), "Second subvalue", "Text for 2st control is correct!");
+					assert.ok(jQuery($tmpl.find("[data-sap-ui]").get(0)).hasClass("test1"), "First Custom Style Classes is set!");
+					assert.ok(jQuery($tmpl.find("[data-sap-ui]").get(0)).hasClass("test2"), "Second Custom Style Classes is set!");
+					assert.ok($tmpl.find("[data-sap-ui]").control(0).hasStyleClass("test1"), "First Custom Style Classes is set!");
+					assert.ok($tmpl.find("[data-sap-ui]").control(0).hasStyleClass("test2"), "Second Custom Style Classes is set!");
+
+					done();
+				});
+			});
+
 		</script>
 	</head>
 	<body>
