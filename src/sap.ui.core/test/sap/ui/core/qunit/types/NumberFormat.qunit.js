@@ -3271,6 +3271,18 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 		assert.ok(isNaN(oFormat.parse("%12.345%")), "NaN", "%12.345%");
 	});
 
+	QUnit.test("Percent format with string values", function(assert) {
+		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
+			maxFractionDigits: 3
+		});
+
+		assert.equal(oFormat.format("12"), "1,200%", "12");
+		assert.equal(oFormat.format("12.34"), "1,234%", "12.34");
+		assert.equal(oFormat.format(".1234567"), "12.345%", ".1234567");
+		assert.equal(oFormat.format("-.1234567"), "-12.345%", ".1234567");
+		assert.equal(oFormat.format(".1234"), "12.34%", ".1234");
+	});
+
 	QUnit.test("Percent format with specific locale tr-TR", function (assert) {
 		var oLocale = new Locale("tr-TR");
 		var oFormat = NumberFormat.getPercentInstance(oLocale);
