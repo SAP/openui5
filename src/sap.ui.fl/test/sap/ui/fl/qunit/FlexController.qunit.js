@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/changeHandler/Base",
@@ -36,6 +37,7 @@ function (
 	ChangeRegistry,
 	ChangeHandlerRegistration,
 	Control,
+	Element,
 	Utils,
 	HideControl,
 	ChangeHandlerBase,
@@ -3119,6 +3121,7 @@ function (
 			var oRevertData = {
 				foo: "bar"
 			};
+			var oControlAfterRevert = {id: "controlAfterRevert"};
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 					'<Label id="' + this.sLabelId + '" >' +
@@ -3127,6 +3130,7 @@ function (
 			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			this.oControl = this.oView.childNodes[0];
 			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
+			sandbox.stub(XmlTreeModifier, "bySelector").returns(oControlAfterRevert);
 			this.oChange.markFinished();
 
 			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
@@ -3134,7 +3138,29 @@ function (
 				assert.deepEqual(this.oChange.getRevertData(), oRevertData, "the revert data was saved in the change");
 				assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
 				assert.equal(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData got deleted");
+				assert.ok(this.oDestroyAppliedCustomDataStub.calledWith(oControlAfterRevert, this.oChange, XmlTreeModifier), "the customData was deleted for the reverted control");
+				assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
 			}.bind(this));
+		});
+
+		QUnit.test("when a change revert was unsuccessful", function (assert) {
+			this.oXmlString =
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<Label id="' + this.sLabelId + '" >' +
+				'</Label>' +
+				'</mvc:View>';
+
+			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+			this.oControl = this.oView.childNodes[0];
+			this.oChangeHandlerRevertChangeStub.throws(new Error("revert unsuccessful"));
+
+			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
+				.then(function(bRevertResult) {
+					assert.strictEqual(bRevertResult, false, "the change was not reverted");
+					assert.strictEqual(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData was deleted ");
+					assert.ok(this.oDestroyAppliedCustomDataStub.calledWith(this.oControl, this.oChange, XmlTreeModifier), "the customData was deleted for the source control");
+					assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
+				}.bind(this));
 		});
 
 		QUnit.test("does not call the change handler if the change was already applied", function (assert) {
@@ -3767,9 +3793,11 @@ function (
 
 	QUnit.module("Revert for stashed control", {
 		beforeEach: function () {
+			var sViewId = "view";
+			this.oControlId = "stashedSection";
 			var oChangeContent = {
 				fileType: "change",
-				layer: "USER",
+				layer: "CUSTOMER",
 				fileName: "a",
 				namespace: "b",
 				packageName: "c",
@@ -3777,7 +3805,7 @@ function (
 				creation: "",
 				reference: "",
 				selector: {
-					id: "stashedSection"
+					id: sViewId + "--" + this.oControlId
 				},
 				content: {
 					something: "createNewVariant"
@@ -3787,12 +3815,6 @@ function (
 			this.oChange = new Change(oChangeContent);
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
-			this.oSetRevertDataStub = sandbox.stub();
-			this.oChangeHandlerRevertChangeStub = sandbox.stub();
-			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
-				revertChange: this.oChangeHandlerRevertChangeStub,
-				setChangeRevertData: this.oSetRevertDataStub
-			});
 			var sXmlString =
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' + 'xmlns:uxap="sap.uxap" >' +
 				'<uxap:ObjectPageLayout id="layout">' +
@@ -3803,10 +3825,16 @@ function (
 				'</uxap:ObjectPageLayout>' +
 				'</mvc:View>';
 			return XMLView.create({
-				id: "view",
+				id: sViewId,
 				definition: sXmlString
 			}).then(function(oView) {
 				this.oView = oView;
+				var oChangeRegistry = ChangeRegistry.getInstance();
+				return oChangeRegistry.registerControlsForChanges({
+					"sap.ui.core._StashedControl" : {
+						stashControl : "default"
+					}
+				});
 			}.bind(this));
 		},
 		afterEach: function () {
@@ -3817,26 +3845,37 @@ function (
 	}, function() {
 		QUnit.test("Reverts the 'stashControl' change which was initially applied on a stashed control", function(assert) {
 			this.oChange.setRevertData({testValue: true});
+			var fnSetRevertDataStub = sandbox.spy(this.oChange, "setRevertData");
 			this.oControl = this.oView.byId("stashedSection");
 			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {
 				modifier: JsControlTreeModifier,
 				view: this.oView
 			}, true)
 				.then(function () {
-					assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "revert was called");
-					assert.ok(this.oSetRevertDataStub.notCalled, "revert data was not set again on the change");
+					var oUnstashedControl = this.oView.byId(this.oControlId);
+					assert.ok(oUnstashedControl instanceof Element, "then a control was unstashed");
+					assert.strictEqual(fnSetRevertDataStub.callCount, 1, "then revert data was called once");
+					assert.ok(fnSetRevertDataStub.calledWith(null), "then revert data was called to reset revert data only");
+					assert.strictEqual(oUnstashedControl.getCustomData().length, 0, "then custom data was removed from the unstashed control");
+					assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
 				}.bind(this));
 		});
 
 		QUnit.test("Reverts the 'stashControl' change for an initially stashed control", function(assert) {
-			this.oControl = this.oView.byId("stashedSection");
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {
+			var oStashedControl = this.oView.byId(this.oControlId);
+			var fnSetRevertDataStub = sandbox.spy(this.oChange, "setRevertData");
+			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, oStashedControl, {
 				modifier: JsControlTreeModifier,
 				view: this.oView
 			}, true)
 				.then(function () {
-					assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "revert was called");
-					assert.ok(this.oSetRevertDataStub.calledWith(this.oChange, false), "revert data was set on the change");
+					var oUnstashedControl = this.oView.byId(this.oControlId);
+					assert.ok(oUnstashedControl instanceof Element, "then a control was unstashed");
+					assert.strictEqual(fnSetRevertDataStub.callCount, 2, "then revert data was called twice");
+					assert.ok(fnSetRevertDataStub.calledWith({originalValue: false, originalIndex: undefined}), "then revert data was called once to set revert data");
+					assert.ok(fnSetRevertDataStub.calledWithExactly(null), "then revert data was called once to reset revert data");
+					assert.strictEqual(oUnstashedControl.getCustomData().length, 0, "then custom data was removed from the unstashed control");
+					assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
 				}.bind(this));
 		});
 	});
