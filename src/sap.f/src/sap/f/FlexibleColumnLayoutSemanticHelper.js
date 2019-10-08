@@ -475,7 +475,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns true if internal <code>FlexibleColumnLayout</code> reference is rendered in the DOM tree.
+	 * Abstract wrapper for {@link sap.f.FlexibleColumnLayout#isDOMReady}.
+	 * Returns <code>true</code> if criteria are met for the APIs in this helper to be used.
+	 *
+	 * @returns {boolean} true if this helper's API reliability criteria are met
+	 * @since 1.72
+	 * @public
+	 */
+	FlexibleColumnLayoutSemanticHelper.prototype.isReady = function () {
+		return this.isDOMReady();
+	};
+
+	/**
+	 * Returns <code>true</code> if internal <code>FlexibleColumnLayout</code> reference is rendered in the DOM tree.
 	 *
 	 * @returns {boolean} true if the associated <code>FlexibleColumnLayout</code> is rendered
 	 * @since 1.72
@@ -483,6 +495,28 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayoutSemanticHelper.prototype.isDOMReady = function () {
 		return this._oFCL.getDomRef() !== null;
+	};
+
+	/**
+	 * Returns promise which can be used to find out when internal criteria for this helper's
+	 * API reliability are met.
+	 *
+	 * @returns {Promise} A promise that resolves after internal criteria are met
+	 * @since 1.72
+	 * @public
+	 */
+	FlexibleColumnLayoutSemanticHelper.prototype.whenReady = function () {
+		var that = this;
+
+		return new Promise(function (resolve, reject) {
+			that.whenDOMReady()
+				.then(function () {
+					resolve();
+				})
+				.catch(function (arg) {
+					reject(arg);
+				});
+		});
 	};
 
 	/**
