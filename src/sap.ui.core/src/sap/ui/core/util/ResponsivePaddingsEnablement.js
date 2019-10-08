@@ -77,7 +77,10 @@ function (
         }
 
         function _registerPaddingsResizeHandler(oControl) {
-            _adjustPaddings(oControl);
+            //ensure that _adjustPaddings is called once after the control is fully rendered
+            setTimeout(function () {
+                _adjustPaddings(oControl);
+            }, 0);
 
             if (!oControl.__iResizeHandlerId__) {
                 oControl.__iResizeHandlerId__ = ResizeHandler.register(oControl, _adjustPaddings.bind(oControl, oControl));
