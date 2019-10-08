@@ -4,7 +4,7 @@
 	xmlns="sap.m">
 	<Page
 		title="Centered Title"
-		class="sapUiContentPadding"
+		class="sapUiContentPadding sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer"
 		showNavButton="true" >
 		<headerContent>
 			<Button icon="sap-icon://action" tooltip="Share" />

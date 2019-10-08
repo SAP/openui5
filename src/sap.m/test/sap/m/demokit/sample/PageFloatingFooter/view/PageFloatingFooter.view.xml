@@ -3,7 +3,12 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	controllerName="sap.m.sample.PageFloatingFooter.controller.PageFloatingFooter">
-	<Page id="floatingFooterPage" title="Floating Footer Example" floatingFooter="true">
+	<Page
+		id="floatingFooterPage"
+		title="Floating Footer Example"
+		floatingFooter="true"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer sapUiResponsivePadding--floatingFooter">
+
 		<Button text="Toggle floating footer" press="toggleFooter"/>
 		<Button text="Toggle footer visibility" press="toggleVisibility"/>
 		<Button text="Add Panel" press="addPanel"/>
