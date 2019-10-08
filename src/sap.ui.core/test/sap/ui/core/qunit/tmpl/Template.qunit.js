@@ -2,9 +2,41 @@
 sap.ui.define([
 	"sap/ui/core/tmpl/Template",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
-], function(Template, JSONModel, jquery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/handlebars"
+], function(Template, JSONModel, jquery, Handlebars) {
 	"use strict";
+
+	QUnit.module("handlebars validation");
+
+	QUnit.test("Check Recursive Field Lookup Patch", function(assert) {
+		assert.expect(1);
+
+		Handlebars.registerHelper("wrap", function(options) {
+			return options.fn(this);
+		});
+
+		Handlebars.registerPartial("list", "{{#each items}}{{#wrap}}{{#wrap}}{{name}}{{#if ../../items}}{{> list}}{{/if}}{{/wrap}}{{/wrap}}{{/each}}");
+
+		var fnTemplate = Handlebars.compile("{{> list}}");
+
+		var sResult = fnTemplate({
+			"items": [
+				{ "name": "child1" },
+				{ "name": "child2" },
+				{ "name": "child3", "items": [
+					{ "name": "child4" },
+					{ "name": "child5" }
+				]}
+			]
+		});
+
+		assert.equal(sResult, "child1child2child3child4child5", "Handlebars doesn't preserve the same context on stack!");
+
+		Handlebars.unregisterHelper("wrap");
+		Handlebars.unregisterPartial("list");
+
+	});
 
 	QUnit.module("Basic Template Tests");
 
@@ -169,6 +201,64 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mixing Helpers and Controls", function(assert) {
+
+		sap.ui.define("my/Control", ["sap/ui/core/Control"], function(Control) {
+			 Control.extend("my.Control", {
+				metadata: {
+					properties: {
+						text: "string"
+					}
+				},
+				renderer: function(oRM, oControl) {
+					oRM.write("<div");
+					oRM.writeControlData(oControl);
+					oRM.writeClasses();
+					oRM.writeStyles();
+					oRM.write(">");
+					oRM.writeEscaped(oControl.getText());
+					oRM.write("</div>");
+				}
+			});
+		});
+
+		var done = assert.async();
+
+		sap.ui.require(["my/Control"], function() {
+			// create a model to validate data binding
+			var oModel = new JSONModel({
+				"subvalues": [{
+					"value": "First subvalue",
+					"visible": true
+				}, {
+					"value": "Second subvalue",
+					"visible": true
+				}]
+			});
+			sap.ui.getCore().setModel(oModel, "other");
+
+			// parse the template
+			sap.ui.template({
+				id: "templateWithListBindingAndControls",
+				type: "text/x-handlebars-template"
+			});
+
+			// force the re-rendering
+			sap.ui.getCore().applyChanges();
+
+			var $tmpl = jQuery("#templateWithListBindingAndControls");
+			assert.equal($tmpl.find("[data-sap-ui]").length, 2, "Found 2 UI5 controls!");
+			assert.equal($tmpl.find("[data-sap-ui]").control(0).getText(), "First subvalue", "Text for 1st control is correct!");
+			assert.equal($tmpl.find("[data-sap-ui]").control(1).getText(), "Second subvalue", "Text for 2st control is correct!");
+			assert.ok(jQuery($tmpl.find("[data-sap-ui]").get(0)).hasClass("test1"), "First Custom Style Classes is set!");
+			assert.ok(jQuery($tmpl.find("[data-sap-ui]").get(0)).hasClass("test2"), "Second Custom Style Classes is set!");
+			assert.ok($tmpl.find("[data-sap-ui]").control(0).hasStyleClass("test1"), "First Custom Style Classes is set!");
+			assert.ok($tmpl.find("[data-sap-ui]").control(0).hasStyleClass("test2"), "Second Custom Style Classes is set!");
+
+			done();
+		});
+	});
+
+	QUnit.test("Context Stacking (fix for migration from 3.x to 4.x)", function(assert) {
 
 		sap.ui.define("my/Control", ["sap/ui/core/Control"], function(Control) {
 			 Control.extend("my.Control", {
