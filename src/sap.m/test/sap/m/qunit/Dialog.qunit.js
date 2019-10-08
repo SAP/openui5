@@ -1499,6 +1499,58 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
+	QUnit.test("Check if dialog height is getting smaller after removing part of the content", function(assert) {
+		// arrange
+		var oDialog = new Dialog({
+			draggable: true,
+			title: "Some title",
+			beginButton: new Button({text: "button"}),
+			content: [
+				new Text({
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+				}),
+				new Text("txt", {
+					text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+				})
+			]
+		});
+
+		// act
+		oDialog.open();
+
+		this.clock.tick(500);
+
+		var oMockEvent = {
+			pageX: 608,
+			pageY: 646,
+			offsetX: 177,
+			offsetY: 35,
+			preventDefault: function () {},
+			stopPropagation: function () {},
+			target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+		};
+
+		var iInitialHeight = oDialog.$().height();
+
+		oDialog.onmousedown(oMockEvent);
+
+		this.clock.tick(500);
+
+		sap.ui.getCore().byId("txt").setVisible(false);
+		sap.ui.getCore().applyChanges();
+		oDialog._onResize();
+
+		var iAfterResizeHeight = oDialog.$().height();
+
+		// assert
+		assert.ok(iInitialHeight > iAfterResizeHeight, "The height of the dialog is smaller than the initial height.");
+
+		// cleanup
+		jQuery(document).off("mouseup mousemove");
+
+		oDialog.destroy();
+	});
+
 	QUnit.test("Check if dialog is not dragged from a bar inside the content section", function(assert) {
 
 		var oBar = new Bar();
