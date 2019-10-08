@@ -314,11 +314,11 @@ Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0
 
-Component: Handlebars 4.0.5
+Component: Handlebars 4.4.3
 Licensor: Yehuda Katz
 Website: http://handlebarsjs.com/
 License: MIT License
-<year> = 2011-2015
+<year> = 2011-2017
 <copyright holders> = Yehuda Katz
 
 Component: Hasher 1.2.0
