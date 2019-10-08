@@ -1159,4 +1159,97 @@ sap.ui.define([
 		// clean
 		oMessageBox.destroy();
 	});
+
+	QUnit.test("auto close when a routing navigation occurs", function (assert) {
+
+		var oDialog;
+
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: "Lorem ipsum"
+		});
+		this.clock.tick(500);
+
+		oDialog = sap.ui.getCore().byId("messageId");
+
+		assert.ok(oDialog.isOpen(), "Dialog is opened");
+
+		InstanceManager.closeAllDialogs();
+		this.clock.tick(500);
+
+		assert.notOk(oDialog.isOpen(), "Dialog is closed");
+
+		// clean
+		oDialog.destroy();
+
+
+		// closeOnNavigation=false
+		MessageBox.show("Message", {
+			id: "messageId",
+			details: "Lorem ipsum",
+			closeOnNavigation: false
+		});
+		this.clock.tick(500);
+
+		oDialog = sap.ui.getCore().byId("messageId");
+
+		InstanceManager.closeAllDialogs();
+		this.clock.tick(500);
+
+		assert.ok(oDialog.isOpen(), "Dialog remains opened when closeOnNavigation=false");
+		// clean
+		oDialog.destroy();
+
+		// confirm
+		MessageBox.confirm("Message", {
+			id: "messageId",
+			details: "Lorem ipsum"
+		});
+		this.clock.tick(500);
+
+		oDialog = sap.ui.getCore().byId("messageId");
+
+		InstanceManager.closeAllDialogs();
+		this.clock.tick(500);
+
+		assert.ok(oDialog.isOpen(), "confirm MessageBox remains opened");
+
+		// clean
+		oDialog.destroy();
+
+		// confirm and closeOnNavigation: true
+		MessageBox.confirm("Message", {
+			id: "messageId",
+			details: "Lorem ipsum",
+			closeOnNavigation: true
+		});
+		this.clock.tick(500);
+
+		oDialog = sap.ui.getCore().byId("messageId");
+
+		InstanceManager.closeAllDialogs();
+		this.clock.tick(500);
+
+		assert.notOk(oDialog.isOpen(), "confirm MessageBox is closed");
+
+		// clean
+		oDialog.destroy();
+
+		// error
+		MessageBox.confirm("Message", {
+			id: "messageId",
+			details: "Lorem ipsum"
+		});
+		this.clock.tick(500);
+
+		oDialog = sap.ui.getCore().byId("messageId");
+
+		InstanceManager.closeAllDialogs();
+		this.clock.tick(500);
+
+		assert.ok(oDialog.isOpen(), "error MessageBox remains opened");
+
+		// clean
+		oDialog.destroy();
+	});
 });

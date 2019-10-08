@@ -230,6 +230,9 @@ sap.ui.define([
 			events = [],
 			fakeDialog = {
 				close : closeSpy,
+				getCloseOnNavigation: function () {
+					return true;
+				},
 				attachEvent : function(eventName, fnFireEvent){
 						events.push(fnFireEvent);
 				}

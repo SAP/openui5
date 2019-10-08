@@ -358,6 +358,10 @@ sap.ui.define(["sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
 		for (i = 0 ; i < aIntances.length; i++) {
 			dialog = aIntances[i];
 
+			if (!dialog.getCloseOnNavigation()) {
+				continue;
+			}
+
 			if (fnCallback) {
 				oDeferred = new jQuery.Deferred().done();
 				aDeferred.push(oDeferred);
