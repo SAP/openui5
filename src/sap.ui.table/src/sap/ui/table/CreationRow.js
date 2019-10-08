@@ -163,10 +163,10 @@ sap.ui.define([
 	 * @returns {sap.m.OverflowToolbar} The default toolbar.
 	 */
 	function createDefaultToolbar(oCreationRow) {
-		return new OverflowToolbar({
+		return new OverflowToolbar(oCreationRow.getId() + "-tb", {
 			content: [
 				new ToolbarSpacer(),
-				new Button({
+				new Button(oCreationRow.getId() + "-applyBtn", {
 					text: TableUtils.getResourceText("TBL_CREATIONROW_APPLY"),
 					enabled: oCreationRow.getApplyEnabled(),
 					press: function() {
