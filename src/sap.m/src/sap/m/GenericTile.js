@@ -131,7 +131,12 @@ sap.ui.define([
 				 * Defines the type of text wrapping to be used (hyphenated or normal).
 				 * @since 1.60
 				 */
-				wrappingType: {type: "sap.m.WrappingType", group: "Appearance", defaultValue: WrappingType.Normal}
+				wrappingType: {type: "sap.m.WrappingType", group: "Appearance", defaultValue: WrappingType.Normal},
+				/**
+				 * Width of the control.
+				 * @since 1.72
+				 */
+				width: {type: "sap.ui.core.CSSSize", group: "Appearance"}
 			},
 			defaultAggregation: "tileContent",
 			aggregations: {
@@ -317,6 +322,10 @@ sap.ui.define([
 			default:
 			// do nothing
 		}
+	};
+
+	GenericTile.prototype._isSmall = function() {
+		return this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches;
 	};
 
 	GenericTile.prototype.exit = function () {

@@ -3,16 +3,92 @@
  */
 
 sap.ui.define([
-	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/core/IconPool',
-	'sap/m/Image',
-	'./NumericContentRenderer',
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/ResizeHandler",
+	"sap/m/Image",
+	"./NumericContentRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual"
-],
-	function(library, Control, IconPool, Image, NumericContentRenderer, KeyCodes, deepEqual) {
+], function (library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual) {
 	"use strict";
+
+	var LANG_MAP = {
+		"ar": 4,
+		"ar_EG": 4,
+		"ar_SA": 4,
+		"bg": 4,
+		"ca": 6,
+		"cs": 4,
+		"da": 4,
+		"de": 8,
+		"de_AT": 8,
+		"de_CH": 8,
+		"el": 4,
+		"el_CY": 4,
+		"en": 4,
+		"en_AU": 4,
+		"en_GB": 4,
+		"en_HK": 4,
+		"en_IE": 4,
+		"en_IN": 4,
+		"en_NZ": 4,
+		"en_PG": 4,
+		"en_SG": 4,
+		"en_ZA": 4,
+		"es": 6,
+		"es_AR": 4,
+		"es_BO": 4,
+		"es_CL": 4,
+		"es_CO": 4,
+		"es_MX": 6,
+		"es_PE": 4,
+		"es_UY": 4,
+		"es_VE": 4,
+		"et": 4,
+		"fa": 4,
+		"fi": 4,
+		"fr": 4,
+		"fr_BE": 4,
+		"fr_CA": 4,
+		"fr_CH": 4,
+		"fr_LU": 4,
+		"he": 4,
+		"hi": 4,
+		"hr": 4,
+		"hu": 4,
+		"id": 4,
+		"it": 8,
+		"it_CH": 8,
+		"ja": 6,
+		"kk": 4,
+		"ko": 6,
+		"lt": 4,
+		"lv": 4,
+		"ms": 4,
+		"nb": 4,
+		"nl": 4,
+		"nl_BE": 4,
+		"pl": 4,
+		"pt": 4,
+		"pt_PT": 4,
+		"ro": 4,
+		"ru": 4,
+		"ru_UA": 4,
+		"sk": 4,
+		"sl": 4,
+		"sr": 4,
+		"sv": 4,
+		"th": 4,
+		"tr": 4,
+		"uk": 4,
+		"vi": 4,
+		"zh_CN": 6,
+		"zh_HK": 6,
+		"zh_SG": 6,
+		"zh_TW": 6
+	};
 
 	/**
 	 * Constructor for a new sap.m.GenericTile control.
@@ -32,125 +108,208 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var NumericContent = Control.extend("sap.m.NumericContent", /** @lends sap.m.NumericContent.prototype */ {
-		metadata : {
+		metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 
 				/**
 				 * If set to true, the change of the value will be animated.
 				 */
-				"animateTextChange" : {type : "boolean", group : "Behavior", defaultValue : true},
+				"animateTextChange": {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
 				 * If set to true, the value parameter contains a numeric value and scale. If set to false (default), the value parameter contains a numeric value only.
 				 */
-				"formatterValue" : {type : "boolean", group : "Data", defaultValue : false},
+				"formatterValue": {type: "boolean", group: "Data", defaultValue: false},
 
 				/**
 				 * The icon to be displayed as a graphical element within the control. This can be an image or an icon from the icon font.
 				 */
-				"icon" : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
+				"icon": {type: "sap.ui.core.URI", group: "Appearance", defaultValue: null},
 
 				/**
 				 * Description of an icon that is used in the tooltip.
 				 */
-				"iconDescription" : {type : "string", group : "Accessibility", defaultValue : null},
+				"iconDescription": {type: "string", group: "Accessibility", defaultValue: null},
 
 				/**
 				 * The indicator arrow that shows value deviation.
 				 */
-				"indicator" : {type : "sap.m.DeviationIndicator", group : "Appearance", defaultValue : "None"},
+				"indicator": {type: "sap.m.DeviationIndicator", group: "Appearance", defaultValue: "None"},
 
 				/**
 				 * If set to true, the omitted value property is set to 0.
 				 */
-				"nullifyValue" : {type : "boolean", group : "Behavior", defaultValue : true},
+				"nullifyValue": {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
 				 * The scaling prefix. Financial characters can be used for currencies and counters. The SI prefixes can be used for units. If the scaling prefix contains more than three characters, only the first three characters are displayed.
 				 */
-				"scale" : {type : "string", group : "Appearance", defaultValue : null},
+				"scale": {type: "string", group: "Appearance", defaultValue: null},
 
 				/**
 				 * Updates the size of the control. If not set, then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The NumericContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : "Auto"},
+				"size": {type: "sap.m.Size", group: "Appearance", defaultValue: "Auto"},
 
 				/**
 				 * The number of characters of the <code>value</code> property to display.
 				 */
-				"truncateValueTo" : {type : "int", group : "Appearance", defaultValue : 4},
+				"truncateValueTo": {type: "int", group: "Appearance", defaultValue: 4},
 
 				/**
 				 * The actual value.
 				 */
-				"value" : {type : "string", group : "Data", defaultValue : null},
+				"value": {type: "string", group: "Data", defaultValue: null},
 
 				/**
 				 * The semantic color of the value.
 				 */
-				"valueColor" : {type : "sap.m.ValueColor", group : "Appearance", defaultValue : "Neutral"},
+				"valueColor": {type: "sap.m.ValueColor", group: "Appearance", defaultValue: "Neutral"},
 
 				/**
 				 * The width of the control. If it is not set, the size of the control is defined by the 'size' property.
 				 */
-				"width" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+				"width": {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: null},
 
 				/**
 				 * If the value is set to false, the content is adjusted to the whole size of the control.
 				 */
-				"withMargin" : {type : "boolean", group : "Appearance", defaultValue : true},
+				"withMargin": {type: "boolean", group: "Appearance", defaultValue: true},
 
 				/**
 				 * Indicates the load status.
 				 */
-				"state" : {type : "sap.m.LoadState", group : "Behavior", defaultValue : "Loaded"}
+				"state": {type: "sap.m.LoadState", group: "Behavior", defaultValue: "Loaded"}
 			},
-			events : {
+			events: {
 				/**
 				 * The event is fired when the user chooses the numeric content.
 				 */
-				"press" : {}
+				"press": {}
 			}
 		}
 	});
 
 	/* --- Lifecycle methods --- */
 
-	NumericContent.prototype.init = function() {
+	NumericContent.prototype.init = function () {
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this.setTooltip("{AltText}");
+		sap.ui.getCore().attachInit(this._registerResizeHandler.bind(this));
 	};
 
-	NumericContent.prototype.onBeforeRendering = function() {
+	NumericContent.prototype._getParentTile = function () {
+		var oParent = this.getParent();
+		while (oParent) {
+			if (oParent.isA("sap.m.GenericTile")) {
+				return oParent;
+			}
+
+			oParent = oParent.getParent();
+		}
+
+		return null;
+	};
+
+	NumericContent.prototype._getMaxDigitsData = function () {
+		var oTile = this._getParentTile(),
+			iMaxLength = null,
+			sFontClass = null;
+
+		if (oTile) {
+			var sLang = sap.ui.getCore().getConfiguration().getLanguage(),
+				bIsSmall = oTile._isSmall();
+
+			iMaxLength = LANG_MAP[sLang] || iMaxLength;
+
+			if (!bIsSmall) {
+				switch (iMaxLength) {
+					case 6:
+						sFontClass = "sapMNCMediumFontSize";
+						break;
+					case 8:
+						sFontClass = "sapMNCSmallFontSize";
+						break;
+					default:
+						sFontClass = "sapMNCLargeFontSize";
+						break;
+				}
+			}
+		}
+
+		return {
+			fontClass: sFontClass,
+			maxLength: iMaxLength
+		};
+	};
+
+	/**
+	 * Registers resize handler.
+	 * @private
+	 */
+	NumericContent.prototype._registerResizeHandler = function () {
+		ResizeHandler.register(this, this.invalidate.bind(this));
+	};
+
+	NumericContent.prototype.onBeforeRendering = function () {
 		this.$().unbind("mouseenter");
 		this.$().unbind("mouseleave");
+
+		this._iMaxLength = null;
 	};
 
-	NumericContent.prototype.onAfterRendering = function() {
+	NumericContent.prototype.onAfterRendering = function () {
 		this.$().bind("mouseenter", this._addTooltip.bind(this));
 		this.$().bind("mouseleave", this._removeTooltip.bind(this));
+
+		if (!sap.ui.getCore().isThemeApplied()) {
+			sap.ui.getCore().attachThemeChanged(this._checkIfIconFits, this);
+		} else {
+			this._checkIfIconFits();
+		}
 	};
 
 	/**
 	 * Sets the control's title attribute in order to show the tooltip.
 	 * @private
 	 */
-	NumericContent.prototype._addTooltip = function() {
+	NumericContent.prototype._addTooltip = function () {
 		this.$().attr("title", this.getTooltip_AsString());
+	};
+
+	/**
+	 * Shows/hides icon depending if it fits or not.
+	 * @private
+	 */
+	NumericContent.prototype._checkIfIconFits = function() {
+		//first check if parent tile is going to resize in the future so resize it now for our calculation
+		var oParentTile = this._getParentTile();
+		if (oParentTile && (oParentTile.isA("sap.m.GenericTile") || oParentTile.isA("sap.m.SlideTile"))) {
+			oParentTile._setupResizeClassHandler();
+		}
+
+		var $icon = this.$("icon-image"),
+			$value = this.$("value-inner"),
+			$wrapper = this.$("value-scr");
+
+		var iSize = $icon.outerWidth() + $value.width(),
+			iWrapperSize = $wrapper.width();
+
+		iSize > iWrapperSize ? $icon.hide() : $icon.show();
 	};
 
 	/**
 	 * Removes the control's tooltip in order to prevent screen readers from reading it.
 	 * @private
 	 */
-	NumericContent.prototype._removeTooltip = function() {
+	NumericContent.prototype._removeTooltip = function () {
 		this.$().attr("title", null);
 	};
 
-	NumericContent.prototype.exit = function() {
+	NumericContent.prototype.exit = function () {
 		if (this._oIcon) {
 			this._oIcon.destroy();
 		}
@@ -163,7 +322,7 @@ sap.ui.define([
 	 *
 	 * @returns {String} The alternative text
 	 */
-	NumericContent.prototype.getAltText = function() {
+	NumericContent.prototype.getAltText = function () {
 		var sValue = this.getValue();
 		var sScale = this.getScale();
 		var sEmptyValue;
@@ -192,7 +351,7 @@ sap.ui.define([
 		return sAltText;
 	};
 
-	NumericContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
+	NumericContent.prototype.getTooltip_AsString = function () { //eslint-disable-line
 		var oTooltip = this.getTooltip();
 		var sTooltip = this.getAltText();
 		if (typeof oTooltip === "string" || oTooltip instanceof String) {
@@ -207,7 +366,7 @@ sap.ui.define([
 		}
 	};
 
-	NumericContent.prototype.setIcon = function(uri) {
+	NumericContent.prototype.setIcon = function (uri) {
 		var bValueChanged = !deepEqual(this.getIcon(), uri);
 		if (bValueChanged) {
 			if (this._oIcon) {
@@ -216,8 +375,8 @@ sap.ui.define([
 			}
 			if (uri) {
 				this._oIcon = IconPool.createControlByURI({
-					id : this.getId() + "-icon-image",
-					src : uri
+					id: this.getId() + "-icon-image",
+					src: uri
 				}, Image);
 			}
 		}
@@ -229,7 +388,7 @@ sap.ui.define([
 	 * Sets CSS class 'sapMPointer' for the internal Icon if needed.
 	 * @private
 	 */
-	NumericContent.prototype._setPointerOnIcon = function() {
+	NumericContent.prototype._setPointerOnIcon = function () {
 		if (this._oIcon && this.hasListeners("press")) {
 			this._oIcon.addStyleClass("sapMPointer");
 		} else if (this._oIcon && this._oIcon.hasStyleClass("sapMPointer")) {
@@ -244,7 +403,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
-	NumericContent.prototype.ontap = function(oEvent) {
+	NumericContent.prototype.ontap = function (oEvent) {
 		this.$().focus();
 		this.firePress();
 		oEvent.preventDefault();
@@ -255,7 +414,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
-	NumericContent.prototype.onkeyup = function(oEvent) {
+	NumericContent.prototype.onkeyup = function (oEvent) {
 		if (oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.SPACE) {
 			this.firePress();
 			oEvent.preventDefault();
@@ -267,13 +426,13 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent which was fired
 	 */
-	NumericContent.prototype.onkeydown = function(oEvent) {
+	NumericContent.prototype.onkeydown = function (oEvent) {
 		if (oEvent.which === KeyCodes.SPACE) {
 			oEvent.preventDefault();
 		}
 	};
 
-	NumericContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
+	NumericContent.prototype.attachEvent = function (eventId, data, functionToCall, listener) {
 		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
@@ -282,7 +441,7 @@ sap.ui.define([
 		return this;
 	};
 
-	NumericContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
+	NumericContent.prototype.detachEvent = function (eventId, functionToCall, listener) {
 		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
@@ -300,7 +459,7 @@ sap.ui.define([
 	 * @param {string} sValue - With scale and value
 	 * @returns {Object} The scale and formatted value
 	 */
-	NumericContent.prototype._parseFormattedValue = function(sValue) {
+	NumericContent.prototype._parseFormattedValue = function (sValue) {
 
 		// remove the invisible unicode character LTR and RTL mark before processing the regular expression.
 		var sTrimmedValue = sValue.replace(String.fromCharCode(8206), "").replace(String.fromCharCode(8207), "");
