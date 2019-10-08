@@ -12,7 +12,7 @@
 				id="wizardContentPage"
 				showHeader="false">
 					<content>
-						<Wizard id="CreateProductWizard"
+						<Wizard id="CreateProductWizard" class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
 								complete="wizardCompletedHandler">
 							<WizardStep id="ProductTypeStep"
 										title="Product Type"

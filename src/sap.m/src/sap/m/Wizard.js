@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./WizardProgressNavigator",
+	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/Device",
 	"./WizardRenderer",
 	"sap/ui/dom/containsOrEquals",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Core,
 	ScrollEnablement,
 	WizardProgressNavigator,
+	ResponsivePaddingsEnablement,
 	Device,
 	WizardRenderer,
 	containsOrEquals,
@@ -63,6 +65,10 @@ sap.ui.define([
 		 * When the task has only two steps or less.
 		 * <h3>Responsive Behavior</h3>
 		 * On mobile devices the steps in the StepNavigator are grouped together and overlap. Tapping on them will show a popover to select the step to navigate to.
+		 *
+		 * When using the sap.m.Wizard in SAP Quartz theme, the breakpoints and layout paddings could be determined by the container's width.
+		 * To enable this concept and add responsive paddings to the navigation area and to the content of the Wizard control, you may add the following classes depending on your use case:
+		 * <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--content</code>.
 		 * @extends sap.ui.core.Control
 		 * @author SAP SE
 		 * @version ${version}
@@ -176,6 +182,10 @@ sap.ui.define([
 			SCROLL_OFFSET: 16
 		};
 
+		ResponsivePaddingsEnablement.call(Wizard.prototype, {
+			header: {suffix: "progressNavigator"},
+			content: {suffix: "step-container"}
+		});
 		/************************************** LIFE CYCLE METHODS ***************************************/
 
 		Wizard.prototype.init = function () {
@@ -186,6 +196,7 @@ sap.ui.define([
 			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
 			this._fnHandleNextButtonPressListener = this._handleNextButtonPress.bind(this);
 			this._initProgressNavigator();
+			this._initResponsivePaddingsEnablement();
 		};
 
 		Wizard.prototype.onBeforeRendering = function () {

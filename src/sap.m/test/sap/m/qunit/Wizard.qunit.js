@@ -1011,4 +1011,104 @@ sap.ui.define([
 		oWizardCompleteSpy.restore();
 		oNewWizardCompleteSpy.restore();
 	});
+
+	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(Wizard.prototype, "_initResponsivePaddingsEnablement"),
+			oTestPage = new Wizard({}).placeAt("qunit-fixture");
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement called on init of control");
+		assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
+
+		oSpy.restore();
+		oTestPage.destroy();
+	});
+
+	QUnit.test("Correct style classes are applied", function (assert) {
+		// Arrange
+		var oStep1 = new WizardStep({id: "firstStep", title: "First"}),
+			oStep2 = new WizardStep({id: "secondStep", title: "Second"}),
+			oStep3 = new WizardStep({id: "thirdStep", title: "Third"});
+
+		var oWizard = new Wizard("testWizard", {
+				currentStep: "firstStep",
+				steps: [oStep1, oStep2, oStep3]
+			});
+
+		oWizard.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Act
+		oWizard.addStyleClass("sapUiResponsivePadding--header");
+		oWizard.addStyleClass("sapUiResponsivePadding--content");
+
+		this.stub(window, "requestAnimationFrame", window.setTimeout);
+		Core.applyChanges();
+
+		oWizard.setWidth("300px");
+		Core.applyChanges();
+
+
+		var $wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator"),
+			$wizardStepContent = oWizard.$().find("#testWizard-step-container");
+			this.clock.tick(100);
+
+		var bIsProgressNavigatorResponsive = $wizardProgressNavigator.hasClass("sapUi-Std-PaddingS"),
+			bIsContentResponsive = $wizardStepContent.hasClass("sapUi-Std-PaddingS");
+
+
+		//Assert
+		assert.ok(bIsProgressNavigatorResponsive, "The sapUi-Std-PaddingS class is applied to the progress navigator");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingS class is applied to the content");
+
+		//Act
+		oWizard.setWidth("700px");
+		Core.applyChanges();
+
+		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
+		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
+		this.clock.tick(100);
+
+		bIsProgressNavigatorResponsive = $wizardProgressNavigator.hasClass("sapUi-Std-PaddingM");
+		bIsContentResponsive = $wizardStepContent.hasClass("sapUi-Std-PaddingM");
+
+		//Assert
+		assert.ok(bIsProgressNavigatorResponsive, "The sapUi-Std-PaddingM class is applied to the progress navigator");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingM class is applied to the content");
+
+		//Act
+		oWizard.setWidth("1300px");
+		Core.applyChanges();
+
+		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
+		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
+		this.clock.tick(100);
+
+		bIsProgressNavigatorResponsive = $wizardProgressNavigator.hasClass("sapUi-Std-PaddingL");
+		bIsContentResponsive = $wizardStepContent.hasClass("sapUi-Std-PaddingL");
+
+		//Assert
+		assert.ok(bIsProgressNavigatorResponsive, "The sapUi-Std-PaddingL class is applied to the progress navigator");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingL class is applied to the content");
+
+		//Act
+		oWizard.setWidth("1700px");
+		Core.applyChanges();
+
+		$wizardProgressNavigator = oWizard.$().find("#testWizard-progressNavigator");
+		$wizardStepContent = oWizard.$().find("#testWizard-step-container");
+		this.clock.tick(100);
+
+
+		bIsProgressNavigatorResponsive = $wizardProgressNavigator.hasClass("sapUi-Std-PaddingXL");
+		bIsContentResponsive = $wizardStepContent.hasClass("sapUi-Std-PaddingXL");
+
+		//Assert
+		assert.ok(bIsProgressNavigatorResponsive, "The sapUi-Std-PaddingXL class is applied to the progress navigator");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingXL class is applied to the content");
+
+		this.stub().reset();
+		oWizard.destroy();
+	});
 });

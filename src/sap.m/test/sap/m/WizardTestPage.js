@@ -243,6 +243,8 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 				},
 				steps: [step1, step2, step3, step4, step5, step6]
 			});
+			wizard.addStyleClass("sapUiResponsivePadding--header");
+			wizard.addStyleClass("sapUiResponsivePadding--content");
 
 		})();
 

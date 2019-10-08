@@ -9,7 +9,8 @@
 	<Wizard
 		id="CreateProductWizard"
 		finishButtonText="Finish"
-		currentStep="PricingStep">
+		currentStep="PricingStep"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
 		<WizardStep id="ProductTypeStep"
 					title="Product Type"
 					activate="onActivate">
