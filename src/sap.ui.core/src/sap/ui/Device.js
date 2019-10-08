@@ -213,6 +213,8 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * If this flag is set to <code>true</code>, a Mac operating system is used.
 	 *
+	 * <b>Note:</b> An iPad using Safari browser, which is requesting desktop sites, is also recognized as Macintosh.
+	 *
 	 * @name sap.ui.Device.os.macintosh
 	 * @type boolean
 	 * @public
@@ -306,7 +308,7 @@ if (typeof window.sap.ui !== "object") {
 		"WINDOWS_PHONE": "winphone"
 	};
 
-	function getOS(userAgent) { // may return null!!
+	function getOS(userAgent, platform) { // may return null!!
 
 		userAgent = userAgent || navigator.userAgent;
 
@@ -314,7 +316,7 @@ if (typeof window.sap.ui !== "object") {
 			aMatches;
 
 		function getDesktopOS() {
-			var sPlatform = navigator.platform;
+			var sPlatform = platform || navigator.platform;
 			if (sPlatform.indexOf("Win") != -1) {
 				// userAgent in windows 7 contains: windows NT 6.1
 				// userAgent in windows 8 contains: windows NT 6.2 or higher
@@ -418,8 +420,8 @@ if (typeof window.sap.ui !== "object") {
 		return getDesktopOS();
 	}
 
-	function setOS(customUA) {
-		Device.os = getOS(customUA) || {};
+	function setOS(customUA, customPlatform) {
+		Device.os = getOS(customUA, customPlatform) || {};
 		Device.os.OS = OS;
 		Device.os.version = Device.os.versionStr ? parseFloat(Device.os.versionStr) : -1;
 
@@ -1644,7 +1646,7 @@ if (typeof window.sap.ui !== "object") {
 		var oSystem = {};
 		oSystem.tablet = !!(((Device.support.touch && !isWin7) || isWin8Upwards || !!simMobileOnDesktop) && bTabletDetected);
 		oSystem.phone = !!(Device.os.windows_phone || ((Device.support.touch && !isWin7) || !!simMobileOnDesktop) && !bTabletDetected);
-		oSystem.desktop = !!((!oSystem.tablet && !oSystem.phone) || isWin8Upwards || isWin7 || Device.os.linux);
+		oSystem.desktop = !!((!oSystem.tablet && !oSystem.phone) || isWin8Upwards || isWin7 || Device.os.linux || Device.os.macintosh);
 		oSystem.combi = oSystem.desktop && oSystem.tablet;
 		oSystem.SYSTEMTYPE = SYSTEMTYPE;
 
@@ -1656,8 +1658,13 @@ if (typeof window.sap.ui !== "object") {
 
 	function isTablet(customUA) {
 		var sUserAgent = customUA || navigator.userAgent;
-		if (Device.os.name === Device.os.OS.IOS) {
+		if (Device.os.ios) {
 			return /ipad/i.test(sUserAgent);
+		} else if (Device.os.macintosh) {
+			// With iOS 13 the string 'iPad' was removed from the user agent string through a browser setting, which is applied on all sites by default:
+			// "Request Desktop Website -> All websites" (for more infos see: https://forums.developer.apple.com/thread/119186).
+			// Therefore the OS is detected as MACINTOSH instead of iOS and the device is a tablet if the supported touch points are more than 1
+			return navigator.maxTouchPoints > 1;
 		} else {
 			//in real mobile device
 			if (Device.support.touch) {
