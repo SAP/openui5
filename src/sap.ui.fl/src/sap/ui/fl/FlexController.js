@@ -712,9 +712,10 @@ sap.ui.define([
 		if (bRevert) {
 			oRevertPromise = this._revertChange(oChange, oControl, mPropertyBag);
 		}
-		return oRevertPromise.then(function(bRevertSuccessful) {
-			this._removeChangeFromControl(oControl, oChange, mPropertyBag.modifier);
-			return bRevertSuccessful;
+		return oRevertPromise.then(function(vRevertResult) {
+			// vRevertResult can be an element or false
+			this._removeChangeFromControl(vRevertResult || oControl, oChange, mPropertyBag.modifier);
+			return !!vRevertResult;
 		}.bind(this));
 	};
 
@@ -728,7 +729,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component
 	 * @param {sap.ui.core.mvc.View} [mPropertyBag.view] - View for the control
 	 *
-	 * @returns {Promise|sap.ui.fl.Utils.FakePromise<boolean>} Promise or fake promise resolving to boolean indicating if revert was successful
+	 * @returns {Promise|sap.ui.fl.Utils.FakePromise<sap.ui.core.Element|false>} Promise or fake promise resolving to the control on which change was reverted successfully or false when unsuccessful
 	 * @restricted sap.ui.fl
 	 */
 	FlexController.prototype._revertChange = function(oChange, oControl, mPropertyBag) {
@@ -811,7 +812,7 @@ sap.ui.define([
 				oModifier.updateAggregation(mControl.control, oChange.getContent().boundAggregation);
 			}
 			oChange.markRevertFinished();
-			return true;
+			return mControl.control;
 		})
 		.catch(function(oError) {
 			var sErrorMessage = "Change could not be reverted: " + oError.message;
