@@ -5,8 +5,8 @@
 @_sap_f_Card_ContentPadding: 1rem;
 @_sap_f_Card_HeaderIconColor: #6a6d70;
 @_sap_f_Card_HeaderBorderBottom: 1px solid darken(@sapUiTileBackground, 20);
-@_sap_f_Card_HeaderHoverColor: darken(@sapUiTileBackground, 2);
-@_sap_f_Card_HeaderActiveColor: darken(@sapUiTileBackground, 3);
+@_sap_f_Card_HeaderHoverColor: @sapUiTileHoverBackground;
+@_sap_f_Card_HeaderActiveColor: @sapUiTileActiveBackground;
 
 .sapFCard {
   position: relative;
@@ -16,7 +16,8 @@
   box-sizing: border-box;
   background: @sapUiTileBackground;
   box-shadow: @sapUiShadowLevel0;
-  border-radius: 0.25rem;
+  border-radius: @sapUiElementBorderCornerRadius;;
+  border: 0.0625rem solid @sapUiTileBorderColor;
   width: 100%;
   height: auto;
   overflow: hidden;
