@@ -77,7 +77,7 @@
 		"car": "카리브어",
 		"cay": "카유가어",
 		"cch": "앗삼어",
-		"ccp": "ccp",
+		"ccp": "차크마어",
 		"ce": "체첸어",
 		"ceb": "세부아노어",
 		"cgg": "치가어",
@@ -141,7 +141,7 @@
 		"eo": "에스페란토어",
 		"es": "스페인어",
 		"es_419": "스페인어(라틴 아메리카)",
-		"es_ES": "스페인어(스페인)",
+		"es_ES": "스페인어(유럽)",
 		"es_MX": "스페인어(멕시코)",
 		"et": "에스토니아어",
 		"eu": "바스크어",
@@ -401,7 +401,7 @@
 		"ps": "파슈토어",
 		"pt": "포르투갈어",
 		"pt_BR": "포르투갈어(브라질)",
-		"pt_PT": "포르투갈어(포르투갈)",
+		"pt_PT": "포르투갈어(유럽)",
 		"qu": "케추아어",
 		"quc": "키체어",
 		"raj": "라자스탄어",
@@ -594,6 +594,7 @@
 		"Egyh": "고대 이집트 신관문자",
 		"Egyp": "고대 이집트 신성문자",
 		"Elba": "엘바산 문자",
+		"Elym": "Elym",
 		"Ethi": "에티오피아 문자",
 		"Geok": "그루지야 쿠츠리 문자",
 		"Geor": "조지아 문자",
@@ -618,6 +619,7 @@
 		"Hira": "히라가나",
 		"Hluw": "아나톨리아 상형문자",
 		"Hmng": "파하우 몽 문자",
+		"Hmnp": "Hmnp",
 		"Hrkt": "가나",
 		"Hung": "고대 헝가리 문자",
 		"Inds": "인더스 문자",
@@ -666,6 +668,7 @@
 		"Mtei": "메이테이 마옉 문자",
 		"Mult": "Mult",
 		"Mymr": "미얀마 문자",
+		"Nand": "Nand",
 		"Narb": "옛 북부 아라비아 문자",
 		"Nbat": "나바테아 문자",
 		"Newa": "Newa",
@@ -732,6 +735,7 @@
 		"Vaii": "바이 문자",
 		"Visp": "시화법",
 		"Wara": "바랑 크시티 문자",
+		"Wcho": "Wcho",
 		"Wole": "울레아이",
 		"Xpeo": "고대 페르시아 문자",
 		"Xsux": "수메르-아카드어 설형문자",
@@ -934,8 +938,8 @@
 		"MF": "생마르탱",
 		"MG": "마다가스카르",
 		"MH": "마셜 제도",
-		"MK": "마케도니아",
-		"MK-alt-variant": "마케도니아(FYROM)",
+		"MK": "북마케도니아",
+		"MK-alt-variant": "MK",
 		"ML": "말리",
 		"MM": "미얀마",
 		"MN": "몽골",
@@ -1007,7 +1011,8 @@
 		"SV": "엘살바도르",
 		"SX": "신트마르턴",
 		"SY": "시리아",
-		"SZ": "스와질란드",
+		"SZ": "에스와티니",
+		"SZ-alt-variant": "스와질란드",
 		"TA": "트리스탄다쿠나",
 		"TC": "터크스 케이커스 제도",
 		"TD": "차드",
@@ -1044,8 +1049,8 @@
 		"VU": "바누아투",
 		"WF": "왈리스-푸투나 제도",
 		"WS": "사모아",
-		"XA": "XA",
-		"XB": "XB",
+		"XA": "유사 억양",
+		"XB": "유사 양방향",
 		"XK": "코소보",
 		"YE": "예멘",
 		"YT": "마요트",
@@ -1127,7 +1132,7 @@
 				"yMMMM": "y년 MMMM",
 				"yQQQ": "y년 QQQ",
 				"yQQQQ": "y년 QQQQ",
-				"MMMMW": "MMM W번째 주",
+				"MMMMW": "MMMM W번째 주",
 				"yw": "Y년 w번째 주"
 			},
 			"appendItems": {
@@ -1145,46 +1150,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시~h시"
+				},
+				"Bhm": {
+					"B": "B h:mm~B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일~d일"
 				},
 				"Gy": {
-					"G": "G y – G y",
-					"y": "G y–y"
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
-					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"G": "G y년 MMM ~ G y년 MMM",
+					"M": "G y년 MMM ~ MMM",
+					"y": "G y년 MMM ~ y년 MMM"
 				},
 				"GyMMMd": {
-					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"d": "G y년 MMM d일 ~ d일",
+					"G": "G y년 MMM d일 ~ G y년 MMM d일",
+					"M": "G y년 MMM d일 ~ MMM d일",
+					"y": "G y년 MMM d일 ~ y년 MMM d일"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
+					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -1621,46 +1635,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일 ~ d일"
 				},
 				"Gy": {
-					"G": "G y – G y",
-					"y": "G y–y"
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
-					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"G": "G y년 MMM ~ G y년 MMM",
+					"M": "G y년 MMM ~ y년 MMM",
+					"y": "G y년 MMM ~ y년 MMM"
 				},
 				"GyMMMd": {
-					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"d": "G y년 MMM d일 ~ d일",
+					"G": "G y년 MMM d일 ~ y년 MMM d일",
+					"M": "G y년 MMM d일 ~ MMM d일",
+					"y": "G y년 MMM d일 ~ MMM y년 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
+					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
+					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -2098,46 +2121,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일 ~ d일"
 				},
 				"Gy": {
-					"G": "G y – G y",
-					"y": "G y–y"
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
-					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"G": "G y년 MMM ~ G y년 MMM",
+					"M": "G y년 MMM ~ y년 MMM",
+					"y": "G y년 MMM ~ y년 MMM"
 				},
 				"GyMMMd": {
-					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"d": "G y년 MMM d일 ~ d일",
+					"G": "G y년 MMM d일 ~ y년 MMM d일",
+					"M": "G y년 MMM d일 ~ MMM d일",
+					"y": "G y년 MMM d일 ~ MMM y년 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
+					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
+					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -2596,46 +2628,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일 ~ d일"
 				},
 				"Gy": {
-					"G": "G y – G y",
-					"y": "G y–y"
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
-					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"G": "G y년 MMM ~ G y년 MMM",
+					"M": "G y년 MMM ~ y년 MMM",
+					"y": "G y년 MMM ~ y년 MMM"
 				},
 				"GyMMMd": {
-					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"d": "G y년 MMM d일 ~ d일",
+					"G": "G y년 MMM d일 ~ y년 MMM d일",
+					"M": "G y년 MMM d일 ~ MMM d일",
+					"y": "G y년 MMM d일 ~ MMM y년 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
+					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
+					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -3073,46 +3114,55 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} ~ {1}",
+				"Bh": {
+					"B": "B h시 ~ B h시",
+					"h": "B h시 ~ h시"
+				},
+				"Bhm": {
+					"B": "B h:mm ~ B h:mm",
+					"h": "B h:mm ~ h:mm",
+					"m": "B h:mm ~ h:mm"
+				},
 				"d": {
 					"d": "d일 ~ d일"
 				},
 				"Gy": {
-					"G": "G y – G y",
-					"y": "G y–y"
+					"G": "G y년 ~ G y년",
+					"y": "G y년~y년"
 				},
 				"GyM": {
-					"G": "GGGGG y-MM – GGGGG y-MM",
-					"M": "GGGGG y-MM – y-MM",
-					"y": "GGGGG y-MM – y-MM"
+					"G": "GGGGG y년 M월 ~ GGGGG y년 M월",
+					"M": "GGGGG y년 M월 ~ y년 M월",
+					"y": "GGGGG y년 M월 ~ y년 M월"
 				},
 				"GyMd": {
-					"d": "GGGGG y-MM-dd – y-MM-dd",
-					"G": "GGGGG y-MM-dd – GGGGG y-MM-dd",
-					"M": "GGGGG y-MM-dd – y-MM-dd",
-					"y": "GGGGG y-MM-dd – y-MM-dd"
+					"d": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"G": "GGGGG y년 M월 d일 ~ GGGGG y년 M월 d일",
+					"M": "GGGGG y년 M월 d일 ~ y년 M월 d일",
+					"y": "GGGGG y년 M월 d일 ~ y년 M월 d일"
 				},
 				"GyMEd": {
-					"d": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"G": "GGGGG y-MM-dd, E – GGGGG y-MM-dd, E",
-					"M": "GGGGG y-MM-dd, E – y-MM-dd, E",
-					"y": "GGGGG y-MM-dd, E – y-MM-dd, E"
+					"d": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"G": "GGGGG y년 M월 d일 E요일 ~ GGGGG y년 M월 d일 E요일",
+					"M": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일",
+					"y": "GGGGG y년 M월 d일 E요일 ~ y년 M월 d일 E요일"
 				},
 				"GyMMM": {
-					"G": "G y MMM – G y MMM",
-					"M": "G y MMM–MMM",
-					"y": "G y MMM – y MMM"
+					"G": "G y년 MMM ~ G y년 MMM",
+					"M": "G y년 MMM ~ y년 MMM",
+					"y": "G y년 MMM ~ y년 MMM"
 				},
 				"GyMMMd": {
-					"d": "G y MMM d–d",
-					"G": "G y MMM d – G y MMM d",
-					"M": "G y MMM d – MMM d",
-					"y": "G y MMM d – y MMM d"
+					"d": "G y년 MMM d일 ~ d일",
+					"G": "G y년 MMM d일 ~ y년 MMM d일",
+					"M": "G y년 MMM d일 ~ MMM d일",
+					"y": "G y년 MMM d일 ~ MMM y년 d일"
 				},
 				"GyMMMEd": {
-					"d": "G y MMM d, E – MMM d, E",
-					"G": "G y MMM d, E – G y MMM d, E",
-					"M": "G y MMM d, E – MMM d, E",
-					"y": "G y MMM d, E – y MMM d, E"
+					"d": "G y년 MMM d일 e요일 – MMM d일 e요일",
+					"G": "G y년 MMM d일 E요일 ~ G y년 MMM d일 E요일",
+					"M": "G y년 MMM d일 E요일 ~ MMM d일 E요일",
+					"y": "G y년 MMM d일 E요일 ~ y년 MMM d일 E요일"
 				},
 				"h": {
 					"a": "a h시 ~ a h시",
@@ -3464,7 +3514,7 @@
 			"0": "불기"
 		},
 		"era-narrow": {
-			"0": "BE"
+			"0": "불기"
 		}
 	},
 	"dateFields": {
@@ -3964,6 +4014,10 @@
 				"unitPattern-count-other": "{0}in²",
 				"perUnitPattern": "{0}/in²"
 			},
+			"area-dunam": {
+				"displayName": "두남",
+				"unitPattern-count-other": "{0}두남"
+			},
 			"concentr-karat": {
 				"displayName": "kt",
 				"unitPattern-count-other": "{0}kt"
@@ -3987,6 +4041,14 @@
 			"concentr-permille": {
 				"displayName": "‰",
 				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "mol",
+				"unitPattern-count-other": "{0}mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "L/km",
@@ -4139,6 +4201,22 @@
 				"displayName": "kWh",
 				"unitPattern-count-other": "{0}kWh"
 			},
+			"energy-electronvolt": {
+				"displayName": "eV",
+				"unitPattern-count-other": "{0}eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "Btu",
+				"unitPattern-count-other": "{0}Btu"
+			},
+			"force-pound-force": {
+				"displayName": "lbf",
+				"unitPattern-count-other": "{0}lbf"
+			},
+			"force-newton": {
+				"displayName": "N",
+				"unitPattern-count-other": "{0}N"
+			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
 				"unitPattern-count-other": "{0}GHz"
@@ -4240,9 +4318,17 @@
 				"displayName": "pt",
 				"unitPattern-count-other": "{0}pt"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-other": "{0}R☉"
+			},
 			"light-lux": {
 				"displayName": "lx",
 				"unitPattern-count-other": "{0}lx"
+			},
+			"light-solar-luminosity": {
+				"displayName": "L☉",
+				"unitPattern-count-other": "{0}L☉"
 			},
 			"mass-metric-ton": {
 				"displayName": "t",
@@ -4292,6 +4378,18 @@
 				"displayName": "CD",
 				"unitPattern-count-other": "{0}CD"
 			},
+			"mass-dalton": {
+				"displayName": "Da",
+				"unitPattern-count-other": "{0}Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "M⊕",
+				"unitPattern-count-other": "{0}M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "M☉",
+				"unitPattern-count-other": "{0}M☉"
+			},
 			"power-gigawatt": {
 				"displayName": "GW",
 				"unitPattern-count-other": "{0}GW"
@@ -4340,6 +4438,14 @@
 				"displayName": "atm",
 				"unitPattern-count-other": "{0}atm"
 			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-other": "{0}kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-other": "{0}MPa"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/h",
 				"unitPattern-count-other": "{0}km/h"
@@ -4371,6 +4477,14 @@
 			"temperature-kelvin": {
 				"displayName": "K",
 				"unitPattern-count-other": "{0}K"
+			},
+			"torque-pound-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-other": "{0}lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-other": "{0}N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "km³",
@@ -4469,6 +4583,10 @@
 				"displayName": "fl oz",
 				"unitPattern-count-other": "{0}fl oz"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-other": "{0}fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "tbsp",
 				"unitPattern-count-other": "{0}tbsp"
@@ -4476,6 +4594,10 @@
 			"volume-teaspoon": {
 				"displayName": "tsp",
 				"unitPattern-count-other": "{0}tsp"
+			},
+			"volume-barrel": {
+				"displayName": "bbl",
+				"unitPattern-count-other": "{0}bbl"
 			},
 			"coordinateUnit": {
 				"displayName": "쪽",

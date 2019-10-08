@@ -154,7 +154,6 @@
 		"ga": "ирски",
 		"gaa": "га",
 		"gag": "гагауз",
-		"gan": "gan",
 		"gay": "гајо",
 		"gba": "гбаја",
 		"gd": "шкотски гелски",
@@ -176,7 +175,6 @@
 		"gwi": "гвичински",
 		"ha": "хауса",
 		"hai": "хаида",
-		"hak": "hak",
 		"haw": "хавајски",
 		"he": "хебрејски",
 		"hi": "хинди",
@@ -186,7 +184,6 @@
 		"ho": "хири моту",
 		"hr": "хрватски",
 		"hsb": "горњи лужичкосрпски",
-		"hsn": "hsn",
 		"ht": "хаићански",
 		"hu": "мађарски",
 		"hup": "хупа",
@@ -321,7 +318,6 @@
 		"myv": "ерзја",
 		"mzn": "мазандерански",
 		"na": "науруски",
-		"nan": "nan",
 		"nap": "напуљски",
 		"naq": "нама",
 		"nb": "норвешки букмол",
@@ -501,7 +497,6 @@
 		"was": "вашо",
 		"wbp": "варлпири",
 		"wo": "волоф",
-		"wuu": "wuu",
 		"xal": "калмички",
 		"xh": "коса",
 		"xog": "сога",
@@ -564,6 +559,7 @@
 		"Egyh": "египатско хијератско писмо",
 		"Egyp": "египатски хијероглифи",
 		"Elba": "Elba",
+		"Elym": "Elym",
 		"Ethi": "етиопско писмо",
 		"Geok": "грузијско кхутсури писмо",
 		"Geor": "грузијско писмо",
@@ -588,6 +584,7 @@
 		"Hira": "хирагана",
 		"Hluw": "Hluw",
 		"Hmng": "пахав хмонг писмо",
+		"Hmnp": "Hmnp",
 		"Hrkt": "јапанска слоговна писма",
 		"Hung": "старомађарско писмо",
 		"Inds": "индушко писмо",
@@ -633,6 +630,7 @@
 		"Mtei": "меитеи мајек писмо",
 		"Mult": "Mult",
 		"Mymr": "мијанмарско писмо",
+		"Nand": "Nand",
 		"Narb": "Narb",
 		"Nbat": "Nbat",
 		"Newa": "Newa",
@@ -698,6 +696,7 @@
 		"Vaii": "ваи писмо",
 		"Visp": "видљиви говор",
 		"Wara": "Wara",
+		"Wcho": "Wcho",
 		"Xpeo": "староперсијско писмо",
 		"Xsux": "сумерско-акадско кунеиформ писмо",
 		"Yiii": "ји писмо",
@@ -899,8 +898,8 @@
 		"MF": "Свети Мартин (Француска)",
 		"MG": "Мадагаскар",
 		"MH": "Маршалска Острва",
-		"MK": "Македонија",
-		"MK-alt-variant": "Македонија (БЈРМ)",
+		"MK": "Северна Македонија",
+		"MK-alt-variant": "MK",
 		"ML": "Мали",
 		"MM": "Мијанмар (Бурма)",
 		"MN": "Монголија",
@@ -973,6 +972,7 @@
 		"SX": "Свети Мартин (Холандија)",
 		"SY": "Сирија",
 		"SZ": "Свазиленд",
+		"SZ-alt-variant": "SZ",
 		"TA": "Тристан да Куња",
 		"TC": "Острва Туркс и Каикос",
 		"TD": "Чад",
@@ -1088,7 +1088,7 @@
 				"yMMMM": "MMMM y.",
 				"yQQQ": "QQQ y.",
 				"yQQQQ": "QQQQ y.",
-				"MMMMW": "W. 'седмица' 'у' MMM.",
+				"MMMMW": "W. 'седмица' 'у' MMMM.",
 				"yw": "w. 'седмица' 'у' Y."
 			},
 			"appendItems": {
@@ -1106,6 +1106,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -1572,6 +1581,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2035,6 +2053,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2518,6 +2545,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2981,6 +3017,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -4057,6 +4102,12 @@
 				"unitPattern-count-other": "{0} in²",
 				"perUnitPattern": "{0}/in²"
 			},
+			"area-dunam": {
+				"displayName": "дунами",
+				"unitPattern-count-one": "{0} дунам",
+				"unitPattern-count-few": "{0} дунама",
+				"unitPattern-count-other": "{0} дунама"
+			},
 			"concentr-karat": {
 				"displayName": "kt",
 				"unitPattern-count-one": "{0} kt",
@@ -4092,6 +4143,18 @@
 				"unitPattern-count-one": "{0}‰",
 				"unitPattern-count-few": "{0}‰",
 				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-one": "{0}‱",
+				"unitPattern-count-few": "{0}‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "mol",
+				"unitPattern-count-one": "{0} mol",
+				"unitPattern-count-few": "{0} mol",
+				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "L/km",
@@ -4316,6 +4379,30 @@
 				"unitPattern-count-few": "{0} kWh",
 				"unitPattern-count-other": "{0} kWh"
 			},
+			"energy-electronvolt": {
+				"displayName": "електронволт",
+				"unitPattern-count-one": "{0} eV",
+				"unitPattern-count-few": "{0} eV",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "Btu",
+				"unitPattern-count-one": "{0} Btu",
+				"unitPattern-count-few": "{0} Btu",
+				"unitPattern-count-other": "{0} Btu"
+			},
+			"force-pound-force": {
+				"displayName": "lbf",
+				"unitPattern-count-one": "{0} lbf",
+				"unitPattern-count-few": "{0} lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "њутн",
+				"unitPattern-count-one": "{0} N",
+				"unitPattern-count-few": "{0} N",
+				"unitPattern-count-other": "{0} N"
+			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
 				"unitPattern-count-one": "{0} GHz",
@@ -4461,11 +4548,23 @@
 				"unitPattern-count-few": "{0} pt",
 				"unitPattern-count-other": "{0} pt"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-one": "{0} R☉",
+				"unitPattern-count-few": "{0} R☉",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "lx",
 				"unitPattern-count-one": "{0} lx",
 				"unitPattern-count-few": "{0} lx",
 				"unitPattern-count-other": "{0} lx"
+			},
+			"light-solar-luminosity": {
+				"displayName": "L☉",
+				"unitPattern-count-one": "{0} L☉",
+				"unitPattern-count-few": "{0} L☉",
+				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
 				"displayName": "t",
@@ -4534,6 +4633,24 @@
 				"unitPattern-count-one": "{0} CD",
 				"unitPattern-count-few": "{0} CD",
 				"unitPattern-count-other": "{0} CD"
+			},
+			"mass-dalton": {
+				"displayName": "Da",
+				"unitPattern-count-one": "{0} Da",
+				"unitPattern-count-few": "{0} Da",
+				"unitPattern-count-other": "{0} Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "M⊕",
+				"unitPattern-count-one": "{0} M⊕",
+				"unitPattern-count-few": "{0} M⊕",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "M☉",
+				"unitPattern-count-one": "{0} M☉",
+				"unitPattern-count-few": "{0} M☉",
+				"unitPattern-count-other": "{0} M☉"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -4607,6 +4724,18 @@
 				"unitPattern-count-few": "{0} atm",
 				"unitPattern-count-other": "{0} atm"
 			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-one": "{0} kPa",
+				"unitPattern-count-few": "{0} kPa",
+				"unitPattern-count-other": "{0} kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-one": "{0} MPa",
+				"unitPattern-count-few": "{0} MPa",
+				"unitPattern-count-other": "{0} MPa"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/h",
 				"unitPattern-count-one": "{0} km/h",
@@ -4654,6 +4783,18 @@
 				"unitPattern-count-one": "{0} K",
 				"unitPattern-count-few": "{0} K",
 				"unitPattern-count-other": "{0} K"
+			},
+			"torque-pound-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
+				"unitPattern-count-few": "{0} lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-one": "{0} N⋅m",
+				"unitPattern-count-few": "{0} N⋅m",
+				"unitPattern-count-other": "{0} N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "km³",
@@ -4796,6 +4937,12 @@
 				"unitPattern-count-few": "{0} fl oz",
 				"unitPattern-count-other": "{0} fl oz"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-one": "{0} fl oz Imp.",
+				"unitPattern-count-few": "{0} fl oz Imp.",
+				"unitPattern-count-other": "{0} fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "каш.",
 				"unitPattern-count-one": "{0} каш.",
@@ -4807,6 +4954,12 @@
 				"unitPattern-count-one": "{0} кашич.",
 				"unitPattern-count-few": "{0} кашич.",
 				"unitPattern-count-other": "{0} кашич."
+			},
+			"volume-barrel": {
+				"displayName": "bbl",
+				"unitPattern-count-one": "{0} bbl",
+				"unitPattern-count-few": "{0} bbl",
+				"unitPattern-count-other": "{0} bbl"
 			},
 			"coordinateUnit": {
 				"displayName": "правац",

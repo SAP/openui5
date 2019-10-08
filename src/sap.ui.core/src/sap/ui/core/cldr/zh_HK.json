@@ -73,7 +73,7 @@
 		"car": "加勒比语",
 		"cay": "卡尤加语",
 		"cch": "阿灿语",
-		"ccp": "ccp",
+		"ccp": "查克玛语",
 		"ce": "车臣语",
 		"ceb": "宿务语",
 		"cgg": "奇加语",
@@ -573,18 +573,19 @@
 		"Cyrl": "西里尔文",
 		"Cyrs": "西里尔文字（古教会斯拉夫文的变体）",
 		"Deva": "天城文",
-		"Dogr": "Dogr",
+		"Dogr": "多格拉文",
 		"Dsrt": "德塞莱特文",
 		"Dupl": "杜普洛伊速记",
 		"Egyd": "后期埃及文",
 		"Egyh": "古埃及僧侣书写体",
 		"Egyp": "古埃及象形文",
 		"Elba": "爱尔巴桑文",
+		"Elym": "Elym",
 		"Ethi": "埃塞俄比亚文",
 		"Geok": "格鲁吉亚文（教堂体）",
 		"Geor": "格鲁吉亚文",
 		"Glag": "格拉哥里文",
-		"Gong": "Gong",
+		"Gong": "贡贾拉贡德文",
 		"Gonm": "马萨拉姆冈德文",
 		"Goth": "哥特文",
 		"Gran": "格兰塔文",
@@ -604,6 +605,7 @@
 		"Hira": "平假名",
 		"Hluw": "安那托利亚象形文字",
 		"Hmng": "杨松录苗文",
+		"Hmnp": "尼亚肯蒲丘苗文",
 		"Hrkt": "假名表",
 		"Hung": "古匈牙利文",
 		"Inds": "印度河文字",
@@ -635,12 +637,12 @@
 		"Lyci": "利西亚文",
 		"Lydi": "吕底亚文",
 		"Mahj": "Mahj",
-		"Maka": "Maka",
+		"Maka": "望加锡文",
 		"Mand": "阿拉米文",
 		"Mani": "摩尼教文",
 		"Marc": "大玛尔文",
 		"Maya": "玛雅圣符文",
-		"Medf": "Medf",
+		"Medf": "梅德法伊德林文",
 		"Mend": "门迪文",
 		"Merc": "麦罗埃草书",
 		"Mero": "麦若提克文",
@@ -652,6 +654,7 @@
 		"Mtei": "曼尼普尔文",
 		"Mult": "Mult",
 		"Mymr": "缅甸文",
+		"Nand": "楠迪梵文",
 		"Narb": "古北方阿拉伯文",
 		"Nbat": "纳巴泰文",
 		"Newa": "尼瓦文",
@@ -676,7 +679,7 @@
 		"Prti": "帕提亚文碑铭体",
 		"Qaag": "Qaag",
 		"Rjng": "拉让文",
-		"Rohg": "Rohg",
+		"Rohg": "哈乃斐罗兴亚文",
 		"Roro": "朗格朗格文",
 		"Runr": "古代北欧文",
 		"Samr": "撒马利亚文",
@@ -689,8 +692,8 @@
 		"Sidd": "悉昙",
 		"Sind": "信德文",
 		"Sinh": "僧伽罗文",
-		"Sogd": "Sogd",
-		"Sogo": "Sogo",
+		"Sogd": "粟特文",
+		"Sogo": "古粟特文",
 		"Sora": "索朗桑朋文",
 		"Soyo": "索永布文",
 		"Sund": "巽他文",
@@ -718,6 +721,7 @@
 		"Vaii": "瓦依文",
 		"Visp": "可见语言",
 		"Wara": "瓦郎奇蒂文字",
+		"Wcho": "Wcho",
 		"Wole": "沃莱艾文",
 		"Xpeo": "古波斯文",
 		"Xsux": "苏美尔-阿卡德楔形文字",
@@ -920,8 +924,8 @@
 		"MF": "法属圣马丁",
 		"MG": "马达加斯加",
 		"MH": "马绍尔群岛",
-		"MK": "马其顿",
-		"MK-alt-variant": "马其顿（前南斯拉夫马其顿共和国）",
+		"MK": "北马其顿",
+		"MK-alt-variant": "MK",
 		"ML": "马里",
 		"MM": "缅甸",
 		"MN": "蒙古",
@@ -994,6 +998,7 @@
 		"SX": "荷属圣马丁",
 		"SY": "叙利亚",
 		"SZ": "斯威士兰",
+		"SZ-alt-variant": "SZ",
 		"TA": "特里斯坦-达库尼亚群岛",
 		"TC": "特克斯和凯科斯群岛",
 		"TD": "乍得",
@@ -1030,8 +1035,8 @@
 		"VU": "瓦努阿图",
 		"WF": "瓦利斯和富图纳",
 		"WS": "萨摩亚",
-		"XA": "XA",
-		"XB": "XB",
+		"XA": "伪地区",
+		"XB": "伪双向语言地区",
 		"XK": "科索沃",
 		"YE": "也门",
 		"YT": "马约特",
@@ -1108,7 +1113,7 @@
 				"yMMMM": "y年M月",
 				"yQQQ": "y年第Q季度",
 				"yQQQQ": "y年第Q季度",
-				"MMMMW": "MMM第W周",
+				"MMMMW": "MMMM第W周",
 				"yw": "Y年第w周"
 			},
 			"appendItems": {
@@ -1126,6 +1131,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "Bh时至Bh时",
+					"h": "Bh时至h时"
+				},
+				"Bhm": {
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
+				},
 				"d": {
 					"d": "d–d日"
 				},
@@ -1589,6 +1603,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "Bh时至Bh时",
+					"h": "Bh时至h时"
+				},
+				"Bhm": {
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
+				},
 				"d": {
 					"d": "d至d日"
 				},
@@ -2049,6 +2072,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "Bh时至Bh时",
+					"h": "Bh时至h时"
+				},
+				"Bhm": {
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
+				},
 				"d": {
 					"d": "d至d日"
 				},
@@ -2527,6 +2559,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "Bh时至Bh时",
+					"h": "Bh时至h时"
+				},
+				"Bhm": {
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
+				},
 				"d": {
 					"d": "d至d日"
 				},
@@ -2954,7 +2995,7 @@
 				"M": "L",
 				"Md": "M-d",
 				"MEd": "M/dE",
-				"MMM": "LLL",
+				"MMM": "M月",
 				"MMMd": "M月d日",
 				"MMMEd": "M月d日E",
 				"MMMMd": "M月d日",
@@ -2986,7 +3027,16 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} – {1}",
+				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "Bh时至Bh时",
+					"h": "Bh时至h时"
+				},
+				"Bhm": {
+					"B": "Bh:mm至Bh:mm",
+					"h": "Bh:mm至h:mm",
+					"m": "Bh:mm至h:mm"
+				},
 				"d": {
 					"d": "d至d日"
 				},
@@ -3058,7 +3108,7 @@
 					"h": "vah时至h时"
 				},
 				"Hv": {
-					"H": "HH–HH v"
+					"H": "vHH–HH"
 				},
 				"M": {
 					"M": "M–M月"
@@ -3866,6 +3916,10 @@
 				"unitPattern-count-other": "{0}平方英寸",
 				"perUnitPattern": "{0}/平方英寸"
 			},
+			"area-dunam": {
+				"displayName": "杜纳亩",
+				"unitPattern-count-other": "{0}杜纳亩"
+			},
 			"concentr-karat": {
 				"displayName": "克拉",
 				"unitPattern-count-other": "{0}克拉"
@@ -3889,6 +3943,14 @@
 			"concentr-permille": {
 				"displayName": "‰",
 				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "摩尔",
+				"unitPattern-count-other": "{0}摩尔"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "升/公里",
@@ -4041,6 +4103,22 @@
 				"displayName": "千瓦时",
 				"unitPattern-count-other": "{0}千瓦时"
 			},
+			"energy-electronvolt": {
+				"displayName": "电子伏",
+				"unitPattern-count-other": "{0}电子伏"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "英热单位",
+				"unitPattern-count-other": "{0}英热单位"
+			},
+			"force-pound-force": {
+				"displayName": "磅力",
+				"unitPattern-count-other": "{0}磅力"
+			},
+			"force-newton": {
+				"displayName": "牛",
+				"unitPattern-count-other": "{0}牛"
+			},
 			"frequency-gigahertz": {
 				"displayName": "吉赫",
 				"unitPattern-count-other": "{0}吉赫"
@@ -4142,9 +4220,17 @@
 				"displayName": "pt",
 				"unitPattern-count-other": "{0} pt"
 			},
+			"length-solar-radius": {
+				"displayName": "太阳半径",
+				"unitPattern-count-other": "{0}太阳半径"
+			},
 			"light-lux": {
 				"displayName": "勒克斯",
 				"unitPattern-count-other": "{0}勒克斯"
+			},
+			"light-solar-luminosity": {
+				"displayName": "太阳光度",
+				"unitPattern-count-other": "{0}太阳光度"
 			},
 			"mass-metric-ton": {
 				"displayName": "公吨",
@@ -4194,6 +4280,18 @@
 				"displayName": "克拉",
 				"unitPattern-count-other": "{0}克拉"
 			},
+			"mass-dalton": {
+				"displayName": "道尔顿",
+				"unitPattern-count-other": "{0}道尔顿"
+			},
+			"mass-earth-mass": {
+				"displayName": "地球质量",
+				"unitPattern-count-other": "{0}地球质量"
+			},
+			"mass-solar-mass": {
+				"displayName": "太阳质量",
+				"unitPattern-count-other": "{0}太阳质量"
+			},
 			"power-gigawatt": {
 				"displayName": "吉瓦",
 				"unitPattern-count-other": "{0}吉瓦"
@@ -4242,6 +4340,14 @@
 				"displayName": "大气压",
 				"unitPattern-count-other": "{0}个大气压"
 			},
+			"pressure-kilopascal": {
+				"displayName": "千帕",
+				"unitPattern-count-other": "{0}千帕"
+			},
+			"pressure-megapascal": {
+				"displayName": "兆帕",
+				"unitPattern-count-other": "{0}兆帕"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "公里/小时",
 				"unitPattern-count-other": "每小时{0}公里"
@@ -4273,6 +4379,14 @@
 			"temperature-kelvin": {
 				"displayName": "开",
 				"unitPattern-count-other": "{0}°K"
+			},
+			"torque-pound-foot": {
+				"displayName": "磅英尺",
+				"unitPattern-count-other": "{0}磅英尺"
+			},
+			"torque-newton-meter": {
+				"displayName": "牛米",
+				"unitPattern-count-other": "{0}牛米"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "立方千米",
@@ -4371,6 +4485,10 @@
 				"displayName": "液盎司",
 				"unitPattern-count-other": "{0}液盎司"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "英制液盎司",
+				"unitPattern-count-other": "{0}英制液盎司"
+			},
 			"volume-tablespoon": {
 				"displayName": "汤匙",
 				"unitPattern-count-other": "{0}汤匙"
@@ -4378,6 +4496,10 @@
 			"volume-teaspoon": {
 				"displayName": "茶匙",
 				"unitPattern-count-other": "{0}茶匙"
+			},
+			"volume-barrel": {
+				"displayName": "桶",
+				"unitPattern-count-other": "{0}桶"
 			},
 			"coordinateUnit": {
 				"displayName": "方向",
@@ -4450,7 +4572,7 @@
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
 	"timeData": {
-		"_allowed": "hB hb H h",
+		"_allowed": "hB hb h H",
 		"_preferred": "h"
 	},
 	"eras-gregorian": {

@@ -670,6 +670,7 @@
 		"Egyh": "Egyptian hieratic",
 		"Egyp": "Egyptian hieroglyphs",
 		"Elba": "Elbasan",
+		"Elym": "Elymaic",
 		"Ethi": "Ethiopic",
 		"Geok": "Georgian Khutsuri",
 		"Geor": "Georgian",
@@ -694,6 +695,7 @@
 		"Hira": "Hiragana",
 		"Hluw": "Anatolian Hieroglyphs",
 		"Hmng": "Pahawh Hmong",
+		"Hmnp": "Nyiakeng Puachue Hmong",
 		"Hrkt": "Japanese syllabaries",
 		"Hung": "Old Hungarian",
 		"Inds": "Indus",
@@ -742,6 +744,7 @@
 		"Mtei": "Meitei Mayek",
 		"Mult": "Multani",
 		"Mymr": "Myanmar",
+		"Nand": "Nandinagari",
 		"Narb": "Old North Arabian",
 		"Nbat": "Nabataean",
 		"Newa": "Newa",
@@ -808,6 +811,7 @@
 		"Vaii": "Vai",
 		"Visp": "Visible Speech",
 		"Wara": "Varang Kshiti",
+		"Wcho": "Wancho",
 		"Wole": "Woleai",
 		"Xpeo": "Old Persian",
 		"Xsux": "Sumero-Akkadian Cuneiform",
@@ -1012,14 +1016,14 @@
 		"MF": "St. Martin",
 		"MG": "Madagascar",
 		"MH": "Marshall Islands",
-		"MK": "Macedonia",
-		"MK-alt-variant": "Macedonia (FYROM)",
+		"MK": "North Macedonia",
+		"MK-alt-variant": "MK",
 		"ML": "Mali",
 		"MM": "Myanmar (Burma)",
 		"MM-alt-short": "Myanmar",
 		"MN": "Mongolia",
-		"MO": "Macau SAR China",
-		"MO-alt-short": "Macau",
+		"MO": "Macao SAR China",
+		"MO-alt-short": "Macao",
 		"MP": "Northern Mariana Islands",
 		"MQ": "Martinique",
 		"MR": "Mauritania",
@@ -1086,7 +1090,8 @@
 		"SV": "El Salvador",
 		"SX": "Sint Maarten",
 		"SY": "Syria",
-		"SZ": "Swaziland",
+		"SZ": "Eswatini",
+		"SZ-alt-variant": "Swaziland",
 		"TA": "Tristan da Cunha",
 		"TC": "Turks & Caicos Islands",
 		"TD": "Chad",
@@ -1215,6 +1220,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
 				},
@@ -1676,6 +1690,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
 				},
@@ -2134,6 +2157,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
 				},
@@ -2612,6 +2644,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
 				},
@@ -3070,6 +3111,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d – d"
 				},
@@ -3948,10 +3998,10 @@
 		"end": "{0}, or {1}"
 	},
 	"listPattern-standard-short": {
-		"2": "{0} and {1}",
+		"2": "{0} & {1}",
 		"start": "{0}, {1}",
 		"middle": "{0}, {1}",
-		"end": "{0}, and {1}"
+		"end": "{0}, & {1}"
 	},
 	"units": {
 		"short": {
@@ -4043,6 +4093,11 @@
 				"unitPattern-count-other": "{0} in²",
 				"perUnitPattern": "{0}/in²"
 			},
+			"area-dunam": {
+				"displayName": "dunams",
+				"unitPattern-count-one": "{0} dunam",
+				"unitPattern-count-other": "{0} dunam"
+			},
 			"concentr-karat": {
 				"displayName": "karats",
 				"unitPattern-count-one": "{0} kt",
@@ -4072,6 +4127,16 @@
 				"displayName": "permille",
 				"unitPattern-count-one": "{0}‰",
 				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "permyriad",
+				"unitPattern-count-one": "{0}‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "mole",
+				"unitPattern-count-one": "{0} mol",
+				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "liters/km",
@@ -4260,6 +4325,26 @@
 				"unitPattern-count-one": "{0} kWh",
 				"unitPattern-count-other": "{0} kWh"
 			},
+			"energy-electronvolt": {
+				"displayName": "electronvolt",
+				"unitPattern-count-one": "{0} eV",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "BTU",
+				"unitPattern-count-one": "{0} Btu",
+				"unitPattern-count-other": "{0} Btu"
+			},
+			"force-pound-force": {
+				"displayName": "pound-force",
+				"unitPattern-count-one": "{0} lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "newton",
+				"unitPattern-count-one": "{0} N",
+				"unitPattern-count-other": "{0} N"
+			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
 				"unitPattern-count-one": "{0} GHz",
@@ -4385,10 +4470,20 @@
 				"unitPattern-count-one": "{0} pt",
 				"unitPattern-count-other": "{0} pt"
 			},
+			"length-solar-radius": {
+				"displayName": "solar radii",
+				"unitPattern-count-one": "{0} R☉",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "lux",
 				"unitPattern-count-one": "{0} lx",
 				"unitPattern-count-other": "{0} lx"
+			},
+			"light-solar-luminosity": {
+				"displayName": "solar luminosities",
+				"unitPattern-count-one": "{0} L☉",
+				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
 				"displayName": "t",
@@ -4448,6 +4543,21 @@
 				"displayName": "carats",
 				"unitPattern-count-one": "{0} CD",
 				"unitPattern-count-other": "{0} CD"
+			},
+			"mass-dalton": {
+				"displayName": "daltons",
+				"unitPattern-count-one": "{0} Da",
+				"unitPattern-count-other": "{0} Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "Earth masses",
+				"unitPattern-count-one": "{0} M⊕",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "solar masses",
+				"unitPattern-count-one": "{0} M☉",
+				"unitPattern-count-other": "{0} M☉"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -4509,6 +4619,16 @@
 				"unitPattern-count-one": "{0} atm",
 				"unitPattern-count-other": "{0} atm"
 			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-one": "{0} kPa",
+				"unitPattern-count-other": "{0} kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-one": "{0} MPa",
+				"unitPattern-count-other": "{0} MPa"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/hour",
 				"unitPattern-count-one": "{0} km/h",
@@ -4547,6 +4667,16 @@
 				"displayName": "K",
 				"unitPattern-count-one": "{0} K",
 				"unitPattern-count-other": "{0} K"
+			},
+			"torque-pound-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-one": "{0} N⋅m",
+				"unitPattern-count-other": "{0} N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "km³",
@@ -4668,6 +4798,11 @@
 				"unitPattern-count-one": "{0} fl oz",
 				"unitPattern-count-other": "{0} fl oz"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-one": "{0} fl oz Imp.",
+				"unitPattern-count-other": "{0} fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "tbsp",
 				"unitPattern-count-one": "{0} tbsp",
@@ -4677,6 +4812,11 @@
 				"displayName": "tsp",
 				"unitPattern-count-one": "{0} tsp",
 				"unitPattern-count-other": "{0} tsp"
+			},
+			"volume-barrel": {
+				"displayName": "barrel",
+				"unitPattern-count-one": "{0} bbl",
+				"unitPattern-count-other": "{0} bbl"
 			},
 			"coordinateUnit": {
 				"displayName": "direction",
