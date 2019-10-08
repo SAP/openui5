@@ -14,7 +14,7 @@
 			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
 		</headerContent>
 		<content>
-			<sap.ui.layout:VerticalLayout id="layout0" width="100%">
+			<sap.ui.layout:VerticalLayout id="layout0" width="100%" sap.ui.dt:designtime="not-adaptable-tree">
 				<ObjectHeader id="obheader0" title="{CompanyCodeName}" number="{Summary}" numberUnit="{CoCodeCurrency}">
 					<attributes>
 						<ObjectAttribute id="attribute1" title="{AccountingDocumentTypeName}" text="{AccountingDocument}" active="false"/>
@@ -29,12 +29,18 @@
 						<ObjectStatus id="status2" text="{ExpirationState}" state="Error"/>
 					</statuses>
 				</ObjectHeader>
+				<Text id="headerText1" text="This Layout and Text should not be adaptable" />
+				<sap.ui.layout:VerticalLayout id="layout01" width="100%">
+					<Text id="headerText11" text="This nested Layout and Text should also not be adaptable" />
+				</sap.ui.layout:VerticalLayout>
 			</sap.ui.layout:VerticalLayout>
 			<sap.ui.layout:VerticalLayout id="layout1" width="100%">
 				<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
 				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
 				<Button id="createDeleteButton" text="Create/Delete SmartForm" press=".createOrDeleteContent" />
+
 				<core:Fragment fragmentName="sap.ui.rta.test.fragment.QUnitTestArea" type="XML"></core:Fragment>
+
 				<form:SimpleForm title="Another SimpleForm with titles"
 						id="SimpleForm1"
 						maxContainerCols="3"
