@@ -7,7 +7,7 @@
 
 		<core:Title text="General"/>
 		<Label text="Job classification"/>
-		<Input value="Senior Ui Developer (UIDEV-SR)"/>
+		<Input id="firstEditableInput" value="Senior Ui Developer (UIDEV-SR)"/>
 
 		<Label text="Pay Grade"/>
 		<Input value="Salary Grade 18 (GR-14)"/>

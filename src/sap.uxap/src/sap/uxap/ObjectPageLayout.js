@@ -462,6 +462,23 @@ sap.ui.define([
 	ObjectPageLayout.SHOW_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterShow";
 	ObjectPageLayout.HIDE_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterHide";
 
+	ObjectPageLayout.prototype._getFirstEditableInput = function(sContainer) {
+		var oContainer = this.$(sContainer);
+
+		return sap.uxap.Utilities.findFirstEditableInput(oContainer);
+	};
+
+	/**
+	 * Focuses the first visible and editable input or textarea element.
+	 *
+         * @param sContainer ID of the container inside <code>sap.uxap.ObjectPageLayout</code> to search for editable field
+	 * @restricted
+	 * @since 1.72
+	 */
+	ObjectPageLayout.prototype._focusFirstEditableInput = function(sContainer) {
+		this._getFirstEditableInput(sContainer).focus();
+	};
+
 	/**
 	 * Retrieves thе next entry starting from the given one within the <code>sap.ui.core.TitleLevel</code> enumeration.
 	 * <br><b>Note:</b>
