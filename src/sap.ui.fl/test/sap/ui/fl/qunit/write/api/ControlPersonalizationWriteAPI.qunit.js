@@ -348,7 +348,7 @@ sap.ui.define([
 				changes: [this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2]
 			})
 			.then(function(aSuccessfulChanges) {
-				assert.equal(this.fnLogErrorSpy.callCount, 0, "no error ocurred");
+				assert.equal(this.fnLogErrorSpy.callCount, 0, "no error occurred");
 				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
 				assert.strictEqual(aSuccessfulChanges.length, 4, "then all passed change contents were applied successfully");
 				assert.strictEqual(ControlPersonalizationAPI._getVariantManagement.callCount, 3, "then variant reference is not called for the change content where variantReference was preset");
@@ -386,7 +386,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReference", function(assert) {
+		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and a variant model", function(assert) {
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
 			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
 			return ControlPersonalizationWriteAPI.add({
@@ -394,15 +394,34 @@ sap.ui.define([
 				ignoreVariantManagement: true
 			})
 			.then(function (aSuccessfulChanges) {
-				assert.equal(this.fnLogErrorSpy.callCount, 0, "no error ocurred");
+				assert.equal(this.fnLogErrorSpy.callCount, 0, "no error occurred");
 				assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 4, "FlexController.createAndApplyChange has been called four times");
 				assert.strictEqual(aSuccessfulChanges.length, 4, "then all passed change contents were applied successfully");
 				assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
-				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "first change is without VariantManagement1");
+				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(0).args[0].variantReference, "first change is without the preset variant reference");
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(1).args[0].variantReference, "second change is without VariantManagement1");
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(2).args[0].variantReference, "third change is without VariantManagement1");
 				assert.notOk(this.fnCreateAndApplyChangeSpy.getCall(3).args[0].variantReference, "fourth change is without VariantManagement2");
 			}.bind(this));
+		});
+
+		QUnit.test("when calling 'add' with 'ignoreVariantManagement' property set, for change contents with and without variantReferences and no variant model", function(assert) {
+			sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
+			sandbox.stub(this.oComp, "getModel")
+				.callThrough()
+				.withArgs(Utils.VARIANT_MODEL_NAME)
+				.returns(undefined);
+			this.mMoveChangeData1.changeSpecificData.variantReference = "mockVariantReference";
+			return ControlPersonalizationWriteAPI.add({
+				changes: [this.mMoveChangeData1, this.mRenameChangeData1],
+				ignoreVariantManagement: true
+			})
+				.then(function (aSuccessfulChanges) {
+					assert.equal(this.fnLogErrorSpy.callCount, 0, "no error occurred");
+					assert.equal(this.fnCreateAndApplyChangeSpy.callCount, 2, "FlexController.createAndApplyChange was called twice");
+					assert.strictEqual(aSuccessfulChanges.length, 2, "then all passed change contents were applied successfully");
+					assert.notOk(aSuccessfulChanges[0].getVariantReference(), "then variantReference property is deleted for the change, where it was preset");
+				}.bind(this));
 		});
 	});
 
