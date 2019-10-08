@@ -234,8 +234,7 @@ sap.ui.define([
 				variantControlIds: []
 			};
 
-			// register navigation filter for custom navigation
-			setOrUnsetCustomNavigationForParameter(mPropertyBag.model, /*bSet*/true);
+			URLHandler.attachHandlers(mPropertyBag);
 		},
 
 		/**
@@ -309,9 +308,9 @@ sap.ui.define([
 		 * Attach initial handlers for component lifecycle and persist the loaded variant management.
 		 *
 		 * @param {object} mPropertyBag - Property bag
-		 * @param {string} mPropertyBag.vmReference - Variant Management reference
-		 * @param {boolean} [mPropertyBag.updateURL] - Indicating if 'updateVariantInURL' property is enabled for the passed variant management reference
+		 * @param {string} [mPropertyBag.vmReference] - Variant Management reference
 		 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant model
+		 * @param {boolean} [mPropertyBag.updateURL] - Indicating if 'updateVariantInURL' property is enabled for the passed variant management reference
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.fl.variants.VariantModel
@@ -332,6 +331,9 @@ sap.ui.define([
 					mPropertyBag.model.oComponentDestroyObserver.destroy();
 				});
 			}
+
+			// register navigation filter for custom navigation
+			setOrUnsetCustomNavigationForParameter(mPropertyBag.model, /*bSet*/true);
 
 			if (!mPropertyBag.model.oComponentDestroyObserver && mPropertyBag.model.oAppComponent instanceof Component) {
 				mPropertyBag.model.oComponentDestroyObserver = new ManagedObjectObserver(observerHandler.bind(null));
