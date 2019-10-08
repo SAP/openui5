@@ -71,7 +71,7 @@ function (
 				sap.ui.getCore().applyChanges();
 
 				// TODO: Temporal solution. Remove when synced in DesignTime event wait for all async processes to be done.
-				if (Device.browser.internet_explorer) {
+				if (Device.browser.internet_explorer || Device.browser.edge) {
 					setTimeout(done, 16);
 				} else {
 					done();
