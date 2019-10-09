@@ -67,13 +67,7 @@ sap.ui.define(['./TreeItemBase', './library', 'sap/ui/core/IconPool'],
 	};
 
 	StandardTreeItem.prototype.getContentAnnouncement = function() {
-		var sAnnouncement = "",
-		oIconInfo = IconPool.getIconInfo(this.getIcon()) || {};
-
-		sAnnouncement += (oIconInfo.text || oIconInfo.name || "") + " ";
-		sAnnouncement += this.getTitle() + " ";
-
-		return sAnnouncement;
+		return this.getTitle();
 	};
 
 	StandardTreeItem.prototype.exit = function() {
