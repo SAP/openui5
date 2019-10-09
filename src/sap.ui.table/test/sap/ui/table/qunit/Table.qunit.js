@@ -3412,7 +3412,7 @@ sap.ui.define([
 				rowActionCount: 1,
 				rowActionTemplate: new RowAction({items: [new RowActionItem()]}),
 				title: new PasteTestControl({tagName: "div", handleOnPaste: false}),
-				toolbar: new Toolbar({content: [new PasteTestControl({tagName: "div", handleOnPaste: false})]}),
+				toolbar: new Toolbar({active: true, content: [new PasteTestControl({tagName: "div", handleOnPaste: false})]}),
 				extension: [new PasteTestControl({tagName: "div", handleOnPaste: false})],
 				footer: new PasteTestControl({tagName: "div", handleOnPaste: false})
 			}, function(oTable) {
@@ -3500,7 +3500,9 @@ sap.ui.define([
 			sTestTitle = sTestTitle == null ? "" : sTestTitle + ": ";
 
 			oHTMLElement.focus();
-			oHTMLElement.dispatchEvent(this.createPasteEvent(sData));
+			if (oHTMLElement === document.activeElement) {
+				oHTMLElement.dispatchEvent(this.createPasteEvent(sData));
+			}
 
 			assert.strictEqual(this.oPasteSpy.callCount, bShouldFireOnce ? 1 : 0,
 				sTestTitle + "The paste event was fired the correct number of times");
