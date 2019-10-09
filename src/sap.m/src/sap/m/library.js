@@ -3405,15 +3405,31 @@ sap.ui.define([
 
 		/**
 		 * Swipe from left to right
+		 * @deprecated As of version 1.72, replaced by {@link BeginToEnd}
 		 * @public
 		 */
 		LeftToRight : "LeftToRight",
 
 		/**
 		 * Swipe from right to left.
+		 * @deprecated As of version 1.72, replaced by {@link EndToBegin}
 		 * @public
 		 */
 		RightToLeft : "RightToLeft",
+
+		/**
+		 * Swipe from the beginning to the end - left to right in LTR languages and right to left in RTL languages.
+		 * @public
+		 * @since 1.72
+		 */
+		BeginToEnd : "BeginToEnd",
+
+		/**
+		 * Swipe from the end to the beginning - right to left in LTR languages and left to right in RTL languages.
+		 * @public
+		 * @since 1.72
+		 */
+		EndToBegin : "EndToBegin",
 
 		/**
 		 * Both directions (left to right or right to left)
