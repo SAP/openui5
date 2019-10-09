@@ -124,6 +124,8 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 				}
 			}
 
+			oAccAttributes.disabled = null;
+
 			rm.writeAccessibilityState(oSF, oAccAttributes);
 
 			rm.write(">");

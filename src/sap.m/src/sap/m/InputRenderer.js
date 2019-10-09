@@ -52,7 +52,7 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 		}
 
 		if (oControl.getShowSuggestion() || oControl.getShowValueStateMessage()) {
-			oRm.attr("autocomplete", "off");
+			oRm.attr("autocomplete", "off"); // autocomplete="off" needed so the native browser autocomplete is not shown?
 		}
 
 		if ((!oControl.getEnabled() && oControl.getType() == "Password")
@@ -151,9 +151,6 @@ sap.ui.define(['sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', './InputBase
 
 		var mAccessibilityState = InputBaseRenderer.getAccessibilityState.apply(this, arguments);
 
-		if (oControl.getShowSuggestion() && oControl.getEnabled() && oControl.getEditable()) {
-			mAccessibilityState.autocomplete = "list";
-		}
 
 		return mAccessibilityState;
 
