@@ -29,10 +29,17 @@
 							</contentRight>
 						</Bar>
 					</customHeader>
-					<f:GridContainer id="cardContainer">
+					<f:GridContainer id="cardContainer" visible="{= ${settings>/useExtendedFileEditor} }">
 						<w:Card id="cardSample">
 						</w:Card>
 					</f:GridContainer>
+					<core:HTML
+						id="iframeWrapper"
+						visible="{= !${settings>/useExtendedFileEditor} }"
+						preferDOM="false"
+						content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;
+								 &lt;/div&gt;'>
+					 </core:HTML>
 				</Page>
 			</l:SplitPane>
 			<l:SplitPane requiredParentWidth="1">
@@ -66,18 +73,26 @@
 									class="orientationBtn"
 									press="onChangeSplitterOrientation"
 									icon="sap-icon://header"
-									enabled="{settings>/editable}"
 									type="Transparent"
 								/>
 							</contentRight>
 						</Bar>
 					</customHeader>
 					<MessageStrip id="errorMessageStrip" visible="false" type="Error" showIcon="true" />
-					<MessageStrip visible="{= !${settings>/editable} }" showIcon="true" type="Warning" text="This example is not editable" />
+					<MessageStrip visible="{= !${settings>/editable} }" showIcon="true" type="Warning" text="Only manifest.json file is editable." />
+					<IconTabHeader
+							selectedKey="{extendedFileEditor>/selectedFileKey}"
+							select="onFileSwitch"
+							visible="{= !${settings>/useExtendedFileEditor} }"
+							items="{extendedFileEditor>/files}">
+						<items>
+							<IconTabFilter text="{extendedFileEditor>name}" key="{extendedFileEditor>key}"/>
+						</items>
+					</IconTabHeader>
 					<editor:CodeEditor
 						id="editor"
 						visible="{= ${settings>/editorType} === 'text' }"
-						type="json"
+						type="{settings>/codeEditorType}"
 						syntaxHints="false"
 						class="sapUiSmallMarginBegin"
 						height="100%"
