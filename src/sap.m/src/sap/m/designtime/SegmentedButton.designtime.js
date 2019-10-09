@@ -16,6 +16,11 @@ sap.ui.define([],
 		},
 		templates: {
 			create: "sap/m/designtime/SegmentedButton.create.fragment.xml"
+		},
+		aggregations: {
+			"items": {
+				ignore: true
+			}
 		}
 	};
 
