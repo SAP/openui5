@@ -83,6 +83,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/Storage"]
 				}
 			},
+			"apply/_internal/storageResultDisassemble": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
+				}
+			},
 			"apply/_internal/connectors/JsObjectConnector": {
 				group: "Apply Internal",
 				coverage: {

@@ -6,10 +6,14 @@
 
 sap.ui.define([
 	"sap/base/security/encodeURLParameters",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils"
 ], function (
 	encodeURLParameters,
-	Log
+	Log,
+	Layer,
+	LayerUtils
 ) {
 	"use strict";
 
@@ -28,7 +32,31 @@ sap.ui.define([
 		connector: "StaticFileConnector"
 	};
 
-	function _filterValidLayers (aLayers, aValidLayers) {
+	/**
+	 * Sort grouped flexibility objects by their creation timestamp.
+	 *
+	 * @param {object} [mResult] Grouped flexibility objects
+	 * @returns {object} Map of grouped flexibility objects per layer sorted by their creation timestamp
+	 */
+	function sortGroupedFlexObjects(mResult) {
+		function byCreation(oChangeA, oChangeB) {
+			return new Date(oChangeA.creation) - new Date(oChangeB.creation);
+		}
+
+		[
+			"changes",
+			"variantChanges",
+			"variants",
+			"variantDependentControlChanges",
+			"variantManagementChanges"
+		].forEach(function (sSectionName) {
+			mResult[sSectionName] = mResult[sSectionName].sort(byCreation);
+		});
+
+		return mResult;
+	}
+
+	function _filterValidLayers(aLayers, aValidLayers) {
 		return aLayers.filter(function (sLayer) {
 			return aValidLayers.indexOf(sLayer) !== -1 || aValidLayers[0] === "ALL";
 		});
@@ -42,7 +70,7 @@ sap.ui.define([
 		 * @param {boolean} bLoadApplyConnectors Flag to determine if StaticFileConnector should be included and write layers should be checked
 		 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 		 */
-		getConnectors: function(sNameSpace, bLoadApplyConnectors) {
+		getConnectors: function (sNameSpace, bLoadApplyConnectors) {
 			var aConfiguredConnectors = sap.ui.getCore().getConfiguration().getFlexibilityServices();
 			var mConnectors = [];
 			if (bLoadApplyConnectors) {
@@ -101,7 +129,7 @@ sap.ui.define([
 		 * @param {string} sErrorMessage Error messages retrieved from the endpoint
 		 * @returns {object} oResponse Response from the endpoint
 		 */
-		logAndResolveDefault: function(oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
+		logAndResolveDefault: function (oResponse, oConnectorConfig, sFunctionName, sErrorMessage) {
 			Log.error("Connector (" + oConnectorConfig.connector + ") failed call '" + sFunctionName + "': " + sErrorMessage);
 			return oResponse;
 		},
@@ -121,7 +149,7 @@ sap.ui.define([
 		 * @private
 		 * @restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		getUrl: function(sRoute, mPropertyBag, mParameters) {
+		getUrl: function (sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
 				throw new Error("Not all necessary parameters were passed");
 			}
@@ -139,7 +167,7 @@ sap.ui.define([
 
 			// Adding Query-Parameters to the Url
 			if (mParameters) {
-				Object.keys(mParameters).forEach(function(sKey) {
+				Object.keys(mParameters).forEach(function (sKey) {
 					if (mParameters[sKey] === undefined) {
 						delete mParameters[sKey];
 					}
@@ -165,7 +193,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
-		sendRequest: function(sUrl, sMethod, mPropertyBag) {
+		sendRequest: function (sUrl, sMethod, mPropertyBag) {
 			sMethod = sMethod || "GET";
 			sMethod = sMethod.toUpperCase();
 
@@ -189,7 +217,7 @@ sap.ui.define([
 				} else {
 					xhr.send();
 				}
-				xhr.onload = function() {
+				xhr.onload = function () {
 					if (xhr.status >= 200 && xhr.status < 400) {
 						var oResult = {};
 						var sContentType = xhr.getResponseHeader("Content-Type");
@@ -202,8 +230,8 @@ sap.ui.define([
 						resolve(oResult);
 					} else {
 						reject({
-							status : xhr.status,
-							message : xhr.statusText
+							status: xhr.status,
+							message: xhr.statusText
 						});
 					}
 				};
@@ -224,6 +252,75 @@ sap.ui.define([
 				variantDependentControlChanges: [],
 				variantManagementChanges: []
 			});
+		},
+
+		/**
+		 * Groups flexibility objects according to their layer and semantics.
+		 *
+		 * @param {array} aFlexObjects Flexibility objects
+		 * @returns {object} Map of grouped flexibility objects per layer
+		 */
+		getGroupedFlexObjects: function (aFlexObjects) {
+			var mGroupedFlexObjects = {};
+
+			// build empty groups
+			Object.keys(Layer).forEach(function (sLayer) {
+				mGroupedFlexObjects[sLayer] = this.getEmptyFlexDataResponse();
+				mGroupedFlexObjects[sLayer].index = LayerUtils.getLayerIndex(sLayer);
+			}.bind(this));
+
+			// fill groups
+			aFlexObjects.forEach(function (oFlexObject) {
+				var sLayer = oFlexObject.layer;
+
+				if (oFlexObject.fileType === "ctrl_variant" && oFlexObject.variantManagementReference) {
+					mGroupedFlexObjects[sLayer].variants.push(oFlexObject);
+				} else if (oFlexObject.fileType === "ctrl_variant_change") {
+					mGroupedFlexObjects[sLayer].variantChanges.push(oFlexObject);
+				} else if (oFlexObject.fileType === "ctrl_variant_management_change") {
+					mGroupedFlexObjects[sLayer].variantManagementChanges.push(oFlexObject);
+				} else if (oFlexObject.fileType === "change") {
+					if (oFlexObject.variantReference) {
+						mGroupedFlexObjects[sLayer].variantDependentControlChanges.push(oFlexObject);
+					} else {
+						mGroupedFlexObjects[sLayer].changes.push(oFlexObject);
+					}
+				}
+			});
+
+			// sort groups
+			Object.keys(mGroupedFlexObjects).forEach(function (sLayer) {
+				sortGroupedFlexObjects(mGroupedFlexObjects[sLayer]);
+			});
+
+			return mGroupedFlexObjects;
+		},
+
+		/**
+		 * Takes grouped flexibility objects as input and returns an array of non-empty responses sorted by layer.
+		 *
+		 * @param {object} mGroupedFlexObjects Grouped flexibility objects
+		 * @returns {array} Array of non-empty responses sorted by layer
+		 */
+		filterAndSortResponses: function (mGroupedFlexObjects) {
+			var aResponses = [];
+			Object.keys(mGroupedFlexObjects).forEach(function (sLayer) {
+				aResponses.push(mGroupedFlexObjects[sLayer]);
+			});
+
+			aResponses = aResponses.filter(function (oResponse) {
+				return oResponse.changes.length > 0
+					|| oResponse.variants.length > 0
+					|| oResponse.variantChanges.length > 0
+					|| oResponse.variantManagementChanges.length > 0
+					|| oResponse.variantDependentControlChanges.length > 0;
+			});
+
+			aResponses.sort(function (a, b) {
+				return a.index - b.index;
+			});
+
+			return aResponses;
 		}
 	};
 });

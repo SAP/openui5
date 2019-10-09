@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/BackendConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/library",
 	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
@@ -16,7 +15,6 @@ sap.ui.define([
 	ApplyConnector,
 	ApplyUtils,
 	WriteUtils,
-	flLibrary,
 	_pick
 ) {
 	"use strict";
