@@ -29,7 +29,9 @@ sap.ui.define([
 		 * SinglePlanningCalendarMonthGrid renderer.
 		 * @namespace
 		 */
-		var SinglePlanningCalendarMonthGridRenderer = {};
+		var SinglePlanningCalendarMonthGridRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -41,24 +43,21 @@ sap.ui.define([
 			var oLocaleData = oControl._getCoreLocaleData();
 			var oDensitySizes = oControl._getDensitySizes();
 
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addClass("sapMSinglePCGrid");
-			oRm.addClass("sapMSPCMonthGrid");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oControl);
+			oRm.class("sapMSinglePCGrid");
+			oRm.class("sapMSPCMonthGrid");
+			oRm.openEnd();
 
 			this.renderDayNames(oRm, oControl, oLocaleData);
 
-			oRm.write("<div");
-			oRm.addClass("sapMSinglePCGridContent");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div");
+			oRm.class("sapMSinglePCGridContent");
+			oRm.openEnd();
 
 			this.renderCells(oRm, oControl, oLocaleData, oDensitySizes);
 
-			oRm.write("</div>"); // END .sapMSinglePCGridContent
-			oRm.write("</div>"); // END .sapMSinglePCGrid
+			oRm.close("div"); // END .sapMSinglePCGridContent
+			oRm.close("div"); // END .sapMSinglePCGrid
 		};
 
 		SinglePlanningCalendarMonthGridRenderer.renderCells = function(oRm, oControl, oLocaleData, oDensitySizes) {
@@ -73,26 +72,26 @@ sap.ui.define([
 				aPreviousWeekApps,
 				aPreviousWeekAppsPerDay = [],
 				iMoreCount,
-				iWeekMaxAppCount;
+				iWeekMaxAppCount,
+				i,
+				j;
 
-			for (var i = 0; i < oControl._getRows(); i++) {
+			for (i = 0; i < oControl._getRows(); i++) {
 				iWeekMaxAppCount = 0;
 
-				oRm.write("<div");
-				oRm.writeAttribute("role", "grid");
-				oRm.addClass("sapMSPCMonthWeek");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div");
+				oRm.attr("role", "grid");
+				oRm.class("sapMSPCMonthWeek");
+				oRm.openEnd();
 
 				// render week number
-				oRm.write("<div");
-				oRm.addClass("sapMSPCMonthWeekNumber");
-				oRm.writeClasses();
-				oRm.write(">");
-				oRm.write(aVerticalLabels[i]);
-				oRm.write("</div>");
+				oRm.openStart("div");
+				oRm.class("sapMSPCMonthWeekNumber");
+				oRm.openEnd();
+				oRm.text(aVerticalLabels[i]);
+				oRm.close("div");
 
-				for (var j = 0; j < iColumns; j++) {
+				for (j = 0; j < iColumns; j++) {
 					iCellIndex = i * iColumns + j;
 					oDay = aCells[iCellIndex];
 					aApps = oControl._getAppointmetsForADay(oDay);
@@ -105,25 +104,23 @@ sap.ui.define([
 					iWeekMaxAppCount = Math.max(iWeekMaxAppCount, oControl._aAppsLevelsPerDay[iCellIndex].length);
 				}
 
-				oRm.write("<div");
-				oRm.addClass("sapMSPCMonthDays");
-				oRm.addClass("sapMSPCMonthDaysMax" + iWeekMaxAppCount);
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div");
+				oRm.class("sapMSPCMonthDays");
+				oRm.class("sapMSPCMonthDaysMax" + iWeekMaxAppCount);
+				oRm.openEnd();
 
-				for (var j = 0; j < iColumns; j++) {
+				for (j = 0; j < iColumns; j++) {
 					iCellIndex = i * iColumns + j;
 					oDay = aCells[iCellIndex];
 					this.renderDay(oRm, oControl, oDay, oLocaleData, aMoreCountPerCell[iCellIndex], iCellIndex);
 				}
 
-				oRm.write("<div");
-				oRm.addClass("sapMSinglePCBlockers");
-				oRm.addClass("sapUiCalendarRowVisFilled");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div");
+				oRm.class("sapMSinglePCBlockers");
+				oRm.class("sapUiCalendarRowVisFilled");
+				oRm.openEnd();
 
-				for (var j = 0; j < iColumns; j++) {
+				for (j = 0; j < iColumns; j++) {
 					iCellIndex = i * iColumns + j;
 					oDay = aCells[iCellIndex];
 
@@ -135,9 +132,9 @@ sap.ui.define([
 					this.renderAppointments(oRm, oControl, aAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes);
 				}
 
-				oRm.write("</div>"); // end appointments
-				oRm.write("</div>"); // end cells
-				oRm.write("</div>"); // end grid
+				oRm.close("div"); // end appointments
+				oRm.close("div"); // end cells
+				oRm.close("div"); // end grid
 			}
 		};
 
@@ -148,66 +145,60 @@ sap.ui.define([
 				oType,
 				sLegendItemType;
 
-			oRm.write("<div");
-			oRm.addClass("sapMSPCMonthDay");
+			oRm.openStart("div");
+			oRm.class("sapMSPCMonthDay");
 
 			if (CalendarUtils._isWeekend(oDay, oLocaleData)) {
-				oRm.addClass("nonWorkingTimeframe");
+				oRm.class("nonWorkingTimeframe");
 			}
 
 			if (aSpecialDates) {
 				if (aDayTypes && aDayTypes[0]) {
 					oType = aDayTypes[0];
-					oRm.addClass("sapUiCalendarSpecialDay" + oType.type);
+					oRm.class("sapUiCalendarSpecialDay" + oType.type);
 					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Core.byId(oControl._sLegendId), oType);
 				}
 			}
 
-			oRm.writeClasses();
-			oRm.writeAttribute("sap-ui-date", oDay.valueOf().toString());
-			oRm.writeAttribute("tabindex", -1);
-			oRm.writeAttribute("aria-labelledby", oFormat.format(oDay.toLocalJSDate()) + "-Descr");
-			oRm.write(">");
+			oRm.attr("sap-ui-date", oDay.valueOf().toString());
+			oRm.attr("tabindex", -1);
+			oRm.attr("aria-labelledby", oFormat.format(oDay.toLocalJSDate()) + "-Descr");
+			oRm.openEnd();
 
 			this.renderDndPlaceholder(oRm, oControl.getAggregation("_appsPlaceholders")[iCellIndex]);
 
-			oRm.write("<div");
-			oRm.addClass("specialDateIndicator");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write("</div>");
+			oRm.openStart("div");
+			oRm.class("specialDateIndicator");
+			oRm.openEnd();
+			oRm.close("div");
 
 			//render day number
-			oRm.write("<div");
-			oRm.addClass("sapMSPCMonthDayNumber");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write(oDay.getDate());
-			oRm.write("</div>");
+			oRm.openStart("div");
+			oRm.class("sapMSPCMonthDayNumber");
+			oRm.openEnd();
+			oRm.text(oDay.getDate());
+			oRm.close("div");
 
 			if (more) {
-				oRm.write("<div");
-				oRm.addClass("sapMSPCMonthLnkMore");
-				oRm.writeClasses();
-				oRm.write(">");
+				oRm.openStart("div");
+				oRm.class("sapMSPCMonthLnkMore");
+				oRm.openEnd();
 
 				oRm.renderControl(oControl._getMoreLink(more, oDay, iCellIndex));
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 
-			oRm.write("<span");
-			oRm.writeAttribute("id", oFormat.format(oDay.toLocalJSDate()) + "-Descr");
-			oRm.addClass("sapUiInvisibleText");
-			oRm.writeClasses();
-			oRm.write(">");
-			oRm.write(oControl._getCellStartInfo(oDay.toLocalJSDate()));
+			oRm.openStart("span", oFormat.format(oDay.toLocalJSDate()) + "-Descr");
+			oRm.class("sapUiInvisibleText");
+			oRm.openEnd();
+			oRm.text(oControl._getCellStartInfo(oDay.toLocalJSDate()));
 			//acc for day view + special dates + legend
 			if (oControl._sLegendId && sLegendItemType) {
-				oRm.writeEscaped(sLegendItemType);
+				oRm.text(sLegendItemType);
 			}
-			oRm.write("</span>");
+			oRm.close("span");
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		SinglePlanningCalendarMonthGridRenderer.renderAppointments = function(oRm, oControl, apps, iColumn, iMore, oDensitySizes) {
@@ -240,7 +231,7 @@ sap.ui.define([
 						append: true
 					},
 					// Setting aria-selected attribute to all blockers
-					selected: oAppointment.getSelected() ? true : false
+					selected: !!oAppointment.getSelected()
 				},
 				// aAriaLabels = oControl.getAriaLabelledBy(),
 				iRight = iColumns - iColumn - iWidth,
@@ -265,69 +256,62 @@ sap.ui.define([
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_TENTATIVE");
 			}
 
-			oRm.write("<div");
-			oRm.writeElementData(oAppointment);
-			oRm.writeAttribute("data-sap-level", iLevel);
-			oRm.writeAttribute("data-sap-width", iWidth);
-			oRm.writeAttribute("tabindex", 0);
+			oRm.openStart("div", oAppointment);
+			oRm.attr("data-sap-level", iLevel);
+			oRm.attr("data-sap-width", iWidth);
+			oRm.attr("tabindex", 0);
 
 			if (sTooltip) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+				oRm.attr("title", sTooltip);
 			}
-			oRm.writeAccessibilityState(oAppointment, mAccProps);
-			oRm.addClass("sapMSinglePCAppointmentWrap");
-			oRm.addClass("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
+			oRm.accessibilityState(oAppointment, mAccProps);
+			oRm.class("sapMSinglePCAppointmentWrap");
+			oRm.class("sapUiCalendarRowApps"); // TODO: when refactor the CSS of appointments maybe we won't need this class
 			if (!sColor && sType !== CalendarDayType.None) {
-				oRm.addClass("sapUiCalendarApp" + sType);
+				oRm.class("sapUiCalendarApp" + sType);
 			}
 			if (sColor) {
 				if (Core.getConfiguration().getRTL()) {
-					oRm.addStyle("border-right-color", sColor);
+					oRm.style("border-right-color", sColor);
 				} else {
-					oRm.addStyle("border-left-color", sColor);
+					oRm.style("border-left-color", sColor);
 				}
 			}
-			oRm.addStyle(bIsRTL ? "right" : "left", "calc(" + (iColumn * 100) / iColumns + "% + " + iBorderThickness + "px)");
-			oRm.addStyle(bIsRTL ? "left" : "right", "calc(" + (iRight * 100) / iColumns + "% + " + iBorderThickness + "px)");
-			oRm.addStyle("top", (iLevel * oDensitySizes.appHeight + oDensitySizes.cellHeaderHeight) + "rem");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
+			oRm.style(bIsRTL ? "right" : "left", "calc(" + (iColumn * 100) / iColumns + "% + " + iBorderThickness + "px)");
+			oRm.style(bIsRTL ? "left" : "right", "calc(" + (iRight * 100) / iColumns + "% + " + iBorderThickness + "px)");
+			oRm.style("top", (iLevel * oDensitySizes.appHeight + oDensitySizes.cellHeaderHeight) + "rem");
+			oRm.openEnd();
 
-			oRm.write("<div");
-			oRm.addClass("sapUiCalendarApp");
+			oRm.openStart("div");
+			oRm.class("sapUiCalendarApp");
 
 			if (oAppointment.getSelected()) {
-				oRm.addClass("sapUiCalendarAppSel");
+				oRm.class("sapUiCalendarAppSel");
 			}
 
 			if (oAppointment.getTentative()) {
-				oRm.addClass("sapUiCalendarAppTent");
+				oRm.class("sapUiCalendarAppTent");
 			}
 
 			if (sIcon) {
-				oRm.addClass("sapUiCalendarAppWithIcon");
+				oRm.class("sapUiCalendarAppWithIcon");
 			}
 
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">"); // div element
+			oRm.openEnd(); // div element
 
 			// extra content DIV to make some styling possible
-			oRm.write("<div");
-			oRm.addClass("sapUiCalendarAppCont");
+			oRm.openStart("div");
+			oRm.class("sapUiCalendarAppCont");
 
 			if (sColor) {
-				oRm.addStyle("background-color", oAppointment._getCSSColorForBackground(sColor));
-				oRm.writeStyles();
+				oRm.style("background-color", oAppointment._getCSSColorForBackground(sColor));
 			}
 
-			oRm.writeClasses();
-			oRm.write(">"); // div element
+			oRm.openEnd(); // div element
 
 			if (app.hasPrevious < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconLeft", "sapUiCalendarAppArrowIcon"];
-				oRm.writeIcon("sap-icon://arrow-left", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-left", aClasses, { title: null });
 			}
 
 			if (sIcon) {
@@ -336,31 +320,32 @@ sap.ui.define([
 
 				mAttributes["id"] = sId + "-Icon";
 				mAttributes["title"] = null;
-				oRm.writeIcon(sIcon, aClasses, mAttributes);
+				oRm.icon(sIcon, aClasses, mAttributes);
 			}
 
 			if (sTitle) {
-				oRm.write("<span");
-				oRm.writeAttribute("id", sId + "-Title");
-				oRm.addClass("sapUiCalendarAppTitle");
-				oRm.writeClasses();
-				oRm.write(">"); // span element
-				oRm.writeEscaped(sTitle, true);
-				oRm.write("</span>");
+				oRm.openStart("span", sId + "-Title");
+				oRm.class("sapUiCalendarAppTitle");
+				oRm.openEnd(); // span element
+				oRm.text(sTitle, true);
+				oRm.close("span");
 			}
 
 			if (app.hasNext < 0) {
 				aClasses = ["sapUiCalendarAppArrowIconRight", "sapUiCalendarAppArrowIcon"];
-				oRm.writeIcon("sap-icon://arrow-right", aClasses, { title: null });
+				oRm.icon("sap-icon://arrow-right", aClasses, { title: null });
 			}
 
-			oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" +
-				oControl._getAppointmentAnnouncementInfo(oAppointment) + "</span>");
+			oRm.openStart("span", sId + "-Descr");
+			oRm.class("sapUiInvisibleText");
+			oRm.openEnd(); // span element
+			oRm.text(oControl._getAppointmentAnnouncementInfo(oAppointment));
+			oRm.close("span");
 
-			oRm.write("</div>");
+			oRm.close("div");
 
-			oRm.write("</div>");
-			oRm.write("</div>");
+			oRm.close("div");
+			oRm.close("div");
 		};
 
 		SinglePlanningCalendarMonthGridRenderer.renderDayNames = function(oRm, oControl, oLocaleData) {
@@ -372,39 +357,39 @@ sap.ui.define([
 				aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType),
 				iDayIndex;
 
-			oRm.write("<div id=\"" + sId + "-Names\" class='sapMSPCMonthDayNames'>");
+			oRm.openStart("div", sId + "-Names");
+			oRm.class("sapMSPCMonthDayNames");
+			oRm.openEnd(); // span element
 
 			for (var i = 0; i < 7; i++) {
 				iDayIndex = (i + iFirstDayOfWeek) % 7;
-
-				oRm.write("<div");
-				oRm.addClass("sapUiCalWH");
-
 				sDayId = sId + "-WH" + iDayIndex;
 
-				oRm.writeAttribute("id", sDayId);
-				if (i == 0) {
-					oRm.addClass("sapUiCalFirstWDay");
+				oRm.openStart("div", sDayId);
+				oRm.class("sapUiCalWH");
+
+				if (i === 0) {
+					oRm.class("sapUiCalFirstWDay");
 				}
 
-				oRm.writeAccessibilityState(null, {
+				oRm.accessibilityState(null, {
 					role: "columnheader",
 					label: aWeekDaysWide[iDayIndex]
 				});
-				oRm.writeClasses();
-				oRm.writeStyles();
-				oRm.write(">");
-				oRm.write(aWeekDays[iDayIndex % 7]);
-				oRm.write("</div>");
+				oRm.openEnd();
+				oRm.text(aWeekDays[iDayIndex % 7]);
+				oRm.close("div");
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		SinglePlanningCalendarMonthGridRenderer.renderDndPlaceholder = function(oRm, oPlaceholder) {
-			oRm.write("<div class=\"sapMSinglePCOverlay\">");
+			oRm.openStart("div");
+			oRm.class("sapMSinglePCOverlay");
+			oRm.openEnd(); // span element
 			oRm.renderControl(oPlaceholder);
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		return SinglePlanningCalendarMonthGridRenderer;

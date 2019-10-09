@@ -533,11 +533,11 @@ function(
 	SinglePlanningCalendar.prototype.setTitle = function (sTitle) {
 		this._getHeader().setTitle(sTitle);
 
-		return this.setProperty("title", sTitle, true);
+		return this.setProperty("title", sTitle);
 	};
 
 	SinglePlanningCalendar.prototype.setStartDate = function (oDate) {
-		this.setProperty("startDate", oDate, true /*Suppressing because _alignColumns will do the rendering.*/ );
+		this.setProperty("startDate", oDate);
 		this._alignColumns();
 
 		return this;
@@ -545,21 +545,21 @@ function(
 
 	SinglePlanningCalendar.prototype.setStartHour = function (iHour) {
 		this.getAggregation("_grid").setStartHour(iHour);
-		this.setProperty("startHour", iHour, true /*Suppressing because the gird will do the rendering as its setStartHour is called.*/ );
+		this.setProperty("startHour", iHour);
 
 		return this;
 	};
 
 	SinglePlanningCalendar.prototype.setEndHour = function (iHour) {
 		this.getAggregation("_grid").setEndHour(iHour);
-		this.setProperty("endHour", iHour, true /*Suppressing because the gird will do the rendering as its setEndHour is called.*/ );
+		this.setProperty("endHour", iHour);
 
 		return this;
 	};
 
 	SinglePlanningCalendar.prototype.setFullDay = function (bFullDay) {
 		this.getAggregation("_grid").setFullDay(bFullDay);
-		this.setProperty("fullDay", bFullDay, true /*Suppressing because the gird will do the rendering as its setFullDay is called.*/ );
+		this.setProperty("fullDay", bFullDay);
 
 		return this;
 	};

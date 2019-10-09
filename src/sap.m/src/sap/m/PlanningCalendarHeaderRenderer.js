@@ -9,7 +9,9 @@ sap.ui.define([],
 		 * PlanningCalendarHeader renderer.
 		 * @namespace
 		 */
-		var PlanningCalendarHeaderRenderer = {};
+		var PlanningCalendarHeaderRenderer = {
+			apiVersion: 2
+		};
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -21,11 +23,9 @@ sap.ui.define([],
 			var oActionsToolbar = oHeader.getAggregation("_actionsToolbar"),
 				oNavigationToolbar = oHeader.getAggregation("_navigationToolbar");
 
-			oRm.write("<div");
-			oRm.writeControlData(oHeader);
-			oRm.addClass("sapMPCHead");
-			oRm.writeClasses();
-			oRm.write(">");
+			oRm.openStart("div", oHeader);
+			oRm.class("sapMPCHead");
+			oRm.openEnd();
 
 			if (oActionsToolbar) {
 				oRm.renderControl(oActionsToolbar);
@@ -35,7 +35,7 @@ sap.ui.define([],
 				oRm.renderControl(oNavigationToolbar);
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		};
 
 		return PlanningCalendarHeaderRenderer;
