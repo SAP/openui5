@@ -228,8 +228,7 @@ sap.ui.define([
 					handler: this.handler.bind(this, bOverlayIsSibling),
 					enabled: this.isEnabled.bind(this, bOverlayIsSibling),
 					icon: "sap-icon://add-folder",
-					rank: iRank,
-					group: "Add"
+					rank: iRank
 				});
 			}
 			bOverlayIsSibling = false;
