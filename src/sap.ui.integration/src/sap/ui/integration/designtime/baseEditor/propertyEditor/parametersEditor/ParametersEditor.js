@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/base/util/isPlainObject"
 ], function (
 	BasePropertyEditor,
 	Fragment,
 	JSONModel,
-	deepClone
+	deepClone,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -54,6 +56,13 @@ sap.ui.define([
 			var mParams = this.getConfig().value || {};
 			var aParams = Object.keys(mParams).map(function(sKey) {
 				var oObject = mParams[sKey];
+
+				// FIXME: Workaround to make sure that oObject is actually an object
+				// Parameters that are retrieved from the manifest arrive as key-value-pairs and thus must be converted
+				if (!isPlainObject(oObject)) {
+					oObject = {value: oObject};
+				}
+
 				oObject._key = sKey;
 				return oObject;
 			});

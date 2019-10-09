@@ -70,9 +70,9 @@ sap.ui.define([
 					new Button({
 						icon: "sap-icon://add",
 						tooltip: "{i18n>BASE_EDITOR.ARRAY.ADD}",
-						enabled: "{= ${items} ? ${items}.length < ${maxItems} : false}",
+						enabled: "{= (${items} || []).length < ${maxItems} }",
 						press: function() {
-							var aValue = this.getConfig().value;
+							var aValue = this.getConfig().value || [];
 							aValue.push({});
 							this.firePropertyChanged(aValue);
 						}.bind(this)
