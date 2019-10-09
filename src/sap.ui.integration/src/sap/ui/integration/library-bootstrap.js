@@ -3,8 +3,7 @@
  */
 (function (window) {
 	"use strict";
-	var coreInstance,
-		CustomElements;
+	var coreInstance;
 	//identify the own script include
 	var scriptTag = document.currentScript || document.querySelector("script[src*='/sap-ui-integration.js']");
 
@@ -14,9 +13,8 @@
 			coreInstance = window.sap.ui.getCore();
 			return initTags();
 		}
-		window.sap.ui.require(['sap/ui/core/Core', 'sap/ui/integration/util/CustomElements'],
-			function (Core, CE) {
-				CustomElements = CE;
+		window.sap.ui.require(['sap/ui/core/Core'],
+			function (Core) {
 				Core.boot();
 				coreInstance = Core;
 				Core.attachInit(function () {
@@ -29,8 +27,7 @@
 	function registerLibraryTags(sLibrary) {
 		var oLibrary = coreInstance.getLoadedLibraries()[sLibrary];
 		//collect the prefix and the relevant tags
-		var sPrefix = scriptTag.getAttribute("prefix") || oLibrary.defaultCustomElementsPrefix,
-			aTags = Object.keys(oLibrary.customElements),
+		var	aTags = Object.keys(oLibrary.customElements),
 			sTags = scriptTag.getAttribute("tags");
 		if (sTags) {
 			aTags = sTags.split(",");
@@ -41,16 +38,8 @@
 				function (o, i) {
 					return oLibrary.customElements[aTags[i]];
 				}
-			),
-			function () {
-				//after require, register the tags via CustomElements
-				var args = arguments;
-				aTags.forEach(
-					function (o, i) {
-						CustomElements.registerTag(sPrefix + "-" + aTags[i], args[i]);
-					}
-				);
-			});
+			)
+		);
 	}
 
 	function initTags() {

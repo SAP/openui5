@@ -157,9 +157,12 @@ oCard.refresh();
 </pre>
 
 			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
-			<p>
-				NOTE: Currently refreshing is not possible when using the custom element.
-			</p>
+<pre class="prettyprint">
+customElements.whenDefined("ui-integration-card").then(function () {
+	var oCard = document.getElementById("myCard");
+	oCard.refresh();
+});
+</pre>
 
 		</div>
 		<div class="navigation">

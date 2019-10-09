@@ -34,11 +34,10 @@ sap.ui.define(["sap/ui/base/DataType",
 
 			// define the custom elements that can be used in this library
 			customElements: {
-				"card": "sap/ui/integration/widgets/Card",
-				"widget": "sap/ui/integration/Widget",
-				"host-configuration": "sap/ui/integration/host/HostConfiguration"
-			},
-			defaultCustomElementsPrefix: "ui-integration"
+				"card": "sap/ui/integration/customElements/CustomElementCard",
+				"widget": "sap/ui/integration/customElements/CustomElementWidget",
+				"host-configuration": "sap/ui/integration/customElements/CustomElementHostConfiguration"
+			}
 		});
 
 		/**
