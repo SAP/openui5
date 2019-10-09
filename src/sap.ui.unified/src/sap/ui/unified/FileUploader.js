@@ -426,6 +426,19 @@ sap.ui.define([
 			},
 
 			/**
+			 * Event is fired when the size of the file is 0
+			 */
+			fileEmpty : {
+				parameters : {
+
+					/**
+					 * The name of the file to be uploaded.
+					 */
+					fileName: {type : "string"}
+				}
+			},
+
+			/**
 			 * Event is fired when the file is allowed for upload on client side.
 			 */
 			fileAllowed : {},
@@ -1632,11 +1645,17 @@ sap.ui.define([
 			if (fMaxSize && (fSize > fMaxSize)) {
 				Log.info("File: " + sName + " is of size " + fSize + " MB which exceeds the file size limit of " + fMaxSize + " MB.");
 				this.fireFileSizeExceed({
-					fileName:sName,
-					fileSize:fSize
+					fileName: sName,
+					fileSize: fSize
 				});
 
 				return false;
+			}
+			if (fSize === 0){
+				Log.info("File: " + sName + " is empty!");
+				this.fireFileEmpty({
+					fileName: sName
+				});
 			}
 			//check if the filename is too long and fire the corresponding event if necessary
 			if (this._isFilenameTooLong(sName)) {
