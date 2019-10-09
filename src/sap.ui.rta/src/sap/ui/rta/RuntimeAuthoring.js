@@ -683,6 +683,8 @@ function(
 						this.fireFailed(vError);
 					}
 					if (vError) {
+						// destroy rta when reload is triggered
+						this.destroy();
 						return Promise.reject(vError);
 					}
 				}.bind(this)
