@@ -135,7 +135,7 @@
 			<Label text="scale: default (0), nullable: false"  labelFor="I29"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}" id="I29"/>
 			<Label text="stepInput: min: 0 max: 99" labelFor="stepInput"/>
-			<StepInput id="stepInput" min="0" max="99" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
+			<StepInput id="stepInput" min="0" max="99" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, maximum: '101'}}"/>
 			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3" labelFor="I30"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}" id="I30"/>
 			<Label text="precision: 10, scale: 3, minimum: 100 (exclusive), maximum: 1000" labelFor="decimalInput"/>
