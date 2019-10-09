@@ -31,11 +31,20 @@ sap.ui.define(["sap/base/Log"], function (Log) {
 
 		/**
 		 * Send data if the browser has been closed
+		 *
+		 * The "visibilitychange" event is not fired in Safari when the browser tab is closed.
 		 */
 		document.addEventListener("visibilitychange", function () {
 			if (document.visibilityState === "hidden") {
 				this.send();
 			}
+		}.bind(this));
+
+		/**
+		 * Ensure that the date is sent if the "visibilitychange" event was not fired.
+		 */
+		window.addEventListener("unload", function () {
+			this.send();
 		}.bind(this));
 	};
 

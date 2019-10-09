@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (B
 				assert.equal(msg.data.token, "arranged", "BeaconRequest#send has been replaced");
 				window.removeEventListener("message", arranged);
 				window.addEventListener("message", assertions);
-				oIframe.remove();
+				oIframe.contentWindow.location.reload();
 			}
 
 			// checks the if the stub has been called
