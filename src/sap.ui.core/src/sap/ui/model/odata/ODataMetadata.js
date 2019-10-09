@@ -1089,8 +1089,8 @@ sap.ui.define([
 
 		//for properties it doesn't matter in which Entity (BaseType or derivedType) the property idefined. 
 		//so collect all proeprties over multiple BaseTypes till no BaseType is defined anymore
-		var aEntityProperties = []
-		var aEntityProperties = this.collectPropertiesFromBaseType(oEntityType.name, aEntityProperties)
+		var aEntityProperties = [];
+		aEntityProperties = this.collectPropertiesFromBaseType(oEntityType.name, aEntityProperties);
 		//using collected Properties instead only properties from derivedType!
 		jQuery.each(aEntityProperties, function(k, oProperty) {
 			if (oProperty.name === aParts[0]) {
@@ -1120,21 +1120,21 @@ sap.ui.define([
 	};
 
 	ODataMetadata.prototype.collectPropertiesFromBaseType = function(sEdmType, aEdmTypeProperties) {
-		var bTypeFound = false
-		var edmType = {}
+		var bTypeFound = false;
+		var edmType = {};
 		
 		this.oMetadata.dataServices.schema.forEach(function (schema) {
 			if (!bTypeFound) {
 				 edmType = schema.entityType.find(function (entityType) {
-					return entityType.name === sEdmType
+					return entityType.name === sEdmType;
 				})
 				if (edmType) {
 					/**
 					 * if an EntityName is unique over all scheme, we can stop the search here
 					 */
-					bTypeFound = true
+					bTypeFound = true;
 					if (edmType.property) {
-						aEdmTypeProperties = aEdmTypeProperties.concat(edmType.property)
+						aEdmTypeProperties = aEdmTypeProperties.concat(edmType.property);
 					}
 					
 				}
@@ -1142,9 +1142,9 @@ sap.ui.define([
 		})
 		if (bTypeFound) {
             if (edmType.baseType) {
-               return aEdmTypeProperties.concat(this.collectPropertiesFromBaseType(edmType.baseType.substring(edmType.baseType.indexOf('.') + 1), aEdmTypeProperties))
+               return aEdmTypeProperties.concat(this.collectPropertiesFromBaseType(edmType.baseType.substring(edmType.baseType.indexOf('.') + 1), aEdmTypeProperties));
             } else {
-               return aEdmTypeProperties
+               return aEdmTypeProperties;
             }
          }
 	}
