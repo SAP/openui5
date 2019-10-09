@@ -162,7 +162,7 @@ sap.ui.define([
 			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
 			assert.notOk(this.oTransportSelection.checkTransportInfo(oMockTransportInfoInvalid), "then false is returned for an invalid transport info");
 
-			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges).then(function(){
+			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, null, {}).then(function() {
 				assert.equal(aMockLocalChanges[0].packageName, "aPackage", "then the transported local change is not updated");
 				assert.equal(aMockLocalChanges[1].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
@@ -222,15 +222,35 @@ sap.ui.define([
 			sandbox.stub(Utils, "getClient").returns('');
 			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
 			assert.ok(this.oTransportSelection.checkTransportInfo(oMockTransportInfo), "then true is returned for a valid transport info");
-			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors).then(function(){
+			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, {}).then(function() {
 				assert.equal(aAppVariantDescriptors[0].packageName, "$TMP", "but the app variant descriptor should not be updated");
 				assert.equal(aMockLocalChanges[0].packageName, oMockTransportInfo.packageName, "but the new local change is updated");
 			});
 		});
 
-		QUnit.test("when preparing and checking for transport without local UI changes", function(assert) {
-			return this.oTransportSelection._prepareChangesForTransport({}, []).then(function() {
-				assert.ok(true, "it doesn't fail");
+		QUnit.test("when preparing changes for transport is called the reference, app version and layer was added", function(assert) {
+			var oMockTransportInfo = {
+				packageName : "PackageName",
+				transport : "transportId"
+			};
+			var aMockLocalChanges = [];
+			var aAppVariantDescriptors = [];
+			var sReference = "MyComponent";
+			var sAppVersion = "1.2.3";
+			var sLayer = "CUSTOMER";
+			var oContentParameters = {
+				reference: sReference,
+				appVersion: sAppVersion,
+				layer: sLayer
+			};
+
+			sandbox.stub(Utils, "getClient").returns('');
+			sandbox.stub(LrepConnector, "createConnector").returns(this.oLrepConnector);
+			var oConnectorStub = sandbox.stub(this.oLrepConnector, "send").resolves();
+			return this.oTransportSelection._prepareChangesForTransport(oMockTransportInfo, aMockLocalChanges, aAppVariantDescriptors, oContentParameters).then(function() {
+				assert.equal(oConnectorStub.getCall(0).args[2].reference, sReference, "the reference is added to the request");
+				assert.equal(oConnectorStub.getCall(0).args[2].appVersion, sAppVersion, "the app version is added to the request");
+				assert.equal(oConnectorStub.getCall(0).args[2].layer, sLayer, "the layer is added to the request");
 			});
 		});
 	});
