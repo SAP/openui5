@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/f/GridContainerItemLayoutData",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/restricted/_debounce"
 ], function (
 	BaseController,
 	JSONModel,
@@ -17,11 +18,20 @@ sap.ui.define([
 	MessageToast,
 	GridContainerItemLayoutData,
 	Device,
-	jQuery
+	jQuery,
+	_debounce
 ) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
+
+		constructor: function () {
+			this.onCodeEditorChangeDebounced = _debounce(this.onCodeEditorChangeDebounced, 100);
+			this.onCardEditorChangeDebounced = _debounce(this.onCardEditorChangeDebounced, 100);
+			this._sEditSource = null;
+
+			BaseController.apply(this, arguments);
+		},
 
 		/**
 		 * Called when the controller is instantiated.
@@ -62,11 +72,37 @@ sap.ui.define([
 			this._deregisterResize();
 		},
 
-		onManifestEdited: function (oEvent) {
-			var sValue = oEvent.getParameter("value") || oEvent.getParameter("json");
+		onCodeEditorChangeDebounced: function (sValue) {
+			if (!this._sEditSource) {
+				this._sEditSource = "codeEditor";
+			}
+			var oCardEditor = this.byId("cardEditor");
+			oCardEditor.setJson(sValue);
+			this.updateSample(sValue);
+			this._sEditSource = null;
 
-			if (exploreSettingsModel.getProperty("/autoRun")) {
-				this._reflectManifestChanges(sValue);
+		},
+
+		onCodeEditorChange: function (oEvent) {
+			if (this._sEditSource !== "cardEditor") {
+				var sValue = oEvent.getParameter("value");
+				this.onCodeEditorChangeDebounced(sValue);
+			}
+		},
+
+		onCardEditorChangeDebounced: function (mValue) {
+			if (!this._sEditSource) {
+				this._sEditSource = "cardEditor";
+			}
+			this._editor.setValue(JSON.stringify(mValue, '\t', 4));
+			this.updateSample(mValue);
+			this._sEditSource = null;
+		},
+
+		onCardEditorChange: function (oEvent) {
+			if (this._sEditSource !== "codeEditor") {
+				var mValue = oEvent.getParameter("json");
+				this.onCardEditorChangeDebounced(mValue);
 			}
 		},
 

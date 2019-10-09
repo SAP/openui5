@@ -97,12 +97,12 @@
 						class="sapUiSmallMarginBegin"
 						height="100%"
 						editable="{settings>/editable}"
-						liveChange="onManifestEdited"
+						liveChange="onCodeEditorChange"
 					/>
 					<cardEditor:CardEditor
 						id="cardEditor"
 						visible="{= ${settings>/editorType} === 'card' }"
-						jsonChanged="onManifestEdited"
+						jsonChange="onCardEditorChange"
 					/>
 				</Page>
 			</l:SplitPane>
