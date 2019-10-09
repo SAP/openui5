@@ -338,6 +338,28 @@
 			}.bind(this), delay);
 		});
 
+		test("fnOnFocusIn sets the correct currentFocusIndex when one of the tiles is hidden", function(assert) {
+			var done = assert.async();
+
+			this.sut = new sap.m.TileContainer('testOrderVis', {
+					tiles : [
+						new sap.m.StandardTile({id: 'first', visible: false}),
+						new sap.m.StandardTile({id: 'second'}),
+						new sap.m.StandardTile({id: 'third'}),
+						new sap.m.StandardTile({id: 'forth'})
+					]
+				});
+
+			this.sut.placeAt("qunit-fixture");
+
+			setTimeout(function() {
+				sap.ui.getCore().byId("third").focus();
+				assert.equal(this.sut._iCurrentFocusIndex, 1, "currentFocusIndex is correct");
+				this.sut.destroy();
+				done();
+			}.bind(this), delay);
+		});
+
 		module("Tile common dimension calculation", {
 			beforeEach: function () {
 				this.prepare();
