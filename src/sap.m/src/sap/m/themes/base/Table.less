@@ -262,11 +262,15 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 /* table column header */
-.sapMListTblHeader > .sapMTableTH {
+.sapMTableTH {
 	background: @sapUiListHeaderBackground;
 	border-bottom: 1px solid @sapUiListBorderColor;
-	background-clip: padding-box;
 	vertical-align: middle;
+}
+
+/* background-clip is required for Edge browser as the focus outline of the item below the sticky column headers was not visible on all sides */
+html[data-sap-ui-browser^='ed'] .sapMTableTH {
+	background-clip: padding-box;
 }
 
 /* sticky headerToolbar, infoToolbar and column headers */
