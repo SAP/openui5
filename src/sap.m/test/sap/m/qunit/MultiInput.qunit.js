@@ -2372,4 +2372,41 @@ sap.ui.define([
 		oSyncInput.restore();
 		oMI.destroy();
 	});
+
+	QUnit.test("Read-only popover is opened after N-more is pressed", function(assert){
+		//Arrange
+		var oMultiInput = new sap.m.MultiInput({
+			editable: true
+		}), bVisible;
+
+		oMultiInput.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oMultiInput.updateDomValue("123");
+		qutils.triggerEvent("input", oMultiInput.getFocusDomRef());
+		sap.ui.getCore().applyChanges();
+
+		//Arrange
+		var oToken1 = new Token({text:"Token with a very long text content"}),
+			oToken2 = new Token({text:"Token with a very long text content"}),
+			oToken3 = new Token({text:"Token with a very long text content"}),
+			oToken4 = new Token({text:"Token with a very long text content"}),
+			oToken5 = new Token({text:"Token with a very long text content"}),
+			oToken6 = new Token({text:"Token with a very long text content"});
+
+		//Act
+		oMultiInput.setTokens([oToken1, oToken2, oToken3, oToken4, oToken5, oToken6]);
+		oMultiInput.setEditable(false);
+		sap.ui.getCore().applyChanges();
+
+		oMultiInput._handleIndicatorPress();
+		bVisible = oMultiInput._getTokensList().getVisible();
+
+		//Assert
+		assert.strictEqual(bVisible, true, "Tokens list is visible");
+
+		//Clean up
+		oMultiInput.destroy();
+	});
 });
