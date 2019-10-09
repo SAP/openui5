@@ -81,9 +81,11 @@ sap.ui.define([
 				library: "sap.uxap",
 				properties: {
 					/**
-					 * Determines the mode of the block.
-					 * When block is used inside ObjectPage this mode is inherited my the SubSection.
-					 * The mode of the block is changed when SubSection mode changes.
+					 * Determines the mode of the block. See {@link sap.uxap.ObjectPageSubSectionMode ObjectPageSubSectionMode}.
+					 * When <code>BlockBase</code> is used inside an <code>ObjectPageLayout</code>,
+					 * the <code>mode</code> property is inherited from the respective {@link sap.uxap.ObjectPageSubSection SubSection}.
+					 * The <code>mode</code> property of <code>BlockBase</code> changes when the
+					 * <code>mode</code> property of <code>ObjectPageSubSection</code> changes.
 					 */
 					"mode": {type: "string", group: "Appearance"},
 
@@ -434,7 +436,7 @@ sap.ui.define([
 			return oView;
 		};
 
-		/***
+		/**
 		 * Create view
 		 * @param {*} mParameter parameter
 		 * @returns {*} Promise
