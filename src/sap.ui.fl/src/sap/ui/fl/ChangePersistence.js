@@ -1215,7 +1215,7 @@ sap.ui.define([
 		return this._oVariantController.getChangesForVariantSwitch(mPropertyBag);
 	};
 
-	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer) {
+	ChangePersistence.prototype.transportAllUIChanges = function(oRootControl, sStyleClass, sLayer, aAppVariantDescriptors) {
 		var fnHandleAllErrors = function (oError) {
 			BusyIndicator.hide();
 			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
@@ -1236,10 +1236,20 @@ sap.ui.define([
 					BusyIndicator.show(0);
 					return this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true})
 						.then(function(aAllLocalChanges) {
-							return this._oTransportSelection._prepareChangesForTransport(oTransportInfo, aAllLocalChanges)
-								.then(function() {
-									BusyIndicator.hide();
-								});
+							var oContentParameters = {
+								reference: this.getComponentName(),
+								appVersion: this._mComponent.appVersion,
+								layer: sLayer
+							};
+
+							return this._oTransportSelection._prepareChangesForTransport(
+								oTransportInfo,
+								aAllLocalChanges,
+								aAppVariantDescriptors,
+								oContentParameters
+							).then(function() {
+								BusyIndicator.hide();
+							});
 						}.bind(this));
 				} else {
 					return "Cancel";

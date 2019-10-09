@@ -2456,6 +2456,29 @@ function (
 					return this.packageName;
 				}
 			};
+
+			var oAppVariantDescriptor = {
+				packageName : "$TMP",
+				fileType : "appdescr_variant",
+				fileName : "manifest",
+				id : "customer.app.var.id",
+				namespace : "namespace",
+				getDefinition : function() {
+					return {
+						fileType : this.fileType,
+						fileName : this.fileName
+					};
+				},
+				getNamespace : function() {
+					return this.namespace;
+				},
+				getPackage : function() {
+					return this.packageName;
+				}
+			};
+
+			var sLayer = "CUSTOMER";
+
 			var aMockLocalChanges = [oMockNewChange];
 
 			sandbox.stub(Utils, "getClient").returns('');
@@ -2464,13 +2487,17 @@ function (
 			var fnGetChangesForComponentStub = sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aMockLocalChanges));
 			var fnPrepareChangesForTransportStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "_prepareChangesForTransport").returns(Promise.resolve());
 
-			return this.oChangePersistence.transportAllUIChanges().then(function(){
+			return this.oChangePersistence.transportAllUIChanges(null, null, sLayer, oAppVariantDescriptor).then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(fnCheckTransportInfoStub.calledOnce, "then checkTransportInfo called once");
 				assert.ok(fnGetChangesForComponentStub.calledOnce, "then getChangesForComponent called once");
 				assert.ok(fnPrepareChangesForTransportStub.calledOnce, "then _prepareChangesForTransport called once");
-				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges), "then _prepareChangesForTransport called with the transport info and changes array");
-			});
+				assert.ok(fnPrepareChangesForTransportStub.calledWith(oMockTransportInfo, aMockLocalChanges, oAppVariantDescriptor, {
+					reference: this._mComponentProperties.name,
+					appVersion: this._mComponentProperties.appVersion,
+					layer: sLayer
+				}), "then _prepareChangesForTransport called with the transport info and changes array");
+			}.bind(this));
 		});
 
 		QUnit.test("when calling transportAllUIChanges unsuccessfully", function(assert){
