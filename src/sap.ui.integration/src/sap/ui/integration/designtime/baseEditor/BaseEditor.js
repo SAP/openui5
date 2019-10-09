@@ -2,21 +2,27 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/core/Control",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/merge",
-	"sap/base/util/deepClone",
+	"sap/base/util/isPlainObject",
+	"sap/base/util/restricted/_merge",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/i18n/ResourceBundle"
-], function(
+	"sap/base/i18n/ResourceBundle",
+	"sap/base/Log"
+], function (
+	createPromise,
 	Control,
 	ResourceModel,
 	ObjectPath,
 	merge,
-	deepClone,
+	isPlainObject,
+	_merge,
 	JSONModel,
-	ResourceBundle
+	ResourceBundle,
+	Log
 ) {
 	"use strict";
 
@@ -26,7 +32,7 @@ sap.ui.define([
 	 * Configurable JSON editor.
 	 * <h4>Example:</h4>
 	 * <pre>
-	 * 	sap.ui.require(['sap/ui/integration/designtime/controls/BaseEditor'], function(Editor) {
+	 * 	sap.ui.require(["sap/ui/integration/designtime/baseEditor/BaseEditor"], function(Editor) {
 	 *		var oJson = {
 	 *			root: {
 	 *				context: {
@@ -64,8 +70,8 @@ sap.ui.define([
 	 *				}
 	 *			},
 	 *			"propertyEditors": {
-	 *				"enum" : "sap/ui/integration/designtime/controls/propertyEditors/EnumStringEditor",
-	 *				"string" : "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"
+	 *				"enum" : "sap/ui/integration/designtime/baseEditor/propertyEditors/enumStringEditor/EnumStringEditor",
+	 *				"string" : "sap/ui/integration/designtime/baseEditor/propertyEditors/stringEditor/StringEditor"
 	 *			}
 	 *		});
 	 *		oEditor.attachJsonChanged(function(oEvent) {
@@ -77,7 +83,7 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * @extends sap.ui.core.Control
-	 * @alias sap.ui.integration.designtime.controls.BaseEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.BaseEditor
 	 * @author SAP SE
 	 * @since 1.70.0
 	 * @version ${version}
@@ -89,11 +95,13 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				/**
-				 * JSON to be changed in the editor. Note: object passed as parameter won't be mutated, .getJson() or .attachJsonChanged() should be used instead to get the changed object
+				 * JSON to be changed in the editor. Note: object passed as parameter won't be mutated, .getJson() or
+				 * .attachJsonChange() should be used instead to get the changed object
 				 */
 				"json": {
 					type: "object"
 				},
+
 				/**
 				 * Configuration map
 				 *   config.context {string} path in the JSON, which will be edited e.g. "path/subpath" for json.path.subpath
@@ -104,13 +112,14 @@ sap.ui.define([
 				 *     config.properties.<key>.value {string|boolean} (optional) value of the property, binding relative to context (model name) should be used, e.g. {context>header/name} will create a binding json.root.header.name
 				 *     config.properties.<key>.tags {array} strings to categorize the property
 				 *     config.properties.<key>.visible {string|boolean} should be used as binding relative to context to define conditions, when this property should be possible to change, e.g. {= ${context>anotherProperty} === 'someValue'}
-				 *	   config.properties.<key>.<other configurations> {any} it is possible to define additional configurations in this namespace. This configurations will be passed to the dedicated property editor. Binding strings relative to context model are supported also, e.g. {= ${context>someProperty} + ${context>anotherProperty}}.
+				 *     config.properties.<key>.<other configurations> {any} it is possible to define additional configurations in this namespace. This configurations will be passed to the dedicated property editor. Binding strings relative to context model are supported also, e.g. {= ${context>someProperty} + ${context>anotherProperty}}.
 				 *   config.propertyEditors {map} define, which property editors should be loaded. Key is property type and value is editor module path. E.g. propertyEditors: {"string": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"} defines module responsible for all properties with the type "string"
 				 *   config.i18n {string|array} module path or array of paths for i18n property files. i18n binding, e.g. {i18n>key} is available in the "properties" section, e.g. for "label"
 				 */
 				"config": {
 					type: "object"
 				},
+
 				"_defaultConfig": {
 					type: "object",
 					visibility: "hidden",
@@ -135,13 +144,16 @@ sap.ui.define([
 				/**
 				 * Fired when any property has been changed by the propertyEditor
 				 */
-				jsonChanged: {
+				jsonChange: {
 					parameters: {
-						json: {type: "object"}
+						json: {
+							type: "object"
+						}
 					}
 				},
 				/**
 				 * Fired when all property editors for the given json and config are created
+				 * TODO: remove this public event
 				 */
 				propertyEditorsReady: {
 					parameters: {
@@ -151,76 +163,100 @@ sap.ui.define([
 			}
 		},
 
+		constructor: function() {
+			this._mPropertyEditors = {};
+			this._mEditorClasses = {};
+			this._aCancelHandlers = [];
+
+			Control.prototype.constructor.apply(this, arguments);
+		},
+
 		renderer: function(oRm, oControl) {
 			var aContent = oControl.getContent();
 
-			oRm.openStart("div", oControl);
-			oRm.openEnd();
 
 			if (aContent.length) {
 				aContent.forEach(function(oChildControl) {
 					oRm.renderControl(oChildControl);
 				});
 			} else {
+				oRm.openStart("div", oControl);
+				oRm.openEnd();
+
 				oControl.getPropertyEditorsSync().forEach(function(oPropertyEditor) {
 					oRm.renderControl(oPropertyEditor);
 				});
+
+				oRm.close("div");
 			}
-
-			oRm.close("div");
-		},
-
-		exit: function() {
-			this._cleanup();
-		},
-
-		setJson: function(vJson) {
-			var oJson;
-			if (typeof vJson === "string") {
-				oJson = JSON.parse(vJson);
-			} else {
-				// to avoid that object is changed outside of the editor
-				oJson = deepClone(vJson);
-			}
-			var vReturn = this.setProperty("json", oJson, false);
-			this._initialize();
-			return vReturn;
-		},
-
-		/**
-		 * To be used only in constructor when inheriting from BaseEditor to add additional default config
-		 * @param  {object} oConfig to merge with previous default
-		 */
-		addDefaultConfig: function(oConfig) {
-			this.setProperty("_defaultConfig",
-				this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
-			);
-			this.setConfig(this._oUnmergedConfig || {});
-			return this;
-		},
-
-		setConfig: function(oConfig) {
-			this._oUnmergedConfig = oConfig;
-			return this._setConfig(
-				this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
-			);
 		}
 	});
 
-	BaseEditor.prototype._mergeConfig = function(oTarget, oSource) {
+	BaseEditor.prototype.exit = function () {
+		this._reset();
+	};
+
+	BaseEditor.prototype.setJson = function (vJson) {
+		var mJson;
+
+		if (typeof vJson === "string") {
+			try {
+				mJson = JSON.parse(vJson);
+			} catch (e) {
+				Log.error("sap.ui.integration.designtime.baseEditor.BaseEditor: invalid JSON string is specified");
+			}
+		} else if (isPlainObject(vJson)) {
+			// to avoid that object is changed outside of the editor
+			mJson = _merge({}, vJson);
+		} else {
+			Log.error("sap.ui.integration.designtime.baseEditor.BaseEditor: unsupported data type specified in setJson()");
+		}
+
+		if (mJson) {
+			this.setProperty("json", mJson, false);
+			this._initialize();
+		}
+
+		return this;
+	};
+
+	/**
+	 * To be used only in constructor when inheriting from BaseEditor to add additional default config
+	 * @param  {object} oConfig to merge with previous default
+	 */
+	BaseEditor.prototype.addDefaultConfig = function (oConfig) {
+		this.setProperty("_defaultConfig",
+			this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+		);
+		this.setConfig(this._oUnmergedConfig || {});
+		return this;
+	};
+
+	BaseEditor.prototype.setConfig = function (oConfig) {
+		this._oUnmergedConfig = oConfig;
+		return this._setConfig(
+			this._mergeConfig(this.getProperty("_defaultConfig"), oConfig)
+		);
+	};
+
+	BaseEditor.prototype._mergeConfig = function (oTarget, oSource) {
 		var oResult = merge({}, oTarget, oSource);
 		// concat i18n properties to avoid override
 		oResult.i18n = [].concat(oTarget.i18n || [], oSource.i18n || []);
 		return oResult;
 	};
 
-	BaseEditor.prototype._setConfig = function(oConfig) {
+	BaseEditor.prototype._setConfig = function (oConfig) {
 		var vReturn = this.setProperty("config", oConfig, false);
 		this._initialize();
 		return vReturn;
 	};
 
-	BaseEditor.prototype._cleanup = function(oConfig) {
+	BaseEditor.prototype._reset = function () {
+		this._aCancelHandlers.forEach(function (fnCancel) {
+			fnCancel();
+		});
+
 		if (this._oI18nModel) {
 			this._oI18nModel.destroy();
 			delete this._oI18nModel;
@@ -229,24 +265,61 @@ sap.ui.define([
 			this._oContextModel.destroy();
 			delete this._oContextModel;
 		}
-		delete this._mEditorClasses;
+
+
+		this._mEditorClasses = {};
+
+		Object.keys(this._mPropertyEditors).forEach(function (sPropertyName) {
+			this._mPropertyEditors[sPropertyName].destroy();
+		}, this);
+
 		this._mPropertyEditors = {};
+
 		this.destroyAggregation("_propertyEditors");
 	};
 
-	BaseEditor.prototype._initialize = function() {
-		this._cleanup();
-		var oJson = this.getJson();
-		var oConfig = this.getConfig();
-		if (oJson && oConfig && oConfig.properties) {
-			var oContext = oJson;
-			if (oConfig.context) {
-				oContext = ObjectPath.get(oConfig.context.split("/"), this.getJson());
-			}
-			this._oContextModel = new JSONModel(oContext);
-			this._oContextModel.setDefaultBindingMode("OneWay");
-			this._createI18nModel().then(this._createEditors.bind(this));
+	BaseEditor.prototype._initialize = function () {
+		this._reset();
+		var mJson = this.getJson();
+		var mConfig = this.getConfig();
+		if (mJson && mConfig && mConfig.properties) {
+			this._oContextModel = this._createContextModel();
+
+			this._createI18nModel()
+				.then(function (aBundles) {
+					if (aBundles.length) {
+						var oBundle = aBundles.shift();
+
+						if (!this._oI18nModel) {
+							this._oI18nModel = new ResourceModel({
+								bundle: oBundle
+							});
+							this.setModel(this._oI18nModel, "i18n");
+							this._oI18nModel.setDefaultBindingMode("OneWay");
+						} else {
+							aBundles.forEach(function (oBundle) {
+								this._oI18nModel.enhance(oBundle);
+							}, this);
+						}
+					}
+				}.bind(this))
+				.then(this._createEditors.bind(this));
 		}
+	};
+
+	BaseEditor.prototype._createContextModel = function () {
+		var mJson = this.getJson();
+		var mContext = mJson;
+		var mConfig = this.getConfig();
+
+		if (mConfig.context) {
+			mContext = ObjectPath.get(mConfig.context.split("/"), mJson);
+		}
+
+		var oModel = new JSONModel(mContext);
+		oModel.setDefaultBindingMode("OneWay");
+
+		return oModel;
 	};
 
 	/**
@@ -254,84 +327,97 @@ sap.ui.define([
 	 * I18n model created from all i18n bundles in the merged config.
 	 * To separate properties from different bundles namespacing should be used, e.g. i18n>BASE_EDITOR.PROPERTY
 	 */
-	BaseEditor.prototype._createI18nModel = function() {
-		var oConfig = this.getConfig();
-
-		return Promise.all(
-			oConfig.i18n.map(function (sI18nPath) {
-				return new Promise(function (fnResolve, fnReject) {
-					ResourceBundle.create({
-						url: sap.ui.require.toUrl(sI18nPath),
-						async: true
-					})
-						.then(function (oBundle) {
-							if (!this._oI18nModel) {
-								this._oI18nModel = new ResourceModel({
-									bundle: oBundle
-								});
-								this.setModel(this._oI18nModel, "i18n");
-								this._oI18nModel.setDefaultBindingMode("OneWay");
-							} else {
-								this._oI18nModel.enhance(oBundle);
-							}
-							fnResolve();
-						}.bind(this))
-						.catch(fnReject);
-				}.bind(this));
-			}.bind(this))
-		);
+	BaseEditor.prototype._createI18nModel = function () {
+		return this._createPromise(function (fnResolve, fnRejected) {
+			var oConfig = this.getConfig();
+			Promise.all(
+				oConfig.i18n.map(function (sI18nPath) {
+					return new Promise(function (fnResolve, fnReject) {
+						ResourceBundle.create({
+							url: sap.ui.require.toUrl(sI18nPath),
+							async: true
+						}).then(fnResolve, fnReject);
+					});
+				})
+			).then(fnResolve, fnRejected);
+		}.bind(this));
 	};
 
 	/**
 	 * Requires all editor modules and creates editor instances for all configurable properties
 	 */
-	BaseEditor.prototype._createEditors = function() {
+	BaseEditor.prototype._createEditors = function () {
 		var oConfig = this.getConfig();
-		var aTypes = Object.keys(oConfig.propertyEditors);
-		var aModules = aTypes.map(function(sType) {
-			return oConfig.propertyEditors[sType];
-		});
 
-		this._mEditorClasses = {};
+		return Promise.all(
+			Object.keys(oConfig.properties).map(function(sPropertyName) {
+				var oPropertyConfig = this.getConfig().properties[sPropertyName];
+				return Promise.all([sPropertyName, this.createPropertyEditor(oPropertyConfig)]);
+			}.bind(this))
+		).then(function (aPropertyEditors) {
+			aPropertyEditors.forEach(function (mPropertyEditor) {
+				var sPropertyName = mPropertyEditor[0];
+				var oPropertyEditor = mPropertyEditor[1];
 
-		this._iCreateEditorsCallCount = (this._iCreateEditorsCallCount || 0) + 1;
-		var iCurrentCall = this._iCreateEditorsCallCount;
-		sap.ui.require(aModules, function() {
-			// check whether this is still the most recent call of _createEditors (otherwise config is invalid)
-			if (this._iCreateEditorsCallCount === iCurrentCall) {
-				Array.from(arguments).forEach(function(Editor, iIndex) {
-					this._mEditorClasses[aTypes[iIndex]] = Editor;
-				}.bind(this));
-
-				Object.keys(oConfig.properties).forEach(function(sPropertyName) {
-					var oPropertyConfig = this.getConfig().properties[sPropertyName];
-					var oEditor = this.createPropertyEditor(oPropertyConfig);
-					if (oEditor) {
-						this._mPropertyEditors[sPropertyName] = oEditor;
-						this.addAggregation("_propertyEditors", this._mPropertyEditors[sPropertyName]);
-					}
-				}.bind(this));
-
-				this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
-			}
+				if (oPropertyEditor) {
+					this._mPropertyEditors[sPropertyName] = oPropertyEditor;
+					oPropertyEditor.attachPropertyChanged(this._onPropertyChanged.bind(this));
+					this.addAggregation("_propertyEditors", oPropertyEditor);
+				}
+			}, this);
+			this.firePropertyEditorsReady({propertyEditors: this.getPropertyEditorsSync()});
 		}.bind(this));
+
 	};
 
-	BaseEditor.prototype.createPropertyEditor = function(oPropertyConfig) {
-		var Editor = this._mEditorClasses[oPropertyConfig.type];
-		if (Editor) {
-			var oPropertyEditor = new Editor({
-				editor: this
+	BaseEditor.prototype._createPromise = function (fn) {
+		var mPromise = createPromise(fn);
+		this._aCancelHandlers.push(mPromise.cancel);
+
+		var removeHandler = function (fnCancel, vResolvedValue) {
+			this._aCancelHandlers = this._aCancelHandlers.filter(function (fn) {
+				return fn !== fnCancel;
 			});
-			oPropertyEditor.setModel(this._oContextModel, "_context");
-			oPropertyEditor.setModel(this._oI18nModel, "i18n");
-			// deepClone to avoid editor modifications to influence the outer config
-			oPropertyEditor.setConfig(deepClone(oPropertyConfig));
-			oPropertyEditor.attachPropertyChanged(this._onPropertyChanged.bind(this));
-			// TODO: control styling via editor properties?
-			oPropertyEditor.addStyleClass("sapUiTinyMargin");
-			return oPropertyEditor;
-		}
+			return vResolvedValue;
+		}.bind(this, mPromise.cancel);
+
+		return mPromise.promise.then(removeHandler, removeHandler);
+	};
+
+	BaseEditor.prototype._loadClasses = function (aModules) {
+		return this._createPromise(function (fnResolve, fnReject) {
+			sap.ui.require(
+				aModules,
+				function () {
+					fnResolve(Array.from(arguments));
+				},
+				fnReject
+			);
+		});
+	};
+
+	BaseEditor.prototype.createPropertyEditor = function (oPropertyConfig) {
+		var mConfig = this.getConfig();
+		var aTypes = Object.keys(mConfig.propertyEditors);
+		var aModules = aTypes.map(function(sType) {
+			return mConfig.propertyEditors[sType];
+		});
+
+		return this._loadClasses(aModules).then(function (aClasses) {
+			var Editor = aClasses[aTypes.indexOf(oPropertyConfig.type)];
+			if (Editor) {
+				var oPropertyEditor = new Editor({
+					editor: this
+				});
+				oPropertyEditor.setModel(this._oContextModel, "_context");
+				oPropertyEditor.setModel(this._oI18nModel, "i18n");
+				oPropertyEditor.setConfig(_merge({}, oPropertyConfig)); // deep clone to avoid editor modifications to influence the outer config
+
+				// TODO: control styling via editor properties?
+				oPropertyEditor.addStyleClass("sapUiTinyMargin");
+				return oPropertyEditor;
+			}
+		}.bind(this));
 	};
 
 	BaseEditor.prototype.getPropertyEditor = function (sPropertyName) {
@@ -347,7 +433,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	BaseEditor.prototype.getPropertyEditorSync = function(sPropertyName) {
+	BaseEditor.prototype.getPropertyEditorSync = function (sPropertyName) {
 		return this._mPropertyEditors[sPropertyName];
 	};
 
@@ -364,7 +450,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	BaseEditor.prototype.getPropertyEditorsSync = function(vTag) {
+	BaseEditor.prototype.getPropertyEditorsSync = function (vTag) {
 		var hasTag = function(oPropertyEditor, sTag) {
 			return oPropertyEditor.getConfig().tags && (oPropertyEditor.getConfig().tags.indexOf(sTag) !== -1);
 		};
@@ -386,15 +472,15 @@ sap.ui.define([
 		}
 	};
 
-	BaseEditor.prototype._onPropertyChanged = function(oEvent) {
+	BaseEditor.prototype._onPropertyChanged = function (oEvent) {
 		var sPath = oEvent.getParameter("path");
 		var aParts = sPath.split("/");
 
 		this._oContext = this._oContextModel.getData();
 		ObjectPath.set(aParts, oEvent.getParameter("value"), this._oContext);
 		this._oContextModel.checkUpdate();
-		this.fireJsonChanged({
-			json: deepClone(this.getJson()) // to avoid manipulations with the json outside of the editor
+		this.fireJsonChange({
+			json: _merge({}, this.getJson()) // to avoid manipulations with the json outside of the editor
 		});
 	};
 

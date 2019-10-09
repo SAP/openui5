@@ -53,13 +53,18 @@ sap.ui.define([
 						]
 					})
 				});
-				Object.keys(oItem).forEach(function(sItemProperty) {
-					var oItemConfig = oItem[sItemProperty];
-					var oSubEditor = this.getEditor().createPropertyEditor(oItemConfig);
-					oSubEditor.getLabel().setDesign("Standard");
 
-					oGroup.addItem(oSubEditor);
-				}.bind(this));
+				Promise.all(
+					Object.keys(oItem).map(function(sItemProperty) {
+						var oItemConfig = oItem[sItemProperty];
+						return this.getEditor().createPropertyEditor(oItemConfig);
+					}.bind(this))
+				).then(function (aPropertyEditors) {
+					aPropertyEditors.forEach(function (oPropertyEditor) {
+						oPropertyEditor.getLabel().setDesign("Standard");
+						oGroup.addItem(oPropertyEditor);
+					});
+				});
 
 				return oGroup;
 

@@ -4,10 +4,10 @@
 sap.ui.define(function () {
 	"use strict";
 
-	return function (oControl) {
+	return function (oControl, sClassName) {
 		function findUp(oControl) {
 			if (oControl) {
-				if (oControl.isA("sap.ui.integration.designtime.baseEditor.BaseEditor")) {
+				if (oControl.isA(sClassName)) {
 					return oControl;
 				} else {
 					return findUp(oControl.getParent());

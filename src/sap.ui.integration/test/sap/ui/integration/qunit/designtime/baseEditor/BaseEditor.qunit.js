@@ -67,7 +67,7 @@ sap.ui.define([
 				}
 			});
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
-				this.oBaseEditor.attachJsonChanged(function(oEvent) {
+				this.oBaseEditor.attachJsonChange(function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("json").context.prop1, "test", "Then the value is updated in JSON");
 					assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
 					done();

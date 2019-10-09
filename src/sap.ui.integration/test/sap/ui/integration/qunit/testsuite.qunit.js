@@ -58,17 +58,29 @@ sap.ui.define(function () {
 					]
 				}
 			},
-			"designtime": {
+			"designtime/baseEditor/BaseEditor": {
 				coverage: {
 					only: [
-						"sap/ui/integration/designtime/baseEditor/BaseEditor",
-						"sap/ui/integration/designtime/baseEditor/ObjectBinding"
+						"sap/ui/integration/designtime/baseEditor/BaseEditor"
 					]
 				},
-				module: [
-					'./designtime/baseEditor/BaseEditor.qunit',
-					'./designtime/baseEditor/ObjectBinding.qunit'
-				]
+				sinon: false
+			},
+			"designtime/baseEditor/util/ObjectBinding": {
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/ObjectBinding"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/createPromise": {
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/createPromise"
+					]
+				},
+				sinon: false
 			},
 			"AllCards": {
 				ui5: {

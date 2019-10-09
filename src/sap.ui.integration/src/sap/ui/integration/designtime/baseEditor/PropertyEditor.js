@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/integration/designtime/baseEditor/util/findClosestEditor"
+	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance"
 ], function (
 	Control,
-	findClosestEditor
+	findClosestInstance
 ) {
 	"use strict";
 
@@ -104,7 +104,7 @@ sap.ui.define([
 	};
 
 	PropertyEditor.prototype._propagationListener = function () {
-		var oEditor = findClosestEditor(this.getParent());
+		var oEditor = findClosestInstance(this.getParent(), "sap.ui.integration.designtime.baseEditor.BaseEditor");
 		if (oEditor) {
 			this.setEditor(oEditor);
 			this.removePropagationListener(this._propagationListener);
@@ -115,7 +115,7 @@ sap.ui.define([
 		Control.prototype.setParent.apply(this, arguments);
 
 		if (this._bEditorAutoDetect) {
-			var oEditor = findClosestEditor(oParent);
+			var oEditor = findClosestInstance(oParent, "sap.ui.integration.designtime.baseEditor.BaseEditor");
 
 			if (oEditor) {
 				this.setEditor(oEditor);
