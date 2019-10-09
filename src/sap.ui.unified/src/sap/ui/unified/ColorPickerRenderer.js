@@ -77,6 +77,10 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device"],
 		}
 
 		oRm.write("<div class='sapUiCPDefaultWrapper'>");
+		if (Device.system.phone) {
+			oRm.renderControl(oControl.getAggregation("_oHexField"));
+			oRm.write("<div class='sapUiCPHexText'>Hex</div>");
+		}
 		oRm.write("<div class='sapUiCPDefaultRGB'>");
 		oRm.renderControl(oControl.getAggregation("_oRedField"));
 		this.renderEmptyDiv(oRm);

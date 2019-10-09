@@ -534,6 +534,13 @@
 		display: none;
 	}
 
+	&.sapUiCPDisplayRGB.sapUiCPHexVisible .sapUiCPDefaultRGB,
+	&.sapUiCPDisplayRGB.sapUiCPHexVisible .sapUiCPRGBText,
+	&.sapUiCPDisplayRGB.sapUiCPHexVisible .sapUiCPDefaultHSLV,
+	&.sapUiCPDisplayRGB.sapUiCPHexVisible .sapUiCPDefaultHSLV {
+		display: none;
+	}
+
 	//on desktop the button has to be smaller
 	&:not(.sapUiCPPhone) .sapMBtn {
 		.sapMBtnInner {
@@ -545,11 +552,25 @@
 		}
 	}
 	&.sapUiCPPhone {
+		.sapUiColorPicker-ColorPickerHexField.sapMInputBase,
 		.sapUiCPDefaultRGB,
 		.sapUiCPDefaultHSLV,
 		.sapUiCPHSLVText,
 		.sapUiCPRGBText {
 			width: ~"calc(100% - 3.438rem)"; //100% minus button's width (2.5rem) + space between
+		}
+		.sapUiCPDefaultWrapper .sapUiCPHexText {
+			text-align: center;
+			font-size: 14px;
+			color: @sapUiContentLabelColor;
+			padding-right: 3.438rem;
+		}
+		.sapUiColorPicker-ColorPickerHexField {
+			margin-top:0.25rem;
+		}
+		&.sapUiCPHideHex .sapUiColorPicker-ColorPickerHexField,
+		&.sapUiCPHideHex .sapUiCPDefaultWrapper .sapUiCPHexText {
+			display: none;
 		}
 	}
 }
@@ -635,6 +656,9 @@
 //unified compact mode
 .sapUiSizeCompact {
 	.sapUnifiedColorPicker {
+		&.sapUiCPPhone .sapUiColorPicker-ColorPickerHexField {
+			margin-top:0.2rem;
+		}
 		&.sapUiCPPhone .sapUiCPComparisonWrapper {
 			margin-top: 0.5rem;
 			.sapUiColorPicker-ColorPickerOldColor,

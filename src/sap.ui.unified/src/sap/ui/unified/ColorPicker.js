@@ -2422,6 +2422,10 @@ sap.ui.define([
 		}
 		//unified: the class must be added here in order to toggle it in the button press
 		this.addStyleClass("sapUiCPDisplayRGB");
+		if (Device.system.phone) {
+			// toggle fields - HEX field will be visible initially on mobile
+			this._toggleFields();
+		}
 	};
 
 	/**
@@ -2528,9 +2532,7 @@ sap.ui.define([
 			tooltip: oRb.getText("COLORPICKER_TOGGLE_BTN_TOOLTIP"),
 			icon: "sap-icon://source-code",
 			press: function(oEvent) {
-				//todo add third state - an input field must be shown
-				that.toggleStyleClass("sapUiCPDisplayRGB", that.bPressed);
-				that.bPressed = !that.bPressed;
+				that._toggleFields();
 			}
 		});
 		this.setAggregation("_oButton", this.oButton, true);
@@ -2558,6 +2560,34 @@ sap.ui.define([
 		this.setAggregation("_oValField", this.oValField, true);
 		this.setAggregation("_oSlider", this.oSlider, true);
 		this.setAggregation("_oAlphaSlider", this.oAlphaSlider, true);
+	};
+
+	ColorPicker.prototype._toggleFields = function() {
+		if (!Device.system.phone) {
+			this.toggleStyleClass("sapUiCPDisplayRGB", this.bPressed);
+			this.bPressed = !this.bPressed;
+		} else {
+			switch (this.sVisibleFiled) {
+			case "HSL":
+				this.removeStyleClass("sapUiCPHexVisible");
+				this.toggleStyleClass("sapUiCPDisplayRGB", false);
+				this.addStyleClass("sapUiCPHideHex");
+				this.sVisibleFiled = "RGB";
+				break;
+			case "RGB":
+				this.removeStyleClass("sapUiCPHexVisible");
+				this.addStyleClass("sapUiCPHideHex");
+				this.toggleStyleClass("sapUiCPDisplayRGB", true);
+				this.sVisibleFiled = "Hex";
+				break;
+			case "Hex":
+			default:
+				this.addStyleClass("sapUiCPHexVisible");
+				this.removeStyleClass("sapUiCPHideHex");
+				this.sVisibleFiled = "HSL";
+				break;
+			}
+		}
 	};
 
 	return ColorPicker;
