@@ -6,7 +6,7 @@ sap.ui.define([
 	], function(jQuery, Device, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.ui.layout.sample.HorizontalLayout.C", {
+	return Controller.extend("sap.ui.layout.sample.HorizontalLayout.C", {
 
 		onInit: function () {
 			this.getView().setModel(new JSONModel({
@@ -20,8 +20,5 @@ sap.ui.define([
 			this.getView().setModel(oImgModel, "img");
 		}
 	});
-
-
-	return CController;
 
 });

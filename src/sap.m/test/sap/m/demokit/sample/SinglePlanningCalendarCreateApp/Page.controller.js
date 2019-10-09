@@ -11,7 +11,7 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
-	var PageController = Controller.extend("sap.m.sample.SinglePlanningCalendarCreateApp.Page", {
+	return Controller.extend("sap.m.sample.SinglePlanningCalendarCreateApp.Page", {
 
 		onInit: function() {
 
@@ -536,6 +536,4 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 		}
 
 	});
-
-	return PageController;
 });

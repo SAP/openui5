@@ -8,7 +8,7 @@
 					showAddNewButton="true"
 					class="sapUiResponsiveContentPadding"
 					addNewButtonPress="addNewButtonPressHandler" itemClose="itemCloseHandler">
-		<items >
+		<items>
 			<TabContainerItem
 				name="{name}"
 				additionalText="{position}"
@@ -23,32 +23,28 @@
 						<f:layout>
 								<f:ResponsiveGridLayout/>
 						</f:layout>
-						<f:formContainers>
-							<f:FormContainer>
-								<f:formElements>
-									<f:FormElement label="First Name">
-										<f:fields>
-											<Text text="{empFirstName}"/>
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement label="Last Name">
-										<f:fields>
-											<Text text="{empLastName}" />
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement label="Position">
-										<f:fields>
-											<Text text="{position}" />
-										</f:fields>
-									</f:FormElement>
-									<f:FormElement label="Salary">
-										<f:fields>
-											<Text text="{salary} EUR"/>
-										</f:fields>
-									</f:FormElement>
-								</f:formElements>
-							</f:FormContainer>
-						</f:formContainers>
+						<f:FormContainer>
+							<f:FormElement label="First Name">
+								<f:fields>
+									<Text text="{empFirstName}"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Last Name">
+								<f:fields>
+									<Text text="{empLastName}" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Position">
+								<f:fields>
+									<Text text="{position}" />
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Salary">
+								<f:fields>
+									<Text text="{salary} EUR"/>
+								</f:fields>
+							</f:FormElement>
+						</f:FormContainer>
 					</f:Form>
 				</content>
 			</TabContainerItem>

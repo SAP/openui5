@@ -6,7 +6,7 @@ sap.ui.define([
 	function (Controller, JSONModel, MessageBox) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendar.Page", {
+		return Controller.extend("sap.m.sample.PlanningCalendar.Page", {
 
 			onInit: function () {
 				// create model
@@ -472,7 +472,5 @@ sap.ui.define([
 			}
 
 		});
-
-		return PageController;
 
 	});

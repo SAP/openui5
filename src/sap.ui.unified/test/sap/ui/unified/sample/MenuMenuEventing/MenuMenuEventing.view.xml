@@ -1,14 +1,10 @@
 <mvc:View
 	controllerName="sap.ui.unified.sample.MenuMenuEventing.MenuMenuEventing"
 	xmlns:l="sap.ui.layout"
-	xmlns:u="sap.ui.unified"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	class="viewPadding">
 	<l:HorizontalLayout>
-		<l:content>
-			<Button id="openMenu" text="Open Menu" press="handlePressOpenMenu" />
-
-		</l:content>
+		<Button id="openMenu" text="Open Menu" press="handlePressOpenMenu" />
 	</l:HorizontalLayout>
 </mvc:View>

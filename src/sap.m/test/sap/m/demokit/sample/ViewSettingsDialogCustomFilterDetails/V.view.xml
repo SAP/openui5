@@ -6,16 +6,14 @@
 	<l:VerticalLayout
 			class="sapUiContentPadding"
 			width="100%">
-		<l:content>
-			<Button
-					text="Search Contains"
-					press="handleOpenDialogSearchContains" />
-			<Button
-					text="Search Any Word Starts With"
-					press="handleOpenDialogSearchWordsStartWith" />
-			<Button
-					text="Search Case Sensitive Contains"
-					press="handleOpenDialogCustomSearch" />
-		</l:content>
+		<Button
+				text="Search Contains"
+				press="handleOpenDialogSearchContains" />
+		<Button
+				text="Search Any Word Starts With"
+				press="handleOpenDialogSearchWordsStartWith" />
+		<Button
+				text="Search Case Sensitive Contains"
+				press="handleOpenDialogCustomSearch" />
 	</l:VerticalLayout>
 </mvc:View>

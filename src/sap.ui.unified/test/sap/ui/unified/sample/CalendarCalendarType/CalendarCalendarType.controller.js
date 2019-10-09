@@ -1,12 +1,14 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
-	function(Controller, DateRange) {
+sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/format/DateFormat'],
+	function(Controller, DateFormat) {
 	"use strict";
 
-	var CalendarCalendarTypeController = Controller.extend("sap.ui.unified.sample.CalendarCalendarType.CalendarCalendarType", {
+	var CalendarType = sap.ui.core.CalendarType;
+
+	return Controller.extend("sap.ui.unified.sample.CalendarCalendarType.CalendarCalendarType", {
 		oFormatYyyymmdd: null,
 
 		onInit: function() {
-			this.oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Gregorian});
+			this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
 		},
 
 		handleCalendarSelect: function(oEvent) {
@@ -15,19 +17,17 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 		},
 
 		_updateText: function(oCalendar) {
-			var oText = this.byId("selectedDate");
-			var aSelectedDates = oCalendar.getSelectedDates();
-			var oDate;
-			oDate = aSelectedDates[0].getStartDate();
+			var oText = this.byId("selectedDate"),
+				aSelectedDates = oCalendar.getSelectedDates(),
+				oDate = aSelectedDates[0].getStartDate();
+
 			oText.setText(this.oFormatYyyymmdd.format(oDate));
 		},
 
-		handleFocusToday: function(oEvent) {
+		handleFocusToday: function() {
 			var oCalendar = this.byId("calendar");
 			oCalendar.focusDate(new Date());
 		}
 	});
-
-	return CalendarCalendarTypeController;
 
 });

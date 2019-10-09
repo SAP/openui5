@@ -1,12 +1,14 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
-	function(Controller, DateRange) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/ui/core/format/DateFormat'],
+	function(Controller, DateRange, DateFormat) {
 	"use strict";
+
+	var CalendarType = sap.ui.core.CalendarType;
 
 	return Controller.extend("sap.ui.unified.sample.CalendarDateIntervalBasic.CalendarDateIntervalBasic", {
 		oFormatYyyymmdd: null,
 
 		onInit: function() {
-			this.oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Gregorian});
+			this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
 		},
 
 		handleCalendarSelect: function(oEvent) {

@@ -1,25 +1,30 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/core/format/DateFormat'],
+	function(Controller, JSONModel, DateFormat) {
 	"use strict";
 
-	var CalendarMultipleDaySelectionController = Controller.extend("sap.ui.unified.sample.CalendarMultipleDaySelection.CalendarMultipleDaySelection", {
+	var CalendarType = sap.ui.core.CalendarType;
+
+	return Controller.extend("sap.ui.unified.sample.CalendarMultipleDaySelection.CalendarMultipleDaySelection", {
 		oFormatYyyymmdd: null,
 		oModel: null,
 
 		onInit: function() {
-			this.oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Gregorian});
+			this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
 
 			this.oModel = new JSONModel({selectedDates:[]});
 			this.getView().setModel(this.oModel);
 		},
 
 		handleCalendarSelect: function(oEvent) {
-			var oCalendar = oEvent.getSource();
-			var aSelectedDates = oCalendar.getSelectedDates();
-			var oDate;
-			var oData = {selectedDates:[]};
+			var oCalendar = oEvent.getSource(),
+				aSelectedDates = oCalendar.getSelectedDates(),
+				oData = {
+					selectedDates: []
+				},
+				oDate,
+				i;
 			if (aSelectedDates.length > 0 ) {
-				for (var i = 0; i < aSelectedDates.length; i++){
+				for (i = 0; i < aSelectedDates.length; i++){
 					oDate = aSelectedDates[i].getStartDate();
 					oData.selectedDates.push({Date:this.oFormatYyyymmdd.format(oDate)});
 				}
@@ -29,7 +34,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			}
 		},
 
-		handleRemoveSelection: function(oEvent) {
+		handleRemoveSelection: function() {
 			this.byId("calendar").removeAllSelectedDates();
 			this._clearModel();
 		},
@@ -39,7 +44,5 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			this.oModel.setData(oData);
 		}
 	});
-
-	return CalendarMultipleDaySelectionController;
 
 });

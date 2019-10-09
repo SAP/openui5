@@ -1,7 +1,6 @@
 <mvc:View
 	controllerName="sap.m.sample.SinglePlanningCalendarCreateApp.Page"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns:unified="sap.ui.unified"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">

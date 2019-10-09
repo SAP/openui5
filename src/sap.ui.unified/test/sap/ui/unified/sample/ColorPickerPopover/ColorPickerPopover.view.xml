@@ -2,7 +2,6 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		controllerName="sap.ui.unified.sample.ColorPickerPopover.ColorPickerPopover"
 		xmlns="sap.m">
-
 	<Table id="samplesTable" headerText="Color Picker in a Popover" class="sapUiLargeMarginBottom">
 		<columns>
 			<Column width="30%">
@@ -12,44 +11,41 @@
 				<Text text="Click 'Value help' icon to select color"/>
 			</Column>
 		</columns>
-		<items>
-			<ColumnListItem>
-				<cells>
-					<Label text='Default displayMode'/>
-					<Input id="colorD"
-						type="Text"
-						width="200px"
-						placeholder="Enter Color ..."
-						showValueHelp="true"
-						valueHelpRequest="openDefaultModeSample"
-						change="handleInputChange"/>
-				</cells>
-			</ColumnListItem>
-			<ColumnListItem>
-				<cells>
-					<Label text='Large displayMode'/>
-					<Input id="colorL"
-						type="Text"
-						width="200px"
-						placeholder="Enter Color ..."
-						showValueHelp="true"
-						valueHelpRequest="openLargeModeSample"
-						change="handleInputChange"/>
-				</cells>
-			</ColumnListItem>
-			<ColumnListItem>
-				<cells>
-					<Label text='Simplified displayMode'/>
-					<Input id="colorS"
-						type="Text"
-						width="200px"
-						placeholder="Enter Color ..."
-						showValueHelp="true"
-						valueHelpRequest="openSimplifiedModeSample"
-						change="handleInputChange"/>
-				</cells>
-			</ColumnListItem>
-
-		</items>
+		<ColumnListItem>
+			<cells>
+				<Label text='Default displayMode'/>
+				<Input id="colorD"
+					type="Text"
+					width="200px"
+					placeholder="Enter Color ..."
+					showValueHelp="true"
+					valueHelpRequest="openDefaultModeSample"
+					change="handleInputChange"/>
+			</cells>
+		</ColumnListItem>
+		<ColumnListItem>
+			<cells>
+				<Label text='Large displayMode'/>
+				<Input id="colorL"
+					type="Text"
+					width="200px"
+					placeholder="Enter Color ..."
+					showValueHelp="true"
+					valueHelpRequest="openLargeModeSample"
+					change="handleInputChange"/>
+			</cells>
+		</ColumnListItem>
+		<ColumnListItem>
+			<cells>
+				<Label text='Simplified displayMode'/>
+				<Input id="colorS"
+					type="Text"
+					width="200px"
+					placeholder="Enter Color ..."
+					showValueHelp="true"
+					valueHelpRequest="openSimplifiedModeSample"
+					change="handleInputChange"/>
+			</cells>
+		</ColumnListItem>
 	</Table>
 </mvc:View>

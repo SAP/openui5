@@ -1,23 +1,30 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller'
-], function(Controller) {
+	'sap/ui/core/mvc/Controller',
+	'sap/m/ResponsivePopover',
+	'sap/ui/unified/ColorPicker',
+	'sap/m/Button',
+	'sap/ui/Device'
+], function(Controller, ResponsivePopover, ColorPicker, Button, Device) {
 	"use strict";
 
-	var ColorPicker = Controller.extend("sap.ui.unified.sample.ColorPicker.Controller", {
+	var ColorPickerMode = sap.ui.unified.ColorPickerMode,
+		ColorPickerDisplayMode = sap.ui.unified.ColorPickerDisplayMode;
+
+	return Controller.extend("sap.ui.unified.sample.ColorPicker.Controller", {
 		openPopover: function(oEvent) {
-			var oRP = new sap.m.ResponsivePopover({
+			var oRP = new ResponsivePopover({
 				title: "Color Picker",
 				content:[
-					new sap.ui.unified.ColorPicker({
-						mode: sap.ui.unified.ColorPickerMode.HSL,
-						displayMode: sap.ui.unified.ColorPickerDisplayMode.Simplified
+					new ColorPicker({
+						mode: ColorPickerMode.HSL,
+						displayMode: ColorPickerDisplayMode.Simplified
 					})
 				]
 			});
 
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				oRP.setBeginButton(
-					new sap.m.Button({
+					new Button({
 						text: "Submit",
 						press: function () {
 							oRP.close();
@@ -25,7 +32,7 @@ sap.ui.define([
 					})
 				);
 				oRP.setEndButton(
-					new sap.m.Button({
+					new Button({
 						text: "Cancel",
 						press: function () {
 							oRP.close();
@@ -38,7 +45,5 @@ sap.ui.define([
 			oRP.openBy(oEvent.getSource());
 		}
 	});
-
-	return ColorPicker;
 
 });

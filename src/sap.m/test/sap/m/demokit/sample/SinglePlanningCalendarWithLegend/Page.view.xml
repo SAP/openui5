@@ -1,7 +1,6 @@
 <mvc:View
 	controllerName="sap.m.sample.SinglePlanningCalendarWithLegend.Page"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns:unified="sap.ui.unified"
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
@@ -12,50 +11,48 @@
 		showSideContent="{path: 'stateModel>/legendShown'}"
 		containerQuery="true"
 		breakpointChanged="updateToggleButtonState">
-	<l:mainContent>
-	<VBox>
-		<SinglePlanningCalendar
-			id="SPC1"
-			class="sapUiSmallMarginTop"
-			title= "My Calendar"
-			startHour="8"
-			endHour="20"
-			fullDay="false"
-			appointmentSelect="handleAppointmentSelect"
-			headerDateSelect="handleHeaderDateSelect"
-			startDateChange="handleStartDateChange"
-			startDate="{path: '/startDate'}"
-			appointments="{path: '/appointments'}"
-			specialDates="{path: '/specialDates'}"
-			legend="SinglePlanningCalendarLegend">
-			<actions>
-				<ToggleButton text="Full Day" press="toggleFullDay"/>
-				<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
-			</actions>
-			<views>
-				<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
-				<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
-				<SinglePlanningCalendarDayView key="DayView" title="Day" />
-			</views>
-			<specialDates>
-				<unified:DateTypeRange
-						startDate="{start}"
-						endDate="{end}"
-						type="{type}"/>
-			</specialDates>
-			<appointments>
-				<unified:CalendarAppointment
-					title= "{title}"
-					text= "{text}"
-					type= "{type}"
-					icon= "{icon}"
-					startDate= "{startDate}"
-					endDate= "{endDate}">
-				</unified:CalendarAppointment>
-			</appointments>
-		</SinglePlanningCalendar>
-	</VBox>
-	</l:mainContent>
+		<VBox>
+			<SinglePlanningCalendar
+				id="SPC1"
+				class="sapUiSmallMarginTop"
+				title= "My Calendar"
+				startHour="8"
+				endHour="20"
+				fullDay="false"
+				appointmentSelect="handleAppointmentSelect"
+				headerDateSelect="handleHeaderDateSelect"
+				startDateChange="handleStartDateChange"
+				startDate="{path: '/startDate'}"
+				appointments="{path: '/appointments'}"
+				specialDates="{path: '/specialDates'}"
+				legend="SinglePlanningCalendarLegend">
+				<actions>
+					<ToggleButton text="Full Day" press="toggleFullDay"/>
+					<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
+				</actions>
+				<views>
+					<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+					<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+					<SinglePlanningCalendarDayView key="DayView" title="Day" />
+				</views>
+				<specialDates>
+					<unified:DateTypeRange
+							startDate="{start}"
+							endDate="{end}"
+							type="{type}"/>
+				</specialDates>
+				<appointments>
+					<unified:CalendarAppointment
+						title= "{title}"
+						text= "{text}"
+						type= "{type}"
+						icon= "{icon}"
+						startDate= "{startDate}"
+						endDate= "{endDate}">
+					</unified:CalendarAppointment>
+				</appointments>
+			</SinglePlanningCalendar>
+		</VBox>
 		<l:sideContent width="200px">
 			<PlanningCalendarLegend id="SinglePlanningCalendarLegend" items="{path : '/legendItems', templateShareable: true}" appointmentItems="{path : '/legendAppointmentItems',
 									templateShareable: true}" class="sapUiSmallMarginTop">

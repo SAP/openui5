@@ -1,83 +1,78 @@
 <mvc:View
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<VBox
 		class="sapUiSmallMargin" >
-		<items>
+		<HBox>
+			<Switch state="true">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="true" enabled="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</HBox>
 
-			<HBox>
-				<Switch state="true">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch state="false">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch state="true" enabled="false">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-			</HBox>
+		<HBox>
+			<Switch state="true" customTextOn="Yes" customTextOff="No">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="false" customTextOn="Yes" customTextOff="No">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="true" customTextOn="Yes" customTextOff="No" enabled="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</HBox>
 
-			<HBox>
-				<Switch state="true" customTextOn="Yes" customTextOff="No">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch state="false" customTextOn="Yes" customTextOff="No">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch state="true" customTextOn="Yes" customTextOff="No" enabled="false">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-			</HBox>
+		<HBox>
+			<Switch state="true" customTextOn=" " customTextOff=" ">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="false" customTextOn=" " customTextOff=" ">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="true" customTextOn=" " customTextOff=" " enabled="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</HBox>
 
-			<HBox>
-				<Switch state="true" customTextOn=" " customTextOff=" ">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch state="false" customTextOn=" " customTextOff=" ">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch state="true" customTextOn=" " customTextOff=" " enabled="false">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-			</HBox>
-
-			<HBox>
-				<Switch type="AcceptReject" state="true">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch type="AcceptReject" state="false">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-				<Switch type="AcceptReject" state="true" enabled="false">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Switch>
-			</HBox>
-
-		</items>
+		<HBox>
+			<Switch type="AcceptReject" state="true">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch type="AcceptReject" state="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch type="AcceptReject" state="true" enabled="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</HBox>
 	</VBox>
 </mvc:View>

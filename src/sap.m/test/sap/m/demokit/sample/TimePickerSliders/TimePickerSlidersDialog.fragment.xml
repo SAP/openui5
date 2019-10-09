@@ -8,8 +8,7 @@
 			valueFormat="hh:mm:ss a"
 			displayFormat="hh:mm a"
 			change="handleChange"
-			height="400px"
-		/>
+			height="400px"/>
 		<buttons>
 			<Button
 				text="OK"

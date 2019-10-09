@@ -2,17 +2,15 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 	function(MessageToast, Controller) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ToggleButton.Page", {
+	return Controller.extend("sap.m.sample.ToggleButton.Page", {
 
-			onPress: function (evt) {
-			if (evt.getSource().getPressed()) {
-				MessageToast.show(evt.getSource().getId() + " Pressed");
+			onPress: function (oEvent) {
+			if (oEvent.getSource().getPressed()) {
+				MessageToast.show(oEvent.getSource().getId() + " Pressed");
 			} else {
-				MessageToast.show(evt.getSource().getId() + " Unpressed");
+				MessageToast.show(oEvent.getSource().getId() + " Unpressed");
 			}
 		}
 	});
-
-	return PageController;
 
 });

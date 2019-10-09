@@ -6,7 +6,7 @@ sap.ui.define([
 	], function(jQuery, MessageBox, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.ObjectIdentifier.C", {
+	return Controller.extend("sap.m.sample.ObjectIdentifier.C", {
 
 		onInit : function (evt) {
 			// set explored app's demo model on this sample
@@ -17,8 +17,5 @@ sap.ui.define([
 			MessageBox.alert("Title was clicked!");
 		}
 	});
-
-
-	return CController;
 
 });

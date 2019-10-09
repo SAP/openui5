@@ -1,11 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessageToast'
+	], function(Controller,JSONModel, MessageToast) {
 	"use strict";
 
-	var TableController = Controller.extend("sap.m.sample.ObjectMarker.Table", {
+	return Controller.extend("sap.m.sample.ObjectMarker.Table", {
 
 		onInit: function () {
 			var aData = [
@@ -21,16 +21,14 @@ sap.ui.define([
 				{ product: "Deskjet Super Highspeed", type: "Flagged" }
 			];
 
-			var oModel = new sap.ui.model.json.JSONModel({
+			var oModel = new JSONModel({
 				modelData: aData
 			});
 			this.getView().setModel(oModel);
 		},
 		onPress: function(oEvent) {
-			sap.m.MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
+			MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
 		}
 	});
-
-	return TableController;
 
 });

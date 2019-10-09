@@ -1,12 +1,14 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange', 'sap/m/MessageToast'],
-	function(Controller, DateRange, MessageToast) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/unified/DateRange', 'sap/m/MessageToast', 'sap/ui/core/format/DateFormat'],
+	function(Controller, DateRange, MessageToast, DateFormat) {
 	"use strict";
 
-	var CalendarSingleIntervalSelectionController = Controller.extend("sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection", {
+	var CalendarType = sap.ui.core.CalendarType;
+
+	return Controller.extend("sap.ui.unified.sample.CalendarSingleIntervalSelection.CalendarSingleIntervalSelection", {
 		oFormatYyyymmdd: null,
 
 		onInit: function() {
-			this.oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: sap.ui.core.CalendarType.Gregorian});
+			this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
 		},
 
 		handleCalendarSelect: function(oEvent) {
@@ -15,9 +17,10 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange', 'sap/m/M
 		},
 
 		_updateText: function(oSelectedDates) {
-			var oSelectedDateFrom = this.byId("selectedDateFrom");
-			var oSelectedDateTo = this.byId("selectedDateTo");
-			var oDate;
+			var oSelectedDateFrom = this.byId("selectedDateFrom"),
+				oSelectedDateTo = this.byId("selectedDateTo"),
+				oDate;
+
 			if (oSelectedDates) {
 				oDate = oSelectedDates.getStartDate();
 				if (oDate) {
@@ -37,17 +40,17 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange', 'sap/m/M
 			}
 		},
 
-		handleSelectThisWeek: function(oEvent) {
+		handleSelectThisWeek: function() {
 			this._selectWeekInterval(6);
 		},
 
-		handleSelectWorkWeek: function(oEvent) {
+		handleSelectWorkWeek: function() {
 			this._selectWeekInterval(4);
 		},
 
 		handleWeekNumberSelect: function(oEvent) {
-			var oDateRange = oEvent.getParameter("weekDays");
-			var iWeekNumber = oEvent.getParameter("weekNumber");
+			var oDateRange = oEvent.getParameter("weekDays"),
+				iWeekNumber = oEvent.getParameter("weekNumber");
 
 			if (iWeekNumber % 5 === 0) {
 				oEvent.preventDefault();
@@ -58,13 +61,12 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange', 'sap/m/M
 		},
 
 		_selectWeekInterval: function(iDays) {
-			var oCurrent = new Date();     // get current date
-			var iWeekstart = oCurrent.getDate() - oCurrent.getDay() + 1;
-			var iWeekend = iWeekstart + iDays;       // end day is the first day + 6
-			var oMonday = new Date(oCurrent.setDate(iWeekstart));
-			var oSunday = new Date(oCurrent.setDate(iWeekend));
-
-			var oCalendar = this.byId("calendar");
+			var oCurrent = new Date(), // get current date
+				iWeekStart = oCurrent.getDate() - oCurrent.getDay() + 1,
+				iWeekEnd = iWeekStart + iDays, // end day is the first day + 6
+				oMonday = new Date(oCurrent.setDate(iWeekStart)),
+				oSunday = new Date(oCurrent.setDate(iWeekEnd)),
+				oCalendar = this.byId("calendar");
 
 			oCalendar.removeAllSelectedDates();
 			oCalendar.addSelectedDate(new DateRange({startDate: oMonday, endDate: oSunday}));
@@ -72,7 +74,5 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange', 'sap/m/M
 			this._updateText(oCalendar.getSelectedDates()[0]);
 		}
 	});
-
-	return CalendarSingleIntervalSelectionController;
 
 });

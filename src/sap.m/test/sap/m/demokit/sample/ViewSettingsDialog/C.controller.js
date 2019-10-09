@@ -1,32 +1,39 @@
 sap.ui.define([
-		'jquery.sap.global',
 		'sap/m/MessageToast',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller'
-	], function(jQuery, MessageToast, Fragment, Controller) {
+	], function(MessageToast, Fragment, Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.ViewSettingsDialog.C", {
-		_getDialog : function () {
+	return Controller.extend("sap.m.sample.ViewSettingsDialog.C", {
+		_openDialog : function (sState) {
 			if (!this._oDialog) {
-				this._oDialog = sap.ui.xmlfragment("sap.m.sample.ViewSettingsDialog.Dialog", this);
-				this.getView().addDependent(this._oDialog);
+				Fragment.load({
+					name: "sap.m.sample.ViewSettingsDialog.Dialog",
+					controller: this
+				}).then(function(oDialog){
+					this._oDialog = oDialog;
+					this.getView().addDependent(this._oDialog);
+					this._oDialog.open(sState);
+				}.bind(this));
+			} else {
+				this._oDialog.open(sState);
 			}
-			return this._oDialog;
 		},
+
 		handleOpenDialog: function () {
-			this._getDialog().open();
+			this._openDialog();
 		},
+
 		handleOpenDialogFilter: function () {
-			this._getDialog().open("filter");
+			this._openDialog("filter");
 		},
+
 		handleConfirm: function (oEvent) {
 			if (oEvent.getParameters().filterString) {
 				MessageToast.show(oEvent.getParameters().filterString);
 			}
 		}
 	});
-
-	return CController;
 
 });

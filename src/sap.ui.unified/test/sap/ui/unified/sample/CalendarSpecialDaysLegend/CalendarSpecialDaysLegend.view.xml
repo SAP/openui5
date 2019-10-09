@@ -4,19 +4,16 @@
 		xmlns:u="sap.ui.unified"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
-		xmlns:html="http://www.w3.org/1999/xhtml"
 		class="viewPadding">
 	<l:VerticalLayout>
-		<l:content>
-			<u:Calendar
-					id="calendar1" legend="legend1"/>
-			<u:CalendarLegend
-					id="legend1" />
-			<u:Calendar
-					id="calendar2" legend="legend2"/>
-			<u:CalendarLegend
-					id="legend2" standardItems="Today"/>
-		</l:content>
-		<ToggleButton text="Special Days" press="handleShowSpecialDays"></ToggleButton>
+		<u:Calendar
+				id="calendar1" legend="legend1"/>
+		<u:CalendarLegend
+				id="legend1" />
+		<u:Calendar
+				id="calendar2" legend="legend2"/>
+		<u:CalendarLegend
+				id="legend2" standardItems="Today"/>
+		<ToggleButton text="Special Days" press="handleShowSpecialDays"/>
 	</l:VerticalLayout>
 </mvc:View>

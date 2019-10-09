@@ -1,17 +1,14 @@
 sap.ui.define([
-	"sap/m/Button",
-	"sap/m/Dialog",
-	"sap/ui/core/Fragment",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/library"
 ],
-function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary) {
+function(Controller, JSONModel, unifiedLibrary) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
-	var PageController = Controller.extend("sap.m.sample.SinglePlanningCalendarWithLegend.Page", {
+	return Controller.extend("sap.m.sample.SinglePlanningCalendarWithLegend.Page", {
 
 		onInit: function() {
 
@@ -308,5 +305,4 @@ function(Button, Dialog, Fragment, Controller, JSONModel, unifiedLibrary) {
 
 	});
 
-	return PageController;
 });

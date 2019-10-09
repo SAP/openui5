@@ -1,9 +1,15 @@
-sap.ui.define(['sap/m/library','sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(library, Controller, JSONModel) {
+sap.ui.define(['sap/m/library',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/core/library',
+		'sap/ui/core/Core',
+		'sap/ui/model/json/JSONModel'],
+	function(library, Controller, coreLibrary, Core, JSONModel) {
 		"use strict";
 
 		var TimePickerMaskMode = library.TimePickerMaskMode,
-			TPController = Controller.extend("sap.m.sample.TimePicker.TimePicker", {
+			ValueState = coreLibrary.ValueState;
+
+		return Controller.extend("sap.m.sample.TimePicker.TimePicker", {
 
 			onInit: function () {
 				// create model
@@ -19,37 +25,37 @@ sap.ui.define(['sap/m/library','sap/ui/core/mvc/Controller','sap/ui/model/json/J
 				this._iEvent = 0;
 
 				// for the data binding example do not use the change event for check but the data binding parsing events
-				sap.ui.getCore().attachParseError(
+				Core.attachParseError(
 					function(oEvent) {
 						var oElement = oEvent.getParameter("element");
 
 						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.Error);
+							oElement.setValueState(ValueState.Error);
 						}
 					});
 
-				sap.ui.getCore().attachValidationSuccess(
+				Core.attachValidationSuccess(
 					function(oEvent) {
 						var oElement = oEvent.getParameter("element");
 
 						if (oElement.setValueState) {
-							oElement.setValueState(sap.ui.core.ValueState.None);
+							oElement.setValueState(ValueState.None);
 						}
 					});
 			},
 
 			handleChange: function (oEvent) {
-				var oText = this.byId("T1");
-				var oTP = oEvent.getSource();
-				var sValue = oEvent.getParameter("value");
-				var bValid = oEvent.getParameter("valid");
+				var oText = this.byId("T1"),
+					oTP = oEvent.getSource(),
+					sValue = oEvent.getParameter("value"),
+					bValid = oEvent.getParameter("valid");
 				this._iEvent++;
 				oText.setText("Change - Event " + this._iEvent + ": TimePicker " + oTP.getId() + ":" + sValue);
 
 				if (bValid) {
-					oTP.setValueState(sap.ui.core.ValueState.None);
+					oTP.setValueState(ValueState.None);
 				} else {
-					oTP.setValueState(sap.ui.core.ValueState.Error);
+					oTP.setValueState(ValueState.Error);
 				}
 			},
 
@@ -63,7 +69,5 @@ sap.ui.define(['sap/m/library','sap/ui/core/mvc/Controller','sap/ui/model/json/J
 				this.byId("TP5").setMaskMode(sMaskMode);
 			}
 		});
-
-		return TPController;
 
 	});

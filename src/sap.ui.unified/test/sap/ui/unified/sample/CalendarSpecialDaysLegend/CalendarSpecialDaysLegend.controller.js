@@ -5,17 +5,20 @@ sap.ui.define([
 	], function(Controller, CalendarLegendItem, DateTypeRange) {
 	"use strict";
 
-	var CalendarSpecialDaysLegendController = Controller.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend", {
+	var CalendarDayType = 	sap.ui.unified.CalendarDayType;
+
+	return Controller.extend("sap.ui.unified.sample.CalendarSpecialDaysLegend.CalendarSpecialDaysLegend", {
 
 		handleShowSpecialDays: function(oEvent) {
-			var oCal1 = this.byId("calendar1");
-			var oLeg1 = this.byId("legend1");
-			var oCal2 = this.byId("calendar2");
-			var oLeg2 = this.byId("legend2");
-			var bPressed = oEvent.getParameter("pressed");
+			var oCal1 = this.byId("calendar1"),
+				oLeg1 = this.byId("legend1"),
+				oCal2 = this.byId("calendar2"),
+				oLeg2 = this.byId("legend2"),
+				bPressed = oEvent.getParameter("pressed"),
+				oRefDate;
 
 			if (bPressed) {
-				var oRefDate = new Date();
+				oRefDate = new Date();
 				for (var i = 1; i <= 10; i++) {
 					oRefDate.setDate(i);
 					var sType = "";
@@ -46,32 +49,32 @@ sap.ui.define([
 				oCal1.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(11)),
 					endDate : new Date(oRefDate.setDate(21)),
-					type : sap.ui.unified.CalendarDayType.NonWorking
+					type : CalendarDayType.NonWorking
 				}));
 
 				oCal1.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(25)),
-					type : sap.ui.unified.CalendarDayType.NonWorking
+					type : CalendarDayType.NonWorking
 				}));
 
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(22)),
-					type : sap.ui.unified.CalendarDayType.NonWorking
+					type : CalendarDayType.NonWorking
 				}));
 
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(22)),
-					type : sap.ui.unified.CalendarDayType.Type03
+					type : CalendarDayType.Type03
 				}));
 
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(24)),
-					type : sap.ui.unified.CalendarDayType.NonWorking
+					type : CalendarDayType.NonWorking
 				}));
 
 				oCal2.addSpecialDate(new DateTypeRange({
 					startDate : new Date(oRefDate.setDate(24)),
-					type : sap.ui.unified.CalendarDayType.Type03
+					type : CalendarDayType.Type03
 				}));
 
 			} else {
@@ -82,7 +85,5 @@ sap.ui.define([
 			}
 		}
 	});
-
-	return CalendarSpecialDaysLegendController;
 
 });

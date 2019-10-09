@@ -4,15 +4,13 @@
 	<Dialog
 			title="Dialog with Segmented Button"
 			class="sapUiContentPadding">
-		<content>
-			<SegmentedButton selectedKey="SBApproved" width="100%">
-				<items>
-					<SegmentedButtonItem text="Approved" key="SBApproved"/>
-					<SegmentedButtonItem text="Rejected"/>
-					<SegmentedButtonItem text="Lookup"/>
-				</items>
-			</SegmentedButton>
-		</content>
+		<SegmentedButton selectedKey="SBApproved" width="100%">
+			<items>
+				<SegmentedButtonItem text="Approved" key="SBApproved"/>
+				<SegmentedButtonItem text="Rejected"/>
+				<SegmentedButtonItem text="Lookup"/>
+			</items>
+		</SegmentedButton>
 		<beginButton>
 			<Button text="Close" press="onCloseDialog"/>
 		</beginButton>

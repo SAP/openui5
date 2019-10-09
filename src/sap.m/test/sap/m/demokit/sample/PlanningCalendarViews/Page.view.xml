@@ -19,10 +19,8 @@
 				<Title text="Title" titleStyle="H4"/>
 				<Label id="label" text="Select a date from the interval to mark/unmark it as a non-working day."/>
 				<Select id="select" tooltip="Group appointments mode" change="handleGroupModeChange">
-					<items>
-						<core:Item key="Collapsed" text="Collapsed"/>
-						<core:Item key="Expanded" text="Expanded"/>
-					</items>
+					<core:Item key="Collapsed" text="Collapsed"/>
+					<core:Item key="Expanded" text="Expanded"/>
 				</Select>
 			</toolbarContent>
 			<views>
@@ -99,13 +97,11 @@
 				selectionFinish="handleSelectionFinish"
 				width="230px"
 				placeholder="Choose built-in views">
-			<items>
-				<core:Item key="Hour" text="Hour" />
-				<core:Item key="Day" text="Day" />
-				<core:Item key="Month" text="Month" />
-				<core:Item key="Week" text="1 week" />
-				<core:Item key="One Month" text="1 month" />
-			</items>
+			<core:Item key="Hour" text="Hour" />
+			<core:Item key="Day" text="Day" />
+			<core:Item key="Month" text="Month" />
+			<core:Item key="Week" text="1 week" />
+			<core:Item key="One Month" text="1 month" />
 		</MultiComboBox>
 		<Label text="Add or remove custom views:"/>
 		<ToggleButton text="Toggle custom views" press="onPress" />

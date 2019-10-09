@@ -4,13 +4,10 @@
 	xmlns="sap.ui.unified"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
-
 	<m:Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
-		<m:content>
-			<m:VBox class="sapUiSmallMargin">
-				<ColorPicker id="cp" mode="HSL" displayMode="Simplified"/>
-				<m:Button text="Open ColorPicker in a ResponsivePopover" press="openPopover"/>
-			</m:VBox>
-		</m:content>
+		<m:VBox class="sapUiSmallMargin">
+			<ColorPicker id="cp" mode="HSL" displayMode="Simplified"/>
+			<m:Button text="Open ColorPicker in a ResponsivePopover" press="openPopover"/>
+		</m:VBox>
 	</m:Page>
 </mvc:View>

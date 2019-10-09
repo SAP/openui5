@@ -6,7 +6,7 @@ sap.ui.define([
 	function (Controller, JSONModel, MessageBox) {
 		"use strict";
 
-		var PageController = Controller.extend("sap.m.sample.PlanningCalendarWithStickyHeader.Page", {
+		return Controller.extend("sap.m.sample.PlanningCalendarWithStickyHeader.Page", {
 
 			onInit: function () {
 				// create model
@@ -1085,13 +1085,15 @@ sap.ui.define([
 
 			handleAppointmentSelect: function (oEvent) {
 				var oAppointment = oEvent.getParameter("appointment"),
-					sSelected;
+					sSelected,
+					aAppointments,
+					sValue;
 				if (oAppointment) {
 					sSelected = oAppointment.getSelected() ? "selected" : "deselected";
 					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
-					var aAppointments = oEvent.getParameter("appointments");
-					var sValue = aAppointments.length + " Appointments selected";
+					aAppointments = oEvent.getParameter("appointments");
+					sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
 			},
@@ -1102,7 +1104,5 @@ sap.ui.define([
 			}
 
 		});
-
-		return PageController;
 
 	});
