@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>sap.m.QuickView</title>
+	<title>sap.m.QuickViewPage</title>
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
@@ -92,10 +92,74 @@
 			}
 		});
 
+		var oQuickViewPage1 = new sap.m.QuickViewPage({
+			pageId : "{/pageId}",
+			icon: "{/icon}",
+			title: "Link as title - ONE line",
+			titleUrl: "https://www.sap.com",
+			groups : {
+				path : '/groups',
+				templateShareable : true,
+				template : new sap.m.QuickViewGroup({
+					heading : '{heading}',
+					elements : {
+						path : 'elements',
+						templateShareable : true,
+						template : new sap.m.QuickViewGroupElement({
+							label: "{label}",
+							value: "{value}",
+							url: "{url}",
+							type: "{elementType}",
+							pageLinkId: "{pageLinkId}"
+						})
+					}
+				})
+			}
+		});
+
+		var oQuickViewPage2 = new sap.m.QuickViewPage({
+			pageId : "{/pageId}",
+			icon: "{/icon}",
+			title: "Link as title - TWO lines - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+			titleUrl: "https://www.sap.com",
+			groups : {
+				path : '/groups',
+				templateShareable : true,
+				template : new sap.m.QuickViewGroup({
+					heading : '{heading}',
+					elements : {
+						path : 'elements',
+						templateShareable : true,
+						template : new sap.m.QuickViewGroupElement({
+							label: "{label}",
+							value: "{value}",
+							url: "{url}",
+							type: "{elementType}",
+							pageLinkId: "{pageLinkId}"
+						})
+					}
+				})
+			}
+		});
+
 		var oPanel = new sap.m.Panel('quickViewPagePanel', {
 			width : '320px',
 			content : [
 				oQuickViewPage
+			]
+		});
+
+		var oPanel1 = new sap.m.Panel({
+			width : '320px',
+			content : [
+				oQuickViewPage1
+			]
+		});
+
+		var oPanel2 = new sap.m.Panel({
+			width : '320px',
+			content : [
+				oQuickViewPage2
 			]
 		});
 
@@ -104,7 +168,9 @@
 		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View Page",
 			content : [
-				oPanel
+				oPanel,
+				oPanel1,
+				oPanel2
 			]
 		});
 		app.addPage(page);

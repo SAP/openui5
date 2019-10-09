@@ -7,10 +7,23 @@
 @_sap_m_QuickView_HorizontalLayoutIconFontSize: 2.25rem;
 @_sap_m_QuickView_PagePaddingTop: 3rem;
 @_sap_m_QuickView_Compact_PagePaddingTop: 2.5rem;
+@_sap_m_QuickView_TitleMaxHeight: 2.25rem;
 
 .sapMQuickView .sapMNav,
 .sapMQuickViewCard .sapMNav {
 	white-space: nowrap;
+}
+
+.sapMQuickViewCard .sapUiHLayoutChildWrapper a {
+	margin-right: 1px; // this is needed for the focus to be visible on the right side (BCP 1980423560)
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+
+	.sapUiHLayoutChildWrapper .sapMLnk {
+		max-height: @_sap_m_QuickView_TitleMaxHeight; // this is needed for the focus to be visible on the bottom side in IE
+	}
 }
 
 .sapMQuickViewCard.sapMQuickViewCardNoScroll {
@@ -187,7 +200,7 @@ html.sap-phone .sapMQuickViewPage .sapUiHLayout {
 }
 
 .sapMQuickViewPage .sapUiVltCell:first-child {
-	max-height: 2.25rem;
+	max-height: @_sap_m_QuickView_TitleMaxHeight;
 	margin-bottom: 0.5rem;
 	overflow: hidden;
 }
