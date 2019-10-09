@@ -1087,7 +1087,12 @@ sap.ui.define([
 		sProperty = sProperty.replace(/^\/|\/$/g, "");
 		var aParts = sProperty.split("/"); // path could point to a complex type or nav property
 
-		jQuery.each(oEntityType.property, function(k, oProperty) {
+		//for properties it doesn't matter in which Entity (BaseType or derivedType) the property idefined. 
+		//so collect all proeprties over multiple BaseTypes till no BaseType is defined anymore
+		var aEntityProperties = []
+		var aEntityProperties = this.collectPropertiesFromBaseType(oEntityType.name, aEntityProperties)
+		//using collected Properties instead only properties from derivedType!
+		jQuery.each(aEntityProperties, function(k, oProperty) {
 			if (oProperty.name === aParts[0]) {
 				oPropertyMetadata = oProperty;
 				return false;
@@ -1113,6 +1118,36 @@ sap.ui.define([
 		//jQuery.sap.assert(oPropertyMetadata, "PropertyType for property "+ aParts[0]+ " of EntityType " + oEntityType.name + " not found!");
 		return oPropertyMetadata;
 	};
+
+	ODataMetadata.prototype.collectPropertiesFromBaseType = function(sEdmType, aEdmTypeProperties) {
+		var bTypeFound = false
+		var edmType = {}
+		
+		this.oMetadata.dataServices.schema.forEach(function (schema) {
+			if (!bTypeFound) {
+				 edmType = schema.entityType.find(function (entityType) {
+					return entityType.name === sEdmType
+				})
+				if (edmType) {
+					/**
+					 * if an EntityName is unique over all scheme, we can stop the search here
+					 */
+					bTypeFound = true
+					if (edmType.property) {
+						aEdmTypeProperties = aEdmTypeProperties.concat(edmType.property)
+					}
+					
+				}
+			}
+		})
+		if (bTypeFound) {
+            if (edmType.baseType) {
+               return aEdmTypeProperties.concat(this.collectPropertiesFromBaseType(edmType.baseType.substring(edmType.baseType.indexOf('.') + 1), aEdmTypeProperties))
+            } else {
+               return aEdmTypeProperties
+            }
+         }
+	}
 
 	ODataMetadata.prototype.destroy = function() {
 		delete this.oMetadata;
