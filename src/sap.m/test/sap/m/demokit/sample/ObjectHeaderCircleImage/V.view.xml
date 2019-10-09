@@ -1,5 +1,4 @@
 <mvc:View
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<ObjectHeader
@@ -10,10 +9,8 @@
 		responsive="true"
 		title="Denise Smith"
 		intro="Senior Developer" >
-		<attributes>
 			<ObjectAttribute title="Email address" text="DeniseSmith@sap.com" active="true" />
 			<ObjectAttribute title="Office Phone" text="+33 6 453 564" />
 			<ObjectAttribute title="Functional Area" text="Development" />
-		</attributes>
 	</ObjectHeader>
 </mvc:View>

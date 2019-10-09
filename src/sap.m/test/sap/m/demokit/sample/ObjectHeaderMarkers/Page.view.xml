@@ -1,32 +1,27 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.ObjectHeaderMarkers.Page"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
 		binding="{/ProductCollection/0}"
 		showHeader="false" >
-		<content>
-			<ObjectHeader
-				title="{Name}"
-				number="{
-					parts:[{path:'Price'},{path:'CurrencyCode'}],
-					type: 'sap.ui.model.type.Currency',
-					formatOptions: {showMeasure: false}
-				}"
-				numberUnit="{CurrencyCode}"
-				responsive="true">
-				<attributes>
-					<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-					<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-				</attributes>
-				<markers>
-					<ObjectMarker type="Favorite" />
-					<ObjectMarker type="Flagged" />
-					<ObjectMarker type="Draft" />
-				</markers>
-			</ObjectHeader>
-		</content>
+		<ObjectHeader
+			title="{Name}"
+			number="{
+				parts:[{path:'Price'},{path:'CurrencyCode'}],
+				type: 'sap.ui.model.type.Currency',
+				formatOptions: {showMeasure: false}
+			}"
+			numberUnit="{CurrencyCode}"
+			responsive="true">
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+			<markers>
+				<ObjectMarker type="Favorite" />
+				<ObjectMarker type="Flagged" />
+				<ObjectMarker type="Draft" />
+			</markers>
+		</ObjectHeader>
 	</Page>
 </mvc:View>

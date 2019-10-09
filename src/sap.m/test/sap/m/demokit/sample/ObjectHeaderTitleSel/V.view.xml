@@ -14,9 +14,7 @@
 			formatOptions: {showMeasure: false}
 		}"
 		numberUnit="{CurrencyCode}">
-		<attributes>
-			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-		</attributes>
+		<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+		<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
 	</ObjectHeader>
 </mvc:View>

@@ -7,7 +7,7 @@
 		binding="{/ProductCollection/0}"
 		showHeader="false" >
 		<footer>
-			<Toolbar>
+			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button
 					text="Favorite"
@@ -25,25 +25,21 @@
 					text="Unflag"
 					visible="{ff>/isFlagged}"
 					press="handleUnflag" />
-			</Toolbar>
+			</OverflowToolbar>
 		</footer>
-		<content>
-			<ObjectHeader
-				title="{Name}"
-				number="{
-					parts:[{path:'Price'},{path:'CurrencyCode'}],
-					type: 'sap.ui.model.type.Currency',
-					formatOptions: {showMeasure: false}
-				}"
-				numberUnit="{CurrencyCode}"
-				markFavorite="{ff>/isFavorite}"
-				markFlagged="{ff>/isFlagged}"
-				showMarkers="true">
-				<attributes>
-					<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-					<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-				</attributes>
-			</ObjectHeader>
-		</content>
+		<ObjectHeader
+			title="{Name}"
+			number="{
+				parts:[{path:'Price'},{path:'CurrencyCode'}],
+				type: 'sap.ui.model.type.Currency',
+				formatOptions: {showMeasure: false}
+			}"
+			numberUnit="{CurrencyCode}"
+			markFavorite="{ff>/isFavorite}"
+			markFlagged="{ff>/isFlagged}"
+			showMarkers="true">
+				<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+				<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+		</ObjectHeader>
 	</Page>
 </mvc:View>

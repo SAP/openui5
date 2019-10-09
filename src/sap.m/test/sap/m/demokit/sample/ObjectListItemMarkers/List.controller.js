@@ -10,5 +10,4 @@ sap.ui.define([
 			MessageToast.show("Pressed : " + oEvent.getSource().getTitle());
 		}
 	});
-
 });

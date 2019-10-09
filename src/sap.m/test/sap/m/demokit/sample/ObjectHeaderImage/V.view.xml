@@ -1,6 +1,5 @@
 <mvc:View
 	controllerName="sap.m.sample.ObjectHeaderImage.C"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<ObjectHeader
@@ -20,10 +19,8 @@
 				text="In Stock"
 				state="Success" />
 		</statuses>
-		<attributes>
-			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-			<ObjectAttribute text="{Description}" />
-		</attributes>
+		<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+		<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+		<ObjectAttribute text="{Description}" />
 	</ObjectHeader>
 </mvc:View>

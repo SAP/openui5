@@ -5,30 +5,26 @@
 	<List
 		items="{/ProductCollection}"
 		headerText="Products">
-		<items>
-			<ObjectListItem
-				title="{Name}"
-				type="Active"
-				press="onListItemPress"
-				number="{
-					parts:[{path:'Price'},{path:'CurrencyCode'}],
-					type: 'sap.ui.model.type.Currency',
-					formatOptions: {showMeasure: false}
-				}"
-				numberUnit="{CurrencyCode}">
-				<firstStatus>
-					<ObjectStatus
-						text="{Status}"
-						state="{
-							path: 'Status',
-							formatter: 'sap.m.sample.ObjectListItem.Formatter.status'
-						}" />
-				</firstStatus>
-				<attributes>
-					<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-					<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-				</attributes>
-			</ObjectListItem>
-		</items>
+		<ObjectListItem
+			title="{Name}"
+			type="Active"
+			press="onListItemPress"
+			number="{
+				parts:[{path:'Price'},{path:'CurrencyCode'}],
+				type: 'sap.ui.model.type.Currency',
+				formatOptions: {showMeasure: false}
+			}"
+			numberUnit="{CurrencyCode}">
+			<firstStatus>
+				<ObjectStatus
+					text="{Status}"
+					state="{
+						path: 'Status',
+						formatter: 'sap.m.sample.ObjectListItem.Formatter.status'
+					}" />
+			</firstStatus>
+			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+		</ObjectListItem>
 	</List>
 </mvc:View>

@@ -22,11 +22,9 @@
 		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent">
-		<attributes>
-			<ObjectAttribute
-				title="Manufacturer"
-				text="{SupplierName}"/>
-		</attributes>
+		<ObjectAttribute
+			title="Manufacturer"
+			text="{SupplierName}"/>
 		<statuses>
 			<ObjectStatus
 				title="Approval"
@@ -44,49 +42,41 @@
 					text="Info"
 					count="{Quantity}"
 					key="key1">
-					<content>
-						<l:VerticalLayout
-							class="sapUiContentPadding"
-							width="100%">
-							<l:content>
-								<Image src="{ProductPicUrl}"/>
-								<Text text="{Width} x {Depth} x {Height} {DimUnit}"/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
+					<l:VerticalLayout
+						class="sapUiContentPadding"
+						width="100%">
+						<l:content>
+							<Image src="{ProductPicUrl}"/>
+							<Text text="{Width} x {Depth} x {Height} {DimUnit}"/>
+						</l:content>
+					</l:VerticalLayout>
 				</IconTabFilter>
 				<IconTabFilter
 					text="Activities"
 					count="10"
 					key="key2">
-					<content>
-						<l:VerticalLayout
-							class="sapUiContentPadding"
-							width="100%">
-							<l:content>
-								<Text text="Activity content goes here ..."/>
-							</l:content>
-						</l:VerticalLayout>
-					</content>
+					<l:VerticalLayout
+						class="sapUiContentPadding"
+						width="100%">
+						<l:content>
+							<Text text="Activity content goes here ..."/>
+						</l:content>
+					</l:VerticalLayout>
 				</IconTabFilter>
 				<IconTabFilter
 					text="Attachments"
 					count="1"
 					key="key3">
-					<content>
-						<Link text="Attachment" press="onPress"/>
-					</content>
+					<Link text="Attachment" press="onPress"/>
 				</IconTabFilter>
 				<IconTabFilter
 					text="PartnerInfo"
 					key="key4"
 					count="1">
-					<content>
 						<Link
 							text="Partner SAP SE"
 							target="_blank"
 							href="http://www.sap.com/"/>
-					</content>
 				</IconTabFilter>
 				</items>
 			</IconTabBar>

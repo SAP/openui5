@@ -28,18 +28,13 @@
 					<Text text="Time of buying"/>
 				</Column>
 			</columns>
-			<items>
-				<ColumnListItem vAlign="Middle" type="Navigation">
-					<cells>
-						<Text text="{products>Name}" wrapping="false"/>
-						<Text text="{products>SupplierName}" wrapping="false"/>
-						<DatePicker
-								id="datePicker"
-								value="{products>DateOfSale}" valueFormat="yyyy-MM-dd" displayFormat="long"
-								change="handleDateChange"/>
-					</cells>
-				</ColumnListItem>
-			</items>
+			<ColumnListItem vAlign="Middle" type="Navigation">
+				<Text text="{products>Name}" wrapping="false"/>
+				<Text text="{products>SupplierName}" wrapping="false"/>
+				<DatePicker
+						id="datePicker"
+						value="{products>DateOfSale}" valueFormat="yyyy-MM-dd" displayFormat="long"/>
+			</ColumnListItem>
 		</Table>
 	</VBox>
 </mvc:View>

@@ -19,14 +19,12 @@
 				text="In Stock"
 				state="Success" />
 		</statuses>
-		<attributes>
-			<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
-			<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
-			<ObjectAttribute text="{Description}" />
-			<ObjectAttribute
-				text="www.sap.com"
-				active="true"
-				press="handleLinkObjectAttributePress" />
-		</attributes>
+		<ObjectAttribute text="{WeightMeasure} {WeightUnit}" />
+		<ObjectAttribute text="{Width} x {Depth} x {Height} {DimUnit}" />
+		<ObjectAttribute text="{Description}" />
+		<ObjectAttribute
+			text="www.sap.com"
+			active="true"
+			press="handleLinkObjectAttributePress" />
 	</ObjectHeader>
 </mvc:View>

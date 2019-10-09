@@ -1,9 +1,7 @@
 <mvc:View
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:form="sap.ui.layout.form"
 		controllerName="sap.m.sample.ColorPalettePopover.ColorPalettePopover"
 		xmlns="sap.m">
-
 	<Table id="samplesTable" headerText="Color Palette in a Popover" class="sapUiLargeMarginBottom">
 		<columns>
 			<Column>
@@ -13,37 +11,27 @@
 				<Text text="Action"/>
 			</Column>
 		</columns>
-		<items>
-			<ColumnListItem>
-				<cells>
-					<Label text='Default set of colors with both "Default Color" and "More Colors..." buttons'/>
-					<Button press="openFullSample" icon="sap-icon://text-color"/>
-				</cells>
-			</ColumnListItem>
-			<ColumnListItem>
-				<cells>
-					<Label text='Default set of colors without any additional buttons'/>
-					<Button press="openMinimalSample" icon="sap-icon://color-fill"/>
-				</cells>
-			</ColumnListItem>
-			<ColumnListItem>
-				<cells>
-					<Label text='Custom set of colors with "More Colors..." button'/>
-					<Button press="openCustomColorsSample" icon="sap-icon://color-fill"/>
-				</cells>
-			</ColumnListItem>
-			<ColumnListItem>
-				<cells>
-					<Label text='Two custom colors with "Default Color" button'/>
-					<Button press="openMinimalSampleWithDefaultColorButton" icon="sap-icon://palette"/>
-				</cells>
-			</ColumnListItem>
-			<ColumnListItem>
-				<cells>
-					<Label text='Default set of colors with "More Colors..." button and displayMode set to "Simplified"'/>
-					<Button press="openSampleWithDisplayModeSet" icon="sap-icon://color-fill"/>
-				</cells>
-			</ColumnListItem>
-		</items>
+
+		<ColumnListItem>
+			<Label text='Default set of colors with both "Default Color" and "More Colors..." buttons'/>
+			<Button press="openFullSample" icon="sap-icon://text-color"/>
+		</ColumnListItem>
+		<ColumnListItem>
+			<Label text='Default set of colors without any additional buttons'/>
+			<Button press="openMinimalSample" icon="sap-icon://color-fill"/>
+		</ColumnListItem>
+		<ColumnListItem>
+			<Label text='Custom set of colors with "More Colors..." button'/>
+			<Button press="openCustomColorsSample" icon="sap-icon://color-fill"/>
+		</ColumnListItem>
+		<ColumnListItem>
+			<Label text='Two custom colors with "Default Color" button'/>
+			<Button press="openMinimalSampleWithDefaultColorButton" icon="sap-icon://palette"/>
+		</ColumnListItem>
+		<ColumnListItem>
+			<Label text='Default set of colors with "More Colors..." button and displayMode set to "Simplified"'/>
+			<Button press="openSampleWithDisplayModeSet" icon="sap-icon://color-fill"/>
+		</ColumnListItem>
+
 	</Table>
 </mvc:View>

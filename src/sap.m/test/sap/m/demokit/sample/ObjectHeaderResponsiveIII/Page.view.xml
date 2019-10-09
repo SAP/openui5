@@ -25,24 +25,22 @@
 		markFavorite="true"
 		numberState="Success"
 		backgroundDesign="Translucent">
-		<attributes>
-			<ObjectAttribute
-				title="ProductID"
-				text="{ProductId}"/>
-			<ObjectAttribute
-				title="Manufacturer"
-				text="{SupplierName}"
-				active="true"/>
-			<ObjectAttribute
-				title="Category"
-				text="{Category}"/>
-			<ObjectAttribute
-				title="Weight per unit"
-				text="{WeightMeasure} {WeightUnit}"/>
-			<ObjectAttribute
-				title="Dimension per unit"
-				text="{Width} x {Depth} x {Height} {DimUnit}"/>
-		</attributes>
+		<ObjectAttribute
+			title="ProductID"
+			text="{ProductId}"/>
+		<ObjectAttribute
+			title="Manufacturer"
+			text="{SupplierName}"
+			active="true"/>
+		<ObjectAttribute
+			title="Category"
+			text="{Category}"/>
+		<ObjectAttribute
+			title="Weight per unit"
+			text="{WeightMeasure} {WeightUnit}"/>
+		<ObjectAttribute
+			title="Dimension per unit"
+			text="{Width} x {Depth} x {Height} {DimUnit}"/>
 		<statuses>
  			<ObjectStatus
 				title="Approval"

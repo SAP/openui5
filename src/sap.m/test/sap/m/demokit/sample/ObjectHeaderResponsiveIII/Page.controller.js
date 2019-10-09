@@ -1,12 +1,11 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		"sap/ui/core/Fragment"
+], function(Controller, JSONModel, Fragment) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.ObjectHeaderResponsiveIII.Page", {
+	return Controller.extend("sap.m.sample.ObjectHeaderResponsiveIII.Page", {
 
 		onInit: function() {
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
@@ -21,19 +20,30 @@ sap.ui.define([
 
 		_getPopover : function () {
 			if (!this._oPopover) {
-				this._oPopover = sap.ui.xmlfragment("sap.m.sample.ObjectHeaderResponsiveIII.Popover", this);
-				this.getView().addDependent(this._oPopover);
+				return Fragment.load({
+					type: "XML",
+					name: "sap.m.sample.ObjectHeaderResponsiveIII.Popover",
+					controller: this
+				});
+			} else {
+				return this._oPopover;
 			}
-			return this._oPopover;
 		},
 
 		handleTitlePress : function (oEvent) {
-			var domRef = oEvent.getParameter("domRef");
-			this._getPopover().openBy(domRef);
+			var domRef = oEvent.getParameter("domRef"),
+				oPopoverFragment = this._getPopover();
+
+			if (oPopoverFragment instanceof Promise) {
+				oPopoverFragment.then(function(oPopover) {
+					this._oPopover = oPopover;
+					this.getView().addDependent(this._oPopover);
+					oPopover.openBy(domRef);
+				}.bind(this));
+			} else {
+				oPopoverFragment.openBy(domRef);
+			}
 		}
 	});
-
-
-	return PageController;
 
 });

@@ -2,8 +2,8 @@
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core">
 	<Dialog
-			title="Dialog with Segmented Button"
-			class="sapUiContentPadding">
+		title="Dialog with Segmented Button"
+		class="sapUiContentPadding">
 		<SegmentedButton selectedKey="SBApproved" width="100%">
 			<items>
 				<SegmentedButtonItem text="Approved" key="SBApproved"/>
