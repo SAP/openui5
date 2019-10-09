@@ -1199,57 +1199,5 @@ sap.ui.define([
 		assert.ok(oDialog.isOpen(), "Dialog remains opened when closeOnNavigation=false");
 		// clean
 		oDialog.destroy();
-
-		// confirm
-		MessageBox.confirm("Message", {
-			id: "messageId",
-			details: "Lorem ipsum"
-		});
-		this.clock.tick(500);
-
-		oDialog = sap.ui.getCore().byId("messageId");
-
-		InstanceManager.closeAllDialogs();
-		this.clock.tick(500);
-
-		assert.ok(oDialog.isOpen(), "confirm MessageBox remains opened");
-
-		// clean
-		oDialog.destroy();
-
-		// confirm and closeOnNavigation: true
-		MessageBox.confirm("Message", {
-			id: "messageId",
-			details: "Lorem ipsum",
-			closeOnNavigation: true
-		});
-		this.clock.tick(500);
-
-		oDialog = sap.ui.getCore().byId("messageId");
-
-		InstanceManager.closeAllDialogs();
-		this.clock.tick(500);
-
-		assert.notOk(oDialog.isOpen(), "confirm MessageBox is closed");
-
-		// clean
-		oDialog.destroy();
-
-		// error
-		MessageBox.confirm("Message", {
-			id: "messageId",
-			details: "Lorem ipsum"
-		});
-		this.clock.tick(500);
-
-		oDialog = sap.ui.getCore().byId("messageId");
-
-		InstanceManager.closeAllDialogs();
-		this.clock.tick(500);
-
-		assert.ok(oDialog.isOpen(), "error MessageBox remains opened");
-
-		// clean
-		oDialog.destroy();
 	});
 });
