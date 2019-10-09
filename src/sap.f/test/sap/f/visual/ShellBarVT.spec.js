@@ -1,7 +1,9 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe, it, element, by, takeScreenshot, expect, browser*/
 
 describe('sap.f.ShellBarVT', function() {
 	'use strict';
+
+	browser.testrunner.currentSuite.meta.controlName = 'sap.f.ShellBar';
 
 	it('Test page loaded', function() {
 		element(by.css(".sapUiBody")).click();
