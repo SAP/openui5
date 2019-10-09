@@ -471,7 +471,7 @@ sap.ui.define([
 	/**
 	 * Focuses the first visible and editable input or textarea element.
 	 *
-         * @param sContainer ID of the container inside <code>sap.uxap.ObjectPageLayout</code> to search for editable field
+	 * @param sContainer ID of the container inside <code>sap.uxap.ObjectPageLayout</code> to search for editable field
 	 * @restricted
 	 * @since 1.72
 	 */
