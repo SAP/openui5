@@ -74,16 +74,18 @@ sap.ui.define([
 	};
 
 	function saveListWithConnector(oConnector, aList) {
-		oConnector.write({
+		return oConnector.write({
 			flexObjects : aList
 		});
 	}
 
 	function removeListFromStorage(oStorage, aList) {
-		aList.forEach(function (oFlexObject) {
+		var aPromises = aList.map(function (oFlexObject) {
 			var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
-			oStorage.removeItem(sKey);
+			return oStorage.removeItem(sKey);
 		});
+
+		return Promise.all(aPromises);
 	}
 
 	function assertFileWritten(assert, oStorage, oFlexObject, sMessage) {
@@ -94,78 +96,87 @@ sap.ui.define([
 
 	function getNumberOfFlexObjects(oConnector) {
 		var iCount = 0;
-		BrowserStorageUtils.forEachChangeInStorage({storage: oConnector.oStorage}, function() {
+		return BrowserStorageUtils.forEachObjectInStorage({storage: oConnector.oStorage}, function() {
 			iCount++;
+		})
+		.then(function () {
+			return iCount;
 		});
-		return iCount;
 	}
 
 	function parameterizedTest(oConnector, sStorage) {
 		QUnit.module("loadFlexData: Given a " + sStorage, {
 		}, function () {
 			QUnit.test("when write is called with various changes", function (assert) {
-				saveListWithConnector(oConnector, [
+				return saveListWithConnector(oConnector, [
 					oTestData.oChange1,
 					oTestData.oChange2,
 					oTestData.oChange3,
 					oTestData.oVariant1,
 					oTestData.oVariantChange1,
 					oTestData.oVariantManagementChange
-				]);
-				assertFileWritten(assert, oConnector.oStorage, oTestData.oChange1, "change1 was written");
-				assertFileWritten(assert, oConnector.oStorage, oTestData.oChange2, "change2 was written");
-				assertFileWritten(assert, oConnector.oStorage, oTestData.oChange3, "change3 was written");
-				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariant1, "variant1 was written");
-				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantChange1, "variant change1 was written");
-				assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantManagementChange, "variant management change was written");
-
-				// clean up
-				removeListFromStorage(oConnector.oStorage, [
-					oTestData.oChange1,
-					oTestData.oChange2,
-					oTestData.oChange3,
-					oTestData.oVariant1,
-					oTestData.oVariantChange1,
-					oTestData.oVariantManagementChange
-				]);
+				])
+				.then(function () {
+					assertFileWritten(assert, oConnector.oStorage, oTestData.oChange1, "change1 was written");
+					assertFileWritten(assert, oConnector.oStorage, oTestData.oChange2, "change2 was written");
+					assertFileWritten(assert, oConnector.oStorage, oTestData.oChange3, "change3 was written");
+					assertFileWritten(assert, oConnector.oStorage, oTestData.oVariant1, "variant1 was written");
+					assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantChange1, "variant change1 was written");
+					assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantManagementChange, "variant management change was written");
+				})
+				.then(function () {
+					// clean up
+					return removeListFromStorage(oConnector.oStorage, [
+						oTestData.oChange1,
+						oTestData.oChange2,
+						oTestData.oChange3,
+						oTestData.oVariant1,
+						oTestData.oVariantChange1,
+						oTestData.oVariantManagementChange
+					]);
+				});
 			});
 
 			QUnit.test("when loadFeatures is called", function(assert) {
-				return oConnector.loadFeatures().then(function(oFeatues) {
-					assert.deepEqual(oFeatues, {}, "the function resolves with an empty object");
-				});
+				return oConnector.loadFeatures()
+					.then(function(oFeatues) {
+						assert.deepEqual(oFeatues, {}, "the function resolves with an empty object");
+					});
 			});
 
 			// TODO: fix the getFlexInfo to take the mandatory reference parameter into account
 			QUnit.skip("when getFlexInfo is called without changes present", function(assert) {
-				return oConnector.getFlexInfo({storage: oConnector.oStorage}).then(function(oFlexInfo) {
-					var oExpectedFlexInfo = {
-						isResetEnabled: false
-					};
-					assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
-				});
+				return oConnector.getFlexInfo({storage: oConnector.oStorage})
+					.then(function(oFlexInfo) {
+						var oExpectedFlexInfo = {
+							isResetEnabled: false
+						};
+						assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
+					});
 			});
 
 			QUnit.test("when getFlexInfo is called with changes present", function(assert) {
-				saveListWithConnector(oConnector, [
+				return saveListWithConnector(oConnector, [
 					oTestData.oChange1
-				]);
-				return oConnector.getFlexInfo({storage: oConnector.oStorage}).then(function(oFlexInfo) {
-					var oExpectedFlexInfo = {
-						isResetEnabled: true
-					};
-					assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
+				])
+				.then(function () {
+					return oConnector.getFlexInfo({storage: oConnector.oStorage}).then(function(oFlexInfo) {
+						var oExpectedFlexInfo = {
+							isResetEnabled: true
+						};
+						assert.deepEqual(oFlexInfo, oExpectedFlexInfo, "the function resolves with an empty object");
 
-					removeListFromStorage(oConnector.oStorage, [
-						oTestData.oChange1
-					]);
+						return removeListFromStorage(oConnector.oStorage, [
+							oTestData.oChange1
+						]);
+					});
 				});
 			});
 		});
 
 		QUnit.module("loadFlexData: Given some changes in a " + sStorage, {
 			beforeEach: function() {
-				saveListWithConnector(oConnector, [
+				return saveListWithConnector(oConnector, [
 					oTestData.oChange1,
 					oTestData.oChange2,
 					oTestData.oChange3,
@@ -176,7 +187,7 @@ sap.ui.define([
 				]);
 			},
 			afterEach: function() {
-				removeListFromStorage(oConnector.oStorage, [
+				return removeListFromStorage(oConnector.oStorage, [
 					oTestData.oChange1,
 					oTestData.oChange2,
 					oTestData.oChange3,
@@ -188,75 +199,129 @@ sap.ui.define([
 			}
 		}, function () {
 			QUnit.test("when reset is called", function (assert) {
-				var iInitialCount = getNumberOfFlexObjects(oConnector);
-				return oConnector.reset({
-					reference: "sap.ui.fl.test.1",
-					layer: "USER"
-				}).then(function() {
-					var iNewCount = getNumberOfFlexObjects(oConnector);
-					assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
-				});
+				var iInitialCount;
+				return getNumberOfFlexObjects(oConnector)
+					.then(function (iNumberOfChanges) {
+						iInitialCount = iNumberOfChanges;
+					})
+					.then(function () {
+						return oConnector.reset({
+							reference : "sap.ui.fl.test.1",
+							layer : "USER"
+						});
+					})
+					.then(
+						getNumberOfFlexObjects.bind(undefined, oConnector)
+					)
+					.then(function (iNewCount) {
+						assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
+					});
 			});
 
 			QUnit.test("when reset is called with selector ids", function (assert) {
-				var iInitialCount = getNumberOfFlexObjects(oConnector);
-				return oConnector.reset({
-					reference: "sap.ui.fl.test",
-					layer: "CUSTOMER",
-					selectorIds: ["selector1"]
-				}).then(function() {
-					var iNewCount = getNumberOfFlexObjects(oConnector);
-					assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
-				});
+				var iInitialCount;
+				return getNumberOfFlexObjects(oConnector)
+					.then(function (iNumberOfChanges) {
+						iInitialCount = iNumberOfChanges;
+					})
+					.then(function () {
+						return oConnector.reset({
+							reference : "sap.ui.fl.test",
+							layer : "CUSTOMER",
+							selectorIds : ["selector1"]
+						});
+					})
+					.then(
+						getNumberOfFlexObjects.bind(undefined, oConnector)
+					)
+					.then(function (iNewCount) {
+						assert.equal(iInitialCount - iNewCount, 1, "one change got reset");
+					});
 			});
 
 			QUnit.test("when reset is called with change types", function (assert) {
-				var iInitialCount = getNumberOfFlexObjects(oConnector);
-				return oConnector.reset({
-					reference: "sap.ui.fl.test",
-					layer: "CUSTOMER",
-					changeTypes: ["type1"]
-				}).then(function() {
-					var iNewCount = getNumberOfFlexObjects(oConnector);
-					assert.equal(iInitialCount - iNewCount, 2, "two change got reset");
-				});
+				var iInitialCount;
+				return getNumberOfFlexObjects(oConnector)
+					.then(function (iNumberOfChanges) {
+						iInitialCount = iNumberOfChanges;
+					})
+					.then(function () {
+						return oConnector.reset({
+							reference : "sap.ui.fl.test",
+							layer : "CUSTOMER",
+							changeTypes : ["type1"]
+						});
+					})
+					.then(
+						getNumberOfFlexObjects.bind(undefined, oConnector)
+					)
+					.then(function (iNewCount) {
+						assert.equal(iInitialCount - iNewCount, 2, "two change got reset");
+					});
 			});
 
 			QUnit.test("when reset is called with selectors and change types", function (assert) {
-				var iInitialCount = getNumberOfFlexObjects(oConnector);
-				return oConnector.reset({
-					reference: "sap.ui.fl.test",
-					layer: "CUSTOMER",
-					changeTypes: ["type1"],
-					selectorIds: ["selector2"]
-				}).then(function() {
-					var iNewCount = getNumberOfFlexObjects(oConnector);
-					assert.equal(iInitialCount - iNewCount, 0, "no change got reset");
-				});
+				var iInitialCount;
+				return getNumberOfFlexObjects(oConnector)
+					.then(function (iNumberOfChanges) {
+						iInitialCount = iNumberOfChanges;
+					})
+					.then(function () {
+						return oConnector.reset({
+							reference: "sap.ui.fl.test",
+							layer: "CUSTOMER",
+							changeTypes: ["type1"],
+							selectorIds: ["selector2"]
+						});
+					})
+					.then(
+						getNumberOfFlexObjects.bind(undefined, oConnector)
+					)
+					.then(function (iNewCount) {
+						assert.equal(iInitialCount - iNewCount, 0, "no change got reset");
+					});
 			});
 
 			QUnit.test("when remove is called with a saved flex object", function (assert) {
-				var iInitialCount = getNumberOfFlexObjects(oConnector);
-				return oConnector.remove({
-					flexObject: {
-						fileName: oTestData.oChange1.fileName
-					}
-				}).then(function() {
-					var iNewCount = getNumberOfFlexObjects(oConnector);
-					assert.equal(iInitialCount - iNewCount, 1, "one change got removed");
-				});
+				var iInitialCount;
+				return getNumberOfFlexObjects(oConnector)
+					.then(function (iNumberOfChanges) {
+						iInitialCount = iNumberOfChanges;
+					})
+					.then(function () {
+						return oConnector.remove({
+							flexObject: {
+								fileName: oTestData.oChange1.fileName
+							}
+						});
+					})
+					.then(
+						getNumberOfFlexObjects.bind(undefined, oConnector)
+					)
+					.then(function (iNewCount) {
+						assert.equal(iInitialCount - iNewCount, 1, "one change got removed");
+					});
 			});
 
 			QUnit.test("when remove is called with a not existing flex object", function (assert) {
-				var iInitialCount = getNumberOfFlexObjects(oConnector);
-				return oConnector.remove({
-					flexObject: {
-						fileName: "foo"
-					}
-				}).then(function() {
-					var iNewCount = getNumberOfFlexObjects(oConnector);
-					assert.equal(iInitialCount - iNewCount, 0, "no change got removed");
-				});
+				var iInitialCount;
+				return getNumberOfFlexObjects(oConnector)
+					.then(function (iNumberOfChanges) {
+						iInitialCount = iNumberOfChanges;
+					})
+					.then(function () {
+						return oConnector.remove({
+							flexObject : {
+								fileName : "foo"
+							}
+						});
+					})
+					.then(
+						getNumberOfFlexObjects.bind(undefined, oConnector)
+					)
+					.then(function (iNewCount) {
+						assert.equal(iInitialCount - iNewCount, 0, "no change got removed");
+					});
 			});
 		});
 	}

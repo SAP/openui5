@@ -20,11 +20,11 @@ sap.ui.define([
 	function loadDataFromStorage (mPropertyBag) {
 		var aFlexObjects = [];
 
-		BrowserStorageUtils.forEachChangeInStorage(mPropertyBag, function(mFlexObject) {
+		return BrowserStorageUtils.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
 			aFlexObjects.push(mFlexObject.changeDefinition);
+		}).then(function () {
+			return aFlexObjects;
 		});
-
-		return aFlexObjects;
 	}
 
 	function getGroupedFlexObjects (aFlexObjects) {
@@ -94,10 +94,9 @@ sap.ui.define([
 	 * Base Connector for requesting data from session or local storage
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.BrowserStorageConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @private
-	 * @ui5-restricted sap.ui.fl.write._internal.Connector, sap.ui.fl.apply._internal.Connector
+	 * @ui5-restricted sap.ui.fl.write._internal.Connector, sap.ui.fl.apply._internal.Storage
 	 */
 	var BrowserStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.apply._internal.connectors.BrowserStorageConnector */ {
 		/**
@@ -114,13 +113,13 @@ sap.ui.define([
 		 * @returns {Promise<Object>} resolving with an object containing a data contained in the changes-bundle
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var aFlexObjects = loadDataFromStorage({
+			return loadDataFromStorage({
 				storage: this.oStorage,
 				reference: mPropertyBag.reference
+			}).then(function (aFlexObjects) {
+				var mGroupedFlexObjects = getGroupedFlexObjects(aFlexObjects);
+				return filterAndSortResponses(mGroupedFlexObjects);
 			});
-			var mGroupedFlexObjects = getGroupedFlexObjects(aFlexObjects);
-			var aResponses = filterAndSortResponses(mGroupedFlexObjects);
-			return Promise.resolve(aResponses);
 		}
 	});
 

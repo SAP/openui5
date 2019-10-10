@@ -9,7 +9,6 @@ sap.ui.define([], function () {
 	 * Util class for Connector implementations (apply and write)
 	 *
 	 * @namespace sap.ui.fl.apply._internal.connectors.Utils
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @version ${version}
 	 * @private
@@ -21,60 +20,67 @@ sap.ui.define([], function () {
 
 	return {
 		/**
-		 * The iterator for the fl changes in the given Storage. Filters the changes if a reference or layer is passed
+		 * The iterator for the fl objects in the given Storage. Filters the objects if a reference or layer is passed
 		 * @public
 		 * @param {object} mPropertyBag object with necessary information
-		 * @param {Storage} mPropertyBag.storage browser storage, can be either session or local storage
+		 * @param {Storage} mPropertyBag.storage browser storage
 		 * @param {string} [mPropertyBag.reference] reference of the application
 		 * @param {string} [mPropertyBag.layer] current layer
 		 * @param {function} fnPredicate The function to apply for each change
 		 */
-		forEachChangeInStorage: function(mPropertyBag, fnPredicate) {
+		forEachObjectInStorage: function(mPropertyBag, fnPredicate) {
 			// getItems() is used in the internal keys of the JsObjectStorage
 			var oRealStorage = mPropertyBag.storage.getItems && mPropertyBag.storage.getItems() || mPropertyBag.storage;
 
-			var aKeys = Object.keys(oRealStorage);
-			aKeys.forEach(function(sKey) {
-				var bIsFlexObject = sKey.includes(FL_CHANGE_KEY) || sKey.includes(FL_VARIANT_KEY);
+			// ensure a Promise
+			return Promise.resolve(oRealStorage)
+				.then(function (oRealStorage) {
+					var aPromises = Object.keys(oRealStorage).map(function(sKey) {
+						var bIsFlexObject = sKey.includes(FL_CHANGE_KEY) || sKey.includes(FL_VARIANT_KEY);
 
-				if (!bIsFlexObject) {
-					return;
-				}
+						if (!bIsFlexObject) {
+							return;
+						}
 
-				var oFlexObject = JSON.parse(oRealStorage[sKey]);
-				var bSameReference = true;
-				if (mPropertyBag.reference) {
-					bSameReference = oFlexObject.reference === mPropertyBag.reference || oFlexObject.reference + ".Component" === mPropertyBag.reference;
-				}
+						var oFlexObject = JSON.parse(oRealStorage[sKey]);
+						var bSameReference = true;
+						if (mPropertyBag.reference) {
+							bSameReference = oFlexObject.reference === mPropertyBag.reference || oFlexObject.reference + ".Component" === mPropertyBag.reference;
+						}
 
-				var bSameLayer = true;
-				if (mPropertyBag.layer) {
-					bSameLayer = oFlexObject.layer === mPropertyBag.layer;
-				}
+						var bSameLayer = true;
+						if (mPropertyBag.layer) {
+							bSameLayer = oFlexObject.layer === mPropertyBag.layer;
+						}
 
-				if (!bSameReference || !bSameLayer) {
-					return;
-				}
+						if (!bSameReference || !bSameLayer) {
+							return;
+						}
 
-				fnPredicate({
-					changeDefinition: oFlexObject,
-					key: sKey
+						return fnPredicate({
+							changeDefinition: oFlexObject,
+							key: sKey
+						});
+					});
+
+					return Promise.all(aPromises);
 				});
-			});
 		},
 
 		/**
 		 * Returns an array with all the flex objects in the storage
 		 *
 		 * @param {object} mPropertyBag - object with the necessary information
-		 * @returns {array} Returns an array with maps with two keys: 'key' and 'changeDefinition'
+		 * @returns {Promise} Returns a Promise resolving with an array containing maps with two keys: 'key' and 'changeDefinition'
 		 */
 		getAllFlexObjects: function(mPropertyBag) {
 			var aFlexObjects = [];
-			this.forEachChangeInStorage(mPropertyBag, function(mFlexObject) {
+			return this.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
 				aFlexObjects.push(mFlexObject);
+			})
+			.then(function () {
+				return aFlexObjects;
 			});
-			return aFlexObjects;
 		},
 
 		/**

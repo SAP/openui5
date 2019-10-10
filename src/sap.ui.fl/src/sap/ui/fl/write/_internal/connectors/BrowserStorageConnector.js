@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @extends sap.ui.fl.write.connectors.BaseConnector
 	 * @since 1.70
 	 * @private
-	 * @ui5-restricted sap.ui.fl.write._internal.Connector
+	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	var BrowserStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.BrowserStorageConnector */ {
 		/**
@@ -52,13 +52,18 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		write: function(mPropertyBag) {
-			mPropertyBag.flexObjects.forEach(function(oFlexObject) {
+			var aPromises = mPropertyBag.flexObjects.map(function(oFlexObject) {
 				var sChangeKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
 				var sChange;
 				sChange = JSON.stringify(oFlexObject);
-				this.oStorage.setItem(sChangeKey, sChange);
+				var oSetPromise = this.oStorage.setItem(sChangeKey, sChange);
+				// ensure a Promise
+				return Promise.resolve(oSetPromise);
 			}.bind(this));
-			return Promise.resolve();
+
+			return Promise.all(aPromises).then(function () {
+				// return nothing
+			});
 		},
 
 		/**
@@ -67,25 +72,24 @@ sap.ui.define([
 		update: function(mPropertyBag) {
 			var sChangeKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
 			var sChange = JSON.stringify(mPropertyBag.flexObject);
-			this.oStorage.setItem(sChangeKey, sChange);
-			return Promise.resolve();
+			var oSetPromise = this.oStorage.setItem(sChangeKey, sChange);
+			// ensure a Promise
+			return Promise.resolve(oSetPromise);
 		},
 
 		/**
 		 * @inheritDoc
 		 */
 		reset: function(mPropertyBag) {
-			BrowserStorageUtils.forEachChangeInStorage({
+			return BrowserStorageUtils.forEachObjectInStorage({
 				storage: this.oStorage,
 				reference: mPropertyBag.reference,
 				layer: mPropertyBag.layer
 			}, function(mFlexObject) {
 				if (shouldChangeBeDeleted(mPropertyBag, mFlexObject.changeDefinition)) {
-					this.oStorage.removeItem(mFlexObject.key);
+					return this.oStorage.removeItem(mFlexObject.key);
 				}
 			}.bind(this));
-
-			return Promise.resolve();
 		},
 
 		/**
@@ -94,7 +98,9 @@ sap.ui.define([
 		remove: function(mPropertyBag) {
 			var sChangeKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
 			this.oStorage.removeItem(sChangeKey);
-			return Promise.resolve();
+			var oRemovePromise = this.oStorage.removeItem(sChangeKey);
+			// ensure a Promise
+			return Promise.resolve(oRemovePromise);
 		},
 
 		/**
@@ -109,8 +115,10 @@ sap.ui.define([
 		 */
 		getFlexInfo: function(mPropertyBag) {
 			mPropertyBag.storage = this.oStorage;
-			return Promise.resolve({
-				isResetEnabled: BrowserStorageUtils.getAllFlexObjects(mPropertyBag).length > 0
+			return BrowserStorageUtils.getAllFlexObjects(mPropertyBag).then(function (aFlexObjects) {
+				return {
+					isResetEnabled: aFlexObjects.length > 0
+				};
 			});
 		}
 	});
