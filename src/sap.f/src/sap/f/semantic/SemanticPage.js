@@ -42,7 +42,7 @@ sap.ui.define([
 	* @param {object} [mSettings] Initial settings for the new control
 	*
 	* @class
-	* An enhanced {@link sap.f.DynamicPage}, that contains controls with semantic-specific meaning.
+	* Provides enhanced functionality by internally aggregating {@link sap.f.DynamicPage} and contains controls with semantic-specific meaning.
 	*
 	* <h3>Overview</h3>
 	*
