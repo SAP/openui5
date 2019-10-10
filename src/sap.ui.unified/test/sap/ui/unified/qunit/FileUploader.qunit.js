@@ -50,6 +50,10 @@ sap.ui.define([
 				"size": mProps.size || 401599
 		};
 
+		if (mProps.size === 0){
+			oFileObject.size = 0;
+		}
+
 		return bIsFirefox ? new Blob([oFileObject]) : oFileObject;
 	};
 
@@ -511,6 +515,33 @@ sap.ui.define([
 		assert.ok(!oFireChangeSpy.called, "firedChange was not called");
 
 		// Cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Empty file event is fired", function (assert){
+		var oFileUploader = createFileUploader(),
+			fnFireFileEmpty = this.spy( oFileUploader, "fireFileEmpty"),
+			oTestEvent = {
+				type: "change",
+				target: {
+					files : {
+						"0": createFakeFile({
+								name: "emptyFile.txt",
+								type: "text/html",
+								size: 0
+							}),
+						"length" : 1
+					}
+				}
+		};
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oFileUploader.handlechange(oTestEvent);
+		assert.equal(fnFireFileEmpty.calledOnce, true, "Event on empty file upload is fired.");
+
+		//Clean up
 		oFileUploader.destroy();
 	});
 
