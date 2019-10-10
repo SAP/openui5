@@ -4,237 +4,225 @@
 
 // sap.ui.core.util.ResponsivePaddingsEnabler
 sap.ui.define([
-    "sap/ui/core/library",
-    "sap/base/Log",
-    'sap/ui/core/ResizeHandler'
+	"sap/ui/core/library",
+	"sap/base/Log",
+	'sap/ui/core/ResizeHandler',
+	"sap/ui/thirdparty/jquery"
 ],
 function (
-    library,
-    Log,
-    ResizeHandler
+	library,
+	Log,
+	ResizeHandler,
+	jQuery
 ) {
-    "use strict";
+	"use strict";
 
-    // container`s breakpoints
-    var BREAK_POINTS = {
-        S: 599,
-        M: 1023,
-        L: 1439
-    };
+	// container`s breakpoints
+	var BREAK_POINTS = {
+		S: 599,
+		M: 1023,
+		L: 1439
+	};
 
-    //class to be added against the used container
-    var MEDIA = {
-        S: "sapM-Std-PaddingS",
-        M: "sapM-Std-PaddingM",
-        L: "sapM-Std-PaddingL",
-        XL: "sapM-Std-PaddingXL"
-    };
+	//class to be added against the used container
+	var MEDIA = {
+		S: "sapUi-Std-PaddingS",
+		M: "sapUi-Std-PaddingM",
+		L: "sapUi-Std-PaddingL",
+		XL: "sapUi-Std-PaddingXL"
+	};
 
-    /**
-     * A utility for applying responsive paddings over the separate parts of the controls according to the control's actual width.
-     * @param oSelectors
-     * @returns {Array}
-     * @constructor
-     */
-    var ResponsivePaddingsEnablement = function (oSelectors) {
-        // Ensure only Controls are enhanced
-        if (!this.isA || !this.isA("sap.ui.core.Control")) {
-            Log.error("Responsive Paddings enablement could be applied over controls only");
-            return [];
-        }
+	/**
+	 * A utility for applying responsive paddings over the separate parts of the controls according to the control's actual width.
+	 * @param oSelectors
+	 * @private
+	 * @ui5-restricted
+	 * @experimental Since 1.72
+	 */
+	var ResponsivePaddingsEnablement = function (oSelectors) {
+		// Ensure only Controls are enhanced
+		if (!this.isA || !this.isA("sap.ui.core.Control")) {
+			Log.error("Responsive Paddings enablement could be applied over controls only");
+			return;
+		}
 
-        /**
-         * Initializes enablement's listeners.
-         * Should be invoked in controller's init method.
-         *
-         * @private
-         */
-        this._initResponsivePaddingsEnablement = function () {
-            var fnDestroy = this.destroy;
+		/**
+		 * Initializes enablement's listeners.
+		 * Should be invoked in controller's init method.
+		 *
+		 * @private
+		 */
+		this._initResponsivePaddingsEnablement = function () {
+			this.addEventDelegate({
+				onAfterRendering: onAfterRenderingDelegate,
+				onBeforeRendering: onBeforeRenderingDelegate
+			}, this);
+		};
 
-            // Cleanup listener by patching the destroyer
-            this.destroy = function () {
-                _deregisterPaddingsResizeHandler(this);
-                fnDestroy.apply(this, arguments);
-            };
+		function onBeforeRenderingDelegate() {
+			_deregisterPaddingsResizeHandler(this);
+		}
 
-            this.addEventDelegate({
-                onAfterRendering: onAfterRenderingDelegate.bind(this),
-                onBeforeRendering: onBeforeRenderingDelegate.bind(this)
-            });
-        };
+		function onAfterRenderingDelegate() {
+			var aSelectors = _resolveStyleClasses(this, oSelectors);
 
-        function onBeforeRenderingDelegate() {
-            _deregisterPaddingsResizeHandler(this);
-        }
+			if (aSelectors.length) {
+				window.requestAnimationFrame(function () {
+					_registerPaddingsResizeHandler(this);
+				}.bind(this));
+			}
+		}
 
-        function onAfterRenderingDelegate() {
-            var aSelectors = _resolveStyleClasses(this, oSelectors);
+		function _registerPaddingsResizeHandler(oControl) {
+			_adjustPaddings(oControl);
 
-            if (aSelectors.length) {
-                _registerPaddingsResizeHandler(this);
-            }
-        }
+			if (!oControl.__iResponsivePaddingsResizeHandlerId__) {
+				oControl.__iResponsivePaddingsResizeHandlerId__ = ResizeHandler.register(oControl, _adjustPaddings.bind(oControl, oControl));
+			}
+		}
 
-        function _registerPaddingsResizeHandler(oControl) {
-            //ensure that _adjustPaddings is called once after the control is fully rendered
-            setTimeout(function () {
-                _adjustPaddings(oControl);
-            }, 0);
+		function _deregisterPaddingsResizeHandler(oControl) {
+			if (oControl.__iResponsivePaddingsResizeHandlerId__) {
+				ResizeHandler.deregister(oControl.__iResponsivePaddingsResizeHandlerId__);
+				oControl.__iResponsivePaddingsResizeHandlerId__ = null;
+			}
+		}
 
-            if (!oControl.__iResizeHandlerId__) {
-                oControl.__iResizeHandlerId__ = ResizeHandler.register(oControl, _adjustPaddings.bind(oControl, oControl));
-            }
-        }
+		/**
+		 * Resize handler.
+		 *
+		 * @param oControl
+		 * @param oEvent
+		 * @private
+		 */
+		function _adjustPaddings(oControl, oEvent) {
+			var aResolvedClassNameObjects = _resolveStyleClasses(oControl, oSelectors);
+			var $elemCollection = _resolveSelectors(oControl, aResolvedClassNameObjects);
+			var fWidth = oEvent ? oEvent.size.width : oControl.$().width();
 
-        function _deregisterPaddingsResizeHandler(oControl) {
-            if (oControl.__iResizeHandlerId__) {
-                ResizeHandler.deregister(oControl.__iResizeHandlerId__);
-                oControl.__iResizeHandlerId__ = null;
-            }
-        }
+			_cleanResponsiveClassNames($elemCollection);
+			_appendResponsiveClassNames($elemCollection, fWidth);
+		}
 
-        /**
-         * Resize handler.
-         *
-         * @param oControl
-         * @private
-         */
-        function _adjustPaddings(oControl) {
-            var aResolvedClassNameObjects = _resolveStyleClasses(oControl, oSelectors);
-            var aDomRefs = _resolveSelectors(oControl, aResolvedClassNameObjects);
+		/**
+		 * Checks styleClasses of the control and maps it to the available definitions.
+		 *
+		 * @param oControl
+		 * @param oSelectors
+		 * @returns {Array}
+		 * @private
+		 */
+		function _resolveStyleClasses(oControl, oSelectors) {
+			var aStyleClasses = _generateClassNames(oSelectors);
 
-            _cleanResponsiveClassNames(aDomRefs);
-            _appendResponsiveClassNames(aDomRefs, oControl);
-        }
+			// Filter only the classes which are applied over the control
+			aStyleClasses = aStyleClasses.filter(function (sClassName) {
+				return oControl.hasStyleClass(sClassName);
+			});
 
-        /**
-         * Checks styleClasses of the control and maps it to the available definitions.
-         *
-         * @param oControl
-         * @param oSelectors
-         * @returns {Array|*[]}
-         * @private
-         */
-        function _resolveStyleClasses(oControl, oSelectors) {
-            var aStyleClasses = _generateClassNames(oSelectors);
+			if (!aStyleClasses.length) {
+				return [];
+			}
 
-            // Filter only the classes which are applied over the control
-            aStyleClasses = aStyleClasses.filter(function (sClassName) {
-                return oControl.hasStyleClass(sClassName);
-            });
+			// Extract aggregation name
+			aStyleClasses = aStyleClasses.map(function (sClassName) {
+				return sClassName.split("--")[1];
+			});
 
-            if (!aStyleClasses.length) {
-                return [];
-            }
+			// Map aggregation name to oSelectors object
+			aStyleClasses = aStyleClasses.map(function (sAggregationName) {
+				return oSelectors[sAggregationName];
+			})
+				.filter(function (oSelector) {
+					return oSelector;
+				});
 
-            // Extract aggregation name
-            aStyleClasses = aStyleClasses.map(function (sClassName) {
-                return sClassName.split("--")[1];
-            });
+			return aStyleClasses;
+		}
 
-            // Map aggregation name to oSelectors object
-            aStyleClasses = aStyleClasses.map(function (sAggregationName) {
-                return oSelectors[sAggregationName];
-            })
-                .filter(function (oSelector) {
-                    return !!oSelector;
-                });
+		/**
+		 * Resolves selector definitions to DOMRefs.
+		 *
+		 * @param oControl
+		 * @param aSelectors
+		 * @returns {*}
+		 * @private
+		 */
+		function _resolveSelectors(oControl, aSelectors) {
+			var $elementsCollection = jQuery();
 
-            return aStyleClasses;
-        }
+			aSelectors.forEach(function (oSelector) {
+				if (oSelector.suffix) {
+					$elementsCollection = $elementsCollection.add(oControl.$(oSelector.suffix));
+				}
+				if (oSelector.selector) {
+					$elementsCollection = $elementsCollection.add(oControl.$().find(oSelector.selector).first());
+				}
+			});
 
-        /**
-         * Resolves selector definitions to DOMRefs.
-         *
-         * @param oControl
-         * @param aSelectors
-         * @returns {*}
-         * @private
-         */
-        function _resolveSelectors(oControl, aSelectors) {
-            var aDomRefs = aSelectors.map(function (oSelector) {
-                if (oSelector.suffix) {
-                    return oControl.$(oSelector.suffix);
-                }
-                if (oSelector.selector) {
-                    return oControl.$().find(oSelector.selector).first();
-                }
+			return $elementsCollection;
+		}
 
-                return null;
-            });
+		/**
+		 * Cleans up the responsive class names.
+		 *
+		 * @param $elemCollection
+		 * @private
+		 */
+		function _cleanResponsiveClassNames($elemCollection) {
+			var sClassNames = Object.keys(MEDIA).map(function (sKey) {
+				return MEDIA[sKey];
+			}).join(" ");
 
-            return aDomRefs.filter(function (oDomRef) {
-                return !!oDomRef;
-            });
+			$elemCollection.removeClass(sClassNames);
+		}
 
-        }
+		/**
+		 * Calculates and breakpoints and appends Responsive Class names to a list of DOMRefs.
+		 * Takes the width of oControl as base.
+		 *
+		 * @param $elemCollection
+		 * @param fWidth
+		 * @private
+		 */
+		function _appendResponsiveClassNames($elemCollection, fWidth) {
+			var sKey;
 
-        /**
-         * Cleans up the responsive class names.
-         *
-         * @param aDomRefs
-         * @private
-         */
-        function _cleanResponsiveClassNames(aDomRefs) {
-            var sClassNames = Object.keys(MEDIA).map(function (sKey) {
-                return MEDIA[sKey];
-            }).join(" ");
+			switch (true) {
+				case fWidth <= BREAK_POINTS.S:
+					sKey = "S";
+					break;
+				case fWidth <= BREAK_POINTS.M && fWidth > BREAK_POINTS.S:
+					sKey = "M";
+					break;
+				case fWidth <= BREAK_POINTS.L && fWidth > BREAK_POINTS.M:
+					sKey = "L";
+					break;
+				default:
+					sKey = "XL";
+					break;
+			}
 
-            aDomRefs.forEach(function ($oDomRef) {
-                $oDomRef.removeClass(sClassNames);
-            });
-        }
+			$elemCollection.addClass(MEDIA[sKey]);
+		}
 
-        /**
-         * Calculates and breakpoints and appends Responsive Class names to a list of DOMRefs.
-         * Takes the width of oControl as base.
-         *
-         * @param aDomRefs
-         * @param oControl
-         * @private
-         */
-        function _appendResponsiveClassNames(aDomRefs, oControl) {
-            var sKey,
-                fWidth = oControl.$().width();
+		/**
+		 * Generates classNames for handling the responsiveness.
+		 *
+		 * These classNames would later be used to match and enable Responsive Paddings
+		 *
+		 * @param oSelectors
+		 * @returns {string[]}
+		 * @private
+		 */
+		function _generateClassNames(oSelectors) {
+			return Object.keys(oSelectors)
+				.map(function (sKey) {
+					return "sapUiResponsivePadding--" + sKey;
+				});
+		}
+	};
 
-            switch (true) {
-                case fWidth <= BREAK_POINTS.S:
-                    sKey = "S";
-                    break;
-                case fWidth <= BREAK_POINTS.M && fWidth > BREAK_POINTS.S:
-                    sKey = "M";
-                    break;
-                case fWidth <= BREAK_POINTS.L && fWidth > BREAK_POINTS.M:
-                    sKey = "L";
-                    break;
-                default:
-                    sKey = "XL";
-                    break;
-            }
+	return ResponsivePaddingsEnablement;
 
-            aDomRefs.forEach(function ($oDomRef) {
-                $oDomRef.addClass(MEDIA[sKey]);
-            });
-        }
-
-        /**
-         * Generates classNames for handling the responsiveness.
-         *
-         * These classNames would later be used to match and enable Responsive Paddings
-         *
-         * @param oSelectors
-         * @returns {string[]}
-         * @private
-         */
-        function _generateClassNames(oSelectors) {
-            return Object.keys(oSelectors)
-                .map(function (sKey) {
-                    return "sapUiResponsivePadding--" + sKey;
-                });
-        }
-    };
-
-    return ResponsivePaddingsEnablement;
-
-}, /* bExport= */ true);
+});
