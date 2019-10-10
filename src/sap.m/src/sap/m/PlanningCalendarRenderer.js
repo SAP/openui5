@@ -29,7 +29,7 @@ sap.ui.define([
 		oRm.writeControlData(oPC);
 		oRm.writeAccessibilityState({
 			role: "region",
-			labelledby: InvisibleText.getStaticId("sap.m", oPC._oRB.getText("PLANNINGCALENDAR"))
+			labelledby: InvisibleText.getStaticId("sap.m", "PLANNINGCALENDAR")
 		});
 		oRm.addClass("sapMPlanCal");
 		if (oPC._iSize !== undefined && oPC._iSize !== null) {
