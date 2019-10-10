@@ -180,7 +180,7 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getContext(), oContext);
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.hasOwnProperty("oCachePromise"), true);
-			assert.strictEqual(oBinding.oCachePromise.getResult(), bAbsolute ? oCache : undefined);
+			assert.strictEqual(oBinding.oCachePromise.getResult(), bAbsolute ? oCache : null);
 			assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 			assert.strictEqual(oBinding.sGroupId, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("oCheckUpdateCallToken"), true);
@@ -301,7 +301,7 @@ sap.ui.define([
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 				this.mock(oCache).expects("setActive").withExactArgs(false);
 			} else {
-				assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+				assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 			}
 			if (oFixture.sTarget) {
 				this.mock(oBinding).expects("checkUpdateInternal")
@@ -313,7 +313,7 @@ sap.ui.define([
 			oBinding.setContext(oTargetContext);
 
 			assert.strictEqual(oBinding.oCachePromise.getResult(),
-				oFixture.sTarget === "base" ? oCache : undefined);
+				oFixture.sTarget === "base" ? oCache : null);
 
 			// code under test
 			// #deregisterChange is not called again, if #setContext is called with the same context
@@ -539,11 +539,10 @@ sap.ui.define([
 					.withExactArgs(oBinding.sReducedPath, sinon.match.same(oBinding))
 					.returns(SyncPromise.resolve(vValue));
 			}
-			if (oFixture.internalType !== "any") {
-				this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
-					.withExactArgs(sResolvedPath)
-					.returns(SyncPromise.resolve());
-			}
+			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+				.exactly(oFixture.internalType !== "any" ? 1 : 0)
+				.withExactArgs(sResolvedPath)
+				.returns(SyncPromise.resolve());
 			this.oLogMock.expects("error")
 				.withExactArgs("Accessed value is not primitive",
 					sResolvedPath, sClassName);
@@ -734,11 +733,15 @@ sap.ui.define([
 		QUnit.test("checkUpdateInternal(): with vValue parameter: " + vValue, function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute"),
 				oPromise,
+				oType = {getName : function () {}},
 				done = assert.async();
 
+			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+				.withExactArgs("/absolute")
+				.returns(SyncPromise.resolve(oType));
 			oBinding.vValue = ""; // simulate a read
-			oBinding.setType(null, "any"); // avoid fetchUI5Type()
 			oBinding.attachChange(function () {
+				assert.strictEqual(oBinding.getType(), oType);
 				assert.strictEqual(oBinding.getValue(), vValue);
 				done();
 			});

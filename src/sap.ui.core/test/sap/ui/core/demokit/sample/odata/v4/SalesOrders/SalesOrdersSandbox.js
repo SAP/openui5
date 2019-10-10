@@ -123,6 +123,9 @@ sap.ui.define([
 			"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note" : {
 				source : "SalesOrderList_4_sideEffects2.json"
 			},
+			"SalesOrderList('0500000004')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList_4_sideEffects3.json"
+			},
 			"SalesOrderList('0500000004')/SO_2_SOITEM(SalesOrderID='0500000004',ItemPosition='0000000070')?custom-option=value&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID" : {
 				source : "SalesOrderIist('05000000004')-SO_2_SOITEM('70').json"
 			},
@@ -134,6 +137,15 @@ sap.ui.define([
 			},
 			"SalesOrderList('0500000005')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'%20and%20(ProductID%20eq%20'HT-1061')&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_5_Filter_via_changeParameter.opa.json"
+			},
+			"SalesOrderList?custom-option=value&$filter=SalesOrderID%20eq%20'0500000005'&$select=ChangedAt,GrossAmount,Note,SalesOrderID" : {
+				source : "SalesOrderList_5_sideEffects1.json"
+			},
+			"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Note" : {
+				source : "SalesOrderList_5_sideEffects2.json"
+			},
+			"SalesOrderList('0500000005')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList_5_sideEffects3.json"
 			},
 			"SalesOrderList('0500000006')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 				source : "SalesOrderList_6.json"
@@ -171,6 +183,9 @@ sap.ui.define([
 			"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note" : {
 				source : "SalesOrderList('NEW1')_sideEffects2.json"
 			},
+			"SalesOrderList('NEW1')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList('NEW1')_sideEffects3.json"
+			},
 			"SalesOrderList('NEW1')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_empty.json"
 			},
@@ -200,6 +215,9 @@ sap.ui.define([
 			},
 			"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note" : {
 				source : "SalesOrderList('NEW3')_sideEffects2.json"
+			},
+			"SalesOrderList('NEW3')?custom-option=value&$select=ChangedAt,Note&$expand=SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
+				source : "SalesOrderList('NEW3')_sideEffects3.json"
 			},
 			"SalesOrderList('NEW3')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,Name,ProductID,SupplierName,TypeCode)&$orderby=ItemPosition&$select=DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$filter=ItemPosition%20gt%20'0000000000'&$skip=0&$top=100" : {
 				source : "SalesOrderItemsList_empty.json"

@@ -1787,7 +1787,9 @@ sap.ui.define([
 		if (sCount) {
 			this.iLimit = iCount = parseInt(sCount);
 		}
-		if (iResultLength < iEnd - iStart) { // a short read
+		if (oResult["@odata.nextLink"]) { // server-driven paging
+			this.aElements.length = iStart + iResultLength;
+		} else if (iResultLength < iEnd - iStart) { // short read
 			if (iCount === -1) {
 				// use formerly computed $count
 				iCount = iOld$count && iOld$count - iCreated;
@@ -2017,7 +2019,7 @@ sap.ui.define([
 		mQueryOptions = _Helper.intersectQueryOptions(
 			this.mLateQueryOptions || this.mQueryOptions, aPaths,
 			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath,
-			mNavigationPropertyPaths);
+			mNavigationPropertyPaths, "", true);
 		if (!mQueryOptions) {
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}

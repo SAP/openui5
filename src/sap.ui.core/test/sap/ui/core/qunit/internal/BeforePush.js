@@ -53,6 +53,8 @@
 		'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?realOData=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.html?supportAssistant=true' : 'both',
+		'demokit/sample/odata/v4/ServerDrivenPaging/Opa.qunit.html?realOData=true' : 'both',
+		'demokit/sample/odata/v4/ServerDrivenPaging/Opa.qunit.html?realOData=true&$count=true' : 'both',
 		'demokit/sample/odata/v4/Sticky/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/ViewTemplate/scenario/Opa.qunit.html?supportAssistant=true' : 'both',
 		'demokit/sample/ViewTemplate/types/Opa.qunit.html?supportAssistant=true' : 'both',

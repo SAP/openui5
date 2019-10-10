@@ -1,0 +1,59 @@
+{
+	"_version" : "1.14.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "Test OData V4 server-driven paging",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.ServerDrivenPaging",
+		"title" : "EPM Business Partners",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.71",
+			"libs" : {
+				"sap.m" : {}
+			}
+		},
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : true,
+					"earlyRequests": true,
+					"operationMode" : "Server",
+					"synchronizationMode" : "None"
+				}
+			}
+		},
+		"resources": {
+			"js": [{
+				"uri": "ServerDrivenPagingSandbox.js"
+			}]
+		}
+	}
+}
