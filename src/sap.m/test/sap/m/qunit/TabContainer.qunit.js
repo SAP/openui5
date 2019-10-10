@@ -139,7 +139,7 @@ sap.ui.define([
 
 		this.clock.tick(1000);
 
-			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 0, 'Element with name "' + sName + '" is not in the DOM.');
+			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is still in the DOM.');
 
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		assert.strictEqual(jQuery(this.oTabContainer._getTabStrip().getAggregation('_select').$()).attr('title'),
