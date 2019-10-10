@@ -3183,15 +3183,18 @@ sap.ui.define([
 			});
 		}).then(function(oNestedComponent) {
 			var oNestedRouter = oNestedComponent.getRouter();
+			var oNestedHomeRoute = oNestedRouter.getRoute("nestedHome");
+			var oNestedRouteMatchedSpy = sinon.spy(oNestedHomeRoute, "_routeMatched");
 			var oNestedRouterStopSpy = sinon.spy(oNestedRouter, "stop");
 			var oPromise = new Promise(function(resolve, reject) {
 				oRouter.getRoute("category").attachMatched(function() {
+					assert.equal(oNestedRouteMatchedSpy.callCount, 0, "The home route in nested router shouldn't be matched again");
 					assert.equal(oNestedRouterStopSpy.callCount, 1, "The Router in nested component is stopped");
 					oNestedComponent.destroy();
 					resolve();
 				});
+				oRouter.navTo("category");
 			});
-			oRouter.navTo("category");
 			return oPromise;
 		});
 	});
