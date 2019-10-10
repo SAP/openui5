@@ -498,26 +498,6 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
-	QUnit.test("Change event is not fired when the cancel button is pressed", function (assert) {
-		// Setup
-		var oFileUploader = new sap.ui.unified.FileUploader("fu", {
-				value: "test"
-			}),
-			oFireChangeSpy = this.spy(oFileUploader, "fireChange");
-
-		oFileUploader.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		oFileUploader.setValue("", true);
-
-		// Assert
-		assert.ok(!oFireChangeSpy.called, "firedChange was not called");
-
-		// Cleanup
-		oFileUploader.destroy();
-	});
-
 	QUnit.test("Empty file event is fired", function (assert){
 		var oFileUploader = createFileUploader(),
 			fnFireFileEmpty = this.spy( oFileUploader, "fireFileEmpty"),
