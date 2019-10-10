@@ -24,6 +24,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			}
 		},
 		tests: {
+			AsyncHintsHelper: {},
 			BusyIndicator: {},
 			BusyIndicatorNoCore: {
 				bootCore: false,
