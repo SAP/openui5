@@ -959,6 +959,135 @@ sap.ui.define([
 		assert.strictEqual(oActionSheet.getAggregation("_invisibleAriaTexts").length, 0, "Invisible text should be destroyed");
 	});
 
+	QUnit.module("AfterClose event");
+
+	QUnit.test('Origin should be null when closing the ActionSheet without pressing a selected item', function (assert) {
+		//Arrange
+		var done = assert.async();
+		var oClock = sinon.useFakeTimers();
+		var oButton1 = new Button({text: "Button1"}),
+			oActionSheet = new ActionSheet({
+				cancelButtonText: "Cancel",
+				title: "Title",
+				buttons: [
+					oButton1
+				]
+			}),
+			oButton = new Button({
+				text: "Open ActionSheet",
+				press: function () {
+					oActionSheet.openBy(this);
+				}
+			});
+
+		//Assert
+		oActionSheet.attachAfterClose(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("origin"), null, "Button should have origin of type null");
+
+			//Clean
+			oActionSheet.destroy();
+			oButton.destroy();
+			oClock.restore();
+			done();
+		});
+
+		//Act
+		page.addContent(oButton);
+		sap.ui.getCore().applyChanges();
+		oButton.firePress();
+		oActionSheet.close();
+		oClock.tick(300);
+	});
+
+	QUnit.test('Origin should provide the type of the selected action', function (assert) {
+		//Arrange
+		var done = assert.async();
+		var oClock = sinon.useFakeTimers();
+		var oButton1 = new Button({text: "Button1"}),
+			oActionSheet = new ActionSheet({
+				cancelButtonText: "Cancel",
+				title: "Title",
+				buttons: [
+					oButton1
+				]
+			}),
+			oButton = new Button({
+				text: "Open ActionSheet",
+				press: function () {
+					oActionSheet.openBy(this);
+				}
+			});
+
+		//Assert
+		oActionSheet.attachAfterClose(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("origin"), oButton1, "Button should have origin of type sap.m.Button");
+
+			//Clean
+			oActionSheet.destroy();
+			oButton.destroy();
+			oClock.restore();
+			done();
+		});
+
+		//Act
+		page.addContent(oButton);
+		sap.ui.getCore().applyChanges();
+		oButton.firePress();
+		oActionSheet.onmousedown({ srcControl: oButton1 });
+		oButton1.firePress();
+		oClock.tick(300);
+	});
+
+	QUnit.test('Origin should provide the type of the cancel button', function (assert) {
+		//Arrange
+		var done = assert.async();
+		var oClock = sinon.useFakeTimers();
+		var oSystem = {
+			desktop: false,
+			phone: true,
+			tablet: false
+		};
+
+		this.stub(Device, "system", oSystem);
+
+		var oButton = new Button({
+			text: "Open ActionSheet",
+			press: function () {
+				oActionSheet.openBy(this);
+			}
+		}),
+			oActionSheet = new ActionSheet({
+			showCancelButton: true,
+			buttons: [
+				new Button({
+					id: 'oButton1',
+					type: ButtonType.Reject,
+					text: "Reject Action"
+				})
+			]
+		});
+		var oCancelButton = oActionSheet._getCancelButton();
+
+		//Assert
+		oActionSheet.attachAfterClose(function (oEvent) {
+			assert.strictEqual(oEvent.getParameter("origin"), oCancelButton, "Button should have origin of type sap.m.Button");
+
+			//Clean
+			oActionSheet.destroy();
+			oButton.destroy();
+			oClock.restore();
+			done();
+		});
+
+		//Act
+		page.addContent(oButton);
+		sap.ui.getCore().applyChanges();
+		oButton.firePress();
+		oActionSheet.onmousedown({ srcControl: oCancelButton });
+		oCancelButton.firePress();
+		oClock.tick(300);
+	});
+
 	QUnit.done(function () {
 		// hide the content so that the QUnit results can be seen
 		jQuery("#content").css('height', '0');
