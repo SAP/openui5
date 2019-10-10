@@ -2708,5 +2708,30 @@ sap.ui.define([
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest2.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
+
+		QUnit.module("Events - 'manifestReady'", {
+			beforeEach: function () {
+				this.oCard = new Card();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("'manifestReady' event is fired.", function (assert) {
+
+			// Arrange
+			var done = assert.async();
+			this.oCard.attachManifestReady(function () {
+				// Assert
+				assert.ok(true, "Should have fired 'manifestReady' event.");
+				done();
+			});
+
+			// Act
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
 	}
 );

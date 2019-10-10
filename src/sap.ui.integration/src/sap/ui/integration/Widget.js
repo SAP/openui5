@@ -3,26 +3,18 @@
  */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/integration/util/Manifest",
 	"sap/base/Log",
-	'sap/ui/model/json/JSONModel',
-	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/integration/WidgetRenderer",
-	"sap/ui/integration/library",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/ComponentContainer"
 ], function (
 	jQuery,
-	Core,
 	Control,
 	WidgetManifest,
 	Log,
-	JSONModel,
-	ResourceModel,
 	WidgetRenderer,
-	library,
 	LoaderExtensions,
 	ComponentContainer
 ) {
@@ -121,6 +113,15 @@ sap.ui.define([
 						manifestParameters: {
 							type: "object"
 						}
+					}
+				},
+
+				/**
+				 * Fired when the manifest is loaded.
+				 * @experimental since 1.72
+				 */
+				manifestReady: {
+					parameters: {
 					}
 				}
 			}
@@ -224,7 +225,10 @@ sap.ui.define([
 
 		return this._oWidgetManifest
 			.load(mOptions)
-			.then(this._applyManifest.bind(this))
+			.then(function () {
+				this.fireManifestReady();
+				this._applyManifest();
+			}.bind(this))
 			.catch(this._applyManifest.bind(this));
 	};
 

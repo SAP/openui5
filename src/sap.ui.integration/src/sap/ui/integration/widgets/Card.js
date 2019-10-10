@@ -239,6 +239,15 @@ sap.ui.define([
 							type: "sap.ui.integration.CardActionType"
 						}
 					}
+				},
+
+				/**
+				 * Fired when the manifest is loaded.
+				 * @experimental since 1.72
+				 */
+				manifestReady: {
+					parameters: {
+					}
 				}
 			},
 			associations: {
@@ -352,7 +361,10 @@ sap.ui.define([
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl);
 		return this._oCardManifest
 			.load(mOptions)
-			.then(this._applyManifest.bind(this))
+			.then(function () {
+				this.fireManifestReady();
+				this._applyManifest();
+			}.bind(this))
 			.catch(this._applyManifest.bind(this));
 	};
 
