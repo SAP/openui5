@@ -65,6 +65,22 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: false
+            },
+            "designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/numberEditor/NumberEditor": {
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+					]
+				},
+				sinon: false
 			},
 			"designtime/baseEditor/util/ObjectBinding": {
 				coverage: {
