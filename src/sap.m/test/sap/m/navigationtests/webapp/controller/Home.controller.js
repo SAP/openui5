@@ -14,7 +14,9 @@ sap.ui.define([
 			}.bind(this), 2000);
 		},
 		bntErrorMsgPress :function () {
-			MessageBox.error("Operation was not successful");
+			MessageBox.error("Operation was not successful", {
+				closeOnNavigation: false
+			});
 
 			setTimeout(function () {
 				this.getOwnerComponent().getRouter().navTo("page2");
