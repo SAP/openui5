@@ -22,15 +22,17 @@
 						<Label text="This is a subheading"/>
 					</f:snappedContent>
 					<f:content>
-						<GenericTag text="SR"
-							status="Error"
-							press="onGenericTagPress"
-							design="StatusIconHidden">
-							<ObjectNumber number="2"
-								unit="M"
-								emphasized="false"
-								state="Error"/>
-						</GenericTag>
+						<OverflowToolbar>
+							<GenericTag text="SR"
+								status="Error"
+								press="onGenericTagPress"
+								design="StatusIconHidden">
+								<ObjectNumber number="2"
+									unit="M"
+									emphasized="false"
+									state="Error"/>
+							</GenericTag>
+						</OverflowToolbar>
 					</f:content>
 					<f:actions>
 						<ToolbarSpacer/>
