@@ -54,7 +54,7 @@ sap.ui.define(["sap/f/library", "jquery.sap.global"],
 			}
 			if (sActualDisplayType === AvatarType.Image) {
 				oRm.addClass(sAvatarClass + sActualDisplayType + sImageFitType);
-				oRm.addStyle("background-image", "url('" + jQuery.sap.encodeHTML(sSrc) + "')");
+				oRm.addStyle("background-image", "url('" + jQuery.sap.encodeCSS(sSrc) + "')");
 			}
 			if (sDisplaySize === AvatarSize.Custom) {
 				oRm.addStyle("width", sCustomDisplaySize);
