@@ -88,7 +88,8 @@
 			"sap.f.sample.GridListBoxContainer",
 			"sap.f.sample.GridListBoxContainerGrouping",
 			"sap.f.sample.GridListBoxContainerReal",
-			"sap.f.sample.GridListDragAndDrop"
+			"sap.f.sample.GridListDragAndDrop",
+			"sap.f.sample.GridListResponsiveColumnLayout"
 		  ]
 		},
 		{
@@ -210,6 +211,11 @@
 			"id": "sap.f.sample.GridListDragAndDrop",
 			"name": "Grid List - Drag and Drop",
 			"description": "This sample represents GridList with enabled Drag and Drop functionality."
+		},
+		{
+		  "id": "sap.f.sample.GridListResponsiveColumnLayout",
+		  "name": "GridList with Responsive Column Layout",
+		  "description": "This layout displays a variable number of grid columns depending on available screen size. Grid row's height is dynamically determined by the height of the highest grid element on this row."
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",

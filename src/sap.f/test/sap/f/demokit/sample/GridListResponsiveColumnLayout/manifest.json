@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.f.sample.GridListResponsiveColumnLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.f.sample.GridListResponsiveColumnLayout.GridListResponsiveColumnLayout",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"GridListResponsiveColumnLayout.view.xml",
+					"GridListResponsiveColumnLayout.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

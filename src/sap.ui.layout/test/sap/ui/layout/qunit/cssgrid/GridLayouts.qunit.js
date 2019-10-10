@@ -2,34 +2,49 @@
 
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/Core",
+	"sap/ui/core/HTML",
+	"sap/ui/layout/cssgrid/CSSGrid",
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridBasicLayout",
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
 	"sap/ui/layout/cssgrid/GridBoxLayout",
 	"sap/ui/layout/cssgrid/GridSettings",
+	"sap/ui/layout/cssgrid/ResponsiveColumnLayout",
+	"sap/ui/layout/cssgrid/ResponsiveColumnItemLayoutData",
 	"sap/f/GridList",
 	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/Device"
 ], function (
 	jQuery,
+	Core,
+	HTML,
+	CSSGrid,
 	GridLayoutBase,
 	GridBasicLayout,
 	GridResponsiveLayout,
 	GridBoxLayout,
 	GridSettings,
+	ResponsiveColumnLayout,
+	ResponsiveColumnItemLayoutData,
 	GridList,
 	CustomListItem,
 	Text,
 	JSONModel,
 	Sorter,
 	qutils,
-	KeyCodes
+	KeyCodes,
+	Device
 ) {
 	"use strict";
+
+	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
+	var bBrowserSupportGrid = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
 
 	function getGridSettings() {
 		return {
@@ -544,4 +559,169 @@ sap.ui.define([
 
 		assert.equal(oGridList.getItems()[0].getDomRef().clientWidth, 100, "boxWidth is set correctly to the GridBoxLayout");
 	});
+
+	QUnit.module("ResponsiveColumnLayout", {
+		beforeEach: function () {
+			this.fnLayoutChangeHandler = sinon.spy();
+			this.oGridLayout = new ResponsiveColumnLayout({
+				layoutChange: this.fnLayoutChangeHandler
+			});
+			sinon.spy(this.oGridLayout, "_setActiveLayoutClassName");
+		},
+		afterEach: function () {
+			this.oGridLayout._setActiveLayoutClassName.restore();
+			this.oGridLayout.destroy();
+			this.oGridLayout = null;
+			this.fnLayoutChangeHandler = null;
+		}
+	});
+
+	QUnit.test("Init", function (assert) {
+		assert.ok(this.oGridLayout.isResponsive(), "Should be responsive");
+		assert.notOk(this.oGridLayout.getActiveGridSettings(), "Should have no Grid settings");
+	});
+
+	QUnit.test("onGridAfterRendering", function (assert) {
+
+		// Arrange
+		var $GridMock = jQuery("<div></div>", { width: 500 });
+		var oGridMock = {
+			$: function () {
+				return $GridMock;
+			}
+		};
+
+		// Act
+		this.oGridLayout.onGridAfterRendering(oGridMock);
+
+		// Assert
+		assert.ok(this.fnLayoutChangeHandler.notCalled, "Should not trigger layoutChange onAfterRendering of the grid");
+		assert.ok(this.oGridLayout._setActiveLayoutClassName.calledOnce, "Should add size class when layout is applied");
+	});
+
+	QUnit.test("Resize", function (assert) {
+
+		// Arrange
+		var $GridMock = jQuery("<div><div id='cssGrid'></div></div>");
+
+		var oGridMock = {
+			$: function () {
+				return $GridMock.find("#cssGrid");
+			}
+		};
+
+		var oResizeEventMock = {
+			size: {
+				width: 1000
+			},
+			control: oGridMock
+		};
+
+
+
+		$GridMock.css({padding: 100});
+		$GridMock.width(1300);
+
+		this.oGridLayout.onGridResize(oResizeEventMock);
+		assert.ok(this.fnLayoutChangeHandler.calledOnce, "Trigger layoutChange onAfterRendering of the grid");
+		assert.ok(this.oGridLayout._setActiveLayoutClassName.calledOnce, "Should add size class when layout is applied");
+		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutXL", "XL class name is correct");
+
+		$GridMock.width(900);
+		this.oGridLayout.onGridResize(oResizeEventMock);
+		assert.ok(this.fnLayoutChangeHandler.calledTwice, "Trigger layoutChange");
+		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutL", "L class name is correct");
+
+		$GridMock.width(800);
+		this.oGridLayout.onGridResize(oResizeEventMock);
+		assert.strictEqual(this.fnLayoutChangeHandler.callCount, 3, "Trigger layoutChange");
+		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutM", "M class name is correct");
+
+		$GridMock.width(300);
+		this.oGridLayout.onGridResize(oResizeEventMock);
+		assert.strictEqual(this.fnLayoutChangeHandler.callCount, 4, "Trigger layoutChange");
+		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutS", "S class name is correct");
+	});
+
+	QUnit.module("ResponsiveColumnItemLayoutData", {
+		beforeEach: function () {
+			this.oGrid = new CSSGrid({
+				items: [
+					new HTML({ content: "<div></div>" }),
+					new HTML({ content: "<div></div>" }),
+					new HTML({ content: "<div></div>" })
+				]
+			});
+			this.oLayoutData = new ResponsiveColumnItemLayoutData({
+				rows: 4,
+				columns: 2
+			});
+			this.oItem = this.oGrid.getItems()[0];
+			this.oGrid.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+			if (this.oLayoutData) {
+				this.oLayoutData.destroy();
+			}
+		}
+	});
+
+	QUnit.test("Set item layoutData", function (assert) {
+
+		// Arrange
+		sinon.spy(GridLayoutBase, "setItemStyles");
+		sinon.spy(this.oGrid, "onLayoutDataChange");
+
+		// Act
+		this.oItem.setLayoutData(this.oLayoutData);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(GridLayoutBase.setItemStyles.calledOnce, "Should update item styles on layout data change");
+		assert.ok(this.oGrid.onLayoutDataChange.calledOnce, "Should call layoutDataChange handler");
+
+		if (bBrowserSupportGrid) {
+			assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-row").indexOf("span 4") > -1,"grid-row property is correct");
+			assert.ok(this.oItem.getDomRef().style.getPropertyValue("grid-column").indexOf("span 2") > -1, "grid-column property is correct");
+		}
+
+		// Cleanup
+		GridLayoutBase.setItemStyles.restore();
+		this.oGrid.onLayoutDataChange.restore();
+	});
+	QUnit.test("Remove item layoutData", function (assert) {
+
+		// Arrange
+		this.oItem.setLayoutData(this.oLayoutData);
+		Core.applyChanges();
+
+		// Act
+		this.oItem.setLayoutData(null);
+
+		Core.applyChanges();
+
+		// Assert
+		assert.notOk(this.oItem.getDomRef().style.getPropertyValue("grid-row"), "Should NOT have grid-row property");
+		assert.notOk(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should NOT have grid-column property");
+	});
+
+	if (bBrowserSupportGrid) {
+		QUnit.test("Change item layoutData", function (assert) {
+
+			// Arrange
+			this.oItem.setLayoutData(this.oLayoutData);
+			Core.applyChanges();
+
+			// Act
+			this.oLayoutData.setRows(5);
+
+			// Assert
+			var sGridRow = this.oItem.getDomRef().style.getPropertyValue("grid-row");
+
+			// Check with indexOf as the browser normalizes the property value.
+			assert.ok(sGridRow && sGridRow.indexOf("span 5") > -1, "Should have updated the grid-row property");
+		});
+	}
 });
