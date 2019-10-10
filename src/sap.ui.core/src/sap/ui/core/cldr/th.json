@@ -663,6 +663,7 @@
 		"Egyh": "เฮียราติกอียิปต์",
 		"Egyp": "เฮียโรกลิฟส์อียิปต์",
 		"Elba": "เอลบ์ซาน",
+		"Elym": "Elym",
 		"Ethi": "เอธิโอปิก",
 		"Geok": "คัตซูรีจอร์เจีย",
 		"Geor": "จอร์เจีย",
@@ -687,6 +688,7 @@
 		"Hira": "ฮิระงะนะ",
 		"Hluw": "อักขระอานาโตเลีย",
 		"Hmng": "ปาเฮาห์ม้ง",
+		"Hmnp": "Hmnp",
 		"Hrkt": "คะตะกะนะหรือฮิระงะนะ",
 		"Hung": "ฮังการีโบราณ",
 		"Inds": "อินดัส",
@@ -735,6 +737,7 @@
 		"Mtei": "เมเทมาเยก",
 		"Mult": "Mult",
 		"Mymr": "พม่า",
+		"Nand": "Nand",
 		"Narb": "อาระเบียเหนือโบราณ",
 		"Nbat": "นาบาทาเอียน",
 		"Newa": "Newa",
@@ -801,6 +804,7 @@
 		"Vaii": "ไว",
 		"Visp": "คำพูดที่มองเห็นได้",
 		"Wara": "วารังกสิติ",
+		"Wcho": "Wcho",
 		"Wole": "โอลีเอ",
 		"Xpeo": "เปอร์เซียโบราณ",
 		"Xsux": "อักษรรูปลิ่มสุเมเรีย-อัคคาเดีย",
@@ -1003,8 +1007,8 @@
 		"MF": "เซนต์มาร์ติน",
 		"MG": "มาดากัสการ์",
 		"MH": "หมู่เกาะมาร์แชลล์",
-		"MK": "มาซิโดเนีย",
-		"MK-alt-variant": "มาซิโดเนีย (FYROM)",
+		"MK": "มาซิโดเนียเหนือ",
+		"MK-alt-variant": "MK",
 		"ML": "มาลี",
 		"MM": "เมียนมาร์ (พม่า)",
 		"MN": "มองโกเลีย",
@@ -1076,7 +1080,8 @@
 		"SV": "เอลซัลวาดอร์",
 		"SX": "ซินต์มาร์เทน",
 		"SY": "ซีเรีย",
-		"SZ": "สวาซิแลนด์",
+		"SZ": "เอสวาตีนี",
+		"SZ-alt-variant": "สวาซิแลนด์",
 		"TA": "ทริสตันดาคูนา",
 		"TC": "หมู่เกาะเติกส์และหมู่เกาะเคคอส",
 		"TD": "ชาด",
@@ -1214,6 +1219,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -1702,6 +1716,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2172,6 +2195,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2663,6 +2695,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -3135,6 +3176,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} - {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h – h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm – h:mm B",
+					"m": "h:mm – h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -3944,7 +3994,7 @@
 		"end": "{0} หรือ {1}"
 	},
 	"listPattern-standard-short": {
-		"2": "{0} และ {1}",
+		"2": "{0}และ{1}",
 		"start": "{0} {1}",
 		"middle": "{0} {1}",
 		"end": "{0} และ{1}"
@@ -4023,6 +4073,10 @@
 				"unitPattern-count-other": "{0} ตร.นิ้ว",
 				"perUnitPattern": "{0}/ตร.นิ้ว"
 			},
+			"area-dunam": {
+				"displayName": "ดูนัม",
+				"unitPattern-count-other": "{0} ดูนัม"
+			},
 			"concentr-karat": {
 				"displayName": "กะรัต",
 				"unitPattern-count-other": "{0} กะรัต"
@@ -4046,6 +4100,14 @@
 			"concentr-permille": {
 				"displayName": "‰",
 				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "เปอร์มีเรียด",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "โมล",
+				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "ลิตร/กม.",
@@ -4198,6 +4260,22 @@
 				"displayName": "กว.-ชม.",
 				"unitPattern-count-other": "{0} กว.-ชม."
 			},
+			"energy-electronvolt": {
+				"displayName": "อิเล็กตรอนโวลต์",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "บีทียู",
+				"unitPattern-count-other": "{0} BTU"
+			},
+			"force-pound-force": {
+				"displayName": "แรงปอนด์",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "นิวตัน",
+				"unitPattern-count-other": "{0} N"
+			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
 				"unitPattern-count-other": "{0} GHz"
@@ -4299,9 +4377,17 @@
 				"displayName": "จุด",
 				"unitPattern-count-other": "{0} จุด"
 			},
+			"length-solar-radius": {
+				"displayName": "รัศมีวงกลมของดวงอาทิตย์",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "ลักซ์",
 				"unitPattern-count-other": "{0} ลักซ์"
+			},
+			"light-solar-luminosity": {
+				"displayName": "ความสว่างดวงอาทิตย์",
+				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
 				"displayName": "ต.",
@@ -4351,6 +4437,18 @@
 				"displayName": "กะรัต",
 				"unitPattern-count-other": "{0} กะรัต"
 			},
+			"mass-dalton": {
+				"displayName": "ดัลตัน",
+				"unitPattern-count-other": "{0} Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "มวลของโลก",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "มวลดวงอาทิตย์",
+				"unitPattern-count-other": "{0} M☉"
+			},
 			"power-gigawatt": {
 				"displayName": "กิกะวัตต์",
 				"unitPattern-count-other": "{0} กิกะวัตต์"
@@ -4399,6 +4497,14 @@
 				"displayName": "บรรยากาศ",
 				"unitPattern-count-other": "{0} atm"
 			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-other": "{0} kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-other": "{0} MPa"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "กม./ชั่วโมง",
 				"unitPattern-count-other": "{0} กม./ชม."
@@ -4430,6 +4536,14 @@
 			"temperature-kelvin": {
 				"displayName": "K",
 				"unitPattern-count-other": "{0} K"
+			},
+			"torque-pound-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-other": "{0} N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "ลบ.กม.",
@@ -4528,6 +4642,10 @@
 				"displayName": "ฟลูอิดออนซ์",
 				"unitPattern-count-other": "{0} ฟลูอิดออนซ์"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-other": "{0} fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "ชต.",
 				"unitPattern-count-other": "{0} ชต."
@@ -4535,6 +4653,10 @@
 			"volume-teaspoon": {
 				"displayName": "ชช.",
 				"unitPattern-count-other": "{0} ชช."
+			},
+			"volume-barrel": {
+				"displayName": "บาร์เรล",
+				"unitPattern-count-other": "{0} bbl"
 			},
 			"coordinateUnit": {
 				"displayName": "ทิศหลัก",

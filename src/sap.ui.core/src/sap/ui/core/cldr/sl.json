@@ -62,7 +62,7 @@
 		"ca": "katalonščina",
 		"cad": "kadoščina",
 		"car": "karibski jezik",
-		"ccp": "ccp",
+		"ccp": "chakma",
 		"ce": "čečenščina",
 		"ceb": "sebuanščina",
 		"cgg": "čigajščina",
@@ -153,7 +153,6 @@
 		"ga": "irščina",
 		"gaa": "ga",
 		"gag": "gagavščina",
-		"gan": "gan",
 		"gay": "gajščina",
 		"gba": "gbajščina",
 		"gd": "škotska gelščina",
@@ -175,7 +174,6 @@
 		"gwi": "gvičin",
 		"ha": "havščina",
 		"hai": "haidščina",
-		"hak": "hak",
 		"haw": "havajščina",
 		"he": "hebrejščina",
 		"hi": "hindujščina",
@@ -185,7 +183,6 @@
 		"ho": "hiri motu",
 		"hr": "hrvaščina",
 		"hsb": "gornja lužiška srbščina",
-		"hsn": "hsn",
 		"ht": "haitijska kreolščina",
 		"hu": "madžarščina",
 		"hup": "hupa",
@@ -495,7 +492,6 @@
 		"was": "vašajščina",
 		"wbp": "varlpirščina",
 		"wo": "volofščina",
-		"wuu": "wuu",
 		"xal": "kalmiščina",
 		"xh": "koščina",
 		"xog": "sogščina",
@@ -557,6 +553,7 @@
 		"Egyh": "hieratska egipčanska pisava",
 		"Egyp": "egipčanska slikovna pisava",
 		"Elba": "Elba",
+		"Elym": "Elym",
 		"Ethi": "etiopski",
 		"Geok": "cerkvenogruzijski",
 		"Geor": "gruzijski",
@@ -581,6 +578,7 @@
 		"Hira": "hiragana",
 		"Hluw": "Hluw",
 		"Hmng": "pahavhmonska zlogovna pisava",
+		"Hmnp": "Hmnp",
 		"Hrkt": "japonska zlogovnica",
 		"Hung": "staroogrski",
 		"Inds": "induški",
@@ -626,6 +624,7 @@
 		"Mtei": "manipurski",
 		"Mult": "Mult",
 		"Mymr": "mjanmarski",
+		"Nand": "Nand",
 		"Narb": "Narb",
 		"Nbat": "Nbat",
 		"Newa": "Newa",
@@ -691,6 +690,7 @@
 		"Vaii": "zlogovna pisava vai",
 		"Visp": "vidni govor",
 		"Wara": "Wara",
+		"Wcho": "Wcho",
 		"Xpeo": "staroperzijski",
 		"Xsux": "sumersko-akadski klinopis",
 		"Yiii": "Yiii",
@@ -892,13 +892,13 @@
 		"MF": "Saint Martin",
 		"MG": "Madagaskar",
 		"MH": "Marshallovi otoki",
-		"MK": "Makedonija",
-		"MK-alt-variant": "Makedonija (FYROM)",
+		"MK": "Severna Makedonija",
+		"MK-alt-variant": "MK",
 		"ML": "Mali",
 		"MM": "Mjanmar (Burma)",
 		"MN": "Mongolija",
 		"MO": "Posebno administrativno območje LR Kitajske Macao",
-		"MO-alt-short": "Macao",
+		"MO-alt-short": "Posebno administrativno območje LR Kitajske Macao",
 		"MP": "Severni Marianski otoki",
 		"MQ": "Martinik",
 		"MR": "Mavretanija",
@@ -966,6 +966,7 @@
 		"SX": "Sint Maarten",
 		"SY": "Sirija",
 		"SZ": "Svazi",
+		"SZ-alt-variant": "SZ",
 		"TA": "Tristan da Cunha",
 		"TC": "Otoki Turks in Caicos",
 		"TD": "Čad",
@@ -1002,8 +1003,8 @@
 		"VU": "Vanuatu",
 		"WF": "Wallis in Futuna",
 		"WS": "Samoa",
-		"XA": "XA",
-		"XB": "XB",
+		"XA": "psevdonaglasi",
+		"XB": "psevdobidi",
 		"XK": "Kosovo",
 		"YE": "Jemen",
 		"YT": "Mayotte",
@@ -1077,7 +1078,7 @@
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "W. 'teden' 'v' MMM",
+				"MMMMW": "W. 'teden' 'v' MMMM",
 				"yw": "w. 'teden' 'v' Y"
 			},
 			"appendItems": {
@@ -1095,6 +1096,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "h B–h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h.mm B–h.mm B",
+					"h": "h.mm–h.mm B",
+					"m": "h.mm–h.mm B"
+				},
 				"d": {
 					"d": "d.–d."
 				},
@@ -1557,6 +1567,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "h B–h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B–h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d.–d."
 				},
@@ -2016,6 +2035,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "h B–h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B–h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d.–d."
 				},
@@ -2487,6 +2515,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "h B–h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B–h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d.–d."
 				},
@@ -2946,6 +2983,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
+				"Bh": {
+					"B": "h B–h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B–h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d.–d."
 				},
@@ -4117,6 +4163,13 @@
 				"unitPattern-count-other": "{0} in²",
 				"perUnitPattern": "{0}/in²"
 			},
+			"area-dunam": {
+				"displayName": "dunami",
+				"unitPattern-count-one": "{0} dunam",
+				"unitPattern-count-two": "{0} dunama",
+				"unitPattern-count-few": "{0} dunami",
+				"unitPattern-count-other": "{0} dunamov"
+			},
 			"concentr-karat": {
 				"displayName": "kt",
 				"unitPattern-count-one": "{0} kt",
@@ -4158,6 +4211,20 @@
 				"unitPattern-count-two": "{0} ‰",
 				"unitPattern-count-few": "{0} ‰",
 				"unitPattern-count-other": "{0} ‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-one": "{0} ‱",
+				"unitPattern-count-two": "{0} ‱",
+				"unitPattern-count-few": "{0} ‱",
+				"unitPattern-count-other": "{0} ‱"
+			},
+			"concentr-mole": {
+				"displayName": "mol",
+				"unitPattern-count-one": "{0} mol",
+				"unitPattern-count-two": "{0} mol",
+				"unitPattern-count-few": "{0} mol",
+				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "L/km",
@@ -4418,6 +4485,34 @@
 				"unitPattern-count-few": "{0} kWh",
 				"unitPattern-count-other": "{0} kWh"
 			},
+			"energy-electronvolt": {
+				"displayName": "eV",
+				"unitPattern-count-one": "{0} eV",
+				"unitPattern-count-two": "{0} eV",
+				"unitPattern-count-few": "{0} eV",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "Btu",
+				"unitPattern-count-one": "{0} Btu",
+				"unitPattern-count-two": "{0} Btu",
+				"unitPattern-count-few": "{0} Btu",
+				"unitPattern-count-other": "{0} Btu"
+			},
+			"force-pound-force": {
+				"displayName": "lbf",
+				"unitPattern-count-one": "{0} lbf",
+				"unitPattern-count-two": "{0} lbf",
+				"unitPattern-count-few": "{0} lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "N",
+				"unitPattern-count-one": "{0} N",
+				"unitPattern-count-two": "{0} N",
+				"unitPattern-count-few": "{0} N",
+				"unitPattern-count-other": "{0} N"
+			},
 			"frequency-gigahertz": {
 				"displayName": "GHz",
 				"unitPattern-count-one": "{0} GHz",
@@ -4558,9 +4653,6 @@
 			},
 			"length-furlong": {
 				"displayName": "fur",
-				"unitPattern-count-one": "{0} fur",
-				"unitPattern-count-two": "{0} fur",
-				"unitPattern-count-few": "{0} fur",
 				"unitPattern-count-other": "{0} fur"
 			},
 			"length-fathom": {
@@ -4591,12 +4683,26 @@
 				"unitPattern-count-few": "{0} pt",
 				"unitPattern-count-other": "{0} pt"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-one": "{0} R☉",
+				"unitPattern-count-two": "{0} R☉",
+				"unitPattern-count-few": "{0} R☉",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "lx",
 				"unitPattern-count-one": "{0} lx",
 				"unitPattern-count-two": "{0} lx",
 				"unitPattern-count-few": "{0} lx",
 				"unitPattern-count-other": "{0} lx"
+			},
+			"light-solar-luminosity": {
+				"displayName": "L☉",
+				"unitPattern-count-one": "{0} L☉",
+				"unitPattern-count-two": "{0} L☉",
+				"unitPattern-count-few": "{0} L☉",
+				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
 				"displayName": "t",
@@ -4644,9 +4750,6 @@
 			},
 			"mass-stone": {
 				"displayName": "st",
-				"unitPattern-count-one": "{0} st",
-				"unitPattern-count-two": "{0} st",
-				"unitPattern-count-few": "{0} st",
 				"unitPattern-count-other": "{0} st"
 			},
 			"mass-pound": {
@@ -4678,6 +4781,27 @@
 				"unitPattern-count-two": "{0} CD",
 				"unitPattern-count-few": "{0} CD",
 				"unitPattern-count-other": "{0} CD"
+			},
+			"mass-dalton": {
+				"displayName": "Da",
+				"unitPattern-count-one": "{0} Da",
+				"unitPattern-count-two": "{0} Da",
+				"unitPattern-count-few": "{0} Da",
+				"unitPattern-count-other": "{0} Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "M⊕",
+				"unitPattern-count-one": "{0} M⊕",
+				"unitPattern-count-two": "{0} M⊕",
+				"unitPattern-count-few": "{0} M⊕",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "M☉",
+				"unitPattern-count-one": "{0} M☉",
+				"unitPattern-count-two": "{0} M☉",
+				"unitPattern-count-few": "{0} M☉",
+				"unitPattern-count-other": "{0} M☉"
 			},
 			"power-gigawatt": {
 				"displayName": "GW",
@@ -4763,6 +4887,20 @@
 				"unitPattern-count-few": "{0} atm",
 				"unitPattern-count-other": "{0} atm"
 			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-one": "{0} kPa",
+				"unitPattern-count-two": "{0} kPa",
+				"unitPattern-count-few": "{0} kPa",
+				"unitPattern-count-other": "{0} kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-one": "{0} MPa",
+				"unitPattern-count-two": "{0} MPa",
+				"unitPattern-count-few": "{0} MPa",
+				"unitPattern-count-other": "{0} MPa"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "km/h",
 				"unitPattern-count-one": "{0} km/h",
@@ -4818,6 +4956,20 @@
 				"unitPattern-count-two": "{0} K",
 				"unitPattern-count-few": "{0} K",
 				"unitPattern-count-other": "{0} K"
+			},
+			"torque-pound-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
+				"unitPattern-count-two": "{0} lbf⋅ft",
+				"unitPattern-count-few": "{0} lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-one": "{0} N⋅m",
+				"unitPattern-count-two": "{0} N⋅m",
+				"unitPattern-count-few": "{0} N⋅m",
+				"unitPattern-count-other": "{0} N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "km³",
@@ -4982,6 +5134,13 @@
 				"unitPattern-count-few": "{0} fl oz",
 				"unitPattern-count-other": "{0} fl oz"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "imp. fl. oz.",
+				"unitPattern-count-one": "{0} imp. fl. oz.",
+				"unitPattern-count-two": "{0} imp. fl. oz.",
+				"unitPattern-count-few": "{0} imp. fl. oz.",
+				"unitPattern-count-other": "{0} imp. fl. oz."
+			},
 			"volume-tablespoon": {
 				"displayName": "žlica",
 				"unitPattern-count-one": "{0} žlica",
@@ -4995,6 +5154,13 @@
 				"unitPattern-count-two": "{0} žlički",
 				"unitPattern-count-few": "{0} žličke",
 				"unitPattern-count-other": "{0} žličk"
+			},
+			"volume-barrel": {
+				"displayName": "bbl",
+				"unitPattern-count-one": "{0} bbl",
+				"unitPattern-count-two": "{0} bbl",
+				"unitPattern-count-few": "{0} bbl",
+				"unitPattern-count-other": "{0} bbl"
 			},
 			"coordinateUnit": {
 				"displayName": "smer",

@@ -577,6 +577,7 @@
 		"Egyh": "الهيراطيقية",
 		"Egyp": "الهيروغليفية",
 		"Elba": "Elba",
+		"Elym": "Elym",
 		"Ethi": "الأثيوبية",
 		"Geok": "الأبجدية الجورجية - أسومتافرلي و نسخري",
 		"Geor": "الجورجية",
@@ -601,6 +602,7 @@
 		"Hira": "الهيراجانا",
 		"Hluw": "Hluw",
 		"Hmng": "الباهوه همونج",
+		"Hmnp": "Hmnp",
 		"Hrkt": "أبجدية مقطعية يابانية",
 		"Hung": "المجرية القديمة",
 		"Inds": "اندس - هارابان",
@@ -646,6 +648,7 @@
 		"Mtei": "Mtei",
 		"Mult": "Mult",
 		"Mymr": "الميانمار",
+		"Nand": "Nand",
 		"Narb": "العربية الشمالية القديمة",
 		"Nbat": "Nbat",
 		"Newa": "Newa",
@@ -710,6 +713,7 @@
 		"Vaii": "الفاي",
 		"Visp": "الكلام المرئي",
 		"Wara": "Wara",
+		"Wcho": "Wcho",
 		"Xpeo": "الفارسية القديمة",
 		"Xsux": "الكتابة المسمارية الأكدية السومرية",
 		"Yiii": "اليي",
@@ -911,8 +915,8 @@
 		"MF": "سان مارتن",
 		"MG": "مدغشقر",
 		"MH": "جزر مارشال",
-		"MK": "مقدونيا",
-		"MK-alt-variant": "مقدونيا- جمهورية مقدونيا اليوغسلافية السابقة",
+		"MK": "مقدونيا الشمالية",
+		"MK-alt-variant": "MK",
 		"ML": "مالي",
 		"MM": "ميانمار (بورما)",
 		"MN": "منغوليا",
@@ -984,7 +988,8 @@
 		"SV": "السلفادور",
 		"SX": "سانت مارتن",
 		"SY": "سوريا",
-		"SZ": "سوازيلاند",
+		"SZ": "إسواتيني",
+		"SZ-alt-variant": "SZ",
 		"TA": "تريستان دا كونا",
 		"TC": "جزر توركس وكايكوس",
 		"TD": "تشاد",
@@ -1098,7 +1103,7 @@
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
 				"yQQQQ": "QQQQ y",
-				"MMMMW": "الأسبوع W من MMM",
+				"MMMMW": "الأسبوع W من MMMM",
 				"yw": "الأسبوع w من سنة Y"
 			},
 			"appendItems": {
@@ -1116,6 +1121,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -1580,6 +1594,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2041,6 +2064,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2522,6 +2554,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -2983,6 +3024,15 @@
 			},
 			"intervalFormats": {
 				"intervalFormatFallback": "{0} – {1}",
+				"Bh": {
+					"B": "h B – h B",
+					"h": "h–h B"
+				},
+				"Bhm": {
+					"B": "h:mm B – h:mm B",
+					"h": "h:mm–h:mm B",
+					"m": "h:mm–h:mm B"
+				},
 				"d": {
 					"d": "d–d"
 				},
@@ -4386,6 +4436,15 @@
 				"unitPattern-count-other": "{0} بوصة²",
 				"perUnitPattern": "{0}/بوصة²"
 			},
+			"area-dunam": {
+				"displayName": "دونم",
+				"unitPattern-count-zero": "{0} دونم",
+				"unitPattern-count-one": "{0} دونم",
+				"unitPattern-count-two": "{0} دونم",
+				"unitPattern-count-few": "{0} دونم",
+				"unitPattern-count-many": "{0} دونم",
+				"unitPattern-count-other": "{0} دونم"
+			},
 			"concentr-karat": {
 				"displayName": "قيراط",
 				"unitPattern-count-zero": "{0} قيراط",
@@ -4433,12 +4492,25 @@
 			},
 			"concentr-permille": {
 				"displayName": "في الألف",
-				"unitPattern-count-zero": "{0}‰",
-				"unitPattern-count-one": "{0}‰",
-				"unitPattern-count-two": "{0}‰",
-				"unitPattern-count-few": "{0}‰",
-				"unitPattern-count-many": "{0}‰",
 				"unitPattern-count-other": "{0}‰"
+			},
+			"concentr-permyriad": {
+				"displayName": "‱",
+				"unitPattern-count-zero": "{0}‱",
+				"unitPattern-count-one": "{0}‱",
+				"unitPattern-count-two": "{0}‱",
+				"unitPattern-count-few": "{0}‱",
+				"unitPattern-count-many": "{0}‱",
+				"unitPattern-count-other": "{0}‱"
+			},
+			"concentr-mole": {
+				"displayName": "مول",
+				"unitPattern-count-zero": "{0} mol",
+				"unitPattern-count-one": "{0} mol",
+				"unitPattern-count-two": "{0} mol",
+				"unitPattern-count-few": "{0} mol",
+				"unitPattern-count-many": "{0} mol",
+				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
 				"displayName": "لتر/كم",
@@ -4771,6 +4843,42 @@
 				"unitPattern-count-many": "{0} ك.و.س",
 				"unitPattern-count-other": "{0} ك.و.س"
 			},
+			"energy-electronvolt": {
+				"displayName": "إلكترون فولت",
+				"unitPattern-count-zero": "{0} eV",
+				"unitPattern-count-one": "{0} eV",
+				"unitPattern-count-two": "{0} eV",
+				"unitPattern-count-few": "{0} eV",
+				"unitPattern-count-many": "{0} eV",
+				"unitPattern-count-other": "{0} eV"
+			},
+			"energy-british-thermal-unit": {
+				"displayName": "Btu",
+				"unitPattern-count-zero": "{0} Btu",
+				"unitPattern-count-one": "{0} Btu",
+				"unitPattern-count-two": "{0} Btu",
+				"unitPattern-count-few": "{0} Btu",
+				"unitPattern-count-many": "{0} Btu",
+				"unitPattern-count-other": "{0} Btu"
+			},
+			"force-pound-force": {
+				"displayName": "باوند قوة",
+				"unitPattern-count-zero": "{0} lbf",
+				"unitPattern-count-one": "{0} lbf",
+				"unitPattern-count-two": "{0} lbf",
+				"unitPattern-count-few": "{0} lbf",
+				"unitPattern-count-many": "{0} lbf",
+				"unitPattern-count-other": "{0} lbf"
+			},
+			"force-newton": {
+				"displayName": "نيوتن",
+				"unitPattern-count-zero": "{0} N",
+				"unitPattern-count-one": "{0} N",
+				"unitPattern-count-two": "{0} N",
+				"unitPattern-count-few": "{0} N",
+				"unitPattern-count-many": "{0} N",
+				"unitPattern-count-other": "{0} N"
+			},
 			"frequency-gigahertz": {
 				"displayName": "غ هرتز",
 				"unitPattern-count-zero": "{0} غ هرتز",
@@ -4982,6 +5090,15 @@
 				"unitPattern-count-many": "{0} ن",
 				"unitPattern-count-other": "{0} ن"
 			},
+			"length-solar-radius": {
+				"displayName": "R☉",
+				"unitPattern-count-zero": "{0} R☉",
+				"unitPattern-count-one": "{0} R☉",
+				"unitPattern-count-two": "{0} R☉",
+				"unitPattern-count-few": "{0} R☉",
+				"unitPattern-count-many": "{0} R☉",
+				"unitPattern-count-other": "{0} R☉"
+			},
 			"light-lux": {
 				"displayName": "لكس",
 				"unitPattern-count-zero": "{0} لكس",
@@ -4990,6 +5107,15 @@
 				"unitPattern-count-few": "{0} لكس",
 				"unitPattern-count-many": "{0} لكس",
 				"unitPattern-count-other": "{0} لكس"
+			},
+			"light-solar-luminosity": {
+				"displayName": "ضياء شمسي",
+				"unitPattern-count-zero": "{0} L☉",
+				"unitPattern-count-one": "{0} L☉",
+				"unitPattern-count-two": "{0} L☉",
+				"unitPattern-count-few": "{0} L☉",
+				"unitPattern-count-many": "{0} L☉",
+				"unitPattern-count-other": "{0} L☉"
 			},
 			"mass-metric-ton": {
 				"displayName": "ط.م",
@@ -5088,6 +5214,33 @@
 				"unitPattern-count-few": "{0} قيراط",
 				"unitPattern-count-many": "{0} قيراط",
 				"unitPattern-count-other": "{0} قيراط"
+			},
+			"mass-dalton": {
+				"displayName": "Da",
+				"unitPattern-count-zero": "{0} Da",
+				"unitPattern-count-one": "{0} Da",
+				"unitPattern-count-two": "{0} Da",
+				"unitPattern-count-few": "{0} Da",
+				"unitPattern-count-many": "{0} Da",
+				"unitPattern-count-other": "{0} Da"
+			},
+			"mass-earth-mass": {
+				"displayName": "M⊕",
+				"unitPattern-count-zero": "{0} M⊕",
+				"unitPattern-count-one": "{0} M⊕",
+				"unitPattern-count-two": "{0} M⊕",
+				"unitPattern-count-few": "{0} M⊕",
+				"unitPattern-count-many": "{0} M⊕",
+				"unitPattern-count-other": "{0} M⊕"
+			},
+			"mass-solar-mass": {
+				"displayName": "M☉",
+				"unitPattern-count-zero": "{0} M☉",
+				"unitPattern-count-one": "{0} M☉",
+				"unitPattern-count-two": "{0} M☉",
+				"unitPattern-count-few": "{0} M☉",
+				"unitPattern-count-many": "{0} M☉",
+				"unitPattern-count-other": "{0} M☉"
 			},
 			"power-gigawatt": {
 				"displayName": "غ واط",
@@ -5197,6 +5350,24 @@
 				"unitPattern-count-many": "{0} ض.ج",
 				"unitPattern-count-other": "{0} ض.ج"
 			},
+			"pressure-kilopascal": {
+				"displayName": "kPa",
+				"unitPattern-count-zero": "{0} kPa",
+				"unitPattern-count-one": "{0} kPa",
+				"unitPattern-count-two": "{0} kPa",
+				"unitPattern-count-few": "{0} kPa",
+				"unitPattern-count-many": "{0} kPa",
+				"unitPattern-count-other": "{0} kPa"
+			},
+			"pressure-megapascal": {
+				"displayName": "MPa",
+				"unitPattern-count-zero": "{0} MPa",
+				"unitPattern-count-one": "{0} MPa",
+				"unitPattern-count-two": "{0} MPa",
+				"unitPattern-count-few": "{0} MPa",
+				"unitPattern-count-many": "{0} MPa",
+				"unitPattern-count-other": "{0} MPa"
+			},
 			"speed-kilometer-per-hour": {
 				"displayName": "كم/س",
 				"unitPattern-count-zero": "{0} كم/س",
@@ -5268,6 +5439,24 @@
 				"unitPattern-count-few": "{0} د كلفن",
 				"unitPattern-count-many": "{0} د كلفن",
 				"unitPattern-count-other": "{0} د كلفن"
+			},
+			"torque-pound-foot": {
+				"displayName": "lbf⋅ft",
+				"unitPattern-count-zero": "{0} lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
+				"unitPattern-count-two": "{0} lbf⋅ft",
+				"unitPattern-count-few": "{0} lbf⋅ft",
+				"unitPattern-count-many": "{0} lbf⋅ft",
+				"unitPattern-count-other": "{0} lbf⋅ft"
+			},
+			"torque-newton-meter": {
+				"displayName": "N⋅m",
+				"unitPattern-count-zero": "{0} N⋅m",
+				"unitPattern-count-one": "{0} N⋅m",
+				"unitPattern-count-two": "{0} N⋅m",
+				"unitPattern-count-few": "{0} N⋅m",
+				"unitPattern-count-many": "{0} N⋅m",
+				"unitPattern-count-other": "{0} N⋅m"
 			},
 			"volume-cubic-kilometer": {
 				"displayName": "كم³",
@@ -5476,6 +5665,15 @@
 				"unitPattern-count-many": "{0} أونصة س",
 				"unitPattern-count-other": "{0} أونصة س"
 			},
+			"volume-fluid-ounce-imperial": {
+				"displayName": "Imp. fl oz",
+				"unitPattern-count-zero": "{0} fl oz Imp.",
+				"unitPattern-count-one": "{0} fl oz Imp.",
+				"unitPattern-count-two": "{0} fl oz Imp.",
+				"unitPattern-count-few": "{0} fl oz Imp.",
+				"unitPattern-count-many": "{0} fl oz Imp.",
+				"unitPattern-count-other": "{0} fl oz Imp."
+			},
 			"volume-tablespoon": {
 				"displayName": "ملعقة كبيرة",
 				"unitPattern-count-zero": "{0} ملعقة ك.",
@@ -5493,6 +5691,15 @@
 				"unitPattern-count-few": "{0} ملعقة ص",
 				"unitPattern-count-many": "{0} ملعقة ص",
 				"unitPattern-count-other": "{0} ملعقة ص"
+			},
+			"volume-barrel": {
+				"displayName": "bbl",
+				"unitPattern-count-zero": "{0} bbl",
+				"unitPattern-count-one": "{0} bbl",
+				"unitPattern-count-two": "{0} bbl",
+				"unitPattern-count-few": "{0} bbl",
+				"unitPattern-count-many": "{0} bbl",
+				"unitPattern-count-other": "{0} bbl"
 			},
 			"coordinateUnit": {
 				"displayName": "اتجاه",
