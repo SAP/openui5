@@ -501,59 +501,24 @@ sap.ui.define([
 				resetChangesForPath : function () {}
 			},
 			oExpectation,
-			sPath = "foo",
+			sPath = {/*string*/},
 			oPromise = SyncPromise.resolve(Promise.resolve());
 
 		oExpectation = this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.func, sPath).returns(oPromise);
+			.withExactArgs(sinon.match.func, sinon.match.same(sPath), true)
+			.returns(oPromise);
+		this.mock(oPromise).expects("unwrap").withExactArgs();
 
 		// code under test
 		oBinding.resetChangesForPath(sPath);
 
 		// check that the function passed to withCache works as expected
-		this.mock(oCache).expects("resetChangesForPath").withExactArgs(sPath);
+		this.mock(oCache).expects("resetChangesForPath").withExactArgs(sinon.match.same(sPath));
+
+		// code under test
 		oExpectation.firstCall.args[0](oCache, sPath);
 
 		return oPromise;
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resetChangesForPath: withCache rejects sync", function (assert) {
-		var oBinding = new ODataBinding({
-				oModel : {
-					reportError : function () {}
-				}
-			}),
-			oError = new Error("fail intentionally");
-
-		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Error in resetChangesForPath", sClassName, sinon.match.same(oError));
-
-		// code under test
-		assert.throws(function () {
-			oBinding.resetChangesForPath("foo");
-		}, oError);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("resetChangesForPath: withCache rejects async", function (assert) {
-		var oBinding = new ODataBinding({
-				oModel : {
-					reportError : function () {}
-				}
-			}),
-			oError = new Error("fail intentionally"),
-			oPromise = SyncPromise.resolve(Promise.reject(oError));
-
-		this.mock(oBinding).expects("withCache").returns(oPromise);
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Error in resetChangesForPath", sClassName, sinon.match.same(oError));
-
-		// code under test
-		oBinding.resetChangesForPath("foo");
-
-		return oPromise.catch(function () {});
 	});
 
 	//*********************************************************************************************

@@ -20796,10 +20796,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: hasPendingChanges works even while late child bindings are trying to reuse the
-	// parent binding's cache.
-	// JIRA: CPOUI5UISERVICESV3-1981
-	QUnit.test("hasPendingChanges works for late child bindings", function (assert) {
+	// Scenario: hasPendingChanges and resetChanges work even while late child bindings are trying
+	// to reuse the parent binding's cache.
+	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
+	QUnit.test("hasPendingChanges + resetChanges work for late child bindings", function (assert) {
 		var oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
 				updateGroupId : "$auto"
@@ -20845,18 +20845,12 @@ sap.ui.define([
 			var oOrdersTable = that.oView.byId("orders"),
 				oOrdersBinding = oOrdersTable.getBinding("items");
 
-			that.expectRequest({
-					method : "PATCH",
-					url : "SalesOrderList('1')",
-					payload : {Note : "SO_1 changed"}
-				}, {
-					Note : "SO_1 changed",
-					SalesOrderID : "1"
-				})
-				.expectChange("note", ["SO_1 changed"]);
+			that.expectChange("note", ["SO_1 changed"])
+				.expectChange("note", ["SO_1"]);
 
 			oOrdersTable.getItems()[0].getCells()[0].getBinding("value").setValue("SO_1 changed");
 
+			// code under test
 			assert.ok(oOrdersBinding.hasPendingChanges());
 
 			that.expectChange("itemNote", ["Item_10"]);
@@ -20868,6 +20862,12 @@ sap.ui.define([
 			// code under test
 			assert.ok(oOrdersBinding.hasPendingChanges());
 
+			// code under test
+			oOrdersBinding.resetChanges();
+
+			// code under test
+			assert.notOk(oOrdersBinding.hasPendingChanges());
+
 			return that.waitForChanges(assert);
 		});
 	});
@@ -20878,7 +20878,8 @@ sap.ui.define([
 	// late properties below a list binding want to reuse the parent binding's cache. Relative list
 	// binding without an own cache is necessary because determination whether cache can be used or
 	// not is async.
-	// JIRA: CPOUI5UISERVICESV3-1981
+	// Resetting pending changes works synchronously.
+	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
 [
 	// late dependent binding does not influence hasPendingChanges for a parent list binding with a
 	// persisted created entity.
@@ -20887,38 +20888,39 @@ sap.ui.define([
 
 		this.oView.byId("form").setBindingContext(oCreatedContext);
 
+		// code under test
 		assert.notOk(oModel.hasPendingChanges());
 		assert.notOk(oBinding.hasPendingChanges());
 
 		return this.waitForChanges(assert);
 	},
-	// modify a persisted created entity; hasPendingChanges is not influenced by late properties
+	// modify a persisted created entity; hasPendingChanges is not influenced by late properties;
+	// resetChanges reverts changes synchronously
 	function (assert, oModel, oBinding, oCreatedContext) {
 		var oPropertyBinding = oModel.bindProperty("Note", oCreatedContext);
 
-		this.expectRequest({
-				method : "PATCH",
-				url : "SalesOrderList('43')",
-				payload : {Note : "Modified"}
-			}, {
-				Note : "From Server",
-				SalesOrderID : "43"
-			})
-			.expectChange("note", "Modified")
-			.expectChange("note", "From Server");
+		this.expectChange("note", "New");
 
 		oPropertyBinding.initialize();
-		oPropertyBinding.setValue("Modified");
+		oPropertyBinding.setValue("Modified"); // no change event; reset is done synchronously
 		this.oView.byId("form").setBindingContext(oCreatedContext);
 
+		// code under test
 		assert.ok(oModel.hasPendingChanges());
 		assert.ok(oBinding.hasPendingChanges());
+
+		// code under test
+		oBinding.resetChanges();
+
+		// code under test
+		assert.notOk(oModel.hasPendingChanges());
+		assert.notOk(oBinding.hasPendingChanges());
 
 		return this.waitForChanges(assert);
 	}
 ].forEach(function (fnTest, i) {
-	var sTitle = "hasPendingChanges: late properties for a list binding without a UI and with a"
-			+ " persisted created entity, #" + i;
+	var sTitle = "hasPendingChanges/resetChanges: late properties for a list binding without a UI"
+			+ " and with a persisted created entity, #" + i;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCreatedContext,
@@ -20955,6 +20957,7 @@ sap.ui.define([
 
 			oCreatedContext = oListBindingWithoutUI.create({SO_2_SOITEM : null}, true);
 
+			// code under test
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(oListBindingWithoutUI.hasPendingChanges());
 
@@ -20963,6 +20966,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			// code under test
 			assert.notOk(oModel.hasPendingChanges());
 			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
 

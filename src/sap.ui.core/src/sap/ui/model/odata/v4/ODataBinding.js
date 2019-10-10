@@ -887,17 +887,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetChangesForPath = function (sPath) {
-		var oPromise = this.withCache(function (oCache, sCachePath) {
+		this.withCache(function (oCache, sCachePath) {
 				oCache.resetChangesForPath(sCachePath);
-			}, sPath),
-			that = this;
-
-		oPromise.catch(function (oError) {
-			that.oModel.reportError("Error in resetChangesForPath", sClassName, oError);
-		});
-		if (oPromise.isRejected()) {
-			throw oPromise.getResult();
-		}
+			}, sPath, true).unwrap();
 	};
 
 	/**
