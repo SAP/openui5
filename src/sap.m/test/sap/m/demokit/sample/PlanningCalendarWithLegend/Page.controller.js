@@ -1,12 +1,14 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/unified/library',
+		'sap/m/library'
 	],
-	function (Controller, JSONModel) {
+	function (Controller, JSONModel, unifiedLibrary, mLibrary) {
 		"use strict";
 
-		var StandardCalendarLegendItem = sap.ui.unified.StandardCalendarLegendItem,
-			PlanningCalendarBuiltInView = sap.m.PlanningCalendarBuiltInView;
+		var StandardCalendarLegendItem = unifiedLibrary.StandardCalendarLegendItem,
+			PlanningCalendarBuiltInView = mLibrary.PlanningCalendarBuiltInView;
 
 		return Controller.extend("sap.m.sample.PlanningCalendarWithLegend.Page", {
 

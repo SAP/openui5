@@ -1,8 +1,8 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/core/format/DateFormat'],
-	function(Controller, DateFormat) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/core/format/DateFormat', 'sap/ui/core/library'],
+	function(Controller, DateFormat, coreLibrary) {
 	"use strict";
 
-	var CalendarType = sap.ui.core.CalendarType;
+	var CalendarType = coreLibrary.CalendarType;
 
 	return Controller.extend("sap.ui.unified.sample.CalendarCalendarType.CalendarCalendarType", {
 		oFormatYyyymmdd: null,

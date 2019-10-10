@@ -2,12 +2,13 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/m/ResponsivePopover',
 	'sap/ui/unified/ColorPicker',
+	'sap/ui/unified/library',
 	'sap/m/Button',
 	'sap/ui/Device'
-], function(Controller, ResponsivePopover, ColorPicker, Button, Device) {
+], function(Controller, ResponsivePopover, ColorPicker, unifiedLibrary, Button, Device) {
 	"use strict";
 
-	var ColorPickerMode = sap.ui.unified.ColorPickerMode;
+	var ColorPickerMode = unifiedLibrary.ColorPickerMode;
 
 	return Controller.extend("sap.ui.unified.sample.ColorPicker.Controller", {
 		openPopover: function(oEvent) {
