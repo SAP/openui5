@@ -474,6 +474,7 @@ sap.ui.define([
 				this.mock(oBinding).expects("fetchCache")
 					.withExactArgs(sinon.match.same(oTargetContext))
 					.callsFake(function () {
+						this.oCache = oTargetCache;
 						this.oCachePromise = SyncPromise.resolve(oTargetCache);
 					});
 			}
@@ -498,7 +499,7 @@ sap.ui.define([
 			}
 			return oBinding.oCachePromise.then(function (oCache) {
 				assert.strictEqual(oCache,
-					oFixture.sTarget === "base" ? oTargetCache : undefined);
+					oFixture.sTarget === "base" ? oTargetCache : null);
 			});
 		});
 	});
@@ -513,24 +514,28 @@ sap.ui.define([
 
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext))
 			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve(oContext ? oCache : undefined);
+				this.oCache = oContext ? oCache : null;
+				this.oCachePromise = SyncPromise.resolve(this.oCache);
 			});
 
 		// code under test
 		oBinding.setContext(oContext);
 
+		assert.strictEqual(oBinding.oCache, oCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 
-		oCache = undefined;
+		oCache = null;
 		oContext = undefined;
 
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve();
+			this.oCache = null;
+			this.oCachePromise = SyncPromise.resolve(null);
 		});
 
 		// code under test
 		oBinding.setContext(oContext);
 
+		assert.strictEqual(oBinding.oCache, oCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 	});
 
@@ -572,6 +577,7 @@ sap.ui.define([
 
 		this.mock(ODataContextBinding.prototype).expects("fetchCache").withExactArgs(undefined)
 			.callsFake(function () {
+				this.oCache = oCache;
 				this.oCachePromise = SyncPromise.resolve(oCache);
 			});
 
@@ -582,6 +588,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.getModel(), this.oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), "/EMPLOYEES(ID='1')");
+		assert.strictEqual(oBinding.oCache, oCache);
 		assert.ok(oBinding.oCachePromise, "oCache is initialized");
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 		assert.strictEqual(oBinding.hasOwnProperty("mQueryOptions"), true);
@@ -831,7 +838,8 @@ sap.ui.define([
 
 		this.mock(ODataContextBinding.prototype).expects("fetchCache").atLeast(1)
 			.callsFake(function (oContext0) {
-				this.oCachePromise = SyncPromise.resolve(oContext0 ? {} : undefined);
+				this.oCache = oContext0 ? {} : null;
+				this.oCachePromise = SyncPromise.resolve(this.oCache);
 		});
 		oBinding = this.bindContext("navigation", oContext, {$$groupId : "$direct"});
 		this.mock(oBinding).expects("getRelativePath")
@@ -1085,7 +1093,8 @@ sap.ui.define([
 		this.mock(_Cache).expects("createSingle").never();
 		oBinding = this.bindContext("/FunctionImport(...)");
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 		oCachePromise = oBinding.oCachePromise;
 		oBindingMock = this.mock(oBinding);
 		oBindingMock.expects("_fireChange").never();
@@ -1110,7 +1119,8 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("createReadGroupLock").never();
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.oCache, null);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null);
 
 		// code under test (as called by ODataBinding#refresh)
 		assert.strictEqual(oBinding.refreshInternal("", undefined, true).isFulfilled(), true);
@@ -1709,6 +1719,7 @@ sap.ui.define([
 			oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata),
 			oPromise);
 		assert.strictEqual(oBinding.oOperation.bAction, false);
+		assert.strictEqual(oBinding.oCache, oSingleCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
 
 		// code under test
@@ -1759,6 +1770,7 @@ sap.ui.define([
 			oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, fnGetEntity),
 			oPromise);
 		assert.strictEqual(oBinding.oOperation.bAction, false);
+		assert.strictEqual(oBinding.oCache, oSingleCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
 
 		// code under test
@@ -1808,6 +1820,7 @@ sap.ui.define([
 			oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata),
 			oPromise);
 		assert.strictEqual(oBinding.oOperation.bAction, true);
+		assert.strictEqual(oBinding.oCache, oSingleCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
 
 		// code under test
@@ -1872,6 +1885,7 @@ sap.ui.define([
 					fnGetEntity),
 				oPromise);
 			assert.strictEqual(oBinding.oOperation.bAction, true);
+			assert.strictEqual(oBinding.oCache, oSingleCache);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
 			assert.strictEqual(fnGetEntity.callCount, 1);
 
@@ -1991,6 +2005,7 @@ sap.ui.define([
 			oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, fnGetEntity),
 			oPromise);
 		assert.strictEqual(oBinding.oOperation.bAction, false);
+		assert.strictEqual(oBinding.oCache, oSingleCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
 		assert.strictEqual(oBinding.mCacheQueryOptions, mExpectedQueryOptions);
 	});
@@ -2398,6 +2413,7 @@ sap.ui.define([
 		oBindingMock.expects("checkUpdate").exactly(bKeepCacheOnError ? 1 : 0)
 			.withExactArgs()
 			.callsFake(function () {
+				assert.strictEqual(oBinding.oCache, oCache);
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 			});
 
@@ -2408,6 +2424,7 @@ sap.ui.define([
 			}, function (oReturnedError) {
 				assert.strictEqual(oReturnedError, oError);
 				if (bKeepCacheOnError) {
+					assert.strictEqual(oBinding.oCache, oCache);
 					assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 				} else {
 					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
@@ -2440,6 +2457,7 @@ sap.ui.define([
 		oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext))
 			.callsFake(function () {
+				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
 		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
@@ -2449,6 +2467,7 @@ sap.ui.define([
 		oBindingMock.expects("checkUpdate").exactly(bKeepCacheOnError ? 1 : 0)
 			.withExactArgs()
 			.callsFake(function () {
+				assert.strictEqual(oBinding.oCache, oCache);
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 			});
 
@@ -2469,8 +2488,10 @@ sap.ui.define([
 
 		return Promise.all([oRefreshPromise1, oRefreshPromise2]).then(function () {
 			if (bKeepCacheOnError) {
+				assert.strictEqual(oBinding.oCache, oCache);
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 			} else {
+				assert.notStrictEqual(oBinding.oCache, oCache);
 				assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
 			}
 		});
@@ -2982,6 +3003,7 @@ sap.ui.define([
 
 		assert.strictEqual(oRefreshPromise.isPending(), true);
 		assert.strictEqual(oBinding.mCacheQueryOptions, mQueryOptions);
+		assert.strictEqual(oBinding.oCache, oCache);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 
 		// code under test
@@ -3017,7 +3039,7 @@ sap.ui.define([
 					oResult,
 					that = this;
 
-				oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+				oBinding.oCache = oCache; // simulate execute
 				this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId)
 					.returns(oGroupLock);
 				if (bWithContext) {
@@ -3088,7 +3110,7 @@ sap.ui.define([
 			oGroupLock = {},
 			aPaths = [];
 
-		oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+		oBinding.oCache = oCache; // simulate execute
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
 		this.mock(oCache).expects("requestSideEffects")
@@ -3127,7 +3149,7 @@ sap.ui.define([
 					oRefreshInternalPromise = {},
 					oRefreshPromise = bReturnValueContext ? SyncPromise.resolve() : null;
 
-				oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+				oBinding.oCache = oCache; // simulate execute
 				if (sPath === "") {
 					this.mock(oCache).expects("requestSideEffects").never();
 				} else {
@@ -3169,7 +3191,7 @@ sap.ui.define([
 				aPaths = [sPath],
 				oPromise = {};
 
-			oBinding.oCachePromise = SyncPromise.resolve(oCache); // mock cache creation
+			oBinding.oCache = oCache; // mock cache creation
 			if (sPath === "") {
 				this.mock(oCache).expects("requestSideEffects").never();
 			} else {
@@ -3206,7 +3228,7 @@ sap.ui.define([
 			oGroupLock = {},
 			aPaths = [];
 
-		oBinding.oCachePromise = SyncPromise.resolve(oCache); // simulate execute
+		oBinding.oCache = oCache; // simulate execute
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/Me");
 		this.mock(oCache).expects("requestSideEffects")

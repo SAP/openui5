@@ -701,7 +701,7 @@ sap.ui.define([
 		// code under test
 		oBinding = this.bindList("EMPLOYEE_2_TEAM", undefined, undefined, undefined, mParameters);
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined, "no cache");
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null, "no cache");
 		assert.strictEqual(oBinding.hasOwnProperty("sGroupId"), true);
 		assert.strictEqual(oBinding.sGroupId, undefined);
 		assert.deepEqual(oBinding.mParameters, mParameters);
@@ -810,7 +810,8 @@ sap.ui.define([
 
 		aData.$count = 42;
 		this.mock(oBinding).expects("fetchCache").callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve(Promise.resolve());
+			this.oCache = undefined;
+			this.oCachePromise = SyncPromise.resolve(Promise.resolve(null));
 			this.sReducedPath = "/reduced/path";
 		});
 		oBinding.setContext(oContext);
@@ -840,7 +841,8 @@ sap.ui.define([
 			oPromise;
 
 		oBindingMock.expects("fetchCache").callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve(Promise.resolve(bHasCache ? {} : undefined));
+			this.oCache = undefined;
+			this.oCachePromise = SyncPromise.resolve(Promise.resolve(bHasCache ? {} : null));
 			this.sReducedPath = "/reduced/path";
 		});
 		oBinding.setContext(oContext);
@@ -850,7 +852,8 @@ sap.ui.define([
 		oPromise = oBinding.fetchData(3, 2, 0);
 
 		oBindingMock.expects("fetchCache").callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve();
+			this.oCache = null;
+			this.oCachePromise = SyncPromise.resolve(null);
 			this.sReducedPath = undefined;
 		});
 		oBinding.setContext(null);
@@ -1592,10 +1595,12 @@ sap.ui.define([
 
 		// fetchCache is called once from applyParameters before oBinding.oContext is set
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve();
+			this.oCache = null;
+			this.oCachePromise = SyncPromise.resolve(null);
 		});
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext)).atLeast(1)
 			.callsFake(function () {
+				this.oCache = oCache;
 				this.oCachePromise = SyncPromise.resolve(oCache);
 			});
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
@@ -1741,10 +1746,12 @@ sap.ui.define([
 
 		// fetchCache is called once from applyParameters before oBinding.oContext is set
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve();
+			this.oCache = null;
+			this.oCachePromise = SyncPromise.resolve(null);
 		});
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext)).atLeast(1)
 			.callsFake(function () {
+				this.oCache = oCache;
 				this.oCachePromise = SyncPromise.resolve(oCache);
 			});
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
@@ -1803,6 +1810,7 @@ sap.ui.define([
 			.withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
 				if (bKeepCacheOnError) {
+					assert.strictEqual(oBinding.oCache, oCache);
 					assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 				} else {
 					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
@@ -1853,6 +1861,7 @@ sap.ui.define([
 			.withExactArgs({reason : ChangeReason.Change})
 			.callsFake(function () {
 				if (bKeepCacheOnError) {
+					assert.strictEqual(oBinding.oCache, oCache);
 					assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 				} else {
 					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
@@ -2019,11 +2028,13 @@ sap.ui.define([
 
 		// fetchCache is called once from applyParameters before oBinding.oContext is set
 		oBindingMock.expects("fetchCache").withExactArgs(undefined).callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve();
+			this.oCache = null;
+			this.oCachePromise = SyncPromise.resolve(null);
 		});
 		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext)).atLeast(1)
 			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve({});
+				this.oCache = {};
+				this.oCachePromise = SyncPromise.resolve(this.oCache);
 			});
 		oBinding = this.bindList("SO_2_SOITEM", oContext, undefined, undefined,
 			{$$groupId : "group"});
@@ -2200,7 +2211,8 @@ sap.ui.define([
 				this.mock(oBinding).expects("fetchCache").exactly(bSuspended ? 0 : 1)
 					.withExactArgs(sinon.match.same(oContext))
 					.callsFake(function () {
-						this.oCachePromise = SyncPromise.resolve({});
+						this.oCache = {};
+						this.oCachePromise = SyncPromise.resolve(this.oCache);
 					});
 
 				// code under test
@@ -2234,7 +2246,8 @@ sap.ui.define([
 
 		this.mock(ODataListBinding.prototype).expects("fetchCache").atLeast(1)
 			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve({});
+				this.oCache = {};
+				this.oCachePromise = SyncPromise.resolve(this.oCache);
 			});
 		oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS", 1);
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, undefined, undefined,
@@ -2505,6 +2518,7 @@ sap.ui.define([
 
 			this.mock(ODataListBinding.prototype).expects("fetchCache").atLeast(1)
 				.callsFake(function () {
+					this.oCache = oTargetCache;
 					this.oCachePromise = SyncPromise.resolve(oTargetCache);
 				});
 			oBinding = oModel.bindList("Equipments", oInitialContext);
@@ -2569,7 +2583,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bCreated){
+	[false, true].forEach(function (bCreated) {
 		var sTitle = "createContexts, paging: less data than requested; w/ created: " + bCreated;
 
 		QUnit.test(sTitle, function (assert) {
@@ -2855,13 +2869,15 @@ sap.ui.define([
 					getModelIndex : function () { return 0; }
 				},
 				aData = createData(6, 0, true, undefined, bKeyPredicates),
+				aData2 = aData.slice(4, 6),
 				oETagEntity = {},
 				aPreviousContexts,
 				that = this;
 
 			// [-1, 0, 1, 2, undefined, 4, 5]
 			oBinding.createContexts(0, 3, aData.slice(0, 3));
-			oBinding.createContexts(4, 10, aData.slice(4, 6));
+			aData2.$count = 6; // non-empty short read adds $count
+			oBinding.createContexts(4, 10, aData2);
 			oBinding.aContexts.unshift(oCreatedContext);
 			oBinding.iCreatedContexts = 1;
 			aPreviousContexts = oBinding.aContexts.slice();
@@ -4245,7 +4261,7 @@ sap.ui.define([
 		var oContext = Context.create(this.oModel, {}, "/TEAMS", 0),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
 
-		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined, "noCache");
+		assert.strictEqual(oBinding.oCachePromise.getResult(), null, "noCache");
 
 		this.mock(oBinding).expects("checkSuspended").never();
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
@@ -4255,7 +4271,7 @@ sap.ui.define([
 		// code under test;
 		oBinding.changeParameters({$filter : "bar"});
 
-		assert.ok(oBinding.oCachePromise.getResult() !== undefined,
+		assert.ok(oBinding.oCachePromise.getResult() !== null,
 			"Binding gets cache after changeParameters");
 	});
 
@@ -4270,7 +4286,8 @@ sap.ui.define([
 
 		this.mock(ODataListBinding.prototype).expects("fetchCache").atLeast(1)
 			.callsFake(function () {
-				this.oCachePromise = SyncPromise.resolve();
+				this.oCache = null;
+				this.oCachePromise = SyncPromise.resolve(null);
 			});
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, aSorters, aApplicationFilters,
 			{"$filter" : "staticFilter", "$orderby" : "staticSorter"});
@@ -4691,6 +4708,7 @@ sap.ui.define([
 					.callsFake(function () {
 						assert.ok(oChangeParametersExpectation.called,
 							"changeParameters called before");
+						oBinding.oCache = oNewCache;
 						oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 						return SyncPromise.resolve();
 					});
@@ -4743,6 +4761,7 @@ sap.ui.define([
 		oBinding.createContexts(0, 4, createData(3, 0, true, 3));
 
 		oContext = oBinding.aContexts[2];
+		oBinding.oCache = oCache;
 		oBinding.oCachePromise = SyncPromise.resolve(oCache);
 
 		oBindingMock.expects("withCache")
@@ -4838,6 +4857,7 @@ sap.ui.define([
 
 				oContext = oBinding.aContexts[iIndex];
 				oContextMock = this.mock(oContext);
+				oBinding.oCache = oCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oCache);
 
 				oCacheRequestPromise = SyncPromise.resolve(Promise.resolve().then(function () {
@@ -4921,6 +4941,7 @@ sap.ui.define([
 		oBinding.createContexts(0, 4, createData(3, 0, true, 3));
 
 		oContext = oBinding.aContexts[2];
+		oBinding.oCache = oCache;
 		oBinding.oCachePromise = SyncPromise.resolve(oCache);
 
 		oBindingMock.expects("fireDataRequested").never();
@@ -4956,6 +4977,7 @@ sap.ui.define([
 					unlock : function () {}
 				};
 
+			oBinding.oCache = oCache;
 			oBinding.oCachePromise = SyncPromise.resolve(oCache);
 
 			oBindingMock.expects("fireDataRequested")
@@ -5349,7 +5371,9 @@ sap.ui.define([
 			oGroupLock = {},
 			aPaths = ["A"];
 
-		oBinding.oCachePromise = Promise.resolve(oBinding.oCachePromise); // make this pending
+		// make this pending
+		oBinding.oCache = undefined;
+		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oBinding.oCachePromise));
 		oBinding.aContexts.push({isTransient : function () {}});
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")

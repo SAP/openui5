@@ -784,16 +784,18 @@ sap.ui.define([
 		 *   Hash set of collection-valued navigation property meta paths (relative to the cache's
 		 *   root, that is without the root meta path prefix) which need to be refreshed, maps
 		 *   string to <code>true</code>; is modified
-		 * @param {boolean} [sPrefix=""]
+		 * @param {string} [sPrefix=""]
 		 *   Optional prefix for navigation property meta paths used during recursion
+		 * @param {boolean} [bAllowEmptySelect]
+		 *   Whether an empty "$select" is allowed
 		 * @returns {object}
 		 *   The updated query options or <code>null</code> if no request is needed
 		 * @throws {Error}
-		 *   If a path string is empty or the intersection requires a $expand of a collection-valued
-		 *   navigation property
+		 *   If a path string is empty or the intersection requires a "$expand" of a
+		 *   collection-valued navigation property
 		 */
 		intersectQueryOptions : function (mCacheQueryOptions, aPaths, fnFetchMetadata,
-				sRootMetaPath, mNavigationPropertyPaths, sPrefix) {
+				sRootMetaPath, mNavigationPropertyPaths, sPrefix, bAllowEmptySelect) {
 			var aExpands = [],
 				mExpands = {},
 				mResult,
@@ -879,7 +881,8 @@ sap.ui.define([
 				return null;
 			}
 
-			if (!aSelects.length) { // avoid $select= in URL, use any navigation property
+			if (!aSelects.length && !bAllowEmptySelect) {
+				// avoid $select= in URL, use any navigation property
 				aSelects = Object.keys(mExpands).slice(0, 1);
 			}
 

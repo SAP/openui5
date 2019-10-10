@@ -621,6 +621,7 @@ sap.ui.define([
 			oModel.bAutoExpandSelect, getOriginalResourcePath, bAction, sMetaPath,
 			oOperationMetadata.$ReturnType
 				&& !oOperationMetadata.$ReturnType.$Type.startsWith("Edm."));
+		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
 			? oCache.post(oGroupLock, mParameters, vEntity)
@@ -991,6 +992,7 @@ sap.ui.define([
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
 					oPromise.catch(function () {
+						that.oCache = oCache;
 						that.oCachePromise = SyncPromise.resolve(oCache);
 						oCache.setActive(true);
 						that.checkUpdate();
@@ -1035,6 +1037,7 @@ sap.ui.define([
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
 		oCache = _Cache.createSingle(oModel.oRequestor,
 			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true);
+		this.oCache = oCache;
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		this.createReadGroupLock(sGroupId, true);
 		return this.refreshDependentBindings("", sGroupId, true);
@@ -1067,8 +1070,8 @@ sap.ui.define([
 		if (aPaths.indexOf("") < 0) {
 			try {
 				aPromises.push(
-					this.oCachePromise.getResult().requestSideEffects(this.lockGroup(sGroupId),
-						aPaths, mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
+					this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
+						mNavigationPropertyPaths, oContext && oContext.getPath().slice(1)));
 
 				this.visitSideEffects(sGroupId, aPaths, oContext, mNavigationPropertyPaths,
 					aPromises);

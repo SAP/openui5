@@ -1322,7 +1322,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: error cases", function (assert) {
 		var oBinding = {
-				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				oCache : {/*oCache*/},
 				checkSuspended : function () {},
 				isRelative : function () { return false; }
 			},
@@ -1367,7 +1367,7 @@ sap.ui.define([
 ].forEach(function (oFixture) {
 	QUnit.test("requestSideEffects: " + oFixture.text, function (assert) {
 		var oBinding = {
-				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				oCache : {/*oCache*/},
 				checkSuspended : function () {},
 				getContext : function () { return oFixture.context; },
 				isRelative : function () { return !!oFixture.context; },
@@ -1472,7 +1472,7 @@ sap.ui.define([
 				requestSideEffects : function () {}
 			},
 			oBinding = {
-				oCachePromise : SyncPromise.resolve(oCache),
+				oCache : oCache,
 				checkSuspended : function () {},
 				isRelative : function () { return false; },
 				requestSideEffects : function () {}
@@ -1518,7 +1518,7 @@ sap.ui.define([
 [false, true].forEach(function (bAuto) {
 	QUnit.test("requestSideEffects: no own cache with auto group: " + bAuto, function (assert) {
 		var oBinding = {
-				oCachePromise : SyncPromise.resolve(),
+				oCache : undefined,
 				checkSuspended : function () {},
 				getBoundContext : function () {},
 				getContext : function () {},
@@ -1537,14 +1537,14 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding,
 				"/TEAMS('1')/TEAM_2_MANAGER/Manager_to_Team"),
 			oParentBinding = {
-				oCachePromise : SyncPromise.resolve(),
+				oCache : undefined,
 				getBoundContext : function () {},
 				getContext : function () {},
 				getPath : function () {}
 			},
 			oParentContext = Context.create(oModel, oParentBinding, "/TEAMS('1')/TEAM_2_MANAGER"),
 			oRootBinding = {
-				oCachePromise : SyncPromise.resolve({/*oCache*/}),
+				oCache : {/*oCache*/},
 				requestSideEffects : function () {}
 			},
 			oRootContext = Context.create(oModel, oRootBinding, "/TEAMS('1')"),
@@ -1614,29 +1614,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects without own cache: error case cache promise is pending",
-			function (assert) {
-		var oListBinding = {
-				oCachePromise : new SyncPromise(function () {}),
-				checkSuspended : function () {},
-				getContext : function () { return {}; },
-				isRelative : function () { return true; }
-			},
-			oModel = {
-				checkGroupId : function () {}
-			},
-			oContext = Context.create(oModel, oListBinding, "/TEAMS('1')/TEAM_2_MANAGER");
-
-		assert.throws(function () {
-			// code under test
-			oContext.requestSideEffects([{$PropertyPath : "ID"}]);
-		}, new Error("Illegal state: auto-$expand/$select still computing"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("requestSideEffects: error on transient context", function (assert) {
 		var oBinding = {
-				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
+				oCache : {/*no requestSideEffects*/},
 				checkSuspended : function () {}
 			},
 			oModel = {
@@ -1657,7 +1637,7 @@ sap.ui.define([
 	// the binding becomes unresolved.
 	QUnit.test("requestSideEffects: error on unresolved binding", function (assert) {
 		var oBinding = {
-				oCachePromise : SyncPromise.resolve({/*no requestSideEffects*/}),
+				oCache : {/*no requestSideEffects*/},
 				checkSuspended : function () {},
 				getContext : function () { return undefined; },
 				isRelative : function () { return true; }

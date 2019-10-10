@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/Device",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/ChangeReason",
@@ -23,9 +24,9 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, Controller, View,
-		ChangeReason, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
-		ODataListBinding, ODataModel, TestUtils, XMLHelper) {
+], function (jQuery, Log, uid, ColumnListItem, CustomListItem, Text, Device, SyncPromise,
+		Controller, View, ChangeReason, Filter, FilterOperator, Sorter, OperationMode,
+		AnnotationHelper, ODataListBinding, ODataModel, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -424,10 +425,6 @@ sap.ui.define([
 			if (this.aRequests.length || this.iPendingResponses) {
 				return;
 			}
-			if (sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
-					< this.aMessages.length) {
-				return; // expected messages still missing
-			}
 			for (sControlId in this.mChanges) {
 				if (!this.hasOnlyOptionalChanges(sControlId)) {
 					if (this.mChanges[sControlId].length) {
@@ -447,8 +444,10 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (sap.ui.getCore().getUIDirty()) {
-				setTimeout(this.checkFinish.bind(this, assert), 1);
+			if (sap.ui.getCore().getUIDirty()
+					|| sap.ui.getCore().getMessageManager().getMessageModel().getObject("/").length
+						< this.aMessages.length) {
+				setTimeout(this.checkFinish.bind(this, assert), 10);
 
 				return;
 			}
@@ -1301,18 +1300,25 @@ sap.ui.define([
 		 *
 		 * @param {object} assert The QUnit assert object
 		 * @param {boolean} [bNullOptional] Whether a non-list change to a null value is optional
+		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded and
 		 *   all expected values for controls have been set
 		 */
-		waitForChanges : function (assert, bNullOptional) {
-			var that = this;
+		waitForChanges : function (assert, bNullOptional, iTimeout) {
+			var oPromise,
+				that = this;
 
-			return new Promise(function (resolve) {
+			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				that.bNullOptional = bNullOptional;
 				// After three seconds everything should have run through
 				// Resolve to have the missing requests and changes reported
-				setTimeout(resolve, 3000);
+				setTimeout(function () {
+					if (oPromise.isPending()) {
+						assert.ok(false, "Timeout in waitForChanges");
+						resolve();
+					}
+				}, iTimeout || 3000);
 				that.checkFinish(assert);
 			}).then(function () {
 				var sControlId, aExpectedValuesPerRow, i, j;
@@ -1344,6 +1350,8 @@ sap.ui.define([
 				}
 				that.checkMessages(assert);
 			});
+
+			return oPromise;
 		}
 	});
 
@@ -1917,8 +1925,8 @@ sap.ui.define([
 						}
 					}
 				})
-				.expectChange("longitude1", "8.7") // TODO CPOUI5UISERVICESV3-1950
-				.expectChange("longitude2", "8.7");
+				.expectChange("longitude1", "8.700000000000")
+				.expectChange("longitude2", "8.700000000000");
 
 			// code under test - Longitude is requested once
 			oFormContext = that.oView.byId("form").getBindingContext();
@@ -1943,8 +1951,8 @@ sap.ui.define([
 						}
 					}
 				})
-				.expectChange("longitude1", "8.71") // TODO CPOUI5UISERVICESV3-1950
-				.expectChange("longitude2", "8.71")
+				.expectChange("longitude1", "8.710000000000")
+				.expectChange("longitude2", "8.710000000000")
 				.expectChange("longitude3", "8.710000000000");
 
 			return Promise.all([
@@ -1991,7 +1999,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE", {AGE : 42})
-				.expectChange("age1", 42); // TODO CPOUI5UISERVICESV3-1950
+				.expectChange("age1", "42");
 
 			// code under test - AGE is requested
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
@@ -2026,7 +2034,7 @@ sap.ui.define([
 						{AGE : 36, ID : "4", Name : "Peter Burke"}
 					]
 				})
-				.expectChange("age1", 43)  // TODO CPOUI5UISERVICESV3-1950
+				.expectChange("age1", "43")
 				.expectChange("age2", "43");
 
 			// see that requestSideEffects updates AGE, too
@@ -9900,15 +9908,15 @@ sap.ui.define([
 				template : new CustomListItem({content : [oText]})
 			});
 
-			return that.waitForChanges(assert);
+			// Increase the timeout for this test to 12 seconds to run also in IE
+			return that.waitForChanges(assert, undefined, 12000);
 		});
 	});
 
 	//*********************************************************************************************
 	// Scenario: read all data w/o a control on top
 	QUnit.test("read all data w/o a control on top", function (assert) {
-		var done = assert.async(),
-			i, n = 10000,
+		var i, n = 10000,
 			aIDs = new Array(n),
 			aValues = new Array(n),
 			that = this;
@@ -9919,7 +9927,8 @@ sap.ui.define([
 		}
 
 		return this.createView(assert, "").then(function () {
-			var oListBinding = that.oModel.bindList("/TEAMS");
+			var fnDone,
+				oListBinding = that.oModel.bindList("/TEAMS");
 
 			that.expectRequest("TEAMS", {value : aValues});
 
@@ -9933,10 +9942,18 @@ sap.ui.define([
 						assert.strictEqual(sId, aIDs[i]);
 					}
 				});
-				done();
+				fnDone();
 			});
 
-			return that.waitForChanges(assert);
+
+			return Promise.all([
+				// wait until change event is processed
+				new Promise(function (resolve, reject) {
+					fnDone = resolve;
+				}),
+				// Increase the timeout for this test to 12 seconds to run also in IE
+				that.waitForChanges(assert, undefined, 12000)
+			]);
 		});
 	});
 
@@ -17142,8 +17159,7 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oBestFriendBox = that.oView.byId("table").getItems()[1].getCells()[0];
 
-			//TODO CPOUI5UISERVICESV3-1980: avoid BestFriend
-			that.expectRequest("Artists?$select=ArtistID,BestFriend,IsActiveEntity"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
 					+ "&$expand=BestFriend($select=Name;"
 						+ "$expand=BestPublication($select=CurrencyCode))"
 					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {
@@ -17174,8 +17190,7 @@ sap.ui.define([
 		}).then(function () {
 			var oBestPublicationBox = oBestFriendBox.getItems()[1];
 
-			//TODO CPOUI5UISERVICESV3-1980: avoid BestFriend
-			that.expectRequest("Artists?$select=ArtistID,BestFriend,IsActiveEntity"
+			that.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
 					+ "&$expand=BestFriend($select=BestPublication;"
 						+ "$expand=BestPublication($select=CurrencyCode))"
 					+ "&$filter=ArtistID eq '24' and IsActiveEntity eq true", {
@@ -20278,8 +20293,8 @@ sap.ui.define([
 	// requestSideEffects repeats the failed POST in the same $batch.
 	// JIRA: CPOUI5UISERVICESV3-1936
 [{
-	expectations : function (that) {
-		that.expectRequest({
+	expectations : function () {
+		this.expectRequest({
 				batchNo : 3,
 				method : "POST",
 				payload : {Note : "Created"},
@@ -20313,15 +20328,15 @@ sap.ui.define([
 	},
 	text : "Repeated POST succeeds"
 }, {
-	expectations : function (that) {
+	expectations : function () {
 		var oCausingError = createError(); // a technical error -> let the $batch itself fail
 
-		that.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
+		this.oLogMock.expects("error").withArgs("POST on 'BusinessPartnerList('4711')/BP_2_SO'"
 			+ " failed; will be repeated automatically");
-		that.oLogMock.expects("error").withArgs("$batch failed");
-		that.oLogMock.expects("error").withArgs("Failed to request side effects");
+		this.oLogMock.expects("error").withArgs("$batch failed");
+		this.oLogMock.expects("error").withArgs("Failed to request side effects");
 
-		that.expectRequest({
+		this.expectRequest({
 				batchNo : 3,
 				method : "POST",
 				payload : {Note : "Created"},
@@ -20419,7 +20434,7 @@ sap.ui.define([
 			sap.ui.getCore().getMessageManager().removeAllMessages();
 			that.expectMessages([]);
 
-			oCausingError = oFixture.expectations(that);
+			oCausingError = oFixture.expectations.call(that);
 
 			return Promise.all([
 				// code under test
@@ -20869,5 +20884,126 @@ sap.ui.define([
 
 				return that.waitForChanges(assert);
 			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with m.Table
+	// We expect a "growing" table to only load data when triggered by the end-user via the "More"
+	// button: There are no repeated requests in case the server-side page size is 2 and thus
+	// smaller than the table's growing threshold and just the first page is displayed with less
+	// data. The next request is only sent when the end user wants to see "More".
+	// JIRA: CPOUI5UISERVICESV3-1908
+	QUnit.test("Server-driven paging with m.Table", function (assert) {
+		var sView = '\
+<Table id="table" items="{/EMPLOYEES}" growing="true" growingThreshold="10">\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=10", {
+				value : [
+					{ID : "1", Name : "Peter Burke"},
+					{ID : "2", Name : "Frederic Fall"}
+				],
+				"@odata.nextLink" : "~nextLink"
+			})
+			.expectChange("text", ["Peter Burke", "Frederic Fall"]);
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES?$skip=2&$top=18", {
+					value : [
+						{ID : "3", Name : "John Field"},
+						{ID : "4", Name : "Susan Bay"}
+					],
+					"@odata.nextLink" : "~nextLink1"
+				})
+				.expectChange("text", [,, "John Field", "Susan Bay"]);
+
+			that.oView.byId("table-trigger").firePress(); // press "More" button in table
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with table.Table
+	// Note: Requests following the first request which returned an @odata.nextLink do not request
+	// the prefetch size to avoid server load.
+	// JIRA: CPOUI5UISERVICESV3-1908
+	//TODO support table.Table in later change
+	QUnit.skip("Server-driven paging with table.Table", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
+	<t:Column>\
+		<t:template><Text id="text" text="{Name}" /></t:template>\
+	</t:Column>\
+</t:Table>';
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=103", {
+				value : [
+					{ID : "1", Name : "Peter Burke"},
+					{ID : "2", Name : "Frederic Fall"}
+				],
+				"@odata.nextLink" : "~nextLink"
+			})
+			// request after response with @odata.nextLink does not consider prefetch size
+			.expectRequest("EMPLOYEES?$skip=2&$top=1", {
+				value : [
+					{ID : "3", Name : "John Field"}
+				]
+			})
+			.expectChange("text", ["Peter Burke", "Frederic Fall", "John Field"]);
+
+		return this.createView(assert, sView);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with requestContexts iterates @odata.nextLink until the
+	// originally requested number of entities has been read.
+	// JIRA: CPOUI5UISERVICESV3-1908
+	//TODO Enhance test to cover the following cases distinguished regarding number of entities
+	// requested by requestContexts
+	// 1. server has less entities
+	// 2. server has more entities
+	// 3. @odata.nextLink sequence from responses results in (a) less or (b) more entities than
+	//    requested
+	QUnit.skip("Server-driven paging with OLDB#requestContexts", function (assert) {
+		var that = this;
+
+		return this.createView(assert, "").then(function () {
+			var oBinding = that.oModel.bindList("/EMPLOYEES"),
+				oPromise;
+
+			that.expectRequest("EMPLOYEES?$skip=0&$top=3", {
+					value : [
+						{ID : "1", Name : "Peter Burke"},
+						{ID : "2", Name : "Frederic Fall"}
+					],
+					"@odata.nextLink" : "~nextLink"
+				})
+				.expectRequest("~nextLink", {
+					value : [
+						{ID : "3", Name : "John Field"}
+					]
+				});
+
+			// code under test
+			oPromise = oBinding.requestContexts(0, 3).then(function (aContexts) {
+				assert.deepEqual(aContexts.map(function (oContext) {
+					return oContext.getPath();
+				}), [
+					"/EMPLOYEES('1')",
+					"/EMPLOYEES('2')",
+					"/EMPLOYEES('3')"
+				]);
+			});
+
+			return Promise.all([
+				oPromise,
+				that.waitForChanges(assert)
+			]);
+		});
 	});
 });

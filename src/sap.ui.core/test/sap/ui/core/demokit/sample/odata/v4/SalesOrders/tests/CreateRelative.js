@@ -9,13 +9,27 @@ sap.ui.define([
 
 	return {
 		createRelative : function (Given, When, Then, sUIComponent) {
-			var oExpectedError = {
+			var aExpectedLogs = [],
+				bRealOData = TestUtils.isRealOData(),
+				oSideEffectsFailLog1 = {
+					component : "sap.ui.model.odata.v4.ODataListBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to request side effects",
+					details : "Error: HTTP request was not processed because the previous request"
+						+ " failed"
+				},
+				oSideEffectsFailLog2 = {
+					component : "sap.ui.model.odata.v4.ODataContextBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to request side effects",
+					details : "Error: HTTP request was not processed because the previous request "
+						+ "failed"
+				},
+				oUpdateFailLog = {
 					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
 					message : "Failed to update path /SalesOrderList"
-				},
-				aExpectedErrors = [],
-				bRealOData = TestUtils.isRealOData();
+				};
 
 			// we check supportAssistantIssues only within this test journey because it is the most
 			// deepest one regarding reached UI elements
@@ -74,10 +88,12 @@ sap.ui.define([
 				Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Line Item Note Changed - 1");
 
 				// check correct error handling of multiple changes in one $batch
-				aExpectedErrors.push(oExpectedError);
+				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeNoteInLineItem(0, "Line Item Note Changed - 2");
-				aExpectedErrors.push(oExpectedError);
+				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeQuantityInLineItem(0, "0.0");
+				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
+					oSideEffectsFailLog2);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeQuantityInLineItem(0, "2.0");
@@ -101,8 +117,10 @@ sap.ui.define([
 
 				// change again Note in details causes error because of outdated ETag
 				// because refresh on relative bindings is not supported
-				aExpectedErrors.push(oExpectedError);
+				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 2");
+				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
+					oSideEffectsFailLog2);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 
@@ -114,7 +132,7 @@ sap.ui.define([
 				When.onTheMainPage.pressCancelSalesOrderChangesButton();
 				When.onTheMainPage.pressRefreshSelectedSalesOrdersButton();
 
-				// change Note in details afterwarts is now possible again
+				// change Note in details is now possible again
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 3");
 				When.onTheMainPage.pressSaveSalesOrderButton();
 
@@ -152,7 +170,7 @@ sap.ui.define([
 
 			// delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
-			Then.onAnyPage.checkLog(aExpectedErrors);
+			Then.onAnyPage.checkLog(aExpectedLogs);
 			Then.onAnyPage.analyzeSupportAssistant();
 			Then.iTeardownMyUIComponent();
 		}
