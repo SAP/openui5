@@ -1103,7 +1103,7 @@ sap.ui.define([
 		if (sReason !== "Focus" && sReason !== TableUtils.RowsUpdateReason.Expand && sReason !== TableUtils.RowsUpdateReason.Collapse) {
 			// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
-			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
+			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER | CellType.ROWACTION)) {
 				if (Device.browser.msie) {
 					if (oTable._mTimeouts._cleanupACCCellBusy) {
 						clearTimeout(oTable._mTimeouts._cleanupACCCellBusy);
