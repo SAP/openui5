@@ -1900,18 +1900,18 @@ sap.ui.define([
 		}
 
 		oCtrl.destroyItems();
-		for (var iOperation in aOperations) {
-			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
+		aOperations.forEach(function(sOperation){
+			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + sOperation);
 			if (sText.startsWith("CONDITIONPANEL_OPTION")) {
 				// when for the specified type the resource does not exist use the normal string resource text
-				sText = this._oRb.getText("CONDITIONPANEL_OPTION" + aOperations[iOperation]);
+				sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sOperation);
 			}
 			oCtrl.addItem(new ListItem({
-				key: aOperations[iOperation],
+				key: sOperation,
 				text: sText,
 				tooltip: sText
 			}));
-		}
+		}.bind(this));
 	};
 
 	/**
