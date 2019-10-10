@@ -2,12 +2,13 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/unified/ColorPickerPopover',
+	'sap/ui/unified/library',
 	'sap/m/MessageToast'
-], function (coreLibrary, Controller, ColorPickerPopover, MessageToast) {
+], function (coreLibrary, Controller, ColorPickerPopover, unifiedLibrary, MessageToast) {
 	"use strict";
 
-	var ColorPickerMode = sap.ui.unified.ColorPickerMode,
-		ColorPickerDisplayMode = sap.ui.unified.ColorPickerDisplayMode;
+	var ColorPickerMode = unifiedLibrary.ColorPickerMode,
+		ColorPickerDisplayMode = unifiedLibrary.ColorPickerDisplayMode;
 
 	return Controller.extend("sap.ui.unified.sample.ColorPickerPopover.ColorPickerPopover", {
 

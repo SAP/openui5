@@ -3,14 +3,15 @@ sap.ui.define([
 		'sap/ui/model/json/JSONModel',
 		'sap/m/MessageBox',
 		'sap/ui/Device',
+		'sap/ui/unified/library',
 		'sap/ui/unified/DateTypeRange',
 		'sap/m/PlanningCalendarView'
 	],
-	function (Controller, JSONModel, MessageBox, Device, DateTypeRange, PlanningCalendarView) {
+	function (Controller, JSONModel, MessageBox, Device, unifiedLibrary, DateTypeRange, PlanningCalendarView) {
 		"use strict";
 
-		var CalendarIntervalType = sap.ui.unified.CalendarIntervalType;
-		var CalendarDayType = sap.ui.unified.CalendarDayType;
+		var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
+		var CalendarDayType = unifiedLibrary.CalendarDayType;
 
 		return Controller.extend("sap.m.sample.PlanningCalendarViews.Page", {
 
