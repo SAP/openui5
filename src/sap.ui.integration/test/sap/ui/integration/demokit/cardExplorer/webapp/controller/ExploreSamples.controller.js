@@ -78,7 +78,7 @@ sap.ui.define([
 			}
 			var oCardEditor = this.byId("cardEditor");
 			oCardEditor.setJson(sValue);
-			this.updateSample(sValue);
+			this._updateSample(sValue);
 			this._sEditSource = null;
 
 		},
@@ -95,7 +95,7 @@ sap.ui.define([
 				this._sEditSource = "cardEditor";
 			}
 			this._editor.setValue(JSON.stringify(mValue, '\t', 4));
-			this.updateSample(mValue);
+			this._updateSample(mValue);
 			this._sEditSource = null;
 		},
 
