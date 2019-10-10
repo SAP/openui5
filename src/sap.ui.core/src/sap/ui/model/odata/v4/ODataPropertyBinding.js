@@ -240,6 +240,10 @@ sap.ui.define([
 		if (this.bHasDeclaredType === undefined) {
 			this.bHasDeclaredType = !!vType;
 		}
+		if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any"
+				&& !bIsMeta) {
+			vType = oMetaModel.fetchUI5Type(sResolvedPath);
+		}
 		if (arguments.length < 4) {
 			vValue = this.oCachePromise.then(function (oCache) {
 				var sDataPath, sMetaPath;
@@ -293,11 +297,7 @@ sap.ui.define([
 				}
 				mParametersForDataReceived = {error : oError};
 			});
-			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any"
-					&& !bIsMeta) {
-				vType = oMetaModel.fetchUI5Type(sResolvedPath);
-			}
-			if (oCallToken.forceUpdate && vValue.isFulfilled()) {
+			if (bForceUpdate && vValue.isFulfilled()) {
 				if (vType && vType.isFulfilled && vType.isFulfilled()) {
 					this.setType(vType.getResult(), this.sInternalType);
 				}

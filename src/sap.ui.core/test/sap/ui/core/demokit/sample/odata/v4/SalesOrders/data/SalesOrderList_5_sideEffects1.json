@@ -1,11 +1,11 @@
 {
 	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,GrossAmount,Note,SalesOrderID)",
-	"@odata.count" : 1,
+	"@odata.count" : 7,
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2016-06-26T22:00:00.000000Z",
-		"GrossAmount" : "0.0",
-		"Note" : "new 1",
-		"SalesOrderID" : "NEW1"
+		"GrossAmount" : "25867.03",
+		"Note" : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
+		"SalesOrderID" : "0500000005"
 	}]
 }

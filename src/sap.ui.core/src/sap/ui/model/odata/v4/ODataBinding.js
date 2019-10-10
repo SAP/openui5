@@ -28,7 +28,11 @@ sap.ui.define([
 		// maps a canonical path of a quasi-absolute or relative binding to a cache object that may
 		// be reused
 		this.mCacheByResourcePath = undefined;
-		this.oCachePromise = SyncPromise.resolve();
+		// the current cache of this binding as delivered by oCachePromise
+		// undefined: unknown whether the binding has an own cache or not
+		// null: binding does not have an own cache
+		this.oCache = null;
+		this.oCachePromise = SyncPromise.resolve(null);
 		this.mCacheQueryOptions = undefined;
 		// used to create cache only for the latest call to #fetchCache
 		this.oFetchCacheCallToken = undefined;
@@ -202,7 +206,8 @@ sap.ui.define([
 				oOldCache.setActive(false);
 			}
 		}, function () {});
-		this.oCachePromise = SyncPromise.resolve(); // be nice to #withCache
+		this.oCache = null;
+		this.oCachePromise = SyncPromise.resolve(null); // be nice to #withCache
 		this.mCacheQueryOptions = undefined;
 		// resolving functions e.g. for oReadPromise in #checkUpdateInternal may run after destroy
 		// of this binding and must not access the context
@@ -243,19 +248,18 @@ sap.ui.define([
 	ODataBinding.prototype.fetchCache = function (oContext) {
 		var oCachePromise,
 			oCallToken = {},
-			oCurrentCache,
 			aPromises,
 			that = this;
 
 		if (!this.bRelative) {
 			oContext = undefined;
 		}
-		if (this.oCachePromise.isFulfilled()) {
-			oCurrentCache = this.oCachePromise.getResult();
-			if (oCurrentCache) {
-				oCurrentCache.setActive(false);
-			}
+
+		if (this.oCache) {
+			// if oCachePromise is pending no cache will be created because of oFetchCacheCallToken
+			this.oCache.setActive(false);
 		}
+		this.oCache = undefined;
 		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
 		this.mCacheQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
@@ -294,6 +298,7 @@ sap.ui.define([
 							oCache = that.doCreateCache(sResourcePath, that.mCacheQueryOptions,
 								oContext);
 						}
+						that.oCache = oCache;
 						return oCache;
 					} else {
 						oError = new Error("Cache discarded as a new cache has been created");
@@ -302,6 +307,8 @@ sap.ui.define([
 					}
 				});
 			}
+			that.oCache = null;
+			return null;
 		});
 		oCachePromise.catch(function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
