@@ -1035,8 +1035,7 @@ sap.ui.define([
 
 	FileUploader.prototype.setValue = function(sValue, bFireEvent, bSupressFocus) {
 		var oldValue = this.getValue();
-		var oFiles,
-			bWindowFileNotEmpty = true;
+		var oFiles;
 		if ((oldValue != sValue) || this.getSameFilenameAllowed()) {
 			// only upload when a valid value is set
 			var bUpload = this.getUploadOnChange() && sValue;
@@ -1070,9 +1069,8 @@ sap.ui.define([
 			if (bFireEvent) {
 				if (window.File) {
 					oFiles = this.FUEl.files;
-					bWindowFileNotEmpty = oFiles[0];
 				}
-				if ((!this.getSameFilenameAllowed() || sValue) && bWindowFileNotEmpty) {
+				if (!this.getSameFilenameAllowed() || sValue) {
 					this.fireChange({id:this.getId(), newValue:sValue, files:oFiles});
 				}
 			}
