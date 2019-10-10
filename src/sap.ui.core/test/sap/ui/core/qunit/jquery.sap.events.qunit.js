@@ -35,7 +35,7 @@ sap.ui.define([
 	//see jQuery.sap.ControlEvents
 	var aBasicBrowserEvents = ["click", "dblclick", "contextmenu", "focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "mouseout", "mouseover",
 								"mouseup", "select", "selectstart", "dragstart", "dragenter", "dragover", "dragleave", "dragend", "drop", "paste", "cut", "input",
-								"tap", "swipe", "swipeleft", "swiperight", "scrollstart", "scrollstop", "compositionstart", "compositionend"];
+								"tap", "swipe", "swipeleft", "swiperight", "scrollstart", "scrollstop", "compositionstart", "compositionend", "change"];
 
 	var bEmulationNeeded = !(Device.os.windows_phone && Device.os.version < 10);
 

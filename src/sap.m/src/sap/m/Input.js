@@ -115,6 +115,10 @@ function(
 	 * <b>When not to use:</b>
 	 * Don't use the control for long texts, dates, designated search fields, fields for multiple selection.
 	 *
+	 * <h3>Known Limitations</h3>
+	 *
+	 * If <code>showValueHelp</code> or if <code>showSuggestion</code> is <code>true</code>, the native browser autofill will not fire a change event.
+	 *
 	 * @extends sap.m.InputBase
 	 * @author SAP SE
 	 * @version ${version}
@@ -1395,6 +1399,23 @@ function(
 				this._removeShowMoreButton();
 			}
 			return this;
+		};
+
+		/**
+		 * Event handler for browsers' <code>change</code> event.
+		 *
+		 * @since 1.73
+		 * @public
+		 * @param {jQuery.Event} oEvent The event.
+		 */
+		Input.prototype.onchange = function(oEvent) {
+			if (this.getShowValueHelp() || this.getShowSuggestion()) {
+				// can not handle browser change if value help or suggestions is enabled
+				// because change is fired before the value help is opened or when a link in suggestions is clicked
+				return;
+			}
+
+			this.onChange(oEvent);
 		};
 
 		/**
