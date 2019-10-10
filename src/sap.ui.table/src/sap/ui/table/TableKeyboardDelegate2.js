@@ -745,6 +745,25 @@ sap.ui.define([
 
 	//******************************************************************************************
 
+	function startRangeSelectionMode(oTable) {
+		var iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(oTable);
+		var iDataRowIndex = oTable.getRows()[iFocusedRowIndex].getIndex();
+		var oSelectionPlugin = oTable._getSelectionPlugin();
+
+		/**
+		 * Contains information that are used when the range selection mode is active.
+		 * If this property is undefined the range selection mode is not active.
+		 * @type {{startIndex: int, selected: boolean}}
+		 * @property {int} startIndex The index of the data row in which the selection mode was activated.
+		 * @property {boolean} selected True, if the data row in which the selection mode was activated is selected.
+		 * @private
+		 */
+		oTable._oRangeSelection = {
+			startIndex: iDataRowIndex,
+			selected: oSelectionPlugin.isIndexSelected(iDataRowIndex)
+		};
+	}
+
 	/**
 	 * Hook which is called by the keyboard extension when the table should enter the action mode.
 	 *
@@ -920,23 +939,9 @@ sap.ui.define([
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SHIFT) &&
 			sSelectionMode === SelectionMode.MultiToggle &&
 			(oCellInfo.isOfType(CellType.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(this) ||
-			 (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) && TableUtils.isRowSelectionAllowed(this))) {
+			(oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)))) {
 
-			var iFocusedRowIndex = TableUtils.getRowIndexOfFocusedCell(this);
-			var iDataRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
-
-			/**
-			 * Contains information that are used when the range selection mode is active.
-			 * If this property is undefined the range selection mode is not active.
-			 * @type {{startIndex: int, selected: boolean}}
-			 * @property {int} startIndex The index of the data row in which the selection mode was activated.
-			 * @property {boolean} selected True, if the data row in which the selection mode was activated is selected.
-			 * @private
-			 */
-			this._oRangeSelection = {
-				startIndex: iDataRowIndex,
-				selected: oSelectionPlugin.isIndexSelected(iDataRowIndex)
-			};
+			startRangeSelectionMode(this);
 
 		// Ctrl+A: Select/Deselect all.
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL)) {
@@ -1028,8 +1033,12 @@ sap.ui.define([
 			}
 		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
+		} else if (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE, ModKey.SHIFT)) {
+			TableUtils.toggleRowSelection(this, this.getRows()[oCellInfo.rowIndex].getIndex());
+
+			startRangeSelectionMode(this);
 		} else if (this._legacyMultiSelection && !oCellInfo.isOfType(CellType.COLUMNROWHEADER) &&
-				   (TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE, ModKey.CTRL) ||
+					(TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE, ModKey.CTRL) ||
 					TableKeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER, ModKey.CTRL))) {
 			TableKeyboardDelegate._handleSpaceAndEnter(this, oEvent);
 		}
