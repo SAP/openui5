@@ -2013,6 +2013,23 @@ sap.ui.define([
 		}, 200);
 	});
 
+	QUnit.test("changing property of an invisible control inside OT, does nоt force it to rerender", function (assert) {
+
+	// Arrange
+		var oLabel = new Label({text: "Text", visible: false, id: "label_0"}),
+			aContent = [oLabel, new Button()],
+			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent),
+			spyOTInvalidate = this.spy(OverflowToolbar.prototype, "invalidate");
+	// Act
+		oLabel.setText("Text123");
+		sap.ui.getCore().applyChanges();
+	// Assert
+		assert.strictEqual(spyOTInvalidate.callCount, 0);
+
+	// Clean
+		spyOTInvalidate.restore();
+	});
+
 	QUnit.module("Resize handling");
 
 	QUnit.test("Handling of resizes that don't move elements around", function (assert) {
