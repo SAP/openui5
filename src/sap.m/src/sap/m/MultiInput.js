@@ -1693,6 +1693,7 @@ function(
 				this._openSelectedItemsPicker();
 			} else {
 				this._fillList();
+				this._manageListsVisibility(true);
 				this._getReadOnlyPopover().openBy(this._tokenizer._oIndicator[0]);
 			}
 	};
