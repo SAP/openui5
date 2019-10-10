@@ -1288,7 +1288,11 @@ sap.ui.define([
 				// Only check the value once all parts are available.
 				if (!bIsCompositeType || sValue !== null) {
 					that.checkValue(assert, sValue, sControlId,
-						oContext && (oContext.getIndex ? oContext.getIndex() : oContext.getPath()));
+						oContext && (oContext.getBinding
+							? oContext.getBinding() && oContext.getIndex()
+							: oContext.getPath()
+						)
+					);
 				}
 
 				return sValue;
