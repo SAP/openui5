@@ -342,7 +342,7 @@ sap.ui.define([
 		return this.setAggregation("detailBox", oLightBox);
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	Image.prototype.clone = function () {

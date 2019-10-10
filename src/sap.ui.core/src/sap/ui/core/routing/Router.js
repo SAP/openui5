@@ -1272,11 +1272,12 @@ sap.ui.define([
 			},
 
 			/**
-			 * Registers the router to access it from another context.
+			 * Centrally register this router instance under a given name to be able to access it from another context,
+			 * just by knowing the name.
 			 *
-			 * Use <code>sap.ui.routing.Router.getRouter()</code> to receive the instance.
+			 * Use {@link sap.ui.core.routing.Router.getRouter Router.getRouter()} to retrieve the instance.
 			 *
-			 * @param {string} sName Name of the router
+			 * @param {string} sName Name of the router instance
 			 * @public
 			 */
 			register : function (sName) {

@@ -211,7 +211,7 @@ function(
 	 *
 	 * @param {string} sIdSuffix Suffix to be added to the ids of the new control and its internal objects.
 	 * @returns {sap.m.ComboBox} The cloned <code>sap.m.MultiComboBox</code> control.
-	 * @protected
+	 * @public
 	 */
 	MultiComboBox.prototype.clone = function (sIdSuffix) {
 		var oComboBoxClone = ComboBoxBase.prototype.clone.apply(this, arguments),

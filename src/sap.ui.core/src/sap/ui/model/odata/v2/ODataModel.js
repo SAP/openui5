@@ -159,9 +159,11 @@ sap.ui.define([
 	 * @param {boolean} [mParameters.canonicalRequests=false]
 	 *            When setting this flag to <code>true</code> the model tries to calculate a canonical url to the data.
 	 * @param {boolean} [mParameters.tokenHandlingForGet=false] Send CSRF token for GET requests in case read access logging is activated for the OData Service in the backend.
+	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
 	 *
+	 * See chapter {@link topic:6c47b2b39db9404582994070ec3d57a2 OData V2 Model} for a general introduction.
 	 *
 	 * @example authentication
 	 * oModel = new ODataModel(sURL, {
@@ -5105,7 +5107,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [mParameters] A map which contains the following parameter properties:
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
-	 * @param {string} [mParameters.groupId] Defines the group that should be submitted. If not specified all deferred groups will be submitted. Requests belonging to the same group will be bundled in one batch request.
+	 * @param {string} [mParameters.groupId] Defines the group that should be submitted. If not specified, all deferred groups will be submitted. Requests belonging to the same group will be bundled in one batch request.
 	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully updated. The handler can have the following parameters: <code>oData</code>. <code>oData</code> contains the
 	 * parsed response data as a Javascript object. The batch response is in the <code>__batchResponses</code> property which may contain further <code>__changeResponses</code> in an array depending on the amount of changes
 	 * and change sets of the actual batch request which was sent to the backend.
@@ -5537,9 +5539,9 @@ sap.ui.define([
 	 * Private headers which are set in the ODataModel cannot be modified.
 	 * These private headers are: <code>accept, accept-language, x-csrf-token, MaxDataServiceVersion, DataServiceVersion</code>.
 	 *
-	 * To remove these custom headers simply set the <code>mCustomHeaders</code> parameter to null.
-	 * Please also note that when calling this method again all previous custom headers
-	 * are removed unless they are specified again in the <code>mCustomHeaders</code> parameter.
+	 * To remove these custom headers simply set the <code>mHeaders</code> parameter to null.
+	 * Please also note that when calling this method again, all previous custom headers
+	 * are removed unless they are specified again in the <code>mHeaders</code> parameter.
 	 *
 	 * @param {object} mHeaders The header name/value map.
 	 * @public

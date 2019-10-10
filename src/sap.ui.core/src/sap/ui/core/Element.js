@@ -1051,13 +1051,16 @@ sap.ui.define([
 	/**
 	 * Retrieves, modifies or removes custom data attached to an <code>Element</code>.
 	 *
-	 * Usage:
+	 * Usages:
+	 * <h4>Setting the value for a single key</h4>
 	 * <pre>
 	 *    data("myKey", myData)
 	 * </pre>
 	 * Attaches <code>myData</code> (which can be any JS data type, e.g. a number, a string, an object, or a function)
 	 * to this element, under the given key "myKey". If the key already exists,the value will be updated.
 	 *
+	 *
+	 * <h4>Setting a value for a single key (rendered to the DOM)</h4>
 	 * <pre>
 	 *    data("myKey", myData, writeToDom)
 	 * </pre>
@@ -1067,31 +1070,40 @@ sap.ui.define([
 	 * written to DOM. The key must also be a valid HTML attribute name (it must conform to <code>sap.ui.core.ID</code>
 	 * and may contain no colon) and may not start with "sap-ui". When written to HTML, the key is prefixed with "data-".
 	 *
+	 *
+	 * <h4>Getting the value for a single key</h4>
 	 * <pre>
 	 *    data("myKey")
 	 * </pre>
-	 * Retrieves whatever data has been attached to this element (using the key "myKey") before
+	 * Retrieves whatever data has been attached to this element (using the key "myKey") before.
 	 *
+	 *
+	 * <h4>Removing the value for a single key</h4>
 	 * <pre>
 	 *    data("myKey", null)
 	 * </pre>
-	 * Removes whatever data has been attached to this element (using the key "myKey") before
+	 * Removes whatever data has been attached to this element (using the key "myKey") before.
 	 *
+	 *
+	 * <h4>Removing all custom data for all keys</h4>
 	 * <pre>
 	 *    data(null)
 	 * </pre>
-	 * Removes all data
 	 *
+	 *
+	 * <h4>Getting all custom data values as a plain object</h4>
 	 * <pre>
 	 *    data()
 	 * </pre>
-	 * Returns all data, as a map
+	 * Returns all data, as a map-like object, property names are keys, property values are values.
 	 *
+	 *
+	 * <h4>Setting multiple key/value pairs in a single call</h4>
 	 * <pre>
 	 *    data({"myKey1": myData, "myKey2": null})
 	 * </pre>
 	 * Attaches <code>myData</code> (using the key "myKey1" and removes any data that had been
-	 * attached for key "myKey2"
+	 * attached for key "myKey2".
 	 *
 	 * @see See chapter {@link topic:91f0c3ee6f4d1014b6dd926db0e91070 Custom Data - Attaching Data Objects to Controls}
 	 *    in the documentation.
@@ -1190,8 +1202,8 @@ sap.ui.define([
 	 *
 	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element ID
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.core.Element} reference to the newly created clone
-	 * @protected
+	 * @returns {sap.ui.core.Element} reference to the newly created clone
+	 * @public
 	 */
 	Element.prototype.clone = function(sIdSuffix, aLocalIds){
 

@@ -1283,7 +1283,7 @@ function(
 	 * Clones the <code>sap.m.MultiInput</code> control.
 	 *
 	 * @public
-	 * @return {sap.ui.core.Element} reference to the newly created clone
+	 * @return {sap.m.MultiInput} reference to the newly created clone
 	 */
 	MultiInput.prototype.clone = function () {
 		var oClone;

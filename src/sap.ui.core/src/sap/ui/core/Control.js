@@ -128,7 +128,7 @@ sap.ui.define([
 				 * The IDs of a logical field group that this control belongs to.
 				 *
 				 * All fields in a logical field group should share the same <code>fieldGroupId</code>.
-				 * Once a logical field group is left, the <code>validateFieldGroup</code> event is raised.
+				 * Once a logical field group is left, the <code>validateFieldGroup</code> event is fired.
 				 *
 				 * For backward compatibility with older releases, field group IDs are syntactically not
 				 * limited, but it is suggested to use only valid {@link sap.ui.core.ID}s.
@@ -144,10 +144,14 @@ sap.ui.define([
 			events : {
 				/**
 				 * Event is fired if a logical field group defined by <code>fieldGroupIds</code> of a control was left
-				 * or the user explicitly pressed a key combination that triggers validation.
+				 * or when the user explicitly pressed the key combination that triggers validation.
+				 *
+				 * By default, the <code>RETURN</code> key without any modifier keys triggers validation,
+				 * see {@link #triggerValidateFieldGroup}.
 				 *
 				 * Listen to this event to validate data of the controls belonging to a field group.
-				 * See {@link #setFieldGroupIds}.
+				 * See {@link #setFieldGroupIds}, or consult the
+				 * {@link topic:5b0775397e394b1fb973fa207554003e Field Group} documentation.
 				 */
 				validateFieldGroup : {
 					enableEventBubbling:true,
@@ -259,8 +263,8 @@ sap.ui.define([
 	 *
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned element id
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.core.Element} reference to the newly created clone
-	 * @protected
+	 * @return {sap.ui.core.Control} reference to the newly created clone
+	 * @public
 	 */
 	Control.prototype.clone = function() {
 		var oClone = Element.prototype.clone.apply(this, arguments);
@@ -1133,8 +1137,10 @@ sap.ui.define([
 	 * Triggers the <code>validateFieldGroup</code> event for this control.
 	 *
 	 * Called by <code>sap.ui.core.UIArea</code> if a field group should be validated after it lost
-	 * the focus or when the key combination was pressed that was configured to trigger validation
-	 * (defined in the UI area member <code>UIArea._oFieldGroupValidationKey</code>).
+	 * the focus or when the key combination was pressed that was configured to trigger validation.
+	 *
+	 * By default, the <code>RETURN</code> key without any modifier keys triggers validation.
+	 * There's no public API to change that key combination.
 	 *
 	 * See {@link #attachValidateFieldGroup}.
 	 *
