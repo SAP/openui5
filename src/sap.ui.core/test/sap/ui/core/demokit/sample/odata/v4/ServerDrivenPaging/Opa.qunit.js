@@ -55,7 +55,9 @@ sap.ui.getCore().attachInit(function () {
 				Then.iTeardownMyUIComponent();
 			});
 		} else {
-			QUnit.skip("Test runs only with realOData=true");
+			QUnit.test("Test runs only with realOData=true", function (assert) {
+				assert.ok(true, "need one assertion to avoid voter errors due to 'no tests'");
+			});
 		}
 
 		QUnit.start();
