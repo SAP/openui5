@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Menu - sap.ui.unified</title>
+
+		<script src="shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-trace="false"
+				data-sap-ui-libs="sap.ui.unified, sap.m"
+				src="../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script>
+		var oTestMenu = new sap.ui.unified.Menu("mainMenu"),
+			oFirstMenuItem = new sap.ui.unified.MenuItem("I221"),
+			oSecondMenuItem = new sap.ui.unified.MenuItem("I222"),
+			oButton1,
+			oButton2,
+			oApp,
+			oPage,
+			eDock = sap.ui.core.Popup.Dock;
+
+		oTestMenu.addItem(oFirstMenuItem);
+		oTestMenu.addItem(oSecondMenuItem);
+
+	 	oButton1 = new sap.m.Button("B1", {
+			text : "FirstButton",
+			press : function(){
+				oTestMenu.open(false, oButton1, eDock.BeginTop, eDock.BeginTop, oButton1, "0 0");
+			}
+		});
+
+		oButton2 = new sap.m.Button("B2", {
+			text : "SecondButton",
+			press : function(){
+			}
+		});
+
+		oApp = new sap.m.App("myApp").placeAt("body");
+
+		oPage = new sap.m.Page({
+			title: "Menu Test",
+			content : [
+				oButton1,
+				oButton2
+			]
+		});
+
+		oApp.addPage(oPage);
+
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>
