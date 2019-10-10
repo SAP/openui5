@@ -288,19 +288,17 @@ sap.ui.define([
 			this._createI18nModel()
 				.then(function (aBundles) {
 					if (aBundles.length) {
-						var oBundle = aBundles.shift();
-
 						if (!this._oI18nModel) {
 							this._oI18nModel = new ResourceModel({
-								bundle: oBundle
+								bundle: aBundles.shift()
 							});
 							this.setModel(this._oI18nModel, "i18n");
 							this._oI18nModel.setDefaultBindingMode("OneWay");
-						} else {
-							aBundles.forEach(function (oBundle) {
-								this._oI18nModel.enhance(oBundle);
-							}, this);
 						}
+
+						aBundles.forEach(function (oBundle) {
+							this._oI18nModel.enhance(oBundle);
+						}, this);
 					}
 				}.bind(this))
 				.then(this._createEditors.bind(this));

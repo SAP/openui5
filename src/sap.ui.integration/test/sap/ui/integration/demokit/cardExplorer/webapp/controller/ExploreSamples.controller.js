@@ -373,7 +373,6 @@ sap.ui.define([
 				dataType: "text",
 				success: function (sValue) {
 					this.byId("editor").setValue(sValue);
-					this.byId("cardEditor").setJson(sValue);
 				}.bind(this)
 			});
 		},
