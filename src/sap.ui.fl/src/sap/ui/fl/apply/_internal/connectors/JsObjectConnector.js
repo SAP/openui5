@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var oMyStorage = {
+		_itemsStoredAsObjects: true,
 		_items: {},
 		setItem: function(sKey, vValue) {
 			oMyStorage._items[sKey] = vValue;

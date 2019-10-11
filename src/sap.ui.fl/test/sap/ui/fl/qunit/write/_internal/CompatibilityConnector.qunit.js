@@ -29,10 +29,12 @@ sap.ui.define([
 	//var sandbox = sinon.sandbox.create();
 
 	function writeTestDataToStorage() {
-		aTestData.forEach(function(oChange) {
+		var aPromises = aTestData.map(function(oChange) {
 			var sKey = BrowserStorageUtils.createChangeKey(oChange.fileName);
-			JsObjectConnector.oStorage.setItem(sKey, JSON.stringify(oChange));
+			JsObjectConnector.oStorage.setItem(sKey, oChange);
 		});
+
+		return Promise.all(aPromises);
 	}
 
 	QUnit.module("Given new connector configuration in bootstrap", {
@@ -75,7 +77,7 @@ sap.ui.define([
 				return this.oConnector.update(oTestDataNew);
 			}.bind(this))
 			.then(function () {
-				assert.ok(JSON.parse(JsObjectConnector.oStorage.getItem(sId)).content.isNewContent, "the change content got updated");
+				assert.ok(JsObjectConnector.oStorage.getItem(sId).content.isNewContent, "the change content got updated");
 				return this.oConnector.deleteChange(oTestDataNew);
 			}.bind(this))
 			.then(function () {
@@ -93,26 +95,36 @@ sap.ui.define([
 		});
 
 		QUnit.test("when resetting changes", function (assert) {
-			writeTestDataToStorage();
-			return this.oConnector.resetChanges({
-				sReference : oTestData.reference,
-				sLayer: "CUSTOMER"
-			})
-			.then(function () {
-				assert.equal(numberOfChange(), 0, "JsObjectConnector is empty afterwards");
-			});
+			return writeTestDataToStorage()
+				.then(function () {
+					return this.oConnector.resetChanges({
+						sReference : oTestData.reference,
+						sLayer : "CUSTOMER"
+					});
+				}.bind(this))
+				.then(
+					numberOfChange
+				)
+				.then(function (iNumberOfChanges) {
+					assert.equal(iNumberOfChanges, 0, "JsObjectConnector is empty afterwards");
+				});
 		});
 
 		QUnit.test("when resetting specific changes", function (assert) {
-			writeTestDataToStorage();
-			return this.oConnector.resetChanges({
-				sReference : oTestData.reference,
-				sLayer: "CUSTOMER",
-				aChangeTypes: ["moveFields"]
-			})
-			.then(function () {
-				assert.equal(numberOfChange(), 1, "JsObjectConnector is has only the one not moveFields change afterwards");
-			});
+			return writeTestDataToStorage()
+				.then(function () {
+					return this.oConnector.resetChanges({
+						sReference : oTestData.reference,
+						sLayer : "CUSTOMER",
+						aChangeTypes : ["moveFields"]
+					});
+				}.bind(this))
+				.then(
+					numberOfChange
+				)
+				.then(function (iNumberOfChanges) {
+					assert.equal(iNumberOfChanges, 1, "JsObjectConnector is has only the one not moveFields change afterwards");
+				});
 		});
 
 		QUnit.test("when asking for flex info", function (assert) {
