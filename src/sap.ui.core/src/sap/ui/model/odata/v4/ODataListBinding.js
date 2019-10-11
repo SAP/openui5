@@ -721,7 +721,7 @@ sap.ui.define([
 		}
 
 		for (i = iStart; i < iStart + aResults.length; i += 1) {
-			if (this.aContexts[i] === undefined) {
+			if (this.aContexts[i] === undefined && aResults[i - iStart]) {
 				bChanged = true;
 				i$skipIndex = i - this.iCreatedContexts; // index on server ($skip)
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate")

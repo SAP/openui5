@@ -2589,7 +2589,8 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oBinding = this.bindList("/EMPLOYEES", {/*oContext*/}),
 				iCreatedContexts = bCreated ? 1 : 0,
-				i;
+				i,
+				aResults;
 
 			function result(iLength, iCount) {
 				iCount = iCount && iCount + (bCreated ? 1 : 0);
@@ -2686,6 +2687,31 @@ sap.ui.define([
 			assert.strictEqual(oBinding.getLength(), 30 + iCreatedContexts);
 			assert.strictEqual(oBinding.aContexts.length, 30 + iCreatedContexts);
 			assert.strictEqual(oBinding.iMaxLength, 30);
+
+			// code under test: preparation for following test for server-side paging: create a gap
+			assert.strictEqual(
+				oBinding.createContexts(100 + iCreatedContexts, 20, result(20)),
+				true);
+
+			assert.strictEqual(oBinding.isLengthFinal(), false);
+			assert.strictEqual(oBinding.getLength(), 120 + iCreatedContexts + 10);
+			assert.strictEqual(oBinding.aContexts.length, 120 + iCreatedContexts);
+			assert.strictEqual(oBinding.iMaxLength, Infinity);
+
+			aResults = result(140);
+			for (i = 50; i < 100; i += 1) {
+				delete aResults[i];
+			}
+
+			// code under test: gap is not read completely
+			assert.strictEqual(
+				oBinding.createContexts(0 + iCreatedContexts, 160, aResults),
+				true);
+
+			assert.strictEqual(oBinding.isLengthFinal(), false);
+			assert.strictEqual(oBinding.getLength(), 140 + iCreatedContexts + 10);
+			assert.strictEqual(oBinding.aContexts.length, 140 + iCreatedContexts);
+			assert.strictEqual(oBinding.iMaxLength, Infinity);
 		});
 	});
 

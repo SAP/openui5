@@ -1788,7 +1788,13 @@ sap.ui.define([
 			this.iLimit = iCount = parseInt(sCount);
 		}
 		if (oResult["@odata.nextLink"]) { // server-driven paging
-			this.aElements.length = iStart + iResultLength;
+			if (iEnd < this.aElements.length) { // "inner" gap: do not remove elements behind gap
+				for (i = iStart + iResultLength; i < iEnd; i += 1) {
+					delete this.aElements[i];
+				}
+			} else { // gap at end: shorten array
+				this.aElements.length = iStart + iResultLength;
+			}
 		} else if (iResultLength < iEnd - iStart) { // short read
 			if (iCount === -1) {
 				// use formerly computed $count
