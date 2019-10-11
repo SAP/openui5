@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./MessageStripUtilities"],
-	function (MSUtils) {
+sap.ui.define(["./MessageStripUtilities", "sap/ui/core/InvisibleText"],
+	function (MSUtils, InvisibleText) {
 	"use strict";
 
 	/**
@@ -31,7 +31,7 @@ sap.ui.define(["./MessageStripUtilities"],
 		this.renderTextAndLink(oRm, oControl);
 
 		if (oControl.getShowCloseButton()) {
-			this.renderCloseButton(oRm);
+			this.renderCloseButton(oRm, oControl);
 		}
 
 		this.endMessageStrip(oRm);
@@ -84,11 +84,16 @@ sap.ui.define(["./MessageStripUtilities"],
 		oRm.close("div");
 	};
 
-	MessageStripRenderer.renderCloseButton = function (oRm) {
+	MessageStripRenderer.renderCloseButton = function (oRm, oControl) {
+		var MESSAGE_STRIP_CLOSE_BUTTON = sap.ui.getCore()
+			.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON"),
+			oAccText = new InvisibleText( {text: oControl.getType() + " " + MESSAGE_STRIP_CLOSE_BUTTON})
+				.toStatic().getId();
+
 		oRm.openStart("button");
 		oRm.class(MSUtils.CLASSES.CLOSE_BUTTON);
-		oRm.attr("title",
-			sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON"));
+		oRm.attr("title", MESSAGE_STRIP_CLOSE_BUTTON);
+		oRm.attr("aria-labelledby", oAccText);
 		oRm.openEnd();
 		oRm.close("button");
 	};
