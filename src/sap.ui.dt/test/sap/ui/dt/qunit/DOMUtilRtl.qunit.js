@@ -24,7 +24,7 @@ function(
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer.get(0));
 			//TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -47 : -35;
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile) ? -47 : -35;
 			// in some cases (special physical devices) the offset is returend as decimal value
 			// actually we need to round the offset for chrome browser on mac
 			assert.strictEqual(Math.round(mOffset.left), iExpectedOffsetLeft, "the left offset is correct - result: " +
@@ -37,7 +37,7 @@ function(
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent.get(0));
 			var iScrollValue = -50;
 			//TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.webkit || Device.browser.blink) ? -97 : -85;
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile) ? -97 : -85;
 			// IE and Edge use positive leftScroll
 			if (Device.browser.msie || Device.browser.edge) {
 				iScrollValue = -iScrollValue;
