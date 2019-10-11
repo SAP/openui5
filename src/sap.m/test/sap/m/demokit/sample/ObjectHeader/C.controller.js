@@ -1,7 +1,7 @@
 sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		"sap/m/Library"
+		"sap/m/library"
 ], function(Controller, JSONModel, MLibrary) {
 	"use strict";
 	var URLHelper = MLibrary.URLHelper;

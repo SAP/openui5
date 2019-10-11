@@ -1,7 +1,7 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	"sap/ui/core/Library"
+	"sap/ui/core/library"
 ], function(Controller, JSONModel, CoreLibrary) {
 	"use strict";
 
