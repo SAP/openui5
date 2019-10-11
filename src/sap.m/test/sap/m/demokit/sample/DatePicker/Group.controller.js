@@ -2,13 +2,13 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	"sap/ui/core/Core",
-	"sap/ui/core/Library",
-	"sap/ui/unified/Library",
+	"sap/ui/core/library",
+	"sap/ui/unified/library",
 	"sap/ui/unified/DateTypeRange"
-], function(Controller, JSONModel, Core, CoreLbrary, UnifiedLibrary, DateTypeRange) {
+], function(Controller, JSONModel, Core, CoreLibrary, UnifiedLibrary, DateTypeRange) {
 	"use strict";
 	var CalendarDayType = UnifiedLibrary.CalendarDayType,
-		ValueState = CoreLbrary.ValueState;
+		ValueState = CoreLibrary.ValueState;
 
 	return Controller.extend("sap.m.sample.DatePicker.Group", {
 

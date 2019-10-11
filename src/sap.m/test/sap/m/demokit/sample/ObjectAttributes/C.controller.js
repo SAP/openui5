@@ -6,7 +6,7 @@ sap.ui.define([
 		'sap/m/TextArea',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
-		"sap/m/Library",
+		"sap/m/library",
 		"sap/ui/core/Popup"
 ], function(
 	Button,
