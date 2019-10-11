@@ -752,13 +752,7 @@ function (
 							this._oTaskManager.complete(iTaskId);
 							return oElementOverlay;
 						}.bind(this));
-				}.bind(this),
-				// Rejected
-				function (vError) {
-					// Will be handled by catch() below
-					throw vError;
-				}
-			)
+				}.bind(this))
 			.catch(function (vError) {
 				var oError = Util.propagateError(
 					vError,
@@ -1196,12 +1190,7 @@ function (
 							}, this);
 						}
 						this._oTaskManager.complete(iTaskId);
-					}.bind(this),
-						function (vError) {
-							// Will be handled by catch() below
-							throw vError;
-						}
-					)
+					}.bind(this))
 					.catch(function (sElementId, sAggregationOverlayId, vError) {
 						// In case of any crash or rejection the task has to be canceled
 						this._oTaskManager.cancel(iTaskId);
@@ -1218,7 +1207,7 @@ function (
 
 						// Omit error message if the element was destroyed during overlay initialisation
 						// (e.g. SimpleForm case when multi-removal takes place)
-						if (!oElement.bIsDestroyed) {
+						if (!oElement.bIsDestroyed && !oParentAggregationOverlay.bIsDestroyed) {
 							Log.error(Util.errorToString(oError));
 						}
 					}.bind(this, oElement.getId(), oParentAggregationOverlay.getId()));

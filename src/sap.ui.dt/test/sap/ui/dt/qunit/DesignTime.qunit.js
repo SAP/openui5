@@ -1,3 +1,4 @@
+
 /*global QUnit*/
 
 sap.ui.define([
@@ -385,14 +386,14 @@ function(
 		QUnit.test("when an existing element overlay's editable property is changed and designtime is synced later and this overlay is destroyed in the meantime", function (assert) {
 			var fnDone = assert.async();
 			var oButton = new Button("button3");
-			var fnPromiseResolve;
+			var fnResolveLoadDesigntime;
 
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
 				.callThrough()
 				.withArgs(oButton)
 				.callsFake(function () {
 					return new Promise(function (fnResolve) {
-						fnPromiseResolve = fnResolve;
+						fnResolveLoadDesigntime = fnResolve;
 					});
 				});
 
@@ -411,13 +412,52 @@ function(
 			// In between "syncing" and "synced" events the overlay is destroyed
 			this.oButton1.destroy();
 
-			// Continue execution (this will fire sync)
-			fnPromiseResolve({});
-
 			this.oDesignTime.attachEventOnce("synced", function() {
 				assert.ok(oElementOverlayEditableChangedSpy.notCalled, "then event listeners for property changed was not called");
 				fnDone();
 			});
+
+			// Continue execution (this will fire sync)
+			fnResolveLoadDesigntime({});
+		});
+
+		QUnit.test("when an element overlay is created and in the meanwhile it is take out of the then afterwards destroyed parent", function (assert) {
+			var fnDone = assert.async();
+			var oButton = new Button("newButton");
+			var fnResolveLoadDesigntime;
+
+			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
+				.callThrough()
+				.withArgs(oButton)
+				.callsFake(function () {
+					return new Promise(function (fnResolve) {
+						fnResolveLoadDesigntime = fnResolve;
+					});
+				});
+			var fnLogErrorSpy = sandbox.spy(Log, "error");
+			var oElementOverlayAddedSpy = sandbox.spy();
+			this.oDesignTime.attachEventOnce("elementOverlayAdded", oElementOverlayAddedSpy);
+
+			// Set DesignTime in syncing state
+			this.oInnerLayout.addContent(oButton);
+			assert.strictEqual(this.oDesignTime.getStatus(), DesignTimeStatus.SYNCING);
+
+
+			// In between "syncing" and "synced" events
+			// 1. control is removed from parent
+			// 2. the parent overlay is destroyed
+			this.oInnerLayout.removeContent(oButton);
+			this.oInnerLayout.destroy();
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.ok(oElementOverlayAddedSpy.notCalled, "then event listeners is not called");
+				assert.ok(fnLogErrorSpy.notCalled, "then no error message is shown");
+				oButton.destroy();
+				fnDone();
+			});
+
+			// Continue execution (this will fire sync)
+			fnResolveLoadDesigntime({});
 		});
 
 		QUnit.test("when a new element overlay's editable property is changed during synchronization process", function (assert) {
@@ -475,14 +515,14 @@ function(
 		QUnit.test("when a property on an element with an overlay was changed and designtime is synced later and this overlay is destroyed in the meantime", function (assert) {
 			var fnDone = assert.async();
 			var oButton = new Button("button3");
-			var fnPromiseResolve;
+			var fnResolveLoadDesigntime;
 
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime")
 				.callThrough()
 				.withArgs(oButton)
 				.callsFake(function () {
 					return new Promise(function (fnResolve) {
-						fnPromiseResolve = fnResolve;
+						fnResolveLoadDesigntime = fnResolve;
 					});
 				});
 
@@ -499,13 +539,13 @@ function(
 			// In between "syncing" and "synced" events the overlay is destroyed
 			this.oButton1.destroy();
 
-			// Continue execution (this will fire sync)
-			fnPromiseResolve({});
-
 			this.oDesignTime.attachEventOnce("synced", function() {
 				assert.ok(oElementPropertyChangedSpy.notCalled, "then event listeners for property changed was not called");
 				fnDone();
 			});
+
+			// Continue execution (this will fire sync)
+			fnResolveLoadDesigntime({});
 		});
 
 		QUnit.test("when a property on an element is changed during the creation of its overlay", function (assert) {
@@ -1541,11 +1581,11 @@ function(
 
 		QUnit.test("when called too frequently for the same control", function (assert) {
 			var oButton = new Button();
-			var fnPromiseResolve;
+			var fnResolveLoadDesigntime;
 
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function () {
 				return new Promise(function (fnResolve) {
-					fnPromiseResolve = fnResolve;
+					fnResolveLoadDesigntime = fnResolve;
 				});
 			});
 
@@ -1562,7 +1602,7 @@ function(
 				oButton.destroy();
 			});
 
-			fnPromiseResolve({});
+			fnResolveLoadDesigntime({});
 			return oPromiseAll;
 		});
 
