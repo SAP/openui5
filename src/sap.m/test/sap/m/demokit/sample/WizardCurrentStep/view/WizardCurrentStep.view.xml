@@ -11,22 +11,19 @@
 				showHeader="true">
 					<customHeader>
 						<Bar>
-							<contentLeft>
+							<contentRight>
 								<SegmentedButton selectedKey="{/selectedShowCase}">
 									<items>
 										<SegmentedButtonItem text="Linear case" key="linear" />
 										<SegmentedButtonItem text="Branching case" key="branching" width="150px" />
 									</items>
 								</SegmentedButton>
-							</contentLeft>
+							</contentRight>
+						</Bar>
+					</customHeader>
+					<subHeader>
+						<Bar>
 							<contentRight>
-								<Label text="Set background design: " />
-								<Select change="onBackgroundDesignChange" selectedKey="{/selectedBackgroundDesign}">
-									<core:Item text="Standard" key="Standard" />
-									<core:Item text="Solid" key="Solid" />
-									<core:Item text="List" key="List" />
-									<core:Item text="Transparent" key="Transparent" />
-								</Select>
 								<Label text="Set current step: " />
 								<Select change="onCurrentStepChangeLinear" selectedKey="{/linearWizardSelectedStep}" visible="{= ${/selectedShowCase} === 'linear'}">
 									<core:Item text="ProductTypeStep" key="ProductTypeStep" />
@@ -47,7 +44,7 @@
 								</Select>
 							</contentRight>
 						</Bar>
-					</customHeader>
+					</subHeader>
 					<content>
 						<mvc:XMLView
 							id="wizardViewLinear"
@@ -58,6 +55,19 @@
 							visible="{= ${/selectedShowCase} === 'branching' }"
 							viewName="sap.m.sample.WizardCurrentStep.view.Branching" />
 					</content>
+					<footer>
+						<Bar>
+							<contentRight>
+								<Label text="Set background design: " />
+								<Select change="onBackgroundDesignChange" selectedKey="{/selectedBackgroundDesign}">
+									<core:Item text="Standard" key="Standard" />
+									<core:Item text="Solid" key="Solid" />
+									<core:Item text="List" key="List" />
+									<core:Item text="Transparent" key="Transparent" />
+								</Select>
+							</contentRight>
+						</Bar>
+					</footer>
 				</Page>
 			</pages>
 		</NavContainer>
