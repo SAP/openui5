@@ -412,51 +412,32 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bHasCache) {
-		var sTitle = "hasPendingChangesForPath: cache is " + (bHasCache ? "" : "not yet ")
-				+ "available";
-		QUnit.test(sTitle, function (assert) {
-			var oBinding = new ODataBinding(),
-				oCache = {
-					hasPendingChangesForPath : function () {}
-				},
-				oExpectation,
-				sPath = "foo",
-				bResult = {/*true or false*/},
-				oPromise = SyncPromise.resolve(bHasCache ? bResult : Promise.resolve(bResult));
+	QUnit.test("hasPendingChangesForPath", function (assert) {
+		var oBinding = new ODataBinding({}),
+			oCache = {
+				hasPendingChangesForPath : function () {}
+			},
+			sCachePath = {/*string*/},
+			oExpectation,
+			sPath = "foo",
+			bResult = {/*true or undefined*/},
+			oResult = {},
+			oWithCachePromise = {unwrap : function () {}};
 
-			oExpectation = this.mock(oBinding)
-				.expects("withCache").withExactArgs(sinon.match.func, sPath).returns(oPromise);
-
-			// code under test
-			assert.strictEqual(oBinding.hasPendingChangesForPath(sPath),
-				bHasCache ? bResult : false);
-
-			// check that the function passed to withCache works as expected
-			this.mock(oCache).expects("hasPendingChangesForPath").withExactArgs(sPath)
-				.returns(bResult);
-			assert.strictEqual(oExpectation.firstCall.args[0](oCache, sPath), bResult);
-
-			return oPromise;
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("hasPendingChangesForPath: catch the promise", function (assert) {
-		var oBinding = new ODataBinding({
-				oModel : {
-					reportError : function () {}
-				}
-			}),
-			oError = new Error("fail intentionally");
-
-		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
-		this.mock(oBinding.oModel).expects("reportError")
-			.withExactArgs("Error in hasPendingChangesForPath", sClassName,
-				sinon.match.same(oError));
+		oExpectation = this.mock(oBinding).expects("withCache")
+			.withExactArgs(sinon.match.func, sPath, true)
+			.returns(oWithCachePromise);
+		this.mock(oWithCachePromise).expects("unwrap").withExactArgs().returns(oResult);
 
 		// code under test
-		assert.strictEqual(oBinding.hasPendingChangesForPath("foo"), false);
+		assert.strictEqual(oBinding.hasPendingChangesForPath(sPath), oResult);
+
+		this.mock(oCache).expects("hasPendingChangesForPath")
+			.withExactArgs(sinon.match.same(sCachePath))
+			.returns(bResult);
+
+		// code under test
+		assert.strictEqual(oExpectation.firstCall.args[0](oCache, sCachePath), bResult);
 	});
 
 	//*********************************************************************************************
@@ -1715,29 +1696,34 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bAsync) {
-		QUnit.test("withCache: cache hit, async=" + bAsync, function (assert) {
+[false, true].forEach(function (bSync) {
+	[false, true].forEach(function (bCachePromisePending) {
+		var sTitle = "withCache: cache hit; " + (bSync ? "use oCache" : "use cache promise")
+				+ "; cache promise " + (bCachePromisePending ? "pending" : "fulfilled");
+
+		QUnit.test(sTitle, function (assert) {
 			var oCache = {},
 				oBinding = new ODataBinding({
-					oCache : bAsync ? undefined : oCache,
-					oCachePromise : bAsync ? SyncPromise.resolve(Promise.resolve(oCache))
+					oCache : !bSync && bCachePromisePending ? undefined : oCache,
+					oCachePromise : bCachePromisePending
+						? SyncPromise.resolve(Promise.resolve(oCache))
 						: SyncPromise.resolve(oCache)
 				}),
 				oCallbackResult = {},
 				oProcessor = {
-					fnCallback : function () {}
+					fnProcessor : function () {}
 				},
 				oPromise;
 
 			this.mock(oBinding).expects("getRelativePath").withExactArgs("foo").returns("~");
-			this.mock(oProcessor).expects("fnCallback")
+			this.mock(oProcessor).expects("fnProcessor")
 				.withExactArgs(sinon.match.same(oCache), "~", sinon.match.same(oBinding))
 				.returns(oCallbackResult);
 
 			// code under test
-			oPromise = oBinding.withCache(oProcessor.fnCallback, "foo");
+			oPromise = oBinding.withCache(oProcessor.fnProcessor, "foo", bSync);
 
-			if (!bAsync) {
+			if (bSync || !bCachePromisePending) {
 				assert.strictEqual(oPromise.isFulfilled(), true);
 				assert.strictEqual(oPromise.getResult(), oCallbackResult);
 			}
@@ -1746,6 +1732,7 @@ sap.ui.define([
 			});
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("withCache: cache hit, no path", function (assert) {
@@ -1760,74 +1747,120 @@ sap.ui.define([
 			}),
 			oCallbackResult = {},
 			oProcessor = {
-				fnCallback : function () {}
+				fnProcessor : function () {}
 			};
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs("").returns("");
 		this.mock(oContext).expects("withCache").never();
-		this.mock(oProcessor).expects("fnCallback")
+		this.mock(oProcessor).expects("fnProcessor")
 			.withExactArgs(sinon.match.same(oCache), "", sinon.match.same(oBinding))
 			.returns(oCallbackResult);
 
 		// code under test
-		return oBinding.withCache(oProcessor.fnCallback).then(function (oResult) {
+		return oBinding.withCache(oProcessor.fnProcessor).then(function (oResult) {
 			assert.strictEqual(oResult, oCallbackResult);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("withCache: no cache, but context, relative path", function (assert) {
+[false, true].forEach(function (bSync) {
+	var sTitle = "withCache: bubbling up, called with relative sPath; bSync = " + bSync;
+
+	QUnit.test(sTitle, function (assert) {
 		var oContext = {
 				withCache : function () {}
 			},
 			oBinding = new ODataBinding({
-				oCache : null,
-				oCachePromise : SyncPromise.resolve(null),
+				oCache : bSync ? null : {/*must not be used*/},
+				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(null),
 				oContext : oContext,
-				sPath : "binding/path"
+				sPath : "binding/path",
+				isRelative : function () {}
 			}),
-			fnCallback = {},
 			oContextResult = {},
-			sPath = "foo";
+			sPath = "foo",
+			fnProcessor = {};
 
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").withExactArgs(oBinding.sPath, sPath).returns("~");
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.same(fnCallback), "~")
+			.withExactArgs(sinon.match.same(fnProcessor), "~", bSync)
 			.returns(oContextResult);
 
 		// code under test
-		return oBinding.withCache(fnCallback, sPath).then(function (oResult) {
+		return oBinding.withCache(fnProcessor, sPath, bSync).then(function (oResult) {
 			assert.strictEqual(oResult, oContextResult);
 		});
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("withCache: no cache, but context, absolute path", function (assert) {
+[false, true].forEach(function (bSync) {
+	var sTitle = "withCache: bubbling up, called with absolute path; bSync = " + bSync;
+
+	QUnit.test(sTitle, function (assert) {
 		var oContext = {
 				withCache : function () {}
 			},
 			oBinding = new ODataBinding({
-				oCache : null,
-				oCachePromise : SyncPromise.resolve(null),
-				oContext : oContext
+				oCache : bSync ? null : {/*must not be used*/},
+				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(null),
+				oContext : oContext,
+				isRelative : function () {}
 			}),
-			fnCallback = {},
 			oContextResult = {},
-			sPath = "/foo";
+			sPath = "/foo",
+			fnProcessor = {};
 
+		// oBinding binding might still be relative but while bubbling up sPath is already absolute
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").never();
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.same(fnCallback), sPath)
+			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync)
 			.returns(oContextResult);
 
-		// code under test
-		return oBinding.withCache(fnCallback, sPath).then(function (oResult) {
+		// code under test - simulate a call from Context#withCache
+		return oBinding.withCache(fnProcessor, sPath, bSync).then(function (oResult) {
 			assert.strictEqual(oResult, oContextResult);
 		});
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("withCache: cache miss, but context", function (assert) {
+[false, true].forEach(function (bSync) {
+	var sTitle = "withCache: bubbling up, relative path does not match; bSync = " + bSync;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = {},
+			oContext = {
+				withCache : function () {}
+			},
+			oBinding = new ODataBinding({
+				oCache : bSync ? oCache : {/*must not be used*/},
+				oCachePromise : bSync ? {/*must not be used*/} : SyncPromise.resolve(oCache),
+				oContext : oContext,
+				sPath : "binding/path",
+				isRelative : function () {}
+			}),
+			oContextResult = {},
+			sPath = "/foo",
+			fnProcessor = {};
+
+		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync)
+			.returns(oContextResult);
+
+		// code under test
+		return oBinding.withCache(fnProcessor, sPath, bSync).then(function (oResult) {
+			assert.strictEqual(oResult, oContextResult);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("withCache: absolute, but with V4 context", function (assert) {
 		var oCache = {},
 			oContext = {
 				withCache : function () {}
@@ -1836,19 +1869,18 @@ sap.ui.define([
 				oCache : oCache,
 				oCachePromise : SyncPromise.resolve(oCache),
 				oContext : oContext,
-				sPath : "binding/path"
+				sPath : "binding/path",
+				isRelative : function () {}
 			}),
-			fnCallback = {},
-			oContextResult = {},
 			sPath = "/foo";
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
-		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.same(fnCallback), sPath)
-			.returns(oContextResult);
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
+		this.mock(oContext).expects("withCache").never();
 
 		// code under test
-		return oBinding.withCache(fnCallback, sPath).then(function (oResult) {
-			assert.strictEqual(oResult, oContextResult);
+		return oBinding.withCache({}, sPath).then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
 		});
 	});
 
@@ -1857,7 +1889,6 @@ sap.ui.define([
 		var oContext = {
 				withCache : function () {}
 			},
-			fnCallback = {},
 			oBinding = new ODataBinding({
 				oCache : null,
 				oCachePromise : SyncPromise.resolve(null),
@@ -1869,9 +1900,26 @@ sap.ui.define([
 		this.mock(oContext).expects("withCache").never();
 
 		// code under test
-		return oBinding.withCache(fnCallback, sPath).then(function (oResult) {
+		return oBinding.withCache({/*fnProcessor*/}, sPath).then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("withCache: use oCache, but cache computation is pending", function (assert) {
+		var oContext = {
+				withCache : function () {}
+			},
+			oBinding = new ODataBinding({
+				oCache : undefined,
+				oCachePromise : SyncPromise.resolve(Promise.resolve(null)),
+				oContext : oContext
+//				isRelative : function () {}
+			}),
+			sPath = "/foo";
+
+		// code under test
+		assert.strictEqual(oBinding.withCache({/*fnProcessor*/}, sPath, true).unwrap(), undefined);
 	});
 
 	//*********************************************************************************************
@@ -1882,12 +1930,14 @@ sap.ui.define([
 			var oBinding = new ODataBinding({
 					oCache : null,
 					oCachePromise : SyncPromise.resolve(null),
-					oContext : bBaseContext ? {} : undefined
-				}),
-				fnCallback = {};
+					oContext : bBaseContext ? {} : undefined,
+					isRelative : function () {}
+				});
+
+			this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
 
 			// code under test
-			return oBinding.withCache(fnCallback, "foo").then(function (oResult) {
+			return oBinding.withCache({/*fnProcessor*/}, "foo").then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
 			});
 		});
@@ -2505,5 +2555,14 @@ sap.ui.define([
 		oBinding.setResumeChangeReason(ChangeReason.Change);
 
 		assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Filter);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("allow for super calls", function (assert) {
+		var oBinding = new ODataBinding();
+
+		assert.strictEqual(oBinding.destroy, asODataBinding.prototype.destroy);
+		assert.strictEqual(oBinding.hasPendingChangesForPath,
+			asODataBinding.prototype.hasPendingChangesForPath);
 	});
 });
