@@ -3689,9 +3689,23 @@ sap.ui.define([
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+		//act
+		oErrorComboBox.focus();
+
+		//arrange
+		var oValueStateMessage = document.getElementById("errorcombobox-message"),
+			oPopup = oErrorComboBox._oValueStateMessage._oPopup;
+
+		//assert
+		assert.ok(oValueStateMessage, "error message popup is opened when list is opened");
+
+		//act
 		oErrorComboBox.open();
 		this.clock.tick(1000);
-		assert.ok(!document.getElementById("errorcombobox-message"), "error message popup is not open when list is open");
+
+		//assert
+		assert.strictEqual(oErrorComboBox._getSuggestionsPopover()._oPopover.$().find("header .sapMTitle").text(), "Error Message", "value state message is displayed in the suggestion popover");
+		assert.ok(!oPopup || oPopup.getContent().style.display === "none", "Value state message is not displayed when the list is opened");
 
 		oErrorComboBox.close();
 		this.clock.tick(1000);
