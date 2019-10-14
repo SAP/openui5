@@ -54,6 +54,18 @@ sap.ui.define([
    *     </li>
    * </ul>
    *
+   * As of version 1.72, it is available as a declarative matcher with the following syntax:
+    * <code><pre>{
+    *     labelFor: {
+    *         text: "string",
+    *         modelName: "string",
+    *         key: "string",
+    *         parameters: "any",
+    *         propertyName: "string"
+    *     }
+    * }
+    * </code></pre>
+    *
    * @extends sap.ui.test.matchers.Matcher
    * @param {object} [mSettings] optional map/JSON-object with initial settings for the new LabelFor
    * @public

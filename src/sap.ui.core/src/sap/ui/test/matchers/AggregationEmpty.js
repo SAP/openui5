@@ -13,7 +13,17 @@ sap.ui.define([
 	});
 
 	/**
-	 * @class Checks if an aggregation is empty.
+	 * @class
+	 * Checks if an aggregation is empty.
+	 *
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     aggregationEmpty: {
+	 *         name: "string"
+	 *     }
+	 * }
+	 * </code>
+	 *
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationEmptyMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public
