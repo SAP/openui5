@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/Log"
-], function (Log) {
+	"sap/base/Log",
+	"sap/ui/test/Opa"
+], function (Log, Opa) {
 	"use strict";
 
 	return {
@@ -22,7 +23,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 			/* creates two sales orders
 			 *
