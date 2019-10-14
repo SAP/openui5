@@ -17,15 +17,13 @@
 				rows="{/ProductCollection}"
 				visibleRowCount="7"
 				ariaLabelledBy="title">
-				<title>
+				<extension>
 					<m:HBox>
 						<m:items>
 							<c:Icon src="sap-icon://cart" alt="Cart" size="1.25rem"/>
 							<m:Title text="Shopping Portal" titleStyle="H3" class="sapUiTinyMarginBeginEnd"/>
 						</m:items>
 					</m:HBox>
-				</title>
-				<toolbar>
 					<m:OverflowToolbar>
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
@@ -35,8 +33,6 @@
 							search="handleTxtFilter"
 							width="15rem"/>
 					</m:OverflowToolbar>
-				</toolbar>
-				<extension>
 					<m:FacetFilter
 						id="facetFilter"
 						type="Simple"

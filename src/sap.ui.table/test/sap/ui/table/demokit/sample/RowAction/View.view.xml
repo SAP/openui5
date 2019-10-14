@@ -17,16 +17,16 @@
 				selectionMode="MultiToggle"
 				visibleRowCount="7"
 				ariaLabelledBy="title">
-				<toolbar>
+				<extension>
 					<m:OverflowToolbar>
-						<m:Title id="title" text="Products"></m:Title>
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Select id="select" items="{modes>/items}" selectedKey="Navigation" change="onBehaviourModeChange">
 							<c:Item key="{modes>key}" text="{modes>text}"/>
 						</m:Select>
 						<m:ToggleButton text="Toggle Navigated Indicators" pressed="false" press="onNavIndicatorsToggle"/>
 					</m:OverflowToolbar>
-				</toolbar>
+				</extension>
 				<columns>
 					<Column>
 						<m:Label text="Product Name" />

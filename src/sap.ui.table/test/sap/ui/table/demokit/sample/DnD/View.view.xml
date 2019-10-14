@@ -22,7 +22,7 @@
 					visibleRowCount="10">
 					<extension>
 						<m:OverflowToolbar>
-							<m:Title text="Available Products" />
+							<m:Title text="Available Products"/>
 							<m:ToolbarSpacer/>
 							<m:Button
 								icon="sap-icon://hint"
@@ -93,7 +93,7 @@
 					noData="Please drag-and-drop products here.">
 					<extension>
 						<m:OverflowToolbar>
-							<m:Title text="Selected Products" />
+							<m:Title text="Selected Products"/>
 							<m:ToolbarSpacer/>
 							<m:Button
 								icon="sap-icon://navigation-up-arrow"

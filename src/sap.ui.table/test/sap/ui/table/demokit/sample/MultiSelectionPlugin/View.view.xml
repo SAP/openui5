@@ -31,31 +31,29 @@
 				</plugins>
 				<extension>
 					<m:OverflowToolbar>
-						<m:content>
-							<m:Title id="title" text="Products"/>
-							<m:ToolbarSpacer/>
-							<m:Label text="Selection Mode" labelFor="select1"/>
-							<m:Select
-								id="select1"
-								width="20%"
-								items="{config>/selectionModes}"
-								selectedKey="MultiToggle"
-								change="onSelectionModeChange">
-								<c:Item key="{config>key}" text="{config>text}"/>
-							</m:Select>
-							<m:Label text="Limit" labelFor="input1"/>
-							<m:Input
-								id="input1"
-								value="{path: 'config>/limit', type: 'sap.ui.model.type.Integer'}"
-								width="10%"
-								tooltip="limit"
-								change="onLimitChange"/>
-							<m:ToolbarSeparator/>
-							<m:ToggleButton
-								icon="sap-icon://complete"
-								tooltip="Show header selector"
-								pressed="{config>/showHeaderSelector}"/>
-						</m:content>
+						<m:Title id="title" text="Products"/>
+						<m:ToolbarSpacer/>
+						<m:Label text="Selection Mode" labelFor="select1"/>
+						<m:Select
+							id="select1"
+							width="20%"
+							items="{config>/selectionModes}"
+							selectedKey="MultiToggle"
+							change="onSelectionModeChange">
+							<c:Item key="{config>key}" text="{config>text}"/>
+						</m:Select>
+						<m:Label text="Limit" labelFor="input1"/>
+						<m:Input
+							id="input1"
+							value="{path: 'config>/limit', type: 'sap.ui.model.type.Integer'}"
+							width="10%"
+							tooltip="limit"
+							change="onLimitChange"/>
+						<m:ToolbarSeparator/>
+						<m:ToggleButton
+							icon="sap-icon://complete"
+							tooltip="Show header selector"
+							pressed="{config>/showHeaderSelector}"/>
 					</m:OverflowToolbar>
 				</extension>
 				<columns>

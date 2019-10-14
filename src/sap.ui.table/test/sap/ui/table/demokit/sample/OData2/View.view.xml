@@ -24,11 +24,11 @@
 					factory: '.columnFactory'
 				}"
 				ariaLabelledBy="title">
-				<toolbar>
+				<extension>
 					<m:OverflowToolbar>
-						<m:Title id="title" text="Products"></m:Title>
+						<m:Title id="title" text="Products"/>
 					</m:OverflowToolbar>
-				</toolbar>
+				</extension>
 				<noData>
 					<m:BusyIndicator class="sapUiMediumMargin"/>
 				</noData>

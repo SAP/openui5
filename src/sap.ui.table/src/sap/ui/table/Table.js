@@ -357,6 +357,8 @@ sap.ui.define([
 
 			/**
 			 * Control or text of title section of the Table (if not set it will be hidden)
+			 *
+			 * @deprecated As of 1.72. Use the <code>extension</code> aggregation instead.
 			 */
 			title : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 

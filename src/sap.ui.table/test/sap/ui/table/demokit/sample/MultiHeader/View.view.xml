@@ -12,8 +12,12 @@
 		class="sapUiContentPadding">
 		<m:content>
 
-		<Table id="table1" title="Contacts" selectionMode="MultiToggle" rows="{/modelData}" visibleRowCount="5">
-
+		<Table id="table1" ariaLabelledBy="title" selectionMode="MultiToggle" rows="{/modelData}" visibleRowCount="5">
+			<extension>
+				<m:OverflowToolbar>
+					<m:Title id="title" text="Contacts"/>
+				</m:OverflowToolbar>
+			</extension>
 			<columns>
 				<Column width="11rem" sortProperty="supplier" filterProperty="supplier">
 					<multiLabels>
