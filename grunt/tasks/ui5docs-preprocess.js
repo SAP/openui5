@@ -9,7 +9,7 @@
 
 const path = require('path');
 const fs = require('fs');
-const transformer = require("../../lib/jsdoc/transform-apijson-for-sdk");
+const transformer = require("../../lib/jsdoc/transformApiJson");
 
 module.exports = function(grunt) {
 
