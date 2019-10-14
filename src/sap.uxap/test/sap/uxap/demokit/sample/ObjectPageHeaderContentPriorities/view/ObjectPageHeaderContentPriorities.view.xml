@@ -11,7 +11,8 @@
 							  objectImageAlt="Senior UI Developer"
 							  id="ObjectPageLayoutHeaderTitle"
 							  isObjectTitleAlwaysVisible="false"
-							  showPlaceholder="true">
+							  showPlaceholder="true"
+							  objectImageBackgroundColor="Random">
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
 					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
