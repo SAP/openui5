@@ -2339,7 +2339,7 @@ sap.ui.define([
 			assert.strictEqual(aFilterItems[1].getSelected(), false, "After second opening of VSD, second item should not be selected");
 
 			// Simulate Clear filters button click
-			that.oVSD._onClearFilters();
+			that.oVSD.clearFilters();
 			// Simulate Cancel Button click
 			that.oVSD.attachEventOnce("cancel", cancelHandler);
 			that.oVSD._onCancel();
