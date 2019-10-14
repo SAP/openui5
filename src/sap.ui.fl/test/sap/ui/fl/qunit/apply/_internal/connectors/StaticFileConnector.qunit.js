@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/util/LoaderExtensions"
 ], function(
 	sinon,
 	StaticFileConnector,
 	Utils,
-	Log
+	Log,
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -61,6 +63,28 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("given debug is enabled", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDebug").returns(true);
+			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
+
+			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", appVersion: "1.0.0"}).then(function () {
+				assert.equal(loadResourceStub.callCount, 2, "two resources were requested");
+				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/flexibility-bundle.json"), "the flexibility-bundle was requested");
+				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/changes-bundle.json"), "the changes-bundle was requested");
+			});
+		});
+
+		QUnit.test("given componentPreload is 'off'", function (assert) {
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getComponentPreload").returns("off");
+			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
+
+			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", appVersion: "1.0.0"}).then(function () {
+				assert.equal(loadResourceStub.callCount, 2, "two resources were requested");
+				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/flexibility-bundle.json"), "the flexibility-bundle was requested");
+				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/changes-bundle.json"), "the changes-bundle was requested");
+			});
+		});
+
 		QUnit.test("given only a static flexibility-bundle.json with dummy data placed for 'test.app2' resource roots, when loading flex data", function (assert) {
 			// simulate a component-preload
 			_simulateComponentPreload("test.app2", {
@@ -75,9 +99,10 @@ sap.ui.define([
 			});
 
 			return StaticFileConnector.loadFlexData({reference: "test.app2", appVersion: "1.0.0"}).then(function (oResult) {
-				assert.equal(oResult.changes.length, 1, "one change was loaded");
+				assert.equal(oResult.changes.length, 2, "one entries are in the changes property");
 				assert.equal(oResult.changes[0].dummy1, true, "the change dummy data is correctly loaded");
-				assert.equal(oResult.compVariants[0].dummy2, true, "the compVariant dummy data is correctly loaded");
+				assert.equal(oResult.changes[1].dummy2, true, "the compVariant dummy data is correctly loaded and merged into the changes");
+				assert.equal(oResult.compVariants, undefined, "the compVariants section was removed");
 				assert.equal(oResult.variantChanges[0].dummy3, true, "the variantChange dummy data is correctly loaded");
 				assert.equal(oResult.variantDependentControlChanges[0].dummy4, true, "the variantDependentControlChange dummy data is correctly loaded");
 				assert.equal(oResult.variantManagementChanges[0].dummy5, true, "the variantManagementChange dummy data is correctly loaded");
