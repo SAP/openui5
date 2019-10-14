@@ -1607,7 +1607,7 @@ function(
 		if (this._resetButton === undefined) {
 			this._resetButton = new sap.m.Button(this.getId() + "-resetbutton", {
 				press : function() {
-					that._onClearFilters();
+					that.clearFilters();
 				},
 				text : this._rb.getText("VIEWSETTINGS_RESET")
 			});
@@ -1781,7 +1781,7 @@ function(
 			oDetailResetButton = new sap.m.Button(this.getId()
 			+ "-detailresetbutton", {
 				press : function() {
-					that._onClearFilters();
+					that.clearFilters();
 				},
 				text : this._rb.getText("VIEWSETTINGS_RESET")
 			});
@@ -3110,10 +3110,12 @@ function(
 	};
 
 	/**
-	 * Internal event handler for the reset filter button.
-	 * @private
+	 * Clears the selected filters and navigates to the filter overview page
+	 *
+	 * @public
+	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
-	ViewSettingsDialog.prototype._onClearFilters = function() {
+	ViewSettingsDialog.prototype.clearFilters = function() {
 		// clear data and update selections
 		this._clearSelectedFilters();
 		this._clearPresetFilter();
@@ -3133,6 +3135,8 @@ function(
 		// update preset list selection
 		this._updateListSelection(this._presetFilterList, sap.ui.getCore().byId(
 			this.getSelectedPresetFilterItem()));
+
+		return this;
 	};
 
 	/**
