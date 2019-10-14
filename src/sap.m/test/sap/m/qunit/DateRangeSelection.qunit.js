@@ -137,6 +137,43 @@ sap.ui.define([
 		assert.equal(jQuery("#DRS3").find("input").val(), "April 1, 2014 - April 3, 2014", "DRS3: defined output format used");
 	});
 
+	QUnit.test("Ok button gets enabled after a range is selected", function(assert) {
+		// Prepare
+		var oDPS = new DateRangeSelection({
+				showFooter: true
+			}),
+			oDPSPopover,
+			oCalendar;
+
+			oDPS.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oDPS.toggleOpen();
+		oDPSPopover = oDPS._oPopup;
+		oCalendar = oDPS._getCalendar();
+
+		// Assert
+		assert.notOk(oDPSPopover.getBeginButton().getEnabled(), "Begin button is disabled when the popover is opened and the DateRangeSelection input field is empty");
+
+		// Act
+		oCalendar.getSelectedDates()[0].setStartDate(oCalendar._getFocusedDate().toLocalJSDate());
+		oCalendar.fireSelect();
+
+		// Assert
+		assert.notOk(oDPSPopover.getBeginButton().getEnabled(), "Begin button is still disabled when we choose a start date for our interval");
+
+		// Act
+		oCalendar.getSelectedDates()[0].setEndDate(oCalendar._getFocusedDate().toLocalJSDate());
+		oCalendar.fireSelect();
+
+		// Assert
+		assert.ok(oDPSPopover.getBeginButton().getEnabled(), "Begin button is enabled when the end date is chosen");
+
+		// Cleanup
+		oDPS.destroy();
+	});
+
 	QUnit.module("interaction");
 
 	QUnit.test("min/max", function(assert) {
