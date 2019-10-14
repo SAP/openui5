@@ -43,7 +43,7 @@ sap.ui.define(["./MessageStripUtilities", "sap/ui/core/InvisibleText"],
 		oRm.class(MSUtils.CLASSES.ROOT + oControl.getType());
 
 		oRm.attr(MSUtils.ATTRIBUTES.CLOSABLE, oControl.getShowCloseButton());
-		oRm.accessibilityState(oControl, MSUtils.getAccessibilityState.call(oControl));
+		oRm.accessibilityState(oControl, this.getAccessibilityState.call(oControl));
 		oRm.openEnd();
 	};
 

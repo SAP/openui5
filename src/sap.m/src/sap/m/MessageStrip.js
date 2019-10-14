@@ -217,6 +217,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Retrieves the accessibility state of the control.
+	 *
+	 * @returns {object} The accessibility state of the control
+	 */
+	MessageStripRenderer.getAccessibilityState = function () {
+		var mAccessibilityState = MSUtils.getAccessibilityState.call(this),
+			oLink = this.getLink();
+
+		if (!oLink) {
+			mAccessibilityState.labelledby = this.getId();
+		}
+		return mAccessibilityState;
+	};
+
+	/**
 	 * Handles tap/click
 	 * @returns void
 	 * @private
