@@ -16,105 +16,25 @@
 		</style>
 		<script src="../../shared-config.js"></script>
 		<script>
-			window['sap-ui-config'].noConflict = 'true';
-			window['sap-ui-config'].libs = 'sap.ui.fl, sap.m, sap.ui.layout';
-			window['sap-ui-config'].resourceroots = { "fl.performance": "./" };
-			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+			document.write('\
+				<script \
+					id="sap-ui-bootstrap" \
+					data-sap-ui-theme="sap_belize" \
+					data-sap-ui-language="en" \
+					data-sap-ui-noConflict="true" \
+					data-sap-ui-async="true" \
+					data-sap-ui-onInit="module:fl/performance/main"\
+					data-sap-ui-resourceroots=\'{"fl.performance": "./"}\'\
+					data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.fl" \
+					data-sap-ui-xx-bindingSyntax="complex" \
+					src="' +
+						document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+				><' + '/script>'
+			);
 		</script>
 		<script>
-			window.wpp = {
-				customMetrics: {}
-			};
-			sap.ui.require([
-				"sap/base/Log",
-				"sap/ui/core/mvc/JSView",
-				"sap/ui/core/mvc/Controller",
-				"sap/ui/core/ComponentContainer",
-				"sap/ui/core/Component",
-				"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-				"sap/ui/fl/ChangePersistenceFactory",
-				"sap/ui/layout/VerticalLayout",
-				"sap/ui/layout/HorizontalLayout",
-				"sap/m/Label"
-			],
-			function(
-				BaseLog,
-				JSView,
-				Controller,
-				ComponentContainer,
-				Component,
-				FlexRuntimeInfoAPI,
-				ChangePersistenceFactory,
-				VerticalLayout,
-				HorizontalLayout,
-				Label
-			) {
-				jQuery.sap.measure.setActive(true);
-				var oControlToBeChanged;
-				var oAppComponent;
 
-				sap.ui.controller("my.own.controller", {});
-				sap.ui.jsview("my.own.view", {
-					// defines the UI of this View
-					getControllerName: function() {
-						return "my.own.controller";
-					},
-					createContent: function(oController) {
-						//create Vertical Layout
-						oControlToBeChanged = new Label("initialLabel", {
-							text: "initialLabel"
-						});
-						var oLayout1 = new VerticalLayout("Layout1", {
-							content: [ oControlToBeChanged ]
-						});
-						window.oContainerLayout1 = new VerticalLayout({
-							id : "ContainerLayout1",
-							content :  [
-								new Label("containerLabel", {
-									text : "ContainerLayout1"
-								}),
-								oLayout1,
-								new Label("duration")
-							]
-						});
-						var oHorizontalLayout = new HorizontalLayout("HorizontalLayout", {
-							content : [ oContainerLayout1 ]
-						});
-						return [ oHorizontalLayout ] ;
-					}
-				});
-				Component.create({
-					name: "fl.performance.flexApplyChanges.Component",
-					url: "./flexApplyChanges/",
-					manifestFirst: true
-				})
-				.then(function(oComponent) {
-					oAppComponent = oComponent;
-					return new ComponentContainer({
-						height : "100%",
-						component : oAppComponent,
-						async: true
-					});
-				})
-				.then(function(oComponentContainer) {
-					// start performance measurement
-					window.performance.mark("applyChangesMassive.start");
-					oComponentContainer.placeAt('content');
-					sap.ui.getCore().applyChanges();
-				})
-				.then(function() {
-					return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
-				})
-				.then(function() {
-					// stop performance measurement
-					window.performance.mark("applyChangesMassive.stop");
-					window.performance.measure("ApplyChangesMassive", "applyChangesMassive.start", "applyChangesMassive.stop");
-					window.wpp.customMetrics.applyChangesMassive = window.performance.getEntriesByName("ApplyChangesMassive")[0].duration;
-					var sDurationText = "ApplyChangesMassive = " + window.wpp.customMetrics.applyChangesMassive + "ms";
-					BaseLog.info(sDurationText);
-					sap.ui.getCore().byId("duration").setText(sDurationText);
-				});
-			});
+
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
