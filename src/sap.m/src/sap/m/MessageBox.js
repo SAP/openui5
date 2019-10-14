@@ -60,6 +60,7 @@ sap.ui.define([
 			 * Only the recommended options are documented for those functions.
 			 * </ul>
 			 * <b>NOTE:</b> All options of show() are available for the other template functions as well, but it is recommended to use show() only in more specific scenarios.
+			 * <b>NOTE:</b> Due to the static nature of the <code>MessageBox</code> class, you cannot expect data binding support from its helper functions. If this is required you can use the <code>sap.m.Dialog</code> instead.
 			 * Example:
 			 * <pre>
 			 *	sap.ui.define(["sap/m/MessageBox"], function(MessageBox) {
