@@ -304,6 +304,8 @@ sap.ui.define([
 			"sap.m.upload.UploadSet",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog",
+			"sap.m.WheelSlider",
+			"sap.m.WheelSliderContainer",
 			"sap.m.Wizard",
 			"sap.m.WizardStep",
 			"sap.m.semantic.DetailPage",
