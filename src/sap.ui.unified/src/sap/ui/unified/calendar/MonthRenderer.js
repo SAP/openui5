@@ -288,14 +288,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 	 * @private
 	 */
 	MonthRenderer.renderDummyDay = function(oRm) {
-		oRm.write("<div");
-		oRm.addClass("sapUiCalItem");
-		oRm.addStyle("visibility", "hidden");
-		oRm.writeAttribute("tabindex", "-1");
-		oRm.writeClasses();
-		oRm.writeStyles();
-		oRm.write(">");
-		oRm.write('</div>');
+		oRm.openStart("div");
+		oRm.class("sapUiCalItem");
+		oRm.style("visibility", "hidden");
+		oRm.attr("tabindex", "-1");
+		oRm.openEnd();
+		oRm.close('div');
 	};
 
 	/**
