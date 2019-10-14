@@ -5,11 +5,11 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
-	"sap/ui/fl/apply/_internal/StorageResultDisassembler"
+	"sap/ui/fl/apply/_internal/storageResultDisassemble"
 ], function(
 	ApplyUtils,
 	StorageResultMerger,
-	StorageResultDisassembler
+	storageResultDisassemble
 ) {
 	"use strict";
 
@@ -17,7 +17,6 @@ sap.ui.define([
 	 * Abstraction providing an API to handle communication with persistence like back ends, local & session storage or work spaces.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.Storage
-	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
 	 * @private
@@ -34,18 +33,19 @@ sap.ui.define([
 		return Promise.all(aConnectorPromises);
 	}
 
-	function flattenResponses(aResponses) {
+	function flattenResponses(mResponseObject) {
 		var aFlattenedResponses = [];
 
-		aResponses.forEach(function (oResponse) {
+		mResponseObject.responses.forEach(function (oResponse) {
 			if (Array.isArray(oResponse)) {
 				aFlattenedResponses = aFlattenedResponses.concat(oResponse);
 			} else {
 				aFlattenedResponses.push(oResponse);
 			}
 		});
+		mResponseObject.responses = aFlattenedResponses;
 
-		return aFlattenedResponses;
+		return mResponseObject;
 	}
 
 	function containsVariantData(aResponses) {
@@ -78,7 +78,7 @@ sap.ui.define([
 			aDisassembledResponses = aResponses;
 		} else {
 			aDisassembledResponses = aResponses.map(function (oResponse) {
-				return oResponse.variantSection ? StorageResultDisassembler.disassemble(oResponse) : oResponse;
+				return oResponse.variantSection ? storageResultDisassemble(oResponse) : oResponse;
 			});
 		}
 
@@ -106,8 +106,8 @@ sap.ui.define([
 
 		return ApplyUtils.getApplyConnectors()
 			.then(loadFlexDataFromConnectors.bind(this, mPropertyBag))
-			.then(flattenResponses)
 			.then(disassembleVariantSectionsIfNecessary)
+			.then(flattenResponses)
 			.then(StorageResultMerger.merge);
 	};
 

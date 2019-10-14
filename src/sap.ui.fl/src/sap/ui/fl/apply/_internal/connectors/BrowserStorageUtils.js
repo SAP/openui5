@@ -116,24 +116,7 @@ sap.ui.define([], function () {
 				return this.createVariantKey(oFlexObject.fileName);
 			}
 			return this.createChangeKey(oFlexObject.fileName);
-		},
-
-		sortGroupedFlexObjects: function(mResult) {
-			function byCreation(oChangeA, oChangeB) {
-				return new Date(oChangeA.creation) - new Date(oChangeB.creation);
-			}
-
-			[
-				"changes",
-				"variantChanges",
-				"variants",
-				"variantDependentControlChanges",
-				"variantManagementChanges"
-			].forEach(function (sSectionName) {
-				mResult[sSectionName] = mResult[sSectionName].sort(byCreation);
-			});
-
-			return mResult;
 		}
+
 	};
 });

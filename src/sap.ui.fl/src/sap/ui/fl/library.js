@@ -70,20 +70,6 @@ sap.ui.define([
 	});
 
 	/**
-	 * Available layers
-	 *
-	 * @enum {string}
-	 */
-	sap.ui.fl.Layer = {
-		USER: "USER",
-		CUSTOMER: "CUSTOMER",
-		CUSTOMER_BASE: "CUSTOMER_BASE",
-		PARTNER: "PARTNER",
-		VENDOR: "VENDOR",
-		BASE: "BASE"
-	};
-
-	/**
 	 * Available scenarios
 	 *
 	 * @enum {string}

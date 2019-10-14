@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
 	"sap/base/util/merge"
-], function(
+], function (
 	sinon,
 	Storage,
 	Change,
@@ -28,8 +28,8 @@ sap.ui.define([
 	"use strict";
 
 	var EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION = {
-		changes : [],
-		variantSection : {}
+		changes: [],
+		variantSection: {}
 	};
 
 	var EMPTY_LOAD_FLEX_DATA_RESULT = merge({}, EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
@@ -37,13 +37,13 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Storage checks the input parameters", {
-		beforeEach : function () {
+		beforeEach: function () {
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
 		},
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 		}
-	}, function() {
+	}, function () {
 		QUnit.test("given no property bag was passed on loadFlexData", function (assert) {
 			return assert.throws(Storage.loadFlexData());
 		});
@@ -54,49 +54,49 @@ sap.ui.define([
 	});
 
 	QUnit.module("Storage merges results from a single connector", {
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 		}
-	}, function() {
+	}, function () {
 		QUnit.test("Given a connector provides multiple layers", function (assert) {
 			sandbox.stub(ApplyUtils, "getApplyConnectors").resolves([{
-				connector : "JsObjectConnector",
-				connectorModule : JsObjectConnector
+				connector: "JsObjectConnector",
+				connectorModule: JsObjectConnector
 			}]);
 
 			var sChangeId1 = "change1";
 			var oChange1 = new Change({
-				fileName : sChangeId1,
-				fileType : "change",
-				layer : "VENDOR",
-				reference : "app.id",
-				content : {},
-				changeType : "hideControl",
-				selector : {
-					id : "control.id"
+				fileName: sChangeId1,
+				fileType: "change",
+				layer: "VENDOR",
+				reference: "app.id",
+				content: {},
+				changeType: "hideControl",
+				selector: {
+					id: "control.id"
 				}
 			});
 
 			var sChangeId2 = "change2";
 			var oChange2 = new Change({
-				fileName : sChangeId2,
-				fileType : "change",
-				layer : "CUSTOMER",
-				reference : "app.id",
-				content : {},
-				changeType : "hideControl",
-				selector : {
-					id : "control.id"
+				fileName: sChangeId2,
+				fileType: "change",
+				layer: "CUSTOMER",
+				reference: "app.id",
+				content: {},
+				changeType: "hideControl",
+				selector: {
+					id: "control.id"
 				}
 			});
 
 			sandbox.stub(JsObjectConnector, "loadFlexData").resolves([{
-				changes : [oChange1.getDefinition()]
+				changes: [oChange1.getDefinition()]
 			}, {
-				changes : [oChange2.getDefinition()]
+				changes: [oChange2.getDefinition()]
 			}]);
 
-			return Storage.loadFlexData({reference : "app.id"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 2, "both changes were added to the result");
 				assert.deepEqual(oResult.changes[0], oChange1.getDefinition(), "the change from the first bundle is the first change in the response");
 				assert.deepEqual(oResult.changes[1], oChange2.getDefinition(), "the change from the second bundle is the second change in the response");
@@ -105,12 +105,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Storage merges results from different connectors", {
-		beforeEach : function () {
+		beforeEach: function () {
 		},
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 		}
-	}, function() {
+	}, function () {
 		QUnit.test("Given all connectors provide empty variant properties", function (assert) {
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
@@ -143,15 +143,15 @@ sap.ui.define([
 			var sVariantManagementKey = "management1";
 
 			var oVariant = Variant.createInitialFileContent({
-				content : {
-					fileName : "variant1",
-					fileType : "ctrl_variant",
-					layer : "VENDOR",
+				content: {
+					fileName: "variant1",
+					fileType: "ctrl_variant",
+					layer: "VENDOR",
 					title: "title",
-					reference : "app.id",
-					variantReference : "",
+					reference: "app.id",
+					variantReference: "",
 					content: {},
-					variantManagementReference : sVariantManagementKey
+					variantManagementReference: sVariantManagementKey
 				}
 			});
 
@@ -186,29 +186,29 @@ sap.ui.define([
 			var sVariantManagementKey = "management1";
 
 			var oVariant1 = Variant.createInitialFileContent({
-				content : {
-					fileName : "variant1",
-					fileType : "ctrl_variant",
-					layer : "VENDOR",
+				content: {
+					fileName: "variant1",
+					fileType: "ctrl_variant",
+					layer: "VENDOR",
 					title: "title",
-					reference : "app.id",
-					variantReference : "",
+					reference: "app.id",
+					variantReference: "",
 					content: {},
-					variantManagementReference : sVariantManagementKey
+					variantManagementReference: sVariantManagementKey
 				}
 			});
 			oStaticFileConnectorResponse.variants = [oVariant1.content];
 
 			var oVariant2 = Variant.createInitialFileContent({
-				content : {
-					fileName : "variant2",
-					fileType : "ctrl_variant",
-					layer : "VENDOR",
+				content: {
+					fileName: "variant2",
+					fileType: "ctrl_variant",
+					layer: "VENDOR",
 					title: "title",
-					reference : "app.id",
-					variantReference : "",
+					reference: "app.id",
+					variantReference: "",
 					content: {},
-					variantManagementReference : sVariantManagementKey
+					variantManagementReference: sVariantManagementKey
 				}
 			});
 			oLrepConnectorResponse.variants = [oVariant2.content];
@@ -239,19 +239,19 @@ sap.ui.define([
 			var oLrepConnectorResponse = merge({}, ApplyUtils.getEmptyFlexDataResponse());
 
 			var oChange1 = new Change({
-				fileName : "rename_id_123",
-				fileType : "ctrl_variant",
-				layer : "VENDOR",
-				reference : "app.id",
+				fileName: "rename_id_123",
+				fileType: "ctrl_variant",
+				layer: "VENDOR",
+				reference: "app.id",
 				content: {}
 			});
 			oStaticFileConnectorResponse.changes = [oChange1.getDefinition()];
 
 			var oChange2 = new Change({
-				fileName : "rename_id_123",
-				fileType : "ctrl_variant",
-				layer : "VENDOR",
-				reference : "app.id",
+				fileName: "rename_id_123",
+				fileType: "ctrl_variant",
+				layer: "VENDOR",
+				reference: "app.id",
 				content: {}
 			});
 			oLrepConnectorResponse.changes = [oChange2.getDefinition()];
@@ -303,25 +303,25 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oStaticFileConnectorResponse);
 
 			var oVariant1 = Variant.createInitialFileContent({
-				content : {
-					fileName : "variant1",
-					fileType : "ctrl_variant",
-					layer : "BASE",
+				content: {
+					fileName: "variant1",
+					fileType: "ctrl_variant",
+					layer: "BASE",
 					title: "title",
-					reference : "app.id",
-					variantReference : "",
+					reference: "app.id",
+					variantReference: "",
 					content: {},
-					variantManagementReference : sVariantManagementKey
+					variantManagementReference: sVariantManagementKey
 				}
 			});
 			oStaticFileConnectorResponse.variants = [oVariant1.content];
 
 			var oVariantChange1_1 = Change.createInitialFileContent({
-				fileName : "variantChange1",
-				fileType : "ctrl_variant_change",
-				layer : "BASE",
+				fileName: "variantChange1",
+				fileType: "ctrl_variant_change",
+				layer: "BASE",
 				changeType: "setTitle",
-				reference : "app.id",
+				reference: "app.id",
 				content: {},
 				selector: {
 					id: oVariant1.content.fileName
@@ -345,11 +345,11 @@ sap.ui.define([
 
 			// VENDOR
 			var oVariantManagementChange1 = Change.createInitialFileContent({
-				fileName : "variantManagementChange1",
-				fileType : "ctrl_variant_management_change",
-				layer : "VENDOR",
+				fileName: "variantManagementChange1",
+				fileType: "ctrl_variant_management_change",
+				layer: "VENDOR",
 				changeType: "setDefault",
-				reference : "app.id",
+				reference: "app.id",
 				content: {},
 				selector: {
 					id: sVariantManagementKey
@@ -360,11 +360,11 @@ sap.ui.define([
 			// CUSTOMER_BASE
 
 			var oVariantChange1_2 = Change.createInitialFileContent({
-				fileName : "variantChange1_2",
-				fileType : "ctrl_variant_change",
-				layer : "CUSTOMER_BASE",
+				fileName: "variantChange1_2",
+				fileType: "ctrl_variant_change",
+				layer: "CUSTOMER_BASE",
 				changeType: "setTitle",
-				reference : "app.id",
+				reference: "app.id",
 				content: {},
 				selector: {
 					id: oVariant1.content.fileName
@@ -373,26 +373,26 @@ sap.ui.define([
 			oLrepConnectorCustomerBaseResponse.variantChanges = [oVariantChange1_2];
 
 			var oVariant2 = Variant.createInitialFileContent({
-				content : {
-					fileName : "variant2",
-					fileType : "ctrl_variant",
-					layer : "CUSTOMER_BASE",
+				content: {
+					fileName: "variant2",
+					fileType: "ctrl_variant",
+					layer: "CUSTOMER_BASE",
 					content: {
 						title: "title"
 					},
-					reference : "app.id",
+					reference: "app.id",
 					variantReference: oVariant1.content.fileName,
-					variantManagementReference : sVariantManagementKey
+					variantManagementReference: sVariantManagementKey
 				}
 			});
 			oLrepConnectorCustomerBaseResponse.variants = [oVariant2.content];
 
 			var oVariantDependentChange1 = Change.createInitialFileContent({
-				fileName : "variantDependentChange1",
-				fileType : "change",
-				layer : "CUSTOMER_BASE",
+				fileName: "variantDependentChange1",
+				fileType: "change",
+				layer: "CUSTOMER_BASE",
 				changeType: "property_change",
-				reference : "app.id",
+				reference: "app.id",
 				content: {},
 				selector: {
 					id: "a.control"
@@ -401,11 +401,11 @@ sap.ui.define([
 			});
 
 			var oVariantDependentChange2 = Change.createInitialFileContent({
-				fileName : "variantDependentChange2",
-				fileType : "change",
-				layer : "CUSTOMER_BASE",
+				fileName: "variantDependentChange2",
+				fileType: "change",
+				layer: "CUSTOMER_BASE",
 				changeType: "showControl",
-				reference : "app.id",
+				reference: "app.id",
 				content: {},
 				selector: {
 					id: "a.control"
@@ -420,26 +420,26 @@ sap.ui.define([
 			// CUSTOMER
 
 			var oVariant3 = Variant.createInitialFileContent({
-				content : {
-					fileName : "variant3",
-					fileType : "ctrl_variant",
-					layer : "CUSTOMER",
-					reference : "app.id",
+				content: {
+					fileName: "variant3",
+					fileType: "ctrl_variant",
+					layer: "CUSTOMER",
+					reference: "app.id",
 					variantReference: oVariant1.content.fileName,
 					content: {
 						title: "title"
 					},
-					variantManagementReference : sVariantManagementKey
+					variantManagementReference: sVariantManagementKey
 				}
 			});
 			oLrepConnectorCustomerResponse.variants = [oVariant3.content];
 
 			var oVariantDependentChange3 = Change.createInitialFileContent({
-				fileName : "variantDependentChange3",
-				fileType : "change",
-				layer : "CUSTOMER",
+				fileName: "variantDependentChange3",
+				fileType: "change",
+				layer: "CUSTOMER",
 				changeType: "hideControl",
-				reference : "app.id",
+				reference: "app.id",
 				content: {},
 				selector: {
 					id: "a.control"
@@ -452,11 +452,11 @@ sap.ui.define([
 			// USER
 
 			var oVariantManagementChange2 = Change.createInitialFileContent({
-				fileName : "variantManagementChange2",
-				fileType : "ctrl_variant_management_change",
-				layer : "USER",
+				fileName: "variantManagementChange2",
+				fileType: "ctrl_variant_management_change",
+				layer: "USER",
 				changeType: "setDefault",
-				reference : "app.id",
+				reference: "app.id",
 				content: {},
 				selector: {
 					id: sVariantManagementKey
@@ -534,30 +534,115 @@ sap.ui.define([
 		});
 	});
 
-
-	// TODO: enable module after the Disassembler is ready
 	QUnit.module("Connector disassembles the variantSections", {
-		beforeEach : function () {
+		beforeEach: function () {
 		},
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 		}
-	}, function() {
-		QUnit.skip("Given the first connector provide an variant in a variant property and the second provides a variant section", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
+	}, function () {
+		QUnit.test("Given the first connector provide an variant in a variant property and the second provides a variant section with a variant", function (assert) {
+			var oVariant1 = ApplyUtils.getEmptyFlexDataResponse();
+			oVariant1.variants.push({
+				fileName: "variant1",
+				fileType: "ctrl_variant",
+				layer: "CUSTOMER",
+				variantManagementReference: "variantManagement1",
+				creation: "2019-07-22T10:33:19.7491090Z"
+			});
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oVariant1);
+			var oVariant2 = EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION;
+			oVariant2.variantSection = {
+				variantManagement1: {
+					variantManagementChanges: {},
+					variants: [{
+						content: {
+							fileName: "variant2",
+							fileType: "ctrl_variant",
+							layer: "CUSTOMER",
+							variantManagementReference: "variantManagement1",
+							creation:"2019-07-22T10:34:19.7491090Z"
+						},
+						controlChanges: [],
+						variantChanges: {}
+					}]
+				}
+			};
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(oVariant2);
 
-			return Storage.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
-				assert.ok(false);
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				var aVariants = oResult.variantSection.variantManagement1.variants;
+				assert.equal(3, aVariants.length, "then the returned response has a variant section containing three variants");
+				assert.equal("variantManagement1", aVariants[0].content.fileName);
+				assert.equal(0, aVariants[0].controlChanges.length);
+				assert.deepEqual({}, aVariants[0].variantChanges);
+				assert.equal("variant1", aVariants[1].content.fileName);
+				assert.equal(0, aVariants[1].controlChanges.length);
+				assert.deepEqual({}, aVariants[1].variantChanges);
+				assert.equal("variant2", aVariants[2].content.fileName);
+				assert.equal(0, aVariants[2].controlChanges.length);
+				assert.deepEqual({}, aVariants[2].variantChanges);
+				assert.equal(0, oResult.changes.length);
 			});
 		});
 
-		QUnit.skip("Given two connectors provide variants in the variant section", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
+		QUnit.test("Given two connectors provide variants in the variant section", function (assert) {
+			var oVariant1 = {
+				changes: [],
+				variantSection: {}
+			};
+			oVariant1.variantSection = {
+				variantManagement1: {
+					variantManagementChanges: {},
+					variants: [{
+						content: {
+							fileName: "variant1",
+							fileType: "ctrl_variant",
+							layer: "CUSTOMER",
+							variantManagementReference: "variantManagement1",
+							creation: "2019-07-22T10:33:19.7491090Z"
+						},
+						controlChanges: [],
+						variantChanges:{}
+					}]
+				}
+			};
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oVariant1);
+			var oVariant2 = {
+				changes: [],
+				variantSection: {}
+			};
+			oVariant2.variantSection = {
+				variantManagement1: {
+					variantManagementChanges: {},
+					variants: [{
+						content: {
+							fileName: "variant2",
+							fileType: "ctrl_variant",
+							layer: "CUSTOMER",
+							variantManagementReference: "variantManagement1",
+							creation: "2019-07-22T10:34:19.7491090Z"
+						},
+						controlChanges: [],
+						variantChanges:{}
+					}]
+				}
+			};
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(oVariant2);
 
-			return Storage.loadFlexData({reference : "app.id"}).then(function (/*oResult*/) {
-				assert.ok(false);
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.equal(0, oResult.changes.length);
+				var aVariants = oResult.variantSection.variantManagement1.variants;
+				assert.equal(3, aVariants.length);
+				assert.equal("variantManagement1", aVariants[0].content.fileName);
+				assert.equal(0, aVariants[0].controlChanges.length);
+				assert.deepEqual({}, aVariants[0].variantChanges);
+				assert.equal("variant1", aVariants[1].content.fileName);
+				assert.equal(0, aVariants[1].controlChanges.length);
+				assert.deepEqual({}, aVariants[1].variantChanges);
+				assert.equal("variant2", aVariants[2].content.fileName);
+				assert.equal(0, aVariants[2].controlChanges.length);
+				assert.deepEqual({}, aVariants[2].variantChanges);
 			});
 		});
 	});
