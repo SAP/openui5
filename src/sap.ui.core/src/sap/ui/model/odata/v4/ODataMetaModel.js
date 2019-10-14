@@ -1118,18 +1118,6 @@ sap.ui.define([
 			}
 
 			/*
-			 * Tells whether the given object is "thenable".
-			 *
-			 * @param {object} [o]
-			 *   Any object
-			 * @returns {boolean}
-			 *   <code>true</code> iff an object is given which has a method called "then"
-			 */
-			function isThenable(o) {
-				return o && typeof o.then === "function";
-			}
-
-			/*
 			 * Outputs a log message for the given level. Leads to an <code>undefined</code> result
 			 * in case of a WARNING.
 			 *
@@ -1191,12 +1179,12 @@ sap.ui.define([
 				if (sQualifiedName in mScope) {
 					sTarget = sName = sSchemaChildName = sQualifiedName;
 					vResult = oSchemaChild = mScope[sSchemaChildName];
-					if (!isThenable(vResult)) {
+					if (!SyncPromise.isThenable(vResult)) {
 						return true; // qualified name found, steps may continue
 					}
 				}
 
-				if (isThenable(vResult) && vResult.isPending()) {
+				if (SyncPromise.isThenable(vResult) && vResult.isPending()) {
 					// load on demand still pending (else it must be rejected at this point)
 					return logWithLocation(DEBUG, "Waiting for ", sSchema);
 				}
@@ -1438,7 +1426,7 @@ sap.ui.define([
 				return bContinue;
 			}
 
-			if (!steps(sResolvedPath.slice(1)) && isThenable(vResult)) {
+			if (!steps(sResolvedPath.slice(1)) && SyncPromise.isThenable(vResult)) {
 				// try again after getOrFetchSchema's promise has resolved,
 				// but avoid endless loop for computed annotations returning a promise!
 				vResult = vResult.then(function () {

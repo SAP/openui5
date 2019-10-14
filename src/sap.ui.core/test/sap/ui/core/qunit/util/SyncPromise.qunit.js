@@ -3,9 +3,8 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/base/SyncPromise",
-	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, TestUtils) {
+	"sap/ui/base/SyncPromise"
+], function (Log, SyncPromise) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks:[1,5], no-warning-comments: 0 */
 	"use strict";
@@ -682,6 +681,7 @@ sap.ui.define([
 
 		assertFulfilled(assert, oSyncPromise, 42);
 		assertFulfilled(assert, SyncPromise.all([oThenable]), [42]);
+		assert.strictEqual(SyncPromise.isThenable(oThenable), true);
 	});
 
 	//*********************************************************************************************
@@ -699,6 +699,7 @@ sap.ui.define([
 
 		assertRejected(assert, oSyncPromise, 42);
 		assertRejected(assert, SyncPromise.all([oThenable]), 42);
+		assert.strictEqual(SyncPromise.isThenable(oThenable), true);
 	});
 
 	//*********************************************************************************************
@@ -717,6 +718,7 @@ sap.ui.define([
 
 		assertRejected(assert, oSyncPromise, oError);
 		assertRejected(assert, SyncPromise.all([oThenable]), oError);
+		assert.strictEqual(SyncPromise.isThenable(oThenable), false);
 	});
 
 	//*********************************************************************************************
@@ -736,6 +738,7 @@ sap.ui.define([
 
 		assertFulfilled(assert, oSyncPromise, 42);
 		assertFulfilled(assert, SyncPromise.all([fnThenable]), [42]);
+		assert.strictEqual(SyncPromise.isThenable(fnThenable), true);
 	});
 
 	//*********************************************************************************************
@@ -750,6 +753,7 @@ sap.ui.define([
 
 		assertPending(assert, oSyncPromise);
 		assertPending(assert, SyncPromise.all([oEverPendingThenable]));
+		assert.strictEqual(SyncPromise.isThenable(oEverPendingThenable), true);
 	});
 
 	//*********************************************************************************************
@@ -1002,6 +1006,13 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(SyncPromise.resolve(), SyncPromise.resolve(undefined));
 	});
+
+	//*********************************************************************************************
+[undefined, null, 0, 1, false, true, "", " ", {}, Function, {then : {}}].forEach(function (vValue) {
+	QUnit.test("isThenable: " + vValue, function (assert) {
+		assert.strictEqual(SyncPromise.isThenable(vValue), false);
+	});
+});
 });
 //TODO Promise.race
 //TODO treat rejection via RangeError, ReferenceError, SyntaxError(?), TypeError, URIError specially?!
