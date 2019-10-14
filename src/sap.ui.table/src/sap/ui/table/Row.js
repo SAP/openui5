@@ -231,8 +231,12 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils', "s
 		}
 
 		// update tooltips
-		if ($DomRefs.rowSelector && !this._bHidden && oTable._getShowStandardTooltips() && TableUtils.isRowSelectorSelectionAllowed(oTable)) {
-			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
+		if ($DomRefs.rowSelector) {
+			if (!this._bHidden && oTable._getShowStandardTooltips() && TableUtils.isRowSelectorSelectionAllowed(oTable)) {
+				$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
+			} else {
+				$DomRefs.rowSelector.removeAttr("title");
+			}
 		}
 
 		if ($DomRefs.rowSelectorText) {
