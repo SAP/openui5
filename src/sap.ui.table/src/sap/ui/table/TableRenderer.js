@@ -899,7 +899,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.openEnd();
 			rm.close("div");
 			rm.openStart("div", oRow.getId() + "-groupHeader");
-			rm.attr("class", "sapUiTableGroupIcon");
+			rm.class("sapUiTableGroupIcon");
 			rm.openEnd();
 			rm.close("div");
 
