@@ -487,8 +487,11 @@ sap.ui.define([
 		this.oTable.setCreationRow(this.oCreationRow);
 		sap.ui.getCore().applyChanges();
 
+		var oToolbarDestroySpy = sinon.spy(this.oCreationRow._oDefaultToolbar, "destroy");
+
 		this.oCreationRow.destroy();
-		assert.ok(this.oCreationRow._oDefaultToolbar.bIsDestroyed, "The default toolbar is destroyed");
+		assert.ok(oToolbarDestroySpy.calledOnce, "The default toolbar is destroyed");
+		assert.strictEqual(this.oCreationRow._oDefaultToolbar, null, "Reference to the default toolbar is removed");
 	});
 
 	QUnit.test("Content", function(assert) {
