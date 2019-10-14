@@ -460,16 +460,12 @@ sap.ui.define([
 		 * @returns {any} The value if it could be determined or undefined otherwise
 		 */
 		function missingValue(oValue, sSegment, iPathLength) {
-			var sPropertyPath = "",
+			var sPropertyPath = sPath.split("/").slice(0, iPathLength).join("/"),
 				sReadLink,
 				sServiceUrl;
 
-			if (sPath[0] !== '(') {
-				sPropertyPath += "/";
-			}
-			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
 			return that.oRequestor.getModelInterface()
-				.fetchMetadata(that.sMetaPath + _Helper.getMetaPath(sPropertyPath))
+				.fetchMetadata(that.sMetaPath + "/" + _Helper.getMetaPath(sPropertyPath))
 				.then(function (oProperty) {
 					if (!oProperty) {
 						return invalidSegment(sSegment);
@@ -477,7 +473,8 @@ sap.ui.define([
 					if (oProperty.$Type === "Edm.Stream") {
 						sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
 						sServiceUrl = that.oRequestor.getServiceUrl();
-						return sReadLink || sServiceUrl + that.sResourcePath + sPropertyPath;
+						return sReadLink
+							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
 					}
 					if (!bTransient) {
 						if (oGroupLock && oEntity && oProperty.$kind === "Property") {
