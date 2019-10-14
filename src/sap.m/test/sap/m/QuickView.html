@@ -527,12 +527,107 @@
 		oModel3.setData(mData3);
 		oQuickView3.setModel(oModel3)
 
+		var oQuickView4 = new sap.m.QuickView("QV4", {
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
+			pages : [
+				new sap.m.QuickViewPage({
+					header	: "Store",
+					title	: "Lorem ipsum dolor sit amet",
+					titleUrl: "https://www.sap.com",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					icon	: "sap-icon://retail-store",
+					groups	: [
+						new sap.m.QuickViewGroup({
+							heading		: "Store details",
+							elements	: [
+								new sap.m.QuickViewGroupElement({
+									label	: "Address",
+									value	: "Sunset Blvd. 7, Los Angeles"
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Website",
+									value	: "https://www.sap.com",
+									url 	: "https://www.sap.com",
+									type	: sap.m.QuickViewGroupElementType.link
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Email",
+									value	: "abc@sap.com",
+									type	: sap.m.QuickViewGroupElementType.email
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Opening hours",
+									value	: "Every day from 8AM to 10PM",
+									type	: sap.m.QuickViewGroupElementType.text
+								})
+							]
+						})
+					]
+				})
+			]
+		});
+
+		var oQuickView5 = new sap.m.QuickView("QV5", {
+			placement : sap.m.PlacementType.VerticalPreferedBottom,
+			pages : [
+				new sap.m.QuickViewPage({
+					header	: "Store",
+					title	: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.o",
+					titleUrl: "https://www.sap.com",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					icon	: "sap-icon://retail-store",
+					groups	: [
+						new sap.m.QuickViewGroup({
+							heading		: "Store details",
+							elements	: [
+								new sap.m.QuickViewGroupElement({
+									label	: "Address",
+									value	: "Sunset Blvd. 7, Los Angeles"
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Website",
+									value	: "https://www.sap.com",
+									url 	: "https://www.sap.com",
+									type	: sap.m.QuickViewGroupElementType.link
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Email",
+									value	: "abc@sap.com",
+									type	: sap.m.QuickViewGroupElementType.email
+								}),
+								new sap.m.QuickViewGroupElement({
+									label	: "Opening hours",
+									value	: "Every day from 8AM to 10PM",
+									type	: sap.m.QuickViewGroupElementType.text
+								})
+							]
+						})
+					]
+				})
+			]
+		});
+
 		var oButton3 = new sap.m.Button({
 			text: "Open Quick View with binding and fallback images",
 			press: function() {
 				oQuickView3.openBy(this);
 			}
 		});
+
+		var oButton4 = new sap.m.Button({
+			text: "Open Quick View with links as title - ONE line",
+			press: function() {
+				oQuickView4.openBy(this);
+			}
+		});
+
+		var oButton5 = new sap.m.Button({
+			text: "Open Quick View with links as title - TWO lines",
+			press: function() {
+				oQuickView5.openBy(this);
+			}
+		});
+
 		// create and add a page with icon tab bar
 		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View",
@@ -541,6 +636,8 @@
 				//oModifyJsonButton,
 				oSinglePageQuickViewButton,
 				oButton3,
+				oButton4,
+				oButton5,
 				oPanel
 			]
 		});

@@ -303,6 +303,75 @@
 				})
 			}
 		});
+
+		var oQuickViewCard4 = new sap.m.QuickViewCard("QVC4", {
+			afterNavigate : function (oEvent) {
+				if (oButton) {
+					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
+				}
+			},
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					icon: "",
+					title: "Not so long title",
+					titleUrl: "https://www.sap.com",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					groups : {
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
+							elements : {
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
+		var oQuickViewCard5 = new sap.m.QuickViewCard("QVC5", {
+			afterNavigate : function (oEvent) {
+				if (oButton) {
+					oButton.setEnabled(!oEvent.getParameter('isTopPage'));
+				}
+			},
+			pages : {
+				path : '/pages',
+				template : new sap.m.QuickViewPage({
+					pageId : "{pageId}",
+					icon: "",
+					title: "Title - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					titleUrl: "https://www.sap.com",
+					description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.",
+					groups : {
+						path : 'groups',
+						template : new sap.m.QuickViewGroup({
+							heading : 'Heading - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis aliquam nibh, et vulputate risus efficitur id.',
+							elements : {
+								path : 'elements',
+								template : new sap.m.QuickViewGroupElement({
+									label: "{label}",
+									value: "{value}",
+									url: "{url}",
+									type: "{elementType}",
+									pageLinkId: "{pageLinkId}"
+								})
+							}
+						})
+					}
+				})
+			}
+		});
+
 		var oButton = new sap.m.Button("BackBtn", {
 			text : 'Back',
 			enabled : false,
@@ -365,6 +434,24 @@
 			]
 		});
 
+		var oPanel4 = new sap.m.Panel('quickViewCardPanel4', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store 4 - Test link as title on ONE line',
+			content : [
+				oQuickViewCard4
+			]
+		});
+
+		var oPanel5 = new sap.m.Panel('quickViewCardPanel5', {
+			width : '320px',
+			height : '292px',
+			headerText : 'Store 5 - Test link as title on TWO lines',
+			content : [
+				oQuickViewCard5
+			]
+		});
+
 		// create and add a page
 		var page = new sap.m.Page("quickViewPage", {
 			title : "Quick View Card",
@@ -375,7 +462,11 @@
 				oShowFullHeightButton,
 				oPanel,
 				oPanel2,
-				oPanel3
+				oPanel3,
+				new sap.m.Button("vizTestsHelperButton1", {text: "helper 1"}),
+				oPanel4,
+				new sap.m.Button("vizTestsHelperButton2", {text: "helper 2"}),
+				oPanel5
 			]
 		});
 		app.addPage(page);
