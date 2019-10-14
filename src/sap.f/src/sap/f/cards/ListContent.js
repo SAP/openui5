@@ -127,24 +127,29 @@ sap.ui.define([
 		};
 
 		/**
-		 * Binds/Sets properties to the inner item template based on the configuration object item template.
+		 * Binds/Sets properties to the inner item template based on the configuration object item template which is already parsed.
 		 * Attaches all required actions.
 		 *
 		 * @private
 		 * @param {Object} mItem The item template of the configuration object.
 		 */
 		ListContent.prototype._setItem = function (mItem) {
-			/* eslint-disable no-unused-expressions */
-			mItem.title && this._bindObjectItemProperty("title", mItem.title);
-			mItem.description && this._bindObjectItemProperty("description", mItem.description);
-			mItem.icon && mItem.icon.src && BindingHelper.bindProperty(this._oItemTemplate, "icon", mItem.icon.src, function (sValue) {
-				return IconFormatter.formatSrc(sValue, this._sAppId);
-			}.bind(this));
-			mItem.highlight && BindingHelper.bindProperty(this._oItemTemplate, "highlight", mItem.highlight);
-			mItem.info && BindingHelper.bindProperty(this._oItemTemplate, "info", mItem.info.value);
-			mItem.info && BindingHelper.bindProperty(this._oItemTemplate, "infoState", mItem.info.state);
-			/* eslint-enable no-unused-expressions */
+			var mSettings = {
+				iconDensityAware: false,
+				title: mItem.title && (mItem.title.value || mItem.title),
+				description: mItem.description && (mItem.description.value || mItem.description),
+				highlight: mItem.highlight,
+				info: mItem.info && mItem.info.value,
+				infoState: mItem.info && mItem.info.state
+			};
 
+			if (mItem.icon && mItem.icon.src) {
+				mSettings.icon = BindingHelper.formattedProperty(mItem.icon.src, function (sValue) {
+					return IconFormatter.formatSrc(sValue, this._sAppId);
+				}.bind(this));
+			}
+
+			this._oItemTemplate = new StandardListItem(mSettings);
 			this._oActions.setAreaType(AreaType.ContentItem);
 			this._oActions.attach(mItem, this);
 
@@ -188,33 +193,6 @@ sap.ui.define([
 
 			//workaround until actions refactor
 			this.fireEvent("_actionContentReady");
-		};
-
-		/**
-		 * Directly bind the property when the value is of type string.
-		 * If the value is an object call bind property for both the value and the label properties.
-		 *
-		 * This allow the usage of both:
-		 *
-		 * "title": "Some item title"
-		 *
-		 * and
-		 *
-		 * "title": {
-		 * 		"label": "Some label for the title"
-		 * 		"value": "Some item title"
-		 * }
-		 *
-		 * @private
-		 * @param {string} sPropertyName The name of the property.
-		 * @param {string|Object} vPropertyValue The value of the property.
-		 */
-		ListContent.prototype._bindObjectItemProperty = function (sPropertyName, vPropertyValue) {
-			if (typeof vPropertyValue === "string") {
-				BindingHelper.bindProperty(this._oItemTemplate, sPropertyName, vPropertyValue);
-			} else {
-				BindingHelper.bindProperty(this._oItemTemplate, sPropertyName, vPropertyValue.value);
-			}
 		};
 
 		/**

@@ -7,7 +7,7 @@ sap.ui.define([
 		selectedKey: 'learnGettingStarted',
 		navigation: [
 			{
-				title: 'Integration Card Types',
+				title: 'Card Types',
 				icon: 'sap-icon://overview-chart',
 				key: 'types',
 				target: 'exploreOverview',
@@ -140,7 +140,7 @@ sap.ui.define([
 				]
 			},
 			{
-				title: 'Integration Card Features',
+				title: 'Card Features',
 				key: 'features',
 				target: 'exploreOverview',
 				targetKey: 'actions',
@@ -210,6 +210,22 @@ sap.ui.define([
 								content: ""
 							}
 						]
+					}
+				]
+			},
+			{
+				title: 'Card Formatters',
+				key: 'formatters',
+				target: 'exploreOverview',
+				targetKey: 'formatters',
+				icon: 'sap-icon://activities',
+				hasExpander: false,
+				items: [
+					{
+						key: 'dateAndTime',
+						target: 'exploreSamples',
+						title: 'Date and Time',
+						manifestUrl: "/samples/formatters/dateAndTime/manifest.json"
 					}
 				]
 			}

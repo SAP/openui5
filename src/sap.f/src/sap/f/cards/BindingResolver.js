@@ -1,8 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
-	function (ManagedObject, Log) {
+sap.ui.define([
+	"sap/ui/base/ManagedObject",
+	"sap/base/Log",
+	"sap/base/util/extend"
+], function (ManagedObject, Log, extend) {
 		"use strict";
 
 		/**
@@ -17,7 +20,23 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 				}
 			}
 		});
+
 		var oSimpleControl = new SimpleControl();
+
+		/**
+		 * Checks if object is a binding info.
+		 *
+		 * @param {object} oObj The object to check.
+		 * @returns {boolean} Whether the object represents a binding info.
+		 */
+		function isBindingInfo (oObj) {
+
+			if (!oObj) {
+				return false;
+			}
+
+			return oObj.hasOwnProperty("path") || (oObj.hasOwnProperty("parts") && oObj.hasOwnProperty("formatter"));
+		}
 
 		/**
 		 * Resolves a binding syntax based on a provided model and path.
@@ -31,7 +50,8 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 		var BindingResolver = {};
 
 		/**
-		 * Traverses an object and resolves all binding syntaxes.
+		 * Resolves all binding syntaxes and binding infos recursively.
+		 * The function is pure and won't modify 'vValue' if it is object or array. It will return new one instead.
 		 *
 		 * @param {*} vValue The value to resolve.
 		 * @param {sap.ui.model.Model} oModel The model.
@@ -42,57 +62,55 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 		 * @returns {*} The resolved value.
 		 */
 		function process(vValue, oModel, sPath, iCurrentLevel, iMaxLevel) {
-			var bReachedMaxLevel = iCurrentLevel === iMaxLevel;
-			if (bReachedMaxLevel) {
+
+			if (iCurrentLevel === iMaxLevel) {
 				Log.warning("BindingResolver maximum level processing reached. Please check for circular dependencies.");
-			}
-
-			if (!vValue || bReachedMaxLevel) {
 				return vValue;
 			}
 
+			// iterates arrays
 			if (Array.isArray(vValue)) {
-				vValue.forEach(function (vItem, iIndex, aArray) {
-					if (typeof vItem === "object") {
-						process(vItem, oModel, sPath, iCurrentLevel + 1, iMaxLevel);
-					} else if (typeof vItem === "string") {
-						aArray[iIndex] = resolveBinding(vItem, oModel, sPath);
-					}
-				}, this);
-				return vValue;
-			} else if (typeof vValue === "object") {
-				for (var sProp in vValue) {
-					if (typeof vValue[sProp] === "object") {
-						process(vValue[sProp], oModel, sPath, iCurrentLevel + 1, iMaxLevel);
-					} else if (typeof vValue[sProp] === "string") {
-						vValue[sProp] = resolveBinding(vValue[sProp], oModel, sPath);
-					}
-				}
-				return vValue;
-			} else if (typeof vValue === "string") {
-				return resolveBinding(vValue, oModel, sPath);
-			} else {
-				return vValue;
+				return vValue.map(function(vItem) {
+					return process(vItem, oModel, sPath, iCurrentLevel + 1, iMaxLevel);
+				});
 			}
+
+			// iterates objects
+			if (vValue && typeof vValue === "object" && !isBindingInfo(vValue)) {
+				var oNewObj = {};
+				for (var sProp in vValue) {
+					oNewObj[sProp] = process(vValue[sProp], oModel, sPath, iCurrentLevel + 1, iMaxLevel);
+				}
+				return oNewObj;
+			}
+
+			// resolves strings that might contain binding syntax or objects that are binding infos
+			if (typeof vValue === "string" || (typeof vValue === "object" && isBindingInfo(vValue))) {
+				return resolveBinding(vValue, oModel, sPath);
+			}
+
+			return vValue;
 		}
 
 		/**
-		 * Resolves a single binding syntax.
+		 * Resolves a single string that has binding syntax or object that represents a binding info.
+		 * Pure function.
 		 *
-		 * @param {string} sBinding The value to resolve.
+		 * @param {string|object} vBinding The value to resolve. If the value is an object, it will be copied and the real one won't be modified.
 		 * @param {sap.ui.model.Model} oModel The model.
 		 * @param {string} [sPath] The path to the referenced entity which is going to be used as a binding context.
 		 * @private
 		 * @returns {*} The resolved value.
 		 */
-		function resolveBinding(sBinding, oModel, sPath) {
-			if (!sBinding) {
-				return sBinding;
+		function resolveBinding(vBinding, oModel, sPath) {
+			if (!vBinding) {
+				return vBinding;
 			}
-			var oBindingInfo = ManagedObject.bindingParser(sBinding);
+
+			var oBindingInfo = typeof vBinding ===  "string" ? ManagedObject.bindingParser(vBinding) : extend({}, vBinding);
 
 			if (!oBindingInfo) {
-				return sBinding;
+				return vBinding;
 			}
 
 			if (!sPath) {
@@ -123,23 +141,14 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log"],
 		 * @returns {*} The resolved value.
 		 */
 		BindingResolver.resolveValue = function (vValue, oModel, sPath) {
-			var oClonedValue,
-				vProcessed,
-				iCurrentLevel = 0,
+			var iCurrentLevel = 0,
 				iMaxLevel = 30;
 
-			// Clone Arrays and Objects
-			if (vValue && typeof vValue === "object") {
-				oClonedValue = jQuery.extend(true, Array.isArray(vValue) ? [] : {}, vValue);
-			}
-
-			vProcessed = oClonedValue || vValue;
-
 			if (oModel) {
-				vProcessed = process(vProcessed, oModel, sPath, iCurrentLevel, iMaxLevel);
+				return process(vValue, oModel, sPath, iCurrentLevel, iMaxLevel);
+			} else {
+				return vValue;
 			}
-
-			return vProcessed;
 		};
 
 		return BindingResolver;

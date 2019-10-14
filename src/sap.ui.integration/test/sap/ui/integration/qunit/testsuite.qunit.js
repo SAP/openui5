@@ -33,7 +33,8 @@ sap.ui.define(function () {
 				module: [
 					'./Card.qunit',
 					'./CardDataHandling.qunit',
-					'./CardDesigntime.qunit'
+					'./CardDesigntime.qunit',
+					'./CardFormatters.qunit'
 				]
 			},
 			"cardbundle/CardStaticResources": {},
@@ -73,6 +74,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/customElements/",
 						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
+						"sap/f/cards/BindingHelper",
 						"sap/f/cards/BindingResolver",
 						"sap/f/cards/ComponentContent",
 						"sap/f/cards/DataProvider",
@@ -97,10 +99,12 @@ sap.ui.define(function () {
 					'./util/CardManifest.qunit',
 					'./util/ServiceManager.qunit',
 					'./customElements/CustomElements.qunit',
+					'test-resources/sap/f/qunit/BindingHelper.qunit',
 					'test-resources/sap/f/qunit/BindingResolver.qunit',
 					'test-resources/sap/f/qunit/DataProvider.qunit',
 					'./CardActions.qunit',
-					'./cardbundle/CardStaticResources.qunit'
+					'./cardbundle/CardStaticResources.qunit',
+					'./CardFormatters.qunit'
 				]
 			},
 			"designtime/baseEditor/BaseEditor": {

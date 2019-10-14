@@ -110,28 +110,30 @@ sap.ui.define([
 		};
 
 		/**
-		 * Binds/Sets properties to the inner item template based on the configuration object item template.
+		 * Binds/Sets properties to the inner item template based on the configuration object item template which is already parsed.
 		 *
 		 * @private
 		 * @param {Object} mItem The item template of the configuration object
-		 * @returns <code>this</code> for chaining
+		 * @returns {sap.f.cards.TimelineContent} <code>this</code> for chaining
 		 */
 		TimelineContent.prototype._setItem = function (mItem) {
-			this._oTimeLineItemTemplate =  new TimelineItem({
-				userNameClickable : false
-			});
+			var mSettings = {
+				userNameClickable : false,
+				title: mItem.title && mItem.title.value,
+				text: mItem.description && mItem.description.value,
+				dateTime: mItem.dateTime && mItem.dateTime.value,
+				userName: mItem.owner && mItem.owner.value,
+				icon: mItem.icon && mItem.icon.src
+			};
 
-			/* eslint-disable no-unused-expressions */
-			mItem.title && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "title", mItem.title.value);
-			mItem.description && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "text", mItem.description.value);
-			mItem.ownerImage && mItem.ownerImage.value && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "userPicture", mItem.ownerImage.value, function (sValue) {
-				return IconFormatter.formatSrc(sValue, this._sAppId);
-			}.bind(this));
-			mItem.dateTime && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "dateTime", mItem.dateTime.value);
-			mItem.owner && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "userName", mItem.owner.value);
-			mItem.icon && BindingHelper.bindProperty(this._oTimeLineItemTemplate, "icon", mItem.icon.src);
-			/* eslint-enable no-unused-expressions */
+			// settings that need a formatter
+			if (mItem.ownerImage && mItem.ownerImage.value) {
+				mSettings.userPicture = BindingHelper.formattedProperty(mItem.ownerImage.value, function (sValue) {
+					return IconFormatter.formatSrc(sValue, this._sAppId);
+				}.bind(this));
+			}
 
+			this._oTimeLineItemTemplate =  new TimelineItem(mSettings);
 			this._oActions.attach(mItem, this);
 
 			var oBindingInfo = {
