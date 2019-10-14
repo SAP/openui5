@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/table/RowSettings",
 	"sap/m/MessageToast"
-], function(Controller, JSONModel, MessageToast) {
+], function(Controller, JSONModel, RowSettings, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.RowAction.Controller", {
@@ -90,6 +91,9 @@ sap.ui.define([
 					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
+						if (i === 1) {
+							oProduct.NavigatedState = true;
+						}
 					}
 					oModel.setData(oData);
 				},
@@ -99,6 +103,19 @@ sap.ui.define([
 			});
 
 			return oModel;
+		},
+
+		onNavIndicatorsToggle: function(oEvent) {
+			var oTable = this.byId("table");
+			var oToggleButton = oEvent.getSource();
+
+			if (oToggleButton.getPressed()) {
+				oTable.setRowSettingsTemplate(new RowSettings({
+					navigated: "{NavigatedState}"
+				}));
+			} else {
+				oTable.setRowSettingsTemplate(null);
+			}
 		},
 
 		onBehaviourModeChange : function(oEvent) {

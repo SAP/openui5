@@ -98,7 +98,10 @@ sap.ui.define([
 			oColumn.setSorted(true);
 			oColumn.setFiltered(true);
 
-			_oTable.setRowSettingsTemplate(new RowSettings({highlight: "Success"}));
+			_oTable.setRowSettingsTemplate(new RowSettings({
+				highlight: "Success",
+				navigated: true
+			}));
 		});
 
 		oTreeTable.setFixedColumnCount(1);
@@ -123,6 +126,7 @@ sap.ui.define([
 		beforeEach: function() {
 			createTables();
 			_modifyTables();
+			initRowActions(oTable, 1, 1);
 		},
 		afterEach: function() {
 			destroyTables();
@@ -144,6 +148,9 @@ sap.ui.define([
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
 			aLabels.push(oTable.getId() + "-ariaselection");
+		}
+		if (bFirstTime || bRowChange) {
+			aLabels.push(oTable.getId() + "-rownavigatedtext");
 		}
 
 		aLabels.push(oTable.getId() + "-rownumberofrows");
@@ -682,6 +689,7 @@ sap.ui.define([
 		beforeEach: function() {
 			createTables();
 			_modifyTables();
+			initRowActions(oTable, 1, 1);
 		},
 		afterEach: function() {
 			destroyTables();
@@ -711,6 +719,10 @@ sap.ui.define([
 		}
 
 		if (bFocus) {
+			if (bFirstTime || bRowChange) {
+				aLabels.push(oTable.getId() + "-rownavigatedtext");
+			}
+
 			aLabels.push(oTable.getId() + "-rownumberofrows");
 			if (bGroup) {
 				aLabels.push(oTable.getId() + "-ariarowgrouplabel");
@@ -873,7 +885,8 @@ sap.ui.define([
 		}
 
 		if (bFocus) {
-			if (bRowChange) {
+			if (bFirstTime || bRowChange) {
+				aLabels.push(oTable.getId() + "-rownavigatedtext");
 				aLabels.push(oTable.getId() + "-rownumberofrows");
 			}
 			if (bColChange) {
@@ -1244,10 +1257,9 @@ sap.ui.define([
 	QUnit.test("HiddenTexts", function(assert) {
 		var aHiddenTexts = [
 			"ariadesc", "ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel",
-			"ariagrouptotallabel",
-			"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan",
-			"ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
-			"ariafixedcolumn", "ariainvalid", "ariaselection", "ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext"
+			"ariagrouptotallabel", "ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu",
+			"ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes", "ariafixedcolumn", "ariainvalid", "ariaselection",
+			"ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext", "rownavigatedtext"
 		];
 		var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 		assert.strictEqual($Elem.length, 1, "Hidden Text Area available");

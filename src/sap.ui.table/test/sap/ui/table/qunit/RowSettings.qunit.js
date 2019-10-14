@@ -368,4 +368,89 @@ sap.ui.define([
 		assert.strictEqual(oTable.getRowSettingsTemplate()._getRow(), null, "Null is returned when called on the template");
 	});
 
+	QUnit.module("Navigated indicators", {
+		beforeEach: function() {
+			createTables(false, false, 3);
+
+			oTable.setVisibleRowCount(3);
+			oTable.setRowActionTemplate(new sap.ui.table.RowAction({
+				items: [
+					new sap.ui.table.RowActionItem({
+						type: "Navigation"
+					})
+				]
+			}));
+			oTable.setRowActionCount(1);
+
+			oTable.setRowSettingsTemplate(new RowSettings({
+				navigated: {
+					path: "",
+					formatter: function() {
+						var oRow = this._getRow();
+
+						if (oRow != null) {
+							var iIndex = oRow.getIndex();
+
+							if (iIndex === 1) {
+								return true;
+							}
+						}
+					}
+				}
+			}));
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			destroyTables();
+		},
+		assertNavIndicatorRendering: function(assert, bRendered) {
+			var aRows = oTable.getRows();
+
+			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
+				var oRow = aRows[iRowIndex];
+				var oNavIndicator = oRow.getDomRef("navIndicator");
+
+				assert.strictEqual(oNavIndicator == null, !bRendered,
+					"The navigated indicator of row " + (iRowIndex + 1) + " is " + (bRendered ? "" : "not ") + "in the DOM");
+
+				if (bRendered) {
+					if (iRowIndex === 1) {
+						assert.ok(oNavIndicator.className.indexOf("sapUiTableRowNavigated") > -1,
+							"The navigated indicator of row " + (iRowIndex + 1) + " has the correct css class");
+					} else {
+						assert.ok(oNavIndicator.className.indexOf("sapUiTableRowNavigated") === -1,
+							"The css class hasn't been assigned to the navigated indicator of row " + (iRowIndex + 1));
+					}
+				}
+			}
+		}
+	});
+
+	QUnit.test("Rendering - Settings not configured", function(assert) {
+		oTable.setRowSettingsTemplate(null);
+		sap.ui.getCore().applyChanges();
+
+		this.assertNavIndicatorRendering(assert, false);
+	});
+
+	QUnit.test("Rendering - Navigated not configured", function(assert) {
+		oTable.setRowSettingsTemplate(new RowSettings({
+			navigated: null
+		}));
+		sap.ui.getCore().applyChanges();
+
+		this.assertNavIndicatorRendering(assert, false);
+
+		oTable.setRowSettingsTemplate(new RowSettings({
+			navigated: false
+		}));
+		sap.ui.getCore().applyChanges();
+
+		this.assertNavIndicatorRendering(assert, false);
+	});
+
+	QUnit.test("Rendering", function(assert) {
+		this.assertNavIndicatorRendering(assert, true);
+	});
 });
