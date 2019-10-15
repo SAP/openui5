@@ -15,7 +15,7 @@
 				type="Emphasized"
 				class="sapUiSmallMargin"/>
 		</Page>
-		<Page id="intro" title="Create Enterprise-ready Web Apps with Ease">
+		<Page id="intro" title="Create Enterprise-Ready Web Apps with Ease">
 			<l:BlockLayout background="Light">
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell>
