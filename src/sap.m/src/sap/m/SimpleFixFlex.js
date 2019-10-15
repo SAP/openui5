@@ -59,8 +59,8 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 			},
 			properties: {
 				/**
-				* Determines if the content of the <code>sap.m.SimpleFixFlex</code> should strech
-				* the parent container or wrap in order to fit.
+				* Determines whether the content of <code>sap.m.SimpleFixFlex</code> stretches
+				* the parent container or wraps in order to fit.
 				*/
 				fitParent: {
 					type: "boolean",
