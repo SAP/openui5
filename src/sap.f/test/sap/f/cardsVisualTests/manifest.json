@@ -151,6 +151,11 @@
 		  "pattern": "services",
 		  "name": "services",
 		  "target": "services"
+		},
+		{
+		  "pattern": "minHeight",
+		  "name": "minHeight",
+		  "target": "minHeight"
 		}
 	  ],
 	  "targets": {
@@ -238,7 +243,12 @@
 		  "viewId": "services",
 		  "viewName": "Services",
 		  "viewLevel": 1
-		}
+		},
+		"minHeight": {
+			"viewId": "minHeight",
+			"viewName": "MinHeight",
+			"viewLevel": 1
+		  }
 	  }
 	}
   }

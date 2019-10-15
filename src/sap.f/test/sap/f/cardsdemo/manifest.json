@@ -361,7 +361,7 @@
 			},
 			"minHeight": {
 				"viewId": "minHeight",
-				"viewName": "minHeight",
+				"viewName": "MinHeight",
 				"viewLevel": 1
 			},
 			"dataMode": {

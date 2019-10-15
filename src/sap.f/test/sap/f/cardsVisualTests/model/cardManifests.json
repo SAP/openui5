@@ -2042,5 +2042,364 @@
 				}
 			}
 		}
+	},
+	"minHeight": {
+		"line": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/kpi.json"
+						},
+						"path": "/kpiInfos/kpi"
+					},
+					"title": "Card with 32 rem height",
+					"subTitle": "Analytical Card",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{number}",
+						"unit": "{unit}",
+						"trend": "{trend}",
+						"state": "{state}"
+					},
+					"details": "{details}",
+					"sideIndicators": [{
+							"title": "Target",
+							"number": "{target/number}",
+							"unit": "{target/unit}"
+						},
+						{
+							"title": "Deviation",
+							"number": "{deviation/number}",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "Line",
+					"legend": {
+						"visible": true,
+						"position": "Right",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true
+						}
+					},
+					"title": {
+						"text": "Line chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [{
+						"label": "Weeks",
+						"value": "{Week}"
+					}],
+					"measures": [{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedColumn": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
+						}
+					},
+					"title": "Card with 24 rem height",
+					"subTitle": "Analytical Card - Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "Details, additional information, will directly truncate after there is no more space.Details, additional information, will directly truncate after there is no more space.",
+					"sideIndicators": [{
+							"title": "Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target Long Target",
+							"number": "3252.234",
+							"unit": "K"
+						},
+						{
+							"title": "Long Deviation Long Deviation",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"chartType": "StackedColumn",
+					"legend": {
+						"visible": false
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": false,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Stacked column chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [{
+						"label": "Weeks",
+						"value": "{Week}"
+					}],
+					"measures": [{
+							"label": "Revenue",
+							"value": "{Revenue}"
+						},
+						{
+							"label": "Cost",
+							"value": "{Cost}"
+						}
+					]
+				}
+			}
+		},
+		"stackedBar": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"title": "Card with 12 rem height",
+					"subTitle": "Analytical Card"
+				},
+				"content": {
+					"chartType": "StackedBar",
+					"legend": {
+						"visible": true,
+						"position": "Bottom",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": false
+						},
+						"categoryAxisText": {
+							"visible": false
+						}
+					},
+					"title": {
+						"text": "Stacked Bar chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "valueAxis",
+					"dimensionAxis": "categoryAxis",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/revenue.json"
+						},
+						"path": "/list"
+					},
+					"dimensions": [{
+						"label": "Weeks",
+						"value": "{Week}"
+					}],
+					"measures": [{
+						"label": "Revenue",
+						"value": "{Revenue}"
+					}]
+				}
+			}
+		},
+		"donut": {
+			"sap.card": {
+				"type": "Analytical",
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": 6547394.45496,
+							"u": "М $",
+							"trend": "Down",
+							"valueColor": "Critical"
+						}
+					},
+					"title": "Card with NO height (content min-height 14 rem)",
+					"subTitle": "Analytical Card",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"sideIndicators": [{
+						"title": "Decrease",
+						"number": "24",
+						"unit": "weeks"
+					}]
+				},
+				"content": {
+					"chartType": "Donut",
+					"legend": {
+						"visible": true,
+						"position": "Top",
+						"alignment": "Center"
+					},
+					"plotArea": {
+						"dataLabel": {
+							"visible": true,
+							"showTotal": true
+						}
+					},
+					"title": {
+						"text": "Donut chart",
+						"visible": true,
+						"alignment": "Bottom"
+					},
+					"measureAxis": "size",
+					"dimensionAxis": "color",
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/cost.json"
+						},
+						"path": "/milk"
+					},
+					"dimensions": [{
+						"label": "Store Name",
+						"value": "{Store Name}"
+					}],
+					"measures": [{
+						"label": "Revenue",
+						"value": "{Revenue}"
+					}]
+				}
+			}
+		},
+		"largeList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "NO height (content min-height 5 rem)",
+					"subTitle": "List Card",
+					"icon": {
+						"src": "sap-icon://accept"
+					},
+					"status": "100 of 200"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./cardsVisualTests/cardcontent/someitems.json"
+						}
+					},
+					"maxItems": 7,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"label": "{{title_label}}",
+							"value": "{Name}"
+						},
+						"description": {
+							"label": "{{description_label}}",
+							"value": "{Description}"
+						},
+						"highlight": "{state}",
+						"info": {
+							"value": "{info}",
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		},
+		"smallList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "NO height (content min-height 5 rem)",
+					"subTitle": "List Card",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items": [{
+						"title": "Call Simone",
+						"icon": "sap-icon://call",
+						"infoState": "Error"
+					}]
+				}
+			}
+		},
+		"mediumList": {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "NO height (content min-height 5rem)",
+					"subTitle": "List Card",
+					"icon": {
+						"src": "sap-icon://activities"
+					}
+				},
+				"content": {
+					"items": [{
+							"title": "Alain Chevalier",
+							"icon": "sap-icon://person-placeholder"
+						},
+						{
+							"title": "Monique Legrand",
+							"icon": "sap-icon://account"
+						},
+						{
+							"title": "Elena Petrova",
+							"icon": "sap-icon://business-card"
+						},
+						{
+							"title": "Monique Legrand",
+							"icon": "sap-icon://account"
+						},
+						{
+							"title": "Alain Chevalier",
+							"icon": "sap-icon://account"
+						},
+						{
+							"title": "Elena Petrova",
+							"icon": "sap-icon://business-card"
+						}
+					]
+				}
+			}
+		}
 	}
 }

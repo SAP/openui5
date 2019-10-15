@@ -35,5 +35,11 @@
 		"description": "Grid Container",
 		"route": "gridContainer",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Min height",
+		"description": "Cards with default min height",
+		"route": "minHeight",
+		"group": "Other Card Examples"
 	}
 ]
