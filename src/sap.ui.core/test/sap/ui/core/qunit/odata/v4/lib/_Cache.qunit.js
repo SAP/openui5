@@ -248,6 +248,53 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#setProperty", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
+			oEntity = {},
+			oEntityPromise = Promise.resolve(oEntity),
+			oUpdateData = {},
+			that = this;
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
+			.returns(SyncPromise.resolve(oEntityPromise));
+		oEntityPromise.then(function () {
+			that.mock(_Cache).expects("makeUpdateData")
+				.withExactArgs(["Address", "City"], "Walldorf")
+				.returns(oUpdateData);
+			that.mock(_Helper).expects("updateSelected")
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
+					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
+		});
+
+		// code under test
+		return oCache.setProperty("Address/City", "Walldorf", "path/to/entity");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#setProperty: fails on transient entity", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
+			oEntity = {"@$ui5._" : {"transient" : "true or some update group ID"}},
+			oEntityPromise = Promise.resolve(oEntity);
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "path/to/entity")
+			.returns(SyncPromise.resolve(oEntityPromise));
+		this.mock(_Cache).expects("makeUpdateData").never();
+		this.mock(_Helper).expects("updateSelected").never();
+
+		// code under test
+		return oCache.setProperty("Address/City", "Walldorf", "path/to/entity")
+			.then(function () {
+				assert.ok(false);
+			}, function (oError) {
+				assert.strictEqual(oError.message, "Cannot update a transient entity w/o PATCH");
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_Cache#setQueryOptions", function (assert) {
 		var sMetaPath = "/TEAMS",
 			mNewQueryOptions = {},

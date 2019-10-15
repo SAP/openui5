@@ -3185,9 +3185,10 @@ sap.ui.define([
 		}).then(function () {
 			that.expectChange("budget", "98,765");
 
-			oOperationBinding.getParameterContext().setProperty("Budget", "98765");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oOperationBinding.getParameterContext().setProperty("Budget", "98765"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectChange("budget", "12,345");
 
@@ -3197,9 +3198,11 @@ sap.ui.define([
 		}).then(function () {
 			that.expectChange("budget", "54,321");
 
-			that.oView.byId("form").getBindingContext().setProperty("$Parameter/Budget", "54321");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("form").getBindingContext()
+					.setProperty("$Parameter/Budget", "54321"),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectChange("teamId", null);
 
@@ -3243,21 +3246,25 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			var oPromise;
+
 			that.expectChange("budget", "4,321.1234");
 
 			// code under test - setting the parameter via operation
-			oOperation.getBoundContext().setProperty("$Parameter/Budget", "4321.1234");
+			oPromise = oOperation.getBoundContext().setProperty("$Parameter/Budget", "4321.1234");
 
 			assert.strictEqual(oParameterContext.getProperty("Budget"), "4321.1234");
 
-			return that.waitForChanges(assert);
+			return Promise.all([oPromise, that.waitForChanges(assert)]);
 		}).then(function () {
 			that.expectChange("teamId", "TEAM_01");
 
-			// also test the API for property setting
-			that.oView.byId("parameter").getBindingContext().setProperty("TeamID", "TEAM_01");
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// also test the API for property setting w/o PATCH (CPOUI5ODATAV4-14)
+				that.oView.byId("parameter").getBindingContext()
+					.setProperty("TeamID", "TEAM_01", /*no PATCH*/null),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest({
 				method : "POST",
@@ -20934,6 +20941,8 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	// Scenario: Create a row. See that the city (a nested property inside the address) is removed,
 	// when the POST response nulls the address (the complex property containing it).
 	// JIRA: CPOUI5UISERVICESV3-1878
+	// Also check on-the-fly that setting a property w/o PATCH is refused for the transient row.
+	// JIRA: CPOUI5ODATAV4-14
 	QUnit.test("create removes a nested property", function (assert) {
 		var oCreatedContext,
 			oModel = createSalesOrdersModel({
@@ -20960,7 +20969,24 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 				Address : {City : "Heidelberg"}
 			}, true);
 
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oCreatedContext.setProperty("Address/City", "St. Ingbert", "$direct")
+					.then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.strictEqual(oError.message, "The entity will be created via group"
+							+ " 'update'. Cannot patch via group '$direct'");
+					}),
+				// code under test (CPOUI5ODATAV4-14)
+				oCreatedContext.setProperty("Address/City", "St. Ingbert", null)
+					.then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"Cannot update a transient entity w/o PATCH");
+					}),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
@@ -22045,7 +22071,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 	QUnit.test("BCP 1970517588: invalid property path", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<FlexBox binding="{/TEAMS(\'TEAM01\')}">\
+<FlexBox binding="{/TEAMS(\'TEAM_01\')}">\
 	<Text id="teamId" text="{Team_Id}"/>\
 	<Text id="name" text="{TEAM_2_EMPLOYEES/Name}"/>\
 </FlexBox>';
@@ -22054,7 +22080,7 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 		this.oLogMock.expects("error").twice()
 			.withArgs("Failed to drill-down into TEAM_2_EMPLOYEES/Name, invalid segment: Name");
 
-		this.expectRequest("TEAMS('TEAM01')?$select=Team_Id"
+		this.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
 				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 				Team_Id : "TEAM_01",
 				TEAM_2_EMPLOYEES : []
@@ -22150,6 +22176,64 @@ constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
 			oListBinding.resume();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Controller code sets a field control property, but needs to avoid a PATCH request.
+	// Later on, that property is overwritten again by some server response.
+	// A (context) binding that did not yet read its data does not allow setting a property w/o a
+	// PATCH request.
+	// JIRA: CPOUI5ODATAV4-14
+	QUnit.test("CPOUI5ODATAV4-14", function (assert) {
+		var oBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'42\')}" id="form">\
+	<Input id="name" value="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+				Name : "Team #1",
+				Team_Id : "42"
+			})
+			.expectChange("name", "Team #1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectChange("name", "changed");
+			// expect no PATCH request!
+
+			return Promise.all([
+				// code under test
+				oBinding.getBoundContext().setProperty("Name", "changed", null),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+					Name : "Team #1",
+					Team_Id : "42"
+				})
+				.expectChange("name", "Team #1");
+
+			oBinding.refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oContextBinding = oModel.bindContext("/TEAMS('42')");
+
+			return Promise.all([
+				oContextBinding.getBoundContext().setProperty("Name", "changed", null)
+					.then(function () {
+						assert.ok(false);
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"Unexpected request: GET TEAMS('42')");
+					}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
