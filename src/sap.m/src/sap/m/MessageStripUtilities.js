@@ -76,8 +76,7 @@ sap.ui.define(function () {
 	MessageStripUtilities.getAccessibilityState = function () {
 		return {
 			role: "alert",
-			live: "assertive",
-			labelledby: this.getId()
+			live: "assertive"
 		};
 	};
 
