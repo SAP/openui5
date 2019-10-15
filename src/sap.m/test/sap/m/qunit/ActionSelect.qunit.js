@@ -248,7 +248,7 @@ sap.ui.define([
 					text: "item 0"
 				}),
 
-				new Item({
+				new Item("second_content_left", {
 					key: "1",
 					text: "item 1"
 				})
@@ -286,11 +286,13 @@ sap.ui.define([
 		oActionSelect.open();
 		this.clock.tick(500);
 
+		qutils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.ARROW_DOWN);
 		qutils.triggerKeydown(oActionSelect.getDomRef(), KeyCodes.TAB);
 		this.clock.tick(500);
 
 		// assert
 		assert.ok(Core.byId('firstEnabledButton').$().is(":focus"), 'The first enabled button should be focused');
+		assert.strictEqual(oActionSelect.getSelectedItem().getId(), "second_content_left", "The second item is the selected one");
 
 		// cleanup
 		oActionSelect.destroy();

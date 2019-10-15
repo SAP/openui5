@@ -190,6 +190,7 @@ sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', 'sap/ui/core/Core', './A
 			var aButtons = this.getButtons(),
 				oPicker = this.getPicker(),
 				i;
+				this._bProcessChange = false;
 
 			// check whether event is marked or not
 			if ( oEvent.isMarked() || !this.getEnabled()) {
