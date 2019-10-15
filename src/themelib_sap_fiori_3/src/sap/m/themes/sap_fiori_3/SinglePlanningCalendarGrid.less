@@ -76,6 +76,10 @@
 			}
 		}
 	}
+	//in the calendar there is an after element which is not needed here
+	.sapUiCalItem:focus .sapUiCalItemText:after {
+		display: none;
+	}
 }
 
 .calendarRowTypeColorMixIn(sapUiCalendarAppType01, sapUiCalItemType01, @sapLegendColor1, lighten(@sapLegendColor1,49));

@@ -5,15 +5,11 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		class="viewPadding">
-	<l:VerticalLayout>
-		<u:Calendar
-				id="calendar1" legend="legend1"/>
-		<u:CalendarLegend
-				id="legend1" />
-		<u:Calendar
-				id="calendar2" legend="legend2"/>
-		<u:CalendarLegend
-				id="legend2" standardItems="Today"/>
-		<ToggleButton text="Special Days" press="handleShowSpecialDays"/>
-	</l:VerticalLayout>
+		<l:VerticalLayout>
+			<u:Calendar id="calendar1" legend="legend1" intervalSelection="true"/>
+			<u:CalendarLegend id="legend1"/>
+			<u:Calendar id="calendar2" legend="legend2"/>
+			<u:CalendarLegend id="legend2" standardItems="Today"/>
+			<ToggleButton text="Special Days" press="handleShowSpecialDays"/>
+		</l:VerticalLayout>
 </mvc:View>
