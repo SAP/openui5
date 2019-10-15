@@ -405,20 +405,51 @@ sap.ui.define([
 	});
 
 	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {
-		var sCloseButtonLabelId = this.oMessageStrip.$().find(".sapMMsgStripCloseButton").attr("aria-labelledby"),
-			sCloseButtonLabelText = jQuery.sap.byId(sCloseButtonLabelId)[0].innerText,
-			sInvisibleText = this.oMessageStrip.getType() + " " + sap.ui.getCore()
-			.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON");
+		//Arrange
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		assert.strictEqual(sCloseButtonLabelText, sInvisibleText,
-			"the aria-labelledby of the close button should indicate the type of the message strip");
+		var $oCloseButton = this.oMessageStrip.$().find(".sapMMsgStripCloseButton"),
+			$sCloseButtonLabelId = $oCloseButton.attr("aria-labelledby"),
+			$sCloseButtonLabelText = jQuery.sap.byId($sCloseButtonLabelId)[0].innerText,
+			sInvisibleTextInformation = oRb.getText("MESSAGE_STRIP_INFORMATION_CLOSE_BUTTON"),
+			sInvisibleTextWarning = oRb.getText("MESSAGE_STRIP_WARNING_CLOSE_BUTTON"),
+			sInvisibleTextError = oRb.getText("MESSAGE_STRIP_ERROR_CLOSE_BUTTON"),
+			sInvisibleTextSuccess = oRb.getText("MESSAGE_STRIP_SUCCESS_CLOSE_BUTTON");
+
+		//Assert
+		assert.strictEqual($sCloseButtonLabelText, sInvisibleTextInformation,
+			"the aria-labelledby of the close button should indicate that the type of the message strip is Information");
+
+		//Act
+		this.oMessageStrip.setType("Error");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery.sap.byId($oCloseButton.attr("aria-labelledby"))[0].innerText, sInvisibleTextError,
+			"the aria-labelledby of the close button should indicate that the type of the message strip is Error");
+
+		//Act
+		this.oMessageStrip.setType("Warning");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery.sap.byId($oCloseButton.attr("aria-labelledby"))[0].innerText, sInvisibleTextWarning,
+			"the aria-labelledby of the close button should indicate that the type of the message strip is Warning");
+
+		//Act
+		this.oMessageStrip.setType("Success");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(jQuery.sap.byId($oCloseButton.attr("aria-labelledby"))[0].innerText, sInvisibleTextSuccess,
+			"the aria-labelledby of the close button should indicate that the type of the message strip is Success");
 	});
 
 	QUnit.test("When we have a close button it should indicate that it closes a message strip", function (assert) {
 		var oCore = sap.ui.getCore();
 		assert.strictEqual(jQuery(CLASS_CLOSE_BUTTON).attr('title'),
-			oCore.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_CLOSE_BUTTON"),
-			"the title of the close button should indicate what it closes");
+			oCore.getLibraryResourceBundle("sap.m").getText("MESSAGE_STRIP_TITLE"),
+			"the title of the close button should be set to 'Close'");
 	});
 
 });
