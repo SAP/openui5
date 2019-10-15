@@ -44,6 +44,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher'], function(Matcher) {
 				/**
 				 * The value of the binding property path that is used for matching.
 				 * If (context) path is also set, propertyPath will be assumed to be relative to the binding context path
+				 * @since 1.60
 				 */
 				propertyPath: {
 					type: "string"
