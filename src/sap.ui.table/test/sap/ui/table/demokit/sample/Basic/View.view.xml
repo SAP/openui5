@@ -13,10 +13,15 @@
 		<m:content>
 			<Table
 				rows="{/ProductCollection}"
-				title="Products"
 				selectionMode="MultiToggle"
 				visibleRowCount="7"
-				paste="onPaste">
+				paste="onPaste"
+				arialabelledby="title">
+				<extension>
+					<m:OverflowToolbar>
+						<m:Title id="title" text="Products"/>
+					</m:OverflowToolbar>
+				</extension>
 				<columns>
 					<Column width="11rem">
 						<m:Label text="Product Name" />

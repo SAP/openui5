@@ -26,16 +26,16 @@
 				<noData>
 					<m:BusyIndicator class="sapUiMediumMargin"/>
 				</noData>
-				<toolbar>
+				<extension>
 					<m:OverflowToolbar>
-						<m:Title id="title" text="Products"></m:Title>
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://refresh"
 							tooltip="Reinitialize Model"
 							press="onModelRefresh"/>
 					</m:OverflowToolbar>
-				</toolbar>
+				</extension>
 				<columns>
 					<Column
 						sortProperty="Name"

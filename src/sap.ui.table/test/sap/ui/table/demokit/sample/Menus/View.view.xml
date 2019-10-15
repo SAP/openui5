@@ -21,9 +21,9 @@
 				columnSelect="onColumnSelect"
 				cellContextmenu="onProductIdCellContextMenu"
 				ariaLabelledBy="title">
-				<toolbar>
+				<extension>
 					<m:OverflowToolbar>
-						<m:Title id="title" text="Products"></m:Title>
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
 							icon="sap-icon://show"
@@ -42,7 +42,7 @@
 							tooltip="Enable / Disable Custom Context Menu"
 							press="onToggleContextMenu"/>
 					</m:OverflowToolbar>
-				</toolbar>
+				</extension>
 				<columns>
 					<Column
 						id="name"

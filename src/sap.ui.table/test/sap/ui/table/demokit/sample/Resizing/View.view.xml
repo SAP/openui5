@@ -19,11 +19,11 @@
 				visibleRowCountMode="{/visibleRowCountMode}"
 				columnResize="onColumnResize"
 				ariaLabelledBy="title">
-				<toolbar>
+				<extension>
 					<m:OverflowToolbar>
-						<m:Title id="title" text="Products"></m:Title>
+						<m:Title id="title" text="Products"/>
 					</m:OverflowToolbar>
-				</toolbar>
+				</extension>
 				<columns>
 					<Column
 						width="{ui>/widths/name}"

@@ -17,30 +17,28 @@
 				selectionMode="MultiToggle"
 				visibleRowCount="7"
 				ariaLabelledBy="title">
-				<toolbar>
+				<extension>
 					<m:OverflowToolbar>
-						<m:content>
-							<m:Title id="title" text="Products" />
-							<m:ToolbarSpacer/>
-							<m:Input
-								id="inputColumn"
-								width="20%"
-								placeholder="fixed column count"
-								tooltip="fixed column count"/>
-							<m:Input
-								id="inputRow"
-								width="20%"
-								placeholder="fixed row count"
-								tooltip="fixed row count"/>
-							<m:Input
-								id="inputButtomRow"
-								width="20%"
-								placeholder="fixed bottom row count"
-								tooltip="fixed bottom row count"/>
-							<m:Button id="button" text="Apply" press="buttonPress"/>
-						</m:content>
+						<m:Title id="title" text="Products"/>
+						<m:ToolbarSpacer/>
+						<m:Input
+							id="inputColumn"
+							width="20%"
+							placeholder="fixed column count"
+							tooltip="fixed column count"/>
+						<m:Input
+							id="inputRow"
+							width="20%"
+							placeholder="fixed row count"
+							tooltip="fixed row count"/>
+						<m:Input
+							id="inputButtomRow"
+							width="20%"
+							placeholder="fixed bottom row count"
+							tooltip="fixed bottom row count"/>
+						<m:Button id="button" text="Apply" press="buttonPress"/>
 					</m:OverflowToolbar>
-				</toolbar>
+				</extension>
 
 				<columns>
 					<Column width="11rem">

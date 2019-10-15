@@ -18,9 +18,9 @@
 				visibleRowCount="7"
 				sort="sortDeliveryDate"
 				ariaLabelledBy="title">
-				<toolbar>
+				<extension>
 					<m:OverflowToolbar>
-						<m:Title id="title" text="Products"></m:Title>
+						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Button
 							icon="sap-icon://sorting-ranking"
@@ -35,7 +35,7 @@
 							tooltip="Clear all sortings"
 							press="clearAllSortings"/>
 					</m:OverflowToolbar>
-				</toolbar>
+				</extension>
 				<columns>
 					<Column
 						id="name"
