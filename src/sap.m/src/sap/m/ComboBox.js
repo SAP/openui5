@@ -1147,6 +1147,8 @@ sap.ui.define([
 				oListItem = this.getListItem(oItem),
 				oSelectionRange = this._getSelectionRange();
 
+			this.closeValueStateMessage();
+
 			if (oDomRef) {
 				this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "true");
 
@@ -1592,6 +1594,7 @@ sap.ui.define([
 			if (this.getEnabled() && (!this.isOpen() || !this.getSelectedItem() || !this._getList().hasStyleClass("sapMListFocus"))) {
 				this.addStyleClass("sapMFocus");
 			}
+
 		};
 
 		/**
