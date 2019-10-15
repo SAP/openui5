@@ -16,15 +16,13 @@ sap.ui.define([
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to request side effects",
-					details : "Error: HTTP request was not processed because the previous request"
-						+ " failed"
+					details : "HTTP request was not processed because the previous request failed"
 				},
 				oSideEffectsFailLog2 = {
 					component : "sap.ui.model.odata.v4.ODataContextBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to request side effects",
-					details : "Error: HTTP request was not processed because the previous request "
-						+ "failed"
+					details : "HTTP request was not processed because the previous request failed"
 				},
 				oUpdateFailLog = {
 					component : "sap.ui.model.odata.v4.Context",

@@ -5373,9 +5373,6 @@ sap.ui.define([
 			oGroupLock = {},
 			aPaths = ["A"];
 
-		// make this pending
-		oBinding.oCache = undefined;
-		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oBinding.oCachePromise));
 		oBinding.aContexts.push({isTransient : function () {}});
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
@@ -5392,6 +5389,9 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
+	// Note: although a list binding's oCachePromise may become pending again due to late properties
+	// being added, there is no need to wait for them to arrive. We can just request the current
+	// side effects now and the late property will fetch its own value later on.
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: all contexts transient => no refresh", function (assert) {

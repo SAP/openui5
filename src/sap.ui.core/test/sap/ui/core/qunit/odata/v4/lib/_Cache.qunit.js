@@ -293,6 +293,7 @@ sap.ui.define([
 				false, false, sMetaPath);
 
 		assert.strictEqual(oSingleCache.sMetaPath, sMetaPath);
+		assert.strictEqual(oSingleCache.oPromise, null);
 
 		this.mock(this.oRequestor).expects("fetchTypeForPath").withExactArgs(sMetaPath)
 			.returns(SyncPromise.resolve());
@@ -6564,7 +6565,6 @@ sap.ui.define([
 			fnDataRequested1 = {},
 			fnDataRequested2 = {},
 			oExpectedResult = {},
-			aFetchValuePromises,
 			oGroupLock1 = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
@@ -6576,6 +6576,8 @@ sap.ui.define([
 			oListener1 = {},
 			oListener2 = {},
 			sMetaPath = "~",
+			oOldPromise,
+			aPromises,
 			mQueryParams = {},
 			sResourcePath = "Employees('1')",
 			mTypeForMetaPath = {},
@@ -6590,6 +6592,7 @@ sap.ui.define([
 		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
 			undefined, sMetaPath);
 		oCacheMock = this.mock(oCache);
+		assert.strictEqual(oCache.oPromise, null);
 
 		oCacheMock.expects("registerChange").withExactArgs(undefined,
 			sinon.match.same(oListener1));
@@ -6624,13 +6627,15 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oCache.getValue("foo"), undefined, "before fetchValue");
-		aFetchValuePromises = [
+		aPromises = [
 			oCache.fetchValue(oGroupLock1, undefined, fnDataRequested1, oListener1,
 				oFixture.bFetchIfMissing
 			).then(function (oResult) {
 				assert.strictEqual(oResult, oExpectedResult);
 			})
 		];
+		oOldPromise = oCache.oPromise;
+		assert.notStrictEqual(oOldPromise, null);
 
 		assert.ok(oCache.bSentReadRequest);
 
@@ -6638,7 +6643,7 @@ sap.ui.define([
 		this.mock(oGroupLock2).expects("unlock").withExactArgs();
 
 		// code under test
-		aFetchValuePromises.push(
+		aPromises.push(
 			oCache.fetchValue(oGroupLock2, "foo", fnDataRequested2, oListener2,
 				oFixture.bFetchIfMissing
 			).then(function (oResult) {
@@ -6646,10 +6651,15 @@ sap.ui.define([
 				assert.strictEqual(oCache.getValue("foo"), "bar", "data available");
 			})
 		);
+		assert.strictEqual(oCache.oPromise, oOldPromise);
 
 		assert.strictEqual(oCache.getValue("foo"), undefined, "data not yet available");
 
-		return Promise.all(aFetchValuePromises);
+		aPromises.push(oOldPromise.then(function (oResult) {
+			assert.strictEqual(oResult, oExpectedResult, "resolves with complete data from GET");
+		}));
+
+		return Promise.all(aPromises);
 	});
 });
 
@@ -6738,12 +6748,14 @@ sap.ui.define([
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock0),
 				{"If-Match" : sinon.match.same(oEntity)}, sinon.match.same(oPostData))
 			.resolves(oResult1);
+		assert.strictEqual(oCache.oPromise, null);
 
 		// code under test
 		oPromise = oCache.post(oGroupLock0, oPostData, oEntity);
 
 		assert.ok(!oPromise.isFulfilled());
 		assert.ok(!oPromise.isRejected());
+		assert.strictEqual(oCache.oPromise, oPromise);
 
 		assert.throws(function () {
 			// code under test
@@ -6753,27 +6765,40 @@ sap.ui.define([
 		return oPromise.then(function (oPostResult1) {
 			var fnDataRequested = that.spy(),
 				oGroupLock1 = {},
-				oGroupLock2 = {unlock : function () {}};
+				oGroupLock2 = {unlock : function () {}},
+				oPromise,
+				aPromises = [];
 
 			assert.strictEqual(oPostResult1, oResult1);
+
+			that.mock(oGroupLock2).expects("unlock").withExactArgs();
+
+			// code under test
+			oPromise = oCache.fetchValue(oGroupLock2, "", fnDataRequested);
+
+			aPromises.push(
+				oPromise.then(function (oReadResult) {
+					assert.strictEqual(oReadResult, oResult1);
+					assert.strictEqual(fnDataRequested.callCount, 0);
+				})
+			);
 
 			that.oRequestorMock.expects("request")
 				.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1),
 					{"If-Match" : undefined}, sinon.match.same(oPostData))
 				.resolves(oResult2);
-			that.mock(oGroupLock2).expects("unlock").withExactArgs();
 
-			return Promise.all([
-				// code under test
-				oCache.fetchValue(oGroupLock2, "", fnDataRequested).then(function (oReadResult) {
-					assert.strictEqual(oReadResult, oResult1);
-					assert.strictEqual(fnDataRequested.callCount, 0);
-				}),
-				// code under test
-				oCache.post(oGroupLock1, oPostData).then(function (oPostResult2) {
+			// code under test
+			oPromise = oCache.post(oGroupLock1, oPostData);
+
+			assert.strictEqual(oCache.oPromise, oPromise);
+			aPromises.push(
+				oPromise.then(function (oPostResult2) {
 					assert.strictEqual(oPostResult2, oResult2);
 				})
-			]);
+			);
+
+			return Promise.all(aPromises);
 		});
 	});
 
@@ -6786,6 +6811,7 @@ sap.ui.define([
 			var oData = {"X-HTTP-Method" : "PUT"},
 				oEntity = {},
 				oGroupLock = {getGroupId : function () {}},
+				oPromise,
 				sResourcePath = "LeaveRequest('1')/Submit",
 				oCache = this.createSingle(sResourcePath, undefined, true);
 
@@ -6800,7 +6826,11 @@ sap.ui.define([
 				.resolves();
 
 			// code under test
-			return oCache.post(oGroupLock, oData, oEntity).then(function () {
+			oPromise = oCache.post(oGroupLock, oData, oEntity);
+
+			assert.strictEqual(oCache.oPromise, oPromise);
+
+			return oPromise.then(function () {
 					assert.deepEqual(oData, {});
 				});
 		});
@@ -7116,6 +7146,7 @@ sap.ui.define([
 				oUpdateSelectedExpectation,
 				oVisitResponseExpectation;
 
+			oCache.oPromise = {/*from previous #fetchValue*/};
 			oCache.mLateQueryOptions = mLateQueryOptions;
 			this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(mLateQueryOptions || oCache.mQueryOptions),
@@ -7168,33 +7199,47 @@ sap.ui.define([
 });
 	//TODO CollectionCache#refreshSingle claims that
 	// "_Helper.updateExisting cannot be used because navigation properties cannot be handled"
-	// --> what does that mean for us?
+	// --> what does that mean for us? @see CPOUI5UISERVICESV3-1992
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache#requestSideEffects: no need to GET anything", function (assert) {
-		var oCache = this.createSingle("Employees('42')"),
-			mNavigationPropertyPaths = {},
-			oOldValue = {},
-			aPaths = ["ROOM_ID"];
+	QUnit.test("SingleCache#requestSideEffects: no data read before", function (assert) {
+		var oCache = this.createSingle("Employees('42')");
 
-		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
-				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
-				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
-				"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
-			.returns(null);
-		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
-			.returns(SyncPromise.resolve(oOldValue));
+		assert.strictEqual(oCache.oPromise, null);
+		this.mock(_Helper).expects("intersectQueryOptions").never();
+		this.mock(oCache).expects("fetchValue").never();
 		this.oRequestorMock.expects("buildQueryString").never();
 		this.oRequestorMock.expects("request").never();
 		this.mock(oCache).expects("fetchTypes").never();
 		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
 
 		// code under test
-		return oCache.requestSideEffects({/*group lock*/}, aPaths, mNavigationPropertyPaths)
-			.then(function (vResult) {
-				assert.strictEqual(vResult, oOldValue);
-			});
+		assert.strictEqual(oCache.requestSideEffects(), SyncPromise.resolve());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#requestSideEffects: no need to GET anything", function (assert) {
+		var oCache = this.createSingle("Employees('42')"),
+			mNavigationPropertyPaths = {},
+			aPaths = ["ROOM_ID"];
+
+		oCache.oPromise = {/*from previous #fetchValue*/};
+		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
+				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+				"/Employees/$Type", sinon.match.same(mNavigationPropertyPaths))
+			.returns(null);
+		this.mock(oCache).expects("fetchValue").never();
+		this.oRequestorMock.expects("buildQueryString").never();
+		this.oRequestorMock.expects("request").never();
+		this.mock(oCache).expects("fetchTypes").never();
+		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
+
+		// code under test
+		assert.strictEqual(
+			oCache.requestSideEffects({/*group lock*/}, aPaths, mNavigationPropertyPaths),
+			SyncPromise.resolve()
+		);
 	});
 
 	//*********************************************************************************************
@@ -7209,6 +7254,7 @@ sap.ui.define([
 			aPaths = ["ROOM_ID"],
 			oPromise;
 
+		oCache.oPromise = Promise.resolve(oOldValue); // from previous #fetchValue
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
@@ -7224,7 +7270,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(/*don't care*/));
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
-			.returns(SyncPromise.resolve(oOldValue));
+			.returns(SyncPromise.resolve("ignored"));
 		this.mock(_Helper).expects("updateExisting").never(); // ==> #patch also not called
 
 		// code under test
@@ -7259,14 +7305,13 @@ sap.ui.define([
 			mNavigationPropertyPaths = {},
 			aPaths = ["B/C"];
 
-		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(_GroupLock.$cached), "")
-			.returns(SyncPromise.resolve(/*don't care*/));
+		oCache.oPromise = {/*from previous #fetchValue*/};
 		this.mock(_Helper).expects("intersectQueryOptions").withExactArgs(
 				sinon.match.same(oCache.mQueryOptions), sinon.match.same(aPaths),
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata), "/Me/$Type",
 				sinon.match.same(mNavigationPropertyPaths))
 			.throws(oError);
+		this.mock(oCache).expects("fetchValue").never();
 
 		assert.throws(function () {
 			// code under test
