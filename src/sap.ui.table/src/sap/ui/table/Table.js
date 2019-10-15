@@ -3734,26 +3734,34 @@ sap.ui.define([
 		// Remember the last used value for the case when this function is called with undefined iTableRowContentHeight
 		// _iTableRowContentHeight is not updated during resize and can be used as a last resort only
 		this._iRowsToDisplayHeight = iTableRowContentHeight || this._iRowsToDisplayHeight || this._iTableRowContentHeight;
-		iTableRowContentHeight = this._iRowsToDisplayHeight;
+
+		var iRowContentHeight = this._iRowsToDisplayHeight;
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
 		var iCalculatedRowsToDisplay = 0;
+		var iMinAutoRowCount = this._determineMinAutoRowCount();
+		var iMinAutoRowCountFixedRows = this.getFixedRowCount() + this.getFixedBottomRowCount() + 1;
+		var iDefaultRowHeight = this._getDefaultRowHeight();
+
 		if (sVisibleRowCountMode == VisibleRowCountMode.Fixed) {
 			// at least one row must be rendered in a table
 			iCalculatedRowsToDisplay = this.getVisibleRowCount() || 0;
-		} else if (sVisibleRowCountMode == VisibleRowCountMode.Interactive || sVisibleRowCountMode == VisibleRowCountMode.Auto) {
-			var iMinAutoRowCount = this._determineMinAutoRowCount();
-			var iDefaultRowHeight = this._getDefaultRowHeight();
-			if (!iDefaultRowHeight || !iTableRowContentHeight) {
+		} else if (sVisibleRowCountMode == VisibleRowCountMode.Interactive) {
+			if (iTableRowContentHeight) {
+				iCalculatedRowsToDisplay = Math.max(iMinAutoRowCount, iMinAutoRowCountFixedRows,  Math.floor(iTableRowContentHeight / iDefaultRowHeight));
+			} else {
+				iCalculatedRowsToDisplay = Math.max(iMinAutoRowCount, this.getVisibleRowCount());
+			}
+		} else if (sVisibleRowCountMode == VisibleRowCountMode.Auto) {
+			if (!iDefaultRowHeight || !iRowContentHeight) {
 				iCalculatedRowsToDisplay = iMinAutoRowCount;
 			} else {
 				// Make sure that table does not grow to infinity
 				// Maximum height of the table is the height of the window minus two row height, reserved for header and footer.
-				var iAvailableSpace = Math.min(iTableRowContentHeight, 50000);
+				var iAvailableSpace = Math.min(iRowContentHeight, 50000);
 				// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
 				// to avoid issues with having more fixed rows than visible row count, the number of visible rows must be
 				// adjusted.
-				var iRowCount = Math.floor(iAvailableSpace / iDefaultRowHeight);
-				iCalculatedRowsToDisplay = Math.max((this.getFixedRowCount() + this.getFixedBottomRowCount() + 1), Math.max(iMinAutoRowCount, iRowCount));
+				iCalculatedRowsToDisplay = Math.max(iMinAutoRowCount, iMinAutoRowCountFixedRows,  Math.floor(iAvailableSpace / iDefaultRowHeight));
 			}
 		}
 
