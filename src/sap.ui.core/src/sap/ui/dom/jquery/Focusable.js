@@ -1,7 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], function(jQuery, domHasTabIndex) {
+sap.ui.define([
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/dom/jquery/hasTabIndex",
+	"sap/ui/dom/isHidden"
+], function(jQuery, domHasTabIndex, isHidden) {
 	"use strict";
 
 	/**
@@ -15,26 +19,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/dom/jquery/hasTabIndex"], fun
 	 * @public
 	 * @since 1.58
 	 */
-
-	/**
-	 * Checks whether an Element is invisible for the end user.
-	 *
-	 * This is a combination of jQuery's :hidden selector (but with a slightly
-	 * different semantic, see below) and a check for CSS visibility 'hidden'.
-	 *
-	 * Since jQuery 2.x, inline elements (SPAN etc.) might be considered 'visible'
-	 * although they have zero dimensions (e.g. an empty span). In jQuery 1.x such
-	 * elements had been treated as 'hidden'.
-	 *
-	 * As some UI5 controls rely on the old behavior, this method restores it.
-	 *
-	 * @param {Element} oElem Element to check the dimensions for
-	 * @returns {boolean} Whether the Element either has only zero dimensions or has visibility:hidden (CSS)
-	 * @private
-	 */
-	function isHidden(oElem) {
-		return (oElem.offsetWidth <= 0 && oElem.offsetHeight <= 0) || jQuery.css(oElem, 'visibility') === 'hidden';
-	}
 
 	/**
 	 * Searches for a descendant of the given node that is an Element and focusable and visible.

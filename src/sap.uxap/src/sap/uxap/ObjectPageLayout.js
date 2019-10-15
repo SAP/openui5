@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/base/assert",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/dom/getFirstEditableInput"
 ], function(
 	jQuery,
 	ManagedObjectObserver,
@@ -48,7 +49,8 @@ sap.ui.define([
 	Log,
 	getScrollbarSize,
 	assert,
-	KeyCodes
+	KeyCodes,
+	getFirstEditableInput
 ) {
 	"use strict";
 
@@ -463,9 +465,9 @@ sap.ui.define([
 	ObjectPageLayout.HIDE_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterHide";
 
 	ObjectPageLayout.prototype._getFirstEditableInput = function(sContainer) {
-		var oContainer = this.$(sContainer);
+		var oContainer = this.getDomRef(sContainer);
 
-		return sap.uxap.Utilities.findFirstEditableInput(oContainer);
+		return getFirstEditableInput(oContainer);
 	};
 
 	/**
