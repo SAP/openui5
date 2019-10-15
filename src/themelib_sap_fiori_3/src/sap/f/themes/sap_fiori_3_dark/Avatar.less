@@ -1,0 +1,43 @@
+/* ============================= */
+/* CSS for control sap.f/Avatar  */
+/* Quartz Dark theme             */
+/* ============================= */
+
+@_sap_f_Avatar_Color: @sapUiContentContrastTextColor;
+
+.sapFAvatarBorder {
+	&.sapFAvatarIcon,
+	&.sapFAvatarInitials,
+	.sapFAvatarImageHolder {
+		box-shadow: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 10) inset;
+	}
+}
+
+.sapFAvatarIcon {
+	color: @_sap_f_Avatar_Color;
+}
+
+.sapFAvatarInitialsHolder {
+	color: @_sap_f_Avatar_Color;
+}
+
+.sapFAvatarSquare {
+	border-radius: 0.25rem;
+	.sapMImg,
+	.sapFAvatarImageHolder {
+		border-radius: 0.25rem;
+		-webkit-border-radius: 0.25rem;
+	}
+}
+
+.sapFAvatarL {
+	font-size: 2.25rem;
+}
+
+.sapFAvatarM {
+	font-size: 1.5rem;
+}
+
+.sapFAvatarS {
+	font-size: 1.125rem;
+}

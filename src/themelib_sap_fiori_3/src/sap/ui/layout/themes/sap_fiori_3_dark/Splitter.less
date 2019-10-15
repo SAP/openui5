@@ -1,0 +1,40 @@
+/* ======================================= */
+/* CSS for control sap.ui.layout/Splitter  */
+/* Quartz Dark theme                       */
+/* ======================================= */
+
+@_sap_ui_layout_Splitter_BarColor: lighten(@sapUiBaseBG, 40);
+@_sap_ui_layout_Splitter_BarHoverColor: lighten(@sapUiBaseBG, 50);
+
+html.sap-desktop .sapUiLoSplitterH.sapUiLoSplitter > .sapUiLoSplitterBar,
+html.sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	height: 100%;
+	width: 0.25rem;
+}
+
+html.sap-desktop .sapUiLoSplitterV.sapUiLoSplitter > .sapUiLoSplitterBar,
+html.sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	width: 100%;
+	height: 0.25rem;
+}
+
+.sapUiLoSplitter > .sapUiLoSplitterBar {
+	background-color: @_sap_ui_layout_Splitter_BarColor;
+	&:hover {
+		background-color: @_sap_ui_layout_Splitter_BarHoverColor;
+	}
+}
+
+.sapUiLoSplitterOverlay > .sapUiLoSplitterOverlayBar {
+	background-color: @sapUiHighlight;
+}
+
+.sapUiLoSplitterBarIcon {
+	display: none;
+}
+
+/*********************************** IE Focus outline workaround **********************************/// TODO remove after 1.62 version
+
+html[data-sap-ui-browser^=ie] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+	top: 0;
+}

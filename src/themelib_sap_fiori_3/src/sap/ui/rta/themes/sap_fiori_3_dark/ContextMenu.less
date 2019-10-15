@@ -1,0 +1,77 @@
+/******************************************************************
+	Style of the RTA Contextmenu - sap_fiori_3_dark Theme
+*******************************************************************/
+@_sap_ui_rta_ContextMenu_Border_LightColor : @sapUiWhite;  //#fff
+@_sap_ui_rta_ContextMenu_Border_DarkColor : @sapPrimary1;  //#354a5f
+@_sap_ui_dt_ContextMenu_BoxShadow : 0 10px 20px fade(black, 19), 0 6px 6px fade(black, 23), 0px 0px 0px 1px fade(white, 20), 0px 1px 0px 0 fade(white, 20);
+@_sap_ui_dt_ContextMenu_FocusColor : @sapContent_FocusColor;  //#000
+
+.sapUiRtaMode {
+
+	&.sapUiSizeCompact{
+		.sapUiDtContextMenu{
+			.sapMBtnInner.sapMBtnText .sapMBtnIcon{
+				padding-left: 0px;
+			}
+		}
+	}
+
+	.sapUiDtContextMenu{
+
+		&.sapMPopover, .sapMPopover {
+			border: 2px solid @_sap_ui_rta_ContextMenu_Border_LightColor;
+			border-image: repeating-linear-gradient( -45deg, @_sap_ui_rta_ContextMenu_Border_DarkColor, @_sap_ui_rta_ContextMenu_Border_DarkColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 4px, @_sap_ui_rta_ContextMenu_Border_LightColor 6px) 4;
+			box-shadow: @_sap_ui_dt_ContextMenu_BoxShadow;
+		}
+
+		&.sapMPopoverArr, .sapMPopoverArr {
+			width: 2rem;
+			height: 2rem;
+			bottom: -32px;
+			left:	5px!important;
+			&:after {
+				box-shadow: 0.375rem -0.375rem 0.75rem 0 fade(black,30), 0px 0px 0px 1px fade(white,20);
+				border: 2px solid @_sap_ui_rta_ContextMenu_Border_LightColor;
+				border-image: repeating-linear-gradient( -50deg, @_sap_ui_rta_ContextMenu_Border_DarkColor, @_sap_ui_rta_ContextMenu_Border_DarkColor 3px, @_sap_ui_rta_ContextMenu_Border_LightColor 3px, @_sap_ui_rta_ContextMenu_Border_LightColor 5px) 4;
+				width: 1rem;
+				height: 1rem;
+				margin: -0.65rem 0 0 0.35rem;
+			}
+			&.sapMPopoverArrUp {
+				height:	1rem;
+				top: -16px;
+				&:after {
+					box-shadow: -0.375rem 0.375rem 0.75rem 0 fade(black,30), 0px 0px 0px 1px fade(white,20);
+					margin: 0.35rem 0 0 0.35rem;
+				}
+			}
+		}
+
+		&.sapUiSizeCompact .sapMBtnIcon{
+			margin-left: 0.4375rem;
+			margin-right: 0.4375rem;
+		}
+	}
+}
+
+html.sap-desktop .sapUiDtContextMenu .sapMBtn:focus:not(:hover) > .sapMFocusable,
+html.sap-desktop .sapUiDtContextMenu.sapMBtn:focus:not(:hover) > .sapMFocusable {
+	outline: none;
+	border: 1px dotted;
+}
+
+html.sap-desktop .sapUiDtContextMenu .sapMBtn:focus > .sapMFocusable,
+html.sap-desktop .sapUiDtContextMenu.sapMBtn:focus > .sapMFocusable {
+	border: 1px solid;
+	outline: 1px dotted @_sap_ui_dt_ContextMenu_FocusColor;
+	outline-offset: 1px;
+}
+
+.sapUiRtaMode.sapUiSizeCozy {
+	.sapUiDtContextMenu{
+		.sapMBtn{
+			margin-left: 1px;
+			margin-right: 1px;
+		}
+	}
+}

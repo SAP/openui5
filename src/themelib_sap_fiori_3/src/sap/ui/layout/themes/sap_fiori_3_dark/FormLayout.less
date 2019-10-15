@@ -1,0 +1,26 @@
+/* ========================================= */
+/* CSS for control sap.ui.layout/FormLayout  */
+/* Quartz Dark theme                         */
+/* ========================================= */
+
+.sapUiFormLayout {
+	font-family: @sapUiDesktopFontFamily;
+}
+
+.sapUiFormLayout.sapUiFormBackgrTranslucent > section {
+	background-color: fade(@sapUiGroupContentBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapUiFormLayout.sapUiFormBackgrSolid > section {
+	background-color: @sapUiGroupContentBackground;
+}
+
+.sapUiForm .sapUiFormTitle {
+	border-width: 1px;
+	border-color: @sapUiGroupTitleBorderColor;
+	font-family: @sapUiFontHeaderFamily;
+}
+
+.sapUiFormTitle > .sapUiBtn {
+	bottom: 0.25rem;
+}

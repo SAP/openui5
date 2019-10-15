@@ -1,0 +1,31 @@
+/* ================================ */
+/* CSS for control sap.m/QuickView  */
+/* Quartz Dark theme                */
+/* ================================ */
+
+// ==========================================================================
+// Variables overriding
+// ==========================================================================
+
+@_sap_m_QuickView_HorizontalLayoutMarginBottom: 1rem;
+@_sap_m_QuickView_HorizontalLayoutIconFontSize: 1.5rem;
+@_sap_m_QuickView_PagePaddingTop: 2.75rem;
+
+.sapMQuickViewPage .sapMQuickViewThumbnail {
+	background-color: @sapUiAccent7;
+	color: @sapUiContentContrastTextColor;
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapMQuickViewPage .sapUiIcon:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -3px;
+}
+
+.sapMQuickViewCard {
+	box-sizing: border-box;
+	padding: 1rem;
+	background: @sapUiGroupContentBackground;
+	box-shadow: @sapUiShadowLevel0;
+	border-radius: 0.25rem;
+}
