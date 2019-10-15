@@ -74,14 +74,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * The configuration used in the manifest within the sap.widget section
-				 * This data will be merged on to of an already given manifest
-				 */
-				configuration: {
-					type: "object"
-				},
-
-				/**
 				 * Base URL
 				 */
 				baseUrl: {
@@ -229,20 +221,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Overwrites setter for Widget settings.
-	 *
-	 * @public
-	 * @param {Object} vValue Settings to set in the Widget trough parameters property.
-	 * @returns {sap.ui.integration.widgets.Widget} Pointer to the control instance to allow method chaining.
-	 */
-	Widget.prototype.setConfiguration = function (vValue) {
-		this._bApplyManifest = true;
-		this.setBusy(true);
-		this.setProperty("configuration", vValue);
-		return this;
-	};
-
-	/**
 	 * Overwrites getter for Widget parameters.
 	 *
 	 * @public
@@ -264,15 +242,13 @@ sap.ui.define([
 	Widget.prototype._applyManifest = function () {
 
 		var oParameters = this.getParameters(),
-			sAppType = this._oWidgetManifest.get(MANIFEST_PATHS.APP_TYPE),
-			//in case the manifest is passed as url we need to register the module path
-			oConfiguration = this.getConfiguration();
+			sAppType = this._oWidgetManifest.get(MANIFEST_PATHS.APP_TYPE);
 
 		if (sAppType && sAppType !== "widget") {
 			Log.error("sap.app/type entry in manifest is not 'widget'");
 		}
 
-		this._oWidgetManifest._mergeConfiguration(oConfiguration);
+		//in case the manifest is passed as url we need to register the module path
 		this._registerManifestModulePath();
 		this._oWidgetManifest.processParameters(oParameters);
 		return this._createComponent(this._oWidgetManifest.getJson(), this.getBaseUrl());
@@ -338,7 +314,6 @@ sap.ui.define([
 	 *
 	 * Returns a promise that resolves with an object
 	 * {
-	 *    configuration: the current configuration
 	 *    designtime: the designtime modules response
 	 *    manifest: the complete manifest json
 	 * }
@@ -365,7 +340,6 @@ sap.ui.define([
 				sap.ui.require([sModule, "sap/base/util/deepClone"], function(oDesigntime, deepClone) {
 					//successfully loaded
 					resolve({
-						configuration: deepClone(this._oWidgetManifest.get("/sap.widget"), 30),
 						designtime: oDesigntime,
 						manifest: deepClone(this._oWidgetManifest.oJson, 30)
 					});

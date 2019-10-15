@@ -384,33 +384,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges passed configuration to the current section.
-	 *
-	 * @param {Object} oConfiguration Configuration set in the manifest for the {SECTION} property.
-	 * @private
-	 */
-	Manifest.prototype._mergeConfiguration = function (oConfiguration) {
-		if (!this._oManifest) {
-			return;
-		}
-
-		if (!oConfiguration) {
-			return;
-		}
-		var oManifestConf = this.get(this.CONFIGURATION),
-			oJson = deepClone(this.oJson, 30, 30);
-
-		oJson[this.CONFIGURATION.substring(1)] = merge({}, oManifestConf, oConfiguration);
-
-		// todo this is a temporary solution to experiment with configuration
-		this._oManifest._oManifest = oJson;
-		this._oManifest._oRawManifest = oJson;
-		deepFreeze(this._oManifest._oRawManifest);
-
-		this.oJson = oJson;
-	};
-
-	/**
 	 * Syncs parameters from property.
 	 *
 	 * @param {Object} oParameters Parameters set in the card trough parameters property.
