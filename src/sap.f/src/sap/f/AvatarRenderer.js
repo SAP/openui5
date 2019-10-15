@@ -16,6 +16,11 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeCSS"],
 		// shortcut for sap.f.AvatarColor
 		var AvatarColor = library.AvatarColor;
 
+		// shortcut for Accent colors keys only (from AvatarColor enum)
+		var AccentColors = Object.keys(AvatarColor).filter(function (sCurrColor) {
+			return sCurrColor.indexOf("Accent") !== -1;
+		});
+
 		/**
 		 * <code>Avatar</code> renderer.
 		 * @author SAP SE
@@ -111,19 +116,16 @@ sap.ui.define(["sap/f/library", "sap/base/security/encodeCSS"],
 		};
 
 		AvatarRenderer.addBackgroundColorClass = function (oRm, oAvatar) {
-			var sBackgroundAccent = oAvatar.getBackgroundColor(),
-				aKeys;
+			var sBackground = oAvatar.getBackgroundColor();
 
 			if (oAvatar.getBackgroundColor() === AvatarColor.Random) {
-				aKeys = Object.keys(AvatarColor);
-				aKeys.splice(aKeys.indexOf(AvatarColor.Random), 1);
 
 				// Picking a random Accent property from the AvatarColor enum
 				// << 0 truncates the digits after the decimal (it's the same as Math.trunc())
-				sBackgroundAccent = AvatarColor[aKeys[aKeys.length * Math.random() << 0]];
+				sBackground = AvatarColor[AccentColors[AccentColors.length * Math.random() << 0]];
 			}
 
-			oRm.class("sapFAvatarColor" + sBackgroundAccent);
+			oRm.class("sapFAvatarColor" + sBackground);
 		};
 
 		return AvatarRenderer;

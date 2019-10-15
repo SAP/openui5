@@ -32,7 +32,7 @@
 
 .sapFAvatarIcon {
 	text-align: center;
-	color: @sapUiContentIconColor;
+	color: @sapUiContentImagePlaceholderForegroundColor;
 
 	.sapUiIcon {
 		position: absolute;
@@ -41,6 +41,23 @@
 		transform: translate(-50%, -50%);
 		-webkit-transform: translate(-50%, -50%);
 	}
+}
+
+.sapFAvatarColorTransparent {
+	background-color: transparent;
+
+	&.sapFAvatarIcon,
+	&>.sapFAvatarInitialsHolder {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapFAvatarColorTileIcon {
+	background-color: @sapUiTileIconColor;
+}
+
+.sapFAvatarColorPlaceholder {
+	background-color: @sapUiContentImagePlaceholderBackground;
 }
 
 .sapFAvatarInitialsHolder {
@@ -157,7 +174,7 @@ html:not(.sap-desktop) .sapFAvatarFocusable:focus {
 }
 
 .sapFAvatarInitialsHolder {
-	color: @sapUiContentIconColor;
+	color: @sapUiContentImagePlaceholderForegroundColor;
 }
 
 // Apply LightBox Magnifying glass mixin to control

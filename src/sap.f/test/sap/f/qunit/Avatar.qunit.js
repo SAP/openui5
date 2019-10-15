@@ -613,36 +613,40 @@ sap.ui.define([
 		// Arrange
 		var oAvatar = this.oAvatar,
 			$oAvatar = oAvatar.$(),
-			sDefaultAccent = AvatarColor.Accent6;
+			sDefaultColor = AvatarColor.Accent6;
 
 		// Assert
-		assert.strictEqual(oAvatar.getBackgroundColor(), sDefaultAccent,
+		assert.strictEqual(oAvatar.getBackgroundColor(), sDefaultColor,
 				"Avatar has the default backgroundProperty value.");
-		assert.ok($oAvatar.hasClass("sapFAvatarColor" + sDefaultAccent),
-				"Avatar is with the default CSS class for " + sDefaultAccent + " background color.");
+		assert.ok($oAvatar.hasClass("sapFAvatarColor" + sDefaultColor),
+				"Avatar is with the default CSS class for " + sDefaultColor + " background color.");
 	});
 
-	QUnit.test("Iterate over all possible Color Sets and set them", function (assert) {
+	QUnit.test("Iterate over all possible colors and set them", function (assert) {
 		// Arrange
 		var oAvatar = this.oAvatar,
 			$oAvatar = oAvatar.$(),
-			sCurrentAccent,
+			sCurrentColor,
 			aKeys = Object.keys(AvatarColor);
 
 		// Iterating over all of the properties of AvatarColor enum,
-		// without the last one which is "Random".
-		for (var i = 0; i < aKeys.length - 1; i++) {
-			sCurrentAccent = aKeys[i];
+		// without "Random".
+		for (var i = 0; i < aKeys.length; i++) {
+			sCurrentColor = aKeys[i];
+
+			if (sCurrentColor === AvatarColor.Random) {
+				continue;
+			}
 
 			// Act
-			oAvatar.setBackgroundColor(sCurrentAccent);
+			oAvatar.setBackgroundColor(sCurrentColor);
 			oCore.applyChanges();
 
 			// Assert
-			assert.strictEqual(oAvatar.getBackgroundColor(), sCurrentAccent,
-					"Avatar has the correct backgroundProperty value " + sCurrentAccent + ".");
-			assert.ok($oAvatar.hasClass("sapFAvatarColor" + sCurrentAccent),
-					"Avatar is with the correct CSS class for " + sCurrentAccent + " background color.");
+			assert.strictEqual(oAvatar.getBackgroundColor(), sCurrentColor,
+					"Avatar has the correct backgroundProperty value " + sCurrentColor + ".");
+			assert.ok($oAvatar.hasClass("sapFAvatarColor" + sCurrentColor),
+					"Avatar is with the correct CSS class for " + sCurrentColor + " background color.");
 		}
 	});
 });
