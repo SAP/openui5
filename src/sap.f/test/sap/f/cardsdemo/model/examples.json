@@ -181,5 +181,11 @@
 		"description": "Example with card bundles with static resources and baseURL usage",
 		"route": "bundle",
 		"group": "Other Card Examples"
+	},
+	{
+		"title": "Manifest Ready Event",
+		"description": "Example with card bundles with static resources and baseURL usage",
+		"route": "manifestReady",
+		"group": "Other Card Examples"
 	}
 ]

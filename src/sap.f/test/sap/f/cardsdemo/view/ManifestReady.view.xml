@@ -1,0 +1,25 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true"
+	controllerName="sap.f.cardsdemo.controller.ManifestReady">
+
+	<Page title="{i18n>appTitle}">
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="Card with Numeric Header"/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<Panel>
+				<w:Card manifest="./bundles/listBundle/manifest.json" manifestReady="onManifestReady"/>
+				<w:Card manifest="{manifests>/card14}" manifestReady="onManifestReady">
+				</w:Card>
+			</Panel>
+		</content>
+	</Page>
+</mvc:View>

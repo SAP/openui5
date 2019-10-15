@@ -221,6 +221,11 @@
 		  "pattern": "bundle",
 		  "name": "bundle",
 		  "target": "bundle"
+		},
+		{
+		  "pattern": "manifestReady",
+		  "name": "manifestReady",
+		  "target": "manifestReady"
 		}
 	  ],
 		"targets": {
@@ -377,6 +382,11 @@
 			"bundle": {
 				"viewId": "bundle",
 				"viewName": "Bundle",
+				"viewLevel": 1
+			},
+			"manifestReady": {
+				"viewId": "manifestReady",
+				"viewName": "ManifestReady",
 				"viewLevel": 1
 			}
 		}
