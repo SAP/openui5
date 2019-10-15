@@ -40,7 +40,7 @@ sap.ui.define([
                 return [];
             }
         } else {
-            var vControls = oPlugin._getFilteredControlsByDeclaration(oOptions);
+            var vControls = oPlugin._getFilteredControls(oOptions);
             if (vControls === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
                 return [];
             } else {

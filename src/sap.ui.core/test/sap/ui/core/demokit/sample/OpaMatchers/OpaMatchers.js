@@ -176,5 +176,45 @@ sap.ui.require([
 		Then.iTeardownMyAppFrame();
 	});
 
+	opaTest("Should find buttons using declarative matchers", function(Given, When, Then) {
+
+		Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+		When.waitFor({
+			viewName : "Main",
+			controlType : "sap.m.Button",
+			matchers : {
+				properties : {
+					text: "Changed text"
+				},
+				ancestor: {
+					viewName : "Main",
+					controlType : "sap.m.Bar"
+				}
+			},
+			success : function (aButtons) {
+				Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
+			},
+			errorMessage : "Did not find the button with a text 'Changed text' in an ancestor 'internal header'"
+		});
+
+		When.waitFor({
+			viewName : "Main",
+			controlType: "sap.m.Button",
+			matchers : {
+				propertyStrictEquals : {
+					name : "text",
+					value : "Changed text"
+				}
+			},
+			success : function (aButtons) {
+				Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
+			},
+			errorMessage : "Did not find the button with the property Text equal to Changed text"
+		});
+
+		Then.iTeardownMyAppFrame();
+	});
+
 	QUnit.start();
 });

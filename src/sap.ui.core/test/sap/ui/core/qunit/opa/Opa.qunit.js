@@ -13,7 +13,7 @@ sap.ui.define([
 
 	// loadAndIntercept also loads the module.
 	// I cannot load it with the require above because i need to spy during the loading
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa")[3];
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
 
 	// save default execution delay for this specific browser

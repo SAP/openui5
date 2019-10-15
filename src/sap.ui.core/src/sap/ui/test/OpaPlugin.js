@@ -386,18 +386,17 @@ sap.ui.define([
 			 */
 			_getFilteredControls : function(oOptions) {
 				var vControl = this._filterControlsByCondition(oOptions);
+				var oFilterOptions = $.extend({}, oOptions);
+
+				// when on the root level of oOptions, these options are already processed (see _filterControlsByCondition) and should not be processed again,
+				// as this results in error when no controls are passed to the matcher pipeline (see _filterControlsByMatchers)
+				// - the pipeline should still be executed because there could be custom matchers
+				["interactable", "visible", "enabled"].forEach(function (sProp) {
+					delete oFilterOptions[sProp];
+				});
 
 				return vControl === OpaPlugin.FILTER_FOUND_NO_CONTROLS
-					? OpaPlugin.FILTER_FOUND_NO_CONTROLS : this._filterControlsByMatchers(oOptions, vControl);
-			},
-
-			// same as _getFilteredControls, but expects any matchers in oOptions to be in declarative form
-			_getFilteredControlsByDeclaration: function (oOptions) {
-				var vControl = this._filterControlsByCondition(oOptions);
-				var oMatcherFilterOptions = $.extend({}, oOptions, {useDeclarativeMatchers: true});
-
-				return vControl === OpaPlugin.FILTER_FOUND_NO_CONTROLS
-					? OpaPlugin.FILTER_FOUND_NO_CONTROLS : this._filterControlsByMatchers(oMatcherFilterOptions, vControl);
+					? OpaPlugin.FILTER_FOUND_NO_CONTROLS : this._filterControlsByMatchers(oFilterOptions, vControl);
 			},
 
 			// filter result of getMatchingControls and maps it to FILTER_FOUND_NO_CONTROLS when no controls are found
@@ -424,7 +423,8 @@ sap.ui.define([
 
 			// instantiate any matchers with declarative syntax and run controls through matcher pipeline
 			_filterControlsByMatchers: function (oOptions, vControl) {
-				var aMatchers = oOptions.useDeclarativeMatchers ? oMatcherFactory.getFilteringMatchers(oOptions) : oOptions.matchers;
+				var oOptionsWithMatchers = $.extend({}, oOptions);
+				var aMatchers = oMatcherFactory.getFilteringMatchers(oOptionsWithMatchers);
 				var bPluginLooksForControls = this._isLookingForAControl(oOptions);
 				var vResult = null;
 
@@ -434,7 +434,7 @@ sap.ui.define([
 				 * matchers: function () {return "foo";},
 				 * success: function (sFoo) {}
 				 */
-				if ((vControl || !bPluginLooksForControls) && aMatchers) {
+				if ((vControl || !bPluginLooksForControls) && aMatchers.length) {
 					vResult = oMatcherPipeline.process({
 						matchers: aMatchers,
 						control: vControl

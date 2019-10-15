@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/test/matchers/_Enabled",
 	"sap/base/strings/capitalize",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/test/_ValidationParameters",
 	"sap/ui/test/matchers/matchers"
-], function (UI5Object, Interactable, Visible, _Enabled, capitalize, jQueryDOM) {
+], function (UI5Object, Interactable, Visible, _Enabled, capitalize, jQueryDOM, _ValidationParameters) {
 	"use strict";
 
 	/**
@@ -56,6 +57,10 @@ sap.ui.define([
 		 * @return {array} an array of {@link sap.ui.test.matchers.Matcher} instances
 		 */
 		getFilteringMatchers: function (oOptions) {
+			if (!oOptions) {
+				return [];
+			}
+
 			// extract all matchers on the base level (oOptions = {matcher1: {}, matcher2: {}..}) (as seen in declarative-style options)
 			var aMatchers = this._getPlainObjectMatchers(oOptions);
 
@@ -93,17 +98,21 @@ sap.ui.define([
 		 * @return {array} an array of {@link sap.ui.test.matchers.Matcher} instances; or an error if an unknown matcher is declared
 		 */
 		_getPlainObjectMatchers: function (mMatchers) {
+			if (!mMatchers) {
+				return [];
+			}
 			if (mMatchers["isMatching"]) {
 				// mMatchers is a single matcher instance => return it in a new array
 				return [mMatchers];
 			}
 
+			var aIgnoredProperties = Object.keys(_ValidationParameters.OPA5_WAITFOR_DECORATED);
 			var aSupportedMatchers = this._getSupportedMatchers();
 
 			return Object.keys(mMatchers).filter(function (sMatcher) {
-				// filter out any properties that are supported, but are not defined in a matcher class
-				return this._IMPLICIT_MATCHERS.indexOf(sMatcher) === -1;
-			}.bind(this)).map(function (sMatcher) {
+				// filter out any properties that don't represent a matcher class
+				return aIgnoredProperties.indexOf(sMatcher) === -1;
+			}).map(function (sMatcher) {
 				if (aSupportedMatchers.indexOf(capitalize(sMatcher)) === -1) {
 					throw new Error("Matcher is not supported! Matcher name: '" + sMatcher + "', arguments: '" + JSON.stringify(mMatchers[sMatcher]) + "'");
 				}
@@ -142,10 +151,7 @@ sap.ui.define([
 				// filter out private matchers and helpers
 				return !sMatcher.match(/^(_|matcher)/i);
 			});
-		},
-
-		_IMPLICIT_MATCHERS: ["matchers", "viewName", "viewNamespace", "viewId", "fragmentId", "visible", "enabled", "id",
-			"controlType", "sOriginalControlType", "searchOpenDialogs", "useDeclarativeMatchers", "interaction"]
+		}
 	});
 
 	return MatcherFactory;

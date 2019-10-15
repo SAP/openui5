@@ -3,8 +3,11 @@ sap.ui.define([
 	'sap/ui/test/Opa',
 	'sap/ui/test/Opa5',
 	"sap/m/Button",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (Opa, Opa5, Button, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/Descendant",
+	"sap/ui/layout/HorizontalLayout"
+], function (Opa, Opa5, Button, PropertyStrictEquals, Ancestor, Descendant, HorizontalLayout) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -100,9 +103,11 @@ sap.ui.define([
 	QUnit.module("matchers in waitfor", {
 		beforeEach : function () {
 			sinon.config.useFakeTimers = true;
+			this.oLayout1 = new HorizontalLayout({id: "layout1"});
 			this.oButton = new Button("myButton", {text : "foo"});
 			this.oButton2 = new Button("myButton2", {text : "bar"});
-			this.oButton.placeAt("qunit-fixture");
+			this.oButton.placeAt(this.oLayout1);
+			this.oLayout1.placeAt("qunit-fixture");
 			this.oButton2.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
@@ -110,6 +115,7 @@ sap.ui.define([
 			sinon.config.useFakeTimers = false;
 			this.oButton.destroy();
 			this.oButton2.destroy();
+			this.oLayout1.destroy();
 		}
 	});
 
@@ -189,6 +195,8 @@ sap.ui.define([
 		var oTextMatcherSpy = this.spy(oTextMatcher, "isMatching");
 		var oEnabledMatcherSpy = this.spy(oEnabledMatcher, "isMatching");
 
+		this.oButton.setEnabled(true);
+
 		// Act
 		oOpa5.waitFor({
 			id : "myButton",
@@ -210,6 +218,136 @@ sap.ui.define([
 		assert.strictEqual(oEnabledMatcherSpy.callCount, 2, "did call the oEnabledMatcher again");
 
 		assert.strictEqual(oSuccessSpy.callCount, 1, "did call the success");
+	});
+
+	QUnit.test("Should use declarative matchers", function(assert) {
+		var oSuccessSpy = this.spy();
+
+		var oOpa5 = new Opa5();
+		var fnIsMatching = Opa5.matchers.PropertyStrictEquals.prototype.isMatching;
+		var mCalls = {text: 0, enabled: 0, busy: 0};
+		Opa5.matchers.PropertyStrictEquals.prototype.isMatching = function () {
+			mCalls[this.getName()] += 1;
+			return fnIsMatching.apply(this, arguments);
+		};
+
+		this.oButton.setEnabled(true);
+
+		oOpa5.waitFor({
+			id : "myButton",
+			propertyStrictEquals: [{
+				name : "enabled",
+				value : false
+			}, {
+				name : "text",
+				value : "foo"
+			}],
+			matchers: {
+				propertyStrictEquals: {
+					name: "busy",
+					value: false
+				}
+			},
+			success : oSuccessSpy,
+			timeout : 1, //second
+			pollingInterval : 200 //millisecond
+		});
+		Opa5.emptyQueue();
+
+		this.clock.tick(iExecutionDelay);
+		assert.strictEqual(mCalls.enabled, 1, "called the enabled (state) matcher");
+		assert.strictEqual(mCalls.text, 0, "did not call the text matcher yet (declared on root)");
+		assert.strictEqual(mCalls.busy, 0, "did not call the busy matcher yet (declared in matchers)");
+
+		this.oButton.setEnabled(false);
+		this.clock.tick(200);
+		assert.strictEqual(mCalls.enabled, 2, "did call the enabled (state) matcher again");
+		assert.strictEqual(mCalls.text, 1, "did call the text matcher (declared on root)");
+		assert.strictEqual(mCalls.busy, 1, "did call the busy matcher (declared in matchers)");
+
+		assert.strictEqual(oSuccessSpy.callCount, 1, "did call the success");
+
+		Opa5.matchers.PropertyStrictEquals.prototype.isMatching = fnIsMatching;
+	});
+
+	QUnit.test("Should use declarative matchers with expansions", function (assert) {
+		sinon.config.useFakeTimers = false;
+		var fnDone = assert.async();
+		var oSuccessSpy = this.spy();
+
+		var oOpa5 = new Opa5();
+		var mCalls = {
+			propertyStrictEquals: {text: 0},
+			ancestor: [],
+			descendant: []
+		};
+
+		var fnPropertyMatch = Opa5.matchers.PropertyStrictEquals.prototype.isMatching;
+		Opa5.matchers.PropertyStrictEquals.prototype.isMatching = function () {
+			mCalls.propertyStrictEquals[this.getName()] += 1;
+			return fnPropertyMatch.apply(this, arguments);
+		};
+
+		var fnAncestor = Ancestor;
+		sap.ui.test.matchers.Ancestor = function () {
+			var ancestor = arguments[0];
+			return function () {
+				mCalls.ancestor.push({
+					ancestor: ancestor,
+					child: arguments[0]
+				});
+				return fnAncestor.call(this, ancestor).apply(this, arguments);
+			};
+		};
+		var fnDescendant = Descendant;
+		sap.ui.test.matchers.Descendant = function () {
+			var descendant = arguments[0];
+			return function () {
+				mCalls.descendant.push({
+					descendant: descendant,
+					parent: arguments[0]
+				});
+				return fnDescendant.call(this, descendant).apply(this, arguments);
+			};
+		};
+
+		// reload the mocked matchers
+		jQuery.sap.unloadResources("sap/ui/test/matchers/MatcherFactory", false, true, true);
+		sap.ui.require(["sap/ui/test/matchers/MatcherFactory"], function () {
+			oOpa5.waitFor({
+				id : "myButton",
+				propertyStrictEquals: {
+					name : "text",
+					value : "foo"
+				},
+				matchers: {
+					ancestor: {
+						id: "layout1",
+						descendant: {
+							id: "myButton"
+						}
+					}
+				},
+				success : oSuccessSpy,
+				timeout : 1, //second
+				pollingInterval : 200 //millisecond
+			});
+			Opa5.emptyQueue()
+			.done(function () {
+				assert.strictEqual(mCalls.propertyStrictEquals.text, 1, "called the text matcher");
+				assert.strictEqual(mCalls.descendant.length, 1, "called the descendant matcher");
+				assert.strictEqual(mCalls.ancestor.length, 1, "called the ancestor matcher");
+
+				assert.strictEqual(oSuccessSpy.callCount, 1, "did call the success");
+
+				// restore
+				Opa5.matchers.PropertyStrictEquals.prototype.isMatching = fnPropertyMatch;
+				sap.ui.test.matchers.Ancestor = fnAncestor;
+				sap.ui.test.matchers.Descendant = fnDescendant;
+
+				fnDone();
+			});
+		});
 	});
 
 	QUnit.test("Should only pass matching controls to success", function(assert) {
