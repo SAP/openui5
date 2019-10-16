@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/rta/util/validateStableIds",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/m/InstanceManager"
 ], function (
 	SupportLib,
 	Utils,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Component,
 	ChangeRegistry,
 	validateStableIds,
-	ObjectPath
+	ObjectPath,
+	InstanceManager
 ) {
 	"use strict";
 
@@ -37,6 +39,12 @@ sap.ui.define([
 		});
 
 		return oAppComponent;
+	}
+
+	function _isPopupAdaptable(oPopup) {
+		return (!oPopup.isPopupAdaptationAllowed || oPopup.isPopupAdaptationAllowed())
+		&& Utils.getAppComponentForControl(oPopup)
+		&& (oPopup.isA("sap.m.Dialog") || oPopup.isA("sap.m.Popover"));
 	}
 
 	var oStableIdRule = {
@@ -72,8 +80,12 @@ sap.ui.define([
 				return;
 			}
 
+			var aPopovers = InstanceManager.getOpenPopovers();
+			var aDialogs = InstanceManager.getOpenDialogs();
+			var aAdaptablePopups = aPopovers.concat(aDialogs).filter(_isPopupAdaptable);
+
 			var oDesignTime = new DesignTime({
-				rootElements: [oAppComponent]
+				rootElements: [oAppComponent].concat(aAdaptablePopups)
 			});
 
 			oDesignTime.attachEventOnce("synced", function () {

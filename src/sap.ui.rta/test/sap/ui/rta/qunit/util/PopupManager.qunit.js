@@ -50,6 +50,7 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 	var oView;
+	sinon.stub(PersistenceWriteAPI, "save");
 	FakeLrepConnectorSessionStorage.enableFakeConnector();
 	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
@@ -506,19 +507,19 @@ function(
 			assert.equal(this.oPopover.getModal(), false, "the Popover is not modal before mode change");
 			fnSetRta(this.oRta);
 
-			this.oPopover.attachAfterOpen(function() {
+			this.oRta.getPopupManager().attachEventOnce("open", function(oEvent) {
 				this.oRta.getPopupManager()._applyPopupAttributes.restore();
-				var oPopup = this.oPopover.oPopup;
+				var oPopup = oEvent.getParameters().getSource().oPopup;
 
 				// change mode to 'adaptation'
-				var oEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
-				this.oRta.getPopupManager()._onModeChange(oEvent);
+				var oModeChangeEvent = new Event("testevent", this.oRta, { mode: "adaptation" });
+				this.oRta.getPopupManager()._onModeChange(oModeChangeEvent);
 				assert.equal(oPopup.getModal(), true, "then the Popover is modal after switch to adaptation mode");
 				assert.strictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 2, "then 'bringToFront' was called twice; on popover open and on mode change ");
 
 				// change mode to 'navigation'
-				oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
-				this.oRta.getPopupManager()._onModeChange(oEvent);
+				oModeChangeEvent = new Event("testevent", this.oRta, { mode: "navigation" });
+				this.oRta.getPopupManager()._onModeChange(oModeChangeEvent);
 				assert.equal(oPopup.getModal(), false, "then the Popover is not modal after switch back to navigation mode");
 				assert.strictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 2, "then 'bringToFront' was not called again");
 				this.fnApplyPopupAttributes = sandbox.spy(this.oRta.getPopupManager(), "_applyPopupAttributes");
@@ -616,19 +617,6 @@ function(
 					assert.ok(this.fnRemoveDialogInstanceSpy.calledWith(this.oDialog), "then 'removeRootElement from DesignTime is called with the opened dialog");
 					assert.strictEqual(this.oRta._oDesignTime.getRootElements().indexOf(this.oDialog.getId()), -1, "then the opened dialog is not present in the list of root elements");
 					fnCloseDone();
-				}.bind(this));
-			}.bind(this));
-		});
-		QUnit.test("when dialog with the same app component is opened and then RTA is stopped", function(assert) {
-			//to open the dialog
-			this.oButton.firePress();
-			var fnOpenDone = assert.async();
-			this.oDialog.attachAfterOpen(function() {
-				this.oRta.stop().then(function() {
-					this.oRta.destroy();
-					assert.notOk(this.oRta._oDesignTime, "then DesignTime for the current RTA instance was destroyed");
-					fnOpenDone();
-					this.oDialog.close();
 				}.bind(this));
 			}.bind(this));
 		});
@@ -730,7 +718,7 @@ function(
 				assert.ok(this.oDialog.oPopup.getModal(), "then modal property for dialog is set to true after RTA is started");
 				assert.ok(typeof oRta.getPopupManager()._oModalState.get(this.oDialog.oPopup) === "boolean", "then dialog's modal state map entry exists");
 
-				var oEvent = new Event("testevent", this.oRta, { mode: "navigation" });
+				var oEvent = new Event("testevent", oRta, { mode: "navigation" });
 				oRta.getPopupManager()._onModeChange(oEvent);
 				assert.notOk(this.oDialog.oPopup.getModal(), "then modal property is set back to the original state then RTA is switched to navigation mode");
 				assert.strictEqual(oRta.getPopupManager()._oModalState.get(this.oDialog.oPopup), undefined, "then dialog's modal state map entry no longer exists");

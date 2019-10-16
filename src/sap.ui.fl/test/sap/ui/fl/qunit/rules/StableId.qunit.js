@@ -6,8 +6,13 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
+	"sap/m/Dialog",
+	"sap/m/Popover",
+	"sap/m/InstanceManager",
+	"sap/m/MessageBox",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/Bootstrap",
+	"sap/ui/support/RuleAnalyzer",
 	"test-resources/sap/ui/support/TestHelper"
 ], function (
 	UIComponent,
@@ -15,13 +20,18 @@ sap.ui.define([
 	XMLView,
 	VerticalLayout,
 	Button,
+	Dialog,
+	Popover,
+	InstanceManager,
+	MessageBox,
 	JSONModel,
 	Bootstrap,
+	RuleAnalyzer,
 	testRule
 ) {
 	"use strict";
 
-	QUnit.module("Base functionality", {
+	QUnit.module("Base functionality for app component's root view", {
 		beforeEach: function (assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
@@ -60,7 +70,6 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oComponentContainer.destroy();
-			this.oComponent.destroy();
 		}
 	}, function () {
 		testRule({
@@ -68,6 +77,115 @@ sap.ui.define([
 			libName: "sap.ui.fl",
 			ruleId: "stableId",
 			expectedNumberOfIssues: 5
+		});
+	});
+
+	QUnit.module("Base functionality for popups", {
+		beforeEach: function (assert) {
+			var fnDone = assert.async();
+			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
+				createContent: function() {
+					return new VerticalLayout({
+						id: this.createId("layoutId")
+					});
+				}
+			});
+			this.oComponent = new CustomComponent("componentId");
+
+			// popups with app components + unstable
+			this.oComponent.runAsOwner(function () {
+				this.oDialog = new Dialog({
+					id: this.oComponent.createId("DialogWithComponent"),
+					showHeader: false,
+					content: [new Button({text: "button inside dialog with unstable id"})],
+					contentHeight: "800px",
+					contentWidth: "1000px"
+				});
+				this.oPopover = new Popover({
+					content: [new Button({text: "button inside popover with unstable id"})],
+					showHeader: false,
+					contentMinWidth: "250px",
+					contentWidth: "20%"
+				});
+				// popup with adaptation disabled
+				this.oPopoverAdaptationDisabled = new Popover({
+					id: this.oComponent.createId("PopoverAdaptationDisabled"),
+					content: [new Button({text: "button inside popover with unstable id"})],
+					showHeader: false,
+					contentMinWidth: "250px",
+					contentWidth: "20%"
+				});
+				this.oPopoverAdaptationDisabled.isPopupAdaptationAllowed = function () {
+					return false;
+				};
+				// when focus is taken away popover might close - resulting in failing tests
+				this.oPopoverAdaptationDisabled.oPopup.setAutoClose(false);
+				this.oPopover.oPopup.setAutoClose(false);
+			}.bind(this));
+
+			// popup without component
+			this.oDialogWithoutComponent = new Dialog({
+				showHeader: false,
+				content: [new Button({text: "button inside dialog with unstable id"})],
+				contentHeight: "800px",
+				contentWidth: "1000px"
+			});
+
+			this.oComponentContainer = new ComponentContainer("CompCont1", {
+				component: this.oComponent
+			});
+
+			this.oComponentContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oDialog.attachAfterOpen(function () {
+				this.oPopover.attachAfterOpen(function () {
+					this.oDialogWithoutComponent.attachAfterOpen(function () {
+						this.oPopoverAdaptationDisabled.attachAfterOpen(function () {
+							// recognized as a dialog from InstanceManager
+							MessageBox.show("message box");
+							Bootstrap.initSupportRules(["true", "silent"], {
+								onReady: fnDone
+							});
+						});
+						this.oPopoverAdaptationDisabled.openBy(this.oDialog);
+					}.bind(this));
+					this.oDialogWithoutComponent.open();
+				}.bind(this));
+				this.oPopover.openBy(this.oDialog);
+			}.bind(this));
+			this.oDialog.open();
+		},
+		afterEach: function () {
+			this.oPopover.destroy();
+			this.oPopoverAdaptationDisabled.destroy();
+			this.oDialog.destroy();
+			this.oDialogWithoutComponent.destroy();
+			InstanceManager.closeAllDialogs();
+			this.oComponentContainer.destroy();
+		}
+	}, function () {
+		QUnit.test("stableId check", function (assert) {
+			return RuleAnalyzer.analyze({type: "global"},
+				[{
+					libName: "sap.ui.fl",
+					ruleId: "stableId"
+				}]
+			).then(function () {
+				var aUnstableIds = [
+					this.oDialog.getContent()[0].getId(),
+					this.oPopover.getContent()[0].getId(),
+					this.oPopover.getId()
+				];
+				var oHistory = RuleAnalyzer.getLastAnalysisHistory();
+				oHistory.issues.forEach(function (oIssue) {
+					var iUnstableIdIndex = aUnstableIds.indexOf(oIssue.context.id);
+					if (iUnstableIdIndex > -1) {
+						aUnstableIds.splice(iUnstableIdIndex, 1);
+					}
+				});
+				assert.strictEqual(aUnstableIds.length, 0, "then the correct no. of issues were created");
+			}.bind(this));
 		});
 	});
 
