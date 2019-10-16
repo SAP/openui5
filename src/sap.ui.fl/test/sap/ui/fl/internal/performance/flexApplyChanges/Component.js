@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/variants/URLHandler",
+	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"fl/performance/utils/FlexPerformanceTestUtil",
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/XMLView"

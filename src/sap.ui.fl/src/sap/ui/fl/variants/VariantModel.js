@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/fl/apply/_internal/variants/URLHandler",
+	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/base/util/merge",
 	"sap/base/util/includes",
 	"sap/base/util/ObjectPath"

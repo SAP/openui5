@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/includes",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/ui/fl/apply/_internal/variants/URLHandler",
+	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/base/util/merge",

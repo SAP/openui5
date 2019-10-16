@@ -66,6 +66,18 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"]
 				}
 			},
+			"apply/_internal/changes/Applier": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/Applier"]
+				}
+			},
+			"apply/_internal/changes/Utils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/Utils"]
+				}
+			},
 			"apply/_internal/ChangesController": {
 				group: "Apply Internal",
 				coverage: {
@@ -76,7 +88,7 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				ui5: {
 					resourceroots: {
-						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
+						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
 					}
 				},
 				coverage: {
@@ -129,10 +141,10 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
 				}
 			},
-			"apply/_internal/variants/URLHandler": {
+			"apply/_internal/controlVariants/URLHandler": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/variants/URLHandler"]
+					only: ["sap/ui/fl/apply/_internal/controlVariants/URLHandler"]
 				}
 			},
 			"write/api/ChangesWriteAPI": {
@@ -184,7 +196,7 @@ sap.ui.define(function () {
 				},
 				ui5: {
 					resourceroots: {
-						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
+						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
 					},
 					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]}]'
 				}
@@ -248,7 +260,7 @@ sap.ui.define(function () {
 				ui5: {
 					resourceroots: {
 						"my.lib": "./test-resources/sap/ui/fl/qunit/write/_internal/",
-						"test.app": "./test-resources/sap/ui/fl/qunit/apply/_internal/"
+						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
 					},
 					"xx-componentPreload": "off",
 					flexibilityServices: '[{"applyConnector": "my/lib/apply/BrokenConnector",' +

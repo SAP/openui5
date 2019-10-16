@@ -5,10 +5,7 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/Utils",
-	"sap/ui/core/routing/History",
-	"sap/ui/core/routing/HashChanger",
 	"sap/base/Log",
-	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/ManagedObjectObserver",
@@ -16,10 +13,7 @@ sap.ui.define([
 ], function(
 	Component,
 	Utils,
-	History,
-	HashChanger,
 	Log,
-	deepEqual,
 	merge,
 	isEmptyObject,
 	ManagedObjectObserver,

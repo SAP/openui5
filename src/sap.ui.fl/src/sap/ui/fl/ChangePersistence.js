@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/transport/TransportSelection",
@@ -28,6 +29,7 @@ sap.ui.define([
 	LayerUtils,
 	LRepConnector,
 	Cache,
+	Applier,
 	ContextManager,
 	Settings,
 	TransportSelection,
@@ -992,7 +994,8 @@ sap.ui.define([
 				var sVersion = Utils.getAppVersionFromManifest(oManifest);
 				var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
 				var oFlexController = oFlexControllerFactory.create(this.getComponentName(), sVersion);
-				var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(this.getChangesMapForComponent.bind(this), oAppComponent);
+				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, this.getChangesMapForComponent.bind(this), oAppComponent, oFlexController);
+				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 				oAppComponent.addPropagationListener(fnPropagationListener);
 			}
 		}

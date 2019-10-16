@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/apply/_internal/variants/URLHandler",
+	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/merge"
 ],
@@ -3245,16 +3245,10 @@ function (
 				assert.equal(aRegisteredFlexPropagationListeners.length, nNumber, sAssertionText);
 			}.bind(this);
 
-			var fnGetChangesMap = function () {
-				return this.oChangePersistence._mChanges;
-			}.bind(this);
-			var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
-			var oFlexController = oFlexControllerFactory.create(this._mComponentProperties.name, this._mComponentProperties.appVersion);
-			var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, this._oComponentInstance);
+			var fnEmptyFunction = function() {};
+			this._oComponentInstance.addPropagationListener(fnEmptyFunction.bind());
 
-			this._oComponentInstance.addPropagationListener(fnPropagationListener);
-
-			fnAssertFlPropagationListenerCount(1, "one propagation listener was added");
+			fnAssertFlPropagationListenerCount(0, "no FL propagation listener was added");
 
 			var oChangeContent = {
 				fileName: "Gizorillus",
@@ -3262,7 +3256,7 @@ function (
 				fileType: "change",
 				changeType: "addField",
 				selector: { id: "control1" },
-				content: { },
+				content: {},
 				originalLanguage: "DE"
 			};
 

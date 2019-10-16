@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/util/includes",
 	"sap/base/Log",
-	"sap/ui/fl/apply/_internal/variants/URLHandler"
+	"sap/ui/fl/apply/_internal/controlVariants/URLHandler"
 ], function (
 	Utils,
 	LayerUtils,

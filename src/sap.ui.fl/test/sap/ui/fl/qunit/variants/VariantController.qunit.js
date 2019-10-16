@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexCustomData",
 	"sap/m/Text",
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/variants/URLHandler",
+	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
