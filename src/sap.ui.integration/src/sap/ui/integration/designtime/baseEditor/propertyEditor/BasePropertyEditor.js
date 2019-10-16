@@ -6,13 +6,15 @@ sap.ui.define([
 	"./../util/ObjectBinding",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/ObjectPath",
-	"sap/m/Label"
+	"sap/m/Label",
+	"sap/base/util/restricted/_merge"
 ], function (
 	Control,
 	ObjectBinding,
 	JSONModel,
 	ObjectPath,
-	Label
+	Label,
+	_merge
 ) {
 	"use strict";
 
@@ -85,7 +87,7 @@ sap.ui.define([
 		},
 
 		setConfig: function(oConfig) {
-			var vReturn = this.setProperty("config", oConfig);
+			var vReturn = this.setProperty("config", _merge({}, oConfig));
 			this._initialize();
 			return vReturn;
 		},
@@ -156,7 +158,10 @@ sap.ui.define([
 			oRm.openEnd();
 
 			if (oPropertyEditor.getRenderLabel() && oPropertyEditor.getLabel()) {
+				oRm.openStart("div");
+				oRm.openEnd();
 				oRm.renderControl(oPropertyEditor.getLabel());
+				oRm.close("div");
 			}
 			oPropertyEditor.getContent().forEach(function(oControl) {
 				oRm.renderControl(oControl);
