@@ -3541,6 +3541,23 @@ sap.ui.define([
 		assert.strictEqual(this.oPC2.getStartDate().getHours(), 1, "The Hours are not changed to 00, but instead the original hours are preserved in Day view");
 	});
 
+	QUnit.test('Clicking today is updating calendars start date and Navigations current date', function(assert) {
+		var oToday = new Date();
+		this.oPC2.setViewKey(CalendarIntervalType.Hour);
+		sap.ui.getCore().applyChanges();
+
+		//act
+		_navBackward.call(this, this.oPC2);
+		_clickTodayButton.call(this, this.oPC2);
+
+		//assert
+		assert.equal(this.oPC2._dateNav._current.getFullYear(), oToday.getFullYear(), 'year is correct');
+		assert.equal(this.oPC2._dateNav._current.getMonth(), oToday.getMonth(), 'month is correct');
+		assert.equal(this.oPC2._dateNav._current.getDate(), oToday.getDate(), 'date is correct');
+
+		this.oPC2.setViewKey(CalendarIntervalType.Week);
+	});
+
 	QUnit.module("OneMonth view", {
 		beforeEach: function() {
 			var oSearchField = new SearchField(),
