@@ -1320,6 +1320,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype.onBeforeRendering = function(oEvent) {
+		// The table can be re-rendered as part of the rendering of its parent, without being invalidated before.
+		this._bInvalid = true;
+
 		this._detachEvents();
 
 		if (oEvent && oEvent.isMarked("renderRows")) {
