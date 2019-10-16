@@ -1097,6 +1097,7 @@ function(
 		oGrid._getColumnHeaders().attachEvent("select", fnHandleHeadersSelect, this);
 
 		oGrid.attachEvent("appointmentSelect", fnHandleAppointmentSelect, this);
+		oGridMV.attachEvent("appointmentSelect", fnHandleAppointmentSelect, this);
 
 		oGrid.attachEvent("appointmentDrop", fnHandleAppointmentDrop, this);
 		oGridMV.attachEvent("appointmentDrop", fnHandleAppointmentDrop, this);

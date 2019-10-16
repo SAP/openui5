@@ -178,6 +178,24 @@ sap.ui.define([
 							 */
 							copy: { type: "boolean" }
 						}
+					},
+					/**
+					 * Fired when the selected state of an appointment is changed.
+					 * @since 1.72
+					 */
+					appointmentSelect: {
+						parameters: {
+
+							/**
+							 * The appointment on which the event was triggered.
+							 */
+							appointment: {type: "sap.ui.unified.CalendarAppointment"},
+							/**
+							 * All appointments with changed selected state.
+							 */
+							appointments : {type : "sap.ui.unified.CalendarAppointment[]"}
+
+						}
 					}
 				}
 			}
@@ -265,15 +283,44 @@ sap.ui.define([
 			}, this);
 		};
 
+		/**
+		 * Handles the <code>tap</code> event on the grid.
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 */
 		SinglePlanningCalendarMonthGrid.prototype.ontap = function(oEvent) {
-			var $target = jQuery(oEvent.target).eq(0),
+			this._fireSelectionEvent(oEvent);
+		};
+
+		/**
+		 * Handles the <code>keydown</code> event when any key is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		SinglePlanningCalendarMonthGrid.prototype.onkeydown = function(oEvent) {
+			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+				this._fireSelectionEvent(oEvent);
+
+				// Prevent scrolling
+				oEvent.preventDefault();
+			}
+		};
+
+		/**
+		 * Helper function handling <code>keydown</code> or <code>tap</code> event on the grid.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		SinglePlanningCalendarMonthGrid.prototype._fireSelectionEvent = function (oEvent) {
+			var oTarget = oEvent.srcControl,
+				$target = jQuery(oEvent.target).eq(0),
 				$cell = $target.closest('.sapMSPCMonthDay').eq(0),
 				bIsLink = $target.length && $target[0].classList.contains("sapMLnk"),
 				iTimestamp,
 				oStartDate,
 				oEndDate;
 
-			if ($cell && !bIsLink) {
+			if (oTarget && oTarget.isA("sap.m.SinglePlanningCalendarMonthGrid") && $cell && !bIsLink) {
 				iTimestamp = parseInt($cell.attr("sap-ui-date"));
 
 				oStartDate = new Date(iTimestamp);
@@ -282,8 +329,63 @@ sap.ui.define([
 				oEndDate = new Date(oStartDate);
 				oEndDate.setDate(oEndDate.getDate() + 1);
 
-				this.fireEvent("cellPress", { startDate: oStartDate, endDate: oEndDate});
+				this.fireEvent("cellPress", {startDate: oStartDate, endDate: oEndDate});
+				this.fireAppointmentSelect({
+					appointment: undefined,
+					appointments: this._toggleAppointmentSelection(undefined, true)
+				});
+			} else if (oTarget && oTarget.isA("sap.ui.unified.CalendarAppointment")) {
+				this.fireAppointmentSelect({
+					appointment: oTarget,
+					appointments: this._toggleAppointmentSelection(oTarget, !(oEvent.ctrlKey || oEvent.metaKey))
+				});
 			}
+		};
+
+		/**
+		 * Selects or deselects an appointment that is passed as a parameter. If it is selected, it is going to be
+		 * deselected and vice versa. If modifier keys are pressed - the previously selected appointments will be
+		 * preserved.
+		 *
+		 * @param {sap.m.CalendarAppointment} oAppointment The appointment to be selected/deselected.
+		 * @param {boolean} [bRemoveOldSelection=false] If true, previously selected appointments will be deselected.
+		 * @returns {array} Array of the appointments with changed selected state
+		 * @private
+		 */
+		SinglePlanningCalendarMonthGrid.prototype._toggleAppointmentSelection = function (oAppointment, bRemoveOldSelection) {
+			var aChangedApps = [],
+				aAppointments,
+				iAppointmentsLength,
+				i;
+
+			if (bRemoveOldSelection) {
+				aAppointments = this.getAppointments();
+				for (i = 0, iAppointmentsLength = aAppointments.length; i < iAppointmentsLength; i++) {
+					// Deselecting all selected appointments if a grid cell is focused or
+					// all selected appointments different than the currently focused appointment
+					if ( (!oAppointment || aAppointments[i].getId() !== oAppointment.getId()) && aAppointments[i].getSelected()) {
+						aAppointments[i].setProperty("selected", false, true); // do not invalidate
+						aChangedApps.push(aAppointments[i]);
+						// Get appointment element(s) (it might be rendered in several columns)
+						// remove its selection class and set aria-selected attribute to false
+						jQuery('[data-sap-ui=' + aAppointments[i].getId() + ']')
+							.attr("aria-selected", "false")
+							.find(".sapUiCalendarApp").removeClass("sapUiCalendarAppSel");
+					}
+				}
+			}
+
+			if (oAppointment) {
+				oAppointment.setProperty("selected", !oAppointment.getSelected(), true); // do not invalidate
+				aChangedApps.push(oAppointment);
+
+				// Get appointment element(s) and toggle its selection class and aria-selected attribute
+				jQuery('[data-sap-ui=' + oAppointment.getId() + ']')
+					.attr("aria-selected", oAppointment.getSelected())
+					.find(".sapUiCalendarApp").toggleClass("sapUiCalendarAppSel", oAppointment.getSelected());
+			}
+
+			return aChangedApps;
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getMoreLink = function(iAppointmentsCount, oCalendarDate, iCellIndex) {
