@@ -1,0 +1,119 @@
+/* ============================= */
+/* CSS for control sap.m/Select  */
+/* Quartz Dark theme             */
+/* ============================= */
+
+/* IconOnly */
+
+.sapMSlt.sapMSltIconOnly:not(.sapMSltDisabled) {
+	border-color: @sapUiButtonLiteBorderColor;
+	background: @sapUiButtonLiteBackground;
+	border-radius: 0.2rem;
+}
+
+/* IconOnly Hover */
+
+.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+	background: @sapUiButtonLiteHoverBackground;
+}
+
+/*IconOnly Pressed */
+.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+	background: @sapUiToggleButtonPressedBackground;
+	border: 0.0625rem solid @sapUiToggleButtonPressedBorderColor;
+}
+
+.sapMSlt:not(.sapMSltIconOnly) {
+	border-radius: 0.125rem;
+}
+
+.sapMSlt {
+	height: 2.25rem;
+}
+
+.sapMSlt > .sapMSltLabel {
+	line-height: 2.125rem;
+}
+
+.sapMSltArrow {
+	line-height: 2.25rem;
+}
+
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
+	&:before {
+		pointer-events: none;
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+
+}
+
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus:before {
+	outline-offset: -2px;
+}
+
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:focus:before {
+	outline-offset: -2px;
+}
+
+html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed:focus {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+/* TODO remove after 1.62 version */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
+	  	outline: none;
+
+		&:before {
+			content: "";
+			position: absolute;
+			border: 1px dashed @sapUiContentFocusColor;
+			top: 1px;
+			right: 1px;
+			bottom: 1px;
+			left: 1px;
+			pointer-events: none;
+			outline: none;
+		}
+
+		&.sapMSltIconOnly.sapMSltPressed:before {
+			border: 1px dashed @sapUiContentContrastFocusColor;
+		}
+	}
+}
+
+.sapMSltHoverable:not(.sapMSltState):not(.sapMSltIconOnly):hover {
+	border-color: @sapUiFieldHoverBorderColor;
+	background: @sapUiFieldHoverBackground;
+}
+
+/* pressed and hover */
+
+.sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:not(.sapMSltState):hover {
+	background: @sapUiToggleButtonPressedHoverBackground;
+	border-color: @sapUiFieldActiveBorderColor;
+}
+
+/* value state */
+
+.sapMSltState {
+	border-width: 2px;
+}
+
+/* disabled */
+
+.sapMSltDisabled {
+	opacity: 0.5;
+}
+
+div.sapMSltPicker .sapMSltPickerValueState {
+	box-shadow: inset 0 -0.0625rem @_sap_m_Dialog_HeaderShadowColor;
+}

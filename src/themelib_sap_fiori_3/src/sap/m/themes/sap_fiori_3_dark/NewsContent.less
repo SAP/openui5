@@ -1,0 +1,27 @@
+/* ================================== */
+/* CSS for control sap.m/NewsContent  */
+/* Quartz Dark theme                  */
+/* ================================== */
+
+@_sap_m_NewsContent_HeaderTextColor: @sapUiContentContrastTextColor;
+@_sap_m_NewsContent_SubHeaderTextColor: darken(@sapUiTileTextColor, 45);
+
+.sapMNwC {
+	background-color: fade(@sapUiTileBackground, 60);
+}
+
+.sapMTileCnt.News {
+	.sapMNwC {
+		text-shadow: 0 0 0.125rem @sapUiContentShadowColor;
+		.sapMNwCSbh {
+			color: @_sap_m_NewsContent_SubHeaderTextColor;
+		}
+		.sapMNwCCTxt .sapMText {
+			color: @_sap_m_NewsContent_HeaderTextColor;
+		}
+	}
+}
+
+.sapMNwC:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+}

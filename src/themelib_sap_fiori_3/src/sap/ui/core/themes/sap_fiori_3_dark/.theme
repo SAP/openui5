@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<theme xmlns="http://www.sap.com/sap.ui.library.xsd" >
+
+	<name>sap_fiori_3_dark</name>
+	<vendor>SAP SE</vendor>
+	<copyright>${copyright}</copyright>
+	<version>${version}</version>
+
+	<documentation>SAPUI5 quartz dark black theme library.</documentation>
+
+	<appData>
+		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+			url="../../../../../../test-resources/sap/ui/core/themes/sap_fiori_3_dark/relnotes/changes-{major}.{minor}.json"
+			resolve="lib" />
+	</appData>
+
+</theme>

@@ -1,0 +1,29 @@
+/* =========================== */
+/* CSS for control sap.m/Link  */
+/* Quartz Dark theme           */
+/* =========================== */
+
+@_sap_m_Link_TextShadowColor: none;
+
+.sapMLnkDsbl {
+	opacity: 0.4;
+	outline: none;
+	cursor: default;
+}
+
+.sapMLIBActive .sapMLnk {
+	color: @sapUiListActiveTextColor;
+	text-decoration: underline;
+}
+
+.sapMLnkSubtle {
+	color: darken(@sapUiLink,15);
+}
+
+.sapMLnkSubtle:focus {
+	color: @sapUiContentFocusColor;
+}
+
+.sapMLnk:not(.sapMLnkDsbl) {
+	text-shadow: @_sap_m_Link_TextShadowColor;
+}

@@ -1,0 +1,76 @@
+/* ============================= */
+/* CSS for control sap.m/Slider  */
+/* Quartz Dark theme             */
+/* ============================= */
+
+/* slider */
+.sapMSliderInner {
+	background: @sapUiFieldBorderColor;
+}
+
+.sapMSliderProgress {
+	background: @sapUiActive;
+	height: 0.25rem;
+}
+
+.sapMSliderInner {
+	height: 0.25rem;
+	min-width: 4rem;
+	border-radius: 0.25rem;
+}
+
+.sapMSliderInner:hover > .sapMSliderHandle {
+	background: @sapUiButtonBackground;
+	border: 0.125rem solid @sapUiFieldBorderColor;
+}
+
+/* slider handle */
+.sapMSliderHandle {
+	width: 1.625rem;
+	height: 1.625rem;
+	top: -0.85rem;
+	background: @sapUiButtonBackground;
+	border: 0.125rem solid @sapUiFieldBorderColor;
+	box-shadow: 0 0.0625rem 0.125rem 0 fade(@sapUiContentShadowColor, 20);
+}
+
+.sapMSliderInner .sapMSliderHandle:hover {
+	background-color: @sapUiButtonHoverBackground;
+	border-color: @sapUiActive;
+}
+
+.sapMSliderTickLabel .sapMSliderLabel {
+	padding-top: 0.4375rem;
+	height: 1rem;
+	width: 2rem;
+	left: -1rem;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
+}
+
+.sapMSliderTick {
+	margin: 0.375rem 0 0 -0.0625rem;
+}
+
+/* disabled */
+.sapMSliderDisabled {
+	opacity: 0.5;
+}
+
+/* pressed */
+.sapMSliderPressed:not(.sapMSliderInnerDisabled) > .sapMSliderHandle,
+.sapMSlider .sapMSliderInner > .sapMSliderHandle.sapMSliderHandlePressed {
+	background-color: @sapUiActive;
+	border: 0.125rem solid @sapUiActive;
+}
+
+.sapUiSizeCompact {
+	.sapMSliderHandle {
+		width: 1.25rem;
+		height: 1.25rem;
+		top: -0.6rem;
+	}
+	.sapMSliderTickLabel .sapMSliderLabel {
+		padding-top: 0.375rem;
+	}
+}

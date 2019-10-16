@@ -1,0 +1,35 @@
+/* ================================= */
+/* CSS for control sap.m/MessageBox  */
+/* Quartz Dark theme                 */
+/* ================================= */
+
+// Forces the usage of "sap-icon://message-information" if set to true else "sap-icon://hint" is used
+@_sap_m_Message_Box_Information_Icon: false;
+
+.sapMMessageBoxBarShadow(@color) {
+	box-shadow: inset 0 -0.0625rem @color;
+}
+
+.sapMDialog.sapMMessageDialog.sapMMessageBoxInfo .sapMDialogTitle > .sapMBar {
+	.sapMMessageBoxBarShadow(@sapUiInformationBorder);
+}
+
+.sapMDialog.sapMMessageDialog.sapMMessageBoxWarning .sapMDialogTitle > .sapMBar {
+	.sapMMessageBoxBarShadow(@sapUiWarningBorder);
+}
+
+.sapMDialog.sapMMessageDialog.sapMMessageBoxError .sapMDialogTitle > .sapMBar {
+	.sapMMessageBoxBarShadow(@sapUiErrorBorder);
+}
+
+.sapMDialog.sapMMessageDialog.sapMMessageBoxSuccess .sapMDialogTitle > .sapMBar {
+	.sapMMessageBoxBarShadow(@sapUiSuccessBorder);
+}
+
+.sapMDialog.sapMMessageDialog.sapMMessageBoxQuestion .sapMDialogTitle > .sapMBar {
+	.sapMMessageBoxBarShadow(@sapUiNeutralBorder);
+}
+
+.sapMDialog.sapMMessageBoxInfo .sapMDialogIcon.sapUiIcon {
+	color: @sapUiInformativeElement;
+}
