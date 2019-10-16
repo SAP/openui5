@@ -491,6 +491,25 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("suspend a component target which doesn't have router", function(assert) {
+		var oComponent = new this.Component("rootComponent");
+		var oRouter = oComponent.getRouter();
+		var oTarget = oRouter.getTarget("home");
+
+		assert.ok(oTarget, "The target can be found");
+
+		return new Promise(function(resolve) {
+			oRouter.getRoute("home").attachMatched(resolve);
+		}).then(function() {
+			try {
+				oTarget.suspend();
+				oComponent.destroy();
+			} catch (error) {
+				assert.ok(false, "error is caught which shouldn't occur");
+			}
+		});
+	});
+
 	QUnit.module("target parent and children", {
 		beforeEach: function () {
 			this.oParentView = createView(

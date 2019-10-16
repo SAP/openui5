@@ -56,9 +56,11 @@ sap.ui.define([
 		 */
 		suspend: function() {
 			if (this._isLoaded()) {
-				var oObject = this._get();
-				if (oObject.isA("sap.ui.core.UIComponent")) {
-					oObject.getRouter().stop();
+				var oObject = this._get(),
+					oRouter;
+
+				if (oObject.isA("sap.ui.core.UIComponent") && (oRouter = oObject.getRouter())) {
+					oRouter.stop();
 				}
 			}
 
