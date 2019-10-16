@@ -249,17 +249,26 @@ function(Fragment, Controller, DateFormat, JSONModel, unifiedLibrary, MessageToa
 
 		handleAppointmentSelect: function (oEvent) {
 			var oAppointment = oEvent.getParameter("appointment"),
-				oStartDate = oAppointment.getStartDate(),
-				oEndDate = oAppointment.getEndDate(),
-				oTrimmedStartDate = new Date(oStartDate),
-				oTrimmedEndDate = new Date(oEndDate),
-				bAllDate = false,
-				oModel = this.getView().getModel("allDay");
+				oStartDate,
+				oEndDate,
+				oTrimmedStartDate,
+				oTrimmedEndDate,
+				bAllDate,
+				oModel;
 
-			if (!oAppointment.getSelected()) {
-				this._oDetailsPopover.close();
+			if (!oAppointment || !oAppointment.getSelected()){
+				if (this._oDetailsPopover){
+					this._oDetailsPopover.close();
+				}
 				return;
 			}
+
+			oStartDate = oAppointment.getStartDate();
+			oEndDate = oAppointment.getEndDate();
+			oTrimmedStartDate = new Date(oStartDate);
+			oTrimmedEndDate = new Date(oEndDate);
+			bAllDate = false;
+			oModel = this.getView().getModel("allDay");
 
 			this._setHoursToZero(oTrimmedStartDate);
 			this._setHoursToZero(oTrimmedEndDate);
