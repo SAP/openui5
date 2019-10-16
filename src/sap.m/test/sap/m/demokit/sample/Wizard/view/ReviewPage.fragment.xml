@@ -44,6 +44,15 @@
 						<Label text="Some text"/>
 						<Text text="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
 						tempor incididunt ut labore et dolore magna aliqua. "/>
+						<Label text="Manufacturing Date"/>
+						<Text id="ManufacturingDate" text="{/manufacturingDate}"/>
+						<Label text="Availability"/>
+						<Text id="AvailabilityChosen" text="{/availabilityType}"/>
+						<Label text="Size"/>
+						<Hbox>
+							<Text id="Size" text="{/size}"/>
+							<Text id="Size2" class="sapUiTinyMarginBegin" text="{/measurement}"/>
+						</Hbox>
 						<Link press="editStepThree" text="Edit" />
 					</form:content>
 				</form:SimpleForm>
@@ -56,6 +65,8 @@
 					<form:content>
 						<Label text="Price"/>
 						<Text id="ProductPriceChosen" text="{/productPrice}"/>
+						<Label text="Discount Group"/>
+						<Text id="DiscountGroupChosen" text="{/discountGroup}"/>
 						<Label text="VAT Included"/>
 						<Text id="ProductVATChosen" text="{/productVAT}"/>
 						<Link press="editStepFour" text="Edit" />
@@ -65,8 +76,8 @@
 			<footer>
 				<Bar>
 					<contentRight>
-						<Button text="Submit" press="handleWizardSubmit"></Button>
-						<Button text="Cancel" press="handleWizardCancel"></Button>
+						<Button text="Submit" press="handleWizardSubmit"/>
+						<Button text="Cancel" press="handleWizardCancel"/>
 					</contentRight>
 				</Bar>
 			</footer>

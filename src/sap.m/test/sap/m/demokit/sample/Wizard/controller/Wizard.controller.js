@@ -28,11 +28,17 @@ sap.ui.define([
 			});
 			this.getView().setModel(this.model);
 			this.model.setProperty("/productType", "Mobile");
+			this.model.setProperty("/availabilityType", "In Store");
 			this.model.setProperty("/navApiEnabled", true);
 			this.model.setProperty("/productVAT", false);
+			this.model.setProperty("/measurement", "");
 			this._setEmptyValue("/productManufacturer");
 			this._setEmptyValue("/productDescription");
+			this._setEmptyValue("/size");
 			this._setEmptyValue("/productPrice");
+			this._setEmptyValue("/manufacturingDate");
+			this._setEmptyValue("/discountGroup");
+
 		},
 
 		setProductType: function (evt) {
