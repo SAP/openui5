@@ -42,7 +42,7 @@
 					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Do you want to start a new world domination campaign?</p>'})
 				],
 				buttons: [
-					new sap.m.Button({
+					new sap.m.Button("closeWarningDialog", {
 						text: "Accept",
 						press: function () {
 							oDialog1.close();
@@ -71,6 +71,24 @@
 						text: "OK",
 						press: function () {
 							oDialogErrorState.close();
+						}
+					})
+				]
+			});
+
+			var oDialogSuccessState = new sap.m.Dialog("dialogSuccessState", {
+				title: "Success",
+				ariaDescribedBy: "p1",
+				state: sap.ui.core.ValueState.Success,
+				content: [
+					new sap.ui.core.HTML({content: '<p id="p1" style="margin:0; padding: 16px;">Started</p>'})
+				],
+				buttons: [
+					new sap.m.Button({
+						id: 'oDialogSuccessStateOKButton',
+						text: "OK",
+						press: function () {
+							oDialogSuccessState.close();
 						}
 					})
 				]
@@ -1544,6 +1562,13 @@
 						width: _buttonWidth,
 						press: function () {
 							oDialogErrorState.open();
+						}
+					}),
+					new sap.m.Button('dialogWithSuccessStateButton', {
+						text: "With Success State",
+						width: _buttonWidth,
+						press: function () {
+							oDialogSuccessState.open();
 						}
 					}),
 

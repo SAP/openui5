@@ -71,11 +71,25 @@ describe('sap.m.Dialog', function() {
 		element(by.id('dialogWithCustomHeadersDialogCloseButton')).click();
 	});
 
+	it('should open warning state dialog', function() {
+		element(by.id('dialogWithStateButton')).click();
+		var dialogWarningState = element(by.id('dialog1'));
+		expect(takeScreenshot(dialogWarningState)).toLookAs('warning-state-dialog');
+		element(by.id('closeWarningDialog')).click();
+	});
+
 	it('should open error state dialog', function() {
 		element(by.id('dialogWithErrorStateButton')).click();
 		var dialogErrorState = element(by.id('dialogErrorState'));
 		expect(takeScreenshot(dialogErrorState)).toLookAs('error-state-dialog');
 		element(by.id('oDialogErrorStateOKButton')).click();
+	});
+
+	it('should open success state dialog', function() {
+		element(by.id('dialogWithSuccessStateButton')).click();
+		var dialogSuccessState = element(by.id('dialogSuccessState'));
+		expect(takeScreenshot(dialogSuccessState)).toLookAs('success-state-dialog');
+		element(by.id('oDialogSuccessStateOKButton')).click();
 	});
 
 	it('should open information state dialog', function() {
