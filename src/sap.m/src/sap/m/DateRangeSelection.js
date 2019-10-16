@@ -710,7 +710,7 @@ sap.ui.define([
 				if (oStartDate) {
 					if (!this._oDateRange.getStartDate() || this._oDateRange.getStartDate().getTime() !== oStartDate.getTime()) {
 						this._oDateRange.setStartDate(new Date(oStartDate.getTime()));
-						this._oCalendar.focusDate(oStartDate);
+						this._getCalendar().focusDate(oStartDate);
 					}
 				} else {
 					if (this._oDateRange.getStartDate()) {
@@ -722,7 +722,7 @@ sap.ui.define([
 				if (oEndDate) {
 					if (!this._oDateRange.getEndDate() || this._oDateRange.getEndDate().getTime() !== oEndDate.getTime()) {
 						this._oDateRange.setEndDate(new Date(oEndDate.getTime()));
-						this._oCalendar.focusDate(oEndDate);
+						this._getCalendar().focusDate(oEndDate);
 					}
 				} else {
 					if (this._oDateRange.getEndDate()) {
@@ -834,7 +834,7 @@ sap.ui.define([
 	};
 
 	DateRangeSelection.prototype._selectDate = function () {
-		var aSelectedDates = this._oCalendar.getSelectedDates();
+		var aSelectedDates = this._getCalendar().getSelectedDates();
 
 		if (aSelectedDates.length > 0) {
 			var oDate1 = aSelectedDates[0].getStartDate();
@@ -879,6 +879,21 @@ sap.ui.define([
 				this._oPopup.close();
 			}
 		}
+	};
+
+	DateRangeSelection.prototype._handleCalendarSelect = function(){
+		var oSelectedDates = this._getCalendar().getSelectedDates(),
+			oSelectedStartDate = oSelectedDates[0].getStartDate(),
+			oSelectedEndDate = oSelectedDates[0].getEndDate();
+
+		if (this.getShowFooter()) {
+			if (oSelectedStartDate && oSelectedEndDate) {
+				this._oPopup.getBeginButton().setEnabled(true);
+			}
+			return;
+		}
+
+		this._selectDate();
 	};
 
 	/**

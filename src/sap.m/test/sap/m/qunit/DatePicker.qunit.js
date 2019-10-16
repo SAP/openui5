@@ -278,6 +278,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oRP.getBeginButton().getVisible(), "Begin button is visible");
+		assert.notOk(oRP.getBeginButton().getEnabled(), "Begin button is disabled");
 		assert.notOk(oRP.getShowHeader(), "Header is not visible");
 		assert.ok(oRP.getEndButton().getVisible(), "End button is visible");
 
@@ -307,6 +308,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oRP.getBeginButton().getVisible(), "Begin button is visible");
+		assert.notOk(oRP.getBeginButton().getEnabled(), "Begin button is disabled");
 		assert.ok(oRP.getShowHeader(), "Header is visible");
 		assert.strictEqual(oRP.getTitle(), sLabelText, "Dialog title text is correct");
 		assert.notOk(oRP.getEndButton(), "End button is destroyed");
@@ -902,8 +904,8 @@ sap.ui.define([
 
 		// assert
 
-		assert.ok(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with initialFocusedDateValue");
-		assert.equal(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+		assert.ok(this.oDp._getCalendar().focusDate.calledWith(oExpectedDateValue), "focusDate should be called with initialFocusedDateValue");
+		assert.equal(this.oDp._getCalendar().focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
 	});
 
 	QUnit.test("_fillDateRange should call Calendar's focusDate method with current date if initialFocusedDateValue and value are not set", function (assert) {
@@ -916,8 +918,8 @@ sap.ui.define([
 		this.oDp._fillDateRange();
 
 		// assert
-		assert.equal(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), false, "focusDate should not be called with initialFocusedDateValue");
-		assert.notEqual(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+		assert.equal(this.oDp._getCalendar().focusDate.calledWith(oExpectedDateValue), false, "focusDate should not be called with initialFocusedDateValue");
+		assert.notEqual(this.oDp._getCalendar().focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
 	});
 
 	QUnit.test("_fillDateRange should call Calendar's focusDate method with dateValue", function (assert) {
@@ -931,8 +933,8 @@ sap.ui.define([
 		this.oDp._fillDateRange();
 
 		// assert
-		assert.ok(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with dateValue");
-		assert.equal(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+		assert.ok(this.oDp._getCalendar().focusDate.calledWith(oExpectedDateValue), "focusDate should be called with dateValue");
+		assert.equal(this.oDp._getCalendar().focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
 
 		// cleanup
 		oGetDateValue.restore();
@@ -1160,15 +1162,15 @@ sap.ui.define([
 
 		oDP5.focus();
 		qutils.triggerEvent("click", "DP5-icon");
-		assert.equal(oDP5._oCalendar.getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
-		assert.equal(oDP5._oCalendar.getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
+		assert.equal(oDP5._getCalendar().getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
+		assert.equal(oDP5._getCalendar().getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
 		jQuery("#DP5-cal--Month0-20151124").focus();
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP5.getValue(), "11/24/15", "Value in internal format set");
 
 		oDP7.focus();
 		qutils.triggerEvent("click", "DP7-icon");
-		assert.equal(oDP7._oCalendar.getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
+		assert.equal(oDP7._getCalendar().getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
 		jQuery("#DP7-cal--Month0-20151124").focus();
 		qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(oDP7.getValue(), "2/11/1437 AH", "Value in binding format set");
@@ -1255,7 +1257,7 @@ sap.ui.define([
 		oDP3._fillDateRange();
 		//Assert
 		var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
-		var oFocusedDate = oDP3._oCalendar._getFocusedDate().toUTCJSDate();
+		var oFocusedDate = oDP3._getCalendar()._getFocusedDate().toUTCJSDate();
 		assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DP3: focused date equals min date when current dateValue out of min/max range");
 
 		//Cleanup
@@ -1268,7 +1270,7 @@ sap.ui.define([
 
 		//Assert
 		var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
-		oFocusedDate = oDP3._oCalendar._getFocusedDate().toUTCJSDate();
+		oFocusedDate = oDP3._getCalendar()._getFocusedDate().toUTCJSDate();
 		assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DP3: focused date equals min date when" +
 			" current <dateValue> is null");
 
@@ -1316,8 +1318,8 @@ sap.ui.define([
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
 		//Assert
-		assert.equal(oDP3._oCalendar.getMinDate().toString(), oDP3.getMinDate().toString(), "Calendar has the same MinDate as DatePicker");
-		assert.equal(oDP3._oCalendar.getMaxDate().toString(), oDP3.getMaxDate().toString(), "Calendar has the same MaxDate as DatePicker");
+		assert.equal(oDP3._getCalendar().getMinDate().toString(), oDP3.getMinDate().toString(), "Calendar has the same MinDate as DatePicker");
+		assert.equal(oDP3._getCalendar().getMaxDate().toString(), oDP3.getMaxDate().toString(), "Calendar has the same MaxDate as DatePicker");
 		//Clean - closes the picker
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
@@ -1337,8 +1339,8 @@ sap.ui.define([
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
 		//Assert
-		assert.ok(!oDP3._oCalendar.getMinDate(), "Calendar has no MinDate");
-		assert.ok(!oDP3._oCalendar.getMaxDate(), "Calendar has no MaxDate");
+		assert.ok(!oDP3._getCalendar().getMinDate(), "Calendar has no MinDate");
+		assert.ok(!oDP3._getCalendar().getMaxDate(), "Calendar has no MaxDate");
 		//Cleanup
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
@@ -1402,7 +1404,7 @@ sap.ui.define([
 		oDP.focus();
 		qutils.triggerEvent("click", sIconId);
 		//Assert
-		assert.equal(oDP._oCalendar._getFocusedDate().toLocalJSDate().toString(), oDP._oCalendar.getMinDate().toString(),
+		assert.equal(oDP._getCalendar()._getFocusedDate().toLocalJSDate().toString(), oDP._getCalendar().getMinDate().toString(),
 			".. should focus a date equal to the <minDate>");
 
 		//Cleanup
@@ -1498,7 +1500,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DP3-icon");
 		assert.ok(jQuery("#DP3-cal--Month0-20160601").hasClass("sapUiCalItemType01"), "20160601 has Type01");
 		assert.equal(oDP3.getSpecialDates().length, 1, "1 SpecialDate in Aggregation");
-		assert.equal(oDP3._oCalendar.getLegend(), oLegend.getId(), "Legend set at Calendar");
+		assert.equal(oDP3._getCalendar().getLegend(), oLegend.getId(), "Legend set at Calendar");
 
 		oDate = new Date(2016, 5, 2);
 		var oDate2 = new Date(2016, 5, 3);
@@ -1732,7 +1734,7 @@ sap.ui.define([
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
-		assert.ok(oDP._oCalendar instanceof CustomYearPicker, "Calendar is of type CustomYearPicker");
+		assert.ok(oDP._getCalendar() instanceof CustomYearPicker, "Calendar is of type CustomYearPicker");
 
 		// Clean
 		oDP.destroy();
@@ -1756,7 +1758,7 @@ sap.ui.define([
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
-		assert.ok(oDP._oCalendar instanceof CustomMonthPicker, "Calendar is of type CustomMonthPicker");
+		assert.ok(oDP._getCalendar() instanceof CustomMonthPicker, "Calendar is of type CustomMonthPicker");
 
 		// Clean
 		oDP.destroy();
@@ -1933,7 +1935,7 @@ sap.ui.define([
 		// Assert
 		assert.notOk(oOkButton.getEnabled(), "Ok button is disabled");
 
-		this.oDP._oCalendar.fireSelect();
+		this.oDP._getCalendar().fireSelect();
 
 		// Assert
 		assert.ok(this.fnHandleCalendarSelect.calledOnce, "_handleCalendarSelect handle is called when a date is pressed");
@@ -1949,15 +1951,42 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press footer cancel button", function(assert) {
-
-		// Act
+		// Prepare
 		this.oDP.setShowFooter(true);
 		this.oDP.toggleOpen();
-		this.oDP._oPopup.getEndButton().firePress();
+
+		var oPopup = this.oDP._oPopup,
+			oBeginButton = oPopup.getBeginButton(),
+			oEndButton = oPopup.getEndButton();
+
+		// Act
+		oEndButton.firePress();
 
 		// Assert
 		assert.ok(this.fnHandleCalendarSelect.notCalled, "_handleCalendarSelect handler is not called when 'Cancel' button is pressed");
-		assert.notOk(this.oDP._oPopup.isOpen(), "Popover is closed");
+		assert.notOk(oPopup.isOpen(), "Popover is closed");
+		assert.notOk(oBeginButton.getEnabled(), "Begin button is disabled");
+	});
+
+	QUnit.test("Press ESC keyboard key or close the popover by clicking outside of it", function(assert) {
+		// Prepare
+		var oBeginButton;
+		this.oDP.setShowFooter(true);
+		this.oDP.toggleOpen();
+
+		oBeginButton = this.oDP._oPopup.getBeginButton();
+
+		// Act
+		this.oDP._getCalendar().fireSelect();
+
+		// Assert
+		assert.ok(oBeginButton.getEnabled(), "Begin button is enabled");
+
+		// Act
+		this.oDP._oPopup.fireAfterClose();
+
+		// Assert
+		assert.notOk(oBeginButton.getEnabled(), "Begin button is disabled");
 	});
 
 	QUnit.test("navigate", function (assert) {
@@ -2027,7 +2056,7 @@ sap.ui.define([
 			// We use 200 ms timeout here to place the test on a safe place on the event loop queue
 			// to catch all the ui updates happening with multiple delayed calls.
 			setTimeout(function () {
-				var $Days = this.oDP._oCalendar.$().find(".sapUiCalItemType03");
+				var $Days = this.oDP._getCalendar().$().find(".sapUiCalItemType03");
 				assert.strictEqual($Days.length, 2, "There should be only two special days visible");
 				assert.strictEqual(jQuery($Days[0]).data("sap-day").toString(),
 					oDateFormat.format(this.oStartDate, false),
