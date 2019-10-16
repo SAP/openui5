@@ -1668,7 +1668,7 @@ sap.ui.define([
 		}
 
 		if (this._hasSelectionPlugin()) {
-			Log.warning("If a selection plugin is applied to the table, the selection mode is controlled by the plugin.", this);
+			Log.error("If a selection plugin is applied to the table, the selection mode is controlled by the plugin.", this);
 		} else {
 			this.setProperty("selectionMode", sSelectionMode);
 			this._oLegacySelectionPlugin.setSelectionMode(sSelectionMode);
