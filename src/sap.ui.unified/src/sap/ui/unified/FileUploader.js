@@ -567,7 +567,7 @@ sap.ui.define([
 				}
 			}
 		});
-		this.oBrowse = library.FileUploaderHelper.createButton();
+		this.oBrowse = library.FileUploaderHelper.createButton(this.getId() + "-fu_button");
 		this.oFilePath.setParent(this);
 		this.oBrowse.setParent(this);
 
