@@ -787,8 +787,15 @@ sap.ui.define([
 		oEvent.stopPropagation();
 	};
 
-	Menu.prototype.onsaptabnext = Menu.prototype.onsapescape;
-	Menu.prototype.onsaptabprevious = Menu.prototype.onsapescape;
+	Menu.prototype.onsaptabnext = function(oEvent){
+		if (this.isSubMenu()){
+			oEvent.preventDefault();
+		}
+		this.close(true);
+		oEvent.stopPropagation();
+	};
+
+	Menu.prototype.onsaptabprevious = Menu.prototype.onsaptabnext;
 
 	Menu.prototype._openSubMenuDelayed = function(oItem){
 		if (!oItem) {
