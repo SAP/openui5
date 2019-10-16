@@ -157,7 +157,7 @@ sap.ui.define([
 			 */
 			afterClose : {
 				/**
-				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+				 * This indicates the trigger of closing the control. If dialog is closed by either selection or closeButton (on mobile device), the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
 				 */
 				origin: {type: "sap.m.Button"}
 			},
