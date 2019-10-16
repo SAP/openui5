@@ -3880,6 +3880,89 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("After leaving action mode", function(assert) {
+		oTable.setFixedColumnCount(1);
+		initRowActions(oTable, 1, 1);
+
+		function test(oInitiallyFocusedCell, oTestedCell, oFinallyFocusedCell, fnKeyPress, sTitle) {
+			var bTestedCellIsRowHeader = TableUtils.getCellInfo(oTestedCell).isOfType(TableUtils.CELLTYPE.ROWHEADER);
+
+			oInitiallyFocusedCell.focus();
+
+			// Enter action mode
+			if (bTestedCellIsRowHeader) {
+				oTable._getKeyboardExtension()._actionMode = true;
+				oTable._getKeyboardExtension()._suspendItemNavigation();
+				oTestedCell.focus();
+			} else {
+				TableUtils.getInteractiveElements(oTestedCell)[0].focus();
+			}
+
+			// Leave action mode
+			qutils.triggerKeydown(document.activeElement, Key.F2, false, false, false);
+
+			fnKeyPress();
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), sTitle + " - Table is in navigation mode");
+			checkFocus(oFinallyFocusedCell, assert);
+		}
+
+		// Row header cell
+		test(getCell(2, 2), getRowHeader(1), getRowHeader(0), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+		}, "Row header cell: ArrowUp");
+		test(getCell(2, 2), getRowHeader(1), getRowHeader(2), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		}, "Row header cell: ArrowDown");
+		test(getCell(2, 2), getRowHeader(1), getRowHeader(1), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
+		}, "Row header cell: ArrowLeft");
+		test(getCell(2, 2), getRowHeader(1), getCell(1, 0), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
+		}, "Row header cell: ArrowRight");
+
+		// Cell in fixed column
+		test(getCell(2, 2), getCell(1, 0), getCell(0, 0), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+		}, "Cell in fixed column: ArrowUp");
+		test(getCell(2, 2), getCell(1, 0), getCell(2, 0), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		}, "Cell in fixed column: ArrowDown");
+		test(getCell(2, 2), getCell(1, 0), getRowHeader(1), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
+		}, "Cell in fixed column: ArrowLeft");
+		test(getCell(2, 2), getCell(1, 0), getCell(1, 1), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
+		}, "Cell in fixed column: ArrowRight");
+
+		// Cell in scrollable column
+		test(getCell(2, 3), getCell(1, 1), getCell(0, 1), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+		}, "Cell in scrollable column: ArrowUp");
+		test(getCell(2, 3), getCell(1, 1), getCell(2, 1), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		}, "Cell in scrollable column: ArrowDown");
+		test(getCell(2, 3), getCell(1, 1), getCell(1, 0), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
+		}, "Cell in scrollable column: ArrowLeft");
+		test(getCell(2, 3), getCell(1, 1), getCell(1, 2), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
+		}, "Cell in scrollable column: ArrowRight");
+
+		// Row action cell
+		test(getCell(2, 2), getRowAction(1), getRowAction(0), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+		}, "Row action cell: ArrowUp");
+		test(getCell(2, 2), getRowAction(1), getRowAction(2), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		}, "Row action cell: ArrowDown");
+		test(getCell(2, 2), getRowAction(1), getCell(1, oTable.columnCount - 1), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
+		}, "Row action cell: ArrowLeft");
+		test(getCell(2, 2), getRowAction(1), getRowAction(1), function() {
+			qutils.triggerKeydown(document.activeElement, Key.Arrow.RIGHT, false, false, false);
+		}, "Row action cell: ArrowRight");
+	});
+
 	QUnit.module("TableKeyboardDelegate2 - Navigation > After changing the DOM structure", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({

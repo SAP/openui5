@@ -816,6 +816,17 @@ sap.ui.define([
 			if ($Cell) {
 				TableKeyboardDelegate._focusElement(this, $Cell[0], true);
 			} else {
+				var oItemNavigation = this._getItemNavigation();
+
+				if (oItemNavigation) {
+					var aItemDomRefs = oItemNavigation.aItemDomRefs;
+					var iFocusedIndex = aItemDomRefs.indexOf(oActiveElement);
+
+					if (iFocusedIndex > -1) {
+						oItemNavigation.setFocusedIndex(iFocusedIndex);
+					}
+				}
+
 				oKeyboardExtension._setSilentFocus(oActiveElement);
 			}
 		}
