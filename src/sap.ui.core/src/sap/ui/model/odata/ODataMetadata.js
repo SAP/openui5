@@ -827,7 +827,7 @@ sap.ui.define([
 	*/
 	ODataMetadata.prototype._getEntityTypeName = function(sCollection) {
 		var sEntityTypeName, oEntitySet;
-
+		
 		if (sCollection) {
 			oEntitySet = this._findEntitySetByName(sCollection);
 			if (oEntitySet){
