@@ -642,6 +642,29 @@ sap.ui.define([
 		}, 10);
 	});
 
+	QUnit.test("Destroy beginButton on selection mode change", function (assert) {
+		// Arrange
+		this.oTableSelectDialog = new TableSelectDialog('selectDialog', {
+			title: "my SelectDialog"
+		});
+		var oDialogDestroyBeginButtonSpy = this.spy(this.oTableSelectDialog._oDialog, "destroyBeginButton");
+		this.oTableSelectDialog.setMultiSelect(true);
+
+		// Assert
+		assert.ok(this.oTableSelectDialog._oOkButton, "internal property _oOkButton should exist before deletion.");
+
+		//Arrange
+		this.oTableSelectDialog.setMultiSelect(false);
+
+		// Assert
+		assert.strictEqual(this.oTableSelectDialog._oOkButton, undefined, "internal property _oOkButton is undefined");
+		assert.strictEqual(oDialogDestroyBeginButtonSpy.callCount, 1, "DestroyBeginButton method was called.");
+
+		// Cleanup
+		oDialogDestroyBeginButtonSpy.restore();
+		this.oTableSelectDialog.destroy();
+	});
+
 	QUnit.module("Test Dialog Search");
 
 	QUnit.test("TableSelectDialog1 SearchField Set Value 'Mo'", function(assert){
