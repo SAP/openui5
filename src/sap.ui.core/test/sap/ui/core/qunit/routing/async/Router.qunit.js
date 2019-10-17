@@ -3047,7 +3047,7 @@ sap.ui.define([
 	});
 
 	var count = 0;
-	QUnit.module("activate/deactivate router in nested component", {
+	QUnit.module("Router in nested component", {
 		beforeEach: function() {
 			this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
 			hasher.setHash("");
@@ -3068,6 +3068,11 @@ sap.ui.define([
 
 			ParentComponent = UIComponent.extend("namespace1.ParentComponent" + count, {
 				metadata : {
+					rootView: {
+						viewName: "rootView1",
+						type: "JS",
+						async: true
+					},
 					routing:  {
 						config: {
 							async: true
@@ -3098,9 +3103,6 @@ sap.ui.define([
 							}
 						}
 					}
-				},
-				createContent: function() {
-					return sap.ui.jsview("rootView1");
 				},
 				init : that.fnInitRouter
 			});
@@ -3243,9 +3245,351 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("navTo with nested components", {
+		beforeEach: function() {
+			this.buildNestedComponentStructure = function(level, suffix) {
+				this.oEventProviderStub = sinon.stub(EventProvider.prototype.oEventPool, "returnObject");
+				hasher.setHash("");
+				var that = this;
+				this.fnInitRouter = function() {
+					UIComponent.prototype.init.apply(this, arguments);
+					this._router = this.getRouter();
+					this._router.initialize();
+				};
+
+				sap.ui.jsview("rootView1", {
+					createContent : function() {
+						return new ShellSubstitute(this.createId("shell"));
+					}
+				});
+
+				var ParentComponent;
+
+				ParentComponent = UIComponent.extend("namespace." + suffix + ".ParentComponent", {
+					metadata : {
+						rootView: {
+							viewName: "rootView1",
+							type: "JS",
+							async: true
+						},
+						routing:  {
+							config: {
+								async: true
+							},
+							routes: [
+								{
+									pattern: "",
+									name: "home",
+									target: {
+										name: "home",
+										prefix: "child"
+									}
+								},
+								{
+									pattern: "category",
+									name: "category"
+								}
+							],
+							targets: {
+								home: {
+									name: "namespace." + suffix + ".ChildComponent0",
+									type: "Component",
+									controlId: "shell",
+									controlAggregation: "content",
+									options: {
+										manifest: false
+									}
+								}
+							}
+						}
+					},
+					init : that.fnInitRouter
+				});
+
+				this.aNestedRouteMatchedSpies = [];
+				var aLoopBase = [];
+				Array.prototype.push.apply(aLoopBase, Array(level - 1));
+
+				aLoopBase.forEach(function(value, i) {
+					var oSpy = sinon.spy();
+					that.aNestedRouteMatchedSpies.push(oSpy);
+
+					var oMetadata;
+
+					if (i === level - 2) {
+						oMetadata = {
+							routing:  {
+								config: {
+									async: true
+								},
+								routes: [
+									{
+										pattern: "product/{id}",
+										name: "product"
+									},
+									{
+										pattern: "",
+										name: "nestedHome"
+									}
+								]
+							}
+						};
+					} else {
+						oMetadata = {
+							rootView: {
+								viewName: "rootView1",
+								type: "JS",
+								async: true
+							},
+							routing:  {
+								config: {
+									async: true
+								},
+								routes: [
+									{
+										pattern: "product/{id}",
+										name: "product",
+										target: {
+											name: "nestedComp",
+											prefix: "nestedComp" + (i + 1)
+										}
+									},
+									{
+										pattern: "",
+										name: "nestedHome"
+									}
+								],
+								targets: {
+									nestedComp: {
+										name: "namespace." + suffix + ".ChildComponent" + (i + 1),
+										type: "Component",
+										controlId: "shell",
+										controlAggregation: "content",
+										options: {
+											manifest: false
+										}
+									}
+								}
+							}
+						};
+					}
+
+					sap.ui.predefine("namespace/" + suffix + "/ChildComponent" + i + "/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+						return UIComponent.extend("namespace." + suffix + ".ChildComponent" + i, {
+							metadata : oMetadata,
+							init : function() {
+								UIComponent.prototype.init.apply(this, arguments);
+								var oRouter = this.getRouter();
+
+								oRouter.attachRouteMatched(oSpy);
+								oRouter.initialize();
+							}
+						});
+					});
+				});
+
+				this.oParentComponent = new ParentComponent("parent");
+			};
+		},
+		afterEach: function() {
+			this.oParentComponent.destroy();
+			this.oEventProviderStub.restore();
+		}
+	});
+
+	QUnit.test("Call navTo with specific route and parameter for nested component", function(assert) {
+		this.buildNestedComponentStructure(2, "NavTo2Levels");
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			iHomeRouteMatchCount = 0;
+
+		var pHomeRouteMatched = new Promise(function(resolve, reject) {
+			oRouter.getRoute("home").attachMatched(function() {
+				iHomeRouteMatchCount++;
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell"),
+					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+
+				resolve(oNestedComponent);
+			});
+		});
+
+		return pHomeRouteMatched.then(function(oNestedComponent) {
+			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+			var oNestedRouter = oNestedComponent.getRouter(),
+				sId = "productA";
+
+			return new Promise(function(resolve, reject) {
+				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+
+					var oParameters = oEvent.getParameter("arguments");
+					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+					resolve();
+				});
+				oRouter.navTo("home", {}, {
+					home: {
+						route: "product",
+						parameters: {
+							id: sId
+						}
+					}
+				});
+			});
+		});
+	});
+
+	QUnit.test("Call navTo with specific route and parameter for deep nested component", function(assert) {
+		this.buildNestedComponentStructure(3, "NavTo3Levels");
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			iHomeRouteMatchCount = 0;
+
+		var pHomeRouteMatched = new Promise(function(resolve, reject) {
+			oRouter.getRoute("home").attachMatched(function() {
+				iHomeRouteMatchCount++;
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell"),
+					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+
+				resolve(oNestedComponent);
+			});
+		});
+
+		return pHomeRouteMatched.then(function(oNestedComponent) {
+			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+			var oNestedRouter = oNestedComponent.getRouter(),
+				sId = "productA";
+
+			return new Promise(function(resolve, reject) {
+				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+					var oParameters = oEvent.getParameter("arguments"),
+						aViews = oEvent.getParameter("views");
+
+					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+					assert.equal(aViews.length, 1, "A target instance is created");
+					assert.ok(aViews[0] instanceof sap.ui.core.ComponentContainer, "The target instance is an ComponentContainer");
+
+					var oNestedComponent = aViews[0].getComponentInstance(),
+						oRouter = oNestedComponent.getRouter();
+
+					var oGrandChildRouteMatchedSpy = that.aNestedRouteMatchedSpies[1];
+
+					assert.equal(oGrandChildRouteMatchedSpy.callCount, 1, "A Route is matched in the grand child router");
+					var oCall = oGrandChildRouteMatchedSpy.getCall(0);
+					assert.strictEqual(oCall.thisValue, oRouter, "The correct spy is taken");
+					assert.equal(oCall.args[0].getParameter("name"), "product", "The correct route is matched");
+
+					assert.ok(oRouter.isInitialized(), "The router in nested component is started");
+					assert.equal(oRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
+
+					resolve();
+				});
+				oRouter.navTo("home", {}, {
+					home: {
+						route: "product",
+						parameters: {
+							id: sId
+						},
+						componentTargetInfo: {
+							nestedComp: {
+								route: "product",
+								parameters: {
+									id: sId + "-nested"
+								}
+							}
+						}
+					}
+				});
+			});
+		});
+	});
+
+	QUnit.test("Suspend nested routers after switch to other route", function(assert) {
+		this.buildNestedComponentStructure(3, "NavTo3LevelsSwitch");
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			iHomeRouteMatchCount = 0;
+
+		var pHomeRouteMatched = new Promise(function(resolve, reject) {
+			oRouter.getRoute("home").attachMatched(function() {
+				iHomeRouteMatchCount++;
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell"),
+					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+
+				resolve(oNestedComponent);
+			});
+		});
+
+		return pHomeRouteMatched.then(function(oNestedComponent) {
+			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+			var oNestedRouter = oNestedComponent.getRouter(),
+				sId = "productA";
+
+			return new Promise(function(resolve, reject) {
+				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+					assert.equal(iHomeRouteMatchCount, 1, "home route is still matched only once");
+					var oParameters = oEvent.getParameter("arguments"),
+						aViews = oEvent.getParameter("views");
+
+					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+					assert.equal(aViews.length, 1, "A target instance is created");
+					assert.ok(aViews[0] instanceof sap.ui.core.ComponentContainer, "The target instance is an ComponentContainer");
+
+					var oNestedComponent = aViews[0].getComponentInstance(),
+						oRouter = oNestedComponent.getRouter();
+
+					assert.ok(oRouter.isInitialized(), "The router in nested component is started");
+					assert.equal(oRouter._getLastMatchedRouteName(), "product", "The correct route is matched");
+
+					resolve();
+				});
+				oRouter.navTo("home", {}, {
+					home: {
+						route: "product",
+						parameters: {
+							id: sId
+						},
+						componentTargetInfo: {
+							nestedComp: {
+								route: "product",
+								parameters: {
+									id: sId + "-nested"
+								}
+							}
+						}
+					}
+				});
+			});
+		}).then(function() {
+			return new Promise(function(resolve, reject) {
+				// switch to another route in the top level router
+				oRouter.getRoute("category").attachMatched(function(oEvent) {
+					that.aNestedRouteMatchedSpies.forEach(function(oSpy) {
+						assert.equal(oSpy.callCount, 0, "The nested routers are not matched again");
+					});
+					resolve();
+				});
+				// reset the call history of the routeMatched spies on the nested Routers
+				that.aNestedRouteMatchedSpies.forEach(function(oSpy) {
+					oSpy.resetHistory();
+				});
+				oRouter.navTo("category");
+			});
+		});
+	});
 
 	QUnit.module("Loading nested components through routing's targets with componentUsage settings", {
 		beforeEach: function() {
+			hasher.setHash("");
 			sap.ui.loader.config({
 				paths: {
 					"routing": "../testdata/routing"
@@ -3308,4 +3652,5 @@ sap.ui.define([
 
 		}.bind(this));
 	});
+
 });

@@ -113,17 +113,7 @@ sap.ui.define([
 		assert.strictEqual(this.oRHC.getHash(), "", "intial hash is empty string");
 	});
 
-	QUnit.test("setHash called without Router attached", function(assert) {
-		var oWarningSpy = sinon.spy(Log, "warning");
-
-		this.oRHC.setHash("newHash");
-
-		assert.equal(oWarningSpy.callCount, 1, "Warning log is called");
-		assert.equal(oWarningSpy.getCall(0).args[0], "The function setHash is called on a router which isn't matched within the last browser hashChange event. The call is ignored.", "correct warning message is provided");
-		oWarningSpy.restore();
-	});
-
-	QUnit.test("setHash called with Router attached", function(assert) {
+	QUnit.test("call setHash", function(assert) {
 		var sHash, aChildPrefixes,
 			iCount = 0,
 			fnHashSet = function(oEvent) {
@@ -131,9 +121,6 @@ sap.ui.define([
 				sHash = oEvent.getParameter("hash");
 				aChildPrefixes = oEvent.getParameter("deletePrefix");
 			};
-
-		// simulate that there's a router attached
-		this.oRHC.attachEvent("hashChanged", function(){});
 
 		this.oRHC.attachEvent("hashSet", fnHashSet);
 
@@ -144,17 +131,72 @@ sap.ui.define([
 		assert.deepEqual(aChildPrefixes, [], "child prefix is an empty array");
 	});
 
-	QUnit.test("replaceHash called without Router attached", function(assert) {
-		var oWarningSpy = sinon.spy(Log, "warning");
+	QUnit.test("setHash called with collecting nested hash changes", function(assert) {
+		var sHash, aChildPrefixes, aNestedHashInfo,
+			iCount = 0,
+			fnHashSet = function(oEvent) {
+				iCount++;
+				sHash = oEvent.getParameter("hash");
+				aChildPrefixes = oEvent.getParameter("deletePrefix");
+				aNestedHashInfo = oEvent.getParameter("nestedHashInfo");
+			};
 
-		this.oRHC.replaceHash("newHash");
+		this.oRHC.attachEvent("hashSet", fnHashSet);
 
-		assert.equal(oWarningSpy.callCount, 1, "Warning log is called");
-		assert.equal(oWarningSpy.getCall(0).args[0], "The function replaceHash is called on a router which isn't matched within the last browser hashChange event. The call is ignored.", "correct warning message is provided");
-		oWarningSpy.restore();
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested");
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.setHash("newHash", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				var sHash = oNestedRHC.getHash();
+				assert.strictEqual(sHash, RouterHashChanger.InvalidHash, "The nested RouterHashChanger should return InvalidHash marker during its parent is still in collect mode");
+
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		})).then(function() {
+			assert.equal(iCount, 1, "hashSet event is fired");
+			assert.equal(sHash, "newHash", "The correct hash parameter is set in the event");
+			assert.deepEqual(aChildPrefixes, ["nested"], "child prefix is collected");
+			assert.equal(aNestedHashInfo.length, 1, "nested hash info is provided");
+			assert.equal(aNestedHashInfo[0].key, "nested", "nested hash info is correct");
+			assert.equal(aNestedHashInfo[0].hash, "nestedHash", "nested hash info is correct");
+			assert.deepEqual(aNestedHashInfo[0].deletePrefix, [], "nested hash info is correct");
+		});
 	});
 
-	QUnit.test("replaceHash called with Router attached", function(assert) {
+	QUnit.test("setHash called with collecting nested hash changes (suppress active hash collection)", function(assert) {
+		var sHash, aChildPrefixes, aNestedHashInfo,
+			iCount = 0,
+			fnHashSet = function(oEvent) {
+				iCount++;
+				sHash = oEvent.getParameter("hash");
+				aChildPrefixes = oEvent.getParameter("deletePrefix");
+				aNestedHashInfo = oEvent.getParameter("nestedHashInfo");
+			};
+
+		this.oRHC.attachEvent("hashSet", fnHashSet);
+
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested");
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.setHash("newHash", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		}), /* suppress active prefix collection */true).then(function() {
+			assert.equal(iCount, 1, "hashSet event is fired");
+			assert.equal(sHash, "newHash", "The correct hash parameter is set in the event");
+			assert.strictEqual(aChildPrefixes, undefined, "child prefix is undefined when active prefix collection is suppressed");
+			assert.equal(aNestedHashInfo.length, 1, "nested hash info is provided");
+			assert.equal(aNestedHashInfo[0].key, "nested", "nested hash info is correct");
+			assert.equal(aNestedHashInfo[0].hash, "nestedHash", "nested hash info is correct");
+			assert.deepEqual(aNestedHashInfo[0].deletePrefix, [], "nested hash info is correct");
+		});
+	});
+
+	QUnit.test("call replaceHash", function(assert) {
 		var sHash, aChildPrefixes,
 			iCount = 0,
 			fnHashReplaced = function(oEvent) {
@@ -163,9 +205,6 @@ sap.ui.define([
 				aChildPrefixes = oEvent.getParameter("deletePrefix");
 			};
 
-		// simulate that there's a router attached
-		this.oRHC.attachEvent("hashChanged", function(){});
-
 		this.oRHC.attachEvent("hashReplaced", fnHashReplaced);
 
 		this.oRHC.replaceHash("newHash");
@@ -173,6 +212,68 @@ sap.ui.define([
 		assert.equal(iCount, 1, "hashReplaced event is fired");
 		assert.equal(sHash, "newHash", "The correct hash parameter is set in the event");
 		assert.deepEqual(aChildPrefixes, [], "child prefix is an empty array");
+	});
+
+	QUnit.test("replaceHash called with collecting nested hash changes", function(assert) {
+		var sHash, aChildPrefixes, aNestedHashInfo,
+			iCount = 0,
+			fnHashReplaced = function(oEvent) {
+				iCount++;
+				sHash = oEvent.getParameter("hash");
+				aChildPrefixes = oEvent.getParameter("deletePrefix");
+				aNestedHashInfo = oEvent.getParameter("nestedHashInfo");
+			};
+
+		this.oRHC.attachEvent("hashReplaced", fnHashReplaced);
+
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested");
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.replaceHash("newHash", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		})).then(function() {
+			assert.equal(iCount, 1, "hashReplace event is fired");
+			assert.equal(sHash, "newHash", "The correct hash parameter is set in the event");
+			assert.deepEqual(aChildPrefixes, ["nested"], "child prefix is collected");
+			assert.equal(aNestedHashInfo.length, 1, "nested hash info is provided");
+			assert.equal(aNestedHashInfo[0].key, "nested", "nested hash info is correct");
+			assert.equal(aNestedHashInfo[0].hash, "nestedHash", "nested hash info is correct");
+			assert.deepEqual(aNestedHashInfo[0].deletePrefix, [], "nested hash info is correct");
+		});
+	});
+
+	QUnit.test("replaceHash called with collecting nested hash changes (suppress active prefix collection)", function(assert) {
+		var sHash, aChildPrefixes, aNestedHashInfo,
+			iCount = 0,
+			fnHashReplaced = function(oEvent) {
+				iCount++;
+				sHash = oEvent.getParameter("hash");
+				aChildPrefixes = oEvent.getParameter("deletePrefix");
+				aNestedHashInfo = oEvent.getParameter("nestedHashInfo");
+			};
+
+		this.oRHC.attachEvent("hashReplaced", fnHashReplaced);
+
+		var oNestedRHC = this.oRHC.createSubHashChanger("nested");
+		oNestedRHC.attachEvent("hashChanged", function() {});
+
+		return this.oRHC.replaceHash("newHash", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				oNestedRHC.setHash("nestedHash");
+				resolve();
+			});
+		}), /* suppress active prefix collection */true).then(function() {
+			assert.equal(iCount, 1, "hashReplace event is fired");
+			assert.equal(sHash, "newHash", "The correct hash parameter is set in the event");
+			assert.strictEqual(aChildPrefixes, undefined, "child prefix is undefined when active prefix collection is suppressed");
+			assert.equal(aNestedHashInfo.length, 1, "nested hash info is provided");
+			assert.equal(aNestedHashInfo[0].key, "nested", "nested hash info is correct");
+			assert.equal(aNestedHashInfo[0].hash, "nestedHash", "nested hash info is correct");
+			assert.deepEqual(aNestedHashInfo[0].deletePrefix, [], "nested hash info is correct");
+		});
 	});
 
 	QUnit.test("fireHashChanged", function(assert) {
@@ -277,11 +378,9 @@ sap.ui.define([
 		assert.equal(oRHCHashChangedSpy.args[0][0].getParameter("newHash"), "rootHash", "The correct hash is passed");
 		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChange event is fired on oChildRHC1");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "fooHash/fooHash1", "The correct hash is passed");
-		assert.equal(oChild2HashChangedSpy.callCount, 1, "hashChange event is fired on oChildRHC2");
-		assert.equal(oChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "The correct hash is passed");
-		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChange event is fired on oGrandChildRHC1");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "The correct hash is passed");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChange event is fired on oGrandChildRHC2");
+		assert.equal(oChild2HashChangedSpy.callCount, 0, "no hashChange event is fired on oChildRHC2 because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 0, "no hashChange event is fired on oGrandChildRHC1 because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChange event is fired on oGrandChildRHC2 because the RouterHashChanger already have empty string as default hash");
 		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "foo.child2/foo.child2Hash", "The correct hash is passed");
 	});
 
@@ -352,23 +451,18 @@ sap.ui.define([
 	QUnit.test("fireHashChanged on SubHashChanger", function(assert) {
 		this.oRHC.fireHashChanged("hash", {});
 
-		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
-		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child1 hashChanged fired");
-		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child2 hashChanged fired");
+		assert.equal(this.oChild1HashChangedSpy.callCount, 0, "no hashChanged event is fired on the child hashChanger because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
 	});
 
 	QUnit.test("fireHashChanged on SubHashChanger with subhash", function(assert) {
 		this.oRHC.fireHashChanged("hash", {"foo": "subhash"});
 
 		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
-		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
+		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 0, "hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child1 hashChanged fired");
-		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Grand Child2 hashChanged fired");
 	});
 
 	QUnit.test("fireHashChanged on SubHashChanger with subhashes on nested level", function(assert) {
@@ -376,9 +470,8 @@ sap.ui.define([
 
 		assert.equal(this.oChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the child hashChanger");
 		assert.equal(this.oGrandChild1HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
-		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 1, "hashChanged event is fired on the grand child hashChanger");
+		assert.equal(this.oGrandChild2HashChangedSpy.callCount, 0, "no hashChanged event is fired on the grand child hashChanger because the RouterHashChanger already have empty string as default hash");
 		assert.equal(this.oChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash.foo", "Child1 hashChanged fired");
-		assert.equal(this.oGrandChild2HashChangedSpy.args[0][0].getParameter("newHash"), "", "Child1 hashChanged fired");
+		assert.equal(this.oGrandChild1HashChangedSpy.args[0][0].getParameter("newHash"), "subhash.foo", "Grand Child1 hashChanged fired");
 	});
 });

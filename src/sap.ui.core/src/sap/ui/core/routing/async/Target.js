@@ -49,7 +49,8 @@ sap.ui.define([
 		 *
 		 * Currently this function stops the router of the component when
 		 * the object which is loaded by this target is an instance of
-		 * UIComponent
+		 * UIComponent. When the target is still being loaded or not loaded
+		 * yet, this function has no effect.
 		 *
 		 * @return {sap.ui.core.routing.Target} The 'this' to chain the call
 		 * @private
@@ -62,7 +63,10 @@ sap.ui.define([
 				if (oObject.isA("sap.ui.core.UIComponent") && (oRouter = oObject.getRouter())) {
 					oRouter.stop();
 				}
+			} else {
+				Log.warning("The target with name '" + this._oOptions._name + "' can't be suspended because it's being loaded or not loaded yet");
 			}
+
 
 			return this;
 		},

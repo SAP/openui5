@@ -165,14 +165,17 @@ sap.ui.define([
 			},
 
 			_routeSwitched: function() {
+				this._suspend();
+				this.fireEvent("switched", {
+					name: this._oConfig.name
+				});
+			},
+
+			_suspend: function() {
 				if (this._oRouter._oTargets) {
 					// suspend the targets which were displayed when the route was matched
 					this._oRouter._oTargets.suspend(this._oConfig.target);
 				}
-
-				this.fireEvent("switched", {
-					name: this._oConfig.name
-				});
 			},
 
 			/**
@@ -202,7 +205,97 @@ sap.ui.define([
 			 * @public
 			 */
 			getURL : function (oParameters) {
-				return this._aRoutes[0].interpolate(oParameters);
+				return this._aRoutes[0].interpolate(oParameters || {});
+			},
+
+			/**
+			 * Converts the different format of targets info into the object format
+			 * which has the key of a target saved under the "name" property
+			 *
+			 * @param {string|string[]|object|object[]} vTargetsInfo The key of the target or
+			 *  an object which has the key of the target under property 'name' as specified
+			 *  in the {@link #constructor} or an array of keys or objects
+			 * @return {object[]} Array of objects and each of the objects contains at least
+			 *  the key of the target under the "name" property
+			 * @private
+			 */
+			_alignTargetsConfig: function(vTarget) {
+				if (!vTarget) {
+					return [];
+				}
+
+				if (!Array.isArray(vTarget)) {
+					return (typeof vTarget === "string") ?
+						[{ name: vTarget }] : [vTarget];
+				}
+
+				// vTarget is an array
+				return vTarget.map(function(vTargetConfig) {
+					if (typeof vTargetConfig === "string") {
+						vTargetConfig = {
+							name: vTargetConfig
+						};
+					}
+					return vTargetConfig;
+				});
+			},
+
+			/**
+			 * Loads targets with type "Component" recursively and set the new hash based on the given
+			 * <code>oComponentTargetInfo</code>.
+			 *
+			 * @param {object} oComponentTargetInfo See the documentation {@link sap.ui.core.routing.Router#navTo}
+			 * @param {boolean} [bParentRouteSwitched=false] Whether a new route in the Parent router is matched
+			 * @returns {Promise} A promise which resolves after all targets with type "Component" are loaded and
+			 *  the new hash based on the given component target info is set.
+			 *
+			 * @private
+			 */
+			_changeHashWithComponentTargets: function(oComponentTargetInfo, bParentRouteSwitched) {
+				var aTargetsConfig = this._alignTargetsConfig(this._oConfig.target),
+					oTargets = this._oRouter._oTargets,
+					aTargets,
+					aLoadedPromises;
+
+				if (aTargetsConfig && aTargetsConfig.length > 0 && oTargets) {
+					aTargets = oTargets.getTarget(aTargetsConfig);
+
+					if (!Array.isArray(aTargets)) {
+						aTargets = [aTargets];
+					}
+				} else {
+					aTargets = [];
+				}
+
+				aLoadedPromises = aTargets.map(function(oTarget, index) {
+					if (oTarget._oOptions.type === "Component") {
+						var pLoaded = oTarget._load({
+							prefix: aTargetsConfig[index].prefix
+						});
+
+						return pLoaded
+							.then(function(oComponent) {
+								var oRouter = oComponent.getRouter(),
+									oHashChanger = oRouter && oRouter.getHashChanger(),
+									oRouteInfo = oComponentTargetInfo && oComponentTargetInfo[aTargetsConfig[index].name],
+									sRouteName = oRouteInfo && oRouteInfo.route,
+									oRoute = oRouter && oRouter.getRoute(sRouteName),
+									bRouteSwitched;
+
+								if (oRouteInfo) {
+									if (oRoute) {
+										bRouteSwitched = oRouter._getLastMatchedRouteName() !== sRouteName;
+										oHashChanger.setHash(oRoute.getURL(oRouteInfo.parameters), bParentRouteSwitched || !bRouteSwitched);
+										return oRoute._changeHashWithComponentTargets(oRouteInfo.componentTargetInfo, bParentRouteSwitched || bRouteSwitched);
+									} else {
+										Log.error("Can not navigate to route with name '" + sRouteName + "' because the route does not exist in component with id '" + oComponent.getId() + "'");
+									}
+								}
+							});
+					}
+				});
+
+				return Promise.all(aLoadedPromises);
 			},
 
 			/**

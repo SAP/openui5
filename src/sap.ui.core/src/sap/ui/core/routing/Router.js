@@ -13,8 +13,10 @@ sap.ui.define([
 	'sap/ui/thirdparty/crossroads',
 	"sap/base/util/UriParameters",
 	"sap/base/util/deepEqual",
+	"sap/base/util/isEmptyObject",
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"./RouterHashChanger"
 ],
 	function(
 		library,
@@ -27,8 +29,10 @@ sap.ui.define([
 		crossroads,
 		UriParameters,
 		deepEqual,
+		isEmptyObject,
 		Log,
-		jQuery
+		jQuery,
+		RouterHashChanger
 	) {
 	"use strict";
 
@@ -315,7 +319,8 @@ sap.ui.define([
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */
 			initialize : function (bIgnoreInitialHash) {
-				var that = this;
+				var that = this,
+					sHash;
 
 				if (!this.oHashChanger) {
 					this.oHashChanger = HashChanger.getInstance().createRouterHashChanger();
@@ -366,6 +371,7 @@ sap.ui.define([
 				}
 
 				this.oHashChanger.init();
+				sHash = this.oHashChanger.getHash();
 
 				// initialized because whether the current hash is parsed is
 				// controlled by the 'bSuppressHashParsing' parameter and the
@@ -373,8 +379,11 @@ sap.ui.define([
 				// shouldn't be processed.
 				this.oHashChanger.attachEvent("hashChanged", this.fnHashChanged);
 
-				if (!bIgnoreInitialHash) {
-					this.parse(this.oHashChanger.getHash());
+				// The HashChanger returns an InvalidHash when one of its ancestors is currently in
+				// the collect mode of preparing the next hash change. In this case, the Router should
+				// not be initialized and wait for the next 'hashChanged' event.
+				if (!bIgnoreInitialHash && sHash !== RouterHashChanger.InvalidHash) {
+					this.parse(sHash);
 				}
 
 				return this;
@@ -512,11 +521,6 @@ sap.ui.define([
 			 * @public
 			 */
 			getURL : function (sName, oParameters) {
-				if (oParameters === undefined) {
-					//even if there are only optional parameters crossroads cannot navigate with undefined
-					oParameters = {};
-				}
-
 				var oRoute = this.getRoute(sName);
 				if (!oRoute) {
 					Log.warning("Route with name " + sName + " does not exist", this);
@@ -631,6 +635,21 @@ sap.ui.define([
 			 *             Name of the route
 			 * @param {object} [oParameters]
 			 *             Parameters for the route
+			 * @param {object} [oComponentTargetInfo]
+			 *             Information for route name and parameters of the router in nested components. When any target
+			 *             of the route which is specified with the <code>sName</code> parameter loads a component and a
+			 *             route of this component whose pattern is different than an empty string should be matched
+			 *             directly with this navTo call, the route name and its parameters can be given by using this
+			 *             parameter. Information for deeper nested component target can be given within the
+			 *             <code>componentTargetInfo</code> property which contains the same properties as the top
+			 *             level.
+			 * @param {object} [oComponentTargetInfo.anyName] The name of a target which loads a component. This target is
+			 *  used in the Route which is specified by <code>sName</code>.
+			 * @param {string} [oComponentTargetInfo.anyName.route] The name of the route which should be matched after this
+			 *  navTo call.
+			 * @param {object} [oComponentTargetInfo.anyName.parameters] The parameters which are needed by the route.
+			 * @param {object} [oComponentTargetInfo.anyName.componentTargetInfo] The information for the targets within a
+			 *  nested component. This shares the same structure with the <code>oComponentTargetInfo</code> parameter.
 			 * @param {boolean} [bReplace=false]
 			 *             If set to <code>true</code>, the hash is replaced, and there will be no entry in the browser
 			 *             history, if set to <code>false</code>, the hash is set and the entry is stored in the browser
@@ -638,21 +657,53 @@ sap.ui.define([
 			 * @public
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */
-			navTo : function (sName, oParameters, bReplace) {
-				var sURL = this.getURL(sName, oParameters);
+			navTo : function (sName, oParameters, oComponentTargetInfo, bReplace) {
+				var that = this,
+					bRouteSwitched = this._getLastMatchedRouteName() !== sName,
+					oRoute = this.getRoute(sName),
+					pComponentHashChange, sHash;
 
-				if (sURL === undefined) {
-					Log.error("Can not navigate to route with name " + sName + " because the route does not exist");
+				if (!oRoute) {
+					Log.warning("Route with name " + sName + " does not exist", this);
+					return this;
 				}
 
+				if (typeof oComponentTargetInfo === "boolean") {
+					bReplace = oComponentTargetInfo;
+				}
+
+				if (oParameters === undefined) {
+					//even if there are only optional parameters crossroads cannot navigate with undefined
+					oParameters = {};
+				}
+
+				if (oComponentTargetInfo && !isEmptyObject(oComponentTargetInfo)) {
+					if (!this._oConfig._async) {
+						Log.error("navTo with component target info is only supported with async router", this);
+						return this;
+					}
+					pComponentHashChange = oRoute._changeHashWithComponentTargets(oComponentTargetInfo, bRouteSwitched);
+				}
+
+				sHash = oRoute.getURL(oParameters);
 				if (bReplace) {
-					this._bLastHashReplaced = true;
-					this.oHashChanger.replaceHash(sURL);
+					that._bLastHashReplaced = true;
+					that.oHashChanger.replaceHash(sHash, pComponentHashChange, /*bIgnoreActivePrefix*/ !bRouteSwitched);
 				} else {
-					this.oHashChanger.setHash(sURL);
+					that.oHashChanger.setHash(sHash, pComponentHashChange, /*bIgnoreActivePrefix*/ !bRouteSwitched);
 				}
 
 				return this;
+			},
+
+			/**
+			 * Returns the name of the last matched route.
+			 * If there's no route matched before, it returns undefined
+			 *
+			 * @returns {string} The name of the last matched route
+			 */
+			_getLastMatchedRouteName: function() {
+				return this._matchedRoute && this._matchedRoute._oConfig.name;
 			},
 
 			/**

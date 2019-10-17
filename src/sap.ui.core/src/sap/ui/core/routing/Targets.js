@@ -399,22 +399,24 @@ sap.ui.define([
 			 */
 			getTarget : function (vName) {
 				var that = this,
-					aResult = [];
+					aTargetsConfig = this._alignTargetsInfo(vName),
+					aTargets;
 
-				if (Array.isArray(vName)) {
-					vName.forEach(function (sName) {
-						var oTarget = that._mTargets[sName];
+				aTargets = aTargetsConfig.reduce(function (aAcc, oConfig) {
+					var oTarget = that._mTargets[oConfig.name];
 
-						if (oTarget) {
-							aResult.push(oTarget);
-						} else {
-							Log.error("The target you tried to get \"" + sName + "\" does not exist!", that);
-						}
-					});
-					return aResult;
-				}
+					if (oTarget) {
+						aAcc.push(oTarget);
+					} else {
+						Log.error("The target you tried to get \"" + oConfig.name + "\" does not exist!", that);
+					}
+					return aAcc;
+				}, []);
 
-				return this._mTargets[vName];
+				// When there's only one target found, the target should be returned directly instead of an array
+				// with this target.
+				// When no target is found, undefined should be returned instead of an empty array
+				return aTargets.length <= 1 ? aTargets[0] : aTargets;
 			},
 
 			/**
@@ -621,17 +623,17 @@ sap.ui.define([
 			 * @private
 			 */
 			_alignTargetsInfo: function(vTargetsInfo) {
-				if (!vTargetsInfo) {
+				if (vTargetsInfo === undefined) {
 					return [];
 				}
 
 				if (!Array.isArray(vTargetsInfo)) {
-					return (typeof vTargetsInfo === "string") ?
-						[{ name: vTargetsInfo }] : [vTargetsInfo];
+					return (typeof vTargetsInfo === "object") ?
+						[vTargetsInfo] : [{ name: vTargetsInfo }];
 				}
 
 				return vTargetsInfo.map(function(vTargetInfo) {
-					if (typeof vTargetInfo === "string") {
+					if (typeof vTargetInfo !== "object") {
 						vTargetInfo = {
 							name: vTargetInfo
 						};
@@ -741,7 +743,8 @@ sap.ui.define([
 			_getTitleTargetName: function(vTargetNames, sProvidedTitleTargetName) {
 				var oTarget, sTitleTargetName;
 
-				sTitleTargetName = sProvidedTitleTargetName || (typeof vTargetNames === "string" && vTargetNames);
+				sTitleTargetName = sProvidedTitleTargetName ||
+					(typeof vTargetNames === "string" ? vTargetNames : undefined);
 
 				if (!sTitleTargetName) {
 					vTargetNames.some(function(sTargetName) {
@@ -780,7 +783,10 @@ sap.ui.define([
 				var oTitleTarget;
 
 				sTitleTarget = this._getTitleTargetName(vTargets, sTitleTarget);
-				oTitleTarget = this.getTarget(sTitleTarget);
+
+				if (sTitleTarget) {
+					oTitleTarget = this.getTarget(sTitleTarget);
+				}
 
 				if (this._oLastTitleTarget) {
 					this._oLastTitleTarget.detachTitleChanged(this._forwardTitleChanged, this);

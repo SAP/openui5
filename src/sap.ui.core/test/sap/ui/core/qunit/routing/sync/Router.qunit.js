@@ -736,7 +736,14 @@ sap.ui.define([
 
 	QUnit.module("navTo", {
 		beforeEach: function () {
-			this.oRouter = new Router();
+			this.oRouter = new Router({
+				home: {
+					pattern: ""
+				},
+				product : {
+					pattern : "product"
+				}
+			});
 			this.oRouter.oHashChanger = {
 				setHash: jQuery.noop
 			};
@@ -752,6 +759,14 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oReturnValue, this.oRouter, "able to chain navTo");
+	});
+
+	QUnit.test("Should log an error if navTo is called with component target info", function(assert) {
+		var oLogErrorSpy = this.spy(Log, "error");
+		this.oRouter.navTo("product", {}, {foo: {}});
+
+		sinon.assert.callCount(oLogErrorSpy, 1);
+		sinon.assert.calledWith(oLogErrorSpy, sinon.match(/navTo with component target info is only supported with async router/));
 	});
 
 	QUnit.module("View generation");
