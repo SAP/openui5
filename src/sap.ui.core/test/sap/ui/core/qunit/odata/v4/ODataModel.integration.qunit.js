@@ -21190,4 +21190,30 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A property binding with a path using a collection navigation property must not
+	// cause an invalid late property request.
+	QUnit.test("BCP 1970517588: invalid property path", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'TEAM01\')}">\
+	<Text id="teamId" text="{Team_Id}"/>\
+	<Text id="name" text="{TEAM_2_EMPLOYEES/Name}"/>\
+</FlexBox>';
+
+		// once from initialize and once from the context's checkUpdate
+		this.oLogMock.expects("error").twice()
+			.withArgs("Failed to drill-down into TEAM_2_EMPLOYEES/Name, invalid segment: Name");
+
+		this.expectRequest("TEAMS('TEAM01')?$select=Team_Id"
+				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				Team_Id : "TEAM_01",
+				TEAM_2_EMPLOYEES : []
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("name", null);
+
+		return this.createView(assert, sView, oModel);
+	});
 });

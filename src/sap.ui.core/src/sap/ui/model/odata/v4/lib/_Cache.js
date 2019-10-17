@@ -456,7 +456,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oValue The object that is expected to have the value
 		 * @param {string} sSegment The path segment that is missing
-		 * @param {number} iPathLength The lenght of the path of the missing value
+		 * @param {number} iPathLength The length of the path of the missing value
 		 * @returns {any} The value if it could be determined or undefined otherwise
 		 */
 		function missingValue(oValue, sSegment, iPathLength) {
@@ -464,6 +464,9 @@ sap.ui.define([
 				sReadLink,
 				sServiceUrl;
 
+			if (Array.isArray(oValue)) {
+				return invalidSegment(sSegment); // missing key predicate or index
+			}
 			return that.oRequestor.getModelInterface()
 				.fetchMetadata(that.sMetaPath + "/" + _Helper.getMetaPath(sPropertyPath))
 				.then(function (oProperty) {

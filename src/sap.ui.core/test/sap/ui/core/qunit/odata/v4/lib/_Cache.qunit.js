@@ -770,6 +770,12 @@ sap.ui.define([
 			oCache.drillDown({/*no annotation found*/}, "@$ui5.context.isTransient").getResult(),
 			undefined, "no error if annotation is not found");
 
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into 0/foo/list/bar, invalid segment: bar",
+			oCache.toString(), sClassName);
+
+		assert.strictEqual(drillDown("0/foo/list/bar"), undefined, "0/foo/list/bar");
+
 		oCacheMock.expects("from$skip")
 			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
 		oCacheMock.expects("from$skip")
@@ -777,6 +783,20 @@ sap.ui.define([
 		oCacheMock.expects("from$skip")
 			.withExactArgs("1", sinon.match.same(oData[0].foo.list)).returns(3);
 		assert.strictEqual(drillDown("('a')/foo/list/1"), oData[0].foo.list[3], "('a')/foo/list/1");
+
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into ('a')/foo/list/5, invalid segment: 5",
+			oCache.toString(), sClassName);
+
+		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata").never();
+		oCacheMock.expects("from$skip")
+			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
+		oCacheMock.expects("from$skip")
+			.withExactArgs("list", sinon.match.same(oData[0].foo)).returns("list");
+		oCacheMock.expects("from$skip")
+			.withExactArgs("5", sinon.match.same(oData[0].foo.list)).returns(7);
+		assert.strictEqual(drillDown("('a')/foo/list/5"), undefined,
+			"('a')/foo/list/5: index 7 out of range in ('a')/foo/list");
 	});
 
 	//*********************************************************************************************
