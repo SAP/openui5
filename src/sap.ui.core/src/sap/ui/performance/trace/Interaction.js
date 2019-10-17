@@ -194,6 +194,7 @@ sap.ui.define([
 	}
 
 	var bInteractionActive = false,
+		bInteractionProcessed = false,
 		oCurrentBrowserEvent,
 		iInteractionStepTimer,
 		iScrollEventDelayId = 0;
@@ -430,7 +431,7 @@ sap.ui.define([
 		 */
 		notifyStepStart : function(oElement, bForce) {
 			if (bInteractionActive) {
-				if (oCurrentBrowserEvent || bForce) {
+				if ((oCurrentBrowserEvent && !bInteractionProcessed || bForce)) {
 					var sType;
 					if (bForce) {
 						sType = "startup";
@@ -452,6 +453,13 @@ sap.ui.define([
 						Interaction.onInteractionFinished(oFinshedInteraction, bForce);
 					}
 					oCurrentBrowserEvent = null;
+					//only handle the first browser event within a call stack. Ignore virtual/harmonization events.
+					bInteractionProcessed = true;
+					setTimeout(function() {
+						//cleanup internal registry after actual call stack.
+						oCurrentBrowserEvent = null;
+						bInteractionProcessed = false;
+					}, 0);
 				}
 			}
 		},

@@ -13,7 +13,6 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/Object',
 	'sap/ui/core/ResizeHandler',
-	"sap/ui/performance/trace/Interaction",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes"
 ],
@@ -21,7 +20,6 @@ sap.ui.define([
 		Device,
 		BaseObject,
 		ResizeHandler,
-		Interaction,
 		jQuery,
 		KeyCodes
 	) {
@@ -449,8 +447,6 @@ sap.ui.define([
 					fScrollTop = $Container.scrollTop(),
 					fVerticalMove = fScrollTop - this._scrollY;
 
-				Interaction.notifyStepStart(this._oControl);
-
 				this._scrollX = $Container.scrollLeft(); // remember position
 				this._scrollY = fScrollTop;
 
@@ -550,8 +546,6 @@ sap.ui.define([
 			},
 
 			_onEnd : function(oEvent){
-				Interaction.notifyEventStart(oEvent);
-
 				if (this._oPullDown && this._oPullDown._bTouchMode) {
 					this._oPullDown.doScrollEnd();
 					this._refresh();
