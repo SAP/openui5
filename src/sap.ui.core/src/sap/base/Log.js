@@ -108,6 +108,11 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	mMaxLevel = { '' : Log.Level.ERROR },
 
 	/**
+	 * Maximum amount of stored log entries
+	 */
+	iLogEntriesLimit = 3000,
+
+	/**
 	 * Registered listener to be informed about new log entries.
 	 */
 	oListener = null,
@@ -126,6 +131,27 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	}
 
 	/**
+	 * Discard 30 percent of log entries when the limit is reached
+	 */
+	function discardLogEntries() {
+		var iLogLength =  aLog.length;
+		if (iLogLength) {
+			var iEntriesToKeep = Math.min(iLogLength, Math.floor(iLogEntriesLimit * 0.7));
+
+			if (oListener) {
+				// Notify listener that entries are being discarded
+				oListener.onDiscardLogEntries(aLog.slice(0, iLogLength - iEntriesToKeep));
+			}
+
+			if (iEntriesToKeep) {
+				aLog = aLog.slice(-iEntriesToKeep, iLogLength);
+			} else {
+				aLog = [];
+			}
+		}
+	}
+
+	/**
 	 * Gets the log entry listener instance, if not present creates a new one
 	 * @returns {Object} the singleton log entry listener
 	 */
@@ -137,6 +163,13 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 					for (var i = 0; i < oListener.listeners.length; i++) {
 						if (oListener.listeners[i].onLogEntry) {
 							oListener.listeners[i].onLogEntry(oLogEntry);
+						}
+					}
+				},
+				onDiscardLogEntries: function(aDiscardedLogEntries) {
+					for (var i = 0; i < oListener.listeners.length; i++) {
+						if (oListener.listeners[i].onDiscardLogEntries) {
+							oListener.listeners[i].onDiscardLogEntries(aDiscardedLogEntries);
 						}
 					}
 				},
@@ -383,7 +416,16 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 			if (bLogSupportInfo && typeof fnSupportInfo === "function") {
 				oLogEntry.supportInfo = fnSupportInfo();
 			}
-			aLog.push( oLogEntry );
+
+			if (iLogEntriesLimit) {
+				if (aLog.length >= iLogEntriesLimit) {
+					// Cap the amount of stored log messages by 30 percent
+					discardLogEntries();
+				}
+
+				aLog.push(oLogEntry);
+			}
+
 			if (oListener) {
 				oListener.onLogEntry(oLogEntry);
 			}
@@ -451,6 +493,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * <li>level {module:sap/base/Log.Level} LogLevel level of the entry
 	 * <li>message {string} message text of the entry
 	 * </ul>
+	 * The default amount of stored log entries is limited to 3000 entries.
 	 * @returns {object[]} an array containing the recorded log entries
 	 * @public
 	 * @static
@@ -460,10 +503,41 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	};
 
 	/**
+	 * Returns the maximum amount of stored log entries.
+	 *
+	 * @returns {int|Infinity} The maximum amount of stored log entries or Infinity if no limit is set
+	 * @private
+	 * @ui5-restricted
+	 */
+	Log.getLogEntriesLimit = function() {
+		return iLogEntriesLimit;
+	};
+
+	/**
+	 * Sets the limit of stored log entries
+	 *
+	 * If the new limit is lower than the current limit, the overlap of old log entries will be discarded.
+	 * If the limit is reached the amount of stored messages will be reduced by 30 percent.
+	 *
+	 * @param {int|Infinity} iLimit The maximum amount of stored log entries or Infinity for unlimited entries
+	 * @private
+	 * @ui5-restricted
+	 */
+	Log.setLogEntriesLimit = function(iLimit) {
+		if (iLimit < 0) {
+			throw new Error("The log entries limit needs to be greater than or equal to 0!");
+		}
+		iLogEntriesLimit = iLimit;
+		if (aLog.length >= iLogEntriesLimit) {
+			discardLogEntries();
+		}
+	};
+
+	/**
 	 * Allows to add a new LogListener that will be notified for new log entries.
 	 *
 	 * The given object must provide method <code>onLogEntry</code> and can also be informed
-	 * about <code>onDetachFromLog</code> and <code>onAttachToLog</code>
+	 * about <code>onDetachFromLog</code>, <code>onAttachToLog</code> and <code>onDiscardLogEntries</code>.
 	 * @param {object} oListener The new listener object that should be informed
 	 * @public
 	 * @static
