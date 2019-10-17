@@ -89,17 +89,19 @@
 									<DatePicker
 											id="DP3"
 											displayFormat="short"
-											change="handleChange"/>
+											value="{/manufacturingDate}"/>
 									<Label text="Availability"/>
-									<SegmentedButton selectedItem="inStock">
-										<Button text="In store" id="inStock"/>
-										<Button text="In depot"/>
-										<Button text="In repository"/>
-										<Button text="Out of stock"/>
+									<SegmentedButton selectedKey="{/availabilityType}">
+										<items>
+											<SegmentedButtonItem key="In store" text="In store"/>
+											<SegmentedButtonItem key="In depot" text="In depot"/>
+											<SegmentedButtonItem key="In repository" text="In repository"/>
+											<SegmentedButtonItem key="Out of stock" text="Out of stock"/>
+										</items>
 									</SegmentedButton>
 									<Label text="Size"/>
-									<Input/>
-									<ComboBox maxWidth="100px">
+									<Input value="{/size}"/>
+									<ComboBox maxWidth="100px" selectedKey="{/measurement}">
 										<core:Item key="X" text="X"/>
 										<core:Item key="Y" text="Y"/>
 										<core:Item key="Z" text="Z"/>
@@ -119,13 +121,13 @@
 										editable="true">
 									<Label text="Price"/>
 									<Input value="{/productPrice}"/>
-									<Label text="Discoung group"/>
-									<MultiComboBox>
-										<core:Item key="Children" text="Kids"/>
-										<core:Item key="Children" text="Teens"/>
-										<core:Item key="Children" text="Adults"/>
-										<core:Item key="Children" text="Old people"/>
-									</MultiComboBox>
+									<Label text="Discount group"/>
+									<ComboBox selectedKey="{/discountGroup}">
+										<core:Item key="Kids" text="Kids"/>
+										<core:Item key="Teens" text="Teens"/>
+										<core:Item key="Adults" text="Adults"/>
+										<core:Item key="Elderly" text="Elderly"/>
+									</ComboBox>
 									<Label text=" VAT is included"/>
 									<CheckBox selected="{/productVAT}"/>
 								</form:SimpleForm>
