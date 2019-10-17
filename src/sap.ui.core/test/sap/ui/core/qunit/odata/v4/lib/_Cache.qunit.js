@@ -547,6 +547,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("_Cache#hasChangeListeners", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS");
+
+		// code under test
+		assert.strictEqual(oCache.hasChangeListeners(), false);
+
+		oCache.registerChange("path", "listener");
+
+		// code under test
+		assert.strictEqual(oCache.hasChangeListeners(), true);
+
+		oCache.deregisterChange("path", "listener");
+
+		// code under test
+		assert.strictEqual(oCache.hasChangeListeners(), false);
+	});
+
+	//*********************************************************************************************
 	[true, false].forEach(function (bPatch) {
 		QUnit.test("_Cache#hasPendingChangesForPath: bPatch = " + bPatch, function (assert) {
 			var oCache = new _Cache(this.oRequestor, "TEAMS");

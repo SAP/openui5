@@ -17242,6 +17242,56 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Request side effects on a context binding with an empty path and cache, relative to
+	// a context binding with a cache. Side effects are requested on the parent binding.
+	// CPOUI5UISERVICESV3-1984
+	QUnit.test("requestSideEffects: skip empty path", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="outer">\
+	<Text id="outerName" text="{Name}" />\
+	<FlexBox id="inner" binding="{path : \'\', parameters : {$$ownRequest : true}}"> \
+		<Text id="innerName" text="{Name}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+				ArtistID : "42",
+				IsActiveEntity : true,
+				Name : "Cher"
+			})
+			.expectChange("outerName", "Cher")
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+				ArtistID : "42",
+				IsActiveEntity : true,
+				Name : "Cher"
+			})
+			.expectChange("innerName", "Cher");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Name", {
+					Name : "Cherilyn"
+				})
+				.expectChange("innerName", "Cherilyn")
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Name", {
+					Name : "Cherilyn"
+				})
+				.expectChange("outerName", "Cherilyn");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("innerName").getBindingContext().requestSideEffects([{
+					$PropertyPath : "Name"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Check that the failure to refresh a complete table using requestSideEffects leads
 	// to a rejected promise, but no changes in data.
 	// JIRA: CPOUI5UISERVICESV3-1828

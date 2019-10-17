@@ -8,9 +8,10 @@ sap.ui.define([
 	"./_Helper",
 	"./_Requestor",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, jQuery) {
+], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise, jQuery) {
 	"use strict";
 
 	var // Matches if ending with a transient key predicate:
@@ -737,6 +738,20 @@ sap.ui.define([
 	Cache.prototype.getOriginalResourcePath = function (oEntity) {
 		return this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oEntity)
 			|| this.sResourcePath;
+	};
+
+	/**
+	 * Tells whether there are any registered change listeners.
+	 *
+	 * @returns {boolean}
+	 *   Whether there are any registered change listeners
+	 *
+	 * @public
+	 * @see #deregisterChange
+	 * @see #registerChange
+	 */
+	Cache.prototype.hasChangeListeners = function () {
+		return !isEmptyObject(this.mChangeListeners);
 	};
 
 	/**
