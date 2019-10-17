@@ -443,7 +443,7 @@ sap.ui.define([
 
 	QUnit.module("getChangesFillingCache and level0-changes", function (hooks) {
 		hooks.beforeEach(function() {
-			this.oChangeFromBackend = {};
+			this.oChangeFromBackend = {fileName: "rename_id_456"};
 			this.sComponentName = "testComponent";
 			this.oLrepConnector = LrepConnector.createConnector();
 			this.mComponent = {
@@ -495,7 +495,7 @@ sap.ui.define([
 
 		QUnit.test("can retrieve a preloaded changes-bundle in addition to the changes from the connector", function (assert) {
 			fnStubDebug.call(this, false); // debug is off
-			var oChangeFromBundle = {};
+			var oChangeFromBundle = {fileName: "rename_id_123"};
 			var oLoadResourceStub = fnStubBundle.call(this, true, [oChangeFromBundle]); // bundle is loaded and has a change
 			fnStubBackend.call(this, true, [this.oChangeFromBackend]); // backend call is successful and returns a change
 
@@ -512,6 +512,24 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("filters changes which are duplicates", function (assert) {
+			fnStubDebug.call(this, false); // debug is off
+			var oChange = {fileName: "rename_id_123"};
+			var oChangeFromBundle = {fileName: "rename_id_123"};
+			var oLoadResourceStub = fnStubBundle.call(this, true, [oChange]); // bundle is loaded and has a change
+			fnStubBackend.call(this, true, [oChange]); // backend call is successful and returns a change
+
+			var mPropertyBag = {
+				appName: "sap.app.name"
+			};
+
+			return Cache.getChangesFillingCache(this.oLrepConnector, this.mComponent, mPropertyBag).then(function (oResponse) {
+				var aLoadedChanges = oResponse.changes.changes;
+				assert.equal(1, oLoadResourceStub.callCount, "the changes-bundle was requested");
+				assert.equal(1, aLoadedChanges.length, "only one change was returned");
+				assert.deepEqual(oChangeFromBundle, oChange, "the change form the changes-bundle is returned");
+			});
+		});
 
 		QUnit.test("can retrieve a changes-bundle if a core configuration is set", function (assert) {
 			var oConfiguration = sap.ui.getCore().getConfiguration();
