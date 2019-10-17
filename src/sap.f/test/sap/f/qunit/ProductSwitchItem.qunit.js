@@ -131,20 +131,6 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem", "sap/ui/qunit/QUni
 			}
 		});
 
-		QUnit.test("sapFPSItemWithoutIcon class", function (assert) {
-			assert.ok(this.oProductSwitchItem.getDomRef().classList.contains("sapFPSItemWithoutIcon"), "Control has sapFPSItemWithoutIcon class when there is no icon");
-
-			this.oProductSwitchItem.setSrc("sap-icon://home");
-			Core.applyChanges();
-
-			assert.notOk(this.oProductSwitchItem.getDomRef().classList.contains("sapFPSItemWithoutIcon"), "Control hasn't sapFPSItemWithoutIcon class when there is icon");
-
-			this.oProductSwitchItem.setSrc(null);
-			Core.applyChanges();
-
-			assert.ok(this.oProductSwitchItem.getDomRef().classList.contains("sapFPSItemWithoutIcon"), "Control has sapFPSItemWithoutIcon class when there is no icon");
-		});
-
 		QUnit.test("_title aggregation additonal classses", function (assert) {
 			assert.ok(this.oProductSwitchItem._getTitle().hasStyleClass("sapFPSItemMainTitle"), "Internal aggregation has sapFPSItemMainTitle additional class");
 			assert.ok(this.oProductSwitchItem._getTitle().hasStyleClass("sapFPSItemTitle"), "Internal aggregation has sapFPSItemTitle additional class");
