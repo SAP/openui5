@@ -251,9 +251,8 @@ sap.ui.define(function () {
 			"cardDataJson": {
 				"tags": ["content", "data"],
 				"label": "{i18n>CARD_EDITOR.DATA.JSON}",
-				"type": "string",
-				"path": "content/data/json",
-				"visible": false // Currently lack of JSON Data Editor
+				"type": "json",
+				"path": "content/data/json"
 			},
 			"cardDataPath": {
 				"tags": ["content", "data"],
@@ -399,7 +398,8 @@ sap.ui.define(function () {
 			"array" : "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
 			"parameters" : "sap/ui/integration/designtime/baseEditor/propertyEditor/parametersEditor/ParametersEditor",
 			"boolean": "sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor",
-			"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+			"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor",
+			"json": "sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
 		},
 		"i18n" : "sap/ui/integration/designtime/cardEditor/i18n/i18n.properties"
 	};
