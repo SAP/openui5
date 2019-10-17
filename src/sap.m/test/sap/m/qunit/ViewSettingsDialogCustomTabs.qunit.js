@@ -319,16 +319,12 @@ sap.ui.define([
 		assert.ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
 	});
 
-	QUnit.test("Make sure 'reset' and 'back' buttons is not rendered when on custom page.", function (assert) {
+	QUnit.test("Make sure 'reset' button is rendered when on custom page.", function (assert) {
 		var sId = this.oVSD.getId();
-
-		oVsdConfig.addSortItems(this.oVSD);
-		oVsdConfig.addFilterItems(this.oVSD);
-		oVsdConfig.addPresetFilterItems(this.oVSD);
-		oVsdConfig.addGroupItems(this.oVSD);
+		this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
 
 		this.oVSD.open();
-		assert.ok(!jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should not be rendered");
+		assert.ok(jQuery.sap.domById(sId + "-resetbutton"), "Reset button should be rendered");
 	});
 
 	/* [start]  Actual unit tests of custom tabs */
