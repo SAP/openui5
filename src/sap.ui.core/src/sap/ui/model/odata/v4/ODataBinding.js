@@ -860,18 +860,24 @@ sap.ui.define([
 	 * Resets all pending changes of this binding, see {@link #hasPendingChanges}. Resets also
 	 * invalid user input.
 	 *
+	 * @returns {Promise}
+	 *   A promise which is resolved without a defined result as soon as all changes in the binding
+	 *   itself and all dependent bindings are canceled
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended or if there is a change of this binding which
-	 *   has been sent to the server and for which there is no response yet.
+	 *   has been sent to the server and for which there is no response yet
 	 *
 	 * @public
 	 * @since 1.40.1
 	 */
 	ODataBinding.prototype.resetChanges = function () {
+		var aPromises = [];
+
 		this.checkSuspended();
-		this.resetChangesForPath("");
+		this.resetChangesForPath("", aPromises);
 		this.resetChangesInDependents();
 		this.resetInvalidDataState();
+		return Promise.all(aPromises).then(function () {});
 	};
 
 	/**
@@ -880,20 +886,24 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The path
+	 * @param {sap.ui.base.SyncPromise[]} aPromises
+	 *   List of promises which is extended for each call to
+	 *   {@link sap.ui.model.odata.v4.ODataBinding#resetChangesForPath}
 	 * @throws {Error}
 	 *   If there is a change of this binding which has been sent to the server and for which there
-	 *   is no response yet.
+	 *   is no response yet
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.resetChangesForPath = function (sPath) {
-		this.withCache(function (oCache, sCachePath) {
+	ODataBinding.prototype.resetChangesForPath = function (sPath, aPromises) {
+		aPromises.push(this.withCache(function (oCache, sCachePath) {
 				oCache.resetChangesForPath(sCachePath);
-			}, sPath, true).unwrap();
+			}, sPath).unwrap());
 	};
 
 	/**
 	 * Resets pending changes in all dependent bindings.
+	 *
 	 * @throws {Error}
 	 *   If there is a change of this binding which has been sent to the server and for which there
 	 *   is no response yet.

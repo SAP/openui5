@@ -5235,9 +5235,8 @@ sap.ui.define([
 
 			// no change event: getContexts with E.C.D. returns a diff containing one delete only
 
-			oBinding.resetChanges();
-
 			return Promise.all([
+				oBinding.resetChanges(),
 				that.checkCanceled(assert, oCreatedContext1.created()),
 				that.checkCanceled(assert, oCreatedContext2.created())
 			]);
@@ -5389,9 +5388,8 @@ sap.ui.define([
 				.expectChange("id", ["42", "41"])
 				.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
 
-			oBinding.resetChanges();
-
 			return Promise.all([
+				oBinding.resetChanges(),
 				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
@@ -5483,9 +5481,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// no change event: getContexts with E.C.D. returns a diff containing two deletes only
-			oBinding.resetChanges();
 
 			return Promise.all([
+				oBinding.resetChanges(),
 				that.checkCanceled(assert, oCreatedContext1.created()),
 				that.checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert)
@@ -6300,9 +6298,9 @@ sap.ui.define([
 			assert.strictEqual(oCreatedContext2.isTransient(), true);
 
 			// no change event: getContexts with E.C.D. returns a diff containing three deletes only
-			oBinding.resetChanges();
 
 			return Promise.all([
+				oBinding.resetChanges(),
 				that.checkCanceled(assert, oCreatedContext1.created()),
 				that.checkCanceled(assert, oCreatedContext2.created())
 			]);
@@ -7901,11 +7899,9 @@ sap.ui.define([
 					.expectChange("text", "Frederic Fall", 0);
 
 				// code under test
-				if (bUseReset) {
-					oTeam2EmployeesBinding.resetChanges();
-				} else {
-					oPromise = oNewContext.delete("$direct");
-				}
+				oPromise = bUseReset
+					? oTeam2EmployeesBinding.resetChanges()
+					: oNewContext.delete("$direct");
 
 				assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no pending changes");
 				assert.notOk(oTeamBinding.hasPendingChanges(), "parent has no pending changes");
@@ -20862,13 +20858,13 @@ sap.ui.define([
 			// code under test
 			assert.ok(oOrdersBinding.hasPendingChanges());
 
-			// code under test
-			oOrdersBinding.resetChanges();
-
-			// code under test
-			assert.notOk(oOrdersBinding.hasPendingChanges());
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				oOrdersBinding.resetChanges().then(function() {
+					// code under test
+					assert.notOk(oOrdersBinding.hasPendingChanges());
+				}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -20895,28 +20891,31 @@ sap.ui.define([
 		return this.waitForChanges(assert);
 	},
 	// modify a persisted created entity; hasPendingChanges is not influenced by late properties;
-	// resetChanges reverts changes synchronously
+	// resetChanges reverts changes asynchronously
 	function (assert, oModel, oBinding, oCreatedContext) {
 		var oPropertyBinding = oModel.bindProperty("Note", oCreatedContext);
 
-		this.expectChange("note", "New");
+		this.expectChange("note", "Modified");
 
 		oPropertyBinding.initialize();
-		oPropertyBinding.setValue("Modified"); // no change event; reset is done synchronously
+		oPropertyBinding.setValue("Modified"); // change event; reset is done asynchronously
 		this.oView.byId("form").setBindingContext(oCreatedContext);
 
 		// code under test
 		assert.ok(oModel.hasPendingChanges());
 		assert.ok(oBinding.hasPendingChanges());
 
-		// code under test
-		oBinding.resetChanges();
+		this.expectChange("note", "New");
 
-		// code under test
-		assert.notOk(oModel.hasPendingChanges());
-		assert.notOk(oBinding.hasPendingChanges());
-
-		return this.waitForChanges(assert);
+		return Promise.all([
+			// code under test
+			oBinding.resetChanges().then(function() {
+				// code under test
+				assert.notOk(oModel.hasPendingChanges());
+				assert.notOk(oBinding.hasPendingChanges());
+			}),
+			this.waitForChanges(assert)
+		]);
 	}
 ].forEach(function (fnTest, i) {
 	var sTitle = "hasPendingChanges/resetChanges: late properties for a list binding without a UI"
@@ -20974,6 +20973,34 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity without using a UI and reset it immediately. No request is
+	// added to the queue and ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges
+	// work as expected.
+	// JIRA: CPOUI5UISERVICESV3-1994
+	QUnit.test("create an entity and immediately reset changes (no UI)", function (assert) {
+		var // use autoExpandSelect so that the cache is created asynchronously
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
+				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
+
+			return oListBindingWithoutUI.resetChanges().then(function ( ) {
+				assert.notOk(oModel.hasPendingChanges());
+				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+
+				return that.checkCanceled(assert, oCreatedPromise);
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: Unpark a failed patch while requesting side effects. See that the PATCH response is

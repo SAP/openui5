@@ -483,15 +483,29 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("resetChanges", function (assert) {
 		var oBinding = new ODataBinding(),
-			oBindingMock = this.mock(oBinding);
+			oBindingMock = this.mock(oBinding),
+			oResetChangesForPathPromise = SyncPromise.resolve(new Promise(function (resolve) {
+				setTimeout(resolve.bind(null, "foo"), 2);
+			})),
+			oResetChangesPromise;
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
-		oBindingMock.expects("resetChangesForPath").withExactArgs("");
+		oBindingMock.expects("resetChangesForPath").withExactArgs("", [])
+			.callsFake(function (sPath, aPromises) {
+				aPromises.push(oResetChangesForPathPromise);
+			});
 		oBindingMock.expects("resetChangesInDependents").withExactArgs();
 		oBindingMock.expects("resetInvalidDataState").withExactArgs();
 
 		// code under test
-		oBinding.resetChanges();
+		oResetChangesPromise = oBinding.resetChanges();
+
+		assert.ok(oResetChangesPromise instanceof Promise);
+
+		return oResetChangesPromise.then(function (oResult) {
+			assert.ok(oResetChangesForPathPromise.isFulfilled());
+			assert.strictEqual(oResult, undefined);
+		});
 	});
 
 	//*********************************************************************************************
@@ -502,15 +516,20 @@ sap.ui.define([
 			},
 			oExpectation,
 			sPath = {/*string*/},
-			oPromise = SyncPromise.resolve(Promise.resolve());
+			oPromise = SyncPromise.resolve(),
+			aPromises = [],
+			oUnwrappedWithCachePromise = {};
 
 		oExpectation = this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.func, sinon.match.same(sPath), true)
+			.withExactArgs(sinon.match.func, sinon.match.same(sPath))
 			.returns(oPromise);
-		this.mock(oPromise).expects("unwrap").withExactArgs();
+		this.mock(oPromise).expects("unwrap").withExactArgs().returns(oUnwrappedWithCachePromise);
 
 		// code under test
-		oBinding.resetChangesForPath(sPath);
+		oBinding.resetChangesForPath(sPath, aPromises);
+
+		assert.deepEqual(aPromises, [oUnwrappedWithCachePromise]);
+		assert.strictEqual(aPromises[0], oUnwrappedWithCachePromise);
 
 		// check that the function passed to withCache works as expected
 		this.mock(oCache).expects("resetChangesForPath").withExactArgs(sinon.match.same(sPath));
