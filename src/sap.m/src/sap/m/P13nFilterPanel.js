@@ -549,7 +549,6 @@ sap.ui.define([
 			this._bUpdateRequired = false;
 
 			aKeyFields = [];
-			aKeyFieldsExclude = [];
 			sModelName = (this.getBindingInfo("items") || {}).model;
 			var fGetValueOfProperty = function(sName, oContext, oItem) {
 				var oBinding = oItem.getBinding(sName),
@@ -586,6 +585,7 @@ sap.ui.define([
 				});
 
 				if (bEnableEmptyOperations) {
+					aKeyFieldsExclude = [];
 					bNullable = oItem_.getNullable();
 
 					// Copy the oField object and add it to the exclude array - we need this only when exclude
