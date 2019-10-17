@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/Device"
 ], function(
 	ColorPicker,
 	ColorPickerDisplayMode,
@@ -21,7 +22,8 @@ sap.ui.define([
 	Slider,
 	InvisibleText,
 	qutils,
-	waitForThemeApplied
+	waitForThemeApplied,
+	Device
 ) {
 	"use strict";
 
@@ -577,6 +579,32 @@ sap.ui.define([
 				"Internal HUE value should not be reset nor changed");
 			oAssert.strictEqual(oCalculateHSVSpy.callCount, 0, "_calculateHSV should not be called");
 			oAssert.strictEqual(oHueFieldSetterSpy.callCount, 0, "HUE field 'setValue' should not be called");
+		});
+
+		QUnit.test("_toggleFields", function (oAssert) {
+			var oDevicePhoneStub = this.stub(Device.system, "phone", true);
+
+			this.oCP.placeAt("qunit-fixture");
+			applyChanges();
+
+			// Assert
+			oAssert.ok(document.getElementsByClassName("sapUiCPHexVisible").length, "Hex field is visible by default on phone");
+
+			// Act
+			this.oCP._toggleFields();
+
+			// Assert
+			oAssert.ok(document.getElementsByClassName("sapUiCPHideHex").length, "Hex field is hidden");
+			oAssert.notOk(document.getElementsByClassName("sapUiCPDisplayRGB").length, "HSL field is visible");
+
+			// Act
+			this.oCP._toggleFields();
+
+			// Assert
+			oAssert.ok(document.getElementsByClassName("sapUiCPHideHex").length, "Hex field is hidden");
+			oAssert.ok(document.getElementsByClassName("sapUiCPDisplayRGB").length, "RGB field is visible");
+
+			oDevicePhoneStub.restore();
 		});
 
 		QUnit.module("sap.ui.unified._ColorPickerBox", {
