@@ -317,7 +317,9 @@ function(
 		events : {
 
 			/**
-			 * This event is fired when the value of the input is changed - e.g. at each keypress
+			 * Fired when the value of the input is changed by user interaction - each keystroke, delete, paste, etc.
+			 *
+			 * <b>Note:</b> Browsing autocomplete suggestions does not fires the event.
 			 */
 			liveChange : {
 				parameters : {
