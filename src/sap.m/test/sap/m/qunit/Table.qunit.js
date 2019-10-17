@@ -401,6 +401,57 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	QUnit.module("Navigated indicator");
+
+	QUnit.test("check DOM for Navigated column and cells", function(assert) {
+		var oTable = createSUT('idTableNavigated', true),
+			oFirstItem = oTable.getItems()[0],
+			oSecondItem = oTable.getItems()[1];
+		oTable.placeAt("qunit-fixture");
+		oFirstItem.setNavigated(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oTable.$().find("table").hasClass("sapMListNavigated"), "Navigated class added");
+		var $oNavigatedCol = oTable.$().find(".sapMListTblNavigatedCol");
+		assert.ok($oNavigatedCol.length > 0, "Navigated column is visible");
+		assert.equal($oNavigatedCol.attr("role"), "presentation", "presentation role is set correctly");
+		assert.equal($oNavigatedCol.attr("aria-hidden"), "true", "aria-hidden attribute is set correctly");
+
+		var $oFirstItem = oFirstItem.$().find(".sapMListTblNavigatedCell");
+		assert.ok($oFirstItem.length > 0, "Navigated cell class added");
+		assert.equal($oFirstItem.attr("role"), "presentation", "presentation role is set correctly");
+		assert.equal($oFirstItem.attr("aria-hidden"), "true", "aria-hidden attribute is set correctly");
+		assert.ok($oFirstItem.children().hasClass("sapMLIBNavigated"), "navigated indicator rendered");
+
+		assert.equal(oSecondItem.$().find(".sapMListTblNavigatedCell").children().length, 0, "navigated indicator not added as navigated property is not enabled for the item");
+
+		oFirstItem.setNavigated(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oTable.$().find("table").hasClass("sapMListNavigated"), "Navigated column is removed");
+
+		oTable.destroy();
+	});
+
+	QUnit.test("check DOM for Naivgated indicator with popins", function(assert) {
+		var oTable = createSUT('idTableNavigatedPopin', true),
+			oFirstItem = oTable.getItems()[0];
+		oTable.placeAt("qunit-fixture");
+		oFirstItem.setNavigated(true);
+
+		var oLastColumn = oTable.getColumns()[oTable.getColumns().length - 1];
+		oLastColumn.setDemandPopin(true);
+		oLastColumn.setMinScreenWidth("1000000000000px");
+		sap.ui.getCore().applyChanges();
+
+		var oNavigatedIndicator = oFirstItem.getPopin().getDomRef().childNodes[2];
+		assert.equal(oNavigatedIndicator.getAttribute("role"), "presentation", "presentation role is set correctly");
+		assert.equal(oNavigatedIndicator.getAttribute("aria-hidden"), "true", "aria-hidden attribute set correctly");
+		assert.ok(oNavigatedIndicator.firstChild.classList.contains("sapMLIBNavigated"), "navigated indicator also rendered in popin row");
+
+		oTable.destroy();
+	});
+
 	QUnit.module("Event");
 
 	QUnit.test("SelectAll in selectionChange event", function(assert) {

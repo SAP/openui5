@@ -2070,6 +2070,53 @@ sap.ui.define([
 			oThemeStub.restore();
 		});
 
+		QUnit.module("Navigated indicator");
+
+		QUnit.test("Navigated indicator should be rendered", function(assert) {
+			var oLI = new StandardListItem({
+				title: "Title of the item"
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+			assert.notOk(oLI.$().find(".sapMLIBNavigated").length > 0, "navigated property is not enabled, hence class is not rendered");
+
+			oLI.setNavigated(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oLI.$().find(".sapMLIBNavigated").length > 0, "navigated property is set correctly and class is also rendered");
+
+			// accessibility
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			assert.ok(oLI.getAccessibilityInfo().description.indexOf(oResourceBundle.getText("LIST_ITEM_NAVIGATED")) > -1, "Navigated info added to the accessibility announcement");
+
+			oLI.destroy();
+		});
+
+		QUnit.test("List should respect navigated changes", function(assert) {
+			var oListItem1 = new StandardListItem({
+				title: "oListItem1"
+			}),
+			oListItem2 = new CustomListItem({
+				title: "oListItem1",
+				highlight: "Warning"
+			}),
+			oList = new List({
+				items: [oListItem1, oListItem2]
+			});
+
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "Navigated class is not added as navigated property is not enabled");
+
+			oListItem2.setNavigated(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "List informed to add navigated class");
+
+			oListItem2.setNavigated(false);
+			sap.ui.getCore().applyChanges();
+			assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListNavigated"), "Navigated class is removed, as non of the items are navigated");
+
+			oList.destroy();
+		});
+
 		QUnit.module("Accessibility");
 
 		QUnit.test("aria-labelledby association should only be in the DOM", function(assert) {

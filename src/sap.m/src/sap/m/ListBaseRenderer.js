@@ -146,6 +146,11 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		// modes
 		rm.class("sapMListMode" + oControl.getMode());
 
+		// navigated indicator
+		if (oControl._iItemNeedsNavigated) {
+			rm.class("sapMListNavigated");
+		}
+
 		// list
 		rm.openEnd();
 

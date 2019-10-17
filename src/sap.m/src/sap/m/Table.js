@@ -544,8 +544,8 @@ sap.ui.define([
 		}
 
 		// update the visible column count and colspan
-		// highlight and navigation columns are getting rendered always
-		this._colCount = aVisibleColumns.length + 2 + !!ListBaseRenderer.ModeOrder[this.getMode()];
+		// highlight, navigation and navigated indicator columns are getting rendered always
+		this._colCount = aVisibleColumns.length + 3 + !!ListBaseRenderer.ModeOrder[this.getMode()];
 		this.$("tblBody").find(".sapMGHLICell").attr("colspan", this.getColSpan());
 		this.$("nodata-text").attr("colspan", this.getColCount());
 
@@ -643,12 +643,12 @@ sap.ui.define([
 	};
 
 	/*
-	 * Returns colspan for all columns except navigation
-	 * Because we render navigation always even it is empty
+	 * Returns colspan for all columns except navigation and navigation indicator
+	 * Because we render these columns always even it is empty
 	 * @protected
 	 */
 	Table.prototype.getColSpan = function() {
-		return (this._colCount || 1 ) - 1;
+		return (this._colCount || 1 ) - 2;
 	};
 
 	/*

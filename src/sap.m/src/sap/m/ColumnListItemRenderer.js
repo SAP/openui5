@@ -57,6 +57,19 @@ sap.ui.define([
 		rm.close("td");
 	};
 
+	ColumnListItemRenderer.renderNavigated = function(rm, oLI) {
+		rm.openStart("td");
+		rm.class("sapMListTblNavigatedCell");
+		rm.attr("role", "presentation");
+		rm.attr("aria-hidden", "true");
+		rm.openEnd();
+
+		// let the list item base render the navigated state
+		ListItemBaseRenderer.renderNavigated.apply(this, arguments);
+
+		rm.close("td");
+	};
+
 	// render type content always within a cell
 	ColumnListItemRenderer.renderType = function(rm, oLI) {
 		rm.openStart("td");
@@ -319,6 +332,9 @@ sap.ui.define([
 
 		rm.close("div");
 		rm.close("td");
+
+		this.renderNavigated(rm, oLI);
+
 		rm.close("tr");
 	};
 
