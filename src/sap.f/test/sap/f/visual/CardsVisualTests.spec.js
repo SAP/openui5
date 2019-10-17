@@ -119,4 +119,12 @@ describe("sap.f.CardsVisualTests", function () {
 		var oCard2 = element(by.css("#container-cardsVisualTests---tableContent--tablecard2"));
 		expect(takeScreenshot(oCard2)).toLookAs("6_Table_Card_2");
 	});
+
+	it("Min Height", function () {
+		browser.executeScript("window.history.back()");
+		browser.executeScript('document.getElementById("__item0-container-cardsVisualTests---main--useCases-6").scrollIntoView()');
+		element(by.id("__item0-container-cardsVisualTests---main--useCases-6")).click();
+
+		expect(takeScreenshot()).toLookAs("7_Min_Height");
+	});
 });

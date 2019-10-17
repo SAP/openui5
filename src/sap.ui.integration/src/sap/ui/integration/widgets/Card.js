@@ -841,13 +841,12 @@ sap.ui.define([
 
 		if (!this._oTemporaryContent) {
 			this._oTemporaryContent = new HBox({
-				height: "100%",
 				justifyContent: "Center",
 				busyIndicatorDelay: 0,
 				busy: true
 			});
 
-			this._oTemporaryContent.addStyleClass("sapFCardContentBusy");
+			this._oTemporaryContent.addStyleClass("sapFCardTemporaryContent");
 
 			this._oTemporaryContent.addEventDelegate({
 				onAfterRendering: function () {
