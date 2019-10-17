@@ -14,6 +14,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			sinon.spy(console, "debug");
 			sinon.spy(console, "trace");
 			Log.setLevel(5);
+			Log.setLogEntriesLimit(Infinity);
 		},
 		afterEach: function() {
 			console.error.restore();
@@ -182,25 +183,99 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	QUnit.test("Log: Listener", function(assert) {
 		var fnListener = sinon.spy(),
 			fnAttachListener = sinon.spy(),
+			fnDiscardLogEntriesListener = sinon.spy(),
 			fnDetachListener = sinon.spy(),
 			oListener = {
 				onLogEntry: fnListener,
+				onDiscardLogEntries: fnDiscardLogEntriesListener,
 				onAttachToLog: fnAttachListener,
 				onDetachFromLog: fnDetachListener
 			};
 
 		Log.addLogListener(oListener);
 		Log.error("test");
-		assert.equal(fnListener.callCount, 1, "listener called");
+		assert.equal(fnListener.callCount, 1, "onLogEntry: Listener called");
 		assert.equal(fnAttachListener.callCount, 1, "attached to log");
 		assert.equal(fnDetachListener.callCount, 0, "not yet detached from log");
 		Log.warning("test");
-		assert.equal(fnListener.callCount, 2, "listener called again");
+		assert.equal(fnListener.callCount, 2, "onLogEntry: Listener called again");
+
+		var iCurrentLogEntries = Log.getLogEntries().length;
+		Log.setLogEntriesLimit(iCurrentLogEntries);
+		assert.equal(fnDiscardLogEntriesListener.callCount, 1, "onDiscardLogEntries: Listener called");
+		var iDiscardedLogEntriesCount = iCurrentLogEntries - Math.floor(iCurrentLogEntries * 0.7);
+		assert.equal(fnDiscardLogEntriesListener.getCall(0).args[0].length, iDiscardedLogEntriesCount, "onDiscardLogEntries: Listener called with correct amount of log entries");
+
 		Log.removeLogListener(oListener);
 		Log.warning("test");
-		assert.equal(console.warn.callCount, 2, "listener not called: listener removed");
+		assert.equal(console.warn.callCount, 2, "onLogEntry: Listener not called, listener removed");
 		assert.equal(fnAttachListener.callCount, 1, "attached to log");
 		assert.equal(fnDetachListener.callCount, 1, "detached from log");
+	});
+
+	QUnit.test("Stored log entries limit - new limit is higher as before", function(assert) {
+		// Check current message count
+		var iCurrentLogEntriesCount = Log.getLogEntries().length;
+		var oOldestLogEntryBeforeLimit = Log.getLogEntries()[0];
+
+		// Set new limit
+		var iNewLogEntriesLimit = iCurrentLogEntriesCount + 10;
+		Log.setLogEntriesLimit(iNewLogEntriesLimit);
+
+		// Fill up to the limit
+		var iFillUpTo = iNewLogEntriesLimit;
+		for (var i = iCurrentLogEntriesCount; i < iFillUpTo; i++) {
+			Log.error("test " + i);
+		}
+		assert.equal(iNewLogEntriesLimit, Log.getLogEntries().length, "limit reached but no entries are discarded yet");
+
+		// Exceed limit
+		Log.error("test limit");
+		assert.equal(Math.floor(Log.getLogEntriesLimit() * 0.7) + 1, Log.getLogEntries().length, "limit should not be exceeded");
+
+		var sNewestLogMessage = Log.getLogEntries()[Log.getLogEntries().length - 1].message;
+		assert.equal(sNewestLogMessage, "test limit", "last message should be stored");
+
+		var oOldestLogEntryAfterLimit = Log.getLogEntries()[0];
+		assert.notEqual(oOldestLogEntryBeforeLimit, oOldestLogEntryAfterLimit, "oldest messages should be discarded");
+	});
+
+	QUnit.test("Stored log entries limit - new limit is lower as before", function(assert) {
+		// Fill up
+		for (var i = 1; i <= 6; i++) {
+			Log.error("test " + i);
+		}
+
+		// Set new limit
+		var iNewLogEntriesLimit = 5;
+		Log.setLogEntriesLimit(iNewLogEntriesLimit);
+
+		assert.equal(Math.floor(iNewLogEntriesLimit * 0.7), Log.getLogEntries().length, "limit should not be exceeded");
+
+		var sNewestLogMessage = Log.getLogEntries()[Log.getLogEntries().length - 1].message;
+		assert.equal(sNewestLogMessage, "test 6", "last message should be stored");
+		var sOldestLogMessage = Log.getLogEntries()[0].message;
+		assert.equal(sOldestLogMessage, "test 4", "oldest messages should be discarded");
+	});
+
+	QUnit.test("Stored log entries limit - limit is 0 (store no log entries)", function(assert) {
+		Log.error("test before");
+		Log.setLogEntriesLimit(0);
+		assert.equal(Log.getLogEntries().length, 0, "stored logs were discarded after changing the limit");
+		Log.error("test after");
+		assert.equal(Log.getLogEntries().length, 0, "no logs are stored anymore");
+	});
+
+	QUnit.test("Stored log entries limit - set and get LogEntriesLimit", function(assert) {
+		Log.setLogEntriesLimit(100);
+		assert.equal(Log.getLogEntriesLimit(), 100, "Log entries limit should be positive");
+
+		Log.setLogEntriesLimit(0);
+		assert.equal(Log.getLogEntriesLimit(), 0, "Log entries limit should be 0");
+
+		assert.throws(function() {
+			Log.setLogEntriesLimit(-1);
+		}, "Negative log entries limit is not possible.");
 	});
 
 	/*eslint-enable no-console*/
