@@ -21003,6 +21003,58 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create a new entity within a relative binding which is created via controller
+	// code. Verify that ODataBinding#resetChanges works properly even if the cache for the list
+	// binding is not yet available.
+	// JIRA: CPOUI5UISERVICESV3-1994
+	QUnit.test("Create relative via controller + resetChanges on parent", function (assert) {
+		var oFormBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="note" text="{Note}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCreatedPromise;
+
+			oFormBinding = that.oView.byId("form").getObjectBinding();
+			oCreatedPromise = oModel.bindList("SO_2_SOITEM",
+				oFormBinding.getBoundContext(), undefined, undefined,
+				{$$updateGroupId : "doNotSubmit"}).create({}, true).created();
+
+			return Promise.all([
+				// code under test
+				oFormBinding.resetChanges(),
+				oCreatedPromise.catch(function (oError) {
+					assert.strictEqual(oError.message,
+						"Request canceled: POST SalesOrderList('1')/SO_2_SOITEM; group: doNotSubmit"
+					);
+					assert.ok(oError.canceled);
+				})
+			]);
+		}).then(function () {
+			assert.notOk(oFormBinding.hasPendingChanges());
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Unpark a failed patch while requesting side effects. See that the PATCH response is
 	// processed before the GET response.
 	// JIRA: CPOUI5UISERVICESV3-1878

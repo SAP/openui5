@@ -862,7 +862,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise}
 	 *   A promise which is resolved without a defined result as soon as all changes in the binding
-	 *   itself and all dependent bindings are canceled
+	 *   itself and all dependent bindings are canceled (since 1.72.0)
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended or if there is a change of this binding which
 	 *   has been sent to the server and for which there is no response yet
@@ -875,7 +875,7 @@ sap.ui.define([
 
 		this.checkSuspended();
 		this.resetChangesForPath("", aPromises);
-		this.resetChangesInDependents();
+		this.resetChangesInDependents(aPromises);
 		this.resetInvalidDataState();
 		return Promise.all(aPromises).then(function () {});
 	};
@@ -887,8 +887,7 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   The path
 	 * @param {sap.ui.base.SyncPromise[]} aPromises
-	 *   List of promises which is extended for each call to
-	 *   {@link sap.ui.model.odata.v4.ODataBinding#resetChangesForPath}
+	 *   List of promises which is extended for each call to {@link #resetChangesForPath}
 	 * @throws {Error}
 	 *   If there is a change of this binding which has been sent to the server and for which there
 	 *   is no response yet
@@ -904,6 +903,8 @@ sap.ui.define([
 	/**
 	 * Resets pending changes in all dependent bindings.
 	 *
+	 * @param {sap.ui.base.SyncPromise[]} aPromises
+	 *   List of promises which is extended for each call to {@link #resetChangesInDependents}.
 	 * @throws {Error}
 	 *   If there is a change of this binding which has been sent to the server and for which there
 	 *   is no response yet.

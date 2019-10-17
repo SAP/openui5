@@ -933,17 +933,15 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#resetChangesInDependents
 	 */
-	ODataParentBinding.prototype.resetChangesInDependents = function () {
+	ODataParentBinding.prototype.resetChangesInDependents = function (aPromises) {
 		this.getDependentBindings().forEach(function (oDependent) {
-			var oCache = oDependent.oCache;
-
-			if (oCache !== undefined) {
-				// Pending changes for this cache are only possible when there is a cache already
+			aPromises.push(oDependent.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					oCache.resetChangesForPath("");
 				}
 				oDependent.resetInvalidDataState();
-			}
+			}).unwrap());
+
 			// mCacheByResourcePath may have changes nevertheless
 			if (oDependent.mCacheByResourcePath) {
 				Object.keys(oDependent.mCacheByResourcePath).forEach(function (sPath) {
@@ -952,7 +950,7 @@ sap.ui.define([
 			}
 			// Reset dependents, they might have no cache, but pending changes in
 			// mCacheByResourcePath
-			oDependent.resetChangesInDependents();
+			oDependent.resetChangesInDependents(aPromises);
 		});
 	};
 

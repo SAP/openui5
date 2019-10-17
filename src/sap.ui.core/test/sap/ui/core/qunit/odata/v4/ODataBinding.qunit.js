@@ -483,27 +483,37 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("resetChanges", function (assert) {
 		var oBinding = new ODataBinding(),
+			oExpectation,
 			oBindingMock = this.mock(oBinding),
 			oResetChangesForPathPromise = SyncPromise.resolve(new Promise(function (resolve) {
 				setTimeout(resolve.bind(null, "foo"), 2);
 			})),
+			oResetChangesInDependentsPromise = SyncPromise.resolve(new Promise(function (resolve) {
+				setTimeout(resolve.bind(null, "bar"), 3);
+			})),
 			oResetChangesPromise;
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
-		oBindingMock.expects("resetChangesForPath").withExactArgs("", [])
+		oExpectation = oBindingMock.expects("resetChangesForPath").withExactArgs("", [])
 			.callsFake(function (sPath, aPromises) {
 				aPromises.push(oResetChangesForPathPromise);
 			});
-		oBindingMock.expects("resetChangesInDependents").withExactArgs();
+		oBindingMock.expects("resetChangesInDependents")
+			.withExactArgs([oResetChangesForPathPromise])
+			.callsFake(function (aPromises) {
+				assert.strictEqual(aPromises, oExpectation.firstCall.args[1]);
+
+				aPromises.push(oResetChangesInDependentsPromise);
+			});
 		oBindingMock.expects("resetInvalidDataState").withExactArgs();
 
 		// code under test
 		oResetChangesPromise = oBinding.resetChanges();
-
 		assert.ok(oResetChangesPromise instanceof Promise);
 
 		return oResetChangesPromise.then(function (oResult) {
 			assert.ok(oResetChangesForPathPromise.isFulfilled());
+			assert.ok(oResetChangesInDependentsPromise.isFulfilled());
 			assert.strictEqual(oResult, undefined);
 		});
 	});
