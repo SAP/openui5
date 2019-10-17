@@ -52,6 +52,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.semantic.SemanticPage",
 			"sap.f.GridList",
 			"sap.f.GridListItem",
+			"sap.f.ProductSwitch",
+			"sap.f.ProductSwitchItem",
 			"sap.f.ShellBar"
 		],
 		elements: [

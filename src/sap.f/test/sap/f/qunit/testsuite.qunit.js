@@ -148,6 +148,16 @@ sap.ui.define(function () {
 					only: ["sap/f/GridListItem"]
 				}
 			},
+			"ProductSwitchItem": {
+				coverage: {
+					only: ["sap/f/ProductSwitchItem"]
+				}
+			},
+			"ProductSwitch": {
+				coverage: {
+					only: ["sap/f/ProductSwitch"]
+				}
+			},
 			"Router": {
 				coverage: {
 					only: ["sap/f/Router"]

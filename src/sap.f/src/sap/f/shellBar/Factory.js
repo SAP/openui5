@@ -279,7 +279,7 @@ sap.ui.define([
 				}.bind(this)
 			})
 			.setLayoutData(new OverflowToolbarLayoutData({
-				priority: OverflowToolbarPriority.High
+				priority: OverflowToolbarPriority.NeverOverflow
 			}))
 			.addStyleClass("sapFShellBarGridButton");
 		}

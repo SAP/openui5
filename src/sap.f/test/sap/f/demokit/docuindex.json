@@ -98,6 +98,7 @@
 		  "since": "1.63",
 			"samples": [
 				"sap.f.sample.ShellBar",
+				"sap.f.sample.ShellBarProductSwitch",
 				"sap.f.sample.ShellBarWIthMenuButton",
 				"sap.f.sample.ShellBarWithSearch",
 				"sap.f.sample.ShellBarWithFlexibleColumnLayout",
@@ -219,6 +220,11 @@
 		  "id": "sap.f.sample.ShellBarWIthMenuButton",
 		  "name": "Shell Bar with menu button",
 		  "description": "Shell Bar example with a menu button and a plain title."
+		},
+		{
+		  "id": "sap.f.sample.ShellBarProductSwitch",
+		  "name": "Shell Bar with Product Switch (Experimental)",
+		  "description": "Shell Bar example with enabled Product Switch, configurable by the app developer. The Product Switch control is in experimental state."
 		},
 		{
 		  "id": "sap.f.sample.ShellBarWithSearch",

@@ -541,13 +541,12 @@ function (
 		assert.ok(aContent[14] === this.oSB._oProductSwitcher, "Control at index 13 is ProductSwitcher");
 
 		// Assert - _aOverflowControls
-		assert.strictEqual(this.oSB._aOverflowControls.length, 6, "Array '_aOverflowControls' has 5 controls in it");
+		assert.strictEqual(this.oSB._aOverflowControls.length, 5, "Array '_aOverflowControls' has 5 controls in it");
 		assert.ok(this.oSB._aOverflowControls[0] === this.oSB._oManagedSearch, "Control at index 8 is Managed Search");
 		assert.ok(this.oSB._aOverflowControls[1] === this.oSB._oSearch, "Control at index 0 is Search");
 		assert.ok(this.oSB._aOverflowControls[2] === this.oSB._oNotifications, "Control at index 1 is Notifications");
 		assert.ok(this.oSB._aOverflowControls[3] === oAdditionalButton1, "Control at index 2 is AdditionalButton 1");
 		assert.ok(this.oSB._aOverflowControls[4] === oAdditionalButton2, "Control at index 3 is AdditionalButton 2");
-		assert.ok(this.oSB._aOverflowControls[5] === this.oSB._oProductSwitcher, "Control at index 4 is ProductSwitcher");
 	});
 
 	// Responsiveness

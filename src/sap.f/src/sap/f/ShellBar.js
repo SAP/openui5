@@ -537,7 +537,6 @@ function(
 		}
 		if (this._oProductSwitcher) {
 			this._oOverflowToolbar.addContent(this._oProductSwitcher);
-			this._aOverflowControls.push(this._oProductSwitcher);
 		}
 
 		this._bOTBUpdateNeeded = false;
