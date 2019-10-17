@@ -250,12 +250,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * Sets whether the Commandexecution is visible, or not. If set to
-		 * false, the CommandExecution will unregister the shortcut. If not visible,
+		 * Sets whether the <code>CommandExecution</code> is visible, or not. If set to
+		 * false, the <code>CommandExecution</code> will unregister the shortcut. If not visible,
 		 * the CommandExecution will not be triggered even if it is enabled.
 		 *
 		 * @param {boolean} bValue Whether the CommandExecution is visible, or not.
-		 * @returns {sap.ui.core.Element} The commandExecution
+		 * @returns {sap.ui.core.Element} The CommandExecution
 		 *
 		 * @public
 		 */
