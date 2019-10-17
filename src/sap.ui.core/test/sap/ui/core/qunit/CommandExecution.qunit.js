@@ -227,6 +227,21 @@ sap.ui.define([
 		oCommandExecution.trigger();
 	});
 
+	QUnit.test("visible", function(assert) {
+		assert.expect(2);
+
+		var oCommandExecution = new CommandExecution({command: "save", execute: fnExecute, enabled: true, visible: true});
+
+		function fnExecute() {
+			assert.ok(true, "execute function must not be triggered if visible === false");
+			assert.strictEqual(this, oCommandExecution, "if enable and not visible we must not trigger the command execution");
+		}
+
+		oCommandExecution.trigger();
+		oCommandExecution.setVisible(false);
+		oCommandExecution.trigger();
+	});
+
 	QUnit.module("CommandExecution integration:");
 
 	QUnit.test("enabled $cmd model", function(assert) {
@@ -379,7 +394,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("CommandExecution remove from aggregation and destro", function(assert) {
+	QUnit.test("CommandExecution remove from aggregation and destroy", function(assert) {
 		assert.expect(2);
 		var oComponent;
 
@@ -425,6 +440,137 @@ sap.ui.define([
 			oCE.trigger();
 			oComponent.destroy();
 			oCE.destroy();
+		});
+	});
+
+	QUnit.test("CommandExecution visibility - initial values", function(assert) {
+		assert.expect(6);
+		var oComponent;
+
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			var oModel = oComponent.getModel("$cmd");
+			var oPage = oView.byId("page");
+			var oPopover = oView.byId("popoverCommand");
+			var oPageContext = oPage.getBindingContext("$cmd");
+			var oPagePopoverContext = oPopover.getBindingContext("$cmd");
+
+			assert.equal(oPagePopoverContext.getPath(), "/" + oPopover.getId(), "Context to prototype set correctly");
+			assert.equal(oPageContext.getPath(), "/" + oPage.getId(), "Context to prototype set correctly");
+
+			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPagePopoverContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Save/visible", oPageContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
+			oComponent.destroy();
+		});
+	});
+
+	QUnit.test("CommandExecution visibility - switch values", function(assert) {
+		assert.expect(20);
+		var oComponent;
+
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			var oModel = oComponent.getModel("$cmd");
+			var oPage = oView.byId("page");
+			var oPopover = oView.byId("popoverCommand");
+			var CO_S_P = oView.byId("CE_SAVE_POPOVER");
+			var CO_S = oView.byId("CE_SAVE");
+			var CO_E = oView.byId("CE_EXIT");
+			var oPageContext = oPage.getBindingContext("$cmd");
+			var oPagePopoverContext = oPopover.getBindingContext("$cmd");
+
+			assert.equal(oPagePopoverContext.getPath(), "/" + oPopover.getId(), "Context to prototype set correctly");
+			assert.equal(oPageContext.getPath(), "/" + oPage.getId(), "Context to prototype set correctly");
+
+			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPagePopoverContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Save/visible", oPageContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
+			CO_S_P.setVisible(false);
+			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), false, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Save/visible", oPageContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
+			CO_S.setVisible(false);
+			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), false, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Save/visible", oPageContext), false, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
+			CO_S.setVisible(true);
+			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), false, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Save/visible", oPageContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
+			CO_S_P.setVisible(true);
+			assert.equal(oModel.getProperty("Save/visible", oPagePopoverContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Save/visible", oPageContext), true, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), true, "visible property correctly set in  model");
+			CO_E.setVisible(false);
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), false, "visible property correctly set in  model");
+			assert.equal(oModel.getProperty("Exit/visible", oPageContext), false, "visible property correctly set in  model");
+			oComponent.destroy();
+		});
+	});
+
+	QUnit.test("CommandExecution visibility - Shortcut registration", function(assert) {
+		assert.expect(24);
+		var oComponent;
+
+		// load the test component
+		return Component.create({
+			name: "my.command",
+			manifest: false
+		}).then(function(myComponent) {
+			oComponent = myComponent;
+			return oComponent.getRootControl().loaded();
+		}).then(function(oView) {
+			var oPage = oView.byId("page");
+			var oPopover = oView.byId("popoverCommand");
+			var CO_S_P = oView.byId("CE_SAVE_POPOVER");
+			var CO_S = oView.byId("CE_SAVE");
+			var CO_E = oView.byId("CE_EXIT");
+
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+s"), "Shortcut registered");
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+e"), "Shortcut registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+e"), "Shortcut not registered");
+			assert.ok(Shortcut.isRegistered(oPopover, "ctrl+s"), "Shortcut registered");
+			CO_S_P.setVisible(false);
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+s"), "Shortcut registered");
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+e"), "Shortcut registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+e"), "Shortcut not registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+s"), "Shortcut not registered");
+			CO_S.setVisible(false);
+			assert.ok(!Shortcut.isRegistered(oPage, "ctrl+s"), "Shortcut not registered");
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+e"), "Shortcut registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+e"), "Shortcut not registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+s"), "Shortcut not registered");
+			CO_S.setVisible(true);
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+s"), "Shortcut registered");
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+e"), "Shortcut registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+e"), "Shortcut not registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+s"), "Shortcut not registered");
+			CO_S_P.setVisible(true);
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+s"), "Shortcut registered");
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+e"), "Shortcut registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+e"), "Shortcut not registered");
+			assert.ok(Shortcut.isRegistered(oPopover, "ctrl+s"), "Shortcut registered");
+			CO_E.setVisible(false);
+			assert.ok(Shortcut.isRegistered(oPage, "ctrl+s"), "Shortcut registered");
+			assert.ok(!Shortcut.isRegistered(oPage, "ctrl+e"), "Shortcut not registered");
+			assert.ok(!Shortcut.isRegistered(oPopover, "ctrl+e"), "Shortcut not registered");
+			assert.ok(Shortcut.isRegistered(oPopover, "ctrl+s"), "Shortcut registered");
+			oComponent.destroy();
 		});
 	});
 });

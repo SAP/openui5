@@ -1,16 +1,20 @@
 /*global sinon, QUnit */
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Shortcut",
 	"sap/ui/core/Component",
 	"sap/ui/core/CommandExecution",
 	"sap/ui/core/Control",
-	"sap/m/Panel"
+	"sap/m/Panel",
+	"sap/m/Input"
 ], function(
+	QUtils,
 	Shortcut,
 	Component,
 	CommandExecution,
 	Control,
-	Panel
+	Panel,
+	Input
 ) {
 	"use strict";
 
@@ -19,9 +23,9 @@ sap.ui.define([
 	function fnInitControlTree() {
 		oPanel = new Panel();
 		oControl = new Control({});
-		oCE = new CommandExecution({command:"Save"});
+		oCE = new CommandExecution({command:"Save", execute:function() {}});
 		oPanel.addContent(oControl);
-		oFakeCommand = {"Save":{shortcut:"Ctrl+s", fake:true}};
+		oFakeCommand = {"Save":{shortcut:"Shift+S", fake:true}};
 		oOwnerComponentFake = {getCommand: function(sCommand) {return oFakeCommand[sCommand];}};
 		oStub = sinon.stub(Component, "getOwnerComponentFor").callsFake(
 			function() {
@@ -31,7 +35,6 @@ sap.ui.define([
 	}
 
 	function cleanup() {
-		oCE.destroy();
 		oPanel.destroy();
 		oStub.restore();
 	}
@@ -43,9 +46,50 @@ sap.ui.define([
 
 	QUnit.test("register/unregister/isRegistered", function(assert) {
 		assert.expect(2);
-		Shortcut.register(oPanel, "Ctrl+S", function() {});
-		assert.ok(Shortcut.isRegistered(oPanel, "Ctrl+S"), "Shortcut registered");
-		Shortcut.unregister(oPanel, "Ctrl+S");
-		assert.ok(!Shortcut.isRegistered(oPanel, "Ctrl+S"), "Shortcut unregistered");
+		Shortcut.register(oPanel, "Shift+S", function() {});
+		assert.ok(Shortcut.isRegistered(oPanel, "Shift+S"), "Shortcut registered");
+		Shortcut.unregister(oPanel, "Shift+S");
+		assert.ok(!Shortcut.isRegistered(oPanel, "Shift+S"), "Shortcut unregistered");
+	});
+
+	QUnit.test("register twice", function(assert) {
+		assert.expect(2);
+		Shortcut.register(oPanel, "Shift+S", function() {});
+		assert.ok(Shortcut.isRegistered(oPanel, "Shift+S"), "Shortcut registered");
+		assert.throws(Shortcut.register.bind(null, oPanel, "Shift+S", function() {}), "Can't register the same shortcut twice");
+	});
+
+	QUnit.test("register w/o callback", function(assert) {
+		assert.expect(1);
+		assert.throws(Shortcut.register.bind(null, oPanel, "Shift+S" /*,no callback function */), "No callback function given");
+	});
+
+	QUnit.test("register w/o scopecontrol", function(assert) {
+		assert.expect(1);
+		assert.throws(Shortcut.register.bind(null, null /*no scope control*/, "Shift+S", function() {}), "No scope control given");
+	});
+
+	QUnit.test("unregister w/o scopecontrol", function(assert) {
+		assert.expect(1);
+		assert.throws(Shortcut.unregister.bind(null, null /*no scope control*/, "Shift+S"), "no scope control given");
+	});
+
+	QUnit.test("unregister a not registered shortcut", function(assert) {
+		assert.expect(2);
+		oPanel.addDependent(oCE);
+		assert.ok(!Shortcut.unregister(oPanel, "Ctrl+R"), "Shortcut not unregistered");
+		assert.ok(Shortcut.unregister(oPanel, "Shift+S"), "Shortcut unregistered");
+	});
+
+	QUnit.test("fnWrapper trigger", function(assert) {
+		var done = assert.async();
+		assert.expect(1);
+		var oInput = new Input();
+		oInput.addDependent(new CommandExecution({command:"Save", execute:function() {assert.ok(true, "triggered"); done();}}));
+		oInput.placeAt("qunit-fixture");
+		oInput.addEventDelegate({"onAfterRendering": function() {
+			oInput.focus();
+			QUtils.triggerKeydown(oInput.getDomRef(), "s", true, false, false);
+		}});
 	});
 });

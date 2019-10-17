@@ -1,11 +1,13 @@
 /*global sinon, QUnit */
 sap.ui.define([
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/util/ShortcutHelper",
 	"sap/ui/core/Component",
 	"sap/ui/core/CommandExecution",
 	"sap/ui/core/Control",
 	"sap/m/Panel"
 ], function(
+	QUtils,
 	ShortcutHelper,
 	Component,
 	CommandExecution,
@@ -51,7 +53,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getNormalizedShortcutSpec", function(assert) {
-		assert.expect(1);
+		assert.expect(3);
 		var oExpectedSpec = {
 			key: 's',
 			ctrlKey: false,
@@ -60,9 +62,25 @@ sap.ui.define([
 			shiftKey: true,
 			metaKey: false
 		};
+		var oShortcut = {
+			key: 's',
+			ctrl: false,
+			alt: false,
+			shift: true
+		};
+
+		var oInvalidShortcut = {
+			key: 'selsrjtakfgj',
+			ctrl: false,
+			alt: false,
+			shift: ""
+		};
 
 		var oNormalizedShortcut = ShortcutHelper.getNormalizedShortcutSpec("Shift+s");
-		assert.deepEqual(oNormalizedShortcut, oExpectedSpec, "Shortcut normalized sucessfully");
+		assert.deepEqual(oNormalizedShortcut, oExpectedSpec, "Shortcut normalized sucessfully from string");
+		oNormalizedShortcut = ShortcutHelper.getNormalizedShortcutSpec(oShortcut);
+		assert.deepEqual(oNormalizedShortcut, oExpectedSpec, "Shortcut normalized sucessfully from object");
+		assert.throws(ShortcutHelper.getNormalizedShortcutSpec.bind(ShortcutHelper, oInvalidShortcut), "shortcut object invalid");
 	});
 
 	QUnit.test("parseShortcut", function(assert) {
@@ -117,7 +135,7 @@ sap.ui.define([
 		assert.equal(undefined, ShortcutHelper.validateShortcutString("CTRL+ALT+SHIFT+s"), "Shortcut valid");
 	});
 
-	[".", ",", "-", "plus", "=", "*", "/"].forEach(function(sKey) {
+	[".", ",", "-", "tab", "plus", "=", "*", "/"].forEach(function(sKey) {
 		QUnit.test("validateKeyCombination for key: '" + sKey + "'", function(assert) {
 			assert.expect(1);
 			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+" + sKey);
@@ -155,10 +173,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("handleKeydown", function(assert) {
-
 		assert.expect(1);
 		var e;
-
 		var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+S");
 
 		e = jQuery.Event("keydown");
@@ -170,8 +186,22 @@ sap.ui.define([
 		e.srcElement = document.createElement("input");
 		ShortcutHelper.handleKeydown(oSpec, "shift+S", function() {
 			assert.ok(true, "shortcut triggered");
-
 		}, e);
 	});
 
+	["Control", "Shift", "Alt", "AltGraph", "Meta"].forEach(function(sKey) {
+		QUnit.test("handleKeydown", function(assert) {
+			assert.expect(1);
+			var e;
+			var oSpec = ShortcutHelper.getNormalizedShortcutSpec("shift+S");
+
+			e = jQuery.Event("keydown");
+			e.key = sKey;       // sKey
+			e.srcElement = document.createElement("input");
+
+			assert.ok(!ShortcutHelper.handleKeydown(oSpec, "shift", function() {
+				assert.ok(true, "shortcut should not be triggered");
+			}, e), "Shortcut should not be triggered");
+		});
+	});
 });
