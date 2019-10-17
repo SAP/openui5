@@ -2369,6 +2369,7 @@ sap.ui.define([
 		}
 
 		this.setStartDate(oDate);
+		this._dateNav.setCurrent(oDate);
 		this._updatePickerSelection();
 		this.fireStartDateChange();
 
