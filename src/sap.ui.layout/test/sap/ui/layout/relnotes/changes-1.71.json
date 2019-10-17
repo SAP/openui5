@@ -59,5 +59,21 @@
         ]
       }
     ]
+  },
+  "1.71.1": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "463b2bcfd2779f3983d5356f80af589ded20f469",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: removed deprecated call",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970484042"
+          }
+        ]
+      }
+    ]
   }
 }
