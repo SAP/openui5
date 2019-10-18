@@ -23,7 +23,7 @@
 						densityAware="false"
 						press="navToHome"/>
 				<html:a href="../index.html" class="appTitle">
-					<Title text="UI Integration Cards" href="../index.html"/>
+					<Title text="UI Integration Cards" />
 				</html:a>
 				<IconTabHeader backgroundDesign="Transparent" id="iconTabHeader" select="onTabSelect">
 					<items>
@@ -43,7 +43,7 @@
 											icon="{icon}"
 											enabled="{enabled}"
 											expanded="{expanded}"
-											items="{items}"
+											items="{path: 'items', templateShareable: false}"
 											key="{key}"
 											hasExpander="{hasExpander}">
 						<tnt:NavigationListItem text="{title}"
