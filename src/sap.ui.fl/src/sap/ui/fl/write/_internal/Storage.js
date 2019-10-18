@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/StorageFeaturesMerger"
+	"sap/ui/fl/write/_internal/StorageFeaturesMerger",
+	"sap/base/util/ObjectPath"
 ], function(
 	ApplyUtils,
 	WriteUtils,
-	StorageFeaturesMerger
+	StorageFeaturesMerger,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -68,7 +70,8 @@ sap.ui.define([
 		return getConnectorConfigByLayer(mPropertyBag.layer)
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
-				return oConnectorConfig.connectorModule[sActionName](mPropertyBag);
+				var oConnector = ObjectPath.get(sActionName, oConnectorConfig.connectorModule);
+				return oConnector.call(oConnectorConfig.connectorModule, mPropertyBag);
 			});
 	}
 
@@ -159,6 +162,33 @@ sap.ui.define([
 		return WriteUtils.getWriteConnectors()
 			.then(sendLoadFeaturesToConnector)
 			.then(StorageFeaturesMerger.mergeResults);
+	};
+
+	Storage.appVariant = {
+		getManifest : function(mPropertyBag) {
+			return executeActionByName("appVariant.getManifest", mPropertyBag);
+		},
+		create : function(mPropertyBag) {
+			return executeActionByName("appVariant.create", mPropertyBag);
+		},
+		load : function(mPropertyBag) {
+			return executeActionByName("appVariant.load", mPropertyBag);
+		},
+		update : function(mPropertyBag) {
+			return executeActionByName("appVariant.update", mPropertyBag);
+		},
+		remove : function(mPropertyBag) {
+			return executeActionByName("appVariant.remove", mPropertyBag);
+		},
+		list : function(mPropertyBag) {
+			return executeActionByName("appVariant.list", mPropertyBag);
+		},
+		assignCatalogs : function(mPropertyBag) {
+			return executeActionByName("appVariant.assignCatalogs", mPropertyBag);
+		},
+		unassignCatalogs : function(mPropertyBag) {
+			return executeActionByName("appVariant.unassignCatalogs", mPropertyBag);
+		}
 	};
 
 	return Storage;

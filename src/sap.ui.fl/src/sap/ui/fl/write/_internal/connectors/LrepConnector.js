@@ -26,11 +26,14 @@ sap.ui.define([
 		PUBLISH: "/actions/make_changes_transportable/",
 		CHANGES: "/changes/",
 		VARIANTS: "/variants/",
-		SETTINGS: "/flex/settings"
+		SETTINGS: "/flex/settings",
+		CSRF: "/actions/getcsrftoken/",
+		APPVARIANTS: "/appdescr_variants/",
+		APPVARIANTS_OVERVIEW: "/app_variant_overview/"
 	};
 
 	/**
-	 * Write flex data into LRep back end or update an existing an existing flex data stored in LRep back end
+	 * Write flex data into LRep back end or update an existing flex data stored in LRep back end
 	 *
 	 * @param {object} mPropertyBag Property bag
 	 * @param {string} mPropertyBag.method POST for writing new data and PUT for update an existing data
@@ -39,19 +42,33 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.url Configured url for the connector
 	 * @param {string} [mPropertyBag.transport] The transport ID
 	 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
+	 * @param {boolean} [mPropertyBag.isAppVariant] indicator whether this is an app variant
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
 	 */
 	var doWrite = function(mPropertyBag) {
-		var sRoute = mPropertyBag.isLegacyVariant ? ROUTES.VARIANTS : ROUTES.CHANGES;
+		var sRoute;
+		if (mPropertyBag.isLegacyVariant) {
+			sRoute = ROUTES.VARIANTS;
+		} else if (mPropertyBag.isAppVariant) {
+			sRoute = ROUTES.APPVARIANTS;
+		} else {
+			sRoute = ROUTES.CHANGES;
+		}
+
 		var mParameters = mPropertyBag.transport ? {changelist : mPropertyBag.transport} : undefined;
+
+		if (mPropertyBag.skipIam) {
+			mParameters.skipIam = mPropertyBag.skipIam;
+		}
 		//single update --> fileName needs to be in the url
-		if (mPropertyBag.flexObject) {
+		if (mPropertyBag.flexObject && !mPropertyBag.isAppVariant) {
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
 		}
 		var sWriteUrl = ApplyUtils.getUrl(sRoute, mPropertyBag, mParameters);
+		delete mPropertyBag.reference;
 		delete mPropertyBag.fileName;
-		var sTokenUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag);
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
 			ApplyConnector,
@@ -247,6 +264,117 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		}
 	});
+
+	LrepConnector.appVariant.getManifest = function(mPropertyBag) {
+		var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			undefined,
+			undefined,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sAppVariantManifestUrl, "GET", oRequestOption);
+	};
+
+	LrepConnector.appVariant.load = function(mPropertyBag) {
+		var sAppVariantUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag);
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			undefined,
+			undefined,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sAppVariantUrl, "GET", oRequestOption);
+	};
+
+	LrepConnector.appVariant.create = function(mPropertyBag) {
+		mPropertyBag.method = "POST";
+		mPropertyBag.isAppVariant = true;
+		return doWrite(mPropertyBag);
+	};
+
+	LrepConnector.appVariant.assignCatalogs = function(mPropertyBag) {
+		var mParameters = {};
+		mParameters.action = mPropertyBag.action;
+		delete mPropertyBag.action;
+		mParameters.assignFromAppId = mPropertyBag.assignFromAppId;
+		delete mPropertyBag.assignFromAppId;
+
+		var sCatalogAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+		delete mPropertyBag.reference;
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
+
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			sTokenUrl,
+			undefined,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sCatalogAssignmentUrl, "POST", oRequestOption);
+	};
+
+	LrepConnector.appVariant.unassignCatalogs = function(mPropertyBag) {
+		var mParameters = {};
+		mParameters.action = mPropertyBag.action;
+		delete mPropertyBag.action;
+
+		var sCatalogUnAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+		delete mPropertyBag.reference;
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
+
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			sTokenUrl,
+			undefined,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sCatalogUnAssignmentUrl, "POST", oRequestOption);
+	};
+
+	LrepConnector.appVariant.update = function(mPropertyBag) {
+		mPropertyBag.method = "PUT";
+		mPropertyBag.isAppVariant = true;
+		return doWrite(mPropertyBag);
+	};
+
+	LrepConnector.appVariant.remove = function(mPropertyBag) {
+		var mParameters = {};
+		if (mPropertyBag.transport) {
+			mParameters.changelist = mPropertyBag.transport;
+		}
+
+		var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
+		delete mPropertyBag.reference;
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
+
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			sTokenUrl,
+			undefined,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
+	};
+
+	LrepConnector.appVariant.list = function(mPropertyBag) {
+		var mParameters = {};
+
+		mParameters.layer = mPropertyBag.layer;
+		mParameters["sap.app/id"] = mPropertyBag["sap.app/id"];
+
+		delete mPropertyBag.layer;
+		delete mPropertyBag["sap.app/id"];
+
+		var sAppVarOverviewUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS_OVERVIEW, mPropertyBag, mParameters);
+
+		var oRequestOption = WriteUtils.getRequestOptions(
+			ApplyConnector,
+			undefined,
+			undefined,
+			"application/json; charset=utf-8", "json"
+		);
+		return WriteUtils.sendRequest(sAppVarOverviewUrl, "GET", oRequestOption);
+	};
 
 	return LrepConnector;
 }, true);

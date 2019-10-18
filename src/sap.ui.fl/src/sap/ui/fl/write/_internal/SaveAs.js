@@ -24,15 +24,11 @@ sap.ui.define([
 	"use strict";
 
 	function _prepareTransportInfo(oAppVariant, mPropertyBag) {
-		var oSettings = oAppVariant.getSettings();
-
 		// Smart business colleagues must pass package and transport information as a part of propertybag in case of onPrem systems
 		if (
 			mPropertyBag
 			&& mPropertyBag.package
 			&& mPropertyBag.transport
-			&& !oSettings.isAtoEnabled()
-			&& !oSettings.isAtoAvailable()
 		) {
 			return Promise.resolve({
 				packageName: mPropertyBag.package,
@@ -42,7 +38,7 @@ sap.ui.define([
 
 		// Save As scenario for onPrem systems
 		return Promise.resolve({
-			packageName: "$TMP",
+			packageName: "",
 			transport: ""
 		});
 	}
@@ -104,13 +100,10 @@ sap.ui.define([
 	}
 
 	function _getTransportInfo(oAppVariant, mPropertyBag) {
-		var oSettings = oAppVariant.getSettings();
 		// Since smart business has its own transport handling, they must pass transport in the property bag
 		if (
 			mPropertyBag
 			&& mPropertyBag.transport
-			&& !oSettings.isAtoEnabled()
-			&& !oSettings.isAtoAvailable()
 		) {
 			return Promise.resolve({
 				packageName: oAppVariant.getPackage(),
@@ -199,7 +192,8 @@ sap.ui.define([
 				})
 				.then(function() {
 					// Save the app variant to backend
-					return oAppVariantClosure.submit()
+					return mPropertyBag.isForSAPDeveloper ? oAppVariantClosure.submit()
+							: oAppVariantClosure.submitViaNewConnectors()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_SAVE_APP_VARIANT_FAILED";
 							oError.saveAsFailed = true;
@@ -222,7 +216,7 @@ sap.ui.define([
 							}
 
 							// Delete the inconsistent app variant if the UI changes failed to save
-							return this.deleteAppVar({
+							return this.deleteAppVariant({
 								referenceAppId: mPropertyBag.id
 							})
 								.then(function() {
@@ -243,9 +237,62 @@ sap.ui.define([
 					throw oError;
 				});
 		},
-		deleteAppVar: function(mPropertyBag) {
+		updateAppVariant: function(mPropertyBag) {
 			var oAppVariantClosure;
-			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, true)
+			var oAppVariantResultClosure;
+			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, false, mPropertyBag.layer, mPropertyBag.isForSAPDeveloper)
+				.then(function(oAppVariant) {
+					if (!oAppVariant) {
+						throw new Error("App variant with ID: " + mPropertyBag.referenceAppId + "does not exist");
+					}
+					oAppVariantClosure = merge({}, oAppVariant);
+					return _getTransportInfo(oAppVariantClosure, mPropertyBag);
+				})
+				.then(function(oTransportInfo) {
+					// Sets the transport info for app variant
+					if (oTransportInfo) {
+						if (oTransportInfo.transport) {
+							return oAppVariantClosure.setTransportRequest(oTransportInfo.transport);
+						}
+						return oTransportInfo;
+					}
+					throw new Error("Transport information could not be determined");
+				})
+				.then(function() {
+					var aDescrChanges = [];
+					_getDirtyDescrChanges(mPropertyBag.selector).forEach(function(oChange) {
+						if (includes(DescriptorInlineChangeFactory.getDescriptorChangeTypes(), oChange.getDefinition().changeType)) {
+							aDescrChanges.push(oChange);
+						}
+					});
+
+					return _getInlineChangesFromDescrChanges(aDescrChanges);
+				})
+				.then(function(aAllInlineChanges) {
+					return _inlineDescriptorChanges(aAllInlineChanges, oAppVariantClosure);
+				})
+				.then(function() {
+					// Updates the app variant saved in backend
+					return mPropertyBag.isForSAPDeveloper ? oAppVariantClosure.submit()
+							: oAppVariantClosure.submitViaNewConnectors()
+						.catch(function(oError) {
+							oError.messageKey = "MSG_UPDATE_APP_VARIANT_FAILED";
+							throw oError;
+						});
+				}).then(function(oResult) {
+					oAppVariantResultClosure = merge({}, oResult);
+					_deleteDescrChangesFromPersistence(mPropertyBag.selector);
+					return oAppVariantResultClosure;
+				})
+				.catch(function(oError) {
+					Log.error("the app variant could not be updated.", oError.message || oError.name);
+					throw oError;
+				});
+		},
+		deleteAppVariant: function(mPropertyBag) {
+			var oAppVariantClosure;
+
+			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, true, mPropertyBag.layer)
 				.catch(function(oError) {
 					oError.messageKey = "MSG_LOAD_APP_VARIANT_FAILED";
 					throw oError;
@@ -265,7 +312,8 @@ sap.ui.define([
 					throw new Error("Transport information could not be determined");
 				})
 				.then(function () {
-					return oAppVariantClosure.submit()
+					return mPropertyBag.isForSAPDeveloper ? oAppVariantClosure.submit()
+							: oAppVariantClosure.submitViaNewConnectors()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_DELETE_APP_VARIANT_FAILED";
 							throw oError;

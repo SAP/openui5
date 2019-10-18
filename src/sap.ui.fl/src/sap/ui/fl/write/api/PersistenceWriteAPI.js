@@ -7,17 +7,17 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/fl/write/_internal/SaveAs",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/base/util/restricted/_omit"
+	"sap/base/util/restricted/_omit",
+	"sap/ui/fl/write/_internal/SaveAs"
 ], function(
 	includes,
 	JsControlTreeModifier,
 	ChangesController,
 	DescriptorInlineChangeFactory,
-	SaveAs,
 	FeaturesAPI,
-	_omit
+	_omit,
+	SaveAs
 ) {
 	"use strict";
 
@@ -98,11 +98,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Saves all flex changes and descriptor changes on the relevant flex persistence.
+		 * Saves all flex changes, app variants and descriptor changes on the relevant flex persistence.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
 		 * @param {boolean} [mPropertyBag.skipUpdateCache] - Indicates if cache update should be skipped
+		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the transport in onPremise system
+		 * @param {string} [mPropertyBag.layer=CUSTOMER] - Proposed layer (might be overwritten by the backend) when creating a new app variant - Smart Business must pass the layer
+		 * @param {string} [mPropertyBag.isForSAPDeveloper=false] - Determines whether app variant updation is intended for SAP developer
+		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by Smart Business
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
 		 *
@@ -112,52 +116,22 @@ sap.ui.define([
 		save: function (mPropertyBag) {
 			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
 			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+
+			if (mPropertyBag.selector.appId) { // Only Smart Business passes appId as a part of selector
+				if (!mPropertyBag.layer) {
+					return Promise.reject("Layer must be provided");
+				}
+				if (mPropertyBag.isForSAPDeveloper && mPropertyBag.layer === 'CUSTOMER') {
+					return Promise.reject("Layer provided is not compatible");
+				}
+				mPropertyBag.referenceAppId = oDescriptorFlexController.getComponentName();
+				return SaveAs.updateAppVariant(mPropertyBag);
+			}
+
 			mPropertyBag.invalidateCache = true;
 			return oFlexController.saveAll(mPropertyBag.skipUpdateCache)
 				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, mPropertyBag.skipUpdateCache))
 				.then(PersistenceWriteAPI._getUIChanges.bind(null, _omit(mPropertyBag, "skipUpdateCache")));
-		},
-
-		/**
-		 * Saves the app variant to backend.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {string} mPropertyBag.id - App variant ID
-		 * @param {string} [mPropertyBag.package] - Package info for the app variant - Smart Business must pass the package
-		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the package
-		 * @param {string} [mPropertyBag.version] - Version of the app variant (optional)
-		 * @param {string} [mPropertyBag.layer] - Proposed layer (might be overwritten by the backend) when creating a new app variant; by default, <code>CUSTOMER</code> is set
-		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped
-		 *
-		 * @returns {Promise} Promise that resolves with the app variant save response
-		 *
-		 * @private
-	 	 * @ui5-restricted
-		 */
-		saveAs: function(mPropertyBag) {
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.reference = oFlexController.getComponentName();
-
-			return SaveAs.saveAs(mPropertyBag);
-		},
-
-		/**
-		 * Deletes the app variant from the backend
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the package
-		 *
-		 * @returns {Promise} Promise that resolves with the app variant deletion response
-		 *
-		 * @private
-	 	 * @ui5-restricted
-		 */
-		deleteAppVariant: function(mPropertyBag) {
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.referenceAppId = oFlexController.getComponentName();
-
-			return SaveAs.deleteAppVar(mPropertyBag);
 		},
 
 		/**

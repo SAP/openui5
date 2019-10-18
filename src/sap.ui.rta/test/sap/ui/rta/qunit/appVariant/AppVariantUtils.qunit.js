@@ -5,31 +5,31 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/base/Log",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	jQuery,
 	AppVariantUtils,
 	Settings,
 	FlUtils,
-	DescriptorUtils,
+	WriteUtils,
 	DescriptorVariantFactory,
 	Log,
 	Manifest,
 	ChangesWriteAPI,
-	PersistenceWriteAPI,
+	AppVariantWriteAPI,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given an AppVariantUtils is instantiated and FakeLrepConnector used", {
+	QUnit.module("Given an AppVariantUtils is instantiated", {
 		beforeEach: function () {
 			var oUshellContainerStub = {
 				getService : function () {
@@ -276,10 +276,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setTitle", oAppComponent).then(function(oDescrChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oDescrChange._oInlineChange, "then the title inline change is correct");
 				assert.strictEqual(oDescrChange._oInlineChange.getMap().changeType, "appdescr_app_setTitle", "then the change type is correct");
 			});
@@ -299,10 +299,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setSubTitle", oAppComponent).then(function(oSubtitleInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oSubtitleInlineChange._oInlineChange, "then the subtitle inline change is correct");
 				assert.strictEqual(oSubtitleInlineChange._oInlineChange.getMap().changeType, "appdescr_app_setSubTitle", "then the change type is correct");
 			});
@@ -322,10 +322,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_setDescription", oAppComponent).then(function(oDescriptionInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oDescriptionInlineChange._oInlineChange, "then the description inline change is correct");
 				assert.strictEqual(oDescriptionInlineChange._oInlineChange.getMap().changeType, "appdescr_app_setDescription", "then the change type is correct");
 			});
@@ -340,10 +340,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", oAppComponent).then(function(oIconInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oIconInlineChange._oInlineChange, "then the icon inline change is correct");
 				assert.strictEqual(oIconInlineChange._oInlineChange.getMap().changeType, "appdescr_ui_setIcon", "then the change type is correct");
 			});
@@ -373,10 +373,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the change inbound inline change is correct");
 				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
 			});
@@ -396,10 +396,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", oAppComponent).then(function(oCreateInboundInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oCreateInboundInlineChange._oInlineChange, "then the create inbound inline change is correct");
 				assert.strictEqual(oCreateInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_addNewInbound", "then the change type is correct");
 			});
@@ -429,10 +429,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the inbound title inline change is correct");
 				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
 			});
@@ -462,10 +462,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the create inbound subTitle inline change is correct");
 				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
 			});
@@ -486,10 +486,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", oAppComponent).then(function(oChangeInboundInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oChangeInboundInlineChange._oInlineChange, "then the create inbound icon inline change is correct");
 				assert.strictEqual(oChangeInboundInlineChange._oInlineChange.getMap().changeType, "appdescr_app_changeInbound", "then the change type is correct");
 			});
@@ -504,10 +504,10 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves({});
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
-			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+			var oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 
 			return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", oAppComponent).then(function(oRemoveAllInboundsExceptOneInlineChange) {
-				assert.ok(fnCreateChangesSpy.calledOnce, "then ChangesWriteAPI.create method is called once");
+				assert.equal(oCreateChangesSpy.callCount, 1, "then ChangesWriteAPI.create method is called once");
 				assert.ok(oRemoveAllInboundsExceptOneInlineChange._oInlineChange, "then the remove inbound inline change is correct");
 				assert.strictEqual(oRemoveAllInboundsExceptOneInlineChange._oInlineChange.getMap().changeType, "appdescr_app_removeAllInboundsExceptOne", "then the change type is correct");
 			});
@@ -539,17 +539,17 @@ sap.ui.define([
 
 		QUnit.test("When createAppVariant() method is called", function (assert) {
 			var oAppComponent = fnCreateAppComponent();
-			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves();
+			var fnSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves();
 			return AppVariantUtils.createAppVariant(oAppComponent, {id: "customer.appvar.id", layer: "CUSTOMER"}).then(function() {
 				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: oAppComponent, id: "customer.appvar.id", layer: "CUSTOMER", version: "1.0.0"}));
 			});
 		});
 
 		QUnit.test("When deleteAppVariant() method is called", function (assert) {
-			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
+			var fnDeleteAppVariantStub = sandbox.stub(AppVariantWriteAPI, "deleteAppVariant").resolves();
 			var vAppIdSelector = {appId: "customer.appvar.id"};
-			return AppVariantUtils.deleteAppVariant(vAppIdSelector).then(function() {
-				assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: vAppIdSelector}));
+			return AppVariantUtils.deleteAppVariant(vAppIdSelector, "CUSTOMER").then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledWithExactly({selector: vAppIdSelector, layer: "CUSTOMER"}));
 			});
 		});
 
@@ -605,14 +605,14 @@ sap.ui.define([
 			};
 
 			var bSuccessful = true;
-			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
+			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("OK");
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo, bSuccessful).then(function() {
 				assert.ok("then the successful dialog pops up and OK button pressed");
-				assert.ok(fnCopyID.notCalled, "then the ID is not copied");
+				assert.ok(oCopyIDStub.notCalled, "then the ID is not copied");
 			});
 		});
 
@@ -625,14 +625,14 @@ sap.ui.define([
 
 			var bSuccessful = true;
 
-			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
+			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Copy ID and Close");
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo, bSuccessful).then(function() {
 				assert.ok("then the successful dialog pops up and Copy ID and Close button pressed");
-				assert.ok(fnCopyID.calledOnceWith("Whatever!"), "then the ID is copied successfully");
+				assert.equal(oCopyIDStub.callCount, 1, "then the ID is copied successfully");
 			});
 		});
 
@@ -641,7 +641,7 @@ sap.ui.define([
 				text: "Text",
 				overviewDialog: true
 			};
-			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
+			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
@@ -649,7 +649,7 @@ sap.ui.define([
 			return AppVariantUtils.showRelevantDialog(oInfo).then(function(bResponse) {
 				assert.ok("then the failure dialog pops up and Close button pressed");
 				assert.strictEqual(bResponse, false);
-				assert.ok(fnCopyID.notCalled, "then the ID is not copied");
+				assert.ok(oCopyIDStub.notCalled, "then the ID is not copied");
 			});
 		});
 
@@ -657,14 +657,14 @@ sap.ui.define([
 			var oInfo = {
 				text: "Text"
 			};
-			var fnCopyID = sandbox.stub(AppVariantUtils, "copyId");
+			var oCopyIDStub = sandbox.stub(AppVariantUtils, "copyId");
 			sandbox.stub(sap.m.MessageBox, "show").callsFake(function(sText, mParameters) {
 				mParameters.onClose("Close");
 			});
 
 			return AppVariantUtils.showRelevantDialog(oInfo).then(function() {
 				assert.ok("then the failure dialog pops up and Close button pressed");
-				assert.ok(fnCopyID.notCalled, "then the ID is not copied");
+				assert.ok(oCopyIDStub.notCalled, "then the ID is not copied");
 			});
 		});
 
@@ -795,37 +795,37 @@ sap.ui.define([
 		});
 
 		QUnit.test("When triggerCatalogAssignment() method is called on S4 Cloud system", function (assert) {
-			var fnSendRequest = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
-			return AppVariantUtils.triggerCatalogAssignment("AppVarId", "OriginalId").then(function() {
-				assert.ok(fnSendRequest.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=assignCatalogs&assignFromAppId=OriginalId", "POST"));
+			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
+			return AppVariantUtils.triggerCatalogAssignment("AppVarId", "CUSTOMER", "OriginalId").then(function() {
+				assert.ok(oSendRequestStub.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=assignCatalogs&assignFromAppId=OriginalId", "POST"));
 			});
 		});
 
 		QUnit.test("When triggerCatalogUnAssignment() method is called on S4 Cloud system", function (assert) {
-			var fnSendRequest = sandbox.stub(DescriptorUtils, "sendRequest").resolves();
-			return AppVariantUtils.triggerCatalogUnAssignment("AppVarId").then(function() {
-				assert.ok(fnSendRequest.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=unassignCatalogs", "POST"));
+			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves();
+			return AppVariantUtils.triggerCatalogUnAssignment("AppVarId", "CUSTOMER").then(function() {
+				assert.ok(oSendRequestStub.calledWith("/sap/bc/lrep/appdescr_variants/AppVarId?action=unassignCatalogs", "POST"));
 			});
 		});
 
 		QUnit.test("When showMessage() method is called", function(assert) {
 			var sMessageKey = "SOME_KEY";
-			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
-			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog");
+			var oGetText = sandbox.stub(AppVariantUtils, "getText");
+			var oShowRelevantDialogStub = sandbox.stub(AppVariantUtils, "showRelevantDialog");
 
 			AppVariantUtils.showMessage(sMessageKey);
 
-			assert.ok(fnGetText.calledOnce, "then the getText() method is called once");
-			assert.ok(fnShowRelevantDialog.calledOnce, "then the info message toast pops up");
+			assert.equal(oGetText.callCount, 1, "then the getText() method is called once");
+			assert.equal(oShowRelevantDialogStub.callCount, 1, "then the info message toast pops up");
 		});
 
 		QUnit.test("When catchErrorDialog() method is called", function(assert) {
 			var oError = {};
-			var fnBuildErrorInfo = sandbox.stub(AppVariantUtils, "buildErrorInfo");
-			var fnShowRelevantDialog = sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
+			var oBuildErrorInfoStub = sandbox.stub(AppVariantUtils, "buildErrorInfo");
+			var oShowRelevantDialogStub = sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			return AppVariantUtils.catchErrorDialog(oError, "SOME_KEY", "IAMId").then(function() {
-				assert.ok(fnBuildErrorInfo.calledOnce, "then the buildErrorInfo() method is called once");
-				assert.ok(fnShowRelevantDialog.calledOnce, "then the showRelevantDialog() method is called once");
+				assert.equal(oBuildErrorInfoStub.callCount, 1, "then the buildErrorInfo() method is called once");
+				assert.equal(oShowRelevantDialogStub.callCount, 1, "then the showRelevantDialog() method is called once");
 			});
 		});
 
@@ -838,7 +838,7 @@ sap.ui.define([
 					isProductiveSystem:false
 				})
 			);
-			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -847,7 +847,7 @@ sap.ui.define([
 			.then(function(oAppVariant) {
 				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, false);
 			}).then(function(oInfo) {
-				assert.ok(fnGetText.calledTwice, "then the getText() method is called twice");
+				assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
 				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
 				assert.strictEqual(oInfo.copyId, true, "then the copyID value is as expected");
 			});
@@ -862,7 +862,7 @@ sap.ui.define([
 					isProductiveSystem:false
 				})
 			);
-			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 
 			return DescriptorVariantFactory.createNew({
 				id: "customer.TestId",
@@ -871,7 +871,7 @@ sap.ui.define([
 			.then(function(oAppVariant) {
 				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, true);
 			}).then(function(oInfo) {
-				assert.ok(fnGetText.calledTwice, "then the getText() method is called twice");
+				assert.equal(oGetText.callCount, 2, "then the getText() method is called twice");
 				assert.strictEqual(oInfo.appVariantId, "customer.TestId", "then the app variant id is as expected");
 				assert.strictEqual(oInfo.copyId, false, "then the copyID value is as expected");
 			});
@@ -886,15 +886,15 @@ sap.ui.define([
 					isProductiveSystem:false
 				})
 			);
-			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 			AppVariantUtils.buildFinalSuccessInfoS4HANACloud();
-			assert.ok(fnGetText.calledOnce, "then the getText() method is called once");
+			assert.equal(oGetText.callCount, 1, "then the getText() method is called once");
 		});
 
 		QUnit.test("When buildDeleteSuccessMessage() method is called for S/4HANA Cloud after catalog unassignment finished succesfully", function(assert) {
-			var fnGetText = sandbox.stub(AppVariantUtils, "getText");
+			var oGetText = sandbox.stub(AppVariantUtils, "getText");
 			AppVariantUtils.buildDeleteSuccessMessage("APP_VAR_ID");
-			assert.ok(fnGetText.calledWithExactly("DELETE_APP_VARIANT_SUCCESS_MESSAGE", "APP_VAR_ID"), "then the getText() method is called with correct parameters");
+			assert.ok(oGetText.calledWithExactly("DELETE_APP_VARIANT_SUCCESS_MESSAGE", "APP_VAR_ID"), "then the getText() method is called with correct parameters");
 		});
 	});
 
