@@ -9,7 +9,7 @@ describe("sap.m.Wizard", function() {
 		// disable CSS animations as they are messing with intrinsic waits
 		// this is workaround, remove when data-sap-ui-animation=off is supported by sap.m.Wizard
 		browser.executeScript(function(){
-			jQuery(".sapMWizard .sapMWizardNextButton").css("transition","none !important");
+			jQuery(".sapMWizard .sapMWizardNextButtonVisible").css("transition","none !important");
 		});
 		browser.executeScript(function () {
 			return sap.ui.Device.system.phone;
@@ -25,12 +25,12 @@ describe("sap.m.Wizard", function() {
 	});
 
 	it("should load page 2 of branching wizard", function () {
-		element(by.css(".sapMWizardLastActivatedStep .sapMWizardNextButton")).click();
+		element(by.id("branch-wiz-step1-nextButton")).click();
 		expect(takeScreenshot()).toLookAs("branching-page2");
 	});
 
 	it("validation of step should change visibility of button", function () {
-		element(by.css(".sapMWizardLastActivatedStep .sapMWizardNextButton")).click();
+		element(by.id("Personal_Information-nextButton")).click();
 		expect(takeScreenshot()).toLookAs("branching-page3-noNextButton");
 
 		element(by.id("validate-step")).click();
@@ -38,14 +38,14 @@ describe("sap.m.Wizard", function() {
 	});
 
 	it("should go to the end of the wizard", function () {
-		element(by.css(".sapMWizardLastActivatedStep .sapMWizardNextButton")).click();
+		element(by.id("Payment_Details-nextButton")).click();
 		element(by.id("Card_Contents-Title")).click(); // Remove the focus from the input field
 		expect(takeScreenshot()).toLookAs("branching-page4");
 
-		element(by.css(".sapMWizardLastActivatedStep .sapMWizardNextButton")).click();
+		element(by.id("Card_Contents-nextButton")).click();
 		expect(takeScreenshot()).toLookAs("branching-page5");
 
-		element(by.css(".sapMWizardLastActivatedStep .sapMWizardNextButton")).click();
+		element(by.id("Dummy_Step-nextButton")).click();
 		expect(takeScreenshot()).toLookAs("branching-page6");
 	});
 
@@ -76,6 +76,7 @@ describe("sap.m.Wizard", function() {
 		openBtn.click();
 
 		expect(takeScreenshot(element(by.id("wiz-dialog")))).toLookAs("wizard-in-dialog-initial-focus");
+		closeBtn.click();
 	});
 
 	it("should change background design", function () {
@@ -91,5 +92,38 @@ describe("sap.m.Wizard", function() {
 
 		element(by.id("change-background-transparent")).click();
 		expect(takeScreenshot()).toLookAs("change-background-transparent");
-    });
+	});
+
+	it("should show the first page", function () {
+		element(by.id("fwd-wiz-sel")).click();
+		expect(takeScreenshot()).toLookAs("linear-initial");
+	});
+
+	it("Should load test page with size S", function () {
+		browser.executeScript(function() {
+			sap.ui.getCore().byId("linear-wiz").setWidth("580px");
+		});
+		expect(takeScreenshot()).toLookAs("page-size-S");
+	});
+
+	it("Should load test page with size M", function () {
+		browser.executeScript(function() {
+			sap.ui.getCore().byId("linear-wiz").setWidth("1000px");
+		});
+		expect(takeScreenshot()).toLookAs("page-size-M");
+	});
+
+	it("Should load test page with size L", function () {
+		browser.executeScript(function() {
+			sap.ui.getCore().byId("linear-wiz").setWidth("1430px");
+		});
+		expect(takeScreenshot()).toLookAs("page-size-L");
+	});
+
+	it("Should load test page with size XL", function () {
+		browser.executeScript(function() {
+			sap.ui.getCore().byId("linear-wiz").setWidth("1500px");
+		});
+		expect(takeScreenshot()).toLookAs("page-size-XL");
+	});
 });

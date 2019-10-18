@@ -13,7 +13,8 @@
 				<content>
 					<Wizard id="ShoppingCartWizard"
 							complete="completedHandler"
-							enableBranching="true">
+							enableBranching="true"
+							class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
 						<WizardStep
 								id="ContentsStep"
 								nextStep="PaymentTypeStep"

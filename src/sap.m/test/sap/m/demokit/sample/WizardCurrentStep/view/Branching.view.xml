@@ -5,7 +5,8 @@
 	xmlns="sap.m">
 	<Wizard
 		id="BranchingWizard"
-		enableBranching="true">
+		enableBranching="true"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
 		<WizardStep validated="false" id="A" title="A" subsequentSteps="B1, B2">
 
 			<RadioButtonGroup id="PathSelection" select="discardAndApplyPath">
