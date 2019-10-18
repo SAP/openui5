@@ -142,7 +142,7 @@ sap.ui.define(["./TableExtension", "./TableUtils", "./library"], function(TableE
 				_writeAccText(oRm, sTableId, "ariafixedcolumn", TableUtils.getResourceText("TBL_FIXED_COLUMN"));
 			}
 
-			if (TableUtils.hasRowNavigatedIndicators(oTable)) {
+			if (TableUtils.hasRowNavigationIndicators(oTable)) {
 				_writeAccText(oRm, sTableId, "rownavigatedtext", TableUtils.getResourceText("TBL_ROW_STATE_NAVIGATED"));
 			}
 

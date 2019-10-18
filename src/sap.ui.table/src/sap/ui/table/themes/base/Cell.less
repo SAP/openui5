@@ -84,10 +84,15 @@
 
 		.sapUiTableHScr & {
 			border-left-color: @sapUiListTableFixedBorder;
+			border-right-color: transparent;
 		}
 	}
-	&.sapUiTableRowActionHeaderCell {
-		border-right: none;
+	&.sapUiTableRowActionCell {
+		.sapUiTableRowNavIndicator & {
+			border-right: none;
+			border-left: none;
+			background-color: transparent;
+		}
 	}
 
 	// Fixed data column border
@@ -380,62 +385,64 @@
 .sapUiTableRowActionCell {
 	display: flex;
 	align-items: center;
-	min-width: @_sap_ui_table_RowActionColumnWidth;
+	width: @_sap_ui_table_RowActionColumnWidth;
 
 	html[data-sap-ui-browser^="ie"] & {
-		min-width: calc(@_sap_ui_table_RowActionColumnWidthForIECalc);
+		width: calc(@_sap_ui_table_RowActionColumnWidthForIECalc);
 	}
 
 	.sapUiTableRActS & {
-		min-width: @_sap_ui_table_RowActionColumnSmallWidth;
+		width: @_sap_ui_table_RowActionColumnSmallWidth;
 
 		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthForIECalc);
+			width: calc(@_sap_ui_table_RowActionColumnSmallWidthForIECalc);
 		}
 	}
 
 	.sapUiSizeCozy & {
-		min-width: @_sap_ui_table_RowActionColumnWidthCozy;
+		width: @_sap_ui_table_RowActionColumnWidthCozy;
 
 		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnWidthCozyForIECalc);
+			width: calc(@_sap_ui_table_RowActionColumnWidthCozyForIECalc);
 		}
 	}
 
 	.sapUiSizeCozy .sapUiTableRActS &,
 	.sapUiSizeCozy.sapUiTableRActS & {
-		min-width: @_sap_ui_table_RowActionColumnSmallWidthCozy;
+		width: @_sap_ui_table_RowActionColumnSmallWidthCozy;
 
 		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthCozyForIECalc);
+			width: calc(@_sap_ui_table_RowActionColumnSmallWidthCozyForIECalc);
 		}
 	}
 
 	.sapUiSizeCondensed & {
-		min-width: @_sap_ui_table_RowActionColumnWidthCondensed;
+		width: @_sap_ui_table_RowActionColumnWidthCondensed;
 
 		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnWidthCondensedForIECalc);
+			width: calc(@_sap_ui_table_RowActionColumnWidthCondensedForIECalc);
 		}
 	}
 
 	.sapUiSizeCondensed .sapUiTableRActS &,
 	.sapUiSizeCondensed.sapUiTableRActS & {
-		min-width: @_sap_ui_table_RowActionColumnSmallWidthCondensed;
+		width: @_sap_ui_table_RowActionColumnSmallWidthCondensed;
 
 		html[data-sap-ui-browser^="ie"] & {
-			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthCondensedForIECalc);
+			width: calc(@_sap_ui_table_RowActionColumnSmallWidthCondensedForIECalc);
 		}
+	}
+
+	.sapUiTableRowNavIndicator & {
+		width: @_sap_ui_table_NavIndicatorWidth;
 	}
 }
 
 .sapUiTableCellDummy {
-	background-color: darken(@sapUiListBackground, 2.5);
 	border-left: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
-
-	// Row actions cells are on top of the dummy cells, therefore they don't need a background color.
-	.sapUiTableRActFlexible & {
-		background-color: transparent;
+	pointer-events: none;
+	.sapUiTableContentRow & {
+		background-color: @sapUiListBackground !important;
 	}
 }
 

@@ -327,7 +327,7 @@ sap.ui.define([
 			}
 
 			if (oCountChangeInfo.initial || oCountChangeInfo.rowChange) {
-				if (TableUtils.hasRowNavigatedIndicators(oTable)) {
+				if (TableUtils.hasRowNavigationIndicators(oTable)) {
 					var oCellInfo = TableUtils.getCellInfo($Cell);
 					if (oCellInfo.type !== TableUtils.CELLTYPE.COLUMNHEADER && oCellInfo.type !== TableUtils.CELLTYPE.COLUMNROWHEADER) {
 						var oRowSettings = oTable.getRows()[oCellInfo.rowIndex].getAggregation("_settings");

@@ -139,11 +139,13 @@ sap.ui.define([
 	 * @property {string} navigationIcon - Name of the navigation icon.
 	 * @property {string} deleteIcon - Name of the delete icon.
 	 * @property {string} resetIcon - Name of the reset icon.
+	 * @property {int} navIndicatorWidth - Width of the navigation indicator
 	 */
 	var mThemeParameters = {
 		navigationIcon: "navigation-right-arrow",
 		deleteIcon: "sys-cancel",
-		resetIcon: "undo"
+		resetIcon: "undo",
+		navIndicatorWidth: 3
 	};
 
 	/**
@@ -277,7 +279,7 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @returns {boolean} Whether the table has navigation indicators for rows
 		 */
-		hasRowNavigatedIndicators: function(oTable) {
+		hasRowNavigationIndicators: function(oTable) {
 			if (!oTable) {
 				return false;
 			}
@@ -1535,6 +1537,7 @@ sap.ui.define([
 			mThemeParameters.navigationIcon = ThemeParameters.get("_sap_ui_table_NavigationIcon");
 			mThemeParameters.deleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
 			mThemeParameters.resetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
+			mThemeParameters.navIndicatorWidth = getPixelValue("_sap_ui_table_NavIndicatorWidth");
 		},
 
 		/**

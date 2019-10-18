@@ -826,14 +826,14 @@
 					action: function(oTable, bValue) {
 						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
 							highlight: bValue ? "{highlightState}" : sap.ui.core.MessageType.None,
-							navigated: sap.ui.table.TableUtils.hasRowNavigatedIndicators(oTable) ? "{navigatedState}" : false
+							navigated: sap.ui.table.TableUtils.hasRowNavigationIndicators(oTable) ? "{navigatedState}" : false
 						}));
 					}
 				},
 				NAVINDICATORS: {
-					text: "Navigated Indicators",
+					text: "Navigation Indicators",
 					value: function(oTable) {
-						return sap.ui.table.TableUtils.hasRowNavigatedIndicators(oTable);
+						return sap.ui.table.TableUtils.hasRowNavigationIndicators(oTable);
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
