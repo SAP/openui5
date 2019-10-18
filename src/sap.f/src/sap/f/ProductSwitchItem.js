@@ -119,7 +119,7 @@ sap.ui.define([
 			var oIcon = this.getAggregation("_icon");
 
 			if (!oIcon) {
-				oIcon = new Icon({ size: "1.5rem", height: "3rem" });
+				oIcon = new Icon();
 
 				if (this.getSrc()) {
 					oIcon.setSrc(this.getSrc());
