@@ -1030,6 +1030,20 @@ function (
 		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is collapsed, the Collapse button is not visible");
 	});
 
+	QUnit.test("DynamicPage expand/collapse button visibility", function (assert) {
+		var oDynamicPageHeader = this.oDynamicPage.getHeader();
+
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), true, "Collapse button should be visible when the header content has content");
+
+		oDynamicPageHeader.destroyContent();
+
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "Collapse button should be hidden when the header content has no content");
+
+		oDynamicPageHeader.addContent(oFactory.getContent(1));
+
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), true, "Collapse button should be visible when the header content has content");
+	});
+
 	QUnit.test("DynamicPage Header - backgroundDesign", function(assert) {
 		var oDynamicPageHeader = this.oDynamicPage.getHeader(),
 			$oDomRef = oDynamicPageHeader.$();
