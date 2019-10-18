@@ -299,7 +299,7 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._getShowCollapseButton = function () {
-			return this._bShowCollapseButton;
+			return this._bShowCollapseButton && !!this.getContent().length;
 		};
 
 		/**
