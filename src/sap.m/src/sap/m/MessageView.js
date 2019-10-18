@@ -174,7 +174,7 @@ sap.ui.define([
 			events: {
 				/**
 				 * This event will be fired after the popover is opened
-				 * @deprecated As of version 1.72.
+				 * @deprecated As of version 1.72. Use the appropriate event from the wrapper control, instead.
 				 */
 				afterOpen: {
 					parameters: {
