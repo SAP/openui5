@@ -359,7 +359,9 @@ sap.ui.define([
 			this._oIncludeFilterPanel.setKeyFields(aKeyFields);
 		}
 		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.setKeyFields(aKeyFieldsExclude ? aKeyFieldsExclude : aKeyFields);
+			this._oExcludeFilterPanel.setKeyFields(
+				(Array.isArray(aKeyFieldsExclude) && aKeyFieldsExclude.length > 0) ? aKeyFieldsExclude : aKeyFields
+			);
 		}
 
 	};
@@ -540,7 +542,7 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.onBeforeRendering = function() {
-		var aKeyFieldsExclude,
+		var aKeyFieldsExclude = [],
 			aKeyFields,
 			sModelName,
 			bEnableEmptyOperations = this.getEnableEmptyOperations();
@@ -585,7 +587,6 @@ sap.ui.define([
 				});
 
 				if (bEnableEmptyOperations) {
-					aKeyFieldsExclude = [];
 					bNullable = oItem_.getNullable();
 
 					// Copy the oField object and add it to the exclude array - we need this only when exclude
