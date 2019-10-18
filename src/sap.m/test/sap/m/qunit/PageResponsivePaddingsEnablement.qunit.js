@@ -51,6 +51,8 @@ sap.ui.define([
 		oTestPage.addStyleClass("sapUiResponsivePadding--subHeader");
 		oTestPage.addStyleClass("sapUiResponsivePadding--content");
 		oTestPage.addStyleClass("sapUiResponsivePadding--footer");
+
+		this.stub(window, "requestAnimationFrame", window.setTimeout);
 		sap.ui.getCore().applyChanges();
 
 		var $page = jQuery("#testPage");
@@ -63,66 +65,67 @@ sap.ui.define([
 			$pageSubHeader = oTestPage.$().find(".sapMPageSubHeader .sapMBar"),
 			$pageContent = oTestPage.$().find("#testPage-cont"),
 			$pageFooter = oTestPage.$().find(".sapMPageFooter .sapMBar"),
-			bIsHeaderResponsive = $pageHeader.hasClass("sapM-Std-PaddingS"),
-			bIsSubHeaderResponsive = $pageContent.hasClass("sapM-Std-PaddingS"),
-			bIsContentResponsive = $pageSubHeader.hasClass("sapM-Std-PaddingS"),
-			bIsFooterResponsive = $pageFooter.hasClass("sapM-Std-PaddingS");
+			bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingS"),
+			bIsSubHeaderResponsive = $pageContent.hasClass("sapUi-Std-PaddingS"),
+			bIsContentResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingS"),
+			bIsFooterResponsive = $pageFooter.hasClass("sapUi-Std-PaddingS");
 
 
 		//Assert
-		assert.ok(bIsHeaderResponsive, "The sapM-Std-PaddingS class is applied to the header");
-		assert.ok(bIsSubHeaderResponsive, "The sapM-Std-PaddingS class is applied to the subheader");
-		assert.ok(bIsContentResponsive, "The sapM-Std-PaddingS class is applied to the content");
-		assert.ok(bIsFooterResponsive, "The sapM-Std-PaddingS class is applied to the footer");
+		assert.ok(bIsHeaderResponsive, "The sapUi-Std-PaddingS class is applied to the header");
+		assert.ok(bIsSubHeaderResponsive, "The sapUi-Std-PaddingS class is applied to the subheader");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingS class is applied to the content");
+		assert.ok(bIsFooterResponsive, "The sapUi-Std-PaddingS class is applied to the footer");
 
 		//Act
 		$page.css("width", "700px");
 		this.clock.tick(300);
 		sap.ui.getCore().applyChanges();
 
-		bIsHeaderResponsive = $pageHeader.hasClass("sapM-Std-PaddingM");
-		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapM-Std-PaddingM");
-		bIsContentResponsive = $pageContent.hasClass("sapM-Std-PaddingM");
-		bIsFooterResponsive = $pageFooter.hasClass("sapM-Std-PaddingM");
+		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingM");
+		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingM");
+		bIsContentResponsive = $pageContent.hasClass("sapUi-Std-PaddingM");
+		bIsFooterResponsive = $pageFooter.hasClass("sapUi-Std-PaddingM");
 
 		//Assert
-		assert.ok(bIsHeaderResponsive, "The sapM-Std-PaddingM class is applied to the header");
-		assert.ok(bIsSubHeaderResponsive, "The sapM-Std-PaddingM class is applied to the subheader");
-		assert.ok(bIsContentResponsive, "The sapM-Std-PaddingM class is applied to the content");
-		assert.ok(bIsFooterResponsive, "The sapM-Std-PaddingM class is applied to the footer");
+		assert.ok(bIsHeaderResponsive, "The sapUi-Std-PaddingM class is applied to the header");
+		assert.ok(bIsSubHeaderResponsive, "The sapUi-Std-PaddingM class is applied to the subheader");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingM class is applied to the content");
+		assert.ok(bIsFooterResponsive, "The sapUi-Std-PaddingM class is applied to the footer");
 
 		//Act
 		$page.css("width", "1300px");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(300);
 
-		bIsHeaderResponsive = $pageHeader.hasClass("sapM-Std-PaddingL");
-		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapM-Std-PaddingL");
-		bIsContentResponsive = $pageContent.hasClass("sapM-Std-PaddingL");
-		bIsFooterResponsive = $pageFooter.hasClass("sapM-Std-PaddingL");
+		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingL");
+		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingL");
+		bIsContentResponsive = $pageContent.hasClass("sapUi-Std-PaddingL");
+		bIsFooterResponsive = $pageFooter.hasClass("sapUi-Std-PaddingL");
 
 		//Assert
-		assert.ok(bIsHeaderResponsive, "The sapM-Std-PaddingL class is applied to the header");
-		assert.ok(bIsSubHeaderResponsive, "The sapM-Std-PaddingL class is applied to the subheader");
-		assert.ok(bIsContentResponsive, "The sapM-Std-PaddingL class is applied to the content");
-		assert.ok(bIsFooterResponsive, "The sapM-Std-PaddingL class is applied to the footer");
+		assert.ok(bIsHeaderResponsive, "The sapUi-Std-PaddingL class is applied to the header");
+		assert.ok(bIsSubHeaderResponsive, "The sapUi-Std-PaddingL class is applied to the subheader");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingL class is applied to the content");
+		assert.ok(bIsFooterResponsive, "The sapUi-Std-PaddingL class is applied to the footer");
 
 		//Act
 		$page.css("width", "1700px");
 		this.clock.tick(300);
 		sap.ui.getCore().applyChanges();
 
-		bIsHeaderResponsive = $pageHeader.hasClass("sapM-Std-PaddingXL");
-		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapM-Std-PaddingXL");
-		bIsContentResponsive = $pageContent.hasClass("sapM-Std-PaddingXL");
-		bIsFooterResponsive = $pageFooter.hasClass("sapM-Std-PaddingXL");
+		bIsHeaderResponsive = $pageHeader.hasClass("sapUi-Std-PaddingXL");
+		bIsSubHeaderResponsive = $pageSubHeader.hasClass("sapUi-Std-PaddingXL");
+		bIsContentResponsive = $pageContent.hasClass("sapUi-Std-PaddingXL");
+		bIsFooterResponsive = $pageFooter.hasClass("sapUi-Std-PaddingXL");
 
 		//Assert
-		assert.ok(bIsHeaderResponsive, "The sapM-Std-PaddingXL class is applied to the header");
-		assert.ok(bIsSubHeaderResponsive, "The sapM-Std-PaddingXL class is applied to the subheader");
-		assert.ok(bIsContentResponsive, "The sapM-Std-PaddingXL class is applied to the content");
-		assert.ok(bIsFooterResponsive, "The sapM-Std-PaddingXL class is applied to the footer");
+		assert.ok(bIsHeaderResponsive, "The sapUi-Std-PaddingXL class is applied to the header");
+		assert.ok(bIsSubHeaderResponsive, "The sapUi-Std-PaddingXL class is applied to the subheader");
+		assert.ok(bIsContentResponsive, "The sapUi-Std-PaddingXL class is applied to the content");
+		assert.ok(bIsFooterResponsive, "The sapUi-Std-PaddingXL class is applied to the footer");
 
+		this.stub().reset();
 		oTestPage.destroy();
 	});
 });
