@@ -10,14 +10,17 @@ sap.ui.define([],
 		return {
 			aggregations: {
 				heading: {
-					domRef: ":sap-domref .sapFDynamicPageTitleMainHeadingInner"
+					domRef: ":sap-domref .sapFDynamicPageTitleMainHeadingInner",
+					ignore: function (oElement) {
+						return !oElement.getHeading();
+					}
 				},
 				expandedHeading: {
 					domRef: function (oElement) {
 						return oElement.$("expand-heading-wrapper").get(0);
 					},
 					ignore: function (oElement) {
-						return oElement.getHeading();
+						return oElement.getHeading() || !oElement.getExpandedHeading();
 					}
 				},
 				snappedHeading: {
@@ -25,7 +28,7 @@ sap.ui.define([],
 						return oElement.$("snapped-heading-wrapper").get(0);
 					},
 					ignore: function (oElement) {
-						return oElement.getHeading();
+						return oElement.getHeading() || !oElement.getSnappedHeading();
 					}
 				},
 				actions: {
