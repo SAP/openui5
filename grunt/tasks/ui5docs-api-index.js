@@ -8,7 +8,7 @@
 'use strict';
 
 const path = require('path');
-const indexer = require("../../lib/jsdoc/create-api-index");
+const indexer = require("../../lib/jsdoc/createIndexFiles");
 
 module.exports = function(grunt) {
 
