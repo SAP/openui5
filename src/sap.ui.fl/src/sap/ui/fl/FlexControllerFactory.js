@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/base/Log"
 ], function(
 	FlexController,
 	Utils,
 	ChangePersistenceFactory,
+	Applier,
 	VariantModel,
 	Log
 ) {
@@ -129,7 +131,9 @@ sap.ui.define([
 		oFlexController = FlexControllerFactory.createForControl(oAppComponent, oManifest);
 		return ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oAppComponent)
 		.then(function (fnGetChangesMap) {
-			oAppComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oAppComponent));
+			var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, fnGetChangesMap, oAppComponent, oFlexController);
+			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
+			oAppComponent.addPropagationListener(fnPropagationListener);
 			var oData = oFlexController.getVariantModelData() || {};
 			var oVariantModel = new VariantModel(oData, oFlexController, oAppComponent);
 			oAppComponent.setModel(oVariantModel, Utils.VARIANT_MODEL_NAME);

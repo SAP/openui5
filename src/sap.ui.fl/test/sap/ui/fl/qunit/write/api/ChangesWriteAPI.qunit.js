@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Applier,
 	ChangesController,
 	ChangesWriteAPI,
 	FlexUtils,
@@ -188,26 +190,15 @@ sap.ui.define([
 				.withArgs(mPropertyBag.element)
 				.returns(oAppComponent);
 
-			var fnCheckTargetAndApplyChangeStub = getMethodStub([
-				mPropertyBag.change,
-				mPropertyBag.element,
-				{appComponent: oAppComponent, modifier: JsControlTreeModifier}
-			], Promise.resolve(sReturnValue));
-			var fnCheckForOpenDependenciesStub = getMethodStub([
-				mPropertyBag.change.getSelector(),
-				JsControlTreeModifier,
-				oAppComponent
-			], false);
+			sandbox.stub(Applier, "applyChangeOnControl").resolves(sReturnValue);
 
 			mockFlexController(mPropertyBag.element, {
-				checkTargetAndApplyChange: fnCheckTargetAndApplyChangeStub,
-				checkForOpenDependenciesForControl: fnCheckForOpenDependenciesStub
+				checkForOpenDependenciesForControl: function() {return false;}
 			});
 
-			return ChangesWriteAPI.apply(mPropertyBag)
-				.then(function(sValue) {
-					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-				});
+			return ChangesWriteAPI.apply(mPropertyBag).then(function(sValue) {
+				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
+			});
 		});
 
 		QUnit.test("when apply is called with dependencies on control", function(assert) {
@@ -224,19 +215,17 @@ sap.ui.define([
 			};
 			this.aObjectsToDestroy.push(mPropertyBag.element);
 
-			var fnCheckForOpenDependenciesStub = getMethodStub([mPropertyBag.change.getSelector()], true);
-
-			mockFlexController(mPropertyBag.element, {
-				checkTargetAndApplyChange: function () {
-					assert.notOk(true, "the change should not be applied");
-				},
-				checkForOpenDependenciesForControl: fnCheckForOpenDependenciesStub
+			sandbox.stub(Applier, "applyChangeOnControl").callsFake(function () {
+				assert.notOk(true, "the change should not be applied");
 			});
 
-			return ChangesWriteAPI.apply(mPropertyBag)
-				.catch(function (oError) {
-					assert.strictEqual(oError.message, "The following Change cannot be applied because of a dependency: changeId", "then a rejected promise with an error was returned");
-				});
+			mockFlexController(mPropertyBag.element, {
+				checkForOpenDependenciesForControl: function() {return true;}
+			});
+
+			return ChangesWriteAPI.apply(mPropertyBag).catch(function (oError) {
+				assert.strictEqual(oError.message, "The following Change cannot be applied because of a dependency: changeId", "then a rejected promise with an error was returned");
+			});
 		});
 
 		QUnit.test("when revert is called with a valid element", function(assert) {
