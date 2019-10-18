@@ -1969,16 +1969,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Absolute ODLB, late property. See that it is requested only once, even when bound
-	// twice. See that it is updated via requestSideEffects called at the parent binding (all
-	// visible rows).
+	// Scenario: ODLB, late property. See that it is requested only once, even when bound twice. See
+	// that it is updated via requestSideEffects called at the parent binding (all visible rows).
 	// JIRA: CPOUI5UISERVICESV3-1878
 	QUnit.test("ODLB: late property", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oRowContext,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'1\')}">\
-	<Text text="{Team_Id}"/><!-- TODO CPOUI5UISERVICESV3-1973 -->\
 	<Table id="table" growing="true" growingThreshold="2"\
 			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
 		<ColumnListItem>\
@@ -1990,8 +1988,7 @@ sap.ui.define([
 <Text id="age2" text="{AGE}" />',
 			that = this;
 
-		this.expectRequest("TEAMS('1')?$select=Team_Id", {Team_Id : "1"})
-			.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
+		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
 				value : [
 					{ID : "2", Name : "Frederic Fall"},
 					{ID : "3", Name : "Jonathan Smith"}
@@ -2033,19 +2030,20 @@ sap.ui.define([
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
 				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
 					value : [
-						{AGE : 43, ID : "2", Name : "Frederic Fall"},
-						{AGE : 29, ID : "3", Name : "Jonathan Smith"},
-						{AGE : 36, ID : "4", Name : "Peter Burke"}
+						{AGE : 43, ID : "2", Name : "Frederic Fall *"},
+						{AGE : 29, ID : "3", Name : "Jonathan Smith *"},
+						{AGE : 0, ID : "4", Name : "Peter Burke *"}
 					]
 				})
 				.expectChange("age1", "43")
-				.expectChange("age2", "43");
+				.expectChange("age2", "43")
+				.expectChange("name", ["Frederic Fall *", "Jonathan Smith *", "Peter Burke *"]);
 
 			// see that requestSideEffects updates AGE, too
 			return Promise.all([
-				that.oView.byId("form").getBindingContext().requestSideEffects([
-					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
-					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+				that.oView.byId("table").getBinding("items").getHeaderContext().requestSideEffects([
+					{$PropertyPath : "AGE"},
+					{$PropertyPath : "Name"}
 				]),
 				that.waitForChanges(assert)
 			]);
@@ -2055,6 +2053,29 @@ sap.ui.define([
 			// change one Text to the second row - must be cached from requestSideEffects
 			oRowContext = that.oView.byId("table").getItems()[1].getBindingContext();
 			that.oView.byId("age2").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
+				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
+					value : [
+						{AGE : 44, ID : "2", Name : "Frederic Fall **"},
+						{AGE : 30, ID : "3", Name : "Jonathan Smith **"},
+						{AGE : -1, ID : "4", Name : "Peter Burke **"}
+					]
+				})
+				.expectChange("age1", "44")
+				.expectChange("age2", "30")
+				.expectChange("name", ["Frederic Fall **", "Jonathan Smith **", "Peter Burke **"]);
+
+			return Promise.all([
+				// code under test: requestSideEffects on ODCB w/o data
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
+					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+				]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 

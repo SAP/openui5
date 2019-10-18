@@ -948,7 +948,7 @@ sap.ui.define([
 				+ JSON.stringify(oPath));
 		});
 
-		for (oContext = this; !oContext.getBinding().oCache;
+		for (oContext = /*consistent-this :-(*/that; !oContext.getBinding().oCache;
 				oContext = oContext.getBinding().getContext()) {
 			if (!oContext.getBinding().getBoundContext) {
 				throw new Error("Not a context binding: " + oContext.getBinding());
