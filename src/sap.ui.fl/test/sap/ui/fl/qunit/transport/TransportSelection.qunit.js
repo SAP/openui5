@@ -509,6 +509,24 @@ sap.ui.define([
 				assert.ok(!oSetRequestSpy.called);
 			});
 		});
+
+		QUnit.test('setTransports should rejects with a "cancel" string if the transport dialog is cancelled', function (assert) {
+			var oRootControl = new Control();
+			var aChanges = [
+				new Change({
+					namespace: "testns",
+					fileName: "change1",
+					fileType: "change"
+				})
+			];
+
+			var oTransportSelection = new TransportSelection();
+			sandbox.stub(oTransportSelection, "openTransportSelection").resolves("cancel");
+
+			return oTransportSelection.setTransports(aChanges, oRootControl).catch(function (oError) {
+				assert.equal(oError, "cancel");
+			});
+		});
 	});
 
 	QUnit.done(function() {

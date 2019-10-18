@@ -1102,6 +1102,18 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("when calling '_deleteChanges and reset is cancelled', ", function(assert) {
+			this.oDeleteChangesStub.restore();
+
+			sandbox.stub(PersistenceWriteAPI, "reset").returns(Promise.reject("cancel"));
+			var oStubShowError = sandbox.stub(RtaUtils, "_showMessageBox");
+
+			return this.oRta._deleteChanges().then(function() {
+				assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
+				assert.equal(oStubShowError.callCount, 0, "no error messages is shown");
+			}.bind(this));
+		});
+
 		QUnit.test("when calling '_handleElementModified' and the command fails because of dependencies", function(assert) {
 			assert.expect(2);
 			var oLogStub = sandbox.stub(Log, "error");

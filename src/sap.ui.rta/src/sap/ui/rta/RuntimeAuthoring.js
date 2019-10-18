@@ -1131,7 +1131,9 @@ function(
 				this._reloadPage();
 			}.bind(this))
 			.catch(function (oError) {
-				return Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+				if (oError !== "cancel") {
+					Utils._showMessageBox(MessageBox.Icon.ERROR, "HEADER_RESTORE_FAILED", "MSG_RESTORE_FAILED", oError);
+				}
 			});
 	};
 

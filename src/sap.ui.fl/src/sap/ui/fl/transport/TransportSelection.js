@@ -257,7 +257,7 @@ sap.ui.define([
 	 *
 	 * @param {array} aChanges array of {sap.ui.fl.Change}
 	 * @param {object} oControl object of the root control for the transport
-	 * @returns {Promise} promise that resolves without parameters
+	 * @returns {Promise} promise that resolves without parameters or rejects with "cancel" value in case of escape/cancel from transport dialog triggered
 	 * @public
 	 */
 	TransportSelection.prototype.setTransports = function(aChanges, oControl) {
@@ -284,6 +284,9 @@ sap.ui.define([
 				// bring up the transport dialog to get the transport information for a change
 				if (oCurrentChange.getDefinition().packageName !== "$TMP") {
 					return that.openTransportSelection(oCurrentChange, oControl).then(function(oTransportInfo) {
+						if (oTransportInfo === "cancel") {
+							return Promise.reject("cancel");
+						}
 						oCurrentChange.setRequest(oTransportInfo.transport);
 
 						if (oTransportInfo.fromDialog === true) {
@@ -339,7 +342,7 @@ sap.ui.define([
 			};
 			var fnError = function(oError) {
 				if (oError.sId === 'cancel') {
-					resolve();
+					resolve(oError.sId);
 				} else {
 					reject(oError);
 				}
