@@ -82,6 +82,8 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 		assert(typeof (fnFunction) === "function", "EventProvider.attachEvent: fnFunction must be a function");
 		assert(!oListener || typeof (oListener) === "object", "EventProvider.attachEvent: oListener must be empty or an object");
 
+		oListener = oListener === this ? undefined : oListener;
+
 		var aEventListeners = mEventRegistry[sEventId];
 		if ( !Array.isArray(aEventListeners) ) {
 			aEventListeners = mEventRegistry[sEventId] = [];
@@ -163,6 +165,8 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 		}
 
 		var oFound, oOriginal;
+
+		oListener = oListener === this ? undefined : oListener;
 
 		//PERFOPT use array. remember length to not re-calculate over and over again
 		for (var i = 0, iL = aEventListeners.length; i < iL; i++) {

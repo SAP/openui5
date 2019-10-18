@@ -1976,6 +1976,14 @@ sap.ui.define([
 		assert.equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
 	});
 
+	QUnit.test("Clone Object: events", function(assert) {
+		var oSpy = this.spy();
+		this.obj.attachEvent("press", oSpy, this.obj);
+		var oClone = this.obj.clone();
+		oClone.firePress();
+		assert.strictEqual(oSpy.thisValues[0].getId(), oClone.getId());
+	});
+
 	QUnit.module("Invalidate");
 
 	QUnit.test("ShouldKnowIfInvalidateIsSuppressed", function(assert) {

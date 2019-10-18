@@ -208,6 +208,15 @@ sap.ui.require([
 		assert.strictEqual(count(oObject, "Fire_2"), undefined, "last remove");
 		//typeof mEventRegistry["Fire1"] === "undefined");
 
+		oObject.attachEvent("Fire1", handler1, oObject);
+		assert.strictEqual(count(oObject, "Fire1"), 1, "attach with oListener");
+		oObject.detachEvent("Fire1", handler1);
+		assert.strictEqual(count(oObject, "Fire1"), undefined, "detach without oListener");
+		oObject.attachEvent("Fire1", handler1);
+		assert.strictEqual(count(oObject, "Fire1"), 1, "attach without oListener");
+		oObject.detachEvent("Fire1", handler1, oObject);
+		assert.strictEqual(count(oObject, "Fire1"), undefined, "detach with oListener");
+
 	});
 
 	QUnit.test("FireEventWithAdditionalData", function(assert) {
