@@ -2933,6 +2933,37 @@ sap.ui.define([
 			this.oPC2, "Navigating back twice");
 	});
 
+	QUnit.test("Navigaton buttons disabled when on min/max dates", function(assert){
+		//Prepare
+		var oStartDate = this.oPC2.getStartDate();
+
+		//Arrange
+		this.oPC2.setMinDate(new Date(1999, 1, 1, 0, 0, 0));
+		this.oPC2.setStartDate(new Date(1999, 1, 1, 0, 0, 0));
+		this.oPC2._dateNav.setCurrent(new Date(1999, 1, 1, 0, 0, 0));
+
+		//Act
+		this.oPC2._applyArrowsLogic(true);
+
+		//Assert
+		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
+
+		//Arrange
+		this.oPC2.setMaxDate(new Date(2222,22,22,22,22,22));
+		this.oPC2.setStartDate(new Date(2222,22,22,22,22,22));
+		this.oPC2._dateNav.setCurrent(new Date(2222,22,22,22,22,22));
+
+		//Act
+		this.oPC2._applyArrowsLogic(false);
+
+		//Assert
+		assert.equal(this.oPC2._getHeader()._oNextBtn.getEnabled(), false, "Forward Arrow Is Disabled");
+
+		//Clean
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2._dateNav.setCurrent(oStartDate);
+	});
+
 
 	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area)", function(assert) {
 		var $Days = this.oPC2Interval.$("days"),

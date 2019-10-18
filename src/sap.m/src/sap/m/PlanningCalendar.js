@@ -839,6 +839,25 @@ sap.ui.define([
 			this._dateNav.next();
 		}
 
+		if (this.getMinDate()) {
+			if (this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
+				this._getHeader()._oPrevBtn.setEnabled(false);
+				this._dateNav.setStart(this.getMinDate());
+				this._dateNav.setCurrent(this.getMinDate());
+			} else {
+				this._getHeader()._oPrevBtn.setEnabled(true);
+			}
+		}
+		if (this.getMaxDate()){
+			if (this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
+				this._getHeader()._oNextBtn.setEnabled(false);
+				this._dateNav.setStart(this.getMaxDate());
+				this._dateNav.setCurrent(this.getMaxDate());
+			} else {
+				this._getHeader()._oNextBtn.setEnabled(true);
+			}
+		}
+
 		var oRow = this._getRowInstanceByViewKey(this.getViewKey());
 
 		this.setStartDate(this._dateNav.getStart());
@@ -1521,9 +1540,11 @@ sap.ui.define([
 
 		if (oMinDate) {
 			oHeader.getAggregation("_calendarPicker").setMinDate(new Date(oMinDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMinDate(new Date(oMinDate.getTime()));
 		}
 		if (oMaxDate) {
 			oHeader.getAggregation("_calendarPicker").setMaxDate(new Date(oMaxDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMaxDate(new Date(oMaxDate.getTime()));
 		}
 		this._updateTodayButtonState();
 
@@ -2416,11 +2437,13 @@ sap.ui.define([
 		}
 
 		this._changeStartDate(oStartDate);
+		this._dateNav.setCurrent(oStartDate);
 
 		var sViewKey = this.getViewKey(),
 			oCurrentView = this._getView(sViewKey),
 			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
-			sControlRef;
+			sControlRef,
+			oEndDate = new Date(this._dateNav.getEnd().setHours(23,59,59));
 
 		if (sCurrentViewIntervalType === "Hour") {
 			sCurrentViewIntervalType = "Time";
@@ -2433,6 +2456,15 @@ sap.ui.define([
 
 		if (this[sControlRef]) {
 			this[sControlRef].setDate(oStartDate);
+		}
+
+		if (oStartDate > this.getMinDate() && oStartDate < this.getMaxDate()) {
+			this._getHeader()._oNextBtn.setEnabled(true);
+			this._getHeader()._oPrevBtn.setEnabled(true);
+		} else if (this.getMinDate() >= this._dateNav.getStart() && this.getMinDate() <= oEndDate) {
+			this._getHeader()._oPrevBtn.setEnabled(false);
+		} else if (this.getMaxDate() >= this._dateNav.getStart() && this.getMaxDate() <= oEndDate) {
+			this._getHeader()._oNextBtn.setEnabled(false);
 		}
 	};
 
