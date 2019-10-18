@@ -22,10 +22,12 @@ sap.ui.require([
 		oText.placeAt("uiArea");
 	});
 
-	// we expect this call to throw a "ambiguous test step" error and fail the QUnit build
-	oTestHarness.test({
-		featurePath: "test/testHarnessFailing",
-		steps: Steps
+	QUnit.test("Call Harness with Ambiguous Steps", function(assert) {
+		// we expect this call to throw a "ambiguous test step" error and fail the QUnit test
+		oTestHarness.test({
+			featurePath: "test/testHarnessFailing",
+			steps: Steps
+		});
 	});
 
 });

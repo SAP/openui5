@@ -1951,9 +1951,9 @@
 						fnCallback.apply(__global, aModules);
 					} else {
 						// enforce asynchronous execution of callback even in sync mode
-						setTimeout(function() {
+						Promise.resolve().then(function() {
 							fnCallback.apply(__global, aModules);
-						}, 0);
+						});
 					}
 				}
 			}, function(oErr) {
@@ -1961,9 +1961,9 @@
 					if ( bGlobalAsyncMode ) {
 						fnErrCallback.call(__global, oErr);
 					} else {
-						setTimeout(function() {
+						Promise.resolve().then(function() {
 							fnErrCallback.call(__global, oErr);
-						}, 0);
+						});
 					}
 				} else {
 					throw oErr;
