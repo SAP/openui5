@@ -35,7 +35,7 @@ function(
 	 * @class
 	 * The WizardProgressNavigator is used mainly for displaying the number of steps in the Wizard control.
 	 * It provides a way to navigate between those steps by clicking on each separate step.
-	 * Note: This is a private control that is instatiated and controlled by the Wizard control.
+	 * Note: This is a private control that is instantiated and controlled by the Wizard control.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -111,15 +111,15 @@ function(
 		OPTIONAL_STEP: "WIZARD_STEP_OPTIONAL_STEP_TEXT"
 	};
 
-	/**************************************** LICECYCLE METHODS ***************************************/
+	/**************************************** LIFECYCLE METHODS ***************************************/
 
 	WizardProgressNavigator.prototype.init = function () {
-		this._currentStep = 1;
-		this._activeStep = 1;
-		this._cachedSteps = [];
-		this._stepOptionalIndication = [];
-		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._actionSheet = new ActionSheet();
+		this._iCurrentStep = 1;
+		this._iActiveStep = 1;
+		this._aCachedSteps = [];
+		this._aStepOptionalIndication = [];
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oActionSheet = new ActionSheet();
 		this._createAnchorNavigation();
 	};
 
@@ -136,19 +136,19 @@ function(
 	};
 
 	WizardProgressNavigator.prototype.onAfterRendering = function () {
-		var $ProgressNavStep,
-			zeroBasedActiveStep = this._activeStep - 1,
-			zeroBasedCurrentStep = this._currentStep - 1;
+		var $oProgressNavStep,
+			iZeroBasedActiveStep = this._iActiveStep - 1,
+			iZeroBasedCurrentStep = this._iCurrentStep - 1;
 
 		this._cacheDOMElements();
 		this._updateStepZIndex();
 
-		this._updateAnchorNavigation(zeroBasedActiveStep);
-		this._updateStepActiveAttribute(zeroBasedActiveStep);
-		this._removeAnchorAriaDisabledAttribute(zeroBasedActiveStep);
+		this._updateAnchorNavigation(iZeroBasedActiveStep);
+		this._updateStepActiveAttribute(iZeroBasedActiveStep);
+		this._removeAnchorAriaDisabledAttribute(iZeroBasedActiveStep);
 
-		this._updateStepCurrentAttribute(zeroBasedCurrentStep);
-		this._updateAnchorAriaLabelAttribute(zeroBasedCurrentStep);
+		this._updateStepCurrentAttribute(iZeroBasedCurrentStep);
+		this._updateAnchorAriaLabelAttribute(iZeroBasedCurrentStep);
 
 		this._updateOpenSteps();
 		ResizeHandler.register(this.getDomRef(), this._updateOpenSteps.bind(this));
@@ -157,35 +157,35 @@ function(
 		// iOS is not able to render/calculate properly the table-cell property
 		// Moving to flexbox is not suitable as we should ensure backwards compatibility with IE9
 		if (Device.os.name === Device.os.OS.IOS) {
-			$ProgressNavStep = this.$().find(".sapMWizardProgressNavStep").css("display", "block");
-			setTimeout($ProgressNavStep["css"].bind($ProgressNavStep, "display", ""), 0);
+			$oProgressNavStep = this.$().find(".sapMWizardProgressNavStep").css("display", "block");
+			setTimeout($oProgressNavStep["css"].bind($oProgressNavStep, "display", ""), 0);
 		}
 	};
 
-	WizardProgressNavigator.prototype.ontap = function (event) {
-		if (this._isGroupAtStart(event.target)) {
-			return this._showActionSheet(event.target, true);
+	WizardProgressNavigator.prototype.ontap = function (oEvent) {
+		if (this._isGroupAtStart(oEvent.target)) {
+			return this._showActionSheet(oEvent.target, true);
 		}
 
-		if (this._isGroupAtEnd(event.target)) {
-			return this._showActionSheet(event.target, false);
+		if (this._isGroupAtEnd(oEvent.target)) {
+			return this._showActionSheet(oEvent.target, false);
 		}
 
-		if (!this._isAnchor(event.target) ||
-			!this._isOpenStep(event.target) ||
-			!this._isActiveStep(this._getStepNumber(event.target))) {
+		if (!this._isAnchor(oEvent.target) ||
+			!this._isOpenStep(oEvent.target) ||
+			!this._isActiveStep(this._getStepNumber(oEvent.target))) {
 			return;
 		}
 
-		this._updateCurrentStep(this._getStepNumber(event.target));
-		this.fireStepChanged({	current: this._getStepNumber(event.target) });
+		this._updateCurrentStep(this._getStepNumber(oEvent.target));
+		this.fireStepChanged({	current: this._getStepNumber(oEvent.target) });
 	};
 
-	WizardProgressNavigator.prototype.onsapspace = function (event) {
+	WizardProgressNavigator.prototype.onsapspace = function (oEvent) {
 		if (this._onEnter) {
-			this._onEnter(event, this._anchorNavigation.getFocusedIndex());
+			this._onEnter(oEvent, this._oAnchorNavigation.getFocusedIndex());
 		}
-		this.ontap(event);
+		this.ontap(oEvent);
 	};
 
 	WizardProgressNavigator.prototype.onsapenter = WizardProgressNavigator.prototype.onsapspace;
@@ -193,18 +193,18 @@ function(
 	WizardProgressNavigator.prototype.exit = function () {
 		ResizeHandler.deregisterAllForControl(this.getId());
 
-		this.removeDelegate(this._anchorNavigation);
-		this._anchorNavigation.destroy();
-		this._anchorNavigation = null;
+		this.removeDelegate(this._oAnchorNavigation);
+		this._oAnchorNavigation.destroy();
+		this._oAnchorNavigation = null;
 
-		this._actionSheet.destroy();
-		this._actionSheet = null;
+		this._oActionSheet.destroy();
+		this._oActionSheet = null;
 
-		this._currentStep = null;
-		this._activeStep = null;
-		this._cachedSteps = null;
+		this._iCurrentStep = null;
+		this._iActiveStep = null;
+		this._aCachedSteps = null;
 
-		this._stepOptionalIndication = null;
+		this._aStepOptionalIndication = null;
 	};
 
 	/**************************************** PUBLIC METHODS ***************************************/
@@ -215,7 +215,7 @@ function(
 	 * @public
 	 */
 	WizardProgressNavigator.prototype.getCurrentStep = function () {
-		return this._currentStep;
+		return this._iCurrentStep;
 	};
 
 	/**
@@ -224,7 +224,7 @@ function(
 	 * @public
 	 */
 	WizardProgressNavigator.prototype.getProgress = function () {
-		return this._activeStep;
+		return this._iActiveStep;
 	};
 
 	/**
@@ -233,13 +233,13 @@ function(
 	 * @public
 	 */
 	WizardProgressNavigator.prototype.previousStep = function () {
-		var currentStep = this.getCurrentStep();
+		var iCurrentStep = this.getCurrentStep();
 
-		if (currentStep < 2) {
+		if (iCurrentStep < 2) {
 			return this;
 		}
 
-		return this._moveToStep(currentStep - 1);
+		return this._moveToStep(iCurrentStep - 1);
 	};
 
 	/**
@@ -262,24 +262,22 @@ function(
 
 	/**
 	 * Discards all input done after the step which is being edited.
-	 * @param {number} index The index after which all input will be discarded. One-based.
-	 * @param {boolean} suppressEvent Suppress the stepChanged event.
-	 * @returns {void}
+	 * @param {number} iIndex The index after which all input will be discarded. One-based.
 	 * @public
 	 */
-	WizardProgressNavigator.prototype.discardProgress = function (index) {
-		if (index <= 0 || index > this._activeStep) {
+	WizardProgressNavigator.prototype.discardProgress = function (iIndex) {
+		if (iIndex <= 0 || iIndex > this._iActiveStep) {
 			return this;
 		}
 
-		this._updateCurrentStep(index, this._currentStep);
+		this._updateCurrentStep(iIndex, this._iCurrentStep);
 
-		this._updateStepActiveAttribute(index - 1, this._activeStep - 1);
-		this._addAnchorAriaDisabledAttribute(index - 1);
-		this._updateAnchorNavigation(index - 1);
+		this._updateStepActiveAttribute(iIndex - 1, this._iActiveStep - 1);
+		this._addAnchorAriaDisabledAttribute(iIndex - 1);
+		this._updateAnchorNavigation(iIndex - 1);
 
-		this._currentStep = index;
-		this._activeStep = index;
+		this._iCurrentStep = iIndex;
+		this._iActiveStep = iIndex;
 	};
 
 	/**************************************** PRIVATE METHODS ***************************************/
@@ -295,93 +293,90 @@ function(
 	 */
 	WizardProgressNavigator.prototype._createAnchorNavigation = function () {
 		var that = this;
-		this._anchorNavigation = new ItemNavigation();
-		this._anchorNavigation.setCycling(false);
-		this._anchorNavigation.setDisabledModifiers({
+		this._oAnchorNavigation = new ItemNavigation();
+		this._oAnchorNavigation.setCycling(false);
+		this._oAnchorNavigation.setDisabledModifiers({
 			sapnext: ["alt"],
 			sapprevious: ["alt"]
 		});
-		this._anchorNavigation.attachEvent("AfterFocus", function (params) {
-			var event = params.mParameters.event;
-			if (!event || !event.relatedTarget || jQuery(event.relatedTarget).hasClass(WizardProgressNavigatorRenderer.CLASSES.ANCHOR)) {
+		this._oAnchorNavigation.attachEvent("AfterFocus", function (params) {
+			var oEvent = params.mParameters.oEvent;
+			if (!oEvent || !oEvent.relatedTarget || jQuery(oEvent.relatedTarget).hasClass(WizardProgressNavigatorRenderer.CLASSES.ANCHOR)) {
 				return;
 			}
 
-			that._anchorNavigation.focusItem(that._currentStep - 1);
+			that._oAnchorNavigation.focusItem(that._iCurrentStep - 1);
 		});
-		this.addDelegate(this._anchorNavigation);
+		this.addDelegate(this._oAnchorNavigation);
 	};
 
 	/**
 	 * Caches a reference to the DOM elements which represent the steps and the separators.
 	 * Cached reference is in the form of static NodeList retrieved using querySelectorAll method.
-	 * @returns {void}
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._cacheDOMElements = function () {
-		var domRef = this.getDomRef();
+		var oDomRef = this.getDomRef();
 
-		this._cachedSteps = domRef.querySelectorAll("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
+		this._aCachedSteps = oDomRef.querySelectorAll("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
 	};
 
 	/**
 	 * Sets z-index to all steps so that they stack in the correct order on phone.
 	 * The leftmost step after the current step is with the highest z-index
 	 * while the rightmost is with the lowest z-index.
-	 * @returns {void}
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._updateStepZIndex = function () {
-		var zeroBasedCurrentStep = this._currentStep - 1,
-			stepsLength = this._cachedSteps.length,
-			zIndex = WizardProgressNavigator.CONSTANTS.MAXIMUM_STEPS;
+		var iZeroBasedCurrentStep = this._iCurrentStep - 1,
+			iStepsLength = this._aCachedSteps.length,
+			iZIndex = WizardProgressNavigator.CONSTANTS.MAXIMUM_STEPS;
 
-		for (var i = 0; i < stepsLength; i++) {
-			if (i <= zeroBasedCurrentStep) {
-				this._cachedSteps[i].style.zIndex = 0;
+		for (var i = 0; i < iStepsLength; i++) {
+			if (i <= iZeroBasedCurrentStep) {
+				this._aCachedSteps[i].style.iZIndex = 0;
 			} else {
-				this._cachedSteps[i].style.zIndex = zIndex;
-				zIndex -= 1;
+				this._aCachedSteps[i].style.iIndex = iZIndex;
+				iZIndex -= 1;
 			}
 		}
 	};
 
 	/**
 	 * Allows focus on active anchors.
-	 * @param  {number} index The index of the last focusable anchor. Zero-based.
+	 * @param  {number} iIndex The index of the last focusable anchor. Zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateAnchorNavigation = function (index) {
-		var navDomRef = this.getDomRef(),
-			focusableAnchors = [];
+	WizardProgressNavigator.prototype._updateAnchorNavigation = function (iIndex) {
+		var oNavDomRef = this.getDomRef(),
+			aFocusableAnchors = [];
 
-		for (var i = 0; i <= index; i++) {
-			if (this._cachedSteps[i]) {
-				focusableAnchors.push(this._cachedSteps[i].children[0]);
+		for (var i = 0; i <= iIndex; i++) {
+			if (this._aCachedSteps[i]) {
+				aFocusableAnchors.push(this._aCachedSteps[i].children[0]);
 			}
 		}
 
-		this._anchorNavigation.setRootDomRef(navDomRef);
-		this._anchorNavigation.setItemDomRefs(focusableAnchors);
-		this._anchorNavigation.setPageSize(index);
-		this._anchorNavigation.setFocusedIndex(index);
+		this._oAnchorNavigation.setRootDomRef(oNavDomRef);
+		this._oAnchorNavigation.setItemDomRefs(aFocusableAnchors);
+		this._oAnchorNavigation.setPageSize(iIndex);
+		this._oAnchorNavigation.setFocusedIndex(iIndex);
 	};
 
 	/**
 	 * Updates the step active attribute in the DOM structure of the Control.
-	 * @param {number} newIndex The new index at which the attribute should be set. Zero-based.
-	 * @param {number} oldIndex The old index at which the attribute was set. Zero-based.
-	 * @returns {void}
+	 * @param {number} iNewIndex The new index at which the attribute should be set. Zero-based.
+	 * @param {number} iOldIndex The old index at which the attribute was set. Zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateStepActiveAttribute = function (newIndex, oldIndex) {
-		if (oldIndex !== undefined && this._cachedSteps[oldIndex]) {
-			this._cachedSteps[oldIndex]
+	WizardProgressNavigator.prototype._updateStepActiveAttribute = function (iNewIndex, iOldIndex) {
+		if (iOldIndex !== undefined && this._aCachedSteps[iOldIndex]) {
+			this._aCachedSteps[iOldIndex]
 				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ACTIVE_STEP);
 		}
 
-		if (this._cachedSteps[newIndex]) {
-			this._cachedSteps[newIndex]
+		if (this._aCachedSteps[iNewIndex]) {
+			this._aCachedSteps[iNewIndex]
 				.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ACTIVE_STEP, true);
 		}
 
@@ -389,132 +384,127 @@ function(
 
 	/**
 	 * Updates the step current attribute in the DOM structure of the Control.
-	 * @param {number} newIndex The new index at which the attribute should be set. Zero-based.
-	 * @param {number} oldIndex The old index at which the attribute was set. Zero-based.
-	 * @returns {void}
+	 * @param {number} iNewIndex The new index at which the attribute should be set. Zero-based.
+	 * @param {number} iOldIndex The old index at which the attribute was set. Zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateStepCurrentAttribute = function (newIndex, oldIndex) {
-		if (oldIndex !== undefined && this._cachedSteps[oldIndex]) {
-			this._cachedSteps[oldIndex]
+	WizardProgressNavigator.prototype._updateStepCurrentAttribute = function (iNewIndex, iOldIndex) {
+		if (iOldIndex !== undefined && this._aCachedSteps[iOldIndex]) {
+			this._aCachedSteps[iOldIndex]
 				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.CURRENT_STEP);
 		}
 
-		if (this._cachedSteps[newIndex]) {
-			this._cachedSteps[newIndex]
+		if (this._aCachedSteps[iNewIndex]) {
+			this._aCachedSteps[iNewIndex]
 				.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.CURRENT_STEP, true);
 		}
 	};
 
 	/**
 	 * Adds aria-disabled attribute to all anchors after the specified index.
-	 * @param {number} index The index from which to add aria-disabled=true. Zero-based.
-	 * @returns {void}
+	 * @param {number} iIndex The index from which to add aria-disabled=true. Zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._addAnchorAriaDisabledAttribute = function (index) {
-		var stepsLength = this._cachedSteps.length,
-			anchor;
+	WizardProgressNavigator.prototype._addAnchorAriaDisabledAttribute = function (iIndex) {
+		var iStepsLength = this._aCachedSteps.length,
+			oAnchor;
 
-		for (var i = index + 1; i < stepsLength; i++) {
-			anchor = this._cachedSteps[i].children[0];
+		for (var i = iIndex + 1; i < iStepsLength; i++) {
+			oAnchor = this._aCachedSteps[i].children[0];
 
-			anchor.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_DISABLED, true);
-			anchor.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL);
+			oAnchor.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_DISABLED, true);
+			oAnchor.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL);
 		}
 	};
 
 	/**
 	 * Removes the anchor aria-disabled attribute from the DOM structure of the Control.
-	 * @param {number} index The index at which the attribute should be removed. Zero-based.
-	 * @returns {void}
+	 * @param {number} iIndex The index at which the attribute should be removed. Zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._removeAnchorAriaDisabledAttribute = function (index) {
-		if (this._cachedSteps[index]) {
-			this._cachedSteps[index].children[0]
+	WizardProgressNavigator.prototype._removeAnchorAriaDisabledAttribute = function (iIndex) {
+		if (this._aCachedSteps[iIndex]) {
+			this._aCachedSteps[iIndex].children[0]
 				.removeAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_DISABLED);
 		}
 	};
 
 	/**
 	 * Updates the anchor aria-label attribute in the DOM structure of the Control.
-	 * @param {number} newIndex The new index at which the attribute should be set. Zero-based.
-	 * @param {number} oldIndex The old index at which the attribute was set. Zero-based.
-	 * @returns {void}
+	 * @param {number} iNewIndex The new index at which the attribute should be set. Zero-based.
+	 * @param {number} iOldIndex The old index at which the attribute was set. Zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateAnchorAriaLabelAttribute = function (newIndex, oldIndex) {
-		if (oldIndex !== undefined && this._cachedSteps[oldIndex]) {
-			this._cachedSteps[oldIndex].children[0]
+	WizardProgressNavigator.prototype._updateAnchorAriaLabelAttribute = function (iNewIndex, iOldIndex) {
+		if (iOldIndex !== undefined && this._aCachedSteps[iOldIndex]) {
+			this._aCachedSteps[iOldIndex].children[0]
 				.setAttribute(
 					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL,
-					this._resourceBundle.getText(WizardProgressNavigator.TEXT.PROCESSED));
+					this._oResourceBundle.getText(WizardProgressNavigator.TEXT.PROCESSED));
 		}
 
-		if (this._cachedSteps[newIndex]) {
-			this._cachedSteps[newIndex].children[0]
+		if (this._aCachedSteps[iNewIndex]) {
+			this._aCachedSteps[iNewIndex].children[0]
 				.setAttribute(
 					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_LABEL,
-					this._resourceBundle.getText(WizardProgressNavigator.TEXT.SELECTED));
+					this._oResourceBundle.getText(WizardProgressNavigator.TEXT.SELECTED));
 		}
 
 	};
 
 	/**
 	 * Move to the specified step while updating the current step and active step.
-	 * @param {number} newStep The step number to which current step will be set. Non zero-based.
-	 * @param {boolean} suppressEvent Suppress the stepChanged event.
+	 * @param {number} iNewStep The step number to which current step will be set. Non zero-based.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._moveToStep = function (newStep) {
-		var	stepCount = this.getStepCount(),
-			oldStep = this.getCurrentStep();
+	WizardProgressNavigator.prototype._moveToStep = function (iNewStep) {
+		var	iStepCount = this.getStepCount(),
+			iOldStep = this.getCurrentStep();
 
-		if (newStep > stepCount) {
+		if (iNewStep > iStepCount) {
 			return this;
 		}
 
-		if (newStep > this._activeStep) {
-			this._updateActiveStep(newStep);
+		if (iNewStep > this._iActiveStep) {
+			this._updateActiveStep(iNewStep);
 		}
 
-		return this._updateCurrentStep(newStep, oldStep);
+		return this._updateCurrentStep(iNewStep, iOldStep);
 	};
 
 	/**
 	 * Updates the active step in the control instance as well as the DOM structure.
-	 * @param {number} newStep The step number to which active step will be set. Non zero-based.
-	 * @param {number} oldStep The step number to which active step was set. Non zero-based.
+	 * @param {number} iNewStep The step number to which active step will be set. Non zero-based.
+	 * @param {number} iOldStep The step number to which active step was set. Non zero-based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateActiveStep = function (newStep, oldStep) {
-		var zeroBasedNewStep = newStep - 1,
-			zeroBasedOldStep = (oldStep || this._activeStep) - 1;
+	WizardProgressNavigator.prototype._updateActiveStep = function (iNewStep, iOldStep) {
+		var iZeroBasedNewStep = iNewStep - 1,
+			iZeroBasedOldStep = (iOldStep || this._iActiveStep) - 1;
 
-		this._activeStep = newStep;
-		this._updateAnchorNavigation(zeroBasedNewStep);
-		this._removeAnchorAriaDisabledAttribute(zeroBasedNewStep);
-		this._updateStepActiveAttribute(zeroBasedNewStep, zeroBasedOldStep);
+		this._iActiveStep = iNewStep;
+		this._updateAnchorNavigation(iZeroBasedNewStep);
+		this._removeAnchorAriaDisabledAttribute(iZeroBasedNewStep);
+		this._updateStepActiveAttribute(iZeroBasedNewStep, iZeroBasedOldStep);
 	};
 
 	/**
 	 * Updates the current step in the control instance as well as the DOM structure.
-	 * @param {number} newStep The step number to which current step will be set. Non zero-based.
-	 * @param {number} oldStep The step number to which current step was set. Non zero-based.
+	 * @param {number} iNewStep The step number to which current step will be set. Non zero-based.
+	 * @param {number} iOldStep The step number to which current step was set. Non zero-based.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._updateCurrentStep = function (newStep, oldStep) {
-		var zeroBasedNewStep = newStep - 1,
-			zeroBasedOldStep = (oldStep || this.getCurrentStep()) - 1;
+	WizardProgressNavigator.prototype._updateCurrentStep = function (iNewStep, iOldStep) {
+		var iZeroBasedNewStep = iNewStep - 1,
+			iZeroBasedOldStep = (iOldStep || this.getCurrentStep()) - 1;
 
-		this._currentStep = newStep;
+		this._iCurrentStep = iNewStep;
 		this._updateStepZIndex();
 		this._updateOpenSteps();
-		this._updateStepCurrentAttribute(zeroBasedNewStep, zeroBasedOldStep);
-		this._updateAnchorAriaLabelAttribute(zeroBasedNewStep, zeroBasedOldStep);
+		this._updateStepCurrentAttribute(iZeroBasedNewStep, iZeroBasedOldStep);
+		this._updateAnchorAriaLabelAttribute(iZeroBasedNewStep, iZeroBasedOldStep);
 
 		return this;
 	};
@@ -526,64 +516,63 @@ function(
 	 *   1.2. If there are no available steps towards the end a step towards the beginning is opened
 	 * 2. A step towards the beginning is opened
 	 *   2.2. If there are no available steps towards the beginning a step towards the end is opened
-	 * @returns {void}
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._updateOpenSteps = function () {
-		var width = this.$().width(),
-			currStep = this._currentStep - 1,
-			counter = 0,
-			isForward = true,
-			stepsToShow = this.getStepTitles().length ?
-				Math.floor(width / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_WITH_TITLE) :
-				Math.floor(width / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_NO_TITLE);
+		var iWidth = this.$().width(),
+			iCurrStep = this._iCurrentStep - 1,
+			iCounter = 0,
+			bIsForward = true,
+			iStepsToShow = this.getStepTitles().length ?
+				Math.floor(iWidth / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_WITH_TITLE) :
+				Math.floor(iWidth / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_NO_TITLE);
 
-		[].forEach.call(this._cachedSteps, function (step) {
+		[].forEach.call(this._aCachedSteps, function (step) {
 			step.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, false);
 			step.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV, false);
 			step.setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT, false);
 		});
 
-		if (this._cachedSteps[currStep]) {
-			this._cachedSteps[currStep].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
+		if (this._aCachedSteps[iCurrStep]) {
+			this._aCachedSteps[iCurrStep].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
 		}
 
-		for (var i = 1; i < stepsToShow; i++) {
-			if (isForward) {
-				counter += 1;
+		for (var i = 1; i < iStepsToShow; i++) {
+			if (bIsForward) {
+				iCounter += 1;
 			}
 
-			if (isForward && this._cachedSteps[currStep + counter]) {
-				this._cachedSteps[currStep + counter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
-				isForward = !isForward;
-			} else if (!isForward && this._cachedSteps[currStep - counter]) {
-				this._cachedSteps[currStep - counter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
-				isForward = !isForward;
-			} else if (this._cachedSteps[currStep + counter + 1]) {
-				counter += 1;
-				this._cachedSteps[currStep + counter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
-				isForward = true;
-			} else if (this._cachedSteps[currStep - counter]) {
-				this._cachedSteps[currStep - counter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
-				counter += 1;
-				isForward = false;
+			if (bIsForward && this._aCachedSteps[iCurrStep + iCounter]) {
+				this._aCachedSteps[iCurrStep + iCounter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
+				bIsForward = !bIsForward;
+			} else if (!bIsForward && this._aCachedSteps[iCurrStep - iCounter]) {
+				this._aCachedSteps[iCurrStep - iCounter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
+				bIsForward = !bIsForward;
+			} else if (this._aCachedSteps[iCurrStep + iCounter + 1]) {
+				iCounter += 1;
+				this._aCachedSteps[iCurrStep + iCounter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
+				bIsForward = true;
+			} else if (this._aCachedSteps[iCurrStep - iCounter]) {
+				this._aCachedSteps[iCurrStep - iCounter].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP, true);
+				iCounter += 1;
+				bIsForward = false;
 			}
 		}
 
 		// mark the topmost steps of both groups (in the beginning and the end)
-		for (i = 0; i < this._cachedSteps.length; i++) {
-			if (this._cachedSteps[i].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "true" &&
-				this._cachedSteps[i - 1] &&
-				this._cachedSteps[i - 1].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "false") {
+		for (i = 0; i < this._aCachedSteps.length; i++) {
+			if (this._aCachedSteps[i].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "true" &&
+				this._aCachedSteps[i - 1] &&
+				this._aCachedSteps[i - 1].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "false") {
 
-				this._cachedSteps[i - 1].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV, true);
+				this._aCachedSteps[i - 1].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV, true);
 			}
 
-			if (this._cachedSteps[i].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "false" &&
-				this._cachedSteps[i - 1] &&
-				this._cachedSteps[i - 1].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "true") {
+			if (this._aCachedSteps[i].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "false" &&
+				this._aCachedSteps[i - 1] &&
+				this._aCachedSteps[i - 1].getAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) == "true") {
 
-				this._cachedSteps[i].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT, true);
+				this._aCachedSteps[i].setAttribute(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT, true);
 				break;
 			}
 		}
@@ -593,56 +582,55 @@ function(
 	 * Checks whether the argument has data-sap-ui-wpn-step-open-prev attribute set to true.
 	 * This means this is the topmost step of the group at the start of the navigator.
 	 * It is a group if there is more than one step in the group - the step is not the first one.
-	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @param {HTMLElement} oDomTarget The target of the click/tap event.
 	 * @returns {boolean} Returns true when data-sap-ui-wpn-step-open-prev=true, false otherwise.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._isGroupAtStart = function (domTarget) {
-		var step = jQuery(domTarget).closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
-		var stepNumber = this._getStepNumber(step);
+	WizardProgressNavigator.prototype._isGroupAtStart = function (oDomTarget) {
+		var $oStep = jQuery(oDomTarget).closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
+		var iStepNumber = this._getStepNumber($oStep);
 
-		return step.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV) === "true" &&
-				stepNumber > 1;
+		return $oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV) === "true" &&
+			iStepNumber > 1;
 	};
 
 	/**
 	 * Checks whether the argument has data-sap-ui-wpn-step-open attribute set to false.
 	 * This means this is the topmost step of the group at the end of the navigator.
 	 * It is a group if there is more than one step in the group - the step is not the last one.
-	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @param {HTMLElement} oDomTarget The target of the click/tap event.
 	 * @returns {boolean} Returns true when data-sap-ui-wpn-step-open=false, false otherwise.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._isGroupAtEnd = function (domTarget) {
-		var step = jQuery(domTarget).closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
-		var stepNumber = this._getStepNumber(step);
+	WizardProgressNavigator.prototype._isGroupAtEnd = function (oDomTarget) {
+		var $oStep = jQuery(oDomTarget).closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
+		var iStepNumber = this._getStepNumber($oStep);
 
-		return step.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT) === "true" &&
-				stepNumber < this._cachedSteps.length;
+		return $oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT) === "true" &&
+			iStepNumber < this._aCachedSteps.length;
 	};
 
 	/**
 	 * Opens an ActionSheet control with buttons for each grouped step.
-	 * @param {HTMLElement} domTarget The target of the click/tap event.
-	 * @param {boolean} atStart The position of the group (at the start or at the end).
-	 * @returns {void}
+	 * @param {HTMLElement} oDomTarget The target of the click/tap event.
+	 * @param {boolean} bAtStart The position of the group (at the start or at the end).
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._showActionSheet = function (domTarget, atStart) {
-		var fromStep = atStart ? 0 : this._getStepNumber(domTarget) - 1;
-		var toStep = atStart ? this._getStepNumber(domTarget) : this._cachedSteps.length;
-		var icon, title;
+	WizardProgressNavigator.prototype._showActionSheet = function (oDomTarget, bAtStart) {
+		var iFromStep = bAtStart ? 0 : this._getStepNumber(oDomTarget) - 1;
+		var iToStep = bAtStart ? this._getStepNumber(oDomTarget) : this._aCachedSteps.length;
+		var sIcon, sTitle;
 
-		this._actionSheet.removeAllButtons();
-		for (var i = fromStep; i < toStep; i++) {
-			icon = this.getStepIcons()[i];
-			title = this._cachedSteps[i].childNodes[0].getAttribute("title");
+		this._oActionSheet.removeAllButtons();
+		for (var i = iFromStep; i < iToStep; i++) {
+			sIcon = this.getStepIcons()[i];
+			sTitle = this._aCachedSteps[i].childNodes[0].getAttribute("title");
 
-			this._actionSheet.addButton(new Button({
+			this._oActionSheet.addButton(new Button({
 				width: "200px",
-				text: title,
-				icon: icon,
-				enabled: this._activeStep >= (i + 1),
+				text: sTitle,
+				icon: sIcon,
+				enabled: this._iActiveStep >= (i + 1),
 				press: function (stepNumber) {
 					this._moveToStep(stepNumber);
 					this.fireStepChanged({	current: stepNumber});
@@ -650,58 +638,58 @@ function(
 			}));
 		}
 
-		this._actionSheet.openBy(domTarget);
+		this._oActionSheet.openBy(oDomTarget);
 	};
 
 	/**
 	 * Checks whether the argument has sapMWizardProgressNavAnchor class present.
-	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @param {HTMLElement} oDomTarget The target of the click/tap event.
 	 * @returns {boolean} Returns true when sapMWizardProgressNavAnchor class is present, false otherwise.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._isAnchor = function (domTarget) {
-		return domTarget.className.indexOf(WizardProgressNavigatorRenderer.CLASSES.ANCHOR) !== -1;
+	WizardProgressNavigator.prototype._isAnchor = function (oDomTarget) {
+		return oDomTarget.className.indexOf(WizardProgressNavigatorRenderer.CLASSES.ANCHOR) !== -1;
 	};
 
 	/**
 	 * Checks whether the argument has the open step attribute set to true.
 	 * If not it checks whether it is an only step in a group - therefore navigate to it directly.
-	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @param {HTMLElement} oDomTarget The target of the click/tap event.
 	 * @returns {boolean} Returns true when sapMWizardProgressNavIcon class is present, false otherwise.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._isOpenStep = function (domTarget) {
-		var step = jQuery(domTarget).closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
+	WizardProgressNavigator.prototype._isOpenStep = function (oDomTarget) {
+		var $oStep = jQuery(oDomTarget).closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP);
 
-		return step.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) === "true" ||
-				(step.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) === "false" &&
-				step.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV) === "true") ||
-				(step.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) === "false" &&
-				step.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT) === "true");
+		return $oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) === "true" ||
+				($oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) === "false" &&
+					$oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_PREV) === "true") ||
+				($oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP) === "false" &&
+					$oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT) === "true");
 	};
 
 	/**
 	 * Checks whether the step is active.
-	 * @param {number} stepNumber The step number to be checked.
+	 * @param {number} iStepNumber The step number to be checked.
 	 * @returns {boolean} True when the step number has been activated, false otherwise.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._isActiveStep = function (stepNumber) {
-		return stepNumber <= this._activeStep;
+	WizardProgressNavigator.prototype._isActiveStep = function (iStepNumber) {
+		return iStepNumber <= this._iActiveStep;
 	};
 
 	/**
 	 * Extracts the step attribute from the argument.
-	 * @param {HTMLElement} domAnchor The DOM element which represents the anchor tag in each step.
+	 * @param {HTMLElement} oDomAnchor The DOM element which represents the anchor tag in each step.
 	 * @returns {number} Returns parsed step number. Non-zero based.
 	 * @private
 	 */
-	WizardProgressNavigator.prototype._getStepNumber = function (domAnchor) {
-		var stepNumber = jQuery(domAnchor)
+	WizardProgressNavigator.prototype._getStepNumber = function (oDomAnchor) {
+		var $iStepNumber = jQuery(oDomAnchor)
 						.closest("." + WizardProgressNavigatorRenderer.CLASSES.STEP)
 						.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.STEP);
 
-		return parseInt(stepNumber);
+		return parseInt($iStepNumber);
 	};
 
 	return WizardProgressNavigator;

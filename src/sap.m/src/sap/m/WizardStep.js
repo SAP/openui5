@@ -122,7 +122,7 @@ sap.ui.define([
 	TitlePropagationSupport.call(WizardStep.prototype, "content", function () {return this.getId() + "-title";});
 
 	WizardStep.prototype.init = function () {
-		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._oNumberInvisibleText = new InvisibleText({id: this.getId() + "-NumberedTitle"}).toStatic();
 
 		this._createNextButton();
@@ -135,7 +135,7 @@ sap.ui.define([
 	 */
 	WizardStep.prototype._createNextButton = function () {
 		this._oNextButton = new Button(this.getId() + "-nextButton", {
-			text: this._resourceBundle.getText("WIZARD_STEP") + 2,
+			text: this._oResourceBundle.getText("WIZARD_STEP") + 2,
 			type: ButtonType.Emphasized,
 			press: this._complete.bind(this)
 		}).addStyleClass("sapMWizardNextButtonVisible");
@@ -144,7 +144,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the step's properties in the current context of the wizard
+	 * Updates the step's properties in the current context of the wizard.
 	 * @param {object} [mSettings] Wizard step settings
 	 * @private
 	 * @ui5-restricted sap.m.Wizard
@@ -162,8 +162,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the invisible text, which describes the title and position of the step
-	 * @param {int} iNumber The position of the step inside the wizard
+	 * Gets the invisible text, which describes the title and position of the step.
 	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
 	 * @private
 	 * @ui5-restricted sap.m.Wizard
@@ -173,43 +172,43 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the text, which describes the title and position of the step
-	 * @param {int} iNumber The position of the step inside the wizard
+	 * Sets the text, which describes the title and position of the step.
+	 * @param {number} iNumber The position of the step inside the wizard
 	 * @returns {sap.ui.core.InvisibleText} The invisible text instance
 	 * @private
 	 * @ui5-restricted sap.m.Wizard
 	 */
 	WizardStep.prototype._setNumberInvisibleText = function (iNumber) {
-		return this._oNumberInvisibleText.setText(this._resourceBundle.getText("WIZARD_STEP") + iNumber + " "  + this.getTitle());
+		return this._oNumberInvisibleText.setText(this._oResourceBundle.getText("WIZARD_STEP") + iNumber + " "  + this.getTitle());
 	};
 
-	WizardStep.prototype.setValidated = function (validated) {
-		this.setProperty("validated", validated, true);
+	WizardStep.prototype.setValidated = function (bValidated) {
+		this.setProperty("validated", bValidated, true);
 		this.setButtonVisibility();
 
 		return this;
 	};
 
-	WizardStep.prototype.setNextStep = function (value) {
-		this.setAssociation("nextStep", value, true);
+	WizardStep.prototype.setNextStep = function (oValue) {
+		this.setAssociation("nextStep", oValue, true);
 
-		var parent = this._getWizardParent();
+		var oParent = this._getWizardParent();
 
-		if (parent !== null) {
-			parent._checkCircularReference(this._getNextStepReference());
-			parent._updateProgressNavigator();
+		if (oParent !== null) {
+			oParent._checkCircularReference(this._getNextStepReference());
+			oParent._updateProgressNavigator();
 		}
 
 		return this;
 	};
 	/**
 	 * setVisible shouldn't be used on wizard steps.
-	 * If you need to show/hide steps based on some condition - use the branching property instead
-	 * @param {boolean} visible Whether the step should be visible
+	 * If you need to show/hide steps based on some condition - use the branching property instead.
+	 * @param {boolean} bVisible Whether the step should be visible
 	 * @returns {sap.m.WizardStep} this instance for method chaining
 	 */
-	WizardStep.prototype.setVisible = function (visible) {
-		this.setProperty("visible", visible, true);
+	WizardStep.prototype.setVisible = function (bVisible) {
+		this.setProperty("visible", bVisible, true);
 		Log.warning("Don't use the set visible method for wizard steps. If you need to show/hide steps based on some condition - use the branching property of the Wizard instead.");
 		return this;
 	};
@@ -238,20 +237,20 @@ sap.ui.define([
 	};
 
 	WizardStep.prototype._containsSubsequentStep = function (stepId) {
-		return this.getSubsequentSteps().some(function (step) { return step === stepId; });
+		return this.getSubsequentSteps().some(function (sStep) { return sStep === stepId; });
 	};
 
 	WizardStep.prototype._getWizardParent = function () {
-		var parent = this.getParent();
+		var oParent = this.getParent();
 
-		while (!(parent instanceof sap.m.Wizard)) {
-			if (parent === null) {
+		while (!(oParent instanceof sap.m.Wizard)) {
+			if (oParent === null) {
 				return null;
 			}
-			parent = parent.getParent();
+			oParent = oParent.getParent();
 		}
 
-		return parent;
+		return oParent;
 	};
 
 	WizardStep.prototype.setLast = function(bLast){

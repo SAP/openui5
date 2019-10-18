@@ -83,7 +83,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("alt + right/left is not handled", function(assert) {
-		var oModifiers = this.oProgressNavigator._anchorNavigation.getDisabledModifiers();
+		var oModifiers = this.oProgressNavigator._oAnchorNavigation.getDisabledModifiers();
 		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
 		assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
 		assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
@@ -91,7 +91,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("NextStep() should not overflow", function (assert) {
-		this.oProgressNavigator._currentStep = 5;
+		this.oProgressNavigator._iCurrentStep = 5;
 
 		this.oProgressNavigator.nextStep();
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 5,
@@ -99,7 +99,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("PreviousStep() should go to the previous step", function (assert) {
-		this.oProgressNavigator._currentStep = 2;
+		this.oProgressNavigator._iCurrentStep = 2;
 
 		this.oProgressNavigator.previousStep();
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 1,
@@ -325,9 +325,9 @@ sap.ui.define([
 			tablet: false
 		});
 
-		var stepChangedSpy = sinon.spy(),
+		var oStepChangedSpy = sinon.spy(),
 			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
-		this.oProgressNavigator.attachStepChanged(stepChangedSpy);
+		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
 
 		// navigate to next wizard steps
 		this.oProgressNavigator.nextStep().nextStep().nextStep();
@@ -336,32 +336,32 @@ sap.ui.define([
 		// open action sheet
 		this.oProgressNavigator._showActionSheet($anchors[0]);
 
-		this.oProgressNavigator._actionSheet.getButtons()[0].firePress();
+		this.oProgressNavigator._oActionSheet.getButtons()[0].firePress();
 
-		assert.strictEqual(stepChangedSpy.callCount, 1, "stepChanged event should be fired");
+		assert.strictEqual(oStepChangedSpy.callCount, 1, "stepChanged event should be fired");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 1, "currentStep should change after interaction with the progress navigator");
 	});
 
 	QUnit.test("Tapping on NON ACTIVE step", function(assert) {
-		var stepChangedSpy = sinon.spy(),
+		var oStepChangedSpy = sinon.spy(),
 			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
 
-		this.oProgressNavigator.attachStepChanged(stepChangedSpy);
+		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
 		$anchors.eq(1).trigger("tap");
 
-		assert.strictEqual(stepChangedSpy.callCount, 0, "stepChanged event should NOT be fired");
+		assert.strictEqual(oStepChangedSpy.callCount, 0, "stepChanged event should NOT be fired");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 1, "currentStep should NOT change");
 	});
 
 	QUnit.test("Tapping on ACTIVE step", function(assert) {
-		var stepChangedSpy = sinon.spy(),
+		var oStepChangedSpy = sinon.spy(),
 			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
 
 		this.oProgressNavigator.nextStep().previousStep();
-		this.oProgressNavigator.attachStepChanged(stepChangedSpy);
+		this.oProgressNavigator.attachStepChanged(oStepChangedSpy);
 		$anchors.eq(1).trigger("tap");
 
-		assert.strictEqual(stepChangedSpy.callCount, 1, "stepChanged event should be fired once");
+		assert.strictEqual(oStepChangedSpy.callCount, 1, "stepChanged event should be fired once");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 2, "currentStep should change to 2");
 	});
 
@@ -383,13 +383,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("When rendered only the first anchor should NOT have aria-disabled=true", function(assert) {
-		var stepCount = this.oProgressNavigator.getStepCount(),
+		var iStepCount = this.oProgressNavigator.getStepCount(),
 			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
 
 		assert.strictEqual($anchors.eq(0).attr("aria-disabled"), undefined,
 			"first anchor should NOT have aria-disabled=true attribute");
 
-		for (var i = 1; i < stepCount; i++) {
+		for (var i = 1; i < iStepCount; i++) {
 			assert.strictEqual($anchors.eq(i).attr("aria-disabled"), "true",
 				"anchor should have aria-disabled=true attribute");
 		}
