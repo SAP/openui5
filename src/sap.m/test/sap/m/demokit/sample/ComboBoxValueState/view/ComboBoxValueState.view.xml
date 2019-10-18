@@ -12,6 +12,7 @@
 				<ComboBox
 					id="idComboBoxWarning"
 					valueState="Warning"
+					valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. Extra long text used as a warning message - 3."
 					items="{
 						path: '/CountriesCollection',
 						sorter: { path: 'text' },

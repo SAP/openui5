@@ -6225,7 +6225,8 @@ sap.ui.define([
 		this.clock.tick(200);
 
 		// deselect the first item
-		jQuery(this.oMCB1.getPicker().getContent()[0].getItems()[0]).tap();
+		jQuery(this.oMCB1.getPicker().getContent()[0].getFlexContent()[0].getItems()[0]).tap();
+
 		this.clock.tick(200);
 		// assert
 		assert.strictEqual(this.oMCB1.getSelectedItems().length, 3, "A selected item was removed after deselecting an item from the popover");
@@ -6310,15 +6311,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oMCB._oTokenizer._oIndicator.click();
-		this.clock.tick(200);
+		this.clock.tick(1000);
 
-		aEditModeContent = oMCB.getPicker().getContent();
-		assert.strictEqual(aEditModeContent.length, 1, "The popover has content.");
-		assert.ok(aEditModeContent[0].isA("sap.m.List"), "The popover aggregated a list.");
-		assert.strictEqual(aEditModeContent[0].getMode(), "MultiSelect", "The list is in mode 'MultiSelect'.");
-		assert.strictEqual(aEditModeContent[0].getItems().length, 2, "The list has 2 items.");
-		assert.ok(aEditModeContent[0].getItems()[0].getSelected(), "The first item is selected.");
-		assert.ok(aEditModeContent[0].getItems()[1].getSelected(), "The second item is selected.");
+		aEditModeContent = oMCB.getPicker().getContent()[0].getFlexContent()[0];
+		assert.ok(aEditModeContent.isA("sap.m.List"), "The popover aggregated a list.");
+		assert.strictEqual(aEditModeContent.getMode(), "MultiSelect", "The list is in mode 'MultiSelect'.");
+		assert.strictEqual(aEditModeContent.getItems().length, 2, "The list has 2 items.");
+		assert.ok(aEditModeContent.getItems()[0].getSelected(), "The first item is selected.");
+		assert.ok(aEditModeContent.getItems()[1].getSelected(), "The second item is selected.");
 
 		// clean up
 		oMCB.destroy();
@@ -6946,7 +6946,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("value state message for invalid input should be overwritten by the applications", function(assert) {
-		 var sCustomText = "This is application text.";
+		 var sCustomText = "This is application text. This is application text. This is application text. This is application text. This is application text. This is application text. This is application text.";
 
 		// act
 		this.oMultiComboBox.setValueStateText(sCustomText);

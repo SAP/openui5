@@ -846,6 +846,7 @@ function(
 	 */
 	MultiComboBox.prototype._showWrongValueVisualEffect = function() {
 		var oPickerTextField = this.getPickerTextField(),
+			oSuggestionsPopover = this._getSuggestionsPopover(),
 			sOldValueState = this.isPickerDialog() ? oPickerTextField.getValueState() : this.getValueState(),
 			sInvalidEntry = this._sOriginalValueStateText || this._oRbC.getText("VALUE_STATE_ERROR");
 
@@ -853,11 +854,12 @@ function(
 			return;
 		}
 
-		if (this.isPickerDialog()) {
-			oPickerTextField.setValueState(ValueState.Error);
-			oPickerTextField.setValueStateText(sInvalidEntry);
-			setTimeout(oPickerTextField["setValueState"].bind(oPickerTextField, sOldValueState), 1000);
-		} else {
+		if (oSuggestionsPopover) {
+			oSuggestionsPopover.updateValueState(ValueState.Error, sInvalidEntry, true);
+			setTimeout(oSuggestionsPopover.updateValueState.bind(oSuggestionsPopover, sOldValueState, sInvalidEntry, true), 1000);
+		}
+
+		if (!this.isPickerDialog()) {
 			this.setValueState(ValueState.Error);
 			this.setValueStateText(sInvalidEntry);
 			setTimeout(this["setValueState"].bind(this, sOldValueState), 1000);
@@ -2851,12 +2853,19 @@ function(
 	 */
 	MultiComboBox.prototype._updatePopoverBasedOnEditMode = function (bEditable) {
 		var oList = this._getList(),
-			oPopup = bEditable ? this.getPicker() : this._getReadOnlyPopover(),
-			sListMode = bEditable ? ListMode.MultiSelect : ListMode.None;
+			oSuggestionsPopover = this._getSuggestionsPopover(),
+			oReadOnlyPopover = this._getReadOnlyPopover();
 
-		if (oList && !oPopup.getContent().length) {
-			oList.setMode(sListMode);
-			oPopup.addContent(oList);
+		if (!oList) {
+			return;
+		}
+
+		if (bEditable) {
+			oList.setMode(ListMode.MultiSelect);
+			oSuggestionsPopover.addFlexContent(oList);
+		} else if (!oReadOnlyPopover.getContent().length){
+			oList.setMode(ListMode.None);
+			oReadOnlyPopover.addContent(oList);
 		}
 	};
 

@@ -6,7 +6,10 @@
 		<l:content>
 			<Input valueState="None" value="Value state None"/>
 			<Input valueState="Success" value="Value state Success"/>
-			<Input valueState="Warning" value="Value state Warning"/>
+			<Input
+				valueState="Warning"
+				valueStateText="Warning message. Extra long text used as a warning message. Extra long text used as a warning message - 2. Extra long text used as a warning message - 3. Extra long text used as a warning message - 4. Extra long text used as a warning message - 5."
+				value="Value state Warning."/>
 			<Input valueState="Error" value="Value state Error"/>
 			<Input valueState="Information" value="Value state Information"/>
 		</l:content>

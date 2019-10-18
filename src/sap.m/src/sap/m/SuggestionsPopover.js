@@ -27,6 +27,7 @@ sap.ui.define([
 	'sap/m/Title',
 	'sap/m/Text',
 	'sap/ui/core/IconPool',
+	'sap/m/SimpleFixFlex',
 	"sap/base/security/encodeXML",
 	"sap/ui/events/KeyCodes"
 ], function (
@@ -54,6 +55,7 @@ sap.ui.define([
 	Title,
 	Text,
 	IconPool,
+	SimpleFixFlex,
 	encodeXML,
 	KeyCodes
 ) {
@@ -167,6 +169,11 @@ sap.ui.define([
 
 			this._oProposedItem = null;
 			this._oInputDelegate = null;
+
+			if (this._oPickerValueStateText) {
+				this._oPickerValueStateText.destroy();
+				this._oPickerValueStateText = null;
+			}
 		}
 	});
 
@@ -409,8 +416,8 @@ sap.ui.define([
 		this._oPopover = !this._bUseDialog ?
 			(new Popover(oInput.getId() + "-popup", {
 				showArrow: false,
-				showHeader: true,
 				placement: PlacementType.VerticalPreferredBottom,
+				showHeader: false,
 				initialFocus: oInput,
 				horizontalScrolling: true
 			}))
@@ -503,20 +510,22 @@ sap.ui.define([
 			this._oList = this._getSuggestionsTable();
 		}
 
+		this._oSimpleFixFlex = this._createSimpleFixFlex();
+
 		if (this._oPopover) {
 			if (this._bUseDialog) {
 				// this._oList needs to be manually rendered otherwise it triggers a rerendering of the whole
 				// dialog and may close the opened on screen keyboard
-				this._oPopover.addAggregation("content", this._oList, true);
+				this._oPopover.addAggregation("content", this._oSimpleFixFlex, true);
 				var oRenderTarget = this._oPopover.$("scrollCont")[0];
 				if (oRenderTarget) {
 					var rm = sap.ui.getCore().createRenderManager();
-					rm.renderControl(this._oList);
+					rm.renderControl(this._oSimpleFixFlex);
 					rm.flush(oRenderTarget);
 					rm.destroy();
 				}
 			} else {
-				this._oPopover.addContent(this._oList);
+				this._oPopover.addContent(this._oSimpleFixFlex);
 			}
 		}
 	};
@@ -539,6 +548,11 @@ sap.ui.define([
 		if (this._oList instanceof List) {
 			this._oList.destroy();
 			this._oList = null;
+		}
+
+		if (this._oPickerValueStateText) {
+			this._oPickerValueStateText.destroy();
+			this._oPickerValueStateText = null;
 		}
 
 		this._getInput().removeEventDelegate(this._oInputDelegate, this);
@@ -982,6 +996,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates SimpleFixFlex control.
+	 *
+	 * @private
+	 * @returns {sap.m.SimpleFixFlex} Created sap.m.SimpleFixFlex control.
+	 */
+	SuggestionsPopover.prototype._createSimpleFixFlex = function () {
+		var sSimpleFixFlexId = this._oInput.getId() + "-simplefixflex";
+
+		return new SimpleFixFlex({
+			id: sSimpleFixFlexId,
+			fixContent: this._getPickerValueStateText(),
+			flexContent: this._oList
+		});
+	};
+
+	/**
 	 * Highlights text in DOM items.
 	 *
 	 * @param {Array<HTMLElement>} aItemsDomRef DOM elements on which formatting would be applied
@@ -1227,13 +1257,16 @@ sap.ui.define([
 	* @internal
 	*/
 	SuggestionsPopover.prototype.updateValueState = function(sValueState, sValueStateText, bShowValueStateMessage) {
-
 		var bShow = bShowValueStateMessage && sValueState !== ValueState.None;
-		this._showValueStateText(bShow);
-
 		sValueStateText = sValueStateText || ValueStateSupport.getAdditionalText(sValueState);
 
+		if (this._oPopupInput) {
+			this._oPopupInput.setValueState(sValueState);
+		}
+
 		this._setValueStateText(sValueStateText);
+
+		this._showValueStateText(bShow);
 
 		this._alignValueStateStyles(sValueState);
 		return this;
@@ -1247,11 +1280,8 @@ sap.ui.define([
 	 * @since 1.46
 	 */
 	SuggestionsPopover.prototype._getPickerValueStateText = function() {
-		var oPicker = this._oPopover;
-
 		if (!this._oPickerValueStateText) {
 			this._oPickerValueStateText = new Text({ width: "100%" });
-			oPicker.insertContent(this._oPickerValueStateText, 0);
 		}
 
 		return this._oPickerValueStateText;
@@ -1263,18 +1293,8 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype._showValueStateText = function(bShow) {
-		var oCustomHeader;
-
-		if (this._bUseDialog) {
-			if (this._oPickerValueStateText) {
-				this._oPickerValueStateText.setVisible(bShow);
-			}
-		} else {
-			oCustomHeader = this._getPickerCustomHeader();
-
-			if (oCustomHeader) {
-				oCustomHeader.setVisible(bShow);
-			}
+		if (this._oPickerValueStateText) {
+			this._oPickerValueStateText.setVisible(bShow);
 		}
 	};
 
@@ -1284,43 +1304,16 @@ sap.ui.define([
 	 * @private
 	 */
 	SuggestionsPopover.prototype._setValueStateText = function(sText) {
-		var oHeader;
+		var oValueStateText;
 
-		if (this._bUseDialog) {
-			this._oPickerValueStateText = this._getPickerValueStateText();
-			this._oPickerValueStateText.setText(sText);
-		} else {
-			oHeader = this._getPickerCustomHeader();
-			if (oHeader) {
-				oHeader.getContentLeft()[0].setText(sText);
+		oValueStateText = this._getPickerValueStateText();
+		if (oValueStateText) {
+			oValueStateText.setText(sText);
+
+			if (this._oSimpleFixFlex) {
+				this._oSimpleFixFlex.setFixContent(this._oPickerValueStateText);
 			}
 		}
-	};
-
-	/**
-	 * Gets the picker custom header
-	 *
-	 * @private
-	 */
-	SuggestionsPopover.prototype._getPickerCustomHeader = function() {
-		var oInternalTitle,
-			oInternalHeader,
-			oPicker = this._oPopover,
-			sPickerTitleClass = CSS_CLASS_SUGGESTIONS_POPOVER + "Title";
-
-		if (!oPicker) {
-			return null;
-		}
-
-		if (oPicker.getCustomHeader()) {
-			return oPicker.getCustomHeader();
-		}
-
-		oInternalTitle = new Title({ textAlign: "Left" }).addStyleClass(sPickerTitleClass);
-		oInternalHeader = new Bar({ visible: false, contentLeft: oInternalTitle });
-		oPicker.setCustomHeader(oInternalHeader);
-
-		return oInternalHeader;
 	};
 
 	/**
@@ -1331,25 +1324,26 @@ sap.ui.define([
 	SuggestionsPopover.prototype._alignValueStateStyles = function(sValueState) {
 		var sPickerWithState = CSS_CLASS_SUGGESTIONS_POPOVER + "ValueState",
 			sOldCssClass = CSS_CLASS_SUGGESTIONS_POPOVER + this._sOldValueState + "State",
-			sCssClass = CSS_CLASS_SUGGESTIONS_POPOVER + sValueState + "State",
-			oCustomHeader;
+			sCssClass = CSS_CLASS_SUGGESTIONS_POPOVER + sValueState + "State";
 
-		if (this._bUseDialog && this._oPickerValueStateText) {
+		if (this._oPickerValueStateText) {
 			this._oPickerValueStateText.addStyleClass(sPickerWithState);
 			this._oPickerValueStateText.removeStyleClass(sOldCssClass);
 			this._oPickerValueStateText.addStyleClass(sCssClass);
-		} else {
-
-			oCustomHeader = this._getPickerCustomHeader();
-
-			if (oCustomHeader) {
-				oCustomHeader.addStyleClass(sPickerWithState);
-				oCustomHeader.removeStyleClass(sOldCssClass);
-				oCustomHeader.addStyleClass(sCssClass);
-			}
 		}
-
 		this._sOldValueState = sValueState;
+	};
+
+	/**
+	 * Adds flex content.
+	 *
+	 * @param {sap.m.Control} oControl Control to be added
+	 * @protected
+	 */
+	SuggestionsPopover.prototype.addFlexContent = function(oControl) {
+		if (this._oSimpleFixFlex) {
+			this._oSimpleFixFlex.addFlexContent(oControl);
+		}
 	};
 
 	return SuggestionsPopover;

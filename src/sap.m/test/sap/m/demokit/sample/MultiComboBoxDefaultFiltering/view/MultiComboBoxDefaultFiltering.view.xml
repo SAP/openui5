@@ -11,6 +11,8 @@
 		<Label text="MultiComboBox with &quot;starts with per term&quot; filtering: enter a search term, e.g. &quot;N&quot;, and see filtering results."/>
 		<MultiComboBox
 			width="500px"
+			valueState="Information"
+			valueStateText="Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message - 3."
 			items="{
 				path: '/ProductCollection',
 				sorter: { path: 'Name' }

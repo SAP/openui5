@@ -95,7 +95,7 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 
 	SimpleFixFlex.prototype._registerFixContentResizeHandler = function() {
 		var oFixContent = this.getFixContent();
-		if (!this._sResizeListenerId && oFixContent) {
+		if (!this._sResizeListenerId && oFixContent && oFixContent.getDomRef()) {
 			this._sResizeListenerId = ResizeHandler.register(oFixContent.getDomRef(), this._onFixContentResize.bind(this));
 			this._onFixContentResize();
 		}

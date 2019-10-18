@@ -22,6 +22,8 @@
 				placeholder="Enter Product ..."
 				showSuggestion="true"
 				showValueHelp="false"
+				valueState="Information"
+				valueStateText="Information message. Extra long text used as a information message. Extra long text used as a information message - 2. Extra long text used as a information message - 3."
 				suggestionRows="{/ProductCollection}">
 				<suggestionColumns>
 					<Column
