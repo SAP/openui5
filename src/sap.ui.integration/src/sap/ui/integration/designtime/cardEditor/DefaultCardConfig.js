@@ -72,11 +72,11 @@ sap.ui.define(function () {
 						"path": "header/actions/:index/service",
 						"visible": false // Currently undocumented
 					},
-					"parameters": {
-						"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
-						"type": "parameters",
-						"path": "header/actions/:index/parameters"
-					},
+					// "parameters": {
+					// 	"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
+					// 	"type": "parameters",
+					// 	"path": "header/actions/:index/parameters"
+					// },
 					"target": {
 						"label": "{i18n>CARD_EDITOR.ACTION.TARGET}",
 						"type": "enum",
@@ -226,20 +226,20 @@ sap.ui.define(function () {
 				"path": "content/data/request/method",
 				"visible": "{= !!${context>content/data/request/url} }"
 			},
-			"cardDataRequestParameters": {
-				"tags": ["content", "data"],
-				"label": "{i18n>CARD_EDITOR.DATA.REQUEST.PARAMETERS}",
-				"type": "parameters",
-				"path": "content/data/request/parameters",
-				"visible": "{= !!${context>content/data/request/url} }"
-			},
-			"cardDataRequestHeaders": {
-				"tags": ["content", "data"],
-				"label": "{i18n>CARD_EDITOR.DATA.REQUEST.HEADERS}",
-				"type": "parameters",
-				"path": "content/data/request/headers",
-				"visible": "{= !!${context>content/data/request/url} }"
-			},
+			// "cardDataRequestParameters": {
+			// 	"tags": ["content", "data"],
+			// 	"label": "{i18n>CARD_EDITOR.DATA.REQUEST.PARAMETERS}",
+			// 	"type": "parameters",
+			// 	"path": "content/data/request/parameters",
+			// 	"visible": "{= !!${context>content/data/request/url} }"
+			// },
+			// "cardDataRequestHeaders": {
+			// 	"tags": ["content", "data"],
+			// 	"label": "{i18n>CARD_EDITOR.DATA.REQUEST.HEADERS}",
+			// 	"type": "parameters",
+			// 	"path": "content/data/request/headers",
+			// 	"visible": "{= !!${context>content/data/request/url} }"
+			// },
 			"cardDataRequestWithCredentials": {
 				"tags": ["content", "data"],
 				"label": "{i18n>CARD_EDITOR.DATA.REQUEST.WITHCREDENTIALS}",
@@ -268,13 +268,13 @@ sap.ui.define(function () {
 				"path": "content/data/service/name",
 				"visible": false // Currently undocumented
 			},
-			"cardDataServiceParameters": {
-				"tags": ["content", "data"],
-				"label": "{i18n>CARD_EDITOR.DATA.SERVICE.PARAMETERS}",
-				"type": "parameters",
-				"path": "content/data/service/parameters",
-				"visible": false // Currently undocumented
-			},
+			// "cardDataServiceParameters": {
+			// 	"tags": ["content", "data"],
+			// 	"label": "{i18n>CARD_EDITOR.DATA.SERVICE.PARAMETERS}",
+			// 	"type": "parameters",
+			// 	"path": "content/data/service/parameters",
+			// 	"visible": false // Currently undocumented
+			// },
 			"cardDataUpdateInterval": {
 				"tags": ["content", "data"],
 				"label": "{i18n>CARD_EDITOR.DATA.UPDATEINTERVAL}",
@@ -373,11 +373,11 @@ sap.ui.define(function () {
 						"type": "string",
 						"path": "content/item/actions/:index/url"
 					},
-					"parameters": {
-						"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
-						"type": "parameters",
-						"path": "content/item/actions/:index/parameters"
-					},
+					// "parameters": {
+					// 	"label": "{i18n>CARD_EDITOR.ACTION.PARAMETERS}",
+					// 	"type": "parameters",
+					// 	"path": "content/item/actions/:index/parameters"
+					// },
 					"target": {
 						"label": "{i18n>CARD_EDITOR.ACTION.TARGET}",
 						"type": "string",
