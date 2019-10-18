@@ -593,6 +593,10 @@ sap.ui.define([
 	 * @return {sap.m.CheckBox} reference to the internal select all checkbox
 	 */
 	Table.prototype._getSelectAllCheckbox = function() {
+		if (this.bPreventMassSelection) {
+			return;
+		}
+
 		return this._selectAllCheckBox || (this._selectAllCheckBox = new CheckBox({
 			id: this.getId("sa"),
 			activeHandling: false
