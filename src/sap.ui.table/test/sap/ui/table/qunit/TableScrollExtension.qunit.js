@@ -288,6 +288,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Vertical scrollbar visibility", function(assert) {
+		var done = assert.async();
 		sinon.stub(oTable, "_getTotalRowCount").returns(4);
 		oTable.setVisibleRowCount(3);
 		sap.ui.getCore().applyChanges();
@@ -306,7 +307,31 @@ sap.ui.define([
 		assert.ok(this.oVSb.offsetWidth === 0 && this.oVSb.offsetHeight === 0,
 			"Table content fits height -> Vertical scrollbar is not visible");
 
-		oTable._getTotalRowCount.restore();
+
+		// BCP: 1970484410
+		var that = this;
+		var iApiVersion = sap.ui.table.TableRenderer.apiVersion;
+		oTable.attachEventOnce("_rowsUpdated", function() {
+			that.oVSb = that.oScrollExtension.getVerticalScrollbar();
+
+			assert.notEqual(that.oVSb, null,
+				"Table is re-rendered without being invalidated -> Vertical scrollbar exists");
+			if (that.oVSb) {
+				assert.ok(that.oVSb.offsetWidth > 0 && that.oVSb.offsetHeight > 0,
+					"Table content does not fit height -> Vertical scrollbar is visible");
+			}
+
+			sap.ui.table.TableRenderer.apiVersion = iApiVersion;
+			oTable._getTotalRowCount.restore();
+			done();
+		});
+
+		sap.ui.table.TableRenderer.apiVersion = 1;
+		oTable._getTotalRowCount.returns(4);
+		oTable.bindRows({
+			path: "/"
+		});
+		oTable.rerender();
 	});
 
 	QUnit.test("Vertical scrollbar height if variable row heights enabled", function(assert) {
