@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/AppVariantManager",
+	"sap/ui/rta/appVariant/AppVariantOverviewDialog",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
@@ -25,6 +26,7 @@ sap.ui.define([
 	AppVariantOverviewUtils,
 	AppVariantUtils,
 	AppVariantManager,
+	AppVariantOverviewDialog,
 	DescriptorVariantFactory,
 	Settings,
 	FlUtils,
@@ -423,7 +425,6 @@ sap.ui.define([
 			);
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
-			sandbox.stub(AppVariantUtils, "showRelevantDialog").rejects();
 
 			var oAppComponent = fnCreateAppComponent();
 			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
@@ -448,10 +449,10 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
-				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
-				assert.equal(fnPersistenceRemoveStub.callCount, 10, "then PersistenceWriteAPI.remove method is called " + fnPersistenceRemoveStub.callCount + " times");
+				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called 10 times");
+				assert.equal(fnPersistenceRemoveStub.callCount, 10, "then PersistenceWriteAPI.remove method is called 10 times");
 				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.saveAs method is called once");
-				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview opens only once after the new app variant has been saved to LREP");
+				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview loads only once after the new app variant has been saved to LREP");
 				assert.strictEqual(fnCatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the fnCatchErrorDialog method is called with correct message key");
 			});
 		});
@@ -512,7 +513,7 @@ sap.ui.define([
 				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.save method is called once");
 				assert.ok(fnClearRTACommandStack.calledOnce, "then the clearRTACommandStack method is called once");
 				assert.ok(fnshowSuccessMessage.calledOnce, "then the showSuccessMessage method is called once");
-				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview opens only once after the new app variant has been saved to LREP");
+				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview loads only once after the new app variant has been saved to LREP");
 				assert.ok(fnNavigateToFLPHomepage.notCalled, "then the navigateToFLPHomepage method is not called once");
 				assert.ok(fnTriggerCatalogPublishing.notCalled, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReadySpy.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
@@ -565,7 +566,10 @@ sap.ui.define([
 			});
 			var fnClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var fnshowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
-			var fnOnGetOverviewSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview");
+			fnOnGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, "CUSTOMER"));
+			fnOnGetOverviewStub.onCall(1).resolves();
+
 			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
@@ -573,11 +577,75 @@ sap.ui.define([
 				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
 				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
 				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.saveAs method is called once");
-				assert.ok(fnOnGetOverviewSpy.calledOnce, "then the overview opens only once after the new app variant has been saved to LREP");
 				assert.ok(fnClearRTACommandStack.calledOnce, "then the clearRTACommandStack method is called once");
 				assert.ok(fnshowSuccessMessage.calledTwice, "then the showSuccessMessage method is called twice");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is not called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
+				assert.ok(fnOnGetOverviewStub.calledTwice, "then the overview loads only twice, once after triggering catalog assignment and once tile is created");
+			});
+		});
+
+
+		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog and customer closes Overview during Polling", function(assert) {
+			var oSelectedAppVariant = {
+				"sap.app" : {
+					id : "TestId",
+					crossNavigation: {
+						inbounds: {}
+					}
+				}
+			};
+
+			var oAppVariantData = {
+				idRunningApp: "TestId",
+				title: "Title",
+				subTitle: "Subtitle",
+				description: "Description",
+				icon: "sap-icon://history",
+				inbounds: {}
+			};
+
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
+				})
+			);
+
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
+
+			var oAppComponent = fnCreateAppComponent();
+			sandbox.stub(FlUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oAppComponent);
+			var fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
+
+			sandbox.stub(AppVariantManager.prototype, "getRootControl").returns(oAppComponent);
+
+			var fnProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
+			var fnSaveAsAppVariantStub = sandbox.stub(PersistenceWriteAPI, "saveAs").resolves({
+				response: {
+					id: "customer.TestId.id_123456"
+				}
+			});
+			var fnClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
+			var fnshowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+
+			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
+			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
+
+			return RtaAppVariantFeature.onSaveAs(false, "CUSTOMER", oSelectedAppVariant).then(function() {
+				assert.ok(fnProcessSaveAsDialog.calledOnce, "then the processSaveAsDialog method is called once");
+				assert.equal(fnCreateChangesSpy.callCount, 10, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.ok(fnSaveAsAppVariantStub.calledOnce, "then the PersistenceWriteAPI.saveAs method is called once");
+				assert.ok(fnClearRTACommandStack.calledOnce, "then the clearRTACommandStack method is called once");
+				assert.ok(fnshowSuccessMessage.calledTwice, "then the showSuccessMessage method is called twice");
+				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is not called once");
+				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called once");
+				assert.ok(fnOnGetOverviewStub.calledOnce, "then the overview loads only once after triggering catalog assignment, since it is closed it will not open again after success messagef");
 			});
 		});
 
@@ -780,12 +848,15 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "testId"}});
-			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
 			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
 			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
+
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview");
+			fnOnGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, "CUSTOMER"));
+			fnOnGetOverviewStub.onCall(1).resolves();
 
 			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
 				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
@@ -793,6 +864,7 @@ sap.ui.define([
 				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is called once");
+				assert.ok(fnOnGetOverviewStub.calledTwice, "then the overview loads twice, once after triggering catalog unassignment and once deletion is done");
 			});
 		});
 
@@ -815,12 +887,15 @@ sap.ui.define([
 					inProgress : false
 				}
 			};
-			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
 			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
 			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
 			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
 			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
+
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview");
+			fnOnGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, "CUSTOMER"));
+			fnOnGetOverviewStub.onCall(1).resolves();
 
 			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", false, "CUSTOMER").then(function() {
 				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
@@ -828,6 +903,7 @@ sap.ui.define([
 				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called");
+				assert.ok(fnOnGetOverviewStub.calledTwice, "then the overview loads twice, once after triggering catalog unassignment and once after the error message");
 			});
 		});
 
@@ -844,7 +920,7 @@ sap.ui.define([
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
 
-			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
 			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
 			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
@@ -857,6 +933,7 @@ sap.ui.define([
 				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.notCalled, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called");
+				assert.ok(fnOnGetOverviewStub.calledOnce, "then the overview loads once after deletion is done");
 			});
 		});
 
@@ -873,7 +950,7 @@ sap.ui.define([
 			var oDescriptor = {reference: "someReference", id: "AppVarId"};
 			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
 
-			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage");
 			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
 			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
@@ -883,11 +960,51 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true, "CUSTOMER").then(function() {
 				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
-				assert.ok(fnShowMessageStub.notCalled, "then the showMessage method is called once");
+				assert.ok(fnShowMessageStub.notCalled, "then the showMessage method is not called");
 				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
 				assert.ok(fnTriggerCatalogPublishing.notCalled, "then the triggerCatalogPublishing method is called once");
 				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.notCalled, "then the notifyKeyUserWhenPublishingIsReady method is not called");
 				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the navigateToFLPHomepage() method is called once");
+				assert.ok(fnOnGetOverviewStub.notCalled, "then the overview is not reloaded");
+			});
+		});
+
+		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana Cloud from currently adapting app variant", function(assert) {
+			sandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:true,
+					isAtoAvailable:true,
+					isAtoEnabled:true,
+					isProductiveSystem:false
+				})
+			);
+
+			var oDescriptor = {reference: "someReference", id: "AppVarId"};
+			sandbox.stub(DescriptorVariantFactory, "_getDescriptorVariant").resolves({response: JSON.stringify(oDescriptor)});
+
+			var oPublishingResponse = {
+				response: {
+					IAMId : "IAMId",
+					inProgress : true
+				}
+			};
+
+			var fnOnGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
+			var fnShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
+			var fnShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
+			var fnDeleteAppVariantStub = sandbox.stub(PersistenceWriteAPI, "deleteAppVariant").resolves();
+			var fnTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
+			var fnNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
+			var fnNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
+
+			return RtaAppVariantFeature.onDeleteFromOverviewDialog("AppVarId", true, "CUSTOMER").then(function() {
+				assert.ok(fnDeleteAppVariantStub.calledOnce, "then the PersistenceWriteApi.deleteAppVariant method is called once");
+				assert.ok(fnShowMessageStub.calledOnce, "then the showMessage method is called once");
+				assert.ok(fnShowSuccessMessageStub.calledOnce, "then the showSuccessMessage method is called once");
+				assert.ok(fnTriggerCatalogPublishing.calledOnce, "then the triggerCatalogPublishing method is called once");
+				assert.ok(fnNotifyKeyUserWhenPublishingIsReady.calledOnce, "then the notifyKeyUserWhenPublishingIsReady method is not called");
+				assert.ok(fnNavigateToFLPHomepage.calledOnce, "then the navigateToFLPHomepage() method is called once");
+				assert.ok(fnOnGetOverviewStub.notCalled, "then the overview is not reloaded");
 			});
 		});
 	});
