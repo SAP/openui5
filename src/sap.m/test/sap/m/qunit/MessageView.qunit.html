@@ -9,6 +9,7 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-bindingSyntax="complex"
 				data-sap-ui-libs="sap.m">
 		</script>
 
@@ -794,12 +795,12 @@
 				items: {
 					path: "message>/",
 					template: new sap.m.MessageItem(
-							{
-								title: "{message>message}",
-								subtitle: "{message>additionalText}",
-								type: "{message>type}",
-								description: "{message>message}"
-							})
+						{
+							title: "{message>message}",
+							subtitle: "{message>additionalText}",
+							type: "{message>type}",
+							description: "{message>message}"
+						})
 				}
 			}).setModel(oModel, "message").placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -826,6 +827,66 @@
 			assert.ok(!oMessageView._oLists['warning'].getVisible(), "The 'Warning' list/section is NOT visible");
 
 			oMessageView.destroy();
+		});
+
+		QUnit.module("Aggregation Binding");
+
+		QUnit.test("Escaping brackets", function (assert) {
+			// set up
+			var oMessageTemplate, aMockMessages, oModel,
+				oMessageView, oDialog, oButton;
+
+			oMessageTemplate = new sap.m.MessageItem({
+				type: '{type}',
+				title: '{title}',
+				description: '{description}',
+			});
+
+			aMockMessages = [
+				{
+					type: 'Error',
+					title: 'Error message { 123',
+					description: 'Error message { description'
+
+				}];
+
+			oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(aMockMessages);
+
+			oMessageView = new sap.m.MessageView({
+				items: {
+					path: "/",
+					template: oMessageTemplate
+				}
+			});
+
+			oMessageView.setModel(oModel);
+
+			oDialog = new sap.m.Dialog({
+				content: [oMessageView]
+			});
+
+			oButton = new sap.m.Button({
+				press: function(){
+					oDialog.open();
+				}
+			}).placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oButton.firePress();
+
+			// assert
+			assert.strictEqual(oMessageView.getItems()[0].getTitle(), "Error message { 123", "The item's title is set right.")
+			assert.strictEqual(oMessageView.getItems()[0].getDescription(), "Error message { description", "The item's description is set right.")
+
+			// clean up
+			oButton.destroy();
+			oDialog.destroy();
+			oButton = null;
+			oDialog = null;
+			oMessageView = null;
 		});
 
 		</script>

@@ -23,9 +23,10 @@ sap.ui.define([
 	"./MessageItem",
 	"./GroupHeaderListItem",
 	"sap/ui/core/library",
+	"sap/ui/base/ManagedObject",
 	"jquery.sap.keycodes"
 ], function (jQuery, Control, CustomData, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, List, StandardListItem,
-			 library, Text, SegmentedButton, Page, NavContainer, Link, MessageItem, GroupHeaderListItem, coreLibrary) {
+			 library, Text, SegmentedButton, Page, NavContainer, Link, MessageItem, GroupHeaderListItem, coreLibrary, ManagedObject) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -654,8 +655,8 @@ sap.ui.define([
 		var sType = oMessageItem.getType(),
 			listItemType = this._getItemType(oMessageItem),
 			oListItem = new StandardListItem({
-				title: oMessageItem.getTitle(),
-				description: oMessageItem.getSubtitle(),
+				title: ManagedObject.escapeSettingsValue(oMessageItem.getTitle()),
+				description: ManagedObject.escapeSettingsValue(oMessageItem.getSubtitle()),
 				counter: oMessageItem.getCounter(),
 				icon: this._mapIcon(sType),
 				infoState: this._mapInfoState(sType),
@@ -819,7 +820,7 @@ sap.ui.define([
 	 */
 	MessageView.prototype._setTitle = function (oMessageItem) {
 		this._oMessageTitleText = new Text(this.getId() + "MessageTitleText", {
-			text: oMessageItem.getTitle()
+			text: ManagedObject.escapeSettingsValue(oMessageItem.getTitle())
 		}).addStyleClass("sapMMsgViewTitleText");
 		this._detailsPage.addAggregation("content", this._oMessageTitleText);
 	};
@@ -840,7 +841,7 @@ sap.ui.define([
 			});
 		} else {
 			this._oMessageDescriptionText = new Text(this.getId() + "MessageDescriptionText", {
-				text: oMessageItem.getDescription()
+				text: ManagedObject.escapeSettingsValue(oMessageItem.getDescription())
 			}).addStyleClass("sapMMsgViewDescriptionText");
 		}
 
