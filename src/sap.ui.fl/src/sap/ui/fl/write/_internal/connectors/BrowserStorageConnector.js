@@ -53,12 +53,11 @@ sap.ui.define([
 		 */
 		write: function(mPropertyBag) {
 			var aPromises = mPropertyBag.flexObjects.map(function(oFlexObject) {
-				var sChangeKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
-				var sChange;
-				sChange = JSON.stringify(oFlexObject);
-				var oSetPromise = this.oStorage.setItem(sChangeKey, sChange);
+				var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
+				var vFlexObject = this.oStorage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
+				var vSetResponse = this.oStorage.setItem(sKey, vFlexObject);
 				// ensure a Promise
-				return Promise.resolve(oSetPromise);
+				return Promise.resolve(vSetResponse);
 			}.bind(this));
 
 			return Promise.all(aPromises).then(function () {
@@ -70,11 +69,12 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		update: function(mPropertyBag) {
-			var sChangeKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
-			var sChange = JSON.stringify(mPropertyBag.flexObject);
-			var oSetPromise = this.oStorage.setItem(sChangeKey, sChange);
+			var oFlexObject = mPropertyBag.flexObject;
+			var sKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
+			var vFlexObject = this.oStorage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
+			var vSetResponse = this.oStorage.setItem(sKey, vFlexObject);
 			// ensure a Promise
-			return Promise.resolve(oSetPromise);
+			return Promise.resolve(vSetResponse);
 		},
 
 		/**
@@ -96,11 +96,11 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		remove: function(mPropertyBag) {
-			var sChangeKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
-			this.oStorage.removeItem(sChangeKey);
-			var oRemovePromise = this.oStorage.removeItem(sChangeKey);
+			var sKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
+			this.oStorage.removeItem(sKey);
+			var vRemoveResponse = this.oStorage.removeItem(sKey);
 			// ensure a Promise
-			return Promise.resolve(oRemovePromise);
+			return Promise.resolve(vRemoveResponse);
 		},
 
 		/**

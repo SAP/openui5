@@ -1,10 +1,12 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"
 ], function(
+	sinon,
 	SessionStorageWriteConnector,
 	JsObjectConnector,
 	BrowserStorageUtils
@@ -90,7 +92,8 @@ sap.ui.define([
 
 	function assertFileWritten(assert, oStorage, oFlexObject, sMessage) {
 		var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
-		var oItem = JSON.parse(oStorage.getItem(sKey));
+		var vItem = oStorage.getItem(sKey);
+		var oItem = oStorage._itemsStoredAsObjects ? vItem : JSON.parse(vItem);
 		assert.deepEqual(oFlexObject, oItem, sMessage);
 	}
 
@@ -325,6 +328,44 @@ sap.ui.define([
 			});
 		});
 	}
+
+	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("write: Given a connector where _itemsStoredAsObjects", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function () {
+		QUnit.test("is true when write is called with a change", function (assert) {
+			var oObject = {
+				fileName: "id123"
+			};
+
+			var oSetItemStub = sandbox.stub(JsObjectConnector.oStorage, "setItem");
+
+			return JsObjectConnector.write({
+				flexObjects : [oObject]
+			})
+			.then(function () {
+				assert.equal(oSetItemStub.getCall(0).args[1], oObject, "the write was called with the object");
+			});
+		});
+
+		QUnit.test("is false when write is called with a change", function (assert) {
+			var oObject = {
+				fileName: "id123"
+			};
+			var oSetItemStub = sandbox.stub(SessionStorageWriteConnector.oStorage, "setItem");
+
+			return SessionStorageWriteConnector.write({
+				flexObjects: [oObject]
+			})
+			.then(function () {
+				var sObject = JSON.stringify(oObject);
+				assert.equal(oSetItemStub.getCall(0).args[1], sObject, "the write was called with the object as string");
+			});
+		});
+	});
 
 	parameterizedTest(JsObjectConnector, "JsObjectStorage");
 	parameterizedTest(SessionStorageWriteConnector, "sessionStorage");

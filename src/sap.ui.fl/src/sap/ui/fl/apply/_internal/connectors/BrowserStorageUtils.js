@@ -42,7 +42,8 @@ sap.ui.define([], function () {
 							return;
 						}
 
-						var oFlexObject = JSON.parse(oRealStorage[sKey]);
+						var vStorageEntry = oRealStorage[sKey];
+						var oFlexObject = mPropertyBag.storage._itemsStoredAsObjects ? vStorageEntry : JSON.parse(vStorageEntry);
 						var bSameReference = true;
 						if (mPropertyBag.reference) {
 							bSameReference = oFlexObject.reference === mPropertyBag.reference || oFlexObject.reference + ".Component" === mPropertyBag.reference;
