@@ -12,7 +12,7 @@
 }
 
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
-	background-color: inherit;
+	background-color: @sapUiObjectHeaderBackground;
 	color: @sapUiHighlight;
 }
 
@@ -85,10 +85,6 @@
 		border-color: @sapUiListBorderColor;
 		background: @sapUiObjectHeaderBackground;
 		color: @sapUiContentLabelColor;
-	}
-
-	& ~ .sapMWizardProgressNavStep:hover .sapMWizardProgressNavAnchorCircle {
-		background-color: inherit;
 	}
 
 	/* all separators after (and including) the active step have inactive style */
