@@ -612,5 +612,21 @@
         ]
       }
     ]
+  },
+  "1.44.43": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "c7521cf55ec300f16b419c5c28776d6a6f68e210",
+        "type": "FIX",
+        "text": " sap.m.FileUploader: sample now acts responsive",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980321931"
+          }
+        ]
+      }
+    ]
   }
 }
