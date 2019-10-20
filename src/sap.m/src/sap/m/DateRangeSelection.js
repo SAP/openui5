@@ -887,9 +887,7 @@ sap.ui.define([
 			oSelectedEndDate = oSelectedDates[0].getEndDate();
 
 		if (this.getShowFooter()) {
-			if (oSelectedStartDate && oSelectedEndDate) {
-				this._oPopup.getBeginButton().setEnabled(true);
-			}
+			this._oPopup.getBeginButton().setEnabled(!!(oSelectedStartDate && oSelectedEndDate));
 			return;
 		}
 

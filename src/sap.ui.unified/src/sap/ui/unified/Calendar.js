@@ -337,7 +337,7 @@ sap.ui.define([
 		this._initilizeYearPicker();
 		this._initilizeYearRangePicker();
 
-		this._resizeProxy = jQuery.proxy(_handleResize, this);
+		this._resizeProxy = _handleResize.bind(this);
 		this._oSelectedMonth; //needed to transfer the selected month from _handleSelect to getFocusDomRef
 		//marker, controlled from the DatePicker & checked in the CalendarRenderer
 		//when used in a DatePicker, in mobile there is no cancel button
