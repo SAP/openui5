@@ -776,9 +776,6 @@ sap.ui.define([
 			//recalculate layout of the content area
 			this._adjustHeaderHeights();
 			this._requestAdjustLayout();
-			if (exists(this._$stickyAnchorBar)) {
-				this._$stickyAnchorBar.addClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
-			}
 			return;
 		}
 
@@ -787,9 +784,6 @@ sap.ui.define([
 		this._scrollTo(0, 0, 0);
 		this._bHeaderExpanded = true;
 		this._updateToggleHeaderVisualIndicators();
-		if (exists(this._$stickyAnchorBar)) {
-			this._$stickyAnchorBar.removeClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
-		}
 	};
 
 	ObjectPageLayout.prototype._handleDynamicTitlePress = function () {
@@ -3107,9 +3101,6 @@ sap.ui.define([
 			this._bHeaderExpanded = true;
 			this._adjustHeaderHeights();
 			this._updateToggleHeaderVisualIndicators();
-			if (exists(this._$stickyAnchorBar)) {
-				this._$stickyAnchorBar.removeClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
-			}
 		}
 	};
 
@@ -3182,7 +3173,6 @@ sap.ui.define([
 		this._$headerContent.toggleClass("sapContrastPlus", !bStuck); // contrast only in expanded mode
 		this._$headerContent.toggleClass("sapUxAPObjectPageHeaderDetailsHidden", bStuck); // hide header content
 		this._$anchorBar.css("visibility", sValue);
-		this._$anchorBar.toggleClass("sapUxAPObjectPageNavigationHidden", bStuck); // toggle custom AnchorBar class to make difference between stickied/expanded
 		if (exists(this._$stickyAnchorBar)) {
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);
 		}
@@ -3979,10 +3969,6 @@ sap.ui.define([
 
 		if (exists($oObjectPage)) {
 			$oObjectPage.addClass("sapUxAPObjectPageLayoutHeaderPinned");
-		}
-
-		if (exists(this._$stickyAnchorBar)) {
-			this._$stickyAnchorBar.addClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
 		}
 	};
 
