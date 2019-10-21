@@ -78,3 +78,27 @@
 	// These spans should not be visible.
 	position: absolute;
 }
+
+.sapUiLayoutCSSGrid.sapUiLayoutCSSResponsiveColumnLayoutS,
+.sapUiLayoutCSSResponsiveColumnLayoutS > ul {
+	grid-template-columns: repeat(4, minmax(0px, 1fr));
+	grid-gap: 0.5rem 0.5rem;
+}
+
+.sapUiLayoutCSSGrid.sapUiLayoutCSSResponsiveColumnLayoutM,
+.sapUiLayoutCSSResponsiveColumnLayoutM > ul {
+	grid-template-columns: repeat(8, minmax(0px, 1fr));
+	grid-gap: 1rem 1rem;
+}
+
+.sapUiLayoutCSSGrid.sapUiLayoutCSSResponsiveColumnLayoutL,
+.sapUiLayoutCSSResponsiveColumnLayoutL > ul {
+	grid-template-columns: repeat(12, minmax(0px, 1fr));
+	grid-gap: 1rem 1rem;
+}
+
+.sapUiLayoutCSSGrid.sapUiLayoutCSSResponsiveColumnLayoutXL,
+.sapUiLayoutCSSResponsiveColumnLayoutXL > ul {
+	grid-template-columns: repeat(16, minmax(0px, 1fr));
+	grid-gap: 1rem 1rem;
+}

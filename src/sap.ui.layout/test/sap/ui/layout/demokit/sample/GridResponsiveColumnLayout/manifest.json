@@ -1,0 +1,36 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.GridResponsiveColumnLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.GridResponsiveColumnLayout.GridResponsiveColumnLayout",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "main.css"
+				}
+			]
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"GridResponsiveColumnLayout.view.xml",
+					"GridResponsiveColumnLayout.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

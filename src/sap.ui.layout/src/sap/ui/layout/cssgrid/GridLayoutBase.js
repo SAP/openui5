@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
+	"./GridItemLayoutData",
 	"sap/ui/Device"
-], function (ManagedObject, Device) {
+], function (ManagedObject, GridItemLayoutData, Device) {
 	"use strict";
 
 	var mGridProperties = {
@@ -53,6 +54,91 @@ sap.ui.define([
 			"abstract": true
 		}
 	});
+
+	/**
+	 * Updates the display:grid styles of a single item
+	 *
+	 * @private
+	 * @static
+	 * @param {sap.ui.core.Control} oItem The item which styles have to be updated
+	 */
+	GridLayoutBase.setItemStyles = function (oItem) {
+		if (!oItem) {
+			return;
+		}
+
+		var oLayoutData = GridLayoutBase._getLayoutDataForControl(oItem),
+			oElement = GridLayoutBase._getElement(oItem);
+
+		if (!oElement) {
+			return;
+		}
+
+		if (!oLayoutData) {
+			GridItemLayoutData.removeItemStyles(oElement);
+		} else  {
+			oLayoutData.setItemStyles(oElement);
+		}
+	};
+
+
+	/**
+	 * @private
+	 * @static
+	 * @param {sap.ui.core.Control} oControl The control to get the layoutData from
+	 * @returns {sap.ui.layout.cssgrid.IGridItemLayoutData|undefined} The layoutData used by the grid item
+	 */
+	GridLayoutBase._getLayoutDataForControl = function (oControl) {
+		var oLayoutData,
+			aLayoutData,
+			oInnerLayoutData;
+
+		if (!oControl) {
+			return undefined;
+		}
+
+		oLayoutData = oControl.getLayoutData();
+
+		if (!oLayoutData) {
+			return undefined;
+		}
+
+		if (oLayoutData.isA("sap.ui.layout.cssgrid.IGridItemLayoutData")) {
+			return oLayoutData;
+		}
+
+		if (oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
+			aLayoutData = oLayoutData.getMultipleLayoutData();
+			for (var i = 0; i < aLayoutData.length; i++) {
+				oInnerLayoutData = aLayoutData[i];
+				if (oInnerLayoutData.isA("sap.ui.layout.cssgrid.IGridItemLayoutData")) {
+					return oInnerLayoutData;
+				}
+			}
+		}
+	};
+
+	/**
+	 * Returns the DOM ref of the item or the item's wrapper
+	 *
+	 * @private
+	 * @param {sap.ui.core.Control} oItem The item
+	 */
+	GridLayoutBase._getElement = function (oItem) {
+		var oItemDom = oItem.getDomRef();
+
+		if (!oItemDom) {
+			return undefined;
+		}
+
+		var oWrapper = oItemDom.parentNode;
+
+		if (oWrapper && oWrapper.classList.contains("sapUiLayoutCSSGridItemWrapper")) {
+			return oWrapper;
+		}
+
+		return oItemDom;
+	};
 
 	/**
 	 * Apply display:grid styles to the provided array of HTML elements or controls based on the currently active GridSettings
@@ -210,5 +296,6 @@ sap.ui.define([
 			}
 		}
 	};
+
 	return GridLayoutBase;
 });

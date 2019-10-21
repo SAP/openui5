@@ -153,7 +153,8 @@
 					"sap.ui.layout.sample.GridGap",
 					"sap.ui.layout.sample.GridTemplateRows",
 					"sap.ui.layout.sample.GridAutoRows",
-					"sap.ui.layout.sample.GridResponsiveness"
+					"sap.ui.layout.sample.GridResponsiveness",
+					"sap.ui.layout.sample.GridResponsiveColumnLayout"
 				]
 			}
 		],
@@ -427,6 +428,11 @@
 				"id": "sap.ui.layout.sample.GridResponsiveness",
 				"name": "Responsiveness",
 				"description": "Example of setting customLayout for different layout (screen) sizes."
+			},
+			{
+			  "id": "sap.ui.layout.sample.GridResponsiveColumnLayout",
+			  "name": "Responsive Column Layout",
+			  "description": "Example of using ResponsiveColumnLayout."
 			}
 		]
 	}

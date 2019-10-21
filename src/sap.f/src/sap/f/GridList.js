@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/m/ListBase",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
-	"sap/ui/layout/cssgrid/GridItemLayoutData",
+	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"./GridListRenderer"
 ], function(
 	ListBase,
 	ManagedObjectObserver,
 	GridLayoutDelegate,
-	GridItemLayoutData,
+	GridLayoutBase,
 	GridListRenderer
 ) {
 	"use strict";
@@ -199,7 +199,7 @@ sap.ui.define([
 	 * @private
 	 */
 	GridList.prototype._onAfterItemRendering = function () {
-		GridItemLayoutData._setItemStyles(this);
+		GridLayoutBase.setItemStyles(this);
 	};
 
 	/**
@@ -210,7 +210,7 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent The event from a layoutDataChange
 	 */
 	GridList.prototype.onLayoutDataChange = function (oEvent) {
-		GridItemLayoutData._setItemStyles(oEvent.srcControl);
+		GridLayoutBase.setItemStyles(oEvent.srcControl);
 	};
 
 	return GridList;

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/layout/cssgrid/CSSGrid",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/cssgrid/GridItemLayoutData",
+	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridResponsiveLayout",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
 	"sap/ui/Device",
@@ -14,6 +15,7 @@ function (
 	CSSGrid,
 	HTML,
 	GridItemLayoutData,
+	GridLayoutBase,
 	GridResponsiveLayout,
 	GridLayoutDelegate,
 	Device,
@@ -187,7 +189,7 @@ function (
 			new HTML({ content: "<div></div>" })
 		];
 
-		sinon.stub(GridItemLayoutData, "_setItemStyles");
+		sinon.stub(GridLayoutBase, "setItemStyles");
 
 		// Act
 		aItems.forEach(function (oItem) {
@@ -197,10 +199,10 @@ function (
 
 		// Assert
 		assert.ok(this.oGrid.getItems().length === 3, "Should have 3 items");
-		assert.ok(GridItemLayoutData._setItemStyles.callCount === 3, "Should set styles for every item");
+		assert.ok(GridLayoutBase.setItemStyles.callCount === 3, "Should set styles for every item");
 
 		// Cleanup
-		GridItemLayoutData._setItemStyles.restore();
+		GridLayoutBase.setItemStyles.restore();
 	});
 
 	QUnit.module("_onGridChange", {
@@ -292,7 +294,7 @@ function (
 		assert.ok(this.oSpyRemoveDelegate.notCalled, "Should ignore invalid change object");
 	});
 
-	QUnit.module("LayoutData change", {
+	QUnit.module("GridItemLayoutData", {
 		beforeEach: function () {
 			this.oGrid = new CSSGrid({
 				items: [
@@ -320,7 +322,7 @@ function (
 	QUnit.test("Set item layoutData", function (assert) {
 
 		// Arrange
-		sinon.spy(GridItemLayoutData, "_setItemStyles");
+		sinon.spy(GridLayoutBase, "setItemStyles");
 		sinon.spy(this.oGrid, "onLayoutDataChange");
 
 		// Act
@@ -328,7 +330,7 @@ function (
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(GridItemLayoutData._setItemStyles.calledOnce, "Should update item styles on layout data change");
+		assert.ok(GridLayoutBase.setItemStyles.calledOnce, "Should update item styles on layout data change");
 		assert.ok(this.oGrid.onLayoutDataChange.calledOnce, "Should call layoutDataChange handler");
 
 		if (bBrowserSupportGrid) {
@@ -337,10 +339,9 @@ function (
 		}
 
 		// Cleanup
-		GridItemLayoutData._setItemStyles.restore();
+		GridLayoutBase.setItemStyles.restore();
 		this.oGrid.onLayoutDataChange.restore();
 	});
-
 	QUnit.test("Remove item layoutData", function (assert) {
 
 		// Arrange
@@ -350,29 +351,13 @@ function (
 		// Act
 		this.oItem.setLayoutData(null);
 
+		Core.applyChanges();
+
 		// Assert
 		assert.notOk(this.oItem.getDomRef().style.getPropertyValue("grid-row"), "Should NOT have grid-row property");
 		assert.notOk(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should NOT have grid-column property");
 	});
 
-
-	if (bBrowserSupportGrid) {
-		QUnit.test("Change item layoutData", function (assert) {
-
-			// Arrange
-			this.oItem.setLayoutData(this.oLayoutData);
-			Core.applyChanges();
-
-			// Act
-			this.oLayoutData.setGridRow("span 5");
-
-			// Assert
-			var sGridRow = this.oItem.getDomRef().style.getPropertyValue("grid-row");
-
-			// Check with indexOf as the browser normalizes the property value.
-			assert.ok(sGridRow && sGridRow.indexOf("span 5") > -1, "Should have updated the grid-row property");
-		});
-	}
 
 	QUnit.module("Clone", {
 		beforeEach: function () {
@@ -417,7 +402,7 @@ function (
 	QUnit.module("_getLayoutDataForControl");
 
 	QUnit.test("Missing control", function (assert) {
-		assert.notOk(GridItemLayoutData._getLayoutDataForControl(), "Should have NO layoutData if a control is not provided");
+		assert.notOk(GridLayoutBase._getLayoutDataForControl(), "Should have NO layoutData if a control is not provided");
 	});
 
 	QUnit.test("Missing layoutData for control", function (assert) {
@@ -428,7 +413,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridLayoutBase._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.notOk(oLayoutData, "Should have NO layoutData");
@@ -442,7 +427,7 @@ function (
 			getLayoutData: function () {
 				return {
 					isA: function (sType) {
-						if (sType === "sap.ui.layout.cssgrid.GridItemLayoutData") {
+						if (sType === "sap.ui.layout.cssgrid.IGridItemLayoutData") {
 							return true;
 						}
 						return false;
@@ -452,7 +437,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridLayoutBase._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.ok(oLayoutData, "Should have layoutData");
@@ -483,7 +468,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridLayoutBase._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.ok(oLayoutData, "Should have layoutData");
@@ -504,7 +489,7 @@ function (
 		};
 
 		// Act
-		var oLayoutData = GridItemLayoutData._getLayoutDataForControl(oMockControl);
+		var oLayoutData = GridLayoutBase._getLayoutDataForControl(oMockControl);
 
 		// Assert
 		assert.notOk(oLayoutData, "Should have NO layoutData");
@@ -515,18 +500,18 @@ function (
 	QUnit.test("_setItemStyles - Missing item object", function (assert) {
 
 		// Arrange
-		sinon.spy(GridItemLayoutData, "_removeItemStyles");
+		sinon.spy(GridItemLayoutData, "removeItemStyles");
 		sinon.spy(GridItemLayoutData, "_setItemStyle");
 
 		// Act
-		GridItemLayoutData._setItemStyles();
+		GridLayoutBase.setItemStyles();
 
 		// Assert
-		assert.ok(GridItemLayoutData._removeItemStyles.notCalled, "Should NOT call _removeItemStyles when no item is provided");
+		assert.ok(GridItemLayoutData.removeItemStyles.notCalled, "Should NOT call _removeItemStyles when no item is provided");
 		assert.ok(GridItemLayoutData._setItemStyle.notCalled, "Should NOT call _setItemStyle when no item is provided");
 
 		// Cleanup
-		GridItemLayoutData._removeItemStyles.restore();
+		GridItemLayoutData.removeItemStyles.restore();
 		GridItemLayoutData._setItemStyle.restore();
 	});
 
