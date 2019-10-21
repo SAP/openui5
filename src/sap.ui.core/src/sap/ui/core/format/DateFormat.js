@@ -530,7 +530,7 @@ sap.ui.define([
 				// Compare the letters in oPart.value (the pattern) and sValue (the given string to parse)
 				// one by one.
 				// If the current letter in the pattern is " ", sValue is allowed to have no match, exact match
-				// or mutiple " ". This makes the parsing more tolerant.
+				// or multiple " ". This makes the parsing more tolerant.
 				for (; iPatternIndex < oPart.value.length; iPatternIndex++) {
 					sChar = oPart.value.charAt(iPatternIndex);
 
