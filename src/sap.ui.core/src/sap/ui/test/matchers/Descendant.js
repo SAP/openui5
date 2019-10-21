@@ -12,7 +12,15 @@ sap.ui.define([
 	var oVisitor = new _Visitor();
 
 	/**
-	 * @class Checks if a control has a given descendant.
+	 * @class
+	 * Checks if a control has a given descendant.
+	 *
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     descendant: "object" // where "object" is a declarative matcher for the descendant
+	 * }
+	 * </code></pre>
+	 *
 	 * @param {object|string} vDescendantControl The descendant control to check. If undefined,
 	 * it validates every control to true. Can be a control or a control ID
 	 * @param {boolean} [bDirect] specifies if the descendant should be a direct child

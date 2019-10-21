@@ -12,7 +12,15 @@ sap.ui.define([
 	var oVisitor = new _Visitor();
 
 	/**
-	 * @class Checks if a control has a defined ancestor.
+	 * @class
+	 * Checks if a control has a defined ancestor.
+	 *
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     ancestor: "object" // where "object" is a declarative matcher for the ancestor
+	 * }
+	 * </code></pre>
+	 *
 	 * @param {object|string} vAncestor the ancestor control to check, if undefined, validates every control to true. Can be a control or a control ID
 	 * @param {boolean} [bDirect] specifies if the ancestor should be a direct ancestor (parent)
 	 * @public

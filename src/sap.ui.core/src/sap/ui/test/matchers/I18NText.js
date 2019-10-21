@@ -21,6 +21,17 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 	 *     </li>
 	 * </ul>
 	 *
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <code><pre>{
+	 *     i18NText: {
+	 *         propertyName: "string",
+	 *         key: "string",
+	 *         parameters: "any",
+	 *         modelName: "string"
+	 *     }
+	 * }
+	 * </code></pre>
+	 *
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new I18NText
 	 * @public

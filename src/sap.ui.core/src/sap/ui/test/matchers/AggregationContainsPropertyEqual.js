@@ -10,7 +10,19 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Checks if an aggregation contains at least one item that has a property set to a certain value.
+	 * @class
+	 * Checks if an aggregation contains at least one item that has a property set to a certain value.
+	 *
+	 * As of version 1.72, it is available as a declarative matcher with the following syntax:
+	 * <pre><code>{
+	 *     aggregationContainsPropertyEqual: {
+	 *         aggregationName: "string",
+	 *         propertyName: "string",
+	 *         propertyValue: "string"
+	 *     }
+	 * }
+	 * </code></pre>
+	 *
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationContainsPropertyEqualMatcher
 	 * @public

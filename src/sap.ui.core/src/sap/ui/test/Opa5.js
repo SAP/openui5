@@ -421,11 +421,19 @@ sap.ui.define([
 		/**
 		 * Takes a superset of the parameters of {@link sap.ui.test.Opa#waitFor}.
 		 *
-		 * @param {object} options An Object containing conditions for waiting and callbacks
-		 * Can contain declarative matchers. For details, see the options.matchers property.
-		 * Any matchers declared on the root level of options will be merged with thouse declared in options.matchers.
+		 * @param {object} options An object containing conditions for waiting and callbacks.
+		 *
+		 * The allowed keys are listed below. If a key is not allowed, an error is thrown, stating that
+		 * "the parameter is not defined in the API".
+		 *
+		 * As of version 1.72, in addition to the listed keys, declarative matchers are also allowed.
+		 * Any matchers declared on the root level of the options object are merged with those declared in <code>options.matchers</code>.
+		 * For details on declarative matchers, see the <code>options.matchers</code> property.
+		 *
 		 * @param {string|RegExp} [options.id] The global ID of a control, or the ID of a control inside a view.
-		 * If a regex and a viewName is provided, Opa5 will only look for controls in the view with a matching ID.<br/>
+		 *
+		 * If a regex and a viewName is provided, Opa5 only looks for controls in the view with a matching ID.
+		 *
 		 * Example of a waitFor:
 		 * <pre>
 		 *     <code>
@@ -449,24 +457,66 @@ sap.ui.define([
 		 *         &lt;/core:View&gt;
 		 *     </code>
 		 * </pre>
+		 *
 		 * Will result in matching two controls, the image with the effective ID myView--myImage and the button myView--myButton.
 		 * Although the IDs of the controls myView--bar and myView--baz contain a my,
 		 * they will not be matched since only the part you really write in your views will be matched.
+		 *
 		 * @param {string} [options.viewName] The name of a view.
 		 * If viewName is set, controls will be searched only inside this view. If control ID is given, it will be considered to be relative to the view.
+		 *
 		 * @param {string} [options.viewNamespace] viewName prefix. Recommended to be set in {@link sap.ui.test.Opa5.extendConfig} instead.
-		 * @param {string} [options.viewId] @since 1.62 The ID of a view. Can be used alone or in combination with viewName and viewNamespace.
-		 * Always set view ID if there are multiple views with the same name
-		 * @param {string} [options.fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix
-		 * @param {function|array|object|sap.ui.test.matchers.Matcher} [options.matchers] matchers used to filter controls.
-		 * Could be a function, a single matcher instance, an array of matcher instances, or, @since 1.72, a plain object to specify matchers declaratively.
-		 * For a full list of built-in matchers see {@link sap.ui.test.matchers}.
-		 * Matchers will be applied to an every control found by the waitFor function.
-		 * The matchers are a pipeline: the first matcher gets a control as an input parameter, each subsequent matcher gets the same input as the previous one, if the previous output is 'true'.
+		 *
+		 * @param {string} [options.viewId] @since 1.62 The ID of a view. Can be used alone or in combination with viewName and viewNamespace.		 *
+		 * Always set view ID if there are multiple views with the same name.
+		 *
+		 * @param {string} [options.fragmentId] @since 1.63 The ID of a fragment. If set, controls will match only if their IDs contain the fragment ID prefix.
+		 *
+		 * @param {function|array|object|sap.ui.test.matchers.Matcher} [options.matchers] Matchers used to filter controls.
+		 * Could be a function, a single matcher instance, an array of matcher instances, or, since version 1.72, a plain
+		 * object to specify matchers declaratively. For a full list of built-in matchers, see {@link sap.ui.test.matchers}.
+		 *
+		 * Matchers are applied to each control found by the <code>waitFor</code> function.
+		 * The matchers are a pipeline: the first matcher gets a control as an input parameter, each subsequent matcher gets
+		 * the same input as the previous one, if the previous output is <code>true</code>.
+		 *
 		 * If the previous output is a truthy value, the next matcher will receive this value as an input parameter.
-		 * If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values.
-		 * Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
-
+		 * If there is a matcher that does not match a control (for example, returns a falsy value), then the control is filtered out.
+		 *
+		 * Check function is only called if the matchers matched at least one control, for example, it is not called if matchers filter out all controls/values.
+		 * Check and success are be called with all matching controls as an input parameter.
+		 * A matcher inline function has one parameter - an array of controls, and returns an array of the filtered controls.
+		 *
+		 * A matcher instance could extend <code>sap.ui.test.matchers.Matcher</code> and must have a method with name <code>isMatching</code>,
+		 * that accepts an array of controls and returns an array of the filtered controls.
+		 *
+		 * A declarative matcher object is a set of key-value pairs created by the object literal notation, such that:
+		 * <ul>
+		 * <li>Every key is a name of an OPA5 	built-in matcher, starting with a lower case letter. The following example declares
+		 * an <code>sap.ui.test.matchers.Properties</code> matcher:
+		 * <pre><code>            matchers: {
+		 *                 properties: {<...>}
+		 *             }
+		 * </code></pre>
+		 * </li>
+		 * <li>Every value is an object or an array or objects. Each object represents the properties that will be fed
+		 * to one instance of the declared matcher. The following example declares one <code>sap.ui.test.matchers.Properties</code>
+		 * matcher for property "text" and value "hello":
+		 * <pre><code>            matchers: {
+		 *                 properties: {text: "hello"}
+		 *             }
+		 * </code></pre>
+		 *
+		 * The following example declares two <code>sap.ui.test.matchers.Properties</code> matchers
+		 * (the <code>text</code> property with value <code>hello</code> and the <code>number</code> property with value <code>0</code>):
+		 * <pre><code>            matchers: {
+		 *                 properties: [
+		 *                     {text: "hello"},
+		 *                     {number: 0}
+		 *             ]}
+		 * </code></pre>
+		 * </li></ul>
+		 *
 		 * @param {string} [options.controlType] Selects all control by their type.
 		 * It is usually combined with a viewName or searchOpenDialogs. If no control is matching the type, an empty
 		 * array will be returned. Here are some samples:
