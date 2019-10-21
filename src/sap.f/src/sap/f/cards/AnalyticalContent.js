@@ -178,7 +178,7 @@ sap.ui.define([
 				var aDimensions = [];
 				for (var i = 0; i < oChartObject.dimensions.length; i++) {
 					var oDimension = oChartObject.dimensions[i];
-					var sName = oDimension.value.substring(1, oDimension.value.length - 1);
+					var sName = oDimension.label;
 					aDimensionNames.push(sName);
 					var oDimensionMap = {
 						name: sName,
@@ -194,7 +194,7 @@ sap.ui.define([
 				var aMeasures = [];
 				for (var i = 0; i < oChartObject.measures.length; i++) {
 					var oMeasure = oChartObject.measures[i];
-					var sName = oMeasure.value.substring(1, oMeasure.value.length - 1);
+					var sName = oMeasure.label;
 					aMeasureNames.push(sName);
 					var oMeasureMap = {
 						name: sName,

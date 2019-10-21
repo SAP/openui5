@@ -563,6 +563,10 @@ sap.ui.define([
 						{
 							"label": "Revenue",
 							"value": "{Revenue}"
+						},
+						{
+							"label": "Costs",
+							"value": "{Cost}"
 						}
 					]
 				}
@@ -1754,6 +1758,7 @@ sap.ui.define([
 				assert.equal(oChart.getFeeds()[0].getProperty("type"), "Measure", "Chart should have a feed item whit property 'Measure'");
 				assert.equal(oChart.getFeeds()[1].getProperty("uid"), "categoryAxis", "Chart should have a feed item whit property 'uid'");
 				assert.equal(oChart.getFeeds()[1].getProperty("type"), "Dimension", "Chart should have a feed item whit property 'Measure'");
+				assert.ok(oChart.getFeeds()[0].getProperty("values").indexOf("Costs") > 0, "Chart should have a feed item whit value Costs of it seeds labels");
 
 				done();
 			}.bind(this));
