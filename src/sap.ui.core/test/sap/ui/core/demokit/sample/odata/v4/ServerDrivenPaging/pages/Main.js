@@ -14,40 +14,85 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
-				pressMoreButton : function () {
+				pageDownOnGridTable : function () {
 					return this.waitFor({
-						controlType : "sap.m.CustomListItem",
-						id : /businessPartnerList-trigger/,
-						matchers : new Interactable(),
-						success : function (aControls) {
-							new Press().executeOn(aControls[0]);
-							Opa5.assert.ok(true, "'More' Button pressed");
-						}
-					});
-				}
-			},
-			assertions : {
-				checkItemIndex : function (sValue, iRow) {
-					return this.waitFor({
-						controlType : "sap.m.Text",
-						id : /index-__clone/,
-						matchers : function (oControl) {
-							return oControl.getBindingContext().getIndex() === iRow;
-						},
-						success : function (aControls) {
-							Opa5.assert.strictEqual(aControls[0].getText(), sValue,
-								"Item index for row " + iRow + ": " + sValue);
+						controlType : "sap.ui.table.Table",
+						id : "businessPartnerTable",
+						success : function (oTable) {
+							oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 21);
+							Opa5.assert.ok(true, "Page down on grid table");
 						},
 						viewName : sViewName
 					});
 				},
-				checkTableSize : function (iSize) {
+				pressMoreButton : function () {
+					return this.waitFor({
+						controlType : "sap.m.CustomListItem",
+						id : "businessPartnerList-trigger",
+						success : function (oMoreButton) {
+							new Press().executeOn(oMoreButton);
+							Opa5.assert.ok(true, "'More' Button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				switchToGridTable : function () {
+					return this.waitFor({
+						controlType : "sap.m.IconTabFilter",
+						id : "table",
+						success : function (oTab) {
+							new Press().executeOn(oTab);
+							Opa5.assert.ok(true, "Switched to table.Table");
+						},
+						viewName : sViewName
+					});
+				}
+			},
+			assertions : {
+				checkGridTableTitle : function (sTitle) {
+					return this.waitFor({
+						controlType : "sap.ui.table.Table",
+						id : "businessPartnerTable",
+						success : function (oTable) {
+							Opa5.assert.strictEqual(oTable.getTitle().getText(), sTitle,
+								"Grid table title: " + sTitle);
+						},
+						viewName : sViewName
+					});
+				},
+				checkLastVisibleItemIndex : function (sValue) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
 						id : "businessPartnerList",
 						success : function (oTable) {
-							Opa5.assert.strictEqual(oTable.getItems().length, iSize,
-								"Table length: " + iSize);
+							var oItem = oTable.getItems()[oTable.getItems().length - 1];
+
+							Opa5.assert.strictEqual(oItem.getCells()[0].getText(), sValue,
+								"Last table item index: " + sValue);
+						},
+						viewName : sViewName
+					});
+				},
+				checkLastVisibleRowIndex : function (sValue) {
+					return this.waitFor({
+						controlType : "sap.ui.table.Table",
+						id : "businessPartnerTable",
+						success : function (oTable) {
+							var oRow = oTable.getRows()[20];
+
+							Opa5.assert.strictEqual(oRow.getCells()[0].getText(), sValue,
+								"Last table row index: " + sValue);
+						},
+						viewName : sViewName
+					});
+				},
+				checkTableLength : function (iLength) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "businessPartnerList",
+						success : function (oTable) {
+							Opa5.assert.strictEqual(oTable.getItems().length, iLength,
+								"Table length: " + iLength);
 						},
 						viewName : sViewName
 					});
@@ -55,11 +100,12 @@ sap.ui.define([
 				checkTableTitle : function (sTitle) {
 					return this.waitFor({
 						controlType : "sap.m.Title",
-						id : /businessPartnerListTitle/,
-						success : function (aControls) {
-							Opa5.assert.strictEqual(aControls[0].getText(), sTitle,
+						id : "businessPartnerListTitle",
+						success : function (oTitle) {
+							Opa5.assert.strictEqual(oTitle.getText(), sTitle,
 								"Table title: " + sTitle);
-						}
+						},
+						viewName : sViewName
 					});
 				}
 			}

@@ -4275,6 +4275,45 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#handleResponse: server-driven paging for gap", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oCacheMock = this.mock(oCache),
+			oElement10 = {},
+			oElement5 = {},
+			oFetchTypesResult = {},
+			oHelperMock = this.mock(_Helper),
+			i,
+			oReadPromise = {/* SyncPromise */}, // the promise for elements waiting to be read
+			oResult = {
+				"@odata.context" : "foo",
+				"@odata.nextLink" : "~nextLink",
+				"value" : [oElement5]
+			};
+
+		oCache.mChangeListeners = {};
+		oCache.aElements = [];
+		oCache.aElements[10] = oElement10;
+		fill(oCache.aElements, oReadPromise, 5, 10);
+		oCache.aElements.$count = undefined;
+
+		oCacheMock.expects("visitResponse").withExactArgs(sinon.match.same(oResult),
+			sinon.match.same(oFetchTypesResult), undefined, undefined, undefined, 5);
+		oHelperMock.expects("updateExisting").never();
+
+		// code under test
+		oCache.handleResponse(5, 10, oResult, oFetchTypesResult);
+
+		assert.strictEqual(oCache.aElements.length, 11, "length");
+		assert.strictEqual(oCache.iLimit, Infinity, "iLimit");
+		assert.strictEqual(oCache.aElements[5], oElement5);
+		for (i = 6; i < 10; i += 1) {
+			assert.strictEqual(oCache.aElements[i], undefined);
+			assert.notOk(oCache.aElements.hasOwnProperty(i));
+		}
+		assert.strictEqual(oCache.aElements[10], oElement10);
+	});
+
+	//*********************************************************************************************
 	[true, false].forEach(function (bTail) {
 		QUnit.test("CollectionCache#requestElements: bTail = " + bTail, function (assert) {
 			var oCache = this.createCache("Employees"),

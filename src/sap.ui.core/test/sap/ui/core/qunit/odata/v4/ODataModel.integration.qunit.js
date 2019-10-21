@@ -3919,7 +3919,7 @@ sap.ui.define([
 						SalesOrderID : "43"
 					})
 					.expectChange("note", "from server", 0);
-				if (!bSkipRefresh){
+				if (!bSkipRefresh) {
 					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
 							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 							Note : "fresh from server",
@@ -11963,7 +11963,7 @@ sap.ui.define([
 			oContextBinding.setContext(oListBinding.getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
-		}).then(function (){
+		}).then(function () {
 			that.expectRequest({
 					headers : {"If-Match" : "ETag4"},
 					method : "DELETE",
@@ -14541,7 +14541,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["$direct", "$auto"].forEach(function (sGroupId){
+	["$direct", "$auto"].forEach(function (sGroupId) {
 		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
 			var aMessages = [{
 					code : "foo-42",
@@ -21161,11 +21161,88 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Server-driven paging with table.Table
-	// Note: Requests following the first request which returned an @odata.nextLink do not request
-	// the prefetch size to avoid server load.
+	// Read with server-driven paging in "gaps" does not remove elements behind the gap
 	// JIRA: CPOUI5UISERVICESV3-1908
-	//TODO support table.Table in later change
-	QUnit.skip("Server-driven paging with table.Table", function (assert) {
+	QUnit.test("Server-driven paging with table.Table: no remove behind gap", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template><Text id="text" text="{Name}" /></t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=3", {
+				value : [
+					{ID : "1", Name : "Peter Burke"},
+					{ID : "2", Name : "Frederic Fall"}
+				],
+				"@odata.nextLink" : "~nextLink"
+			})
+			.expectRequest("EMPLOYEES?$skip=2&$top=1", {
+				value : [
+					{ID : "3", Name : "Carla Blue"}
+				]
+			})
+			.expectChange("text", ["Peter Burke", "Frederic Fall", "Carla Blue"]);
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES?$skip=7&$top=3", {
+					value : [
+						{ID : "8", Name : "John Field"},
+						{ID : "9", Name : "Susan Bay"}
+					],
+					"@odata.nextLink" : "~nextLink1"
+				})
+				.expectRequest("EMPLOYEES?$skip=9&$top=1", {
+					value : [
+						{ID : "10", Name : "Daniel Red"}
+					]
+				})
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", [,,,,,,, "John Field", "Susan Bay", "Daniel Red"]);
+
+			that.oView.byId("table").setFirstVisibleRow(7);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES?$skip=3&$top=3", {
+					value : [
+						{ID : "3", Name : "Alice Grey"},
+						{ID : "4", Name : "Bob Green"}
+					],
+					"@odata.nextLink" : "~nextLink2"
+				})
+				.expectRequest("EMPLOYEES?$skip=5&$top=1", {
+					value : [
+						{ID : "5", Name : "Erica Brown"}
+					]
+				})
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", [,,, "Alice Grey", "Bob Green", "Erica Brown"]);
+
+			that.oView.byId("table").setFirstVisibleRow(3);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("text", [,,,,,,, "John Field", "Susan Bay", "Daniel Red"]);
+
+			that.oView.byId("table").setFirstVisibleRow(7);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with table.Table
+	// Requests following the first request which returned an @odata.nextLink do not request
+	//   the prefetch size to avoid server load.
+	// JIRA: CPOUI5UISERVICESV3-1908
+	QUnit.skip("Server-driven paging with table.Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
 	<t:Column>\
