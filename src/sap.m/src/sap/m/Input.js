@@ -151,7 +151,7 @@ function(
 			/**
 			 * Only used if type=date and no datepicker is available.
 			 * The data is displayed and the user input is parsed according to this format.
-			 * NOTE: The value property is always of the form RFC 3339 (YYYY-MM-dd).
+			 * <b>Note:</b> The value property is always of the form RFC 3339 (YYYY-MM-dd).
 			 * @deprecated Since version 1.9.1.
 			 * <code>sap.m.DatePicker</code>, <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code> should be used for date/time inputs and formating.
 			 */
@@ -182,13 +182,15 @@ function(
 
 			/**
 			 * If set, the value of this parameter will control the horizontal size of the suggestion list to display more data. This allows suggestion lists to be wider than the input field if there is enough space available. By default, the suggestion list is always as wide as the input field.
-			 * Note: The value will be ignored if the actual width of the input field is larger than the specified parameter value.
+			 * <b>Note:</b> The value will be ignored if the actual width of the input field is larger than the specified parameter value.
 			 * @since 1.21.1
 			 */
 			maxSuggestionWidth : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 			/**
-			 * Minimum length of the entered text in input before suggest event is fired. The default value is 1 which means the suggest event is fired after user types in input. When it's set to 0, suggest event is fired when input with no text gets focus.
+			 * Minimum length of the entered text in input before suggest event is fired. The default value is 1 which means the suggest event is fired after user types in input.
+			 *
+			 * <b>Note:</b> When it's set to 0, suggest event is fired when input with no text gets focus. In this case no suggestion popup will open.
 			 * @since 1.21.2
 			 */
 			startSuggestion : {type : "int", group : "Behavior", defaultValue : 1},
@@ -196,7 +198,7 @@ function(
 			/**
 			 * For tabular suggestions, this flag will show/hide the button at the end of the suggestion table that triggers the event "valueHelpRequest" when pressed. The default value is true.
 			 *
-			 * NOTE: If suggestions are not tabular or no suggestions are used, the button will not be displayed and this flag is without effect.
+			 * <b>Note:</b> If suggestions are not tabular or no suggestions are used, the button will not be displayed and this flag is without effect.
 			 * @since 1.22.1
 			 */
 			showTableSuggestionValueHelp : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -285,7 +287,7 @@ function(
 			/**
 			 * The suggestionColumns and suggestionRows are for tabular input suggestions. This aggregation allows for binding the table cells.
 			 * The items of this aggregation are to be bound directly or to set in the suggest event method.
-			 * Note: If this aggregation is filled, the aggregation suggestionItems will be ignored.
+			 * <b>Note:</b> If this aggregation is filled, the aggregation suggestionItems will be ignored.
 			 * @since 1.21.1
 			 */
 			suggestionRows : {type : "sap.m.ColumnListItem", altTypes: ["sap.m.GroupHeaderListItem"], multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
@@ -390,7 +392,7 @@ function(
 					/**
 					 * This is the row selected in the tabular suggestion popup represented as a ColumnListItem. For one and two-value suggestions, this value will not be set.
 					 *
-					 * Note: The row result function to select a result value for the string is already executed at this time. To pick different value for the input field or to do follow up steps after the item has been selected.
+					 * <b>Note:</b> The row result function to select a result value for the string is already executed at this time. To pick different value for the input field or to do follow up steps after the item has been selected.
 					 * @since 1.21.1
 					 */
 					selectedRow : {type : "sap.m.ColumnListItem"}
