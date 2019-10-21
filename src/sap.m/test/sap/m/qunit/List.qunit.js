@@ -272,19 +272,21 @@ sap.ui.define([
 	});
 
 	var swipeContentList;
+	var swipeDirection;
 	var swipeContentPage = new Page("swipeContentPage", {
 		title : "Swipe Content Test",
 		content : [swipeContentList = new List({
 			inset : true,
 			swipeContent : new Button({
-				text : "Approve",
-				type : "Accept",
+				text : "Disapprove",
+				type : "Reject",
 				press : function(e) {
 				}
 			}),
 			swipe : function(e) {
 				var li = e.getParameter("listItem");
 				li.setLabel(li.getLabel() + " " + new Date().toLocaleTimeString());
+				swipeDirection = e.getParameter("swipeDirection");
 				sap.ui.getCore().applyChanges();
 			},
 			items : [new DisplayListItem({
@@ -1127,18 +1129,20 @@ sap.ui.define([
 	});
 
 	if (jQuery.support.touch) {
-		QUnit.test("swipe action", function(assert) {
+		QUnit.test("swipe left action", function(assert) {
 			var done = assert.async();
 			app.back();
 			app.to("swipeContentPage", "show");
 			sap.ui.getCore().applyChanges();
 
 			var li = swipeContentList.getItems()[0],
-			event = jQuery.Event("swipeleft", {
-				srcControl : li
-			});
+				event = jQuery.Event("swipeleft", {
+					srcControl : li
+				});
 
 			swipeContentList.onswipeleft(event);
+			assert.equal(swipeDirection, "EndToBegin", "Swipe from the end to the Beginning");
+
 			sap.ui.getCore().applyChanges();
 
 			setTimeout(function() {
@@ -1151,6 +1155,22 @@ sap.ui.define([
 					done();
 				});
 			}, 1000);
+		});
+
+
+		QUnit.test("swipe right action", function(assert) {
+			//var done = assert.async();
+			app.back();
+			app.to("swipeContentPage", "show");
+			sap.ui.getCore().applyChanges();
+
+			var li = swipeContentList.getItems()[0],
+				event = jQuery.Event("swiperight", {
+					srcControl : li
+				});
+
+			swipeContentList.onswiperight(event);
+			assert.equal(swipeDirection, "BeginToEnd", "Swipe from the Beginning to the end");
 		});
 	}
 

@@ -370,7 +370,14 @@ function(
 					/**
 					 * Holds which control caused the swipe event within the item.
 					 */
-					srcControl : {type : "sap.ui.core.Control"}
+					srcControl : {type : "sap.ui.core.Control"},
+
+					/**
+					 * Shows in which direction the user swipes and can have the value <code>BeginToEnd</code> (left to right in LTR languages
+					 * and right to left in RTL languages) or <code>EndToBegin</code> (right to left in LTR languages
+					 * and left to right in RTL languages)
+					 */
+					swipeDirection : {type : "sap.m.SwipeDirection"}
 				}
 			},
 
@@ -1628,8 +1635,13 @@ function(
 	 */
 	ListBase.prototype.close = ListBase.prototype._removeSwipeContent;
 
-	// called on swipe event to bring in the swipeContent control
-	ListBase.prototype._onSwipe = function(oEvent) {
+	/**
+	 * Called on swipe event to bring in the swipeContent control.
+	 * Swipe direction the value can be <code>BeginToEnd</code> (left to right in LTR languages
+	 * and right to left in RTL languages) or <code>EndToBegin</code> (right to left in LTR languages
+	 * and left to right in RTL languages)
+	 */
+	ListBase.prototype._onSwipe = function(oEvent, swipeDirection) {
 		var oContent = this.getSwipeContent(),
 			oSrcControl = oEvent.srcControl;
 
@@ -1647,7 +1659,8 @@ function(
 				this.fireSwipe({
 					listItem : this._swipedItem,
 					swipeContent : oContent,
-					srcControl : oSrcControl
+					srcControl : oSrcControl,
+					swipeDirection: swipeDirection
 				}, true) && this._swipeIn();
 			}
 		}
@@ -1657,19 +1670,44 @@ function(
 		this._eventHandledByControl = oEvent.isMarked();
 	};
 
+	// Swipe from the end to the begin - right to left in LTR and left to right in RTL languages.
 	ListBase.prototype.onswipeleft = function(oEvent) {
-		var exceptDirection = sap.ui.getCore().getConfiguration().getRTL() ? "RightToLeft" : "LeftToRight";
 
-		if (this.getSwipeDirection() != exceptDirection) {
-			this._onSwipe(oEvent);
+		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var exceptDirection = bRtl ? SwipeDirection.EndToBegin : SwipeDirection.BeginToEnd;
+		var swipeDirection = this.getSwipeDirection();
+
+		if (swipeDirection === SwipeDirection.LeftToRight) {
+			swipeDirection = SwipeDirection.BeginToEnd;
+		} else if (swipeDirection === SwipeDirection.RightToLeft) {
+			swipeDirection = SwipeDirection.EndToBegin;
+		}
+
+		if (swipeDirection != exceptDirection) {
+			if (swipeDirection == SwipeDirection.Both) {
+				swipeDirection = bRtl ? SwipeDirection.BeginToEnd : SwipeDirection.EndToBegin;
+			}
+			this._onSwipe(oEvent, swipeDirection);
 		}
 	};
 
+	// Swipe from the begin to the end - left to right in LTR and right to left in RTL languages.
 	ListBase.prototype.onswiperight = function(oEvent) {
-		var exceptDirection = sap.ui.getCore().getConfiguration().getRTL() ? "LeftToRight" : "RightToLeft";
+		var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		var exceptDirection = bRtl ? SwipeDirection.BeginToEnd : SwipeDirection.EndToBegin;
+		var swipeDirection = this.getSwipeDirection();
 
-		if (this.getSwipeDirection() != exceptDirection) {
-			this._onSwipe(oEvent);
+		if (swipeDirection === SwipeDirection.LeftToRight) {
+			swipeDirection = SwipeDirection.BeginToEnd;
+		} else if (swipeDirection === SwipeDirection.RightToLeft) {
+			swipeDirection = SwipeDirection.EndToBegin;
+		}
+
+		if (swipeDirection != exceptDirection) {
+			if (swipeDirection == SwipeDirection.Both) {
+				swipeDirection = bRtl ? SwipeDirection.EndToBegin : SwipeDirection.BeginToEnd;
+			}
+			this._onSwipe(oEvent, swipeDirection);
 		}
 	};
 
