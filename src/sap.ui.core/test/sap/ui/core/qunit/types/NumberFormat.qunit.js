@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/base/Log"], function (NumberFormat, Locale, Log) {
+sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/core/LocaleData", "sap/base/Log"], function (NumberFormat, Locale, LocaleData, Log) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
@@ -191,6 +191,30 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/bas
 		assert.equal(oFormat.format(-999000), "-999000", "-999000 formatted");
 		assert.equal(oFormat.format(-999900), "-1\xa0Mio.", "-999900 formatted");
 		assert.equal(oFormat.format(-999999), "-1\xa0Mio.", "-999999 formatted");
+	});
+
+	["nb-NO", "en_GB", "xx-XX", "zh_CN", "de_DE"].forEach(function(sLocale) {
+		QUnit.test("lenient parsing for " + sLocale, function(assert) {
+			var oLocale = new Locale(sLocale);
+			var oLocaleData = new LocaleData(oLocale);
+			var oFormat = NumberFormat.getIntegerInstance({}, oLocale);
+
+			// parse minusSign
+			var sMinusSymbols = oLocaleData.getLenientNumberSymbols("minusSign");
+			var aMinusSymbols = sMinusSymbols.split("");
+			assert.ok(aMinusSymbols.length > 0, "There should be minus symbols present");
+			aMinusSymbols.forEach(function(sSymbol) {
+				assert.equal(oFormat.parse(sSymbol + "100"), -100, "-100 is parsed correctly for '" + sSymbol + "'");
+			});
+
+			// Parse plusSign
+			var sPlusSymbols = oLocaleData.getLenientNumberSymbols("plusSign");
+			var aPlusSymbols = sPlusSymbols.split("");
+			assert.ok(aPlusSymbols.length > 0, "There should be plus symbols present");
+			aPlusSymbols.forEach(function(sSymbol) {
+				assert.equal(oFormat.parse(sSymbol + "100"), 100, "100 is parsed correctly for '" + sSymbol + "'");
+			});
+		});
 	});
 
 	QUnit.test("integer short style under locale zh_CN", function (assert) {

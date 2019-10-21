@@ -1303,7 +1303,9 @@ sap.ui.define([
 	 */
 	NumberFormat.prototype.parse = function(sValue) {
 		var oOptions = this.oFormatOptions,
-			sPlusMinusSigns = quote(oOptions.plusSign + oOptions.minusSign),
+			sPlusSigns = oOptions.plusSign + this.oLocaleData.getLenientNumberSymbols("plusSign") ,
+			sMinusSigns = oOptions.minusSign + this.oLocaleData.getLenientNumberSymbols("minusSign") ,
+			sPlusMinusSigns = quote(sPlusSigns + sMinusSigns),
 			sGroupingSeparator = quote(oOptions.groupingSeparator),
 			sDecimalSeparator = quote(oOptions.decimalSeparator),
 			sRegExpFloat = "^\\s*([" + sPlusMinusSigns + "]?(?:[0-9" + sGroupingSeparator + "]+|[0-9" + sGroupingSeparator + "]*" + sDecimalSeparator + "[0-9]*)(?:[eE][+-][0-9]+)?)\\s*$",
@@ -1461,8 +1463,23 @@ sap.ui.define([
 		// Remove grouping separator and replace locale dependant decimal separator,
 		// before calling parseInt/parseFloat
 		sValue = sValue.replace(oGroupingRegExp, "");
-		sValue = sValue.replace(oOptions.plusSign, "+");
-		sValue = sValue.replace(oOptions.minusSign, "-");
+
+		// Replace "minus/plus" sign with a parsable symbol
+		// e.g. "➖47" (cannot be parsed using parseInt) --> "-47" (can be parsed using parseInt)
+		var iValueLength = sValue.length;
+		for (var iValuePos = 0; iValuePos < iValueLength; iValuePos++) {
+			var sCurrentValueChar = sValue[iValuePos];
+
+			// it can either be a minus or a plus
+			// if one was found break because there can only be one in a value
+			if (sPlusSigns.includes(sCurrentValueChar)) {
+				sValue = sValue.replace(sCurrentValueChar, "+");
+				break;
+			} else if (sMinusSigns.includes(sCurrentValueChar)) {
+				sValue = sValue.replace(sCurrentValueChar, "-");
+				break;
+			}
+		}
 
 		// Remove the leading "+" sign because when "parseAsString" is set to true the "parseInt" or "parseFloat" isn't called and the leading "+" has to be moved manually
 		sValue = sValue.replace(/^\+/, "");
