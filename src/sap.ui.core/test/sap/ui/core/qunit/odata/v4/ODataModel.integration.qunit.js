@@ -1288,7 +1288,11 @@ sap.ui.define([
 				// Only check the value once all parts are available.
 				if (!bIsCompositeType || sValue !== null) {
 					that.checkValue(assert, sValue, sControlId,
-						oContext && (oContext.getIndex ? oContext.getIndex() : oContext.getPath()));
+						oContext && (oContext.getBinding
+							? oContext.getBinding() && oContext.getIndex()
+							: oContext.getPath()
+						)
+					);
 				}
 
 				return sValue;
@@ -1965,16 +1969,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Absolute ODLB, late property. See that it is requested only once, even when bound
-	// twice. See that it is updated via requestSideEffects called at the parent binding (all
-	// visible rows).
+	// Scenario: ODLB, late property. See that it is requested only once, even when bound twice. See
+	// that it is updated via requestSideEffects called at the parent binding (all visible rows).
 	// JIRA: CPOUI5UISERVICESV3-1878
 	QUnit.test("ODLB: late property", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oRowContext,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'1\')}">\
-	<Text text="{Team_Id}"/><!-- TODO CPOUI5UISERVICESV3-1973 -->\
 	<Table id="table" growing="true" growingThreshold="2"\
 			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
 		<ColumnListItem>\
@@ -1986,8 +1988,7 @@ sap.ui.define([
 <Text id="age2" text="{AGE}" />',
 			that = this;
 
-		this.expectRequest("TEAMS('1')?$select=Team_Id", {Team_Id : "1"})
-			.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
+		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
 				value : [
 					{ID : "2", Name : "Frederic Fall"},
 					{ID : "3", Name : "Jonathan Smith"}
@@ -2029,19 +2030,20 @@ sap.ui.define([
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
 				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
 					value : [
-						{AGE : 43, ID : "2", Name : "Frederic Fall"},
-						{AGE : 29, ID : "3", Name : "Jonathan Smith"},
-						{AGE : 36, ID : "4", Name : "Peter Burke"}
+						{AGE : 43, ID : "2", Name : "Frederic Fall *"},
+						{AGE : 29, ID : "3", Name : "Jonathan Smith *"},
+						{AGE : 0, ID : "4", Name : "Peter Burke *"}
 					]
 				})
 				.expectChange("age1", "43")
-				.expectChange("age2", "43");
+				.expectChange("age2", "43")
+				.expectChange("name", ["Frederic Fall *", "Jonathan Smith *", "Peter Burke *"]);
 
 			// see that requestSideEffects updates AGE, too
 			return Promise.all([
-				that.oView.byId("form").getBindingContext().requestSideEffects([
-					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
-					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+				that.oView.byId("table").getBinding("items").getHeaderContext().requestSideEffects([
+					{$PropertyPath : "AGE"},
+					{$PropertyPath : "Name"}
 				]),
 				that.waitForChanges(assert)
 			]);
@@ -2051,6 +2053,29 @@ sap.ui.define([
 			// change one Text to the second row - must be cached from requestSideEffects
 			oRowContext = that.oView.byId("table").getItems()[1].getBindingContext();
 			that.oView.byId("age2").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
+				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
+					value : [
+						{AGE : 44, ID : "2", Name : "Frederic Fall **"},
+						{AGE : 30, ID : "3", Name : "Jonathan Smith **"},
+						{AGE : -1, ID : "4", Name : "Peter Burke **"}
+					]
+				})
+				.expectChange("age1", "44")
+				.expectChange("age2", "30")
+				.expectChange("name", ["Frederic Fall **", "Jonathan Smith **", "Peter Burke **"]);
+
+			return Promise.all([
+				// code under test: requestSideEffects on ODCB w/o data
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
+					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+				]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -20212,8 +20237,8 @@ sap.ui.define([
 			oCreationRowContext = oCreationRowListBinding.create({Note : "New item note"});
 			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
-			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oFormBinding.hasPendingChanges());
-			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oCreationRowListBinding.hasPendingChanges());
+			assert.ok(oFormBinding.hasPendingChanges());
+			assert.ok(oCreationRowListBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges(), "consider all groups");
 			assert.notOk(oModel.hasPendingChanges("$auto"));
 			assert.ok(oModel.hasPendingChanges("doNotSubmit"), "creation row has changes");
@@ -20792,6 +20817,186 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: hasPendingChanges and resetChanges work even while late child bindings are trying
+	// to reuse the parent binding's cache.
+	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
+	QUnit.test("hasPendingChanges + resetChanges work for late child bindings", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<Table id="orders" items="{path: \'/SalesOrderList\', parameters: {\
+		$expand : {\
+			SO_2_SOITEM : {\
+				$select : [\'ItemPosition\',\'Note\',\'SalesOrderID\']\
+			}\
+		},\
+		$select : \'Note\'\
+	}}">\
+	<ColumnListItem>\
+		<Input id="note" value="{Note}"/>\
+	</ColumnListItem>\
+</Table>\
+<Table id="items" items="{SO_2_SOITEM}">\
+	<ColumnListItem>\
+		<Text id="itemNote" text="{Note}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList"
+			+ "?$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)"
+			+ "&$select=Note,SalesOrderID"
+			+ "&$skip=0&$top=100", {
+				value : [{
+					Note : "SO_1",
+					SalesOrderID : "1",
+					SO_2_SOITEM : [{
+						ItemPosition : "10",
+						Note : "Item_10",
+						SalesOrderID : "1"
+					}]
+				}]
+			})
+			.expectChange("note", ["SO_1"])
+			.expectChange("itemNote", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOrdersTable = that.oView.byId("orders"),
+				oOrdersBinding = oOrdersTable.getBinding("items");
+
+			that.expectChange("note", ["SO_1 changed"])
+				.expectChange("note", ["SO_1"]);
+
+			oOrdersTable.getItems()[0].getCells()[0].getBinding("value").setValue("SO_1 changed");
+
+			// code under test
+			assert.ok(oOrdersBinding.hasPendingChanges());
+
+			that.expectChange("itemNote", ["Item_10"]);
+
+			// Observe hasPendingChanges while the child binding is checking whether it can use the
+			// parent cache
+			that.oView.byId("items").setBindingContext(oOrdersBinding.getCurrentContexts()[0]);
+
+			// code under test
+			assert.ok(oOrdersBinding.hasPendingChanges());
+
+			// code under test
+			oOrdersBinding.resetChanges();
+
+			// code under test
+			assert.notOk(oOrdersBinding.hasPendingChanges());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity without using a UI and persist it.
+	// ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges work as expected even if
+	// late properties below a list binding want to reuse the parent binding's cache. Relative list
+	// binding without an own cache is necessary because determination whether cache can be used or
+	// not is async.
+	// Resetting pending changes works synchronously.
+	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
+[
+	// late dependent binding does not influence hasPendingChanges for a parent list binding with a
+	// persisted created entity.
+	function (assert, oModel, oBinding, oCreatedContext) {
+		this.expectChange("note", "New");
+
+		this.oView.byId("form").setBindingContext(oCreatedContext);
+
+		// code under test
+		assert.notOk(oModel.hasPendingChanges());
+		assert.notOk(oBinding.hasPendingChanges());
+
+		return this.waitForChanges(assert);
+	},
+	// modify a persisted created entity; hasPendingChanges is not influenced by late properties;
+	// resetChanges reverts changes synchronously
+	function (assert, oModel, oBinding, oCreatedContext) {
+		var oPropertyBinding = oModel.bindProperty("Note", oCreatedContext);
+
+		this.expectChange("note", "New");
+
+		oPropertyBinding.initialize();
+		oPropertyBinding.setValue("Modified"); // no change event; reset is done synchronously
+		this.oView.byId("form").setBindingContext(oCreatedContext);
+
+		// code under test
+		assert.ok(oModel.hasPendingChanges());
+		assert.ok(oBinding.hasPendingChanges());
+
+		// code under test
+		oBinding.resetChanges();
+
+		// code under test
+		assert.notOk(oModel.hasPendingChanges());
+		assert.notOk(oBinding.hasPendingChanges());
+
+		return this.waitForChanges(assert);
+	}
+].forEach(function (fnTest, i) {
+	var sTitle = "hasPendingChanges/resetChanges: late properties for a list binding without a UI"
+			+ " and with a persisted created entity, #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedContext,
+			oListBindingWithoutUI,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<FlexBox id="form">\
+	<Text id="note" text="{Note}"/>\
+	<Table id="items" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="itemNote" text="{Note}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		oListBindingWithoutUI = oModel.bindList("/SalesOrderList");
+
+		this.expectChange("note")
+			.expectChange("itemNote", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {SO_2_SOITEM : null}
+				}, {
+					Note : "New",
+					SalesOrderID : "43"
+				});
+
+			oCreatedContext = oListBindingWithoutUI.create({SO_2_SOITEM : null}, true);
+
+			// code under test
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// code under test
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+
+			return fnTest.call(that, assert, oModel, oListBindingWithoutUI, oCreatedContext);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Unpark a failed patch while requesting side effects. See that the PATCH response is
 	// processed before the GET response.
 	// JIRA: CPOUI5UISERVICESV3-1878
@@ -21005,5 +21210,31 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A property binding with a path using a collection navigation property must not
+	// cause an invalid late property request.
+	QUnit.test("BCP 1970517588: invalid property path", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'TEAM01\')}">\
+	<Text id="teamId" text="{Team_Id}"/>\
+	<Text id="name" text="{TEAM_2_EMPLOYEES/Name}"/>\
+</FlexBox>';
+
+		// once from initialize and once from the context's checkUpdate
+		this.oLogMock.expects("error").twice()
+			.withArgs("Failed to drill-down into TEAM_2_EMPLOYEES/Name, invalid segment: Name");
+
+		this.expectRequest("TEAMS('TEAM01')?$select=Team_Id"
+				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				Team_Id : "TEAM_01",
+				TEAM_2_EMPLOYEES : []
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("name", null);
+
+		return this.createView(assert, sView, oModel);
 	});
 });

@@ -456,20 +456,19 @@ sap.ui.define([
 		 *
 		 * @param {object} oValue The object that is expected to have the value
 		 * @param {string} sSegment The path segment that is missing
-		 * @param {number} iPathLength The lenght of the path of the missing value
+		 * @param {number} iPathLength The length of the path of the missing value
 		 * @returns {any} The value if it could be determined or undefined otherwise
 		 */
 		function missingValue(oValue, sSegment, iPathLength) {
-			var sPropertyPath = "",
+			var sPropertyPath = sPath.split("/").slice(0, iPathLength).join("/"),
 				sReadLink,
 				sServiceUrl;
 
-			if (sPath[0] !== '(') {
-				sPropertyPath += "/";
+			if (Array.isArray(oValue)) {
+				return invalidSegment(sSegment); // missing key predicate or index
 			}
-			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
 			return that.oRequestor.getModelInterface()
-				.fetchMetadata(that.sMetaPath + _Helper.getMetaPath(sPropertyPath))
+				.fetchMetadata(that.sMetaPath + "/" + _Helper.getMetaPath(sPropertyPath))
 				.then(function (oProperty) {
 					if (!oProperty) {
 						return invalidSegment(sSegment);
@@ -477,7 +476,8 @@ sap.ui.define([
 					if (oProperty.$Type === "Edm.Stream") {
 						sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
 						sServiceUrl = that.oRequestor.getServiceUrl();
-						return sReadLink || sServiceUrl + that.sResourcePath + sPropertyPath;
+						return sReadLink
+							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
 					}
 					if (!bTransient) {
 						if (oGroupLock && oEntity && oProperty.$kind === "Property") {
@@ -1977,9 +1977,9 @@ sap.ui.define([
 	 *   The number of elements to request side effects for; <code>Infinity</code> is supported.
 	 *   If <code>undefined</code>, only the side effects for the element at <code>iStart</code> are
 	 *   requested; the other elements are not discarded in this case.
-	 * @returns {Promise}
-	 *   A promise resolving without a defined result, or <code>null</code> if a key property is
-	 *   missing
+	 * @returns {Promise|sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
+	 *   effects fails, or <code>null</code> if a key property is missing.
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
@@ -2371,8 +2371,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to be resolved with the updated data when the side effects have been
-	 * loaded from the given resource path.
+	 * Returns a promise to be resolved when the side effects have been loaded from the given
+	 * resource path.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
@@ -2386,8 +2386,8 @@ sap.ui.define([
 	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
 	 * @param {string} [sResourcePath=this.sResourcePath]
 	 *   A resource path relative to the service URL; it must not contain a query string
-	 * @returns {Promise}
-	 *   A promise resolving with the updated data, or rejected with an error if loading of side
+	 * @returns {Promise|sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails.
 	 * @throws {Error} If the side effects require a $expand, or if group ID is '$cached' (the error
 	 *   has a property <code>$cached = true</code> then)
@@ -2396,8 +2396,8 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, sResourcePath) {
-		var oOldValuePromise = this.fetchValue(_GroupLock.$cached, ""),
-			mQueryOptions = _Helper.intersectQueryOptions(
+		var oOldValuePromise = this.oPromise,
+			mQueryOptions = oOldValuePromise && _Helper.intersectQueryOptions(
 				this.mLateQueryOptions || this.mQueryOptions, aPaths,
 				this.oRequestor.getModelInterface().fetchMetadata,
 				this.sMetaPath + "/$Type", // add $Type because of return value context
@@ -2406,7 +2406,7 @@ sap.ui.define([
 			that = this;
 
 		if (!mQueryOptions) {
-			return oOldValuePromise;
+			return SyncPromise.resolve();
 		}
 
 		sResourcePath = (sResourcePath || this.sResourcePath)
@@ -2414,7 +2414,7 @@ sap.ui.define([
 		oResult = SyncPromise.all([
 			this.oRequestor.request("GET", sResourcePath, oGroupLock),
 			this.fetchTypes(),
-			oOldValuePromise
+			this.fetchValue(_GroupLock.$cached, "") // Note: includes some additional checks
 		]).then(function (aResult) {
 			var oNewValue = aResult[0],
 				oOldValue = aResult[2];

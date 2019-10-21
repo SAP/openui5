@@ -293,7 +293,9 @@ sap.ui.define([
 			oDependentBinding.setContext(undefined);
 		});
 		this.oBinding = undefined;
-		this.oModel = undefined;
+		// When removing oModel, ManagedObject#getBindingContext does not return the destroyed
+		// context although the control still refers to it
+		// this.oModel = undefined;
 		BaseContext.prototype.destroy.apply(this);
 	};
 
@@ -946,7 +948,7 @@ sap.ui.define([
 				+ JSON.stringify(oPath));
 		});
 
-		for (oContext = this; !oContext.getBinding().oCache;
+		for (oContext = /*consistent-this :-(*/that; !oContext.getBinding().oCache;
 				oContext = oContext.getBinding().getContext()) {
 			if (!oContext.getBinding().getBoundContext) {
 				throw new Error("Not a context binding: " + oContext.getBinding());
@@ -1029,21 +1031,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls the given processor with the cache containing this context's data and the absolute
-	 * <code>sPath</code> (by prepending the context path if necessary).
+	 * Calls the given processor with the cache containing this context's data, with the path
+	 * relative to the cache and with the cache-owning binding. Adjusts the path if the cache is
+	 * owned by a parent binding.
 	 *
 	 * @param {function} fnProcessor The processor
 	 * @param {string} sPath The path; either relative to the context or absolute containing
 	 *   the cache's request path (it will become absolute when forwarding the request to the
 	 *   parent binding)
-	 * @returns {sap.ui.base.SyncPromise} A sync promise on the result of the processor
+	 * @param {boolean} [bSync] Whether to use the synchronously available cache
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with either the result of
+	 *   the processor or <code>undefined</code> if there is no cache for this binding, or if the
+	 *   cache determination is not yet completed
 	 */
-	Context.prototype.withCache = function (fnProcessor, sPath) {
+	Context.prototype.withCache = function (fnProcessor, sPath, bSync) {
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
 		return this.oBinding.withCache(fnProcessor,
-			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath));
+			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
+			bSync);
 	};
 
 	oModule = {

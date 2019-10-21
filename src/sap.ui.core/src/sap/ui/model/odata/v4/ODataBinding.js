@@ -621,16 +621,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.hasPendingChangesForPath = function (sPath) {
-		var that = this,
-			oPromise = this.withCache(function (oCache, sCachePath) {
+		return this.withCache(function (oCache, sCachePath) {
 				return oCache.hasPendingChangesForPath(sCachePath);
-			}, sPath).catch(function (oError) {
-				that.oModel.reportError("Error in hasPendingChangesForPath", sClassName, oError);
-				return false;
-			});
-
-		// If the cache is still being determined, there can be no changes in it
-		return oPromise.isFulfilled() ? oPromise.getResult() : false;
+			}, sPath, true).unwrap();
 	};
 
 	/**
@@ -894,17 +887,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.resetChangesForPath = function (sPath) {
-		var oPromise = this.withCache(function (oCache, sCachePath) {
+		this.withCache(function (oCache, sCachePath) {
 				oCache.resetChangesForPath(sCachePath);
-			}, sPath),
-			that = this;
-
-		oPromise.catch(function (oError) {
-			that.oModel.reportError("Error in resetChangesForPath", sClassName, oError);
-		});
-		if (oPromise.isRejected()) {
-			throw oPromise.getResult();
-		}
+			}, sPath, true).unwrap();
 	};
 
 	/**
@@ -989,35 +974,39 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Calls the given processor with the cache containing this binding's data, the path relative
-	 * to the cache and the cache-owning binding. Adjusts the path if the cache is owned by a parent
-	 * binding.
+	 * Calls the given processor with the cache containing this binding's data, with the path
+	 * relative to the cache and with the cache-owning binding. Adjusts the path if the cache is
+	 * owned by a parent binding.
 	 *
 	 * @param {function} fnProcessor The processor
 	 * @param {string} [sPath=""] The path; either relative to the binding or absolute containing
 	 *   the cache's request path (it will become absolute when forwarding the request to the
 	 *   parent binding)
+	 * @param {boolean} [bSync] Whether to use the synchronously available cache
 	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with either the result of
-	 *   the processor or <code>undefined</code> if there is no cache for this binding currently
+	 *   the processor or <code>undefined</code> if there is no cache for this binding, or if the
+	 *   cache determination is not yet completed
 	 */
-	ODataBinding.prototype.withCache = function (fnProcessor, sPath) {
-		var sRelativePath,
+	ODataBinding.prototype.withCache = function (fnProcessor, sPath, bSync) {
+		var oCachePromise = bSync ? SyncPromise.resolve(this.oCache) : this.oCachePromise,
+			sRelativePath,
 			that = this;
 
 		sPath = sPath || "";
-		return this.oCachePromise.then(function (oCache) {
+		return oCachePromise.then(function (oCache) {
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
 					return fnProcessor(oCache, sRelativePath, that);
 				}
 				// the path did not match, try to find it in the parent cache
-			} else if (that.oOperation) {
-				return undefined; // no cache yet
+			} else if (oCache === undefined || that.oOperation) {
+				return undefined; // no cache or cache determination is still running
 			}
-			if (that.oContext && that.oContext.withCache) {
+			if (that.isRelative() && that.oContext && that.oContext.withCache) {
 				return that.oContext.withCache(fnProcessor,
-					sPath[0] === "/" ? sPath : _Helper.buildPath(that.sPath, sPath));
+					sPath[0] === "/" ? sPath : _Helper.buildPath(that.sPath, sPath),
+					bSync);
 			}
 			// no context or base context -> no cache (yet)
 			return undefined;
@@ -1032,7 +1021,11 @@ sap.ui.define([
 		}
 	}
 
+	// #destroy is not final, allow for "super" calls
 	asODataBinding.prototype.destroy = ODataBinding.prototype.destroy;
+	// #hasPendingChangesForPath is not final, allow for "super" calls
+	asODataBinding.prototype.hasPendingChangesForPath
+		= ODataBinding.prototype.hasPendingChangesForPath;
 
 	return asODataBinding;
 }, /* bExport= */ false);

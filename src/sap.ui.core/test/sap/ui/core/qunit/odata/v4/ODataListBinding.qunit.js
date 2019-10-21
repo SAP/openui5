@@ -139,15 +139,16 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("mixin", function (assert) {
 		var oBinding = this.bindList("EMPLOYEES"),
-			oMixin = {};
+			oMixin = {},
+			aOverriddenFunctions = ["destroy", "getDependentBindings", "hasPendingChangesForPath"];
 
 		asODataParentBinding(oMixin);
 
-		assert.notStrictEqual(oBinding["getDependentBindings"], oMixin["getDependentBindings"],
-			"overwrite getDependentBindings");
-		assert.notStrictEqual(oBinding["destroy"], oMixin["destroy"], "overwrite destroy");
+		aOverriddenFunctions.forEach(function (sFunction) {
+			assert.notStrictEqual(oBinding[sFunction], oMixin[sFunction], "overwrite " + sFunction);
+		});
 		Object.keys(oMixin).forEach(function (sKey) {
-			if (!(sKey === "getDependentBindings" || sKey === "destroy")) {
+			if (aOverriddenFunctions.indexOf(sKey) < 0) {
 				assert.strictEqual(oBinding[sKey], oMixin[sKey], sKey);
 			}
 		});
@@ -3439,6 +3440,7 @@ sap.ui.define([
 					sinon.match.func, sinon.match.func)
 				.returns(SyncPromise.resolve({}));
 
+			// code under test
 			oBinding.create(undefined, true, aAtEnd[0]);
 
 			assert.strictEqual(oBinding.bCreatedAtEnd, !!aAtEnd[0]);
@@ -5371,9 +5373,6 @@ sap.ui.define([
 			oGroupLock = {},
 			aPaths = ["A"];
 
-		// make this pending
-		oBinding.oCache = undefined;
-		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oBinding.oCachePromise));
 		oBinding.aContexts.push({isTransient : function () {}});
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
@@ -5390,6 +5389,9 @@ sap.ui.define([
 				assert.strictEqual(oError0, oError);
 			});
 	});
+	// Note: although a list binding's oCachePromise may become pending again due to late properties
+	// being added, there is no need to wait for them to arrive. We can just request the current
+	// side effects now and the late property will fetch its own value later on.
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: all contexts transient => no refresh", function (assert) {
@@ -5575,6 +5577,42 @@ sap.ui.define([
 
 		assert.deepEqual(oBinding.aPreviousData, ["/SalesOrderList('42')/SO_2_SOITEM($uid=2)"]);
 		assert.notOk(oBinding.aPreviousData.hasOwnProperty("-1"));
+	});
+
+	//*********************************************************************************************
+[{}, null].forEach(function (oCache, i) {
+	QUnit.test("hasPendingChangesForPath: calls super, #" + i, function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES"),
+			sPath = {/*string*/},
+			bResult = {/*boolean*/};
+
+		oBinding.oCache = oCache;
+
+		this.mock(asODataParentBinding.prototype).expects("hasPendingChangesForPath")
+			.on(oBinding)
+			.withExactArgs(sinon.match.same(sPath))
+			.returns(bResult);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesForPath(sPath), bResult);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("hasPendingChangesForPath: iCreatedContexts", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES");
+
+		oBinding.oCache = undefined;
+		oBinding.iCreatedContexts = 0;
+		this.mock(asODataParentBinding.prototype).expects("hasPendingChangesForPath").never();
+
+		// code under test
+		assert.notOk(oBinding.hasPendingChangesForPath());
+
+		oBinding.iCreatedContexts = 1;
+
+		// code under test
+		assert.ok(oBinding.hasPendingChangesForPath());
 	});
 });
 

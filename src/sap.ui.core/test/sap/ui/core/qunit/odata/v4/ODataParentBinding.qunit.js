@@ -2704,7 +2704,7 @@ sap.ui.define([
 
 		oModelMock.expects("withUnresolvedBindings").never();
 
-		this.mock(oBinding).expects("getDependentBindings").exactly(7)
+		this.mock(oBinding).expects("getDependentBindings").exactly(8)
 			.withExactArgs()
 			.returns([oChild1, oChild2, oChild3]);
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
@@ -2733,6 +2733,15 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+
+		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
 		// code under test
@@ -2741,6 +2750,7 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
@@ -2750,6 +2760,7 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(true);
@@ -2760,6 +2771,7 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
@@ -3052,6 +3064,15 @@ sap.ui.define([
 			oFixture.delegate ? "/base/path" : "/resolved/path");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("allow for super calls", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		assert.strictEqual(oBinding.destroy, asODataParentBinding.prototype.destroy);
+		assert.strictEqual(oBinding.hasPendingChangesForPath,
+			asODataParentBinding.prototype.hasPendingChangesForPath);
+	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"

@@ -1403,6 +1403,24 @@ sap.ui.define([
 	}, { // transient entity
 		dataPath : "/Foo($uid=id-1-23)/bar",
 		metaPath : "/Foo/bar"
+	}, { // empty path
+		dataPath : "",
+		metaPath : ""
+	}, { // relative with key predicate
+		dataPath : "Foo('42')",
+		metaPath : "Foo"
+	}, { // relative, only key predicate
+		dataPath : "('42')",
+		metaPath : ""
+	}, { // relative, leading key predicate
+		dataPath : "('42')/bar",
+		metaPath : "bar"
+	}, { // relative, only index
+		dataPath : "42",
+		metaPath : ""
+	}, { // relative, leading index
+		dataPath : "42/bar",
+		metaPath : "bar"
 	}].forEach(function (oFixture) {
 		QUnit.test("getMetaPath: " + oFixture.dataPath, function (assert) {
 			var sMetaPath = _Helper.getMetaPath(oFixture.dataPath);
@@ -2466,26 +2484,22 @@ sap.ui.define([
 	mQueryOptions : {
 		$select : "Bar"
 	},
-	sArg4GetMetaPath : "/",
 	sPath : "",
 	mQueryOptionsForPath : {
 		$select : "Bar"
 	}
 }, { // mQueryOptions has to be optional
 	mQueryOptions : undefined,
-	sArg4GetMetaPath : "/",
 	sPath : "",
 	mQueryOptionsForPath : {}
 }, { // mQueryOptions has to be optional
 	mQueryOptions : undefined,
-	sArg4GetMetaPath : "/FooSet",
 	sPath : "FooSet",
 	mQueryOptionsForPath : {}
 }, { // $select=Bar
 	mQueryOptions : {
 		$select : "Bar"
 	},
-	sArg4GetMetaPath : "/FooSet/WithoutExpand",
 	sPath : "FooSet/WithoutExpand",
 	mQueryOptionsForPath : {}
 }, { // $expand(FooSet=$expand(BarSet=$select(Baz)))
@@ -2500,7 +2514,6 @@ sap.ui.define([
 			}
 		}
 	},
-	sArg4GetMetaPath : "/15/FooSet('0815')/BarSet",
 	sPath : "15/FooSet('0815')/BarSet",
 	mQueryOptionsForPath : {
 		$select : ["Baz"]
@@ -2511,7 +2524,6 @@ sap.ui.define([
 			ExpandWithoutOptions : true
 		}
 	},
-	sArg4GetMetaPath : "/ExpandWithoutOptions",
 	sPath : "ExpandWithoutOptions",
 	mQueryOptionsForPath : {}
 }, { // $expand(FooSet=$select(Bar,Baz))
@@ -2522,7 +2534,6 @@ sap.ui.define([
 			}
 		}
 	},
-	sArg4GetMetaPath : "/FooSet('0815')",
 	sPath : "FooSet('0815')",
 	mQueryOptionsForPath : {
 		$select : ["Bar", "Baz"]
@@ -2540,7 +2551,6 @@ sap.ui.define([
 		}
 	},
 	// combination of key predicate and index is unrealistic ;-)
-	sArg4GetMetaPath : "/FooSet($uid=id-1-23)/12/BarSet",
 	sPath : "FooSet($uid=id-1-23)/12/BarSet",
 	mQueryOptionsForPath : {
 		$select : ["Baz"]
@@ -2554,7 +2564,6 @@ sap.ui.define([
 		},
 		$select : ["Param3", "Param4"]
 	},
-	sArg4GetMetaPath : "('42')/BarSet",
 	sPath : "('42')/BarSet",
 	mQueryOptionsForPath : {
 		$select : ["Param1", "Param2"]
@@ -2563,15 +2572,13 @@ sap.ui.define([
 	mQueryOptions : {
 		$select : ["Param3", "Param4"]
 	},
-	sArg4GetMetaPath : "('42')",
 	sPath : "('42')",
 	mQueryOptionsForPath : {
 		$select : ["Param3", "Param4"]
 	}
 }].forEach(function (oFixture) {
 	QUnit.test("getQueryOptionsForPath " + oFixture.sPath, function (assert) {
-		this.mock(_Helper).expects("getMetaPath").withExactArgs(oFixture.sArg4GetMetaPath)
-			.callThrough();
+		this.mock(_Helper).expects("getMetaPath").withExactArgs(oFixture.sPath).callThrough();
 
 		// code under test
 		assert.deepEqual(
