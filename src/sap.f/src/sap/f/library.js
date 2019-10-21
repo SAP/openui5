@@ -428,8 +428,13 @@ sap.ui.define(["sap/ui/base/DataType",
 	/**
 	 * Possible background color options for the {@link sap.f.Avatar} control.
 	 *
-	 * <b>Note:</b> If the <code>Random</code> value is assigned, a random color is
-	 * chosen from the other options (Accent1 to Accent10).
+	 * <b>Notes:</b>
+	 * <ul>
+	 * <li>Keep in mind that the colors are theme-dependent and can differ based
+	 * on the currently used theme.</li>
+	 * <li> If the <code>Random</code> value is assigned, a random color is
+	 * chosen from the accent options (Accent1 to Accent10).</li>
+	 * </ul>
 	 *
 	 * @enum {string}
 	 * @public
@@ -498,11 +503,29 @@ sap.ui.define(["sap/ui/base/DataType",
 		 */
 		Accent10: "Accent10",
 		/**
-		 * Random color, chosen from the other options (Accent1 to Accent10)
+		 * Random color, chosen from the accent options (Accent1 to Accent10)
 		 *
 		 * @public
 		 */
-		Random: "Random"
+		Random: "Random",
+		/**
+		 * Transparent
+		 *
+		 * @public
+		 */
+		Transparent: "Transparent",
+		/**
+		 * Recommended when used as an icon in a tile.
+		 *
+		 * @public
+		 */
+		TileIcon: "TileIcon",
+		/**
+		 * Recommended when used as a placeholder (no image or initials are provided).
+		 *
+		 * @public
+		 */
+		Placeholder: "Placeholder"
 	};
 
 	/**
