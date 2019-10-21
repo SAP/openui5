@@ -140,6 +140,24 @@ sap.ui.define([
 					 */
 					"selectedView": {type: "sap.ui.core.Control", multiple: false}
 				},
+				events: {
+
+					/**
+					 * Fired when an aggregated view is instantiated.
+					 * @since 1.71
+					 */
+					"viewInit": {
+						parameters: {
+
+							/**
+							 * The initialized view.
+							 */
+							view: {
+								type: "sap.ui.core.mvc.View"
+							}
+						}
+					}
+				},
 				views: {
 
 //				 define your views here following the pattern:
@@ -480,8 +498,9 @@ sap.ui.define([
 				}));
 
 				this.addAggregation("_views", oViewInner);
-				this.setAssociation("selectedView", oViewInner);
+				this.fireEvent("viewInit", {view: oViewInner});
 
+				this.setAssociation("selectedView", oViewInner);
 				this._notifyForLoadingInMode(oController, oViewInner, sMode);
 			} else {
 				throw new Error("BlockBase :: no view defined in metadata.views for mode " + sMode);

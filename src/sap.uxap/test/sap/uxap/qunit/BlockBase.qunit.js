@@ -154,4 +154,41 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		});
 	});
 
+	QUnit.module("View selection", {
+
+		beforeEach: function (assert) {
+			var done = assert.async();
+			XMLView.create({
+				id: "UxAP-InfoBlocks",
+				viewName: "view.UxAP-InfoBlocks"
+			}).then(function (oView) {
+				this.oObjectPageInfoView = oView;
+				done();
+			}.bind(this));
+		},
+		afterEach: function () {
+			this.oObjectPageInfoView.destroy();
+		}
+	});
+
+	QUnit.test("initView event is fired", function (assert) {
+
+		var oOPL = this.oObjectPageInfoView.byId("ObjectPageLayout"),
+			oTargetSubSection = oOPL.getSections()[0].getSubSections()[0],
+			oBlock = oTargetSubSection.getBlocks()[0],
+			done = assert.async();
+
+		assert.expect(1);
+
+		oBlock.attachEvent("viewInit", function(oEvent) {
+			var oView = oEvent.getParameter("view");
+			assert.ok(oView, "event is fired");
+			done();
+		});
+
+		this.oObjectPageInfoView.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+	});
+
 });
