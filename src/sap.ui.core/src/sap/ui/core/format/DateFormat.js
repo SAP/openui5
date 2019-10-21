@@ -526,12 +526,13 @@ sap.ui.define([
 				var bValid = true;
 				var iValueIndex = 0;
 				var iPatternIndex = 0;
-				var rDelimiter = /[\u002d\u007E\u2010\u2011\u2012\u2013\u2014\ufe58\ufe63\uff0d\uFF5E]/;
+				// https://www.compart.com/en/unicode/category/Pd
+				var sDelimiter = "\u002d\u007E\u2010\u2011\u2012\u2013\u2014\ufe58\ufe63\uff0d\uFF5E";
 
 				// Compare the letters in oPart.value (the pattern) and sValue (the given string to parse)
 				// one by one.
 				// If the current letter in the pattern is " ", sValue is allowed to have no match, exact match
-				// or mutiple " ". This makes the parsing more tolerant.
+				// or multiple " ". This makes the parsing more tolerant.
 				for (; iPatternIndex < oPart.value.length; iPatternIndex++) {
 					sChar = oPart.value.charAt(iPatternIndex);
 
@@ -540,8 +541,8 @@ sap.ui.define([
 						while (sValue.charAt(iValueIndex) === " ") {
 							iValueIndex++;
 						}
-					} else if (rDelimiter.test(sChar)) {
-						if (!rDelimiter.test(sValue.charAt(iValueIndex))) {
+					} else if (sDelimiter.includes(sChar)) {
+						if (!sDelimiter.includes(sValue.charAt(iValueIndex))) {
 								bValid = false;
 						}
 						iValueIndex++;
