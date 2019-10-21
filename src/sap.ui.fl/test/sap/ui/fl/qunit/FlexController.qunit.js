@@ -1218,9 +1218,6 @@ function (
 			this.oChange4 = new Change(labelChangeContent4); // selector.id === "foo"
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
-			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
-			this.oApplyChangesOnControlStub = sandbox.stub(Applier, "applyAllChangesForControl").returns(new Utils.FakePromise());
-
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
@@ -1236,6 +1233,14 @@ function (
 				getId : function () { return "RTADemoAppMD"; },
 				getManifestObject : function () { return oManifest; }
 			};
+
+			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
+			this.oApplyChangesOnControlStub = sandbox.stub(Applier, "applyAllChangesForControl")
+				.callThrough()
+				.withArgs(sinon.match.typeOf("function"), this.oComponent, this.oFlexController, sinon.match(function (oControl) {
+					return oControl instanceof Control;
+				}))
+				.returns(new Utils.FakePromise());
 		},
 		afterEach: function () {
 			this.oControl.destroy();
