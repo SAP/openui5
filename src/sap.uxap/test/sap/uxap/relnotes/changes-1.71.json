@@ -58,5 +58,21 @@
         ]
       }
     ]
+  },
+  "1.71.2": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "a90cd96234a676a135b5f60f145e5799add9693f",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Added viewInit event",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "410797"
+          }
+        ]
+      }
+    ]
   }
 }

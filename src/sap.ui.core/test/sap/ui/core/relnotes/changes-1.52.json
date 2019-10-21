@@ -1939,5 +1939,32 @@
         ]
       }
     ]
+  },
+  "1.52.35": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "0a5394f1547af69ff1944e3ef91993f743736719",
+        "type": "FIX",
+        "text": " NumberFormat: Percent formatting did not work for string values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "303770"
+          }
+        ]
+      },
+      {
+        "id": "63180753291197d3235ab926056a103a72e8120d",
+        "type": "FIX",
+        "text": " sap/ui/Device: Detect iPads running on iOS 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970475024"
+          }
+        ]
+      }
+    ]
   }
 }

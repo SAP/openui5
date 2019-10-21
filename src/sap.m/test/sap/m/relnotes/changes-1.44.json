@@ -5469,5 +5469,21 @@
         ]
       }
     ]
+  },
+  "1.44.43": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "272a0d34ca189d1a5fb16f534d8ea03500d7f6f3",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: focus index is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970415298"
+          }
+        ]
+      }
+    ]
   }
 }
