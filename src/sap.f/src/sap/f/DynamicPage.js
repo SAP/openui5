@@ -1400,6 +1400,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Updates the visibility of the <code>pinButton</code> and the header scroll state.
+	 * @private
+	 */
+	DynamicPage.prototype._updateHeaderVisualState = function (iPageControlHeight) {
+		var oDynamicPageHeader = this.getHeader();
+
+		if (!this._preserveHeaderStateOnScroll() && oDynamicPageHeader) {
+			if (this._headerBiggerThanAllowedToPin(iPageControlHeight) || Device.system.phone) {
+				this._unPin();
+				this._togglePinButtonVisibility(false);
+				this._togglePinButtonPressedState(false);
+			} else {
+				this._togglePinButtonVisibility(true);
+			}
+
+			if (this.getHeaderExpanded() && this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+				this._expandHeader(false /* remove header from title area */);
+				this._setScrollPosition(0);
+			}
+		}
+	};
+
+	/**
 	 * Updates the focus visibility and active state of the <code>title</code>.
 	 * @private
 	 */
@@ -1688,8 +1711,9 @@ sap.ui.define([
 	 * in order to adjust the update the <code>ScrollBar</code>.
 	 * @private
 	 */
-	DynamicPage.prototype._onChildControlsHeightChange = function () {
-		var bNeedsVerticalScrollBar = this._needsVerticalScrollBar();
+	DynamicPage.prototype._onChildControlsHeightChange = function (oEvent) {
+		var bNeedsVerticalScrollBar = this._needsVerticalScrollBar(),
+			oHeader = this.getHeader();
 
 		// FitContainer needs to be updated, when height is changed and scroll bar appear, to enable calc of original height
 		if (bNeedsVerticalScrollBar) {
@@ -1703,6 +1727,10 @@ sap.ui.define([
 		}
 
 		this._bExpandingWithAClick = false;
+
+		if (oHeader && oEvent.target.id === oHeader.getId()) {
+			this._updateHeaderVisualState();
+		}
 	};
 
 	/**
@@ -1715,23 +1743,9 @@ sap.ui.define([
 	 */
 	DynamicPage.prototype._onResize = function (oEvent) {
 		var oDynamicPageTitle = this.getTitle(),
-			oDynamicPageHeader = this.getHeader(),
 			iCurrentWidth = oEvent.size.width;
 
-		if (!this._preserveHeaderStateOnScroll() && oDynamicPageHeader) {
-			if (this._headerBiggerThanAllowedToPin(oEvent.size.height) || Device.system.phone) {
-				this._unPin();
-				this._togglePinButtonVisibility(false);
-				this._togglePinButtonPressedState(false);
-			} else {
-				this._togglePinButtonVisibility(true);
-			}
-
-			if (this.getHeaderExpanded() && this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
-				this._expandHeader(false /* remove header from title area */);
-				this._setScrollPosition(0);
-			}
-		}
+		this._updateHeaderVisualState(oEvent.size.height);
 
 		if (exists(oDynamicPageTitle)) {
 			oDynamicPageTitle._onResize(iCurrentWidth);

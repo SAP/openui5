@@ -941,7 +941,7 @@ function (
 		$oDynamicPage = this.oDynamicPage.$();
 		$oDynamicPage.find('.sapMPanel').get(0).style.height = "300px";
 		// explicitly call to avoid waiting for resize handler to detect change
-		this.oDynamicPage._onChildControlsHeightChange();
+		this.oDynamicPage._onChildControlsHeightChange({target: oHeader.getDomRef()});
 
 		// Check
 		assert.ok(isHeaderSnappedWithScroll(), "header is still snapped with scroll");
@@ -1479,6 +1479,21 @@ function (
 		oDynamicPage._expandHeader();
 
 		assert.ok(fnSpy.calledOnce, "_togglePinButtonVisibility should be called");
+	});
+
+	QUnit.test("DynamicPage _headerBiggerThanAllowedToPin() is called on child resize", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oSandBox = sinon.sandbox.create(),
+			fnSpy = oSandBox.spy(oDynamicPage, "_headerBiggerThanAllowedToPin");
+
+		oSandBox.stub(oDynamicPage, "_canSnapHeaderOnScroll").returns(false);
+
+		// Act: resize the header (call the resize listener synchronously to save timeout in the test)
+		oDynamicPage._onChildControlsHeightChange({target: oDynamicPage.getHeader().getDomRef()});
+
+		assert.ok(fnSpy.called, "_headerBiggerThanAllowedToPin is called");
+
+		oSandBox.restore();
 	});
 
 	QUnit.test("DynamicPage _headerBiggerThanAllowedToBeExpandedInTitleArea() returns the correct value on desktop", function (assert) {
