@@ -47,31 +47,37 @@ sap.ui.define([
         }
     });
 
-    QUnit.test("Should return unique selectors", function (assert) {
-        var aSelectors = [];
+    QUnit.test("Should validate unique selectors", function (assert) {
         var mUniqueSelector = {
             controlType: "sap.m.Text",
             properties: {text: "uniqueText"}
         };
-        var oControlSelectorValidator = new _ControlSelectorValidator(aSelectors);
-        oControlSelectorValidator._validate(mUniqueSelector);
-        assert.strictEqual(aSelectors.length, 1, "Should find one valid selector");
-        assert.strictEqual(aSelectors[0], mUniqueSelector, "Should return the unique selector");
+        var oControlSelectorValidator = new _ControlSelectorValidator();
+        var bValid = oControlSelectorValidator._validate(mUniqueSelector);
+        assert.ok(bValid, "Should find one valid selector");
     });
 
-    QUnit.test("Should filter out selectors that match multiple controls", function (assert) {
-        var aSelectors = [];
+    QUnit.test("Should filter out selectors that match multiple controls - multiple disabled", function (assert) {
         var mDuplicateSelector = {
             controlType: "sap.m.Text",
             properties: {text: "duplicateText"}
         };
-        var oControlSelectorValidator = new _ControlSelectorValidator(aSelectors);
-        oControlSelectorValidator._validate(mDuplicateSelector);
-        assert.ok(!aSelectors.length, "Should not return selectors that are not unique");
+        var oControlSelectorValidator = new _ControlSelectorValidator();
+        var bValid = oControlSelectorValidator._validate(mDuplicateSelector);
+        assert.ok(!bValid, "Should not validate selectors that are not unique");
     });
 
-    QUnit.test("Should consider validation ancestor", function (assert) {
-        var aRowSelectors = [];
+    QUnit.test("Should validate selectors that match multiple controls - multiple enabled", function (assert) {
+        var mDuplicateSelector = {
+            controlType: "sap.m.Text",
+            properties: {text: "duplicateText"}
+        };
+        var oControlSelectorValidator = new _ControlSelectorValidator(null, true);
+        var bValid = oControlSelectorValidator._validate(mDuplicateSelector);
+        assert.ok(bValid, "Should validate selectors that are not unique");
+    });
+
+    QUnit.test("Should validate against validation ancestor", function (assert) {
         var mFirstRowSelector = {
             controlType: "sap.m.StandardListItem",
             bindingPath: {
@@ -83,15 +89,13 @@ sap.ui.define([
             controlType: "sap.ui.core.Icon",
             properties: {src: "sap-icon://slim-arrow-right"}
         };
-        var oRowSelectorValidator = new _ControlSelectorValidator(aRowSelectors);
-        oRowSelectorValidator._validate(mFirstRowSelector);
-        assert.strictEqual(aRowSelectors.length, 1, "Should match unique validation ancestor");
+        var oRowSelectorValidator = new _ControlSelectorValidator();
+        var bValidFirstRow = oRowSelectorValidator._validate(mFirstRowSelector);
+        assert.ok(bValidFirstRow, "Should match unique validation ancestor");
 
         var oRow = _ControlFinder._findControls($.extend({}, mFirstRowSelector))[0];
-        var aRowItemSelectors = [];
-        var oRowItemSelectorValidator = new _ControlSelectorValidator(aRowItemSelectors, oRow);
-        oRowItemSelectorValidator._validate(mRowItemSelector);
-        assert.strictEqual(aRowItemSelectors.length, 1, "Should match child of unique ancestor");
-        assert.strictEqual(aRowItemSelectors[0], mRowItemSelector, "Should match unique child of validation ancestor");
+        var oRowItemSelectorValidator = new _ControlSelectorValidator(oRow);
+        var bValidRowItem = oRowItemSelectorValidator._validate(mRowItemSelector);
+        assert.ok(bValidRowItem, "Should match child with unique selector relative to validation root");
     });
 });

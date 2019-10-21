@@ -43,14 +43,16 @@ sap.ui.define([
             }
         },
 
+        _isAncestorRequired: function () {
+            return true;
+        },
+
         // if the control has a direct parent, which is a dropdown list, return the parent
-        _getAncestors: function (oControl) {
+        _getAncestor: function (oControl) {
             if (oControl instanceof Item) {
                 var oSelectList = oControl.getParent();
                 if (oSelectList && oSelectList instanceof SelectList) {
-                    return {
-                        selector: oSelectList
-                    };
+                    return oSelectList;
                 }
             }
         }

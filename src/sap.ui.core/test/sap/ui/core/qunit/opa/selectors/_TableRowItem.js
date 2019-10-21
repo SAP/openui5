@@ -1,12 +1,13 @@
 /*global QUnit*/
 sap.ui.define([
     "sap/ui/test/selectors/_TableRowItem",
+    "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/ui/thirdparty/jquery",
     "sap/m/App",
     "sap/ui/core/mvc/View",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/library"
-], function (_TableRowItem, $, App, View, JSONModel, library) {
+], function (_TableRowItem, _ControlSelectorGenerator, $, App, View, JSONModel, library) {
     "use strict";
 
     // shortcut for sap.ui.core.mvc.ViewType
@@ -57,32 +58,28 @@ sap.ui.define([
     });
 
     QUnit.test("Should select a control in table row", function (assert) {
-        var oTableRowItem = new _TableRowItem();
+        var fnDone = assert.async();
         var oControl = sap.ui.getCore().byId("myView--objectId" + iTest + "-myView--myTable-0");
-        var mControlAncestors = oTableRowItem._getAncestors(oControl);
-        var mSelector = oTableRowItem.generate(oControl._getTextControl(), {
-            id: "myView--myTable"
-        }, {
-            controlType: "sap.m.Text",
-            properties: {text: "Item11"}
-        });
-        assert.strictEqual(mSelector.properties.text, "Item11", "Should include control selector relative to row");
-        assert.strictEqual(mSelector.ancestor.bindingPath.path, "/items/0", "Should include row binding context path");
-        assert.strictEqual(mSelector.ancestor.controlType, "sap.m.ColumnListItem", "Should include row type");
-        assert.strictEqual(mSelector.ancestor.ancestor.id, "myView--myTable", "Should include table selector");
-        assert.ok(mControlAncestors.validation.getId().match("myView--myTable-0$"), "Should get control table");
-        assert.strictEqual(mControlAncestors.selector.getId(), "myView--myTable", "Should get control table row");
+        _ControlSelectorGenerator._generate({control: oControl._getTextControl(), includeAll: true})
+            .then(function (aSelectors) {
+                var mTableSelector = aSelectors[1][0];
+                assert.strictEqual(mTableSelector.properties.text, "Item 11", "Should include control selector relative to row");
+                assert.strictEqual(mTableSelector.ancestor.bindingPath.path, "/items/0", "Should include row binding context path");
+                assert.strictEqual(mTableSelector.ancestor.controlType, "sap.m.ColumnListItem", "Should include row type");
+                assert.strictEqual(mTableSelector.ancestor.ancestor.id, "myView--myTable", "Should include table selector");
+            }).finally(fnDone);
     });
 
     QUnit.test("Should find control table and row", function (assert) {
-        var oTableRowItem = new _TableRowItem();
+        var oGenerator = new _TableRowItem();
         var oControl = sap.ui.getCore().byId("myView--objectId" + iTest + "-myView--myTable-0");
-        var oRow = oTableRowItem._findRow(oControl);
-        var oTable = oTableRowItem._findTable(oControl);
-        var mAncestors = oTableRowItem._getAncestors(oControl);
+        var oRow = oGenerator._getValidationRoot(oControl);
+        var oTable = oGenerator._getAncestor(oControl);
+        assert.ok(oGenerator._isAncestorRequired());
+        assert.ok(oGenerator._isValidationRootRequired());
         assert.ok(oRow.getId().match(/__item[0-9]+-myView--myTable-0/), "Should find control's row");
         assert.strictEqual(oTable.getId(), "myView--myTable", "Should find control's table");
-        assert.strictEqual(mAncestors.validation, oRow, "Should have row as validation ancestor");
-        assert.strictEqual(mAncestors.selector, oTable, "Should have table as selector ancestor");
+        assert.strictEqual(oRow.getMetadata().getName(), "sap.m.ColumnListItem", "Should have row as validation ancestor");
+        assert.strictEqual(oTable.getMetadata().getName(), "sap.m.Table", "Should have table as selector ancestor");
     });
 });
