@@ -1,0 +1,21 @@
+<mvc:View
+	controllerName="sap.m.sample.StandardListItemNavigated.List"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<List
+		id="ShortProductList"
+		headerText="Products (Click on an item to set as navigated)"
+		items="{
+			path: '/ProductCollection',
+			sorter: {
+				path: 'Name'
+			}
+		}">
+		<items>
+			<StandardListItem
+				type="Active"
+				title="{Name}"
+				press="onPress" />
+		</items>
+	</List>
+</mvc:View>

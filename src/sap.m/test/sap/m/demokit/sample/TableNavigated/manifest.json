@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableNavigated",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableNavigated.Table",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

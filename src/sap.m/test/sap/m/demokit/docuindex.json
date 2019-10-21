@@ -1165,7 +1165,8 @@
 			"sap.m.sample.StandardListItemDescription",
 			"sap.m.sample.StandardListItemIcon",
 			"sap.m.sample.StandardListItemInfo",
-			"sap.m.sample.StandardListItemWrapping"
+			"sap.m.sample.StandardListItemWrapping",
+			"sap.m.sample.StandardListItemNavigated"
 		  ]
 		},
 		{
@@ -1210,7 +1211,8 @@
 			"sap.m.sample.TableAlternateRowColors",
 			"sap.m.sample.TableDnD",
 			"sap.m.sample.TableContextualWidthDynamic",
-			"sap.m.sample.TableContextualWidthStatic"
+			"sap.m.sample.TableContextualWidthStatic",
+			"sap.m.sample.TableNavigated"
 		  ]
 		},
 		{
@@ -2613,6 +2615,11 @@
 		  "description": "This example shows the container-based pop-in behavior. The container has static width."
 		},
 		{
+			"id": "sap.m.sample.TableNavigated",
+			"name": "Table - Item Navigated",
+			"description": "This example demonstrates the navigated property of the item."
+		  },
+		{
 		  "id": "sap.m.sample.ActionListItem",
 		  "name": "Action List Item",
 		  "description": "Use the Action List Item to trigger an action directly from a list"
@@ -2696,6 +2703,11 @@
 		  "id": "sap.m.sample.StandardListItemWrapping",
 		  "name": "Standard List Item - Wrapping",
 		  "description": "This sample demonstrates the wrapping behavior of the title text and the description text. In desktop mode, the character limit is set to 300 characters, whereas in the phone mode, the character limit is set to 100 characters."
+		},
+		{
+		  "id": "sap.m.sample.StandardListItemNavigated",
+		  "name": "Standard List Item - Navigated",
+		  "description": "This example demonstrates the navigated property of the list item."
 		},
 		{
 		  "id": "sap.m.sample.MaskInput",

@@ -189,6 +189,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		});
 
 		createBlankCell("NavCol", type + "Nav", !oTable._iItemNeedsColumn);
+		createBlankCell("NavigatedCol", type + "Navigated", true);
 
 		if (iModeOrder == 1) {
 			createBlankCell("SelCol", "", true);

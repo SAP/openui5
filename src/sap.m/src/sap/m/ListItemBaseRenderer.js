@@ -353,6 +353,7 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 		this.renderCounter(rm, oLI);
 		this.renderType(rm, oLI);
 		this.renderMode(rm, oLI, 1);
+		this.renderNavigated(rm, oLI);
 	};
 
 	ListItemBaseRenderer.renderLIContentWrapper = function(rm, oLI) {
@@ -361,6 +362,16 @@ sap.ui.define(["./library", "sap/ui/core/Core", "sap/ui/Device", "sap/ui/core/In
 		rm.close("div");
 	};
 
+	ListItemBaseRenderer.renderNavigated = function(rm, oLI) {
+		if (!oLI.getNavigated()) {
+			return;
+		}
+
+		rm.openStart("div");
+		rm.class("sapMLIBNavigated");
+		rm.openEnd();
+		rm.close("div");
+	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided.

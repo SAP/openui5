@@ -518,6 +518,7 @@ function(
 		this._aNavSections = [];
 		this._aSelectedPaths = [];
 		this._iItemNeedsHighlight = 0;
+		this._iItemNeedsNavigated = 0;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
@@ -1070,6 +1071,17 @@ function(
 			this.$("listUl").addClass("sapMListHighlight");
 		} else if (this._iItemNeedsHighlight == 0) {
 			this.$("listUl").removeClass("sapMListHighlight");
+		}
+	};
+
+	ListBase.prototype.onItemNavigatedChange = function(oItem, bNeedsNavigated) {
+		this._iItemNeedsNavigated += (bNeedsNavigated ? 1 : -1);
+
+		// update navigated visibility
+		if (this._iItemNeedsNavigated == 1 && bNeedsNavigated) {
+			this.$("listUl").addClass("sapMListNavigated");
+		} else if (this._iItemNeedsNavigated == 0) {
+			this.$("listUl").removeClass("sapMListNavigated");
 		}
 	};
 

@@ -1,0 +1,25 @@
+<mvc:View
+	controllerName="sap.m.sample.TableNavigated.Table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Table id="productsTable"
+		items="{/ProductCollection}"
+		headerText="Products (Click on an item to set as navigated)">
+		<columns>
+			<Column id="productCol" width="12em"><Text text="Product" /></Column>
+			<Column id="supplierCol" minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
+			<Column id="dimensionsCol" minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Dimensions" /></Column>
+		</columns>
+		<items>
+			<ColumnListItem
+				type="Active"
+				press="onPress">
+				<cells>
+					<ObjectIdentifier title="{Name}" text="{ProductId}" class="sapMTableContentMargin" />
+					<Text text="{SupplierName}" />
+					<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

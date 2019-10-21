@@ -132,7 +132,16 @@ function(
 			 *
 			 * @since 1.62
 			 */
-			highlightText : {type : "string", group : "Misc", defaultValue : ""}
+			highlightText : {type : "string", group : "Misc", defaultValue : ""},
+
+			/**
+			 * The navigated state of the list item.
+			 *
+			 * If set to <code>true</code>, a navigation indicator is displayed at the end of the list item.
+			 *
+			 * @since 1.72
+			 */
+			navigated : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		associations: {
 
@@ -270,11 +279,13 @@ function(
 		this._active = false;
 		this._bGroupHeader = false;
 		this._bNeedsHighlight = false;
+		this._bNeedsNavigated = false;
 	};
 
 	ListItemBase.prototype.onAfterRendering = function() {
 		this.informList("DOMUpdate", true);
 		this._checkHighlight();
+		this._checkNavigated();
 	};
 
 	ListItemBase.prototype.invalidate = function() {
@@ -428,6 +439,10 @@ function(
 
 		if (sTooltip) {
 			aOutput.push(sTooltip);
+		}
+
+		if (this.getNavigated()) {
+			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATED"));
 		}
 
 		return aOutput.join(" ");
@@ -697,6 +712,7 @@ function(
 	ListItemBase.prototype.exit = function() {
 		this._oLastFocused = null;
 		this._checkHighlight(false);
+		this._checkNavigated(false);
 		this.setActive(false);
 		this.destroyControls([
 			"Delete",
@@ -837,6 +853,17 @@ function(
 		if (this._bNeedsHighlight != bNeedsHighlight) {
 			this._bNeedsHighlight = bNeedsHighlight;
 			this.informList("HighlightChange", bNeedsHighlight);
+		}
+	};
+
+	ListItemBase.prototype._checkNavigated = function(bNeedsNavigated) {
+		if (bNeedsNavigated == undefined) {
+			bNeedsNavigated = (this.getVisible() && this.getNavigated());
+		}
+
+		if (this._bNeedsNavigated != bNeedsNavigated) {
+			this._bNeedsNavigated = bNeedsNavigated;
+			this.informList("NavigatedChange", bNeedsNavigated);
 		}
 	};
 
