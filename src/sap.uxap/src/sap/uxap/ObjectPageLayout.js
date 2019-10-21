@@ -464,6 +464,10 @@ sap.ui.define([
 	ObjectPageLayout.SHOW_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterShow";
 	ObjectPageLayout.HIDE_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterHide";
 
+	// Class which is added to the ObjectPageLayout if we don't have
+	// additional navigation (e.g. AnchorBar, IconTabBar, etc.)
+	ObjectPageLayout.NO_NAVIGATION_CLASS_NAME = "sapUxAPObjectPageNoNavigation";
+
 	ObjectPageLayout.prototype._getFirstEditableInput = function(sContainer) {
 		var oContainer = this.getDomRef(sContainer);
 
@@ -1557,6 +1561,8 @@ sap.ui.define([
 			oTitleVisibilityInfo[oFirstVisibleSection.getId()] = false;
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
+
+		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, iVisibleSection <= 1);
 
 		Object.keys(oTitleVisibilityInfo).forEach(function(sId) {
 			this.oCore.byId(sId)._setInternalTitleVisible(oTitleVisibilityInfo[sId], bInvalidate);
