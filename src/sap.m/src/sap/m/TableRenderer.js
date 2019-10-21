@@ -48,19 +48,6 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			cellTag = (type == "Head") ? "th" : "td",
 			groupTag = "t" + type.toLowerCase(),
 			aColumns = oTable.getColumns(),
-			bActiveHeaders = type == "Head" && oTable.bActiveHeaders,
-			isHeaderHidden = (type == "Head") && aColumns.every(function(oColumn) {
-				return	!oColumn.getHeader() ||
-						!oColumn.getHeader().getVisible() ||
-						!oColumn.getVisible() ||
-						oColumn.isPopin() ||
-						oColumn.isHidden();
-			}),
-			hasOneHeader = (type == "Head") && aColumns.filter(function(oColumn) {
-				return	oColumn.getVisible() &&
-						!oColumn.isPopin() &&
-						!oColumn.isHidden();
-			}).length == 1,
 			createBlankCell = function(cls, id, bAriaHidden) {
 				rm.openStart(cellTag, id && idPrefix + id);
 				if (cellTag === "th") {
@@ -76,12 +63,40 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 				index++;
 			};
 
+		if (type == "Head") {
+			var oForcedColumn = aColumns.reduce(function(oRefColumn, oColumn, iOrder) {
+				oColumn.setIndex(-1);
+				oColumn.setInitialOrder(iOrder);
+				oColumn.setForcedColumn(false);
+				return (oColumn.getCalculatedMinScreenWidth() < oRefColumn.getCalculatedMinScreenWidth()) ? oColumn : oRefColumn;
+			}, aColumns[0]);
+
+			var iHeaderLength = aColumns.filter(function(oColumn) {
+				return	oColumn.getVisible() &&
+						!oColumn.isPopin() &&
+						!oColumn.isHidden();
+			}).length;
+
+			if (!iHeaderLength && oForcedColumn) {
+				oForcedColumn.setForcedColumn(true);
+				iHeaderLength = 1;
+			}
+
+			var bHeaderHidden = aColumns.every(function(oColumn) {
+				return	!oColumn.getHeader() ||
+						!oColumn.getHeader().getVisible() ||
+						!oColumn.getVisible() ||
+						oColumn.isPopin() ||
+						oColumn.isHidden();
+			});
+		}
+
 		rm.openStart(groupTag).openEnd();
 
 		rm.openStart("tr", oTable.addNavSection(idPrefix + type + "er"));
 		rm.attr("tabindex", -1);
 
-		if (isHeaderHidden) {
+		if (bHeaderHidden) {
 			rm.class("sapMListTblHeaderNone");
 		} else {
 			rm.class("sapMListTblRow").class("sapMLIBFocusable").class("sapMListTbl" + type + "er");
@@ -93,7 +108,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		createBlankCell("HighlightCol", type + "Highlight", true);
 
 		if (iModeOrder == -1) {
-			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
+			if (mode == "MultiSelect" && type == "Head" && !bHeaderHidden) {
 				rm.openStart("th");
 				rm.class("sapMTableTH");
 				rm.attr("aria-hidden", "true");
@@ -108,11 +123,6 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			}
 		}
 
-		aColumns.forEach(function(oColumn, order) {
-			oColumn.setIndex(-1);
-			oColumn.setInitialOrder(order);
-		});
-
 		oTable.getColumns(true).forEach(function(oColumn, order) {
 			if (!oColumn.getVisible()) {
 				return;
@@ -126,7 +136,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			}
 
 			var control = oColumn["get" + type + "er"](),
-				width = hasOneHeader ? "" : oColumn.getWidth(),
+				width = (iHeaderLength == 1) ? "" : oColumn.getWidth(),
 				cls = oColumn.getStyleClass(true),
 				align = oColumn.getCssAlign();
 
@@ -158,7 +168,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 					rm.openStart("div");
 					rm.class("sapMColumnHeader");
 
-					if (bActiveHeaders) {
+					if (oTable.bActiveHeaders) {
 						// add active header attributes and style class
 						rm.attr("tabindex", 0);
 						rm.attr("role", "button");
@@ -202,7 +212,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			oTable._hasPopin = hasPopin;
 			oTable._colCount = index - hiddens;
 			oTable._hasFooter = hasFooter;
-			oTable._headerHidden = isHeaderHidden;
+			oTable._headerHidden = bHeaderHidden;
 		}
 	};
 

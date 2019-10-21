@@ -20,11 +20,11 @@ sap.ui.define([
 		// SUT
 		var hasPopin,
 			sut = new ColumnListItem(),
-			column = new Column({
+			column = [new Column({
 				demandPopin : true,
 				// make the column bigger than the screen
 				minScreenWidth : "48000px"
-			}),
+			}), new Column()],
 			table = new Table({
 				columns : column,
 				items : sut
@@ -52,11 +52,11 @@ sap.ui.define([
 				sut = new ColumnListItem({
 					cells: new Text()
 				}),
-				column = new Column({
+				column = [new Column({
 					demandPopin : true,
 					// make the column bigger than the screen
 					minScreenWidth : "48000px"
-				}),
+				}), new Column()],
 				table = new Table({
 					columns : column,
 					items : sut
@@ -81,9 +81,11 @@ sap.ui.define([
 	QUnit.test("Should not clone headers for popinDisplay:WithoutHeader", function(assert) {
 		// SUT
 		var sut = new ColumnListItem({
-				cells : new Text({
+				cells : [new Text({
 					text: "Cell"
-				})
+				}), new Text({
+					text: "Cell"
+				})]
 			}),
 			column = new Column({
 				header : new Text({
@@ -95,7 +97,7 @@ sap.ui.define([
 				demandPopin : true
 			}),
 			table = new Table({
-				columns : column,
+				columns : [column, new Column()],
 				items : sut
 			});
 
@@ -182,6 +184,7 @@ sap.ui.define([
 				MessageToast.show("Item pressed");
 			},
 			cells: [
+				new Text({text: "Hello World"}),
 				new Text({text: "Hello World"})
 			]
 		});
@@ -191,7 +194,7 @@ sap.ui.define([
 			minScreenWidth: "4000000px"
 		});
 		var oTable = new Table({
-			columns: [oCol],
+			columns: [oCol, new Column()],
 			items: [oCLI]
 		});
 		oTable.placeAt("qunit-fixture");

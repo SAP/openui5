@@ -1434,4 +1434,63 @@ sap.ui.define([
 		sut.destroy();
 		oStub.restore();
 	});
+
+	QUnit.module("Forced columns");
+
+	QUnit.test("The one column must stay in the tabular layout", function(assert) {
+		var sut = new ColumnListItem(),
+			column0 = new Column({
+				demandPopin : true,
+				// make the column bigger than the screen
+				minScreenWidth : "48000px"
+			}),
+			table = new Table({
+				columns : column0,
+				items : sut
+			});
+
+		table.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(sut.hasPopin(), "Item do not have a popin even though the column is configured to be shown as popin");
+		assert.notOk(table.hasPopin(), "Table do not have a popin even though the column is configured to be shown as popin");
+		assert.ok(column0._bForcedColumn, "Column0 is a forced column");
+
+		// Act for smaller minScreenWidth property
+		var column1 = new Column({
+			demandPopin : true,
+			minScreenWidth : "47000px",
+			header: new Text({text: "Column1"})
+		});
+		table.addColumn(column1);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(sut.hasPopin(), "Item now has popin");
+		assert.ok(table.hasPopin(), "Table now has popin");
+		assert.ok(column1._bForcedColumn, "Column1 is a forced column");
+		assert.notOk(column0._bForcedColumn, "Column0 is not a forced column any longer");
+		assert.ok(column0.isPopin(), "Column0 is in the popin");
+		assert.equal(table.$("tblHeader").text(), "Column1", "Column1 shown as a physical column even though it is configured to be shown as popin");
+
+		// Act for no column forcing case
+		var column2 = new Column({
+			header: new Text({text: "Column2"})
+		});
+		table.addColumn(column2);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(sut.hasPopin(), "Item still has popin");
+		assert.ok(table.hasPopin(), "Table still has popin");
+		assert.notOk(column0._bForcedColumn, "Column0 is not a forced column any longer");
+		assert.notOk(column1._bForcedColumn, "Column1 is not a forced column any longer");
+		assert.ok(column0.isPopin(), "Column0 is in the popin");
+		assert.ok(column1.isPopin(), "Column1 is in the popin");
+		assert.equal(table.$("tblHeader").text(), "Column2", "Column2 shown as a physical column since it is not configured for being shown as popin");
+
+		//Cleanup
+		table.destroy();
+	});
 });
