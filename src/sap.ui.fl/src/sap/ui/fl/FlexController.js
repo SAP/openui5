@@ -894,7 +894,7 @@ sap.ui.define([
 
 				// TODO: replace applyAllChangesForControl. This is based on the control specific changes. Should be replaced by a function that applies still the changes passed in applyVariantChanges
 				// Previous changes added as dependencies
-				return Applier.applyAllChangesForControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl, this);
+				return Applier.applyAllChangesForControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, this, oControl);
 			}.bind(this));
 		}.bind(this));
 
