@@ -3013,5 +3013,43 @@
         ]
       }
     ]
+  },
+  "1.60.20": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "b850682251d62aa5f15503f61e23fc54ceae96a4",
+        "type": "FIX",
+        "text": " GenericTile breathing \u0026 language fix.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "49891"
+          }
+        ]
+      },
+      {
+        "id": "fb873a5bb16f88b384d7aaeb463c17b7e37ab23d",
+        "type": "FIX",
+        "text": " sap.m.Input: Changing showSuggestion now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980358967"
+          }
+        ]
+      },
+      {
+        "id": "5725898f99a574866875089af6645f98973a3d5a",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: focus index is correct now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970415298"
+          }
+        ]
+      }
+    ]
   }
 }
