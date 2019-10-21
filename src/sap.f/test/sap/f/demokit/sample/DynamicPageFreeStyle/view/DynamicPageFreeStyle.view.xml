@@ -32,15 +32,17 @@
 						<Title text="Header Title On Phone"/>
 					</f:snappedTitleOnMobile>
 					<f:content>
-						<GenericTag text="SR"
-							status="Error"
-							press="onGenericTagPress"
-							design="StatusIconHidden">
-							<ObjectNumber number="2"
-								unit="M"
-								emphasized="false"
-								state="Error"/>
-						</GenericTag>
+						<OverflowToolbar>
+							<GenericTag text="SR"
+								status="Error"
+								press="onGenericTagPress"
+								design="StatusIconHidden">
+								<ObjectNumber number="2"
+									unit="M"
+									emphasized="false"
+									state="Error"/>
+							</GenericTag>
+						</OverflowToolbar>
 					</f:content>
 					<f:actions>
 						<Button
