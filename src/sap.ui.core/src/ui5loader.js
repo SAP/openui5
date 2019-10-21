@@ -107,6 +107,14 @@
 		});
 	}
 
+	function executeInSeparateTask(fn) {
+		setTimeout(fn, 0);
+	}
+
+	function executeInMicroTask(fn) {
+		Promise.resolve().then(fn);
+	}
+
 	// ---- hooks & configuration -----------------------------------------------------------------
 
 	/**
@@ -158,6 +166,15 @@
 	 * @private
 	 */
 	var translate;
+
+	/**
+	 * Method used by sap.ui.require to simulate asynchronous behavior.
+	 *
+	 * The default executes the given function in a separate browser task.
+	 * Can be changed to execute in a micro task to save idle time in case of
+	 * many nested sap.ui.require calls.
+	 */
+	var simulateAsyncCallback = executeInSeparateTask;
 
 	/*
 	 * Activates strictest possible compliance with AMD spec
@@ -1951,7 +1968,7 @@
 						fnCallback.apply(__global, aModules);
 					} else {
 						// enforce asynchronous execution of callback even in sync mode
-						Promise.resolve().then(function() {
+						simulateAsyncCallback(function() {
 							fnCallback.apply(__global, aModules);
 						});
 					}
@@ -1961,7 +1978,7 @@
 					if ( bGlobalAsyncMode ) {
 						fnErrCallback.call(__global, oErr);
 					} else {
-						Promise.resolve().then(function() {
+						simulateAsyncCallback(function() {
 							fnErrCallback.call(__global, oErr);
 						});
 					}
@@ -2401,6 +2418,14 @@
 			},
 			set: function(v) {
 				translate = v;
+			}
+		},
+		callbackInMicroTask: {
+			get: function() {
+				return simulateAsyncCallback === executeInMicroTask;
+			},
+			set: function(v) {
+				simulateAsyncCallback = v ? executeInMicroTask : executeInSeparateTask;
 			}
 		}
 	});

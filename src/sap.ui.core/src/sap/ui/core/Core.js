@@ -1360,6 +1360,8 @@ sap.ui.define([
 			return;
 		}
 		this.bInitialized = true;
+		// switch loader to micro tasks only now to avoid issues with badly written tests
+		sap.ui.loader._.callbackInMicroTask = true;
 		this._executeOnInit();
 		this._setupRootComponent();
 		this._executeInitListeners();
