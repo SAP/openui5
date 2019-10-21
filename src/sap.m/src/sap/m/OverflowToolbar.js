@@ -1264,6 +1264,11 @@ sap.ui.define([
 		oControlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oSourceControl);
 		sParameterName = oEvent.getParameter("name");
 
+		// Do nothing if the changed property belongs to invisible control
+		if (sParameterName !== 'visible' && !oSourceControl.getVisible()) {
+			return;
+		}
+
 		// Do nothing if the changed property is in the blacklist above
 		if (typeof oControlConfig !== "undefined" &&
 			oControlConfig.noInvalidationProps.indexOf(sParameterName) !== -1) {
