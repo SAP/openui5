@@ -1,31 +1,25 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.TitleWrapping.C", {
+	return Controller.extend("sap.m.sample.TitleWrapping.C", {
 
-		onInit: function () {
-			this.getView();
+		onSliderMoved: function (oEvent) {
+			var fValue = oEvent.getParameter("value");
+			this.byId("containerLayout").setWidth(fValue + "%");
 		},
-		onSliderMoved: function (event) {
-			var value = event.getParameter("value");
-			this.byId("containerLayout").setWidth(value + "%");
+
+		onWrappingChange: function () {
+			var oTitle = sap.ui.getCore().byId(this.getView().getId() + "--WrappingTitle");
+			oTitle.setWrapping(!oTitle.getWrapping());
 		},
-		onWrappingChange: function() {
 
-			var title = sap.ui.getCore().byId(this.getView().getId() + "--WrappingTitle");
-			title.setWrapping(!title.getWrapping());
-		},
-		onHyphenationChange: function(oEvent) {
-
-			var title = this.byId("WrappingTitle");
-
-			var wrappingTypeValue = oEvent.getParameter("state") ? "Hyphenated" : "Normal";
-			title.setWrappingType(wrappingTypeValue);
+		onHyphenationChange: function (oEvent) {
+			var oTitle = this.byId("WrappingTitle");
+			var sWrappingType = oEvent.getParameter("state") ? "Hyphenated" : "Normal";
+			oTitle.setWrappingType(sWrappingType);
 		}
+
 	});
-
-	return CController;
-
 });
-

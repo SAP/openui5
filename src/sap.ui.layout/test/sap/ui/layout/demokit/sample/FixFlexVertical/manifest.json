@@ -19,7 +19,7 @@
 		"resources": {
 			"css": [
 				{
-					"uri": "FixFlexVertical/style.css"
+					"uri": "css/style.css"
 				}
 			]
 		},
@@ -29,7 +29,7 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"style.css",
+					"css/style.css",
 					"manifest.json"
 				]
 			}

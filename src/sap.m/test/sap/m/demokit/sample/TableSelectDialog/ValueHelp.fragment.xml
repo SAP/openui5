@@ -4,9 +4,9 @@
 	<TableSelectDialog
 		noDataText="No Products Found"
 		title="Select Product"
-		search="handleSearch"
-		confirm="handleValueHelpClose"
-		cancel="handleValueHelpClose"
+		search=".handleSearch"
+		confirm=".handleValueHelpClose"
+		cancel=".handleValueHelpClose"
 		showClearButton="true"
 		items="{
 			path : '/ProductCollection',
@@ -17,9 +17,7 @@
 		}">
 		<ColumnListItem selected="{selected}">
 			<cells>
-				<ObjectIdentifier
-					title="{Name}"
-					text="{ProductId}" />
+				<ObjectIdentifier title="{Name}" text="{ProductId}" />
 				<Text text="{SupplierName}" />
 				<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
 				<ObjectNumber
@@ -44,9 +42,7 @@
 					<Text text="Product" />
 				</header>
 			</Column>
-			<Column
-				minScreenWidth="Tablet"
-				demandPopin="true" >
+			<Column minScreenWidth="Tablet" demandPopin="true">
 				<header>
 					<Text text="Supplier" />
 				</header>

@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.RadioButton.view.RadioButton",
+			"viewName": "sap.m.sample.RadioButton.V",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 		"config": {
 			"sample": {
 				"files": [
-					"view/RadioButton.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

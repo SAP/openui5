@@ -13,13 +13,15 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
 				"sap.m": {}
 			}
 		},
 		"resources": {
 			"css": [
 				{
-					"uri": "FixFlexFixedSize/style.css"
+					"uri": "css/style.css"
 				}
 			]
 		},
@@ -28,7 +30,7 @@
 				"stretch": true,
 				"files": [
 					"V.view.xml",
-					"style.css",
+					"css/style.css",
 					"manifest.json"
 				]
 			}

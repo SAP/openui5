@@ -1,32 +1,38 @@
-<core:View height="100%"
-		xmlns:core="sap.ui.core"
-		xmlns="sap.m"
-		xmlns:l="sap.ui.layout"
-		controllerName="sap.m.sample.QuickView.QuickView">
-	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
+<mvc:View
+	controllerName="sap.m.sample.QuickView.QuickView"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	height="100%">
+	<Page
+		showHeader="false"
+		class="sapUiContentPadding"
+		showNavButton="false">
 		<l:VerticalLayout>
-			<l:content>
-				<Button id="employeeQuickView"
-						class="sapUiSmallMarginBottom"
-						text="Employee QuickView"
-						width="200px"
-						press="handleEmployeeQuickViewPress" />
-				<Button id="showQuickView"
-						class="sapUiSmallMarginBottom"
-						text="Company QuickView"
-						width="200px"
-						press="handleCompanyQuickViewPress" />
-				<Button id="genericQuickView"
-						class="sapUiSmallMarginBottom"
-						text="Generic QuickView"
-						width="200px"
-						press="handleGenericQuickViewPress" />
-				<Button id="genericQuickViewNoHeader"
-						class="sapUiSmallMarginBottom"
-						text="Generic QuickView No Header Set"
-						width="250px"
-						press="handleGenericNoHeaderQuickViewPress" />
-			</l:content>
+			<Button
+				id="employeeQuickView"
+				class="sapUiSmallMarginBottom"
+				text="Employee QuickView"
+				width="200px"
+				press=".handleEmployeeQuickViewPress" />
+			<Button
+				id="showQuickView"
+				class="sapUiSmallMarginBottom"
+				text="Company QuickView"
+				width="200px"
+				press=".handleCompanyQuickViewPress" />
+			<Button
+				id="genericQuickView"
+				class="sapUiSmallMarginBottom"
+				text="Generic QuickView"
+				width="200px"
+				press=".handleGenericQuickViewPress" />
+			<Button
+				id="genericQuickViewNoHeader"
+				class="sapUiSmallMarginBottom"
+				text="Generic QuickView No Header Set"
+				width="250px"
+				press=".handleGenericNoHeaderQuickViewPress" />
 		</l:VerticalLayout>
 	</Page>
-</core:View>
+</mvc:View>

@@ -13,7 +13,9 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
@@ -22,6 +24,7 @@
 					"V.view.xml",
 					"C.controller.js",
 					"Dialog.fragment.xml",
+					"ValueHelp.fragment.xml",
 					"Formatter.js",
 					"manifest.json"
 				]

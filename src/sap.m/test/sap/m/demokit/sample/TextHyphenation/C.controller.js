@@ -1,27 +1,21 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.TextHyphenation.C", {
+	return Controller.extend("sap.m.sample.TextHyphenation.C", {
 
-		onInit: function () {
-			var oModel = new JSONModel({data: {}});
-			this.getView().setModel(oModel);
+		onSliderMoved: function (oEvent) {
+			var fValue = oEvent.getParameter("value");
+			this.byId("containerLayout").setWidth(fValue + "%");
 		},
-		onSliderMoved: function (event) {
-			var value = event.getParameter("value");
-			this.byId("containerLayout").setWidth(value + "%");
-		},
-		onHyphenationChange: function(oEvent) {
-			var wrappingTypeValue = oEvent.getParameter("state") ? "Hyphenated" : "Normal";
 
+		onHyphenationChange: function (oEvent) {
+			var sWrappingType = oEvent.getParameter("state") ? "Hyphenated" : "Normal";
 			for (var i = 0; i < 5; i++) {
-				this.byId("text" + i).setWrappingType(wrappingTypeValue);
-
+				this.byId("text" + i).setWrappingType(sWrappingType);
 			}
 		}
+
 	});
-
-	return CController;
-
 });

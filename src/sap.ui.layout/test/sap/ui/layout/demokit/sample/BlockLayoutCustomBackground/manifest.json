@@ -20,7 +20,9 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
@@ -28,6 +30,8 @@
 				"files": [
 					"Block.view.xml",
 					"Block.controller.js",
+					"resources/sample.css",
+					"resources/Night_sky.jpg",
 					"manifest.json"
 				]
 			}

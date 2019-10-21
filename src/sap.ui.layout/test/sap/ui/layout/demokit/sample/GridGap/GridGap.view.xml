@@ -1,85 +1,86 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		xmlns:form="sap.ui.layout.form"
-		controllerName="sap.ui.layout.sample.GridGap.GridGap">
-	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
+	controllerName="sap.ui.layout.sample.GridGap.GridGap"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:form="sap.ui.layout.form">
+	<Slider
+		value="100"
+		liveChange=".onSliderMoved"
+		class="sapUiSmallMarginBottom" />
 	<Panel id="panelCSSGrid">
 		<headerToolbar>
-			<Toolbar height="3rem">
-				<Title text=" Property gridGap example"/>
-			</Toolbar>
+			<OverflowToolbar height="3rem">
+				<Title text=" Property gridGap example" />
+			</OverflowToolbar>
 		</headerToolbar>
-		<content>
-		<Text class="infoText" text="The gridGap property sets both Row and Column gap values. Setting gridRowGap or gridColumnGap overwrites the corresponding gridGap values."/>
-			<form:SimpleForm editable="true"
-				layout="ResponsiveGridLayout"
-				labelSpanXL="4"
-				labelSpanL="3"
-				labelSpanM="4"
-				labelSpanS="12"
-				adjustLabelSpan="false"
-				emptySpanXL="0"
-				emptySpanL="4"
-				emptySpanM="0"
-				emptySpanS="0"
-				columnsXL="2"
-				columnsL="1"
-				columnsM="1"
-				singleContainerFullSize="false">
-				<Label  labelFor="gg" text="gridGap" />
-				<Input id="gg" width="120px" value="1rem 0.5rem" change="onInputChanged"/>
-				<Label  labelFor="grg" text="gridRowGap" />
-				<Input id="grg" width="60px" change="onInputChanged"/>
-				<Label  labelFor="gcg" text="gridColumnGap" />
-				<Input id="gcg" width="60px" change="onInputChanged"/>
-			</form:SimpleForm>
-			<grid:CSSGrid id="grid1"
-						  gridAutoFlow="Column"
-						  gridTemplateColumns="repeat(6, minmax(30px,1fr))"
-						  gridTemplateRows="repeat(2, 5rem)"
-						  gridAutoRows="2rem"
-						  gridGap="1rem 0.5rem">
-				<grid:items>
-					<VBox class="demoBox">
-						<layoutData>
-								<grid:GridItemLayoutData gridRow = "1 / 3"/>
-						</layoutData>
-						<Text text="One (2 rows, 1 column)" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Two" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Three" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<layoutData>
-							<grid:GridItemLayoutData gridColumn = "3 / 5"/>
-						</layoutData>
-						<Text text="Four (1 row, 2 columns)" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Five" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Six" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Seven" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Eight" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Nine" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Ten" wrapping="true" />
-					</VBox>
-				</grid:items>
-			</grid:CSSGrid>
-		</content>
+		<Text class="infoText" text="The gridGap property sets both Row and Column gap values. Setting gridRowGap or gridColumnGap will overwrite the corresponding gridGap values." />
+		<form:SimpleForm
+			editable="true"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="3"
+			labelSpanM="4"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="0"
+			emptySpanL="4"
+			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false">
+			<Label labelFor="gg" text="gridGap" />
+			<Input id="gg" width="120px" value="1rem 0.5rem" change=".onInputChanged"/>
+			<Label labelFor="grg" text="gridRowGap" />
+			<Input id="grg" width="60px" change=".onInputChanged"/>
+			<Label labelFor="gcg" text="gridColumnGap" />
+			<Input id="gcg" width="60px" change="onInputChanged"/>
+		</form:SimpleForm>
+		<grid:CSSGrid
+			id="grid1"
+			gridAutoFlow="Column"
+			gridTemplateColumns="repeat(6, minmax(30px,1fr))"
+			gridTemplateRows="repeat(2, 5rem)"
+			gridAutoRows="2rem"
+			gridGap="1rem 0.5rem">
+			<VBox class="demoBox">
+				<layoutData>
+					<grid:GridItemLayoutData gridRow = "1 / 3" />
+				</layoutData>
+				<Text text="One (2 rows, 1 column)" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Two" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Three" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<layoutData>
+					<grid:GridItemLayoutData gridColumn = "3 / 5" />
+				</layoutData>
+				<Text text="Four (1 row, 2 columns)" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Five" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Six" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Seven" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Eight" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Nine" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Ten" wrapping="true" />
+			</VBox>
+		</grid:CSSGrid>
 	</Panel>
 </mvc:View>

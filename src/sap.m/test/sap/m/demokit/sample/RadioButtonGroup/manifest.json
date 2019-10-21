@@ -7,20 +7,20 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.RadioButtonGroup.view.RadioButtonGroup",
+			"viewName": "sap.m.sample.RadioButtonGroup.V",
 			"type": "XML",
 			"async": true
 		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {},
-				"sap.ui.core": {}
+				"sap.ui.core": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"view/RadioButtonGroup.view.xml",
+					"V.view.xml",
 					"manifest.json"
 				]
 			}

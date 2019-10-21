@@ -1,27 +1,17 @@
 <mvc:View
-	controllerName="sap.tnt.sample.ToolHeaderFiori3.V"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
 	height="100%">
 	<tnt:ToolHeader>
-		<Button icon="sap-icon://menu2" type="Transparent">
-		</Button>
-		<Image src="test-resources/sap/tnt/images/SAP_Logo.png">
-		</Image>
-		<Text text="Name of the Tool" wrapping="false">
-		</Text>
+		<Button icon="sap-icon://menu2" type="Transparent" />
+		<Image src="test-resources/sap/tnt/images/SAP_Logo.png" />
+		<Text text="Name of the Tool" wrapping="false" />
 		<ToolbarSpacer />
-		<Button icon="sap-icon://search" type="Transparent">
-		</Button>
-		<Button icon="sap-icon://task" type="Transparent">
-		</Button>
-		<Button icon="sap-icon://bell" type="Transparent">
-		</Button>
-		<Button icon="test-resources/sap/tnt/images/avatar.png" type="Transparent">
-		</Button>
-		<Button icon="sap-icon://grid" type="Transparent">
-		</Button>
+		<Button icon="sap-icon://search" type="Transparent" />
+		<Button icon="sap-icon://task" type="Transparent" />
+		<Button icon="sap-icon://bell" type="Transparent" />
+		<Button icon="test-resources/sap/tnt/images/avatar.png" type="Transparent" />
+		<Button icon="sap-icon://grid" type="Transparent" />
 	</tnt:ToolHeader>
 </mvc:View>

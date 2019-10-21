@@ -1,40 +1,44 @@
-<mvc:View xmlns:core="sap.ui.core"
-		  xmlns:mvc="sap.ui.core.mvc"
-		  xmlns="sap.m"
-		  xmlns:f="sap.ui.layout.form"
-		  xmlns:l="sap.ui.layout"
-		  controllerName="sap.m.sample.TextRenderWhitespace.C"
-		  displayBlock="true">
+<mvc:View
+	controllerName="sap.m.sample.TextRenderWhitespace.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+	displayBlock="true">
 	<f:SimpleForm
-			layout="ResponsiveGridLayout"
-			editable="true"
-			title="Text Properties"
-			adjustLabelSpan="false"
-			labelSpanXL="2"
-			labelSpanL="2"
-			labelSpanM="2"
-			labelSpanS="4"
-			emptySpanXL="4"
-			emptySpanL="4"
-			emptySpanM="2"
-			emptySpanS="0"
-			columnsXL="2"
-			columnsL="2"
-			columnsM="2"
-			columnsS="2">
+		layout="ResponsiveGridLayout"
+		editable="true"
+		title="Text Properties"
+		adjustLabelSpan="false"
+		labelSpanXL="2"
+		labelSpanL="2"
+		labelSpanM="2"
+		labelSpanS="4"
+		emptySpanXL="4"
+		emptySpanL="4"
+		emptySpanM="2"
+		emptySpanS="0"
+		columnsXL="2"
+		columnsL="2"
+		columnsM="2"
+		columnsS="2">
 		<Label text="Wrapping" />
-		<Switch state="true" change="onWrappingChange" />
+		<Switch state="true" change=".onWrappingChange" />
 		<Label text="RenderWhitespace" />
-		<Switch state="true" change="onRenderWhitespaceChange" />
+		<Switch state="true" change=".onRenderWhitespaceChange" />
 		<Label text="Container Width" />
-		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+		<Slider
+			id="widthSlider"
+			value="100"
+			liveChange=".onSliderMoved" />
 	</f:SimpleForm>
-	<Panel id="containerLayout"
-		   headerText="Rendered Text in container"
-		   width="100%">
-		<Text id="text"
-			   renderWhitespace="true"
-			   wrapping="true"
-			   text="Lorem ipsum dolor sit amet,(1 line break follows)&#xA;consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore magna aliquyam erat, (4 tabs follow)&#x9;&#x9;&#x9;&#x9;sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)&#xA;Stet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:"/>
+	<Panel
+		id="containerLayout"
+		headerText="Rendered Text in container"
+		width="100%">
+		<Text
+			id="text"
+			renderWhitespace="true"
+			wrapping="true"
+			text="Lorem ipsum dolor sit amet,(1 line break follows)&#xA;consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore magna aliquyam erat, (4 tabs follow)&#x9;&#x9;&#x9;&#x9;sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)&#xA;Stet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:" />
 	</Panel>
 </mvc:View>

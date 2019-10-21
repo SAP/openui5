@@ -1,47 +1,65 @@
 <mvc:View
-	controllerName="sap.ui.layout.sample.SplitterNested1.Splitter"
-	xmlns="sap.ui.layout"
-	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:m="sap.m">
-	<Splitter height="500px" orientation="Vertical">
-		<Splitter>
-			<layoutData><SplitterLayoutData size="50px" /></layoutData>
-			<contentAreas>
-				<m:Button width="100%" text="Content 1">
-					<m:layoutData><SplitterLayoutData size="auto" /></m:layoutData>
-				</m:Button>
-			</contentAreas>
-		</Splitter>
-		<Splitter>
-			<layoutData><SplitterLayoutData size="auto" /></layoutData>
-			<contentAreas>
-				<m:Button width="100%" text="Content 2">
-					<m:layoutData><SplitterLayoutData size="300px" /></m:layoutData>
-				</m:Button>
-				<Splitter orientation="Vertical">
-					<m:Button width="100%" text="Content 3">
-						<m:layoutData><SplitterLayoutData size="auto" /></m:layoutData>
-					</m:Button>
-					<m:Button width="100%" text="Content 4">
-						<m:layoutData><SplitterLayoutData size="10%" /></m:layoutData>
-					</m:Button>
-				</Splitter>
-				<m:Button width="100%" text="Content 5">
-					<m:layoutData><SplitterLayoutData size="30%" minSize="200px" /></m:layoutData>
-				</m:Button>
-			</contentAreas>
-		</Splitter>
-		<Splitter>
-			<layoutData><SplitterLayoutData size="50px" /></layoutData>
-			<contentAreas>
-				<m:Button width="100%" text="Content 6">
-					<m:layoutData><SplitterLayoutData size="auto" /></m:layoutData>
-				</m:Button>
-				<m:Button width="100%" text="Content 7">
-					<m:layoutData><SplitterLayoutData size="auto" /></m:layoutData>
-				</m:Button>
-			</contentAreas>
-		</Splitter>
-	</Splitter>
+	xmlns="sap.m">
+	<l:Splitter height="500px" orientation="Vertical">
+		<l:Splitter>
+			<l:layoutData>
+				<l:SplitterLayoutData size="50px" />
+			</l:layoutData>
+			<l:contentAreas>
+				<Button width="100%" text="Content 1">
+					<layoutData>
+						<l:SplitterLayoutData size="auto" />
+					</layoutData>
+				</Button>
+			</l:contentAreas>
+		</l:Splitter>
+		<l:Splitter>
+			<l:layoutData>
+				<l:SplitterLayoutData size="auto" />
+			</l:layoutData>
+			<l:contentAreas>
+				<Button width="100%" text="Content 2">
+					<layoutData>
+						<l:SplitterLayoutData size="300px" />
+					</layoutData>
+				</Button>
+				<l:Splitter orientation="Vertical">
+					<Button width="100%" text="Content 3">
+						<layoutData>
+							<l:SplitterLayoutData size="auto" />
+						</layoutData>
+					</Button>
+					<Button width="100%" text="Content 4">
+						<layoutData>
+							<l:SplitterLayoutData size="10%" />
+						</layoutData>
+					</Button>
+				</l:Splitter>
+				<Button width="100%" text="Content 5">
+					<layoutData>
+						<l:SplitterLayoutData size="30%" minSize="200px" />
+					</layoutData>
+				</Button>
+			</l:contentAreas>
+		</l:Splitter>
+		<l:Splitter>
+			<l:layoutData>
+				<l:SplitterLayoutData size="50px" />
+			</l:layoutData>
+			<l:contentAreas>
+				<Button width="100%" text="Content 6">
+					<layoutData>
+						<l:SplitterLayoutData size="auto" />
+					</layoutData>
+				</Button>
+				<Button width="100%" text="Content 7">
+					<layoutData>
+						<l:SplitterLayoutData size="auto" />
+					</layoutData>
+				</Button>
+			</l:contentAreas>
+		</l:Splitter>
+	</l:Splitter>
 </mvc:View>

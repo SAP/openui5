@@ -13,15 +13,18 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.tnt": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
-					"V.controller.js",
+					"C.controller.js",
 					"Formatter.js",
+					"model/data.json",
 					"manifest.json"
 				]
 			}
