@@ -3155,6 +3155,11 @@
 		"XPF": "CFPF"
 	},
 	"rtl": false,
+	"lenient-scope-number": {
+		"minusSign": "-－﹣−⁻₋➖‒",
+		"commaSign": ",，﹐︐،٫、﹑︑､",
+		"plusSign": "+＋﬩﹢⁺₊➕"
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,

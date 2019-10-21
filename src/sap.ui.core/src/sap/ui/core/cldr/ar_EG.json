@@ -3544,6 +3544,11 @@
 		"YER": "ر.ي.‏"
 	},
 	"rtl": true,
+	"lenient-scope-number": {
+		"minusSign": "-－﹣−⁻₋➖‒",
+		"commaSign": ",，﹐︐،٫、﹑︑､",
+		"plusSign": "+＋﬩﹢⁺₊➕"
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3658,9 +3663,6 @@
 		},
 		"235": {
 			"_start": "1989-1-8"
-		},
-		"236": {
-			"_start": "2019-5-1"
 		}
 	},
 	"calendarPreference": "gregorian coptic islamic islamic-civil islamic-tbla"

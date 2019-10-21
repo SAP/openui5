@@ -787,6 +787,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Get lenient number symbols for "plusSign" or "minusSign".
+		 *
+		 * @param {string} sType the required type of symbol
+		 * @returns {string} the selected lenient number symbols, e.g. "-－﹣−⁻₋➖‒"
+		 * @public
+		 */
+		getLenientNumberSymbols: function(sType) {
+			jQuery.sap.assert(sType == "plusSign" || sType == "minusSign", "sType must be plusSign or minusSign");
+			return this._get("lenient-scope-number")[sType];
+		},
+
+		/**
 		 * Get decimal format pattern.
 		 *
 		 * @returns {string} The pattern
@@ -2231,6 +2243,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"timeData": {
 				_allowed: "H h",
 				_preferred: "H"
+			},
+			"lenient-scope-number": {
+				"minusSign": "-－﹣−⁻₋➖‒",
+				"commaSign": ",，﹐︐،٫、﹑︑､",
+				"plusSign": "+＋﬩﹢⁺₊➕"
 			},
 			"plurals": {}
 	};
