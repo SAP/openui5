@@ -530,6 +530,7 @@ sap.ui.define([
 	QUnit.test("_Cache#registerChange", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
+		this.mock(oCache).expects("checkActive");
 		this.mock(_Helper).expects("addByPath")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path", "listener");
 
@@ -4512,7 +4513,7 @@ sap.ui.define([
 		that.mock(oGroupLock0).expects("unlock").withExactArgs();
 
 		// This may only happen when the read is finished
-		oCacheMock.expects("checkActive").twice(); // from read and fetchValue
+		oCacheMock.expects("checkActive"); // from read
 		oCacheMock.expects("registerChange")
 			.withExactArgs("('c')/key", sinon.match.same(oListener));
 		that.mock(oGroupLock0).expects("getUnlockedCopy").withExactArgs()
@@ -4539,7 +4540,6 @@ sap.ui.define([
 
 					that.mock(oGroupLock1).expects("unlock").withExactArgs();
 					oCacheMock.expects("registerChange").withExactArgs("('c')/key", undefined);
-					oCacheMock.expects("checkActive");
 					that.mock(oGroupLock1).expects("getUnlockedCopy").withExactArgs()
 						.exactly(oFixture.bFetchIfMissing ? 1 : 0)
 						.returns(oUnlockedCopy1);
@@ -6614,8 +6614,7 @@ sap.ui.define([
 		oCacheMock = this.mock(oCache);
 		assert.strictEqual(oCache.oPromise, null);
 
-		oCacheMock.expects("registerChange").withExactArgs(undefined,
-			sinon.match.same(oListener1));
+		oCacheMock.expects("registerChange").never();
 		this.mock(oGroupLock1).expects("unlock").never();
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
@@ -6624,7 +6623,8 @@ sap.ui.define([
 				oCacheMock.expects("visitResponse")
 					.withExactArgs(sinon.match.same(oExpectedResult),
 						sinon.match.same(mTypeForMetaPath), undefined);
-				oCacheMock.expects("checkActive").twice();
+				oCacheMock.expects("registerChange").withExactArgs(undefined,
+					sinon.match.same(oListener1));
 				that.mock(oGroupLock1).expects("getUnlockedCopy")
 					.exactly(oFixture.bFetchIfMissing ? 1 : 0)
 					.withExactArgs().returns(oFixture.oGroupLock1);
@@ -7363,14 +7363,15 @@ sap.ui.define([
 		oCacheMock = this.mock(oCache);
 
 		this.mock(oGroupLock1).expects("unlock").never();
-		oCacheMock.expects("registerChange").withExactArgs("", sinon.match.same(oListener1));
-		oCacheMock.expects("registerChange").withExactArgs("", undefined);
+		oCacheMock.expects("registerChange").never();
 
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
 				undefined, sinon.match.same(fnDataRequested1), undefined, "/Employees")
 			.returns(Promise.resolve().then(function () {
-					oCacheMock.expects("checkActive").exactly(3);
+					oCacheMock.expects("registerChange").withExactArgs("",
+						sinon.match.same(oListener1));
+					oCacheMock.expects("registerChange").withExactArgs("", undefined);
 					return {value : oExpectedResult};
 				}));
 
