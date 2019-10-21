@@ -9,11 +9,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/base/DataType",
 	"sap/ui/Device",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library", // library dependency
 	"sap/m/library", // library dependency
 	"sap/ui/layout/library" // library dependency
-], function(Core, DataType, Device, jQuery) {
+], function(Core, DataType, Device) {
 	"use strict";
 
 	/**
@@ -288,41 +287,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether an Element is invisible for the end user.
-	 *
-	 * This is a combination of jQuery's :hidden selector (but with a slightly
-	 * different semantic, see below) and a check for CSS visibility 'hidden'.
-	 *
-	 * Since jQuery 2.x, inline elements, such as span, might be considered 'visible'
-	 * although they have zero dimensions (for example, an empty span). In jQuery 1.x, such
-	 * elements had been treated as 'hidden'.
-	 *
-	 * As some UI5 controls rely on the old behavior, this method restores it.
-	 *
-	 * @param {Element} oElem Element to check the dimensions for
-	 * @returns {boolean} Whether the Element either has only zero dimensions or has visibility:hidden (CSS)
-	 * @private
-	 */
-	function isHidden(oElem) {
-		return (oElem.offsetWidth <= 0 && oElem.offsetHeight <= 0) || jQuery.css(oElem, 'visibility') === 'hidden';
-	}
-
-	/**
-	 * Searches for a descendant of the given node that is an Element which is focusable, visible, and editable.
-	 *
-	 * @param {Element} oContainer Node to search for a focusable descendant
-	 * @returns {Element} Element node that is focusable, visible and editable or null
-	 * @since 1.72
-	 * @private
-	 * @ui5-restricted
-	 */
-	function findEditableInput(oContainer) {
-		return jQuery(oContainer).find('input, textarea')
-			.not('input[readonly],textarea[readonly],input[type=hidden],input[type=button],input[type=submit],input[type=reset],input[type=image],button')
-			.filter(':enabled:visible:first')[0];
-	}
-
-	/**
 	 *
 	 * @type {{getClosestOPL: Function}}
 	 */
@@ -355,15 +319,6 @@ sap.ui.define([
 		},
 		_isCurrentMediaSize: function (sMedia, oRange) {
 			return oRange && oRange.name === sMedia;
-		},
-		findFirstEditableInput: function(oContainer) {
-			var oContainerDomRef = oContainer[0];
-
-			if ( !oContainerDomRef || isHidden(oContainerDomRef) ) {
-				return null;
-			}
-
-			return findEditableInput(oContainerDomRef);
 		}
 	};
 
