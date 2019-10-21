@@ -2,7 +2,15 @@
 	"_version": "1.14.0",
 	"sap.app": {
 		"id": "card.explorer.line.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a Line Chart",
+		"subTitle": "Sample of a Line Chart"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://line-chart"
+		}
 	},
 	"sap.card": {
 		"type": "Analytical",

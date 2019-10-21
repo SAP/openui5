@@ -2,7 +2,15 @@
 	"_version": "1.15.0",
 	"sap.app": {
 		"id": "card.explorer.activities.timeline.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a Activities Timeline",
+		"subTitle": "Sample of a Activities Timeline"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://activity-items"
+		}
 	},
 	"sap.card": {
 		"type": "Timeline",

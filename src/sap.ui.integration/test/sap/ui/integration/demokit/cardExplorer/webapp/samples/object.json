@@ -2,7 +2,15 @@
 	"_version": "1.15.0",
 	"sap.app": {
 		"id": "card.explorer.object.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of an Object Card",
+		"subTitle": "Sample of an Object Card"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
 	},
 	"sap.card": {
 		"type": "Object",
