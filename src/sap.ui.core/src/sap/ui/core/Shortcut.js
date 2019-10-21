@@ -94,10 +94,18 @@ sap.ui.define([
 			function wrapCallback() {
 				var $focusedElement = jQuery(document.activeElement),
 					oFocusedControl = $focusedElement.control(0),
-					oSpan = document.createElement("span");
+					oSpan = document.createElement("span"),
+					oStaticUiAreaDomRef = sap.ui.getCore().getStaticAreaRef();
 
 				oSpan.setAttribute("tabindex", 0);
-				oScopeControl.getDomRef().appendChild(oSpan);
+				oSpan.style.position = "absolute";
+				oSpan.style.top = "50%";
+				oSpan.style.bottom = "50%";
+				oSpan.style.left = "50%";
+				oSpan.style.right = "50%";
+
+				// add span to static-ui-area
+				oStaticUiAreaDomRef.appendChild(oSpan);
 
 				// set focus on span to enforce blur - e.g. data of input field needs to get peristed
 				oSpan.focus();
@@ -109,7 +117,7 @@ sap.ui.define([
 				oFocusedControl.focus();
 
 				// cleanup DOM
-				oScopeControl.getDomRef().removeChild(oSpan);
+				oStaticUiAreaDomRef.removeChild(oSpan);
 			}
 
 			var oDelegate = {};
