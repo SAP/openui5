@@ -1,9 +1,11 @@
 <mvc:View
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:f="sap.f"
 	xmlns:w="sap.ui.integration.widgets"
 	controllerName="sap.f.cardsdemo.controller.DelayedLoading"
+	xmlns:form="sap.ui.layout.form"
 	displayBlock="true">
 
 	<Page title="{i18n>appTitle}">
@@ -22,6 +24,15 @@
 		</subHeader>
 
 		<content>
+			<form:SimpleForm editable="true" width="40rem">
+				<core:Title text="Cards loading will take random time in the given interval." />
+				<Label text="Minimum loading time" />
+				<Input id="loadingMinSeconds" width="8rem" type="Number" description="seconds"/>
+				<Label text="Maximum loading time"/>
+				<Input id="loadingMaxSeconds" width="8rem" type="Number" description="seconds"/>
+				<Button text="Start loading" type="Emphasized" press="onFormSubmit"/>
+			</form:SimpleForm>
+
 			<f:GridContainer class="sapUiSmallMargin">
 				<w:Card id="listCard1">
 					<w:layoutData>
