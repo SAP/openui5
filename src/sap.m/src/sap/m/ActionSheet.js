@@ -145,21 +145,25 @@ sap.ui.define([
 			 * This event will be fired before the ActionSheet is closed.
 			 */
 			beforeClose : {
-				/**
-				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
-				 *
-				 */
-				origin: {type: "sap.m.Button"}
+				parameters: {
+					/**
+					 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+					 *
+					 */
+					origin: {type: "sap.m.Button"}
+				}
 			},
 
 			/**
 			 * This event will be fired after the ActionSheet is closed.
 			 */
 			afterClose : {
-				/**
-				 * This indicates the trigger of closing the control. If dialog is closed by either selection or closeButton (on mobile device), the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
-				 */
-				origin: {type: "sap.m.Button"}
+				parameters: {
+					/**
+					 * This indicates the trigger of closing the control. If dialog is closed by either selection or closeButton (on mobile device), the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null.
+					 */
+					origin: {type: "sap.m.Button"}
+				}
 			},
 
 			/**
