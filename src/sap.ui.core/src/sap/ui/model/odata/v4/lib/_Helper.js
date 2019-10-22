@@ -644,16 +644,27 @@ sap.ui.define([
 
 		/**
 		 * Returns the OData metadata model path corresponding to the given OData data model path.
+		 * May also be used on relative paths.
+		 *
+		 * Examples:
+		 * getMetaPath("/EMPLOYEES/0/ENTRYDATE") --> "/EMPLOYEES/ENTRYDATE"
+		 * getMetaPath("/EMPLOYEES('42')/ENTRYDATE") --> "/EMPLOYEES/ENTRYDATE"
+		 * getMetaPath("0/ENTRYDATE") --> "ENTRYDATE"
+		 * getMetaPath("('42')/ENTRYDATE") --> "ENTRYDATE"
 		 *
 		 * @param {string} sPath
-		 *   An absolute data path within the OData data model, for example
-		 *   "/EMPLOYEES/0/ENTRYDATE" or "/EMPLOYEES('42')/ENTRYDATE
+		 *   A data path within the OData data model
 		 * @returns {string}
-		 *   The corresponding metadata path within the OData metadata model, for example
-		 *   "/EMPLOYEES/ENTRYDATE"
+		 *   The corresponding metadata path within the OData metadata model
 		 */
 		getMetaPath : function (sPath) {
-			return sPath.replace(rNotMetaContext, "");
+			if (sPath[0] === "/") {
+				return sPath.replace(rNotMetaContext, "");
+			}
+			if (sPath[0] !== "(") {
+				sPath = "/" + sPath;
+			}
+			return sPath.replace(rNotMetaContext, "").slice(1);
 		},
 
 		/**
@@ -688,11 +699,7 @@ sap.ui.define([
 		 *   falsy
 		 */
 		getQueryOptionsForPath : function (mQueryOptions, sPath) {
-			sPath = sPath[0] === "("
-				? _Helper.getMetaPath(sPath).slice(1) // avoid leading "/"
-				// getMetaPath needs an absolute path, a relative path starting with an index would
-				// not result in a correct meta path -> first add, then remove '/'
-				: _Helper.getMetaPath("/" + sPath).slice(1);
+			sPath = _Helper.getMetaPath(sPath);
 			if (sPath) {
 				sPath.split("/").some(function (sSegment) {
 					mQueryOptions = mQueryOptions && mQueryOptions.$expand

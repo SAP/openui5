@@ -910,10 +910,12 @@ sap.ui.define([
 
 		return filter(this.mRunningChangeRequests).length > 0
 			|| this.aLockedGroupLocks.some(function (oGroupLock) {
-				if (sGroupId === undefined || oGroupLock.getGroupId() === sGroupId) {
-					return oGroupLock.isModifying() && oGroupLock.isLocked();
-				}
-				return false;
+				return (sGroupId === undefined || oGroupLock.getGroupId() === sGroupId)
+					// aLockedGroupLocks may contain modifying group locks that have been unlocked
+					// already; cleanup of aLockedGroupLocks is done only in #submitBacth. An
+					// unlocked group lock is not relevant because either the corresponding change
+					// has been reset or it has been added to the batch queue.
+					&& oGroupLock.isModifying() && oGroupLock.isLocked();
 			})
 			|| filter(this.mBatchQueue).some(function (sGroupId0) {
 				return that.mBatchQueue[sGroupId0].some(function (vRequests) {

@@ -43,7 +43,7 @@
 			<li>Enter a value less than or equal to 100 in the <code>sap.ui.model.odata.type.Decimal
 				(minimum: 100 (exclusive), maximum: 1000)</code> field.</li>
 			<li><b>Check</b>: You get a validation error.</li>
-			<li>Correct errors by enter valid values.</li>
+			<li>Correct errors by entering valid values.</li>
 			<li><b>Check</b>: The validation error is gone and the old value is displayed.</li>
 		</ol>
 		<h3>OData V4 Model tests</h3>
@@ -58,17 +58,23 @@
 			<li><b>Check</b>: The validation errors are gone and the old values are displayed.</li>
 			<li>Enter again invalid values in one or more of the data fields.</li>
 			<li><b>Check</b>: You get validation errors with appropriate error messages.</li>
-			<li>Correct errors by enter valid values.</li>
+			<li>Correct errors by entering valid values.</li>
 			<li><b>Check</b>: The validation errors are gone.</li>
 			<li>Enter 100 in the field labeled <code>precision: 10, scale: 3, minimum: 100
 				(exclusive), maximum: 1000</code>.</li>
 			<li><b>Check</b>: You get an error with the message "Enter a number greater than
 				100.000".</li>
-			<li>Correct the error by enter a valid value, e.g. 101</li>
+			<li>Correct the error by entering a valid value, e.g. 101</li>
 			<li><b>Check</b>: The validation error is gone.</li>
-			<li>Enter 102 in the field labeled <code>stepInput: min: 0 max: 99</code>.</li>
-			<li><b>Check</b>: You get an error invalid data state "Invalid Value".</li>
-			<li>Correct the error by enter a valid value, e.g. 99</li>
+			<li>Enter 102 in the field labeled <code>stepInput: min: 0 max: 99 scale: 0</code>.</li>
+			<li><b>Check</b>: You get an invalid data state "Enter a number with a maximum value of
+				99".</li>
+			<li>Correct the error by entering a valid value, e.g. 99</li>
+			<li>Enter 1.234 in the field labeled <code>stepInput: min: 0 max: 99 scale: 0</code>.
+				</li>
+			<li><b>Check</b>: You get an invalid data state "Enter a number with no decimal places".
+				</li>
+			<li>Correct the error by entering a valid value, e.g. 98</li>
 			<li><b>Check</b>: The validation error is gone.</li>
 			<li>Enter any value in the field labeled <code>Duration</code>.</li>
 			<li><b>Check</b>: You get an error with the message "Type

@@ -63,8 +63,12 @@ sap.ui.getCore().attachInit(function () {
 			Then.onTheMainPage.checkInputValueState("decimalInput", ValueState.None, "");
 
 			When.onTheMainPage.enterStepInputValue("stepInput", 102);
-			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error);
-			When.onTheMainPage.enterStepInputValue("stepInput", 99);
+			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error,
+				"Enter a number with a maximum value of 99");
+			When.onTheMainPage.enterStepInputValue("stepInput", 1.234);
+			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.Error,
+				"Enter a number with no decimal places");
+			When.onTheMainPage.enterStepInputValue("stepInput", 0);
 			Then.onTheMainPage.checkStepInputValueState("stepInput", ValueState.None);
 
 			When.onTheMainPage.enterInputValue("booleanInput", "XXX");

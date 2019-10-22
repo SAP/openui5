@@ -659,15 +659,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal(): read error with force update", function (assert) {
-		var oError = new Error("Expected failure");
+		var done = assert.async(),
+			oError = new Error("Expected failure");
 
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to read path /EntitySet('foo')/property", sClassName,
 			sinon.match.same(oError));
 
-		return this.createTextBinding(assert, 1, oError).then(function (oBinding) {
-			var done = assert.async();
-
+		this.createTextBinding(assert, 1, oError).then(function (oBinding) {
 			oBinding.attachChange(function () {
 				done();
 			});
@@ -1040,8 +1039,11 @@ sap.ui.define([
 					}
 				},
 				oCacheMock = this.mock(_Cache),
-				done = assert.async(),
 				oControl = new TestControl({models : this.oModel}),
+				fnDone,
+				oDataReceivedPromise = new Promise(function (resolve, reject) {
+					fnDone = resolve;
+				}),
 				sPath = "/path",
 				oRawType = {
 					formatValue : function (vValue) { return vValue; },
@@ -1062,19 +1064,23 @@ sap.ui.define([
 			oControl.bindProperty("text", {path : sPath, events : {
 				dataReceived : function (oEvent) {
 					var oBinding = oControl.getBinding("text");
+
 					assert.strictEqual(oBinding.getType(), oRawType);
 					assert.strictEqual(oBinding.getValue(), undefined);
 					assert.deepEqual(oEvent.getParameter("data"), {});
 					assert.strictEqual(oEvent.getParameter("error"), undefined, "no read error");
-					done();
+					fnDone();
 				}
 			}});
 
 			oBinding = oControl.getBinding("text");
-			return oSpy.returnValues[0].then(function () {
-				assert.strictEqual(oBinding.getType(), oRawType);
-				assert.strictEqual(oBinding.getValue(), undefined);
-			});
+			return Promise.all([
+				oDataReceivedPromise,
+				oSpy.returnValues[0].then(function () {
+					assert.strictEqual(oBinding.getType(), oRawType);
+					assert.strictEqual(oBinding.getValue(), undefined);
+				})
+			]);
 		});
 	});
 

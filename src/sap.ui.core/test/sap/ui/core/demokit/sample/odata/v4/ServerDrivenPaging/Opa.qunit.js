@@ -40,16 +40,40 @@ sap.ui.getCore().attachInit(function () {
 					}
 				});
 
-				Then.onTheMainPage.checkItemIndex("19", 19);
-				Then.onTheMainPage.checkTableSize(20);
+				Then.onTheMainPage.checkLastVisibleItemIndex("19");
+				Then.onTheMainPage.checkTableLength(20);
 				Then.onTheMainPage.checkTableTitle(bCount
 					? "30 Business Partners"
 					: " Business Partners");
 
 				When.onTheMainPage.pressMoreButton();
-				Then.onTheMainPage.checkItemIndex("29", 29);
-				Then.onTheMainPage.checkTableSize(30);
+				Then.onTheMainPage.checkLastVisibleItemIndex("29");
+				Then.onTheMainPage.checkTableLength(30);
 				Then.onTheMainPage.checkTableTitle("30 Business Partners");
+
+				When.onTheMainPage.switchToGridTable();
+				Then.onTheMainPage.checkLastVisibleRowIndex("20");
+				Then.onTheMainPage.checkGridTableTitle(bCount
+					? "50 Business Partners"
+					//TODO change to " Business Partners" when prefetch range is not read in case
+					// of server-driven paging
+					: "50 Business Partners");
+
+				When.onTheMainPage.pageDownOnGridTable();
+				Then.onTheMainPage.checkLastVisibleRowIndex("41");
+				Then.onTheMainPage.checkGridTableTitle(bCount
+					? "50 Business Partners"
+					//TODO change to " Business Partners" when prefetch range is not read in case
+					// of server-driven paging
+					: "50 Business Partners");
+
+				When.onTheMainPage.pageDownOnGridTable();
+				Then.onTheMainPage.checkLastVisibleRowIndex("49");
+				Then.onTheMainPage.checkGridTableTitle(bCount
+					? "50 Business Partners"
+					//TODO change to " Business Partners" when prefetch range is not read in case
+					// of server-driven paging
+					: "50 Business Partners");
 
 				Then.onAnyPage.checkLog();
 				Then.iTeardownMyUIComponent();

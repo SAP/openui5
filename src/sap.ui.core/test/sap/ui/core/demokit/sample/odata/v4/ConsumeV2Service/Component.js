@@ -8,14 +8,14 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.script", // jQuery.sap.getUriParameters()
+	"sap/base/util/UriParameters",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, library, View, BaseComponent, OperationMode, ODataModel, TestUtils) {
+], function (UriParameters, library, View, BaseComponent, OperationMode, ODataModel, TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -27,7 +27,7 @@ sap.ui.define([
 		},
 
 		createContent : function () {
-			var sGroupId = jQuery.sap.getUriParameters().get("$direct")
+			var sGroupId = UriParameters.fromQuery(window.location.search).get("$direct")
 					? "$direct" // switch off batch
 					: undefined,
 				bHasOwnProxy = this.proxy !== BaseComponent.prototype.proxy,

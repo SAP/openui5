@@ -803,6 +803,8 @@ sap.ui.define([
 				if (oCache && oCache.hasPendingChangesForPath("")) {
 					return true;
 				}
+			} else if (oDependent.hasPendingChangesForPath("")) {
+				return true;
 			}
 			if (oDependent.mCacheByResourcePath) {
 				bHasPendingChanges = Object.keys(oDependent.mCacheByResourcePath)
@@ -1139,7 +1141,11 @@ sap.ui.define([
 		}
 	}
 
+	// #destroy is still not final, allow for "super" calls
 	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
+	// #hasPendingChangesForPath is still not final, allow for "super" calls
+	asODataParentBinding.prototype.hasPendingChangesForPath
+		= ODataParentBinding.prototype.hasPendingChangesForPath;
 
 	return asODataParentBinding;
 }, /* bExport= */ false);

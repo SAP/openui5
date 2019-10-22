@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/test/Opa",
 	"sap/ui/test/TestUtils"
-], function (Log, TestUtils) {
+], function (Log, Opa, TestUtils) {
 	"use strict";
 
 	return {
@@ -15,15 +16,13 @@ sap.ui.define([
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to request side effects",
-					details : "Error: HTTP request was not processed because the previous request"
-						+ " failed"
+					details : "HTTP request was not processed because the previous request failed"
 				},
 				oSideEffectsFailLog2 = {
 					component : "sap.ui.model.odata.v4.ODataContextBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to request side effects",
-					details : "Error: HTTP request was not processed because the previous request "
-						+ "failed"
+					details : "HTTP request was not processed because the previous request failed"
 				},
 				oUpdateFailLog = {
 					component : "sap.ui.model.odata.v4.Context",
@@ -41,7 +40,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 			// Preparation: create a new sales order
 			When.onTheMainPage.firstSalesOrderIsVisible();
