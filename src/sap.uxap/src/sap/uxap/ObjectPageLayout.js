@@ -3428,23 +3428,13 @@ sap.ui.define([
 			return 0;
 		}
 
-		// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element to eliminate unwanted
-		// scrollbar appearing during measurement of the snapped title height
-		var sOrigOverflow = this._$opWrapper.css("overflow-y");
-		this._$opWrapper.css("overflow-y", "hidden");
-
 		if (bViaClone) {
 			$Clone = this._appendTitleCloneToDOM(true /* enable snapped mode */);
 			iHeight = $Clone.height();
 			$Clone.remove(); //clean dom
-		} else if (oTitle && oTitle.snap) {
-			oTitle.snap(false);
-			iHeight = oTitle.$().outerHeight();
-			oTitle.unSnap(false);
+		} else if (oTitle.snap) {
+			iHeight = this._obtainTitleHeightViaStateChange(true /* snap */);
 		}
-
-		// restore scrolling
-		this._$opWrapper.css("overflow-y", sOrigOverflow);
 
 		return iHeight;
 	};
@@ -3452,9 +3442,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._obtainExpandedTitleHeight = function (bViaClone) {
 		var oTitle = this.getHeaderTitle(),
 			$Clone,
-			iHeight,
-			iSectionsContainerHeight,
-			iSectionsContainerNewHeight;
+			iHeight;
 
 		if (!oTitle) {
 			return 0;
@@ -3464,16 +3452,34 @@ sap.ui.define([
 			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
-		} else if (oTitle && oTitle.unSnap) {
-			iSectionsContainerHeight = this._$sectionsContainer.height();
-
-			oTitle.unSnap(false);
-			iHeight = oTitle.$().outerHeight();
-			oTitle.snap(false);
-
-			iSectionsContainerNewHeight = this._$sectionsContainer.height();
-			this._adjustSpacerHeightUponUnsnapping(iSectionsContainerHeight, iSectionsContainerNewHeight);
+		} else if (oTitle.unSnap) {
+			iHeight = this._obtainTitleHeightViaStateChange(false /* do not snap */);
 		}
+
+		return iHeight;
+	};
+
+	/**
+	 * Obtains the height of the title in its alternative state
+	 * by temporarily switching to the alternative state
+	 * @param bSnap
+	 * @returns {number}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._obtainTitleHeightViaStateChange = function (bSnap) {
+		var oTitle = this.getHeaderTitle(),
+			iHeight,
+			iSectionsContainerHeight = this._$sectionsContainer.height(),
+			iSectionsContainerNewHeight,
+			fnToAlternativeState = (bSnap) ? oTitle.snap : oTitle.unSnap,
+			fnRestoreState =  (bSnap) ? oTitle.unSnap : oTitle.snap;
+
+		fnToAlternativeState.call(oTitle, false);
+		iHeight = oTitle.$().outerHeight();
+		fnRestoreState.call(oTitle, false);
+
+		iSectionsContainerNewHeight = this._$sectionsContainer.height();
+		this._adjustSpacerHeightUponUnsnapping(iSectionsContainerHeight, iSectionsContainerNewHeight);
 
 		return iHeight;
 	};

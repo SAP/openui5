@@ -2812,8 +2812,7 @@ function (
 		oObjectPage.destroy();
 	});
 
-	QUnit.test("snapping of the title should not introduce scrollbar in " +
-		"_obtainSnappedTitleHeight with dynamic title", function (assert) {
+	QUnit.test("_obtainSnappedTitleHeight does not change element overflow", function (assert) {
 
 		// Arrange
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
@@ -2825,12 +2824,10 @@ function (
 		oCSSSpy = sinon.spy(oObjectPage._$opWrapper, "css");
 
 		// Act - render OP and call method
-		oObjectPage._obtainSnappedTitleHeight(false/* snap directly */);
+		oObjectPage._obtainSnappedTitleHeight(false/* expand directly */);
 
 		// Assert
-		assert.strictEqual(oCSSSpy.callCount, 3, "jQuery object css method is called three times");
-		assert.ok(oCSSSpy.secondCall.calledWith("overflow-y", "hidden"), "OverflowY of the wrapper set to hidden");
-		assert.ok(oCSSSpy.thirdCall.calledWith("overflow-y", "auto"), "OverflowY of the wrapper returned to auto");
+		assert.notOk(oCSSSpy.calledWith("overflow-y", "hidden"), "no disabling of scrolling of the wrapper (BCP 002075129400005875712019)");
 
 		// Cleanup
 		oCSSSpy.restore();
