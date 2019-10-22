@@ -250,6 +250,38 @@ function(
 			assert.equal(aChildNodes[1].namespaceURI, "sap.m");
 		});
 
+		QUnit.test("a child is removed from the aggregation and then destroyed + destroy without removing", function (assert) {
+			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+			var oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
+			XmlTreeModifier.removeAggregation(oVBox, "items", oLabel);
+			var aChildNodes = XmlTreeModifier._children(oVBox);
+			assert.equal(aChildNodes.length, 2);
+			assert.equal(aChildNodes[0].localName, "tooltip");
+			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+			assert.equal(aChildNodes[1].localName, "Label");
+			assert.equal(aChildNodes[1].namespaceURI, "sap.m");
+
+			// destroy after remove
+			XmlTreeModifier.destroy(oLabel);
+			// nothing changes
+			aChildNodes = XmlTreeModifier._children(oVBox);
+			assert.equal(aChildNodes.length, 2);
+			assert.equal(aChildNodes[0].localName, "tooltip");
+			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+			assert.equal(aChildNodes[1].localName, "Label");
+			assert.equal(aChildNodes[1].namespaceURI, "sap.m");
+
+			// destroy the other label
+			oLabel = aChildNodes[1];
+			XmlTreeModifier.destroy(oLabel);
+
+			// the label is removed
+			aChildNodes = XmlTreeModifier._children(oVBox);
+			assert.equal(aChildNodes.length, 1);
+			assert.equal(aChildNodes[0].localName, "tooltip");
+			assert.equal(aChildNodes[0].namespaceURI, "sap.m");
+		});
+
 		QUnit.test("removeAll from the default aggregation ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			XmlTreeModifier.removeAllAggregation(oVBox, "items");
