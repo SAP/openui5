@@ -2442,6 +2442,110 @@ sap.ui.define([
 		assert.ok(true, "Should not throw an error when there is no dom ref");
 	});
 
+	QUnit.module("Responsive paddings");
+
+	QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
+		// Arrange
+		var oSpy = sinon.spy(Popover.prototype, "_initResponsivePaddingsEnablement");
+		var oButton = new Button().placeAt("content");
+		var oPopover = new Popover({});
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oPopover.openBy(oButton);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement is called on init of the control");
+
+		// cleanup
+		oSpy.restore();
+		oPopover.destroy();
+		oButton.destroy();
+	});
+
+	QUnit.test("Correct responsive paddings are applied", function (assert) {
+		var clock = sinon.useFakeTimers();
+
+		var oButton = new Button({text: "Test"}).placeAt("content");
+		var oPopover = new Popover("responsivePaddingsPopover", {
+			title: "Test title",
+			subHeader: new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.SearchField({
+						placeholder: "Search ...",
+						width: "100%"
+					})
+				]
+			}),
+			content: [
+				new List({
+					items: [
+						new StandardListItem({
+							title: "Item 1"
+						}),
+						new StandardListItem({
+							title: "Item 2"
+						})
+					]
+				})
+			],
+			footer: new sap.m.Bar({
+				contentLeft: [new sap.m.Button({icon: "sap-icon://inspection", text: "short"})],
+				contentRight: [new sap.m.Button({icon: "sap-icon://home", text: "loooooong text"})]
+			})
+		});
+
+		var oStub = sinon.stub(window, "requestAnimationFrame", window.setTimeout);
+		sap.ui.getCore().applyChanges();
+
+		oPopover.addStyleClass("sapUiResponsivePadding--header");
+		oPopover.addStyleClass("sapUiResponsivePadding--subHeader");
+		oPopover.addStyleClass("sapUiResponsivePadding--content");
+		oPopover.addStyleClass("sapUiResponsivePadding--footer");
+		sap.ui.getCore().applyChanges();
+
+		oPopover.openBy(oButton);
+		clock.tick(300);
+		sap.ui.getCore().applyChanges();
+
+		var fnIsResponsive = function (sParentSelector, sChildSelector) {
+			return oPopover.$().find(sParentSelector).hasClass(sChildSelector);
+		};
+
+		// Assert
+		assert.ok(fnIsResponsive("#responsivePaddingsPopover-intHeader", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+		assert.ok(fnIsResponsive(".sapMPopoverSubHeader .sapMIBar", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+		assert.ok(fnIsResponsive("#responsivePaddingsPopover-cont", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+		assert.ok(fnIsResponsive(".sapMPopoverFooter .sapMIBar", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+
+		// Act
+		oPopover.setContentWidth("600px");
+		clock.tick(300);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(fnIsResponsive("#responsivePaddingsPopover-intHeader", "sapUi-Std-PaddingM"), "The sapUi-Std-PaddingM class is applied to the header");
+		assert.ok(fnIsResponsive(".sapMPopoverSubHeader .sapMIBar", "sapUi-Std-PaddingM"), "The sapUi-Std-PaddingM class is applied to the header");
+		assert.ok(fnIsResponsive("#responsivePaddingsPopover-cont", "sapUi-Std-PaddingM"), "The sapUi-Std-PaddingM class is applied to the header");
+		assert.ok(fnIsResponsive(".sapMPopoverFooter .sapMIBar", "sapUi-Std-PaddingM"), "The sapUi-Std-PaddingM class is applied to the header");
+
+		// Act
+		oPopover.setContentWidth("300px");
+		clock.tick(300);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(fnIsResponsive("#responsivePaddingsPopover-intHeader", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+		assert.ok(fnIsResponsive(".sapMPopoverSubHeader .sapMIBar", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+		assert.ok(fnIsResponsive("#responsivePaddingsPopover-cont", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+		assert.ok(fnIsResponsive(".sapMPopoverFooter .sapMIBar", "sapUi-Std-PaddingS"), "The sapUi-Std-PaddingS class is applied to the header");
+
+		//cleanup
+		oPopover.destroy();
+		oButton.destroy();
+		oStub.restore();
+	});
+
 	// include stylesheet and let test starter wait for it
 	return includeStylesheet({
 		url: sap.ui.require.toUrl("test-resources/sap/m/qunit/Popover.css")
