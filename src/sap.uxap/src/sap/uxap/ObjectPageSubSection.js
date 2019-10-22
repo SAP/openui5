@@ -124,6 +124,9 @@ sap.ui.define([
 				 * CSS class to them and set their <code>width</code> property to <code>auto</code>
 				 * (if not set by default).
 				 *
+				 * Avoid using this class in combination with <code>ResponsiveLayout</code> because <code>ResponsiveLayout</code> applies custom paddings.
+				 * To align items with <code>sapUxAPObjectPageSubSectionAlignContent</code>, use <code>ColumnLayout</code>.
+				 *
 				 * Example:
 				 *
 				 * <pre>
