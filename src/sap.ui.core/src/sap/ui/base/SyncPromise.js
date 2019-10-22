@@ -399,13 +399,17 @@ sap.ui.define([], function () {
 	 * @see step 2.3.3. of https://promisesaplus.com
 	 */
 	SyncPromise.isThenable = function (vValue) {
+		// "typeof vValue.then" returns "unknown" in IE if the getter for "then" throws an error; to
+		// get 100% code coverage also in IE assign vValue.then to a variable before using typeof
+		var fnThen;
+
 		try {
-			return !!hasThen(vValue) && typeof vValue.then === "function";
+			return !!hasThen(vValue) && (fnThen = vValue.then) && typeof fnThen === "function";
 		} catch (e) {
 			// "2.3.3.2. If retrieving the property x.then results in a thrown exception e,..."
 			// ...we should not call this a proper "thenable"
+			return false;
 		}
-		return false;
 	};
 
 	/**
