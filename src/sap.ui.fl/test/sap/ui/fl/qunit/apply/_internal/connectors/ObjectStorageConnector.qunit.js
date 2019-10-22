@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	BrowserStorageUtils,
+	ObjectStorageUtils,
 	JsObjectConnector,
 	SessionStorageConnector,
 	ConnectorUtils,
@@ -24,7 +24,7 @@ sap.ui.define([
 			return ConnectorUtils.getApplyConnectors().then(function (aConnectors) {
 				assert.equal(aConnectors.length, 2, "two connectors are loaded");
 				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
-				assert.equal(aConnectors[1].connector, "BrowserStorageConnector", "the BrowserStorageConnector is the second connector");
+				assert.equal(aConnectors[1].connector, "ObjectStorageConnector", "the ObjectStorageConnector is the second connector");
 			});
 		});
 	});
@@ -199,7 +199,7 @@ sap.ui.define([
 
 	function removeListFromStorage(oStorage, aList) {
 		aList.forEach(function (sObjectId) {
-			var sKey = BrowserStorageUtils.createChangeKey(sObjectId);
+			var sKey = ObjectStorageUtils.createChangeKey(sObjectId);
 			if (oStorage.removeItem) {
 				oStorage.removeItem(sKey);
 			} else {

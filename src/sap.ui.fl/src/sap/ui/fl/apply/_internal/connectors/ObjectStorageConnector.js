@@ -5,12 +5,12 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/apply/_internal/connectors/Utils"
 ], function(
 	merge,
 	BaseConnector,
-	BrowserStorageUtils,
+	ObjectStorageUtils,
 	ApplyUtils
 ) {
 	"use strict";
@@ -18,7 +18,7 @@ sap.ui.define([
 	function loadDataFromStorage (mPropertyBag) {
 		var aFlexObjects = [];
 
-		return BrowserStorageUtils.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
+		return ObjectStorageUtils.forEachObjectInStorage(mPropertyBag, function(mFlexObject) {
 			aFlexObjects.push(mFlexObject.changeDefinition);
 		}).then(function () {
 			return aFlexObjects;
@@ -28,12 +28,12 @@ sap.ui.define([
 	/**
 	 * Base Connector for requesting data from session or local storage
 	 *
-	 * @namespace sap.ui.fl.apply._internal.connectors.BrowserStorageConnector
+	 * @namespace sap.ui.fl.apply._internal.connectors.ObjectStorageConnector
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector, sap.ui.fl.apply._internal.Storage
 	 */
-	var BrowserStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.apply._internal.connectors.BrowserStorageConnector */ {
+	var ObjectStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.apply._internal.connectors.ObjectStorageConnector */ {
 		/**
 		 * can be either window.sessionStorage or window.localStorage
 		 */
@@ -58,5 +58,5 @@ sap.ui.define([
 		}
 	});
 
-	return BrowserStorageConnector;
+	return ObjectStorageConnector;
 }, true);

@@ -4,10 +4,10 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/write/_internal/connectors/BrowserStorageConnector"
+	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector"
 ], function(
 	merge,
-	BrowserStorageConnector
+	ObjectStorageConnector
 ) {
 	"use strict";
 
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
 	 */
-	var LocalStorageConnector = merge({}, BrowserStorageConnector, /** @lends sap.ui.fl.write._internal.connectors.LocalStorageConnector */ {
+	var LocalStorageConnector = merge({}, ObjectStorageConnector, /** @lends sap.ui.fl.write._internal.connectors.LocalStorageConnector */ {
 		oStorage: window.localStorage
 	});
 

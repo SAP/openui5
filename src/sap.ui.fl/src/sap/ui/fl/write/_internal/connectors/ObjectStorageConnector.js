@@ -5,11 +5,11 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/write/connectors/BaseConnector",
-	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
 	merge,
 	BaseConnector,
-	BrowserStorageUtils
+	ObjectStorageUtils
 ) {
 	"use strict";
 
@@ -34,13 +34,13 @@ sap.ui.define([
 	/**
 	 * Base Connector for requesting data from session or local storage
 	 *
-	 * @namespace sap.ui.fl.write._internal.connectors.BrowserStorageConnector
+	 * @namespace sap.ui.fl.write._internal.connectors.ObjectStorageConnector
 	 * @extends sap.ui.fl.write.connectors.BaseConnector
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
-	var BrowserStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.BrowserStorageConnector */ {
+	var ObjectStorageConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.ObjectStorageConnector */ {
 		/**
 		 * can be either window.sessionStorage or window.localStorage or just a JS map
 		 */
@@ -53,7 +53,7 @@ sap.ui.define([
 		 */
 		write: function(mPropertyBag) {
 			var aPromises = mPropertyBag.flexObjects.map(function(oFlexObject) {
-				var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
+				var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
 				var vFlexObject = this.oStorage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
 				var vSetResponse = this.oStorage.setItem(sKey, vFlexObject);
 				// ensure a Promise
@@ -70,7 +70,7 @@ sap.ui.define([
 		 */
 		update: function(mPropertyBag) {
 			var oFlexObject = mPropertyBag.flexObject;
-			var sKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
+			var sKey = ObjectStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
 			var vFlexObject = this.oStorage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
 			var vSetResponse = this.oStorage.setItem(sKey, vFlexObject);
 			// ensure a Promise
@@ -81,7 +81,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		reset: function(mPropertyBag) {
-			return BrowserStorageUtils.forEachObjectInStorage({
+			return ObjectStorageUtils.forEachObjectInStorage({
 				storage: this.oStorage,
 				reference: mPropertyBag.reference,
 				layer: mPropertyBag.layer
@@ -96,7 +96,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		remove: function(mPropertyBag) {
-			var sKey = BrowserStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
+			var sKey = ObjectStorageUtils.createFlexObjectKey(mPropertyBag.flexObject);
 			this.oStorage.removeItem(sKey);
 			var vRemoveResponse = this.oStorage.removeItem(sKey);
 			// ensure a Promise
@@ -115,7 +115,7 @@ sap.ui.define([
 		 */
 		getFlexInfo: function(mPropertyBag) {
 			mPropertyBag.storage = this.oStorage;
-			return BrowserStorageUtils.getAllFlexObjects(mPropertyBag).then(function (aFlexObjects) {
+			return ObjectStorageUtils.getAllFlexObjects(mPropertyBag).then(function (aFlexObjects) {
 				return {
 					isResetEnabled: aFlexObjects.length > 0
 				};
@@ -123,5 +123,5 @@ sap.ui.define([
 		}
 	});
 
-	return BrowserStorageConnector;
+	return ObjectStorageConnector;
 }, true);

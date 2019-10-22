@@ -47,23 +47,23 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
-			"apply/_internal/connectors/BrowserStorageConnector": {
+			"apply/_internal/connectors/ObjectStorageConnector": {
 				group: "Apply Internal",
 				coverage: {
 					only: [
-						"sap/ui/fl/apply/_internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
 						"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
 						"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector"
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layers": []}]'
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
-			"apply/_internal/connectors/BrowserStorageUtils": {
+			"apply/_internal/connectors/ObjectStorageUtils": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"]
+					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
 				}
 			},
 			"apply/_internal/changes/Applier": {
@@ -219,17 +219,17 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/_internal/StorageFeaturesMerger"]
 				}
 			},
-			"write/_internal/connectors/BrowserStorageConnector": {
+			"write/_internal/connectors/ObjectStorageConnector": {
 				group: "Write Internal",
 				coverage: {
 					only: [
-						"sap/ui/fl/write/_internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
 						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layers": []}]'
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
 			"write/_internal/connectors/JsObjectConnector": {
