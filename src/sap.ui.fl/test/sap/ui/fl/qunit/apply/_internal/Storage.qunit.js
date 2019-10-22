@@ -65,6 +65,7 @@ sap.ui.define([
 		QUnit.test("Given all connectors provide empty variant properties", function (assert) {
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
 			sandbox.stub(JsObjectConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
@@ -128,23 +129,6 @@ sap.ui.define([
 				assert.equal(aVariants[1].content.fileName, sVariant1);
 				assert.equal(aVariants[1].controlChanges.length, 1, "then the control change is added to the variant1");
 				assert.deepEqual(aVariants[1].controlChanges[0], mChange1);
-			});
-		});
-	});
-
-	QUnit.module("Storage merges results from different connectors", {
-		beforeEach: function () {
-		},
-		afterEach: function () {
-			sandbox.restore();
-		}
-	}, function () {
-		QUnit.test("Given all connectors provide empty variant properties", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
-
-			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
 			});
 		});
 

@@ -15,8 +15,8 @@ sap.ui.define([], function () {
 	 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 	 */
 
-	var FL_CHANGE_KEY = "sap.ui.fl.change";
-	var FL_VARIANT_KEY = "sap.ui.fl.variant";
+	 // avoid working with other entries in the storage, e.g. some demokit entries in localStorage
+	var FL_PREFIX = "sap.ui.fl";
 
 	return {
 		/**
@@ -36,7 +36,7 @@ sap.ui.define([], function () {
 			return Promise.resolve(oRealStorage)
 				.then(function (oRealStorage) {
 					var aPromises = Object.keys(oRealStorage).map(function(sKey) {
-						var bIsFlexObject = sKey.includes(FL_CHANGE_KEY) || sKey.includes(FL_VARIANT_KEY);
+						var bIsFlexObject = sKey.includes(FL_PREFIX);
 
 						if (!bIsFlexObject) {
 							return;
@@ -85,38 +85,24 @@ sap.ui.define([], function () {
 		},
 
 		/**
-		 * Creates the fl change key
-		 * @param  {string} sId The change id
-		 * @returns {string} the prefixed id
+		 * Creates the fl key
+		 * @param  {string} sId The flex object ID
+		 * @returns {string} the prefixed ID
 		 */
-		createChangeKey: function(sId) {
+		createFlexKey: function(sId) {
 			if (sId) {
-				return FL_CHANGE_KEY + "." + sId;
+				return FL_PREFIX + "." + sId;
 			}
 		},
 
 		/**
-		 * Creates the fl variant key
-		 * @param  {string} sId The variant id
-		 * @returns {string} the prefixed id
-		 */
-		createVariantKey: function(sId) {
-			if (sId) {
-				return FL_VARIANT_KEY + "." + sId;
-			}
-		},
-
-		/**
-		 * Returns the key depending on the fileType
+		 * Returns the key for a flex object
 		 *
 		 * @param {object} oFlexObject The definition of the flex Object
 		 * @returns {string} Returns the prefixed ID
 		 */
 		createFlexObjectKey: function(oFlexObject) {
-			if (oFlexObject.fileType === "ctrl_variant" && oFlexObject.variantManagementReference) {
-				return this.createVariantKey(oFlexObject.fileName);
-			}
-			return this.createChangeKey(oFlexObject.fileName);
+			return this.createFlexKey(oFlexObject.fileName);
 		}
 
 	};

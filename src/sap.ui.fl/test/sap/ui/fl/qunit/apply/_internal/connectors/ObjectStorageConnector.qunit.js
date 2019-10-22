@@ -199,7 +199,7 @@ sap.ui.define([
 
 	function removeListFromStorage(oStorage, aList) {
 		aList.forEach(function (sObjectId) {
-			var sKey = ObjectStorageUtils.createChangeKey(sObjectId);
+			var sKey = ObjectStorageUtils.createFlexKey(sObjectId);
 			if (oStorage.removeItem) {
 				oStorage.removeItem(sKey);
 			} else {
