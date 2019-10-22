@@ -866,9 +866,9 @@ sap.ui.define([
 	 *
 	 * If the first ancestor binding has an empty path, it is a context binding. In this case, we
 	 * look for the farthest ancestor binding with the following characteristics: It uses own data
-	 * service requests, it can be only reached via empty paths, and it is actually being used. This
-	 * way, side effects are loaded also for siblings of that first ancestor binding which show the
-	 * same data, but useless requests are avoided.
+	 * service requests, it can be reached via a sequence of only empty paths, and it is actually
+	 * being used. This way, side effects are loaded also for siblings of that first ancestor
+	 * binding which show the same data, but useless requests are avoided.
 	 *
 	 * By default, the request uses the update group ID for this context's binding; this way, it can
 	 * easily be part of the same batch request as the corresponding update. <b>Caution:</b> If a
