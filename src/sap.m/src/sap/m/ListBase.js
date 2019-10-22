@@ -514,6 +514,9 @@ function(
 	// announce accessibility details at the initial focus
 	ListBase.prototype.bAnnounceDetails = true;
 
+	// determines whether range selection and select all feature should be enabled for MultiSelect mode
+	ListBase.prototype.bPreventMassSelection = false;
+
 	ListBase.getInvisibleText = function() {
 		return this.oInvisibleText || (this.oInvisibleText = new InvisibleText().toStatic());
 	};
@@ -1311,7 +1314,7 @@ function(
 	ListBase.prototype.onItemSelect = function(oListItem, bSelected) {
 		var sMode = this.getMode();
 
-		if (this._mRangeSelection) {
+		if (this._mRangeSelection && !this.bPreventMassSelection) {
 			// if this._mRangeSelection.selected == false, then simply select the item
 			if (!this._mRangeSelection.selected) {
 				this._fireSelectionChangeEvent([oListItem]);
@@ -1412,7 +1415,7 @@ function(
 	};
 
 	ListBase.prototype.onItemKeyDown = function (oItem, oEvent) {
-		if (!oEvent.shiftKey || this.getMode() !== ListMode.MultiSelect || !oItem.isSelectable()) {
+		if (!oEvent.shiftKey || this.getMode() !== ListMode.MultiSelect || !oItem.isSelectable() || this.bPreventMassSelection) {
 			return;
 		}
 
@@ -2162,7 +2165,7 @@ function(
 	ListBase.prototype.onkeydown = function(oEvent) {
 
 		var bCtrlA = (oEvent.which == KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
-		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
+		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass) || this.bPreventMassSelection) {
 			return;
 		}
 
@@ -2302,7 +2305,7 @@ function(
 	};
 
 	ListBase.prototype.onItemUpDownModifiers = function(oItem, oEvent, iDirection) {
-		if (!this._mRangeSelection) {
+		if (!this._mRangeSelection || this.bPreventMassSelection) {
 			return;
 		}
 
