@@ -335,7 +335,6 @@ sap.ui.define([
 		}
 	};
 
-
 	QUnit.module("Initial Check", {
 		beforeEach : function () {
 			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -1212,7 +1211,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._sortOrderList.getAriaLabelledBy().length, 1, "Sort order list should have aria ariaLabelledBy set");
 		assert.strictEqual(this.oVSD._sortList.getAriaLabelledBy().length, 1, "Sort list should have aria ariaLabelledBy set");
 
-		assert.ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
 });
 
 	QUnit.module("Group tab only checks", {
@@ -1266,7 +1265,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._groupOrderList.getAriaLabelledBy().length, 1, "Group order list should have aria ariaLabelledBy set");
 		assert.strictEqual(this.oVSD._groupList.getAriaLabelledBy().length, 1, "Group list should have aria ariaLabelledBy set");
 
-		assert.ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
 	});
 
 	QUnit.module("Preset Filter only checks", {
@@ -1309,7 +1308,7 @@ sap.ui.define([
 		assert.strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initalized and has two items");
 		assert.strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 		assert.strictEqual(this.oVSD.getSelectedFilterItems().length, 0, "There are no selected filter items");
-		assert.ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+		assert.ok(jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should be rendered");
 	});
 
 	QUnit.module("Filter details rendering", {
@@ -3337,6 +3336,182 @@ sap.ui.define([
 		assert.strictEqual(aAriaLabelledBy[0], this.oVSD._sFilterDetailTitleLabelId,  "The filter detail title is applied");
 		assert.strictEqual(aAriaLabelledBy.indexOf(this.oVSD._sTitleLabelId), -1,
 			"VSD's standard title isn't referenced in aria-labelledby for the filter details");
+
+	});
+
+	QUnit.module("Reset Button", {
+		beforeEach : function () {
+			this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oVSD = new ViewSettingsDialog();
+			this.bindAggregations(this.oVSD);
+
+			this.oVSD.placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oVSD.destroy();
+			this.oVSD = null;
+		},
+		getFirstModelData: function() {
+			return {
+				sortData: [
+					{
+						myKey: "key1",
+						myText: "Sort text 1 A",
+						selected: true
+					},
+					{
+						myKey: "key2",
+						myText: "Sort text 2 A"
+					}],
+				groupData: [
+					{
+						myKey: "groupKey1",
+						myText: "Group text A",
+						selected: true
+					},
+					{
+						myKey: "groupKey2",
+						myText: "Group text 2 A"
+					}],
+				filterData: [
+					{
+						myKey: "filterKey1",
+						myText: "Filter text A",
+						myItems: [
+							{
+								myKey: 'item1',
+								myText: 'item A'
+							}
+						]
+					},
+					{
+						myKey: "filterKey2",
+						myText: "Filter text 2 A"
+					}]
+			};
+		},
+		bindAggregations: function(oVsdInst) {
+			var template1 = new ViewSettingsItem({
+				key: "{myKey}",
+				text: "{myText}",
+				selected: "{selected}"
+			});
+			var template2 = new ViewSettingsItem({
+				key: "{myKey}",
+				text: "{myText}",
+				selected: "{selected}"
+			});
+			var template3 = new ViewSettingsFilterItem({
+				key: "{myKey}",
+				text: "{myText}",
+				items: {
+					path: 'myItems',
+					template: new ViewSettingsItem({
+						key: "{myKey}",
+						text: "{myText}"
+					}),
+					templateShareable: true
+				}
+			});
+
+			var oModel = new JSONModel();
+			oModel.setData(this.getFirstModelData());
+
+			this.oVSD.setModel(oModel);
+
+			this.oVSD.bindAggregation("sortItems", "/sortData", template1);
+			this.oVSD.bindAggregation("groupItems", "/groupData", template2);
+			this.oVSD.bindAggregation("filterItems", "/filterData", template3);
+		},
+		focusItem: function (sItemId) {
+			jQuery("#" + sItemId).focus();
+		},
+		checkItemFocus: function (sItemId) {
+			assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");
+		}
+	});
+
+	QUnit.test("Enabled/disabled state", function (assert) {
+
+		this.oVSD.open();
+		sap.ui.getCore().applyChanges();
+
+		// Check initial Reset button state
+		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), false, "Reset button is initially disabled");
+
+		// Select second Sort item
+		this.oVSD.setSelectedSortItem(this.oVSD.getSortItems()[1]);
+		this.oVSD._switchToPage(0);
+		// Check Reset button state
+		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), true, "Select second Sort By item - Reset button is enabled");
+
+		// Select first Sort item
+		this.oVSD.setSelectedSortItem(this.oVSD.getSortItems()[0]);
+		this.oVSD._switchToPage(0);
+		// Check Reset button state
+		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), false, "Select first Sort By item - Reset button is disabled");
+
+		// Select second Group item
+		this.oVSD.setSelectedGroupItem(this.oVSD.getGroupItems()[1]);
+		this.oVSD._switchToPage(1);
+		// Check Reset button state
+		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), true, "Select second Group By item - Reset button is enabled");
+
+		// Select first Group item
+		this.oVSD.setSelectedGroupItem(this.oVSD.getGroupItems()[0]);
+		this.oVSD._switchToPage(1);
+		// Check Reset button state
+		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), false, "Select first Group By item - Reset button is disabled");
+
+		// Select first Filter item
+		this.oVSD.getFilterItems()[0].getItems()[0].setSelected(true);
+		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]);
+		// Check Reset button state
+		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), true, "Select first available Filter item - Reset button is enabled");
+
+		// Deselect first Filter item
+		this.oVSD.getFilterItems()[0].getItems()[0].setSelected(false);
+		this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]);
+		// Check Reset button state
+		assert.strictEqual(this.oVSD._getResetButton().getEnabled(), false, "Unselect first available Filter item - Reset button is disabled");
+
+	});
+
+	QUnit.test("Reset functionality", function (assert) {
+
+		// open the VSD
+		this.oVSD.open();
+		var spy = this.spy(this.oVSD, "_globalReset");
+
+		// get initial Sort, Group and Filters
+		var sSortInitial = this.oVSD.getSelectedSortItem();
+		var sGroupInitial = this.oVSD.getSelectedGroupItem();
+		var sFiltersInitial = this.oVSD.getSelectedFilterItems();
+
+		// do some changes
+		this.oVSD.setSelectedSortItem(this.oVSD.getSortItems()[1]);
+		this.oVSD.setSelectedGroupItem(this.oVSD.getGroupItems()[1]);
+		this.oVSD.getFilterItems()[0].getItems()[0].setSelected(true);
+
+		// get Sort, Group and Filters that are just set
+		var sSortBefore = this.oVSD.getSelectedSortItem();
+		var sGroupBefore = this.oVSD.getSelectedGroupItem();
+		var sFiltersBefore = this.oVSD.getSelectedFilterItems();
+
+		// Check if the values are really changed
+		assert.strictEqual(sSortInitial !== sSortBefore && sGroupInitial !== sGroupBefore && sFiltersInitial.length !== sFiltersBefore.length, true, "New Sort, Group and Filter items are selected successfully");
+
+		this.oVSD._getResetButton().firePress();
+		assert.equal(spy.callCount, 1, "Reset button Press handler is called");
+
+		// get Sort, Group and Filters after the reset
+		var sSortAfter = this.oVSD.getSelectedSortItem();
+		var sGroupAfter = this.oVSD.getSelectedGroupItem();
+		var sFiltersAfter = this.oVSD.getSelectedFilterItems();
+
+		// Check if the values are reset to their initial values
+		assert.strictEqual(sSortInitial === sSortAfter && sGroupInitial === sGroupAfter && sFiltersInitial.length === sFiltersAfter.length, true, "After the Reset, Sort, Group and Filter items are restored to initial values successfully");
 
 	});
 
