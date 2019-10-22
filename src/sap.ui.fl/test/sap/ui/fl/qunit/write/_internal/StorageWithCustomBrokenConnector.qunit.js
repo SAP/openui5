@@ -59,7 +59,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given the BrokenConnector is registered and a changes-bundle.json is present for the application when Connector.loadFlexData is called", function(assert) {
-			return Storage.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
+			return Storage.loadFlexData({reference: "test.app", appVersion: "1.0.0", componentName: "test.app"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "then one change is returned");
 				assert.deepEqual(oResult.changes[0], {dummy: true}, "and the data from the changes bundle is included");
 			});
