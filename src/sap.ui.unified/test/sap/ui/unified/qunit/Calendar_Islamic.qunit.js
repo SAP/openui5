@@ -159,6 +159,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("20150805 Monthpicker", function(assert) {
-		checkMonthPicker("20150805", 10, assert);
+		checkMonthPicker("20150801", 9, assert);
 	});
+
 });
