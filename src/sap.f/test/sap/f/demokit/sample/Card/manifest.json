@@ -22,7 +22,9 @@
 				"files": [
 					"Card.view.xml",
 					"Card.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"model/cities.json",
+					"model/products.json"
 				]
 			}
 		}
