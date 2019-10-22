@@ -904,37 +904,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Handles the <code>keydown</code> event when any key is pressed.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 */
-		SinglePlanningCalendarGrid.prototype.onkeydown = function (oEvent) {
-			var oAppointment = oEvent.srcControl,
-				bRemoveOldSelection = !(oEvent.ctrlKey || oEvent.metaKey),
-				oGridCell;
-
-			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-				if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
-					this.fireAppointmentSelect({
-						appointment: oAppointment,
-						appointments: this._toggleAppointmentSelection(oAppointment, bRemoveOldSelection)
-					});
-				} else if (oEvent.target.classList.contains("sapMSinglePCRow") ||
-					oEvent.target.classList.contains("sapMSinglePCBlockersColumn")) {
-
-					oGridCell = oEvent.target;
-					this.fireEvent("cellPress", {
-						startDate: this._getDateFormatter().parse(oGridCell.getAttribute("data-sap-start-date")),
-						endDate: this._getDateFormatter().parse(oGridCell.getAttribute("data-sap-end-date"))
-					});
-				}
-
-				// Prevent scrolling
-				oEvent.preventDefault();
-			}
-		};
-
-		/**
 		 * Ensures that the focus is moved from an appointment to the correct cell from the visible grid area or
 		 * borderReached event is fired when the correct cell to focus is outside of the visible grid area
 		 * and removes the appointments selection.
@@ -944,15 +913,14 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._appFocusHandler = function(oEvent, iDirection) {
-			var oAppointment = sap.ui.getCore().byId(oEvent.target.id),
-				bIsAppointment = oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment");
+			var oTarget = sap.ui.getCore().byId(oEvent.target.id);
 
-			if (bIsAppointment) {
+			if (oTarget && oTarget.isA("sap.ui.unified.CalendarAppointment")) {
 				this.fireAppointmentSelect({
 					appointment: undefined,
 					appointments: this._toggleAppointmentSelection(undefined, true)
 				});
-				this._focusCellWithKeyboard(oAppointment, iDirection);
+				this._focusCellWithKeyboard(oTarget, iDirection);
 
 				// Prevent scrolling
 				oEvent.preventDefault();
@@ -1186,21 +1154,48 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object
 		 */
 		SinglePlanningCalendarGrid.prototype.ontap = function (oEvent) {
+			this._fireSelectionEvent(oEvent);
+		};
+
+		/**
+		 * Handles the <code>keydown</code> event when any key is pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		SinglePlanningCalendarGrid.prototype.onkeydown = function (oEvent) {
+			if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
+				this._fireSelectionEvent(oEvent);
+
+				// Prevent scrolling
+				oEvent.preventDefault();
+			}
+		};
+
+		/**
+		 * Helper function handling <code>keydown</code> or <code>tap</code> event on the grid.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		SinglePlanningCalendarGrid.prototype._fireSelectionEvent = function (oEvent) {
 			var oAppointment = oEvent.srcControl,
-				bRemoveOldSelection = !(oEvent.ctrlKey || oEvent.metaKey);
+				oGridCell = oEvent.target;
 
-			if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
-
-				this.fireAppointmentSelect({
-					appointment: oAppointment,
-					appointments: this._toggleAppointmentSelection(oAppointment, bRemoveOldSelection)
-				});
-			} else if (oEvent.target.classList.contains("sapMSinglePCRow") ||
+			if (oEvent.target.classList.contains("sapMSinglePCRow") ||
 				oEvent.target.classList.contains("sapMSinglePCBlockersColumn")) {
+
+				this.fireEvent("cellPress", {
+					startDate: this._getDateFormatter().parse(oGridCell.getAttribute("data-sap-start-date")),
+					endDate: this._getDateFormatter().parse(oGridCell.getAttribute("data-sap-end-date"))
+				});
 
 				this.fireAppointmentSelect({
 					appointment: undefined,
 					appointments: this._toggleAppointmentSelection(undefined, true)
+				});
+			} else if (oAppointment && oAppointment.isA("sap.ui.unified.CalendarAppointment")) {
+				this.fireAppointmentSelect({
+					appointment: oAppointment,
+					appointments: this._toggleAppointmentSelection(oAppointment, !(oEvent.ctrlKey || oEvent.metaKey))
 				});
 			}
 		};

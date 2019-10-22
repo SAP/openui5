@@ -349,7 +349,7 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("appointmentSelect: select single appointment", function (assert) {
+	QUnit.test("appointmentSelect: select a single appointment", function (assert) {
 		var oAppointment = new CalendarAppointment(),
 			oGrid = new SinglePlanningCalendarGrid({
 				appointments: [
@@ -399,13 +399,11 @@ sap.ui.define([
 				]
 			}),
 			oFakeEvent = {
-				target: {
-					classList: {
-						contains: function() {
-							return true;
-						}
-					}
-				}
+				target: jQuery("<div></div>").attr({
+					"data-sap-start-date": "20180708-0300",
+					"data-sap-end-date": "20180708-0400",
+					"class": "sapMSinglePCRow"
+				}).get(0)
 			},
 			fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
 
@@ -441,7 +439,7 @@ sap.ui.define([
 			fnFireGridCellFocusSpy = this.spy(oGrid, "fireEvent");
 
 		// act
-		oGrid.onkeydown(oFakeEvent);
+		oGrid._fireSelectionEvent(oFakeEvent);
 
 		// assert
 		assert.ok(fnFireGridCellFocusSpy.withArgs("cellPress").calledOnce, "Event was fired");
