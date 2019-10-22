@@ -3668,7 +3668,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#read: prefetch", function (assert) {
+[false, true].forEach(function (bServerDrivenPaging) {
+	QUnit.test("CollectionCache#read: prefetch, SDP = " + bServerDrivenPaging, function (assert) {
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
 			oReadGroupLock = {
@@ -3677,7 +3678,8 @@ sap.ui.define([
 			},
 			oUnlockedCopy = {};
 
-		this.mock(oCache).expects("getReadRange").withExactArgs(20, 6, 10)
+		oCache.bServerDrivenPaging = bServerDrivenPaging;
+		this.mock(oCache).expects("getReadRange").withExactArgs(20, 6, bServerDrivenPaging ? 0 : 10)
 			.returns({start : 15, length : 16}); // Note: not necessarily a realistic example
 
 		this.mock(oReadGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oUnlockedCopy);
@@ -3692,6 +3694,7 @@ sap.ui.define([
 			assert.deepEqual(oResult, createResult(20, 6, undefined, true));
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache#fill", function (assert) {
@@ -4287,6 +4290,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.length, 6, "length");
 		assert.strictEqual(oCache.iLimit, Infinity, "iLimit");
 		assert.strictEqual(oCache.aElements[5], oElement5);
+		assert.strictEqual(oCache.bServerDrivenPaging, true);
 		for (i = 6; i < 10; i += 1) {
 			assert.strictEqual(oCache.aElements[i], undefined);
 			assert.notOk(oCache.aElements.hasOwnProperty(i));
@@ -4325,6 +4329,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.aElements.length, 11, "length");
 		assert.strictEqual(oCache.iLimit, Infinity, "iLimit");
 		assert.strictEqual(oCache.aElements[5], oElement5);
+		assert.strictEqual(oCache.bServerDrivenPaging, true);
 		for (i = 6; i < 10; i += 1) {
 			assert.strictEqual(oCache.aElements[i], undefined);
 			assert.notOk(oCache.aElements.hasOwnProperty(i));
@@ -4447,6 +4452,7 @@ sap.ui.define([
 		assert.ok("$tail" in oCache.aElements);
 		assert.strictEqual(oCache.iLimit, Infinity);
 		assert.ok("oSyncPromiseAll" in oCache);
+		assert.strictEqual(oCache.bServerDrivenPaging, false);
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oUnlockedCopy);
 		this.mock(oGroupLock).expects("unlock").withExactArgs();

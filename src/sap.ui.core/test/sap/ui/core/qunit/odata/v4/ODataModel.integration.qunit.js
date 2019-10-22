@@ -21454,8 +21454,8 @@ sap.ui.define([
 	// Scenario: Server-driven paging with table.Table
 	// Requests following the first request which returned an @odata.nextLink do not request
 	//   the prefetch size to avoid server load.
-	// JIRA: CPOUI5UISERVICESV3-1908
-	QUnit.skip("Server-driven paging with table.Table: do not read prefetch", function (assert) {
+	// JIRA: CPOUI5UISERVICESV3-2018
+	QUnit.test("Server-driven paging with table.Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
 	<t:Column>\
