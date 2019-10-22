@@ -721,7 +721,7 @@ sap.ui.define([
 		}
 
 		for (i = iStart; i < iStart + aResults.length; i += 1) {
-			if (this.aContexts[i] === undefined) {
+			if (this.aContexts[i] === undefined && aResults[i - iStart]) {
 				bChanged = true;
 				i$skipIndex = i - this.iCreatedContexts; // index on server ($skip)
 				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate")
@@ -1734,6 +1734,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#hasPendingChangesForPath
+	 */
+	ODataListBinding.prototype.hasPendingChangesForPath = function (sPath) {
+		if (this.oCache === undefined) {
+			// as long as cache is not yet known there can be only changes caused by created
+			// entities; sPath does not matter
+			return this.iCreatedContexts > 0;
+		}
+		return asODataParentBinding.prototype.hasPendingChangesForPath.apply(this, arguments);
+	};
+
+	/**
 	 * Enhance the inherited query options by the given query options if this binding does not have
 	 * any binding parameters. If both have a '$orderby', the resulting '$orderby' is the
 	 * concatenation of both '$orderby' with the given one first. If both have a '$filter', the
@@ -2036,7 +2049,7 @@ sap.ui.define([
 			mNavigationPropertyPaths = {},
 			oPromise,
 			aPromises,
-			that = this;
+			bSingle = oContext && oContext !== this.oHeaderContext;
 
 		/*
 		 * Adds an error handler to the given promise which reports errors to the model.
@@ -2051,36 +2064,31 @@ sap.ui.define([
 			});
 		}
 
-		return this.oCachePromise.then(function (oCache) {
-			var bSingle = oContext && oContext !== that.oHeaderContext,
-				iLength = bSingle ? undefined : that.iCurrentEnd - that.iCurrentBegin,
-				iStart;
+		if (aPaths.indexOf("") < 0) {
+			oPromise = this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
+				mNavigationPropertyPaths,
+				/*iStart*/bSingle ? oContext.getModelIndex() : this.iCurrentBegin,
+				/*iLength*/bSingle ? undefined : this.iCurrentEnd - this.iCurrentBegin);
+			if (oPromise) {
+				aPromises = [oPromise];
+				this.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,
+					mNavigationPropertyPaths, aPromises);
 
-			if (aPaths.indexOf("") < 0) {
-				iStart = bSingle ? oContext.getModelIndex() : that.iCurrentBegin;
-				oPromise = oCache.requestSideEffects(that.lockGroup(sGroupId), aPaths,
-					mNavigationPropertyPaths, iStart, iLength);
-				if (oPromise) {
-					aPromises = [oPromise];
-					that.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,
-						mNavigationPropertyPaths, aPromises);
-
-					return SyncPromise.all(aPromises.map(reportError));
-				}
+				return SyncPromise.all(aPromises.map(reportError));
 			}
-			if (bSingle) {
-				return that.refreshSingle(oContext, that.lockGroup(sGroupId), false);
+		}
+		if (bSingle) {
+			return this.refreshSingle(oContext, this.lockGroup(sGroupId), false);
+		}
+		if (this.aContexts.length) {
+			bAllContextsTransient = this.aContexts.every(function (oContext) {
+				return oContext.isTransient();
+			});
+			if (bAllContextsTransient) {
+				return SyncPromise.resolve();
 			}
-			if (that.aContexts.length) {
-				bAllContextsTransient = that.aContexts.every(function (oContext) {
-					return oContext.isTransient();
-				});
-				if (bAllContextsTransient) {
-					return SyncPromise.resolve();
-				}
-			}
-			return that.refreshInternal("", sGroupId, false, true);
-		});
+		}
+		return this.refreshInternal("", sGroupId, false, true);
 	};
 
 	/**

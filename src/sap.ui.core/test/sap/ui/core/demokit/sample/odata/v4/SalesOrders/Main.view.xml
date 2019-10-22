@@ -235,14 +235,16 @@
 									<Button enabled="{ui>/bScheduleSelected}"
 										id="deleteSalesOrderSchedules"
 										icon="sap-icon://delete" press="onDeleteSalesOrderSchedules"
-										tooltip="Delete sales order schedules"/>
+										tooltip="Delete selected sales order schedules"/>
 								</Toolbar>
 								<buttons>
 									<Button icon="sap-icon://sys-cancel-2"
+										id="closeSalesOrderSchedules"
 										press="onCloseSalesOrderSchedules" text="Close"
 										tooltip="Close dialog"/>
 								</buttons>
-								<Table id="SO_2_SCHDL" items="{SO_2_SCHDL}"
+								<Table id="SO_2_SCHDL" items="{path : 'SO_2_SCHDL',
+											parameters : {$$ownRequest : true}}"
 										mode="MultiSelect"
 										selectionChange="onSalesOrderScheduleSelect">
 									<columns>

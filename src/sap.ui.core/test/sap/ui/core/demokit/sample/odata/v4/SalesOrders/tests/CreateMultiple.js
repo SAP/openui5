@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/Log"
-], function (Log) {
+	"sap/base/Log",
+	"sap/ui/test/Opa",
+	"sap/ui/test/TestUtils"
+], function (Log, Opa, TestUtils) {
 	"use strict";
 
 	return {
@@ -22,7 +24,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 			/* creates two sales orders
 			 *
@@ -107,7 +109,21 @@ sap.ui.define([
 			When.onTheSuccessInfo.confirm();
 			Then.onTheMainPage.checkSalesOrdersSelectionMode("SingleSelectMaster");
 
-			// delete created sales orders
+            if (TestUtils.isRealOData()) {
+				// For each line item the server implicitely creates a schedule. Check that
+				// 1. these schedules becomes visible via requestSideEffects
+				// 2. they can be deleted from within the sales order schedules dialog
+				// 3. they are also deleted from the sales order line items table
+				When.onTheMainPage.pressShowSalesOrderSchedules();
+				Then.onTheSalesOrderSchedulesDialog.checkLength(2);
+				When.onTheSalesOrderSchedulesDialog.selectAll();
+				When.onTheSalesOrderSchedulesDialog.deleteSalesOrderSchedules();
+				Then.onTheSalesOrderSchedulesDialog.checkLength(0);
+				When.onTheSuccessInfo.confirm();
+				When.onTheSalesOrderSchedulesDialog.close();
+				Then.onTheMainPage.checkTableLength(0, "SO_2_SOITEM");
+			}
+            // delete created sales orders
 			When.onAnyPage.cleanUp("SalesOrderList");
 			Then.onAnyPage.checkLog([oExpectedLog, oExpectedLog]);
 			Then.iTeardownMyUIComponent();
