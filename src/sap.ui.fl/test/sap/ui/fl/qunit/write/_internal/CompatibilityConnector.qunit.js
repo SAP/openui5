@@ -53,7 +53,7 @@ sap.ui.define([
 				}
 			})
 			;
-			return this.oConnector.loadChanges({name: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
+			return this.oConnector.loadChanges({name: "test.app", appVersion: "1.0.0", appName: "test.app"}).then(function (oResult) {
 				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");

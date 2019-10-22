@@ -53,7 +53,14 @@ sap.ui.define([
 		 * @returns {Promise<Object>} Resolving with an object containing a data contained in the bundle
 		 */
 		loadFlexData: function (mPropertyBag) {
-			var oFlexBundle = _getBundle(mPropertyBag.reference, "flexibility-bundle");
+			var sComponentName = mPropertyBag.componentName;
+
+			if (!sComponentName) {
+				// fallback in case the loadFlexData was called without passing the component name
+				sComponentName = mPropertyBag.reference.replace(/.Component/g, "");
+			}
+
+			var oFlexBundle = _getBundle(sComponentName, "flexibility-bundle");
 			if (oFlexBundle) {
 				// TODO: remove as soon as the client also does the separation of compVariants and changes
 				oFlexBundle.changes = oFlexBundle.changes.concat(oFlexBundle.compVariants);
@@ -61,12 +68,13 @@ sap.ui.define([
 				return Promise.resolve(oFlexBundle);
 			}
 
-			var oChangesBundle = _getBundle(mPropertyBag.reference, "changes-bundle");
+			var oChangesBundle = _getBundle(sComponentName, "changes-bundle");
 			if (oChangesBundle) {
 				return Promise.resolve({
-					changes: oChangesBundle
+					changes : oChangesBundle
 				});
 			}
+
 
 			return Promise.resolve(Utils.getEmptyFlexDataResponse());
 		}

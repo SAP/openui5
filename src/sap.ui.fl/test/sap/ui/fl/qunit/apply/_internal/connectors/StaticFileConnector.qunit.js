@@ -44,7 +44,7 @@ sap.ui.define([
 			var oLogSpy = sandbox.spy(Log, "error");
 			var oLogWarning = sandbox.spy(Log, "warning");
 
-			return StaticFileConnector.loadFlexData({reference: "test.app.broken", appVersion: "1.0.0"}).then(function (oResult) {
+			return StaticFileConnector.loadFlexData({reference: "test.app.broken", appVersion: "1.0.0", componentName: "test.app.broken"}).then(function (oResult) {
 				assert.deepEqual(oResult, Utils.getEmptyFlexDataResponse(), "the default response was returned");
 				if (oLogSpy.callCount !== 1) {
 					assert.equal(oLogWarning.callCount, 1, "an error or warning was logged");
@@ -52,11 +52,47 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("given a flexibility-bundle.json for 'test.app' resource roots, when loading flex data with an 'componentName'", function (assert) {
+			_simulateComponentPreload("test.app", {
+				"test/app/changes/flexibility-bundle.json" : '{"changes":[{"dummy":true}],"compVariants":[]}'
+			});
+
+			return StaticFileConnector.loadFlexData({reference: "some.other.id", appVersion: "1.0.0", componentName: "test.app"}).then(function (oResult) {
+				assert.equal(oResult.changes.length, 1, "one change was loaded");
+				var oChange = oResult.changes[0];
+				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
+			});
+		});
+
+		QUnit.test("given a flexibility-bundle.json for 'test.app' resource roots, when loading flex data without an 'componentName'", function (assert) {
+			_simulateComponentPreload("test.app", {
+				"test/app/changes/flexibility-bundle.json" : '[changes:{"dummy":true},"compVariants":[]]'
+			});
+
+			return StaticFileConnector.loadFlexData({reference: "test.app.Component", appVersion: "1.0.0"}).then(function (oResult) {
+				assert.equal(oResult.changes.length, 1, "one change was loaded");
+				var oChange = oResult.changes[0];
+				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
+			});
+		});
+
+		QUnit.test("given a changes-bundle.json for 'test.app' resource roots, when loading flex data with an 'componentName'", function (assert) {
+			_simulateComponentPreload("test.app", {
+				"test/app/changes/changes-bundle.json" : '[{"dummy":true},"compVariants":[]]'
+			});
+
+			return StaticFileConnector.loadFlexData({reference: "some.other.id", appVersion: "1.0.0", componentName: "test.app"}).then(function (oResult) {
+				assert.equal(oResult.changes.length, 1, "one change was loaded");
+				var oChange = oResult.changes[0];
+				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
+			});
+		});
+
 		QUnit.test("given only a static changes-bundle.json with dummy data placed for 'test.app' resource roots, when loading flex data", function (assert) {
 			_simulateComponentPreload("test.app", {
-				"test/app/changes/changes-bundle.json" : '[{"dummy":true}]'
+				"test/app/changes/changes-bundle.json" : '[{"dummy":true},"compVariants":[]]'
 			});
-			return StaticFileConnector.loadFlexData({reference: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
+			return StaticFileConnector.loadFlexData({reference: "test.app", appVersion: "1.0.0", componentName: "test.app"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
@@ -67,7 +103,7 @@ sap.ui.define([
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getDebug").returns(true);
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
-			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", appVersion: "1.0.0"}).then(function () {
+			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", componentName: "test.app.not.preloaded", appVersion: "1.0.0"}).then(function () {
 				assert.equal(loadResourceStub.callCount, 2, "two resources were requested");
 				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/flexibility-bundle.json"), "the flexibility-bundle was requested");
 				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/changes-bundle.json"), "the changes-bundle was requested");
@@ -78,7 +114,7 @@ sap.ui.define([
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getComponentPreload").returns("off");
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
-			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", appVersion: "1.0.0"}).then(function () {
+			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", appVersion: "1.0.0", componentName: "test.app.not.preloaded"}).then(function () {
 				assert.equal(loadResourceStub.callCount, 2, "two resources were requested");
 				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/flexibility-bundle.json"), "the flexibility-bundle was requested");
 				assert.ok(loadResourceStub.calledWith("test/app/not/preloaded/changes/changes-bundle.json"), "the changes-bundle was requested");
@@ -98,7 +134,7 @@ sap.ui.define([
 					'}'
 			});
 
-			return StaticFileConnector.loadFlexData({reference: "test.app2", appVersion: "1.0.0"}).then(function (oResult) {
+			return StaticFileConnector.loadFlexData({reference: "test.app2", appVersion: "1.0.0", componentName: "test.app2"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 2, "one entries are in the changes property");
 				assert.equal(oResult.changes[0].dummy1, true, "the change dummy data is correctly loaded");
 				assert.equal(oResult.changes[1].dummy2, true, "the compVariant dummy data is correctly loaded and merged into the changes");

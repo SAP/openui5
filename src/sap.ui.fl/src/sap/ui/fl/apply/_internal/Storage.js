@@ -95,6 +95,7 @@ sap.ui.define([
 	 *
 	 * @param {map} mPropertyBag properties needed by the connectors
 	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
+	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
