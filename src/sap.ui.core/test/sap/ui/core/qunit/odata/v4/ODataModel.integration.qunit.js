@@ -313,27 +313,39 @@ sap.ui.define([
 		},
 
 		afterEach : function (assert) {
-			var iLocks;
+			var that = this;
 
-			if (this.oView) {
-				// avoid calls to formatters by UI5 localization changes in later tests
-				this.oView.destroy();
+			function getGroupLocks() {
+				return (that.oModel && that.oModel.oRequestor.aLockedGroupLocks || [])
+					.filter(function (oGroupLock) {
+						return oGroupLock.isLocked();
+					});
 			}
-			if (this.oModel) {
-				if (this.oModel.oRequestor.aLockedGroupLocks) {
-					iLocks = this.oModel.oRequestor.aLockedGroupLocks.filter(function (oGroupLock) {
-						if (oGroupLock.isLocked()) {
-							assert.ok(false, "GroupLock remained: " + oGroupLock);
 
-							return true;
-						}
-					}).length;
-					assert.strictEqual(iLocks, 0, "No remaining locks");
+			return new SyncPromise(function (resolve) {
+				if (getGroupLocks().length) {
+					setTimeout(resolve, 5);
+				} else {
+					resolve();
 				}
-				this.oModel.destroy();
-			}
-			// reset the language
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}).then(function () {
+				var aGroupLocks = getGroupLocks();
+
+				aGroupLocks.forEach(function (oGroupLock) {
+					assert.ok(false, "GroupLock remained: " + oGroupLock);
+				});
+				assert.strictEqual(aGroupLocks.length, 0, "No remaining locks");
+
+				if (that.oView) {
+					// avoid calls to formatters by UI5 localization changes in later tests
+					that.oView.destroy();
+				}
+				if (that.oModel) {
+					that.oModel.destroy();
+				}
+				// reset the language
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			});
 		},
 
 		/**
