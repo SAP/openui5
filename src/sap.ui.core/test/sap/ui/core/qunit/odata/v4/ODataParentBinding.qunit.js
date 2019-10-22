@@ -2788,7 +2788,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesInDependents", function (assert) {
-		var oCache = {
+		var oCache1 = {
+				resetChangesForPath : function () {}
+			},
+			oCache3 = {
 				resetChangesForPath : function () {}
 			},
 			oCache31 = {
@@ -2798,13 +2801,13 @@ sap.ui.define([
 				resetChangesForPath : function () {}
 			},
 			oChild1 = new ODataParentBinding({
-				oCache : oCache
+				oCachePromise : SyncPromise.resolve(Promise.resolve(oCache1))
 			}),
 			oChild2 = new ODataParentBinding({
-				oCache : null
+				oCachePromise : SyncPromise.resolve(null)
 			}),
 			oChild3 = new ODataParentBinding({
-				oCache : undefined,
+				oCachePromise : SyncPromise.resolve(Promise.resolve(oCache3)),
 				mCacheByResourcePath : {
 					"/Foo/1" : oCache31,
 					"/Foo/2" : oCache32
@@ -2812,22 +2815,70 @@ sap.ui.define([
 			}),
 			oBinding = new ODataParentBinding({
 				getDependentBindings : function () {}
-			});
+			}),
+			aPromises = [];
 
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs().returns([oChild1, oChild2, oChild3]);
-		this.mock(oCache).expects("resetChangesForPath").withExactArgs("");
-		this.mock(oChild1).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oCache1).expects("resetChangesForPath").withExactArgs("");
+		this.mock(oChild1).expects("resetChangesInDependents")
+			.withExactArgs(sinon.match.same(aPromises))
+			.callsFake(function (aPromises0) {
+				aPromises0.push("foo");
+			});
 		this.mock(oChild1).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oChild2).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oChild2).expects("resetChangesInDependents")
+			.withExactArgs(sinon.match.same(aPromises))
+			.callsFake(function (aPromises0) {
+				aPromises0.push("bar");
+			});
 		this.mock(oChild2).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oChild3).expects("resetChangesInDependents").withExactArgs();
-		this.mock(oChild3).expects("resetInvalidDataState").never();
+		this.mock(oCache3).expects("resetChangesForPath").withExactArgs("");
+		this.mock(oChild3).expects("resetChangesInDependents")
+			.withExactArgs(sinon.match.same(aPromises))
+			.callsFake(function (aPromises0) {
+				aPromises0.push("baz");
+			});
+		this.mock(oChild3).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oCache31).expects("resetChangesForPath").withExactArgs("");
 		this.mock(oCache32).expects("resetChangesForPath").withExactArgs("");
 
 		// code under test
-		oBinding.resetChangesInDependents();
+		oBinding.resetChangesInDependents(aPromises);
+
+		assert.strictEqual(aPromises.length, 6);
+		assert.ok(SyncPromise.isThenable(aPromises[0]));
+		assert.strictEqual(aPromises[1], "foo");
+		assert.strictEqual(aPromises[2], undefined);
+		assert.strictEqual(aPromises[3], "bar");
+		assert.ok(SyncPromise.isThenable(aPromises[4]));
+		assert.strictEqual(aPromises[5], "baz");
+
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChangesInDependents: synchronous error", function (assert) {
+		var oBinding = new ODataParentBinding({
+				getDependentBindings : function () {}
+			}),
+			oCache = {
+				resetChangesForPath : function () {}
+			},
+			oChild = new ODataParentBinding({
+				oCachePromise : SyncPromise.resolve(oCache)
+			}),
+			oError = new Error("Intentionally failed"),
+			aPromises = [];
+
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs().returns([oChild]);
+		this.mock(oCache).expects("resetChangesForPath").withExactArgs("").throws(oError);
+		this.mock(oChild).expects("resetChangesInDependents").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.resetChangesInDependents(aPromises);
+		}, oError);
 	});
 
 	//*********************************************************************************************
