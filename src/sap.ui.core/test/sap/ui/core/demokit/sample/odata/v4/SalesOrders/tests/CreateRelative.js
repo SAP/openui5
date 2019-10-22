@@ -24,6 +24,21 @@ sap.ui.define([
 					message : "Failed to request side effects",
 					details : "HTTP request was not processed because the previous request failed"
 				},
+				oReadCountFailLog = {
+					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to read path /SalesOrderList",
+					details : "Error: HTTP request was not processed because the previous request "
+						+ "failed"
+				},
+				oReadSchedulesFailLog = {
+					component : "sap.ui.model.odata.v4.ODataListBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to get contexts for /testsuite/proxy/sap/opu/odata4/sap/"
+						+ "zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList",
+					details : "Error: HTTP request was not processed because the previous request "
+						+ "failed"
+				},
 				oUpdateFailLog = {
 					component : "sap.ui.model.odata.v4.Context",
 					level : Log.Level.ERROR,
@@ -92,7 +107,7 @@ sap.ui.define([
 				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeQuantityInLineItem(0, "0.0");
 				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
-					oSideEffectsFailLog2);
+					oSideEffectsFailLog2, oReadCountFailLog, oReadSchedulesFailLog);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeQuantityInLineItem(0, "2.0");
@@ -119,7 +134,8 @@ sap.ui.define([
 				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 2");
 				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
-					oSideEffectsFailLog2);
+					oSideEffectsFailLog2, oSideEffectsFailLog2, oSideEffectsFailLog2,
+					oReadCountFailLog, oReadSchedulesFailLog);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 

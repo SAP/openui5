@@ -603,7 +603,7 @@ sap.ui.define([
 						throw new Error("GET " + sResourcePath + ": ETag changed");
 					}
 
-					_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oData);
+					_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oData);
 
 					// return the missing property, so that drillDown properly proceeds
 					return _Helper.drillDown(oEntity, sMissingPropertyPath.split("/"));
@@ -1272,7 +1272,7 @@ sap.ui.define([
 			// remember the old value
 			vOldValue = _Helper.drillDown(oEntity, aPropertyPath);
 			// write the changed value into the cache
-			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
 			if (sUnitOrCurrencyPath) {
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
@@ -2099,7 +2099,7 @@ sap.ui.define([
 				for (i = 0, n = oResult.value.length; i < n; i += 1) {
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-					_Helper.updateSelected(that.mChangeListeners, sPredicate,
+					_Helper.updateAll(that.mChangeListeners, sPredicate,
 						that.aElements.$byPredicate[sPredicate], oElement);
 				}
 			});
@@ -2443,7 +2443,7 @@ sap.ui.define([
 
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1]);
-			_Helper.updateSelected(that.mChangeListeners, "", oOldValue, oNewValue);
+			_Helper.updateAll(that.mChangeListeners, "", oOldValue, oNewValue);
 
 			return oOldValue;
 		});
