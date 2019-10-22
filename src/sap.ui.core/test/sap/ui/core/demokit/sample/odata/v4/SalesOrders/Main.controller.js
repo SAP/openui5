@@ -302,6 +302,9 @@ sap.ui.define([
 				aPromises.push(oContext.delete(sGroupId));
 			});
 
+			// removing schedule(s) implicitly removes items
+			// -> remove context of dependent bindings and hide details
+			this._setSalesOrderLineItemBindingContext();
 			this.requestSideEffects(sGroupId, "SO_2_SOITEM");
 
 			Promise.all(aPromises).then(function () {

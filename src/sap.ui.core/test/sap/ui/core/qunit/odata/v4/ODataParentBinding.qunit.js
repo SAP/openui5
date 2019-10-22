@@ -2704,7 +2704,7 @@ sap.ui.define([
 
 		oModelMock.expects("withUnresolvedBindings").never();
 
-		this.mock(oBinding).expects("getDependentBindings").exactly(7)
+		this.mock(oBinding).expects("getDependentBindings").exactly(8)
 			.withExactArgs()
 			.returns([oChild1, oChild2, oChild3]);
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
@@ -2733,6 +2733,15 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
+
+		// code under test
+		assert.strictEqual(oBinding.hasPendingChangesInDependents(), true);
+
+		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
+		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
 		// code under test
@@ -2741,6 +2750,7 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(true);
 
@@ -2750,6 +2760,7 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(true);
@@ -2760,6 +2771,7 @@ sap.ui.define([
 		oChild1CacheMock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild1Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
 		oChild2Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
+		oChild3Mock.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
@@ -2776,7 +2788,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("resetChangesInDependents", function (assert) {
-		var oCache = {
+		var oCache1 = {
+				resetChangesForPath : function () {}
+			},
+			oCache3 = {
 				resetChangesForPath : function () {}
 			},
 			oCache31 = {
@@ -2786,13 +2801,13 @@ sap.ui.define([
 				resetChangesForPath : function () {}
 			},
 			oChild1 = new ODataParentBinding({
-				oCache : oCache
+				oCachePromise : SyncPromise.resolve(Promise.resolve(oCache1))
 			}),
 			oChild2 = new ODataParentBinding({
-				oCache : null
+				oCachePromise : SyncPromise.resolve(null)
 			}),
 			oChild3 = new ODataParentBinding({
-				oCache : undefined,
+				oCachePromise : SyncPromise.resolve(Promise.resolve(oCache3)),
 				mCacheByResourcePath : {
 					"/Foo/1" : oCache31,
 					"/Foo/2" : oCache32
@@ -2800,22 +2815,70 @@ sap.ui.define([
 			}),
 			oBinding = new ODataParentBinding({
 				getDependentBindings : function () {}
-			});
+			}),
+			aPromises = [];
 
 		this.mock(oBinding).expects("getDependentBindings")
 			.withExactArgs().returns([oChild1, oChild2, oChild3]);
-		this.mock(oCache).expects("resetChangesForPath").withExactArgs("");
-		this.mock(oChild1).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oCache1).expects("resetChangesForPath").withExactArgs("");
+		this.mock(oChild1).expects("resetChangesInDependents")
+			.withExactArgs(sinon.match.same(aPromises))
+			.callsFake(function (aPromises0) {
+				aPromises0.push("foo");
+			});
 		this.mock(oChild1).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oChild2).expects("resetChangesInDependents").withExactArgs();
+		this.mock(oChild2).expects("resetChangesInDependents")
+			.withExactArgs(sinon.match.same(aPromises))
+			.callsFake(function (aPromises0) {
+				aPromises0.push("bar");
+			});
 		this.mock(oChild2).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oChild3).expects("resetChangesInDependents").withExactArgs();
-		this.mock(oChild3).expects("resetInvalidDataState").never();
+		this.mock(oCache3).expects("resetChangesForPath").withExactArgs("");
+		this.mock(oChild3).expects("resetChangesInDependents")
+			.withExactArgs(sinon.match.same(aPromises))
+			.callsFake(function (aPromises0) {
+				aPromises0.push("baz");
+			});
+		this.mock(oChild3).expects("resetInvalidDataState").withExactArgs();
 		this.mock(oCache31).expects("resetChangesForPath").withExactArgs("");
 		this.mock(oCache32).expects("resetChangesForPath").withExactArgs("");
 
 		// code under test
-		oBinding.resetChangesInDependents();
+		oBinding.resetChangesInDependents(aPromises);
+
+		assert.strictEqual(aPromises.length, 6);
+		assert.ok(SyncPromise.isThenable(aPromises[0]));
+		assert.strictEqual(aPromises[1], "foo");
+		assert.strictEqual(aPromises[2], undefined);
+		assert.strictEqual(aPromises[3], "bar");
+		assert.ok(SyncPromise.isThenable(aPromises[4]));
+		assert.strictEqual(aPromises[5], "baz");
+
+		return Promise.all(aPromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resetChangesInDependents: synchronous error", function (assert) {
+		var oBinding = new ODataParentBinding({
+				getDependentBindings : function () {}
+			}),
+			oCache = {
+				resetChangesForPath : function () {}
+			},
+			oChild = new ODataParentBinding({
+				oCachePromise : SyncPromise.resolve(oCache)
+			}),
+			oError = new Error("Intentionally failed"),
+			aPromises = [];
+
+		this.mock(oBinding).expects("getDependentBindings").withExactArgs().returns([oChild]);
+		this.mock(oCache).expects("resetChangesForPath").withExactArgs("").throws(oError);
+		this.mock(oChild).expects("resetChangesInDependents").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.resetChangesInDependents(aPromises);
+		}, oError);
 	});
 
 	//*********************************************************************************************
@@ -3052,6 +3115,15 @@ sap.ui.define([
 			oFixture.delegate ? "/base/path" : "/resolved/path");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("allow for super calls", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		assert.strictEqual(oBinding.destroy, asODataParentBinding.prototype.destroy);
+		assert.strictEqual(oBinding.hasPendingChangesForPath,
+			asODataParentBinding.prototype.hasPendingChangesForPath);
+	});
 });
 //TODO Fix issue with ODataModel.integration.qunit
 //  "suspend/resume: list binding with nested context binding, only context binding is adapted"

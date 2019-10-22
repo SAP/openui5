@@ -8,9 +8,10 @@ sap.ui.define([
 	"./_Helper",
 	"./_Requestor",
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/thirdparty/jquery"
-], function (_GroupLock, _Helper, _Requestor, Log, SyncPromise, jQuery) {
+], function (_GroupLock, _Helper, _Requestor, Log, isEmptyObject, SyncPromise, jQuery) {
 	"use strict";
 
 	var // Matches if ending with a transient key predicate:
@@ -253,6 +254,8 @@ sap.ui.define([
 	/**
 	 * Throws an error if the cache is not active.
 	 *
+	 * @throws {Error} If the cache is not active
+	 *
 	 * @private
 	 */
 	Cache.prototype.checkActive = function () {
@@ -456,20 +459,19 @@ sap.ui.define([
 		 *
 		 * @param {object} oValue The object that is expected to have the value
 		 * @param {string} sSegment The path segment that is missing
-		 * @param {number} iPathLength The lenght of the path of the missing value
+		 * @param {number} iPathLength The length of the path of the missing value
 		 * @returns {any} The value if it could be determined or undefined otherwise
 		 */
 		function missingValue(oValue, sSegment, iPathLength) {
-			var sPropertyPath = "",
+			var sPropertyPath = sPath.split("/").slice(0, iPathLength).join("/"),
 				sReadLink,
 				sServiceUrl;
 
-			if (sPath[0] !== '(') {
-				sPropertyPath += "/";
+			if (Array.isArray(oValue)) {
+				return invalidSegment(sSegment); // missing key predicate or index
 			}
-			sPropertyPath += sPath.split("/").slice(0, iPathLength).join("/");
 			return that.oRequestor.getModelInterface()
-				.fetchMetadata(that.sMetaPath + _Helper.getMetaPath(sPropertyPath))
+				.fetchMetadata(that.sMetaPath + "/" + _Helper.getMetaPath(sPropertyPath))
 				.then(function (oProperty) {
 					if (!oProperty) {
 						return invalidSegment(sSegment);
@@ -477,7 +479,8 @@ sap.ui.define([
 					if (oProperty.$Type === "Edm.Stream") {
 						sReadLink = oValue[sSegment + "@odata.mediaReadLink"];
 						sServiceUrl = that.oRequestor.getServiceUrl();
-						return sReadLink || sServiceUrl + that.sResourcePath + sPropertyPath;
+						return sReadLink
+							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
 					}
 					if (!bTransient) {
 						if (oGroupLock && oEntity && oProperty.$kind === "Property") {
@@ -600,7 +603,7 @@ sap.ui.define([
 						throw new Error("GET " + sResourcePath + ": ETag changed");
 					}
 
-					_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oData);
+					_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oData);
 
 					// return the missing property, so that drillDown properly proceeds
 					return _Helper.drillDown(oEntity, sMissingPropertyPath.split("/"));
@@ -737,6 +740,20 @@ sap.ui.define([
 	Cache.prototype.getOriginalResourcePath = function (oEntity) {
 		return this.fnGetOriginalResourcePath && this.fnGetOriginalResourcePath(oEntity)
 			|| this.sResourcePath;
+	};
+
+	/**
+	 * Tells whether there are any registered change listeners.
+	 *
+	 * @returns {boolean}
+	 *   Whether there are any registered change listeners
+	 *
+	 * @public
+	 * @see #deregisterChange
+	 * @see #registerChange
+	 */
+	Cache.prototype.hasChangeListeners = function () {
+		return !isEmptyObject(this.mChangeListeners);
 	};
 
 	/**
@@ -899,10 +916,12 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The path
 	 * @param {object} [oListener] The listener
+	 * @throws {Error} If the cache is not active
 	 *
 	 * @private
 	 */
 	Cache.prototype.registerChange = function (sPath, oListener) {
+		this.checkActive();
 		_Helper.addByPath(this.mChangeListeners, sPath, oListener);
 	};
 
@@ -1253,7 +1272,7 @@ sap.ui.define([
 			// remember the old value
 			vOldValue = _Helper.drillDown(oEntity, aPropertyPath);
 			// write the changed value into the cache
-			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
+			_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity, oUpdateData);
 			if (sUnitOrCurrencyPath) {
 				aUnitOrCurrencyPath = sUnitOrCurrencyPath.split("/");
 				sUnitOrCurrencyPath = _Helper.buildPath(sEntityPath, sUnitOrCurrencyPath);
@@ -1566,7 +1585,6 @@ sap.ui.define([
 			this.oSyncPromiseAll = SyncPromise.all(aElements);
 		}
 		return this.oSyncPromiseAll.then(function () {
-			that.checkActive();
 			// register afterwards to avoid that updateExisting fires updates before the first
 			// response
 			that.registerChange(sPath, oListener);
@@ -1788,7 +1806,13 @@ sap.ui.define([
 			this.iLimit = iCount = parseInt(sCount);
 		}
 		if (oResult["@odata.nextLink"]) { // server-driven paging
-			this.aElements.length = iStart + iResultLength;
+			if (iEnd < this.aElements.length) { // "inner" gap: do not remove elements behind gap
+				for (i = iStart + iResultLength; i < iEnd; i += 1) {
+					delete this.aElements[i];
+				}
+			} else { // gap at end: shorten array
+				this.aElements.length = iStart + iResultLength;
+			}
 		} else if (iResultLength < iEnd - iStart) { // short read
 			if (iCount === -1) {
 				// use formerly computed $count
@@ -1977,9 +2001,9 @@ sap.ui.define([
 	 *   The number of elements to request side effects for; <code>Infinity</code> is supported.
 	 *   If <code>undefined</code>, only the side effects for the element at <code>iStart</code> are
 	 *   requested; the other elements are not discarded in this case.
-	 * @returns {Promise}
-	 *   A promise resolving without a defined result, or <code>null</code> if a key property is
-	 *   missing
+	 * @returns {Promise|sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
+	 *   effects fails, or <code>null</code> if a key property is missing.
 	 * @throws {Error}
 	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
@@ -2075,7 +2099,7 @@ sap.ui.define([
 				for (i = 0, n = oResult.value.length; i < n; i += 1) {
 					oElement = oResult.value[i];
 					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-					_Helper.updateSelected(that.mChangeListeners, sPredicate,
+					_Helper.updateAll(that.mChangeListeners, sPredicate,
 						that.aElements.$byPredicate[sPredicate], oElement);
 				}
 			});
@@ -2155,7 +2179,6 @@ sap.ui.define([
 	PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener) {
 		var that = this;
 
-		that.registerChange("", oListener);
 		if (this.oPromise) {
 			oGroupLock.unlock();
 		} else {
@@ -2165,7 +2188,7 @@ sap.ui.define([
 			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
-			that.checkActive();
+			that.registerChange("", oListener);
 			return oResult.value;
 		});
 	};
@@ -2261,7 +2284,6 @@ sap.ui.define([
 		var sResourcePath = this.sResourcePath + this.sQueryString,
 			that = this;
 
-		this.registerChange(sPath, oListener);
 		if (this.oPromise) {
 			oGroupLock.unlock();
 		} else {
@@ -2280,7 +2302,7 @@ sap.ui.define([
 			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
-			that.checkActive();
+			that.registerChange(sPath, oListener);
 			if (oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
@@ -2371,8 +2393,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to be resolved with the updated data when the side effects have been
-	 * loaded from the given resource path.
+	 * Returns a promise to be resolved when the side effects have been loaded from the given
+	 * resource path.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
@@ -2386,8 +2408,8 @@ sap.ui.define([
 	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
 	 * @param {string} [sResourcePath=this.sResourcePath]
 	 *   A resource path relative to the service URL; it must not contain a query string
-	 * @returns {Promise}
-	 *   A promise resolving with the updated data, or rejected with an error if loading of side
+	 * @returns {Promise|sap.ui.base.SyncPromise}
+	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails.
 	 * @throws {Error} If the side effects require a $expand, or if group ID is '$cached' (the error
 	 *   has a property <code>$cached = true</code> then)
@@ -2396,8 +2418,8 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
 			mNavigationPropertyPaths, sResourcePath) {
-		var oOldValuePromise = this.fetchValue(_GroupLock.$cached, ""),
-			mQueryOptions = _Helper.intersectQueryOptions(
+		var oOldValuePromise = this.oPromise,
+			mQueryOptions = oOldValuePromise && _Helper.intersectQueryOptions(
 				this.mLateQueryOptions || this.mQueryOptions, aPaths,
 				this.oRequestor.getModelInterface().fetchMetadata,
 				this.sMetaPath + "/$Type", // add $Type because of return value context
@@ -2406,7 +2428,7 @@ sap.ui.define([
 			that = this;
 
 		if (!mQueryOptions) {
-			return oOldValuePromise;
+			return SyncPromise.resolve();
 		}
 
 		sResourcePath = (sResourcePath || this.sResourcePath)
@@ -2414,14 +2436,14 @@ sap.ui.define([
 		oResult = SyncPromise.all([
 			this.oRequestor.request("GET", sResourcePath, oGroupLock),
 			this.fetchTypes(),
-			oOldValuePromise
+			this.fetchValue(_GroupLock.$cached, "") // Note: includes some additional checks
 		]).then(function (aResult) {
 			var oNewValue = aResult[0],
 				oOldValue = aResult[2];
 
 			// visit response to report the messages
 			that.visitResponse(oNewValue, aResult[1]);
-			_Helper.updateSelected(that.mChangeListeners, "", oOldValue, oNewValue);
+			_Helper.updateAll(that.mChangeListeners, "", oOldValue, oNewValue);
 
 			return oOldValue;
 		});

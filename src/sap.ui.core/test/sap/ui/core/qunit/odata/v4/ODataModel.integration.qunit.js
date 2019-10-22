@@ -313,27 +313,39 @@ sap.ui.define([
 		},
 
 		afterEach : function (assert) {
-			var iLocks;
+			var that = this;
 
-			if (this.oView) {
-				// avoid calls to formatters by UI5 localization changes in later tests
-				this.oView.destroy();
+			function getGroupLocks() {
+				return (that.oModel && that.oModel.oRequestor.aLockedGroupLocks || [])
+					.filter(function (oGroupLock) {
+						return oGroupLock.isLocked();
+					});
 			}
-			if (this.oModel) {
-				if (this.oModel.oRequestor.aLockedGroupLocks) {
-					iLocks = this.oModel.oRequestor.aLockedGroupLocks.filter(function (oGroupLock) {
-						if (oGroupLock.isLocked()) {
-							assert.ok(false, "GroupLock remained: " + oGroupLock);
 
-							return true;
-						}
-					}).length;
-					assert.strictEqual(iLocks, 0, "No remaining locks");
+			return new SyncPromise(function (resolve) {
+				if (getGroupLocks().length) {
+					setTimeout(resolve, 5);
+				} else {
+					resolve();
 				}
-				this.oModel.destroy();
-			}
-			// reset the language
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}).then(function () {
+				var aGroupLocks = getGroupLocks();
+
+				aGroupLocks.forEach(function (oGroupLock) {
+					assert.ok(false, "GroupLock remained: " + oGroupLock);
+				});
+				assert.strictEqual(aGroupLocks.length, 0, "No remaining locks");
+
+				if (that.oView) {
+					// avoid calls to formatters by UI5 localization changes in later tests
+					that.oView.destroy();
+				}
+				if (that.oModel) {
+					that.oModel.destroy();
+				}
+				// reset the language
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			});
 		},
 
 		/**
@@ -1288,7 +1300,11 @@ sap.ui.define([
 				// Only check the value once all parts are available.
 				if (!bIsCompositeType || sValue !== null) {
 					that.checkValue(assert, sValue, sControlId,
-						oContext && (oContext.getIndex ? oContext.getIndex() : oContext.getPath()));
+						oContext && (oContext.getBinding
+							? oContext.getBinding() && oContext.getIndex()
+							: oContext.getPath()
+						)
+					);
 				}
 
 				return sValue;
@@ -1965,16 +1981,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Absolute ODLB, late property. See that it is requested only once, even when bound
-	// twice. See that it is updated via requestSideEffects called at the parent binding (all
-	// visible rows).
+	// Scenario: ODLB, late property. See that it is requested only once, even when bound twice. See
+	// that it is updated via requestSideEffects called at the parent binding (all visible rows).
 	// JIRA: CPOUI5UISERVICESV3-1878
 	QUnit.test("ODLB: late property", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oRowContext,
 			sView = '\
 <FlexBox id="form" binding="{/TEAMS(\'1\')}">\
-	<Text text="{Team_Id}"/><!-- TODO CPOUI5UISERVICESV3-1973 -->\
 	<Table id="table" growing="true" growingThreshold="2"\
 			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
 		<ColumnListItem>\
@@ -1986,8 +2000,7 @@ sap.ui.define([
 <Text id="age2" text="{AGE}" />',
 			that = this;
 
-		this.expectRequest("TEAMS('1')?$select=Team_Id", {Team_Id : "1"})
-			.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
+		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
 				value : [
 					{ID : "2", Name : "Frederic Fall"},
 					{ID : "3", Name : "Jonathan Smith"}
@@ -2029,19 +2042,20 @@ sap.ui.define([
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
 				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
 					value : [
-						{AGE : 43, ID : "2", Name : "Frederic Fall"},
-						{AGE : 29, ID : "3", Name : "Jonathan Smith"},
-						{AGE : 36, ID : "4", Name : "Peter Burke"}
+						{AGE : 43, ID : "2", Name : "Frederic Fall *"},
+						{AGE : 29, ID : "3", Name : "Jonathan Smith *"},
+						{AGE : 0, ID : "4", Name : "Peter Burke *"}
 					]
 				})
 				.expectChange("age1", "43")
-				.expectChange("age2", "43");
+				.expectChange("age2", "43")
+				.expectChange("name", ["Frederic Fall *", "Jonathan Smith *", "Peter Burke *"]);
 
 			// see that requestSideEffects updates AGE, too
 			return Promise.all([
-				that.oView.byId("form").getBindingContext().requestSideEffects([
-					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
-					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+				that.oView.byId("table").getBinding("items").getHeaderContext().requestSideEffects([
+					{$PropertyPath : "AGE"},
+					{$PropertyPath : "Name"}
 				]),
 				that.waitForChanges(assert)
 			]);
@@ -2051,6 +2065,29 @@ sap.ui.define([
 			// change one Text to the second row - must be cached from requestSideEffects
 			oRowContext = that.oView.byId("table").getItems()[1].getBindingContext();
 			that.oView.byId("age2").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name" +
+				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'", {
+					value : [
+						{AGE : 44, ID : "2", Name : "Frederic Fall **"},
+						{AGE : 30, ID : "3", Name : "Jonathan Smith **"},
+						{AGE : -1, ID : "4", Name : "Peter Burke **"}
+					]
+				})
+				.expectChange("age1", "44")
+				.expectChange("age2", "30")
+				.expectChange("name", ["Frederic Fall **", "Jonathan Smith **", "Peter Burke **"]);
+
+			return Promise.all([
+				// code under test: requestSideEffects on ODCB w/o data
+				that.oView.byId("form").getBindingContext().requestSideEffects([
+					{$PropertyPath : "TEAM_2_EMPLOYEES/AGE"},
+					{$PropertyPath : "TEAM_2_EMPLOYEES/Name"}
+				]),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -3415,6 +3452,54 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Delete multiple entities in a table w/o own cache.
+	QUnit.test("Delete multiple entities in a table w/o own cache", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="position" text="{ItemPosition}" />\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		that.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				// SalesOrderId : "1,
+				SO_2_SOITEM : [
+					{SalesOrderID : "1", "ItemPosition" : "0010"},
+					{SalesOrderID : "1", "ItemPosition" : "0020"},
+					{SalesOrderID : "1", "ItemPosition" : "0030"},
+					{SalesOrderID : "1", "ItemPosition" : "0040"}
+				]
+			})
+			.expectChange("position", ["0010", "0020", "0030", "0040"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var aItems = that.oView.byId("table").getItems();
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0020')"
+				})
+				.expectRequest({
+					method : "DELETE",
+					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0030')"
+				})
+				.expectChange("position", [, "0040"]);
+
+			// code under test
+			return Promise.all([
+				aItems[1].getBindingContext().delete(),
+				aItems[2].getBindingContext().delete(),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: SalesOrders app
 	// * Select a sales order
 	// * Refresh the sales order list
@@ -3894,7 +3979,7 @@ sap.ui.define([
 						SalesOrderID : "43"
 					})
 					.expectChange("note", "from server", 0);
-				if (!bSkipRefresh){
+				if (!bSkipRefresh) {
 					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
 							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 							Note : "fresh from server",
@@ -5231,9 +5316,8 @@ sap.ui.define([
 
 			// no change event: getContexts with E.C.D. returns a diff containing one delete only
 
-			oBinding.resetChanges();
-
 			return Promise.all([
+				oBinding.resetChanges(),
 				that.checkCanceled(assert, oCreatedContext1.created()),
 				that.checkCanceled(assert, oCreatedContext2.created())
 			]);
@@ -5385,9 +5469,8 @@ sap.ui.define([
 				.expectChange("id", ["42", "41"])
 				.expectChange("note", ["First SalesOrder", "Second SalesOrder"]);
 
-			oBinding.resetChanges();
-
 			return Promise.all([
+				oBinding.resetChanges(),
 				oCreatedContext0.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
 				oCreatedContext2.created().catch(function () {/* avoid uncaught (in promise) */}),
@@ -5479,9 +5562,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// no change event: getContexts with E.C.D. returns a diff containing two deletes only
-			oBinding.resetChanges();
 
 			return Promise.all([
+				oBinding.resetChanges(),
 				that.checkCanceled(assert, oCreatedContext1.created()),
 				that.checkCanceled(assert, oCreatedContext2.created()),
 				that.waitForChanges(assert)
@@ -6296,9 +6379,9 @@ sap.ui.define([
 			assert.strictEqual(oCreatedContext2.isTransient(), true);
 
 			// no change event: getContexts with E.C.D. returns a diff containing three deletes only
-			oBinding.resetChanges();
 
 			return Promise.all([
+				oBinding.resetChanges(),
 				that.checkCanceled(assert, oCreatedContext1.created()),
 				that.checkCanceled(assert, oCreatedContext2.created())
 			]);
@@ -7897,11 +7980,9 @@ sap.ui.define([
 					.expectChange("text", "Frederic Fall", 0);
 
 				// code under test
-				if (bUseReset) {
-					oTeam2EmployeesBinding.resetChanges();
-				} else {
-					oPromise = oNewContext.delete("$direct");
-				}
+				oPromise = bUseReset
+					? oTeam2EmployeesBinding.resetChanges()
+					: oNewContext.delete("$direct");
 
 				assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no pending changes");
 				assert.notOk(oTeamBinding.hasPendingChanges(), "parent has no pending changes");
@@ -11942,7 +12023,7 @@ sap.ui.define([
 			oContextBinding.setContext(oListBinding.getCurrentContexts()[0]);
 
 			return that.waitForChanges(assert);
-		}).then(function (){
+		}).then(function () {
 			that.expectRequest({
 					headers : {"If-Match" : "ETag4"},
 					method : "DELETE",
@@ -14520,7 +14601,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["$direct", "$auto"].forEach(function (sGroupId){
+	["$direct", "$auto"].forEach(function (sGroupId) {
 		QUnit.test("Unbound messages in response: " + sGroupId, function (assert) {
 			var aMessages = [{
 					code : "foo-42",
@@ -16220,6 +16301,57 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: requestSideEffects delivers a new entity. See that it can be patched later on.
+	// JIRA: CPOUI5UISERVICESV3-1992
+	QUnit.test("requestSideEffects delivers a new entity", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}" id="form">\
+	<Input id="company" value="{SO_2_BP/CompanyName}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+			+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				SalesOrderID : "1",
+				SO_2_BP : null
+			})
+			.expectChange("company", null);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+					SO_2_BP : {
+						"@odata.etag" : "ETag",
+						BusinessPartnerID : "42",
+						CompanyName : "Company"
+					}
+				})
+				.expectChange("company", "Company");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("form").getBindingContext().requestSideEffects([{
+					$NavigationPropertyPath : "SO_2_BP"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("company", "changed")
+				.expectRequest({
+					headers : {"If-Match" : "ETag"},
+					method : "PATCH",
+					payload : {CompanyName : "changed"},
+					url : "BusinessPartnerList('42')"
+				});
+
+			that.oView.byId("company").getBinding("value").setValue("changed");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: read side effects which affect dependent bindings.
 	QUnit.test("requestSideEffects: dependent bindings #1", function (assert) {
 		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
@@ -17210,6 +17342,56 @@ sap.ui.define([
 				// code under test
 				oBestPublicationBox.getBindingContext().requestSideEffects([{
 					$PropertyPath : "CurrencyCode"
+				}]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Request side effects on a context binding with an empty path and cache, relative to
+	// a context binding with a cache. Side effects are requested on the parent binding.
+	// CPOUI5UISERVICESV3-1984
+	QUnit.test("requestSideEffects: skip empty path", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/Artists(ArtistID=\'42\',IsActiveEntity=true)}" id="outer">\
+	<Text id="outerName" text="{Name}" />\
+	<FlexBox id="inner" binding="{path : \'\', parameters : {$$ownRequest : true}}"> \
+		<Text id="innerName" text="{Name}" />\
+	</FlexBox>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+				ArtistID : "42",
+				IsActiveEntity : true,
+				Name : "Cher"
+			})
+			.expectChange("outerName", "Cher")
+			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name", {
+				ArtistID : "42",
+				IsActiveEntity : true,
+				Name : "Cher"
+			})
+			.expectChange("innerName", "Cher");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Name", {
+					Name : "Cherilyn"
+				})
+				.expectChange("innerName", "Cherilyn")
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Name", {
+					Name : "Cherilyn"
+				})
+				.expectChange("outerName", "Cherilyn");
+
+			return Promise.all([
+				// code under test
+				that.oView.byId("innerName").getBindingContext().requestSideEffects([{
+					$PropertyPath : "Name"
 				}]),
 				that.waitForChanges(assert)
 			]);
@@ -20212,8 +20394,8 @@ sap.ui.define([
 			oCreationRowContext = oCreationRowListBinding.create({Note : "New item note"});
 			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
-			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oFormBinding.hasPendingChanges());
-			//TODO: CPOUI5UISERVICESV3-1955 assert.ok(oCreationRowListBinding.hasPendingChanges());
+			assert.ok(oFormBinding.hasPendingChanges());
+			assert.ok(oCreationRowListBinding.hasPendingChanges());
 			assert.ok(oModel.hasPendingChanges(), "consider all groups");
 			assert.notOk(oModel.hasPendingChanges("$auto"));
 			assert.ok(oModel.hasPendingChanges("doNotSubmit"), "creation row has changes");
@@ -20792,6 +20974,269 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: hasPendingChanges and resetChanges work even while late child bindings are trying
+	// to reuse the parent binding's cache.
+	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
+	QUnit.test("hasPendingChanges + resetChanges work for late child bindings", function (assert) {
+		var oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<Table id="orders" items="{path: \'/SalesOrderList\', parameters: {\
+		$expand : {\
+			SO_2_SOITEM : {\
+				$select : [\'ItemPosition\',\'Note\',\'SalesOrderID\']\
+			}\
+		},\
+		$select : \'Note\'\
+	}}">\
+	<ColumnListItem>\
+		<Input id="note" value="{Note}"/>\
+	</ColumnListItem>\
+</Table>\
+<Table id="items" items="{SO_2_SOITEM}">\
+	<ColumnListItem>\
+		<Text id="itemNote" text="{Note}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList"
+			+ "?$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)"
+			+ "&$select=Note,SalesOrderID"
+			+ "&$skip=0&$top=100", {
+				value : [{
+					Note : "SO_1",
+					SalesOrderID : "1",
+					SO_2_SOITEM : [{
+						ItemPosition : "10",
+						Note : "Item_10",
+						SalesOrderID : "1"
+					}]
+				}]
+			})
+			.expectChange("note", ["SO_1"])
+			.expectChange("itemNote", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oOrdersTable = that.oView.byId("orders"),
+				oOrdersBinding = oOrdersTable.getBinding("items");
+
+			that.expectChange("note", ["SO_1 changed"])
+				.expectChange("note", ["SO_1"]);
+
+			oOrdersTable.getItems()[0].getCells()[0].getBinding("value").setValue("SO_1 changed");
+
+			// code under test
+			assert.ok(oOrdersBinding.hasPendingChanges());
+
+			that.expectChange("itemNote", ["Item_10"]);
+
+			// Observe hasPendingChanges while the child binding is checking whether it can use the
+			// parent cache
+			that.oView.byId("items").setBindingContext(oOrdersBinding.getCurrentContexts()[0]);
+
+			// code under test
+			assert.ok(oOrdersBinding.hasPendingChanges());
+
+			return Promise.all([
+				oOrdersBinding.resetChanges().then(function() {
+					// code under test
+					assert.notOk(oOrdersBinding.hasPendingChanges());
+				}),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity without using a UI and persist it.
+	// ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges work as expected even if
+	// late properties below a list binding want to reuse the parent binding's cache. Relative list
+	// binding without an own cache is necessary because determination whether cache can be used or
+	// not is async.
+	// Resetting pending changes works synchronously.
+	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
+[
+	// late dependent binding does not influence hasPendingChanges for a parent list binding with a
+	// persisted created entity.
+	function (assert, oModel, oBinding, oCreatedContext) {
+		this.expectChange("note", "New");
+
+		this.oView.byId("form").setBindingContext(oCreatedContext);
+
+		// code under test
+		assert.notOk(oModel.hasPendingChanges());
+		assert.notOk(oBinding.hasPendingChanges());
+
+		return this.waitForChanges(assert);
+	},
+	// modify a persisted created entity; hasPendingChanges is not influenced by late properties;
+	// resetChanges reverts changes asynchronously
+	function (assert, oModel, oBinding, oCreatedContext) {
+		var oPropertyBinding = oModel.bindProperty("Note", oCreatedContext);
+
+		this.expectChange("note", "Modified");
+
+		oPropertyBinding.initialize();
+		oPropertyBinding.setValue("Modified"); // change event; reset is done asynchronously
+		this.oView.byId("form").setBindingContext(oCreatedContext);
+
+		// code under test
+		assert.ok(oModel.hasPendingChanges());
+		assert.ok(oBinding.hasPendingChanges());
+
+		this.expectChange("note", "New");
+
+		return Promise.all([
+			// code under test
+			oBinding.resetChanges().then(function() {
+				// code under test
+				assert.notOk(oModel.hasPendingChanges());
+				assert.notOk(oBinding.hasPendingChanges());
+			}),
+			this.waitForChanges(assert)
+		]);
+	}
+].forEach(function (fnTest, i) {
+	var sTitle = "hasPendingChanges/resetChanges: late properties for a list binding without a UI"
+			+ " and with a persisted created entity, #" + i;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCreatedContext,
+			oListBindingWithoutUI,
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "$auto"
+			}),
+			sView = '\
+<FlexBox id="form">\
+	<Text id="note" text="{Note}"/>\
+	<Table id="items" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="itemNote" text="{Note}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		oListBindingWithoutUI = oModel.bindList("/SalesOrderList");
+
+		this.expectChange("note")
+			.expectChange("itemNote", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {SO_2_SOITEM : null}
+				}, {
+					Note : "New",
+					SalesOrderID : "43"
+				});
+
+			oCreatedContext = oListBindingWithoutUI.create({SO_2_SOITEM : null}, true);
+
+			// code under test
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+
+			return Promise.all([
+				oCreatedContext.created(),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// code under test
+			assert.notOk(oModel.hasPendingChanges());
+			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+
+			return fnTest.call(that, assert, oModel, oListBindingWithoutUI, oCreatedContext);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity without using a UI and reset it immediately. No request is
+	// added to the queue and ODataModel#hasPendingChanges and ODataListBinding#hasPendingChanges
+	// work as expected.
+	// JIRA: CPOUI5UISERVICESV3-1994
+	QUnit.test("create an entity and immediately reset changes (no UI)", function (assert) {
+		var // use autoExpandSelect so that the cache is created asynchronously
+			oModel = createSalesOrdersModel({autoExpandSelect : true, updateGroupId : "$auto"}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oListBindingWithoutUI = oModel.bindList("/SalesOrderList"),
+				oCreatedPromise = oListBindingWithoutUI.create({}, true).created();
+
+			assert.ok(oModel.hasPendingChanges());
+			assert.ok(oListBindingWithoutUI.hasPendingChanges());
+			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
+
+			return oListBindingWithoutUI.resetChanges().then(function ( ) {
+				assert.notOk(oModel.hasPendingChanges());
+				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
+				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+
+				return that.checkCanceled(assert, oCreatedPromise);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a new entity within a relative binding which is created via controller
+	// code. Verify that ODataBinding#resetChanges works properly even if the cache for the list
+	// binding is not yet available.
+	// JIRA: CPOUI5UISERVICESV3-1994
+	QUnit.test("Create relative via controller + resetChanges on parent", function (assert) {
+		var oFormBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="note" text="{Note}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				SalesOrderID : "1",
+				SO_2_SOITEM : [{
+					ItemPosition : "10",
+					Note : "Foo",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectChange("note", ["Foo"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oCreatedPromise;
+
+			oFormBinding = that.oView.byId("form").getObjectBinding();
+			oCreatedPromise = oModel.bindList("SO_2_SOITEM",
+				oFormBinding.getBoundContext(), undefined, undefined,
+				{$$updateGroupId : "doNotSubmit"}).create({}, true).created();
+
+			return Promise.all([
+				// code under test
+				oFormBinding.resetChanges(),
+				oCreatedPromise.catch(function (oError) {
+					assert.strictEqual(oError.message,
+						"Request canceled: POST SalesOrderList('1')/SO_2_SOITEM; group: doNotSubmit"
+					);
+					assert.ok(oError.canceled);
+				})
+			]);
+		}).then(function () {
+			assert.notOk(oFormBinding.hasPendingChanges());
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Unpark a failed patch while requesting side effects. See that the PATCH response is
 	// processed before the GET response.
 	// JIRA: CPOUI5UISERVICESV3-1878
@@ -20929,11 +21374,88 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Server-driven paging with table.Table
-	// Note: Requests following the first request which returned an @odata.nextLink do not request
-	// the prefetch size to avoid server load.
+	// Read with server-driven paging in "gaps" does not remove elements behind the gap
 	// JIRA: CPOUI5UISERVICESV3-1908
-	//TODO support table.Table in later change
-	QUnit.skip("Server-driven paging with table.Table", function (assert) {
+	QUnit.test("Server-driven paging with table.Table: no remove behind gap", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{/EMPLOYEES}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template><Text id="text" text="{Name}" /></t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=3", {
+				value : [
+					{ID : "1", Name : "Peter Burke"},
+					{ID : "2", Name : "Frederic Fall"}
+				],
+				"@odata.nextLink" : "~nextLink"
+			})
+			.expectRequest("EMPLOYEES?$skip=2&$top=1", {
+				value : [
+					{ID : "3", Name : "Carla Blue"}
+				]
+			})
+			.expectChange("text", ["Peter Burke", "Frederic Fall", "Carla Blue"]);
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES?$skip=7&$top=3", {
+					value : [
+						{ID : "8", Name : "John Field"},
+						{ID : "9", Name : "Susan Bay"}
+					],
+					"@odata.nextLink" : "~nextLink1"
+				})
+				.expectRequest("EMPLOYEES?$skip=9&$top=1", {
+					value : [
+						{ID : "10", Name : "Daniel Red"}
+					]
+				})
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", [,,,,,,, "John Field", "Susan Bay", "Daniel Red"]);
+
+			that.oView.byId("table").setFirstVisibleRow(7);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES?$skip=3&$top=3", {
+					value : [
+						{ID : "3", Name : "Alice Grey"},
+						{ID : "4", Name : "Bob Green"}
+					],
+					"@odata.nextLink" : "~nextLink2"
+				})
+				.expectRequest("EMPLOYEES?$skip=5&$top=1", {
+					value : [
+						{ID : "5", Name : "Erica Brown"}
+					]
+				})
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", null, null)
+				.expectChange("text", [,,, "Alice Grey", "Bob Green", "Erica Brown"]);
+
+			that.oView.byId("table").setFirstVisibleRow(3);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("text", [,,,,,,, "John Field", "Susan Bay", "Daniel Red"]);
+
+			that.oView.byId("table").setFirstVisibleRow(7);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Server-driven paging with table.Table
+	// Requests following the first request which returned an @odata.nextLink do not request
+	//   the prefetch size to avoid server load.
+	// JIRA: CPOUI5UISERVICESV3-1908
+	QUnit.skip("Server-driven paging with table.Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
 	<t:Column>\
@@ -21005,5 +21527,31 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A property binding with a path using a collection navigation property must not
+	// cause an invalid late property request.
+	QUnit.test("BCP 1970517588: invalid property path", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'TEAM01\')}">\
+	<Text id="teamId" text="{Team_Id}"/>\
+	<Text id="name" text="{TEAM_2_EMPLOYEES/Name}"/>\
+</FlexBox>';
+
+		// once from initialize and once from the context's checkUpdate
+		this.oLogMock.expects("error").twice()
+			.withArgs("Failed to drill-down into TEAM_2_EMPLOYEES/Name, invalid segment: Name");
+
+		this.expectRequest("TEAMS('TEAM01')?$select=Team_Id"
+				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				Team_Id : "TEAM_01",
+				TEAM_2_EMPLOYEES : []
+			})
+			.expectChange("teamId", "TEAM_01")
+			.expectChange("name", null);
+
+		return this.createView(assert, sView, oModel);
 	});
 });

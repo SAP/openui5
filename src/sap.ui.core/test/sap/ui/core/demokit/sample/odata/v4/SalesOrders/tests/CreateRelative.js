@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/test/Opa",
 	"sap/ui/test/TestUtils"
-], function (Log, TestUtils) {
+], function (Log, Opa, TestUtils) {
 	"use strict";
 
 	return {
@@ -15,13 +16,26 @@ sap.ui.define([
 					component : "sap.ui.model.odata.v4.ODataListBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to request side effects",
-					details : "Error: HTTP request was not processed because the previous request"
-						+ " failed"
+					details : "HTTP request was not processed because the previous request failed"
 				},
 				oSideEffectsFailLog2 = {
 					component : "sap.ui.model.odata.v4.ODataContextBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to request side effects",
+					details : "HTTP request was not processed because the previous request failed"
+				},
+				oReadCountFailLog = {
+					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to read path /SalesOrderList",
+					details : "Error: HTTP request was not processed because the previous request "
+						+ "failed"
+				},
+				oReadSchedulesFailLog = {
+					component : "sap.ui.model.odata.v4.ODataListBinding",
+					level : Log.Level.ERROR,
+					message : "Failed to get contexts for /testsuite/proxy/sap/opu/odata4/sap/"
+						+ "zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList",
 					details : "Error: HTTP request was not processed because the previous request "
 						+ "failed"
 				},
@@ -41,7 +55,7 @@ sap.ui.define([
 				}
 			});
 
-			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+			Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 			// Preparation: create a new sales order
 			When.onTheMainPage.firstSalesOrderIsVisible();
@@ -93,7 +107,7 @@ sap.ui.define([
 				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeQuantityInLineItem(0, "0.0");
 				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
-					oSideEffectsFailLog2);
+					oSideEffectsFailLog2, oReadCountFailLog, oReadSchedulesFailLog);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 				When.onTheMainPage.changeQuantityInLineItem(0, "2.0");
@@ -120,7 +134,8 @@ sap.ui.define([
 				aExpectedLogs.push(oUpdateFailLog);
 				When.onTheMainPage.changeNoteInDetails("Sales Order Details Note Changed - 2");
 				aExpectedLogs.push(oSideEffectsFailLog1, oSideEffectsFailLog1,
-					oSideEffectsFailLog2);
+					oSideEffectsFailLog2, oSideEffectsFailLog2, oSideEffectsFailLog2,
+					oReadCountFailLog, oReadSchedulesFailLog);
 				When.onTheMainPage.pressSaveSalesOrderButton();
 				When.onTheMessagePopover.close();
 

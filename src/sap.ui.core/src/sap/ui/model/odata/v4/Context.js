@@ -293,7 +293,9 @@ sap.ui.define([
 			oDependentBinding.setContext(undefined);
 		});
 		this.oBinding = undefined;
-		this.oModel = undefined;
+		// When removing oModel, ManagedObject#getBindingContext does not return the destroyed
+		// context although the control still refers to it
+		// this.oModel = undefined;
 		BaseContext.prototype.destroy.apply(this);
 	};
 
@@ -862,6 +864,12 @@ sap.ui.define([
 	 * pointless requests. There must be only context bindings between this context and its first
 	 * ancestor binding which uses own data service requests.
 	 *
+	 * If the first ancestor binding has an empty path, it is a context binding. In this case, we
+	 * look for the farthest ancestor binding with the following characteristics: It uses own data
+	 * service requests, it can be only reached via empty paths, and it is actually being used. This
+	 * way, side effects are loaded also for siblings of that first ancestor binding which show the
+	 * same data, but useless requests are avoided.
+	 *
 	 * By default, the request uses the update group ID for this context's binding; this way, it can
 	 * easily be part of the same batch request as the corresponding update. <b>Caution:</b> If a
 	 * dependent binding uses a different update group ID, it may lose its pending changes. The same
@@ -915,10 +923,14 @@ sap.ui.define([
 	 * @since 1.61.0
 	 */
 	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
-		var oContext,
+		var that = this,
+			oBinding,
+			oCandidate = /*consistent-this*/that,
+			oContext,
+			oParentContext,
+			sPath,
 			aPaths,
-			sPrefix = "",
-			that = this;
+			sPrefix = "";
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
@@ -946,12 +958,22 @@ sap.ui.define([
 				+ JSON.stringify(oPath));
 		});
 
-		for (oContext = this; !oContext.getBinding().oCache;
-				oContext = oContext.getBinding().getContext()) {
-			if (!oContext.getBinding().getBoundContext) {
-				throw new Error("Not a context binding: " + oContext.getBinding());
+		for (;;) {
+			oBinding = oCandidate.getBinding();
+			sPath = oBinding.getPath();
+			oParentContext = oBinding.getContext();
+			if (oBinding.oCache && (!oContext || oBinding.oCache.hasChangeListeners())) {
+				oContext = oCandidate; // binding with own cache is a good target
 			}
-			sPrefix = _Helper.buildPath(oContext.getBinding().getPath(), sPrefix);
+			if (oContext && sPath) {
+				// bubble further up through empty path only
+				break;
+			}
+			if (!oBinding.getBoundContext) {
+				throw new Error("Not a context binding: " + oBinding);
+			}
+			sPrefix = _Helper.buildPath(sPath, sPrefix);
+			oCandidate = oParentContext;
 		}
 		if (sPrefix) {
 			aPaths = aPaths.map(function (sPath) {
@@ -1029,21 +1051,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calls the given processor with the cache containing this context's data and the absolute
-	 * <code>sPath</code> (by prepending the context path if necessary).
+	 * Calls the given processor with the cache containing this context's data, with the path
+	 * relative to the cache and with the cache-owning binding. Adjusts the path if the cache is
+	 * owned by a parent binding.
 	 *
 	 * @param {function} fnProcessor The processor
 	 * @param {string} sPath The path; either relative to the context or absolute containing
 	 *   the cache's request path (it will become absolute when forwarding the request to the
 	 *   parent binding)
-	 * @returns {sap.ui.base.SyncPromise} A sync promise on the result of the processor
+	 * @param {boolean} [bSync] Whether to use the synchronously available cache
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with either the result of
+	 *   the processor or <code>undefined</code> if there is no cache for this binding, or if the
+	 *   cache determination is not yet completed
 	 */
-	Context.prototype.withCache = function (fnProcessor, sPath) {
+	Context.prototype.withCache = function (fnProcessor, sPath, bSync) {
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
 		return this.oBinding.withCache(fnProcessor,
-			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath));
+			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
+			bSync);
 	};
 
 	oModule = {

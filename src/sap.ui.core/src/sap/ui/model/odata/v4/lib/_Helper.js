@@ -644,16 +644,27 @@ sap.ui.define([
 
 		/**
 		 * Returns the OData metadata model path corresponding to the given OData data model path.
+		 * May also be used on relative paths.
+		 *
+		 * Examples:
+		 * getMetaPath("/EMPLOYEES/0/ENTRYDATE") --> "/EMPLOYEES/ENTRYDATE"
+		 * getMetaPath("/EMPLOYEES('42')/ENTRYDATE") --> "/EMPLOYEES/ENTRYDATE"
+		 * getMetaPath("0/ENTRYDATE") --> "ENTRYDATE"
+		 * getMetaPath("('42')/ENTRYDATE") --> "ENTRYDATE"
 		 *
 		 * @param {string} sPath
-		 *   An absolute data path within the OData data model, for example
-		 *   "/EMPLOYEES/0/ENTRYDATE" or "/EMPLOYEES('42')/ENTRYDATE
+		 *   A data path within the OData data model
 		 * @returns {string}
-		 *   The corresponding metadata path within the OData metadata model, for example
-		 *   "/EMPLOYEES/ENTRYDATE"
+		 *   The corresponding metadata path within the OData metadata model
 		 */
 		getMetaPath : function (sPath) {
-			return sPath.replace(rNotMetaContext, "");
+			if (sPath[0] === "/") {
+				return sPath.replace(rNotMetaContext, "");
+			}
+			if (sPath[0] !== "(") {
+				sPath = "/" + sPath;
+			}
+			return sPath.replace(rNotMetaContext, "").slice(1);
 		},
 
 		/**
@@ -688,11 +699,7 @@ sap.ui.define([
 		 *   falsy
 		 */
 		getQueryOptionsForPath : function (mQueryOptions, sPath) {
-			sPath = sPath[0] === "("
-				? _Helper.getMetaPath(sPath).slice(1) // avoid leading "/"
-				// getMetaPath needs an absolute path, a relative path starting with an index would
-				// not result in a correct meta path -> first add, then remove '/'
-				: _Helper.getMetaPath("/" + sPath).slice(1);
+			sPath = _Helper.getMetaPath(sPath);
 			if (sPath) {
 				sPath.split("/").some(function (sSegment) {
 					mQueryOptions = mQueryOptions && mQueryOptions.$expand
@@ -1198,12 +1205,67 @@ sap.ui.define([
 		uid : uid,
 
 		/**
+		 * Updates the target object with the source object. All properties of the source object are
+		 * taken into account. Fires change events for all changed properties. The function
+		 * recursively handles modified, added or removed structural properties and fires change
+		 * events for all modified/added/removed primitive properties therein.
+		 *
+		 * Restrictions:
+		 * - oTarget and oSource are expected to have the same structure; when there is an
+		 *   object at a given path in either of them, the other one must have an object or
+		 *   <code>null</code>.
+		 * - no change events for collection-valued properties
+		 * - does not update collection-valued navigation properties
+		 *
+		 * @param {object} mChangeListeners A map of change listeners by path
+		 * @param {string} sPath The path of the old object in mChangeListeners
+		 * @param {object} oTarget The target object
+		 * @param {object} oSource The source object
+		 * @returns {object} The target object
+		 */
+		updateAll : function (mChangeListeners, sPath, oTarget, oSource) {
+			Object.keys(oSource).forEach(function (sProperty) {
+				var sPropertyPath = _Helper.buildPath(sPath, sProperty),
+					vSourceProperty = oSource[sProperty],
+					vTargetProperty = oTarget[sProperty];
+
+				if (sProperty === "@$ui5._") {
+					_Helper.setPrivateAnnotation(oTarget, "predicate",
+						_Helper.getPrivateAnnotation(oSource, "predicate"));
+				} else if (Array.isArray(vSourceProperty)) {
+					// copy complete collection; no change events as long as collection-valued
+					// properties are not supported
+					oTarget[sProperty] = vSourceProperty;
+				} else if (vSourceProperty && typeof vSourceProperty === "object") {
+					oTarget[sProperty]
+						= _Helper.updateAll(mChangeListeners, sPropertyPath, vTargetProperty || {},
+								vSourceProperty);
+				} else if (vTargetProperty !== vSourceProperty) {
+					oTarget[sProperty] = vSourceProperty;
+					if (vTargetProperty && typeof vTargetProperty === "object") {
+						_Helper.fireChanges(mChangeListeners, sPropertyPath, vTargetProperty, true);
+					} else {
+						_Helper.fireChange(mChangeListeners, sPropertyPath, vSourceProperty);
+					}
+				}
+			});
+
+			return oTarget;
+		},
+
+		/**
 		 * Updates the old object with the new object. Only existing properties of the old object
 		 * are updated. Fires change events for all changed properties. The function recursively
 		 * handles modified, added or removed structural properties and fires change events for all
-		 * modified/added/removed primitive properties therein. Collection-valued properties are
-		 * only updated in the old object, there are no change events for properties therein. Also
-		 * fires change events for new advertised actions.
+		 * modified/added/removed primitive properties therein. Also fires change events for new
+		 * advertised actions.
+		 *
+		 * Restrictions:
+		 * - oOldObject and oNewObject are expected to have the same structure; when there is an
+		 *   object at a given path in either of them, the other one must have an object or
+		 *   <code>null</code>.
+		 * - no change events for collection-valued properties
+		 * - does not update collection-valued navigation properties
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of the old object in mChangeListeners
@@ -1219,34 +1281,32 @@ sap.ui.define([
 			Object.keys(oOldObject).forEach(function (sProperty) {
 				var sPropertyPath = _Helper.buildPath(sPath, sProperty),
 					vOldProperty = oOldObject[sProperty],
-					vNewProperty;
+					vNewProperty = oNewObject[sProperty];
 
 				if (sProperty in oNewObject || sProperty[0] === "#") {
-					// the property was patched
-					vNewProperty = oNewObject[sProperty];
-					if (vNewProperty && typeof vNewProperty === "object") {
-						if (Array.isArray(vNewProperty)) {
-							// copy complete collection; no change events as long as
-							// collection-valued properties are not supported
-							oOldObject[sProperty] = vNewProperty;
-						} else if (vOldProperty) {
-							// a structural property in cache and patch -> recursion
+					if (Array.isArray(vNewProperty)) {
+						// copy complete collection; no change events as long as collection-valued
+						// properties are not supported
+						oOldObject[sProperty] = vNewProperty;
+					} else if (vNewProperty && typeof vNewProperty === "object") {
+						if (vOldProperty) {
+							// a structural property was modified
 							_Helper.updateExisting(mChangeListeners, sPropertyPath, vOldProperty,
 								vNewProperty);
 						} else {
-							// a structural property was added
+							// a structural property was added; copy the whole structure because we
+							// cannot tell which primitive properties are required therein
 							oOldObject[sProperty] = vNewProperty;
 							_Helper.fireChanges(mChangeListeners, sPropertyPath, vNewProperty,
 								false);
 						}
-					} else if (vOldProperty && typeof vOldProperty === "object") {
-						// a structural property was removed
+					} else if (vOldProperty !== vNewProperty) {
 						oOldObject[sProperty] = vNewProperty;
-						_Helper.fireChanges(mChangeListeners, sPropertyPath, vOldProperty, true);
-					} else {
-						// a primitive property
-						oOldObject[sProperty] = vNewProperty;
-						if (vOldProperty !== vNewProperty) {
+						if (vOldProperty && typeof vOldProperty === "object") {
+							// a structural property was removed
+							_Helper.fireChanges(mChangeListeners, sPropertyPath, vOldProperty,
+								true);
+						} else {
 							_Helper.fireChange(mChangeListeners, sPropertyPath, vNewProperty);
 						}
 					}
@@ -1279,6 +1339,8 @@ sap.ui.define([
 		 *   object at a given path in either of them, the other one must have an object or
 		 *   <code>null</code>.
 		 * - "*" in aSelect does not work correctly if oNewValue contains navigation properties
+		 * - no change events for collection-valued properties
+		 * - does not update navigation properties
 		 *
 		 * @param {object} mChangeListeners
 		 *   A map of change listeners by path
@@ -1309,71 +1371,46 @@ sap.ui.define([
 					var vSourceProperty = oSource[sSegment],
 						vTargetProperty = oTarget[sSegment];
 
-					if (vSourceProperty && typeof vSourceProperty === "object") {
-						oTarget[sSegment] = vTargetProperty || {};
-					} else if (vTargetProperty && typeof vTargetProperty === "object") {
-						oTarget[sSegment] = vSourceProperty; // null or undefined
-						_Helper.fireChanges(mChangeListeners,
-							_Helper.buildPath(sPath, aSegments.slice(0, iIndex + 1).join("/")),
-							vTargetProperty, true);
-						return false;
+					if (Array.isArray(vSourceProperty)) {
+						// copy complete collection; no change events as long as collection-valued
+						// properties are not supported
+						oTarget[sSegment] = vSourceProperty;
+					} else if (vSourceProperty && typeof vSourceProperty === "object") {
+						oTarget = oTarget[sSegment] = vTargetProperty || {};
+						oSource = vSourceProperty;
+						return true;
 					} else if (vTargetProperty !== vSourceProperty) {
 						oTarget[sSegment] = vSourceProperty;
-						if (iIndex === aSegments.length - 1) {
+						if (vTargetProperty && typeof vTargetProperty === "object") {
+							_Helper.fireChanges(mChangeListeners,
+								_Helper.buildPath(sPath, aSegments.slice(0, iIndex + 1).join("/")),
+								vTargetProperty, true);
+						} else if (iIndex === aSegments.length - 1) {
 							_Helper.fireChange(mChangeListeners,
 								_Helper.buildPath(sPath, sPropertyPath), vSourceProperty);
 						}
 						// else a change from undefined to null where an object is expected along a
 						// property path from aSelect
-						return false;
-					} else if (!vTargetProperty) {
-						return false;
 					}
-
-					oTarget = oTarget[sSegment];
-					oSource = vSourceProperty;
-					return true;
-				});
-			}
-
-			/*
-			 * Creates an array of all property paths for a given object
-			 * @param {object} oObject
-			 * @param {string} [sPropertyPath] The path of the complex property
-			 */
-			function buildPropertyPaths(oObject, sPropertyPath) {
-				Object.keys(oObject).forEach(function (sProperty) {
-					var sChildPath, vValue;
-
-					if (sProperty === "@$ui5._") {
-						return; // ignore private namespace
-					}
-
-					sChildPath = _Helper.buildPath(sPropertyPath, sProperty);
-					vValue = oObject[sProperty];
-					if (vValue !== null && typeof vValue === "object") {
-						buildPropertyPaths(vValue, sChildPath);
-					} else {
-						aSelect.push(sChildPath);
-					}
+					return false;
 				});
 			}
 
 			if (!aSelect || aSelect.indexOf("*") >= 0) {
 				// no individual properties selected, fetch all properties of the new value
-				aSelect = [];
-				buildPropertyPaths(oNewValue);
-			} else {
-				// fetch the selected properties plus the ETag;
-				// _Cache#visitResponse is called with the response data before updateSelected
-				// copies the selected values to the cache. visitResponse computes
-				// - $count values for collections, which are not relevant for POST (deep create is
-				//   not yet supported);
-				// - key predicates, which are relevant only for the top level element as no deep
-				//   create is supported
-				// and reports bound messages. Messages need to be copied only if they are selected.
-				aSelect = aSelect.concat("@odata.etag");
+				_Helper.updateAll(mChangeListeners, sPath, oOldValue, oNewValue);
+				return;
 			}
+
+			// fetch the selected properties plus the ETag;
+			// _Cache#visitResponse is called with the response data before updateSelected
+			// copies the selected values to the cache. visitResponse computes
+			// - $count values for collections, which are not relevant for POST (deep create is
+			//   not yet supported);
+			// - key predicates, which are relevant only for the top level element as no deep
+			//   create is supported
+			// and reports bound messages. Messages need to be copied only if they are selected.
+			aSelect = aSelect.concat("@odata.etag");
 
 			// take over properties from the new value and fire change events
 			aSelect.forEach(function (sProperty) {
