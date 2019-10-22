@@ -89,7 +89,8 @@ sap.ui.define(function () {
 				ui5: {
 					resourceroots: {
 						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
-					}
+					},
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
 				},
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/Storage"]
