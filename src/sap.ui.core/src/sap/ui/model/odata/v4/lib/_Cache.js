@@ -254,6 +254,8 @@ sap.ui.define([
 	/**
 	 * Throws an error if the cache is not active.
 	 *
+	 * @throws {Error} If the cache is not active
+	 *
 	 * @private
 	 */
 	Cache.prototype.checkActive = function () {
@@ -914,10 +916,12 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath The path
 	 * @param {object} [oListener] The listener
+	 * @throws {Error} If the cache is not active
 	 *
 	 * @private
 	 */
 	Cache.prototype.registerChange = function (sPath, oListener) {
+		this.checkActive();
 		_Helper.addByPath(this.mChangeListeners, sPath, oListener);
 	};
 
@@ -1581,7 +1585,6 @@ sap.ui.define([
 			this.oSyncPromiseAll = SyncPromise.all(aElements);
 		}
 		return this.oSyncPromiseAll.then(function () {
-			that.checkActive();
 			// register afterwards to avoid that updateExisting fires updates before the first
 			// response
 			that.registerChange(sPath, oListener);
@@ -2176,7 +2179,6 @@ sap.ui.define([
 	PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener) {
 		var that = this;
 
-		that.registerChange("", oListener);
 		if (this.oPromise) {
 			oGroupLock.unlock();
 		} else {
@@ -2186,7 +2188,7 @@ sap.ui.define([
 			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
-			that.checkActive();
+			that.registerChange("", oListener);
 			return oResult.value;
 		});
 	};
@@ -2282,7 +2284,6 @@ sap.ui.define([
 		var sResourcePath = this.sResourcePath + this.sQueryString,
 			that = this;
 
-		this.registerChange(sPath, oListener);
 		if (this.oPromise) {
 			oGroupLock.unlock();
 		} else {
@@ -2301,7 +2302,7 @@ sap.ui.define([
 			this.bSentReadRequest = true;
 		}
 		return this.oPromise.then(function (oResult) {
-			that.checkActive();
+			that.registerChange(sPath, oListener);
 			if (oResult["$ui5.deleted"]) {
 				throw new Error("Cannot read a deleted entity");
 			}
