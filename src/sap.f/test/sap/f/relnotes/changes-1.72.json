@@ -12,6 +12,107 @@
             "reference": "1980405260"
           }
         ]
+      },
+      {
+        "id": "7f7e4327f9e6ca226f829bff4222f96440ca7ae8",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added more background color options",
+        "references": []
+      },
+      {
+        "id": "1f9c5aa9a6830d6c17ea8e7439f740a620084667",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayoutSemanticHelper: New API reliability methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405260"
+          }
+        ]
+      },
+      {
+        "id": "7f3f16ee6f0e666e457506f29d251d53016bc727",
+        "type": "FEATURE",
+        "text": " sap.f.GridList: ResponsiveColumnLayout implementation",
+        "references": []
+      },
+      {
+        "id": "bf0a4518655d1041e1ef0f50ba031fb84c8cd3a3",
+        "type": "FEATURE",
+        "text": " sap.f.ProductSwitch: Implemented new control",
+        "references": []
+      },
+      {
+        "id": "7bce5e4655614e7dc7d525d094484c7468e88f56",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: manifestReady event is added",
+        "references": []
+      },
+      {
+        "id": "83d944e79df49402e187d1b5dca7ff21bdba4ebf",
+        "type": "FIX",
+        "text": " sap.f.Card: Default min height for analytical card now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970517031"
+          }
+        ]
+      },
+      {
+        "id": "b1bf3cbfbcba061b77d1177a0a5a0d9ec6588aaa",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Corrected pin button update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980353295"
+          }
+        ]
+      },
+      {
+        "id": "022e8d77c7cbc3bc190e5f7c9439fc61fc314fe7",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fixed visibility of collapse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "567110"
+          }
+        ]
+      },
+      {
+        "id": "4dd14fb3666aa7c23ceef72fdf06158dc6b71615",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed design time metadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "392895"
+          }
+        ]
+      },
+      {
+        "id": "564a63f89841e409a3dda5558bf175252df89e26",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Hide top container if it is empty",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970462938"
+          }
+        ]
+      },
+      {
+        "id": "558937809b24798beebc7fa00fea423e46f1f422",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Profile button focus outline fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970494492"
+          }
+        ]
       }
     ]
   }

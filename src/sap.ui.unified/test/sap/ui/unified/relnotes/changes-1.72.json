@@ -12,6 +12,63 @@
             "reference": "1970378886"
           }
         ]
+      },
+      {
+        "id": "7318c03e38f3898f48df88a7f3c78b6f57fdd546",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Quartz Light accessibility improvement",
+        "references": []
+      },
+      {
+        "id": "fb2c457f86f99fa8911ba5b0c1e926f036cab27e",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader: When upload empty file event is fired",
+        "references": []
+      },
+      {
+        "id": "22b393011577d929ae8797d82defb4e3d6021966",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Menu: When press tab on open menu you are now navigated to the next focusable element",
+        "references": []
+      },
+      {
+        "id": "2fa080da934806c5dd0977b49c26c14ac6a08ba2",
+        "type": "FIX",
+        "text": " Revert sap.ui.unified.FileUploader: change event is not fired when the cancel button is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970502883"
+          }
+        ]
+      },
+      {
+        "id": "696d19686c17859e319f6f54aae2abf50b4eba30",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection:  State of OK button in the footer managed correctly",
+        "references": []
+      },
+      {
+        "id": "4ea3783ede727b63adb811d7ef8222cc636f8787",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: HEX field shown on mobile devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970480327"
+          }
+        ]
+      },
+      {
+        "id": "d218ee6cf5fb7b93489f6df237898662b9e96d6e",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: semantic rendering fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970518370"
+          }
+        ]
       }
     ]
   }

@@ -264,6 +264,319 @@
             "reference": "1980313804"
           }
         ]
+      },
+      {
+        "id": "a4a3bdf1fb0d6c090fa8df79bdcc4bea0ae0f457",
+        "type": "FEATURE",
+        "text": " ListItemBase: navigated indicator enabled",
+        "references": []
+      },
+      {
+        "id": "b2fc9b0bfd8da73a79c2b20d0ab8a90d156f1b17",
+        "type": "FEATURE",
+        "text": " sap.m.Dialog: closeOnNavigation property is added",
+        "references": []
+      },
+      {
+        "id": "6df03b5aedf70d006a89e06631b2e7c9633a0866",
+        "type": "FEATURE",
+        "text": " sap.m.ListBase: Swipe direction parameter in Swipe event provided.",
+        "references": []
+      },
+      {
+        "id": "c9546822eebe3d90fee50698c891f526571699a6",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: Responsive paddings enablement",
+        "references": []
+      },
+      {
+        "id": "16f980e7dd9ecc952b8cb578bd1f64b013efd729",
+        "type": "FEATURE",
+        "text": " sap.m.SuggestionsPopover: Multiline value state support",
+        "references": []
+      },
+      {
+        "id": "9c69eb2a4ebd3edad24938465f7643515be5c11c",
+        "type": "FEATURE",
+        "text": "[FIX] GenericTile breathing \u0026 language fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "49891"
+          }
+        ]
+      },
+      {
+        "id": "d6964adf46699b276e255602f356beaf94b4d4b6",
+        "type": "FIX",
+        "text": " GenericTile title extends beyond 2 lines in ContentMode in IE, FF and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980152703"
+          }
+        ]
+      },
+      {
+        "id": "33f6778ad746f5218f1567b9b24ee6bb569c934f",
+        "type": "FIX",
+        "text": " Samples are now loading without error",
+        "references": []
+      },
+      {
+        "id": "d6d8f40af43f63a99745ef3e05a9007c2d05da6d",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Buttons are correctly positioned",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970472565"
+          }
+        ]
+      },
+      {
+        "id": "9f4e19fb4e39e105ac0b7ccbae2e3d314919bab4",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: GroupHeaderListItem styles adjusted in compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980062789"
+          }
+        ]
+      },
+      {
+        "id": "8245053854b0a706d5a905703a5ced898cd9e1de",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: ValueStateMessage is closed when picker is open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980401917"
+          }
+        ]
+      },
+      {
+        "id": "696d19686c17859e319f6f54aae2abf50b4eba30",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection:  State of OK button in the footer managed correctly",
+        "references": []
+      },
+      {
+        "id": "b673d38430d5e086cbb3db5ea71670ee0113a034",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: State of OK button in the footer managed correctly",
+        "references": []
+      },
+      {
+        "id": "0da329e1b0d062f668fcc43fadec8c4cbc601183",
+        "type": "FIX",
+        "text": " sap.m.Dialog: resizes correctly when it is draggable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970480556"
+          }
+        ]
+      },
+      {
+        "id": "77af4a08c2462796ba24b313b53b22fc761a1bc8",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: When in IconTabBar and in Split mode focus no longer goes outside the box",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405114"
+          }
+        ]
+      },
+      {
+        "id": "cbd3d92c2300884098ed4a4592b7b0b5c5a10edb",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Aria-labelledby attribute is set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980401950"
+          }
+        ]
+      },
+      {
+        "id": "ce1d72c76389e00c9defcbc62c3e3aba1c9e3237",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Read-only popover is no longer empty upon opening",
+        "references": []
+      },
+      {
+        "id": "902a611bb834eabf40d9b09b8a2f93ed76c6488a",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Empty Popover is not shown anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970480882"
+          }
+        ]
+      },
+      {
+        "id": "f9dbce4a2823a1db67837bb10f93db18c6c79ff8",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fixed flickering",
+        "references": []
+      },
+      {
+        "id": "cb2192760cd250c3262edf09767a7363fa032fdb",
+        "type": "FIX",
+        "text": " sap.m.Panel: Panel with OverflowToolbar rendering issue fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980363546"
+          }
+        ]
+      },
+      {
+        "id": "a97194646e57016c6ae45e43662eb6f1cfe25de1",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation doesn\u0027t throw an error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970504591"
+          }
+        ]
+      },
+      {
+        "id": "7dd1606dd8ad4954ad9723c6e71a0887f9da3f78",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Sticky header adjusted properly onThemeChanged",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970484883"
+          }
+        ]
+      },
+      {
+        "id": "92bf67158ee3101af80d0ef29fd3683dae655ebe",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: visual bug in row header fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970487808"
+          }
+        ]
+      },
+      {
+        "id": "ca30aedf5ef6671ddfeb6f79295dbc581cb43971",
+        "type": "FIX",
+        "text": " sap.m.QuickViewCard: Focus of the link as title is on the four sides now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980423560"
+          }
+        ]
+      },
+      {
+        "id": "525a857416ec79eb9e4bbc84cd41b0ca6be4f658",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: designtime fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970496112"
+          }
+        ]
+      },
+      {
+        "id": "95505d3abdc4ce7e7cc3dfebf6470128c5e37bc2",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Appointment select event is handled properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970504655"
+          }
+        ]
+      },
+      {
+        "id": "18e1be41dc005297c9bb627d2684354bbfc4d204",
+        "type": "FIX",
+        "text": " sap.m.StepInput: No infinite spinning on long-press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970458141"
+          }
+        ]
+      },
+      {
+        "id": "052bf797af6ce2ef031adb47263820632fbbdb43",
+        "type": "FIX",
+        "text": " sap.m.StepInput: respects min and max binding constraints",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970359174"
+          }
+        ]
+      },
+      {
+        "id": "65d0675a59e293899c7ddd8c33d10aaea216d11c",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Removing a bound item corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970471129"
+          }
+        ]
+      },
+      {
+        "id": "4d62c2dbfa2d5ef3bedd0ab622b5c9d4ec1a2d19",
+        "type": "FIX",
+        "text": " sap.m.TextArea: maxLength is now working on phone",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980364115"
+          }
+        ]
+      },
+      {
+        "id": "7c7956464075c0f78d2ea96e8ea282f6fa1fdd5d",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Fixed vertical alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970464090"
+          }
+        ]
+      },
+      {
+        "id": "860be40f82e50b094d058eb05b0b8a4c934ce495",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970479184"
+          }
+        ]
+      },
+      {
+        "id": "cee9e2c875bcd4acfcc3008ac93110214f4cf023",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Sample adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970478978"
+          }
+        ]
       }
     ]
   }

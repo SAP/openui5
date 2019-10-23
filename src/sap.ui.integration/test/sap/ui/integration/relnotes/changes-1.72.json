@@ -7,6 +7,23 @@
         "type": "FEATURE",
         "text": " sap.ui.integration.widgets.Card: Predefined parameter LOCALE is available now",
         "references": []
+      },
+      {
+        "id": "7bce5e4655614e7dc7d525d094484c7468e88f56",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: manifestReady event is added",
+        "references": []
+      },
+      {
+        "id": "83d944e79df49402e187d1b5dca7ff21bdba4ebf",
+        "type": "FIX",
+        "text": " sap.f.Card: Default min height for analytical card now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970517031"
+          }
+        ]
       }
     ]
   }
