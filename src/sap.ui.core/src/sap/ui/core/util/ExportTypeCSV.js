@@ -38,6 +38,7 @@ sap.ui.define(['./ExportType'],
 	 * @since 1.22.0
 	 *
 	 * @public
+	 * @deprecated Since version 1.73
 	 * @alias sap.ui.core.util.ExportTypeCSV
 	 */
 	var CSV = ExportType.extend('sap.ui.core.util.ExportTypeCSV', {

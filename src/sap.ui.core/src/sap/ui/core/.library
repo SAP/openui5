@@ -407,6 +407,13 @@
             <name>CA-UI5-TBL</name>
             <modules>
                 <module>sap/ui/core/dnd/*</module>
+                <module>sap/ui/core/util/Export</module>
+                <module>sap/ui/core/util/ExportCell</module>
+                <module>sap/ui/core/util/ExportColumn</module>
+                <module>sap/ui/core/util/ExportRow</module>
+                <module>sap/ui/core/util/ExportType</module>
+                <module>sap/ui/core/util/ExportTypeCSV</module>
+                <module>sap/ui/core/util/File</module>
             </modules>
         </component>
 
