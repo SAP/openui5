@@ -1,31 +1,39 @@
 {
-  "_version": "1.15.0",
-  "sap.app": {
-    "id": "sap.ui.demo.cardExplorer.samples.component.cardContentHeaderBottom",
-    "type": "card",
-    "applicationVersion": {
-      "version": "1.0.0"
-    }
-  },
-  "sap.ui5": {
-    "rootView": {
-      "viewName": "sap.ui.demo.cardExplorer.samples.component.cardContentHeaderBottom.View",
-      "type": "XML",
-      "async": true,
-      "id": "app"
-    },
-    "dependencies": {
-      "minUI5Version": "1.38",
-      "libs": {
-        "sap.m": {}
-      }
-    }
-  },
-  "sap.card": {
-    "type": "Component",
-    "headerPosition": "Bottom",
-    "header": {
-      "title": "Office Supplies, Books, Subscriptions"
-    }
-  }
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.demo.cardExplorer.samples.component.cardContentHeaderBottom",
+		"type": "card",
+		"title": "Sample of a Component with a Bottom Header",
+		"subTitle": "Sample of a Component  with a Bottom Header",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://technical-object"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.cardExplorer.samples.component.cardContentHeaderBottom.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.38",
+			"libs": {
+				"sap.m": {}
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"headerPosition": "Bottom",
+		"header": {
+			"title": "Office Supplies, Books, Subscriptions"
+		}
+	}
 }

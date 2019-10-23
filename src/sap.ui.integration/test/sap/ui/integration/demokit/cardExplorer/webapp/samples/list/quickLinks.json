@@ -2,7 +2,15 @@
 	"_version": "1.15.0",
 	"sap.app": {
 		"id": "card.explorer.quick.links.list.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a List with Quick Links",
+		"subTitle": "Sample of a List with Quick Links"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
 	},
 	"sap.card": {
 		"type": "List",

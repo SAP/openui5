@@ -2,7 +2,15 @@
 	"_version": "1.14.0",
 	"sap.app": {
 		"id": "card.explorer.numeric.list.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a List with Numeric Header",
+		"subTitle": "Sample of a List with Numeric Header"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
 	},
 	"sap.card": {
 		"type": "List",

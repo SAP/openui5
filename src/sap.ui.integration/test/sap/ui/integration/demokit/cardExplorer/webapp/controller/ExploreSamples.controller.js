@@ -82,7 +82,6 @@ sap.ui.define([
 			this._sEditSource = null;
 
 		},
-
 		onCodeEditorChange: function (oEvent) {
 			if (this._sEditSource !== "cardEditor") {
 				var sValue = oEvent.getParameter("value");
@@ -138,7 +137,36 @@ sap.ui.define([
 			var isOrientationVertical = exploreSettingsModel.getProperty("/splitViewVertically");
 			this.getView().byId("splitView").getRootPaneContainer().setOrientation(isOrientationVertical ? "Vertical" : "Horizontal");
 		},
+		onDownloadFile: function () {
+			var oCardEditor = this.byId("cardEditor"),
+				sJSON = JSON.stringify(oCardEditor.getJson(), null, "\t");
+			sap.ui.require([
+				"sap/ui/core/util/File"
+			], function (File) {
+				File.save(sJSON, "manifest", "json", "application/json");
+			});
 
+		},
+		_onDownloadCompressed: function (sType) {
+			var oCardEditor = this.byId("cardEditor"),
+				oJSON = oCardEditor.getJson(),
+				sName = oJSON["sap.app"] && oJSON["sap.app"] ? oJSON["sap.app"].id.replace(/\./g,"-") : "exported",
+				sJSON = JSON.stringify(oJSON, null, "\t");
+			sap.ui.require([
+				"sap/ui/thirdparty/jszip",
+				"sap/ui/core/util/File"
+			], function (JSZip, File) {
+				var oZipFile = new JSZip();
+				oZipFile.folder(sName).file("manifest.json", sJSON, "manifest.json");
+				File.save(oZipFile.generate({ type: "blob" }), sName, sType, "application/zip");
+			});
+		},
+		onDownloadBundle: function () {
+			this._onDownloadCompressed("card");
+		},
+		onDownloadZip: function () {
+			this._onDownloadCompressed("zip");
+		},
 		showError: function (sMessage) {
 			if (sMessage) {
 				this._errorMessageStrip.setVisible(true);

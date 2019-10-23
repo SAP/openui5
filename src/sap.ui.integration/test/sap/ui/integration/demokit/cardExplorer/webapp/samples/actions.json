@@ -2,7 +2,15 @@
 	"_version": "1.15.0",
 	"sap.app": {
 		"id": "card.explorer.actions.list.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of Actions in Cards",
+		"subTitle": "Sample of Actions in Cards"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
 	},
 	"sap.card": {
 		"type": "List",
