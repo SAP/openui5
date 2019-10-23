@@ -666,10 +666,6 @@ function(
 		}.bind(this), 0);
 	};
 
-	ListBase.prototype.unbindAggregation = function(sName) {
-		return Control.prototype.unbindAggregation.call(this, sName, this.getGrowing());
-	};
-
 	ListBase.prototype.destroyItems = function(bSuppressInvalidate) {
 		// check whether we have items to destroy or not
 		if (!this.getItems(true).length) {
