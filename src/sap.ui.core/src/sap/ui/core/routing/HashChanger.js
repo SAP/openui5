@@ -294,7 +294,10 @@ sap.ui.define([
 	HashChanger.prototype.getRelevantEventsInfo = function() {
 		return [
 			{
-				name: "hashChanged"
+				name: "hashChanged",
+				paramMapping: {
+					fullHash: "newHash"
+				}
 			}
 		];
 	};
