@@ -53,9 +53,6 @@ sap.ui.define(["sap/ui/Device"],
 			if (bTitleClickable) {
 				oRm.addClass("sapUxAPObjectPageLayoutTitleClickEnabled");
 			}
-			if (oAnchorBar) {
-				oRm.addClass("sapUxAPObjectPageLayoutWithNavigation");
-			}
 
 			oRm.writeClasses();
 			oRm.addStyle("height", oControl.getHeight());
@@ -107,6 +104,7 @@ sap.ui.define(["sap/ui/Device"],
 			}
 			oRm.addClass("sapUxAPObjectPageStickyAnchorBar");
 			oRm.addClass("sapUxAPObjectPageNavigation");
+			oRm.addClass("ui-helper-clearfix");
 
 			if (sBackgroundDesign) {
 				oRm.addClass("sapUxAPObjectPageNavigation" + sBackgroundDesign);
@@ -154,6 +152,7 @@ sap.ui.define(["sap/ui/Device"],
 				oRm.writeAttributeEscaped("aria-label", sNavigationAriaLabelText);
 			}
 			oRm.addClass("sapUxAPObjectPageNavigation");
+			oRm.addClass("ui-helper-clearfix");
 			oRm.addClass("sapContrastPlus");
 
 			if (sBackgroundDesign) {

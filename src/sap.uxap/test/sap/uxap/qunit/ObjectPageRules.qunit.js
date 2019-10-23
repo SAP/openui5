@@ -188,19 +188,24 @@ function($, Core, XMLView, App) {
 	});
 
 	QUnit.test("ObjectPageId 3: DynamicPageTitle  AnchorBar padding top CSS functionality", function (assert) {
-		var $stickyAnchorBar = this.referencedObjectPage3._$stickyAnchorBar;
+		var oAnchorBar = this.referencedObjectPage3.getAggregation("_anchorBar"),
+			oAnchorBarDom = oAnchorBar.getDomRef();
+
+		function hasTopMargin() {
+			return getComputedStyle(oAnchorBarDom).marginTop > "0px";
+		}
 
 		this.referencedObjectPage3._pin();
-		assert.ok($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is applied");
+		assert.ok(hasTopMargin(), "DynamicPageTitle AnchorBar has top margin");
 
 		this.referencedObjectPage3._expandHeader(false);
-		assert.notOk($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is removed");
+		assert.ok(hasTopMargin(), "DynamicPageTitle AnchorBar has top margin");
 
 		this.referencedObjectPage3._expandHeader(true);
-		assert.ok($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is applied");
+		assert.ok(hasTopMargin(), "DynamicPageTitle AnchorBar has top margin");
 
 		this.referencedObjectPage3._toggleHeader(false);
-		assert.notOk($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is removed");
+		assert.ok(hasTopMargin(), "DynamicPageTitle AnchorBar has top margin");
 	});
 
 	QUnit.module("Title Propagation Support based on UX Rules", {
