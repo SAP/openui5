@@ -12,6 +12,23 @@
             "reference": "1980423718"
           }
         ]
+      },
+      {
+        "id": "7f7e4327f9e6ca226f829bff4222f96440ca7ae8",
+        "type": "FEATURE",
+        "text": " sap.f.Avatar: Added more background color options",
+        "references": []
+      },
+      {
+        "id": "77af4a08c2462796ba24b313b53b22fc761a1bc8",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: When in IconTabBar and in Split mode focus no longer goes outside the box",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405114"
+          }
+        ]
       }
     ]
   }

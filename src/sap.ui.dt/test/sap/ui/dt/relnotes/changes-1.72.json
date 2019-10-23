@@ -1,0 +1,18 @@
+{
+  "1.72.0": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "0ffcda9076d22b60755541a9e83d228505343b87",
+        "type": "FIX",
+        "text": ": RTA - do not change focus on closing Minimenu",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970471990"
+          }
+        ]
+      }
+    ]
+  }
+}
