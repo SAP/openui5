@@ -466,6 +466,28 @@ function(
 			assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then '_updateChangesForVariantManagementInMap' of VariantController called");
 		});
 
+		QUnit.test("when calling 'setVariantProperties' for 'setDefault' to delete a change while current variant is not the default variant", function(assert) {
+			var fnUpdateChangesForVariantManagementInMap = sandbox.stub(this.oModel.oVariantController, "_updateChangesForVariantManagementInMap").returns(1);
+			var fnChangeStub = sandbox.stub().returns({ getDefinition : function() {} });
+			var fnDeleteChangeStub = sandbox.stub(this.oModel.oChangePersistence, "deleteChange");
+			var fnUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
+			var mPropertyBag = {
+				changeType : "setDefault",
+				defaultVariant : "variant0",
+				variantManagementReference : "variantMgmtId1",
+				change : fnChangeStub()
+			};
+			this.oModel.oVariantController._mVariantManagement = {};
+			this.oModel.oVariantController._mVariantManagement["variantMgmtId1"] = {defaultVariant : this.oData["variantMgmtId1"].defaultVariant};
+
+			var oChange = this.oModel.setVariantProperties("variantMgmtId1", mPropertyBag, false);
+			assert.ok(fnUpdateCurrentVariantStub.calledOnce, "then 'updateCurrentVariant' called");
+			assert.notOk(oChange, "then no change returned");
+			assert.ok(fnDeleteChangeStub.calledWith(mPropertyBag.change), "then 'FlexController.deleteChange' called with the passed change");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].defaultVariant, mPropertyBag.defaultVariant, "then the parameter 'defaultVariant' updated in the VariantModel");
+			assert.ok(fnUpdateChangesForVariantManagementInMap.calledOnce, "then '_updateChangesForVariantManagementInMap' of VariantController called");
+		});
+
 		QUnit.test("when calling 'setVariantProperties' for 'setDefault' with different current and default variants, in UI adaptation mode", function(assert) {
 			var mPropertyBag = {
 				changeType : "setDefault",
