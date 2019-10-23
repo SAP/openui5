@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for ListFormat - must not be used: To get a ListFormat instance, please use getInstance.
+	 * Constructor for ListFormat - must not be used: To get a ListFormat instance, please use <code>ListFormat.getInstance()</code>.
 	 *
 	 * @class
 	 * The ListFormat is a static class for formatting and parsing an array of strings in a locale-sensitive manner according
@@ -159,7 +159,7 @@ sap.ui.define([
 				oOriginalFormat = this.oOriginalFormatOptions,
 				mListPatterns,
 				rPlaceholder = /\{[01]\}/g,
-				sEnd, sSeperatorExactNumber, sSeparatorStart, sSeparatorMiddle, sSeparatorEnd;
+				sEnd, sSeparatorExactNumber, sSeparatorStart, sSeparatorMiddle, sSeparatorEnd;
 
 		if (!oOriginalFormat) {
 			oOriginalFormat = ListFormat.oDefaultListFormat;
@@ -192,9 +192,9 @@ sap.ui.define([
 
 		if (aStart.length < 1 || aMiddle.length < 1 || aEnd.length < 1) {
 			// if start, middle or end pattern do not match, then test type 2 pattern
-			sSeperatorExactNumber = mListPatterns["2"].replace(rPlaceholder, "");
+			sSeparatorExactNumber = mListPatterns["2"].replace(rPlaceholder, "");
 			// parse exact number
-			aExactNumber = sValue.split(sSeperatorExactNumber);
+			aExactNumber = sValue.split(sSeparatorExactNumber);
 
 			if (aExactNumber.length === 2) {
 				return aExactNumber;
