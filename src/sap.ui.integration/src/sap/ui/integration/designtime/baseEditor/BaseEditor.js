@@ -174,21 +174,20 @@ sap.ui.define([
 		renderer: function(oRm, oControl) {
 			var aContent = oControl.getContent();
 
+			oRm.openStart("div", oControl);
+			oRm.openEnd();
 
 			if (aContent.length) {
 				aContent.forEach(function(oChildControl) {
 					oRm.renderControl(oChildControl);
 				});
 			} else {
-				oRm.openStart("div", oControl);
-				oRm.openEnd();
-
 				oControl.getPropertyEditorsSync().forEach(function(oPropertyEditor) {
 					oRm.renderControl(oPropertyEditor);
 				});
-
-				oRm.close("div");
 			}
+
+			oRm.close("div");
 		}
 	});
 
