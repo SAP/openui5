@@ -69,9 +69,6 @@ sap.ui.define([
 		// shortcut for sap.m.TitleAlignment
 		var TitleAlignment = library.TitleAlignment;
 
-		// a buffer width for the HTML container scrollbar
-		var iScrollbarWidth = 20;
-
 		/**
 		* Constructor for a new Popover.
 		*
@@ -1025,10 +1022,8 @@ sap.ui.define([
 					$popoverContent.width() < iMaxWidth) {		// - if the popover hasn't reached a threshold size
 
 					$popover.addClass("sapMPopoverVerticalScrollIncluded");
-					$popoverContent.css({"padding-right": iScrollbarWidth});
 				} else {
 					$popover.removeClass("sapMPopoverVerticalScrollIncluded");
-					$popoverContent.css({"padding-right": ""});
 				}
 			}
 		};
