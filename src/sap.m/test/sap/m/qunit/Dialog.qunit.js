@@ -2024,4 +2024,48 @@ sap.ui.define([
 		}.bind(this), 1000);
 
 	});
+
+	QUnit.module("TitleAlignmentMixin Test", {
+		beforeEach: function() {
+			this.oDialog = new Dialog({
+				title: "Header",
+				buttons: [ new Button() ]
+			});
+		},
+		afterEach: function() {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("setTitleAlignment test", function (assert) {
+
+		var initialTheme = sap.ui.getCore().getConfiguration().getTheme(),
+			themeAlignment = sap.ui.core.theming.Parameters.get("sapMTitleAlignment"),
+			themeAlignmentName = themeAlignment ? themeAlignment : 'not defined',
+			haveStartClass = themeAlignment === "Start" ? true : false,
+			startClass = "sapMBarTitleStart",
+			setTitleAlignmentSpy = this.spy(this.oDialog, "setTitleAlignment");
+
+		this.oDialog.open();
+
+		// initial titleAlignment test depending on theme
+		assert.equal(this.oDialog._header.hasStyleClass(startClass), haveStartClass, "'" + initialTheme + "' theme detected, the default theme alignment is '" + themeAlignmentName + "', so there is " + (haveStartClass ? '' : 'no') + " class '" + startClass + "' applied to the Header");
+
+		// set titleAlignment to Start
+		this.oDialog.setTitleAlignment("Start");
+		assert.equal(this.oDialog._header.hasStyleClass(startClass), true, "titleAlignment is set to 'Start', there is class '" + startClass + "' applied to the Header");
+
+		// set titleAlignment to Center
+		this.oDialog.setTitleAlignment("Center");
+		assert.equal(this.oDialog._header.hasStyleClass(startClass), false, "titleAlignment is set to 'Center', there is no class '" + startClass + "' applied to the Header");
+
+		// set titleAlignment to Auto
+		this.oDialog.setTitleAlignment("Auto");
+		assert.equal(this.oDialog._header.hasStyleClass(startClass), haveStartClass, "'" + initialTheme + "' theme detected, the default theme alignment is '" + themeAlignmentName + "', so there is " + (haveStartClass ? '' : 'no') + " class '" + startClass + "' applied to the Header");
+
+		// check how many times setTitleAlignment method is called
+		assert.equal(setTitleAlignmentSpy.callCount, 3, "'setTitleAlignment' method is called total " + setTitleAlignmentSpy.callCount + " times");
+
+	});
+
 });

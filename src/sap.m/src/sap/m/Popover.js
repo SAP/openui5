@@ -10,6 +10,7 @@ sap.ui.define([
 	'./InstanceManager',
 	'./library',
 	'./Title',
+	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
 	'sap/ui/core/delegate/ScrollEnablement',
@@ -36,6 +37,7 @@ sap.ui.define([
 		InstanceManager,
 		library,
 		Title,
+		TitleAlignmentMixin,
 		Control,
 		Popup,
 		ScrollEnablement,
@@ -64,8 +66,12 @@ sap.ui.define([
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType;
 
+		// shortcut for sap.m.TitleAlignment
+		var TitleAlignment = library.TitleAlignment;
+
 		// a buffer width for the HTML container scrollbar
 		var iScrollbarWidth = 20;
+
 		/**
 		* Constructor for a new Popover.
 		*
@@ -228,7 +234,16 @@ sap.ui.define([
 					 * @since 1.70
 					 * @private
 					 */
-					ariaModal: {type: "boolean", group: "Misc", defaultValue: true, visibility: "hidden"}
+					ariaModal: {type: "boolean", group: "Misc", defaultValue: true, visibility: "hidden"},
+
+					/**
+					 * Specifies the Title alignment (theme specific).
+					 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+					 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+					 * @since 1.72
+					 * @public
+					 */
+					titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -2084,6 +2099,10 @@ sap.ui.define([
 			if (!this._internalHeader) {
 				var that = this;
 				this._internalHeader = new Bar(this.getId() + "-intHeader");
+
+				// call the method that registers this Bar for alignment
+				this._setupBarTitleAlignment(this._internalHeader, this.getId() + "_internalHeader");
+
 				this.setAggregation("_internalHeader", this._internalHeader);
 				this._internalHeader.addEventDelegate({
 					onAfterRendering: function () {
@@ -2629,6 +2648,9 @@ sap.ui.define([
 		Popover.prototype._applyContextualSettings = function () {
 			ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 		};
+
+		// enrich the control functionality with TitleAlignmentMixin
+		TitleAlignmentMixin.mixInto(Popover.prototype);
 
 		return Popover;
 	});
