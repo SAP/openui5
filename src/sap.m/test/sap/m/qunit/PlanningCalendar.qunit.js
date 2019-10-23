@@ -2754,6 +2754,9 @@ sap.ui.define([
 			),
 			fnAdjustColumnHeader = sinon.spy(oPC, "_adjustColumnHeadersTopOffset");
 
+		// assert
+		assert.strictEqual(fnAdjustColumnHeader.callCount, 0, "_adjustColumnHeadersTopOffset() is not called if the control is not rendered");
+
 		// act
 		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();

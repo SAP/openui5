@@ -1071,7 +1071,10 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype.onThemeChanged = function() {
-		this._adjustColumnHeadersTopOffset();
+		// adjust offset only if the control is rendered
+		if (this.getDomRef()) {
+			this._adjustColumnHeadersTopOffset();
+		}
 	};
 
 	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
