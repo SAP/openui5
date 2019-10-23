@@ -175,6 +175,10 @@ sap.ui.define([
 		oTable.qunit.pInitialRenderingFinished = new Promise(function(resolve) {
 			oTable.qunit.fnResolveInitialRenderingFinished = resolve;
 		});
+		oTable.qunit.bInitialRenderingFinished = false;
+		oTable.qunit.pInitialRenderingFinished.then(function() {
+			oTable.qunit.bInitialRenderingFinished = true;
+		});
 		oTable.qunit.pRenderingFinished = null;
 
 		function waitForUnpredictableEvents() {
@@ -253,8 +257,22 @@ sap.ui.define([
 		function wrapForRenderingDetection(oObject, sFunctionName) {
 			var fnOriginalFunction = oObject[sFunctionName];
 			oObject[sFunctionName] = function() {
-				if (oTable.qunit.pRenderingFinished == null) {
-					oTable.qunit.pRenderingFinished = oTable.qunit.whenNextRenderingFinished().then(function() {
+				if (oTable.qunit.pRenderingFinished == null && oTable.qunit.bInitialRenderingFinished) {
+					if (oTable.getBinding("rows")) {
+						oTable.qunit.pRenderingFinished = oTable.qunit.whenNextRenderingFinished();
+					} else {
+						// A table without binding does not fire _rowsUpdated events.
+						oTable.qunit.pRenderingFinished = new Promise(function(resolve) {
+							TableQUnitUtils.addEventDelegateOnce(oTable, "onAfterRendering", function() {
+								if (!oTable.getBinding("rows")) {
+									waitForUnpredictableEvents().then(resolve);
+								} else {
+									oTable.qunit.whenNextRenderingFinished().then(resolve);
+								}
+							});
+						});
+					}
+					oTable.qunit.pRenderingFinished = oTable.qunit.pRenderingFinished.then(function() {
 						oTable.qunit.pRenderingFinished = null;
 					});
 				}
