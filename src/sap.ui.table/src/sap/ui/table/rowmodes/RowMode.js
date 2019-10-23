@@ -62,7 +62,19 @@ sap.ui.define([
 	var TableDelegate = {};
 
 	RowMode.prototype.init = function(oTableDelegate) {
-		this._bTableIsRendering = false;
+		/*
+		 * Flag indicating whether the first _rowsUpdated event after rendering was fired.
+		 *
+		 * @type {boolean}
+		 */
+		this._bFiredRowsUpdatedAfterRendering = false;
+
+		/*
+		 * Flag indicating whether the row mode is currently listening for the first _rowsUpdated event after rendering.
+		 *
+		 * @type {boolean}
+		 */
+		this._bListeningForFirstRowsUpdatedAfterRendering = false;
 
 		/**
 		 * Updates the table asynchronously according to the current computed row count.
@@ -209,7 +221,7 @@ sap.ui.define([
 		// Update the rows aggregation and the row's binding contexts.
 		var bRowsAggregationChanged = this.updateTableRows();
 
-		if (oTable._bInvalid || this._bTableIsRendering) {
+		if (oTable._bInvalid) {
 			// No need to update the DOM or fire the _rowsUpdated event if the table is about to rerender, or is currently rendering.
 			return;
 		}
@@ -694,15 +706,12 @@ sap.ui.define([
 	/**
 	 * @this sap.ui.table.rowmodes.RowMode
 	 */
-	TableDelegate.onBeforeRendering = function() {
-		this._bTableIsRendering = true;
-	};
+	TableDelegate.onBeforeRendering = function(oEvent) {
+		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
-	/**
-	 * @this sap.ui.table.rowmodes.RowMode
-	 */
-	TableDelegate.onAfterRendering = function() {
-		this._bTableIsRendering = false;
+		if (!bRenderedRows) {
+			this._bFiredRowsUpdatedAfterRendering = false;
+		}
 	};
 
 	return RowMode;
