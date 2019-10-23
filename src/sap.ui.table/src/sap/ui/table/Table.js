@@ -1107,7 +1107,7 @@ sap.ui.define([
 		var sRowCSSClass = bHeader ? ".sapUiTableColHdrTr" : ".sapUiTableTr";
 		var aRowsInFixedColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlFixed > tbody > tr" + sRowCSSClass);
 		var aRowsInScrollableColumnsArea = oDomRef.querySelectorAll(".sapUiTableCtrlScroll > tbody > tr" + sRowCSSClass);
-		var iRowCount = this.getRows().length;
+		var iRowCount = bHeader ? TableUtils.getHeaderRowCount(this) : this.getRows().length;
 		var aRowHeights = [];
 		var bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
 
