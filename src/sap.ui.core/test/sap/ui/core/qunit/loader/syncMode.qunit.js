@@ -248,13 +248,99 @@
 
 
 
+	//====================================================
+	// error handling
+	//====================================================
+
+	QUnit.module('Error Handling', {});
+
+	/*
+	 * Helper to check error reporting of the (sap.ui.)require implementation.
+	 *
+	 * When an error callback is given, the implementation reports errors always via that callback.
+	 * If none is given, it might throw synchronously, in a new task or in a micro task.
+	 * This helper covers all 3 ways to decouple the tests from the implementation.
+	 */
+	function shouldThrow(assert, fnAct, expectedError) {
+		var done = assert.async();
+		var oldOnError = window.onerror;
+
+		function checkAndRestore(msg, qualifier) {
+			window.removeEventListener("error", onError);
+			window.removeEventListener("unhandledrejection", onUnhandledRejection);
+			window.onerror = oldOnError;
+			assert.ok(expectedError.test(msg), "message of " + qualifier + " should match the expected message");
+			done();
+		}
+
+		function onError(e) {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+			checkAndRestore(e.message, "uncaught global error");
+		}
+
+		function onUnhandledRejection(e) {
+			e.stopImmediatePropagation();
+			e.preventDefault();
+			checkAndRestore(e.reason && e.reason.message, "unhandled rejection reason");
+		}
+
+		window.onerror = null; // deactivate qunit global error handler
+		window.addEventListener("error", onError);
+		window.addEventListener("unhandledrejection", onUnhandledRejection);
+
+		try {
+			fnAct();
+		} catch (err) {
+			checkAndRestore(err && err.message, "synchronously thrown error");
+		}
+	}
+
+	QUnit.test("Execution Error (errback)", function(assert) {
+		sap.ui.predefine('sap/test/FailingModule', [], function() {
+			throw new Error("Sorry, my fault");
+		});
+		var done = assert.async();
+		sap.ui.require(['sap/test/FailingModule'], function (mod1) {
+			assert.ok(false, "callback should never be reached");
+		}, function(err) {
+			assert.ok(err && /Sorry, my fault/i.test(err.message), "module loading should fail in case of an execution error");
+			done();
+		});
+
+	});
+
+	QUnit.test("Execution Error (no errback)", function(assert) {
+		sap.ui.predefine('sap/test/FailingModule', [], function() {
+			throw new Error("Sorry, my fault");
+		});
+
+		shouldThrow(assert, function() {
+			sap.ui.require(['sap/test/FailingModule'], function (mod1) {
+				assert.ok(false, "callback should never be reached");
+			});
+		}, /Sorry, my fault/i);
+	});
+
+
+
 	//****************************************************
 	// module name resolution (sap.ui.define)
 	//****************************************************
 
 	QUnit.module('Module Name Resolution', {
 
+		unloadTestModules: function() {
+			jQuery.sap.unloadResources('sap/test/myapp/Component.js', false, true, true);
+			jQuery.sap.unloadResources('sap/test/myapp/views/MainView.js', false, true, true);
+			jQuery.sap.unloadResources('sap/test/myapp/views/DetailView.js', false, true, true);
+			jQuery.sap.unloadResources('sap/test/myapp/utils/Formatter.js', false, true, true);
+			jQuery.sap.unloadResources('thirdparty/SomeOpenSource.js', false, true, true);
+		},
+
 		beforeEach: function(assert) {
+
+			this.unloadTestModules();
 
 			sap.ui.predefine('sap/test/myapp/Component', function(mod2) {
 				return "Component";
@@ -274,11 +360,7 @@
 		},
 
 		afterEach: function() {
-			jQuery.sap.unloadResources('sap/test/myapp/Component.js', false, true, true);
-			jQuery.sap.unloadResources('sap/test/myapp/views/MainView.js', false, true, true);
-			jQuery.sap.unloadResources('sap/test/myapp/views/DetailView.js', false, true, true);
-			jQuery.sap.unloadResources('sap/test/myapp/utils/Formatter.js', false, true, true);
-			jQuery.sap.unloadResources('thirdparty/SomeOpenSource.js', false, true, true);
+			this.unloadTestModules();
 		}
 
 	});
@@ -319,7 +401,8 @@
 		});
 	});
 
-	QUnit.test("navigate to parent of root (begin)", function(assert) {
+
+	QUnit.test("navigate to parent of root (begin,errback)", function(assert) {
 
 		sap.ui.predefine('sap/test/myapp/views/MainView',
 		[
@@ -328,16 +411,34 @@
 			return "MainView";
 		});
 
-		assert.throws(function() {
-			sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
-				// if this factory function is reached, this will be an error
-				// but QUnit.throws should have reported it already, so no need to add checks in here
-			});
-		}, /parent of root/i, "module loading should fail due to dependency");
+		var done = assert.async();
+		sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+			assert.ok(false, "callback should never be reached in case of module loading errors");
+		}, function(err) {
+			assert.ok(err && /parent of root/i.test(err.message), "module loading should fail due to dependency");
+			done();
+		});
 
 	});
 
-	QUnit.test("navigate to parent of root (inside)", function(assert) {
+	QUnit.test("navigate to parent of root (begin,no errback)", function(assert) {
+
+		sap.ui.predefine('sap/test/myapp/views/MainView',
+		[
+			'../../../../../thirdparty/SomeOpenSource'
+		], function(mod1) {
+			return "MainView";
+		});
+
+		shouldThrow(assert, function() {
+			sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+				assert.ok(false, "callback should never be reached in case of module loading errors");
+			});
+		}, /parent of root/i);
+
+	});
+
+	QUnit.test("navigate to parent of root (inside, errback)", function(assert) {
 
 		sap.ui.predefine('sap/test/myapp/views/MainView',
 		[
@@ -346,47 +447,81 @@
 			return "MainView";
 		});
 
-		assert.throws(function() {
-			sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
-				// if this factory function is reached, this will be an error
-				// but QUnit.throws should have reported it already, so no need to add checks in here
-			});
-		}, /parent of root/i, "module loading should fail due to dependency");
+		var done = assert.async();
+		sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+			assert.ok(false, "callback should never be reached in case of module loading errors");
+		}, function(err) {
+			assert.ok(err && /parent of root/i.test(err.message), "module loading should fail due to dependency");
+			done();
+		});
 
 	});
 
-	QUnit.test("invalid dot-segment", function(assert) {
+	QUnit.test("navigate to parent of root (inside, no errback)", function(assert) {
+
+		sap.ui.predefine('sap/test/myapp/views/MainView',
+		[
+			'sap/test/myapp/../../../../thirdparty/SomeOpenSource'
+		], function(mod1) {
+			return "MainView";
+		});
+
+		shouldThrow(assert, function() {
+			sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+				assert.ok(false, "callback should never be reached in case of module loading errors");
+			});
+		}, /parent of root/i);
+
+	});
+
+	QUnit.test("invalid dot-segment (errback)", function(assert) {
 
 		sap.ui.predefine('sap/test/myapp/views/MainView', ['./.../Component'], function(mod1) {
 			return "MainView";
 		});
 
-		assert.throws(function() {
+		var done = assert.async();
+		sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
+			assert.ok(false, "callback should never be reached in case of module loading errors");
+		}, function(err) {
+			assert.ok(err && /illegal.*segment/i.test(err.message), "module loading should fail due to dependency");
+			done();
+		});
+
+	});
+
+	QUnit.test("invalid dot-segment (no errback)", function(assert) {
+
+		sap.ui.predefine('sap/test/myapp/views/MainView', ['./.../Component'], function(mod1) {
+			return "MainView";
+		});
+
+		shouldThrow(assert, function() {
 			sap.ui.require(['sap/test/myapp/views/MainView'], function (mod1) {
-				// if this factory function is reached, this will be an error
-				// but QUnit.throws should have reported it already, so no need to add checks in here
+				assert.ok(false, "callback should never be reached in case of module loading errors");
 			});
-		}, /illegal.*segment/i, "module loading should fail due to dependency");
+		}, /illegal.*segment/i);
+
 	});
 
 	QUnit.test("invalid use of relative paths in require", function(assert) {
 
 		// sap.ui.require doesn't support relative paths
-		assert.throws(function() {
+		shouldThrow(assert, function() {
 			sap.ui.require(['./test/myapp/views/MainView'], function (mod1) {
 				// if this factory function is reached, this will be an error
 				// but QUnit.throws should have reported it already, so no need to add checks in here
 			});
 		}, /not supported/i, "module loading should fail due to relative path ");
 
-		// sap.ui.require doesn't support relative paths
-		assert.throws(function() {
+		// sap.ui.require doesn't support relative paths with '../'
+		shouldThrow(assert, function() {
 			sap.ui.require(['../test/myapp/views/MainView'], function (mod1) {
 			});
 		}, /not supported/i, "module loading should fail due to relative path ");
 
 		// sap.ui.require also doesn't support invalid segment
-		assert.throws(function() {
+		shouldThrow(assert, function() {
 			sap.ui.require(['.../test/myapp/views/MainView'], function (mod1) {
 			});
 		}, /not supported/i, "module loading should fail due to relative path ");
