@@ -29,6 +29,7 @@ sap.ui.define([
 	createAndAppendDiv("uiArea3");
 	createAndAppendDiv("uiArea4");
 	createAndAppendDiv("uiArea5").setAttribute("style", "width:200px;");
+	createAndAppendDiv("uiArea6");
 	createAndAppendDiv("uiArea7");
 	createAndAppendDiv("uiArea8");
 
@@ -95,6 +96,11 @@ sap.ui.define([
 			type: new DateTime({style: "medium", strictParsing: true})}
 		}).placeAt("uiArea4");
 
+	//BCP: 	1970509170
+	var oDTP6 = new DateTimePicker("oDTP6", {
+		dateValue: new Date("2019", "9", "25", "11", "12", "13")
+	}).placeAt("uiArea6");
+
 
 	QUnit.module("initialization");
 
@@ -103,10 +109,11 @@ sap.ui.define([
 		assert.ok(!oDTP1.getDateValue(), "DTP1: no DateValue");
 		assert.equal(oDTP2.getValue(), "2016-02-17,10-11-12", "DTP2: Value in internal format set");
 		assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP2: DateValue set");
-		assert.equal(oDTP3.getValue(), "2/17/16, 10:11 AM", "DTP3: Value in internal format set");
+		assert.equal(oDTP3.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP3: Value in internal format set");
 		assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP3: DateValue set");
 		assert.equal(oDTP4.getValue(), "Feb 17, 2016, 10:11:12 AM", "DTP4: Value in internal format set");
 		assert.equal(oDTP4.getDateValue().getTime(), new Date("2016", "01", "17", "10", "11", "12").getTime(), "DTP4: DateValue set");
+		assert.equal(oDTP6.getValue(), "Oct 25, 2019, 11:12:13 AM", "oDTP6: Default Value Format Set");
 	});
 
 
@@ -439,8 +446,8 @@ sap.ui.define([
 				assert.ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
 				assert.ok(!jQuery("#DTP3-Sliders").is(":visible"), "Silder is invisible");
 				assert.equal(sId, "DTP3", "Change event fired");
-				assert.equal(sValue, "2/10/16, 11:11 AM", "Value in internal format priovided");
-				assert.equal(oDTP3.getValue(), "2/10/16, 11:11 AM", "Value in internal format set");
+				assert.equal(sValue, "Feb 10, 2016, 11:11:00 AM", "Value in internal format priovided");
+				assert.equal(oDTP3.getValue(), "Feb 10, 2016, 11:11:00 AM", "Value in internal format set");
 				assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
 				done();
 			}, 600);
