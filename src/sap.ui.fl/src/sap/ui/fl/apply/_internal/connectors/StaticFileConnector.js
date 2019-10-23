@@ -50,6 +50,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag Properties needed by the connector
 		 * @param {string} mPropertyBag.reference Reference of the application
+		 * @param {string} [mComponent.componentName] Component name of the current application which may differ in case of an app variant
 		 * @returns {Promise<Object>} Resolving with an object containing a data contained in the bundle
 		 */
 		loadFlexData: function (mPropertyBag) {
