@@ -392,6 +392,24 @@ sap.ui.define([
 				},
 
 				/**
+				 * Fired when the current section is changed by scrolling.
+				 *
+				 * @since 1.73
+				 */
+				sectionChange: {
+					parameters: {
+						/**
+						 * The section which the layout is scrolled to.
+						 */
+						section: {type: "sap.uxap.ObjectPageSection"},
+						/**
+						 * The subsection which the layout is scrolled to.
+						 */
+						subSection: {type: "sap.uxap.ObjectPageSubSection"}
+					}
+				},
+
+				/**
 				 * The event is fired when the Edit Header button is pressed
 				 */
 				editHeaderButtonPress: {},
@@ -3005,6 +3023,10 @@ sap.ui.define([
 			if (sClosestSubSectionId !== this._sScrolledSubSectionId) {
 				this._sScrolledSubSectionId = sClosestSubSectionId;
 				this.fireEvent("_sectionChange", {
+					section: this.oCore.byId(sClosestId),
+					subSection: this.oCore.byId(sClosestSubSectionId)
+				});
+				this.fireEvent("sectionChange", {
 					section: this.oCore.byId(sClosestId),
 					subSection: this.oCore.byId(sClosestSubSectionId)
 				});
