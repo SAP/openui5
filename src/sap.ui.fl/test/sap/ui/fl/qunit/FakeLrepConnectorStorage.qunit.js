@@ -59,6 +59,14 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when info are requested", function (assert) {
+			return oFakeLrepConnectorSessionStorage.getFlexInfo()
+			.then(function (oInfo) {
+				assert.equal(oInfo.isPublishEnabled, false, "Default: isPublishEnabled is false");
+				assert.equal(oInfo.isResetEnabled, false, "Default: isResetEnabled is false");
+			});
+		});
+
 		QUnit.test("when calling send function with DELETE flag", function (assert) {
 			var sUri = "/sap/bc/lrep/changes/" +
 				"?reference=" + aTestData[0].reference +

@@ -21,6 +21,25 @@ sap.ui.define([
 
 	QUnit.module("Given an instance of FakeLrepConnector", {
 	}, function() {
+		QUnit.test("when getFlexInfo with default value", function(assert) {
+			var mInfo = {};
+
+			return oFakeLrepConnector.getFlexInfo().then(function(result) {
+				assert.deepEqual(result, mInfo, "then default value returned.");
+			});
+		});
+
+		QUnit.test("when setFlexInfo and then getFlexInfo", function(assert) {
+			var mInfo = {
+				isResetEnabled: true,
+				isPublishEnabled: false
+			};
+			oFakeLrepConnector.setInfo(mInfo);
+			return oFakeLrepConnector.getFlexInfo().then(function(result) {
+				assert.deepEqual(result, mInfo, "then new info value returned.");
+			});
+		});
+
 		QUnit.test("when loadSettings with default value", function(assert) {
 			var mSetting = {};
 

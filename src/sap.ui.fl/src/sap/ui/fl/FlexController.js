@@ -1267,5 +1267,86 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * Checks if changes exist for the flex persistence associated with the selector control.
+	 *
+	 * @param {object} mPropertyBag Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
+	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist
+	 */
+	FlexController.prototype.hasChanges = function(mPropertyBag) {
+		mPropertyBag.includeCtrlVariants = true;
+		mPropertyBag.invalidateCache = false;
+		return this.getComponentChanges(mPropertyBag, mPropertyBag.invalidateCache)
+		.then(function(aChanges) {
+			return aChanges.length > 0;
+		});
+	};
+
+	/**
+	 * Checks if one of the existing changes can be published;
+	 *
+	 * @param {object} mPropertyBag Object with parameters as properties
+	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist and are not yet published
+	 */
+	FlexController.prototype.hasChangesToPublish = function(mPropertyBag) {
+		mPropertyBag.includeCtrlVariants = true;
+		mPropertyBag.invalidateCache = false;
+		return this.getComponentChanges(mPropertyBag, mPropertyBag.invalidateCache)
+		.then(function(aChanges) {
+			return aChanges.some(function(oChange) {
+				return oChange.getPackage() === "$TMP";
+			});
+		});
+	};
+
+	/**
+	 * Checks if publish is available in the system
+	 *
+	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if publish is available in the system
+	 */
+	FlexController.prototype.isPublishAvailable = function() {
+		return FlexSettings.getInstance().then(function(oSettings) {
+			return !oSettings.isProductiveSystem();
+		});
+	};
+
+	/**
+	 * Send a flex/info request to the backend.
+	 *
+	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
+	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
+	 *
+	 * @returns {Promise<map>} Resolves as a map with 2 booleans indicating if the application has content that can be reset and/or published
+	 */
+	FlexController.prototype.getResetAndPublishInfo = function(mPropertyBag) {
+		return Promise.all([
+			this.hasChanges(mPropertyBag),
+			this.hasChangesToPublish(mPropertyBag),
+			this.isPublishAvailable()
+		])
+		.then(function(aResetPublishInfo) {
+			var oFlexInfo = {
+				isResetEnabled: aResetPublishInfo[0],
+				isPublishEnabled: aResetPublishInfo[1]
+			};
+			var bPublishAvailable = aResetPublishInfo[2];
+
+			var bIsBackEndCallNeeded = !oFlexInfo.isResetEnabled || (bPublishAvailable && !oFlexInfo.isPublishEnabled);
+			if (bIsBackEndCallNeeded) {
+				mPropertyBag.reference = this._sComponentName;
+				mPropertyBag.appVersion = this._sAppVersion;
+				return this._oChangePersistence.getResetAndPublishInfo(mPropertyBag)
+				.then(function(oResponse) {
+					oFlexInfo.isResetEnabled = oFlexInfo.isResetEnabled || oResponse.isResetEnabled;
+					oFlexInfo.isPublishEnabled = oFlexInfo.isPublishEnabled || oResponse.isPublishEnabled;
+					return oFlexInfo;
+				});
+			}
+			return oFlexInfo;
+		}.bind(this));
+	};
+
 	return FlexController;
 }, true);
