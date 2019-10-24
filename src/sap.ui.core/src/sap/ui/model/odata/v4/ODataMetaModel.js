@@ -1815,21 +1815,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the module path to the model specific adapter factory.
-	 *
-	 * @returns {string}
-	 *   The module path to the model specific adapter factory
-	 *
-	 * @private
-	 * @see sap.ui.model.MetaModel#getAdapterFactoryModulePath
-	 * @since 1.55.0
-	 */
-	// @override
-	ODataMetaModel.prototype.getAdapterFactoryModulePath = function () {
-		return "sap/ui/mdc/experimental/adapter/odata/v4/ODataAdapterFactory";
-	};
-
-	/**
 	 * Returns the type constraints for the given property.
 	 *
 	 * @param {object} oProperty
