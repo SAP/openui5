@@ -4,12 +4,12 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
 	sinon,
 	SessionStorageWriteConnector,
 	JsObjectConnector,
-	BrowserStorageUtils
+	ObjectStorageUtils
 ) {
 	"use strict";
 
@@ -83,7 +83,7 @@ sap.ui.define([
 
 	function removeListFromStorage(oStorage, aList) {
 		var aPromises = aList.map(function (oFlexObject) {
-			var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
+			var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
 			return oStorage.removeItem(sKey);
 		});
 
@@ -91,7 +91,7 @@ sap.ui.define([
 	}
 
 	function assertFileWritten(assert, oStorage, oFlexObject, sMessage) {
-		var sKey = BrowserStorageUtils.createFlexObjectKey(oFlexObject);
+		var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
 		var vItem = oStorage.getItem(sKey);
 		var oItem = oStorage._itemsStoredAsObjects ? vItem : JSON.parse(vItem);
 		assert.deepEqual(oFlexObject, oItem, sMessage);
@@ -99,7 +99,7 @@ sap.ui.define([
 
 	function getNumberOfFlexObjects(oConnector) {
 		var iCount = 0;
-		return BrowserStorageUtils.forEachObjectInStorage({storage: oConnector.oStorage}, function() {
+		return ObjectStorageUtils.forEachObjectInStorage({storage: oConnector.oStorage}, function() {
 			iCount++;
 		})
 		.then(function () {

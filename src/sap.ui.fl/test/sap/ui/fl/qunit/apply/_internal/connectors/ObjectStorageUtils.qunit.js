@@ -2,12 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function (
 	Utils,
-	BrowserStorageUtils,
+	ObjectStorageUtils,
 	sinon,
 	jQuery
 ) {
@@ -19,10 +19,10 @@ sap.ui.define([
 
 	QUnit.module("forEachChangeInStorage / createChangeKey / createVariantKey", {
 		beforeEach: function() {
-			this.sChangeKey1 = BrowserStorageUtils.createChangeKey("id1");
-			this.sChangeKey2 = BrowserStorageUtils.createChangeKey("id2");
-			this.sVariantKey1 = BrowserStorageUtils.createVariantKey("id1");
-			this.sVariantKey2 = BrowserStorageUtils.createVariantKey("id2");
+			this.sChangeKey1 = ObjectStorageUtils.createChangeKey("id1");
+			this.sChangeKey2 = ObjectStorageUtils.createChangeKey("id2");
+			this.sVariantKey1 = ObjectStorageUtils.createVariantKey("id1");
+			this.sVariantKey2 = ObjectStorageUtils.createVariantKey("id2");
 			this.oStorage = {};
 			this.oStorage[this.sChangeKey1] = JSON.stringify({reference: "sap.ui.fl.test", layer: "USER", name: "change1"});
 			this.oStorage[this.sChangeKey2] = JSON.stringify({reference: "sap.ui.fl.test.1", layer: "USER", name: "change2"});
@@ -36,7 +36,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("forEachObjectInStorage with various changes and variants", function(assert) {
-			return BrowserStorageUtils.forEachObjectInStorage({storage: this.oStorage}, function(mFlexObject) {
+			return ObjectStorageUtils.forEachObjectInStorage({storage: this.oStorage}, function(mFlexObject) {
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));
 			}.bind(this))
@@ -51,7 +51,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("forEachObjectInStorage with various changes and variants with reference", function(assert) {
-			return BrowserStorageUtils.forEachObjectInStorage({
+			return ObjectStorageUtils.forEachObjectInStorage({
 				storage : this.oStorage,
 				reference : "sap.ui.fl.test"
 			}, function (mFlexObject) {
@@ -69,7 +69,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("forEachObjectInStorage with various changes and variants with layer", function(assert) {
-			return BrowserStorageUtils.forEachObjectInStorage({
+			return ObjectStorageUtils.forEachObjectInStorage({
 				storage: this.oStorage,
 				layer: "USER"
 			}, function(mFlexObject) {
@@ -87,7 +87,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("forEachObjectInStorage with various changes and variants with layer + reference", function(assert) {
-			return BrowserStorageUtils.forEachObjectInStorage({
+			return ObjectStorageUtils.forEachObjectInStorage({
 				storage: this.oStorage,
 				reference: "sap.ui.fl.test",
 				layer: "CUSTOMER"
