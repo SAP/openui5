@@ -152,9 +152,6 @@ sap.ui.define([
 			aLabels.push(oTable.getId() + "-ariacount");
 			aLabels.push(oTable.getId() + "-ariaselection");
 		}
-		if (bFirstTime || bRowChange) {
-			aLabels.push(oTable.getId() + "-rownavigatedtext");
-		}
 
 		aLabels.push(oTable.getId() + "-rownumberofrows");
 		aLabels.push(oTable.getId() + "-colnumberofcols");
@@ -194,6 +191,10 @@ sap.ui.define([
 
 		if (oTable.isIndexSelected(iRow) && TableUtils.Grouping.isTreeMode(oTable)) {
 			aLabels.push(oTable.getId() + "-ariarowselected");
+		}
+
+		if (bFirstTime || bRowChange) {
+			aLabels.push(oTable.getId() + "-rownavigatedtext");
 		}
 
 		assert.strictEqual(
@@ -682,10 +683,6 @@ sap.ui.define([
 			}
 
 			if (bFocus) {
-				if (bFirstTime || bRowChange) {
-					aLabels.push(oTable.getId() + "-rownavigatedtext");
-				}
-
 				aLabels.push(oTable.getId() + "-rownumberofrows");
 				if (bGroup) {
 					aLabels.push(oTable.getId() + "-ariarowgrouplabel");
@@ -695,6 +692,10 @@ sap.ui.define([
 				} else {
 					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-rowselecttext");
 					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
+				}
+
+				if (bFirstTime || bRowChange) {
+					aLabels.push(oTable.getId() + "-rownavigatedtext");
 				}
 			}
 
@@ -921,7 +922,6 @@ sap.ui.define([
 
 			if (bFocus) {
 				if (bFirstTime || bRowChange) {
-					aLabels.push(oTable.getId() + "-rownavigatedtext");
 					aLabels.push(oTable.getId() + "-rownumberofrows");
 				}
 				if (bColChange) {
@@ -944,6 +944,9 @@ sap.ui.define([
 				}
 				if (!bGroup) {
 					aLabels.push(oTable.getId() + "-cellacc");
+				}
+				if (bFirstTime || bRowChange) {
+					aLabels.push(oTable.getId() + "-rownavigatedtext");
 				}
 			} else {
 				aLabels.push(oTable.getId() + "-rowacthdr");
