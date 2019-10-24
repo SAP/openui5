@@ -28,7 +28,7 @@ sap.ui.define([],
 		scrollContainers : [{
 				domRef : "> .sapFDynamicPageContentWrapper",
 				aggregations : function(oElement) {
-					if (oElement._bPinned || oElement.getPreserveHeaderStateOnScroll()) {
+					if (oElement._bHeaderInTitleArea || oElement._bPinned || oElement.getPreserveHeaderStateOnScroll()) {
 						return ["content"];
 					} else {
 						return ["header", "content"];
