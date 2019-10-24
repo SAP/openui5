@@ -1184,10 +1184,6 @@ sap.ui.define([
 
 		// code under test
 		oMetaModel = new ODataMetaModel(null, null, null, oModel);
-
-		// code under test
-		assert.strictEqual(oMetaModel.getAdapterFactoryModulePath(),
-			"sap/ui/mdc/experimental/adapter/odata/v4/ODataAdapterFactory");
 	});
 
 	//*********************************************************************************************
