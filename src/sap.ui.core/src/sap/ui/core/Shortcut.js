@@ -92,12 +92,12 @@ sap.ui.define([
 
 			// wrap callback to also trigger a blur on focused control.
 			function wrapCallback() {
-				var $focusedElement = jQuery(document.activeElement),
-					oFocusedControl = $focusedElement.control(0),
+				var oFocusedElement = document.activeElement,
 					oSpan = document.createElement("span"),
 					oStaticUiAreaDomRef = sap.ui.getCore().getStaticAreaRef();
 
 				oSpan.setAttribute("tabindex", 0);
+				oSpan.setAttribute("id", "sap-ui-shortcut-focus");
 				oSpan.style.position = "absolute";
 				oSpan.style.top = "50%";
 				oSpan.style.bottom = "50%";
@@ -110,14 +110,15 @@ sap.ui.define([
 				// set focus on span to enforce blur - e.g. data of input field needs to get peristed
 				oSpan.focus();
 
-				// trigger callback
-				fnCallback.apply(null, arguments);
-
 				// restore old focus
-				oFocusedControl.focus();
+				oFocusedElement.focus();
 
 				// cleanup DOM
 				oStaticUiAreaDomRef.removeChild(oSpan);
+
+				// trigger callback
+				fnCallback.apply(null, arguments);
+
 			}
 
 			var oDelegate = {};
