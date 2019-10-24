@@ -82,6 +82,14 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor": {
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/util/ObjectBinding": {
 				coverage: {
 					only: [
