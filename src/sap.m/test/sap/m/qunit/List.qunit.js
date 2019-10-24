@@ -1772,6 +1772,47 @@ sap.ui.define([
 		oList.destroy();
 	});
 
+	QUnit.test("Info text - full text displayed when string lenght <= 15", function(assert) {
+		// test with title text only
+		var oStdLI = new StandardListItem({
+			title: "This is the Title Text", // title text length > 18
+			info: "X".repeat(15) // info text is 15 characters
+		});
+
+		var oList = new List({
+			items : [oStdLI]
+		});
+
+		oList.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oInfoTextDom = oStdLI.getDomRef("info");
+		assert.ok(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is fully displayed as text is 15 characters lenght");
+
+		oStdLI.setInfo("A very very long information text"); // info text is greater than 15
+		sap.ui.getCore().applyChanges();
+
+		oInfoTextDom = oStdLI.getDomRef("info");
+		assert.notOk(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is trucated as text is more than 15 characters in length");
+		assert.ok(oInfoTextDom.classList.contains("sapMSLIInfoTextMinWidth"), "Min width reserved to show long info text");
+
+		// test with description text
+		oStdLI.setDescription("This is the description text");
+		oStdLI.setInfo("X".repeat(15)); // info text is 15 characters
+		sap.ui.getCore().applyChanges();
+
+		oInfoTextDom = oStdLI.getDomRef("info");
+		assert.ok(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is fully displayed as text is 15 characters lenght");
+
+		oStdLI.setInfo("Information text"); // info text is greater than 15
+		sap.ui.getCore().applyChanges();
+
+		oInfoTextDom = oStdLI.getDomRef("info");
+		assert.notOk(oInfoTextDom.classList.contains("sapMSLIInfoTextFull"), "Info Text is trucated as text is more than 15 characters in length");
+
+		oList.destroy();
+	});
+
 	QUnit.test("StandardListItem wrapping behavior (Phone)", function(assert) {
 		this.stub(Device.system, "phone", true);
 

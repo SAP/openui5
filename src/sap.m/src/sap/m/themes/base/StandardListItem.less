@@ -59,7 +59,8 @@ html[data-sap-ui-browser='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sa
 	flex: 1 1 auto;
 }
 
-.sapMSLIThumbnail:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv {
+.sapMSLIThumbnail:not(.sapMSLIWrapping) > .sapMLIBContent > .sapMSLIDiv,
+.sapMSLIDescriptionText {
 	padding: 0.125rem 0;
 }
 
@@ -127,6 +128,17 @@ html[data-sap-ui-browser='ie11'] .sapMSLIWithDescription > .sapMLIBContent > .sa
 	margin: 0 0 0 1rem;
 	padding: 0.125rem 0;
 	font-size: @sapMFontMediumSize;
+}
+
+// no flex for info text upto 15 characters
+.sapMSLIInfoTextFull {
+	flex: none;
+}
+
+// ensure min-width for info text greater than 15 characters
+// 7.5rem is a result of the 15 characters string "MMMMMMMMIIIIIII" (approx. 120px)
+.sapMSLIInfoTextMinWidth {
+	min-width: 7.5rem;
 }
 
 .sapMSLIInfoMiddle > .sapMSLIInfo {

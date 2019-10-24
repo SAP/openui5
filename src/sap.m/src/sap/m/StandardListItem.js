@@ -221,6 +221,16 @@ sap.ui.define([
 		return sAnnouncement;
 	};
 
+	/**
+	 * Returns <code>true</code>, if the info text is less than or equal to maximum limit of characters.
+	 * @returns {boolean} show the complete info text.
+	 *
+	 * @private
+	 */
+	StandardListItem.prototype.showCompleteInfoText = function() {
+		return this.getInfo().length <= 15;
+	};
+
 	StandardListItem.prototype.ontap = function(oEvent) {
 		this._checkExpandCollapse(oEvent);
 
