@@ -5,24 +5,24 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/StandardVariant",
 	"sap/ui/fl/apply/_internal/StorageResultMerger",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/JsObjectConnector",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/base/util/merge"
 ], function (
 	sinon,
 	Storage,
 	Change,
 	Variant,
-	StandardVariant,
 	StorageResultMerger,
 	ApplyUtils,
 	StaticFileConnector,
 	LrepConnector,
 	JsObjectConnector,
+	ObjectStorageUtils,
 	merge
 ) {
 	"use strict";
@@ -53,16 +53,41 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Storage merges results from a single connector", {
+
+	QUnit.module("Storage merges results from different connectors", {
+		beforeEach: function () {
+		},
 		afterEach: function () {
 			sandbox.restore();
+			JsObjectConnector.oStorage.clear();
 		}
 	}, function () {
-		QUnit.test("Given a connector provides multiple layers", function (assert) {
-			sandbox.stub(ApplyUtils, "getApplyConnectors").resolves([{
-				connector: "JsObjectConnector",
-				connectorModule: JsObjectConnector
-			}]);
+		QUnit.test("Given all connectors provide empty variant properties", function (assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
+			sandbox.stub(JsObjectConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
+
+			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
+				assert.deepEqual(oResult, EMPTY_LOAD_FLEX_DATA_RESULT);
+			});
+		});
+
+		QUnit.test("Given some connector provides multiple layers", function (assert) {
+			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(ApplyUtils.getEmptyFlexDataResponse());
+			var sVariant1 = "variant1";
+			var oVariant1 = Variant.createInitialFileContent({
+				content: {
+					fileName: sVariant1,
+					fileType: "ctrl_variant",
+					layer: "VENDOR",
+					title: "title",
+					reference: "app.id",
+					variantReference: "",
+					content: {},
+					variantManagementReference: "someVarMangementControlId"
+				}
+			});
+			var mVariant1 = oVariant1.content;
+			JsObjectConnector.oStorage.setItem(ObjectStorageUtils.createFlexObjectKey(mVariant1), mVariant1);
 
 			var sChangeId1 = "change1";
 			var oChange1 = new Change({
@@ -74,8 +99,11 @@ sap.ui.define([
 				changeType: "hideControl",
 				selector: {
 					id: "control.id"
-				}
+				},
+				variantReference: sVariant1
 			});
+			var mChange1 = oChange1.getDefinition();
+			JsObjectConnector.oStorage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange1), mChange1);
 
 			var sChangeId2 = "change2";
 			var oChange2 = new Change({
@@ -89,17 +117,17 @@ sap.ui.define([
 					id: "control.id"
 				}
 			});
-
-			sandbox.stub(JsObjectConnector, "loadFlexData").resolves([{
-				changes: [oChange1.getDefinition()]
-			}, {
-				changes: [oChange2.getDefinition()]
-			}]);
+			var mChange2 = oChange2.getDefinition();
+			JsObjectConnector.oStorage.setItem(ObjectStorageUtils.createFlexObjectKey(mChange2), mChange2);
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
-				assert.equal(oResult.changes.length, 2, "both changes were added to the result");
-				assert.deepEqual(oResult.changes[0], oChange1.getDefinition(), "the change from the first bundle is the first change in the response");
-				assert.deepEqual(oResult.changes[1], oChange2.getDefinition(), "the change from the second bundle is the second change in the response");
+				assert.equal(oResult.changes.length, 1, "only the UI change was added to the result");
+				assert.deepEqual(oResult.changes[0], mChange2, "the 2. change is in the response");
+				var aVariants = oResult.variantSection.someVarMangementControlId.variants;
+				assert.equal(aVariants.length, 2, "then the returned response has a variant section containing the standard variant and the variant1");
+				assert.equal(aVariants[1].content.fileName, sVariant1);
+				assert.equal(aVariants[1].controlChanges.length, 1, "then the control change is added to the variant1");
+				assert.deepEqual(aVariants[1].controlChanges[0], mChange1);
 			});
 		});
 	});
@@ -520,16 +548,6 @@ sap.ui.define([
 				assert.equal(aSetTitleChanges.length, 2, "two set title variant changes are present for the variant 3");
 				assert.deepEqual(aSetTitleChanges[0], oVariantChange1_1, "the variant change 1_1 was added");
 				assert.deepEqual(aSetTitleChanges[1], oVariantChange1_2, "the variant change 1_2 was added");
-			});
-		});
-
-		// TODO: enable test after the Disassembler is ready
-		QUnit.skip("Given a connector provide variant data in the variantSection which referencing to each other", function (assert) {
-			sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
-			sandbox.stub(LrepConnector, "loadFlexData").resolves();
-
-			return Storage.loadFlexData({reference: "app.id"}).then(function (/*oResult*/) {
-				assert.ok(false);
 			});
 		});
 	});
