@@ -721,7 +721,7 @@ sap.ui.define([
 	 * The value can either be a simple string which then will be assumed to be the type of the new aggregation or it can be
 	 * an object literal with the following properties
 	 * <ul>
-	 * <li><code>type: <i>string</i></code> type of the new aggregation. must be the full global name of a ManagedObject subclass (in dot notation, e.g. 'sap.m.Button')</li>
+	 * <li><code>type: <i>string</i></code> type of the new aggregation. must be the full global name of a ManagedObject subclass or UI5 interface (in dot notation, e.g. 'sap.m.Button')</li>
 	 * <li><code>[multiple]: <i>boolean</i></code> whether the aggregation is a 0..1 (false) or a 0..n aggregation (true), defaults to true </li>
 	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n aggregations. For 0..n aggregations the name by convention should be the plural name.
 	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
