@@ -53,7 +53,10 @@ sap.ui.define([
 	sap.ui.getCore().initLibrary({
 		name: "sap.ui.fl",
 		version: "${version}",
-		controls: ["sap.ui.fl.variants.VariantManagement"],
+		controls: [
+			"sap.ui.fl.variants.VariantManagement",
+			"sap.ui.fl.util.IFrame"
+		],
 		dependencies: [
 			"sap.ui.core", "sap.m"
 		],

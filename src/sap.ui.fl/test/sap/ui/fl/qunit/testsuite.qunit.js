@@ -362,6 +362,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/util/ManagedObjectModel"]
 				}
 			},
+			"util/IFrame": {
+				group: "IFrame control",
+				coverage: {
+					only: ["sap/ui/fl/util/IFrame"]
+				}
+			},
 
 			// ChangeHandler tests:
 			"changeHandler/AddXML": {
@@ -458,6 +464,17 @@ sap.ui.define(function () {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/UnstashControl"]
+				}
+			},
+			"changeHandler/UpdateIFrame": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/UpdateIFrame"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
 				}
 			},
 
