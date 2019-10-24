@@ -295,7 +295,7 @@ sap.ui.define([
 		this.oBinding = undefined;
 		// When removing oModel, ManagedObject#getBindingContext does not return the destroyed
 		// context although the control still refers to it
-		// this.oModel = undefined;
+		this.oModel = undefined;
 		BaseContext.prototype.destroy.apply(this);
 	};
 
