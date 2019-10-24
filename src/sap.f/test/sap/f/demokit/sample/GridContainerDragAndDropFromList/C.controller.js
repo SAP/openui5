@@ -4,7 +4,7 @@ sap.ui.define([
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
 	'sap/f/dnd/GridDropInfo'
-], function (Controller, JSONModel, DragInfo, DropInfo, GridDropInfo, Card) {
+], function (Controller, JSONModel, DragInfo, DropInfo, GridDropInfo) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridContainerDragAndDropFromList.C", {

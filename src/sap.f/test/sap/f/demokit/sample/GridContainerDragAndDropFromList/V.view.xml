@@ -14,10 +14,7 @@
 				class="sapUiSmallMargin"
 				width="400px"
 				items="{ path: '/' }">
-
-				<items>
 					<StandardListItem title="{title}" />
-				</items>
 			</List>
 
 			<f:GridContainer
@@ -34,7 +31,6 @@
 					<f:GridContainerSettings rowSize="70px" columnSize="70px" gap="8px" />
 				</f:layoutXS>
 
-				<f:items>
 					<f:Card>
 						<f:layoutData>
 							<f:GridContainerItemLayoutData minRows="{rows}" columns="{columns}" />
@@ -43,7 +39,6 @@
 							<card:Header title="{title}" />
 						</f:header>
 					</f:Card>
-				</f:items>
 			</f:GridContainer>
 		</HBox>
 </mvc:View>

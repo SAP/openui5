@@ -2,21 +2,17 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	'sap/ui/core/dnd/DragInfo',
-	'sap/f/dnd/GridDropInfo',
-	'sap/ui/integration/widgets/Card'
-], function (Controller, JSONModel, DragInfo, GridDropInfo, Card) {
+	'sap/f/dnd/GridDropInfo'
+], function (Controller, JSONModel, DragInfo, GridDropInfo) {
 	"use strict";
 
 	return Controller.extend("sap.f.sample.GridContainerDragAndDrop.C", {
 		onInit: function () {
 
-			var cardManifests = new JSONModel();
-
-			cardManifests.loadData(sap.ui.require.toUrl("sap/f/sample/GridContainerDragAndDrop/cardManifests.json"));
-
-			this.getView().setModel(cardManifests, "manifests");
-
+			var oCardManifests = new JSONModel(sap.ui.require.toUrl("sap/f/sample/GridContainerDragAndDrop/cardManifests.json"));
 			var oGrid = this.byId("grid1");
+
+			this.getView().setModel(oCardManifests, "manifests");
 
 			oGrid.addDragDropConfig(new DragInfo({
 				sourceAggregation: "items"

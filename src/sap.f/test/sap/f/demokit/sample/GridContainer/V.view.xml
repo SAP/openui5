@@ -35,7 +35,6 @@
 			<f:layoutXS>
 				<f:GridContainerSettings rowSize="70px" columnSize="70px" gap="8px" />
 			</f:layoutXS>
-			<f:items>
 				<GenericTile header="Sales Fulfillment Application Title" subheader="Subtitle">
 					<layoutData>
 						<f:GridContainerItemLayoutData minRows="2" columns="2" />
@@ -74,19 +73,19 @@
 									width="120px"
 									placeholder="From City"
 									items="{
-										path: '/cities',
+										path: 'cities>/cities',
 										sorter: { path: 'text' }
 									}">
-									<core:Item key="{key}" text="{text}" />
+									<core:Item key="{cities>key}" text="{cities>text}" />
 								</ComboBox>
 								<ComboBox
 									width="120px"
 									placeholder="To City"
 									items="{
-										path: '/cities',
+										path: 'cities>/cities',
 										sorter: { path: 'text' }
 									}">
-									<core:Item key="{key}" text="{text}" />
+									<core:Item key="{cities>key}" text="{cities>text}" />
 								</ComboBox>
 							</HBox>
 							<HBox justifyContent="SpaceBetween">
@@ -127,19 +126,19 @@
 					<f:content>
 						<List
 							showSeparators="None"
-							items="{path: '/productItems'}" >
+							items="{path: 'products>/productItems'}" >
 							<CustomListItem>
 								<HBox
 									alignItems="Center"
 									justifyContent="SpaceBetween">
 									<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
-										<Title level="H3" text="{title}" />
-										<Text text="{subtitle}"/>
+										<Title level="H3" text="{products>title}" />
+										<Text text="{products>subtitle}"/>
 									</VBox>
 									<ObjectStatus
 										class="sapUiTinyMargin"
-										text="{revenue}"
-										state= "{statusSchema}"/>
+										text="{products>revenue}"
+										state= "{products>statusSchema}"/>
 								</HBox>
 							</CustomListItem>
 						</List>
@@ -169,7 +168,6 @@
 						<f:GridContainerItemLayoutData columns="4" />
 					</layoutData>
 				</Text>
-			</f:items>
 		</f:GridContainer>
 	</ScrollContainer>
 </mvc:View>
