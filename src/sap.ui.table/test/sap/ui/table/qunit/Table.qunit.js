@@ -3574,6 +3574,8 @@ sap.ui.define([
 		var oMockServer = startMockServer();
 
 		function test(sVisibleRowCountMode) {
+			ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
+
 			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
 			var oBindingInfo = oTable.getBindingInfo("rows");
 
