@@ -57,6 +57,15 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when info are requested", function (assert) {
+			return this.oFakeLrepConnectorSessionStorage.getFlexInfo()
+			.then(function (oInfo) {
+				assert.equal(oInfo.isPublishEnabled, false, "Default: isPublishEnabled is false");
+				assert.equal(oInfo.isResetEnabled, false, "Default: isResetEnabled is false");
+			});
+		});
+
+
 		QUnit.test("when calling resetChanges", function (assert) {
 			var oForeignTestData = { "fileName": "id_1445501120486_45", "fileType": "change", "changeType": "hideControl", "reference": "sap.ui.rta.test.ForeignDemo.md.Component", "packageName": "$TMP", "content": {}, "selector": { "id": "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, "layer": "CUSTOMER", "texts": {}, "namespace": "sap.ui.rta.test.ForeignDemo.md.Component", "creation": "", "originalLanguage": "EN", "conditions": {}, "support": { "generator": "Change.createInitialFileContent", "service": "", "user": "" }, "validAppVersions": { "creation": "1.0.0", "from": "1.0.0" } };
 			var aMixedTestData = aTestData.concat([oForeignTestData]);

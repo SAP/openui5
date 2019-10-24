@@ -33,6 +33,7 @@ sap.ui.define([
 	function FakeLrepConnector(sInitialComponentJsonPath){
 		this.sInitialComponentJsonPath = sInitialComponentJsonPath;
 		this.mSettings = {};
+		this.mInfo = {};
 	}
 
 	for (var prop in oLrepConnector){
@@ -56,6 +57,28 @@ sap.ui.define([
 			return this._getFlexibilityServicesUrlPrefix() + "/variants/";
 		}
 		return this._getFlexibilityServicesUrlPrefix() + "/changes/";
+	};
+
+	/**
+	 * Replaces the original {@link sap.ui.fl.LrepConnector.prototype.getFlexInfo} method
+	 * This method returns a Promise with an info map.
+	 *
+	 * @returns {Promise} Returns a Promise with an info map
+	 * @public
+	 */
+	FakeLrepConnector.prototype.getFlexInfo = function() {
+		return Promise.resolve(this.mInfo);
+	};
+
+	/**
+	 * Sets the info map which can be retrieved by the {@link sap.ui.fl.FakeLrepConnector.prototype.getFlexInfo} method.
+	 *
+	 * @param {map} mInfo Contains flexibility info values
+	 * @param {boolean} mInfo.isResetEnabled Indicates whether reset is enabled or not
+	 * @param {boolean} mInfo.isPublishEnabled Indicates whether publish is enabled or not
+	 */
+	FakeLrepConnector.prototype.setInfo = function(mInfo) {
+		this.mInfo = mInfo;
 	};
 
 	/**
