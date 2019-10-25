@@ -194,12 +194,8 @@ sap.ui.define([
 		reset: function (mPropertyBag) {
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
 			var oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
-			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oAppComponent);
 			var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
-			return oFlexController.resetChanges.apply(oFlexController, aArguments)
-				.then(oDescriptorFlexController.resetChanges.bind.apply(
-					oDescriptorFlexController.resetChanges, [oDescriptorFlexController].concat(aArguments))
-				);
+			return oFlexController.resetChanges.apply(oFlexController, aArguments);
 		},
 
 		/**
