@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
-	"./DefaultCardConfig"
+	"./config/index"
 ], function (
 	BaseEditor,
 	oDefaultCardConfig
