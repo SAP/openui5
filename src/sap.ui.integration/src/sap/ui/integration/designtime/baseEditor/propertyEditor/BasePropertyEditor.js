@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"./../util/ObjectBinding",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/ObjectPath",
 	"sap/m/Label",
 	"sap/base/util/restricted/_merge"
 ], function (
 	Control,
 	ObjectBinding,
 	JSONModel,
-	ObjectPath,
 	Label,
 	_merge
 ) {

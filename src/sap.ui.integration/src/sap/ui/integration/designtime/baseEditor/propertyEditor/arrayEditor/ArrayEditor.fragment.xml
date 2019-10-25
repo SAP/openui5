@@ -1,0 +1,38 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:baseEditor="sap.ui.integration.designtime.baseEditor"
+>
+	<VBox>
+		<VBox items="{items}">
+			<VBox>
+				<Bar>
+					<contentLeft>
+						<Label text="{itemLabel}" />
+					</contentLeft>
+					<contentRight>
+						<Button
+							icon="sap-icon://less"
+							tooltip="{i18n>BASE_EDITOR.ARRAY.REMOVE}"
+							press="_removeItem"
+						>
+							<customData>
+								<core:CustomData
+									key="index"
+									value="{index}"
+								/>
+							</customData>
+						</Button>
+					</contentRight>
+				</Bar>
+				<baseEditor:PropertyEditors config="{properties}"/>
+			</VBox>
+		</VBox>
+		<Button
+			icon="sap-icon://add"
+			tooltip="{i18n>BASE_EDITOR.ARRAY.ADD}"
+			enabled="{= !${maxItems} || (${items} || []).length &lt; ${maxItems} }"
+			press="_addItem"
+		/>
+	</VBox>
+</core:FragmentDefinition>
