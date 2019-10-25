@@ -31,7 +31,8 @@ function(Device, UIArea, jQuery) {
 		$GhostContainer,			// container to place custom ghosts
 		sCalculatedDropPosition,	// calculated position of the drop action relative to the valid dropped control.
 		iTargetEnteringTime,		// timestamp of drag enter
-		mLastIndicatorStyle = {};	// holds the last style settings of the indicator
+		mLastIndicatorStyle = {},	// holds the last style settings of the indicator
+		oDraggableAncestorNode;		// reference to ancestor node that has draggable=true attribute
 
 
 	function addStyleClass(oElement, sStyleClass) {
@@ -67,6 +68,10 @@ function(Device, UIArea, jQuery) {
 		var oNewEvent = jQuery.Event(null, oEvent);
 		oNewEvent.type = sEventName;
 		oControl.getUIArea()._handleEvent(oNewEvent);
+	}
+
+	function isSelectableElement(oElement) {
+		return !oElement.disabled && /^(input|textarea)$/.test(oElement.localName);
 	}
 
 	function setDragGhost(oDragControl, oEvent) {
@@ -497,6 +502,21 @@ function(Device, UIArea, jQuery) {
 		}
 	};
 
+	DnD.onbeforemousedown = function(oEvent) {
+		// text selection workaround for IE since preventDefault on dragstart does not help
+		// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/10375756/
+		if (Device.browser.msie && isSelectableElement(oEvent.target)) {
+			oDraggableAncestorNode = jQuery(oEvent.target).closest("[data-sap-ui-draggable=true]").prop("draggable", false)[0];
+		}
+	};
+
+	DnD.onbeforemouseup = function(oEvent) {
+		if (oDraggableAncestorNode) {
+			oDraggableAncestorNode.draggable = true;
+			oDraggableAncestorNode = null;
+		}
+	};
+
 	DnD.onbeforedragstart = function(oEvent) {
 		// draggable implicitly
 		if (!oEvent.target.draggable) {
@@ -504,7 +524,7 @@ function(Device, UIArea, jQuery) {
 		}
 
 		// the text inside input fields should still be selectable
-		if (/^(input|textarea)$/i.test(document.activeElement.tagName)) {
+		if (isSelectableElement(document.activeElement)) {
 			oEvent.target.getAttribute("data-sap-ui-draggable") && oEvent.preventDefault();
 			return;
 		}
