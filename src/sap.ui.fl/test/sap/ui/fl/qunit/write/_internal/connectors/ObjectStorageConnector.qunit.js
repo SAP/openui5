@@ -355,14 +355,14 @@ sap.ui.define([
 			var oObject = {
 				fileName: "id123"
 			};
-			var oSetItemStub = sandbox.stub(SessionStorageWriteConnector.oStorage, "setItem");
 
+			var sKey = ObjectStorageUtils.createFlexObjectKey(oObject);
 			return SessionStorageWriteConnector.write({
 				flexObjects: [oObject]
 			})
 			.then(function () {
 				var sObject = JSON.stringify(oObject);
-				assert.equal(oSetItemStub.getCall(0).args[1], sObject, "the write was called with the object as string");
+				assert.strictEqual(SessionStorageWriteConnector.oStorage.getItem(sKey), sObject, "the write was called with the object as string");
 			});
 		});
 	});
