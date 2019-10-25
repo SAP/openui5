@@ -61,10 +61,10 @@ sap.ui.define([
 							type: "{message>type}",
 							description: "{message>message}"
 						})
-				}
+				},
+				groupItems: true
 			});
 
-			this.oMP._oMessageView.setGroupItems(true);
 			this.getView().byId("messagePopoverBtn").addDependent(this.oMP);
 		},
 
@@ -165,10 +165,6 @@ sap.ui.define([
 
 			this.handleRequiredField(oRequiredNameInput);
 			this.checkInputConstraints(iWeeklyHours);
-
-			this.oMP.getBinding("items").attachChange(function(oEvent){
-				this.oMP._oMessageView.navigateBack();
-			}.bind(this));
 
 			setTimeout(function(){
 				this.oMP.openBy(oButton);
