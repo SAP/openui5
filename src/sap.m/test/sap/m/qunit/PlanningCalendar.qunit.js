@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
@@ -65,6 +66,7 @@ sap.ui.define([
 	DatesRow,
 	coreLibrary,
 	Control,
+	Element,
 	InvisibleText,
 	waitForThemeApplied
 ) {
@@ -3556,6 +3558,18 @@ sap.ui.define([
 		assert.equal(this.oPC2._dateNav._current.getDate(), oToday.getDate(), 'date is correct');
 
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
+	});
+
+	QUnit.test("Date Picker close button works on mobile", function(assert) {
+		var oHeader = this.oPC2._getHeader(),
+			oCalendarPicker = Element.registry.get(oHeader.getAssociation("currentPicker")),
+			oSpyCancel = sinon.spy(oHeader, "_closeCalendarPickerPopup");
+
+		oHeader._openCalendarPickerPopup(oCalendarPicker);
+
+		oHeader._handlePickerCancelEvent();
+
+		assert.equal(oSpyCancel.callCount,1, "Close event was thrown once");
 	});
 
 	QUnit.module("OneMonth view", {
