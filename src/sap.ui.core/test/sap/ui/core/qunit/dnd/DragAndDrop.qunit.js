@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
-	"sap/ui/core/Core"
-], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, Element, UIArea, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/Device"
+], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, Element, UIArea, Core, Device) {
 	"use strict";
 
 	var DivControl = Control.extend("sap.ui.core.dnd.test.DivControl", {
@@ -178,6 +179,28 @@ sap.ui.define([
 		oEvent.target.focus();
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.equal(oEvent.dragSession, null, "No drag session was created for a textarea element");
+	});
+
+	QUnit.test("IE - Text input elements", function(assert) {
+
+		var oBrowserStub = sinon.stub(Device, "browser").value({msie: true});
+
+		this.oControl.addTopItem(new DivControl({elementTag: "input"}));
+		this.oControl.addTopItem(new DivControl({elementTag: "textarea"}));
+		this.oControl.addDragDropConfig(new DragDropInfo());
+		Core.applyChanges();
+
+		assert.ok(this.oControl.getDomRef().draggable, "Ancestor is draggable before mousedown");
+
+		["input", "textarea"].forEach(function(sSelectableElementTagName) {
+			this.oControl.$().find(sSelectableElementTagName).trigger("mousedown");
+			assert.notOk(this.oControl.getDomRef().draggable, "Ancestor is not draggable after mousedown to allow text selection");
+
+			this.oControl.$().find(sSelectableElementTagName).trigger("mouseup");
+			assert.ok(this.oControl.getDomRef().draggable, "Ancestor is draggable again after mouseup to allow drag and drop again");
+		}, this);
+
+		oBrowserStub.restore();
 	});
 
 	QUnit.test("Draggable elements without control id", function(assert) {
