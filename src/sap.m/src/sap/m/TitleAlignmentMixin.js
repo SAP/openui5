@@ -37,6 +37,9 @@ function(
 	 */
 	var _setupBarTitleAlignment = function (oBar, sKey) {
 		// add bar instance to the list
+		if (!this._oTitleAlignmentBarInstances) {
+			this._oTitleAlignmentBarInstances = {};
+		}
 		this._oTitleAlignmentBarInstances[sKey] = oBar;
 		this._determineTitleAlignment(oBar);
 	};
@@ -86,9 +89,11 @@ function(
 			sControlAlignment = sThemeAlignment === undefined ? TitleAlignment.Center : sThemeAlignment;
 		}
 		// do bar alignment
-		if (oBar === undefined) { // no Bar passes as argument, align all Bars "registered" for alignment
-			for (var k in this._oTitleAlignmentBarInstances) {
-				_setBarClass(this._oTitleAlignmentBarInstances[k]);
+		if (!oBar) { // no Bar passes as argument, align all Bars "registered" for alignment
+			if (this._oTitleAlignmentBarInstances) {
+				for (var k in this._oTitleAlignmentBarInstances) {
+					_setBarClass(this._oTitleAlignmentBarInstances[k]);
+				}
 			}
 		} else { // align only passed Bar (initial setup)
 			_setBarClass(oBar);
@@ -115,8 +120,10 @@ function(
 	var setTitleAlignment = function (oAlignment) {
 		this.setProperty("titleAlignment", oAlignment, true);
 		this._determineTitleAlignment();
-		for (var k in this._oTitleAlignmentBarInstances) {
-			this._oTitleAlignmentBarInstances[k].invalidate();
+		if (this._oTitleAlignmentBarInstances) {
+			for (var k in this._oTitleAlignmentBarInstances) {
+				this._oTitleAlignmentBarInstances[k].invalidate();
+			}
 		}
 
 		return this;
@@ -138,7 +145,9 @@ function(
 
 		var fnInit = oControlPrototype.init;
 		oControlPrototype.init = function (sId) {
-			this._oTitleAlignmentBarInstances = {};
+			if (!this._oTitleAlignmentBarInstances) {
+			  this._oTitleAlignmentBarInstances = {};
+			}
 			var res = fnInit.apply(this, arguments);
 			this._attachTitleAlignmentEventDelegate();
 			return res;
