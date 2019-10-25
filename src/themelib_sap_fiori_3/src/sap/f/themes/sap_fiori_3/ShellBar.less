@@ -222,7 +222,6 @@
 			.sapMSFF {
 				background: transparent;
 				border-color: lighten(@sapUiShellBorderColor, 30);
-
 				&:hover {
 					background: @sapUiShellHoverBackground;
 				}
@@ -244,9 +243,16 @@
 					}
 				}
 			}
+
 			&.sapMSFDisabled {
 				opacity: 0.4;
 			}
+
+			&.sapMFocus > .sapMSFF::before ,
+			html[data-sap-ui-browser^="ie"] &.sapMFocus .sapMSFF::before{
+				border-color: @sapUiContentContrastFocusColor;
+			}
+
 		}
 
 		// sap.m.Select
@@ -266,7 +272,7 @@
 				}
 			}
 			&.sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState) {
-				border-color: lighten(@sapUiShellBorderColor,  30);
+				border-color:lighten(@sapUiShellBorderColor,  30);
 			}
 			.sapMSltLabel {
 				color: @sapUiShellTextColor;
