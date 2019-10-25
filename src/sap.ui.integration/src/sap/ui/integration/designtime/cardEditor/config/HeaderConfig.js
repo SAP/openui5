@@ -46,7 +46,10 @@ sap.ui.define([
 			"type": "string",
 			"path": "header/subTitle"
 		},
-		"actions": generateActionConfig(["header"], "header/"),
+		"actions": generateActionConfig({
+			"tags": ["header"],
+			"path": "header/actions"
+		}),
 		"statusText": {
 			"tags": ["header", "defaultHeader"],
 			"label": "{i18n>CARD_EDITOR.STATUS}",
