@@ -163,6 +163,13 @@ sap.ui.define([
 		dnd: { draggable: false, droppable: true }
 	}});
 
+	var DateTimeFormatStyles = {
+		Short: "short",
+		Medium: "medium",
+		Long: "long",
+		Full: "full"
+	};
+
 	var PopupContent = Control.extend("sap.m.internal.DateTimePickerPopup", {
 
 		metadata: {
@@ -351,6 +358,10 @@ sap.ui.define([
 
 	};
 
+	DateTimePicker.prototype._getDefaultValueStyle = function () {
+		return DateTimeFormatStyles.Medium;
+	};
+
 	DateTimePicker.prototype.setMinDate = function (oDate) {
 		DatePicker.prototype.setMinDate.call(this, oDate);
 
@@ -414,7 +425,7 @@ sap.ui.define([
 			return true;
 		} else if (sPattern.indexOf("/") > 0) {
 			// could be a mixed style
-			var aStyles = ["short", "medium", "long", "full"];
+			var aStyles = [ DateTimeFormatStyles.Short, DateTimeFormatStyles.Medium, DateTimeFormatStyles.Long, DateTimeFormatStyles.Long];
 			var bStyle = false;
 
 			for (var i = 0; i < aStyles.length; i++) {
@@ -746,7 +757,7 @@ sap.ui.define([
 		}
 
 		if (!sDisplayFormat) {
-			sDisplayFormat = "medium";
+			sDisplayFormat = DateTimeFormatStyles.Medium;
 		}
 
 		var iSlashIndex = sDisplayFormat.indexOf("/");
@@ -754,7 +765,7 @@ sap.ui.define([
 			sDisplayFormat = sDisplayFormat.substr(iSlashIndex + 1);
 		}
 
-		if (sDisplayFormat == "short" || sDisplayFormat == "medium" || sDisplayFormat == "long" || sDisplayFormat == "full") {
+		if (sDisplayFormat == DateTimeFormatStyles.Short || sDisplayFormat == DateTimeFormatStyles.Medium || sDisplayFormat == DateTimeFormatStyles.Long || sDisplayFormat == DateTimeFormatStyles.Full) {
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 			var oLocaleData = LocaleData.getInstance(oLocale);
 			sTimePattern = oLocaleData.getTimePattern(sDisplayFormat);
