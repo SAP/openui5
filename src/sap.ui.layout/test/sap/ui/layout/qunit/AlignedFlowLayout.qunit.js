@@ -71,6 +71,7 @@ sap.ui.require([
 			oRm.addStyle("width", oControl.getWidth());
 			oRm.addStyle("height", oControl.getHeight());
 			oRm.addStyle("box-sizing", "border-box");
+			oRm.addStyle("vertical-align", "top");
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.writeEscaped(oControl.getText());
@@ -113,8 +114,8 @@ sap.ui.require([
 
 			// act
 			this.oAlignedFlowLayout = new AlignedFlowLayout({
-				minItemWidth: "15rem",
-				maxItemWidth: "30rem"
+				minItemWidth: "240px", // 15rem
+				maxItemWidth: "480px"  // 30rem
 			});
 			this.oContentDomRef = document.getElementById(CONTENT_ID);
 
@@ -126,6 +127,7 @@ sap.ui.require([
 
 			// cleanup
 			this.oAlignedFlowLayout.destroy();
+			Core.applyChanges();
 			this.oAlignedFlowLayout = null;
 		}
 	});
@@ -159,14 +161,15 @@ sap.ui.require([
 		Core.applyChanges();
 		var CSS_CLASS = this.oAlignedFlowLayout.getRenderer().CSS_CLASS + "Item",
 			oItemDomRef = this.oAlignedFlowLayout.getDomRef().firstElementChild,
-			oStyles = getComputedStyle(oItemDomRef);
+			oStyles = getComputedStyle(oItemDomRef),
+			sItemMaxWidth = oStyles.maxWidth;
 
 		// assert
 		assert.ok(oItemDomRef.classList.contains(CSS_CLASS));
 		assert.strictEqual(oStyles.flexGrow, "1", 'it should set the "flex-grow" CSS property to "1"');
 		assert.strictEqual(oStyles.flexShrink, "0", 'it should set the "flex-shrink" CSS property to "0"');
-		assert.strictEqual(oItemDomRef.style.flexBasis, "15rem", 'it should set the "flex-basis" CSS property to "15rem"');
-		assert.strictEqual(oStyles.maxWidth, "480px", 'it should set the "max-width" CSS property to "480px"');
+		assert.strictEqual(oItemDomRef.style.flexBasis, "240px", 'it should set the "flex-basis" CSS property to "240px"');
+		assert.strictEqual(sItemMaxWidth, "480px", 'it should set the "max-width" CSS property to "480px"');
 
 		// cleanup
 		oInput.destroy();
@@ -446,8 +449,8 @@ sap.ui.require([
 
 			// act
 			this.oAlignedFlowLayout = new AlignedFlowLayout({
-				minItemWidth: "15rem",
-				maxItemWidth: "30rem"
+				minItemWidth: "240px", // 15rem
+				maxItemWidth: "480px"  // 30rem
 			});
 			this.oContentDomRef = document.getElementById(CONTENT_ID);
 			this.CSS_CLASS_ONE_LINE = this.oAlignedFlowLayout.getRenderer().CSS_CLASS + "OneLine";
@@ -765,8 +768,8 @@ sap.ui.require([
 		var oInput3;
 		var oAdaptFiltersButton;
 		var oAlignedFlowLayout = new AlignedFlowLayout({
-			minItemWidth: "12rem", // default 192px
-			maxItemWidth: "24rem", // default 384px
+			minItemWidth: "192px", // default 12rem
+			maxItemWidth: "384px", // default 24rem
 			content: [
 				oInput1 = new Input({
 					width: "100%"
@@ -850,8 +853,8 @@ sap.ui.require([
 		var oInput3;
 		var oAdaptFiltersButton;
 		var oAlignedFlowLayout = new AlignedFlowLayout({
-			minItemWidth: "12rem", // default 192px
-			maxItemWidth: "24rem", // default 384px
+			minItemWidth: "192px", // default 12rem
+			maxItemWidth: "384px", // default 24rem
 			content: [
 				oInput1 = new Input({
 					width: "100%",
@@ -955,8 +958,8 @@ sap.ui.require([
 		var oInput3;
 		var oAdaptFiltersButton;
 		var oAlignedFlowLayout = new AlignedFlowLayout({
-			minItemWidth: "12rem", // default 192px
-			maxItemWidth: "24rem", // default 384px
+			minItemWidth: "192px", // default 12rem
+			maxItemWidth: "384px", // default 24rem
 			content: [
 				oInput1 = new Input({
 					width: "100%",
