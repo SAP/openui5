@@ -8,7 +8,6 @@
  * @version @version@
  */
 sap.ui.define([
-	"./SalesOrdersSandbox",
 	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/m/HBox",
@@ -19,8 +18,8 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (SalesOrdersSandbox, jQuery, Log, HBox, library, UIComponent, View, JSONModel,
-		OperationMode, ODataModel, TestUtils) {
+], function (jQuery, Log, HBox, library, UIComponent, View, JSONModel, OperationMode, ODataModel,
+		TestUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -79,15 +78,6 @@ sap.ui.define([
 			return oLayout;
 			// TODO: enhance sample application after features are supported
 			// - Error Handling; not yet implemented in model
-		},
-
-		exit : function () {
-			TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders.sandbox").restore();
-			// ensure the sandbox module is reloaded so that sandbox initialization takes place
-			// again the next time the component used
-			jQuery.sap.unloadResources(
-				"sap/ui/core/sample/odata/v4/SalesOrders/SalesOrdersSandbox.js",
-				false /*bPreloadGroup*/, true /*bUnloadAll*/, true /*bDeleteExports*/);
 		}
 	});
 });
