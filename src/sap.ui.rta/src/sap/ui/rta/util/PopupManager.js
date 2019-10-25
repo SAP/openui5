@@ -306,10 +306,10 @@ function (
 			if (this._isSupportedPopup(oPopupElement)) {
 				if (this._isPopupAdaptable(oPopupElement)
 					&& this.getRta()._oDesignTime) {
-					oPopupElement.attachAfterOpen(this._createPopupOverlays, this);
-					this._setModal(true, oPopupElement);
+					oPopupElement.attachEventOnce("afterOpen", this._createPopupOverlays, this);
 					//PopupManager internal method
-					this.fireOpen(oPopupElement);
+					oPopupElement.attachEventOnce("afterOpen", this.fireOpen, this);
+					this._setModal(true, oPopupElement);
 				} else if (!(oPopupElement instanceof Popover)) {
 					// for all popups which are non-adaptable and non-popovers
 					this._setModal(true, oPopupElement);

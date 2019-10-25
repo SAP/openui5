@@ -273,7 +273,7 @@ function(
 			}
 
 			if (sap.ui.version.includes("-SNAPSHOT")) {
-				this.attachStart(validateFlexEnabled.bind(null, this));
+				this.attachEvent("start", validateFlexEnabled.bind(null, this));
 			}
 		},
 		_RESTART : {
@@ -446,9 +446,10 @@ function(
 	};
 
 	RuntimeAuthoring.prototype.onPopupOpen = function(oEvent) {
+		var oOpenedPopup = oEvent.getParameters().getSource();
 		if (
-			oEvent.getParameters() instanceof sap.m.Dialog
-			&& this.getToolbar() instanceof FioriToolbar
+			oOpenedPopup.isA("sap.m.Dialog")
+			&& this.getToolbar().isA("sap.ui.rta.toolbar.Fiori")
 		) {
 			this.getToolbar().setColor("contrast");
 		}

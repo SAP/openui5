@@ -486,6 +486,9 @@ sap.ui.define([
 				"util/validateFlexEnabled": {
 					coverage: {
 						only: ["sap/ui/rta/util/validateFlexEnabled"]
+					},
+					ui5: {
+						flexibilityServices: '[{"connector": "LocalStorageConnector", "layers": ["ALL"]}]'
 					}
 				},
 				"util/validateStableIds": {
