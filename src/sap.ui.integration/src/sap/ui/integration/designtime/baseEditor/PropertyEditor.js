@@ -3,12 +3,21 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance"
+	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
+	"sap/ui/integration/designtime/baseEditor/util/createPromise",
+	"sap/ui/integration/designtime/baseEditor/util/escapeParameter",
+	"sap/base/util/isPlainObject"
 ], function (
 	Control,
-	findClosestInstance
+	findClosestInstance,
+	createPromise,
+	escapeParameter,
+	isPlainObject
 ) {
 	"use strict";
+
+	var CREATED_BY_CONFIG = "config";
+	var CREATED_BY_PROPERTY_NAME = "propertyName";
 
 	/**
 	 * @constructor
@@ -20,6 +29,9 @@ sap.ui.define([
 			properties: {
 				propertyName: {
 					type: "string"
+				},
+				config: {
+					type: "object"
 				}
 			},
 			aggregations: {
@@ -30,19 +42,65 @@ sap.ui.define([
 				}
 			},
 			associations: {
-				"editor": {
+				editor: {
 					type: "sap.ui.integration.designtime.baseEditor.BaseEditor",
 					multiple: false
 				}
 			},
 			events: {
+				/**
+				 * Fires when new Editor changes.
+				 */
 				editorChange: {
 					parameters: {
-						editor: {
+						previousEditor: {
 							type: "sap.ui.integration.designtime.baseEditor.BaseEditor"
 						},
-						nextEditor: {
+						editor: {
 							type: "sap.ui.integration.designtime.baseEditor.BaseEditor"
+						}
+					}
+				},
+
+				/**
+				 * Fires when internal property editor changes, e.g. called after initial initialisation or
+				 * after changing propertyName or config properties.
+				 */
+				propertyEditorChange: {
+					parameters: {
+						previousPropertyEditor: {
+							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
+						},
+						propertyEditor: {
+							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
+						}
+					}
+				},
+
+				/**
+				 * Fires when config changes.
+				 */
+				configChange: {
+					parameters: {
+						previousConfig: {
+							type: "object"
+						},
+						config: {
+							type: "object"
+						}
+					}
+				},
+
+				/**
+				 * Fires when propertyName changes.
+				 */
+				propertyNameChange: {
+					parameters: {
+						previousPropertyName: {
+							type: "string"
+						},
+						propertyName: {
+							type: "string"
 						}
 					}
 				}
@@ -50,27 +108,53 @@ sap.ui.define([
 		},
 
 		_bEditorAutoDetect: false,
+		_sCreatedBy: null, // possible values: null | propertyName | config
 
 		constructor: function() {
-			Control.prototype.constructor.apply(this, arguments);
+			Control.prototype.constructor.apply(this, escapeParameter(arguments, "config"));
 
-			if (this.getEditor()) {
-				this._initPropertyEditor(this.getEditor());
-			} else {
+			if (!this.getEditor()) {
+				// FIXME: if set later manually => this detection should be disabled
 				// if editor is not set explicitly via constructor, we're going to try to find it
 				this._bEditorAutoDetect = true;
 			}
 
-			this.setPropertyName = function () {
-				throw new Error("Property `propertyName` cannot be changed after initialisation");
-			};
-
 			this._propagationListener = this._propagationListener.bind(this);
-			this.attachEditorChange(this._onEditorChange, this);
+
+			this.attachEditorChange(function () {
+				if (this._sCreatedBy) {
+					this._removePropertyEditor();
+				}
+				this._initPropertyEditor();
+			});
+
+			this.attachConfigChange(function () {
+				if (this._sCreatedBy) {
+					this._removePropertyEditor();
+				}
+				this._initPropertyEditor();
+			});
+
+			this.attachPropertyNameChange(function () {
+				if (this._sCreatedBy === CREATED_BY_PROPERTY_NAME) {
+					this._removePropertyEditor();
+				}
+				if (this._sCreatedBy !== CREATED_BY_CONFIG) {
+					this._initPropertyEditor();
+				}
+			});
+
+			// init
+			this._initPropertyEditor();
 		},
 
 		renderer: function (oRm, oControl) {
+			oRm.openStart("div", oControl);
+			oRm.openEnd();
+
 			oRm.renderControl(oControl.getAggregation("propertyEditor"));
+
+			oRm.close("div");
 		}
 	});
 
@@ -78,29 +162,123 @@ sap.ui.define([
 		return sap.ui.getCore().byId(this.getAssociation('editor'));
 	};
 
-	PropertyEditor.prototype.setEditor = function (vEditor) {
-		var oEditor = this.getEditor();
-		this.setAssociation('editor', vEditor);
-		var oNextEditor = this.getEditor();
-		this.fireEditorChange({
-			editor: oEditor,
-			nextEditor: oNextEditor
-		});
-	};
-
-	PropertyEditor.prototype._onEditorChange = function (oEvent) {
-		var oNextEditor = oEvent.getParameter('nextEditor');
-		if (oNextEditor) {
-			this._initPropertyEditor(oNextEditor);
+	PropertyEditor.prototype.setConfig = function (mConfig) {
+		var mPreviousConfig = this.getConfig();
+		if (
+			mPreviousConfig !== mConfig
+			&& (
+				!isPlainObject(mPreviousConfig)
+				|| !isPlainObject(mConfig)
+				|| JSON.stringify(mPreviousConfig) !== JSON.stringify(mConfig)
+			)
+		) {
+			this.setProperty("config", mConfig);
+			this.fireConfigChange({
+				previousConfig: mPreviousConfig,
+				config: mConfig
+			});
 		}
 	};
 
-	PropertyEditor.prototype._initPropertyEditor = function (oEditor) {
-		oEditor.getPropertyEditor(this.getPropertyName()).then(function (oPropertyEditor) {
-			if (this.getEditor() === oEditor) { // Just in case editor changes faster than promise is resolved
-				this.setAggregation("propertyEditor", oPropertyEditor);
+	PropertyEditor.prototype.setPropertyName = function (sPropertyName) {
+		var sPreviousPropertyName = this.getPropertyName();
+		if (sPreviousPropertyName !== sPropertyName) {
+			this.setProperty("propertyName", sPropertyName);
+			this.firePropertyNameChange({
+				previousPropertyName: sPreviousPropertyName,
+				propertyName: sPropertyName
+			});
+		}
+	};
+
+	PropertyEditor.prototype.setEditor = function (vEditor) {
+		var oPreviousEditor = this.getEditor();
+		var oEditor = typeof vEditor === "string" ? sap.ui.getCore().byId(vEditor) : vEditor;
+		if (oPreviousEditor !== oEditor) {
+			this.setAssociation("editor", vEditor);
+			var oEditor = this.getEditor();
+			this.fireEditorChange({
+				previousEditor: oPreviousEditor,
+				editor: oEditor
+			});
+		}
+	};
+
+	PropertyEditor.prototype.destroy = function () {
+		this._removePropertyEditor();
+		Control.prototype.destroy.apply(this, arguments);
+	};
+
+	PropertyEditor.prototype._removePropertyEditor = function () {
+		var oPropertyEditor = this.getAggregation("propertyEditor");
+
+		if (oPropertyEditor) {
+			this.setAggregation("propertyEditor", null);
+			switch (this._sCreatedBy) {
+				case CREATED_BY_CONFIG:
+					oPropertyEditor.destroy();
+					break;
+				case CREATED_BY_PROPERTY_NAME:
+					// Need to manually as there is a bug in removeAllAggregation()
+					// when aggregation marked as "multiple: false"
+					oPropertyEditor.setParent(null);
+					break;
 			}
-		}.bind(this));
+			this._sCreatedBy = null;
+			this.firePropertyEditorChange({
+				propertyEditor: null
+			});
+		}
+	};
+
+	PropertyEditor.prototype._initPropertyEditor = function () {
+		if (
+			this.getEditor()
+			&& (
+				this.getConfig()
+				|| (
+					!this.getBindingInfo("config") // If there is a binding on config property the value might not arrived yet
+					&& this.getPropertyName()
+				)
+			)
+		) {
+			var oEditor = this.getEditor();
+			// Cancel previous async process if any
+			if (this._fnCancelInit) {
+				this._fnCancelInit();
+				delete this._fnCancelInit;
+			}
+
+			var mPromise = createPromise(function (fnResolve, fnReject) {
+				var oPromise;
+				var sCreatedBy;
+
+				if (this.getConfig()) {
+					oPromise = oEditor.createPropertyEditor(this.getConfig());
+					sCreatedBy = CREATED_BY_CONFIG;
+				} else {
+					oPromise = oEditor.getPropertyEditor(this.getPropertyName());
+					sCreatedBy = CREATED_BY_PROPERTY_NAME;
+				}
+
+				oPromise
+					.then(function (oPropertyEditor) {
+						this._sCreatedBy = sCreatedBy;
+						delete this._fnCancelInit;
+						fnResolve(oPropertyEditor);
+					}.bind(this))
+					.catch(fnReject);
+			}.bind(this));
+
+			this._fnCancelInit = mPromise.cancel;
+
+			mPromise.promise.then(function (oPropertyEditor) {
+				this.setAggregation("propertyEditor", oPropertyEditor);
+				this.firePropertyEditorChange({
+					propertyEditor: oPropertyEditor
+				});
+			}.bind(this));
+		}
 	};
 
 	PropertyEditor.prototype._propagationListener = function () {

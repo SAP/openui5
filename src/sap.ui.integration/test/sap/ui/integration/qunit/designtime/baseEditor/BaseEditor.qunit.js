@@ -101,7 +101,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "{i18n>prop}", "Then binding against other models is untouched");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "prop", "Then binding against other models is untouched");
 				done();
 			}.bind(this));
 		});

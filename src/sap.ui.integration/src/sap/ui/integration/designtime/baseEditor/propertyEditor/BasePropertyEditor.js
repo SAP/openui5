@@ -106,6 +106,10 @@ sap.ui.define([
 			}
 		},
 
+		getValue: function () {
+			return this.getConfig().value;
+		},
+
 		_initialize: function() {
 			var oConfig = this.getConfig();
 			var oJsonModel = this.getModel("_context");
@@ -116,6 +120,7 @@ sap.ui.define([
 				// resolve binding strings
 				this._oConfigBinding = new ObjectBinding();
 				this._oConfigBinding.setModel(oJsonModel, "context");
+				this._oConfigBinding.setModel(this.getModel("i18n"), "i18n");
 				this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
 				this._oConfigBinding.setObject(oConfig);
 				//
@@ -144,7 +149,7 @@ sap.ui.define([
 			var oLabel = this.getAggregation("_label");
 			if (!oLabel) {
 				oLabel = new Label({
-					text: this.getConfig().label,
+					text: "{label}",
 					design: "Bold"
 				});
 				this.setAggregation("_label", oLabel);
