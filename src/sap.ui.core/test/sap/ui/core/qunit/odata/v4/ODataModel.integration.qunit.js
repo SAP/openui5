@@ -322,20 +322,7 @@ sap.ui.define([
 					});
 			}
 
-			return new SyncPromise(function (resolve) {
-				if (getGroupLocks().length) {
-					setTimeout(resolve, 5);
-				} else {
-					resolve();
-				}
-			}).then(function () {
-				var aGroupLocks = getGroupLocks();
-
-				aGroupLocks.forEach(function (oGroupLock) {
-					assert.ok(false, "GroupLock remained: " + oGroupLock);
-				});
-				assert.strictEqual(aGroupLocks.length, 0, "No remaining locks");
-
+			function cleanup() {
 				if (that.oView) {
 					// avoid calls to formatters by UI5 localization changes in later tests
 					that.oView.destroy();
@@ -345,7 +332,19 @@ sap.ui.define([
 				}
 				// reset the language
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-			});
+			}
+
+			if (getGroupLocks().length) {
+				return resolveLater(function () {
+					getGroupLocks().forEach(function (oGroupLock) {
+						assert.ok(false, "GroupLock remained: " + oGroupLock);
+					});
+
+					cleanup();
+				});
+			}
+
+			cleanup();
 		},
 
 		/**
