@@ -72,6 +72,11 @@ sap.ui.define([
 			"path": "content/item/icon/src",
 			"visible": "{= ${context>type} === 'List' }"
 		},
-		"listItemActions": generateActionConfig(["content", "listItem"], "content/item/")
+		"listItemActions": generateActionConfig({
+			"tags": ["content", "listItem"],
+			"path": "content/item/actions",
+			"maxItems": 1,
+			"visible": "{= ${context>type} === 'List' }"
+		})
 	};
 });
