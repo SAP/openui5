@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Variant",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/context/ContextManager",
@@ -27,7 +27,7 @@ sap.ui.define([
 	Variant,
 	Utils,
 	LayerUtils,
-	LRepConnector,
+	CompatibilityConnector,
 	Cache,
 	Applier,
 	ContextManager,
@@ -105,7 +105,6 @@ sap.ui.define([
 
 		this._oVariantController = new VariantController(this._mComponent.name, this._mComponent.appVersion, {});
 		this._oTransportSelection = new TransportSelection();
-		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
 		this._mChangesEntries = {};
@@ -133,17 +132,6 @@ sap.ui.define([
 	ChangePersistence.prototype.getComponentName = function() {
 		return this._mComponent.name;
 	};
-
-	/**
-	 * Creates a new instance of the LRepConnector
-	 *
-	 * @returns {sap.ui.fl.LrepConnector} LRep connector instance
-	 * @private
-	 */
-	ChangePersistence.prototype._createLrepConnector = function() {
-		return LRepConnector.createConnector();
-	};
-
 
 	/**
 	 * Returns an cache key for caching views.
@@ -229,7 +217,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag, bInvalidateCache) {
-		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag, bInvalidateCache).then(function(oWrappedChangeFileContent) {
+		return Cache.getChangesFillingCache(this._mComponent, mPropertyBag, bInvalidateCache).then(function(oWrappedChangeFileContent) {
 			var oChangeFileContent = merge({}, oWrappedChangeFileContent);
 			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
 
@@ -627,44 +615,41 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.saveAllChangesForVariant = function(sStableId) {
 		var aPromises = [];
-		var that = this;
 		jQuery.each(this._mVariantsChanges[sStableId], function(id, oChange) {
 			var sChangeId = oChange.getId();
 			switch (oChange.getPendingAction()) {
 				case "NEW":
-					aPromises.push(that._oConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
-						oChange.setResponse(result.response);
+					aPromises.push(CompatibilityConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
 						if (Cache.isActive()) {
-							Cache.addChange({ name: that._mComponent.name, appVersion: that._mComponent.appVersion}, result.response);
+							Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						}
 						return result;
-					}));
+					}.bind(this)));
 					break;
 				case "UPDATE":
-					aPromises.push(that._oConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
-						oChange.setResponse(result.response);
+					aPromises.push(CompatibilityConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
 						if (Cache.isActive()) {
-							Cache.updateChange({ name: that._mComponent.name, appVersion: that._mComponent.appVersion}, result.response);
+							Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						}
 						return result;
-					}));
+					}.bind(this)));
 					break;
 				case "DELETE":
-					aPromises.push(that._oConnector.deleteChange(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
-						var oChange = that._mVariantsChanges[sStableId][sChangeId];
+					aPromises.push(CompatibilityConnector.deleteChange(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
+						var oChange = this._mVariantsChanges[sStableId][sChangeId];
 						if (oChange.getPendingAction() === "DELETE") {
-							delete that._mVariantsChanges[sStableId][sChangeId];
+							delete this._mVariantsChanges[sStableId][sChangeId];
 						}
 						if (Cache.isActive()) {
-							Cache.deleteChange({ name: that._mComponent.name, appVersion: that._mComponent.appVersion}, oChange.getDefinition());
+							Cache.deleteChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						}
 						return result;
-					}));
+					}.bind(this)));
 					break;
 				default:
 					break;
 			}
-		});
+		}.bind(this));
 
 		// TODO Consider not rejecting with first error, but wait for all promises and collect the results
 		return Promise.all(aPromises);
@@ -812,6 +797,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChange The change whose dependencies should be copied
 	 * @param {function} fnDependencyValidation this function is called to check if the dependency is still valid
+	 * @param {sap.ui.core.Component} oAppComponent Application component instance that is currently loading
 	 * @returns {object} Returns the mChanges object with the updated dependencies
 	 */
 	ChangePersistence.prototype.copyDependenciesFromInitialChangesMap = function(oChange, fnDependencyValidation, oAppComponent) {
@@ -906,10 +892,9 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesForView = function(sViewId, mPropertyBag) {
-		var that = this;
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
-			return aChanges.filter(changesHavingCorrectViewPrefix.bind(that));
-		});
+			return aChanges.filter(changesHavingCorrectViewPrefix.bind(this));
+		}.bind(this));
 
 		function changesHavingCorrectViewPrefix(oChange) {
 			var oSelector = oChange.getSelector();
@@ -1019,7 +1004,7 @@ sap.ui.define([
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];
 			var aPreparedDirtyChangesBulk = this._prepareDirtyChanges(aDirtyChanges);
-			return this._oConnector.create(aPreparedDirtyChangesBulk, sRequest)
+			return CompatibilityConnector.create(aPreparedDirtyChangesBulk, sRequest)
 			.then(function(oResponse) {
 				this._massUpdateCacheAndDirtyState(aDirtyChanges, aDirtyChangesClone, bSkipUpdateCache);
 				return oResponse;
@@ -1051,13 +1036,13 @@ sap.ui.define([
 	ChangePersistence.prototype._performSingleSaveAction = function (oDirtyChange) {
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
-				return this._oConnector.create(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
+				return CompatibilityConnector.create(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
 			}
 
 			if (oDirtyChange.getPendingAction() === "DELETE") {
-				return this._oConnector.deleteChange(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
+				return CompatibilityConnector.deleteChange(oDirtyChange.getDefinition(), oDirtyChange.getRequest());
 			}
-		}.bind(this);
+		};
 	};
 
 	/**
@@ -1380,7 +1365,7 @@ sap.ui.define([
 				mParams.aChangeTypes = aChangeTypes;
 			}
 
-			return this._oConnector.resetChanges(mParams);
+			return CompatibilityConnector.resetChanges(mParams);
 		}.bind(this))
 		.then(function(oResponse) {
 			var aChangesToRevert = [];
@@ -1418,7 +1403,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} Resolves the information if the application has content that can be reset and/or published
 	 */
 	ChangePersistence.prototype.getResetAndPublishInfo = function(mPropertyBag) {
-		return this._oConnector.getFlexInfo(mPropertyBag);
+		return CompatibilityConnector.getFlexInfo(mPropertyBag);
 	};
 
 	return ChangePersistence;

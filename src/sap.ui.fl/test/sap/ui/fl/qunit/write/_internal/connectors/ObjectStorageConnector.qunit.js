@@ -143,7 +143,10 @@ sap.ui.define([
 			QUnit.test("when loadFeatures is called", function(assert) {
 				return oConnector.loadFeatures()
 					.then(function(oFeatues) {
-						assert.deepEqual(oFeatues, {}, "the function resolves with an empty object");
+						assert.deepEqual(oFeatues, {
+							isKeyUser: true,
+							isVariantSharingEnabled: true
+						}, "the function resolves with options");
 					});
 			});
 

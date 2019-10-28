@@ -3,17 +3,21 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/FakeLrepConnectorStorage",
-	"sap/ui/fl/FakeLrepLocalStorage"
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/FakeLrepConnector",
+	"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
+	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector"
 ],
 function(
-	FakeLrepConnectorStorage,
-	FakeLrepLocalStorage
+	Cache,
+	FakeLrepConnector,
+	ApplyLocalStorageConnector,
+	WriteLocalStorageConnector
 ) {
 	"use strict";
 
 	/**
-	 * Class for connecting to Fake LREP storing changes in local storage
+	 * Class for storing changes in local storage
 	 *
 	 * @class
 	 *
@@ -26,5 +30,29 @@ function(
 	 * @alias sap.ui.fl.FakeLrepConnectorLocalStorage
 	 */
 
-	return FakeLrepConnectorStorage(FakeLrepLocalStorage, window.localStorage);
+	return {
+		enableFakeConnector : function (mPropertyBag) {
+			var sJsonPath = mPropertyBag ? mPropertyBag.sInitialComponentJsonPath : undefined;
+			FakeLrepConnector.setFlexibilityServicesAndClearCache("LocalStorageConnector", sJsonPath);
+		},
+		disableFakeConnector : function () {
+			FakeLrepConnector.disableFakeConnector();
+		},
+		forTesting: {
+			spyWrite: function (sandbox, assert) {
+				return FakeLrepConnector.forTesting.spyMethod(sandbox, assert, WriteLocalStorageConnector, "write");
+			},
+			getNumberOfChanges: function (sReference) {
+				return FakeLrepConnector.forTesting.getNumberOfChanges(ApplyLocalStorageConnector, sReference);
+			},
+			synchronous: {
+				clearAll: function () {
+					FakeLrepConnector.forTesting.synchronous.clearAll(window.localStorage);
+				},
+				store: function (sKey, oItem) {
+					FakeLrepConnector.forTesting.synchronous.store(window.localStorage, sKey, oItem);
+				}
+			}
+		}
+	};
 }, /* bExport= */ true);

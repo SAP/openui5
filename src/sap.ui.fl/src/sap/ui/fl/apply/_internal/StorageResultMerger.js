@@ -221,7 +221,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.Cache
 	 */
-	oStorageResultMerger._concatChanges = function(aResponses) {
+	function _concatChanges(aResponses) {
 		var aChanges = [];
 
 		aResponses.forEach(function (oResponse) {
@@ -241,7 +241,22 @@ sap.ui.define([
 		});
 
 		return aChanges;
-	};
+	}
+
+	/**
+	 * Concatenates all ui2personalization from a list of flex data request responses into a passed result object and removed duplicates.
+	 *
+	 * @param {object[]} aResponses List of responses containing a changes property to be concatenated
+	 * @param {object[]} aResponses.ui2personalization List of the change definitions
+	 * @returns {object[]} Merged array of ui2personalization
+	 * @private
+	 * @ui5-restricted sap.ui.fl.Cache
+	 */
+	function _concatUi2personalization(aResponses) {
+		return aResponses.reduce(function (oUi2Section, oResponse) {
+			return merge({}, oUi2Section, oResponse.ui2personalization);
+		}, {});
+	}
 
 	/**
 	 * Merges the results from all involved connectors.
@@ -256,7 +271,8 @@ sap.ui.define([
 	 */
 	oStorageResultMerger.merge = function(mPropertyBag) {
 		var oResult = {
-			changes: oStorageResultMerger._concatChanges(mPropertyBag.responses),
+			changes: _concatChanges(mPropertyBag.responses),
+			ui2personalization: _concatUi2personalization(mPropertyBag.responses),
 			variantSection: {}
 		};
 

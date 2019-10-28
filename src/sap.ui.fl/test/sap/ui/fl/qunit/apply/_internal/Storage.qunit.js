@@ -29,7 +29,8 @@ sap.ui.define([
 
 	var EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION = {
 		changes: [],
-		variantSection: {}
+		variantSection: {},
+		ui2personalization: {}
 	};
 
 	var EMPTY_LOAD_FLEX_DATA_RESULT = merge({}, EMPTY_FLEX_DATA_RESPONSE_WITH_VARIANT_SECTION);
@@ -179,7 +180,7 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				var oResultKeys = Object.keys(oResult);
-				assert.equal(oResultKeys.length, 2, "two entries are in the result");
+				assert.equal(oResultKeys.length, 3, "three entries are in the result");
 				assert.ok(oResultKeys.indexOf("changes") !== -1, "the changes section was included");
 				assert.ok(oResultKeys.indexOf("variantSection") !== -1, "the variantSection was included");
 				var oResultVariantSectionKeys = Object.keys(oResult.variantSection);
@@ -232,7 +233,7 @@ sap.ui.define([
 
 			return Storage.loadFlexData({reference: "app.id"}).then(function (oResult) {
 				var oResultKeys = Object.keys(oResult);
-				assert.equal(oResultKeys.length, 2, "two entries are in the result");
+				assert.equal(oResultKeys.length, 3, "three entries are in the result");
 				assert.ok(oResultKeys.indexOf("changes") !== -1, "the changes section was included");
 				assert.ok(oResultKeys.indexOf("variantSection") !== -1, "the variantSection was included");
 				var oResultVariantSectionKeys = Object.keys(oResult.variantSection);
@@ -591,7 +592,8 @@ sap.ui.define([
 		QUnit.test("Given two connectors provide variants in the variant section", function (assert) {
 			var oVariant1 = {
 				changes: [],
-				variantSection: {}
+				variantSection: {},
+				ui2personalization: {}
 			};
 			oVariant1.variantSection = {
 				variantManagement1: {
@@ -612,7 +614,8 @@ sap.ui.define([
 			sandbox.stub(StaticFileConnector, "loadFlexData").resolves(oVariant1);
 			var oVariant2 = {
 				changes: [],
-				variantSection: {}
+				variantSection: {},
+				ui2personalization: {}
 			};
 			oVariant2.variantSection = {
 				variantManagement1: {

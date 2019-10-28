@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/Utils",
@@ -26,6 +27,7 @@ sap.ui.define([
 	Settings,
 	ChangeRegistry,
 	LrepConnector,
+	CompatibilityConnector,
 	WriteUtils,
 	TransportSelection,
 	flexUtils,
@@ -52,7 +54,7 @@ sap.ui.define([
 		};
 
 		var oManifest = new Manifest(oDescriptor);
-		var oAppComponent = {
+		return {
 			name: "testComponent",
 			getManifest : function() {
 				return oManifest;
@@ -60,12 +62,8 @@ sap.ui.define([
 			getId: function() {
 				return "Control---demo--test";
 			},
-			getLocalId: function() {
-				return;
-			}
+			getLocalId: function() {}
 		};
-
-		return oAppComponent;
 	}
 
 	function simulateSystemConfig(bIsCloudSystem) {
@@ -252,7 +250,7 @@ sap.ui.define([
 				}
 			});
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
+			var fnCreateBackendCall = sandbox.stub(CompatibilityConnector, "create").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
@@ -309,7 +307,7 @@ sap.ui.define([
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							assert.equal(oUIChange.getNamespace(), "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 							// Get the UI change to be saved to backend
-							assert.ok(oOldConnectorCall.calledWith("/sap/bc/lrep/changes/", "POST"), "then backend call is triggered with correct parameters");
+							assert.equal(fnCreateBackendCall.callCount, 1, "then backend call is triggered");
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
@@ -521,7 +519,7 @@ sap.ui.define([
 				}
 			});
 
-			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
+			var fnCreateBackendCall = sandbox.stub(CompatibilityConnector, "create").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
@@ -554,7 +552,7 @@ sap.ui.define([
 							assert.equal(oUIChange.getDefinition().validAppVersions.from, "1.0.0", "the app variant from version of UI Change has been changed");
 							assert.equal(oUIChange.getNamespace(), "apps/customer.reference.app.id/changes/", "the namespace of the UI Change has been changed");
 							assert.equal(oUIChange.getRequest(), "", "the request has been set correctly");
-							assert.ok(oOldConnectorCall.calledWith("/sap/bc/lrep/changes/", "POST"), "then backend call is triggered with correct parameters");
+							assert.equal(fnCreateBackendCall.callCount, 1, "then backend call is triggered");
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");

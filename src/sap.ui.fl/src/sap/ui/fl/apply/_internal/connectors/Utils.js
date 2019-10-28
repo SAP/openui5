@@ -102,7 +102,11 @@ sap.ui.define([
 								mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
 							}
 						}
-						mConnectors[iIndex].connectorModule = oConnector;
+						if (bLoadApplyConnectors) {
+							mConnectors[iIndex].applyConnectorModule = oConnector;
+						} else {
+							mConnectors[iIndex].writeConnectorModule = oConnector;
+						}
 					});
 
 					resolve(mConnectors);
@@ -250,7 +254,8 @@ sap.ui.define([
 				variants: [],
 				variantChanges: [],
 				variantDependentControlChanges: [],
-				variantManagementChanges: []
+				variantManagementChanges: [],
+				ui2personalization: {}
 			});
 		},
 
@@ -279,7 +284,7 @@ sap.ui.define([
 					mGroupedFlexObjects[sLayer].variantChanges.push(oFlexObject);
 				} else if (oFlexObject.fileType === "ctrl_variant_management_change") {
 					mGroupedFlexObjects[sLayer].variantManagementChanges.push(oFlexObject);
-				} else if (oFlexObject.fileType === "change") {
+				} else if (oFlexObject.fileType === "change" || oFlexObject.fileType === "variant") {
 					if (oFlexObject.variantReference) {
 						mGroupedFlexObjects[sLayer].variantDependentControlChanges.push(oFlexObject);
 					} else {

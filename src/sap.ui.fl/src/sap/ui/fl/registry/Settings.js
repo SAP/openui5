@@ -4,13 +4,13 @@
 /*global Error */
 
 sap.ui.define([
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
 	"sap/base/util/UriParameters",
 	"sap/base/Log"
 ], function(
-	LrepConnector,
+	CompatibilityConnector,
 	Cache,
 	Utils,
 	UriParameters,
@@ -59,22 +59,6 @@ sap.ui.define([
 		this._oSettings = oSettings;
 	};
 
-	/**
-	 * Sets the initial value of the settings instance. If the current system is a trial system it will create an instance with default parameters.
-	 * Otherwise the instance remains undefined.
-	 */
-	Settings._initInstance = function () {
-		var oSettings;
-		if (Utils.isTrialSystem()) {
-			oSettings = new Settings({
-				isKeyUser: true,
-				isVariantSharingEnabled: false
-			});
-		}
-		Settings._instance = oSettings;
-	};
-
-	Settings._initInstance();
 	Settings._IS_VARIANT_SHARING_ENABLED = "isVariantSharingEnabled";
 
 
@@ -139,7 +123,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Settings._loadSettings = function() {
-		return LrepConnector.createConnector().loadSettings().then(function (oSettings) {
+		return CompatibilityConnector.loadSettings().then(function (oSettings) {
 			if (!oSettings) {
 				Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
 				// in case the back end cannot respond resolve with a default response
@@ -254,7 +238,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether sharing of variants is enabled.
+	 * Checks whether sharing of variants is enabled for the given user.
 	 *
 	 * @public
 	 * @returns {boolean} true if sharing of variants is enabled
@@ -265,7 +249,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the system Id of the connected backend.
-	 * Taken from the property 'system' of the LRep flex settings file. Only filled for an ABAP backend.
+	 * Taken from the property 'system' of the flex settings. Only filled for an ABAP backend.
 	 *
 	 * @public
 	 * @returns {String} system Id of the connected backend or undefined (when property 'system' does not exist in the flex settings file)
@@ -276,7 +260,7 @@ sap.ui.define([
 
 	/**
 	 * Getter for the client of the connected backend.
-	 * Taken from the property 'client' of the LRep flex settings file. Only filled for an ABAP backend.
+	 * Taken from the property 'client' of the flex settings. Only filled for an ABAP backend.
 	 *
 	 * @public
 	 * @returns {String} client of the connected backend or undefined (when property 'system' does not exist in the flex settings file)

@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/FlexCustomData",
 	"sap/ui/fl/Change",
@@ -28,6 +29,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
+	CompatibilityConnector,
 	FlexController,
 	FlexCustomData,
 	Change,
@@ -380,12 +382,7 @@ function (
 					assert.ok(oChange);
 
 					var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
-					var oCreateStub = sinon.stub();
-					oCreateStub.returns(Promise.resolve());
-					var oLrepConnectorMock = {
-						create: oCreateStub
-					};
-					oChangePersistence._oConnector = oLrepConnectorMock;
+					var oCreateStub = sandbox.stub(CompatibilityConnector, "create").returns(Promise.resolve());
 
 					sinon.stub(oChangePersistence, "_massUpdateCacheAndDirtyState").returns(undefined);
 
@@ -435,7 +432,7 @@ function (
 		//TODO non local id
 
 		QUnit.test("addChange shall not set transport information", function (assert) {
-			var oControl = new Control("mockControl");
+			var oControl = new Control("mockControl2");
 			this.oFlexController._sComponentName = "myComponent";
 			var oChangeParameters = { transport: "testtransport", packageName: "testpackage" };
 			var fChangeHandler = sinon.stub();
@@ -746,7 +743,7 @@ function (
 		});
 
 		QUnit.test("adds context to the change if provided by the context manager", function (assert) {
-			var oControl = new Control("mockControl");
+			var oControl = new Control("mockControl3");
 			var sProvidedContext = "ctx001";
 			var aProvidedContext = [sProvidedContext];
 			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns(aProvidedContext);
@@ -777,7 +774,7 @@ function (
 		});
 
 		QUnit.test("throws an error if a change is written with more than one design time context active", function (assert) {
-			var oControl = new Control("mockControl");
+			var oControl = new Control("mockControl4");
 			var aProvidedContext = ["aCtxId", "anotherCtxId"];
 			sandbox.stub(ContextManager, "_getContextIdsFromUrl").returns(aProvidedContext);
 
@@ -794,7 +791,7 @@ function (
 		});
 
 		QUnit.test("creates a change for controls with a stable ID which doesn't have the app component's ID as a prefix", function (assert) {
-			var oControl = new Control("mockControl");
+			var oControl = new Control("mockControl5");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 			var oDummyChangeHandler = {
 				completeChangeContent: function () {}
@@ -889,7 +886,7 @@ function (
 		beforeEach: function() {
 			this.oDOMParser = new DOMParser();
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-			this.oXmlString = '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" />';
+			this.oXmlString = '<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" />';
 			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 		},
 		afterEach: function() {

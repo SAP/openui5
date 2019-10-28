@@ -1,16 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	//"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	LrepConnector,
+	CompatibilityConnector,
 	JsObjectConnector,
 	ObjectStorageUtils,
-	//sinon,
 	jQuery
 ) {
 	"use strict";
@@ -40,7 +38,6 @@ sap.ui.define([
 	QUnit.module("Given new connector configuration in bootstrap", {
 		beforeEach : function() {
 			JsObjectConnector.oStorage.clear();
-			this.oConnector = LrepConnector.createConnector();
 		}
 	}, function() {
 		QUnit.test("and static preload when loading flex data", function (assert) {
@@ -53,7 +50,7 @@ sap.ui.define([
 				}
 			})
 			;
-			return this.oConnector.loadChanges({name: "test.app", appVersion: "1.0.0", appName: "test.app"}).then(function (oResult) {
+			return CompatibilityConnector.loadChanges({name: "test.app", appVersion: "1.0.0", appName: "test.app"}).then(function (oResult) {
 				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
@@ -61,7 +58,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when settings are requested", function (assert) {
-			return this.oConnector.loadSettings()
+			return CompatibilityConnector.loadSettings()
 			.then(function (mSettings) {
 				assert.ok(mSettings, "something is returned");
 				//defaults/JsObjectConnector implementation missing so far
@@ -71,22 +68,22 @@ sap.ui.define([
 
 		QUnit.test("when creating single change, update it and then delete it", function (assert) {
 			var sId = ObjectStorageUtils.createFlexKey(oTestData.fileName);
-			return this.oConnector.create(oTestData)
+			return CompatibilityConnector.create(oTestData)
 			.then(function () {
 				assert.ok(JsObjectConnector.oStorage.getItem(sId), "JsObjectConnector got the change");
-				return this.oConnector.update(oTestDataNew);
-			}.bind(this))
+				return CompatibilityConnector.update(oTestDataNew);
+			})
 			.then(function () {
 				assert.ok(JsObjectConnector.oStorage.getItem(sId).content.isNewContent, "the change content got updated");
-				return this.oConnector.deleteChange(oTestDataNew);
-			}.bind(this))
+				return CompatibilityConnector.deleteChange(oTestDataNew);
+			})
 			.then(function () {
 				assert.notOk(JsObjectConnector.oStorage.getItem(sId), "the change got deleted");
 			});
 		});
 
 		QUnit.test("when creating multiple changes at once", function (assert) {
-			return this.oConnector.create(aTestData)
+			return CompatibilityConnector.create(aTestData)
 			.then(function () {
 				assert.equal(numberOfChange(), aTestData.length, "then spot-checking that JsObjectConnector got the changes");
 				var sId = ObjectStorageUtils.createFlexKey(aTestData[2].fileName);
@@ -97,11 +94,11 @@ sap.ui.define([
 		QUnit.test("when resetting changes", function (assert) {
 			return writeTestDataToStorage()
 				.then(function () {
-					return this.oConnector.resetChanges({
+					return CompatibilityConnector.resetChanges({
 						sReference : oTestData.reference,
 						sLayer : "CUSTOMER"
 					});
-				}.bind(this))
+				})
 				.then(
 					numberOfChange
 				)
@@ -113,12 +110,12 @@ sap.ui.define([
 		QUnit.test("when resetting specific changes", function (assert) {
 			return writeTestDataToStorage()
 				.then(function () {
-					return this.oConnector.resetChanges({
+					return CompatibilityConnector.resetChanges({
 						sReference : oTestData.reference,
 						sLayer : "CUSTOMER",
 						aChangeTypes : ["moveFields"]
 					});
-				}.bind(this))
+				})
 				.then(
 					numberOfChange
 				)
@@ -128,7 +125,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when asking for flex info", function (assert) {
-			return this.oConnector.getFlexInfo({
+			return CompatibilityConnector.getFlexInfo({
 				sReference : oTestData.reference,
 				appVersion: "1.0.0",
 				layer: "CUSTOMER"

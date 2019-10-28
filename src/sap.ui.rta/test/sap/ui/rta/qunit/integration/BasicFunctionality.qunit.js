@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/fl/FakeLrepSessionStorage",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/Device",
@@ -19,7 +18,6 @@ sap.ui.define([
 	CommandFactory,
 	RtaQunitUtils,
 	FakeLrepConnectorSessionStorage,
-	FakeLrepSessionStorage,
 	LayerUtils,
 	OverlayRegistry,
 	Device,
@@ -44,10 +42,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started...", {
-		beforeEach : function(assert) {
-			FakeLrepSessionStorage.deleteChanges();
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
-
+		beforeEach : function() {
 			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
 			this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
@@ -59,7 +54,8 @@ sap.ui.define([
 				commandStack : this.oCommandStack
 			});
 
-			return this.oRta.start().then(function () {
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta)).then(function () {
 				this.oFieldOverlay = OverlayRegistry.getOverlay(this.oField);
 				this.oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
 			}.bind(this));
@@ -67,8 +63,8 @@ sap.ui.define([
 		afterEach : function() {
 			this.oRta.destroy();
 			this.oCommandStack.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function () {
 		QUnit.test("when removing a group using a command stack API", function(assert) {
@@ -159,12 +155,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
-		beforeEach : function(assert) {
+		beforeEach : function() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
-
-			FakeLrepSessionStorage.deleteChanges();
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
 
 			this.fnUndoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onUndo");
 			this.fnRedoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onRedo");
@@ -179,7 +172,8 @@ sap.ui.define([
 				}
 			});
 
-			return this.oRta.start().then(function () {
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta)).then(function () {
 				this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
 				this.oElementOverlay = OverlayRegistry.getOverlay(sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
 			}.bind(this));
@@ -188,7 +182,7 @@ sap.ui.define([
 			sandbox.restore();
 			this.oRta.destroy();
 			Device.os.macintosh = this.bMacintoshOriginal;
-			FakeLrepSessionStorage.deleteChanges();
+			return RtaQunitUtils.clear();
 		}
 	}, function () {
 		QUnit.test("with focus on an overlay", function(assert) {

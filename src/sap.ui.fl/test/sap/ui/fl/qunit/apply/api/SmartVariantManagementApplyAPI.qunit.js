@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
 	"sap/ui/fl/registry/Settings",
@@ -24,6 +25,7 @@ sap.ui.define([
 	LayerUtils,
 	Cache,
 	SmartVariantManagementApplyAPI,
+	CompatibilityConnector,
 	UIComponent,
 	Control,
 	Settings,
@@ -135,11 +137,7 @@ sap.ui.define([
 				isAtoAvailable: true
 			};
 
-			sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
-				loadSettings : function() {
-					return Promise.resolve(oSetting);
-				}
-			});
+			sandbox.stub(CompatibilityConnector, "loadSettings").returns(Promise.resolve(oSetting));
 			sandbox.stub(Cache, "getFlexDataPromise").rejects();
 
 			assert.ok(Settings, "Settings loaded");

@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/dt/Overlay",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/FakeLrepSessionStorage",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
@@ -45,7 +44,6 @@ function(
 	Overlay,
 	ChangeRegistry,
 	Change,
-	FakeLrepSessionStorage,
 	Utils,
 	RtaUtils,
 	AppVariantUtils,
@@ -83,21 +81,21 @@ function(
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
 		beforeEach : function() {
-			FakeLrepSessionStorage.deleteChanges();
-
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp
 			});
 
 			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
-			return this.oRta.start().then(function() {
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
 				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
 			}.bind(this));
 		},
 		afterEach : function() {
 			this.oRta.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when RTA gets initialized and command stack is changed,", function(assert) {
@@ -116,7 +114,7 @@ function(
 			assert.equal(this.oRta.getToolbar().getControl('redo').getEnabled(), false, "then the redo Button is enabled");
 			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Restore Button is visible");
 			assert.equal(this.oRta.getToolbar().getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
-			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), true, "then the Publish Button is visible");
+			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
 			assert.equal(this.oRta.getToolbar().getControl('publish').getEnabled(), false, "then the Publish Button is disabled");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getVisible(), false, "then the 'AppVariant Overview' Icon Button is not visible");
 			assert.equal(this.oRta.getToolbar().getControl('manageApps').getEnabled(), false, "then the 'AppVariant Overview' Icon Button is not enabled");
@@ -192,8 +190,6 @@ function(
 
 	QUnit.module("Given a USER layer change", {
 		beforeEach : function() {
-			FakeLrepSessionStorage.deleteChanges();
-
 			this.oUserChange = new Change({
 				fileType: "change",
 				layer: "USER",
@@ -218,11 +214,13 @@ function(
 				isResetEnabled: true,
 				isPublishEnabled: false
 			});
+
+			return RtaQunitUtils.clear();
 		},
 		afterEach : function() {
 			this.oRta.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when RTA is started and stopped in the user layer", function(assert) {
@@ -298,19 +296,18 @@ function(
 
 	QUnit.module("Given that RuntimeAuthoring is started without toolbar...", {
 		beforeEach : function() {
-			FakeLrepSessionStorage.deleteChanges();
-
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp,
 				showToolbars : false
 			});
 
-			return this.oRta.start();
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach : function() {
 			this.oRta.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when RTA gets initialized,", function(assert) {
@@ -455,18 +452,20 @@ function(
 		beforeEach : function(assert) {
 			var fnDone = assert.async();
 
-			FakeLrepSessionStorage.deleteChanges();
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			RtaQunitUtils.clear();
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 
 			// Prepare elements an designtime
 			var oElement1 = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.Name");
 			var oElement2 = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.comp.smartform.GroupElement" : {
-					hideControl : "default"
-				}
+			return RtaQunitUtils.clear()
+			.then(function () {
+				oChangeRegistry.registerControlsForChanges({
+					"sap.ui.comp.smartform.GroupElement" : {
+						hideControl : "default"
+					}
+				});
 			})
 			.then(function() {
 				this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
@@ -507,16 +506,16 @@ function(
 
 					this.oRta.start()
 
-					.then(function() {
-						this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-						this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
-					}.bind(this))
+						.then(function() {
+							this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
+							this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
+						}.bind(this))
 
-					.then(fnDone)
+						.then(fnDone)
 
-					.catch(function (oError) {
-						assert.ok(false, 'catch must never be called - Error: ' + oError);
-					});
+						.catch(function (oError) {
+							assert.ok(false, 'catch must never be called - Error: ' + oError);
+						});
 				}.bind(this));
 
 				this.oCommandStack = new Stack();
@@ -534,7 +533,7 @@ function(
 			this.oRemoveCommand.destroy();
 			this.oCommandStack.destroy();
 			this.oRta.destroy();
-			FakeLrepSessionStorage.deleteChanges();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with macintosh device and metaKey is pushed", function(assert) {
@@ -652,28 +651,21 @@ function(
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
-		beforeEach : function(assert) {
-			FakeLrepSessionStorage.deleteChanges();
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+		beforeEach : function() {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
-
-			// Create the controls
-			this.oGroupElement1 = new GroupElement({id : oComp.createId("element1")});
-			this.oGroupElement2 = new GroupElement({id : oComp.createId("element2")});
-			this.oGroup = new Group({
+			var oGroupElement1 = new GroupElement({id : oComp.createId("element1")});
+			var oGroupElement2 = new GroupElement({id : oComp.createId("element2")});
+			var oGroup = new Group({
 				id : oComp.createId("group"),
-				groupElements : [this.oGroupElement1, this.oGroupElement2]
+				groupElements : [oGroupElement1, oGroupElement2]
 			});
 			this.oSmartForm = new SmartForm({
 				id : oComp.createId("smartform"),
-				groups : [this.oGroup]
+				groups : [oGroup]
 			});
-
-			this.oSmartForm.placeAt('qunit-fixture');
+			this.oSmartForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-
-			// Create commmands
-			this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
+			var oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
 				data : {
 					actions : {
 						remove : {
@@ -682,54 +674,37 @@ function(
 					}
 				}
 			});
-
 			var oCommandFactory = new CommandFactory();
-			return oCommandFactory.getCommandFor(this.oGroupElement1, "Remove", {
-				removedElement : this.oGroupElement1
-			}, this.oGroupElementDesignTimeMetadata)
-
-			.then(function(oRemoveCommand) {
-				this.oRemoveCommand1 = oRemoveCommand;
-				return oCommandFactory.getCommandFor(this.oGroupElement2, "Remove", {
-					removedElement : this.oGroupElement2
-				}, this.oGroupElementDesignTimeMetadata);
-			}.bind(this))
-
-			.then(function(oRemoveCommand) {
-				this.oRemoveCommand2 = oRemoveCommand;
-				// Create command stack with the commands
-				this.oCommandStack = new Stack();
-				return this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
-			}.bind(this))
-
-			.then(function() {
-				return this.oCommandStack.pushExecutedCommand(this.oRemoveCommand2);
-			}.bind(this))
-
-			.then(function() {
-				// Start RTA with command stack
-				this.oRta = new RuntimeAuthoring({
-					rootControl : this.oSmartForm,
-					commandStack : this.oCommandStack,
-					showToolbars : true
-				});
-
-				return this.oRta.start();
-			}.bind(this))
-
-			.catch(function (oError) {
-				assert.ok(false, 'catch must never be called - Error: ' + oError);
+			this.oCommandStack = new Stack();
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oSmartForm,
+				commandStack : this.oCommandStack,
+				showToolbars : true
 			});
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta))
+			.then(function() {
+				return oCommandFactory.getCommandFor(oGroupElement1, "Remove", {
+					removedElement : oGroupElement1
+				}, oGroupElementDesignTimeMetadata);
+			})
+			.then(function(oRemoveCommand) {
+				return this.oCommandStack.pushAndExecute(oRemoveCommand);
+			}.bind(this))
+			.then(function() {
+				return oCommandFactory.getCommandFor(oGroupElement2, "Remove", {
+					removedElement : oGroupElement2
+				}, oGroupElementDesignTimeMetadata);
+			})
+			.then(function(oRemoveCommand) {
+				return this.oCommandStack.pushAndExecute(oRemoveCommand);
+			}.bind(this));
 		},
 		afterEach : function() {
 			this.oSmartForm.destroy();
-			this.oRemoveCommand1.destroy();
-			this.oRemoveCommand2.destroy();
-			this.oGroupElementDesignTimeMetadata.destroy();
 			this.oRta.destroy();
-			this.oCommandStack.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when trying to stop rta with error in saving changes,", function(assert) {
@@ -747,26 +722,31 @@ function(
 		});
 
 		QUnit.test("when stopping rta without saving changes,", function(assert) {
-			var done = assert.async();
-			return this.oRta.stop(true).then(function() {
-				assert.ok(true, "then the promise got resolved");
-				assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "there is no change written to LREP");
-				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 2, "2 commands are still in the stack");
-				done();
-			}.bind(this));
+			return this.oRta.stop(true)
+				.then(function() {
+					assert.ok(true, "then the promise got resolved");
+					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 2, "2 commands are still in the stack");
+				}.bind(this))
+				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+				.then(function (iNumOfChanges) {
+					assert.equal(iNumOfChanges, 0, "there is no change written");
+				});
 		});
 
 		QUnit.test("when stopping rta with saving changes", function(assert) {
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(2, assert);
-			return this.oRta.stop().then(function() {
+			return this.oRta.stop()
+			.then(function() {
 				assert.ok(true, "then the promise got resolved");
+			})
+			.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+			.then(function (iNumberOfChanges) {
+				assert.equal(iNumberOfChanges, 2);
 			});
 		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with different plugin sets...", {
 		beforeEach : function() {
-			FakeLrepSessionStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
@@ -786,14 +766,15 @@ function(
 
 			this.fnDestroy = sandbox.spy(this.oRta, "_destroyDefaultPlugins");
 
-			return this.oRta.start();
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach : function() {
 			this.oContextMenuPlugin.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			this.oRemovePlugin.destroy();
 			this.oRta.destroy();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when RTA gets initialized with custom plugins only", function(assert) {
@@ -811,14 +792,13 @@ function(
 
 	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
 		beforeEach : function() {
-			FakeLrepSessionStorage.deleteChanges();
-
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oComp.getAggregation("rootControl"),
 				metadataScope : "someScope"
 			});
 
-			return this.oRta.start();
+			return RtaQunitUtils.clear()
+			.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach : function() {
 			this.oRta.destroy();
