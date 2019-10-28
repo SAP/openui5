@@ -32,14 +32,20 @@ sap.ui.define([
 	 * @param {string} mComponent.name Name of component
 	 * @param {string} [mComponent.appVersion] Current running version of application
 	 * @param {string} [mComponent.appName] Component name of the current application which may differ in case of an app variant
+	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
+	 * @param {string} [mPropertyBag.cacheKey] Pre-calculated cache key of the component
 	 * @returns {Promise} Returns a Promise with the changes response
 	 */
-	CompatibilityConnector.loadChanges = function(mComponent) {
+	CompatibilityConnector.loadChanges = function(mComponent, mPropertyBag) {
+		mPropertyBag = mPropertyBag || {};
 		return ApplyStorage.loadFlexData({
 			reference: mComponent.name,
 			appVersion: mComponent.appVersion,
-			componentName: mComponent.appName
-			//,cacheKey: "" //read from async hints
+			componentName: mComponent.appName,
+			cacheKey: mPropertyBag.cacheKey,
+			siteId: mPropertyBag.siteId,
+			appDescriptor: mPropertyBag.appDescriptor
 		}).then(function(mFlexData) {
 			return {
 				changes: mFlexData,
@@ -95,7 +101,7 @@ sap.ui.define([
 		return WriteStorage.update({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
-			_transport: sChangeList
+			transport: sChangeList
 		});
 	};
 
@@ -113,7 +119,7 @@ sap.ui.define([
 		return WriteStorage.remove({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
-			_transport: sChangeList
+			transport: sChangeList
 		});
 	};
 

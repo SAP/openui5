@@ -462,14 +462,14 @@ sap.ui.define([
 			var sExpectedUrl = sUrl + "/changes/";
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 
 			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.ok(oStubGetUrl.calledOnce, "getUrl is called once");
+				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
 				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
@@ -502,14 +502,14 @@ sap.ui.define([
 			var sExpectedUrl = sUrl + "/changes/";
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.stub(ApplyUtils, "getUrl").returns(sExpectedUrl);
 
 			return Storage.reset(mPropertyBag).then(function () {
 				var oGetUrlCallArgs = oStubGetUrl.getCall(0).args;
 				var oSendRequestCallArgs = oStubSendRequest.getCall(0).args;
 
-				assert.ok(oStubGetUrl.calledOnce, "getUrl is called once");
+				assert.equal(oStubGetUrl.callCount, 2, "getUrl is called twice");
 				assert.equal(oGetUrlCallArgs[0], "/changes/", "with correct route path");
 				assert.deepEqual(oGetUrlCallArgs[1], mPropertyBag, "with correct property bag");
 				assert.equal(oGetUrlCallArgs[1].url, sUrl, "the url was added");
@@ -540,7 +540,7 @@ sap.ui.define([
 
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
@@ -580,7 +580,7 @@ sap.ui.define([
 
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
 			var oSpyGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
@@ -620,7 +620,7 @@ sap.ui.define([
 
 			var sExpectedMethod = "DELETE";
 
-			var oStubSendRequest = sandbox.stub(ApplyUtils, "sendRequest").resolves({});
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({});
 			var oStubGetUrl = sandbox.spy(ApplyUtils, "getUrl");
 
 			return Storage.reset(mPropertyBag).then(function () {
