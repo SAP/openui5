@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,browser,expect*/
+/*global describe,it,element,by,takeScreenshot,browser,expect,protractor*/
 
 describe("sap.m.ObjectHeaderVisualTest", function() {
 	"use strict";
@@ -50,5 +50,18 @@ describe("sap.m.ObjectHeaderVisualTest", function() {
 		element(by.id("change_fullscreen")).click();
 		element(by.id("one_state_empty_attribute")).click();
 		expect(takeScreenshot()).toLookAs("1_status_1_empty_attribute");
+	});
+
+	it("should type Space inside input field", function () {
+		var oOHSpace = element(by.id("ohSpace"));
+
+		//there is no keyboard on mobile
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("typeSpace-inner")).click();
+			element(by.id("typeSpace-inner")).sendKeys(protractor.Key.SPACE);
+			element(by.id("typeSpace-inner")).sendKeys(protractor.Key.NUMPAD7);
+
+			expect(takeScreenshot(oOHSpace)).toLookAs("OH_Input_has_space");
+		}
 	});
 });

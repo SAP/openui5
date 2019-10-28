@@ -107,6 +107,22 @@
 		oneStateButton.placeAt("body");
 		typeBtn.placeAt("body");
 		condBtn.placeAt("body");
+
+		var oInput = new sap.m.Input("typeSpace", {value: "test"}),
+			oOH = new sap.m.ObjectHeader("ohSpace", {
+				title : "Test pressing space key inside input",
+				responsive : true,
+				headerContainer: [
+					new sap.m.HeaderContainer({
+						content: [
+							oInput
+						]
+					})
+				]
+			});
+
+		oOH.placeAt("body");
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody" role="application">
