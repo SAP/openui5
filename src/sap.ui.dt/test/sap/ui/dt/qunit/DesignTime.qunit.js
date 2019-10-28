@@ -26,6 +26,7 @@ sap.ui.define([
 	"qunit/MetadataTestUtil",
 	"sap/base/util/includes",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
@@ -54,6 +55,7 @@ function(
 	MetadataTestUtil,
 	includes,
 	DOMUtil,
+	JSONModel,
 	sinon
 ) {
 	"use strict";
@@ -1521,6 +1523,47 @@ function(
 					assert.ok(true, "promise is rejected");
 					assert.ok(oError instanceof Error, "proper error object is provided");
 					assert.ok(oError.message.includes("Cannot create overlay — the element is already destroyed"), "proper rejection reason is provided");
+					fnDone();
+				}
+			);
+		});
+
+		QUnit.test("when called with an element from a bound aggregation but without control representation in the template", function (assert) {
+			var fnDone = assert.async();
+			var oModel = new JSONModel({
+				texts: [{}, {}, {}] // this will create 3 horizontal layouts in items aggregation of VerticalLayout
+			});
+
+			var oVerticalLayout = new VerticalLayout({
+				content: {
+					path: "/texts",
+					template: new HorizontalLayout({
+						content: []
+					})
+				}
+			});
+
+			oVerticalLayout.setModel(oModel);
+
+			var oButton = new Button("ManualButton");
+			var oManualItem = new HorizontalLayout({
+				content: [
+					oButton
+				]
+			});
+
+			oVerticalLayout.addContent(oManualItem);
+
+			this.oDesignTime.createOverlay(oButton).then(
+				// Fulfilled
+				function () {
+					assert.ok(false, "this must never be called, no overlay could be created without destroyed element");
+				},
+				// Rejected
+				function (oError) {
+					assert.ok(true, "promise is rejected");
+					assert.ok(oError instanceof Error, "proper error object is provided");
+					assert.ok(oError.message.startsWith("Element is in a bound aggregation, but not found in the binding template."), "proper rejection reason is provided");
 					fnDone();
 				}
 			);

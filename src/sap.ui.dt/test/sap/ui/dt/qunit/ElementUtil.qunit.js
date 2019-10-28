@@ -927,6 +927,86 @@ function(
 		});
 	});
 
+	QUnit.module("Given a bound list control and a control inside of the list which is not in the template", {
+		beforeEach: function() {
+			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
+			var oModel = new JSONModel({
+				texts : aTexts
+			});
+
+			this.oItemTemplate = new CustomListItem("item", {
+				content: [
+					new VBox("vbox1", {
+						items: [
+							new VBox("vbox2", {
+								items : [
+									new VBox("vbox3", {
+										items : []
+									})
+								]
+							})
+						]
+					})
+				]
+			});
+			this.oList = new List("list", {
+				items : {
+					path : "/texts",
+					template : this.oItemTemplate
+				}
+			}).setModel(oModel);
+
+			// adding a whole list item to the list (not via template)
+			this.oList.addItem(new CustomListItem("unboundlist-0", {
+				content: [
+					new VBox("vbox4", {
+						items: [
+							new VBox("vbox5", {
+								items : [
+									new VBox("vbox6", {
+										items : [
+											new Button("evil-btn1", {text:'{text}'})
+										]
+									})
+								]
+							})
+						]
+					})
+				]
+			}));
+
+			// adding a control to an aggregation of the template
+			this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].addItem(new Button("evil-btn2"));
+
+			this.oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oButton1 = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+			this.oButton2 = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
+		},
+		afterEach : function () {
+			this.oList.destroy();
+			this.oItemTemplate.destroy();
+			this.oButton1.destroy();
+			this.oButton2.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when extractTemplateId() is called for control which is not in the template hierarchy", function(assert) {
+			var mAggregationInfo1 = ElementUtil.getAggregationInformation(this.oButton1);
+			var mAggregationInfo2 = ElementUtil.getAggregationInformation(this.oButton2);
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo1), undefined, "... then undefined is returned");
+			assert.equal(ElementUtil.extractTemplateId(mAggregationInfo2), undefined, "... then undefined is returned");
+		});
+
+		QUnit.test("when isElementInTemplate() is called for control which is not in the template hierarchy", function(assert) {
+			var bValid1 = ElementUtil.isElementInTemplate(this.oButton1);
+			var bValid2 = ElementUtil.isElementInTemplate(this.oButton2);
+			assert.notOk(bValid1, "... then false is returned");
+			assert.notOk(bValid2, "... then false is returned");
+		});
+	});
+
 	QUnit.module("Given a List with bound items and a List with unbound items", {
 		beforeEach: function () {
 			// create list with bound items
