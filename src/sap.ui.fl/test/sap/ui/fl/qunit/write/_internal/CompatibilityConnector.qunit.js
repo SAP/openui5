@@ -30,7 +30,7 @@ sap.ui.define([
 
 	function writeTestDataToStorage() {
 		var aPromises = aTestData.map(function(oChange) {
-			var sKey = ObjectStorageUtils.createChangeKey(oChange.fileName);
+			var sKey = ObjectStorageUtils.createFlexKey(oChange.fileName);
 			JsObjectConnector.oStorage.setItem(sKey, oChange);
 		});
 
@@ -70,7 +70,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when creating single change, update it and then delete it", function (assert) {
-			var sId = ObjectStorageUtils.createChangeKey(oTestData.fileName);
+			var sId = ObjectStorageUtils.createFlexKey(oTestData.fileName);
 			return this.oConnector.create(oTestData)
 			.then(function () {
 				assert.ok(JsObjectConnector.oStorage.getItem(sId), "JsObjectConnector got the change");
@@ -89,7 +89,7 @@ sap.ui.define([
 			return this.oConnector.create(aTestData)
 			.then(function () {
 				assert.equal(numberOfChange(), aTestData.length, "then spot-checking that JsObjectConnector got the changes");
-				var sId = ObjectStorageUtils.createChangeKey(aTestData[2].fileName);
+				var sId = ObjectStorageUtils.createFlexKey(aTestData[2].fileName);
 				assert.ok(JsObjectConnector.oStorage.getItem(sId), "then spot-checking that JsObjectConnector got the changes");
 			});
 		});
