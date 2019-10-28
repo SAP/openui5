@@ -1,8 +1,9 @@
 /*global QUnit, window, sinon */
 
 sap.ui.define([
-	"sap/ui/unified/calendar/MonthPicker"
-], function(MonthPicker) {
+	"sap/ui/unified/calendar/MonthPicker",
+	"sap/ui/events/KeyCodes"
+], function(MonthPicker, KeyCodes) {
 	"use strict";
 	(function () {
 
@@ -83,6 +84,70 @@ sap.ui.define([
 			// assert
 			assert.equal(oFirePageChangeSpy.callCount, 1, "pageChange is fired once");
 			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: -1 })), "pageChange is fired with the correct arguments");
+		});
+
+		QUnit.test("fires pageChange on border reached with arrow up/down", function(assert) {
+			// arrange
+			var oFirePageChangeSpy = this.spy(this.oMP, "firePageChange");
+
+			// act
+			this.oMP._oItemNavigation.fireEvent("BorderReached", {
+				event: {
+						type: "sapprevious",
+						keyCode: KeyCodes.ARROW_UP
+					}
+				});
+
+			// assert
+			assert.equal(oFirePageChangeSpy.callCount, 1, "pageChange is fired once");
+			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: -1 })), "pageChange is fired with the correct arguments");
+
+			// arrange
+			oFirePageChangeSpy.reset();
+
+			// act
+			this.oMP._oItemNavigation.fireEvent("BorderReached", {
+				event: {
+						type: "sapnext",
+						keyCode: KeyCodes.ARROW_DOWN
+					}
+				});
+
+			// assert
+			assert.equal(oFirePageChangeSpy.callCount, 1, "pageChange is fired once");
+			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: 1 })), "pageChange is fired with the correct arguments");
+		});
+
+		QUnit.test("fires pageChange on border reached with arrow right/left", function(assert) {
+			// arrange
+			var oFirePageChangeSpy = this.spy(this.oMP, "firePageChange");
+
+			// act
+			this.oMP._oItemNavigation.fireEvent("BorderReached", {
+				event: {
+						type: "sapprevious",
+						keyCode: KeyCodes.ARROW_RIGHT
+					}
+				});
+
+			// assert
+			assert.equal(oFirePageChangeSpy.callCount, 1, "pageChange is fired once");
+			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: -1 })), "pageChange is fired with the correct arguments");
+
+			// arrange
+			oFirePageChangeSpy.reset();
+
+			// act
+			this.oMP._oItemNavigation.fireEvent("BorderReached", {
+				event: {
+						type: "sapnext",
+						keyCode: KeyCodes.ARROW_LEFT
+					}
+				});
+
+			// assert
+			assert.equal(oFirePageChangeSpy.callCount, 1, "pageChange is fired once");
+			assert.ok(oFirePageChangeSpy.calledWith(sinon.match({ offset: 1 })), "pageChange is fired with the correct arguments");
 		});
 
 	})();
