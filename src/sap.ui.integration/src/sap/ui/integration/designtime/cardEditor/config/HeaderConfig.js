@@ -134,17 +134,17 @@ sap.ui.define([
 				"title" : {
 					"label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.TITLE}",
 					"type": "string",
-					"path": "header/sideIndicators/:index/title"
+					"path": "title"
 				},
 				"number" : {
 					"label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.NUMBER}",
 					"type": "number",
-					"path": "header/sideIndicators/:index/number"
+					"path": "number"
 				},
 				"unit" : {
 					"label": "{i18n>CARD_EDITOR.SIDE_INDICATOR.UNIT}",
 					"type": "string",
-					"path": "header/sideIndicators/:index/unit"
+					"path": "unit"
 				}
 			},
 			"maxItems": 2,

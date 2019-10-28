@@ -249,5 +249,64 @@ sap.ui.define([
 			// A new item is added
 			QUnitUtils.triggerEvent("tap", this.oEditor.getContent()[0].getItems()[1].getDomRef());
 		});
+
+		QUnit.test("When a nested array editor is created", function (assert) {
+			this.oEditor.destroy();
+			var done = assert.async();
+
+			this.oPropertyConfig = {
+				label: "Nested Array Level 1",
+				path: "parent/parentitems",
+				type: "array",
+				itemLabel: "Item",
+				template: {
+					parentitems: {
+						label: "Nested Array Level 2",
+						type: "array",
+						path: "childitems",
+						template: {
+							childproperty: {
+								label: "Number",
+								type: "number",
+								path: "childproperty"
+							}
+						}
+					}
+				}
+			};
+			this.oContextModel = new JSONModel({
+				parent: {
+					parentitems: [
+						{
+							childitems: [
+								{childproperty: 1},
+								{childproperty: 2},
+								{childproperty: 3}
+							]
+						},
+						{
+							childitems: [
+								{childproperty: 4},
+								{childproperty: 5},
+								{childproperty: 6}
+							]
+						}
+					]
+				}
+			});
+			this.oContextModel.setDefaultBindingMode("OneWay");
+			this.oEditor = new ArrayEditor();
+			this.oEditor.setModel(this.oContextModel, "_context");
+			this.oEditor.setConfig(this.oPropertyConfig);
+
+			this.oEditor.attachReady(function () {
+				assert.strictEqual(
+					this.oEditor.getModel("_context").getProperty("/parent/parentitems/0/childitems/0/childproperty"),
+					1,
+					"Then the item binding paths are correct"
+				);
+				done();
+			}, this);
+		});
 	});
 });
