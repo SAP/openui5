@@ -2675,10 +2675,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Event: _rowsUpdated", {
+		before: function() {
+			this.oQunitFixture = document.getElementById("qunit-fixture");
+			this.sOriginalQUnitFixtureHeight = this.oQunitFixture.style.height;
+			this.sOriginalQUnitFixtureDisplay = this.oQunitFixture.style.display;
+		},
 		afterEach: function() {
 			if (this.oTable) {
 				this.oTable.destroy();
 			}
+			this.restoreQUnitFixtureHeight();
+			this.restoreQUnitFixtureDisplay();
 		},
 		/**
 		 * Creates a table with a JSON model.
@@ -2753,6 +2760,26 @@ sap.ui.define([
 					resolve();
 				}, iDelay == null ? 250 : iDelay);
 			});
+		},
+		setQUnitFixtureHeight: function(sHeight) {
+			this.oQunitFixture.style.height = sHeight;
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+		},
+		restoreQUnitFixtureHeight: function() {
+			return this.setQUnitFixtureHeight(this.sOriginalQUnitFixtureHeight);
+		},
+		setQUnitFixtureDisplay: function(sDisplay) {
+			this.oQunitFixture.style.display = sDisplay;
+
+			return new Promise(function(resolve) {
+				window.requestAnimationFrame(resolve);
+			});
+		},
+		restoreQUnitFixtureDisplay: function() {
+			return this.setQUnitFixtureDisplay(this.sOriginalQUnitFixtureDisplay);
 		}
 	});
 
@@ -2801,8 +2828,6 @@ sap.ui.define([
 	QUnit.test("Initial rendering without binding in invisible container", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oQUnitFixture = document.getElementById("qunit-fixture");
-		var sQUnitFixtureOriginalDisplayStyle = oQUnitFixture.style.display;
 
 		function _createTable(sVisibleRowCountMode, iRowHeight) {
 			oTable = that.createTableWithJSONModel(sVisibleRowCountMode, false, function(oTable) {
@@ -2814,30 +2839,46 @@ sap.ui.define([
 			});
 		}
 
-		oQUnitFixture.style.display = "none";
-		_createTable(VisibleRowCountMode.Fixed);
-		return this.checkRowsUpdated(assert, aFiredReasons, []).then(function() {
-			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+		return this.setQUnitFixtureDisplay("none").then(function() {
+			_createTable(VisibleRowCountMode.Fixed);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+			aFiredReasons = [];
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+
+		}).then(function() {
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			_createTable(VisibleRowCountMode.Interactive);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
-			return that.checkRowsUpdated(assert, aFiredReasons, []);
+			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+
+		}).then(function() {
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			_createTable(VisibleRowCountMode.Auto);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
+			return that.checkRowsUpdated(assert, aFiredReasons, []);
+
+		}).then(function() {
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
 			_createTable(VisibleRowCountMode.Auto, 90);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
+		}).then(function() {
+			aFiredReasons = [];
+			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		});
@@ -2882,8 +2923,6 @@ sap.ui.define([
 	QUnit.test("Initial rendering with client binding in invisible container", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oQUnitFixture = document.getElementById("qunit-fixture");
-		var sQUnitFixtureOriginalDisplayStyle = oQUnitFixture.style.display;
 
 		function _createTable(sVisibleRowCountMode, iRowHeight) {
 			oTable = that.createTableWithJSONModel(sVisibleRowCountMode, true, function(oTable) {
@@ -2895,42 +2934,53 @@ sap.ui.define([
 			});
 		}
 
-		oQUnitFixture.style.display = "none";
-		_createTable(VisibleRowCountMode.Fixed);
-		return this.checkRowsUpdated(assert, aFiredReasons, [
-			TableUtils.RowsUpdateReason.Render
-		]).then(function() {
+		return this.setQUnitFixtureDisplay("none").then(function() {
+			_createTable(VisibleRowCountMode.Fixed);
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			_createTable(VisibleRowCountMode.Interactive);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			_createTable(VisibleRowCountMode.Auto);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Resize
 			]);
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
 			_createTable(VisibleRowCountMode.Auto, 90);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Resize
 			]);
@@ -2982,8 +3032,6 @@ sap.ui.define([
 		var aFiredReasons = [];
 		var that = this;
 		var oMockServer = startMockServer();
-		var oQUnitFixture = document.getElementById("qunit-fixture");
-		var sQUnitFixtureOriginalDisplayStyle = oQUnitFixture.style.display;
 
 		function _createTable(sVisibleRowCountMode, iRowHeight) {
 			oTable = that.createTableWithODataModel(sVisibleRowCountMode, true, function(oTable) {
@@ -2995,18 +3043,23 @@ sap.ui.define([
 			});
 		}
 
-		oQUnitFixture.style.display = "none";
 		ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
-		_createTable(VisibleRowCountMode.Fixed);
-		return this.checkRowsUpdated(assert, aFiredReasons, [
-			TableUtils.RowsUpdateReason.Render,
-			TableUtils.RowsUpdateReason.Change
-		]).then(function() {
+
+		return this.setQUnitFixtureDisplay("none").then(function() {
+			_createTable(VisibleRowCountMode.Fixed);
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Render,
+				TableUtils.RowsUpdateReason.Change
+			]);
+		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			_createTable(VisibleRowCountMode.Interactive);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Render,
@@ -3014,32 +3067,38 @@ sap.ui.define([
 			]);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			_createTable(VisibleRowCountMode.Auto);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Resize
 			]);
 		}).then(function() {
-			oQUnitFixture.style.display = "none";
+
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
 			_createTable(VisibleRowCountMode.Auto, 90);
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Resize
 			]);
 		}).then(function() {
 			oMockServer.destroy();
-			window.breaky = false;
 		});
 	});
 
@@ -3088,8 +3147,6 @@ sap.ui.define([
 	QUnit.test("Re-render without binding in invisible container", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oQUnitFixture = document.getElementById("qunit-fixture");
-		var sQUnitFixtureOriginalDisplayStyle = oQUnitFixture.style.display;
 		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed, false);
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
@@ -3104,47 +3161,57 @@ sap.ui.define([
 
 		return this.oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
+
 		}).then(function() {
 			return setVisibleRowCountMode(VisibleRowCountMode.Interactive);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
+
 		}).then(function() {
 			return setVisibleRowCountMode(VisibleRowCountMode.Auto);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			oTable.setRowHeight(oTable._getDefaultRowHeight() + 20); // The table would show less rows.
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		});
 	});
@@ -3202,8 +3269,6 @@ sap.ui.define([
 	QUnit.test("Re-render with binding in invisible container", function(assert) {
 		var aFiredReasons = [];
 		var that = this;
-		var oQUnitFixture = document.getElementById("qunit-fixture");
-		var sQUnitFixtureOriginalDisplayStyle = oQUnitFixture.style.display;
 		var oTable = this.createTableWithJSONModel(VisibleRowCountMode.Fixed);
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
@@ -3218,7 +3283,8 @@ sap.ui.define([
 
 		return this.oTable.qunit.whenInitialRenderingFinished().then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
@@ -3226,13 +3292,16 @@ sap.ui.define([
 			]);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
+
 		}).then(function() {
 			return setVisibleRowCountMode(VisibleRowCountMode.Interactive);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, [
@@ -3240,31 +3309,37 @@ sap.ui.define([
 			]);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
+
 		}).then(function() {
 			return setVisibleRowCountMode(VisibleRowCountMode.Auto);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Resize
 			]);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = "none";
-			oTable.setRowHeight(oTable._getDefaultRowHeight() + 20); // The table will show less rows.
+			return that.setQUnitFixtureDisplay("none");
+		}).then(function() {
+			oTable.setRowHeight(oTable._getDefaultRowHeight() + 20); // The table would show less rows.
 			sap.ui.getCore().applyChanges();
 			return that.checkRowsUpdated(assert, aFiredReasons, []);
 		}).then(function() {
 			aFiredReasons = [];
-			oQUnitFixture.style.display = sQUnitFixtureOriginalDisplayStyle;
+			return that.restoreQUnitFixtureDisplay();
+		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Resize
 			]);
