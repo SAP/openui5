@@ -3388,7 +3388,7 @@ sap.ui.define([
 		var $headerTitle = this.getHeaderTitle().$(),
 			$headerTitleClone = $headerTitle.clone();
 		//prepare: make sure it won't be visible ever and fix width to the original headerTitle which is 100%
-		$headerTitleClone.css({left: "-10000px", top: "-10000px", width: $headerTitle.width() + "px"});
+		$headerTitleClone.css({left: "-10000px", top: "-10000px", width: $headerTitle.width() + "px", position:"absolute"});
 		$headerTitleClone.toggleClass("sapUxAPObjectPageHeaderStickied", bEnableStickyMode);
 		$headerTitleClone.appendTo(this._$titleArea.parent());
 
@@ -3442,14 +3442,9 @@ sap.ui.define([
 		}
 
 		if (bViaClone) {
-			// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element during clone to eliminate unwanted
-			// scrollbar appearing during measurement of cloned header
-			var sOrigOverflow = this._$opWrapper.css("overflow-y");
-			this._$opWrapper.css("overflow-y", "hidden");
 			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
-			this._$opWrapper.css("overflow-y", sOrigOverflow);
 		} else if (oTitle && oTitle.unSnap) {
 			iSectionsContainerHeight = this._$sectionsContainer.height();
 
