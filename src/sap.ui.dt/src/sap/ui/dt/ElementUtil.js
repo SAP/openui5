@@ -334,6 +334,26 @@ function(
 	};
 
 	/**
+	 * Checks whether specified Element is in a binding template, if so it checks if template has a valid control representation.
+	 *
+	 * @param {sap.ui.base.Object} oObject - Object for validation
+	 * @returns {boolean} <code>true</code> if object is not in bound aggregation or has a valid template representation
+	 */
+	ElementUtil.isElementInTemplate = function (oObject) {
+		var mLocationInTemplate = ElementUtil.getAggregationInformation(oObject);
+
+		if (mLocationInTemplate.templateId) {
+			var sTemplateId = ElementUtil.extractTemplateId(mLocationInTemplate);
+
+			if (!sTemplateId) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	/**
 	 * Checks whether specified Element is a valid ManagedObject. The allowed objects must be
 	 * descendants of sap.ui.core.Element or sap.ui.core.Component classes.
 	 *
@@ -347,6 +367,7 @@ function(
 				|| oObject instanceof Component
 			)
 			&& !oObject.bIsDestroyed
+			&& ElementUtil.isElementInTemplate(oObject)
 		);
 
 		return bValid;
@@ -411,6 +432,9 @@ function(
 					sAggregation = mBoundControl.stack[i].aggregation;
 					iIndex = mBoundControl.stack[i].index;
 					oResultControl = ElementUtil.getAggregation(oAggregatedControl, sAggregation)[iIndex];
+					if (!oResultControl) {
+						return undefined;
+					}
 					oAggregatedControl = oResultControl;
 				}
 				return oAggregatedControl.getId();
@@ -456,7 +480,7 @@ function(
 
 		if (oParent) {
 			sAggregationName = oElement.sParentAggregationName;
-			iIndex = Util.castArray(oParent.getAggregation(sAggregationName)).indexOf(oElement);
+			iIndex = ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oElement);
 		} else {
 			iIndex = -1;
 		}
