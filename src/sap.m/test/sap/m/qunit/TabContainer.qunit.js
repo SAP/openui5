@@ -242,6 +242,20 @@ sap.ui.define([
 		assert.equal(this.oTabContainer.$().attr("data-sap-ui-fastnavgroup"), "true", 'TabContainer is a fast navigation group.');
 	});
 
+		QUnit.test("_initResponsivePaddingsEnablement is called on init", function (assert) {
+			// Arrange
+			var oSpy = sinon.spy(TabContainer.prototype, "_initResponsivePaddingsEnablement"),
+				oTestPage = new TabContainer({}).placeAt("qunit-fixture");
+
+			// Assert
+			assert.strictEqual(oSpy.callCount, 1, "Method _initResponsivePaddingsEnablement called on init of control");
+			assert.ok(oSpy.calledOn(oTestPage), "The spy is called on the tested control instance");
+
+			//clean
+			oSpy.restore();
+			oTestPage.destroy();
+		});
+
 	QUnit.test("Add button rendering in nested TabContainer with binding", function (assert) {
 		//arrange
 		var oTemplate2,
