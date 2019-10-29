@@ -45,6 +45,7 @@ sap.ui.define([
 	library
 ) {
 	"use strict";
+	/* global Map */
 
 	var MANIFEST_PATHS = {
 		TYPE: "/sap.card/type",
@@ -268,6 +269,7 @@ sap.ui.define([
 	Card.prototype.init = function () {
 		this.setModel(new JSONModel(), "parameters");
 		this.setBusyIndicatorDelay(0);
+		this._busyStates = new Map();
 	};
 
 	/**
@@ -357,7 +359,7 @@ sap.ui.define([
 			vManifest = null;
 		}
 
-		this.setBusy(true);
+		this._startBusyState("applyManifest");
 		this._oCardManifest = new CardManifest("sap.card", vManifest, sBaseUrl);
 		return this._oCardManifest
 			.load(mOptions)
@@ -429,6 +431,7 @@ sap.ui.define([
 
 	Card.prototype.exit = function () {
 		this.destroyManifest();
+		this._busyStates = null;
 	};
 
 	/**
@@ -460,6 +463,8 @@ sap.ui.define([
 		this.destroyAggregation("_content");
 
 		this._aReadyPromises = null;
+
+		this._busyStates.clear();
 	};
 
 	/**
@@ -544,6 +549,7 @@ sap.ui.define([
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
 		if (this._oDataProvider) {
+			this._startBusyState("data");
 			this.setModel(new JSONModel());
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
@@ -556,6 +562,7 @@ sap.ui.define([
 
 			this._oDataProvider.triggerDataUpdate().then(function () {
 				this.fireEvent("_cardReady");
+				this._endBusyState("data");
 			}.bind(this));
 		}
 	};
@@ -649,7 +656,7 @@ sap.ui.define([
 		}
 
 		if (!bHasContent && !bIsComponent) {
-			this.setBusy(false);
+			this._endBusyState("applyManifest");
 			this.fireEvent("_contentReady");
 			return;
 		}
@@ -669,7 +676,7 @@ sap.ui.define([
 				this._handleError(sError);
 			}.bind(this))
 			.finally(function () {
-				this.setBusy(false);
+				this._endBusyState("applyManifest");
 			}.bind(this));
 	};
 
@@ -703,24 +710,6 @@ sap.ui.define([
 		} else {
 			oHeader.attachEvent("_ready", function () {
 				this.fireEvent("_headerReady");
-			}.bind(this));
-		}
-	};
-
-	/**
-	 * Fires a ready event for the card when header or content are ready.
-	 *
-	 * @private
-	 * @param {sap.ui.core.Control} oControl The header or content of the card.
-	 * @param {string} sReadyEventName The name of the event to fire when the control is ready.
-	 */
-	Card.prototype._fireReady = function (oControl, sReadyEventName) {
-		if (oControl.isReady()) {
-			this.fireEvent(sReadyEventName);
-		} else {
-			oControl.attachEvent("_ready", function () {
-				this.fireEvent(sReadyEventName);
-				this.setBusy(false);
 			}.bind(this));
 		}
 	};
@@ -807,7 +796,7 @@ sap.ui.define([
 	 */
 	Card.prototype._handleError = function (sLogMessage, sDisplayMessage) {
 		Log.error(sLogMessage);
-		this.setBusy(false);
+		this._endBusyStateAll();
 
 		this.fireEvent("_error", {message:sLogMessage});
 
@@ -868,6 +857,41 @@ sap.ui.define([
 		this._oTemporaryContent.destroyItems();
 
 		return this._oTemporaryContent;
+	};
+
+	/**
+	 * Starts busy loading for the card and writes down the reason for it being busy in a queue.
+	 *
+	 * @private
+	 * @param {string} sState The reason to go in busy mode
+	 */
+	Card.prototype._startBusyState = function (sState) {
+		this._busyStates.set(sState, true);
+		this.setBusy(true);
+	};
+
+	/**
+	 * Removes one reason for the card to be busy. If there is no other reasons for being busy - remove the busy state.
+	 *
+	 * @private
+	 * @param {string} sState The reason to go in busy mode
+	 */
+	Card.prototype._endBusyState = function (sState) {
+		this._busyStates.delete(sState);
+
+		if (!this._busyStates.size) {
+			this.setBusy(false);
+		}
+	};
+
+	/**
+	 * Force the card to stop being busy.
+	 *
+	 * @private
+	 */
+	Card.prototype._endBusyStateAll = function () {
+		this._busyStates.clear();
+		this.setBusy(false);
 	};
 
 	/**

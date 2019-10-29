@@ -1,0 +1,1048 @@
+{
+    "Items": [
+        {
+            "Name": "776f6396-e5b0-403d-955a-e3ba588de810",
+            "Type": "HighChart",
+            "Data": {
+                "chart": {
+                    "animation": false,
+                    "backgroundColor": "rgba(0,0,0,0)",
+                    "style": {
+                        "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
+                        "spacingBottom": 10
+                    },
+                    "polar": false,
+                    "type": "bar"
+                },
+                "lang": {},
+                "boost": {
+                    "useGPUTranslations": true
+                },
+                "credits": {
+                    "enabled": false
+                },
+                "colors": [
+                    "#5899da",
+                    "#e8743b",
+                    "#19a979",
+                    "#ed4a7b",
+                    "#3391d5",
+                    "#945ecf",
+                    "#13a4b4",
+                    "#525df4",
+                    "#ffaecf",
+                    "#7761c6"
+                ],
+                "legend": {
+                    "itemStyle": {
+                        "fontSize": "12px",
+                        "fontWeight": "normal"
+                    },
+                    "verticalAlign": "top",
+                    "enabled": true,
+                    "squareSymbol": true,
+                    "symbolRadius": 0,
+                    "layout": "horizontal",
+                    "align": "center"
+                },
+                "title": {
+                    "text": "Unit Price per Product Sub-Category",
+                    "align": "left"
+                },
+                "subtitle": {
+                    "text": "",
+                    "align": "left"
+                },
+                "plotOptions": {
+                    "bar": {
+                        "dataLabels": {
+                            "enabled": true,
+                            "hideWhenOverlap": true,
+                            "style": {
+                                "fill": "black !important",
+                                "color": "black !important",
+                                "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
+                                "fontSize": "12px",
+                                "fontWeight": "normal",
+                                "textOutline": "0px"
+                            },
+                            "format": "{point.yFormatted} "
+                        },
+                        "stacking": null,
+                        "yAxis": 0,
+                        "colorByPoint": false,
+                        "pointPadding": 0
+                    },
+                    "series": {
+                        "borderColor": "transparent",
+                        "dataLabels": {
+                            "format": "{point.yFormatted}"
+                        }
+                    }
+                },
+                "responsive": {
+                    "rules": [
+                        {
+                            "condition": {
+                                "maxHeight": 176
+                            },
+                            "chartOptions": {
+                                "legend": {
+                                    "enabled": false
+                                },
+                                "yAxis": {
+                                    "labels": {
+                                        "rotation": 344,
+                                        "x": 10
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "condition": {
+                                "maxWidth": 359,
+                                "minHeight": 70
+                            },
+                            "chartOptions": {
+                                "chart": {
+                                    "animation": false,
+                                    "marginTop": 50
+                                },
+                                "plotOptions": {
+                                    "series": {
+                                        "dataLabels": {
+                                            "style": {
+                                                "fontSize": "9px"
+                                            }
+                                        }
+                                    }
+                                },
+                                "title": {
+                                    "style": {
+                                        "fontSize": "13px",
+                                        "floating": true
+                                    }
+                                },
+                                "subtitle": {
+                                    "text": ""
+                                },
+                                "xAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "10px"
+                                        }
+                                    }
+                                },
+                                "yAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "10px"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "condition": {
+                                "maxWidth": 176
+                            },
+                            "chartOptions": {
+                                "chart": {
+                                    "animation": false,
+                                    "marginTop": 40
+                                },
+                                "legend": {
+                                    "enabled": false,
+                                    "y": 25
+                                },
+                                "plotOptions": {
+                                    "series": {
+                                        "minSize": 100,
+                                        "dataLabels": {
+                                            "connectorWidth": 0,
+                                            "distance": -25,
+                                            "style": {
+                                                "fontSize": "8px"
+                                            }
+                                        }
+                                    }
+                                },
+                                "title": {
+                                    "style": {
+                                        "fontSize": "10px"
+                                    }
+                                },
+                                "subtitle": {
+                                    "text": ""
+                                },
+                                "xAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "9px"
+                                        }
+                                    }
+                                },
+                                "yAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "9px"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "xAxis": [
+                    {
+                        "categories": [
+                            "\"Accessories\"",
+                            "\"Equipment\"",
+                            "\"Men Clothing\"",
+                            "\"Women Clothing\""
+                        ],
+                        "lineWidth": 0,
+                        "lineColor": "rgb(0, 0, 0)",
+                        "labels": {
+                            "x": -5,
+                            "style": {
+                                "fontSize": "13px",
+                                "fill": "rgb(166, 168, 171)",
+                                "fontFamily": "Lato, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'"
+                            },
+                            "enabled": false
+                        },
+                        "gridLineWidth": 0,
+                        "tickColor": "rgb(166, 168, 171)",
+                        "tickWidth": 0
+                    }
+                ],
+                "series": [
+                    {
+                        "data": [
+                            {
+                                "y": 42,
+                                "yFormatted": "42",
+                                "percent": 4200,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            }
+                        ],
+                        "name": "Unit Price",
+                        "type": "bar",
+                        "id": "UNIT_PRICE"
+                    }
+                ],
+                "rs": 5,
+                "colorRs": 4,
+                "scrollLimit": 3,
+                "yAxis": [
+                    {
+                        "lineColor": "#FFFFFF",
+                        "labels": {
+                            "x": -5,
+                            "style": {
+                                "fontSize": "13px",
+                                "fill": "rgb(166, 168, 171)",
+                                "fontFamily": "Lato, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'"
+                            },
+                            "enabled": false
+                        },
+                        "gridLineWidth": 0,
+                        "tickColor": "rgb(166, 168, 171)",
+                        "tickWidth": 0,
+                        "title": {
+                            "text": ""
+                        },
+                        "stackLabels": {
+                            "enabled": true,
+                            "format": "{total:,.2f}",
+                            "style": {
+                                "color": "rgb(88,89,91)",
+                                "fontSize": "12px",
+                                "fontStyle": "normal",
+                                "fontWeight": "bold"
+                            }
+                        },
+                        "plotLines": [
+                            {
+                                "color": "black",
+                                "width": 2,
+                                "value": 0,
+                                "id": "BASE_PLOTLINE_ID",
+                                "zIndex": 6
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "Name": "f82bed53-b056-48d4-8479-30c44ed2efec",
+            "Type": "HighChart",
+            "Data": {
+                "chart": {
+                    "animation": false,
+                    "backgroundColor": "rgba(0,0,0,0)",
+                    "style": {
+                        "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
+                        "spacingBottom": 10
+                    },
+                    "polar": false,
+                    "type": "area"
+                },
+                "lang": {},
+                "boost": {
+                    "useGPUTranslations": true
+                },
+                "credits": {
+                    "enabled": false
+                },
+                "colors": [
+                    "#5899da",
+                    "#e8743b",
+                    "#19a979",
+                    "#ed4a7b",
+                    "#3391d5",
+                    "#945ecf",
+                    "#13a4b4",
+                    "#525df4",
+                    "#ffaecf",
+                    "#7761c6"
+                ],
+                "legend": {
+                    "itemStyle": {
+                        "fontSize": "12px",
+                        "fontWeight": "normal"
+                    },
+                    "verticalAlign": "top",
+                    "enabled": true,
+                    "squareSymbol": true,
+                    "symbolRadius": 0,
+                    "layout": "horizontal",
+                    "align": "center"
+                },
+                "title": {
+                    "text": "Quantity, Unit Price per Product Name",
+                    "align": "left"
+                },
+                "plotOptions": {
+                    "area": {
+                        "dataLabels": {
+                            "enabled": true,
+                            "hideWhenOverlap": true,
+                            "style": {
+                                "fill": "black !important",
+                                "color": "black !important",
+                                "fontFamily": "LatoWeb, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'",
+                                "fontSize": "12px",
+                                "fontWeight": "normal",
+                                "textOutline": "0px"
+                            },
+                            "format": "{point.yFormatted} "
+                        },
+                        "stacking": null,
+                        "yAxis": 0,
+                        "colorByPoint": false,
+                        "pointPadding": 0
+                    },
+                    "series": {
+                        "borderColor": "transparent",
+                        "dataLabels": {
+                            "format": "{point.yFormatted}"
+                        }
+                    }
+                },
+                "responsive": {
+                    "rules": [
+                        {
+                            "condition": {
+                                "maxHeight": 176
+                            },
+                            "chartOptions": {
+                                "legend": {
+                                    "enabled": false
+                                },
+                                "yAxis": {
+                                    "labels": {
+                                        "rotation": 344,
+                                        "x": 10
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "condition": {
+                                "maxWidth": 359,
+                                "minHeight": 70
+                            },
+                            "chartOptions": {
+                                "chart": {
+                                    "animation": false,
+                                    "marginTop": 50
+                                },
+                                "plotOptions": {
+                                    "series": {
+                                        "dataLabels": {
+                                            "style": {
+                                                "fontSize": "9px"
+                                            }
+                                        }
+                                    }
+                                },
+                                "title": {
+                                    "style": {
+                                        "fontSize": "13px",
+                                        "floating": true
+                                    }
+                                },
+                                "subtitle": {
+                                    "text": ""
+                                },
+                                "xAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "10px"
+                                        }
+                                    }
+                                },
+                                "yAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "10px"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "condition": {
+                                "maxWidth": 176
+                            },
+                            "chartOptions": {
+                                "chart": {
+                                    "animation": false,
+                                    "marginTop": 40
+                                },
+                                "legend": {
+                                    "enabled": false,
+                                    "y": 25
+                                },
+                                "plotOptions": {
+                                    "series": {
+                                        "minSize": 100,
+                                        "dataLabels": {
+                                            "connectorWidth": 0,
+                                            "distance": -25,
+                                            "style": {
+                                                "fontSize": "8px"
+                                            }
+                                        }
+                                    }
+                                },
+                                "title": {
+                                    "style": {
+                                        "fontSize": "10px"
+                                    }
+                                },
+                                "subtitle": {
+                                    "text": ""
+                                },
+                                "xAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "9px"
+                                        }
+                                    }
+                                },
+                                "yAxis": {
+                                    "labels": {
+                                        "style": {
+                                            "fontSize": "9px"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                "xAxis": [
+                    {
+                        "categories": [
+                            "\"Bench And Zabuton\"",
+                            "\"Breathable Eco Mat\"",
+                            "\"Breathe Tank\"",
+                            "\"Candid Pullover\"",
+                            "\"Cardio Longsleeve\"",
+                            "\"Cardio Shortsleeve\"",
+                            "\"Cardio Tankini Tops\"",
+                            "\"Cedar Yoga Block\"",
+                            "\"Core Xplode CrossFit\"",
+                            "\"Cork Yoga Block\"",
+                            "\"Cosmo CrossFit Warm\"",
+                            "\"CrossFit Gloves\"",
+                            "\"Femme Fatale Compres\"",
+                            "\"Granite X Shorts\"",
+                            "\"Hipster Cinched Shor\"",
+                            "\"Hipster Shorts\"",
+                            "\"Intensification Nano\"",
+                            "\"Intensification X2 C\"",
+                            "\"Liberty Long Sleeve\"",
+                            "\"Liberty Short Sleeve\"",
+                            "\"Metro Active Trouser\"",
+                            "\"Metro Man Tank\"",
+                            "\"Metro Yoga Short\"",
+                            "\"Min Max CrossFit Tee\"",
+                            "\"Organic Cotton Socks\"",
+                            "\"Rambo Headband\"",
+                            "\"Rhabdo CrossFit Comp\"",
+                            "\"Ripped To Shreds Cro\"",
+                            "\"Silhouette Crew Neck\"",
+                            "\"Silhouette Tunic\"",
+                            "\"Sublime Hooded Long\"",
+                            "\"Swag Leggings Organi\"",
+                            "\"Thermx Active Long S\"",
+                            "\"Thermx Active Short\"",
+                            "\"Thermx Long Short\"",
+                            "\"Thermx Sweat Pants\"",
+                            "\"Yoga Equipment Bag\"",
+                            "\"Zsuzsi Star Lift Pan\""
+                        ],
+                        "lineWidth": 2,
+                        "lineColor": "rgb(0, 0, 0)",
+                        "labels": {
+                            "x": -5,
+                            "style": {
+                                "fontSize": "13px",
+                                "fill": "rgb(166, 168, 171)",
+                                "fontFamily": "Lato, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'"
+                            },
+                            "enabled": true
+                        },
+                        "gridLineWidth": 0,
+                        "tickColor": "rgb(166, 168, 171)",
+                        "tickWidth": 0
+                    }
+                ],
+                "series": [
+                    {
+                        "data": [
+                            {
+                                "y": 188,
+                                "yFormatted": "188",
+                                "percent": 18800,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 179,
+                                "yFormatted": "179",
+                                "percent": 17900,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 329,
+                                "yFormatted": "329",
+                                "percent": 32900,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 159,
+                                "yFormatted": "159",
+                                "percent": 15900,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 203,
+                                "yFormatted": "203",
+                                "percent": 20300,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 468,
+                                "yFormatted": "468",
+                                "percent": 46800,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 258,
+                                "yFormatted": "258",
+                                "percent": 25800,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 208,
+                                "yFormatted": "208",
+                                "percent": 20800,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 1457,
+                                "yFormatted": "1,457",
+                                "percent": 145700,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 190,
+                                "yFormatted": "190",
+                                "percent": 19000,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 1588,
+                                "yFormatted": "1,588",
+                                "percent": 158800,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 681,
+                                "yFormatted": "681",
+                                "percent": 68100,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 1165,
+                                "yFormatted": "1,165",
+                                "percent": 116500,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 1120,
+                                "yFormatted": "1,120",
+                                "percent": 112000,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 399,
+                                "yFormatted": "399",
+                                "percent": 39900,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 455,
+                                "yFormatted": "455",
+                                "percent": 45500,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 1110,
+                                "yFormatted": "1,110",
+                                "percent": 111000,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 791,
+                                "yFormatted": "791",
+                                "percent": 79100,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 195,
+                                "yFormatted": "195",
+                                "percent": 19500,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 106,
+                                "yFormatted": "106",
+                                "percent": 10600,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 99,
+                                "yFormatted": "99",
+                                "percent": 9900,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 152,
+                                "yFormatted": "152",
+                                "percent": 15200,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 94,
+                                "yFormatted": "94",
+                                "percent": 9400,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 996,
+                                "yFormatted": "996",
+                                "percent": 99600,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 346,
+                                "yFormatted": "346",
+                                "percent": 34600,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 505,
+                                "yFormatted": "505",
+                                "percent": 50500,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 884,
+                                "yFormatted": "884",
+                                "percent": 88400,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 1557,
+                                "yFormatted": "1,557",
+                                "percent": 155700,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 267,
+                                "yFormatted": "267",
+                                "percent": 26700,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 441,
+                                "yFormatted": "441",
+                                "percent": 44100,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 250,
+                                "yFormatted": "250",
+                                "percent": 25000,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 258,
+                                "yFormatted": "258",
+                                "percent": 25800,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 149,
+                                "yFormatted": "149",
+                                "percent": 14900,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 147,
+                                "yFormatted": "147",
+                                "percent": 14700,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 90,
+                                "yFormatted": "90",
+                                "percent": 9000,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 217,
+                                "yFormatted": "217",
+                                "percent": 21700,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 202,
+                                "yFormatted": "202",
+                                "percent": 20200,
+                                "name": "Quantity"
+                            },
+                            {
+                                "y": 701,
+                                "yFormatted": "701",
+                                "percent": 70100,
+                                "name": "Quantity"
+                            }
+                        ],
+                        "name": "Quantity",
+                        "type": "area",
+                        "id": "QUANTITY"
+                    },
+                    {
+                        "data": [
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 41,
+                                "yFormatted": "41",
+                                "percent": 4100,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 36,
+                                "yFormatted": "36",
+                                "percent": 3600,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 38,
+                                "yFormatted": "38",
+                                "percent": 3800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 30,
+                                "yFormatted": "30",
+                                "percent": 3000,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 28,
+                                "yFormatted": "28",
+                                "percent": 2800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 27,
+                                "yFormatted": "27",
+                                "percent": 2700,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 16,
+                                "yFormatted": "16",
+                                "percent": 1600,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 14,
+                                "yFormatted": "14",
+                                "percent": 1400,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 25,
+                                "yFormatted": "25",
+                                "percent": 2500,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 27,
+                                "yFormatted": "27",
+                                "percent": 2700,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 33,
+                                "yFormatted": "33",
+                                "percent": 3300,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 32,
+                                "yFormatted": "32",
+                                "percent": 3200,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 39,
+                                "yFormatted": "39",
+                                "percent": 3900,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 30,
+                                "yFormatted": "30",
+                                "percent": 3000,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 31,
+                                "yFormatted": "31",
+                                "percent": 3100,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 8,
+                                "yFormatted": "8",
+                                "percent": 800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 11,
+                                "yFormatted": "11",
+                                "percent": 1100,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 108,
+                                "yFormatted": "108",
+                                "percent": 10800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 25,
+                                "yFormatted": "25",
+                                "percent": 2500,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 27,
+                                "yFormatted": "27",
+                                "percent": 2700,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 30,
+                                "yFormatted": "30",
+                                "percent": 3000,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 35,
+                                "yFormatted": "35",
+                                "percent": 3500,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 27,
+                                "yFormatted": "27",
+                                "percent": 2700,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 22,
+                                "yFormatted": "22",
+                                "percent": 2200,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 34,
+                                "yFormatted": "34",
+                                "percent": 3400,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 38,
+                                "yFormatted": "38",
+                                "percent": 3800,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 42,
+                                "yFormatted": "42",
+                                "percent": 4200,
+                                "name": "Unit Price"
+                            },
+                            {
+                                "y": 34,
+                                "yFormatted": "34",
+                                "percent": 3400,
+                                "name": "Unit Price"
+                            }
+                        ],
+                        "name": "Unit Price",
+                        "type": "area",
+                        "id": "UNIT_PRICE"
+                    }
+                ],
+                "rs": 40,
+                "colorRs": 19,
+                "scrollLimit": 5,
+                "yAxis": [
+                    {
+                        "lineColor": "#FFFFFF",
+                        "labels": {
+                            "x": -5,
+                            "style": {
+                                "fontSize": "13px",
+                                "fill": "rgb(166, 168, 171)",
+                                "fontFamily": "Lato, 'Open Sans', 'Helvetica Neue', Helvetica, Arial, 'sans serif'"
+                            },
+                            "enabled": false
+                        },
+                        "gridLineWidth": 0,
+                        "tickColor": "rgb(166, 168, 171)",
+                        "tickWidth": 0,
+                        "title": {
+                            "text": ""
+                        },
+                        "stackLabels": {
+                            "enabled": true,
+                            "format": "{total:,.2f}",
+                            "align": "center",
+                            "y": -20
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
