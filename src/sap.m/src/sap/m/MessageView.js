@@ -74,35 +74,36 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * It is used to display a summarized list of different types of messages (error, warning, success, and information messages).
+	 *
 	 * <h3>Overview</h3>
-	 * A <code>MessageView</code> is used to display a summarized list of different types of messages (error, warning, success, and information messages).
 	 * It is meant to be embedded into container controls (such as {@link sap.m.Popover}, {@link sap.m.ResponsivePopover}, {@link sap.m.Dialog}).
-	 * It provides a handy and systemized way to navigate and explore details for every message.
-	 * If the MessageView contains only one item, which has either description, markupDescription or longTextUrl, its details page will be displayed initially.
-	 * It also exposes an event {@link sap.m.MessageView#event:activeTitlePress}, which can be used for navigation from a message to its source.
+	 * It provides a handy and systematized way to navigate and explore details for every message.
+	 * If the <code>MessageView</code> contains only one item, which has either description, markupDescription or longTextUrl, its details page will be displayed initially.
+	 * It also exposes the {@link sap.m.MessageView#event:activeTitlePress} event, which can be used for navigation from a message to its source.
 	 * <h3>Notes:</h3>
 	 * <ul>
-	 * <li>If your application changes its model between two interactions with the MessageView, this could lead to outdated messages being shown.
-	 * To avoid this, you need to call <code>navigateBack</code> on the MessageView BEFORE opening its container.</li>
-	 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>. </li>
-	 * <li> If the message cannot be fully displayed or includes a long description, the MessageView provides navigation to the detailed description. </li>
+	 * <li>If your application changes its model between two interactions with the <code>MessageView</code>, this could lead to outdated messages being shown.
+	 * To avoid this, you need to call <code>navigateBack</code> on the <code>MessageView</code> BEFORE opening its container.</li>
+	 * <li> Messages can have descriptions preformatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>. </li>
+	 * <li> If the message cannot be fully displayed, or includes a long description, the <code>MessageView</code> provides navigation to the detailed description. </li>
 	 * </ul>
 	 * <h3>Structure</h3>
-	 * The MessageView stores all messages in an association of type {@link sap.m.MessageItem} named <code>items</code>.
+	 * The <code>MessageView</code> stores all messages in an association of type {@link sap.m.MessageItem}, named <code>items</code>.
 	 * <br>
 	 * A set of properties determines how the items are rendered:
 	 * <ul>
-	 * <li> counter - An integer that is used to indicate the number of errors for each type </li>
-	 * <li> type - The type of message </li>
-	 * <li> title/subtitle - The title and subtitle of the message</li>
-	 * <li> description - The long text description of the message</li>
-	 * <li> activeTitle - Determines whether the title of the item is interactive</li>
+	 * <li> counter - An integer that is used to indicate the number of errors for each type. </li>
+	 * <li> type - The type of message. </li>
+	 * <li> title/subtitle - The title and subtitle of the message.</li>
+	 * <li> description - The long text description of the message.</li>
+	 * <li> activeTitle - Determines whether the title of the item is interactive.</li>
 	 * </ul>
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
 	 * <ul>
 	 * <li>When you want a way to centrally manage messages and show them to the user without additional work for the developer.
-	 * Navigation between the message item and the source of the error can be created, if needed by the application.
+	 * If needed the navigation between the message item and the source of the error can be created by the application.
 	 * This can be done by setting the <code>activeTitle</code> property to true and providing a handler for the <code>activeTitlePress</code> event.</li>
 	 * </ul>
 	 * @author SAP SE
@@ -121,7 +122,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * Callback function for resolving a promise after description has been asynchronously loaded inside this function
+				 * Callback function for resolving a promise after description has been asynchronously loaded inside this function.
 				 * @callback sap.m.MessageView~asyncDescriptionHandler
 				 * @param {object} config A single parameter object
 				 * @param {MessagePopoverItem} config.item Reference to respective MessagePopoverItem instance
@@ -132,7 +133,7 @@ sap.ui.define([
 				asyncDescriptionHandler: {type: "any", group: "Behavior", defaultValue: null},
 
 				/**
-				 * Callback function for resolving a promise after a link has been asynchronously validated inside this function
+				 * Callback function for resolving a promise after a link has been asynchronously validated inside this function.
 				 * @callback sap.m.MessageView~asyncURLHandler
 				 * @param {object} config A single parameter object
 				 * @param {string} config.url URL to validate
@@ -144,12 +145,12 @@ sap.ui.define([
 				asyncURLHandler: {type: "any", group: "Behavior", defaultValue: null},
 
 				/**
-				 * Defines whether the MessageItems are grouped or not
+				 * Defines whether the MessageItems are grouped or not.
 				 */
 				groupItems: { type: "boolean", group: "Behavior", defaultValue: false },
 
 				/**
-				 * Defines whether the header of details page will be shown
+				 * Defines whether the header of details page will be shown.
 				 */
 				showDetailsPageHeader: { type: "boolean", group: "Behavior", defaultValue: true }
 			},
@@ -162,46 +163,46 @@ sap.ui.define([
 				items: { type: "sap.m.MessageItem", multiple: true, singularName: "item" },
 
 				/**
-				 * A custom header button
+				 * Sets a custom header button.
 				 */
 				headerButton: { type: "sap.m.Button", multiple: false },
 
 				/**
-				 * A navContainer that contains both details and list pages
+				 * A navContainer that contains both details and list pages.
 				 */
 				_navContainer: { type: "sap.m.NavContainer", multiple: false, visibility : "hidden" }
 			},
 			events: {
 				/**
-				 * This event will be fired after the popover is opened
+				 * Event fired after the popover is opened.
 				 * @deprecated As of version 1.72. Use the appropriate event from the wrapper control, instead.
 				 */
 				afterOpen: {
 					parameters: {
 						/**
-						 * This refers to the control which opens the popover
+						 * This refers to the control which opens the popover.
 						 */
 						openBy: {type: "sap.ui.core.Control"}
 					}
 				},
 				/**
-				 * This event will be fired when description is shown
+				 * Event fired when description is shown.
 				 */
 				itemSelect: {
 					parameters: {
 						/**
-						 * Refers to the message item that is being presented
+						 * Refers to the message item that is being presented.
 						 */
 						item: {type: "sap.m.MessageItem"},
 						/**
-						 * Refers to the type of messages being shown
-						 * See sap.ui.core.MessageType values for types
+						 * Refers to the type of messages being shown.
+						 * See sap.ui.core.MessageType values for types.
 						 */
 						messageTypeFilter: {type: "sap.ui.core.MessageType"}
 					}
 				},
 				/**
-				 * This event will be fired when one of the lists is shown when (not) filtered  by type
+				 * Event fired when one of the lists is shown when (not) filtered  by type.
 				 */
 				listSelect: {
 					parameters: {
@@ -212,22 +213,22 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * This event will be fired when the long text description data from a remote URL is loaded
+				 * Event fired when the long text description data from a remote URL is loaded.
 				 */
 				longtextLoaded: {},
 				/**
-				 * This event will be fired when a validation of a URL from long text description is ready
+				 * Event fired when a validation of a URL from long text description is ready.
 				 */
 				urlValidated: {},
 
 				/**
-				 * This event will be fired when an active title of a MessageItem is pressed
+				 * Event fired when an activeTitle of a MessageItem is pressed.
 				 * @since 1.58
 				 */
 				activeTitlePress: {
 					parameters: {
 						/**
-						 * Refers to the message item that contains the active Title
+						 * Refers to the message item that contains the activeTitle.
 						 */
 						item: { type: "sap.m.MessageItem" }
 					}
