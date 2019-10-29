@@ -201,7 +201,7 @@ sap.ui.define([
 						that = this;
 
 					// do not pass any parameters to Model
-					Model.apply(this);
+					Model.call(this);
 
 					if (!mParameters || mParameters.synchronizationMode !== "None") {
 						throw new Error("Synchronization mode must be 'None'");
