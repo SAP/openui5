@@ -9,30 +9,30 @@ sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
-		"sap/base/util/UriParameters",
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/ServerDrivenPaging/pages/Main",
-		"sap/base/Log",
-		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
-	], function (UriParameters, Any, Main, Log, Opa5, opaTest, TestUtils) {
-
-		var bCount = UriParameters.fromQuery(window.location.search).get("$count") === "true",
-			sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+	], function (Any, Main, opaTest, TestUtils) {
 
 		QUnit.module("sap.ui.core.sample.odata.v4.ServerDrivenPaging", {
 			before : function () {
+				this.sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			},
 			after : function () {
-				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+				sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
 			}
 		});
 
 		//*****************************************************************************
-		if (TestUtils.isRealOData()) {
-			opaTest("Test ServerDrivenPaging Application", function (Given, When, Then) {
+		[false, true].forEach(function (bCount) {
+			var sTitle = "Test ServerDrivenPaging Application, $count=" + bCount;
+
+			opaTest(sTitle, function (Given, When, Then) {
+				TestUtils.setData("sap.ui.core.sample.odata.v4.ServerDrivenPaging.$count",
+					bCount);
+
 				Given.iStartMyUIComponent({
 					autoWait : true,
 					componentConfig : {
@@ -51,38 +51,22 @@ sap.ui.getCore().attachInit(function () {
 				Then.onTheMainPage.checkTableLength(30);
 				Then.onTheMainPage.checkTableTitle("30 Business Partners");
 
-				When.onTheMainPage.switchToGridTable();
-				Then.onTheMainPage.checkLastVisibleRowIndex("20");
-				Then.onTheMainPage.checkGridTableTitle(bCount
-					? "50 Business Partners"
-					//TODO change to " Business Partners" when prefetch range is not read in case
-					// of server-driven paging
-					: "50 Business Partners");
+				if (bCount) { // scrolling in grid table only works well with known collection size
+					When.onTheMainPage.switchToGridTable();
+					Then.onTheMainPage.checkLastVisibleRowIndex("20");
+					Then.onTheMainPage.checkGridTableTitle("50 Business Partners");
 
-				When.onTheMainPage.pageDownOnGridTable();
-				Then.onTheMainPage.checkLastVisibleRowIndex("41");
-				Then.onTheMainPage.checkGridTableTitle(bCount
-					? "50 Business Partners"
-					//TODO change to " Business Partners" when prefetch range is not read in case
-					// of server-driven paging
-					: "50 Business Partners");
+					When.onTheMainPage.pageDownOnGridTable();
+					Then.onTheMainPage.checkLastVisibleRowIndex("41");
 
-				When.onTheMainPage.pageDownOnGridTable();
-				Then.onTheMainPage.checkLastVisibleRowIndex("49");
-				Then.onTheMainPage.checkGridTableTitle(bCount
-					? "50 Business Partners"
-					//TODO change to " Business Partners" when prefetch range is not read in case
-					// of server-driven paging
-					: "50 Business Partners");
+					When.onTheMainPage.pageDownOnGridTable();
+					Then.onTheMainPage.checkLastVisibleRowIndex("49");
+				}
 
 				Then.onAnyPage.checkLog();
 				Then.iTeardownMyUIComponent();
 			});
-		} else {
-			QUnit.test("Test runs only with realOData=true", function (assert) {
-				assert.ok(true, "need one assertion to avoid voter errors due to 'no tests'");
-			});
-		}
+		});
 
 		QUnit.start();
 	});

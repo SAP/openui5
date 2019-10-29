@@ -1522,6 +1522,7 @@ sap.ui.define([
 		// - iStart: the start (inclusive)
 		// - iEnd: the end (exclusive)
 		this.aReadRequests = [];
+		this.bServerDrivenPaging = false;
 		this.oSyncPromiseAll = undefined;
 	}
 
@@ -1806,6 +1807,7 @@ sap.ui.define([
 			this.iLimit = iCount = parseInt(sCount);
 		}
 		if (oResult["@odata.nextLink"]) { // server-driven paging
+			this.bServerDrivenPaging = true;
 			if (iEnd < this.aElements.length) { // "inner" gap: do not remove elements behind gap
 				for (i = iStart + iResultLength; i < iEnd; i += 1) {
 					delete this.aElements[i];
@@ -1848,7 +1850,8 @@ sap.ui.define([
 	 *   prefetch data for a paged access. The cache ensures that at least half the prefetch length
 	 *   is available left and right of the requested range without a further request. If data is
 	 *   missing on one side, the full prefetch length is added at this side.
-	 *   <code>Infinity</code> is supported
+	 *   <code>Infinity</code> is supported. In case server-driven paging (@odata.nextLink) has been
+	 *   encountered before, this parameter is ignored.
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
 	 * @param {function} [fnDataRequested]
@@ -1892,7 +1895,7 @@ sap.ui.define([
 			});
 		}
 
-		oRange = this.getReadRange(iIndex, iLength, iPrefetchLength);
+		oRange = this.getReadRange(iIndex, iLength, this.bServerDrivenPaging ? 0 : iPrefetchLength);
 		iEnd = Math.min(oRange.start + oRange.length, this.aElements.$created + this.iLimit);
 		n = Math.min(iEnd, Math.max(oRange.start, this.aElements.length) + 1);
 
