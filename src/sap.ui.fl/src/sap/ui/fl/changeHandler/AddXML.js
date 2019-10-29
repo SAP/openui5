@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/base/util/LoaderExtensions"
+	"sap/base/util/LoaderExtensions",
+	"sap/ui/fl/changeHandler/common/revertAddedControls"
 ], function(
 	Utils,
 	Base,
-	LoaderExtensions
+	LoaderExtensions,
+	revertAddedControls
 ) {
 	"use strict";
 
@@ -93,26 +95,7 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.fl.changeHandler.AddXML#revertChange
 	 */
-	AddXML.revertChange = function(oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oChangeDefinition = oChange.getDefinition();
-		var sAggregationName = oChangeDefinition.content.targetAggregation;
-		var oView = mPropertyBag.view || Utils.getViewForControl(oControl);
-		var oAppComponent = mPropertyBag.appComponent;
-		var aRevertData = oChange.getRevertData() || [];
-		var aControlsToRemove = aRevertData.map(function(sId) {
-			// when we apply the change in XML and revert in JS, the saved ID is not yet concatinated with the view
-			return oModifier.bySelector(sId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sId));
-		});
-
-		aControlsToRemove.forEach(function(oControlToRemove) {
-			oModifier.removeAggregation(oControl, sAggregationName, oControlToRemove);
-		});
-
-		destroyArrayOfControls(aControlsToRemove);
-		oChange.resetRevertData();
-		return true;
-	};
+	AddXML.revertChange = revertAddedControls;
 
 	/**
 	 * Completes the change by adding change handler specific content
