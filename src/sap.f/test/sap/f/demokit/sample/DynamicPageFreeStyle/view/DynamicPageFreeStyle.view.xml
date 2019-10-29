@@ -35,7 +35,7 @@
 						<OverflowToolbar>
 							<GenericTag text="SR"
 								status="Error"
-								press="onGenericTagPress"
+								press="onPressOpenPopover"
 								design="StatusIconHidden">
 								<ObjectNumber number="2"
 									unit="M"
@@ -62,6 +62,14 @@
 						<Button
 								icon="sap-icon://action"
 								type="Transparent"/>
+						<Button
+								text="Button with layoutData"
+								type="Transparent"
+								press="onPressOpenPopover">
+							<layoutData>
+								<OverflowToolbarLayoutData priority="AlwaysOverflow" closeOverflowOnInteraction="false" />
+							</layoutData>
+						</Button>
 					</f:actions>
 					<f:navigationActions>
 						<Button

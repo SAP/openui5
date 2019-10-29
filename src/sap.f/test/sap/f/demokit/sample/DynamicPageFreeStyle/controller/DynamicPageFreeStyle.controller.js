@@ -24,7 +24,7 @@ sap.ui.define([
 				sNewPrimaryArea = oTitle.getPrimaryArea() === DynamicPageTitleArea.Begin ? DynamicPageTitleArea.Middle : DynamicPageTitleArea.Begin;
 			oTitle.setPrimaryArea(sNewPrimaryArea);
 		},
-		onGenericTagPress: function (oEvent) {
+		onPressOpenPopover: function (oEvent) {
 			if (!this._oPopover) {
 				this._oPopover = sap.ui.xmlfragment("sap.f.sample.DynamicPageFreeStyle.view.Card", this);
 				this.getView().addDependent(this._oPopover);
