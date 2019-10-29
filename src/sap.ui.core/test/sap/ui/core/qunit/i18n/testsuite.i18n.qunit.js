@@ -400,6 +400,12 @@ sap.ui.define(function() {
 				coverage : {
 					only : "sap/ui/core/date/UniversalDate"
 				}
+			},
+			"UniversalDateUtils": {
+				title: "sap.ui.core.date.UniversalDateUtils: UniversalDate Utility Functions",
+				coverage : {
+					only : "sap/ui/core/date/UniversalDateUtils"
+				}
 			}
 		}
 	};
