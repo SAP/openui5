@@ -229,8 +229,6 @@ function(
 		var sOPHId = this.getId(),
 			sNavToolbarId = sOPHId + "-NavToolbar",
 			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			oPrevBtn,
-			oNextBtn,
 			oPicker,
 			oCalendarPicker,
 			oMonthPicker,
@@ -245,7 +243,7 @@ function(
 			.addContent(this._getOrCreateViewSwitch())
 		);
 
-		oPrevBtn = new Button(sNavToolbarId + "-PrevBtn", {
+		this._oPrevBtn = new Button(sNavToolbarId + "-PrevBtn", {
 			icon: IconPool.getIconURI('slim-arrow-left'),
 			tooltip: oRB.getText("PCH_NAVIGATE_BACKWARDS"),
 			press: function () {
@@ -259,7 +257,7 @@ function(
 				this.firePressToday();
 			}.bind(this)
 		});
-		oNextBtn = new Button(sNavToolbarId + "-NextBtn", {
+		this._oNextBtn = new Button(sNavToolbarId + "-NextBtn", {
 			icon: IconPool.getIconURI('slim-arrow-right'),
 			tooltip: oRB.getText("PCH_NAVIGATE_FORWARD"),
 			press: function () {
@@ -306,9 +304,9 @@ function(
 		this.setAggregation("_navigationToolbar", new Toolbar(sNavToolbarId, {
 			design: ToolbarDesign.Transparent,
 			content: [
-				oPrevBtn,
+				this._oPrevBtn,
 				this._oTodayBtn,
-				oNextBtn,
+				this._oNextBtn,
 				this._oPickerBtn
 			]
 		}).addStyleClass("sapMPCHeadNavToolbar"));
@@ -332,6 +330,14 @@ function(
 		if (this._oPopup) {
 			this._oPopup.destroy();
 			this._oPopup = null;
+		}
+		if (this._oPrevBtn) {
+			this._oPrevBtn.destroy();
+			this._oPrevBtn = null;
+		}
+		if (this._oNextBtn) {
+			this._oNextBtn.destroy();
+			this._oNextBtn = null;
 		}
 	};
 
