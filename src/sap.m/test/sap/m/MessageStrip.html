@@ -119,6 +119,14 @@
 					"<a href='http://www.sap.com/' target='_blank'>Learn more</a>"
 		});
 
+		var oMCLongWordAndSmallWidth = new sap.ui.layout.VerticalLayout("mcontainer8", {
+			width: "10rem",
+			content: new sap.m.MessageStrip({
+				showIcon: true,
+				text: "This is a VeryLongWordAndThereMustBeNoScroll in IE11"
+			})
+		});
+
 		var oPageNoLayout = new sap.m.Page("no-layout", {
 			title:"Several MessageStrip controls with no layout",
 			titleLevel: "H1",
@@ -130,7 +138,8 @@
 				oMCInformationIC,
 				oMCInformationLong,
 				oMCWarning,
-				oMCWarningWithFormattedText
+				oMCWarningWithFormattedText,
+				oMCLongWordAndSmallWidth
 			],
 			footer: new sap.m.Bar({
 				contentMiddle: [
