@@ -1307,8 +1307,8 @@ sap.ui.define(['sap/ui/base/DataType', 'sap/base/util/ObjectPath',
 			setTextFieldContent: function(oTextField, sWidth){
 				oTextField.setWidth(sWidth);
 			},
-			createButton: function(){
-				var oButton = new sap.ui.commons.Button();
+			createButton: function(sId){
+				var oButton = new sap.ui.commons.Button(sId);
 				return oButton;
 			},
 			addFormClass: function(){ return "sapUiCFUM"; },

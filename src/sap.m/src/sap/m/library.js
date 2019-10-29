@@ -4820,8 +4820,8 @@ sap.ui.define([
 		setTextFieldContent: function(oTextField, sWidth){
 			oTextField.setWidth(sWidth);
 		},
-		createButton: function(){
-			var oButton = new sap.m.Button();
+		createButton: function(sId){
+			var oButton = new sap.m.Button(sId);
 			return oButton;
 		},
 		addFormClass: function(){ return "sapUiFUM"; },

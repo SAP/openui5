@@ -697,6 +697,23 @@ sap.ui.define([
 		assert.equal($Frame.css("display"), "none", "Blindlayer is 'display:none'");
 	});
 
+	QUnit.test("File uploader input field and browse button have stable IDs", function (assert) {
+		var sBrowseButtonSuffix = "-fu_button",
+			sTextFueldSuffix = "-fu_input";
+
+		// assert
+		assert.strictEqual(
+			this.oFileUploader.oBrowse.getId(),
+			this.oFileUploader.getId()  + sBrowseButtonSuffix,
+			"Browse button ID is stable"
+		);
+		assert.strictEqual(
+			this.oFileUploader.oFilePath.getId(),
+			this.oFileUploader.getId()  + sTextFueldSuffix,
+			"Input field ID is stable"
+		);
+	});
+
 	QUnit.module("Keyboard handling");
 
 	QUnit.test("ESCAPE key propagation", function (assert) {
