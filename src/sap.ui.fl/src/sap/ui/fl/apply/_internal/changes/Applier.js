@@ -33,8 +33,7 @@ sap.ui.define([
 
 	function _checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
 		var bXmlModifier = _isXmlModifier(mPropertyBag);
-		var sControlType = mPropertyBag.modifier.getControlType(oControl);
-		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
+		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 		var bIsCurrentlyAppliedOnControl = FlexCustomData.hasChangeApplyFinishedCustomData(mControl.control, oChange, mPropertyBag.modifier);
 		var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
 		if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
@@ -54,13 +53,8 @@ sap.ui.define([
 		return mChangesMap;
 	}
 
-	function _checkPreconditions(oChange, oChangeHandler, mPropertyBag) {
+	function _checkPreconditions(oChange, mPropertyBag) {
 		var sErrorMessage;
-		if (!oChangeHandler) {
-			sErrorMessage = "Change handler implementation for change not found or change type not enabled for current layer - Change ignored";
-			Log.warning(sErrorMessage);
-		}
-
 		if (_isXmlModifier(mPropertyBag) && oChange.getDefinition().jsOnly) {
 			// change is not capable of xml modifier
 			// the change status has to be reset to initial
@@ -146,7 +140,6 @@ sap.ui.define([
 	}
 
 	var Applier = {
-
 		PENDING: "sap.ui.fl:PendingChange",
 
 		/**
@@ -154,19 +147,18 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.fl.Change} oChange - Change object which should be applied on the passed control
 		 * @param {sap.ui.core.Control} oControl - Control which is the target of the passed change
-		 * @param {object} mPropertyBag propertyBag - Passed by the view processing
-		 * @param {object} mPropertyBag.view - The view to process
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {object} mPropertyBag.view - View to process
 		 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
 		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
 		 * @param {object} mPropertyBag.appComponent - Component instance that is currently loading
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
 		 */
 		applyChangeOnControl: function(oChange, oControl, mPropertyBag) {
-			var sControlType = mPropertyBag.modifier.getControlType(oControl);
-			var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, sControlType, mPropertyBag);
+			var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 
 			return Utils.getChangeHandler(oChange, mControl, mPropertyBag).then(function(oChangeHandler) {
-				_checkPreconditions(oChange, oChangeHandler, mPropertyBag);
+				_checkPreconditions(oChange, mPropertyBag);
 				return oChangeHandler;
 			})
 
@@ -208,10 +200,10 @@ sap.ui.define([
 		 * Gets the changes map and gets all changes for that control from the map, then, depending on
 		 * dependencies, directly applies the change or saves the callback to apply in the dependency.
 		 *
-		 * @param {function} fnGetChangesMap function which resolves with the changes map
-		 * @param {object} oAppComponent Component instance that is currently loading
-		 * @param {sap.ui.fl.oFlexControlle} oFlexController instance of FlexController
-		 * @param {sap.ui.core.Control} oControl instance of the Control on which changes should be applied
+		 * @param {function} fnGetChangesMap - Function which resolves with the changes map
+		 * @param {object} oAppComponent - Component instance that is currently loading
+		 * @param {sap.ui.fl.oFlexControlle} oFlexController - Instance of FlexController
+		 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
 		 */
 		applyAllChangesForControl: function(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
 			var aPromiseStack = [];
@@ -242,8 +234,8 @@ sap.ui.define([
 			});
 
 			// TODO improve handling of mControlsWithDependencies when change applying gets refactored
-			// 		- save the IDs of the waiting changes in the map
-			// 		- only try to apply those changes first
+			// 	- save the IDs of the waiting changes in the map
+			// 	- only try to apply those changes first
 			if (aChangesForControl.length || mChangesMap.mControlsWithDependencies[sControlId]) {
 				delete mChangesMap.mControlsWithDependencies[sControlId];
 				return FlUtils.execPromiseQueueSequentially(aPromiseStack).then(function () {
@@ -256,15 +248,15 @@ sap.ui.define([
 		/**
 		 * Looping over all retrieved flexibility changes and applying them onto the targeted control within the view.
 		 *
-		 * @param {object} mPropertyBag - collection of cross-functional attributes
-		 * @param {object} mPropertyBag.view - the view to process
-		 * @param {string} mPropertyBag.viewId - id of the processed view
+		 * @param {object} mPropertyBag - Collection of cross-functional attributes
+		 * @param {object} mPropertyBag.view - View to process
+		 * @param {string} mPropertyBag.viewId - ID of the processed view
 		 * @param {string} mPropertyBag.appComponent - Application component instance responsible for the view
-		 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
-		 * @param {object} mPropertyBag.appDescriptor - app descriptor containing the metadata of the current application
-		 * @param {string} mPropertyBag.siteId - id of the flp site containing this application
-		 * @param {sap.ui.fl.Change[]} aChanges - list of flexibility changes on controls for the current processed view
-		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Returns promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
+		 * @param {object} mPropertyBag.modifier - Polymorph reuse operations handling the changes on the given view type
+		 * @param {object} mPropertyBag.appDescriptor - App descriptor containing the metadata of the current application
+		 * @param {string} mPropertyBag.siteId - ID of the flp site containing this application
+		 * @param {sap.ui.fl.Change[]} aChanges List of flexibility changes on controls for the current processed view
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 		 */
 		applyAllChangesForXMLView: function(mPropertyBag, aChanges) {
 			var aPromiseStack = [];

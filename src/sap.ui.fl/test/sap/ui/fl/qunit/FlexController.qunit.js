@@ -6,12 +6,10 @@ sap.ui.define([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/Control",
-	"sap/ui/core/Element",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
@@ -24,7 +22,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/core/mvc/XMLView",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/base/util/deepClone",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -35,12 +33,10 @@ function (
 	Change,
 	ChangeRegistry,
 	Control,
-	Element,
 	Utils,
 	HideControl,
 	ChangePersistenceFactory,
 	JsControlTreeModifier,
-	XmlTreeModifier,
 	ContextManager,
 	Manifest,
 	UIComponent,
@@ -53,7 +49,7 @@ function (
 	URLHandler,
 	Applier,
 	ChangeUtils,
-	XMLView,
+	Reverter,
 	deepClone,
 	jQuery,
 	sinon
@@ -323,11 +319,11 @@ function (
 				assert.strictEqual(arguments[3], sChangeTypeString, "then correct change type string passed");
 				return Promise.resolve(aDeletedChanges);
 			});
-			var oRevertChangesOnControlStub = sandbox.stub(this.oFlexController, "revertChangesOnControl").returns(Promise.resolve());
+			var oRevertMultipleChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").returns(Promise.resolve());
 			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp, sSelectorString, sChangeTypeString)
 				.then(function() {
-					assert.ok(oRevertChangesOnControlStub.calledOnce, "the revertChangesOnControl is called once");
-					assert.deepEqual(oRevertChangesOnControlStub.args[0][0], aDeletedChanges, "with the correct changes");
+					assert.ok(oRevertMultipleChangesStub.calledOnce, "the revertMultipleChanges is called once");
+					assert.deepEqual(oRevertMultipleChangesStub.args[0][0], aDeletedChanges, "with the correct changes");
 					assert.deepEqual(URLHandler.update.getCall(0).args[0], {
 						parameters: [],
 						updateURL: true,
@@ -355,10 +351,10 @@ function (
 				assert.strictEqual(arguments[1], sGenerator, "then correct generator passed");
 				return Promise.resolve([]);
 			});
-			var oRevertChangesOnControlStub = sandbox.stub(this.oFlexController, "revertChangesOnControl").returns(Promise.resolve());
+			var oRevertMultipleChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").returns(Promise.resolve());
 			return this.oFlexController.resetChanges(sLayer, sGenerator, oComp)
 				.then(function() {
-					assert.equal(oRevertChangesOnControlStub.callCount, 0, "the revertChangesOnControl is not called");
+					assert.equal(oRevertMultipleChangesStub.callCount, 0, "the revertMultipleChanges is not called");
 					assert.deepEqual(URLHandler.update.getCall(0).args[0], {
 						parameters: [],
 						updateURL: true,
@@ -1086,127 +1082,6 @@ function (
 					assert.equal(oSecondTest, oHideControl, "and contains the correct value in the second promise");
 				});
 		});
-
-
-		QUnit.test("when calling 'revertChangesOnControl' with a change type only registered for a control inside the template", function (assert) {
-			this.oChange.setRevertData({
-				originalValue: false
-			});
-			this.oChange.markFinished();
-			var oHideControl = sap.ui.fl.changeHandler.HideControl;
-			var oGetChangeHandlerSpy = sandbox.spy(this.oFlexController, "_getChangeHandler");
-			var oRevertChangeSpy = sandbox.spy(oHideControl, "revertChange");
-			var oModifierUpdateAggregationSpy = sandbox.spy(JsControlTreeModifier, "updateAggregation");
-			var oAppComponent = {};
-
-			return this.oFlexController.revertChangesOnControl([this.oChange], oAppComponent)
-			.then(function() {
-				assert.equal(oGetChangeHandlerSpy.callCount, 1, "the function '_getChangeHandler' is called once");
-				assert.equal(oRevertChangeSpy.args[0][1], this.oText, "revertChange is called with the correct control");
-				assert.ok(oRevertChangeSpy.returnValues[0], "revertChange finished successfully");
-				assert.equal(oModifierUpdateAggregationSpy.callCount, 1, "updateAggregation of the modifier is called once");
-				assert.equal(oModifierUpdateAggregationSpy.args[0][0], this.oList, "updateAggregation is called with the correct control");
-				assert.equal(this.oList.getItems()[0].getContent()[0].getVisible(), false, "the text control in the first item is invisible");
-				assert.equal(this.oList.getItems()[1].getContent()[0].getVisible(), false, "the text control in the second item is invisible");
-				assert.equal(this.oList.getItems()[2].getContent()[0].getVisible(), false, "the text control in the third item is invisible");
-				return oGetChangeHandlerSpy.returnValues[0];
-			}.bind(this))
-			.then(function(oReturnValue) {
-				assert.equal(oReturnValue, oHideControl, "and returns the correct change handler");
-			});
-		});
-
-		QUnit.test("when calling 'revertChangesOnControl' with a change type for a non-existent control", function (assert) {
-			var oAppComponent = {};
-			this.oChange.markFinished();
-			var oHideControl = sap.ui.fl.changeHandler.HideControl;
-			var oRevertChangeSpy = sandbox.spy(oHideControl, "revertChange");
-			// non-existent control
-			sandbox.stub(JsControlTreeModifier, "bySelector");
-			sandbox.spy(Log, "warning");
-
-			return this.oFlexController.revertChangesOnControl([this.oChange], oAppComponent)
-				.then(function() {
-					assert.ok(Log.warning.calledOnce, "then a warning was logged");
-					assert.ok(oRevertChangeSpy.notCalled, "then revertChange() was not called");
-				});
-		});
-
-		QUnit.test("when calling '_revertChange' with a non-existent control", function(assert) {
-			var oPropertyBag = {
-				modifier: JsControlTreeModifier
-			};
-
-			return this.oFlexController._revertChange(this.oChange, undefined, oPropertyBag)
-			.catch(function() {
-				assert.ok(false, "should never go here");
-			})
-			.then(function(bResult) {
-				assert.ok(true, "the function resolves");
-				assert.equal(bResult, false, "the undo was not successful");
-			});
-		});
-	});
-
-	QUnit.module("[JS] removeFromAppliedChanges with one change for a label", {
-		beforeEach: function () {
-			var oLabelChangeContent = jQuery.extend({}, labelChangeContent);
-			this.sLabelId = oLabelChangeContent.selector.id;
-			this.oControl = new Label(this.sLabelId);
-			this.oChange = new Change(oLabelChangeContent);
-			this.mChanges = getInitialChangesMap();
-			this.mChanges.mChanges[this.sLabelId] = [this.oChange];
-			this.fnGetChangesMap = function () {
-				return this.mChanges;
-			}.bind(this);
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-
-			this.oChangeHandlerApplyChangeStub = sandbox.stub();
-			this.oChangeHandlerRevertChangeStub = sandbox.stub();
-			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
-				applyChange: this.oChangeHandlerApplyChangeStub,
-				revertChange: this.oChangeHandlerRevertChangeStub,
-				completeChangeContent: function() {}
-			});
-			sandbox.stub(Log, "error");
-			this.oAddAppliedCustomDataSpy = sandbox.spy(FlexCustomData, "addAppliedCustomData");
-			this.oDestroyAppliedCustomDataStub = sandbox.spy(FlexCustomData, "destroyAppliedCustomData");
-		},
-		afterEach: function () {
-			this.oControl.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("deletes the custom data after reverting the change and saves the revertData to the change", function (assert) {
-			this.oChange.markFinished();
-			FlexCustomData.addAppliedCustomData(this.oControl, this.oChange, {modifier: JsControlTreeModifier});
-			assert.strictEqual(FlexCustomData.getAppliedCustomDataValue(this.oControl, this.oChange, JsControlTreeModifier), "true", "then custom data is initially set on the control");
-			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-			.then(function() {
-				assert.strictEqual(this.oChange.getRevertData(), true, "the revert data was saved in the change");
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
-				assert.equal(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData was destroyed");
-				assert.strictEqual(FlexCustomData.getAppliedCustomDataValue(this.oControl, this.oChange, JsControlTreeModifier), undefined, "then custom data is removed from the control");
-			}.bind(this));
-		});
-
-		QUnit.test("deletes the changeId from custom data without reverting the change", function (assert) {
-			return this.oFlexController.removeFromAppliedChangesOnControl(this.oChange, {}, this.oControl)
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was NOT called");
-				assert.equal(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData was destroyed");
-			}.bind(this));
-		});
-
-		QUnit.test("does not call the revert change handler if the change wasn't applied", function(assert) {
-			var oDeleteChangeInMapSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_deleteChangeInMap");
-
-			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
-				assert.equal(oDeleteChangeInMapSpy.callCount, 0, "the change was not deleted in the change persistence");
-			}.bind(this));
-		});
 	});
 
 	QUnit.module("applyVariantChanges with two changes for a label", {
@@ -1275,233 +1150,6 @@ function (
 			assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["foo"].length, 1, "then 1 change of the second control added to map");
 			assert.equal(this.oApplyChangesOnControlStub.callCount, 2, "then applyChangesOnControl is called twice (two controls)");
 			assert.equal(this.oAddChangeAndUpdateDependenciesSpy.callCount, 3, "then three changes were added to the map and dependencies were updated");
-		});
-	});
-
-	QUnit.module("[JS] removeFromAppliedChanges with two changes for a label", {
-		beforeEach: function () {
-			this.sLabelId = labelChangeContent.selector.id;
-			this.oControl = new Label(this.sLabelId);
-			this.oChange = new Change(labelChangeContent);
-			this.oChange2 = new Change(labelChangeContent2);
-			this.mChanges = getInitialChangesMap();
-			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2];
-			this.fnGetChangesMap = function () {
-				return this.mChanges;
-			}.bind(this);
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-
-			this.oChangeHandlerApplyChangeStub = sandbox.stub();
-			this.oChangeHandlerRevertChangeStub = sandbox.stub();
-			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
-			this.oApplyChangesOnControlSpy = sandbox.spy(Applier, "applyAllChangesForControl");
-			this.oDeleteChangeInMapSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_deleteChangeInMap");
-
-			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
-				applyChange: this.oChangeHandlerApplyChangeStub,
-				revertChange: this.oChangeHandlerRevertChangeStub
-			});
-
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					applicationVersion: {
-						version : "1.2.3"
-					}
-				}
-			};
-			var oManifest = new Manifest(oManifestObj);
-			this.oComponent = {
-				name: "testScenarioComponent",
-				appVersion: "1.2.3",
-				getId : function() {return "RTADemoAppMD";},
-				getManifestObject : function() {return oManifest;}
-			};
-		},
-		afterEach: function () {
-			this.oControl.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("calls the revert change handler twice", function (assert) {
-			this.oChange.markFinished();
-			this.oChange2.markFinished();
-			return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2], this.oControl)
-
-			.then(function() {
-				assert.ok(this.oDeleteChangeInMapSpy.calledTwice, "both changes were deleted from the map");
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
-			}.bind(this));
-		});
-
-		QUnit.test("calls the revert change handler twice separately", function (assert) {
-			this.oChange.markFinished();
-			this.oChange2.markFinished();
-			return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "first change was reverted");
-			}.bind(this))
-
-			.then(function() {
-				return this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl);
-			}.bind(this))
-
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
-			}.bind(this));
-		});
-
-		QUnit.test("does not call the revert change handler if the change wasn't applied", function(assert) {
-			return this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl)
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
-			}.bind(this));
-		});
-	});
-
-	QUnit.module("[JS] removeFromAppliedChanges with three changes for a label", {
-		beforeEach: function () {
-			this.sLabelId = labelChangeContent.selector.id;
-			this.oControl = new Label(this.sLabelId);
-			this.oChange = new Change(labelChangeContent);
-			this.oChange2 = new Change(labelChangeContent2);
-			this.oChange3 = new Change(labelChangeContent3);
-			this.mChanges = getInitialChangesMap();
-			this.mChanges.mChanges[this.sLabelId] = [this.oChange, this.oChange2, this.oChange3];
-			this.fnGetChangesMap = function () {
-				return this.mChanges;
-			}.bind(this);
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-
-			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
-			this.oApplyChangesOnControlSpy = sandbox.spy(Applier, "applyAllChangesForControl");
-			this.oDeleteChangeInMapSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_deleteChangeInMap");
-
-			var oManifestObj = {
-				"sap.app": {
-					id: "MyComponent",
-					applicationVersion: {
-						version : "1.2.3"
-					}
-				}
-			};
-			var oManifest = new Manifest(oManifestObj);
-			this.oComponent = {
-				name: "testScenarioComponent",
-				appVersion: "1.2.3",
-				getId : function() {return "RTADemoAppMD";},
-				getManifestObject : function() {return oManifest;}
-			};
-		},
-		afterEach: function () {
-			this.oControl.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("calls revert change when previously called async apply change throws exception", function (assert) {
-			var fnDelayedPromiseReject = new Promise(function(fnResolve, fnReject) {
-				setTimeout(function() {
-					fnReject(new Error("Test error"));
-				}, 0);
-			});
-			sandbox.stub(Log, "error");
-			var oFirstAsyncChangeHandlerApplyChangeStub = sandbox.stub().returns(fnDelayedPromiseReject);
-			var oFirstAsyncChangeHandlerRevertChangeStub = sandbox.stub().returns(Promise.resolve());
-			sandbox.stub(ChangeUtils, "getChangeHandler").resolves({ applyChange: oFirstAsyncChangeHandlerApplyChangeStub });
-			sandbox.stub(this.oFlexController, "_getChangeHandler")
-			.onCall(0).resolves({ revertChange: oFirstAsyncChangeHandlerRevertChangeStub });
-
-			Applier.applyAllChangesForControl(this.fnGetChangesMap, {}, this.oFlexController, this.oControl);
-
-			return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2, this.oChange3], this.oControl).then(function() {
-				assert.strictEqual(oFirstAsyncChangeHandlerApplyChangeStub.callCount, 1, "then the first async change is applied");
-				assert.strictEqual(oFirstAsyncChangeHandlerRevertChangeStub.callCount, 0, "then the first async revert change is never called");
-			});
-		});
-	});
-
-	QUnit.module("[XML] _removeFromAppliedChangesAndMaybeRevert with one change for a label", {
-		beforeEach: function () {
-			var oLabelChangeContent = jQuery.extend({}, labelChangeContent);
-			this.sLabelId = oLabelChangeContent.selector.id;
-			this.oDOMParser = new DOMParser();
-			this.oChange = new Change(oLabelChangeContent);
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-
-			this.oAddAppliedCustomDataStub = sandbox.stub(FlexCustomData, "addAppliedCustomData");
-			this.oDestroyAppliedCustomDataStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
-			this.oAddFailedCustomDataStub = sandbox.stub(FlexCustomData, "addFailedCustomData");
-			this.oChangeHandlerApplyChangeStub = sandbox.stub();
-			this.oChangeHandlerRevertChangeStub = sandbox.stub();
-			sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
-				applyChange: this.oChangeHandlerApplyChangeStub,
-				revertChange: this.oChangeHandlerRevertChangeStub
-			});
-		},
-		afterEach: function () {
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when a change with revertData only in customData gets reverted", function (assert) {
-			var oRevertData = {
-				foo: "bar"
-			};
-			var oControlAfterRevert = {id: "controlAfterRevert"};
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-					'<Label id="' + this.sLabelId + '" >' +
-					'</Label>' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-			sandbox.stub(FlexCustomData, "getParsedRevertDataFromCustomData").returns(oRevertData);
-			sandbox.stub(XmlTreeModifier, "bySelector").returns(oControlAfterRevert);
-			this.oChange.markFinished();
-
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-			.then(function() {
-				assert.deepEqual(this.oChange.getRevertData(), oRevertData, "the revert data was saved in the change");
-				assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
-				assert.equal(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData got deleted");
-				assert.ok(this.oDestroyAppliedCustomDataStub.calledWith(oControlAfterRevert, this.oChange, XmlTreeModifier), "the customData was deleted for the reverted control");
-				assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
-			}.bind(this));
-		});
-
-		QUnit.test("when a change revert was unsuccessful", function (assert) {
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-				'<Label id="' + this.sLabelId + '" >' +
-				'</Label>' +
-				'</mvc:View>';
-
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-			this.oChangeHandlerRevertChangeStub.throws(new Error("revert unsuccessful"));
-
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-				.then(function(bRevertResult) {
-					assert.strictEqual(bRevertResult, false, "the change was not reverted");
-					assert.strictEqual(this.oDestroyAppliedCustomDataStub.callCount, 1, "the customData was deleted ");
-					assert.ok(this.oDestroyAppliedCustomDataStub.calledWith(this.oControl, this.oChange, XmlTreeModifier), "the customData was deleted for the source control");
-					assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
-				}.bind(this));
-		});
-
-		QUnit.test("does not call the revert change handler if the change was not applied before", function(assert) {
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-					'<Label id="' + this.sLabelId + '" >' +
-					'</Label>' +
-				'</mvc:View>';
-			this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
-			this.oControl = this.oView.childNodes[0];
-
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-			.then(function() {
-				assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changehandler wasn't called");
-				assert.equal(this.oControl.getElementsByTagName("customData").length, 0, "no customData is available");
-			}.bind(this));
 		});
 	});
 
@@ -1615,7 +1263,6 @@ function (
 					assert.equal(oReturn, undefined, "the return value is undefined");
 				}.bind(this));
 			});
-
 
 			QUnit.test(sPrefix + "together with another control, with 3 async queued changes and another independent control with a change", function(assert) {
 				assert.expect(2);
@@ -1900,7 +1547,11 @@ function (
 				oChange.markFinished();
 			});
 			this.mChanges.mChanges[this.sLabelId] = aChanges;
-			this.oFlexController.revertChangesOnControl(aChanges, this.oComponent);
+			Reverter.revertMultipleChanges(aChanges, {
+				appCOmponent: this.oComponent,
+				modifier: JsControlTreeModifier,
+				flexController: this.oFlexController
+			});
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function(oReturn) {
 				assert.equal(oReturn, undefined, "the return value is undefined");
@@ -1911,13 +1562,13 @@ function (
 		QUnit.test("with 2 changes that are both queued for apply and revert", function(assert) {
 			var aChanges = [this.oChange, this.oChange2];
 			this.mChanges.mChanges[this.sLabelId] = aChanges;
-			this.oGetChangeHandlerStub2 = sandbox.stub(this.oFlexController, "_getChangeHandler").resolves({
-				applyChange: this.oChangeHandlerApplyChangeStub,
-				revertChange: this.oChangeHandlerRevertChangeStub
-			});
 
 			Applier.applyAllChangesForControl(this.fnGetChangesMap, this.oComponent, this.oFlexController, this.oControl);
-			this.oFlexController.revertChangesOnControl(aChanges, this.oComponent);
+			Reverter.revertMultipleChanges(aChanges, {
+				appCOmponent: this.oComponent,
+				modifier: JsControlTreeModifier,
+				flexController: this.oFlexController
+			});
 
 			return this.oFlexController.waitForChangesToBeApplied(this.oControl)
 			.then(function() {
@@ -1940,94 +1591,6 @@ function (
 				assert.equal(oReturn, undefined, "the return value is undefined");
 				assert.ok(bCalled, "the function waited for the variant switch");
 			});
-		});
-	});
-
-	QUnit.module("Revert for stashed control", {
-		beforeEach: function () {
-			var sViewId = "view";
-			this.oControlId = "stashedSection";
-			var oChangeContent = {
-				fileType: "change",
-				layer: "CUSTOMER",
-				fileName: "a",
-				namespace: "b",
-				packageName: "c",
-				changeType: "stashControl",
-				creation: "",
-				reference: "",
-				selector: {
-					id: sViewId + "--" + this.oControlId
-				},
-				content: {
-					something: "createNewVariant"
-				}
-			};
-			this.oDOMParser = new DOMParser();
-			this.oChange = new Change(oChangeContent);
-			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
-
-			var sXmlString =
-				'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' + 'xmlns:uxap="sap.uxap" >' +
-					'<uxap:ObjectPageLayout id="layout">' +
-						'<uxap:sections>' +
-							'<uxap:ObjectPageSection id="stashedSection" stashed="true" />' +
-						'</uxap:sections>' +
-					'</uxap:ObjectPageLayout>' +
-				'</mvc:View>';
-			return XMLView.create({
-				id: sViewId,
-				definition: sXmlString
-			}).then(function(oView) {
-				this.oView = oView;
-				var oChangeRegistry = ChangeRegistry.getInstance();
-				return oChangeRegistry.registerControlsForChanges({
-					"sap.ui.core._StashedControl" : {
-						stashControl : "default"
-					}
-				});
-			}.bind(this));
-		},
-		afterEach: function () {
-			this.oView.destroy();
-			this.oChange.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("Reverts the 'stashControl' change which was initially applied on a stashed control", function(assert) {
-			this.oChange.setRevertData({testValue: true});
-			var fnSetRevertDataStub = sandbox.spy(this.oChange, "setRevertData");
-			this.oControl = this.oView.byId("stashedSection");
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {
-				modifier: JsControlTreeModifier,
-				view: this.oView
-			}, true)
-				.then(function () {
-					var oUnstashedControl = this.oView.byId(this.oControlId);
-					assert.ok(oUnstashedControl instanceof Element, "then a control was unstashed");
-					assert.strictEqual(fnSetRevertDataStub.callCount, 1, "then revert data was called once");
-					assert.ok(fnSetRevertDataStub.calledWith(null), "then revert data was called to reset revert data only");
-					assert.strictEqual(oUnstashedControl.getCustomData().length, 0, "then custom data was removed from the unstashed control");
-					assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
-				}.bind(this));
-		});
-
-		QUnit.test("Reverts the 'stashControl' change for an initially stashed control", function(assert) {
-			var oStashedControl = this.oView.byId(this.oControlId);
-			var fnSetRevertDataStub = sandbox.spy(this.oChange, "setRevertData");
-			return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, oStashedControl, {
-				modifier: JsControlTreeModifier,
-				view: this.oView
-			}, true)
-				.then(function () {
-					var oUnstashedControl = this.oView.byId(this.oControlId);
-					assert.ok(oUnstashedControl instanceof Element, "then a control was unstashed");
-					assert.strictEqual(fnSetRevertDataStub.callCount, 2, "then revert data was called twice");
-					assert.ok(fnSetRevertDataStub.calledWith({originalValue: false, originalIndex: undefined}), "then revert data was called once to set revert data");
-					assert.ok(fnSetRevertDataStub.calledWithExactly(null), "then revert data was called once to reset revert data");
-					assert.strictEqual(oUnstashedControl.getCustomData().length, 0, "then custom data was removed from the unstashed control");
-					assert.ok(this.oChange.getApplyState(), Change.applyState.REVERT_FINISHED, "then change was marked as revert finished");
-				}.bind(this));
 		});
 	});
 

@@ -78,6 +78,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/changes/Utils"]
 				}
 			},
+			"apply/_internal/changes/Reverter": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/Reverter"]
+				}
+			},
 			"apply/_internal/ChangesController": {
 				group: "Apply Internal",
 				coverage: {

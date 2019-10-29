@@ -4,24 +4,26 @@
 
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/BusyIndicator",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/core/BusyIndicator",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/base/util/merge",
 	"sap/base/util/includes",
 	"sap/base/util/ObjectPath"
 ], function(
 	JSONModel,
+	JsControlTreeModifier,
+	BusyIndicator,
 	Utils,
 	LayerUtils,
-	JsControlTreeModifier,
 	Change,
 	BaseChangeHandler,
-	BusyIndicator,
+	Reverter,
 	URLHandler,
 	fnBaseMerge,
 	includes,
@@ -45,12 +47,18 @@ sap.ui.define([
 			};
 			var mChangesToBeSwitched = this.oChangePersistence.loadSwitchChangesMapForComponent(mPropertyBag);
 			this._oVariantSwitchPromise = this._oVariantSwitchPromise
-				.then(this.oFlexController.revertChangesOnControl.bind(this.oFlexController, mChangesToBeSwitched.changesToBeReverted, this.oAppComponent))
-				.then(function() {
-					delete this.oData[sVariantManagementReference];
-					delete this.oVariantController.getChangeFileContent()[sVariantManagementReference];
-					this._ensureStandardVariantExists(sVariantManagementReference);
-				}.bind(this));
+
+			.then(Reverter.revertMultipleChanges.bind(null, mChangesToBeSwitched.changesToBeReverted, {
+				appComponent: this.oAppComponent,
+				modifier: JsControlTreeModifier,
+				flexController: this.oFlexController
+			}))
+
+			.then(function() {
+				delete this.oData[sVariantManagementReference];
+				delete this.oVariantController.getChangeFileContent()[sVariantManagementReference];
+				this._ensureStandardVariantExists(sVariantManagementReference);
+			}.bind(this));
 		}.bind(this));
 		//re-initialize hash data and remove existing parameters
 		URLHandler.initialize({model: this});
@@ -128,7 +136,11 @@ sap.ui.define([
 		return Promise.resolve()
 			.then(function() {
 				if (mPropertyBag.revert) {
-					return mPropertyBag.model.oFlexController.revertChangesOnControl(aVariantDirtyChanges, mPropertyBag.model.oAppComponent);
+					return Reverter.revertMultipleChanges(aVariantDirtyChanges, {
+						appComponent: mPropertyBag.model.oAppComponent,
+						modifier: JsControlTreeModifier,
+						flexController: mPropertyBag.model.oFlexController
+					});
 				}
 			})
 			.then(function() {
@@ -234,7 +246,11 @@ sap.ui.define([
 				oPromiseMap.resolveFunction = resolve;
 			});
 			this.oFlexController.setVariantSwitchPromise(oPromiseMap.promise);
-			this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.changesToBeReverted, oAppComponent || this.oAppComponent)
+			Reverter.revertMultipleChanges(mChangesToBeSwitched.changesToBeReverted, {
+				appComponent: oAppComponent || this.oAppComponent,
+				modifier: JsControlTreeModifier,
+				flexController: this.oFlexController
+			})
 			.then(this.oFlexController.applyVariantChanges.bind(this.oFlexController, mChangesToBeSwitched.changesToBeApplied, oAppComponent || this.oAppComponent))
 			.then(function() {
 				// update current variant in model

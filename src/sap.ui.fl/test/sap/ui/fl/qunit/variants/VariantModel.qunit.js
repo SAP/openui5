@@ -1,38 +1,40 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/App",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/BusyIndicator",
-	"sap/m/App",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
+	App,
 	VariantModel,
 	VariantManagement,
 	Utils,
 	LayerUtils,
 	Change,
 	FlexControllerFactory,
+	Reverter,
 	URLHandler,
+	ChangesController,
 	JsControlTreeModifier,
 	BusyIndicator,
-	App,
 	UIComponent,
 	ComponentContainer,
 	XMLView,
-	ChangesController,
 	jQuery,
 	sinon
 ) {
@@ -108,7 +110,7 @@ function(
 			};
 
 
-			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl").resolves();
+			this.fnRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
 			sandbox.spy(URLHandler, "initialize");
 			sandbox.spy(this.oFlexController._oChangePersistence._oVariantController, "assignResetMapListener");
@@ -137,7 +139,11 @@ function(
 			var fnResetListener = this.oModel.oVariantController.assignResetMapListener.getCall(0).args[0];
 			assert.ok(typeof fnResetListener === "function", "then a listener function was assigned to variant controller map reset");
 			return fnResetListener().then(function () {
-				assert.ok(this.fnRevertChangesStub.calledWith(aRevertChanges, this.oComponent), "then current variant changes were reverted");
+				assert.ok(this.fnRevertChangesStub.calledWith(aRevertChanges, {
+					appComponent: this.oComponent,
+					modifier: JsControlTreeModifier,
+					flexController: this.oFlexController
+				}), "then current variant changes were reverted");
 				assert.ok(URLHandler.update.calledWith({
 					parameters: [],
 					updateHashEntry: true,
@@ -569,7 +575,7 @@ function(
 				}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
 				assert.ok(oSetVariantSwitchPromiseStub.calledBefore(this.fnRevertChangesStub), "the promise was first set");
 				assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
-				assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
+				assert.ok(this.fnRevertChangesStub.calledOnce, "then revertMultipleChanges called once in FlexController");
 				assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
 				assert.ok(fnUpdateCurrentVariantInMapStub.calledWith("variantMgmtId1", "variant0"), "then variantController.updateCurrentVariantInMap called with the right parameters");
 				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
@@ -590,7 +596,7 @@ function(
 						currentVariantReference: "variant1",
 						newVariantReference: "variant0"
 					}), "then ChangePersistence.loadSwitchChangesMapForComponent() called with correct parameters");
-					assert.deepEqual(this.fnRevertChangesStub.getCall(0).args[1], this.oComponent, "then revertChangesOnControl called in FlexController with the correct component");
+					assert.deepEqual(this.fnRevertChangesStub.getCall(0).args[1].appComponent, this.oComponent, "then revertMultipleChanges called in FlexController with the correct component");
 					assert.deepEqual(this.fnApplyChangesStub.getCall(0).args[1], this.oComponent, "then applyVariantChanges called in FlexController with the correct component");
 					assert.ok(fnUpdateCurrentVariantInMapStub.calledWith("variantMgmtId1", "variant0"), "then variantController.updateCurrentVariantInMap called with the right parameters");
 				}.bind(this));
@@ -613,8 +619,8 @@ function(
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
-			this.oFlexController.revertChangesOnControl.restore();
-			var oRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl")
+			Reverter.revertMultipleChanges.restore();
+			var oRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges")
 			.onCall(0).returns(new Promise(function(resolve) {
 				setTimeout(function() {
 					resolve();
@@ -627,7 +633,7 @@ function(
 			.then(function() {
 				assert.ok(true, "the internal promise '_oVariantSwitchPromise' is resolved");
 				assert.equal(this.fnLoadSwitchChangesStub.callCount, 2, "then loadSwitchChangesMapForComponent called twice from ChangePersitence");
-				assert.equal(oRevertChangesStub.callCount, 2, "then revertChangesOnControl called twice in FlexController");
+				assert.equal(oRevertChangesStub.callCount, 2, "then revertMultipleChanges called twice in FlexController");
 				assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then oSetVariantSwitchPromiseStub called twice in FlexController");
 				assert.equal(this.fnApplyChangesStub.callCount, 2, "then applyVariantChanges called twice in FlexController");
 				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
@@ -641,8 +647,8 @@ function(
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
-			this.oFlexController.revertChangesOnControl.restore();
-			var oRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl")
+			Reverter.revertMultipleChanges.restore();
+			var oRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges")
 			.onCall(0).returns(new Promise(function(resolve, reject) {
 				setTimeout(function() {
 					reject();
@@ -655,7 +661,7 @@ function(
 			.then(function() {
 				assert.ok(true, "the internal promise '_oVariantSwitchPromise' is resolved");
 				assert.equal(this.fnLoadSwitchChangesStub.callCount, 2, "then loadSwitchChangesMapForComponent called twice from ChangePersitence");
-				assert.equal(oRevertChangesStub.callCount, 2, "then revertChangesOnControl called twice in FlexController");
+				assert.equal(oRevertChangesStub.callCount, 2, "then revertChrevertMultipleChangesangesOnControl called twice in FlexController");
 				assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then oSetVariantSwitchPromiseStub called twice in FlexController");
 				assert.equal(this.fnApplyChangesStub.callCount, 1, "then applyVariantChanges called only for the first call");
 				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
@@ -1575,7 +1581,7 @@ function(
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oModel.oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
-			this.fnRevertChangesStub = sandbox.stub(this.oFlexController, "revertChangesOnControl");
+			this.fnRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges");
 			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
 			this.oAttachHandlersStub = sandbox.stub(URLHandler, "attachHandlers");
 		},
@@ -1676,8 +1682,8 @@ function(
 			sandbox.stub(this.oVariantModel.oVariantController, "removeChangeFromVariant");
 			sandbox.stub(this.oVariantModel.oVariantController, "getVariantChanges");
 			sandbox.stub(this.oVariantModel.oFlexController, "deleteChange");
-			sandbox.stub(this.oVariantModel.oFlexController, "revertChangesOnControl").resolves();
 			sandbox.stub(this.oVariantModel.oChangePersistence, "getDirtyChanges");
+			sandbox.stub(Reverter, "revertMultipleChanges").resolves();
 
 			this.oVariantModel.setData(oData);
 			this.oVariantModel.checkUpdate(true);
@@ -1721,7 +1727,7 @@ function(
 
 			oVMControl.attachEventOnce("select", function(oEvent) {
 				assert.ok(this.oVariantModel.updateCurrentVariant.calledWith(oEvent.getParameters().key, this.sVMReference, this.oComp), "then variant switch was performed");
-				assert.ok(this.oVariantModel.oFlexController.revertChangesOnControl.notCalled, "then variant was not reverted explicitly");
+				assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
 				assert.ok(this.oVariantModel.oVariantController.removeChangeFromVariant.notCalled, "then dirty changes were not removed from the source variant");
 				assert.ok(this.oVariantModel.oFlexController.deleteChange.notCalled, "then no dirty changes were deleted");
 				done();
@@ -1748,7 +1754,7 @@ function(
 				var sTargetVariantId = oEvent.getParameters().key;
 				this.oVariantModel._oVariantSwitchPromise.then(function() {
 					assert.ok(this.oVariantModel.updateCurrentVariant.calledWith(sTargetVariantId, this.sVMReference, this.oComp), "then variant switch was performed");
-					assert.ok(this.oVariantModel.oFlexController.revertChangesOnControl.notCalled, "then variant was not reverted explicitly");
+					assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
 					assert.strictEqual(this.oVariantModel.oData[this.sVMReference].modified, false);
 
 					aMockDirtyChanges.forEach(function (oDirtyChange) {
@@ -1804,7 +1810,11 @@ function(
 				var sTargetVariantId = oEvent.getParameters().key;
 				this.oVariantModel._oVariantSwitchPromise.then(function() {
 					assert.ok(this.oVariantModel.updateCurrentVariant.notCalled, "then variant switch was not performed");
-					assert.ok(this.oVariantModel.oFlexController.revertChangesOnControl.calledWith(aMockDirtyChanges, this.oComp), "then variant was not reverted explicitly");
+					assert.ok(Reverter.revertMultipleChanges.calledWith(aMockDirtyChanges, {
+						appComponent: this.oComp,
+						modifier: JsControlTreeModifier,
+						flexController: this.oFlexController
+					}), "then variant was reverted");
 					assert.strictEqual(this.oVariantModel.oData[this.sVMReference].modified, false);
 
 					aMockDirtyChanges.forEach(function (oDirtyChange) {
