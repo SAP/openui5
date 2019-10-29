@@ -725,6 +725,37 @@ sap.ui.define([
 
 		});
 
+		QUnit.test("breakpointChanged is fired after the resizing is done", function (assert) {
+			// prepare
+			// first set to M so the both contents are visible
+			this._oDSC._currentBreakpoint = M;
+			this._oDSC._changeGridState();
+
+			// Replacing jQuery width method to report stable browser screen resolution for the test
+			var that = this;
+			this._ojQueryWidthMethod = jQuery.fn.width;
+			jQuery.fn.width = function (sWidth) {
+				if (!sWidth && this[0] === window) {
+					return 719;
+				}
+				return that._ojQueryWidthMethod.apply(this, arguments);
+			};
+
+			// Act
+			this._oDSC.attachBreakpointChanged(function (oEvent) {
+				// Assert
+				// this will be called after _adjustToScreenSize
+				assert.strictEqual(oEvent.getParameters().currentBreakpoint, "S", "Current breakpoint is S");
+				assert.strictEqual(that._oDSC.isSideContentVisible(), false, "SideContent is hidden, when the breakpointChanged is fired on break point 'S'");
+			});
+
+			// Act
+			this._oDSC._adjustToScreenSize();
+
+			// clean up
+			jQuery.fn.width = this._ojQueryWidthMethod;
+		});
+
 		QUnit.module("Listeners", {
 			beforeEach : function () {
 				this._oDSC = new DynamicSideContent({containerQuery: true});

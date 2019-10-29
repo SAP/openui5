@@ -548,7 +548,7 @@ sap.ui.define([
 				this._iOldWindowWidth = this._iWindowWidth;
 
 				this._oldBreakPoint = this._currentBreakpoint;
-				this._setBreakpointFromWidth(this._iWindowWidth);
+				this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
 
 				if ((this._oldBreakPoint !== this._currentBreakpoint)
 					|| (this._currentBreakpoint === M
@@ -556,6 +556,7 @@ sap.ui.define([
 					this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
 					this._changeGridState();
 				}
+				this._setBreakpointFromWidth(this._iWindowWidth);
 			}
 		};
 
