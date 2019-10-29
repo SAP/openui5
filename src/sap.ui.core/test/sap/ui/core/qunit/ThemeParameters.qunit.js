@@ -9,6 +9,42 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		assert.ok(Parameters.get, "sap.ui.core.theming.Parameters.get() must exist");
 	});
 
+	/**
+	 * converts short notation hex color code to long notation
+	 * @param input, e.g. #abc
+	 * @returns {string}, e.g. #aabbcc
+	 */
+	function unifyHexNotation(input) {
+		if (input.length === 4) {
+			var colorShortNotationRegexp = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+			var sResult = colorShortNotationRegexp.exec(input);
+			if (sResult) {
+				return "#" + sResult[1] + sResult[1] + sResult[2] + sResult[2] + sResult[3] + sResult[3];
+			}
+		}
+		return input;
+	}
+
+	function getParameterInUnifiedHexNotation(key, oElement) {
+		var sParameter = Parameters.get(key, oElement);
+		if (sParameter) {
+			return unifyHexNotation(sParameter);
+		}
+		return sParameter;
+	}
+
+	function getParametersInUnifiedHexNotation(aKeys, oElement) {
+		var oParameters = Parameters.get(aKeys, oElement);
+		if (oParameters) {
+			aKeys.forEach(function(key) {
+				if (oParameters[key]) {
+					oParameters[key] = unifyHexNotation(oParameters[key]);
+				}
+			});
+		}
+		return oParameters;
+	}
+
 	QUnit.test("Read single parameters", function(assert) {
 		/* HCB theme was chosen because:
 		 *  1. it should be quite stable in general
@@ -16,12 +52,12 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		 *  3. it should be reliably there for accessibility reasons
 		 *  4. text and background color differ from the base theme
 		 */
-		assert.equal(Parameters.get("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
-		assert.equal(Parameters.get("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as black '#000000'");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiText"), "#ffffff", "sapUiText must be defined as 'white - #ffffff'");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiExtraLightBG"), "#000000", "sapUiExtraLightBG must be defined as black '#000000'");
 
 		// Read parameters of legacy library-parameters.json format
 		assert.equal(Parameters.get("sapUiLegacyTstTextColor"), "#fafafa", "sapUiLegacyTstTextColor must be defined as '#fafafa'");
-		assert.equal(Parameters.get("sapUiLegacyText"), "#ffffff", "sapUiLegacyText must be defined as '#ffffff'");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiLegacyText"), "#ffffff", "sapUiLegacyText must be defined as '#ffffff'");
 	});
 
 	QUnit.test("Undefined parameter", function(assert) {
@@ -57,8 +93,8 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		var fnAssertThemeChanged = function() {
 
 			// parameters of base theme should now be present
-			assert.equal(Parameters.get("sapUiText"), "#000000", "sapUiText must be defined as 'black - #000000'");
-			assert.equal(Parameters.get("sapUiExtraLightBG"), "#ffffff", "sapUiExtraLightBG must be defined as 'white - #ffffff'");
+			assert.equal(getParameterInUnifiedHexNotation("sapUiText"), "#000000", "sapUiText must be defined as 'black - #000000'");
+			assert.equal(getParameterInUnifiedHexNotation("sapUiExtraLightBG"), "#ffffff", "sapUiExtraLightBG must be defined as 'white - #ffffff'");
 
 			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
 			sap.ui.getCore().attachThemeChanged(fnContinue);
@@ -96,9 +132,9 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 
 		oControl.addStyleClass("sapTestScope");
 
-		assert.equal(Parameters.get("sapUiTstTextColor", oControl), "#000000",
+		assert.equal(getParameterInUnifiedHexNotation("sapUiTstTextColor", oControl), "#000000",
 			"Scope set directly on control - scoped param should be returned");
-		assert.equal(Parameters.get("sapUiColor", oControl), "#ffffff",
+		assert.equal(getParameterInUnifiedHexNotation("sapUiColor", oControl), "#ffffff",
 			"Scope set directly on control but no scoped value defined - default value should get returned");
 
 		oControl.removeStyleClass("sapTestScope");
@@ -106,9 +142,9 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		oParent.addStyleClass("sapTestScope");
 		oControl.setParent(oParent);
 
-		assert.equal(Parameters.get("sapUiTstTextColor", oControl), "#000000",
+		assert.equal(getParameterInUnifiedHexNotation("sapUiTstTextColor", oControl), "#000000",
 			"Scope set on parent control - scoped param should be returned");
-		assert.equal(Parameters.get("sapUiText", oControl), "#000000",
+		assert.equal(getParameterInUnifiedHexNotation("sapUiText", oControl), "#000000",
 			"Scope set on parent control but no scoped value defined - default value should get returned");
 
 	});
@@ -129,7 +165,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		oParent.addStyleClass("sapTestScope");
 		oElement.setParent(oParent);
 
-		assert.equal(Parameters.get("sapUiTstTextColor", oElement), "#000000",
+		assert.equal(getParameterInUnifiedHexNotation("sapUiTstTextColor", oElement), "#000000",
 			"Scope set on parent control - scoped param should be returned");
 
 	});
@@ -141,7 +177,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 			"sapUiText": "#ffffff"
 		};
 
-		var oParamResult = Parameters.get(aParams);
+		var oParamResult = getParametersInUnifiedHexNotation(aParams);
 
 		assert.deepEqual(oParamResult, oExpected,
 			"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
@@ -160,7 +196,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 			"sapUiText": "#000000"
 		};
 
-		var oParamResult = Parameters.get(aParams, oElement);
+		var oParamResult = getParametersInUnifiedHexNotation(aParams, oElement);
 
 		assert.deepEqual(oParamResult, oExpected,
 			"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
@@ -174,7 +210,7 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 			"sapUiTestParam": undefined
 		};
 
-		var oParamResult = Parameters.get(aParams);
+		var oParamResult = getParametersInUnifiedHexNotation(aParams);
 
 		assert.deepEqual(oParamResult, oExpected,
 			"Key-value map for the given params 'sapUiTstTextColor' and 'sapUiText' should be returned");
