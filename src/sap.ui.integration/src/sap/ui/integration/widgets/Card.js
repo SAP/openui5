@@ -914,7 +914,8 @@ sap.ui.define([
 	 *     error: "Card.designtime not found"
 	 * }
 	 *
-	 * @experimental Since 1.71
+	 * @public
+	 * @experimental Since 1.73
 	 * @returns {Promise} Promise resolves after the designtime configuration is loaded.
 	 */
 	Card.prototype.loadDesigntime = function() {
