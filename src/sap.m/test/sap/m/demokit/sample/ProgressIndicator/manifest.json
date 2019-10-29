@@ -7,7 +7,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.m.sample.ProgressIndicator.V",
+			"viewName": "sap.m.sample.ProgressIndicator.view.ProgressIndicator",
 			"type": "XML",
 			"async": true
 		},
@@ -19,7 +19,8 @@
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
+					"view/ProgressIndicator.view.xml",
+					"controller/ProgressIndicator.controller.js",
 					"manifest.json"
 				]
 			}

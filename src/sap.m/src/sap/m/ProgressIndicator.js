@@ -109,7 +109,13 @@ sap.ui.define([
 			 * Determines whether the control is in display-only state where the control has different visualization and cannot be focused.
 			 * @since 1.50
 			 */
-			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
+			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Determines whether a percentage change is displayed with animation.
+			 * @since 1.73
+			 */
+			displayAnimation : {type : "boolean", group : "Behavior", defaultValue : true}
 		},
 		associations : {
 			/**
@@ -168,7 +174,7 @@ sap.ui.define([
 				.attr("aria-valuenow", fPercentValue)
 				.attr("aria-valuetext", this._getAriaValueText({fPercent: fPercentValue}));
 
-			fAnimationDuration = bUseAnimations ? Math.abs(fPercentDiff) * 20 : 0;
+			fAnimationDuration = bUseAnimations && this.getDisplayAnimation() ? Math.abs(fPercentDiff) * 20 : 0;
 			$progressBar = this.$("bar");
 			// Stop currently running animation and start new one.
 			// In case of multiple setPercentValue calls all animations will run and it will take some time until the last value is animated,
