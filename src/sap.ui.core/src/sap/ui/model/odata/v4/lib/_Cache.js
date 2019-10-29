@@ -482,7 +482,7 @@ sap.ui.define([
 							|| _Helper.buildPath(sServiceUrl + that.sResourcePath, sPropertyPath);
 					}
 					if (!bTransient) {
-						return oEntity && oProperty.$kind === "Property"
+						return oEntity
 							&& that.fetchLateProperty(oGroupLock, oEntity,
 								aSegments.slice(0, iEntityPathLength).join("/"),
 								aSegments.slice(iEntityPathLength).join("/"),
@@ -577,7 +577,46 @@ sap.ui.define([
 		var oPromise,
 			mQueryOptions,
 			sResourcePath,
+			mTypeForMetaPath = this.fetchTypes().getResult(),
+			aUpdateProperties = [sRequestedPropertyPath],
 			that = this;
+
+		/**
+		 * Recursively visits the $expand of the query options. Determines the target type and adds
+		 * the key properties to the contained $select. Adds all relevant properties to
+		 * aUpdateProperties.
+		 *
+		 * @param {object} mQueryOptions The query options containing $expand
+		 * @param {string} sBasePath The base meta path of the query options relative to the entity
+		 */
+		function visitExpand(mQueryOptions, sBasePath) {
+			// intersecting the query options with sRequestedPropertyPath delivers exactly one entry
+			// in $expand at each level (one for each navigation property binding)
+			var sExpand = Object.keys(mQueryOptions.$expand)[0],
+				sExpandPath = _Helper.buildPath(sBasePath, sExpand),
+				oEntityType = that.oRequestor.fetchTypeForPath(that.sMetaPath + "/" + sExpandPath)
+					.getResult();
+
+			mQueryOptions = mQueryOptions.$expand[sExpand];
+			mTypeForMetaPath[that.sMetaPath + "/" + sExpandPath] = oEntityType;
+			(oEntityType.$Key || []).forEach(function (vKey) {
+				if (typeof vKey === "object") {
+					vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
+				}
+				mQueryOptions.$select.push(vKey);
+				aUpdateProperties.push(sExpandPath + "/" + vKey);
+			});
+			aUpdateProperties.push(sExpandPath + "/@odata.etag");
+			aUpdateProperties.push(sExpandPath + "/@$ui5._/predicate");
+			if (mQueryOptions.$expand) {
+				if (mQueryOptions.$select.length > 1) {
+					// the first entry in $select is the one in $expand (from intersectQueryOptions)
+					// and is unnecessary now
+					mQueryOptions.$select = mQueryOptions.$select.slice(1);
+				}
+				visitExpand(mQueryOptions, sExpandPath);
+			}
+		}
 
 		if (!this.mLateQueryOptions || _Helper.getMetaPath(sEntityPath)) {
 			return undefined; // not supported yet - CPOUI5UISERVICESV3-1990
@@ -592,15 +631,21 @@ sap.ui.define([
 
 		delete mQueryOptions.$apply;
 		delete mQueryOptions.$count;
-		delete mQueryOptions.$expand;
 		delete mQueryOptions.$filter;
 		delete mQueryOptions.$orderby;
 		delete mQueryOptions.$search;
+		if (mQueryOptions.$expand) {
+			visitExpand(mQueryOptions, "");
+		}
 		sResourcePath = _Helper.buildPath(this.sResourcePath, sEntityPath)
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
 		oPromise = this.mPropertyRequestByPath[sResourcePath];
 		if (!oPromise) {
 			oPromise = this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
+				.then(function (oData) {
+					that.visitResponse(oData, mTypeForMetaPath, that.sMetaPath, sEntityPath);
+					return oData;
+				})
 				.finally(function () {
 					delete that.mPropertyRequestByPath[sResourcePath];
 				});
@@ -615,7 +660,7 @@ sap.ui.define([
 			}
 
 			_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity, oData,
-				[sRequestedPropertyPath]);
+				aUpdateProperties);
 
 			// return the missing property, so that drillDown properly proceeds
 			return _Helper.drillDown(oEntity, sMissingPropertyPath.split("/"));
