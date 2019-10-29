@@ -31,6 +31,54 @@ span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnContent
 	line-height: 1.375rem;
 }
 
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral{
+	background: @sapUiButtonHoverBackground;
+	border: 1px solid @sapUiButtonHoverBorderColor;
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical:not(.sapMToggleBtnPressed),
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative:not(.sapMToggleBtnPressed),
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess:not(.sapMToggleBtnPressed),
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral:not(.sapMToggleBtnPressed){
+	background: @sapUiButtonBackground;
+	border-color: @sapUiButtonBorderColor;
+	border-width: @sapUiButtonBorderWidth;
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral.sapMBtnActive{
+	background: @sapUiButtonActiveBackground;
+	border-color: @sapUiButtonActiveBorderColor;
+	border-width: @sapUiButtonBorderWidth;
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess.sapMBtnActive,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral.sapMBtnActive{
+	background: @sapUiButtonHoverBackground;
+	border: 1px solid @sapUiButtonHoverBorderColor;
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess,
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess,
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral{
+	.sapMBtnContent{
+		color: @sapUiButtonTextColor;
+	}
+}
+
+
 /* --------------------------------------------------------------------- */
 /* Custom focus outline:                                                 */
 /* --------------------------------------------------------------------- */
@@ -97,4 +145,20 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 
 .sapMBtnDisabled .sapMBtnActive {
 	background-color: @sapUiButtonBackground;
+}
+
+.sapMBtnDisabled .sapMBtnCritical,
+.sapMBtnDisabled .sapMBtnNegative,
+.sapMBtnDisabled .sapMBtnSuccess,
+.sapMBtnDisabled .sapMBtnNeutral{
+	background-color: @sapUiButtonBackground;
+	border-color: @sapUiHcReducedForeground;
+}
+.sapMBtnDisabled .sapMBtnCritical,
+.sapMBtnDisabled .sapMBtnNegative,
+.sapMBtnDisabled .sapMBtnSuccess,
+.sapMBtnDisabled .sapMBtnNeutral{
+	.sapMBtnContent{
+		color: @sapUiContentDisabledTextColor;
+	}
 }

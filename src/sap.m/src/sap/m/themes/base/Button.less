@@ -426,6 +426,103 @@ span.sapMBtnInner.sapMBtnEmphasized {
 
 }
 
+.sapMBtn .sapMBtnCritical,
+.sapContrast span.sapMBtnInner.sapMBtnCritical{
+	background: @sapUiCriticalElement;
+	border-color: @sapUiCriticalElement;
+}
+
+.sapMBtn .sapMBtnNegative,
+.sapContrast span.sapMBtnInner.sapMBtnNegative{
+	background: @sapUiNegativeElement;
+	border-color: @sapUiNegativeElement;
+}
+
+.sapMBtn .sapMBtnSuccess,
+.sapContrast span.sapMBtnInner.sapMBtnSuccess{
+	background: @sapUiPositiveElement;
+	border-color: @sapUiPositiveElement;
+}
+
+.sapMBtn .sapMBtnNeutral,
+.sapContrast span.sapMBtnInner.sapMBtnNeutral{
+	background: @sapUiNeutralElement;
+	border-color: @sapUiNeutralElement;
+}
+
+.sapMBtn .sapMBtnCritical,
+.sapMBtn .sapMBtnNegative,
+.sapMBtn .sapMBtnSuccess,
+.sapMBtn .sapMBtnNeutral,
+.sapContrast span.sapMBtnInner.sapMBtnCritical,
+.sapContrast span.sapMBtnInner.sapMBtnNegative,
+.sapContrast span.sapMBtnInner.sapMBtnSuccess,
+.sapContrast span.sapMBtnInner.sapMBtnNeutral{
+	.sapMBtnContent{
+		color: @sapUiContentContrastIconColor;
+	}
+}
+
+.sapMBtn .sapMBtnCritical.sapMBtnInner,
+.sapMBtn .sapMBtnNegative.sapMBtnInner,
+.sapMBtn .sapMBtnSuccess.sapMBtnInner,
+.sapMBtn .sapMBtnNeutral.sapMBtnInner{
+		text-shadow: none;
+}
+
+.sapMBtn .sapMBtnCritical,
+.sapMBtn .sapMBtnNegative,
+.sapMBtn .sapMBtnSuccess,
+.sapMBtn .sapMBtnNeutral,
+.sapContrast span.sapMBtnInner.sapMBtnCritical,
+.sapContrast span.sapMBtnInner.sapMBtnNegative,
+.sapContrast span.sapMBtnInner.sapMBtnSuccess,
+.sapContrast span.sapMBtnInner.sapMBtnNeutral{
+	.sapMBtnIcon{
+		color: @sapUiContentContrastIconColor;
+	}
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnCritical{
+	background: darken(@sapUiCriticalElement, 7);
+	border-color: darken(@sapUiCriticalElement, 7);
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNegative{
+	background: darken(@sapUiNegativeElement, 7);
+	border-color: darken(@sapUiNegativeElement, 7);
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnSuccess{
+	background: darken(@sapUiPositiveElement, 7);
+	border-color: darken(@sapUiPositiveElement, 7);
+}
+
+.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnNeutral{
+	background: darken(@sapUiNeutralElement, 7);
+	border-color: darken(@sapUiNeutralElement, 7);
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnCritical.sapMBtnActive{
+	background: darken(@sapUiCriticalElement, 10);
+	border-color: darken(@sapUiCriticalElement, 10);
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNegative.sapMBtnActive{
+	background: darken(@sapUiNegativeElement, 10);
+	border-color: darken(@sapUiNegativeElement, 10);
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnSuccess.sapMBtnActive{
+	background: darken(@sapUiPositiveElement, 10);
+	border-color: darken(@sapUiPositiveElement, 10);
+}
+
+.sapMBtn:not(.sapMBtnDisabled) .sapMBtnNeutral.sapMBtnActive{
+	background: darken(@sapUiNeutralElement, 10);
+	border-color: darken(@sapUiNeutralElement, 10);
+}
+
 /* ---------------------------------------------------------------------*/
 /* Transparent buttons looks like normal one in a header/footer.        */
 /* The following rules are overridden in a bar below:                   */
@@ -499,6 +596,26 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
+.sapMIBar-CTX .sapMBtnInner,
+.sapMBar .sapMBtnInner{
+	&.sapMBtnCritical{
+		background: @sapUiCriticalElement;
+		border-color: @sapUiCriticalElement;
+	}
+	&.sapMBtnNegative{
+		background: @sapUiNegativeElement;
+		border-color: @sapUiNegativeElement;
+	}
+	&.sapMBtnNeutral{
+		background: @sapUiPositiveElement;
+		border-color: @sapUiPositiveElement;
+	}
+	&.sapMBtnSuccess{
+		background: @sapUiNeutralElement;
+		border-color: @sapUiNeutralElement;
+	}
+}
+
 .sapMIBar-CTX .sapMBtnInner.sapMBtnGhost,
 .sapMBar .sapMBtnInner.sapMBtnGhost,
 .sapMHeader-CTX .sapMBtnInner.sapMBtnGhost,
@@ -555,6 +672,46 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	border-color:     @sapUiButtonEmphasizedHoverBorderColor;
 	color:            @sapUiButtonEmphasizedTextColor;
 	text-shadow:      0 0 0.125rem @sapUiButtonEmphasizedTextShadow;
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnCritical:not(.sapMBtnActive) {
+	background-color: darken(@sapUiCriticalElement, 7);
+	border-color: darken(@sapUiCriticalElement, 7);
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnNegative:not(.sapMBtnActive) {
+	background-color: darken(@sapUiNegativeElement, 7);
+	border-color: darken(@sapUiNegativeElement, 7);
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnSuccess:not(.sapMBtnActive) {
+	background-color: darken(@sapUiPositiveElement, 7);
+	border-color: darken(@sapUiPositiveElement, 7);
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnNeutral:not(.sapMBtnActive) {
+	background-color: darken(@sapUiNeutralElement, 7);
+	border-color: darken(@sapUiNeutralElement, 7);
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnCritical.sapMBtnActive {
+	background-color: darken(@sapUiCriticalElement, 10);
+	border-color: darken(@sapUiCriticalElement, 10);
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnNegative.sapMBtnActive {
+	background-color: darken(@sapUiNegativeElement, 10);
+	border-color: darken(@sapUiNegativeElement, 10);
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnSuccess.sapMBtnActive {
+	background-color: darken(@sapUiPositiveElement, 10);
+	border-color: darken(@sapUiPositiveElement, 10);
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable.sapMBtnNeutral.sapMBtnActive {
+	background-color: darken(@sapUiNeutralElement, 10);
+	border-color: darken(@sapUiNeutralElement, 10);
 }
 
 /* Separators between buttons in a footer */
