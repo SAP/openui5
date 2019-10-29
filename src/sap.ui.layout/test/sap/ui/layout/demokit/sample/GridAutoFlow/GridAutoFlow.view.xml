@@ -1,74 +1,70 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		xmlns:core="sap.ui.core"
-		controllerName="sap.ui.layout.sample.GridAutoFlow.GridAutoFlow">
+	controllerName="sap.ui.layout.sample.GridAutoFlow.GridAutoFlow"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid">
 	<Panel width="100%" height="100%">
 		<headerToolbar>
-			<Toolbar height="3rem">
-				<Title text="gridAutoFlow property example"/>
-			</Toolbar>
+			<OverflowToolbar height="3rem">
+				<Title text="gridAutoFlow property example" />
+			</OverflowToolbar>
 		</headerToolbar>
-		<content>
-			<RadioButtonGroup class="sapUiSmallMargin" select="onRadioButtonSelected">
-				<RadioButton text="Column - Vertical placement in columns"/>
-				<RadioButton text="ColumnDense - Vertical placement in columns and filling empty spaces"/>
-				<RadioButton text="Row - Horizontal placement in rows"/>
-				<RadioButton text="RowDense - Horizontal placement in rows and filling empty spaces"/>
-			</RadioButtonGroup>
-			<grid:CSSGrid id="grid1"
-						  gridAutoFlow="Column"
-						  gridTemplateColumns="repeat(7, 1fr)"
-						  gridTemplateRows="repeat(2, 5rem)"
-						  gridAutoRows="5rem"
-						  gridAutoColumns="1fr"
-						  gridGap="0.5rem">
-				<grid:items>
-					<VBox class="demoBox">
-						<layoutData>
-								<grid:GridItemLayoutData gridRow = "span 2"/>
-						</layoutData>
-						<Text text="One (2 rows)" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Two" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<layoutData>
-								<grid:GridItemLayoutData gridRow = "span 2"/>
-						</layoutData>
-						<Text text="Three (2 rows)" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<layoutData>
-							<grid:GridItemLayoutData gridColumn = "span 2"/>
-						</layoutData>
-						<Text text="Four (2 columns)" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Five" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<layoutData>
-								<grid:GridItemLayoutData gridColumn = "span 2"/>
-						</layoutData>
-						<Text text="Six (2 columns)" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Seven" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Eight" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Nine" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Ten" wrapping="true" />
-					</VBox>
-				</grid:items>
-			</grid:CSSGrid>
-		</content>
+		<RadioButtonGroup class="sapUiSmallMargin" select=".onRadioButtonSelected">
+			<RadioButton text="Column - Vertical placement in columns" />
+			<RadioButton text="ColumnDense - Vertical placement in columns and filling empty spaces" />
+			<RadioButton text="Row - Horizontal placement in rows" />
+			<RadioButton text="RowDense - Horizontal placement in rows and filling empty spaces" />
+		</RadioButtonGroup>
+		<grid:CSSGrid
+			id="grid1"
+			gridAutoFlow="Column"
+			gridTemplateColumns="repeat(7, 1fr)"
+			gridTemplateRows="repeat(2, 5rem)"
+			gridAutoRows="5rem"
+			gridAutoColumns="1fr"
+			gridGap="0.5rem">
+			<VBox class="demoBox">
+				<layoutData>
+					<grid:GridItemLayoutData gridRow="span 2" />
+				</layoutData>
+				<Text text="One (2 rows)" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Two" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<layoutData>
+					<grid:GridItemLayoutData gridRow="span 2" />
+				</layoutData>
+				<Text text="Three (2 rows)" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<layoutData>
+					<grid:GridItemLayoutData gridColumn="span 2" />
+				</layoutData>
+				<Text text="Four (2 columns)" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Five" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<layoutData>
+					<grid:GridItemLayoutData gridColumn="span 2" />
+				</layoutData>
+				<Text text="Six (2 columns)" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Seven" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Eight" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Nine" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Ten" wrapping="true" />
+			</VBox>
+		</grid:CSSGrid>
 	</Panel>
 </mvc:View>

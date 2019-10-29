@@ -1,43 +1,39 @@
 <mvc:View
-	controllerName="sap.tnt.sample.SideNavigation.V"
+	controllerName="sap.tnt.sample.SideNavigation.C"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.tnt"
-	xmlns:m="sap.m"
+	xmlns:tnt="sap.tnt"
 	height="100%"
 	class="side-navigation-demo">
-	<m:Button text="Toggle Collapse/Expand"
-			  icon="sap-icon://menu2"
-			  press="onCollapseExpandPress" />
-	<m:Button text="Show/Hide Sub Item 3"
-			  icon="sap-icon://menu2"
-			  press="onHideShowSubItemPress" />
-	<SideNavigation id="sideNavigation" selectedKey="subItem3">
-		<item>
-			<NavigationList>
-				<NavigationListItem
-					text="Item 1"
-					icon="sap-icon://employee">
-					<NavigationListItem text="Sub Item 1" />
-					<NavigationListItem text="Sub Item 2" />
-					<NavigationListItem text="Sub Item 3" id="subItem3" key="subItem3"/>
-					<NavigationListItem text="Sub Item 4" />
-				</NavigationListItem>
-				<NavigationListItem
-					text="Item 2"
-					icon="sap-icon://building">
-					<NavigationListItem text="Sub Item 1" />
-					<NavigationListItem text="Sub Item 2" />
-					<NavigationListItem text="Sub Item 3" />
-					<NavigationListItem text="Sub Item 4" />
-				</NavigationListItem>
-			</NavigationList>
-		</item>
-		<fixedItem>
-			<NavigationList>
-				<NavigationListItem text="Item 1" icon="sap-icon://employee"/>
-				<NavigationListItem text="Item 2" icon="sap-icon://building"/>
-				<NavigationListItem text="Item 3" icon="sap-icon://card"/>
-			</NavigationList>
-		</fixedItem>
-	</SideNavigation>
+	<Button
+		text="Toggle Collapse/Expand"
+		icon="sap-icon://menu2"
+		press=".onCollapseExpandPress" />
+	<Button
+		text="Show/Hide Sub Item 3"
+		icon="sap-icon://menu2"
+		press=".onHideShowSubItemPress" />
+	<tnt:SideNavigation id="sideNavigation" selectedKey="subItem3">
+		<tnt:NavigationList>
+			<tnt:NavigationListItem text="Item 1" icon="sap-icon://employee">
+				<tnt:NavigationListItem text="Sub Item 1" />
+				<tnt:NavigationListItem text="Sub Item 2" />
+				<tnt:NavigationListItem text="Sub Item 3" id="subItem3" key="subItem3" />
+				<tnt:NavigationListItem text="Sub Item 4" />
+			</tnt:NavigationListItem>
+			<tnt:NavigationListItem text="Item 2" icon="sap-icon://building">
+				<tnt:NavigationListItem text="Sub Item 1" />
+				<tnt:NavigationListItem text="Sub Item 2" />
+				<tnt:NavigationListItem text="Sub Item 3" />
+				<tnt:NavigationListItem text="Sub Item 4" />
+			</tnt:NavigationListItem>
+		</tnt:NavigationList>
+		<tnt:fixedItem>
+			<tnt:NavigationList>
+				<tnt:NavigationListItem text="Item 1" icon="sap-icon://employee" />
+				<tnt:NavigationListItem text="Item 2" icon="sap-icon://building" />
+				<tnt:NavigationListItem text="Item 3" icon="sap-icon://card" />
+			</tnt:NavigationList>
+		</tnt:fixedItem>
+	</tnt:SideNavigation>
 </mvc:View>

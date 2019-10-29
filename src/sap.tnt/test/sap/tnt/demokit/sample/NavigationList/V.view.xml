@@ -1,44 +1,45 @@
 <mvc:View
-	controllerName="sap.tnt.sample.NavigationList.V"
+	controllerName="sap.tnt.sample.NavigationList.C"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.tnt"
-	xmlns:m="sap.m"
+	xmlns:tnt="sap.tnt"
 	height="100%">
-	<m:OverflowToolbar>
-		<m:Button text="Toggle Collapse/Expand"
-				  icon="sap-icon://menu2"
-				  press="onCollapseExpandPress"
-		/>
-		<m:Button text="Show/Hide SubItem 3"
-				  icon="sap-icon://menu2"
-				  press="onHideShowSubItemPress"
-		/>
-	</m:OverflowToolbar>
-	<NavigationList id="navigationList" width="320px" selectedKey="subItem3">
-		<NavigationListItem text="Item 1" key="rootItem1" icon="sap-icon://employee">
-			<NavigationListItem text="Sub Item 1"/>
-			<NavigationListItem text="Sub Item 2"/>
-			<NavigationListItem text="Sub Item 3" key="subItem3"/>
-			<NavigationListItem text="Sub Item 4"/>
-			<NavigationListItem text="Invisible Sub Item 5" visible="false"/>
-			<NavigationListItem text="Invisible Sub Item 6" visible="false"/>
-		</NavigationListItem>
-		<NavigationListItem
-				text="Invisible Section"
-				icon="sap-icon://employee"
-				visible="false">
-			<NavigationListItem text="Sub Item 1"/>
-			<NavigationListItem text="Sub Item 2"/>
-			<NavigationListItem text="Sub Item 3"/>
-			<NavigationListItem text="Sub Item 4"/>
-		</NavigationListItem>
-		<NavigationListItem
-				text="Item 2"
-				icon="sap-icon://building">
-			<NavigationListItem text="Sub Item 1"/>
-			<NavigationListItem text="Sub Item 2"/>
-			<NavigationListItem text="Sub Item 3"/>
-			<NavigationListItem text="Sub Item 4"/>
-		</NavigationListItem>
-	</NavigationList>
+	<OverflowToolbar>
+		<Button
+			text="Toggle Collapse/Expand"
+			icon="sap-icon://menu2"
+			press=".onCollapseExpandPress" />
+		<Button
+			text="Show/Hide SubItem 3"
+			icon="sap-icon://menu2"
+			press=".onHideShowSubItemPress" />
+	</OverflowToolbar>
+	<tnt:NavigationList
+		id="navigationList"
+		width="320px"
+		selectedKey="subItem3">
+		<tnt:NavigationListItem text="Item 1" key="rootItem1" icon="sap-icon://employee">
+			<tnt:NavigationListItem text="Sub Item 1" />
+			<tnt:NavigationListItem text="Sub Item 2" />
+			<tnt:NavigationListItem text="Sub Item 3" id="subItemThree" key="subItem3" />
+			<tnt:NavigationListItem text="Sub Item 4" />
+			<tnt:NavigationListItem text="Invisible Sub Item 5" visible="false" />
+			<tnt:NavigationListItem text="Invisible Sub Item 6" visible="false" />
+		</tnt:NavigationListItem>
+		<tnt:NavigationListItem
+			text="Invisible Section"
+			icon="sap-icon://employee"
+			visible="false">
+			<tnt:NavigationListItem text="Sub Item 1" />
+			<tnt:NavigationListItem text="Sub Item 2" />
+			<tnt:NavigationListItem text="Sub Item 3" />
+			<tnt:NavigationListItem text="Sub Item 4" />
+		</tnt:NavigationListItem>
+		<tnt:NavigationListItem text="Item 2" icon="sap-icon://building">
+			<tnt:NavigationListItem text="Sub Item 1" />
+			<tnt:NavigationListItem text="Sub Item 2" />
+			<tnt:NavigationListItem text="Sub Item 3" />
+			<tnt:NavigationListItem text="Sub Item 4" />
+		</tnt:NavigationListItem>
+	</tnt:NavigationList>
 </mvc:View>

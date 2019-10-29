@@ -4,14 +4,12 @@ sap.ui.define([
 ], function (Controller, JSONModel) {
 	"use strict";
 
-	var ComponentCardController = Controller.extend("sap.ui.integration.sample.CardsLayout.componentCard.ComponentCard", {
+	return Controller.extend("sap.ui.integration.sample.CardsLayout.componentCard.ComponentCard", {
+
 		onInit: function () {
 			var mapImageUrl = sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/componentCard/images/map.png");
-
 			this.getView().setModel(new JSONModel({ mapImageUrl: mapImageUrl }));
 		}
+
 	});
-
-	return ComponentCardController;
-
 });

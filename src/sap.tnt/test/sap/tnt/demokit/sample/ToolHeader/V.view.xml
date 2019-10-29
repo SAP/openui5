@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.tnt.sample.ToolHeader.V"
+	controllerName="sap.tnt.sample.ToolHeader.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:tnt="sap.tnt"
@@ -61,11 +61,10 @@
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</SearchField>
-		<Button text="Alan Smith" type="Transparent" press="onUserNamePress">
+		<Button text="Alan Smith" type="Transparent" press=".onUserNamePress">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</Button>
-
 	</tnt:ToolHeader>
 </mvc:View>

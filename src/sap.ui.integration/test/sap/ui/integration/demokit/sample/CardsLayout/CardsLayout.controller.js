@@ -7,7 +7,8 @@ sap.ui.define([
 ], function (Controller, JSONModel, DateFormat, MessageToast, integrationLibrary) {
 	"use strict";
 
-	var CardsLayoutController = Controller.extend("sap.ui.integration.sample.CardsLayout.CardsLayout", {
+	return Controller.extend("sap.ui.integration.sample.CardsLayout.CardsLayout", {
+
 		onInit: function () {
 			var cardManifests = new JSONModel(),
 				componentCardUrl = sap.ui.require.toUrl("sap/ui/integration/sample/CardsLayout/componentCard/manifest.json"),
@@ -23,13 +24,12 @@ sap.ui.define([
 				date: date
 			}));
 		},
+
 		onAction: function (oEvent) {
 			if (oEvent.getParameter("type") === integrationLibrary.CardActionType.Navigation) {
 				MessageToast.show("URL: " + oEvent.getParameter("manifestParameters").url);
 			}
 		}
+
 	});
-
-	return CardsLayoutController;
-
 });

@@ -1,13 +1,14 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
-	function(jQuery, Controller) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
+	"use strict";
 
-		var NestedGrids = Controller.extend("sap.ui.layout.sample.NestedGrids.NestedGrids", {
-			onSliderMoved: function (oEvent) {
-				var value = oEvent.getParameter("value");
-				this.byId("panelCSSGrid").setWidth(value + "%");
-			}
-		});
+	return Controller.extend("sap.ui.layout.sample.NestedGrids.NestedGrids", {
 
-		return NestedGrids;
+		onSliderMoved: function (oEvent) {
+			var fValue = oEvent.getParameter("value");
+			this.byId("panelCSSGrid").setWidth(fValue + "%");
+		}
+
 	});
+});

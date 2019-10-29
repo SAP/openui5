@@ -1,18 +1,22 @@
 <mvc:View
-	controllerName="sap.ui.layout.sample.Splitter4.Splitter"
 	xmlns:l="sap.ui.layout"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<l:Splitter height="500px" width="100%">
 		<Button width="100%" text="Content 1">
-			<layoutData><l:SplitterLayoutData size="300px" /></layoutData>
+			<layoutData>
+				<l:SplitterLayoutData size="300px" />
+			</layoutData>
 		</Button>
 		<Button width="100%" text="Content 2">
-			<layoutData><l:SplitterLayoutData size="auto" /></layoutData>
+			<layoutData>
+				<l:SplitterLayoutData size="auto" />
+			</layoutData>
 		</Button>
 		<Button width="100%" text="Content 3">
-			<layoutData><l:SplitterLayoutData size="30%" minSize="200px" /></layoutData>
+			<layoutData>
+				<l:SplitterLayoutData size="30%" minSize="200px" />
+			</layoutData>
 		</Button>
 	</l:Splitter>
 </mvc:View>

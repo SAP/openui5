@@ -1,13 +1,14 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
-	function(jQuery, Controller) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
+	"use strict";
 
-		var CSSGridPageLayout = Controller.extend("sap.ui.layout.sample.CSSGrid.CSSGridPageLayout", {
-			onSliderMoved: function (oEvent) {
-				var value = oEvent.getParameter("value");
-				this.byId("gridLayout").setWidth(value + "%");
-			}
-		});
+	return Controller.extend("sap.ui.layout.sample.CSSGrid.CSSGridPageLayout", {
 
-		return CSSGridPageLayout;
+		onSliderMoved: function (oEvent) {
+			var fValue = oEvent.getParameter("value");
+			this.byId("gridLayout").setWidth(fValue + "%");
+		}
+
 	});
+});

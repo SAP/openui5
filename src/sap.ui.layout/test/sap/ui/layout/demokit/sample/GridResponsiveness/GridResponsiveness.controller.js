@@ -1,34 +1,37 @@
-sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
+	"use strict";
 
-		var GridResponsiveness = Controller.extend("sap.ui.layout.sample.GridResponsiveness.GridResponsiveness", {
-			onAfterRendering: function (oEvent) {
-				var layout = this.byId("grid1").getCustomLayout().getActiveGridSettings().sParentAggregationName;
-				if (layout == "layout") {
-					this.byId("infoTxt").setText('Layout size is: layoutM or layoutL');
-				} else {
-					this.byId("infoTxt").setText('Layout size is: ' + layout);
-				}
+	return Controller.extend("sap.ui.layout.sample.GridResponsiveness.GridResponsiveness", {
 
-			},
-			onSliderMoved: function (oEvent) {
-				var value = oEvent.getParameter("value");
-				this.byId("panelCSSGrid").setWidth(value + "%");
-			},
-			onLayoutChange: function (oEvent) {
-				var layout = oEvent.getParameter("layout");
-				if (layout == "layout") {
-					this.byId("infoTxt").setText('Layout size is: layoutM or layoutL');
-				} else {
-					this.byId("infoTxt").setText('Layout size is: ' + layout);
-				}
-			},
-			onSegmentedButtonChange: function (oEvent) {
-				var bState = oEvent.getParameters().item.getKey();
-				this.byId("grid1").getCustomLayout().setContainerQuery(bState == "true");
+		onAfterRendering: function () {
+			var sLayout = this.byId("grid1").getCustomLayout().getActiveGridSettings().sParentAggregationName;
+			if (sLayout == "layout") {
+				this.byId("infoTxt").setText('Layout size is: layoutM or layoutL');
+			} else {
+				this.byId("infoTxt").setText('Layout size is: ' + sLayout);
 			}
-		});
+		},
 
-		return GridResponsiveness;
+		onSliderMoved: function (oEvent) {
+			var fValue = oEvent.getParameter("value");
+			this.byId("panelCSSGrid").setWidth(fValue + "%");
+		},
+
+		onLayoutChange: function (oEvent) {
+			var sLayout = oEvent.getParameter("layout");
+			if (sLayout == "layout") {
+				this.byId("infoTxt").setText('Layout size is: layoutM or layoutL');
+			} else {
+				this.byId("infoTxt").setText('Layout size is: ' + sLayout);
+			}
+		},
+
+		onSegmentedButtonChange: function (oEvent) {
+			var bState = oEvent.getParameters().item.getKey();
+			this.byId("grid1").getCustomLayout().setContainerQuery(bState == "true");
+		}
+
 	});
+});

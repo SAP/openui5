@@ -1,236 +1,25 @@
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Fragment',
-	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel',
-	'sap/m/MessageToast'
-], function (jQuery, Fragment, Controller, JSONModel, MessageToast) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment",
+	"sap/m/MessageToast"
+], function (Controller, JSONModel, Fragment, MessageToast) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.QuickView.QuickView", {
+	return Controller.extend("sap.m.sample.QuickView.QuickView", {
 
-		// create JSON model instance
-		oCompanyModel: new JSONModel(),
-		oEmployeeModel: new JSONModel(),
-		oGenericModel: new JSONModel(),
-		oGenericDataNoHeader: new JSONModel(),
 		onInit: function () {
-			// JSON sample data
-			var mCompanyData = {
-				pages: [
-					{
-						pageId: "companyPageId",
-						header: "Company info",
-						title: "Adventure Company",
-						titleUrl: "http://sap.com",
-						icon: "sap-icon://building",
-						description: "John Doe",
-						groups: [
-							{
-								heading: "Contact Details",
-								elements: [
-									{
-										label: "Phone",
-										value: "+001 6101 34869-0",
-										elementType: sap.m.QuickViewGroupElementType.phone
-									},
-									{
-										label: "Address",
-										value: "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
-										elementType: sap.m.QuickViewGroupElementType.text
-									}
-								]
-							},
-							{
-								heading: "Main Contact",
-								elements: [
-									{
-										label: "Name",
-										value: "John Doe",
-										elementType: sap.m.QuickViewGroupElementType.pageLink,
-										pageLinkId: "companyEmployeePageId"
-									},
-									{
-										label: "Mobile",
-										value: "+001 6101 34869-0",
-										elementType: sap.m.QuickViewGroupElementType.mobile
-									},
-									{
-										label: "Phone",
-										value: "+001 6101 34869-0",
-										elementType: sap.m.QuickViewGroupElementType.phone
-									},
-									{
-										label: "Email",
-										value: "main.contact@company.com",
-										emailSubject : 'Subject',
-										elementType: sap.m.QuickViewGroupElementType.email
-									}
-								]
-							}
-						]
-					},
-					{
-						pageId: "companyEmployeePageId",
-						header: "Employee Info",
-						title: "John Doe",
-						icon: "sap-icon://person-placeholder",
-						description: "Department Manager",
-						groups: [
-							{
-								heading: "Company",
-								elements: [
-									{
-										label: "Name",
-										value: "Adventure Company",
-										url: "http://sap.com",
-										elementType: sap.m.QuickViewGroupElementType.link
-									},
-									{
-										label: "Address",
-										value: "Sofia, Boris III, 136A"
-									},
-									{
-										label: "Slogan",
-										value: "Innovation through technology"
-									}
-								]
-							},
-							{
-								heading: "Other",
-								elements: [
-									{
-										label: "Email",
-										value: "john.doe@sap.com",
-										emailSubject : 'Subject',
-										elementType: sap.m.QuickViewGroupElementType.email
-									},
-									{
-										label: "Phone",
-										value: "+359 888 888 888",
-										elementType: sap.m.QuickViewGroupElementType.phone
-									}
-								]
-							}
-						]
-					}
-				]
-			};
+			// load JSON sample data
+			var oCompanyModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickView/model/CompanyData.json")),
+				oEmployeeModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickView/model/EmployeeData.json")),
+				oGenericModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickView/model/GenericData.json")),
+				oGenericModelNoHeader = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickView/model/GenericDataNoHeader.json"));
 
-			var mEmployeeData = {
-				pages: [
-					{
-						pageId: "employeePageId",
-						header: "Employee Info",
-						icon: "test-resources/sap/ui/documentation/sdk/images/johnDoe.png",
-						title: "Michael Muller",
-						description: "Account Manager",
-						groups: [
-							{
-								heading: "Contact Details",
-								elements: [
-									{
-										label: "Mobile",
-										value: "+001 6101 34869-0",
-										elementType: sap.m.QuickViewGroupElementType.mobile
-									},
-									{
-										label: "Phone",
-										value: "+001 6101 34869-1",
-										elementType: sap.m.QuickViewGroupElementType.phone
-									},
-									{
-										label: "Email",
-										value: "main.contact@company.com",
-										emailSubject : 'Subject',
-										elementType: sap.m.QuickViewGroupElementType.email
-									}
-								]
-							},
-							{
-								heading: "Company",
-								elements: [
-									{
-										label: "Name",
-										value: "Adventure Company",
-										url: "http://sap.com",
-										elementType: sap.m.QuickViewGroupElementType.link
-									},
-									{
-										label: "Address",
-										value: "Main Street 4572, Los Angeles USA"
-									}
-								]
-							}
-						]
-					}
-				]
-			};
-
-			var mGenericData = {
-				pages: [
-					{
-						pageId: "genericPageId",
-						header: "Process",
-						title: "Inventarisation",
-						titleUrl: "http://de.wikipedia.org/wiki/Inventarisation",
-						icon: "sap-icon://camera",
-						groups: [
-							{
-								elements: [
-									{
-										label: "Start Date",
-										value: "01/01/2015"
-									},
-									{
-										label: "End Date",
-										value: "31/12/2015"
-									},
-									{
-										label: "Occurrence",
-										value: "Weekly"
-									}
-								]
-							}
-						]
-					}
-				]
-			};
-
-			var mGenericDataNoHeader = {
-				pages: [
-					{
-						pageId: "genericPageId",
-						title: "Inventarisation",
-						titleUrl: "http://de.wikipedia.org/wiki/Inventarisation",
-						icon: "sap-icon://camera",
-						groups: [
-							{
-								elements: [
-									{
-										label: "Start Date",
-										value: "01/01/2015"
-									},
-									{
-										label: "End Date",
-										value: "31/12/2015"
-									},
-									{
-										label: "Occurrence",
-										value: "Weekly"
-									}
-								]
-							}
-						]
-					}
-				]
-			};
-
-			// set the data for the model
-			this.oCompanyModel.setData(mCompanyData);
-			this.oEmployeeModel.setData(mEmployeeData);
-			this.oGenericModel.setData(mGenericData);
-			this.oGenericDataNoHeader.setData(mGenericDataNoHeader);
+			this.getView()
+				.setModel(oCompanyModel, "CompanyModel")
+				.setModel(oEmployeeModel, "EmployeeModel")
+				.setModel(oGenericModel, "GenericModel")
+				.setModel(oGenericModelNoHeader, "GenericModelNoHeader");
 		},
 
 		onAfterRendering: function () {
@@ -245,40 +34,47 @@ sap.ui.define([
 		},
 
 		openQuickView: function (oEvent, oModel) {
-			this.createPopover();
+			var oButton = oEvent.getSource();
 
+			if (!this._oQuickView) {
+				Fragment.load({
+					name: "sap.m.sample.QuickView.QuickView",
+					controller: this
+				}).then(function (oQuickView) {
+					this._oQuickView = oQuickView;
+					this._configQuickView(oModel);
+					this._oQuickView.openBy(oButton);
+				}.bind(this));
+			} else {
+				this._configQuickView(oModel);
+				this._oQuickView.openBy(oButton);
+			}
+		},
+
+		_configQuickView: function (oModel) {
+			this.getView().addDependent(this._oQuickView);
 			this._oQuickView.close();
 			this._oQuickView.setModel(oModel);
-
-			// delay because addDependent will do a async rerendering and the actionSheet will immediately close without it.
-			var oButton = oEvent.getSource();
-			jQuery.sap.delayedCall(0, this, function () {
-				this._oQuickView.openBy(oButton);
-			});
 		},
 
 		handleCompanyQuickViewPress: function (oEvent) {
-			this.openQuickView(oEvent, this.oCompanyModel);
+			var oModel = this.getView().getModel("CompanyModel");
+			this.openQuickView(oEvent, oModel);
 		},
 
 		handleEmployeeQuickViewPress: function (oEvent) {
-			this.openQuickView(oEvent, this.oEmployeeModel);
+			var oModel = this.getView().getModel("EmployeeModel");
+			this.openQuickView(oEvent, oModel);
 		},
 
 		handleGenericQuickViewPress: function (oEvent) {
-			this.openQuickView(oEvent, this.oGenericModel);
+			var oModel = this.getView().getModel("GenericModel");
+			this.openQuickView(oEvent, oModel);
 		},
 
 		handleGenericNoHeaderQuickViewPress: function (oEvent) {
-			this.openQuickView(oEvent, this.oGenericDataNoHeader);
-		},
-
-		createPopover: function() {
-			if (!this._oQuickView) {
-				this._oQuickView = sap.ui.xmlfragment("sap.m.sample.QuickView.QuickView", this);
-			}
-
-			this.getView().addDependent(this._oQuickView);
+			var oModel = this.getView().getModel("GenericModelNoHeader");
+			this.openQuickView(oEvent, oModel);
 		},
 
 		onNavigate: function (oEvent) {
@@ -295,9 +91,6 @@ sap.ui.define([
 				this._oQuickView.destroy();
 			}
 		}
+
 	});
-
-
-	return CController;
-
 });

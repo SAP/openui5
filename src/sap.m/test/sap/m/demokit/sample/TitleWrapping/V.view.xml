@@ -1,30 +1,33 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc"
-		  xmlns="sap.m"
-		  xmlns:f="sap.ui.layout.form"
-		  controllerName="sap.m.sample.TitleWrapping.C"
-		  displayBlock="true">
+<mvc:View
+	controllerName="sap.m.sample.TitleWrapping.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+	displayBlock="true">
 	<f:SimpleForm
-			layout="ResponsiveGridLayout"
-			editable="true"
-			title="Title Properties"
-			adjustLabelSpan="false"
-			labelSpanXL="2"
-			labelSpanL="2"
-			labelSpanM="2"
-			labelSpanS="5">
+		layout="ResponsiveGridLayout"
+		editable="true"
+		title="Title Properties"
+		adjustLabelSpan="false"
+		labelSpanXL="2"
+		labelSpanL="2"
+		labelSpanM="2"
+		labelSpanS="5">
 		<Label text="Wrapping" />
-		<Switch id="wrappingSwitch" state="true" change="onWrappingChange" />
+		<Switch id="wrappingSwitch" state="true" change=".onWrappingChange" />
 		<Label text="Enable Hyphenation" />
-		<Switch state="false" change="onHyphenationChange" />
+		<Switch state="false" change=".onHyphenationChange" />
 		<Label text="Container Width" />
-		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+		<Slider id="widthSlider" value="100" liveChange=".onSliderMoved" />
 	</f:SimpleForm>
-	<Panel id="containerLayout"
-		   headerText="Rendered Title in container"
-		   width="100%">
-		<Title id="WrappingTitle"
-			   wrapping="true"
-			   text="The Title control represents a single line of text with explicit header / title semantics. The Title control represents a single line of text with explicit header / title semantics."/>
+	<Panel
+		id="containerLayout"
+		headerText="Rendered Title in container"
+		width="100%">
+		<Title
+			id="WrappingTitle"
+			wrapping="true"
+			text="The Title control represents a single line of text with explicit header / title semantics. The Title control represents a single line of text with explicit header / title semantics." />
 	</Panel>
 	<MessageStrip
 		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom"

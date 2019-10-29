@@ -1,38 +1,32 @@
 <mvc:View
-	controllerName="sap.tnt.sample.ToolHeaderIconTabHeader.V"
-	xmlns:mvc="sap.ui.core.mvc"
+	controllerName="sap.tnt.sample.ToolHeaderIconTabHeader.C"
 	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
 	height="100%">
 	<tnt:ToolHeader>
-		<Button icon="sap-icon://home" type="Transparent" press="onHomePress">
+		<Button icon="sap-icon://home" type="Transparent" press=".onHomePress">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</Button>
-		<IconTabHeader id="iconTabHeader"
+		<IconTabHeader
+			id="iconTabHeader"
 			selectedKey="invalidKey"
-			select="onSelectTab"
+			select=".onSelectTab"
 			showOverflowSelectList="true"
 			backgroundDesign="Transparent"
 			mode="Inline">
 			<layoutData>
-				<OverflowToolbarLayoutData
-					priority="NeverOverflow"
-					shrinkable="true" />
+				<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
 			</layoutData>
 			<items>
-				<IconTabFilter text="Documentation">
-				</IconTabFilter>
-				<IconTabFilter text="Explored">
-				</IconTabFilter>
-				<IconTabFilter text="API Reference">
-				</IconTabFilter>
-				<IconTabFilter text="Demo Apps">
-				</IconTabFilter>
+				<IconTabFilter text="Documentation" />
+				<IconTabFilter text="Explored" />
+				<IconTabFilter text="API Reference" />
+				<IconTabFilter text="Demo Apps" />
 			</items>
 		</IconTabHeader>
-
 		<ToolbarSpacer>
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px" />
@@ -48,25 +42,17 @@
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</Button>
-
 		<MenuButton icon="sap-icon://hint" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
-			<menu>
-				<Menu>
-					<items>
-						<MenuItem text="Edit" icon="sap-icon://edit" />
-						<MenuItem text="Save" icon="sap-icon://save" />
-					</items>
-				</Menu>
-			</menu>
+			<Menu>
+				<MenuItem text="Edit" icon="sap-icon://edit" />
+				<MenuItem text="Save" icon="sap-icon://save" />
+			</Menu>
 		</MenuButton>
-
 	</tnt:ToolHeader>
 	<Panel>
-		<Label
-			id="labelId"
-			text="Home Screen"/>
+		<Label id="labelId" text="Home Screen" />
 	</Panel>
 </mvc:View>

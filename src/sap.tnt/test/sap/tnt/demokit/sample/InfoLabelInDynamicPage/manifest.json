@@ -13,7 +13,10 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.ui.layout": {},
+				"sap.tnt": {},
+				"sap.m": {},
 				"sap.f": {}
 			}
 		},
@@ -22,7 +25,7 @@
 				"stretch": true,
 				"files": [
 					"V.view.xml",
-					"V.controller.js",
+					"C.controller.js",
 					"manifest.json"
 				]
 			}

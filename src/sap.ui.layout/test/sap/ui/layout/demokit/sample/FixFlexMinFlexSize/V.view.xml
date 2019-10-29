@@ -1,101 +1,93 @@
 <mvc:View
-		controllerName="sap.ui.layout.sample.FixFlexMinFlexSize.C"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:l="sap.ui.layout"
-		xmlns="sap.m"
-		height="100%">
+	controllerName="sap.ui.layout.sample.FixFlexMinFlexSize.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
+	height="100%">
 	<l:FixFlex minFlexSize="400">
 		<l:fixContent>
 			<ObjectHeader
-					responsive="true"
-					fullScreenOptimized="true"
-					binding="{/ProductCollection/0}"
-					intro="{Description}"
-					title="Long title truncated to 80 chars on all devices and to 50 chars on phone portrait"
-					number="{
-						parts:[{path:'Price'},{path:'CurrencyCode'}],
-						type: 'sap.ui.model.type.Currency',
-						formatOptions: {showMeasure: false}
-					}"
-					numberUnit="{CurrencyCode}"
-					showMarkers="true"
-					markFlagged="true"
-					markFavorite="true"
-					numberState="Success"
-					backgroundDesign="Translucent">
+				responsive="true"
+				fullScreenOptimized="true"
+				binding="{/ProductCollection/0}"
+				intro="{Description}"
+				title="Long title truncated to 80 chars on all devices and to 50 chars on phone portrait"
+				number="{
+					parts:[{path:'Price'},{path:'CurrencyCode'}],
+					type: 'sap.ui.model.type.Currency',
+					formatOptions: {showMeasure: false}
+				}"
+				numberUnit="{CurrencyCode}"
+				showMarkers="true"
+				markFlagged="true"
+				markFavorite="true"
+				numberState="Success"
+				backgroundDesign="Translucent">
 				<attributes>
 					<ObjectAttribute
-							title="Manufacturer"
-							text="{SupplierName}"/>
+						title="Manufacturer"
+						text="{SupplierName}" />
 				</attributes>
 				<statuses>
 					<ObjectStatus
-							title="Approval"
-							text="Pending"
-							state="Warning"/>
+						title="Approval"
+						text="Pending"
+						state="Warning" />
 				</statuses>
 			</ObjectHeader>
 		</l:fixContent>
 		<l:flexContent>
-			<Table id="idProductsTable"
-				   items="{
+			<Table
+				id="idProductsTable"
+				items="{
 					path: '/ProductCollection',
 					sorter: {
 						path: 'Name'
 					}
-				}">
+				}"
+				growing="true"
+				growingThreshold="50">
 				<headerToolbar>
-					<Toolbar>
-						<Title text="Products" level="H2"/>
-					</Toolbar>
+					<OverflowToolbar>
+						<Title text="Products" level="H2" />
+					</OverflowToolbar>
 				</headerToolbar>
 				<columns>
-					<Column
-							width="12em">
-						<Text text="Product"/>
+					<Column width="12em">
+						<Text text="Product" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="Supplier" />
 					</Column>
 					<Column
-							minScreenWidth="Tablet"
-							demandPopin="true">
-						<Text text="Supplier"/>
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="Right">
+						<Text text="Dimensions" />
 					</Column>
 					<Column
-							minScreenWidth="Tablet"
-							demandPopin="true"
-							hAlign="Right">
-						<Text text="Dimensions"/>
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="Center">
+						<Text text="Weight" />
 					</Column>
-					<Column
-							minScreenWidth="Tablet"
-							demandPopin="true"
-							hAlign="Center">
-						<Text text="Weight"/>
-					</Column>
-					<Column
-							hAlign="Right">
-						<Text text="Price"/>
+					<Column hAlign="Right">
+						<Text text="Price" />
 					</Column>
 				</columns>
 				<items>
 					<ColumnListItem>
 						<cells>
-							<ObjectIdentifier
-									title="{Name}"
-									text="{ProductId}"/>
-							<Text
-									text="{SupplierName}"/>
-							<Text
-									text="{Width} x {Depth} x {Height} {DimUnit}"/>
-							<ObjectNumber
-									number="{WeightMeasure}"
-									unit="{WeightUnit}"/>
-							<ObjectNumber
-									number="{
-										parts:[{path:'Price'},{path:'CurrencyCode'}],
-										type: 'sap.ui.model.type.Currency',
-										formatOptions: {showMeasure: false}
-									}"
-									unit="{CurrencyCode}" />
+							<ObjectIdentifier title="{Name}" text="{ProductId}" />
+							<Text text="{SupplierName}"/>
+							<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
+							<ObjectNumber number="{WeightMeasure}" unit="{WeightUnit}" />
+							<ObjectNumber number="{
+									parts:[{path:'Price'},{path:'CurrencyCode'}],
+									type: 'sap.ui.model.type.Currency',
+									formatOptions: {showMeasure: false}
+								}"
+								unit="{CurrencyCode}" />
 						</cells>
 					</ColumnListItem>
 				</items>

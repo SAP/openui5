@@ -13,13 +13,15 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
 				"sap.m": {}
 			}
 		},
 		"resources": {
 			"css": [
 				{
-					"uri": "FixFlexHorizontal/style.css"
+					"uri": "css/style.css"
 				}
 			]
 		},
@@ -29,7 +31,7 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"style.css",
+					"css/style.css",
 					"manifest.json"
 				]
 			}

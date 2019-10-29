@@ -1,0 +1,19 @@
+<mvc:View
+	controllerName="sap.m.sample.QuickViewCard.QuickViewCard"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	height="100%">
+	<Page
+		showHeader="false"
+		class="sapUiContentPadding"
+		showNavButton="false">
+		<Button
+			id="buttonBack"
+			enabled="false"
+			text="Navigate Back"
+			press=".onButtonBackClick"
+			class="sapUiSmallMarginBottom" />
+		<core:Fragment fragmentName="sap.m.sample.QuickViewCard.QuickViewCard" type="XML" />
+	</Page>
+</mvc:View>

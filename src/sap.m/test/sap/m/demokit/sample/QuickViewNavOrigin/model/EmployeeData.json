@@ -1,0 +1,162 @@
+{
+	"Johnny Cash": {
+		"pageId": "contactPage",
+		"header": "Employee Info",
+		"title": "Johnny Cash",
+		"icon": "sap-icon://person-placeholder",
+		"description": "Department Manager",
+		"groups": [
+			{
+				"heading": "Contact Info",
+				"elements": [
+					{
+						"label": "Address",
+						"value": "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
+						"elementType": "text"
+					},
+					{
+						"label": "Email",
+						"value": "johnny.cash@sapbank.com",
+						"emailSubject": "Give me cash",
+						"elementType": "email"
+					},
+					{
+						"label": "Phone",
+						"value": "+359 888 888 888",
+						"elementType": "phone"
+					}
+				]
+			},
+			{
+				"heading": "Additional Info",
+				"elements": [
+					{
+						"label": "Major",
+						"value": "Cash operations",
+						"elementType": "text"
+					}
+				]
+			}
+		]
+	},
+	"James Bonus": {
+		"pageId": "contactPage",
+		"header": "Employee Info",
+		"title": "James Bonus",
+		"icon": "sap-icon://person-placeholder",
+		"description": "Department Manager",
+		"groups": [
+			{
+				"heading": "Contact Info",
+				"elements": [
+					{
+						"label": "Address",
+						"value": "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
+						"elementType": "text"
+					},
+					{
+						"label": "Email",
+						"value": "james.bonus@sapbank.com",
+						"emailSubject": "Bonus interest",
+						"elementType": "email"
+					},
+					{
+						"label": "Phone",
+						"value": "+359 777 777 777",
+						"elementType": "phone"
+					}
+				]
+			},
+			{
+				"heading": "Additional Info",
+				"elements": [
+					{
+						"label": "Major",
+						"value": "Bonuses for loyal customers",
+						"elementType": "text"
+					}
+				]
+			}
+		]
+	},
+	"Maria Leasing": {
+		"pageId": "contactPage",
+		"header": "Employee Info",
+		"title": "Maria Leasing",
+		"icon": "sap-icon://person-placeholder",
+		"description": "Department Manager",
+		"groups": [
+			{
+				"heading": "Contact Info",
+				"elements": [
+					{
+						"label": "Address",
+						"value": "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
+						"elementType": "text"
+					},
+					{
+						"label": "Email",
+						"value": "maria.leasing@sapbank.com",
+						"emailSubject": "Leasing",
+						"elementType": "email"
+					},
+					{
+						"label": "Phone",
+						"value": "+359 555 555 555",
+						"elementType": "phone"
+					}
+				]
+			},
+			{
+				"heading": "Additional Info",
+				"elements": [
+					{
+						"label": "Major",
+						"value": "Financial leasing",
+						"elementType": "text"
+					}
+				]
+			}
+		]
+	},
+	"Claudia Credit": {
+		"pageId": "contactPage",
+		"header": "Employee Info",
+		"title": "Claudia Credit",
+		"icon": "sap-icon://person-placeholder",
+		"description": "Department Manager",
+		"groups": [
+			{
+				"heading": "Contact Info",
+				"elements": [
+					{
+						"label": "Address",
+						"value": "550 Larkin Street, 4F, Mountain View, CA, 94102 San Francisco USA",
+						"elementType": "text"
+					},
+					{
+						"label": "Email",
+						"value": "claudia.credit@sapbank.com",
+						"emailSubject": "Credit",
+						"elementType": "email"
+					},
+					{
+						"label": "Phone",
+						"value": "+359 666 666 666",
+						"elementType": "phone"
+					}
+				]
+			},
+			{
+				"heading": "Additional Info",
+				"elements": [
+					{
+						"label": "Major",
+						"value": "Real estate & investment credits",
+						"elementType": "text"
+					}
+				]
+			}
+		]
+	}
+}

@@ -15,15 +15,14 @@
 			"css": [
 				{
 					"uri": "css/splitter.css"
-				},
-				{
-					"uri": "Splitter/css/splitter.css"
 				}
 			]
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
@@ -31,6 +30,7 @@
 				"files": [
 					"Splitter.view.xml",
 					"Splitter.controller.js",
+					"css/splitter.css",
 					"manifest.json"
 				]
 			}

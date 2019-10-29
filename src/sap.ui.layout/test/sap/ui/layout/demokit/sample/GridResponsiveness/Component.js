@@ -1,13 +1,13 @@
-sap.ui.define(['sap/ui/core/UIComponent'],
-	function(UIComponent) {
-		"use strict";
+sap.ui.define([
+	"sap/ui/core/UIComponent"
+], function (UIComponent) {
+	"use strict";
 
-		var Component = UIComponent.extend("sap.ui.layout.sample.GridResponsiveness.Component", {
+	return UIComponent.extend("sap.ui.layout.sample.GridResponsiveness.Component", {
 
-			metadata : {
-				manifest: "json"
-			}
-		});
+		metadata : {
+			manifest: "json"
+		}
 
-		return Component;
 	});
+});

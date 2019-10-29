@@ -1,84 +1,80 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		xmlns:form="sap.ui.layout.form"
-		xmlns:core="sap.ui.core"
-		controllerName="sap.ui.layout.sample.GridAutoRows.GridAutoRows">
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:form="sap.ui.layout.form">
 	<Panel>
 		<headerToolbar>
-			<Toolbar height="3rem">
-				<Title text=" Property gridAutoRows example"/>
-			</Toolbar>
+			<OverflowToolbar height="3rem">
+				<Title text=" Property gridAutoRows example" />
+			</OverflowToolbar>
 		</headerToolbar>
-		<content>
-		<Text class="message  sapUiResponsiveMargin" text="Row dimensions are set to 3rems for the first 2 rows, while extra rows height is set to 1.5rem by gridAutoRows."/>
-			<form:SimpleForm editable="false"
-				layout="ResponsiveGridLayout"
-				labelSpanXL="4"
-				labelSpanL="3"
-				labelSpanM="4"
-				labelSpanS="12"
-				adjustLabelSpan="false"
-				emptySpanXL="0"
-				emptySpanL="4"
-				emptySpanM="0"
-				emptySpanS="0"
-				columnsXL="2"
-				columnsL="1"
-				columnsM="1"
-				singleContainerFullSize="false">
-				<Label displayOnly="false" text="gridTemplateRows is set to"/>
-				<Text text="repeat(2, 3rem)"/>
-				<Label displayOnly="false" text="gridAutoRows is set to"/>
-				<Text text="1.5rem"/>
-			</form:SimpleForm>
-			<grid:CSSGrid id="grid1"
-						  gridAutoFlow="Row"
-						  gridTemplateColumns="repeat(4, 10rem)"
-						  gridTemplateRows="repeat(2, 3rem)"
-						  gridAutoRows="1.5rem"
-						  gridGap="1rem">
-				<grid:items>
-					<VBox class="demoBox">
-						<Text text="A" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="B" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="C" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="D" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="E" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="F" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="G" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="H" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="I" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="J" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="K" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="L" wrapping="true" />
-					</VBox>
-				</grid:items>
-			</grid:CSSGrid>
-		</content>
+		<Text class="message sapUiResponsiveMargin" text="Row dimensions are set to 3rems for the first 2 rows, while extra rows height is set to 1.5rem by gridAutoRows." />
+		<form:SimpleForm
+			editable="false"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="3"
+			labelSpanM="4"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="0"
+			emptySpanL="4"
+			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false">
+			<Label displayOnly="false" text="gridTemplateRows is set to" />
+			<Text text="repeat(2, 3rem)" />
+			<Label displayOnly="false" text="gridAutoRows is set to" />
+			<Text text="1.5rem"/>
+		</form:SimpleForm>
+		<grid:CSSGrid
+			id="grid1"
+			gridAutoFlow="Row"
+			gridTemplateColumns="repeat(4, 10rem)"
+			gridTemplateRows="repeat(2, 3rem)"
+			gridAutoRows="1.5rem"
+			gridGap="1rem">
+			<VBox class="demoBox">
+				<Text text="A" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="B" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="C" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="D" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="E" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="F" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="G" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="H" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="I" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="J" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="K" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="L" wrapping="true" />
+			</VBox>
+		</grid:CSSGrid>
 	</Panel>
 	<Panel>
 		<headerToolbar>
@@ -86,79 +82,77 @@
 				<Title text=" Property gridAutoColumns example"/>
 			</Toolbar>
 		</headerToolbar>
-		<content>
-			<form:SimpleForm editable="false"
-				layout="ResponsiveGridLayout"
-				labelSpanXL="4"
-				labelSpanL="3"
-				labelSpanM="4"
-				labelSpanS="12"
-				adjustLabelSpan="false"
-				emptySpanXL="0"
-				emptySpanL="4"
-				emptySpanM="0"
-				emptySpanS="0"
-				columnsXL="2"
-				columnsL="1"
-				columnsM="1"
-				singleContainerFullSize="false">
-				<Label displayOnly="false" text="gridTemplateColumns is set to"/>
-				<Text text="repeat(3, 10rem)"/>
-				<Label displayOnly="false" text="gridAutoColumns is set to"/>
-				<Text text="5rem"/>
-			</form:SimpleForm>
-			<Text class="message sapUiResponsiveMargin" text="Column dimensions are set to 10rems for the first 3 columns, while extra columns width is set to 5rems by gridAutoColumns."/>
-			<grid:CSSGrid id="grid2"
-						  gridAutoFlow="Column"
-						  gridTemplateRows="repeat(4, 2rem)"
-						  gridTemplateColumns="repeat(3, 10rem)"
-						  gridAutoColumns="5rem"
-						  gridGap="1rem">
-				<grid:items>
-					<VBox class="demoBox">
-						<Text text="M" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="N" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="O" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="P" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Q" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="R" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="S" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="T" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="U" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="V" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="W" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="X" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Y" wrapping="true" />
-					</VBox>
-					<VBox class="demoBox">
-						<Text text="Z" wrapping="true" />
-					</VBox>
-				</grid:items>
-			</grid:CSSGrid>
-		</content>
+		<form:SimpleForm
+			editable="false"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="4"
+			labelSpanL="3"
+			labelSpanM="4"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="0"
+			emptySpanL="4"
+			emptySpanM="0"
+			emptySpanS="0"
+			columnsXL="2"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false">
+			<Label displayOnly="false" text="gridTemplateColumns is set to" />
+			<Text text="repeat(3, 10rem)" />
+			<Label displayOnly="false" text="gridAutoColumns is set to" />
+			<Text text="5rem" />
+		</form:SimpleForm>
+		<Text class="message sapUiResponsiveMargin" text="Column dimensions are set to 10rems for the first 3 columns, while extra columns width is set to 5rems by gridAutoColumns." />
+		<grid:CSSGrid
+			id="grid2"
+			gridAutoFlow="Column"
+			gridTemplateRows="repeat(4, 2rem)"
+			gridTemplateColumns="repeat(3, 10rem)"
+			gridAutoColumns="5rem"
+			gridGap="1rem">
+			<VBox class="demoBox">
+				<Text text="M" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="N" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="O" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="P" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Q" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="R" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="S" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="T" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="U" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="V" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="W" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="X" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Y" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Text text="Z" wrapping="true" />
+			</VBox>
+		</grid:CSSGrid>
 	</Panel>
 </mvc:View>

@@ -1,28 +1,21 @@
 <mvc:View
 	controllerName="sap.m.sample.TableSelectDialogGrowing.C"
+	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button
-				class="sapUiSmallMarginBottom"
-				text="Show Table Select Dialog (Growing: True)"
-				press="handleTableSelectDialogPress">
-				<customData>
-					<core:CustomData
-						key="growing"
-						value="true" />
-				</customData>
-			</Button>
-			<Button
-				class="sapUiSmallMarginBottom"
-				text="Show Table Select Dialog (Growing: False)"
-				press="handleTableSelectDialogPress">
-			</Button>
-		</l:content>
+	xmlns:core="sap.ui.core">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			class="sapUiSmallMarginBottom"
+			text="Show Table Select Dialog (Growing: True)"
+			press=".handleTableSelectDialogPress">
+			<customData>
+				<core:CustomData key="growing" value="true" />
+			</customData>
+		</Button>
+		<Button
+			class="sapUiSmallMarginBottom"
+			text="Show Table Select Dialog (Growing: False)"
+			press=".handleTableSelectDialogPress" />
 	</l:VerticalLayout>
 </mvc:View>

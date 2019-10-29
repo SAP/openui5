@@ -13,14 +13,15 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
 					"Splitter.view.xml",
-					"Splitter.controller.js",
 					"manifest.json"
 				]
 			}

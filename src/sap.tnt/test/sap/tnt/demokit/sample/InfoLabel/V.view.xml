@@ -1,5 +1,4 @@
 <mvc:View
-	controllerName="sap.tnt.sample.InfoLabel.V"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
@@ -29,47 +28,47 @@
 					<f:formElements>
 						<f:FormElement label="Color Scheme 1">
 							<f:fields>
-								<tnt:InfoLabel id="il1" text="2" renderMode="Narrow" colorScheme="1" displayOnly= "true"/>
+								<tnt:InfoLabel id="il1" text="2" renderMode="Narrow" colorScheme="1" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 2">
 							<f:fields>
-								<tnt:InfoLabel id="il2" text="5" renderMode="Narrow" colorScheme="2" displayOnly= "true"/>
+								<tnt:InfoLabel id="il2" text="5" renderMode="Narrow" colorScheme="2" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 3">
 							<f:fields>
-								<tnt:InfoLabel id="il3" text="12.5" renderMode="Narrow" colorScheme="3" displayOnly= "true"/>
+								<tnt:InfoLabel id="il3" text="12.5" renderMode="Narrow" colorScheme="3" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 4">
 							<f:fields>
-								<tnt:InfoLabel id="il4" text="2k" renderMode="Narrow" colorScheme="4" displayOnly= "true"/>
+								<tnt:InfoLabel id="il4" text="2k" renderMode="Narrow" colorScheme="4" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 5">
 							<f:fields>
-								<tnt:InfoLabel id="il5" text="text info label" renderMode="Loose" colorScheme="5" displayOnly= "true"/>
+								<tnt:InfoLabel id="il5" text="text info label" renderMode="Loose" colorScheme="5" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 6">
 							<f:fields>
-								<tnt:InfoLabel id="il6" text="just a long info label" colorScheme="6" width = "140px" displayOnly= "true"/>
+								<tnt:InfoLabel id="il6" text="just a long info label" colorScheme="6" width = "140px" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 7">
 							<f:fields>
-								<tnt:InfoLabel id="il7" text="label shorter than width" colorScheme="7" width="250px" displayOnly= "true"/>
+								<tnt:InfoLabel id="il7" text="label shorter than width" colorScheme="7" width="250px" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 8">
 							<f:fields>
-								<tnt:InfoLabel id="il8" text="available" colorScheme="8" displayOnly= "true"/>
+								<tnt:InfoLabel id="il8" text="available" colorScheme="8" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 9">
 							<f:fields>
-								<tnt:InfoLabel id="il9" text="in warehouse" colorScheme="9" displayOnly= "true"/>
+								<tnt:InfoLabel id="il9" text="in warehouse" colorScheme="9" displayOnly= "true" />
 							</f:fields>
 						</f:FormElement>
 					</f:formElements>

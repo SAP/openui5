@@ -1,14 +1,12 @@
 sap.ui.define(['sap/ui/core/UIComponent'],
-	function(UIComponent) {
+	function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.integration.sample.ComponentCard.cardContentCarousel.Component", {
+	return UIComponent.extend("sap.ui.integration.sample.ComponentCard.cardContentCarousel.Component", {
 
-		metadata : {
+		metadata: {
 			manifest: "json"
 		}
+
 	});
-
-	return Component;
-
 });

@@ -1,119 +1,117 @@
 <mvc:View
-        controllerName="sap.ui.layout.sample.BlockLayoutCustomBackground.Block"
-        xmlns:l="sap.ui.layout"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns:core="sap.ui.core"
-        xmlns:f="sap.ui.layout.form"
-        xmlns="sap.m">
-
-    <l:BlockLayout id="BlockLayoutTwo">
-        <l:BlockLayoutRow>
-            <l:BlockLayoutCell id="cell-1"
-                               title="Select Cells' Custom Color"
-                               backgroundColorSet="{/colorSet}"
-                               backgroundColorShade="{/shades/0}">
-                <FlexBox height="100%"
-                         alignItems="Center"
-                         justifyContent="End">
-                    <items>
-
-                        <VBox>
-                            <layoutData>
-                                <FlexItemData growFactor="3" />
-                            </layoutData>
-                            <items>
-                                <Label text="Enable Custom Colors"/>
-                                <CheckBox selected="true" select="handleChecked"/>
-
-                                <Label text="Select Color Set"/>
-                                <Select selectedKey="{/colorSet}" enabled="{/selectEnabled}">
-                                    <core:Item key="ColorSet1" text="ColorSet1"/>
-                                    <core:Item key="ColorSet2" text="ColorSet2"/>
-                                    <core:Item key="ColorSet3" text="ColorSet3"/>
-                                    <core:Item key="ColorSet4" text="ColorSet4"/>
-                                    <core:Item key="ColorSet5" text="ColorSet5"/>
-                                    <core:Item key="ColorSet6" text="ColorSet6"/>
-                                    <core:Item key="ColorSet7" text="ColorSet7"/>
-                                    <core:Item key="ColorSet8" text="ColorSet8"/>
-                                    <core:Item key="ColorSet9" text="ColorSet9"/>
-                                    <core:Item key="ColorSet10" text="ColorSet10"/>
-                                    <core:Item key="ColorSet11" text="ColorSet11"/>
-                                </Select>
-
-                                <Label text="Select Contrast Cells"/>
-                                <MultiComboBox selectionChange="handleContrastCellSelection"
-                                               selectedKeys="{/contrastCells}" enabled="{/selectEnabled}">
-                                    <core:Item key="cell-1" text="Cell 1"/>
-                                    <core:Item key="cell-2" text="Cell 2"/>
-                                    <core:Item key="cell-3" text="Cell 3"/>
-                                    <core:Item key="cell-4" text="Cell 4"/>
-                                </MultiComboBox>
-                            </items>
-                        </VBox>
-
-                    </items>
-                </FlexBox>
-            </l:BlockLayoutCell>
-        </l:BlockLayoutRow>
-        <l:BlockLayoutRow>
-            <l:BlockLayoutCell class="customCellImageBackground" title="The Title"
-                               titleAlignment="Center">
-                <Text text="Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin."/>
-            </l:BlockLayoutCell>
-            <l:BlockLayoutCell id="cell-2"
-                               title="An Icon"
-                               backgroundColorSet="{/colorSet}"
-                               backgroundColorShade="{/shades/1}">
-                <core:Icon src="sap-icon://add-activity"/>
-            </l:BlockLayoutCell>
-        </l:BlockLayoutRow>
-        <l:BlockLayoutRow>
-            <l:BlockLayoutCell id="cell-3"
-                               title="Simple Form"
-                               backgroundColorSet="{/colorSet}"
-                               backgroundColorShade="{/shades/2}">
-                <f:SimpleForm editable="true" backgroundDesign="Transparent" layout="GridLayout">
-                    <f:content>
-                        <Label text="sap.m.Input"/>
-                        <Input type="Text" placeholder="Enter Name ..."/>
-
-                        <Label text="sap.m.TextArea"/>
-                        <TextArea placeholder="Please add your comment..." rows="6" maxLength="255" width="100%"/>
-
-                        <Label text="sap.m.Text"/>
-                        <Text text="Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin, in gravida lectus aliquam. Vivamus tortor lorem, semper et diam ac, faucibus suscipit metus. Curabitur eget aliquet purus, id vestibulum sapien. Cras vitae imperdiet felis. Fusce placerat velit orci, at tempor nisl aliquam laoreet. Aliquam in sapien sit amet tortor laoreet feugiat id in ligula."/>
-                    </f:content>
-                </f:SimpleForm>
-            </l:BlockLayoutCell>
-        </l:BlockLayoutRow>
-        <l:BlockLayoutRow>
-            <l:BlockLayoutCell id="cell-4"
-                               title="Right Aligned Title"
-                               titleAlignment="Right"
-                               backgroundColorSet="{/colorSet}"
-                               backgroundColorShade="{/shades/3}">
-                <Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui."/>
-            </l:BlockLayoutCell>
-        </l:BlockLayoutRow>
-
-        <l:BlockLayoutRow>
-            <l:BlockLayoutCell id="cell-5"
-                               title="Left Aligned Title (background only for Fiori 3 theme)"
-                               titleAlignment="Left"
-                               backgroundColorSet="{/colorSet}"
-                               backgroundColorShade="{/shades/4}">
-                <Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui."/>
-            </l:BlockLayoutCell>
-        </l:BlockLayoutRow>
-
-        <l:BlockLayoutRow>
-            <l:BlockLayoutCell id="cell-6"
-                               title="Default Aligned Title (background only for Fiori 3 theme)"
-                               backgroundColorSet="{/colorSet}"
-                               backgroundColorShade="{/shades/5}">
-                <Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui."/>
-            </l:BlockLayoutCell>
-        </l:BlockLayoutRow>
-
-    </l:BlockLayout>
+	controllerName="sap.ui.layout.sample.BlockLayoutCustomBackground.Block"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.m">
+	<l:BlockLayout id="BlockLayoutTwo">
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-1"
+				title="Select Cells' Custom Color"
+				backgroundColorSet="{/colorSet}"
+				backgroundColorShade="{/shades/0}">
+				<FlexBox
+					height="100%"
+					alignItems="Center"
+					justifyContent="End">
+					<VBox>
+						<layoutData>
+							<FlexItemData growFactor="3" />
+						</layoutData>
+						<Label text="Enable Custom Colors" />
+						<CheckBox selected="true" select="handleChecked" />
+						<Label text="Select Color Set" />
+						<Select selectedKey="{/colorSet}" enabled="{/selectEnabled}">
+							<core:Item key="ColorSet1" text="ColorSet1" />
+							<core:Item key="ColorSet2" text="ColorSet2" />
+							<core:Item key="ColorSet3" text="ColorSet3" />
+							<core:Item key="ColorSet4" text="ColorSet4" />
+							<core:Item key="ColorSet5" text="ColorSet5" />
+							<core:Item key="ColorSet6" text="ColorSet6" />
+							<core:Item key="ColorSet7" text="ColorSet7" />
+							<core:Item key="ColorSet8" text="ColorSet8" />
+							<core:Item key="ColorSet9" text="ColorSet9" />
+							<core:Item key="ColorSet10" text="ColorSet10" />
+							<core:Item key="ColorSet11" text="ColorSet11" />
+						</Select>
+						<Label text="Select Contrast Cells"/>
+						<MultiComboBox
+							selectionChange=".handleContrastCellSelection"
+							selectedKeys="{/contrastCells}"
+							enabled="{/selectEnabled}">
+							<core:Item key="cell-1" text="Cell 1" />
+							<core:Item key="cell-2" text="Cell 2" />
+							<core:Item key="cell-3" text="Cell 3" />
+							<core:Item key="cell-4" text="Cell 4" />
+						</MultiComboBox>
+					</VBox>
+				</FlexBox>
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				title="The Title"
+				titleAlignment="Center"
+				class="customCellImageBackground">
+				<Text text="Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin." />
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell
+				id="cell-2"
+				title="An Icon"
+				backgroundColorSet="{/colorSet}"
+				backgroundColorShade="{/shades/1}">
+				<core:Icon src="sap-icon://add-activity" />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-3"
+				title="Simple Form"
+				backgroundColorSet="{/colorSet}"
+				backgroundColorShade="{/shades/2}">
+				<f:SimpleForm
+					editable="true"
+					backgroundDesign="Transparent"
+					layout="GridLayout">
+					<Label text="sap.m.Input" />
+					<Input type="Text" placeholder="Enter Name ..." />
+					<Label text="sap.m.TextArea" />
+					<TextArea placeholder="Please add your comment..." rows="6" maxLength="255" width="100%" />
+					<Label text="sap.m.Text" />
+					<Text text="Donec bibendum diam nibh, sit amet ornare ante fermentum sed. Ut vulputate justo at orci sollicitudin, in gravida lectus aliquam. Vivamus tortor lorem, semper et diam ac, faucibus suscipit metus. Curabitur eget aliquet purus, id vestibulum sapien. Cras vitae imperdiet felis. Fusce placerat velit orci, at tempor nisl aliquam laoreet. Aliquam in sapien sit amet tortor laoreet feugiat id in ligula." />
+				</f:SimpleForm>
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-4"
+				title="Right Aligned Title"
+				titleAlignment="Right"
+				backgroundColorSet="{/colorSet}"
+				backgroundColorShade="{/shades/3}">
+				<Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui." />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-5"
+				title="Left Aligned Title (background only for Fiori 3 theme)"
+				titleAlignment="Left"
+				backgroundColorSet="{/colorSet}"
+				backgroundColorShade="{/shades/4}">
+				<Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui." />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell
+				id="cell-6"
+				title="Default Aligned Title (background only for Fiori 3 theme)"
+				backgroundColorSet="{/colorSet}"
+				backgroundColorShade="{/shades/5}">
+				<Text text="Morbi id ullamcorper lorem, vestibulum facilisis velit. Ut elementum aliquam nisl a pretium. Donec auctor mattis convallis. Aenean sodales tortor nec facilisis fringilla. Nam feugiat nulla at diam sollicitudin pretium. Sed at lacus volutpat, finibus arcu ultricies, convallis elit. Aliquam sollicitudin tortor sit amet mi consequat fringilla. Fusce nisl leo, tempor et nulla id, pellentesque suscipit augue. Morbi cursus molestie tellus. Ut volutpat orci interdum, condimentum risus sed, iaculis tellus. Proin nisi eros, tristique nec tortor quis, suscipit sodales dui." />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
 </mvc:View>

@@ -1,0 +1,20 @@
+<mvc:View 
+	controllerName="sap.m.sample.QuickViewNavOrigin.QuickViewNavOrigin"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	height="100%">
+	<Page
+		showHeader="false"
+		class="sapUiContentPadding"
+		showNavButton="false">
+		<l:VerticalLayout>
+			<Button
+				id="quickViewBtn"
+				class="sapUiSmallMarginBottom"
+				text="Open QuickView"
+				width="200px"
+				press=".handleQuickViewBtnPress" />
+		</l:VerticalLayout>
+	</Page>
+</mvc:View>

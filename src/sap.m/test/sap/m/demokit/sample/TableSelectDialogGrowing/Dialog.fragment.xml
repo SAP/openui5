@@ -4,9 +4,9 @@
 	<TableSelectDialog
 		noDataText="No Products Found"
 		title="Select Product"
-		search="handleSearch"
-		confirm="handleClose"
-		cancel="handleClose"
+		search=".handleSearch"
+		confirm=".handleClose"
+		cancel=".handleClose"
 		multiSelect="true"
 		items="{
 			path : '/ProductCollection',
@@ -17,9 +17,7 @@
 		}">
 		<ColumnListItem>
 			<cells>
-				<ObjectIdentifier
-					title="{Name}"
-					text="{ProductId}" />
+				<ObjectIdentifier title="{Name}" text="{ProductId}" />
 				<Text text="{SupplierName}" />
 				<Text text="{Width} x {Depth} x {Height} {DimUnit}" />
 				<ObjectNumber
@@ -30,12 +28,12 @@
 						formatter: 'sap.m.sample.TableSelectDialogGrowing.Formatter.weightState'
 					}" />
 				<ObjectNumber
-						number="{
-							parts:[{path:'Price'},{path:'CurrencyCode'}],
-							type: 'sap.ui.model.type.Currency',
-							formatOptions: {showMeasure: false}
-						}"
-						unit="{CurrencyCode}" />
+					number="{
+						parts:[{path:'Price'},{path:'CurrencyCode'}],
+						type: 'sap.ui.model.type.Currency',
+						formatOptions: {showMeasure: false}
+					}"
+					unit="{CurrencyCode}" />
 			</cells>
 		</ColumnListItem>
 		<columns>
@@ -44,9 +42,7 @@
 					<Text text="Product" />
 				</header>
 			</Column>
-			<Column
-				minScreenWidth="Tablet"
-				demandPopin="true" >
+			<Column minScreenWidth="Tablet" demandPopin="true">
 				<header>
 					<Text text="Supplier" />
 				</header>

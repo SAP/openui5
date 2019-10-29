@@ -1,19 +1,17 @@
 <mvc:View 
 	controllerName="sap.ui.integration.sample.CardsLayout.componentCard.ComponentCard"
-	xmlns:core="sap.ui.core"
-	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	width="100%"
 	displayBlock="true">
-
 	<HBox class="sapUiSmallMargin">
 		<ComboBox placeholder="Peach Valley" selectedKey="peachValley">
 			<items>
 				<core:Item key="peachValley" text="Peach Valley" />
 			</items>
 		</ComboBox>
-		<Button text="Get Directions" type="Emphasized" class="sapUiSmallMarginBegin"/>
+		<Button text="Get Directions" type="Emphasized" class="sapUiSmallMarginBegin" />
 	</HBox>
-	<Image src="{/mapImageUrl}" alt="Sales manager" width="100%"/>
+	<Image src="{/mapImageUrl}" alt="Sales manager" width="100%" />
 </mvc:View>
