@@ -1171,6 +1171,7 @@ sap.ui.define([
 				this._getCalendar().attachSelect(this._handleCalendarSelect, this);
 				this._getCalendar().attachCancel(_cancel, this);
 				this._getCalendar().attachEvent("_renderMonth", _resizeCalendar, this);
+				this._oCalendar.setPopupMode(true);
 
 				this._oPopup._getButtonFooter().setVisible(this.getShowFooter());
 				this._getCalendar()._bSkipCancelButtonRendering = true;
@@ -1405,7 +1406,6 @@ sap.ui.define([
 	}
 
 	function _handleOpen() {
-		this._getCalendar().focus();
 		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this._renderedDays = this._getCalendar().$("-Month0-days").find(".sapUiCalItem").length;
 
