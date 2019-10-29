@@ -22,18 +22,6 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
-	 * Returns a clone, that is a deep copy, of the given object.
-	 *
-	 * @param {object} o
-	 *   any serializable object
-	 * @returns {object}
-	 *   a deep copy of <code>o</code>
-	 */
-	function clone(o) {
-		return JSON.parse(JSON.stringify(o));
-	}
-
-	/**
 	 * Constructs a test object.
 	 *
 	 * @param {object} [oTemplate={}]
@@ -576,6 +564,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("aggregateQueryOptions: do not embed child query options", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mAggregatedQueryOptions : {}
+			}),
+			mChildQueryOptions = {$select : ["bar"], $count : true};
+
+		// code under test
+		assert.ok(oBinding.aggregateQueryOptions({$expand : {foo : mChildQueryOptions}}, false));
+
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {$expand : {foo : mChildQueryOptions}});
+		assert.notStrictEqual(oBinding.mAggregatedQueryOptions.$expand.foo, mChildQueryOptions);
+	});
+
+	//*********************************************************************************************
 	[{ // conflict: parent has $orderby, but child has different $orderby value
 		aggregatedQueryOptions : {$orderby : "Category"},
 		childQueryOptions : {$orderby : "Category desc"}
@@ -992,8 +994,8 @@ sap.ui.define([
 		oBindingMock.expects("aggregateQueryOptions")
 			.withExactArgs({}, /*bIsCacheImmutable*/false)
 			.returns(false);
-		this.mock(jQuery).expects("extend")
-			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(oBinding.mAggregatedQueryOptions))
 			.returns(mNewQueryOptions);
 		this.mock(oCache).expects("setQueryOptions").withExactArgs(mNewQueryOptions);
@@ -1520,48 +1522,61 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("aggregateQueryOptions: cache is immutable", function (assert) {
-		var mAggregatedQueryOptions = {
-				$expand : {
-					"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}
-				},
-				$select : ["Name", "AGE"]
-			},
+[{
+	aggregatedQueryOptions : {$select : ["Name", "AGE"]},
+	childQueryOptions :  {$select : ["Name"]},
+	success : true,
+	title : "same $select as before"
+}, {
+	aggregatedQueryOptions : {$select : ["Name", "AGE"]},
+	childQueryOptions :  {$select : ["ROOM_ID"]},
+	lateQueryOptions : {$select : ["Name", "AGE", "ROOM_ID"]},
+	success : true,
+	title : "new property accepted and added to late properties"
+}, {
+	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {"EMPLOYEE_2_TEAM" : {}}},
+	success : true,
+	title : "same $expand as before"
+}, {
+	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Name"]}}},
+	success : false,
+	title : "new $select in existing $expand"
+}, {
+	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {"EMPLOYEE_2_EQUIPMENTS" : {}}},
+	success : false,
+	title : "new $expand not allowed"
+}].forEach(function (oFixture, i) {
+	QUnit.test("aggregateQueryOptions: cache is immutable," + oFixture.title, function (assert) {
+		var mAggregatedQueryOptions = {},
 			oBinding = new ODataParentBinding({
-				mAggregatedQueryOptions : clone(mAggregatedQueryOptions)
-			});
+				mAggregatedQueryOptions : mAggregatedQueryOptions,
+				oCache : {
+					getLateQueryOptions : function () {},
+					setLateQueryOptions : function () {}
+				}
+			}),
+			mLateQueryOptions = {};
 
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$select : ["Name"]}, true),
-			true, "same $select as before");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+		this.mock(oBinding.oCache).expects("getLateQueryOptions").withExactArgs()
+			.returns(mLateQueryOptions);
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, sinon.match.same(oBinding.mAggregatedQueryOptions),
+				sinon.match.same(mLateQueryOptions))
+			.returns(oFixture.aggregatedQueryOptions);
+		this.mock(oBinding.oCache).expects("setLateQueryOptions")
+			.exactly(oFixture.lateQueryOptions ? 1 : 0)
+			.withExactArgs(oFixture.lateQueryOptions);
 
-		// code under test
 		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$select : ["ROOM_ID"]}, true),
-			true, "new property accepted, but not added to $select");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
-
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$expand : {"EMPLOYEE_2_TEAM" : {}}}, true),
-			true, "same $expand as before");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
-
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions(
-				{$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Name"]}}}, true),
-			false, "new $select in existing $expand");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
-
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$expand : {"EMPLOYEE_2_EQUIPMENTS" : {}}}, true),
-			false, "new $expand not allowed");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+			// code under test
+			oBinding.aggregateQueryOptions(oFixture.childQueryOptions, true), oFixture.success);
+		assert.strictEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {}, "mAggregatedQueryOptions unchanged");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("deleteFromCache: binding w/ cache", function (assert) {

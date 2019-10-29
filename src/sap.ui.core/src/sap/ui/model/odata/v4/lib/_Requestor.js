@@ -1304,7 +1304,8 @@ sap.ui.define([
 	 *   A lock for the group to associate the request with; if no lock is given or its group ID has
 	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct}, the request is sent immediately; for all
 	 *   other group ID values, the request is added to the given group and you can use
-	 *   {@link #submitBatch} to send all requests in that group.
+	 *   {@link #submitBatch} to send all requests in that group. This group lock will be unlocked
+	 *   immediately, even if the request itself is queued.
 	 * @param {object} [mHeaders]
 	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain

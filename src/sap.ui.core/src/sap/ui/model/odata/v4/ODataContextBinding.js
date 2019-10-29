@@ -791,7 +791,7 @@ sap.ui.define([
 						oCache.fetchValue(oGroupLock, sRelativePath, function () {
 							bDataRequested = true;
 							that.fireDataRequested();
-						}, oListener, that.oModel.bAutoExpandSelect)
+						}, oListener)
 					).then(function (vValue) {
 						if (bDataRequested) {
 							that.fireDataReceived({data : {}});

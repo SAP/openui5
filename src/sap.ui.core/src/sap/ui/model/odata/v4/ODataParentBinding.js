@@ -166,7 +166,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, bCacheImmutable) {
-		var mAggregatedQueryOptionsClone = jQuery.extend(true, {}, this.mAggregatedQueryOptions);
+		var mAggregatedQueryOptionsClone = _Helper.merge({}, this.mAggregatedQueryOptions,
+				this.oCache && this.oCache.getLateQueryOptions()),
+			bChanged = false;
 
 		/*
 		 * Recursively merges the given query options into the given aggregated query options.
@@ -195,7 +197,8 @@ sap.ui.define([
 				if (bCacheImmutable) {
 					return false;
 				}
-				mAggregatedQueryOptions.$expand[sExpandPath] = mExpandValue[sExpandPath];
+				mAggregatedQueryOptions.$expand[sExpandPath]
+					= _Helper.merge({}, mExpandValue[sExpandPath]);
 				return true;
 			}
 
@@ -207,9 +210,10 @@ sap.ui.define([
 			 */
 			function mergeSelectPath(sSelectPath) {
 				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
-					if (bCacheImmutable) {
-						return !bInsideExpand;
+					if (bCacheImmutable && bInsideExpand) {
+						return false;
 					}
+					bChanged = true;
 					mAggregatedQueryOptions.$select.push(sSelectPath);
 				}
 				return true;
@@ -243,7 +247,11 @@ sap.ui.define([
 		}
 
 		if (merge(mAggregatedQueryOptionsClone, mQueryOptions)) {
-			this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
+			if (!bCacheImmutable) {
+				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
+			} else if (bChanged) {
+				this.oCache.setLateQueryOptions(mAggregatedQueryOptionsClone);
+			}
 			return true;
 		}
 		return false;
@@ -710,7 +718,7 @@ sap.ui.define([
 				var oCache = aResult[0];
 
 				if (oCache && !oCache.bSentReadRequest) {
-					oCache.setQueryOptions(jQuery.extend(true, {}, that.oModel.mUriParameters,
+					oCache.setQueryOptions(_Helper.merge({}, that.oModel.mUriParameters,
 						that.mAggregatedQueryOptions));
 				}
 				return oCache;

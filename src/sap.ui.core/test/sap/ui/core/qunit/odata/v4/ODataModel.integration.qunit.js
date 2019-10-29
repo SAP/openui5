@@ -1919,8 +1919,7 @@ sap.ui.define([
 <Text id="longitude3" text="{Address/GeoLocation/Longitude}"/>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=Address/City,BusinessPartnerID",
-			{
+		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=Address/City,BusinessPartnerID", {
 				Address : {
 					City : "Heidelberg"
 				},
@@ -1932,6 +1931,9 @@ sap.ui.define([
 			.expectChange("longitude3");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
+
 			that.expectRequest("SalesOrderList('1')/SO_2_BP"
 				+ "?$select=Address/GeoLocation/Longitude", {
 					Address : {
@@ -1943,12 +1945,24 @@ sap.ui.define([
 				.expectChange("longitude1", "8.700000000000")
 				.expectChange("longitude2", "8.700000000000");
 
-			// code under test - Longitude is requested once
 			oFormContext = that.oView.byId("form").getBindingContext();
+
+			// code under test - CompanyName leads to a "failed to drill-down"
+			assert.strictEqual(oFormContext.getProperty("CompanyName"), undefined);
+
+			// code under test - Longitude is requested once
 			that.oView.byId("longitude1").setBindingContext(oFormContext);
 			that.oView.byId("longitude2").setBindingContext(oFormContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
+
+			// code under test
+			return oFormContext.requestProperty("CompanyName").then(function (sValue) {
+				assert.strictEqual(sValue, undefined);
+			});
 		}).then(function () {
 			that.expectChange("longitude3", "8.700000000000");
 
