@@ -38,8 +38,7 @@ sap.ui.define([
 					"type": "enum",
 					"enum": ["Navigation"],
 					"defaultValue": "Navigation",
-					"path": oCustomConfig.path + "/:index/type",
-					"visible": false // Deactivated as Navigation is currently the only option
+					"path": oCustomConfig.path + "/:index/type"
 				},
 				"service": {
 					"label": "{i18n>CARD_EDITOR.ACTION.SERVICE}",
