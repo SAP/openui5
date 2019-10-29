@@ -311,15 +311,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		};
 
 		/**
-		 * Gets the tooltip for the BusyDialog.
-		 *
-		 * @public
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * Gets the tooltip of the internal dialog.
+		 * @override
 		 */
 		BusyDialog.prototype.getTooltip = function () {
-			this._oDialog.getTooltip();
-
-			return this;
+			return this._oDialog.getTooltip();
 		};
 
 		/**
