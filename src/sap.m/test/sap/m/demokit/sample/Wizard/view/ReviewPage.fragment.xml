@@ -49,10 +49,10 @@
 						<Label text="Availability"/>
 						<Text id="AvailabilityChosen" text="{/availabilityType}"/>
 						<Label text="Size"/>
-						<Hbox>
+						<HBox>
 							<Text id="Size" text="{/size}"/>
 							<Text id="Size2" class="sapUiTinyMarginBegin" text="{/measurement}"/>
-						</Hbox>
+						</HBox>
 						<Link press="editStepThree" text="Edit" />
 					</form:content>
 				</form:SimpleForm>
