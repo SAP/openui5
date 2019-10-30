@@ -703,6 +703,22 @@ function (
 		oContainer.destroy();
 	});
 
+	if (!bIsGridSupported) {
+		QUnit.test("Should not throw error if destroyed when polyfill is scheduled", function (assert) {
+			// Arrange
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			// Act
+			this.oGrid._scheduleIEPolyfill();
+			this.oGrid.destroy();
+			this.clock.tick(500);
+
+			// Assert
+			assert.ok(true, "There is no error when grid is destroyed after scheduled IE polyfill.");
+		});
+	}
+
 	QUnit.module("Resizing", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer();
