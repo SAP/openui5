@@ -71,6 +71,32 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
 		});
 
+		QUnit.test("When the JsonEditor Dialog is re-opened", function (assert) {
+			var fnDone = assert.async();
+
+			this.oEditor._oInput.attachValueHelpRequest(function () {
+				this.oEditor._openJsonEditor.returnValues[0].then(function (oDialog) {
+					if (this.bOpenedBefore) {
+						assert.strictEqual(
+							oDialog.getContent()[1].getValue(),
+							JSON.stringify(this.oOriginalModelContent.content, 0, "\t"),
+							"Then the changes are discarded"
+						);
+						delete this.bOpenedBefore;
+						fnDone();
+					} else {
+						this.bOpenedBefore = true;
+						oDialog.getContent()[1].setValue("");
+						QUnitUtils.triggerEvent("input", oDialog.getContent()[1].getDomRef());
+						QUnitUtils.triggerEvent("tap", oDialog.getEndButton().getDomRef());
+						QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
+					}
+				}.bind(this));
+			}.bind(this));
+
+			QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
+		});
+
 		QUnit.test("When a model is set", function (assert) {
 			var fnDone = assert.async();
 
@@ -126,11 +152,27 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a value is incorrectly changed in the inline editor", function (assert) {
+			var fnDone = assert.async();
+
 			this.oEditor._oInput.setValue("[{\"name\": John}]");
 			QUnitUtils.triggerEvent("input", this.oEditor._oInput.getDomRef());
 
 			assert.strictEqual(this.oEditor._oInput.getValueState(), "Error", "Then the error is displayed");
 			assert.deepEqual(this.oEditor.getBindingContext().getObject().value, this.oOriginalModelContent.content, "Then the model is not updated");
+
+			// Edit the error in the dialog
+
+			this.oEditor._oInput.attachValueHelpRequest(function () {
+				this.oEditor._openJsonEditor.returnValues[0].then(function (oDialog) {
+					oDialog.getContent()[1]._getEditorInstance().getSession().on("changeAnnotation", function () {
+						assert.ok(oDialog.getContent()[0].getText().length > 0, "Then an error is displayed in the editor dialog");
+						oDialog.getContent()[1]._getEditorInstance().getSession().removeAllListeners('changeAnnotation');
+						fnDone();
+					});
+				});
+			}.bind(this));
+
+			QUnitUtils.triggerEvent("click", this.oEditor._oInput.$("vhi"));
 		});
 
 		QUnit.test("When a value is correctly changed in the inline editor", function (assert) {
