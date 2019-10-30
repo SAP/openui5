@@ -507,11 +507,22 @@ sap.ui.define([
 				 * @since 1.46.0
 				 */
 				rowHeaderClick: {
+					parameters : {
 
-					/**
-					 * The row user clicked on.
-					 */
-					row : {type : "sap.m.PlanningCalendarRow"}
+						/**
+						 * The ID of the <code>PlanningCalendarRowHeader</code> of the selected appointment.
+						 *
+						 * <b>Note:</b> Intended to be used as an easy way to get an ID of a <code>PlanningCalendarRowHeader</code>. Do NOT use for modification.
+						 *
+						 * @since 1.73
+						 */
+						headerId : {type : "string"},
+
+						/**
+						 * The row user clicked on.
+						 */
+						row : {type : "sap.m.PlanningCalendarRow"}
+					}
 				}
 			},
 			designtime: "sap/m/designtime/PlanningCalendar.designtime"
@@ -671,9 +682,10 @@ sap.ui.define([
 			onAfterRendering: function () {
 				this._rowHeaderClickEvent = oTable.$().find(".sapMPlanCalRowHead > div.sapMLIB").click(function (oEvent) {
 					var oRowHeader = jQuery(oEvent.currentTarget).control(0),
-						oRow = getRow(oRowHeader.getParent());
+						oRow = getRow(oRowHeader.getParent()),
+						sRowHeaderId = oRowHeader.getId();
 
-					this.fireRowHeaderClick({row: oRow});
+					this.fireRowHeaderClick({headerId: sRowHeaderId, row: oRow});
 				}.bind(this));
 				this._adjustColumnHeadersTopOffset();
 			}

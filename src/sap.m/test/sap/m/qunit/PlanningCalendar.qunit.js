@@ -2566,11 +2566,13 @@ sap.ui.define([
 			oSecondRow = oPC1.getRows()[1], // Get second row
 			handleRowHeaderClick = function (oEvent) {
 				var oRow = oEvent.getParameter("row");
+				var sRowHeaderId = oEvent.getParameter("headerId");
 
 				// Assert
 				assert.ok(oRow, "There must be a returned row");
 				assert.ok(oRow instanceof PlanningCalendarRow, "Returned row must derive from sap.m.PlanningCalendarRow");
 				assert.strictEqual(oRow, oSecondRow, "Returned row must be reference to the second row");
+				assert.strictEqual(sRowHeaderId, oSecondRow.sId + "-Head", "Returned id must be equal to the second row header id");
 			};
 
 		oSpy = sinon.spy(handleRowHeaderClick);
