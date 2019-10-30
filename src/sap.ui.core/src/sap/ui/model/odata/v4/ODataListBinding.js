@@ -800,8 +800,8 @@ sap.ui.define([
 		this.mQueryOptions = undefined;
 		this.aSorters = undefined;
 
-		asODataParentBinding.prototype.destroy.apply(this);
-		ListBinding.prototype.destroy.apply(this);
+		asODataParentBinding.prototype.destroy.call(this);
+		ListBinding.prototype.destroy.call(this);
 	};
 
 	/**
