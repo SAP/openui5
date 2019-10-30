@@ -521,13 +521,6 @@ sap.ui.define([
 		assert.strictEqual(this.oBusyDialog._oDialog.getAriaLabelledBy()[0], this.oBusyDialog._oLabel.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
 	});
 
-	QUnit.test('Checking role property', function (assert) {
-		this.oBusyDialog.setText('Loading...');
-		this.oBusyDialog.open();
-		this.clock.tick(500);
-		assert.strictEqual(this.oBusyDialog._oDialog._$content.attr('role'), 'application', 'Should be application.');
-	});
-
 	QUnit.module('Style Class Methods', {
 		beforeEach: function () {
 			this.oBusyDialog = new BusyDialog({
