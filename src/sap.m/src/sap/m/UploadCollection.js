@@ -2000,7 +2000,7 @@ sap.ui.define([
 					sGroupKey = fnGroupKey(item);
 				}
 			}
-			if (!item._status) {
+			if (!item._status || !item.getVisibleEdit()) {
 				//Set default status value -> UploadCollection._displayStatus
 				item._status = UploadCollection._displayStatus;
 			} else if (that.getInstantUpload() && that._oItemForDelete &&
