@@ -1,3 +1,5 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect,protractor*/
+
 describe("sap.m.ObjectHeaderVisualTest", function() {
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.ObjectHeader';
 
@@ -39,5 +41,18 @@ describe("sap.m.ObjectHeaderVisualTest", function() {
 	it("Set condensed",function() {
 		element(by.id("change_to_condensed")).click();
 		expect(takeScreenshot()).toLookAs("condensed-OH");
+	});
+
+	it("should type Space inside input field", function () {
+		var oOHSpace = element(by.id("ohSpace"));
+
+		//there is no keyboard on mobile
+		if (browser.testrunner.runtime.platformName != "android" && browser.testrunner.runtime.platformName != "ios") {
+			element(by.id("typeSpace-inner")).click();
+			element(by.id("typeSpace-inner")).sendKeys(protractor.Key.SPACE);
+			element(by.id("typeSpace-inner")).sendKeys(protractor.Key.NUMPAD7);
+
+			expect(takeScreenshot(oOHSpace)).toLookAs("OH_Input_has_space");
+		}
 	});
 });
