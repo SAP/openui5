@@ -643,10 +643,11 @@ sap.ui.define([
 			return SyncPromise.resolve(sResolvedChildPath);
 		}
 
-		// Note: this.oCachePromise exists for all bindings except operation bindings
+		// Note: this.oCachePromise exists for all bindings except operation bindings; it might
+		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
-			// "this.oCache !== undefined" cannot be used; oCachePromise might become pending again
-			|| this.oCachePromise.isFulfilled() && (!this.oCache || this.oCache.bSentReadRequest);
+			|| this.oCache === null
+			|| this.oCache && this.oCache.bSentReadRequest;
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sFullMetaPath = oMetaModel.getMetaPath(sResolvedChildPath);
 		aPromises = [

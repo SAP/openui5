@@ -830,7 +830,7 @@ sap.ui.define([
 				},
 				oCachePromise = bRejected
 					? SyncPromise.reject({}) // "Failed to create cache..."
-					: SyncPromise.resolve(oCache),
+					: SyncPromise.resolve(Promise.resolve(oCache)), // it might become pending again
 				oBinding = new ODataParentBinding({
 					bAggregatedQueryOptionsInitial : false,
 					oCache : bRejected ? undefined : oCache,
@@ -891,23 +891,25 @@ sap.ui.define([
 			oBindingMock.expects("aggregateQueryOptions")
 				.withExactArgs({}, /*bIsCacheImmutable*/true)
 				.returns(false);
-			if (oCachePromise.isFulfilled()) {
-				this.mock(oCachePromise.getResult()).expects("setQueryOptions").never();
-			} else {
+			if (bRejected) {
 				this.mock(oBinding.oModel).expects("reportError")
 					.withExactArgs(oBinding + ": Failed to enhance query options for "
 						+ "auto-$expand/$select for child childPath", sClassName,
 						sinon.match.same(oCachePromise.getResult()));
+			} else {
+				this.mock(oCache).expects("setQueryOptions").never();
 			}
 
 			// code under test
 			oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
 				SyncPromise.resolve(mChildLocalQueryOptions));
 
-			return oPromise.then(function (sReducedPath) {
+			return Promise.all([oPromise, !bRejected && oCachePromise]).then(function (aResults) {
+				var sReducedPath = aResults[0];
+
 				assert.strictEqual(sReducedPath, undefined);
 				assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-				if (oCachePromise.isFulfilled()) {
+				if (!bRejected) {
 					assert.strictEqual(oBinding.oCachePromise.getResult(),
 						oCachePromise.getResult());
 				}
@@ -1086,7 +1088,7 @@ sap.ui.define([
 				sinon.match.same(oModelInterface.fetchMetadata))
 			.returns(mWrappedChildQueryOptions);
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), false)
+			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), undefined)
 			.returns(true);
 
 		// code under test
@@ -1182,7 +1184,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bImmutable, i) {
+[undefined, true].forEach(function (bImmutable, i) {
 	QUnit.test("fetchIfChildCanUseCache, advertised action #" + i, function (assert) {
 		var oMetaModel = {
 				fetchObject : function () {},
@@ -1333,8 +1335,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function (bImmutable) {
-	QUnit.test("fetchIfChildCanUseCache: non-deferred function and 'value'", function (assert) {
+[undefined, true].forEach(function (bImmutable) {
+	var sTitle = "fetchIfChildCanUseCache: non-deferred function and 'value', bImmutable = "
+			+ bImmutable;
+
+	QUnit.test(sTitle, function (assert) {
 		var oMetaModel = {
 				fetchObject : function () {},
 				getMetaPath : function (sPath) {

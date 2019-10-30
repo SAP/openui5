@@ -21567,4 +21567,50 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel);
 	});
+
+	//*********************************************************************************************
+	// Scenario: Cache is immutable although oCachePromise becomes pending again. The list binding
+	// inside the details must not prevent other bindings from sending their own request.
+	// JIRA: CPOUI5UISERVICESV3-2025
+	QUnit.test("CPOUI5UISERVICESV3-2025", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<ColumnListItem>\
+		<Text id="teamId" text="{Team_Id}"/>\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="detail">\
+	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+	<Text id="managerId" text="{MANAGER_ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				value : [{
+					Team_Id : "TEAM_01"
+				}]
+			})
+			.expectChange("teamId", ["TEAM_01"])
+			.expectChange("name", false)
+			.expectChange("managerId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100",
+					{value : [{ID : "2", Name : "Frederic Fall"}]})
+				.expectChange("name", ["Frederic Fall"])
+				.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID", {MANAGER_ID : "5"})
+				.expectChange("managerId", "5");
+
+			// code under test: bindings inside "detail" form need to send their own requests
+			that.oView.byId("detail").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
