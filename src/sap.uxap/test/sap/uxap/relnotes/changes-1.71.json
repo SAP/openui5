@@ -74,5 +74,21 @@
         ]
       }
     ]
+  },
+  "1.71.3": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "4fa283cb178d132ce9658c1f83a45b48a3867e7d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevented iOS scroll issue on overflow change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005875712019"
+          }
+        ]
+      }
+    ]
   }
 }
