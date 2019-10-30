@@ -520,7 +520,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_getActions: function(bSibling, oOverlay, bInvalidate) {
-			return new Promise(function(resolve) {
+			return new Promise(function(resolve, reject) {
 				var sSiblingOrChild = bSibling ? "asSibling" : "asChild";
 				if (!bInvalidate && oOverlay._mAddActions) {
 					return resolve(oOverlay._mAddActions[sSiblingOrChild]);
@@ -550,6 +550,9 @@ sap.ui.define([
 						oOverlay._mAddActions = oOverlay._mAddActions || {asSibling: {}, asChild: {}};
 						oOverlay._mAddActions[sSiblingOrChild] = mOverall;
 						resolve(mOverall);
+					})
+					.catch(function (vError) {
+						reject(vError);
 					});
 			}.bind(this));
 		},
@@ -917,11 +920,14 @@ sap.ui.define([
 						asSibling: aPromiseValues[0],
 						asChild: aPromiseValues[1]
 					};
+				})
+				.catch(function (vError) {
+					Log.error(vError);
 				});
 		},
 
 		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
-			return new Promise(function(resolve) {
+			return new Promise(function(resolve, reject) {
 				var bEditable = false;
 				var mParents = _getParents(bOverlayIsSibling, oOverlay);
 
@@ -962,9 +968,12 @@ sap.ui.define([
 							}.bind(this));
 					}.bind(this));
 				}.bind(this))
-					.then(function(bEditable) {
-						resolve(bEditable);
-					});
+				.then(function(bEditable) {
+					resolve(bEditable);
+				})
+				.catch(function (vError) {
+					reject(vError);
+				});
 			}.bind(this));
 		},
 
