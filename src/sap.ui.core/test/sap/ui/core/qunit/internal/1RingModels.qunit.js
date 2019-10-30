@@ -44,7 +44,8 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperBasics.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperExpression.qunit",
-		"sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit"
+		"sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit"
 	], function () {
 		function start() {
 			Core.detachThemeChanged(start);
