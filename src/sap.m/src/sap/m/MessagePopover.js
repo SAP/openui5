@@ -50,6 +50,8 @@ function(
 		 * It also exposes an event {@link sap.m.MessagePopover#event:activeTitlePress}, which can be used for navigation from a message to the source of the issue.
 		 * <h3>Notes:</h3>
 		 * <ul>
+		 * <li> If your application changes its model between two interactions with the <code>MessagePopover</code>, this could lead to outdated messages being shown.
+		 * To avoid this, you need to call <code>navigateBack</code> when the model is updated.</li>
 		 * <li> Messages can have descriptions pre-formatted with HTML markup. In this case, the <code>markupDescription</code> has to be set to <code>true</code>.</li>
 		 * <li> If the message cannot be fully displayed or includes a long description, the message popover provides navigation to the detailed description.</li>
 		 * </ul>
@@ -128,7 +130,12 @@ function(
 					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded.
 					 * Note: If there is only one message in the control, this state will be ignored and the details page of the message will be shown.
 					 */
-					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true}
+					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
+
+					/**
+					 * Defines whether the MessageItems are grouped or not.
+					 */
+					groupItems: { type: "boolean", group: "Behavior", defaultValue: false }
 				},
 				defaultAggregation: "items",
 				aggregations: {
@@ -431,6 +438,8 @@ function(
 						cloneBinding: true
 					}));
 				}, this);
+
+				this.navigateBack();
 
 				this._bItemsChanged = false;
 			}
@@ -749,6 +758,24 @@ function(
 			this._oMessageView.setModel(oModel, sName);
 
 			return Control.prototype.setModel.apply(this, arguments);
+		};
+		/**
+		 * Sets the value of the <code>groupItems</code> property.
+		 * @param {boolean} bValue A boolean indicating whether items should be grouped or not.
+		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
+		 * @public
+		 */
+		MessagePopover.prototype.setGroupItems = function (bValue) {
+			// MessagePopover is just a proxy to the MessageView
+			this.setProperty('groupItems', bValue, false);
+			this._oMessageView.setProperty("groupItems", bValue, false);
+
+			return this;
+		};
+
+		MessagePopover.prototype.navigateBack = function () {
+			// MessagePopover is just a proxy to the MessageView
+			this._oMessageView.navigateBack();
 		};
 
 		["invalidate", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
