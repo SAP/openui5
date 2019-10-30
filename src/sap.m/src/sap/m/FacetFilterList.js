@@ -82,6 +82,11 @@ sap.ui.define([
 
 			/**
 			 * Indicates that the list is displayed as a button when the FacetFilter type is set to <code>Simple</code>.
+			 *
+			 * <b>Note:</b> Set the <code>showPersonalization</code> property of the
+			 * <code>FacetFilter</code> to <code>true</code> when this property is set to
+			 * <code>false</code>. This is needed, as the non-active lists are not displayed,
+			 * and without a personalization button they can't be selected by the user.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -760,9 +765,12 @@ sap.ui.define([
 	 * @private
 	 */
 	FacetFilterList.prototype._handleSelectAllClick = function(bSelected) {
-		var bActive;
+		var bActive,
+			bAtLeastOneItemIsSelected,
+			aItems = this._getNonGroupItems(),
+			iItemsCount = aItems.length;
 
-		this._getNonGroupItems().forEach(function (oItem) {
+		aItems.forEach(function (oItem) {
 			if (bSelected) {
 				this._addSelectedKey(oItem.getKey(), oItem.getText());
 			} else {
@@ -771,9 +779,14 @@ sap.ui.define([
 			oItem.setSelected(bSelected, true);
 		}, this);
 
+		function isSelected(oItem) {
+			return oItem.getSelected();
+		}
+
 		if (this.getMode() === ListMode.MultiSelect) {
 			// At least one item needs to be selected to consider the list as active or it appeared as active once
-			bActive = this._getOriginalActiveState() || bSelected;
+			bAtLeastOneItemIsSelected = iItemsCount > 0 && iItemsCount === aItems.filter(isSelected).length;
+			bActive = this._getOriginalActiveState() || (bSelected && bAtLeastOneItemIsSelected);
 			this.setActive(bActive);
 		}
 		setTimeout(this._updateSelectAllCheckBox.bind(this), 0);

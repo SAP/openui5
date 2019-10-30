@@ -191,10 +191,10 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
 
 
 		for (i = 0; i < iLength; i++) {
-			// add button only if the list is not empty
+			// add button only if the list is not empty or is active
 			var bListItems = aLists[i].getItems().length > 0,
-				bPersonalization = oControl.getShowPersonalization(),
-				bAddButton =  (oControl._bCheckForAddListBtn && bListItems) || !bPersonalization;
+				bListActive = aLists[i]._getOriginalActiveState(),
+				bAddButton = oControl._bCheckForAddListBtn && (bListItems || bListActive);
 
 			if (!oControl._bCheckForAddListBtn || bAddButton) {
 				oButton = oControl._getButtonForList(aLists[i]);

@@ -155,6 +155,8 @@ sap.ui.define([
 		properties : {
 			/**
 			 * If set to <code>true</code> and the FacetFilter type is <code>Simple</code>, then the Add Facet icon will be displayed and each facet button will also have a Facet Remove icon displayed beside it, allowing the user to deactivate the facet.
+			 *
+			 * <b>Note:</b> Always set this property to <code>true</code> when your facet lists are not active, so that the user is able to select them and interact with them.
 			 */
 			showPersonalization : {type : "boolean", group : "Appearance", defaultValue : false},
 
