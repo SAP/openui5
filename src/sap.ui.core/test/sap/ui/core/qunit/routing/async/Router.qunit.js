@@ -3263,6 +3263,14 @@ sap.ui.define([
 					}
 				});
 
+				sap.ui.jsview("notFound", {
+					createContent : function() {
+						return new Button({
+							text: "Not Found"
+						});
+					}
+				});
+
 				var ParentComponent;
 
 				ParentComponent = UIComponent.extend("namespace." + suffix + ".ParentComponent", {
@@ -3299,6 +3307,13 @@ sap.ui.define([
 									options: {
 										manifest: false
 									}
+								},
+								notFound: {
+									name: "notFound",
+									type: "View",
+									viewType: "JS",
+									controlId: "shell",
+									controlAggregation: "content"
 								}
 							}
 						}
@@ -3405,20 +3420,38 @@ sap.ui.define([
 			iHomeRouteMatchCount = 0;
 
 		var pHomeRouteMatched = new Promise(function(resolve, reject) {
-			oRouter.getRoute("home").attachMatched(function() {
+			var fnMatched = function() {
+				this.detachMatched(fnMatched);
+
 				iHomeRouteMatchCount++;
 				var oContainer = that.oParentComponent.getRootControl(),
 					oShell = oContainer.byId("shell"),
-					oNestedComponent = oShell.getContent()[0].getComponentInstance();
+					oControl = oShell.getContent()[0];
 
-				resolve(oNestedComponent);
-			});
+				if (oControl.isA("sap.ui.core.ComponentContainer")) {
+					resolve(oControl.getComponentInstance());
+				}
+			};
+			oRouter.getRoute("home").attachMatched(fnMatched);
 		});
 
 		return pHomeRouteMatched.then(function(oNestedComponent) {
 			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
 			var oNestedRouter = oNestedComponent.getRouter(),
 				sId = "productA";
+
+			oRouter.navTo("home", {}, {
+				home: {
+					route: "product",
+					parameters: {
+						id: sId
+					}
+				}
+			});
+
+			oRouter.getRoute("home").attachMatched(function() {
+				assert.ok(false, "The home route shouldn't be matched again");
+			});
 
 			return new Promise(function(resolve, reject) {
 				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
@@ -3427,15 +3460,11 @@ sap.ui.define([
 					var oParameters = oEvent.getParameter("arguments");
 					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
 
-					resolve();
-				});
-				oRouter.navTo("home", {}, {
-					home: {
-						route: "product",
-						parameters: {
-							id: sId
-						}
-					}
+					// wait 100ms since the matched event from oRouter is fired after this call stack
+					// to guarantee that no further matched event is fired on the home route in oRouter
+					setTimeout(function() {
+						resolve();
+					}, 100);
 				});
 			});
 		});
@@ -3507,6 +3536,71 @@ sap.ui.define([
 					}
 				});
 			});
+		});
+	});
+
+	QUnit.test("navTo the same route after a manual Targets.display with a component should triger routeMatched event", function(assert) {
+		this.buildNestedComponentStructure(2, "NavTo2LevelsWithTargetDisplay");
+
+		var that = this,
+			oRouter = this.oParentComponent.getRouter(),
+			iHomeRouteMatchCount = 0;
+
+		var pHomeRouteMatched = new Promise(function(resolve, reject) {
+			var fnMatched = function() {
+				this.detachMatched(fnMatched);
+
+				iHomeRouteMatchCount++;
+				var oContainer = that.oParentComponent.getRootControl(),
+					oShell = oContainer.byId("shell"),
+					oControl = oShell.getContent()[0];
+
+				if (oControl.isA("sap.ui.core.ComponentContainer")) {
+					resolve(oControl.getComponentInstance());
+				}
+			};
+			oRouter.getRoute("home").attachMatched(fnMatched);
+		});
+
+		return pHomeRouteMatched.then(function(oNestedComponent) {
+			assert.equal(iHomeRouteMatchCount, 1, "home route is matched once");
+
+			// display another target with in the top level router
+			// this should reset the hash in its RouterHashChanger in order to allow
+			// a navTo to the same route which is matched before displaying the notFound
+			return oRouter.getTargets().display("notFound").then(function() {
+				return oNestedComponent;
+			});
+		}).then(function(oNestedComponent) {
+			var oNestedRouter = oNestedComponent.getRouter(),
+				sId = "productA";
+
+			var oNestedRouterMatched = new Promise(function(resolve, reject) {
+				oNestedRouter.getRoute("product").attachMatched(function(oEvent) {
+					var oParameters = oEvent.getParameter("arguments");
+					assert.equal(oParameters.id, sId, "correct route is matched with parameter");
+
+					resolve();
+				});
+			});
+
+			var oRouterMatched = new Promise(function(resolve, reject) {
+				oRouter.getRoute("home").attachMatched(function() {
+					assert.ok(true, "home route is matched again");
+					resolve();
+				});
+			});
+
+			oRouter.navTo("home", {}, {
+				home: {
+					route: "product",
+					parameters: {
+						id: sId
+					}
+				}
+			});
+
+			return Promise.all([oRouterMatched, oNestedRouterMatched]);
 		});
 	});
 

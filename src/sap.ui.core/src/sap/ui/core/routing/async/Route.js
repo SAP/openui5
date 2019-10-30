@@ -29,6 +29,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 				that = this;
 
 			oRouter._matchedRoute = this;
+			oRouter._bMatchingProcessStarted = true;
 
 			if (!oSequencePromise || oSequencePromise === true) {
 				bInitial = true;
@@ -104,6 +105,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/ui/thirdparty/jquery"], fun
 			}
 
 			return oSequencePromise.then(function(oResult) {
+				oRouter._bMatchingProcessStarted = false;
 				var aResult, aViews, aControls;
 
 				// The legacy config uses single target to display which makes the promise resolve with an object
