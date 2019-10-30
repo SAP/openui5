@@ -642,15 +642,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Override clone method to avoid conflict between generic cloning of content
+	 * Creates a clone of this view.
+	 *
+	 * Overrides the clone method to avoid conflicts between generic cloning of the content aggregation
 	 * and content creation as defined by the UI5 Model View Controller lifecycle.
 	 *
-	 * For more details see the development guide section about Model View Controller in UI5.
+	 * For more details see the {@link topic:a575619e25c2487f904bae71764e2350 View Cloning} section in
+	 * the documentation.
 	 *
-	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned element id
-	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.core.Element} reference to the newly created clone
-	 * @protected
+	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element IDs
+	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
+	 * @returns {sap.ui.core.mvc.View} Reference to the newly created clone
+	 * @public
 	 */
 	View.prototype.clone = function(sIdSuffix, aLocalIds) {
 		var mSettings = {}, sKey, oClone;

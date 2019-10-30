@@ -237,7 +237,7 @@ sap.ui.define([
 		return this.setAggregation("detailBox", oLightBox);
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	Avatar.prototype.clone = function () {

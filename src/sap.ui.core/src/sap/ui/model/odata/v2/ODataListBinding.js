@@ -1317,7 +1317,7 @@ sap.ui.define([
 	 * Please note that a custom filter function is only supported with operation mode <code>sap.ui.model.odata.OperationMode.Client</code>.
 	 *
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter or array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted. If it is not given, the standard behaviour applies
+	 * @param {sap.ui.model.FilterType} [sFilterType=Control] Type of the filter which should be adjusted. If it is not given, type <code>Control</code> is assumed
 	 * @param {boolean} [bReturnSuccess=false] Whether the success indicator should be returned instead of <code>this</code>
 	 * @return {sap.ui.model.ListBinding} Reference to <code>this</code> to facilitate method chaining or a boolean success indicator
 	 *

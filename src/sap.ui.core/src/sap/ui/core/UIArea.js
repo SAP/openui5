@@ -1099,11 +1099,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles field group change or validation based on the given event.
-	 * Triggers the changeGroup event (with reason: validate) for current field group control.
+	 * Handles field group change or validation based on the given browser event.
 	 *
-	 * @param {jQuery.Event} oEvent the jQuery event object
-	 * @param {sap.ui.core.Element} oElement the element where the event occured
+	 * Triggers the <code>changeGroup</code> event (with reason: validate) for current field group control.
+	 *
+	 * @param {jQuery.Event} oEvent Browser event
+	 * @param {sap.ui.core.Element} oElement UI5 <code>Element</code> where the event occurred
 	 *
 	 * @return {boolean} true if the field group control was set or validated.
 	 *
@@ -1112,7 +1113,7 @@ sap.ui.define([
 	UIArea.prototype._handleGroupChange = function(oEvent, oElement) {
 		var oKey = UIArea._oFieldGroupValidationKey;
 		if (oEvent.type === "focusin") {
-			//check for field group change delayed to allow focus forwarding and resetting focus after selection
+			// delay the check for a field group change to allow focus forwarding and resetting focus after selection
 			if (UIArea._iFieldGroupDelayTimer) {
 				clearTimeout(UIArea._iFieldGroupDelayTimer);
 				UIArea._iFieldGroupDelayTimer = null;
@@ -1125,7 +1126,7 @@ sap.ui.define([
 				oEvent.shiftKey === oKey.shiftKey &&
 				oEvent.altKey === oKey.altKey &&
 				oEvent.ctrlKey === oKey.ctrlKey) {
-			//check for field group change (validate) after events where processed by elements
+			// check for field group change (validate) only after events where processed by elements
 			if (UIArea._iFieldGroupTriggerDelay) {
 				clearTimeout(UIArea._iFieldGroupTriggerDelay);
 			}
