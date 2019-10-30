@@ -2166,14 +2166,19 @@ sap.ui.define([
 			oBinding1 = new Binding(oModel, "relative"),
 			oBinding2 = new Binding(oModel, "/absolute");
 
+		assert.deepEqual(oModel.aAllBindings, []);
+
 		// code under test
-		assert.deepEqual(oModel.getAllBindings(), []);
+		assert.deepEqual(oModel.getAllBindings(), oModel.aAllBindings);
+		assert.notStrictEqual(oModel.getAllBindings(), oModel.aAllBindings);
 
 		oModel.bindingCreated(oBinding1);
 		oModel.bindingCreated(oBinding2);
+		assert.deepEqual(oModel.aAllBindings, [oBinding1, oBinding2]);
 
 		// code under test
-		assert.deepEqual(oModel.getAllBindings(), [oBinding1, oBinding2]);
+		assert.deepEqual(oModel.getAllBindings(), oModel.aAllBindings);
+		assert.notStrictEqual(oModel.getAllBindings(), oModel.aAllBindings);
 	});
 
 	//*********************************************************************************************
@@ -2184,7 +2189,6 @@ sap.ui.define([
 			},
 			oModel = createModel(),
 			oContext1 = {/*any context*/},
-			oModelMock = this.mock(oModel),
 			vParameter = {},
 			oResolvedBinding = {
 				getContext : function () {},
@@ -2208,13 +2212,14 @@ sap.ui.define([
 			},
 			oUnresolvedBinding2Mock = this.mock(oUnresolvedBinding2);
 
-		oModelMock.expects("getAllBindings").withExactArgs().returns([]);
+		this.mock(oModel).expects("getAllBindings").never();
+		oModel.aAllBindings = [];
 
 		// code under test
 		assert.strictEqual(oModel.withUnresolvedBindings(), false);
 
-		oModelMock.expects("getAllBindings").withExactArgs().returns([oResolvedBinding,
-			oUnresolvedBinding0, oAbsoluteBinding, oUnresolvedBinding1, oUnresolvedBinding2]);
+		oModel.aAllBindings = [oResolvedBinding, oUnresolvedBinding0, oAbsoluteBinding,
+			oUnresolvedBinding1, oUnresolvedBinding2];
 
 		this.mock(oResolvedBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(oResolvedBinding).expects("getContext").withExactArgs().returns(oContext1);
@@ -2236,8 +2241,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oModel.withUnresolvedBindings("anyCallback", vParameter), true);
 
-		oModelMock.expects("getAllBindings").withExactArgs()
-			.returns([oUnresolvedBinding0, oUnresolvedBinding2]);
+		oModel.aAllBindings = [oUnresolvedBinding0, oUnresolvedBinding2];
 
 		oUnresolvedBinding0Mock.expects("isRelative").withExactArgs().returns(true);
 		oUnresolvedBinding0Mock.expects("getContext").withExactArgs().returns(undefined);
