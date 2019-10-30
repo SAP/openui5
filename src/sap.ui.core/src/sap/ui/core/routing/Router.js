@@ -245,6 +245,18 @@ sap.ui.define([
 
 				if (oTargetsConfig) {
 					this._oTargets = this._createTargets(this._oConfig, oTargetsConfig);
+					this._oTargets.attachDisplay(function(oEvent) {
+						if (this.isInitialized() && !this._bMatchingProcessStarted) {
+							var oHashChanger = this.getHashChanger();
+							// check the type of oHashChanger before calling the function "resetHash"
+							// which only exists on RouterHashChanger
+							if (oHashChanger instanceof RouterHashChanger) {
+								// reset the hash to allow the match with the previous route after
+								// displaying a target without involving the router
+								oHashChanger.resetHash();
+							}
+						}
+					}, this);
 				}
 
 				var that = this,

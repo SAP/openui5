@@ -176,6 +176,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Reset the hash
+	 *
+	 * This is needed for allowing to fire the hashChanged event with the previous hash again
+	 * after displaying a Target without involving a Router.
+	 *
+	 * @return {sap.ui.core.routing.RouterHashChanger} The current RouterHashChanger for chaining the method
+	 * @protected
+	 */
+	RouterHashChanger.prototype.resetHash = function() {
+		this.hash = undefined;
+		return this;
+	};
+
+	/**
 	 * Sets the hash to a certain value. When using this function, a browser history entry is written.
 	 * If you do not want to have an entry in the browser history, please use the {@link #replaceHash} function.
 	 *
