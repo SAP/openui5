@@ -198,12 +198,14 @@ sap.ui.define([
 		ProductSwitch.prototype._setSelection = function (vItem) {
 			if (this._oCurrentSelectedItem) {
 				this._oCurrentSelectedItem.removeStyleClass("sapFPSItemSelected");
+				this._oCurrentSelectedItem.$().removeAttr("aria-checked");
 			}
 
 			this._oCurrentSelectedItem = vItem;
 
 			if (this._oCurrentSelectedItem) {
 				this._oCurrentSelectedItem.addStyleClass("sapFPSItemSelected");
+				this._oCurrentSelectedItem.$().attr("aria-checked", "true");
 			}
 		};
 
@@ -229,7 +231,7 @@ sap.ui.define([
 
 			this._setSelection(vItem);
 
-			return this.setAssociation("selectedItem", vItem);
+			return this.setAssociation("selectedItem", vItem, true);
 		};
 
 		ProductSwitch.prototype.addItem = function (oItem) {
@@ -290,6 +292,23 @@ sap.ui.define([
 			this._gridContainerItemsUpdate();
 
 			return aDestroyedItems;
+		};
+
+		ProductSwitch.prototype._getItemsCount = function () {
+			return this.getItems().length;
+		};
+
+		ProductSwitch.prototype._getItemPosition = function (oItem) {
+			var aItems = this.getItems(),
+				iIndex;
+
+			aItems.forEach(function (oItemInner, iIndexInner) {
+				if (oItemInner === oItem) {
+					iIndex = iIndexInner + 1;
+				}
+			});
+
+			return iIndex;
 		};
 
 		return ProductSwitch;
