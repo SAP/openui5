@@ -1600,6 +1600,18 @@ function(
 		Input.prototype._hideSuggestionPopup = function () {
 			var oPopup = this._oSuggPopover._oPopover;
 
+			// The IE moves the cursor position at the beginning when there is a binding and delay from the back-end
+			// The workaround is to save the focus info which includes position and reset it after updating the DOM
+			function setDomValue() {
+				if (Device.browser.internet_explorer) {
+					var oFocusInfo = this.getFocusInfo();
+					this.setDOMValue(this._oSuggPopover._sTypedInValue);
+					this.applyFocusInfo(oFocusInfo);
+				} else {
+					this.setDOMValue(this._oSuggPopover._sTypedInValue);
+				}
+			}
+
 			// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 			if (!this._bUseDialog) {
 				if (oPopup.isOpen()) {
@@ -1607,7 +1619,7 @@ function(
 						this._oSuggPopover._iPopupListSelectedIndex = -1;
 						this.cancelPendingSuggest();
 						if (this._oSuggPopover._sTypedInValue) {
-							this.setDOMValue(this._oSuggPopover._sTypedInValue);
+							setDomValue.call(this);
 						}
 						this._oSuggPopover._oProposedItem = null;
 						oPopup.close();
