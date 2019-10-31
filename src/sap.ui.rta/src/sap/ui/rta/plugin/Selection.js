@@ -180,7 +180,20 @@ function (
 				this._setFocusOnOverlay(oNextSiblingOverlay, oEvent);
 				oEvent.preventDefault();
 			}
+		} else if (oEvent.keyCode === KeyCodes.ESCAPE) {
+			if (oOverlay) {
+				this._deselectOverlays();
+			}
 		}
+	};
+
+	/**
+	 * Deselect all selected Overlays
+	 *
+	 * @private
+	 */
+	Selection.prototype._deselectOverlays = function () {
+		this.getDesignTime().getSelectionManager().reset();
 	};
 
 	Selection.prototype._selectOverlay = function (oEvent) {
