@@ -74,13 +74,10 @@
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.SalesOrders.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "SalesOrdersSandbox.js"
-			}]
 		}
 	}
 }

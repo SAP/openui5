@@ -1,33 +1,20 @@
 /*!
  * ${copyright}
  */
-
-// Provides a sandbox for this component:
-// For the "realOData" case when the component runs with backend, the v4.ODataModel constructor
-//   is wrapped so that the URL is adapted to a proxy URL and certain constructor parameters are
-//   taken from URL parameters
-// For the "non-realOData" case, sets up a mock server for the backend requests.
-//
-// Note: For setup to work properly, this module has to be loaded *before* model instantiation
-//   from the component's manifest. Add it as "js" resource to sap.ui5/resources in the
-//   manifest.json to achieve that.
+// The SandboxModel is used in the manifest instead of OData V4 model for the following purposes:
+// For the "realOData" case, the URL is adapted to a proxy URL and certain constructor parameters
+// are taken from URL parameters.
+// For the "non-realOData" case, a mock server for the backend requests is set up.
 sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/sinon"
-], function (UriParameters, ODataModel, TestUtils, sinon) {
+	"sap/ui/thirdparty/sinon-4"
+], function (UriParameters, ODataModel, SubmitMode, TestUtils, sinon) {
 	"use strict";
 
-	var oSandbox = sinon.sandbox.create(),
-		sUpdateGroupId = UriParameters.fromQuery(window.location.search).get("updateGroupId")
-			|| TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId")
-			|| undefined;
-
-	function setupMockServer() {
-		// TODO: Add Mockdata for single sales orders *with expand*
-		// http://localhost:8080/testsuite/proxy/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList('050001110')?custom-option=value&$expand=SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))
-		TestUtils.setupODataV4Server(oSandbox, {
+	var mFixture = {
 			"$metadata?custom-option=value" : {source : "metadata.xml"},
 			"BusinessPartnerList?custom-option=value&$orderby=CompanyName&$filter=BusinessPartnerRole%20eq%20'01'&$select=BusinessPartnerID,CompanyName&$skip=0&$top=100" : {
 				source : "BusinessPartnerList.json"
@@ -332,7 +319,7 @@ sap.ui.define([
 				source : "SalesOrderItemsList_1.json"
 			},
 			"POST SalesOrderList?custom-option=value" : [{
-				code: 400,
+				code : 400,
 				ifMatch : /,"Note":"RAISE_ERROR"/g,
 				source : "POST-SalesOrderList.Error.json"
 			}, {
@@ -348,19 +335,19 @@ sap.ui.define([
 				source : "POST-SalesOrderList_NEW1.json"
 			}],
 			"POST SalesOrderList('0500000004')/SO_2_SOITEM?custom-option=value" : [{
-				code: 400,
+				code : 400,
 				ifMatch : /,"Quantity":"0",/g,
 				source : "POST-SalesOrderList('0500000004')-SO_2_SOITEM.Error.json"
 			}, {
 				source : "POST-SalesOrderList('0500000004')-SO_2_SOITEM.json"
 			}],
 			"PATCH SalesOrderList('0500000004')?custom-option=value" : [{
-				code: 400,
+				code : 400,
 				ifMatch : /{"Note":"RAISE_ERROR"}/g,
 				source : "PATCH-SalesOrderList('0500000004').Error.json"
 			}],
 			"PATCH SalesOrderList('0500000001')?custom-option=value" : [{
-				code: 204,
+				code : 204,
 				headers : {"ETag" : "New ETag"},
 				ifMatch : /{"Note":"204"}/g
 			}, {
@@ -373,43 +360,60 @@ sap.ui.define([
 				},
 				message : {"Note" : "You have used the new ETag!"}
 			}]
-		}, "sap/ui/core/sample/odata/v4/SalesOrders/data",
-		"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
-	}
+		};
 
-	function adaptModelConstructor() {
-		var Constructor = sap.ui.model.odata.v4.ODataModel,
-			oUriParameters = UriParameters.fromQuery(window.location.search);
+	function adaptParameters(mParameters) {
+		var oUriParameters = UriParameters.fromQuery(window.location.search),
+			sUpdateGroupId = oUriParameters.get("updateGroupId") ||
+				TestUtils.retrieveData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId");
 
-		oSandbox.stub(sap.ui.model.odata.v4, "ODataModel", function (mParameters) {
-			// clone: do not modify constructor call parameter
-			mParameters = Object.assign({}, mParameters, {
-				earlyRequests : oUriParameters.get("earlyRequests") !== "false",
-				groupId : oUriParameters.get("$direct") ? "$direct" : mParameters.groupId,
-				serviceUrl : TestUtils.proxy(mParameters.serviceUrl),
-				updateGroupId : sUpdateGroupId || mParameters.updateGroupId
-			});
-			if (sUpdateGroupId) {
-				if (sUpdateGroupId in mParameters.groupProperties) {
-					// "SalesOrderUpdateGroup" should have same submit mode as default update group
-					mParameters.groupProperties.SalesOrderUpdateGroup
-						= mParameters.groupProperties[sUpdateGroupId];
-				} else if (sUpdateGroupId.startsWith("$auto")) {
-					mParameters.groupProperties.SalesOrderUpdateGroup.submit = "Auto";
-				} else if (sUpdateGroupId === "$direct") {
-					mParameters.groupProperties.SalesOrderUpdateGroup.submit = "Direct";
-				}
-			}
-			return new Constructor(mParameters);
+		if (!TestUtils.isRealOData() && !sUpdateGroupId) {
+			return mParameters;
+		}
+
+		// clone: do not modify constructor call parameter
+		mParameters = Object.assign({}, mParameters, {
+			earlyRequests : oUriParameters.get("earlyRequests") !== "false",
+			groupId : oUriParameters.get("$direct") ? "$direct" : mParameters.groupId,
+			serviceUrl : TestUtils.proxy(mParameters.serviceUrl),
+			updateGroupId : sUpdateGroupId || mParameters.updateGroupId
 		});
+
+		if (sUpdateGroupId) {
+			if (sUpdateGroupId in mParameters.groupProperties) {
+				// "SalesOrderUpdateGroup" should have same submit mode as default update group
+				mParameters.groupProperties.SalesOrderUpdateGroup
+					= mParameters.groupProperties[sUpdateGroupId];
+			} else if (sUpdateGroupId.startsWith("$auto")) {
+				mParameters.groupProperties.SalesOrderUpdateGroup.submit = SubmitMode.Auto;
+			} else if (sUpdateGroupId === "$direct") {
+				mParameters.groupProperties.SalesOrderUpdateGroup.submit = SubmitMode.Direct;
+			}
+		}
+
+		return mParameters;
 	}
 
-	if (TestUtils.isRealOData() || sUpdateGroupId) {
-		adaptModelConstructor();
-	}
-	if (!TestUtils.isRealOData()) {
-		setupMockServer();
-	}
+	return ODataModel.extend("sap.ui.core.sample.odata.v4.SalesOrders.SandboxModel", {
+		constructor : function (mParameters) {
+			var oModel, oSandbox;
 
-	TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.sandbox", oSandbox);
+			if (!TestUtils.isRealOData()) {
+				oSandbox = sinon.sandbox.create();
+				TestUtils.setupODataV4Server(oSandbox, mFixture,
+					"sap/ui/core/sample/odata/v4/SalesOrders/data",
+					"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
+			}
+
+			oModel = new ODataModel(adaptParameters(mParameters));
+			oModel.destroy = function () {
+				if (oSandbox) {
+					oSandbox.restore();
+					oSandbox = undefined;
+				}
+				return ODataModel.prototype.destroy.apply(this, arguments);
+			};
+			return oModel;
+		}
+	});
 });
