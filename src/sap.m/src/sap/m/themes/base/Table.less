@@ -246,13 +246,8 @@ html[data-sap-ui-browser='ie11'] .sapMListTblNavigatedCell > .sapMLIBNavigated {
 	padding-left: 1rem;
 }
 
-.sapMListTblCell.sapMListTblCellNoData,
-.sapMListTblCell:nth-last-child(2) {
+.sapMListTblCell.sapMListTblCellNoData {
 	padding-right: 1rem;
-}
-
-.sapMListTblHasNav .sapMListTblCell:not(.sapMListTblHeaderCell):nth-last-child(2) {
-	padding-right: 0;
 }
 
 .sapMListTblSelCol,
@@ -398,15 +393,6 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH {
 	padding-left: .5rem;
 }
 
-.sapMListTblHeaderCell:nth-last-child(2) {
-	padding-right: .5rem;
-}
-
-/* padding-right: 0.25rem added to Active column headers so that the focus outline does not overlap the header content */
-.sapMListTblHasNav .sapMListTblHeaderCell:nth-last-child(2) > .sapMColumnHeader {
-	padding-right: 0.25rem;
-}
-
 .sapMColumnHeaderActive:hover {
 	background-color: @sapUiListHoverBackground;
 }
@@ -506,15 +492,6 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH {
 	height: 2rem;
 }
 
-/* overwrite padding if Navigation is present, to align header and cell content */
-.sapUiSizeCompact .sapMListTblHasNav .sapMListTblCell:not(.sapMListTblHeaderCell):nth-last-child(2) {
-	padding-right: 0.25rem;
-}
-
-.sapUiSizeCompact .sapMListTblHasNav .sapMListTblHeaderCell:nth-last-child(2) {
-	padding-right: 0;
-}
-
 /* reset height of cells when no header is defined */
 .sapMListTblHeaderNone > .sapMListTblCell {
 	height: 0;
@@ -534,8 +511,4 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH {
 
 .sapUiSizeCompact .sapMListTblHighlightCol + .sapMListTblCell.sapMListTblHeaderCell {
 	padding-left: .5rem;
-}
-
-.sapUiSizeCompact .sapMListTblHeaderCell:nth-last-child(2) {
-	padding-right: .5rem;
 }
