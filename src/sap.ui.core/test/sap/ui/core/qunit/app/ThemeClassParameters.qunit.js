@@ -18,11 +18,30 @@ sap.ui.define(["sap/ui/core/theming/Parameters"], function (Parameters) {
 	}
 
 	/**
+	 * converts short notation hex color code to long notation
+	 * @param input, e.g. #abc
+	 * @returns {string}, e.g. #aabbcc
+	 */
+	function unifyHexNotation(input) {
+		if (input.length === 4) {
+			var colorShortNotationRegexp = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+			var sResult = colorShortNotationRegexp.exec(input);
+			if (sResult) {
+				return "#" + sResult[1] + sResult[1] + sResult[2] + sResult[2] + sResult[3] + sResult[3];
+			}
+		}
+		return input;
+	}
+
+	/**
 	 * converts a hex color value to RGB
 	 * @param {string} sHex a hex color value in #rgb or #rrggbb value
 	 * @return {string} the rgv(r,g,b) color value
 	 */
 	function hexToRgb(sHex) {
+
+		sHex = unifyHexNotation(sHex);
+
 		var sResult = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(sHex);
 
 		return (sResult ? "rgb(" + parseInt(sResult[1], 16) + ", " + parseInt(sResult[2], 16) + ", " + parseInt(sResult[3], 16) + ")" : sHex);
