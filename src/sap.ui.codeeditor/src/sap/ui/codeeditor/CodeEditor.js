@@ -171,8 +171,38 @@ sap.ui.define([
 					}
 				},
 				events: {
-					liveChange: {},
-					change: {}
+
+					/**
+					 * Fired when the value is changed by user interaction - each keystroke, delete, paste, etc.
+					 */
+					liveChange: {
+						parameters: {
+							/**
+							 * The current value of the code editor.
+							 */
+							value: { type: "string" },
+							/**
+							 * The underlying change event of the Ace code editor.
+							 */
+							editorEvent: { type: "object" }
+						}
+					},
+
+					/**
+					 * Fired when the value has changed and the focus leaves the code editor.
+					 */
+					change: {
+						parameters: {
+							/**
+							 * The current value of the code editor.
+							 */
+							value: { type: "string" },
+							/**
+							 * The old value of the code editor.
+							 */
+							oldValue: { type: "string" }
+						}
+					}
 				},
 				defaultProperty: "content"
 			},
