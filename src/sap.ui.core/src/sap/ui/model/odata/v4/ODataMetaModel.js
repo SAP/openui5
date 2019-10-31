@@ -1002,7 +1002,7 @@ sap.ui.define([
 							// sTarget does not matter because no further steps follow
 							return false; // no further steps must happen
 						}
-						if (mScope.$Annotations[sIndividualOverloadTarget][sTerm]) {
+						if (sTerm in mScope.$Annotations[sIndividualOverloadTarget]) {
 							// "external targeting of individual operation overload"
 							sTarget = sIndividualOverloadTarget;
 							vResult = mScope; // see below
