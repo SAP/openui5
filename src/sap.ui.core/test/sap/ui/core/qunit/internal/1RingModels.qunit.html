@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+
+<!--
+	Tested class: all UI5 Core - Models code
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>One Ring To Rule Them All - UI5 Core - Models</title>
+
+		<base href="../../../../../../">
+
+		<script src="test-resources/sap/ui/core/shared-config.js"></script>
+		<link href="resources/sap/ui/thirdparty/qunit-2.css" media="screen" rel="stylesheet">
+		<script src="resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="resources/sap/ui/thirdparty/sinon-4.js"></script>
+		<!-- minimal bootstrap code starts here -->
+		<!-- @see sap-ui-core.js, @see BootstrapMinimal.qunit.html -->
+		<script nomodule src="resources/sap/ui/thirdparty/baseuri.js"></script>
+		<script src="resources/sap/ui/thirdparty/es6-promise.js"></script>
+		<script nomodule src="resources/sap/ui/thirdparty/es6-shim-nopromise.js"></script>
+		<script src="resources/ui5loader.js"></script>
+		<script src="test-resources/sap/ui/core/qunit/internal/1Ring_handleAbort.js"></script>
+		<script id="sap-ui-bootstrap" src="resources/ui5loader-autoconfig.js"
+			data-sap-ui-compatversion="edge"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+				"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
+				"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit"
+			}'>
+		</script>
+		<!-- end of minimal bootstrap code -->
+		<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
+		<script src="resources/sap/ui/qunit/qunit-coverage.js"
+			data-cover-flags="branchTracking"
+			data-sap-ui-cover-never="[.qunit.js]"
+			data-sap-ui-cover-only="[/odata/type/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel]"
+			></script>
+		<script src="resources/sap/ui/test/BranchTracking.js"
+			data-threshold="100"></script>
+
+		<script src="test-resources/sap/ui/core/qunit/internal/1RingModels.qunit.js"></script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
