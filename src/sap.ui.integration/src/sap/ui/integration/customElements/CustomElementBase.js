@@ -88,8 +88,6 @@ sap.ui.define([
 		} else if (this._mAllAssociations[sCamelizedAttributeName]) {
 			var vValue = document.getElementById(vNewValue)._getControl();
 			this._mAllAssociations[sCamelizedAttributeName].set(this._oControlInstance, vValue);
-		} else {
-			Log.error("Unknown attribute " + sAttributeName + " set to " + this.id);
 		}
 	};
 
@@ -106,7 +104,6 @@ sap.ui.define([
 		// holder for UIArea
 		if (!this.firstElementChild) {
 			var oUiArea = document.createElement("div");
-			oUiArea.style.display = "block"; // display: contents looks like the best choice, but it is not supported on all browsers
 			this.appendChild(oUiArea);
 		}
 	};
@@ -218,12 +215,15 @@ sap.ui.define([
 
 	/**
 	 * Creates new class which will inherit CustomElementBase.
+	 * An optional object can be passed with the property <code>privateProperties</code> as an array of strings for each of the control's private properties that should not be exposed by the custom element.
 	 *
 	 * @static
 	 * @param {sap.ui.core.Control} ControlClass A UI5 class that will be wrapped in the custom html element.
+	 * @param {object} [mSettings] Object with settings for the new control.
+	 * @param {string[]} [mSettings.privateProperties] The control's private properties that should not be exposed by the custom element.
 	 * @returns {sap.ui.integration.customElements.CustomElementBase} New class which inherits CustomElementBase.
 	 */
-	CustomElementBase.extend = function (ControlClass) {
+	CustomElementBase.extend = function (ControlClass, mSettings) {
 
 		function CustomElementSubClass() {
 			return CustomElementBase.apply(this, arguments);
@@ -242,6 +242,10 @@ sap.ui.define([
 		oPrototype._aAllProperties = []; // holds all properties and associations in "camelCase"
 
 		for (sKey in oPrototype._mAllProperties) {
+			if (mSettings && mSettings.privateProperties && mSettings.privateProperties.indexOf(sKey) !== -1) {
+				// do not expose property if it's passed as a private when defined
+				continue;
+			}
 			oPrototype._aAllProperties.push(sKey);
 		}
 

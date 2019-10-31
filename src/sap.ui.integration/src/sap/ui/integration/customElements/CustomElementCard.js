@@ -20,7 +20,9 @@ sap.ui.require([
 	 * @alias sap.ui.integration.customElements.CustomElementCard
 	 * @private
 	 */
-	var CustomElementCard = CustomElementBase.extend(Card);
+	var CustomElementCard = CustomElementBase.extend(Card, {
+		privateProperties: ["width", "height"]
+	});
 
 	/* Public methods */
 
