@@ -92,7 +92,7 @@ sap.ui.define([
 				bUpdated = oContext && oContext.isUpdated(),
 				bForceRefresh = oContext && oContext.isRefreshForced();
 
-			if (that.bCreatePreliminaryContext && oContext && that.oElementContext && that.oElementContext.isPreliminary()) {
+			if (that.bCreatePreliminaryContext && oContext && that.oElementContext) {
 				that.oElementContext.setPreliminary(false);
 				that.oModel._updateContext(that.oElementContext, oContext.getPath());
 				that._fireChange({ reason: ChangeReason.Context }, false, true);
@@ -226,7 +226,7 @@ sap.ui.define([
 				mParameters.groupId = this.sRefreshGroupId;
 			}
 			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, mParameters, function(oContext) {
-				if (that.bCreatePreliminaryContext && oContext && that.oElementContext && that.oElementContext.isPreliminary()) {
+				if (that.bCreatePreliminaryContext && oContext && that.oElementContext) {
 					that.oElementContext.setPreliminary(false);
 					that.oModel._updateContext(that.oElementContext, oContext.getPath());
 					that._fireChange({ reason: ChangeReason.Context }, false, true);
@@ -314,7 +314,7 @@ sap.ui.define([
 				this.bPendingRequest = true;
 			}
 			var oContext = this.oModel.createBindingContext(this.sPath, this.oContext, this.mParameters, function(oContext) {
-				if (that.bCreatePreliminaryContext && oContext && that.oElementContext && that.oElementContext.isPreliminary()) {
+				if (that.bCreatePreliminaryContext && oContext && that.oElementContext) {
 					that.oElementContext.setPreliminary(false);
 					that.oModel._updateContext(that.oElementContext, oContext.getPath());
 					that._fireChange({ reason: ChangeReason.Context }, false, true);
