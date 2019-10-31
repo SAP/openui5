@@ -23,6 +23,7 @@
 				"files": [
 					"ToolPage.view.xml",
 					"ToolPage.controller.js",
+					"model/data.json",
 					"manifest.json"
 				]
 			}
