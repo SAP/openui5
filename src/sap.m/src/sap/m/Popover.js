@@ -1799,7 +1799,6 @@ sap.ui.define([
 
 			if ((iActualContentHeight > iMaxContentHeight) && this._hasSingleScrollableContent()) {
 				oCSS["max-height"] = Math.min(iMaxContentHeight, iActualContentHeight) + "px";
-				oCSS["height"] = "";
 			}
 
 			return oCSS;
