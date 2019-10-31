@@ -367,7 +367,7 @@ sap.ui.define([
 			scopeTest;
 
 		if (isNaN(scopeVal)) {
-			if (RegExp("^(auto|0)$|^[+-]?[0-9].?([0-9]+)?(px|em|rem|ex|%|in|cm|mm|pt|pc)$").test(cssSize)) {
+			if (RegExp("^(auto|0)$|^[+-\.]?[0-9].?([0-9]+)?(px|em|rem|ex|%|in|cm|mm|pt|pc)$").test(cssSize)) {
 				scopeTest = jQuery('<div style="display: none; width: ' + cssSize + '; margin: 0; padding:0; height: auto; line-height: 1; font-size: 1; border:0; overflow: hidden">&nbsp;</div>').appendTo(sap.ui.getCore().getStaticAreaRef());
 				scopeVal = scopeTest.width();
 				scopeTest.remove();
