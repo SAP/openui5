@@ -85,11 +85,11 @@
 	&.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitleTransparent {
 		.title-hover(transparent);
 	}
-
-	> .sapUxAPObjectPageHeaderStickied > .sapFDynamicPageTitle {
-		box-shadow: none;
-	}
   }
+}
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageNoNavigation) > .sapUxAPObjectPageHeaderStickied > .sapFDynamicPageTitle {
+	box-shadow: none;
 }
 
 // footer
