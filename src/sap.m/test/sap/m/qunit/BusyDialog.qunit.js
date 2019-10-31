@@ -5,11 +5,11 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/BusyDialog",
 	"sap/ui/Device",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/InvisibleText",
-	"jquery.sap.keycodes"
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -18,8 +18,10 @@ sap.ui.define([
 	jQuery,
 	JSONModel,
 	RenderManager,
-	InvisibleText
+	InvisibleText,
+	KeyCodes
 ) {
+	"use strict";
 	createAndAppendDiv("content");
 
 
@@ -350,7 +352,7 @@ sap.ui.define([
 		this.oBusyDialog.attachClose(fnEventSpy);
 
 		// Act
-		sap.ui.test.qunit.triggerKeydown(this.oBusyDialog.getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+		qutils.triggerKeydown(this.oBusyDialog.getFocusDomRef(), KeyCodes.ESCAPE);
 		this.clock.tick(500);
 
 		// Assert
@@ -571,5 +573,30 @@ sap.ui.define([
 		assert.ok(oDialogHasStyleClassStub.called, "The Dialog hasStyleClass has been called");
 		assert.ok(oDialogRemoveStyleClassStub.called, "The Dialog removeStyleClass has been called");
 		assert.ok(oDialogToggleStyleClassStub.called, "The Dialog toggleStyleClass has been called");
+	});
+
+	QUnit.module("API", {
+		beforeEach: function () {
+			this.oBusyDialog = new BusyDialog();
+		},
+		afterEach: function () {
+			this.oBusyDialog.close();
+			this.oBusyDialog.destroy();
+			this.oBusyDialog = null;
+		}
+	});
+
+	QUnit.test("#getTooltip", function (assert) {
+		//Assert
+		assert.notOk(this.oBusyDialog.getTooltip(), "Tooltip should be falsy value if never set.");
+		assert.notEqual(this.oBusyDialog.getTooltip(), this.oBusyDialog, "Should NOT return 'this' reference.");
+
+		// Arrange and Act
+		var sTooltip = "New tooltip for BusyDialog.";
+		this.oBusyDialog.setTooltip(sTooltip);
+
+		//Assert
+		assert.strictEqual(this.oBusyDialog.getTooltip(), sTooltip, "Return value should be the one passed on #setTooltip.");
+		assert.strictEqual(this.oBusyDialog.getTooltip_AsString(), sTooltip, "Return value should be the one passed on #setTooltip.");
 	});
 });
