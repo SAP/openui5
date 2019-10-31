@@ -108,7 +108,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/Core", "sap/ui/Device"],
 
 		// ARIA
 		rm.writeAccessibilityState(oCarousel, {
-			role: "list"
+			role: "listbox"
 		});
 
 		rm.write(">");
@@ -144,7 +144,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/Core", "sap/ui/Device"],
 
 			// ARIA
 			rm.writeAccessibilityState(oPage, {
-				role: "listitem",
+				role: "option",
 				posinset: iIndex + 1,
 				setsize: aArray.length
 			});
