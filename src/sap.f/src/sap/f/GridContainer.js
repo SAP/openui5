@@ -849,6 +849,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (this.bIsDestroyed) {
+			return;
+		}
+
 		var $that = this.$(),
 			innerWidth = $that.innerWidth(),
 			oSettings = this.getActiveLayoutSettings(),
