@@ -272,7 +272,7 @@ function(
 				this.startService('receiver');
 			}
 
-			if (sap.ui.version.includes("-SNAPSHOT")) {
+			if (this._shouldValidateFlexEnabled()) {
 				this.attachEvent("start", validateFlexEnabled.bind(null, this));
 			}
 		},
@@ -282,6 +282,10 @@ function(
 			RELOAD_PAGE : "reload"
 		}
 	});
+
+	RuntimeAuthoring.prototype._shouldValidateFlexEnabled = function () {
+		return document.location.hostname.endsWith(".sap" + ".corp");
+	};
 
 	/**
 	 * Returns (and creates) the default plugins of RuntimeAuthoring
