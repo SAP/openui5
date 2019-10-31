@@ -240,7 +240,10 @@ sap.ui.define([
 						assert.equal(this.oPlugin.getContextMenuTitle(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 						assert.ok(this.oPlugin.isAvailable(test.sibling, [oOverlay]), "then the action is available");
 						assert.notOk(this.oPlugin.isEnabled(test.sibling, [oOverlay]), "then the action is disabled");
-						assert.ok(this.oPlugin._isEditableCheck(oOverlay, test.sibling), "then the overlay is editable");
+						return this.oPlugin._isEditableCheck(oOverlay, test.sibling)
+							.then(function(bIsEditable) {
+								assert.strictEqual(bIsEditable, true, "then the overlay is editable");
+							});
 					}.bind(this));
 			});
 		});
@@ -265,7 +268,10 @@ sap.ui.define([
 					assert.equal(this.oPlugin.getContextMenuTitle(true, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 					assert.ok(this.oPlugin.isAvailable(true, [oOverlay]), "then the action is available");
 					assert.notOk(this.oPlugin.isEnabled(true, [oOverlay]), "then the action is disabled");
-					assert.ok(this.oPlugin._isEditableCheck(oOverlay, true), "then the overlay is editable");
+					return this.oPlugin._isEditableCheck(oOverlay, true)
+						.then(function(bIsEditable) {
+							assert.strictEqual(bIsEditable, true, "then the overlay is editable");
+						});
 				}.bind(this));
 		});
 
@@ -290,7 +296,10 @@ sap.ui.define([
 				.then(function(oOverlay) {
 					assert.ok(this.oPlugin.isAvailable(ON_SIBLING, [oOverlay]), "then the action is available");
 					assert.notOk(this.oPlugin.isEnabled(ON_SIBLING, [oOverlay]), "then the action is disabled");
-					assert.ok(this.oPlugin._isEditableCheck(oOverlay, ON_SIBLING), "then the overlay is editable");
+					return this.oPlugin._isEditableCheck(oOverlay, ON_SIBLING)
+						.then(function(bIsEditable) {
+							assert.strictEqual(bIsEditable, true, "then the overlay is editable");
+						});
 				}.bind(this));
 		});
 
@@ -784,13 +793,47 @@ sap.ui.define([
 						}
 						return true;
 					}.bind(this));
-					return this.oPlugin._isEditableCheck(oOverlay, true);
+					return this.oPlugin._isEditableCheck(oOverlay, true, "then the overlay is editable");
 				}.bind(this))
 				.then(function() {
 					assert.ok(false, "should never come here");
 				})
 				.catch(function (oError) {
 					assert.strictEqual(oError.message, "Some error");
+				});
+		});
+
+		QUnit.test("when _isEditableCheck() is called and parent overlay is destroyed asynchronously", function (assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				reveal: {
+					changeType: "unhideControl"
+				}
+			},
+			ON_CHILD
+			)
+				.then(function (oParentOverlay) {
+					oParentOverlay.destroy();
+					return this.oPlugin._isEditableCheck(this.oSiblingOverlay, true);
+				}.bind(this))
+				.then(function (bEditable) {
+					assert.strictEqual(bEditable, false, "then the overlay is not editable");
+				});
+		});
+
+		QUnit.test("when _isEditableCheck() is called and overlay is destroyed asynchronously", function (assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				reveal: {
+					changeType: "unhideControl"
+				}
+			},
+			ON_SIBLING
+			)
+				.then(function (oChildOverlay) {
+					oChildOverlay.destroy();
+					return this.oPlugin._isEditableCheck(this.oSiblingOverlay, true);
+				}.bind(this))
+				.then(function (bEditable) {
+					assert.strictEqual(bEditable, false, "then the overlay is not editable");
 				});
 		});
 
