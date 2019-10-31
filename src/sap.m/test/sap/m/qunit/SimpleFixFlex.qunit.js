@@ -3,8 +3,10 @@ sap.ui.define([
 	"sap/m/SimpleFixFlex",
 	"sap/m/SimpleFixFlexRenderer",
 	"sap/m/Text",
-	"sap/base/Log"
-], function(SimpleFixFlex, SimpleFixFlexRenderer, Text, Log) {
+	"sap/base/Log",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
+], function(SimpleFixFlex, SimpleFixFlexRenderer, Text, Log, Sinon) {
 	"use strict";
 
 	var oCore = sap.ui.getCore();
@@ -151,5 +153,24 @@ sap.ui.define([
 							"SimpleFixFlex should have the correct padding-top.");
 		assert.notOk(this.oSimpleFixFlex.getFixContent().$().hasClass("sapUiSimpleFixFlexFixedWrap"),
 						"FixContent should not wrap.");
+	});
+
+	QUnit.test("SimpleFixFlex control should not throw error when there is no FixedContent and _onFixContentResize is called", function(assert) {
+
+		// Arrange
+		var oSpy = new Sinon.spy(this.oSimpleFixFlex, "_onFixContentResize");
+
+		// Act
+		this.oSimpleFixFlex.getFixContent().setVisible(false);
+		sap.ui.getCore().applyChanges();
+
+		try {
+			oSpy.apply(this.oSimpleFixFlex);
+		} catch (e) {
+			// pass through here in case of thrown error
+		}
+
+		// Assert
+		assert.strictEqual(oSpy.threw(), false, "The method didn't threw an error.");
 	});
 });
