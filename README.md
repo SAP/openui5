@@ -9,7 +9,7 @@ any browser of your choice. It's based on JavaScript, using jQuery as its founda
 It eases your development with a client-side HTML5 rendering library including a rich set of controls
 and supports data binding to different data models (JSON, XML and OData).
 
-And... it's free and open source: OpenUI5 is licensed under the Apache License, Version 2.0 - see LICENSE.txt
+And... it's free and open source: OpenUI5 is licensed under the Apache License, Version 2.0 - see [LICENSE.txt](LICENSE.txt)
 
 Try it!
 -------
