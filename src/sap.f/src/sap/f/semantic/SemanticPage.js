@@ -192,7 +192,19 @@ sap.ui.define([
 				*
 				* @since 1.58
 				*/
-				titleAreaShrinkRatio : {type: "sap.f.DynamicPageTitleShrinkRatio", group: "Appearance", defaultValue: "1:1.6:1.6"}
+				titleAreaShrinkRatio : {type: "sap.f.DynamicPageTitleShrinkRatio", group: "Appearance", defaultValue: "1:1.6:1.6"},
+
+				/**
+				 * Optimizes <code>SemanticPage</code> responsiveness on small screens and behavior
+				 * when expanding/collapsing the <code>SemanticPageHeader</code>.
+				 *
+				 * <b>Note:</b> It is recommended to use this property when displaying content
+				 * of adaptive controls that stretch to fill the available space. Such controls may be
+				 * {@link sap.ui.table.Table} and {@link sap.ui.table.AnalyticalTable} depending on their settings.
+				 *
+				 * @since 1.73
+				 */
+				fitContent: {type: "boolean", group: "Behavior", defaultValue: false}
 
 			},
 			defaultAggregation : "content",
@@ -678,6 +690,11 @@ sap.ui.define([
 
 		oDynamicPageTitle.setAreaShrinkRatio(sAreaShrinkRatio);
 		return this.setProperty("titleAreaShrinkRatio", oDynamicPageTitle.getAreaShrinkRatio(), true);
+	};
+
+	SemanticPage.prototype.setFitContent = function (bFitContent) {
+		this._getPage().setFitContent(bFitContent);
+		return this.setProperty("fitContent", bFitContent, true);
 	};
 
 	SemanticPage.prototype.addStyleClass = function (sClass, bSuppressRerendering) {
