@@ -1,0 +1,63 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form">
+	<Dialog title="{/text/dialogTitle}">
+		<content>
+			<form:SimpleForm editable="true" title="{/text/sectionTitle}" layout="ResponsiveGridLayout"
+				adjustLabelSpan="false" singleContainerFullSize="false"
+				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
+				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+				columnsXL="2" columnsL="2" columnsM="2"
+				>
+				<form:content>
+					<Label text="{/text/newSectionLabel}"/>
+					<CheckBox/>
+					<Label text="{/text/nameLabel}"/>
+					<Input/>
+				</form:content>
+			</form:SimpleForm>
+			<form:SimpleForm editable="true" title="{/text/sizeTitle}" layout="ResponsiveGridLayout"
+				adjustLabelSpan="false" singleContainerFullSize="false"
+				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
+				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+				columnsXL="2" columnsL="2" columnsM="2"
+				>
+				<form:content>
+					<Label text="{/text/widthLabel}"/>
+					<Input />
+					<Select />
+					<Label text="{/text/heigthLabel}"/>
+					<Input />
+					<Select />
+					<Label />
+					<Text text="{/text/sizeWarning}"/>
+				</form:content>
+			</form:SimpleForm>
+			<form:SimpleForm editable="true" title="{/text/urlTitle}" layout="ResponsiveGridLayout"
+				adjustLabelSpan="false" singleContainerFullSize="false"
+				labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="4"
+				emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+				columnsXL="2" columnsL="2" columnsM="2"
+				>
+				<form:content>
+					<TextArea />
+				</form:content>
+			</form:SimpleForm>
+		</content>
+		<beginButton>
+			<Button
+				type="Emphasized"
+				text="{/text/OKText}"
+				press=""
+			/>
+		</beginButton>
+		<endButton>
+			<Button
+				type="Transparent"
+				text="{/text/cancelText}"
+				press=""
+			/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

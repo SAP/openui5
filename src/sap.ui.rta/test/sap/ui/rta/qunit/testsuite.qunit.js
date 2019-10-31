@@ -112,6 +112,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
 				}
 			},
+			"plugin/iframe/SettingsDialog": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/iframe/SettingsDialog"]
+				}
+			},
 			"plugin/Combine": {
 				group: "Plugin",
 				coverage: {
