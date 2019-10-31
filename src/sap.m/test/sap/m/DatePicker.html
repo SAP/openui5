@@ -215,7 +215,13 @@
 					dateValue: new Date("2014", "02", "26"),
 					displayFormat: "----------------yyyyyyyyyy------------",
 					change: handleChange
-				})
+				}),
+				new sap.m.Label({text: "DatePicker for month and year in compact mode:", labelFor: "DP14"}),
+				new sap.m.DatePicker("DP14", {
+					dateValue: new Date("2014", "02", "26"),
+					displayFormat: "yyyy+++++MM",
+					change: handleChange
+				}).addStyleClass("sapUiSizeCompact")
 			],
 			footer: createFooter()
 		});
