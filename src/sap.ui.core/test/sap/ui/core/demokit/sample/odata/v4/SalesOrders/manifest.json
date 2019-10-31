@@ -41,6 +41,7 @@
 					"Main.controller.js",
 					"Main.view.xml",
 					"manifest.json",
+					"SandboxModel.js",
 					"../../../common/Controller.js",
 					"../../../common/ValueHelp.js"
 				]
