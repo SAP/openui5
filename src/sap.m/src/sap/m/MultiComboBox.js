@@ -437,7 +437,7 @@ function(
 		aVisibleItems = this._getUnselectedItems(bPickerOpened ? "" : this.getValue());
 
 		for (i = 0; i < aVisibleItems.length; i++) {
-			if (aVisibleItems[i].getText().toUpperCase() === this.getValue().toUpperCase()) {
+			if (aVisibleItems[i].getText().toUpperCase() === this.getValue().toUpperCase() && aVisibleItems[i].getKey()) {
 				oItem = aVisibleItems[i];
 				bItemMatched = true;
 				break;
