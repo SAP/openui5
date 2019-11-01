@@ -59,6 +59,9 @@
 		<module>src/themelib_sap_belize</module>
 		<module>src/themelib_sap_fiori_3</module>
 
+		<!-- JSDoc template -->
+		<module>lib/jsdoc</module>
+
 	</modules>
 
 
