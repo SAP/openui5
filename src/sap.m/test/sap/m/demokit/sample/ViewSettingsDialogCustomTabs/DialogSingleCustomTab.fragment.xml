@@ -10,11 +10,11 @@
 						<Label text="Theme" design="Bold" id="VSDThemeLabel"/>
 						<SegmentedButton
 								class="vsdSetting"
-								selectedButton="VSDsap_bluecrystal"
+								selectedButton="VSDsap_quartzlight"
 								id="VSDThemeButtons"
 								width="100%" >
 							<Button text="High Contrast Black" id="VSDsap_hcb" />
-							<Button text="Blue Crystal" id="VSDsap_bluecrystal" />
+							<Button text="Quartz Light" id="VSDsap_quartzlight" />
 						</SegmentedButton>
 						<Label text="Compact Content Density" design="Bold" />
 						<SegmentedButton

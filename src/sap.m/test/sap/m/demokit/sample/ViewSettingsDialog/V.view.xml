@@ -12,5 +12,11 @@
 		<Button
 				text="Open View Settings Dialog in Filter view"
 				press="handleOpenDialogFilter" />
-	</l:VerticalLayout>
+		<Button
+				text="Open View Settings Dialog with preselected filters"
+				press="handleOpenDialogFilterPreselected" />
+		<Button
+				text="Open View Settings Dialog with presetFilterItems"
+				press="handleOpenDialogPresetFilterItems" />
+</l:VerticalLayout>
 </mvc:View>
