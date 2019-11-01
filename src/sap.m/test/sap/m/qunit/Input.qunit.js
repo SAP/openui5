@@ -387,6 +387,52 @@ sap.ui.define([
 		assert.strictEqual(spy.callCount, 1, "The value help was requested by pressing F4");
 	});
 
+	QUnit.test("Value help _userInputValue request parameter with suggestions", function(assert) {
+		// Arrange
+		var oInput = new Input({
+				showValueHelp: true,
+				showSuggestion: true
+			}),
+			oSpy = sinon.spy(oInput, "fireValueHelpRequest"),
+			oSuggPopover;
+
+		oSuggPopover = oInput._getSuggestionsPopover();
+		oSuggPopover._sTypedInValue = "test";
+
+		// Act
+		oInput._fireValueHelpRequest();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The value help was called once");
+		assert.strictEqual(oSpy.firstCall.args[0]._userInputValue, "test", "The value for user input was the correct one");
+
+		// Clean
+		oInput.destroy();
+	});
+
+	QUnit.test("Value help _userInputValue request parameter without suggestions", function(assert) {
+		// Arrange
+		var oInput = new Input({
+				showValueHelp: true,
+				showSuggestion: false,
+				value: "test"
+			}),
+			oSpy = sinon.spy(oInput, "fireValueHelpRequest");
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._fireValueHelpRequest();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The value help was called once");
+		assert.strictEqual(oSpy.firstCall.args[0]._userInputValue, "test", "The value for user input was the correct one");
+
+		// Clean
+		oInput.destroy();
+	});
+
 	QUnit.test("Submit Event", function(assert) {
 
 		var sEvents = "";
