@@ -2970,6 +2970,58 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Paste value behaviour", function (assert) {
+		var oMultiComboBox = new MultiComboBox({
+			items : [oItem = new Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+
+		var oFakeEvent = {
+			isMarked: function () { },
+			setMarked: function () { },
+			srcControl: oMultiComboBox,
+			target: {
+				value: "Al"
+			}
+		},
+			oHandleInputEventSpy = this.spy(oMultiComboBox, "handleInputValidation"),
+			oHandleTypeAheadSpy = this.spy(oMultiComboBox, "_handleTypeAhead"),
+			oUpdateDomValueSpy = this.spy(oMultiComboBox, "updateDomValue");
+
+		oMultiComboBox._bDoTypeAhead = true;
+		oMultiComboBox._bIsPasteEvent = true;
+
+		// act
+		oMultiComboBox.oncompositionstart(oFakeEvent);
+		oMultiComboBox.oninput(oFakeEvent);
+		this.clock.tick(300);
+
+		// assert
+		assert.ok(oHandleInputEventSpy.called, "handleInputValidation should be called on input");
+		assert.ok(oUpdateDomValueSpy.called, "Update DOM value should be called while pasting value");
+		assert.ok(oHandleTypeAheadSpy.called, "Type ahead should be called while pasting value");
+	});
+
+
+	QUnit.test("Focus out cleanup", function (assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox();
+		oMultiComboBox._bIsPasteEvent = true;
+		oMultiComboBox.sUpdateValue = "Test";
+		var oUpdateDomValueSpy = this.spy(oMultiComboBox, "updateDomValue");
+
+		// Act
+		oMultiComboBox._handleInputFocusOut();
+		this.clock.tick(300);
+
+		// Assert
+		assert.notOk(oMultiComboBox._bIsPasteEvent, "Should reset _bIsPasteEvent variable");
+		assert.ok(oUpdateDomValueSpy.called, "DOM value should be called");
+		assert.ok(oUpdateDomValueSpy.calledWith(""), "DOM value should be updated");
+	});
+
 	QUnit.test("Scenario 'EVENT_VALUE_LINE_BREAK_PASTE': CTRL+V 'item1 item2' ", function(assert) {
 		/* TODO remove after 1.62 version */
 		// IE has security settings
@@ -7119,6 +7171,7 @@ sap.ui.define([
 			oHandleFieldValueStateSpy = this.spy(this.multiComboBox, "_handleFieldValidationState");
 
 		this.multiComboBox._bDoTypeAhead = true;
+		this.multiComboBox._bIsPasteEvent = false;
 
 		// act
 		this.multiComboBox.oncompositionstart(oFakeEvent);
