@@ -21,10 +21,9 @@ sap.ui.define([
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
 	"sap/base/Log",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/events/F6Navigation"
+	"sap/ui/events/KeyCodes"
 ], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler,	ScrollEnablement,
-		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes, F6Navigation) {
+		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -873,62 +872,6 @@ sap.ui.define([
 				$anchorBarItem.attr(sTabIndex, sNotFocusable);
 			}
 		});
-	};
-
-	/**
-	 * Handler for F6
-	 *
-	 * @param oEvent - The event object
-	 */
-	AnchorBar.prototype.onsapskipforward = function (oEvent) {
-		this._handleGroupNavigation(oEvent, false);
-	};
-
-	/**
-	 * Handler for F6 and Shift + F6 group navigation
-	 *
-	 * @param {jQuery.Event} oEvent
-	 * @param {boolean} bShiftKey serving as a reference if shift is used
-	 * @private
-	 */
-	AnchorBar.prototype._handleGroupNavigation = function (oEvent, bShiftKey) {
-		var oEventF6 = jQuery.Event("keydown"),
-			oSettings = {},
-			oObjectPageLayout = this.getParent(),
-			bUseIconTabBar = oObjectPageLayout.getUseIconTabBar(),
-			sCurrentSectionId = oObjectPageLayout.getSelectedSection(),
-			aSections = oObjectPageLayout._getVisibleSections(),
-			aSubSections = [this.getDomRef()],
-			aCurrentSubSections = [];
-
-		if (bUseIconTabBar) {
-			aCurrentSubSections = sap.ui.getCore().byId(sCurrentSectionId).getSubSections().map(function (oSubSection) {
-				return oSubSection.$().attr("tabindex", -1)[0];
-			});
-
-			aSubSections = aSubSections.concat(aCurrentSubSections);
-		} else {
-			//this is needed in order to be sure that next F6 group will be found in sub sections
-			aSections.forEach(function (oSection) { // for each section
-				// get the subsections which have tabindex=-1
-				aCurrentSubSections = oSection.getSubSections().map(function (oSubSection) {
-					return oSubSection.$().attr("tabindex", -1)[0];
-				});
-				// accumulate the result
-				aSubSections = aSubSections.concat(aCurrentSubSections);
-			});
-		}
-		oSettings.scope = aSubSections;
-
-		oEvent.preventDefault();
-		this.$().focus();
-
-		oEventF6.target = oEvent.target;
-		oEventF6.keyCode = KeyCodes.F6;
-		oEventF6.key = "F6";
-		oEventF6.shiftKey = bShiftKey;
-
-		F6Navigation.handleF6GroupNavigation(oEventF6, oSettings);
 	};
 
 	/**
