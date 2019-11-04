@@ -1538,21 +1538,6 @@ sap.ui.define([
 		assert.ok(true, "No exception has been thrown");
 	});
 
-	QUnit.test("After items are changed, navigateBack should be called", function (assert) {
-		//Arrange
-		this.oMessagePopover.setModel(this.oModel);
-		var oNavigateBackSpy = sinon.spy(this.oMessagePopover, "navigateBack");
-
-		sap.ui.getCore().applyChanges();
-
-		//Act
-		this.oMessagePopover.openBy(this.oButton);
-		this.clock.tick(500);
-
-		//Assert
-		assert.strictEqual(oNavigateBackSpy.callCount, 1, "navigateBack() is called.");
-	});
-
 	QUnit.test("MessagePopover's navigateBack should serve as proxy to the MessageView", function (assert) {
 		//Arrange
 		var oNavigateBackSpy = sinon.spy(this.oMessagePopover._oMessageView, "navigateBack");
