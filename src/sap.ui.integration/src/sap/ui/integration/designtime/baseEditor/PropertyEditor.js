@@ -20,16 +20,45 @@ sap.ui.define([
 	var CREATED_BY_PROPERTY_NAME = "propertyName";
 
 	/**
-	 * @constructor
+	 * @class
+	 * Renders one of the {@link sap.ui.integration.designtime.baseEditor.propertyEditor property editors} based on a specified <code>propertyName</code> or custom <code>config</code>.
+	 *
+	 * @extends sap.ui.core.Control
+	 * @alias sap.ui.integration.designtime.baseEditor.PropertyEditor
+	 * @author SAP SE
+	 * @since 1.73.0
+	 * @version ${version}
 	 * @private
-	 * @experimental
+	 * @experimental since 1.73.0
+	 * @ui5-restricted
 	 */
 	var PropertyEditor = Control.extend("sap.ui.integration.designtime.baseEditor.PropertyEditor", {
 		metadata: {
 			properties: {
+				/**
+				 * Property name for which the configuration should be retrieved. The configuration for a specified name will be taken from the {@link sap.ui.integration.designtime.baseEditor.BaseEditor BaseEditor} directly.
+				 */
 				propertyName: {
 					type: "string"
 				},
+
+				/**
+				 * Custom configuration object. If set, it has priority over <code>propertyName</code>.
+				 * Example:
+				 * <pre>
+				 * {
+				 *     "label": "My property",
+				 *     "type": "string",
+				 *     "path": "header/status/text"
+				 * }
+				 * </pre>
+				 * Where:
+				 * <ul>
+				 *     <li><b>label</b> = text string for the property editor label</li>
+				 *     <li><b>type</b> = one of the registered property editor types in {@link sap.ui.integration.designtime.baseEditor.BaseEditor BaseEditor configuration} (see <code>propertyEditors</code> section)</li>
+				 *     <li><b>path</b> = a binding path to get data from</li>
+				 * </ul>
+				 */
 				config: {
 					type: "object"
 				}
@@ -49,7 +78,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fires when new Editor changes.
+				 * Fires when the new editor changes.
 				 */
 				editorChange: {
 					parameters: {
@@ -63,8 +92,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fires when internal property editor changes, e.g. called after initial initialisation or
-				 * after changing propertyName or config properties.
+				 * Fires when the internal property editor changes, e.g. called after the initial initialization or
+				 * after changing the <code>propertyName</code> or <code>config</code> properties.
 				 */
 				propertyEditorChange: {
 					parameters: {
@@ -78,7 +107,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fires when config changes.
+				 * Fires when <code>config</code> changes.
 				 */
 				configChange: {
 					parameters: {
@@ -92,7 +121,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fires when propertyName changes.
+				 * Fires when <code>propertyName</code> changes.
 				 */
 				propertyNameChange: {
 					parameters: {

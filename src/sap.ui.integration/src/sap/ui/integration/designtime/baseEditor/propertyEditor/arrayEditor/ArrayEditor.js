@@ -15,9 +15,22 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @constructor
+	 * @class
+	 * Constructor for a new <code>ArrayEditor</code>.
+	 *
+	 * This property editor allows you to edit arrays in a flat way.
+	 *
+	 * To get notified about changes made with the editor, you can use the <code>propertyChange</code> event.
+	 *
+	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor
+	 * @author SAP SE
+	 * @since 1.72
+	 * @version ${version}
+	 *
 	 * @private
 	 * @experimental
+	 * @ui5-restricted
 	 */
 	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor", {
 		metadata: {
@@ -64,12 +77,12 @@ sap.ui.define([
 			var iIndex = oEvent.getSource().data("index");
 			var aValue = this.getConfig().value;
 			aValue.splice(iIndex, 1);
-			this.firePropertyChanged(aValue);
+			this.firePropertyChange(aValue);
 		},
 		_addItem: function() {
 			var aValue = this.getConfig().value || [];
 			aValue.push({});
-			this.firePropertyChanged(aValue);
+			this.firePropertyChange(aValue);
 		},
 
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render

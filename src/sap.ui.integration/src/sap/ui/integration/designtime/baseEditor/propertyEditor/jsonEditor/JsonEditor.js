@@ -17,8 +17,8 @@ sap.ui.define([
 	 * Constructor for a new <code>JsonEditor</code>.
 	 * This allows to set json text values for a specified property of a JSON object.
 	 * The editor is rendered as a {@link sap.ui.CodeEditor} inside a {@link sap.m.Dialog}.
-	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChanged</code> method,
-	 * which passes the current property state as an object to the provided callback function when the user saves changes in the Dialog.
+	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChange</code> method,
+	 * which passes the current property state as an object to the provided callback function when the user saves changes in the dialog.
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
 	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.jsonEditor.JsonEditor
@@ -42,14 +42,14 @@ sap.ui.define([
 				showValueHelp: true,
 				valueHelpRequest: this._openJsonEditor.bind(this)
 			});
-			this._oInput.attachLiveChange(function(oEvent) {
+			this._oInput.attachLiveChange(function() {
 				var oJsonValue = this._parseJson(this._oInput.getValue());
 				if (oJsonValue instanceof Error) {
 					this._oInput.setValueState("Error");
 					this._oInput.setValueStateText("Error: " + oJsonValue);
 				} else {
 					this._oInput.setValueState("None");
-					this.firePropertyChanged(oJsonValue);
+					this.firePropertyChange(oJsonValue);
 				}
 			}, this);
 			this.addContent(this._oInput);
@@ -133,7 +133,7 @@ sap.ui.define([
 
 		onSave: function () {
 			if (this._oCode) {
-				this.firePropertyChanged(this._oCode);
+				this.firePropertyChange(this._oCode);
 				this._oInput.setValueState("None");
 				// Explicitly set the value of the inline editor here because
 				// the model might not have changed if invalid (unsynchronized) changes

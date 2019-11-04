@@ -21,7 +21,7 @@ sap.ui.define([
 			this._oInput = new sap.m.Input({value: "{value}"});
 			this._oInput.attachLiveChange(function(oEvent) {
 				if (this._validate()) {
-					this.firePropertyChanged(this._oInput.getValue());
+					this.firePropertyChange(this._oInput.getValue());
 				}
 			}.bind(this));
 			this.addContent(this._oInput);

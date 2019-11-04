@@ -49,10 +49,10 @@ sap.ui.define([
 				}
 			},
 			events: {
-				propertyChanged: {
+				propertyChange: {
 					parameters: {
 						/**
-						 * Path in context object where the change should happen
+						 * Path in the context object where the change should happen
 						 */
 						path: {type: "string"},
 						value: {type: "any"}
@@ -173,8 +173,8 @@ sap.ui.define([
 			oRm.close("div");
 		},
 
-		firePropertyChanged: function(vValue) {
-			this.fireEvent("propertyChanged", {
+		firePropertyChange: function(vValue) {
+			this.fireEvent("propertyChange", {
 				path: this.getConfig().path,
 				value: vValue
 			});
