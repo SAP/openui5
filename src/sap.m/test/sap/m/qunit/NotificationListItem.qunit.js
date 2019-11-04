@@ -125,7 +125,7 @@ sap.ui.define([
 
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), 'Show More', 'Show More link is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIImage span').attr('aria-label'), 'John Smith', 'author picture is rendered');
+		assert.strictEqual($item.find('.sapFAvatar').attr('aria-label'), 'Avatar', 'author avatar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIDescription').text(), 'Notification List Item Description', 'description is rendered');
 	});

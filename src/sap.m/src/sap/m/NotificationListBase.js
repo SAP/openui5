@@ -149,12 +149,6 @@ sap.ui.define([
 					_overflowToolbar: {type: 'sap.m.OverflowToolbar', multiple: false, visibility: "hidden"},
 
 					/**
-					 * The sap.m.Image or sap.ui.core.Control control that holds the author image or icon.
-					 * @private
-					 */
-					_authorImage: {type: 'sap.ui.core.Control', multiple: false, visibility: "hidden"},
-
-					/**
 					 * The priority icon.
 					 * @private
 					 */
@@ -252,30 +246,6 @@ sap.ui.define([
 			});
 
 			return this;
-		};
-
-		/**
-		 * Returns the sap.m.Image or the sap.ui.core.Control used in the NotificationListBase's author picture.
-		 *
-		 * @protected
-		 * @returns {sap.m.Image|sap.ui.core.Control} The notification author picture text.
-		 */
-		NotificationListBase.prototype._getAuthorImage = function() {
-			/** @type {sap.m.Image|sap.ui.core.Control} */
-			var authorImage = this.getAggregation('_authorImage'),
-				authorPicture = this.getAuthorPicture(),
-				authorName = this.getAuthorName();
-
-			// todo - check if the type (Icon/Image) has changed
-			if (!authorImage) {
-				authorImage = isIcon(authorPicture) ? new Icon() : new Image();
-				this.setAggregation('_authorImage', authorImage, true);
-			}
-
-			authorImage.setSrc(authorPicture);
-			authorImage.setAlt(authorName);
-
-			return authorImage;
 		};
 
 		NotificationListBase.prototype._getOverflowToolbar = function() {
@@ -380,22 +350,6 @@ sap.ui.define([
 				parent.addEventDelegate(delegate);
 			}
 		};
-
-		/**
-		 * Checks if an sap.ui.core.URI parameter is an icon src or not.
-		 *
-		 * @private
-		 * @param {string} source The source to be checked.
-		 * @returns {boolean} The result of the check.
-		 */
-		function isIcon(source) {
-			if (!source) {
-				return false;
-			}
-
-			var result = window.URI.parse(source);
-			return result.protocol && result.protocol === 'sap-icon';
-		}
 
 		NotificationListBase.prototype._getPriorityIcon = function() {
 			var priorityIcon = this.getAggregation('_priorityIcon');
