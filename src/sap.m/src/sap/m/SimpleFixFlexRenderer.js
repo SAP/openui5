@@ -45,6 +45,7 @@ sap.ui.define([],
 			var aFlexContent = oControl.getFlexContent();
 
 			oRm.write('<div');
+			oRm.writeAttribute("id", oControl.getId() + "-flexContentContainer");
 			oRm.addClass('sapUiSimpleFixFlexFlexContentContainer');
 			oRm.writeClasses();
 			oRm.write('>');
