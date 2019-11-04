@@ -7,12 +7,13 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
+	'sap/ui/core/util/ResponsivePaddingsEnablement',
 	'./TabContainerRenderer',
-    './TabStrip',
-    './TabStripItem',
-    './Button'
+	'./TabStrip',
+	'./TabStripItem',
+	'./Button'
 ],
-	function(library, Control, IconPool, TabContainerRenderer, TabStrip, TabStripItem, Button) {
+	function(library, Control, IconPool, ResponsivePaddingsEnablement, TabContainerRenderer, TabStrip, TabStripItem, Button) {
 		"use strict";
 
 		// shortcut for sap.m.ButtonType
@@ -54,6 +55,10 @@ sap.ui.define([
 		 *
 		 * The <code>TabContainer</code> is a full-page container that takes 100% of its parent width and height.
 		 * As the control is expected to occupy the whole parent, it should be the only child of its parent.
+		 *
+		 * When using the <code>sap.m.TabContainer</code> in SAP Quartz theme, the breakpoints and layout paddings could be determined by the container's width.
+		 * To enable this concept and add responsive padding to the the <code>TabContainer</code> control, you may add the following class:
+		 * <code>sapUiResponsivePadding--header</code>.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
@@ -206,6 +211,17 @@ sap.ui.define([
 			"icon": "icon",
 			"iconTooltip": "iconTooltip",
 			"modified": "modified"
+		};
+
+		ResponsivePaddingsEnablement.call(TabContainer.prototype, {
+			header: {selector: ".sapMTabStribContainer"}
+		});
+
+		/**
+		 * Called when control is initialized.
+		 */
+		TabContainer.prototype.init = function () {
+			this._initResponsivePaddingsEnablement();
 		};
 
 		/**
