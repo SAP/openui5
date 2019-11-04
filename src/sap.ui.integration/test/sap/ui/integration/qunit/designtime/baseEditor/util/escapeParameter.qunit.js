@@ -2,13 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/integration/designtime/baseEditor/util/escapeParameter",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/integration/designtime/baseEditor/util/escapeParameter"
 ],
 function (
 	ManagedObject,
-	escapeParameter,
-	sinon
+	escapeParameter
 ) {
 	"use strict";
 
