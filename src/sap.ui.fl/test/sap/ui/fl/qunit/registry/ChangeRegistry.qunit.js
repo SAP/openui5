@@ -885,6 +885,23 @@ function(
 					assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct default changehandler is returned");
 				});
 		});
+
+		QUnit.test("when getChangeHandler is called for without a handler registered for the control", function (assert) {
+			var oControl = {};
+			var sChangeType = "moveControls";
+			var sControlType = "VerticalLayout";
+			var sLayer;
+			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
+
+			return this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer)
+			.then(function() {
+				assert.ok(false, "should not resolve");
+			})
+			.catch(function(oError) {
+				assert.ok(oError, "the function rejects with an error");
+				assert.ok(oError.message.indexOf("No Change handler registered for the Control and Change type") > -1, "the error contains the correct message");
+			});
+		});
 	});
 
 	QUnit.done(function () {

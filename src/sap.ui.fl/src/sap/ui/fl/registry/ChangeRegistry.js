@@ -263,6 +263,7 @@ sap.ui.define([
 		if (oRegistryItem && oRegistryItem.getChangeTypeMetadata) {
 			return oRegistryItem.getChangeTypeMetadata().getChangeHandler();
 		}
+		throw Error("No Change handler registered for the Control and Change type");
 	};
 
 	/**
@@ -276,16 +277,10 @@ sap.ui.define([
 	 */
 	ChangeRegistry.prototype.getChangeHandler = function (sChangeType, sControlType, oControl, oModifier, sLayer) {
 		return this._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, oModifier)
-			.then(function(oSpecificChangeRegistryItem) {
-				return this._extractChangeHandlerFromRegistryItem(oSpecificChangeRegistryItem);
-			}.bind(this))
-			.then(function (oSpecificChangeHandler) {
-				if (oSpecificChangeHandler) {
-					return oSpecificChangeHandler;
-				}
-				var oChangeRegistryItem = this._getChangeRegistryItem(sChangeType, sControlType, sLayer);
-				return this._extractChangeHandlerFromRegistryItem(oChangeRegistryItem);
-			}.bind(this));
+		.then(function(oSpecificChangeRegistryItem) {
+			var oChangeRegistryItem = oSpecificChangeRegistryItem || this._getChangeRegistryItem(sChangeType, sControlType, sLayer);
+			return this._extractChangeHandlerFromRegistryItem(oChangeRegistryItem);
+		}.bind(this));
 	};
 
 	/**

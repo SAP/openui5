@@ -2,17 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/dt/ElementUtil",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/plugin/ControlVariant",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/Utils",
 	"sap/m/Button",
@@ -28,17 +24,13 @@ sap.ui.define([
 ],
 function (
 	DesignTime,
-	ElementDesignTimeMetadata,
-	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
-	ElementUtil,
 	Plugin,
 	Remove,
 	Rename,
 	ControlVariant,
 	CommandFactory,
-	MoveControlsChangeHandler,
 	ChangeRegistry,
 	FlexUtils,
 	Button,
@@ -56,7 +48,54 @@ function (
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given this the Plugin is initialized", {
+	QUnit.module("Given a Plugin and 'hasChangeHandler' is called", {
+		beforeEach: function() {
+			this.oPlugin = new Plugin({
+				commandFactory : new CommandFactory()
+			});
+			this.oButton = new Button();
+			this.oGetChangeHandlerStub = sandbox.stub(ChangeRegistry.prototype, "getChangeHandler");
+		},
+		afterEach: function() {
+			this.oButton.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the change registry resolves with a change handler", function(assert) {
+			this.oGetChangeHandlerStub.resolves();
+			return this.oPlugin.hasChangeHandler("moveControls", this.oButton).then(function(bHasChangeHandler) {
+				assert.strictEqual(bHasChangeHandler, true, "then the function returns true");
+				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the change registry was called");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0], "moveControls", "the change type was correctly passed");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[1], "sap.m.Button", "the control type was taken from the control");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[2], this.oButton, "the control was correctly passed");
+			}.bind(this));
+		});
+
+		QUnit.test("when the change registry rejects", function(assert) {
+			this.oGetChangeHandlerStub.rejects();
+			return this.oPlugin.hasChangeHandler("moveControls", this.oButton).then(function(bHasChangeHandler) {
+				assert.strictEqual(bHasChangeHandler, false, "then the function returns false");
+				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the change registry was called");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0], "moveControls", "the change type was correctly passed");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[1], "sap.m.Button", "the control type was taken from the control");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[2], this.oButton, "the control was correctly passed");
+			}.bind(this));
+		});
+
+		QUnit.test("when the change registry resolves and a control type is passed", function(assert) {
+			this.oGetChangeHandlerStub.resolves();
+			return this.oPlugin.hasChangeHandler("moveControls", this.oButton, "anotherType").then(function(bHasChangeHandler) {
+				assert.strictEqual(bHasChangeHandler, true, "then the function returns true");
+				assert.equal(this.oGetChangeHandlerStub.callCount, 1, "the change registry was called");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[0], "moveControls", "the change type was correctly passed");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[1], "anotherType", "the control type was taken from the parameter");
+				assert.equal(this.oGetChangeHandlerStub.lastCall.args[2], this.oButton, "the control was correctly passed");
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Given the Plugin is initialized with move registered for a control", {
 		beforeEach : function(assert) {
 			var done = assert.async();
 
@@ -101,19 +140,6 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the hasChangeHandler function is called", function(assert) {
-			return this.oPlugin.hasChangeHandler("moveControls", this.oLayout)
-				.then(function(bHasChangeHandler) {
-					assert.strictEqual(bHasChangeHandler, true, "then the function returns true");
-				});
-		});
-
-		QUnit.test("when the hasChangeHandler function is called with 'async' = true", function(assert) {
-			return this.oPlugin.hasChangeHandler("moveControls", this.oLayout, true).then(function(bHasChangeHandler) {
-				assert.strictEqual(bHasChangeHandler, true, "then the function returns a promise with true as value");
-			});
-		});
-
 		QUnit.test("when an overlay gets deregistered and registered again and visible change event gets fired", function(assert) {
 			var oGetRelevantOverlays = sandbox.spy(this.oRemovePlugin, "_getRelevantOverlays");
 
@@ -799,58 +825,6 @@ function (
 
 			assert.equal(sVarMgmtRefForObjectPageSection, "variant-test", "then for the control with variant ChangeHandler the variant management reference is returned");
 			assert.equal(sVarMgmtRefForStashedControl, "variant-test", "then for the stashed control with variant ChangeHandler variant management reference from parent is returned, as no overlay exists");
-		});
-	});
-
-	QUnit.module("Given this the Plugin is initialized", {
-		beforeEach : function(assert) {
-			var done = assert.async();
-
-			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.registerControlsForChanges({
-				VerticalLayout : {
-					moveControls: "default"
-				}
-			})
-			.then(function() {
-				this.oButton = new Button();
-				this.oLayout = new VerticalLayout({
-					content : [
-						this.oButton
-					]
-				}).placeAt("qunit-fixture");
-
-				sap.ui.getCore().applyChanges();
-
-				this.oDesignTime = new DesignTime({
-					rootElements : [this.oLayout]
-				});
-				this.oPlugin = new Plugin({
-					commandFactory : new CommandFactory()
-				});
-				this.oRemovePlugin = new Remove();
-
-				sandbox.stub(this.oPlugin, "_isEditable").returns(true);
-				sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
-					this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-					done();
-				}.bind(this));
-			}.bind(this));
-		},
-		afterEach : function() {
-			this.oLayout.destroy();
-			this.oDesignTime.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when '_getChangeHandler' is called with a control that has the default change handler registered for 'moveControls'", function(assert) {
-			return this.oPlugin._getChangeHandler("moveControls", this.oLayout)
-				.then(function(oResultChangeHandler) {
-					assert.strictEqual(oResultChangeHandler, MoveControlsChangeHandler, "then the function returns the correct change handler");
-				});
 		});
 	});
 

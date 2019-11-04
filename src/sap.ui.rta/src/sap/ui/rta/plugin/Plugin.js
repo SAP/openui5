@@ -296,10 +296,7 @@ function(
 		}
 
 		if (sChangeType) {
-			return this.hasChangeHandler(sChangeType, oElement)
-				.then(function(bHasChangeHandler) {
-					return bHasChangeHandler;
-				});
+			return this.hasChangeHandler(sChangeType, oElement);
 		}
 		return Promise.resolve(false);
 	};
@@ -321,20 +318,17 @@ function(
 		}
 	};
 
-	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement) {
-		return this._getChangeHandler(sChangeType, oElement)
-			.then(function(oChangeHandler) {
-				return !!oChangeHandler;
-			});
-	};
-
-	BasePlugin.prototype._getChangeHandler = function(sChangeType, oElement, sControlType) {
-		if (!sControlType) {
-			sControlType = oElement.getMetadata().getName();
-		}
+	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement, sControlType) {
+		sControlType = sControlType || oElement.getMetadata().getName();
 		var sLayer = this.getCommandFactory().getFlexSettings().layer;
 
-		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oElement, JsControlTreeModifier, sLayer);
+		return ChangeRegistry.getInstance().getChangeHandler(sChangeType, sControlType, oElement, JsControlTreeModifier, sLayer)
+		.then(function() {
+			return true;
+		})
+		.catch(function() {
+			return false;
+		});
 	};
 
 	BasePlugin.prototype.isAvailable = function (aElementOverlays) {

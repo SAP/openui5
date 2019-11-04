@@ -212,33 +212,26 @@ sap.ui.define([
 		},
 
 		_checkChangeSpecificData: function(oChange, sLayer) {
-			return Promise.resolve()
-				.then(function() {
-					if (!oChange.changeSpecificData) {
-						throw new Error("No changeSpecificData available");
-					}
-					if (!oChange.changeSpecificData.changeType) {
-						throw new Error("No valid changeType");
-					}
+			if (!oChange.changeSpecificData) {
+				return Promise.reject(new Error("No changeSpecificData available"));
+			}
+			if (!oChange.changeSpecificData.changeType) {
+				return Promise.reject(new Error("No valid changeType"));
+			}
 
-					if (!(oChange.selectorControl instanceof Element)) {
-						throw new Error("No valid selectorControl");
-					}
+			if (!(oChange.selectorControl instanceof Element)) {
+				return Promise.reject(new Error("No valid selectorControl"));
+			}
 
-					var sControlType = oChange.selectorControl.getMetadata().getName();
-					var oChangeRegistry = ChangeRegistry.getInstance();
-					return oChangeRegistry.getChangeHandler(
-						oChange.changeSpecificData.changeType,
-						sControlType,
-						oChange.selectorControl,
-						JsControlTreeModifier,
-						sLayer);
-				})
-				.then(function(oChangeHandler) {
-					if (!oChangeHandler) {
-						throw new Error("No valid ChangeHandler");
-					}
-				});
+			var sControlType = oChange.selectorControl.getMetadata().getName();
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			return oChangeRegistry.getChangeHandler(
+				oChange.changeSpecificData.changeType,
+				sControlType,
+				oChange.selectorControl,
+				JsControlTreeModifier,
+				sLayer
+			);
 		},
 
 		/**
