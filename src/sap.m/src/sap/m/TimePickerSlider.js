@@ -289,7 +289,7 @@ sap.ui.define([
 					//Be careful not to invoke this method twice (the first time is on animate finish callback).
 					//If this is the first animation, the _iSelectedIndex will remain its initial value, so no need
 					//to notify the scroller about any snap completion
-					if (this._animatingTargetIndex !== null) {
+					if (this._animatingTargetIndex !== null && this._animatingTargetIndex !== undefined) {
 						this._scrollerSnapped(this._animatingTargetIndex);
 						this._animatingTargetIndex = null;
 					} else if (this._iSelectedIndex !== -1) {
@@ -1302,7 +1302,7 @@ sap.ui.define([
 				return el.getText() === sText;
 			});
 
-			return aItems[index].getKey();
+			return aItems[index] ? aItems[index].getKey() : '';
 		};
 
 		/*
