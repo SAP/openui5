@@ -62,11 +62,16 @@ sap.ui.define([
 			);
 		}
 
+		function _isControlAvailable(oControl) {
+			return oControl && !oControl._bIsBeingDestroyed;
+		}
+
 		function _handleModeChanged(oEvent) {
 			var sNewMode = oEvent.getParameters().mode;
 			if (sNewMode === "adaptation") {
 				var oRta = oEvent.getSource();
 				var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
+				aPendingOverlaysToValidate = aPendingOverlaysToValidate.filter(_isControlAvailable);
 				_handleUnstableIds(oRta, oComponent, aPendingOverlaysToValidate);
 				aPendingOverlaysToValidate = [];
 			}
@@ -76,7 +81,11 @@ sap.ui.define([
 			var oElementOverlayCreated = oEvent.getParameters().elementOverlay;
 			if (oRta.getMode() === "adaptation") {
 				var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
-				DtUtil.waitForSynced(oRta._oDesignTime, _handleUnstableIds)(oRta, oComponent, [oElementOverlayCreated]);
+				DtUtil.waitForSynced(oRta._oDesignTime, function (oOverlay) {
+					if (_isControlAvailable(oOverlay)) {
+						_handleUnstableIds(oRta, oComponent, [oOverlay]);
+					}
+				})(oElementOverlayCreated);
 			} else {
 				aPendingOverlaysToValidate.push(oElementOverlayCreated);
 			}

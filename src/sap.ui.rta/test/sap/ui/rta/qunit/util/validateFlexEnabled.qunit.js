@@ -127,20 +127,26 @@ function (
 			}.bind(this))), "then message box was shown");
 		});
 
-		QUnit.test("when another unstable control is added in adaptation mode", function (assert) {
+		QUnit.test("when two unstable controls are added in adaptation mode, out of which one gets destroyed shortly after", function (assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = _createButtonWithUnstableId();
+			var oButtonToBeDestroyedWithUnstableId = _createButtonWithUnstableId();
 			Log.error.resetHistory();
 			MessageBox.show.resetHistory();
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
-					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then an error was logged");
-					assert.ok(MessageBox.show.notCalled, "then message box was not shown");
-					done();
-				})();
-			}.bind(this));
+			this.oRta._oDesignTime.attachEvent("elementOverlayCreated", sandbox.stub().onSecondCall().callsFake(
+				function () {
+					oButtonToBeDestroyedWithUnstableId.destroy();
+					DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+						assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then an error was logged once");
+						assert.strictEqual(Log.error.withArgs(vLoggedErrorMatcher).getCall(0).args[1], oButtonWithUnstableId.getId(), "then the error was logged for the control which was not destroyed");
+						assert.ok(MessageBox.show.notCalled, "then message box was not shown");
+						done();
+					})();
+				}.bind(this)
+			));
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
+			this.oComponent.getRootControl().addContent(oButtonToBeDestroyedWithUnstableId);
 		});
 
 		QUnit.test("when another stable control is added in adaptation mode", function (assert) {
@@ -159,24 +165,30 @@ function (
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
 		});
 
-		QUnit.test("when another unstable control is added in navigation mode, which is later switched to adaptation mode", function (assert) {
+		QUnit.test("when two unstable controls are added in navigation mode, out of which one is destroyed shortly after, followed later by a switch to adaptation mode", function (assert) {
 			var done = assert.async();
 			var oButtonWithUnstableId = _createButtonWithUnstableId();
+			var oButtonToBeDestroyedWithUnstableId = _createButtonWithUnstableId();
 			_setNavigationMode(this.oRta);
 			Log.error.resetHistory();
 			MessageBox.show.resetHistory();
 
-			this.oRta._oDesignTime.attachEventOnce("elementOverlayCreated", function () {
-				DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
-					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged initially");
-					assert.ok(MessageBox.show.notCalled, "then message box was not shown initially");
-					_setAdaptationMode(this.oRta);
-					assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then an error was logged after mode switch to adaptation");
-					assert.ok(MessageBox.show.notCalled, "then no message box was not shown after mode switch to adaptation");
-					done();
-				}.bind(this))();
-			}.bind(this));
+			this.oRta._oDesignTime.attachEvent("elementOverlayCreated", sandbox.stub().onSecondCall().callsFake(
+				function () {
+					DtUtil.waitForSynced(this.oRta._oDesignTime, function () {
+						assert.ok(Log.error.withArgs(vLoggedErrorMatcher).notCalled, "then no error was logged initially");
+						assert.ok(MessageBox.show.notCalled, "then message box was not shown initially");
+						oButtonToBeDestroyedWithUnstableId.destroy();
+						_setAdaptationMode(this.oRta);
+						assert.ok(Log.error.withArgs(vLoggedErrorMatcher).calledOnce, "then one error was logged after mode switch to adaptation");
+						assert.strictEqual(Log.error.withArgs(vLoggedErrorMatcher).getCall(0).args[1], oButtonWithUnstableId.getId(), "then the error was logged for the control which was not destroyed");
+						assert.ok(MessageBox.show.notCalled, "then no message box was not shown after mode switch to adaptation");
+						done();
+					}.bind(this))();
+				}.bind(this)
+			));
 			this.oComponent.getRootControl().addContent(oButtonWithUnstableId);
+			this.oComponent.getRootControl().addContent(oButtonToBeDestroyedWithUnstableId);
 		});
 
 		QUnit.test("when no element overlays are created while switching between navigation and adaptation modes", function (assert) {
