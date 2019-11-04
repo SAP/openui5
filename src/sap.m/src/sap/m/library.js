@@ -654,43 +654,43 @@ sap.ui.define([
 	thisLib.ButtonType = {
 
 		/**
-		 * default type (no special styling)
+		 * Default type (no special styling)
 		 * @public
 		 */
 		Default : "Default",
 
 		/**
-		 * back type (back navigation button for header)
+		 * Back type (back navigation button for header)
 		 * @public
 		 */
 		Back : "Back",
 
 		/**
-		 * accept type (green button)
+		 * Accept type
 		 * @public
 		 */
 		Accept : "Accept",
 
 		/**
-		 * reject style (red button)
+		 * Reject style
 		 * @public
 		 */
 		Reject : "Reject",
 
 		/**
-		 * transparent type
+		 * Transparent type
 		 * @public
 		 */
 		Transparent : "Transparent",
 
 		/**
-		 * ghost type
+		 * Ghost type
 		 * @public
 		 */
 		Ghost : "Ghost",
 
 		/**
-		 * up type (up navigation button for header)
+		 * Up type (up navigation button for header)
 		 * @public
 		 */
 		Up : "Up",
@@ -702,11 +702,38 @@ sap.ui.define([
 		Unstyled : "Unstyled",
 
 		/**
-		 * emphasized type
+		 * Emphasized type
 		 * @public
 		 */
-		Emphasized : "Emphasized"
+		Emphasized : "Emphasized",
 
+		/**
+		 * Critical type
+		 * @public
+		 * @since 1.73
+		 */
+		Critical : "Critical",
+
+		/**
+		 * Negative type
+		 * @public
+		 * @since 1.73
+		 */
+		Negative : "Negative",
+
+		/**
+		 * Success type
+		 * @public
+		 * @since 1.73
+		 */
+		Success : "Success",
+
+		/**
+		 * Neutral type
+		 * @public
+		 * @since 1.73
+		 */
+		Neutral : "Neutral"
 	};
 
 	/**
