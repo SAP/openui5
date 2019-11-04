@@ -20,6 +20,7 @@ sap.ui.define([
 	'sap/ui/unified/CalendarRow',
 	'sap/ui/unified/CalendarRowRenderer',
 	'sap/ui/Device',
+	'sap/ui/core/Core',
 	'sap/ui/core/Element',
 	'sap/ui/core/Renderer',
 	'sap/ui/core/ResizeHandler',
@@ -68,6 +69,7 @@ sap.ui.define([
 	CalendarRow,
 	CalendarRowRenderer,
 	Device,
+	Core,
 	Element,
 	Renderer,
 	ResizeHandler,
@@ -595,27 +597,26 @@ sap.ui.define([
 			}
 		},
 
-		renderer : function(oRm, oHeader) {
+		renderer : {
+			apiVersion: 2,
+			render: function(oRm, oHeader) {
+				oRm.openStart("div", oHeader);
+				oRm.class("sapMPlanCalHead");
+				oRm.openEnd();
 
-			oRm.write("<div");
-			oRm.writeControlData(oHeader);
-			oRm.addClass("sapMPlanCalHead");
-			oRm.writeClasses();
-			oRm.write(">");
+				var oToolbar = oHeader.getToolbar();
+				if (oToolbar) {
+					oRm.renderControl(oToolbar);
+				}
 
-			var oToolbar = oHeader.getToolbar();
-			if (oToolbar) {
-				oRm.renderControl(oToolbar);
+				var oAllCB = oHeader.getAllCheckBox();
+				if (oAllCB) {
+					oRm.renderControl(oAllCB);
+				}
+
+				oRm.close("div");
 			}
-
-			var oAllCB = oHeader.getAllCheckBox();
-			if (oAllCB) {
-				oRm.renderControl(oAllCB);
-			}
-
-			oRm.write("</div>");
 		}
-
 	});
 
 	PlanningCalendar.prototype.init = function(){
@@ -638,7 +639,7 @@ sap.ui.define([
 		this.setAggregation("header", this._createHeader());
 		this._attachHeaderEvents();
 
-		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRB = Core.getLibraryResourceBundle("sap.m");
 
 		var sId = this.getId();
 		this._oIntervalTypeSelect = this._getHeader()._getOrCreateViewSwitch();
@@ -891,7 +892,7 @@ sap.ui.define([
 			oEndDate = CalendarUtils._createLocalDate(oRangeDates.oEndDate, true),
 			sViewKey = this.getViewKey(),
 			sViewType = CalendarIntervalType[sViewKey] ? CalendarIntervalType[sViewKey] : this._getView(sViewKey).getIntervalType(),
-			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			bRTL = Core.getConfiguration().getRTL(),
 			oDateFormat,
 			sResult,
 			sBeginningResult,
@@ -1605,7 +1606,7 @@ sap.ui.define([
 	PlanningCalendar.prototype._updatePickerSelection = function() {
 		var oRangeDates = this._getFirstAndLastRangeDate(),
 			sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
-			oPicker = sap.ui.getCore().byId(sCurrentPickerId),
+			oPicker = Core.byId(sCurrentPickerId),
 			oSelectedRange;
 
 		oSelectedRange = new DateRange({
@@ -1978,7 +1979,7 @@ sap.ui.define([
 		this.setAssociation("legend", vLegend, true);
 
 		var aRows = this.getRows(),
-			oLegend = this.getLegend() && sap.ui.getCore().byId(this.getLegend()),
+			oLegend = this.getLegend() && Core.byId(this.getLegend()),
 			oLegendDestroyObserver;
 
 		for (var i = 0; i < aRows.length; i++) {
@@ -2913,7 +2914,7 @@ sap.ui.define([
 		for (var i = 0; i < rows.length; i++) {
 			var aApps = getRowTimeline(rows[i]).aSelectedAppointments;
 			for (var j = 0; j < aApps.length; j++) {
-				var oApp = sap.ui.getCore().byId(aApps[j]);
+				var oApp = Core.byId(aApps[j]);
 				if (oApp) {
 					oApp.setProperty("selected", false, true);
 					oApp.$().removeClass("sapUiCalendarAppSel");
@@ -3175,6 +3176,7 @@ sap.ui.define([
 	};
 
 	var PlanningCalendarRowTimelineRenderer = Renderer.extend(CalendarRowRenderer);
+	PlanningCalendarRowTimelineRenderer.apiVersion = 2;
 
 	/* Returns AppointmentItems or Items depends on the Legend type:
 		sap.m.PlanningCalendarLegend or sap.ui.unified.CalendarLegend
@@ -3185,7 +3187,7 @@ sap.ui.define([
 			sLegendId = oTimeline.getLegend();
 
 		if (sLegendId) {
-			oLegend = sap.ui.getCore().byId(sLegendId);
+			oLegend = Core.byId(sLegendId);
 			if (oLegend) {
 				aTypes = oLegend.getAppointmentItems ? oLegend.getAppointmentItems() : oLegend.getItems();
 			} else {
@@ -3206,7 +3208,9 @@ sap.ui.define([
 
 		aIntervalPlaceholders = oTimeline.getAggregation("_intervalPlaceholders");
 
-		oRm.write("<div class=\"sapUiCalendarRowAppsOverlay\">");
+		oRm.openStart("div");
+		oRm.class("sapUiCalendarRowAppsOverlay");
+		oRm.openEnd(); // div element
 		if (aIntervalPlaceholders) {
 			for (var i = 0; i < aIntervalPlaceholders.length; i++) {
 				var intervalPlaceholder = aIntervalPlaceholders[i];
@@ -3214,7 +3218,7 @@ sap.ui.define([
 				oRm.renderControl(intervalPlaceholder);
 			}
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	PlanningCalendarRowTimelineRenderer.renderResizeHandle = function (oRm, oTimeline, oAppointment) {
@@ -3222,16 +3226,15 @@ sap.ui.define([
 			return;
 		}
 
-		oRm.write("<span");
-		oRm.addClass("sapUiCalendarAppResizeHandle");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.write("</span>");
+		oRm.openStart("span");
+		oRm.class("sapUiCalendarAppResizeHandle");
+		oRm.openEnd(); // span element
+		oRm.close("span");
 	};
 
 	PlanningCalendarRowTimelineRenderer.writeCustomAttributes = function (oRm, oTimeline) {
 		if (getRow(oTimeline.getParent()).getEnableAppointmentsCreate()) {
-			oRm.writeAttribute("draggable", "true");
+			oRm.attr("draggable", "true");
 		}
 	};
 
@@ -3276,7 +3279,7 @@ sap.ui.define([
 					if (oCurrentDate.getTime() >= oNonWorkingStartDate.getTime() && oCurrentDate.getTime() <= oNonWorkingEndDate.getTime()) {
 						var bAlreadyNonWorkingDate = aNonWorkingItems.some(fnDayMatchesCurrentDate);
 						if (!bAlreadyNonWorkingDate) {
-							oRm.addClass("sapUiCalendarRowAppsNoWork");
+							oRm.class("sapUiCalendarRowAppsNoWork");
 						}
 					}
 				}
@@ -3345,13 +3348,11 @@ sap.ui.define([
 			}
 		},
 		renderer: function(oRm, oControl) {
-			oRm.write("<div");
-			oRm.writeControlData(oControl);
-			oRm.addStyle("width", oControl.getWidth());
-			oRm.writeStyles();
-			oRm.addClass("sapUiCalendarRowAppsPlaceholder");
-			oRm.writeClasses();
-			oRm.write("></div>");
+			oRm.openStart("div", oControl);
+			oRm.style("width", oControl.getWidth());
+			oRm.class("sapUiCalendarRowAppsPlaceholder");
+			oRm.openEnd();
+			oRm.close("div");
 		}
 	});
 
@@ -3496,9 +3497,9 @@ sap.ui.define([
 					fnAlignIndicator = function () {
 						var $Indicator = jQuery(oDragSession.getIndicator()),
 							oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
-							oRowRects = sap.ui.getCore().byId(sTargetElementId).getDomRef().getBoundingClientRect(),
+							oRowRects = Core.byId(sTargetElementId).getDomRef().getBoundingClientRect(),
 							iAppWidth = oDragSession.getDragControl().$().outerWidth(),
-							bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+							bRTL = Core.getConfiguration().getRTL(),
 							iAvailWidth = bRTL ? Math.ceil(oDropRects.right) - oRowRects.left : oRowRects.right - Math.ceil(oDropRects.left);
 
 						$Indicator
@@ -3677,11 +3678,10 @@ sap.ui.define([
 						sTargetElementId = this.getTargetElement(),
 						fnHideIndicator = function () {
 							var $Indicator = jQuery(oDragSession.getIndicator());
-
 							$Indicator.addClass("sapUiDnDIndicatorHide");
 						},
 						oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
-						oRowRects = sap.ui.getCore().byId(sTargetElementId).getDomRef().getBoundingClientRect(),
+						oRowRects = Core.byId(sTargetElementId).getDomRef().getBoundingClientRect(),
 						mDraggedControlConfig = {
 							width: oDropRects.left + oDropRects.width - (oDragSession.getDragControl().$().position().left + oRowRects.left),
 							"z-index": 1,
@@ -3917,9 +3917,7 @@ sap.ui.define([
 						oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
 						fnAlignIndicator = function () {
 							var $Indicator = jQuery(oDragSession.getIndicator());
-
 							$Indicator.addClass("sapUiCalendarApp sapUiCalendarAppType01 sapUiAppCreate");
-
 						};
 
 					var iStartXPosition = oDragSession.getData("text") ? parseFloat(oDragSession.getData("text").split("|")[0]) : 0;
@@ -3987,11 +3985,11 @@ sap.ui.define([
 	function getRow(oListItem) {
 		var sId = oListItem.getId();
 
-		return sap.ui.getCore().byId(sId.substring(0, sId.indexOf(LISTITEM_SUFFIX)));
+		return Core.byId(sId.substring(0, sId.indexOf(LISTITEM_SUFFIX)));
 	}
 
 	function getListItem(oRow) {
-		return sap.ui.getCore().byId(oRow.getId() + LISTITEM_SUFFIX);
+		return Core.byId(oRow.getId() + LISTITEM_SUFFIX);
 	}
 
 	function getRowHeader(oRow) {
@@ -4054,20 +4052,17 @@ sap.ui.define([
 	// as all our css should depend on the main container size, not screen size like sapUiMedia-Std-Tablet...
 	function toggleSizeClasses(iSize) {
 		var sCurrentSizeClass = 'sapMSize' + iSize,
-			oRef = this.$(),
 			i,
 			sClass;
 
-		if (oRef) {
 			for (i = 0; i < 3; i++) {
 				sClass = 'sapMSize' + i;
 				if (sClass === sCurrentSizeClass) {
-					oRef.addClass(sClass);
+					this.addStyleClass(sClass);
 				} else {
-					oRef.removeClass(sClass);
+					this.removeStyleClass(sClass);
 				}
 			}
-		}
 	}
 
 	function updateSelectItems() {

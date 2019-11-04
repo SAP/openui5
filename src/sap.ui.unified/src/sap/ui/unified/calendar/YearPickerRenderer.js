@@ -16,6 +16,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 	 * @namespace
 	 */
 	var YearPickerRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -34,22 +35,20 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 		var iColumns = oYP.getColumns();
 		var sWidth = "";
 
-		oRm.write("<div");
-		oRm.writeControlData(oYP);
-		oRm.addClass("sapUiCalYearPicker");
-		oRm.writeClasses();
+		oRm.openStart("div", oYP);
+		oRm.class("sapUiCalYearPicker");
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.attr('title', sTooltip);
 		}
 
-		oRm.writeAccessibilityState(oYP, {
+		oRm.accessibilityState(oYP, {
 			role: "grid",
 			readonly: "true",
 			multiselectable: "false"
 		});
 
-		oRm.write(">"); // div element
+		oRm.openEnd(); // div element
 
 		var oDate = new CalendarDate(oCurrentDate, oYP.getPrimaryCalendarType());
 		oDate.setYear(oDate.getYear() - Math.floor(iYears / 2));
@@ -79,43 +78,40 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 
 			if (iColumns > 0 && i % iColumns == 0) {
 				// begin of row
-				oRm.write("<div");
-				oRm.writeAccessibilityState(null, {role: "row"});
-				oRm.write(">"); // div element
+				oRm.openStart("div");
+				oRm.accessibilityState(null, {role: "row"});
+				oRm.openEnd(); // div element
 			}
 
-			oRm.write("<div");
-			oRm.writeAttribute("id", sId + "-y" + sYyyymmdd);
-			oRm.addClass("sapUiCalItem");
+			oRm.openStart("div", sId + "-y" + sYyyymmdd);
+			oRm.class("sapUiCalItem");
 			if ( oDate.getYear() == iCurrentYear) {
-				oRm.addClass("sapUiCalItemSel");
+				oRm.class("sapUiCalItemSel");
 				mAccProps["selected"] = true;
 			} else {
 				mAccProps["selected"] = false;
 			}
 			if (!bEnabled) {
-				oRm.addClass("sapUiCalItemDsbl"); // year disabled
+				oRm.class("sapUiCalItemDsbl"); // year disabled
 				mAccProps["disabled"] = true;
 			}
-			oRm.writeAttribute("tabindex", "-1");
-			oRm.writeAttribute("data-sap-year-start", sYyyymmdd);
-			oRm.addStyle("width", sWidth);
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.writeAccessibilityState(null, mAccProps);
-			oRm.write(">"); // div element
+			oRm.attr("tabindex", "-1");
+			oRm.attr("data-sap-year-start", sYyyymmdd);
+			oRm.style("width", sWidth);
+			oRm.accessibilityState(null, mAccProps);
+			oRm.openEnd(); // div element
 			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
-			oRm.write(oYP._oYearFormat.format(UniversalDate.getInstance(oDate.toUTCJSDate(), oDate.getCalendarType()), true)); // to render era in Japanese
-			oRm.write("</div>");
+			oRm.text(oYP._oYearFormat.format(UniversalDate.getInstance(oDate.toUTCJSDate(), oDate.getCalendarType()))); // to render era in Japanese
+			oRm.close("div");
 			oDate.setYear(oDate.getYear() + 1);
 
 			if (iColumns > 0 && ((i + 1) % iColumns == 0)) {
 				// end of row
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 		}
 
-		oRm.write("</div>");
+		oRm.close("div");
 
 	};
 

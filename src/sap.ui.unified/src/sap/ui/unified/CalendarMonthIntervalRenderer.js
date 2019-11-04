@@ -6,12 +6,12 @@ sap.ui.define([],
 	function() {
 	"use strict";
 
-
 	/**
 	 * Calendar renderer.
 	 * @namespace
 	 */
 	var CalendarMonthIntervalRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -21,21 +21,19 @@ sap.ui.define([],
 	 * @param {sap.ui.unified.CalendarMonthInterval} oCal An object representation of the control that should be rendered
 	 */
 	CalendarMonthIntervalRenderer.render = function(oRm, oCal){
-
 		oCal._iMode = 0; // it's rendered always as MonthsRow
 
 		var sId = oCal.getId();
 		var sTooltip = oCal.getTooltip_AsString();
 		var oMonthsRow = oCal.getAggregation("monthsRow");
 
-		oRm.write("<div");
-		oRm.writeControlData(oCal);
-		oRm.addClass("sapUiCal");
-		oRm.addClass("sapUiCalInt");
-		oRm.addClass("sapUiCalMonthInt");
+		oRm.openStart("div", oCal);
+		oRm.class("sapUiCal");
+		oRm.class("sapUiCalInt");
+		oRm.class("sapUiCalMonthInt");
 
 		if (oCal._getShowItemHeader()) {
-			oRm.addClass("sapUiCalIntHead");
+			oRm.class("sapUiCalIntHead");
 		}
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
@@ -43,46 +41,54 @@ sap.ui.define([],
 		if (oCal._bPoupupMode) {
 			mAccProps["role"] = "dialog";
 		}
-		oRm.writeAccessibilityState(oCal, mAccProps);
+		oRm.accessibilityState(oCal, mAccProps);
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped('title', sTooltip);
+			oRm.attr('title', sTooltip);
 		}
 
 		var sWidth = oCal.getWidth();
 		if (sWidth && sWidth != '') {
-			oRm.addStyle("width", sWidth);
-			oRm.writeStyles();
+			oRm.style("width", sWidth);
 		}
 
-		oRm.writeClasses();
-		oRm.write(">"); // div element
+		oRm.openEnd(); // div element
 
 		var oHeader = oCal.getAggregation("header");
 		oRm.renderControl(oHeader);
 
-		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
+		oRm.openStart("div", sId + "-content");
+		oRm.class("sapUiCalContent");
+		oRm.openEnd();
 		oRm.renderControl(oMonthsRow);
-
-		oRm.write("</div>");
-
-		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
-		oRm.write(rb.getText("CALENDAR_CANCEL"));
-		oRm.write("</button>");
-
-		// dummy element to catch tabbing in from next element
-		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");
+		oRm.close("div");
+		oRm.openStart("button", sId + "-cancel");
+		oRm.class("sapUiCalCancel");
+		oRm.attr("tabindex", "-1");
+		oRm.openEnd();
+		oRm.text(rb.getText("CALENDAR_CANCEL"));
+		oRm.close("button");
+		oRm.openStart("div", sId + "-end");
+		oRm.attr("tabindex", "0");
+		oRm.style("width", "0");
+		oRm.style("height", "0");
+		oRm.style("position", "absolute");
+		oRm.style("right", "0");
+		oRm.style("bottom", "0");
+		oRm.openEnd();
+		oRm.close("div");
 
 		if (oCal.getPickerPopup()) {
-			oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\"");
+			oRm.openStart("div", sId + "-contentOver");
+			oRm.class("sapUiCalContentOver");
 			if (!oCal._oPopup || !oCal._oPopup.isOpen()) {
-				oRm.write("style=\"display:none;\"");
+				oRm.style("display", "none");
 			}
-			oRm.write(">");
-			oRm.write("</div>");
+			oRm.openEnd();
+			oRm.close("div");
 		}
-		oRm.write("</div>");
 
+		oRm.close("div");
 	};
 
 	return CalendarMonthIntervalRenderer;
