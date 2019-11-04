@@ -110,11 +110,17 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 
 	SimpleFixFlex.prototype._onFixContentResize = function () {
 		var	$simpleFixFlex = this.$(),
-			$fixContent = this.getFixContent().$();
+			$fixContent = this.getFixContent().$(),
+			oFixedDom = $fixContent.get(0);
+
+		// In case the fixed content is already hidden / destroyed when the handler is executed
+		if (!oFixedDom) {
+			return;
+		}
 
 			//using clientHeight as jQuery's innerHeight() method returns the height
 			//even if the fix content has style of "display: none;"
-			$simpleFixFlex.css("padding-top", $fixContent.get(0).clientHeight);
+			$simpleFixFlex.css("padding-top", oFixedDom.clientHeight);
 			$fixContent.addClass("sapUiSimpleFixFlexFixedWrap");
 	};
 
