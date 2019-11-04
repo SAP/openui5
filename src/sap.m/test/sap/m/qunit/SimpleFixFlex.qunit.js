@@ -35,6 +35,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		assert.ok(oSimpleFixFlex.getDomRef(), "SimpleFixFlex should be rendered.");
+		assert.ok(oSimpleFixFlex.getDomRef("flexContentContainer"), "The flex content container was rendered with id.");
 
 		oSimpleFixFlex.destroy();
 	});
