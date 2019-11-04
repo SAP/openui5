@@ -1,7 +1,9 @@
 /* ============================= */
-/* CSS for control sap.f/Avatar  */
-/* Fiori 3 theme                 */
+/* CSS for control sap.m/Avatar  */
+/* Quartz Dark theme             */
 /* ============================= */
+
+@_sap_f_Avatar_Color: @sapUiContentContrastTextColor;
 
 .sapFAvatarBorder {
 	&.sapFAvatarIcon,
@@ -9,6 +11,14 @@
 	.sapFAvatarImageHolder {
 		box-shadow: 0 0 0 0.0625rem fade(@sapUiContentShadowColor, 10) inset;
 	}
+}
+
+.sapFAvatarIcon {
+	color: @_sap_f_Avatar_Color;
+}
+
+.sapFAvatarInitialsHolder {
+	color: @_sap_f_Avatar_Color;
 }
 
 .sapFAvatarSquare {

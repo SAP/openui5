@@ -29,11 +29,6 @@ sap.ui.define(function () {
 			autostart: true
 		},
 		tests: {
-			"Avatar": {
-				coverage: {
-					only: ["sap/f/Avatar"]
-				}
-			},
 			"Card": {
 				coverage: {
 					only: ["sap/f/Card"]
