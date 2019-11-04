@@ -192,6 +192,15 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: false
+			},
+			"designtime/baseEditor/util/findClosestInstance": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/findClosestInstance"
+					]
+				},
+				sinon: false
 			}
 		}
 	};
