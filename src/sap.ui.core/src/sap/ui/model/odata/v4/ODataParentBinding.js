@@ -71,6 +71,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the new current value and updates the cache.
+	 *
+	 * @param {string} sPath
+	 *   A relative path within the JSON structure
+	 * @param {any} vValue
+	 *   The new value which must be primitive
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the PATCH request
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   <code>undefined</code> or a promise which is resolved without a result in case of success,
+	 *   or rejected with an instance of <code>Error</code> in case of failure
+	 *
+	 * @see sap.ui.model.odata.v4.ODataContext#doSetProperty
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.doSetProperty = function (sPath, vValue, oGroupLock) {};
+
+	/**
 	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
 	 *
 	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
@@ -564,7 +583,7 @@ sap.ui.define([
 		this.removeReadGroupLock();
 		this.oResumePromise = undefined;
 
-		asODataBinding.prototype.destroy.apply(this);
+		asODataBinding.prototype.destroy.call(this);
 	};
 
 	/**
@@ -1147,6 +1166,11 @@ sap.ui.define([
 		}
 	}
 
+	// #doDeregisterChangeListener is still not final, allow for "super" calls
+	asODataParentBinding.prototype.doDeregisterChangeListener
+		= ODataParentBinding.prototype.doDeregisterChangeListener;
+	// #doSetProperty is not final, allow for "super" calls
+	asODataParentBinding.prototype.doSetProperty = ODataParentBinding.prototype.doSetProperty;
 	// #destroy is still not final, allow for "super" calls
 	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
 	// #hasPendingChangesForPath is still not final, allow for "super" calls

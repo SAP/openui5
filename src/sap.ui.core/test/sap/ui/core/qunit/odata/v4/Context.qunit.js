@@ -1818,7 +1818,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("doSetProperty: fetchUpdataData fails", function (assert) {
-		var oMetaModel = {
+		var oBinding = {
+				doSetProperty : function () {}
+			},
+			oMetaModel = {
 				fetchUpdateData : function () {}
 			},
 			oModel = {
@@ -1826,9 +1829,11 @@ sap.ui.define([
 					return oMetaModel;
 				}
 			},
-			oContext = Context.create(oModel, null, "/ProductList('HT-1000')"),
+			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed");
 
+		this.mock(oBinding).expects("doSetProperty")
+			.withExactArgs("some/relative/path", undefined, undefined);
 		this.mock(oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
@@ -1843,7 +1848,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("doSetProperty: withCache fails", function (assert) {
-		var oMetaModel = {
+		var oBinding = {
+				doSetProperty : function () {}
+			},
+			oMetaModel = {
 				fetchUpdateData : function () {}
 			},
 			oModel = {
@@ -1851,9 +1859,11 @@ sap.ui.define([
 					return oMetaModel;
 				}
 			},
-			oContext = Context.create(oModel, null, "/ProductList('HT-1000')"),
+			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed");
 
+		this.mock(oBinding).expects("doSetProperty")
+			.withExactArgs("some/relative/path", undefined, undefined);
 		this.mock(oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({entityPath : "/entity/path"}));
@@ -1912,7 +1922,15 @@ sap.ui.define([
 	var sTitle = "doSetProperty: scenario " + i;
 
 	QUnit.test(sTitle, function (assert) {
-		var oGroupLock = {},
+		var oBinding = {
+				doSetProperty : function () {},
+				firePatchCompleted : function () {},
+				firePatchSent : function () {},
+				getUpdateGroupId : function () {},
+				isPatchWithoutSideEffects : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oGroupLock = {},
 			oMetaModel = {
 				fetchUpdateData : function () {},
 				getUnitOrCurrencyPath : function () {}
@@ -1924,12 +1942,14 @@ sap.ui.define([
 				reportError : function () {},
 				resolve : function () {}
 			},
-			oContext = Context.create(oModel, null, "/BusinessPartnerList('0100000000')"),
+			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			oError = new Error("This call intentionally failed"),
 			bSkipRetry = i === 1,
 			vWithCacheResult = {},
 			that = this;
 
+		oBindingMock.expects("doSetProperty")
+			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock));
 		this.mock(oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("some/relative/path", sinon.match.same(oContext))
 			.returns(SyncPromise.resolve({
@@ -1939,14 +1959,7 @@ sap.ui.define([
 			}));
 		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func, "/entity/path")
 			.callsFake(function (fnProcessor) {
-				var oBinding = {
-						firePatchCompleted : function () {},
-						firePatchSent : function () {},
-						getUpdateGroupId : function () {},
-						isPatchWithoutSideEffects : function () {}
-					},
-					oBindingMock = that.mock(oBinding),
-					oCache = {
+				var oCache = {
 						update : function () {}
 					},
 					bPatchWithoutSideEffects = {/*false,true*/},
@@ -2013,6 +2026,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("doSetProperty: reduce path", function (assert) {
 		var oBinding = {
+				doSetProperty : function () {},
 				getBaseForPathReduction : function () {}
 			},
 			oMetaModel = {
@@ -2036,9 +2050,11 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("getReducedPath")
 			.withExactArgs("/~", "/base/path")
 			.returns("/reduced/path");
+		this.mock(oBinding).expects("doSetProperty")
+			.withExactArgs("/reduced/path", "new value", undefined);
 		this.mock(oMetaModel).expects("fetchUpdateData")
 			.withExactArgs("/reduced/path", sinon.match.same(oContext))
-			.resolves(oFetchUpdateDataResult);
+			.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 		this.mock(oContext).expects("withCache")
 			.withExactArgs(sinon.match.func, sinon.match.same(oFetchUpdateDataResult.entityPath))
 			.resolves();
@@ -2046,6 +2062,43 @@ sap.ui.define([
 		// code under test
 		return oContext.doSetProperty("some/relative/path", "new value");
 	});
+
+	//*********************************************************************************************
+[SyncPromise.resolve(), undefined].forEach(function (vValue) {
+	QUnit.test("doSetProperty: invocation of ODB#doSetProperty", function (assert) {
+		var oBinding = {
+				doSetProperty : function () {}
+			},
+			oGroupLock = {},
+			oMetaModel = {
+				fetchUpdateData : function () {}
+			},
+			oModel = {
+				bAutoExpandSelect : false,
+				getMetaModel : function () {
+					return oMetaModel;
+				}
+			},
+			bSkipRetry = {/*true, false*/},
+			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
+			oFetchUpdateDataResult = {entityPath : {}};
+
+		this.mock(oBinding).expects("doSetProperty")
+			.withExactArgs("/some/absolute/path", "new value", sinon.match.same(oGroupLock))
+			.returns(vValue);
+		this.mock(oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
+			.exactly(vValue ? 0 : 1)
+			.returns(SyncPromise.resolve(oFetchUpdateDataResult));
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, sinon.match.same(oFetchUpdateDataResult.entityPath))
+			.exactly(vValue ? 0 : 1)
+			.resolves();
+
+		// code under test
+		return oContext.doSetProperty("/some/absolute/path", "new value", oGroupLock, bSkipRetry);
+	});
+});
 
 	//*********************************************************************************************
 [null, "new value"].forEach(function (vValue) {
@@ -2068,7 +2121,8 @@ sap.ui.define([
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", vValue, sinon.match.same(oGroupLock), true)
-			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated
+			// allow check that #withCache's result is propagated
+			.returns(SyncPromise.resolve(vWithCacheResult));
 
 		// code under test
 		return oContext.setProperty("some/relative/path", vValue, "group").then(function (vResult) {
@@ -2130,10 +2184,12 @@ sap.ui.define([
 		oGroupLockMock.expects("unlock").never(); // not yet
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
-			.rejects(oError);
+			.returns(SyncPromise.resolve(Promise.reject(oError)));
 
 		// code under test
 		oPromise = oContext.setProperty("some/relative/path", "new value", "group");
+
+		assert.ok(oPromise instanceof Promise);
 
 		oGroupLockMock.expects("unlock").withExactArgs(true);
 
@@ -2165,7 +2221,8 @@ sap.ui.define([
 			.returns(oGroupLock);
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock), true)
-			.resolves(vWithCacheResult); // allow check that #withCache's result is propagated
+			// allow check that #withCache's result is propagated
+			.returns(SyncPromise.resolve(vWithCacheResult));
 
 		// code under test
 		return oContext.setProperty("some/relative/path", "new value").then(function (vResult) {

@@ -3135,9 +3135,19 @@ sap.ui.define([
 	QUnit.test("allow for super calls", function (assert) {
 		var oBinding = new ODataParentBinding();
 
-		assert.strictEqual(oBinding.destroy, asODataParentBinding.prototype.destroy);
-		assert.strictEqual(oBinding.hasPendingChangesForPath,
-			asODataParentBinding.prototype.hasPendingChangesForPath);
+		assert.strictEqual(asODataParentBinding.prototype.doDeregisterChangeListener,
+			oBinding.doDeregisterChangeListener);
+		assert.strictEqual(asODataParentBinding.prototype.doSetProperty, oBinding.doSetProperty);
+		assert.strictEqual(asODataParentBinding.prototype.destroy, oBinding.destroy);
+		assert.strictEqual(asODataParentBinding.prototype.hasPendingChangesForPath,
+			oBinding.hasPendingChangesForPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		assert.strictEqual(oBinding.doSetProperty(), undefined);
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

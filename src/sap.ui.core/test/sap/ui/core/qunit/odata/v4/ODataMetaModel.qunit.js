@@ -1437,6 +1437,11 @@ sap.ui.define([
 			//TODO merge facets of return type and type definition?!
 			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType,
 		"/ChangeManagerOfTeam/value" : oTeamData.value,
+		"/ChangeManagerOfTeam/$kind" : "ActionImport",
+		"/ChangeManagerOfTeam/$Action/0/$Parameter/0/$Name" : "TEAM",
+		"/ChangeManagerOfTeam/@$ui5.overload/0/$Parameter/0/$Name" : "TEAM",
+		"/ChangeManagerOfTeam/$Parameter/TEAM/$Name" : "TEAM",
+		"/OverloadedFunctionImport/$Parameter/C/$Type" : "Edm.String",
 		// action overloads -----------------------------------------------------------------------
 		"/OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([aOverloadedAction[2]]),
 		"/OverloadedAction/@$ui5.overload/0" : aOverloadedAction[2],
@@ -1464,6 +1469,8 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedAction/_it" : aOverloadedAction[1].$Parameter[0],
 		"/T€AMS/name.space.OverloadedAction/parameter1" : aOverloadedAction[1].$Parameter[1],
 		"/T€AMS/name.space.OverloadedAction/parameter2" : aOverloadedAction[1].$Parameter[2],
+		"/T€AMS/name.space.OverloadedAction/$Parameter/parameter2"
+			: aOverloadedAction[1].$Parameter[2],
 		// parameters take precedence, empty segment disambiguates - - - - - - - - - - - - - - - - -
 		"/T€AMS/tea_busi.NewAction/Name" : oTeamData.Name, // "Name" is not a parameter
 		"/T€AMS/tea_busi.NewAction/_it" : mScope["tea_busi.NewAction"][1].$Parameter[0],
@@ -1489,6 +1496,8 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedBoundFunction/_it@Common.Label"
 			: mScope.$Annotations["name.space.OverloadedBoundFunction/_it"]["@Common.Label"],
 		"/T€AMS/name.space.OverloadedBoundFunction/B" : aOverloadedBoundFunction[1].$Parameter[1],
+		"/T€AMS/name.space.OverloadedBoundFunction/$Parameter/B"
+			: aOverloadedBoundFunction[1].$Parameter[1],
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
