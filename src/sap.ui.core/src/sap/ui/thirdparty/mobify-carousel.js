@@ -325,7 +325,7 @@ Mobify.UI.Carousel = (function($, Utils) {
     	if(this._fnStart) {
     		this._fnStart.call(this, e);
     	} else {
-    		jQuery.sap.log.warning("Mobify's 'start' method not available yet.")
+    		jQuery.sap.log.warning("Mobify's 'start' method not available yet.");
     	}
     }
 
