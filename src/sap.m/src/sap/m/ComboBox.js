@@ -1160,7 +1160,7 @@ sap.ui.define([
 			// if there is a selected item, scroll and show the list
 			fnSelectedItemOnViewPort.call(this, true);
 
-			if (oItem && oSelectionRange.start === oSelectionRange.end) {
+			if (oItem && oSelectionRange.start === oSelectionRange.end && oSelectionRange.start > 1) {
 				setTimeout(function() {
 					this.selectText(0, oSelectionRange.end);
 				}.bind(this), 0);
