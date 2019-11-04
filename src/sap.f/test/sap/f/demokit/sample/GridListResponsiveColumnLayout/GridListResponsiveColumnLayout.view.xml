@@ -4,10 +4,6 @@
 		xmlns:grid="sap.ui.layout.cssgrid"
 		xmlns:f="sap.f"
 		controllerName="sap.f.sample.GridListResponsiveColumnLayout.GridListResponsiveColumnLayout">
-	<MessageStrip
-			class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
-			type="Information"
-			text="Note: This layout is not supported by Microsoft Internet Explorer."/>
 	<Slider value="100" liveChange="onSliderMoved"/>
 	<Panel id="panelForGridList">
 		<headerToolbar>

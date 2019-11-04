@@ -566,10 +566,10 @@ sap.ui.define([
 			this.oGridLayout = new ResponsiveColumnLayout({
 				layoutChange: this.fnLayoutChangeHandler
 			});
-			sinon.spy(this.oGridLayout, "_setActiveLayoutClassName");
+			sinon.spy(this.oGridLayout, "_applyLayout");
 		},
 		afterEach: function () {
-			this.oGridLayout._setActiveLayoutClassName.restore();
+			this.oGridLayout._applyLayout.restore();
 			this.oGridLayout.destroy();
 			this.oGridLayout = null;
 			this.fnLayoutChangeHandler = null;
@@ -588,6 +588,12 @@ sap.ui.define([
 		var oGridMock = {
 			$: function () {
 				return $GridMock;
+			},
+			isA: function () {
+				return false;
+			},
+			getItems: function () {
+				return [];
 			}
 		};
 
@@ -596,7 +602,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.fnLayoutChangeHandler.notCalled, "Should not trigger layoutChange onAfterRendering of the grid");
-		assert.ok(this.oGridLayout._setActiveLayoutClassName.calledOnce, "Should add size class when layout is applied");
+		assert.ok(this.oGridLayout._applyLayout.calledOnce, "Should add size class when layout is applied");
 	});
 
 	QUnit.test("Resize", function (assert) {
@@ -607,6 +613,12 @@ sap.ui.define([
 		var oGridMock = {
 			$: function () {
 				return $GridMock.find("#cssGrid");
+			},
+			isA: function () {
+				return false;
+			},
+			getItems: function () {
+				return [];
 			}
 		};
 
@@ -624,7 +636,7 @@ sap.ui.define([
 
 		this.oGridLayout.onGridResize(oResizeEventMock);
 		assert.ok(this.fnLayoutChangeHandler.calledOnce, "Trigger layoutChange onAfterRendering of the grid");
-		assert.ok(this.oGridLayout._setActiveLayoutClassName.calledOnce, "Should add size class when layout is applied");
+		assert.ok(this.oGridLayout._applyLayout.calledOnce, "Should add size class when layout is applied");
 		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutXL", "XL class name is correct");
 
 		$GridMock.width(900);
@@ -691,6 +703,7 @@ sap.ui.define([
 		GridLayoutBase.setItemStyles.restore();
 		this.oGrid.onLayoutDataChange.restore();
 	});
+
 	QUnit.test("Remove item layoutData", function (assert) {
 
 		// Arrange
