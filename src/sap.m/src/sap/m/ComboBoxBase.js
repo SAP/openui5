@@ -1003,7 +1003,7 @@ sap.ui.define([
 
 			// Creates the internal controls of the <code>SuggestionsPopover</code>
 			oSuggPopover._createSuggestionPopup({showSelectedButton: this._hasShowSelectedButton()});
-			oSuggPopover._createSuggestionPopupContent(false, false, false);
+			oSuggPopover._createSuggestionPopupContent(false);
 
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
 			this._updateSuggestionsPopoverValueState();

@@ -65,6 +65,12 @@ function(
 	// shortcut for sap.m.InputType
 	var InputType = library.InputType;
 
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.m.ListSeparators
+	var ListSeparators = library.ListSeparators;
+
 	/**
 	 * Constructor for a new <code>Input</code>.
 	 *
@@ -428,6 +434,50 @@ function(
 	IconPool.insertFontFaceStyle();
 
 	/**
+	 * The default filter function for tabular suggestions. It checks whether some item text begins with the typed value.
+	 *
+	 * @private
+	 * @param {string} sValue the current filter string.
+	 * @param {sap.m.ColumnListItem} oColumnListItem The filtered list item.
+	 * @returns {boolean} true for items that start with the parameter sValue, false for non matching items.
+	 */
+	Input._DEFAULTFILTER_TABULAR = function(sValue, oColumnListItem) {
+		var aCells = oColumnListItem.getCells(),
+			i = 0;
+
+		for (; i < aCells.length; i++) {
+
+			if (aCells[i].getText) {
+				if (SuggestionsPopover._wordStartsWithValue(aCells[i].getText(), sValue)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * The default result function for tabular suggestions. It returns the value of the first cell with a "text" property.
+	 *
+	 * @private
+	 * @param {sap.m.ColumnListItem} oColumnListItem The selected list item.
+	 * @returns {string} The value to be displayed in the input field.
+	 */
+	Input._DEFAULTRESULT_TABULAR = function (oColumnListItem) {
+		var aCells = oColumnListItem.getCells(),
+			i = 0;
+
+		for (; i < aCells.length; i++) {
+			// take first cell with a text method and compare value
+			if (aCells[i].getText) {
+				return aCells[i].getText();
+			}
+		}
+		return "";
+	};
+
+	/**
 	 * Initializes the control.
 	 *
 	 * @private
@@ -465,6 +515,11 @@ function(
 		if (this._iRefreshListTimeout) {
 			clearTimeout(this._iRefreshListTimeout);
 			this._iRefreshListTimeout = null;
+		}
+
+		if (this._oSuggestionTable) {
+			this._oSuggestionTable.destroy();
+			this._oSuggestionTable = null;
 		}
 
 		if (this._oSuggPopover) {
@@ -610,7 +665,7 @@ function(
 		}
 
 		if (this._hasTabularSuggestions()) {
-			bHasSelectedItem = this._oSuggPopover._oSuggestionTable && !!this._oSuggPopover._oSuggestionTable.getSelectedItem();
+			bHasSelectedItem = this._oSuggestionTable && !!this._oSuggestionTable.getSelectedItem();
 		} else {
 			bHasSelectedItem = this._oSuggPopover._oList && !!this._oSuggPopover._oList.getSelectedItem();
 		}
@@ -1891,7 +1946,7 @@ function(
 			oItem.setType(ListType.Active);
 			this.addAggregation("suggestionRows", oItem);
 			this._synchronizeSuggestions();
-			this._createSuggestionPopupContent();
+			this._createSuggestionPopupContent(true);
 			return this;
 		};
 
@@ -1907,7 +1962,7 @@ function(
 			oItem.setType(ListType.Active);
 			this.insertAggregation("suggestionRows", oItem, iIndex);
 			this._synchronizeSuggestions();
-			this._createSuggestionPopupContent();
+			this._createSuggestionPopupContent(true);
 			return this;
 		};
 
@@ -2113,7 +2168,57 @@ function(
 	 * @returns {sap.m.Table} Suggestion table.
 	 */
 	Input.prototype._getSuggestionsTable = function () {
-		return this._getSuggestionsPopover()._getSuggestionsTable();
+
+		if (this._bIsBeingDestroyed) {
+			return this._oSuggestionTable;
+		}
+
+		if (!this._oSuggestionTable) {
+			this._oSuggestionTable = new Table(this.getId() + "-popup-table", {
+				mode: ListMode.SingleSelectMaster,
+				showNoData: false,
+				showSeparators: ListSeparators.None,
+				width: "100%",
+				enableBusyIndicator: false,
+				rememberSelections : false,
+				itemPress: function (oEvent) {
+					if (Device.system.desktop) {
+						this.focus();
+					}
+					this._oSuggPopover._bSuggestionItemTapped = true;
+					var oSelectedListItem = oEvent.getParameter("listItem");
+					this.setSelectionRow(oSelectedListItem, true);
+				}.bind(this)
+			});
+
+			this._oSuggestionTable.addEventDelegate({
+				onAfterRendering: function () {
+					var aTableCellsDomRef, sInputValue;
+
+					if (!this.getEnableSuggestionsHighlighting()) {
+						return;
+					}
+
+					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
+					sInputValue = (this._sTypedInValue || this.getValue()).toLowerCase();
+
+					this._oSuggPopover.highlightSuggestionItems(aTableCellsDomRef, sInputValue);
+				}.bind(this)
+			});
+
+			// initially hide the table on phone
+			if (this._bUseDialog) {
+				this._oSuggestionTable.addStyleClass("sapMInputSuggestionTableHidden");
+			}
+
+			this._oSuggestionTable.updateItems = function() {
+				Table.prototype.updateItems.apply(this, arguments);
+				this._refreshItemsDelayed();
+				return this;
+			};
+		}
+
+		return this._oSuggestionTable;
 	};
 
 	/**
@@ -2372,7 +2477,7 @@ function(
 	/**
 	 * Helper function that creates content for the suggestion popup.
 	 *
-	 * @param {boolean|null} bTabular Content for the popup.
+	 * @param {boolean|null} bTabular Determines whether the popup content is a table or a list.
 	 * @private
 	 */
 	Input.prototype._createSuggestionPopupContent = function(bTabular) {
@@ -2381,7 +2486,7 @@ function(
 			return;
 		}
 
-		this._oSuggPopover._createSuggestionPopupContent(bTabular, this._hasTabularSuggestions());
+		this._oSuggPopover._createSuggestionPopupContent(bTabular);
 
 		if (!this._hasTabularSuggestions() && !bTabular) {
 			this._oSuggPopover._oList.attachItemPress(function (oEvent) {
@@ -2399,12 +2504,12 @@ function(
 			// tabular suggestions
 			// if no custom filter is set we replace the default filter function here
 			if (this._fnFilter === SuggestionsPopover._DEFAULTFILTER) {
-				this._fnFilter = SuggestionsPopover._DEFAULTFILTER_TABULAR;
+				this._fnFilter = Input._DEFAULTFILTER_TABULAR;
 			}
 
 			// if not custom row result function is set we set the default one
 			if (!this._fnRowResultFilter) {
-				this._fnRowResultFilter = SuggestionsPopover._DEFAULTRESULT_TABULAR;
+				this._fnRowResultFilter = Input._DEFAULTRESULT_TABULAR;
 			}
 
 			if (this.getShowTableSuggestionValueHelp()) {
