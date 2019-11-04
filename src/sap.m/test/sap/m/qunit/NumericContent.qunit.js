@@ -309,6 +309,87 @@ sap.ui.define([
 		assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 	});
 
+	QUnit.module("Adaptive font size", {
+		beforeEach: function () {
+			this.oNumericContent = new NumericContent("numeric-cnt", {
+				indicator: DeviationIndicator.Up,
+				value: "12345678",
+				animateTextChange: false
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oNumericContent.destroy();
+			this.oNumericContent = null;
+		}
+	});
+
+	QUnit.test("Test the adaptive font size change based on language - small", function(assert){
+		// Arrange
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCSmallFontSize"),"When the language is set to 'de' the font should be smaller");
+		// Arrange
+		this.oNumericContent.setAdaptiveFontSize(false);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'de' and adaptiveFontSize is set to false the font should be larger");
+		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+
+	});
+	QUnit.test("Test the adaptive font size change based on language - medium", function(assert){
+		// Arrange
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		sap.ui.getCore().getConfiguration().setLanguage("es");
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCMediumFontSize"),"When the language is set to 'es' the font should be smaller");
+		// Arrange
+		this.oNumericContent.setAdaptiveFontSize(false);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'es' and adaptiveFontSize is set to false the font should be larger");
+		this.oNumericContent.setAdaptiveFontSize(true);
+		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+
+	});
+	QUnit.test("Test the adaptive font size change based on language - large", function(assert){
+		// Arrange
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		sap.ui.getCore().getConfiguration().setLanguage("bg");
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'bg' the font should be smaller");
+		// Arrange
+		this.oNumericContent.setAdaptiveFontSize(false);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"),"When the language is set to 'bg' and adaptiveFontSize is set to false the font should stay the same");
+		this.oNumericContent.setAdaptiveFontSize(true);
+		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+
+	});
+
+	QUnit.test("Test the adaptive font size change based on language - adaptiveFontSize: false", function(assert){
+		// Arrange
+		this.oNumericContent.setAdaptiveFontSize(false);
+
+		// Assert
+		assert.notOk(this.oNumericContent.$("value-scr").hasClass("sapMNCSmallFontSize") || this.oNumericContent.$("value-scr").hasClass("sapMNCMediumFontSize"),"When adaptiveFontSize is set to false the font size class should not change");
+		assert.ok(this.oNumericContent.$("value-scr").hasClass("sapMNCLargeFontSize"), "When adaptiveFontSize is set to false the font size class should be the default one");
+
+		this.oNumericContent.setAdaptiveFontSize(true);
+
+	});
+
 	/* --- Helpers --- */
 
 	function fnAssertNumericContentHasRendered (assert) {
