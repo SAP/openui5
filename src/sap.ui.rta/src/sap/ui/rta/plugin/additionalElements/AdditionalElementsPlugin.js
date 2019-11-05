@@ -927,54 +927,46 @@ sap.ui.define([
 		},
 
 		_isEditableCheck: function(oOverlay, bOverlayIsSibling) {
-			return new Promise(function(resolve, reject) {
-				var bEditable = false;
-				var mParents = _getParents(bOverlayIsSibling, oOverlay);
+			return Promise.resolve()
+				.then(function() {
+					var mParents = _getParents(bOverlayIsSibling, oOverlay);
 
-				if (!mParents.relevantContainerOverlay) {
-					return resolve(false);
-				}
+					if (!mParents.relevantContainerOverlay) {
+						return false;
+					}
+					return this._getActions(bOverlayIsSibling, oOverlay, true)
+						.then(function (mActions) {
+							return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function () {
+								var bEditable = false;
+								if (mActions.addODataProperty) {
+									var oAddODataPropertyAction = mActions.addODataProperty.action;
+									bEditable = oAddODataPropertyAction &&
+										oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
+								}
 
-				this._getActions(bOverlayIsSibling, oOverlay, true).then(function(mActions) {
-					return Utils.doIfAllControlsAreAvailable([oOverlay, mParents.parentOverlay], function() {
-						if (mActions.addODataProperty) {
-							var oAddODataPropertyAction = mActions.addODataProperty.action;
-							bEditable = oAddODataPropertyAction &&
-								oAddODataPropertyAction.aggregation === oOverlay.getParentAggregationOverlay().getAggregationName();
-						}
+								if (!bEditable && mActions.reveal) {
+									bEditable = true;
+								}
 
-						if (!bEditable && mActions.reveal) {
-							bEditable = true;
-						}
+								if (!bEditable && mActions.custom) {
+									bEditable = true;
+								}
 
-						if (!bEditable && mActions.custom) {
-							bEditable = true;
-						}
-
-						return Promise.resolve(bEditable)
-							.then(function(bEditable) {
 								if (!bEditable && !bOverlayIsSibling) {
 									return this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
 								}
 								return bEditable;
-							}.bind(this))
-							.then(function(bEditable) {
-								if (bEditable) {
-									bEditable =
-										this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
-										&& this.hasStableId(mParents.parentOverlay);
-								}
-								return bEditable;
 							}.bind(this));
-					}.bind(this));
-				}.bind(this))
-				.then(function(bEditable) {
-					resolve(bEditable);
-				})
-				.catch(function (vError) {
-					reject(vError);
-				});
-			}.bind(this));
+						}.bind(this))
+						.then(function (bEditable) {
+							if (bEditable) {
+								bEditable =
+									this.hasStableId(oOverlay) //don't confuse the user/Web IDE by an editable overlay without stable ID
+									&& this.hasStableId(mParents.parentOverlay);
+							}
+							return bEditable;
+						}.bind(this));
+				}.bind(this));
 		},
 
 		getAllElements: function(bOverlayIsSibling, aElementOverlays, iIndex, sControlName) {
