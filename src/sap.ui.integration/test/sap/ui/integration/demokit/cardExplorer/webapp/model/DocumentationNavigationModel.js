@@ -21,7 +21,7 @@ sap.ui.define([
 				key: 'gettingStarted'
 			},
 			{
-				title: 'Integration Card Headers',
+				title: 'Card Headers',
 				icon: 'sap-icon://header',
 				target: 'learnDetail',
 				key: 'headers',
@@ -41,7 +41,7 @@ sap.ui.define([
 				]
 			},
 			{
-				title: 'Integration Card Types',
+				title: 'Card Types',
 				icon: 'sap-icon://overview-chart',
 				target: 'learnDetail',
 				key: 'types',
@@ -85,7 +85,7 @@ sap.ui.define([
 				]
 			},
 			{
-				title: 'Integration Card Features',
+				title: 'Card Features',
 				icon: 'sap-icon://activities',
 				target: 'learnDetail',
 				key: 'features',
@@ -125,6 +125,12 @@ sap.ui.define([
 						target: 'learnDetail',
 						key: 'featureDynamicCounter',
 						topicTitle: 'Integration Card Features'
+					},
+					{
+						title: 'Formatters',
+						target: 'learnDetail',
+						key: 'featureFormatters',
+						topicTitle: 'Integration Card Features'
 					}
 				]
 			},
@@ -134,6 +140,20 @@ sap.ui.define([
 				icon: 'sap-icon://attachment-zip-file',
 				target: 'learnDetail',
 				key: 'bundle'
+			},
+			{
+				title: 'Card Formatters',
+				icon: 'sap-icon://text-formatting',
+				target: 'learnDetail',
+				key: 'formatters',
+				items: [
+					{
+						title: 'Date and Time',
+						target: 'learnDetail',
+						key: 'dateAndTime',
+						topicTitle: 'Formatters'
+					}
+				]
 			}
 		]
 	});

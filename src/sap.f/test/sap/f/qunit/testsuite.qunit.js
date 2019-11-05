@@ -39,6 +39,11 @@ sap.ui.define(function () {
 					only: ["sap/f/Card"]
 				}
 			},
+			"BindingHelper": {
+				coverage: {
+					only: ["sap/f/cards/BindingHelper"]
+				}
+			},
 			"BindingResolver": {
 				coverage: {
 					only: ["sap/f/cards/BindingResolver"]

@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Core",
-	"sap/f/cards/CardActions"
-], function (Control, JSONModel, Log, ManagedObjectObserver, Core, CardActions) {
+	"sap/f/cards/CardActions",
+	"./BindingHelper"
+], function (Control, JSONModel, Log, ManagedObjectObserver, Core, CardActions, BindingHelper) {
 	"use strict";
 
 	/**
@@ -338,7 +339,7 @@ sap.ui.define([
 				oContent._sAppId = sAppId;
 				oContent.setServiceManager(oServiceManager);
 				oContent.setDataProviderFactory(oDataProviderFactory);
-				oContent.setConfiguration(oConfiguration);
+				oContent.setConfiguration(BindingHelper.createBindingInfos(oConfiguration));
 				resolve(oContent);
 			};
 
