@@ -1,26 +1,29 @@
 /*!
  * ${copyright}
  */
+
+ /* global XMLHttpRequest */
+
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/m/MessageBox",
 	"sap/ui/rta/Utils",
-	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/core/BusyIndicator",
 	"sap/base/util/uid",
 	"sap/base/Log",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI"
 ],
 function(
 	FlexUtils,
 	MessageBox,
 	RtaUtils,
-	DescriptorUtils,
 	BusyIndicator,
 	uid,
 	Log,
 	PersistenceWriteAPI,
+	AppVariantWriteAPI,
 	ChangesWriteAPI
 ) {
 	"use strict";
@@ -32,8 +35,24 @@ function(
 	AppVariantUtils._newAppVariantId = null;
 
 	AppVariantUtils.getManifirstSupport = function(sRunningAppId) {
-		var sRoute = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
-		return DescriptorUtils.sendRequest(sRoute, 'GET');
+		var sManifirstUrl = '/sap/bc/ui2/app_index/ui5_app_mani_first_supported/?id=' + sRunningAppId;
+
+		return new Promise(function (resolve, reject) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", sManifirstUrl);
+			xhr.send();
+
+			xhr.onload = function() {
+				if (xhr.status >= 200 && xhr.status < 400) {
+					resolve(xhr.response);
+				} else {
+					reject({
+						status : xhr.status,
+						message : xhr.statusText
+					});
+				}
+			};
+		});
 	};
 
 	AppVariantUtils.isStandAloneApp = function() {
@@ -113,7 +132,7 @@ function(
 
 	AppVariantUtils.createAppVariant = function(oRootControl, mPropertyBag) {
 		mPropertyBag.version = "1.0.0"; // Application variant version should be 1.0.0 which is expected by backend
-		return PersistenceWriteAPI.saveAs(Object.assign({selector: oRootControl}, mPropertyBag));
+		return AppVariantWriteAPI.saveAs(Object.assign({selector: oRootControl}, mPropertyBag));
 	};
 
 	AppVariantUtils.getInlineChangeInput = function(sValue, sComment) {
@@ -294,14 +313,25 @@ function(
 		};
 	};
 
-	AppVariantUtils.triggerCatalogAssignment = function(sAppVariantId, sReferenceAppId) {
-		var sRoute = '/sap/bc/lrep/appdescr_variants/' + sAppVariantId + '?action=assignCatalogs&assignFromAppId=' + sReferenceAppId;
-		return DescriptorUtils.sendRequest(sRoute, 'POST');
+	AppVariantUtils.triggerCatalogAssignment = function(sAppVariantId, sLayer, sReferenceAppId) {
+		return AppVariantWriteAPI.assignCatalogs({
+			selector: {
+				appId: sAppVariantId
+			},
+			action: "assignCatalogs",
+			assignFromAppId: sReferenceAppId,
+			layer: sLayer
+		});
 	};
 
-	AppVariantUtils.triggerCatalogUnAssignment = function(sAppVariantId) {
-		var sRoute = '/sap/bc/lrep/appdescr_variants/' + sAppVariantId + '?action=unassignCatalogs';
-		return DescriptorUtils.sendRequest(sRoute, 'POST');
+	AppVariantUtils.triggerCatalogUnAssignment = function(sAppVariantId, sLayer) {
+		return AppVariantWriteAPI.unassignCatalogs({
+			selector: {
+				appId: sAppVariantId
+			},
+			action: "unassignCatalogs",
+			layer: sLayer
+		});
 	};
 
 	AppVariantUtils.isS4HanaCloud = function(oSettings) {
@@ -481,8 +511,11 @@ function(
 		return Promise.resolve();
 	};
 
-	AppVariantUtils.deleteAppVariant = function(vSelector) {
-		return PersistenceWriteAPI.deleteAppVariant({selector: vSelector});
+	AppVariantUtils.deleteAppVariant = function(vSelector, sLayer) {
+		return AppVariantWriteAPI.deleteAppVariant({
+			selector: vSelector,
+			layer: sLayer
+		});
 	};
 
 	AppVariantUtils.handleBeforeUnloadEvent = function () {

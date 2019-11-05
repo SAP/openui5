@@ -1714,84 +1714,6 @@ sap.ui.define([
 				});
 			});
 		});
-
-		QUnit.test("getJson", function(assert) {
-			var oDescriptorVariant;
-			return DescriptorVariantFactory.createNew({
-				id : "a.id",
-				reference: "a.reference",
-				isAppVariantRoot:	false,
-				version : "1.52.0"
-			}).then(function(_oDescriptorVariant) {
-				oDescriptorVariant = _oDescriptorVariant;
-				var mExpectedJson = {
-					id : "a.id",
-					reference: "a.reference",
-					fileName:	"manifest",
-					fileType:	"cdmapp_config",
-					isAppVariantRoot:	false,
-					layer: "CUSTOMER",
-					namespace: "apps/a.reference/appVariants/a.id/",
-					packageName: "$TMP",
-					version : "1.52.0",
-					content: []
-				};
-				var mJsonResult = oDescriptorVariant.getJson();
-				assert.ok(mJsonResult);
-				assert.deepEqual(mJsonResult, mExpectedJson);
-				//with an inline change
-				return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"});
-			}).then(function(oDescriptorInlineChange) {
-				return oDescriptorVariant.addDescriptorInlineChange(oDescriptorInlineChange);
-			}).then(function() {
-				var mExpectedJsonWithContent = {
-					id : "a.id",
-					reference: "a.reference",
-					fileName:	"manifest",
-					fileType:	"cdmapp_config",
-					isAppVariantRoot:	false,
-					layer: "CUSTOMER",
-					namespace: "apps/a.reference/appVariants/a.id/",
-					packageName: "$TMP",
-					version : "1.52.0",
-					content: [{
-						changeType: "changeType",
-						content: {
-							param:"value"
-						},
-						texts: {a: "b"}
-					}]
-				};
-				var mJsonResultWithContent = oDescriptorVariant.getJson();
-				assert.ok(mJsonResultWithContent);
-				assert.deepEqual(mJsonResultWithContent, mExpectedJsonWithContent);
-
-				return DescriptorVariantFactory.createNew({
-					id : "a.id",
-					reference: "a.reference",
-					referenceVersion: "1.1",
-					isAppVariantRoot:	false
-				});
-			}).then(function(_oDescriptorVariant) {
-				var oDescriptorVariant = _oDescriptorVariant;
-
-				var mExpectedJson = {
-					id : "a.id",
-					reference: "a.reference",
-					fileName:	"manifest",
-					fileType:	"cdmapp_config",
-					isAppVariantRoot:	false,
-					layer: "CUSTOMER",
-					namespace: "apps/a.reference/appVariants/a.id/",
-					packageName: "$TMP",
-					content: [],
-					referenceVersion: "1.1"
-				};
-				var mJsonResult = oDescriptorVariant.getJson();
-				assert.ok(mJsonResult);
-				assert.deepEqual(mJsonResult, mExpectedJson);
-			});
-		});
 	});
 
 	QUnit.module("DescriptorVariantFactory", {
@@ -1913,39 +1835,6 @@ sap.ui.define([
 				layer: "VENDOR"
 			}).then(function(oDescriptorVariant) {
 				assert.equal(oDescriptorVariant._getMap().layer, 'VENDOR');
-			});
-		});
-
-		QUnit.test("createNew - isAppVariantRoot not set", function(assert) {
-			//default behavior - isAppVariantRoot node not added to Descriptor Variant
-			return DescriptorVariantFactory.createNew({
-				id : "a.id",
-				reference: "a.reference",
-				layer: "VENDOR"
-			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().isAppVariantRoot, undefined);
-			});
-		});
-
-		QUnit.test("createNew - isAppVariantRoot = true", function(assert) {
-			return DescriptorVariantFactory.createNew({
-				id : "a.id",
-				reference : "a.reference",
-				layer : "VENDOR",
-				isAppVariantRoot : true
-			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().isAppVariantRoot, true);
-			});
-		});
-
-		QUnit.test("createNew - isAppVariantRoot = false", function(assert) {
-			return DescriptorVariantFactory.createNew({
-				id : "a.id",
-				reference : "a.reference",
-				layer : "VENDOR",
-				isAppVariantRoot : false
-			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().isAppVariantRoot, false);
 			});
 		});
 
@@ -2237,8 +2126,7 @@ sap.ui.define([
 	QUnit.module("DescriptorVariantFactory - ATO false", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
-			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
-			this._fStubSend.resolves({
+			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",

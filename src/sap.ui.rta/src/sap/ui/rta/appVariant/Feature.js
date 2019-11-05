@@ -187,13 +187,14 @@ sap.ui.define([
 		/**
 		 * @param {object} oRootControl - Root control of an app (variant)
 		 * @returns {Promise} Resolved promise with an app variant descriptor
+		 * @param {string} sCurrentLayer - Current working layer
 		 * @description Getting here an app variant descriptor from the layered repository.
 		 */
-		getAppVariantDescriptor: function(oRootControl) {
+		getAppVariantDescriptor: function(oRootControl, sCurrentLayer) {
 			oRootControlRunningApp = oRootControl;
 			var oDescriptor = fnGetDescriptor();
 			if (oDescriptor["sap.app"] && oDescriptor["sap.app"].id) {
-				return DescriptorVariantFactory.loadAppVariant(oDescriptor["sap.app"].id, false);
+				return DescriptorVariantFactory.loadAppVariant(oDescriptor["sap.app"].id, false, sCurrentLayer);
 			}
 			return Promise.resolve(false);
 		},
@@ -254,7 +255,7 @@ sap.ui.define([
 
 				var fnClearRTACommandStack = function(oAppVariant) {
 					oAppVariantSaveClosure = null;
-					oAppVariantSaveClosure = merge({}, oAppVariant.response);
+					oAppVariantSaveClosure = merge({}, oAppVariant);
 
 					// If there are any unsaved changes, should be taken away for the new created app variant
 					return oAppVariantManager.clearRTACommandStack(bCopyUnsavedChanges);

@@ -219,7 +219,10 @@ sap.ui.define([
 			var sDescriptorUrl = this.getModelProperty("descriptorUrl", oEvent.getSource().getBindingContext());
 
 			BusyIndicator.show();
-			return AppVariantOverviewUtils.getDescriptor(sDescriptorUrl).then(function(oAppVariantDescriptor) {
+			return AppVariantOverviewUtils.getDescriptor({
+				appVarUrl: sDescriptorUrl,
+				layer: _sLayer
+			}).then(function(oAppVariantDescriptor) {
 				BusyIndicator.hide();
 				return RtaAppVariantFeature.onSaveAs(false, false, _sLayer, oAppVariantDescriptor);
 			});
