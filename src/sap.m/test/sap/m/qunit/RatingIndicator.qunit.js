@@ -317,6 +317,7 @@ sap.ui.define([
 		assert.strictEqual(oRating9._toPx("10px"), 10, "The result of 10px must be 10");
 		assert.strictEqual(oRating9._toPx("2rem"), 32, "The result of 2rem must be 32");
 		assert.strictEqual(oRating9._toPx("0.2rem"), 3, "The result of 0.2rem must be 3");
+		assert.strictEqual(oRating9._toPx(".2rem"), 3, "The result of .2rem must be 3");
 		assert.strictEqual(oRating9._toPx("1em"), 16, "The result of 1em must be 16");
 
 		// check exceeding value change
