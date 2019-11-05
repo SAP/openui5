@@ -13,7 +13,7 @@ sap.ui.define([
 ], function (Opa5, LabelFor, Input, Label, Button, ResourceModel, App, Page, SimpleForm, Link) {
 	"use strict";
 
-	var BUNDLE_URL = "test-resources/sap/ui/core/qunit/opa/matchers/I18NText.properties";
+	var BUNDLE_URL = "test-resources/sap/ui/core/qunit/opa/fixture/I18NText.properties";
 
 	QUnit.module("LabelFor", {
 		beforeEach: function () {

@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"../utils/browser",
 	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/Matcher",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/thirdparty/jquery",
 	"../utils/customQUnitAssertions"
-], function (Opa5, opaTest, browser, Press, URI, $) {
+], function (Opa5, opaTest, browser, Press, Matcher, URI, $) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -620,6 +621,18 @@ sap.ui.define([
 			controlType: "sap.ui.commons.Button",
 			success: function (aButtons) {
 				Opa5.assert.ok(aButtons instanceof Array, "It is an array out the outer document");
+			}
+		});
+
+		this.oOpa5.iTeardownMyAppFrame();
+	});
+
+	opaTest("Should access application context from matchers", function () {
+		this.oOpa5.waitFor({
+			success: function () {
+				var aTestMatcher = new Matcher();
+				Opa5.assert.strictEqual(aTestMatcher._getApplicationWindow(), Opa5.getWindow());
+				Opa5.assert.notStrictEqual(aTestMatcher._getApplicationWindow(), window);
 			}
 		});
 

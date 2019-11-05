@@ -41,6 +41,19 @@ sap.ui.define([
 		 */
 		isMatching : function (oControl) {
 			return true;
+		},
+
+		/**
+		 * @return {object} window of the application under test, or the current window if OPA5 is not loaded
+		 * @private
+		 * @function
+		 */
+		_getApplicationWindow: function () {
+			try {
+				return sap.ui.test.Opa5.getWindow();
+			} catch (e) {
+				return window;
+			}
 		}
 	});
 

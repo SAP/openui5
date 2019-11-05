@@ -6,9 +6,8 @@ sap.ui.define([
 	'sap/ui/test/matchers/Matcher',
 	'sap/ui/test/matchers/Visible',
 	'sap/ui/test/matchers/_Busy',
-	'sap/ui/test/matchers/_Visitor',
-	"sap/ui/thirdparty/jquery"
-], function(Matcher, Visible, _Busy, _Visitor, jQueryDOM) {
+	'sap/ui/test/matchers/_Visitor'
+], function(Matcher, Visible, _Busy, _Visitor) {
 	"use strict";
 
 	var oVisibleMatcher = new Visible();
@@ -67,8 +66,9 @@ sap.ui.define([
 				return false;
 			}
 
+			var oAppWindowJQuery = this._getApplicationWindow().jQuery;
 			var bControlIsInStaticArea = oControl.$().closest("#sap-ui-static").length;
-			var bOpenStaticBlockingLayer = jQueryDOM("#sap-ui-blocklayer-popup").is(":visible");
+			var bOpenStaticBlockingLayer = oAppWindowJQuery("#sap-ui-blocklayer-popup").is(":visible");
 			if (!bControlIsInStaticArea && bOpenStaticBlockingLayer) {
 				this._oLogger.debug("The control '" + oControl + "' is hidden behind a blocking popup layer");
 				return false;

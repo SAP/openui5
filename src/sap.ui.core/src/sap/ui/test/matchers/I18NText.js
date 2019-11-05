@@ -86,11 +86,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 				aParameters = this.getParameters(),
 				sModelName = this.getModelName(),
 				oModel = oControl.getModel(sModelName),
-				oBundle,
-				fnProperty = oControl["get" + capitalize(sPropertyName, 0)],
-				sPropertyValue,
-				sText,
-				bResult;
+				fnProperty = oControl["get" + capitalize(sPropertyName, 0)];
 
 			// check model existence
 			if (!oModel) {
@@ -105,9 +101,10 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 			}
 
 			// check resource bundle
-			oBundle = oModel.getResourceBundle();
-			if (oBundle instanceof Promise) {
-				if (oModel._oResourceBundle instanceof Object && oModel._oResourceBundle.getText) {
+			var oAppWindow = this._getApplicationWindow();
+			var oBundle = oModel.getResourceBundle();
+			if (oBundle instanceof oAppWindow.Promise) {
+				if (oModel._oResourceBundle instanceof oAppWindow.Object && oModel._oResourceBundle.getText) {
 					// we access the loaded bundle from the internal variable of the resource model
 					// ... instead of using the asynchronous promises which is no option for a synchronous matcher
 					// !!! we have a qunit in place that ensures this internal implementation of the ResourceModel
@@ -123,10 +120,11 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 				this._oLogger.debug("The '" + oControl + "' has no '" + sPropertyName + "' property");
 				return false;
 			}
-			sPropertyValue =  fnProperty.call(oControl);
+
+			var sPropertyValue =  fnProperty.call(oControl);
 
 			// check key
-			sText = oBundle.getText(sKey, aParameters);
+			var sText = oBundle.getText(sKey, aParameters);
 			if (sText === sKey) {
 				var sMessage = "No value for the key '" + sKey + "' in the model '" + sModelName + "' of '" + oControl + "'";
 				this._oLogger.debug(sMessage);
@@ -134,7 +132,7 @@ sap.ui.define(['sap/ui/test/matchers/Matcher', "sap/base/strings/capitalize"], f
 			}
 
 			// compare values
-			bResult = sPropertyValue === sText;
+			var bResult = sPropertyValue === sText;
 			if (!bResult) {
 				this._oLogger.debug("The text '" + sText + "' does not match the value '" + sPropertyValue + "' of the '" + sPropertyName + "' property for '" + oControl + "'");
 			}

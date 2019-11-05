@@ -38,7 +38,8 @@ sap.ui.define([
 
 			var oDescendantControl;
 			if (typeof vDescendantControl === "string") {
-				oDescendantControl = sap.ui.getCore().byId(vDescendantControl);
+				var oAppWindow = oVisitor._getApplicationWindow();
+				oDescendantControl = oAppWindow.sap.ui.getCore().byId(vDescendantControl);
 			} else {
 				oDescendantControl = vDescendantControl;
 			}

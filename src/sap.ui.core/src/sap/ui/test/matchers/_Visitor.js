@@ -4,11 +4,11 @@
 
 // private
 sap.ui.define([
-	"sap/ui/base/ManagedObject"
-], function(ManagedObject) {
+	'sap/ui/test/matchers/Matcher'
+], function (Matcher) {
 	"use strict";
 
-	return ManagedObject.extend("sap.ui.test.matchers._Visitor", {
+	return Matcher.extend("sap.ui.test.matchers._Visitor", {
 		// oControl or one of its ancestors must satisfy a condition
 		// fnMatch=condition; gets 1 arguments: current control
 		// bDirect=false; only direct parent or go up the entire tree

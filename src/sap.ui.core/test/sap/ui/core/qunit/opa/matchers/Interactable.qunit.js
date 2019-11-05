@@ -139,6 +139,33 @@ sap.ui.define([
 		this.oDialog.open();
 	});
 
+	opaTest("Should not match a Button when a dialog is opened in front of it - iframe", function (Given, When, Then) {
+		var oButtonInPage;
+		var oDialog;
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/miniUI5Site.html");
+		When.waitFor({
+			controlType: "sap.m.Button",
+			viewName: "myView",
+			id: "myButton",
+			success: function (oButton) {
+				oButtonInPage = oButton;
+				// success => button is found => button is interactable before dialog is opened
+				oDialog = new (Opa5.getWindow().sap.m.Dialog)();
+				oDialog.open();
+			}
+		});
+		When.waitFor({
+			interactable: false,
+			success: function () {
+				var bResultAfterOpening = this.oInteractable.isMatching(oButtonInPage);
+				Opa5.assert.ok(!bResultAfterOpening, "Control isn't matching after a dialog is opened");
+				sinon.assert.calledWith(this.oSpy,  sinon.match(/hidden behind a blocking popup layer/));
+				oDialog.destroy();
+			}.bind(this)
+		});
+		Then.iTeardownMyApp();
+	});
+
 	QUnit.test("Should not match a Button when a dialog is opened in front of it even if the dialog is still opening", function (assert) {
 		// Arrange
 		var fnStart = assert.async();
@@ -223,7 +250,7 @@ sap.ui.define([
 			oLogCollector.getAndClearLog();
 			assert.ok(!this.oInteractable.isMatching(oButton), "No match because the button was invalidated");
 			var sLog = oLogCollector.getAndClearLog();
-			QUnit.assert.contains(sLog, "Control 'Element sap.m.Button#__button22' is currently in a UIArea that needs a new rendering");
+			QUnit.assert.contains(sLog, "Control 'Element sap.m.Button#" + oButton.getId() + "' is currently in a UIArea that needs a new rendering");
 			fnTimeoutDone();
 		}.bind(this), 0);
 

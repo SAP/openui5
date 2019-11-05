@@ -53,6 +53,7 @@ sap.ui.define([
 				}
 
 				var vCurrentPropertyValue = fnProperty.call(oControl);
+				// propertyValue is set in parent frame (on matcher instantiation), so match it against the parent's RegExp constructor
 				if (oPropertyValue instanceof RegExp) {
 					bIsMatching = oPropertyValue.test(vCurrentPropertyValue);
 				} else {

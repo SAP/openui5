@@ -3,12 +3,15 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/test/matchers/I18NText",
-	"sap/ui/model/json/JSONModel"
-], function(Button, ResourceModel, I18NText, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/Opa5"
+], function(Button, ResourceModel, I18NText, JSONModel, opaTest, Opa5) {
 
 	"use strict";
 
-	var BUNDLE_URL = "test-resources/sap/ui/core/qunit/opa/matchers/I18NText.properties";
+	var BUNDLE_FILE = "I18NText.properties";
+	var BUNDLE_URL = "test-resources/sap/ui/core/qunit/opa/fixture/" + BUNDLE_FILE;
 
 	QUnit.module("Sync Resource Model", {
 		beforeEach: function () {
@@ -19,6 +22,7 @@ sap.ui.define([
 			this.oDebugSpy = sinon.spy(this.oMatcher._oLogger, "debug");
 		},
 		afterEach: function () {
+			this.oModel.destroy();
 			this.oButton.destroy();
 			this.oMatcher.destroy();
 			this.oDebugSpy.restore();
@@ -180,7 +184,6 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The text 'PressMe666' does not match the value 'PressMe123' of the 'text' property for 'Element sap.m.Button#button'/));
 	});
 
-
 	QUnit.module("Async Resource Model", {
 		beforeEach: function () {
 			this.oModel = new ResourceModel({ bundleUrl: BUNDLE_URL, async: true });
@@ -189,6 +192,7 @@ sap.ui.define([
 			this.oDebugSpy = sinon.spy(this.oMatcher._oLogger, "debug");
 		},
 		afterEach: function () {
+			this.oModel.destroy();
 			this.oButton.destroy();
 			this.oMatcher.destroy();
 			this.oDebugSpy.restore();
@@ -218,6 +222,66 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("I18NText - iframe", {
+		beforeEach: function () {
+			this.oMatcher = new I18NText({ propertyName: "text", key: "buttonText" });
+			this.oDebugSpy = sinon.spy(this.oMatcher._oLogger, "debug");
+		},
+		afterEach: function () {
+			this.oMatcher.destroy();
+			this.oDebugSpy.restore();
+		}
+	});
+
+	opaTest("Async resource model - iframe", function (Given, When, Then) {
+		var oButton;
+		var bLoaded = false;
+		var oModel;
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/miniUI5Site.html");
+		When.waitFor({
+			controlType: "sap.m.Page",
+			viewName: "myView",
+			id: "page1",
+			success: function (oPage) {
+				oButton = new (Opa5.getWindow().sap.m.Button)({
+					id: "newButton",
+					text: "{i18n>buttonText}"
+				});
+				oPage.addContent(oButton);
+			}
+		});
+		When.waitFor({
+			success: function () {
+				// mind the fixture page's resourceRoots when setting URLs
+				// laod the module and check its state in the same waitFor, otherwise it might be awaited and loaded before expected
+				oModel = new (Opa5.getWindow().sap.ui.model.resource.ResourceModel)({
+					bundleUrl: "./" + BUNDLE_FILE,
+					async: true
+				});
+				oButton.setModel(oModel, "i18n");
+				var bMatch = this.oMatcher.isMatching(oButton);
+				Opa5.assert.ok(!bMatch, "Did not match - async model not loaded");
+				sinon.assert.calledWith(this.oDebugSpy, sinon.match(/The model 'i18n' of 'Element sap.m.Button#newButton' is in async mode and not loaded yet/));
+
+				oModel.getResourceBundle().then(function () {
+					// wait for button value to update
+					setTimeout(function () {
+						bLoaded = true;
+					}, 100);
+				});
+			}.bind(this)
+		});
+		When.waitFor({
+			check: function () {
+				return bLoaded;
+			},
+			success: function () {
+				var bMatch = this.oMatcher.isMatching(oButton);
+				Opa5.assert.ok(bMatch, "Did match - async model is loaded");
+			}.bind(this)
+		});
+		Then.iTeardownMyApp();
+	});
 
 	QUnit.module("JSON Model");
 

@@ -2,8 +2,10 @@
 sap.ui.define([
 	"sap/ui/test/matchers/Descendant",
 	"sap/m/Button",
-	"sap/ui/layout/HorizontalLayout"
-], function (Descendant, Button, HorizontalLayout) {
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/Opa5"
+], function (Descendant, Button, HorizontalLayout, opaTest, Opa5) {
 	"use strict";
 
 	QUnit.module("Descendant", {
@@ -50,4 +52,33 @@ sap.ui.define([
 		assert.ok(bResult, "Should not filter controls when no descendant is given");
 	});
 
+	opaTest("Should find descendant - iframe", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/core/qunit/opa/fixture/miniUI5Site.html");
+		When.waitFor({
+			controlType: "sap.m.Button",
+			viewName: "myView",
+			id: "myButton",
+			success: function (oButton) {
+				this.waitFor({
+					controlType: "sap.m.Page",
+					matchers: new Descendant(oButton), //instance
+					success: function (aPages) {
+						Opa5.assert.ok(oButton instanceof Opa5.getWindow().sap.m.Button, "Descendant is found in iframe");
+						Opa5.assert.ok(aPages,length, 1);
+						Opa5.assert.ok(aPages[0] instanceof Opa5.getWindow().sap.m.Page);
+						this.waitFor({
+							controlType: "sap.m.Page",
+							matchers: new Descendant(oButton.getId()), // ID declaration
+							success: function (aPages) {
+								Opa5.assert.ok(aPages,length, 1);
+								Opa5.assert.ok(aPages[0] instanceof Opa5.getWindow().sap.m.Page, "Descendant is found in iframe");
+								Opa5.assert.ok(aPages[0].getId().match("page1"));
+							}
+						});
+					}
+				});
+			}
+		});
+		Then.iTeardownMyApp();
+	});
 });
