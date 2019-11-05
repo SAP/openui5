@@ -75,7 +75,7 @@ sap.ui.define([
 	 *     to check whether a parameter is defined at all. Using the new <code>has</code> method or checking the
 	 *     result of <code>get</code> against <code>null</code> serves the same purpose.</li>
 	 * </ul>
-	 * Callers using <code>UriParameters.fromQuery(input)</code> can be migrated to<code>new URLSearchParams(input)</code>
+	 * Callers using <code>UriParameters.fromQuery(input)</code> can be migrated to <code>new URLSearchParams(input)</code>
 	 * once the new API is available in all supported browsers. Callers using <code>UriParameters.fromURL(input)</code>
 	 * can be migrated to <code>new URL(input).searchParams</code> then.
 	 *
