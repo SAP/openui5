@@ -11975,7 +11975,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
-		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
 
 		oGroupHeaderListItem = this.oComboBox._oList.getItems()[0];
 		oInvisibleText = sap.ui.getCore().byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
@@ -12047,9 +12047,9 @@ sap.ui.define([
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
 	});
 
-	QUnit.test("onsapdown when picker opened should move visual focus to the first item (group header in this case)", function (assert) {
-		assert.expect(5);
-		var oGroupHeaderItem;
+	QUnit.test("onsapdown when picker opened should move visual focus to the first selectable item (not to the group header)", function (assert) {
+		assert.expect(6);
+		var oGroupHeaderItem, aItems, oSelectedItem;
 
 		// arrange
 		this.oComboBox.focus();
@@ -12060,14 +12060,19 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
-		oGroupHeaderItem = this.oComboBox._oList.getItems()[0];
 
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		aItems = this.oComboBox._oList.getItems();
+		oGroupHeaderItem = aItems[0];
+		oSelectedItem = aItems[1];
+
+
+		assert.notOk(oGroupHeaderItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the group header item.");
+		assert.ok(oSelectedItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the first item.");
 
 		// assert
 		// no selection was made, the value is empty and the group header has the visual focus
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.fnCheckSelectedItemAndValue(assert, null, "");
-		assert.ok(oGroupHeaderItem.hasStyleClass("sapMLIBFocused"), "Visual focus moved to the group header item.");
 	});
 
 	QUnit.test("onsapdown twice when picker opened should move visual focus to the first item", function (assert) {
@@ -12087,8 +12092,6 @@ sap.ui.define([
 		oExpectedListItem = this.oComboBox.getListItem(oExpectedItem);
 		oGroupHeaderListItem = this.oComboBox._oList.getItems()[0];
 
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 
 		// assert
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
