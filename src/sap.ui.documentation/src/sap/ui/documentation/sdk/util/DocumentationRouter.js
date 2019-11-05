@@ -1,3 +1,4 @@
+/* global hasher */
 /*!
  * ${copyright}
  */
@@ -14,10 +15,13 @@ sap.ui.define([
 	// and it enables the application to handle module URL's which need to be encoded.
 	Hasher.raw = true;
 
-	return Router.extend("sap.ui.documentation.sdk.util.DocumentationRouter", {
+	var DocumentationRouter = Router.extend("sap.ui.documentation.sdk.util.DocumentationRouter", {
 
 		constructor : function() {
 			Router.prototype.constructor.apply(this, arguments);
+
+			// Configure URL separator
+			this._URLSeparator = window['sap-ui-documentation-static'] ? "%23" : "#";
 
 			this.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
 			this.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
@@ -172,15 +176,409 @@ sap.ui.define([
 				oComponent.destroy();
 				oComponent = null;
 			}
-		},
+		}
+
+	});
+
+	/*
+	 * ===============================================================================================================
+	 *
+	 * Handling for documentation links based on deployment type. Demo Kit should handle all 3 types of URL's listed
+	 * below:
+	 *
+	 * 1) Java server and local Grunt serve:
+	 *
+	 * /api/module:sap/base/Log#methods/sap/base/Log.warning
+	 * \__/\__________________/ \_____/ \__________________/
+	 *  |            |             |              |
+	 * Section    Symbol      Member type       Member
+	 *
+	 * 2) Static deployment:
+	 *
+	 * #/api/module:sap/base/Log%23methods/sap/base/Log.warning
+	 *  \__/\__________________/   \_____/ \__________________/
+	 *   |            |               |              |
+	 * Section      Symbol       Member type       Member
+	 *
+	 * 3) Legacy URL's:
+	 *
+	 * #/api/module%3Asap%2Fbase%2FLog/methods/sap%2Fbase%2FLog.warning
+	 *  \__/\________________________/ \_____/\_______________________/
+	 *   |               |                |              |
+	 * Section         Symbol        Member type       Member
+	 *
+	 * ===============================================================================================================
+	 */
+
+	/**
+	 * Handling of documentation link clicks - some times only scrolling is needed without navigation
+	 */
+	DocumentationRouter.prototype.linkClickHandler = function (oEvent) {
+		var oElement = oEvent.target,
+			$Element = jQuery(oElement),
+			sTarget;
+
+		if (!oElement) {
+			return;
+		}
+
+		if (
+			$Element.hasClass("scrollToMethod") ||
+			$Element.hasClass("scrollToEvent") ||
+			$Element.hasClass("scrollToAnnotation")
+		) {
+			if (oEvent.preventDefault) {
+				oEvent.preventDefault();
+			}
+			return; // This is handled in the SubApiDetail controller
+		}
+
+		if ($Element.hasClass("sapDemokitTreeItemTitle")) {
+			sTarget = $Element.control(0).getHref();
+		}
+
+		if (!sTarget) {
+			sTarget = getHref(oElement) || getHref(oElement.parentElement);
+		}
+
+		// If we have no target by here we give up
+		if (!sTarget ||
+			/^blob:/.test(sTarget) ||
+			/^https?:\/\//.test(sTarget) ||
+			/^test-resources\//.test(sTarget) ||
+			/^resources\//.test(sTarget)
+		) {
+			return;
+		}
+
+		// Stop the event propagation
+		if (oEvent.preventDefault) {
+			oEvent.preventDefault();
+		}
+
+		if (sTarget === "#") {
+			sTarget = ""; // translate to base route
+		}
+
+		if (window['sap-ui-documentation-static']) {
+			sTarget = sTarget.replace("#", "%23");
+		}
+
+		this.parse(sTarget);
+
+		// Add new URL history and update URL
+		if (window['sap-ui-documentation-static']) {
+			window.history.pushState({},undefined,"#/" + sTarget);
+		} else {
+			window.history.pushState({},undefined, sTarget);
+		}
+
+	};
+
+	DocumentationRouter.prototype.attachGlobalLinkHandler = function () {
+		if (!this._bGlobalHandlerAttached) {
+			document.body.addEventListener("click", this.linkClickHandler.bind(this), true);
+			this._bGlobalHandlerAttached = true;
+		}
+	};
+
+	/**
+	 * API Reference special route decoder method
+	 *
+	 * Patterns:
+	 * /api/module:sap/base/Log#methods/sap/base/Log.warning
+	 * /api/module:sap/base/Log#methods/attachModelContextChange
+	 * /api/module:sap/base/Log#methods/sap.ui.base.ManagedObject.create
+	 * /api/module:sap/base/Log#methods/Summary
+	 * /api/module:sap/base/Log#events/Summary
+	 * /api/module:sap/base/Log#events/modelContextChange
+	 * /api/module:sap/base/Log#overview
+	 * /api/module:sap/base/Log#constructor
+	 * /api/module:sap/base/Log#controlProperties
+	 * /api/module:sap/base/Log#aggregations
+	 * /api/module:sap/base/Log#associations
+	 * /api/module:sap/base/Log#specialsettings
+	 * /api/module:sap/methods/Debug#methods/sap/methods/Debug.breakpoint
+	 * /api/module:sap/methods/Debug#methods/setText
+	 * /api/module:sap/events/KeyPress#methods/sap/events/KeyPress.extend
+	 *
+	 * @param {object} oEvent the event object
+	 * @returns {object} Demo Kit custom object
+	 * @private
+	 */
+	DocumentationRouter.prototype._decodeSpecialRouteArguments = function (oEvent) {
+		var oArguments = oEvent.getParameters().arguments,
+			aEntity = [],
+			sMemberType,
+			aMember = [],
+			aTemp;
+
+		// Case where we have only ID
+		if (oArguments.p1 === undefined) {
+
+			// Check if we need to split the ID value
+			if (oArguments.id.indexOf(this._URLSeparator) > -1) {
+				aTemp = oArguments.id.split(this._URLSeparator);
+
+				// Assign new member values
+				oArguments.id = aTemp[0];
+				oArguments.p1 = aTemp[1];
+			}
+
+			return {
+				id: decodeURIComponent(oArguments.id),
+				entityId: undefined,
+				entityType: oArguments.p1
+			};
+		}
+
+		// Module links
+		if (/^module:\S+$/.test(oArguments.id)) {
+
+			// Convert to array
+			Object.keys(oArguments).forEach(function (sKey) {
+				var sArgument = oArguments[sKey],
+					aTemp;
+
+				if (!sArgument) {
+					return;
+				}
+
+				if (!sMemberType && sArgument.indexOf(this._URLSeparator) !== -1) {
+					aTemp = sArgument.split(this._URLSeparator);
+					aEntity.push(aTemp[0]);
+					sMemberType = aTemp[1];
+					return;
+				}
+
+				if (!sMemberType) {
+					aEntity.push(sArgument);
+				} else {
+					aMember.push(sArgument);
+				}
+			}.bind(this));
+
+			return {
+				id: aEntity.join("/"),
+				entityId: aMember.length ? aMember.join("/") : undefined,
+				entityType: sMemberType
+			};
+
+		}
+
+		// Check if we need to split the ID value
+		if (oArguments.id.indexOf(this._URLSeparator) !== -1) {
+			aTemp = oArguments.id.split(this._URLSeparator);
+
+			// Shift p1 -> p2
+			oArguments.p2 = oArguments.p1;
+
+			// Assign new member values
+			oArguments.id = aTemp[0];
+			oArguments.p1 = aTemp[1];
+		}
+
+		// Standard symbol link
+		return {
+			id: decodeURIComponent(oArguments.id),
+			entityType: oArguments.p1,
+			entityId: oArguments.p2 ? decodeURIComponent(oArguments.p2) : undefined
+		};
+
+	};
+
+	/**
+	 * @override
+	 */
+	DocumentationRouter.prototype.navTo = function (sName, oParameters, bReplace) {
+		var sPath;
+
+		this._destroySampleComponent(); // BCP: 1880458601
+
+		// Encoding needed for native routing to work
+		if (sName === "apiId") {
+			if (oParameters.id) {
+				oParameters.id = encodeURIComponent(oParameters.id);
+			}
+			if (oParameters.entityId) {
+				oParameters.entityId = encodeURIComponent(oParameters.entityId);
+			}
+		}
+
+		sPath = this.getURL(sName, oParameters); // Calculate URL Path
+
+		if (sName === "apiId") {
+			sPath = sPath.replace(/#$/, ""); // Remove trailing hash
+		}
+
+		// Parse new path
+		sPath = decodeURIComponent(sPath);
+		this.parse(sPath);
+
+		// Modify URL
+		if (window['sap-ui-documentation-static']) {
+			window.history.pushState({},undefined,"#/" + sPath.replace("#", this._URLSeparator));
+		} else {
+			window.history.pushState({}, undefined, sPath);
+		}
+
+		return this;
+	};
+
+	if (!window['sap-ui-documentation-static']) {
+
+		DocumentationRouter.prototype._processPath = function (sPath) {
+			var oBase = document.querySelector("base[href]"),
+				sBase = oBase ? oBase.getAttribute("href") : "",
+				sBaseWithoutSlash = sBase.slice(0, sBase.length - 1),
+				sHash = location.hash,
+				aTemp;
+
+			if (sPath.startsWith(sBase)) {
+				sPath = sPath.replace(sBase, "");
+			} else if (sPath.startsWith(sBaseWithoutSlash)) {
+				sPath = sPath.replace(sBaseWithoutSlash, "");
+			}
+
+			if (sHash) {
+
+				// Detect legacy module path - in this case we need to decode the hash
+				if (!sPath && sHash.indexOf("module%3A") !== -1) {
+
+					// Transform from: #/api/module%3Asap%2Fbase%2FLog/methods/sap%2Fbase%2FLog.debug
+					// to: api/module:sap/base/Log#methods/sap/base/Log.debug
+					aTemp = sHash.split("/");
+					sHash = "#" +
+							aTemp[1] +
+							"/" +
+							decodeURIComponent(aTemp[2]) +
+							(aTemp[3] ? "#" + aTemp[3] : "") +
+							(!aTemp[3] ? "/" : "") +
+							(aTemp[4] ? "/" + decodeURIComponent(aTemp[4]) : "");
+				}
+
+				sPath += (sPath ? "#" : "") + sHash.slice(1);
+			}
+
+			return sPath;
+		};
 
 		/**
 		 * @override
 		 */
-		navTo: function () {
-			this._destroySampleComponent(); // BCP: 1880458601
-			Router.prototype.navTo.apply(this, arguments);
+		DocumentationRouter.prototype.initialize = function () {
+			var oPopstateHandler,
+				sPath;
+
+			sPath = this._processPath(location.pathname);
+
+			// stop the hash change listener
+			this.stop();
+
+			// do initial routing (if there is a path) - updates the UI according to the config
+			this.parse(sPath);
+
+			// attach listener for route changes via the browser back/forward buttons
+			oPopstateHandler = function (event) {
+				// trigger the UI update logic for the new path
+				this.parse(this._processPath(location.pathname));
+			}.bind(this);
+			window.addEventListener('popstate', oPopstateHandler);
+
+			// Attach link handler
+			this.attachGlobalLinkHandler();
+
+			return this;
+		};
+
+		DocumentationRouter.prototype.navToChangeUrlOnly = function (oParameters, bHistory) {
+			var sPath;
+
+			// Encoding needed for native routing to work
+			if (oParameters.id) {
+				oParameters.id = encodeURIComponent(oParameters.id);
+			}
+			if (oParameters.entityId) {
+				oParameters.entityId = encodeURIComponent(oParameters.entityId);
+			}
+
+			// Calculate URL Path
+			sPath = this.getURL("apiId", oParameters);
+			sPath = decodeURIComponent(sPath);
+
+			// pushState used to navigate away from legacy URL
+			if (bHistory) {
+				window.history.pushState({}, undefined, sPath);
+			} else {
+				window.history.replaceState({}, undefined, sPath);
+			}
+
+			return this;
+		};
+
+	} else {
+
+		/**
+		 * @override
+		 */
+		DocumentationRouter.prototype.initialize = function () {
+			Router.prototype.initialize.apply(this, arguments);
+
+			// attach listener for route changes via the browser back/forward buttons
+			var oPopstateHandler = function (event) {
+
+				var sRoute = location.hash.replace(/^[#]/, "");
+				sRoute = sRoute.replace(/^[/]/, "");
+				// trigger the UI update logic for the new path
+				this.parse(sRoute);
+			}.bind(this);
+			window.addEventListener('popstate', oPopstateHandler);
+
+			// Attach link handler
+			this.attachGlobalLinkHandler();
+
+			return this;
+		};
+
+		DocumentationRouter.prototype.navToChangeUrlOnly = function (oParameters, bHistory) {
+			var sPath;
+
+			// Encoding needed for native routing to work
+			if (oParameters.id) {
+				oParameters.id = encodeURIComponent(oParameters.id);
+			}
+			if (oParameters.entityId) {
+				oParameters.entityId = encodeURIComponent(oParameters.entityId);
+			}
+
+			// Calculate URL Path
+			sPath = this.getURL("apiId", oParameters);
+
+			sPath = decodeURIComponent(sPath);
+			sPath = sPath.replace("#", this._URLSeparator);
+
+			this.stop();
+			hasher.stop();
+
+			if (bHistory) {
+				hasher.setHash(sPath);
+			} else {
+				hasher.replaceHash(sPath);
+			}
+
+			hasher.init();
+			this.initialize(true);
+		};
+
+	}
+
+	// util
+	function getHref(oAnchorElement) {
+		if (oAnchorElement && oAnchorElement.nodeName === "A" && oAnchorElement.getAttribute("target") !== "_blank") {
+			return oAnchorElement.getAttribute("href");
 		}
-	});
+	}
+
+	return DocumentationRouter;
 
 });

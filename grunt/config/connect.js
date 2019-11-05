@@ -92,6 +92,47 @@ module.exports = function(grunt, config) {
 
 					} ]);
 
+					middlewares.unshift(function (req, res, next) {
+						var sRequestUrl = req.url;
+
+						if (
+							/\/documentation\/test-resources\/\S*/.test(sRequestUrl) ||
+							/\/documentation\/resources\/\S*/.test(sRequestUrl) ||
+							/\/docs\/api\/\S*/.test(sRequestUrl) ||
+							/\/docs\/topics\/\S*/.test(sRequestUrl)
+						) {
+							req.url = sRequestUrl.replace("/documentation/", "/");
+							next();
+							return;
+						}
+
+						if (
+							/^\/testsuite\/documentation\/?$/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/api(\/?$)?\S*/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/controls\/?$/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/controls\/filter\/\S+/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/entity\/\S+/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/sample\/\S+/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/demoapps(\/?$)?\S*/.test(sRequestUrl) ||
+							/^\/testsuite\/documentation\/topic(\/?$)?\S*/.test(sRequestUrl)
+						) {
+							fs.readFile(sapUiTestsuiteBasePath + '/src/main/webapp/documentation-index.tmpl', { encoding: 'utf-8' } , function(err, data) {
+								if (err) {
+									res.writeHead(404);
+									res.end();
+									return;
+								} else {
+									res.writeHead(200, { 'Content-Type': 'text/html' });
+									res.write(data);
+									res.end();
+									return;
+								}
+							});
+						}
+
+						next();
+					});
+
 					var oCspConfig = {
 						allowDynamicPolicySelection: true,
 						allowDynamicPolicyDefinition: true,

@@ -214,7 +214,7 @@ sap.ui.define([
 				var oClassList = oEvent.target.classList,
 					bJSDocLink = oClassList.contains("jsdoclink"),
 					bExternalLink = oClassList.contains("sapUISDKExternalLink"),
-					sLinkTarget = oEvent.target.getAttribute("data-sap-ui-target"),
+					sLinkTarget = decodeURIComponent(oEvent.target.getAttribute("data-target")),
 					sEntityType;
 
 				// Not a JSDocLink - we do nothing
@@ -237,22 +237,11 @@ sap.ui.define([
 				}
 
 				this._scrollToEntity(sEntityType, sLinkTarget);
-				this._navigateRouter(sEntityType, sLinkTarget, true);
 			},
 
 			/* =========================================================== */
 			/* begin: internal methods									   aa*/
 			/* =========================================================== */
-
-			_navigateRouter: function(sEntityType, sEntityId, bShouldStoreToHistory) {
-				this._oRouter.stop();
-				this._oRouter.navTo("apiId", {
-					id: encodeURIComponent(this._sTopicId),
-					entityType: sEntityType,
-					entityId: encodeURIComponent(sEntityId)
-				}, !bShouldStoreToHistory);
-				this._oRouter.initialize(true);
-			},
 
 			_modifyURL: function(oSection, oSubSection, bShouldStoreToHistory) {
 				var sSection = oSection.getTitle().toLowerCase(),
@@ -264,7 +253,12 @@ sap.ui.define([
 					sSection = this.SECTION_MAP[sSection];
 				}
 
-				this._navigateRouter(sSection, sSubSection, bShouldStoreToHistory);
+				this._oRouter.navToChangeUrlOnly({
+					id: this._sTopicId,
+					entityType: sSection,
+					entityId: sSubSection
+				}, bShouldStoreToHistory);
+
 			},
 
 			_prettify: function () {
@@ -315,15 +309,6 @@ sap.ui.define([
 					});
 
 					if (aFilteredSubSections.length) {
-
-						// Disable router as we are going to scroll only - this is only to prevent routing when a link
-						// pointing to a sub-section from the same entity with a href is clicked
-						this._oRouter.stop();
-						setTimeout(function () {
-							// Re-enable rooter after current operation
-							this._oRouter.initialize(true);
-						}.bind(this), 0);
-
 						// We scroll to the first sub-section found
 						this._objectPage.scrollToSection(aFilteredSubSections[0].getId(), 250);
 					}
@@ -377,7 +362,7 @@ sap.ui.define([
 										emphasized: true,
 										text: oEntityData.sample,
 										visible: !!oEntityData.hasSample,
-										href: "#/entity/" + oControlData.name
+										href: "entity/" + oControlData.name
 									}),
 									_getText({text: oEntityData.sample, visible: !oEntityData.hasSample})
 								]
@@ -390,7 +375,7 @@ sap.ui.define([
 									_getLink({
 										emphasized: true,
 										text: oControlData.docuLinkText,
-										href: "#/topic/" + oControlData.docuLink
+										href: "topic/" + oControlData.docuLink
 									})
 								]
 							}, true);
@@ -419,7 +404,7 @@ sap.ui.define([
 									_getLabel({text: "Extends:"}),
 									_getLink({
 										text: oControlData.extendsText,
-										href: "#/api/" + oControlData.extendsText,
+										href: "api/" + oControlData.extendsText,
 										visible: oControlData.isDerived
 									}),
 									_getText({text: oControlData.extendsText, visible: !oControlData.isDerived})
@@ -433,7 +418,7 @@ sap.ui.define([
 							this._aSubClasses = aSubClasses;
 
 							if (aSubClasses.length === 1) {
-								oSubClassesLink = _getLink({text: aSubClasses[0], href: "#/api/" + aSubClasses[0]});
+								oSubClassesLink = _getLink({text: aSubClasses[0], href: "api/" + aSubClasses[0]});
 							} else {
 								oSubClassesLink = _getLink({
 									text: oControlData.isClass ? "View subclasses" : "View implementations",
@@ -452,7 +437,7 @@ sap.ui.define([
 							var aItems = [_getLabel({text: "Implements:"})];
 
 							oControlData.implementsParsed.forEach(function (oElement) {
-								aItems.push(_getLink({text: oElement.name, href: "#/api/" + oElement.href}));
+								aItems.push(_getLink({text: oElement.name, href: "api/" + oElement.href}));
 							});
 
 							return _getHBox({
@@ -489,7 +474,7 @@ sap.ui.define([
 				var aPopoverContent = this._aSubClasses.map(function (oElement) {
 					return new Link({
 						text: oElement,
-						href: "#/api/" + oElement
+						href: "api/" + oElement
 					}).addStyleClass("sapUiTinyMarginBottom sapUiTinyMarginEnd");
 				}), oPopover = this._getSubClassesAndImplementationsPopover(aPopoverContent);
 

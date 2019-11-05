@@ -23,6 +23,10 @@ sap.ui.getCore().attachInit(function() {
 		});
 
 		opaTest("Should see at least 5 demo app cells", function (Given, When) {
+
+			// Needed for hash based navigation for the test to work properly
+			window['sap-ui-documentation-static'] = true;
+
 			Given.iStartMyUIComponent({
 				componentConfig: {
 					name: "sap.ui.documentation.sdk",

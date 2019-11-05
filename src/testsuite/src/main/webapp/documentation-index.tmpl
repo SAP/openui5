@@ -5,6 +5,7 @@
 	<title>OpenUI5 SDK - Demo Kit</title>
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<meta charset="utf-8">
+	<base href="/testsuite/documentation/">
 	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="shortcut icon" >
 	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="icon" >
 	<link rel="stylesheet" href="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
@@ -15,7 +16,7 @@
 			type='text/javascript'
 			src='resources/sap-ui-core.js'
 			data-sap-ui-bindingSyntax="complex"
-			data-sap-ui-theme='sap_fiori_3'
+			data-sap-ui-theme='sap_belize'
 			data-sap-ui-libs='sap.ui.documentation, sap.ui.layout, sap.m, sap.uxap, sap.f, sap.tnt, sap.ui.codeeditor'
 			data-sap-ui-xx-waitForTheme="true"
 			data-sap-ui-compatVersion="1.16"
@@ -28,26 +29,15 @@
 
 	<script>
 
-		// Demo Kit in static navigation mode
-		window['sap-ui-documentation-static'] = true;
-
 		// when documentation-config.js doesn't exist or doesn't define a configuration, probe for api-index.json
 		if ( window['sap-ui-documentation-config'] == null ) {
 			window['sap-ui-documentation-config'] = {};
 			jQuery.ajax({
 				method: "HEAD",
-				url: "./docs/api/api-index.json",
+				url: "docs/api/api-index.json",
 				async:false,
 				success: function() {
-					window['sap-ui-documentation-config'].apiInfoRoot = "./test-resources/";
-				}
-			});
-			jQuery.ajax({
-				method: "HEAD",
-				url: "./docs/topics/index.json",
-				async:false,
-				success: function() {
-					window['sap-ui-documentation-config'].docuPath = "./docs/topics/";
+					window['sap-ui-documentation-config'].apiInfoRoot = "test-resources";
 				}
 			});
 		}

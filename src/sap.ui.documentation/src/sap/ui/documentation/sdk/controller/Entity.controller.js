@@ -117,7 +117,7 @@ sap.ui.define([
 							sRoute = "api";
 						}
 
-						return '<a class="jsdoclink" href="#/' + sRoute + '/' + sTarget + '">' + sText + '</a>';
+						return '<a class="jsdoclink" href="' + sRoute + '/' + sTarget + '">' + sText + '</a>';
 
 					}
 				});
@@ -254,7 +254,7 @@ sap.ui.define([
 					// make intro text active if a documentation link is set
 					if (oDoc.docuLink) {
 						oData.show.introLink = true;
-						oData.docuLink = "#/topic/" + oDoc.docuLink;
+						oData.docuLink = "topic/" + oDoc.docuLink;
 						oData.docuLinkText = oDoc.docuLinkText;
 					}
 
@@ -403,7 +403,7 @@ sap.ui.define([
 									_getLink({
 										emphasized: true,
 										text: oData.name,
-										href: "#/api/" + oData.name
+										href: "api/" + oData.name
 									})
 								]
 							}, true);
@@ -439,7 +439,7 @@ sap.ui.define([
 									_getLabel({text: "Extends:"}),
 									_getLink({
 										text: oData.baseTypeText,
-										href: "#/entity/" + oData.baseType,
+										href: "entity/" + oData.baseType,
 										visible: !!oData.baseTypeNav
 									}),
 									_getText({text: "N/A", visible: !oData.baseTypeNav || !oData.baseType})

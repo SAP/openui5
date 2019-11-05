@@ -178,14 +178,14 @@ sap.ui.define([
 					sEntityPath = APIREF_URL_PATHS[sEntityType],
 					sURL;
 
-				sURL = "api/" + encodeURIComponent(sEntityName);
+				sURL = "api/" + sEntityName;
 
 				if (sEntityPath) {
-					sURL += "/" + encodeURIComponent(sEntityPath); // add target section
+					sURL += "#" + sEntityPath; // add target section
 				}
 
 				if (sEntityType === "methods") {
-					sURL += "/" + encodeURIComponent(oMatch.matchedDocWord); // add target subSection
+					sURL += "/" + oMatch.matchedDocWord; // add target subSection
 				}
 
 				return sURL;
@@ -246,7 +246,7 @@ sap.ui.define([
 					// Access control lazy loading method if available
 					if (oItem._getLinkSender) {
 						// Set link href to allow open in new window functionality
-						oItem._getLinkSender().setHref("#/" + oItem.getCustomData()[0].getValue());
+						oItem._getLinkSender().setHref(oItem.getCustomData()[0].getValue());
 					}
 				}
 			},

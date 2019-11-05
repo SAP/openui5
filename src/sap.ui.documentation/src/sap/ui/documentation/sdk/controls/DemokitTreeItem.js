@@ -25,7 +25,7 @@ sap.ui.define([
 			}
 		},
 		getHref: function () {
-			return '#/' + this.getSection() + '/' +
+			return this.getSection() + '/' +
 				(this.getEncodeTarget() ? encodeURIComponent(this.getTarget()) : this.getTarget());
 		},
 		/**
