@@ -11301,12 +11301,12 @@ sap.ui.define([
 						text: 'a'
 					}),
 					new Item({
-						key: 'aa',
-						text: 'aa'
-					}),
-					new Item({
 						key: 'aaa',
 						text: 'aaa'
+					}),
+					new Item({
+						key: 'aaaa',
+						text: 'aaaa'
 					}),
 					new Item({
 						key: 'b',
@@ -11331,26 +11331,38 @@ sap.ui.define([
 	});
 
 	QUnit.test('Selection when typing and focus in', function (assert) {
+		// Act
 		this.comboBox._$input.focus().val("a").trigger("input");
-		sap.ui.getCore().applyChanges();
-		this.clock.tick(500);
+		var selectedText = selectedText = this.comboBox._$input.getSelectedText();
 
+		// Assert
+		assert.equal(selectedText, "", "There is no selected text when matching a suggestion");
+
+		// Act
 		this.comboBox._$input.focus().val("aa").trigger("input");
-		sap.ui.getCore().applyChanges();
-		this.clock.tick(500);
+		selectedText = this.comboBox._$input.getSelectedText();
 
-		var selectedText = this.comboBox._$input.getSelectedText();
-		assert.equal(selectedText, "", "There is no selected text while typing");
+		// Assert
+		assert.equal(selectedText, "a", "The next suggestions is autocompleted");
 
+		// Act
+		this.comboBox._$input.focus().val("aaaa").trigger("input");
+		selectedText = this.comboBox._$input.getSelectedText();
+
+		// Assert
+		assert.equal(selectedText, "", "There is no selected text when matching a suggestion");
+
+		// Act
 		this.comboBox._$input.blur();
 		this.clock.tick(500);
 		this.comboBox._$input.focus();
 		this.comboBox.onfocusin({});
-
 		this.clock.tick(500);
 
 		selectedText = this.comboBox._$input.getSelectedText();
-		assert.equal(selectedText, "aa", "The text inside the combo box is selected on focus in");
+
+		// Assert
+		assert.equal(selectedText, "aaaa", "The text inside the combo box is selected on focus in");
 	});
 
 	QUnit.module("Selection when typing non ASCII characters", {
