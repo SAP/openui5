@@ -109,7 +109,7 @@ sap.ui.define([
 		QUnit.test("When the first delete button is pressed in the editor", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChanged(function (oEvent) {
+			this.oEditor.attachPropertyChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is only one side indicator");
 				assert.equal(oEvent.getParameter("value")[0].title, "Deviation", "Then it is updated correctly");
 				done();
@@ -121,7 +121,7 @@ sap.ui.define([
 		QUnit.test("When the second delete button is pressed in the editor", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChanged(function (oEvent) {
+			this.oEditor.attachPropertyChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is only one side indicator");
 				assert.strictEqual(oEvent.getParameter("value")[0].title, "Target", "Then it is updated correctly");
 				done();
@@ -133,7 +133,7 @@ sap.ui.define([
 		QUnit.test("When the add button is pressed in the editor", function (assert) {
 			var done = assert.async();
 
-			this.oEditor.attachPropertyChanged(function (oEvent) {
+			this.oEditor.attachPropertyChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 3, "Then there are three side indicators");
 				done();
 			});

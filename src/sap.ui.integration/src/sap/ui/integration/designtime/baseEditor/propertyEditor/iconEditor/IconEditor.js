@@ -44,10 +44,10 @@ sap.ui.define([
 				additionalText: "{icons>name}"
 			}));
 			this._oInput.attachLiveChange(function(oEvent) {
-				this.firePropertyChanged(oEvent.getParameter("value"));
+				this.firePropertyChange(oEvent.getParameter("value"));
 			}.bind(this));
 			this._oInput.attachSuggestionItemSelected(function(oEvent) {
-				this.firePropertyChanged(oEvent.getParameter("selectedItem").getText());
+				this.firePropertyChange(oEvent.getParameter("selectedItem").getText());
 			}.bind(this));
 			this.addContent(this._oInput);
 		},
@@ -88,7 +88,7 @@ sap.ui.define([
 	IconEditor.prototype.handleClose = function(oEvent) {
 		var oSelectedItem = oEvent.getParameter("selectedItem");
 		if (oSelectedItem) {
-			this.firePropertyChanged(oSelectedItem.getIcon());
+			this.firePropertyChange(oSelectedItem.getIcon());
 		}
 		oEvent.getSource().getBinding("items").filter([]);
 	};

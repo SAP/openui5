@@ -16,16 +16,52 @@ sap.ui.define([
 	var CREATED_BY_TAGS = "tags";
 
 	/**
-	 * @constructor
+	 * @class
+	 * Renders a group of {@link sap.ui.integration.designtime.baseEditor.propertyEditor property editors} based on specified <code>tags</code> or custom <code>config</code>.
+	 *
+	 * @extends sap.ui.core.Control
+	 * @alias sap.ui.integration.designtime.baseEditor.PropertyEditors
+	 * @author SAP SE
+	 * @since 1.73.0
+	 * @version ${version}
 	 * @private
-	 * @experimental
+	 * @experimental since 1.73.0
+	 * @ui5-restricted
 	 */
 	var PropertyEditors = Control.extend("sap.ui.integration.designtime.baseEditor.PropertyEditors", {
 		metadata: {
 			properties: {
+				/**
+				 * List of tags to render, e.g. <code>"header,content"</code>. Only the properties that contain both tags will be rendered.
+				 */
 				tags: {
 					type: "any"
 				},
+
+				/**
+				 * An array of custom configuration objects. If set, it has priority over <code>tags</code>.
+				 * Example:
+				 * <pre>
+				 * [
+				 *     {
+				 *         "label": "My property 1",
+				 *         "type": "string",
+				 *         "path": "path/to/my/property1"
+				 *     },
+				 *     {
+				 *         "label": "My property 2",
+				 *         "type": "string",
+				 *         "path": "path/to/my/property2"
+				 *     }
+				 * ]
+				 * </pre>
+				 * Where:
+				 * <ul>
+				 *     <li><b>label</b> = text string for the property editor label</li>
+				 *     <li><b>type</b> = one of the registered property editors types in {@link sap.ui.integration.designtime.baseEditor.BaseEditor BaseEditor configuration} (see <code>propertyEditors</code> section)</li>
+				 *     <li><b>path</b> = a binding path to get data from</li>
+				 * </ul>
+				 */
 				config: {
 					type: "array"
 				}
@@ -44,7 +80,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fires when new Editor changes.
+				 * Fires when the new editor changes.
 				 */
 				editorChange: {
 					parameters: {
@@ -58,8 +94,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fires when internal propertyEditors aggregation changes, e.g. called after initial initialisation or
-				 * after changing tag or config properties.
+				 * Fires when the internal <code>propertyEditors</code> aggregation changes, e.g. called after the initial initialization or
+				 * after changing <code>tag</code> or <code>config</code> properties.
 				 */
 				propertyEditorsChange: {
 					parameters: {
@@ -73,7 +109,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fires when config changes.
+				 * Fires when <code>config</code> changes.
 				 */
 				configChange: {
 					parameters: {
@@ -87,7 +123,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fires when tags changes.
+				 * Fires when <code>tags</code> changes.
 				 */
 				tagsChange: {
 					parameters: {

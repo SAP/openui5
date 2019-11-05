@@ -17,9 +17,9 @@ sap.ui.define([
 	/**
 	 * @class
 	 * Constructor for a new <code>NumberEditor</code>.
-	 * This allows to set numeric values or binding paths for a specified property of a JSON object.
+	 * This allows you to set numeric values or binding paths for a specified property of a JSON object.
 	 * The editor is rendered as a {@link sap.m.Input}, which prevents non-numeric user input unless it is a valid binding path.
-	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChanged</code> method,
+	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChange</code> method,
 	 * which passes the current property value as a number or binding string to the provided callback function when the state changes.
 	 *
 	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
@@ -39,7 +39,7 @@ sap.ui.define([
 			this._oInput.attachLiveChange(function(oEvent) {
 				var sInput = this._validate(this._oInput.getValue());
 				if (sInput !== null) {
-					this.firePropertyChanged(sInput);
+					this.firePropertyChange(sInput);
 				}
 			}, this);
 			this.addContent(this._oInput);
