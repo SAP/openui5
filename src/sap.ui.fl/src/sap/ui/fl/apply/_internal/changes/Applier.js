@@ -19,16 +19,26 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function _checkControlAndDependentSelectorControls(oChange, mPropertyBag) {
+		var oSelector = oChange.getSelector && oChange.getSelector();
+		if (!oSelector || !oSelector.id) {
+			throw new Error("No selector in change found or no selector ID.");
+		}
 
-	function _checkForDependentSelectorControls(oChange, mPropertyBag) {
+		var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view);
+		if (!oControl) {
+			throw new Error("A flexibility change tries to change a nonexistent control.");
+		}
+
 		var aDependentControlSelectorList = oChange.getDependentControlSelectorList();
-
 		aDependentControlSelectorList.forEach(function(sDependentControlSelector) {
 			var oDependentControl = mPropertyBag.modifier.bySelector(sDependentControlSelector, mPropertyBag.appComponent, mPropertyBag.view);
 			if (!oDependentControl) {
 				throw new Error("A dependent selector control of the flexibility change is not available.");
 			}
 		});
+
+		return oControl;
 	}
 
 	function _checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
@@ -136,7 +146,7 @@ sap.ui.define([
 		sWarningMessage += "\n   LRep location of the change: " + fullQualifiedName;
 		sWarningMessage += "\n   id of targeted control: '" + sTargetControlId + "'.";
 
-		Log.warning(sWarningMessage, undefined, "sap.ui.fl.FlexController");
+		Log.warning(sWarningMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 	}
 
 	var Applier = {
@@ -204,6 +214,7 @@ sap.ui.define([
 		 * @param {object} oAppComponent - Component instance that is currently loading
 		 * @param {sap.ui.fl.oFlexControlle} oFlexController - Instance of FlexController
 		 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
+		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
 		 */
 		applyAllChangesForControl: function(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
 			var aPromiseStack = [];
@@ -263,23 +274,13 @@ sap.ui.define([
 
 			if (!Array.isArray(aChanges)) {
 				var sErrorMessage = "No list of changes was passed for processing the flexibility on view: " + mPropertyBag.view + ".";
-				Log.error(sErrorMessage, undefined, "sap.ui.fl.FlexController");
+				Log.error(sErrorMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 				aChanges = [];
 			}
 
 			aChanges.forEach(function (oChange) {
 				try {
-					var oSelector = oChange.getSelector && oChange.getSelector();
-					if (!oSelector || !oSelector.id) {
-						throw new Error("No selector in change found or no selector ID.");
-					}
-
-					var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent, mPropertyBag.view);
-					if (!oControl) {
-						throw new Error("A flexibility change tries to change a nonexistent control.");
-					}
-
-					_checkForDependentSelectorControls(oChange, mPropertyBag);
+					var oControl = _checkControlAndDependentSelectorControls(oChange, mPropertyBag);
 
 					oChange.setQueuedForApply();
 					aPromiseStack.push(function() {
