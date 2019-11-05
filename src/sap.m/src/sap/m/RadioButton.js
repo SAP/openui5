@@ -7,6 +7,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/message/MessageMixin',
 	'./RadioButtonGroup',
 	'./Label',
 	'sap/ui/core/library',
@@ -17,6 +18,7 @@ function(
 	library,
 	Control,
 	EnabledPropagator,
+	MessageMixin,
 	RadioButtonGroup,
 	Label,
 	coreLibrary,
@@ -164,7 +166,14 @@ function(
 			 * @since 1.61
 			 * @private
 			 */
-			editableParent: { type: "boolean", group: "Behavior", defaultValue: true, visibility: "hidden"}
+			editableParent: { type: "boolean", group: "Behavior", defaultValue: true, visibility: "hidden"},
+
+			/**
+			 * Defines the text that appears in the tooltip of the <code>RadioButton</code>. If this is not specified, a default text is shown from the resource bundle.
+			 * @private
+			 */
+			valueStateText: { type: "string", group: "Misc", defaultValue: null, visibility: "hidden" }
+
 		},
 		events : {
 
@@ -197,23 +206,11 @@ function(
 		designtime: "sap/m/designtime/RadioButton.designtime"
 	}});
 
-
-	/**
-	 * Method to set a RadioButton's state to active or inactive.
-	 *
-	 * @name sap.m.RadioButton#setActiveState
-	 * @function
-	 * @param {boolean} bActive - Sets the active state to true or false
-	 * @type void
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	/**
-	 * This file defines behavior for the control,
-	 */
-
 	EnabledPropagator.call(RadioButton.prototype);
+
+	// Apply the message mixin so all Messages on the RadioButton will have additionalText property set to ariaLabelledBy's text of the RadioButton
+	// and have valueState property of the RadioButton set to the message type.
+	MessageMixin.call(RadioButton.prototype);
 
 	RadioButton.prototype._groupNames = {};
 
@@ -644,6 +641,17 @@ function(
 			this._createLabel("textAlign", this.getTextAlign());
 		}
 		return this;
+	};
+
+	/**
+	 * Sets the private valueStateText property. Required, in order to make the MessageMixin work.
+	 *
+	 * @private
+	 * @param {string} sText The new value of the property.
+	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining.
+	 */
+	RadioButton.prototype.setValueStateText = function(sText) {
+		return this.setProperty("valueStateText", sText, true);
 	};
 
 	/**
