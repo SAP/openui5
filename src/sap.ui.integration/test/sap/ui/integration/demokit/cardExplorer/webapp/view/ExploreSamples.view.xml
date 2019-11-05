@@ -61,7 +61,6 @@
 							</contentLeft>
 							<contentRight>
 								<MenuButton
-									press="onChangeEditorClick"
 									icon="sap-icon://download"
 									enabled="true"
 									tooltip="Download"
