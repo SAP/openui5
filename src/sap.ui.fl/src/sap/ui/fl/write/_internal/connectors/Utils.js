@@ -42,10 +42,7 @@ sap.ui.define([
 
 	function updateTokenInPropertyBagAndConnectorAndSendRequest (mPropertyBag, sUrl, sMethod) {
 		return updateTokenInPropertyBagAndConnector(mPropertyBag)
-			.then(ApplyUtils.sendRequest.bind(undefined, sUrl, sMethod))
-			.then(function(oResult) {
-				return oResult.response;
-			});
+			.then(ApplyUtils.sendRequest.bind(undefined, sUrl, sMethod));
 	}
 
 	/**
