@@ -15,7 +15,7 @@
  * datajs.js
  */
 
-(function (window, undefined) {
+(function(window, undefined) {
 
     var datajs = window.datajs || {};
     var odata = window.OData || {};
@@ -30,7 +30,7 @@
     }
 
 
-    var activeXObject = function (progId) {
+    var activeXObject = function(progId) {
         /// <summary>Creates a new ActiveXObject from the given progId.</summary>
         /// <param name="progId" type="String" mayBeNull="false" optional="false">
         ///    ProgId string of the desired ActiveXObject.
@@ -49,14 +49,14 @@
         return null;
     };
 
-    var assigned = function (value) {
+    var assigned = function(value) {
         /// <summary>Checks whether the specified value is different from null and undefined.</summary>
         /// <param name="value" mayBeNull="true" optional="true">Value to check.</param>
         /// <returns type="Boolean">true if the value is assigned; false otherwise.</returns>
         return value !== null && value !== undefined;
     };
 
-    var contains = function (arr, item) {
+    var contains = function(arr, item) {
         /// <summary>Checks whether the specified item is in the array.</summary>
         /// <param name="arr" type="Array" optional="false" mayBeNull="false">Array to check in.</param>
         /// <param name="item">Item to look for.</param>
@@ -72,7 +72,7 @@
         return false;
     };
 
-    var defined = function (a, b) {
+    var defined = function(a, b) {
         /// <summary>Given two values, picks the first one that is not undefined.</summary>
         /// <param name="a">First value.</param>
         /// <param name="b">Second value.</param>
@@ -80,7 +80,7 @@
         return (a !== undefined) ? a : b;
     };
 
-    var delay = function (callback) {
+    var delay = function(callback) {
         /// <summary>Delays the invocation of the specified function until execution unwinds.</summary>
         /// <param name="callback" type="Function">Callback function.</param>
         if (arguments.length === 1) {
@@ -89,13 +89,13 @@
         }
 
         var args = Array.prototype.slice.call(arguments, 1);
-        window.setTimeout(function () {
+        window.setTimeout(function() {
             callback.apply(this, args);
         }, 0);
     };
 
 
-    var extend = function (target, values) {
+    var extend = function(target, values) {
         /// <summary>Extends the target with the specified values.</summary>
         /// <param name="target" type="Object">Object to add properties to.</param>
         /// <param name="values" type="Object">Object with properties to add into target.</param>
@@ -108,7 +108,7 @@
         return target;
     };
 
-    var find = function (arr, callback) {
+    var find = function(arr, callback) {
         /// <summary>Returns the first item in the array that makes the callback function true.</summary>
         /// <param name="arr" type="Array" optional="false" mayBeNull="true">Array to check in.</param>
         /// <param name="callback" type="Function">Callback function to invoke once per item in the array.</param>
@@ -125,7 +125,7 @@
         return null;
     };
 
-    var isArray = function (value) {
+    var isArray = function(value) {
         /// <summary>Checks whether the specified value is an array object.</summary>
         /// <param name="value">Value to check.</param>
         /// <returns type="Boolean">true if the value is an array object; false otherwise.</returns>
@@ -133,7 +133,7 @@
         return Object.prototype.toString.call(value) === "[object Array]";
     };
 
-    var isDate = function (value) {
+    var isDate = function(value) {
         /// <summary>Checks whether the specified value is a Date object.</summary>
         /// <param name="value">Value to check.</param>
         /// <returns type="Boolean">true if the value is a Date object; false otherwise.</returns>
@@ -141,7 +141,7 @@
         return Object.prototype.toString.call(value) === "[object Date]";
     };
 
-    var isObject = function (value) {
+    var isObject = function(value) {
         /// <summary>Tests whether a value is an object.</summary>
         /// <param name="value">Value to test.</param>
         /// <remarks>
@@ -152,7 +152,7 @@
         return typeof value === "object";
     };
 
-    var parseInt10 = function (value) {
+    var parseInt10 = function(value) {
         /// <summary>Parses a value in base 10.</summary>
         /// <param name="value" type="String">String value to parse.</param>
         /// <returns type="Number">The parsed value, NaN if not a valid value.</returns>
@@ -160,7 +160,7 @@
         return parseInt(value, 10);
     };
 
-    var renameProperty = function (obj, oldName, newName) {
+    var renameProperty = function(obj, oldName, newName) {
         /// <summary>Renames a property in an object.</summary>
         /// <param name="obj" type="Object">Object in which the property will be renamed.</param>
         /// <param name="oldName" type="String">Name of the property that will be renamed.</param>
@@ -175,13 +175,13 @@
         }
     };
 
-    var throwErrorCallback = function (error) {
+    var throwErrorCallback = function(error) {
         /// <summary>Default error handler.</summary>
         /// <param name="error" type="Object">Error to handle.</param>
         throw error;
     };
 
-    var trimString = function (str) {
+    var trimString = function(str) {
         /// <summary>Removes leading and trailing whitespaces from a string.</summary>
         /// <param name="str" type="String" optional="false" mayBeNull="false">String to trim</param>
         /// <returns type="String">The string with no leading or trailing whitespace.</returns>
@@ -193,7 +193,7 @@
         return str.replace(/^\s+|\s+$/g, '');
     };
 
-    var undefinedDefault = function (value, defaultValue) {
+    var undefinedDefault = function(value, defaultValue) {
         /// <summary>Returns a default value in place of undefined.</summary>
         /// <param name="value" mayBeNull="true" optional="true">Value to check.</param>
         /// <param name="defaultValue">Value to return if value is undefined.</param>
@@ -215,7 +215,7 @@
     var uriRegEx = /^([^:\/?#]+:)?(\/\/[^\/?#]*)?([^?#:]+)?(\?[^#]*)?(#.*)?/;
     var uriPartNames = ["scheme", "authority", "path", "query", "fragment"];
 
-    var getURIInfo = function (uri) {
+    var getURIInfo = function(uri) {
         /// <summary>Gets information about the components of the specified URI.</summary>
         /// <param name="uri" type="String">URI to get information from.</param>
         /// <returns type="Object">
@@ -242,7 +242,7 @@
         return result;
     };
 
-    var getURIFromInfo = function (uriInfo) {
+    var getURIFromInfo = function(uriInfo) {
         /// <summary>Builds a URI string from its components.</summary>
         /// <param name="uriInfo" type="Object"> An object with uri parts (scheme, authority, etc.).</param>
         /// <returns type="String">URI string.</returns>
@@ -265,7 +265,7 @@
     // Regular expression that matches percentage enconded octects (i.e %20 or %3A);
     var pctEncodingRegEx = /%[0-9A-F]{2}/ig;
 
-    var normalizeURICase = function (uri) {
+    var normalizeURICase = function(uri) {
         /// <summary>Normalizes the casing of a URI.</summary>
         /// <param name="uri" type="String">URI to normalize, absolute or relative.</param>
         /// <returns type="String">The URI normalized to lower case.</returns>
@@ -280,21 +280,21 @@
                 var matches = uriAuthorityRegEx.exec(authority);
                 if (matches) {
                     uriInfo.authority = "//" +
-                    (matches[1] ? matches[1] + "@" : "") +
-                    (matches[2].toLowerCase()) +
-                    (matches[3] ? ":" + matches[3] : "");
+                        (matches[1] ? matches[1] + "@" : "") +
+                        (matches[2].toLowerCase()) +
+                        (matches[3] ? ":" + matches[3] : "");
                 }
             }
         }
 
         uri = getURIFromInfo(uriInfo);
 
-        return uri.replace(pctEncodingRegEx, function (str) {
+        return uri.replace(pctEncodingRegEx, function(str) {
             return str.toLowerCase();
         });
     };
 
-    var normalizeURI = function (uri, base) {
+    var normalizeURI = function(uri, base) {
         /// <summary>Normalizes a possibly relative URI with a base URI.</summary>
         /// <param name="uri" type="String">URI to normalize, absolute or relative.</param>
         /// <param name="base" type="String" mayBeNull="true">Base URI to compose with.</param>
@@ -340,7 +340,7 @@
         return getURIFromInfo(normInfo);
     };
 
-    var mergeUriPathWithBase = function (uriPath, basePath) {
+    var mergeUriPathWithBase = function(uriPath, basePath) {
         /// <summary>Merges the path of a relative URI and a base URI.</summary>
         /// <param name="uriPath" type="String>Relative URI path.</param>
         /// <param name="basePath" type="String">Base URI path.</param>
@@ -361,7 +361,7 @@
         return path + uriPath;
     };
 
-    var removeDotsFromPath = function (path) {
+    var removeDotsFromPath = function(path) {
         /// <summary>Removes the special folders . and .. from a URI's path.</summary>
         /// <param name="path" type="string">URI path component.</param>
         /// <returns type="String">Path without any . and .. folders.</returns>
@@ -400,15 +400,15 @@
 
     // URI prefixes to generate smaller code.
     var http = "http://";
-    var w3org = http + "www.w3.org/";               // http://www.w3.org/
+    var w3org = http + "www.w3.org/"; // http://www.w3.org/
 
-    var xhtmlNS = w3org + "1999/xhtml";             // http://www.w3.org/1999/xhtml
-    var xmlnsNS = w3org + "2000/xmlns/";            // http://www.w3.org/2000/xmlns/
-    var xmlNS = w3org + "XML/1998/namespace";       // http://www.w3.org/XML/1998/namespace
+    var xhtmlNS = w3org + "1999/xhtml"; // http://www.w3.org/1999/xhtml
+    var xmlnsNS = w3org + "2000/xmlns/"; // http://www.w3.org/2000/xmlns/
+    var xmlNS = w3org + "XML/1998/namespace"; // http://www.w3.org/XML/1998/namespace
 
     var mozillaParserErroNS = http + "www.mozilla.org/newlayout/xml/parsererror.xml";
 
-    var hasLeadingOrTrailingWhitespace = function (text) {
+    var hasLeadingOrTrailingWhitespace = function(text) {
         /// <summary>Checks whether the specified string has leading or trailing spaces.</summary>
         /// <param name="text" type="String">String to check.</param>
         /// <returns type="Boolean">true if text has any leading or trailing whitespace; false otherwise.</returns>
@@ -417,7 +417,7 @@
         return re.test(text);
     };
 
-    var isWhitespace = function (text) {
+    var isWhitespace = function(text) {
         /// <summary>Determines whether the specified text is empty or whitespace.</summary>
         /// <param name="text" type="String">Value to inspect.</param>
         /// <returns type="Boolean">true if the text value is empty or all whitespace; false otherwise.</returns>
@@ -426,7 +426,7 @@
         return text === null || ws.test(text);
     };
 
-    var isWhitespacePreserveContext = function (domElement) {
+    var isWhitespacePreserveContext = function(domElement) {
         /// <summary>Determines whether the specified element has xml:space='preserve' applied.</summary>
         /// <param name="domElement">Element to inspect.</param>
         /// <returns type="Boolean">Whether xml:space='preserve' is in effect.</returns>
@@ -445,7 +445,7 @@
         return false;
     };
 
-    var isXmlNSDeclaration = function (domAttribute) {
+    var isXmlNSDeclaration = function(domAttribute) {
         /// <summary>Determines whether the attribute is a XML namespace declaration.</summary>
         /// <param name="domAttribute">Element to inspect.</param>
         /// <returns type="Boolean">
@@ -456,7 +456,7 @@
         return nodeName == "xmlns" || nodeName.indexOf("xmlns:") == 0;
     };
 
-    var safeSetProperty = function (obj, name, value) {
+    var safeSetProperty = function(obj, name, value) {
         /// <summary>Safely set as property in an object by invoking obj.setProperty.</summary>
         /// <param name="obj">Object that exposes a setProperty method.</param>
         /// <param name="name" type="String" mayBeNull="false">Property name.</param>
@@ -464,10 +464,10 @@
 
         try {
             obj.setProperty(name, value);
-        } catch (_) { }
+        } catch (_) {}
     };
 
-    var msXmlDom3 = function () {
+    var msXmlDom3 = function() {
         /// <summary>Creates an configures new MSXML 3.0 ActiveX object.</summary>
         /// <remakrs>
         ///    This function throws any exception that occurs during the creation
@@ -484,7 +484,7 @@
         return msxml3;
     };
 
-    var msXmlDom = function () {
+    var msXmlDom = function() {
         /// <summary>Creates an configures new MSXML 6.0 or MSXML 3.0 ActiveX object.</summary>
         /// <remakrs>
         ///    This function will try to create a new MSXML 6.0 ActiveX object. If it fails then
@@ -504,7 +504,7 @@
         }
     };
 
-    var msXmlParse = function (text) {
+    var msXmlParse = function(text) {
         /// <summary>Parses an XML string using the MSXML DOM.</summary>
         /// <remakrs>
         ///    This function throws any exception that occurs during the creation
@@ -525,7 +525,7 @@
         return dom;
     };
 
-    var xmlThrowParserError = function (exceptionOrReason, srcText, errorXmlText) {
+    var xmlThrowParserError = function(exceptionOrReason, srcText, errorXmlText) {
         /// <summary>Throws a new exception containing XML parsing error information.</summary>
         /// <param name="exceptionOrReason">
         ///    String indicatin the reason of the parsing failure or
@@ -542,7 +542,7 @@
         throw extend(exceptionOrReason, { srcText: srcText || "", errorXmlText: errorXmlText || "" });
     };
 
-    var xmlParse = function (text) {
+    var xmlParse = function(text) {
         /// <summary>Returns an XML DOM document from the specified text.</summary>
         /// <param name="text" type="String">Document text.</param>
         /// <returns>XML DOM document.</returns>
@@ -597,7 +597,7 @@
         return dom;
     };
 
-    var xmlQualifiedName = function (prefix, name) {
+    var xmlQualifiedName = function(prefix, name) {
         /// <summary>Builds a XML qualified name string in the form of "prefix:name".</summary>
         /// <param name="prefix" type="String" maybeNull="true">Prefix string.</param>
         /// <param name="name" type="String">Name string to qualify with the prefix.</param>
@@ -606,7 +606,7 @@
         return prefix ? prefix + ":" + name : name;
     };
 
-    var xmlAppendText = function (domNode, textNode) {
+    var xmlAppendText = function(domNode, textNode) {
         /// <summary>Appends a text node into the specified DOM element node.</summary>
         /// <param name="domNode">DOM node for the element.</param>
         /// <param name="text" type="String" mayBeNull="false">Text to append as a child of element.</param>
@@ -622,7 +622,7 @@
         return domNode;
     };
 
-    var xmlAttributes = function (element, onAttributeCallback) {
+    var xmlAttributes = function(element, onAttributeCallback) {
         /// <summary>Iterates through the XML element's attributes and invokes the callback function for each one.</summary>
         /// <param name="element">Wrapped element to iterate over.</param>
         /// <param name="onAttributeCallback" type="Function">Callback function to invoke with wrapped attribute nodes.</param>
@@ -634,7 +634,7 @@
         }
     };
 
-    var xmlAttributeValue = function (domNode, localName, nsURI) {
+    var xmlAttributeValue = function(domNode, localName, nsURI) {
         /// <summary>Returns the value of a DOM element's attribute.</summary>
         /// <param name="domNode">DOM node for the owning element.</param>
         /// <param name="localName" type="String">Local name of the attribute.</param>
@@ -645,7 +645,7 @@
         return attribute ? xmlNodeValue(attribute) : null;
     };
 
-    var xmlAttributeNode = function (domNode, localName, nsURI) {
+    var xmlAttributeNode = function(domNode, localName, nsURI) {
         /// <summary>Gets an attribute node from a DOM element.</summary>
         /// <param name="domNode">DOM node for the owning element.</param>
         /// <param name="localName" type="String">Local name of the attribute.</param>
@@ -660,7 +660,7 @@
         return attributes.getQualifiedItem(localName, nsURI) || null;
     };
 
-    var xmlBaseURI = function (domNode, baseURI) {
+    var xmlBaseURI = function(domNode, baseURI) {
         /// <summary>Gets the value of the xml:base attribute on the specified element.</summary>
         /// <param name="domNode">Element to get xml:base attribute value from.</param>
         /// <param name="baseURI" mayBeNull="true" optional="true">Base URI used to normalize the value of the xml:base attribute.</param>
@@ -671,12 +671,12 @@
     };
 
 
-    var xmlChildElements = function (domNode, onElementCallback) {
+    var xmlChildElements = function(domNode, onElementCallback) {
         /// <summary>Iterates through the XML element's child DOM elements and invokes the callback function for each one.</summary>
         /// <param name="element">DOM Node containing the DOM elements to iterate over.</param>
         /// <param name="onElementCallback" type="Function">Callback function to invoke for each child DOM element.</param>
 
-        xmlTraverse(domNode, /*recursive*/false, function (child) {
+        xmlTraverse(domNode, /*recursive*/ false, function(child) {
             if (child.nodeType === 1) {
                 onElementCallback(child);
             }
@@ -685,7 +685,7 @@
         });
     };
 
-    var xmlFindElementByPath = function (root, namespaceURI, path) {
+    var xmlFindElementByPath = function(root, namespaceURI, path) {
         /// <summary>Gets the descendant element under root that corresponds to the specified path and namespace URI.</summary>
         /// <param name="root">DOM element node from which to get the descendant element.</param>
         /// <param name="namespaceURI" type="String">The namespace URI of the element to match.</param>
@@ -704,7 +704,7 @@
         return root || null;
     };
 
-    var xmlFindNodeByPath = function (root, namespaceURI, path) {
+    var xmlFindNodeByPath = function(root, namespaceURI, path) {
         /// <summary>Gets the DOM element or DOM attribute node under root that corresponds to the specified path and namespace URI.</summary>
         /// <param name="root">DOM element node from which to get the descendant node.</param>
         /// <param name="namespaceURI" type="String">The namespace URI of the node to match.</param>
@@ -731,17 +731,17 @@
         return null;
     };
 
-    var xmlFirstChildElement = function (domNode, namespaceURI, localName) {
+    var xmlFirstChildElement = function(domNode, namespaceURI, localName) {
         /// <summary>Returns the first child DOM element under the specified DOM node that matches the specified namespace URI and local name.</summary>
         /// <param name="domNode">DOM node from which the child DOM element is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
         /// <param name="localName" type="String" optional="true">Name of the element to match.</param>
         /// <returns>The node's first child DOM element that matches the specified namespace URI and local name; null otherwise.</returns>
 
-        return xmlFirstElementMaybeRecursive(domNode, namespaceURI, localName, /*recursive*/false);
+        return xmlFirstElementMaybeRecursive(domNode, namespaceURI, localName, /*recursive*/ false);
     };
 
-    var xmlFirstDescendantElement = function (domNode, namespaceURI, localName) {
+    var xmlFirstDescendantElement = function(domNode, namespaceURI, localName) {
         /// <summary>Returns the first descendant DOM element under the specified DOM node that matches the specified namespace URI and local name.</summary>
         /// <param name="domNode">DOM node from which the descendant DOM element is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
@@ -752,10 +752,10 @@
             var result = domNode.getElementsByTagNameNS(namespaceURI, localName);
             return result.length > 0 ? result[0] : null;
         }
-        return xmlFirstElementMaybeRecursive(domNode, namespaceURI, localName, /*recursive*/true);
+        return xmlFirstElementMaybeRecursive(domNode, namespaceURI, localName, /*recursive*/ true);
     };
 
-    var xmlFirstElementMaybeRecursive = function (domNode, namespaceURI, localName, recursive) {
+    var xmlFirstElementMaybeRecursive = function(domNode, namespaceURI, localName, recursive) {
         /// <summary>Returns the first descendant DOM element under the specified DOM node that matches the specified namespace URI and local name.</summary>
         /// <param name="domNode">DOM node from which the descendant DOM element is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
@@ -767,7 +767,7 @@
         /// <returns>The node's first descendant DOM element that matches the specified namespace URI and local name; null otherwise.</returns>
 
         var firstElement = null;
-        xmlTraverse(domNode, recursive, function (child) {
+        xmlTraverse(domNode, recursive, function(child) {
             if (child.nodeType === 1) {
                 var isExpectedNamespace = !namespaceURI || xmlNamespaceURI(child) === namespaceURI;
                 var isExpectedNodeName = !localName || xmlLocalName(child) === localName;
@@ -781,7 +781,7 @@
         return firstElement;
     };
 
-    var xmlInnerText = function (xmlElement) {
+    var xmlInnerText = function(xmlElement) {
         /// <summary>Gets the concatenated value of all immediate child text and CDATA nodes for the specified element.</summary>
         /// <param name="domElement">Element to get values for.</param>
         /// <returns type="String">Text for all direct children.</returns>
@@ -791,7 +791,7 @@
         var whitespaceAlreadyRemoved = root.ownerDocument.preserveWhiteSpace === false;
         var whitespacePreserveContext;
 
-        xmlTraverse(root, false, function (child) {
+        xmlTraverse(root, false, function(child) {
             if (child.nodeType === 3 || child.nodeType === 4) {
                 // isElementContentWhitespace indicates that this is 'ignorable whitespace',
                 // but it's not defined by all browsers, and does not honor xml:space='preserve'
@@ -827,7 +827,7 @@
         return result;
     };
 
-    var xmlLocalName = function (domNode) {
+    var xmlLocalName = function(domNode) {
         /// <summary>Returns the localName of a XML node.</summary>
         /// <param name="domNode">DOM node to get the value from.</param>
         /// <returns type="String">localName of domNode.</returns>
@@ -835,7 +835,7 @@
         return domNode.localName || domNode.baseName;
     };
 
-    var xmlNamespaceURI = function (domNode) {
+    var xmlNamespaceURI = function(domNode) {
         /// <summary>Returns the namespace URI of a XML node.</summary>
         /// <param name="node">DOM node to get the value from.</param>
         /// <returns type="String">Namespace URI of domNode.</returns>
@@ -843,7 +843,7 @@
         return domNode.namespaceURI || null;
     };
 
-    var xmlNodeValue = function (domNode) {
+    var xmlNodeValue = function(domNode) {
         /// <summary>Returns the value or the inner text of a XML node.</summary>
         /// <param name="node">DOM node to get the value from.</param>
         /// <returns>Value of the domNode or the inner text if domNode represents a DOM element node.</returns>
@@ -854,7 +854,7 @@
         return domNode.nodeValue;
     };
 
-    var xmlTraverse = function (domNode, recursive, onChildCallback) {
+    var xmlTraverse = function(domNode, recursive, onChildCallback) {
         /// <summary>Walks through the descendants of the domNode and invokes a callback for each node.</summary>
         /// <param name="domNode">DOM node whose descendants are going to be traversed.</param>
         /// <param name="recursive" type="Boolean">
@@ -877,7 +877,7 @@
         }
     };
 
-    var xmlSiblingElement = function (domNode, namespaceURI, localName) {
+    var xmlSiblingElement = function(domNode, namespaceURI, localName) {
         /// <summary>Returns the next sibling DOM element of the specified DOM node.</summary>
         /// <param name="domNode">DOM node from which the next sibling is going to be retrieved.</param>
         /// <param name="namespaceURI" type="String" optional="true">The namespace URI of the element to match.</param>
@@ -899,7 +899,7 @@
         return null;
     };
 
-    var xmlDom = function () {
+    var xmlDom = function() {
         /// <summary>Creates a new empty DOM document node.</summary>
         /// <returns>New DOM document node.</returns>
         /// <remarks>
@@ -913,11 +913,11 @@
 
         var implementation = window.document.implementation;
         return (implementation && implementation.createDocument) ?
-           implementation.createDocument(null, null, null) :
-           msXmlDom();
+            implementation.createDocument(null, null, null) :
+            msXmlDom();
     };
 
-    var xmlAppendChildren = function (parent, children) {
+    var xmlAppendChildren = function(parent, children) {
         /// <summary>Appends a collection of child nodes or string values to a parent DOM node.</summary>
         /// <param name="parent">DOM node to which the children will be appended.</param>
         /// <param name="children" type="Array">Array containing DOM nodes or string values that will be appended to the parent.</param>
@@ -938,7 +938,7 @@
         return parent;
     };
 
-    var xmlAppendChild = function (parent, child) {
+    var xmlAppendChild = function(parent, child) {
         /// <summary>Appends a child node or a string value to a parent DOM node.</summary>
         /// <param name="parent">DOM node to which the child will be appended.</param>
         /// <param name="child">Child DOM node or string value to append to the parent.</param>
@@ -976,7 +976,7 @@
     };
     // ##### END: MODIFIED BY SAP
 
-    var xmlNewAttribute = function (dom, namespaceURI, qualifiedName, value) {
+    var xmlNewAttribute = function(dom, namespaceURI, qualifiedName, value) {
         /// <summary>Creates a new DOM attribute node.</summary>
         /// <param name="dom">DOM document used to create the attribute.</param>
         /// <param name="prefix" type="String">Namespace prefix.</param>
@@ -995,7 +995,7 @@
         return attribute;
     };
 
-    var xmlNewElement = function (dom, nampespaceURI, qualifiedName, children) {
+    var xmlNewElement = function(dom, nampespaceURI, qualifiedName, children) {
         /// <summary>Creates a new DOM element node.</summary>
         /// <param name="dom">DOM document used to create the DOM element.</param>
         /// <param name="namespaceURI" type="String">Namespace URI of the new DOM element.</param>
@@ -1016,7 +1016,7 @@
         return xmlAppendChildren(element, children || []);
     };
 
-    var xmlNewNSDeclaration = function (dom, namespaceURI, prefix) {
+    var xmlNewNSDeclaration = function(dom, namespaceURI, prefix) {
         /// <summary>Creates a namespace declaration attribute.</summary>
         /// <param name="dom">DOM document used to create the attribute.</param>
         /// <param name="namespaceURI" type="String">Namespace URI.</param>
@@ -1026,7 +1026,7 @@
         return xmlNewAttribute(dom, xmlnsNS, xmlQualifiedName("xmlns", prefix), namespaceURI);
     };
 
-    var xmlNewFragment = function (dom, text) {
+    var xmlNewFragment = function(dom, text) {
         /// <summary>Creates a new DOM document fragment node for the specified xml text.</summary>
         /// <param name="dom">DOM document from which the fragment node is going to be created.</param>
         /// <param name="text" type="String" mayBeNull="false">XML text to be represented by the XmlFragment.</param>
@@ -1046,7 +1046,7 @@
         return fragment;
     };
 
-    var xmlNewText = function (dom, text) {
+    var xmlNewText = function(dom, text) {
         /// <summary>Creates new DOM text node.</summary>
         /// <param name="dom">DOM document used to create the text node.</param>
         /// <param name="text" type="String">Text value for the DOM text node.</param>
@@ -1055,7 +1055,7 @@
         return dom.createTextNode(text);
     };
 
-    var xmlNewNodeByPath = function (dom, root, namespaceURI, prefix, path) {
+    var xmlNewNodeByPath = function(dom, root, namespaceURI, prefix, path) {
         /// <summary>Creates a new DOM element or DOM attribute node as specified by path and appends it to the DOM tree pointed by root.</summary>
         /// <param name="dom">DOM document used to create the new node.</param>
         /// <param name="root">DOM element node used as root of the subtree on which the new nodes are going to be created.</param>
@@ -1096,7 +1096,7 @@
         return xmlNode;
     };
 
-    var xmlSerialize = function (domNode) {
+    var xmlSerialize = function(domNode) {
         /// <summary>
         /// Returns the text representation of the document to which the specified node belongs.
         /// </summary>
@@ -1116,7 +1116,7 @@
         throw { message: "XML serialization unsupported" };
     };
 
-    var xmlSerializeDescendants = function (domNode) {
+    var xmlSerializeDescendants = function(domNode) {
         /// <summary>Returns the XML representation of the all the descendants of the node.</summary>
         /// <param name="domNode" optional="false" mayBeNull="false">Node to serialize.</param>
         /// <returns type="String">The XML representation of all the descendants of the node.</returns>
@@ -1153,7 +1153,7 @@
         return xml;
     };
 
-    var xmlSerializeNode = function (domNode) {
+    var xmlSerializeNode = function(domNode) {
         /// <summary>Returns the XML representation of the node and all its descendants.</summary>
         /// <param name="domNode" optional="false" mayBeNull="false">Node to serialize.</param>
         /// <returns type="String">The XML representation of the node and all its descendants.</returns>
@@ -1174,20 +1174,20 @@
 
 
 
-    var forwardCall = function (thisValue, name, returnValue) {
+    var forwardCall = function(thisValue, name, returnValue) {
         /// <summary>Creates a new function to forward a call.</summary>
         /// <param name="thisValue" type="Object">Value to use as the 'this' object.</param>
         /// <param name="name" type="String">Name of function to forward to.</param>
         /// <param name="returnValue" type="Object">Return value for the forward call (helps keep identity when chaining calls).</param>
         /// <returns type="Function">A new function that will forward a call.</returns>
 
-        return function () {
+        return function() {
             thisValue[name].apply(thisValue, arguments);
             return returnValue;
         };
     };
 
-    var DjsDeferred = function () {
+    var DjsDeferred = function() {
         /// <summary>Initializes a new DjsDeferred object.</summary>
         /// <remarks>
         /// Compability Note A - Ordering of callbacks through chained 'then' invocations
@@ -1220,7 +1220,7 @@
     };
 
     DjsDeferred.prototype = {
-        then: function (fulfilledHandler, errorHandler /*, progressHandler */) {
+        then: function(fulfilledHandler, errorHandler /*, progressHandler */ ) {
             /// <summary>Adds success and error callbacks for this deferred object.</summary>
             /// <param name="fulfilledHandler" type="Function" mayBeNull="true" optional="true">Success callback.</param>
             /// <param name="errorHandler" type="Function" mayBeNull="true" optional="true">Error callback.</param>
@@ -1257,7 +1257,7 @@
             return this;
         },
 
-        resolve: function (/* args */) {
+        resolve: function( /* args */ ) {
             /// <summary>Invokes success callbacks for this deferred object.</summary>
             /// <remarks>All arguments are forwarded to success callbacks.</remarks>
 
@@ -1283,7 +1283,7 @@
             }
         },
 
-        reject: function (/* args */) {
+        reject: function( /* args */ ) {
             /// <summary>Invokes error callbacks for this deferred object.</summary>
             /// <remarks>All arguments are forwarded to error callbacks.</remarks>
             if (this._fail) {
@@ -1301,7 +1301,7 @@
             }
         },
 
-        promise: function () {
+        promise: function() {
             /// <summary>Returns a version of this object that has only the read-only methods available.</summary>
             /// <returns>An object with only the promise object.</returns>
 
@@ -1311,7 +1311,7 @@
         }
     };
 
-    var createDeferred = function () {
+    var createDeferred = function() {
         /// <summary>Creates a deferred object.</summary>
         /// <returns type="DjsDeferred">
         /// A new deferred object. If jQuery is installed, then a jQuery
@@ -1328,7 +1328,7 @@
 
 
 
-    var dataItemTypeName = function (value, metadata) {
+    var dataItemTypeName = function(value, metadata) {
         /// <summary>Gets the type name of a data item value that belongs to a feed, an entry, a complex type property, or a collection property.</summary>
         /// <param name="value">Value of the data item from which the type name is going to be retrieved.</param>
         /// <param name="metadata" type="object" optional="true">Object containing metadata about the data tiem.</param>
@@ -1425,7 +1425,7 @@
         EDM_GEOGRAPHY_MULTIPOINT
     ];
 
-    var forEachSchema = function (metadata, callback) {
+    var forEachSchema = function(metadata, callback) {
         /// <summary>Invokes a function once per schema in metadata.</summary>
         /// <param name="metadata">Metadata store; one of edmx, schema, or an array of any of them.</param>
         /// <param name="callback" type="Function">Callback function to invoke once per schema.</param>
@@ -1456,7 +1456,7 @@
         }
     };
 
-    var formatMilliseconds = function (ms, ns) {
+    var formatMilliseconds = function(ms, ns) {
         /// <summary>Formats a millisecond and a nanosecond value into a single string.</summary>
         /// <param name="ms" type="Number" mayBeNull="false">Number of milliseconds to format.</param>
         /// <param name="ns" type="Number" mayBeNull="false">Number of nanoseconds to format.</param>
@@ -1479,12 +1479,12 @@
     };
 
     // ##### BEGIN: MODIFIED BY SAP
-    var formatDateTimeOffsetJSON = function (value) {
-    	return "\/Date("+value.getTime()+")\/";
+    var formatDateTimeOffsetJSON = function(value) {
+        return "\/Date(" + value.getTime() + ")\/";
     };
     // ##### END: MODIFIED BY SAP
 
-    var formatDateTimeOffset = function (value) {
+    var formatDateTimeOffset = function(value) {
         /// <summary>Formats a DateTime or DateTimeOffset value a string.</summary>
         /// <param name="value" type="Date" mayBeNull="false">Value to format.</param>
         /// <returns type="String">Formatted text.</returns>
@@ -1530,7 +1530,7 @@
             ms + offset;
     };
 
-    var formatDuration = function (value) {
+    var formatDuration = function(value) {
         /// <summary>Converts a duration to a string in xsd:duration format.</summary>
         /// <param name="value" type="Object">Object with ms and __edmType properties.</param>
         /// <returns type="String">String representation of the time object in xsd:duration format.</returns>
@@ -1553,14 +1553,14 @@
         ms -= seconds * 1000;
 
         return sign + "P" +
-               formatNumberWidth(days, 2) + "DT" +
-               formatNumberWidth(hours, 2) + "H" +
-               formatNumberWidth(minutes, 2) + "M" +
-               formatNumberWidth(seconds, 2) +
-               formatMilliseconds(ms, value.ns) + "S";
+            formatNumberWidth(days, 2) + "DT" +
+            formatNumberWidth(hours, 2) + "H" +
+            formatNumberWidth(minutes, 2) + "M" +
+            formatNumberWidth(seconds, 2) +
+            formatMilliseconds(ms, value.ns) + "S";
     };
 
-    var formatNumberWidth = function (value, width, append) {
+    var formatNumberWidth = function(value, width, append) {
         /// <summary>Formats the specified value to the given width.</summary>
         /// <param name="value" type="Number">Number to format (non-negative).</param>
         /// <param name="width" type="Number">Minimum width for number.</param>
@@ -1578,7 +1578,7 @@
         return result;
     };
 
-    var getCanonicalTimezone = function (timezone) {
+    var getCanonicalTimezone = function(timezone) {
         /// <summary>Gets the canonical timezone representation.</summary>
         /// <param name="timezone" type="String">Timezone representation.</param>
         /// <returns type="String">An 'Z' string if the timezone is absent or 0; the timezone otherwise.</returns>
@@ -1586,7 +1586,7 @@
         return (!timezone || timezone === "Z" || timezone === "+00:00" || timezone === "-00:00") ? "Z" : timezone;
     };
 
-    var getCollectionType = function (typeName) {
+    var getCollectionType = function(typeName) {
         /// <summary>Gets the type of a collection type name.</summary>
         /// <param name="typeName" type="String">Type name of the collection.</param>
         /// <returns type="String">Type of the collection; null if the type name is not a collection type.</returns>
@@ -1600,7 +1600,7 @@
         return null;
     };
 
-    var invokeRequest = function (request, success, error, handler, httpClient, context) {
+    var invokeRequest = function(request, success, error, handler, httpClient, context) {
         /// <summary>Sends a request containing OData payload to a server.</summary>
         /// <param name="request">Object that represents the request to be sent..</param>
         /// <param name="success">Callback for a successful read operation.</param>
@@ -1609,7 +1609,7 @@
         /// <param name="httpClient">HTTP client layer.</param>
         /// <param name="context">Context used for processing the request</param>
 
-        return httpClient.request(request, function (response) {
+        return httpClient.request(request, function(response) {
             try {
                 if (response.headers) {
                     normalizeHeaders(response.headers);
@@ -1631,16 +1631,16 @@
             // ##### BEGIN: MODIFIED BY SAP
             // errors in success handler for sync requests result in error handler calls. So here we fix this.
             try {
-            	success(response.data, response);
-			} catch (err) {
-				err.bIsSuccessHandlerError = true;
-				throw err;
-			}
-			// ##### END: MODIFIED BY SAP
+                success(response.data, response);
+            } catch (err) {
+                err.bIsSuccessHandlerError = true;
+                throw err;
+            }
+            // ##### END: MODIFIED BY SAP
         }, error);
     };
 
-    var isBatch = function (value) {
+    var isBatch = function(value) {
         /// <summary>Tests whether a value is a batch object in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <returns type="Boolean">True is the value is a batch object; false otherwise.</returns>
@@ -1651,7 +1651,7 @@
     // Regular expression used for testing and parsing for a collection type.
     var collectionTypeRE = /Collection\((.*)\)/;
 
-    var isCollection = function (value, typeName) {
+    var isCollection = function(value, typeName) {
         /// <summary>Tests whether a value is a collection value in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <param name="typeName" type="Sting">Type name of the value. This is used to disambiguate from a collection property value.</param>
@@ -1663,14 +1663,14 @@
             (!typeName && isArray(colData) && !isComplex(colData[0]));
     };
 
-    var isCollectionType = function (typeName) {
+    var isCollectionType = function(typeName) {
         /// <summary>Checks whether the specified type name is a collection type.</summary>
         /// <param name="typeName" type="String">Name of type to check.</param>
         /// <returns type="Boolean">True if the type is the name of a collection type; false otherwise.</returns>
         return collectionTypeRE.test(typeName);
     };
 
-    var isComplex = function (value) {
+    var isComplex = function(value) {
         /// <summary>Tests whether a value is a complex type value in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <returns type="Boolean">True is the value is a complex type value; false otherwise.</returns>
@@ -1681,14 +1681,14 @@
             !isDate(value);
     };
 
-    var isDateTimeOffset = function (value) {
+    var isDateTimeOffset = function(value) {
         /// <summary>Checks whether a Date object is DateTimeOffset value</summary>
         /// <param name="value" type="Date" mayBeNull="false">Value to check.</param>
         /// <returns type="Boolean">true if the value is a DateTimeOffset, false otherwise.</returns>
         return (value.__edmType === "Edm.DateTimeOffset" || (!value.__edmType && value.__offset));
     };
 
-    var isDeferred = function (value) {
+    var isDeferred = function(value) {
         /// <summary>Tests whether a value is a deferred navigation property in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <returns type="Boolean">True is the value is a deferred navigation property; false otherwise.</returns>
@@ -1701,7 +1701,7 @@
         return !metadata.type && !!deferred.uri;
     };
 
-    var isEntry = function (value) {
+    var isEntry = function(value) {
         /// <summary>Tests whether a value is an entry object in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <returns type="Boolean">True is the value is an entry object; false otherwise.</returns>
@@ -1709,7 +1709,7 @@
         return isComplex(value) && value.__metadata && "uri" in value.__metadata;
     };
 
-    var isFeed = function (value, typeName) {
+    var isFeed = function(value, typeName) {
         /// <summary>Tests whether a value is a feed value in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <param name="typeName" type="Sting">Type name of the value. This is used to disambiguate from a collection property value.</param>
@@ -1722,7 +1722,7 @@
         );
     };
 
-    var isGeographyEdmType = function (typeName) {
+    var isGeographyEdmType = function(typeName) {
         /// <summary>Checks whether the specified type name is a geography EDM type.</summary>
         /// <param name="typeName" type="String">Name of type to check.</param>
         /// <returns type="Boolean">True if the type is a geography EDM type; false otherwise.</returns>
@@ -1730,7 +1730,7 @@
         return contains(geographyEdmTypes, typeName);
     };
 
-    var isGeometryEdmType = function (typeName) {
+    var isGeometryEdmType = function(typeName) {
         /// <summary>Checks whether the specified type name is a geometry EDM type.</summary>
         /// <param name="typeName" type="String">Name of type to check.</param>
         /// <returns type="Boolean">True if the type is a geometry EDM type; false otherwise.</returns>
@@ -1738,7 +1738,7 @@
         return contains(geometryEdmTypes, typeName);
     };
 
-    var isNamedStream = function (value) {
+    var isNamedStream = function(value) {
         /// <summary>Tests whether a value is a named stream value in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <returns type="Boolean">True is the value is a named stream; false otherwise.</returns>
@@ -1751,7 +1751,7 @@
         return !metadata && !!mediaResource && !!mediaResource.media_src;
     };
 
-    var isPrimitive = function (value) {
+    var isPrimitive = function(value) {
         /// <summary>Tests whether a value is a primitive type value in the library's internal representation.</summary>
         /// <param name="value">Value to test.</param>
         /// <remarks>
@@ -1765,7 +1765,7 @@
             typeof value === "boolean";
     };
 
-    var isPrimitiveEdmType = function (typeName) {
+    var isPrimitiveEdmType = function(typeName) {
         /// <summary>Checks whether the specified type name is a primitive EDM type.</summary>
         /// <param name="typeName" type="String">Name of type to check.</param>
         /// <returns type="Boolean">True if the type is a primitive EDM type; false otherwise.</returns>
@@ -1773,7 +1773,7 @@
         return contains(primitiveEdmTypes, typeName);
     };
 
-    var navigationPropertyKind = function (value, propertyModel) {
+    var navigationPropertyKind = function(value, propertyModel) {
         /// <summary>Gets the kind of a navigation property value.</summary>
         /// <param name="value">Value of the navigation property.</param>
         /// <param name="propertyModel" type="Object" optional="true">
@@ -1802,41 +1802,41 @@
         return null;
     };
 
-    var lookupProperty = function (properties, name) {
+    var lookupProperty = function(properties, name) {
         /// <summary>Looks up a property by name.</summary>
         /// <param name="properties" type="Array" mayBeNull="true">Array of property objects as per EDM metadata.</param>
         /// <param name="name" type="String">Name to look for.</param>
         /// <returns type="Object">The property object; null if not found.</returns>
 
-        return find(properties, function (property) {
+        return find(properties, function(property) {
             return property.name === name;
         });
     };
 
-    var lookupInMetadata = function (name, metadata, kind) {
+    var lookupInMetadata = function(name, metadata, kind) {
         /// <summary>Looks up a type object by name.</summary>
         /// <param name="name" type="String">Name, possibly null or empty.</param>
         /// <param name="metadata">Metadata store; one of edmx, schema, or an array of any of them.</param>
         /// <param name="kind" type="String">Kind of object to look for as per EDM metadata.</param>
         /// <returns>An type description if the name is found; null otherwise.</returns>
 
-        return (name) ? forEachSchema(metadata, function (schema) {
+        return (name) ? forEachSchema(metadata, function(schema) {
             return lookupInSchema(name, schema, kind);
         }) : null;
     };
 
-    var lookupEntitySet = function (entitySets, name) {
+    var lookupEntitySet = function(entitySets, name) {
         /// <summary>Looks up a entity set by name.</summary>
         /// <param name="properties" type="Array" mayBeNull="true">Array of entity set objects as per EDM metadata.</param>
         /// <param name="name" type="String">Name to look for.</param>
         /// <returns type="Object">The entity set object; null if not found.</returns>
 
-        return find(entitySets, function (entitySet) {
+        return find(entitySets, function(entitySet) {
             return entitySet.name === name;
         });
     };
 
-    var lookupComplexType = function (name, metadata) {
+    var lookupComplexType = function(name, metadata) {
         /// <summary>Looks up a complex type object by name.</summary>
         /// <param name="name" type="String">Name, possibly null or empty.</param>
         /// <param name="metadata">Metadata store; one of edmx, schema, or an array of any of them.</param>
@@ -1845,7 +1845,7 @@
         return lookupInMetadata(name, metadata, "complexType");
     };
 
-    var lookupEntityType = function (name, metadata) {
+    var lookupEntityType = function(name, metadata) {
         /// <summary>Looks up an entity type object by name.</summary>
         /// <param name="name" type="String">Name, possibly null or empty.</param>
         /// <param name="metadata">Metadata store; one of edmx, schema, or an array of any of them.</param>
@@ -1854,20 +1854,20 @@
         return lookupInMetadata(name, metadata, "entityType");
     };
 
-    var lookupDefaultEntityContainer = function (metadata) {
+    var lookupDefaultEntityContainer = function(metadata) {
         /// <summary>Looks up an</summary>
         /// <param name="name" type="String">Name, possibly null or empty.</param>
         /// <param name="metadata">Metadata store; one of edmx, schema, or an array of any of them.</param>
         /// <returns>An entity container description if the name is found; null otherwise.</returns>
 
-        return forEachSchema(metadata, function (schema) {
-            return find(schema.entityContainer, function (container) {
+        return forEachSchema(metadata, function(schema) {
+            return find(schema.entityContainer, function(container) {
                 return parseBool(container.isDefaultEntityContainer);
             });
         });
     };
 
-    var lookupEntityContainer = function (name, metadata) {
+    var lookupEntityContainer = function(name, metadata) {
         /// <summary>Looks up an entity container object by name.</summary>
         /// <param name="name" type="String">Name, possibly null or empty.</param>
         /// <param name="metadata">Metadata store; one of edmx, schema, or an array of any of them.</param>
@@ -1876,18 +1876,18 @@
         return lookupInMetadata(name, metadata, "entityContainer");
     };
 
-    var lookupFunctionImport = function (functionImports, name) {
+    var lookupFunctionImport = function(functionImports, name) {
         /// <summary>Looks up a function import by name.</summary>
         /// <param name="properties" type="Array" mayBeNull="true">Array of function import objects as per EDM metadata.</param>
         /// <param name="name" type="String">Name to look for.</param>
         /// <returns type="Object">The entity set object; null if not found.</returns>
 
-        return find(functionImports, function (functionImport) {
+        return find(functionImports, function(functionImport) {
             return functionImport.name === name;
         });
     };
 
-    var lookupNavigationPropertyType = function (navigationProperty, metadata) {
+    var lookupNavigationPropertyType = function(navigationProperty, metadata) {
         /// <summary>Looks up the target entity type for a navigation property.</summary>
         /// <param name="navigationProperty" type="Object"></param>
         /// <param name="metadata" type="Object"></param>
@@ -1896,7 +1896,7 @@
         var result = null;
         if (navigationProperty) {
             var rel = navigationProperty.relationship;
-            var association = forEachSchema(metadata, function (schema) {
+            var association = forEachSchema(metadata, function(schema) {
                 // The name should be the namespace qualified name in 'ns'.'type' format.
                 var nameOnly = removeNamespace(schema["namespace"], rel);
                 var associations = schema.association;
@@ -1922,7 +1922,7 @@
         return result;
     };
 
-    var removeNamespace = function (ns, fullName) {
+    var removeNamespace = function(ns, fullName) {
         /// <summary>Given an expected namespace prefix, removes it from a full name.</summary>
         /// <param name="ns" type="String">Expected namespace.</param>
         /// <param name="fullName" type="String">Full name in 'ns'.'name' form.</param>
@@ -1935,7 +1935,7 @@
         return null;
     };
 
-    var lookupInSchema = function (name, schema, kind) {
+    var lookupInSchema = function(name, schema, kind) {
         /// <summary>Looks up a schema object by name.</summary>
         /// <param name="name" type="String">Name (assigned).</param>
         /// <param name="schema">Schema object as per EDM metadata.</param>
@@ -1946,7 +1946,7 @@
             // The name should be the namespace qualified name in 'ns'.'type' format.
             var nameOnly = removeNamespace(schema["namespace"], name);
             if (nameOnly) {
-                return find(schema[kind], function (item) {
+                return find(schema[kind], function(item) {
                     return item.name === nameOnly;
                 });
             }
@@ -1954,7 +1954,7 @@
         return null;
     };
 
-    var maxVersion = function (left, right) {
+    var maxVersion = function(left, right) {
         /// <summary>Compares to version strings and returns the higher one.</summary>
         /// <param name="left" type="String">Version string in the form "major.minor.rev"</param>
         /// <param name="right" type="String">Version string in the form "major.minor.rev"</param>
@@ -1967,9 +1967,9 @@
         var leftParts = left.split(".");
         var rightParts = right.split(".");
 
-        var len = (leftParts.length >= rightParts.length)
-            ? leftParts.length
-            : rightParts.length;
+        var len = (leftParts.length >= rightParts.length) ?
+            leftParts.length :
+            rightParts.length;
 
         for (var i = 0; i < len; i++) {
             var leftVersion = leftParts[i] && parseInt10(leftParts[i]);
@@ -1990,10 +1990,10 @@
         "maxdataserviceversion": "MaxDataServiceVersion",
         // ##### BEGIN: MODIFIED BY SAP
         "last-modified": "Last-Modified"
-        // ##### END: MODIFIED BY SAP
+            // ##### END: MODIFIED BY SAP
     };
 
-    var normalizeHeaders = function (headers) {
+    var normalizeHeaders = function(headers) {
         /// <summary>Normalizes headers so they can be found with consistent casing.</summary>
         /// <param name="headers" type="Object">Dictionary of name/value pairs.</param>
 
@@ -2008,7 +2008,7 @@
         }
     };
 
-    var parseBool = function (propertyValue) {
+    var parseBool = function(propertyValue) {
         /// <summary>Parses a string into a boolean value.</summary>
         /// <param name="propertyValue">Value to parse.</param>
         /// <returns type="Boolean">true if the property value is 'true'; false otherwise.</returns>
@@ -2028,11 +2028,11 @@
     // 7     - optional milliseconds
     // 8     - everything else (presumably offset information)
 
-	// ##### BEGIN: MODIFIED BY SAP
+    // ##### BEGIN: MODIFIED BY SAP
     var parseDateTimeRE = /^(-?\d{4,})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.(\d+))?(.*)$/;
-	// ##### END: MODIFIED BY SAP
+    // ##### END: MODIFIED BY SAP
 
-    var parseDateTimeMaybeOffset = function (value, withOffset, nullOnError) {
+    var parseDateTimeMaybeOffset = function(value, withOffset, nullOnError) {
         /// <summary>Parses a string into a DateTime value.</summary>
         /// <param name="value" type="String">Value to parse.</param>
         /// <param name="withOffset" type="Boolean">Whether offset is expected.</param>
@@ -2078,9 +2078,9 @@
         // Pre-parse other time components and offset them if necessary.
         var hours = parseInt10(parts[4]);
         var minutes = parseInt10(parts[5]);
-    	// ##### BEGIN: MODIFIED BY SAP
+        // ##### BEGIN: MODIFIED BY SAP
         var seconds = parseInt10(parts[6]) || 0;
-    	// ##### END: MODIFIED BY SAP
+        // ##### END: MODIFIED BY SAP
         if (offset !== "Z") {
             // The offset is reversed to get back the UTC date, which is
             // what the API will eventually have.
@@ -2093,10 +2093,10 @@
         // Set the date and time separately with setFullYear, so years 0-99 aren't biased like in Date.UTC.
         var result = new Date();
         result.setUTCFullYear(
-            year,                       // Year.
-            parseInt10(parts[2]) - 1,   // Month (zero-based for Date.UTC and setFullYear).
-            parseInt10(parts[3])        // Date.
-            );
+            year, // Year.
+            parseInt10(parts[2]) - 1, // Month (zero-based for Date.UTC and setFullYear).
+            parseInt10(parts[3]) // Date.
+        );
         result.setUTCHours(hours, minutes, seconds, ms);
 
         if (isNaN(result.valueOf())) {
@@ -2118,7 +2118,7 @@
         return result;
     };
 
-    var parseDateTime = function (propertyValue, nullOnError) {
+    var parseDateTime = function(propertyValue, nullOnError) {
         /// <summary>Parses a string into a DateTime value.</summary>
         /// <param name="propertyValue" type="String">Value to parse.</param>
         /// <returns type="Date">The parsed value.</returns>
@@ -2126,7 +2126,7 @@
         return parseDateTimeMaybeOffset(propertyValue, false, nullOnError);
     };
 
-    var parseDateTimeOffset = function (propertyValue, nullOnError) {
+    var parseDateTimeOffset = function(propertyValue, nullOnError) {
         /// <summary>Parses a string into a DateTimeOffset value.</summary>
         /// <param name="propertyValue" type="String">Value to parse.</param>
         /// <returns type="Date">The parsed value.</returns>
@@ -2148,11 +2148,11 @@
 
     var parseTimeRE = /^([+-])?P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(?:\.(\d+))?S)?)?/;
 
-    var isEdmDurationValue = function (value) {
+    var isEdmDurationValue = function(value) {
         parseTimeRE.test(value);
     }
 
-    var parseDuration = function (duration) {
+    var parseDuration = function(duration) {
         /// <summary>Parses a string in xsd:duration format.</summary>
         /// <param name="duration" type="String">Duration value.</param>
         /// <remarks>
@@ -2207,7 +2207,7 @@
         return result;
     };
 
-    var parseTimezone = function (timezone) {
+    var parseTimezone = function(timezone) {
         /// <summary>Parses a timezone description in (+|-)nn:nn format.</summary>
         /// <param name="timezone" type="String">Timezone offset.</param>
         /// <returns type="Object">
@@ -2223,7 +2223,7 @@
         return { d: direction, h: offsetHours, m: offsetMinutes };
     };
 
-    var prepareRequest = function (request, handler, context) {
+    var prepareRequest = function(request, handler, context) {
         /// <summary>Prepares a request object so that it can be sent through the network.</summary>
         /// <param name="request">Object that represents the request to be sent.</param>
         /// <param name="handler">Handler for data serialization</param>
@@ -2254,12 +2254,12 @@
 
         // ##### BEGIN: MODIFIED BY SAP
         if (request.async === undefined) {
-        	request.async = true;
+            request.async = true;
         }
         // ##### END: MODIFIED BY SAP
     };
 
-    var traverseInternal = function (item, owner, callback) {
+    var traverseInternal = function(item, owner, callback) {
         /// <summary>Traverses a tree of objects invoking callback for every value.</summary>
         /// <param name="item" type="Object">Object or array to traverse.</param>
         /// <param name="callback" type="Function">
@@ -2286,7 +2286,7 @@
         return item;
     };
 
-    var traverse = function (item, callback) {
+    var traverse = function(item, callback) {
         /// <summary>Traverses a tree of objects invoking callback for every value.</summary>
         /// <param name="item" type="Object">Object or array to traverse.</param>
         /// <param name="callback" type="Function">
@@ -2301,7 +2301,7 @@
 
     var ticks = 0;
 
-    var canUseJSONP = function (request) {
+    var canUseJSONP = function(request) {
         /// <summary>
         /// Checks whether the specified request can be satisfied with a JSONP request.
         /// </summary>
@@ -2320,7 +2320,7 @@
         return true;
     };
 
-    var createIFrame = function (url) {
+    var createIFrame = function(url) {
         /// <summary>Creates an IFRAME tag for loading the JSONP script</summary>
         /// <param name="url" type="String">The source URL of the script</param>
         /// <returns type="HTMLElement">The IFRAME tag</returns>
@@ -2337,7 +2337,7 @@
         return iframe;
     };
 
-    var createXmlHttpRequest = function () {
+    var createXmlHttpRequest = function() {
         /// <summary>Creates a XmlHttpRequest object.</summary>
         /// <returns type="XmlHttpRequest">XmlHttpRequest object.</returns>
         if (window.XMLHttpRequest) {
@@ -2360,7 +2360,7 @@
         throw exception;
     };
 
-    var isAbsoluteUrl = function (url) {
+    var isAbsoluteUrl = function(url) {
         /// <summary>Checks whether the specified URL is an absolute URL.</summary>
         /// <param name="url" type="String">URL to check.</param>
         /// <returns type="Boolean">true if the url is an absolute URL; false otherwise.</returns>
@@ -2370,7 +2370,7 @@
             url.indexOf("file://") === 0;
     };
 
-    var isLocalUrl = function (url) {
+    var isLocalUrl = function(url) {
         /// <summary>Checks whether the specified URL is local to the current context.</summary>
         /// <param name="url" type="String">URL to check.</param>
         /// <returns type="Boolean">true if the url is a local URL; false otherwise.</returns>
@@ -2385,7 +2385,7 @@
         return (url.indexOf(locationDomain) === 0);
     };
 
-    var removeCallback = function (name, tick) {
+    var removeCallback = function(name, tick) {
         /// <summary>Removes a callback used for a JSONP request.</summary>
         /// <param name="name" type="String">Function name to remove.</param>
         /// <param name="tick" type="Number">Tick count used on the callback.</param>
@@ -2399,7 +2399,7 @@
         }
     };
 
-    var removeIFrame = function (iframe) {
+    var removeIFrame = function(iframe) {
         /// <summary>Removes an iframe.</summary>
         /// <param name="iframe" type="Object">The iframe to remove.</param>
         /// <returns type="Object">Null value to be assigned to iframe reference.</returns>
@@ -2411,41 +2411,41 @@
         return null;
     };
 
-    var readResponseHeaders = function (xhr, headers) {
+    var readResponseHeaders = function(xhr, headers) {
         /// <summary>Reads response headers into array.</summary>
         /// <param name="xhr" type="XMLHttpRequest">HTTP request with response available.</param>
         /// <param name="headers" type="Array">Target array to fill with name/value pairs.</param>
 
         // ##### BEGIN: MODIFIED BY SAP
-    	// for CORS issues
+        // for CORS issues
         var responseHeaders = xhr.getAllResponseHeaders();
-        if (!responseHeaders){
+        if (!responseHeaders) {
             var contentType = xhr.getResponseHeader("Content-Type");
             var contentLength = xhr.getResponseHeader("Content-Length");
-            if (contentType){headers["Content-Type"] = contentType;}
-            if (contentLength){headers["Content-Length"] = contentLength;}
+            if (contentType) { headers["Content-Type"] = contentType; }
+            if (contentLength) { headers["Content-Length"] = contentLength; }
         } else {
-        // ##### END: MODIFIED BY SAP
-        	responseHeaders = responseHeaders.split(/\r?\n/);
-        	var i, len;
-        	for (i = 0, len = responseHeaders.length; i < len; i++) {
-        		if (responseHeaders[i]) {
-        			// ##### BEGIN: MODIFIED BY SAP
+            // ##### END: MODIFIED BY SAP
+            responseHeaders = responseHeaders.split(/\r?\n/);
+            var i, len;
+            for (i = 0, len = responseHeaders.length; i < len; i++) {
+                if (responseHeaders[i]) {
+                    // ##### BEGIN: MODIFIED BY SAP
 
-        			// expression matches "field-name: field-value"
-        			// removes trailing/leading whitespace(s) from the field-value.
-        			// result array: 0 = header, 1 = field-name, 2 = field-value
-        			var header = responseHeaders[i].match(/([^:]*):\s*((?:\s*\S+)+)?\s*/);
-        			headers[header[1]] = header[2];
+                    // expression matches "field-name: field-value"
+                    // removes trailing/leading whitespace(s) from the field-value.
+                    // result array: 0 = header, 1 = field-name, 2 = field-value
+                    var header = responseHeaders[i].match(/([^:]*):\s*((?:\s*\S+)+)?\s*/);
+                    headers[header[1]] = header[2];
 
-        			// ##### END: MODIFIED BY SAP
-        		}
-        	}
+                    // ##### END: MODIFIED BY SAP
+                }
+            }
         }
 
     };
 
-    var writeHtmlToIFrame = function (iframe, html) {
+    var writeHtmlToIFrame = function(iframe, html) {
         /// <summary>Writes HTML to an IFRAME document.</summary>
         /// <param name="iframe" type="HTMLElement">The IFRAME element to write to.</param>
         /// <param name="html" type="String">The HTML to write.</param>
@@ -2462,7 +2462,7 @@
 
         enableJsonpCallback: false,
 
-        request: function (request, success, error) {
+        request: function(request, success, error) {
             /// <summary>Performs a network request.</summary>
             /// <param name="request" type="Object">Request description.</request>
             /// <param name="success" type="Function">Success callback with the response object.</param>
@@ -2474,7 +2474,7 @@
             var done = false;
             var iframe;
 
-            result.abort = function () {
+            result.abort = function() {
                 iframe = removeIFrame(iframe);
                 if (done) {
                     return;
@@ -2489,7 +2489,7 @@
                 error({ message: "Request aborted" });
             };
 
-            var handleTimeout = function () {
+            var handleTimeout = function() {
                 iframe = removeIFrame(iframe);
                 if (!done) {
                     done = true;
@@ -2507,8 +2507,8 @@
 
                 xhr = createXmlHttpRequest();
                 // ##### BEGIN: MODIFIED BY SAP
-                var requestCallback = function () {
-                // ##### END: MODIFIED BY SAP
+                var requestCallback = function() {
+                    // ##### END: MODIFIED BY SAP
                     if (done || xhr === null || xhr.readyState !== 4) {
                         return;
                     }
@@ -2527,9 +2527,9 @@
                     // ##### BEGIN: MODIFIED BY SAP
                     var xml = null;
                     if (datajs._sap && xhr.responseXML) {
-                    	xml = xhr.responseXML;
+                        xml = xhr.responseXML;
                     }
-                   	// ##### END: MODIFIED BY SAP
+                    // ##### END: MODIFIED BY SAP
 
                     var response = { requestUri: url, statusCode: statusCode, statusText: statusText, headers: headers, body: xhr.responseText };
 
@@ -2538,33 +2538,33 @@
                     if (statusCode >= 200 && statusCode <= 299) {
                         success(response);
                     } else {
-                    	// ##### BEGIN: MODIFIED BY SAP
-                    	// normalize response headers here which is also done in the success function call above
-                      	normalizeHeaders(response.headers);
-                      	// ##### END: MODIFIED BY SAP
+                        // ##### BEGIN: MODIFIED BY SAP
+                        // normalize response headers here which is also done in the success function call above
+                        normalizeHeaders(response.headers);
+                        // ##### END: MODIFIED BY SAP
                         error({ message: "HTTP request failed", request: request, response: response });
                     }
                     // ##### BEGIN: MODIFIED BY SAP
                     if (datajs._sap && response.requestUri.indexOf("$metadata") > -1) {
 
-                    	var mSettings = {
-                      	   supportXML: xml,
-                      	   response: response
-                      	};
-                    	datajs._sap._supportInfo({context: xml, env: {caller:'datajs', settings: mSettings, type:"metadata"}});
+                        var mSettings = {
+                            supportXML: xml,
+                            response: response
+                        };
+                        datajs._sap._supportInfo({ context: xml, env: { caller: 'datajs', settings: mSettings, type: "metadata" } });
                     }
                     // ##### END: MODIFIED BY SAP
                 };
 
                 // ##### BEGIN: MODIFIED BY SAP
                 if (request.user && request.password) {
-                	xhr.open(request.method || "GET", url, request.async, request.user, request.password);
+                    xhr.open(request.method || "GET", url, request.async, request.user, request.password);
                 } else {
-                	xhr.open(request.method || "GET", url, request.async);
+                    xhr.open(request.method || "GET", url, request.async);
                 }
                 // do it after open call because IE 10 may throw InvalidStateError exception.
                 if (request.withCredentials) {
-                	xhr.withCredentials = true;
+                    xhr.withCredentials = true;
                 }
                 // ##### END: MODIFIED BY SAP
 
@@ -2588,7 +2588,7 @@
                 // modified by SAP: typeof request.body !== 'undefined' ? request.body : null. Check added to make it work in IE 11.
                 xhr.send(typeof request.body !== 'undefined' ? request.body : null);
                 if (!request.async) {
-                	requestCallback();
+                    requestCallback();
                 }
                 // ##### END: MODIFIED BY SAP
             } else {
@@ -2602,7 +2602,7 @@
                 var succeeded = false;
                 var timeoutId;
                 name = "handleJSONP_" + tickText;
-                window[name] = function (data) {
+                window[name] = function(data) {
                     iframe = removeIFrame(iframe);
                     if (!done) {
                         succeeded = true;
@@ -2616,7 +2616,7 @@
                         }
 
                         // Call the success callback in the context of the parent window, instead of the IFRAME
-                        delay(success, { body: data, statusCode: 200, headers: { "Content-Type": "application/json"} });
+                        delay(success, { body: data, statusCode: 200, headers: { "Content-Type": "application/json" } });
                     }
                 };
 
@@ -2649,7 +2649,7 @@
 
     var MAX_DATA_SERVICE_VERSION = "3.0";
 
-    var contentType = function (str) {
+    var contentType = function(str) {
         /// <summary>Parses a string into an object with media type and properties.</summary>
         /// <param name="str" type="String">String with media type to parse.</param>
         /// <returns>null if the string is empty; an object with 'mediaType' and a 'properties' dictionary otherwise.</returns>
@@ -2670,7 +2670,7 @@
         return { mediaType: trimString(contentTypeParts[0]), properties: properties };
     };
 
-    var contentTypeToString = function (contentType) {
+    var contentTypeToString = function(contentType) {
         /// <summary>Serializes an object with media type and properties dictionary into a string.</summary>
         /// <param name="contentType">Object with media type and properties dictionary to serialize.</param>
         /// <returns>String representation of the media type object; undefined if contentType is null or undefined.</returns>
@@ -2687,7 +2687,7 @@
         return result;
     };
 
-    var createReadWriteContext = function (contentType, dataServiceVersion, context, handler) {
+    var createReadWriteContext = function(contentType, dataServiceVersion, context, handler) {
         /// <summary>Creates an object that is going to be used as the context for the handler's parser and serializer.</summary>
         /// <param name="contentType">Object with media type and properties dictionary.</param>
         /// <param name="dataServiceVersion" type="String">String indicating the version of the protocol to use.</param>
@@ -2695,16 +2695,16 @@
         /// <param name="handler">Handler object that is processing a resquest or response.</param>
         /// <returns>Context object.</returns>
 
-    	// ##### BEGIN: MODIFIED BY SAP
+        // ##### BEGIN: MODIFIED BY SAP
         // this was not working in 1.1.0 so this fix is from 1.1.1.beta2
 
-//        var rwContext = {
-//                contentType: contentType,
-//                dataServiceVersion: dataServiceVersion,
-//                handler: handler
-//            };
-//
-//        return extend(rwContext, context);
+        //        var rwContext = {
+        //                contentType: contentType,
+        //                dataServiceVersion: dataServiceVersion,
+        //                handler: handler
+        //            };
+        //
+        //        return extend(rwContext, context);
 
         var rwContext = {};
         extend(rwContext, context);
@@ -2719,7 +2719,7 @@
 
     };
 
-    var fixRequestHeader = function (request, name, value) {
+    var fixRequestHeader = function(request, name, value) {
         /// <summary>Sets a request header's value. If the header has already a value other than undefined, null or empty string, then this method does nothing.</summary>
         /// <param name="request">Request object on which the header will be set.</param>
         /// <param name="name" type="String">Header name.</param>
@@ -2734,7 +2734,7 @@
         }
     };
 
-    var fixDataServiceVersionHeader = function (request, version) {
+    var fixDataServiceVersionHeader = function(request, version) {
         /// <summary>Sets the DataServiceVersion header of the request if its value is not yet defined or of a lower version.</summary>
         /// <param name="request">Request object on which the header will be set.</param>
         /// <param name="version" type="String">Version value.</param>
@@ -2749,7 +2749,7 @@
         }
     };
 
-    var getRequestOrResponseHeader = function (requestOrResponse, name) {
+    var getRequestOrResponseHeader = function(requestOrResponse, name) {
         /// <summary>Gets the value of a request or response header.</summary>
         /// <param name="requestOrResponse">Object representing a request or a response.</param>
         /// <param name="name" type="String">Name of the header to retrieve.</param>
@@ -2759,7 +2759,7 @@
         return (headers && headers[name]) || undefined;
     };
 
-    var getContentType = function (requestOrResponse) {
+    var getContentType = function(requestOrResponse) {
         /// <summary>Gets the value of the Content-Type header from a request or response.</summary>
         /// <param name="requestOrResponse">Object representing a request or a response.</param>
         /// <returns type="Object">Object with 'mediaType' and a 'properties' dictionary; null in case that the header is not found or doesn't have a value.</returns>
@@ -2768,7 +2768,7 @@
     };
 
     var versionRE = /^\s?(\d+\.\d+);?.*$/;
-    var getDataServiceVersion = function (requestOrResponse) {
+    var getDataServiceVersion = function(requestOrResponse) {
         /// <summary>Gets the value of the DataServiceVersion header from a request or response.</summary>
         /// <param name="requestOrResponse">Object representing a request or a response.</param>
         /// <returns type="String">Data service version; undefined if the header cannot be found.</returns>
@@ -2784,7 +2784,7 @@
         // Fall through and return undefined.
     };
 
-    var handlerAccepts = function (handler, cType) {
+    var handlerAccepts = function(handler, cType) {
         /// <summary>Checks that a handler can process a particular mime type.</summary>
         /// <param name="handler">Handler object that is processing a resquest or response.</param>
         /// <param name="cType">Object with 'mediaType' and a 'properties' dictionary.</param>
@@ -2795,7 +2795,7 @@
         return handler.accept.indexOf(cType.mediaType) >= 0;
     };
 
-    var handlerRead = function (handler, parseCallback, response, context) {
+    var handlerRead = function(handler, parseCallback, response, context) {
         /// <summary>Invokes the parser associated with a handler for reading the payload of a HTTP response.</summary>
         /// <param name="handler">Handler object that is processing the response.</param>
         /// <param name="parseCallback" type="Function">Parser function that will process the response payload.</param>
@@ -2815,7 +2815,7 @@
         // added !body
         // in XML case if e.g. delete op body is "" and no content type do nothing...check if this is fixed in future versions...
         if (!assigned(body) || !body) {
-        //##### END: MODIFIED BY SAP
+            //##### END: MODIFIED BY SAP
             return false;
         }
 
@@ -2829,7 +2829,7 @@
         return false;
     };
 
-    var handlerWrite = function (handler, serializeCallback, request, context) {
+    var handlerWrite = function(handler, serializeCallback, request, context) {
         /// <summary>Invokes the serializer associated with a handler for generating the payload of a HTTP request.</summary>
         /// <param name="handler">Handler object that is processing the request.</param>
         /// <param name="serializeCallback" type="Function">Serializer function that will generate the request payload.</param>
@@ -2861,7 +2861,7 @@
         return false;
     };
 
-    var handler = function (parseCallback, serializeCallback, accept, maxDataServiceVersion) {
+    var handler = function(parseCallback, serializeCallback, accept, maxDataServiceVersion) {
         /// <summary>Creates a handler object for processing HTTP requests and responses.</summary>
         /// <param name="parseCallback" type="Function">Parser function that will process the response payload.</param>
         /// <param name="serializeCallback" type="Function">Serializer function that will generate the request payload.</param>
@@ -2873,21 +2873,21 @@
             accept: accept,
             maxDataServiceVersion: maxDataServiceVersion,
 
-            read: function (response, context) {
+            read: function(response, context) {
                 return handlerRead(this, parseCallback, response, context);
             },
 
-            write: function (request, context) {
+            write: function(request, context) {
                 return handlerWrite(this, serializeCallback, request, context);
             }
         };
     };
 
-    var textParse = function (handler, body /*, context */) {
+    var textParse = function(handler, body /*, context */ ) {
         return body;
     };
 
-    var textSerialize = function (handler, data /*, context */) {
+    var textSerialize = function(handler, data /*, context */ ) {
         if (assigned(data)) {
             return data.toString();
         } else {
@@ -2898,13 +2898,13 @@
     odata.textHandler = handler(textParse, textSerialize, "text/plain", MAX_DATA_SERVICE_VERSION);
 
 
-    var gmlOpenGis = http + "www.opengis.net";           // http://www.opengis.net
-    var gmlXmlNs = gmlOpenGis + "/gml";                 // http://www.opengis.net/gml
+    var gmlOpenGis = http + "www.opengis.net"; // http://www.opengis.net
+    var gmlXmlNs = gmlOpenGis + "/gml"; // http://www.opengis.net/gml
     var gmlSrsPrefix = gmlOpenGis + "/def/crs/EPSG/0/"; // http://www.opengis.net/def/crs/EPSG/0/
 
     var gmlPrefix = "gml";
 
-    var gmlCreateGeoJSONOBject = function (type, member, data) {
+    var gmlCreateGeoJSONOBject = function(type, member, data) {
         /// <summary>Creates a GeoJSON object with the specified type, member and value.</summary>
         /// <param name="type" type="String">GeoJSON object type.</param>
         /// <param name="member" type="String">Name for the data member in the GeoJSON object.</param>
@@ -2916,7 +2916,7 @@
         return result;
     };
 
-    var gmlSwapLatLong = function (coordinates) {
+    var gmlSwapLatLong = function(coordinates) {
         /// <summary>Swaps the longitude and latitude in the coordinates array.</summary>
         /// <param name="coordinates" type="Array">Array of doubles descrbing a set of coordinates.</param>
         /// <returns type="Array">Array of doubles with the latitude and longitude components swapped.</returns>
@@ -2929,7 +2929,7 @@
         return coordinates;
     };
 
-    var gmlReadODataMultiItem = function (domElement, type, member, members, valueReader, isGeography) {
+    var gmlReadODataMultiItem = function(domElement, type, member, members, valueReader, isGeography) {
         /// <summary>
         ///    Reads a GML DOM element that represents a composite structure like a multi-point or a
         ///    multi-geometry returnig its GeoJSON representation.
@@ -2950,7 +2950,7 @@
         return gmlCreateGeoJSONOBject(type, "coordinates", coordinates);
     };
 
-    var gmlReadODataMultiItemValue = function (domElement, member, members, valueReader, isGeography) {
+    var gmlReadODataMultiItemValue = function(domElement, member, members, valueReader, isGeography) {
         /// <summary>
         ///    Reads the value of a GML DOM element that represents a composite structure like a multi-point or a
         ///    multi-geometry returnig its items.
@@ -2969,7 +2969,7 @@
 
         var items = [];
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             if (xmlNamespaceURI(child) !== gmlXmlNs) {
                 return;
             }
@@ -2988,7 +2988,7 @@
             }
 
             if (localName === members) {
-                xmlChildElements(child, function (valueElement) {
+                xmlChildElements(child, function(valueElement) {
                     if (xmlNamespaceURI(valueElement) !== gmlXmlNs) {
                         return;
                     }
@@ -3003,7 +3003,7 @@
         return items;
     };
 
-    var gmlReadODataCollection = function (domElement, isGeography) {
+    var gmlReadODataCollection = function(domElement, isGeography) {
         /// <summary>Reads a GML DOM element representing a multi-geometry returning its GeoJSON representation.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3017,7 +3017,7 @@
         return gmlCreateGeoJSONOBject(GEOJSON_GEOMETRYCOLLECTION, "geometries", geometries);
     };
 
-    var gmlReadODataLineString = function (domElement, isGeography) {
+    var gmlReadODataLineString = function(domElement, isGeography) {
         /// <summary>Reads a GML DOM element representing a line string returning its GeoJSON representation.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3030,7 +3030,7 @@
         return gmlCreateGeoJSONOBject(GEOJSON_LINESTRING, "coordinates", gmlReadODataLineValue(domElement, isGeography));
     };
 
-    var gmlReadODataMultiLineString = function (domElement, isGeography) {
+    var gmlReadODataMultiLineString = function(domElement, isGeography) {
         /// <summary>Reads a GML DOM element representing a multi-line string returning its GeoJSON representation.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3043,7 +3043,7 @@
         return gmlReadODataMultiItem(domElement, GEOJSON_MULTILINESTRING, "curveMember", "curveMembers", gmlReadODataLineValue, isGeography);
     };
 
-    var gmlReadODataMultiPoint = function (domElement, isGeography) {
+    var gmlReadODataMultiPoint = function(domElement, isGeography) {
         /// <summary>Reads a GML DOM element representing a multi-point returning its GeoJSON representation.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3056,7 +3056,7 @@
         return gmlReadODataMultiItem(domElement, GEOJSON_MULTIPOINT, "pointMember", "pointMembers", gmlReadODataPointValue, isGeography);
     };
 
-    var gmlReadODataMultiPolygon = function (domElement, isGeography) {
+    var gmlReadODataMultiPolygon = function(domElement, isGeography) {
         /// <summary>Reads a GML DOM element representing a multi-polygon returning its GeoJSON representation.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3069,7 +3069,7 @@
         return gmlReadODataMultiItem(domElement, GEOJSON_MULTIPOLYGON, "surfaceMember", "surfaceMembers", gmlReadODataPolygonValue, isGeography);
     };
 
-    var gmlReadODataPoint = function (domElement, isGeography) {
+    var gmlReadODataPoint = function(domElement, isGeography) {
         /// <summary>Reads a GML DOM element representing a point returning its GeoJSON representation.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3082,7 +3082,7 @@
         return gmlCreateGeoJSONOBject(GEOJSON_POINT, "coordinates", gmlReadODataPointValue(domElement, isGeography));
     };
 
-    var gmlReadODataPolygon = function (domElement, isGeography) {
+    var gmlReadODataPolygon = function(domElement, isGeography) {
         /// <summary>Reads a GML DOM element representing a polygon returning its GeoJSON representation.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3095,7 +3095,7 @@
         return gmlCreateGeoJSONOBject(GEOJSON_POLYGON, "coordinates", gmlReadODataPolygonValue(domElement, isGeography));
     };
 
-    var gmlReadODataLineValue = function (domElement, isGeography) {
+    var gmlReadODataLineValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML DOM element representing a line returning its set of coordinates.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3107,7 +3107,7 @@
 
         var coordinates = [];
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             var nsURI = xmlNamespaceURI(child);
 
             if (nsURI !== gmlXmlNs) {
@@ -3133,7 +3133,7 @@
         return coordinates;
     };
 
-    var gmlReadODataPointValue = function (domElement, isGeography) {
+    var gmlReadODataPointValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML DOM element representing a point returning its coordinates.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3147,7 +3147,7 @@
         return pos ? gmlReadODataPosValue(pos, isGeography) : [];
     };
 
-    var gmlReadODataPointWrapperValue = function (domElement, isGeography) {
+    var gmlReadODataPointWrapperValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML DOM element wrapping an element representing a point returning its coordinates.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3161,7 +3161,7 @@
         return point ? gmlReadODataPointValue(point, isGeography) : [];
     };
 
-    var gmlReadODataPolygonValue = function (domElement, isGeography) {
+    var gmlReadODataPolygonValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML DOM element representing a polygon returning its set of coordinates.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3173,7 +3173,7 @@
 
         var coordinates = [];
         var exteriorFound = false;
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             if (xmlNamespaceURI(child) !== gmlXmlNs) {
                 return;
             }
@@ -3193,13 +3193,15 @@
 
         if (!exteriorFound && coordinates.length > 0) {
             // Push an empty exterior ring.
-            coordinates.unshift([[]]);
+            coordinates.unshift([
+                []
+            ]);
         }
 
         return coordinates;
     };
 
-    var gmlReadODataPolygonRingValue = function (domElement, isGeography) {
+    var gmlReadODataPolygonRingValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML DOM element representing a linear ring in a GML Polygon element.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3210,7 +3212,7 @@
         /// <returns type="Array">Array containing an array of doubles for each coordinate of the linear ring.</returns>
 
         var value = [];
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             if (xmlNamespaceURI(child) !== gmlXmlNs || xmlLocalName(child) !== "LinearRing") {
                 return;
             }
@@ -3219,7 +3221,7 @@
         return value;
     };
 
-    var gmlReadODataPosListValue = function (domElement, isGeography) {
+    var gmlReadODataPosListValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML DOM element representing a list of positions retruning its set of coordinates.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3247,7 +3249,7 @@
         return value;
     };
 
-    var gmlReadODataPosValue = function (domElement, isGeography) {
+    var gmlReadODataPosValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML element describing a position or a set of coordinates in an OData spatial property value.</summary>
         /// <param name="property">DOM element for the GML element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3281,7 +3283,7 @@
         return isGeography ? gmlSwapLatLong(value) : value;
     };
 
-    var gmlReadODataSpatialValue = function (domElement, isGeography) {
+    var gmlReadODataSpatialValue = function(domElement, isGeography) {
         /// <summary>Reads the value of a GML DOM element a spatial value in an OData XML document.</summary>
         /// <param name="domElement">DOM element.</param>
         /// <param name="isGeography" type="Boolean" Optional="True">Flag indicating if the value uses a geographic reference system or not.<param>
@@ -3326,7 +3328,7 @@
         // other end points might no do this as per the standard.
 
         var srsName = xmlAttributeValue(domElement, "srsName", gmlXmlNs) ||
-                      xmlAttributeValue(domElement, "srsName");
+            xmlAttributeValue(domElement, "srsName");
 
         if (srsName) {
             if (srsName.indexOf(gmlSrsPrefix) !== 0) {
@@ -3346,7 +3348,7 @@
         return value;
     };
 
-    var gmlNewODataSpatialValue = function (dom, value, type, isGeography) {
+    var gmlNewODataSpatialValue = function(dom, value, type, isGeography) {
         /// <summary>Creates a new GML DOM element for the value of an OData spatial property or GeoJSON object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">Spatial property value in GeoJSON format.</param>
@@ -3405,7 +3407,7 @@
         return gml;
     };
 
-    var gmlNewODataElement = function (dom, name, children) {
+    var gmlNewODataElement = function(dom, name, children) {
         /// <summary>Creates a new DOM element in the GML namespace.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Local name of the GML element to create.</param>
@@ -3419,7 +3421,7 @@
         return xmlNewElement(dom, gmlXmlNs, xmlQualifiedName(gmlPrefix, name), children);
     };
 
-    var gmlNewODataPosElement = function (dom, coordinates, isGeography) {
+    var gmlNewODataPosElement = function(dom, coordinates, isGeography) {
         /// <summary>Creates a new GML pos DOM element.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="coordinates" type="Array">Array of doubles describing the coordinates of the pos element.</param>
@@ -3439,7 +3441,7 @@
         return gmlNewODataElement(dom, "pos", posValue.join(" "));
     };
 
-    var gmlNewODataLineElement = function (dom, name, coordinates, isGeography) {
+    var gmlNewODataLineElement = function(dom, name, coordinates, isGeography) {
         /// <summary>Creates a new GML DOM element representing a line.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Name of the element to create.</param>
@@ -3465,7 +3467,7 @@
         return element;
     };
 
-    var gmlNewODataPointElement = function (dom, coordinates, isGeography) {
+    var gmlNewODataPointElement = function(dom, coordinates, isGeography) {
         /// <summary>Creates a new GML Point DOM element.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON Point object.</param>
@@ -3479,7 +3481,7 @@
         return gmlNewODataElement(dom, "Point", gmlNewODataPosElement(dom, coordinates, isGeography));
     };
 
-    var gmlNewODataLineStringElement = function (dom, coordinates, isGeography) {
+    var gmlNewODataLineStringElement = function(dom, coordinates, isGeography) {
         /// <summary>Creates a new GML LineString DOM element.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="coordinates" type="Array">Array of array of doubles describing the coordinates of the line element.</param>
@@ -3493,7 +3495,7 @@
         return gmlNewODataLineElement(dom, "LineString", coordinates, isGeography);
     };
 
-    var gmlNewODataPolygonRingElement = function (dom, name, coordinates, isGeography) {
+    var gmlNewODataPolygonRingElement = function(dom, name, coordinates, isGeography) {
         /// <summary>Creates a new GML DOM element representing a polygon ring.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Name of the element to create.</param>
@@ -3513,7 +3515,7 @@
         return ringElement;
     };
 
-    var gmlNewODataPolygonElement = function (dom, coordinates, isGeography) {
+    var gmlNewODataPolygonElement = function(dom, coordinates, isGeography) {
         /// <summary>Creates a new GML Polygon DOM element for a GeoJSON Polygon object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="coordinates" type="Array">Array of array of array of doubles describing the coordinates of the polygon.</param>
@@ -3538,7 +3540,7 @@
         return element;
     };
 
-    var gmlNewODataPoint = function (dom, value, isGeography) {
+    var gmlNewODataPoint = function(dom, value, isGeography) {
         /// <summary>Creates a new GML Point DOM element for a GeoJSON Point object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON Point object.</param>
@@ -3552,7 +3554,7 @@
         return gmlNewODataPointElement(dom, value.coordinates, isGeography);
     };
 
-    var gmlNewODataLineString = function (dom, value, isGeography) {
+    var gmlNewODataLineString = function(dom, value, isGeography) {
         /// <summary>Creates a new GML LineString DOM element for a GeoJSON LineString object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON LineString object.</param>
@@ -3566,7 +3568,7 @@
         return gmlNewODataLineStringElement(dom, value.coordinates, isGeography);
     };
 
-    var gmlNewODataPolygon = function (dom, value, isGeography) {
+    var gmlNewODataPolygon = function(dom, value, isGeography) {
         /// <summary>Creates a new GML Polygon DOM element for a GeoJSON Polygon object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON Polygon object.</param>
@@ -3580,7 +3582,7 @@
         return gmlNewODataPolygonElement(dom, value.coordinates, isGeography);
     };
 
-    var gmlNewODataMultiItem = function (dom, name, members, items, itemWriter, isGeography) {
+    var gmlNewODataMultiItem = function(dom, name, members, items, itemWriter, isGeography) {
         /// <summary>Creates a new GML DOM element for a composite structure like a multi-point or a multi-geometry.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Name of the element to create.</param>
@@ -3606,7 +3608,7 @@
         return element;
     };
 
-    var gmlNewODataMultiPoint = function (dom, value, isGeography) {
+    var gmlNewODataMultiPoint = function(dom, value, isGeography) {
         /// <summary>Creates a new GML MultiPoint DOM element for a GeoJSON MultiPoint object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON MultiPoint object.</param>
@@ -3620,7 +3622,7 @@
         return gmlNewODataMultiItem(dom, "MultiPoint", "pointMembers", value.coordinates, gmlNewODataPointElement, isGeography);
     };
 
-    var gmlNewODataMultiLineString = function (dom, value, isGeography) {
+    var gmlNewODataMultiLineString = function(dom, value, isGeography) {
         /// <summary>Creates a new GML MultiCurve DOM element for a GeoJSON MultiLineString object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON MultiLineString object.</param>
@@ -3634,7 +3636,7 @@
         return gmlNewODataMultiItem(dom, "MultiCurve", "curveMembers", value.coordinates, gmlNewODataLineStringElement, isGeography);
     };
 
-    var gmlNewODataMultiPolygon = function (dom, value, isGeography) {
+    var gmlNewODataMultiPolygon = function(dom, value, isGeography) {
         /// <summary>Creates a new GML MultiSurface DOM element for a GeoJSON MultiPolygon object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON MultiPolygon object.</param>
@@ -3648,7 +3650,7 @@
         return gmlNewODataMultiItem(dom, "MultiSurface", "surfaceMembers", value.coordinates, gmlNewODataPolygonElement, isGeography);
     };
 
-    var gmlNewODataGeometryCollectionItem = function (dom, value, isGeography) {
+    var gmlNewODataGeometryCollectionItem = function(dom, value, isGeography) {
         /// <summary>Creates a new GML element for an item in a geometry collection object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="item" type="Object">GeoJSON object in the geometry collection.</param>
@@ -3662,7 +3664,7 @@
         return gmlNewODataSpatialValue(dom, value, value.type, isGeography);
     };
 
-    var gmlNewODataGeometryCollection = function (dom, value, isGeography) {
+    var gmlNewODataGeometryCollection = function(dom, value, isGeography) {
         /// <summary>Creates a new GML MultiGeometry DOM element for a GeoJSON GeometryCollection object.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="value" type="Object">GeoJSON GeometryCollection object.</param>
@@ -3680,31 +3682,31 @@
 
     var xmlMediaType = "application/xml";
 
-    var ado = http + "schemas.microsoft.com/ado/";      // http://schemas.microsoft.com/ado/
-    var adoDs = ado + "2007/08/dataservices";           // http://schemas.microsoft.com/ado/2007/08/dataservices
+    var ado = http + "schemas.microsoft.com/ado/"; // http://schemas.microsoft.com/ado/
+    var adoDs = ado + "2007/08/dataservices"; // http://schemas.microsoft.com/ado/2007/08/dataservices
 
-    var edmxNs = ado + "2007/06/edmx";                  // http://schemas.microsoft.com/ado/2007/06/edmx
-    var edmNs1 = ado + "2006/04/edm";                   // http://schemas.microsoft.com/ado/2006/04/edm
-    var edmNs1_1 = ado + "2007/05/edm";                 // http://schemas.microsoft.com/ado/2007/05/edm
-    var edmNs1_2 = ado + "2008/01/edm";                 // http://schemas.microsoft.com/ado/2008/01/edm
+    var edmxNs = ado + "2007/06/edmx"; // http://schemas.microsoft.com/ado/2007/06/edmx
+    var edmNs1 = ado + "2006/04/edm"; // http://schemas.microsoft.com/ado/2006/04/edm
+    var edmNs1_1 = ado + "2007/05/edm"; // http://schemas.microsoft.com/ado/2007/05/edm
+    var edmNs1_2 = ado + "2008/01/edm"; // http://schemas.microsoft.com/ado/2008/01/edm
 
     // There are two valid namespaces for Edm 2.0
-    var edmNs2a = ado + "2008/09/edm";                  // http://schemas.microsoft.com/ado/2008/09/edm
-    var edmNs2b = ado + "2009/08/edm";                  // http://schemas.microsoft.com/ado/2009/08/edm
+    var edmNs2a = ado + "2008/09/edm"; // http://schemas.microsoft.com/ado/2008/09/edm
+    var edmNs2b = ado + "2009/08/edm"; // http://schemas.microsoft.com/ado/2009/08/edm
 
-    var edmNs3 = ado + "2009/11/edm";                   // http://schemas.microsoft.com/ado/2009/11/edm
+    var edmNs3 = ado + "2009/11/edm"; // http://schemas.microsoft.com/ado/2009/11/edm
     // ##### BEGIN: MODIFIED BY SAP
-	var edmNs4 = http + "docs.oasis-open.org/odata/ns/edm";  // http://docs.oasis-open.org/odata/ns/edm
-	// ##### END: MODIFIED BY SAP
-    var odataXmlNs = adoDs;                             // http://schemas.microsoft.com/ado/2007/08/dataservices
-    var odataMetaXmlNs = adoDs + "/metadata";           // http://schemas.microsoft.com/ado/2007/08/dataservices/metadata
-    var odataRelatedPrefix = adoDs + "/related/";       // http://schemas.microsoft.com/ado/2007/08/dataservices/related
-    var odataScheme = adoDs + "/scheme";                // http://schemas.microsoft.com/ado/2007/08/dataservices/scheme
+    var edmNs4 = http + "docs.oasis-open.org/odata/ns/edm"; // http://docs.oasis-open.org/odata/ns/edm
+    // ##### END: MODIFIED BY SAP
+    var odataXmlNs = adoDs; // http://schemas.microsoft.com/ado/2007/08/dataservices
+    var odataMetaXmlNs = adoDs + "/metadata"; // http://schemas.microsoft.com/ado/2007/08/dataservices/metadata
+    var odataRelatedPrefix = adoDs + "/related/"; // http://schemas.microsoft.com/ado/2007/08/dataservices/related
+    var odataScheme = adoDs + "/scheme"; // http://schemas.microsoft.com/ado/2007/08/dataservices/scheme
 
     var odataPrefix = "d";
     var odataMetaPrefix = "m";
 
-    var createAttributeExtension = function (domNode, useNamespaceURI) {
+    var createAttributeExtension = function(domNode, useNamespaceURI) {
         /// <summary>Creates an extension object for the specified attribute.</summary>
         /// <param name="domNode">DOM node for the attribute.</param>
         /// <param name="useNamespaceURI" type="Boolean">Flag indicating if the namespaceURI property should be added to the extension object instead of the namespace property.</param>
@@ -3722,7 +3724,7 @@
         return extension;
     };
 
-    var createElementExtension = function (domNode, useNamespaceURI) {
+    var createElementExtension = function(domNode, useNamespaceURI) {
         /// <summary>Creates an extension object for the specified element.</summary>
         /// <param name="domNode">DOM node for the element.</param>
         /// <param name="useNamespaceURI" type="Boolean">Flag indicating if the namespaceURI property should be added to the extension object instead of the namespace property.</param>
@@ -3766,7 +3768,7 @@
         return extension;
     };
 
-    var isCollectionItemElement = function (domElement) {
+    var isCollectionItemElement = function(domElement) {
         /// <summary>Checks whether the domElement is a collection item.</summary>
         /// <param name="domElement">DOM element possibliy represnting a collection item.</param>
         /// <returns type="Boolean">True if the domeElement belongs to the OData metadata namespace and its local name is "element"; false otherwise.</returns>
@@ -3774,7 +3776,7 @@
         return xmlNamespaceURI(domElement) === odataXmlNs && xmlLocalName(domElement) === "element";
     };
 
-    var makePropertyMetadata = function (type, extensions) {
+    var makePropertyMetadata = function(type, extensions) {
         /// <summary>Creates an object containing property metadata.</summary>
         /// <param type="String" name="type">Property type name.</param>
         /// <param type="Array" name="extensions">Array of attribute extension objects.</param>
@@ -3783,7 +3785,7 @@
         return { type: type, extensions: extensions };
     };
 
-    var odataInferTypeFromPropertyXmlDom = function (domElement) {
+    var odataInferTypeFromPropertyXmlDom = function(domElement) {
         /// <summary>Infers type of a property based on its xml DOM tree.</summary>
         /// <param name="domElement">DOM element for the property.</param>
         /// <returns type="String">Inferred type name; null if the type cannot be determined.</returns>
@@ -3808,7 +3810,7 @@
         return null;
     };
 
-    var xmlReadODataPropertyAttributes = function (domElement) {
+    var xmlReadODataPropertyAttributes = function(domElement) {
         /// <summary>Reads the attributes of a property DOM element in an OData XML document.</summary>
         /// <param name="domElement">DOM element for the property.</param>
         /// <returns type="Object">Object containing the property type, if it is null, and its attribute extensions.</returns>
@@ -3817,7 +3819,7 @@
         var isNull = false;
         var extensions = [];
 
-        xmlAttributes(domElement, function (attribute) {
+        xmlAttributes(domElement, function(attribute) {
             var nsURI = xmlNamespaceURI(attribute);
             var localName = xmlLocalName(attribute);
             var value = xmlNodeValue(attribute);
@@ -3843,7 +3845,7 @@
         return { type: (!type && isNull ? EDM_STRING : type), isNull: isNull, extensions: extensions };
     };
 
-    var xmlReadODataProperty = function (domElement) {
+    var xmlReadODataProperty = function(domElement) {
         /// <summary>Reads a property DOM element in an OData XML document.</summary>
         /// <param name="domElement">DOM element for the property.</param>
         /// <returns type="Object">Object with name, value, and metadata for the property.</returns>
@@ -3865,7 +3867,7 @@
         return { name: propertyName, value: propertyValue, metadata: propertyMetadata };
     };
 
-    var xmlReadODataPropertyValue = function (domElement, propertyType, propertyMetadata) {
+    var xmlReadODataPropertyValue = function(domElement, propertyType, propertyMetadata) {
         /// <summary>Reads the value of a property in an OData XML document.</summary>
         /// <param name="domElement">DOM element for the property.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
@@ -3893,7 +3895,7 @@
         return xmlReadODataComplexPropertyValue(domElement, propertyType, propertyMetadata);
     };
 
-    var xmlReadODataSpatialPropertyValue = function (domElement, propertyType, isGeography) {
+    var xmlReadODataSpatialPropertyValue = function(domElement, propertyType, isGeography) {
         /// <summary>Reads the value of an spatial property in an OData XML document.</summary>
         /// <param name="property">DOM element for the spatial property.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
@@ -3911,7 +3913,7 @@
         return value;
     };
 
-    var xmlReadODataEdmPropertyValue = function (domNode, propertyType) {
+    var xmlReadODataEdmPropertyValue = function(domNode, propertyType) {
         /// <summary>Reads the value of an EDM property in an OData XML document.</summary>
         /// <param name="donNode">DOM node for the EDM property.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
@@ -3947,15 +3949,15 @@
         return propertyValue;
     };
 
-    var xmlReadODataComplexPropertyValue = function (domElement, propertyType, propertyMetadata) {
+    var xmlReadODataComplexPropertyValue = function(domElement, propertyType, propertyMetadata) {
         /// <summary>Reads the value of a complex type property in an OData XML document.</summary>
         /// <param name="property">DOM element for the complex type property.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
         /// <param name="propertyMetadata" type="Object">Object that will store metadata about the property.</param>
         /// <returns type="Object">Complex type property value.</returns>
 
-        var propertyValue = { __metadata: { type: propertyType} };
-        xmlChildElements(domElement, function (child) {
+        var propertyValue = { __metadata: { type: propertyType } };
+        xmlChildElements(domElement, function(child) {
             var childProperty = xmlReadODataProperty(child);
             var childPropertyName = childProperty.name;
 
@@ -3967,7 +3969,7 @@
         return propertyValue;
     }
 
-    var xmlReadODataCollectionPropertyValue = function (domElement, propertyType, propertyMetadata) {
+    var xmlReadODataCollectionPropertyValue = function(domElement, propertyType, propertyMetadata) {
         /// <summary>Reads the value of a collection property in an OData XML document.</summary>
         /// <param name="property">DOM element for the collection property.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
@@ -3978,7 +3980,7 @@
         var itemsMetadata = propertyMetadata.elements = [];
         var collectionType = getCollectionType(propertyType);
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             if (isCollectionItemElement(child)) {
                 var itemAttributes = xmlReadODataPropertyAttributes(child);
                 var itemExtensions = itemAttributes.extensions;
@@ -3995,7 +3997,7 @@
         return { __metadata: { type: propertyType === "Collection()" ? null : propertyType }, results: items };
     };
 
-    var readODataXmlDocument = function (xmlRoot, baseURI) {
+    var readODataXmlDocument = function(xmlRoot, baseURI) {
         /// <summary>Reads an OData link(s) producing an object model in return.</summary>
         /// <param name="xmlRoot">Top-level element to read.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the XML payload.</param>
@@ -4015,7 +4017,7 @@
         return undefined;
     };
 
-    var readLinks = function (linksElement, baseURI) {
+    var readLinks = function(linksElement, baseURI) {
         /// <summary>Deserializes an OData XML links element.</summary>
         /// <param name="linksElement">XML links element.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the XML payload.</param>
@@ -4023,7 +4025,7 @@
 
         var uris = [];
 
-        xmlChildElements(linksElement, function (child) {
+        xmlChildElements(linksElement, function(child) {
             if (xmlLocalName(child) === "uri" && xmlNamespaceURI(child) === odataXmlNs) {
                 uris.push(readUri(child, baseURI));
             }
@@ -4032,7 +4034,7 @@
         return { results: uris };
     };
 
-    var readUri = function (uriElement, baseURI) {
+    var readUri = function(uriElement, baseURI) {
         /// <summary>Deserializes an OData XML uri element.</summary>
         /// <param name="uriElement">XML uri element.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the XML payload.</param>
@@ -4042,7 +4044,7 @@
         return { uri: normalizeURI(uri, baseURI) };
     };
 
-    var xmlODataInferSpatialValueGeoJsonType = function (value, edmType) {
+    var xmlODataInferSpatialValueGeoJsonType = function(value, edmType) {
         /// <summary>Infers the GeoJSON type from the spatial property value and the edm type name.</summary>
         /// <param name="value" type="Object">Spatial property value in GeoJSON format.</param>
         /// <param name="edmType" type="String" mayBeNull="true" optional="true">Spatial property edm type.<param>
@@ -4090,7 +4092,7 @@
         return null;
     };
 
-    var xmlNewODataMetaElement = function (dom, name, children) {
+    var xmlNewODataMetaElement = function(dom, name, children) {
         /// <summary>Creates a new DOM element in the OData metadata namespace.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Local name of the OData metadata element to create.</param>
@@ -4104,7 +4106,7 @@
         return xmlNewElement(dom, odataMetaXmlNs, xmlQualifiedName(odataMetaPrefix, name), children);
     };
 
-    var xmlNewODataMetaAttribute = function (dom, name, value) {
+    var xmlNewODataMetaAttribute = function(dom, name, value) {
         /// <summary>Creates a new DOM attribute in the odata namespace.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Local name of the OData attribute to create.</param>
@@ -4114,7 +4116,7 @@
         return xmlNewAttribute(dom, odataMetaXmlNs, xmlQualifiedName(odataMetaPrefix, name), value);
     };
 
-    var xmlNewODataElement = function (dom, name, children) {
+    var xmlNewODataElement = function(dom, name, children) {
         /// <summary>Creates a new DOM element in the OData namespace.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Local name of the OData element to create.</param>
@@ -4128,7 +4130,7 @@
         return xmlNewElement(dom, odataXmlNs, xmlQualifiedName(odataPrefix, name), children);
     };
 
-    var xmlNewODataPrimitiveValue = function (value, typeName) {
+    var xmlNewODataPrimitiveValue = function(value, typeName) {
         /// <summary>Returns the string representation of primitive value for an OData XML document.</summary>
         /// <param name="value">Primivite value to format.</param>
         /// <param name="typeName" type="String" optional="true">Type name of the primitive value.</param>
@@ -4143,7 +4145,7 @@
         return value.toString();
     };
 
-    var xmlNewODataElementInfo = function (domElement, dataServiceVersion) {
+    var xmlNewODataElementInfo = function(domElement, dataServiceVersion) {
         /// <summary>Creates an object that represents a new DOM element for an OData XML document and the data service version it requires.</summary>
         /// <param name="domElement">New DOM element for an OData XML document.</param>
         /// <param name="dataServiceVersion" type="String">Required data service version by the new DOM element.</param>
@@ -4152,7 +4154,7 @@
         return { element: domElement, dsv: dataServiceVersion };
     };
 
-    var xmlNewODataProperty = function (dom, name, typeName, children) {
+    var xmlNewODataProperty = function(dom, name, typeName, children) {
         /// <summary>Creates a new DOM element for an entry property in an OData XML document.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Property name.</param>
@@ -4169,7 +4171,7 @@
         return xmlAppendChildren(property, children);
     };
 
-    var xmlNewODataEdmProperty = function (dom, name, value, typeName) {
+    var xmlNewODataEdmProperty = function(dom, name, value, typeName) {
         /// <summary>Creates a new DOM element for an EDM property in an OData XML document.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Property name.</param>
@@ -4182,10 +4184,10 @@
 
         var propertyValue = xmlNewODataPrimitiveValue(value, typeName);
         var property = xmlNewODataProperty(dom, name, typeName, propertyValue);
-        return xmlNewODataElementInfo(property, /*dataServiceVersion*/"1.0");
+        return xmlNewODataElementInfo(property, /*dataServiceVersion*/ "1.0");
     };
 
-    var xmlNewODataNullProperty = function (dom, name, typeName, model) {
+    var xmlNewODataNullProperty = function(dom, name, typeName, model) {
         /// <summary>Creates a new DOM element for a null property in an OData XML document.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Property name.</param>
@@ -4206,7 +4208,7 @@
         return xmlNewODataElementInfo(property, dataServiceVersion);
     };
 
-    var xmlNewODataCollectionProperty = function (dom, name, value, typeName, collectionMetadata, collectionModel, model) {
+    var xmlNewODataCollectionProperty = function(dom, name, value, typeName, collectionMetadata, collectionModel, model) {
         /// <summary>Creates a new DOM element for a collection property in an OData XML document.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Property name.</param>
@@ -4222,7 +4224,7 @@
 
         var itemTypeName = getCollectionType(typeName);
         var items = isArray(value) ? value : value.results;
-        var itemMetadata = typeName ? { type: itemTypeName} : {};
+        var itemMetadata = typeName ? { type: itemTypeName } : {};
         itemMetadata.properties = collectionMetadata.properties;
 
         var xmlProperty = xmlNewODataProperty(dom, name, itemTypeName ? typeName : null);
@@ -4234,10 +4236,10 @@
 
             xmlAppendChild(xmlProperty, item.element);
         }
-        return xmlNewODataElementInfo(xmlProperty, /*dataServiceVersion*/"3.0");
+        return xmlNewODataElementInfo(xmlProperty, /*dataServiceVersion*/ "3.0");
     };
 
-    var xmlNewODataComplexProperty = function (dom, name, value, typeName, propertyMetadata, propertyModel, model) {
+    var xmlNewODataComplexProperty = function(dom, name, value, typeName, propertyMetadata, propertyModel, model) {
         /// <summary>Creates a new DOM element for a complex type property in an OData XML document.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Property name.</param>
@@ -4271,7 +4273,7 @@
         return xmlNewODataElementInfo(xmlProperty, dataServiceVersion);
     };
 
-    var xmlNewODataSpatialProperty = function (dom, name, value, typeName, isGeography) {
+    var xmlNewODataSpatialProperty = function(dom, name, value, typeName, isGeography) {
         /// <summary>Creates a new DOM element for an EDM spatial property in an OData XML document.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Property name.</param>
@@ -4290,7 +4292,7 @@
         return xmlNewODataElementInfo(xmlProperty, "3.0");
     };
 
-    var xmlNewODataDataElement = function (dom, name, value, dataItemMetadata, dataItemModel, model) {
+    var xmlNewODataDataElement = function(dom, name, value, dataItemMetadata, dataItemModel, model) {
         /// <summary>Creates a new DOM element for a data item in an entry, complex property, or collection property.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Data item name.</param>
@@ -4303,19 +4305,19 @@
         ///     required data service version for it.
         /// </returns>
         var typeName = dataItemTypeName(value, dataItemMetadata, dataItemModel);
-    	// ##### BEGIN: MODIFIED BY SAP
+        // ##### BEGIN: MODIFIED BY SAP
         // the above method doesn't work in all cases (e.g. POST) when dataItemMetadata is empty.
         // The 3rd parameter is always ignored in dataItemTypeName function
         // so if there is no typename we try to find it with the third parameter dataItemModel
         if (!typeName) {
-        	typeName = dataItemTypeName(value, dataItemModel);
+            typeName = dataItemTypeName(value, dataItemModel);
         }
         // ##### END: MODIFIED BY SAP
 
         if (isPrimitive(value)) {
-        	// ##### BEGIN: MODIFIED BY SAP
-        	// removed // typeName || EDM_STRING
-        	// if no type found at all don't add any default type so that no embedded type is sent which should also work
+            // ##### BEGIN: MODIFIED BY SAP
+            // removed // typeName || EDM_STRING
+            // if no type found at all don't add any default type so that no embedded type is sent which should also work
             return xmlNewODataEdmProperty(dom, name, value, typeName);
             // ##### END: MODIFIED BY SAP
         }
@@ -4346,7 +4348,7 @@
         return xmlNewODataComplexProperty(dom, name, value, typeName, dataItemMetadata, dataItemModel, model);
     };
 
-    var odataNewLinkDocument = function (data) {
+    var odataNewLinkDocument = function(data) {
         /// <summary>Writes the specified data into an OData XML document.</summary>
         /// <param name="data">Data to write.</param>
         /// <returns>The root of the DOM tree built.</returns>
@@ -4358,7 +4360,7 @@
         // Allow for undefined to be returned.
     };
 
-    var xmlParser = function (handler, text) {
+    var xmlParser = function(handler, text) {
         /// <summary>Parses an OData XML document.</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="text" type="String">Document text.</param>
@@ -4375,7 +4377,7 @@
         // Allow for undefined to be returned.
     };
 
-    var xmlSerializer = function (handler, data, context) {
+    var xmlSerializer = function(handler, data, context) {
         /// <summary>Serializes an OData XML object into a document.</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="data" type="Object">Representation of feed or entry.</param>
@@ -4395,12 +4397,12 @@
 
     var atomPrefix = "a";
 
-    var atomXmlNs = w3org + "2005/Atom";                    // http://www.w3.org/2005/Atom
-    var appXmlNs = w3org + "2007/app";                      // http://www.w3.org/2007/app
+    var atomXmlNs = w3org + "2005/Atom"; // http://www.w3.org/2005/Atom
+    var appXmlNs = w3org + "2007/app"; // http://www.w3.org/2007/app
 
-    var odataEditMediaPrefix = adoDs + "/edit-media/";        // http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media
+    var odataEditMediaPrefix = adoDs + "/edit-media/"; // http://schemas.microsoft.com/ado/2007/08/dataservices/edit-media
     var odataMediaResourcePrefix = adoDs + "/mediaresource/"; // http://schemas.microsoft.com/ado/2007/08/dataservices/mediaresource
-    var odataRelatedLinksPrefix = adoDs + "/relatedlinks/";   // http://schemas.microsoft.com/ado/2007/08/dataservices/relatedlinks
+    var odataRelatedLinksPrefix = adoDs + "/relatedlinks/"; // http://schemas.microsoft.com/ado/2007/08/dataservices/relatedlinks
 
     var atomAcceptTypes = ["application/atom+xml", "application/atomsvc+xml", "application/xml"];
     var atomMediaType = atomAcceptTypes[0];
@@ -4423,7 +4425,7 @@
         SyndicationUpdated: "updated"
     };
 
-    var expandedFeedCustomizationPath = function (path) {
+    var expandedFeedCustomizationPath = function(path) {
         /// <summary>Returns an expanded customization path if it's well-known.</summary>
         /// <param name="path" type="String">Path to expand.</param>
         /// <returns type="String">Expanded path or just 'path' otherwise.</returns>
@@ -4431,7 +4433,7 @@
         return knownCustomizationPaths[path] || path;
     };
 
-    var isExtensionNs = function (nsURI) {
+    var isExtensionNs = function(nsURI) {
         /// <summary>Checks whether the specified namespace is an extension namespace to ATOM.</summary>
         /// <param type="String" name="nsURI">Namespace to check.</param>
         /// <returns type="Boolean">true if nsURI is an extension namespace to ATOM; false otherwise.</returns>
@@ -4439,7 +4441,7 @@
         return !(contains(nonExtensionNamepaces, nsURI));
     };
 
-    var atomFeedCustomization = function (customizationModel, entityType, model, propertyName, suffix) {
+    var atomFeedCustomization = function(customizationModel, entityType, model, propertyName, suffix) {
         /// <summary>Creates an object describing a feed customization that was delcared in an OData conceptual schema.</summary>
         /// <param name="customizationModel" type="Object">Object describing the customization delcared in the conceptual schema.</param>
         /// <param name="entityType" type="Object">Object describing the entity type that owns the customization in an OData conceputal schema.</param>
@@ -4479,7 +4481,7 @@
         };
     };
 
-    var atomApplyAllFeedCustomizations = function (entityType, model, callback) {
+    var atomApplyAllFeedCustomizations = function(entityType, model, callback) {
         /// <summary>Gets all the feed customizations that have to be applied to an entry as per the enity type declared in an OData conceptual schema.</summary>
         /// <param name="entityType" type="Object">Object describing an entity type in a conceptual schema.</param>
         /// <param name="model" type="Object">Object describing an OData conceptual schema.</param>
@@ -4511,13 +4513,13 @@
         return customizations;
     };
 
-    var atomReadExtensionAttributes = function (domElement) {
+    var atomReadExtensionAttributes = function(domElement) {
         /// <summary>Reads ATOM extension attributes (any attribute not in the Atom namespace) from a DOM element.</summary>
         /// <param name="domElement">DOM element with zero or more extension attributes.</param>
         /// <returns type="Array">An array of extension attribute representations.</returns>
 
         var extensions = [];
-        xmlAttributes(domElement, function (attribute) {
+        xmlAttributes(domElement, function(attribute) {
             var nsURI = xmlNamespaceURI(attribute);
             if (isExtensionNs(nsURI)) {
                 extensions.push(createAttributeExtension(attribute, true));
@@ -4526,15 +4528,15 @@
         return extensions;
     };
 
-    var atomReadExtensionElement = function (domElement) {
+    var atomReadExtensionElement = function(domElement) {
         /// <summary>Reads an ATOM extension element (an element not in the ATOM namespaces).</summary>
         /// <param name="domElement">DOM element not part of the atom namespace.</param>
         /// <returns type="Object">Object representing the extension element.</returns>
 
-        return createElementExtension(domElement, /*addNamespaceURI*/true);
+        return createElementExtension(domElement, /*addNamespaceURI*/ true);
     };
 
-    var atomReadDocument = function (domElement, baseURI, model) {
+    var atomReadDocument = function(domElement, baseURI, model) {
         /// <summary>Reads an ATOM entry, feed or service document, producing an object model in return.</summary>
         /// <param name="domElement">Top-level ATOM DOM element to read.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the ATOM document.</param>
@@ -4562,7 +4564,7 @@
         // Allow undefined to be returned.
     };
 
-    var atomReadAdvertisedActionOrFunction = function (domElement, baseURI) {
+    var atomReadAdvertisedActionOrFunction = function(domElement, baseURI) {
         /// <summary>Reads the DOM element for an action or a function in an OData Atom document.</summary>
         /// <param name="domElement">DOM element to read.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing the action or function target url.</param>
@@ -4570,7 +4572,7 @@
 
         var extensions = [];
         var result = { extensions: extensions };
-        xmlAttributes(domElement, function (attribute) {
+        xmlAttributes(domElement, function(attribute) {
             var localName = xmlLocalName(attribute);
             var nsURI = xmlNamespaceURI(attribute);
             var value = xmlNodeValue(attribute);
@@ -4593,7 +4595,7 @@
         return result;
     };
 
-    var atomReadAdvertisedAction = function (domElement, baseURI, parentMetadata) {
+    var atomReadAdvertisedAction = function(domElement, baseURI, parentMetadata) {
         /// <summary>Reads the DOM element for an action in an OData Atom document.</summary>
         /// <param name="domElement">DOM element to read.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing the action or target url.</param>
@@ -4603,7 +4605,7 @@
         actions.push(atomReadAdvertisedActionOrFunction(domElement, baseURI));
     };
 
-    var atomReadAdvertisedFunction = function (domElement, baseURI, parentMetadata) {
+    var atomReadAdvertisedFunction = function(domElement, baseURI, parentMetadata) {
         /// <summary>Reads the DOM element for an action in an OData Atom document.</summary>
         /// <param name="domElement">DOM element to read.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing the action or target url.</param>
@@ -4613,7 +4615,7 @@
         functions.push(atomReadAdvertisedActionOrFunction(domElement, baseURI));
     };
 
-    var atomReadFeed = function (domElement, baseURI, model) {
+    var atomReadFeed = function(domElement, baseURI, model) {
         /// <summary>Reads a DOM element for an ATOM feed, producing an object model in return.</summary>
         /// <param name="domElement">ATOM feed DOM element.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the ATOM feed.</param>
@@ -4628,7 +4630,7 @@
 
         baseURI = xmlBaseURI(domElement, baseURI);
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             var nsURI = xmlNamespaceURI(child);
             var localName = xmlLocalName(child);
 
@@ -4677,7 +4679,7 @@
         return feed;
     };
 
-    var atomReadFeedLink = function (domElement, feed, baseURI) {
+    var atomReadFeedLink = function(domElement, feed, baseURI) {
         /// <summary>Reads an ATOM link DOM element for a feed.</summary>
         /// <param name="domElement">ATOM link DOM element.</param>
         /// <param name="feed">Feed object to be annotated with the link data.</param>
@@ -4701,7 +4703,7 @@
         }
     };
 
-    var atomReadLink = function (domElement, baseURI) {
+    var atomReadLink = function(domElement, baseURI) {
         /// <summary>Reads an ATOM link DOM element.</summary>
         /// <param name="linkElement">DOM element to read.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing the link href.</param>
@@ -4712,7 +4714,7 @@
         var extensions = [];
         var link = { extensions: extensions, baseURI: baseURI };
 
-        xmlAttributes(domElement, function (attribute) {
+        xmlAttributes(domElement, function(attribute) {
             var nsURI = xmlNamespaceURI(attribute);
             var localName = xmlLocalName(attribute);
             var value = attribute.value;
@@ -4738,7 +4740,7 @@
         return link;
     };
 
-    var atomGetObjectValueByPath = function (path, item) {
+    var atomGetObjectValueByPath = function(path, item) {
         /// <summary>Gets a slashed path value from the specified item.</summary>
         /// <param name="path" type="String">Property path to read ('/'-separated).</param>
         /// <param name="item" type="Object">Object to get value from.</param>
@@ -4766,7 +4768,7 @@
         }
     };
 
-    var atomSetEntryValueByPath = function (path, target, value, propertyType) {
+    var atomSetEntryValueByPath = function(path, target, value, propertyType) {
         /// <summary>Sets a slashed path value on the specified target.</summary>
         /// <param name="path" type="String">Property path to set ('/'-separated).</param>
         /// <param name="target" type="Object">Object to set value on.</param>
@@ -4804,7 +4806,7 @@
         }
     };
 
-    var atomApplyCustomizationToEntryObject = function (customization, domElement, entry) {
+    var atomApplyCustomizationToEntryObject = function(customization, domElement, entry) {
         /// <summary>Applies a specific feed customization item to an object.</summary>
         /// <param name="customization">Object with customization description.</param>
         /// <param name="sourcePath">Property path to set ('source' in the description).</param>
@@ -4842,7 +4844,7 @@
         atomSetEntryValueByPath(propertyPath, entry, propertyValue, propertyType);
     };
 
-    var lookupPropertyType = function (metadata, owningType, path) {
+    var lookupPropertyType = function(metadata, owningType, path) {
         /// <summary>Looks up the type of a property given its path in an entity type.</summary>
         /// <param name="metadata">Metadata in which to search for base and complex types.</param>
         /// <param name="owningType">Type to which property belongs.</param>
@@ -4889,7 +4891,7 @@
         return null;
     };
 
-    var atomReadEntry = function (domElement, baseURI, model) {
+    var atomReadEntry = function(domElement, baseURI, model) {
         /// <summary>Reads a DOM element for an ATOM entry, producing an object model in return.</summary>
         /// <param name="domElement">ATOM entry DOM element.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the ATOM entry.</param>
@@ -4906,7 +4908,7 @@
 
         baseURI = xmlBaseURI(domElement, baseURI);
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             var nsURI = xmlNamespaceURI(child);
             var localName = xmlLocalName(child);
 
@@ -4948,14 +4950,14 @@
 
         // Apply feed customizations if applicable
         var entityType = lookupEntityType(entryMetadata.type, model);
-        atomApplyAllFeedCustomizations(entityType, model, function (customization) {
+        atomApplyAllFeedCustomizations(entityType, model, function(customization) {
             atomApplyCustomizationToEntryObject(customization, domElement, entry);
         });
 
         return entry;
     };
 
-    var atomReadEntryId = function (domElement, entryMetadata, baseURI) {
+    var atomReadEntryId = function(domElement, entryMetadata, baseURI) {
         /// <summary>Reads an ATOM entry id DOM element.</summary>
         /// <param name="domElement">ATOM id DOM element.</param>
         /// <param name="entryMetadata">Entry metadata object to update with the id information.</param>
@@ -4964,7 +4966,7 @@
         entryMetadata.uri_extensions = atomReadExtensionAttributes(domElement);
     };
 
-    var atomReadEntryType = function (domElement, entryMetadata) {
+    var atomReadEntryType = function(domElement, entryMetadata) {
         /// <summary>Reads type information from an ATOM category DOM element.</summary>
         /// <param name="domElement">ATOM category DOM element.</param>
         /// <param name="entryMetadata">Entry metadata object to update with the type information.</param>
@@ -4975,7 +4977,7 @@
             }
 
             var typeExtensions = [];
-            xmlAttributes(domElement, function (attribute) {
+            xmlAttributes(domElement, function(attribute) {
                 var nsURI = xmlNamespaceURI(attribute);
                 var localName = xmlLocalName(attribute);
 
@@ -4996,7 +4998,7 @@
         }
     };
 
-    var atomReadEntryContent = function (domElement, entry, entryMetadata, baseURI) {
+    var atomReadEntryContent = function(domElement, entry, entryMetadata, baseURI) {
         /// <summary>Reads an ATOM content DOM element.</summary>
         /// <param name="domElement">ATOM content DOM element.</param>
         /// <param name="entry">Entry object to update with information.</param>
@@ -5018,7 +5020,7 @@
             entryMetadata.content_type = type;
         }
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             if (src) {
                 throw { message: "Invalid AtomPub document: content element must not have child elements if the src attribute is specified", element: domElement };
             }
@@ -5029,7 +5031,7 @@
         });
     };
 
-    var atomReadEntryLink = function (domElement, entry, entryMetadata, baseURI, model) {
+    var atomReadEntryLink = function(domElement, entry, entryMetadata, baseURI, model) {
         /// <summary>Reads a link element on an entry.</summary>
         /// <param name="atomEntryLink">'link' element on the entry.</param>
         /// <param name="entry" type="Object">Entry object to update with the link data.</param>
@@ -5086,7 +5088,7 @@
         }
     };
 
-    var atomReadNavPropRelatedLink = function (link, entryMetadata) {
+    var atomReadNavPropRelatedLink = function(link, entryMetadata) {
         /// <summary>Reads a link represnting the links related to a navigation property in an OData Atom document.</summary>
         /// <param name="link" type="Object">Object representing the parsed link DOM element.</param>
         /// <param name="entryMetadata" type="Object">Entry metadata object to update with the related links information.</param>
@@ -5101,7 +5103,7 @@
         propertyMetadata.associationuri_extensions = link.extensions;
     };
 
-    var atomReadNavPropLink = function (domElement, link, entry, entryMetadata, model) {
+    var atomReadNavPropLink = function(domElement, link, entry, entryMetadata, model) {
         /// <summary>Reads a link representing a navigation property in an OData Atom document.</summary>
         /// <param name="domElement">DOM element for a navigation property in an OData Atom document.</summary>
         /// <param name="link" type="Object">Object representing the parsed link DOM element.</param>
@@ -5118,7 +5120,7 @@
             inlineData = inlineDocRoot ? atomReadDocument(inlineDocRoot, inlineBaseURI, model) : null;
         } else {
             // If the link has no inline content, we consider it deferred.
-            inlineData = { __deferred: { uri: link.href} };
+            inlineData = { __deferred: { uri: link.href } };
         }
 
         var propertyName = link.rel.substring(odataRelatedPrefix.length);
@@ -5133,7 +5135,7 @@
         propertyMetadata.extensions = link.extensions;
     };
 
-    var atomReadNamedStreamEditLink = function (link, entry, entryMetadata) {
+    var atomReadNamedStreamEditLink = function(link, entry, entryMetadata) {
         /// <summary>Reads a link representing the edit-media url of a named stream in an OData Atom document.</summary>
         /// <param name="link" type="Object">Object representing the parsed link DOM element.</param>
         /// <param name="entry" type="Object">Entry object to update with the named stream data.</param>
@@ -5158,7 +5160,7 @@
         atomReadLinkMediaEtag(link, mediaResource);
     };
 
-    var atomReadNamedStreamSelfLink = function (link, entry, entryMetadata) {
+    var atomReadNamedStreamSelfLink = function(link, entry, entryMetadata) {
         /// <summary>Reads a link representing the self url of a named stream in an OData Atom document.</summary>
         /// <param name="link" type="Object">Object representing the parsed link DOM element.</param>
         /// <param name="entry" type="Object">Entry object to update with the named stream data.</param>
@@ -5175,7 +5177,7 @@
         mediaResource.content_type = link.type;
     };
 
-    var atomGetEntryNamedStreamMediaResource = function (name, entry, entryMetadata) {
+    var atomGetEntryNamedStreamMediaResource = function(name, entry, entryMetadata) {
         /// <summary>Gets the media resource object and metadata object for a named stream in an entry object.</summary>
         /// <param name="link" type="Object">Object representing the parsed link DOM element.</param>
         /// <param name="entry" type="Object">Entry object from which the media resource object will be obtained.</param>
@@ -5199,7 +5201,7 @@
         return { value: mediaResource, metadata: mediaResourceMetadata };
     };
 
-    var atomReadLinkMediaEtag = function (link, mediaResource) {
+    var atomReadLinkMediaEtag = function(link, mediaResource) {
         /// <summary>Gets the media etag from the link extensions and updates the media resource object with it.</summary>
         /// <param name="link" type="Object">Object representing the parsed link DOM element.</param>
         /// <param name="mediaResource" type="Object">Object containing media information for an OData Atom entry.</param>
@@ -5220,7 +5222,7 @@
         }
     };
 
-    var atomReadEntryStructuralObject = function (domElement, parent, parentMetadata) {
+    var atomReadEntryStructuralObject = function(domElement, parent, parentMetadata) {
         /// <summary>Reads an atom entry's property as a structural object and sets its value in the parent and the metadata in the parentMetadata objects.</summary>
         /// <param name="propertiesElement">XML element for the 'properties' node.</param>
         /// <param name="parent">
@@ -5229,7 +5231,7 @@
         /// </param>
         /// <param name="parentMetadata">Object that will contain the property metadata. It can be either an atom entry metadata or a complex property metadata object</param>
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             var property = xmlReadODataProperty(child);
             if (property) {
                 var propertyName = property.name;
@@ -5240,7 +5242,7 @@
         });
     };
 
-    var atomReadServiceDocument = function (domElement, baseURI) {
+    var atomReadServiceDocument = function(domElement, baseURI) {
         /// <summary>Reads an AtomPub service document</summary>
         /// <param name="atomServiceDoc">DOM element for the root of an AtomPub service document</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the AtomPub service document.</param>
@@ -5251,7 +5253,7 @@
 
         baseURI = xmlBaseURI(domElement, baseURI);
         // Find all the workspace elements.
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             if (xmlNamespaceURI(child) === appXmlNs && xmlLocalName(child) === "workspace") {
                 workspaces.push(atomReadServiceDocumentWorkspace(child, baseURI));
                 return;
@@ -5268,7 +5270,7 @@
         return { workspaces: workspaces, extensions: extensions };
     };
 
-    var atomReadServiceDocumentWorkspace = function (domElement, baseURI) {
+    var atomReadServiceDocumentWorkspace = function(domElement, baseURI) {
         /// <summary>Reads a single workspace element from an AtomPub service document</summary>
         /// <param name="domElement">DOM element that represents a workspace of an AtomPub service document</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the AtomPub service document workspace.</param>
@@ -5280,7 +5282,7 @@
 
         baseURI = xmlBaseURI(domElement, baseURI);
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             var nsURI = xmlNamespaceURI(child);
             var localName = xmlLocalName(child);
 
@@ -5307,7 +5309,7 @@
         return { title: title || "", collections: collections, extensions: extensions };
     };
 
-    var atomReadServiceDocumentCollection = function (domElement, baseURI) {
+    var atomReadServiceDocumentCollection = function(domElement, baseURI) {
         /// <summary>Reads a service document collection element into an object.</summary>
         /// <param name="domElement">DOM element that represents a collection of an AtomPub service document.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the AtomPub service document collection.</param>
@@ -5325,7 +5327,7 @@
         var extensions = [];
         var title = undefined;
 
-        xmlChildElements(domElement, function (child) {
+        xmlChildElements(domElement, function(child) {
             var nsURI = xmlNamespaceURI(child);
             var localName = xmlLocalName(child);
 
@@ -5354,7 +5356,7 @@
         return { title: title, href: href, extensions: extensions };
     };
 
-    var atomNewElement = function (dom, name, children) {
+    var atomNewElement = function(dom, name, children) {
         /// <summary>Creates a new DOM element in the Atom namespace.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Local name of the Atom element to create.</param>
@@ -5368,7 +5370,7 @@
         return xmlNewElement(dom, atomXmlNs, xmlQualifiedName(atomPrefix, name), children);
     };
 
-    var atomNewAttribute = function (dom, name, value) {
+    var atomNewAttribute = function(dom, name, value) {
         /// <summary>Creates a new DOM attribute for an Atom element in the default namespace.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Local name of the OData attribute to create.</param>
@@ -5378,7 +5380,7 @@
         return xmlNewAttribute(dom, null, name, value);
     };
 
-    var atomCanRemoveProperty = function (propertyElement) {
+    var atomCanRemoveProperty = function(propertyElement) {
         /// <summary>Checks whether the property represented by domElement can be removed from the atom document DOM tree.</summary>
         /// <param name="propertyElement">DOM element for the property to test.</param>
         /// <remarks>
@@ -5397,12 +5399,12 @@
             var attribute = attributes[i];
 
             isEmpty = isEmpty && isXmlNSDeclaration(attribute) ||
-                 (xmlNamespaceURI(attribute) == odataMetaXmlNs && xmlLocalName(attribute) === "type");
+                (xmlNamespaceURI(attribute) == odataMetaXmlNs && xmlLocalName(attribute) === "type");
         }
         return isEmpty;
     };
 
-    var atomNewODataNavigationProperty = function (dom, name, kind, value, model) {
+    var atomNewODataNavigationProperty = function(dom, name, kind, value, model) {
         /// <summary>Creates a new Atom link DOM element for a navigation property in an OData Atom document.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Property name.</param>
@@ -5444,7 +5446,7 @@
         return xmlNewODataElementInfo(navProp, linkContentBodyData ? linkContentBodyData.dsv : "1.0");
     };
 
-    var atomNewODataEntryDataItem = function (dom, name, value, dataItemMetadata, dataItemModel, model) {
+    var atomNewODataEntryDataItem = function(dom, name, value, dataItemMetadata, dataItemModel, model) {
         /// <summary>Creates a new DOM element for a data item in an entry, complex property, or collection property.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="name" type="String">Data item name.</param>
@@ -5471,7 +5473,7 @@
         return dataElement;
     };
 
-    var atomEntryCustomization = function (dom, entry, entryProperties, customization) {
+    var atomEntryCustomization = function(dom, entry, entryProperties, customization) {
         /// <summary>Applies a feed customization by transforming an Atom entry DOM element as needed.</summary>
         /// <param name="dom">DOM document used for creating any new DOM nodes required by the customization.</param>
         /// <param name="entry">DOM element for the Atom entry to which the customization is going to be applied.</param>
@@ -5517,14 +5519,14 @@
 
         var contentKind = customization.contentKind;
         xmlAppendChildren(targetNode, [
-                contentKind && xmlNewAttribute(dom, null, "type", contentKind),
-                contentKind === "xhtml" ? xmlNewFragment(dom, atomPropertyValue) : atomPropertyValue
+            contentKind && xmlNewAttribute(dom, null, "type", contentKind),
+            contentKind === "xhtml" ? xmlNewFragment(dom, atomPropertyValue) : atomPropertyValue
         ]);
 
         return dataServiceVersion;
     };
 
-    var atomNewODataEntry = function (dom, data, model) {
+    var atomNewODataEntry = function(dom, data, model) {
         /// <summary>Creates a new DOM element for an Atom entry.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="data" type="Object">Entry object in the library's internal representation.</param>
@@ -5552,7 +5554,7 @@
                 atomNewAttribute(dom, "term", typeName),
                 atomNewAttribute(dom, "scheme", odataScheme)
             ]),
-        // TODO: MLE support goes here.
+            // TODO: MLE support goes here.
             atomNewElement(dom, "content", [
                 atomNewAttribute(dom, "type", "application/xml"),
                 properties
@@ -5564,8 +5566,8 @@
             if (name !== "__metadata") {
                 var entryDataItemMetadata = propertiesMetadata[name] || {};
                 var entryDataItemModel = entityType && (
-                    lookupProperty(entityType.property, name)
-                     || lookupProperty(entityType.navigationProperty, name));
+                    lookupProperty(entityType.property, name) ||
+                    lookupProperty(entityType.navigationProperty, name));
 
                 var entryDataItem = atomNewODataEntryDataItem(dom, name, data[name], entryDataItemMetadata, entryDataItemModel, model);
                 if (entryDataItem) {
@@ -5578,7 +5580,7 @@
             }
         };
 
-        atomApplyAllFeedCustomizations(entityType, model, function (customization) {
+        atomApplyAllFeedCustomizations(entityType, model, function(customization) {
             var customizationDsv = atomEntryCustomization(dom, entry, properties, customization);
             dataServiceVersion = maxVersion(dataServiceVersion, customizationDsv);
         });
@@ -5586,7 +5588,7 @@
         return xmlNewODataElementInfo(entry, dataServiceVersion);
     };
 
-    var atomNewODataFeed = function (dom, data, model) {
+    var atomNewODataFeed = function(dom, data, model) {
         /// <summary>Creates a new DOM element for an Atom feed.</summary>
         /// <param name="dom">DOM document used for creating the new DOM Element.</param>
         /// <param name="data" type="Object">Feed object in the library's internal representation.</param>
@@ -5613,7 +5615,7 @@
         return xmlNewODataElementInfo(atomFeed, dataServiceVersion);
     };
 
-    var atomNewODataDocument = function (data, model) {
+    var atomNewODataDocument = function(data, model) {
         /// <summary>Creates a new OData Atom document.</summary>
         /// <param name="data" type="Object">Feed or entry object in the libary's internal representaion.</param>
         /// <param name="model" type="Object" optional="true">Object describing an OData conceptual schema.</param>
@@ -5642,7 +5644,7 @@
         return null;
     };
 
-    var atomParser = function (handler, text, context) {
+    var atomParser = function(handler, text, context) {
         /// <summary>Parses an ATOM document (feed, entry or service document).</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="text" type="String">Document text.</param>
@@ -5658,7 +5660,7 @@
         }
     };
 
-    var atomSerializer = function (handler, data, context) {
+    var atomSerializer = function(handler, data, context) {
         /// <summary>Serializes an ATOM object into a document (feed or entry).</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="data" type="Object">Representation of feed or entry.</param>
@@ -5680,7 +5682,7 @@
 
 
 
-    var schemaElement = function (attributes, elements, text, ns) {
+    var schemaElement = function(attributes, elements, text, ns) {
         /// <summary>Creates an object that describes an element in an schema.</summary>
         /// <param name="attributes" type="Array">List containing the names of the attributes allowed for this element.</param>
         /// <param name="elements" type="Array">List containing the names of the child elements allowed for this element.</param>
@@ -5704,228 +5706,342 @@
     var schema = {
         elements: {
             Annotations: schemaElement(
-            /*attributes*/["Target", "Qualifier"],
-            /*elements*/["Annotation*","TypeAnnotation*", "ValueAnnotation*"] // ##### MODIFIED BY SAP
+                /*attributes*/
+                ["Target", "Qualifier"],
+                /*elements*/
+                ["Annotation*", "TypeAnnotation*", "ValueAnnotation*"] // ##### MODIFIED BY SAP
             ),
             // ##### BEGIN: MODIFIED BY SAP
             Annotation: schemaElement(
-            /*attributes*/["Term"],
-            /*elements*/["Record", "Collection"]
+                /*attributes*/
+                ["Term"],
+                /*elements*/
+                ["Record", "Collection"]
             ),
             // ##### END: MODIFIED BY SAP
             Association: schemaElement(
-            /*attributes*/["Name"],
-            /*elements*/["End*", "ReferentialConstraint", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name"],
+                /*elements*/
+                ["End*", "ReferentialConstraint", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             AssociationSet: schemaElement(
-            /*attributes*/["Name", "Association"],
-            /*elements*/["End*", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "Association"],
+                /*elements*/
+                ["End*", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             Binary: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Bool: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Collection: schemaElement(
-            /*attributes*/null,
-            /*elements*/["String*", "Int*", "Float*", "Decimal*", "Bool*", "DateTime*", "DateTimeOffset*", "Guid*", "Binary*", "Time*", "Collection*", "Record*"]
+                /*attributes*/
+                null,
+                /*elements*/
+                ["String*", "Int*", "Float*", "Decimal*", "Bool*", "DateTime*", "DateTimeOffset*", "Guid*", "Binary*", "Time*", "Collection*", "Record*"]
             ),
             CollectionType: schemaElement(
-            /*attributes*/["ElementType", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "SRID"]
-            /*elements*/["CollectionType", "ReferenceType", "RowType", "TypeRef"]
+                /*attributes*/
+                ["ElementType", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "SRID"]
+                /*elements*/
+                ["CollectionType", "ReferenceType", "RowType", "TypeRef"]
             ),
             ComplexType: schemaElement(
-            /*attributes*/["Name", "BaseType", "Abstract"],
-            /*elements*/["Property*", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "BaseType", "Abstract"],
+                /*elements*/
+                ["Property*", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             DateTime: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             DateTimeOffset: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Decimal: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             DefiningExpression: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Dependent: schemaElement(
-            /*attributes*/["Role"],
-            /*elements*/["PropertyRef*"]
+                /*attributes*/
+                ["Role"],
+                /*elements*/
+                ["PropertyRef*"]
             ),
             Documentation: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             End: schemaElement(
-            /*attributes*/["Type", "Role", "Multiplicity", "EntitySet"],
-            /*elements*/["OnDelete"]
+                /*attributes*/
+                ["Type", "Role", "Multiplicity", "EntitySet"],
+                /*elements*/
+                ["OnDelete"]
             ),
             EntityContainer: schemaElement(
-            /*attributes*/["Name", "Extends"],
-            /*elements*/["EntitySet*", "AssociationSet*", "FunctionImport*", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "Extends"],
+                /*elements*/
+                ["EntitySet*", "AssociationSet*", "FunctionImport*", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             EntitySet: schemaElement(
-            /*attributes*/["Name", "EntityType"],
-            /*elements*/["TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "EntityType"],
+                /*elements*/
+                ["TypeAnnotation*", "ValueAnnotation*"]
             ),
             EntityType: schemaElement(
-            /*attributes*/["Name", "BaseType", "Abstract", "OpenType"],
-            /*elements*/["Key", "Property*", "NavigationProperty*", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "BaseType", "Abstract", "OpenType"],
+                /*elements*/
+                ["Key", "Property*", "NavigationProperty*", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             EnumType: schemaElement(
-            /*attributes*/["Name", "UnderlyingType", "IsFlags"],
-            /*elements*/["Member*"]
+                /*attributes*/
+                ["Name", "UnderlyingType", "IsFlags"],
+                /*elements*/
+                ["Member*"]
             ),
             Float: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Function: schemaElement(
-            /*attributes*/["Name", "ReturnType"],
-            /*elements*/["Parameter*", "DefiningExpression", "ReturnType", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "ReturnType"],
+                /*elements*/
+                ["Parameter*", "DefiningExpression", "ReturnType", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             FunctionImport: schemaElement(
-            /*attributes*/["Name", "ReturnType", "EntitySet", "IsSideEffecting", "IsComposable", "IsBindable", "EntitySetPath"],
-            /*elements*/["Parameter*", "ReturnType", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "ReturnType", "EntitySet", "IsSideEffecting", "IsComposable", "IsBindable", "EntitySetPath"],
+                /*elements*/
+                ["Parameter*", "ReturnType", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             Guid: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Int: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Key: schemaElement(
-            /*attributes*/null,
-            /*elements*/["PropertyRef*"]
+                /*attributes*/
+                null,
+                /*elements*/
+                ["PropertyRef*"]
             ),
             LabeledElement: schemaElement(
-            /*attributes*/["Name"],
-            /*elements*/["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"]
+                /*attributes*/
+                ["Name"],
+                /*elements*/
+                ["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"]
             ),
             Member: schemaElement(
-            /*attributes*/["Name", "Value"]
+                /*attributes*/
+                ["Name", "Value"]
             ),
             NavigationProperty: schemaElement(
-            /*attributes*/["Name", "Relationship", "ToRole", "FromRole", "ContainsTarget"],
-            /*elements*/["TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "Relationship", "ToRole", "FromRole", "ContainsTarget"],
+                /*elements*/
+                ["TypeAnnotation*", "ValueAnnotation*"]
             ),
             Null: schemaElement(
-            /*attributes*/null,
-            /*elements*/null
+                /*attributes*/
+                null,
+                /*elements*/
+                null
             ),
             OnDelete: schemaElement(
-            /*attributes*/["Action"]
+                /*attributes*/
+                ["Action"]
             ),
             Path: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Parameter: schemaElement(
-            /*attributes*/["Name", "Type", "Mode", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "ConcurrencyMode", "SRID"],
-            /*elements*/["CollectionType", "ReferenceType", "RowType", "TypeRef", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "Type", "Mode", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "ConcurrencyMode", "SRID"],
+                /*elements*/
+                ["CollectionType", "ReferenceType", "RowType", "TypeRef", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             Principal: schemaElement(
-            /*attributes*/["Role"],
-            /*elements*/["PropertyRef*"]
+                /*attributes*/
+                ["Role"],
+                /*elements*/
+                ["PropertyRef*"]
             ),
             Property: schemaElement(
-            /*attributes*/["Name", "Type", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "ConcurrencyMode", "CollectionKind", "SRID"],
-            /*elements*/["CollectionType", "ReferenceType", "RowType", "TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "Type", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "ConcurrencyMode", "CollectionKind", "SRID"],
+                /*elements*/
+                ["CollectionType", "ReferenceType", "RowType", "TypeAnnotation*", "ValueAnnotation*"]
             ),
             PropertyRef: schemaElement(
-            /*attributes*/["Name"]
+                /*attributes*/
+                ["Name"]
             ),
             PropertyValue: schemaElement(
-            /*attributes*/["PropertyPath", "Property", "Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time"], // ##### MODIFIED BY SAP
-            /*Elements*/["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"]
+                /*attributes*/
+                ["PropertyPath", "Property", "Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time"], // ##### MODIFIED BY SAP
+                /*Elements*/
+                ["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"]
             ),
             // ##### BEGIN: MODIFIED BY SAP
             Record: schemaElement(
-            /*attributes*/["Type"],
-            /*Elements*/["PropertyValue*"]
+                /*attributes*/
+                ["Type"],
+                /*Elements*/
+                ["PropertyValue*"]
             ),
             // ##### END: MODIFIED BY SAP
             ReferenceType: schemaElement(
-            /*attributes*/["Type"]
+                /*attributes*/
+                ["Type"]
             ),
             ReferentialConstraint: schemaElement(
-            /*attributes*/null,
-            /*elements*/["Principal", "Dependent"]
+                /*attributes*/
+                null,
+                /*elements*/
+                ["Principal", "Dependent"]
             ),
             ReturnType: schemaElement(
-            /*attributes*/["ReturnType", "Type", "EntitySet"],
-            /*elements*/["CollectionType", "ReferenceType", "RowType"]
+                /*attributes*/
+                ["ReturnType", "Type", "EntitySet"],
+                /*elements*/
+                ["CollectionType", "ReferenceType", "RowType"]
             ),
             RowType: schemaElement(
-            /*elements*/["Property*"]
+                /*elements*/
+                ["Property*"]
             ),
             String: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             Schema: schemaElement(
-            /*attributes*/["Namespace", "Alias"],
-            /*elements*/["Using*", "EntityContainer*", "EntityType*", "Association*", "ComplexType*", "Function*", "ValueTerm*", "Annotations*"]
+                /*attributes*/
+                ["Namespace", "Alias"],
+                /*elements*/
+                ["Using*", "EntityContainer*", "EntityType*", "Association*", "ComplexType*", "Function*", "ValueTerm*", "Annotations*"]
             ),
             Time: schemaElement(
-            /*attributes*/null,
-            /*elements*/null,
-            /*text*/true
+                /*attributes*/
+                null,
+                /*elements*/
+                null,
+                /*text*/
+                true
             ),
             TypeAnnotation: schemaElement(
-            /*attributes*/["Term", "Qualifier"],
-            /*elements*/["PropertyValue*"]
+                /*attributes*/
+                ["Term", "Qualifier"],
+                /*elements*/
+                ["PropertyValue*"]
             ),
             TypeRef: schemaElement(
-            /*attributes*/["Type", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "SRID"]
+                /*attributes*/
+                ["Type", "Nullable", "DefaultValue", "MaxLength", "FixedLength", "Precision", "Scale", "Unicode", "Collation", "SRID"]
             ),
             Using: schemaElement(
-            /*attributes*/["Namespace", "Alias"]
+                /*attributes*/
+                ["Namespace", "Alias"]
             ),
             ValueAnnotation: schemaElement(
-            /*attributes*/["Term", "Qualifier", "Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time"],
-            /*Elements*/["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"]
+                /*attributes*/
+                ["Term", "Qualifier", "Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time"],
+                /*Elements*/
+                ["Path", "String", "Int", "Float", "Decimal", "Bool", "DateTime", "DateTimeOffset", "Guid", "Binary", "Time", "Collection", "Record", "LabeledElement", "Null"]
             ),
             ValueTerm: schemaElement(
-            /*attributes*/["Name", "Type"],
-            /*elements*/["TypeAnnotation*", "ValueAnnotation*"]
+                /*attributes*/
+                ["Name", "Type"],
+                /*elements*/
+                ["TypeAnnotation*", "ValueAnnotation*"]
             ),
 
             // See http://msdn.microsoft.com/en-us/library/dd541238(v=prot.10) for an EDMX reference.
             Edmx: schemaElement(
-            /*attributes*/["Version"],
-            /*elements*/["DataServices", "Reference*", "AnnotationsReference*"],
-            /*text*/false,
-            /*ns*/edmxNs
+                /*attributes*/
+                ["Version"],
+                /*elements*/
+                ["DataServices", "Reference*", "AnnotationsReference*"],
+                /*text*/
+                false,
+                /*ns*/
+                edmxNs
             ),
             DataServices: schemaElement(
-            /*attributes*/null,
-            /*elements*/["Schema*"],
-            /*text*/false,
-            /*ns*/edmxNs
+                /*attributes*/
+                null,
+                /*elements*/
+                ["Schema*"],
+                /*text*/
+                false,
+                /*ns*/
+                edmxNs
             )
         }
     };
@@ -5947,7 +6063,7 @@
     schema.elements.EntityType.attributes.push("m:HasStream");
     schema.elements.DataServices.attributes = ["m:DataServiceVersion", "m:MaxDataServiceVersion"];
 
-    var scriptCase = function (text) {
+    var scriptCase = function(text) {
         /// <summary>Converts a Pascal-case identifier into a camel-case identifier.</summary>
         /// <param name="text" type="String">Text to convert.</param>
         /// <returns type="String">Converted text.</returns>
@@ -5969,7 +6085,7 @@
         return text.charAt(0).toLowerCase();
     };
 
-    var getChildSchema = function (parentSchema, candidateName) {
+    var getChildSchema = function(parentSchema, candidateName) {
         /// <summary>Gets the schema node for the specified element.</summary>
         /// <param name="parentSchema" type="Object">Schema of the parent XML node of 'element'.</param>
         /// <param name="candidateName">XML element name to consider.</param>
@@ -6008,23 +6124,24 @@
     // The captures are 0 - whole string, 1 - name as it appears in internal table.
     var isFeedCustomizationNameRE = /^(m:FC_.*)_[0-9]+$/;
 
-    var isEdmNamespace = function (nsURI) {
+    var isEdmNamespace = function(nsURI) {
         /// <summary>Checks whether the specifies namespace URI is one of the known CSDL namespace URIs.</summary>
         /// <param name="nsURI" type="String">Namespace URI to check.</param>
         /// <returns type="Boolean">true if nsURI is a known CSDL namespace; false otherwise.</returns>
 
-        return nsURI === edmNs1
-            || nsURI === edmNs1_1
-            || nsURI === edmNs1_2
-            || nsURI === edmNs2a
-            || nsURI === edmNs2b
-            || nsURI === edmNs3
+        return nsURI === edmNs1 ||
+            nsURI === edmNs1_1 ||
+            nsURI === edmNs1_2 ||
+            nsURI === edmNs2a ||
+            nsURI === edmNs2b ||
+            nsURI === edmNs3
             // ##### BEGIN: MODIFIED BY SAP
-            || nsURI === edmNs4
+            ||
+            nsURI === edmNs4
             // ##### END: MODIFIED BY SAP
     };
 
-    var parseConceptualModelElement = function (element) {
+    var parseConceptualModelElement = function(element) {
         /// <summary>Parses a CSDL document.</summary>
         /// <param name="element">DOM element to parse.</param>
         /// <returns type="Object">An object describing the parsed element.</returns>
@@ -6047,7 +6164,7 @@
         var item = {};
         var extensions = [];
         var attributes = elementSchema.attributes || [];
-        xmlAttributes(element, function (attribute) {
+        xmlAttributes(element, function(attribute) {
 
             var localName = xmlLocalName(attribute);
             var nsURI = xmlNamespaceURI(attribute);
@@ -6090,7 +6207,7 @@
             }
         });
 
-        xmlChildElements(element, function (child) {
+        xmlChildElements(element, function(child) {
             var localName = xmlLocalName(child);
             var childSchema = getChildSchema(elementSchema, localName);
             if (childSchema) {
@@ -6120,7 +6237,7 @@
         return item;
     };
 
-    var metadataParser = function (handler, text) {
+    var metadataParser = function(handler, text) {
         /// <summary>Parses a metadata document.</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="text" type="String">Metadata text.</param>
@@ -6166,7 +6283,7 @@
         url: "uri"
     };
 
-    var jsonLightAnnotationInfo = function (annotation) {
+    var jsonLightAnnotationInfo = function(annotation) {
         /// <summary>Gets the name and target of an annotation in a JSON light payload.</summary>
         /// <param name="annotation" type="String">JSON light payload annotation.</param>
         /// <returns type="Object">Object containing the annotation name and the target property name.</param>
@@ -6185,7 +6302,7 @@
         return null;
     };
 
-    var jsonLightDataItemType = function (name, value, container, dataItemModel, model) {
+    var jsonLightDataItemType = function(name, value, container, dataItemModel, model) {
         /// <summary>Gets the type name of a JSON light data item that belongs to a feed, an entry, a complex type property, or a collection property.</summary>
         /// <param name="name" type="String">Name of the data item for which the type name is going to be retrieved.</param>
         /// <param name="value">Value of the data item.</param>
@@ -6206,7 +6323,7 @@
             null;
     };
 
-    var jsonLightDataItemModel = function (name, containerModel) {
+    var jsonLightDataItemModel = function(name, containerModel) {
         /// <summary>Gets an object describing a data item in an OData conceptual schema.</summary>
         /// <param name="name" type="String">Name of the data item for which the model is going to be retrieved.</param>
         /// <param name="containerModel" type="Object">Object describing the owner of the data item in an OData conceptual schema.</param>
@@ -6219,7 +6336,7 @@
         return null;
     };
 
-    var jsonLightIsEntry = function (data) {
+    var jsonLightIsEntry = function(data) {
         /// <summary>Determines whether data represents a JSON light entry object.</summary>
         /// <param name="data" type="Object">JSON light object to test.</param>
         /// <returns type="Boolean">True if the data is JSON light entry object; false otherwise.</returns>
@@ -6227,7 +6344,7 @@
         return isComplex(data) && data.hasOwnProperty(odataAnnotationPrefix + "id");
     };
 
-    var jsonLightIsNavigationProperty = function (name, data, dataItemModel) {
+    var jsonLightIsNavigationProperty = function(name, data, dataItemModel) {
         /// <summary>Determines whether a data item in a JSON light object is a navigation property.</summary>
         /// <param name="name" type="String">Name of the data item to test.</param>
         /// <param name="data" type="Object">JSON light object that owns the data item.</param>
@@ -6243,7 +6360,7 @@
         return jsonLightIsEntry(value);
     };
 
-    var jsonLightIsPrimitiveType = function (typeName) {
+    var jsonLightIsPrimitiveType = function(typeName) {
         /// <summary>Determines whether a type name is a primitive type in a JSON light payload.</summary>
         /// <param name="typeName" type="String">Type name to test.</param>
         /// <returns type="Boolean">True if the type name an EDM primitive type or an OData spatial type; false otherwise.</returns>
@@ -6251,7 +6368,7 @@
         return isPrimitiveEdmType(typeName) || isGeographyEdmType(typeName) || isGeometryEdmType(typeName);
     };
 
-    var jsonLightReadDataAnnotations = function (data, obj, baseURI, dataModel, model) {
+    var jsonLightReadDataAnnotations = function(data, obj, baseURI, dataModel, model) {
         /// <summary>Converts annotations found in a JSON light payload object to either properties or metadata.</summary>
         /// <param name="data" type="Object">JSON light payload object containing the annotations to convert.</param>
         /// <param name="obj" type="Object">Object that will store the converted annotations.</param>
@@ -6285,7 +6402,7 @@
         return obj;
     };
     5
-    var jsonLightApplyPayloadODataAnnotation = function (name, target, targetType, value, data, obj, baseURI) {
+    var jsonLightApplyPayloadODataAnnotation = function(name, target, targetType, value, data, obj, baseURI) {
         /// <summary>
         ///   Processes a JSON Light payload OData annotation producing either a property, payload metadata, or property metadata on its owner object.
         /// </summary>
@@ -6318,7 +6435,7 @@
         }
     };
 
-    var jsonLightApplyMetadataAnnotation = function (name, target, value, obj, baseURI) {
+    var jsonLightApplyMetadataAnnotation = function(name, target, value, obj, baseURI) {
         /// <summary>
         ///    Converts a JSON light annotation that applies to entry metadata only (i.e. odata.editLink or odata.readLink) and its value
         ///    into their library's internal representation and saves it back to data.
@@ -6356,7 +6473,7 @@
         metadata[mappedName] = value;
     };
 
-    var jsonLightApplyFeedAnnotation = function (name, target, value, obj, baseURI) {
+    var jsonLightApplyFeedAnnotation = function(name, target, value, obj, baseURI) {
         /// <summary>
         ///    Converts a JSON light annotation that applies to feeds only (i.e. odata.count or odata.nextlink) and its value
         ///    into their library's internal representation and saves it back to data.
@@ -6372,7 +6489,7 @@
         feed[mappedName] = (name === "nextLink") ? normalizeURI(value, baseURI) : value;
     };
 
-    var jsonLightApplyMediaAnnotation = function (name, target, targetType, value, obj, baseURI) {
+    var jsonLightApplyMediaAnnotation = function(name, target, targetType, value, obj, baseURI) {
         /// <summary>
         ///    Converts a JSON light media annotation in and its value into their library's internal representation
         ///    and saves it back to data or metadata.
@@ -6405,7 +6522,7 @@
         metadata[mappedName] = value;
     };
 
-    var jsonLightApplyNavigationUrlAnnotation = function (name, target, targetType, value, data, obj, baseURI) {
+    var jsonLightApplyNavigationUrlAnnotation = function(name, target, targetType, value, data, obj, baseURI) {
         /// <summary>
         ///    Converts a JSON light navigation property annotation and its value into their library's internal representation
         ///    and saves it back to data o metadata.
@@ -6430,12 +6547,12 @@
             propertyMetadata.navigationLinkUrl = uri;
             return;
         }
-        obj[target] = { __deferred: { uri: uri} };
+        obj[target] = { __deferred: { uri: uri } };
         propertyMetadata.type = propertyMetadata.type || targetType;
     };
 
 
-    var jsonLightReadDataItemValue = function (value, typeName, dataItemMetadata, baseURI, dataItemModel, model, recognizeDates) {
+    var jsonLightReadDataItemValue = function(value, typeName, dataItemMetadata, baseURI, dataItemModel, model, recognizeDates) {
         /// <summary>Converts the value of a data item in a JSON light object to its library representation.</summary>
         /// <param name="value">Data item value to convert.</param>
         /// <param name="typeName" type="String">Type name of the data item.</param>
@@ -6462,7 +6579,7 @@
         return value;
     };
 
-    var jsonLightReadStringPropertyValue = function (value, propertyType, recognizeDates) {
+    var jsonLightReadStringPropertyValue = function(value, propertyType, recognizeDates) {
         /// <summary>Convertes the value of a string property in a JSON light object to its library representation.</summary>
         /// <param name="value" type="String">String value to convert.</param>
         /// <param name="propertyType" type="String">Type name of the property.</param>
@@ -6473,20 +6590,20 @@
             case EDM_TIME:
                 return parseDuration(value);
             case EDM_DATETIME:
-                return parseDateTime(value, /*nullOnError*/false);
+                return parseDateTime(value, /*nullOnError*/ false);
             case EDM_DATETIMEOFFSET:
-                return parseDateTimeOffset(value, /*nullOnError*/false);
+                return parseDateTimeOffset(value, /*nullOnError*/ false);
         }
 
         if (recognizeDates) {
-            return parseDateTime(value, /*nullOnError*/true)
-                || parseDateTimeOffset(value, /*nullOnError*/true)
-                || value;
+            return parseDateTime(value, /*nullOnError*/ true) ||
+                parseDateTimeOffset(value, /*nullOnError*/ true) ||
+                value;
         }
         return value;
     };
 
-    var jsonLightReadCollectionPropertyValue = function (value, propertyType, propertyMetadata, baseURI, model, recognizeDates) {
+    var jsonLightReadCollectionPropertyValue = function(value, propertyType, propertyMetadata, baseURI, model, recognizeDates) {
         /// <summary>Converts the value of a collection property in a JSON light object into its library representation.</summary>
         /// <param name="value" type="Array">Collection property value to convert.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
@@ -6519,7 +6636,7 @@
         return { __metadata: { type: propertyType }, results: items };
     };
 
-    var jsonLightReadComplexPropertyValue = function (value, propertyType, propertyMetadata, baseURI, model, recognizeDates) {
+    var jsonLightReadComplexPropertyValue = function(value, propertyType, propertyMetadata, baseURI, model, recognizeDates) {
         /// <summary>Converts the value of a comples property in a JSON light object into its library representation.</summary>
         /// <param name="value" type="Object">Complex property value to convert.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
@@ -6540,7 +6657,7 @@
         return complexValue;
     };
 
-    var jsonLightReadNavigationPropertyValue = function (value, propertyType, baseURI, model, recognizeDates) {
+    var jsonLightReadNavigationPropertyValue = function(value, propertyType, baseURI, model, recognizeDates) {
         /// <summary>Converts the value of a navigation property in a JSON light object into its library representation.</summary>
         /// <param name="value">Navigation property property value to convert.</param>
         /// <param name="propertyType" type="String">Property type name.</param>
@@ -6559,7 +6676,7 @@
         return null;
     };
 
-    var jsonLightReadObject = function (data, typeName, baseURI, model, recognizeDates) {
+    var jsonLightReadObject = function(data, typeName, baseURI, model, recognizeDates) {
         /// <summary>Converts a JSON light entry or complex type object into its library representation.</summary>
         /// <param name="data" type="Object">JSON light entry or complex type object to convert.</param>
         /// <param name="typeName" type="String">Type name of the entry or complex type.</param>
@@ -6593,8 +6710,8 @@
                     var propertyMetadata = propertiesMetadata[name] = propertiesMetadata[name] || { type: propertyType };
 
                     obj[name] = isNavigationProperty ?
-                    jsonLightReadNavigationPropertyValue(propertyValue, propertyType, baseURI, model, recognizeDates) :
-                    jsonLightReadDataItemValue(propertyValue, propertyType, propertyMetadata, baseURI, propertyModel, model, recognizeDates);
+                        jsonLightReadNavigationPropertyValue(propertyValue, propertyType, baseURI, model, recognizeDates) :
+                        jsonLightReadDataItemValue(propertyValue, propertyType, propertyMetadata, baseURI, propertyModel, model, recognizeDates);
                 }
             }
         }
@@ -6602,7 +6719,7 @@
         return jsonLightReadDataAnnotations(data, obj, baseURI, dataModel, model);
     };
 
-    var jsonLightReadAdvertisedFunctionOrAction = function (name, value, obj, baseURI, model) {
+    var jsonLightReadAdvertisedFunctionOrAction = function(name, value, obj, baseURI, model) {
         /// <summary>Converts a JSON light advertised action or function object into its library representation.</summary>
         /// <param name="name" type="String">Advertised action or function name.</param>
         /// <param name="value">Advertised action or function value.</param>
@@ -6653,7 +6770,7 @@
         }
     };
 
-    var jsonLightReadFeed = function (data, typeName, baseURI, model, recognizeDates) {
+    var jsonLightReadFeed = function(data, typeName, baseURI, model, recognizeDates) {
         /// <summary>Converts a JSON light feed or top level collection property object into its library representation.</summary>
         /// <param name="data" type="Object">JSON light feed object to convert.</param>
         /// <param name="typeName" type="String">Type name of the feed or collection items.</param>
@@ -6685,7 +6802,7 @@
         return feed;
     };
 
-    var jsonLightReadTopPrimitiveProperty = function (data, typeName, baseURI, recognizeDates) {
+    var jsonLightReadTopPrimitiveProperty = function(data, typeName, baseURI, recognizeDates) {
         /// <summary>Converts a JSON light top level primitive property object into its library representation.</summary>
         /// <param name="data" type="Object">JSON light feed object to convert.</param>
         /// <param name="typeName" type="String">Type name of the primitive property.</param>
@@ -6698,7 +6815,7 @@
         return jsonLightReadDataAnnotations(data, { __metadata: metadata, value: value }, baseURI);
     };
 
-    var jsonLightReadTopCollectionProperty = function (data, typeName, baseURI, model, recognizeDates) {
+    var jsonLightReadTopCollectionProperty = function(data, typeName, baseURI, model, recognizeDates) {
         /// <summary>Converts a JSON light top level collection property object into its library representation.</summary>
         /// <param name="data" type="Object">JSON light feed object to convert.</param>
         /// <param name="typeName" type="String">Type name of the collection property.</param>
@@ -6713,7 +6830,7 @@
         return jsonLightReadDataAnnotations(data, value, baseURI);
     };
 
-    var jsonLightReadLinksDocument = function (data, baseURI) {
+    var jsonLightReadLinksDocument = function(data, baseURI) {
         /// <summary>Converts a JSON light links collection object to its library representation.</summary>
         /// <param name="data" type="Object">JSON light link object to convert.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the payload.</param>
@@ -6734,7 +6851,7 @@
         return jsonLightReadDataAnnotations(data, links, baseURI);
     };
 
-    var jsonLightReadLink = function (data, baseURI) {
+    var jsonLightReadLink = function(data, baseURI) {
         /// <summary>Converts a JSON light link object to its library representation.</summary>
         /// <param name="data" type="Object">JSON light link object to convert.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the payload.</param>
@@ -6752,7 +6869,7 @@
         return link;
     };
 
-    var jsonLightRemoveTypePropertyMetadata = function (propertyMetadata) {
+    var jsonLightRemoveTypePropertyMetadata = function(propertyMetadata) {
         /// <summary>Removes the type property from a property metadata object.</summary>
         /// <param name="propertyMetadata" type="Object">Property metadata object.</param>
 
@@ -6761,7 +6878,7 @@
         }
     };
 
-    var jsonLightReadSvcDocument = function (data, baseURI) {
+    var jsonLightReadSvcDocument = function(data, baseURI) {
         /// <summary>Converts a JSON light service document object to its library representation.</summary>
         /// <param name="data" type="Object">JSON light service document object to convert.</param>
         /// <param name="baseURI" type="String">Base URI for normalizing relative URIs found in the payload.</param>
@@ -6798,7 +6915,7 @@
         return { workspaces: [workspace] };
     };
 
-    var jsonLightMakePayloadInfo = function (kind, type) {
+    var jsonLightMakePayloadInfo = function(kind, type) {
         /// <summary>Creates an object containing information for the json light payload.</summary>
         /// <param name="kind" type="String">JSON light payload kind, one of the PAYLOADTYPE_XXX constant values.</param>
         /// <param name="typeName" type="String">Type name of the JSON light payload.</param>
@@ -6810,7 +6927,7 @@
         return { kind: kind, type: type || null };
     };
 
-    var jsonLightPayloadInfo = function (data, model, inferFeedAsComplexType) {
+    var jsonLightPayloadInfo = function(data, model, inferFeedAsComplexType) {
         /// <summary>Infers the information describing the JSON light payload from its metadata annotation, structure, and data model.</summary>
         /// <param name="data" type="Object">Json light response payload object.</param>
         /// <param name="model" type="Object">Object describing an OData conceptual schema.</param>
@@ -6900,7 +7017,7 @@
         return null;
     };
 
-    var jsonLightReadPayload = function (data, model, recognizeDates, inferFeedAsComplexType) {
+    var jsonLightReadPayload = function(data, model, recognizeDates, inferFeedAsComplexType) {
         /// <summary>Converts a JSON light response payload object into its library's internal representation.</summary>
         /// <param name="data" type="Object">Json light response payload object.</param>
         /// <param name="model" type="Object">Object describing an OData conceptual schema.</param>
@@ -6937,7 +7054,7 @@
 
     var jsonLightSerializableMetadata = ["type", "etag", "media_src", "edit_media", "content_type", "media_etag"];
 
-    var formatJsonLight = function (obj, context) {
+    var formatJsonLight = function(obj, context) {
         /// <summary>Converts an object in the library's internal representation to its json light representation.</summary>
         /// <param name="obj" type="Object">Object the library's internal representation.</param>
         /// <param name="context" type="Object">Object with the serialization context.</param>
@@ -6953,7 +7070,7 @@
         return data;
     };
 
-    var formatJsonLightMetadata = function (metadata, data) {
+    var formatJsonLightMetadata = function(metadata, data) {
         /// <summary>Formats an object's metadata into the appropriate json light annotations and saves them to data.</summary>
         /// <param name="obj" type="Object">Object whose metadata is going to be formatted as annotations.</param>
         /// <param name="data" type="Object">Object on which the annotations are going to be stored.</param>
@@ -6969,7 +7086,7 @@
         }
     };
 
-    var formatJsonLightData = function (obj, pMetadata, data, isLinks) {
+    var formatJsonLightData = function(obj, pMetadata, data, isLinks) {
         /// <summary>Formats an object's data into the appropriate json light values and saves them to data.</summary>
         /// <param name="obj" type="Object">Object whose data is going to be formatted.</param>
         /// <param name="pMetadata" type="Object">Object that contains metadata for the properties that are being formatted.</param>
@@ -6994,7 +7111,7 @@
         }
     };
 
-    var formatJsonLightProperty = function (name, value, pMetadata, data) {
+    var formatJsonLightProperty = function(name, value, pMetadata, data) {
         /// <summary>Formats an object's value identified by name to its json light representation and saves it to data.</summary>
         /// <param name="name" type="String">Property name.</param>
         /// <param name="value">Property value.</param>
@@ -7039,14 +7156,14 @@
         formatJsonLightData(value, propertyMetadata.properties, data[name]);
     };
 
-    var formatJsonLightEntityLink = function (value, data) {
+    var formatJsonLightEntityLink = function(value, data) {
         /// <summary>Formats an entity link in a $links document and saves it into data.</summary>
         /// <param name="value" type="String">Entity link value.</summary>
         /// <param name="data" type="Object">Object on which the formatted value is going to be stored.</param>
         data.url = value;
     };
 
-    var formatJsonLightDeferredProperty = function (name, value, data) {
+    var formatJsonLightDeferredProperty = function(name, value, data) {
         /// <summary>Formats the object value's identified by name as an odata.navigalinkurl annotation and saves it to data.</summary>
         /// <param name="name" type="String">Name of the deferred property to be formatted.</param>
         /// <param name="value" type="Object">Deferred property value to be formatted.</param>
@@ -7055,7 +7172,7 @@
         formatJsonLightAnnotation(navUrlAnnotation, name, value.__deferred.uri, data);
     };
 
-    var formatJsonLightCollectionProperty = function (name, value, data) {
+    var formatJsonLightCollectionProperty = function(name, value, data) {
         /// <summary>Formats a collection property in obj identified by name as a json light collection property and saves it to data.</summary>
         /// <param name="name" type="String">Name of the collection property to be formatted.</param>
         /// <param name="value" type="Object">Collection property value to be formatted.</param>
@@ -7066,7 +7183,7 @@
         formatJsonLightData(items, null, data[name]);
     };
 
-    var formatJsonLightInlineProperty = function (name, value, data) {
+    var formatJsonLightInlineProperty = function(name, value, data) {
         /// <summary>Formats an inline feed or entry property in obj identified by name as a json light value and saves it to data.</summary>
         /// <param name="name" type="String">Name of the inline feed or entry property to be formatted.</param>
         /// <param name="value" type="Object or Array">Value of the inline feed or entry property.</param>
@@ -7085,7 +7202,7 @@
         formatJsonLightInlineEntry(name, value, false, data);
     };
 
-    var formatJsonLightInlineEntry = function (name, value, inFeed, data) {
+    var formatJsonLightInlineEntry = function(name, value, inFeed, data) {
         /// <summary>Formats an inline entry value in the property identified by name as a json light value and saves it to data.</summary>
         /// <param name="name" type="String">Name of the inline feed or entry property that owns the entry formatted.</param>
         /// <param name="value" type="Object">Inline entry value to be formatted.</param>
@@ -7107,7 +7224,7 @@
         data[name] = entry;
     };
 
-    var formatJsonLightBinding = function (name, uri, inFeed, data) {
+    var formatJsonLightBinding = function(name, uri, inFeed, data) {
         /// <summary>Formats an entry binding in the inline property in obj identified by name as an odata.bind annotation and saves it to data.</summary>
         /// <param name="name" type="String">Name of the inline property that has the binding to be formated.</param>
         /// <param name="uri" type="String">Uri to the bound entry.</param>
@@ -7125,7 +7242,7 @@
         data[bindingName] = uri;
     };
 
-    var formatJsonLightAnnotation = function (qName, target, value, data) {
+    var formatJsonLightAnnotation = function(qName, target, value, data) {
         /// <summary>Formats a value as a json light annotation and stores it in data</summary>
         /// <param name="qName" type="String">Qualified name of the annotation.</param>
         /// <param name="target" type="String">Name of the property that the metadata value targets.</param>
@@ -7142,7 +7259,7 @@
     var jsonMediaType = "application/json";
     var jsonContentType = contentType(jsonMediaType);
 
-    var jsonReadAdvertisedActionsOrFunctions = function (value) {
+    var jsonReadAdvertisedActionsOrFunctions = function(value) {
         /// <summary>Reads and object containing action or function metadata and maps them into a single array of objects.</summary>
         /// <param name="value" type="Object">Object containing action or function metadata.</param>
         /// <returns type="Array">Array of objects containing metadata for the actions or functions specified in value.</returns>
@@ -7157,7 +7274,7 @@
         return result;
     };
 
-    var jsonApplyMetadata = function (value, metadata, dateParser, recognizeDates) {
+    var jsonApplyMetadata = function(value, metadata, dateParser, recognizeDates) {
         /// <summary>Applies metadata coming from both the payload and the metadata object to the value.</summary>
         /// <param name="value" type="Object">Data on which the metada is going to be applied.</param>
         /// <param name="metadata">Metadata store; one of edmx, schema, or an array of any of them.</param>
@@ -7182,6 +7299,13 @@
             }
 
             var dataType = lookupEntityType(dataTypeName, metadata) || lookupComplexType(dataTypeName, metadata);
+            // PSINOVA AG - Michael Rudolph - 
+            // Collection BaseType Properties as well
+            var restDerProperties = []
+            if (dataType.baseType) {
+                restDerProperties = collectPropertiesFromBaseType(dataType.baseType.substring(dataType.baseType.indexOf('.') + 1), restDerProperties, metadata)
+                properties = properties.concat(restDerProperties)
+            }
 
             if (dataType) {
                 var properties = dataType.property;
@@ -7201,13 +7325,13 @@
                                 value[propertyName] = propertyValue;
                             }
                         } else if (property.type === "Edm.Time") {
-                        	// ##### BEGIN: MODIFIED BY SAP
-                        	if (propertyValue) {
-                       		// ##### END: MODIFIED BY SAP
-                        		value[propertyName] = parseDuration(propertyValue);
                             // ##### BEGIN: MODIFIED BY SAP
-                        	}
-                        	// ##### END: MODIFIED BY SAP
+                            if (propertyValue) {
+                                // ##### END: MODIFIED BY SAP
+                                value[propertyName] = parseDuration(propertyValue);
+                                // ##### BEGIN: MODIFIED BY SAP
+                            }
+                            // ##### END: MODIFIED BY SAP
                         }
                     }
                 }
@@ -7223,7 +7347,7 @@
         return value;
     };
 
-    var isJsonLight = function (contentType) {
+    var isJsonLight = function(contentType) {
         /// <summary>Tests where the content type indicates a json light payload.</summary>
         /// <param name="contentType">Object with media type and properties dictionary.</param>
         /// <returns type="Boolean">True is the content type indicates a json light payload. False otherwise.</returns>
@@ -7235,7 +7359,7 @@
         return false;
     };
 
-    var normalizeServiceDocument = function (data, baseURI) {
+    var normalizeServiceDocument = function(data, baseURI) {
         /// <summary>Normalizes a JSON service document to look like an ATOM service document.</summary>
         /// <param name="data" type="Object">Object representation of service documents as deserialized.</param>
         /// <param name="baseURI" type="String">Base URI to resolve relative URIs.</param>
@@ -7268,7 +7392,7 @@
     // look like regular forward slashes.
     var jsonDateRE = /^\/Date\((-?\d+)(\+|-)?(\d+)?\)\/$/;
 
-    var minutesToOffset = function (minutes) {
+    var minutesToOffset = function(minutes) {
         /// <summary>Formats the given minutes into (+/-)hh:mm format.</summary>
         /// <param name="minutes" type="Number">Number of minutes to format.</param>
         /// <returns type="String">The minutes in (+/-)hh:mm format.</returns>
@@ -7287,7 +7411,7 @@
         return sign + formatNumberWidth(hours, 2) + ":" + formatNumberWidth(minutes, 2);
     };
 
-    var parseJsonDateString = function (value) {
+    var parseJsonDateString = function(value) {
         /// <summary>Parses the JSON Date representation into a Date object.</summary>
         /// <param name="value" type="String">String value.</param>
         /// <returns type="Date">A Date object if the value matches one; falsy otherwise.</returns>
@@ -7323,7 +7447,7 @@
     // See the history of this file for a candidate implementation of
     // a 'formatJsonDateString' function.
 
-    var jsonParser = function (handler, text, context) {
+    var jsonParser = function(handler, text, context) {
         /// <summary>Parses a JSON OData payload.</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="text">Payload text (this parser also handles pre-parsed objects).</param>
@@ -7344,7 +7468,7 @@
             dateParser = parseDateTime;
         }
 
-        json = traverse(json.d, function (key, value) {
+        json = traverse(json.d, function(key, value) {
             return jsonApplyMetadata(value, model, dateParser, recognizeDates);
         });
 
@@ -7352,7 +7476,7 @@
         return jsonNormalizeData(json, context.response.requestUri);
     };
 
-    var jsonToString = function (data) {
+    var jsonToString = function(data) {
         /// <summary>Converts the data into a JSON string.</summary>
         /// <param name="data">Data to serialize.</param>
         /// <returns type="String">The JSON string representation of data.</returns>
@@ -7362,10 +7486,10 @@
         var dateToJSON = Date.prototype.toJSON;
         try {
             // Set our own date.toJSON function
-            Date.prototype.toJSON = function () {
+            Date.prototype.toJSON = function() {
                 // ##### BEGIN: MODIFIED BY SAP
                 //return formatDateTimeOffset(this);
-            	return formatDateTimeOffsetJSON(this);
+                return formatDateTimeOffsetJSON(this);
                 //##### END: MODIFIED BY SAP
             };
             result = window.JSON.stringify(data, jsonReplacer);
@@ -7379,7 +7503,7 @@
         return result;
     };
 
-    var jsonSerializer = function (handler, data, context) {
+    var jsonSerializer = function(handler, data, context) {
         /// <summary>Serializes the data by returning its string representation.</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="data">Data to serialize.</param>
@@ -7406,7 +7530,7 @@
         return undefined;
     };
 
-    var jsonReplacer = function (_, value) {
+    var jsonReplacer = function(_, value) {
         /// <summary>JSON replacer function for converting a value to its JSON representation.</summary>
         /// <param value type="Object">Value to convert.</param>
         /// <returns type="String">JSON representation of the input value.</returns>
@@ -7422,7 +7546,7 @@
         }
     };
 
-    var jsonNormalizeData = function (data, baseURI) {
+    var jsonNormalizeData = function(data, baseURI) {
         /// <summary>
         /// Normalizes the specified data into an intermediate representation.
         /// like the latest supported version.
@@ -7434,7 +7558,7 @@
         return isSvcDoc ? normalizeServiceDocument(data, baseURI) : data;
     };
 
-    var jsonUpdateDataFromVersion = function (data, dataVersion) {
+    var jsonUpdateDataFromVersion = function(data, dataVersion) {
         /// <summary>
         /// Updates the specified data in the specified version to look
         /// like the latest supported version.
@@ -7470,7 +7594,7 @@
     var responseStatusRegex = /^HTTP\/1\.\d (\d{3}) (.*)$/i;
     var responseHeaderRegex = /^([^()<>@,;:\\"\/[\]?={} \t]+)\s?:\s?(.*)/;
 
-    var hex16 = function () {
+    var hex16 = function() {
         /// <summary>
         /// Calculates a random 16 bit number and returns it in hexadecimal format.
         /// </summary>
@@ -7479,7 +7603,7 @@
         return Math.floor((1 + Math.random()) * 0x10000).toString(16).substr(1);
     };
 
-    var createBoundary = function (prefix) {
+    var createBoundary = function(prefix) {
         /// <summary>
         /// Creates a string that can be used as a multipart request boundary.
         /// </summary>
@@ -7489,7 +7613,7 @@
         return prefix + hex16() + "-" + hex16() + "-" + hex16();
     };
 
-    var partHandler = function (context) {
+    var partHandler = function(context) {
         /// <summary>
         /// Gets the handler for data serialization of individual requests / responses in a batch.
         /// </summary>
@@ -7499,7 +7623,7 @@
         return context.handler.partHandler;
     };
 
-    var currentBoundary = function (context) {
+    var currentBoundary = function(context) {
         /// <summary>
         /// Gets the current boundary used for parsing the body of a multipart response.
         /// </summary>
@@ -7510,7 +7634,7 @@
         return boundaries[boundaries.length - 1];
     };
 
-    var batchParser = function (handler, text, context) {
+    var batchParser = function(handler, text, context) {
         /// <summary>Parses a batch response.</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="text" type="String">Batch text.</param>
@@ -7521,7 +7645,7 @@
         return { __batchResponses: readBatch(text, { boundaries: [boundary], handlerContext: context }) };
     };
 
-    var batchSerializer = function (handler, data, context) {
+    var batchSerializer = function(handler, data, context) {
         /// <summary>Serializes a batch object representation into text.</summary>
         /// <param name="handler">This handler.</param>
         /// <param name="data" type="Object">Representation of a batch.</param>
@@ -7534,7 +7658,7 @@
         }
     };
 
-    var readBatch = function (text, context) {
+    var readBatch = function(text, context) {
         /// <summary>
         /// Parses a multipart/mixed response body from from the position defined by the context.
         /// </summary>
@@ -7599,7 +7723,7 @@
         return responses;
     };
 
-    var readHeaders = function (text, context) {
+    var readHeaders = function(text, context) {
         /// <summary>
         /// Parses the http headers in the text from the position defined by the context.
         /// </summary>
@@ -7632,7 +7756,7 @@
         return headers;
     };
 
-    var readResponse = function (text, context, delimiter) {
+    var readResponse = function(text, context, delimiter) {
         /// <summary>
         /// Parses an HTTP response.
         /// </summary>
@@ -7666,7 +7790,7 @@
         };
     };
 
-    var readLine = function (text, context) {
+    var readLine = function(text, context) {
         /// <summary>
         /// Returns a substring from the position defined by the context up to the next line break (CRLF).
         /// </summary>
@@ -7677,7 +7801,7 @@
         return readTo(text, context, "\r\n");
     };
 
-    var readTo = function (text, context, str) {
+    var readTo = function(text, context, str) {
         /// <summary>
         /// Returns a substring from the position given by the context up to value defined by the str parameter and increments the position in the context.
         /// </summary>
@@ -7701,7 +7825,7 @@
         return text.substring(start, end);
     };
 
-    var writeBatch = function (data, context) {
+    var writeBatch = function(data, context) {
         /// <summary>
         /// Serializes a batch request object to a string.
         /// </summary>
@@ -7719,7 +7843,7 @@
         var i, len;
         for (i = 0, len = batchParts.length; i < len; i++) {
             batch += writeBatchPartDelimiter(batchBoundary, false) +
-                     writeBatchPart(batchParts[i], context);
+                writeBatchPart(batchParts[i], context);
         }
         batch += writeBatchPartDelimiter(batchBoundary, true);
 
@@ -7730,7 +7854,7 @@
         return batch;
     };
 
-    var writeBatchPartDelimiter = function (boundary, close) {
+    var writeBatchPartDelimiter = function(boundary, close) {
         /// <summary>
         /// Creates the delimiter that indicates that start or end of an individual request.
         /// </summary>
@@ -7746,7 +7870,7 @@
         return result + "\r\n";
     };
 
-    var writeBatchPart = function (part, context, nested) {
+    var writeBatchPart = function(part, context, nested) {
         /// <summary>
         /// Serializes a part of a batch request to a string. A part can be either a GET request or
         /// a change set grouping several CUD (create, update, delete) requests.
@@ -7771,7 +7895,7 @@
             var i, len;
             for (i = 0, len = changeSet.length; i < len; i++) {
                 result += writeBatchPartDelimiter(changeSetBoundary, false) +
-                     writeBatchPart(changeSet[i], context, true);
+                    writeBatchPart(changeSet[i], context, true);
             }
 
             result += writeBatchPartDelimiter(changeSetBoundary, true);
@@ -7789,7 +7913,7 @@
         return result;
     };
 
-    var writeRequest = function (request) {
+    var writeRequest = function(request) {
         /// <summary>
         /// Serializes a request object to a string.
         /// </summary>
@@ -7807,24 +7931,24 @@
         // code added to add the content-length for each batch part...may be removed for later gateway versions
         if (request.body) {
 
-        	function utf8Len(ch) {
-        		if (ch <= 0x7F) return 1;
-        		if (ch <= 0x7FF) return 2;
-        		if (ch <= 0xFFFF) return 3;
-        		if (ch <= 0x1FFFFF) return 4;
-        		if (ch <= 0x3FFFFFF) return 5;
-        		if (ch <= 0x7FFFFFFF) return 6;
-        		throw new Error("Illegal argument: " + ch);
-        	}
+            function utf8Len(ch) {
+                if (ch <= 0x7F) return 1;
+                if (ch <= 0x7FF) return 2;
+                if (ch <= 0xFFFF) return 3;
+                if (ch <= 0x1FFFFF) return 4;
+                if (ch <= 0x3FFFFFF) return 5;
+                if (ch <= 0x7FFFFFFF) return 6;
+                throw new Error("Illegal argument: " + ch);
+            }
 
-        	function utf8ByteCount(str) {
-        		var count = 0;
-        		for (var i = 0; i < str.length; i++) {
-        			var ch = str.charCodeAt(i);
-        			count += utf8Len(ch);
-        		}
-        		return count;
-        	}
+            function utf8ByteCount(str) {
+                var count = 0;
+                for (var i = 0; i < str.length; i++) {
+                    var ch = str.charCodeAt(i);
+                    count += utf8Len(ch);
+                }
+                return count;
+            }
             result += "Content-Length: " + utf8ByteCount(request.body) + "\r\n";
         }
         // ##### END: MODIFIED BY SAP
@@ -7844,22 +7968,21 @@
 
     var handlers = [odata.jsonHandler, odata.atomHandler, odata.xmlHandler, odata.textHandler];
 
-    var dispatchHandler = function (handlerMethod, requestOrResponse, context) {
+    var dispatchHandler = function(handlerMethod, requestOrResponse, context) {
         /// <summary>Dispatches an operation to handlers.</summary>
         /// <param name="handlerMethod" type="String">Name of handler method to invoke.</param>
         /// <param name="requestOrResponse" type="Object">request/response argument for delegated call.</param>
         /// <param name="context" type="Object">context argument for delegated call.</param>
 
         var i, len;
-        for (i = 0, len = handlers.length; i < len && !handlers[i][handlerMethod](requestOrResponse, context); i++) {
-        }
+        for (i = 0, len = handlers.length; i < len && !handlers[i][handlerMethod](requestOrResponse, context); i++) {}
 
         if (i === len) {
             throw { message: "no handler for data" };
         }
     };
 
-    odata.defaultSuccess = function (data) {
+    odata.defaultSuccess = function(data) {
         /// <summary>Default success handler for OData.</summary>
         /// <param name="data">Data to process.</param>
 
@@ -7869,20 +7992,20 @@
     odata.defaultError = throwErrorCallback;
 
     odata.defaultHandler = {
-        read: function (response, context) {
+        read: function(response, context) {
             /// <summary>Reads the body of the specified response by delegating to JSON and ATOM handlers.</summary>
             /// <param name="response">Response object.</param>
             /// <param name="context">Operation context.</param>
 
-        	// ##### BEGIN: MODIFIED BY SAP
-        	// added response.body check and removed assigned(response.body) call...for the case that if body is empty string...don't process any response body data
+            // ##### BEGIN: MODIFIED BY SAP
+            // added response.body check and removed assigned(response.body) call...for the case that if body is empty string...don't process any response body data
             if (response && response.body && response.headers["Content-Type"]) {
-            // ##### END: MODIFIED BY SAP
+                // ##### END: MODIFIED BY SAP
                 dispatchHandler("read", response, context);
             }
         },
 
-        write: function (request, context) {
+        write: function(request, context) {
             /// <summary>Write the body of the specified request by delegating to JSON and ATOM handlers.</summary>
             /// <param name="request">Reques tobject.</param>
             /// <param name="context">Operation context.</param>
@@ -7896,7 +8019,7 @@
 
     odata.defaultMetadata = [];
 
-    odata.read = function (urlOrRequest, success, error, handler, httpClient, metadata) {
+    odata.read = function(urlOrRequest, success, error, handler, httpClient, metadata) {
         /// <summary>Reads data from the specified URL.</summary>
         /// <param name="urlOrRequest">URL to read data from.</param>
         /// <param name="success" type="Function" optional="true">Callback for a successful read operation.</param>
@@ -7915,7 +8038,7 @@
         return odata.request(request, success, error, handler, httpClient, metadata);
     };
 
-    odata.request = function (request, success, error, handler, httpClient, metadata) {
+    odata.request = function(request, success, error, handler, httpClient, metadata) {
         /// <summary>Sends a request containing OData payload to a server.</summary>
         /// <param name="request" type="Object">Object that represents the request to be sent.</param>
         /// <param name="success" type="Function" optional="true">Callback for a successful read operation.</param>
@@ -7953,15 +8076,15 @@
             prepareRequest(request, handler, context);
             return invokeRequest(request, success, error, handler, httpClient, context);
         } catch (err) {
-        	// ##### BEGIN: MODIFIED BY SAP
+            // ##### BEGIN: MODIFIED BY SAP
             // errors in success handler for sync requests are caught here and result in error handler calls.
-        	// So here we fix this and throw that error further.
-        	if (err.bIsSuccessHandlerError) {
-        		throw err;
-        	} else {
-        		error(err);
-        	}
-        	// ##### END: MODIFIED BY SAP
+            // So here we fix this and throw that error further.
+            if (err.bIsSuccessHandlerError) {
+                throw err;
+            } else {
+                error(err);
+            }
+            // ##### END: MODIFIED BY SAP
         }
     };
 
@@ -7972,7 +8095,7 @@
 
     var localStorage = null;
 
-    var domStoreDateToJSON = function () {
+    var domStoreDateToJSON = function() {
         /// <summary>Converts a Date object into an object representation friendly to JSON serialization.</summary>
         /// <returns type="Object">Object that represents the Date.</returns>
         /// <remarks>
@@ -7988,7 +8111,7 @@
         return newValue;
     };
 
-    var domStoreJSONToDate = function (_, value) {
+    var domStoreJSONToDate = function(_, value) {
         /// <summary>JSON reviver function for converting an object representing a Date in a JSON stream to a Date object</summary>
         /// <param value="Object">Object to convert.</param>
         /// <returns type="Date">Date object.</returns>
@@ -8009,7 +8132,7 @@
         return value;
     };
 
-    var qualifyDomStoreKey = function (store, key) {
+    var qualifyDomStoreKey = function(store, key) {
         /// <summary>Qualifies the key with the name of the store.</summary>
         /// <param name="store" type="Object">Store object whose name will be used for qualifying the key.</param>
         /// <param name="key" type="String">Key string.</param>
@@ -8018,7 +8141,7 @@
         return store.name + "#!#" + key;
     };
 
-    var unqualifyDomStoreKey = function (store, key) {
+    var unqualifyDomStoreKey = function(store, key) {
         /// <summary>Gets the key part of a fully qualified key string.</summary>
         /// <param name="store" type="Object">Store object whose name will be used for qualifying the key.</param>
         /// <param name="key" type="String">Fully qualified key string.</param>
@@ -8027,13 +8150,13 @@
         return key.replace(store.name + "#!#", "");
     };
 
-    var DomStore = function (name) {
+    var DomStore = function(name) {
         /// <summary>Constructor for store objects that use DOM storage as the underlying mechanism.</summary>
         /// <param name="name" type="String">Store name.</param>
         this.name = name;
     };
 
-    DomStore.create = function (name) {
+    DomStore.create = function(name) {
         /// <summary>Creates a store object that uses DOM Storage as its underlying mechanism.</summary>
         /// <param name="name" type="String">Store name.</param>
         /// <returns type="Object">Store object.</returns>
@@ -8046,13 +8169,13 @@
         throw { message: "Web Storage not supported by the browser" };
     };
 
-    DomStore.isSupported = function () {
+    DomStore.isSupported = function() {
         /// <summary>Checks whether the underlying mechanism for this kind of store objects is supported by the browser.</summary>
         /// <returns type="Boolean">True if the mechanism is supported by the browser; otherwise false.</summary>
         return !!window.localStorage;
     };
 
-    DomStore.prototype.add = function (key, value, success, error) {
+    DomStore.prototype.add = function(key, value, success, error) {
         /// <summary>Adds a new value identified by a key to the store.</summary>
         /// <param name="key" type="String">Key string.</param>
         /// <param name="value">Value that is going to be added to the store.</param>
@@ -8064,7 +8187,7 @@
 
         error = error || this.defaultError;
         var store = this;
-        this.contains(key, function (contained) {
+        this.contains(key, function(contained) {
             if (!contained) {
                 store.addOrUpdate(key, value, success, error);
             } else {
@@ -8073,7 +8196,7 @@
         }, error);
     };
 
-    DomStore.prototype.addOrUpdate = function (key, value, success, error) {
+    DomStore.prototype.addOrUpdate = function(key, value, success, error) {
         /// <summary>Adds or updates a value identified by a key to the store.</summary>
         /// <param name="key" type="String">Key string.</param>
         /// <param name="value">Value that is going to be added or updated to the store.</param>
@@ -8100,21 +8223,19 @@
                 // Save the json string.
                 localStorage.setItem(fullKey, storedValue);
                 delay(success, key, value);
-            }
-            catch (e) {
+            } catch (e) {
                 if (e.code === 22 || e.number === 0x8007000E) {
                     delay(error, { name: "QUOTA_EXCEEDED_ERR", error: e });
                 } else {
                     delay(error, e);
                 }
-            }
-            finally {
+            } finally {
                 Date.prototype.toJSON = oldDateToJSON;
             }
         }
     };
 
-    DomStore.prototype.clear = function (success, error) {
+    DomStore.prototype.clear = function(success, error) {
         /// <summary>Removes all the data associated with this store object.</summary>
         /// <param name="success" type="Function" optional="no">Callback for a successful clear operation.</param>
         /// <param name="error" type="Function" optional="yes">Callback for handling errors. If not specified then store.defaultError is invoked.</param>
@@ -8124,7 +8245,8 @@
 
         error = error || this.defaultError;
         try {
-            var i = 0, len = localStorage.length;
+            var i = 0,
+                len = localStorage.length;
             while (len > 0 && i < len) {
                 var fullKey = localStorage.key(i);
                 var key = unqualifyDomStoreKey(this, fullKey);
@@ -8136,17 +8258,16 @@
                 }
             };
             delay(success);
-        }
-        catch (e) {
+        } catch (e) {
             delay(error, e);
         }
     };
 
-    DomStore.prototype.close = function () {
+    DomStore.prototype.close = function() {
         /// <summary>This function does nothing in DomStore as it does not have a connection model</summary>
     };
 
-    DomStore.prototype.contains = function (key, success, error) {
+    DomStore.prototype.contains = function(key, success, error) {
         /// <summary>Checks whether a key exists in the store.</summary>
         /// <param name="key" type="String">Key string.</param>
         /// <param name="success" type="Function" optional="no">Callback indicating whether the store contains the key or not.</param>
@@ -8163,7 +8284,7 @@
 
     DomStore.prototype.defaultError = throwErrorCallback;
 
-    DomStore.prototype.getAllKeys = function (success, error) {
+    DomStore.prototype.getAllKeys = function(success, error) {
         /// <summary>Gets all the keys that exist in the store.</summary>
         /// <param name="success" type="Function" optional="no">Callback for a successful get operation.</param>
         /// <param name="error" type="Function" optional="yes">Callback for handling errors. If not specified then store.defaultError is invoked.</param>
@@ -8182,8 +8303,7 @@
                 }
             }
             delay(success, results);
-        }
-        catch (e) {
+        } catch (e) {
             delay(error, e);
         }
     };
@@ -8191,7 +8311,7 @@
     /// <summary>Identifies the underlying mechanism used by the store.</summary>
     DomStore.prototype.mechanism = "dom";
 
-    DomStore.prototype.read = function (key, success, error) {
+    DomStore.prototype.read = function(key, success, error) {
         /// <summary>Reads the value associated to a key in the store.</summary>
         /// <param name="key" type="String">Key string.</param>
         /// <param name="success" type="Function" optional="no">Callback for a successful reads operation.</param>
@@ -8207,8 +8327,7 @@
                 if (value !== null && value !== "undefined") {
                     // Hydrate using json
                     value = window.JSON.parse(value, domStoreJSONToDate);
-                }
-                else {
+                } else {
                     value = undefined;
                 }
                 delay(success, key, value);
@@ -8218,7 +8337,7 @@
         }
     };
 
-    DomStore.prototype.remove = function (key, success, error) {
+    DomStore.prototype.remove = function(key, success, error) {
         /// <summary>Removes a key and its value from the store.</summary>
         /// <param name="key" type="String">Key string.</param>
         /// <param name="success" type="Function" optional="no">Callback for a successful remove operation.</param>
@@ -8238,7 +8357,7 @@
         }
     };
 
-    DomStore.prototype.update = function (key, value, success, error) {
+    DomStore.prototype.update = function(key, value, success, error) {
         /// <summary>Updates the value associated to a key in the store.</summary>
         /// <param name="key" type="String">Key string.</param>
         /// <param name="value">New value.</param>
@@ -8250,7 +8369,7 @@
 
         error = error || this.defaultError;
         var store = this;
-        this.contains(key, function (contained) {
+        this.contains(key, function(contained) {
             if (contained) {
                 store.addOrUpdate(key, value, success, error);
             } else {
@@ -8268,13 +8387,13 @@
     var IDBT_READ_ONLY = IDBTransaction.READ_ONLY || "readonly";
     var IDBT_READ_WRITE = IDBTransaction.READ_WRITE || "readwrite";
 
-    var getError = function (error, defaultError) {
+    var getError = function(error, defaultError) {
         /// <summary>Returns either a specific error handler or the default error handler</summary>
         /// <param name="error" type="Function">The specific error handler</param>
         /// <param name="defaultError" type="Function">The default error handler</param>
         /// <returns type="Function">The error callback</returns>
 
-        return function (e) {
+        return function(e) {
             var errorFunc = error || defaultError;
             if (!errorFunc) {
                 return;
@@ -8282,7 +8401,7 @@
 
             // Old api quota exceeded error support.
             if (Object.prototype.toString.call(e) === "[object IDBDatabaseException]") {
-                if (e.code === 11 /* IndexedDb disk quota exceeded */) {
+                if (e.code === 11 /* IndexedDb disk quota exceeded */ ) {
                     errorFunc({ name: "QuotaExceededError", error: e });
                     return;
                 }
@@ -8301,7 +8420,7 @@
         };
     };
 
-    var openStoreDb = function (store, success, error) {
+    var openStoreDb = function(store, success, error) {
         /// <summary>Opens the store object's indexed db database.</summary>
         /// <param name="store" type="IndexedDBStore">The store object</param>
         /// <param name="success" type="Function">The success callback</param>
@@ -8314,22 +8433,22 @@
         request.onblocked = error;
         request.onerror = error;
 
-        request.onupgradeneeded = function () {
+        request.onupgradeneeded = function() {
             var db = request.result;
             if (!db.objectStoreNames.contains(storeName)) {
                 db.createObjectStore(storeName);
             }
         };
 
-        request.onsuccess = function (event) {
+        request.onsuccess = function(event) {
             var db = request.result;
             if (!db.objectStoreNames.contains(storeName)) {
                 // Should we use the old style api to define the database schema?
                 if ("setVersion" in db) {
                     var versionRequest = db.setVersion("1.0");
-                    versionRequest.onsuccess = function () {
+                    versionRequest.onsuccess = function() {
                         var transaction = versionRequest.transaction;
-                        transaction.oncomplete = function () {
+                        transaction.oncomplete = function() {
                             success(db);
                         };
                         db.createObjectStore(storeName, null, false);
@@ -8347,14 +8466,14 @@
                 return;
             }
 
-            db.onversionchange = function (event) {
+            db.onversionchange = function(event) {
                 event.target.close();
             }
             success(db);
         };
     };
 
-    var openTransaction = function (store, mode, success, error) {
+    var openTransaction = function(store, mode, success, error) {
         /// <summary>Opens a new transaction to the store</summary>
         /// <param name="store" type="IndexedDBStore">The store object</param>
         /// <param name="mode" type="Short">The read/write mode of the transaction (constants from IDBTransaction)</param>
@@ -8370,20 +8489,20 @@
             return;
         }
 
-        openStoreDb(store, function (db) {
+        openStoreDb(store, function(db) {
             store.db = db;
             success(db.transaction(storeName, mode));
         }, errorCallback);
     };
 
-    var IndexedDBStore = function (name) {
+    var IndexedDBStore = function(name) {
         /// <summary>Creates a new IndexedDBStore.</summary>
         /// <param name="name" type="String">The name of the store.</param>
         /// <returns type="Object">The new IndexedDBStore.</returns>
         this.name = name;
     };
 
-    IndexedDBStore.create = function (name) {
+    IndexedDBStore.create = function(name) {
         /// <summary>Creates a new IndexedDBStore.</summary>
         /// <param name="name" type="String">The name of the store.</param>
         /// <returns type="Object">The new IndexedDBStore.</returns>
@@ -8394,13 +8513,13 @@
         throw { message: "IndexedDB is not supported on this browser" };
     };
 
-    IndexedDBStore.isSupported = function () {
+    IndexedDBStore.isSupported = function() {
         /// <summary>Returns whether IndexedDB is supported.</summary>
         /// <returns type="Boolean">True if IndexedDB is supported, false otherwise.</returns>
         return !!indexedDB;
     };
 
-    IndexedDBStore.prototype.add = function (key, value, success, error) {
+    IndexedDBStore.prototype.add = function(key, value, success, error) {
         /// <summary>Adds a key/value pair to the store</summary>
         /// <param name="key" type="String">The key</param>
         /// <param name="value" type="Object">The value</param>
@@ -8419,9 +8538,9 @@
             values = [value];
         }
 
-        openTransaction(this, IDBT_READ_WRITE, function (transaction) {
+        openTransaction(this, IDBT_READ_WRITE, function(transaction) {
             transaction.onabort = getError(error, defaultError, key, "add");
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 if (key instanceof Array) {
                     success(keys, values);
                 } else {
@@ -8435,7 +8554,7 @@
         }, error);
     };
 
-    IndexedDBStore.prototype.addOrUpdate = function (key, value, success, error) {
+    IndexedDBStore.prototype.addOrUpdate = function(key, value, success, error) {
         /// <summary>Adds or updates a key/value pair in the store</summary>
         /// <param name="key" type="String">The key</param>
         /// <param name="value" type="Object">The value</param>
@@ -8454,9 +8573,9 @@
             values = [value];
         }
 
-        openTransaction(this, IDBT_READ_WRITE, function (transaction) {
+        openTransaction(this, IDBT_READ_WRITE, function(transaction) {
             transaction.onabort = getError(error, defaultError);
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 if (key instanceof Array) {
                     success(keys, values);
                 } else {
@@ -8471,15 +8590,15 @@
         }, error);
     };
 
-    IndexedDBStore.prototype.clear = function (success, error) {
+    IndexedDBStore.prototype.clear = function(success, error) {
         /// <summary>Clears the store</summary>
         /// <param name="success" type="Function">The success callback</param>
         /// <param name="error" type="Function">The error callback</param>
         var name = this.name;
         var defaultError = this.defaultError;
-        openTransaction(this, IDBT_READ_WRITE, function (transaction) {
+        openTransaction(this, IDBT_READ_WRITE, function(transaction) {
             transaction.onerror = getError(error, defaultError);
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 success();
             };
 
@@ -8487,7 +8606,7 @@
         }, error);
     };
 
-    IndexedDBStore.prototype.close = function () {
+    IndexedDBStore.prototype.close = function() {
         /// <summary>Closes the connection to the database</summary>
         if (this.db) {
             this.db.close();
@@ -8495,18 +8614,18 @@
         }
     };
 
-    IndexedDBStore.prototype.contains = function (key, success, error) {
+    IndexedDBStore.prototype.contains = function(key, success, error) {
         /// <summary>Returns whether the store contains a key</summary>
         /// <param name="key" type="String">The key</param>
         /// <param name="success" type="Function">The success callback</param>
         /// <param name="error" type="Function">The error callback</param>
         var name = this.name;
         var defaultError = this.defaultError;
-        openTransaction(this, IDBT_READ_ONLY, function (transaction) {
+        openTransaction(this, IDBT_READ_ONLY, function(transaction) {
             var objectStore = transaction.objectStore(name);
             var request = objectStore["get"](key);
 
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 success(!!request.result);
             };
             transaction.onerror = getError(error, defaultError);
@@ -8515,23 +8634,23 @@
 
     IndexedDBStore.prototype.defaultError = throwErrorCallback;
 
-    IndexedDBStore.prototype.getAllKeys = function (success, error) {
+    IndexedDBStore.prototype.getAllKeys = function(success, error) {
         /// <summary>Gets all the keys from the store</summary>
         /// <param name="success" type="Function">The success callback</param>
         /// <param name="error" type="Function">The error callback</param>
         var name = this.name;
         var defaultError = this.defaultError;
-        openTransaction(this, IDBT_READ_WRITE, function (transaction) {
+        openTransaction(this, IDBT_READ_WRITE, function(transaction) {
             var results = [];
 
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 success(results);
             };
 
             var request = transaction.objectStore(name).openCursor();
 
             request.onerror = getError(error, defaultError);
-            request.onsuccess = function (event) {
+            request.onsuccess = function(event) {
                 var cursor = event.target.result;
                 if (cursor) {
                     results.push(cursor.key);
@@ -8545,7 +8664,7 @@
     /// <summary>Identifies the underlying mechanism used by the store.</summary>
     IndexedDBStore.prototype.mechanism = "indexeddb";
 
-    IndexedDBStore.prototype.read = function (key, success, error) {
+    IndexedDBStore.prototype.read = function(key, success, error) {
         /// <summary>Reads the value for the specified key</summary>
         /// <param name="key" type="String">The key</param>
         /// <param name="success" type="Function">The success callback</param>
@@ -8555,11 +8674,11 @@
         var defaultError = this.defaultError;
         var keys = (key instanceof Array) ? key : [key];
 
-        openTransaction(this, IDBT_READ_ONLY, function (transaction) {
+        openTransaction(this, IDBT_READ_ONLY, function(transaction) {
             var values = [];
 
             transaction.onerror = getError(error, defaultError, key, "read");
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 if (key instanceof Array) {
                     success(keys, values);
                 } else {
@@ -8571,7 +8690,7 @@
                 // Some tools have issues because get is a javascript reserved word.
                 var objectStore = transaction.objectStore(name);
                 var request = objectStore["get"].call(objectStore, keys[i]);
-                request.onsuccess = function (event) {
+                request.onsuccess = function(event) {
                     var record = event.target.result;
                     values.push(record ? record.v : undefined);
                 };
@@ -8579,7 +8698,7 @@
         }, error);
     };
 
-    IndexedDBStore.prototype.remove = function (key, success, error) {
+    IndexedDBStore.prototype.remove = function(key, success, error) {
         /// <summary>Removes the specified key from the store</summary>
         /// <param name="key" type="String">The key</param>
         /// <param name="success" type="Function">The success callback</param>
@@ -8588,9 +8707,9 @@
         var defaultError = this.defaultError;
         var keys = (key instanceof Array) ? key : [key];
 
-        openTransaction(this, IDBT_READ_WRITE, function (transaction) {
+        openTransaction(this, IDBT_READ_WRITE, function(transaction) {
             transaction.onerror = getError(error, defaultError);
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 success();
             };
 
@@ -8602,7 +8721,7 @@
         }, error);
     };
 
-    IndexedDBStore.prototype.update = function (key, value, success, error) {
+    IndexedDBStore.prototype.update = function(key, value, success, error) {
         /// <summary>Updates a key/value pair in the store</summary>
         /// <param name="key" type="String">The key</param>
         /// <param name="value" type="Object">The value</param>
@@ -8621,9 +8740,9 @@
             values = [value];
         }
 
-        openTransaction(this, IDBT_READ_WRITE, function (transaction) {
+        openTransaction(this, IDBT_READ_WRITE, function(transaction) {
             transaction.onabort = getError(error, defaultError);
-            transaction.oncomplete = function () {
+            transaction.oncomplete = function() {
                 if (key instanceof Array) {
                     success(keys, values);
                 } else {
@@ -8635,7 +8754,7 @@
                 var request = transaction.objectStore(name).openCursor(IDBKeyRange.only(keys[i]));
                 var record = { v: values[i] };
                 request.pair = { key: keys[i], value: record };
-                request.onsuccess = function (event) {
+                request.onsuccess = function(event) {
                     var cursor = event.target.result;
                     if (cursor) {
                         cursor.update(event.target.pair.value);
@@ -8649,7 +8768,7 @@
 
 
 
-    var MemoryStore = function (name) {
+    var MemoryStore = function(name) {
         /// <summary>Constructor for store objects that use a sorted array as the underlying mechanism.</summary>
         /// <param name="name" type="String">Store name.</param>
 
@@ -8659,11 +8778,11 @@
 
         this.name = name;
 
-        var getErrorCallback = function (error) {
+        var getErrorCallback = function(error) {
             return error || this.defaultError;
         };
 
-        var validateKeyInput = function (key, error) {
+        var validateKeyInput = function(key, error) {
             /// <summary>Validates that the specified key is not undefined, not null, and not an array</summary>
             /// <param name="key">Key value.</param>
             /// <param name="error" type="Function">Error callback.</param>
@@ -8686,7 +8805,7 @@
             return true;
         };
 
-        this.add = function (key, value, success, error) {
+        this.add = function(key, value, success, error) {
             /// <summary>Adds a new value identified by a key to the store.</summary>
             /// <param name="key" type="String">Key string.</param>
             /// <param name="value">Value that is going to be added to the store.</param>
@@ -8707,7 +8826,7 @@
             }
         };
 
-        this.addOrUpdate = function (key, value, success, error) {
+        this.addOrUpdate = function(key, value, success, error) {
             /// <summary>Adds or updates a value identified by a key to the store.</summary>
             /// <param name="key" type="String">Key string.</param>
             /// <param name="value">Value that is going to be added or updated to the store.</param>
@@ -8734,7 +8853,7 @@
             }
         };
 
-        this.clear = function (success) {
+        this.clear = function(success) {
             /// <summary>Removes all the data associated with this store object.</summary>
             /// <param name="success" type="Function" optional="no">Callback for a successful clear operation.</param>
 
@@ -8745,7 +8864,7 @@
             delay(success);
         };
 
-        this.contains = function (key, success) {
+        this.contains = function(key, success) {
             /// <summary>Checks whether a key exists in the store.</summary>
             /// <param name="key" type="String">Key string.</param>
             /// <param name="success" type="Function" optional="no">Callback indicating whether the store contains the key or not.</param>
@@ -8754,7 +8873,7 @@
             delay(success, contained);
         };
 
-        this.getAllKeys = function (success) {
+        this.getAllKeys = function(success) {
             /// <summary>Gets all the keys that exist in the store.</summary>
             /// <param name="success" type="Function" optional="no">Callback for a successful get operation.</param>
 
@@ -8765,7 +8884,7 @@
             delay(success, results);
         };
 
-        this.read = function (key, success, error) {
+        this.read = function(key, success, error) {
             /// <summary>Reads the value associated to a key in the store.</summary>
             /// <param name="key" type="String">Key string.</param>
             /// <param name="success" type="Function" optional="no">Callback for a successful reads operation.</param>
@@ -8778,7 +8897,7 @@
             }
         };
 
-        this.remove = function (key, success, error) {
+        this.remove = function(key, success, error) {
             /// <summary>Removes a key and its value from the store.</summary>
             /// <param name="key" type="String">Key string.</param>
             /// <param name="success" type="Function" optional="no">Callback for a successful remove operation.</param>
@@ -8806,7 +8925,7 @@
             }
         };
 
-        this.update = function (key, value, success, error) {
+        this.update = function(key, value, success, error) {
             /// <summary>Updates the value associated to a key in the store.</summary>
             /// <param name="key" type="String">Key string.</param>
             /// <param name="value">New value.</param>
@@ -8827,20 +8946,20 @@
         };
     };
 
-    MemoryStore.create = function (name) {
+    MemoryStore.create = function(name) {
         /// <summary>Creates a store object that uses memory storage as its underlying mechanism.</summary>
         /// <param name="name" type="String">Store name.</param>
         /// <returns type="Object">Store object.</returns>
         return new MemoryStore(name);
     };
 
-    MemoryStore.isSupported = function () {
+    MemoryStore.isSupported = function() {
         /// <summary>Checks whether the underlying mechanism for this kind of store objects is supported by the browser.</summary>
         /// <returns type="Boolean">True if the mechanism is supported by the browser; otherwise false.</returns>
         return true;
     };
 
-    MemoryStore.prototype.close = function () {
+    MemoryStore.prototype.close = function() {
         /// <summary>This function does nothing in MemoryStore as it does not have a connection model.</summary>
     };
 
@@ -8859,7 +8978,7 @@
 
     datajs.defaultStoreMechanism = "best";
 
-    datajs.createStore = function (name, mechanism) {
+    datajs.createStore = function(name, mechanism) {
         /// <summary>Creates a new store object.</summary>
         /// <param name="name" type="String">Store name.</param>
         /// <param name="mechanism" type="String" optional="true">A specific mechanism to use (defaults to best, can be "best", "dom", "indexeddb", "webdb").</param>
@@ -8884,7 +9003,7 @@
 
 
 
-    var appendQueryOption = function (uri, queryOption) {
+    var appendQueryOption = function(uri, queryOption) {
         /// <summary>Appends the specified escaped query option to the specified URI.</summary>
         /// <param name="uri" type="String">URI to append option to.</param>
         /// <param name="queryOption" type="String">Escaped query option to append.</param>
@@ -8892,7 +9011,7 @@
         return uri + separator + queryOption;
     };
 
-    var appendSegment = function (uri, segment) {
+    var appendSegment = function(uri, segment) {
         /// <summary>Appends the specified segment to the given URI.</summary>
         /// <param name="uri" type="String">URI to append a segment to.</param>
         /// <param name="segment" type="String">Segment to append.</param>
@@ -8911,7 +9030,7 @@
         return uri + segment + queryPortion;
     };
 
-    var buildODataRequest = function (uri, options) {
+    var buildODataRequest = function(uri, options) {
         /// <summary>Builds a request object to GET the specified URI.</summary>
         /// <param name="uri" type="String">URI for request.</param>
         /// <param name="options" type="Object">Additional options.</param>
@@ -8941,7 +9060,7 @@
         // ##### END: MODIFIED BY SAP
     };
 
-    var findQueryOptionStart = function (uri, name) {
+    var findQueryOptionStart = function(uri, name) {
         /// <summary>Finds the index where the value of a query option starts.</summary>
         /// <param name="uri" type="String">URI to search in.</param>
         /// <param name="name" type="String">Name to look for.</param>
@@ -8961,7 +9080,7 @@
         return result;
     };
 
-    var queryForData = function (uri, options, success, error) {
+    var queryForData = function(uri, options, success, error) {
         /// <summary>Gets data from an OData service.</summary>
         /// <param name="uri" type="String">URI to the OData service.</param>
         /// <param name="options" type="Object">Object with additional well-known request options.</param>
@@ -8973,7 +9092,7 @@
         return request;
     };
 
-    var queryForDataInternal = function (uri, options, data, success, error) {
+    var queryForDataInternal = function(uri, options, data, success, error) {
         /// <summary>Gets data from an OData service taking into consideration server side paging.</summary>
         /// <param name="uri" type="String">URI to the OData service.</param>
         /// <param name="options" type="Object">Object with additional well-known request options.</param>
@@ -8983,7 +9102,7 @@
         /// <returns type="Object">Object with an abort method.</returns>
 
         var request = buildODataRequest(uri, options);
-        var currentRequest = odata.request(request, function (newData) {
+        var currentRequest = odata.request(request, function(newData) {
             var next = newData.__next;
             var results = newData.results;
 
@@ -8997,13 +9116,13 @@
         }, error, undefined, options.httpClient, options.metadata);
 
         return {
-            abort: function () {
+            abort: function() {
                 currentRequest.abort();
             }
         };
     };
 
-    var ODataCacheSource = function (options) {
+    var ODataCacheSource = function(options) {
         /// <summary>Creates a data cache source object for requesting data from an OData service.</summary>
         /// <param name="options">Options for the cache data source.</param>
         /// <returns type="ODataCacheSource">A new data cache source instance.</returns>
@@ -9014,7 +9133,7 @@
         that.identifier = normalizeURICase(encodeURI(decodeURI(uri)));
         that.options = options;
 
-        that.count = function (success, error) {
+        that.count = function(success, error) {
             /// <summary>Gets the number of items in the collection.</summary>
             /// <param name="success" type="Function">Success callback with the item count.</param>
             /// <param name="error" type="Function">Error callback.</param>
@@ -9023,7 +9142,7 @@
             var options = that.options;
             return odata.request(
                 buildODataRequest(appendSegment(uri, "$count"), options),
-                function (data) {
+                function(data) {
                     var count = parseInt10(data.toString());
                     if (isNaN(count)) {
                         error({ message: "Count is NaN", count: count });
@@ -9033,7 +9152,7 @@
                 }, error, undefined, options.httpClient, options.metadata);
         };
 
-        that.read = function (index, count, success, error) {
+        that.read = function(index, count, success, error) {
             /// <summary>Gets a number of consecutive items from the collection.</summary>
             /// <param name="index" type="Number">Zero-based index of the items to retrieve.</param>
             /// <param name="count" type="Number">Number of items to retrieve.</param>
@@ -9050,7 +9169,7 @@
 
 
 
-    var appendPage = function (operation, page) {
+    var appendPage = function(operation, page) {
         /// <summary>Appends a page's data to the operation data.</summary>
         /// <param name="operation" type="Object">Operation with (i)ndex, (c)ount and (d)ata.</param>
         /// <param name="page" type="Object">Page with (i)ndex, (c)ount and (d)ata.</param>
@@ -9063,7 +9182,7 @@
         }
     };
 
-    var intersectRanges = function (x, y) {
+    var intersectRanges = function(x, y) {
         /// <summary>Returns the {(i)ndex, (c)ount} range for the intersection of x and y.</summary>
         /// <param name="x" type="Object">Range with (i)ndex and (c)ount members.</param>
         /// <param name="y" type="Object">Range with (i)ndex and (c)ount members.</param>
@@ -9081,7 +9200,7 @@
         return result;
     };
 
-    var checkZeroGreater = function (val, name) {
+    var checkZeroGreater = function(val, name) {
         /// <summary>Checks whether val is a defined number with value zero or greater.</summary>
         /// <param name="val" type="Number">Value to check.</param>
         /// <param name="name" type="String">Parameter name to use in exception.</param>
@@ -9095,7 +9214,7 @@
         }
     };
 
-    var checkUndefinedGreaterThanZero = function (val, name) {
+    var checkUndefinedGreaterThanZero = function(val, name) {
         /// <summary>Checks whether val is undefined or a number with value greater than zero.</summary>
         /// <param name="val" type="Number">Value to check.</param>
         /// <param name="name" type="String">Parameter name to use in exception.</param>
@@ -9111,7 +9230,7 @@
         }
     };
 
-    var checkUndefinedOrNumber = function (val, name) {
+    var checkUndefinedOrNumber = function(val, name) {
         /// <summary>Checks whether val is undefined or a number</summary>
         /// <param name="val" type="Number">Value to check.</param>
         /// <param name="name" type="String">Parameter name to use in exception.</param>
@@ -9120,7 +9239,7 @@
         }
     };
 
-    var removeFromArray = function (arr, item) {
+    var removeFromArray = function(arr, item) {
         /// <summary>Performs a linear search on the specified array and removes the first instance of 'item'.</summary>
         /// <param name="arr" type="Array">Array to search.</param>
         /// <param name="item">Item being sought.</param>
@@ -9137,7 +9256,7 @@
         return false;
     };
 
-    var estimateSize = function (obj) {
+    var estimateSize = function(obj) {
         /// <summary>Estimates the size of an object in bytes.</summary>
         /// <param name="obj" type="Object">Object to determine the size of.</param>
         /// <returns type="Integer">Estimated size of the object in bytes.</returns>
@@ -9156,7 +9275,7 @@
         return size;
     };
 
-    var snapToPageBoundaries = function (lowIndex, highIndex, pageSize) {
+    var snapToPageBoundaries = function(lowIndex, highIndex, pageSize) {
         /// <summary>Snaps low and high indices into page sizes and returns a range.</summary>
         /// <param name="lowIndex" type="Number">Low index to snap to a lower value.</param>
         /// <param name="highIndex" type="Number">High index to snap to a higher value.</param>
@@ -9200,7 +9319,7 @@
     var READ_STATE_SAVE = "save";
     var READ_STATE_SOURCE = "source";
 
-    var DataCacheOperation = function (stateMachine, promise, isCancelable, index, count, data, pending) {
+    var DataCacheOperation = function(stateMachine, promise, isCancelable, index, count, data, pending) {
         /// <summary>Creates a new operation object.</summary>
         /// <param name="stateMachine" type="Function">State machine that describes the specific behavior of the operation.</param>
         /// <param name="promise" type ="DjsDeferred">Promise for requested values.</param>
@@ -9234,7 +9353,7 @@
         that.pending = pending;
         that.oncomplete = null;
 
-        that.cancel = function () {
+        that.cancel = function() {
             /// <summary>Transitions this operation to the cancel state and sets the canceled flag to true.</summary>
             /// <remarks>The function is a no-op if the operation is non-cancelable.</summary>
 
@@ -9249,20 +9368,20 @@
             }
         };
 
-        that.complete = function () {
+        that.complete = function() {
             /// <summary>Transitions this operation to the end state.</summary>
 
             transition(OPERATION_STATE_END, stateData);
         };
 
-        that.error = function (err) {
+        that.error = function(err) {
             /// <summary>Transitions this operation to the error state.</summary>
             if (!that.canceled) {
                 transition(OPERATION_STATE_ERROR, err);
             }
         };
 
-        that.run = function (state) {
+        that.run = function(state) {
             /// <summary>Executes the operation's current state in the context of a new cache state.</summary>
             /// <param name="state" type="Object">New cache state.</param>
 
@@ -9270,13 +9389,13 @@
             that.transition(that.s, stateData);
         };
 
-        that.wait = function (data) {
+        that.wait = function(data) {
             /// <summary>Transitions this operation to the wait state.</summary>
 
             transition(OPERATION_STATE_WAIT, data);
         };
 
-        var operationStateMachine = function (opTargetState, cacheState, data) {
+        var operationStateMachine = function(opTargetState, cacheState, data) {
             /// <summary>State machine that describes all operations common behavior.</summary>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
             /// <param name="cacheState" type="Object">Current cache state.</param>
@@ -9323,12 +9442,12 @@
 
                 default:
                     // Any other state is passed down to the state machine describing the operation's specific behavior.
-                        stateMachine(that, opTargetState, cacheState, data);
+                    stateMachine(that, opTargetState, cacheState, data);
                     break;
             }
         };
 
-        var transition = function (state, data) {
+        var transition = function(state, data) {
             /// <summary>Transitions this operation to a new state.</summary>
             /// <param name="state" type="Object">State to transition the operation to.</param>
             /// <param name="data" type="Object" optional="true">Additional data passed to the state.</param>
@@ -9343,7 +9462,7 @@
         return that;
     };
 
-    DataCacheOperation.prototype.fireResolved = function () {
+    DataCacheOperation.prototype.fireResolved = function() {
         /// <summary>Fires a resolved notification as necessary.</summary>
 
         // Fire the resolve just once.
@@ -9354,7 +9473,7 @@
         }
     };
 
-    DataCacheOperation.prototype.fireRejected = function (reason) {
+    DataCacheOperation.prototype.fireRejected = function(reason) {
         /// <summary>Fires a rejected notification as necessary.</summary>
 
         // Fire the rejection just once.
@@ -9365,14 +9484,14 @@
         }
     };
 
-    DataCacheOperation.prototype.fireCanceled = function () {
+    DataCacheOperation.prototype.fireCanceled = function() {
         /// <summary>Fires a canceled notification as necessary.</summary>
 
         this.fireRejected({ canceled: true, message: "Operation canceled" });
     };
 
 
-    var DataCache = function (options) {
+    var DataCache = function(options) {
         /// <summary>Creates a data cache for a collection that is efficiently loaded on-demand.</summary>
         /// <param name="options">
         /// Options for the data cache, including name, source, pageSize,
@@ -9387,14 +9506,14 @@
         var readOperations = [];
         var prefetchOperations = [];
 
-        var actualCacheSize = 0;                                             // Actual cache size in bytes.
-        var allDataLocal = false;                                            // Whether all data is local.
-        var cacheSize = undefinedDefault(options.cacheSize, 1048576);        // Requested cache size in bytes, default 1 MB.
-        var collectionCount = 0;                                             // Number of elements in the server collection.
-        var highestSavedPage = 0;                                            // Highest index of all the saved pages.
-        var highestSavedPageSize = 0;                                        // Item count of the saved page with the highest index.
-        var overflowed = cacheSize === 0;                                    // If the cache has overflowed (actualCacheSize > cacheSize or cacheSize == 0);
-        var pageSize = undefinedDefault(options.pageSize, 50);               // Number of elements to store per page.
+        var actualCacheSize = 0; // Actual cache size in bytes.
+        var allDataLocal = false; // Whether all data is local.
+        var cacheSize = undefinedDefault(options.cacheSize, 1048576); // Requested cache size in bytes, default 1 MB.
+        var collectionCount = 0; // Number of elements in the server collection.
+        var highestSavedPage = 0; // Highest index of all the saved pages.
+        var highestSavedPageSize = 0; // Item count of the saved page with the highest index.
+        var overflowed = cacheSize === 0; // If the cache has overflowed (actualCacheSize > cacheSize or cacheSize == 0);
+        var pageSize = undefinedDefault(options.pageSize, 50); // Number of elements to store per page.
         var prefetchSize = undefinedDefault(options.prefetchSize, pageSize); // Number of elements to prefetch from the source when the cache is idling.
         var version = "1.0";
         var cacheFailure;
@@ -9416,7 +9535,7 @@
         that.onidle = options.idle;
         that.stats = stats;
 
-        that.count = function () {
+        that.count = function() {
             /// <summary>Counts the number of items in the collection.</summary>
             /// <returns type="Object">A promise with the number of items.</returns>
 
@@ -9428,7 +9547,7 @@
             var canceled = false;
 
             if (allDataLocal) {
-                delay(function () {
+                delay(function() {
                     deferred.resolve(collectionCount);
                 });
 
@@ -9436,17 +9555,17 @@
             }
 
             // TODO: Consider returning the local data count instead once allDataLocal flag is set to true.
-            var request = source.count(function (count) {
+            var request = source.count(function(count) {
                 request = null;
                 stats.counts++;
                 deferred.resolve(count);
-            }, function (err) {
+            }, function(err) {
                 request = null;
                 deferred.reject(extend(err, { canceled: canceled }));
             });
 
             return extend(deferred.promise(), {
-                cancel: function () {
+                cancel: function() {
                     /// <summary>Aborts the count operation.</summary>
                     if (request) {
                         canceled = true;
@@ -9457,7 +9576,7 @@
             });
         };
 
-        that.clear = function () {
+        that.clear = function() {
             /// <summary>Cancels all running operations and clears all local data associated with this cache.</summary>
             /// <remarks>
             /// New read requests made while a clear operation is in progress will not be canceled.
@@ -9478,7 +9597,7 @@
             return clearOperations[0].p;
         };
 
-        that.filterForward = function (index, count, predicate) {
+        that.filterForward = function(index, count, predicate) {
             /// <summary>Filters the cache data based a predicate.</summary>
             /// <param name="index" type="Number">The index of the item to start filtering forward from.</param>
             /// <param name="count" type="Number">Maximum number of items to include in the result.</param>
@@ -9490,7 +9609,7 @@
             return filter(index, count, predicate, false);
         };
 
-        that.filterBack = function (index, count, predicate) {
+        that.filterBack = function(index, count, predicate) {
             /// <summary>Filters the cache data based a predicate.</summary>
             /// <param name="index" type="Number">The index of the item to start filtering backward from.</param>
             /// <param name="count" type="Number">Maximum number of items to include in the result.</param>
@@ -9502,7 +9621,7 @@
             return filter(index, count, predicate, true);
         };
 
-        that.readRange = function (index, count) {
+        that.readRange = function(index, count) {
             /// <summary>Reads a range of adjacent records.</summary>
             /// <param name="index" type="Number">Zero-based index of record range to read.</param>
             /// <param name="count" type="Number">Number of records in the range.</param>
@@ -9529,14 +9648,14 @@
             queueAndStart(op, readOperations);
 
             return extend(deferred.promise(), {
-                cancel: function () {
+                cancel: function() {
                     /// <summary>Aborts the readRange operation.</summary>
                     op.cancel();
                 }
             });
         };
 
-        that.ToObservable = that.toObservable = function () {
+        that.ToObservable = that.toObservable = function() {
             /// <summary>Creates an Observable object that enumerates all the cache contents.</summary>
             /// <returns>A new Observable object that enumerates all the cache contents.</returns>
             if (!window.Rx || !window.Rx.Observable) {
@@ -9547,17 +9666,17 @@
                 throw cacheFailure;
             }
 
-            return window.Rx.Observable.CreateWithDisposable(function (obs) {
+            return window.Rx.Observable.CreateWithDisposable(function(obs) {
                 var disposed = false;
                 var index = 0;
 
-                var errorCallback = function (error) {
+                var errorCallback = function(error) {
                     if (!disposed) {
                         obs.OnError(error);
                     }
                 };
 
-                var successCallback = function (data) {
+                var successCallback = function(data) {
                     if (!disposed) {
                         var i, len;
                         for (i = 0, len = data.length; i < len; i++) {
@@ -9577,11 +9696,11 @@
 
                 that.readRange(index, pageSize).then(successCallback, errorCallback);
 
-                return { Dispose: function () { disposed = true; } };
+                return { Dispose: function() { disposed = true; } };
             });
         };
 
-        var cacheFailureCallback = function (message) {
+        var cacheFailureCallback = function(message) {
             /// <summary>Creates a function that handles a callback by setting the cache into failure mode.</summary>
             /// <param name="message" type="String">Message text.</param>
             /// <returns type="Function">Function to use as error callback.</returns>
@@ -9590,7 +9709,7 @@
             /// during cache initialization.
             /// </remarks>
 
-            return function (error) {
+            return function(error) {
                 cacheFailure = { message: message, error: error };
 
                 // Destroy any pending clear or read operations.
@@ -9610,7 +9729,7 @@
             };
         };
 
-        var changeState = function (newState) {
+        var changeState = function(newState) {
             /// <summary>Updates the cache's state and signals all pending operations of the change.</summary>
             /// <param name="newState" type="Object">New cache state.</param>
             /// <remarks>This method is a no-op if the cache's current state and the new state are the same.</remarks>
@@ -9625,12 +9744,12 @@
             }
         };
 
-        var clearStore = function () {
+        var clearStore = function() {
             /// <summary>Removes all the data stored in the cache.</summary>
             /// <returns type="DjsDeferred">A promise with no value.</returns>
 
             var deferred = new DjsDeferred();
-            store.clear(function () {
+            store.clear(function() {
 
                 // Reset the cache settings.
                 actualCacheSize = 0;
@@ -9648,13 +9767,13 @@
 
                 store.close();
                 deferred.resolve();
-            }, function (err) {
+            }, function(err) {
                 deferred.reject(err);
             });
             return deferred;
         };
 
-        var dequeueOperation = function (operation) {
+        var dequeueOperation = function(operation) {
             /// <summary>Removes an operation from the caches queues and changes the cache state to idle.</summary>
             /// <param name="operation" type="DataCacheOperation">Operation to dequeue.</param>
             /// <remarks>This method is used as a handler for the operation's oncomplete event.</remarks>
@@ -9671,7 +9790,7 @@
             changeState(CACHE_STATE_IDLE);
         };
 
-        var fetchPage = function (start) {
+        var fetchPage = function(start) {
             /// <summary>Requests data from the cache source.</summary>
             /// <param name="start" type="Number">Zero-based index of items to request.</param>
             /// <returns type="DjsDeferred">A promise for a page object with (i)ndex, (c)ount, (d)ata.</returns>
@@ -9680,15 +9799,15 @@
             var deferred = new DjsDeferred();
             var canceled = false;
 
-            var request = source.read(start, pageSize, function (data) {
+            var request = source.read(start, pageSize, function(data) {
                 var page = { i: start, c: data.length, d: data };
                 deferred.resolve(page);
-            }, function (err) {
+            }, function(err) {
                 deferred.reject(err);
             });
 
             return extend(deferred, {
-                cancel: function () {
+                cancel: function() {
                     if (request) {
                         request.abort();
                         canceled = true;
@@ -9698,7 +9817,7 @@
             });
         };
 
-        var filter = function (index, count, predicate, backwards) {
+        var filter = function(index, count, predicate, backwards) {
             /// <summary>Filters the cache data based a predicate.</summary>
             /// <param name="index" type="Number">The index of the item to start filtering from.</param>
             /// <param name="count" type="Number">Maximum number of items to include in the result.</param>
@@ -9729,12 +9848,12 @@
             var canceled = false;
             var pendingReadRange = null;
 
-            var readMore = function (readIndex, readCount) {
+            var readMore = function(readIndex, readCount) {
                 if (!canceled) {
                     if (count >= 0 && arr.length >= count) {
                         deferred.resolve(arr);
                     } else {
-                        pendingReadRange = that.readRange(readIndex, readCount).then(function (data) {
+                        pendingReadRange = that.readRange(readIndex, readCount).then(function(data) {
                             for (var i = 0, length = data.length; i < length && (count < 0 || arr.length < count); i++) {
                                 var dataIndex = backwards ? length - i - 1 : i;
                                 var item = data[dataIndex];
@@ -9755,7 +9874,7 @@
                                 var nextIndex = backwards ? Math.max(readIndex - pageSize, 0) : readIndex + readCount;
                                 readMore(nextIndex, pageSize);
                             }
-                        }, function (err) {
+                        }, function(err) {
                             deferred.reject(err);
                         });
                     }
@@ -9769,7 +9888,7 @@
             readMore(initialIndex, initialCount);
 
             return extend(deferred.promise(), {
-                cancel: function () {
+                cancel: function() {
                     /// <summary>Aborts the filter operation</summary>
                     if (pendingReadRange) {
                         pendingReadRange.cancel();
@@ -9779,7 +9898,7 @@
             });
         };
 
-        var fireOnIdle = function () {
+        var fireOnIdle = function() {
             /// <summary>Fires an onidle event if any functions are assigned.</summary>
 
             if (that.onidle && pendingOperations === 0) {
@@ -9787,7 +9906,7 @@
             }
         };
 
-        var prefetch = function (start) {
+        var prefetch = function(start) {
             /// <summary>Creates and starts a new prefetch operation.</summary>
             /// <param name="start" type="Number">Zero-based index of the items to prefetch.</param>
             /// <remarks>
@@ -9810,7 +9929,7 @@
             }
         };
 
-        var queueAndStart = function (op, queue) {
+        var queueAndStart = function(op, queue) {
             /// <summary>Queues an operation and runs it.</summary>
             /// <param name="op" type="DataCacheOperation">Operation to queue.</param>
             /// <param name="queue" type="Array">Array that will store the operation.</param>
@@ -9821,7 +9940,7 @@
             op.run(state);
         };
 
-        var readPage = function (key) {
+        var readPage = function(key) {
             /// <summary>Requests a page from the cache local store.</summary>
             /// <param name="key" type="Number">Zero-based index of the reuqested page.</param>
             /// <returns type="DjsDeferred">A promise for a found flag and page object with (i)ndex, (c)ount, (d)ata, and (t)icks.</returns>
@@ -9829,7 +9948,7 @@
 
             var canceled = false;
             var deferred = extend(new DjsDeferred(), {
-                cancel: function () {
+                cancel: function() {
                     /// <summary>Aborts the readPage operation.</summary>
                     canceled = true;
                 }
@@ -9837,12 +9956,12 @@
 
             var error = storeFailureCallback(deferred, "Read page from store failure");
 
-            store.contains(key, function (contained) {
+            store.contains(key, function(contained) {
                 if (canceled) {
                     return;
                 }
                 if (contained) {
-                    store.read(key, function (_, data) {
+                    store.read(key, function(_, data) {
                         if (!canceled) {
                             deferred.resolve(data !== undefined, data);
                         }
@@ -9854,7 +9973,7 @@
             return deferred;
         };
 
-        var savePage = function (key, page) {
+        var savePage = function(key, page) {
             /// <summary>Saves a page to the cache local store.</summary>
             /// <param name="key" type="Number">Zero-based index of the requested page.</param>
             /// <param name="page" type="Object">Object with (i)ndex, (c)ount, (d)ata, and (t)icks.</param>
@@ -9864,7 +9983,7 @@
             var canceled = false;
 
             var deferred = extend(new DjsDeferred(), {
-                cancel: function () {
+                cancel: function() {
                     /// <summary>Aborts the readPage operation.</summary>
                     canceled = true;
                 }
@@ -9872,7 +9991,7 @@
 
             var error = storeFailureCallback(deferred, "Save page to store failure");
 
-            var resolve = function () {
+            var resolve = function() {
                 deferred.resolve(true);
             };
 
@@ -9881,7 +10000,7 @@
                 overflowed = cacheSize >= 0 && cacheSize < actualCacheSize + pageBytes;
 
                 if (!overflowed) {
-                    store.addOrUpdate(key, page, function () {
+                    store.addOrUpdate(key, page, function() {
                         updateSettings(page, pageBytes);
                         saveSettings(resolve, error);
                     }, error);
@@ -9895,7 +10014,7 @@
             return deferred;
         };
 
-        var saveSettings = function (success, error) {
+        var saveSettings = function(success, error) {
             /// <summary>Saves the cache's current settings to the local store.</summary>
             /// <param name="success" type="Function">Success callback.</param>
             /// <param name="error" type="Function">Errror callback.</param>
@@ -9915,7 +10034,7 @@
             store.addOrUpdate("__settings", settings, success, error);
         };
 
-        var storeFailureCallback = function (deferred/*, message*/) {
+        var storeFailureCallback = function(deferred /*, message*/ ) {
             /// <summary>Creates a function that handles a store error.</summary>
             /// <param name="deferred" type="DjsDeferred">Deferred object to resolve.</param>
             /// <param name="message" type="String">Message text.</param>
@@ -9924,7 +10043,7 @@
             /// This function will specifically handle problems when interacting with the store.
             /// </remarks>
 
-            return function (/*error*/) {
+            return function( /*error*/ ) {
                 // var console = window.console;
                 // if (console && console.log) {
                 //    console.log(message);
@@ -9934,7 +10053,7 @@
             };
         };
 
-        var updateSettings = function (page, pageBytes) {
+        var updateSettings = function(page, pageBytes) {
             /// <summary>Updates the cache's settings based on a page object.</summary>
             /// <param name="page" type="Object">Object with (i)ndex, (c)ount, (d)ata.</param>
             /// <param name="pageBytes" type="Number">Size of the page in bytes.</param>
@@ -9964,7 +10083,7 @@
             }
         };
 
-        var cancelStateMachine = function (operation, opTargetState, cacheState, data) {
+        var cancelStateMachine = function(operation, opTargetState, cacheState, data) {
             /// <summary>State machine describing the behavior for cancelling a read or prefetch operation.</summary>
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
@@ -9987,7 +10106,7 @@
             return canceled;
         };
 
-        var destroyStateMachine = function (operation, opTargetState, cacheState) {
+        var destroyStateMachine = function(operation, opTargetState, cacheState) {
             /// <summary>State machine describing the behavior of a clear operation.</summary>
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
@@ -10018,7 +10137,7 @@
 
                 case DESTROY_STATE_CLEAR:
                     // State that clears all the local data of the cache.
-                    clearStore().then(function () {
+                    clearStore().then(function() {
                         // Terminate the operation once the local store has been cleared.
                         operation.complete();
                     });
@@ -10032,7 +10151,7 @@
             return true;
         };
 
-        var prefetchStateMachine = function (operation, opTargetState, cacheState, data) {
+        var prefetchStateMachine = function(operation, opTargetState, cacheState, data) {
             /// <summary>State machine describing the behavior of a prefetch operation.</summary>
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
@@ -10100,7 +10219,7 @@
             return true;
         };
 
-        var readStateMachine = function (operation, opTargetState, cacheState, data) {
+        var readStateMachine = function(operation, opTargetState, cacheState, data) {
             /// <summary>State machine describing the behavior of a read operation.</summary>
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
@@ -10179,7 +10298,7 @@
             return true;
         };
 
-        var readSaveStateMachine = function (operation, opTargetState, cacheState, data, isPrefetch) {
+        var readSaveStateMachine = function(operation, opTargetState, cacheState, data, isPrefetch) {
             /// <summary>State machine describing the behavior for reading and saving data into the cache.</summary>
             /// <param name="operation" type="DataCacheOperation">Operation being run.</param>
             /// <param name="opTargetState" type="Object">Operation state to transition to.</param>
@@ -10204,7 +10323,7 @@
                 case READ_STATE_LOCAL:
                     // State that requests for a page from the local store.
                     // Data is expected to be the index of the page to request.
-                    request = readPage(data).then(function (found, page) {
+                    request = readPage(data).then(function(found, page) {
                         // Signal the cache that a read operation is running.
                         if (!operation.canceled) {
                             if (found) {
@@ -10221,7 +10340,7 @@
                 case READ_STATE_SOURCE:
                     // State that requests for a page from the cache source.
                     // Data is expected to be the index of the page to request.
-                    request = fetchPage(data).then(function (page) {
+                    request = fetchPage(data).then(function(page) {
                         // Signal the cache that a read operation is running.
                         if (!operation.canceled) {
                             // Update the stats and save the page to the local store.
@@ -10241,7 +10360,7 @@
                     // Write access to the store is exclusive.
                     if (cacheState !== CACHE_STATE_WRITE) {
                         changeState(CACHE_STATE_WRITE);
-                        request = savePage(data.i, data).then(function (saved) {
+                        request = savePage(data.i, data).then(function(saved) {
                             if (!operation.canceled) {
                                 if (!saved && isPrefetch) {
                                     operation.pending = 0;
@@ -10273,7 +10392,7 @@
         };
 
         // Initialize the cache.
-        store.read("__settings", function (_, settings) {
+        store.read("__settings", function(_, settings) {
             if (assigned(settings)) {
                 var settingsVersion = settings.version;
                 if (!settingsVersion || settingsVersion.indexOf("1.") !== 0) {
@@ -10283,7 +10402,7 @@
 
                 if (pageSize !== settings.pageSize || source.identifier !== settings.sourceId) {
                     // The shape or the source of the data was changed so invalidate the store.
-                    clearStore().then(function () {
+                    clearStore().then(function() {
                         // Signal the cache is fully initialized.
                         changeState(CACHE_STATE_IDLE);
                     }, cacheFailureCallback("Unable to clear store during initialization"));
@@ -10302,7 +10421,7 @@
                 }
             } else {
                 // This is a brand new cache.
-                saveSettings(function () {
+                saveSettings(function() {
                     // Signal the cache is fully initialized.
                     changeState(CACHE_STATE_IDLE);
                 }, cacheFailureCallback("Unable to write settings during initialization."));
@@ -10312,7 +10431,7 @@
         return that;
     };
 
-    datajs.createDataCache = function (options) {
+    datajs.createDataCache = function(options) {
         /// <summary>Creates a data cache for a collection that is efficiently loaded on-demand.</summary>
         /// <param name="options">
         /// Options for the data cache, including name, source, pageSize,
@@ -10336,6 +10455,6 @@
 
 
 
-// ##### BEGIN: MODIFIED BY SAP
+    // ##### BEGIN: MODIFIED BY SAP
 })(window);
 // ##### END: MODIFIED BY SAP
