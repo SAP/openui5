@@ -1893,10 +1893,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("deregisterChange", function (assert) {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
-			oCache = {
-				deregisterChange : function () {}
-			},
 			oMock,
+			oOtherBinding = {
+				doDeregisterChangeListener : function () {}
+			},
 			sPath = "foo";
 
 		oMock = this.mock(oBinding).expects("withCache").withExactArgs(sinon.match.func)
@@ -1905,10 +1905,11 @@ sap.ui.define([
 		// code under test
 		oBinding.deregisterChange();
 
-		// check that the function passed to withCache works as expected
-		this.mock(oCache).expects("deregisterChange")
+		this.mock(oOtherBinding).expects("doDeregisterChangeListener")
 			.withExactArgs(sPath, sinon.match.same(oBinding));
-		oMock.firstCall.args[0](oCache, sPath);
+
+		// code under test - check that the function passed to withCache works as expected
+		oMock.firstCall.args[0](null, sPath, oOtherBinding);
 	});
 
 	//*********************************************************************************************

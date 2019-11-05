@@ -328,18 +328,18 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the binding as change listener from its cache.
+	 * Deregisters the binding as change listener from its cache or operation binding ($Parameter).
 	 *
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.deregisterChange = function () {
 		var that = this;
 
-		this.withCache(function (oCache, sPath) {
-			oCache.deregisterChange(sPath, that);
+		this.withCache(function (oCache, sPath, oBinding) {
+			oBinding.doDeregisterChangeListener(sPath, that);
 		}).catch(function (oError) {
 			that.oModel.reportError("Error in deregisterChange", sClassName, oError);
-		});
+		}, /*sPath*/"", /*bSync*/false, /*bWithOrWithoutCache*/true);
 	};
 
 	/**
@@ -356,7 +356,7 @@ sap.ui.define([
 		this.mQueryOptions = undefined;
 		this.vValue = undefined;
 
-		asODataBinding.prototype.destroy.apply(this);
+		asODataBinding.prototype.destroy.call(this);
 		PropertyBinding.prototype.destroy.apply(this, arguments);
 	};
 

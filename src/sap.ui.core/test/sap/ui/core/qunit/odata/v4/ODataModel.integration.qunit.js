@@ -2953,6 +2953,171 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Allow binding of operation parameters (see ListBinding application)
+	// - automatic type determination
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: type determination", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget", null)
+			.expectChange("teamId", "");
+
+		return this.createView(assert, sView).then(function () {
+			var oBudgetType = that.oView.byId("budget").getBinding("value").getType(),
+				oTeamIdType = that.oView.byId("teamId").getBinding("value").getType();
+
+			// verify automatic type determination
+			assert.strictEqual(oBudgetType.getName(), "sap.ui.model.odata.type.Decimal");
+			assert.deepEqual(oBudgetType.oConstraints, {
+				nullable : false,
+				precision : 16,
+				scale : Infinity
+			});
+			assert.strictEqual(oTeamIdType.getName(), "sap.ui.model.odata.type.String");
+			assert.deepEqual(oTeamIdType.oConstraints, {
+				maxLength : 10,
+				nullable : false
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow binding of operation parameters (see ListBinding application)
+	// - parameters appear on UI via binding
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: OneTime", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget")
+			.expectChange("teamId");
+
+		return this.createView(assert, sView).then(function () {
+			var oOperationBinding = that.oModel.bindContext("/ChangeTeamBudgetByID(...)");
+
+			oOperationBinding
+				.setParameter("Budget", "1234.1234")
+				.setParameter("TeamID", "TEAM_01");
+
+			that.expectChange("budget", "1,234.1234")
+				.expectChange("teamId", "TEAM_01");
+
+			that.oView.byId("form").getObjectBinding()
+				.setContext(oOperationBinding.getBoundContext()); //TODO getParameterContext()
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow binding of operation parameters (see ListBinding application)
+	// - parameters appear on UI via binding
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: OneWay", function (assert) {
+		var oOperationBinding,
+			sView = '\
+<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget", null)
+			.expectChange("teamId", "");
+
+		return this.createView(assert, sView).then(function () {
+			oOperationBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectChange("budget", "1,234.1234")
+				.expectChange("teamId", "TEAM_01");
+
+			oOperationBinding
+				.setParameter("Budget", "1234.1234")
+				.setParameter("TeamID", "TEAM_01");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "ChangeTeamBudgetByID",
+					payload : {
+						Budget : "1234.1234",
+						TeamID : "TEAM_01"
+					}
+				}, {/* response does not matter here */});
+
+			oOperationBinding.execute();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("budget", "56,789");
+
+			oOperationBinding.setParameter("Budget", "56789");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("teamId", null);
+
+			// #deregisterChange
+			that.oView.byId("teamId").getBinding("value").setContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oOperationBinding.setParameter("TeamID", "n/a");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow setting parameters of operations via control property binding
+	// - parameters change because of change in property binding
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget", null)
+			.expectChange("teamId", "");
+
+		return this.createView(assert, sView).then(function () {
+			that.expectChange("budget", "1,234.1234")
+				.expectChange("teamId", "TEAM_01");
+
+			that.oView.byId("budget").getBinding("value").setValue("1234.1234");
+			// also test the API for property setting
+			that.oView.byId("form").getBindingContext().setProperty("$Parameter/TeamID", "TEAM_01");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+				method : "POST",
+				url : "ChangeTeamBudgetByID",
+				payload : {
+					Budget : "1234.1234",
+					TeamID : "TEAM_01"
+				}
+			}, {/* response does not matter here */});
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().execute();
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Changing the binding parameters causes a refresh of the table
 	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Absolute ODLB changing parameters", function (assert) {

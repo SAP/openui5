@@ -1247,7 +1247,8 @@ sap.ui.define([
 					}
 
 					if (bODataMode) {
-						if (sSegment[0] === "$" && sSegment !== "$ReturnType"
+						if (sSegment[0] === "$"
+								&& sSegment !== "$Parameter" && sSegment !== "$ReturnType"
 							|| rNumber.test(sSegment)) {
 							// technical property, switch to pure "JSON" drill-down
 							bODataMode = false;
@@ -1292,6 +1293,9 @@ sap.ui.define([
 								}
 							}
 							if (Array.isArray(vResult)) { // operation overloads
+								if (sSegment === "$Parameter") {
+									return true;
+								}
 								if (sSegment.startsWith("@$ui5.overload@")) {
 									// useful to force annotation at unbound operation overload
 									sSegment = sSegment.slice(14);
@@ -2573,9 +2577,9 @@ sap.ui.define([
 	 * the schema child named "acme.DefaultContainer". This also works indirectly
 	 * ("/$EntityContainer/EMPLOYEES") and implicitly ("/EMPLOYEES", see below).
 	 *
-	 * A segment which represents an OData simple identifier (or the special name "$ReturnType",
-	 * since 1.71.0) needs special preparations. The same applies to the empty segment after a
-	 * trailing slash.
+	 * A segment which represents an OData simple identifier (or the special names "$ReturnType",
+	 * since 1.71.0, or "$Parameter", since 1.73.0) needs special preparations. The same applies to
+	 * the empty segment after a trailing slash.
 	 * <ol>
 	 * <li> If the current object has a "$Action", "$Function" or "$Type" property, it is used for
 	 *    scope lookup first. This way, "/EMPLOYEES/ENTRYDATE" addresses the same object as
@@ -2607,11 +2611,12 @@ sap.ui.define([
 	 *    for example "/acme.NewAction/@$ui5.overload".
 	 *
 	 *    Once a single overload has been determined, its parameters can be immediately addressed,
-	 *    for example "/TEAMS/acme.NewAction/Team_ID". The special name "$ReturnType" can be used
-	 *    (since 1.71.0) like a parameter to address the return type instead, for example
-	 *    "/TEAMS/acme.NewAction/$ReturnType". For all other names, the overload's
-	 *    "$ReturnType/$Type" is used for scope lookup. This way, "/GetOldestWorker/AGE" addresses
-	 *    the same object as "/GetOldestWorker/$ReturnType/AGE" or
+	 *    for example "/TEAMS/acme.NewAction/Team_ID", or the special name "$Parameter" can be used
+	 *    (since 1.73.0), for example "/TEAMS/acme.NewAction/$Parameter/Team_ID". The special name
+	 *    "$ReturnType" can be used (since 1.71.0) like a parameter to address the return type
+	 *    instead, for example "/TEAMS/acme.NewAction/$ReturnType". For all other names, the
+	 *    overload's "$ReturnType/$Type" is used for scope lookup. This way, "/GetOldestWorker/AGE"
+	 *    addresses the same object as "/GetOldestWorker/$ReturnType/AGE" or
 	 *    "/GetOldestWorker/$Function/0/$ReturnType/$Type/AGE", and
 	 *    "/TEAMS/acme.NewAction/MemberCount" (assuming "MemberCount" is not a parameter in this
 	 *    example) addresses the same object as "/TEAMS/acme.NewAction/$ReturnType/MemberCount" or

@@ -56,11 +56,9 @@
 								binding="{/ChangeTeamBudgetByID(...)}" editable="true"
 								id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
 								<Label text="Team ID" />
-								<!-- <Text text="{$Parameter('TeamID'}" /> -->
-								<Input value="{ui>/TeamID}" editable="false" />
+								<Input value="{$Parameter/TeamID}" editable="false" />
 								<Label text="Budget" />
-								<!-- <Input value="{$Parameter('Budget'}" /> -->
-								<Input value="{ui>/Budget}" />
+								<Input value="{$Parameter/Budget}" />
 							</form:SimpleForm>
 						</Dialog>
 					</dependents>
@@ -94,8 +92,7 @@
 						editable="true" id="ChangeTeamManagerByID"
 						layout="ResponsiveGridLayout">
 					<Label text="Manager ID" />
-					<!-- <Input value="{$Parameter('ManagerID'}" /> -->
-					<Input value="{ui>/ManagerID}" />
+					<Input value="{$Parameter/ManagerID}" />
 				</form:SimpleForm>
 			</Dialog>
 		</form:dependents>
