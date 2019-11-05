@@ -7299,16 +7299,18 @@
             }
 
             var dataType = lookupEntityType(dataTypeName, metadata) || lookupComplexType(dataTypeName, metadata);
-            // PSINOVA AG - Michael Rudolph - 
-            // Collection BaseType Properties as well
-            var restDerProperties = []
-            if (dataType.baseType) {
-                restDerProperties = collectPropertiesFromBaseType(dataType.baseType.substring(dataType.baseType.indexOf('.') + 1), restDerProperties, metadata)
-                properties = properties.concat(restDerProperties)
-            }
 
             if (dataType) {
                 var properties = dataType.property;
+                // PSINOVA AG - Michael Rudolph - Start
+                // Collection BaseType Properties as well
+
+                var restDerProperties = []
+                if (dataType.baseType) {
+                    restDerProperties = collectPropertiesFromBaseType(dataType.baseType.substring(dataType.baseType.indexOf('.') + 1), restDerProperties, metadata)
+                    properties = properties.concat(restDerProperties)
+                }
+                // PSINOVA AG - Michael Rudolph - End
                 if (properties) {
                     var i, len;
                     for (i = 0, len = properties.length; i < len; i++) {
@@ -7345,6 +7347,36 @@
             }
         }
         return value;
+    };
+
+    var collectPropertiesFromBaseType = function(sEdmType, aEdmTypeProperties, oMetadata) {
+        var bTypeFound = false;
+        var edmType = {};
+
+        oMetadata.dataServices.schema.forEach(function(schema) {
+            if (!bTypeFound) {
+                edmType = schema.entityType.find(function(entityType) {
+                    return entityType.name === sEdmType;
+                })
+                if (edmType) {
+                    /**
+                     * if an EntityName is unique over all scheme, we can stop the search here
+                     */
+                    bTypeFound = true;
+                    if (edmType.property) {
+                        aEdmTypeProperties = aEdmTypeProperties.concat(edmType.property);
+                    }
+
+                }
+            }
+        })
+        if (bTypeFound) {
+            if (edmType.baseType) {
+                return aEdmTypeProperties.concat(this.collectPropertiesFromBaseType(edmType.baseType.substring(edmType.baseType.indexOf('.') + 1), aEdmTypeProperties));
+            } else {
+                return aEdmTypeProperties;
+            }
+        }
     };
 
     var isJsonLight = function(contentType) {
