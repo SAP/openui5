@@ -3684,10 +3684,20 @@ sap.ui.define([
 						oRowRects = sap.ui.getCore().byId(sTargetElementId).getDomRef().getBoundingClientRect(),
 						mDraggedControlConfig = {
 							width: oDropRects.left + oDropRects.width - (oDragSession.getDragControl().$().position().left + oRowRects.left),
-							"min-width": Math.min(oDragSession.getDragControl().$().outerWidth(), oDragSession.getDropControl().$().outerWidth()),
 							"z-index": 1,
 							opacity: 0.8
-						};
+						},
+						fMinWidth = mDraggedControlConfig.width;
+
+					if (oDropRects.width > 0) {
+						while (fMinWidth <= 0) {
+							fMinWidth += oDropRects.width;
+						}
+						while (fMinWidth > oDropRects.width) {
+							fMinWidth -= oDropRects.width;
+						}
+					}
+					mDraggedControlConfig["min-width"] = fMinWidth;
 
 					oDragSession.getDragControl().$().css(mDraggedControlConfig);
 
