@@ -409,7 +409,6 @@ function(
 	MultiInput.prototype._onSuggestionItemSelected = function (eventArgs) {
 		var item = null,
 			token = null,
-			that = this,
 			iOldLength = this._tokenizer.getTokens().length; //length of tokens before validating
 
 		// Tokenizer is "full" or ValueHelp is open.
@@ -435,11 +434,7 @@ function(
 				text: text,
 				token: token,
 				suggestionObject: item,
-				validationCallback: function (validated) {
-					if (validated) {
-						that.setValue("");
-					}
-				}
+				validationCallback: this._validationCallback.bind(this, iOldLength)
 			});
 		}
 
@@ -813,30 +808,33 @@ function(
 			});
 		}
 
-		var that = this;
-
 		result = this._tokenizer._validateToken({
 			text: text,
 			token: token,
 			suggestionObject: item,
-			validationCallback: function (validated) {
-				that._bIsValidating = false;
-				if (validated) {
-					that.setValue("");
-					if (that._bUseDialog && that._isMultiLineMode && that._oSuggestionTable.getItems().length === 0) {
-						var iNewLength = that._tokenizer.getTokens().length;
-						if (iOldLength < iNewLength) {
-							that._oSuggPopover._oPopupInput.setValue("");
-						}
-
-						that._setAllTokenVisible();
-					}
-
-				}
-			}
+			validationCallback: this._validationCallback.bind(this, iOldLength)
 		});
 
 		return result;
+	};
+
+	/**
+	 * A callback executed on _tokenizer._validateToken call
+	 *
+	 * @param {integer} iOldLength Prior validation length of the Tokens
+	 * @param {boolean} bValidated Is token/input successfully validated
+	 * @private
+	 */
+	MultiInput.prototype._validationCallback = function (iOldLength, bValidated) {
+		var iNewLength = this._tokenizer.getTokens().length;
+
+		this._bIsValidating = false;
+		if (bValidated) {
+			this.setValue("");
+			if (this._bUseDialog && this._oSuggPopover && this._oSuggPopover._oPopupInput && (iOldLength < iNewLength)) {
+				this._oSuggPopover._oPopupInput.setValue("");
+			}
+		}
 	};
 
 	/**
@@ -1009,8 +1007,6 @@ function(
 	};
 
 	MultiInput.prototype._onDialogClose = function () {
-		this._validateCurrentText();
-
 		this.setAggregation("tokenizer", this._tokenizer);
 		this._tokenizer.setReverseTokens(false);
 		this._tokenizer.invalidate();
@@ -1093,7 +1089,8 @@ function(
 	 * @private
 	 */
 	MultiInput.prototype._validateCurrentText = function (bExactMatch) {
-		var text = this.getValue();
+		var text = this.getValue(),
+			iOldLength = this._tokenizer.getTokens().length; //length of tokens before validating
 		if (!text || !this.getEditable()) {
 			return;
 		}
@@ -1125,8 +1122,6 @@ function(
 			});
 		}
 
-		var that = this;
-
 		// if maxTokens limit is not set or the added tokens are less than the limit
 		if (!this.getMaxTokens() || this.getTokens().length < this.getMaxTokens()) {
 			this._bIsValidating = true;
@@ -1134,12 +1129,7 @@ function(
 				text: text,
 				token: token,
 				suggestionObject: item,
-				validationCallback: function (validated) {
-					that._bIsValidating = false;
-					if (validated) {
-						that.setValue("");
-					}
-				}
+				validationCallback: this._validationCallback.bind(this, iOldLength)
 			});
 		}
 	};
@@ -1449,15 +1439,15 @@ function(
 		oPopupInput.addEventDelegate({
 			oninput: that._manageListsVisibility.bind(that, false),
 			onsapenter: function (oEvent) {
+				if (oPopupInput.getValue()) {
+					that._closeSuggestionPopup();
+				}
+
 				that._validateCurrentText();
 				that._setValueInvisible();
 
 				// Fire through the MultiInput Popup's input value and save it
 				that.onChange(oEvent, null, oPopupInput.getValue());
-
-				if (oPopupInput.getValue()) {
-					that._closeSuggestionPopup();
-				}
 			}
 		});
 
