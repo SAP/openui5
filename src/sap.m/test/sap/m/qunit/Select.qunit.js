@@ -6689,9 +6689,8 @@ sap.ui.define([
 					assert.ok(oSelect.$("arrow").length, "The HTML span element for the arrow exists");
 					assert.strictEqual(getComputedStyle(
 						oSelect.$("arrow")[0]).pointerEvents,
-						/* TODO remove after 1.62 version */
-						Device.browser.internet_explorer ? "none" : "auto",
-						"The HTML span element for the arrow has pointer-events = 'none' in IE, and 'auto' in all other browsers");
+						"auto",
+						"The HTML span element for the arrow has pointer-events = 'auto' in all other browsers");
 				} else if (oSelect.getType() === SelectType.IconOnly) {
 					assert.ok(oSelect.$("icon").length, "The HTML span element for the icon exists");
 				}
