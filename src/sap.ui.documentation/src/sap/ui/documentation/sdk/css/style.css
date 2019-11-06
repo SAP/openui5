@@ -1925,6 +1925,8 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
  */
 .sapUiDocLightTable .sapUiParamText.sapUiDocumentationParamBold {
 	font-weight: bold;
+	word-wrap: break-word;
+	white-space: initial;
 }
 
 .sapUiDocLightTable .sapUiParamText.sapUiDocumentationParamPhone {
