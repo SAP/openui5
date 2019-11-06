@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/FlexController",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -16,6 +17,7 @@ function (
 	Page,
 	Button,
 	OverlayRegistry,
+	FlexController,
 	sinon
 ) {
 	"use strict";
@@ -49,6 +51,11 @@ function (
 			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
 		},
 		beforeEach: function () {
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
+			});
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oPage

@@ -613,6 +613,17 @@ function(
 				window.onbeforeunload = this._onUnload.bind(this);
 			}.bind(this))
 			.then(function () {
+				var mPropertyBag = {
+					selector : this.getRootControlInstance(),
+					currentLayer : this.getLayer()
+				};
+				return this._getFlexController().getResetAndPublishInfo(mPropertyBag)
+				.then(function(oFlexInfo) {
+					this.bInitialPublishEnabled = oFlexInfo.isPublishEnabled;
+					this.bInitialResetEnabled = oFlexInfo.isResetEnabled;
+				}.bind(this));
+			}.bind(this))
+			.then(function () {
 				if (this.getShowToolbars()) {
 					// Create ToolsMenu
 					return this._getPublishAndAppVariantSupportVisibility()
@@ -699,7 +710,7 @@ function(
 	RuntimeAuthoring.prototype._getPublishAndAppVariantSupportVisibility = function() {
 		return FlexSettings.getInstance().then(function(oSettings) {
 			var bIsAppVariantSupported = RtaAppVariantFeature.isPlatFormEnabled(this.getRootControlInstance(), this.getLayer(), this._oSerializer);
-			return [!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
+			return [!oSettings.isProductiveSystem(), !oSettings.isProductiveSystem() && bIsAppVariantSupported];
 		}.bind(this))
 		.catch(function () {
 			return false;
@@ -778,8 +789,8 @@ function(
 
 		if (this.getShowToolbars()) {
 			this.getToolbar().setUndoRedoEnabled(bCanUndo, bCanRedo);
-			this.getToolbar().setPublishEnabled(this._bChangesExist || bCanUndo);
-			this.getToolbar().setRestoreEnabled(this._bChangesExist || bCanUndo);
+			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled || bCanUndo);
+			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled || bCanUndo);
 		}
 		this.fireUndoRedoStackModified();
 	};
@@ -884,11 +895,11 @@ function(
 			) {
 				this._onUndo().then(oEvent.stopPropagation.bind(oEvent));
 			} else if (
-				(( // OSX: CMD+SHIFT+Z
+				((// OSX: CMD+SHIFT+Z
 					bMacintosh
 					&& oEvent.keyCode === KeyCodes.Z
 					&& oEvent.shiftKey === true
-				) || ( // Others: CTRL+Y
+				) || (// Others: CTRL+Y
 					!bMacintosh
 					&& oEvent.keyCode === KeyCodes.Y
 					&& oEvent.shiftKey === false
@@ -974,6 +985,9 @@ function(
 				}), 'toolbar');
 			}
 
+			this.getToolbar().setPublishEnabled(this.bInitialPublishEnabled);
+			this.getToolbar().setRestoreEnabled(this.bInitialResetEnabled);
+
 			var bExtendedOverview;
 
 			if (bIsAppVariantSupported) {
@@ -999,15 +1013,6 @@ function(
 					this.getToolbar().getControl('saveAs').setEnabled(bResult);
 				}.bind(this));
 			}
-
-			this._checkChangesExist().then(function(bResult){
-				// FIXME: remove this condition when start() is refactored properly
-				if (!this.bIsDestroyed) {
-					this._bChangesExist = bResult;
-					this.getToolbar().setPublishEnabled(bResult);
-					this.getToolbar().setRestoreEnabled(bResult);
-				}
-			}.bind(this));
 		}
 	};
 
@@ -1088,7 +1093,9 @@ function(
 	};
 
 	/**
-	 * Delete all changes for current layer and root control's component
+	 * Delete all changes for current layer and root control's component.
+	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Flex Persistence instances,
+	 * the changes for both places will be deleted. For App Variants all the changes are saved in one place.
 	 *
 	 * @private
 	 */
@@ -1292,21 +1299,6 @@ function(
 	RuntimeAuthoring.prototype._handleStopCutPaste = function() {
 		if (this.getPlugins()["cutPaste"]){
 			this.getPlugins()["cutPaste"].stopCutAndPaste();
-		}
-	};
-
-	/**
-	 * Check if Changes exist
-	 * @private
-	 * @returns {Promise} Resolving to false means that no change check is required
-	 */
-	RuntimeAuthoring.prototype._checkChangesExist = function() {
-		if (this._getFlexController().getComponentName().length > 0) {
-			return this._getFlexController().getComponentChanges({currentLayer: this.getLayer(), includeCtrlVariants: true}).then(function(aAllLocalChanges) {
-				return aAllLocalChanges.length > 0;
-			});
-		} else {
-			return Promise.resolve(false);
 		}
 	};
 

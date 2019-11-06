@@ -338,13 +338,16 @@ sap.ui.define([
 				},
 				getComponentChanges : function() {
 					return Promise.resolve();
+				},
+				getResetAndPublishInfo : function() {
+					return Promise.resolve({
+						isResetEnabled : true,
+						isPublishEnabled : true
+					});
 				}
 			};
 
 			sandbox.stub(this.oRta, "_getFlexController").returns(stubFlexController);
-			sandbox.stub(this.oRta, "_checkChangesExist").callsFake(function(){
-				return Promise.resolve(true);
-			});
 			this.oRta.setShowToolbars(true);
 
 			this.oRta.start().then(function () {
@@ -603,26 +606,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
-		beforeEach : function() {
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
-			});
-			sandbox.stub(Settings, "getInstance").returns(Promise.reject());
-
-			return this.oRta.start();
-		},
-		afterEach : function() {
-			this.oRta.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("and FL settings return rejected promise", function(assert) {
-			assert.equal(this.oRta.getToolbar().getControl('restore').getVisible(), true, "then the Reset Button is still visible");
-			assert.equal(this.oRta.getToolbar().getControl('publish').getVisible(), false, "then the Publish Button is invisible");
-		});
-	});
-
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
 		beforeEach : function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
@@ -703,18 +686,6 @@ sap.ui.define([
 				}
 			});
 			assert.equal(this.oRta.iEditableOverlaysCount, 0, "the counter is now 0 again");
-		});
-
-		QUnit.test("when _checkChangesExist is called without a componentName", function(assert) {
-			sandbox.stub(this.oRta, "_getFlexController").returns({
-				getComponentName: function() {
-					return [];
-				}
-			});
-
-			return this.oRta._checkChangesExist().then(function(bPromiseValue) {
-				assert.equal(bPromiseValue, false, "then the promise resolved with false as parameter");
-			});
 		});
 	});
 

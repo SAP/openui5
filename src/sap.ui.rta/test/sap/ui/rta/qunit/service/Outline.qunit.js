@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/FlexController",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/m/Page",
@@ -23,6 +24,7 @@ sap.ui.define([
 	CommandFactory,
 	OverlayRegistry,
 	DesignTime,
+	FlexController,
 	VerticalLayout,
 	Button,
 	Page,
@@ -108,6 +110,11 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oPage
+			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
 			});
 
 			// check designtime metadata label property
@@ -282,6 +289,11 @@ sap.ui.define([
 				rootControl: oPage,
 				showToolbars: false,
 				plugins: { "testPlugin": oPlugin }
+			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
 			});
 
 			this.oRta.getService("outline").then(function (oService) {

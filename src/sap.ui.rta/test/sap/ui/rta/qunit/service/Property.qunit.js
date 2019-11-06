@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/Util",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/FlexController",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Control",
 	"sap/m/Page",
@@ -15,6 +16,7 @@ sap.ui.define([
 	RuntimeAuthoring,
 	DtUtil,
 	DesignTime,
+	FlexController,
 	VerticalLayout,
 	Control,
 	Page,
@@ -43,6 +45,11 @@ sap.ui.define([
 					oPage = new Page("mainPage");
 					return oPage;
 				}
+			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
 			});
 
 			this.oComp = new MockComponent("testComponent");

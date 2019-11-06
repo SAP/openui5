@@ -3,6 +3,7 @@
 sap.ui.require([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/fl/FlexController",
 	"sap/ui/core/UIComponent",
 	"sap/m/Page",
 	"sap/m/Button",
@@ -12,6 +13,7 @@ sap.ui.require([
 function (
 	RuntimeAuthoring,
 	BasePlugin,
+	FlexController,
 	UIComponent,
 	Page,
 	Button,
@@ -44,13 +46,18 @@ function (
 			this.oComponent = new FixtureComponent();
 			this.oPage = this.oComponent.getRootControl();
 			this.oButton = this.oPage.getContent()[0];
-
-			sandbox.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
 		},
 		beforeEach: function () {
+			sandbox.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oPage
+			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
 			});
 
 			return this.oRta.start().then(function () {
@@ -70,10 +77,10 @@ function (
 		},
 		afterEach: function() {
 			this.oRta.destroy();
+			sandbox.restore();
 		},
 		after: function () {
 			this.oComponent.destroy();
-			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("get()", function (assert) {
