@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
 	"sap/m/Input",
+	"sap/m/Table",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Item",
 	"sap/ui/model/json/JSONModel",
@@ -32,6 +33,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	Device,
 	Input,
+	Table,
 	EventExtension,
 	Item,
 	JSONModel,
@@ -1559,6 +1561,7 @@ sap.ui.define([
 
 		var oInput = new Input({
 			width: "100px",
+			enableSuggestionsHighlighting: false,
 			suggestionColumns: [
 				new Column({
 					styleClass: "name",
@@ -2468,6 +2471,94 @@ sap.ui.define([
 		assert.equal(oSelectedRow2.getId(), oInput.getSelectedRow(), "SuggestionRow should be correctly set");
 
 		// clean up
+		oInput.destroy();
+	});
+
+	QUnit.test("Tabular Suggestions - remove suggestions", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionColumns: [
+				new Column({
+					header: new Label({
+						text: "{i18n>/Name}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Qty}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Value}"
+					})
+				}),
+				new Column({
+					header : new Label({
+						text : "{i18n>/Price}"
+					})
+				})
+			]}),
+			oTableItemTemplate = new ColumnListItem({
+				vAlign : "Middle",
+				cells : [
+					new Label({
+						text : "{name}"
+					}),
+					new Label({
+						text: "{qty}"
+					}), new Label({
+						text: "{limit}"
+					}), new Label({
+						text : "{price}"
+					})
+				]
+			}),
+			oSuggestionData = {
+				tabularSuggestionItems : [{
+					name : "Product1",
+					qty : "10 EA",
+					limit : "15.00 Eur",
+					price : "10.00 EUR"
+				}, {
+					name : "Product2",
+					qty : "9 EA",
+					limit : "25.00 Eur",
+					price : "20.00 EUR"
+				}, {
+					name : "Photo scan",
+					qty : "8 EA",
+					limit : "35.00 Eur",
+					price : "30.00 EUR"
+				}]
+			};
+
+		var oModel = new JSONModel(oSuggestionData);
+
+		oInput.setModel(oModel);
+		oInput.bindSuggestionRows({
+			path: "/tabularSuggestionItems",
+			template: oTableItemTemplate
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		var oRemovedRow = oInput.getSuggestionRows()[0];
+		oInput.removeSuggestionRow(oRemovedRow);
+
+		// Assert
+		assert.strictEqual(oInput.getSuggestionRows().length, 2, "A suggestions is removed");
+
+		// Act
+		oInput.removeAllSuggestionRows();
+
+		// Assert
+		assert.strictEqual(oInput.getSuggestionRows().length, 0, "All suggestions are removed");
+
+		// Destroy
 		oInput.destroy();
 	});
 
@@ -4820,8 +4911,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oInput._oSuggPopover._oSuggestionTable.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggPopover._oSuggestionTable.getItems()).length, 5, "Shows all items");
+		assert.strictEqual(this.oInput._oSuggestionTable.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggestionTable.getItems()).length, 5, "Shows all items");
 	});
 
 	QUnit.test("Should filter the items", function (assert) {
@@ -4839,8 +4930,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oInput._oSuggPopover._oSuggestionTable.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggPopover._oSuggestionTable.getItems()).length, 1, "Only the matching items are visible");
+		assert.strictEqual(this.oInput._oSuggestionTable.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggestionTable.getItems()).length, 1, "Only the matching items are visible");
 	});
 
 	QUnit.module("Dialog on mobile");

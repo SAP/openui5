@@ -99,6 +99,8 @@ sap.ui.define([
 			// stores a reference to the input control that instantiates the popover
 			this._oInput = oInput;
 
+			this._bHasTabularSuggestions = false;
+
 			// show suggestions in a dialog on phones
 			this._bUseDialog = Device.system.phone;
 
@@ -160,11 +162,6 @@ sap.ui.define([
 			if (this._oList) {
 				this._oList.destroy();
 				this._oList = null;
-			}
-
-			if (this._oSuggestionTable) {
-				this._oSuggestionTable.destroy();
-				this._oSuggestionTable = null;
 			}
 
 			this._oProposedItem = null;
@@ -234,50 +231,6 @@ sap.ui.define([
 		}
 
 		return SuggestionsPopover._wordStartsWithValue(oItem.getText(), sValue);
-	};
-
-	/**
-	 * The default filter function for tabular suggestions. It checks whether some item text begins with the typed value.
-	 *
-	 * @private
-	 * @param {string} sValue the current filter string.
-	 * @param {sap.m.ColumnListItem} oColumnListItem The filtered list item.
-	 * @returns {boolean} true for items that start with the parameter sValue, false for non matching items.
-	 */
-	SuggestionsPopover._DEFAULTFILTER_TABULAR = function(sValue, oColumnListItem) {
-		var aCells = oColumnListItem.getCells(),
-			i = 0;
-
-		for (; i < aCells.length; i++) {
-
-			if (aCells[i].getText) {
-				if (SuggestionsPopover._wordStartsWithValue(aCells[i].getText(), sValue)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	};
-
-	/**
-	 * The default result function for tabular suggestions. It returns the value of the first cell with a "text" property.
-	 *
-	 * @private
-	 * @param {sap.m.ColumnListItem} oColumnListItem The selected list item.
-	 * @returns {string} The value to be displayed in the input field.
-	 */
-	SuggestionsPopover._DEFAULTRESULT_TABULAR = function (oColumnListItem) {
-		var aCells = oColumnListItem.getCells(),
-			i = 0;
-
-		for (; i < aCells.length; i++) {
-			// take first cell with a text method and compare value
-			if (aCells[i].getText) {
-				return aCells[i].getText();
-			}
-		}
-		return "";
 	};
 
 	/**
@@ -474,13 +427,14 @@ sap.ui.define([
 	/**
 	 * Helper function that creates content for the suggestion popup.
 	 *
-	 * @param {boolean | null } bTabular Content for the popup.
-	 * @param hasTabularSuggestions {boolean} Determines if the Input has tabular suggestions.
+	 * @param {boolean | null } bTabular Determines whether the popup content is a table or a list.
 	 */
-	SuggestionsPopover.prototype._createSuggestionPopupContent = function (bTabular, hasTabularSuggestions) {
+	SuggestionsPopover.prototype._createSuggestionPopupContent = function (bTabular) {
 		var oInput = this._oInput;
 
-		if (!hasTabularSuggestions && !bTabular) {
+		this._bHasTabularSuggestions = bTabular;
+
+		if (!bTabular) {
 			this._oList = new List(oInput.getId() + "-popup-list", {
 				showNoData : false,
 				mode : ListMode.SingleSelectMaster,
@@ -507,7 +461,7 @@ sap.ui.define([
 
 		} else {
 			// tabular suggestions
-			this._oList = this._getSuggestionsTable();
+			this._oList = this._oInput._getSuggestionsTable();
 		}
 
 		this._oSimpleFixFlex = this._createSimpleFixFlex();
@@ -790,25 +744,11 @@ sap.ui.define([
 		// CSN# 1390866/2014: The default for ListItemBase type is "Inactive", therefore disabled entries are only supported for single and two-value suggestions
 		// for tabular suggestions: only check visible
 		// for two-value and single suggestions: check also if item is not inactive
-		var bSelectionAllowed = this._hasTabularSuggestions()
+		var bSelectionAllowed = this._bHasTabularSuggestions
 			|| oItem.getType() !== ListType.Inactive
 			|| oItem.isA("sap.m.GroupHeaderListItem");
 
 		return oItem.getVisible() && bSelectionAllowed;
-	};
-
-	/**
-	 * Check for tabular suggestions in the input.
-	 *
-	 * @private
-	 * @returns {boolean} Determines if the Input has tabular suggestions.
-	 */
-	SuggestionsPopover.prototype._hasTabularSuggestions = function() {
-		if (!this._oSuggestionTable) {
-			return;
-		}
-
-		return !!(this._oSuggestionTable.getColumns() && this._oSuggestionTable.getColumns().length);
 	};
 
 	SuggestionsPopover.prototype.setOkPressHandler = function(fnHandler){
@@ -867,69 +807,6 @@ sap.ui.define([
 		} else if (iBottom > 0) {
 			oScrollDelegate.scrollTo(oScrollDelegate._scrollX, oScrollDelegate._scrollY + iBottom);
 		}
-	};
-
-	/**
-	 * Gets suggestion table with lazy loading.
-	 *
-	 * @private
-	 * @returns {sap.m.Table} Suggestion table.
-	 */
-	SuggestionsPopover.prototype._getSuggestionsTable = function() {
-		var oInput = this._oInput;
-
-		if (oInput._bIsBeingDestroyed) {
-			return this._oSuggestionTable;
-		}
-
-		if (!this._oSuggestionTable) {
-			this._oSuggestionTable = new Table(oInput.getId() + "-popup-table", {
-				mode: ListMode.SingleSelectMaster,
-				showNoData: false,
-				showSeparators: ListSeparators.None,
-				width: "100%",
-				enableBusyIndicator: false,
-				rememberSelections : false,
-				itemPress: function (oEvent) {
-					if (Device.system.desktop) {
-						oInput.focus();
-					}
-					this._bSuggestionItemTapped = true;
-					var oSelectedListItem = oEvent.getParameter("listItem");
-					oInput.setSelectionRow(oSelectedListItem, true);
-				}.bind(this)
-			});
-
-			this._oSuggestionTable.addEventDelegate({
-				onAfterRendering: function () {
-					var aTableCellsDomRef, sInputValue;
-
-					if (!oInput.getEnableSuggestionsHighlighting()) {
-						return;
-					}
-
-					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
-					sInputValue = (this._sTypedInValue || this._oInput.getValue()).toLowerCase();
-
-					this.highlightSuggestionItems(aTableCellsDomRef, sInputValue);
-				}.bind(this)
-			});
-
-			// initially hide the table on phone
-			if (this._bUseDialog) {
-				this._oSuggestionTable.addStyleClass("sapMInputSuggestionTableHidden");
-			}
-
-			this._oSuggestionTable.updateItems = function() {
-				Table.prototype.updateItems.apply(oInput, arguments);
-				oInput._refreshItemsDelayed();
-				return oInput;
-			};
-		}
-
-		oInput._oSuggestionTable = this._oSuggestionTable; // for backward compatibility (used in some other controls)
-
-		return this._oSuggestionTable;
 	};
 
 	/**
@@ -1096,8 +973,7 @@ sap.ui.define([
 		}
 
 		var sValueLowerCase = sValue.toLowerCase(),
-			bSearchSuggestionRows = this._hasTabularSuggestions(),
-			aItems = bSearchSuggestionRows ? this._oInput.getSuggestionRows() : this._oInput.getSuggestionItems(),
+			aItems = this._bHasTabularSuggestions ? this._oInput.getSuggestionRows() : this._oInput.getSuggestionItems(),
 			iLength,
 			sNewValue,
 			sItemText,
@@ -1110,7 +986,7 @@ sap.ui.define([
 		iLength = aItems.length;
 
 		for (i = 0; i < iLength; i++) {
-			sItemText =  bSearchSuggestionRows ? this._oInput._fnRowResultFilter(aItems[i]) : aItems[i].getText();
+			sItemText =  this._bHasTabularSuggestions ? this._oInput._fnRowResultFilter(aItems[i]) : aItems[i].getText();
 
 			if (sItemText.toLowerCase().indexOf(sValueLowerCase) === 0) { // startsWith
 				this._oProposedItem = aItems[i];
@@ -1184,7 +1060,7 @@ sap.ui.define([
 		}
 
 		if (!this._bSuggestionItemTapped && !this._bSuggestionItemChanged && this._oProposedItem) {
-			if (this._hasTabularSuggestions()) {
+			if (this._bHasTabularSuggestions) {
 				this._oInput.setSelectionRow(this._oProposedItem, true);
 			} else {
 				this._oInput.setSelectionItem(this._oProposedItem, true);

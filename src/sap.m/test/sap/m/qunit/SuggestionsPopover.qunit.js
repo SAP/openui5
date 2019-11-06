@@ -6,6 +6,7 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/SuggestionsPopover",
+	'sap/m/List',
 	"sap/m/Input"
 ], function (
 	qutils,
@@ -13,6 +14,7 @@ sap.ui.define([
 	jQuery,
 	mobileLibrary,
 	SuggestionsPopover,
+	List,
 	Input
 ) {
 	"use strict";
@@ -277,5 +279,39 @@ sap.ui.define([
 		assert.strictEqual(oDivDomRef.innerHTML,
 			"<span class=\"sapMInputHighlight\">서비스</span> ID 유헝 <span class=\"sapMInputHighlight\">서비스</span> 성별",
 			"Double highlight with unicode characters");
+	});
+
+	QUnit.module("_createSuggestionPopupContent", {
+		beforeEach: function () {
+			var oInput = new Input();
+			this.oSuggestionsPopover = new SuggestionsPopover(oInput);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSuggestionsPopover.destroy();
+			this.oSuggestionsPopover = null;
+		}
+	});
+
+	QUnit.test("Using tabular suggestions", function (assert) {
+		//Act
+		var fnGetSuggestionsTableSpy = this.spy(Input.prototype, "_getSuggestionsTable");
+		this.oSuggestionsPopover._createSuggestionPopupContent(true);
+
+		//Assert
+		assert.strictEqual(this.oSuggestionsPopover._bHasTabularSuggestions, true, "The value is updated correctly");
+		assert.strictEqual(fnGetSuggestionsTableSpy.callCount, 1, "The input has tabular suggestions");
+
+		//Clean up
+		fnGetSuggestionsTableSpy.restore();
+	});
+
+	QUnit.test("Using regular suggestions", function (assert) {
+		//Act
+		this.oSuggestionsPopover._createSuggestionPopupContent(false);
+
+		//Assert
+		assert.strictEqual(this.oSuggestionsPopover._bHasTabularSuggestions, false, "The value is updated correctly");
+		assert.ok(this.oSuggestionsPopover._oList instanceof List, "The suggestions type is ListItem");
 	});
 });
