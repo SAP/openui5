@@ -334,9 +334,9 @@ function(
 
 		for (var i = 0; i < iStepsLength; i++) {
 			if (i <= iZeroBasedCurrentStep) {
-				this._aCachedSteps[i].style.iZIndex = 0;
+				this._aCachedSteps[i].style.zIndex = 0;
 			} else {
-				this._aCachedSteps[i].style.iIndex = iZIndex;
+				this._aCachedSteps[i].style.zIndex = iZIndex;
 				iZIndex -= 1;
 			}
 		}
