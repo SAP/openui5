@@ -61,9 +61,7 @@ sap.ui.define([
 				oArguments = this.getRouter()._decodeSpecialRouteArguments(oEvent);
 				oComponent = this.getOwnerComponent();
 
-				if (this._sTopicid === oArguments.id
-					&& this._sEntityType === oArguments.entityType
-					&& this._sEntityId === oArguments.entityId) {
+				if (this._sTopicid === oArguments.id) {
 					// since we trigger <code>router.parse(new_path)</code> without checking the current path,
 					// it is possible to trigger navigation to the same path more than once
 					// => check if entity already displayed on controller level for now
