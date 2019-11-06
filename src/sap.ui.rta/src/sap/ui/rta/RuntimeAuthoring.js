@@ -942,6 +942,12 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
+		if (!this._bReloadNeeded) {
+			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
+				this._bReloadNeeded = bReloadNeeded;
+				return this._oSerializer.saveCommands();
+			}.bind(this));
+		}
 		return this._oSerializer.saveCommands();
 	};
 
@@ -1466,7 +1472,9 @@ function(
 	 */
 	RuntimeAuthoring.prototype._handleReloadOnExit = function() {
 		return Promise.all([
-			this._oSerializer.needsReload(),
+			(!this._bReloadNeeded) ?
+				this._oSerializer.needsReload() :
+				Promise.resolve(this._bReloadNeeded),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
 			PersistenceWriteAPI.hasHigherLayerChanges({selector: this.getRootControlInstance(), ignoreMaxLayerParameter: true})
