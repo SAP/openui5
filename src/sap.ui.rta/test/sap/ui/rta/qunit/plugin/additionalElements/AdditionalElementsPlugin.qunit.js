@@ -768,6 +768,32 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("when something breaks during _isEditableCheck() check", function(assert) {
+			return createOverlayWithAggregationActions.call(this, {
+				reveal : {
+					changeType : "unhideControl",
+					changeOnRelevantContainer: true
+				}
+			},
+			ON_SIBLING
+			)
+				.then(function(oOverlay) {
+					sandbox.stub(this.oPlugin, "hasStableId").callsFake(function(oOverlay) {
+						if (oOverlay === this.oPseudoPublicParentOverlay) {
+							throw new Error("Some error");
+						}
+						return true;
+					}.bind(this));
+					return this.oPlugin._isEditableCheck(oOverlay, true);
+				}.bind(this))
+				.then(function() {
+					assert.ok(false, "should never come here");
+				})
+				.catch(function (oError) {
+					assert.strictEqual(oError.message, "Some error");
+				});
+		});
+
 		QUnit.test("when the control's dt metadata has a reveal action with changeOnRelevantContainer true but the parent does not have stable ID", function(assert) {
 			return createOverlayWithAggregationActions.call(this, {
 				reveal : {
