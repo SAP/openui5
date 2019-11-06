@@ -2,18 +2,20 @@
 
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
-	"sap/ui/integration/designtime/baseEditor/PropertyEditors",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/qunit/QUnitUtils"
+	"sap/ui/qunit/QUnitUtils",
+	"sap/base/util/ObjectPath"
 ], function (
 	ArrayEditor,
-	PropertyEditors,
 	JSONModel,
-	ManagedObjectObserver,
-	QUnitUtils
+	QUnitUtils,
+	ObjectPath
 ) {
 	"use strict";
+
+	function _getArrayEditorElement(oEditor, iIndex) {
+		return oEditor.getContent()[0].getItems()[0].getItems()[iIndex];
+	}
 
 	QUnit.module("Array Editor: Given an editor config", {
 		beforeEach: function (assert) {
@@ -27,7 +29,8 @@ sap.ui.define([
 					title : {
 						label: "SIDE_INDICATOR.TITLE",
 						type: "string",
-						path: "header/sideIndicators/:index/title"
+						path: "header/sideIndicators/:index/title",
+						defaultValue: "Side Indicator"
 					},
 					number : {
 						label: "SIDE_INDICATOR.NUMBER",
@@ -88,7 +91,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a model is set", function (assert) {
-			var oPropertyEditors = this.oEditor.getContent()[0].getItems()[0].getItems()[0].getItems()[1];
+			var oPropertyEditors = _getArrayEditorElement(this.oEditor, 0).getItems()[1];
 			assert.strictEqual(oPropertyEditors.getConfig().length, 3, "Then the property editors get three configurations");
 			assert.strictEqual(oPropertyEditors.getConfig()[0].type, "string", "and the first property editor is for string");
 			assert.strictEqual(oPropertyEditors.getConfig()[1].type, "number", "and the second property editor is for number");
@@ -99,7 +102,7 @@ sap.ui.define([
 			this.oPropertyConfig.template.title.type = "enum";
 			this.oPropertyConfig.template.title.enum = ["Title1", "Title2"];
 			this.oEditor.setConfig(this.oPropertyConfig);
-			var oPropertyEditors = this.oEditor.getContent()[0].getItems()[0].getItems()[0].getItems()[1];
+			var oPropertyEditors = _getArrayEditorElement(this.oEditor, 0).getItems()[1];
 			assert.strictEqual(oPropertyEditors.getConfig().length, 3, "Then the property editors get three configurations");
 			assert.strictEqual(oPropertyEditors.getConfig()[0].type, "enum", "and the first property editor is changed to enum");
 			assert.strictEqual(oPropertyEditors.getConfig()[1].type, "number", "and the second property editor is still for number");
@@ -114,8 +117,8 @@ sap.ui.define([
 				assert.equal(oEvent.getParameter("value")[0].title, "Deviation", "Then it is updated correctly");
 				done();
 			});
-			var oDelButton_0 = this.oEditor.getContent()[0].getItems()[0].getItems()[0].getItems()[0].getContentRight()[0];
-			QUnitUtils.triggerEvent("tap", oDelButton_0.getDomRef());
+			var oDelButton0 = _getArrayEditorElement(this.oEditor, 0).getItems()[0].getContentRight()[0];
+			QUnitUtils.triggerEvent("tap", oDelButton0.getDomRef());
 		});
 
 		QUnit.test("When the second delete button is pressed in the editor", function (assert) {
@@ -126,8 +129,61 @@ sap.ui.define([
 				assert.strictEqual(oEvent.getParameter("value")[0].title, "Target", "Then it is updated correctly");
 				done();
 			});
-			var oButton_1 = this.oEditor.getContent()[0].getItems()[0].getItems()[1].getItems()[0].getContentRight()[0];
-			QUnitUtils.triggerEvent("tap", oButton_1.getDomRef());
+			var oButton1 = _getArrayEditorElement(this.oEditor, 1).getItems()[0].getContentRight()[0];
+			QUnitUtils.triggerEvent("tap", oButton1.getDomRef());
+		});
+
+		QUnit.test("When the default values are undefined or complex", function (assert) {
+			var done = assert.async();
+			var oConfig = {
+				tags: ["header", "numericHeader"],
+				label: "SIDE_INDICATORS",
+				path: "header/sideIndicators",
+				type: "array",
+				itemLabel: "SIDE_INDICATOR",
+				template: {
+					title : {
+						label: "SIDE_INDICATOR.TITLE",
+						type: "string",
+						path: "header/sideIndicators/:index/title",
+						defaultValue: undefined
+					},
+					number : {
+						label: "SIDE_INDICATOR.NUMBER",
+						type: "enum",
+						defaultValue: {
+							val: 1,
+							unit: undefined
+						},
+						path: "header/sideIndicators/:index/number",
+						"enum": [{
+							val: 1,
+							unit: undefined
+						}]
+					}
+				},
+				maxItems: 3,
+				visible: "{= ${context>header/type} === 'Numeric' }"
+			};
+			this.oEditor.setConfig(oConfig);
+
+			this.oEditor.attachPropertyChange(function (oEvent) {
+				assert.deepEqual(
+					oEvent.getParameter("value")[2],
+					{
+						number: {
+							unit: undefined,
+							val: 1
+						},
+						title: undefined
+					},
+					"Then new items have the proper values"
+				);
+				assert.ok(oEvent.getParameter("value")[2].number !== oConfig.template.number.defaultValue, "Then the default value is cloned");
+				done();
+			});
+			var oAddButton = this.oEditor.getContent()[0].getItems()[1];
+			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});
 
 		QUnit.test("When the add button is pressed in the editor", function (assert) {
@@ -135,11 +191,63 @@ sap.ui.define([
 
 			this.oEditor.attachPropertyChange(function (oEvent) {
 				assert.strictEqual(oEvent.getParameter("value").length, 3, "Then there are three side indicators");
+				assert.deepEqual(oEvent.getParameter("value")[2], {title: "Side Indicator"}, "Then the new item is created with proper default values");
 				done();
 			});
 			var oAddButton = this.oEditor.getContent()[0].getItems()[1];
 			QUnitUtils.triggerEvent("tap", oAddButton.getDomRef());
 		});
 
+		QUnit.test("When a new item is added to and an exisiting item is removed from an array", function (assert) {
+			var done = assert.async();
+
+			this.oEditor.attachEventOnce("propertyChange", function (oEvent) {
+				var aEditorValueAfterAdding = oEvent.getParameter("value");
+				assert.deepEqual(
+					aEditorValueAfterAdding,
+					[{
+						title: "Target",
+						number: 250,
+						unit: "K"
+					},{
+						number: 42,
+						title: "Deviation",
+						unit: "%"
+					},{
+						title: "Side Indicator"
+					}],
+					"Then the new item is added to the array"
+				);
+
+				var sPath = oEvent.getParameter("path");
+				var aParts = sPath.split("/");
+
+				var oContext = this.oContextModel.getData();
+				ObjectPath.set(aParts, oEvent.getParameter("value"), oContext);
+				this.oContextModel.checkUpdate();
+
+				this.oEditor.attachPropertyChange(function (oEvent) {
+					assert.deepEqual(
+						oEvent.getParameter("value"),
+						[{
+							title: "Target",
+							number: 250,
+							unit: "K"
+						},{
+							title: "Side Indicator"
+						}],
+						"Then the remaining items still have the correct value"
+					);
+					assert.ok(oEvent.getParameter("value") !== aEditorValueAfterAdding, "Then the editor value is not mutated");
+					done();
+				});
+
+				// The old item is deleted
+				QUnitUtils.triggerEvent("tap", _getArrayEditorElement(this.oEditor, 1).getItems()[0].getContentRight()[0].getDomRef());
+			}.bind(this));
+
+			// A new item is added
+			QUnitUtils.triggerEvent("tap", this.oEditor.getContent()[0].getItems()[1].getDomRef());
+		});
 	});
 });

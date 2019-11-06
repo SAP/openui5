@@ -48,7 +48,8 @@ sap.ui.define([
 		},
 		"actions": generateActionConfig({
 			"tags": ["header"],
-			"path": "header/actions"
+			"path": "header/actions",
+			"maxItems": 1
 		}),
 		"statusText": {
 			"tags": ["header", "defaultHeader"],

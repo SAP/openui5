@@ -75,13 +75,24 @@ sap.ui.define([
 		},
 		_removeItem: function(oEvent) {
 			var iIndex = oEvent.getSource().data("index");
-			var aValue = this.getConfig().value;
+			var aValue = this.getModel("_context").getProperty("/" + this.getConfig().path).slice();
 			aValue.splice(iIndex, 1);
 			this.firePropertyChange(aValue);
 		},
 		_addItem: function() {
-			var aValue = this.getConfig().value || [];
-			aValue.push({});
+			var oConfig = this.getConfig();
+			var aValue = this.getModel("_context").getProperty("/" + oConfig.path).slice() || [];
+			// Workaround:
+			// Create a default array item
+			// This solution does not support nested arrays
+			var oDefaultItem = {};
+			Object.keys(oConfig.template).forEach(function (sKey) {
+				var defaultValue = oConfig.template[sKey].defaultValue;
+				if (oConfig.template[sKey].hasOwnProperty("defaultValue")) {
+					oDefaultItem[sKey] = deepClone(defaultValue);
+				}
+			});
+			aValue.push(oDefaultItem);
 			this.firePropertyChange(aValue);
 		},
 
