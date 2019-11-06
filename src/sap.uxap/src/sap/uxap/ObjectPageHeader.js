@@ -841,9 +841,7 @@ sap.ui.define([
 			iActionsWidth = this._getActionsWidth(), // the width off all actions without hidden one
 			iActionsContProportion = iActionsWidth / iIdentifierContWidth, // the percentage(proportion) that action buttons take from the available space
 			iAvailableSpaceForActions = this._iAvailablePercentageForActions * iIdentifierContWidth,
-			$overflowButton = this._oOverflowButton.$(),
-			$actions = this._findById($headerDomRef, "actions"),
-			$actionButtons = $actions.find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton");
+			$overflowButton = this._oOverflowButton.$();
 
 		if (iIdentifierContWidth === 0) {
 			return;
@@ -865,7 +863,11 @@ sap.ui.define([
 		}
 
 		// verify overflow button visibility
-		if ($actionButtons.filter(":visible").length === $actionButtons.length) {
+		// adaptation is only needed for the original header
+		var $originalActions = this.$("actions");
+		var $originalActionButtons = $originalActions.find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton");
+
+		if ($originalActionButtons.filter(":visible").length === $originalActionButtons.length) {
 			$overflowButton.hide();
 		}
 
