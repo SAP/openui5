@@ -56,7 +56,8 @@ sap.ui.define([
 		PUBLISH: "/actions/publish/",
 		DATA: "/flex/data/",
 		MODULES: "/flex/modules/",
-		SETTINGS: "/flex/settings"
+		SETTINGS: "/flex/settings",
+		INFO: "/flex/info"
 	};
 
 	/**
@@ -500,6 +501,43 @@ sap.ui.define([
 				LrepConnector._bServiceAvailability = false;
 			}
 			throw (oError);
+		});
+	};
+
+	/* Get flex/info from ABAP backend.
+	*
+	* @param {map} mPropertyBag Contains additional data needed for flex/info request
+	* @param {string} mPropertyBag.reference Name of Component
+	* @param {string} [mPropertyBag.layer] Layer which send request the backend
+	* @param {string} [mPropertyBag.appVersion] Version of the application that is currently running
+	* @returns {Object} Returns the result from the request
+	* @public
+	*/
+	LrepConnector.prototype.getFlexInfo = function(mPropertyBag) {
+		if (!mPropertyBag.reference) {
+			throw new Error("No Component was passed");
+		}
+		var sRequestPath = this._getFlexibilityServicesUrlPrefix() + LrepConnector.ROUTES.INFO + "/" + mPropertyBag.reference;
+		var aParams = [];
+		if (mPropertyBag.appVersion) {
+			aParams.push({
+				name: "appVersion",
+				value: mPropertyBag.appVersion
+			});
+		}
+
+		if (mPropertyBag.layer) {
+			aParams.push({
+				name: "layer",
+				value: mPropertyBag.layer
+			});
+		}
+		sRequestPath += this._buildParams(aParams);
+
+		return this.send(sRequestPath, "GET", null, null).then(function(oResponse) {
+			return oResponse.response;
+		}, function() {
+			return Promise.reject();
 		});
 	};
 
