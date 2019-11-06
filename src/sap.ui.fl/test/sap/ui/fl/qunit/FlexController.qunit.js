@@ -3496,6 +3496,252 @@ function (
 		});
 	});
 
+	QUnit.module("getFlexInfo", {
+		before: function() {
+			var oUIChangeSpecificData = {
+				variantReference:"",
+				fileName:"id_1445501120486_26",
+				fileType:"change",
+				changeType:"hideControl",
+				reference:"reference.app.Component",
+				packageName:"$TMP",
+				content:{},
+				selector:{
+					id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+				},
+				layer:"CUSTOMER",
+				texts:{},
+				namespace:"reference.app.Component",
+				creation:"2018-10-16T08:00:02",
+				originalLanguage:"EN",
+				conditions:{},
+				support:{
+					generator:"Change.createInitialFileContent",
+					service:"",
+					user:""
+				}
+			};
+			this.oChange = new Change(oUIChangeSpecificData);
+			this.oFlexController = new FlexController("testScenarioComponent");
+			this.vSelector = {
+				elementId: "selector",
+				elementType: "sap.ui.core.Control",
+				appComponent: {
+					id: "appComponent"
+				}
+			};
+
+			this.mPropertyBag = {
+				selector: this.vSelector,
+				layer: "CUSTOMER"
+			};
+		},
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has NO changes, backend has changes", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(false);
+			sandbox.stub(this.oFlexController, "hasChangesToPublish").withArgs(this.mPropertyBag).resolves(false);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has changes to reset, backend has NO changes to reset", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "hasChangesToPublish").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, false, "flex/info not called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has NO changes to reset, backend has NO changes to reset", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(false);
+			sandbox.stub(this.oFlexController, "hasChangesToPublish").withArgs(this.mPropertyBag).resolves(false);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "flex/info isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes to publish, backend has changes to publish", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: true, isPublishEnabled: true}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+			sandbox.stub(this.oFlexController, "getComponentChanges").withArgs(this.mPropertyBag).resolves([new Change({packageName: "transported"})]);
+
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes to publish, backend has NO changes to publish", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "hasChangesToPublish").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, false, "flex/info not called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has NO changes to publish, backend has NO changes to publish", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(false);
+			sandbox.stub(this.oFlexController, "hasChangesToPublish").withArgs(this.mPropertyBag).resolves(false);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "flex/info isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes that are not yet published, backend has NO changes", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "hasChangesToPublish").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, false, "flex/info not called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "flex/info isPublishEnabled is true");
+			});
+		});
+
+		QUnit.test("get flex/info isPublishEnabled, check hasChangesToPublish: persistence has changes that are all published, backend has NO changes to be published", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(true);
+			sandbox.stub(this.oFlexController, "getComponentChanges").withArgs(this.mPropertyBag).resolves([new Change({packageName: "transported"}), new Change({packageName: "transported"})]);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, true, "flex/info called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info with a change known by the client, which has packageName of an empty string", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "getComponentChanges").withArgs(this.mPropertyBag).resolves([new Change({packageName: ""}), new Change({packageName: "transported"})]);
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(false);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, false, "flex/info not called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+
+		QUnit.test("get flex/info rejects, only the client info is taken", function(assert) {
+			var oCreateStub = sinon.stub();
+			oCreateStub.returns(Promise.reject());
+			var oLrepConnectorMock = {
+				getFlexInfo: oCreateStub
+			};
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+			oChangePersistence._oConnector = oLrepConnectorMock;
+
+			sandbox.stub(this.oFlexController, "getComponentChanges").withArgs(this.mPropertyBag).resolves([new Change({packageName: "transported"}), new Change({packageName: "transported"})]);
+			sandbox.stub(this.oFlexController, "hasChanges").withArgs(this.mPropertyBag).resolves(true);
+			sandbox.stub(this.oFlexController, "isPublishAvailable").withArgs().resolves(false);
+
+			return this.oFlexController.getResetAndPublishInfo(this.mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(oLrepConnectorMock.getFlexInfo.calledOnce, false, "flex/info not called once");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "flex/info isResetEnabled is true");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "flex/info isPublishEnabled is false");
+			});
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

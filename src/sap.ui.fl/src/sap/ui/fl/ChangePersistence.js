@@ -1294,5 +1294,18 @@ sap.ui.define([
 			}.bind(this));
 	};
 
+	/**
+	 * Send a flex/info request to the backend.
+	 *
+	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
+	 * @param {string} mPropertyBag.reference Application component name
+	 * @param {string} mPropertyBag.layer Layer on which the request is sent to the the backend
+	 *
+	 * @returns {Promise<map>} Resolves as a map with 2 booleans indicating if the application has content that can be reset and/or published
+	 */
+	ChangePersistence.prototype.getResetAndPublishInfo = function(mPropertyBag) {
+		return this._oConnector.getFlexInfo(mPropertyBag);
+	};
+
 	return ChangePersistence;
 }, true);
