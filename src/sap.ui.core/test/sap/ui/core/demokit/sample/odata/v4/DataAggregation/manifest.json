@@ -35,7 +35,9 @@
 					"Component.js",
 					"DataAggregation.controller.js",
 					"DataAggregation.view.xml",
-					"manifest.json"
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -60,13 +62,10 @@
 					"groupId" : "$direct",
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.DataAggregation.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "Sandbox.js"
-			}]
 		},
 		"rootView" : {
 			"async" : true,

@@ -35,7 +35,9 @@
 					"Component.js",
 					"FlatDataAggregation.controller.js",
 					"FlatDataAggregation.view.xml",
-					"manifest.json"
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -60,13 +62,10 @@
 					"groupId" : "$direct",
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.FlatDataAggregation.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "Sandbox.js"
-			}]
 		},
 		"rootView" : {
 			"async" : true,
