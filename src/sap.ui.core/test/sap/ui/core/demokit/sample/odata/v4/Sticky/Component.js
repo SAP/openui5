@@ -8,16 +8,15 @@
  */
 sap.ui.define([
 	"sap/ui/core/library",
-	"sap/ui/core/sample/common/Component",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/test/TestUtils"
-], function (library, BaseComponent, JSONModel, TestUtils) {
+	"sap/ui/core/UIComponent",
+	"sap/ui/model/json/JSONModel"
+], function (library, UIComponent, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
 	var ViewType = library.mvc.ViewType;
 
-	return BaseComponent.extend("sap.ui.core.sample.odata.v4.Sticky.Component", {
+	return UIComponent.extend("sap.ui.core.sample.odata.v4.Sticky.Component", {
 		metadata : {
 			manifest : "json"
 		},
@@ -32,13 +31,6 @@ sap.ui.define([
 				type : ViewType.XML,
 				viewName : "sap.ui.core.sample.odata.v4.Sticky.Main"
 			});
-		},
-
-		exit : function () {
-			TestUtils.retrieveData("sap.ui.core.sample.odata.v4.Sticky.sandbox").restore();
-			jQuery.sap.unloadResources(
-				"sap/ui/core/sample/odata/v4/Sticky/StickySandbox.js",
-				false /*bPreloadGroup*/, true /*bUnloadAll*/, true /*bDeleteExports*/);
 		}
 	});
 });
