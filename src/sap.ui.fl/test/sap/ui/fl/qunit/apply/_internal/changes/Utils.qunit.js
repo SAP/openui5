@@ -50,7 +50,6 @@ function (
 					originalSelector: "original"
 				}
 			});
-			var sControlType = "sap.ui.core.Control";
 			var mPropertyBag = {
 				modifier: JsControlTreeModifier
 			};
@@ -62,7 +61,7 @@ function (
 				controlType: "sap.m.Text",
 				bTemplateAffected: true
 			};
-			var mControl = ChangeUtils.getControlIfTemplateAffected(oChange, this.oControl, sControlType, mPropertyBag);
+			var mControl = ChangeUtils.getControlIfTemplateAffected(oChange, this.oControl, mPropertyBag);
 
 			assert.deepEqual(mControl.originalControl, mExpectedResult.originalControl, "the parameter 'originalControl' is correct.");
 			assert.deepEqual(mControl.control, mExpectedResult.control, "the parameter 'control' is correct.");
@@ -74,19 +73,39 @@ function (
 			var oChange = new Change({
 				content: {}
 			});
-			var sControlType = "sap.ui.core.Control";
 			var mPropertyBag = {
 				modifier: JsControlTreeModifier
 			};
-			sandbox.stub(JsControlTreeModifier, "bySelector").returns(this.oText);
 
 			var mExpectedResult = {
 				originalControl: this.oControl,
 				control: this.oControl,
-				controlType: sControlType,
+				controlType: "sap.ui.core.Control",
 				bTemplateAffected: false
 			};
-			var mControl = ChangeUtils.getControlIfTemplateAffected(oChange, this.oControl, sControlType, mPropertyBag);
+			var mControl = ChangeUtils.getControlIfTemplateAffected(oChange, this.oControl, mPropertyBag);
+
+			assert.deepEqual(mControl.originalControl, mExpectedResult.originalControl, "the parameter 'originalControl' is correct.");
+			assert.deepEqual(mControl.control, mExpectedResult.control, "the parameter 'control' is correct.");
+			assert.deepEqual(mControl.controlType, mExpectedResult.controlType, "the parameter 'controlType' is correct.");
+			assert.deepEqual(mControl.bTemplateAffected, mExpectedResult.bTemplateAffected, "the parameter 'bTemplateAffected' is correct.");
+		});
+
+		QUnit.test("when calling 'getControlIfTemplateAffected' without a control and a change without containing the parameter boundAggregation", function (assert) {
+			var oChange = new Change({
+				content: {}
+			});
+			var mPropertyBag = {
+				modifier: JsControlTreeModifier
+			};
+
+			var mExpectedResult = {
+				originalControl: undefined,
+				control: undefined,
+				controlType: undefined,
+				bTemplateAffected: false
+			};
+			var mControl = ChangeUtils.getControlIfTemplateAffected(oChange, undefined, mPropertyBag);
 
 			assert.deepEqual(mControl.originalControl, mExpectedResult.originalControl, "the parameter 'originalControl' is correct.");
 			assert.deepEqual(mControl.control, mExpectedResult.control, "the parameter 'control' is correct.");

@@ -4,20 +4,22 @@
 
 sap.ui.define([
 	"sap/base/util/includes",
+	"sap/base/util/restricted/_omit",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/base/util/restricted/_omit",
-	"sap/ui/fl/write/_internal/SaveAs"
+	"sap/ui/fl/write/_internal/SaveAs",
+	"sap/ui/fl/FlexCustomData"
 ], function(
 	includes,
+	_omit,
 	JsControlTreeModifier,
 	ChangesController,
 	DescriptorInlineChangeFactory,
 	FeaturesAPI,
-	_omit,
-	SaveAs
+	SaveAs,
+	FlexCustomData
 ) {
 	"use strict";
 
@@ -266,7 +268,7 @@ sap.ui.define([
 			var oFlexController = ChangesController.getFlexControllerInstance(oAppComponent);
 			// remove custom data for flex change
 			if (oElement) {
-				oFlexController._removeChangeFromControl(oElement, mPropertyBag.change, JsControlTreeModifier);
+				FlexCustomData.destroyAppliedCustomData(oElement, mPropertyBag.change, JsControlTreeModifier);
 			}
 			// delete from flex persistence map
 			oFlexController.deleteChange(mPropertyBag.change, oAppComponent);

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Applier,
+	Reverter,
 	ChangesController,
 	ChangesWriteAPI,
 	FlexUtils,
@@ -243,36 +245,36 @@ sap.ui.define([
 
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent
+				appComponent: {
+					type: "appComponent"
+				}
 			};
-			var fnPersistenceStub = getMethodStub([mPropertyBag.change, mPropertyBag.element, mRevertSettings], Promise.resolve(sReturnValue));
+			sandbox.stub(Reverter, "revertChangeOnControl")
+				.withArgs(mPropertyBag.change, mPropertyBag.element, mRevertSettings)
+				.resolves(sReturnValue);
 
-			mockFlexController(mPropertyBag.element, {_revertChange: fnPersistenceStub});
-
-			return ChangesWriteAPI.revert(mPropertyBag)
-				.then(function (sValue) {
-					assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-				});
+			return ChangesWriteAPI.revert(mPropertyBag).then(function (sValue) {
+				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
+			});
 		});
 
 		QUnit.test("when revert is called with an invalid element", function(assert) {
 			var mPropertyBag = {
-				change: {type: "change"}
+				change: {type: "change"},
+				element: null
 			};
 
 			var mRevertSettings = {
 				modifier: JsControlTreeModifier,
 				appComponent: undefined
 			};
+			sandbox.stub(Reverter, "revertChangeOnControl")
+				.withArgs(mPropertyBag.change, mPropertyBag.element, mRevertSettings)
+				.resolves(sReturnValue);
 
-			var fnPersistenceStub = getMethodStub([mPropertyBag.change, undefined, mRevertSettings], Promise.resolve(sReturnValue));
-
-			mockFlexController({}, {_revertChange: fnPersistenceStub});
-
-			return ChangesWriteAPI.revert(mPropertyBag)
-				.then(function (sValue) {
-					assert.strictEqual(sValue, sReturnValue, "the return value from the revert function was passed");
-				});
+			return ChangesWriteAPI.revert(mPropertyBag).then(function (sValue) {
+				assert.strictEqual(sValue, sReturnValue, "the return value from the revert function was passed");
+			});
 		});
 	});
 

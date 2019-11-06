@@ -4,25 +4,27 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/base/Log",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
-	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/util/includes",
 	"sap/base/util/restricted/_omit"
 ], function(
 	Applier,
+	Reverter,
 	ChangesController,
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
 	Log,
 	Component,
 	Element,
-	includes,
 	JsControlTreeModifier,
+	includes,
 	_omit
 ) {
 	"use strict";
@@ -134,8 +136,7 @@ sap.ui.define([
 			};
 			// if the element is not present we just pass an empty object, so that revert will not throw an error
 			// and the status of the change will be updated
-			return ChangesController.getFlexControllerInstance(mPropertyBag.element || {})
-				._revertChange(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
+			return Reverter.revertChangeOnControl(mPropertyBag.change, mPropertyBag.element, mRevertSettings);
 		}
 	};
 	return ChangesWriteAPI;

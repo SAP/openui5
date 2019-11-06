@@ -2,29 +2,31 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/base/util/restricted/_omit",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/api/FeaturesAPI"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ChangesController,
-	PersistenceWriteAPI,
-	Settings,
-	LrepConnector,
-	WriteUtils,
-	DescriptorInlineChangeFactory,
-	JsControlTreeModifier,
 	_omit,
+	JsControlTreeModifier,
+	ChangesController,
+	DescriptorInlineChangeFactory,
+	Settings,
+	WriteUtils,
+	FeaturesAPI,
+	PersistenceWriteAPI,
+	FlexCustomData,
+	LrepConnector,
 	jQuery,
-	sinon,
-	FeaturesAPI
+	sinon
 ) {
 	"use strict";
 
@@ -448,10 +450,10 @@ sap.ui.define([
 				.withArgs(mPropertyBag.change.getSelector(), oAppComponent)
 				.returns(oElement);
 
-			var fnRemoveChangeStub = sandbox.stub();
+			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockFlexController(oAppComponent, { _removeChangeFromControl : fnRemoveChangeStub, deleteChange : fnDeleteChangeStub });
+			mockFlexController(oAppComponent, { deleteChange : fnDeleteChangeStub });
 
 			PersistenceWriteAPI.remove(mPropertyBag);
 			assert.ok(fnRemoveChangeStub.calledWith(oElement, mPropertyBag.change, JsControlTreeModifier), "then the flex persistence was called with correct parameters");
@@ -470,10 +472,10 @@ sap.ui.define([
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector");
 
-			var fnRemoveChangeStub = sandbox.stub();
+			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockFlexController(undefined, { _removeChangeFromControl : fnRemoveChangeStub, deleteChange : fnDeleteChangeStub });
+			mockFlexController(undefined, { deleteChange : fnDeleteChangeStub });
 			try {
 				PersistenceWriteAPI.remove(mPropertyBag);
 			} catch (oError) {
@@ -494,10 +496,10 @@ sap.ui.define([
 
 			sandbox.stub(ChangesController, "getAppComponentForSelector");
 
-			var fnRemoveChangeStub = sandbox.stub();
+			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockFlexController(undefined, { _removeChangeFromControl : fnRemoveChangeStub, deleteChange : fnDeleteChangeStub });
+			mockFlexController(undefined, { deleteChange : fnDeleteChangeStub });
 			try {
 				PersistenceWriteAPI.remove(mPropertyBag);
 			} catch (oError) {
