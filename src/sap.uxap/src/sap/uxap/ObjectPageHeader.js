@@ -18,7 +18,8 @@ sap.ui.define([
     "./ObjectPageHeaderContent",
     "./library",
     "sap/m/library",
-    "./ObjectPageHeaderRenderer"
+	"sap/f/library",
+	"./ObjectPageHeaderRenderer"
 ], function(
     jQuery,
 	Control,
@@ -34,6 +35,7 @@ sap.ui.define([
 	ObjectPageHeaderContent,
 	library,
 	mobileLibrary,
+	fLibrary,
 	ObjectPageHeaderRenderer
 ) {
 	"use strict";
@@ -50,8 +52,11 @@ sap.ui.define([
 	// shortcut for sap.uxap.ObjectPageHeaderDesign
 	var ObjectPageHeaderDesign = library.ObjectPageHeaderDesign;
 
-	// shortcut for sap.uxap.ObjectPageHeaderPictureShape
-	var ObjectPageHeaderPictureShape = library.ObjectPageHeaderPictureShape;
+	// shortcut for sap.f.AvatarShape
+	var ObjectPageHeaderPictureShape = fLibrary.AvatarShape;
+
+	// shortcut for sap.f.AvatarColor
+	var ObjectPageHeaderPictureBackgroundColor = fLibrary.AvatarColor;
 
 	function isFunction(oObject) {
 		return typeof oObject === "function";
@@ -127,8 +132,17 @@ sap.ui.define([
 				 * Determines whether the picture should be displayed in a square or with a circle-shaped mask.
 				 */
 				objectImageShape: {
-					type: "sap.uxap.ObjectPageHeaderPictureShape",
+					type: "sap.f.AvatarShape", group: "Appearance",
 					defaultValue: ObjectPageHeaderPictureShape.Square
+				},
+
+				/**
+				 * Determines the background color of the image placeholder or icon if valid icon URI is provided.
+				 * @since 1.73
+				 */
+				objectImageBackgroundColor: {
+					type: "sap.f.AvatarColor", group: "Appearance",
+					defaultValue: ObjectPageHeaderPictureBackgroundColor.Accent6
 				},
 
 				/**
@@ -241,7 +255,7 @@ sap.ui.define([
 				 * Icon for the identifier line.
 				 */
 				_objectImage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
-				_placeholder: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
+				_placeholder: {type: "sap.f.Avatar", multiple: false, visibility: "hidden"},
 				_lockIconCont: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_lockIcon: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 				_titleArrowIconCont: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
@@ -549,7 +563,7 @@ sap.ui.define([
 
 	var aPropertiesToOverride = ["objectSubtitle", "showTitleSelector", "markLocked", "markFavorite", "markFlagged",
 			"showMarkers", "showPlaceholder", "markChanges"],
-		aObjectImageProperties = ["objectImageURI", "objectImageAlt", "objectImageDensityAware", "objectImageShape"];
+		aObjectImageProperties = ["objectImageURI", "objectImageAlt", "objectImageDensityAware", "objectImageShape", "objectImageBackgroundColor"];
 
 	var fnGenerateSetterForAction = function (sPropertyName) {
 		var sConvertedSetterName = "set" + sPropertyName.charAt(0).toUpperCase() + sPropertyName.slice(1);
