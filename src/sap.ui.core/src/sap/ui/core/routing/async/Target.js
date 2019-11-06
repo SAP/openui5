@@ -56,11 +56,12 @@ sap.ui.define([
 		 */
 		suspend: function() {
 			if (this._isLoaded()) {
-				this._load().then(function(oObject) {
-					if (oObject.isA("sap.ui.core.UIComponent")) {
-						oObject.getRouter().stop();
-					}
-				});
+				var oObject = this._get(),
+					oRouter;
+
+				if (oObject.isA("sap.ui.core.UIComponent") && (oRouter = oObject.getRouter())) {
+					oRouter.stop();
+				}
 			}
 
 			return this;
@@ -77,17 +78,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * Loads the object from TargetCache.
+		 * Get the target instance from the TargetCache.
 		 *
-		 * @param {object} [oTargetCreateInfo] Additional information for the component creation. Currently the object
+		 * The difference between this function and the "_load" function is that this function returns the target
+		 * instance directly if it's already loaded and returns a Promise during the loading of the target instance
+		 * while the "_load" function always returns a promise no matter whether the target instance is loaded or not.
+		 *
+		 * @param {object} [oTargetCreateInfo] Additional information  for the component creation. Currently the object
 		 *  only contains the prefix for the routerHashChanger
-		 * @return {Promise} A promise which resolves with the loaded object of this Target
+		 * @returns {sap.ui.core.mvc.View|sap.ui.core.UIComponent|Promise} The target instance when it's already loaded
+		 *  or a promise which resolves with the target instance during the loading of the target instance
 		 * @private
 		 */
-		_load: function(oTargetCreateInfo) {
+		_get: function(oTargetCreateInfo) {
 			var sName = this._getEffectiveObjectName(this._oOptions.name),
 				oOptions = this._oOptions,
-				oCreateOptions, oObject, pLoaded;
+				oCreateOptions;
 
 			switch (oOptions.type) {
 				case "View":
@@ -113,9 +119,22 @@ sap.ui.define([
 					throw new Error("The given type " + oOptions.type + " isn't support by sap.ui.core.routing.Target");
 			}
 
-			oObject = this._oCache._get(oCreateOptions, oOptions.type,
+			return this._oCache._get(oCreateOptions, oOptions.type,
 				// Hook in the route for deprecated global view id, it has to be supported to stay compatible
 				this._bUseRawViewId, oTargetCreateInfo);
+		},
+
+		/**
+		 * Loads the object from TargetCache.
+		 *
+		 * @param {object} [oTargetCreateInfo] Additional information for the component creation. Currently the object
+		 *  only contains the prefix for the routerHashChanger
+		 * @return {Promise} A promise which resolves with the loaded object of this Target
+		 * @private
+		 */
+		_load: function(oTargetCreateInfo) {
+			var oObject = this._get(oTargetCreateInfo),
+				pLoaded;
 
 			if (!(oObject instanceof Promise)) {
 				if (oObject.isA("sap.ui.core.mvc.View")) {
