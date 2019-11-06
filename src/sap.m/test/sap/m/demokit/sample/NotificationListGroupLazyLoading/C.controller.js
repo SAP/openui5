@@ -1,11 +1,18 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
-	'sap/m/MessageToast'
-], function (jQuery, Controller, MessageToast) {
+	'sap/m/MessageToast',
+	'sap/ui/Device'
+], function (jQuery, Controller, MessageToast, Device) {
 	'use strict';
 
 	var CController = Controller.extend('sap.m.sample.NotificationListGroupLazyLoading.C', {
+		onInit: function () {
+			var sWidth;
+			Device.system.phone ? sWidth = "100%" : sWidth = "50%";
+			this.getView().byId("notificationList").setWidth(sWidth);
+		},
+
 		onRejectPress: function () {
 			MessageToast.show('Reject Button Pressed');
 		},

@@ -3,217 +3,75 @@
 /* Base theme                                   */
 /* ============================================ */
 
-@_sap_m_NotificationListGroup_ContainerPadding: 1rem;
-@_sap_m_NotificationListGroup_BottomMargin: 0.5rem;
-@_sap_m_NotificationListGroup_BorderRadius: 0.25rem;
-
-.sapMNLG {
-	background: transparent;
-	margin-bottom: @_sap_m_NotificationListGroup_BottomMargin;
-	padding-right: 0.5rem;
-	position: relative;
-	box-shadow: @sapUiShadowLevel0;
-	.sapMNLI {
-		border-left: none;
-		border-right: none;
-	}
-}
-
-.sapMNLG-GroupHeader {
-	background: @_sap_m_NotificationListBase_ItemBackground;
-}
-
-.sapMNLG.sapMLIB {
-	padding-bottom: 0;
-	border-bottom: 0;
-}
-
-.sapMNLG .sapMLIB.sapMNLB:first-of-type {
-	margin-top: 0;
-}
-
-/* Priority styles
-  ========================================================================== */
-
-.sapMNLG-Header > .sapMNLB-Priority {
-	padding-top: @_sap_m_NotificationListGroup_ContainerPadding;
-}
-
-/* ==========================================================================
-   Header styles
-  ========================================================================== */
-
-.sapMNLG-Header {
-	padding-bottom: 0.375rem;
-	border-radius: @_sap_m_NotificationListGroup_BorderRadius @_sap_m_NotificationListGroup_BorderRadius 0 0;
-	.sapMNLG-Title {
-		padding-right: 1.75rem;
-	}
-	.sapMNLGTitleUnread {
-		font-weight: bold;
-	}
-}
-
-.sapMNLG-GroupHeader .sapMNLG-Details {
-	padding-top: 0.375rem;
-	font-family: @sapUiFontFamily;
-	font-weight: normal;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: flex;
-	position: relative;
-	.sapMNLG-Description {
-		width: 100%;
-		padding-top: 0.375rem;
-	}
-	.sapMText.sapMNLI-Text {
-		display: inline;
-	}
-}
-
-/* ==========================================================================
-   SubHeader styles
-  ========================================================================== */
-
-.sapMNLG .sapMNLG-SubHeader {
-	border-radius: 0 0 @_sap_m_NotificationListGroup_BorderRadius @_sap_m_NotificationListGroup_BorderRadius;
-}
-
-.sapMNLG-SubHeader {
-	height: 3rem;
-}
-
-.sapMNLG-SubHeader {
-	.sapMBtn {
-		margin-left: 0.25rem;
-	}
-}
-
-.sapMNLG-SubHeader .sapMTB {
-	.sapMBtn {
-		margin-left: 0.25rem;
+.sapMNLGroup {
+	&.sapMLIB {
+		display: block;
 		padding: 0;
-		border: none;
-		padding-top: 0.25rem;
-		padding-bottom: 0.25rem;
-	}
-}
-
-/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */// TODO remove after 1.62 version
-html[data-sap-ui-browser*='ie'] .sapMNLG-SubHeader .sapMBtnInner {
-	display: block;
-	width: auto;
-}
-
-.sapMNLG-SubHeader > .sapMBtn:first-of-type {
-	float: left;
-}
-
-.sapMNLG-Collapsed .sapMNLG-SubHeader {
-	border-top: 0;
-}
-
-.sapMNLG-SubHeader > .sapMNLB-Priority {
-	border-radius: 0;
-}
-
-/* ==========================================================================
-   Body styles
-  ========================================================================== */
-
-.sapMNLG-Body {
-	position: relative;
-	padding-left: 0;
-	padding-right: 0;
-	.sapMNLI {
-		background: @_sap_m_NotificationListBase_ItemGroupedBackground;
 		margin: 0;
-		box-shadow: none;
+		overflow: hidden;
 		border-bottom: none;
-		border-radius: 0;
 	}
-	.sapMNLG-MaxNotifications {
-		border-radius: 0 0 0.25rem 0.25rem;
-		padding: 1.5rem 0.5rem 1rem;
-		text-align: center;
-		line-height: 1.5rem;
-		span {
+
+	.sapMNLGroupHeader {
+		min-height: 2.75rem;
+		background: @sapUiListGroupHeaderBackground;
+		border-bottom: 0.0625rem solid @sapUiListGroupHeaderBorderColor;
+		box-sizing: border-box;
+		padding: 0.75rem 0.5rem 0 0.75rem;
+		display: flex;
+		align-items: center;
+	}
+
+	.sapMNLGroupTitle {
+		color: @sapUiGroupTitleTextColor;
+		font-size: @sapMFontHeader6Size;
+		font-family: @sapUiFontHeaderFamily;
+		font-weight: @sapUiFontHeaderWeight;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.sapMNLGroupHeaderSpacer {
+		flex: 1;
+	}
+
+	.sapMNLGroupChildren {
+		margin: 0;
+		padding: 0;
+	}
+
+	&.sapMNLGroupUnread {
+		.sapMNLGroupTitle,
+		.sapMNLGroupCount {
 			font-weight: bold;
-			margin: 0;
-			padding: 0;
 		}
 	}
+
+	.sapMNLGroupCollapseButton {
+		margin-right: 1rem;
+	}
 }
 
-.sapMText.sapMNLG-Datetime {
-	color: @sapUiLightText;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.sapMLIB.sapMNLG-Collapsed .sapMNLG-Body {
+.sapMNLGroup.sapMNLGroupCollapsed .sapMNLGroupChildren {
 	display: none;
 }
 
-/* Compact mode
-  ========================================================================== */
-
-.sapUiSizeCompact .sapMNLG-Title {
-	padding-right: 1.25rem;
-}
-
-.sapUiSizeCompact .sapMNLG-SubHeader {
-	padding-top: 0.25rem;
-	padding-left: 0.75rem;
-	height: 2.5rem;
-	line-height: 2.5rem;
-	box-sizing: border-box;
-}
-
-.sapUiSizeCompact .sapMNLG-SubHeader .sapMBtn {
+.sapMNLGroupCount {
 	margin-left: 0.25rem;
-	padding: 0;
+	margin-right: 1rem;
+
+	color: @sapUiGroupTitleTextColor;
+	font-size: @sapMFontHeader6Size;
+	font-family: @sapUiFontHeaderFamily;
 }
 
-.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
-	border: none;
-}
-
-/* Single item mode
-  ========================================================================== */
-
-.sapMNLG.sapMLIB.sapMNLGNoHdrFooter {
-	padding-top: 0;
-}
-
-.sapMNLG-Header > .sapMNLG-Title {
-	color: @sapUiListTextColor;
-	font-size: @sapMFontLargeSize;
-}
-
-.sapMNLG {
-	.sapMNLG-Details {
-		color: @sapUiContentLabelColor;
-		padding-left: 1.25rem;
-		padding-right: 1rem;
+.sap-phone {
+	.sapMNLGroup .sapMNLGroupHeader {
+		padding: 0 0.5rem
 	}
-	.sapMNLI {
-		margin-top: 0;
-		border-top: 1px solid @sapUiListBorderColor;
-	}
-}
 
-.sapMNLG-Body {
-	.sapMNLG-MaxNotifications {
-		font-family: @sapUiFontFamily;
-		font-size: @sapMFontMediumSize;
-		color: @sapUiContentLabelColor;
-		border-top: 1px solid @sapUiListBorderColor;
-		span {
-			font-family: @sapUiFontFamily;
-			font-size: @sapMFontLargeSize;
-			color: @sapUiBaseText;
-			font-weight: bold;
-		}
+	.sapMNLGroupCollapseButton {
+		margin-right: 0.75rem;
 	}
 }

@@ -7,42 +7,36 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-			<List class="sapContrast sapContrastPlus">
+			<List id="notificationList" class="sapContrast sapContrastPlus">
 				<NotificationListGroup
 						title="Group with max number of notifications that will be loaded on pressing the 'Load' button without max number of notifications message."
-						datetime="15 minutes"
 						showCloseButton="true"
-						authorName="Michael Muller"
-						authorPicture="sap-icon://person-placeholder"
 						collapsed="true"
 						onCollapse="loadNotifications"
 						close="onItemClose"
 						showEmptyGroup="true"
 						enableCollapseButtonWhenEmpty="true">
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject All" type="Reject" press="onRejectPress"/>
-						<Button text="Load Notifications without message" type="None" press="onLoadMaxNotificationsWithout"/>
+						<Button text="Accept All" press="onAcceptPress"/>
+						<Button text="Reject All" press="onRejectPress"/>
+						<Button text="Load Notifications without message" press="onLoadMaxNotificationsWithout"/>
 					</buttons>
 				</NotificationListGroup>
 			</List>
 
-			<List class="sapContrast sapContrastPlus">
+			<List id="notificationList2" class="sapContrast sapContrastPlus">
 				<NotificationListGroup
 						title="Group with max number of notifications that will be loaded on pressing the 'Load' button."
-						datetime="15 minutes"
 						showCloseButton="true"
-						authorName="Michael Muller"
-						authorPicture="sap-icon://person-placeholder"
 						collapsed="true"
 						onCollapse="loadNotifications"
 						close="onItemClose"
 						showEmptyGroup="true"
 						enableCollapseButtonWhenEmpty="true">
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject All" type="Reject" press="onRejectPress"/>
-						<Button text="Load max notifications" type="None" press="onLoadMaxNotifications"/>
+						<Button text="Accept All" press="onAcceptPress"/>
+						<Button text="Reject All" press="onRejectPress"/>
+						<Button text="Load max notifications" press="onLoadMaxNotifications"/>
 					</buttons>
 				</NotificationListGroup>
 			</List>

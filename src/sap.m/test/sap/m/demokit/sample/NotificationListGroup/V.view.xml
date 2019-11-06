@@ -8,13 +8,10 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-			<List>
+			<List id="notificationList">
 				<NotificationListGroup
 						title="Orders"
-						datetime="1 hour"
 						showCloseButton="true"
-						authorName="Michael Muller"
-						authorPicture="sap-icon://person-placeholder"
 						close="onItemClose">
 					<items>
 						<NotificationListItem
@@ -37,13 +34,13 @@
 								close="onItemClose"
 								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"/>
-								<Button text="Reject" type="Reject" press="onRejectPress"/>
+								<Button text="Accept" press="onAcceptPress"/>
+								<Button text="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 						<NotificationListItem
 								title="New order (#2523)"
-								description="Aliquam quis varius ligula.."
+								description="Aliquam quis varius ligula."
 								showCloseButton="falseue"
 								unread="false"
 								datetime="3 days"
@@ -51,14 +48,13 @@
 								close="onItemClose"
 								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"/>
-								<Button text="Reject" type="Reject" press="onRejectPress"/>
+								<Button text="Accept" press="onAcceptPress"/>
+								<Button text="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 					</items>
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject All" type="Reject" press="onRejectPress"/>
+						<Button text="Accept All" press="onAcceptPress"/>
 					</buttons>
 				</NotificationListGroup>
 				<NotificationListGroup
@@ -87,13 +83,13 @@
 								close="onItemClose"
 								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"/>
-								<Button text="Reject" type="Reject" press="onRejectPress"/>
+								<Button text="Accept" press="onAcceptPress"/>
+								<Button text="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 						<NotificationListItem
 								title="New order (#2523)"
-								description="Aliquam quis varius ligula.."
+								description="Aliquam quis varius ligula."
 								showCloseButton="falseue"
 								unread="false"
 								datetime="3 days"
@@ -101,22 +97,19 @@
 								close="onItemClose"
 								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"/>
-								<Button text="Reject" type="Reject" press="onRejectPress"/>
+								<Button text="Accept" press="onAcceptPress"/>
+								<Button text="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 					</items>
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject All" type="Reject" press="onRejectPress"/>
+						<Button text="Accept All" press="onAcceptPress"/>
+						<Button text="Reject All" press="onRejectPress"/>
 					</buttons>
 				</NotificationListGroup>
 				<NotificationListGroup
 						title="When 'Accept All' is pressed some of the notifications will show an error"
-						datetime="1 hour"
 						showCloseButton="true"
-						authorName="Michael Muller"
-						authorPicture="sap-icon://person-placeholder"
 						close="onItemClose">
 					<items>
 						<NotificationListItem
@@ -139,13 +132,12 @@
 								close="onItemClose"
 								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"/>
-								<Button text="Reject" type="Reject" press="onRejectPress"/>
+								<Button text="Accept" press="onAcceptPress"/>
 							</buttons>
 						</NotificationListItem>
 						<NotificationListItem
 								title="New order (#2523)"
-								description="Aliquam quis varius ligula.."
+								description="Aliquam quis varius ligula."
 								showCloseButton="falseue"
 								unread="false"
 								datetime="3 days"
@@ -153,22 +145,19 @@
 								close="onItemClose"
 								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"/>
-								<Button text="Reject" type="Reject" press="onRejectPress"/>
+								<Button text="Accept" press="onAcceptPress"/>
+								<Button text="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 					</items>
 					<buttons>
-						<Button text="Accept All" type="Accept" press="onAcceptErrors"/>
-						<Button text="Reject All" type="Reject" press="onRejectPress"/>
+						<Button text="Accept All" press="onAcceptErrors"/>
+						<Button text="Reject All" press="onRejectPress"/>
 					</buttons>
 				</NotificationListGroup>
 				<NotificationListGroup
 						title="Group with notifications without footer buttons"
-						datetime="1 hour"
 						showCloseButton="true"
-						authorName="Michael Muller"
-						authorPicture="sap-icon://person-placeholder"
 						close="onItemClose">
 					<items>
 						<NotificationListItem
@@ -191,8 +180,8 @@
 								close="onItemClose"
 								press="onListItemPress">
 							<buttons>
-								<Button text="Accept" type="Accept" press="onAcceptPress"/>
-								<Button text="Reject" type="Reject" press="onRejectPress"/>
+								<Button text="Accept" press="onAcceptPress"/>
+								<Button text="Reject" press="onRejectPress"/>
 							</buttons>
 						</NotificationListItem>
 					</items>

@@ -21,8 +21,8 @@
 						authorName="Jean Doe"
 						authorPicture="test-resources/sap/m/images/Woman_04.png">
 					<buttons>
-						<Button text="Accept All Requested Information" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject All Requested Information" type="Reject" press="onRejectPress"/>
+						<Button text="Accept All Requested Information" press="onAcceptPress"/>
+						<Button text="Reject All Requested Information" press="onRejectPress"/>
 					</buttons>
 					</NotificationListItem>
 				<NotificationListItem
@@ -49,8 +49,8 @@
 						authorName="Patricia Clark"
 						authorPicture="test-resources/sap/m/images/female_BaySu.jpg">
 					<buttons>
-						<Button text="Accept" type="Accept" press="onAcceptPress" icon="sap-icon://accept"/>
-						<Button text="Reject" type="Reject" press="onRejectPress" icon="sap-icon://sys-cancel"/>
+						<Button text="Accept" press="onAcceptPress" icon="sap-icon://accept"/>
+						<Button text="Reject" press="onRejectPress" icon="sap-icon://sys-cancel"/>
 					</buttons>
 				</NotificationListItem>
 				<NotificationListItem
@@ -90,8 +90,7 @@
 						authorPicture="test-resources/sap/m/images/Woman_04.png"
 						truncate="false">
 					<buttons>
-						<Button text="Accept" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject" type="Reject" press="onRejectPress"/>
+						<Button text="Accept" press="onAcceptPress"/>
 					</buttons>
 				</NotificationListItem>
 				<NotificationListItem
@@ -108,8 +107,8 @@
 						hideShowMoreButton="true"
 						showButtons="false">
 					<buttons>
-						<Button text="Accept" type="Accept" press="onAcceptPress"/>
-						<Button text="Reject" type="Reject" press="onRejectPress"/>
+						<Button text="Accept" press="onAcceptPress"/>
+						<Button text="Reject" press="onRejectPress"/>
 					</buttons>
 				</NotificationListItem>
 				<NotificationListItem
@@ -123,9 +122,9 @@
 						authorName="Patricia Clark"
 						authorPicture="test-resources/sap/m/images/female_BaySu.jpg">
 					<buttons>
-						<Button text="Accept" type="Accept" press="onAcceptPress" icon="sap-icon://accept"/>
-						<Button text="Reject" type="Reject" press="onRejectPress" icon="sap-icon://sys-cancel"/>
-						<Button text="Get Error" type="Reject" press="onErrorPress" icon="sap-icon://sys-cancel"/>
+						<Button text="Accept" press="onAcceptPress" icon="sap-icon://accept"/>
+						<Button text="Reject" press="onRejectPress" icon="sap-icon://sys-cancel"/>
+						<Button text="Get Error" press="onErrorPress" icon="sap-icon://sys-cancel"/>
 					</buttons>
 				</NotificationListItem>
 				<NotificationListItem
