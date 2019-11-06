@@ -31,15 +31,21 @@
 						title="{$count} Business Partners" visibleRowCount="21">
 					<t:Column>
 						<Label text="Index"/>
-						<t:template><Text id="index::table" /></t:template>
+						<t:template>
+							<Text id="index::table" wrapping="false"/>
+						</t:template>
 					</t:Column>
 					<t:Column>
 						<Label text="ID"/>
-						<t:template><Text text="{BusinessPartnerID}" /></t:template>
+						<t:template>
+							<Text text="{BusinessPartnerID}" wrapping="false"/>
+						</t:template>
 					</t:Column>
 					<t:Column>
 						<Label text="Company Name"/>
-						<t:template><Text text="{CompanyName}" /></t:template>
+						<t:template>
+							<Text text="{CompanyName}" wrapping="false"/>
+						</t:template>
 					</t:Column>
 				</t:Table>
 			</IconTabFilter>

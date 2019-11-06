@@ -296,7 +296,7 @@ sap.ui.define([
 		// When removing oModel, ManagedObject#getBindingContext does not return the destroyed
 		// context although the control still refers to it
 		this.oModel = undefined;
-		BaseContext.prototype.destroy.apply(this);
+		BaseContext.prototype.destroy.call(this);
 	};
 
 	/**
@@ -311,7 +311,7 @@ sap.ui.define([
 	 * @param {boolean} [bSkipRetry=false]
 	 *   Whether to skip retries of failed PATCH requests and instead fail accordingly, but still
 	 *   fire "patchSent" and "patchCompleted" events
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
 	 *
@@ -326,58 +326,60 @@ sap.ui.define([
 				_Helper.buildPath(this.sPath, sPath),
 				this.oBinding.getBaseForPathReduction());
 		}
-		return oMetaModel.fetchUpdateData(sPath, this).then(function (oResult) {
-			return that.withCache(function (oCache, sCachePath, oBinding) {
-				// If a PATCH is merged into a POST request, firePatchSent is not called, thus
-				// don't call firePatchCompleted
-				var bFirePatchCompleted = false;
+		return this.oBinding.doSetProperty(sPath, vValue, oGroupLock)
+			|| oMetaModel.fetchUpdateData(sPath, this).then(function (oResult) {
+				return that.withCache(function (oCache, sCachePath, oBinding) {
+					// If a PATCH is merged into a POST request, firePatchSent is not called, thus
+					// don't call firePatchCompleted
+					var bFirePatchCompleted = false;
 
-				/*
-				 * Error callback to report the given error and fire "patchCompleted" accordingly.
-				 *
-				 * @param {Error} oError
-				 */
-				function errorCallback(oError) {
-					that.oModel.reportError(
-						"Failed to update path " + that.oModel.resolve(sPath, that),
-						sClassName, oError);
-					firePatchCompleted(false);
-				}
-
-				/*
-				 * Fire "patchCompleted" according to the given success flag, if needed.
-				 *
-				 * @param {boolean} bSuccess
-				 */
-				function firePatchCompleted(bSuccess) {
-					if (bFirePatchCompleted) {
-						oBinding.firePatchCompleted(bSuccess);
-						bFirePatchCompleted = false;
+					/*
+					 * Error callback to report the given error and fire "patchCompleted"
+					 * accordingly.
+					 *
+					 * @param {Error} oError
+					 */
+					function errorCallback(oError) {
+						that.oModel.reportError(
+							"Failed to update path " + that.oModel.resolve(sPath, that),
+							sClassName, oError);
+						firePatchCompleted(false);
 					}
-				}
 
-				/*
-				 * Fire "patchSent" and remember to later fire "patchCompleted".
-				 */
-				function patchSent() {
-					bFirePatchCompleted = true;
-					oBinding.firePatchSent();
-				}
+					/*
+					 * Fire "patchCompleted" according to the given success flag, if needed.
+					 *
+					 * @param {boolean} bSuccess
+					 */
+					function firePatchCompleted(bSuccess) {
+						if (bFirePatchCompleted) {
+							oBinding.firePatchCompleted(bSuccess);
+							bFirePatchCompleted = false;
+						}
+					}
 
-				// if request is canceled fnPatchSent and fnErrorCallback are not called and
-				// returned Promise is rejected -> no patch events
-				return oCache.update(oGroupLock, oResult.propertyPath, vValue,
-					bSkipRetry ? undefined : errorCallback, oResult.editUrl, sCachePath,
-					oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
-					oBinding.isPatchWithoutSideEffects(), patchSent
-				).then(function () {
-					firePatchCompleted(true);
-				}, function (oError) {
-					firePatchCompleted(false);
-					throw oError;
-				});
-			}, oResult.entityPath);
-		});
+					/*
+					 * Fire "patchSent" and remember to later fire "patchCompleted".
+					 */
+					function patchSent() {
+						bFirePatchCompleted = true;
+						oBinding.firePatchSent();
+					}
+
+					// if request is canceled fnPatchSent and fnErrorCallback are not called and
+					// returned Promise is rejected -> no patch events
+					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
+						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sCachePath,
+						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
+						oBinding.isPatchWithoutSideEffects(), patchSent
+					).then(function () {
+						firePatchCompleted(true);
+					}, function (oError) {
+						firePatchCompleted(false);
+						throw oError;
+					});
+				}, oResult.entityPath);
+			});
 	};
 
 	/**
@@ -1028,7 +1030,8 @@ sap.ui.define([
 		}
 		oGroupLock = this.oModel.lockGroup(sGroupId || this.getUpdateGroupId(), this, true, true);
 
-		return this.doSetProperty(sPath, vValue, oGroupLock, true).catch(function (oError) {
+		return Promise.resolve(this.doSetProperty(sPath, vValue, oGroupLock, true))
+			.catch(function (oError) {
 				oGroupLock.unlock(true);
 				throw oError;
 			});

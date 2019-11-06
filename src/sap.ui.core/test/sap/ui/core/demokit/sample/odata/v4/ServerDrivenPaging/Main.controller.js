@@ -6,15 +6,17 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/ui/core/sample/common/Controller"
-], function (UriParameters, ColumnListItem, Text, Controller) {
+	"sap/ui/core/sample/common/Controller",
+	"sap/ui/test/TestUtils"
+], function (UriParameters, ColumnListItem, Text, Controller, TestUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.ServerDrivenPaging.Main", {
 		onInit : function () {
 			var oTemplate = new ColumnListItem();
 
-			this.bCount = UriParameters.fromQuery(window.location.search).get("$count") === "true";
+			this.bCount = UriParameters.fromQuery(window.location.search).get("$count") === "true"
+				|| TestUtils.retrieveData("sap.ui.core.sample.odata.v4.ServerDrivenPaging.$count");
 			oTemplate.addCell(new Text("index", {
 				text : {
 					path : "BusinessPartnerID",

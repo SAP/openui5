@@ -322,20 +322,7 @@ sap.ui.define([
 					});
 			}
 
-			return new SyncPromise(function (resolve) {
-				if (getGroupLocks().length) {
-					setTimeout(resolve, 5);
-				} else {
-					resolve();
-				}
-			}).then(function () {
-				var aGroupLocks = getGroupLocks();
-
-				aGroupLocks.forEach(function (oGroupLock) {
-					assert.ok(false, "GroupLock remained: " + oGroupLock);
-				});
-				assert.strictEqual(aGroupLocks.length, 0, "No remaining locks");
-
+			function cleanup() {
 				if (that.oView) {
 					// avoid calls to formatters by UI5 localization changes in later tests
 					that.oView.destroy();
@@ -345,7 +332,19 @@ sap.ui.define([
 				}
 				// reset the language
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-			});
+			}
+
+			if (getGroupLocks().length) {
+				return resolveLater(function () {
+					getGroupLocks().forEach(function (oGroupLock) {
+						assert.ok(false, "GroupLock remained: " + oGroupLock);
+					});
+
+					cleanup();
+				});
+			}
+
+			cleanup();
 		},
 
 		/**
@@ -759,7 +758,7 @@ sap.ui.define([
 						Note : "New 1",
 						SalesOrderID : "43"
 					})
-					.expectChange("id", "43", 0);
+					.expectChange("id", ["43"]);
 
 				return Promise.all([
 					oCreatedContext.created(),
@@ -783,7 +782,7 @@ sap.ui.define([
 						Note : "New 2",
 						SalesOrderID : "44"
 					})
-					.expectChange("id", "44", 0);
+					.expectChange("id", ["44"]);
 
 				return Promise.all([
 					oCreatedContext.created(),
@@ -1055,26 +1054,27 @@ sap.ui.define([
 		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to set a value (or multiple values) at the property
 		 * "text" of the control with the given ID. <code>vValue</code> must be a list with expected
-		 * values for each row if the control is created via a template in a list.
+		 * values for each row if the control is created via a template in a list. Use a sparse list
+		 * if changes are expected for some rows only.
 		 *
 		 * You must call the function before {@link #createView}, even if you do not expect a change
 		 * to the control's value initially. This is necessary because createView must attach a
 		 * formatter function to the binding info before the bindings are created in order to see
-		 * the change. If you do not expect a value initially, leave out the vValue parameter.
+		 * the change. If you do not expect a value initially, leave out the vValue parameter or use
+		 * an empty array.
 		 *
 		 * Examples:
 		 * this.expectChange("foo", "bar"); // expect value "bar" for the control with ID "foo"
 		 * this.expectChange("foo"); // listen to changes for the control with ID "foo", but do not
 		 *                           // expect a change (in createView)
-		 * this.expectChange("foo", false); // listen to changes for the control with ID "foo", but
-		 *                                 // do not expect a change (in createView). To be used if
-		 *                                 // the control is a template within a table.
+		 * this.expectChange("foo", []); // listen to changes for the control with ID "foo", but do
+		 *                               // not expect a change (in createView). To be used if the
+		 *                               // control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
-		 *                                       // ID "foo"; may be combined with an offset vRow
+		 *                                       // ID "foo"
 		 * this.expectChange("foo", ["a",,"b"]); // expect values for the rows 0 and 2 of the
 		 *                                       // control with the ID "foo", because this is a
 		 *                                       // sparse array in which index 1 is unset
-		 * this.expectChange("foo", "c", 2); // expect value "c" for control with ID "foo" in row 2
 		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
 		 *                                 // expect value "d" for control with ID "foo" in a
 		 *                                 // metamodel table on "/MyEntitySet/ID"
@@ -1085,15 +1085,15 @@ sap.ui.define([
 		 *                                 // destroyed
 		 *
 		 * @param {string} sControlId The control ID
-		 * @param {string|string[]|boolean} [vValue] The expected value, a list of expected values
-		 *   or <code>false</code> to enforce listening to a template control.
-		 * @param {number|string} [vRow] The row index (for the model) or the path of its parent
-		 *   context (for the metamodel), in case that a change is expected for a single row of a
-		 *   list (in this case <code>vValue</code> must be a string).
+		 * @param {string|string[]|number|number[]} [vValue] The expected value or a list of
+		 *   expected values
+		 * @param {string} [sRow] (Only for metamodel tests) The path of the binding's parent
+		 *   context, in case that a change is expected for a single row of a list; in this case
+		 *   <code>vValue</code> must be a string
 		 * @returns {object} The test instance for chaining
 		 */
-		expectChange : function (sControlId, vValue, vRow) {
-			var aExpectations, i;
+		expectChange : function (sControlId, vValue, sRow) {
+			var aExpectations;
 
 			// Ensures that oObject[vProperty] is an array and returns it
 			function array(oObject, vProperty) {
@@ -1104,26 +1104,13 @@ sap.ui.define([
 
 			if (arguments.length === 3) {
 				aExpectations = array(this.mListChanges, sControlId);
-				if (Array.isArray(vValue)) {
-					for (i = 0; i < vValue.length; i += 1) {
-						if (i in vValue) {
-							// This may create a sparse array this.mListChanges[sControlId]
-							array(aExpectations, vRow + i).push(vValue[i]);
-						}
-					}
-				} else {
-					// This may create a sparse array this.mListChanges[sControlId]
-					array(aExpectations, vRow).push(vValue);
-				}
+				// This may create a sparse array this.mListChanges[sControlId]
+				array(aExpectations, sRow).push(vValue);
 			} else if (Array.isArray(vValue)) {
 				aExpectations = array(this.mListChanges, sControlId);
-				for (i = 0; i < vValue.length; i += 1) {
-					if (i in vValue) {
-						array(aExpectations, i).push(vValue[i]);
-					}
-				}
-			} else if (vValue === false) {
-				array(this.mListChanges, sControlId);
+				vValue.forEach(function (vRowValue, i) {
+					array(aExpectations, i).push(vRowValue);
+				});
 			} else {
 				aExpectations = array(this.mChanges, sControlId);
 				if (arguments.length > 1) {
@@ -1920,8 +1907,7 @@ sap.ui.define([
 <Text id="longitude3" text="{Address/GeoLocation/Longitude}"/>',
 			that = this;
 
-		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=Address/City,BusinessPartnerID",
-			{
+		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=Address/City,BusinessPartnerID", {
 				Address : {
 					City : "Heidelberg"
 				},
@@ -1933,6 +1919,9 @@ sap.ui.define([
 			.expectChange("longitude3");
 
 		return this.createView(assert, sView, oModel).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
+
 			that.expectRequest("SalesOrderList('1')/SO_2_BP"
 				+ "?$select=Address/GeoLocation/Longitude", {
 					Address : {
@@ -1944,12 +1933,24 @@ sap.ui.define([
 				.expectChange("longitude1", "8.700000000000")
 				.expectChange("longitude2", "8.700000000000");
 
-			// code under test - Longitude is requested once
 			oFormContext = that.oView.byId("form").getBindingContext();
+
+			// code under test - CompanyName leads to a "failed to drill-down"
+			assert.strictEqual(oFormContext.getProperty("CompanyName"), undefined);
+
+			// code under test - Longitude is requested once
 			that.oView.byId("longitude1").setBindingContext(oFormContext);
 			that.oView.byId("longitude2").setBindingContext(oFormContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			that.oLogMock.expects("error")
+				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
+
+			// code under test
+			return oFormContext.requestProperty("CompanyName").then(function (sValue) {
+				assert.strictEqual(sValue, undefined);
+			});
 		}).then(function () {
 			that.expectChange("longitude3", "8.700000000000");
 
@@ -2201,7 +2202,7 @@ sap.ui.define([
 						{Name : "Peter Burke"}
 					]
 				})
-				.expectChange("text", "Peter Burke", 1);
+				.expectChange("text", [, "Peter Burke"]);
 
 			// code under test
 			that.oView.byId("table").getBinding("items")
@@ -2249,7 +2250,7 @@ sap.ui.define([
 						headers : {"If-Match" : "ETag0"},
 						payload : {AGE : 10}
 					}) // 204 No Content
-					.expectChange("age", "10", 0); // caused by setValue
+					.expectChange("age", ["10"]); // caused by setValue
 
 				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value")
 					.setValue(10);
@@ -2280,7 +2281,7 @@ sap.ui.define([
 							AGE : 51
 						}]
 					})
-					.expectChange("age", "51", 0);
+					.expectChange("age", ["51"]);
 
 				// code under test
 				oContext.refresh(undefined, true);
@@ -2746,8 +2747,7 @@ sap.ui.define([
 					}]
 				})
 				.expectChange("name", null, null)
-				.expectChange("name", "Frederic Fall", 1)
-				.expectChange("name", "Peter Burke", 2)
+				.expectChange("name", [, "Frederic Fall", "Peter Burke"])
 				.expectMessages([oMessage1, oMessage2]);
 
 			oTable.setFirstVisibleRow(1);
@@ -2936,6 +2936,171 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			return that.checkValueState(assert, "name", "Warning", "Warning Text");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow binding of operation parameters (see ListBinding application)
+	// - automatic type determination
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: type determination", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget", null)
+			.expectChange("teamId", "");
+
+		return this.createView(assert, sView).then(function () {
+			var oBudgetType = that.oView.byId("budget").getBinding("value").getType(),
+				oTeamIdType = that.oView.byId("teamId").getBinding("value").getType();
+
+			// verify automatic type determination
+			assert.strictEqual(oBudgetType.getName(), "sap.ui.model.odata.type.Decimal");
+			assert.deepEqual(oBudgetType.oConstraints, {
+				nullable : false,
+				precision : 16,
+				scale : Infinity
+			});
+			assert.strictEqual(oTeamIdType.getName(), "sap.ui.model.odata.type.String");
+			assert.deepEqual(oTeamIdType.oConstraints, {
+				maxLength : 10,
+				nullable : false
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow binding of operation parameters (see ListBinding application)
+	// - parameters appear on UI via binding
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: OneTime", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget")
+			.expectChange("teamId");
+
+		return this.createView(assert, sView).then(function () {
+			var oOperationBinding = that.oModel.bindContext("/ChangeTeamBudgetByID(...)");
+
+			oOperationBinding
+				.setParameter("Budget", "1234.1234")
+				.setParameter("TeamID", "TEAM_01");
+
+			that.expectChange("budget", "1,234.1234")
+				.expectChange("teamId", "TEAM_01");
+
+			that.oView.byId("form").getObjectBinding()
+				.setContext(oOperationBinding.getBoundContext()); //TODO getParameterContext()
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow binding of operation parameters (see ListBinding application)
+	// - parameters appear on UI via binding
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: OneWay", function (assert) {
+		var oOperationBinding,
+			sView = '\
+<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget", null)
+			.expectChange("teamId", "");
+
+		return this.createView(assert, sView).then(function () {
+			oOperationBinding = that.oView.byId("form").getObjectBinding();
+
+			that.expectChange("budget", "1,234.1234")
+				.expectChange("teamId", "TEAM_01");
+
+			oOperationBinding
+				.setParameter("Budget", "1234.1234")
+				.setParameter("TeamID", "TEAM_01");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "ChangeTeamBudgetByID",
+					payload : {
+						Budget : "1234.1234",
+						TeamID : "TEAM_01"
+					}
+				}, {/* response does not matter here */});
+
+			oOperationBinding.execute();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("budget", "56,789");
+
+			oOperationBinding.setParameter("Budget", "56789");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("teamId", null);
+
+			// #deregisterChange
+			that.oView.byId("teamId").getBinding("value").setContext(null);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			oOperationBinding.setParameter("TeamID", "n/a");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Allow setting parameters of operations via control property binding
+	// - parameters change because of change in property binding
+	// JIRA: CPOUI5UISERVICESV3-2010
+	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<Input id="budget" value="{$Parameter/Budget}" />\
+	<Input id="teamId" value="{$Parameter/TeamID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("budget", null)
+			.expectChange("teamId", "");
+
+		return this.createView(assert, sView).then(function () {
+			that.expectChange("budget", "1,234.1234")
+				.expectChange("teamId", "TEAM_01");
+
+			that.oView.byId("budget").getBinding("value").setValue("1234.1234");
+			// also test the API for property setting
+			that.oView.byId("form").getBindingContext().setProperty("$Parameter/TeamID", "TEAM_01");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+				method : "POST",
+				url : "ChangeTeamBudgetByID",
+				payload : {
+					Budget : "1234.1234",
+					TeamID : "TEAM_01"
+				}
+			}, {/* response does not matter here */});
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().execute();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -3273,7 +3438,7 @@ sap.ui.define([
 				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=1&$top=2", {
 					value : [{SalesOrderID : "0500000004"}]
 				})
-				.expectChange("id", "0500000004", 1);
+				.expectChange("id", [, "0500000004"]);
 
 			// code under test
 			return Promise.all([
@@ -3319,7 +3484,7 @@ sap.ui.define([
 				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=2&$top=4", {
 					value : [{SalesOrderID : "0500000004"}]
 				})
-				.expectChange("id", "0500000004", 2);
+				.expectChange("id", [,, "0500000004"]);
 
 			oTable = that.oView.byId("table");
 
@@ -3378,7 +3543,7 @@ sap.ui.define([
 				.expectRequest("SalesOrderList('0500000003')?$select=SalesOrderID", {
 					SalesOrderID : "0500000003"
 				})
-				.expectChange("id", "0500000003", 1);
+				.expectChange("id", [, "0500000003"]);
 
 			oTable = that.oView.byId("table");
 
@@ -3429,7 +3594,7 @@ sap.ui.define([
 				// for the delete is fired (it wouldn't come with $count)
 				.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=5&$top=1", {value : []})
 				.expectChange("id", null) // from deleting the item '0500000002'
-				.expectChange("id", "0500000004", 2);
+				.expectChange("id", [,, "0500000004"]);
 
 			oTable = that.oView.byId("table");
 
@@ -3554,7 +3719,7 @@ sap.ui.define([
 					]
 				})
 				.expectChange("count", "2")
-				.expectChange("item", "0000000030", 1);
+				.expectChange("item", [, "0000000030"]);
 
 			// code under test
 			that.oView.byId("form").getObjectBinding().refresh();
@@ -3629,7 +3794,7 @@ sap.ui.define([
 				})
 				.expectChange("count", "3")
 				.expectChange("note", "refreshed")
-				.expectChange("item", "0000000030", 2);
+				.expectChange("item", [,, "0000000030"]);
 
 			// expect event only for ODLB because ODCB doesn't fire a change event
 			that.oView.byId("table").getBinding("items")
@@ -3688,7 +3853,7 @@ sap.ui.define([
 					headers : {"If-Match" : "ETag"},
 					payload : {CompanyName : "Bar"}
 				}, {CompanyName : "Bar"})
-				.expectChange("item", "Bar", 0);
+				.expectChange("item", ["Bar"]);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("Bar");
@@ -3755,7 +3920,7 @@ sap.ui.define([
 					headers : {"If-Match" : "ETag"},
 					payload : {Value : "New"}
 				}, {Value : "New"})
-				.expectChange("item", "New", 0);
+				.expectChange("item", ["New"]);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("New");
@@ -3897,7 +4062,7 @@ sap.ui.define([
 				}, new Promise(function (resolve, reject) {
 					fnResolvePost = resolve;
 				}))
-				.expectChange("note", "baz", 0);
+				.expectChange("note", ["baz"]);
 
 			oTable.getItems()[0].getCells()[1].getBinding("value").setValue("baz");
 
@@ -3908,7 +4073,7 @@ sap.ui.define([
 		}).then(function () {
 			var oCreateCompletedPromise = expectCreateCompleted(true);
 
-			that.expectChange("salesOrderID", "43", 0);
+			that.expectChange("salesOrderID", ["43"]);
 
 			fnResolvePost({
 				Note : "baz",
@@ -3961,7 +4126,7 @@ sap.ui.define([
 				var oTable = that.oView.byId("table");
 
 				that.expectChange("note", ["bar", "foo"])
-					.expectChange("note", "baz", 0)
+					.expectChange("note", ["baz"])
 					.expectChange("companyName", null)
 					.expectChange("companyName", "SAP");
 
@@ -3978,7 +4143,7 @@ sap.ui.define([
 						Note : "from server",
 						SalesOrderID : "43"
 					})
-					.expectChange("note", "from server", 0);
+					.expectChange("note", ["from server"]);
 				if (!bSkipRefresh) {
 					that.expectRequest("SalesOrderList('43')?$select=Note,SalesOrderID"
 							+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
@@ -3989,7 +4154,7 @@ sap.ui.define([
 								CompanyName : "ACM"
 							}
 						})
-						.expectChange("note", "fresh from server", 0)
+						.expectChange("note", ["fresh from server"])
 						.expectChange("companyName", "ACM");
 				}
 
@@ -4057,8 +4222,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("count", "3")
-				.expectChange("id", "", 1)
-				.expectChange("id", "42", 2)
+				.expectChange("id", [, "", "42"])
 				.expectChange("note", ["New 2", "New 1", "First SalesOrder"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
@@ -4116,7 +4280,7 @@ sap.ui.define([
 					Note : "New 3",
 					SalesOrderID : "45"
 				})
-				.expectChange("id", "45", 0);
+				.expectChange("id", ["45"]);
 
 			return Promise.all([
 				oCreatedContext.created(),
@@ -4201,7 +4365,7 @@ sap.ui.define([
 					Note : "New 3",
 					SalesOrderID : "45"
 				})
-				.expectChange("id", "45", 0);
+				.expectChange("id", ["45"]);
 
 			return Promise.all([
 				oCreatedContext.created(),
@@ -4273,8 +4437,8 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("count", "4")
-				.expectChange("id", "", 0)
-				.expectChange("note", "New 1", 0);
+				.expectChange("id", [""])
+				.expectChange("note", ["New 1"]);
 
 			// never persisted or deleted
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
@@ -4282,16 +4446,16 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("count", "5")
-				.expectChange("id", "", 0)
-				.expectChange("note", "New 2", 0);
+				.expectChange("id", [""])
+				.expectChange("note", ["New 2"]);
 
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("count", "6")
-				.expectChange("id", "", 0)
-				.expectChange("note", "New 3", 0);
+				.expectChange("id", [""])
+				.expectChange("note", ["New 3"]);
 
 			// never persisted or deleted
 			oCreatedContext2 = oBinding.create({Note : "New 3"}, true);
@@ -4299,7 +4463,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("count", "5")
-				.expectChange("note", "New 1", 1);
+				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
@@ -4320,10 +4484,8 @@ sap.ui.define([
 			assert.strictEqual(oCreatedContext0.getProperty("Note"), "New 1");
 			assert.strictEqual(oCreatedContext0.getProperty("/SalesOrderList/-1/Note"), "New 1");
 
-			that.expectChange("id", "42", 2)
-				.expectChange("note", "First SalesOrder", 2)
-				.expectChange("id", "43", 3)
-				.expectChange("note", "Second SalesOrder", 3);
+			that.expectChange("id", [,, "42", "43"])
+				.expectChange("note", [,, "First SalesOrder", "Second SalesOrder"]);
 
 			// show more items
 			that.oView.byId("table-trigger").firePress();
@@ -4513,7 +4675,7 @@ sap.ui.define([
 					Note : "New 1",
 					SalesOrderID : "43"
 				})
-				.expectChange("id", "43", 0);
+				.expectChange("id", ["43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -4538,8 +4700,8 @@ sap.ui.define([
 
 			that.expectChange("id", null)
 				.expectChange("note", null)
-				.expectChange("id", "43", 1)
-				.expectChange("note", "New 1", 1);
+				.expectChange("id", [, "43"])
+				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */}),
@@ -4578,8 +4740,8 @@ sap.ui.define([
 					Note : "New 3 - Changed",
 					SalesOrderID : "44"
 				})
-				.expectChange("id", "44", 0)
-				.expectChange("note", "New 3 - Changed", 0);
+				.expectChange("id", ["44"])
+				.expectChange("note", ["New 3 - Changed"]);
 
 			aRows[0].getCells()[1].getBinding("value").setValue("New 3 - Changed");
 
@@ -4701,8 +4863,8 @@ sap.ui.define([
 				})
 				.expectChange("id", null)
 				.expectChange("note", null)
-				.expectChange("id", "43", 1)
-				.expectChange("note", "New 1", 1);
+				.expectChange("id", [, "43"])
+				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
@@ -4969,7 +5131,7 @@ sap.ui.define([
 					Note : "New 3 - Changed",
 					SalesOrderID : "46"
 				})
-				.expectChange("note", "New 3 - Changed", 0);
+				.expectChange("note", ["New 3 - Changed"]);
 
 			oTable.getItems()[0].getCells()[1].getBinding("value").setValue("New 3 - Changed");
 
@@ -5112,8 +5274,8 @@ sap.ui.define([
 				})
 				.expectChange("id", null) // for the deleted row
 				.expectChange("note", null)
-				.expectChange("id", "43", 1)
-				.expectChange("note", "New 1", 1);
+				.expectChange("id", [, "43"])
+				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
@@ -5272,8 +5434,8 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("items");
 
-			that.expectChange("id", "", 0)
-				.expectChange("note", "New 1", 0);
+			that.expectChange("id", [""])
+				.expectChange("note", ["New 1"]);
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true);
 
@@ -5287,7 +5449,7 @@ sap.ui.define([
 					Note : "New 1",
 					SalesOrderID : "43"
 				})
-				.expectChange("id", "43", 0);
+				.expectChange("id", ["43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -5530,8 +5692,8 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("items");
 
-			that.expectChange("id", "", 0)
-				.expectChange("note", "New 1", 0);
+			that.expectChange("id", [""])
+				.expectChange("note", ["New 1"]);
 
 			oCreatedContext0 = oTable.getBinding("items").create({Note : "New 1"}, true);
 
@@ -5545,7 +5707,7 @@ sap.ui.define([
 					Note : "New 1",
 					SalesOrderID : "43"
 				})
-				.expectChange("id", "43", 0);
+				.expectChange("id", ["43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -5717,7 +5879,7 @@ sap.ui.define([
 					Note : "New 1",
 					SalesOrderID : "43"
 				})
-				.expectChange("id", "43", 0);
+				.expectChange("id", ["43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -5832,8 +5994,8 @@ sap.ui.define([
 					Note : "New 2",
 					SalesOrderID : "44"
 				})
-				.expectChange("id", "44", 0)
-				.expectChange("id", "43", 1);
+				.expectChange("id", ["44"])
+				.expectChange("id", [, "43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -5855,8 +6017,8 @@ sap.ui.define([
 				})
 				.expectChange("id", null)
 				.expectChange("note", null)
-				.expectChange("id", "43", 1)
-				.expectChange("note", "New 1", 1);
+				.expectChange("id", [, "43"])
+				.expectChange("note", [, "New 1"]);
 
 			return Promise.all([
 				oCreatedContext1.delete("$auto"),
@@ -6068,7 +6230,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("note", "New 3", 2);
+			that.expectChange("note", [,, "New 3"]);
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
@@ -6131,8 +6293,8 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("items");
 
-			that.expectChange("id", "", 1)
-				.expectChange("note", "New 1", 1);
+			that.expectChange("id", [, ""])
+				.expectChange("note", [, "New 1"]);
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true, true);
 
@@ -6146,7 +6308,7 @@ sap.ui.define([
 					Note : "New 1",
 					SalesOrderID : "43"
 				})
-				.expectChange("id", "43", 1);
+				.expectChange("id", [, "43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -6335,8 +6497,8 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("items");
 
-			that.expectChange("id", "", 1)
-				.expectChange("note", "New 1", 1);
+			that.expectChange("id", [, ""])
+				.expectChange("note", [, "New 1"]);
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true, true);
 
@@ -6351,7 +6513,7 @@ sap.ui.define([
 					Note : "New 1",
 					SalesOrderID : "43"
 				})
-				.expectChange("id", "43", 1);
+				.expectChange("id", [, "43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -6443,8 +6605,8 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oBinding = oTable.getBinding("rows");
 
-			that.expectChange("id", "", 1)
-				.expectChange("note", "New 1", 1); // "New 2" is not visible as visibleRowCount is 2
+			that.expectChange("id", [, ""])
+				.expectChange("note", [, "New 1"]); // "New 2" is  invisible as visibleRowCount is 2
 
 			oCreatedContext0 = oBinding.create({Note : "New 1"}, true, true);
 			oCreatedContext1 = oBinding.create({Note : "New 2"}, true, true);
@@ -6469,7 +6631,7 @@ sap.ui.define([
 					Note : "New 2",
 					SalesOrderID : "44"
 				})
-				.expectChange("id", "43", 1);
+				.expectChange("id", [, "43"]);
 
 			return Promise.all([
 				oCreatedContext0.created(),
@@ -6500,8 +6662,8 @@ sap.ui.define([
 				})
 				.expectChange("id", null)
 				.expectChange("note", null)
-				.expectChange("id", "", 2)
-				.expectChange("note", "New 3", 2);
+				.expectChange("id", [,, ""])
+				.expectChange("note", [,, "New 3"]);
 
 			return Promise.all([
 				oCreatedContext1.created().catch(function () {/* avoid uncaught (in promise) */
@@ -6560,8 +6722,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("city", "Heidelberg", 0)
-				.expectChange("longitude", "8.700000000000", 0);
+			that.expectChange("city", ["Heidelberg"])
+				.expectChange("longitude", ["8.700000000000"]);
 
 			oTable.getItems()[0].getCells()[0].getBinding("value").setValue("Heidelberg");
 			oTable.getItems()[0].getCells()[1].getBinding("value").setValue("8.7");
@@ -6593,7 +6755,7 @@ sap.ui.define([
 					},
 					BusinessPartnerID : "43"
 				})
-				.expectChange("longitude", "8.690000000000", 0);
+				.expectChange("longitude", ["8.690000000000"]);
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -6641,7 +6803,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("quantity", "2.000", 0);
+			that.expectChange("quantity", ["2.000"]);
 
 			oTable.getItems()[0].getCells()[0].getBinding("value").setValue("2.000");
 
@@ -7749,7 +7911,7 @@ sap.ui.define([
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
 
-		this.expectChange("item", false);
+		this.expectChange("item", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("item", "ID", "/MANAGERS/ID")
@@ -7870,10 +8032,8 @@ sap.ui.define([
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 			oTeamBinding = that.oView.byId("form").getObjectBinding();
 			// insert new employee at first row
-			that.expectChange("id", "", 0)
-				.expectChange("text", "John Doe", 0)
-				.expectChange("id", "2", 1)
-				.expectChange("text", "Frederic Fall", 1);
+			that.expectChange("id", ["", "2"])
+				.expectChange("text", ["John Doe", "Frederic Fall"]);
 			oTeam2EmployeesBinding.create({ID : null, Name : "John Doe"});
 
 			// code under test
@@ -7897,8 +8057,8 @@ sap.ui.define([
 					ID : "7",
 					Name : "The real John Doe"
 				})
-				.expectChange("id", "7", 0)
-				.expectChange("text", "The real John Doe", 0);
+				.expectChange("id", ["7"])
+				.expectChange("text", ["The real John Doe"]);
 
 			return Promise.all([
 				that.oModel.submitBatch("update"),
@@ -7923,10 +8083,8 @@ sap.ui.define([
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 			that.oView.byId("form").getObjectBinding();
 			// insert new employee at first row
-			that.expectChange("id", "", 0)
-				.expectChange("text", "John Doe", 0)
-				.expectChange("id", "2", 1)
-				.expectChange("text", "Frederic Fall", 1);
+			that.expectChange("id", ["", "2"])
+				.expectChange("text", ["John Doe", "Frederic Fall"]);
 			oTeam2EmployeesBinding.create({ID : null, Name : "John Doe"});
 
 			return that.waitForChanges(assert);
@@ -7959,10 +8117,8 @@ sap.ui.define([
 				oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 				oTeamBinding = that.oView.byId("form").getObjectBinding();
 
-				that.expectChange("id", "", 0)
-					.expectChange("text", "John Doe", 0)
-					.expectChange("id", "2", 1)
-					.expectChange("text", "Frederic Fall", 1);
+				that.expectChange("id", ["", "2"])
+					.expectChange("text", ["John Doe", "Frederic Fall"]);
 
 				oNewContext = oTeam2EmployeesBinding.create({ID : null, Name : "John Doe"});
 				oNewContext.created().catch(function (oError) {
@@ -7976,8 +8132,8 @@ sap.ui.define([
 			}).then(function () {
 				var oPromise;
 
-				that.expectChange("id", "2", 0)
-					.expectChange("text", "Frederic Fall", 0);
+				that.expectChange("id", ["2"])
+					.expectChange("text", ["Frederic Fall"]);
 
 				// code under test
 				oPromise = bUseReset
@@ -8134,7 +8290,7 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("name", "Missy Eliot")
-			.expectChange("nameCreated", false);
+			.expectChange("nameCreated", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
@@ -8558,7 +8714,7 @@ sap.ui.define([
 							{Name : "Peter Burke"}
 						]
 					})
-					.expectChange("text", "Peter Burke", 1);
+					.expectChange("text", [, "Peter Burke"]);
 
 				// code under test
 				that.oView.byId("table").getBinding("items")
@@ -8574,8 +8730,7 @@ sap.ui.define([
 							{Name : "Peter Burke"}
 						]
 					})
-					.expectChange("text", "Jonathan Smith", 1)
-					.expectChange("text", "Peter Burke", 2);
+					.expectChange("text", [, "Jonathan Smith", "Peter Burke"]);
 
 				// code under test
 				that.oView.byId("table").getBinding("items").filter(/*no filter*/);
@@ -8621,7 +8776,7 @@ sap.ui.define([
 							{Name : "Peter Burke"}
 						]
 					})
-					.expectChange("text", "Peter Burke", 1);
+					.expectChange("text", [, "Peter Burke"]);
 
 				// code under test
 				that.oView.byId("table").getBinding("items")
@@ -8858,7 +9013,7 @@ sap.ui.define([
 </Table>',
 				that = this;
 
-			this.expectChange("text", false);
+			this.expectChange("text", []);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectRequest({
@@ -8903,7 +9058,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectChange("text", false);
+		this.expectChange("text", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
@@ -8957,7 +9112,7 @@ sap.ui.define([
 				]
 			})
 			.expectChange("teamId", ["1", "2"])
-			.expectChange("employeeId", false)
+			.expectChange("employeeId", [])
 			.expectChange("employeeName");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -9157,7 +9312,7 @@ sap.ui.define([
 							{SalesOrderID : "2"}
 						]
 					})
-					.expectChange("text", "2", 1);
+					.expectChange("text", [, "2"]);
 
 				// code under test
 				that.oView.byId("table").getBinding("items").filter(oFixture.filter);
@@ -9315,7 +9470,7 @@ sap.ui.define([
 					headers : {"If-Match" : "ETag"},
 					payload : {ROOM_ID : "1.02"}
 				})
-				.expectChange("room", "1.02", 0);
+				.expectChange("room", ["1.02"]);
 
 			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("value")
 				.setValue("1.02");
@@ -11582,7 +11737,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectChange("id", false);
+		this.expectChange("id", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("items");
@@ -11629,7 +11784,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectChange("id", false);
+		this.expectChange("id", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 
@@ -11653,7 +11808,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectChange("id", false);
+		this.expectChange("id", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("items");
@@ -11745,7 +11900,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectChange("nickname", false);
+		this.expectChange("nickname", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("GetSOContactList(SalesOrderID='0500000001')", {
@@ -12001,8 +12156,8 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("note", ["Row1", "Row2"])
-			.expectChange("netAmount", false)
-			.expectChange("salesOrderID", false);
+			.expectChange("netAmount", [])
+			.expectChange("salesOrderID", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContextBinding = that.oView.byId("form").getElementBinding(),
@@ -12063,7 +12218,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectChange("position", false);
+		this.expectChange("position", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("SalesOrderList('0500000000')/SO_2_SOITEM?$skip=0&$top=110", {
@@ -12245,7 +12400,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectChange("name", false);
+		this.expectChange("name", []);
 
 		return this.createView(assert, sView).then(function () {
 
@@ -12333,7 +12488,7 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectChange("name", false);
+		this.expectChange("name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oListBinding = that.oView.byId("table").getBinding("rows");
@@ -12465,11 +12620,11 @@ sap.ui.define([
 					.expectChange("grossAmount", undefined, null)
 					.expectChange("lifecycleStatus", null, null);
 			}
-			that.expectChange("isExpanded", [false, false, false], 7)
-				.expectChange("isTotal", [true, true, true], 7)
-				.expectChange("level", [1, 1, 1], 7)
-				.expectChange("grossAmount", [7, 8, 9], 7)
-				.expectChange("lifecycleStatus", ["T", "S", "R"], 7);
+			that.expectChange("isExpanded", [,,,,,,, false, false, false])
+				.expectChange("isTotal", [,,,,,,, true, true, true])
+				.expectChange("level", [,,,,,,, 1, 1, 1])
+				.expectChange("grossAmount", [,,,,,,, 7, 8, 9])
+				.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
 
 			that.oView.byId("table").setFirstVisibleRow(7);
 
@@ -12483,10 +12638,10 @@ sap.ui.define([
 							{LifecycleStatus : "R"}
 						]
 					})
-					.expectChange("isExpanded", [false, false, false], 7)
-					.expectChange("isTotal", [true, true, true], 7)
-					.expectChange("level", [1, 1, 1], 7)
-					.expectChange("lifecycleStatus", ["T", "S", "R"], 7);
+					.expectChange("isExpanded", [,,,,,,, false, false, false])
+					.expectChange("isTotal", [,,,,,,, true, true, true])
+					.expectChange("level", [,,,,,,, 1, 1, 1])
+					.expectChange("lifecycleStatus", [,,,,,,, "T", "S", "R"]);
 
 				oTable.removeColumn(4).destroy(); // GrossAmount
 				oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
@@ -12619,9 +12774,9 @@ sap.ui.define([
 					.expectChange("country", null, null)
 					.expectChange("region", null, null)
 					.expectChange("salesNumber", null, null)
-					.expectChange("country", ["a", "b", "c", "d"], 1)
-					.expectChange("region", ["Z", "Y", "X", "W"], 1)
-					.expectChange("salesNumber", ["1", "2", "3", "4"], 1);
+					.expectChange("country", [, "a", "b", "c", "d"])
+					.expectChange("region", [, "Z", "Y", "X", "W"])
+					.expectChange("salesNumber", [, "1", "2", "3", "4"]);
 
 				oTable.setFirstVisibleRow(0);
 
@@ -12695,9 +12850,9 @@ sap.ui.define([
 						: "/top(5)"),
 					{value : aValues})
 				.expectChange("count")
-				.expectChange("country", ["a", "b", "c", "d", "e"], 1)
-				.expectChange("region", ["Z", "Y", "X", "W", "V"], 1)
-				.expectChange("salesNumber", ["1", "2", "3", "4", "5"], 1);
+				.expectChange("country", [, "a", "b", "c", "d", "e"])
+				.expectChange("region", [, "Z", "Y", "X", "W", "V"])
+				.expectChange("salesNumber", [, "1", "2", "3", "4", "5"]);
 
 			return this.createView(assert, sView, createBusinessPartnerTestModel())
 			.then(function () {
@@ -13098,8 +13253,8 @@ sap.ui.define([
 					]
 				})
 				.expectChange("count")
-				.expectChange("grossAmount", ["2.00", "3.00", "4.00", "5.00"], 1)
-				.expectChange("lifecycleStatus", ["Y", "X", "W", "V"], 1);
+				.expectChange("grossAmount", [, "2.00", "3.00", "4.00", "5.00"])
+				.expectChange("lifecycleStatus", [, "Y", "X", "W", "V"]);
 
 			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
 				that.expectChange("count", "26");
@@ -13213,8 +13368,8 @@ sap.ui.define([
 				]
 			})
 			.expectChange("count")
-			.expectChange("text", ["Jonathan Smith", "Frederic Fall", "Peter Burke"], 1)
-			.expectChange("age", ["50", "70", "77"], 1);
+			.expectChange("text", [, "Jonathan Smith", "Frederic Fall", "Peter Burke"])
+			.expectChange("age", [, "50", "70", "77"]);
 
 		return this.createView(assert, sView).then(function () {
 			that.expectChange("count", "4");
@@ -13276,8 +13431,8 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectChange("text", false)
-			.expectChange("age", false);
+		this.expectChange("text", [])
+			.expectChange("age", []);
 
 		return this.createView(assert, sView).then(function () {
 			var oListBinding = that.oView.byId("table").getBinding("items"),
@@ -13341,7 +13496,7 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectChange("name", false);
+		this.expectChange("name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// Here it is essential that createView renders the table, as
@@ -13715,7 +13870,7 @@ sap.ui.define([
 			.expectChange("id")
 			.expectChange("isActive")
 			.expectChange("name")
-			.expectChange("price", false);
+			.expectChange("price", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oRowContext;
@@ -13882,7 +14037,7 @@ sap.ui.define([
 					"@odata.etag" : "ETag1",
 					Price : "8.88"
 				})
-				.expectChange("price", "8.88", 0);
+				.expectChange("price", ["8.88"]);
 
 			oBinding.setValue("8.88");
 
@@ -13974,7 +14129,7 @@ sap.ui.define([
 			})
 			.expectChange("name", ["Jonathan Smith", "Frederic Fall"])
 			.expectChange("managerId")
-			.expectChange("equipmentId", false);
+			.expectChange("equipmentId", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("EMPLOYEES('42')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
@@ -14386,7 +14541,7 @@ sap.ui.define([
 					url : "TEAMS",
 					payload : {Team_Id : "new"}
 				}, {Team_Id : "newer"})
-				.expectChange("Team_Id", "new", 0)
+				.expectChange("Team_Id", ["new"])
 				.expectChange("Team_Id", ["newer", "42"])
 				.expectRequest("TEAMS('newer')?$select=Team_Id", {Team_Id : "newer"});
 
@@ -14449,7 +14604,7 @@ sap.ui.define([
 					payload : {ID : null}
 				}, {ID : "7"})
 				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('7')?$select=ID", {ID : "7"})
-				.expectChange("id", "", 0) // from setValue(null)
+				.expectChange("id", [""]) // from setValue(null)
 				.expectChange("id", ["7", "2"]);
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 			oCreatedContext = oTeam2EmployeesBinding.create({ID : null});
@@ -14515,7 +14670,7 @@ sap.ui.define([
 					url : "SalesOrderList",
 					payload : {SalesOrderID : "newID"}
 				}, {SalesOrderID : "43"})
-				.expectChange("SalesOrderID", "newID", 0) // from create()
+				.expectChange("SalesOrderID", ["newID"]) // from create()
 				.expectChange("SalesOrderID", ["43", "42"])
 				.expectRequest("SalesOrderList('43')?$select=SalesOrderID", {SalesOrderID : "43"});
 
@@ -14553,8 +14708,8 @@ sap.ui.define([
 					SalesOrderID : "43",
 					ItemPosition : "10"
 				})
-				.expectChange("ItemPosition", "newPos", 0)
-				.expectChange("ItemPosition", "10", 0);
+				.expectChange("ItemPosition", ["newPos"])
+				.expectChange("ItemPosition", ["10"]);
 
 			oCreatedItemContext =  oItemBinding.create({
 				SalesOrderID : "43",
@@ -14677,7 +14832,7 @@ sap.ui.define([
 				]
 			})
 			.expectChange("text", ["Team 01", "Team 02"])
-			.expectChange("Name", false);
+			.expectChange("Name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("TEAMS('Team_01')/TEAM_2_EMPLOYEES"
@@ -15468,7 +15623,7 @@ sap.ui.define([
 					method : "DELETE",
 					url : "EMPLOYEES('1')"
 				})
-				.expectChange("name", "Frederic Fall", 1);
+				.expectChange("name", [, "Frederic Fall"]);
 
 			return Promise.all([
 				// code under test
@@ -15498,7 +15653,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectChange("Team_Id")
-			.expectChange("name", false);
+			.expectChange("name", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id", {
@@ -15798,7 +15953,7 @@ sap.ui.define([
 						}]
 					}
 				})
-				.expectChange("name", "", 0) // triggered by setValue
+				.expectChange("name", [""]) // triggered by setValue
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
@@ -15881,7 +16036,7 @@ sap.ui.define([
 						}]
 					}
 				})
-				.expectChange("name", "", 0) // triggered by setValue
+				.expectChange("name", [""]) // triggered by setValue
 				.expectMessages([{
 					code : "1",
 					message : "Enter a name",
@@ -16676,10 +16831,8 @@ sap.ui.define([
 						PublicationID : "42-2"
 					}]
 				})
-				.expectChange("price", "7.11", 1)
-				.expectChange("price", "7.22", 2)
-				.expectChange("name", null, 1)
-				.expectChange("name", "Minute Frustrated", 2)
+				.expectChange("price", [, "7.11", "7.22"])
+				.expectChange("name", [, null, "Minute Frustrated"])
 				.expectMessages([{
 					code : "23",
 					message : "This looks pretty cheap now",
@@ -16732,10 +16885,8 @@ sap.ui.define([
 				.expectChange("currency", null, null)
 				// "name" temporarily loses its binding context and thus fires a change event
 				.expectChange("name", null, null)
-				.expectChange("price", "7.77", 7)
-				.expectChange("price", "7.88", 8)
-				.expectChange("currency", "EUR", 7)
-				.expectChange("currency", "EUR", 8);
+				.expectChange("price", [,,,,,,, "7.77", "7.88"])
+				.expectChange("currency", [,,,,,,, "EUR", "EUR"]);
 
 			that.oView.byId("table").setFirstVisibleRow(7);
 
@@ -16753,8 +16904,7 @@ sap.ui.define([
 						PublicationID : "42-7"
 					}]
 				})
-				.expectChange("price", "5.77", 7)
-				.expectChange("price", "5.88", 8);
+				.expectChange("price", [,,,,,,, "5.77",  "5.88"]);
 
 			return Promise.all([
 				// code under test
@@ -16853,8 +17003,8 @@ sap.ui.define([
 			.expectChange("priceDetail")
 			.expectChange("currencyDetail")
 			.expectChange("inProcessByUser")
-			.expectChange("idDetail", false)
-			.expectChange("nameDetail", false);
+			.expectChange("idDetail", [])
+			.expectChange("nameDetail", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
@@ -17420,7 +17570,7 @@ sap.ui.define([
 				value : [{SalesOrderID : "42"}]
 			})
 			.expectChange("salesOrderID", ["42"])
-			.expectChange("note", false);
+			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error"); // don't care about console here
@@ -17480,7 +17630,7 @@ sap.ui.define([
 				value : [{SalesOrderID : "42"}]
 			})
 			.expectChange("salesOrderID", ["42"])
-			.expectChange("note", false);
+			.expectChange("note", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
@@ -18180,7 +18330,7 @@ sap.ui.define([
 							}]
 						}
 					})
-					.expectChange("id", "", 0) // from setValue(null)
+					.expectChange("id", [""]) // from setValue(null)
 					.expectChange("id", ["7", "3"])
 					.expectMessages([{
 						code : "1",
@@ -18572,7 +18722,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// change value in details
-			that.expectChange("note", "Foo", 0);
+			that.expectChange("note", ["Foo"]);
 
 			// Note: cannot call Input#setValue because of that.setFormatter
 			that.oView.byId("table").getItems()[0].getCells()[1].getBinding("value")
@@ -21017,7 +21167,7 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("note", ["SO_1"])
-			.expectChange("itemNote", false);
+			.expectChange("itemNote", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oOrdersTable = that.oView.byId("orders"),
@@ -21124,7 +21274,7 @@ sap.ui.define([
 		oListBindingWithoutUI = oModel.bindList("/SalesOrderList");
 
 		this.expectChange("note")
-			.expectChange("itemNote", false);
+			.expectChange("itemNote", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
@@ -21454,8 +21604,8 @@ sap.ui.define([
 	// Scenario: Server-driven paging with table.Table
 	// Requests following the first request which returned an @odata.nextLink do not request
 	//   the prefetch size to avoid server load.
-	// JIRA: CPOUI5UISERVICESV3-1908
-	QUnit.skip("Server-driven paging with table.Table: do not read prefetch", function (assert) {
+	// JIRA: CPOUI5UISERVICESV3-2018
+	QUnit.test("Server-driven paging with table.Table: do not read prefetch", function (assert) {
 		var sView = '\
 <t:Table id="table" rows="{/EMPLOYEES}" visibleRowCount="3">\
 	<t:Column>\
@@ -21553,5 +21703,51 @@ sap.ui.define([
 			.expectChange("name", null);
 
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Cache is immutable although oCachePromise becomes pending again. The list binding
+	// inside the details must not prevent other bindings from sending their own request.
+	// JIRA: CPOUI5UISERVICESV3-2025
+	QUnit.test("CPOUI5UISERVICESV3-2025", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<ColumnListItem>\
+		<Text id="teamId" text="{Team_Id}"/>\
+	</ColumnListItem>\
+</Table>\
+<FlexBox id="detail">\
+	<Table id="employees" items="{TEAM_2_EMPLOYEES}">\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</Table>\
+	<Text id="managerId" text="{MANAGER_ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				value : [{
+					Team_Id : "TEAM_01"
+				}]
+			})
+			.expectChange("teamId", ["TEAM_01"])
+			.expectChange("name", [])
+			.expectChange("managerId");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100",
+					{value : [{ID : "2", Name : "Frederic Fall"}]})
+				.expectChange("name", ["Frederic Fall"])
+				.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID", {MANAGER_ID : "5"})
+				.expectChange("managerId", "5");
+
+			// code under test: bindings inside "detail" form need to send their own requests
+			that.oView.byId("detail").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
 	});
 });

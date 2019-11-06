@@ -31,14 +31,9 @@ sap.ui.define([
 
 		changeTeamBudget : function (oEvent) {
 			var oView = this.getView(),
-				oForm = oView.byId("ChangeTeamBudgetByID"),
-				oUiModel = oView.getModel("ui");
+				oForm = oView.byId("ChangeTeamBudgetByID");
 
-			oForm.getObjectBinding()
-				.setParameter("TeamID", oUiModel.getProperty("/TeamID"))
-				.setParameter("Budget", oUiModel.getProperty("/Budget"))
-				.execute()
-				.then(function () {
+			oForm.getObjectBinding().execute().then(function () {
 					var oBinding = oView.byId("Budget").getBinding("text");
 
 					oBinding.setContext(null);
@@ -52,13 +47,9 @@ sap.ui.define([
 
 		changeManagerOfTeam : function (oEvent) {
 			var oView = this.getView(),
-				oForm = oView.byId("ChangeTeamManagerByID"),
-				oUiModel = oView.getModel("ui");
+				oForm = oView.byId("ChangeTeamManagerByID");
 
-			oForm.getObjectBinding()
-				.setParameter("ManagerID", oUiModel.getProperty("/ManagerID"))
-				.execute()
-				.then(function () {
+			oForm.getObjectBinding().execute().then(function () {
 					var oControl = oView.byId("ManagerID");
 
 					oControl.bindProperty("text", "MANAGER_ID");
@@ -219,18 +210,25 @@ sap.ui.define([
 		},
 
 		openChangeTeamBudgetDialog : function (oEvent) {
-			var oUiModel = this.getView().getModel("ui");
+			var oView = this.getView(),
+				oTeamContext = oView.byId("TeamDetails").getBindingContext();
 
-			// TODO There must be a simpler way to copy values from the model to our parameters
-			oUiModel.setProperty("/TeamID", this.byId("Team_Id").getBinding("text").getValue());
-			oUiModel.setProperty("/Budget", this.byId("Budget").getBinding("text").getValue());
+			// set default values for operation parameters
+			oView.byId("ChangeTeamBudgetByID").getObjectBinding()
+				.setParameter("TeamID", oTeamContext.getProperty("Team_Id"))
+				.setParameter("Budget", oTeamContext.getProperty("Budget"));
+
 			this.byId("ChangeTeamBudgetDialog").open();
 		},
 
 		openChangeManagerOfTeamDialog : function (oEvent) {
-			// TODO There must be a simpler way to copy values from the model to our parameters
-			this.getView().getModel("ui").setProperty("/ManagerID",
-				this.byId("ManagerID").getBinding("text").getValue());
+			var oView = this.getView(),
+				oTeamContext = oView.byId("TeamDetails").getBindingContext();
+
+			// set default values for operation parameters
+			oView.byId("ChangeTeamManagerByID").getObjectBinding()
+				.setParameter("ManagerID", oTeamContext.getProperty("TEAM_2_MANAGER/ID"));
+
 			this.byId("ChangeManagerOfTeamDialog").open();
 		},
 

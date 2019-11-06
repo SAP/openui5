@@ -22,18 +22,6 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
-	 * Returns a clone, that is a deep copy, of the given object.
-	 *
-	 * @param {object} o
-	 *   any serializable object
-	 * @returns {object}
-	 *   a deep copy of <code>o</code>
-	 */
-	function clone(o) {
-		return JSON.parse(JSON.stringify(o));
-	}
-
-	/**
 	 * Constructs a test object.
 	 *
 	 * @param {object} [oTemplate={}]
@@ -576,6 +564,20 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("aggregateQueryOptions: do not embed child query options", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mAggregatedQueryOptions : {}
+			}),
+			mChildQueryOptions = {$select : ["bar"], $count : true};
+
+		// code under test
+		assert.ok(oBinding.aggregateQueryOptions({$expand : {foo : mChildQueryOptions}}, false));
+
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {$expand : {foo : mChildQueryOptions}});
+		assert.notStrictEqual(oBinding.mAggregatedQueryOptions.$expand.foo, mChildQueryOptions);
+	});
+
+	//*********************************************************************************************
 	[{ // conflict: parent has $orderby, but child has different $orderby value
 		aggregatedQueryOptions : {$orderby : "Category"},
 		childQueryOptions : {$orderby : "Category desc"}
@@ -828,7 +830,7 @@ sap.ui.define([
 				},
 				oCachePromise = bRejected
 					? SyncPromise.reject({}) // "Failed to create cache..."
-					: SyncPromise.resolve(oCache),
+					: SyncPromise.resolve(Promise.resolve(oCache)), // it might become pending again
 				oBinding = new ODataParentBinding({
 					bAggregatedQueryOptionsInitial : false,
 					oCache : bRejected ? undefined : oCache,
@@ -889,23 +891,25 @@ sap.ui.define([
 			oBindingMock.expects("aggregateQueryOptions")
 				.withExactArgs({}, /*bIsCacheImmutable*/true)
 				.returns(false);
-			if (oCachePromise.isFulfilled()) {
-				this.mock(oCachePromise.getResult()).expects("setQueryOptions").never();
-			} else {
+			if (bRejected) {
 				this.mock(oBinding.oModel).expects("reportError")
 					.withExactArgs(oBinding + ": Failed to enhance query options for "
 						+ "auto-$expand/$select for child childPath", sClassName,
 						sinon.match.same(oCachePromise.getResult()));
+			} else {
+				this.mock(oCache).expects("setQueryOptions").never();
 			}
 
 			// code under test
 			oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
 				SyncPromise.resolve(mChildLocalQueryOptions));
 
-			return oPromise.then(function (sReducedPath) {
+			return Promise.all([oPromise, !bRejected && oCachePromise]).then(function (aResults) {
+				var sReducedPath = aResults[0];
+
 				assert.strictEqual(sReducedPath, undefined);
 				assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-				if (oCachePromise.isFulfilled()) {
+				if (!bRejected) {
 					assert.strictEqual(oBinding.oCachePromise.getResult(),
 						oCachePromise.getResult());
 				}
@@ -992,8 +996,8 @@ sap.ui.define([
 		oBindingMock.expects("aggregateQueryOptions")
 			.withExactArgs({}, /*bIsCacheImmutable*/false)
 			.returns(false);
-		this.mock(jQuery).expects("extend")
-			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(oBinding.mAggregatedQueryOptions))
 			.returns(mNewQueryOptions);
 		this.mock(oCache).expects("setQueryOptions").withExactArgs(mNewQueryOptions);
@@ -1084,7 +1088,7 @@ sap.ui.define([
 				sinon.match.same(oModelInterface.fetchMetadata))
 			.returns(mWrappedChildQueryOptions);
 		oBindingMock.expects("aggregateQueryOptions")
-			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), false)
+			.withExactArgs(sinon.match.same(mWrappedChildQueryOptions), undefined)
 			.returns(true);
 
 		// code under test
@@ -1180,7 +1184,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bImmutable, i) {
+[undefined, true].forEach(function (bImmutable, i) {
 	QUnit.test("fetchIfChildCanUseCache, advertised action #" + i, function (assert) {
 		var oMetaModel = {
 				fetchObject : function () {},
@@ -1331,8 +1335,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[true, false].forEach(function (bImmutable) {
-	QUnit.test("fetchIfChildCanUseCache: non-deferred function and 'value'", function (assert) {
+[undefined, true].forEach(function (bImmutable) {
+	var sTitle = "fetchIfChildCanUseCache: non-deferred function and 'value', bImmutable = "
+			+ bImmutable;
+
+	QUnit.test(sTitle, function (assert) {
 		var oMetaModel = {
 				fetchObject : function () {},
 				getMetaPath : function (sPath) {
@@ -1520,48 +1527,61 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("aggregateQueryOptions: cache is immutable", function (assert) {
-		var mAggregatedQueryOptions = {
-				$expand : {
-					"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}
-				},
-				$select : ["Name", "AGE"]
-			},
+[{
+	aggregatedQueryOptions : {$select : ["Name", "AGE"]},
+	childQueryOptions :  {$select : ["Name"]},
+	success : true,
+	title : "same $select as before"
+}, {
+	aggregatedQueryOptions : {$select : ["Name", "AGE"]},
+	childQueryOptions :  {$select : ["ROOM_ID"]},
+	lateQueryOptions : {$select : ["Name", "AGE", "ROOM_ID"]},
+	success : true,
+	title : "new property accepted and added to late properties"
+}, {
+	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {"EMPLOYEE_2_TEAM" : {}}},
+	success : true,
+	title : "same $expand as before"
+}, {
+	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Name"]}}},
+	success : false,
+	title : "new $select in existing $expand"
+}, {
+	aggregatedQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Team_Id"]}}},
+	childQueryOptions :  {$expand : {"EMPLOYEE_2_EQUIPMENTS" : {}}},
+	success : false,
+	title : "new $expand not allowed"
+}].forEach(function (oFixture, i) {
+	QUnit.test("aggregateQueryOptions: cache is immutable," + oFixture.title, function (assert) {
+		var mAggregatedQueryOptions = {},
 			oBinding = new ODataParentBinding({
-				mAggregatedQueryOptions : clone(mAggregatedQueryOptions)
-			});
+				mAggregatedQueryOptions : mAggregatedQueryOptions,
+				oCache : {
+					getLateQueryOptions : function () {},
+					setLateQueryOptions : function () {}
+				}
+			}),
+			mLateQueryOptions = {};
 
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$select : ["Name"]}, true),
-			true, "same $select as before");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+		this.mock(oBinding.oCache).expects("getLateQueryOptions").withExactArgs()
+			.returns(mLateQueryOptions);
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, sinon.match.same(oBinding.mAggregatedQueryOptions),
+				sinon.match.same(mLateQueryOptions))
+			.returns(oFixture.aggregatedQueryOptions);
+		this.mock(oBinding.oCache).expects("setLateQueryOptions")
+			.exactly(oFixture.lateQueryOptions ? 1 : 0)
+			.withExactArgs(oFixture.lateQueryOptions);
 
-		// code under test
 		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$select : ["ROOM_ID"]}, true),
-			true, "new property accepted, but not added to $select");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
-
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$expand : {"EMPLOYEE_2_TEAM" : {}}}, true),
-			true, "same $expand as before");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
-
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions(
-				{$expand : {"EMPLOYEE_2_TEAM" : {$select : ["Name"]}}}, true),
-			false, "new $select in existing $expand");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
-
-		// code under test
-		assert.strictEqual(
-			oBinding.aggregateQueryOptions({$expand : {"EMPLOYEE_2_EQUIPMENTS" : {}}}, true),
-			false, "new $expand not allowed");
-		assert.deepEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+			// code under test
+			oBinding.aggregateQueryOptions(oFixture.childQueryOptions, true), oFixture.success);
+		assert.strictEqual(oBinding.mAggregatedQueryOptions, mAggregatedQueryOptions);
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {}, "mAggregatedQueryOptions unchanged");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("deleteFromCache: binding w/ cache", function (assert) {
@@ -3120,9 +3140,19 @@ sap.ui.define([
 	QUnit.test("allow for super calls", function (assert) {
 		var oBinding = new ODataParentBinding();
 
-		assert.strictEqual(oBinding.destroy, asODataParentBinding.prototype.destroy);
-		assert.strictEqual(oBinding.hasPendingChangesForPath,
-			asODataParentBinding.prototype.hasPendingChangesForPath);
+		assert.strictEqual(asODataParentBinding.prototype.doDeregisterChangeListener,
+			oBinding.doDeregisterChangeListener);
+		assert.strictEqual(asODataParentBinding.prototype.doSetProperty, oBinding.doSetProperty);
+		assert.strictEqual(asODataParentBinding.prototype.destroy, oBinding.destroy);
+		assert.strictEqual(asODataParentBinding.prototype.hasPendingChangesForPath,
+			oBinding.hasPendingChangesForPath);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		assert.strictEqual(oBinding.doSetProperty(), undefined);
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

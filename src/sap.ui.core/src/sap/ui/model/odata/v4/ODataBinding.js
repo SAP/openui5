@@ -238,6 +238,20 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Deregisters the given change listener from the given path.
+	 *
+	 * @param {string} sPath
+	 *   The path
+	 * @param {object} oListener
+	 *   The change listener
+	 *
+	 * @private
+	 */
+	ODataBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
+		this.oCache.deregisterChange(sPath, oListener);
+	};
+
+	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
@@ -994,11 +1008,15 @@ sap.ui.define([
 	 *   the cache's request path (it will become absolute when forwarding the request to the
 	 *   parent binding)
 	 * @param {boolean} [bSync] Whether to use the synchronously available cache
+	 * @param {boolean} [bWithOrWithoutCache] Whether to call the processor even without a cache
+	 *   (currently implemented for operation bindings only)
 	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with either the result of
 	 *   the processor or <code>undefined</code> if there is no cache for this binding, or if the
 	 *   cache determination is not yet completed
+	 *
+	 * @private
 	 */
-	ODataBinding.prototype.withCache = function (fnProcessor, sPath, bSync) {
+	ODataBinding.prototype.withCache = function (fnProcessor, sPath, bSync, bWithOrWithoutCache) {
 		var oCachePromise = bSync ? SyncPromise.resolve(this.oCache) : this.oCachePromise,
 			sRelativePath,
 			that = this;
@@ -1011,8 +1029,12 @@ sap.ui.define([
 					return fnProcessor(oCache, sRelativePath, that);
 				}
 				// the path did not match, try to find it in the parent cache
-			} else if (oCache === undefined || that.oOperation) {
-				return undefined; // no cache or cache determination is still running
+			} else if (oCache === undefined) {
+				return undefined; // cache determination is still running
+			} else if (that.oOperation) {
+				return bWithOrWithoutCache
+					? fnProcessor(null, that.getRelativePath(sPath), that)
+					: undefined; // no cache
 			}
 			if (that.isRelative() && that.oContext && that.oContext.withCache) {
 				return that.oContext.withCache(fnProcessor,
@@ -1032,6 +1054,9 @@ sap.ui.define([
 		}
 	}
 
+	// #doDeregisterChangeListener is not final, allow for "super" calls
+	asODataBinding.prototype.doDeregisterChangeListener
+		= ODataBinding.prototype.doDeregisterChangeListener;
 	// #destroy is not final, allow for "super" calls
 	asODataBinding.prototype.destroy = ODataBinding.prototype.destroy;
 	// #hasPendingChangesForPath is not final, allow for "super" calls
