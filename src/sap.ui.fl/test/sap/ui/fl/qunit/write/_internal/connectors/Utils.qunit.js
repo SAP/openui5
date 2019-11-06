@@ -103,7 +103,7 @@ sap.ui.define([
 			oStubSendRequest.onCall(1).resolves({xsrfToken : "newToken"});
 			oStubSendRequest.onCall(2).resolves({response : "something"});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
-				assert.equal(oResponse, "something", "correct response is returned");
+				assert.deepEqual(oResponse, {response : "something"}, "correct response is returned");
 				assert.equal(oApplyConnector.xsrfToken, "newToken", "new token is stored in apply connector");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
