@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/registry/ChangeRegistry"

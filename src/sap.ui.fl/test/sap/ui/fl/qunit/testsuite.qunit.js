@@ -72,6 +72,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/changes/Applier"]
 				}
 			},
+			"apply/_internal/changes/FlexCustomData": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/FlexCustomData"]
+				}
+			},
 			"apply/_internal/changes/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -337,11 +343,6 @@ sap.ui.define(function () {
 			FlexControllerFactory: {
 				coverage: {
 					only: ["sap/ui/fl/FlexControllerFactory"]
-				}
-			},
-			FlexCustomData: {
-				coverage: {
-					only: ["sap/ui/fl/FlexCustomData"]
 				}
 			},
 			Variant: {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/FlexCustomData"
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData"
 ],
 function (
 	jQuery,

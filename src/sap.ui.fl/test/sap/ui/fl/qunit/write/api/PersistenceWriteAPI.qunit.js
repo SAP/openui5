@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
