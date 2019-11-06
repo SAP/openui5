@@ -43,6 +43,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.transport] The transport ID
 	 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 	 * @param {boolean} [mPropertyBag.isAppVariant] indicator whether this is an app variant
+	 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
 	 */

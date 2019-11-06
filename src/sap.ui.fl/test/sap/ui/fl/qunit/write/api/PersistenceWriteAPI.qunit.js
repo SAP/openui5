@@ -181,7 +181,7 @@ sap.ui.define([
 		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update an app variant in VENDOR layer", function(assert) {
 			var mPropertyBag = {
 				layer: "VENDOR",
-				isForSAPDeveloper: true
+				bIsForSapDelivery: true
 			};
 			mPropertyBag.selector = {
 				appId: "customer.reference.app.id"

@@ -107,7 +107,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.skipUpdateCache] - Indicates if cache update should be skipped
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the transport in onPremise system
 		 * @param {string} [mPropertyBag.layer=CUSTOMER] - Proposed layer (might be overwritten by the backend) when creating a new app variant - Smart Business must pass the layer
-		 * @param {string} [mPropertyBag.isForSAPDeveloper=false] - Determines whether app variant updation is intended for SAP developer
+		 * @param {string} [mPropertyBag.isForSAPDelivery=false] - Determines whether app variant updation is intended for SAP delivery
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by Smart Business
 		 *
 		 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
@@ -123,7 +123,7 @@ sap.ui.define([
 				if (!mPropertyBag.layer) {
 					return Promise.reject("Layer must be provided");
 				}
-				if (mPropertyBag.isForSAPDeveloper && mPropertyBag.layer === 'CUSTOMER') {
+				if (mPropertyBag.isForSAPDelivery && mPropertyBag.layer === 'CUSTOMER') {
 					return Promise.reject("Layer provided is not compatible");
 				}
 				mPropertyBag.referenceAppId = oDescriptorFlexController.getComponentName();

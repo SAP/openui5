@@ -164,7 +164,7 @@ sap.ui.define([
 				break;
 			case 'FROM_EXISTING':
 				sMethod = 'PUT';
-				sRoute = sRoute + this._getMap().id;
+				sRoute = sRoute + mMap.id;
 				break;
 			case 'DELETION':
 				sMethod = 'DELETE';
@@ -343,7 +343,7 @@ sap.ui.define([
 	var DescriptorVariantFactory = {};
 
 	DescriptorVariantFactory._getDescriptorVariant = function(mPropertyBag) {
-		if (mPropertyBag.isForSapDeveloper || !mPropertyBag.layer) {
+		if (mPropertyBag.isForSAPDelivery || !mPropertyBag.layer) {
 			var sRoute = '/sap/bc/lrep/appdescr_variants/' + mPropertyBag.reference;
 			return Utils.sendRequest(sRoute, 'GET');
 		}
@@ -459,13 +459,13 @@ sap.ui.define([
 	 * @param {string} sId the id of the app variant
 	 * @param {boolean} bDeletion required for deletion
 	 * @param {string} [sLayer] - Current layer (required to determine the connector later in Storage)
-	 * @param {string} [bIsForSAPDeveloper=false] - Determines whether app variant deletion is intended for SAP developer
+	 * @param {string} [bIsForSapDelivery=false] - Determines whether app variant deletion is intended for SAP delivery
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion, sLayer, bIsForSapDeveloper) {
+	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion, sLayer, bIsForSapDelivery) {
 		if (sId === undefined || typeof sId !== "string") {
 			throw new Error("Parameter \"sId\" must be provided of type string");
 		}
@@ -474,7 +474,7 @@ sap.ui.define([
 		return DescriptorVariantFactory._getDescriptorVariant({
 			reference: sId,
 			layer: sLayer,
-			isForSapDeveloper: bIsForSapDeveloper
+			isForSAPDelivery: bIsForSapDelivery
 		}).then(function(mResult) {
 			_mResult = mResult;
 			return Settings.getInstance();
