@@ -30,7 +30,7 @@ sap.ui.define([
 ], function (jQuery, Log, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
 		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter,
 		OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
-		 ValueListType, _Helper, TestUtils, URI) {
+		ValueListType, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1560,7 +1560,6 @@ sap.ui.define([
 				},
 				"@Common.ValueListWithFixedValues" : true
 			});
-			return true; // caller's assert.ok() should not fail
 		}),
 		// annotations at operations across all overloads - - - - - - - - - - - - - - - - - - - - -
 		"/name.space.OverloadedFunction@Common.Label"
@@ -1587,7 +1586,6 @@ sap.ui.define([
 					// Note: "$PropertyPath" : "n/a" must not appear here! PUT semantics, not PATCH
 				}
 			});
-			return true; // caller's assert.ok() should not fail
 		}),
 		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable" // at unbound overload
 			: mScope.$Annotations["name.space.OverloadedAction()"]["@Core.OperationAvailable"],
@@ -1686,7 +1684,7 @@ sap.ui.define([
 			if (vResult && typeof vResult === "object" && "test" in vResult) {
 				assert.notStrictEqual(oSyncPromise.getResult(), undefined);
 				// Sinon.JS matcher
-				assert.ok(vResult.test(oSyncPromise.getResult()));
+				vResult.test(oSyncPromise.getResult());
 			} else {
 				assert.strictEqual(oSyncPromise.getResult(), vResult);
 			}

@@ -946,10 +946,10 @@ sap.ui.define([
 				// binding parameter's type name ({string}) for overloading of bound operations
 				// or UNBOUND ({object}) for unbound operations called via an import
 			var vBindingParameterType,
-				bInsideAnnotation = false, // inside an annotation, invalid names are OK
+				bInsideAnnotation, // inside an annotation, invalid names are OK
 				vLocation, // {string[]|string} location of indirection
 				sName, // what "@sapui.name" refers to: OData or annotation name
-				bODataMode = true, // OData navigation mode with scope lookup etc.
+				bODataMode, // OData navigation mode with scope lookup etc.
 				// parent for next "17.2 SimpleIdentifier"...
 				// (normally the schema child containing the current object)
 				oSchemaChild, // ...as object
@@ -957,7 +957,7 @@ sap.ui.define([
 				// annotation target pointing to current object, or undefined
 				// (schema child's qualified name plus optional segments)
 				sTarget,
-				vResult = mScope; // current object
+				vResult; // current object
 
 			/*
 			 * Handles annotation at operation or parameter, taking care of individual versus all
@@ -1212,7 +1212,7 @@ sap.ui.define([
 					return log(WARNING, "Invalid segment: $Annotations");
 				}
 
-				if (vResult !== mScope && typeof vResult === "object" && sSegment in vResult) {
+				if (i && typeof vResult === "object" && sSegment in vResult) {
 					// fast path for pure "JSON" drill-down, but this cannot replace scopeLookup()!
 					if (sSegment[0] === "$" || rNumber.test(sSegment)) {
 						bODataMode = false; // technical property, switch to pure "JSON" drill-down
