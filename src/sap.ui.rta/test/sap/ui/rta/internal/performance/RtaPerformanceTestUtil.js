@@ -15,6 +15,7 @@ sap.ui.define([
 ){
 	"use strict";
 
+	var sandbox = sinon.sandbox.create();
 	var oManifest = {
 		"sap.app" : {
 			applicationVersion : {
@@ -58,13 +59,12 @@ sap.ui.define([
 		},
 
 		_defineTestStubs: function(oRuntimeAuthoring) {
-			sinon.stub(FlexSettings, "getInstance").returns(Promise.resolve({
-				isProductiveSystem: function() { return false; },
-				hasMergeErrorOccured: function() { return false; }
+			sandbox.stub(FlexSettings, "getInstance").returns(Promise.resolve({
+				isProductiveSystem: function() { return false; }
 			}));
-			sinon.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			var oFlexController = oRuntimeAuthoring._getFlexController();
-			sinon.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
+			sandbox.stub(oFlexController, "getComponentChanges").returns(Promise.resolve([]));
 		},
 
 		startRta: function(oHorizontalLayout, aPlugins) {
@@ -95,7 +95,7 @@ sap.ui.define([
 				oOverlay.setSelected(true);
 			})
 			.then(function() {
-				sinon.restore();
+				sandbox.restore();
 			});
 		},
 
@@ -125,7 +125,7 @@ sap.ui.define([
 				oOverlay.setSelected(true);
 			})
 			.then(function() {
-				sinon.restore();
+				sandbox.restore();
 			});
 		},
 
@@ -134,7 +134,7 @@ sap.ui.define([
 				rootControl: oHorizontalLayout
 			});
 			Util._defineTestStubs(oRuntimeAuthoring);
-			sinon.stub(DesignTime.prototype, "addRootElement");
+			sandbox.stub(DesignTime.prototype, "addRootElement");
 
 			// will result in custom timer in webPageTest
 			window.performance.mark("rta.start.starts");
@@ -150,7 +150,7 @@ sap.ui.define([
 				jQuery.sap.log.info(sMeasureName, sap.ui.rta.startTime + "ms");
 			})
 			.then(function() {
-				sinon.restore();
+				sandbox.restore();
 			});
 		},
 

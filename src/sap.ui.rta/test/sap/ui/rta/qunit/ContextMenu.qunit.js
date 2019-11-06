@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/ui/rta/RuntimeAuthoring",
 	"qunit/RtaQunitUtils",
+	"sap/ui/fl/FlexController",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/m/Page",
@@ -20,6 +21,7 @@ function(
 	ObjectPageLayout,
 	RuntimeAuthoring,
 	RtaQunitUtils,
+	FlexController,
 	OverlayRegistry,
 	ChangeRegistry,
 	Page,
@@ -441,6 +443,11 @@ function(
 
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
 		beforeEach : function() {
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
+			});
+
 			var oSubSection = new ObjectPageSubSection({
 				id : "subsection1",
 				blocks: [new Button({text: "abc"})]
@@ -474,8 +481,6 @@ function(
 			});
 			this.oObjectPageLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-
-			sandbox.stub(RuntimeAuthoring.prototype, '_checkChangesExist').resolves(false);
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : this.oObjectPageLayout,

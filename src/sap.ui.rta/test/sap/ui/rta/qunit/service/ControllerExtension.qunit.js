@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/FlexController",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/mvc/View",
@@ -13,6 +14,7 @@ function(
 	RuntimeAuthoring,
 	OverlayRegistry,
 	FlexUtils,
+	FlexController,
 	UIComponent,
 	ComponentContainer,
 	View,
@@ -76,7 +78,13 @@ function(
 				}.bind(this),
 				addPreparedChange: function() {
 					this.iAddPreparedChangeCounter ++;
-				}.bind(this)
+				}.bind(this),
+				getResetAndPublishInfo: function() {
+					return Promise.resolve({
+						isResetEnabled : false,
+						isPublishEnabled : false
+					});
+				}
 			});
 			sandbox.stub(FlexUtils, "getAppComponentForControl");
 			return this.oRta.start().then(function () {
@@ -168,6 +176,12 @@ function(
 			showToolbars: false,
 			rootControl: this.oComponentContainer
 			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
+			});
+
 			return this.oRta.start().then(function () {
 				return this.oRta.getService("controllerExtension").then(function(oService) {
 					this.oControllerExtension = oService;
