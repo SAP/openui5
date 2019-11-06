@@ -458,9 +458,8 @@ sap.ui.define([
 				this.applyTableBottomPlaceholderStyles();
 			}
 
-			if (bStartAutomaticAdjustment && oTable.getRows().length > 0) {
-				// The parameter "bStartAutomaticAdjustment" indicates that this is the first adjustment after a table re-rendering.
-				// Even if the row count does not change, the rows updated event still needs to be fired.
+			if (!this._bFiredRowsUpdatedAfterRendering && oTable.getRows().length > 0) {
+				// Even if the row count does not change, the rows updated event still needs to be fired after rendering.
 				oTable._fireRowsUpdated(sReason);
 			}
 		}

@@ -62,6 +62,20 @@ sap.ui.define([
 	var TableDelegate = {};
 
 	RowMode.prototype.init = function(oTableDelegate) {
+		/*
+		 * Flag indicating whether the first _rowsUpdated event after rendering was fired.
+		 *
+		 * @type {boolean}
+		 */
+		this._bFiredRowsUpdatedAfterRendering = false;
+
+		/*
+		 * Flag indicating whether the row mode is currently listening for the first _rowsUpdated event after rendering.
+		 *
+		 * @type {boolean}
+		 */
+		this._bListeningForFirstRowsUpdatedAfterRendering = false;
+
 		this._bTableIsRendering = false;
 
 		/**
@@ -694,7 +708,13 @@ sap.ui.define([
 	/**
 	 * @this sap.ui.table.rowmodes.RowMode
 	 */
-	TableDelegate.onBeforeRendering = function() {
+	TableDelegate.onBeforeRendering = function(oEvent) {
+		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
+
+		if (!bRenderedRows) {
+			this._bFiredRowsUpdatedAfterRendering = false;
+		}
+
 		this._bTableIsRendering = true;
 	};
 
