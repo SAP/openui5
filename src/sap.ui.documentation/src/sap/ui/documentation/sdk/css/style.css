@@ -7,20 +7,6 @@ a.sapLogo {
 	display: none;
 }
 
-.defaultHighlightedText {
-	background: #d4f7db;
-	font-weight: bold;
-}
-
-html.sapUiTheme-sap_belize_hcb .defaultHighlightedText,
-html.sapUiTheme-sap_belize_hcw .defaultHighlightedText {
-	background: #058088
-}
-
-html.sapUiTheme-sap_fiori_3 .defaultHighlightedText {
-	background: #ebf5fe;
-}
-
 .aboutLink {
 	vertical-align: bottom;
 }

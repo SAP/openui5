@@ -11,7 +11,8 @@ sap.ui.define([
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/ui/model/json/JSONModel"
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/documentation/sdk/controller/util/Highlighter"
 	], function (
 		Device,
 		MasterTreeBaseController,
@@ -20,7 +21,8 @@ sap.ui.define([
 		Filter,
 		FilterOperator,
 		APIInfo,
-		JSONModel
+		JSONModel,
+		Highlighter
 	) {
 		"use strict";
 
@@ -70,6 +72,20 @@ sap.ui.define([
 						// Init tree util
 						this._initTreeUtil("name", "nodes");
 					}.bind(this));
+			},
+
+			onAfterRendering: function () {
+				if (!this.highlighter) {
+					this.highlighter = new Highlighter(this._oTree.getDomRef(), {
+						useExternalStyles: false,
+						shouldBeObserved: true,
+						isCaseSensitive: false
+					});
+				}
+			},
+
+			onExit: function () {
+				this.highlighter.destroy();
 			},
 
 			_bindTreeModel : function (aTreeContent) {
@@ -168,6 +184,18 @@ sap.ui.define([
 				this._oRouter.navTo("apiId", {
 					id : oEvent.getParameter("listItem").getTarget()
 				}, false);
+			},
+
+			/**
+			 * @override
+			 */
+			onTreeFilter: function () {
+				MasterTreeBaseController.prototype.onTreeFilter.apply(this, arguments);
+
+				if (this.highlighter) {
+					this.highlighter.highlight(this._sFilter);
+				}
+				return this;
 			},
 
 			/**
