@@ -3,6 +3,8 @@
 /* Base theme                                   */
 /* ============================================ */
 
+@_sap_m_NotificationListGroup_Background: @sapUiListGroupHeaderBackground;
+
 .sapMNLGroup {
 	&.sapMLIB {
 		display: block;
@@ -14,16 +16,22 @@
 
 	.sapMNLGroupHeader {
 		min-height: 2.75rem;
-		background: @sapUiListGroupHeaderBackground;
+		background: @_sap_m_NotificationListGroup_Background;
 		border-bottom: 0.0625rem solid @sapUiListGroupHeaderBorderColor;
 		box-sizing: border-box;
 		padding: 0.75rem 0.5rem 0 0.75rem;
 		display: flex;
 		align-items: center;
+
+		.sapMNLIBPriority .sapUiIcon {
+			font-size: 0.875rem;
+			line-height: 0.875rem;
+			padding-right: 0.25rem;
+		}
 	}
 
 	.sapMNLGroupTitle {
-		color: @sapUiGroupTitleTextColor;
+		color: @sapUiListTableGroupHeaderTextColor;
 		font-size: @sapMFontHeader6Size;
 		font-family: @sapUiFontHeaderFamily;
 		font-weight: @sapUiFontHeaderWeight;
@@ -49,7 +57,8 @@
 	}
 
 	.sapMNLGroupCollapseButton {
-		margin-right: 1rem;
+		margin-right: 0.75rem;
+		width: 2.25rem;
 	}
 }
 
@@ -73,5 +82,14 @@
 
 	.sapMNLGroupCollapseButton {
 		margin-right: 0.75rem;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMNLGroup {
+		.sapMNLGroupCollapseButton {
+			width: 2rem;
+			margin-right: 1rem;
+		}
 	}
 }

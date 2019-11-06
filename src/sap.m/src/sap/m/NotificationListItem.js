@@ -122,8 +122,35 @@ function(
 		}
 
 		this._updateShowMoreButtonVisibility();
+
 		if (this.getDomRef()) {
 			this._resizeListenerId = ResizeHandler.register(this.getDomRef(),  this._onResize.bind(this));
+		}
+	};
+
+	/**
+	 * Handles the <code>focusin</code> event.
+	 *
+	 * @param {jQuery.Event} event The event object.
+	 */
+	NotificationListItem.prototype.onfocusin = function (event) {
+		NotificationListBase.prototype.onfocusin.apply(this, arguments);
+
+		if (!Device.browser.msie) {
+			return;
+		}
+
+		// in IE the elements inside can get the focus (IE issue)
+		// https://stackoverflow.com/questions/18259754/ie-click-on-child-does-not-focus-parent-parent-has-tabindex-0
+		// in that case just focus the whole item
+		var target = event.target;
+
+		if (target !== this.getDomRef() &&
+			!target.classList.contains('sapMBtn') &&
+			!target.classList.contains('sapMLnk')) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			this.focus();
 		}
 	};
 
