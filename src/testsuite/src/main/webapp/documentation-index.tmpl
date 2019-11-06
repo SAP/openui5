@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>OpenUI5 SDK - Demo Kit</title>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
+	<base href="/testsuite/documentation/">
+	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="shortcut icon" >
+	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="icon" >
+	<link rel="stylesheet" href="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
+
+	<script src="../documentation-config.js"></script>
+	<script
+			id='sap-ui-bootstrap'
+			type='text/javascript'
+			src='resources/sap-ui-core.js'
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.ui.documentation, sap.ui.layout, sap.m, sap.uxap, sap.f, sap.tnt, sap.ui.codeeditor'
+			data-sap-ui-xx-waitForTheme="true"
+			data-sap-ui-compatVersion="1.16"
+			data-sap-ui-resourceroots='{
+				"sap.ui.demo.mock": "test-resources/sap/ui/documentation/sdk/"
+			}' >
+	</script>
+	<script src="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/lang-css.js"></script>
+
+	<script>
+
+		// when documentation-config.js doesn't exist or doesn't define a configuration, probe for api-index.json
+		if ( window['sap-ui-documentation-config'] == null ) {
+			window['sap-ui-documentation-config'] = {};
+			jQuery.ajax({
+				method: "HEAD",
+				url: "docs/api/api-index.json",
+				async:false,
+				success: function() {
+					window['sap-ui-documentation-config'].apiInfoRoot = "test-resources";
+				}
+			});
+		}
+
+		sap.ui.getCore().attachInit(function () {
+
+			sap.ui.require([
+				"sap/m/Page",
+				"sap/ui/core/ComponentContainer",
+				"sap/ui/documentation/sdk/controller/util/APIInfo",
+				"sap/ui/documentation/sdk/Component"
+			], function (Page, ComponentContainer, APIInfo, SDKComponent) {
+
+				if ( typeof window['sap-ui-documentation-config'].apiInfoRoot === 'string' ) {
+					APIInfo._setRoot(window['sap-ui-documentation-config'].apiInfoRoot);
+				} else {
+					window['sap-ui-documentation-hideApiSection'] = true;
+				}
+				if ( typeof window['sap-ui-documentation-config'].docuPath === 'string' ) {
+					SDKComponent.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = window['sap-ui-documentation-config'].docuPath;
+				} else {
+					window['sap-ui-documentation-hideTopicSection'] = true;
+				}
+
+				window['sap-ui-documentation-preview'] = true;
+
+				// initialize the UI component
+				new Page({
+					showHeader : false,
+					content : new ComponentContainer({
+						height : "100%",
+						name : "sap.ui.documentation.sdk",
+						settings : {
+							id : "sdk"
+						}
+					})
+				}).placeAt("content");
+			});
+		});
+	</script>
+</head>
+<body class='sapUiBody' id='content'>
+</body>
+</html>

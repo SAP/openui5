@@ -115,6 +115,10 @@ function(
 	 * <b>When not to use:</b>
 	 * Don't use the control for long texts, dates, designated search fields, fields for multiple selection.
 	 *
+	 * <h3>Known Limitations</h3>
+	 *
+	 * If <code>showValueHelp</code> or if <code>showSuggestion</code> is <code>true</code>, the native browser autofill will not fire a change event.
+	 *
 	 * @extends sap.m.InputBase
 	 * @author SAP SE
 	 * @version ${version}
@@ -1398,6 +1402,23 @@ function(
 		};
 
 		/**
+		 * Event handler for browsers' <code>change</code> event.
+		 *
+		 * @since 1.73
+		 * @public
+		 * @param {jQuery.Event} oEvent The event.
+		 */
+		Input.prototype.onchange = function(oEvent) {
+			if (this.getShowValueHelp() || this.getShowSuggestion()) {
+				// can not handle browser change if value help or suggestions is enabled
+				// because change is fired before the value help is opened or when a link in suggestions is clicked
+				return;
+			}
+
+			this.onChange(oEvent);
+		};
+
+		/**
 		 * Event handler for user input.
 		 *
 		 * @public
@@ -1600,6 +1621,18 @@ function(
 		Input.prototype._hideSuggestionPopup = function () {
 			var oPopup = this._oSuggPopover._oPopover;
 
+			// The IE moves the cursor position at the beginning when there is a binding and delay from the back-end
+			// The workaround is to save the focus info which includes position and reset it after updating the DOM
+			function setDomValue() {
+				if (Device.browser.internet_explorer) {
+					var oFocusInfo = this.getFocusInfo();
+					this.setDOMValue(this._oSuggPopover._sTypedInValue);
+					this.applyFocusInfo(oFocusInfo);
+				} else {
+					this.setDOMValue(this._oSuggPopover._sTypedInValue);
+				}
+			}
+
 			// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 			if (!this._bUseDialog) {
 				if (oPopup.isOpen()) {
@@ -1607,7 +1640,7 @@ function(
 						this._oSuggPopover._iPopupListSelectedIndex = -1;
 						this.cancelPendingSuggest();
 						if (this._oSuggPopover._sTypedInValue) {
-							this.setDOMValue(this._oSuggPopover._sTypedInValue);
+							setDomValue.call(this);
 						}
 						this._oSuggPopover._oProposedItem = null;
 						oPopup.close();

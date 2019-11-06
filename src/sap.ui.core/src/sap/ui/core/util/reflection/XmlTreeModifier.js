@@ -594,7 +594,9 @@ sap.ui.define([
 		 */
 		destroy: function(oControl) {
 			var oParent = oControl.parentNode;
-			oParent.removeChild(oControl);
+			if (oParent) {
+				oParent.removeChild(oControl);
+			}
 		},
 
 		/**

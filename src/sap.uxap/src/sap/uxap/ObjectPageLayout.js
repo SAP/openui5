@@ -392,6 +392,24 @@ sap.ui.define([
 				},
 
 				/**
+				 * Fired when the current section is changed by scrolling.
+				 *
+				 * @since 1.73
+				 */
+				sectionChange: {
+					parameters: {
+						/**
+						 * The section which the layout is scrolled to.
+						 */
+						section: {type: "sap.uxap.ObjectPageSection"},
+						/**
+						 * The subsection which the layout is scrolled to.
+						 */
+						subSection: {type: "sap.uxap.ObjectPageSubSection"}
+					}
+				},
+
+				/**
 				 * The event is fired when the Edit Header button is pressed
 				 */
 				editHeaderButtonPress: {},
@@ -463,6 +481,10 @@ sap.ui.define([
 
 	ObjectPageLayout.SHOW_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterShow";
 	ObjectPageLayout.HIDE_FOOTER_CLASS_NAME = "sapUxAPObjectPageFloatingFooterHide";
+
+	// Class which is added to the ObjectPageLayout if we don't have
+	// additional navigation (e.g. AnchorBar, IconTabBar, etc.)
+	ObjectPageLayout.NO_NAVIGATION_CLASS_NAME = "sapUxAPObjectPageNoNavigation";
 
 	ObjectPageLayout.prototype._getFirstEditableInput = function(sContainer) {
 		var oContainer = this.getDomRef(sContainer);
@@ -795,9 +817,6 @@ sap.ui.define([
 			//recalculate layout of the content area
 			this._adjustHeaderHeights();
 			this._requestAdjustLayout();
-			if (exists(this._$stickyAnchorBar)) {
-				this._$stickyAnchorBar.addClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
-			}
 			return;
 		}
 
@@ -806,9 +825,6 @@ sap.ui.define([
 		this._scrollTo(0, 0, 0);
 		this._bHeaderExpanded = true;
 		this._updateToggleHeaderVisualIndicators();
-		if (exists(this._$stickyAnchorBar)) {
-			this._$stickyAnchorBar.removeClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
-		}
 	};
 
 	ObjectPageLayout.prototype._handleDynamicTitlePress = function () {
@@ -1563,6 +1579,8 @@ sap.ui.define([
 			oTitleVisibilityInfo[oFirstVisibleSection.getId()] = false;
 			Log.info("ObjectPageLayout :: firstSectionTitleHidden UX rule matched", "section " + oFirstVisibleSection.getTitle() + " title forced to hidden");
 		}
+
+		this.toggleStyleClass(ObjectPageLayout.NO_NAVIGATION_CLASS_NAME, iVisibleSection <= 1);
 
 		Object.keys(oTitleVisibilityInfo).forEach(function(sId) {
 			this.oCore.byId(sId)._setInternalTitleVisible(oTitleVisibilityInfo[sId], bInvalidate);
@@ -3014,6 +3032,10 @@ sap.ui.define([
 					section: this.oCore.byId(sClosestId),
 					subSection: this.oCore.byId(sClosestSubSectionId)
 				});
+				this.fireEvent("sectionChange", {
+					section: this.oCore.byId(sClosestId),
+					subSection: this.oCore.byId(sClosestSubSectionId)
+				});
 			}
 		}
 	};
@@ -3126,9 +3148,6 @@ sap.ui.define([
 			this._bHeaderExpanded = true;
 			this._adjustHeaderHeights();
 			this._updateToggleHeaderVisualIndicators();
-			if (exists(this._$stickyAnchorBar)) {
-				this._$stickyAnchorBar.removeClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
-			}
 		}
 	};
 
@@ -3201,7 +3220,6 @@ sap.ui.define([
 		this._$headerContent.toggleClass("sapContrastPlus", !bStuck); // contrast only in expanded mode
 		this._$headerContent.toggleClass("sapUxAPObjectPageHeaderDetailsHidden", bStuck); // hide header content
 		this._$anchorBar.css("visibility", sValue);
-		this._$anchorBar.toggleClass("sapUxAPObjectPageNavigationHidden", bStuck); // toggle custom AnchorBar class to make difference between stickied/expanded
 		if (exists(this._$stickyAnchorBar)) {
 			this._$stickyAnchorBar.attr("aria-hidden", !bStuck);
 		}
@@ -3428,23 +3446,13 @@ sap.ui.define([
 			return 0;
 		}
 
-		// BCP: 1870298358 - setting overflow-y to hidden of the wrapper element to eliminate unwanted
-		// scrollbar appearing during measurement of the snapped title height
-		var sOrigOverflow = this._$opWrapper.css("overflow-y");
-		this._$opWrapper.css("overflow-y", "hidden");
-
 		if (bViaClone) {
 			$Clone = this._appendTitleCloneToDOM(true /* enable snapped mode */);
 			iHeight = $Clone.height();
 			$Clone.remove(); //clean dom
-		} else if (oTitle && oTitle.snap) {
-			oTitle.snap(false);
-			iHeight = oTitle.$().outerHeight();
-			oTitle.unSnap(false);
+		} else if (oTitle.snap) {
+			iHeight = this._obtainTitleHeightViaStateChange(true /* snap */);
 		}
-
-		// restore scrolling
-		this._$opWrapper.css("overflow-y", sOrigOverflow);
 
 		return iHeight;
 	};
@@ -3452,9 +3460,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._obtainExpandedTitleHeight = function (bViaClone) {
 		var oTitle = this.getHeaderTitle(),
 			$Clone,
-			iHeight,
-			iSectionsContainerHeight,
-			iSectionsContainerNewHeight;
+			iHeight;
 
 		if (!oTitle) {
 			return 0;
@@ -3464,16 +3470,34 @@ sap.ui.define([
 			$Clone = this._appendTitleCloneToDOM(false /* disable snapped mode */);
 			iHeight = $Clone.is(":visible") ? $Clone.height() - this.iAnchorBarHeight : 0;
 			$Clone.remove(); //clean dom
-		} else if (oTitle && oTitle.unSnap) {
-			iSectionsContainerHeight = this._$sectionsContainer.height();
-
-			oTitle.unSnap(false);
-			iHeight = oTitle.$().outerHeight();
-			oTitle.snap(false);
-
-			iSectionsContainerNewHeight = this._$sectionsContainer.height();
-			this._adjustSpacerHeightUponUnsnapping(iSectionsContainerHeight, iSectionsContainerNewHeight);
+		} else if (oTitle.unSnap) {
+			iHeight = this._obtainTitleHeightViaStateChange(false /* do not snap */);
 		}
+
+		return iHeight;
+	};
+
+	/**
+	 * Obtains the height of the title in its alternative state
+	 * by temporarily switching to the alternative state
+	 * @param bSnap
+	 * @returns {number}
+	 * @private
+	 */
+	ObjectPageLayout.prototype._obtainTitleHeightViaStateChange = function (bSnap) {
+		var oTitle = this.getHeaderTitle(),
+			iHeight,
+			iSectionsContainerHeight = this._$sectionsContainer.height(),
+			iSectionsContainerNewHeight,
+			fnToAlternativeState = (bSnap) ? oTitle.snap : oTitle.unSnap,
+			fnRestoreState =  (bSnap) ? oTitle.unSnap : oTitle.snap;
+
+		fnToAlternativeState.call(oTitle, false);
+		iHeight = oTitle.$().outerHeight();
+		fnRestoreState.call(oTitle, false);
+
+		iSectionsContainerNewHeight = this._$sectionsContainer.height();
+		this._adjustSpacerHeightUponUnsnapping(iSectionsContainerHeight, iSectionsContainerNewHeight);
 
 		return iHeight;
 	};
@@ -3998,10 +4022,6 @@ sap.ui.define([
 
 		if (exists($oObjectPage)) {
 			$oObjectPage.addClass("sapUxAPObjectPageLayoutHeaderPinned");
-		}
-
-		if (exists(this._$stickyAnchorBar)) {
-			this._$stickyAnchorBar.addClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
 		}
 	};
 

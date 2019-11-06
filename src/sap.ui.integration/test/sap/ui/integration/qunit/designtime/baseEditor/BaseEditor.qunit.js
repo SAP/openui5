@@ -73,7 +73,7 @@ sap.ui.define([
 					done();
 				}.bind(this));
 
-				this.oBaseEditor.getPropertyEditorsSync()[0].firePropertyChanged("test");
+				this.oBaseEditor.getPropertyEditorsSync()[0].firePropertyChange("test");
 			}.bind(this));
 		});
 
@@ -101,7 +101,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "{i18n>prop}", "Then binding against other models is untouched");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "prop", "Then binding against other models is untouched");
 				done();
 			}.bind(this));
 		});
@@ -194,11 +194,11 @@ sap.ui.define([
 					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
+			this.oBaseEditor.attachPropertyEditorsReady(function() {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items.length, 2, "Then configuration for array items is created from template");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items[0].a.path, "prop/0/a", "Then path index in array item is resolved");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items[0].properties[0].path, "prop/0/a", "Then path index in array item is resolved");
+				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items[0].properties[1].path, "prop/0/b", "Then path index in array item is resolved");
 				assert.deepEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().value, aArray, "Then array value is set correctly");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getContent().length, 2, "Then array editor is created correctly");
 				done();
 			}.bind(this));
 		});

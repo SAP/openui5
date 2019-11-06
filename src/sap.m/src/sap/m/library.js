@@ -120,6 +120,7 @@ sap.ui.define([
 			"sap.m.SwitchType",
 			"sap.m.TileSizeBehavior",
 			"sap.m.TimePickerMaskMode",
+			"sap.m.TitleAlignment",
 			"sap.m.ToolbarDesign",
 			"sap.m.ToolbarStyle",
 			"sap.m.UploadState",
@@ -303,6 +304,8 @@ sap.ui.define([
 			"sap.m.upload.UploadSet",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog",
+			"sap.m.WheelSlider",
+			"sap.m.WheelSliderContainer",
 			"sap.m.Wizard",
 			"sap.m.WizardStep",
 			"sap.m.semantic.DetailPage",
@@ -651,43 +654,43 @@ sap.ui.define([
 	thisLib.ButtonType = {
 
 		/**
-		 * default type (no special styling)
+		 * Default type (no special styling)
 		 * @public
 		 */
 		Default : "Default",
 
 		/**
-		 * back type (back navigation button for header)
+		 * Back type (back navigation button for header)
 		 * @public
 		 */
 		Back : "Back",
 
 		/**
-		 * accept type (green button)
+		 * Accept type
 		 * @public
 		 */
 		Accept : "Accept",
 
 		/**
-		 * reject style (red button)
+		 * Reject style
 		 * @public
 		 */
 		Reject : "Reject",
 
 		/**
-		 * transparent type
+		 * Transparent type
 		 * @public
 		 */
 		Transparent : "Transparent",
 
 		/**
-		 * ghost type
+		 * Ghost type
 		 * @public
 		 */
 		Ghost : "Ghost",
 
 		/**
-		 * up type (up navigation button for header)
+		 * Up type (up navigation button for header)
 		 * @public
 		 */
 		Up : "Up",
@@ -699,11 +702,38 @@ sap.ui.define([
 		Unstyled : "Unstyled",
 
 		/**
-		 * emphasized type
+		 * Emphasized type
 		 * @public
 		 */
-		Emphasized : "Emphasized"
+		Emphasized : "Emphasized",
 
+		/**
+		 * Critical type
+		 * @public
+		 * @since 1.73
+		 */
+		Critical : "Critical",
+
+		/**
+		 * Negative type
+		 * @public
+		 * @since 1.73
+		 */
+		Negative : "Negative",
+
+		/**
+		 * Success type
+		 * @public
+		 * @since 1.73
+		 */
+		Success : "Success",
+
+		/**
+		 * Neutral type
+		 * @public
+		 * @since 1.73
+		 */
+		Neutral : "Neutral"
 	};
 
 	/**
@@ -3786,6 +3816,35 @@ sap.ui.define([
 		NavBarAndColHeaders: "NavBarAndColHeaders"
 	};
 
+	/**
+	 * Declares the type of title alignment for some controls
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.TitleAlignment = {
+
+		/**
+		 * The default type (if specified in the theme)
+		 * @public
+		 */
+		Auto : "Auto",
+
+		/**
+		 * Explicitly sets the alignment to the start (left or right depending on LTR/RTL)
+		 * @public
+		 */
+		Start : "Start",
+
+		/**
+		 * Explicitly sets the alignment to the start (left or right depending on LTR/RTL)
+		 * @public
+		 */
+		Center : "Center"
+
+	};
+
 	//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");
 
@@ -4790,8 +4849,8 @@ sap.ui.define([
 		setTextFieldContent: function(oTextField, sWidth){
 			oTextField.setWidth(sWidth);
 		},
-		createButton: function(){
-			var oButton = new sap.m.Button();
+		createButton: function(sId){
+			var oButton = new sap.m.Button(sId);
 			return oButton;
 		},
 		addFormClass: function(){ return "sapUiFUM"; },

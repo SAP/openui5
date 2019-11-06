@@ -383,6 +383,18 @@ sap.ui.define([
 			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
 
+		QUnit.test("Pressing ESC on an Overlay when there are selected Overlays", function (assert) {
+			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			this.oSelectionManager.add(oOverlay1);
+			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			this.oSelectionManager.add(oOverlay2);
+			assert.equal(this.oSelectionManager.get().length, 2, "Two Overlays are selected before Keypress");
+			oOverlay2.focus();
+			this.oEvent.keyCode = KeyCodes.ESCAPE;
+			oOverlay2.$().trigger(this.oEvent);
+			assert.equal(this.oSelectionManager.get().length, 0, "No Overlays are selected after Keypress");
+		});
+
 		QUnit.test("Pressing UP-Arrow on an Overlay", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerVBox2Btn"));
 			oOverlay.focus();

@@ -146,7 +146,7 @@ sap.ui.define([
 							sEntityId = sClassName + "." + sEntityId;
 						}
 
-						sHref = "#/api/" + sClassName;
+						sHref = "api/" + sClassName;
 						if (sEntityType !== "class") {
 							sHref += "/" + sEntityType + "/" + sEntityId;
 						}

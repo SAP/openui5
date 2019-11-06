@@ -2,7 +2,15 @@
 	"_version": "1.14.0",
 	"sap.app": {
 		"id": "card.explorer.line.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a Line Chart",
+		"subTitle": "Sample of a Line Chart"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://line-chart"
+		}
 	},
 	"sap.card": {
 		"type": "Analytical",
@@ -50,9 +58,9 @@
 		"content": {
 			"chartType": "Line",
 			"legend": {
-				"visible": true,
-				"position": "Bottom",
-				"alignment": "TopLeft"
+				"visible": "{legend/visible}",
+				"position": "{legend/position}",
+				"alignment": "{legend/alignment}"
 			},
 			"plotArea": {
 				"dataLabel": {
@@ -74,6 +82,18 @@
 			"dimensionAxis": "categoryAxis",
 			"data": {
 				"json": {
+					"dimensions": {
+						"weekLabel": "Weeks"
+					},
+				    "measures": {
+				        "revenueLabel": "Revenue",
+				        "costLabel": "Costs"
+				    },
+					"legend": {
+						"visible": true,
+						"position": "Bottom",
+						"alignment": "TopLeft"
+					},
 					"list": [
 						{
 							"Week": "CW14",
@@ -151,17 +171,17 @@
 			},
 			"dimensions": [
 				{
-					"label": "Weeks",
+					"label": "{dimensions/weekLabel}",
 					"value": "{Week}"
 				}
 			],
 			"measures": [
 				{
-					"label": "Revenue",
+					"label": "{measures/revenueLabel}",
 					"value": "{Revenue}"
 				},
 				{
-					"label": "Cost",
+					"label": "{measures/costLabel}",
 					"value": "{Cost}"
 				}
 			]

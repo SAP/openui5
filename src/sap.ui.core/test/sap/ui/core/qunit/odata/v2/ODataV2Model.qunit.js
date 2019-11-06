@@ -7138,4 +7138,78 @@ sap.ui.define([
 			});
 		}.bind(this));
 	});
+
+	QUnit.module("Preliminary Context", {
+		beforeEach: function() {
+			this.oModel = initModel(sURI);
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
+
+	QUnit.test("2 object bindings to the same entity: both preliminary", function(assert) {
+		var done = assert.async();
+		var iCount = 0;
+		assert.expect(2);
+		this.oModel = new ODataModel(sURI, {"preliminaryContext":true});
+
+		var oInput = new Input({models: this.oModel, value:"{CategoryName}"});
+		var oInput2 = new Input({models: this.oModel, value:"{CategoryName}"});
+
+		this.oModel.metadataLoaded().then(function() {
+			function fnChange() {
+				//first run should be the preliminary context, second one should set the values
+				if (iCount === 1) {
+					assert.equal(oInput.getValue(), "Beverages", "Context propagated and value set correctly");
+					assert.equal(oInput2.getValue(), "Beverages", "Context propagated and value set correctly");
+					oInput.destroy();
+					oInput2.destroy();
+					done();
+				}
+				iCount++;
+			}
+			oInput.bindElement("/Categories(20)");
+			oInput2.bindElement("/Categories(20)");
+			oInput2.getElementBinding().attachChange(fnChange);
+		});
+	});
+
+	QUnit.test("2 object bindings to the same entity: one preliminary", function(assert) {
+		var done = assert.async();
+		var iCount = 0;
+		assert.expect(2);
+		this.oModel = new ODataModel(sURI);
+
+		var oInput = new Input({models: this.oModel, value:"{CategoryName}"});
+		var oInput2 = new Input({models: this.oModel, value:"{CategoryName}"});
+
+		this.oModel.metadataLoaded().then(function() {
+			function fnChange() {
+				//first run should be the preliminary context, second one should set the values
+				if (iCount === 1) {
+					assert.equal(oInput.getValue(), "Beverages", "Context propagated and value set correctly");
+					assert.equal(oInput2.getValue(), "Beverages", "Context propagated and value set correctly");
+					oInput.destroy();
+					oInput2.destroy();
+					done();
+				}
+				iCount++;
+			}
+			oInput.bindElement({
+				path: "/Categories(20)",
+				parameters: {
+					createPreliminaryContext: false
+				}
+			});
+			oInput2.bindElement({
+				path: "/Categories(20)",
+				parameters: {
+					createPreliminaryContext: true
+				}
+			});
+			oInput2.getElementBinding().attachChange(fnChange);
+		});
+	});
 });

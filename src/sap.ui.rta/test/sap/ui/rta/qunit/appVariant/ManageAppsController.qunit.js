@@ -205,7 +205,7 @@ sap.ui.define([
 				}
 			};
 
-			var getDescriptorSpy = sandbox.stub(AppVariantOverviewUtils, "sendRequest").resolves(oResult);
+			var getDescriptorSpy = sandbox.stub(AppVariantOverviewUtils, "getDescriptor").resolves(oResult);
 
 			var onSaveAsSpy = sandbox.stub(RtaAppVariantFeature, "onSaveAs").resolves();
 

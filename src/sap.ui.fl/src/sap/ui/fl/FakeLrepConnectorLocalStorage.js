@@ -26,5 +26,5 @@ function(
 	 * @alias sap.ui.fl.FakeLrepConnectorLocalStorage
 	 */
 
-	return FakeLrepConnectorStorage(FakeLrepLocalStorage);
+	return FakeLrepConnectorStorage(FakeLrepLocalStorage, window.localStorage);
 }, /* bExport= */ true);

@@ -1,0 +1,31 @@
+<assembly>
+
+	<id>jsdocext</id>
+
+	<formats>
+		<format>zip</format>
+	</formats>
+
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<files>
+		<file>
+			<source>createIndexFiles.js</source>
+			<outputDirectory>sdk/</outputDirectory>
+		</file>
+		<file>
+			<source>transformApiJson.js</source>
+			<outputDirectory>sdk/</outputDirectory>
+		</file>
+		<file>
+			<source>ui5/plugin.js</source>
+			<outputDirectory>plugins/</outputDirectory>
+			<destName>sapui5-jsdoc3.js</destName>
+		</file>
+		<file>
+			<source>ui5/template/publish.js</source>
+			<outputDirectory>templates/sapui5-jsdoc3/</outputDirectory>
+		</file>
+	</files>
+	
+</assembly>

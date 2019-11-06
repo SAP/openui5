@@ -7,24 +7,24 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/f/Avatar",
 	"sap/ui/Device",
-	'sap/f/cards/DataProviderFactory',
 	'sap/ui/model/json/JSONModel',
 	"sap/f/cards/HeaderRenderer",
 	"sap/f/cards/IconFormatter",
 	"sap/f/cards/CardActions",
-	"sap/base/strings/formatMessage"
+	"sap/base/strings/formatMessage",
+	"sap/f/cards/BindingHelper"
 ], function (
 	library,
 	Control,
 	Text,
 	Avatar,
 	Device,
-	DataProviderFactory,
 	JSONModel,
 	HeaderRenderer,
 	IconFormatter,
 	CardActions,
-	formatMessage
+	formatMessage,
+	BindingHelper
 ) {
 	"use strict";
 
@@ -235,25 +235,7 @@ sap.ui.define([
 		this._getTitle().setText(this.getTitle());
 		this._getSubtitle().setText(this.getSubtitle());
 		this._getAvatar().setDisplayShape(this.getIconDisplayShape());
-
-		// Format the relative icon src for the integration card only.
-		if (this.isInsideIntegrationCard() && this.getIconSrc()) {
-			var oSrcBindingInfo = this.getBindingInfo("iconSrc");
-
-			if (oSrcBindingInfo) {
-				if (!oSrcBindingInfo.formatter) {
-					oSrcBindingInfo.formatter = function (sValue) {
-						return IconFormatter.formatSrc(sValue, this._sAppId);
-					}.bind(this);
-				}
-				this._getAvatar().bindProperty("src", oSrcBindingInfo);
-			} else {
-				this._getAvatar().setSrc(IconFormatter.formatSrc(this.getIconSrc(), this._sAppId));
-			}
-		} else {
-			this._getAvatar().setSrc(this.getIconSrc());
-		}
-
+		this._getAvatar().setSrc(this.getIconSrc());
 		this._getAvatar().setInitials(this.getIconInitials());
 	};
 
@@ -294,22 +276,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * @returns {boolean} Wether or not the parent of the header is an integration card.
-	 */
-	Header.prototype.isInsideIntegrationCard = function () {
-		var oParent = this.getParent();
-		if (oParent && oParent.isA("sap.ui.integration.widgets.Card")) {
-			return true;
-		}
-		return false;
-	};
-
-	/**
 	 * Creates an instance of Header with the given options.
 	 *
 	 * @private
 	 * @static
-	 * @param {Object} mConfiguration A map containing the header configuration options.
+	 * @param {Object} mConfiguration A map containing the header configuration options, which are already parsed.
 	 * @param {Object} oServiceManager A service manager instance to handle services.
 	 * @param {Object} oDataProviderFactory A DataProviderFactory instance.
 	 * @param {string} sAppId The sap.app/id from the manifest.
@@ -322,7 +293,11 @@ sap.ui.define([
 		};
 
 		if (mConfiguration.icon) {
-			mSettings.iconSrc = mConfiguration.icon.src;
+			if (mConfiguration.icon.src) {
+				mSettings.iconSrc = BindingHelper.formattedProperty(mConfiguration.icon.src, function (sValue) {
+					return IconFormatter.formatSrc(sValue, sAppId);
+				});
+			}
 			mSettings.iconDisplayShape = mConfiguration.icon.shape;
 			mSettings.iconInitials = mConfiguration.icon.text;
 		}
@@ -331,7 +306,10 @@ sap.ui.define([
 			mSettings.statusText = mConfiguration.status.text;
 		}
 
+		mSettings = BindingHelper.createBindingInfos(mSettings);
+
 		var oHeader = new Header(mSettings);
+
 		oHeader._sAppId = sAppId;
 		if (mConfiguration.status && mConfiguration.status.text && mConfiguration.status.text.format) {
 			Header._bindStatusText(mConfiguration.status.text.format, oHeader);

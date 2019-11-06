@@ -3,13 +3,13 @@
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	//"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	LrepConnector,
 	JsObjectConnector,
-	BrowserStorageUtils,
+	ObjectStorageUtils,
 	//sinon,
 	jQuery
 ) {
@@ -30,7 +30,7 @@ sap.ui.define([
 
 	function writeTestDataToStorage() {
 		var aPromises = aTestData.map(function(oChange) {
-			var sKey = BrowserStorageUtils.createChangeKey(oChange.fileName);
+			var sKey = ObjectStorageUtils.createFlexKey(oChange.fileName);
 			JsObjectConnector.oStorage.setItem(sKey, oChange);
 		});
 
@@ -53,7 +53,7 @@ sap.ui.define([
 				}
 			})
 			;
-			return this.oConnector.loadChanges({name: "test.app", appVersion: "1.0.0"}).then(function (oResult) {
+			return this.oConnector.loadChanges({name: "test.app", appVersion: "1.0.0", appName: "test.app"}).then(function (oResult) {
 				assert.equal(oResult.changes.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
@@ -70,7 +70,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when creating single change, update it and then delete it", function (assert) {
-			var sId = BrowserStorageUtils.createChangeKey(oTestData.fileName);
+			var sId = ObjectStorageUtils.createFlexKey(oTestData.fileName);
 			return this.oConnector.create(oTestData)
 			.then(function () {
 				assert.ok(JsObjectConnector.oStorage.getItem(sId), "JsObjectConnector got the change");
@@ -89,7 +89,7 @@ sap.ui.define([
 			return this.oConnector.create(aTestData)
 			.then(function () {
 				assert.equal(numberOfChange(), aTestData.length, "then spot-checking that JsObjectConnector got the changes");
-				var sId = BrowserStorageUtils.createChangeKey(aTestData[2].fileName);
+				var sId = ObjectStorageUtils.createFlexKey(aTestData[2].fileName);
 				assert.ok(JsObjectConnector.oStorage.getItem(sId), "then spot-checking that JsObjectConnector got the changes");
 			});
 		});

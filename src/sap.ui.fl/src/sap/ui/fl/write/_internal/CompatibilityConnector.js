@@ -31,12 +31,14 @@ sap.ui.define([
 	 * @param {object} mComponent Contains component data needed for reading changes
 	 * @param {string} mComponent.name Name of component
 	 * @param {string} [mComponent.appVersion] Current running version of application
+	 * @param {string} [mComponent.appName] Component name of the current application which may differ in case of an app variant
 	 * @returns {Promise} Returns a Promise with the changes response
 	 */
 	CompatibilityConnector.prototype.loadChanges = function(mComponent) {
 		return ApplyStorage.loadFlexData({
 			reference: mComponent.name,
-			appVersion: mComponent.appVersion
+			appVersion: mComponent.appVersion,
+			componentName: mComponent.appName
 			//,cacheKey: "" //read from async hints
 		}).then(function(mFlexData) {
 			return {

@@ -7,6 +7,7 @@ sap.ui.define([
 	'./Dialog',
 	'./Popover',
 	'./library',
+	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/base/ManagedObject',
@@ -21,6 +22,7 @@ sap.ui.define([
 		Dialog,
 		Popover,
 		library,
+		TitleAlignmentMixin,
 		Control,
 		IconPool,
 		ManagedObject,
@@ -39,7 +41,8 @@ sap.ui.define([
 	// shortcut for sap.m.PlacementType
 	var PlacementType = library.PlacementType;
 
-
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = library.TitleAlignment;
 
 	/**
 	 * Constructor for a new ResponsivePopover.
@@ -148,7 +151,16 @@ sap.ui.define([
 			 * @since 1.36.4
 			 * @private
 			 */
-			resizable: {type: "boolean", group: "Dimension", defaultValue: false}
+			resizable: {type: "boolean", group: "Dimension", defaultValue: false},
+
+			/**
+			 * Specifies the Title alignment (theme specific).
+			 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+			 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+			 * @since 1.72
+			 * @public
+			 */
+			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 		},
 		defaultAggregation: "content",
 		aggregations : {
@@ -302,6 +314,7 @@ sap.ui.define([
 
 		var settings = {
 			resizable: that.getResizable(),
+			titleAlignment: that.getTitleAlignment(),
 			beforeOpen: function(oEvent){
 				that.fireBeforeOpen({openBy: oEvent.getParameter('openBy')});
 			},

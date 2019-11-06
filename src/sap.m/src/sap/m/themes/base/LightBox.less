@@ -22,7 +22,7 @@
 	max-width: 100%;
 	min-height: 18rem;
 	max-height: 100%;
-	border-radius: 0.25rem;
+	border-radius: @sapUiElementBorderCornerRadius;
 	background-color: @_sap_m_LightBox_ContainerBackground;
 	box-shadow: @sapUiShadowLevel3;
 	outline: none;
@@ -69,7 +69,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 }
 
 .sapMLightBox.sapMLightBoxTopCornersRadius .sapMImg {
-	border-radius: 0.25rem 0.25rem 0 0;
+	border-radius: @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0 0;
 }
 
 /* ==========================================================================
@@ -88,7 +88,7 @@ html[data-sap-ui-browser^='sf'] .sapMLightBox {
 	justify-content: space-between;
 	height: 3rem;
 	align-items: flex-end;
-	border-radius: 0 0 0.25rem 0.25rem;
+	border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
 
 	&.sapMLightBoxFooterTwoLines {
 		height: @_sap_m_LightBox_FooterTwoLinesHeightMobile;

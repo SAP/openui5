@@ -434,6 +434,7 @@ sap.ui.define([
 		{i : {precision : 0.9}, o : undefined, warning : "Illegal precision: 0.9"},
 		{i : {precision : 3.14}, o : undefined, warning : "Illegal precision: 3.14"},
 		{i : {precision : 12.1}, o : undefined, warning : "Illegal precision: 12.1"},
+		{i : {nullable : "false", precision : 3}, o : {nullable : false, precision : 3}},
 		{i : {V4 : undefined}, o : undefined},
 		{i : {V4 : false}, o : undefined},
 		{i : {V4 : true}, o : undefined}, // not stored inside oConstraints

@@ -1,17 +1,20 @@
-<core:View height="100%"
-		xmlns:core="sap.ui.core"
-		xmlns="sap.m"
-		xmlns:l="sap.ui.layout"
-		controllerName="sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon">
-	<Page showHeader="false" class="sapUiContentPadding" showNavButton="false">
+<mvc:View
+	controllerName="sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	height="100%">
+	<Page
+		showHeader="false"
+		class="sapUiContentPadding"
+		showNavButton="false">
 		<l:VerticalLayout>
-			<l:content>
-				<Button id="showQuickView"
-						class="sapUiSmallMarginBottom"
-						text="Employee QuickView"
-						width="200px"
-						press="handleButtonPress" />
-			</l:content>
+			<Button
+				id="showQuickView"
+				class="sapUiSmallMarginBottom"
+				text="Employee QuickView"
+				width="200px"
+				press=".handleButtonPress" />
 		</l:VerticalLayout>
 	</Page>
-</core:View>
+</mvc:View>

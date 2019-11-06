@@ -275,10 +275,87 @@ sap.ui.define([
 			var oCellPressSpy = this.spy(this.oSPCMG, "fireEvent");
 
 			// act
-			this.oSPCMG.ontap({ target: this.oSPCMG.$().find('.sapMSPCMonthDay')[3] });
+			this.oSPCMG._fireSelectionEvent({ target: this.oSPCMG.$().find('.sapMSPCMonthDay')[3], srcControl: this.oSPCMG});
 
 			// assert
-			assert.ok(oCellPressSpy.calledOnce, "an event is fired");
-			assert.ok(oCellPressSpy.calledWithMatch("cellPress", { startDate: o2Aug2018_00_00, endDate: o3Aug2018_00_00 }), "its the right event + parameters");
+			assert.ok(oCellPressSpy.callCount, 2, "two events are fired");
+			assert.ok(oCellPressSpy.calledWithMatch("appointmentSelect", { appointment: undefined, appointments: [] }), "appointmentSelect is fired + parameters");
+			assert.ok(oCellPressSpy.calledWithMatch("cellPress", { startDate: o2Aug2018_00_00, endDate: o3Aug2018_00_00 }), "cellPress is fired + parameters");
+		});
+
+		QUnit.test("appointmentSelect: select a single appointment", function (assert) {
+			var oAppointment = new CalendarAppointment(),
+				oGrid = new SinglePlanningCalendarMonthGrid({
+					appointments: [
+						oAppointment
+					]
+				}),
+				oFakeEvent = {
+					target: {
+						classList: {
+							contains: function() {
+								return false;
+							}
+						}
+					},
+					srcControl: oAppointment
+				},
+				fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
+
+			//act
+			oGrid._fireSelectionEvent(oFakeEvent);
+
+			//assert
+			assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+			assert.ok(fnFireAppointmentSelectSpy.calledWithExactly({
+				appointment: oAppointment,
+				appointments: [oAppointment],
+				id: oGrid.getId()
+			}), "Event was fired with the correct parameters");
+
+			//clean up
+			oGrid.destroy();
+		});
+
+		QUnit.test("appointmentSelect: deselect all appointments", function (assert) {
+			var oGrid = new SinglePlanningCalendarMonthGrid({
+					appointments: [
+						new CalendarAppointment({
+							startDate: new Date(2018, 6, 8, 5),
+							endDate: new Date(2018, 6, 8, 6),
+							selected: true
+						}),
+						new CalendarAppointment({
+							startDate: new Date(2018, 6, 9, 4),
+							endDate: new Date(2018, 6, 10, 4),
+							selected: true
+						})
+					]
+				}),
+				oFakeEvent = {
+					target: {
+						classList: {
+							contains: function() {
+								return false;
+							}
+						}
+					},
+					srcControl: oGrid
+				},
+				fnFireAppointmentSelectSpy = this.spy(oGrid, "fireAppointmentSelect");
+
+			//act
+			oGrid._fireSelectionEvent(oFakeEvent);
+
+			//assert
+			assert.ok(fnFireAppointmentSelectSpy.calledOnce, "Event was fired");
+			assert.ok(fnFireAppointmentSelectSpy.calledWith({
+				appointment: undefined,
+				appointments: oGrid.getAggregation("appointments"),
+				id: oGrid.getId()
+			}), "Event was fired with the correct parameters");
+
+			//clean up
+			oGrid.destroy();
 		});
 	});

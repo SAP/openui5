@@ -9,6 +9,7 @@ sap.ui.define([
 	'./List',
 	'./SearchField',
 	'./library',
+	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
@@ -27,6 +28,7 @@ function(
 	List,
 	SearchField,
 	library,
+	TitleAlignmentMixin,
 	Control,
 	Device,
 	ManagedObject,
@@ -49,6 +51,8 @@ function(
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.m.TitleAlignment
+	var TitleAlignment = library.TitleAlignment;
 
 	/**
 	 * Constructor for a new SelectDialog.
@@ -182,21 +186,33 @@ function(
 			 * @since 1.58
 			 */
 			showClearButton : {type : "boolean", group : "Behavior", defaultValue : false},
+
 			/**
 			 * Overwrites the default text for the confirmation button.
 			 * @since 1.68
 			 */
-			confirmButtonText: {type : "string", group : "Appearance"},
+
+			 confirmButtonText: {type : "string", group : "Appearance"},
 			/**
 			 * When set to <code>true</code>, the SelectDialog is draggable by its header. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be draggable only in desktop mode.
 			 * @since 1.70
 			 */
-			draggable: {type: "boolean", group: "Behavior", defaultValue: false},
+
+			 draggable: {type: "boolean", group: "Behavior", defaultValue: false},
 			/**
 			 * When set to <code>true</code>, the SelectDialog will have a resize handler in its bottom right corner. The default value is <code>false</code>. <b>Note</b>: The SelectDialog can be resizable only in desktop mode.
 			 * @since 1.70
 			 */
-			resizable: {type: "boolean", group: "Behavior", defaultValue: false}
+			resizable: {type: "boolean", group: "Behavior", defaultValue: false},
+
+			/**
+			 * Specifies the Title alignment (theme specific).
+			 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+			 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+			 * @since 1.72
+			 * @public
+			 */
+			titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 		},
 		defaultAggregation : "items",
 		aggregations : {
@@ -383,6 +399,9 @@ function(
 				})
 			]
 		});
+
+		// call the method that registers this Bar for alignment
+		this._setupBarTitleAlignment(oCustomHeader, this.getId() + "_customHeader");
 
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
@@ -1299,6 +1318,9 @@ function(
 	/* =========================================================== */
 	/*           end: internal methods                             */
 	/* =========================================================== */
+
+	// enrich the control functionality with TitleAlignmentMixin
+	TitleAlignmentMixin.mixInto(SelectDialog.prototype);
 
 	return SelectDialog;
 

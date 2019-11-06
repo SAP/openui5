@@ -507,11 +507,22 @@ sap.ui.define([
 				 * @since 1.46.0
 				 */
 				rowHeaderClick: {
+					parameters : {
 
-					/**
-					 * The row user clicked on.
-					 */
-					row : {type : "sap.m.PlanningCalendarRow"}
+						/**
+						 * The ID of the <code>PlanningCalendarRowHeader</code> of the selected appointment.
+						 *
+						 * <b>Note:</b> Intended to be used as an easy way to get an ID of a <code>PlanningCalendarRowHeader</code>. Do NOT use for modification.
+						 *
+						 * @since 1.73
+						 */
+						headerId : {type : "string"},
+
+						/**
+						 * The row user clicked on.
+						 */
+						row : {type : "sap.m.PlanningCalendarRow"}
+					}
 				}
 			},
 			designtime: "sap/m/designtime/PlanningCalendar.designtime"
@@ -671,9 +682,10 @@ sap.ui.define([
 			onAfterRendering: function () {
 				this._rowHeaderClickEvent = oTable.$().find(".sapMPlanCalRowHead > div.sapMLIB").click(function (oEvent) {
 					var oRowHeader = jQuery(oEvent.currentTarget).control(0),
-						oRow = getRow(oRowHeader.getParent());
+						oRow = getRow(oRowHeader.getParent()),
+						sRowHeaderId = oRowHeader.getId();
 
-					this.fireRowHeaderClick({row: oRow});
+					this.fireRowHeaderClick({headerId: sRowHeaderId, row: oRow});
 				}.bind(this));
 				this._adjustColumnHeadersTopOffset();
 			}
@@ -837,6 +849,25 @@ sap.ui.define([
 			this._dateNav.previous();
 		} else {
 			this._dateNav.next();
+		}
+
+		if (this.getMinDate()) {
+			if (this._dateNav.getStart().getTime() <= this.getMinDate().getTime()) {
+				this._getHeader()._oPrevBtn.setEnabled(false);
+				this._dateNav.setStart(this.getMinDate());
+				this._dateNav.setCurrent(this.getMinDate());
+			} else {
+				this._getHeader()._oPrevBtn.setEnabled(true);
+			}
+		}
+		if (this.getMaxDate()){
+			if (this._dateNav.getEnd().getTime() >= this.getMaxDate().getTime()) {
+				this._getHeader()._oNextBtn.setEnabled(false);
+				this._dateNav.setStart(this.getMaxDate());
+				this._dateNav.setCurrent(this.getMaxDate());
+			} else {
+				this._getHeader()._oNextBtn.setEnabled(true);
+			}
 		}
 
 		var oRow = this._getRowInstanceByViewKey(this.getViewKey());
@@ -1071,7 +1102,10 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype.onThemeChanged = function() {
-		this._adjustColumnHeadersTopOffset();
+		// adjust offset only if the control is rendered
+		if (this.getDomRef()) {
+			this._adjustColumnHeadersTopOffset();
+		}
 	};
 
 	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
@@ -1518,9 +1552,11 @@ sap.ui.define([
 
 		if (oMinDate) {
 			oHeader.getAggregation("_calendarPicker").setMinDate(new Date(oMinDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMinDate(new Date(oMinDate.getTime()));
 		}
 		if (oMaxDate) {
 			oHeader.getAggregation("_calendarPicker").setMaxDate(new Date(oMaxDate.getTime()));
+			oHeader.getAggregation("_yearPicker").setMaxDate(new Date(oMaxDate.getTime()));
 		}
 		this._updateTodayButtonState();
 
@@ -2413,11 +2449,13 @@ sap.ui.define([
 		}
 
 		this._changeStartDate(oStartDate);
+		this._dateNav.setCurrent(oStartDate);
 
 		var sViewKey = this.getViewKey(),
 			oCurrentView = this._getView(sViewKey),
 			sCurrentViewIntervalType = oCurrentView.getIntervalType(),
-			sControlRef;
+			sControlRef,
+			oEndDate = new Date(this._dateNav.getEnd().setHours(23,59,59));
 
 		if (sCurrentViewIntervalType === "Hour") {
 			sCurrentViewIntervalType = "Time";
@@ -2430,6 +2468,15 @@ sap.ui.define([
 
 		if (this[sControlRef]) {
 			this[sControlRef].setDate(oStartDate);
+		}
+
+		if (oStartDate > this.getMinDate() && oStartDate < this.getMaxDate()) {
+			this._getHeader()._oNextBtn.setEnabled(true);
+			this._getHeader()._oPrevBtn.setEnabled(true);
+		} else if (this.getMinDate() >= this._dateNav.getStart() && this.getMinDate() <= oEndDate) {
+			this._getHeader()._oPrevBtn.setEnabled(false);
+		} else if (this.getMaxDate() >= this._dateNav.getStart() && this.getMaxDate() <= oEndDate) {
+			this._getHeader()._oNextBtn.setEnabled(false);
 		}
 	};
 

@@ -165,6 +165,9 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 */
 	TabStripRenderer.beginTabStrip = function (oRm, oControl) {
 		oRm.write("<div");
+		oRm.addClass("sapMTabStribContainer");
+		oRm.writeClasses();
+		oRm.write("><div");
 		oRm.addClass("sapMTabStrip");
 		oRm.addClass("sapContrastPlus");
 		oRm.writeControlData(oControl);
@@ -178,6 +181,7 @@ sap.ui.define(['./TabStripItem', 'sap/ui/Device', 'sap/ui/core/InvisibleText'], 
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 */
 	TabStripRenderer.endTabStrip = function (oRm) {
+		oRm.write("</div>");
 		oRm.write("</div>");
 	};
 

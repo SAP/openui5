@@ -24,7 +24,7 @@
 						<core:Item text="Compact" key="compact"/>
 						<core:Item text="Condensed" key="condensed"/>
 					</Select>
-					<Link text="Read more about Content Densities" href="#/topic/e54f729da8e3405fae5e4fe8ae7784c1" target="_blank" class="sapUiTinyMarginTop"/>
+					<Link text="Read more about Content Densities" href="topic/e54f729da8e3405fae5e4fe8ae7784c1" target="_blank" class="sapUiTinyMarginTop"/>
 
 					<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
 						<Label text="Right To Left Mode:" design="Standard" labelFor="RTLSwitch" />

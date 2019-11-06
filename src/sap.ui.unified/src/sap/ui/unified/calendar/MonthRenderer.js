@@ -489,6 +489,13 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		oRm.accessibilityState(null, mAccProps);
 		oRm.openEnd(); // div element
 
+		if (aDayTypes[0]){ //if there's a special date, render it
+			oRm.openStart("div");
+			oRm.class("sapUiCalSpecialDate");
+			oRm.openEnd(); // div
+			oRm.close("div");
+		}
+
 		oRm.openStart("span");
 		oRm.class("sapUiCalItemText");
 		oRm.openEnd(); // span

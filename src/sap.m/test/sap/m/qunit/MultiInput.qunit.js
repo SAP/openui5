@@ -21,7 +21,9 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/m/StandardListItem",
 	"sap/ui/core/library",
-	"sap/ui/base/Event"
+	"sap/ui/dom/containsOrEquals",
+	"sap/ui/base/Event",
+	"sap/ui/core/InvisibleText"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -43,7 +45,9 @@ sap.ui.define([
 	ListItem,
 	StandardListItem,
 	coreLibrary,
-	Event
+	containsOrEquals,
+	Event,
+	InvisibleText
 ) {
 	createAndAppendDiv("content");
 
@@ -1539,6 +1543,18 @@ sap.ui.define([
 
 		this.multiInput1.focus();
 		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-describedby').indexOf(oInvisibleText.getId()) !== -1, "Tokens information is added to the input");
+
+		//arrange
+		sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
+
+		// act
+		this.multiInput1.setEditable(false);
+		this.multiInput1.setWidth("20px");
+
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.ok(this.multiInput1.getFocusDomRef().getAttribute('aria-labelledBy').indexOf(sInvisibleTextId) !== -1, "Input has aria-labelledby attribute to indicate Enter press possibility");
 	});
 
 	QUnit.test("Placeholder opacity", function(assert) {
@@ -1962,6 +1978,7 @@ sap.ui.define([
 		var aListItems,
 			oToken = new Token({text: "XXXX"});
 		this.multiInput.addToken(oToken);
+		this.multiInput._oSuggestionPopup.open();
 
 		// act
 		this.multiInput._fillList();
@@ -1989,7 +2006,7 @@ sap.ui.define([
 		fnReadOnlyPopDestroySpy.restore();
 	});
 
-	QUnit.test("Read-only popover should be closed on focusout", function (assert) {
+	QUnit.test("Read-only popover should be closed on ENTER", function (assert) {
 		// arrange
 		var oMultiInput = new MultiInput({
 			editable: false,
@@ -2010,15 +2027,48 @@ sap.ui.define([
 		assert.ok(oMultiInput._oReadOnlyPopover, "Readonly Popover should be created");
 
 		// act
-		oMultiInput._handleIndicatorPress();
-		this.clock.tick(300);
-
-		oMultiInput.onsapfocusleave({});
+		qutils.triggerKeydown(oMultiInput._oReadOnlyPopover, KeyCodes.ENTER);
 		this.clock.tick(300);
 
 		assert.notOk(oMultiInput._oReadOnlyPopover.isOpen(), "Readonly Popover should be closed");
 
 		// delete
+		oMultiInput.destroy();
+	});
+
+	QUnit.test("Read-only popover should be opened on ENTER keypress", function (assert) {
+		// arrange
+		var oMultiInput = new MultiInput({
+			editable: false,
+			width: "200px",
+			tokens: [
+				new Token({ text: "XXXX" }),
+				new Token({ text: "XXXX" }),
+				new Token({ text: "XXXX" }),
+				new Token({ text: "XXXX" })
+			]
+		}), oMIDomRef;
+
+		// act
+		oMultiInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var oHandleIndicatorPressSpy = sinon.spy(oMultiInput, "_handleIndicatorPress");
+
+		// assert
+		assert.ok(oMultiInput._oReadOnlyPopover, "Readonly Popover should be created");
+
+		// act
+		oMIDomRef = oMultiInput.getFocusDomRef();
+		qutils.triggerKeydown(oMIDomRef, KeyCodes.ENTER);
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(containsOrEquals(oMultiInput._getTokensList().getItems()[0].getDomRef(), document.activeElement),
+			"Popover should be on focus when opened");
+		assert.ok(oHandleIndicatorPressSpy.called, "MultiInput's _handleIndicatorPress is called");
+
+		// delete
+		oHandleIndicatorPressSpy.restore();
 		oMultiInput.destroy();
 	});
 
@@ -2405,6 +2455,28 @@ sap.ui.define([
 
 		//Assert
 		assert.strictEqual(bVisible, true, "Tokens list is visible");
+
+		//Clean up
+		oMultiInput.destroy();
+	});
+
+	QUnit.module("Performance");
+
+	QUnit.test("Check execution time when 1000 tokens are being added", function (assert) {
+		//Arrange
+		var i = 1000,
+			oMultiInput = new MultiInput({
+				width: "150px"
+			}),
+			iTimeStamp = window.performance.now();
+
+		// Act
+		while (i--) {
+			oMultiInput.addToken(new Token({text: ("0000" + i).slice(-4)}));
+		}
+
+		// Assert
+		assert.ok((iTimeStamp + 1000) > window.performance.now(), "A thousand Tokens get populated under a second");
 
 		//Clean up
 		oMultiInput.destroy();

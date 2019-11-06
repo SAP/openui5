@@ -22,6 +22,7 @@ sap.ui.define([
 	'./MultiInputRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
+	'sap/ui/core/InvisibleText',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos",
@@ -47,6 +48,7 @@ function(
 	MultiInputRenderer,
 	containsOrEquals,
 	KeyCodes,
+	InvisibleText,
 	jQuery
 ) {
 		"use strict";
@@ -307,6 +309,7 @@ function(
 		this._tokenizer.scrollToEnd();
 		this._registerResizeHandler();
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+		this._handleNMoreAccessibility();
 		this._handleInnerVisibility();
 		this._syncInputWidth(this._tokenizer);
 		Input.prototype.onAfterRendering.apply(this, arguments);
@@ -363,6 +366,7 @@ function(
 		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 		this._handleInnerVisibility();
 		this._syncInputWidth(this._tokenizer);
+		this._handleNMoreAccessibility();
 
 		this._registerResizeHandler();
 	};
@@ -375,7 +379,10 @@ function(
 			this._tokenizer._useCollapsedMode(false);
 		}
 
-		this._fillList();
+		if ((this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) || this._bUseDialog) {
+			this._fillList();
+		}
+
 		// on mobile the list with the tokens should be updated and shown
 		if (this._bUseDialog) {
 			this._manageListsVisibility(true/*show list with tokens*/);
@@ -917,6 +924,11 @@ function(
 			this._validateCurrentText();
 		}
 
+		// Open popover with items if in readonly mode and has Nmore indicator
+		if (!this.getEditable() && this._tokenizer._hasMoreIndicator() && oEvent.target === this.getFocusDomRef()) {
+			this._handleIndicatorPress();
+		}
+
 		this.focus();
 	};
 
@@ -943,15 +955,13 @@ function(
 			bNewFocusIsInTokenizer = false,
 			bNewFocusIsInMultiInput = this._checkFocus(),
 			oRelatedControlDomRef,
-			bFocusIsInSelectedItemPopup,
-			bNewFocusIsInReadOnlyPopover;
+			bFocusIsInSelectedItemPopup;
 
 		if (oPopup instanceof sap.m.Popover) {
 			if (oEvent.relatedControlId) {
 				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
 				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
 				bNewFocusIsInTokenizer = containsOrEquals(this._tokenizer.getFocusDomRef(), oRelatedControlDomRef);
-				bNewFocusIsInReadOnlyPopover = containsOrEquals(this._oReadOnlyPopover && this._oReadOnlyPopover.getFocusDomRef(), oRelatedControlDomRef);
 
 				if (oSelectedItemsPopup) {
 					bFocusIsInSelectedItemPopup = containsOrEquals(oSelectedItemsPopup.getFocusDomRef(), oRelatedControlDomRef);
@@ -990,10 +1000,6 @@ function(
 
 		if (!bFocusIsInSelectedItemPopup && !bNewFocusIsInTokenizer) {
 			this._tokenizer._useCollapsedMode(true);
-		}
-
-		if (this._oReadOnlyPopover && this._oReadOnlyPopover.isOpen() && !bNewFocusIsInTokenizer && !bNewFocusIsInReadOnlyPopover) {
-			this._oReadOnlyPopover.close();
 		}
 
 		this._handleInnerVisibility();
@@ -1280,7 +1286,7 @@ function(
 	 * Clones the <code>sap.m.MultiInput</code> control.
 	 *
 	 * @public
-	 * @return {sap.ui.core.Element} reference to the newly created clone
+	 * @return {sap.m.MultiInput} reference to the newly created clone
 	 */
 	MultiInput.prototype.clone = function () {
 		var oClone;
@@ -1705,19 +1711,35 @@ function(
 	 */
 	MultiInput.prototype._handleNMoreItemDelete = function(oEvent) {
 		var oListItem = oEvent.getParameter("listItem"),
-			sSelectedId = oListItem.data("tokenId"),
+			sSelectedId = oListItem && oListItem.data("tokenId"),
 			oTokenToDelete;
 
 		oTokenToDelete = this.getTokens().filter(function(oToken){
 			return oToken.getId() === sSelectedId;
 		})[0];
 
-		if (oTokenToDelete.getEditable()) {
+		if (oTokenToDelete && oTokenToDelete.getEditable()) {
 			this._tokenizer._onTokenDelete(oTokenToDelete);
 			this._getTokensList().removeItem(oListItem);
 		}
 
 		this.focus();
+	};
+
+	/**
+	 * Adds or removes aria-labelledby attribute to indicate that you can interact with Nmore.
+	 *
+	 * @private
+	 */
+	MultiInput.prototype._handleNMoreAccessibility = function () {
+		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
+		var bHasAriaLabelledBy = this.getAriaLabelledBy().indexOf(sInvisibleTextId) !== -1;
+
+		if (!this.getEditable() && this._tokenizer._hasMoreIndicator()) {
+			!bHasAriaLabelledBy && this.addAriaLabelledBy(sInvisibleTextId);
+		} else {
+			bHasAriaLabelledBy && this.removeAriaLabelledBy(sInvisibleTextId);
+		}
 	};
 
 	/**
@@ -1783,8 +1805,7 @@ function(
 			placement: PlacementType.Auto,
 			showHeader: false,
 			contentMinWidth: "auto"
-		}).addStyleClass("sapMMultiInputReadOnlyPopover")
-			.setInitialFocus(this);
+		}).addStyleClass("sapMMultiInputReadOnlyPopover");
 	};
 
 	/**

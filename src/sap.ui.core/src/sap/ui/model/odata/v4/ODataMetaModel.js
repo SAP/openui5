@@ -1002,7 +1002,7 @@ sap.ui.define([
 							// sTarget does not matter because no further steps follow
 							return false; // no further steps must happen
 						}
-						if (mScope.$Annotations[sIndividualOverloadTarget][sTerm]) {
+						if (sTerm in mScope.$Annotations[sIndividualOverloadTarget]) {
 							// "external targeting of individual operation overload"
 							sTarget = sIndividualOverloadTarget;
 							vResult = mScope; // see below
@@ -1816,21 +1816,6 @@ sap.ui.define([
 		// sUrl references the metadata document, make it absolute based on our $metadata URL to get
 		// rid of ".." segments and remove the filename part
 		return new URI(sUrl).absoluteTo(sAbsoluteUrl).filename("").toString();
-	};
-
-	/**
-	 * Returns the module path to the model specific adapter factory.
-	 *
-	 * @returns {string}
-	 *   The module path to the model specific adapter factory
-	 *
-	 * @private
-	 * @see sap.ui.model.MetaModel#getAdapterFactoryModulePath
-	 * @since 1.55.0
-	 */
-	// @override
-	ODataMetaModel.prototype.getAdapterFactoryModulePath = function () {
-		return "sap/ui/mdc/experimental/adapter/odata/v4/ODataAdapterFactory";
 	};
 
 	/**

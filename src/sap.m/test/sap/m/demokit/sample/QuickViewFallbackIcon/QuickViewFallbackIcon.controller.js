@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (Fragment, Controller, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon", {
+	return Controller.extend("sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon", {
 
 		onInit: function () {
 			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/QuickViewFallbackIcon/model/data.json"));
@@ -22,7 +22,7 @@ sap.ui.define([
 			if (!this._oQuickView) {
 				Fragment.load({
 					name: "sap.m.sample.QuickViewFallbackIcon.QuickViewFallbackIcon"
-				}).then(function(oQuickView) {
+				}).then(function (oQuickView) {
 					oQuickView.setModel(this.oModel);
 					this._oQuickView = oQuickView;
 					this.getView().addDependent(oQuickView);
@@ -38,7 +38,6 @@ sap.ui.define([
 				this._oQuickView.destroy();
 			}
 		}
-	});
 
-	return CController;
+	});
 });

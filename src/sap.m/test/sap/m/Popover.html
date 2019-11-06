@@ -141,6 +141,39 @@
 			right: 200px;
 		}
 
+		.positioned12 {
+			position: absolute !important;
+			top: 350px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned12 {
+			left: 10px;
+			right: auto;
+		}
+
+		.positioned13 {
+			position: absolute !important;
+			top: 400px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned13 {
+			left: 10px;
+			right: auto;
+		}
+
+		.positioned14 {
+			position: absolute !important;
+			top: 450px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned14 {
+			left: 10px;
+			right: auto;
+		}
+
 		.vbox {
 			position: absolute !important;
 			top: 100px;
@@ -458,6 +491,78 @@
 			}
 		});
 
+		var oList3 = new sap.m.List({
+			inset: true,
+		})
+
+		bindListData(data, oItemTemplate1, oList3);
+
+		var oPopover11 = new sap.m.Popover("popover11", {
+			placement: sap.m.PlacementType.Left,
+			title: "Popover11",
+			showHeader: true,
+			subHeader: new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.SearchField({
+						placeholder: "Search ...",
+						width: "100%"
+					})
+				]
+			}),
+			content: [
+				oList3
+			],
+			footer:
+			new sap.m.Bar({
+				contentLeft: [new sap.m.Button("btn-set-width-700", {
+					text: "Set width to 700px",
+					press: function () {
+						oList3.setWidth("700px");
+					}
+				})],
+				contentRight: [new sap.m.Button("btn-set-width-1024", {
+					text: "Set width to 1024px",
+					press: function () {
+						oList3.setWidth("1024px");
+					}
+				})]
+			})
+		});
+
+		oPopover11.addStyleClass("sapUiResponsivePadding--header");
+		oPopover11.addStyleClass("sapUiResponsivePadding--subHeader");
+		oPopover11.addStyleClass("sapUiResponsivePadding--content");
+		oPopover11.addStyleClass("sapUiResponsivePadding--footer");
+
+		var oChangeToFioriTheme = new sap.m.Button({
+			id: "change-fiori-theme",
+			text: "Change theme to sap_fiori_3",
+			press: function() {
+				sap.ui.getCore().applyTheme("sap_fiori_3");
+			}
+		});
+
+		oChangeToFioriTheme.addStyleClass("positioned12");
+
+		var oChangeToBelizeTheme = new sap.m.Button({
+			id: "change-belize-theme",
+			text: "Change theme to sap_belize",
+			press: function() {
+				sap.ui.getCore().applyTheme("sap_belize");
+			}
+		});
+
+		oChangeToBelizeTheme.addStyleClass("positioned13");
+
+		var oButton14 = new sap.m.Button("btn11", {
+			text: "Popover with Responsive paddings",
+			press: function () {
+				oPopover11.openBy(this);
+			}
+		});
+
+		oButton14.addStyleClass("positioned14");
+
 		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
 			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
 			suggestType: "json"
@@ -563,7 +668,7 @@
 		var page1 = new sap.m.Page("page1", {
 			title: "Page 1",
 			content: [
-				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oOverflowingPopover, oButton7, oButton8, oButton9, oVBox, oButton14, oChangeToFioriTheme, oChangeToBelizeTheme
 			]
 		});
 

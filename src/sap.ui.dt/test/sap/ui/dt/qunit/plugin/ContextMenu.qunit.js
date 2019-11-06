@@ -171,12 +171,16 @@ sap.ui.define([
 		QUnit.test("Showing the ContextMenu", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+				var fnSpy = sandbox.spy(oContextMenuControl, "_rememberPosition");
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
+				assert.ok(oContextMenuControl._oLastPosition === null, "The Last Position of the ContextMenu is not set, because it is the first opening");
 				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
 				this.clock.tick(400); //animation of the closing of the Popover
+				var oLastPosition = oContextMenuControl._oLastPosition;
+				assert.strictEqual(fnSpy.callCount, 1, "The Position of the ContextMenu is stored before closing");
 				assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
-
 				return openContextMenu.call(this, this.oButton2Overlay).then(function() {
+					assert.strictEqual(oContextMenuControl._oLastPosition, oLastPosition, "The Last Position of the ContextMenu is used because it is opened on same Overlay");
 					assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 				});
 			}.bind(this));
@@ -189,6 +193,7 @@ sap.ui.define([
 				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
 				this.clock.tick(400); //animation of the closing of the Popover
 				assert.strictEqual(fnSpy.callCount, 1, "the focus without scrolling function is called");
+				assert.ok(oContextMenuControl._oLastSourceOverlay === this.oButton2Overlay, "the last Caller Overlay of the ContextMenu is set");
 				fnSpy.restore();
 			}.bind(this));
 		});
@@ -202,6 +207,7 @@ sap.ui.define([
 				QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), KeyCodes.ESCAPE);
 				this.clock.tick(400); //animation of the closing of the Popover
 				assert.strictEqual(fnSpy.callCount, 0, "the focus without scrolling function is not called");
+				assert.ok(oContextMenuControl._oLastSourceOverlay === null, "the last Caller Overlay of the ContextMenu is not set");
 				fnSpy.restore();
 			}.bind(this));
 		});
@@ -226,6 +232,7 @@ sap.ui.define([
 			var bIsEdge = Device.browser.edge;
 			Device.browser.edge = true;
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			var fnSpy = sandbox.spy(oContextMenuControl, "_rememberPosition");
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 				openContextMenu.call(this, this.oButton2Overlay).then(function() {
@@ -235,8 +242,10 @@ sap.ui.define([
 			}.bind(this));
 			oContextMenuControl.attachEventOnce("Closed", function() {
 				assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
+				assert.strictEqual(fnSpy.callCount, 0, "the Position of the ContextMenu is not stored before closing, because Contextmenu is not closed via ESCAPE");
 				oContextMenuControl.attachEventOnce("Opened", function() {
 					assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be reopened again");
+					assert.ok(oContextMenuControl._oLastPosition === null, "the Last Position of the ContextMenu is not set");
 					Device.browser.edge = bIsEdge;
 					done();
 				});
@@ -250,10 +259,12 @@ sap.ui.define([
 		QUnit.test("When a context menu is open and selection changes", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+				var fnSpy = sandbox.spy(oContextMenuControl, "_rememberPosition");
 				var oContextMenuControlCloseSpy = sandbox.spy(oContextMenuControl, "close");
 				this.oDesignTime.getSelectionManager().fireChange({
 					selection: [this.oButton1Overlay]
 				});
+				assert.strictEqual(fnSpy.callCount, 0, "the Position of the ContextMenu is not stored before closing, because Contextmenu is not closed via ESCAPE");
 				assert.ok(oContextMenuControlCloseSpy.called, "ContextMenu is closed");
 			}.bind(this));
 		});
@@ -1497,28 +1508,33 @@ sap.ui.define([
 			assert.ok(spyExpandedContextMenu.notCalled);
 		});
 
-		QUnit.test("calling _changeFocusOnKeyStroke", function (assert) {
+		QUnit.test("calling _onKeyDown", function (assert) {
 			this.oButton1Overlay.focus();
 			var oEvent = { key: "ArrowRight" };
 			var oChangeFocusOnButtonsStub = sandbox.stub(this.oContextMenuControl, "_changeFocusOnButtons");
-			this.oContextMenuControl._changeFocusOnKeyStroke(oEvent);
+			var oRememberPositionStub = sandbox.stub(this.oContextMenuControl, "_rememberPosition");
+			this.oContextMenuControl._onKeyDown(oEvent);
 			assert.equal(oChangeFocusOnButtonsStub.callCount, 1, "_changeFocusOnButtons called first");
 			assert.equal(oChangeFocusOnButtonsStub.args.length, 1, "_changeFocusOnButtons called with one argument");
 			oEvent.key = "ArrowLeft";
-			this.oContextMenuControl._changeFocusOnKeyStroke(oEvent);
+			this.oContextMenuControl._onKeyDown(oEvent);
 			assert.equal(oChangeFocusOnButtonsStub.callCount, 2, "_changeFocusOnButtons called second");
 			assert.equal(oChangeFocusOnButtonsStub.args[1].length, 2, "_changeFocusOnButtons called with two arguments");
 			oEvent.key = "ArrowUp";
-			this.oContextMenuControl._changeFocusOnKeyStroke(oEvent);
+			this.oContextMenuControl._onKeyDown(oEvent);
 			assert.equal(oChangeFocusOnButtonsStub.callCount, 3, "_changeFocusOnButtons called third");
 			assert.equal(oChangeFocusOnButtonsStub.args[2].length, 2, "_changeFocusOnButtons called with two arguments");
 			oEvent.key = "ArrowDown";
-			this.oContextMenuControl._changeFocusOnKeyStroke(oEvent);
+			this.oContextMenuControl._onKeyDown(oEvent);
 			assert.equal(oChangeFocusOnButtonsStub.callCount, 4, "_changeFocusOnButtons called fourth");
 			assert.equal(oChangeFocusOnButtonsStub.args[3].length, 1, "_changeFocusOnButtons called with one argument");
 			oEvent.key = "Tab";
-			this.oContextMenuControl._changeFocusOnKeyStroke(oEvent);
+			this.oContextMenuControl._onKeyDown(oEvent);
 			assert.equal(oChangeFocusOnButtonsStub.callCount, 4, "_changeFocusOnButtons was not called again");
+			oEvent = { key: "Escape" };
+			this.oContextMenuControl._onKeyDown(oEvent);
+			assert.equal(oChangeFocusOnButtonsStub.callCount, 4, "_changeFocusOnButtons was not called again");
+			assert.equal(oRememberPositionStub.callCount, 1, "_rememberPosition called");
 		});
 
 		QUnit.test("calling _onContextMenu (attached at popover)", function(assert) {

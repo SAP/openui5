@@ -76,7 +76,7 @@ sap.ui.define([
 				mParams[oParam._key] = deepClone(oParam);
 				delete mParams[oParam._key]._key;
 			});
-			this.firePropertyChanged(mParams);
+			this.firePropertyChange(mParams);
 		},
 		_addParameter: function() {
 			var mParams = this.getConfig().value || {};

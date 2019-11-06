@@ -9,7 +9,7 @@
 	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="icon" >
 	<link rel="stylesheet" href="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
 
-	<script src="documentation-config.js"></script>
+	<script src="../documentation-config.js"></script>
 	<script
 			id='sap-ui-bootstrap'
 			type='text/javascript'
@@ -20,13 +20,16 @@
 			data-sap-ui-xx-waitForTheme="true"
 			data-sap-ui-compatVersion="1.16"
 			data-sap-ui-resourceroots='{
-			"sap.ui.demo.mock": "test-resources/sap/ui/documentation/sdk/"
-		}' >
+				"sap.ui.demo.mock": "test-resources/sap/ui/documentation/sdk/"
+			}' >
 	</script>
 	<script src="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
 	<script src="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/lang-css.js"></script>
 
 	<script>
+
+		// Demo Kit in static navigation mode
+		window['sap-ui-documentation-static'] = true;
 
 		// when documentation-config.js doesn't exist or doesn't define a configuration, probe for api-index.json
 		if ( window['sap-ui-documentation-config'] == null ) {

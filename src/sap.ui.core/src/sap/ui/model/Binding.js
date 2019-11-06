@@ -136,16 +136,25 @@ sap.ui.define([
 
 	// Getter
 	/**
-	 * Getter for path
-	 * @return {string} the binding path
+	 * Returns the model path to which this binding binds.
+	 *
+	 * Might be a relative or absolute path. If it is relative, it will be resolved relative
+	 * to the context as returned by {@link getContext()}.
+	 *
+	 * @returns {string} Binding path
+	 * @public
 	 */
 	Binding.prototype.getPath = function() {
 		return this.sPath;
 	};
 
 	/**
-	 * Getter for context
-	 * @return {Object} the context object
+	 * Returns the model context in which this binding will be resolved.
+	 *
+	 * If the binding path is absolute, the context is not relevant.
+	 *
+	 * @returns {sap.ui.model.Context} Context object
+	 * @public
 	 */
 	Binding.prototype.getContext = function() {
 		return this.oContext;
@@ -184,8 +193,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Getter for model
-	 * @return {sap.ui.model.Model} the model
+	 * Returns the model to which this binding belongs.
+	 *
+	 * @returns {sap.ui.model.Model} Model to which this binding belongs
+	 * @public
 	 */
 	Binding.prototype.getModel = function() {
 		return this.oModel;
@@ -468,7 +479,7 @@ sap.ui.define([
 
 	/**
 	 * Returns whether the binding is initial, which means it did not get an initial value yet
-	 * @return {boolean} whether binding is initial
+	 * @returns {boolean} Whether binding is initial
 	 * @public
 	 */
 	Binding.prototype.isInitial = function() {
@@ -476,8 +487,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether the binding is relative, which means it did not start with a /
-	 * @return {boolean} whether binding is relative
+	 * Returns whether the binding is relative, which means its path does not start with a slash ('/')
+	 * @returns {boolean} Whether binding is relative
 	 * @public
 	 */
 	Binding.prototype.isRelative = function() {
@@ -579,7 +590,7 @@ sap.ui.define([
 	/**
 	 * Returns true if the binding is suspended or false if not.
 	 *
-	 * @return {boolean} whether binding is suspended
+	 * @returns {boolean} Whether binding is suspended
 	 * @public
 	 */
 	Binding.prototype.isSuspended = function() {
@@ -590,7 +601,7 @@ sap.ui.define([
 	 * Resumes the binding update. Change events will be fired again.
 	 *
 	 * When the binding is resumed, a change event will be fired immediately, if the data has changed while the binding
-	 * was suspended. For serverside models, a request to the server will be triggered, if a refresh was requested
+	 * was suspended. For server-side models, a request to the server will be triggered, if a refresh was requested
 	 * while the binding was suspended.
 	 * @public
 	 */

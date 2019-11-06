@@ -4158,15 +4158,42 @@ sap.ui.define([
 		oFF.destroy();
 	});
 
+	QUnit.test("The selected keys are cleared when the list is made inactive", function(assert) {
+		var done = assert.async();
+		var oFF = oSCHelper.createFFWithModel();
+		var oFFL = oFF.getLists()[0];
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
+
+		oFFL.setSelectedKeys({
+			"4" : "Val4"
+		});
+		var oIcon = oFF.getAggregation("removeFacetIcons")[0];
+		callIconDelegate("ontouchstart", oIcon);
+		callIconDelegate("ontouchend", oIcon);
+		oIcon.firePress({
+			selected : true
+		});
+		setTimeout(function() {
+			assert.ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
+					"Selected keys should be cleared by making list inactive");
+			destroyFF(oFF);
+			done();
+		}, 500);
+	});
+
+	module("Buttons for List");
+
 	QUnit.test("_bCheckForAddListBtn should be set to true when the list is multiSelect", function(assert) {
 		var done = assert.async();
 
-		var oFF = new FacetFilter({
-			showPersonalization : true
-		});
 		var oFFL = new FacetFilterList({
+			active: false,
 			multiSelect: true,
 			title : "List"
+		});
+		var oFF = new FacetFilter({
+			showPersonalization : true
 		});
 
 		oFF.addList(oFFL);
@@ -4198,7 +4225,7 @@ sap.ui.define([
 			assert.ok(oFF._bCheckForAddListBtn, '_bCheckForAddListBtn should be set to true');
 			sap.ui.getCore().applyChanges();
 			setTimeout(function () {
-				assert.equal(oFF.getAggregation("buttons")[0].getDomRef(), null, 'The button for the list is not rendered, when the list is empty');
+				assert.equal(oFF.getAggregation("buttons"), null, 'The button for the list is not rendered, when the list is empty');
 				destroyFF(oFF);
 				done();
 			}, 1000);
@@ -4207,13 +4234,14 @@ sap.ui.define([
 		oFF._navToFilterItemsPage(oFacetListItem1);
 	});
 
-	QUnit.test("The button for the list is rendered, when the list is empty but showPersonalization is false and multiSelect true", function(assert) {
+	QUnit.test("The button for the list is rendered, when the list is empty but active", function(assert) {
 		var done = assert.async();
 
 		var oFF = new FacetFilter({
-			showPersonalization : false
+			showPersonalization : true
 		});
 		var oFFL = new FacetFilterList({
+			active: true,
 			multiSelect: true,
 			title : "List"
 		});
@@ -4244,10 +4272,8 @@ sap.ui.define([
 
 		oFF._getFacetDialog().attachEventOnce("afterClose", function(oEvent) {
 			// Assert
-			assert.ok(oFF._bCheckForAddListBtn, '_bCheckForAddListBtn should be true');
-			sap.ui.getCore().applyChanges();
 			setTimeout(function () {
-				assert.ok(oFF.getAggregation("buttons")[0].getDomRef(), 'The button for the list is rendered, when the list is empty but showPersonalization is false');
+				assert.ok(oFF.getAggregation("buttons")[0].getDomRef(), 'The button for the list is rendered, when the list is empty but active');
 				destroyFF(oFF);
 				done();
 			}, 1000);
@@ -4256,29 +4282,6 @@ sap.ui.define([
 		oFF._navToFilterItemsPage(oFacetListItem1);
 	});
 
-	QUnit.test("The selected keys are cleared when the list is made inactive", function(assert) {
-		var done = assert.async();
-		var oFF = oSCHelper.createFFWithModel();
-		var oFFL = oFF.getLists()[0];
-		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges(); //_getFacetRemoveIcon is implicitly called upon rendering
-
-		oFFL.setSelectedKeys({
-			"4" : "Val4"
-		});
-		var oIcon = oFF.getAggregation("removeFacetIcons")[0];
-		callIconDelegate("ontouchstart", oIcon);
-		callIconDelegate("ontouchend", oIcon);
-		oIcon.firePress({
-			selected : true
-		});
-		setTimeout(function() {
-			assert.ok(!Object.getOwnPropertyNames(oFFL.getSelectedKeys()).length,
-					"Selected keys should be cleared by making list inactive");
-			destroyFF(oFF);
-			done();
-		}, 500);
-	});
 
 	QUnit.module('Group Headers', {
 		beforeEach: function () {

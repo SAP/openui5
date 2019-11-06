@@ -1,11 +1,15 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
-	"qunit/DynamicPageUtil"
+	"qunit/DynamicPageUtil",
+	"sap/f/DynamicPage"
 ],
 	function (
+		Core,
 		$,
-		DynamicPageUtil
+		DynamicPageUtil,
+		DynamicPage
 	) {
 		"use strict";
 
@@ -150,17 +154,17 @@ sap.ui.define([
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), sStickyContentProviderId,  "Sticky subheader provider is the control in content aggregation");
 
 			oDynamicPage.setStickySubheaderProvider(null);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(oDynamicPage._oStickySubheader, null,  "There was not setted sticky subheader");
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), null,  "Sticky content is in sticky area");
 
 			oDynamicPage.setStickySubheaderProvider(sWrongStickySubheaderSource);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.equal(oDynamicPage._oStickySubheader, null,  "There was not setted sticky subheader");
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), sWrongStickySubheaderSource,  "Sticky content is in sticky area");
 
 			oDynamicPage.setStickySubheaderProvider(sStickyContentProviderId);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.notEqual(oDynamicPage._oStickySubheader, null,  "There was setted sticky subheader");
 			assert.equal(oDynamicPage.getStickySubheaderProvider(), sStickyContentProviderId,  "Sticky content is in sticky area");
 
@@ -435,5 +439,34 @@ sap.ui.define([
 			oUtil.renderObject(oDynamicPage);
 
 			headerDynamicVisibilityChange(assert, oDynamicPage);
+		});
+
+		QUnit.module("DynamicPage - Conditional CSS applied when StickySubheaderProvider is present", {
+			beforeEach: function () {
+				// Arrange
+				this.oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(false /*preserveHeaderStateOnScroll*/, true  /*has header*/, true /*header visible*/, true /*has title*/);
+				oUtil.renderObject(this.oDynamicPage);
+			},
+			afterEach: function () {
+				// Clean up
+				this.oDynamicPage.destroy();
+				this.oDynamicPage = null;
+			}
+		});
+
+		QUnit.test("DynamicPage - " + DynamicPage.NAVIGATION_CLASS_NAME + " CSS class", function(assert) {
+			// Assert
+			assert.ok(this.oDynamicPage.hasStyleClass(DynamicPage.NAVIGATION_CLASS_NAME),
+					"Dynamic Page has the " + DynamicPage.NAVIGATION_CLASS_NAME + ", " +
+					"when we have StickySubheaderProvider.");
+
+			// Act - Destroy the StickySubheaderProvider
+			Core.byId(this.oDynamicPage.getStickySubheaderProvider()).destroy();
+			oUtil.renderObject(this.oDynamicPage);
+
+			// Assert
+			assert.notOk(this.oDynamicPage.hasStyleClass(DynamicPage.NAVIGATION_CLASS_NAME),
+					"Dynamic Page doesn't have the " + DynamicPage.NAVIGATION_CLASS_NAME + ", " +
+					"when we don't have StickySubheaderProvider.");
 		});
 	});

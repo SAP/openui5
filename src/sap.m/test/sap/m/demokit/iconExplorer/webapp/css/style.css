@@ -30,6 +30,12 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw):not(.sapUiTheme-sap_beliz
 /* margin for clear icon in search field*/
 .sapUiDemoIconExplorer .inputClear{
 	position: relative;
+	right: 2rem;
+}
+
+.sapContrastPlus .sapMInputBaseIcon:active {
+	background-color: #91c8f6;
+    color: #2f3c48;
 }
 
 /* remove focus for this icon */

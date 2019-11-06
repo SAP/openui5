@@ -1,0 +1,72 @@
+/* ================================== */
+/* CSS for control sap.m/WheelSlider  */
+/* Belize theme                       */
+/* ================================== */
+
+@_sap_m_TimePickerSliders_ItemColor: lighten(@sapUiContentForegroundColor, 5);
+@_sap_m_TimePickerSliders_ItemHoverColor: darken(@sapUiContentForegroundColor, 5);
+@_sap_m_TimePickerSliders_ItemBorderColor: lighten(@sapUiListBorderColor, 10);
+
+.sapMWS {
+	.sapMWSInner {
+		.sapMWSItem {
+			border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
+			&:hover {
+				background: darken(@sapUiSelected, 10);
+			}
+		}
+	}
+	&.sapMWSExpanded {
+		.sapMWSInner {
+			.sapMWSItem {
+				background: @_sap_m_TimePickerSliders_ItemColor;
+				border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
+				&:hover {
+					background: @_sap_m_TimePickerSliders_ItemHoverColor;
+				}
+				&:active {
+					background: @sapUiHighlight;
+					color: @sapUiContentContrastTextColor;
+				}
+
+			}
+			.sapMWSSelectionFrame {
+				outline: 0.125rem solid @sapUiSelected;
+				outline-offset: -0.188rem;
+				&:hover {
+					+ ul > li.sapMWSItem.sapMWSItemSelected {
+						background: @_sap_m_TimePickerSliders_ItemHoverColor;
+					}
+				}
+				&:active {
+					& + ul > li.sapMWSItem.sapMWSItemSelected {
+						background: @sapUiSelected;
+						color: @sapUiContentContrastTextColor;
+					}
+				}
+			}
+		}
+	}
+}
+
+.sap-phone {
+	.sapMWS {
+		.sapMWSInner {
+			.sapMWSItem {
+				border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
+			}
+		}
+		&.sapMWSExpanded {
+			.sapMWSInner {
+				.sapMWSItem {
+					background: @_sap_m_TimePickerSliders_ItemColor;
+					border: 1px solid @_sap_m_TimePickerSliders_ItemBorderColor;
+				}
+				.sapMWSSelectionFrame {
+					outline: 0.125rem solid @sapUiSelected;
+					outline-offset: -0.188rem;
+				}
+			}
+		}
+	}
+}

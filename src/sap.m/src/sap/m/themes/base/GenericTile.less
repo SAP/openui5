@@ -81,7 +81,7 @@
 }
 
 .sapMGTSubHdrTxt {
-	margin-top: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .sapMGTSubHdrTxt > .sapMText,
@@ -265,7 +265,7 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 		border-radius: 0.2rem;
 		box-shadow: none;
 		transition: background-color 0.2s;
-		margin-bottom: 0.125rem;
+		margin: 0.125rem 0 0.125rem 0;
 		pointer-events: none;
 	}
 
@@ -310,8 +310,9 @@ html.sap-desktop .sapMGT:focus:not([tabindex]) {
 	.sapMGTLineMode .sapMGTSubHdrTxt {
 		display: inline-block;
 		font-size: @sapMFontMediumSize;
-		max-width: 100%;
 		line-height: 1.375rem;
+		margin-top: 0;
+		max-width: 100%;
 	}
 
 	.sapMGTLineMode .sapMGTLineModeFailedIcon {

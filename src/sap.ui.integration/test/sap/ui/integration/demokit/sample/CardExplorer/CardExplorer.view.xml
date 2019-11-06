@@ -1,19 +1,20 @@
 <mvc:View
-		controllerName="sap.ui.integration.sample.CardExplorer.CardExplorer"
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:f="sap.f"
-		class="sapUiContentPadding"
-		xmlns:w="sap.ui.integration.widgets">
+	controllerName="sap.ui.integration.sample.CardExplorer.CardExplorer"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:w="sap.ui.integration.widgets"
+	class="sapUiContentPadding">
 	<VBox>
-		<Link text="Visit the Card Explorer"
-				href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
-				emphasized="true"
-				class="sapUiSmallMargin"
-				target="_blank"/>
-		<Image src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png"
-				alt="Card Explorer"
-				class="sapUiSmallMargin"
-				press="onImagePress"/>
+		<Link
+			text="Visit the Card Explorer"
+			href="test-resources/sap/ui/integration/demokit/cardExplorer/index.html"
+			emphasized="true"
+			class="sapUiSmallMargin"
+			target="_blank" />
+		<Image
+			src="./resources/sap/ui/documentation/sdk/images/tools/CardExplorer.png"
+			alt="Card Explorer"
+			class="sapUiSmallMargin"
+			press=".onImagePress" />
 	</VBox>
 </mvc:View>

@@ -3,47 +3,135 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/integration/designtime/baseEditor/util/findClosestEditor"
+	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
+	"sap/ui/integration/designtime/baseEditor/util/createPromise"
 ], function (
 	Control,
-	findClosestEditor
+	findClosestInstance,
+	createPromise
 ) {
 	"use strict";
 
+	var CREATED_BY_CONFIG = "config";
+	var CREATED_BY_TAGS = "tags";
+
 	/**
-	 * @constructor
+	 * @class
+	 * Renders a group of {@link sap.ui.integration.designtime.baseEditor.propertyEditor property editors} based on specified <code>tags</code> or custom <code>config</code>.
+	 *
+	 * @extends sap.ui.core.Control
+	 * @alias sap.ui.integration.designtime.baseEditor.PropertyEditors
+	 * @author SAP SE
+	 * @since 1.73.0
+	 * @version ${version}
 	 * @private
-	 * @experimental
+	 * @experimental since 1.73.0
+	 * @ui5-restricted
 	 */
 	var PropertyEditors = Control.extend("sap.ui.integration.designtime.baseEditor.PropertyEditors", {
 		metadata: {
 			properties: {
+				/**
+				 * List of tags to render, e.g. <code>"header,content"</code>. Only the properties that contain both tags will be rendered.
+				 */
 				tags: {
-					type: "string",
-					defaultValue: ""
+					type: "any"
+				},
+
+				/**
+				 * An array of custom configuration objects. If set, it has priority over <code>tags</code>.
+				 * Example:
+				 * <pre>
+				 * [
+				 *     {
+				 *         "label": "My property 1",
+				 *         "type": "string",
+				 *         "path": "path/to/my/property1"
+				 *     },
+				 *     {
+				 *         "label": "My property 2",
+				 *         "type": "string",
+				 *         "path": "path/to/my/property2"
+				 *     }
+				 * ]
+				 * </pre>
+				 * Where:
+				 * <ul>
+				 *     <li><b>label</b> = text string for the property editor label</li>
+				 *     <li><b>type</b> = one of the registered property editors types in {@link sap.ui.integration.designtime.baseEditor.BaseEditor BaseEditor configuration} (see <code>propertyEditors</code> section)</li>
+				 *     <li><b>path</b> = a binding path to get data from</li>
+				 * </ul>
+				 */
+				config: {
+					type: "array"
 				}
 			},
 			aggregations: {
 				propertyEditors: {
 					type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor",
-					multiple: true,
 					visibility: "hidden"
 				}
 			},
 			associations: {
-				"editor": {
+				editor: {
 					type: "sap.ui.integration.designtime.baseEditor.BaseEditor",
 					multiple: false
 				}
 			},
 			events: {
+				/**
+				 * Fires when the new editor changes.
+				 */
 				editorChange: {
 					parameters: {
-						editor: {
+						previousEditor: {
 							type: "sap.ui.integration.designtime.baseEditor.BaseEditor"
 						},
-						nextEditor: {
+						editor: {
 							type: "sap.ui.integration.designtime.baseEditor.BaseEditor"
+						}
+					}
+				},
+
+				/**
+				 * Fires when the internal <code>propertyEditors</code> aggregation changes, e.g. called after the initial initialization or
+				 * after changing <code>tag</code> or <code>config</code> properties.
+				 */
+				propertyEditorsChange: {
+					parameters: {
+						previousPropertyEditor: {
+							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
+						},
+						propertyEditor: {
+							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
+						}
+					}
+				},
+
+				/**
+				 * Fires when <code>config</code> changes.
+				 */
+				configChange: {
+					parameters: {
+						previousConfig: {
+							type: "array"
+						},
+						config: {
+							type: "array"
+						}
+					}
+				},
+
+				/**
+				 * Fires when <code>tags</code> changes.
+				 */
+				tagsChange: {
+					parameters: {
+						previousTags: {
+							type: "string"
+						},
+						tags: {
+							type: "string"
 						}
 					}
 				}
@@ -51,32 +139,56 @@ sap.ui.define([
 		},
 
 		_bEditorAutoDetect: false,
+		_sCreatedBy: null, // possible values: null | propertyName | config
 
 		constructor: function() {
 			Control.prototype.constructor.apply(this, arguments);
 
-			if (this.getEditor()) {
-				this._initPropertyEditor(this.getEditor());
-			} else {
+			if (!this.getEditor()) {
+				// FIXME: if set later manually => this detection should be disabled
 				// if editor is not set explicitly via constructor, we're going to try to find it
 				this._bEditorAutoDetect = true;
 			}
 
-			this.setTags = function () {
-				throw new Error("Property `tags` cannot be changed after initialisation");
-			};
-
 			this._propagationListener = this._propagationListener.bind(this);
-			this.attachEditorChange(this._onEditorChange, this);
+
+			this.attachEditorChange(function () {
+				if (this._sCreatedBy) {
+					this._removePropertyEditors();
+				}
+				this._initPropertyEditors();
+			});
+
+			this.attachConfigChange(function () {
+				if (this._sCreatedBy) {
+					this._removePropertyEditors();
+				}
+				this._initPropertyEditors();
+			});
+
+			this.attachTagsChange(function () {
+				if (this._sCreatedBy === CREATED_BY_TAGS) {
+					this._removePropertyEditors();
+				}
+				if (this._sCreatedBy !== CREATED_BY_CONFIG) {
+					this._initPropertyEditors();
+				}
+			});
+
+			// init
+			this._initPropertyEditors();
 		},
 
 		renderer: function (oRm, oControl) {
 			var aPropertyEditors = oControl.getAggregation("propertyEditors");
+			oRm.openStart("div", oControl);
+			oRm.openEnd();
 			if (Array.isArray(aPropertyEditors)) {
 				aPropertyEditors.forEach(function (oPropertyEditor) {
 					oRm.renderControl(oPropertyEditor);
 				});
 			}
+			oRm.close("div");
 		}
 	});
 
@@ -84,37 +196,142 @@ sap.ui.define([
 		return sap.ui.getCore().byId(this.getAssociation('editor'));
 	};
 
-	PropertyEditors.prototype.setEditor = function (vEditor) {
-		var oEditor = this.getEditor();
-		this.setAssociation('editor', vEditor);
-		var oNextEditor = this.getEditor();
-		this.fireEditorChange({
-			editor: oEditor,
-			nextEditor: oNextEditor
-		});
-	};
-
-	PropertyEditors.prototype._onEditorChange = function (oEvent) {
-		var oNextEditor = oEvent.getParameter('nextEditor');
-		if (oNextEditor) {
-			this._initPropertyEditors(oNextEditor);
+	PropertyEditors.prototype.setConfig = function (mConfig) {
+		var mPreviousConfig = this.getConfig();
+		if (
+			mPreviousConfig !== mConfig
+			&& (
+				!Array.isArray(mPreviousConfig)
+				|| !Array.isArray(mConfig)
+				|| JSON.stringify(mPreviousConfig) !== JSON.stringify(mConfig)
+			)
+		) {
+			this.setProperty("config", mConfig);
+			this.fireConfigChange({
+				previousConfig: mPreviousConfig,
+				config: mConfig
+			});
 		}
 	};
 
-	PropertyEditors.prototype._initPropertyEditors = function (oEditor) {
-		var aTags = this.getTags().split(",");
-		oEditor.getPropertyEditors(aTags).then(function (aPropertyEditors) {
-			if (this.getEditor() === oEditor) { // Just in case editor changes faster than promise is resolved
-				this.removeAllAggregation("propertyEditors");
+	PropertyEditors.prototype.setTags = function (vTags) {
+		var sPreviousTags = this.getTags();
+		var vResult = vTags;
+
+		if (typeof vTags === "string") {
+			vResult = vTags.split(",").sort().join(",");
+		}
+
+		if (sPreviousTags !== vResult) {
+			this.setProperty("tags", vResult);
+			this.fireTagsChange({
+				previousTags: sPreviousTags,
+				tags: vResult
+			});
+		}
+	};
+
+	PropertyEditors.prototype.setEditor = function (vEditor) {
+		var oPreviousEditor = this.getEditor();
+		var oEditor = typeof vEditor === "string" ? sap.ui.getCore().byId(vEditor) : vEditor;
+		if (oPreviousEditor !== oEditor) {
+			this.setAssociation("editor", vEditor);
+			var oEditor = this.getEditor();
+			this.fireEditorChange({
+				previousEditor: oPreviousEditor,
+				editor: oEditor
+			});
+		}
+	};
+
+	PropertyEditors.prototype.destroy = function () {
+		this._removePropertyEditors();
+		Control.prototype.destroy.apply(this, arguments);
+	};
+
+	PropertyEditors.prototype._removePropertyEditors = function () {
+		var aPropertyEditors = this.removeAllAggregation("propertyEditors");
+
+		if (aPropertyEditors.length) {
+			aPropertyEditors.forEach(function (oPropertyEditor) {
+				switch (this._sCreatedBy) {
+					case CREATED_BY_CONFIG:
+						oPropertyEditor.destroy();
+						break;
+					case CREATED_BY_TAGS:
+						// Need to manually as there is a bug in removeAllAggregation()
+						// when aggregation marked as "multiple: false"
+						oPropertyEditor.setParent(null);
+						break;
+				}
+			}, this);
+
+			this._sCreatedBy = null;
+			this.firePropertyEditorsChange({
+				propertyEditor: null
+			});
+		}
+	};
+
+	PropertyEditors.prototype._initPropertyEditors = function () {
+		if (
+			this.getEditor()
+			&& (
+				this.getConfig()
+				|| (
+					!this.getBindingInfo("config") // If there is a binding on config property the value might not arrived yet
+					&& this.getTags()
+				)
+			)
+		) {
+			var oEditor = this.getEditor();
+			// Cancel previous async process if any
+			if (this._fnCancelInit) {
+				this._fnCancelInit();
+				delete this._fnCancelInit;
+			}
+
+			var mPromise = createPromise(function (fnResolve, fnReject) {
+				var oPromise;
+				var sCreatedBy;
+
+				if (this.getConfig()) {
+					oPromise = Promise.all(
+						this.getConfig().map(function (mItemConfig) {
+							return oEditor.createPropertyEditor(mItemConfig);
+						})
+					);
+					sCreatedBy = CREATED_BY_CONFIG;
+				} else {
+					var aTags = this.getTags().split(",");
+					oPromise = oEditor.getPropertyEditors(aTags);
+					sCreatedBy = CREATED_BY_TAGS;
+				}
+
+				oPromise
+					.then(function (aPropertyEditors) {
+						this._sCreatedBy = sCreatedBy;
+						delete this._fnCancelInit;
+						fnResolve(aPropertyEditors);
+					}.bind(this))
+					.catch(fnReject);
+			}.bind(this));
+
+			this._fnCancelInit = mPromise.cancel;
+
+			mPromise.promise.then(function (aPropertyEditors) {
 				aPropertyEditors.forEach(function (oPropertyEditor) {
 					this.addAggregation("propertyEditors", oPropertyEditor);
 				}, this);
-			}
-		}.bind(this));
+				this.firePropertyEditorsChange({
+					propertyEditors: aPropertyEditors
+				});
+			}.bind(this));
+		}
 	};
 
 	PropertyEditors.prototype._propagationListener = function () {
-		var oEditor = findClosestEditor(this.getParent());
+		var oEditor = findClosestInstance(this.getParent(), "sap.ui.integration.designtime.baseEditor.BaseEditor");
 		if (oEditor) {
 			this.setEditor(oEditor);
 			this.removePropagationListener(this._propagationListener);
@@ -125,7 +342,7 @@ sap.ui.define([
 		Control.prototype.setParent.apply(this, arguments);
 
 		if (this._bEditorAutoDetect) {
-			var oEditor = findClosestEditor(oParent);
+			var oEditor = findClosestInstance(oParent, "sap.ui.integration.designtime.baseEditor.BaseEditor");
 
 			if (oEditor) {
 				this.setEditor(oEditor);

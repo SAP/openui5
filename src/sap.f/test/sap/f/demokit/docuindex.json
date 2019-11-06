@@ -124,7 +124,16 @@
 				"sap.f.sample.GridContainerDragAndDrop",
 				"sap.f.sample.GridContainerDragAndDropFromList"
 			]
-		}
+		},
+		{
+			"id": "sap.f.ProductSwitch",
+			"name": "Product Switch",
+			"category": "Display",
+			"since": "1.72",
+			  "samples": [
+				  "sap.f.sample.ShellBarProductSwitch"
+			  ]
+		  }
 	  ],
 	  "samples": [
 		{

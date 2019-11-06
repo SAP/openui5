@@ -721,7 +721,7 @@ sap.ui.define([
 	 * The value can either be a simple string which then will be assumed to be the type of the new aggregation or it can be
 	 * an object literal with the following properties
 	 * <ul>
-	 * <li><code>type: <i>string</i></code> type of the new aggregation. must be the full global name of a ManagedObject subclass (in dot notation, e.g. 'sap.m.Button')</li>
+	 * <li><code>type: <i>string</i></code> type of the new aggregation. must be the full global name of a ManagedObject subclass or UI5 interface (in dot notation, e.g. 'sap.m.Button')</li>
 	 * <li><code>[multiple]: <i>boolean</i></code> whether the aggregation is a 0..1 (false) or a 0..n aggregation (true), defaults to true </li>
 	 * <li><code>[singularName]: <i>string</i></code>. Singular name for 0..n aggregations. For 0..n aggregations the name by convention should be the plural name.
 	 *     Methods affecting multiple objects in an aggregation will use the plural name (e.g. getItems(), whereas methods that deal with a single object will use
@@ -4845,19 +4845,21 @@ sap.ui.define([
 	 * which means in case <code>cloneChildren</code> or <code>cloneBindings</code> is not specified, then this ia
 	 * assumed to be <code>false</code> and associations/aggregations or bindings are not cloned.
 	 *
-	 * For each cloned object the following settings are cloned based on the metadata of the object and the defined options:
+	 * For each cloned object, the following settings are cloned based on the metadata of the object and the defined options:
 	 * <ul>
-	 * <li>all properties that are not bound. If <code>cloneBinding</code> is <code>false</code>,
-	 *     even these properties will be cloned; the values are used by reference, they are not cloned</li>
-	 * <li>all aggregated objects that are not bound. If <code>cloneBinding</code> is <code>false</code>,
-	 *     even the ones that are bound will be cloned; they are all cloned recursively using the same
+	 * <li>All properties that are not bound. If <code>cloneBindings</code> is <code>false</code>,
+	 *     also the bound properties will be cloned; in general, values are referenced 1:1, not cloned.
+	 *     For some property types, however, the getters or setters might clone the value (e.g. array types
+	 *     and properties using metadata option <code>byValue</code>)</li>
+	 * <li>All aggregated objects that are not bound. If <code>cloneBindings</code> is <code>false</code>,
+	 *     also the ones that are bound will be cloned; they are all cloned recursively using the same
 	 *     <code>sIdSuffix</code></li>
-	 * <li>all associated controls; when an association points to an object inside the cloned object tree,
-	 *     then the cloned association will be modified to that it points to the clone of the target object.
+	 * <li>All associated controls; when an association points to an object inside the cloned object tree,
+	 *     then the cloned association will be modified so that it points to the clone of the target object.
 	 *     When the association points to a managed object outside of the cloned object tree, then its
 	 *     target won't be changed.</li>
-	 * <li>all models set via <code>setModel()</code>; used by reference </li>
-	 * <li>all property and aggregation bindings (if <code>cloneBindings</code> is <code>true</code>);
+	 * <li>All models set via <code>setModel()</code>; used by reference.</li>
+	 * <li>All property and aggregation bindings (if <code>cloneBindings</code> is <code>true</code>);
 	 *     the pure binding information (path, model name) is cloned, but all other information like
 	 *     template control or factory function, data type or formatter function are copied by reference.
 	 *     The bindings themselves are created anew as they are specific for the combination (object, property, model).
@@ -4886,7 +4888,7 @@ sap.ui.define([
 	 * @param {boolean} [oOptions.cloneChildren=false] Whether associations and aggregations will be cloned
 	 * @param {boolean} [oOptions.cloneBindings=false] Whether bindings will be cloned
 	 * @returns {sap.ui.base.ManagedObject} Reference to the newly created clone
-	 * @protected
+	 * @public
 	 */
 	ManagedObject.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {
 		var bCloneChildren = true,

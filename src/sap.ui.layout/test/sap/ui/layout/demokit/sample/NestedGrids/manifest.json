@@ -13,13 +13,15 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
 				"sap.m": {}
 			}
 		},
 		"resources": {
 			"css": [
 				{
-					"uri": "main.css"
+					"uri": "css/main.css"
 				}
 			]
 		},
@@ -28,7 +30,7 @@
 				"files": [
 					"NestedGrids.view.xml",
 					"NestedGrids.controller.js",
-					"main.css",
+					"css/main.css",
 					"manifest.json"
 				]
 			}

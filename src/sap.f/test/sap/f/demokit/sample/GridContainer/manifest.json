@@ -13,7 +13,9 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.f": {}
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"config": {
@@ -22,7 +24,9 @@
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"model/cities.json",
+					"model/products.json"
 				]
 			}
 		}

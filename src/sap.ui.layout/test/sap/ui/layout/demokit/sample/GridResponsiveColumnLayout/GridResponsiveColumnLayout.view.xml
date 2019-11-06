@@ -5,10 +5,6 @@
 		xmlns:f="sap.f"
 		xmlns:cards="sap.f.cards"
 		controllerName="sap.ui.layout.sample.GridResponsiveColumnLayout.GridResponsiveColumnLayout">
-	<MessageStrip
-			class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
-			type="Information"
-			text="Note: This layout is not supported by Microsoft Internet Explorer."/>
 	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
 	<Panel id="panelCSSGrid">
 		<headerToolbar>
@@ -39,11 +35,27 @@
 
 					<f:Card>
 						<f:layoutData>
-							<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
+							<grid:ResponsiveColumnItemLayoutData columns="3" rows="3" />
 						</f:layoutData>
 						<f:content>
 							<VBox class="sapUiSmallMargin">
-								<Title text="3 / 2" wrapping="true" />
+								<Title text="3 / 3" wrapping="true" />
+								<Label text="Subtitle Subtitle Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
@@ -53,11 +65,25 @@
 
 					<f:Card>
 						<f:layoutData>
-							<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
+							<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
 						</f:layoutData>
 						<f:content>
 							<VBox class="sapUiSmallMargin">
-								<Title text="3 / 2" wrapping="true" />
+								<Title text="1 / 1" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+							</VBox>
+						</f:content>
+					</f:Card>
+
+					<f:Card>
+						<f:layoutData>
+							<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
+						</f:layoutData>
+						<f:content>
+							<VBox class="sapUiSmallMargin">
+								<Title text="1 / 1" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
@@ -72,6 +98,21 @@
 						<f:content>
 							<VBox class="sapUiSmallMargin">
 								<Title text="1 / 1" wrapping="true" />
+								<Label text="Subtitle " wrapping="true" />
+								<Label text="Subtitle " wrapping="true" />
+							</VBox>
+						</f:content>
+					</f:Card>
+
+					<f:Card>
+						<f:layoutData>
+							<grid:ResponsiveColumnItemLayoutData columns="3" rows="2" />
+						</f:layoutData>
+						<f:content>
+							<VBox class="sapUiSmallMargin">
+								<Title text="3 / 2" wrapping="true" />
+								<Label text="Subtitle Subtitle Subtitle" wrapping="true" />
+								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
 							</VBox>
 						</f:content>
@@ -84,7 +125,19 @@
 						<f:content>
 							<VBox class="sapUiSmallMargin">
 								<Title text="1 / 1" wrapping="true" />
-								<Label text="Subtitle" wrapping="true" />
+								<Label text="Subtitle Subtitle Subtitle" wrapping="true" />
+							</VBox>
+						</f:content>
+					</f:Card>
+
+					<f:Card>
+						<f:layoutData>
+							<grid:ResponsiveColumnItemLayoutData columns="1" rows="1" />
+						</f:layoutData>
+						<f:content>
+							<VBox class="sapUiSmallMargin">
+								<Title text="1 / 1" wrapping="true" />
+								<Label text="Subtitle Subtitle Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />
 								<Label text="Subtitle" wrapping="true" />

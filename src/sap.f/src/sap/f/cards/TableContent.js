@@ -136,13 +136,20 @@ sap.ui.define([
 			return this;
 		};
 
+		/**
+		 * Binds/Sets properties to the inner item template based on the configuration object row template which is already parsed.
+		 * Attaches all required actions.
+		 *
+		 * @private
+		 * @param {Object} oRow The item template of the configuration object.
+		 */
 		TableContent.prototype._setColumns = function (oRow) {
 			var aCells = [],
 				oTable = this._getTable(),
 				aColumns = oRow.columns;
 
 			aColumns.forEach(function (oColumn) {
-				this._getTable().addColumn(new Column({
+				oTable.addColumn(new Column({
 					header: new Text({ text: oColumn.title }),
 					width: oColumn.width
 				}));
@@ -225,26 +232,24 @@ sap.ui.define([
 			}
 
 			if (oColumn.identifier) {
+
+				var vTitleActive;
+
+				if (oColumn.identifier.url) {
+					vTitleActive = BindingHelper.formattedProperty(oColumn.identifier.url, function (sValue) {
+						if (typeof sValue === "string") {
+							return true;
+						}
+						return false;
+					});
+				}
+
 				var oIdentifier = new ObjectIdentifier({
-					title: oColumn.value
+					title: oColumn.value,
+					titleActive: vTitleActive
 				});
 
 				if (oColumn.identifier.url) {
-					var oBindingInfo = ManagedObject.bindingParser(oColumn.identifier.url);
-
-					if (oBindingInfo) {
-						oBindingInfo.formatter = function (vValue) {
-							if (typeof vValue === "string") {
-								return true;
-							}
-
-							return false;
-						};
-						oIdentifier.bindProperty("titleActive", oBindingInfo);
-					} else {
-						oIdentifier.setTitleActive(!!oColumn.identifier.url);
-					}
-
 					// TO DO: move this part to CardActions
 					oIdentifier.attachTitlePress(function (oEvent) {
 
@@ -285,14 +290,14 @@ sap.ui.define([
 			}
 
 			if (oColumn.icon) {
-				var oAvatar = new Avatar({
+				var vSrc = BindingHelper.formattedProperty(oColumn.icon.src, function (sValue) {
+					return IconFormatter.formatSrc(sValue, this._sAppId);
+				}.bind(this));
+				return new Avatar({
+					src: vSrc,
 					displayShape: oColumn.icon.shape,
 					displaySize: AvatarSize.XS
 				});
-				BindingHelper.bindProperty(oAvatar, "src", oColumn.icon.src, function (sValue) {
-					return IconFormatter.formatSrc(sValue, this._sAppId);
-				}.bind(this));
-				return oAvatar;
 			}
 
 			if (oColumn.progressIndicator) {

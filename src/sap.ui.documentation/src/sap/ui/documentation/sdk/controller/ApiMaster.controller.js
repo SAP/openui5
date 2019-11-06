@@ -39,7 +39,7 @@ sap.ui.define([
 				// Routing
 				this._oRouter = this.getRouter();
 				this._oRouter.getRoute("api").attachPatternMatched(this._onMatched, this);
-				this._oRouter.getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
+				this._oRouter.getRoute("apiSpecialRoute").attachPatternMatched(this._onTopicMatched, this);
 				this._oRouter.getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
 				this._oRouter.getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
 				this._oRouter.getRoute("since").attachPatternMatched(this._onTopicMatched, this);
@@ -121,7 +121,14 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (event) {
-				var sTopicId = decodeURIComponent(event.getParameter("arguments").id) || event.getParameter("name");
+				var sTopicId = decodeURIComponent(event.getParameter("arguments").id) || event.getParameter("name"),
+					oSpecialRouteInfo;
+
+				// Handling for special route
+				if (event.getParameter("name") === "apiSpecialRoute") {
+					oSpecialRouteInfo = this._oRouter._decodeSpecialRouteArguments(event);
+					sTopicId = oSpecialRouteInfo.id;
+				}
 
 				try {
 					this.showMasterSide();
@@ -158,8 +165,9 @@ sap.ui.define([
 			},
 
 			onNodeSelect : function (oEvent) {
-				var sTarget = oEvent.getParameter("listItem").getTarget();
-				this._oRouter.navTo("apiId", {id : encodeURIComponent(sTarget)}, false);
+				this._oRouter.navTo("apiId", {
+					id : oEvent.getParameter("listItem").getTarget()
+				}, false);
 			},
 
 			/**

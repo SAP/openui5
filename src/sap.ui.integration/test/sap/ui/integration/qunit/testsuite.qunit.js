@@ -11,14 +11,17 @@ sap.ui.define(function () {
 				version: "edge"
 			},
 			ui5: {
-				libs: ["sap.f", "sap.m"], // Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
+				language: "en",
+				libs: ["sap.f", "sap.m", "sap.ui.integration"], // Libraries to load upfront in addition to the library which is tested, if null no libs are loaded
 				noConflict: true,
-				preload: "auto"
+				// preload: "auto",
+				"xx-waitForTheme": "init"
 			},
 			coverage: {
 				only: ["sap/ui/integration"]
 			},
-			autostart: true
+			autostart: true,
+			page: "test-resources/sap/ui/integration/qunit/testsandbox.qunit.html?test={name}"
 		},
 		tests: {
 			"Card": {
@@ -30,7 +33,8 @@ sap.ui.define(function () {
 				module: [
 					'./Card.qunit',
 					'./CardDataHandling.qunit',
-					'./CardDesigntime.qunit'
+					'./CardDesigntime.qunit',
+					'./CardFormatters.qunit'
 				]
 			},
 			"cardbundle/CardStaticResources": {},
@@ -58,46 +62,6 @@ sap.ui.define(function () {
 					]
 				}
 			},
-			"designtime/baseEditor/BaseEditor": {
-				coverage: {
-					only: [
-						"sap/ui/integration/designtime/baseEditor/BaseEditor"
-					]
-				},
-				sinon: false
-            },
-            "designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
-				coverage: {
-					only: [
-						"sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor"
-					]
-				},
-				sinon: false
-			},
-			"designtime/baseEditor/propertyEditor/numberEditor/NumberEditor": {
-				coverage: {
-					only: [
-						"sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
-					]
-				},
-				sinon: false
-			},
-			"designtime/baseEditor/util/ObjectBinding": {
-				coverage: {
-					only: [
-						"sap/ui/integration/designtime/baseEditor/util/ObjectBinding"
-					]
-				},
-				sinon: false
-			},
-			"designtime/baseEditor/util/createPromise": {
-				coverage: {
-					only: [
-						"sap/ui/integration/designtime/baseEditor/util/createPromise"
-					]
-				},
-				sinon: false
-			},
 			"AllCards": {
 				ui5: {
 					libs: ["sap.ui.integration"]
@@ -110,6 +74,7 @@ sap.ui.define(function () {
 						"sap/ui/integration/customElements/",
 						"sap/f/cards/CardActions",
 						"sap/f/cards/AnalyticalContent",
+						"sap/f/cards/BindingHelper",
 						"sap/f/cards/BindingResolver",
 						"sap/f/cards/ComponentContent",
 						"sap/f/cards/DataProvider",
@@ -134,11 +99,112 @@ sap.ui.define(function () {
 					'./util/CardManifest.qunit',
 					'./util/ServiceManager.qunit',
 					'./customElements/CustomElements.qunit',
+					'test-resources/sap/f/qunit/BindingHelper.qunit',
 					'test-resources/sap/f/qunit/BindingResolver.qunit',
 					'test-resources/sap/f/qunit/DataProvider.qunit',
 					'./CardActions.qunit',
-					'./cardbundle/CardStaticResources.qunit'
+					'./cardbundle/CardStaticResources.qunit',
+					'./CardFormatters.qunit'
 				]
+			},
+			"designtime/baseEditor/BaseEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/BaseEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/PropertyEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/PropertyEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/PropertyEditors": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/PropertyEditors"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/numberEditor/NumberEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/jsonEditor/JsonEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/ObjectBinding": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/ObjectBinding"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/createPromise": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/createPromise"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/escapeParameter": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/escapeParameter"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/util/findClosestInstance": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/util/findClosestInstance"
+					]
+				},
+				sinon: false
 			}
 		}
 	};

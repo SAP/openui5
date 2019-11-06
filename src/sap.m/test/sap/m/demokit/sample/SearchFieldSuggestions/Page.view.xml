@@ -1,28 +1,21 @@
 <mvc:View
 	controllerName="sap.m.sample.SearchFieldSuggestions.Page"
-	height="100%"
-	xmlns:l="sap.ui.layout"
+	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<Page
-		showHeader="false" >
-		<content>
-			<SearchField
-				id="searchField"
-				width="50%"
-				placeholder="search for..."
-				enableSuggestions="true"
-				search="onSearch"
-				suggest="onSuggest"
-				suggestionItems="{
-					path: '/ProductCollection',
-					sorter: { path: 'Name' }
-				}"
-				>
-				<suggestionItems>
-					<SuggestionItem text="{Name}" description="{path:'Price'} {path:'CurrencyCode'}" key="{ProductId}"/>
-				</suggestionItems>
-			</SearchField>
-		</content>
+	height="100%">
+	<Page showHeader="false" >
+		<SearchField
+			id="searchField"
+			width="50%"
+			placeholder="Search for..."
+			enableSuggestions="true"
+			search=".onSearch"
+			suggest=".onSuggest"
+			suggestionItems="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+			<SuggestionItem text="{Name}" description="{path:'Price'} {path:'CurrencyCode'}" key="{ProductId}" />
+		</SearchField>
 	</Page>
 </mvc:View>

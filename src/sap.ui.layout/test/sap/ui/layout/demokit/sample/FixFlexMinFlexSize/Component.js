@@ -2,14 +2,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.layout.sample.FixFlexMinFlexSize.Component", {
+	return UIComponent.extend("sap.ui.layout.sample.FixFlexMinFlexSize.Component", {
 
 		metadata: {
 			manifest: "json"
 		}
+
 	});
-
-
-	return Component;
-
 });

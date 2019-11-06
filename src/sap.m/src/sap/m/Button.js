@@ -196,6 +196,23 @@ sap.ui.define([
 		this.$().off("mouseenter", this._onmouseenter);
 	};
 
+	Button.prototype.setType = function(sButtonType) {
+		this.setProperty("type", sButtonType, false);
+
+
+		if (sButtonType === ButtonType.Critical && !this.getIcon()) {
+			this.setIcon("sap-icon://message-error");
+		} else if (sButtonType === ButtonType.Negative && !this.getIcon()) {
+			this.setIcon("sap-icon://message-warning");
+		} else if (sButtonType === ButtonType.Success && !this.getIcon()) {
+			this.setIcon("sap-icon://message-success");
+		} else if (sButtonType === ButtonType.Neutral && !this.getIcon()) {
+			this.setIcon("sap-icon://message-information");
+		}
+
+		return this;
+	};
+
 	/*
 	 * Remember active state if the button was depressed before re-rendering.
 	 */

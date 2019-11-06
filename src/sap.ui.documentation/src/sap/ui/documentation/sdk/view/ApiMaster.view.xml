@@ -38,7 +38,6 @@
 						title="{treeData>displayName}"
 						target="{treeData>name}"
                         entityType="{treeData>kind}"
-						encodeTarget="true"
 						section="api"
 						class="sapDemokitTreeItem"
 						deprecated="{treeData>bIsDeprecated}"/>

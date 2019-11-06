@@ -2,7 +2,15 @@
 	"_version": "1.15.0",
 	"sap.app": {
 		"id": "card.explorer.parameters.list.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a Card with Parameters",
+		"subTitle": "Sample of an Card with Parameters"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
 	},
 	"sap.card": {
 		"configuration": {

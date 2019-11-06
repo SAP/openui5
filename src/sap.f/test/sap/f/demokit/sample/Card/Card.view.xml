@@ -2,7 +2,6 @@
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:f="sap.f"
-		xmlns:m="sap.m"
 		xmlns:card="sap.f.cards"
 		xmlns:core="sap.ui.core"
 		displayBlock="true"
@@ -28,19 +27,19 @@
 							width="120px"
 							placeholder="From City"
 							items="{
-								path: '/cities',
+								path: 'cities>/cities',
 								sorter: { path: 'text' }
 							}">
-							<core:Item key="{key}" text="{text}" />
+							<core:Item key="{cities>key}" text="{cities>text}" />
 						</ComboBox>
 						<ComboBox
 							width="120px"
 							placeholder="To City"
 							items="{
-								path: '/cities',
+								path: 'cities>/cities',
 								sorter: { path: 'text' }
 							}">
-							<core:Item key="{key}" text="{text}" />
+							<core:Item key="{cities>key}" text="{cities>text}" />
 						</ComboBox>
 					</HBox>
 					<HBox justifyContent="SpaceBetween">
@@ -62,19 +61,19 @@
 			<f:content>
 				<List
 					showSeparators="None"
-					items="{path: '/productItems'}" >
+					items="{path: 'products>/productItems'}" >
 					<CustomListItem>
 						<HBox
 							 alignItems="Center"
 							justifyContent="SpaceBetween">
 							<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
-								<Title level="H3" text="{title}" />
-								<Text text="{subtitle}"/>
+								<Title level="H3" text="{products>title}" />
+								<Text text="{products>subtitle}"/>
 							</VBox>
 							<ObjectStatus
 								class="sapUiTinyMargin"
-								text="{revenue}"
-								state= "{statusSchema}"/>
+								text="{products>revenue}"
+								state= "{products>statusSchema}"/>
 						</HBox>
 					</CustomListItem>
 				</List>

@@ -79,7 +79,7 @@
 						<custom:TitleLink
 								width="100%"
 								text="What's New?"
-								href="#/topic/99ac68a5b1c3416ab5c84c99fefa250d"
+								href="topic/99ac68a5b1c3416ab5c84c99fefa250d"
 								titleStyle="H1"/>
 							<Text
 									text="Find out about the new features in the latest UI5 versions"/>
@@ -94,7 +94,7 @@
 						<custom:TitleLink
 								width="100%"
 								text="Read Me First"
-								href="#/topic/167193ced54c41c3961d7df3479d7bbe"
+								href="topic/167193ced54c41c3961d7df3479d7bbe"
 								titleStyle="H1"/>
 							<Text
 									text="Important information before you start using UI5 productively"/>
@@ -110,7 +110,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="Get Started"
-									href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
+									href="topic/8b49fc198bf04b2d9800fc37fecbb218"
 									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
 							<Text
@@ -130,7 +130,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="Developing Apps"
-									href="#/topic/23cfd955f58142389fa7c9097e11559c"
+									href="topic/23cfd955f58142389fa7c9097e11559c"
 									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
 							<Text
@@ -146,7 +146,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="Extending Apps"
-									href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
+									href="topic/a264a9abf98d4caabbf9b027bc1005d8"
 									titleStyle="H1"/>
 							<Text
 									text="Adapt apps to your specific requirements"/>
@@ -161,7 +161,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="Developing Controls"
-									href="#/topic/8dcab0011d274051808f959800cabf9f"
+									href="topic/8dcab0011d274051808f959800cabf9f"
 									titleStyle="H1"/>
 							<Text
 									text="Create custom controls or contribute to UI5"/>
@@ -180,7 +180,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="SAP Fiori Elements"
-									href="#/topic/03265b0408e2432c9571d6b3feb6b1fd"
+									href="topic/03265b0408e2432c9571d6b3feb6b1fd"
 									titleStyle="H1"/>
 							<Text
 									text="UI patterns and templates for commonly used application patterns"/>
@@ -196,7 +196,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="Analysis Path Framework"
-									href="#/topic/1c457c53595a6655e10000000a423f68"
+									href="topic/1c457c53595a6655e10000000a423f68"
 									titleStyle="H1"/>
 							<Text
 									text="Build and enhance interactive analytical web applications"/>
@@ -210,7 +210,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="Essentials"
-									href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
+									href="topic/ec699e0817fb46a0817b0fa276a249f8"
 									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
 							<Text
@@ -227,7 +227,7 @@
 							<custom:TitleLink
 									width="100%"
 									text="More About Controls"
-									href="#/topic/3ec6808ff0f34a75a9f40748cf9989b9"
+									href="topic/3ec6808ff0f34a75a9f40748cf9989b9"
 									titleStyle="H1"/>
 							<Text
 									text="Addition to the API reference"/>

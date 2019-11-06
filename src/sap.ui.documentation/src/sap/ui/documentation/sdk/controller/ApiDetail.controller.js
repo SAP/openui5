@@ -6,25 +6,27 @@
 sap.ui.define([
     "sap/ui/documentation/sdk/controller/BaseController",
     "sap/ui/model/json/JSONModel",
+    "sap/ui/core/CustomData",
     "sap/ui/documentation/sdk/controller/util/ControlsInfo",
     "sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
     "sap/ui/documentation/sdk/controller/util/APIInfo",
     "sap/ui/documentation/sdk/model/formatter",
+    "sap/ui/core/mvc/XMLView",
     "sap/ui/core/library",
     "sap/base/Log"
 ], function(
     BaseController,
 	JSONModel,
+	CustomData,
 	ControlsInfo,
 	ToggleFullScreenHandler,
 	APIInfo,
 	formatter,
+	XMLView,
 	CoreLibrary,
 	Log
 ) {
 		"use strict";
-
-		var ViewType = CoreLibrary.mvc.ViewType;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
 
@@ -36,7 +38,7 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
+				this.getRouter().getRoute("apiSpecialRoute").attachPatternMatched(this._onTopicMatched, this);
 
 				// BPC: 1780339157 - There are cases where we have more than 100 method entries so we need to increase
 				// the default model size limit.
@@ -53,17 +55,30 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
-				if (this._oView) {
+				var oArguments,
+					oComponent;
+
+				oArguments = this.getRouter()._decodeSpecialRouteArguments(oEvent);
+				oComponent = this.getOwnerComponent();
+
+				if (this._sTopicid === oArguments.id
+					&& this._sEntityType === oArguments.entityType
+					&& this._sEntityId === oArguments.entityId) {
+					// since we trigger <code>router.parse(new_path)</code> without checking the current path,
+					// it is possible to trigger navigation to the same path more than once
+					// => check if entity already displayed on controller level for now
+					return;
+				}
+
+				this._sTopicid = oArguments.id;
+				this._sEntityType = oArguments.entityType;
+				this._sEntityId = oArguments.entityId;
+
+				if (this._oView && !this._oView.bIsDestroyed) {
 					this._oView.destroy();
 					// If we had a view that means this is a navigation so we need to init the busy state
 					this._oContainerPage.setBusy(true);
 				}
-
-				var oComponent = this.getOwnerComponent();
-
-				this._sTopicid = decodeURIComponent(oEvent.getParameter("arguments").id);
-				this._sEntityType = oEvent.getParameter("arguments").entityType;
-				this._sEntityId = decodeURIComponent(oEvent.getParameter("arguments").entityId);
 
 				// API Reference lifecycle
 				oComponent.loadVersionInfo()
@@ -100,6 +115,15 @@ sap.ui.define([
 			_initSubView: function (oView) {
 				var oController = oView.getController();
 
+				// check if the view become outdated
+				// (as the view is created asynchronously, another topic may have been chosen meanwhile)
+				if (oView.data("topicid") !== this._sTopicid) {
+					oView.destroy();
+					return;
+				}
+
+				this._oView = oView;
+
 				// Add the sub view to the current one
 				this._oContainerPage.addContent(oView);
 				this._oContainerPage.setBusy(false);
@@ -135,10 +159,13 @@ sap.ui.define([
 				this._bindData(this._sTopicid);
 
 				// Create the sub-view and controller
-				this._oView = sap.ui.view({
+				return XMLView.create({
 					height: "100%",
+					customData: new CustomData({
+						key: "topicid",
+						value: this._sTopicid
+					}),
 					viewName: "sap.ui.documentation.sdk.view.SubApiDetail",
-					type: ViewType.XML,
 					async: true,
 					preprocessors: {
 						xml: {
@@ -148,9 +175,6 @@ sap.ui.define([
 						}
 					}
 				});
-
-				// Return view loaded promise
-				return this._oView.loaded();
 			},
 
 			/**
@@ -556,14 +580,14 @@ sap.ui.define([
 						var fnMethodsMapper = function (item) {
 							return {
 								name: item.name,
-								link: "#/api/" + sBaseClass + "/methods/" + item.name
+								link: "api/" + sBaseClass + "#methods/" + item.name
 							};
 						};
 
 						var fnEventsMapper = function (item) {
 							return {
 								name: item.name,
-								link: "#/api/" + sBaseClass + "/events/" + item.name
+								link: "api/" + sBaseClass + "#events/" + item.name
 							};
 						};
 

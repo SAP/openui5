@@ -33,7 +33,7 @@ sap.ui.define([
 			});
 			this._oCombo.attachChange(function() {
 				if (this._validate()) {
-					this.firePropertyChanged(this._oCombo.getSelectedKey() || this._oCombo.getValue());
+					this.firePropertyChange(this._oCombo.getSelectedKey() || this._oCombo.getValue());
 				}
 			}.bind(this));
 			this.addContent(this._oCombo);

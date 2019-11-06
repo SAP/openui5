@@ -1,14 +1,12 @@
 sap.ui.define(['sap/ui/core/UIComponent'],
 	function (UIComponent) {
-		"use strict";
+	"use strict";
 
-		var Component = UIComponent.extend("sap.ui.layout.sample.ResponsiveSplitter.Component", {
+	return UIComponent.extend("sap.ui.layout.sample.ResponsiveSplitter.Component", {
 
-			metadata: {
-				manifest: "json"
-			}
-		});
-
-		return Component;
+		metadata: {
+			manifest: "json"
+		}
 
 	});
+});

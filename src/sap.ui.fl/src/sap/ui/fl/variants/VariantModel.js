@@ -614,6 +614,10 @@ sap.ui.define([
 						});
 					}
 				}
+
+				if (!bAddChange && oData[sVariantManagementReference].currentVariant !== mPropertyBag.defaultVariant) {
+					this.updateCurrentVariant(sVariantManagementReference, mPropertyBag.defaultVariant, mPropertyBag.appComponent);
+				}
 				break;
 			default:
 				break;

@@ -245,6 +245,18 @@ sap.ui.define([
 
 				if (oTargetsConfig) {
 					this._oTargets = this._createTargets(this._oConfig, oTargetsConfig);
+					this._oTargets.attachDisplay(function(oEvent) {
+						if (this.isInitialized() && !this._bMatchingProcessStarted) {
+							var oHashChanger = this.getHashChanger();
+							// check the type of oHashChanger before calling the function "resetHash"
+							// which only exists on RouterHashChanger
+							if (oHashChanger instanceof RouterHashChanger) {
+								// reset the hash to allow the match with the previous route after
+								// displaying a target without involving the router
+								oHashChanger.resetHash();
+							}
+						}
+					}, this);
 				}
 
 				var that = this,
@@ -1272,11 +1284,12 @@ sap.ui.define([
 			},
 
 			/**
-			 * Registers the router to access it from another context.
+			 * Centrally register this router instance under a given name to be able to access it from another context,
+			 * just by knowing the name.
 			 *
-			 * Use <code>sap.ui.routing.Router.getRouter()</code> to receive the instance.
+			 * Use {@link sap.ui.core.routing.Router.getRouter Router.getRouter()} to retrieve the instance.
 			 *
-			 * @param {string} sName Name of the router
+			 * @param {string} sName Name of the router instance
 			 * @public
 			 */
 			register : function (sName) {

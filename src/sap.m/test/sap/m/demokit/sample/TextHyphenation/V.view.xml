@@ -1,51 +1,64 @@
-<mvc:View xmlns:core="sap.ui.core"
-		  xmlns:mvc="sap.ui.core.mvc"
-		  xmlns="sap.m"
-		  xmlns:f="sap.ui.layout.form"
-		  xmlns:l="sap.ui.layout"
-		  controllerName="sap.m.sample.TextHyphenation.C"
-		  displayBlock="true">
+<mvc:View
+	controllerName="sap.m.sample.TextHyphenation.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout"
+	displayBlock="true">
 	<f:SimpleForm
-			layout="ResponsiveGridLayout"
-			editable="true"
-			adjustLabelSpan="false"
-			labelSpanXL="2"
-			labelSpanL="2"
-			labelSpanM="3"
-			labelSpanS="5">
+		layout="ResponsiveGridLayout"
+		editable="true"
+		adjustLabelSpan="false"
+		labelSpanXL="2"
+		labelSpanL="2"
+		labelSpanM="3"
+		labelSpanS="5">
 		<Label text="Wrapping" />
 		<Switch state="true" enabled="false" />
 		<Label text="Enable Hyphenation" />
-		<Switch state="true" change="onHyphenationChange" />
+		<Switch state="true" change=".onHyphenationChange" />
 		<Label text="Container Width" />
-		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+		<Slider id="widthSlider" value="100" liveChange=".onSliderMoved" />
 	</f:SimpleForm>
-	<Panel id="containerLayout"
-		   headerText="sap.m.Text in container"
-		   width="100%">
-		<Text id="text0"
-			   wrappingType="Hyphenated"
-			   text="An aggregation is a special relation between two UI element types. It is used to define the parent-child relationship within the tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are table rows and cells, or the content of a table cell."/>
+	<Panel
+		id="containerLayout"
+		headerText="sap.m.Text in container"
+		width="100%">
+		<Text
+			id="text0"
+			wrappingType="Hyphenated"
+			text="An aggregation is a special relation between two UI element types. It is used to define the parent-child relationship within the tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are table rows and cells, or the content of a table cell." />
 	</Panel>
-	<Title titleStyle="H4" text="sap.m.Text in sap.ui.layout.BlockLayout" class="sapUiSmallMargin"/>
+	<Title
+		titleStyle="H4"
+		text="sap.m.Text in sap.ui.layout.BlockLayout"
+		class="sapUiSmallMargin" />
 	<l:BlockLayout id="BlockLayout" background="Light">
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell
-						title="Aggregation">
-					<Text id = "text1" wrappingType="Hyphenated" text="An aggregation is a special relation between two UI element types. It is used to define the parent-child relationship within the tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are table rows and cells, or the content of a table cell."/>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-						title="Association">
-					<Text id = "text2" wrappingType="Hyphenated" text="An association is a type of relation between two UI element types which is independent of the parent-child relationship within the tree structure. Directed outgoing associations to a target of cardinality 0..1 are supported. They represent a loose coupling only and are thus implemented by storing the target element instance's ID. The most prominent example is the association between a label and its field."/>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-						title="Asynchronous (async) processing">
-					<Text id = "text3" wrappingType="Hyphenated" text="In contrast to synchronous processing this processing mode does not keep the browser thread busy but does the processing in the background and continues with the next task. Code can be executed asynchronously and a callback function is triggered when a certain condition is met. Similarly, a file can be loaded asynchronously. Asynchronous processing is highly recommended for performance reasons and to not freeze the UI."/>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-						title="Bootstrap">
-					<Text id = "text4" wrappingType="Hyphenated" text="To use the SAPUI5 features in your web page, you have to load and initialize – or bootstrap – the SAPUI5 runtime in your HTML page."/>
-				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
-		</l:BlockLayout>
+		<l:BlockLayoutRow>
+			<l:BlockLayoutCell title="Aggregation">
+				<Text
+					id="text1"
+					wrappingType="Hyphenated"
+					text="An aggregation is a special relation between two UI element types. It is used to define the parent-child relationship within the tree structure. The parent end of the aggregation has cardinality 0..1, while the child end may have 0..1 or 0..*. The element's API offers convenient and consistent methods to deal with aggregations (e.g. to get, set, or remove target elements). Examples are table rows and cells, or the content of a table cell." />
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell title="Association">
+				<Text
+					id="text2"
+					wrappingType="Hyphenated"
+					text="An association is a type of relation between two UI element types which is independent of the parent-child relationship within the tree structure. Directed outgoing associations to a target of cardinality 0..1 are supported. They represent a loose coupling only and are thus implemented by storing the target element instance's ID. The most prominent example is the association between a label and its field." />
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell title="Asynchronous (async) processing">
+				<Text
+					id="text3"
+					wrappingType="Hyphenated"
+					text="In contrast to synchronous processing this processing mode does not keep the browser thread busy but does the processing in the background and continues with the next task. Code can be executed asynchronously and a callback function is triggered when a certain condition is met. Similarly, a file can be loaded asynchronously. Asynchronous processing is highly recommended for performance reasons and to not freeze the UI." />
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell title="Bootstrap">
+				<Text
+					id="text4"
+					wrappingType="Hyphenated"
+					text="To use the UI5 features in your web page, you have to load and initialize – or bootstrap – the UI5 runtime in your HTML page." />
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
 </mvc:View>

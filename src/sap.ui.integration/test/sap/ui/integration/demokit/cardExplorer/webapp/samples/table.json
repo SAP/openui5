@@ -2,7 +2,15 @@
 	"_version": "1.15.0",
 	"sap.app": {
 		"id": "card.explorer.table.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a Table Card",
+		"subTitle": "Sample of a Table Card"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://table-view"
+		}
 	},
 	"sap.card": {
 		"type": "Table",

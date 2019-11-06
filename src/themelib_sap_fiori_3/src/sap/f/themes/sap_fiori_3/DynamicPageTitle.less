@@ -45,10 +45,12 @@
 	box-shadow: @sapUiShadowHeader;
 }
 
-.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped,
-.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly {
-	& > .sapFDynamicPageTitle {
-		box-shadow: none;
+.sapFDynamicPageNavigation .sapFDynamicPageTitleWrapper {
+	&.sapFDynamicPageTitleSnapped,
+	&.sapFDynamicPageTitleOnly {
+		& > .sapFDynamicPageTitle {
+			box-shadow: none;
+		}
 	}
 }
 

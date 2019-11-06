@@ -1160,7 +1160,7 @@ sap.ui.define([
 			// if there is a selected item, scroll and show the list
 			fnSelectedItemOnViewPort.call(this, true);
 
-			if (oItem && oSelectionRange.start === oSelectionRange.end) {
+			if (oItem && oSelectionRange.start === oSelectionRange.end && oSelectionRange.start > 1) {
 				setTimeout(function() {
 					this.selectText(0, oSelectionRange.end);
 				}.bind(this), 0);
@@ -1501,7 +1501,8 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onsapshow = function(oEvent) {
 			var aSelectableItems, oItem,
-				bEditable = this.getEditable();
+				bEditable = this.getEditable(),
+				oListItem;
 			ComboBoxBase.prototype.onsapshow.apply(this, arguments);
 
 			this.syncPickerContent();
@@ -1511,6 +1512,7 @@ sap.ui.define([
 				oItem = this.getNonSeparatorSelectableItems(aSelectableItems)[0];
 
 				if (oItem) {
+					oListItem = this.getListItem(oItem);
 					this.setSelection(oItem);
 					this.updateDomValue(oItem.getText());
 
@@ -1521,6 +1523,14 @@ sap.ui.define([
 					setTimeout(function() {
 						this.selectText(0, oItem.getText().length);
 					}.bind(this), 0);
+
+					if (this.isOpen()) {
+						this.removeStyleClass("sapMFocus");
+						this._getList().addStyleClass("sapMListFocus");
+						this.handleListItemsVisualFocus(oListItem);
+					} else {
+						this.addStyleClass("sapMFocus");
+					}
 				}
 			}
 		};
@@ -2001,7 +2011,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sIdSuffix Suffix to be added to the ids of the new control and its internal objects.
 		 * @returns {sap.m.ComboBox} The cloned <code>sap.m.ComboBox</code> control.
-		 * @private
+		 * @public
 		 * @since 1.22.1
 		 */
 		ComboBox.prototype.clone = function(sIdSuffix) {

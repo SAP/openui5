@@ -2442,4 +2442,70 @@ sap.ui.define([
 		// Cleanup
 		oDP.destroy();
 	});
+
+	QUnit.module("Month Button Appearance", {
+		beforeEach: function () {
+			this.oDP = new DatePicker("SDP", {
+				dateValue: new Date(2016, 0, 1)
+			}).placeAt("uiArea6");
+			sap.ui.getCore().applyChanges();
+
+			// Open date picker
+			qutils.triggerEvent("click", "SDP-icon");
+		},
+		afterEach: function () {
+			this.oDP.destroy();
+			this.oDP = null;
+
+			this.oStartDate = null;
+			this.oEndDate = null;
+		},
+		/**
+		 * Click on a calendar month from the monthPicker
+		 * @param {int} iIndex 0..11 zero based index of the month
+		 */
+		clickOnMonth: function (iIndex) {
+			var $Items = jQuery("#SDP-cal--MP").find(".sapUiCalItem"),
+				$Target = $Items[iIndex];
+
+			qutils.triggerEvent("mousedown", $Target);
+			qutils.triggerEvent("mouseup", $Target);
+		},
+		assertButtonAppearance: function (fnDone) {
+			var oHeader = this.oDP._oCalendar.getAggregation("header");
+			// We use 200 ms timeout here to place the test on a safe place on the event loop queue
+			// to catch all the ui updates happening with multiple delayed calls.
+			setTimeout(function () {
+				assert.strictEqual(oHeader.getVisibleButton1(), true, "Month button is visible again after the Month Picker closing");
+				fnDone();
+			}, 200);
+		}
+	});
+
+	QUnit.test("Changing month using the month picker", function (assert) {
+		var fnDone = assert.async();
+
+		// Act
+		var that = this;
+		setTimeout(function () {
+			var oHeader = that.oDP._oCalendar.getAggregation("header");
+
+			assert.equal(oHeader.getVisibleButton1(), true, "Month button is visible before the Month Picker opening");
+
+			// Open month picker
+			qutils.triggerEvent("click", "SDP-cal--Head-B1");
+
+			assert.equal(oHeader.getVisibleButton1(), false, "Month button is hidden after the Month Picker opening");
+
+			// Click on March
+			that.clickOnMonth(2);
+
+			// Assert
+			that.assertButtonAppearance(fnDone);
+
+		}, 0);
+
+	});
+
+
 });

@@ -436,17 +436,24 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 
 .sapUiCal {
 	.sapUiCalHead {
-		.sapUiCalHeadB2.sapUiCalYearRangeButton,
-		.sapUiCalHeadB4.sapUiCalYearRangeButton {
-			width: 12.5rem;
+		.sapUiCalHeadB2.sapUiCalSingleYearButton,
+		.sapUiCalHeadB4.sapUiCalSingleYearButton {
+			width: 11.5rem;
+		}
+
+		.sapUiCalHeadB3 + .sapUiCalHeadB4.sapUiCalSingleYearButton {
+			width: 5.75rem;
 		}
 	}
 
 	&.sapUiCalTwoMonthsTwoColumns,
 	&.sapUiCalTwoMonthsTwoColumnsJaZh {
-		.sapUiCalHeadB2.sapUiCalYearRangeButton{
+		.sapUiCalHeadB2.sapUiCalSingleYearButton{
 			margin-left: calc(~"25% - 5.75rem");
-			margin-right: 6.25rem;
+		}
+
+		.sapUiCalHeadB2 + .sapUiCalHeadB4 {
+			margin-left: 6.25rem;
 		}
 	}
 }
@@ -458,9 +465,9 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 
 .sapUiSizeCompact .sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4,
 .sapUiSizeCompact .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3,
-.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4:not(.sapUiCalYearRangeButton),
+.sapUiCalTwoMonthsTwoColumnsJaZh .sapUiCalHeadB4:not(.sapUiCalSingleYearButton),
 .sapUiCalTwoMonthsTwoColumns .sapUiCalHeadB3 {
-	margin-left: calc(~"50% - 2 * 5.75rem");
+	margin-left: 6.25rem;
 }
 
 .sapUiCalItemNow > .sapUiCalItemText{
@@ -818,18 +825,8 @@ html.sapUiMedia-Std-Phone .sapUiCalHeadB0{
 
 /*** Phone ***/
 /* make calendar full-screen if on popup (DatePicker), but not if stand alone */
-html.sap-phone .sapUiCal[data-sap-ui-popup]{
-	position: absolute;
-	top: 0 !important;
-	bottom: 0 !important;
-	left: 0 !important;
-	right: 0 !important;
-	width: auto;
-	border: none;
-}
-
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalMonthPicker,
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalYearPicker{
 	width: 100%;
 	box-sizing: border-box;
 	margin: 0;
@@ -838,11 +835,7 @@ html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPi
 	padding-bottom: 1rem;
 }
 
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalCancel{
-	display: block;
-}
-
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalMonthPicker,
-html.sap-phone .sapUiCal[data-sap-ui-popup] > .sapUiCalContent > .sapUiCalYearPicker{
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalMonthPicker,
+html.sap-phone [data-sap-ui-popup] .sapUiCal > .sapUiCalContent > .sapUiCalYearPicker{
 	left: 0;
 }

@@ -31,12 +31,35 @@ sap.ui.define([
 
 
 	/**
-	 * Constructor for CompositeBinding
+	 * Constructor for CompositeBinding.
 	 *
 	 * @class
-	 * The CompositeBinding is used to bundle multiple property bindings which are be used to provide a single binding against
-	 * these property bindings.
+	 * Combines multiple property bindings (called 'parts') into a single one.
 	 *
+	 * A <code>CompositeBinding</code> combines the values from all its binding parts (each an instance of
+	 * <code>PropertyBinding</code>), either by calling a formatter function or by involving a
+	 * {@link sap.ui.model.CompositeType composite type}. When a formatter function is used, then the
+	 * composite binding is automatically limited to <code>OneWay</code> mode. When a type is used, the binding
+	 * can also operate in <code>TwoWay</code> mode.
+	 *
+	 * Higher layers of the framework derive composite bindings from easy-to-write string representations
+	 * (the following features require complex binding syntax, e.g. <code>data-sap-ui-bindingSyntax="complex"</code>):
+	 *
+	 * XML views, for example, convert attribute values with nested curly braces like
+	 * <pre>
+	 *   text="{fullname} &amp;lt;{email}&amp;gt;"
+	 * </pre>
+	 * into a composite binding with two parts (one property binding for property "fullname" and one for
+	 * property "email") and with a generic formatter function that injects the values of the parts into
+	 * the string literal "{0} &lt;{1}&gt;" accordingly.
+	 *
+	 * Similarly, {@link topic:daf6852a04b44d118963968a1239d2c0 expression bindings} are parsed and converted
+	 * into composite bindings, too. The formatter function is created by the framework and executes the
+	 * calculations as defined by the expression string, taking the values from the binding parts as input.
+	 *
+	 * <b>Note:</b> A nesting of composite bindings is currently not supported (albeit being helpful).
+	 *
+	 * @see {@link topic:a2fe8e763014477e87990ff50657a0d0}
 	 * @public
 	 * @alias sap.ui.model.CompositeBinding
 	 * @extends sap.ui.model.PropertyBinding

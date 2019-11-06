@@ -82,6 +82,22 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 	};
 
 	QUnit.module("ObjectPage Content scroll visibility");
+
+	QUnit.test("sectionChange event is fired upon scrolling", function (assert) {
+		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
+			oSection = oObjectPage.getSections()[9],
+			fnDone = assert.async();
+
+		oObjectPage.attachSectionChange(function(oEvent) {
+			assert.equal(oEvent.getParameter("section").getId(), oSection.getId(), "sectionChange event is fired upon scrolling to a specified section");
+			fnDone();
+		});
+
+		// act
+		helpers.renderObject(oObjectPage);
+		oObjectPage.setSelectedSection(oSection);
+	});
+
 	QUnit.test("ObjectPage Content CustomScrollBar visibility", function (assert) {
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 10),
 			fnDone = assert.async();

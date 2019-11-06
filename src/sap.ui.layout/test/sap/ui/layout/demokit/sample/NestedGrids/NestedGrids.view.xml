@@ -1,70 +1,71 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		controllerName="sap.ui.layout.sample.NestedGrids.NestedGrids">
-	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved" />
-	<Panel id="panelCSSGrid" width="100%" height="100%">
+	controllerName="sap.ui.layout.sample.NestedGrids.NestedGrids"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:grid="sap.ui.layout.cssgrid">
+	<Slider
+		value="100"
+		liveChange=".onSliderMoved"
+		class="sapUiSmallMarginBottom" />
+	<Panel
+		id="panelCSSGrid"
+		width="100%"
+		height="100%">
 		<headerToolbar>
-			<Toolbar height="3rem">
-				<Title text=" CssGrid Nested grids example"/>
-			</Toolbar>
+			<OverflowToolbar height="3rem">
+				<Title text="CSS Grid Nested grids example" />
+			</OverflowToolbar>
 		</headerToolbar>
-		<content>
-			<grid:CSSGrid id="grid1"
-						  gridTemplateColumns="repeat(2,minmax(250px, 1fr))"
-						  gridTemplateRows="1fr 3fr"
-						  gridGap="1rem">
-				<grid:items>
-					<VBox class="demoBox">
-						<Title text="A Box" wrapping="true" />
-						<Text text="A Box subtitle" wrapping="true" />
+		<grid:CSSGrid
+			id="grid1"
+			gridTemplateColumns="repeat(2,minmax(250px, 1fr))"
+			gridTemplateRows="1fr 3fr"
+			gridGap="1rem">
+			<VBox class="demoBox">
+				<Title text="A Box" wrapping="true" />
+				<Text text="A Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Title text="B Box" wrapping="true" />
+				<Text text="B Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Title text="C Box" wrapping="true" />
+				<Text text="C Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<grid:CSSGrid
+					gridTemplateColumns="repeat(2,minmax(120px, 1fr))"
+					gridGap="0.5rem">
+					<VBox class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiSmallMarginEnd demoInnerBox">
+						<layoutData>
+							<grid:GridItemLayoutData
+								gridColumn="1 / 3"
+								gridRow="1" />
+						</layoutData>
+						<Title text="E Box" wrapping="true" />
+						<Text text="E Box subtitle" wrapping="true" />
 					</VBox>
-					<VBox class="demoBox">
-						<Title text="B Box" wrapping="true" />
-						<Text text="B Box subtitle" wrapping="true" />
+					<VBox class="sapUiSmallMarginBegin demoInnerBox">
+						<layoutData>
+							<grid:GridItemLayoutData
+								gridColumn="1"
+								gridRow="2" />
+						</layoutData>
+						<Title text="F Box" wrapping="true" />
+						<Text text="F Box subtitle" wrapping="true" />
 					</VBox>
-					<VBox class="demoBox">
-						<Title text="C Box" wrapping="true" />
-						<Text text="C Box subtitle" wrapping="true" />
+					<VBox class="sapUiSmallMarginEnd demoInnerBox">
+						<layoutData>
+							<grid:GridItemLayoutData
+								gridColumn="2"
+								gridRow="2" />
+						</layoutData>
+						<Title text="G Box" wrapping="true" />
+						<Text text="G Box subtitle" wrapping="true" />
 					</VBox>
-					<VBox class="demoBox">
-						<grid:CSSGrid
-								gridTemplateColumns="repeat(2,minmax(120px, 1fr))"
-								gridGap="0.5rem">
-							<grid:items>
-								<VBox class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiSmallMarginEnd demoInnerBox">
-									<layoutData>
-										<grid:GridItemLayoutData
-											gridColumn="1 / 3"
-											gridRow="1"/>
-									</layoutData>
-									<Title text="E Box" wrapping="true" />
-									<Text text="E Box subtitle" wrapping="true" />
-								</VBox>
-								<VBox class="sapUiSmallMarginBegin demoInnerBox">
-									<layoutData>
-										<grid:GridItemLayoutData
-											gridColumn="1"
-											gridRow="2"/>
-									</layoutData>
-									<Title text="F Box" wrapping="true" />
-									<Text text="F Box subtitle" wrapping="true" />
-								</VBox>
-								<VBox class="sapUiSmallMarginEnd demoInnerBox">
-									<layoutData>
-										<grid:GridItemLayoutData
-											gridColumn="2"
-											gridRow="2"/>
-									</layoutData>
-									<Title text="G Box" wrapping="true" />
-									<Text text="G Box subtitle" wrapping="true" />
-								</VBox>
-							</grid:items>
-						</grid:CSSGrid>
-					</VBox>
-				</grid:items>
-			</grid:CSSGrid>
-		</content>
+				</grid:CSSGrid>
+			</VBox>
+		</grid:CSSGrid>
 	</Panel>
 </mvc:View>

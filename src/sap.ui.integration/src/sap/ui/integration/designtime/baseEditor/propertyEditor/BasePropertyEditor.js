@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"./../util/ObjectBinding",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/util/ObjectPath",
 	"sap/m/Label",
 	"sap/base/util/restricted/_merge"
 ], function (
 	Control,
 	ObjectBinding,
 	JSONModel,
-	ObjectPath,
 	Label,
 	_merge
 ) {
@@ -51,10 +49,10 @@ sap.ui.define([
 				}
 			},
 			events: {
-				propertyChanged: {
+				propertyChange: {
 					parameters: {
 						/**
-						 * Path in context object where the change should happen
+						 * Path in the context object where the change should happen
 						 */
 						path: {type: "string"},
 						value: {type: "any"}
@@ -106,6 +104,10 @@ sap.ui.define([
 			}
 		},
 
+		getValue: function () {
+			return this.getConfig().value;
+		},
+
 		_initialize: function() {
 			var oConfig = this.getConfig();
 			var oJsonModel = this.getModel("_context");
@@ -116,6 +118,7 @@ sap.ui.define([
 				// resolve binding strings
 				this._oConfigBinding = new ObjectBinding();
 				this._oConfigBinding.setModel(oJsonModel, "context");
+				this._oConfigBinding.setModel(this.getModel("i18n"), "i18n");
 				this._oConfigBinding.setBindingContext(oJsonModel.getContext("/"), "context");
 				this._oConfigBinding.setObject(oConfig);
 				//
@@ -144,7 +147,7 @@ sap.ui.define([
 			var oLabel = this.getAggregation("_label");
 			if (!oLabel) {
 				oLabel = new Label({
-					text: this.getConfig().label,
+					text: "{label}",
 					design: "Bold"
 				});
 				this.setAggregation("_label", oLabel);
@@ -170,8 +173,8 @@ sap.ui.define([
 			oRm.close("div");
 		},
 
-		firePropertyChanged: function(vValue) {
-			this.fireEvent("propertyChanged", {
+		firePropertyChange: function(vValue) {
+			this.fireEvent("propertyChange", {
 				path: this.getConfig().path,
 				value: vValue
 			});

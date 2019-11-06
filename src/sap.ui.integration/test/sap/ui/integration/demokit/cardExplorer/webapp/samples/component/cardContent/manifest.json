@@ -1,30 +1,38 @@
 {
-  "_version": "1.15.0",
-  "sap.app": {
-    "id": "sap.ui.demo.cardExplorer.samples.component.cardContent",
-    "type": "card",
-    "applicationVersion": {
-      "version": "1.0.0"
-    }
-  },
-  "sap.ui5": {
-    "rootView": {
-      "viewName": "sap.ui.demo.cardExplorer.samples.component.cardContent.View",
-      "type": "XML",
-      "async": true,
-      "id": "app"
-    },
-    "dependencies": {
-      "minUI5Version": "1.38",
-      "libs": {
-        "sap.m": {}
-      }
-    }
-  },
-  "sap.card": {
-    "type": "Component",
-    "header": {
-      "title": "Visit our workshop"
-    }
-  }
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.demo.cardExplorer.samples.component.cardContent",
+		"type": "card",
+		"title": "Sample of a Component Content",
+		"subTitle": "Sample of a Component Content",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://technical-object"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.cardExplorer.samples.component.cardContent.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.38",
+			"libs": {
+				"sap.m": {}
+			}
+		}
+	},
+	"sap.card": {
+		"type": "Component",
+		"header": {
+			"title": "Visit our workshop"
+		}
+	}
 }

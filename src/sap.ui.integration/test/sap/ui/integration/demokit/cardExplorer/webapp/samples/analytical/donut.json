@@ -2,7 +2,15 @@
 	"_version": "1.14.0",
 	"sap.app": {
 		"id": "card.explorer.donut.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a Donut Chart",
+		"subTitle": "Sample of a Donut Chart"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://donut-chart"
+		}
 	},
 	"sap.card": {
 		"type": "Analytical",

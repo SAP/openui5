@@ -1,4 +1,5 @@
 # Ignore .gitignore, target, dist and tmp folders
+lib/jsdoc/target
 src/*/.gitignore
 src/*/target/
 src/*/dist/

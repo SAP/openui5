@@ -1,26 +1,34 @@
 {
-  "_version": "1.15.0",
-  "sap.app": {
-    "id": "sap.ui.demo.cardExplorer.samples.component.cardContentControls",
-    "type": "card",
-    "applicationVersion": {
-      "version": "1.0.0"
-    }
-  },
-  "sap.ui5": {
-    "rootView": {
-      "viewName": "sap.ui.demo.cardExplorer.samples.component.cardContentControls.View",
-      "type": "XML",
-      "async": true,
-      "id": "app"
-    },
-    "dependencies": {
-      "minUI5Version": "1.38",
-      "libs": {
-        "sap.m": {}
-      }
-    },
-    "config": {
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.demo.cardExplorer.samples.component.cardContentControls",
+		"type": "card",
+		"title": "Sample of a Component Content with Form",
+		"subTitle": "Sample of a Component Content with Form",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://bus-public-transport"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.cardExplorer.samples.component.cardContentControls.View",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"dependencies": {
+			"minUI5Version": "1.38",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
 			"sample": {
 				"stretch": true,
 				"files": [
@@ -28,15 +36,15 @@
 				]
 			}
 		}
-  },
-  "sap.card": {
-    "type": "Component",
-    "header": {
-      "icon":  {
-        "src": "sap-icon://bus-public-transport"
-      },
-      "title": "Buy your bus ticket online",
-      "subTitle": "You’ll receive an email with a QR code. No need to print!"
-    }
-  }
+	},
+	"sap.card": {
+		"type": "Component",
+		"header": {
+			"icon": {
+				"src": "sap-icon://bus-public-transport"
+			},
+			"title": "Buy your bus ticket online",
+			"subTitle": "You’ll receive an email with a QR code. No need to print!"
+		}
+	}
 }

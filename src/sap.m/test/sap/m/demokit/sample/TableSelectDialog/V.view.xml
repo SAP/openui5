@@ -1,90 +1,67 @@
 <mvc:View
 	controllerName="sap.m.sample.TableSelectDialog.C"
+	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Input
-				id="productInput"
-				type="Text"
-				value="Astro Phone 6"
-				placeholder="Enter Product ..."
-				showValueHelp="true"
-				valueHelpOnly="true"
-				valueHelpRequest="handleValueHelp"
-				width="15rem"
-				class="sapUiSmallMarginBottom"/>
-			<Button
-				class="sapUiSmallMarginBottom"
-				text="Show Table Select Dialog"
-				press="handleTableSelectDialogPress">
-			</Button>
-			<Button
-				class="sapUiSmallMarginBottom"
-				text="Show Table Select Dialog (Multi)"
-				press="handleTableSelectDialogPress">
-				<customData>
-					<core:CustomData
-						key="multi"
-						value="true" />
-				</customData>
-			</Button>
-			<Button
+	xmlns:core="sap.ui.core">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Input
+			id="productInput"
+			type="Text"
+			value="Astro Phone 6"
+			placeholder="Enter Product ..."
+			showValueHelp="true"
+			valueHelpOnly="true"
+			valueHelpRequest="handleValueHelp"
+			width="15rem"
+			class="sapUiSmallMarginBottom"/>
+		<Button
 			class="sapUiSmallMarginBottom"
-			text="Show Table Select Dialog (draggable=true)"
-			press="handleTableSelectDialogPress">
+			text="Show Table Select Dialog"
+			press=".handleTableSelectDialogPress" />
+		<Button
+			class="sapUiSmallMarginBottom"
+			text="Show Table Select Dialog (Multi)"
+			press=".handleTableSelectDialogPress">
 			<customData>
-				<core:CustomData
-					key="multi"
-					value="true" />
-				<core:CustomData
-					key="draggable"
-					value="true" />
+				<core:CustomData key="multi" value="true" />
 			</customData>
 		</Button>
 		<Button
 			class="sapUiSmallMarginBottom"
-			text="Show Table Select Dialog (resizable=true)"
-			press="handleTableSelectDialogPress">
+			text="Show Table Select Dialog (draggable=true)"
+			press=".handleTableSelectDialogPress">
 			<customData>
-				<core:CustomData
-					key="multi"
-					value="true" />
-				<core:CustomData
-					key="resizable"
-					value="true" />
+				<core:CustomData key="multi" value="true" />
+				<core:CustomData key="draggable" value="true" />
 			</customData>
 		</Button>
-			<Button
-				class="sapUiSmallMarginBottom"
-				text="Show Table Select Dialog (Remember)"
-				press="handleTableSelectDialogPress">
-				<customData>
-					<core:CustomData
-						key="multi"
-						value="true" />
-					<core:CustomData
-						key="remember"
-						value="true" />
-				</customData>
-			</Button>
-			<Button
-				class="sapUiSmallMarginBottom"
-				text="Show Table Select Dialog (Custom confirmation button text)"
-				press="handleTableSelectDialogPress">
-				<customData>
-					<core:CustomData
-							key="multi"
-							value="true" />
-					<core:CustomData
-						key="confirmButtonText"
-						value="Save" />
-				</customData>
-			</Button>
-		</l:content>
+		<Button
+			text="Show Table Select Dialog (resizable=true)"
+			class="sapUiSmallMarginBottom"
+			press=".handleTableSelectDialogPress">
+			<customData>
+				<core:CustomData key="multi" value="true" />
+				<core:CustomData key="resizable" value="true" />
+			</customData>
+		</Button>
+		<Button
+			class="sapUiSmallMarginBottom"
+			text="Show Table Select Dialog (Remember)"
+			press=".handleTableSelectDialogPress">
+			<customData>
+				<core:CustomData key="multi" value="true" />
+				<core:CustomData key="remember" value="true" />
+			</customData>
+		</Button>
+		<Button
+			text="Show Table Select Dialog (Custom confirmation button text)"
+			class="sapUiSmallMarginBottom"
+			press=".handleTableSelectDialogPress">
+			<customData>
+				<core:CustomData key="multi" value="true" />
+				<core:CustomData key="confirmButtonText" value="Save" />
+			</customData>
+		</Button>
 	</l:VerticalLayout>
 </mvc:View>

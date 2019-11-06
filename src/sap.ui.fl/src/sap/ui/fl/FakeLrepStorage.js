@@ -21,6 +21,7 @@ sap.ui.define(function () {
 	 */
 
 	return function (oStorage) {
+		var FL_LREP_KEY = "sap.ui.fl.";
 		var FL_LREP_CHANGE_KEY = "sap.ui.fl.change";
 		var FL_LREP_VARIANT_KEY = "sap.ui.fl.variant";
 		var FakeLrepStorage = {};
@@ -66,7 +67,7 @@ sap.ui.define(function () {
 		FakeLrepStorage.forEachLrepChangeInLocalStorage = function(fnPredicate) {
 			var aKeys = Object.keys(oStorage);
 			aKeys.forEach(function(sKey) {
-				if (sKey.includes(FL_LREP_CHANGE_KEY) || sKey.includes(FL_LREP_VARIANT_KEY)) {
+				if (sKey.includes(FL_LREP_KEY)) {
 					fnPredicate(sKey);
 				}
 			});

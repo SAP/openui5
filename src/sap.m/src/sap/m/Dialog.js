@@ -10,6 +10,7 @@ sap.ui.define([
 	'./ToolbarSpacer',
 	'./Title',
 	'./library',
+	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Popup',
@@ -38,6 +39,7 @@ function(
 	ToolbarSpacer,
 	Title,
 	library,
+	TitleAlignmentMixin,
 	Control,
 	IconPool,
 	Popup,
@@ -69,6 +71,8 @@ function(
 		// shortcut for sap.ui.core.ValueState
 		var ValueState = coreLibrary.ValueState;
 
+		// shortcut for sap.m.TitleAlignment
+		var TitleAlignment = library.TitleAlignment;
 
 		var sAnimationMode = Core.getConfiguration().getAnimationMode();
 		var bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
@@ -246,7 +250,16 @@ function(
 					 * Indicates whether the Dialog will be closed automatically when a routing navigation occurs.
 					 * @since 1.72
 					 */
-					closeOnNavigation: {type: "boolean", group: "Behavior", defaultValue: true}
+					closeOnNavigation: {type: "boolean", group: "Behavior", defaultValue: true},
+
+					/**
+					 * Specifies the Title alignment (theme specific).
+					 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+					 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+					 * @since 1.72
+					 * @public
+					 */
+					titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -1051,6 +1064,10 @@ function(
 				this._header = new Bar(this.getId() + "-header");
 				this._header._setRootAccessibilityRole("heading");
 				this._header._setRootAriaLevel("2");
+
+				// call the method that registers this Bar for alignment
+				this._setupBarTitleAlignment(this._header, this.getId() + "_header");
+
 				this.setAggregation("_header", this._header, false);
 			}
 		};
@@ -2011,6 +2028,9 @@ function(
 		Dialog.prototype._applyContextualSettings = function () {
 			ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 		};
+
+		// enrich the control functionality with TitleAlignmentMixin
+		TitleAlignmentMixin.mixInto(Dialog.prototype);
 
 		return Dialog;
 	});

@@ -174,15 +174,19 @@ sap.ui.define([
 			});
 		};
 
+		/**
+		 * Sets 'type' property of the list item template or binds it with a formatter.
+		 *
+		 * @param {object} oAction The action object which contains binding infos.
+		 */
 		CardActions.prototype._setItemTemplateEnabledState = function (oAction) {
 
 			var oBindingInfo,
 				sType,
 				oItemTemplate = this._oAreaControl._oItemTemplate;
 
-			if (typeof oAction.enabled === "string") {
-				oBindingInfo = ManagedObject.bindingParser(oAction.enabled);
-
+			if (typeof oAction.enabled === "object") {
+				oBindingInfo = oAction.enabled;
 				oBindingInfo.formatter = function (vValue) {
 					if (vValue && (typeof vValue === "string")) {
 						return "Navigation";

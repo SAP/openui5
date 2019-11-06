@@ -176,3 +176,24 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 .sapMIBar .sapMBarPH > .sapMBarChild:last-child {
 	margin-right: 0;
 }
+
+/* Bar Title Alignment */
+.sapMBarTitleStart .sapMBarPH {
+	text-align: start;
+}
+
+html[data-sap-ui-browser^="ff"].sap-desktop .sapMBarTitleStart .sapMBarPH {
+	justify-content: start;
+}
+
+html[data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarPH,
+html[data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarMiddle,
+html[data-sap-ui-browser^="ed"] .sapMBarTitleStart .sapMBarPH {
+	text-align: left;
+}
+
+html[dir="rtl"][data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarPH,
+html[dir="rtl"][data-sap-ui-browser^="ie"] .sapMBarTitleStart .sapMBarMiddle,
+html[dir="rtl"][data-sap-ui-browser^="ed"] .sapMBarTitleStart .sapMBarPH {
+	text-align: right;
+}

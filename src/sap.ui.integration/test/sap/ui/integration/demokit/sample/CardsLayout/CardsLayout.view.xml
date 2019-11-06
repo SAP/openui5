@@ -1,28 +1,27 @@
 <mvc:View
-		controllerName="sap.ui.integration.sample.CardsLayout.CardsLayout"
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:f="sap.f"
-		xmlns:w="sap.ui.integration.widgets"
-		xmlns:cssgrid="sap.ui.layout.cssgrid">
-
+	controllerName="sap.ui.integration.sample.CardsLayout.CardsLayout"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:cssgrid="sap.ui.layout.cssgrid">
 	<f:ShellBar
-			title="Drone Hive"
-			secondTitle="{/date}"
-			homeIcon="{/homeIconUrl}"
-			showCopilot="true"
-			showSearch="true"
-			showNotifications="true"
-			showProductSwitcher="true"
-			notificationsNumber="2"
-			class="sapUiSmallMarginTop sapUiSmallMarginBegin">
+		title="Drone Hive"
+		secondTitle="{/date}"
+		homeIcon="{/homeIconUrl}"
+		showCopilot="true"
+		showSearch="true"
+		showNotifications="true"
+		showProductSwitcher="true"
+		notificationsNumber="2"
+		class="sapUiSmallMarginTop sapUiSmallMarginBegin">
 		<f:menu>
 			<Menu>
 				<MenuItem text="Drone Hive" icon="{/homeIconUrl}" />
 			</Menu>
 		</f:menu>
 		<f:profile>
-			<f:Avatar initials="UI"/>
+			<f:Avatar initials="UI" />
 		</f:profile>
 	</f:ShellBar>
 	<IconTabBar
@@ -32,7 +31,6 @@
 		class="sapUiResponsiveContentPadding sapUiSmallMarginBegin">
 		<items>
 			<IconTabFilter text="Home">
-
 				<f:GridContainer>
 					<f:layout>
 						<f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="1rem" />
@@ -56,8 +54,10 @@
 						</w:layoutData>
 					</w:Card>
 				</f:GridContainer>
-
-				<Title text="Incidents" class="sapUiSmallMarginBottom sapUiSmallMarginTop sapUiSmallMarginBegin" titleStyle="H2"/>
+				<Title
+					text="Incidents"
+					titleStyle="H2"
+					class="sapUiSmallMarginBottom sapUiSmallMarginTop sapUiSmallMarginBegin" />
 				<f:GridContainer>
 					<f:layout>
 						<f:GridContainerSettings rowSize="5rem" columnSize="5rem" gap="1rem" />
@@ -87,15 +87,9 @@
 					</w:Card>
 				</f:GridContainer>
 			</IconTabFilter>
-
-			<IconTabFilter text="Team Distribution">
-			</IconTabFilter>
-
-			<IconTabFilter text="Drone Maintenance">
-			</IconTabFilter>
-
-			<IconTabFilter text="Drone Development">
-			</IconTabFilter>
+			<IconTabFilter text="Team Distribution" />
+			<IconTabFilter text="Drone Maintenance" />
+			<IconTabFilter text="Drone Development" />
 		</items>
 	</IconTabBar>
 </mvc:View>

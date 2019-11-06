@@ -1,0 +1,29 @@
+{
+	"pages": [
+		{
+			"pageId": "genericPageId",
+			"header": "Process",
+			"title": "Inventarisation",
+			"titleUrl": "http://de.wikipedia.org/wiki/Inventarisation",
+			"icon": "sap-icon://camera",
+			"groups": [
+				{
+					"elements": [
+						{
+							"label": "Start Date",
+							"value": "01/01/2015"
+						},
+						{
+							"label": "End Date",
+							"value": "31/12/2015"
+						},
+						{
+							"label": "Occurrence",
+							"value": "Weekly"
+						}
+					]
+				}
+			]
+		}
+	]
+}

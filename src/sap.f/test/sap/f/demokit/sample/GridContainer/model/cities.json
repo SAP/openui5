@@ -1,0 +1,32 @@
+{
+	"cities": [
+		{
+			"text": "Berlin",
+			"key": "BR"
+		},
+		{
+			"text": "London",
+			"key": "LN"
+		},
+		{
+			"text": "Madrid",
+			"key": "MD"
+		},
+		{
+			"text": "Prague",
+			"key": "PR"
+		},
+		{
+			"text": "Paris",
+			"key": "PS"
+		},
+		{
+			"text": "Sofia",
+			"key": "SF"
+		},
+		{
+			"text": "Vienna",
+			"key": "VN"
+		}
+	]
+}

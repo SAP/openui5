@@ -144,12 +144,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 				visible: true
 			});
 
-			function onOpen() {
-				if (sap.ui.getCore().getConfiguration().getAccessibility()) {
-					this._$content.attr('role', 'application');
-				}
-			}
-
 			/**
 			 * Creates the dialog with its class.
 			 * @private
@@ -157,7 +151,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 			this._oDialog = new Dialog(this.getId() + '-Dialog', {
 				content: this._busyIndicator,
 				showHeader: false,
-				afterOpen: onOpen,
 				afterClose: this._fnCloseHandler.bind(this),
 				initialFocus: this._busyIndicator.getId() + '-busyIndicator'
 			}).addStyleClass('sapMBusyDialog');
@@ -311,15 +304,11 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		};
 
 		/**
-		 * Gets the tooltip for the BusyDialog.
-		 *
-		 * @public
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * Gets the tooltip of the internal dialog.
+		 * @override
 		 */
 		BusyDialog.prototype.getTooltip = function () {
-			this._oDialog.getTooltip();
-
-			return this;
+			return this._oDialog.getTooltip();
 		};
 
 		/**

@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.f"
 	xmlns:card="sap.f.cards">
-	<Popover placement="Right" showHeader="false" contentWidth="300px">
+	<Popover placement="Bottom" showHeader="false" contentWidth="300px">
 			<f:Card width="300px">
 				<f:header>
 					<card:NumericHeader

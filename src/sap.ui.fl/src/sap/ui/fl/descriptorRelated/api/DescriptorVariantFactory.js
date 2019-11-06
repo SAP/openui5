@@ -7,13 +7,15 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/fl/write/_internal/Storage"
 ], function(
 	LayerUtils,
 	Utils,
 	Settings,
 	jQuery,
-	fnBaseMerge
+	fnBaseMerge,
+	Storage
 ) {
 	"use strict";
 
@@ -25,7 +27,6 @@ sap.ui.define([
 	 * @param {string} mParameters.reference the proposed referenced descriptor or app variant id (might be overwritten by the backend) to be provided when creating a new app variant
 	 * @param {string} [mParameters.version] version of the app variant (optional)
 	 * @param {string} [mParameters.layer='CUSTOMER'] the proposed layer (might be overwritten by the backend) when creating a new app variant
-	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
 	 * @param {object} mFileContent file content of the existing app variant to be provided if app variant shall be created from an existing
 	 * @param {boolean} [bDeletion=false] deletion indicator to be provided if app variant shall be deleted
 	 * @param {sap.ui.fl.registry.Settings} oSettings settings
@@ -49,9 +50,6 @@ sap.ui.define([
 			this._id = mParameters.id;
 			this._reference = mParameters.reference;
 			this._layer = mParameters.layer;
-			if (typeof mParameters.isAppVariantRoot !== "undefined") {
-				this._isAppVariantRoot = mParameters.isAppVariantRoot;
-			}
 			if (typeof mParameters.referenceVersion !== "undefined") {
 				this._referenceVersion = mParameters.referenceVersion;
 			}
@@ -148,15 +146,17 @@ sap.ui.define([
 
 	/**
 	 * Submits the app variant to the backend
-	 *
 	 * @return {Promise} resolving when submitting the app variant was successful
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.submit = function() {
+		// In case of CRUD appvariant operations are intended for a SAP developer, it will be given to the old LREPConnector
 		var sRoute = '/sap/bc/lrep/appdescr_variants/';
 		var sMethod;
+
+		var mMap = this._getMap();
 
 		switch (this._mode) {
 			case 'NEW':
@@ -174,8 +174,6 @@ sap.ui.define([
 				// do nothing
 		}
 
-		var mMap = this._getMap();
-
 		if (this._sTransportRequest) {
 		//set to URL-Parameter 'changelist', as done in LrepConnector
 			sRoute += '?changelist=' + this._sTransportRequest;
@@ -189,6 +187,57 @@ sap.ui.define([
 		}
 
 		return Utils.sendRequest(sRoute, sMethod, mMap);
+	};
+
+	/**
+	 * Submits the app variant to the backend via new connectors
+	 * @return {Promise} resolving when submitting the app variant was successful
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.rta, smart business
+	 */
+	DescriptorVariant.prototype.submitViaNewConnectors = function() {
+		var mMap = this._getMap();
+
+		var mPropertyBag = {
+			flexObject: {}
+		};
+
+		if (this._sTransportRequest) {
+			mPropertyBag.transport = this._sTransportRequest;
+		} else if (this._oSettings.isAtoEnabled() && this._skipIam && LayerUtils.isCustomerDependentLayer(mMap.layer)) {
+			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
+			mPropertyBag.transport = "ATO_NOTIFICATION";
+		}
+		if (this._skipIam) {
+			mPropertyBag.skipIam = this._skipIam;
+		}
+
+		if (mMap.layer) {
+			mPropertyBag.layer = mMap.layer;
+		}
+
+		var oBackendOperation;
+		switch (this._mode) {
+			case 'NEW':
+				Object.assign(mPropertyBag.flexObject, mMap);
+				oBackendOperation = Storage.appVariant.create(mPropertyBag);
+				break;
+			case 'FROM_EXISTING':
+				mPropertyBag.reference = mMap.id;
+				oBackendOperation = Storage.appVariant.update(mPropertyBag);
+				break;
+			case 'DELETION':
+				mPropertyBag.reference = mMap.id;
+				oBackendOperation = Storage.appVariant.remove(mPropertyBag);
+				break;
+			default:
+				return Promise.reject("Please provide a valid operation.");
+		}
+
+		return oBackendOperation.then(function(oResult) {
+			return oResult;
+		});
 	};
 
 	DescriptorVariant.prototype.getId = function() {
@@ -261,12 +310,6 @@ sap.ui.define([
 
 					content: this._content
 				};
-				if (typeof this._isAppVariantRoot !== "undefined") {
-					mResult.isAppVariantRoot = this._isAppVariantRoot;
-				}
-				if (mResult.isAppVariantRoot !== undefined && !mResult.isAppVariantRoot) {
-					mResult.fileType = "cdmapp_config";
-				}
 				if (typeof this._referenceVersion !== "undefined") {
 					mResult.referenceVersion = this._referenceVersion;
 				}
@@ -299,9 +342,12 @@ sap.ui.define([
 	 */
 	var DescriptorVariantFactory = {};
 
-	DescriptorVariantFactory._getDescriptorVariant = function(sId) {
-		var sRoute = '/sap/bc/lrep/appdescr_variants/' + sId;
-		return Utils.sendRequest(sRoute, 'GET');
+	DescriptorVariantFactory._getDescriptorVariant = function(mPropertyBag) {
+		if (mPropertyBag.isForSapDeveloper || !mPropertyBag.layer) {
+			var sRoute = '/sap/bc/lrep/appdescr_variants/' + mPropertyBag.reference;
+			return Utils.sendRequest(sRoute, 'GET');
+		}
+		return Storage.appVariant.load(mPropertyBag);
 	};
 
 	/**
@@ -312,7 +358,6 @@ sap.ui.define([
 	 * @param {string} mParameters.id the id for the app variant id
 	 * @param {string} mParameters.version optional version of the app variant
 	 * @param {string} [mParameters.layer='CUSTOMER'] the proposed layer for the app variant (might be overwritten by the backend)
-	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
 	 * @param {boolean} [mParameters.skipIam=false] indicator whether the default IAM item creation and registration is skipped
 
 	 * @return {Promise} resolving the new DescriptorVariant instance
@@ -332,9 +377,7 @@ sap.ui.define([
 	 * @param {string} mParameters.id the id for the app variant id
 	 * @param {string} mParameters.version optional version of the app variant
 	 * @param {string} [mParameters.layer='CUSTOMER'] the proposed layer for the app variant (might be overwritten by the backend)
-	 * @param {boolean} [mParameters.isAppVariantRoot=true] indicator whether this is an app variant, default is true
 	 * @param {boolean} [mParameters.skipIam=false] indicator whether the default IAM item creation and registration is skipped
-
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
 	 * @private
@@ -355,10 +398,6 @@ sap.ui.define([
 			Utils.checkParameterAndType(mParameters, "layer", "string");
 		}
 
-		// isAppVariantRoot
-		if (mParameters.isAppVariantRoot) {
-			Utils.checkParameterAndType(mParameters, "isAppVariantRoot", "boolean");
-		}
 		if (mParameters.skipIam) {
 			Utils.checkParameterAndType(mParameters, "skipIam", "boolean");
 		}
@@ -419,18 +458,24 @@ sap.ui.define([
 	 *
 	 * @param {string} sId the id of the app variant
 	 * @param {boolean} bDeletion required for deletion
+	 * @param {string} [sLayer] - Current layer (required to determine the connector later in Storage)
+	 * @param {string} [bIsForSAPDeveloper=false] - Determines whether app variant deletion is intended for SAP developer
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
-	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion) {
+	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion, sLayer, bIsForSapDeveloper) {
 		if (sId === undefined || typeof sId !== "string") {
 			throw new Error("Parameter \"sId\" must be provided of type string");
 		}
 
 		var _mResult;
-		return DescriptorVariantFactory._getDescriptorVariant(sId).then(function(mResult) {
+		return DescriptorVariantFactory._getDescriptorVariant({
+			reference: sId,
+			layer: sLayer,
+			isForSapDeveloper: bIsForSapDeveloper
+		}).then(function(mResult) {
 			_mResult = mResult;
 			return Settings.getInstance();
 		}).then(function(oSettings) {

@@ -1,12 +1,12 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Fragment, Controller, JSONModel) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/MessageToast",
+	"sap/ui/model/Filter"
+], function (Controller, JSONModel, MessageToast, Filter) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.SearchFieldSuggestions.Page", {
+	return Controller.extend("sap.m.sample.SearchFieldSuggestions.Page", {
 
 		onInit: function () {
 			// set explored app's demo model on this sample
@@ -17,35 +17,33 @@ sap.ui.define([
 		},
 
 		onSearch: function (event) {
-			var item = event.getParameter("suggestionItem");
-			if (item) {
-				sap.m.MessageToast.show("Search for: " + item.getText());
+			var oItem = event.getParameter("suggestionItem");
+			if (oItem) {
+				MessageToast.show("Search for: " + oItem.getText());
 			} else {
-				sap.m.MessageToast.show("Search is fired!");
+				MessageToast.show("Search is fired!");
 			}
 		},
 
 		onSuggest: function (event) {
-			var value = event.getParameter("suggestValue");
-			var filters = [];
-			if (value) {
-				filters = [
-					new sap.ui.model.Filter([
-						new sap.ui.model.Filter("ProductId", function(sText) {
-							return (sText || "").toUpperCase().indexOf(value.toUpperCase()) > -1;
+			var sValue = event.getParameter("suggestValue"),
+				aFilters = [];
+			if (sValue) {
+				aFilters = [
+					new Filter([
+						new Filter("ProductId", function (sText) {
+							return (sText || "").toUpperCase().indexOf(sValue.toUpperCase()) > -1;
 						}),
-						new sap.ui.model.Filter("Name", function(sDes) {
-							return (sDes || "").toUpperCase().indexOf(value.toUpperCase()) > -1;
+						new Filter("Name", function (sDes) {
+							return (sDes || "").toUpperCase().indexOf(sValue.toUpperCase()) > -1;
 						})
 					], false)
 				];
 			}
 
-			this.oSF.getBinding("suggestionItems").filter(filters);
+			this.oSF.getBinding("suggestionItems").filter(aFilters);
 			this.oSF.suggest();
 		}
+
 	});
-
-	return CController;
-
 });

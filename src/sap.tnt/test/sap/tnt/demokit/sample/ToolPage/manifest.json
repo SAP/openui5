@@ -13,15 +13,17 @@
 		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
 				"sap.tnt": {}
 			}
 		},
 		"config": {
 			"sample": {
-				"stretch": true,
 				"files": [
 					"ToolPage.view.xml",
 					"ToolPage.controller.js",
+					"model/data.json",
 					"manifest.json"
 				]
 			}

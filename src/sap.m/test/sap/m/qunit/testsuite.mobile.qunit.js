@@ -1425,6 +1425,33 @@ sap.ui.define([
 			ViewSettingsDialogCustomTabs: {
 				title: "QUnit Page for sap.m.ViewSettingsDialog"
 			},
+			WheelSlider: {
+				title: "QUnit Page for sap.m.WheelSlider",
+				ui5: {
+					language: "en_US"
+				},
+				sinon: {
+					useFakeTimers: true
+				},
+				coverage: {
+					only: [
+						"sap/m/WheelSlider",
+						"sap/m/WheelSliderRenderer"
+					]
+				}
+			},
+			WheelSliderContainer: {
+				title: "QUnit Page for sap.m.WheelSliderContainer",
+				ui5: {
+					language: "en_US"
+				},
+				coverage: {
+					only: [
+						"sap/m/WheelSliderContainer",
+						"sap/m/WheelSliderContainerRenderer"
+					]
+				}
+			},
 			Wizard: {
 				title: "QUnit Page for sap.m.Wizard",
 				sinon: {

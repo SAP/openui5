@@ -20,7 +20,7 @@
 						  type="Information"
 						  text="Compare same content of Generic Tiles in regular and in line mode; no line mode equivalent for Slide Tile."
 						  class="sapUiTinyMargin"/>
-			<l:VerticalLayout>
+			<VBox>
 				<l:HorizontalLayout
 						id="TileContainerExpanded"
 						allowWrapping="true"
@@ -108,7 +108,6 @@
 								scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
 								mode="LineMode"
 								press="press"
-								class="sapUiTinyMarginEnd"
 								sizeBehavior="{/sizeBehavior}">
 							<TileContent footer="{footer}">
 								<NumericContent
@@ -121,7 +120,7 @@
 						</GenericTile>
 					</l:HorizontalLayout>
 				</html:div>
-			</l:VerticalLayout>
+			</VBox>
 		</content>
 	</Page>
 </mvc:View>

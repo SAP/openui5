@@ -322,6 +322,10 @@ sap.ui.define([
 				}
 			}
 
+			if (aLabels && aLabels.length) {
+				sLabel = sLabel + " " + aLabels.join(" ");
+			}
+
 			if (oCountChangeInfo.initial || oCountChangeInfo.rowChange) {
 				if (TableUtils.hasRowNavigatedIndicators(oTable)) {
 					var oCellInfo = TableUtils.getCellInfo($Cell);
@@ -332,10 +336,6 @@ sap.ui.define([
 						}
 					}
 				}
-			}
-
-			if (aLabels && aLabels.length) {
-				sLabel = sLabel + " " + aLabels.join(" ");
 			}
 
 			$Cell.attr({

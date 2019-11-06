@@ -10,12 +10,14 @@ sap.ui.define([
 	'./InstanceManager',
 	'./library',
 	'./Title',
+	'./TitleAlignmentMixin',
 	'sap/ui/core/Control',
 	'sap/ui/core/Popup',
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
+	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	'sap/ui/core/library',
 	'sap/ui/core/Element',
 	'sap/ui/core/ResizeHandler',
@@ -35,12 +37,14 @@ sap.ui.define([
 		InstanceManager,
 		library,
 		Title,
+		TitleAlignmentMixin,
 		Control,
 		Popup,
 		ScrollEnablement,
 		Parameters,
 		Device,
 		ManagedObject,
+		ResponsivePaddingsEnablement,
 		coreLibrary,
 		Element,
 		ResizeHandler,
@@ -62,8 +66,9 @@ sap.ui.define([
 		// shortcut for sap.m.PlacementType
 		var PlacementType = library.PlacementType;
 
-		// a buffer width for the HTML container scrollbar
-		var iScrollbarWidth = 20;
+		// shortcut for sap.m.TitleAlignment
+		var TitleAlignment = library.TitleAlignment;
+
 		/**
 		* Constructor for a new Popover.
 		*
@@ -101,6 +106,7 @@ sap.ui.define([
 		* The popover is closed when the user clicks or taps outside the popover or selects an action within the popover. You can prevent this with the <code>modal</code> property.
 		* The popover can be resized when the <code>resizable</code> property is enabled.
 		*
+		* When using the sap.m.Popover in Sap Quartz theme, the breakpoints and layout paddings could be determined by the container's width. To enable this concept and add responsive paddings to an element of the Popover control, you may add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
 		* <ul>
 		* <li>{@link sap.m.Popover} is <u>not</u> responsive on mobile devices - it will always be rendered as a popover and you have to take care of its size and position.</li>
 		* <li>{@link sap.m.ResponsivePopover} is adaptive and responsive. It renders as a dialog with a close button in the header on phones, and as a popover on tablets.</li>
@@ -225,7 +231,16 @@ sap.ui.define([
 					 * @since 1.70
 					 * @private
 					 */
-					ariaModal: {type: "boolean", group: "Misc", defaultValue: true, visibility: "hidden"}
+					ariaModal: {type: "boolean", group: "Misc", defaultValue: true, visibility: "hidden"},
+
+					/**
+					 * Specifies the Title alignment (theme specific).
+					 * If set to <code>TitleAlignment.Auto</code>, the Title will be aligned as it is set in the theme (if not set, the default value is <code>center</code>);
+					 * Other possible values are <code>TitleAlignment.Start</code> (left or right depending on LTR/RTL), and <code>TitleAlignment.Center</code> (centered)
+					 * @since 1.72
+					 * @public
+					 */
+					titleAlignment : {type : "sap.m.TitleAlignment", group : "Misc", defaultValue : TitleAlignment.Auto}
 				},
 				defaultAggregation: "content",
 				aggregations: {
@@ -366,6 +381,13 @@ sap.ui.define([
 		/* =========================================================== */
 		Popover._bIOS7 = Device.os.ios && Device.os.version >= 7 && Device.os.version < 8 && Device.browser.name === "sf";
 
+		ResponsivePaddingsEnablement.call(Popover.prototype, {
+			header: {suffix: "intHeader"},
+			subHeader: {selector: ".sapMPopoverSubHeader .sapMIBar"},
+			content: {suffix: "cont"},
+			footer: {selector: ".sapMPopoverFooter .sapMIBar"}
+		});
+
 		/**
 		 * Initializes the popover control.
 		 *
@@ -448,6 +470,8 @@ sap.ui.define([
 			//closed when a containing scroll container is scrolled, be it via scrollbar or using the
 			//mousewheel.
 			this.setFollowOf(true);
+
+			this._initResponsivePaddingsEnablement();
 
 			this._oRestoreFocusDelegate = {
 				onBeforeRendering: function () {
@@ -998,10 +1022,8 @@ sap.ui.define([
 					$popoverContent.width() < iMaxWidth) {		// - if the popover hasn't reached a threshold size
 
 					$popover.addClass("sapMPopoverVerticalScrollIncluded");
-					$popoverContent.css({"padding-right": iScrollbarWidth});
 				} else {
 					$popover.removeClass("sapMPopoverVerticalScrollIncluded");
-					$popoverContent.css({"padding-right": ""});
 				}
 			}
 		};
@@ -1772,7 +1794,6 @@ sap.ui.define([
 
 			if ((iActualContentHeight > iMaxContentHeight) && this._hasSingleScrollableContent()) {
 				oCSS["max-height"] = Math.min(iMaxContentHeight, iActualContentHeight) + "px";
-				oCSS["height"] = "";
 			}
 
 			return oCSS;
@@ -2072,6 +2093,10 @@ sap.ui.define([
 			if (!this._internalHeader) {
 				var that = this;
 				this._internalHeader = new Bar(this.getId() + "-intHeader");
+
+				// call the method that registers this Bar for alignment
+				this._setupBarTitleAlignment(this._internalHeader, this.getId() + "_internalHeader");
+
 				this.setAggregation("_internalHeader", this._internalHeader);
 				this._internalHeader.addEventDelegate({
 					onAfterRendering: function () {
@@ -2617,6 +2642,9 @@ sap.ui.define([
 		Popover.prototype._applyContextualSettings = function () {
 			ManagedObject.prototype._applyContextualSettings.call(this, ManagedObject._defaultContextualSettings);
 		};
+
+		// enrich the control functionality with TitleAlignmentMixin
+		TitleAlignmentMixin.mixInto(Popover.prototype);
 
 		return Popover;
 	});

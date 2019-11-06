@@ -13,7 +13,9 @@
 		},
 		"dependencies": {
 			"libs": {
-				"sap.ui.layout": {}
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {}
 			}
 		},
 		"config": {
@@ -23,6 +25,10 @@
 					"QuickView.view.xml",
 					"QuickView.controller.js",
 					"QuickView.fragment.xml",
+					"model/CompanyData.json",
+					"model/EmployeeData.json",
+					"model/GenericData.json",
+					"model/GenericDataNoHeader.json",
 					"manifest.json"
 				]
 			}

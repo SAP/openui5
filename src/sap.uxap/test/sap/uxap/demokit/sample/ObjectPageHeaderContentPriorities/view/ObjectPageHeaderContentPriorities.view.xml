@@ -50,7 +50,22 @@
 				<subSections>
 					<ObjectPageSubSection title="Goal summary">
 						<blocks>
-							<goals:GoalsBlock id="goalsblock"/>
+							<goals:GoalsBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Goal summary">
+						<blocks>
+							<goals:GoalsBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Goal summary">
+						<blocks>
+							<goals:GoalsBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Goal summary">
+						<blocks>
+							<goals:GoalsBlock/>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>

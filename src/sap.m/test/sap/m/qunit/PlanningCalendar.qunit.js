@@ -31,6 +31,7 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"jquery.sap.keycodes"
@@ -65,6 +66,7 @@ sap.ui.define([
 	DatesRow,
 	coreLibrary,
 	Control,
+	Element,
 	InvisibleText,
 	waitForThemeApplied
 ) {
@@ -2564,11 +2566,13 @@ sap.ui.define([
 			oSecondRow = oPC1.getRows()[1], // Get second row
 			handleRowHeaderClick = function (oEvent) {
 				var oRow = oEvent.getParameter("row");
+				var sRowHeaderId = oEvent.getParameter("headerId");
 
 				// Assert
 				assert.ok(oRow, "There must be a returned row");
 				assert.ok(oRow instanceof PlanningCalendarRow, "Returned row must derive from sap.m.PlanningCalendarRow");
 				assert.strictEqual(oRow, oSecondRow, "Returned row must be reference to the second row");
+				assert.strictEqual(sRowHeaderId, oSecondRow.sId + "-Head", "Returned id must be equal to the second row header id");
 			};
 
 		oSpy = sinon.spy(handleRowHeaderClick);
@@ -2754,6 +2758,9 @@ sap.ui.define([
 			),
 			fnAdjustColumnHeader = sinon.spy(oPC, "_adjustColumnHeadersTopOffset");
 
+		// assert
+		assert.strictEqual(fnAdjustColumnHeader.callCount, 0, "_adjustColumnHeadersTopOffset() is not called if the control is not rendered");
+
 		// act
 		oPC.placeAt("bigUiArea");
 		sap.ui.getCore().applyChanges();
@@ -2928,6 +2935,37 @@ sap.ui.define([
 				new Date(2016, 7, 20),
 				new Date(2016, 7, 21)],
 			this.oPC2, "Navigating back twice");
+	});
+
+	QUnit.test("Navigaton buttons disabled when on min/max dates", function(assert){
+		//Prepare
+		var oStartDate = this.oPC2.getStartDate();
+
+		//Arrange
+		this.oPC2.setMinDate(new Date(1999, 1, 1, 0, 0, 0));
+		this.oPC2.setStartDate(new Date(1999, 1, 1, 0, 0, 0));
+		this.oPC2._dateNav.setCurrent(new Date(1999, 1, 1, 0, 0, 0));
+
+		//Act
+		this.oPC2._applyArrowsLogic(true);
+
+		//Assert
+		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
+
+		//Arrange
+		this.oPC2.setMaxDate(new Date(2222,22,22,22,22,22));
+		this.oPC2.setStartDate(new Date(2222,22,22,22,22,22));
+		this.oPC2._dateNav.setCurrent(new Date(2222,22,22,22,22,22));
+
+		//Act
+		this.oPC2._applyArrowsLogic(false);
+
+		//Assert
+		assert.equal(this.oPC2._getHeader()._oNextBtn.getEnabled(), false, "Forward Arrow Is Disabled");
+
+		//Clean
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2._dateNav.setCurrent(oStartDate);
 	});
 
 
@@ -3553,6 +3591,18 @@ sap.ui.define([
 		assert.equal(this.oPC2._dateNav._current.getDate(), oToday.getDate(), 'date is correct');
 
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
+	});
+
+	QUnit.test("Date Picker close button works on mobile", function(assert) {
+		var oHeader = this.oPC2._getHeader(),
+			oCalendarPicker = Element.registry.get(oHeader.getAssociation("currentPicker")),
+			oSpyCancel = sinon.spy(oHeader, "_closeCalendarPickerPopup");
+
+		oHeader._openCalendarPickerPopup(oCalendarPicker);
+
+		oHeader._handlePickerCancelEvent();
+
+		assert.equal(oSpyCancel.callCount,1, "Close event was thrown once");
 	});
 
 	QUnit.module("OneMonth view", {

@@ -200,7 +200,11 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 	outline-color:    @sapUiContentContrastFocusColor;
 }
 
-html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
+html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable,
+html.sap-desktop .sapMBtn:focus > .sapMBtnCritical.sapMFocusable,
+html.sap-desktop .sapMBtn:focus > .sapMBtnNegative.sapMFocusable,
+html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable,
+html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable {
 	outline-color:     @sapUiContentContrastFocusColor;
 }
 
@@ -296,7 +300,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 }
 
 .sapMIBar-CTX, .sapMTB-Transparent-CTX {
-	.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
+	.sapMBtn:not(.sapMBtnDisabled):hover > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost):not(.sapMBtnCritical):not(.sapMBtnNegative):not(.sapMBtnNeutral):not(.sapMBtnSuccess) {
 		border-color: @sapUiButtonHoverBorderColor;
 	}
 }

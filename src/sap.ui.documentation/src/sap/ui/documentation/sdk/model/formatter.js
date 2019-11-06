@@ -118,7 +118,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 				sEntityId = sClassName + "." + sEntityId;
 			}
 
-			sHref = "#/api/" + sClassName;
+			sHref = "api/" + sClassName;
 			if (sEntityType !== "class") {
 				sHref += "/" + sEntityType + "/" + sEntityId;
 			}
@@ -171,7 +171,7 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 						target = target.slice(0, iHashIndex) + '/methods/' + target.slice(iHashIndex + 1);
 					}
 
-					return "<a class=\"jsdoclink\" href=\"#/api/" + target + "\" target=\"_self\">" + text + "</a>";
+					return "<a class=\"jsdoclink\" href=\"api/" + target + "\" target=\"_self\">" + text + "</a>";
 
 				}
 			});

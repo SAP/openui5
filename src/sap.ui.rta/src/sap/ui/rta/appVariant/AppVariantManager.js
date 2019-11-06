@@ -165,7 +165,7 @@ sap.ui.define([
 	AppVariantManager.prototype.deleteAppVariant = function(sAppVariantId) {
 		return AppVariantUtils.deleteAppVariant({
 			appId: sAppVariantId
-		});
+		}, this.getLayer());
 	};
 
 	/**
@@ -229,7 +229,7 @@ sap.ui.define([
 	 */
 	AppVariantManager.prototype.triggerCatalogPublishing = function(sAppVariantId, sReferenceAppId, bSaveAs) {
 		var fnTriggerCatalogOperation = bSaveAs ? AppVariantUtils.triggerCatalogAssignment : AppVariantUtils.triggerCatalogUnAssignment;
-		return fnTriggerCatalogOperation(sAppVariantId, sReferenceAppId)
+		return fnTriggerCatalogOperation(sAppVariantId, this.getLayer(), sReferenceAppId)
 			.catch(function(oError) {
 				var sMessageKey = bSaveAs ? "MSG_CATALOG_ASSIGNMENT_FAILED" : "MSG_DELETE_APP_VARIANT_FAILED";
 				return AppVariantUtils.catchErrorDialog(oError, sMessageKey, sAppVariantId);

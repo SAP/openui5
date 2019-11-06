@@ -1,81 +1,91 @@
 <mvc:View
-		xmlns="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:core="sap.ui.core"
-		xmlns:grid="sap.ui.layout.cssgrid"
-		xmlns:form="sap.ui.layout.form"
-		controllerName="sap.ui.layout.sample.GridTemplateRows.GridTemplateRows">
-	<Slider class="sapUiSmallMarginBottom" value="100" liveChange="onSliderMoved"/>
+	controllerName="sap.ui.layout.sample.GridTemplateRows.GridTemplateRows"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:grid="sap.ui.layout.cssgrid"
+	xmlns:form="sap.ui.layout.form">
+	<Slider
+		value="100"
+		liveChange=".onSliderMoved"
+		class="sapUiSmallMarginBottom" />
 	<Panel id="panelCSSGrid">
 		<headerToolbar>
-			<Toolbar height="3rem">
-				<Title text=" Properties gridTemplateRows and gridTemplateColumns example"/>
-			</Toolbar>
+			<OverflowToolbar height="3rem">
+				<Title text="Properties gridTemplateRows and gridTemplateColumns example" />
+			</OverflowToolbar>
 		</headerToolbar>
-		<content>
-			<form:SimpleForm editable="true"
-				layout="ResponsiveGridLayout"
-				labelSpanXL="3"
-				labelSpanL="3"
-				labelSpanM="4"
-				labelSpanS="12">
-				<Label text="Change the value of Rows Template" />
-				<ComboBox id="rTem" width="40%" selectedKey="rFr" change="onInputChanged">
-					<core:Item text="1fr 2fr 1fr" key="rFr"/>
-					<core:Item text="1fr 3fr 1fr"/>
-					<core:Item text="1fr 2fr 3fr"/>
-					<core:Item text="auto"/>
-					<core:Item text="40px 4em 40px"/>
-					<core:Item text="25% 40% 25%"/>
-					<core:Item text="minmax(10px, 100px) auto auto"/>
-					<core:Item text="repeat(3, 50px)"/>
-					<core:Item text="repeat(3, minmax(40px, 60px))"/>
-					<core:Item text="repeat(auto-fill, 50px)"/>
-				</ComboBox>
-				<Label text="Change the value of Columns Template" />
-				<ComboBox id="cTem" width="40%" value="1fr 1fr" selectedKey="cFr" change="onInputChanged">
-					<core:Item text="1fr 1fr" key="cFr"/>
-					<core:Item text="1fr 2fr"/>
-					<core:Item text="auto"/>
-					<core:Item text="400px auto"/>
-					<core:Item text="25% 50%"/>
-					<core:Item text="minmax(100px, 200px) auto"/>
-					<core:Item text="repeat(2, 150px)"/>
-					<core:Item text="repeat(2, minmax(120px, 1fr))"/>
-					<core:Item text="repeat(auto-fill, 200px)"/>
-				</ComboBox>
-			</form:SimpleForm>
-			<grid:CSSGrid id="grid1"
-						  gridTemplateRows="1fr 2fr 1fr"
-						  gridTemplateColumns="repeat(2,1fr)"
-						  gridGap="1rem">
-				<grid:items>
-					<VBox class=" demoBox">
-						<Title text="A Box" wrapping="true" />
-						<Text text="A Box subtitle" wrapping="true" />
-					</VBox>
-					<VBox class=" demoBox">
-						<Title text="B Box" wrapping="true" />
-						<Text text="B Box subtitle" wrapping="true" />
-					</VBox>
-					<VBox class=" demoBox">
-						<Title text="C Box" wrapping="true" />
-						<Text text="C Box subtitle" wrapping="true" />
-					</VBox>
-					<VBox class=" demoBox">
-						<Title text="D Box" wrapping="true" />
-						<Text text="D Box subtitle" wrapping="true" />
-					</VBox>
-					<VBox class=" demoBox">
-						<Title text="E Box" wrapping="true" />
-						<Text text="E Box subtitle" wrapping="true" />
-					</VBox>
-					<VBox class=" demoBox">
-						<Title text="F Box" wrapping="true" />
-						<Text text="F Box subtitle" wrapping="true" />
-					</VBox>
-				</grid:items>
-			</grid:CSSGrid>
-		</content>
+		<form:SimpleForm
+			editable="true"
+			layout="ResponsiveGridLayout"
+			labelSpanXL="3"
+			labelSpanL="3"
+			labelSpanM="4"
+			labelSpanS="12">
+			<Label text="Change the value of Rows Template" />
+			<ComboBox
+				id="rTem"
+				width="40%"
+				selectedKey="rFr"
+				change=".onInputChanged">
+				<core:Item text="1fr 2fr 1fr" key="rFr" />
+				<core:Item text="1fr 3fr 1fr" />
+				<core:Item text="1fr 2fr 3fr" />
+				<core:Item text="auto" />
+				<core:Item text="40px 4em 40px" />
+				<core:Item text="25% 40% 25%" />
+				<core:Item text="minmax(10px, 100px) auto auto" />
+				<core:Item text="repeat(3, 50px)" />
+				<core:Item text="repeat(3, minmax(40px, 60px))" />
+				<core:Item text="repeat(auto-fill, 50px)" />
+			</ComboBox>
+			<Label text="Change the value of Columns Template" />
+			<ComboBox
+				id="cTem"
+				width="40%"
+				value="1fr 1fr"
+				selectedKey="cFr"
+				change=".onInputChanged">
+				<core:Item text="1fr 1fr" key="cFr" />
+				<core:Item text="1fr 2fr" />
+				<core:Item text="auto" />
+				<core:Item text="400px auto" />
+				<core:Item text="25% 50%" />
+				<core:Item text="minmax(100px, 200px) auto" />
+				<core:Item text="repeat(2, 150px)" />
+				<core:Item text="repeat(2, minmax(120px, 1fr))" />
+				<core:Item text="repeat(auto-fill, 200px)" />
+			</ComboBox>
+		</form:SimpleForm>
+		<grid:CSSGrid
+			id="grid1"
+			gridTemplateRows="1fr 2fr 1fr"
+			gridTemplateColumns="repeat(2,1fr)"
+			gridGap="1rem">
+			<VBox class="demoBox">
+				<Title text="A Box" wrapping="true" />
+				<Text text="A Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Title text="B Box" wrapping="true" />
+				<Text text="B Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Title text="C Box" wrapping="true" />
+				<Text text="C Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Title text="D Box" wrapping="true" />
+				<Text text="D Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Title text="E Box" wrapping="true" />
+				<Text text="E Box subtitle" wrapping="true" />
+			</VBox>
+			<VBox class="demoBox">
+				<Title text="F Box" wrapping="true" />
+				<Text text="F Box subtitle" wrapping="true" />
+			</VBox>
+		</grid:CSSGrid>
 	</Panel>
 </mvc:View>

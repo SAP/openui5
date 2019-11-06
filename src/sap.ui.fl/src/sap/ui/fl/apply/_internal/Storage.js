@@ -33,16 +33,22 @@ sap.ui.define([
 		return Promise.all(aConnectorPromises);
 	}
 
-	function flattenResponses(mResponseObject) {
+	function flattenResponses(aResponses) {
 		var aFlattenedResponses = [];
 
-		mResponseObject.responses.forEach(function (oResponse) {
+		aResponses.forEach(function (oResponse) {
 			if (Array.isArray(oResponse)) {
 				aFlattenedResponses = aFlattenedResponses.concat(oResponse);
 			} else {
 				aFlattenedResponses.push(oResponse);
 			}
 		});
+		return aFlattenedResponses;
+	}
+
+
+	function flattenInnerResponses(mResponseObject) {
+		var aFlattenedResponses = flattenResponses(mResponseObject.responses);
 		mResponseObject.responses = aFlattenedResponses;
 
 		return mResponseObject;
@@ -95,6 +101,7 @@ sap.ui.define([
 	 *
 	 * @param {map} mPropertyBag properties needed by the connectors
 	 * @param {string} mPropertyBag.reference reference of the application for which the flex data is requested
+	 * @param {string} [mPropertyBag.componentName] componentName of the application which may differ from the reference in case of an app variant
 	 * @param {string} [mPropertyBag.appVersion] version of the application for which the flex data is requested
 	 * @param {string} [mPropertyBag.cacheKey] cacheKey which can be used to etag / cachebuster the request
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
@@ -106,8 +113,9 @@ sap.ui.define([
 
 		return ApplyUtils.getApplyConnectors()
 			.then(loadFlexDataFromConnectors.bind(this, mPropertyBag))
-			.then(disassembleVariantSectionsIfNecessary)
 			.then(flattenResponses)
+			.then(disassembleVariantSectionsIfNecessary)
+			.then(flattenInnerResponses)
 			.then(StorageResultMerger.merge);
 	};
 

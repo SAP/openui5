@@ -211,7 +211,7 @@ function(
 	 *
 	 * @param {string} sIdSuffix Suffix to be added to the ids of the new control and its internal objects.
 	 * @returns {sap.m.ComboBox} The cloned <code>sap.m.MultiComboBox</code> control.
-	 * @protected
+	 * @public
 	 */
 	MultiComboBox.prototype.clone = function (sIdSuffix) {
 		var oComboBoxClone = ComboBoxBase.prototype.clone.apply(this, arguments),
@@ -762,13 +762,14 @@ function(
 
 		this.syncPickerContent();
 
+		// suppress invalid value
+		this.handleInputValidation(oEvent, this.isComposingCharacter());
+
 		if (this._bIsPasteEvent) {
-			oInput.updateDomValue(this._sOldValue || "");
+			oInput.updateDomValue(this._sOldValue || oEvent.target.value || "");
 			return;
 		}
 
-		// suppress invalid value
-		this.handleInputValidation(oEvent, this.isComposingCharacter());
 
 		if (this.isOpen()) {
 			// wait a tick so the setVisible call has replaced the DOM
@@ -1927,8 +1928,8 @@ function(
 	MultiComboBox.prototype._handleInputFocusOut = function () {
 		var oInput = this.isPickerDialog() ? this.getPickerTextField() : this,
 		sUpdateValue = this._sOldInput || this._sOldValue || "";
-
 		oInput.updateDomValue(sUpdateValue);
+		this._bIsPasteEvent = null;
 	};
 
 	MultiComboBox.prototype.onItemChange = function (oControlEvent) {
@@ -3024,7 +3025,9 @@ function(
 
 		aStartsWithItems = this._getItemsStartingWith(sValue, true);
 
-		!bCompositionEvent && this._handleTypeAhead(sValue, aStartsWithItems, oInput);
+		if (!bCompositionEvent || this._bIsPasteEvent) {
+			this._handleTypeAhead(sValue, aStartsWithItems, oInput);
+		}
 
 		aItemsToCheck = this.getEnabledItems();
 

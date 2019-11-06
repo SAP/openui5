@@ -13,6 +13,17 @@
         "type": "FIX",
         "text": " sap.ui.rta: Revision of concatenation of custom id",
         "references": []
+      },
+      {
+        "id": "5b6cc681147f3ee94a39a6b6bc6d43aca54f548c",
+        "type": "FIX",
+        "text": ": RTA ContextMenu remove grouping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411624"
+          }
+        ]
       }
     ]
   }

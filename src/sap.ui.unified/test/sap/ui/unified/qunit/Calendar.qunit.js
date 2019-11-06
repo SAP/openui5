@@ -545,6 +545,32 @@ sap.ui.define([
 		oAdjustYearRangeDisplaySpy.restore();
 	});
 
+	QUnit.test("Month Button appearance (hidden/visible)", function (assert) {
+		// Prepare
+		var oCal = new Calendar({
+				primaryCalendarType: sap.ui.core.CalendarType.Gregorian
+			}).placeAt("qunit-fixture"),
+			oHeader = oCal.getAggregation("header");
+
+		sap.ui.getCore().applyChanges();
+
+		// check initial Month Button visibility
+		assert.equal(oHeader.getVisibleButton1(), true, "At the beginning, Month Button is visible");
+
+		// open MonthPicker and check Button visibility
+		oCal._showMonthPicker(true);
+		sap.ui.getCore().applyChanges();
+		assert.equal(oHeader.getVisibleButton1(), false, "After opening of the Month Picker, Month Button is hidden");
+
+		// close MonthPicker and check Button visibility
+		oCal._selectMonth();
+		sap.ui.getCore().applyChanges();
+		assert.equal(oHeader.getVisibleButton1(), true, "After closing of the Month Picker, Month Button is visible");
+
+	});
+
+
+
 	QUnit.module("initialize");
 
 	QUnit.test("YearRangePicker aggregation is instantiated correctly", function (assert) {

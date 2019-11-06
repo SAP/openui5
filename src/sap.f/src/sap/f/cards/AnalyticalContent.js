@@ -4,6 +4,7 @@
 sap.ui.define([
 		"sap/f/library",
 		"sap/f/cards/BaseContent",
+		"sap/f/cards/BindingResolver",
 		"sap/viz/ui5/controls/VizFrame",
 		"sap/viz/ui5/controls/common/feeds/FeedItem",
 		"sap/viz/ui5/data/FlattenedDataset",
@@ -11,7 +12,7 @@ sap.ui.define([
 		"sap/ui/core/Core",
 		"jquery.sap.global"
 	],
-	function (library, BaseContent, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery) {
+	function (library, BaseContent, BindingResolver, VizFrame, FeedItem, FlattenedDataset, Log, Core, jQuery) {
 		"use strict";
 
 		/**
@@ -156,8 +157,8 @@ sap.ui.define([
 		 * @private
 		 */
 		AnalyticalContent.prototype._updateModel = function () {
-			this._createChart();
 			BaseContent.prototype._updateModel.apply(this, arguments);
+			this._createChart();
 		};
 
 		/**
@@ -173,12 +174,14 @@ sap.ui.define([
 				return;
 			}
 
+			var oResolvedChartObject = BindingResolver.resolveValue(oChartObject, this.getModel(), "/");
+
 			var aDimensionNames = [];
 			if (oChartObject.dimensions) {
 				var aDimensions = [];
 				for (var i = 0; i < oChartObject.dimensions.length; i++) {
 					var oDimension = oChartObject.dimensions[i];
-					var sName = oDimension.label;
+					var sName = oResolvedChartObject.dimensions[i].label;
 					aDimensionNames.push(sName);
 					var oDimensionMap = {
 						name: sName,
@@ -194,7 +197,7 @@ sap.ui.define([
 				var aMeasures = [];
 				for (var i = 0; i < oChartObject.measures.length; i++) {
 					var oMeasure = oChartObject.measures[i];
-					var sName = oMeasure.label;
+					var sName = oResolvedChartObject.measures[i].label;
 					aMeasureNames.push(sName);
 					var oMeasureMap = {
 						name: sName,
@@ -235,7 +238,8 @@ sap.ui.define([
 					})
 				]
 			});
-			var oVizProperties = this._getVizPropertiesObject(oChartObject);
+
+			var oVizProperties = this._getVizPropertiesObject(oResolvedChartObject);
 			oChart.setVizProperties(oVizProperties);
 
 			this._oActions.setAreaType(AreaType.Content);

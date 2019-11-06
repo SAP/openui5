@@ -88,7 +88,7 @@ sap.ui.define([
 				width: sColumnWidth,
 				label: new sap.m.Label({text: "{/#Product/" + sName + "/@sap:label}"}),
 				hAlign: sType && sType.indexOf("Decimal") >= 0 ? "End" : "Begin",
-				template: specialTemplate() || new Text({text: {path: sName}})
+				template: specialTemplate() || new Text({text: {path: sName}, wrapping: false})
 			});
 		}
 

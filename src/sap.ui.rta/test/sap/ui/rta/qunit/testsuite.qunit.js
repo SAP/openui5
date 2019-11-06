@@ -112,6 +112,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin"]
 				}
 			},
+			"plugin/iframe/SettingsDialog": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/iframe/SettingsDialog"]
+				}
+			},
 			"plugin/Combine": {
 				group: "Plugin",
 				coverage: {
@@ -486,6 +492,9 @@ sap.ui.define([
 				"util/validateFlexEnabled": {
 					coverage: {
 						only: ["sap/ui/rta/util/validateFlexEnabled"]
+					},
+					ui5: {
+						flexibilityServices: '[{"connector": "LocalStorageConnector", "layers": ["ALL"]}]'
 					}
 				},
 				"util/validateStableIds": {

@@ -45,6 +45,89 @@
             "reference": "1980009856"
           }
         ]
+      },
+      {
+        "id": "f219d7c0752dff95be182d70d63e42790199a0ef",
+        "type": "FEATURE",
+        "text": " CLDR: Upgrade to 35.1, support new Japanese era",
+        "references": []
+      },
+      {
+        "id": "0ebc42f7326b52cbb0784d92ed624927d8326bf0",
+        "type": "FEATURE",
+        "text": " CommandExecution: add visible property",
+        "references": []
+      },
+      {
+        "id": "5740660d377c0d4a6286c428bbbeb3ff4d729fb2",
+        "type": "FEATURE",
+        "text": " core.routing: navTo with information for nested components",
+        "references": []
+      },
+      {
+        "id": "e507288380dcb1986f0ca5cd9e66eea0778d550e",
+        "type": "FIX",
+        "text": " Interaction: fix interaction tracking.",
+        "references": []
+      },
+      {
+        "id": "c663f345553092b3c4ecc74fddcd977350506ff1",
+        "type": "FIX",
+        "text": " core.routing: target should be suspended without promise involved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "N/A"
+          }
+        ]
+      },
+      {
+        "id": "fd1d965b8dbcac04a9df1106d6a173dd871a5346",
+        "type": "FIX",
+        "text": " handlebars: upgrading to version 4.4.3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970505257"
+          }
+        ]
+      },
+      {
+        "id": "d0f0090c72c075f168cd4141f3707989748d7920",
+        "type": "FIX",
+        "text": " routing.Target: check router before stopping it",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970526256"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970527298"
+          }
+        ]
+      },
+      {
+        "id": "052bf797af6ce2ef031adb47263820632fbbdb43",
+        "type": "FIX",
+        "text": " sap.m.StepInput: respects min and max binding constraints",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970359174"
+          }
+        ]
+      },
+      {
+        "id": "625d15ba0bd2e36ee7a7a30ccc5734df55759545",
+        "type": "FIX",
+        "text": " sap/ui/Device: Detect iPads running on iOS 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970475024"
+          }
+        ]
       }
     ]
   }

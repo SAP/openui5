@@ -6,6 +6,7 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/m/ScrollBar",
 	"sap/m/library",
 	"sap/ui/base/ManagedObjectObserver",
@@ -22,6 +23,7 @@ sap.ui.define([
 ], function(
 	library,
 	Control,
+	Core,
 	ScrollBar,
 	mLibrary,
 	ManagedObjectObserver,
@@ -334,6 +336,9 @@ sap.ui.define([
 	DynamicPage.SHOW_FOOTER_CLASS_NAME = "sapFDynamicPageActualFooterControlShow";
 	DynamicPage.HIDE_FOOTER_CLASS_NAME = "sapFDynamicPageActualFooterControlHide";
 
+	// Class which is added to the DynamicPage if we have additional navigation (e.g. IconTabBar)
+	DynamicPage.NAVIGATION_CLASS_NAME = "sapFDynamicPageNavigation";
+
 	/**
 	 * LIFECYCLE METHODS
 	 */
@@ -369,7 +374,7 @@ sap.ui.define([
 		this._attachTitleMouseOverHandlers();
 		this._addStickySubheaderAfterRenderingDelegate();
 		this._detachScrollHandler();
-
+		this._toggleAdditionalNavigationClass();
 	};
 
 	DynamicPage.prototype.onAfterRendering = function () {
@@ -470,7 +475,7 @@ sap.ui.define([
 			return this;
 		}
 
-		oOldStickySubheaderProvider = sap.ui.getCore().byId(sOldStickySubheaderProviderId);
+		oOldStickySubheaderProvider = Core.byId(sOldStickySubheaderProviderId);
 
 		if (this._oStickySubheader && oOldStickySubheaderProvider) {
 			oOldStickySubheaderProvider._returnStickyContent();
@@ -580,7 +585,7 @@ sap.ui.define([
 			return;
 		}
 
-		bUseAnimations = sap.ui.getCore().getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
+		bUseAnimations = Core.getConfiguration().getAnimationMode() !== Configuration.AnimationMode.none;
 		this._toggleFooterSpacer(bShow);
 
 		if (bUseAnimations) {
@@ -1261,7 +1266,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._updateScrollBarOffset = function () {
-		var sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
+		var sStyleAttribute = Core.getConfiguration().getRTL() ? "left" : "right",
 			iOffsetWidth = this._needsVerticalScrollBar() ? getScrollbarSize().width + "px" : 0,
 			oFooter = this.getFooter();
 
@@ -1826,7 +1831,7 @@ sap.ui.define([
 			return;
 		}
 
-		oStickySubheaderProvider = sap.ui.getCore().byId(sStickySubheaderProviderId);
+		oStickySubheaderProvider = Core.byId(sStickySubheaderProviderId);
 
 		if (!exists(oStickySubheaderProvider)) {
 			return;
@@ -2122,7 +2127,7 @@ sap.ui.define([
 			sStickySubheaderProviderId = this.getStickySubheaderProvider(),
 			bIsInInterface;
 
-		oStickySubheaderProvider = sap.ui.getCore().byId(sStickySubheaderProviderId);
+		oStickySubheaderProvider = Core.byId(sStickySubheaderProviderId);
 
 		if (exists(oStickySubheaderProvider) && !this._bAlreadyAddedStickySubheaderAfterRenderingDelegate) {
 			bIsInInterface = oStickySubheaderProvider.getMetadata()
@@ -2182,6 +2187,27 @@ sap.ui.define([
 
 		this.$wrapper.on("scroll", this._onWrapperScrollReference);
 		this.$wrapper.on("scroll", this._toggleHeaderOnScrollReference);
+	};
+
+	/**
+	 * Toggles the <code>sapFDynamicPageNavigation</code> CSS class depending on the
+	 * <code>StickySubheaderProvider</code> existence.
+	 * @private
+	 */
+	DynamicPage.prototype._toggleAdditionalNavigationClass = function() {
+		var bShow = this._bStickySubheaderProviderExists();
+
+		this.toggleStyleClass(DynamicPage.NAVIGATION_CLASS_NAME, bShow);
+	};
+
+	/**
+	 * Checks whether or not the <code>StickySubheaderProvider</code> is available.
+	 * @returns {boolean} Whether the <code>StickySubheaderProvider</code> exists
+	 * @private
+	 */
+	DynamicPage.prototype._bStickySubheaderProviderExists = function() {
+		var oSticky = Core.byId(this.getStickySubheaderProvider());
+		return !!oSticky && oSticky.isA("sap.f.IDynamicPageStickyContent");
 	};
 
 	/**

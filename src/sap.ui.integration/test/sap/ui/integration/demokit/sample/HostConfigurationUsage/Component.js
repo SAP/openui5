@@ -1,13 +1,13 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/m/routing/Router"
-], function (UIComponent, Router) {
+	"sap/ui/core/UIComponent"
+], function (UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.ui.integration.sample.HostConfigurationUsage.Component", {
+	return UIComponent.extend("sap.ui.integration.sample.HostConfigurationUsage.Component", {
+
 		metadata: {
 			manifest: "json"
 		}
+
 	});
-	return Component;
 }, true);

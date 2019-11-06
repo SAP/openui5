@@ -21733,7 +21733,7 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("teamId", ["TEAM_01"])
-			.expectChange("name", false)
+			.expectChange("name", [])
 			.expectChange("managerId");
 
 		return this.createView(assert, sView, oModel).then(function () {

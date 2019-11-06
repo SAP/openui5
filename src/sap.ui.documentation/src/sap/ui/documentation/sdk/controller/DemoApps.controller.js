@@ -171,7 +171,7 @@ sap.ui.define([
 			 * @public
 			 */
 			onReadMoreButtonPress: function () {
-				window.open("#/topic/a3ab54ecf7ac493b91904beb2095d208", "_blank");
+				window.open("topic/a3ab54ecf7ac493b91904beb2095d208", "_blank");
 			},
 
 			/**

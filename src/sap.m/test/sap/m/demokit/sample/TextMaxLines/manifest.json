@@ -11,15 +11,9 @@
 			"type": "XML",
 			"async": true
 		},
-		"resources": {
-			"css": [
-				{
-					"uri": "style.css"
-				}
-			]
-		},
 		"dependencies": {
 			"libs": {
+				"sap.ui.core": {},
 				"sap.m": {}
 			}
 		},
@@ -27,7 +21,6 @@
 			"sample": {
 				"files": [
 					"V.view.xml",
-					"style.css",
 					"manifest.json"
 				]
 			}

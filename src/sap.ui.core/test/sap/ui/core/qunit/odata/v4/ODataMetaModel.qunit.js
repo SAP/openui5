@@ -112,7 +112,8 @@ sap.ui.define([
 					},
 					"@Core.OperationAvailable#1" : {
 						"$Path" : "$ReturnType"
-					}
+					},
+					"@Core.OperationAvailable#2" : false
 				},
 				"name.space.OverloadedAction()/parameter0" : {
 					"@Common.Label" : "Zero"
@@ -1184,10 +1185,6 @@ sap.ui.define([
 
 		// code under test
 		oMetaModel = new ODataMetaModel(null, null, null, oModel);
-
-		// code under test
-		assert.strictEqual(oMetaModel.getAdapterFactoryModulePath(),
-			"sap/ui/mdc/experimental/adapter/odata/v4/ODataAdapterFactory");
 	});
 
 	//*********************************************************************************************
@@ -1589,6 +1586,7 @@ sap.ui.define([
 		}),
 		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable" // at unbound overload
 			: mScope.$Annotations["name.space.OverloadedAction()"]["@Core.OperationAvailable"],
+		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable#2" : false,
 		// annotations at $ReturnType of specific overload or across all overloads (ODATA-1178) - -
 		"/ChangeManagerOfTeam/$ReturnType@Common.Label" : "Hail to the Chief",
 		// Note: there are two overloads with (Collection of) Worker, avoid these!

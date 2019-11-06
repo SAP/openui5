@@ -154,21 +154,41 @@ sap.ui.define([
 		oCalendar = oDPS._getCalendar();
 
 		// Assert
-		assert.notOk(oDPSPopover.getBeginButton().getEnabled(), "Begin button is disabled when the popover is opened and the DateRangeSelection input field is empty");
+		assert.notOk(
+			oDPSPopover.getBeginButton().getEnabled(),
+			"Begin button is disabled when the popover is opened and the DateRangeSelection input field is empty"
+		);
 
 		// Act
 		oCalendar.getSelectedDates()[0].setStartDate(oCalendar._getFocusedDate().toLocalJSDate());
 		oCalendar.fireSelect();
 
 		// Assert
-		assert.notOk(oDPSPopover.getBeginButton().getEnabled(), "Begin button is still disabled when we choose a start date for our interval");
+		assert.notOk(
+			oDPSPopover.getBeginButton().getEnabled(),
+			"Begin button is still disabled when we choose a start date for our interval"
+		);
 
 		// Act
 		oCalendar.getSelectedDates()[0].setEndDate(oCalendar._getFocusedDate().toLocalJSDate());
 		oCalendar.fireSelect();
 
 		// Assert
-		assert.ok(oDPSPopover.getBeginButton().getEnabled(), "Begin button is enabled when the end date is chosen");
+		assert.ok(
+			oDPSPopover.getBeginButton().getEnabled(),
+			"Begin button is enabled when the end date is chosen"
+		);
+
+		// Act
+		oCalendar.getSelectedDates()[0].setStartDate(oCalendar._getFocusedDate().toLocalJSDate());
+		oCalendar.getSelectedDates()[0].setEndDate(null);
+		oCalendar.fireSelect();
+
+		// Assert
+		assert.notOk(
+			oDPSPopover.getBeginButton().getEnabled(),
+			"Begin button is disabled again when we choose a start date for a new interval"
+		);
 
 		// Cleanup
 		oDPS.destroy();

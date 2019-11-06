@@ -441,7 +441,7 @@ sap.ui.define([
 
 		var oLastColumn = oTable.getColumns()[oTable.getColumns().length - 1];
 		oLastColumn.setDemandPopin(true);
-		oLastColumn.setMinScreenWidth("1000000000000px");
+		oLastColumn.setMinScreenWidth("48000px");
 		sap.ui.getCore().applyChanges();
 
 		var oNavigatedIndicator = oFirstItem.getPopin().getDomRef().childNodes[2];

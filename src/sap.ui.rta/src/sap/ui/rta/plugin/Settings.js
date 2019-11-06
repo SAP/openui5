@@ -120,9 +120,9 @@ sap.ui.define([
 			oControl = vSelector;
 		}
 
-		return this._getChangeHandler(mChangeSpecificData.changeType, oControl, sControlType)
-			.then(function(oChangeHandler) {
-				if (aSelectedOverlays[0].getVariantManagement && oChangeHandler && oChangeHandler.revertChange) {
+		return this.hasChangeHandler(mChangeSpecificData.changeType, oControl, sControlType)
+			.then(function(bHasChangeHandler) {
+				if (aSelectedOverlays[0].getVariantManagement && bHasChangeHandler) {
 					sVariantManagementReference = aSelectedOverlays[0].getVariantManagement();
 				}
 				return this.getCommandFactory().getCommandFor(

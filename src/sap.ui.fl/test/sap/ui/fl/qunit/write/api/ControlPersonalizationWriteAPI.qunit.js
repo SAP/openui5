@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
@@ -21,7 +20,6 @@ sap.ui.define([
 	FlexControllerFactory,
 	Utils,
 	LayerUtils,
-	ChangeRegistry,
 	ChangeHandlerRegistration,
 	VariantModel,
 	ControlPersonalizationWriteAPI,
@@ -119,9 +117,9 @@ sap.ui.define([
 				selectorControl: this.oElement
 			};
 			return ControlPersonalizationAPI._checkChangeSpecificData(oChange)
-				.catch(function(oError) {
-					assert.equal(oError.message, "No valid ChangeHandler", "the function returns an error");
-				});
+			.catch(function(oError) {
+				assert.ok(oError, "the function rejects with an error");
+			});
 		});
 	});
 

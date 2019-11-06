@@ -24,6 +24,8 @@
 					"V.view.xml",
 					"C.controller.js",
 					"Dialog.fragment.xml",
+					"DialogPreselected.fragment.xml",
+					"DialogPreset.fragment.xml",
 					"manifest.json"
 				]
 			}

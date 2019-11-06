@@ -47,23 +47,23 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
-			"apply/_internal/connectors/BrowserStorageConnector": {
+			"apply/_internal/connectors/ObjectStorageConnector": {
 				group: "Apply Internal",
 				coverage: {
 					only: [
-						"sap/ui/fl/apply/_internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
 						"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
 						"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector"
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layers": []}]'
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
-			"apply/_internal/connectors/BrowserStorageUtils": {
+			"apply/_internal/connectors/ObjectStorageUtils": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/BrowserStorageUtils"]
+					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
 				}
 			},
 			"apply/_internal/changes/Applier": {
@@ -89,7 +89,8 @@ sap.ui.define(function () {
 				ui5: {
 					resourceroots: {
 						"test.app": "./test-resources/sap/ui/fl/qunit/testResources/"
-					}
+					},
+					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]},{"connector": "LrepConnector", "layers": ["ALL"], "url": "someURL"}]'
 				},
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/Storage"]
@@ -165,6 +166,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/api/PersistenceWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
 				}
 			},
+			"write/api/AppVariantWriteAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/AppVariantWriteAPI", "sap/ui/fl/apply/_internal/ChangesController"]
+				}
+			},
 			"write/api/FeaturesAPI": {
 				group: "Write API",
 				coverage: {
@@ -219,17 +226,17 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/write/_internal/StorageFeaturesMerger"]
 				}
 			},
-			"write/_internal/connectors/BrowserStorageConnector": {
+			"write/_internal/connectors/ObjectStorageConnector": {
 				group: "Write Internal",
 				coverage: {
 					only: [
-						"sap/ui/fl/write/_internal/connectors/BrowserStorageConnector",
+						"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
 						"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 						"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
 					]
 				},
 				ui5: {
-					flexibilityServices: '[{"connector": "BrowserStorageConnector", "layers": []}]'
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
 			"write/_internal/connectors/JsObjectConnector": {
@@ -361,6 +368,12 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/util/ManagedObjectModel"]
 				}
 			},
+			"util/IFrame": {
+				group: "IFrame control",
+				coverage: {
+					only: ["sap/ui/fl/util/IFrame"]
+				}
+			},
 
 			// ChangeHandler tests:
 			"changeHandler/AddXML": {
@@ -457,6 +470,17 @@ sap.ui.define(function () {
 				group: "ChangeHandler",
 				coverage: {
 					only: ["sap/ui/fl/changeHandler/UnstashControl"]
+				}
+			},
+			"changeHandler/UpdateIFrame": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/UpdateIFrame"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
 				}
 			},
 

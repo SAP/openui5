@@ -220,13 +220,13 @@ sap.ui.define([
 				xhr.onload = function () {
 					if (xhr.status >= 200 && xhr.status < 400) {
 						var oResult = {};
-						var sContentType = xhr.getResponseHeader("Content-Type");
-						if (sContentType && sContentType.startsWith("application/json")) {
-							//HEAD request for token does not have body response
-							oResult.response = xhr.response ? JSON.parse(xhr.response) : undefined;
+						if (xhr.response) {
+							oResult.response = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
 						}
 						oResult.status = xhr.status;
-						oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
+						if (xhr.getResponseHeader("X-CSRF-Token")) {
+							oResult.xsrfToken = xhr.getResponseHeader("X-CSRF-Token");
+						}
 						resolve(oResult);
 					} else {
 						reject({

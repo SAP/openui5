@@ -4,86 +4,52 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/deepClone",
-	"sap/m/VBox",
-	"sap/m/Bar",
-	"sap/m/Label",
-	"sap/m/Button"
+	"sap/ui/core/Fragment",
+	"sap/base/util/restricted/_merge"
 ], function (
 	BasePropertyEditor,
 	deepClone,
-	VBox,
-	Bar,
-	Label,
-	Button
+	Fragment,
+	_merge
 ) {
 	"use strict";
 
 	/**
-	 * @constructor
+	 * @class
+	 * Constructor for a new <code>ArrayEditor</code>.
+	 *
+	 * This property editor allows you to edit arrays in a flat way.
+	 *
+	 * To get notified about changes made with the editor, you can use the <code>propertyChange</code> event.
+	 *
+	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor
+	 * @author SAP SE
+	 * @since 1.72
+	 * @version ${version}
+	 *
 	 * @private
 	 * @experimental
+	 * @ui5-restricted
 	 */
 	var ArrayEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor", {
+		metadata: {
+			events: {
+				"ready" : {}
+			}
+		},
 		constructor: function() {
 			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			var oContainer = new VBox();
-			this.addContent(oContainer);
 
-			oContainer.bindAggregation("items", "items", function(sId, oItemContext) {
-				var oItem = oItemContext.getObject();
-				var iIndex = this.getConfig().items.indexOf(oItem);
+			Fragment.load({
+				name: "sap.ui.integration.designtime.baseEditor.propertyEditor.arrayEditor.ArrayEditor",
+				controller: this
+			}).then(function(oContainer) {
 
-				var oGroup = new VBox({
-					items: new Bar({
-						contentLeft: [
-							new Label({
-								text: this.getConfig().itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}"
-							})
-						],
-						contentRight: [
-							new Button({
-								icon: "sap-icon://less",
-								tooltip: "{i18n>BASE_EDITOR.ARRAY.REMOVE}",
-								press: function(iIndex) {
-									var aValue = this.getConfig().value;
-									aValue.splice(iIndex, 1);
-									this.firePropertyChanged(aValue);
-								}.bind(this, iIndex)
-							})
-						]
-					})
-				});
+				this.addContent(oContainer);
 
-				Promise.all(
-					Object.keys(oItem).map(function(sItemProperty) {
-						var oItemConfig = oItem[sItemProperty];
-						return this.getEditor().createPropertyEditor(oItemConfig);
-					}.bind(this))
-				).then(function (aPropertyEditors) {
-					aPropertyEditors.forEach(function (oPropertyEditor) {
-						oPropertyEditor.getLabel().setDesign("Standard");
-						oGroup.addItem(oPropertyEditor);
-					});
-				});
-
-				return oGroup;
-
+				this.fireReady();
 			}.bind(this));
-
-			this.addContent(new Bar({
-				contentRight: [
-					new Button({
-						icon: "sap-icon://add",
-						tooltip: "{i18n>BASE_EDITOR.ARRAY.ADD}",
-						enabled: "{= (${items} || []).length < ${maxItems} }",
-						press: function() {
-							var aValue = this.getConfig().value || [];
-							aValue.push({});
-							this.firePropertyChanged(aValue);
-						}.bind(this)
-					})
-				]
-			}));
 		},
 		onValueChange: function() {
 			var vReturn = BasePropertyEditor.prototype.onValueChange.apply(this, arguments);
@@ -91,19 +57,34 @@ sap.ui.define([
 			if (oConfig.value && oConfig.template) {
 				oConfig.items = [];
 				oConfig.value.forEach(function(oValue, iIndex) {
-					var mItem = deepClone(oConfig.template);
-					Object.keys(mItem).forEach(function(sKey) {
-						var oItemProperty = mItem[sKey];
-						if (oItemProperty.path) {
-							oItemProperty.path = oItemProperty.path.replace(":index", iIndex);
-						}
-					});
+					var mItem = {
+						itemLabel: oConfig.itemLabel || "{i18n>BASE_EDITOR.ARRAY.ITEM_LABEL}",
+						index: iIndex,
+						properties: Object.keys(oConfig.template).map(function (sKey) {
+							var mTemplate = oConfig.template[sKey];
+							return _merge({}, mTemplate, {
+								path: mTemplate.path.replace(":index", iIndex)
+							});
+						})
+					};
 					oConfig.items.push(mItem);
 				});
 				this.getModel().checkUpdate();
 			}
 			return vReturn;
 		},
+		_removeItem: function(oEvent) {
+			var iIndex = oEvent.getSource().data("index");
+			var aValue = this.getConfig().value;
+			aValue.splice(iIndex, 1);
+			this.firePropertyChange(aValue);
+		},
+		_addItem: function() {
+			var aValue = this.getConfig().value || [];
+			aValue.push({});
+			this.firePropertyChange(aValue);
+		},
+
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
 

@@ -61,6 +61,8 @@ sap.ui.define([
 	 * @param {boolean} settings.allowDenseFill Similar to "row dense" for css grid
 	 * @param {boolean} settings.rtl Right to left mode
 	 * @param {int} settings.width The total width of the grid
+	 * @param {boolean} settings.rowsAutoHeight Define if the grid row's height is dynamically
+	 * determined by the height of the highest grid element on this row
 	 */
 	VirtualGrid.prototype.init = function (settings) {
 
@@ -87,6 +89,7 @@ sap.ui.define([
 		this.items = {};
 		this.rtl = settings.rtl;
 		this.width = settings.width;
+		this.rowsAutoHeight = settings.rowsAutoHeight;
 
 		//This can be taken from parent element padding or configured
 		// this.topOffset = 0.625;
@@ -151,8 +154,19 @@ sap.ui.define([
 	 * @returns {int} Total height in the configured unit of measure
 	 */
 	VirtualGrid.prototype.getHeight = function () {
-		var rows = 0;
-		for (var row = 0; row < this.virtualGridMatrix.length; row++) {
+		var height = -this.iGapSize,
+			rows = 0,
+			row;
+
+		if (this.rowsAutoHeight) {
+			this.rowsHeights.forEach(function (item) {
+				height += item + this.iGapSize;
+			}.bind(this));
+
+			return height;
+		}
+
+		for (row = 0; row < this.virtualGridMatrix.length; row++) {
 			if (!this.virtualGridMatrix[row].every(isZero)) {
 				rows++;
 			}
@@ -169,36 +183,48 @@ sap.ui.define([
 	 */
 	VirtualGrid.prototype.calculatePositions = function () {
 
-		var row,
-			col,
+		if (this.rowsAutoHeight) {
+			this.calculateRowsHeights();
+		}
+
+		var rowIndex,
+			columnIndex,
+			row,
+			column,
 			item,
 			itemLeft,
 			itemWidth;
 
-		for (row = 0; row < this.virtualGridMatrix.length; row++) {
-			for (col = 0; col < this.virtualGridMatrix[row].length; col++) {
+		for (rowIndex = 0; rowIndex < this.virtualGridMatrix.length; rowIndex++) {
 
-				if (!this.virtualGridMatrix[row][col]) {
+			row = this.virtualGridMatrix[rowIndex];
+
+			for (columnIndex = 0; columnIndex < row.length; columnIndex++) {
+
+				column = row[columnIndex];
+
+				if (!column) {
 					continue;
 				}
 
-				if (!this.items[this.virtualGridMatrix[row][col]].calculatedCoords) {
+				item = this.items[column];
 
-					item = this.items[this.virtualGridMatrix[row][col]];
-
-					itemLeft = col * (this.cellWidth + this.iGapSize) + this.leftOffset;
-					itemWidth = item.cols * (this.cellHeight + this.iGapSize) - this.iGapSize;
-
-					if (this.rtl) {
-						itemLeft = this.width - itemLeft - itemWidth;
-					}
-
-					item.top = row * (this.cellHeight + this.iGapSize) + this.topOffset + this.unitOfMeasure;
-					item.left = itemLeft + this.unitOfMeasure;
-					item.width = itemWidth + this.unitOfMeasure;
-					item.height = (item.rows * (this.cellWidth + this.iGapSize) - this.iGapSize) + this.unitOfMeasure;
-					item.calculatedCoords = true;
+				if (item.calculatedCoords) {
+					continue;
 				}
+
+				itemLeft = columnIndex * (this.cellWidth + this.iGapSize) + this.leftOffset;
+				itemWidth = item.cols * (this.cellWidth + this.iGapSize) - this.iGapSize;
+
+				if (this.rtl) {
+					itemLeft = this.width - itemLeft - itemWidth;
+				}
+
+				this.setItemTopAndHeight(item);
+
+				item.left = itemLeft + this.unitOfMeasure;
+				item.width = itemWidth + this.unitOfMeasure;
+				item.calculatedCoords = true;
 			}
 		}
 	};
@@ -211,26 +237,29 @@ sap.ui.define([
 	 * Use <code>VirtualGrid.calculatePositions()</code> and then <code>VirtualGrid.getItems()</code> to retrieve the calculated CSS positions for all items.
 	 *
 	 * @param {string} id The id of the element
-	 * @param {int} width Number of columns it needs
-	 * @param {int} height Number of rows it needs
+	 * @param {int} columns Number of columns it needs
+	 * @param {int} rows Number of rows it needs
+	 * @param {int} height The height of the item
 	 * @param {boolean} growVertically Should the grid grow vertically if there is not enough space
 	 * @param {boolean} secondTry Flag to prevent infinite recursion
 	 */
-	VirtualGrid.prototype.fitElement = function (id, width, height, growVertically, secondTry) {
+	VirtualGrid.prototype.fitElement = function (id, columns, rows, height, growVertically, secondTry) {
 		var placeFound,
+			item,
 			that = this,
-			widthToFit = Math.min(width, this.numberOfCols), // handles the case if item columns > total columns
+			columnsToFit = Math.min(columns, this.numberOfCols), // handles the case if item columns > total columns
 			lastTop = that.lastItemPosition.top,
 			lastLeft = that.lastItemPosition.left;
 
-		this.items[id] = {
-			rows: height,
-			cols: widthToFit,
+		this.items[id] = item = {
+			rows: rows,
+			height: height,
+			cols: columnsToFit,
 			calculatedCoords: false
 		};
 
-		if (height > this.virtualGridMatrix.length) {
-			this.addEmptyRows(height - this.virtualGridMatrix.length);
+		if (rows > this.virtualGridMatrix.length) {
+			this.addEmptyRows(rows - this.virtualGridMatrix.length);
 		}
 
 		//Check if there is enough free cells
@@ -239,14 +268,17 @@ sap.ui.define([
 		}
 
 		this.virtualGridMatrix.forEach(function (element, row, array) {
+
 			// here we have access to the rows 1, 2, 3
 			element.forEach(function (element2d, col, array2d) {
 				// now we have access to each individual box
-				var isOrderGood = that.bAllowDenseFill || row > lastTop || (row == lastTop && col > lastLeft);
+				var isOrderGood = that.bAllowDenseFill || row > lastTop || (row === lastTop && col > lastLeft);
 				if (isOrderGood && that.virtualGridMatrix[row][col] === 0 && !placeFound) {
 					//Optimize  this because its not efficient
-					if (that.shouldElementFit(row, col, widthToFit, height)) {
-						that.fillElement(row, col, widthToFit, height, id);
+					if (that.shouldElementFit(row, col, columnsToFit, rows)) {
+						that.fillElement(row, col, columnsToFit, rows, id);
+
+						item.rowIndex = row;
 						placeFound = true;
 					}
 				}
@@ -254,7 +286,7 @@ sap.ui.define([
 		});
 
 		if (!placeFound && !secondTry) {
-			this.fitElement(id, width, height, true, true);
+			this.fitElement(id, columns, rows, height, true, true);
 		}
 	};
 
@@ -262,41 +294,115 @@ sap.ui.define([
 	 * Check if element can fit the place with start position [row][col]
 	 * @param {int} row The starting row (top corner)
 	 * @param {int} col The starting column (left corner)
-	 * @param {int} width How many columns to take
-	 * @param {int} height How many rows to take
+	 * @param {int} columns How many columns to take
+	 * @param {int} rows How many rows to take
 	 * @returns {boolean} True if it fits
 	 */
-	VirtualGrid.prototype.shouldElementFit = function (row, col, width, height) {
-		var targetHeight = row + height;
-		var targetWidth = col + width;
+	VirtualGrid.prototype.shouldElementFit = function (row, col, columns, rows) {
+		var targetHeight = row + rows;
+		var targetWidth = col + columns;
 		var matrix = this.virtualGridMatrix;
 
 		for (var i = row; i < targetHeight; i++) {
 			for (var j = col; j < targetWidth; j++) {
-				if ((matrix[i][j] !== 0) || (matrix.length < targetHeight) || (matrix[i].length < col + width)) {
+				if ((matrix[i][j] !== 0) || (matrix.length < targetHeight) || (matrix[i].length < col + columns)) {
 					return false;
 				}
 			}
 		}
+
 		return true;
 	};
 
 	/**
-	 * Fills element in the virtual matrix by passed row col width and height
+	 * Fills element in the virtual matrix by passed row col columns and rows
 	 * @param {int} row The starting row (top corner)
 	 * @param {int} col The starting column (left corner)
-	 * @param {int} width How many columns to take
-	 * @param {int} height How many rows to take
+	 * @param {int} columns How many columns to take
+	 * @param {int} rows How many rows to take
 	 * @param {string} id The id of the element
 	 */
-	VirtualGrid.prototype.fillElement = function (row, col, width, height, id) {
-		for (var i = row; i < row + height; i++) {
-			for (var j = col; j < col + width; j++) {
+	VirtualGrid.prototype.fillElement = function (row, col, columns, rows, id) {
+		for (var i = row; i < row + rows; i++) {
+			for (var j = col; j < col + columns; j++) {
 				this.virtualGridMatrix[i][j] = id;
 			}
 		}
 
 		this.lastItemPosition = {top: row, left: col};
+	};
+
+	VirtualGrid.prototype.calculateRowsHeights = function () {
+		var i,
+			rowIndex,
+			items = this.items,
+			arrItems = [],
+			currentTotalHeight,
+			key,
+			diff,
+			rowsLength = this.virtualGridMatrix.length,
+			rowsHeights = [];
+
+		for (i = 0; i < rowsLength; i++) {
+			rowsHeights.push(0);
+		}
+
+		for (key in items) {
+			if (!items.hasOwnProperty(key)) {
+				continue;
+			}
+
+			arrItems.push(items[key]);
+		}
+
+		arrItems.sort(function (a, b) {
+			return a.rows - b.rows;
+		});
+
+		arrItems.forEach(function (item) {
+			currentTotalHeight = -this.iGapSize;
+
+			for (rowIndex = 0; rowIndex < item.rows; rowIndex++) {
+				currentTotalHeight += rowsHeights[rowIndex + item.rowIndex] + this.iGapSize;
+			}
+
+			if (item.height > currentTotalHeight) {
+
+				diff = (item.height - currentTotalHeight) / item.rows;
+
+				for (rowIndex = 0; rowIndex < item.rows; rowIndex++) {
+					rowsHeights[rowIndex + item.rowIndex] += diff;
+				}
+			}
+		}.bind(this));
+
+		this.rowsHeights = rowsHeights;
+	};
+
+	VirtualGrid.prototype.setItemTopAndHeight = function (item) {
+		var itemRowStart = item.rowIndex;
+
+		if (!this.rowsAutoHeight) {
+			item.top = itemRowStart * (this.cellHeight + this.iGapSize) + this.topOffset + this.unitOfMeasure;
+			item.height = (item.rows * (this.cellHeight + this.iGapSize) - this.iGapSize) + this.unitOfMeasure;
+			return;
+		}
+
+		var rowIndex,
+			top = 0,
+			height = -this.iGapSize,
+			rowsHeights = this.rowsHeights;
+
+		for (rowIndex = 0; rowIndex < itemRowStart; rowIndex++) {
+			top += rowsHeights[rowIndex] + this.iGapSize;
+		}
+
+		for (rowIndex = itemRowStart; rowIndex < itemRowStart + item.rows; rowIndex++) {
+			height += rowsHeights[rowIndex] + this.iGapSize;
+		}
+
+		item.top = top + this.unitOfMeasure;
+		item.height = height + this.unitOfMeasure;
 	};
 
 	return VirtualGrid;

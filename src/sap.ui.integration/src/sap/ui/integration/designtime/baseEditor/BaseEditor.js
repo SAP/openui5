@@ -29,57 +29,57 @@ sap.ui.define([
 	/**
 	 * @class
 	 * <h3>Overview</h3>
-	 * Configurable JSON editor.
-	 * <h4>Example:</h4>
+	 * Configurable JSON editor
+	 * <h4>Example</h4>
 	 * <pre>
-	 * 	sap.ui.require(["sap/ui/integration/designtime/baseEditor/BaseEditor"], function(Editor) {
-	 *		var oJson = {
-	 *			root: {
-	 *				context: {
-	 *					id: "404",
-	 *					name: "Kate",
-	 *					role: "End User"
-	 *				},
-	 *				foo: {
-	 *					bar: true
-	 *				}
-	 *			}
-	 *		};
-	 *		var oEditor = new Editor();
-	 *		oEditor.setJson(oJson);
-	 *		oEditor.setConfig({
-	 *			"context": "root/context",
-	 *			"properties" : {
-	 *				"name": {
-	 *					"label": "Name",
-	 *					"path": "name",
-	 *					"type": "string"
-	 *				},
-	 *				"role": {
-	 *					"label": "Role",
-	 *					"path": "role",
-	 *					"type": "enum",
-	 *					"enum": ["Developer", "Key User", "End User"]
-	 *				},
-	 *				"department": {
-	 *					"label": "Department",
-	 *					"path": "department",
-	 *					"type": "enum",
-	 *					"enum": ["Sales", "HR", "Development"],
-	 *					"visible": "{= ${context>/role} === 'Key User'}"
-	 *				}
-	 *			},
-	 *			"propertyEditors": {
-	 *				"enum" : "sap/ui/integration/designtime/baseEditor/propertyEditors/enumStringEditor/EnumStringEditor",
-	 *				"string" : "sap/ui/integration/designtime/baseEditor/propertyEditors/stringEditor/StringEditor"
-	 *			}
-	 *		});
-	 *		oEditor.attachJsonChanged(function(oEvent) {
-	 *			var oJson = oEvent.getParameter("json");
-	 *			// live change
-	 *		})
-	 *		oEditor.placeAt("content");
-	 * 	})
+	 * sap.ui.require(["sap/ui/integration/designtime/baseEditor/BaseEditor"], function (Editor) {
+	 *     var oJson = {
+	 *         root: {
+	 *             context: {
+	 *                 id: "404",
+	 *                 name: "Kate",
+	 *                 role: "End User"
+	 *             },
+	 *             foo: {
+	 *                 bar: true
+	 *             }
+	 *         }
+	 *     };
+	 *     var oEditor = new Editor();
+	 *     oEditor.setJson(oJson);
+	 *     oEditor.setConfig({
+	 *         "context": "root/context",
+	 *         "properties" : {
+	 *             "name": {
+	 *                 "label": "Name",
+	 *                 "path": "name",
+	 *                 "type": "string"
+	 *             },
+	 *             "role": {
+	 *                 "label": "Role",
+	 *                 "path": "role",
+	 *                 "type": "enum",
+	 *                 "enum": ["Developer", "Key User", "End User"]
+	 *             },
+	 *             "department": {
+	 *                 "label": "Department",
+	 *                 "path": "department",
+	 *                 "type": "enum",
+	 *                 "enum": ["Sales", "HR", "Development"],
+	 *                 "visible": "{= ${context>/role} === 'Key User'}"
+	 *             }
+	 *         },
+	 *         "propertyEditors": {
+	 *             "enum" : "sap/ui/integration/designtime/baseEditor/propertyEditors/enumStringEditor/EnumStringEditor",
+	 *             "string" : "sap/ui/integration/designtime/baseEditor/propertyEditors/stringEditor/StringEditor"
+	 *         }
+	 *     });
+	 *     oEditor.attachJsonChange(function(oEvent) {
+	 *         var oJson = oEvent.getParameter("json");
+	 *         // live change
+	 *     })
+	 *     oEditor.placeAt("content");
+	 * })
 	 * </pre>
 	 *
 	 * @extends sap.ui.core.Control
@@ -88,33 +88,33 @@ sap.ui.define([
 	 * @since 1.70.0
 	 * @version ${version}
 	 * @private
-	 * @experimental
+	 * @experimental since 1.70.0
 	 * @ui5-restricted
 	 */
 	var BaseEditor = Control.extend("sap.ui.integration.designtime.baseEditor.BaseEditor", {
 		metadata: {
 			properties: {
 				/**
-				 * JSON to be changed in the editor. Note: object passed as parameter won't be mutated, .getJson() or
-				 * .attachJsonChange() should be used instead to get the changed object
+				 * JSON to be changed in the editor. Note: If an object is passed as a parameter, it won't be mutated. <code>.getJson()</code> or
+				 * <code>.attachJsonChange()</code> should be used instead to get the changed object.
 				 */
 				"json": {
 					type: "object"
 				},
 
 				/**
-				 * Configuration map
-				 *   config.context {string} path in the JSON, which will be edited e.g. "path/subpath" for json.path.subpath
-				 *   config.properties {map} defines, which fields in the context are editable
-				 *     config.properties.<key>.label {string} of the property to show in the UI
+				 * Configuration Map
+				 *   config.context {string} Path in the JSON that will be edited e.g. <code>"path/subpath"</code> for <code>json.path.subpath</code>
+				 *   config.properties {map} Defines which fields in the context are editable
+				 *     config.properties.<key>.label {string} of the property to show on the UI
 				 *     config.properties.<key>.type {string} of the property (property editor for this type will be shown)
-				 *     config.properties.<key>.path {string} which will be changed, relative to the context e.g. if context is "root" and path is "header/name", json.root.header.name field is to be changed
-				 *     config.properties.<key>.value {string|boolean} (optional) value of the property, binding relative to context (model name) should be used, e.g. {context>header/name} will create a binding json.root.header.name
-				 *     config.properties.<key>.tags {array} strings to categorize the property
-				 *     config.properties.<key>.visible {string|boolean} should be used as binding relative to context to define conditions, when this property should be possible to change, e.g. {= ${context>anotherProperty} === 'someValue'}
-				 *     config.properties.<key>.<other configurations> {any} it is possible to define additional configurations in this namespace. This configurations will be passed to the dedicated property editor. Binding strings relative to context model are supported also, e.g. {= ${context>someProperty} + ${context>anotherProperty}}.
-				 *   config.propertyEditors {map} define, which property editors should be loaded. Key is property type and value is editor module path. E.g. propertyEditors: {"string": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"} defines module responsible for all properties with the type "string"
-				 *   config.i18n {string|array} module path or array of paths for i18n property files. i18n binding, e.g. {i18n>key} is available in the "properties" section, e.g. for "label"
+				 *     config.properties.<key>.path {string} that will be changed, relative to the context. Example: If the context is <code>root</code> and the path is <code>header/name</code>, the <code>json.root.header.name</code> field is to be changed
+				 *     config.properties.<key>.value {string|boolean} (Optional) value of the property. A binding relative to the context (model name) should be used. Example: <code>{context>header/name}</code> will create a binding <code>json.root.header.name</code>
+				 *     config.properties.<key>.tags {array} Strings to categorize the property
+				 *     config.properties.<key>.visible {string|boolean} Should be used as a binding relative to the context to define the conditions under which this property should be changeable, e.g. <code>{= ${context>anotherProperty} === 'someValue'}</code>
+				 *     config.properties.<key>.<other configurations> {any} It is possible to define additional configurations in this namespace. These configurations will be passed to the dedicated property editor. Binding strings relative to context model are supported as well, e.g. <code>{= ${context>someProperty} + ${context>anotherProperty}}</code>
+				 *   config.propertyEditors {map} Defines which property editors should be loaded. Key is the property type and value is the editor module path. Example: <code>propertyEditors: {"string": "sap/ui/integration/designtime/controls/propertyEditors/StringEditor"}</code> defines the module responsible for all properties with the type <code>string</code>
+				 *   config.i18n {string|array} Module path or array of paths for i18n property files. i18n binding, for example, <code>{i18n>key}</code> is available in the <code>/properties<code> section, e.g. for <code>label</code>
 				 */
 				"config": {
 					type: "object"
@@ -142,7 +142,7 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fired when any property has been changed by the propertyEditor
+				 * Fired when any property has been changed by the <code>propertyEditor</code>.
 				 */
 				jsonChange: {
 					parameters: {
@@ -152,8 +152,8 @@ sap.ui.define([
 					}
 				},
 				/**
-				 * Fired when all property editors for the given json and config are created
-				 * TODO: remove this public event
+				 * Fired when all property editors for the given JSON and configuration are created.
+				 * TODO: remove this public event.
 				 */
 				propertyEditorsReady: {
 					parameters: {
@@ -174,21 +174,20 @@ sap.ui.define([
 		renderer: function(oRm, oControl) {
 			var aContent = oControl.getContent();
 
+			oRm.openStart("div", oControl);
+			oRm.openEnd();
 
 			if (aContent.length) {
 				aContent.forEach(function(oChildControl) {
 					oRm.renderControl(oChildControl);
 				});
 			} else {
-				oRm.openStart("div", oControl);
-				oRm.openEnd();
-
 				oControl.getPropertyEditorsSync().forEach(function(oPropertyEditor) {
 					oRm.renderControl(oPropertyEditor);
 				});
-
-				oRm.close("div");
 			}
+
+			oRm.close("div");
 		}
 	});
 
@@ -221,8 +220,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * To be used only in constructor when inheriting from BaseEditor to add additional default config
-	 * @param  {object} oConfig to merge with previous default
+	 * To be used only in constructor when inheriting from <code>BaseEditor</code> to add additional default configuration.
+	 * @param  {object} oConfig - To merge with previous default
 	 */
 	BaseEditor.prototype.addDefaultConfig = function (oConfig) {
 		this.setProperty("_defaultConfig",
@@ -321,9 +320,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * I18n model is used as interface (read-only) for property editors.
-	 * I18n model created from all i18n bundles in the merged config.
-	 * To separate properties from different bundles namespacing should be used, e.g. i18n>BASE_EDITOR.PROPERTY
+	 * The I18n model is used as an interface (read-only) for property editors.
+	 * It is created from all i18n bundles in the merged configuration.
+	 * To separate properties from different bundles, namespacing should be used, e.g. i18n>BASE_EDITOR.PROPERTY
 	 */
 	BaseEditor.prototype._createI18nModel = function () {
 		return this._createPromise(function (fnResolve, fnRejected) {
@@ -342,7 +341,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requires all editor modules and creates editor instances for all configurable properties
+	 * Requires all editor modules and creates editor instances for all configurable properties.
 	 */
 	BaseEditor.prototype._createEditors = function () {
 		var oConfig = this.getConfig();
@@ -359,7 +358,6 @@ sap.ui.define([
 
 				if (oPropertyEditor) {
 					this._mPropertyEditors[sPropertyName] = oPropertyEditor;
-					oPropertyEditor.attachPropertyChanged(this._onPropertyChanged.bind(this));
 					this.addAggregation("_propertyEditors", oPropertyEditor);
 				}
 			}, this);
@@ -409,6 +407,7 @@ sap.ui.define([
 				});
 				oPropertyEditor.setModel(this._oContextModel, "_context");
 				oPropertyEditor.setModel(this._oI18nModel, "i18n");
+				oPropertyEditor.attachPropertyChange(this._onPropertyChanged.bind(this));
 				oPropertyEditor.setConfig(_merge({}, oPropertyConfig)); // deep clone to avoid editor modifications to influence the outer config
 
 				// TODO: control styling via editor properties?

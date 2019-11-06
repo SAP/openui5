@@ -2,7 +2,15 @@
 	"_version": "1.14.0",
 	"sap.app": {
 		"id": "card.explorer.stacked.column.card",
-		"type": "card"
+		"type": "card",
+		"title": "Sample of a Stacked Column Chart",
+		"subTitle": "Sample of a Stacked Column Chart"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://full-stacked-column-chart"
+		}
 	},
 	"sap.card": {
 		"type": "Analytical",

@@ -1088,7 +1088,7 @@ sap.ui.define([
 		oContext.destroy();
 
 		assert.strictEqual(oContext.oBinding, undefined);
-		assert.strictEqual(oContext.oModel, oModel);
+		assert.strictEqual(oContext.oModel, undefined/*TODO oModel*/);
 	});
 
 	//*********************************************************************************************

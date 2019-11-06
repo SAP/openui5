@@ -7,17 +7,19 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/LayerUtils"
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
 	FakeLrepConnector,
 	LrepConnector,
 	Cache,
 	ChangePersistenceFactory,
-	LayerUtils
+	LayerUtils,
+	ObjectStorageUtils
 ) {
 	"use strict";
 
-	return function (oFakeLrepStorage) {
+	return function (oFakeLrepStorage, oWindowStorage) {
 		FakeLrepConnectorStorage._oBackendInstances = {};
 
 		/**
@@ -558,6 +560,24 @@ sap.ui.define([
 		FakeLrepConnectorStorage.clearCacheAndResetVariants = function (sComponentName, sAppVersion, oChangePersistence) {
 			Cache.clearEntry(sComponentName, sAppVersion);
 			oChangePersistence.resetVariantMap(/*bResetAtRuntime*/true);
+		};
+
+		FakeLrepConnectorStorage.forTesting = {
+			synchronous: {
+				clearAll: function (oStorage) {
+					ObjectStorageUtils.forEachObjectInStorage({
+						storage: oWindowStorage
+					},
+					function (mPropertyBag) {
+						oStorage.removeItem(mPropertyBag.key);
+					});
+				}.bind(this, oWindowStorage),
+				store: function (sId, oItem) {
+					var sKey = ObjectStorageUtils.createFlexKey(sId);
+					var sItem = JSON.stringify(oItem);
+					window.localStorage.setItem(sKey, sItem);
+				}
+			}
 		};
 
 		return FakeLrepConnectorStorage;

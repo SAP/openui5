@@ -1,27 +1,37 @@
 <mvc:View
 	controllerName="sap.ui.layout.sample.Splitter.Splitter"
 	xmlns:l="sap.ui.layout"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:Splitter id="mainSplitter" height="500px" width="100%">
+	<l:Splitter
+		id="mainSplitter"
+		height="500px"
+		width="100%">
 		<Button width="100%" text="Content 1">
-			<layoutData><l:SplitterLayoutData size="300px" /></layoutData>
+			<layoutData>
+				<l:SplitterLayoutData size="300px" />
+			</layoutData>
 		</Button>
 		<Button width="100%" text="Content 2">
-			<layoutData><l:SplitterLayoutData size="auto" /></layoutData>
+			<layoutData>
+				<l:SplitterLayoutData size="auto" />
+			</layoutData>
 		</Button>
 		<Button width="100%" text="Content 3">
-			<layoutData><l:SplitterLayoutData size="30%" minSize="200px" /></layoutData>
+			<layoutData>
+				<l:SplitterLayoutData size="30%" minSize="200px" />
+			</layoutData>
 		</Button>
 	</l:Splitter>
 	<l:HorizontalLayout class="sapUiSmallMarginTop sapUiSmallMarginBegin">
-		<Button text="Add content area" press="btnAddContentArea"></Button>
-		<Button text="Remove content area" press="btnRemoveContentArea"></Button>
-		<Button text="Invalidate Splitter" press="btnInvalidateSplitter"></Button>
-		<Button text="Change Orientation" press="btnChangeOrientation"></Button>
-		<Text id="eventStatus" text="Nothing happened so far..." class="sapUiTinyMarginTop sapUiTinyMarginBegin"></Text>
+		<Button text="Add content area" press="btnAddContentArea" />
+		<Button text="Remove content area" press="btnRemoveContentArea" />
+		<Button text="Invalidate Splitter" press="btnInvalidateSplitter" />
+		<Button text="Change Orientation" press="btnChangeOrientation" />
+		<Text
+			id="eventStatus"
+			text="Nothing happened so far..."
+			class="sapUiTinyMarginTop sapUiTinyMarginBegin" />
 	</l:HorizontalLayout>
-	<l:VerticalLayout id="mainOptions" class="options">
-	</l:VerticalLayout>
+	<l:VerticalLayout id="mainOptions" class="options" />
 </mvc:View>

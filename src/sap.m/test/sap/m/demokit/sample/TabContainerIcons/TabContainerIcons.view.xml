@@ -6,7 +6,7 @@
 		xmlns="sap.m">
 	<TabContainer items="{ path: '/employees' }" id="myTabContainer"
 					showAddNewButton="true"
-					class="sapUiResponsiveContentPadding"
+					class="sapUiResponsiveContentPadding sapUiResponsivePadding--header"
 					addNewButtonPress="addNewButtonPressHandler" itemClose="itemCloseHandler">
 		<items>
 			<TabContainerItem

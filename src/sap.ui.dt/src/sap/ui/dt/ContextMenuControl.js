@@ -116,7 +116,7 @@ sap.ui.define([
 				return 0;
 			};
 
-			oPopover.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
+			oPopover.attachBrowserEvent("keydown", this._onKeyDown, this);
 			this._oPopover = oPopover;
 			oPopover.addStyleClass("sapUiDtContextMenu");
 
@@ -137,7 +137,7 @@ sap.ui.define([
 				return 0;
 			};
 
-			oPopoverExpanded.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
+			oPopoverExpanded.attachBrowserEvent("keydown", this._onKeyDown, this);
 			this._oExpandedPopover = oPopoverExpanded;
 			oPopoverExpanded.addStyleClass("sapUiDtContextMenu");
 
@@ -777,11 +777,13 @@ sap.ui.define([
 		},
 
 		/**
+		 * Handler for KeyDown Event
 		 * Changes the focus inside the ContextMenu if an Arrowkey is pressed
 		 * Allows Safari users to navigate through the ContextMenu using tab and tab+shift
+		 * Closes the MiniMenu when Escape is pressed
 		 * @param {jQuery.Event} oEvent the keyboard event
 		 */
-		_changeFocusOnKeyStroke: function(oEvent) {
+		_onKeyDown: function(oEvent) {
 			if (document.activeElement) {
 				var sId = document.activeElement.id;
 				switch (oEvent.key) {
@@ -796,6 +798,9 @@ sap.ui.define([
 						break;
 					case "ArrowDown":
 						this._changeFocusOnButtons(sId);
+						break;
+					case "Escape":
+						this._rememberPosition();
 						break;
 					default:
 						break;
@@ -819,6 +824,25 @@ sap.ui.define([
 					return true;
 				}
 			}.bind(this));
+		},
+
+		/**
+		 * Stores the current Position of the Contextmenu for opening again at same position
+		 * @private
+		 */
+		_rememberPosition: function() {
+			var oNode = document.getElementById(this._oTarget.getAttribute("overlay"));
+			if (oNode) {
+				DOMUtil.focusWithoutScrolling(oNode);
+				this._oLastSourceOverlay = OverlayRegistry.getOverlay(oNode.id);
+				this._oLastSourceClientRects = this._oLastSourceOverlay.getDomRef().getClientRects();
+			} else {
+				this._oLastSourceClientRects = null;
+			}
+			this._oLastPosition = {
+				x: this._oContextMenuPosition.x,
+				y: this._oContextMenuPosition.y
+			};
 		},
 
 		/**
@@ -889,35 +913,15 @@ sap.ui.define([
 		_handleBeforeClose: function() {
 			this.getPopover().detachBeforeClose(this._handleBeforeClose, this);
 			this.getPopover().removeStyleClass("sapUiDtContextMenuVisible");
-			// remove Focus from PopOver
-			document.activeElement.blur();
 		},
 
 		/**
 		 * Handle After Close
-		 * Set the focus back to the Overlay without scrolling
-		 * Remember the last Position of the Contextmenu, the last Source and its Dimensions
+		 * Fires the closed event
 		 * @private
 		 */
 		_handleAfterClose: function() {
-			// The Focus is set back to the original Overlay ONLY if it has not changed during closing
-			if (document.activeElement.localName !== "body") {
-				return;
-			}
 			this.getPopover().detachAfterClose(this._handleAfterClose, this);
-			var oNode = document.getElementById(this._oTarget.getAttribute("overlay"));
-			// Set focus & remember the last Source & Position for Opening in same place
-			if (oNode) {
-				DOMUtil.focusWithoutScrolling(oNode);
-				this._oLastSourceOverlay = OverlayRegistry.getOverlay(oNode.id);
-				this._oLastSourceClientRects = this._oLastSourceOverlay.getDomRef().getClientRects();
-			} else {
-				this._oLastSourceClientRects = null;
-			}
-			this._oLastPosition = {
-				x: this._oContextMenuPosition.x,
-				y: this._oContextMenuPosition.y
-			};
 			this.fireClosed();
 		},
 

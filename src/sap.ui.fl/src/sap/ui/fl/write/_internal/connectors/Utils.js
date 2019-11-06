@@ -132,7 +132,14 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
 		sendRequest:function (sUrl, sMethod, mPropertyBag) {
-			if (!mPropertyBag.applyConnector || !mPropertyBag.applyConnector.xsrfToken) {
+			if (
+				!mPropertyBag.applyConnector
+				|| (
+					!mPropertyBag.applyConnector.xsrfToken
+					&& !(sMethod === 'GET') // For GET and HEAD operations, there is no need to fetch a token
+					&& !(sMethod === 'HEAD')
+				)
+			) {
 				return updateTokenInPropertyBagAndConnectorAndSendRequest(mPropertyBag, sUrl, sMethod);
 			}
 

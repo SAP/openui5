@@ -30,16 +30,14 @@
 						</Bar>
 					</customHeader>
 					<f:GridContainer id="cardContainer" visible="{= ${settings>/useExtendedFileEditor} }">
-						<w:Card id="cardSample">
-						</w:Card>
+						<w:Card id="cardSample"></w:Card>
 					</f:GridContainer>
 					<core:HTML
 						id="iframeWrapper"
 						visible="{= !${settings>/useExtendedFileEditor} }"
 						preferDOM="false"
 						content='&lt;div style="height:100%; overflow-y: hidden; overflow-x:auto;"&gt;
-								 &lt;/div&gt;'>
-					 </core:HTML>
+								 &lt;/div&gt;'></core:HTML>
 				</Page>
 			</l:SplitPane>
 			<l:SplitPane requiredParentWidth="1">
@@ -62,6 +60,22 @@
 								/>
 							</contentLeft>
 							<contentRight>
+								<MenuButton
+									icon="sap-icon://download"
+									enabled="true"
+									tooltip="Download"
+									text="Download"
+									type="Transparent"
+									visible="true"
+								>
+									<menu>
+										<Menu>
+											<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadFile" />
+											<MenuItem text="Bundle as .zip" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
+											<MenuItem text="Bundle as .card" icon="sap-icon://ppt-attachment" press="onDownloadBundle" />
+										</Menu>
+									</menu>
+								</MenuButton>
 								<Button
 									press="onChangeEditorClick"
 									icon="sap-icon://developer-settings"
