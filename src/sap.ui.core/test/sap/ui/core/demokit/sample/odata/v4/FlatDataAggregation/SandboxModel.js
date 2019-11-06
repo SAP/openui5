@@ -1,28 +1,18 @@
 /*!
  * ${copyright}
  */
-
-// Provides a sandbox for this component:
-// For the "realOData" case when the component runs with backend, the v4.ODataModel constructor
-//   is wrapped so that the URL is adapted to a proxy URL and certain constructor parameters are
-//   taken from URL parameters
-// For the "non-realOData" case, sets up a mock server for the backend requests.
-//
-// Note: For setup to work properly, this module has to be loaded *before* model instantiation
-//   from the component's manifest. Add it as "js" resource to sap.ui5/resources in the
-//   manifest.json to achieve that.
+// The SandboxModel is used in the manifest instead of OData V4 model for the following purposes:
+// For the "realOData" case, the URL is adapted to a proxy URL and certain constructor parameters
+// are taken from URL parameters.
+// For the "non-realOData" case, a mock server for the backend requests is set up.
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/sinon"
-], function (jQuery, ODataModel, TestUtils, sinon) {
+	"sap/ui/core/sample/common/SandboxModelHelper",
+	"sap/ui/model/odata/v4/ODataModel"
+], function (SandboxModelHelper, ODataModel) {
 	"use strict";
 
-	var oSandbox = sinon.sandbox.create();
-
-	function setupMockServer() {
-		TestUtils.setupODataV4Server(oSandbox, {
+	var oMockData = {
+		mFixture : {
 			"$metadata" : {
 				source : "metadata.xml"
 			},
@@ -47,25 +37,14 @@ sap.ui.define([
 			"BusinessPartners?$apply=groupby((Region),aggregate(SalesNumber))/filter(SalesNumber%20gt%200)/orderby(Region%20desc)/skip(9)/top(5)" : {
 				source : "BusinessPartners_10_15.json"
 			}
-		}, "sap/ui/core/sample/odata/v4/FlatDataAggregation/data",
-		"/serviceroot.svc/");
-	}
+		},
+		sFilterBase : "/serviceroot.svc/",
+		sSourceBase : "sap/ui/core/sample/odata/v4/FlatDataAggregation/data"
+	};
 
-	function adaptModelConstructor() {
-		oSandbox.stub(sap.ui.model.odata.v4, "ODataModel", function (mParameters) {
-			// clone: do not modify constructor call parameter
-			mParameters = jQuery.extend({}, mParameters, {
-				serviceUrl : TestUtils.proxy(mParameters.serviceUrl)
-			});
-			return new ODataModel(mParameters);
-		});
-	}
-
-	if (TestUtils.isRealOData()) {
-		adaptModelConstructor();
-	} else {
-		setupMockServer();
-	}
-
-	TestUtils.setData("sap.ui.core.sample.odata.v4.FlatDataAggregation.sandbox", oSandbox);
+	return ODataModel.extend("sap.ui.core.sample.odata.v4.FlatDataAggregation.SandboxModel", {
+		constructor : function (mParameters) {
+			return SandboxModelHelper.adaptModelParametersAndCreateModel(mParameters, oMockData);
+		}
+	});
 });

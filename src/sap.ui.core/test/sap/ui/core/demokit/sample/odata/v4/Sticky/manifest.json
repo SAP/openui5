@@ -37,7 +37,8 @@
 					"Main.view.xml",
 					"manifest.json",
 					"SandboxModel.js",
-					"../../../common/Controller.js"
+					"../../../common/Controller.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},

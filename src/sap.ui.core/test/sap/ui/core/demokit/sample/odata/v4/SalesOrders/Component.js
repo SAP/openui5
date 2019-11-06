@@ -8,7 +8,6 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/base/Log",
 	"sap/m/HBox",
 	"sap/ui/core/library",
@@ -18,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Log, HBox, library, UIComponent, View, JSONModel, OperationMode, ODataModel,
+], function (Log, HBox, library, UIComponent, View, JSONModel, OperationMode, ODataModel,
 		TestUtils) {
 	"use strict";
 
