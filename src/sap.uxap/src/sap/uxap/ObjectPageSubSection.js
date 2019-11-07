@@ -124,12 +124,12 @@ sap.ui.define([
 				 * CSS class to them and set their <code>width</code> property to <code>auto</code>
 				 * (if not set by default).
 				 *
-				 * Don't use <code>sapUxAPObjectPageSubSectionAlignContent</code> in the following cases:
+				 * Don't use the <code>sapUxAPObjectPageSubSectionAlignContent</code> CSS class in the following cases:
 				 * <ul>
-				 * <li>In combination with <code>ResponsiveLayout</code> because <code>ResponsiveLayout</code> applies custom paddings.
+				 * <li>In combination with <code>ResponsiveLayout</code>, because <code>ResponsiveLayout</code> applies custom paddings.
 				 * To align items with <code>sapUxAPObjectPageSubSectionAlignContent</code>, use <code>ColumnLayout</code>.</li>
-				 * <li>When there are more than one controls in the same <code>ObjectPageSubSection</code> because
-				 * it interferes with their alignment.</li>
+				 * <li>If there are multiple controls in the same <code>ObjectPageSubSection</code>, because the CSS class
+				 * interferes with their alignment.</li>
 				 * </ul>
 				 * Example:
 				 *
