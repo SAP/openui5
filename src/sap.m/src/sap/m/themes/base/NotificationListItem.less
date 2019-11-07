@@ -10,6 +10,7 @@
 	background: @_sap_m_NotificationListBase_ItemBackground;
 	cursor: pointer;
 	display: flex;
+	flex-direction: column;
 	padding: 1rem 0.5rem 1rem 1rem;
 
 	.sapMNLIImage {
@@ -28,6 +29,14 @@
 			color: @sapUiContentContrastTextColor; // same as Avatar control
 			background: @sapUiAccent7; // same as Avatar control
 		}
+	}
+
+	.sapMMsgStrip  {
+		margin-bottom: 1rem;
+	}
+
+	.sapMNLIMain {
+		display: flex;
 	}
 
 	.sapMNLIContent {

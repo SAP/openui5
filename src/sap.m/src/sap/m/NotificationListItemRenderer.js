@@ -57,6 +57,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		rm.write('>');
 
+		// Processing Message
+		rm.renderControl(control.getProcessingMessage());
+		rm.write('<div class="sapMNLIMain">');
+
 		// image
 		rm.write('<div class="sapMNLIImage">');
 		if (authorImage) {
@@ -169,6 +173,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			rm.renderControl(closeButton);
 			rm.write('</div>');
 		}
+
+		// end main
+		rm.write('</div>');
 
 		rm.write('</li>');
 	};

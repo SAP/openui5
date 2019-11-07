@@ -2,18 +2,13 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/mvc/Controller',
 	'sap/m/MessageToast',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/Device'
-], function (jQuery, Controller, MessageToast, JSONModel, Device) {
+	'sap/ui/model/json/JSONModel'
+], function (jQuery, Controller, MessageToast, JSONModel) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.NotificationListGroupBindings.C", {
 
 		onInit : function (evt) {
-			var sWidth;
-			Device.system.phone ? sWidth = "100%" : sWidth = "50%";
-			this.getView().byId("notificationList").setWidth(sWidth);
-
 			var oData = {
 				"NotificationGroups": [
 					{
