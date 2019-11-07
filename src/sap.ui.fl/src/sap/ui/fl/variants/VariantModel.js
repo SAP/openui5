@@ -890,15 +890,17 @@ sap.ui.define([
 			}
 			this.oData[sVariantManagementReference].modified = false;
 			this.checkUpdate(true);
-			return this.oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges);
-		}.bind(this))
-		// unsaved changes on the source variant are removed
-		.then(_eraseDirtyChanges.bind(null, {
-			changes: aSourceVariantChanges,
-			vmReference: sVariantManagementReference,
-			vReference: sSourceVariantReference,
-			model: this
-		}));
+			// unsaved changes on the source variant are removed before copied variant changes are saved.
+			return _eraseDirtyChanges({
+				changes: aSourceVariantChanges,
+				vmReference: sVariantManagementReference,
+				vReference: sSourceVariantReference,
+				model: this
+			})
+				.then(function() {
+					return this.oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges);
+				}.bind(this));
+		}.bind(this));
 	};
 
 	VariantModel.prototype.getLocalId = function(sId, oAppComponent) {

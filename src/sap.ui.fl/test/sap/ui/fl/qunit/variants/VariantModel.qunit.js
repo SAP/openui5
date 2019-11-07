@@ -1272,7 +1272,7 @@ function(
 				.returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oModel.oVariantController, "removeChangeFromVariant");
-			sandbox.stub(this.oModel.oFlexController, "deleteChange");
+			var fnDeleteChangeStub = sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "setVariantProperties").returns({fileName: "changeWithSetDefault"});
 			var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveSequenceOfDirtyChanges").resolves();
@@ -1297,6 +1297,7 @@ function(
 				assert.equal(fnSaveSequenceOfDirtyChangesStub.args[0][0].length, 5, "five dirty changes are saved (new variant, 3 copied ctrl changes, setDefault change");
 				assert.equal(fnSaveSequenceOfDirtyChangesStub.args[0][0][4].fileName, "changeWithSetDefault", "the last change is 'setDefault'");
 				assert.notOk(this.oModel.getData()[sVMReference].modified, "finally the model property 'modified' is set to false");
+				assert.ok(fnDeleteChangeStub.calledBefore(fnSaveSequenceOfDirtyChangesStub), "the changes were deleted from default variant before the copied variant is saved");
 				[oChange1, oChange2, oChange3].forEach(function (oDirtyChange) {
 					assert.ok(this.oModel.oVariantController.removeChangeFromVariant.calledWith(oDirtyChange, oCopiedVariantContent.content.variantManagementReference, oCopiedVariantContent.content.variantReference), "then dirty changes were removed from the source variant");
 					assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
@@ -1362,7 +1363,7 @@ function(
 				.returns([oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, oChange1, oChange2, oChange3]);
 			sandbox.stub(this.oModel.oVariantController, "removeChangeFromVariant");
-			sandbox.stub(this.oModel.oFlexController, "deleteChange");
+			var fnDeleteChangeStub = sandbox.stub(this.oModel.oFlexController, "deleteChange");
 			var fnCopyVariantStub = sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 			var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "setVariantProperties");
 			var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oModel.oChangePersistence, "saveSequenceOfDirtyChanges").resolves();
@@ -1372,6 +1373,7 @@ function(
 				assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
 				assert.ok(fnSaveSequenceOfDirtyChangesStub.calledOnce, "SaveSequenceOfDirtyChanges is called");
 				assert.notOk(this.oModel.getData()[sVMReference].modified, "finally the model property 'modified' is set to false");
+				assert.ok(fnDeleteChangeStub.calledBefore(fnSaveSequenceOfDirtyChangesStub), "the changes were deleted from default variant before the copied variant is saved");
 				[oChange1, oChange2, oChange3].forEach(function (oDirtyChange) {
 					assert.ok(this.oModel.oVariantController.removeChangeFromVariant.calledWith(oDirtyChange, oCopiedVariantContent.content.variantManagementReference, oCopiedVariantContent.content.variantReference), "then dirty changes were removed from the source variant");
 					assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
