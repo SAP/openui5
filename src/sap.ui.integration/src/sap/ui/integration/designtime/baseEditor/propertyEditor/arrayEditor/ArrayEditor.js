@@ -63,7 +63,7 @@ sap.ui.define([
 						properties: Object.keys(oConfig.template).map(function (sKey) {
 							var mTemplate = oConfig.template[sKey];
 							return _merge({}, mTemplate, {
-								path: mTemplate.path.replace(":index", iIndex)
+								path: oConfig.path + "/" + iIndex + "/" + mTemplate.path
 							});
 						})
 					};

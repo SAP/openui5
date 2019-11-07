@@ -7,10 +7,14 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/cardEditor/config/HeaderConfig",
 	"sap/ui/integration/designtime/cardEditor/config/ListCardConfig",
+	"sap/ui/integration/designtime/cardEditor/config/ObjectCardConfig",
+	"sap/ui/integration/designtime/cardEditor/config/TableCardConfig",
 	"sap/ui/integration/designtime/cardEditor/config/generateDataConfig"
 ], function (
 	HeaderConfig,
 	ListCardConfig,
+	ObjectCardConfig,
+	TableCardConfig,
 	generateDataConfig
 ) {
 	"use strict";
@@ -21,6 +25,8 @@ sap.ui.define([
 			{},
 			HeaderConfig,
 			ListCardConfig,
+			ObjectCardConfig,
+			TableCardConfig,
 			generateDataConfig(["content"], "content/", "card"),
 			{
 				// General properties

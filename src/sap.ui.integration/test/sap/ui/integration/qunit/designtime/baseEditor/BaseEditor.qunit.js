@@ -177,11 +177,11 @@ sap.ui.define([
 						type: "array",
 						template: {
 							a: {
-								path: "prop/:index/a",
+								path: "a",
 								type: "string"
 							},
 							b: {
-								path: "prop/:index/b",
+								path: "b",
 								type: "enum",
 								"enum": ["Default", "Bold"]
 							}
