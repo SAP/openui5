@@ -872,6 +872,23 @@ sap.ui.define([
 		assert.ok(this.sut._oShowMasterBtn.getTooltip() == oTooltip, 'Tooltip is correct');
 	});
 
+	QUnit.test("showMaster/hideMaster doesn't crash when _oMasterNav hasn't been rendered", function (assert) {
+		var done = assert.async();
+
+		var oPage = new Page();
+		var oSplitContainer = new SplitContainer({
+			masterPages: [oPage]
+		});
+
+		// Do not place on page. so _oMasterNav won't have dom ref
+
+		oSplitContainer.showMaster();
+		assert.ok(true);
+		oSplitContainer.hideMaster();
+		assert.ok(true);
+
+		done();
+	});
 	QUnit.module("SplitContainer Navigation test", {
 		beforeEach : function () {
 			this.sut = splitContainerSetup();
