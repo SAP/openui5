@@ -1269,7 +1269,7 @@ function(
 			this.fireBeforeMasterOpen();
 			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", true);
 			//BCP: 1870368506
-			this._oMasterNav.getDomRef().offsetHeight;
+			this._oMasterNav.getDomRef() && this._oMasterNav.getDomRef().offsetHeight;
 			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", false);
 			this._bMasterOpening = true;
 			that._removeMasterButton(_curPage);
@@ -1314,7 +1314,7 @@ function(
 			this.fireBeforeMasterClose();
 			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterVisible", false);
 			//BCP: 1870368506
-			this._oMasterNav.getDomRef().offsetHeight;
+			this._oMasterNav.getDomRef() && this._oMasterNav.getDomRef().offsetHeight;
 			this._oMasterNav.toggleStyleClass("sapMSplitContainerMasterHidden", true);
 			this._bMasterClosing = true;
 		}
