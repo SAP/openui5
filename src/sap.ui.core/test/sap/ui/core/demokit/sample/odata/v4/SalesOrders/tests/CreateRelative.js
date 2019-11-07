@@ -28,7 +28,7 @@ sap.ui.define([
 					component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 					level : Log.Level.ERROR,
 					message : "Failed to read path /SalesOrderList",
-					details : "Error: HTTP request was not processed because the previous request "
+					details : "HTTP request was not processed because the previous request "
 						+ "failed"
 				},
 				oReadSchedulesFailLog = {
@@ -36,7 +36,7 @@ sap.ui.define([
 					level : Log.Level.ERROR,
 					message : "Failed to get contexts for /testsuite/proxy/sap/opu/odata4/sap/"
 						+ "zui5_testv4/default/sap/zui5_epm_sample/0002/SalesOrderList",
-					details : "Error: HTTP request was not processed because the previous request "
+					details : "HTTP request was not processed because the previous request "
 						+ "failed"
 				},
 				oUpdateFailLog = {

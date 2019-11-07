@@ -201,7 +201,7 @@ sap.ui.define([
 						that = this;
 
 					// do not pass any parameters to Model
-					Model.apply(this);
+					Model.call(this);
 
 					if (!mParameters || mParameters.synchronizationMode !== "None") {
 						throw new Error("Synchronization mode must be 'None'");
@@ -1034,12 +1034,13 @@ sap.ui.define([
 	 * Returns the model's bindings.
 	 *
 	 * @returns {sap.ui.model.Binding[]}
-	 *   An array with all bindings, or an empty array if there are no bindings
+	 *   A copy of an array with all bindings, or an empty array if there are no bindings
 	 *
-	 * @private
+	 * @public
+	 * @since 1.73.0
 	 */
 	ODataModel.prototype.getAllBindings = function () {
-		return this.aAllBindings;
+		return this.aAllBindings.slice();
 	};
 
 	/**
@@ -1815,7 +1816,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.withUnresolvedBindings = function (sCallbackName, vParameter) {
-		return this.getAllBindings().filter(function (oBinding) {
+		return this.aAllBindings.filter(function (oBinding) {
 			return oBinding.isRelative() && !oBinding.getContext();
 		}).some(function (oBinding) {
 			return oBinding[sCallbackName](vParameter);

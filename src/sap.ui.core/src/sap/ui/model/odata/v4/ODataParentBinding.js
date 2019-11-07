@@ -71,6 +71,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the new current value and updates the cache.
+	 *
+	 * @param {string} sPath
+	 *   A relative path within the JSON structure
+	 * @param {any} vValue
+	 *   The new value which must be primitive
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the PATCH request
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   <code>undefined</code> or a promise which is resolved without a result in case of success,
+	 *   or rejected with an instance of <code>Error</code> in case of failure
+	 *
+	 * @see sap.ui.model.odata.v4.ODataContext#doSetProperty
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.doSetProperty = function (sPath, vValue, oGroupLock) {};
+
+	/**
 	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.
 	 *
 	 * @param {boolean} bSuccess Whether the current PATCH request has been processed successfully
@@ -166,7 +185,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions, bCacheImmutable) {
-		var mAggregatedQueryOptionsClone = jQuery.extend(true, {}, this.mAggregatedQueryOptions);
+		var mAggregatedQueryOptionsClone = _Helper.merge({}, this.mAggregatedQueryOptions,
+				this.oCache && this.oCache.getLateQueryOptions()),
+			bChanged = false;
 
 		/*
 		 * Recursively merges the given query options into the given aggregated query options.
@@ -195,7 +216,8 @@ sap.ui.define([
 				if (bCacheImmutable) {
 					return false;
 				}
-				mAggregatedQueryOptions.$expand[sExpandPath] = mExpandValue[sExpandPath];
+				mAggregatedQueryOptions.$expand[sExpandPath]
+					= _Helper.merge({}, mExpandValue[sExpandPath]);
 				return true;
 			}
 
@@ -207,9 +229,10 @@ sap.ui.define([
 			 */
 			function mergeSelectPath(sSelectPath) {
 				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
-					if (bCacheImmutable) {
-						return !bInsideExpand;
+					if (bCacheImmutable && bInsideExpand) {
+						return false;
 					}
+					bChanged = true;
 					mAggregatedQueryOptions.$select.push(sSelectPath);
 				}
 				return true;
@@ -243,7 +266,11 @@ sap.ui.define([
 		}
 
 		if (merge(mAggregatedQueryOptionsClone, mQueryOptions)) {
-			this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
+			if (!bCacheImmutable) {
+				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
+			} else if (bChanged) {
+				this.oCache.setLateQueryOptions(mAggregatedQueryOptionsClone);
+			}
 			return true;
 		}
 		return false;
@@ -556,7 +583,7 @@ sap.ui.define([
 		this.removeReadGroupLock();
 		this.oResumePromise = undefined;
 
-		asODataBinding.prototype.destroy.apply(this);
+		asODataBinding.prototype.destroy.call(this);
 	};
 
 	/**
@@ -635,10 +662,11 @@ sap.ui.define([
 			return SyncPromise.resolve(sResolvedChildPath);
 		}
 
-		// Note: this.oCachePromise exists for all bindings except operation bindings
+		// Note: this.oCachePromise exists for all bindings except operation bindings; it might
+		// become pending again
 		bCacheImmutable = this.oCachePromise.isRejected()
-			// "this.oCache !== undefined" cannot be used; oCachePromise might become pending again
-			|| this.oCachePromise.isFulfilled() && (!this.oCache || this.oCache.bSentReadRequest);
+			|| this.oCache === null
+			|| this.oCache && this.oCache.bSentReadRequest;
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sFullMetaPath = oMetaModel.getMetaPath(sResolvedChildPath);
 		aPromises = [
@@ -710,7 +738,7 @@ sap.ui.define([
 				var oCache = aResult[0];
 
 				if (oCache && !oCache.bSentReadRequest) {
-					oCache.setQueryOptions(jQuery.extend(true, {}, that.oModel.mUriParameters,
+					oCache.setQueryOptions(_Helper.merge({}, that.oModel.mUriParameters,
 						that.mAggregatedQueryOptions));
 				}
 				return oCache;
@@ -1139,6 +1167,11 @@ sap.ui.define([
 		}
 	}
 
+	// #doDeregisterChangeListener is still not final, allow for "super" calls
+	asODataParentBinding.prototype.doDeregisterChangeListener
+		= ODataParentBinding.prototype.doDeregisterChangeListener;
+	// #doSetProperty is not final, allow for "super" calls
+	asODataParentBinding.prototype.doSetProperty = ODataParentBinding.prototype.doSetProperty;
 	// #destroy is still not final, allow for "super" calls
 	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
 	// #hasPendingChangesForPath is still not final, allow for "super" calls

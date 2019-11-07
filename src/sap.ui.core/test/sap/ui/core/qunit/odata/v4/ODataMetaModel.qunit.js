@@ -30,7 +30,7 @@ sap.ui.define([
 ], function (jQuery, Log, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
 		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, PropertyBinding, Sorter,
 		OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
-		 ValueListType, _Helper, TestUtils, URI) {
+		ValueListType, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1434,6 +1434,11 @@ sap.ui.define([
 			//TODO merge facets of return type and type definition?!
 			: mScope["name.space.DerivedPrimitiveFunction"][0].$ReturnType,
 		"/ChangeManagerOfTeam/value" : oTeamData.value,
+		"/ChangeManagerOfTeam/$kind" : "ActionImport",
+		"/ChangeManagerOfTeam/$Action/0/$Parameter/0/$Name" : "TEAM",
+		"/ChangeManagerOfTeam/@$ui5.overload/0/$Parameter/0/$Name" : "TEAM",
+		"/ChangeManagerOfTeam/$Parameter/TEAM/$Name" : "TEAM",
+		"/OverloadedFunctionImport/$Parameter/C/$Type" : "Edm.String",
 		// action overloads -----------------------------------------------------------------------
 		"/OverloadedAction/@$ui5.overload" : sinon.match.array.deepEquals([aOverloadedAction[2]]),
 		"/OverloadedAction/@$ui5.overload/0" : aOverloadedAction[2],
@@ -1461,6 +1466,8 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedAction/_it" : aOverloadedAction[1].$Parameter[0],
 		"/T€AMS/name.space.OverloadedAction/parameter1" : aOverloadedAction[1].$Parameter[1],
 		"/T€AMS/name.space.OverloadedAction/parameter2" : aOverloadedAction[1].$Parameter[2],
+		"/T€AMS/name.space.OverloadedAction/$Parameter/parameter2"
+			: aOverloadedAction[1].$Parameter[2],
 		// parameters take precedence, empty segment disambiguates - - - - - - - - - - - - - - - - -
 		"/T€AMS/tea_busi.NewAction/Name" : oTeamData.Name, // "Name" is not a parameter
 		"/T€AMS/tea_busi.NewAction/_it" : mScope["tea_busi.NewAction"][1].$Parameter[0],
@@ -1486,6 +1493,8 @@ sap.ui.define([
 		"/T€AMS/name.space.OverloadedBoundFunction/_it@Common.Label"
 			: mScope.$Annotations["name.space.OverloadedBoundFunction/_it"]["@Common.Label"],
 		"/T€AMS/name.space.OverloadedBoundFunction/B" : aOverloadedBoundFunction[1].$Parameter[1],
+		"/T€AMS/name.space.OverloadedBoundFunction/$Parameter/B"
+			: aOverloadedBoundFunction[1].$Parameter[1],
 		// annotations ----------------------------------------------------------------------------
 		"/@DefaultContainer"
 			: mScope.$Annotations["tea_busi.DefaultContainer"]["@DefaultContainer"],
@@ -1548,7 +1557,6 @@ sap.ui.define([
 				},
 				"@Common.ValueListWithFixedValues" : true
 			});
-			return true; // caller's assert.ok() should not fail
 		}),
 		// annotations at operations across all overloads - - - - - - - - - - - - - - - - - - - - -
 		"/name.space.OverloadedFunction@Common.Label"
@@ -1575,7 +1583,6 @@ sap.ui.define([
 					// Note: "$PropertyPath" : "n/a" must not appear here! PUT semantics, not PATCH
 				}
 			});
-			return true; // caller's assert.ok() should not fail
 		}),
 		"/OverloadedAction/@$ui5.overload@Core.OperationAvailable" // at unbound overload
 			: mScope.$Annotations["name.space.OverloadedAction()"]["@Core.OperationAvailable"],
@@ -1675,7 +1682,7 @@ sap.ui.define([
 			if (vResult && typeof vResult === "object" && "test" in vResult) {
 				assert.notStrictEqual(oSyncPromise.getResult(), undefined);
 				// Sinon.JS matcher
-				assert.ok(vResult.test(oSyncPromise.getResult()));
+				vResult.test(oSyncPromise.getResult());
 			} else {
 				assert.strictEqual(oSyncPromise.getResult(), vResult);
 			}

@@ -47,13 +47,10 @@
 					"earlyRequests": true,
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.ServerDrivenPaging.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
-		},
-		"resources": {
-			"js": [{
-				"uri": "ServerDrivenPagingSandbox.js"
-			}]
 		}
 	}
 }

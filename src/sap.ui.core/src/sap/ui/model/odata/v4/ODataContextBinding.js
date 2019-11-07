@@ -144,6 +144,7 @@ sap.ui.define([
 				if (iPos >= 0) { // deferred operation binding
 					this.oOperation = {
 						bAction : undefined,
+						mChangeListeners : {}, // map from path to an array of change listeners
 						mParameters : {},
 						sResourcePath : undefined
 					};
@@ -650,8 +651,8 @@ sap.ui.define([
 		this.mParameters = undefined;
 		this.mQueryOptions = undefined;
 
-		asODataParentBinding.prototype.destroy.apply(this);
-		ContextBinding.prototype.destroy.apply(this);
+		asODataParentBinding.prototype.destroy.call(this);
+		ContextBinding.prototype.destroy.call(this);
 	};
 
 	/**
@@ -667,6 +668,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataBinding#doDeregisterChangeListener
+	 */
+	ODataContextBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
+		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
+			_Helper.removeByPath(this.oOperation.mChangeListeners,
+				sPath.slice(/*"$Parameter/".length*/11), oListener);
+			return;
+		}
+		asODataParentBinding.prototype.doDeregisterChangeListener.apply(this, arguments);
+	};
+
+	/**
 	 * Hook method for {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache} to
 	 * determine the query options for this binding.
 	 *
@@ -677,6 +691,20 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.doFetchQueryOptions = function () {
 		return SyncPromise.resolve(this.mQueryOptions);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
+	 */
+	ODataContextBinding.prototype.doSetProperty = function(sPath, vValue, oGroupLock) {
+		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
+			this.setParameter(sPath.slice(/*"$Parameter/".length*/11), vValue);
+			oGroupLock.unlock();
+			return SyncPromise.resolve();
+		}
+
+		return asODataParentBinding.prototype.doSetProperty.apply(this, arguments);
 	};
 
 	/**
@@ -776,39 +804,57 @@ sap.ui.define([
 		}
 		return this.oCachePromise.then(function (oCache) {
 			var bDataRequested = false,
-				sRelativePath;
+				sRelativePath = oCache || that.oOperation
+					? that.getRelativePath(sPath)
+					: undefined,
+				aSegments,
+				vValue;
 
-			if (oCache) {
-				sRelativePath = that.getRelativePath(sPath);
-				if (sRelativePath !== undefined) {
-					if (bCached) {
-						oGroupLock = _GroupLock.$cached;
-					} else {
-						oGroupLock = that.oReadGroupLock || that.lockGroup();
-						that.oReadGroupLock = undefined;
+			if (that.oOperation) {
+				aSegments = sRelativePath.split("/");
+				if (aSegments[0] === "$Parameter") {
+					if (aSegments.length === 1) {
+						return undefined;
 					}
-					return that.resolveRefreshPromise(
-						oCache.fetchValue(oGroupLock, sRelativePath, function () {
-							bDataRequested = true;
-							that.fireDataRequested();
-						}, oListener, that.oModel.bAutoExpandSelect)
-					).then(function (vValue) {
-						if (bDataRequested) {
-							that.fireDataReceived({data : {}});
-						}
-						return vValue;
-					}, function (oError) {
-						oGroupLock.unlock(true);
-						if (bDataRequested) {
-							that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
-								oError);
-							that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
-						}
-						throw oError;
-					});
+					_Helper.addByPath(that.oOperation.mChangeListeners,
+						sRelativePath.slice(/*"$Parameter/".length*/11), oListener);
+
+					vValue = _Helper.drillDown(that.oOperation.mParameters, aSegments.slice(1));
+
+					return vValue === undefined ? null : vValue;
 				}
 			}
-			if (!that.oOperation && that.oContext && that.oContext.fetchValue) {
+
+			if (oCache && sRelativePath !== undefined) {
+				if (bCached) {
+					oGroupLock = _GroupLock.$cached;
+				} else {
+					oGroupLock = that.oReadGroupLock || that.lockGroup();
+					that.oReadGroupLock = undefined;
+				}
+
+				return that.resolveRefreshPromise(
+					oCache.fetchValue(oGroupLock, sRelativePath, function () {
+						bDataRequested = true;
+						that.fireDataRequested();
+					}, oListener)
+				).then(function (vValue) {
+					if (bDataRequested) {
+						that.fireDataReceived({data : {}});
+					}
+					return vValue;
+				}, function (oError) {
+					oGroupLock.unlock(true);
+					if (bDataRequested) {
+						that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
+							oError);
+						that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
+					}
+					throw oError;
+				});
+			}
+
+			if (!that.oOperation && that.oContext) {
 				return that.oContext.fetchValue(sPath, oListener, bCached);
 			}
 		});
@@ -1198,6 +1244,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.setParameter = function (sParameterName, vValue) {
+		var oSource = {};
+
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
@@ -1207,8 +1255,11 @@ sap.ui.define([
 		if (vValue === undefined) {
 			throw new Error("Missing value for parameter: " + sParameterName);
 		}
-		this.oOperation.mParameters[sParameterName] = vValue;
+		oSource[sParameterName] = vValue;
+		_Helper.updateAll(this.oOperation.mChangeListeners, "", this.oOperation.mParameters,
+			oSource);
 		this.oOperation.bAction = undefined; // "not yet executed"
+
 		return this;
 	};
 

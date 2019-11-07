@@ -1969,15 +1969,13 @@ sap.ui.define([
 			oPromise,
 			oReadResult = {};
 
-		oBinding.oModel.bAutoExpandSelect = {};
 		this.mock(oBinding).expects("lockGroup").exactly(oFixture.bCached ? 0 : 1)
 			.withExactArgs().returns(oFixture.oGroupLock);
 		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs("/EMPLOYEES/42/bar").returns("42/bar");
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oFixture.oGroupLock), "42/bar",
-				undefined, sinon.match.same(oListener),
-				sinon.match.same(oBinding.oModel.bAutoExpandSelect))
+			.withExactArgs(sinon.match.same(oFixture.oGroupLock), "42/bar", undefined,
+				sinon.match.same(oListener))
 			.returns(SyncPromise.resolve(oReadResult));
 
 		// code under test

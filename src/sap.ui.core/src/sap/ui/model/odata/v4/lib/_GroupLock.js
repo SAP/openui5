@@ -71,7 +71,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an unlocked group lock for the same group ID.
+	 * Returns an unlocked group lock for the same group ID. This is required when reusing a group
+	 * lock on which {@link #unlock} has already been called (e.g. when one group is used to create
+	 * multiple requests).
 	 *
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
