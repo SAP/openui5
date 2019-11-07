@@ -1,6 +1,6 @@
 /*global describe,it,element,by,takeScreenshot,expect,browser*/
 
-describe("sap.m.Label", function() {
+describe("sap.m.LabelRTL", function() {
 	"use strict";
 
 	it("should load test page", function () {

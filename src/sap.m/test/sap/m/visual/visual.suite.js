@@ -25,6 +25,7 @@ module.exports = [
 	"InputVisualTests.spec.js",
 	"InputDescriptionVisualTests.spec.js",
 	"Label.spec.js",
+	"LabelRTL.spec.js",
 	"LightBox.spec.js",
 	"Link.spec.js",
 	"MenuButton.spec.js",
