@@ -23,20 +23,31 @@ sap.ui.define([
 		"context": "sap.card",
 		"properties" : Object.assign(
 			{},
-			HeaderConfig,
-			ListCardConfig,
-			ObjectCardConfig,
-			TableCardConfig,
-			generateDataConfig(["content"], "content/", "card"),
 			{
-				// General properties
+				"type": {
+					"tags": ["general"],
+					"label": "{i18n>CARD_EDITOR.TYPE}",
+					"type": "enum",
+					"enum": [
+						"List",
+						"Object",
+						"Table"
+					],
+					"default": "List",
+					"path": "type"
+				},
 				"parameters": {
-					"tags": ["parameters"],
+					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.PARAMETERS}",
 					"path": "configuration/parameters",
 					"type": "parameters"
 				}
-			}
+			},
+			HeaderConfig,
+			ListCardConfig,
+			ObjectCardConfig,
+			TableCardConfig,
+			generateDataConfig(["content"], "content/", "card")
 		),
 		"propertyEditors": {
 			"enum" : "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
