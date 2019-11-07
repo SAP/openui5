@@ -166,6 +166,10 @@ sap.ui.define([
 			this.handleRequiredField(oRequiredNameInput);
 			this.checkInputConstraints(iWeeklyHours);
 
+			this.oMP.getBinding("items").attachChange(function(oEvent){
+				this.oMP.navigateBack();
+			}.bind(this));
+
 			setTimeout(function(){
 				this.oMP.openBy(oButton);
 			}.bind(this), 100);

@@ -441,8 +441,6 @@ function(
 					}));
 				}, this);
 
-				this.navigateBack();
-
 				this._bItemsChanged = false;
 			}
 
@@ -761,6 +759,7 @@ function(
 
 			return Control.prototype.setModel.apply(this, arguments);
 		};
+
 		/**
 		 * Sets the value of the <code>groupItems</code> property.
 		 * @param {boolean} bValue A boolean indicating whether items should be grouped or not.
@@ -775,6 +774,11 @@ function(
 			return this;
 		};
 
+		/**
+		 * Navigates back to the list page.
+		 *
+		 * @public
+		 */
 		MessagePopover.prototype.navigateBack = function () {
 			// MessagePopover is just a proxy to the MessageView
 			this._oMessageView.navigateBack();
