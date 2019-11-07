@@ -1222,6 +1222,41 @@ sap.ui.define([
 		oMultiInput1.destroy();
 	});
 
+	QUnit.test("Add tokens on mobile", function(assert) {
+		// system under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		var oMultiInput = new MultiInput({
+			enableMultiLineMode: true,
+			filterSuggests: false,
+			showSuggestion: true,
+			showValueHelp: true
+		}).placeAt("qunit-fixture");
+
+		oMultiInput.addValidator(function(args){
+			var text = args.text;
+
+			return new Token({text: text});
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiInput._openSuggestionsPopover({});
+		oMultiInput._oSuggPopover._oPopupInput.focus();
+		oMultiInput._oSuggPopover._oPopupInput.updateDomValue("123");
+		qutils.triggerKeydown(oMultiInput._oSuggPopover._oPopupInput.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick(300);
+
+		assert.strictEqual(oMultiInput._tokenizer.getTokens().length, 1, "Just a single token gets created");
+
+		// Cleanup
+		oMultiInput.destroy();
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.multiInput1 = new MultiInput();
