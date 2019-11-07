@@ -111,10 +111,6 @@ sap.ui.define([
 								"id": "cacheBusterToken",
 								"libName": "sap.ui.core"
 							},
-							"unresolvedPropertyBindings": {
-								"id": "unresolvedPropertyBindings",
-								"libName": "sap.ui.core"
-							},
 							"bindingPathSyntaxValidation": {
 								"id": "bindingPathSyntaxValidation",
 								"libName": "sap.ui.core"
@@ -418,14 +414,14 @@ sap.ui.define([
 		var mRules = RuleSetLoader.getAllRules();
 
 		assert.notOk(mRules instanceof Array, "Should not be an array");
-		assert.equal(Object.keys(mRules).length, 10, "Should have 10 rules");
+		assert.equal(Object.keys(mRules).length, 9, "Should have 9 rules");
 	});
 
 	QUnit.test("getAllRuleDescriptors", function (assert) {
 		var aRuleDescriptors = RuleSetLoader.getAllRuleDescriptors();
 
 		assert.ok(aRuleDescriptors instanceof Array, "Should be an array");
-		assert.equal(aRuleDescriptors.length, 10, "Should have 10 rules");
+		assert.equal(aRuleDescriptors.length, 9, "Should have 9 rules");
 		assert.ok(aRuleDescriptors[0].hasOwnProperty("libName"), "Rule descriptors should have libName property set");
 		assert.ok(aRuleDescriptors[0].hasOwnProperty("ruleId"), "Rule descriptors should have ruleId property set");
 	});
