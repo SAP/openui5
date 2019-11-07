@@ -1770,16 +1770,18 @@ sap.ui.define([
 			oContextResult = {},
 			sPath = "foo",
 			fnProcessor = {},
-			oPromise;
+			oPromise,
+			bWithOrWithoutCache = {};
 
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").withExactArgs(oBinding.sPath, sPath).returns("~");
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.same(fnProcessor), "~", bSync)
+			.withExactArgs(sinon.match.same(fnProcessor), "~", bSync,
+				sinon.match.same(bWithOrWithoutCache))
 			.returns(oContextResult);
 
 		// code under test
-		oPromise = oBinding.withCache(fnProcessor, sPath, bSync);
+		oPromise = oBinding.withCache(fnProcessor, sPath, bSync, bWithOrWithoutCache);
 
 		assert.strictEqual(oPromise.unwrap(), oContextResult);
 	});
@@ -1802,17 +1804,19 @@ sap.ui.define([
 			oContextResult = {},
 			sPath = "/foo",
 			fnProcessor = {},
-			oPromise;
+			oPromise,
+			bWithOrWithoutCache = {};
 
 		// oBinding binding might still be relative but while bubbling up sPath is already absolute
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(_Helper).expects("buildPath").never();
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync)
+			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync,
+				sinon.match.same(bWithOrWithoutCache))
 			.returns(oContextResult);
 
 		// code under test - simulate a call from Context#withCache
-		oPromise = oBinding.withCache(fnProcessor, sPath, bSync);
+		oPromise = oBinding.withCache(fnProcessor, sPath, bSync, bWithOrWithoutCache);
 
 		assert.strictEqual(oPromise.unwrap(), oContextResult);
 	});
@@ -1837,16 +1841,18 @@ sap.ui.define([
 			oContextResult = {},
 			sPath = "/foo",
 			fnProcessor = {},
-			oPromise;
+			oPromise,
+			bWithOrWithoutCache = {};
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync)
+			.withExactArgs(sinon.match.same(fnProcessor), sPath, bSync,
+				sinon.match.same(bWithOrWithoutCache))
 			.returns(oContextResult);
 
 		// code under test
-		oPromise = oBinding.withCache(fnProcessor, sPath, bSync);
+		oPromise = oBinding.withCache(fnProcessor, sPath, bSync, bWithOrWithoutCache);
 
 		assert.strictEqual(oPromise.unwrap(), oContextResult);
 	});
