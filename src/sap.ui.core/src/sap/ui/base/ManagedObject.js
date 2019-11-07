@@ -3725,7 +3725,9 @@ sap.ui.define([
 	 *            <code>bindList</code> method of the corresponding model class or with the model specific
 	 *            subclass of <code>sap.ui.model.ListBinding</code>
 	 * @param {function} [oBindingInfo.groupHeaderFactory]
-	 *            A factory function to generate custom group visualization (optional)
+	 *            A factory function to generate custom group visualization (optional). It should return a
+	 *            control suitable to visualize a group header (e.g. a <code>sap.m.GroupHeaderListItem</code>
+	 *            for a <code>sap.m.List</code>).
 	 * @param {object} [oBindingInfo.events=null]
 	 *            Map of event handler functions keyed by the name of the binding events that they should be attached to
 	 *
