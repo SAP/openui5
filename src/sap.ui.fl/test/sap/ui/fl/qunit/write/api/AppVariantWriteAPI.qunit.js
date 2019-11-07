@@ -568,74 +568,69 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Smart Business - onPrem system) when saveAs is called with descriptor change already added into own persistence and IAM registration is skipped", function(assert) {
-			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
-
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			sandbox.stub(LrepConnector.prototype, "send").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
 			// Creates a descriptor change
-			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: oAppComponent})
+			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: {appId: "reference.app"}})
 				.then(function(oDescriptorInlineChange) {
 					// Adds a descriptor change to its own persistence
-					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: {appId: "reference.app"}});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return AppVariantWriteAPI.saveAs({
-						selector: oAppComponent,
+						selector: {
+							appId: "reference.app"
+						},
 						id: "customer.reference.app.id",
 						// eslint-disable-next-line quote-props
 						package: "TEST_PACKAGE",
 						transport: "U1YK123456",
-						layer: "CUSTOMER",
-						skipIam: true
+						layer: "CUSTOMER"
 					})
 						.then(function() {
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 							assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
-							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&skipIam=true", "POST"), "then backend call is triggered with correct parameters");
+							assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456", "POST"), "then backend call is triggered with correct parameters");
 						});
 				});
 		});
 
 		QUnit.test("(Smart Business - S4/Hana Cloud system) when saveAs is called with descriptor change already added into own persistence and IAM registration is skipped", function(assert) {
-			var oAppComponent = createAppComponent();
 			simulateSystemConfig(true);
-
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			sandbox.stub(LrepConnector.prototype, "send").resolves();
 
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
 			// Creates a descriptor change
-			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: oAppComponent})
+			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: {appId: "reference.app"}})
 				.then(function(oDescriptorInlineChange) {
 					// Adds a descriptor change to its own persistence
-					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: {appId: "reference.app"}});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return AppVariantWriteAPI.saveAs({
-						selector: oAppComponent,
+						selector: {
+							appId: "reference.app"
+						},
 						id: "customer.reference.app.id",
 						// eslint-disable-next-line quote-props
 						layer: "CUSTOMER",
 						skipIam: true
 					})
 						.then(function() {
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
@@ -945,25 +940,6 @@ sap.ui.define([
 
 		QUnit.test("(Save As scenario) when getManifest is called and layer is not passed in propertbag", function(assert) {
 			return AppVariantWriteAPI.getManifest({})
-				.catch(function() {
-					assert.ok("Layer must be passed");
-				});
-		});
-
-		QUnit.test("(Save As scenario) when loadAppVariant is called", function(assert) {
-			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
-			return AppVariantWriteAPI.loadAppVariant({
-				selector: {
-					appId: "customer.reference.app.id"
-				},
-				layer: "CUSTOMER"
-			}).then(function() {
-				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id", "GET"), "then the parameters are correct");
-			});
-		});
-
-		QUnit.test("(Save As scenario) when loadAppVariant is called and layer is not passed in propertbag", function(assert) {
-			return AppVariantWriteAPI.loadAppVariant({})
 				.catch(function() {
 					assert.ok("Layer must be passed");
 				});

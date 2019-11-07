@@ -23,12 +23,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function _prepareTransportInfo(oAppVariant, mPropertyBag) {
+	function _prepareTransportInfo(mPropertyBag) {
 		// Smart business colleagues must pass package and transport information as a part of propertybag in case of onPrem systems
 		if (
 			mPropertyBag
 			&& mPropertyBag.package
 			&& mPropertyBag.transport
+			&& mPropertyBag.selector
+			&& mPropertyBag.selector.appId // Only Smart Business passes appId as a part of selector
 		) {
 			return Promise.resolve({
 				packageName: mPropertyBag.package,
@@ -104,6 +106,8 @@ sap.ui.define([
 		if (
 			mPropertyBag
 			&& mPropertyBag.transport
+			&& mPropertyBag.selector
+			&& mPropertyBag.selector.appId
 		) {
 			return Promise.resolve({
 				packageName: oAppVariant.getPackage(),
@@ -115,17 +119,23 @@ sap.ui.define([
 	}
 
 	function _getDirtyDescrChanges(vSelector) {
-		var aDescrChanges = ChangesController.getDescriptorFlexControllerInstance(vSelector)
-			._oChangePersistence.getDirtyChanges();
-		aDescrChanges = aDescrChanges.slice();
-		return aDescrChanges;
+		var oDescriptorFlexControllerPersistence = ChangesController.getDescriptorFlexControllerInstance(vSelector)._oChangePersistence;
+		if (oDescriptorFlexControllerPersistence) {
+			var aDescrChanges = oDescriptorFlexControllerPersistence.getDirtyChanges();
+			aDescrChanges = aDescrChanges.slice();
+			return aDescrChanges;
+		}
+		return [];
 	}
 
 	function _getDirtyUIChanges(vSelector) {
-		var aUIChanges = ChangesController.getFlexControllerInstance(vSelector)
-			._oChangePersistence.getDirtyChanges();
-		aUIChanges = aUIChanges.slice();
-		return aUIChanges;
+		var oFlexControllerPersistence = ChangesController.getFlexControllerInstance(vSelector)._oChangePersistence;
+		if (oFlexControllerPersistence) {
+			var aUIChanges = oFlexControllerPersistence.getDirtyChanges();
+			aUIChanges = aUIChanges.slice();
+			return aUIChanges;
+		}
+		return [];
 	}
 
 	function _arePersistenciesTheSame(vSelector) {
@@ -177,7 +187,7 @@ sap.ui.define([
 			return DescriptorVariantFactory.createAppVariant(mPropertyBag)
 				.then(function(oAppVariant) {
 					oAppVariantClosure = merge({}, oAppVariant);
-					return _prepareTransportInfo(oAppVariantClosure, mPropertyBag);
+					return _prepareTransportInfo(mPropertyBag);
 				})
 				.then(function(oTransportInfo) {
 					return _setTransportInfoForAppVariant(oAppVariantClosure, oTransportInfo);
@@ -192,7 +202,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					// Save the app variant to backend
-					return mPropertyBag.isForSAPDeveloper ? oAppVariantClosure.submit()
+					return mPropertyBag.bIsForSapDelivery ? oAppVariantClosure.submit()
 							: oAppVariantClosure.submitViaNewConnectors()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_SAVE_APP_VARIANT_FAILED";
@@ -208,22 +218,28 @@ sap.ui.define([
 					}
 
 					var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-					// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
-					return oFlexController.saveAll(true)
-						.catch(function(oError) {
-							if (bArePersistencesEqual) {
-								_deleteDescrChangesFromPersistence(mPropertyBag.selector);
-							}
 
-							// Delete the inconsistent app variant if the UI changes failed to save
-							return this.deleteAppVariant({
-								referenceAppId: mPropertyBag.id
-							})
-								.then(function() {
-									oError.messageKey = "MSG_COPY_UNSAVED_CHANGES_FAILED";
-									throw oError;
-								});
-						}.bind(this));
+					var aUIChanges = _getDirtyUIChanges(mPropertyBag.selector);
+					if (aUIChanges.length) {
+						// Save the dirty UI changes to backend => firing PersistenceWriteApi.save
+						return oFlexController.saveAll(true)
+							.catch(function(oError) {
+								if (bArePersistencesEqual) {
+									_deleteDescrChangesFromPersistence(mPropertyBag.selector);
+								}
+
+								// Delete the inconsistent app variant if the UI changes failed to save
+								return this.deleteAppVariant({
+									referenceAppId: mPropertyBag.id
+								})
+									.then(function() {
+										oError.messageKey = "MSG_COPY_UNSAVED_CHANGES_FAILED";
+										throw oError;
+									});
+							}.bind(this));
+					}
+
+					return Promise.resolve();
 				}.bind(this))
 				.then(function() {
 					//Reference Application Usecase: Since the UI changes have been successfully saved, the descriptor inline changes will now be removed from persistence
@@ -240,7 +256,7 @@ sap.ui.define([
 		updateAppVariant: function(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
-			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, false, mPropertyBag.layer, mPropertyBag.isForSAPDeveloper)
+			return DescriptorVariantFactory.loadAppVariant(mPropertyBag.referenceAppId, false, mPropertyBag.layer, mPropertyBag.bIsForSapDelivery)
 				.then(function(oAppVariant) {
 					if (!oAppVariant) {
 						throw new Error("App variant with ID: " + mPropertyBag.referenceAppId + "does not exist");
@@ -273,7 +289,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					// Updates the app variant saved in backend
-					return mPropertyBag.isForSAPDeveloper ? oAppVariantClosure.submit()
+					return mPropertyBag.bIsForSapDelivery ? oAppVariantClosure.submit()
 							: oAppVariantClosure.submitViaNewConnectors()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_UPDATE_APP_VARIANT_FAILED";
@@ -312,7 +328,7 @@ sap.ui.define([
 					throw new Error("Transport information could not be determined");
 				})
 				.then(function () {
-					return mPropertyBag.isForSAPDeveloper ? oAppVariantClosure.submit()
+					return mPropertyBag.bIsForSapDelivery ? oAppVariantClosure.submit()
 							: oAppVariantClosure.submitViaNewConnectors()
 						.catch(function(oError) {
 							oError.messageKey = "MSG_DELETE_APP_VARIANT_FAILED";

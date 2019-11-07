@@ -30,11 +30,11 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
 		 * @param {string} mPropertyBag.id - App variant ID
-		 * @param {sap.ui.fl.Layers} mPropertyBag.layer - Current working layer
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Current working layer
 		 * @param {string} [mPropertyBag.package] - Package info for the app variant - Smart Business must pass the package
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the transport
 		 * @param {string} [mPropertyBag.version] - Version of the app variant
-		 * @param {string} [mPropertyBag.isForSAPDeveloper=false] - Determines whether app variant creation is intended for SAP developer
+		 * @param {string} [mPropertyBag.isForSAPDelivery=false] - Determines whether app variant creation is intended for SAP delivery
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
 		 *
 		 * @returns {Promise} Promise that resolves with the app variant save response
@@ -56,9 +56,9 @@ sap.ui.define([
 		 * Deletes the app variant from the backend
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {sap.ui.fl.Layers} mPropertyBag.layer - Connectors are now determined based on the layer - Smart Business must pass the layer
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer - Smart Business must pass the layer
 		 * @param {string} [mPropertyBag.transport] - Transport request for the app variant - Smart Business must pass the transport
-		 * @param {string} [mPropertyBag.isForSAPDeveloper=false] - Determines whether app variant deletion is intended for SAP developer
+		 * @param {string} [mPropertyBag.isForSAPDelivery=false] - Determines whether app variant deletion is intended for SAP delivery
 		 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
 		 * @returns {Promise} Promise that resolves with the app variant deletion response
 		 *
@@ -78,7 +78,7 @@ sap.ui.define([
 		 * Lists all the app variants based on the reference application
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {sap.ui.fl.Layers} mPropertyBag.layer - Connectors are now determined based on the layer
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer
 		 * @returns {Promise} Promise that resolves with the list of app variant entries
 		 *
 		 * @private
@@ -97,7 +97,7 @@ sap.ui.define([
 		 * Gets the manifest of an app(variant) from backend
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {sap.ui.fl.Layers} mPropertyBag.layer - Connectors are now determined based on the layer
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer
 		 * @returns {Promise} Promise that resolves with the app(variant) manifest
 		 *
 		 * @private
@@ -110,29 +110,10 @@ sap.ui.define([
 			return Storage.appVariant.getManifest(mPropertyBag);
 		},
 		/**
-		 * Loads the app(variant) design time configuration from backend
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {sap.ui.fl.Layers} mPropertyBag.layer - Connectors are now determined based on the layer
-		 * @returns {Promise} Promise that resolves with the app(variant) design time configuration
-		 *
-		 * @private
-	 	 * @ui5-restricted
-		 */
-		loadAppVariant: function(mPropertyBag) {
-			if (!mPropertyBag.layer) {
-				return Promise.reject("Layer must be provided");
-			}
-			var oFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-			mPropertyBag.reference = oFlexController.getComponentName();
-
-			return Storage.appVariant.load(mPropertyBag);
-		},
-		/**
 		 * Assigns the same catalogs to app varriant as of reference application
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {sap.ui.fl.Layers} mPropertyBag.layer - Connectors are now determined based on the layer
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer
 		 * @param {string} mPropertyBag.assignFromAppId - Reference application ID
 		 * @param {string} mPropertyBag.action - Action name e.g. assignCatalogs
 		 * @returns {Promise} Promise that resolves with the app variant catalog assignment information
@@ -153,7 +134,7 @@ sap.ui.define([
 		 * Assigns the same catalogs to app varriant as of reference application
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector
-		 * @param {sap.ui.fl.Layers} mPropertyBag.layer - Connectors are now determined based on the layer
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Connectors are now determined based on the layer
 		 * @param {string} mPropertyBag.action - Action name e.g. unassignCatalogs
 		 * @returns {Promise} Promise that resolves with the app variant unassignment information
 		 *
