@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Connector that retrieves data from a json loaded from a specified path.
+	 * Empty connector since we don't support writing to a file.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.ObjectPathConnector
 	 * @since 1.73

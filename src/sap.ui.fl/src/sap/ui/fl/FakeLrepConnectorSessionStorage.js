@@ -3,14 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/FakeLrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/apply/_internal/connectors/Utils"
+	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector"
 ],
 function(
-	Cache,
 	FakeLrepConnector,
 	ApplySessionStorageConnector,
 	WriteSessionStorageConnector
