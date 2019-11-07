@@ -39,9 +39,16 @@ sap.ui.define(['sap/base/Log', './OverflowToolbar', './OverflowToolbarRenderer',
 
 		AssociativeOverflowToolbar.prototype.getContent = function () {
 			var associativeArrayWithIds = this.getAssociation("content") || [];
-			return associativeArrayWithIds.map(function (controlId) {
-				return sap.ui.getCore().byId(controlId);
+			var aControls = [];
+
+			associativeArrayWithIds.forEach(function (controlId) {
+				var oControl = sap.ui.getCore().byId(controlId);
+				if (oControl) {
+					aControls.push(oControl);
+				}
 			});
+
+			return aControls;
 		};
 
 		AssociativeOverflowToolbar.prototype.insertContent = function (oControl, iIndex) {
