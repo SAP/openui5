@@ -106,7 +106,7 @@ sap.ui.define([
 				/**
 				 * Determines whether the side content is visible or hidden.
 				 *
-				 * <b>Note:</b> If both <code>DynamicSideContent</code> and <code>showMainContent</code> properties are set to <code>true</code>,
+				 * <b>Note:</b> If both <code>showSideContent</code> and <code>showMainContent</code> properties are set to <code>true</code>,
 				 * use the <code>toggle</code> method for showing the side content on phone.
 				 */
 				showSideContent : {type : "boolean", group : "Appearance", defaultValue : true},
