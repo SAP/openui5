@@ -642,6 +642,7 @@ function(
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be failed and finished", function(assert) {
+			assert.expect(10);
 			sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
 			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
@@ -655,7 +656,10 @@ function(
 				}, 0);
 			}))
 			.onCall(1).resolves();
-			this.oModel.updateCurrentVariant("variantMgmtId1", "variant2", this.oModel.oAppComponent);
+			this.oModel.updateCurrentVariant("variantMgmtId1", "variant2", this.oModel.oAppComponent)
+				.catch(function() {
+					assert.ok(true, "then the first promise was rejected");
+				});
 			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oAppComponent)
 			.then(this.oModel._oVariantSwitchPromise)
 			.then(function() {
@@ -1249,14 +1253,12 @@ function(
 			};
 			var oCopiedVariant = new sap.ui.fl.Variant(oCopiedVariantContent);
 			var oEvent = {
-				getParameter: function(sParameter) {
-					if (sParameter === "overwrite") {
-						return false;
-					} else if (sParameter === "name") {
-						return "Test";
-					} else if (sParameter === "def") {
-						return true;
-					}
+				getParameters: function() {
+					return {
+						overwrite: false,
+						name: "Test",
+						def: true
+					};
 				},
 				getSource: function() {
 					return oVariantManagement;
@@ -1340,14 +1342,12 @@ function(
 			};
 			var oCopiedVariant = new sap.ui.fl.Variant(oCopiedVariantContent);
 			var oEvent = {
-				getParameter: function(sParameter) {
-					if (sParameter === "overwrite") {
-						return false;
-					} else if (sParameter === "name") {
-						return "Test";
-					} else if (sParameter === "def") {
-						return false;
-					}
+				getParameters: function() {
+					return {
+						overwrite: false,
+						name: "Test",
+						def: false
+					};
 				},
 				getSource: function() {
 					return oVariantManagement;
@@ -1400,12 +1400,11 @@ function(
 
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
-				getParameter: function(sParameter) {
-					if (sParameter === "overwrite") {
-						return true;
-					} else if (sParameter === "name") {
-						return "Test";
-					}
+				getParameters: function() {
+					return {
+						overwrite: true,
+						name: "Test"
+					};
 				},
 				getSource: function() {
 					return oVariantManagement;
@@ -1447,12 +1446,11 @@ function(
 
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
-				getParameter: function(sParameter) {
-					if (sParameter === "overwrite") {
-						return true;
-					} else if (sParameter === "name") {
-						return "Test";
-					}
+				getParameters: function() {
+					return {
+						overwrite: true,
+						name: "Test"
+					};
 				},
 				getSource: function() {
 					return oVariantManagement;
@@ -1548,8 +1546,6 @@ function(
 
 	QUnit.module("Given a VariantModel with no data and a VariantManagement control", {
 		beforeEach : function() {
-			this.oData = {};
-
 			var oManifestObj = {
 				"sap.app": {
 					id: "MyComponent",
@@ -1581,10 +1577,11 @@ function(
 			sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
 			this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-			this.oModel = new VariantModel(this.oData, this.oFlexController, oComponent);
+			this.oModel = new VariantModel({}, this.oFlexController, oComponent);
 			this.fnLoadSwitchChangesStub = sandbox.stub(this.oModel.oChangePersistence, "loadSwitchChangesMapForComponent").returns({aRevert:[], aNew:[]});
-			this.fnRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges");
-			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges");
+			this.fnRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges").resolves();
+			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "applyVariantChanges").resolves();
+			this.fnApplyChangesStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves();
 			this.oAttachHandlersStub = sandbox.stub(URLHandler, "attachHandlers");
 		},
 		afterEach : function() {
@@ -1624,6 +1621,101 @@ function(
 
 		QUnit.test("when calling 'getVariantManagementReferenceForControl' with a variant management control with an app component prefix", function(assert) {
 			assert.strictEqual(this.oModel.getVariantManagementReferenceForControl(this.oVariantManagement), "localId", "then the local id of the control is retuned");
+		});
+
+		QUnit.test("when 'save' event event is triggered from a variant management control for a new variant, when variant model is busy", function(assert) {
+			var done = assert.async();
+			var fnSwitchPromiseStub = sandbox.stub();
+
+			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+			this.oVariantManagement.attachEventOnce("save", function() {
+				this.oModel._oVariantSwitchPromise.then(function() {
+					// resolved when variant model is not busy anymore
+					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
+					assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getTitle(), "variant created title", "then the required variant change was saved");
+					done();
+				}.bind(this));
+			}.bind(this));
+
+			// set variant model busy
+			this.oModel._oVariantSwitchPromise = new Promise(function(resolve) {
+				fnSwitchPromiseStub.callsFake(function() {
+					resolve();
+				});
+				setTimeout(fnSwitchPromiseStub, 0);
+			});
+
+			this.oVariantManagement.fireSave({
+				name: "variant created title",
+				overwrite: false,
+				def: false
+			});
+		});
+
+		QUnit.test("when 'save' event is triggered from a variant management control for an existing variant, when variant model is busy", function(assert) {
+			var done = assert.async();
+			var sVMReference = "localId";
+			var fnSwitchPromiseStub = sandbox.stub();
+
+			var oDirtyChange1 = new Change({fileName: "newChange1"});
+			var oDirtyChange2 = new Change({fileName: "newChange2"});
+			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange1);
+			this.oFlexController._oChangePersistence.addDirtyChange(oDirtyChange2);
+
+			sandbox.stub(this.oModel.oVariantController, "getVariantChanges")
+				.callThrough()
+				.withArgs(sVMReference, sVMReference, true)
+				.returns([oDirtyChange1, oDirtyChange2]);
+
+			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+
+			this.oVariantManagement.attachEventOnce("save", function() {
+				this.oModel._oVariantSwitchPromise.then(function() {
+					// resolved when variant model is not busy anymore
+					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
+					assert.deepEqual(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0], [oDirtyChange1, oDirtyChange2], "then the control changes inside the variant were saved");
+					done();
+				}.bind(this));
+			}.bind(this));
+
+			// set variant model busy
+			this.oModel._oVariantSwitchPromise = new Promise(function(resolve) {
+				fnSwitchPromiseStub.callsFake(function() {
+					resolve();
+				});
+				setTimeout(fnSwitchPromiseStub, 0);
+			});
+			this.oVariantManagement.fireSave({
+				overwrite: true,
+				def: false
+			});
+		});
+
+		QUnit.test("when 'save' event is triggered from a variant management control for a new varint, with another update variant call being triggered in parallel", function(assert) {
+			var done = assert.async();
+			assert.expect(1);
+			var sVMReference = "localId";
+
+			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
+
+			Reverter.revertMultipleChanges.onFirstCall().callsFake(function() {
+				// make second update call to set variant model busy, when the first call is still in process
+				this.oModel.updateCurrentVariant(sVMReference, sVMReference).then(done);
+				return Promise.resolve();
+			}.bind(this));
+
+
+			Reverter.revertMultipleChanges.onSecondCall().callsFake(function() {
+				// on second call check if the first call was completed successfully
+				assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getTitle(), "variant created title", "then a variant change was saved before the second update call was executed");
+				return Promise.resolve();
+			}.bind(this));
+
+			this.oVariantManagement.fireSave({
+				name: "variant created title",
+				overwrite: false,
+				def: false
+			});
 		});
 	});
 
@@ -1728,11 +1820,18 @@ function(
 			var oVMControl = sap.ui.getCore().byId(sVMControlId);
 
 			oVMControl.attachEventOnce("select", function(oEvent) {
-				assert.ok(this.oVariantModel.updateCurrentVariant.calledWith(oEvent.getParameters().key, this.sVMReference, this.oComp), "then variant switch was performed");
-				assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
-				assert.ok(this.oVariantModel.oVariantController.removeChangeFromVariant.notCalled, "then dirty changes were not removed from the source variant");
-				assert.ok(this.oVariantModel.oFlexController.deleteChange.notCalled, "then no dirty changes were deleted");
-				done();
+				var sSelectedVariantReference = oEvent.getParameters().key;
+				this.oVariantModel.updateCurrentVariant.onFirstCall().callsFake(function() {
+					// update call will make variant model busy, which will be resolved after the whole update process has taken place
+					this.oVariantModel._oVariantSwitchPromise.then(function() {
+						assert.ok(this.oVariantModel.updateCurrentVariant.calledWith(sSelectedVariantReference, this.sVMReference, this.oComp, true), "then variant switch was performed");
+						assert.ok(Reverter.revertMultipleChanges.notCalled, "then variant was not reverted explicitly");
+						assert.ok(this.oVariantModel.oVariantController.removeChangeFromVariant.notCalled, "then dirty changes were not removed from the source variant");
+						assert.ok(this.oVariantModel.oFlexController.deleteChange.notCalled, "then no dirty changes were deleted");
+						done();
+					}.bind(this));
+					return Promise.resolve();
+				}.bind(this));
 			}.bind(this));
 
 			clickOnVMControl(oVMControl);

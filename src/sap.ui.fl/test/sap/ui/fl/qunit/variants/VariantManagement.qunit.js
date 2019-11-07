@@ -79,6 +79,7 @@ sap.ui.define([
 					]
 				}
 			}, {
+				setVariantSwitchPromise: function() {},
 				_oChangePersistence: {
 					_oVariantController: {
 						assignResetMapListener: function() {
