@@ -253,9 +253,9 @@ sap.ui.define([
 						});
 				};
 
-				var fnClearRTACommandStack = function(oAppVariant) {
+				var fnClearRTACommandStack = function(oResult) {
 					oAppVariantSaveClosure = null;
-					oAppVariantSaveClosure = merge({}, oAppVariant);
+					oAppVariantSaveClosure = merge({}, oResult.response);
 
 					// If there are any unsaved changes, should be taken away for the new created app variant
 					return oAppVariantManager.clearRTACommandStack(bCopyUnsavedChanges);
