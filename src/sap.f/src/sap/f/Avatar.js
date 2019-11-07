@@ -385,10 +385,9 @@ sap.ui.define([
 	Avatar.prototype._getImageFallbackType = function () {
 		var sInitials = this.getInitials();
 
-		if (this._sActualType === AvatarType.Image) {
-			this._sImageFallbackType = sInitials && this._areInitialsValid(sInitials) ?
+		this._sImageFallbackType = sInitials && this._areInitialsValid(sInitials) ?
 			AvatarType.Initials : AvatarType.Icon;
-		}
+
 
 		return this._sImageFallbackType;
 	};
