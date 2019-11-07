@@ -164,6 +164,36 @@ customElements.whenDefined("ui-integration-card").then(function () {
 });
 </pre>
 
+			<h1 id="settingDimensions">Configuring card dimensions</h1>
+			<p>
+				To configure the height and width of the card, you can set any value that the CSS properties <code>height</code> and <code>width</code> would accept.
+			</p>
+			<h3>When using UI5</h3>
+			<p>
+				To modify the height and width of the Card, set its respective attributes <code>height</code> and <code>width</code>.
+			</p>
+<pre class="prettyprint">
+&lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
+	&lt;w:Card manifest="./manifest.json" width="360px" height="auto"/&gt;
+&lt;/mvc:View&gt;
+</pre>
+			<h3>When using &lt;ui-integration-card&gt; custom element</h3>
+			<p>
+				Set the height and width using CSS as you would usually style any other aspect of your web application.
+				The default <code>display</code> property of the custom element is <code>inline-block</code>.
+			</p>
+			<p>
+				<em>The attributes <code>height</code> and <code>width</code> are not available on the custom element.</em>
+			</p>
+<pre class="prettyprint">
+.myCard {
+	width: 380px;
+	height: 16rem;
+}
+...
+&lt;ui-integration-card class="myCard" manifest="./manifest.json"&gt;
+&lt;/ui-integration-card&gt;
+</pre>
 		</div>
 		<div class="navigation">
 			<h4>Table of Contents</h4>
@@ -171,6 +201,7 @@ customElements.whenDefined("ui-integration-card").then(function () {
 			<div><a href="#handlingActions">Handling events</a></div>
 			<div><a href="#passingParameters">Passing parameters</a></div>
 			<div><a href="#managingState">Managing card state</a></div>
+			<div><a href="#settingDimensions">Configuring card dimensions</a></div>
 		</div>
 	</div>
 	<script>

@@ -8,13 +8,18 @@
 				id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_fiori_3">
 		</script>
+		<style>
+			.myCard {
+				width: 25rem;
+			}
+		</style>
 	</head>
 	<body>
 		<ui-integration-card
 			id="cardCustomElement"
 			manifest="./manifest.json"
 			data-mode="Active"
-			width="25rem">
+			class="myCard">
 		</ui-integration-card>
 	</body>
 </html>
