@@ -4,10 +4,10 @@
 /* ============================== */
 @_sap_m_Toolbar_MarginRight: 0.25rem;
 
-.sapMIBar.sapMTB .sapMBarChild:last-child {
+.sapMIBar.sapMTB .sapMBarChild.sapMBarLastVisibleChild {
 	margin-right: @_sap_m_Toolbar_MarginRight;
 
-	&:only-child {
+	&.sapMBarFirstVisibleChild {
 		margin-right: 0px;
 	}
 }
