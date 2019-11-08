@@ -55,12 +55,15 @@ sap.ui.define([
 			 * Number of indices which can be selected in a range.
 			 * Accepts positive integer values. If set to 0, the limit is disabled, and the Select All checkbox appears instead of the Deselect All
 			 * button.
-			 * <b>Note:</b> To avoid severe performance problems, the limit should only be set to 0 in the following cases:
+			 * <b>Note:</b>
+			 * To avoid severe performance problems, the limit should only be set to 0 in the following cases:
 			 * <ul>
 			 * <li>With client-side models</li>
 			 * <li>With server-side models if they are used in client mode</li>
 			 * <li>If the entity set is small</li>
 			 * </ul>
+			 * In other cases, we recommend to set the limit to at least double the value of the {@link sap.ui.table.Table#getThreshold threshold} property
+			 * of the related <code>sap.ui.table.Table</code> control.
 			 */
 			limit : {type : "int", group : "Behavior", defaultValue : 200},
 			/**
