@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -17,8 +17,7 @@ sap.ui.define([
 	var oProgInd = new ProgressIndicator("pi1", {
 		width : "50%",
 		percentValue : 30,
-		displayValue : "display 30%",
-		showValue : true
+		displayValue : "display 30%"
 	});
 	oProgInd.placeAt("content");
 
@@ -34,7 +33,6 @@ sap.ui.define([
 		width : "50%",
 		percentValue : 30,
 		displayValue : "display 30 %",
-		showValue : true,
 		textDirection: "RTL"
 	});
 
@@ -44,7 +42,6 @@ sap.ui.define([
 		width : "50%",
 		percentValue : 30,
 		displayValue : "display 30 %",
-		showValue : true,
 		textDirection: "LTR"
 	});
 
@@ -372,5 +369,68 @@ sap.ui.define([
 		oInfo = oControl.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, sDisplayValue, "Description should equal the displayValue when set");
 		oControl.destroy();
+	});
+
+	QUnit.test("displayAnimation property", function(assert) {
+		// Arrange
+		var oProgressIndicator = new ProgressIndicator();
+
+		// Assert
+		assert.ok(oProgressIndicator.getDisplayAnimation(), "DisplayAnimation is with correct default value");
+
+		// Act
+		oProgressIndicator.setDisplayAnimation(false);
+
+		// Assert
+		assert.notOk(oProgressIndicator.getDisplayAnimation(), "DisplayAnimation value is successfully changed");
+
+		// Clean up
+		oProgressIndicator.destroy();
+	});
+
+	QUnit.test("Animation is displayed when displayAnimation is true", function(assert) {
+		// Arrange
+		var oProgressIndicator = new ProgressIndicator(),
+			iExpectedAnimationDuration = 2000, // the default one
+			oSpy = this.spy(jQuery.fn, "animate");
+
+		// Act
+		oProgressIndicator.placeAt("content");
+		Core.applyChanges();
+		oProgressIndicator.setPercentValue(100);
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "jQuery's animate method is called only once");
+		assert.strictEqual(oSpy.args[0][1], iExpectedAnimationDuration,
+			"jQuery's animate method's second argument is " + iExpectedAnimationDuration +
+			" milliseconds (default animation) as expected");
+
+		// Clean up
+		oSpy.reset();
+		oProgressIndicator.destroy();
+	});
+
+	QUnit.test("Animation is not displayed when displayAnimation is false", function(assert) {
+		// Arrange
+		var oProgressIndicator = new ProgressIndicator({
+				displayAnimation: false
+			}),
+			iExpectedAnimationDuration = 0,
+			oSpy = this.spy(jQuery.fn, "animate");
+
+		// Act
+		oProgressIndicator.placeAt("content");
+		Core.applyChanges();
+		oProgressIndicator.setPercentValue(100);
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "jQuery's animate method is called only once");
+		assert.strictEqual(oSpy.args[0][1], iExpectedAnimationDuration,
+			"jQuery's animate method's second argument is " + iExpectedAnimationDuration +
+			" milliseconds (no animation) as expected");
+
+		// Clean up
+		oSpy.reset();
+		oProgressIndicator.destroy();
 	});
 });
