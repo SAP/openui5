@@ -47,25 +47,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
-			"apply/_internal/connectors/ObjectStorageConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
-						"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
-						"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
-				}
-			},
-			"apply/_internal/connectors/ObjectStorageUtils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
-				}
-			},
 			"apply/_internal/changes/Applier": {
 				group: "Apply Internal",
 				coverage: {
@@ -114,6 +95,25 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
 				}
 			},
+			"apply/_internal/connectors/ObjectStorageConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
+						"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
+				}
+			},
+			"apply/_internal/connectors/ObjectStorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
+				}
+			},
 			"apply/_internal/connectors/JsObjectConnector": {
 				group: "Apply Internal",
 				coverage: {
@@ -152,6 +152,12 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
+				}
+			},
+			"apply/_internal/connectors/Utils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/connectors/Utils"]
 				}
 			},
 			"apply/_internal/controlVariants/URLHandler": {
