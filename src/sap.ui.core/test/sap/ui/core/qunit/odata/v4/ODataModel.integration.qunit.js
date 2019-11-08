@@ -1908,6 +1908,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')/SO_2_BP?$select=Address/City,BusinessPartnerID", {
+				"@odata.etag" : "etag",
 				Address : {
 					City : "Heidelberg"
 				},
@@ -1923,12 +1924,14 @@ sap.ui.define([
 				.withArgs("Failed to drill-down into CompanyName, invalid segment: CompanyName");
 
 			that.expectRequest("SalesOrderList('1')/SO_2_BP"
-				+ "?$select=Address/GeoLocation/Longitude", {
+				+ "?$select=Address/GeoLocation/Longitude,BusinessPartnerID", {
+					"@odata.etag" : "etag",
 					Address : {
 						GeoLocation : {
 							Longitude : "8.7"
 						}
-					}
+					},
+					BusinessPartnerID : "2"
 				})
 				.expectChange("longitude1", "8.700000000000")
 				.expectChange("longitude2", "8.700000000000");
@@ -1961,6 +1964,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')/SO_2_BP"
 				+ "?$select=Address/City,Address/GeoLocation/Longitude", {
+					"@odata.etag" : "etag",
 					Address : {
 						City : "Heidelberg",
 						GeoLocation : {
@@ -2027,6 +2031,8 @@ sap.ui.define([
 	// Scenario: ODLB, late property. See that it is requested only once, even when bound twice. See
 	// that it is updated via requestSideEffects called at the parent binding (all visible rows).
 	// JIRA: CPOUI5UISERVICESV3-1878
+	// JIRA: CPOUI5ODATAV4-23 see that a late property for a nested entity (within $expand) is
+	// fetched
 	QUnit.test("ODLB: late property", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oRowContext,
@@ -2041,28 +2047,37 @@ sap.ui.define([
 </FlexBox>\
 <Text id="age1" text="{AGE}" />\
 <Text id="age2" text="{AGE}" />\
-<Input id="team" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>',
+<Input id="team" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>\
+<Input id="budget" value="{EMPLOYEE_2_TEAM/Budget}"/>',
 			that = this;
 
 		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
 				value : [
-					{ID : "2", Name : "Frederic Fall"},
-					{ID : "3", Name : "Jonathan Smith"}
+					{"@odata.etag" : "etag0", ID : "2", Name : "Frederic Fall"},
+					{"@odata.etag" : "etag0", ID : "3", Name : "Jonathan Smith"}
 				]
 			})
 			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
 			.expectChange("age1")
 			.expectChange("age2")
-			.expectChange("team");
+			.expectChange("team")
+			.expectChange("budget");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE", {AGE : 42})
-				//TODO: one request -> CPOUI5UISERVICESV3-1880
-				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=EMPLOYEE_2_TEAM"
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE,ID", {
+					"@odata.etag" : "etag0",
+					AGE : 42,
+					ID : "2"
+				})
+				//TODO: one request -> CPOUI5ODATAV4-27
+				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=ID"
 					+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
-						+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))", {
+					+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))", {
+					"@odata.etag" : "etag0",
+					ID : "2",
 					EMPLOYEE_2_TEAM : {
-						// Team_Id : "1",
+						"@odata.etag" : "etag1",
+						Team_Id : "1",
 						TEAM_2_MANAGER : {
 							"@odata.etag" : "ETag",
 							ID : "5",
@@ -2073,7 +2088,7 @@ sap.ui.define([
 				.expectChange("age1", "42")
 				.expectChange("team", "1");
 
-			// code under test - AGE and TEAM_ID are requested
+			// code under test - AGE and Team_Id are requested
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			that.oView.byId("age1").setBindingContext(oRowContext);
 			that.oView.byId("team").setBindingContext(oRowContext);
@@ -2089,6 +2104,19 @@ sap.ui.define([
 				});
 
 			that.oView.byId("team").getBinding("value").setValue("changed");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest(
+				"TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?$select=Budget,Team_Id", {
+					"@odata.etag" : "etag1",
+					Budget : "12.45",
+					Team_Id : "1"
+				})
+				.expectChange("budget", "12.45");
+
+			// code under test - now the team is in the cache and only the budget is missing
+			that.oView.byId("budget").setBindingContext(oRowContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -2162,6 +2190,185 @@ sap.ui.define([
 			]);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: ODLB, late property at an entity within $expand.
+	// JIRA: CPOUI5ODATAV4-23
+	QUnit.test("ODLB: late property at nested entity", function (assert) {
+		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList(\'1\')/SO_2_SOITEM}">\
+   <ColumnListItem>\
+      <Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
+   </ColumnListItem>\
+</Table>\
+<Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM?sap-client=123"
+			+ "&$select=ItemPosition,SalesOrderID"
+			+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)&$skip=0&$top=100", {
+			value : [{
+				"@odata.etag" : "etag0",
+				ItemPosition : "0010",
+				SalesOrderID : "1",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "etag1",
+					Name : "Notebook Basic 15",
+					ProductID : "HT-1000"
+				}
+			}]
+		})
+			.expectChange("product", ["Notebook Basic 15"])
+			.expectChange("businessPartner");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(
+				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+				+ "/SOITEM_2_PRODUCT?$select=ProductID"
+				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
+				+ "&sap-client=123", {
+					"@odata.etag" : "etag1",
+					ProductID : "HT-1000",
+					PRODUCT_2_BP : {
+						"@odata.etag" : "etag2",
+						BusinessPartnerID : "0100000005",
+						CompanyName : "TECUM"
+					}
+				})
+				.expectChange("businessPartner", "TECUM");
+
+			// code under test
+			that.oView.byId("businessPartner").setBindingContext(
+				that.oView.byId("table").getItems()[0].getBindingContext());
+
+			that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODCB, late property at an entity within $expand.
+	// JIRA: CPOUI5ODATAV4-23
+	QUnit.test("ODCB: late property at nested entity", function (assert) {
+		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_SOITEM(\'0010\')}">\
+      <Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
+</FlexBox>\
+<Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')?sap-client=123"
+			+ "&$select=ItemPosition,SalesOrderID"
+			+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
+				ItemPosition : "0010",
+				SalesOrderID : "1",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "ETag",
+					Name : "Notebook Basic 15",
+					ProductID : "HT-1000"
+				}
+			})
+			.expectChange("product", "Notebook Basic 15")
+			.expectChange("businessPartner");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
+				+ "?$select=ProductID"
+				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
+				+ "&sap-client=123", {
+					"@odata.etag" : "ETag",
+					ProductID : "HT-1000",
+					PRODUCT_2_BP : {
+						BusinessPartnerID : "0100000005",
+						CompanyName : "TECUM"
+					}
+				})
+				.expectChange("businessPartner", "TECUM");
+
+			// code under test
+			that.oView.byId("businessPartner").setBindingContext(
+				that.oView.byId("form").getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: ODCB, late property at an entity within $expand fails because ETag or key predicate
+	// changed.
+	// JIRA: CPOUI5ODATAV4-23
+[{
+	error : "ETag changed",
+	lateETag : "changedETag",
+	lateID : "HT-1000"
+}, {
+	error : "Key predicate changed from ('HT-1000') to ('HT-2000')",
+	lateETag : "ETag",
+	lateID : "HT-2000"
+}].forEach(function (oFixture) {
+	QUnit.test("ODCB: late property at nested entity fails: " + oFixture.error, function (assert) {
+		var oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_SOITEM(\'0010\')}">\
+      <Text id="product" text="{SOITEM_2_PRODUCT/Name}"/>\
+</FlexBox>\
+<Text id="businessPartner" text="{SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName}"/>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')?sap-client=123"
+				+ "&$select=ItemPosition,SalesOrderID"
+				+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
+				ItemPosition : "0010",
+				SalesOrderID : "1",
+				SOITEM_2_PRODUCT : {
+					"@odata.etag" : "ETag",
+					Name : "Notebook Basic 15",
+					ProductID : "HT-1000"
+				}
+			})
+			.expectChange("product", "Notebook Basic 15")
+			.expectChange("businessPartner");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var sMessage = "GET SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT?"
+				+ "$select=ProductID&$expand=PRODUCT_2_BP($select=BusinessPartnerID,"
+				+ "CompanyName)&sap-client=123: " + oFixture.error;
+
+			that.oLogMock.expects("error")
+				.withArgs("Failed to read path /SalesOrderList('1')/SO_2_SOITEM('0010')/"
+					+ "SOITEM_2_PRODUCT/PRODUCT_2_BP/CompanyName");
+
+			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
+					+ "?$select=ProductID"
+					+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
+					+ "&sap-client=123", {
+					"@odata.etag" : oFixture.lateEtag,
+					ProductID : oFixture.lateID,
+					PRODUCT_2_BP : {
+						BusinessPartnerID : "0100000005",
+						CompanyName : "TECUM"
+					}
+				})
+				.expectMessages([{
+					"code" : undefined,
+					"descriptionUrl" : undefined,
+					"message" : sMessage,
+					"persistent" : true,
+					"target" : "",
+					"technical" : true,
+					"technicalDetails" : {},
+					"type" : "Error"
+				}]);
+
+			// code under test
+			that.oView.byId("businessPartner").setBindingContext(
+				that.oView.byId("form").getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
@@ -9006,7 +9213,8 @@ sap.ui.define([
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
 			// 'Name' is added to the table row
-			that.expectRequest("TEAMS('TEAM_01')?$select=Name", {Name : "Team #1"})
+			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
+					{Name : "Team #1", Team_Id : "TEAM_01"})
 				.expectChange("text1", "Team #1");
 
 			that.oView.byId("detail").setBindingContext(oContext);
@@ -10661,9 +10869,12 @@ sap.ui.define([
 
 			// 'flightDetails' is added to the table row
 			that.expectRequest("FlightCollection(carrid='AA',connid='0017',fldate=datetime"
-					+ "'2017-08-10T00%3A00%3A00')?$select=flightDetails", {
+					+ "'2017-08-10T00%3A00%3A00')?$select=carrid,connid,fldate,flightDetails", {
 					d : {
 						__metadata : {type : "RMTSAMPLEFLIGHT.Flight"},
+						carrid : "AA",
+						connid : "0017",
+						fldate : "/Date(1502323200000)/",
 						flightDetails : {
 							__metadata : {type : "RMTSAMPLEFLIGHT.FlightDetails"},
 							cityFrom : "New York",
@@ -21856,7 +22067,8 @@ sap.ui.define([
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100",
 					{value : [{ID : "2", Name : "Frederic Fall"}]})
 				.expectChange("name", ["Frederic Fall"])
-				.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID", {MANAGER_ID : "5"})
+				.expectRequest("TEAMS('TEAM_01')?$select=MANAGER_ID,Team_Id",
+					{MANAGER_ID : "5", Team_Id : "TEAM_01"})
 				.expectChange("managerId", "5");
 
 			// code under test: bindings inside "detail" form need to send their own requests

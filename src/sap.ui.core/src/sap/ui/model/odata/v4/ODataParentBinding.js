@@ -179,8 +179,8 @@ sap.ui.define([
 	 * "OData Version 4.0 Part 2: URL Conventions".
 	 *
 	 * @param {object} mQueryOptions The query options to be merged
-	 * @param {boolean} bCacheImmutable Whether the cache of this binding is immutable
 	 * @param {string} sBaseMetaPath This binding's meta path
+	 * @param {boolean} bCacheImmutable Whether the cache of this binding is immutable
 	 * @returns {boolean} Whether the query options can be fulfilled by this binding
 	 *
 	 * @private
@@ -217,9 +217,6 @@ sap.ui.define([
 					sExpandMetaPath = sMetaPath + "/" + sExpandPath;
 
 				if (bAddExpand) {
-					if (!bAdd && bCacheImmutable && bInsideExpand) { // -> CPOUI5UISERVICESV3-2022
-						return false;
-					}
 					mAggregatedQueryOptions.$expand[sExpandPath] = {};
 					if (bCacheImmutable && that.oModel.getMetaModel()
 							.fetchObject(sExpandMetaPath).getResult().$isCollection) {
@@ -239,9 +236,6 @@ sap.ui.define([
 			 */
 			function mergeSelectPath(sSelectPath) {
 				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
-					if (!bAdd && bCacheImmutable && bInsideExpand) { // -> CPOUI5UISERVICESV3-2022
-						return false;
-					}
 					bChanged = true;
 					mAggregatedQueryOptions.$select.push(sSelectPath);
 				}

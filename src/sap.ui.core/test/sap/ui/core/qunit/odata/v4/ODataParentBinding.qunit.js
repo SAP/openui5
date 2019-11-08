@@ -1579,12 +1579,17 @@ sap.ui.define([
 }, {
 	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id"]}}},
 	childQueryOptions :  {$expand : {EMPLOYEE_2_TEAM : {$select : ["Name"]}}},
-	success : false,
+	lateQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}}},
+	success : true,
 	title : "new $select in existing $expand"
 }, {
 	aggregatedQueryOptions : {$expand : {EMPLOYEE_2_TEAM : {}}},
 	childQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$expand : {TEAM_2_MANAGER : {}}}}},
-	success : false,
+	lateQueryOptions : {$expand : {"EMPLOYEE_2_TEAM" : {$expand : {TEAM_2_MANAGER : {}}}}},
+	metadata : {
+		"/base/metaPath/EMPLOYEE_2_TEAM/TEAM_2_MANAGER" : {}
+	},
+	success : true,
 	title : "new $expand in existing $expand"
 }, {
 	aggregatedQueryOptions : {$select : ["AGE"]},

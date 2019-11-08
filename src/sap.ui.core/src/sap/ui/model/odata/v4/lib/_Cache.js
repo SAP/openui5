@@ -568,74 +568,108 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving with the missing property value or <code>undefined</code> if the
 	 *   requested property is not an expected late property; it rejects with an error if the GET
-	 *   request failed or if the ETag has changed
+	 *   request failed, if the key predicate or if the ETag has changed
 	 *
 	 * @private
 	 */
 	Cache.prototype.fetchLateProperty = function (oGroupLock, oEntity, sEntityPath,
 			sRequestedPropertyPath, sMissingPropertyPath) {
-		var oPromise,
+		var sEntityMetaPath,
+			sFullEntityMetaPath,
+			oPromise,
 			mQueryOptions,
 			sResourcePath,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
 			aUpdateProperties = [sRequestedPropertyPath],
 			that = this;
 
+		/*
+		 * Adds the key properties for the given meta path to $select of the given query options and
+		 * to aUpdateProperties.
+		 *
+		 * @param {string} sMetaPath The meta path
+		 * @param {object} mQueryOptions0 The query options
+		 * @param {string} [sBasePath=""] The base path for the key properties in aUpdateProperties
+		 */
+		function addKeyProperties(sMetaPath, mQueryOptions0, sBasePath) {
+			// the type is available synchronously because the binding read it when checking for
+			// late properties
+			var oEntityType = that.oRequestor.fetchTypeForPath(sMetaPath).getResult();
+
+			mTypeForMetaPath[sMetaPath] = oEntityType;
+			(oEntityType.$Key || []).forEach(function (vKey) {
+				if (typeof vKey === "object") {
+					vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
+				}
+				mQueryOptions0.$select.push(vKey);
+				aUpdateProperties.push(_Helper.buildPath(sBasePath, vKey));
+			});
+			if (mQueryOptions0.$expand && mQueryOptions0.$select.length > 1) {
+				// the first entry in $select is the one in $expand (from intersectQueryOptions)
+				// and is unnecessary now
+				mQueryOptions0.$select = mQueryOptions0.$select.slice(1);
+			}
+		}
+
 		/**
 		 * Recursively visits the $expand of the query options. Determines the target type and adds
 		 * the key properties to the contained $select. Adds all relevant properties to
 		 * aUpdateProperties.
 		 *
-		 * @param {object} mQueryOptions The query options containing $expand
+		 * @param {object} mQueryOptions0 The query options containing $expand
 		 * @param {string} sBasePath The base meta path of the query options relative to the entity
+		 * @param {string} sMetaPath The entity's meta path
 		 */
-		function visitExpand(mQueryOptions, sBasePath) {
+		function visitExpand(mQueryOptions0, sBasePath, sMetaPath) {
 			// intersecting the query options with sRequestedPropertyPath delivers exactly one entry
 			// in $expand at each level (one for each navigation property binding)
-			var sExpand = Object.keys(mQueryOptions.$expand)[0],
-				sExpandPath = _Helper.buildPath(sBasePath, sExpand),
-				oEntityType = that.oRequestor.fetchTypeForPath(that.sMetaPath + "/" + sExpandPath)
-					.getResult();
+			var sExpand = Object.keys(mQueryOptions0.$expand)[0],
+				sExpandPath = _Helper.buildPath(sBasePath, sExpand);
 
-			mQueryOptions = mQueryOptions.$expand[sExpand];
-			mTypeForMetaPath[that.sMetaPath + "/" + sExpandPath] = oEntityType;
-			(oEntityType.$Key || []).forEach(function (vKey) {
-				if (typeof vKey === "object") {
-					vKey = vKey[Object.keys(vKey)[0]]; // the path for the alias
-				}
-				mQueryOptions.$select.push(vKey);
-				aUpdateProperties.push(sExpandPath + "/" + vKey);
-			});
+			sMetaPath = sMetaPath + "/" + sExpand;
+			mQueryOptions0 = mQueryOptions0.$expand[sExpand];
+			addKeyProperties(sMetaPath, mQueryOptions0, sExpandPath);
 			aUpdateProperties.push(sExpandPath + "/@odata.etag");
 			aUpdateProperties.push(sExpandPath + "/@$ui5._/predicate");
-			if (mQueryOptions.$expand) {
-				if (mQueryOptions.$select.length > 1) {
-					// the first entry in $select is the one in $expand (from intersectQueryOptions)
-					// and is unnecessary now
-					mQueryOptions.$select = mQueryOptions.$select.slice(1);
-				}
-				visitExpand(mQueryOptions, sExpandPath);
+			if (mQueryOptions0.$expand) {
+				visitExpand(mQueryOptions0, sExpandPath, sMetaPath);
 			}
 		}
 
-		if (!this.mLateQueryOptions || _Helper.getMetaPath(sEntityPath)) {
-			return undefined; // not supported yet - CPOUI5UISERVICESV3-1990
+		if (!this.mLateQueryOptions) {
+			return undefined;
 		}
-
-		mQueryOptions = _Helper.intersectQueryOptions(this.mLateQueryOptions,
-			[sRequestedPropertyPath], this.oRequestor.getModelInterface().fetchMetadata,
-			this.sMetaPath, {});
+		sEntityMetaPath = _Helper.getMetaPath(sEntityPath);
+		mQueryOptions = {
+			$select : this.mLateQueryOptions.$select,
+			$expand : this.mLateQueryOptions.$expand
+		};
+		mQueryOptions = _Helper.intersectQueryOptions(mQueryOptions,
+			// no need to convert sRequestedPropertyPath to a metapath, intersectQueryOptions will
+			// reject the resulting invalid path
+			[_Helper.buildPath(sEntityMetaPath, sRequestedPropertyPath)],
+			this.oRequestor.getModelInterface().fetchMetadata, this.sMetaPath, {});
 		if (!mQueryOptions) {
 			return undefined;
 		}
+		if (sEntityMetaPath) {
+			// Note: intersectQueryOptions guarantees that the meta path can be followed
+			sEntityMetaPath.split("/").forEach(function (sSegment) {
+				mQueryOptions = mQueryOptions.$expand[sSegment];
+			});
+		}
 
-		delete mQueryOptions.$apply;
-		delete mQueryOptions.$count;
-		delete mQueryOptions.$filter;
-		delete mQueryOptions.$orderby;
-		delete mQueryOptions.$search;
+		// custom query options must be sent with each request
+		Object.keys(this.mLateQueryOptions).forEach(function (sName) {
+			if (sName[0] !== "$") {
+				mQueryOptions[sName] = that.mLateQueryOptions[sName];
+			}
+		});
+
+		sFullEntityMetaPath = _Helper.buildPath(this.sMetaPath, sEntityMetaPath);
+		addKeyProperties(sFullEntityMetaPath, mQueryOptions);
 		if (mQueryOptions.$expand) {
-			visitExpand(mQueryOptions, "");
+			visitExpand(mQueryOptions, "", sFullEntityMetaPath);
 		}
 		sResourcePath = _Helper.buildPath(this.sResourcePath, sEntityPath)
 			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true);
@@ -643,7 +677,7 @@ sap.ui.define([
 		if (!oPromise) {
 			oPromise = this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
 				.then(function (oData) {
-					that.visitResponse(oData, mTypeForMetaPath, that.sMetaPath, sEntityPath);
+					that.visitResponse(oData, mTypeForMetaPath, sFullEntityMetaPath, sEntityPath);
 					return oData;
 				})
 				.finally(function () {
@@ -655,6 +689,12 @@ sap.ui.define([
 		// even when two late properties lead to the same request, each of them must be copied to
 		// the cache.
 		return oPromise.then(function (oData) {
+			if (_Helper.getPrivateAnnotation(oEntity, "predicate")
+					!== _Helper.getPrivateAnnotation(oData, "predicate")) {
+				throw new Error("GET " + sResourcePath + ": Key predicate changed from "
+					+ _Helper.getPrivateAnnotation(oEntity, "predicate")
+					+ " to " + _Helper.getPrivateAnnotation(oData, "predicate"));
+			}
 			if (oData["@odata.etag"] !== oEntity["@odata.etag"]) {
 				throw new Error("GET " + sResourcePath + ": ETag changed");
 			}
