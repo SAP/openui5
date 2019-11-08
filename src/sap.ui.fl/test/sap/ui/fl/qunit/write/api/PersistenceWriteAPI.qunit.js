@@ -769,7 +769,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Smart Business - onPrem system) when saveAs is called with descriptor change already added into own persistence and IAM registration is skipped", function(assert) {
-			var oAppComponent = createAppComponent();
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -778,21 +777,21 @@ sap.ui.define([
 					isProductiveSystem:false
 				})
 			);
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var fnSendBackendCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
 
 			// Creates a descriptor change
-			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: oAppComponent})
+			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: {appId: "reference.app"}})
 				.then(function(oDescriptorInlineChange) {
 					// Adds a descriptor change to its own persistence
-					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: {appId: "reference.app"}});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return PersistenceWriteAPI.saveAs({
-						selector: oAppComponent,
+						selector: {
+							appId: "reference.app"
+						},
 						id: "customer.reference.app.id",
 						// eslint-disable-next-line quote-props
 						package: "TEST_PACKAGE",
@@ -801,7 +800,7 @@ sap.ui.define([
 						skipIam: true
 					})
 						.then(function() {
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							// Get the app variant to be saved to backend
 							var oAppVariant = fnSendBackendCall.firstCall.args[2];
 							assert.strictEqual(oAppVariant.packageName, "TEST_PACKAGE", "then the app variant will be saved with a provided package");
@@ -814,7 +813,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Smart Business - S4/Hana Cloud system) when saveAs is called with descriptor change already added into own persistence and IAM registration is skipped", function(assert) {
-			var oAppComponent = createAppComponent();
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:true,
@@ -823,28 +821,28 @@ sap.ui.define([
 					isProductiveSystem:false
 				})
 			);
-			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
-			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
 
 			var fnSendBackendCall = sandbox.stub(LrepConnector.prototype, "send").resolves();
 
 			// Creates a descriptor change
-			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: oAppComponent})
+			return ChangesWriteAPI.create({changeSpecificData: this.oDescrChangeSpecificData1, selector: {appId: "reference.app"}})
 				.then(function(oDescriptorInlineChange) {
 					// Adds a descriptor change to its own persistence
-					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: oAppComponent});
+					return PersistenceWriteAPI.add({change: oDescriptorInlineChange, selector: {appId: "reference.app"}});
 				})
 				.then(function() {
-					assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
+					assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 1, "then a Descriptor change has been added to the persistence");
 					return PersistenceWriteAPI.saveAs({
-						selector: oAppComponent,
+						selector: {
+							appId: "reference.app"
+						},
 						id: "customer.reference.app.id",
 						// eslint-disable-next-line quote-props
 						layer: "CUSTOMER",
 						skipIam: true
 					})
 						.then(function() {
-							assert.equal(ChangesController.getDescriptorFlexControllerInstance(oAppComponent)._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
+							assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							// Get the app variant to be saved to backend
 							var oAppVariant = fnSendBackendCall.firstCall.args[2];
 							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
