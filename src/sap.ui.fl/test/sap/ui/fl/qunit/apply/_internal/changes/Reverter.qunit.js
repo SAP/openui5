@@ -132,8 +132,6 @@ function (
 			sandbox.stub(this.oAppliedChange, "hasApplyProcessStarted").returns(true);
 			var oIsApplyFinishedStub = sandbox.stub(this.oAppliedChange, "isApplyProcessFinished").returns(false);
 			var oAddPromiseStub = sandbox.stub(this.oAppliedChange, "addPromiseForApplyProcessing").callsFake(function() {
-				// here we have to change the oIsApplyFinishedStub
-				// oIsApplyFinishedStub.restore();
 				oIsApplyFinishedStub.returns(true);
 				return Promise.resolve();
 			});
