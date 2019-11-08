@@ -45,6 +45,29 @@ sap.ui.define([
 			}.bind(undefined, sandbox.server));
 		});
 
+		QUnit.test("given a mock server, when loading flex data is triggered with a sideId and appDescriptorId info passed", function (assert) {
+			var sCacheKey = "abc123";
+
+			fnReturnData(JSON.stringify({changes: [], loadModules: false}));
+
+			return LrepConnector.loadFlexData({
+				url: "/sap/bc/lrep",
+				reference: "reference",
+				appVersion: "1.0.0",
+				cacheKey: sCacheKey,
+				siteId: "dummySite",
+				appDescriptor: {
+					"sap.app": {
+						id: "appDescriptorId"
+					}
+				}
+			}).then(function (oServer) {
+				assert.equal(oServer.getRequest(0).url, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "the cacheKey is included in the request");
+				assert.equal(oServer.getRequest(0).requestHeaders["X-LRep-Site-Id"], "dummySite", "the siteId is included in the request");
+				assert.equal(oServer.getRequest(0).requestHeaders["X-LRep-AppDescriptor-Id"], "appDescriptorId", "the appDescriptorId is included in the request");
+			}.bind(undefined, sandbox.server));
+		});
+
 		QUnit.test("given a mock server, when loading flex data and returning the flag to also load modules", function (assert) {
 			var sCacheKey = "abc123";
 

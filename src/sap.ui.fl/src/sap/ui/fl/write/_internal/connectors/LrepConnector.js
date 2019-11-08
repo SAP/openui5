@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/LrepConnector",
 	"sap/ui/fl/apply/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/Utils",
 	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
@@ -16,7 +15,6 @@ sap.ui.define([
 	ApplyConnector,
 	ApplyUtils,
 	WriteUtils,
-	FlexUtils,
 	_pick
 ) {
 	"use strict";
@@ -27,7 +25,7 @@ sap.ui.define([
 		CHANGES: "/changes/",
 		VARIANTS: "/variants/",
 		SETTINGS: "/flex/settings",
-		CSRF: "/actions/getcsrftoken/",
+		TOKEN: "/actions/getcsrftoken/",
 		APPVARIANTS: "/appdescr_variants/",
 		APPVARIANTS_OVERVIEW: "/app_variant_overview/"
 	};
@@ -47,7 +45,7 @@ sap.ui.define([
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
 	 */
-	var doWrite = function(mPropertyBag) {
+	var _doWrite = function(mPropertyBag) {
 		var sRoute;
 		if (mPropertyBag.isLegacyVariant) {
 			sRoute = ROUTES.VARIANTS;
@@ -57,11 +55,12 @@ sap.ui.define([
 			sRoute = ROUTES.CHANGES;
 		}
 
-		var mParameters = mPropertyBag.transport ? {changelist : mPropertyBag.transport} : undefined;
+		var mParameters = _pick({
+			changelist: mPropertyBag.transport,
+			skipIam: mPropertyBag.skipIam
+		}, ["changelist", "skipIam"]);
 
-		if (mPropertyBag.skipIam) {
-			mParameters.skipIam = mPropertyBag.skipIam;
-		}
+		ApplyConnector._addClientAndLanguageInfo(mParameters);
 		//single update --> fileName needs to be in the url
 		if (mPropertyBag.flexObject && !mPropertyBag.isAppVariant) {
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
@@ -69,7 +68,7 @@ sap.ui.define([
 		var sWriteUrl = ApplyUtils.getUrl(sRoute, mPropertyBag, mParameters);
 		delete mPropertyBag.reference;
 		delete mPropertyBag.fileName;
-		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
 			ApplyConnector,
@@ -87,7 +86,7 @@ sap.ui.define([
 	 * @since 1.67
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl.write._internal.Connector
+	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	var LrepConnector = merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.LrepConnector */ {
 
@@ -113,10 +112,7 @@ sap.ui.define([
 			var aParameters = ["reference", "layer", "appVersion", "changelist", "generator"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
-			var sClient = FlexUtils.getUrlParameter("sap-client");
-			if (sClient) {
-				mParameters["sap-client"] = sClient;
-			}
+			ApplyConnector._addClientAndLanguageInfo(mParameters);
 
 			if (mPropertyBag.selectorIds) {
 				mParameters.selector = mPropertyBag.selectorIds;
@@ -126,8 +122,13 @@ sap.ui.define([
 			}
 
 			delete mPropertyBag.reference;
-			var sDataUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl, "DELETE");
+			var sResetUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+			var oRequestOption = WriteUtils.getRequestOptions(
+				this.applyConnector,
+				sTokenUrl
+			);
+			return WriteUtils.sendRequest(sResetUrl, "DELETE", oRequestOption);
 		},
 
 
@@ -143,18 +144,21 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.appVersion] Version of the application
 		 * @returns {Promise} Promise resolves as soon as the publish has completed
 		 */
+		//TODO Need to be removed/aligned. This function is not used but a direct request triggered from sap/ui/fl/Transport
 		publish: function (mPropertyBag) {
 			var aParameters = ["reference", "layer", "appVersion", "changelist", "package"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
-			var sClient = FlexUtils.getUrlParameter("sap-client");
-			if (sClient) {
-				mParameters["sap-client"] = sClient;
-			}
+			ApplyConnector._addClientAndLanguageInfo(mParameters);
 
 			delete mPropertyBag.reference;
-			var sDataUrl = ApplyUtils.getUrl(ROUTES.PUBLISH, mPropertyBag, mParameters);
-			return ApplyUtils.sendRequest(sDataUrl, "POST");
+			var sPublishUrl = ApplyUtils.getUrl(ROUTES.PUBLISH, mPropertyBag, mParameters);
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
+			var oRequestOption = WriteUtils.getRequestOptions(
+				this.applyConnector,
+				sTokenUrl
+			);
+			return WriteUtils.sendRequest(sPublishUrl, "POST", oRequestOption);
 		},
 
 		/**
@@ -173,10 +177,7 @@ sap.ui.define([
 			var aParameters = ["layer", "appVersion"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
-			var sClient = FlexUtils.getUrlParameter("sap-client");
-			if (sClient) {
-				mParameters["sap-client"] = sClient;
-			}
+			ApplyConnector._addClientAndLanguageInfo(mParameters);
 
 			var sDataUrl = ApplyUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sDataUrl);
@@ -192,10 +193,7 @@ sap.ui.define([
 		loadFeatures: function (mPropertyBag) {
 			var mParameters = {};
 
-			var sClient = FlexUtils.getUrlParameter("sap-client");
-			if (sClient) {
-				mParameters["sap-client"] = sClient;
-			}
+			ApplyConnector._addClientAndLanguageInfo(mParameters);
 
 			var sFeaturesUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag, mParameters);
 			return ApplyUtils.sendRequest(sFeaturesUrl);
@@ -214,7 +212,7 @@ sap.ui.define([
 		 */
 		write:function (mPropertyBag) {
 			mPropertyBag.method = "POST";
-			return doWrite(mPropertyBag);
+			return _doWrite(mPropertyBag);
 		},
 
 		/**
@@ -231,7 +229,7 @@ sap.ui.define([
 				mPropertyBag.isLegacyVariant = true;
 			}
 			mPropertyBag.method = "PUT";
-			return doWrite(mPropertyBag);
+			return _doWrite(mPropertyBag);
 		},
 
 		/**
@@ -251,10 +249,14 @@ sap.ui.define([
 			if (mPropertyBag.transport) {
 				mParameters.changelist = mPropertyBag.transport;
 			}
+			ApplyConnector._addClientAndLanguageInfo(mParameters);
 			mPropertyBag.fileName = mPropertyBag.flexObject.fileName;
-			var sDeleteUrl = ApplyUtils.getUrl(ROUTES.CHANGES, mPropertyBag, mParameters);
+			var sRoute = mPropertyBag.flexObject.fileType === "variant" ? ROUTES.VARIANTS : ROUTES.CHANGES;
+			var sDeleteUrl = ApplyUtils.getUrl(sRoute, mPropertyBag, mParameters);
+			//decode url before sending to ABAP back end which does not expect encoded special character such as "/" in the namespace
+			sDeleteUrl = decodeURIComponent(sDeleteUrl);
 			delete mPropertyBag.fileName;
-			var sTokenUrl = ApplyUtils.getUrl(ROUTES.SETTINGS, mPropertyBag);
+			var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 			var oRequestOption = WriteUtils.getRequestOptions(
 				ApplyConnector,
@@ -265,6 +267,7 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		}
 	});
+	LrepConnector.applyConnector = ApplyConnector;
 
 	LrepConnector.appVariant.getManifest = function(mPropertyBag) {
 		var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
@@ -291,7 +294,7 @@ sap.ui.define([
 	LrepConnector.appVariant.create = function(mPropertyBag) {
 		mPropertyBag.method = "POST";
 		mPropertyBag.isAppVariant = true;
-		return doWrite(mPropertyBag);
+		return _doWrite(mPropertyBag);
 	};
 
 	LrepConnector.appVariant.assignCatalogs = function(mPropertyBag) {
@@ -303,7 +306,7 @@ sap.ui.define([
 
 		var sCatalogAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 		delete mPropertyBag.reference;
-		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
 			ApplyConnector,
@@ -321,7 +324,7 @@ sap.ui.define([
 
 		var sCatalogUnAssignmentUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 		delete mPropertyBag.reference;
-		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
 			ApplyConnector,
@@ -335,7 +338,7 @@ sap.ui.define([
 	LrepConnector.appVariant.update = function(mPropertyBag) {
 		mPropertyBag.method = "PUT";
 		mPropertyBag.isAppVariant = true;
-		return doWrite(mPropertyBag);
+		return _doWrite(mPropertyBag);
 	};
 
 	LrepConnector.appVariant.remove = function(mPropertyBag) {
@@ -346,7 +349,7 @@ sap.ui.define([
 
 		var sDeleteUrl = ApplyUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag, mParameters);
 		delete mPropertyBag.reference;
-		var sTokenUrl = ApplyUtils.getUrl(ROUTES.CSRF, mPropertyBag);
+		var sTokenUrl = ApplyUtils.getUrl(ROUTES.TOKEN, mPropertyBag);
 
 		var oRequestOption = WriteUtils.getRequestOptions(
 			ApplyConnector,

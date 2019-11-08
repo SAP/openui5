@@ -74,7 +74,7 @@ sap.ui.define([
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.equal(oStubSendRequest.getCall(0).args[0], sExpectedUrl, "with correct url");
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
-				assert.deepEqual(oStubSendRequest.getCall(0).args[2], {xsrfToken: undefined}, "with correct token");
+				assert.deepEqual(oStubSendRequest.getCall(0).args[2].xsrfToken, undefined, "with correct token");
 				assert.equal(PersonalizationConnector.xsrfToken, "newToken", "new token is set");
 			});
 		});
