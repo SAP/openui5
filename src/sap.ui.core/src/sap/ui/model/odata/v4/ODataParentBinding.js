@@ -79,9 +79,6 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID to be used for the PATCH request
-	 * @returns {sap.ui.base.SyncPromise}
-	 *   <code>undefined</code> or a promise which is resolved without a result in case of success,
-	 *   or rejected with an instance of <code>Error</code> in case of failure
 	 *
 	 * @see sap.ui.model.odata.v4.ODataContext#doSetProperty
 	 *
