@@ -88,6 +88,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		// container
 		rm.openEnd();
 
+		// render message strip
+		rm.renderControl(oControl.getAggregation("_messageStrip"));
+
 		// render header
 		var sHeaderText = oControl.getHeaderText();
 		var oHeaderTBar = oControl.getHeaderToolbar();

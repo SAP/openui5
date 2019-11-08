@@ -377,6 +377,8 @@ sap.ui.define([
 			"sap.m.ViewSettingsCustomTab",
 			"sap.m.ViewSettingsFilterItem",
 			"sap.m.ViewSettingsItem",
+			"sap.m.plugins.DataStateIndicator",
+			"sap.m.plugins.PluginBase",
 			"sap.m.semantic.AddAction",
 			"sap.m.semantic.CancelAction",
 			"sap.m.semantic.DeleteAction",

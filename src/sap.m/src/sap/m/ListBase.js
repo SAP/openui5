@@ -281,7 +281,13 @@ function(
 			 *
 			 * @since 1.54
 			 */
-			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
+			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false},
+
+			/**
+			 * Defines the message strip to display binding-related messages.
+			 * @since 1.73
+			 */
+			_messageStrip: {type : "sap.m.MessageStrip", multiple : false, visibility : "hidden"}
 		},
 		associations: {
 

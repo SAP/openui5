@@ -32,10 +32,11 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/m/MessageToast",
 	"sap/m/ScrollContainer",
-	"sap/m/Title"
+	"sap/m/Title",
+	"sap/m/plugins/DataStateIndicator"
 ], function(createAndAppendDiv, jQuery,
 			qutils, ListBaseRenderer, KeyCodes, JSONModel, Sorter, Filter, FilterOperator, Device, coreLibrary, ThemeParameters, library, StandardListItem, App, Page, ListBase, List, Toolbar,
-			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title) {
+			ToolbarSpacer, GrowingEnablement, Input, CustomListItem, InputListItem, GroupHeaderListItem, Button, VBox, Text, Menu, MenuItem, MessageToast, ScrollContainer, Title, DataStateIndicator) {
 		"use strict";
 		createAndAppendDiv("content").setAttribute("data-sap-ui-fastnavgroup", "true");
 
@@ -2783,6 +2784,19 @@ sap.ui.define([
 				oScrollContainer.destroy();
 				// reset stub
 				this.stub().reset();
+			}
+		});
+
+		QUnit.module("Dependents Plugins");
+
+		QUnit.test("DataStateIndicator Plugin Support", function(assert) {
+			try {
+				new ListBase({
+					dependents: new DataStateIndicator()
+				});
+				assert.ok(true, "ListBase supports DataStateIndicator plugin");
+			} catch (e) {
+				assert.ok(false, "ListBase does not support DataStateIndicator plugin");
 			}
 		});
 

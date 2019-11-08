@@ -119,6 +119,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		this.renderTabElement(rm, "sapUiTableOuterBefore");
 
+		rm.renderControl(oTable.getAggregation("_messageStrip"));
+
 		if (oTable.getTitle()) {
 			this.renderHeader(rm, oTable, oTable.getTitle());
 		}
@@ -130,6 +132,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (oTable.getExtension() && oTable.getExtension().length > 0) {
 			this.renderExtensions(rm, oTable, oTable.getExtension());
 		}
+
 		rm.openStart("div", oTable.getId() + "-sapUiTableCnt");
 		rm.class("sapUiTableCnt");
 

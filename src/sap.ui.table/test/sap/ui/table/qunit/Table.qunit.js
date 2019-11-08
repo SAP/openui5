@@ -39,11 +39,12 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/base/Log",
-	"sap/m/library"
+	"sap/m/library",
+	"sap/m/plugins/DataStateIndicator"
 ], function(qutils, TableQUnitUtils, Table, Column, ColumnMenu, ColumnMenuRenderer, AnalyticalColumnMenuRenderer, TablePersoController, RowAction,
 			RowActionItem, RowSettings, TableUtils, TableLibrary, SelectionPlugin,
 			CoreLibrary, Control, MockServer, PasteHelper, Device, JSONModel, ODataModel, Sorter, Filter, FloatType,
-			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library) {
+			Text, Input, Label, CheckBox, Button, Link, RatingIndicator, Image, Toolbar, Menu, MenuItem, MenuM, MenuItemM, Log, library, DataStateIndicator) {
 	"use strict";
 
 	// shortcut for sap.m.ToolbarDesign
@@ -5172,5 +5173,18 @@ sap.ui.define([
 		this.oTable._enableLegacyMultiSelection();
 		assert.throws(this.oTable._legacyMultiSelection, "Table#_legacyMultiSelection throws an error if a selection plugin is applied");
 
+	});
+
+	QUnit.module("Dependents Plugins");
+
+	QUnit.test("DataStateIndicator Plugin Support", function(assert) {
+		try {
+			new Table({
+				dependents: new DataStateIndicator()
+			});
+			assert.ok(true, "Table supports DataStateIndicator plugin");
+		} catch (e) {
+			assert.ok(false, "Table does not support DataStateIndicator plugin");
+		}
 	});
 });

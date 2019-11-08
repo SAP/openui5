@@ -1887,6 +1887,15 @@ sap.ui.define([
 					}
 				}
 			},
+			"plugins/DataStateIndicator": {
+				title: "Test Page for sap.m.plugins.DataStateIndicator",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
+			},
 			"routing/async/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler",
 				qunit: {

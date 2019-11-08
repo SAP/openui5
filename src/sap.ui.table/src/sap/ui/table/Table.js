@@ -471,7 +471,13 @@ sap.ui.define([
 			 *
 			 * @since 1.64
 			 */
-			plugins : {type : "sap.ui.table.plugins.SelectionPlugin", multiple : true, singularName : "plugin"}
+			plugins : {type : "sap.ui.table.plugins.SelectionPlugin", multiple : true, singularName : "plugin"},
+
+			/**
+			 * Defines the message strip to display binding-related messages.
+			 * @since 1.73
+			 */
+			_messageStrip: {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 		},
 		associations : {
 

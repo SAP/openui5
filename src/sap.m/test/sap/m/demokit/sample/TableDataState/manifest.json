@@ -1,0 +1,31 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.TableDataState",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.TableDataState.Table",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Table.view.xml",
+					"Table.controller.js",
+					"Formatter.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
