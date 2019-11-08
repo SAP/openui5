@@ -2202,7 +2202,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("DescriptorVariantFactory - ATO true", {
+	QUnit.module("DescriptorVariantFactory - ATO true and app variant not yet published", {
 		beforeEach: function() {
 			this._oSandbox = sinon.sandbox.create();
 			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
@@ -2210,7 +2210,8 @@ sap.ui.define([
 				response: JSON.stringify({
 					id : "a.id",
 					reference: "a.reference",
-					layer: "CUSTOMER"
+					layer: "CUSTOMER",
+					packageName: '$TMP'
 				})
 			});
 			this._oSandbox.stub(Settings, "getInstance").resolves(
@@ -2275,6 +2276,84 @@ sap.ui.define([
 				}).then(function(oResponse) {
 					assert.notEqual(oResponse, null);
 					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id');
+				});
+		});
+	});
+
+	QUnit.module("DescriptorVariantFactory - ATO true and app variant already published", {
+		beforeEach: function() {
+			this._oSandbox = sinon.sandbox.create();
+			this._fStubSend = this._oSandbox.stub(LrepConnector.prototype, "send");
+			this._fStubSend.resolves({
+				response: JSON.stringify({
+					id : "a.id",
+					reference: "a.reference",
+					layer: "CUSTOMER",
+					packageName: "YY1_DEFAULT_123"
+				})
+			});
+			this._oSandbox.stub(Settings, "getInstance").resolves(
+				new Settings({
+					isKeyUser:false,
+					isAtoAvailable:false,
+					isAtoEnabled:true,
+					isProductiveSystem:false
+				})
+			);
+		},
+		afterEach: function() {
+			this._oSandbox.restore();
+			delete this._oSandbox;
+		}
+	}, function() {
+		QUnit.test("new - submit", function(assert) {
+			var that = this;
+			return DescriptorVariantFactory.createNew({
+				id : "a.id",
+				reference: "a.reference",
+				layer: "CUSTOMER"
+			}).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/');
+			});
+		});
+
+		QUnit.test("Smart Business: new - submit", function(assert) {
+			var that = this;
+			return DescriptorVariantFactory.createNew({
+				id : "a.id",
+				reference: "a.reference",
+				layer: "CUSTOMER",
+				skipIam: true
+			}).then(function(oDescriptorVariant) {
+				return oDescriptorVariant.submit();
+			}).then(function(oResponse) {
+				assert.notEqual(oResponse, null);
+				assert.equal(that._fStubSend.getCall(0).args[0], '/sap/bc/lrep/appdescr_variants/?changelist=ATO_NOTIFICATION&skipIam=true');
+			});
+		});
+
+		QUnit.test("Smart Business: for existing - submit", function(assert) {
+			var that = this;
+			return DescriptorVariantFactory.createForExisting("a.id")
+				.then(function(oDescriptorVariant) {
+					return oDescriptorVariant.submit();
+				}).then(function(oResponse) {
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
+				});
+		});
+
+		QUnit.test("Smart Business: delete - submit", function(assert) {
+			var that = this;
+			return DescriptorVariantFactory.createDeletion("a.id")
+				.then(function(oDescriptorVariant) {
+					return oDescriptorVariant.submit();
+				}).then(function(oResponse) {
+					assert.notEqual(oResponse, null);
+					assert.equal(that._fStubSend.getCall(1).args[0], '/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
 				});
 		});
 	});

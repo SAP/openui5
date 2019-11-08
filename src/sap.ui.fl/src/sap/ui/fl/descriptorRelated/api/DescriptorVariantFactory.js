@@ -175,9 +175,13 @@ sap.ui.define([
 		}
 
 		if (this._sTransportRequest) {
-		//set to URL-Parameter 'changelist', as done in LrepConnector
+			//set to URL-Parameter 'changelist', as done in LrepConnector
 			sRoute += '?changelist=' + this._sTransportRequest;
-		} else if (this._oSettings.isAtoEnabled() && this._skipIam && LayerUtils.isCustomerDependentLayer(mMap.layer)) {
+		} else if (
+			this._oSettings.isAtoEnabled()
+			&& (this._skipIam || ((sMethod === 'PUT' || sMethod === 'DELETE') && mMap.packageName !== '$TMP'))
+			&& LayerUtils.isCustomerDependentLayer(mMap.layer)
+		) {
 			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
 			sRoute += '?changelist=ATO_NOTIFICATION';
 		}
@@ -205,7 +209,11 @@ sap.ui.define([
 
 		if (this._sTransportRequest) {
 			mPropertyBag.transport = this._sTransportRequest;
-		} else if (this._oSettings.isAtoEnabled() && this._skipIam && LayerUtils.isCustomerDependentLayer(mMap.layer)) {
+		} else if (
+			this._oSettings.isAtoEnabled()
+			&& (this._skipIam || ((this._mode === 'FROM_EXISTING' || this._mode === 'DELETION') && mMap.packageName !== '$TMP'))
+			&& LayerUtils.isCustomerDependentLayer(mMap.layer)
+		) {
 			// Smart Business created KPI tiles on S4 Cloud and the query parameter will be added to support their usecase
 			mPropertyBag.transport = "ATO_NOTIFICATION";
 		}

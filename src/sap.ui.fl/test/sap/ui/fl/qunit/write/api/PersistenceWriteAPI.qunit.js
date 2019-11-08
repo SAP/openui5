@@ -135,9 +135,9 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update an app variant in CUSTOMER layer", function(assert) {
+		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update an app variant in CUSTOMER_BASE layer", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER"
+				layer: "CUSTOMER_BASE"
 			};
 			mPropertyBag.selector = {
 				appId: "customer.reference.app.id"
