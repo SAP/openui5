@@ -3,12 +3,10 @@
 sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Cache",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FeaturesAPI,
 	Settings,
-	Cache,
 	sinon
 ) {
 	"use strict";
@@ -35,11 +33,9 @@ sap.ui.define([
 			});
 
 			QUnit.test("when isKeyUser() is called for " + (bValueToBeSet ? "a" : "not a") + " key user", function (assert) {
-				sandbox.stub(Cache, "getFlexDataPromise").resolves({
-					changes: {
-						settings: {
-							isKeyUser: bValueToBeSet
-						}
+				sandbox.stub(Settings, "getInstance").resolves({
+					isKeyUser: function () {
+						return bValueToBeSet;
 					}
 				});
 				return FeaturesAPI.isKeyUser()

@@ -36,6 +36,7 @@ sap.ui.define([
 	var LrepConnector = merge({}, BaseConnector,  /** @lends sap.ui.fl.apply._internal.connectors.LrepConnector */ {
 
 		xsrfToken: undefined,
+		settings: undefined,
 
 		/**
 		 * Loads the modules in a CSP-compliant way via the UI5 core scripting mechanism
@@ -103,6 +104,9 @@ sap.ui.define([
 					this.xsrfToken = oResult.xsrfToken;
 				}
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
+				if (oResponse.settings) {
+					this.settings = oResponse.settings;
+				}
 				if (!oResponse.loadModules) {
 					return oResponse;
 				}

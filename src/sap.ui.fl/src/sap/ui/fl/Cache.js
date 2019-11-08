@@ -45,8 +45,6 @@ function(
 
 	Cache._switches = {};
 
-	Cache._oFlexDataPromise = undefined;
-
 	/**
 	 * Get the list of the switched-on business functions from the flex response
 	 *
@@ -78,17 +76,6 @@ function(
 	 */
 	Cache.setActive = function (bActive) {
 		Cache._isOn = bActive;
-	};
-
-	/**
-	 * Returns the last cached flex data request promise
-	 *
-	 * @returns {Promise} Promise of a flex data request
-	 *
-	 * @protected
-	 */
-	Cache.getFlexDataPromise = function () {
-		return Cache._oFlexDataPromise;
 	};
 
 	/**
@@ -225,10 +212,8 @@ function(
 			return oCurrentLoadChanges;
 		}
 
-		var oFlexDataPromise = CompatibilityConnector.loadChanges(mComponent, mPropertyBag);
-		var oChangesLoadingPromise = oFlexDataPromise.then(function (oResult) {
-			return oResult;
-		}, function (oError) {
+		var oChangesLoadingPromise = CompatibilityConnector.loadChanges(mComponent, mPropertyBag)
+		.catch(function (oError) {
 			var sMessageText = "";
 			if (oError.messages && oError.messages.length !== 0 && oError.messages[0].text) {
 				sMessageText = oError.messages[0].text;
@@ -253,8 +238,6 @@ function(
 			Cache._deleteEntry(sComponentName, sAppVersion);
 			throw err;
 		});
-
-		Cache._oFlexDataPromise = oFlexDataPromise;
 
 		return oCacheEntry.promise;
 	};

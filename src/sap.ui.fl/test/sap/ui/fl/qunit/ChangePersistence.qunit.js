@@ -1567,24 +1567,6 @@ function (
 			});
 		});
 
-		QUnit.test("getChangesForComponent shall also pass the settings data to the fl.Settings", function(assert) {
-			var oFileContent = {
-				changes: {
-					settings: {
-						isKeyUser: true
-					}
-				}
-			};
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
-			var oSettingsStoreInstanceStub = sandbox.stub(Settings, "_storeInstance");
-
-			return this.oChangePersistence.getChangesForComponent().then(function() {
-				assert.ok(oSettingsStoreInstanceStub.calledOnce, "the _storeInstance function of the fl.Settings was called.");
-				var aPassedArguments = oSettingsStoreInstanceStub.getCall(0).args;
-				assert.deepEqual(aPassedArguments[0], oFileContent.changes.settings, "the settings content was passed to the function");
-			});
-		});
-
 		QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings, but only if the data comes from the back end", function(assert) {
 			var oFileContent = {};
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));

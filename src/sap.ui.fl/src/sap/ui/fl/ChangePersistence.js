@@ -221,10 +221,6 @@ sap.ui.define([
 			var oChangeFileContent = merge({}, oWrappedChangeFileContent);
 			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
 
-			if (oChangeFileContent.changes && oChangeFileContent.changes.settings) {
-				Settings._storeInstance(oChangeFileContent.changes.settings);
-			}
-
 			var bFlexChangesExist = oChangeFileContent.changes
 				&& Array.isArray(oChangeFileContent.changes.changes)
 				&& oChangeFileContent.changes.changes.length !== 0;
