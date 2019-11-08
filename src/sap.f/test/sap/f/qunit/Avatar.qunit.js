@@ -180,6 +180,25 @@ sap.ui.define([
 		assert.ok(this.oAvatar._bIsDefaultIcon, "Icon source is invalid and fallback icon will be shown");
 	});
 
+	QUnit.test("Fallback type should be always restored according to current property values", function (assert) {
+		//Arrange
+		this.oAvatar.setSrc("http://www.some-image-src.jpg");
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oAvatar._getImageFallbackType(), "Icon",
+			"Icon is the fallback type when the Avatar has src and no initials");
+
+		// Act
+		this.oAvatar.setSrc("");
+		this.oAvatar.setInitials("IB");
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oAvatar._getImageFallbackType(), "Initials",
+			"Initials is returned as fallback type when the src of the Avatar is removed and initials are set");
+	});
+
 	QUnit.module("Rendering different types", {
 		beforeEach: setupFunction,
 		afterEach: teardownFunction
