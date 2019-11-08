@@ -704,6 +704,9 @@ sap.ui.define([
 	};
 
 	/**
+	 * Handles setting a parameter property in case of a deferred operation binding, otherwise it
+	 * returns <code>undefined</code>.
+	 *
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
 	 */
@@ -713,8 +716,6 @@ sap.ui.define([
 			oGroupLock.unlock();
 			return SyncPromise.resolve();
 		}
-
-		return asODataParentBinding.prototype.doSetProperty.apply(this, arguments);
 	};
 
 	/**

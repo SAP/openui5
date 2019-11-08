@@ -896,6 +896,12 @@ sap.ui.define([
 			});
 	};
 
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
+	 */
+	ODataListBinding.prototype.doSetProperty = function () {};
+
 	/*
 	 * Delegates to {@link sap.ui.model.ListBinding#enableExtendedChangeDetection} while disallowing
 	 * the <code>vKey</code> parameter.
