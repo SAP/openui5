@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/fl/FlexController",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/m/Page",
@@ -13,6 +14,7 @@ sap.ui.define([
 function (
 	RuntimeAuthoring,
 	BasePlugin,
+	FlexController,
 	UIComponent,
 	ComponentContainer,
 	Page,
@@ -53,13 +55,18 @@ function (
 			});
 			this.oComponentContainer.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
-
-			sandbox.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
 		},
 		beforeEach: function () {
+			sandbox.stub(BasePlugin.prototype, 'hasChangeHandler').returns(true);
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oPage
+			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
 			});
 
 			return this.oRta.start().then(function () {
@@ -79,11 +86,11 @@ function (
 		},
 		afterEach: function() {
 			this.oRta.destroy();
+			sandbox.restore();
 		},
 		after: function () {
 			QUnit.config.fixture = '';
 			this.oComponentContainer.destroy();
-			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("get()", function (assert) {

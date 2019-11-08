@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/service/index",
 	"sap/ui/dt/Util",
+	"sap/ui/fl/FlexController",
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -18,6 +19,7 @@ sap.ui.define([
 	RuntimeAuthoring,
 	mServicesDictionary,
 	DtUtil,
+	FlexController,
 	ManagedObjectMetadata,
 	sinon
 ) {
@@ -49,6 +51,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
+			});
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent.getRootControl()
@@ -114,6 +121,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
+			});
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent.getRootControl()
@@ -580,6 +592,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
+			});
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent.getRootControl()
@@ -648,6 +665,11 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 		},
 		beforeEach: function () {
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
+			});
+
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oComponent.getRootControl()

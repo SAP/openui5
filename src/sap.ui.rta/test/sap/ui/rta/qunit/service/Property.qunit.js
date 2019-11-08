@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/DesignTime",
+	"sap/ui/fl/FlexController",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Control",
 	"sap/m/Page",
@@ -21,6 +22,7 @@ sap.ui.define([
 	DtUtil,
 	ElementDesignTimeMetadata,
 	DesignTime,
+	FlexController,
 	VerticalLayout,
 	Control,
 	Page,
@@ -52,6 +54,11 @@ sap.ui.define([
 				createContent : function() {
 					return new Page("mainPage");
 				}
+			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
 			});
 
 			this.oComp = new MockComponent("testComponent");
@@ -413,6 +420,11 @@ sap.ui.define([
 			var oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oPage
+			});
+
+			sandbox.stub(FlexController.prototype, "getResetAndPublishInfo").resolves({
+				isResetEnabled : false,
+				isPublishEnabled : false
 			});
 
 			oRta.start();
