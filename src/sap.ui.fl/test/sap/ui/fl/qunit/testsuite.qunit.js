@@ -324,21 +324,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
 				}
 			},
-			FakeLrepConnector: {
-				coverage: {
-					only: ["sap/ui/fl/FakeLrepConnector"]
-				}
-			},
-			FakeLrepConnectorStorage: {
-				coverage: {
-					only: ["sap/ui/fl/FakeLrepConnectorStorage"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.fl.qunit": "test-resources/sap/ui/fl/qunit/"
-					}
-				}
-			},
 			FlexController: {
 				coverage: {
 					only: ["sap/ui/fl/FlexController"]
@@ -569,17 +554,35 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/EventHistory"]
 				}
 			},
-			FakeLrepStorage: {
-				coverage: {
-					only: ["sap/ui/fl/FakeLrepStorage"]
-				}
-			},
 			library: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
 				},
 				ui5: {
-					flexibilityServices: "",
+					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			library1: {
+				coverage: {
+					only: ["sap/ui/fl/library"]
+				},
+				ui5: {
+					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			library2: {
+				coverage: {
+					only: ["sap/ui/fl/library"]
+				},
+				ui5: {
+					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			library3: {
+				coverage: {
+					only: ["sap/ui/fl/library"]
+				},
+				ui5: {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},

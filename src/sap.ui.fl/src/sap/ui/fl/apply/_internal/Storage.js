@@ -25,8 +25,8 @@ sap.ui.define([
 
 	function loadFlexDataFromConnectors (mPropertyBag, aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url});
-			return oConnectorConfig.connectorModule.loadFlexData(oConnectorSpecificPropertyBag)
+			var oConnectorSpecificPropertyBag = Object.assign(mPropertyBag, {url: oConnectorConfig.url, path: oConnectorConfig.url});
+			return oConnectorConfig.applyConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)
 				.catch(ApplyUtils.logAndResolveDefault.bind(undefined, ApplyUtils.getEmptyFlexDataResponse(), oConnectorConfig, "loadFlexData"));
 		});
 
@@ -48,9 +48,7 @@ sap.ui.define([
 
 
 	function flattenInnerResponses(mResponseObject) {
-		var aFlattenedResponses = flattenResponses(mResponseObject.responses);
-		mResponseObject.responses = aFlattenedResponses;
-
+		mResponseObject.responses = flattenResponses(mResponseObject.responses);
 		return mResponseObject;
 	}
 

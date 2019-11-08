@@ -686,43 +686,6 @@ function(
 			aArray = [{a: 1, b: 2, c: 3}, undefined, {a: 7, b: 8, c: 9}];
 			assert.equal(Utils.indexOfObject(aArray, oObject), 1, "the function returns the correct index");
 		});
-
-		QUnit.test("isTrialSystem with ushellContainer available and returning true", function(assert) {
-			assert.expect(2);
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getLogonSystem: function() {
-					return {
-						isTrial: function() {
-							assert.ok(true, "the function was called");
-							return true;
-						}
-					};
-				}
-			});
-
-			assert.ok(Utils.isTrialSystem(), "the function returns true");
-		});
-
-		QUnit.test("isTrialSystem with ushellContainer available and returning false", function(assert) {
-			assert.expect(2);
-			sandbox.stub(Utils, "getUshellContainer").returns({
-				getLogonSystem: function() {
-					return {
-						isTrial: function() {
-							assert.ok(true, "the function was called");
-							return false;
-						}
-					};
-				}
-			});
-
-			assert.notOk(Utils.isTrialSystem(), "the function returns false");
-		});
-
-		QUnit.test("isTrialSystem without ushellContainer available", function(assert) {
-			sandbox.stub(Utils, "getUshellContainer").returns(undefined);
-			assert.notOk(Utils.isTrialSystem(), "the function does not break and returns false");
-		});
 	});
 
 	function fnCreateComponentMockup(mTechnicalParameters) {
@@ -1742,42 +1705,6 @@ function(
 			var sCreationVersion = "1.0.0";
 			var bIsValidAppVersionToRequired = Utils._isValidAppVersionToRequired(sCreationVersion, true, Scenario.AdaptationProject);
 			assert.equal(bIsValidAppVersionToRequired, false, "the necessity of 'to' correct defined");
-		});
-	});
-
-	QUnit.module("Utils.useNewConnectors", {
-		afterEach: function () {
-			sandbox.restore();
-		}
-	}, function () {
-		QUnit.test("by default new connectors are not necessary", function (assert) {
-			var bNewConnectorsNecessary = Utils.areNewConnectorsNecessary();
-			assert.equal(bNewConnectorsNecessary, false, "new connectors are not necessary");
-		});
-
-		QUnit.test("a set url for the LRepConnector does not require the new connectors", function (assert) {
-			var aConnectorConfiguration = [{
-				connector: "LrepConnector",
-				url: "/another/url"
-			}];
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns(aConnectorConfiguration);
-			var bNewConnectorsNecessary = Utils.areNewConnectorsNecessary();
-			assert.equal(bNewConnectorsNecessary, false, "new connectors are not necessary");
-		});
-
-		QUnit.test("a set object does  require the new connectors", function (assert) {
-			var aConnectorConfiguration = [
-				{
-					connector: "LrepConnector",
-					url: "/another/url"
-				},
-				{
-					connector: "JsObjectConnector"
-				}
-			];
-			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns(aConnectorConfiguration);
-			var bNewConnectorsNecessary = Utils.areNewConnectorsNecessary();
-			assert.equal(bNewConnectorsNecessary, true, "new connectors are necessary");
 		});
 	});
 

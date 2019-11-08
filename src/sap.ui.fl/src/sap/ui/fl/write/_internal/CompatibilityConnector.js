@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @param {string} [mComponent.appName] Component name of the current application which may differ in case of an app variant
 	 * @returns {Promise} Returns a Promise with the changes response
 	 */
-	CompatibilityConnector.prototype.loadChanges = function(mComponent) {
+	CompatibilityConnector.loadChanges = function(mComponent) {
 		return ApplyStorage.loadFlexData({
 			reference: mComponent.name,
 			appVersion: mComponent.appVersion,
@@ -55,7 +55,7 @@ sap.ui.define([
 	 * @see sap.ui.fl.apply._internal.Storage.loadFlexData
 	 * @returns {Promise} Returns a Promise with the settings response
 	 */
-	CompatibilityConnector.prototype.loadSettings = function() {
+	CompatibilityConnector.loadSettings = function() {
 		return WriteStorage.loadFeatures();
 	};
 
@@ -69,7 +69,7 @@ sap.ui.define([
 	 * @param {boolean} [bIsVariant] Whether the data has file type .variant or not
 	 * @returns {Promise} Resolve if successful, rejects with errors
 	 */
-	CompatibilityConnector.prototype.create = function(vFlexObjects, sChangelist, bIsVariant) {
+	CompatibilityConnector.create = function(vFlexObjects, sChangelist, bIsVariant) {
 		var aFlexObjects = vFlexObjects;
 		if (!Array.isArray(aFlexObjects)) {
 			aFlexObjects = [vFlexObjects];
@@ -91,7 +91,7 @@ sap.ui.define([
 	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.update = function(oFlexObject, sChangeList) {
+	CompatibilityConnector.update = function(oFlexObject, sChangeList) {
 		return WriteStorage.update({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
@@ -109,7 +109,7 @@ sap.ui.define([
 	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.deleteChange = function(oFlexObject, sChangeList) {
+	CompatibilityConnector.deleteChange = function(oFlexObject, sChangeList) {
 		return WriteStorage.remove({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
@@ -129,7 +129,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.appVersion] Version of the application that is currently running
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
-	CompatibilityConnector.prototype.getFlexInfo = function(mParameters) {
+	CompatibilityConnector.getFlexInfo = function(mParameters) {
 		return WriteStorage.getFlexInfo(mParameters);
 	};
 
@@ -149,12 +149,13 @@ sap.ui.define([
 	 * @param {string} mParameters.aChangeTypes Change types of the changes which should be reset
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.resetChanges = function(mParameters) {
+	CompatibilityConnector.resetChanges = function(mParameters) {
 		return WriteStorage.reset({
 			reference: mParameters.sReference,
 			layer: mParameters.sLayer,
 			appVersion: mParameters.sAppVersion,
 			generator: mParameters.sGenerator,
+			changelist: mParameters.sChangelist,
 			selectorIds: mParameters.aSelectorIds,
 			changeTypes: mParameters.aChangeTypes
 		});

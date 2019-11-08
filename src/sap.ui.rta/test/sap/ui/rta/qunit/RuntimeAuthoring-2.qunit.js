@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
-	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Remove",
@@ -25,18 +25,18 @@ sap.ui.define([
 	Log,
 	FlexUtils,
 	RtaFlexUtils,
-	FakeLrepSessionStorage,
+	FakeLrepConnectorSessionStorage,
 	RuntimeAuthoring,
 	CommandFactory,
 	Remove,
-	RtaQunitFlexUtils,
+	RtaQunitUtils,
 	PersistenceWriteAPI,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitFlexUtils.renderTestAppAt("qunit-fixture");
+	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
 	var oComp = oCompCont.getComponentInstance();
 
 	function givenAnFLP(fnFLPToExternalStub, mShellParams) {
@@ -150,7 +150,6 @@ sap.ui.define([
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
 		beforeEach : function() {
-			FakeLrepSessionStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
@@ -170,19 +169,18 @@ sap.ui.define([
 
 			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
 
-			return this.oRta.start();
+			return RtaQunitUtils.clear()
+				.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach : function() {
 			this.oContextMenuPlugin.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			this.oRemovePlugin.destroy();
 			this.oRta.destroy();
 			sandbox.restore();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when we check the plugins on RTA", function(assert) {
-			var done = assert.async();
-
 			assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " then the custom ContextMenuPlugin is set");
 			assert.equal(this.oRta.getPlugins()['rename'], undefined, " and the default plugins are not loaded");
 			assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
@@ -190,15 +188,12 @@ sap.ui.define([
 			return this.oRta.stop(false).then(function() {
 				this.oRta.destroy();
 				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-				done();
 			}.bind(this));
 		});
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with one different (non-default) plugin (using setPlugins method)...", {
 		beforeEach : function(assert) {
-			FakeLrepSessionStorage.deleteChanges();
-
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
 
 			this.oRta = new RuntimeAuthoring({
@@ -213,11 +208,12 @@ sap.ui.define([
 			mPlugins['contextMenu'] = this.oContextMenuPlugin;
 			this.oRta.setPlugins(mPlugins);
 
-			return this.oRta.start()
+			return RtaQunitUtils.clear()
+				.then(this.oRta.start.bind(this.oRta))
 			.then(function() {
 				assert.throws(function () {
 					this.oRta.setPlugins(mPlugins);
-				}, /Cannot replace plugins/, " and setPlugins cannot be called after DT start");
+				}.bind(this), /Cannot replace plugins/, " and setPlugins cannot be called after DT start");
 				assert.equal(this.oRta.getPlugins()['rename'], undefined, " and a custom rename plugin does not exist");
 				assert.ok(this.oRta.getDefaultPlugins()['rename'].bIsDestroyed, " and the default rename plugin has been destroyed");
 				assert.ok(this.oRta.getDefaultPlugins()['contextMenu'].bIsDestroyed, " and the default context menu plugin has been destroyed");
@@ -226,8 +222,8 @@ sap.ui.define([
 		},
 		afterEach : function() {
 			this.oContextMenuPlugin.destroy();
-			FakeLrepSessionStorage.deleteChanges();
 			this.oRta.destroy();
+			return RtaQunitUtils.clear();
 		}
 	}, function() {
 		QUnit.test("when we check the plugins on RTA", function (assert) {

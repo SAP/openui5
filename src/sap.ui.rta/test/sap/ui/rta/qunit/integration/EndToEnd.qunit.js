@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/fl/FakeLrepSessionStorage",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"qunit/RtaQunitUtils",
@@ -16,7 +15,6 @@ sap.ui.define([
 	jQuery,
 	RuntimeAuthoring,
 	FakeLrepConnectorSessionStorage,
-	FakeLrepSessionStorage,
 	OverlayRegistry,
 	DtUtil,
 	RtaQunitUtils,
@@ -38,10 +36,8 @@ sap.ui.define([
 		after: function () {
 			QUnit.config.fixture = '';
 		},
-		beforeEach : function(assert) {
-			FakeLrepSessionStorage.deleteChanges();
+		beforeEach : function() {
 			FakeLrepConnectorSessionStorage.enableFakeConnector();
-			assert.equal(FakeLrepSessionStorage.getNumChanges(), 0, "Session storage based LREP is empty");
 			this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
 			this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oBoundButton35Field = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
@@ -54,6 +50,7 @@ sap.ui.define([
 			});
 
 			return Promise.all([
+				RtaQunitUtils.clear(),
 				new Promise(function (fnResolve) {
 					this.oRta.attachStart(function () {
 						this.oVictimOverlay = OverlayRegistry.getOverlay(this.oVictim);
@@ -128,7 +125,7 @@ sap.ui.define([
 
 		QUnit.test("when adding a group element via context menu (expanded context menu - reveal)", function(assert) {
 			var fnDone = assert.async();
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
+
 			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 			var oCommandStack = this.oRta.getCommandStack();
@@ -165,7 +162,11 @@ sap.ui.define([
 										assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 										return this.oRta.stop();
 									}.bind(this))
-										.then(fnDone);
+									.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+									.then(function (iNumberOfChanges) {
+										assert.equal(iNumberOfChanges, 3);
+									})
+									.then(fnDone);
 								}
 							}.bind(this));
 
@@ -186,7 +187,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when adding a group element via context menu (expanded context menu - addODataProperty)", function(assert) {
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var fnDone = assert.async();
 
 			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
@@ -219,7 +219,11 @@ sap.ui.define([
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 						oObserver.disconnect();
 						this.oRta.stop()
-							.then(fnDone);
+						.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+						.then(function (iNumberOfChanges) {
+							assert.equal(iNumberOfChanges, 1);
+						})
+						.then(fnDone);
 					}.bind(this));
 
 					var oConfig = {attributes: false, childList: true, characterData: false, subtree: true};
@@ -236,10 +240,8 @@ sap.ui.define([
 
 		QUnit.test("when removing a field,", function(assert) {
 			var fnDone = assert.async();
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-
 			var oCommandStack = this.oRta.getCommandStack();
-			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oVictim}).length;
+			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oVictim}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			oCommandStack.attachModified(function () {
@@ -249,10 +251,14 @@ sap.ui.define([
 					fnWaitForExecutionAndSerializationBeingDone.call(this)
 						.then(function () {
 							assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
-							iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oVictim}).length;
+							iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oVictim}).length;
 							assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 							return this.oRta.stop();
 						}.bind(this))
+						.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+						.then(function (iNumberOfChanges) {
+							assert.equal(iNumberOfChanges, 1);
+						})
 						.then(fnDone);
 				}
 			}.bind(this));
@@ -266,9 +272,8 @@ sap.ui.define([
 
 		QUnit.test("when moving a field (via cut and paste),", function(assert) {
 			var fnDone = assert.async();
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var oCommandStack = this.oRta.getCommandStack();
-			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			oCommandStack.attachModified(function () {
@@ -278,11 +283,15 @@ sap.ui.define([
 					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 						var iIndex = 0;
 						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
-						iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+						iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 						return this.oRta.stop();
 					}.bind(this))
-						.then(fnDone);
+					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+					.then(function (iNumberOfChanges) {
+						assert.equal(iNumberOfChanges, 1);
+					})
+					.then(fnDone);
 				}
 			}.bind(this));
 
@@ -296,8 +305,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when renaming a group (via double click) and setting a new title...", function(assert) {
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			this.oDatesGroupOverlay.focus();
@@ -321,7 +329,7 @@ sap.ui.define([
 									oFirstExecutedCommand.getName() === "rename") {
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 										assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
-										iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+										iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 										fnResolveOnCommandAdded();
 									}.bind(this));
@@ -339,8 +347,13 @@ sap.ui.define([
 							}, this);
 						}.bind(this))
 					]).then(function () {
-						this.oRta.stop().then(fnDone);
-					}.bind(this));
+						return this.oRta.stop();
+					}.bind(this))
+					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+					.then(function (iNumberOfChanges) {
+						assert.equal(iNumberOfChanges, 1);
+					})
+					.then(fnDone);
 
 					document.activeElement.innerHTML = "Test";
 					QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, false, false);
@@ -352,9 +365,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 			var fnDone = assert.async();
-
 			var oForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm--Form");
 			var oFormContainer = oForm.getFormContainers()[0];
 			var oFieldToHide = oFormContainer.getFormElements()[0];
@@ -368,7 +379,7 @@ sap.ui.define([
 				}
 			}
 
-			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
@@ -387,8 +398,8 @@ sap.ui.define([
 						new Promise(function (fnResolve) {
 							if (!oFieldOverlay) {
 								this.oRta._oDesignTime.attachEvent("elementOverlayCreated", {
-									resolve: fnResolve,
-									controlId: oField.getId()
+									resolve : fnResolve,
+									controlId : oField.getId()
 								}, checkOverlay, this);
 							} else {
 								fnResolve(oFieldOverlay);
@@ -422,10 +433,13 @@ sap.ui.define([
 														sap.ui.getCore().applyChanges();
 													})
 													.then(function () {
-														iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+														iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 														assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 														return this.oRta.stop();
 													}.bind(this))
+													.then(RtaQunitUtils.getNumberOfChangesForTestApp).then(function (iNumberOfChanges) {
+														assert.equal(iNumberOfChanges, 3);
+													})
 													.then(fnDone);
 											}
 										}.bind(this));
@@ -454,27 +468,9 @@ sap.ui.define([
 			QUnitUtils.triggerKeyup(oFieldToHideOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 		});
 
-		QUnit.test("when renaming a group element via context menu (expanded context menu) and setting a new label...", function(assert) {
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
-
-			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
-
-			this.oCompanyCodeFieldOverlay.focus();
-			this.oCompanyCodeFieldOverlay.setSelected(true);
-
-			// open context menu (expanded menu) and press rename button
-			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function () {
-				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
-				return fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oContextMenuButton, 'TestExpandedMenu');
-			}.bind(this));
-		});
-
 		QUnit.test("when renaming a group element via Context menu (compact context menu) and setting a new label...", function(assert) {
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var fnDone = assert.async();
-
-			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			this.oCompanyCodeFieldOverlay.focus();
@@ -484,7 +480,12 @@ sap.ui.define([
 				assert.ok(oContextMenuControl.getPopover(false).isOpen(), "ContextMenu is open");
 				// press rename button
 				var oRenameButton = oContextMenuControl.getButtons()[0];
-				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameButton, 'TestCompactMenu').then(fnDone);
+				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameButton, 'TestCompactMenu')
+					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+					.then(function (iNumberOfChanges) {
+						assert.equal(iNumberOfChanges, 1);
+					})
+					.then(fnDone);
 			}.bind(this));
 
 			// open context menu (compact menu)
@@ -492,24 +493,26 @@ sap.ui.define([
 		});
 
 		QUnit.test("when splitting a combined SmartForm GroupElement via context menu (expanded context menu) - split", function(assert) {
-			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 			var fnDone = assert.async();
-
 			var oCombinedElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
-			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: oCombinedElement}).length;
+			var iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : oCombinedElement}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no changes to publish in the flex persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
 			oCommandStack.attachCommandExecuted(function () {
 				fnWaitForExecutionAndSerializationBeingDone.call(this)
-					.then(function() {
+					.then(function () {
 						sap.ui.getCore().applyChanges();
-						iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector: oCombinedElement}).length;
+						iDirtyChangesCount = TestChangesUtil.getDirtyChanges({selector : oCombinedElement}).length;
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 						return this.oRta.stop();
 					}.bind(this))
+					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
+					.then(function (iNumberOfChanges) {
+						assert.equal(iNumberOfChanges, 1);
+					})
 					.then(fnDone);
 			}, this);
 

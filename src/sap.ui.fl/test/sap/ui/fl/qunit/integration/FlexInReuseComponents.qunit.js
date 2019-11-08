@@ -5,33 +5,16 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LrepConnector",
-	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
 ],
 function (
 	jQuery,
 	Component,
 	Utils,
 	LrepConnector,
-	FlexRuntimeInfoAPI,
-	sinon
+	FlexRuntimeInfoAPI
 ) {
 	"use strict";
-
-	sinon.stub(LrepConnector.prototype, "loadChanges")
-	.resolves({
-		changes: {
-			changes: [],
-			contexts: [],
-			variantSection: {},
-			settings: {
-				isKeyUser: true,
-				isAtoAvailable: false,
-				isAtoEnabled: false,
-				isProductiveSystem: false
-			}
-		}
-	});
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach: function () {

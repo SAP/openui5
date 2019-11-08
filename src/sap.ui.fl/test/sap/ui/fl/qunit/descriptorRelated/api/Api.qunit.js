@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	DescriptorVariantFactory,
 	DescriptorChangeFactory,
 	LrepConnector,
+	CompatibilityConnector,
 	Settings,
 	sinon
 ) {
@@ -1888,12 +1890,12 @@ sap.ui.define([
 
 	QUnit.module("DescriptorChange", {
 		beforeEach: function() {
-			this._oSandbox = sinon.sandbox.create();
-			this._oSandbox.stub(LrepConnector.prototype, "send").resolves({
-				response: JSON.stringify({
-					reference: "a.reference"
-				})
+			this.sCreateResponse = JSON.stringify({
+				reference: "a.reference"
 			});
+			this._oSandbox = sinon.sandbox.create();
+			// required since we store changes via changepersistence --> CompatibilityConnector
+			this._oSandbox.stub(CompatibilityConnector, "create").resolves(this.sCreateResponse);
 			this._oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser:false,
@@ -1981,13 +1983,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("submit", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
-				new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange).then(function(oDescriptorChange) {
-					return oDescriptorChange.submit().then(function(oResponse) {
-						assert.notEqual(oResponse, null);
-					});
-				});
-			});
+			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"})
+			.then(function(oDescriptorInlineChange) {
+				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
+			}).then(function(oDescriptorChange) {
+				return oDescriptorChange.submit();
+			}).then(function(oResponse) {
+				assert.equal(oResponse, this.sCreateResponse);
+			}.bind(this));
 		});
 
 		QUnit.test("createNew - w/o layer, check default", function(assert) {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/registry/Settings",
 	"sap/m/MessageBox",
@@ -25,7 +25,7 @@ function (
 	LayerUtils,
 	Change,
 	Variant,
-	LrepConnector,
+	CompatibilityConnector,
 	Cache,
 	Settings,
 	MessageBox,
@@ -2754,19 +2754,20 @@ function (
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
-			// LREP Connector
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 
 			this.oChangePersistence.resetChanges("VENDOR", "Change.createInitialFileContent").then(function(aChanges) {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
-				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
-				assert.equal(oLrepStub.args[0][0],
-					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=VENDOR&changelist=transportId&generator=Change.createInitialFileContent",
-					"and with the correct URI");
-				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
+				var oResetArgs = oResetChangesStub.getCall(0).args[0];
+				assert.equal(oResetArgs.sReference, "MyComponent");
+				assert.equal(oResetArgs.sAppVersion, "1.2.3");
+				assert.equal(oResetArgs.sLayer, "VENDOR");
+				assert.equal(oResetArgs.sChangelist, "transportId");
+				assert.equal(oResetArgs.sGenerator, "Change.createInitialFileContent");
 				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
 				assert.deepEqual(aChanges, [], "empty array is returned");
@@ -2827,19 +2828,20 @@ function (
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
-			// LREP Connector
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
 			var fnOpenTransportSelectionStub = sandbox.stub(this.oChangePersistence._oTransportSelection, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
 			return this.oChangePersistence.resetChanges("VENDOR", "", ["abc123"], ["labelChange"]).then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
-				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
-				assert.equal(oLrepStub.args[0][0],
-					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=VENDOR&changelist=transportId&selector=abc123&changeType=labelChange",
-					"and with the correct URI");
-				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
+				var oResetArgs = oResetChangesStub.getCall(0).args[0];
+				assert.equal(oResetArgs.sReference, "MyComponent");
+				assert.equal(oResetArgs.sAppVersion, "1.2.3");
+				assert.equal(oResetArgs.sLayer, "VENDOR");
+				assert.equal(oResetArgs.sChangelist, "transportId");
+				assert.deepEqual(oResetArgs.aChangeTypes, ["labelChange"]);
 				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
 				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
 				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
@@ -2913,17 +2915,18 @@ function (
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
 
-			// LREP Connector
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
 			return this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent").then(function(aChanges) {
-				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
-				assert.equal(oLrepStub.args[0][0],
-					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=CUSTOMER&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent",
-					"and with the correct URI");
-				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
+				var oResetArgs = oResetChangesStub.getCall(0).args[0];
+				assert.equal(oResetArgs.sReference, "MyComponent");
+				assert.equal(oResetArgs.sAppVersion, "1.2.3");
+				assert.equal(oResetArgs.sLayer, "CUSTOMER");
+				assert.equal(oResetArgs.sChangelist, "ATO_NOTIFICATION");
+				assert.equal(oResetArgs.sGenerator, "Change.createInitialFileContent");
 				assert.equal(oCacheRemoveChangesStub.callCount, 0, "the Cache.removeChanges is not called");
 				assert.equal(oGetChangesFromMapByNamesStub.callCount, 0, "the getChangesFromMapByNames is not called");
 				assert.deepEqual(aChanges, [], "empty array is returned");
@@ -2942,7 +2945,7 @@ function (
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 			var aControlIds = [
@@ -2952,12 +2955,12 @@ function (
 				"feview--controlWithNoChanges"
 			];
 			return this.oChangePersistence.resetChanges("CUSTOMER", "Change.createInitialFileContent", aControlIds).then(function() {
-				assert.ok(oLrepStub.calledOnce, "the LrepConnector is called once");
-				assert.equal(oLrepStub.args[0][0],
-					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=CUSTOMER&generator=Change.createInitialFileContent&" +
-					"selector=view--control1,view--controlWithNoChanges,feview--control2,feview--controlWithNoChanges",
-					"and with the correct URI");
-				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
+				var oResetArgs = oResetChangesStub.getCall(0).args[0];
+				assert.equal(oResetArgs.sReference, "MyComponent");
+				assert.equal(oResetArgs.sAppVersion, "1.2.3");
+				assert.equal(oResetArgs.sLayer, "CUSTOMER");
+				assert.equal(oResetArgs.aSelectorIds, aControlIds);
 				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
 				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
 				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
@@ -2977,7 +2980,7 @@ function (
 				isAtoEnabled: function() {return true;}
 			};
 			sandbox.stub(sap.ui.fl.registry.Settings, "getInstance").returns(Promise.resolve(oSetting));
-			var oLrepStub = sandbox.stub(this.oChangePersistence._oConnector, "send").returns(Promise.resolve(aDeletedChangeContentIds));
+			var oResetChangesStub = sandbox.stub(CompatibilityConnector, "resetChanges").returns(Promise.resolve(aDeletedChangeContentIds));
 			var oCacheRemoveChangesStub = sandbox.stub(Cache, "removeChanges");
 			var oGetChangesFromMapByNamesStub = sandbox.stub(this.oChangePersistence, "_getChangesFromMapByNames").returns(Promise.resolve());
 
@@ -2989,12 +2992,12 @@ function (
 			];
 			return this.oChangePersistence.resetChanges("USER", "Change.createInitialFileContent", aControlIds).then(function() {
 				assert.equal(oTransportStub.callCount, 0, "no transport data was requested");
-				assert.equal(oLrepStub.callCount, 1, "the LrepConnector is called once");
-				assert.equal(oLrepStub.args[0][0],
-					"/sap/bc/lrep/changes/?reference=MyComponent&appVersion=1.2.3&layer=USER&generator=Change.createInitialFileContent&" +
-					"selector=view--control1,view--controlWithNoChanges,feview--control2,feview--controlWithNoChanges",
-					"and with the correct URI");
-				assert.equal(oLrepStub.args[0][1], "DELETE", "and with the correct method");
+				assert.ok(oResetChangesStub.calledOnce, "CompatibilityConnector.deleteChange is called once");
+				var oResetArgs = oResetChangesStub.getCall(0).args[0];
+				assert.equal(oResetArgs.sReference, "MyComponent");
+				assert.equal(oResetArgs.sAppVersion, "1.2.3");
+				assert.equal(oResetArgs.sChangelist, "");
+				assert.equal(oResetArgs.aSelectorIds, aControlIds);
 				assert.ok(oCacheRemoveChangesStub.calledOnce, "the Cache.removeChanges is called once");
 				assert.deepEqual(oCacheRemoveChangesStub.args[0][1], ["1", "2"], "and with the correct names");
 				assert.ok(oGetChangesFromMapByNamesStub.calledOnce, "the getChangesFromMapByNames is called once");
@@ -3275,13 +3278,11 @@ function (
 			this._oComponentInstance = sap.ui.component({
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
 			});
-			this.lrepConnectorMock = {
-				create: sinon.stub().returns(Promise.resolve()),
-				deleteChange: sinon.stub().returns(Promise.resolve()),
-				loadChanges: sinon.stub().returns(Promise.resolve({changes: {changes: []}}))
-			};
+
+			this.oCreateStub = sandbox.stub(CompatibilityConnector, "create").returns(Promise.resolve());
+			this.oDeleteChangeStub = sandbox.stub(CompatibilityConnector, "deleteChange").returns(Promise.resolve());
+			this.oLoadChangeStub = sandbox.stub(CompatibilityConnector, "loadChanges").returns(Promise.resolve({changes: {changes: []}}));
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
-			this.oChangePersistence._oConnector = this.lrepConnectorMock;
 
 			this.oServer = sinon.fakeServer.create();
 		},
@@ -3308,7 +3309,7 @@ function (
 
 			//Call CUT
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.ok(this.lrepConnectorMock.create.calledOnce);
+				assert.ok(this.oCreateStub.calledOnce);
 			}.bind(this));
 		});
 
@@ -3343,7 +3344,7 @@ function (
 
 			//Call CUT
 			return this.oChangePersistence.saveDirtyChanges(true).then(function() {
-				assert.ok(this.lrepConnectorMock.create.calledOnce);
+				assert.ok(this.oCreateStub.calledOnce);
 				assert.equal(oAddChangeSpy.callCount, 0, "then addChange was never called for the change related to app variants");
 			}.bind(this));
 		});
@@ -3367,19 +3368,15 @@ function (
 
 			//Call CUT
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.ok(this.lrepConnectorMock.deleteChange.calledOnce);
-				assert.ok(this.lrepConnectorMock.create.notCalled);
+				assert.equal(this.oDeleteChangeStub.callCount, 1);
+				assert.equal(this.oCreateStub.callCount, 0);
 			}.bind(this));
 		});
 
 		QUnit.test("Shall save the dirty changes in a bulk", function (assert) {
-			assert.expect(3);
 			// REVISE There might be more elegant implementation
 			var oChangeContent1;
 			var oChangeContent2;
-			var oCreateStub;
-
-			oCreateStub = this.lrepConnectorMock.create;
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
@@ -3405,19 +3402,15 @@ function (
 
 			//Call CUT
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
-				assert.ok(oCreateStub.calledOnce, "the create method of the connector is called once");
-				assert.deepEqual(oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
-			});
+				assert.ok(this.oCreateStub.calledOnce, "the create method of the connector is called once");
+				assert.deepEqual(this.oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
+				assert.deepEqual(this.oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
+			}.bind(this));
 		});
 
 		QUnit.test("(Save As scenario) Shall save the dirty changes for the new created app variant in a bulk when pressing a 'Save As' button", function (assert) {
-			assert.expect(3);
 			var oChangeContent1;
 			var oChangeContent2;
-			var oCreateStub;
-
-			oCreateStub = this.lrepConnectorMock.create;
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
@@ -3455,10 +3448,10 @@ function (
 
 			//Call CUT
 			return this.oChangePersistence.saveDirtyChanges(true).then(function() {
-				assert.ok(oCreateStub.calledOnce, "the create method of the connector is called once");
-				assert.deepEqual(oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
-			});
+				assert.ok(this.oCreateStub.calledOnce, "the create method of the connector is called once");
+				assert.deepEqual(this.oCreateStub.getCall(0).args[0][0], oChangeContent1, "the first change was processed first");
+				assert.deepEqual(this.oCreateStub.getCall(0).args[0][1], oChangeContent2, "the second change was processed afterwards");
+			}.bind(this));
 		});
 
 		QUnit.test("after a change creation has been saved, the change shall be added to the cache", function (assert) {
@@ -3595,8 +3588,6 @@ function (
 				originalLanguage: "DE"
 			};
 
-			this.lrepConnectorMock.loadChanges = sinon.stub().returns(Promise.resolve({changes: {changes: []}}));
-
 			//Call CUT
 			return this.oChangePersistence.getChangesForComponent().then(function() {
 				this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
@@ -3617,8 +3608,6 @@ function (
 				content: { },
 				originalLanguage: "DE"
 			};
-
-			this.lrepConnectorMock.loadChanges = sinon.stub().returns(Promise.resolve({changes: {changes: []}}));
 
 			this.oServer.respondWith([
 				200,
@@ -3653,7 +3642,9 @@ function (
 				originalLanguage: "DE"
 			};
 
-			this.lrepConnectorMock.loadChanges = sinon.stub().returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
+			// this test requires a slightly different setup
+			this.oLoadChangeStub.restore();
+			sandbox.stub(CompatibilityConnector, "loadChanges").returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
 
 			//Call CUT
 			return this.oChangePersistence.getChangesForComponent()
@@ -3699,8 +3690,13 @@ function (
 			};
 
 			var oRaisedError = {messages: [{severity : "Error", text : "Error"}]};
-			this.lrepConnectorMock.loadChanges = sinon.stub().returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
-			this.lrepConnectorMock.create = sinon.stub().returns(Promise.reject(oRaisedError));
+
+			// this test requires a slightly different setup
+			this.oLoadChangeStub.restore();
+			sandbox.stub(CompatibilityConnector, "loadChanges").returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
+			this.oCreateStub.restore();
+			sandbox.stub(CompatibilityConnector, "create").returns(Promise.reject(oRaisedError));
+
 			this._updateCacheAndDirtyStateSpy = sandbox.spy(this.oChangePersistence, "_updateCacheAndDirtyState");
 
 			//Call CUT
@@ -3750,7 +3746,9 @@ function (
 				originalLanguage: "DE"
 			};
 
-			this.lrepConnectorMock.loadChanges = sinon.stub().returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
+			// this test requires a slightly different setup
+			this.oLoadChangeStub.restore();
+			sandbox.stub(CompatibilityConnector, "loadChanges").returns(Promise.resolve({changes: {changes: [oChangeContent]}}));
 
 			return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {
 				//Call CUT
@@ -3763,14 +3761,9 @@ function (
 		});
 
 		QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk", function (assert) {
-			assert.expect(3);
-			// REVISE There might be more elegant implementation
 			var oChangeContent1;
 			var oChangeContent2;
 			var oChangeContent3;
-			var oCreateStub;
-
-			oCreateStub = this.lrepConnectorMock.create;
 
 			oChangeContent1 = {
 				fileName: "Gizorillus1",
@@ -3807,12 +3800,11 @@ function (
 
 			var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
 
-			//Call CUT
 			return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function() {
-				assert.ok(oCreateStub.calledTwice, "the create method of the connector is called for each selected change");
-				assert.deepEqual(oCreateStub.getCall(0).args[0], oChangeContent1, "the first change was processed first");
-				assert.deepEqual(oCreateStub.getCall(1).args[0], oChangeContent3, "the second change was processed afterwards");
-			});
+				assert.equal(this.oCreateStub.callCount, 2, "the create method of the connector is called for each selected change");
+				assert.deepEqual(this.oCreateStub.getCall(0).args[0], oChangeContent1, "the first change was processed first");
+				assert.deepEqual(this.oCreateStub.getCall(1).args[0], oChangeContent3, "the second change was processed afterwards");
+			}.bind(this));
 		});
 
 		QUnit.test("addChangeForVariant should add a new change object into variants changes mapp with pending action is NEW", function(assert) {
@@ -3842,7 +3834,7 @@ function (
 			assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
 		});
 
-		QUnit.test("saveAllChangesForVariant should use the lrep connector to create the change in the backend if pending action is NEW or delete the change if pending action is DELETE", function(assert) {
+		QUnit.test("saveAllChangesForVariant should use the CompatibilityConnector to create the change in the backend if pending action is NEW or delete the change if pending action is DELETE", function(assert) {
 			var mParameters = {
 				id: "changeId",
 				type: "filterBar",
@@ -3869,19 +3861,23 @@ function (
 			assert.equal(oChange.getPendingAction(), "NEW");
 			var oCreateResponse = {response : oChange._oDefinition};
 			var oDeleteResponse = {};
-			this.lrepConnectorMock.create = sinon.stub().returns(Promise.resolve(oCreateResponse));
-			this.lrepConnectorMock.deleteChange = sinon.stub().returns(Promise.resolve(oDeleteResponse));
+
+			// this test requires a slightly different setup
+			this.oCreateStub.restore();
+			sandbox.stub(CompatibilityConnector, "create").returns(Promise.resolve(oCreateResponse));
+			this.oDeleteChangeStub.restore();
+			this.oDeleteChangeStub = sandbox.stub(CompatibilityConnector, "deleteChange").returns(Promise.resolve(oDeleteResponse));
 
 			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
-				assert.ok(jQuery.isArray(aResults));
+				assert.ok(Array.isArray(aResults));
 				assert.equal(aResults.length, 1);
 				assert.strictEqual(aResults[0], oCreateResponse);
 				oChange.markForDeletion();
 				return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
-					assert.ok(jQuery.isArray(aResults));
+					assert.ok(Array.isArray(aResults));
 					assert.equal(aResults.length, 1);
 					assert.strictEqual(aResults[0], oDeleteResponse);
-					sinon.assert.calledWith(this.lrepConnectorMock.deleteChange, oChange.getDefinition(), "");
+					assert.ok(this.oDeleteChangeStub.calledWith(oChange.getDefinition(), ""));
 					assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
 				}.bind(this));
 			}.bind(this));
@@ -3911,11 +3907,15 @@ function (
 			var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
 			assert.ok(sId);
 			assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
-			this.lrepConnectorMock.create = sinon.stub().returns(Promise.resolve(Promise.reject({
+
+
+			// this test requires a slightly different setup
+			this.oCreateStub.restore();
+			sandbox.stub(CompatibilityConnector, "create").returns(Promise.reject({
 				messages: [
 					{text: "Backend says: Boom"}
 				]
-			})));
+			}));
 
 			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar")['catch'](function(err) {
 				assert.equal(err.messages[0].text, "Backend says: Boom");
@@ -4014,14 +4014,12 @@ function (
 
 	QUnit.module("getResetAndPublishInfo", {
 		beforeEach: function () {
-			sandbox.stub(LrepConnector, "createConnector").returns({
-				getFlexInfo: function() {
-					return Promise.resolve({
-						isResetEnabled: true,
-						isPublishEnabled: true
-					});
-				}
-			});
+			sandbox.stub(CompatibilityConnector, "getFlexInfo").returns(
+				Promise.resolve({
+					isResetEnabled: true,
+					isPublishEnabled: true
+				})
+			);
 			this._mComponentProperties = {
 				name: "testScenarioComponent",
 				appVersion: "1.2.3"
