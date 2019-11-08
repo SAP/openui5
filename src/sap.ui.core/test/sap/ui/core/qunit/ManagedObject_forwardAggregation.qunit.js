@@ -523,6 +523,144 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/core/
 
 
 
+		QUnit.module("Cloning", {
+			beforeEach: function() {
+				this.composite = new CompositeElement();
+				this.innerElement = this.composite.getAggregation("_innerElement");
+			},
+			afterEach: function() {
+				this.composite.destroy();
+			}
+		});
+
+		QUnit.test("Cloning with forwarded binding (shareable template)", function(assert) {
+			this.data = [
+				{
+					name: "Stefan"
+				},
+				{
+					name: "Frank"
+				},
+				{
+					name: "Peter"
+				},
+				{
+					name: "Andreas"
+				}
+			];
+			this.model = new JSONModel(this.data);
+			this.itemTemplate = new SimpleElement("item", {
+				text: "{name}"
+			});
+			this.composite.bindAggregation("outerAggregationWithForwardedBinding", {
+				path: "/",
+				template: this.itemTemplate
+			});
+			this.composite.setModel(this.model);
+
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 4, "outer control should have 4 items initially");
+
+			this.composite2 = this.composite.clone();
+			this.innerElement2 = this.composite2.getAggregation("_innerElement");
+
+			// item should still be in original parent
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 4, "outer control should still have 4 items after cloning");
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding()[0].getText(), "Stefan", "first item should be returned by aggregation getter");
+
+			// clone should have a cloned item
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding().length, 4, "cloned outer control should have 4 items");
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding()[0].getText(), "Stefan", "cloned outer control should have the correct item in position 0");
+			assert.equal(this.innerElement2.getInnerAggregationWithForwardedBinding().length, 4, "cloned inner control should have 4 items");
+			assert.ok(this.composite.getOuterAggregationWithForwardedBinding()[0] !== this.composite2.getOuterAggregationWithForwardedBinding()[0], "item should be a clone, not a copy by reference");
+
+			// add one more to the data to see whether forwarding still works in the clone
+			this.data.push({name: "Tim"});
+			this.model.setData(this.data); // TODO: refresh
+
+			// check the original composite
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 5, "outer control should now have 5 items");
+
+			// now check the clone
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding().length, 5, "cloned outer control should have 5 items");
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding()[4].getText(), "Tim", "cloned outer control should have the correct item in position 4");
+			assert.equal(this.innerElement2.getInnerAggregationWithForwardedBinding().length, 5, "cloned inner control should have 5 items");
+			assert.ok(this.composite.getOuterAggregationWithForwardedBinding()[4] !== this.composite2.getOuterAggregationWithForwardedBinding()[4], "item should be a clone, not a copy by reference");
+
+			this.composite2.destroy();
+			this.itemTemplate.destroy(); // cloning marked this aggregation binding template as templateShareable=true, hence it is not destroyed by the framework
+		});
+
+		QUnit.test("Cloning with forwarded binding (non-shareable template)", function(assert) { // exactly as above, but with non-shareable template, which is cloned
+			this.data = [
+				{
+					name: "Stefan"
+				},
+				{
+					name: "Frank"
+				},
+				{
+					name: "Peter"
+				},
+				{
+					name: "Andreas"
+				}
+			];
+			this.model = new JSONModel(this.data);
+			this.itemTemplate = new SimpleElement("item", {
+				text: "{name}"
+			});
+			this.composite.bindAggregation("outerAggregationWithForwardedBinding", {
+				path: "/",
+				template: this.itemTemplate,
+				templateShareable: false
+			});
+			this.composite.setModel(this.model);
+
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 4, "outer control should have 4 items initially");
+
+			this.composite2 = this.composite.clone();
+			this.innerElement2 = this.composite2.getAggregation("_innerElement");
+
+			// item should still be in original parent
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 4, "outer control should still have 4 items after cloning");
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding()[0].getText(), "Stefan", "first item should be returned by aggregation getter");
+
+			// clone should have a cloned item
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding().length, 4, "cloned outer control should have 4 items");
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding()[0].getText(), "Stefan", "cloned outer control should have the correct item in position 0");
+			assert.equal(this.innerElement2.getInnerAggregationWithForwardedBinding().length, 4, "cloned inner control should have 4 items");
+			assert.ok(this.composite.getOuterAggregationWithForwardedBinding()[0] !== this.composite2.getOuterAggregationWithForwardedBinding()[0], "item should be a clone, not a copy by reference");
+
+			// add one more to the data to see whether forwarding still works in the clone
+			this.data.push({name: "Tim"});
+			this.model.setData(this.data); // TODO: refresh
+
+			// check the original composite
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 5, "outer control should now have 5 items");
+
+			// now check the clone
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding().length, 5, "cloned outer control should have 5 items");
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding()[4].getText(), "Tim", "cloned outer control should have the correct item in position 4");
+			assert.equal(this.innerElement2.getInnerAggregationWithForwardedBinding().length, 5, "cloned inner control should have 5 items");
+			assert.ok(this.composite.getOuterAggregationWithForwardedBinding()[4] !== this.composite2.getOuterAggregationWithForwardedBinding()[4], "item should be a clone, not a copy by reference");
+
+			this.composite2.destroy();
+		});
+
+		QUnit.test("Cloning with forwarded binding (but actually unbound)", function(assert) { // as above, but with no active binding
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 0, "outer control should have 0 items initially");
+
+			this.composite2 = this.composite.clone();
+			this.innerElement2 = this.composite2.getAggregation("_innerElement");
+
+			// item should still be in original parent
+			assert.equal(this.composite.getOuterAggregationWithForwardedBinding().length, 0, "outer control should still have 0 items after cloning");
+
+			// clone should have a cloned item
+			assert.equal(this.composite2.getOuterAggregationWithForwardedBinding().length, 0, "cloned outer control should have 0 items");
+			this.composite2.destroy();
+		});
+
 
 
 		QUnit.module("Single-to-single aggregation, non-binding", {
