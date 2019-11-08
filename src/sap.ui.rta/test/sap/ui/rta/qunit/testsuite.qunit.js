@@ -517,7 +517,7 @@ sap.ui.define([
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						},
-						flexibilityServices: '[{"connector": "LocalStorageConnector"}]'
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					},
 					qunit: {
 						reorder: false

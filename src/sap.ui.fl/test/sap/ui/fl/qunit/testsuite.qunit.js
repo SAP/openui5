@@ -569,7 +569,7 @@ sap.ui.define(function () {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
-			library1: {
+			libraryInTrial1: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
 				},
@@ -577,7 +577,7 @@ sap.ui.define(function () {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
-			library2: {
+			libraryInTrial2: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
 				},
@@ -585,7 +585,7 @@ sap.ui.define(function () {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
-			library3: {
+			libraryInTrial3: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
 				},

@@ -621,6 +621,7 @@ sap.ui.define([
 				case "NEW":
 					aPromises.push(CompatibilityConnector.create(oChange.getDefinition(), oChange.getRequest(), oChange.isVariant()).then(function(result) {
 						if (Cache.isActive()) {
+							oChange.setState(Change.states.PERSISTED);
 							Cache.addChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						}
 						return result;
@@ -629,6 +630,7 @@ sap.ui.define([
 				case "UPDATE":
 					aPromises.push(CompatibilityConnector.update(oChange.getDefinition(), oChange.getRequest()).then(function(result) {
 						if (Cache.isActive()) {
+							oChange.setState(Change.states.PERSISTED);
 							Cache.updateChange({ name: this._mComponent.name, appVersion: this._mComponent.appVersion}, oChange.getDefinition());
 						}
 						return result;
