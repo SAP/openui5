@@ -71,7 +71,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the new current value and updates the cache.
+	 * Handles exceptional cases of setting the property with the given path to the given value.
 	 *
 	 * @param {string} sPath
 	 *   A relative path within the JSON structure
@@ -79,12 +79,15 @@ sap.ui.define([
 	 *   The new value which must be primitive
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID to be used for the PATCH request
+	 * @returns {sap.ui.base.SyncPromise} <code>undefined</code> for the general case which is
+	 *   handled generically by the caller {@link sap.ui.model.odata.v4.ODataContext#doSetProperty}
+	 *   or a <code>SyncPromise</code> for the exceptional case
 	 *
-	 * @see sap.ui.model.odata.v4.ODataContext#doSetProperty
-	 *
+	 * @abstract
+	 * @function
+	 * @name sap.ui.model.odata.v4.ODataParentBinding#doSetProperty
 	 * @private
 	 */
-	ODataParentBinding.prototype.doSetProperty = function (sPath, vValue, oGroupLock) {};
 
 	/**
 	 * Fire event 'patchCompleted' to attached listeners, if the last PATCH request is completed.

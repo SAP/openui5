@@ -3632,17 +3632,14 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doSetProperty: super", function (assert) {
+	QUnit.test("doSetProperty: non operational binding", function (assert) {
 		var oBinding = this.bindContext("/Employee('42')"),
 			oGroupLock = {},
 			sPath = "foo",
 			vValue = "bar";
 
-		this.mock(asODataParentBinding.prototype).expects("doSetProperty").on(oBinding)
-			.withExactArgs(sPath, vValue, sinon.match.same(oGroupLock));
-
 		// code under test
-		oBinding.doSetProperty(sPath, vValue, oGroupLock);
+		assert.strictEqual(oBinding.doSetProperty(sPath, vValue, oGroupLock), undefined);
 	});
 
 	//*********************************************************************************************
@@ -3666,9 +3663,6 @@ sap.ui.define([
 			},
 			vValue = "bar";
 
-		this.mock(asODataParentBinding.prototype).expects("doSetProperty")
-			.on(oBinding).withExactArgs(oFixture.path, vValue, sinon.match.same(oGroupLock))
-			.exactly(oFixture.name === undefined ? 1 : 0);
 		this.mock(oBinding).expects("setParameter")
 			.withExactArgs(oFixture.name, vValue)
 			.exactly(oFixture.name === undefined ? 0 : 1);

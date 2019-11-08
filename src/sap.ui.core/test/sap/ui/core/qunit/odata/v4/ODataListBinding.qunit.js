@@ -5647,6 +5647,12 @@ sap.ui.define([
 		// code under test
 		assert.ok(oBinding.hasPendingChangesForPath());
 	});
+
+	//*********************************************************************************************
+	QUnit.test("doSetProperty: returns undefined", function (assert) {
+		// code under test
+		assert.strictEqual(this.bindList("/EMPLOYEES").doSetProperty(), undefined);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select
