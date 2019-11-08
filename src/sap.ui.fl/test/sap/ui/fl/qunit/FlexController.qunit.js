@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/FlexController",
-	"sap/ui/fl/FlexCustomData",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/core/Control",
@@ -22,6 +21,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/base/util/deepClone",
@@ -31,7 +31,6 @@ sap.ui.define([
 function (
 	CompatibilityConnector,
 	FlexController,
-	FlexCustomData,
 	Change,
 	ChangeRegistry,
 	Control,
@@ -50,6 +49,7 @@ function (
 	Log,
 	URLHandler,
 	Applier,
+	FlexCustomData,
 	ChangeUtils,
 	Reverter,
 	deepClone,

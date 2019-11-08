@@ -6,20 +6,20 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/write/_internal/SaveAs",
-	"sap/ui/fl/FlexCustomData"
+	"sap/ui/fl/write/_internal/SaveAs"
 ], function(
 	includes,
 	_omit,
 	JsControlTreeModifier,
+	FlexCustomData,
 	ChangesController,
 	DescriptorInlineChangeFactory,
 	FeaturesAPI,
-	SaveAs,
-	FlexCustomData
+	SaveAs
 ) {
 	"use strict";
 

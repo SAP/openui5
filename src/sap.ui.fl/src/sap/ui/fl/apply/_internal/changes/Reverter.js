@@ -4,13 +4,13 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/FlexCustomData",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
-	Utils,
 	FlexCustomData,
+	Utils,
 	FlUtils
 ) {
 	"use strict";

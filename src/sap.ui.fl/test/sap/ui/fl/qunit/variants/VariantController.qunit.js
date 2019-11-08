@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/m/Text",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
