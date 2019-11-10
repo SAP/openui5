@@ -782,7 +782,7 @@ sap.ui.define([
 		 *
 		 * @returns {sap.m.List} The list instance object or <code>null</code>.
 		 * @protected
-		 * @deprecated Deprecated as of version 1.62. The list structure should not be used as per SAP note: 2746748.
+		 * @deprecated As of version 1.62. The list structure should not be used as per SAP note: 2746748.
 		 */
 		ComboBoxBase.prototype.getList = function() {
 			Log.warning(

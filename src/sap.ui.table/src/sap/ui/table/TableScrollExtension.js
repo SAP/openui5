@@ -108,9 +108,18 @@ sap.ui.define([
 	 */
 
 	/**
+	 * A function to be executed by a <code>Process</code>.
+	 *
+	 * @callback Executor
+	 * @param {function} fnResolve
+	 * @param {function} fnReject
+	 * @param {ProcessInterface} oProcessInterface
+	 */
+
+	/**
 	 * Constructor for a Process.
 	 *
-	 * @param {function(fnResolve: function, fnReject: function, oProcessInterface: ProcessInterface)} fnExecutor The function to be executed.
+	 * @param {Executor} fnExecutor The function to be executed.
 	 * @param {ProcessInfo} oProcessInfo The process information.
 	 * @returns {Promise} The process promise.
 	 * @constructor

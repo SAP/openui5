@@ -134,7 +134,8 @@ sap.ui.define(["sap/ui/base/DataType",
 	* @enum {string}
 	* @public
 	* @since 1.50
-	* @deprecated Since version 1.54
+	* @deprecated Since version 1.54. Consumers of the {@link sap.f.DynamicPageTitle} control should now use
+	*   the <code>areaShrinkRatio</code> property instead of the <code>primaryArea</code> property.
 	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	thisLib.DynamicPageTitleArea = {
