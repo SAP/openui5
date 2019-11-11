@@ -21,7 +21,6 @@ sap.ui.define([
 
 	QUnit.module("LrepConnector", {
 		beforeEach: function() {
-			LrepConnector._bServiceAvailability = undefined;
 			this.oLrepConnector = LrepConnector.createConnector();
 			sandbox.stub(ContextManager, "getActiveContexts").callsFake(function () {
 				return [];
@@ -58,22 +57,6 @@ sap.ui.define([
 			assert.equal(this.oLrepConnector._resolveUrl(""), "/");
 			assert.equal(this.oLrepConnector._resolveUrl("index.html"), "/index.html");
 			assert.equal(this.oLrepConnector._resolveUrl("index.html?anyParam=value"), "/index.html?anyParam=value");
-		});
-
-		QUnit.test("_resolveUrl with request url prefix", function(assert) {
-			LrepConnector.prototype.setRequestUrlPrefix("/newprefix");
-
-			//Arrange
-			assert.ok(this.oLrepConnector);
-
-			//Act & Assert
-			assert.equal(this.oLrepConnector._resolveUrl("/content/subfolder"), "/newprefix/content/subfolder");
-			assert.equal(this.oLrepConnector._resolveUrl("content/subfolder"), "/newprefix/content/subfolder");
-			assert.equal(this.oLrepConnector._resolveUrl("//content/subfolder"), "/newprefix//content/subfolder");
-			assert.equal(this.oLrepConnector._resolveUrl("/content//subfolder/"), "/newprefix/content//subfolder/");
-			assert.equal(this.oLrepConnector._resolveUrl(""), "/newprefix/");
-			assert.equal(this.oLrepConnector._resolveUrl("index.html"), "/newprefix/index.html");
-			assert.equal(this.oLrepConnector._resolveUrl("index.html?anyParam=value"), "/newprefix/index.html?anyParam=value");
 		});
 
 		QUnit.test("_getDefaultHeader", function(assert) {
@@ -590,6 +573,359 @@ sap.ui.define([
 				});
 		});
 	});
+
+	QUnit.module("loadChanges", {
+		beforeEach: function () {
+			this.oLrepConnector = LrepConnector.createConnector();
+			sandbox.stub(ContextManager, "getActiveContexts").returns([]);
+		},
+		afterEach: function() {
+			sandbox.restore();
+			if (this.server) {
+				this.server.restore();
+			}
+
+			LrepConnector.prototype._aSentRequestListeners = [];
+			LrepConnector.prototype._sRequestUrlPrefix = "";
+		}
+	}, function () {
+		QUnit.test("loadChanges failed with 404 error code", function(assert) {
+			var oError = {
+				code : 404
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
+
+			return this.oLrepConnector.loadChanges({name: 'something'}, {})
+				.catch(function () {
+					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				});
+		});
+
+		QUnit.test("loadSettings request is cached", function(assert) {
+			var oSetting = {
+				isKeyUser : "true"
+			};
+			var oResponse = {
+				response : oSetting
+			};
+			LrepConnector._oLoadSettingsPromise = undefined;
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oResponse);
+
+			return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function(oSettings) {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered only one");
+				assert.notEqual(LrepConnector._oLoadSettingsPromise, undefined, "loadSettings promise was saved");
+				assert.deepEqual(oSettings[0], oSetting, "settings content is correct in the first request");
+				assert.deepEqual(oSettings[1], oSetting, "settings content is correct in the second request");
+				assert.deepEqual(oSettings[2], oSetting, "settings content is correct in the third request");
+			});
+		});
+
+		QUnit.test("loadChanges failed with 404 error code", function(assert) {
+			var oError = {
+				code: 404
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
+
+			return this.oLrepConnector.loadChanges({name: 'something'}, {})
+				.catch(function () {
+					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				});
+		});
+
+		QUnit.test("loadChanges failed with error code differs from 404", function(assert) {
+			var oError = {
+				code: 403
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
+
+			return this.oLrepConnector.loadChanges({name: 'something'}, {})
+				.catch(function () {
+					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				});
+		});
+
+		QUnit.test("loadChanges", function(assert) {
+			var sComponentClassName;
+			this.server = sinon.fakeServer.create();
+			var sEtag = "abc123";
+			this.server.respondWith([200,
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", etag: sEtag},
+				'{ "changes": [ ], "settings": { "isKeyUser": true, "isAtoAvailable": false, "isAtoEnabled": false, "isProductiveSystem": false }, "messagebundle": {"i_123": "translatedKey"} }'
+			]);
+			this.server.autoRespond = true;
+
+			sComponentClassName = "smartFilterBar.Component";
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, {})
+				.then(function (oResult) {
+					assert.equal(oResult.changes.changes.length, 0);
+					assert.equal(oResult.changes.settings.isKeyUser, true);
+					assert.equal(oResult.changes.componentClassName, this.sComponentClassName);
+					assert.equal(oResult.etag, sEtag);
+					assert.deepEqual(oResult.changes.messagebundle, {i_123: "translatedKey"}, "returns the responded messagebundle within the result");
+				}.bind(this));
+		});
+
+		QUnit.test("loadChanges can handle a undefined mPropertyBag", function(assert) {
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith([200,
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
+				'{ "changes": [ ], "settings": {}, "messagebundle": {} }'
+			]);
+			this.server.autoRespond = true;
+
+			var sComponentClassName = "smartFilterBar.Component";
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}).then(function() {
+				assert.equal(this.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
+				assert.ok(this.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
+			}.bind(this));
+		});
+
+		QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-AppDescriptor-Id", function(assert) {
+			var sComponentClassName;
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith([200,
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
+				'{ "changes": [ ], "settings": {}, "messagebundle": {} }'
+			]);
+			this.server.autoRespond = true;
+
+			sComponentClassName = "smartFilterBar.Component";
+			var oAppDescriptor = {
+				"sap.app": {
+					id: "sap.ui.smartFormOData"
+				}
+			};
+
+			var mPropertyBag = {
+				appDescriptor: oAppDescriptor
+			};
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+				assert.equal(this.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
+				assert.ok(this.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
+				assert.equal(this.server.requests[0].requestHeaders["X-LRep-AppDescriptor-Id"], "sap.ui.smartFormOData", "Request header shall contain appDescriptorId");
+			}.bind(this));
+		});
+
+		QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-Site-Id", function(assert) {
+			this.server = sinon.fakeServer.create();
+			this.server.respondWith([200,
+				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
+				'{ "changes": [ ], "settings": {}, "messagebundle": {} }'
+			]);
+			this.server.autoRespond = true;
+
+			var sComponentClassName = "smartFilterBar.Component";
+			var mPropertyBag = {
+				siteId: "dummyId4711"
+			};
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+				assert.equal(this.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
+				assert.ok(this.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
+				assert.equal(this.server.requests[0].requestHeaders["X-LRep-Site-Id"], mPropertyBag.siteId, "Request header shall contain siteId");
+			}.bind(this));
+		});
+
+		QUnit.test("loadChanges adds upToLayerType parameter to request when requested", function(assert) {
+			var sComponentClassName = "smartFilterBar.Component";
+			var mPropertyBag = {
+				layer: "CUSTOMER"
+			};
+
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName + "?upToLayerType=CUSTOMER";
+
+			var oFakeResponse = {
+				response: {}
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly build with the upToLayerType parameter");
+			});
+		});
+
+		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
+			var sComponentClassName = "smartFilterBar.Component";
+			var mPropertyBag = {
+				cacheKey: "ABC123thisISaHASH"
+			};
+
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/data/~" + mPropertyBag.cacheKey + "~/" + sComponentClassName;
+
+			var oFakeResponse = {
+				response: {}
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly build with the cache key");
+				assert.ok(aCallArguments[3].cache, "caching is enabled for the call");
+			});
+		});
+
+		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
+			var sComponentName = "sap.ui.demoapps.rta.fiorielements.Component";
+			var sFlexModulesUri = "/sap/bc/lrep/flex/modules/~BQjKGDJlASfuh7tvYU5BclaHKD4=~/sap.ui.demoapps.rta.fiorielements.Component?sap-client=120&appVersion=1.0";
+			var sCacheKey = "BQjKGDJlASfuh7tvYU5BclaHKD4";
+			var oResponse = {
+				etag: null,
+				response: {
+					loadModules: false, changes: Array(20), contexts: Array(0), variantSection: {}, ui2personalization: {}
+				},
+				status: "success"
+			};
+			var mFlexData = this.oLrepConnector._onChangeResponseReceived(sComponentName, sFlexModulesUri, sCacheKey, oResponse);
+
+			assert.equal(mFlexData.etag, sCacheKey);
+		});
+
+		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
+			var sComponentClassName = "smartFilterBar.Component";
+			var mPropertyBag = {};
+
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName;
+
+			var oFakeResponse = {
+				response: {}
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly build without any cache key");
+				assert.equal(aCallArguments[3].cache, undefined, "caching is disabled for the call");
+			});
+		});
+
+		QUnit.test("when requested, loadChanges adds appVersion parameter to the request URL", function(assert) {
+			var sComponentClassName = "smartFilterBar.Component";
+			var sAppVersion = "1.2.3";
+
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName + "?appVersion=1.2.3";
+
+			var oFakeResponse = {
+				response: {}
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}, {}).then(function() {
+				assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
+
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was included");
+			});
+		});
+
+		QUnit.test("loadChanges ignores appVersion parameter to the request URL in case of default app version", function(assert) {
+			var sComponentClassName = "smartFilterBar.Component";
+			var sAppVersion = Utils.DEFAULT_APP_VERSION;
+
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName;
+
+			var oFakeResponse = {
+				response: {}
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}, {}).then(function() {
+				assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
+
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was not included");
+			});
+		});
+	});
+
+	QUnit.module("loadChanges", {
+		beforeEach: function () {
+			this.oLrepConnector = LrepConnector.createConnector();
+			sandbox.stub(ContextManager, "getActiveContexts").returns([]);
+		},
+		afterEach: function() {
+			sandbox.restore();
+			if (this.server) {
+				this.server.restore();
+			}
+
+			LrepConnector.prototype._aSentRequestListeners = [];
+			LrepConnector.prototype._sRequestUrlPrefix = "";
+		}
+	}, function () {
+		QUnit.test("loadSettings succeed", function (assert) {
+			this.oLrepConnector._sClient = "123";
+			var sExpectedCallUrl = "/sap/bc/lrep/flex/settings" + "?sap-client=" + this.oLrepConnector._sClient;
+
+			var oFakeResponse = {
+				response : {}
+			};
+			LrepConnector._oLoadSettingsPromise = undefined;
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
+
+			return this.oLrepConnector.loadSettings().then(function () {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				var oCall = oSendStub.getCall(0);
+				var aCallArguments = oCall.args;
+				assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly built");
+				assert.equal(LrepConnector._bServiceAvailability, true, "service availability flag is set to true");
+			});
+		});
+
+		QUnit.test("loadSettings failed with 404 error code", function (assert) {
+			var oError = {
+				code : 404
+			};
+			LrepConnector._oLoadSettingsPromise = undefined;
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
+
+			return this.oLrepConnector.loadSettings().then(function () {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
+			});
+		});
+
+		QUnit.test("loadSettings request is cached", function (assert) {
+			var oSetting = {
+				isKeyUser : "true"
+			};
+			var oResponse = {
+				response : oSetting
+			};
+			LrepConnector._oLoadSettingsPromise = undefined;
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oResponse);
+
+			return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function (oSettings) {
+				assert.equal(oSendStub.callCount, 1, "the backend request was triggered only one");
+				assert.notEqual(LrepConnector._oLoadSettingsPromise, undefined, "loadSettings promise was saved");
+				assert.deepEqual(oSettings[0], oSetting, "settings content is correct in the first request");
+				assert.deepEqual(oSettings[1], oSetting, "settings content is correct in the second request");
+				assert.deepEqual(oSettings[2], oSetting, "settings content is correct in the third request");
+			});
+		});
+	});
+
+
 
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();

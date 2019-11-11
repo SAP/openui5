@@ -8,7 +8,8 @@ sap.ui.define([
 	FakeLrepConnectorLocalStorage
 ) {
 	/**
-	 * Class handling the Fake Lrep storage for local storage
+	 * Class handling the Fake Lrep storage for local storage;
+	 * This class stays since some tests are still using this internal; We will remove this in the near future.
 	 *
 	 * @class
 	 *

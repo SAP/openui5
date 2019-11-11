@@ -6,13 +6,11 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/base/util/merge"
 ], function(
 	jQuery,
 	uri,
 	FlexUtils,
-	CompatibilityConnector,
 	fnBaseMerge
 ) {
 	"use strict";
@@ -42,7 +40,6 @@ sap.ui.define([
 		return new LrepConnector(mParameters);
 	};
 
-	LrepConnector._bServiceAvailability = undefined;
 	LrepConnector._oLoadSettingsPromise = undefined;
 	LrepConnector.prototype._sClient = undefined;
 	LrepConnector.prototype._sLanguage = undefined;
@@ -82,17 +79,6 @@ sap.ui.define([
 		if (sLanguage) {
 			this._sLanguage = sLanguage;
 		}
-	};
-
-	/**
-	 * Prefix for request URL can be set in exceptional cases when consumer needs to add a prefix to the URL
-	 *
-	 * @param {String} sRequestUrlPrefix - request URL prefix which must start with a (/) and must not end with a (/)
-	 * @private
-	 * @ui5-restricted
-	 */
-	LrepConnector.prototype.setRequestUrlPrefix = function(sRequestUrlPrefix) {
-		this._sRequestUrlPrefix = sRequestUrlPrefix;
 	};
 
 	/**
@@ -387,30 +373,140 @@ sap.ui.define([
 		return result;
 	};
 
-	/**
-	 * Creates a change or variant via REST call.
-	 *
-	 * @param {Object} oPayload The content which is send to the server
-	 * @param {String} [sChangelist] The transport ID.
-	 * @param {Boolean} bIsVariant - is variant?
-	 * @returns {Object} Returns the result from the request
-	 * @private
-	 * @ui5-restricted sap.ui.fl.codeExt.CodeExtManager
-	 */
-	LrepConnector.prototype.create = function(oPayload, sChangelist, bIsVariant) {
-		var sRequestPath = this._getUrlPrefix(bIsVariant);
+	LrepConnector.prototype.loadChanges = function(oComponent, mPropertyBag) {
+		function _createRequestOptions(mPropertyBag) {
+			var mOptions = {};
 
-		var aParams = [];
-		if (sChangelist) {
-			aParams.push({
-				name: "changelist",
-				value: sChangelist
-			});
+			if (mPropertyBag.cacheKey) {
+				mOptions.cache = true;
+			}
+			if (mPropertyBag.siteId) {
+				if (!mOptions.headers) {
+					mOptions.headers = {};
+				}
+
+				mOptions.headers = {
+					"X-LRep-Site-Id": mPropertyBag.siteId
+				};
+			}
+
+			if (mPropertyBag.appDescriptor) {
+				if (mPropertyBag.appDescriptor["sap.app"]) {
+					if (!mOptions.headers) {
+						mOptions.headers = {};
+					}
+
+					mOptions.headers = {
+						"X-LRep-AppDescriptor-Id": mPropertyBag.appDescriptor["sap.app"].id
+					};
+				}
+			}
+
+			return mOptions;
 		}
 
-		sRequestPath += this._buildParams(aParams);
+		function _createUrls(oComponent, mPropertyBag, sClient) {
+			var mUrls = {};
+			var sFlexDataPrefix = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.DATA;
+			var sFlexModulesPrefix = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.MODULES;
+			var sPostFix = "";
 
-		return this.send(sRequestPath, "POST", oPayload, null);
+			if (mPropertyBag.cacheKey) {
+				sPostFix += "~" + mPropertyBag.cacheKey + "~/";
+			}
+
+			sPostFix += oComponent.name;
+
+
+			if (mPropertyBag.layer) {
+				sPostFix += "&upToLayerType=" + mPropertyBag.layer;
+			}
+
+			if (sClient) {
+				sPostFix += "&sap-client=" + sClient;
+			}
+
+			if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
+				sPostFix += "&appVersion=" + oComponent.appVersion;
+			}
+
+			// Replace first & with ?
+			sPostFix = sPostFix.replace("&", "?");
+
+			mUrls.flexDataUrl = mUrls.flexDataUrl || sFlexDataPrefix + sPostFix;
+			mUrls.flexModulesUrl = mUrls.flexModulesUrl || sFlexModulesPrefix + sPostFix;
+
+			return mUrls;
+		}
+
+		mPropertyBag = mPropertyBag || {};
+
+		if (!oComponent.name) {
+			return Promise.reject(new Error("Component name not specified"));
+		}
+
+		var mOptions = _createRequestOptions(mPropertyBag);
+
+		var mUrls = _createUrls.call(this, oComponent, mPropertyBag, this._sClient);
+
+		return this.send(mUrls.flexDataUrl, undefined, undefined, mOptions)
+			.then(this._onChangeResponseReceived.bind(this, oComponent.name, mUrls.flexModulesUrl, mPropertyBag.cacheKey));
+	};
+
+	LrepConnector.prototype._onChangeResponseReceived = function (sComponentName, sFlexModulesUri, sCacheKey, oResponse) {
+		LrepConnector._bServiceAvailability = true;
+		// If a cachebuster token is used, we provide no etag in the response.
+		// For the view cache feature, we must provide a etag, that's why we set the value from the
+		// cachebuster token as etag
+		if (oResponse.etag === null) {
+			oResponse.etag = sCacheKey;
+		}
+		var mFlexData = {
+			changes : oResponse.response,
+			loadModules : oResponse.response.loadModules,
+			messagebundle : oResponse.response.messagebundle,
+			componentClassName : sComponentName,
+			etag : oResponse.etag
+		};
+
+		if (!mFlexData.loadModules) {
+			return mFlexData;
+		}
+
+
+		return this._loadModules(sFlexModulesUri).then(function () {
+			/* the modules within the server response are preloaded by the browser processing the request.
+			 * The promise chain only needs to return the response of the first server request. */
+			return mFlexData;
+		});
+	};
+
+	/**
+	 * Loads flexibility settings.
+	 *
+	 * @returns {Promise} Returns a Promise with the flexibility settings content
+	 * @public
+	 */
+	LrepConnector.prototype.loadSettings = function() {
+		if (!LrepConnector._oLoadSettingsPromise) {
+			var sUri = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.SETTINGS;
+
+			if (this._sClient) {
+				sUri += "?sap-client=" + this._sClient;
+			}
+			LrepConnector._oLoadSettingsPromise = this.send(sUri, undefined, undefined, {});
+		}
+
+		return LrepConnector._oLoadSettingsPromise.then(function(oResponse) {
+			LrepConnector._bServiceAvailability = true;
+			return oResponse.response;
+		}, function(oError) {
+			if (oError.code === 404) {
+				LrepConnector._bServiceAvailability = false;
+			}
+			//In case of failure, resolve promise without value. Error handle is done in Settings class
+			return Promise.resolve();
+		});
 	};
 
 	return LrepConnector;
