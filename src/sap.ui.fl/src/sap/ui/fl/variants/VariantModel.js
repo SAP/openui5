@@ -44,7 +44,7 @@ sap.ui.define([
 			};
 			var mChangesToBeSwitched = this.oChangePersistence.loadSwitchChangesMapForComponent(mPropertyBag);
 			_setVariantModelBusy(
-				this.oFlexController.revertChangesOnControl.bind(this.oFlexController, mChangesToBeSwitched.changesToBeReverted, this.oAppComponent), this
+				this.oFlexController.revertChangesOnControl.bind(this.oFlexController, mChangesToBeSwitched.changesToBeReverted, this.oAppComponent), this, sVariantManagementReference
 			)
 				.then(function () {
 					delete this.oData[sVariantManagementReference];
@@ -73,9 +73,9 @@ sap.ui.define([
 	 * @private
 	 */
 	function _variantSelectHandler(oEvent, mPropertyBag) {
-		return _setVariantModelBusy(function (mParameters) {
-			var oModel = mPropertyBag.model;
-			var sVMReference = mPropertyBag.vmReference;
+		return _setVariantModelBusy(function (mParameters, mVariantProperties) {
+			var oModel = mVariantProperties.model;
+			var sVMReference = mVariantProperties.vmReference;
 			var bVariantSwitch = false;
 			var sTargetVReference = mParameters.key;
 			var sSourceVReference = mParameters.key;
@@ -109,7 +109,7 @@ sap.ui.define([
 						});
 					}
 				});
-		}.bind(null, oEvent.getParameters()), mPropertyBag.model);
+		}.bind(null, oEvent.getParameters(), mPropertyBag), mPropertyBag.model, mPropertyBag.vmReference);
 	}
 
 	/**
@@ -143,6 +143,11 @@ sap.ui.define([
 			});
 	}
 
+	function _setBusy(oModel, sVMReference, bValue) {
+		oModel.oData[sVMReference].variantBusy = bValue;
+		oModel.checkUpdate();
+	}
+
 	/**
 	 * Executes the passed callback function when the variant model instance is not busy anymore.
 	 * During the execution of the function, the variant model is again set to busy state.
@@ -152,9 +157,18 @@ sap.ui.define([
 	 * @returns {Promise} Resolves when the variant model is not busy anymore
 	 * @private
 	 */
-	function _setVariantModelBusy(fnCallback, oModel) {
+	function _setVariantModelBusy(fnCallback, oModel, sVMReference) {
 		// if there are multiple switches triggered very quickly this makes sure that they are being executed one after another
-		oModel._oVariantSwitchPromise = oModel._oVariantSwitchPromise.catch(function() {}).then(fnCallback);
+		oModel._oVariantSwitchPromise = oModel._oVariantSwitchPromise
+			// if the previous promise error is not caught
+			.catch(function() {})
+			.then(_setBusy.bind(null, oModel, sVMReference, true))
+			.then(fnCallback)
+			.then(_setBusy.bind(null, oModel, sVMReference, false))
+			.catch(function(oError) {
+				_setBusy(oModel, sVMReference, false);
+				throw oError;
+			});
 		oModel.oFlexController.setVariantSwitchPromise(oModel._oVariantSwitchPromise);
 		return oModel._oVariantSwitchPromise;
 	}
@@ -228,6 +242,7 @@ sap.ui.define([
 	 * @param {String} sVariantManagementReference - Variant management reference
 	 * @param {String} sNewVariantReference - Newly selected variant reference
 	 * @param {sap.ui.core.Component} [oAppComponent] - Application component responsible for the variant management reference
+	 * @param {boolean} [bInternallyCalled] - If set variant model is not se to busy explicitly
 	 *
 	 * @returns {Promise} Promise that resolves after the variant is updated
 	 * @private
@@ -265,7 +280,7 @@ sap.ui.define([
 		if (bInternallyCalled) {
 			return fnSwitchVariantCallback();
 		}
-		return _setVariantModelBusy(fnSwitchVariantCallback, this);
+		return _setVariantModelBusy(fnSwitchVariantCallback, this, sVariantManagementReference);
 	};
 
 	/**
@@ -829,10 +844,13 @@ sap.ui.define([
 	};
 
 	VariantModel.prototype._handleSave = function(oEvent) {
-		return _setVariantModelBusy(function(oVariantManagementControl, mParameters) {
+		var oVariantManagementControl = oEvent.getSource();
+		var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
+		var sVMReference = this.getLocalId(oVariantManagementControl.getId(), oAppComponent);
+
+		return _setVariantModelBusy(function(sVariantManagementReference, oAppComponent, mParameters) {
 			var bSetDefault = mParameters["def"];
-			var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
-			var sVariantManagementReference = this.getLocalId(oVariantManagementControl.getId(), oAppComponent);
+
 			var sSourceVariantReference = this.getCurrentVariantReference(sVariantManagementReference);
 			var aSourceVariantChanges = this.oVariantController.getVariantChanges(sVariantManagementReference, sSourceVariantReference, true);
 
@@ -881,7 +899,7 @@ sap.ui.define([
 					})
 						.then(this.oFlexController.saveSequenceOfDirtyChanges.bind(this.oFlexController, aCopiedVariantDirtyChanges));
 				}.bind(this));
-		}.bind(this, oEvent.getSource(), oEvent.getParameters()), this);
+		}.bind(this, sVMReference, oAppComponent, oEvent.getParameters()), this, sVMReference);
 	};
 
 	VariantModel.prototype.getLocalId = function(sId, oAppComponent) {
