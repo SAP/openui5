@@ -320,7 +320,8 @@ function(
 				id: this.getId() + "-icon",
 				src: this.getIconSrc(),
 				noTabStop: true,
-				title: ""
+				title: "",
+				tooltip: this._oResourceBundle.getText("OPEN_PICKER_TEXT")
 			});
 
 			// idicates whether the picker is still open
