@@ -593,6 +593,11 @@ sap.ui.define(function () {
 					libs: null // The fl library is being loaded inside the test
 				}
 			},
+			FakeLrepConnector: {
+				coverage: {
+					only: ["sap/ui/fl/FakeLrepConnector"]
+				}
+			},
 			LrepConnector: {
 				coverage: {
 					only: ["sap/ui/fl/LrepConnector"]

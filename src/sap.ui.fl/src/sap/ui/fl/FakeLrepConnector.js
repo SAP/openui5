@@ -3,15 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/Cache",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
-	jQuery,
-	Cache,
-	ChangePersistenceFactory,
 	ObjectPathConnector,
 	ObjectStorageUtils
 ) {
@@ -19,6 +13,9 @@ sap.ui.define([
 
 	var FakeLrepConnector = {};
 	var FL_PREFIX = "sap.ui.fl";
+
+	// prototype is used for overwriting methods (to stay compatible)
+	FakeLrepConnector.prototype = {};
 
 	/**
 	 * Enables fake LRep connector.
@@ -42,17 +39,20 @@ sap.ui.define([
 		}
 		aConnectorConfig.push({connector: sStorageConnectorName});
 		sap.ui.getCore().getConfiguration().setFlexibilityServices(aConnectorConfig);
-		Cache.clearEntries();
+		sap.ui.requireSync("sap/ui/fl/Cache").clearEntries();
 	};
 
 	/**
 	 * Restores the original {@link sap.ui.fl.LrepConnector.createConnector} factory function.
 	 */
 	FakeLrepConnector.disableFakeConnector = function() {
+		FakeLrepConnector.prototype = {};
+		sap.ui.requireSync("sap/ui/fl/Cache").clearEntries();
+
+		// only reset the flexibility Services in case they were changes by the FakeConnector before
 		if (this._oFlexibilityServices) {
 			sap.ui.getCore().getConfiguration().setFlexibilityServices(this._oFlexibilityServices);
 			delete this._oFlexibilityServices;
-			Cache.clearEntries();
 		}
 	};
 
@@ -75,7 +75,7 @@ sap.ui.define([
 			};
 		},
 		clear: function(oConnector, mPropertyBag) {
-			Cache.clearEntries();
+			sap.ui.requireSync("sap/ui/fl/Cache").clearEntries();
 			return oConnector.reset(mPropertyBag);
 		},
 		setStorage: function(oConnector, oNewStorage) {

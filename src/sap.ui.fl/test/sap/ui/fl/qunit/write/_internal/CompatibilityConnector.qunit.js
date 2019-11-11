@@ -4,14 +4,24 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/fl/apply/_internal/Storage",
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/FakeLrepConnector",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CompatibilityConnector,
 	JsObjectConnector,
 	ObjectStorageUtils,
-	jQuery
+	ApplyStorage,
+	WriteStorage,
+	FakeLrepConnector,
+	jQuery,
+	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	var oTestData = { fileName: "id_1445501120486_25", fileType: "change", changeType: "hideControl", reference: "sap.ui.rta.test.Demo.md.Component", packageName: "$TMP", content: {}, selector: { id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus" }, layer: "CUSTOMER", texts: {}, namespace: "sap.ui.rta.test.Demo.md.Component", creation: "", originalLanguage: "EN", conditions: {}, support: { generator: "Change.createInitialFileContent", service: "", user: "" }, validAppVersions: { creation: "1.0.0", from: "1.0.0" } };
 	var oTestDataNew = JSON.parse(JSON.stringify(oTestData));
@@ -134,6 +144,117 @@ sap.ui.define([
 				assert.equal(mFlexInfo.isResetEnabled, false, "value for reset availability is returned");
 				assert.equal(mFlexInfo.isPublishEnabled, undefined, "default value for publish availability is returned");
 			});
+		});
+	});
+
+	QUnit.module("Given methods are overwritten by the FakeLrepConnector", {
+		afterEach: function () {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when 'loadChanges' is overwritten by the FakeLrepConnector and the function is called", function (assert) {
+			var oFunctionStub = sandbox.stub().callsFake(function () {
+				assert.equal(this, FakeLrepConnector.prototype, "then the scope is set correct");
+				return Promise.resolve();
+			});
+			FakeLrepConnector.prototype.loadChanges = oFunctionStub;
+			var oStorageStub = sandbox.stub(ApplyStorage, "loadFlexData");
+
+			return CompatibilityConnector.loadChanges()
+				.then(function () {
+					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
+					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
+				});
+		});
+
+		QUnit.test("when 'loadSettings' is overwritten by the FakeLrepConnector and the function is called", function (assert) {
+			var oFunctionStub = sandbox.stub().callsFake(function () {
+				assert.equal(this, FakeLrepConnector.prototype, "then the scope is set correct");
+				return Promise.resolve();
+			});
+			FakeLrepConnector.prototype.loadSettings = oFunctionStub;
+			var oStorageStub = sandbox.stub(WriteStorage, "loadFeatures");
+
+			return CompatibilityConnector.loadSettings()
+				.then(function () {
+					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
+					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
+				});
+		});
+
+		QUnit.test("when 'create' is overwritten by the FakeLrepConnector and the function is called", function (assert) {
+			var oFunctionStub = sandbox.stub().callsFake(function () {
+				assert.equal(this, FakeLrepConnector.prototype, "then the scope is set correct");
+				return Promise.resolve();
+			});
+			FakeLrepConnector.prototype.create = oFunctionStub;
+			var oStorageStub = sandbox.stub(WriteStorage, "write");
+
+			return CompatibilityConnector.create()
+				.then(function () {
+					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
+					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
+				});
+		});
+
+		QUnit.test("when 'update' is overwritten by the FakeLrepConnector and the function is called", function (assert) {
+			var oFunctionStub = sandbox.stub().callsFake(function () {
+				assert.equal(this, FakeLrepConnector.prototype, "then the scope is set correct");
+				return Promise.resolve();
+			});
+			FakeLrepConnector.prototype.update = oFunctionStub;
+			var oStorageStub = sandbox.stub(WriteStorage, "update");
+
+			return CompatibilityConnector.update()
+				.then(function () {
+					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
+					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
+				});
+		});
+
+		QUnit.test("when 'deleteChange' is overwritten by the FakeLrepConnector and the function is called", function (assert) {
+			var oFunctionStub = sandbox.stub().callsFake(function () {
+				assert.equal(this, FakeLrepConnector.prototype, "then the scope is set correct");
+				return Promise.resolve();
+			});
+			FakeLrepConnector.prototype.deleteChange = oFunctionStub;
+			var oStorageStub = sandbox.stub(WriteStorage, "remove");
+
+			return CompatibilityConnector.deleteChange()
+				.then(function () {
+					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
+					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
+				});
+		});
+
+		QUnit.test("when 'getFlexInfo' is overwritten by the FakeLrepConnector and the function is called", function (assert) {
+			var oFunctionStub = sandbox.stub().callsFake(function () {
+				assert.equal(this, FakeLrepConnector.prototype, "then the scope is set correct");
+				return Promise.resolve();
+			});
+			FakeLrepConnector.prototype.getFlexInfo = oFunctionStub;
+			var oStorageStub = sandbox.stub(WriteStorage, "getFlexInfo");
+
+			return CompatibilityConnector.getFlexInfo()
+				.then(function () {
+					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
+					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
+				});
+		});
+
+		QUnit.test("when 'resetChanges' is overwritten by the FakeLrepConnector and the function is called", function (assert) {
+			var oFunctionStub = sandbox.stub().callsFake(function () {
+				assert.equal(this, FakeLrepConnector.prototype, "then the scope is set correct");
+				return Promise.resolve();
+			});
+			FakeLrepConnector.prototype.resetChanges = oFunctionStub;
+			var oStorageStub = sandbox.stub(WriteStorage, "reset");
+
+			return CompatibilityConnector.resetChanges()
+				.then(function () {
+					assert.equal(oFunctionStub.callCount, 1, "and the registered function was called");
+					assert.equal(oStorageStub.callCount, 0, "and the Storage function was NOT called");
+				});
 		});
 	});
 

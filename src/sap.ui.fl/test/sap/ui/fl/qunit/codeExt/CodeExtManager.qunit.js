@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/codeExt/CodeExtManager",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	CodeExtManager,
+	CompatibilityConnector,
 	Utils,
 	LayerUtils,
 	jQuery,
@@ -276,13 +278,13 @@ sap.ui.define([
 				}
 			];
 
-			var oLrepConnectorCreateStub = sandbox.stub(CodeExtManager._oLrepConnector, "create");
+			var oConnectorCreateStub = sandbox.stub(CompatibilityConnector, "create");
 
 			CodeExtManager.createCodeExtChanges(aChanges, mOptions);
 
-			assert.ok(oLrepConnectorCreateStub.calledOnce, "the sending was initiated");
+			assert.ok(oConnectorCreateStub.calledOnce, "the sending was initiated");
 
-			var oCallArguments = oLrepConnectorCreateStub.getCall(0).args;
+			var oCallArguments = oConnectorCreateStub.getCall(0).args;
 
 			assert.deepEqual(oCallArguments[0], aExpectedPayload, "the payload was built correctly");
 			assert.equal(oCallArguments[1], mOptions.transportId, "the transportId was sent correctly");
