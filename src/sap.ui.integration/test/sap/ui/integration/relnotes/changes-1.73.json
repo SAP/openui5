@@ -1,0 +1,13 @@
+{
+  "1.73.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "f4a6558052e37bd53ad088e5d0035d7e62d10763",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added predefined DateTime formatter",
+        "references": []
+      }
+    ]
+  }
+}
