@@ -92,7 +92,7 @@ sap.ui.define([
 		var that = this;
 		var sText = "Before bindRows: ";
 		assert.ok(this.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is set to true");
-		assert.equal(this.oTable.$("selall").attr("disabled"), "disabled", sText + "Deselect All is disabled");
+		assert.ok(this.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is disabled");
 
 		this.oTable.bindRows({path: "/Products"});
 		var oModel = new ODataModel(sServiceURI, {
@@ -107,7 +107,7 @@ sap.ui.define([
 				if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Change) {
 					sText = "After bindRows: ";
 					assert.ok(that.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is set to true");
-					assert.equal(that.oTable.$("selall").attr("disabled"), "disabled", sText + "Deselect All is disabled");
+					assert.ok(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is disabled");
 					resolve();
 				}
 			});
@@ -118,7 +118,7 @@ sap.ui.define([
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 					sText = "After rows are selected: ";
 					assert.notOk(that.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is removed");
-					assert.notOk(that.oTable.$("selall").attr("disabled"), sText + "Deselect All is enabled");
+					assert.notOk(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is enabled");
 					that.oTable.unbindRows();
 					resolve();
 				});
@@ -129,7 +129,7 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				sText = "After unbindRows: ";
 				assert.ok(that.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is set to true");
-				assert.equal(that.oTable.$("selall").attr("disabled"), "disabled", sText + "Deselect All is disabled");
+				assert.ok(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is disabled");
 				resolve();
 			});
 		});
@@ -177,12 +177,12 @@ sap.ui.define([
 		this.oTable.setEnableSelectAll(false);
 		assert.strictEqual(this.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
 		assert.ok(this.oTable.$("selall").attr("aria-disabled"), "aria-disabled is set to true");
-		assert.equal(this.oTable.$("selall").attr("disabled"), "disabled", "Deselect All is disabled");
+		assert.ok(this.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "Deselect All is disabled");
 
 		oSelectionPlugin.attachSelectionChange(function(){
 			assert.strictEqual(that.oTable.$("selall").attr("title"), "Deselect All", "Tooltip exists");
 			assert.notOk(that.oTable.$("selall").attr("aria-disabled"), "aria-disabled is removed");
-			assert.notOk(that.oTable.$("selall").attr("disabled"), "Deselect All is enabled");
+			assert.notOk(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "Deselect All is enabled");
 			assert.strictEqual((that.oTable.$("selall").attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
 			that.oTable.setEnableSelectAll(true);
 
