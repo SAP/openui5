@@ -7,7 +7,6 @@ sap.ui.define([
 		'sap/ui/core/Core',
 		'sap/ui/core/Control',
 		'sap/ui/core/Element',
-		'sap/ui/core/InvisibleText',
 		'sap/ui/Device',
 		'./ListItemBase',
 		'./Text',
@@ -23,7 +22,6 @@ sap.ui.define([
 			  Core,
 			  Control,
 			  Element,
-			  InvisibleText,
 			  Device,
 			  ListItemBase,
 			  Text,
@@ -166,30 +164,14 @@ sap.ui.define([
 			}
 		});
 
+		// overrides ListItemBase method
 		NotificationListBase.prototype._activeHandling = function () {
 
 		};
 
+		// overrides ListItemBase method
 		NotificationListBase.prototype.updateSelectedDOM = function() {
 
-		};
-
-
-		NotificationListBase._getInvisibleText = function() {
-			return this._invisibleText || (this._invisibleText = new InvisibleText().toStatic());
-		};
-
-		NotificationListBase.prototype.onfocusin = function (event) {
-			if (event.target !== this.getDomRef()) {
-				return;
-			}
-
-			var invisibleText = NotificationListBase._getInvisibleText(),
-				$focusedItem = this.$(),
-				accText = this.getAccessibilityText();
-
-			invisibleText.setText(accText);
-			$focusedItem.addAriaLabelledBy(invisibleText.getId());
 		};
 
 		NotificationListBase.prototype.getAccessibilityText = function() {

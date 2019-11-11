@@ -156,13 +156,6 @@ sap.ui.define([
 	});
 
 	QUnit.test('ARIA - Accessibility Text', function (assert) {
-		var invisibleText = NotificationListBase._getInvisibleText();
-		assert.notOk(invisibleText.getText(), "accessibility text is initially empty");
-
-		this.notificationListGroup.onfocusin({
-			target: this.notificationListGroup.getDomRef()
-		});
-
-		assert.equal(invisibleText.getText(), 'Notification List Group Title', "accessibility text is correct");
+		assert.equal(this.notificationListGroup.$().attr('aria-label'), 'Notification List Group Title Notification group unread. None Priority. Counter 2', "accessibility text is correct");
 	});
 });

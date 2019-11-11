@@ -34,7 +34,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			authorAvatar = control._getAuthorAvatar(),
 			priority = control.getPriority(),
 			isUnread = control.getUnread(),
-			priorityClass = '';
+			priorityClass = '',
+			closeButton;
 
 		rm.write('<li');
 		rm.writeControlData(control);
@@ -52,7 +53,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		// ARIA
 		rm.writeAccessibilityState(control, {
-			role: "option"
+			role: "option",
+			label: control.getAccessibilityText()
 		});
 
 		rm.write('>');
@@ -61,9 +63,25 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.renderControl(control.getProcessingMessage());
 		rm.write('<div class="sapMNLIMain">');
 
-		// avatar
-		rm.write('<div class="sapMNLIImage">');
-		rm.renderControl(authorAvatar);
+		// actions and close
+		rm.write('<div aria-hidden="true" class="sapMNLIItem sapMNLIItemAC">');
+
+		// actions
+		if (control.getShowButtons() && control.getButtons().length) {
+			rm.write('<div class="sapMNLIItem sapMNLIActions">');
+			rm.renderControl(control._getOverflowToolbar());
+			rm.write('</div>');
+		}
+
+		// close button
+		closeButton = control._getCloseButton();
+		if (control.getShowCloseButton() && closeButton && !Device.system.phone) {
+			rm.write('<div class="sapMNLIItem">');
+			rm.renderControl(closeButton);
+			rm.write('</div>');
+		}
+
+		// end actions and close
 		rm.write('</div>');
 
 		// content
@@ -145,8 +163,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		// content - footer - show more
 		if (!control.getHideShowMoreButton()) {
-			//aria-hidden stop show more button to read out the whole notification
-			rm.write('<div class="sapMNLIShowMore" aria-hidden ="true">');
+			// aria-hidden stop show more button to read out the whole notification
+			rm.write('<div class="sapMNLIShowMore" aria-hidden="true">');
 			rm.renderControl(control._getShowMoreButton());
 			rm.write('</div>');
 		}
@@ -157,20 +175,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		// end content
 		rm.write('</div>');
 
-		// actions
-		if (control.getShowButtons() && control.getButtons().length) {
-			rm.write('<div class="sapMNLIItem sapMNLIActions">');
-			rm.renderControl(control._getOverflowToolbar());
-			rm.write('</div>');
-		}
-
-		// close button
-		var closeButton = control._getCloseButton();
-		if (control.getShowCloseButton() && closeButton && !Device.system.phone) {
-			rm.write('<div class="sapMNLIItem">');
-			rm.renderControl(closeButton);
-			rm.write('</div>');
-		}
+		// avatar
+		rm.write('<div class="sapMNLIImage">');
+		rm.renderControl(authorAvatar);
+		rm.write('</div>');
 
 		// end main
 		rm.write('</div>');

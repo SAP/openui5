@@ -39,6 +39,8 @@ function(
 	var resourceBundle = Core.getLibraryResourceBundle('sap.m'),
 		expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND'),
 		collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE'),
+		readText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_READ'),
+		unreadText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD'),
 		expandIcon = 'sap-icon://slim-arrow-right',
 		collapseIcon = 'sap-icon://slim-arrow-down';
 
@@ -87,6 +89,8 @@ function(
 
 				/**
 				 * Determines if the group header/footer of the empty group will be always shown. By default groups with 0 notifications are not shown.
+				 *
+				 * @deprecated As of version 1.73
 				 */
 				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
@@ -196,6 +200,12 @@ function(
 		return this;
 	};
 
+	/**
+	 * Gets the visible NotificationListItems inside the group.
+	 *
+	 * @private
+	 * @returns {number} The visible notifications.
+	 */
 	NotificationListGroup.prototype.getVisibleItems = function () {
 		var visibleItems = this.getItems().filter(function (item) {
 			return item.getVisible();
@@ -215,7 +225,16 @@ function(
 	};
 
 	NotificationListGroup.prototype.getAccessibilityText = function() {
-		var ariaTexts = [this.getTitle()];
+
+		var readUnreadText = this.getUnread() ? unreadText : readText,
+			priorityText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_PRIORITY', this.getPriority()),
+			counterText,
+			ariaTexts = [this.getTitle(), readUnreadText, priorityText];
+
+		if (this.getShowItemsCounter()) {
+			counterText = resourceBundle.getText("LIST_ITEM_COUNTER", this._getVisibleItemsCount());
+			ariaTexts.push(counterText);
+		}
 
 		return ariaTexts.join(' ');
 	};
