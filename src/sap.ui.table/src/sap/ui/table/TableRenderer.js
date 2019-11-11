@@ -413,7 +413,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 
 				if (!mRenderConfig.headerSelector.enabled) {
-					rm.attr("disabled", "true");
+					rm.class("sapUiTableSelAllDisabled");
 					rm.attr("aria-disabled", "true");
 				}
 			}
@@ -426,10 +426,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			} else {
 				bSelAll = true;
 			}
-			rm.class("sapUiTableSelAllEnabled");
+			rm.class("sapUiTableSelAllVisible");
 			bEnabled = true;
-		} else {
-			rm.class("sapUiTableSelAllDisabled");
 		}
 
 		rm.attr("tabindex", "-1");
