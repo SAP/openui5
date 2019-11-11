@@ -282,11 +282,9 @@ sap.ui.define([
 				.returns(oAppComponent);
 
 			var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
-			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve());
-			var fnDescriptorStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
+			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
 
 			mockFlexController(oAppComponent, { resetChanges : fnPersistenceStub });
-			mockDescriptorController(oAppComponent, { resetChanges: fnDescriptorStub });
 
 			return PersistenceWriteAPI.reset(mPropertyBag)
 				.then(function (sValue) {
