@@ -49,8 +49,11 @@ sap.ui.define([
 	 * Restores the original {@link sap.ui.fl.LrepConnector.createConnector} factory function.
 	 */
 	FakeLrepConnector.disableFakeConnector = function() {
-		sap.ui.getCore().getConfiguration().setFlexibilityServices(this._oFlexibilityServices);
-		Cache.clearEntries();
+		if (this._oFlexibilityServices) {
+			sap.ui.getCore().getConfiguration().setFlexibilityServices(this._oFlexibilityServices);
+			delete this._oFlexibilityServices;
+			Cache.clearEntries();
+		}
 	};
 
 	FakeLrepConnector.forTesting = {
@@ -75,6 +78,9 @@ sap.ui.define([
 			Cache.clearEntries();
 			return oConnector.reset(mPropertyBag);
 		},
+		setStorage: function(oConnector, oNewStorage) {
+			oConnector.oStorage = oNewStorage;
+		},
 		synchronous: {
 			clearAll: function (oStorage) {
 				Object.keys(oStorage).map(function(sKey) {
@@ -88,9 +94,24 @@ sap.ui.define([
 				});
 			},
 			store: function (oStorage, sKey, oItem) {
-				var sKey = ObjectStorageUtils.createFlexKey(sKey);
+				var sFlexKey = ObjectStorageUtils.createFlexKey(sKey);
 				var sItem = JSON.stringify(oItem);
-				oStorage.setItem(sKey, sItem);
+				oStorage.setItem(sFlexKey, sItem);
+			},
+			getNumberOfChanges: function(oStorage, sReference) {
+				var iCount = 0;
+				Object.keys(oStorage).map(function(sKey) {
+					var bIsFlexObject = sKey.includes(FL_PREFIX);
+
+					if (!bIsFlexObject) {
+						return;
+					}
+					var oFlexObject = JSON.parse(oStorage.getItem(sKey));
+					if (oFlexObject.reference === sReference || oFlexObject.reference + ".Component" === sReference) {
+						iCount++;
+					}
+				});
+				return iCount;
 			}
 		}
 	};

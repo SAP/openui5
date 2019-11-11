@@ -42,6 +42,20 @@ function(
 			},
 			getNumberOfChanges: function (sReference) {
 				return FakeLrepConnector.forTesting.getNumberOfChanges(ApplySessionStorageConnector, sReference);
+			},
+			clear: function(mPropertyBag) {
+				return FakeLrepConnector.forTesting.clear(WriteSessionStorageConnector, mPropertyBag);
+			},
+			setStorage: function(oNewStorage) {
+				FakeLrepConnector.forTesting.setStorage(ApplySessionStorageConnector, oNewStorage);
+			},
+			synchronous: {
+				clearAll: function () {
+					FakeLrepConnector.forTesting.synchronous.clearAll(window.sessionStorage);
+				},
+				getNumberOfChanges: function(sReference) {
+					return FakeLrepConnector.forTesting.synchronous.getNumberOfChanges(ApplySessionStorageConnector.oStorage, sReference);
+				}
 			}
 		}
 	};
