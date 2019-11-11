@@ -3051,5 +3051,21 @@
         ]
       }
     ]
+  },
+  "1.60.21": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "452c1574f08819fe021460fefb3cd3652ca98880",
+        "type": "FIX",
+        "text": " Translation delivery: translations fixed for sap.m.TimePicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005041000000799792019"
+          }
+        ]
+      }
+    ]
   }
 }

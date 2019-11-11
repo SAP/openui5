@@ -1217,5 +1217,32 @@
         ]
       }
     ]
+  },
+  "1.60.21": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "baa08d7e4eede1e27dad5e17ec6c773b113adb5f",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: also clone forwarded bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005492722019"
+          }
+        ]
+      },
+      {
+        "id": "a45b90fba1f82bcc55e76aa62cf199402de72007",
+        "type": "FIX",
+        "text": " ManagedObject.bindAggregation returns \u0027this\u0027 even when forwarded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970047588"
+          }
+        ]
+      }
+    ]
   }
 }
