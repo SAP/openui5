@@ -169,7 +169,7 @@ sap.ui.define([
 					headerContent: [this.oVariantManagementControl],
 					sections : [this.oObjectPageSection]
 				});
-				this.oVariantManagementControl.setAssociation("for", "objPage", true);
+				this.oVariantManagementControl.addAssociation("for", "objPage", true);
 				this.oButton2 = new Button();
 				this.oLayoutOuter = new VerticalLayout("verlayouter", {
 					content: [this.oButton2]
@@ -1157,7 +1157,7 @@ sap.ui.define([
 					headerContent: [this.oVariantManagementControl],
 					sections : [this.oObjectPageSection]
 				});
-				this.oVariantManagementControl.setAssociation("for", "objPage", true);
+				this.oVariantManagementControl.addAssociation("for", "objPage", true);
 				this.oButton2 = new Button();
 				this.oLayoutOuter = new VerticalLayout("verlayouter", {
 					content: [this.oButton2]
@@ -1238,7 +1238,7 @@ sap.ui.define([
 			this.oModel = new VariantModel(this.oData, undefined, oMockAppComponent);
 			this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
 			this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
-			this.oVariantManagementControl.setAssociation("for", "objPage", true);
+			this.oVariantManagementControl.addAssociation("for", "objPage", true);
 
 			var oVariantManagementDesignTimeMetadata = {
 				"sap.ui.fl.variants.VariantManagement": {}
