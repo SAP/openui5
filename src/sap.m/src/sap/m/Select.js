@@ -1914,7 +1914,7 @@ function(
 
 			this._oList = new SelectList({
 				width: "100%",
-				maxWidth: "600px",
+				maxWidth: Device.system.phone ? "100%" : "600px",
 				keyboardNavigationMode: sKeyboardNavigationMode
 			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
 			.addEventDelegate({
