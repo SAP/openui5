@@ -974,7 +974,9 @@ sap.ui.define([
 			// update the DOM value when necessary
 			// otherwise cursor can goto end of text unnecessarily
 			this._$input.val(sValue);
-			this._$input.cursorPos(this._curpos);
+			if (document.activeElement === this._$input[0]) {
+				this._$input.cursorPos(this._curpos);
+			}
 		}
 
 		return this;
