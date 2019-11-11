@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/URI",
-	"sap/f/Avatar",
+	"sap/m/Avatar",
 	"sap/m/LightBox",
 	"sap/f/library"
 ], function(
@@ -25,7 +25,7 @@ sap.ui.define([
 		sPreAvatarType = "Avatar's type is ",
 		sDefaultIconRendered = "Avatar is a default icon",
 		sPreAvatarFitType = "Avatar's image fit type is ",
-		// shortcut for sap.f.AvatarColor
+		// shortcut for sap.m.AvatarColor
 		AvatarColor = library.AvatarColor;
 
 	function createAvatar(oProps, sId) {
@@ -297,7 +297,7 @@ sap.ui.define([
 		var done = assert.async(),
 		oStub = sinon.stub(this.oAvatar, "_onImageError", function() {
 			//Assert
-			assert.ok(true, "When image inside sap.f.Avatar is not loaded, error callback launches");
+			assert.ok(true, "When image inside sap.m.Avatar is not loaded, error callback launches");
 			done();
 		}),
 		$oAvatar;
@@ -310,7 +310,7 @@ sap.ui.define([
 
 		//Assert
 		$oAvatar = this.oAvatar.$();
-		assert.equal($oAvatar.find(".sapFAvatarInitialsHolder").text(),"PB", "When type of sap.f.Avatar is 'Image'" +
+		assert.equal($oAvatar.find(".sapFAvatarInitialsHolder").text(),"PB", "When type of sap.m.Avatar is 'Image'" +
 		 " and initials are set we load fallback initials container");
 		//Cleanup
 		oStub.restore();
@@ -350,7 +350,7 @@ sap.ui.define([
 
 		//Assert
 		var $oAvatar = this.oAvatar.$();
-		assert.ok($oAvatar.find(".sapUiIcon") !== undefined, "When type of sap.f.Avatar is 'Image'" +
+		assert.ok($oAvatar.find(".sapUiIcon") !== undefined, "When type of sap.m.Avatar is 'Image'" +
 		"we load fallback icon container");
 
 	});
@@ -400,7 +400,7 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	QUnit.test("Fallback content is loaded, but hidden when sap.f.Avatar type Image has valid image source", function (assert) {
+	QUnit.test("Fallback content is loaded, but hidden when sap.m.Avatar type Image has valid image source", function (assert) {
 		//Arrange
 		assert.expect(2);
 		var done = assert.async(),
@@ -410,7 +410,7 @@ sap.ui.define([
 				oStub.restore();
 				that.oAvatar._onImageLoad();
 				//Assert
-				assert.ok(true, "When image inside sap.f.Avatar is loaded, success callback launches");
+				assert.ok(true, "When image inside sap.m.Avatar is loaded, success callback launches");
 				assert.equal(that.oAvatar.$().find(".sapUiIcon").css('display'), 'none', "Hiding fallback content valid");
 				done();
 			});
@@ -577,7 +577,7 @@ sap.ui.define([
 
 	QUnit.test("Check ARIA specific roles", function (assert) {
 		var $oAvatar = this.oAvatar.$(),
-			sDefaultTooltip = oCore.getLibraryResourceBundle("sap.f").getText("AVATAR_TOOLTIP");
+			sDefaultTooltip = oCore.getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP");
 
 		assert.strictEqual($oAvatar.attr("role"), "img", "Aria role should be 'img'");
 		assert.strictEqual($oAvatar.attr("aria-label"), sDefaultTooltip, "Aria-label should be the default one if no initials set");

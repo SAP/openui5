@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>sap.m.Avatar test page</title>
+	<script type="text/javascript"
+			src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_belize">
+	</script>
+	<script>
+		function onAvatarPress (oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed");
+		}
+
+		var oPage = new sap.m.Page({
+			title: "sap.m.Avatar",
+			titleLevel: "H1",
+			content: [
+				new sap.m.Avatar("defaultXSSquareAvatar", {
+					displaySize: "XS",
+					displayShape: "Square"
+				}),
+				new sap.m.Avatar("defaultAvatar"),
+				new sap.m.Avatar("initialsMCircleAvatar", {
+					initials: "BP",
+					displaySize: "M"
+				}),
+				new sap.m.Avatar("iconLAvatar", {
+					src: "sap-icon://lab",
+					displaySize: "L"
+				}),
+				new sap.m.Avatar("imageXL", {
+					src: "images/Woman_avatar_01.png",
+					displaySize: "XL"
+
+				}),
+				// if image cannot be found, the initials will be shown if provided
+				new sap.m.Avatar("imageXL2", {
+					initials: "YY",
+					src: "images/cannotfind_Woman_avatar_01.png",
+					displaySize: "XL"
+				}),
+				new sap.m.Avatar("imageXLSquareCover", {
+					src: "images/Screw_avatar_01.jpg",
+					displaySize: "XL",
+					displayShape: "Square",
+					imageFitType: "Cover",
+					press: onAvatarPress
+				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
+				new sap.m.Avatar("imageXLSquareContain", {
+					src: "images/Lamp_avatar_01.jpg",
+					displaySize: "XL",
+					displayShape: "Square",
+					imageFitType: "Contain",
+					press: onAvatarPress
+				}).addStyleClass("sapUiTinyMarginBegin sapUiTinyMarginEnd sapUiTinyMarginTop"),
+				new sap.m.Avatar("initialsCustomAvatar", {
+					initials: "BP",
+					displaySize: "Custom",
+					customDisplaySize: "10rem",
+					customFontSize: "2rem"
+				}),
+				new sap.m.Avatar({
+					initials: "LB",
+					displaySize: "M",
+					detailBox: new sap.m.LightBox({
+						imageContent: sap.m.LightBoxItem({
+							imageSrc: "images/Woman_avatar_01.png",
+							title: "LightBox example"
+						})
+					})
+				}).addStyleClass("sapUiTinyMarginBegin")
+			]
+		});
+
+		var oApp = new sap.m.App();
+		oApp.addPage(oPage).placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

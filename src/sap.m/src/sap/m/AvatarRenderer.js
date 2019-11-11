@@ -2,18 +2,18 @@
  * ${copyright}
  */
 
-// Provides default renderer for control sap.f.Avatar
-sap.ui.define(["sap/f/library", "sap/base/security/encodeCSS"],
+// Provides default renderer for controlsap.m.Avatar
+sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 	function (library, encodeCSS) {
 		"use strict";
 
-		// shortcut for sap.f.AvatarSize
+		// shortcut for sap.m.AvatarSize
 		var AvatarSize = library.AvatarSize;
 
-		// shortcut for sap.f.AvatarType
+		// shortcut for sap.m.AvatarType
 		var AvatarType = library.AvatarType;
 
-		// shortcut for sap.f.AvatarColor
+		// shortcut for sap.m.AvatarColor
 		var AvatarColor = library.AvatarColor;
 
 		// shortcut for Accent colors keys only (from AvatarColor enum)

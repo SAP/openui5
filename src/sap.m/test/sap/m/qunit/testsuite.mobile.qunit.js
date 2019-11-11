@@ -48,6 +48,11 @@ sap.ui.define([
 				title: "QUnit Page for sap.m.App with Background Images",
 				_alternativeTitle: "QUnit Page for sap.m.App"
 			},
+			Avatar: {
+				coverage: {
+					only: ["sap/m/Avatar"]
+				}
+			},
 			Bar: {
 				title: "QUnit Page for sap.m.Bar",
 				sinon: {

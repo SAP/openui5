@@ -7,44 +7,44 @@
 		height="100%">
 
 	<m:ScrollContainer
-		height="100%"
-		width="100%"
-		horizontal="false"
-		vertical="true">
+			height="100%"
+			width="100%"
+			horizontal="false"
+			vertical="true">
 		<m:Text
 				text="The Avatar Control allows usage of different shapes, sizes and content. Border can also be applied:"
 				width="100%"
 				class="sapUiSmallMarginTop sapUiSmallMarginBegin sapUiMediumMarginBottom"/>
 		<l:Grid
-			defaultSpan="XL2 L3 M6 S6">
+				defaultSpan="XL2 L3 M6 S6">
 			<l:content>
 				<m:VBox alignItems="Center">
 					<f:Avatar
-						src="./test-resources/sap/f/images/Speakers_avatar_01.jpg"
-						displaySize="XL"
-						displayShape="Square"
-						showBorder="true"/>
+							src="./test-resources/sap/f/images/Speakers_avatar_01.jpg"
+							displaySize="XL"
+							displayShape="Square"
+							showBorder="true"/>
 					<m:Text
-						text="Avatar of a product with border"
-						class="sapUiSmallMarginTop"/>
+							text="Avatar of a product with border"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 				<m:VBox alignItems="Center">
 					<f:Avatar
-						src="./test-resources/sap/f/images/Woman_avatar_01.png"
-						displaySize="XL"
-						showBorder="true"/>
+							src="./test-resources/sap/f/images/Woman_avatar_01.png"
+							displaySize="XL"
+							showBorder="true"/>
 					<m:Text
-						text="Avatar of a person with border"
-						class="sapUiSmallMarginTop"/>
+							text="Avatar of a person with border"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 				<m:VBox alignItems="Center">
 					<f:Avatar
-						initials="IS"
-						displaySize="XL"
-						displayShape="Square"/>
+							initials="IS"
+							displaySize="XL"
+							displayShape="Square"/>
 					<m:Text
-						text="Square with initials"
-						class="sapUiSmallMarginTop"/>
+							text="Square with initials"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 				<m:VBox alignItems="Center">
 					<f:Avatar
@@ -79,56 +79,56 @@
 				width="100%"
 				class="sapUiSmallMarginBegin sapUiMediumMarginTop sapUiMediumMarginBottom"/>
 		<l:Grid
-			defaultSpan="XL2 L2 M3 S12">
+				defaultSpan="XL2 L2 M3 S12">
 			<l:content>
 				<m:VBox
-					alignItems="Center"
-					alignContent="End">
+						alignItems="Center"
+						alignContent="End">
 					<f:Avatar
-						src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
-						displaySize="XL"
-						displayShape="Square"/>
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="XL"
+							displayShape="Square"/>
 					<m:Text
-						text="XL"
-						class="sapUiSmallMarginTop"/>
+							text="XL"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 				<m:VBox
-					alignItems="Center"
-					alignContent="End">
+						alignItems="Center"
+						alignContent="End">
 					<f:Avatar
-						src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
-						displaySize="L"
-						displayShape="Square"/>
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="L"
+							displayShape="Square"/>
 					<m:Text
-						text="L"
-						class="sapUiSmallMarginTop"/>
+							text="L"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 				<m:VBox alignItems="Center">
 					<f:Avatar
-						src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
-						displaySize="M"
-						displayShape="Square"/>
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="M"
+							displayShape="Square"/>
 					<m:Text
-						text="M"
-						class="sapUiSmallMarginTop"/>
+							text="M"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 				<m:VBox alignItems="Center">
 					<f:Avatar
-						src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
-						displaySize="S"
-						displayShape="Square"/>
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="S"
+							displayShape="Square"/>
 					<m:Text
-						text="S"
-						class="sapUiSmallMarginTop"/>
+							text="S"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 				<m:VBox alignItems="Center">
 					<f:Avatar
-						src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
-						displaySize="XS"
-						displayShape="Square"/>
+							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							displaySize="XS"
+							displayShape="Square"/>
 					<m:Text
-						text="XS"
-						class="sapUiSmallMarginTop"/>
+							text="XS"
+							class="sapUiSmallMarginTop"/>
 				</m:VBox>
 			</l:content>
 		</l:Grid>
@@ -314,7 +314,7 @@
 							width="100%"
 							class="sapUiMediumMarginBottom sapUiMediumMarginTop"/>
 					<l:Grid
-						defaultSpan="XL4 L4 M6 S6">
+							defaultSpan="XL4 L4 M6 S6">
 						<l:content>
 							<m:VBox alignItems="Center">
 								<f:Avatar
