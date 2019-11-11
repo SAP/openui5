@@ -153,7 +153,7 @@ sap.ui.define([
 				return iIndex >= 0 && iIndex < iTotalRowCount
 					   && !bIsLeaf
 					   && bExpand !== bIsExpanded;
-			}).sort();
+			}).sort(function(a, b) { return a - b; });
 
 			if (aValidSortedIndices.length === 0) {
 				return null;
