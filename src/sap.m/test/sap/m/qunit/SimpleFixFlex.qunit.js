@@ -174,4 +174,26 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oSpy.threw(), false, "The method didn't threw an error.");
 	});
+
+	QUnit.test("SimpleFixFlex control should not throw error when the DOM element doesn't have clientHeight and _onFixContentResize is called", function (assert) {
+		// Arrange
+		var vResult;
+		this.stub(this.oSimpleFixFlex, "getFixContent", function () {
+			return {
+				$: function () {
+					return {
+						get: function () {
+							return {};
+						}
+					};
+				}
+			};
+		});
+
+		// Act
+		vResult = this.oSimpleFixFlex._onFixContentResize();
+
+		// Assert
+		assert.strictEqual(vResult, null, "The result of the method should be null, because the DOM element doesn't have clientHeight");
+	});
 });
