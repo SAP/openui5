@@ -30,7 +30,7 @@ sap.ui.require([
 		// Table settings
 		mTableSettings.showColumnVisibilityMenu = true;
 		mTableSettings.columns = jQuery.map(oData.cols, function(colname) {
-			return new Column(colname, {
+			var oAggregations = {
 				label: new Label({text: colname}),
 				visible: colname === "Color" ? false : true, // Color column should be invisible by default
 				template: new Label({
@@ -38,7 +38,14 @@ sap.ui.require([
 						path: colname.toLowerCase()
 					}
 				})
-			});
+			};
+			if (colname !== "Number") {
+				oAggregations.multiLabels = [
+					new Label({text: "First level header"}),
+					new Label({text: colname + " - Second level header"})
+				];
+			}
+			return new Column(colname, oAggregations);
 		});
 
 		// Controller settings
@@ -489,6 +496,15 @@ sap.ui.require([
 		assert.equal(oTable.indexOfColumn(oNumberColumn), 0, "Number column should be on index 0.");
 		assert.equal(oTable.indexOfColumn(oNameColumn), 1, "Name column should be on index 1.");
 		assert.equal(oTable.indexOfColumn(oColorColumn), 2, "Color column should be on index 2.");
+	});
+
+	QUnit.test("Column multiLabels", function(assert) {
+		createController();
+
+		var oTablePersoData = oController._getCurrentTablePersoData(true);
+		assert.equal(oTablePersoData.aColumns[0].text, "Name - Second level header", "Name column has the correct label in TablePersoDialog");
+		assert.equal(oTablePersoData.aColumns[1].text, "Color - Second level header", "Color column has the correct label in TablePersoDialog");
+		assert.equal(oTablePersoData.aColumns[2].text, "Number", "Number column has the correct label in TablePersoDialog");
 	});
 
 	QUnit.module("Personalization via CustomDataKey", {
