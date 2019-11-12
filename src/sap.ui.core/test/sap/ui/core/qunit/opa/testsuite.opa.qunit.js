@@ -517,6 +517,10 @@ sap.ui.define([
 		"_BrowserLogCollector": {
 			title: "QUnit Page for sap.ui.test._BrowserLogCollector",
 			module: "./_BrowserLogCollector.qunit"
+		},
+		"OpaBuilder": {
+			title: "QUnit Page for sap.ui.test.OpaBuilder",
+			module: "./OpaBuilder.qunit"
 		}
 	};
 
