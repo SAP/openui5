@@ -16,29 +16,48 @@
 		"configuration": {
 			"parameters": {
 				"city": {
-					"value": "New York"
+					"value": "Berlin"
 				}
 			}
 		},
 		"type": "List",
 		"header": {
-			"title": "Weather forecast for {{parameters.city}}",
-			"subTitle": "{{parameters.NOW_ISO}}, locale: {{parameters.LOCALE}}"
+			"title": "Recent news in  {{parameters.city}}",
+			"subTitle": "Provided by NewsAPI",
+			"icon": {
+			  "src": "sap-icon://newspaper"
+			},
+			"actions": [
+			  {
+				"type": "Navigation",
+				"parameters": {
+				  "url": "https://newsapi.org"
+				}
+			  }
+			]
 		},
 		"content": {
-			"data": {
-				"request": {
-					"url": "//api.apixu.com/v1/forecast.json?key=4fbdcdb5a8c24190bc3145021191302&q={{parameters.city}}&days=7"
-				},
-				"path": "/forecast/forecastday"
+		  "data": {
+			"request": {
+			  "url": "https://newsapi.org/v2/everything?from={{parameters.TODAY_ISO}}&q={{parameters.city}}&sortBy=relevancy&apiKey=da959b2d34334e1db76c53f54a1303aa&language=en&pageSize=10"
 			},
-			"item": {
-				"icon": {
-					"src": "{day/condition/icon}"
-				},
-				"title": "For {date}",
-				"description": "{day/avgtemp_c}°C, {day/condition/text}"
-			}
+			"path": "/articles"
+		  },
+		  "item": {
+			"icon": {
+			  "src": "{urlToImage}"
+			},
+			"title": "{title}",
+			"description": "{description}",
+			"actions": [
+			  {
+				"type": "Navigation",
+				"enabled": "{= ${url}}",
+				"url": "{url}"
+			  }
+			]
+		  },
+		  "maxItems": 4
 		}
 	}
 }
