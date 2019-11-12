@@ -1,19 +1,27 @@
 /*global QUnit, sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/SuggestionsPopover",
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/m/ComboBox",
+	"sap/m/MultiComboBox",
+	"sap/ui/thirdparty/sinon"
 ], function (
+	Device,
 	qutils,
 	createAndAppendDiv,
 	jQuery,
 	mobileLibrary,
 	SuggestionsPopover,
-	Input
+	Input,
+	ComboBox,
+	MultiComboBox,
+	sinon
 ) {
 	"use strict";
 
@@ -277,5 +285,92 @@ sap.ui.define([
 		assert.strictEqual(oDivDomRef.innerHTML,
 			"<span class=\"sapMInputHighlight\">서비스</span> ID 유헝 <span class=\"sapMInputHighlight\">서비스</span> 성별",
 			"Double highlight with unicode characters");
+	});
+
+	QUnit.module("mobile");
+
+	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", function (assert) {
+		var oComboBox, oSuggestionsPopover, oRegisterAutocompleteStub;
+
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		oComboBox = new ComboBox();
+
+		oSuggestionsPopover = new SuggestionsPopover(oComboBox);
+		oSuggestionsPopover._bUseDialog = true;
+
+		oRegisterAutocompleteStub = sinon.stub(oSuggestionsPopover, "_registerAutocomplete", function () {});
+
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oSuggestionsPopover._createSuggestionPopup({});
+
+		//Assert
+		assert.ok(oSuggestionsPopover._oPopover.hasStyleClass("sapUiNoContentPadding"), "The sapUiNoContentPadding class is added");
+
+		// cleanup
+		oRegisterAutocompleteStub.restore();
+		oSuggestionsPopover.destroy();
+		oComboBox.destroy();
+	});
+
+	QUnit.test("ComboBox: The following condition is met: hеight != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+		var oComboBox;
+
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		oComboBox = new ComboBox();
+		oComboBox.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.open();
+
+		// Assert
+		// NOTE!
+		// This can change in future! In such case please ensure that the scroll is working on mobile devices
+		// and amend this test accordingly and/or add new ones!
+		assert.notEqual(jQuery(oComboBox._oSuggestionPopover._oSimpleFixFlex.getDomRef()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+
+		//Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("MultiComboBox: The following condition is met: hеight != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+		var oMultiComboBox;
+
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		oMultiComboBox = new MultiComboBox();
+		oMultiComboBox.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.open();
+
+		// Assert
+		// NOTE!
+		// This can change in future! In such case please ensure that the scroll is working on mobile devices
+		// and amend this test accordingly and/or add new ones!
+		assert.notEqual(jQuery(oMultiComboBox._oSuggestionPopover._oSimpleFixFlex.getDomRef()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+
+		//Cleanup
+		oMultiComboBox.destroy();
 	});
 });
