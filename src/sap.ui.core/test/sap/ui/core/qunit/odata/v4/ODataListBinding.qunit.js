@@ -1242,7 +1242,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: AddVirtualContext", function (assert) {
+[false, true].forEach(function (bSuspend) {
+	QUnit.test("getContexts: AddVirtualContext, suspend = " + bSuspend, function (assert) {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
@@ -1271,17 +1272,25 @@ sap.ui.define([
 		assert.strictEqual(aContexts[0], oVirtualContext);
 
 		// prerendering task
-
-		oBindingMock.expects("_fireChange")
-			.withExactArgs({detailedReason : "RemoveVirtualContext", reason : ChangeReason.Change});
-		oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
+		oBindingMock.expects("isRootBindingSuspended").withExactArgs().returns(bSuspend);
+		if (bSuspend) {
+			oBindingMock.expects("_fireChange").never();
+			oBindingMock.expects("reset").never();
+		} else {
+			oBindingMock.expects("_fireChange").withExactArgs({
+				detailedReason : "RemoveVirtualContext",
+				reason : ChangeReason.Change
+			});
+			oBindingMock.expects("reset").withExactArgs(ChangeReason.Refresh);
+		}
 		this.mock(oVirtualContext).expects("destroy").withExactArgs();
 
 		// code under test - call the prerendering task
 		oTaskCall.args[0][0]();
 
-		assert.strictEqual(oBinding.sChangeReason, "RemoveVirtualContext");
+		assert.strictEqual(oBinding.sChangeReason, bSuspend ? undefined : "RemoveVirtualContext");
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts: RemoveVirtualContext", function (assert) {
