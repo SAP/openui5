@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/flexState/FlexState"
 ], function(
 	Change,
 	Variant,
@@ -41,7 +42,8 @@ sap.ui.define([
 	jQuery,
 	merge,
 	isEmptyObject,
-	Log
+	Log,
+	FlexState
 ) {
 	"use strict";
 
@@ -276,6 +278,14 @@ sap.ui.define([
 				this._bHasChangesOverMaxLayer = false;
 				return this.HIGHER_LAYER_CHANGES_EXIST;
 			}
+
+			// correct place to initialize maps yet to be defined
+			FlexState.initMaps(
+				Object.assign({
+					reference: this.getComponentName(),
+					flexResponse: oChangeFileContent
+				}, oComponentData && {technicalParameters: oComponentData.technicalParameters})
+			);
 
 			if (bVariantSectionContainsContent) {
 				// if variant changes should be included in response OR if filtering is required for variant changes
