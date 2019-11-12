@@ -90,7 +90,9 @@ sap.ui.define([
 			colorString : {type: "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Determines the color mode of the <code>ColorPicker</code>.
+			 * Determines the color representation mode the ColorPicker works with - Hue, Saturation, and Value (HSV) or Hue, Saturation, and Lightness (HSL).
+			 *
+			 * <b>Note:</b> The <code>ColorPickerMode.HSV</code> is set by default. For color composing with alpha values, please set the mode to <code>ColorPickerMode.HSL</code>
 			 * @since 1.48.0
 			 */
 			mode : {type: "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : ColorPickerMode.HSV},
@@ -118,7 +120,7 @@ sap.ui.define([
 
 			/*
 			 * ColorPickerBox.
-			 * All the hidden aggegations from here to the bottom are of type Control because the code also
+			 * All the hidden aggregations from here to the bottom are of type Control because the code also
 			 * works in commons.ColorPicker. It could be fixed via separation of the controls.
 			 * @private
 			 * @since 1.61
