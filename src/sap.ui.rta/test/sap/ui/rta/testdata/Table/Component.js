@@ -1,10 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage"
+	"sap/ui/core/UIComponent"
 ],
 function(
-	UIComponent,
-	FakeLrepConnectorLocalStorage
+	UIComponent
 ) {
 	"use strict";
 
@@ -37,8 +35,6 @@ function(
 	});
 
 	Component.prototype.createContent = function () {
-		this._createFakeLrep();
-
 		var oApp = new sap.m.App();
 
 		var oPage = sap.ui.view(this.createId("idMain1"), {
@@ -49,10 +45,6 @@ function(
 		oApp.addPage(oPage);
 
 		return oApp;
-	};
-
-	Component.prototype._createFakeLrep = function () {
-		FakeLrepConnectorLocalStorage.enableFakeConnector();
 	};
 
 	return Component;

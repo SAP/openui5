@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/UIArea",
 	"sap/base/util/merge",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/core/mvc/XMLView",
@@ -40,7 +39,6 @@ function(
 	Component,
 	UIArea,
 	merge,
-	FakeLrepConnectorSessionStorage,
 	PersistenceWriteAPI,
 	ZIndexManager,
 	XMLView,
@@ -51,7 +49,6 @@ function(
 	var sandbox = sinon.sandbox.create();
 	var oView;
 	sinon.stub(PersistenceWriteAPI, "save");
-	FakeLrepConnectorSessionStorage.enableFakeConnector();
 	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: 	{
