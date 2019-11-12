@@ -162,7 +162,7 @@
 		},
 		{
 			"control": "sap.m.Link",
-			"url": "../Link.html",
+			"url": "Link.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
