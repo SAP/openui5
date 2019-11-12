@@ -73,7 +73,8 @@ sap.ui.define([
 	// shortcut for sap.m.ListSeparators
 	var ListSeparators = library.ListSeparators;
 
-	var CSS_CLASS_SUGGESTIONS_POPOVER = "sapMSuggestionsPopover";
+	var CSS_CLASS_SUGGESTIONS_POPOVER = "sapMSuggestionsPopover",
+		CSS_CLASS_NO_CONTENT_PADDING = "sapUiNoContentPadding";
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
@@ -402,6 +403,7 @@ sap.ui.define([
 
 		this._registerAutocomplete();
 		this._oPopover.addStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER);
+		this._oPopover.addStyleClass(CSS_CLASS_NO_CONTENT_PADDING);
 		this._oPopover.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
 
 		if (!this._bUseDialog) {
