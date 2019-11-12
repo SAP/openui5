@@ -8,7 +8,7 @@
             id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.ui.table">
     </script>
     <script id="view1" type="sapui5/xmlview">
-	<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" xmlns:layout="sap.ui.layout" displayBlock="true" height="100%">
+	<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" height="100%">
 
 		<ObjectPageLayout id="ObjectPageLayout"
 					showTitleInHeaderContent="true"
@@ -35,10 +35,10 @@
 					</expandedContent>
 					<snappedContent>
 						<m:HBox>
-							<f:Avatar class="sapUiTinyMargin"
+							<m:Avatar class="sapUiTinyMargin"
 									src="../../sap/f/images/Woman_avatar_02.png"
 									displaySize="L">
-							</f:Avatar>
+							</m:Avatar>
 							<m:Text class="sapUiTinyMargin" text="This is an image with a long subheading [SNAPPED CONTENT AGGR]"/>
 						</m:HBox>
 					</snappedContent>
@@ -86,10 +86,10 @@
 					</ObjectPageDynamicHeaderTitle>
 				</headerTitle>
 				<headerContent>
-					<f:Avatar class="sapUiTinyMargin"
+					<m:Avatar class="sapUiTinyMargin"
 							src="../../sap/f/images/Woman_avatar_02.png"
 							displaySize="XL">
-					</f:Avatar>
+					</m:Avatar>
 					<layout:VerticalLayout class="sapUiTinyMargin">
 						<m:Link text="denise-smith"/>
 						<m:Button text="To detail detail" press="handleDetailPress" />

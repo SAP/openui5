@@ -92,7 +92,7 @@ sap.ui.define([
 
 					_objectImage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
 
-					_placeholder: {type: "sap.f.Avatar", multiple: false, visibility: "hidden"}
+					_placeholder: {type: "sap.m.Avatar", multiple: false, visibility: "hidden"}
 				}
 			}
 		});
