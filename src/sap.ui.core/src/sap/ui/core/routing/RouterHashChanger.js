@@ -110,6 +110,7 @@ sap.ui.define([
 	RouterHashChanger.prototype._onChildHashChanged = function(sKey, oEvent) {
 		var sChildKey = oEvent.getParameter("key") || sKey,
 			sHash = oEvent.getParameter("hash"),
+			aNestedHashInfo = oEvent.getParameter("nestedHashInfo"),
 			aDeletePrefix = oEvent.getParameter("deletePrefix");
 
 		if (this._bCollectMode) {
@@ -119,6 +120,7 @@ sap.ui.define([
 			this.fireEvent(oEvent.getId(), {
 				hash: sHash,
 				key: sChildKey,
+				nestedHashInfo: aNestedHashInfo,
 				deletePrefix: aDeletePrefix
 			});
 		}
