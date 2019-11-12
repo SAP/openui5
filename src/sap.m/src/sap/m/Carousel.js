@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+/*global HTMLImageElement*/
 // Provides control sap.m.Carousel.
 sap.ui.define([
 	'./library',
@@ -366,6 +367,11 @@ function(
 	 */
 	Carousel.prototype.ontouchstart = function(oEvent) {
 		if (this._oMobifyCarousel) {
+			if (oEvent.target instanceof HTMLImageElement) {
+				// When swiped, image elements begin dragging as ghost images (eg. dragstart event).
+				// This dragging behaviour is not desired when inside a Carousel, so we prevent it.
+				oEvent.preventDefault();
+			}
 			this._oMobifyCarousel.touchstart(oEvent);
 		}
 	};

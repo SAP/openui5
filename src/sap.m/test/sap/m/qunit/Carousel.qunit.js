@@ -1631,6 +1631,36 @@ sap.ui.define([
 		}.bind(this), 1000);
 	});
 
+	QUnit.module("Change images", {
+		beforeEach: function() {
+			sinon.config.useFakeTimers = false;
+			this.oCarousel = createCarouselWithContent("");
+			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oCarousel.destroy();
+			sinon.config.useFakeTimers = true;
+		}
+	});
+
+	QUnit.test("Simulate click on image within slide should prevent it's drag event resulting in normal swiping behaviour", function (assert) {
+		// Arrange
+		var preventDefaultSpy = this.spy(),
+			oImageElement = document.createElement("img"),
+			oFakeEvent = {
+				target: oImageElement,
+				preventDefault: preventDefaultSpy,
+				isMarked: function() {}
+			};
+
+		// Act
+		this.oCarousel.ontouchstart(oFakeEvent);
+
+		// Assert
+		assert.ok(preventDefaultSpy.calledOnce, "Prevent Default on the Event with target image should have been called once");
+	});
+
 	QUnit.module("Change pages", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
