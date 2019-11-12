@@ -8961,7 +8961,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("onAfterOpen test case 3 - selected item position", function (assert) {
+	QUnit.test("onAfterOpen test case 3 - selected item position", function (assert) {
 
 		var oComboBox = new ComboBox({
 			items: [
@@ -9104,11 +9104,49 @@ sap.ui.define([
 				new Item({
 					key: "YE",
 					text: "Yemen"
+				}),
+				new Item({
+					key: "14",
+					text: "item 14"
+				}),
+
+				new Item({
+					key: "15",
+					text: "item 15"
+				}),
+
+				new Item({
+					key: "16",
+					text: "item 16"
+				}),
+
+				new Item({
+					key: "17",
+					text: "item 17"
+				}),
+				new Item({
+					key: "4",
+					text: "item 4"
+				}),
+
+				new Item({
+					key: "5",
+					text: "item 5"
+				}),
+
+				new Item({
+					key: "6",
+					text: "item 6"
+				}),
+
+				new Item({
+					key: "7",
+					text: "item 7"
 				})
 
 			],
 
-			selectedKey: "AR"
+			selectedKey: "7"
 		});
 
 		// arrange
@@ -9119,7 +9157,9 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// asserts
-		assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop < oComboBox.getSelectedItem().getDomRef().offsetTop);
+		assert.ok(oComboBox._oSuggestionPopover._getScrollableContent().scrollTop, "The picker was scrolled");
+		assert.ok(oComboBox._oSuggestionPopover._getScrollableContent().scrollTop < oComboBox.getListItem(oComboBox.getSelectedItem()).getDomRef().offsetTop,
+				"The selected item is on the viewport");
 
 		// cleanup
 		oComboBox.destroy();

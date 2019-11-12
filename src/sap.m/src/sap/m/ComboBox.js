@@ -263,12 +263,12 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.scrollToItem = function(oItem) {
-			var oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont"),
+			var oSuggestionsPopover = this._getSuggestionsPopover(),
+				oPickerDomRef = oSuggestionsPopover && oSuggestionsPopover._getScrollableContent(),
 				oListItem = this.getListItem(oItem),
 				oItemDomRef = oItem && oListItem && oListItem.getDomRef();
 
-			if (!oPicker || !oPickerDomRef || !oItemDomRef) {
+			if (!oSuggestionsPopover || !oPickerDomRef || !oItemDomRef) {
 				return;
 			}
 
@@ -302,8 +302,8 @@ sap.ui.define([
 				oItemDomRef = oItem && oListItem && oListItem.getDomRef(),
 				oItemOffsetTop = oItemDomRef && oItemDomRef.offsetTop,
 				oItemOffsetHeight = oItemDomRef && oItemDomRef.offsetHeight,
-				oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont"),
+				oSuggestionsPopover = this._getSuggestionsPopover(),
+				oPickerDomRef = oSuggestionsPopover && oSuggestionsPopover._getScrollableContent(),
 				oPickerClientHeight = oPickerDomRef.clientHeight;
 
 			//check if the selected item is on the viewport

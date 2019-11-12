@@ -1305,38 +1305,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Scrolls an item into the visual viewport.
-		 * @param {object} oItem The item to be scrolled
-		 *
-		 */
-		ComboBoxBase.prototype.scrollToItem = function(oItem) {
-			var oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont"),
-				oItemDomRef = oItem && oItem.getDomRef();
-
-			if (!oPicker || !oPickerDomRef || !oItemDomRef) {
-				return;
-			}
-
-			var iPickerScrollTop = oPickerDomRef.scrollTop,
-				iItemOffsetTop = oItemDomRef.offsetTop,
-				iPickerHeight = oPickerDomRef.clientHeight,
-				iItemHeight = oItemDomRef.offsetHeight;
-
-			if (iPickerScrollTop > iItemOffsetTop) {
-
-				// scroll up
-				oPickerDomRef.scrollTop = iItemOffsetTop;
-
-			// bottom edge of item > bottom edge of viewport
-			} else if ((iItemOffsetTop + iItemHeight) > (iPickerScrollTop + iPickerHeight)) {
-
-				// scroll down, the item is partly below the viewport of the list
-				oPickerDomRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iPickerHeight);
-			}
-		};
-
-		/**
 		 * Clears the filter.
 		 *
 		 */
