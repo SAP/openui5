@@ -42,6 +42,8 @@ function(
 		expandIcon = 'sap-icon://slim-arrow-right',
 		collapseIcon = 'sap-icon://slim-arrow-down';
 
+	var maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
+
 	/**
 	 * Constructor for a new NotificationListGroup.
 	 *
@@ -281,6 +283,29 @@ function(
 		NotificationListBase.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._getCollapseButton().setVisible(this.getEnableCollapseButtonWhenEmpty() || this._getVisibleItemsCount() > 0);
+	};
+
+	/**
+	 * Checks if the max number of notification is reached
+	 *
+	 * @private
+	 * @returns {boolean} Whether the max number of notification is reached
+	 */
+	NotificationListGroup.prototype._isMaxNumberReached = function () {
+		return this.getItems().length > maxNumberOfNotifications;
+	};
+
+	/**
+	 * Returns the messages, which should be displayed, when the notification limit is reached
+	 *
+	 * @private
+	 * @returns {object} The messages
+	 */
+	NotificationListGroup.prototype._getMaxNumberReachedMsg = function () {
+		return {
+			title: resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', this.getItems().length - maxNumberOfNotifications),
+			description: resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY')
+		};
 	};
 
 	return NotificationListGroup;

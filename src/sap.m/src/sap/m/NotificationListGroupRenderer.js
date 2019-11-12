@@ -35,7 +35,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			bShowItemsCounter = control.getShowItemsCounter(),
 			isUnread = control.getUnread(),
 			priorityClass = '',
-			visibleItemsCount = control._getVisibleItemsCount();
+			visibleItemsCount = control._getVisibleItemsCount(),
+			maxNumberMsg;
 
 		rm.write('<li');
 		rm.writeControlData(control);
@@ -133,6 +134,21 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		control.getItems().forEach(function (item) {
 			rm.renderControl(item);
 		});
+
+		if (control._isMaxNumberReached()) {
+			maxNumberMsg = control._getMaxNumberReachedMsg();
+			rm.write('<div class="sapMNLGroupMaxNotifications">');
+
+			rm.write('<div  class="sapMNLGroupMNTitle">');
+			rm.write(maxNumberMsg.title);
+			rm.write('</div>');
+
+			rm.write('<div class="sapMNLGroupMNDescription">');
+			rm.write(maxNumberMsg.description);
+			rm.write('</div>');
+
+			rm.write('</div>');
+		}
 
 		rm.write('</ul>');
 
