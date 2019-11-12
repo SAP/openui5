@@ -362,7 +362,13 @@ sap.ui.define([
 				}
 			}
 			if (bForDialog) {
-				oColumnInfo.text = oColumn.getLabel() && oColumn.getLabel().getText() || sPersoKey;
+				oColumnInfo.text = sPersoKey;
+				var aMultiLabels = oColumn.getMultiLabels();
+				if (aMultiLabels && aMultiLabels.length > 0) {
+					oColumnInfo.text = aMultiLabels[aMultiLabels.length - 1].getText();
+				} else if (oColumn.getLabel()) {
+					oColumnInfo.text = oColumn.getLabel().getText();
+				}
 			}
 			oData.aColumns.push(oColumnInfo);
 		}
