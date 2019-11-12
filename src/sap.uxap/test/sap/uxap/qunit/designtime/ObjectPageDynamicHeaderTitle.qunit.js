@@ -5,7 +5,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sXmlView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f">' +
+	var sXmlView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.uxap" xmlns:m="sap.m">' +
 						'<ObjectPageDynamicHeaderTitle id="title">' +
 							'<breadcrumbs>' +
 								'<m:Breadcrumbs>' +
@@ -28,7 +28,7 @@ sap.ui.define([
 							'<snappedHeading>' +
 								'<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">' +
 									'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center">' +
-										'<f:Avatar displaySize="S"/>' +
+										'<m:Avatar displaySize="S"/>' +
 										'<m:Title text="Denise Smith" wrapping="true"/>' +
 									'</m:FlexBox>' +
 									'<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center">' +
