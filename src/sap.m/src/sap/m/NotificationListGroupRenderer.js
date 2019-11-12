@@ -6,7 +6,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 	'use strict';
 
 	/**
-	 * NotificationListItemGroup renderer.
+	 * NotificationListGroup renderer.
 	 * @namespace
 	 */
 	var NotificationListGroupRenderer = {};
