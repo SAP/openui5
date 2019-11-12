@@ -82,26 +82,13 @@
 
 		var singleItemGroup = new sap.m.NotificationListGroup({
 			id: 'notificationGroup2',
-			showCounter: false,
+			showItemsCounter: false,
 			title: 'Single Notification List Item Group',
 			// datetime: 'More than 15 minutes', // deprecated
 			// authorPicture: 'images/SAPLogo.jpg', // deprecated
 			// authorName: 'Lorem Ipsum', // deprecated
 			visible: true,
 			collapsed: true,
-			buttons: [
-				new sap.m.Button({
-					text: 'Accept All',
-					type: sap.m.ButtonType.Accept,
-					tap: function () {
-						sap.m.MessageToast.show('Accept all button pressed');
-					}
-				}),
-				new sap.m.Button({
-					text: 'Cancel All',
-					type: sap.m.ButtonType.Reject
-				})
-			],
 			items: [
 				new sap.m.NotificationListItem({
 					title: 'Single Item Notification',
@@ -175,9 +162,9 @@
 		var noItemsNoDetailsGroup = new sap.m.NotificationListGroup({
 			id: 'notificationGroup4',
 			unread: true,
-			showCounter: false,
+			showItemsCounter: false,
 			enableCollapseButtonWhenEmpty: true,
-			title: 'Notification List With 0 Items and no Details section',
+			title: 'Notification List With 0 Items and collapsable',
 			showEmptyGroup: true,
 			buttons: [
 				new sap.m.Button({
@@ -186,10 +173,6 @@
 					tap: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
-				}),
-				new sap.m.Button({
-					text: 'Cancel All',
-					type: sap.m.ButtonType.Reject
 				})
 			],
 			items: [
@@ -198,7 +181,7 @@
 
 		var hiddenActionButtonsGroup = new sap.m.NotificationListGroup({
 			id: 'notificationGroup5',
-			showCounter: false,
+			showItemsCounter: false,
 			title: 'Notification List Group with hidden action buttons',
 			showEmptyGroup: true,
 			showButtons: false,
@@ -246,11 +229,12 @@
 
 		var busyGroup = new sap.m.NotificationListGroup({
 			id: 'notificationGroup6',
-			showCounter: false,
-			busy: true,
-			title: 'Notification List Group with hidden action buttons',
+			showItemsCounter: false,
+			autoPriority: false,
+			priority: sap.ui.core.Priority.High,
+			// busy: true,
+			title: 'Busy Notification List Group + no auto priority',
 			showEmptyGroup: true,
-			showButtons: false,
 			buttons: [
 				new sap.m.Button({
 					text: 'Accept All',
@@ -272,7 +256,7 @@
 					unread: true,
 					visible: true,
 					showCloseButton: false,
-					priority: sap.ui.core.Priority.High,
+					priority: sap.ui.core.Priority.Medium,
 					buttons: [
 						new sap.m.Button({
 							text: 'Accept',
@@ -290,6 +274,31 @@
 						})
 					]
 				}),
+				new sap.m.NotificationListItem({
+					title: 'Single Item Notification',
+					description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.',
+					datetime: '2 hours',
+					unread: true,
+					visible: true,
+					showCloseButton: false,
+					priority: sap.ui.core.Priority.Low,
+					buttons: [
+						new sap.m.Button({
+							text: 'Accept',
+							type: sap.m.ButtonType.Accept,
+							tap: function () {
+								sap.m.MessageToast.show('Accept button pressed');
+							}
+						}),
+						new sap.m.Button({
+							text: 'Cancel',
+							type: sap.m.ButtonType.Reject,
+							tap: function () {
+								sap.m.MessageToast.show('Cancel button pressed');
+							}
+						})
+					]
+				})
 			]
 		});
 

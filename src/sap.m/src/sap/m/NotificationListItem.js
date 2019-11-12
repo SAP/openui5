@@ -47,7 +47,7 @@ function(
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListItem control shows notifications to the user.
+	 * The NotificationListItem control shows notification to the user.
 	 * <h4>Structure</h4>
 	 * The notification item holds properties for the following elements:
 	 * <ul>
