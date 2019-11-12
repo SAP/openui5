@@ -1017,6 +1017,43 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
+	 * request delivers all entities considering the binding's query options (such as filters or
+	 * sorters).
+	 *
+	 * @returns {sap.ui.base.SyncPromise<string>}
+	 *   A promise that is resolved with the download URL.
+	 * @throws {Error}
+	 *   If the binding is unresolved
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchDownloadUrl = function () {
+		var oModel = this.oModel;
+
+		if (this.isRelative() && !this.oContext) {
+			throw new Error("Binding is unresolved");
+		}
+		return this.withCache(function (oCache, sPath) {
+			var mQueryOptions = oCache.mQueryOptions,
+				sMetaPath = _Helper.getMetaPath(sPath); // the binding's meta path rel. to the cache
+
+			if (sMetaPath) {
+				// reduce the query options to the child meta path
+				mQueryOptions = sMetaPath.split("/").reduce(function (mOptions, sSegment) {
+					return mOptions.$expand[sSegment];
+				}, mQueryOptions);
+				// add the custom query options again
+				mQueryOptions = _Helper.merge({}, oModel.mUriParameters, mQueryOptions);
+			}
+			return oModel.sServiceUrl
+				+ _Helper.buildPath(oCache.sResourcePath, sPath)
+				+ oModel.oRequestor.buildQueryString(_Helper.buildPath(oCache.sMetaPath, sMetaPath),
+					mQueryOptions);
+		});
+	};
+
+	/**
 	 * Requests a $filter query option value for the this binding; the value is computed from the
 	 * given arrays of dynamic application and control filters and the given static filter.
 	 *
@@ -1552,6 +1589,24 @@ sap.ui.define([
 		throw new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues");
 	};
 
+
+	/**
+	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
+	 * request delivers all entities considering the binding's query options (such as filters or
+	 * sorters).
+	 *
+	 * @returns {string}
+	 *   The download URL
+     * @throws {Error}
+	 *   If the binding is unresolved or if the URL determination is not finished yet
+	 *
+	 * @function
+	 * @public
+	 * @see #requestDownloadUrl
+	 * @since 1.74.0
+	 */
+	ODataListBinding.prototype.getDownloadUrl = _Helper.createGetMethod("fetchDownloadUrl", true);
+
 	/**
 	 * Returns the filter information as an abstract syntax tree.
 	 * Consumers must not rely on the origin information to be available, future filter
@@ -2048,6 +2103,23 @@ sap.ui.define([
 				throw oError;
 			});
 	};
+
+	/**
+	 * Returns a URL by which the complete content of the list can be downloaded in JSON format. The
+	 * request delivers all entities considering the binding's query options (such as filters or
+	 * sorters).
+	 *
+	 * @returns {Promise<string>}
+	 *   A promise that is resolved with the download URL
+	 * @throws {Error}
+	 *   If the binding is unresolved
+	 *
+	 * @function
+	 * @public
+	 * @see #getDownloadUrl
+	 * @since 1.74.0
+	 */
+	ODataListBinding.prototype.requestDownloadUrl = _Helper.createRequestMethod("fetchDownloadUrl");
 
 	/**
 	 * @override
