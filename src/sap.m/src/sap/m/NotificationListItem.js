@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'sap/ui/core/ResizeHandler',
 	'sap/m/Link',
+	'sap/m/Avatar',
 	"sap/ui/events/KeyCodes",
 	'./NotificationListItemRenderer'
 ],
@@ -25,6 +26,7 @@ function(
 	Icon,
 	ResizeHandler,
 	Link,
+	Avatar,
 	KeyCodes,
 	NotificationListItemRenderer
 	) {
@@ -39,6 +41,12 @@ function(
 
 	// anything better?
 	var maxTruncationHeight = 44;
+
+	// shortcut for sap.m.AvatarSize
+	var AvatarSize = library.AvatarSize;
+
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = library.AvatarColor;
 
 	/**
 	 * Constructor for a new NotificationListItem.
@@ -77,6 +85,11 @@ function(
 				description: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 				/**
+				 * Defines the displayed author initials.
+				 */
+				authorInitials: {type: "string", group: "Data", defaultValue: null},
+
+				/**
 				 * Determines if the text in the title and the description of the notification are truncated to the first two lines.
 				 */
 				truncate: {type: 'boolean', group: 'Appearance', defaultValue: true},
@@ -104,6 +117,17 @@ function(
 	NotificationListItem.prototype.init = function() {
 		// set it to an active ListItemBase to the press and tap events are fired
 		this.setType('Active');
+	};
+
+	NotificationListItem.prototype._getAuthorAvatar = function() {
+		var avatar = new Avatar({
+			initials: this.getAuthorInitials(),
+			src: this.getAuthorPicture(),
+			backgroundColor: AvatarColor.Random,
+			displaySize: AvatarSize.XS
+		});
+
+		return avatar;
 	};
 
 	NotificationListItem.prototype.onBeforeRendering = function() {
