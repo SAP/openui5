@@ -106,6 +106,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getShowPageIndicator(), true, "Default 'showPageIndicator' value is true");
 		assert.strictEqual(this.oCarousel.getPageIndicatorPlacement(), PlacementType.Bottom, "Default 'pageIndicatorPlacement' value is Bottom");
 		assert.strictEqual(this.oCarousel.getArrowsPlacement(), CarouselArrowsPlacement.Content, "Default 'arrowsPlacement' value is 'Content'");
+		assert.strictEqual(this.oCarousel.$("a").attr("href"), undefined, "Arrow's attribute href is not a link.");
 	});
 
 	//================================================================================
