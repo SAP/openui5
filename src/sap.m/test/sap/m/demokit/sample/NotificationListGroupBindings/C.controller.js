@@ -42,6 +42,7 @@ sap.ui.define([
 								"title": "New order (#2526)",
 								"description": "Lacinia ac ex at, vulputate dictum turpis.",
 								"priority": sap.ui.core.Priority.Low,
+								"authorInitials" : "JS",
 								"unread": true,
 								"itemButtons": [
 									{

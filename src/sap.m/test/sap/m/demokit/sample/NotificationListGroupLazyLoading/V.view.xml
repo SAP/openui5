@@ -10,7 +10,7 @@
 		<l:content>
 			<List id="notificationList"  class="sapContrast sapContrastPlus">
 				<NotificationListGroup
-						title="Group with 3 messages from the backend. They will be lazy loaded when 'Expand' button is pressed."
+						title="3 messages. They will be lazy loaded when 'Expand' button is pressed."
 						showCloseButton="true"
 						showItemsCounter="false"
 						collapsed="true"
@@ -25,7 +25,7 @@
 					</buttons>
 				</NotificationListGroup>
 				<NotificationListGroup
-						title="Group with 3 messages from the backend. They will be lazy loaded when 'Expand' button is pressed."
+						title="3 messages. They will be lazy loaded when 'Expand' button is pressed."
 						showCloseButton="true"
 						showItemsCounter="false"
 						collapsed="true"

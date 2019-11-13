@@ -7,36 +7,17 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-			<List id="notificationList" class="sapContrast sapContrastPlus">
-				<NotificationListGroup
-						title="Group with max number of notifications that will be loaded on pressing the 'Load' button without max number of notifications message."
-						showCloseButton="true"
-						collapsed="true"
-						onCollapse="loadNotifications"
-						close="onItemClose"
-						showEmptyGroup="true"
-						enableCollapseButtonWhenEmpty="true">
-					<buttons>
-						<Button text="Accept All" press="onAcceptPress"/>
-						<Button text="Reject All" press="onRejectPress"/>
-						<Button text="Load Notifications without message" press="onLoadMaxNotificationsWithout"/>
-					</buttons>
-				</NotificationListGroup>
-			</List>
-
 			<List id="notificationList2" class="sapContrast sapContrastPlus">
 				<NotificationListGroup
-						title="Group with max number of notifications that will be loaded on pressing the 'Load' button."
+						title="Notification Group"
 						showCloseButton="true"
-						collapsed="true"
+						collapsed="false"
 						onCollapse="loadNotifications"
 						close="onItemClose"
 						showEmptyGroup="true"
 						enableCollapseButtonWhenEmpty="true">
 					<buttons>
-						<Button text="Accept All" press="onAcceptPress"/>
-						<Button text="Reject All" press="onRejectPress"/>
-						<Button text="Load max notifications" press="onLoadMaxNotifications"/>
+						<Button text="Load notifications" press="onLoadNotifications"/>
 					</buttons>
 				</NotificationListGroup>
 			</List>

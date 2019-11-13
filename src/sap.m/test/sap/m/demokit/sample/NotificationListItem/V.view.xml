@@ -47,7 +47,7 @@
 						close="onItemClose"
 						press="onListItemPress"
 						authorName="Patricia Clark"
-						authorPicture="test-resources/sap/m/images/female_BaySu.jpg">
+						authorInitials="PC">
 					<buttons>
 						<Button text="Accept" press="onAcceptPress" icon="sap-icon://accept"/>
 						<Button text="Reject" press="onRejectPress" icon="sap-icon://sys-cancel"/>
@@ -63,7 +63,7 @@
 						close="onItemClose"
 						press="onListItemPress"
 						authorName="John Smith"
-						authorPicture="test-resources/sap/m/images/headerImg2.jpg">
+						authorInitials="JS">
 				</NotificationListItem>
 				<NotificationListItem
 						title="New order (#2521)"
