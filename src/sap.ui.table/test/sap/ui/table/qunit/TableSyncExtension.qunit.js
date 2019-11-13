@@ -626,6 +626,9 @@ sap.ui.define([
 			assert.ok(oTableInvalidate.notCalled, "The table was not invalidated");
 			assert.equal(Div.firstElementChild, oExternalVSb, "The external scrollbar is placed in the correct container");
 
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
+
 			// Scroll the external scrollbar.
 			oExternalVSb.scrollTop = oTable._getBaseRowHeight() * 2;
 

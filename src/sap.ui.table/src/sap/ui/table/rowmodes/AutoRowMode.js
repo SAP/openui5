@@ -460,7 +460,7 @@ sap.ui.define([
 
 			if (!this._bFiredRowsUpdatedAfterRendering && oTable.getRows().length > 0) {
 				// Even if the row count does not change, the rows updated event still needs to be fired after rendering.
-				oTable._fireRowsUpdated(sReason);
+				this.fireRowsUpdated(sReason);
 			}
 		}
 

@@ -2968,7 +2968,7 @@ sap.ui.define([
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Resize
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 
@@ -2982,7 +2982,7 @@ sap.ui.define([
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Resize
+				TableUtils.RowsUpdateReason.Render
 			]);
 		});
 	});
@@ -3004,24 +3004,22 @@ sap.ui.define([
 
 		_createTable(VisibleRowCountMode.Fixed);
 		return this.checkRowsUpdated(assert, aFiredReasons, [
-			TableUtils.RowsUpdateReason.Render,
-			TableUtils.RowsUpdateReason.Change
+			TableUtils.RowsUpdateReason.Render
 		]).then(function() {
 			_createTable(VisibleRowCountMode.Interactive);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Render,
-				TableUtils.RowsUpdateReason.Change
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			_createTable(VisibleRowCountMode.Auto);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Change
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			// No need to adjust row count after rendering. The table starts with 10 rows, and only 10 rows with a height of 90px fit.
 			_createTable(VisibleRowCountMode.Auto, 90);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Change
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			oMockServer.destroy();
@@ -3043,13 +3041,10 @@ sap.ui.define([
 			});
 		}
 
-		ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
-
 		return this.setQUnitFixtureDisplay("none").then(function() {
 			_createTable(VisibleRowCountMode.Fixed);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Render,
-				TableUtils.RowsUpdateReason.Change
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			aFiredReasons = [];
@@ -3062,8 +3057,7 @@ sap.ui.define([
 		}).then(function() {
 			_createTable(VisibleRowCountMode.Interactive);
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Render,
-				TableUtils.RowsUpdateReason.Change
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			aFiredReasons = [];
@@ -3081,7 +3075,7 @@ sap.ui.define([
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Resize
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 
@@ -3095,7 +3089,7 @@ sap.ui.define([
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Resize
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			oMockServer.destroy();
@@ -3327,7 +3321,7 @@ sap.ui.define([
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Resize
+				TableUtils.RowsUpdateReason.Render
 			]);
 		}).then(function() {
 			aFiredReasons = [];
@@ -3341,8 +3335,45 @@ sap.ui.define([
 			return that.restoreQUnitFixtureDisplay();
 		}).then(function() {
 			return that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Resize
+				TableUtils.RowsUpdateReason.Render
 			]);
+		});
+	});
+
+	QUnit.test("Re-render and refresh", function(assert) {
+		var aFiredReasons = [];
+		var that = this;
+		var oMockServer = startMockServer();
+
+		function test(sVisibleRowCountMode) {
+			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
+
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
+
+			return new Promise(function(resolve) {
+				oTable.getBinding("rows").attachEventOnce("change", function() {
+					oTable.attachEventOnce("_rowsUpdated", resolve);
+				});
+			}).then(function() {
+				aFiredReasons = [];
+				oTable.invalidate();
+				oTable.getBinding("rows").refresh(true);
+				sap.ui.getCore().applyChanges();
+
+				return that.checkRowsUpdated(assert, aFiredReasons, [
+					TableUtils.RowsUpdateReason.Render
+				]);
+			});
+		}
+
+		return test(VisibleRowCountMode.Fixed).then(function() {
+			return test(VisibleRowCountMode.Interactive);
+		}).then(function() {
+			return test(VisibleRowCountMode.Auto);
+		}).then(function() {
+			oMockServer.destroy();
 		});
 	});
 
@@ -3649,8 +3680,6 @@ sap.ui.define([
 		var oMockServer = startMockServer();
 
 		function test(sVisibleRowCountMode) {
-			ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
-
 			var oTable = that.createTableWithODataModel(sVisibleRowCountMode);
 			var oBindingInfo = oTable.getBindingInfo("rows");
 
