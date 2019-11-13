@@ -203,20 +203,25 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype._getExpanderControl = function() {
-		var sSrc = this.CollapsedIconURI;
+		var sSrc = this.CollapsedIconURI,
+			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sIconTooltip = oBundle.getText("TREE_ITEM_EXPAND_NODE");
+
 		if (this.getExpanded()) {
 			sSrc = this.ExpandedIconURI;
+			sIconTooltip = oBundle.getText("TREE_ITEM_COLLAPSE_NODE");
 		}
 
 		if (this._oExpanderControl) {
 			this._oExpanderControl.setSrc(sSrc);
+			this._oExpanderControl.setTooltip(sIconTooltip);
 			return this._oExpanderControl;
 		}
 
 		this._oExpanderControl = new Icon({
 			id: this.getId() + "-expander",
 			src: sSrc,
-			useIconTooltip: false,
+			tooltip: sIconTooltip,
 			noTabStop: true
 		}).setParent(this, null, true).addStyleClass("sapMTreeItemBaseExpander").attachPress(function(oEvent) {
 			this.informTree("ExpanderPressed");

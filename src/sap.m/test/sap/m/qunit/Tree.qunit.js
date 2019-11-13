@@ -332,9 +332,13 @@ sap.ui.define([
 		oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 	});
 
-	QUnit.test("Expand to level", function(assert){
+	QUnit.test("Expand to level and tree item expander tooltip test", function(assert){
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_EXPAND_NODE"), "Tooltip is correctly set to the Expander control");
 		oTree.expandToLevel(3);
+		sap.ui.getCore().applyChanges();
 		assert.ok(oTree.getItems()[0].getExpanded(),"node is expanded");
+		assert.strictEqual(oTree.getItems()[0]._oExpanderControl.getTooltip(), oBundle.getText("TREE_ITEM_COLLAPSE_NODE"), "Tooltip for the Expander control updated correctly");
 		assert.equal(oTree.getItems()[4].getLevel(), 3, "expand to level 3");
 	});
 
