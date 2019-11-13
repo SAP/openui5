@@ -326,13 +326,21 @@ module.exports = function(grunt, config) {
 					'cldr-cal-buddhist-modern'
 				],
 				sVersion = "35.1.0",
-				aArgs;
-			aArgs = aPakets.map(function(sName) {
-				return sName + "@" + sVersion;
+				baseFolder = path.join(__dirname, "../../"),
+				downloadFolder = path.join(baseFolder, "tmp/cldr"),
+				pacote = require('pacote'),
+				done = this.async();
+			
+			Promise.all(aPakets.map(function(sName) {
+				return pacote.extract(sName + "@" + sVersion, path.join(downloadFolder, sName));
+					
+			})).then(function() {
+				grunt.log.ok("DONE", "Files downloaded and extracted to", downloadFolder);
+				done();
+			}, function(err) {
+				grunt.log.error(err);
+				done(false);
 			});
-			aArgs.push("--no-save")
-			grunt.config(['npm-command', 'install-cldr', 'options', 'args'], aArgs);
-			grunt.task.run(['npm-command:install-cldr']);
 		},
 		'cldr-generate': function() {
 			var done = this.async();
@@ -340,6 +348,7 @@ module.exports = function(grunt, config) {
 			var baseFolder = path.join(__dirname, "../../");
 
 			var outputFolder = grunt.option("output"),
+				sourceFolder = path.join(baseFolder, "tmp/cldr"),
 				prettyPrint = grunt.option("prettyPrint");
 
 			if (typeof prettyPrint !== "boolean") {
@@ -352,6 +361,7 @@ module.exports = function(grunt, config) {
 
 			if (outputFolder) {
 				cldr({
+					source: sourceFolder,
 					output: outputFolder,
 					prettyPrint: prettyPrint
 				}).on("generated", function() {
