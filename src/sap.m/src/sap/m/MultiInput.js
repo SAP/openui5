@@ -340,7 +340,6 @@ function(
 	MultiInput.prototype._registerResizeHandler = function () {
 		if (!this._iResizeHandlerId) {
 			this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
-			this._iTokenizerResizeHandler = ResizeHandler.register(this._tokenizer, this._onResize.bind(this));
 		}
 	};
 
@@ -353,11 +352,6 @@ function(
 		if (this._iResizeHandlerId) {
 			ResizeHandler.deregister(this._iResizeHandlerId);
 			this._iResizeHandlerId = null;
-		}
-
-		if (this._iTokenizerResizeHandler) {
-			ResizeHandler.deregister(this._iTokenizerResizeHandler);
-			this._iTokenizerResizeHandler = null;
 		}
 	};
 
