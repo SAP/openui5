@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/command/CommandFactory",
 	"qunit/RtaQunitUtils",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/Device",
@@ -17,7 +16,6 @@ sap.ui.define([
 	Stack,
 	CommandFactory,
 	RtaQunitUtils,
-	FakeLrepConnectorSessionStorage,
 	LayerUtils,
 	OverlayRegistry,
 	Device,
@@ -32,12 +30,10 @@ sap.ui.define([
 
 	QUnit.begin(function () {
 		QUnit.config.fixture = null;
-		FakeLrepConnectorSessionStorage.enableFakeConnector();
 	});
 
 	QUnit.done(function () {
 		QUnit.config.fixture = '';
-		FakeLrepConnectorSessionStorage.disableFakeConnector();
 		jQuery("#qunit-fixture").hide();
 	});
 

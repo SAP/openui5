@@ -3,7 +3,6 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"qunit/RtaQunitUtils",
@@ -14,7 +13,6 @@ sap.ui.define([
 ], function (
 	jQuery,
 	RuntimeAuthoring,
-	FakeLrepConnectorSessionStorage,
 	OverlayRegistry,
 	DtUtil,
 	RtaQunitUtils,
@@ -37,7 +35,6 @@ sap.ui.define([
 			QUnit.config.fixture = '';
 		},
 		beforeEach : function() {
-			FakeLrepConnectorSessionStorage.enableFakeConnector();
 			this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
 			this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oBoundButton35Field = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
@@ -65,7 +62,6 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			this.oRta.destroy();
-			FakeLrepConnectorSessionStorage.disableFakeConnector();
 			sandbox.restore();
 		}
 	}, function () {
