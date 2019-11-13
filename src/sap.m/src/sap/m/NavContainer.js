@@ -90,7 +90,7 @@ sap.ui.define([
 				visible: {type: "boolean", group: "Appearance", defaultValue: true},
 
 				/**
-				 * The type of the transition/animation to apply when "to()" is called without defining a transition type to use. The default is "slide". Other options are: "fade", "flip" and "show" - and the names of any registered custom transitions.
+				 * The type of the transition/animation to apply when "to()" is called without defining a transition type to use. The default is "slide". Other options are: "baseSlide", "fade", "flip" and "show" - and the names of any registered custom transitions.
 				 * @since 1.7.1
 				 */
 				defaultTransitionName: {type: "string", group: "Appearance", defaultValue: "slide"}
@@ -250,6 +250,14 @@ sap.ui.define([
 		},
 		fnHasParent = function(oControl) {
 			return !!(oControl && oControl.getParent());
+		},
+		fnSetAnimationDirection = function (oPage, sDirection) {
+			if (fnHasParent(oPage)) {
+				oPage.$().css({
+					'-webkit-animation-direction': sDirection,
+					'animation-direction':  sDirection
+				});
+			}
 		};
 
 	NavContainer.TransitionDirection = {
@@ -641,7 +649,7 @@ sap.ui.define([
 	 *
 	 * Note that any modifications to the target page (like setting its title, or anything else that could cause a re-rendering) should be done BEFORE calling to(), in order to avoid unwanted side effects, e.g. related to the page animation.
 	 *
-	 * Available transitions currently include "slide" (default), "fade", "flip", and "show". None of these is currently making use of any given transitionParameters.
+	 * Available transitions currently include "slide" (default), "baseSlide",  "fade", "flip", and "show". None of these is currently making use of any given transitionParameters.
 	 *
 	 * Calling this navigation method triggers first the (cancelable) "navigate" event on the NavContainer, then the "beforeHide" pseudo event on the source page and "beforeFirstShow" (if applicable) and"beforeShow" on the target page. Later - after the transition has completed - the "afterShow" pseudo event is triggered on the target page and "afterHide" on the page which has been left. The given data object is available in the "beforeFirstShow", "beforeShow" and "afterShow" event object as "data" property.
 	 *
@@ -649,7 +657,7 @@ sap.ui.define([
 	 *         The screen to which drilldown should happen. The ID or the control itself can be given.
 	 * @param {string} transitionName
 	 *         The type of the transition/animation to apply. This parameter can be omitted; then the default is "slide" (horizontal movement from the right).
-	 *         Other options are: "fade", "flip", and "show" and the names of any registered custom transitions.
+	 *         Other options are: "baseSlide", "fade", "flip", and "show" and the names of any registered custom transitions.
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} data
@@ -665,7 +673,7 @@ sap.ui.define([
 	 *         For a proper parameter order, the "data" parameter must be given when the "transitionParameters" parameter is used. (it can be given as "null")
 	 *
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
-	 *         The "show", "slide" and "fade" transitions do not use any parameter.
+	 *         The "show", "slide", "baseSlide" and "fade" transitions do not use any parameter.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 * @returns {sap.m.NavContainer} The <code>sap.m.NavContainer</code> instance
@@ -1224,6 +1232,63 @@ sap.ui.define([
 		this.fCallback();
 	};
 
+	/**
+	 * Applying slide animation considering direction
+	 * @param {object} oFromPage The container navigating from
+	 * @param {object} oToPage The container navigating to
+	 * @param {function} fCallback The callback function called at the end of the animations
+	 * @private
+	 */
+	NavContainer.prototype._baseSlideAnimation = function(oFromPage, oToPage, fCallback /*, oTransitionParameters is unused */) {
+		var bFirstSlideDone = false,
+			bTransitionEndPending = true,
+			bIsReverse = this._sTransitionDirection === NavContainer.TransitionDirection.BACK,
+			sAnimationDirection = bIsReverse ? "reverse" : "normal",
+			sToPageClass = bIsReverse ? "sapMNavItemSlideCenterToLeft" : "sapMNavItemSlideRightToCenter",
+			sFromPageClass = !bIsReverse ? "sapMNavItemSlideCenterToLeft" : "sapMNavItemSlideRightToCenter",
+			fAfterAnimation = function () {
+				jQuery(this).unbind("webkitAnimationEnd animationend");
+
+				if (!bFirstSlideDone) {
+					return (bFirstSlideDone = true);
+				}
+
+				bTransitionEndPending = false;
+
+				// remove direction to avoid collision with other animations
+				fnSetAnimationDirection(oToPage, "");
+				fnSetAnimationDirection(oFromPage, "");
+
+				// remove animation classes, so they could be trigger again later
+				if (fnHasParent(oToPage)) {
+					oToPage.removeStyleClass(sToPageClass);
+				}
+
+				if (fnHasParent(oFromPage)) {
+					oFromPage.removeStyleClass(sFromPageClass).addStyleClass("sapMNavItemHidden");
+				}
+
+				fCallback();
+			};
+
+		oFromPage.$().bind("webkitAnimationEnd animationend", fAfterAnimation);
+		oToPage.$().bind("webkitAnimationEnd animationend", fAfterAnimation);
+
+		fnSetAnimationDirection(oToPage, sAnimationDirection);
+		fnSetAnimationDirection(oFromPage, sAnimationDirection);
+
+		// trigger animation
+		oFromPage.addStyleClass(sFromPageClass);
+		oToPage.addStyleClass(sToPageClass).removeStyleClass("sapMNavItemHidden");
+
+		window.setTimeout(function () { // in case rerendering prevented the fAfterAnimation call
+			if (bTransitionEndPending) {
+				bFirstSlideDone = true;
+				fAfterAnimation.apply(oFromPage.$().add(oToPage.$()));
+			}
+		}, fnGetDelay(400));
+	};
+
 	NavContainer.transitions = NavContainer.transitions || {}; // make sure the object exists
 
 
@@ -1243,6 +1308,14 @@ sap.ui.define([
 		}
 	};
 
+
+	//*** BASE SLIDE Transition ***
+
+	NavContainer.transitions["baseSlide"] = {
+		to: NavContainer.prototype._baseSlideAnimation,
+
+		back: NavContainer.prototype._baseSlideAnimation
+	};
 
 	//*** SLIDE Transition ***
 
