@@ -124,7 +124,7 @@ sap.ui.define([
 					this._oFormatDecimal = FileSizeFormat.getInstance({
 						binaryFilesize: true,
 						maxFractionDigits: 1,
-						maxIntegerDigits: 3
+						maxIntegerDigits: 4
 					});
 				}
 			} catch (e) {
