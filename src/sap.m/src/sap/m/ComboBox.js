@@ -151,9 +151,9 @@ sap.ui.define([
 					 * <ul>
 					 * 	<li>The focus leaves the text input field</li>
 					 * 	<li>The <i>Enter</i> key is pressed</li>
+					 * 	<li>An item in the list is selected</li>
 					 * </ul>
 					 *
-					 * In addition, this event is also fired when an item in the list is selected.
 					 */
 					change: {
 						parameters: {
