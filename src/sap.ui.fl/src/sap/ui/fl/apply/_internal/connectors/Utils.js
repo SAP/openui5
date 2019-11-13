@@ -232,6 +232,12 @@ sap.ui.define([
 				xhr.onload = function () {
 					if (xhr.status >= 200 && xhr.status < 400) {
 						var oResult = {};
+
+						// mockservers using sinon servers have the response in responseText, not in response
+						if (!xhr.response && xhr.responseText) {
+							xhr.response = this.responseText;
+						}
+
 						if (xhr.response) {
 							oResult.response = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
 						}
