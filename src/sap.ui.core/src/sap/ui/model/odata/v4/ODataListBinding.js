@@ -1344,13 +1344,15 @@ sap.ui.define([
 		if (sChangeReason === "AddVirtualContext") {
 			// Note: this task is queued _before_ any SubmitMode.Auto task!
 			sap.ui.getCore().addPrerenderingTask(function () {
-				// Note: first result of getContexts after refresh is ignored
-				that.sChangeReason = "RemoveVirtualContext";
-				that._fireChange({
-					detailedReason : that.sChangeReason,
-					reason : ChangeReason.Change
-				});
-				that.reset(ChangeReason.Refresh);
+				if (!that.isRootBindingSuspended()) {
+					// Note: first result of getContexts after refresh is ignored
+					that.sChangeReason = "RemoveVirtualContext";
+					that._fireChange({
+						detailedReason : that.sChangeReason,
+						reason : ChangeReason.Change
+					});
+					that.reset(ChangeReason.Refresh);
+				}
 				oVirtualContext.destroy();
 			}, true);
 			oVirtualContext = Context.create(this.oModel, this,

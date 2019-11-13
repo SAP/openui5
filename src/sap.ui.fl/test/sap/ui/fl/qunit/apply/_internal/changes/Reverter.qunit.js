@@ -6,9 +6,9 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/changes/Utils",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/FlexCustomData",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -18,9 +18,9 @@ function (
 	JsControlTreeModifier,
 	Control,
 	ChangeUtils,
+	FlexCustomData,
 	Reverter,
 	Change,
-	FlexCustomData,
 	jQuery,
 	sinon
 ) {
@@ -132,8 +132,6 @@ function (
 			sandbox.stub(this.oAppliedChange, "hasApplyProcessStarted").returns(true);
 			var oIsApplyFinishedStub = sandbox.stub(this.oAppliedChange, "isApplyProcessFinished").returns(false);
 			var oAddPromiseStub = sandbox.stub(this.oAppliedChange, "addPromiseForApplyProcessing").callsFake(function() {
-				// here we have to change the oIsApplyFinishedStub
-				// oIsApplyFinishedStub.restore();
 				oIsApplyFinishedStub.returns(true);
 				return Promise.resolve();
 			});

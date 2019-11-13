@@ -1,0 +1,25 @@
+{
+  "1.73.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "c696f551b19037cb67e7a73400f02c3d36099cf4",
+        "type": "FIX",
+        "text": " Fixing the response get from backend",
+        "references": []
+      },
+      {
+        "id": "870300847b1594f89832bc4ba1c643c0793cd783",
+        "type": "FIX",
+        "text": " sap.ui.rta: Handle appDescriptor change publish and exit",
+        "references": []
+      },
+      {
+        "id": "8699de0aff83bab4c3424d9ba276b60109b1e11f",
+        "type": "FIX",
+        "text": ": RTA - Toolbar Mode Buttons in RTL-Mode",
+        "references": []
+      }
+    ]
+  }
+}

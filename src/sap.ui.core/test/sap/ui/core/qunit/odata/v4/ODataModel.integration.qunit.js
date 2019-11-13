@@ -21750,4 +21750,46 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: A list binding is used by a control, has already delivered its virtual context and
+	// is about to remove it again. In between these two "change" events, #suspend and #resume is
+	// used (say by controller code).
+	// Avoid "Uncaught Error: Must not call method when the binding's root binding is suspended:
+	// sap.ui.model.odata.v4.ODataListBinding: /|TEAMS"
+	// JIRA: CPOUI5UISERVICESV3-2033
+	QUnit.test("CPOUI5UISERVICESV3-2033", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{TEAMS}">\
+	<ColumnListItem>\
+		<Text id="teamId" text="{Team_Id}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("teamId", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oRootContext = that.oModel.createBindingContext("/"),
+				oTable = that.oView.byId("table"),
+				oListBinding = oTable.getBinding("items");
+
+			that.expectRequest("TEAMS?$select=Team_Id&$orderby=Team_Id&$filter=Budget gt 42"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						Team_Id : "TEAM_01"
+					}]
+				})
+				.expectChange("teamId", ["TEAM_01"]);
+
+			oTable.setBindingContext(oRootContext);
+			oListBinding.suspend();
+			oListBinding.filter(new Filter("Budget", FilterOperator.GT, 42));
+			oListBinding.sort(new Sorter("Team_Id"));
+			oListBinding.resume();
+
+			return that.waitForChanges(assert);
+		});
+	});
 });

@@ -51,32 +51,23 @@
 					"json": {
 						"list": [
 							{
-								"Week": "Weather",
+								"Category": "Weather",
 								"Revenue": 431000.22,
 								"Cost": 230000.00,
-								"Cost1": 24800.63,
-								"Cost2": 205199.37,
-								"Cost3": 199999.37,
 								"Target": 500000.00,
 								"Budget": 210000.00
 							},
 							{
-								"Week": "Mechanics",
+								"Category": "Mechanics",
 								"Revenue": 494000.30,
 								"Cost": 238000.00,
-								"Cost1": 99200.39,
-								"Cost2": 138799.61,
-								"Cost3": 200199.37,
 								"Target": 500000.00,
 								"Budget": 224000.00
 							},
 							{
-								"Week": "Software",
+								"Category": "Software",
 								"Revenue": 491000.17,
 								"Cost": 221000.00,
-								"Cost1": 70200.54,
-								"Cost2": 150799.46,
-								"Cost3": 80799.46,
 								"Target": 500000.00,
 								"Budget": 238000.00
 							}
@@ -86,8 +77,8 @@
 				},
 				"dimensions": [
 					{
-						"label": "Weeks",
-						"value": "{Week}"
+						"label": "Categories",
+						"value": "{Category}"
 					}
 				],
 				"measures": [
@@ -100,8 +91,8 @@
 						"value": "{Cost}"
 					},
 					{
-						"label": "Cost",
-						"value": "{Cost2}"
+						"label": "Target",
+						"value": "{Target}"
 					}
 				]
 			}

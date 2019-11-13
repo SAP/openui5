@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/m/library",
 	"sap/f/library",
 	"sap/ui/core/Control",
 	"sap/m/Text",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/base/strings/formatMessage",
 	"sap/f/cards/BindingHelper"
 ], function (
+	mLibrary,
 	library,
 	Control,
 	Text,
@@ -28,7 +30,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var AvatarShape = library.AvatarShape;
+	var AvatarShape = mLibrary.AvatarShape;
 
 	var AreaType = library.cards.AreaType;
 
@@ -85,7 +87,7 @@ sap.ui.define([
 				/**
 				 * Defines the shape of the icon.
 				 */
-				iconDisplayShape: { type: "sap.f.AvatarShape", defaultValue: AvatarShape.Circle },
+				iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Circle },
 
 				/**
 				 * Defines the icon source.

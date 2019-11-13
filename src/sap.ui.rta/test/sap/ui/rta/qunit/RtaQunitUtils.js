@@ -1,13 +1,13 @@
 sap.ui.define([
 	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/fl/FakeLrepSessionStorage",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ], function(
 	FakeLrepConnectorSessionStorage,
-	FakeLrepSessionStorage,
+	PersistenceWriteAPI,
 	Component,
 	ComponentContainer,
 	QUnitUtils,
@@ -57,6 +57,24 @@ sap.ui.define([
 		return oCompCont;
 	};
 
+	RtaQunitUtils.clear = function (oSelector) {
+		oSelector = oSelector || sap.ui.getCore().getComponent("Comp1");
+		return Promise.all([
+			PersistenceWriteAPI.save({selector: oSelector, layer: "CUSTOMER"}),
+			PersistenceWriteAPI.save({selector: oSelector, layer: "USER"})
+		])
+		.then(
+			Promise.all([
+				PersistenceWriteAPI.reset({selector: oSelector, layer: "CUSTOMER", generator: "Change.createInitialFileContent"}),
+				PersistenceWriteAPI.reset({selector: oSelector, layer: "USER", generator: "Change.createInitialFileContent"})
+			])
+		);
+	};
+
+	RtaQunitUtils.getNumberOfChangesForTestApp = function () {
+		return FakeLrepConnectorSessionStorage.forTesting.getNumberOfChanges("sap.ui.rta.qunitrta.Component");
+	};
+
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
 		FakeLrepConnectorSessionStorage.enableFakeConnector();
 
@@ -101,56 +119,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		return oCompCont;
-	};
-
-	RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd = function(iNumberOfChanges, assert) {
-		var done = [];
-		for (var i = 0; i < iNumberOfChanges; i++) {
-			done.push(assert.async());
-		}
-		var iChangeCounter = 0;
-		var fnAssert = function() {
-			iChangeCounter++;
-			if (iChangeCounter === iNumberOfChanges) {
-				FakeLrepSessionStorage.detachModifyCallback(fnAssert);
-				assert.equal(iChangeCounter, iNumberOfChanges, "then the rta changes are written to LREP");
-			}
-			done[iChangeCounter - 1]();
-		};
-
-		FakeLrepSessionStorage.attachModifyCallback(fnAssert);
-	};
-
-	// At the end of the test, the returning fnDetachEvent function must be called for clean up
-	RtaQunitUtils.waitForExactNumberOfChangesInLrep = function(iNumberOfChanges, assert, sModifyType) {
-		var done = [];
-		for (var i = 0; i < iNumberOfChanges; i++) {
-			done.push(assert.async());
-		}
-		var iChangeCounter = 0;
-		var fnAssert = function(sPassedModifyType) {
-			// Only collect operations of the given type
-			if (sPassedModifyType !== sModifyType) {
-				throw new Error("Unexpected LREP modification: Expected: " + sModifyType + ", but got " + sPassedModifyType);
-			}
-			iChangeCounter++;
-			if (iChangeCounter === iNumberOfChanges) {
-				assert.equal(iChangeCounter, iNumberOfChanges,
-					"then " + iNumberOfChanges + " operations of type " + sModifyType + " happen in LREP");
-			}
-			if (iChangeCounter > iNumberOfChanges) {
-				assert.notOk(true, "Error: there are more " + sModifyType + " operations done in LREP than expected");
-				return;
-			}
-			done[iChangeCounter - 1]();
-		};
-		var fnDetachEvent = function() {
-			FakeLrepSessionStorage.detachModifyCallback(fnAssert);
-		};
-
-		FakeLrepSessionStorage.attachModifyCallback(fnAssert);
-
-		return fnDetachEvent;
 	};
 
 	RtaQunitUtils.openContextMenuWithKeyboard = function(oTarget) {

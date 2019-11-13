@@ -4,23 +4,25 @@
 
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
+	"sap/ui/fl/apply/_internal/connectors/StaticFileConnector",
 	"sap/ui/fl/Utils",
 	"sap/base/strings/formatMessage",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/ObjectPath",
-	"sap/ui/fl/apply/_internal/StorageResultMerger"
+	"sap/base/util/ObjectPath"
 ],
 function(
 	LrepConnector,
+	CompatibilityConnector,
+	StaticFileConnector,
 	Utils,
 	formatMessage,
 	Log,
 	jQuery,
 	LoaderExtensions,
-	ObjectPath,
-	StorageResultMerger
+	ObjectPath
 ) {
 	"use strict";
 
@@ -180,9 +182,8 @@ function(
 	 * changes from the back end.
 	 *
 	 * If the cache is not active, the method just delegates the call to the
-	 * loadChanges method of the given LrepConnector.
+	 * loadChanges method of the CompatibilityConnector.
 	 *
-	 * @param {sap.ui.fl.LrepConnector} oLrepConnector - LrepConnector instance to retrieve the changes with
 	 * @param {map} mComponent - Contains component data needed for reading changes
 	 * @param {string} mComponent.name - Name of the component
 	 * @param {string} mComponent.appVersion - Current running version of application
@@ -196,46 +197,35 @@ function(
 	 *
 	 * @public
 	 */
-	Cache.getChangesFillingCache = function (oLrepConnector, mComponent, mPropertyBag, bInvalidateCache) {
+	Cache.getChangesFillingCache = function (mComponent, mPropertyBag, bInvalidateCache) {
 		var sComponentName = mComponent.name;
 		var sAppVersion = mComponent.appVersion || Utils.DEFAULT_APP_VERSION;
 		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
 		var oCurrentLoadChanges;
 		mPropertyBag = mPropertyBag || {};
-		mPropertyBag.isTrial = Utils.isTrialSystem();
-
 		if (oCacheEntry.promise && !bInvalidateCache) {
 			return oCacheEntry.promise;
 		}
 
-		var oChangesBundleLoadingPromise = Cache._getChangesFromBundle(mPropertyBag);
-
 		// in case of no changes present according to async hints
 		if (mPropertyBag.cacheKey === "<NO CHANGES>") {
-			oCurrentLoadChanges = oChangesBundleLoadingPromise.then(function (aChanges) {
+			// TODO: handle the "no cache" scenario in the connectors
+			oCurrentLoadChanges = StaticFileConnector.loadFlexData({
+				reference: sComponentName,
+				appVersion: mComponent.appVersion,
+				componentName: mPropertyBag.appName
+			}).then(function (oData) {
 				oCacheEntry.file = {
-					changes: {
-						changes : aChanges,
-						contexts : [],
-						variantSection : {},
-						ui2personalization : {}
-					},
+					changes: oData,
 					componentClassName: sComponentName
 				};
 				return oCacheEntry.file;
-			})
-			.then(function(oReturn) {
-				// normally the LrepConnector takes care of this, but in case of no changes and async hints we have to do it here
-				if (mPropertyBag.isTrial && oLrepConnector instanceof LrepConnector) {
-					return oLrepConnector.enableFakeConnectorForTrial(mComponent, oReturn);
-				}
-				return oReturn;
 			});
 			oCacheEntry.promise = oCurrentLoadChanges;
 			return oCurrentLoadChanges;
 		}
 
-		var oFlexDataPromise = oLrepConnector.loadChanges(mComponent, mPropertyBag);
+		var oFlexDataPromise = CompatibilityConnector.loadChanges(mComponent, mPropertyBag);
 		var oChangesLoadingPromise = oFlexDataPromise.then(function (oResult) {
 			return oResult;
 		}, function (oError) {
@@ -256,15 +246,7 @@ function(
 			});
 		});
 
-		oCurrentLoadChanges = Promise.all([oChangesBundleLoadingPromise, oChangesLoadingPromise]).then(function (aValues) {
-			var aChangesFromBundle = aValues[0];
-			var mChanges = aValues[1];
-
-			if (mChanges && mChanges.changes) {
-				// remove duplicate changes by using the same functionality for the Connectors
-				var aChangesArrays = [{changes: aChangesFromBundle}, Object.assign({}, mChanges.changes)];
-				mChanges.changes.changes = StorageResultMerger._concatChanges(aChangesArrays);
-			}
+		oCacheEntry.promise = oChangesLoadingPromise.then(function (mChanges) {
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;
 		}, function (err) {
@@ -272,52 +254,10 @@ function(
 			throw err;
 		});
 
-		oCacheEntry.promise = oCurrentLoadChanges;
 		Cache._oFlexDataPromise = oFlexDataPromise;
 
-		return oCurrentLoadChanges;
+		return oCacheEntry.promise;
 	};
-
-	/**
-	 * Function to get the changes-bundle.json file stored in the application sources.
-	 * This data is returned only in case it is part of the application preload or in debug mode.
-	 * In case no debugging takes place and the file is not loaded an empty list is returned.
-	 *
-	 * @param {map} mPropertyBag
-	 * @param {string} mPropertyBag.appName Fully qualified name of the application
-	 * @return {Promise} Promise resolving with an array of changes stored in the application source code
-	 *
-	 * @private
-	 */
-	Cache._getChangesFromBundle = function (mPropertyBag) {
-		// in case the new connectors are used the sap.ui.fl.apply._internal.connectors.StaticFileConnector is handling this
-		if (!Utils.areNewConnectorsNecessary()) {
-			var bChangesBundleDeterminable = mPropertyBag.appName;
-
-			if (!bChangesBundleDeterminable) {
-				return Promise.resolve([]);
-			}
-
-			var sResourcePath = mPropertyBag.appName.replace(/\./g, "/") + "/changes/changes-bundle.json";
-			var bChangesBundleLoaded = !!sap.ui.loader._.getModuleState(sResourcePath);
-			if (bChangesBundleLoaded) {
-				return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
-			}
-
-			var oConfiguration = sap.ui.getCore().getConfiguration();
-			if (oConfiguration.getDebug() || oConfiguration.getComponentPreload() === "off" || oConfiguration.isFlexBundleRequestForced()) {
-				// try to load the source in case a debugging takes place and the component could have no Component-preload
-				try {
-					return Promise.resolve(LoaderExtensions.loadResource(sResourcePath));
-				} catch (e) {
-					Log.warning("flexibility did not find a changesBundle.json  for the application");
-				}
-			}
-		}
-
-		return Promise.resolve([]);
-	};
-
 
 	Cache.NOTAG = "<NoTag>";
 
@@ -352,7 +292,7 @@ function(
 			Log.warning("Not all parameters were passed to determine a flexibility cache key.");
 			return Promise.resolve(Cache.NOTAG);
 		}
-		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent)
+		return this.getChangesFillingCache(mComponent)
 			.then(function (oWrappedChangeFileContent) {
 				if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
 					return Cache._trimEtag(oWrappedChangeFileContent.etag);
@@ -509,7 +449,7 @@ function(
 			name: sReference,
 			appVersion: sAppVersion
 		};
-		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent).then(function (oResponse) {
+		return this.getChangesFillingCache(mComponent).then(function (oResponse) {
 			if (!oResponse || !oResponse.changes || !oResponse.changes.ui2personalization ||
 				!oResponse.changes.ui2personalization[sContainerKey]) {
 				// return undefined in case there is no personalization for the item or an empty array if a list was requested

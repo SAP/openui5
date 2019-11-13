@@ -532,7 +532,7 @@ sap.ui.define([
 		modifyAccOfCOLUMNROWHEADER: function(oCellInfo) {
 			var oTable = this.getTable();
 			var $Cell = oCellInfo.cell;
-			var bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
+			var bEnabled = $Cell.hasClass("sapUiTableSelAllVisible");
 
 			oTable.$("sapUiTableGridCnt").removeAttr("role");
 

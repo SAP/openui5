@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -135,9 +135,9 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update an app variant in CUSTOMER layer", function(assert) {
+		QUnit.test("(Smart Business - S4/Hana Cloud system) when save is called to update an app variant in CUSTOMER_BASE layer", function(assert) {
 			var mPropertyBag = {
-				layer: "CUSTOMER"
+				layer: "CUSTOMER_BASE"
 			};
 			mPropertyBag.selector = {
 				appId: "customer.reference.app.id"
@@ -282,11 +282,9 @@ sap.ui.define([
 				.returns(oAppComponent);
 
 			var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
-			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve());
-			var fnDescriptorStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
+			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
 
 			mockFlexController(oAppComponent, { resetChanges : fnPersistenceStub });
-			mockDescriptorController(oAppComponent, { resetChanges: fnDescriptorStub });
 
 			return PersistenceWriteAPI.reset(mPropertyBag)
 				.then(function (sValue) {

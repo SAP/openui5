@@ -148,20 +148,6 @@ function(
 		},
 
 		/**
-		 * Returns a boolean indicating whether the current system is a trial system (only available for S/4 HANA Cloud) or not.
-		 * This function needs a ushell container to be available, otherwise it will also return false.
-		 *
-		 * @returns {boolean} Returns true if the system is a trial system, false otherwise
-		 */
-		isTrialSystem: function() {
-			var oUshellContainer = Utils.getUshellContainer();
-			if (oUshellContainer) {
-				return oUshellContainer.getLogonSystem().isTrial();
-			}
-			return false;
-		},
-
-		/**
 		 * Returns the class name of the application component owning the passed component or the component name itself if
 		 * this is already an application component.
 		 *
@@ -248,11 +234,7 @@ function(
 		 * @name sap.ui.fl.Utils.getSiteIdByComponentData
 		 */
 		getSiteIdByComponentData: function (oComponentData) {
-			var sSiteId = null;
-
-			sSiteId = this._getStartUpParameter(oComponentData, "hcpApplicationId");
-
-			return sSiteId;
+			return this._getStartUpParameter(oComponentData, "hcpApplicationId");
 		},
 
 		/**
@@ -624,22 +606,6 @@ function(
 			});
 
 			return oLrepConfiguration ? oLrepConfiguration.url : "";
-		},
-
-		/**
-		 * Determines if the new Connector functionality should be used.
-		 *
-		 * @returns {boolean} A boolean indicates if the new functionality must be used
-		 * @private
-		 * @ui5-restricted sap.ui.fl
-		 */
-		areNewConnectorsNecessary: function () {
-			var aFlexibilityServices = sap.ui.getCore().getConfiguration().getFlexibilityServices();
-			var bOnlyLrepConnectorConfigured = aFlexibilityServices.every(function (oServiceConfig) {
-				return oServiceConfig.connector === "LrepConnector";
-			});
-
-			return !bOnlyLrepConnectorConfigured;
 		},
 
 		/**

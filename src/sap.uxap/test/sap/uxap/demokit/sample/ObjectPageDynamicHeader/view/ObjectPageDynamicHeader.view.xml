@@ -1,7 +1,6 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.uxap"
 	xmlns:m="sap.m"
-	xmlns:f="sap.f"
 	xmlns:l="sap.ui.layout"
 	xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 	xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
@@ -34,7 +33,7 @@
 				<snappedHeading>
 					<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
-							<f:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" displaySize="S"
+							<m:Avatar src="./test-resources/sap/uxap/images/imageID_275314.png" displaySize="S"
 									  class="sapUiTinyMarginEnd"/>
 							<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>
 						</m:FlexBox>
@@ -77,10 +76,10 @@
 
 		<headerContent>
 			<m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
-				<f:Avatar class="sapUiSmallMarginEnd sapUiSmallMarginTop"
+				<m:Avatar class="sapUiSmallMarginEnd sapUiSmallMarginTop"
 						  src="./test-resources/sap/uxap/images/imageID_275314.png"
 						  displaySize="L">
-				</f:Avatar>
+				</m:Avatar>
 
 				<l:VerticalLayout class="sapUiSmallMarginEnd sapUiSmallMarginTop">
 					<m:Link text="+33 6 4512 5158"/>

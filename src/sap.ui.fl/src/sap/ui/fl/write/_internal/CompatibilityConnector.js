@@ -4,12 +4,26 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/Storage",
-	"sap/ui/fl/write/_internal/Storage"
+	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/FakeLrepConnector"
 ], function(
 	ApplyStorage,
-	WriteStorage
+	WriteStorage,
+	FakeLrepConnector
 ) {
 	"use strict";
+
+	/**
+	 * Checks if the FakeLrepConnector has a set function for the given name which should be called instead of the default
+	 * functionality in the flow.
+	 *
+	 * @param sMethodName Name of the function in the FakeLrepConnector.prototype
+	 * @returns {boolean} Flag if the method was overwritten
+	 * @private
+	 */
+	function _isMethodOverwritten(sMethodName) {
+		return !!FakeLrepConnector.prototype[sMethodName];
+	}
 
 	/**
 	 * Adapts the existing @see sap.ui.fl.LrepConnector API to the new apply/write.Storage API
@@ -32,14 +46,25 @@ sap.ui.define([
 	 * @param {string} mComponent.name Name of component
 	 * @param {string} [mComponent.appVersion] Current running version of application
 	 * @param {string} [mComponent.appName] Component name of the current application which may differ in case of an app variant
+	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
+	 * @param {string} [mPropertyBag.cacheKey] Pre-calculated cache key of the component
 	 * @returns {Promise} Returns a Promise with the changes response
 	 */
-	CompatibilityConnector.prototype.loadChanges = function(mComponent) {
+	CompatibilityConnector.loadChanges = function(mComponent, mPropertyBag) {
+		mPropertyBag = mPropertyBag || {};
+
+		if (_isMethodOverwritten("loadChanges")) {
+			return FakeLrepConnector.prototype.loadChanges(mComponent, mPropertyBag);
+		}
+
 		return ApplyStorage.loadFlexData({
 			reference: mComponent.name,
 			appVersion: mComponent.appVersion,
-			componentName: mComponent.appName
-			//,cacheKey: "" //read from async hints
+			componentName: mComponent.appName,
+			cacheKey: mPropertyBag.cacheKey,
+			siteId: mPropertyBag.siteId,
+			appDescriptor: mPropertyBag.appDescriptor
 		}).then(function(mFlexData) {
 			return {
 				changes: mFlexData,
@@ -55,7 +80,10 @@ sap.ui.define([
 	 * @see sap.ui.fl.apply._internal.Storage.loadFlexData
 	 * @returns {Promise} Returns a Promise with the settings response
 	 */
-	CompatibilityConnector.prototype.loadSettings = function() {
+	CompatibilityConnector.loadSettings = function() {
+		if (_isMethodOverwritten("loadSettings")) {
+			return FakeLrepConnector.prototype.loadSettings();
+		}
 		return WriteStorage.loadFeatures();
 	};
 
@@ -69,7 +97,11 @@ sap.ui.define([
 	 * @param {boolean} [bIsVariant] Whether the data has file type .variant or not
 	 * @returns {Promise} Resolve if successful, rejects with errors
 	 */
-	CompatibilityConnector.prototype.create = function(vFlexObjects, sChangelist, bIsVariant) {
+	CompatibilityConnector.create = function(vFlexObjects, sChangelist, bIsVariant) {
+		if (_isMethodOverwritten("create")) {
+			return FakeLrepConnector.prototype.create(vFlexObjects, sChangelist, bIsVariant);
+		}
+
 		var aFlexObjects = vFlexObjects;
 		if (!Array.isArray(aFlexObjects)) {
 			aFlexObjects = [vFlexObjects];
@@ -91,11 +123,15 @@ sap.ui.define([
 	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.update = function(oFlexObject, sChangeList) {
+	CompatibilityConnector.update = function(oFlexObject, sChangeList) {
+		if (_isMethodOverwritten("update")) {
+			return FakeLrepConnector.prototype.update(oFlexObject, sChangeList);
+		}
+
 		return WriteStorage.update({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
-			_transport: sChangeList
+			transport: sChangeList
 		});
 	};
 
@@ -109,11 +145,15 @@ sap.ui.define([
 	 * @param {string} [sChangeList] The transport ID which will be handled internally, so there is no need to be passed
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.deleteChange = function(oFlexObject, sChangeList) {
+	CompatibilityConnector.deleteChange = function(oFlexObject, sChangeList) {
+		if (_isMethodOverwritten("deleteChange")) {
+			return FakeLrepConnector.prototype.deleteChange(oFlexObject, sChangeList);
+		}
+
 		return WriteStorage.remove({
 			flexObject: oFlexObject,
 			layer: oFlexObject.layer,
-			_transport: sChangeList
+			transport: sChangeList
 		});
 	};
 
@@ -129,8 +169,12 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.appVersion] Version of the application that is currently running
 	 * @returns {Promise<object>} Promise resolves as soon as the writing was completed
 	 */
-	CompatibilityConnector.prototype.getFlexInfo = function(mParameters) {
-		return WriteStorage.getFlexInfo(mParameters);
+	CompatibilityConnector.getFlexInfo = function(mPropertyBag) {
+		if (_isMethodOverwritten("getFlexInfo")) {
+			return FakeLrepConnector.prototype.getFlexInfo(mPropertyBag);
+		}
+
+		return WriteStorage.getFlexInfo(mPropertyBag);
 	};
 
 	/**
@@ -149,12 +193,17 @@ sap.ui.define([
 	 * @param {string} mParameters.aChangeTypes Change types of the changes which should be reset
 	 * @returns {Promise<object>} Returns the result from the request
 	 */
-	CompatibilityConnector.prototype.resetChanges = function(mParameters) {
+	CompatibilityConnector.resetChanges = function(mParameters) {
+		if (_isMethodOverwritten("resetChanges")) {
+			return FakeLrepConnector.prototype.resetChanges(mParameters);
+		}
+
 		return WriteStorage.reset({
 			reference: mParameters.sReference,
 			layer: mParameters.sLayer,
 			appVersion: mParameters.sAppVersion,
 			generator: mParameters.sGenerator,
+			changelist: mParameters.sChangelist,
 			selectorIds: mParameters.aSelectorIds,
 			changeTypes: mParameters.aChangeTypes
 		});

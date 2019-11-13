@@ -258,23 +258,23 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		 assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
-	QUnit.test("Placeholder should be of type sap.f.Avatar", function (assert) {
+	QUnit.test("Placeholder should be of type sap.m.Avatar", function (assert) {
 		// Act
 		this._oPage.getHeaderTitle().setObjectImageURI("");
 		this._oPage.getHeaderTitle().setShowPlaceholder(true);
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(this._oHeader.getAggregation("_placeholder").isA("sap.f.Avatar"), "Placeholder is of type sap.f.Avatar");
+		assert.ok(this._oHeader.getAggregation("_placeholder").isA("sap.m.Avatar"), "Placeholder is of type sap.m.Avatar");
 	});
 
-	QUnit.test("Icons should be of type sap.f.Avatar", function (assert) {
+	QUnit.test("Icons should be of type sap.m.Avatar", function (assert) {
 		// Act
 		this._oPage.getHeaderTitle().setObjectImageURI("sap-icon://accelerated");
 		Core.applyChanges();
 
 		// Assert
-		assert.ok(this._oHeader.getAggregation("_objectImage").isA("sap.f.Avatar"), "The icon is of type sap.f.Avatar");
+		assert.ok(this._oHeader.getAggregation("_objectImage").isA("sap.m.Avatar"), "The icon is of type sap.m.Avatar");
 	});
 
 	QUnit.module("layout calculation", {

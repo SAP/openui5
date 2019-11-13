@@ -6,11 +6,21 @@
  * Initialization Code and shared classes of library sap.f.
  */
 sap.ui.define(["sap/ui/base/DataType",
+	"sap/m/AvatarShape",
+	"sap/m/AvatarSize",
+	"sap/m/AvatarType",
+	"sap/m/AvatarColor",
+	"sap/m/AvatarImageFitType",
+	"sap/m/library", // library dependency
 	"sap/ui/Global",
 	"sap/ui/core/library",
-	"sap/ui/layout/library", // library dependency
-	"sap/m/library"], // library dependency
-	function(DataType) {
+	"sap/ui/layout/library"], // library dependency
+	function(DataType,
+			 AvatarShape,
+			 AvatarSize,
+			 AvatarType,
+			 AvatarColor,
+			 AvatarImageFitType) {
 
 	"use strict";
 
@@ -308,72 +318,21 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @enum {string}
 	 * @public
 	 * @since 1.46
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarShape} instead.
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AvatarShape = {
-		/**
-		 * Circular shape.
-		 * @public
-		 */
-		Circle: "Circle",
-
-		/**
-		 * Square shape.
-		 * @public
-		 */
-		Square: "Square"
-	};
+	thisLib.AvatarShape = AvatarShape;
 
 	/**
 	 * Predefined sizes for the {@link sap.f.Avatar} control.
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarSize} instead.
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AvatarSize = {
-		/**
-		 * Control size - 2rem
-		 * Font size - 0.75rem
-		 * @public
-		 */
-		XS: "XS",
-
-		/**
-		 * Control size - 3rem
-		 * Font size - 1.125rem
-		 * @public
-		 */
-		S: "S",
-
-		/**
-		 * Control size - 4rem
-		 * Font size - 1.625rem
-		 * @public
-		 */
-		M: "M",
-
-		/**
-		 * Control size - 5rem
-		 * Font size - 2rem
-		 * @public
-		 */
-		L: "L",
-
-		/**
-		 * Control size - 7rem
-		 * Font size - 2.75rem
-		 * @public
-		 */
-		XL: "XL",
-
-		/**
-		 * Custom size
-		 * @public
-		 */
-		Custom: "Custom"
-	};
+	thisLib.AvatarSize = AvatarSize;
 
 	/**
 	 * Interface for controls suitable for the <code>stickySubheaderProvider</code>
@@ -404,26 +363,11 @@ sap.ui.define(["sap/ui/base/DataType",
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarType} instead.
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AvatarType = {
-		/**
-		 * The displayed content is an icon.
-		 * @public
-		 */
-		Icon: "Icon",
-		/**
-		 * The displayed content is an image.
-		 * @public
-		 */
-		Image: "Image",
-		/**
-		 * The displayed content is initials.
-		 * @public
-		 */
-		Initials: "Initials"
-	};
+	thisLib.AvatarType = AvatarType;
 
 	/**
 	 * Possible background color options for the {@link sap.f.Avatar} control.
@@ -438,116 +382,22 @@ sap.ui.define(["sap/ui/base/DataType",
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarColor} instead.
 	 * @since 1.69
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AvatarColor = {
-		/**
-		 * Accent 1
-		 *
-		 * @public
-		 */
-		Accent1: "Accent1",
-		/**
-		 * Accent 2
-		 *
-		 * @public
-		 */
-		Accent2: "Accent2",
-		/**
-		 * Accent 3
-		 *
-		 * @public
-		 */
-		Accent3: "Accent3",
-		/**
-		 * Accent 4
-		 *
-		 * @public
-		 */
-		Accent4: "Accent4",
-		/**
-		 * Accent 5
-		 *
-		 * @public
-		 */
-		Accent5: "Accent5",
-		/**
-		 * Accent 6
-		 *
-		 * @public
-		 */
-		Accent6: "Accent6",
-		/**
-		 * Accent 7
-		 *
-		 * @public
-		 */
-		Accent7: "Accent7",
-		/**
-		 * Accent 8
-		 *
-		 * @public
-		 */
-		Accent8: "Accent8",
-		/**
-		 * Accent 9
-		 *
-		 * @public
-		 */
-		Accent9: "Accent9",
-		/**
-		 * Accent 10
-		 *
-		 * @public
-		 */
-		Accent10: "Accent10",
-		/**
-		 * Random color, chosen from the accent options (Accent1 to Accent10)
-		 *
-		 * @public
-		 */
-		Random: "Random",
-		/**
-		 * Transparent
-		 *
-		 * @public
-		 */
-		Transparent: "Transparent",
-		/**
-		 * Recommended when used as an icon in a tile.
-		 *
-		 * @public
-		 */
-		TileIcon: "TileIcon",
-		/**
-		 * Recommended when used as a placeholder (no image or initials are provided).
-		 *
-		 * @public
-		 */
-		Placeholder: "Placeholder"
-	};
+	thisLib.AvatarColor = AvatarColor;
 
 	/**
 	 * Types of image size and position that determine how an image fits in the {@link sap.f.Avatar} control area.
 	 *
 	 * @enum {string}
 	 * @public
+	 * @deprecated as of version 1.73. Use the {@link sap.m.AvatarImageFitType} instead.
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AvatarImageFitType = {
-		/**
-		 * The image is scaled to be large enough so that the control area is completely covered.
-		 * @public
-		 */
-		Cover: "Cover",
-		/**
-		 * The image is scaled to the largest size so that both its width and height can fit in the control area.
-		 * @public
-		 */
-		Contain: "Contain"
-	};
+	thisLib.AvatarImageFitType = AvatarImageFitType;
 
 	/**
 	 * Interface that should be implemented by all card controls.

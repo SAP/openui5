@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/IconPool",
-	"sap/f/Avatar",
+	"sap/m/Avatar",
 	"sap/m/Image"
 ], function (ManagedObject, IconPool, Avatar, Image) {
 	"use strict";
@@ -67,7 +67,7 @@ sap.ui.define([
 			sObjectImageShape = oHeader.getObjectImageShape(),
 			sObjectImageBackgroundColor = oHeader.getObjectImageBackgroundColor(),
 			bShowPlaceholder = oHeader.getShowPlaceholder() && !oHeader.getObjectImageURI(),
-			bAddIconContainer = oObjectImage.isA("sap.f.Avatar");
+			bAddIconContainer = oObjectImage.isA("sap.m.Avatar");
 
 		if (oHeader.getShowPlaceholder()) {
 			ObjectImageHelper.updateAvatarInstance(oPlaceholder, sObjectImageShape, sObjectImageBackgroundColor);

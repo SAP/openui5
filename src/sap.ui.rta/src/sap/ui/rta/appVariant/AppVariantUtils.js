@@ -512,6 +512,7 @@ function(
 	};
 
 	AppVariantUtils.deleteAppVariant = function(vSelector, sLayer) {
+		BusyIndicator.hide();
 		return AppVariantWriteAPI.deleteAppVariant({
 			selector: vSelector,
 			layer: sLayer

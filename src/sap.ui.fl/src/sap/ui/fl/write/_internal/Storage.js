@@ -45,7 +45,7 @@ sap.ui.define([
 
 	function sendLoadFeaturesToConnector(aConnectors) {
 		var aConnectorPromises = aConnectors.map(function (oConnectorConfig) {
-			return oConnectorConfig.connectorModule.loadFeatures({url: oConnectorConfig.url})
+			return oConnectorConfig.writeConnectorModule.loadFeatures({url: oConnectorConfig.url})
 				.catch(ApplyUtils.logAndResolveDefault.bind(null, {}, oConnectorConfig, "loadFeatures"));
 		});
 
@@ -70,8 +70,8 @@ sap.ui.define([
 		return getConnectorConfigByLayer(mPropertyBag.layer)
 			.then(function (oConnectorConfig) {
 				mPropertyBag.url = oConnectorConfig.url;
-				var oConnector = ObjectPath.get(sActionName, oConnectorConfig.connectorModule);
-				return oConnector.call(oConnectorConfig.connectorModule, mPropertyBag);
+				var oConnector = ObjectPath.get(sActionName, oConnectorConfig.writeConnectorModule);
+				return oConnector.call(oConnectorConfig.writeConnectorModule, mPropertyBag);
 			});
 	}
 

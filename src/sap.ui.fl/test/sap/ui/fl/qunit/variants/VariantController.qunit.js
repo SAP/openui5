@@ -1,7 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/FakeLrepConnector",
+	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Variant",
@@ -11,14 +11,14 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/FlexCustomData",
+	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/m/Text",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	FakeLrepConnector,
+	FakeLrepConnectorLocalStorage,
 	Cache,
 	Change,
 	Variant,
@@ -40,7 +40,7 @@ sap.ui.define([
 
 	sandbox.stub(LayerUtils, "getCurrentLayer").returns("CUSTOMER");
 
-	var oFakeLrepConnector = new FakeLrepConnector("Dummy path");
+	FakeLrepConnectorLocalStorage.enableFakeConnector("Dummy path");
 
 	QUnit.module("Given an instance of FakeLrepConnector", {
 		beforeEach : function(assert) {
@@ -56,15 +56,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function () {
-		QUnit.test("when create change which is variant and send it to LrepConnector", function(assert) {
-			var done = assert.async();
-			oFakeLrepConnector.create(this.oResponse, "testChangeList", true).then(function(result) {
-				assert.deepEqual(result.response, this.oResponse, "then an exact payload was returned.");
-				assert.equal(result.status, 'success', "successfully.");
-				done();
-			}.bind(this));
-		});
-
 		QUnit.test("when calling 'updateCurrentVariantInMap'  of the VariantController", function(assert) {
 			var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
 			oVariantController.updateCurrentVariantInMap("idMain1--variantManagementOrdersTable", "variant2");

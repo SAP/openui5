@@ -5,14 +5,14 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	Settings,
 	Cache,
 	Utils,
-	LrepConnector,
+	CompatibilityConnector,
 	sinon
 ) {
 	"use strict";
@@ -107,19 +107,13 @@ sap.ui.define([
 				isAtoAvailable: true
 			};
 
-			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
-				loadSettings : function() {
-					return Promise.resolve(oSetting);
-				}
-			});
+			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(oSetting);
 			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").returns(undefined);
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
-				assert.equal(oStubCreateConnector.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
 				assert.equal(oSettings.isModelS(), true);
 				Settings.getInstance().then(function(oSettings2) {
-					assert.equal(oStubCreateConnector.callCount, 1);
 					assert.equal(oSettings, oSettings2);
 				});
 			});
@@ -130,19 +124,13 @@ sap.ui.define([
 				isKeyUser: true,
 				isAtoAvailable: true
 			};
-			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
-				loadSettings : function() {
-					return Promise.resolve(oSetting);
-				}
-			});
+			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(oSetting);
 			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").rejects();
 			return Settings.getInstance().then(function(oSettings) {
 				assert.equal(oStubGetFlexDataPromise.callCount, 1);
-				assert.equal(oStubCreateConnector.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
 				assert.equal(oSettings.isModelS(), true);
 				Settings.getInstance().then(function(oSettings2) {
-					assert.equal(oStubCreateConnector.callCount, 1);
 					assert.equal(oSettings, oSettings2);
 				});
 			});
@@ -185,43 +173,14 @@ sap.ui.define([
 				isKeyUser: true,
 				isAtoAvailable: true
 			};
-			var oStubCreateConnector = sandbox.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
-				loadSettings : function() {
-					return Promise.resolve(oSetting);
-				}
-			});
+			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(oSetting);
 			var oSettings0 = Settings.getInstanceOrUndef();
 			assert.ok(!oSettings0);
 			return Settings.getInstance().then(function(oSettings1) {
 				assert.ok(oSettings1);
-				assert.equal(oStubCreateConnector.callCount, 1);
 				var oSettings2 = Settings.getInstanceOrUndef();
 				assert.equal(oSettings1, oSettings2);
-				assert.equal(oStubCreateConnector.callCount, 1);
 			});
-		});
-	});
-
-	QUnit.module("Given that Settings file is loaded", {
-		afterEach: function() {
-			delete Settings._instance;
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("and the system is a trial system", function(assert) {
-			assert.notOk(Settings.getInstanceOrUndef(), "initially the instance is undefined");
-
-			// call initialize function again to initialize with trial
-			sandbox.stub(Utils, "isTrialSystem").returns(true);
-			Settings._initInstance();
-
-			var oSettings = Settings.getInstanceOrUndef();
-			assert.ok(oSettings, "the settings instance is available");
-			assert.equal(oSettings.isKeyUser(), true);
-			assert.equal(oSettings.isAtoAvailable(), false);
-			assert.equal(oSettings.isAtoEnabled(), false);
-			assert.equal(oSettings.isProductiveSystem(), false);
-			assert.equal(oSettings.isVariantSharingEnabled(), false);
 		});
 	});
 
@@ -232,10 +191,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("a default response is resolving the request", function(assert) {
-			var oLrepConnector = new LrepConnector();
-			sandbox.stub(oLrepConnector, "loadSettings").resolves();
-			sandbox.stub(LrepConnector, "createConnector").returns(oLrepConnector);
-
+			sandbox.stub(CompatibilityConnector, "loadSettings").resolves();
 			return Settings.getInstance().then(function (oSettings) {
 				assert.ok(oSettings, "the settings instance is available");
 				assert.equal(oSettings.isKeyUser(), false);

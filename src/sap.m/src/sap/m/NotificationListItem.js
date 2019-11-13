@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/Icon',
 	'sap/ui/core/ResizeHandler',
 	'sap/m/Link',
+	'sap/m/Avatar',
 	"sap/ui/events/KeyCodes",
 	'./NotificationListItemRenderer'
 ],
@@ -25,6 +26,7 @@ function(
 	Icon,
 	ResizeHandler,
 	Link,
+	Avatar,
 	KeyCodes,
 	NotificationListItemRenderer
 	) {
@@ -40,6 +42,12 @@ function(
 	// anything better?
 	var maxTruncationHeight = 44;
 
+	// shortcut for sap.m.AvatarSize
+	var AvatarSize = library.AvatarSize;
+
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = library.AvatarColor;
+
 	/**
 	 * Constructor for a new NotificationListItem.
 	 *
@@ -47,7 +55,7 @@ function(
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListItem control shows notifications to the user.
+	 * The NotificationListItem control shows notification to the user.
 	 * <h4>Structure</h4>
 	 * The notification item holds properties for the following elements:
 	 * <ul>
@@ -75,6 +83,11 @@ function(
 				 * Determines the description of the NotificationListItem.
 				 */
 				description: {type: 'string', group: 'Appearance', defaultValue: ''},
+
+				/**
+				 * Defines the displayed author initials.
+				 */
+				authorInitials: {type: "string", group: "Data", defaultValue: null},
 
 				/**
 				 * Determines if the text in the title and the description of the notification are truncated to the first two lines.
@@ -106,6 +119,17 @@ function(
 		this.setType('Active');
 	};
 
+	NotificationListItem.prototype._getAuthorAvatar = function() {
+		var avatar = new Avatar({
+			initials: this.getAuthorInitials(),
+			src: this.getAuthorPicture(),
+			backgroundColor: AvatarColor.Random,
+			displaySize: AvatarSize.XS
+		});
+
+		return avatar;
+	};
+
 	NotificationListItem.prototype.onBeforeRendering = function() {
 		NotificationListBase.prototype.onBeforeRendering.call(this);
 
@@ -122,8 +146,35 @@ function(
 		}
 
 		this._updateShowMoreButtonVisibility();
+
 		if (this.getDomRef()) {
 			this._resizeListenerId = ResizeHandler.register(this.getDomRef(),  this._onResize.bind(this));
+		}
+	};
+
+	/**
+	 * Handles the <code>focusin</code> event.
+	 *
+	 * @param {jQuery.Event} event The event object.
+	 */
+	NotificationListItem.prototype.onfocusin = function (event) {
+		NotificationListBase.prototype.onfocusin.apply(this, arguments);
+
+		if (!Device.browser.msie) {
+			return;
+		}
+
+		// in IE the elements inside can get the focus (IE issue)
+		// https://stackoverflow.com/questions/18259754/ie-click-on-child-does-not-focus-parent-parent-has-tabindex-0
+		// in that case just focus the whole item
+		var target = event.target;
+
+		if (target !== this.getDomRef() &&
+			!target.classList.contains('sapMBtn') &&
+			!target.classList.contains('sapMLnk')) {
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			this.focus();
 		}
 	};
 

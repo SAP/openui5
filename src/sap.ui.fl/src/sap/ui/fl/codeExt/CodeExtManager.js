@@ -4,9 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/LrepConnector",
+	"sap/ui/fl/write/_internal/CompatibilityConnector",
 	"sap/ui/fl/Change"
 ], function(
 	LrepConnector,
+	CompatibilityConnector,
 	Change
 ) {
 	"use strict";
@@ -85,7 +87,7 @@ sap.ui.define([
 				aPreparedChanges.push(Change.createInitialFileContent(oChange));
 			});
 
-			return this._oLrepConnector.create(aPreparedChanges, mOptions.transportId);
+			return CompatibilityConnector.create(aPreparedChanges, mOptions.transportId);
 		},
 
 		/**

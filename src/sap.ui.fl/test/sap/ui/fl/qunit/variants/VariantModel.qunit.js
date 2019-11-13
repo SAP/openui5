@@ -642,35 +642,51 @@ function(
 		});
 
 		QUnit.test("when calling 'updateCurrentVariant' twice without waiting for the first one to be failed and finished", function(assert) {
-			assert.expect(10);
+			assert.expect(15);
+			var sVMReference = "variantMgmtId1";
 			sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
-			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
-			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
+			assert.equal(this.oModel.oData[sVMReference].currentVariant, "variant1", "then initially current variant is variant1");
+			assert.equal(this.oModel.oData[sVMReference].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 			Reverter.revertMultipleChanges.restore();
+
+			var fnRejectionStub = sandbox.stub();
+
+			// revert stubs - called during the start of an update call
 			var oRevertChangesStub = sandbox.stub(Reverter, "revertMultipleChanges")
-			.onCall(0).returns(new Promise(function(resolve, reject) {
-				setTimeout(function() {
-					reject();
-				}, 0);
-			}))
-			.onCall(1).resolves();
-			this.oModel.updateCurrentVariant("variantMgmtId1", "variant2", this.oModel.oAppComponent)
+				.onCall(0).callsFake(function () {
+					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, true, "then 'variantBusy' property was set before the first update call");
+					return new Promise(function(resolve, reject) {
+						fnRejectionStub.callsFake(reject);
+						setTimeout(fnRejectionStub, 0);
+					});
+				}.bind(this))
+				.onCall(1).callsFake(function() {
+					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, true, "then 'variantBusy' property was set before the second update call");
+					return Promise.resolve();
+				}.bind(this));
+
+			// first call
+			this.oModel.updateCurrentVariant(sVMReference, "variant2", this.oModel.oAppComponent)
 				.catch(function() {
+					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property was unset after the first update call was rejected");
 					assert.ok(true, "then the first promise was rejected");
-				});
-			return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0", this.oModel.oAppComponent)
-			.then(this.oModel._oVariantSwitchPromise)
-			.then(function() {
-				assert.ok(true, "the internal promise '_oVariantSwitchPromise' is resolved");
-				assert.equal(this.fnLoadSwitchChangesStub.callCount, 2, "then loadSwitchChangesMapForComponent called twice from ChangePersitence");
-				assert.equal(oRevertChangesStub.callCount, 2, "then revertChrevertMultipleChangesangesOnControl called twice in FlexController");
-				assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then oSetVariantSwitchPromiseStub called twice in FlexController");
-				assert.equal(this.fnApplyChangesStub.callCount, 1, "then applyVariantChanges called only for the first call");
-				assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
-				assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
-			}.bind(this));
+				}.bind(this));
+
+			// second call
+			return this.oModel.updateCurrentVariant(sVMReference, "variant0", this.oModel.oAppComponent)
+				.then(function () {
+					assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property was unset after the second update call was resolved");
+					assert.ok(fnRejectionStub.calledOnce, "then the first promise was rejected");
+					assert.ok(true, "the internal promise '_oVariantSwitchPromise' is resolved");
+					assert.equal(this.fnLoadSwitchChangesStub.callCount, 2, "then loadSwitchChangesMapForComponent called twice from ChangePersitence");
+					assert.equal(oRevertChangesStub.callCount, 2, "then Reverter.revertMultipleChanges() was called twice");
+					assert.equal(oSetVariantSwitchPromiseStub.callCount, 2, "then oSetVariantSwitchPromiseStub called twice in FlexController");
+					assert.equal(this.fnApplyChangesStub.callCount, 1, "then applyVariantChanges called only for the first call");
+					assert.equal(this.oModel.oData[sVMReference].currentVariant, "variant0", "then current variant updated to variant0");
+					assert.equal(this.oModel.oData[sVMReference].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
+				}.bind(this));
 		});
 
 		QUnit.test("when calling '_duplicateVariant' on the same layer", function(assert) {
@@ -1691,21 +1707,27 @@ function(
 			});
 		});
 
-		QUnit.test("when 'save' event is triggered from a variant management control for a new varint, with another update variant call being triggered in parallel", function(assert) {
+		QUnit.test("when 'save' event is triggered from a variant management control for a new variant, with another update variant call being triggered in parallel", function(assert) {
 			var done = assert.async();
-			assert.expect(1);
+			assert.expect(4);
 			var sVMReference = "localId";
 
 			this.oVariantManagement.setModel(this.oModel, Utils.VARIANT_MODEL_NAME);
 
 			Reverter.revertMultipleChanges.onFirstCall().callsFake(function() {
+				assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, true, "then 'variantBusy' property is set");
 				// make second update call to set variant model busy, when the first call is still in process
-				this.oModel.updateCurrentVariant(sVMReference, sVMReference).then(done);
+				this.oModel.updateCurrentVariant(sVMReference, sVMReference)
+					.then(function() {
+						assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, false, "then 'variantBusy' property is unset");
+						done();
+					}.bind(this));
 				return Promise.resolve();
 			}.bind(this));
 
 
 			Reverter.revertMultipleChanges.onSecondCall().callsFake(function() {
+				assert.strictEqual(this.oModel.oData[sVMReference].variantBusy, true, "then 'variantBusy' property is set");
 				// on second call check if the first call was completed successfully
 				assert.ok(this.oFlexController.saveSequenceOfDirtyChanges.getCall(0).args[0][0].getTitle(), "variant created title", "then a variant change was saved before the second update call was executed");
 				return Promise.resolve();

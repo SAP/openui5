@@ -32,10 +32,11 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			closeButton = control._getCloseButton(),
 			isCollapsed = control.getCollapsed(),
 			priority = control.getPriority(),
-			bShowCounter = control.getShowCounter(),
+			bShowItemsCounter = control.getShowItemsCounter(),
 			isUnread = control.getUnread(),
 			priorityClass = '',
-			visibleItemsCount = control._getVisibleItemsCount();
+			visibleItemsCount = control._getVisibleItemsCount(),
+			maxNumberMsg;
 
 		rm.write('<li');
 		rm.writeControlData(control);
@@ -99,7 +100,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.writeEscaped(control.getTitle());
 		rm.write('</div>');
 
-		if (bShowCounter) {
+		if (bShowItemsCounter) {
 			rm.write('<div class="sapMNLGroupCount">(' + visibleItemsCount + ')</div>');
 		}
 
@@ -107,7 +108,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.write('<div class="sapMNLGroupHeaderSpacer"></div>');
 
 		// actions
-		if (control.getShowButtons() && !isCollapsed && visibleItemsCount !== 0) {
+		if (control.getShowButtons() && !isCollapsed) {
 			rm.write('<div class="sapMNLIItem sapMNLIActions">');
 		} else {
 			rm.write('<div class="sapMNLIItem sapMNLIActions" style= "display:none">');
@@ -133,6 +134,21 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		control.getItems().forEach(function (item) {
 			rm.renderControl(item);
 		});
+
+		if (control._isMaxNumberReached()) {
+			maxNumberMsg = control._getMaxNumberReachedMsg();
+			rm.write('<div class="sapMNLGroupMaxNotifications">');
+
+			rm.write('<div  class="sapMNLGroupMNTitle">');
+			rm.write(maxNumberMsg.title);
+			rm.write('</div>');
+
+			rm.write('<div class="sapMNLGroupMNDescription">');
+			rm.write(maxNumberMsg.description);
+			rm.write('</div>');
+
+			rm.write('</div>');
+		}
 
 		rm.write('</ul>');
 

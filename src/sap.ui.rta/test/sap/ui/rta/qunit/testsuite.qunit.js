@@ -40,6 +40,9 @@ sap.ui.define([
 				group: 'Service',
 				coverage: {
 					only: ["sap/ui/rta/service/Action"]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "LocalStorageConnector"}]'
 				}
 			},
 			"service/ControllerExtension": {
@@ -513,7 +516,8 @@ sap.ui.define([
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					},
 					qunit: {
 						reorder: false
@@ -572,6 +576,7 @@ sap.ui.define([
 						only: ["sap/ui/rta/RuntimeAuthoring"]
 					},
 					ui5: {
+						flexibilityServices: '[{"connector": "LocalStorageConnector"}]',
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",

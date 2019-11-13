@@ -1,0 +1,31 @@
+/* ============================= */
+/* CSS for control sap.m/Avatar  */
+/* High Contrast White theme     */
+/* ============================= */
+
+.sapFAvatarBorder > .sapFAvatarImageHolder {
+	box-shadow: 0 0 0 0.0625rem @sapUiContentShadowColor inset;
+}
+
+.sapFAvatarImageContain,
+.sapFAvatarIcon,
+.sapFAvatarInitials {
+	border: 0.125rem solid @sapUiFieldBorderColor;
+	box-sizing: border-box;
+}
+
+.sapFAvatarIcon,
+.sapFAvatarInitialsHolder {
+	color: @sapUiContentForegroundColor;
+}
+
+.sapFAvatarColorPlaceholder {
+	&.sapFAvatarIcon,
+	&>.sapFAvatarInitialsHolder {
+		color: @sapUiContentIconColor;
+	}
+}
+
+.sapFAvatarFocusable:focus {
+	outline-width: 0.125rem;
+}

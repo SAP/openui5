@@ -6,11 +6,12 @@
 sap.ui.define([
     "sap/ui/thirdparty/jquery",
     "sap/ui/documentation/sdk/controller/BaseController",
-    "sap/ui/documentation/sdk/controller/util/SearchUtil",
+	"sap/ui/documentation/sdk/controller/util/SearchUtil",
+	"sap/ui/documentation/sdk/controller/util/Highlighter",
     "sap/ui/model/json/JSONModel",
     "sap/m/GroupHeaderListItem",
     "sap/base/Log"
-], function(jQuery, BaseController, SearchUtil, JSONModel, GroupHeaderListItem, Log) {
+], function(jQuery, BaseController, SearchUtil, Highlighter, JSONModel, GroupHeaderListItem, Log) {
 		"use strict";
 
 		var APIREF_URL_PATHS = {
@@ -52,6 +53,22 @@ sap.ui.define([
 				this.getModel().setData(this.dataObject);
 			},
 
+			onAfterRendering: function () {
+				var oConfig = {
+					useExternalStyles: false,
+					shouldBeObserved: true,
+					isCaseSensitive: false
+				};
+
+				if (!this.highlighter) {
+					this.highlighter = new Highlighter(this.getView().getDomRef(), oConfig);
+				}
+			},
+
+			onExit: function () {
+				this.highlighter.destroy();
+			},
+
 			/* =========================================================== */
 			/* begin: internal methods									 */
 			/* =========================================================== */
@@ -78,12 +95,12 @@ sap.ui.define([
 
 				oList.setBusy(true);
 				SearchUtil.search(sQuery).then(function(result) {
-					this.processResult(result);
+					this.processResult(result, sQuery);
 					oList.setBusy(false);
 				}.bind(this));
 			},
 
-			processResult : function (oData) {
+			processResult : function (oData, sQuery) {
 				this.dataObject.data = [];
 				this.dataObject.dataAPI = [];
 				this.dataObject.dataDoc = [];
@@ -170,6 +187,7 @@ sap.ui.define([
 					jQuery(".sapUiRrNoData").html("Search failed, please retry ...");
 				}
 				this._modelRefresh();
+				this.highlighter.highlight(sQuery);
 			},
 
 			_formatApiRefURL: function(oMatch) {

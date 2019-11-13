@@ -1,21 +1,27 @@
 /*global QUnit, sinon */
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
+	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"jquery.sap.global",
 	"sap/m/library",
 	"sap/m/SuggestionsPopover",
 	'sap/m/List',
-	"sap/m/Input"
+	"sap/m/Input",
+	"sap/m/ComboBox",
+	"sap/ui/thirdparty/sinon"
 ], function (
+	Device,
 	qutils,
 	createAndAppendDiv,
 	jQuery,
 	mobileLibrary,
 	SuggestionsPopover,
 	List,
-	Input
+	Input,
+	ComboBox,
+	sinon
 ) {
 	"use strict";
 
@@ -313,5 +319,36 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(this.oSuggestionsPopover._bHasTabularSuggestions, false, "The value is updated correctly");
 		assert.ok(this.oSuggestionsPopover._oList instanceof List, "The suggestions type is ListItem");
+	});
+
+	QUnit.module("mobile");
+
+	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", function (assert) {
+		var oComboBox, oSuggestionsPopover, oRegisterAutocompleteStub;
+
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		oComboBox = new ComboBox();
+
+		oSuggestionsPopover = new SuggestionsPopover(oComboBox);
+		oSuggestionsPopover._bUseDialog = true;
+
+		oRegisterAutocompleteStub = sinon.stub(oSuggestionsPopover, "_registerAutocomplete", function () {});
+
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oSuggestionsPopover._createSuggestionPopup({});
+
+		//Assert
+		assert.ok(oSuggestionsPopover._oPopover.hasStyleClass("sapUiNoContentPadding"), "The sapUiNoContentPadding class is added");
+
+		// cleanup
+		oRegisterAutocompleteStub.restore();
 	});
 });

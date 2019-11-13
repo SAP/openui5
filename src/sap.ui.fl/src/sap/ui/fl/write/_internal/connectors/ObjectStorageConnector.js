@@ -55,9 +55,7 @@ sap.ui.define([
 			var aPromises = mPropertyBag.flexObjects.map(function(oFlexObject) {
 				var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
 				var vFlexObject = this.oStorage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
-				var vSetResponse = this.oStorage.setItem(sKey, vFlexObject);
-				// ensure a Promise
-				return Promise.resolve(vSetResponse);
+				return this.oStorage.setItem(sKey, vFlexObject);
 			}.bind(this));
 
 			return Promise.all(aPromises).then(function () {
@@ -107,7 +105,10 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		loadFeatures: function() {
-			return Promise.resolve({});
+			return Promise.resolve({
+				isKeyUser: true,
+				isVariantSharingEnabled: true
+			});
 		},
 
 		/**
@@ -124,4 +125,4 @@ sap.ui.define([
 	});
 
 	return ObjectStorageConnector;
-}, true);
+});

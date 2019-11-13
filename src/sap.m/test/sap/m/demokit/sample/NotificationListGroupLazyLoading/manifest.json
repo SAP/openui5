@@ -16,12 +16,20 @@
 				"sap.ui.layout": {}
 			}
 		},
+		"resources": {
+			"css": [
+				{
+					"uri": "styles.css"
+				}
+			]
+		},
 		"config": {
 			"sample": {
 				"files": [
 					"V.view.xml",
 					"C.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"styles.css"
 				]
 			}
 		}

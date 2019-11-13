@@ -19,6 +19,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/defineLazyProperty",
 	"sap/base/security/encodeCSS",
+	"./AvatarShape",
+	"./AvatarSize",
+	"./AvatarType",
+	"./AvatarColor",
+	"./AvatarImageFitType",
 	// referenced here to enable the Support feature
 	'./Support'
 ],
@@ -34,7 +39,12 @@ sap.ui.define([
 	assert,
 	Log,
 	defineLazyProperty,
-	encodeCSS
+	encodeCSS,
+	AvatarShape,
+	AvatarSize,
+	AvatarType,
+	AvatarColor,
+	AvatarImageFitType
 ) {
 
 	"use strict";
@@ -47,6 +57,11 @@ sap.ui.define([
 		dependencies : ["sap.ui.core"],
 		designtime: "sap/m/designtime/library.designtime",
 		types: [
+			"sap.m.AvatarImageFitType",
+			"sap.m.AvatarShape",
+			"sap.m.AvatarSize",
+			"sap.m.AvatarType",
+			"sap.m.AvatarColor",
 			"sap.m.BackgroundDesign",
 			"sap.m.BarDesign",
 			"sap.m.BreadcrumbsSeparatorStyle",
@@ -148,6 +163,7 @@ sap.ui.define([
 			"sap.m.ActionSelect",
 			"sap.m.ActionSheet",
 			"sap.m.App",
+			"sap.m.Avatar",
 			"sap.m.Bar",
 			"sap.m.BusyDialog",
 			"sap.m.BusyIndicator",
@@ -3845,7 +3861,14 @@ sap.ui.define([
 
 	};
 
-	//lazy imports for MessageToast
+	thisLib.AvatarShape = AvatarShape;
+	thisLib.AvatarSize = AvatarSize;
+	thisLib.AvatarType = AvatarType;
+	thisLib.AvatarColor = AvatarColor;
+	thisLib.AvatarImageFitType = AvatarImageFitType;
+
+
+		//lazy imports for MessageToast
 	sap.ui.lazyRequire("sap.m.MessageToast", "show");
 
 	// requires for routing

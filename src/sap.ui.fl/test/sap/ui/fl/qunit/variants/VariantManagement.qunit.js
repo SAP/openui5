@@ -327,6 +327,33 @@ sap.ui.define([
 			assert.ok(!this.oVariantManagement.oVariantSelectionPage.getShowFooter());
 		});
 
+
+		QUnit.test("Check 'variantBusy'", function(assert) {
+			var oInput = new Input();
+
+			this.oVariantManagement.addAssociation("for", oInput);
+
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+			this.oVariantManagement._openVariantList();
+
+			assert.ok(!oInput.getBusy());
+
+			var oData = this.oVariantManagement.getBindingContext(flUtils.VARIANT_MODEL_NAME).getObject();
+			oData.variantBusy = !oData.variantBusy;
+
+			oModel.checkUpdate(true);
+
+			assert.ok(oInput.getBusy());
+
+			oData.variantBusy = !oData.variantBusy;
+			oModel.checkUpdate(true);
+
+			assert.ok(!oInput.getBusy());
+
+
+			oInput.destroy();
+		});
+
 		QUnit.test("Check 'editable'", function(assert) {
 			assert.ok(this.oVariantManagement.getEditable());
 

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/fl/apply/_internal/Storage",
 	"sap/ui/fl/XmlPreprocessorImpl",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/layout/changeHandler/AddSimpleFormGroup",
@@ -16,6 +17,7 @@ function(
 	jQuery,
 	XmlTreeModifier,
 	Component,
+	Storage,
 	XmlPreprocessorImpl,
 	CacheManager,
 	AddSimpleFormGroup,
@@ -32,52 +34,50 @@ function(
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
 		beforeEach: function() {
-			sandbox.stub(sap.ui.fl.LrepConnector.prototype, "loadChanges").resolves({
-				changes: {
-					changes : [{
-						fileName: "id_1504610195273_78_addSimpleFormGroup",
-						fileType: "change",
-						changeType: "addSimpleFormGroup",
-						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
-						packageName: "$TMP",
-						content: {
-							group: {
-								selector: {
-									id: sAddedSimpleFormGroupId,
-									idIsLocal: true
-								},
-								relativeIndex: 1
-							}
-						},
-						selector: {
-							id: "rootView--myForm",
-							idIsLocal: true
-						},
-						layer: "CUSTOMER",
-						texts: {
-							groupLabel: {
-								value: "New Group",
-								type: "XFLD"
-							}
-						},
-						namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
-						creation: "2017-09-05T11:16:46.701Z",
-						originalLanguage: "EN",
-						conditions: {},
-						context: "",
-						support: {
-							generator: "Change.createInitialFileContent",
-							service: "",
-							user: "",
-							sapui5Version: sap.ui.version
-						},
-						dependentSelector: {},
-						validAppVersions: {
-							creation: "${project.version}",
-							from: "${project.version}"
+			sandbox.stub(Storage, "loadFlexData").resolves({
+				changes : [{
+					fileName: "id_1504610195273_78_addSimpleFormGroup",
+					fileType: "change",
+					changeType: "addSimpleFormGroup",
+					reference: "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
+					packageName: "$TMP",
+					content: {
+						group: {
+							selector: {
+								id: sAddedSimpleFormGroupId,
+								idIsLocal: true
+							},
+							relativeIndex: 1
 						}
-					}]
-				},
+					},
+					selector: {
+						id: "rootView--myForm",
+						idIsLocal: true
+					},
+					layer: "CUSTOMER",
+					texts: {
+						groupLabel: {
+							value: "New Group",
+							type: "XFLD"
+						}
+					},
+					namespace: "apps/sap.ui.demoapps.rta.freestyle/changes/",
+					creation: "2017-09-05T11:16:46.701Z",
+					originalLanguage: "EN",
+					conditions: {},
+					context: "",
+					support: {
+						generator: "Change.createInitialFileContent",
+						service: "",
+						user: "",
+						sapui5Version: sap.ui.version
+					},
+					dependentSelector: {},
+					validAppVersions: {
+						creation: "${project.version}",
+						from: "${project.version}"
+					}
+				}],
 				contexts: [],
 				variantSection: {},
 				settings: {
@@ -97,9 +97,8 @@ function(
 		}
 	}, function() {
 		QUnit.test("applies the change after the recreation of the changed control", function(assert) {
-			var that = this;
-			var oXmlPrepossessSpy = sinon.spy(XmlPreprocessorImpl, "process");
-			var oAddGroupChangeHandlerSpy = sinon.spy(AddSimpleFormGroup, "applyChange");
+			var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
+			var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 			sandbox.stub(Utils, "isApplication").returns(true);
 
 			return sap.ui.component({
@@ -114,13 +113,13 @@ function(
 					async : true
 				}
 			}).then(function(oComponent) {
-				that.oComponent = oComponent;
+				this.oComponent = oComponent;
 				return oComponent.getRootControl().loaded();
-			}).then(function(oView) {
+			}.bind(this)).then(function(oView) {
 				assert.ok(oView);
-				assert.ok(oXmlPrepossessSpy.calledOnce, "the xml processing was called once for the view");
+				assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml processing was called once for the view");
 
-				assert.ok(oAddGroupChangeHandlerSpy.calledOnce, "the change handler was called only once");
+				assert.equal(oAddGroupChangeHandlerSpy.callCount, 1, "the change handler was called only once");
 				var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
 				assert.equal(XmlTreeModifier, oPassedModifier, "the call was done with the xml tree modifier");
 				oXmlPrepossessSpy.restore();

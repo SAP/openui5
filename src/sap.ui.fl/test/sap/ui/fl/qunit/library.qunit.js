@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/Configuration",
 	"sap/ui/fl/RegistrationDelegator"
 ], function(
 	sinon,
 	jQuery,
+	Configuration,
 	RegistrationDelegator
 ) {
 	"use strict";
@@ -21,13 +23,16 @@ sap.ui.define([
 		QUnit.test("triggers all its registrations", function (assert) {
 			var oRegisterAllStub = sandbox.stub(RegistrationDelegator, "registerAll");
 
-			var fnDone = assert.async();
-			sap.ui.require(["sap/ui/fl/library"], function() {
-				assert.ok(oRegisterAllStub.calledOnce, "the registration is done");
-				fnDone();
+			return new Promise(function(resolve) {
+				sap.ui.require(["sap/ui/fl/library"], function() {
+					assert.equal(oRegisterAllStub.callCount, 1, "the registration is done");
+					resolve();
+				});
 			});
 		});
 	});
+
+
 
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();

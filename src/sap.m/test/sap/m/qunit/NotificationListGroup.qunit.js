@@ -75,7 +75,7 @@ sap.ui.define([
 
 		assert.strictEqual($item.find('.sapMNLGroupCollapseButton button').attr('title'), 'Collapse Group', 'collapse button is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), 'Close', 'close button is rendered');
+		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), 'Close all', 'close button is rendered');
 		assert.ok(this.notificationListGroup.$('overflowToolbar'), 'overflow toolbar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLGroupChildren li').length, 2, 'group has 2 items');

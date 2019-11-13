@@ -37,7 +37,7 @@ sap.ui.define([
 				assert.equal(aConnectors.length, 2, "two connectors are loaded");
 				assert.equal(aConnectors[0].connector, "StaticFileConnector", "the StaticFileConnector is the first connector");
 				assert.equal(aConnectors[1].applyConnector, "my/lib/apply/BrokenConnector", "the BrokenConnector is the second connector");
-				assert.equal(aConnectors[1].connectorModule.testApplyCheckProperty, true, "the test property identifying the BrokenConnector is present");
+				assert.equal(aConnectors[1].applyConnectorModule.testApplyCheckProperty, true, "the test property identifying the BrokenConnector is present");
 			});
 		});
 
@@ -45,7 +45,7 @@ sap.ui.define([
 			return WriteUtils.getWriteConnectors().then(function (aConnectors) {
 				assert.equal(aConnectors.length, 1, "one connector is loaded");
 				assert.equal(aConnectors[0].writeConnector, "my/lib/write/BrokenConnector", "the BrokenConnector is the connector");
-				assert.equal(aConnectors[0].connectorModule.testWriteCheckProperty, true, "the test property identifying the BrokenConnector is present");
+				assert.equal(aConnectors[0].writeConnectorModule.testWriteCheckProperty, true, "the test property identifying the BrokenConnector is present");
 			});
 		});
 

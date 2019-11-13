@@ -102,7 +102,11 @@ sap.ui.define([
 								mConnectors[iIndex].layers = _filterValidLayers(mConnectors[iIndex].layers, oConnector.layers);
 							}
 						}
-						mConnectors[iIndex].connectorModule = oConnector;
+						if (bLoadApplyConnectors) {
+							mConnectors[iIndex].applyConnectorModule = oConnector;
+						} else {
+							mConnectors[iIndex].writeConnectorModule = oConnector;
+						}
 					});
 
 					resolve(mConnectors);
@@ -191,6 +195,8 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.payload] Payload of the request
 		 * @param {string} [mPropertyBag.contentType] Content type of the request
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
+		 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to actual component
+		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
 		sendRequest: function (sUrl, sMethod, mPropertyBag) {
@@ -208,6 +214,12 @@ sap.ui.define([
 				}
 				if (mPropertyBag && mPropertyBag.contentType) {
 					xhr.setRequestHeader("Content-Type", mPropertyBag.contentType);
+				}
+				if (mPropertyBag && mPropertyBag.siteId) {
+					xhr.setRequestHeader("X-LRep-Site-Id", mPropertyBag.siteId);
+				}
+				if (mPropertyBag && mPropertyBag.sAppDescriptorId) {
+					xhr.setRequestHeader("X-LRep-AppDescriptor-Id", mPropertyBag.sAppDescriptorId);
 				}
 				if (mPropertyBag && mPropertyBag.dataType) {
 					xhr.responseType = mPropertyBag.dataType;
@@ -250,7 +262,8 @@ sap.ui.define([
 				variants: [],
 				variantChanges: [],
 				variantDependentControlChanges: [],
-				variantManagementChanges: []
+				variantManagementChanges: [],
+				ui2personalization: {}
 			});
 		},
 
@@ -279,7 +292,7 @@ sap.ui.define([
 					mGroupedFlexObjects[sLayer].variantChanges.push(oFlexObject);
 				} else if (oFlexObject.fileType === "ctrl_variant_management_change") {
 					mGroupedFlexObjects[sLayer].variantManagementChanges.push(oFlexObject);
-				} else if (oFlexObject.fileType === "change") {
+				} else if (oFlexObject.fileType === "change" || oFlexObject.fileType === "variant") {
 					if (oFlexObject.variantReference) {
 						mGroupedFlexObjects[sLayer].variantDependentControlChanges.push(oFlexObject);
 					} else {

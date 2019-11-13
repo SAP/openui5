@@ -63,6 +63,24 @@ function (
 			"SemanticPage showFooter set to false and retrieved successfully.");
 	});
 
+	QUnit.test("test SemanticPage fitContent setter and getter", function (assert) {
+		// Assert default
+		assert.equal(this.oSemanticPage.getFitContent(), false,
+			"SemanticPage fitContent is false by default.");
+
+		assert.equal(this.oSemanticPage._getPage().getFitContent(), false,
+			"DynamicPage fitContent is false by default.");
+
+		// Act
+		this.oSemanticPage.setFitContent(true);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getFitContent(), true,
+			"SemanticPage fitContent is successfully set to true.");
+
+		assert.equal(this.oSemanticPage._getPage().getFitContent(), true,
+			"DynamicPage fitContent is successfully set to true.");
+	});
 
 	QUnit.test("test SemanticPage headerExpanded setter and getter", function (assert) {
 		// Assert default
@@ -1063,4 +1081,5 @@ function (
 		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticAddType), false,
 			sSemanticAddType + " should not be preprocessed");
 	});
+
 });

@@ -31,7 +31,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		var truncate = control.getTruncate(),
 			authorName = control.getAuthorName(),
 			datetime = control.getDatetime(),
-			authorImage = control._getAuthorImage(),
+			authorAvatar = control._getAuthorAvatar(),
 			priority = control.getPriority(),
 			isUnread = control.getUnread(),
 			priorityClass = '';
@@ -57,11 +57,13 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		rm.write('>');
 
-		// image
+		// Processing Message
+		rm.renderControl(control.getProcessingMessage());
+		rm.write('<div class="sapMNLIMain">');
+
+		// avatar
 		rm.write('<div class="sapMNLIImage">');
-		if (authorImage) {
-			rm.renderControl(authorImage);
-		}
+		rm.renderControl(authorAvatar);
 		rm.write('</div>');
 
 		// content
@@ -143,7 +145,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		// content - footer - show more
 		if (!control.getHideShowMoreButton()) {
-		    //aria-hidden stop show more button to read out the whole notification
+			//aria-hidden stop show more button to read out the whole notification
 			rm.write('<div class="sapMNLIShowMore" aria-hidden ="true">');
 			rm.renderControl(control._getShowMoreButton());
 			rm.write('</div>');
@@ -169,6 +171,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			rm.renderControl(closeButton);
 			rm.write('</div>');
 		}
+
+		// end main
+		rm.write('</div>');
 
 		rm.write('</li>');
 	};

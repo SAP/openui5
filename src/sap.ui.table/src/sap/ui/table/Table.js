@@ -2974,7 +2974,7 @@ sap.ui.define([
 		}
 
 		if (mRenderConfig.headerSelector.type === "clear" && mRenderConfig.headerSelector.visible) {
-			$SelectAll.attr("disabled", !mRenderConfig.headerSelector.enabled);
+			$SelectAll.toggleClass("sapUiTableSelAllDisabled", !mRenderConfig.headerSelector.enabled);
 			sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 
 			if (mRenderConfig.headerSelector.enabled) {

@@ -698,7 +698,28 @@ sap.ui.define([
 				}
 			}
 		}.bind(this));
+
+		var oBindingBusy = new PropertyBinding(oModel, this.oContext + "/variantBusy");
+		oBindingBusy.attachChange(function(oData) {
+			if (oData && oData.oSource && oData.oSource.oModel && oData.oSource.sPath) {
+				var bFlag = oData.oSource.oModel.getProperty(oData.oSource.sPath);
+				this._handleBusy(bFlag);
+			}
+		}.bind(this));
 	};
+
+	// clickable area
+	VariantManagement.prototype._handleBusy = function(bFlag) {
+		if (bFlag !== undefined) {
+			this.getAssociation("for", []).forEach(function(sControlId) {
+				var oControl = sap.ui.getCore().byId(sControlId);
+				if (oControl && oControl.setBusy) {
+					oControl.setBusy(bFlag);
+				}
+			});
+		}
+	};
+
 
 	// clickable area
 	VariantManagement.prototype.handleOpenCloseVariantPopover = function() {

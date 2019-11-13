@@ -46,32 +46,29 @@ sap.ui.define([
 			});
 		});
 		QUnit.test("given a mock server, when publish is triggered", function (assert) {
-			fnReturnData(204, { }, '[]');
-
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "flexReference", appVersion: "1.0.0", layer: "VENDOR", changelist: "transportId", "package": "somePackage"};
 			var sUrl = "/sap/bc/lrep/actions/make_changes_transportable/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&package=somePackage";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
 			return LrepConnector.publish(mPropertyBag).then(function () {
-				assert.equal(sandbox.server.getRequest(0).method, "POST", "request method is POST");
-				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a make changes transportable request is send containing the reference, the app version, the layer, the changelist and the package as query parameters");
+				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
 			});
 		});
 		QUnit.test("given a mock server, when reset is triggered", function (assert) {
-			var aExpectedResponse = [
-				{
-					appComponent: "sap.ui.demoapps.rta.freestyle.Component",
-					appVersionFrom: 10000000000,
-					name: "id_1565952176663_88_stashControl",
-					tenantId: "555552-a23e-6666-3333-53002f046412",
-					userName: "test.test@test.com"
-				}
-			];
-			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(aExpectedResponse));
 			var mPropertyBag = {url: "/sap/bc/lrep", reference: "flexReference", appVersion: "1.0.0", layer: "VENDOR", changelist: "transportId", generator: "someGenerator", selectorIds:"someSelectors", changeTypes:"someChangeTypes"};
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&appVersion=1.0.0&changelist=transportId&generator=someGenerator&selector=someSelectors&changeType=someChangeTypes";
-			return LrepConnector.reset(mPropertyBag).then(function (oResponse) {
-				assert.equal(sandbox.server.getRequest(0).method, "DELETE", "request method is DELETE");
-				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a delete request is send containing the reference, the app version, the layer, the changelist, the generator, the selector Ids and the change types as query parameters");
-				assert.deepEqual(oResponse.response, aExpectedResponse, "reset response flow is correct");
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves([]);
+			return LrepConnector.reset(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
 			});
 		});
 		QUnit.test("given a mock server, when loadFeatures is triggered", function (assert) {
@@ -161,11 +158,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("given a mock server, when remove is triggered", function (assert) {
+		QUnit.test("given a mock server, when remove change is triggered", function (assert) {
 			var oFlexObject = {
-				fileType: "variant",
+				fileType: "change",
 				fileName: "myFileName",
-				namespace: "myNamespace",
+				namespace: "level1/level2/level3",
 				layer: "VENDOR"
 			};
 			var mPropertyBag = {
@@ -173,13 +170,40 @@ sap.ui.define([
 				url: "/sap/bc/lrep",
 				transport: "transportID"
 			};
-			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=myNamespace&layer=VENDOR&changelist=transportID";
+			var sUrl = "/sap/bc/lrep/changes/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 
 			return LrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
 					xsrfToken : ApplyConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/flex/settings",
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
+					applyConnector : ApplyConnector,
+					contentType : "application/json; charset=utf-8",
+					dataType : "json"
+				}), "a send request with correct parameters and options is sent");
+				WriteUtils.sendRequest.restore();
+			});
+		});
+
+		QUnit.test("given a mock server, when remove variant is triggered", function (assert) {
+			var oFlexObject = {
+				fileType: "variant",
+				fileName: "myFileName",
+				namespace: "level1/level2/level3",
+				layer: "VENDOR"
+			};
+			var mPropertyBag = {
+				flexObject: oFlexObject,
+				url: "/sap/bc/lrep",
+				transport: "transportID"
+			};
+			var sUrl = "/sap/bc/lrep/variants/myFileName?namespace=level1/level2/level3&layer=VENDOR&changelist=transportID";
+			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
+
+			return LrepConnector.remove(mPropertyBag).then(function () {
+				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
+					xsrfToken : ApplyConnector.xsrfToken,
+					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
 					applyConnector : ApplyConnector,
 					contentType : "application/json; charset=utf-8",
 					dataType : "json"

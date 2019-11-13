@@ -242,7 +242,7 @@ sap.ui.define([
 
 	MenuTextFieldItem.prototype.onkeyup = function(oEvent){
 		//like sapenter but on keyup -> see Menu.prototype.onkeyup
-		if (!PseudoEvents.events.sapenter.fnCheck(oEvent)) {
+		if (!PseudoEvents.events.sapenter.fnCheck(oEvent) && oEvent.key !== "Enter") {
 			return;
 		}
 		var sValue = this.$("tf").val();

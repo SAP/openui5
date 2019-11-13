@@ -47,7 +47,8 @@ sap.ui.define([
 		var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 		var resourceBundle = Core.getLibraryResourceBundle('sap.m'),
-			closeText = resourceBundle.getText('NOTIFICATION_LIST_BASE_CLOSE'); // this is used for tooltip for the "X" button and the text of the button "X" when it is in the overflow toolbar on mobile
+			closeText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_CLOSE'), // this is used for tooltip for the "X" button and the text of the button "X" when it is in the overflow toolbar on mobile
+			closeAllText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_CLOSE'); // this is used for tooltip for the "X" button and the text of the button "X" when it is in the overflow toolbar on mobile
 
 		/**
 		 * Constructor for a new NotificationListBase.
@@ -61,6 +62,7 @@ sap.ui.define([
 		 * The NotificationList controls are designed for the SAP Fiori notification center.
 		 * <h4>Overview</h4>
 		 * NotificationListBase defines the general structure of a notification item. Most of the behavioral logic is defined for the single items or groups.
+		 *
 		 * <h4>Structure</h4>
 		 * The base holds properties for the following elements:
 		 * <ul>
@@ -75,6 +77,10 @@ sap.ui.define([
 		 * <li><code>showButtons</code> - action buttons visibility</li>
 		 * <li><code>showCloseButton</code> - close button visibility</li>
 		 * </ul>
+		 *
+		 * * <h4>Note</h4>
+		 * There are several properties, that are inherited from ListItemBase and have no
+		 * visual representation in the Notifications - counter, highlight, highlightText, navigated, selected, type
 		 * @extends sap.m.ListItemBase
 		 *
 		 * @author SAP SE
@@ -95,11 +101,7 @@ sap.ui.define([
 					/**
 					 * Determines the priority of the Notification.
 					 */
-					priority: {
-						type: 'sap.ui.core.Priority',
-						group: 'Appearance',
-						defaultValue: Priority.None
-					},
+					priority: {type: 'sap.ui.core.Priority', group: 'Appearance', defaultValue: Priority.None},
 
 					/**
 					 * Determines the title of the NotificationListBase item.
@@ -107,7 +109,7 @@ sap.ui.define([
 					title: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
-					 * Determines the due date of the NotificationListItem.
+					 * Determines the due date of the Notification.
 					 */
 					datetime: {type: 'string', group: 'Appearance', defaultValue: ''},
 
@@ -124,12 +126,12 @@ sap.ui.define([
 					showCloseButton: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
 					/**
-					 * Determines the notification group's author name.
+					 * Determines the notification author name.
 					 */
 					authorName: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
-					 * Determines the URL of the notification group's author picture.
+					 * Determines the URL of the notification author picture.
 					 */
 					authorPicture: {type: 'sap.ui.core.URI', multiple: false}
 
@@ -145,12 +147,6 @@ sap.ui.define([
 					 * @private
 					 */
 					_overflowToolbar: {type: 'sap.m.OverflowToolbar', multiple: false, visibility: "hidden"},
-
-					/**
-					 * The sap.m.Image or sap.ui.core.Control control that holds the author image or icon.
-					 * @private
-					 */
-					_authorImage: {type: 'sap.ui.core.Control', multiple: false, visibility: "hidden"},
 
 					/**
 					 * The priority icon.
@@ -252,30 +248,6 @@ sap.ui.define([
 			return this;
 		};
 
-		/**
-		 * Returns the sap.m.Image or the sap.ui.core.Control used in the NotificationListBase's author picture.
-		 *
-		 * @protected
-		 * @returns {sap.m.Image|sap.ui.core.Control} The notification author picture text.
-		 */
-		NotificationListBase.prototype._getAuthorImage = function() {
-			/** @type {sap.m.Image|sap.ui.core.Control} */
-			var authorImage = this.getAggregation('_authorImage'),
-				authorPicture = this.getAuthorPicture(),
-				authorName = this.getAuthorName();
-
-			// todo - check if the type (Icon/Image) has changed
-			if (!authorImage) {
-				authorImage = isIcon(authorPicture) ? new Icon() : new Image();
-				this.setAggregation('_authorImage', authorImage, true);
-			}
-
-			authorImage.setSrc(authorPicture);
-			authorImage.setAlt(authorName);
-
-			return authorImage;
-		};
-
 		NotificationListBase.prototype._getOverflowToolbar = function() {
 			var overflowToolbar = this.getAggregation('_overflowToolbar');
 
@@ -310,7 +282,7 @@ sap.ui.define([
 			if (!closeButton) {
 				if (Device.system.phone) {
 					this._closeButton = new Button(this.getId() + '-closeButtonOverflow', {
-						text: closeText,
+						text: this.isA("sap.m.NotificationListItem") ? closeText : closeAllText,
 						type: ButtonType.Default,
 						press: function () {
 							this.close();
@@ -320,7 +292,7 @@ sap.ui.define([
 					this._closeButton = new Button(this.getId() + '-closeButtonX', {
 						icon: IconPool.getIconURI('decline'),
 						type: ButtonType.Transparent,
-						tooltip: closeText,
+						tooltip: this.isA("sap.m.NotificationListItem") ? closeText : closeAllText,
 						press: function () {
 							this.close();
 						}.bind(this)
@@ -353,8 +325,6 @@ sap.ui.define([
 				}));
 			}
 
-
-
 			if (this._getOverflowToolbar().getContent().length === 1) {
 				this.addStyleClass("sapMNLBNoOverflow");
 			}
@@ -380,22 +350,6 @@ sap.ui.define([
 				parent.addEventDelegate(delegate);
 			}
 		};
-
-		/**
-		 * Checks if an sap.ui.core.URI parameter is an icon src or not.
-		 *
-		 * @private
-		 * @param {string} source The source to be checked.
-		 * @returns {boolean} The result of the check.
-		 */
-		function isIcon(source) {
-			if (!source) {
-				return false;
-			}
-
-			var result = window.URI.parse(source);
-			return result.protocol && result.protocol === 'sap-icon';
-		}
 
 		NotificationListBase.prototype._getPriorityIcon = function() {
 			var priorityIcon = this.getAggregation('_priorityIcon');

@@ -38,11 +38,27 @@
 				unread : true,
 				authorName : 'Jean Doe',
 				authorPicture : 'images/Woman_04.png',
-				priority: sap.ui.core.Priority.None
+				priority: sap.ui.core.Priority.None,
+				buttons: [
+					new sap.m.Button({
+						text: 'Accept',
+						type: sap.m.ButtonType.Accept,
+						tap: function () {
+							sap.m.MessageToast.show('Accept button pressed');
+						}
+					}),
+					new sap.m.Button({
+						text: 'Cancel',
+						type: sap.m.ButtonType.Reject,
+						tap: function () {
+							listItem2.close();
+						}
+					})
+				]
 			});
 
 			var listItem2 = new sap.m.NotificationListItem('secondNotification', {
-				title: 'Notification List Long Title That Truncates And Activates Show More Button Notification List Long Title That Truncates And Activates Show More Button',
+				title: 'Notification List Long Title',
 				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
 				showCloseButton : false,
 				datetime : '3 days',
@@ -61,7 +77,7 @@
 				]
 			});
 
-			var listItem2A = new sap.m.NotificationListItem('secondNotificationNoButtons', {
+			var listItem2A = new sap.m.NotificationListItem('notificationNoButtons', {
 				title: 'Notification List Title',
 				description : 'Notification List Item with no "Accept" and no "Reject" buttons.',
 				showButtons: false,
@@ -69,7 +85,7 @@
 				datetime : '3 days',
 				priority : sap.ui.core.Priority.Low,
 				authorName : 'Office Notification',
-				authorPicture : 'sap-icon://group',
+				authorInitials: 'SC',
 				buttons: [
 					new sap.m.Button({
 						id: 'button356',
@@ -82,13 +98,14 @@
 				]
 			});
 
-			var listItem3 = new sap.m.NotificationListItem({
+			var listItem3 = new sap.m.NotificationListItem("notificationOnlyOneActionButton", {
 				title: 'Notification List Title',
 				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
 				showCloseButton : true,
 				datetime : '3 days',
 				unread : true,
 				priority : sap.ui.core.Priority.Medium,
+				authorInitials: 'JM',
 				buttons: [
 					new sap.m.Button({
 						id: 'button3',
@@ -101,7 +118,7 @@
 				]
 			});
 
-			var listItem4 = new sap.m.NotificationListItem({
+			var listItem4 = new sap.m.NotificationListItem("notificationNoDescription", {
 				title: 'Notification List Title',
 				showCloseButton : true,
 				datetime : '3 days',
@@ -109,6 +126,7 @@
 				priority : sap.ui.core.Priority.High,
 				authorName : 'John Smith',
 				authorPicture : 'images/headerImg2.jpg',
+				authorInitials: 'AM',
 				buttons: [
 					new sap.m.Button({
 						id: 'button5',
@@ -161,7 +179,7 @@
 				type : "{buttonType}"
 			});
 
-			var listItem5 = new sap.m.NotificationListItem({
+			var listItem5 = new sap.m.NotificationListItem("notificationBinding", {
 				id : "lastNotification",
 				title : 'Item with binding - ' +
 				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
@@ -194,7 +212,7 @@
 				}
 			});
 
-			var listItem6 = new sap.m.NotificationListItem({
+			var listItem6 = new sap.m.NotificationListItem("notificationNoShowMoreButton", {
 				id : "lastNotification2",
 				title : 'Item with binding AND no "show more" option - ' +
 				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
@@ -219,6 +237,7 @@
 				hideShowMoreButton: true,
 				datetime : '1 hour',
 				unread : true,
+				showButtons: false,
 				authorName : 'Jean Doedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoedoe',
 				authorPicture : 'images/Woman_04.png',
 				priority: sap.ui.core.Priority.None,
@@ -228,7 +247,7 @@
 				}
 			});
 
-			var listItem7 = new sap.m.NotificationListItem({
+			var listItem7 = new sap.m.NotificationListItem("notificationNoTruncation", {
 				id : "lastNotification3",
 				title : 'Item with binding AND no truncation - ' +
 				'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
@@ -263,9 +282,9 @@
 			});
 
 			var listItem8 = new sap.m.NotificationListItem({
-				title: 'Notification List Title',
+				title: 'Busy Notification List Title',
 				showCloseButton : true,
-				busy: true,
+				// busy: true,
 				datetime : '3 days',
 				unread : true,
 				priority : sap.ui.core.Priority.High,

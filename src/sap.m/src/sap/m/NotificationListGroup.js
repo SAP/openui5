@@ -42,6 +42,8 @@ function(
 		expandIcon = 'sap-icon://slim-arrow-right',
 		collapseIcon = 'sap-icon://slim-arrow-down';
 
+	var maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
+
 	/**
 	 * Constructor for a new NotificationListGroup.
 	 *
@@ -51,7 +53,7 @@ function(
 	 * @class
 	 * The NotificationListItemGroup control is used for grouping {@link sap.m.NotificationListItem notification items} of the same type.
 	 * <h4>Behavior</h4>
-	 * The group handles specific behavior for different usecases:
+	 * The group handles specific behavior for different use cases:
 	 * <ul>
 	 * <li><code>autoPriority</code> - sets the group priority to the highest priority of an item in the group.</li>
 	 * <li><code>enableCollapseButtonWhenEmpty</code> - displays a collapse button for an empty group.</li>
@@ -79,7 +81,7 @@ function(
 				collapsed: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
 				/**
-				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the developer.
+				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the "priority" property.
 				 */
 				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
@@ -94,11 +96,11 @@ function(
 				enableCollapseButtonWhenEmpty: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
 				/**
-				 * Determines if counter inside the group title will be visible.
+				 * Determines if the items counter inside the group header will be visible.
 				 *
 				 *<b>Note:</b> Counter value represents the number of currently visible (loaded) items inside the group.
 				 */
-				showCounter: {type: 'boolean', group: 'Behavior', defaultValue: true},
+				showItemsCounter: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
 				/**
 				 * Determines the notification group's author name.
@@ -115,7 +117,7 @@ function(
 				authorPicture: {type: 'sap.ui.core.URI', multiple: false, deprecated: true},
 
 				/**
-				 * Determines the due date of the NotificationListItem.
+				 * Determines the due date of the NotificationListGroup.
 				 *
 				 *  @deprecated Since version 1.73
 				 */
@@ -130,7 +132,7 @@ function(
 				items: {type: 'sap.m.NotificationListItem', multiple: true, singularName: 'item'},
 
 				/**
-				 * The collapse button.
+				 * The collapse/expand button.
 				 * @private
 				 */
 				_collapseButton: {type: 'sap.m.Button', multiple: false, visibility: "hidden"}
@@ -153,8 +155,6 @@ function(
 	});
 
 	NotificationListGroup.prototype._getCollapseButton = function() {
-
-
 		var collapseButton = this.getAggregation('_collapseButton'),
 			collapsed = this.getCollapsed();
 
@@ -178,11 +178,12 @@ function(
 
 		var $that = this.$(),
 			collapseButton = this._getCollapseButton(),
-			display = "";
+			display = "",
+			areActionButtonsVisible = !bCollapsed && this.getShowButtons();
 
 		$that.toggleClass('sapMNLGroupCollapsed', bCollapsed);
 		$that.attr('aria-expanded', !bCollapsed);
-		bCollapsed ? display = "none" : display = "block";
+		areActionButtonsVisible ? display = "block" : display = "none";
 		$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
 
 		collapseButton.setIcon(bCollapsed ? expandIcon : collapseIcon);
@@ -282,6 +283,29 @@ function(
 		NotificationListBase.prototype.onBeforeRendering.apply(this, arguments);
 
 		this._getCollapseButton().setVisible(this.getEnableCollapseButtonWhenEmpty() || this._getVisibleItemsCount() > 0);
+	};
+
+	/**
+	 * Checks if the max number of notification is reached
+	 *
+	 * @private
+	 * @returns {boolean} Whether the max number of notification is reached
+	 */
+	NotificationListGroup.prototype._isMaxNumberReached = function () {
+		return this.getItems().length > maxNumberOfNotifications;
+	};
+
+	/**
+	 * Returns the messages, which should be displayed, when the notification limit is reached
+	 *
+	 * @private
+	 * @returns {object} The messages
+	 */
+	NotificationListGroup.prototype._getMaxNumberReachedMsg = function () {
+		return {
+			title: resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', this.getItems().length - maxNumberOfNotifications),
+			description: resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY')
+		};
 	};
 
 	return NotificationListGroup;

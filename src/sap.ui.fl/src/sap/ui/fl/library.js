@@ -4,9 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/RegistrationDelegator",
+	"sap/ui/fl/Utils",
 	"sap/ui/core/library", // library dependency
 	"sap/m/library" // library dependency
-], function(RegistrationDelegator) {
+], function(
+	RegistrationDelegator,
+	Utils
+) {
 	"use strict";
 
 	/**
@@ -86,6 +90,25 @@ sap.ui.define([
 	};
 
 	RegistrationDelegator.registerAll();
+
+	function _isTrialSystem() {
+		var oUshellContainer = Utils.getUshellContainer();
+		if (oUshellContainer) {
+			return oUshellContainer.getLogonSystem().isTrial();
+		}
+		return false;
+	}
+
+	if (_isTrialSystem()) {
+		sap.ui.getCore().getConfiguration().setFlexibilityServices([{
+			connector: "LrepConnector",
+			url: "/sap/bc/lrep",
+			layers: []
+		}, {
+			connector: "LocalStorageConnector",
+			layers: ["CUSTOMER", "USER"]
+		}]);
+	}
 
 	return sap.ui.fl;
 });

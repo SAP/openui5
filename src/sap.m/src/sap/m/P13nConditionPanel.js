@@ -1739,6 +1739,7 @@ sap.ui.define([
 					items: aItems,
 					change: function() {
 						that._changeField(oConditionGrid);
+						that._makeFieldValid(oControl, true);
 					},
 					layoutData: new GridData({
 						span: oFieldInfo["Span" + this._sConditionType]

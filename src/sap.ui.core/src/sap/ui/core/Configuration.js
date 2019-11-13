@@ -1312,17 +1312,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns a flag if the changes-bundle for flexibility should be requested in case they are not preloaded
-		 *
-		 * @returns {boolean} flag if the changes-bundle for flexibility should be requested in case they are not preloaded
-		 * @private
-		 * @since 1.60.0
-		 */
-		isFlexBundleRequestForced : function() {
-			return this["xx-flexBundleRequestForced"];
-		},
-
-		/**
 		 * Returns the URL from where the UI5 flexibility services are called;
 		 * if empty, the flexibility services are not called.
 		 *
@@ -1348,6 +1337,25 @@ sap.ui.define([
 			}
 
 			return this.flexibilityServices;
+		},
+
+		/**
+		 * Sets the UI5 flexibility services configuration.
+		 *
+		 * @param {object[]} aFlexibilityServices Connector configuration
+		 * @param {string} [aFlexibilityServices.connector] Name of the connector
+		 * @param {string} [aFlexibilityServices.applyConnector] Name of the full module name of the custom apply connector
+		 * @param {string} [aFlexibilityServices.writeConnector] Name of the full module name of the custom write connector
+		 * @param {boolean} [aFlexibilityServices.custom=false] Flag to identify the connector as custom or fl owned
+		 * @param {string} [aFlexibilityServices.url] Url for requests sent by the connector
+		 * @param {string} [aFlexibilityServices.path] Path for loading data in the ObjectPath connector
+		 * @param {sap.ui.fl.Layer[]} [aFlexibilityServices.layers] List of layers in which the connector is allowed to write
+		 * @private
+		 * @ui5-restricted sap.ui.fl, other ui5 bootstrapping tools
+		 * @since 1.73.0
+		 */
+		setFlexibilityServices: function (aFlexibilityServices) {
+			this.flexibilityServices = aFlexibilityServices;
 		},
 
 		/**

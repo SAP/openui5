@@ -212,30 +212,84 @@ sap.ui.define([
 	});
 
 	QUnit.test("Expand and collapse multiple rows", function(assert) {
-		var done = assert.async();
 		var that = this;
+		var oBindingExpandSpy = this.spy(this.table.getBinding("rows"), "expand");
+		var oBindingCollapseSpy = this.spy(this.table.getBinding("rows"), "collapse");
 
-		this.testAsync({
-			act: function() {
-				that.table.expand([0, 1]);
-			},
-			test: function() {
-				assert.equal(that.table._getTotalRowCount(), 6, "Expanded: Row count is correct");
-				assert.equal(that.table.isExpanded(0), true, "Expanded state of the first expanded row is correct");
-				assert.equal(that.table.isExpanded(3), true, "Expanded state of the first expanded row is correct");
-			}
+		for (var i = 3; i <= 15; i++) {
+			this.table.getModel().getData().root[i] = {
+				name: "item",
+				description: "item description",
+				0: {
+					name: "subitem",
+					description: "subitem description"
+				}
+			};
+		}
+		this.table.getModel().refresh();
+
+		return new Promise(function(resolve) {
+			that.table.attachEventOnce("_rowsUpdated", resolve);
 		}).then(function() {
-			that.testAsync({
+			return that.testAsync({
+				act: function() {
+					that.table.expand([0, 1]);
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 19, "Expanded: Row count is correct");
+					assert.equal(that.table.isExpanded(0), true, "Expanded state of the first expanded row is correct");
+					assert.equal(that.table.isExpanded(3), true, "Expanded state of the second expanded row is correct");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
 				act: function() {
 					that.table.collapse([0, 3]);
 				},
 				test: function() {
-					assert.equal(that.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
+					assert.equal(that.table._getTotalRowCount(), 16, "Collapsed: Row count is correct");
 					assert.equal(that.table.isExpanded(0), false, "Expanded state of the first collapsed row is correct");
-					assert.equal(that.table.isExpanded(1), false, "Expanded state of the first collapsed row is correct");
-					done();
+					assert.equal(that.table.isExpanded(1), false, "Expanded state of the second collapsed row is correct");
 				}
 			});
+		}).then(function() {
+			that.table.setFirstVisibleRow(4);
+			return new Promise(function(resolve) {
+				that.table.attachEventOnce("_rowsUpdated", resolve);
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					oBindingExpandSpy.reset();
+					that.table.expand([10, 9]);
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 18, "Expanded: Row count is correct");
+					assert.equal(that.table.isExpanded(9), true, "Expanded state of the first expanded row is correct");
+					assert.equal(that.table.isExpanded(11), true, "Expanded state of the second expanded row is correct");
+					assert.ok(oBindingExpandSpy.calledTwice, "Binding#expand was called twice");
+					assert.ok(oBindingExpandSpy.getCall(0).calledWithExactly(10, true), "First call with index 10");
+					assert.ok(oBindingExpandSpy.getCall(1).calledWithExactly(9, false), "Second call with index 9");
+				}
+			});
+		}).then(function() {
+			return that.testAsync({
+				act: function() {
+					oBindingCollapseSpy.reset();
+					that.table.collapse([9, 11]);
+				},
+				test: function() {
+					assert.equal(that.table._getTotalRowCount(), 16, "Collapsed: Row count is correct");
+					assert.equal(that.table.isExpanded(9), false, "Expanded state of the first collapsed row is correct");
+					assert.equal(that.table.isExpanded(10), false, "Expanded state of the second collapsed row is correct");
+					assert.ok(oBindingCollapseSpy.calledTwice, "Binding#collapse was called twice");
+					assert.ok(oBindingCollapseSpy.getCall(0).calledWithExactly(11, true), "First call with index 11");
+					assert.ok(oBindingCollapseSpy.getCall(1).calledWithExactly(9, false), "Second call with index 9");
+				}
+			});
+		}).then(function() {
+			oBindingExpandSpy.restore();
+			oBindingCollapseSpy.restore();
 		});
 	});
 

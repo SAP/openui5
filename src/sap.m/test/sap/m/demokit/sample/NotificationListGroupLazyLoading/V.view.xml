@@ -12,7 +12,7 @@
 				<NotificationListGroup
 						title="Group with 3 messages from the backend. They will be lazy loaded when 'Expand' button is pressed."
 						showCloseButton="true"
-						showCounter="false"
+						showItemsCounter="false"
 						collapsed="true"
 						onCollapse="loadNotifications"
 						close="onItemClose"
@@ -27,7 +27,7 @@
 				<NotificationListGroup
 						title="Group with 3 messages from the backend. They will be lazy loaded when 'Expand' button is pressed."
 						showCloseButton="true"
-						showCounter="false"
+						showItemsCounter="false"
 						collapsed="true"
 						onCollapse="loadNotifications"
 						close="onItemClose"

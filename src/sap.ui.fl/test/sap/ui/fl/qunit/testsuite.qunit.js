@@ -47,29 +47,16 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/apply/api/UI2PersonalizationApplyAPI"]
 				}
 			},
-			"apply/_internal/connectors/ObjectStorageConnector": {
-				group: "Apply Internal",
-				coverage: {
-					only: [
-						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
-						"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
-						"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector"
-					]
-				},
-				ui5: {
-					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
-				}
-			},
-			"apply/_internal/connectors/ObjectStorageUtils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
-				}
-			},
 			"apply/_internal/changes/Applier": {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/changes/Applier"]
+				}
+			},
+			"apply/_internal/changes/FlexCustomData": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/FlexCustomData"]
 				}
 			},
 			"apply/_internal/changes/Utils": {
@@ -106,6 +93,25 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/storageResultDisassemble"]
+				}
+			},
+			"apply/_internal/connectors/ObjectStorageConnector": {
+				group: "Apply Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/apply/_internal/connectors/ObjectStorageConnector",
+						"sap/ui/fl/apply/_internal/connectors/LocalStorageConnector",
+						"sap/ui/fl/apply/_internal/connectors/SessionStorageConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
+				}
+			},
+			"apply/_internal/connectors/ObjectStorageUtils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"]
 				}
 			},
 			"apply/_internal/connectors/JsObjectConnector": {
@@ -146,6 +152,12 @@ sap.ui.define(function () {
 				group: "Apply Internal",
 				coverage: {
 					only: ["sap/ui/fl/apply/_internal/connectors/KeyUserConnector"]
+				}
+			},
+			"apply/_internal/connectors/Utils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/connectors/Utils"]
 				}
 			},
 			"apply/_internal/controlVariants/URLHandler": {
@@ -324,21 +336,6 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/ChangePersistenceFactory"]
 				}
 			},
-			FakeLrepConnector: {
-				coverage: {
-					only: ["sap/ui/fl/FakeLrepConnector"]
-				}
-			},
-			FakeLrepConnectorStorage: {
-				coverage: {
-					only: ["sap/ui/fl/FakeLrepConnectorStorage"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap.ui.fl.qunit": "test-resources/sap/ui/fl/qunit/"
-					}
-				}
-			},
 			FlexController: {
 				coverage: {
 					only: ["sap/ui/fl/FlexController"]
@@ -352,11 +349,6 @@ sap.ui.define(function () {
 			FlexControllerFactory: {
 				coverage: {
 					only: ["sap/ui/fl/FlexControllerFactory"]
-				}
-			},
-			FlexCustomData: {
-				coverage: {
-					only: ["sap/ui/fl/FlexCustomData"]
 				}
 			},
 			Variant: {
@@ -569,18 +561,41 @@ sap.ui.define(function () {
 					only: ["sap/ui/fl/EventHistory"]
 				}
 			},
-			FakeLrepStorage: {
-				coverage: {
-					only: ["sap/ui/fl/FakeLrepStorage"]
-				}
-			},
 			library: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
 				},
 				ui5: {
-					flexibilityServices: "",
 					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			libraryInTrial1: {
+				coverage: {
+					only: ["sap/ui/fl/library"]
+				},
+				ui5: {
+					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			libraryInTrial2: {
+				coverage: {
+					only: ["sap/ui/fl/library"]
+				},
+				ui5: {
+					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			libraryInTrial3: {
+				coverage: {
+					only: ["sap/ui/fl/library"]
+				},
+				ui5: {
+					libs: null // The fl library is being loaded inside the test
+				}
+			},
+			FakeLrepConnector: {
+				coverage: {
+					only: ["sap/ui/fl/FakeLrepConnector"]
 				}
 			},
 			LrepConnector: {

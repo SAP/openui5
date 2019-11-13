@@ -1,0 +1,42 @@
+{
+  "1.73.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "13c5b11c6a3e0211c284bc47357c4273bec39d50",
+        "type": "FEATURE",
+        "text": " sap.f.semantic.SemanticPage: fitContent property exposed",
+        "references": []
+      },
+      {
+        "id": "f4a6558052e37bd53ad088e5d0035d7e62d10763",
+        "type": "FEATURE",
+        "text": " sap.ui.integration.widgets.Card: Added predefined DateTime formatter",
+        "references": []
+      },
+      {
+        "id": "f6d05979394e71844c229d568619779fabe77702",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: IE polyfill",
+        "references": []
+      },
+      {
+        "id": "e0f915c4a81cda17bf660e7e2a59cc5dea040948",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Prevent errors when grid is destroyed on IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970503296"
+          }
+        ]
+      },
+      {
+        "id": "bbb52fb711a8127384ac5ceb4ae3de271200ca9e",
+        "type": "FIX",
+        "text": " sap.ui.core: address SDK feedback (2019/10 and older)",
+        "references": []
+      }
+    ]
+  }
+}

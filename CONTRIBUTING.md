@@ -146,8 +146,6 @@ the [Corporate Contributor License Agreement](/docs/SAP%20Corporate%20Contributo
 -   Fax it to: +49 6227 78-45813
 -   Send it by traditional letter to: *Industry Standards & Open Source Team, Dietmar-Hopp-Allee 16, 69190 Walldorf, Germany*
 
-The form contains a list of employees who are authorized to contribute on behalf of your company. When this list changes, please let us know.
-
 ### Contribution Content Guidelines
 
 Contributed content can be accepted if it:
