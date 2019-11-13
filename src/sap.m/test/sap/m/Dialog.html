@@ -358,37 +358,26 @@
 				})
 			});
 
-			var oDialogWithSelect = new sap.m.Dialog({
-				title: "Dialog with Select",
-				content: new sap.m.Select({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						}),
-						new sap.ui.core.Item({
-							key: "3",
-							text: "item 3"
-						})
-					]
+			var oDialogWithResponsivePadding = new sap.m.Dialog({
+				title: "Dialog with Responsive Padding",
+				resizable: true,
+				content: new sap.m.OverflowToolbar({
+					content: new sap.m.Text({ text: "Only on SAP Quartz themes." })
 				}),
-				contentWidth: "30em",
-				contentHeight: "25%",
 				beginButton: new sap.m.Button({
+					text: "OK",
 					press: function () {
-						oDialogWithSelect.close();
-					},
-					text: "Close"
+						oDialogWithResponsivePadding.close();
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: "Close",
+					press: function () {
+						oDialogWithResponsivePadding.close();
+					}
 				})
 			});
+			oDialogWithResponsivePadding.addStyleClass("sapUiResponsivePadding--content sapUiResponsivePadding--header sapUiResponsivePadding--footer");
 
 			var oDialogWithSelect = new sap.m.Dialog({
 				title: "Dialog with Select",
@@ -435,6 +424,14 @@
 				width: _buttonWidth,
 				press: function () {
 					oDialogWithSelect.open();
+				}
+			});
+
+			var oButtonDialogResponsivePadding = new sap.m.Button({
+				text: "Responsive Padding Enabled",
+				width: _buttonWidth,
+				press: function () {
+					oDialogWithResponsivePadding.open();
 				}
 			});
 
@@ -1589,6 +1586,7 @@
 						}
 					}),
 					oButton6,
+					oButtonDialogResponsivePadding,
 					new sap.ui.core.HTML({content: "<br>"}),
 					new sap.m.Button({
 						text: "Full-screen Form in Dialog",
