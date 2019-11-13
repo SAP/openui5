@@ -344,15 +344,19 @@ sap.ui.define([
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
 			oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
 			oSlider = new Slider(),
-			aLabels = oSlider.getAggregation("_handlesLabels");
+			aLabels = oSlider.getAggregation("_handlesLabels"),
+			oSliderWithTickmarks = new Slider({enableTickmarks: true}),
+			aTickmarksLabels = oSliderWithTickmarks.getAggregation("_handlesLabels");
 
 		oSlider.placeAt("content");
+		oSliderWithTickmarks.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(aLabels.length, 1, "Label for handles should be added as an aggregation");
 		assert.ok(oBoundleCalledStub.calledWith("SLIDER_HANDLE"), "Text should be regarding the handle");
 		assert.strictEqual(oSlider.getDomRef("handle").getAttribute("aria-labelledby"), aLabels[0].getId());
+		assert.strictEqual(oSliderWithTickmarks.getDomRef("handle").getAttribute("aria-labelledby"), aTickmarksLabels[0].getId());
 
 		// cleanup
 		oSlider.destroy();
