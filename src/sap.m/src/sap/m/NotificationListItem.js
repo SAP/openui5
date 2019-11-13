@@ -105,8 +105,8 @@ function(
 				 */
 				processingMessage: {type: 'sap.m.MessageStrip', multiple: false},
 
-					/**
-				 * The show more button of the notification item.
+				/**
+				 * The "Show More" button of the notification item.
 				 * @private
 				 */
 				_showMoreButton: {type: 'sap.m.Link', multiple: false, visibility: "hidden"}

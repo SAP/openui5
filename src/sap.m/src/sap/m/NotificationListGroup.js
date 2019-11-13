@@ -51,7 +51,7 @@ function(
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListItemGroup control is used for grouping {@link sap.m.NotificationListItem notification items} of the same type.
+	 * The NotificationListGroup control is used for grouping {@link sap.m.NotificationListItem notification items} of the same type.
 	 * <h4>Behavior</h4>
 	 * The group handles specific behavior for different use cases:
 	 * <ul>
@@ -105,21 +105,21 @@ function(
 				/**
 				 * Determines the notification group's author name.
 				 *
-				 * @deprecated Since version 1.73
+				 * @deprecated As of version 1.73
 				 */
 				authorName: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true},
 
 				/**
 				 * Determines the URL of the notification group's author picture.
 				 *
-				 *  @deprecated Since version 1.73
+				 *  @deprecated As of version 1.73
 				 */
 				authorPicture: {type: 'sap.ui.core.URI', multiple: false, deprecated: true},
 
 				/**
 				 * Determines the due date of the NotificationListGroup.
 				 *
-				 *  @deprecated Since version 1.73
+				 *  @deprecated As of version 1.73
 				 */
 				datetime: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true}
 			},

@@ -80,6 +80,25 @@
 			}
 		});
 
+		// for testing the showing of the buttons for short time before to be hidden in the overflow toolbar after reload of the page
+				var overflowToolBarTest = new sap.m.OverflowToolbar({
+				width: "200px",
+				content: [
+					new sap.m.Text ({text:"some long long long long text", wrapping: false}),
+					new sap.m.Button({
+						text: 'Accept All',
+						type: sap.m.ButtonType.Accept,
+						tap: function () {
+							sap.m.MessageToast.show('Accept all button pressed');
+						}
+					}),
+					new sap.m.Button({
+						text: 'Cancel All',
+						type: sap.m.ButtonType.Reject
+					})
+				]
+			});
+
 		var singleItemGroup = new sap.m.NotificationListGroup({
 			id: 'notificationGroup2',
 			showItemsCounter: false,
@@ -169,7 +188,6 @@
 			buttons: [
 				new sap.m.Button({
 					text: 'Accept All',
-					type: sap.m.ButtonType.Accept,
 					tap: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
@@ -323,7 +341,7 @@
 
 		var page = new sap.m.Page("page", {
 			title: "NotificationGroup Test Page",
-        		content: [compactSizeButton, list]
+        		content: [overflowToolBarTest, compactSizeButton, list]
 		});
 
 		var oApp = new sap.m.App("myApp", { initialPage: "page" });
