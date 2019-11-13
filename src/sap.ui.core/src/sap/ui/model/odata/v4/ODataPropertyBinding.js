@@ -86,7 +86,6 @@ sap.ui.define([
 				this.oContext = oContext;
 				this.bHasDeclaredType = undefined; // whether the binding info declares a type
 				this.bInitial = true;
-				this.sPathWithFetchTypeError = undefined;
 				this.vValue = undefined;
 				oModel.bindingCreated(this);
 			},
