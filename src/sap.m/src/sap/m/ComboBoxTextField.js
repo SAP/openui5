@@ -77,15 +77,13 @@ sap.ui.define([
 			InputBase.prototype.init.apply(this, arguments);
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			var oIcon = this.addEndIcon({
+			this.addEndIcon({
 				id: this.getId() + "-arrow",
 				src: "sap-icon://slim-arrow-down",
 				noTabStop: true,
 				alt: oRb.getText("COMBOBOX_BUTTON"),
 				decorative: false
 			});
-
-			oIcon.addAriaLabelledBy("");
 		};
 
 		/**
