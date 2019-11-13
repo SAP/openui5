@@ -1112,6 +1112,18 @@ function(
 						.then(function(sResponse) {
 							if (sResponse !== "Error" && sResponse !== "Cancel") {
 								this._showMessageToast("MSG_TRANSPORT_SUCCESS");
+
+								if (this.getShowToolbars()) {
+									var mPropertyBag = {
+										selector: this.getRootControlInstance(),
+										layer: this.getLayer()
+									};
+									PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
+									.then(function(oPublishAndResetInfo) {
+										this.getToolbar().setPublishEnabled(oPublishAndResetInfo.isPublishEnabled);
+										this.getToolbar().setRestoreEnabled(oPublishAndResetInfo.isResetEnabled);
+									}.bind(this));
+								}
 							}
 						}.bind(this));
 				}.bind(this));
