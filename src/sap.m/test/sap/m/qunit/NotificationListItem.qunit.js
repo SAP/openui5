@@ -30,6 +30,8 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.Priority
 	var Priority = coreLibrary.Priority;
+	var  oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var  oResourceBundleCore = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
@@ -114,7 +116,7 @@ sap.ui.define([
 		assert.ok($item.hasClass('sapMNLIUnread'), 'unread class is set');
 		assert.strictEqual($item.find('.sapMNLITitle .sapMNLITitleText').text(), 'Notification List Item Title', 'title is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), 'Error', 'priority is rendered');
+		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), 'Close', 'close button is rendered');
 		assert.ok(this.notificationListItem.$('overflowToolbar'), 'overflow toolbar is rendered');
@@ -123,7 +125,7 @@ sap.ui.define([
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIFooterItem:nth-child(3)').text(), '3 days', 'datetime is rendered');
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIFooterItem:first-child').text(), 'John Smith', 'author name is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), 'Show More', 'Show More link is rendered');
+		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_MORE"), 'Show More link is rendered');
 
 		assert.strictEqual($item.find('.sapFAvatar').attr('aria-label'), 'Avatar', 'author avatar is rendered');
 
@@ -178,7 +180,7 @@ sap.ui.define([
 		$item = this.notificationListItem.$();
 		assert.notOk($item.find('.sapMNLITitleText').hasClass('sapMNLIItemTextLineClamp'), 'title does not have sapMNLIItemTextLineClamp class');
 		assert.notOk($item.find('.sapMNLIDescription').hasClass('sapMNLIItemTextLineClamp'), 'description does not have sapMNLIItemTextLineClamp class');
-		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), 'Show Less', 'text is "Show Less"');
+		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_LESS"), 'text is "Show Less"');
 
 		showMoreButton.firePress();
 		Core.applyChanges();
@@ -186,7 +188,7 @@ sap.ui.define([
 		$item = this.notificationListItem.$();
 		assert.ok($item.find('.sapMNLITitleText').hasClass('sapMNLIItemTextLineClamp'), 'title has sapMNLIItemTextLineClamp class');
 		assert.ok($item.find('.sapMNLIDescription').hasClass('sapMNLIItemTextLineClamp'), 'description has sapMNLIItemTextLineClamp class');
-		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), 'Show More', 'text is "Show More"');
+		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_MORE"), 'text is "Show More"');
 
 		this.list.setWidth('1000px');
 		Core.applyChanges();
@@ -225,7 +227,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('ARIA - Accessibility Text', function (assert) {
-		assert.equal(this.notificationListItem.$().attr('aria-label'), 'Notification List Item Title Notification List Item Description Notification unread. Created By John Smith Due in 3 days, High Priority.', "accessibility text is correct");
+		assert.equal(this.notificationListItem.$().attr('aria-label'), 'Notification List Item Title Notification List Item Description ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + ' ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY")  + ' John Smith ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY", [this.notificationListItem.getDatetime(), this.notificationListItem.getPriority()]), "accessibility text is correct");
 	});
 
 	QUnit.module('Keyboard navigation', {

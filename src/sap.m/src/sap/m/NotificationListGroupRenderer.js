@@ -26,6 +26,8 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		if (!control.getVisible()) {
 			InvisibleRenderer.render(rm, control, control.TagName);
 			return false;
+		} else if (control.getItems().length === 0 && control.getShowEmptyGroup() === false) {
+			return false;
 		}
 
 		var overflowToolbar = control._getOverflowToolbar(),
@@ -123,7 +125,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		// close button
 		if (control.getShowCloseButton() && closeButton && !Device.system.phone) {
-			rm.write('<div class="sapMNLIItem">');
+			rm.write('<div class="sapMNLIItem sapMNLICloseBtn">');
 			rm.renderControl(closeButton);
 			rm.write('</div>');
 		}

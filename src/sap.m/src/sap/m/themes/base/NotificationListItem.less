@@ -20,6 +20,7 @@
 	.sapMNLIMain {
 		display: flex;
 		flex-direction: row-reverse;
+		width: 100%;
 	}
 
 	.sapMNLIItemAC {
@@ -102,7 +103,7 @@
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
-	max-height: 44px;
+	max-height: 40px; // font-size * line-height (value 1.4) * 2 (number of rows)
 }
 
 .sapMNLIActions {

@@ -21,6 +21,8 @@ sap.ui.define([
 
 	var RENDER_LOCATION = 'qunit-fixture';
 	var Priority = coreLibrary.Priority;
+	var  oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var  oResourceBundleCore = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
 	function createNotificationListGroup() {
 		return new NotificationListGroup({
@@ -73,7 +75,7 @@ sap.ui.define([
 		assert.ok($item.hasClass('sapMNLGroupUnread'), 'unread class is set');
 		assert.strictEqual($item.find('.sapMNLGroupTitle').text(), 'Notification List Group Title', 'title is rendered');
 
-		assert.strictEqual($item.find('.sapMNLGroupCollapseButton button').attr('title'), 'Collapse Group', 'collapse button is rendered');
+		assert.strictEqual($item.find('.sapMNLGroupCollapseButton button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_COLLAPSE"), 'collapse button is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), 'Close all', 'close button is rendered');
 		assert.ok(this.notificationListGroup.$('overflowToolbar'), 'overflow toolbar is rendered');
@@ -86,7 +88,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var $item = this.notificationListGroup.$();
-		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), 'Error', 'priority is rendered');
+		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
 	});
 
 	QUnit.test('priority', function(assert) {
@@ -118,7 +120,7 @@ sap.ui.define([
 		collapseButton.firePress();
 
 		assert.strictEqual(fnSpy.callCount, 1, 'onCollapse should be called.');
-		assert.strictEqual(collapseButton.getTooltip(), 'Expand Group', 'collapse button tooltip is correct');
+		assert.strictEqual(collapseButton.getTooltip(), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_EXPAND"), 'collapse button tooltip is correct');
 
 		$item = this.notificationListGroup.$();
 		assert.ok($item.hasClass('sapMNLGroupCollapsed'), 'sapMNLGroupCollapsed class is set');
@@ -126,7 +128,7 @@ sap.ui.define([
 		collapseButton.firePress();
 
 		assert.strictEqual(fnSpy.callCount, 2, 'onCollapse should be called.');
-		assert.strictEqual(collapseButton.getTooltip(), 'Collapse Group', 'collapse button tooltip is correct');
+		assert.strictEqual(collapseButton.getTooltip(), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_COLLAPSE"), 'collapse button tooltip is correct');
 
 		$item = this.notificationListGroup.$();
 		assert.notOk($item.hasClass('sapMNLGroupCollapsed'), 'sapMNLGroupCollapsed class is not set');
