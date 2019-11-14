@@ -248,6 +248,9 @@ sap.ui.define([
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.ok(oEvent.dragSession != null, "dragstart: A new drag session was created");
 
+		DragAndDrop.postprocessEvent(oEvent);
+		assert.ok(jQuery("html").hasClass("sapUiDnDNoScrolling"), "scrolling of the html element is blocked");
+
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl, true);
 		oEvent.target.dataset.sapUiRelated = this.oControl.getId();
 		DragAndDrop.preprocessEvent(oEvent);
@@ -260,6 +263,9 @@ sap.ui.define([
 		oEvent = createjQueryDragEventDummy("dragend", this.oControl, false);
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.ok(oEvent.dragSession === oDragSession, "dragend: Drag session was preserved");
+
+		DragAndDrop.postprocessEvent(oEvent);
+		assert.notOk(jQuery("html").hasClass("sapUiDnDNoScrolling"), "scrolling of the html element is retained");
 
 		DragAndDrop.postprocessEvent(oEvent); // Postprocessing "dragend" event. Drag session should be destroyed.
 		oEvent = createjQueryDragEventDummy("dragenter", this.oControl, false);

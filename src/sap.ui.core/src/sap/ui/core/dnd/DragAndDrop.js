@@ -574,6 +574,9 @@ function(Device, UIArea, jQuery) {
 
 		// set dragging class of the drag source
 		addStyleClass(oDragControl, "sapUiDnDDragging");
+
+		// prevent HTML element from scrolling during drag-and-drop
+		jQuery("html").addClass("sapUiDnDNoScrolling");
 	};
 
 	DnD.onbeforedragenter = function(oEvent) {
@@ -695,6 +698,9 @@ function(Device, UIArea, jQuery) {
 		aValidDragInfos.forEach(function(oDragInfo) {
 			oDragInfo.fireDragEnd(oEvent);
 		});
+
+		// retain the scrolling behavior of the html element after dragend
+		jQuery("html").removeClass("sapUiDnDNoScrolling");
 
 		// finalize drag session
 		closeDragSession();
