@@ -5664,6 +5664,79 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("_selectItemByKey should set items with valid keys only", function(assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox();
+		var oFakeEvent = {
+			setMarked: function () {}
+		};
+
+		var fnTestFunction = function() {
+			return "Test";
+		};
+
+		var oGetUnselectedItemsStub = sinon.stub(oMultiComboBox, "_getUnselectedItems", function() {
+			return [
+				{
+					getId: fnTestFunction,
+					getText: fnTestFunction,
+					data: fnTestFunction,
+					getKey: function () {
+						return "";
+					}
+				},
+				{
+					getId: fnTestFunction,
+					getText: fnTestFunction,
+					data: fnTestFunction,
+					getKey: fnTestFunction
+				}
+			];
+		}),
+		oGetEnabledStub = sinon.stub(oMultiComboBox, "getEnabled", function () {
+			return true;
+		}),
+		oGetListItemStub = sinon.stub(oMultiComboBox, "getListItem", function (oItem) {
+			return {
+				isSelected: function () {
+					return false;
+				}
+			};
+		}),
+		oGetValueStub = sinon.stub(oMultiComboBox, "getValue", fnTestFunction),
+		oSetSelectionSpy = sinon.spy(oMultiComboBox, "setSelection");
+
+		// Act
+		oMultiComboBox._selectItemByKey(oFakeEvent);
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(oSetSelectionSpy.calledWith({
+			item: {
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: fnTestFunction
+			},
+			id: "Test",
+			key: "Test",
+			fireChangeEvent: true,
+			fireFinishEvent: true,
+			suppressInvalidate: true,
+			listItemUpdated: false
+		}), "Selection should be called with not empty string as a key");
+
+		// cleanup
+		oGetUnselectedItemsStub.restore();
+		oGetEnabledStub.restore();
+		oGetListItemStub.restore();
+		oGetValueStub.restore();
+		oSetSelectionSpy.restore();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("onsapenter on mobile device", function(assert) {
 
 		// system under test
