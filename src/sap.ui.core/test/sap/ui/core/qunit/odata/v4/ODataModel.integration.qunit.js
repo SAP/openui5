@@ -17563,15 +17563,15 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.oLogMock.expects("error").thrice(); // don't care about console here
-			that.expectRequest("SalesOrderList('42')?$select=SalesOrderID",
-					createError({code : "CODE1", message : "Request 1 intentionally failed"}))
-				.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,SalesOrderID"
 					+ "&$skip=0&$top=100",
+					createError({code : "CODE1", message : "Request 1 intentionally failed"}))
+				.expectRequest("SalesOrderList('42')?$select=SalesOrderID",
 					createError({code : "CODE2", message : "Request 2 intentionally failed"}))
 				.expectMessages([{
-					code : "CODE2",
+					code : "CODE1",
 					descriptionUrl : undefined,
-					message : "Request 2 intentionally failed",
+					message : "Request 1 intentionally failed",
 					persistent : true,
 					target : "",
 					technical : true,
@@ -17583,8 +17583,11 @@ sap.ui.define([
 					.requestSideEffects([{$NavigationPropertyPath : ""}]).then(
 					function () {
 						assert.ok(false, "unexpected success");
-					}, function () {
-						assert.ok(true, "requestSideEffects failed as expected");
+					}, function (oError) {
+						assert.strictEqual(oError.message,
+							"HTTP request was not processed because the previous request failed");
+						assert.strictEqual(oError.cause.error.message,
+							"Request 1 intentionally failed");
 					}),
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
@@ -20952,7 +20955,7 @@ sap.ui.define([
 					method : "PATCH",
 					payload : {CompanyName : "SAP SE"},
 					url : "BusinessPartnerList('4711')"
-				}, {/*response does not matter here*/})
+				}, {/* response does not matter here */})
 				.expectRequest({
 					batchNo : 3,
 					method : "GET",
@@ -21553,5 +21556,86 @@ sap.ui.define([
 			.expectChange("name", null);
 
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: A PATCH triggers a side effect for the whole object page, while the paginator
+	// switches to another item. The side effect's GET is thus ignored because the cache for the
+	// old item is already inactive; thus the promise fails. Due to this failure, the old cache was
+	// restored, which was wrong. Timing is essential!
+	// BCP: 1970600374
+	QUnit.test("BCP: 1970600374", function (assert) {
+		var oInput,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="detail">\
+	<Input id="name" value="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("name");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oInput = that.oView.byId("name");
+
+			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id", {
+					Name : "Team #1",
+					Team_Id : "TEAM_01"
+				})
+				.expectChange("name", "Team #1");
+			that.oView.byId("detail").setBindingContext(
+				oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oPromise, fnRespond;
+
+			that.expectChange("name", "Darth Vader")
+				.expectRequest({
+					method : "PATCH",
+					payload : {Name : "Darth Vader"},
+					url : "TEAMS('TEAM_01')"
+				}, {/* response does not matter here */});
+			oInput.getBinding("value").setValue("Darth Vader");
+
+			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id",
+					new Promise(function (resolve, reject) {
+						fnRespond = resolve.bind(null, {
+							Name : "Darth Vader",
+							Team_Id : "TEAM_01"
+						});
+					}));
+			oPromise
+				= oInput.getBindingContext().requestSideEffects([{$NavigationPropertyPath : ""}]);
+
+			// pagination triggered by separate event --> new task
+			setTimeout(function () {
+				that.expectRequest("TEAMS('TEAM_02')?$select=Name,Team_Id", {
+						Name : "Team #2",
+						Team_Id : "TEAM_02"
+					})
+					.expectChange("name", "Team #2");
+				that.oView.byId("detail").setBindingContext(
+					oModel.bindContext("/TEAMS('TEAM_02')").getBoundContext());
+				setTimeout(fnRespond, 0);
+			}, 0);
+
+			return Promise.all([
+				oPromise.catch(function (oError) {
+					assert.strictEqual(oError.message, "Response discarded: cache is inactive");
+				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			that.expectChange("name", "Palpatine")
+				.expectRequest({
+					method : "PATCH",
+					payload : {Name : "Palpatine"},
+					url : "TEAMS('TEAM_02')"
+				}, {/* response does not matter here */});
+			oInput.getBinding("value").setValue("Palpatine");
+
+			return that.waitForChanges(assert);
+		});
 	});
 });

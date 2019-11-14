@@ -991,11 +991,16 @@ sap.ui.define([
 				// binding hierarchy causing a flood of events.
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
-					oPromise.catch(function () {
-						that.oCache = oCache;
-						that.oCachePromise = SyncPromise.resolve(oCache);
-						oCache.setActive(true);
-						that.checkUpdate();
+					oPromise = oPromise.catch(function (oError) {
+						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
+							if (!that.bRelative || oCache.$resourcePath === sResourcePath) {
+								that.oCache = oCache;
+								that.oCachePromise = SyncPromise.resolve(oCache);
+								oCache.setActive(true);
+								that.checkUpdate();
+							}
+							throw oError;
+						});
 					});
 				}
 				if (!bCheckUpdate) {
