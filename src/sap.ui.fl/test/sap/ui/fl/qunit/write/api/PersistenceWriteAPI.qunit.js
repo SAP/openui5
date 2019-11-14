@@ -448,6 +448,24 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("get flex/info is not called for USER layer", function(assert) {
+			var mPropertyBag = {
+				selector: this.vSelector,
+				layer: "USER"
+			};
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: true, isPublishEnabled: false}));
+
+			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
+			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
+				assert.equal(fnPersistenceStub.callCount, 0, "flex/info never called");
+				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
+			});
+		});
+
 		QUnit.test("get flex/info isResetEnabled, check hasChanges: persistence has NO changes, backend has changes", function(assert) {
 			var mPropertyBag = {
 				selector: this.vSelector
