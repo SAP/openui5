@@ -1119,7 +1119,7 @@ sap.ui.define([
 			}
 		}
 
-		function flushInternal(fnPutIntoDom) {
+		function flushInternal(fnPutIntoDom, fnDone) {
 
 			var oStoredFocusInfo;
 			if (!bDomInterface) {
@@ -1136,7 +1136,9 @@ sap.ui.define([
 
 			ActivityDetection.refresh();
 
-			Interaction.notifyStepEnd();
+			if (fnDone) {
+				fnDone();
+			}
 		}
 
 		/**
@@ -1173,6 +1175,8 @@ sap.ui.define([
 		 */
 		this.flush = function(oTargetDomNode, bDoNotPreserve, vInsert) {
 			assert((typeof oTargetDomNode === "object") && (oTargetDomNode.ownerDocument == document), "oTargetDomNode must be a DOM element");
+
+			var fnDone = Interaction.notifyAsyncStep();
 
 			// preserve HTML content before flushing HTML into target DOM node
 			if (!bDoNotPreserve && (typeof vInsert !== "number") && !vInsert) { // expression mimics the conditions used below
@@ -1212,7 +1216,7 @@ sap.ui.define([
 					jQuery(oTargetDomNode).append(sHTML); // Append the HTML into the given DOM Node
 				}
 
-			});
+			}, fnDone);
 
 		};
 
@@ -1236,6 +1240,8 @@ sap.ui.define([
 				Log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
 				return;
 			}
+
+			var fnDone = Interaction.notifyAsyncStep();
 
 			// Reset internal state before rendering
 			reset();
@@ -1310,8 +1316,7 @@ sap.ui.define([
 					}
 
 				}
-
-			});
+			}, fnDone);
 		};
 
 		/**
