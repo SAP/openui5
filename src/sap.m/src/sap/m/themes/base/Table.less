@@ -136,9 +136,11 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	overflow: hidden;
 }
 
+html[data-sap-ui-browser^="ed"] .sapMListTblHighlightCell > .sapMLIBHighlight,
 html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight,
+html[data-sap-ui-browser^="ed"] .sapMListTblNavigatedCell > .sapMLIBNavigated,
 html[data-sap-ui-browser='ie11'] .sapMListTblNavigatedCell > .sapMLIBNavigated {
-	height: 40rem; /* IE11 cannot stretch the height of the cell content */
+	height: 40rem; /* IE11 and Edge cannot stretch the height of the cell content */
 }
 
 /* responsive table approach */
