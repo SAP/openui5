@@ -122,15 +122,18 @@ sap.ui.define([
 			this.aRequests = [{
 				startTime: 1,
 				requestStart: 2,
-				responseEnd: 3
+				responseEnd: 3,
+				initiatorType: "xmlhttprequest"
 			}, {
 				startTime: 4,
 				requestStart: 5,
-				responseEnd: 6
+				responseEnd: 6,
+				initiatorType: "xmlhttprequest"
 			}, {
 				startTime: 7,
 				requestStart: 8,
-				responseEnd: 9
+				responseEnd: 9,
+				initiatorType: "xmlhttprequest"
 			}];
 			this.start = function() {
 				this.stub.returns(this.aRequests);
@@ -167,8 +170,6 @@ sap.ui.define([
 		assert.strictEqual(aFESR[1].length, 32, "transaction_id - length");
 		assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 		assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
-		// end to end will be negative due to mocked request timings, hence -1
-		assert.strictEqual(parseInt(aFESR[4]), -1, "end_to_end_time");
 		assert.strictEqual(parseInt(aFESR[5]), 3, "network_round_trips");
 		assert.ok(aFESR[6].length <= 40, "epp-action");
 		assert.strictEqual(parseInt(aFESR[7]), 0, "network_time");
@@ -205,15 +206,18 @@ sap.ui.define([
 		this.aRequests = [{
 			startTime: 1,
 			requestStart: 2,
-			responseEnd: 3
+			responseEnd: 3,
+			initiatorType: "xmlhttprequest"
 		}, {
 			startTime: 3,
 			requestStart: 4,
-			responseEnd: 5
+			responseEnd: 5,
+			initiatorType: "xmlhttprequest"
 		}, {
 			startTime: 10, // 5ms gap to request 2
 			requestStart: 11,
-			responseEnd: 12
+			responseEnd: 12,
+			initiatorType: "xmlhttprequest"
 		}];
 		this.start();
 
@@ -230,15 +234,18 @@ sap.ui.define([
 		this.aRequests = [{
 			startTime: 1,
 			requestStart: 2,
-			responseEnd: 3
+			responseEnd: 3,
+			initiatorType: "xmlhttprequest"
 		}, {
 			startTime: 2, // overlap with request 1
 			requestStart: 3,
-			responseEnd: 4
+			responseEnd: 4,
+			initiatorType: "xmlhttprequest"
 		}, {
 			startTime: 3, // overlap with reqeust 2
 			requestStart: 4,
-			responseEnd: 5
+			responseEnd: 5,
+			initiatorType: "xmlhttprequest"
 		}];
 		this.start();
 
@@ -256,15 +263,18 @@ sap.ui.define([
 		this.aRequests = [{
 			startTime: 1,
 			requestStart: 2,
-			responseEnd: 3
+			responseEnd: 3,
+			initiatorType: "xmlhttprequest"
 		}, {
 			startTime: 1,
 			requestStart: 3,
-			responseEnd: 5
+			responseEnd: 5,
+			initiatorType: "xmlhttprequest"
 		}, {
 			startTime: 7,
 			requestStart: 8,
-			responseEnd: 9
+			responseEnd: 9,
+			initiatorType: "xmlhttprequest"
 		}];
 		this.start();
 
@@ -282,7 +292,8 @@ sap.ui.define([
 		// mock an incomplete request
 		this.aRequests.push({
 			startTime: 10,
-			requestStart: 11
+			requestStart: 11,
+			initiatorType: "xmlhttprequest"
 			// no responseEnd
 		});
 
@@ -330,6 +341,7 @@ sap.ui.define([
 
 	// Check if global busy indicator measurement works without delay
 	QUnit.test("Busy indicator without delay", function(assert) {
+		jQuery.sap.interaction.notifyStepStart(null, true);
 		BusyIndicator.show(0);
 		BusyIndicator.hide();
 		jQuery.sap.interaction.notifyStepEnd();
@@ -349,6 +361,7 @@ sap.ui.define([
 
 	// Check if global busy indicator measurement works with delay
 	QUnit.test("Busy indicator with delay", function(assert) {
+		jQuery.sap.interaction.notifyStepStart(null, true);
 		BusyIndicator.show(1);
 		var done = assert.async();
 		assert.expect(2);
@@ -396,6 +409,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("named component", function(assert) {
+		jQuery.sap.interaction.notifyStepStart(null, true);
 		var sName = "foo.sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js";
 
 		try {
@@ -406,12 +420,11 @@ sap.ui.define([
 		var fnSpy = this.spy;
 		var done = assert.async();
 		var oReq = new XMLHttpRequest();
-		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+		oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
 		oReq.send();
 
 		// we need to use the timeout here, as the request-timing is not found otherwise
 		setTimeout(function() {
-
 			jQuery.sap.interaction.notifyStepEnd();
 			jQuery.sap.interaction.notifyStepStart(null, true);
 
@@ -421,7 +434,7 @@ sap.ui.define([
 
 			oReq = new XMLHttpRequest();
 			var spy = fnSpy(oReq, "setRequestHeader");
-			oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now());
+			oReq.open("GET", "resources/sap-ui-core.js?noCache=" + Date.now(), false);
 			oReq.send();
 
 			var aHeaderValues = getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",");

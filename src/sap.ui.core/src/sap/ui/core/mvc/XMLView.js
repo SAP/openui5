@@ -18,7 +18,8 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	'sap/base/strings/hash',
 	'sap/base/Log',
-	'sap/base/util/LoaderExtensions'
+	'sap/base/util/LoaderExtensions',
+	"sap/ui/performance/trace/Interaction"
 ],
 	function(
 		jQuery,
@@ -35,7 +36,8 @@ sap.ui.define([
 		XMLHelper,
 		hash,
 		Log,
-		LoaderExtensions
+		LoaderExtensions,
+		Interaction
 	) {
 	"use strict";
 
@@ -511,9 +513,11 @@ sap.ui.define([
 			}
 
 			function runPreprocessorsAsync(xContent) {
+				var fnDone = Interaction.notifyAsyncStep("VIEW PREPROCESSING");
 				return that.runPreprocessor("xml", xContent).then(function(xContent) {
 					return runViewxmlPreprocessor(xContent, /*bAsync=*/true);
-				});
+				})
+				.finally(fnDone);
 			}
 
 			function loadResourceAsync(sResourceName) {
@@ -631,13 +635,14 @@ sap.ui.define([
 			if (!this.oAsyncState) {
 				this._aParsedContent = fnRunWithPreprocessor(XMLTemplateProcessor.parseTemplate.bind(null, this._xContent, this));
 			} else {
+				var fnDone = Interaction.notifyAsyncStep("VIEW PROCESSING");
 				return XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, true, {
 					fnRunWithPreprocessor: fnRunWithPreprocessor
 				}).then(function(aParsedContent) {
 					that._aParsedContent = aParsedContent;
 					// allow rendering of preserve content
 					delete that.oAsyncState.suppressPreserve;
-				});
+				}).finally(fnDone);
 			}
 		};
 
