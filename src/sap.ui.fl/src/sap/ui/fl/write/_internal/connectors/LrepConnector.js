@@ -191,6 +191,9 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
 		loadFeatures: function (mPropertyBag) {
+			if (ApplyConnector.settings) {
+				return Promise.resolve({response: ApplyConnector.settings});
+			}
 			var mParameters = {};
 
 			ApplyConnector._addClientAndLanguageInfo(mParameters);

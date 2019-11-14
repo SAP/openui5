@@ -138,7 +138,6 @@ sap.ui.define([
 			};
 
 			sandbox.stub(CompatibilityConnector, "loadSettings").returns(Promise.resolve(oSetting));
-			sandbox.stub(Cache, "getFlexDataPromise").rejects();
 
 			assert.ok(Settings, "Settings loaded");
 			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementApplyAPI, "isVariantSharingEnabled");

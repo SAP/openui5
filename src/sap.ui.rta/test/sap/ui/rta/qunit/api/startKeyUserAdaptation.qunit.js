@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Cache",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Utils",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
@@ -17,7 +17,7 @@ sap.ui.define([
 	Element,
 	UIComponent,
 	Settings,
-	Cache,
+	FeaturesAPI,
 	FlexUtils,
 	Log,
 	sinon
@@ -26,13 +26,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	function setIsKeyUser(bIsKeyUser) {
-		sandbox.stub(Cache, "getFlexDataPromise").resolves({
-			changes: {
-				settings: {
-					isKeyUser: bIsKeyUser
-				}
-			}
-		});
+		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);
 	}
 
 	QUnit.module("Given startKeyUserAdaptation()", {
