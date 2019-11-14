@@ -196,7 +196,8 @@ sap.ui.define([
 			oElement, bHasColumns, i, j, k, aTableElements;
 
 		oDocument = XMLHelper.parse(
-			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
+			'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table"'
+			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">'
 			+ sViewXML
 			+ '</mvc:View>',
 			"application/xml"
@@ -804,10 +805,12 @@ sap.ui.define([
 		 *   If no model is given, <code>createTeaBusiModel</code> is used.
 		 * @param {object} [oController]
 		 *   An object defining the methods and properties of the controller
+		 * @param {object} [mPreprocessors] A map from the specified preprocessor type (e.g. "xml")
+		 *    to a preprocessor configuration, see {@link @sap.ui.core.mvc.View.create}
 		 * @returns {Promise} A promise that is resolved when the view is created and all expected
 		 *   values for controls have been set
 		 */
-		createView : function (assert, sViewXML, oModel, oController) {
+		createView : function (assert, sViewXML, oModel, oController, mPreprocessors) {
 			var fnLockGroup,
 				that = this;
 
@@ -1021,7 +1024,8 @@ sap.ui.define([
 			return View.create({
 				type : "XML",
 				controller : oController && new (Controller.extend(uid(), oController))(),
-				definition : xml(sViewXML)
+				definition : xml(sViewXML),
+				preprocessors : mPreprocessors
 			}).then(function (oView) {
 				Object.keys(that.mChanges).forEach(function (sControlId) {
 					var oControl = oView.byId(sControlId);
@@ -1403,6 +1407,65 @@ sap.ui.define([
 			}
 
 			return this.createView(assert, sView, vModel);
+		});
+	}
+
+	/**
+	 * Test that the template output is as expected.
+	 *
+	 * @param {sString} sTitle The title of the test case
+	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
+	 *    see {@link @sap.ui.core.mvc.View.create}
+	 * @param {string} sTemplate The template used to generate the expected view as XML
+	 * @param {string} sView The expected resulting view from templating
+	 *
+	 * @private
+	 */
+	function testXMLTemplating(sTitle, oXMLPreprocessorConfig, sTemplate, sView) {
+		/*
+		 * Remove all namespaces and all spaces before tag ends (..."/>) and all tabs from the
+		 * given XML string.
+		 *
+		 * @param {string} sXml
+		 *   XML string
+		 * @returns {string}
+		 *   Normalized XML string
+		 */
+		function _normalizeXml(sXml) {
+			/*jslint regexp: true*/
+			sXml = sXml
+			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
+			// Note: Chrome adds all namespaces at root level, but before other attributes!
+				.replace(/ xmlns.*?=\".*?\"/g, "")
+				// Note: browsers differ in whitespace for empty HTML(!) tags
+				.replace(/ \/>/g, '/>')
+				// Replace all tabulators
+				.replace(/\t/g, "");
+			if (Device.browser.msie || Device.browser.edge) {
+				// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
+				// - no escaped quotes in attribute values!
+				// - e.g. <In a="..." b="..."/> or <template:repeat a="..." t:b="...">
+				sXml = sXml.replace(/<[\w:]+( [\w:]+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
+					var aParts = sMatch.split(" ");
+					// aParts[0] e.g. "<In" or "<template:repeat"
+					// sMatch does not contain "/>" or ">" at end!
+					return aParts[0] + " " + aParts.slice(1).sort().join(" ");
+				});
+			}
+			return sXml;
+		}
+
+
+		QUnit.test(sTitle, function (assert) {
+			var that = this;
+
+			return this.createView(assert, sTemplate, undefined, undefined,
+				{xml : oXMLPreprocessorConfig}).then(function () {
+					assert.strictEqual(
+						_normalizeXml(XMLHelper.serialize(that.oView._xContent)),
+						_normalizeXml(XMLHelper.serialize(xml(sView)))
+					);
+			});
 		});
 	}
 
@@ -3184,6 +3247,36 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: As a Fiori Elements developer you template the operation dialog and want to use
+	// the AnnotationHelper.format to bind the parameters so that you have the type information
+	// already available before the controls are created.
+	// JIRA: CPOUI5ODATAV4-28
+	testXMLTemplating("Operation parameters with sap.ui.model.odata.v4.AnnotationHelper.format",
+		{models : {meta : createTeaBusiModel().getMetaModel()}},
+'<template:alias name="format" value="sap.ui.model.odata.v4.AnnotationHelper.format">\
+	<template:with\
+		path="meta>/com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamBudgetByID/0"\
+		var="action">\
+		<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+			<FlexBox binding="{$Parameter}">\
+				<template:repeat list="{action>$Parameter}" var="parameter">\
+					<Input id="{parameter>$Name}" value="{parameter>@@format}"/>\
+				</template:repeat>\
+			</FlexBox>\
+		</FlexBox>\
+	</template:with>\
+</template:alias>',
+'<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+	<FlexBox binding="{$Parameter}">\
+		<Input id="TeamID" value="{path:\'TeamID\',type:\'sap.ui.model.odata.type.String\',\
+constraints:{\'maxLength\':10,\'nullable\':false},\
+formatOptions:{\'parseKeepsEmptyString\':true}}"/>\
+		<Input id="Budget" value="{path:\'Budget\',type:\'sap.ui.model.odata.type.Decimal\',\
+constraints:{\'precision\':16,\'scale\':\'variable\',\'nullable\':false}}"/>\
+	</FlexBox>\
+</FlexBox>');
 
 	//*********************************************************************************************
 	// Scenario: Changing the binding parameters causes a refresh of the table

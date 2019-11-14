@@ -354,8 +354,8 @@ sap.ui.define([
 				Basics.expectType(oPathValue, "object");
 
 				["$And", "$Apply", "$Date", "$DateTimeOffset", "$Decimal", "$Float", "$Eq",
-					"$Ge", "$Gt", "$Guid", "$If", "$Int", "$Le", "$Lt", "$Ne", "$Not", "$Null",
-					"$Or", "$Path", "$PropertyPath", "$TimeOfDay"
+					"$Ge", "$Gt", "$Guid", "$If", "$Int", "$Le", "$Lt", "$Name", "$Ne", "$Not",
+					"$Null", "$Or", "$Path", "$PropertyPath", "$TimeOfDay", "$LabeledElement"
 				].forEach(function (sProperty) {
 					if (oRawValue.hasOwnProperty(sProperty)) {
 						sType = sProperty.slice(1);
@@ -371,6 +371,7 @@ sap.ui.define([
 				case "If": // 14.5.6 Expression edm:If
 					return Expression.conditional(oSubPathValue);
 
+				case "Name": // 12.4.1 Attribute Name
 				case "Path": // 14.5.12 Expression edm:Path
 				case "PropertyPath": // 14.5.13 Expression edm:PropertyPath
 					return Expression.path(oSubPathValue);
@@ -410,6 +411,7 @@ sap.ui.define([
 						value : null
 					});
 
+				// case "LabeledElement": 14.5.8 Expression edm:LabeledElement
 				default:
 					return asyncError(oPathValue, "Unsupported OData expression");
 			}
