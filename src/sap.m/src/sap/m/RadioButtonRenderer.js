@@ -45,7 +45,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 			oRm.writeStyles();
 		}
 
-		var sTooltipWithStateMessage = ValueStateSupport.enrichTooltip(oRadioButton, oRadioButton.getTooltip_AsString());
+		var sTooltipWithStateMessage = this.getTooltipText(oRadioButton);
 		if (sTooltipWithStateMessage) {
 			oRm.writeAttributeEscaped("title", sTooltipWithStateMessage);
 		}
@@ -139,6 +139,25 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/library', 'sap/ui/D
 		}
 		oRm.write("</div>"); // Control - DIVs close
 	};
+
+	/**
+	 * Returns the correct value of the tooltip.
+	 *
+	 * @param {sap.m.RadioButton} oRadioButton RadioButton instance.
+	 * @returns {string} The correct tooltip value.
+	 */
+	RadioButtonRenderer.getTooltipText = function (oRadioButton) {
+		var sValueStateText = oRadioButton.getProperty("valueStateText"),
+			sTooltipText = oRadioButton.getTooltip_AsString();
+
+		if (sValueStateText) {
+			return (sTooltipText ? sTooltipText + " - " : "") + sValueStateText;
+		} else {
+			return ValueStateSupport.enrichTooltip(oRadioButton, sTooltipText);
+		}
+	};
+
+
 
 	return RadioButtonRenderer;
 
