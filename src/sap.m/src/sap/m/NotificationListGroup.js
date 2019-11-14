@@ -90,7 +90,6 @@ function(
 				/**
 				 * Determines if the group header/footer of the empty group will be always shown. By default groups with 0 notifications are not shown.
 				 *
-				 * @deprecated As of version 1.73
 				 */
 				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
@@ -183,18 +182,26 @@ function(
 		var $that = this.$(),
 			collapseButton = this._getCollapseButton(),
 			display = "",
-			areActionButtonsVisible = !bCollapsed && this.getShowButtons();
+			areActionButtonsVisible = !bCollapsed && this._shouldRenderOverflowToolbar();
 
 		$that.toggleClass('sapMNLGroupCollapsed', bCollapsed);
 		$that.attr('aria-expanded', !bCollapsed);
-		areActionButtonsVisible ? display = "block" : display = "none";
-		$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
+
+		if (!Device.system.phone) {
+			areActionButtonsVisible ? display = "block" : display = "none";
+			$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
+		}
 
 		collapseButton.setIcon(bCollapsed ? expandIcon : collapseIcon);
 		collapseButton.setTooltip(bCollapsed ? expandText : collapseText);
 
 		// Setter overwritten to suppress invalidation
 		this.setProperty('collapsed', bCollapsed, true);
+
+		if (Device.system.phone && this.getDomRef()) {
+			this._updatePhoneButtons();
+		}
+
 		this.fireOnCollapse({collapsed: bCollapsed});
 
 		return this;

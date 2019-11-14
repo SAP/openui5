@@ -34,8 +34,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			authorAvatar = control._getAuthorAvatar(),
 			priority = control.getPriority(),
 			isUnread = control.getUnread(),
-			priorityClass = '',
-			closeButton;
+			priorityClass = '';
 
 		rm.write('<li');
 		rm.writeControlData(control);
@@ -67,17 +66,16 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.write('<div aria-hidden="true" class="sapMNLIItem sapMNLIItemAC">');
 
 		// actions
-		if (control.getShowButtons() && control.getButtons().length) {
+		if (control._shouldRenderOverflowToolbar()) {
 			rm.write('<div class="sapMNLIItem sapMNLIActions">');
 			rm.renderControl(control._getOverflowToolbar());
 			rm.write('</div>');
 		}
 
 		// close button
-		closeButton = control._getCloseButton();
-		if (control.getShowCloseButton() && closeButton && !Device.system.phone) {
+		if (control._shouldRenderCloseButton()) {
 			rm.write('<div class="sapMNLIItem sapMNLICloseBtn">');
-			rm.renderControl(closeButton);
+			rm.renderControl(control._getCloseButton());
 			rm.write('</div>');
 		}
 
