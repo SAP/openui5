@@ -989,19 +989,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
+	 * Saves the passed or all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 *
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
+	 * @param {sap.ui.fl.Change} [aChanges] If passed only those changes are saved
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache) {
-		var aDirtyChangesClone = this._aDirtyChanges.slice(0);
-		var aDirtyChanges = this._aDirtyChanges;
-		var aRequests = this._getRequests(aDirtyChangesClone);
-		var aPendingActions = this._getPendingActions(aDirtyChangesClone);
+	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache, aChanges) {
+		var aDirtyChanges = aChanges || this._aDirtyChanges;
+		var aDirtyChangesClone = aDirtyChanges.slice(0);
+		var aRequests = this._getRequests(aDirtyChanges);
+		var aPendingActions = this._getPendingActions(aDirtyChanges);
 
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];
