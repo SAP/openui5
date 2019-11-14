@@ -264,6 +264,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the scrollable content of the SimpleFixFlex
+	 *
+	 * @return {Element} The DOM element of the scrollable content
+	 * @private
+	 */
+	SuggestionsPopover.prototype._getScrollableContent = function () {
+		var oSimpleFixFlexDomRef = this._oSimpleFixFlex && this._oSimpleFixFlex.getDomRef(),
+			oScrollableContentDomRef = oSimpleFixFlexDomRef && oSimpleFixFlexDomRef.querySelector('.sapUiSimpleFixFlexFlexContent');
+
+		return oScrollableContentDomRef;
+	};
+
+	/**
 	 * Updated the dialog title based on the labels of the parent input
 	 *
 	 * @return {sap.m.Title} The title control

@@ -10,7 +10,8 @@ sap.ui.define([
 	'sap/m/List',
 	"sap/m/Input",
 	"sap/m/ComboBox",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/thirdparty/sinon",
+	"sap/m/SimpleFixFlex"
 ], function (
 	Device,
 	qutils,
@@ -21,7 +22,8 @@ sap.ui.define([
 	List,
 	Input,
 	ComboBox,
-	sinon
+	sinon,
+	SimpleFixFlex
 ) {
 	"use strict";
 
@@ -350,5 +352,34 @@ sap.ui.define([
 
 		// cleanup
 		oRegisterAutocompleteStub.restore();
+		oComboBox.destroy();
+		oSuggestionsPopover.destroy();
+	});
+
+	QUnit.module("API");
+
+	QUnit.test("_getScrollableContent", function (assert) {
+		//Set up
+		var oInput = new Input(),
+			oGetDomRefSpy,
+			oSuggestionsPopover = new SuggestionsPopover(oInput);
+
+		//Assert
+		assert.ok(!oSuggestionsPopover._getScrollableContent(),
+			"_getScrollableContent should not return anything, when there is no SimpleFixFlex");
+
+		//Act
+		oSuggestionsPopover._createSuggestionPopupContent(false);
+		oGetDomRefSpy = sinon.spy(SimpleFixFlex.prototype, "getDomRef");
+		oSuggestionsPopover._getScrollableContent();
+
+		//Assert
+		assert.ok(oGetDomRefSpy.calledOnce,
+			"_getScrollableContent should return the dom ref of the flex content, when a SimpleFixFlex is created");
+
+		//Clean up
+		oSuggestionsPopover.destroy();
+		oInput.destroy();
+		oGetDomRefSpy.restore();
 	});
 });
