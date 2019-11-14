@@ -55,9 +55,11 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.writeClasses();
 
 		rm.writeAttribute('tabindex', '0');
+
 		rm.writeAccessibilityState(control, {
 			role: "option",
-			expanded: !control.getCollapsed()
+			expanded: !control.getCollapsed(),
+			label: control.getAccessibilityText()
 		});
 
 		rm.write('>');

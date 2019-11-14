@@ -225,14 +225,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('ARIA - Accessibility Text', function (assert) {
-		var invisibleText = NotificationListBase._getInvisibleText();
-		assert.notOk(invisibleText.getText(), "accessibility text is initially empty");
-
-		this.notificationListItem.onfocusin({
-			target: this.notificationListItem.getDomRef()
-		});
-
-		assert.equal(invisibleText.getText(), 'Notification List Item Title Notification List Item Description Notification unread. Created By John Smith Due in 3 days, High Priority.', "accessibility text is correct");
+		assert.equal(this.notificationListItem.$().attr('aria-label'), 'Notification List Item Title Notification List Item Description Notification unread. Created By John Smith Due in 3 days, High Priority.', "accessibility text is correct");
 	});
 
 	QUnit.module('Keyboard navigation', {
