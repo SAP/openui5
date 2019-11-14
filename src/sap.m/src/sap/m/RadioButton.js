@@ -170,7 +170,6 @@ function(
 
 			/**
 			 * Defines the text that appears in the tooltip of the <code>RadioButton</code>. If this is not specified, a default text is shown from the resource bundle.
-			 * @since 1.73
 			 * @private
 			 */
 			valueStateText: { type: "string", group: "Misc", defaultValue: null, visibility: "hidden" }
