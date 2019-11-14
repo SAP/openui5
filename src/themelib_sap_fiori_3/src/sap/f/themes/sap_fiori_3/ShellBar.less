@@ -174,39 +174,59 @@
 	.@{controlClass} {
 
 		// sap.m.Button
-		.sapMTB-Transparent-CTX .sapMBtn {
+		.sapMTB-Transparent-CTX .sapFShellBarItem.sapMBtn,
+		.sapMTB-Transparent-CTX .sapFShellBarItem>.sapMBtn {
 			&:focus .sapMBtnInner {
 				outline-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
 			}
 			&:focus .sapMBtnFocusDiv {
 				border-color: contrast(@sapShellColor, @sapUiContentFocusColor, @sapUiContentContrastFocusColor, @sapContent_ContrastTextThreshold);
 			}
-			.sapMBtnContent,
 			.sapMBtnInner::after,
 			.sapMBtnIcon {
 				background: transparent;
+				color: @sapUiShellInteractiveTextColor;
+			}
+			.sapMBtnContent
+			{
+				background: transparent;
 				color: @sapUiShellTextColor;
 			}
-			&:hover {
-				.sapMBtnInner {
-					background: @sapUiShellHoverBackground !important;
-					border-color: transparent;
+			&:hover:not(.sapMBtnDisabled) {
+				>span.sapMBtnInner.sapMBtnHoverable.sapMBtnTransparent:not(.sapMToggleBtnPressed) {
+					&:not(.sapMBtnActive) {
+						background: @sapUiShellHoverBackground;
+						border-color: @sapUiShellHoverBackground;
+					}
+					&.sapMBtnActive {
+						background: @sapUiShellActiveBackground;
+						border-color: @sapUiShellActiveBackground;
+						color: @sapUiShellTextColor;
+					}
+					&:after,
+					>.sapMBtnIcon {
+						color: @sapUiShellInteractiveTextColor;
+					}
+					>.sapMBtnContent,
+					>.sapMBtnContent bdi
+					{
+						color: @sapUiShellTextColor;
+					}
+
+				}
+				&.sapMToggleBtnPressed {
+					background: @sapUiShellActiveBackground;
+					border-color: @sapUiShellActiveBackground;
+				}
+				&:active {
+					>.sapMBtnContent,
+					>.sapMBtnInner,
+					>.sapMBtnIcon {
+						color: @sapUiShellTextColor;
+					}
 				}
 			}
-			.sapMToggleBtnPressed {
-				background: @sapUiShellActiveBackground !important;
-				border-color: transparent !important;
-			}
-			&:active {
-				.sapMBtnContent,
-				.sapMBtnInner,
-				.sapMBtnIcon {
-					color: @sapUiShellActiveTextColor;
-				}
-				.sapMBtnInner {
-					background: @sapUiShellActiveBackground !important;
-				}
-			}
+
 			&:disabled {
 				opacity: 0.4;
 			}
@@ -300,3 +320,4 @@
 		}
 	}
 }
+
