@@ -81,7 +81,7 @@ sap.ui.define([
 		},
 		_addItem: function() {
 			var oConfig = this.getConfig();
-			var aValue = this.getModel("_context").getProperty("/" + oConfig.path).slice() || [];
+			var aValue = (this.getModel("_context").getProperty("/" + oConfig.path) || []).slice();
 			// Workaround:
 			// Create a default array item
 			// This solution does not support nested arrays
