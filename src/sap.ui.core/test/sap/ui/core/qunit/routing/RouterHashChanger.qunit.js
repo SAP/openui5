@@ -402,6 +402,32 @@ sap.ui.define([
 		assert.equal(this.oChild2HashSetSpy.callCount, 0, "Child 2 hash changer not called");
 	});
 
+	QUnit.test("set hash on the child with collecting nested hash info", function(assert) {
+		var oParentHashSetSpy = sinon.spy(),
+			oChildHashSetSpy = sinon.spy(),
+			oGrandChildHashSetSpy = sinon.spy(),
+			that = this;
+
+		this.oRHC.attachEvent("hashSet", oParentHashSetSpy);
+		this.oChildRHC1.attachEvent("hashSet", oChildHashSetSpy);
+		this.oGrandChildRHC1.attachEvent("hashSet", oGrandChildHashSetSpy);
+
+		return this.oChildRHC1.setHash("Child1", new Promise(function(resolve, reject) {
+			Promise.resolve().then(function() {
+				that.oGrandChildRHC1.setHash("GrandChild1");
+				resolve();
+			});
+		})).then(function() {
+			assert.equal(oGrandChildHashSetSpy.callCount, 1, "hashSet event is not fired on the grand child router hash changer");
+
+			assert.equal(oChildHashSetSpy.callCount, 1, "hashSet event is fired on the child router hash changer");
+			assert.deepEqual(oChildHashSetSpy.getCall(0).args[0].getParameter("nestedHashInfo"), [{key: "foo-child1", hash: "GrandChild1", deletePrefix: []}]);
+
+			assert.equal(oParentHashSetSpy.callCount, 1, "hashSet event is fired on the parent router hash changer");
+			assert.deepEqual(oParentHashSetSpy.getCall(0).args[0].getParameter("nestedHashInfo"), [{key: "foo-child1", hash: "GrandChild1", deletePrefix: []}]);
+		});
+	});
+
 	QUnit.test("delete prefix for one active child after setHash", function(assert) {
 		this.oGrandChildRHC2.detachEvent("hashChanged", this.oGrandChild2HashChangedSpy);
 		this.oChildRHC1.setHash("Child1");
