@@ -35,7 +35,7 @@ sap.ui.define([
 		return new JSONModel({
 			text: _mText,
 			asNewSection: {
-				selected: false
+				value: false
 			},
 			sectionName: {
 				value: "",
@@ -46,39 +46,27 @@ sap.ui.define([
 				valueState: ValueState.None
 			},
 			frameWidthUnit: {
-				selectedKey: ""
+				value: "px"
 			},
 			frameHeigth: {
 				value: "",
 				valueState: ValueState.None
 			},
 			frameHeigthUnit: {
-				selectedKey: ""
+				value: "px"
 			},
 			frameUrl: {
 				value: "",
 				valueState: ValueState.None
-			}
+			},
+			unitsOfMeasure: [{
+				name: "px"
+			}, {
+				name: "%"
+			}, {
+				name: "rem"
+			}]
 		});
-	}
-
-	function _createDialog() {
-		this._oJSONModel = _createJSONModel();
-		Fragment.load({
-			name: "sap.ui.rta.view.SettingsDialog",
-			controller: new SettingsDialogController(this._oJSONModel)
-		}).then(function (oSettingsDialog) {
-			this._oDialog = oSettingsDialog;
-			this._oDialog.setModel(this._oJSONModel);
-			_openDialog.call(this);
-		}.bind(this));
-	}
-
-	function _openDialog() {
-		this._oDialog.attachAfterOpen(function () {
-			this.fireOpened();
-		}.bind(this));
-		this._oDialog.open();
 	}
 
 	/**
@@ -102,10 +90,6 @@ sap.ui.define([
 		}
 	});
 
-	SettingsDialog.prototype.exit = function () {
-		this._oDialog.destroy();
-	};
-
 	/**
 	 * Open the Settings Dialog
 	 *
@@ -113,15 +97,47 @@ sap.ui.define([
 	 * @public
 	 */
 	SettingsDialog.prototype.open = function () {
-		return new Promise(function (resolve, reject) {
+		return new Promise(function (resolve) {
 			this._fnResolve = resolve;
-			this._fnReject = reject;
-			if (!this._oDialog) {
-				_createDialog.call(this);
-			} else {
-				_openDialog.call(this);
-			}
+			this._createDialog();
 		}.bind(this));
+	};
+
+	/**
+	 * Create the Settings Dialog
+	 *
+	 * @private
+	 */
+	SettingsDialog.prototype._createDialog = function () {
+		this._oJSONModel = _createJSONModel();
+		this._oController = new SettingsDialogController(this._oJSONModel);
+		Fragment.load({
+			name: "sap.ui.rta.view.SettingsDialog",
+			controller: this._oController
+		}).then(function (oSettingsDialog) {
+			this._oDialog = oSettingsDialog;
+			this._oDialog.setModel(this._oJSONModel);
+			this._openDialog();
+		}.bind(this));
+	};
+
+	/**
+	 * Open and set up Settings Dialog
+	 *
+	 * @private
+	 */
+	SettingsDialog.prototype._openDialog = function () {
+		this._oDialog.attachAfterOpen(function () {
+			this.fireOpened();
+		}.bind(this));
+
+		this._oDialog.attachAfterClose(function () {
+			this._oDialog.destroy();
+			this._oDialog = undefined;
+			this._fnResolve(this._oController.getSettings());
+		}.bind(this));
+
+		this._oDialog.open();
 	};
 
 	return SettingsDialog;

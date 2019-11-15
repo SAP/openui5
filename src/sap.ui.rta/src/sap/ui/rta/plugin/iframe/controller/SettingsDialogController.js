@@ -12,6 +12,7 @@ sap.ui.define([
 
 	var _aTextInputFields = ["sectionName", "frameUrl"];
 	var _aNumericInputFields = ["frameWidth", "frameHeigth"];
+	var _aSelectInputFields = ["asNewSection", "frameWidthUnit", "frameHeigthUnit"];
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.controller.SettingsDialogController", {
 		constructor: function (oJSONModel) {
@@ -41,13 +42,41 @@ sap.ui.define([
 		 * Event handler for OK button
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onOKPress: function () {},
+		onOKPress: function () {
+			if (this._areAllTextFieldsValid() && this._areAllValueStateNones()) {
+				this._close(this._buildReturnedSettings());
+			}
+		},
 
 		/**
 		 * Event handler for cancel button
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onCancelPress: function () {},
+		onCancelPress: function () {
+			this._close();
+		},
+
+		/**
+		 * Close Settings Dialog
+		 *
+		 * @param {object|undefined} mSettings - iframe settings to be returned
+		 * @private
+		 */
+		_close: function (mSettings) {
+			var oSettingsDialog = sap.ui.getCore().byId("sapUiRtaSettingsDialog");
+			this._mSettings = mSettings;
+			oSettingsDialog.close();
+		},
+
+		/**
+		 * Get iframe settings
+		 *
+		 * @returns {object|undefined} mSettings - iframe settings
+		 * @public
+		 */
+		getSettings: function () {
+			return this._mSettings;
+		},
 
 		/**
 		 * Verify that there is no error value state
@@ -76,6 +105,20 @@ sap.ui.define([
 				}
 			}, this);
 			return bValid;
+		},
+
+		/**
+		 * Build the returned settings
+		 *
+		 * @private
+		 */
+		_buildReturnedSettings: function () {
+			var mSettings = {};
+			var oData = this._oJSONModel.getData();
+			_aTextInputFields.concat(_aNumericInputFields, _aSelectInputFields).forEach(function (sFieldName) {
+				mSettings[sFieldName] = oData[sFieldName].value;
+			});
+			return mSettings;
 		}
 	});
 });
