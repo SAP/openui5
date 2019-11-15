@@ -212,36 +212,11 @@ sap.ui.define([
 			Log.warning('Ignored new rating value "' + fValue + '" because it is out  of range (0-' + this.getMaxValue() + ')');
 		} else {
 			fValue = this._roundValueToVisualMode(fValue);
-			this.setProperty("value", fValue, true);
+			this.setProperty("value", fValue);
 
 			// always set hover value to current value to allow keyboard / mouse / touch navigation
 			this._fHoverValue = fValue;
-
-			// if control is already rendered reflect the changes in the UI as well
-			if (this.$().length) {
-				this._updateUI(fValue);
-			}
 		}
-		return this;
-	};
-
-	/**
-	 * Sets the icon size value. The method automatically updates the UI components if the control has been rendered before.
-	 *
-	 * @param {sap.ui.core.CSSSize} sIconSize The size of the icon
-	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
-	 * @override
-	 * @public
-	 */
-	RatingIndicator.prototype.setIconSize = function (sIconSize) {
-
-		// if control is already rendered we calculate the new pixel values for the icon size once
-		if (this.$().length) {
-			this._iPxIconSize = this._toPx(sIconSize) || 16;
-		}
-
-		// then update the property and rerender since updating all widths would be too complex here
-		this.setProperty("iconSize", sIconSize, false);
 		return this;
 	};
 
