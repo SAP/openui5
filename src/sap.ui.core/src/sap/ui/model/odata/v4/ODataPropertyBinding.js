@@ -710,16 +710,13 @@ sap.ui.define([
 		}
 
 		if (this.vValue !== vValue) {
-			oGroupLock = that.lockGroup(sGroupId || this.getUpdateGroupId(), true, true);
-			this.oCachePromise.then(function (oCache) {
-				if (oCache) {
-					reportError(new Error("Cannot set value on this binding as it is not relative"
-						+ " to a sap.ui.model.odata.v4.Context"));
-					// do not update that.vValue!
-				} else {
-					return that.oContext.doSetProperty(that.sPath, vValue, oGroupLock);
-				}
-			}).catch(function (oError) {
+			if (this.oCache) {
+				reportError(new Error("Cannot set value on this binding as it is not relative"
+					+ " to a sap.ui.model.odata.v4.Context"));
+				return; // do not update this.vValue!
+			}
+			oGroupLock = this.lockGroup(sGroupId || this.getUpdateGroupId(), true, true);
+			this.oContext.doSetProperty(this.sPath, vValue, oGroupLock).catch(function (oError) {
 				oGroupLock.unlock(true);
 				reportError(oError);
 			});
