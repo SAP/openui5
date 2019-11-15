@@ -1681,7 +1681,7 @@ sap.ui.define([
 				id : "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().packageName, "$TMP");//check the default
+				assert.equal(oDescriptorVariant._getMap().packageName, "");//check the default
 				oDescriptorVariant_ = oDescriptorVariant;
 				return oDescriptorVariant.setPackage("/ABC/DEFGH_IJKL12345");
 			}).then(function() {
@@ -1694,7 +1694,7 @@ sap.ui.define([
 				id : "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
-				assert.equal(oDescriptorVariant._getMap().packageName, "$TMP");//check the default
+				assert.equal(oDescriptorVariant._getMap().packageName, "");//check the default
 				return oDescriptorVariant.setPackage("SomePackage_WrongFormat");
 			}).then(
 				function() {

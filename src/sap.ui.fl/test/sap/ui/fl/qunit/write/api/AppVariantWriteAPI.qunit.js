@@ -206,7 +206,7 @@ sap.ui.define([
 				fileType:"change",
 				changeType:"hideControl",
 				reference:"reference.app.Component",
-				packageName:"$TMP",
+				packageName:"",
 				content:{},
 				selector:{
 					id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
@@ -310,7 +310,7 @@ sap.ui.define([
 							assert.equal(fnCreateBackendCall.callCount, 1, "then backend call is triggered");
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
+							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
@@ -555,7 +555,7 @@ sap.ui.define([
 							assert.equal(fnCreateBackendCall.callCount, 1, "then backend call is triggered");
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
+							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
@@ -631,7 +631,7 @@ sap.ui.define([
 							assert.equal(ChangesController.getDescriptorFlexControllerInstance({appId: "reference.app"})._oChangePersistence.getDirtyChanges().length, 0, "then a Descriptor change has been removed from the persistence");
 							// Get the app variant to be saved to backend
 							var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
-							assert.strictEqual(oAppVariant.packageName, "$TMP", "then the app variant will be saved with local object");
+							assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
 							assert.strictEqual(oAppVariant.reference, "reference.app", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the reference app id is correct");
 							assert.strictEqual(oAppVariant.content[0].changeType, "appdescr_ovp_addNewCard", "then the inline change is saved into manifest");
@@ -696,13 +696,66 @@ sap.ui.define([
 			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
 				.then(function() {
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=customer.reference.app.id&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
 		});
 
-		QUnit.test("(Key User Delete Appvar scenario) when deleteAppVariant is called and layer is not passed in propertbag", function(assert) {
+		QUnit.test("(Key User Delete Appvar scenario - onPrem system) when deleteAppVariant is called, has transports and user presses 'Cancel' on Transport Dialog", function(assert) {
+			var oAppComponent = createAppComponent();
+			simulateSystemConfig(false);
+
+			sandbox.stub(flexUtils, "getComponentClassName").returns("testComponent");
+			sandbox.stub(flexUtils, "getAppComponentForControl").returns(oAppComponent);
+
+			var mAppVariant = {
+				response: {
+					id: "customer.reference.app.id",
+					reference: "reference.app",
+					fileName: "fileName1",
+					namespace: "namespace1",
+					layer: "layer1",
+					fileType: "fileType1",
+					content: [{
+						changeType: "changeType2",
+						content: {}
+					}]
+				}
+			};
+
+			var oTransportResponse = {
+				response: {
+					errorCode: "",
+					localonly: false,
+					transports: "TRANSPORT123"
+				}
+			};
+
+			var oOldConnectorCall = sandbox.stub(LrepConnector.prototype, "send").resolves(oTransportResponse); // Get transports
+			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest");
+			oNewConnectorCall.onFirstCall().resolves(mAppVariant); // Get Descriptor variant call
+			oNewConnectorCall.onSecondCall().resolves(); // Delete call to backend
+
+			var fnSimulateDialogSelectionAndCancel = function (oConfig, fOkay, fError) {
+				var oResponse = {
+					sId: "cancel"
+				};
+				fError(oResponse);
+			};
+
+			var oOpenDialogStub = sandbox.stub(TransportSelection.prototype, "_openDialog").callsFake(fnSimulateDialogSelectionAndCancel);
+
+			return AppVariantWriteAPI.deleteAppVariant({selector: oAppComponent, layer: "CUSTOMER"})
+				.then(function() {
+					assert.ok(oNewConnectorCall.firstCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.equal(oNewConnectorCall.secondCall, null, "then delete app variants backend call is never triggered");
+					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
+				});
+		});
+
+		QUnit.test("(Key User Delete Appvar scenario) when deleteAppVariant is called and layer is not passed in propertybag", function(assert) {
 			return AppVariantWriteAPI.deleteAppVariant({})
 				.catch(function() {
 					assert.ok("Layer must be passed");
@@ -817,13 +870,13 @@ sap.ui.define([
 					assert.ok("then the promise got rejected");
 					assert.equal(oError.messageKey, "MSG_DELETE_APP_VARIANT_FAILED", "then the messagekey is correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/reference.app", "GET"), "then the parameters are correct");
-					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=customer.reference.app.id&namespace=namespace1&type=fileType1"), "then the parameters are correct");
+					assert.ok(oOldConnectorCall.calledWithExactly("/sap/bc/lrep/actions/gettransports/?name=fileName1&namespace=namespace1&type=fileType1"), "then the parameters are correct");
 					assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/customer.reference.app.id?changelist=TRANSPORT123", "DELETE"), "then the parameters are correct");
 					assert.equal(oOpenDialogStub.callCount, 1, "the dialog was opened");
 				});
 		});
 
-		QUnit.test("(Key User Delete Appvar scenario - onPrem system) when deleteAppVariant is called when local object is used", function(assert) {
+		QUnit.test("(Key User Delete Appvar scenario - onPrem system) when deleteAppVariant is called", function(assert) {
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 
@@ -838,7 +891,7 @@ sap.ui.define([
 					namespace: "namespace1",
 					layer: "layer1",
 					fileType: "fileType1",
-					packageName: "$TMP",
+					packageName: "",
 					content: [{
 						changeType: "changeType2",
 						content: {}
