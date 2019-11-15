@@ -55,6 +55,8 @@ sap.ui.define([
 				this.setModel(oModel);
 			}
 
+			this.setModel(oModel, "parameterContext");
+
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
 					"Equipments?$count=true&$orderby=Category,Name&$select=Category,ID,Name,EmployeeId&$skip=0&$top=5" : {

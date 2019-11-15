@@ -138,19 +138,25 @@ sap.ui.define([
 				this.sGroupId = undefined;
 				this.bInheritExpandSelect = false;
 				this.oOperation = undefined;
+				this.oParameterContext = null;
 				this.oReturnValueContext = null;
 				this.sUpdateGroupId = undefined;
 
 				if (iPos >= 0) { // deferred operation binding
+					if (iPos !== this.sPath.length - /*"(...)".length*/5) {
+						throw new Error(
+							"The path must not continue after a deferred operation: " + this.sPath);
+					}
+
 					this.oOperation = {
 						bAction : undefined,
 						mChangeListeners : {}, // map from path to an array of change listeners
 						mParameters : {},
 						sResourcePath : undefined
 					};
-					if (iPos !== this.sPath.length - 5) {
-						throw new Error(
-							"The path must not continue after a deferred operation: " + this.sPath);
+					if (!this.bRelative) {
+						this.oParameterContext = Context.create(this.oModel, this,
+							this.sPath + "/$Parameter");
 					}
 				}
 
@@ -641,6 +647,10 @@ sap.ui.define([
 			this.oElementContext.destroy();
 			this.oElementContext = undefined;
 		}
+		if (this.oParameterContext) {
+			this.oParameterContext.destroy();
+			this.oParameterContext = undefined;
+		}
 		if (this.oReturnValueContext) {
 			this.oReturnValueContext.destroy();
 			this.oReturnValueContext = undefined;
@@ -878,6 +888,25 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.getDependentBindings = function () {
 		return this.oModel.getDependentBindings(this);
+	};
+
+	/**
+	 * Returns the context pointing to the parameters of a deferred operation binding.
+	 *
+	 * @returns {sap.ui.model.odata.v4.Context}
+	 *   The parameter context
+	 * @throws {Error}
+	 *   If the binding is not a deferred operation binding (see
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding})
+	 *
+	 * @public
+	 * @since 1.73
+	 */
+	ODataContextBinding.prototype.getParameterContext = function () {
+		if (!this.oOperation) {
+			throw new Error("Not a deferred operation binding: " + this);
+		}
+		return this.oParameterContext;
 	};
 
 	/**
@@ -1214,10 +1243,18 @@ sap.ui.define([
 					this.oReturnValueContext.destroy();
 					this.oReturnValueContext = null;
 				}
+				if (this.oParameterContext) {
+					this.oParameterContext.destroy();
+					this.oParameterContext = null;
+				}
 				this.fetchCache(oContext);
 				if (oContext) {
 					this.oElementContext = Context.create(this.oModel, this,
 						this.oModel.resolve(this.sPath, oContext));
+					if (this.oOperation) {
+						this.oParameterContext = Context.create(this.oModel, this,
+							this.oModel.resolve(this.sPath + "/$Parameter", oContext));
+					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext);

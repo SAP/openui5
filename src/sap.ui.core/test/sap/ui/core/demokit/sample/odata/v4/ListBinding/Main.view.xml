@@ -45,7 +45,8 @@
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit"
 						press="openChangeTeamBudgetDialog" text="Budget">
 					<dependents>
-						<Dialog id="ChangeTeamBudgetDialog" title="Change Team Budget">
+						<Dialog id="ChangeTeamBudgetDialog" title="Change Team Budget"
+							binding="{/ChangeTeamBudgetByID(...)}">
 							<buttons>
 								<Button icon="sap-icon://sys-cancel-2"
 									press="cancelChangeTeamBudget" text="Cancel" type="Reject"/>
@@ -53,12 +54,12 @@
 									text="Change" type="Accept"/>
 							</buttons>
 							<form:SimpleForm ariaLabelledBy="ChangeTeamBudgetDialog"
-								binding="{/ChangeTeamBudgetByID(...)}" editable="true"
+								binding="{$Parameter}" editable="true"
 								id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
 								<Label text="Team ID" />
-								<Input value="{$Parameter/TeamID}" editable="false" />
+								<Input value="{TeamID}" editable="false" />
 								<Label text="Budget" />
-								<Input value="{$Parameter/Budget}" />
+								<Input value="{Budget}" />
 							</form:SimpleForm>
 						</Dialog>
 					</dependents>
@@ -88,11 +89,10 @@
 						text="Change" type="Accept"/>
 				</buttons>
 				<form:SimpleForm ariaLabelledBy="ChangeManagerOfTeamDialog"
-						binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)}"
 						editable="true" id="ChangeTeamManagerByID"
 						layout="ResponsiveGridLayout">
 					<Label text="Manager ID" />
-					<Input value="{$Parameter/ManagerID}" />
+					<Input value="{parameterContext>ManagerID}" />
 				</form:SimpleForm>
 			</Dialog>
 		</form:dependents>

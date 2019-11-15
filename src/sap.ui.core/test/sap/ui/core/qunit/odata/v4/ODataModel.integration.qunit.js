@@ -3008,9 +3008,9 @@ sap.ui.define([
 	// JIRA: CPOUI5UISERVICESV3-2010
 	QUnit.test("Allow binding of operation parameters: OneTime", function (assert) {
 		var sView = '\
-<FlexBox id="form" binding="{}">\
-	<Input id="budget" value="{$Parameter/Budget}" />\
-	<Input id="teamId" value="{$Parameter/TeamID}" />\
+<FlexBox id="form" >\
+	<Input id="budget" value="{Budget}" />\
+	<Input id="teamId" value="{TeamID}" />\
 </FlexBox>',
 			that = this;
 
@@ -3027,8 +3027,7 @@ sap.ui.define([
 			that.expectChange("budget", "1,234.1234")
 				.expectChange("teamId", "TEAM_01");
 
-			that.oView.byId("form").getObjectBinding()
-				.setContext(oOperationBinding.getBoundContext()); //TODO getParameterContext()
+			that.oView.byId("form").setBindingContext(oOperationBinding.getParameterContext());
 
 			return that.waitForChanges(assert);
 		});
@@ -3081,6 +3080,24 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
+			that.expectChange("budget", "98,765");
+
+			oOperationBinding.getParameterContext().setProperty("Budget", "98765");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("budget", "12,345");
+
+			that.oView.byId("budget").getBinding("value").setValue("12345");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("budget", "54,321");
+
+			that.oView.byId("form").getBindingContext().setProperty("$Parameter/Budget", "54321");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
 			that.expectChange("teamId", null);
 
 			// #deregisterChange
@@ -3097,10 +3114,14 @@ sap.ui.define([
 	// - parameters change because of change in property binding
 	// JIRA: CPOUI5UISERVICESV3-2010
 	QUnit.test("Allow binding of operation parameters: Changing with controls", function (assert) {
-		var sView = '\
-<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
-	<Input id="budget" value="{$Parameter/Budget}" />\
-	<Input id="teamId" value="{$Parameter/TeamID}" />\
+		var oOperation,
+			oParameterContext,
+			sView = '\
+<FlexBox id="operation" binding="{/ChangeTeamBudgetByID(...)}">\
+	<FlexBox id="parameter" binding="{$Parameter}">\
+		<Input id="budget" value="{Budget}" />\
+		<Input id="teamId" value="{TeamID}" />\
+	</FlexBox>\
 </FlexBox>',
 			that = this;
 
@@ -3108,12 +3129,30 @@ sap.ui.define([
 			.expectChange("teamId", "");
 
 		return this.createView(assert, sView).then(function () {
-			that.expectChange("budget", "1,234.1234")
-				.expectChange("teamId", "TEAM_01");
+			oOperation = that.oView.byId("operation").getObjectBinding();
+			oParameterContext = oOperation.getParameterContext();
 
+			that.expectChange("budget", "1,234.1234");
+
+			// code under test - setting the parameter via value binding
 			that.oView.byId("budget").getBinding("value").setValue("1234.1234");
+			assert.strictEqual(oParameterContext.getProperty("Budget"), "1234.1234");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("budget", "4,321.1234");
+
+			// code under test - setting the parameter via operation
+			oOperation.getBoundContext().setProperty("$Parameter/Budget", "4321.1234");
+
+			assert.strictEqual(oParameterContext.getProperty("Budget"), "4321.1234");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("teamId", "TEAM_01");
+
 			// also test the API for property setting
-			that.oView.byId("form").getBindingContext().setProperty("$Parameter/TeamID", "TEAM_01");
+			that.oView.byId("parameter").getBindingContext().setProperty("TeamID", "TEAM_01");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -3121,13 +3160,13 @@ sap.ui.define([
 				method : "POST",
 				url : "ChangeTeamBudgetByID",
 				payload : {
-					Budget : "1234.1234",
+					Budget : "4321.1234",
 					TeamID : "TEAM_01"
 				}
 			}, {/* response does not matter here */});
 
 			// code under test
-			that.oView.byId("form").getObjectBinding().execute();
+			oOperation.execute();
 
 			return that.waitForChanges(assert);
 		});

@@ -1261,13 +1261,18 @@ sap.ui.define([
 			fnCallback = {},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
 			oResult = {},
-			bSync = {/*boolean*/};
+			bSync = {/*boolean*/},
+			bWithOrWithoutCache = {/*boolean*/};
 
 		this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.same(fnCallback), "/foo", sinon.match.same(bSync))
+			.withExactArgs(sinon.match.same(fnCallback), "/foo", sinon.match.same(bSync),
+				sinon.match.same(bWithOrWithoutCache))
 			.returns(oResult);
 
-		assert.strictEqual(oContext.withCache(fnCallback, "/foo", bSync), oResult);
+		assert.strictEqual(
+			oContext.withCache(fnCallback, "/foo", bSync, bWithOrWithoutCache),
+			oResult
+		);
 	});
 
 	//*********************************************************************************************
@@ -1278,15 +1283,20 @@ sap.ui.define([
 			fnCallback = {},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')", 42),
 			oResult = {},
-			bSync = {/*boolean*/};
+			bSync = {/*boolean*/},
+			bWithOrWithoutCache = {/*boolean*/};
 
 		this.mock(_Helper).expects("buildPath").withExactArgs("/EMPLOYEES('42')", "foo")
 			.returns("~");
 		this.mock(oBinding).expects("withCache")
-			.withExactArgs(sinon.match.same(fnCallback), "~", sinon.match.same(bSync))
+			.withExactArgs(sinon.match.same(fnCallback), "~", sinon.match.same(bSync),
+				sinon.match.same(bWithOrWithoutCache))
 			.returns(oResult);
 
-		assert.strictEqual(oContext.withCache(fnCallback, "foo", bSync), oResult);
+		assert.strictEqual(
+			oContext.withCache(fnCallback, "foo", bSync, bWithOrWithoutCache),
+			oResult
+		);
 	});
 
 	//*********************************************************************************************
@@ -1830,13 +1840,20 @@ sap.ui.define([
 				}
 			},
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
-			oError = new Error("This call intentionally failed");
+			oError = new Error("This call intentionally failed"),
+		that = this;
 
-		this.mock(oBinding).expects("doSetProperty")
-			.withExactArgs("some/relative/path", undefined, undefined);
-		this.mock(oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("some/relative/path", sinon.match.same(oContext))
-			.returns(SyncPromise.resolve(Promise.reject(oError)));
+		this.mock(oContext).expects("withCache")
+			.withExactArgs(sinon.match.func, "some/relative/path", false, true)
+			.callsFake(function (fnProcessor) {
+				that.mock(oBinding).expects("doSetProperty")
+					.withExactArgs("some/relative/path", undefined, undefined);
+				that.mock(oMetaModel).expects("fetchUpdateData")
+					.withExactArgs("some/relative/path", sinon.match.same(oContext))
+					.returns(SyncPromise.resolve(Promise.reject(oError)));
+
+				return fnProcessor({/*oCache*/}, "some/relative/path", oBinding);
+			});
 
 		// code under test
 		return oContext.doSetProperty("some/relative/path").then(function () {
@@ -1848,12 +1865,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("doSetProperty: withCache fails", function (assert) {
-		var oBinding = {
-				doSetProperty : function () {}
-			},
-			oMetaModel = {
-				fetchUpdateData : function () {}
-			},
+		var oBinding = {},
+			oMetaModel = {},
 			oModel = {
 				getMetaModel : function () {
 					return oMetaModel;
@@ -1862,12 +1875,8 @@ sap.ui.define([
 			oContext = Context.create(oModel, oBinding, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed");
 
-		this.mock(oBinding).expects("doSetProperty")
-			.withExactArgs("some/relative/path", undefined, undefined);
-		this.mock(oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("some/relative/path", sinon.match.same(oContext))
-			.returns(SyncPromise.resolve({entityPath : "/entity/path"}));
-		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func, "/entity/path")
+		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
+			"some/relative/path", /*bSync*/false, /*bWithOrWithoutCache*/true)
 			.returns(SyncPromise.reject(oError));
 
 		// code under test
@@ -1923,11 +1932,13 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = {
+				oContext : {},
 				doSetProperty : function () {},
 				firePatchCompleted : function () {},
 				firePatchSent : function () {},
 				getUpdateGroupId : function () {},
-				isPatchWithoutSideEffects : function () {}
+				isPatchWithoutSideEffects : function () {},
+				sPath : "binding/path"
 			},
 			oBindingMock = this.mock(oBinding),
 			oGroupLock = {},
@@ -1942,22 +1953,15 @@ sap.ui.define([
 				reportError : function () {},
 				resolve : function () {}
 			},
+			oModelMock = this.mock(oModel),
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			oError = new Error("This call intentionally failed"),
 			bSkipRetry = i === 1,
 			vWithCacheResult = {},
 			that = this;
 
-		oBindingMock.expects("doSetProperty")
-			.withExactArgs("some/relative/path", "new value", sinon.match.same(oGroupLock));
-		this.mock(oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("some/relative/path", sinon.match.same(oContext))
-			.returns(SyncPromise.resolve({
-				editUrl : "/edit/url",
-				entityPath : "/entity/path",
-				propertyPath : "property/path"
-			}));
-		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func, "/entity/path")
+		this.mock(oContext).expects("withCache").withExactArgs(sinon.match.func,
+			"some/relative/path",  /*bSync*/false, /*bWithOrWithoutCache*/true)
 			.callsFake(function (fnProcessor) {
 				var oCache = {
 						update : function () {}
@@ -1965,20 +1969,35 @@ sap.ui.define([
 					bPatchWithoutSideEffects = {/*false,true*/},
 					oUpdatePromise;
 
+				oBindingMock.expects("doSetProperty")
+					.withExactArgs("cache/path", "new value", sinon.match.same(oGroupLock));
+				that.mock(oMetaModel).expects("fetchUpdateData")
+					.withExactArgs("some/relative/path", sinon.match.same(oContext))
+					.returns(SyncPromise.resolve({
+						editUrl : "/edit/url",
+						entityPath : "/entity/path",
+						propertyPath : "property/path"
+					}));
 				oBindingMock.expects("firePatchCompleted").never();
 				oBindingMock.expects("firePatchSent").never();
 				oBindingMock.expects("isPatchWithoutSideEffects").withExactArgs()
 					.returns(bPatchWithoutSideEffects);
-				that.mock(oModel).expects("resolve").atLeast(1) // fnErrorCallback also needs it
+				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+					.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+					.returns("/resolved/binding/path");
+				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
 					.withExactArgs("some/relative/path", sinon.match.same(oContext))
 					.returns("/resolved/data/path");
+				that.mock(_Helper).expects("getRelativePath").withExactArgs("/entity/path",
+					"/resolved/binding/path")
+					.returns("helper/path");
 				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
 					.withExactArgs("/resolved/data/path")
 					.returns("unit/or/currency/path");
 				that.mock(oCache).expects("update")
 					.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
 						/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func, "/edit/url",
-						"cache/path", "unit/or/currency/path",
+						"helper/path", "unit/or/currency/path",
 						sinon.match.same(bPatchWithoutSideEffects), /*fnPatchSent*/sinon.match.func)
 					.callsFake(function () {
 						return SyncPromise.resolve(
@@ -2026,21 +2045,33 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("doSetProperty: reduce path", function (assert) {
 		var oBinding = {
+				oContext : {},
 				doSetProperty : function () {},
-				getBaseForPathReduction : function () {}
+				getBaseForPathReduction : function () {},
+				isPatchWithoutSideEffects : function () {},
+				sPath : "binding/path"
 			},
 			oMetaModel = {
 				fetchUpdateData : function () {},
-				getReducedPath : function () {}
+				getReducedPath : function () {},
+				getUnitOrCurrencyPath : function () {}
 			},
 			oModel = {
 				bAutoExpandSelect : true,
 				getMetaModel : function () {
 					return oMetaModel;
-				}
+				},
+				resolve : function () {}
 			},
+			oModelMock = this.mock(oModel),
+			bPatchWithoutSideEffects = {},
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
-			oFetchUpdateDataResult = {entityPath : {}};
+			oFetchUpdateDataResult = {
+				editUrl : "/edit/url",
+				entityPath : "/entity/path",
+				propertyPath : "property/path"
+			},
+			that = this;
 
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("/BusinessPartnerList('0100000000')", "some/relative/path")
@@ -2050,14 +2081,43 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("getReducedPath")
 			.withExactArgs("/~", "/base/path")
 			.returns("/reduced/path");
-		this.mock(oBinding).expects("doSetProperty")
-			.withExactArgs("/reduced/path", "new value", undefined);
-		this.mock(oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("/reduced/path", sinon.match.same(oContext))
-			.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.func, sinon.match.same(oFetchUpdateDataResult.entityPath))
-			.resolves();
+			.withExactArgs(sinon.match.func, "/reduced/path", /*bSync*/false,
+				/*bWithOrWithoutCache*/true)
+			.callsFake(function (fnProcessor) {
+				var oCache = {
+						update : function () {}
+					};
+
+				that.mock(oBinding).expects("doSetProperty")
+					.withExactArgs("/reduced/path", "new value", undefined);
+				that.mock(oMetaModel).expects("fetchUpdateData")
+					.withExactArgs("/reduced/path", sinon.match.same(oContext))
+					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
+				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+					.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+					.returns("/resolved/binding/path");
+				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+					.withExactArgs("/reduced/path", sinon.match.same(oContext))
+					.returns("/resolved/data/path");
+				that.mock(_Helper).expects("getRelativePath").withExactArgs("/entity/path",
+					"/resolved/binding/path")
+					.returns("helper/path");
+				that.mock(oBinding).expects("isPatchWithoutSideEffects").withExactArgs()
+					.returns(bPatchWithoutSideEffects);
+				that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
+					.withExactArgs("/resolved/data/path")
+					.returns("unit/or/currency/path");
+
+				that.mock(oCache).expects("update")
+					.withExactArgs(undefined, "property/path", "new value",
+						/*fnErrorCallback*/sinon.match.func, "/edit/url", "helper/path",
+						"unit/or/currency/path", sinon.match.same(bPatchWithoutSideEffects),
+						/*fnPatchSent*/sinon.match.func)
+					.resolves();
+
+				return fnProcessor(oCache, "/reduced/path", oBinding);
+			});
 
 		// code under test
 		return oContext.doSetProperty("some/relative/path", "new value");
@@ -2067,33 +2127,77 @@ sap.ui.define([
 [SyncPromise.resolve(), undefined].forEach(function (vValue) {
 	QUnit.test("doSetProperty: invocation of ODB#doSetProperty", function (assert) {
 		var oBinding = {
-				doSetProperty : function () {}
+				oContext : {},
+				doSetProperty : function () {},
+				isPatchWithoutSideEffects : function () {},
+				sPath : "binding/path"
+			},
+			oFetchUpdateDataResult = {
+				editUrl : "/edit/url",
+				entityPath : "/entity/path",
+				propertyPath : "property/path"
 			},
 			oGroupLock = {},
+			bPatchWithoutSideEffects = {},
 			oMetaModel = {
-				fetchUpdateData : function () {}
+				fetchUpdateData : function () {},
+				getUnitOrCurrencyPath : function () {}
 			},
 			oModel = {
 				bAutoExpandSelect : false,
 				getMetaModel : function () {
 					return oMetaModel;
-				}
+				},
+				resolve : function () {}
 			},
+			oModelMock = this.mock(oModel),
 			bSkipRetry = {/*true, false*/},
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
-			oFetchUpdateDataResult = {entityPath : {}};
+			that = this;
 
-		this.mock(oBinding).expects("doSetProperty")
-			.withExactArgs("/some/absolute/path", "new value", sinon.match.same(oGroupLock))
-			.returns(vValue);
-		this.mock(oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
-			.exactly(vValue ? 0 : 1)
-			.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 		this.mock(oContext).expects("withCache")
-			.withExactArgs(sinon.match.func, sinon.match.same(oFetchUpdateDataResult.entityPath))
-			.exactly(vValue ? 0 : 1)
-			.resolves();
+			.withExactArgs(sinon.match.func, "/some/absolute/path",  /*bSync*/false,
+				/*bWithOrWithoutCache*/true)
+			.callsFake(function (fnProcessor) {
+				var oCache = {
+						update : function () {}
+					};
+
+				that.mock(oBinding).expects("doSetProperty")
+					.withExactArgs("/cache/path", "new value", sinon.match.same(oGroupLock))
+					.returns(vValue);
+				that.mock(oMetaModel).expects("fetchUpdateData")
+					.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
+					.exactly(vValue ? 0 : 1)
+					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
+
+				if (vValue == undefined) {
+					oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+						.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+						.returns("/resolved/binding/path");
+					oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
+						.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
+						.returns("/resolved/data/path");
+					that.mock(_Helper).expects("getRelativePath").withExactArgs("/entity/path",
+						"/resolved/binding/path")
+						.returns("helper/path");
+					that.mock(oBinding).expects("isPatchWithoutSideEffects").withExactArgs()
+						.returns(bPatchWithoutSideEffects);
+					that.mock(oMetaModel).expects("getUnitOrCurrencyPath")
+						.withExactArgs("/resolved/data/path")
+						.returns("unit/or/currency/path");
+
+					that.mock(oCache).expects("update")
+						.withExactArgs(sinon.match.same(oGroupLock), "property/path", "new value",
+							/*fnErrorCallback*/bSkipRetry ? undefined : sinon.match.func,
+							"/edit/url", "helper/path", "unit/or/currency/path",
+							sinon.match.same(bPatchWithoutSideEffects),
+							/*fnPatchSent*/sinon.match.func)
+						.resolves();
+				}
+
+				return fnProcessor(oCache, "/cache/path", oBinding);
+			});
 
 		// code under test
 		return oContext.doSetProperty("/some/absolute/path", "new value", oGroupLock, bSkipRetry);
