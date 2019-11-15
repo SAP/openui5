@@ -76,7 +76,7 @@ sap.ui.define([
 		 * <li><code>showCloseButton</code> - close button visibility</li>
 		 * </ul>
 		 *
-		 * * <h4>Note</h4>
+		 * <h4>Note</h4>
 		 * There are several properties, that are inherited from ListItemBase and have no
 		 * visual representation in the Notifications - counter, highlight, highlightText, navigated, selected, type
 		 * @extends sap.m.ListItemBase

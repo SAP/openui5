@@ -34,7 +34,7 @@
 				new sap.m.Button({
 					text: 'OK',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('OK button pressed');
 					}
 				})
@@ -60,7 +60,7 @@
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				}),
@@ -88,14 +88,18 @@
 					new sap.m.Button({
 						text: 'Accept All',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept all button pressed');
 						}
-					}),
+					}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+					})),
 					new sap.m.Button({
 						text: 'Cancel All',
 						type: sap.m.ButtonType.Reject
-					})
+					}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+					}))
 				]
 			});
 
@@ -121,14 +125,14 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})
@@ -146,7 +150,7 @@
 						new sap.m.Button({
 							text: 'OK',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('OK button pressed');
 							}
 						})
@@ -169,7 +173,7 @@
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				})
@@ -188,7 +192,7 @@
 			buttons: [
 				new sap.m.Button({
 					text: 'Accept All',
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				})
@@ -207,7 +211,7 @@
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				}),
@@ -229,14 +233,14 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})
@@ -257,7 +261,7 @@
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				}),
@@ -279,14 +283,14 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})
@@ -304,14 +308,14 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})

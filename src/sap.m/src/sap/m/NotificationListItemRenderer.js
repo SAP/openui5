@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		// close button
 		closeButton = control._getCloseButton();
 		if (control.getShowCloseButton() && closeButton && !Device.system.phone) {
-			rm.write('<div class="sapMNLIItem">');
+			rm.write('<div class="sapMNLIItem sapMNLICloseBtn">');
 			rm.renderControl(closeButton);
 			rm.write('</div>');
 		}
