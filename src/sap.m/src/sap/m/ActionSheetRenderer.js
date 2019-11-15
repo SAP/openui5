@@ -11,6 +11,7 @@ sap.ui.define(["sap/ui/Device"],
 	 * @namespace
 	 */
 	var ActionSheetRenderer = {
+		apiVersion: 2
 	};
 
 
@@ -34,38 +35,33 @@ sap.ui.define(["sap/ui/Device"],
 				})[0];
 			};
 
-		for (i = 0 ; i < iButtonsCount ; i++) {
+		for (i = 0; i < iButtonsCount; i++) {
 			oButton = aActionButtons[i];
-			oButton.removeStyleClass("sapMActionSheetButtonNoIcon");
 			if (oButton.getIcon() && oButton.getVisible()) {
 				bMixedButtons = true;
-			} else {
-				oButton.addStyleClass("sapMActionSheetButtonNoIcon");
 			}
 		}
-
 		// write the HTML into the render manager
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
-		oRm.addClass("sapMActionSheet");
+		oRm.openStart("div", oControl);
+		oRm.class("sapMActionSheet");
+
 		if (bMixedButtons) {
-			oRm.addClass("sapMActionSheetMixedButtons");
+			oRm.class("sapMActionSheetMixedButtons");
 		}
-		oRm.writeClasses();
 
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		// This is needed in order to prevent JAWS from announcing the ActionSheet content multiple times
-		bAccessibilityOn && oRm.writeAttributeEscaped("role", "presentation");
+		bAccessibilityOn && oRm.attr("role", "presentation");
 
-		oRm.write(">");
+		oRm.openEnd("div");
 
-		for (i = 0 ; i < iButtonsCount ; i++) {
+		for (i = 0; i < iButtonsCount; i++) {
 			oButton = aActionButtons[i];
-			oRm.renderControl(aActionButtons[i].addStyleClass("sapMActionSheetButton"));
+			oRm.renderControl(aActionButtons[i]);
 
 			if (bAccessibilityOn && oButton.getVisible()) {
 
@@ -84,8 +80,7 @@ sap.ui.define(["sap/ui/Device"],
 		if (Device.system.phone && oControl.getShowCancelButton()) {
 			oRm.renderControl(oControl._getCancelButton());
 		}
-
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 
