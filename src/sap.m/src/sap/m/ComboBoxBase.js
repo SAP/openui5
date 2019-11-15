@@ -530,6 +530,15 @@ sap.ui.define([
 			return oItem._bSelectable;
 		};
 
+		ComboBoxBase.prototype._setItemsShownWithFilter = function (bValue) {
+			this._bItemsShownWithFilter = bValue;
+		};
+
+		ComboBoxBase.prototype._getItemsShownWithFilter = function () {
+			return this._bItemsShownWithFilter;
+		};
+
+
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
@@ -539,6 +548,9 @@ sap.ui.define([
 
 			// sets the picker popup type
 			this.setPickerType(Device.system.phone ? "Dialog" : "Dropdown");
+
+			// indicates if the picker was opened by the showItems function
+			this._setItemsShownWithFilter(false);
 
 			// indicate whether the items are updated
 			this.bItemsUpdated = false;
@@ -581,6 +593,20 @@ sap.ui.define([
 				return;
 			}
 
+			if (bOpenOnInteraction && this._getItemsShownWithFilter()) {
+				this._bShouldClosePicker = false;
+
+				// instead of closing and reopening the SuggestionsPopover we set the default filter
+				// and use it to show all items in the picker, while adding the correct style class to the
+				// ComboBoxes icon.
+				this.toggleIconPressedStyle(true);
+				this.bOpenedByKeyboardOrButton = false;
+				this.clearFilter();
+				this._setItemsShownWithFilter(false);
+
+				return;
+			}
+
 			if (this._bShouldClosePicker) {
 				this._bShouldClosePicker = false;
 				this.close();
@@ -616,7 +642,6 @@ sap.ui.define([
 			this.aMessageQueue = null;
 			this.fnFilter = null;
 		};
-
 		/* ----------------------------------------------------------- */
 		/* Keyboard handling                                           */
 		/* ----------------------------------------------------------- */
@@ -638,6 +663,11 @@ sap.ui.define([
 
 			if (oEvent.keyCode === KeyCodes.F4) {
 				this.onF4(oEvent);
+			}
+
+			if (this._getItemsShownWithFilter()) {
+				this.loadItems(this._handlePopupOpenAndItemsLoad.bind(this, true));
+				return;
 			}
 
 			if (this.isOpen()) {
@@ -1058,13 +1088,23 @@ sap.ui.define([
 		};
 
 		/**
+		 * This event handler is called before the picker popup is opened.
+		 *
+		 */
+		ComboBoxBase.prototype.onBeforeOpen = function () {
+			if (!this._getItemsShownWithFilter()) {
+				this.toggleIconPressedStyle(true);
+			}
+		};
+
+		/**
 		 * This event handler is called before the picker popup is closed.
 		 *
 		 */
 		ComboBoxBase.prototype.onBeforeClose = function() {
-
 			// reset opener
 			this.bOpenedByKeyboardOrButton = false;
+			this._setItemsShownWithFilter(false);
 		};
 
 		/**
@@ -1613,6 +1653,9 @@ sap.ui.define([
 			if (!this.getEnabled() || !this.getEditable()) {
 				return;
 			}
+
+			// Indicate that in the moment the items are shown using this API
+			this._setItemsShownWithFilter(true);
 
 			this.attachLoadItems(fnLoadItemsListener);
 			this.loadItems(fnLoadItemsListener);

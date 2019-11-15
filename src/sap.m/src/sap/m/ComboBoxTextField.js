@@ -95,6 +95,16 @@ sap.ui.define([
 			return this.getAggregation("_endIcon")[0];
 		};
 
+		/**
+		 * Toggles the icon pressed style on or off.
+		 *
+		 * @param {boolean} [bState] True if the icon pressed class should be applied.
+		 * @protected
+		 */
+		ComboBoxTextField.prototype.toggleIconPressedStyle = function(bState) {
+			this.toggleStyleClass(InputBase.ICON_PRESSED_CSS_CLASS, bState);
+		};
+
 		ComboBoxTextField.prototype.onBeforeRendering = function () {
 			InputBase.prototype.onBeforeRendering.apply(this, arguments);
 
