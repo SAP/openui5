@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/m/List',
 	"sap/m/Input",
 	"sap/m/ComboBox",
+	"sap/m/MultiComboBox",
 	"sap/ui/thirdparty/sinon",
 	"sap/m/SimpleFixFlex"
 ], function (
@@ -22,6 +23,7 @@ sap.ui.define([
 	List,
 	Input,
 	ComboBox,
+	MultiComboBox,
 	sinon,
 	SimpleFixFlex
 ) {
@@ -354,6 +356,60 @@ sap.ui.define([
 		oRegisterAutocompleteStub.restore();
 		oComboBox.destroy();
 		oSuggestionsPopover.destroy();
+	});
+
+	QUnit.test("ComboBox: The following condition is met: hеight != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+		var oComboBox;
+
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		oComboBox = new ComboBox();
+		oComboBox.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.open();
+
+		// Assert
+		// NOTE!
+		// This can change in future! In such case please ensure that the scroll is working on mobile devices
+		// and amend this test accordingly and/or add new ones!
+		assert.notEqual(jQuery(oComboBox._oSuggestionPopover._oSimpleFixFlex.getDomRef()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+
+		//Cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("MultiComboBox: The following condition is met: hеight != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+		var oMultiComboBox;
+
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		oMultiComboBox = new MultiComboBox();
+		oMultiComboBox.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.open();
+
+		// Assert
+		// NOTE!
+		// This can change in future! In such case please ensure that the scroll is working on mobile devices
+		// and amend this test accordingly and/or add new ones!
+		assert.notEqual(jQuery(oMultiComboBox._oSuggestionPopover._oSimpleFixFlex.getDomRef()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+
+		//Cleanup
+		oMultiComboBox.destroy();
 	});
 
 	QUnit.module("API");
