@@ -20,13 +20,13 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("LrepConnector", {
-		beforeEach: function() {
+		beforeEach: function () {
 			this.oLrepConnector = LrepConnector.createConnector();
 			sandbox.stub(ContextManager, "getActiveContexts").callsFake(function () {
 				return [];
 			});
 		},
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 			if (this.server) {
 				this.server.restore();
@@ -35,8 +35,8 @@ sap.ui.define([
 			LrepConnector.prototype._aSentRequestListeners = [];
 			LrepConnector.prototype._sRequestUrlPrefix = "";
 		}
-	}, function() {
-		QUnit.test("The XSRF Token can be injected in the constructor", function(assert) {
+	}, function () {
+		QUnit.test("The XSRF Token can be injected in the constructor", function (assert) {
 			var oConnector;
 			var mParams;
 			mParams = {XsrfToken: "jingabuhr"};
@@ -45,7 +45,7 @@ sap.ui.define([
 			assert.equal(oConnector._sXsrfToken, "jingabuhr");
 		});
 
-		QUnit.test("_resolveUrl", function(assert) {
+		QUnit.test("_resolveUrl", function (assert) {
 			//Arrange
 			assert.ok(this.oLrepConnector);
 
@@ -59,7 +59,7 @@ sap.ui.define([
 			assert.equal(this.oLrepConnector._resolveUrl("index.html?anyParam=value"), "/index.html?anyParam=value");
 		});
 
-		QUnit.test("_getDefaultHeader", function(assert) {
+		QUnit.test("_getDefaultHeader", function (assert) {
 			//Arrange
 			var sSampleXsrfToken = "ABCDEFGHIJKLMN123456789";
 			var headerWithoutExistingXsrfToken = {
@@ -84,7 +84,7 @@ sap.ui.define([
 			assert.deepEqual(newToken, headerWithExistingXsrfToken);
 		});
 
-		QUnit.test("_getDefaultOptions", function(assert) {
+		QUnit.test("_getDefaultOptions", function (assert) {
 			//Arrange
 			sandbox.stub(this.oLrepConnector, "_getDefaultHeader").returns({
 				headers: {
@@ -140,7 +140,7 @@ sap.ui.define([
 			assert.deepEqual(this.oLrepConnector._getDefaultOptions("PUT"), thirdTry);
 		});
 
-		QUnit.test("send - check basic calls", function(assert) {
+		QUnit.test("send - check basic calls", function (assert) {
 			//Arrange
 			var sSampleUri = "http://www.abc.de/index.html?request=Value";
 			var mSampleOptions = {};
@@ -159,7 +159,7 @@ sap.ui.define([
 			assert.ok(sendAjaxRequestStub.calledOnce);
 		});
 
-		QUnit.test("send - check internals", function(assert) {
+		QUnit.test("send - check internals", function (assert) {
 			//Arrange
 			var sSampleUri = "http://www.abc.de/index.html?request=Value";
 			var mSampleOptions = {
@@ -203,7 +203,7 @@ sap.ui.define([
 			assert.ok(sendAjaxRequestStub.calledWith(sSampleUri, mSampleMergedHeader));
 		});
 
-		QUnit.test("_sendAjaxRequest - resolve", function(assert) {
+		QUnit.test("_sendAjaxRequest - resolve", function (assert) {
 			//Arrange
 			this.server = sinon.fakeServer.create();
 			var sEtag = "abc123";
@@ -231,7 +231,7 @@ sap.ui.define([
 			this.oLrepConnector._sXsrfToken = "SomeBlablub81919";
 
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function(result) {
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function (result) {
 				//Assert
 				assert.equal(result.status, "success");
 				assert.equal(result.response, "{ test: 123 }");
@@ -240,7 +240,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("_sendAjaxRequest - reject", function(assert) {
+		QUnit.test("_sendAjaxRequest - reject", function (assert) {
 			//Arrange
 			var iCode = 404;
 			this.server = sinon.fakeServer.create();
@@ -271,7 +271,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("_buildParams - empty", function(assert) {
+		QUnit.test("_buildParams - empty", function (assert) {
 			//Arrange
 			var aParams = [];
 
@@ -282,7 +282,7 @@ sap.ui.define([
 			assert.equal(result, "");
 		});
 
-		QUnit.test("_buildParams - empty (explicit client)", function(assert) {
+		QUnit.test("_buildParams - empty (explicit client)", function (assert) {
 			//Arrange
 			var aParams = [];
 			this.oLrepConnector._sClient = "123";
@@ -294,7 +294,7 @@ sap.ui.define([
 			assert.equal(result, "?sap-client=123");
 		});
 
-		QUnit.test("_buildParams - one parameter", function(assert) {
+		QUnit.test("_buildParams - one parameter", function (assert) {
 			//Arrange
 			var aParams = [
 				{name: "p1", value: 512}
@@ -307,7 +307,7 @@ sap.ui.define([
 			assert.equal(result, "?p1=512");
 		});
 
-		QUnit.test("_buildParams - one parameter (explicit client)", function(assert) {
+		QUnit.test("_buildParams - one parameter (explicit client)", function (assert) {
 			//Arrange
 			var aParams = [
 				{name: "p1", value: 512}
@@ -321,7 +321,7 @@ sap.ui.define([
 			assert.equal(result, "?p1=512&sap-client=234");
 		});
 
-		QUnit.test("_buildParams - multiple parameter", function(assert) {
+		QUnit.test("_buildParams - multiple parameter", function (assert) {
 			//Arrange
 			var aParams = [
 				{name: "p1", value: 512},
@@ -341,7 +341,7 @@ sap.ui.define([
 			assert.equal(result2, "?p1=512&p2=test&p3=3");
 		});
 
-		QUnit.test("_buildParams - multiple parameter (explicit client)", function(assert) {
+		QUnit.test("_buildParams - multiple parameter (explicit client)", function (assert) {
 			//Arrange
 			var aParams = [
 				{name: "p1", value: 512},
@@ -363,7 +363,7 @@ sap.ui.define([
 			assert.equal(result2, "?p1=512&p2=test&p3=3&sap-client=345");
 		});
 
-		QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised) and reuse of previous XSRF token", function(assert) {
+		QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised) and reuse of previous XSRF token", function (assert) {
 			var requestCount = 0;
 			var bValidRequestReceived = false;
 			var bValidFetchXSRFReceived = false;
@@ -400,23 +400,23 @@ sap.ui.define([
 			};
 
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function () {
 				assert.equal(requestCount, 3, "There shall be 3 roundtrips: 1) Failed due to missing XSFR token. 2) Fetch XSRF Token. 3) Repeat first roundtrip.");
 				assert.ok(bValidRequestReceived, "The XSRF Token shall be fetched and the origin request shall be resent");
 				assert.ok(bValidFetchXSRFReceived, "The XSRF Token shall be fetched with a dedicated GET request");
 				mSampleOptions.type = "POST";
 				bValidRequestReceived = false;
-				return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+				return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function () {
 					assert.equal(requestCount, 4, "Next POST request will re use previous valid XSRF Token");
 					assert.ok(bValidRequestReceived, "and send the correct request");
 					mSampleOptions.type = "PUT";
 					bValidRequestReceived = false;
-					return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+					return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function () {
 						assert.equal(requestCount, 5, "Next PUT request will re use previous valid XSRF Token");
 						assert.ok(bValidRequestReceived, "and send the correct request");
 						mSampleOptions.type = "DELETE";
 						bValidRequestReceived = false;
-						return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+						return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function () {
 							assert.equal(requestCount, 6, "Next DELETE request will re use previous valid XSRF Token");
 							assert.ok(bValidRequestReceived, "and send the correct request");
 						});
@@ -426,7 +426,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised) and reuse of previous XSRF token;" +
-					"If the subsequence request fails, the promise is rejected but no error throws", function(assert) {
+			"If the subsequence request fails, the promise is rejected but no error throws", function (assert) {
 			var requestCount = 0;
 			var bValidRequestReceived = false;
 			var bValidFetchXSRFReceived = false;
@@ -459,8 +459,7 @@ sap.ui.define([
 			};
 			var oStubGetMessage = sandbox.stub(this.oLrepConnector, "_getMessagesFromXHR");
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).
-			then(undefined,
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(undefined,
 				//Promise is rejected
 				function () {
 					assert.equal(requestCount, 3, "There shall be 3 roundtrips: 1) Failed due to missing XSFR token. 2) Fetch XSRF Token. 3) Repeat first roundtrip.");
@@ -470,7 +469,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("_sendAjaxRequest - shall reject Promise when backend returns error", function(assert) {
+		QUnit.test("_sendAjaxRequest - shall reject Promise when backend returns error", function (assert) {
 			//Arrange
 			var iCode = 500;
 			this.server = sinon.fakeServer.create();
@@ -490,14 +489,14 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("_sendAjaxRequest - shall reject Promise when no flexibility services url prefix is returned", function(assert) {
+		QUnit.test("_sendAjaxRequest - shall reject Promise when no flexibility services url prefix is returned", function (assert) {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([]);
 			var sSampleUri = "http://www.abc.de/files/";
 
 			//Act
-			return this.oLrepConnector._sendAjaxRequest(sSampleUri).then(function() {
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri).then(function () {
 				assert.ok(false, "The Promise has not rejected");
-			}, function(oError) {
+			}, function (oError) {
 				assert.ok(true, "The Promise has rejected");
 				assert.equal("warning", oError.status);
 				assert.equal(1, oError.messages.length);
@@ -505,7 +504,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("_sendAjaxRequest - shall reject Promise when fetching the XSRF Token has failed", function(assert) {
+		QUnit.test("_sendAjaxRequest - shall reject Promise when fetching the XSRF Token has failed", function (assert) {
 			var requestCount = 0;
 			//Arrange
 			this.server = sinon.fakeServer.create();
@@ -525,12 +524,12 @@ sap.ui.define([
 
 			//Act
 			return this.oLrepConnector._sendAjaxRequest(sSampleUri)
-				.catch(function() {
+				.catch(function () {
 					assert.equal(requestCount, 1, "There shall be 2 roundtrips: 1) Failed due to missing XSFR token. 2) Failing XSRF Token Fetch");
 				});
 		});
 
-		QUnit.test("_getDefaultOptions shall delete the request body for http DELETE", function(assert) {
+		QUnit.test("_getDefaultOptions shall delete the request body for http DELETE", function (assert) {
 			var mOptions;
 
 			//Call CUT
@@ -539,7 +538,7 @@ sap.ui.define([
 			assert.strictEqual(mOptions.data, undefined);
 		});
 
-		QUnit.test("_sendAjaxRequest - shall read error messages from backend and reject Promise", function(assert) {
+		QUnit.test("_sendAjaxRequest - shall read error messages from backend and reject Promise", function (assert) {
 			//Arrange
 			var iCode = 500;
 			this.server = sinon.fakeServer.create();
@@ -579,7 +578,7 @@ sap.ui.define([
 			this.oLrepConnector = LrepConnector.createConnector();
 			sandbox.stub(ContextManager, "getActiveContexts").returns([]);
 		},
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 			if (this.server) {
 				this.server.restore();
@@ -589,20 +588,7 @@ sap.ui.define([
 			LrepConnector.prototype._sRequestUrlPrefix = "";
 		}
 	}, function () {
-		QUnit.test("loadChanges failed with 404 error code", function(assert) {
-			var oError = {
-				code : 404
-			};
-
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
-
-			return this.oLrepConnector.loadChanges({name: 'something'}, {})
-				.catch(function () {
-					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
-				});
-		});
-
-		QUnit.test("loadChanges failed with 404 error code", function(assert) {
+		QUnit.test("loadChanges failed with 404 error code", function (assert) {
 			var oError = {
 				code: 404
 			};
@@ -615,7 +601,20 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("loadChanges failed with error code differs from 404", function(assert) {
+		QUnit.test("loadChanges failed with 404 error code", function (assert) {
+			var oError = {
+				code: 404
+			};
+
+			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
+
+			return this.oLrepConnector.loadChanges({name: 'something'}, {})
+				.catch(function () {
+					assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+				});
+		});
+
+		QUnit.test("loadChanges failed with error code differs from 404", function (assert) {
 			var oError = {
 				code: 403
 			};
@@ -628,12 +627,17 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("loadChanges", function(assert) {
+		QUnit.test("loadChanges", function (assert) {
 			var sComponentClassName;
 			this.server = sinon.fakeServer.create();
 			var sEtag = "abc123";
 			this.server.respondWith([200,
-				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", etag: sEtag},
+				{
+					"Content-Type": "application/json",
+					"Content-Length": 13,
+					"X-CSRF-Token": "0987654321",
+					etag: sEtag
+				},
 				'{ "changes": [ ], "settings": { "isKeyUser": true, "isAtoAvailable": false, "isAtoEnabled": false, "isProductiveSystem": false }, "messagebundle": {"i_123": "translatedKey"} }'
 			]);
 			this.server.autoRespond = true;
@@ -649,7 +653,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("loadChanges can handle a undefined mPropertyBag", function(assert) {
+		QUnit.test("loadChanges can handle a undefined mPropertyBag", function (assert) {
 			this.server = sinon.fakeServer.create();
 			this.server.respondWith([200,
 				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
@@ -659,13 +663,13 @@ sap.ui.define([
 
 			var sComponentClassName = "smartFilterBar.Component";
 
-			return this.oLrepConnector.loadChanges({name: sComponentClassName}).then(function() {
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}).then(function () {
 				assert.equal(this.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 				assert.ok(this.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
 			}.bind(this));
 		});
 
-		QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-AppDescriptor-Id", function(assert) {
+		QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-AppDescriptor-Id", function (assert) {
 			var sComponentClassName;
 			this.server = sinon.fakeServer.create();
 			this.server.respondWith([200,
@@ -684,14 +688,14 @@ sap.ui.define([
 			var mPropertyBag = {
 				appDescriptor: oAppDescriptor
 			};
-			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function () {
 				assert.equal(this.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 				assert.ok(this.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
 				assert.equal(this.server.requests[0].requestHeaders["X-LRep-AppDescriptor-Id"], "sap.ui.smartFormOData", "Request header shall contain appDescriptorId");
 			}.bind(this));
 		});
 
-		QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-Site-Id", function(assert) {
+		QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-Site-Id", function (assert) {
 			this.server = sinon.fakeServer.create();
 			this.server.respondWith([200,
 				{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
@@ -704,14 +708,14 @@ sap.ui.define([
 				siteId: "dummyId4711"
 			};
 
-			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function () {
 				assert.equal(this.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 				assert.ok(this.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
 				assert.equal(this.server.requests[0].requestHeaders["X-LRep-Site-Id"], mPropertyBag.siteId, "Request header shall contain siteId");
 			}.bind(this));
 		});
 
-		QUnit.test("loadChanges adds upToLayerType parameter to request when requested", function(assert) {
+		QUnit.test("loadChanges adds upToLayerType parameter to request when requested", function (assert) {
 			var sComponentClassName = "smartFilterBar.Component";
 			var mPropertyBag = {
 				layer: "CUSTOMER"
@@ -725,7 +729,7 @@ sap.ui.define([
 
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
-			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function () {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 				var oCall = oSendStub.getCall(0);
@@ -734,7 +738,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
+		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function (assert) {
 			var sComponentClassName = "smartFilterBar.Component";
 			var mPropertyBag = {
 				cacheKey: "ABC123thisISaHASH"
@@ -748,7 +752,7 @@ sap.ui.define([
 
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
-			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function () {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 				var oCall = oSendStub.getCall(0);
@@ -758,14 +762,18 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
+		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function (assert) {
 			var sComponentName = "sap.ui.demoapps.rta.fiorielements.Component";
 			var sFlexModulesUri = "/sap/bc/lrep/flex/modules/~BQjKGDJlASfuh7tvYU5BclaHKD4=~/sap.ui.demoapps.rta.fiorielements.Component?sap-client=120&appVersion=1.0";
 			var sCacheKey = "BQjKGDJlASfuh7tvYU5BclaHKD4";
 			var oResponse = {
 				etag: null,
 				response: {
-					loadModules: false, changes: Array(20), contexts: Array(0), variantSection: {}, ui2personalization: {}
+					loadModules: false,
+					changes: Array(20),
+					contexts: Array(0),
+					variantSection: {},
+					ui2personalization: {}
 				},
 				status: "success"
 			};
@@ -774,7 +782,7 @@ sap.ui.define([
 			assert.equal(mFlexData.etag, sCacheKey);
 		});
 
-		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function(assert) {
+		QUnit.test("loadChanges adds a cache key to the request if present and allows caching within the request", function (assert) {
 			var sComponentClassName = "smartFilterBar.Component";
 			var mPropertyBag = {};
 
@@ -786,7 +794,7 @@ sap.ui.define([
 
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
-			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
+			return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function () {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 				var oCall = oSendStub.getCall(0);
@@ -796,7 +804,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when requested, loadChanges adds appVersion parameter to the request URL", function(assert) {
+		QUnit.test("when requested, loadChanges adds appVersion parameter to the request URL", function (assert) {
 			var sComponentClassName = "smartFilterBar.Component";
 			var sAppVersion = "1.2.3";
 
@@ -808,7 +816,10 @@ sap.ui.define([
 
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
-			return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}, {}).then(function() {
+			return this.oLrepConnector.loadChanges({
+				name: sComponentClassName,
+				appVersion: sAppVersion
+			}, {}).then(function () {
 				assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
 
 				var oCall = oSendStub.getCall(0);
@@ -817,7 +828,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("loadChanges ignores appVersion parameter to the request URL in case of default app version", function(assert) {
+		QUnit.test("loadChanges ignores appVersion parameter to the request URL in case of default app version", function (assert) {
 			var sComponentClassName = "smartFilterBar.Component";
 			var sAppVersion = Utils.DEFAULT_APP_VERSION;
 
@@ -829,7 +840,10 @@ sap.ui.define([
 
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
 
-			return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}, {}).then(function() {
+			return this.oLrepConnector.loadChanges({
+				name: sComponentClassName,
+				appVersion: sAppVersion
+			}, {}).then(function () {
 				assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
 
 				var oCall = oSendStub.getCall(0);
@@ -844,7 +858,7 @@ sap.ui.define([
 			this.oLrepConnector = LrepConnector.createConnector();
 			sandbox.stub(ContextManager, "getActiveContexts").returns([]);
 		},
-		afterEach: function() {
+		afterEach: function () {
 			sandbox.restore();
 			if (this.server) {
 				this.server.restore();
@@ -859,7 +873,7 @@ sap.ui.define([
 			var sExpectedCallUrl = "/sap/bc/lrep/flex/settings" + "?sap-client=" + this.oLrepConnector._sClient;
 
 			var oFakeResponse = {
-				response : {}
+				response: {}
 			};
 			LrepConnector._oLoadSettingsPromise = undefined;
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oFakeResponse);
@@ -875,7 +889,7 @@ sap.ui.define([
 
 		QUnit.test("loadSettings failed with 404 error code", function (assert) {
 			var oError = {
-				code : 404
+				code: 404
 			};
 			LrepConnector._oLoadSettingsPromise = undefined;
 			var oSendStub = sandbox.stub(this.oLrepConnector, "send").rejects(oError);
@@ -887,6 +901,53 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("getStaticResource", {
+		beforeEach: function () {
+			this.oLrepConnector = new LrepConnector();
+		}
+	}, function () {
+		QUnit.test("all params", function (assert) {
+			//Arrange
+			var expectedResult = {abc: 123};
+			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType";
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
+
+			//Act
+			return this.oLrepConnector.getStaticResource("myNamespace/mySubNamespace", "myName", "myType", true).then(function (result) {
+				//Assert
+				assert.ok(sendStub.calledWith(expectedUrl, "GET", null, null));
+				assert.deepEqual(result, expectedResult);
+			});
+		});
+
+		QUnit.test("required only", function (assert) {
+			//Arrange
+			var expectedResult = {abc: 123};
+			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?dt=true";
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
+
+			//Act
+			return this.oLrepConnector.getStaticResource("myNamespace/mySubNamespace", "myName", "myType").then(function (result) {
+				//Assert
+				assert.ok(sendStub.calledWith(expectedUrl, "GET", null, null));
+				assert.deepEqual(result, expectedResult);
+			});
+		});
+
+		QUnit.test("optional set to false", function (assert) {
+			//Arrange
+			var expectedResult = {abc: 123};
+			var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?dt=true";
+			var sendStub = sinon.stub(this.oLrepConnector, "send").resolves({abc: 123});
+
+			//Act
+			return this.oLrepConnector.getStaticResource("myNamespace/mySubNamespace", "myName", "myType", false).then(function (result) {
+				//Assert
+				assert.ok(sendStub.calledWith(expectedUrl, "GET", null, null));
+				assert.deepEqual(result, expectedResult);
+			});
+		});
+	});
 
 
 	QUnit.done(function () {
