@@ -1506,7 +1506,7 @@ sap.ui.define([
 
 		var $this = this.$();
 
-		if (TableUtils.hasRowActions(this)) {
+		if (TableUtils.hasRowActions(this) || TableUtils.hasRowNavigationIndicators(this)) {
 			var bHasFlexibleRowActions = $this.hasClass("sapUiTableRActFlexible");
 			var oDummyColumn = this.getDomRef("dummycolhdr");
 
@@ -1525,7 +1525,10 @@ sap.ui.define([
 
 				if (!bHasFlexibleRowActions && bDummyColumnHasWidth) {
 					var iRowActionPos = oTableSizes.tableCtrlScrWidth + oTableSizes.tableRowHdrScrWidth + oTableSizes.tableCtrlFixedWidth - iDummyColWidth;
-					var oRowActionStyles = {width: "auto"};
+					var oRowActionStyles = {};
+					if (!TableUtils.hasRowActions(this)) {
+						iRowActionPos = iRowActionPos - TableUtils.ThemeParameters.navIndicatorWidth + TableUtils.BaseBorderWidth;
+					}
 					oRowActionStyles[this._bRtlMode ? "right" : "left"] = iRowActionPos;
 					this.$("sapUiTableRowActionScr").css(oRowActionStyles);
 					this.$("rowacthdr").css(oRowActionStyles);

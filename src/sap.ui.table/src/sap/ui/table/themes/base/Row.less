@@ -30,6 +30,10 @@
 	&.sapUiTableRowSel.sapUiTableRowHvr {
 		background-color: @sapUiListSelectionHoverBackground;
 	}
+
+	.sapUiTableRowActionScr & {
+		background-color: transparent !important;
+	}
 }
 
 .sapUiTableColHdrTr,
@@ -55,11 +59,12 @@
 	}
 }
 
-// Row Navigated Indicator
+// Row Navigation Indicator
 .sapUiTableRowNavigated {
 	height: 100%;
 	width: 0.1875rem;
 	position: absolute;
+	top: 0;
 	right: 0;
 	background-color: @sapUiSelected;
 }
