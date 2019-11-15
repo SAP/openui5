@@ -277,8 +277,6 @@ function(Device, UIArea, jQuery) {
 	}
 
 	function closeDragSession(oEvent) {
-		hideDropIndicator();
-		removeStyleClass(oDragControl, "sapUiDnDDragging");
 		oDragControl = oDropControl = oValidDropControl = oDragSession = null;
 		sCalculatedDropPosition = "";
 		aValidDragInfos = [];
@@ -699,8 +697,14 @@ function(Device, UIArea, jQuery) {
 			oDragInfo.fireDragEnd(oEvent);
 		});
 
+		// remove the dragging class of the dragged control
+		removeStyleClass(oDragControl, "sapUiDnDDragging");
+
 		// retain the scrolling behavior of the html element after dragend
 		jQuery("html").removeClass("sapUiDnDNoScrolling");
+
+		// hide the indicator
+		hideDropIndicator();
 
 		// finalize drag session
 		closeDragSession();

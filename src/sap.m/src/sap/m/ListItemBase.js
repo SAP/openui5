@@ -1007,9 +1007,7 @@ function(
 	};
 
 	ListItemBase.prototype.ontouchend = function(oEvent) {
-
-		// several fingers could be used
-		if (oEvent.targetTouches.length == 0 && this.hasActiveType()) {
+		if (this.hasActiveType()) {
 			this._timeoutIdEnd = setTimeout(function() {
 				this.setActive(false);
 			}.bind(this), 100);
@@ -1018,6 +1016,9 @@ function(
 
 	// During native scrolling: Chrome sends touchcancel and no touchend thereafter
 	ListItemBase.prototype.ontouchcancel = ListItemBase.prototype.ontouchend;
+
+	// active handling should be removed when dragging an item is over
+	ListItemBase.prototype.ondragend = ListItemBase.prototype.ontouchend;
 
 	// toggle active styles for navigation items
 	ListItemBase.prototype._activeHandlingNav = function() {};

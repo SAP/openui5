@@ -214,10 +214,11 @@ sap.ui.define([
 		}
 
 		if (this._sContextualWidth.toLowerCase() === "auto") {
-			//if auto, register resizeHandler
+			// if auto, register resizeHandler and apply the contextual width
 			this._registerResizeHandler();
+			this._applyContextualWidth(this.$().width());
 		} else {
-			//if px value, apply contextualWidth
+			// if px value, apply contextualWidth
 			this._applyContextualWidth(this._sContextualWidth);
 		}
 
@@ -556,7 +557,7 @@ sap.ui.define([
 
 		// remove or show column header row(thead) according to column visibility value
 		if (!bColVisible && bHeaderVisible) {
-			$headRow[0].className = "sapMListTblRow sapMListTblHeader";
+			$headRow[0].className = "sapMListTblRow sapMLIBFocusable sapMListTblHeader";
 			this._headerHidden = false;
 		} else if (bColVisible && !bHeaderVisible && !aVisibleColumns.length) {
 			$headRow[0].className = "sapMListTblHeaderNone";
@@ -692,11 +693,6 @@ sap.ui.define([
 	// returns accessibility role
 	Table.prototype.getAccessibilityType = function() {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TABLE");
-	};
-
-	// custom footer text announcement is only for tables
-	Table.prototype.getAccessibilityDescription = function() {
-		return ListBase.prototype.getAccessibilityDescription.call(this) + " " + this.getFooterText();
 	};
 
 	Table.prototype._setHeaderAnnouncement = function() {
