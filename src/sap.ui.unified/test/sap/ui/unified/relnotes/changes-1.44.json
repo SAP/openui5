@@ -71,5 +71,562 @@
         ]
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "ba3835b71457fb7781b05a80b7453121d5981d68",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Used short format for the week names when there is not enough space",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670471691"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670387751"
+          }
+        ]
+      },
+      {
+        "id": "d9215394e7e17e25f39c29098c6f645b0bd41e6b",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670528009"
+          }
+        ]
+      },
+      {
+        "id": "ba46f5a1c45f26c1ec63a6fa882305b37eb81ba8",
+        "type": "FIX",
+        "text": "sap.ui.unified.MenuTextFieldItem: Process enter key on keyup like for other Menuitems instead of keydown",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670541155"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "c9f4f250d8cd736592bed58ace8c0c10b06bd246",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Displayed correctly in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680288698"
+          }
+        ]
+      },
+      {
+        "id": "c7c893245ae3484093bdd75b65221078c5b7c99a",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Day selection drag threshold added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003905172016"
+          }
+        ]
+      },
+      {
+        "id": "7796ed58a1f363c166c2d1fa9251cddd598673b6",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Day selection drag threshold reverted",
+        "references": []
+      },
+      {
+        "id": "8b46505083e10881fe0628c821e495f7cd218f94",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: multiple selection when multiple months is now consistent with the single selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670539427"
+          }
+        ]
+      },
+      {
+        "id": "d957ca8f7b969486df4e0274ae5fca0dcd0d4fde",
+        "type": "FIX",
+        "text": "sap.ui.unified.CalendarUtils: Week number calculated correctly for all \"en-US\" locales",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003882912016"
+          }
+        ]
+      },
+      {
+        "id": "672a5d4a08704e2e40c8f73fc5074ba87dd0d68e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Shell/sap.m.Toolbar: Fix focus contrast issues in IE/Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680344097"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680344152"
+          }
+        ]
+      },
+      {
+        "id": "a7d71a9f283a07c32916efd7d7c3b21f8ab02ead",
+        "type": "FIX",
+        "text": "sap.ui.unified.Shell: Avoid URL announcement of Screenreader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680344362"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "fdab68e52390eb42cea962500ccf85a6a7493311",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar - switching year in week view for negative time zones is corrected.",
+        "references": []
+      },
+      {
+        "id": "ff413cb08fbf28d88b4d78f6b8fd27fed7e37f1f",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Invalidate Months only if they exist",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680314380"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.7": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "883c41171e0dfcd7991791fe2fbf90544a42e624",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004765332016"
+          }
+        ]
+      },
+      {
+        "id": "698e5ebaa5e7dc37790d937dd39927db1dd75c14",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Belize Deep theme fixed for 1.44",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680334939"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "fc12c15ab574552665ef357663bdabf045959487",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: One Month view",
+        "references": []
+      }
+    ]
+  },
+  "1.44.11": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "081127a73bd39d64889ef5ee256864507a092cbe",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: displayed correctly in Japanese and Chinese",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680365626"
+          }
+        ]
+      },
+      {
+        "id": "c1cda60fe3fece6683cc5ec09ed2c0951ea0b3ff",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Special dates have aria labels as texts in the associated legend",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770066920"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "e7374e3ef73e89dd7309571ed4be80dae645f6e9",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: corrected checks for detecting Japanese and Chinese",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680365626"
+          }
+        ]
+      },
+      {
+        "id": "95a98bd09a7b38270c4f181e1548e366b5fc4fa9",
+        "type": "FIX",
+        "text": ": sap.ui.unified.calendar controls. - focused item is preserved after rerendering.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770147677"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "42863597b234ee557b847a764d21dac0812bddef",
+        "type": "FIX",
+        "text": "sap.ui.unified.calendar.CalendarDateInterval: setStartDate to min/max date no longer throws an error.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770255505"
+          }
+        ]
+      },
+      {
+        "id": "0fd276b117cc3d046c6893e7c3315bf07f736b88",
+        "type": "FIX",
+        "text": "sap.ui.unified.calendar.Header: Previous and next buttons have aria info",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770200814"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "71e7dc5cf7167559d039bf108b3a47c3c9a40a77",
+        "type": "FIX",
+        "text": "m.PlanningCalendar: Appointments are aggregated equally across time zones",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770204955"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.24": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "c0fe131b5a2a37f1978e40e6828499bb6d387564",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: qunit tests fixed on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770560529"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.25": {
+    "date": "December 2017",
+    "notes": [
+      {
+        "id": "a93ab5f07168d4ba3d9a62e54b90f3514b1e999b",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: days aligned correctly in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780414532"
+          }
+        ]
+      },
+      {
+        "id": "3eae5fcbaa4459b527cfac359ccb132aa0261199",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Select month and year corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780443549"
+          }
+        ]
+      },
+      {
+        "id": "a2fb6b6df3edcc03bd94b95d04d1a2ff239594e0",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: select date on mouseup when used on touch device",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1750"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376500005552752017"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.27": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "188006928eb2542303cbe0283f50b465aeb5cc88",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: align currency labels properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880111590"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.28": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "070cce98aa50dfd0c3879c196cb92b3987663bbc",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1885"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880151681"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.31": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "e9502531924817f8951ef3d1efb9ddcd028465d0",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Failing qunit fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870129725"
+          }
+        ]
+      },
+      {
+        "id": "f93bf5b6e686796414e6d5581ef66e2d1dc71d58",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770572211"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770572146"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770543942"
+          }
+        ]
+      },
+      {
+        "id": "db067c83455d387264b3153c473ca25d643f79d4",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003736822017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000480702018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.32": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "bb41820db2ccc7c534bfa669c2ec9dab5627d6b4",
+        "type": "FIX",
+        "text": "sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870234443"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.33": {
+    "date": "July 2018",
+    "notes": [
+      {
+        "id": "526c451f3647bda7e01bdbae8517e1f5be6e473d",
+        "type": "FIX",
+        "text": "FileUploader: Accessing upload iframe adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001676212018"
+          }
+        ]
+      },
+      {
+        "id": "ade7371d35da13d480a1bed08ac270e93c81ea86",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: pressing of ESCAPE is now propagated to the parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880332317"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.34": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "f6138932b08831e8a0569116bca186c5eb32e821",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: returns empty string now when file has no extension",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880468008"
+          }
+        ]
+      },
+      {
+        "id": "0805457396f2bce9fc574e8b23cebb2c6da74b7f",
+        "type": "FIX",
+        "text": "ui.unified.FileUploader: Documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003320162018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.35": {
+    "date": "August 2018",
+    "notes": [
+      {
+        "id": "e0ddae574c674968d0898ed0b7e6cd243b875d61",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003469352018"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770353619"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.42": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "e80764ec05efad896249c9ac0eb956f9596e24ba",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "ce6246b0e987c2d377e9e16001f73b97833c5dab",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.TimesRow: Now custom data is respected over locale\u0027s one",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "324698"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.43": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "c7521cf55ec300f16b419c5c28776d6a6f68e210",
+        "type": "FIX",
+        "text": " sap.m.FileUploader: sample now acts responsive",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980321931"
+          }
+        ]
+      }
+    ]
   }
 }

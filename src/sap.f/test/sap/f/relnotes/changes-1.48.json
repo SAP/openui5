@@ -5,31 +5,42 @@
       {
         "id": "311dc6ccb1eb5b5f3ea40323c051426ebc97bcc0",
         "type": "FEATURE",
-        "text": "sap.f.Avatar: Usage with LightBox enabled",
+        "text": " sap.f.Avatar: Usage with LightBox enabled",
         "references": []
       },
       {
         "id": "bfabed4d4e9c20bbce7486a01bc24dd5fded5411",
         "type": "FEATURE",
-        "text": "sap.f.SemanticPage: saveAsTileAction aggregation added",
+        "text": " sap.f.SemanticPage: saveAsTileAction aggregation added",
         "references": []
       },
       {
         "id": "8f65b118d203972e278a6159d22c0d21d898bef7",
         "type": "FEATURE",
-        "text": "sap.ui.core.routing: 'beforeMatched' and 'beforeRouteMatched' events",
+        "text": " sap.ui.core.routing: \u0027beforeMatched\u0027 and \u0027beforeRouteMatched\u0027 events",
         "references": []
       },
       {
         "id": "6cabd559ace24f7c307f4f8270e8e77879751d31",
         "type": "FIX",
-        "text": "sap.f.DynamicPageTitle border-bottom fixed",
+        "text": " sap.f.DynamicPageTitle border-bottom fixed",
         "references": []
       },
       {
         "id": "79962d2a1888a54f39a0607fd22557adf3d544ac",
         "type": "FIX",
-        "text": "sap.f.DynamicPageTitle: Toolbar bottom border repaired",
+        "text": " sap.f.DynamicPageTitle: Toolbar bottom border repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.48.6": {
+    "date": "August 2017",
+    "notes": [
+      {
+        "id": "a1bfd1aa99f75be642776473aeca0718f06cb265",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: corrected width of the footer with custom sap.m.Bar",
         "references": []
       }
     ]

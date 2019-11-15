@@ -5,112 +5,140 @@
       {
         "id": "1aa41ce6ebdc91afb2b28ff2e40a25797ccc2224",
         "type": "FIX",
-        "text": "core.Icon: make the focus outline stay within the DOM area",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780089678"
-          }
-        ]
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
       },
       {
         "id": "e890612f66b7236d7cf490a104c150fb9d05c98d",
         "type": "FIX",
-        "text": "core.Icon: simulate focus outline with negative offset for IE and Edge",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780147610"
-          },
-          {
-            "type": "BCP",
-            "reference": "1780280317"
-          }
-        ]
+        "text": " core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": []
       },
       {
         "id": "fbc843d4633527acf5807f862883bc0fe2277096",
         "type": "FIX",
-        "text": "local less parameter names",
+        "text": " local less parameter names",
         "references": []
       },
       {
         "id": "45d164c3abfc53c490130ca4e1cd2be161dd29bf",
         "type": "FIX",
-        "text": "local less parameter names",
+        "text": " local less parameter names",
         "references": []
       },
       {
         "id": "f48487cd11786650f2cfe0de10aaf62161277230",
         "type": "FIX",
-        "text": "local less parameter names for sap.ui.core",
+        "text": " local less parameter names for sap.ui.core",
         "references": []
       },
       {
         "id": "917516f08e6465368602f11efea400a78ed09c3e",
         "type": "FIX",
-        "text": "sap.m.Button: Has correct focused state in a transparent Toolbar in HCB and HCW themes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770224005"
-          }
-        ]
+        "text": " sap.m.Button: Has correct focused state in a transparent Toolbar in HCB and HCW themes",
+        "references": []
       },
       {
         "id": "a2d2246e1194ce159416d8fdede61dbc1f9ec9fe",
         "type": "FIX",
-        "text": "sap.m.SelectList: Corrected SelectList focus",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780151879"
-          }
-        ]
+        "text": " sap.m.SelectList: Corrected SelectList focus",
+        "references": []
       },
       {
         "id": "0aa512af618eb8259b260ecc5c27ee4d086e754d",
         "type": "FIX",
-        "text": "sap.m.TileContent: Semantic color of footer corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "002075129400003416502017"
-          }
-        ]
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
       },
       {
         "id": "8e0f9f69440e0bf520b9e585bb3eb398c815a693",
         "type": "FIX",
-        "text": "sap.m.Tokenizer: Focus issue fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770143500"
-          }
-        ]
+        "text": " sap.m.Tokenizer: Focus issue fixed",
+        "references": []
       },
       {
         "id": "441752af0afd91925ba484c28b2bcd05d1b7baa6",
         "type": "FIX",
-        "text": "sap_bluecrystal: @sapNeutralTextColor color fix",
+        "text": " sap_bluecrystal: @sapNeutralTextColor color fix",
         "references": []
       },
       {
         "id": "0d776003a01734c4f906953045167c6acc946229",
         "type": "FIX",
-        "text": "unified.Calendar: On IE selected days focus outline is dashed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770207956"
-          }
-        ]
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
       },
       {
         "id": "ea224f143075e16818999fe41a3c42975083289a",
         "type": "FEATURE",
-        "text": "sap.m.PlanningCalendarLegend: New control with two lists of items implemented.",
+        "text": " sap.m.PlanningCalendarLegend: New control with two lists of items implemented.",
+        "references": []
+      }
+    ]
+  },
+  "1.50.3": {
+    "date": "September 2017",
+    "notes": [
+      {
+        "id": "cf433ef64c658190ac15fbabf7bac98befd69806",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      }
+    ]
+  },
+  "1.50.4": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "2652d40969d667f1efc041c07ee30a3baac09800",
+        "type": "FIX",
+        "text": " sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
+        "references": []
+      }
+    ]
+  },
+  "1.50.5": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "1a3ed654e0c5118015e33dffb80874f2e362ae46",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      }
+    ]
+  },
+  "1.50.6": {
+    "date": "November 2017",
+    "notes": [
+      {
+        "id": "ba5fbaa72b627de95005d9592573879c143d8b2e",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Moving of tiles fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.50.9": {
+    "date": "January 2018",
+    "notes": [
+      {
+        "id": "3f234eb76551a9e1f1000e3aad7595515f6cebbf",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "2fa075b6b1daebb40def993d4a444b6617b55672",
+        "type": "FIX",
+        "text": " sap.m.Popover: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "78d81f9d14746439570a5841a241dff75158c249",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
         "references": []
       }
     ]

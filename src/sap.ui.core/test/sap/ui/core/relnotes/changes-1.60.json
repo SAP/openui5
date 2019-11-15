@@ -27,7 +27,7 @@
       {
         "id": "a7a0009e1e5305ea4ad084746dd289a3acd5180b",
         "type": "FIX",
-        "text": "v2.ODataAnnotations: don't cache invalid annotations",
+        "text": "v2.ODataAnnotations: don\u0027t cache invalid annotations",
         "references": [
           {
             "type": "BCP",
@@ -172,7 +172,7 @@
       {
         "id": "cd553e45a0c0e08fd2a5a8d346ec399cca8c794e",
         "type": "FIX",
-        "text": "format/DateFormat: Multiple instances shouldn't share fallback formats",
+        "text": "format/DateFormat: Multiple instances shouldn\u0027t share fallback formats",
         "references": [
           {
             "type": "BCP",
@@ -631,6 +631,615 @@
           {
             "type": "BCP",
             "reference": "1880642900"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.1": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "e723aa4d44246b07856a206dfc739db114bf6eea",
+        "type": "FIX",
+        "text": "sap.ui.model.analytics.odata4analytics#_renderPropertyFilterValue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880577456"
+          }
+        ]
+      },
+      {
+        "id": "68eab4ac33f4050d637e93fc02bc9793aefe8ff6",
+        "type": "FIX",
+        "text": "performance/trace/FESR: deal with unsupported window.Performance API",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870446987"
+          }
+        ]
+      },
+      {
+        "id": "9b9631b727a7bf908e0ed2836d923c3f1ba3f345",
+        "type": "FIX",
+        "text": "routing.History: maintain the history state after hash replacement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880686177"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880687236"
+          }
+        ]
+      },
+      {
+        "id": "bba33ddc1e9254c005802f8c66ffe66c50e3734b",
+        "type": "FIX",
+        "text": "sap/ui/core/Manifest: finalize resolveUri API",
+        "references": []
+      }
+    ]
+  },
+  "1.60.2": {
+    "date": "November 2018",
+    "notes": [
+      {
+        "id": "5702fb03b3f589473dc078b04685587e9e6cc07f",
+        "type": "FIX",
+        "text": "Component: register the module path for app variants",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870472657"
+          }
+        ]
+      },
+      {
+        "id": "3d4656af568637dc8709b402fcb98370e6edbb5f",
+        "type": "FIX",
+        "text": "Model.removeBinding: performance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005859532018"
+          }
+        ]
+      },
+      {
+        "id": "b80509a6e14dc6dbc1c9d903f82ff658cb63d980",
+        "type": "FIX",
+        "text": "Unit Type: Only parse and format valid values",
+        "references": []
+      },
+      {
+        "id": "e9bfcbc1ab6de6c9ac7fe9c6060081eb3fe9d174",
+        "type": "FIX",
+        "text": "core/Control: corrected visibility of blocked property",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880574071"
+          }
+        ]
+      },
+      {
+        "id": "dd34c4702d6edb0e861c6eeee3a94014d8f6317c",
+        "type": "FIX",
+        "text": "core/Control: fixed wrong jsdoc tag",
+        "references": []
+      },
+      {
+        "id": "789f4d795465c40ecd2aa2c8b7d1811c47dfb5df",
+        "type": "FIX",
+        "text": "TreeBindingUtils: Fixes negative $skip values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870460769"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.3": {
+    "date": "December 2018",
+    "notes": [
+      {
+        "id": "6cacdbd6934fc39099a0f83110b689ec8c39cd9b",
+        "type": "FIX",
+        "text": "ComboBoxBase: Support for composition characters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880653816"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880483051"
+          }
+        ]
+      },
+      {
+        "id": "a4d93f23fd231a8beb6bf1e996567f424cfe91eb",
+        "type": "FIX",
+        "text": "Device.js: use maxTouchPoints for touch support detection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880727749"
+          }
+        ]
+      },
+      {
+        "id": "f10fcbbe2e28d62916f6c40d6fc9442ac8ac3f22",
+        "type": "FIX",
+        "text": "NumberFormat: Fixed bug in short currency parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005959522018"
+          }
+        ]
+      },
+      {
+        "id": "048a0b8635f96a24e854f4ff31fc56dd0864322e",
+        "type": "FIX",
+        "text": "NumberFormat: correctly handle option precision with CurrencyFormat",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880662411"
+          }
+        ]
+      },
+      {
+        "id": "e64a8c6a46e92001ffd0f8b610b8283abb723720",
+        "type": "FIX",
+        "text": "ODataUtils: Enhance setAnnotationOrigin for HanaXS Use Case",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006014532018"
+          }
+        ]
+      },
+      {
+        "id": "0a64c4b2f0e0a5058e72d85d27f536f6dd86f0d7",
+        "type": "FIX",
+        "text": "TreeBindingCompatibilityAdapter: Safe Array indexOf",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870512006"
+          }
+        ]
+      },
+      {
+        "id": "c18db8f635f05fd0b2d1fea62d9f43969d8981b0",
+        "type": "FIX",
+        "text": "UriParameters: Fixed parsing of query values with an equal sign",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880708373"
+          }
+        ]
+      },
+      {
+        "id": "fc9b3d01094325ebb7e0e432afd471e00589563a",
+        "type": "FIX",
+        "text": "i18n.ResourceBundle: Norwegian language support for \"nb\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880647149"
+          }
+        ]
+      },
+      {
+        "id": "098a4ae9bcbdfeda1486ec35f200827a98334679",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationsParser: nested annotation w/o qualifier",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880610531"
+          }
+        ]
+      },
+      {
+        "id": "2381ca75c357adf1d27cfd77dec72a490b590410",
+        "type": "FIX",
+        "text": "v2.ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870521429"
+          }
+        ]
+      },
+      {
+        "id": "3e026e935c3b172e78e852aef747e18e4d02ae66",
+        "type": "FIX",
+        "text": "sap.ui.core/Component: improved variant determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870534690"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.6": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "72da2e919114457d94e6b62864bce0d73d31c320",
+        "type": "FIX",
+        "text": "ODataMessageParser: support \u0027transition\u0027 flag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970053675"
+          }
+        ]
+      },
+      {
+        "id": "74e9a598c6274aab7daf8d8895f4dd1119be7565",
+        "type": "FIX",
+        "text": "ODataModel: Don\u0027t send CSRF token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006276072018"
+          }
+        ]
+      },
+      {
+        "id": "e9ae2f59535a880ab82c025c43991d7f48589f95",
+        "type": "FIX",
+        "text": "ODataModel: memory leak",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044943"
+          }
+        ]
+      },
+      {
+        "id": "ecf2ec898549a9476811f29e18ff74253b579a04",
+        "type": "FIX",
+        "text": "core.DateFormat: fix am/pm parsing with pattern which contains \".\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006279892018"
+          }
+        ]
+      },
+      {
+        "id": "ff020bdb7089f2fa6ef461a0e0ad605ba9a54d66",
+        "type": "FIX",
+        "text": "util/Storage: fixed removeAll function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970007379"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.8": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "9f0e1cc7cdef7da02354052091993652ddfc6af9",
+        "type": "FIX",
+        "text": "sap.ui.core: Remove circular dependency Component \u003c-\u003e Core",
+        "references": []
+      }
+    ]
+  },
+  "1.60.9": {
+    "date": "February 2019",
+    "notes": [
+      {
+        "id": "fe713d43c12c355a6db164618eabd5dca6c09668",
+        "type": "FIX",
+        "text": "Added missing RJS converter method to Core",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970020928"
+          }
+        ]
+      },
+      {
+        "id": "f32f73dc6bcad94f673801be6a44009151338b40",
+        "type": "FIX",
+        "text": "check isInvalidateSuppressed",
+        "references": []
+      },
+      {
+        "id": "b8cfcccec353b9646eea8f10742c5571bb76fed9",
+        "type": "FIX",
+        "text": "core.Popup: blur focus element only when it\u0027s not in a Popup",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880721798"
+          }
+        ]
+      },
+      {
+        "id": "7c77ab49f066b88c5d00f1657ff8436a34c46118",
+        "type": "FIX",
+        "text": "core.Popup: check the existence of blur method before call it",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970044373"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.10": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "a416a95049a733232c42470f299d754b44d92ec1",
+        "type": "FIX",
+        "text": " AppCacheBuster: ensure to keep URL parameters and hash",
+        "references": []
+      },
+      {
+        "id": "fba30edc0cf53aa35f8baec20f6d8b4c98085bf4",
+        "type": "FIX",
+        "text": " Drag-and-Drop: Text in input fields should be selectable",
+        "references": []
+      },
+      {
+        "id": "0bf60dff691f7620845a36e1b02ec63519996cf8",
+        "type": "FIX",
+        "text": " ManagedObject: suppressInvalidate",
+        "references": []
+      },
+      {
+        "id": "74a35d2c0b457e4e62a5c075e5dfb6ba664741a4",
+        "type": "FIX",
+        "text": " core.routing: check existence of targets before display a target",
+        "references": []
+      }
+    ]
+  },
+  "1.60.11": {
+    "date": "March 2019",
+    "notes": [
+      {
+        "id": "04b532b24b2ef66ddfcf9a15aa1666ab39714dd6",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: run ExtensionPoints with correct owner ID",
+        "references": []
+      }
+    ]
+  },
+  "1.60.12": {
+    "date": "April 2019",
+    "notes": [
+      {
+        "id": "49d348969fd9f5a5af88099522cd1a3e00d83a94",
+        "type": "FIX",
+        "text": " Core: Ensure firing the ThemeChanged event when loading libs",
+        "references": []
+      },
+      {
+        "id": "38ee9581ebbd7e951c41e01dc4a20baa35314605",
+        "type": "FIX",
+        "text": " sap/ui/util/Mobile: Update favicon properly in IE",
+        "references": []
+      },
+      {
+        "id": "9773f9fe213603c9e7f252fae4cbaa8b7907976b",
+        "type": "FIX",
+        "text": " trace/Passport: Do not reset trace level on call of traceFlags",
+        "references": []
+      }
+    ]
+  },
+  "1.60.13": {
+    "date": "May 2019",
+    "notes": [
+      {
+        "id": "967c238cbfd41d32717c2500dcfa612ee0e86495",
+        "type": "FIX",
+        "text": " AppCacheBuster: ignore hash-only URLs for rewriting",
+        "references": []
+      },
+      {
+        "id": "76f0179a31aed3bb3d58a969fe78b4ff9b07ef07",
+        "type": "FIX",
+        "text": " CLDR: Added new Japanese era name",
+        "references": []
+      },
+      {
+        "id": "db42aef8796ffe783883942f0a4fe8be539b1b72",
+        "type": "FIX",
+        "text": " Core/Component: Respect \"final\" resourceRoot configuration",
+        "references": []
+      },
+      {
+        "id": "89249d1a3246552ac83040c586ae53901e4b9254",
+        "type": "FIX",
+        "text": " date.Japanese: adapt unit test to era change",
+        "references": []
+      }
+    ]
+  },
+  "1.60.14": {
+    "date": "June 2019",
+    "notes": [
+      {
+        "id": "d108d868223b7066828ee6f42fae74e2f2372a39",
+        "type": "FIX",
+        "text": " sap/base/util/merge: Avoid Object.prototype pollution",
+        "references": []
+      },
+      {
+        "id": "f681345ec1399df1877031c084eddf74f4c5fe5e",
+        "type": "FIX",
+        "text": " sap/ui/thirdparty/jQuery: Prevent Object.prototype pollution",
+        "references": []
+      }
+    ]
+  },
+  "1.60.15": {
+    "date": "July 2019",
+    "notes": [
+      {
+        "id": "f48033133b9331a5e9fc322c28ae45f3ca38f51e",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataListBinding: ContextChange",
+        "references": []
+      }
+    ]
+  },
+  "1.60.16": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "9b30fc2b2844d58f394886bb92ca5acdb59eb416",
+        "type": "FIX",
+        "text": " Improve jQuery.parseHTML implementation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "n/a"
+          }
+        ]
+      },
+      {
+        "id": "7f71d09c433a3952aaec2c39a1ff2f17b942d66b",
+        "type": "FIX",
+        "text": " Opa: iframe size and position in Chrome 75",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970223441"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.17": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "a82151926f2b0ed68fa31dd5c85c1f425830c3bf",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Prevent exception when setting context to null",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "315554"
+          }
+        ]
+      },
+      {
+        "id": "a544c9a484c996c25e170794d5d73f9f4dc8bdda",
+        "type": "FIX",
+        "text": " odata/ODataUtils: Convert deprecated ODataFilter to model/Filter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "362147"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.18": {
+    "date": "August 2019",
+    "notes": [
+      {
+        "id": "602fe9aa37fa70e1f921b0bd1d7e4160e6138c32",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Don\u0027t use expanded data, if custom parameters are set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980011792"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.20": {
+    "date": "October 2019",
+    "notes": [
+      {
+        "id": "2592ce67846166bb89268bbe0084e16d5f8690ac",
+        "type": "FIX",
+        "text": " ODataModel: Don\u0027t send CSRF token for GET requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "529036"
+          }
+        ]
+      },
+      {
+        "id": "c087708d6c4c38d0dd2d815b2fd7b4fc9f0d4e1c",
+        "type": "FIX",
+        "text": " sap.ui.core.date.Islamic: Customization fall-back format is always A",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "364899"
+          }
+        ]
+      },
+      {
+        "id": "857e932190ead69fabd04f304a123439142bdb04",
+        "type": "FIX",
+        "text": " sap/ui/Device: Detect iPads running on iOS 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970475024"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.21": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "baa08d7e4eede1e27dad5e17ec6c773b113adb5f",
+        "type": "FIX",
+        "text": " Aggregation Forwarding: also clone forwarded bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376500005492722019"
+          }
+        ]
+      },
+      {
+        "id": "a45b90fba1f82bcc55e76aa62cf199402de72007",
+        "type": "FIX",
+        "text": " ManagedObject.bindAggregation returns \u0027this\u0027 even when forwarded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970047588"
           }
         ]
       }

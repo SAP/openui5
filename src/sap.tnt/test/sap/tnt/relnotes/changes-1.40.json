@@ -1,108 +1,134 @@
 {
-	"1.40.0": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "80b7fbdebe09755545c61ef72914ff6f965b4eb4",
-				"type": "FEATURE",
-				"text": "sap.m.NavigationListItem: Added one click navigation",
-				"references": []
-			},
-			{
-				"id": "2c354fd3c83429916d8048a9868097f6c1281fc9",
-				"type": "FEATURE",
-				"text": "sap.tnt.SideNavigation: Added animation when collapse/expand",
-				"references": []
-			},
-			{
-				"id": "2455a09ca1f6365fe8633c6cb2614450c0e0cb8a",
-				"type": "FIX",
-				"text": "sap.m.SideNavigation: Reduced control width",
-				"references": []
-			},
-			{
-				"id": "4bf589e3e3ab1b885abaeb8903a84e07eb8687a1",
-				"type": "FIX",
-				"text": "sap.tnt.NavigationList: Focus is now styled correctly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1570874790"
-					}
-				]
-			},
-			{
-				"id": "0ec17ff58341b34c6a28a0b70593acd50a3b64b7",
-				"type": "FIX",
-				"text": "sap.tnt.NavigationList: Icon rendering issue solved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670303055"
-					}
-				]
-			},
-			{
-				"id": "8485c3f9f1d64c95a6e86bb6599719267f1c5fb8",
-				"type": "FIX",
-				"text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670074223"
-					}
-				]
-			},
-			{
-				"id": "0e2f3315124f17d6043cbddc970e9e2c9a739f81",
-				"type": "FIX",
-				"text": "sap.tnt.SideNavigation: Fix Typo in Sample",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "895"
-					}
-				]
-			},
-			{
-				"id": "a1c85a8b8fb725e9b69adaac388533ec62c781f9",
-				"type": "FIX",
-				"text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670250764"
-					}
-				]
-			},
-			{
-				"id": "ca42118022c75402a16a9f53da5c359d5de4ed25",
-				"type": "FIX",
-				"text": "sap.tnt.ToolPage:",
-				"references": []
-			},
-			{
-				"id": "96ac3265ad453238b8fd8790b398f3333e5966dd",
-				"type": "FIX",
-				"text": "sap.tnt.ToolPage: sideExpanded is fixed for Phone use case",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670279327"
-					}
-				]
-			},
-			{
-				"id": "1134d85bafbd28f8c14ae8e021dd243ca88408de",
-				"type": "FIX",
-				"text": "sap.tnt.ToolPage: sideExpanded is fixed in IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670279635"
-					}
-				]
-			}
-		]
-	}
+  "1.40.0": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "80b7fbdebe09755545c61ef72914ff6f965b4eb4",
+        "type": "FEATURE",
+        "text": "sap.m.NavigationListItem: Added one click navigation",
+        "references": []
+      },
+      {
+        "id": "2c354fd3c83429916d8048a9868097f6c1281fc9",
+        "type": "FEATURE",
+        "text": "sap.tnt.SideNavigation: Added animation when collapse/expand",
+        "references": []
+      },
+      {
+        "id": "2455a09ca1f6365fe8633c6cb2614450c0e0cb8a",
+        "type": "FIX",
+        "text": "sap.m.SideNavigation: Reduced control width",
+        "references": []
+      },
+      {
+        "id": "4bf589e3e3ab1b885abaeb8903a84e07eb8687a1",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Focus is now styled correctly",
+        "references": []
+      },
+      {
+        "id": "0ec17ff58341b34c6a28a0b70593acd50a3b64b7",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Icon rendering issue solved",
+        "references": []
+      },
+      {
+        "id": "8485c3f9f1d64c95a6e86bb6599719267f1c5fb8",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
+        "references": []
+      },
+      {
+        "id": "0e2f3315124f17d6043cbddc970e9e2c9a739f81",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Fix Typo in Sample",
+        "references": []
+      },
+      {
+        "id": "a1c85a8b8fb725e9b69adaac388533ec62c781f9",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
+        "references": []
+      },
+      {
+        "id": "ca42118022c75402a16a9f53da5c359d5de4ed25",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage:",
+        "references": []
+      },
+      {
+        "id": "96ac3265ad453238b8fd8790b398f3333e5966dd",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: sideExpanded is fixed for Phone use case",
+        "references": []
+      },
+      {
+        "id": "1134d85bafbd28f8c14ae8e021dd243ca88408de",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: sideExpanded is fixed in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.40.2": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "ecf1ee74e5d3faf7e4751e7dbef816cad8a44d3f",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
+        "references": []
+      }
+    ]
+  },
+  "1.40.5": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "3baede387b9a8147ed8237723b80d45f73b26ce6",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.40.10": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "d45be16fdf25808f721bc74d4108d10574632d9f",
+        "type": "FIX",
+        "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
+        "references": []
+      },
+      {
+        "id": "491ee8eb2761659678342580593fbf5bb6c19c2e",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationList: Popover not closing in collapsed mode issue fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.40.11": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "6b42f2d59d779213605a975aaa5e9ab1ddc2e20e",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.40.12": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "944f38c39a94e4f2139fb219594b16f6fbad9d80",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": []
+      }
+    ]
+  }
 }

@@ -1,213 +1,341 @@
 {
-	"1.42.0": {
-		"date": "August 2016",
-		"notes": [
-			{
-				"id": "d569426171ae7686f508834e1816d72889d95421",
-				"type": "FEATURE",
-				"text": "sap.m.Carousel: New property for arrows position",
-				"references": []
-			},
-			{
-				"id": "6cff123a1d91fdcca8ac533978e427ffa420d857",
-				"type": "FEATURE",
-				"text": "sap.m.RangeSlider Input fields in the handle tooltips",
-				"references": []
-			},
-			{
-				"id": "2a675c335cac11a405be5d40c50549a98480aa27",
-				"type": "FEATURE",
-				"text": "sap.m.Select: add \"valueState\" property",
-				"references": []
-			},
-			{
-				"id": "512d462875e920abf2f6a951b6d34a5bf06db11c",
-				"type": "FEATURE",
-				"text": "sap.m.Select: redesign for mobile devices",
-				"references": []
-			},
-			{
-				"id": "15f128a5ce73d873e431aa4c70b2b835a6f6b267",
-				"type": "FIX",
-				"text": "sap.m.Button: Adjust CSS selector specificity",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670288616"
-					}
-				]
-			},
-			{
-				"id": "d929bf5ec632b8e0653db60828ee4cea55a0d289",
-				"type": "FIX",
-				"text": "sap.m.Button: Emphasized button colors in bar",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129500002271482016"
-					}
-				]
-			},
-			{
-				"id": "999b4119d5bd7b51bfb3526428c570e16ceb101f",
-				"type": "FIX",
-				"text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680021221"
-					}
-				]
-			},
-			{
-				"id": "8cd4f0d1d381c86929c5214796db623dfe195519",
-				"type": "FIX",
-				"text": "sap.m.Button: Has correct colors in footer context",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "002075129500002271482016"
-					}
-				]
-			},
-			{
-				"id": "27666887b63ae8b0dd99779e589f44ebdceb5b8b",
-				"type": "FIX",
-				"text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680020740"
-					}
-				]
-			},
-			{
-				"id": "39f23e8f9441b9af7e295fb7e6a41ea95dc91780",
-				"type": "FIX",
-				"text": "sap.m.GenericTile: Add solid border to GenericTile",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680093789"
-					}
-				]
-			},
-			{
-				"id": "aac19ec7b79d583de8ad690b4af8c8aa2e3fbea1",
-				"type": "FIX",
-				"text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670295059"
-					}
-				]
-			},
-			{
-				"id": "951f10bfd69aef6902571092378d7570f81906f4",
-				"type": "FIX",
-				"text": "sap.m.InputBase: Fix error state visualization in table cell",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680167105"
-					}
-				]
-			},
-			{
-				"id": "db70485c8148ab534339505073fe80e57dfeed90",
-				"type": "FIX",
-				"text": "sap.m.Link: Focus visualization within table cell",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680084755"
-					}
-				]
-			},
-			{
-				"id": "83b7af2571cc4bb4d731ca2459770abf4760e664",
-				"type": "FIX",
-				"text": "sap.m.MessagePopover: Styles for markup description improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680154117"
-					}
-				]
-			},
-			{
-				"id": "ab2077c796c2ade3152ed990d3e855737c55ae7d",
-				"type": "FIX",
-				"text": "sap.m.MultiInput: hover disabled multi input blue border removed",
-				"references": []
-			},
-			{
-				"id": "774e62b0348c6fe6ff1a5e853b391cb760f52dde",
-				"type": "FIX",
-				"text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680058747"
-					}
-				]
-			},
-			{
-				"id": "31143985440c0f8820add8b9b89fe1f8cc37a0cd",
-				"type": "FIX",
-				"text": "sap.m.Table - focus outline in IE",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680158762"
-					}
-				]
-			},
-			{
-				"id": "9be9dd2232de301cdbbd5776a8ba28843458f7cb",
-				"type": "FIX",
-				"text": "sap.m.Table: insufficient contrast of focus outline",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680089765"
-					}
-				]
-			},
-			{
-				"id": "fa32019f794c4d078552e82dd7cd1b1c33d696f6",
-				"type": "FIX",
-				"text": "sap.m.TextArea: State outline now has proper offsets/paddings",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680081585"
-					}
-				]
-			},
-			{
-				"id": "08c5c55ad341017a16e58967f4d690973506396a",
-				"type": "FIX",
-				"text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1670335892"
-					}
-				]
-			},
-			{
-				"id": "3b0a501165212f65041f99f02b192f0ae67faa4f",
-				"type": "FIX",
-				"text": "sap.uxap.ObjectPageSubSection: focus in IE was broken",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1680064055"
-					}
-				]
-			}
-		]
-	}
+  "1.42.0": {
+    "date": "August 2016",
+    "notes": [
+      {
+        "id": "d569426171ae7686f508834e1816d72889d95421",
+        "type": "FEATURE",
+        "text": "sap.m.Carousel: New property for arrows position",
+        "references": []
+      },
+      {
+        "id": "6cff123a1d91fdcca8ac533978e427ffa420d857",
+        "type": "FEATURE",
+        "text": "sap.m.RangeSlider Input fields in the handle tooltips",
+        "references": []
+      },
+      {
+        "id": "2a675c335cac11a405be5d40c50549a98480aa27",
+        "type": "FEATURE",
+        "text": "sap.m.Select: add \"valueState\" property",
+        "references": []
+      },
+      {
+        "id": "512d462875e920abf2f6a951b6d34a5bf06db11c",
+        "type": "FEATURE",
+        "text": "sap.m.Select: redesign for mobile devices",
+        "references": []
+      },
+      {
+        "id": "15f128a5ce73d873e431aa4c70b2b835a6f6b267",
+        "type": "FIX",
+        "text": "sap.m.Button: Adjust CSS selector specificity",
+        "references": []
+      },
+      {
+        "id": "d929bf5ec632b8e0653db60828ee4cea55a0d289",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button colors in bar",
+        "references": []
+      },
+      {
+        "id": "999b4119d5bd7b51bfb3526428c570e16ceb101f",
+        "type": "FIX",
+        "text": "sap.m.Button: Emphasized button has sufficient contrast ratio",
+        "references": []
+      },
+      {
+        "id": "8cd4f0d1d381c86929c5214796db623dfe195519",
+        "type": "FIX",
+        "text": "sap.m.Button: Has correct colors in footer context",
+        "references": []
+      },
+      {
+        "id": "27666887b63ae8b0dd99779e589f44ebdceb5b8b",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: focus outline was cut when put in a Grid",
+        "references": []
+      },
+      {
+        "id": "39f23e8f9441b9af7e295fb7e6a41ea95dc91780",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Add solid border to GenericTile",
+        "references": []
+      },
+      {
+        "id": "aac19ec7b79d583de8ad690b4af8c8aa2e3fbea1",
+        "type": "FIX",
+        "text": "sap.m.Input: The input field in an InputListItem is more recognizable now",
+        "references": []
+      },
+      {
+        "id": "951f10bfd69aef6902571092378d7570f81906f4",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Fix error state visualization in table cell",
+        "references": []
+      },
+      {
+        "id": "db70485c8148ab534339505073fe80e57dfeed90",
+        "type": "FIX",
+        "text": "sap.m.Link: Focus visualization within table cell",
+        "references": []
+      },
+      {
+        "id": "83b7af2571cc4bb4d731ca2459770abf4760e664",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Styles for markup description improved",
+        "references": []
+      },
+      {
+        "id": "ab2077c796c2ade3152ed990d3e855737c55ae7d",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: hover disabled multi input blue border removed",
+        "references": []
+      },
+      {
+        "id": "774e62b0348c6fe6ff1a5e853b391cb760f52dde",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: ObjectAttribute is verticaly aligned correctly",
+        "references": []
+      },
+      {
+        "id": "31143985440c0f8820add8b9b89fe1f8cc37a0cd",
+        "type": "FIX",
+        "text": "sap.m.Table - focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "9be9dd2232de301cdbbd5776a8ba28843458f7cb",
+        "type": "FIX",
+        "text": "sap.m.Table: insufficient contrast of focus outline",
+        "references": []
+      },
+      {
+        "id": "fa32019f794c4d078552e82dd7cd1b1c33d696f6",
+        "type": "FIX",
+        "text": "sap.m.TextArea: State outline now has proper offsets/paddings",
+        "references": []
+      },
+      {
+        "id": "08c5c55ad341017a16e58967f4d690973506396a",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fix focus visualization on group headers",
+        "references": []
+      },
+      {
+        "id": "3b0a501165212f65041f99f02b192f0ae67faa4f",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: focus in IE was broken",
+        "references": []
+      }
+    ]
+  },
+  "1.42.1": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "9b7968d4411750eee1fa9b242157558d0bfff5e7",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.BlockLayout: Belize enhancements",
+        "references": []
+      },
+      {
+        "id": "10bb9f7d7c4773e1d1f934bef25bb0c2549aa7c9",
+        "type": "FIX",
+        "text": "m.ViewSettingsPopover: Header items have correct focus outline",
+        "references": []
+      },
+      {
+        "id": "8afa4f66e9041b8fa07dd58898655b89616b0abc",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: the icon is wrongly positioned in Safari on Mac",
+        "references": []
+      },
+      {
+        "id": "a94f30b97d7e03cb3451faa4b63247a772367271",
+        "type": "FIX",
+        "text": "sap.m.GenericTile: Less parameters for Bluecrystal theme updated",
+        "references": []
+      },
+      {
+        "id": "ebdb640f63725899b2486f3b0e1ae17024b7feb8",
+        "type": "FIX",
+        "text": "sap.m.ListBase - double focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "fe267ac726c7ce8c4d7b97c2192919261f75fddd",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Last segmented button should have focus",
+        "references": []
+      },
+      {
+        "id": "75f1ef7c6bad16985f74d66d981ab0ad9ff53496",
+        "type": "FIX",
+        "text": "sap.m.Popover compact mode arrow style",
+        "references": []
+      }
+    ]
+  },
+  "1.42.2": {
+    "date": "September 2016",
+    "notes": [
+      {
+        "id": "def196e7efb09dc5045137a9a7872f3355a2a7c0",
+        "type": "FIX",
+        "text": "changes-1.42.json: remove duplicates",
+        "references": []
+      }
+    ]
+  },
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "1cefafc4662997371ad56d2c0f11c18b1ca76efa",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "ed26508b69ff8221234bf6dd1fe88935ee2daa10",
+        "type": "FIX",
+        "text": "sap.m.Button: focus didn\u0027t have enough contrast in active toolbar contest",
+        "references": []
+      }
+    ]
+  },
+  "1.42.4": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "a2074e1aab62cee2d8903bfd82637d0fbe66768c",
+        "type": "FIX",
+        "text": "core/general: text should be selectable on combi device",
+        "references": []
+      },
+      {
+        "id": "aed10205ffce746b060df365afab8b4836b6890b",
+        "type": "FIX",
+        "text": "sap.m.ObjectIdentifier: margin inside table + cleanup selectors",
+        "references": []
+      },
+      {
+        "id": "d39101cc0f1d444ee0c35bc63e0e266c8dbb3542",
+        "type": "FIX",
+        "text": "sap.m.Token: Border type is changed for Internet Explorer due to visual issues",
+        "references": []
+      },
+      {
+        "id": "99a1c10ef7635fd8e23277d941f7680f2e8a26c9",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Scrollbar appearence on mobile devices",
+        "references": []
+      },
+      {
+        "id": "5d9f285a3fe57beb561e00077d5722af1ed38315",
+        "type": "FIX",
+        "text": "sap.ui.table.*: getDefaultRowHeight to consider the content density",
+        "references": []
+      },
+      {
+        "id": "40f81b18e2bd0acf60fd852833934a1d7d72a0f2",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Corrected focus for Planning Calendar",
+        "references": []
+      }
+    ]
+  },
+  "1.42.5": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "d189d6a2809eccf4203f3684f0779947c37f2d0e",
+        "type": "FIX",
+        "text": "sap.m.Input: Text selection on tablets is now correct",
+        "references": []
+      },
+      {
+        "id": "e3aeec59c3f96cec20eab6d87971f2fe7145f460",
+        "type": "FIX",
+        "text": "sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
+      }
+    ]
+  },
+  "1.42.7": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "de125d754e1582e1d5f41c9484bcecc9e6eb0cf7",
+        "type": "FIX",
+        "text": " sap.m.GenericTile: Line height increased to fit Devanagari script",
+        "references": []
+      },
+      {
+        "id": "9384b997158e188499ea44c5d08a751be1b034ad",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Token selection corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "b1ecb6034502dc94ab7a1b0039e8c34636cf506d",
+        "type": "FIX",
+        "text": " sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": []
+      },
+      {
+        "id": "7bc40ec7c72e6d458276e3acc984c50985dcfc31",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
+      },
+      {
+        "id": "e99182cf6fd6405c95b68815a03ba78e2b356fea",
+        "type": "FIX",
+        "text": " sap.m.Carousel: bluecrystal arrows in content fixed",
+        "references": []
+      },
+      {
+        "id": "9dc12b9e2c4aec24763719fb50188e5390fde146",
+        "type": "FIX",
+        "text": " sap.m.Link: Dashed focus outline in IE",
+        "references": []
+      },
+      {
+        "id": "4e3056e81114955ffa2b6abbfecec567b101afce",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Layout no longer breaks on resize",
+        "references": []
+      },
+      {
+        "id": "88a820535b761e7c2f5dc1b5bd69af01965bf172",
+        "type": "FIX",
+        "text": " sap.m.Page: rendering performance",
+        "references": []
+      }
+    ]
+  },
+  "1.42.9": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "095a84c5ca5c013a687fd328c371acfd3a48dfa6",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      },
+      {
+        "id": "b66ec988f1c6644ca346106fc7449e5326a9711a",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
+        "references": []
+      }
+    ]
+  }
 }

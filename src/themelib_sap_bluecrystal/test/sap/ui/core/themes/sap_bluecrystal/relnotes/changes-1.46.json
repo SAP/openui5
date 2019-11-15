@@ -5,171 +5,236 @@
       {
         "id": "13519278096de0dd43d00df96d0574f60c69cd2e",
         "type": "FIX",
-        "text": "fix transparency for buttons within a bar",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680272089"
-          }
-        ]
+        "text": " fix transparency for buttons within a bar",
+        "references": []
       },
       {
         "id": "f66f46cc9f785b2100ea41add6ffe776f5e8f4f2",
         "type": "FIX",
-        "text": "sap.m.Button: Emphasized button has correct contrast ratio",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "012005040900000439602016"
-          }
-        ]
+        "text": " sap.m.Button: Emphasized button has correct contrast ratio",
+        "references": []
       },
       {
         "id": "0f1edc0aa6a7288cb375e28c71c940141eabcb20",
         "type": "FIX",
-        "text": "sap.m.Button: sap_bluecrystal hover issue fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680328978"
-          }
-        ]
+        "text": " sap.m.Button: sap_bluecrystal hover issue fixed",
+        "references": []
       },
       {
         "id": "23301116f2a90e94228ca4c32b895e3762a87889",
         "type": "FIX",
-        "text": "sap.m.Carousel + TileContainer: Page dots fixed",
+        "text": " sap.m.Carousel + TileContainer: Page dots fixed",
         "references": []
       },
       {
         "id": "ea80e5aeb09f4f6f0ef17e92d0a16d2e4ac14c0b",
         "type": "FIX",
-        "text": "sap.m.Carousel: Focus outline corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680343890"
-          }
-        ]
+        "text": " sap.m.Carousel: Focus outline corrected",
+        "references": []
       },
       {
         "id": "380d4afc989df082f06e45e1ecc68c228ba406c9",
         "type": "FIX",
-        "text": "sap.m.Carousel: bluecrystal arrows in content fixed",
+        "text": " sap.m.Carousel: bluecrystal arrows in content fixed",
         "references": []
       },
       {
         "id": "0e693e0c4d3f994754643890fbd0fac770d02751",
         "type": "FIX",
-        "text": "sap.m.Carousel: hover on previous and next buttons fixed",
+        "text": " sap.m.Carousel: hover on previous and next buttons fixed",
         "references": []
       },
       {
         "id": "3094ebfd975de6988c906c094daa8ea3c540c7ed",
         "type": "FIX",
-        "text": "sap.m.Input: Text selection on tablets is now correct",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670540585"
-          }
-        ]
+        "text": " sap.m.Input: Text selection on tablets is now correct",
+        "references": []
       },
       {
         "id": "53f83204ddd9cbaed738a47dfcb568a765e2770c",
         "type": "FIX",
-        "text": "sap.m.List fixes",
+        "text": " sap.m.List fixes",
         "references": []
       },
       {
         "id": "ae309f47224cf2a59ec0847e88f60d363f4bb818",
         "type": "FIX",
-        "text": "sap.m.List selection background fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680332355"
-          }
-        ]
+        "text": " sap.m.List selection background fixed",
+        "references": []
       },
       {
         "id": "1cd9b5b5fa42b7958ff4179bb13d7f785473512c",
         "type": "FIX",
-        "text": "sap.m.ListItemBase: hover and active states fixed",
+        "text": " sap.m.ListItemBase: hover and active states fixed",
         "references": []
       },
       {
         "id": "bf7036e112c6b0bc15e75ca291285e46b1e1f795",
         "type": "FIX",
-        "text": "sap.m.MessageToast: remove text shadow for bluecrystal",
+        "text": " sap.m.MessageToast: remove text shadow for bluecrystal",
         "references": []
       },
       {
         "id": "961e09b8a55fec9f7f136f42c273419290857b01",
         "type": "FIX",
-        "text": "sap.m.MultiInput: Token selection corrected",
+        "text": " sap.m.MultiInput: Token selection corrected",
         "references": []
       },
       {
         "id": "9a559d5359d5ca10496089cd428c7d6b1ad33b23",
         "type": "FIX",
-        "text": "sap.m.NewsContent + TileContent: bluecrystal fixes",
+        "text": " sap.m.NewsContent + TileContent: bluecrystal fixes",
         "references": []
       },
       {
         "id": "3c47e85916c9d1261e1befc6f7e07aa99baeab4a",
         "type": "FIX",
-        "text": "sap.m.NotificationListitem: Color of DateTime in the Notifications has been corected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670524792"
-          }
-        ]
+        "text": " sap.m.NotificationListitem: Color of DateTime in the Notifications has been corected",
+        "references": []
       },
       {
         "id": "c152a59ce1b54307efb699e36c4500f9ae83e7e3",
         "type": "FIX",
-        "text": "sap.m.Panel: Expandable icon contrast ratio fix",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780012486"
-          }
-        ]
+        "text": " sap.m.Panel: Expandable icon contrast ratio fix",
+        "references": []
       },
       {
         "id": "8aae09286ef0a354fdb4168bca7f55059f145a48",
         "type": "FIX",
-        "text": "sap.m.RadioButtonGroup: Setters no longer modify RadioButtons' states",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680282575"
-          }
-        ]
+        "text": " sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
+        "references": []
       },
       {
         "id": "5d7604d5be9a9fbe95d47e19ad6163104951c1c7",
         "type": "FIX",
-        "text": "sap.ui.layout.BlockLayout: HC backgrounds fixed",
+        "text": " sap.ui.layout.BlockLayout: HC backgrounds fixed",
         "references": []
       },
       {
         "id": "7c3264b23cfc67a6e9cb34790836936dc4e49449",
         "type": "FIX",
-        "text": "sap.ui.unified.Currency: Correct aligned in table",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670528009"
-          }
-        ]
+        "text": " sap.ui.unified.Currency: Correct aligned in table",
+        "references": []
       },
       {
         "id": "e40ddf805bac76c32b58d60c2dd5286cca5a8e58",
         "type": "FIX",
-        "text": "uxap.ObjectPageSubSection title color fixed",
+        "text": " uxap.ObjectPageSubSection title color fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "319e868f327e839a2e6f42a2ee4f7f8c8f30bbea",
+        "type": "FEATURE",
+        "text": " sap.m.MessageView - generic control implementation",
+        "references": []
+      },
+      {
+        "id": "89fc42ca8dd10cf3a2d8223689dd99c3514852fa",
+        "type": "FEATURE",
+        "text": " sap.m.Popover: HCW and HCB arrow styling based on Belize",
+        "references": []
+      },
+      {
+        "id": "670383cde7a8032effeabf4eb0f1f031c6908ace",
+        "type": "FIX",
+        "text": " sap.m.Button: Focus outline now visible for IE",
+        "references": []
+      },
+      {
+        "id": "08438769c575a8920b3244b3e5315a8a3059e8e2",
+        "type": "FIX",
+        "text": " sap.m.Button: Text styling fixes for buttons in bars",
+        "references": []
+      },
+      {
+        "id": "bcea40478a3a5646c9ed7ffd5a8ad568d089db9d",
+        "type": "FIX",
+        "text": " sap.m.Button: styling fixes",
+        "references": []
+      },
+      {
+        "id": "4ff7689e8e3b9f0d4bf9653f16cb6d387d4c9992",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Focus fixed for Belize",
+        "references": []
+      },
+      {
+        "id": "2d33c0812a255a89f35f18c75e50240e97d31381",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar-tap on appointment on mobile should not fire rowSelectionChange.",
+        "references": []
+      },
+      {
+        "id": "4c7b6d0aa3cb29dec41658472ad06b7884b91f9e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: 1 month view for S and M sizes is usable now.",
+        "references": []
+      },
+      {
+        "id": "a923281e6c875daa014114026f5a20fc2a03c0f4",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: AnchorBar Button hover fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.46.5": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "be1cf875b8cfaef9c64249f84f56e29bb9100c5a",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Focus clear visible on IE",
+        "references": []
+      }
+    ]
+  },
+  "1.46.6": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "3a56cdae1aa79cdb9a4a2e6f4a5db105bfe45619",
+        "type": "FIX",
+        "text": " sap.m.Page: Footer border in HCB and bluecrystal corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "ef54eaabdb093c2f0b4147c5c212eeb437602fa6",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "27022beb5c75d59702659d9ff6597a2e40f61d18",
+        "type": "FIX",
+        "text": " core.Popup: BlockLayer should always use position:fixed",
+        "references": []
+      },
+      {
+        "id": "013b2950d55a43353ecd4d2c02e227027551ce0d",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "e86a6a6b5ef747b52414f55f2cbac18e168016b8",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
         "references": []
       }
     ]
