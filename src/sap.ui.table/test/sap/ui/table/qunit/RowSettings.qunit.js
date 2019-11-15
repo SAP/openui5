@@ -14,6 +14,7 @@ sap.ui.define([
 	var destroyTables = window.destroyTables;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
+	var removeRowActions = window.removeRowActions;
 
 	var MessageType = CoreLibrary.MessageType;
 	var IndicationColor = CoreLibrary.IndicationColor;
@@ -404,7 +405,7 @@ sap.ui.define([
 		afterEach: function() {
 			destroyTables();
 		},
-		assertNavIndicatorRendering: function(assert, bRendered) {
+		assertNavIndicatorRendering: function(assert, hasRowActions, bRendered) {
 			var aRows = oTable.getRows();
 
 			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
@@ -412,7 +413,8 @@ sap.ui.define([
 				var oNavIndicator = oRow.getDomRef("navIndicator");
 
 				assert.strictEqual(oNavIndicator == null, !bRendered,
-					"The navigated indicator of row " + (iRowIndex + 1) + " is " + (bRendered ? "" : "not ") + "in the DOM");
+					"The navigated indicator of row " + (iRowIndex + 1) + " is " + (bRendered ? "" : "not ") + "in the DOM when RowActions column " +
+					(hasRowActions ? "exists" : "doesn't exist"));
 
 				if (bRendered) {
 					if (iRowIndex === 1) {
@@ -431,7 +433,7 @@ sap.ui.define([
 		oTable.setRowSettingsTemplate(null);
 		sap.ui.getCore().applyChanges();
 
-		this.assertNavIndicatorRendering(assert, false);
+		this.assertNavIndicatorRendering(assert, true, false);
 	});
 
 	QUnit.test("Rendering - Navigated not configured", function(assert) {
@@ -440,17 +442,21 @@ sap.ui.define([
 		}));
 		sap.ui.getCore().applyChanges();
 
-		this.assertNavIndicatorRendering(assert, false);
+		this.assertNavIndicatorRendering(assert, true, false);
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: false
 		}));
 		sap.ui.getCore().applyChanges();
 
-		this.assertNavIndicatorRendering(assert, false);
+		this.assertNavIndicatorRendering(assert, true, false);
 	});
 
 	QUnit.test("Rendering", function(assert) {
-		this.assertNavIndicatorRendering(assert, true);
+		this.assertNavIndicatorRendering(assert, true, true);
+
+		removeRowActions(oTable);
+
+		this.assertNavIndicatorRendering(assert, false, true);
 	});
 });
