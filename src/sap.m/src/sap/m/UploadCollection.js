@@ -1633,7 +1633,7 @@ sap.ui.define([
 				oRm.write("</div>");// end of markers container
 			}
 			if (iAttrCounter > 0) {
-				oRm.write("<div class=\"sapMUCAttrContainer\">"); // begin of attributes container
+				oRm.write("<div class=\"sapMUCAttrContainer\" tabindex=\"0\">"); // begin of attributes container
 				for (i = 0; i < iAttrCounter; i++) {
 					aAttributes[i].addStyleClass("sapMUCAttr");
 					oRm.renderControl(aAttributes[i]);
@@ -1644,9 +1644,10 @@ sap.ui.define([
 				oRm.write("</div>"); // end of attributes container
 			}
 			if (iStatusesCounter > 0) {
-				oRm.write("<div class=\"sapMUCStatusContainer\">"); // begin of statuses container
+				oRm.write("<div class=\"sapMUCStatusContainer\" tabindex=\"0\">"); // begin of statuses container
 				for (i = 0; i < iStatusesCounter; i++) {
 					aStatuses[i].detachBrowserEvent("hover");
+					aStatuses[i].setTooltip(aStatuses[i].getTitle() +  ":" + aStatuses[i].getText());
 					oRm.renderControl(aStatuses[i]);
 					if ((i + 1) < iStatusesCounter) {
 						oRm.write("<div class=\"sapMUCSeparator\">&nbsp&#x00B7&#160</div>"); // separator between statuses
