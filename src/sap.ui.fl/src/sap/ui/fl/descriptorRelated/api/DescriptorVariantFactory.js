@@ -258,7 +258,7 @@ sap.ui.define([
 					fileType: "appdescr_variant",
 					namespace: this._getNameAndNameSpace().namespace,
 					layer: this._layer,
-					packageName: this._package ? this._package : "$TMP",
+					packageName: this._package ? this._package : "",
 
 					reference: this._reference,
 					id: this._id,
