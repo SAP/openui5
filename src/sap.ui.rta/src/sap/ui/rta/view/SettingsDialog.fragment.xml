@@ -2,7 +2,11 @@
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m"
 	xmlns:form="sap.ui.layout.form">
-	<Dialog title="{/text/dialogTitle}">
+	<Dialog title="{/text/dialogTitle}"
+		validationSuccess="onValidationSuccess"
+		validationError="onValidationError"
+		parseError="onValidationError"
+		>
 		<content>
 			<form:SimpleForm editable="true" title="{/text/sectionTitle}" layout="ResponsiveGridLayout"
 				adjustLabelSpan="false" singleContainerFullSize="false"
@@ -12,9 +16,10 @@
 				>
 				<form:content>
 					<Label text="{/text/newSectionLabel}"/>
-					<CheckBox/>
+					<CheckBox selected="{path: '/asNewSection/selected', type: 'sap.ui.model.type.Boolean'}"/>
 					<Label text="{/text/nameLabel}"/>
-					<Input/>
+					<Input value="{path: '/sectionName/value', type: 'sap.ui.model.type.String', constraints: {minLength: 1}}"
+						valueState="{/sectionName/valueState}"/>
 				</form:content>
 			</form:SimpleForm>
 			<form:SimpleForm editable="true" title="{/text/sizeTitle}" layout="ResponsiveGridLayout"
@@ -25,12 +30,14 @@
 				>
 				<form:content>
 					<Label text="{/text/widthLabel}"/>
-					<Input />
-					<Select />
+					<Input value="{path: '/frameWidth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
+						valueState="{/frameWidth/valueState}"/>
+					<Select selectedKey="{frameWidthUnit/selectedKey}"/>
 					<Label text="{/text/heigthLabel}"/>
-					<Input />
-					<Select />
-					<Label />
+					<Input value="{path: '/frameHeigth/value', type: 'sap.ui.model.type.Float', constraints: {minimum: 0}}"
+						valueState="{/frameHeigth/valueState}"/>
+					<Select selectedKey="{frameHeigthUnit/selectedKey}"/>
+					<Label/>
 					<Text text="{/text/sizeWarning}"/>
 				</form:content>
 			</form:SimpleForm>
@@ -41,7 +48,8 @@
 				columnsXL="2" columnsL="2" columnsM="2"
 				>
 				<form:content>
-					<TextArea />
+					<TextArea value="{path: '/frameUrl/value', type: 'sap.ui.model.type.String', constraints: { minLength: 1}}"
+						valueState="{/frameUrl/valueState}"/>
 				</form:content>
 			</form:SimpleForm>
 		</content>
@@ -49,14 +57,14 @@
 			<Button
 				type="Emphasized"
 				text="{/text/OKText}"
-				press=""
+				press="onOKPress"
 			/>
 		</beginButton>
 		<endButton>
 			<Button
 				type="Transparent"
 				text="{/text/cancelText}"
-				press=""
+				press="onCancelPress"
 			/>
 		</endButton>
 	</Dialog>

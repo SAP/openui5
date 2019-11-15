@@ -3,59 +3,73 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/m/Label",
-	"sap/m/Dialog",
-	"sap/m/Button",
-	"sap/m/ButtonType",
-	"sap/m/Text",
-	"sap/m/CheckBox",
-	"sap/m/Input",
-	"sap/m/TextArea",
-	"sap/ui/layout/form/SimpleForm",
-	"sap/ui/core/Title",
-	"sap/m/Select",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/ui/core/ValueState",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/plugin/iframe/controller/SettingsDialogController"
 ], function (
 	ManagedObject,
-	Label,
-	Dialog,
-	Button,
-	ButtonType,
-	Text,
-	CheckBox,
-	Input,
-	TextArea,
-	SimpleForm,
-	Title,
-	Select,
-	Fragment
+	Fragment,
+	ValueState,
+	JSONModel,
+	SettingsDialogController
 ) {
 	"use strict";
 
 	var _oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-	var _oJSONModel = new sap.ui.model.json.JSONModel({
-		text: {
-			dialogTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"),
-			sectionTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SECTION_TITLE"),
-			newSectionLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NEW_SECTION_LABEL"),
-			nameLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NAME_LABEL"),
-			sizeTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_TITLE"),
-			widthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_WIDTH_LABEL"),
-			heigthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGTH_LABEL"),
-			sizeWarning: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_WARNING"),
-			urlTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_URL_TITLE"),
-			OKText: _oTextResources.getText("BTN_FREP_OK"),
-			cancelText: _oTextResources.getText("BTN_FREP_CANCEL")
-		}
-	});
+	var _mText = {
+		dialogTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_TITLE"),
+		sectionTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SECTION_TITLE"),
+		newSectionLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NEW_SECTION_LABEL"),
+		nameLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_NAME_LABEL"),
+		sizeTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_TITLE"),
+		widthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_WIDTH_LABEL"),
+		heigthLabel: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_HEIGTH_LABEL"),
+		sizeWarning: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_SIZE_WARNING"),
+		urlTitle: _oTextResources.getText("IFRAME_SETTINGS_DIALOG_URL_TITLE"),
+		OKText: _oTextResources.getText("BTN_FREP_OK"),
+		cancelText: _oTextResources.getText("BTN_FREP_CANCEL")
+	};
+
+	function _createJSONModel() {
+		return new JSONModel({
+			text: _mText,
+			asNewSection: {
+				selected: false
+			},
+			sectionName: {
+				value: "",
+				valueState: ValueState.None
+			},
+			frameWidth: {
+				value: "",
+				valueState: ValueState.None
+			},
+			frameWidthUnit: {
+				selectedKey: ""
+			},
+			frameHeigth: {
+				value: "",
+				valueState: ValueState.None
+			},
+			frameHeigthUnit: {
+				selectedKey: ""
+			},
+			frameUrl: {
+				value: "",
+				valueState: ValueState.None
+			}
+		});
+	}
 
 	function _createDialog() {
+		this._oJSONModel = _createJSONModel();
 		Fragment.load({
 			name: "sap.ui.rta.view.SettingsDialog",
-			controller: this
+			controller: new SettingsDialogController(this._oJSONModel)
 		}).then(function (oSettingsDialog) {
 			this._oDialog = oSettingsDialog;
-			this._oDialog.setModel(_oJSONModel);
+			this._oDialog.setModel(this._oJSONModel);
 			_openDialog.call(this);
 		}.bind(this));
 	}
