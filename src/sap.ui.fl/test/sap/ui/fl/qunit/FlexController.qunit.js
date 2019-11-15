@@ -121,10 +121,10 @@ function (
 		});
 
 		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", function (assert) {
-			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
+			var fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges");
 			var aChanges = ["mockChange1", "mockChange2"];
 			this.oFlexController.saveSequenceOfDirtyChanges(aChanges);
-			assert.ok(fnChangePersistenceSaveStub.calledWith(aChanges), "then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters");
+			assert.ok(fnChangePersistenceSaveStub.calledWith(false, aChanges), "then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters");
 		});
 
 		QUnit.test("createAndApplyChange shall not crash if Applier.applyChangeOnControl throws an error", function (assert) {
