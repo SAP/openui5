@@ -1,0 +1,7 @@
+{
+	"@odata.context" : "../$metadata#BusinessPartnerList(WebAddress,BusinessPartnerID)/$entity",
+	"@odata.metadataEtag" : "W/\"20191129135853\"",
+	"@odata.etag" : "W/\"20190321111935.0000000 \"",
+	"BusinessPartnerID" : "0100000006",
+	"WebAddress" : "http://www.asia-ht.com"
+}

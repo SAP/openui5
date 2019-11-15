@@ -57,6 +57,10 @@ sap.ui.define(function () {
 			"lib/_V4MetadataConverter" : {},
 			// the following tests set autostart=false because they require modules asynchronously
 			// and start QUnit on their own
+			"OPA.LateProperties" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/Lateproperties/Opa.qunit"]
+			},
 			"OPA.ListBinding" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/ListBinding/Opa.qunit"]

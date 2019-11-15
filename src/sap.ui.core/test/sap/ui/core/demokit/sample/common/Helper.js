@@ -26,14 +26,17 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The ID of a "sap.m.Input" control inside the view sViewName
 		 * @param {string} sValue
 		 *  The external value of the control as a string
+		 * @param {boolean} bSearchOpenDialogs
+		 *  If set to true, Opa5 will only search in open dialogs
 		 * @returns {jQuery.promise}
 		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
-		changeInputValue : function (oOpa5, sViewName, sId, sValue) {
+		changeInputValue : function (oOpa5, sViewName, sId, sValue, bSearchOpenDialogs) {
 			return oOpa5.waitFor({
 				actions : new EnterText({clearTextFirst : true, text : sValue}),
 				controlType : "sap.m.Input",
 				id : sId,
+				searchOpenDialogs : bSearchOpenDialogs,
 				success : function (oInput) {
 					Opa5.assert.strictEqual(oInput.getValue(), sValue, sId + ": Input value set to "
 						+ sValue);
@@ -209,13 +212,16 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		 *  The name of the view which contains the searched control
 		 * @param {string} sId
 		 *  The ID of a "sap.m.Button" control inside the view sViewName
+		 * @param {boolean} bSearchOpenDialogs
+		 *  If set to true, Opa5 will only search in open dialogs
 		 * @returns {jQuery.promise}
 		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
 		 */
-		pressButton : function (oOpa5, sViewName, sId) {
+		pressButton : function (oOpa5, sViewName, sId, bSearchOpenDialogs) {
 			return oOpa5.waitFor({
 				actions : new Press(),
 				controlType : "sap.m.Button",
+				searchOpenDialogs : bSearchOpenDialogs,
 				id : sId,
 				success : function (oButton) {
 					var sText = oButton.getTooltip() || oButton.getText() || sId;
