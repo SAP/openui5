@@ -5,15 +5,21 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/write/_internal/connectors/ObjectStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
-	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
+	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
+	"sap/base/util/values",
+	"sap/base/util/restricted/_uniq"
 ], function(
 	merge,
 	sinon,
 	ObjectStorageConnector,
 	SessionStorageWriteConnector,
+	LocalStorageWriteConnector,
 	JsObjectConnector,
-	ObjectStorageUtils
+	ObjectStorageUtils,
+	values,
+	_uniq
 ) {
 	"use strict";
 
@@ -21,7 +27,7 @@ sap.ui.define([
 
 	var oTestData = {
 		oChange1: {
-			fileName: "id_1445501120486_15",
+			fileName: "oChange1",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
 			layer: "CUSTOMER",
@@ -31,7 +37,7 @@ sap.ui.define([
 			changeType: "type1"
 		},
 		oChange2: {
-			fileName: "id_1445517849455_16",
+			fileName: "oChange2",
 			fileType: "change",
 			reference: "sap.ui.fl.test",
 			layer: "CUSTOMER",
@@ -96,11 +102,19 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	}
 
-	function assertFileWritten(assert, oStorage, oFlexObject, sMessage) {
+	function getFlexObjectFromStorage(oFlexObject, oStorage) {
 		var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
-		return Promise.resolve(oStorage.getItem(sKey)).then(function(vItem) {
-			var oItem = oStorage._itemsStoredAsObjects ? vItem : JSON.parse(vItem);
-			assert.deepEqual(oFlexObject, oItem, sMessage);
+		return Promise.resolve(oStorage.getItem(sKey));
+	}
+
+	function assertFileWritten(assert, oStorage, oData, sMessage) {
+		return values(oData).map(function(oFlexObject) {
+			return getFlexObjectFromStorage(oFlexObject, oStorage)
+				.then(function(vItem) {
+					var oItem = oStorage._itemsStoredAsObjects ? vItem : JSON.parse(vItem);
+					assert.ok(!!Date.parse(oItem.creation), "then creation property was set for the flex item");
+					assert.deepEqual(oFlexObject, oItem, oItem.fileName + sMessage);
+				});
 		});
 	}
 
@@ -115,42 +129,47 @@ sap.ui.define([
 	}
 
 	function parameterizedTest(oConnector, sStorage) {
-		QUnit.module("loadFlexData: Given a " + sStorage, {}, function() {
+		QUnit.module("loadFlexData: Given a " + sStorage, {
+			afterEach: function() {
+				sandbox.restore();
+			}
+		}, function() {
 			QUnit.test("when write is called with various changes", function(assert) {
-				return saveListWithConnector(oConnector, [
-					oTestData.oChange1,
-					oTestData.oChange2,
-					oTestData.oChange3,
-					oTestData.oVariant1,
-					oTestData.oVariantChange1,
-					oTestData.oVariantManagementChange
-				])
-				.then(function() {
-					return Promise.all([
-						assertFileWritten(assert, oConnector.oStorage, oTestData.oChange1, "change1 was written"),
-						assertFileWritten(assert, oConnector.oStorage, oTestData.oChange2, "change2 was written"),
-						assertFileWritten(assert, oConnector.oStorage, oTestData.oChange3, "change3 was written"),
-						assertFileWritten(assert, oConnector.oStorage, oTestData.oVariant1, "variant1 was written"),
-						assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantChange1, "variant change1 was written"),
-						assertFileWritten(assert, oConnector.oStorage, oTestData.oVariantManagementChange, "variant management change was written")
-					]);
-				})
-				.then(function() {
-					// clean up
-					return removeListFromStorage(oConnector.oStorage, [
-						oTestData.oChange1,
-						oTestData.oChange2,
-						oTestData.oChange3,
-						oTestData.oVariant1,
-						oTestData.oVariantChange1,
-						oTestData.oVariantManagementChange
-					]);
-				});
+				return saveListWithConnector(oConnector, values(oTestData))
+					.then(function () {
+						return Promise.all([assertFileWritten(assert, oConnector.oStorage, oTestData, " was written")]);
+					})
+					.then(function () {
+						// clean up
+						return removeListFromStorage(oConnector.oStorage, values(oTestData));
+					});
+			});
+
+			QUnit.test("when write is called with changes created with the same timestamp", function(assert) {
+				var nCurrentTimestamp = Date.now();
+				sandbox.stub(Date, "now").returns(nCurrentTimestamp);
+				return saveListWithConnector(oConnector, values(oTestData))
+					.then(function() {
+						var aCreationFields = [];
+						return Promise.all([
+							values(oTestData)
+							.map(function (oFlexObject) {
+								return getFlexObjectFromStorage(oFlexObject, oConnector.oStorage)
+									.then(function (vItem) {
+										aCreationFields.push(oConnector.oStorage._itemsStoredAsObjects ? vItem.creation : JSON.parse(vItem).creation);
+									});
+							})
+						])
+							.then(function () {
+								var iTotalChanges = aCreationFields.length;
+								assert.strictEqual(_uniq(aCreationFields).length, iTotalChanges);
+							});
+					});
 			});
 
 			QUnit.test("when loadFeatures is called", function(assert) {
-				return oConnector.loadFeatures().then(function(oFeatues) {
-					assert.deepEqual(oFeatues, {
+				return oConnector.loadFeatures().then(function(oFeatures) {
+					assert.deepEqual(oFeatures, {
 						isKeyUser: true,
 						isVariantSharingEnabled: true
 					}, "the function resolves with options");
@@ -188,26 +207,10 @@ sap.ui.define([
 
 		QUnit.module("loadFlexData: Given some changes in a " + sStorage, {
 			beforeEach: function() {
-				return saveListWithConnector(oConnector, [
-					oTestData.oChange1,
-					oTestData.oChange2,
-					oTestData.oChange3,
-					oTestData.oChange4,
-					oTestData.oVariant1,
-					oTestData.oVariantChange1,
-					oTestData.oVariantManagementChange
-				]);
+				return saveListWithConnector(oConnector, values(oTestData));
 			},
 			afterEach: function() {
-				return removeListFromStorage(oConnector.oStorage, [
-					oTestData.oChange1,
-					oTestData.oChange2,
-					oTestData.oChange3,
-					oTestData.oChange4,
-					oTestData.oVariant1,
-					oTestData.oVariantChange1,
-					oTestData.oVariantManagementChange
-				]);
+				return removeListFromStorage(oConnector.oStorage, values(oTestData));
 			}
 		}, function() {
 			QUnit.test("when reset is called", function(assert) {
@@ -403,7 +406,7 @@ sap.ui.define([
 	// WebIDE uses the ObjectStorageConnector with an async storage
 	parameterizedTest(oConnectorWithAsyncStorage, "asyncStorage");
 	// LocalStorage behaves similar to Session storage and we rely on this to not run into issues with parallel tests interfering in the LocalStorageTests
-	//parameterizedTest(LocalStorageWriteConnector, "localStorage");
+	// parameterizedTest(LocalStorageWriteConnector, "localStorage");
 
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
