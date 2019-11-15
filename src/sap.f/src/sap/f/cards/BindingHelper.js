@@ -4,11 +4,13 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/extend",
-	"./formatters/DateTimeFormatter"
+	"./formatters/DateTimeFormatter",
+	"./bindingFeatures/DateRange"
 	], function (
 		ManagedObject,
 		extend,
-		DateTimeFormatter
+		DateTimeFormatter,
+		DateRange
 	) {
 		"use strict";
 
@@ -31,7 +33,8 @@ sap.ui.define([
 		};
 
 		BindingHelper.mLocals = {
-			"format": mFormatters
+			"format": mFormatters,
+			"dateRange": DateRange
 		};
 
 		/**

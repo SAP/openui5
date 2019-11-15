@@ -92,8 +92,8 @@
 	font-size: 14px;
 }
 
-.topic table th:first-of-type,
-.topic table td:first-of-type {
+.topic table:not(.plainFirstColumn) th:first-of-type,
+.topic table:not(.plainFirstColumn) td:first-of-type {
 	font-weight: bold;
 }
 
@@ -135,6 +135,19 @@ pre.prettyprint {
 
 .tableWrapper {
 	overflow-x:auto;
+}
+
+.messageStripWarning {
+	background-color: #fef7f1;
+    color: #32363a;
+	border: 1px solid #e9730c;
+    border-radius: 0.1875rem;
+    box-sizing: border-box;
+    font-size: 0.875rem;
+    font-weight: normal;
+    padding: 0.4375rem 1rem;
+    position: relative;
+	min-height: 2rem;
 }
 
 /* on Phone */

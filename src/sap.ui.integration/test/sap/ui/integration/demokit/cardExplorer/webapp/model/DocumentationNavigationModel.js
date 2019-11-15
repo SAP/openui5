@@ -127,10 +127,10 @@ sap.ui.define([
 						topicTitle: 'Integration Card Features'
 					},
 					{
-						title: 'Formatters',
+						title: 'Date Range Handling',
 						target: 'learnDetail',
-						key: 'featureFormatters',
-						topicTitle: 'Integration Card Features'
+						key: 'featureDateRangeHandling',
+						topicTitle: 'Integration Card Date Range Handling'
 					}
 				]
 			},

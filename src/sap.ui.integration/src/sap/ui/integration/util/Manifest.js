@@ -272,7 +272,7 @@ sap.ui.define([
 
 		if (oParam) {
 			for (var oProperty in oParam) {
-				sProcessed = sProcessed.replace("{{parameters." + oProperty + "}}", oParam[oProperty].value);
+				sProcessed = sProcessed.replace(new RegExp("{{parameters." + oProperty + "}}", 'g'), oParam[oProperty].value);
 			}
 		}
 
