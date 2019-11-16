@@ -2190,6 +2190,46 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Initial scroll position if binding length changed after rendering; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode,
+				firstVisibleRow: mConfig.firstVisibleRow,
+				bindingLength: 99
+			}, function(oTable) {
+				TableQUnitUtils.addEventDelegateOnce(oTable, "onAfterRendering", function() {
+					that.changeBindingLength(100, ChangeReason.Change);
+				});
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				that.assertPosition(assert, mConfig.firstVisibleRow, mConfig.firstVisibleRow * that.iBaseRowHeight, 0,
+					mConfig.rowMode + ", " + mConfig.title + "; After rendering");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					title: "FirstVisibleRow = 0",
+					rowMode: oRowModeConfig.rowMode,
+					firstVisibleRow: 0
+				});
+			}).then(function() {
+				return test({
+					title: "FirstVisibleRow = 5",
+					rowMode: oRowModeConfig.rowMode,
+					firstVisibleRow: 5
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
 	QUnit.test("Scroll with scrollbar; Tiny data; Variable row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
@@ -2480,6 +2520,36 @@ sap.ui.define([
 		return pTestSequence;
 	});
 
+	QUnit.test("Scroll with scrollbar if binding length changed after rendering; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode,
+				bindingLength: 99
+			}, function(oTable) {
+				TableQUnitUtils.addEventDelegateOnce(oTable, "onAfterRendering", function() {
+					that.changeBindingLength(100, ChangeReason.Change);
+				});
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(oTable.qunit.$scrollVSbTo(49)).then(function() {
+				that.assertPosition(assert, 1, 49, 0, mConfig.rowMode + ", ScrollTop set to 48");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
 	QUnit.test("Scroll by setting FirstVisibleRow; Tiny data; Variable row heights", function(assert) {
 		var that = this;
 		var pTestSequence = Promise.resolve();
@@ -2746,6 +2816,37 @@ sap.ui.define([
 				oTable.setFirstVisibleRow(500049023);
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
 				that.assertPosition(assert, 500049023, Math.round(iMaxScrollTop / 2), 0, sTitle + "500049023");
+			});
+		}
+
+		this.forEachTestedRowMode(function(oRowModeConfig) {
+			pTestSequence = pTestSequence.then(function() {
+				return test({
+					rowMode: oRowModeConfig.rowMode
+				});
+			});
+		});
+
+		return pTestSequence;
+	});
+
+	QUnit.test("Scroll by setting FirstVisibleRow when re-rendering; Small data; Fixed row heights", function(assert) {
+		var that = this;
+		var pTestSequence = Promise.resolve();
+
+		function test(mConfig) {
+			var oTable = that.createTable({
+				rowMode: mConfig.rowMode
+			});
+
+			return oTable.qunit.whenInitialRenderingFinished().then(function() {
+				TableQUnitUtils.addEventDelegateOnce(oTable, "onBeforeRendering", function() {
+					oTable.setFirstVisibleRow(1);
+				});
+				oTable.invalidate();
+				sap.ui.getCore().applyChanges();
+			}).then(oTable.qunit.whenRenderingFinished).then(function() {
+				that.assertPosition(assert, 1, 49, 0, "FirstVisibleRow = 1");
 			});
 		}
 
