@@ -88,9 +88,9 @@ sap.ui.define([
 	}
 
 	/**
-	 * The interface of a cancellable process.
+	 * The interface of a process.
 	 *
-	 * @typedef {Object} CancellableProcessInterface
+	 * @typedef {Object} ProcessInterface
 	 * @property {function} cancel Cancels the process.
 	 * @property {function():boolean} isCancelled Whether the process is cancelled.
 	 * @property {function(function)} addCancelListener Adds a listener that is called when the process is cancelled.
@@ -99,15 +99,23 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Constructor for a cancellable process.
+	 * Information about a process.
 	 *
-	 * @param {function(fnResolve: function, fnReject: function, oProcessInterface: CancellableProcessInterface)} fnExecutor
-	 * The function to be executed.
-	 * @param {string} sID The process ID.
-	 * @returns {Promise} The cancellable process.
+	 * @typedef {Object} ProcessInfo
+	 * @property {string} id The id.
+	 * @property {int} rank The rank.
+	 * @property {boolean} cancellable Whether the process can be cancelled.
+	 */
+
+	/**
+	 * Constructor for a Process.
+	 *
+	 * @param {function(fnResolve: function, fnReject: function, oProcessInterface: ProcessInterface)} fnExecutor The function to be executed.
+	 * @param {ProcessInfo} oProcessInfo The process information.
+	 * @returns {Promise} The process promise.
 	 * @constructor
 	 */
-	function CancellableProcess(fnExecutor, sID) {
+	function Process(fnExecutor, oProcessInfo) {
 		var bRunning = true;
 		var bCancelled = false;
 		var aListeners = [];
@@ -123,7 +131,7 @@ sap.ui.define([
 					aListeners[i]();
 				}
 
-				log("Process was cancelled: " + sID);
+				log("Process was cancelled: " + oProcessInfo.id);
 			},
 			isCancelled: function() {
 				return bCancelled;
@@ -134,8 +142,8 @@ sap.ui.define([
 			isRunning: function() {
 				return bRunning;
 			},
-			getId: function() {
-				return sID;
+			getInfo: function() {
+				return oProcessInfo;
 			}
 		};
 		var pCancellablePromise;
@@ -151,9 +159,13 @@ sap.ui.define([
 		Object.assign(pCancellablePromise, oProcessInterface);
 
 		pCancellablePromise.then(function() {
-			log("Process has finished: " + sID);
+			if (!oProcessInterface.isCancelled()) {
+				log("Process has finished: " + oProcessInfo.id);
+			}
 			bRunning = false;
 		});
+
+		log("Process started: " + oProcessInfo.id);
 
 		return pCancellablePromise;
 	}
@@ -336,7 +348,7 @@ sap.ui.define([
 				oVerticalScrollPosition: new ScrollPosition(oTable),
 				bIsScrolledVerticallyByWheel: false,
 				bIsScrolledVerticallyByKeyboard: false,
-				pVerticalScrollUpdateProcess: new CancellableProcess(function() {}, "noop"),
+				pVerticalScrollUpdateProcess: null,
 
 				// External vertical scrolling
 				oExternalVerticalScrollbar: null,
@@ -351,6 +363,44 @@ sap.ui.define([
 	};
 	internal.destroy = function(oTable) {
 		delete internalMap.delete(oTable);
+	};
+
+	/**
+	 * Helper for vertical scroll update processes.
+	 */
+	var VerticalScrollProcess = {
+		UpdateFromFirstVisibleRow: {id: "UpdateFromFirstVisibleRow", rank: 6},
+		UpdateFromScrollPosition: {id: "UpdateFromScrollPosition", rank: 5},
+		RestoreScrollPosition: {id: "RestoreScrollPosition", rank: 4},
+		AdjustToTotalRowCount: {id: "AdjustToTotalRowCount", rank: 3},
+		OnRowsUpdated: {id: "OnRowsUpdated", rank: 3},
+		UpdateFromScrollbar: {id: "UpdateFromScrollbar", rank: 2},
+		UpdateFromViewport: {id: "UpdateFromViewport", rank: 1},
+
+		canStart: function(oTable, oProcessInfo) {
+			var pCurrentProcess = internal(oTable).pVerticalScrollUpdateProcess;
+			var oCurrentProcessInfo = pCurrentProcess ? pCurrentProcess.getInfo() : null;
+
+			if (pCurrentProcess && pCurrentProcess.isRunning() && oCurrentProcessInfo.rank > oProcessInfo.rank) {
+				log("Cannot start update process " + oProcessInfo.id
+					+ " - A higher-ranked update process is currently running (" + oCurrentProcessInfo.id + ")", oTable);
+				return false;
+			}
+
+			return true;
+		},
+		start: function(oTable, oProcessInfo, fnProcessExecutor) {
+			if (!VerticalScrollProcess.canStart(oTable, oProcessInfo)) {
+				return null;
+			}
+
+			if (internal(oTable).pVerticalScrollUpdateProcess) {
+				internal(oTable).pVerticalScrollUpdateProcess.cancel();
+			}
+			internal(oTable).pVerticalScrollUpdateProcess = new Process(fnProcessExecutor, oProcessInfo);
+
+			return internal(oTable).pVerticalScrollUpdateProcess;
+		}
 	};
 
 	/**
@@ -519,14 +569,11 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {boolean} [bExpectRowsUpdatedEvent=false] Whether an update of the rows will happen.
-		 * @returns {CancellableProcess} A cancellable process.
 		 */
 		performUpdateFromFirstVisibleRow: function(oTable, bExpectRowsUpdatedEvent) {
 			log("VerticalScrollingHelper.performUpdateFromFirstVisibleRow", oTable);
-			VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable);
 
-			internal(oTable).pVerticalScrollUpdateProcess.cancel();
-			internal(oTable).pVerticalScrollUpdateProcess = new CancellableProcess(function(resolve, reject, oProcessInterface) {
+			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromFirstVisibleRow, function(resolve, reject, oProcessInterface) {
 				if (bExpectRowsUpdatedEvent === true) {
 					var fnOnRowsUpdatedPreprocessor = function() {
 						log("VerticalScrollingHelper.performUpdateFromFirstVisibleRow (async: rows update)", oTable);
@@ -545,9 +592,7 @@ sap.ui.define([
 				} else {
 					VerticalScrollingHelper._performUpdateFromFirstVisibleRow(oTable, oProcessInterface).then(resolve);
 				}
-			}, "UpdateFromFirstVisibleRow");
-
-			return internal(oTable).pVerticalScrollUpdateProcess;
+			});
 		},
 
 		_performUpdateFromFirstVisibleRow: function(oTable, oProcessInterface) {
@@ -568,14 +613,11 @@ sap.ui.define([
 		 * Performs all necessary steps to scroll the table based on the extension's internal scroll position.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {CancellableProcess} A cancellable process.
 		 */
 		performUpdateFromScrollPosition: function(oTable) {
 			log("VerticalScrollingHelper.performUpdateFromScrollPosition", oTable);
-			VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable);
 
-			internal(oTable).pVerticalScrollUpdateProcess.cancel();
-			internal(oTable).pVerticalScrollUpdateProcess = new CancellableProcess(function(resolve, reject, oProcessInterface) {
+			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromScrollPosition, function(resolve, reject, oProcessInterface) {
 				VerticalScrollingHelper.adjustFirstVisibleRowToScrollPosition(oTable, null, oProcessInterface).then(function() {
 					if (oProcessInterface.isCancelled()) {
 						return;
@@ -601,25 +643,20 @@ sap.ui.define([
 						VerticalScrollingHelper.scrollScrollbar(oTable, oProcessInterface)
 					]);
 				}).then(resolve);
-			}, "UpdateFromScrollPosition");
-
-			return internal(oTable).pVerticalScrollUpdateProcess;
+			});
 		},
 
 		/**
 		 * Performs all necessary steps to scroll the table based on the scrollbar's scroll position.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {CancellableProcess} A cancellable process.
 		 */
 		performUpdateFromScrollbar: function(oTable) {
 			log("VerticalScrollingHelper.performUpdateFromScrollbar", oTable);
 			clearTimeout(oTable._mTimeouts.largeDataScrolling);
 			delete oTable._mTimeouts.largeDataScrolling;
-			VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable);
 
-			internal(oTable).pVerticalScrollUpdateProcess.cancel();
-			internal(oTable).pVerticalScrollUpdateProcess = new CancellableProcess(function(resolve, reject, oProcessInterface) {
+			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromScrollbar, function(resolve, reject, oProcessInterface) {
 				if (oTable._bLargeDataScrolling && !internal(oTable).bIsScrolledVerticallyByWheel) {
 					oTable._mTimeouts.largeDataScrolling = setTimeout(function() {
 						delete oTable._mTimeouts.largeDataScrolling;
@@ -642,9 +679,7 @@ sap.ui.define([
 				} else {
 					VerticalScrollingHelper._performUpdateFromScrollbar(oTable, oProcessInterface).then(resolve);
 				}
-			}, "UpdateFromScrollbar");
-
-			return internal(oTable).pVerticalScrollUpdateProcess;
+			});
 		},
 
 		_performUpdateFromScrollbar: function(oTable, oProcessInterface) {
@@ -683,22 +718,17 @@ sap.ui.define([
 		 * Performs all necessary steps to scroll the table based on the viewport's scroll position.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {CancellableProcess} A cancellable process.
 		 */
 		performUpdateFromViewport: function(oTable) {
 			log("VerticalScrollingHelper.performUpdateFromViewport", oTable);
-			VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable);
 
-			internal(oTable).pVerticalScrollUpdateProcess.cancel();
-			internal(oTable).pVerticalScrollUpdateProcess = new CancellableProcess(function(resolve, reject, oProcessInterface) {
+			VerticalScrollProcess.start(oTable, VerticalScrollProcess.UpdateFromViewport, function(resolve, reject, oProcessInterface) {
 				VerticalScrollingHelper.adjustScrollPositionToViewport(oTable, oProcessInterface).then(function() {
 					return VerticalScrollingHelper.adjustFirstVisibleRowToScrollPosition(oTable, true, oProcessInterface);
 				}).then(function() {
 					return VerticalScrollingHelper.scrollScrollbar(oTable, oProcessInterface);
 				}).then(resolve);
-			}, "UpdateFromViewport");
-
-			return internal(oTable).pVerticalScrollUpdateProcess;
+			});
 		},
 
 		/**
@@ -711,14 +741,8 @@ sap.ui.define([
 			// For interaction detection.
 			Interaction.notifyScrollEvent && Interaction.notifyScrollEvent(oEvent);
 
-			if (internal(this).pVerticalScrollUpdateProcess.isRunning()) {
-				var sProcessId = internal(this).pVerticalScrollUpdateProcess.getId();
-
-				if (sProcessId !== "UpdateFromScrollbar" && sProcessId !== "UpdateFromViewport") {
-					log("VerticalScrollingHelper.onScrollbarScroll: "
-						+ "Aborted - A higher-ranked update process is currently running (" + sProcessId + ")", this);
-					return;
-				}
+			if (!VerticalScrollProcess.canStart(this, VerticalScrollProcess.UpdateFromScrollbar)) {
+				return;
 			}
 
 			if (internal(this).bIsScrolledVerticallyByKeyboard) {
@@ -756,14 +780,8 @@ sap.ui.define([
 		 * @see VerticalScrollingHelper.scrollViewport
 		 */
 		onViewportScroll: function(oEvent) {
-			if (internal(this).pVerticalScrollUpdateProcess.isRunning()) {
-				var sProcessId = internal(this).pVerticalScrollUpdateProcess.getId();
-
-				if (sProcessId !== "UpdateFromViewport") {
-					log("VerticalScrollingHelper.onViewportScroll: "
-						+ "Aborted - A higher-ranked update process is currently running (" + sProcessId + ")", this);
-					return;
-				}
+			if (!VerticalScrollProcess.canStart(this, VerticalScrollProcess.UpdateFromViewport)) {
+				return;
 			}
 
 			var nNewScrollTop = oEvent.target.scrollTop; // Can be a float if zoomed in Chrome.
@@ -784,7 +802,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {boolean} [bSuppressRendering=false] Whether the <vode>firstVisibleRow</vode> property should only be set without rendering.
-		 * @param {CancellableProcessInterface} [oProcessInterface] The interface to the cancellable process.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
 		 * @returns {Promise} A Promise that resolves when the first visible row of the table is set to the correct value and is rendered.
 		 */
 		adjustFirstVisibleRowToScrollPosition: function(oTable, bSuppressRendering, oProcessInterface) {
@@ -847,7 +865,7 @@ sap.ui.define([
 		 * @param {boolean} [bForceFirstVisibleRowChangedEvent=false] Whether to fire the <code>firstVisibleRowChanged</code> event of the table,
 		 * @param {boolean} [bSuppressRendering=false] Whether the <vode>firstVisibleRow</vode> property should only be set without rendering.
 		 * regardless of whether the first visible row has changed.
-		 * @param {CancellableProcessInterface} [oProcessInterface] The interface to the cancellable process.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
 		 * @returns {Promise} A Promise that resolves when the first visible row of the table is set to the correct value.
 		 */
 		adjustFirstVisibleRowToScrollPositionInBuffer: function(oTable, bForceFirstVisibleRowChangedEvent, bSuppressRendering,
@@ -923,7 +941,7 @@ sap.ui.define([
 		 * Adjusts the scroll position to the <code>firstVisibleRow</code> property of the table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {CancellableProcessInterface} [oProcessInterface] The interface to the cancellable process.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
 		 * @returns {Promise} A Promise that resolves when the scroll position is adjusted to the first visible row.
 		 */
 		adjustScrollPositionToFirstVisibleRow: function(oTable, oProcessInterface) {
@@ -941,7 +959,7 @@ sap.ui.define([
 		 * Adjusts the scroll position to the scroll position of the scrollbar.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {CancellableProcessInterface} [oProcessInterface] The interface to the cancellable process.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
 		 * @returns {Promise} A Promise that resolves when the scroll position is adjusted to the scrollbar.
 		 */
 		adjustScrollPositionToScrollbar: function(oTable, oProcessInterface) {
@@ -1022,7 +1040,7 @@ sap.ui.define([
 		 * Adjusts the scroll position to the scroll position of the viewport.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {CancellableProcessInterface} [oProcessInterface] The interface to the cancellable process.
+		 * @param {ProcessInterface} [oProcessInterface] The interface to the process.
 		 * @returns {Promise} A Promise that resolves when the scroll position is adjusted to the scrollbar.
 		 */
 		adjustScrollPositionToViewport: function(oTable, oProcessInterface) {
@@ -1060,7 +1078,7 @@ sap.ui.define([
 		 * position.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {CancellableProcessInterface} [oProcessInterface} The interface to the cancellable process.
+		 * @param {ProcessInterface} [oProcessInterface} The interface to the process.
 		 * @returns {Promise} A Promise that resolves when <code>scrollTop</code> of the viewport was set.
 		 */
 		scrollViewport: function(oTable, oProcessInterface) {
@@ -1177,7 +1195,7 @@ sap.ui.define([
 		 * Scrolls the scrollbar to match the scroll position.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {CancellableProcessInterface} [oProcessInterface} The interface to the cancellable process.
+		 * @param {ProcessInterface} [oProcessInterface} The interface to the process.
 		 * @returns {Promise} A Promise that resolves when <code>scrollTop</code> of the scrollbar was set.
 		 */
 		scrollScrollbar: function(oTable, oProcessInterface) {
@@ -1511,15 +1529,14 @@ sap.ui.define([
 				return;
 			}
 
-			internal(this).pVerticalScrollUpdateProcess.cancel();
-			internal(this).pVerticalScrollUpdateProcess = new CancellableProcess(function(resolve, reject, oProcessInterface) {
+			VerticalScrollProcess.start(this, VerticalScrollProcess.OnRowsUpdated, function(resolve, reject, oProcessInterface) {
 				VerticalScrollingHelper.scrollViewport(this, oProcessInterface).then(function() {
 					return Promise.all([
 						VerticalScrollingHelper.adjustFirstVisibleRowToScrollPosition(this, true, oProcessInterface),
 						VerticalScrollingHelper.scrollScrollbar(this, oProcessInterface)
 					]);
 				}.bind(this)).then(resolve);
-			}.bind(this), "OnRowsUpdated");
+			}.bind(this));
 		},
 
 		/**
@@ -1528,32 +1545,38 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {boolean} [bExpectRowsUpdatedEvent=false] Whether an update of the rows will happen.
-		 * @returns {CancellableProcess} A cancellable process.
 		 */
 		restoreScrollPosition: function(oTable, bExpectRowsUpdatedEvent) {
 			log("VerticalScrollingHelper.restoreScrollPosition", oTable);
-			VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable);
 
-			internal(oTable).pVerticalScrollUpdateProcess.cancel();
+			var pProcess = VerticalScrollProcess.start(oTable, VerticalScrollProcess.RestoreScrollPosition, function(resolve, reject, oProcessInterface) {
+				if (bExpectRowsUpdatedEvent !== true) {
+					resolve(oProcessInterface);
+					return;
+				}
 
-			if (bExpectRowsUpdatedEvent === true) {
-				internal(oTable).pVerticalScrollUpdateProcess = new CancellableProcess(function(resolve, reject, oProcessInterface) {
-					VerticalScrollingHelper.addOnRowsUpdatedPreprocessor(oTable, function() {
-						log("VerticalScrollingHelper.restoreScrollPosition (async: rows updated)", oTable);
+				var fnOnRowsUpdatedPreprocessor = function() {
+					log("VerticalScrollingHelper.restoreScrollPosition (async: rows updated)", oTable);
+					resolve(oProcessInterface);
+					return false;
+				};
+
+				VerticalScrollingHelper.addOnRowsUpdatedPreprocessor(oTable, fnOnRowsUpdatedPreprocessor);
+
+				oProcessInterface.addCancelListener(function() {
+					var bRemoved = VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable, fnOnRowsUpdatedPreprocessor);
+					if (bRemoved) {
 						resolve(oProcessInterface);
-						return false;
-					});
-				}, "RestoreScrollPosition");
+					}
+				});
+			});
 
-				internal(oTable).pVerticalScrollUpdateProcess.then(function(oProcessInterface) {
+			if (pProcess) {
+				pProcess.then(function(oProcessInterface) {
 					if (!oProcessInterface.isCancelled()) {
 						VerticalScrollingHelper._restoreScrollPosition(oTable);
 					}
 				});
-
-				return internal(oTable).pVerticalScrollUpdateProcess;
-			} else {
-				return VerticalScrollingHelper._restoreScrollPosition(oTable);
 			}
 		},
 
@@ -1565,43 +1588,51 @@ sap.ui.define([
 				+ "Scroll position is" + (bScrollPositionIsInitial ? " " : " not ") + "initial", oTable);
 
 			if (bScrollPositionIsInitial) {
-				return VerticalScrollingHelper.performUpdateFromFirstVisibleRow(oTable);
+				VerticalScrollingHelper.performUpdateFromFirstVisibleRow(oTable);
 			} else {
-				return VerticalScrollingHelper.performUpdateFromScrollPosition(oTable);
+				VerticalScrollingHelper.performUpdateFromScrollPosition(oTable);
 			}
 		},
 
 		adjustToTotalRowCount: function(oTable) {
 			log("VerticalScrollingHelper.adjustToTotalRowCount", oTable);
-			VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable);
 
-			internal(oTable).pVerticalScrollUpdateProcess.cancel();
-			internal(oTable).pVerticalScrollUpdateProcess = new CancellableProcess(function(resolve, reject, oProcessInterface) {
-				var oScrollExtension = oTable._getScrollExtension();
+			var oScrollExtension = oTable._getScrollExtension();
+			oScrollExtension.updateVerticalScrollbarVisibility();
+			oScrollExtension.updateVerticalScrollHeight();
 
-				oScrollExtension.updateVerticalScrollbarVisibility();
-				oScrollExtension.updateVerticalScrollHeight();
-
-				if (!internal(oTable).oVerticalScrollPosition.isInitial()) {
-					VerticalScrollingHelper.addOnRowsUpdatedPreprocessor(oTable, function() {
+			var pProcess = VerticalScrollProcess.start(oTable, VerticalScrollProcess.AdjustToTotalRowCount, function(resolve, reject, oProcessInterface) {
+				if (internal(oTable).oVerticalScrollPosition.isInitial()) {
+					resolve(oProcessInterface);
+				} else {
+					var fnOnRowsUpdatedPreprocessor = function() {
 						log("VerticalScrollingHelper.adjustToTotalRowCount (async: rows updated)", oTable);
 						resolve(oProcessInterface);
 						return false;
+					};
+
+					VerticalScrollingHelper.addOnRowsUpdatedPreprocessor(oTable, fnOnRowsUpdatedPreprocessor);
+
+					oProcessInterface.addCancelListener(function() {
+						var bRemoved = VerticalScrollingHelper.removeOnRowsUpdatedPreprocessor(oTable, fnOnRowsUpdatedPreprocessor);
+						if (bRemoved) {
+							resolve(oProcessInterface);
+						}
 					});
 				}
-			}, "AdjustToTotalRowCount");
-
-			internal(oTable).pVerticalScrollUpdateProcess.then(function(oProcessInterface) {
-				if (oProcessInterface.isCancelled()) {
-					return;
-				}
-
-				// TODO: Avoid usage of scrollViewport.
-				VerticalScrollingHelper.scrollViewport(oTable);
-				VerticalScrollingHelper.performUpdateFromScrollPosition(oTable);
 			});
 
-			return internal(oTable).pVerticalScrollUpdateProcess;
+			if (pProcess) {
+				pProcess.then(function(oProcessInterface) {
+					if (oProcessInterface.isCancelled() || internal(oTable).oVerticalScrollPosition.isInitial()) {
+						return;
+					}
+
+					// TODO: Avoid usage of scrollViewport.
+					VerticalScrollingHelper.scrollViewport(oTable);
+					VerticalScrollingHelper.performUpdateFromScrollPosition(oTable);
+				});
+			}
 		},
 
 		/**
