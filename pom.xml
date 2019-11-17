@@ -46,7 +46,6 @@
 		<module>src/sap.ui.documentation</module>
 		<module>src/sap.ui.dt</module>
 		<module>src/sap.tnt</module>
-		<module>src/sap.ui.demokit</module>
 		<module>src/sap.uxap</module>
 		<module>src/sap.ui.fl</module>
 		<module>src/sap.ui.rta</module>

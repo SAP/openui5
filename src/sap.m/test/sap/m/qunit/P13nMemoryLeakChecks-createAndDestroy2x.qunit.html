@@ -130,7 +130,6 @@
 							sControlName === "sap.m.TimePickerSliders" ||
 							sControlName === "sap.m.Wizard" ||
 							sControlName === "sap.tnt.NavigationList" ||
-							sControlName === "sap.ui.demokit.IndexLayout._Tile" ||
 							sControlName === "sap.ui.layout.BlockLayoutRow" ||
 							sControlName === "sap.ui.suite.TaskCircle" ||
 							sControlName === "sap.ui.ux3.ActionBar" ||
@@ -150,9 +149,7 @@
 							//sControlName === "sap.m.P13nSortPanel" || // Ticket: 1670353042
 							//sControlName === "sap.m.P13nConditionPanel" || // Ticket: 1670353042
 							sControlName === "sap.m.QuickViewPage" || // Ticket: 1670352810
-							sControlName === "sap.m.ViewSettingsPopover" || // Ticket: 1670352807
-							sControlName === "sap.ui.demokit.CodeSampleContainer" || // Ticket: none (Demokit Lib)
-							sControlName === "sap.ui.demokit.UI5EntityCueCard" // Ticket: none (Demokit Lib)
+							sControlName === "sap.m.ViewSettingsPopover" // Ticket: 1670352807
 						) { // known to be leaking
 							assert.ok(true, "WARNING: " + sControlName + " is known to have memory leaks and is ignored until they are fixed.");
 							return true;

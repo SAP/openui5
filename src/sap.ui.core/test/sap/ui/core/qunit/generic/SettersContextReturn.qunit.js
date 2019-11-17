@@ -56,11 +56,6 @@ sap.ui.define([
 				"sap.uxap.BlockBase": NO_CREATE // needs constructor arguments (maybe should be abstract?)
 			}
 		},
-		"sap.ui.demokit": {
-			elements: {
-				"sap.ui.demokit.UI5EntityCueCard": NO_CREATE// fails to load
-			}
-		},
 		"sap.ui.fl": {
 			elements: {
 				"sap.ui.fl.util.ManagedObjectModel": { exclude: ["data", "name", "object"] } // setters throw when called after initialization
