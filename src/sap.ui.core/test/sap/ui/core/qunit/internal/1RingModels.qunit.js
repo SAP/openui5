@@ -49,12 +49,15 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/type/Unit.qunit",
 		"sap/ui/core/qunit/odata/type/UnitMixin.qunit",
 		// OData V2
-		// Note: some types use lazy loading and are used by AnnotationHelper tests!
-		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
-		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperBasics.qunit",
 		"sap/ui/core/qunit/odata/_AnnotationHelperExpression.qunit",
 		"sap/ui/core/qunit/odata/_ODataMetaModelUtils.qunit",
+		// Note: some types use lazy loading and are used by AnnotationHelper tests!
+		"sap/ui/core/qunit/odata/AnnotationHelper.qunit",
+		"sap/ui/core/qunit/odata/ODataMessageParserNoFakeService.qunit",
+		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataListBindingNoFakeService.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit"
 	], function () {
 		function start() {

@@ -93,6 +93,12 @@ sap.ui.define(function() {
 					"test-resources/sap/ui/core/qunit/odata/ODataMessageParser.qunit"
 				]
 			},
+			ODataMessageParserNoFakeService: {
+				title: "sap.ui.model.odata.ODataMessageParser (ODataMessageParserNoFakeService.qunit)",
+				module: [
+					"test-resources/sap/ui/core/qunit/odata/ODataMessageParserNoFakeService.qunit"
+				]
+			},
 			ODataMetadata: {
 				qunit: {
 					reorder: false
