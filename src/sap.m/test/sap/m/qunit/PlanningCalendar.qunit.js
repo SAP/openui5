@@ -991,6 +991,29 @@ sap.ui.define([
 		_checkColor(oBorderColor, {R: 255, G:0, B: 0}, "Row2: IntervalHeader1 has the right custom border color");
 	});
 
+	QUnit.test("CalendarHeader is rendered correctly on a combi device", function (assert) {
+		//prepare
+		var oOriginalSysInfoDesktop = Device.system.desktop,
+			oOriginalSysInfoTablet = Device.system.tablet,
+			oPC;
+
+		Device.system.tablet = true;
+		jQuery("html").addClass("sapUiMedia-Std-Tablet");
+		Device.system.desktop = true;
+		jQuery("html").addClass("sapUiMedia-Std-Desktop");
+		oPC = new PlanningCalendar();
+
+		//assert
+		assert.equal(oPC._iSize, 2, "iSize is correctly set");
+
+		//clean-up
+		oPC.destroy();
+		Device.system.desktop = oOriginalSysInfoDesktop;
+		Device.system.tablet = oOriginalSysInfoTablet;
+		jQuery("html").removeClass("sapUiMedia-Std-Tablet");
+		jQuery("html").addClass("sapUiMedia-Std-Desktop");
+	});
+
 	QUnit.module("rendering - Hours View", {
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());

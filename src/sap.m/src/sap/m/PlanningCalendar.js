@@ -628,7 +628,7 @@ sap.ui.define([
 		if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 			this._iSize = 0;
 			this._iSizeScreen = 0;
-		}else if (Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+		}else if ((Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) && !(Device.system.desktop || jQuery('html').hasClass("sapUiMedia-Std-Desktop"))){
 			this._iSize = 1;
 			this._iSizeScreen = 1;
 		}else {
