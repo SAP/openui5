@@ -367,6 +367,190 @@
             "reference": "1970226045"
           }
         ]
+      },
+      {
+        "id": "86ddf6dd5e535650efcc02d6883fb8ba506088df",
+        "type": "FEATURE",
+        "text": " Demo Kit: API Reference search highlighting enabled",
+        "references": []
+      },
+      {
+        "id": "319623ecc320e60d13852311d6b77f99b0b28e95",
+        "type": "FEATURE",
+        "text": " Demo Kit: Search highlighting is implemented",
+        "references": []
+      },
+      {
+        "id": "062003f5a4b41557e9f157c3893ff64e5d7e132d",
+        "type": "FIX",
+        "text": " P13nConditionPanel: improve validation handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980411112"
+          }
+        ]
+      },
+      {
+        "id": "93224b656696009b59d320c56b12a88ee30ab8d9",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Carousel\u0027s arrows navigate properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970607184"
+          }
+        ]
+      },
+      {
+        "id": "e1ef29946d5eade708419ecfd8452fd9653236b7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Image slides now swipe correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970535011"
+          }
+        ]
+      },
+      {
+        "id": "99d78b78653255db23eeb992f811194bf02052aa",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Change event documentation improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970550657"
+          }
+        ]
+      },
+      {
+        "id": "8eafc1ebdfdeb7ec095c39a17c5248a119d5cdbc",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Scrolling to item now works correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591954"
+          }
+        ]
+      },
+      {
+        "id": "340dee2c2b509af95b065ad24837012392b2a4ea",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxTextField: Remove fake aria-labelledby",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970592098"
+          }
+        ]
+      },
+      {
+        "id": "7e0bd2b1e0a9261b45c2bffa9e0decba69fd4816",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: setDisplayFormat does not trigger focus in",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "0020751295 0000595762 2019"
+          }
+        ]
+      },
+      {
+        "id": "2ebe8c84a3f9c326dddf9e2f4a04b598208489e4",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Selection properly showed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980401268"
+          }
+        ]
+      },
+      {
+        "id": "ddf538ec21b7161fada5f61d44280dee1e6c0165",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Trigger resize handler on token update",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970502405"
+          }
+        ]
+      },
+      {
+        "id": "fa0f24cd778c1fd9f652ab7cd3abb9b4875736e1",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Trigger resize handler on token update reverted",
+        "references": []
+      },
+      {
+        "id": "97de9ef4ae754afc5a72abee845b05bd077fc515",
+        "type": "FIX",
+        "text": " sap.m.SimpleFixFlex: Console error in _onFixContentResize prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970587851"
+          }
+        ]
+      },
+      {
+        "id": "3a7b956cfb26527c4eedb61ef11078fa2144a956",
+        "type": "FIX",
+        "text": " sap.m.Slider: Aria-labelledby read twice fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970580550"
+          }
+        ]
+      },
+      {
+        "id": "ad3106a114095430275a4b54e24e753abf1a48d7",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Scrolling in ComboBox, MultiComboBox fixed on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970592168"
+          }
+        ]
+      },
+      {
+        "id": "a8d568923da7ff23ff210a8304a802c51a52b864",
+        "type": "FIX",
+        "text": " sap.m.Table: Highlight cell is not visible on Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970613403"
+          }
+        ]
+      },
+      {
+        "id": "cc02477b695a3da4c962a4334760e8568723a608",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: missing tooltip for the \"open calendar\" fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970595088"
+          }
+        ]
+      },
+      {
+        "id": "f000e16a3fa650fdfd60bb3dd554560ccf5d60eb",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection - fix accessibility of statuses in listitem",
+        "references": []
+      },
+      {
+        "id": "cf066076e6c7324af846fd170e2c2fc029229a4d",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection - fix correct filesize for range 1000-1023 Bytes",
+        "references": []
       }
     ]
   }

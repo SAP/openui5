@@ -56,6 +56,17 @@
             "reference": "002075129400006664912019"
           }
         ]
+      },
+      {
+        "id": "ad1ba7f6d536f650cf4f65aded2f40c9c7ab8489",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: visual issues are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970400974"
+          }
+        ]
       }
     ]
   }
