@@ -482,6 +482,7 @@ function(
 	};
 
 	AppVariantUtils.deleteAppVariant = function(vSelector) {
+		BusyIndicator.hide();
 		return PersistenceWriteAPI.deleteAppVariant({selector: vSelector});
 	};
 

@@ -339,7 +339,7 @@ sap.ui.define([
 			};
 			var fnError = function(oError) {
 				if (oError.sId === 'cancel') {
-					resolve();
+					resolve(oError.sId);
 				} else {
 					reject(oError);
 				}
