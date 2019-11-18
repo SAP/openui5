@@ -516,7 +516,9 @@ sap.ui.define([
 				this.rebuildListItems(aContexts, oBindingInfo);
 			} else if (!aDiff || !aItems.length && aDiff.length) {
 				// new records need to be applied from scratch
-				this.rebuildListItems(aContexts, oBindingInfo, true);
+				if (oControl.shouldRenderItems()) {
+					this.rebuildListItems(aContexts, oBindingInfo, true);
+				}
 			} else if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
 
 				if (this._sGroupingPath != this._getGroupingPath(oBinding)) {

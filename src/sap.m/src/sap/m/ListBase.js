@@ -1799,25 +1799,9 @@ function(
 		return sStates;
 	};
 
-	ListBase.prototype.getAccessibilityDescription = function() {
-		var sDescription = "";
-		var oHeaderTBar = this.getHeaderToolbar();
-		if (oHeaderTBar) {
-			var oTitle = oHeaderTBar.getTitleControl();
-			if (oTitle) {
-				sDescription += oTitle.getText() + " ";
-			}
-		} else {
-			sDescription += this.getHeaderText() + " ";
-		}
-
-		sDescription += this.getAccessibilityStates() + " ";
-		return sDescription;
-	};
-
 	ListBase.prototype.getAccessibilityInfo = function() {
 		return {
-			description: this.getAccessibilityDescription().trim(),
+			description: this.getAccessibilityStates().trim(),
 			focusable: true
 		};
 	};

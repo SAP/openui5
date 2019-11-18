@@ -581,11 +581,10 @@ sap.ui.define([
 
 		assert.ok(sut.$().length > 0, "Table in DOM tree");
 
-		assert.equal(sut.$().attr("aria-labelledby"), InvisibleText.getStaticId("sap.m", "TABLE_CONTAINER_ROLE_DESCRIPTION"), "aria-labelledby - Container");
 		assert.equal(sut.$().attr("role"), "application", "Container has correct ARIA role");
 
-		assert.equal(sut.$("listUl").attr("aria-labelledby"), "idTitle " + InvisibleText.getStaticId("sap.m", "TABLE_ROLE_DESCRIPTION"), "aria-labelledby - Table");
-		assert.ok(!sut.$("listUl").attr("role"), "Table has correct ARIA role");
+		assert.equal(sut.$().attr("aria-labelledby"), "idTitle " + InvisibleText.getStaticId("sap.m", "TABLE_ROLE_DESCRIPTION"), "aria-labelledby - Table");
+		assert.ok(!sut.$("listUl").attr("role"), "Table has no ARIA role");
 
 		function checkCells(sCellType) {
 			var $Scope = sCellType === "th" ? sut.$() : sut.getItems()[0].$();
