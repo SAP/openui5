@@ -87,6 +87,28 @@
         "type": "FIX",
         "text": " sap.ui.core: address SDK feedback (2019/10 and older)",
         "references": []
+      },
+      {
+        "id": "e1ef29946d5eade708419ecfd8452fd9653236b7",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Image slides now swipe correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970535011"
+          }
+        ]
+      },
+      {
+        "id": "5134cdc61e15862c4b07087d7afcd9547e6eeade",
+        "type": "FIX",
+        "text": " sap.ui.core.dnd: double scrollbar during drag-and-drop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970614786"
+          }
+        ]
       }
     ]
   }
