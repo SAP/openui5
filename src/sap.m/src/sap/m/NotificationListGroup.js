@@ -47,18 +47,18 @@ function(
 	var maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
 
 	/**
-	 * Constructor for a new NotificationListGroup.
+	 * Constructor for a new <code>NotificationListGroup<code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListGroup control is used for grouping {@link sap.m.NotificationListItem notification items} of the same type.
+	 * The <code>NotificationListGroup</code> control is used for grouping {@link sap.m.NotificationListItem notification items} of the same type.
 	 * <h4>Behavior</h4>
 	 * The group handles specific behavior for different use cases:
 	 * <ul>
-	 * <li><code>autoPriority</code> - sets the group priority to the highest priority of an item in the group.</li>
-	 * <li><code>enableCollapseButtonWhenEmpty</code> - displays a collapse button for an empty group.</li>
+	 * <li><code>autoPriority</code> - determines the group priority to the highest priority of an item in the group.</li>
+	 * <li><code>enableCollapseButtonWhenEmpty</code> - determines if the collapse/expand button for an empty group is displayed.</li>
 	 * <li><code>showEmptyGroup</code> - determines if the header/footer of an empty group is displayed.</li>
 	 * </ul>
 	 * @extends sap.m.NotificationListBase
@@ -83,7 +83,7 @@ function(
 				collapsed: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
 				/**
-				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the "priority" property.
+				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the <code>priority</code> property.
 				 */
 				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
@@ -94,7 +94,7 @@ function(
 				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
 				/**
-				 * Determines if the collapse/expand button should be enabled for an empty group.
+				 * Determines if the collapse/expand button for an empty group is displayed.
 				 */
 				enableCollapseButtonWhenEmpty: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
@@ -142,7 +142,7 @@ function(
 			},
 			events: {
 				/**
-				 * This event is called when collapse property value is changed
+				 * <code>onCollapse</code> event is called when collapse property value is changed
 				 * @since 1.44
 				 */
 				onCollapse: {
