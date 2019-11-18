@@ -49,7 +49,7 @@ function(
 	var AvatarColor = library.AvatarColor;
 
 	/**
-	 * Constructor for a new NotificationListItem.
+	 * Constructor for a new <code>NotificationListItem<code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control

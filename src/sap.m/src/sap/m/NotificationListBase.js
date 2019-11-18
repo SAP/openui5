@@ -49,7 +49,7 @@ sap.ui.define([
 			closeAllText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_CLOSE'); // this is used for tooltip for the "X" button and the text of the button "X" when it is in the overflow toolbar on mobile
 
 		/**
-		 * Constructor for a new NotificationListBase.
+		 * Constructor for a new <code>NotificationListBase</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
@@ -77,8 +77,8 @@ sap.ui.define([
 		 * </ul>
 		 *
 		 * <h4>Note</h4>
-		 * There are several properties, that are inherited from ListItemBase and have no
-		 * visual representation in the Notifications - counter, highlight, highlightText, navigated, selected, type
+		 * There are several properties, that are inherited from <code>ListItemBase</code> and have no
+		 * visual representation in the Notifications - <code>counter</code>, <code>highlight</code>, <code>highlightText</code>, <code>navigated</code>, <code>selected</code>, <code>type</code>
 		 * @extends sap.m.ListItemBase
 		 *
 		 * @author SAP SE
@@ -107,14 +107,14 @@ sap.ui.define([
 					title: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
-					 * Determines the due date of the Notification.
+					 * The time stamp of the Notification.
 					 */
 					datetime: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
 					 * Determines the action buttons visibility.
 					 *
-					 * <b>Note:</b> Collapsed Notification List Groups don't show the action buttons at all.
+					 * <b>Note:</b> Action buttons are not shown when Notification List Groups are collapsed.
 					 */
 					showButtons: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
