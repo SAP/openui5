@@ -2,6 +2,8 @@
 /* CSS for control sap.ui.unified/CalendarLegend  */
 /* Base theme                                     */
 /* ============================================== */
+@_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendWorkingDay: lighten(@sapUiContentForegroundColor, 7);
+@_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendNonWorkingDay: darken(@sapUiContentForegroundColor, 3);
 
 .sapUiUnifiedLegend {
 	color: @sapUiContentLabelColor;
@@ -93,17 +95,17 @@
 }
 
 .sapUiUnifiedLegendWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: lighten(@sapUiContentForegroundColor, 7);
+	background: @_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendWorkingDay;
 }
 
 .sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: darken(@sapUiContentForegroundColor, 3);
+	background: @_sap_ui_unified_CalendarLegend_sapUiUnifiedLegendNonWorkingDay;
 }
 
 .sapUiUnifiedLegend hr {
-  margin-left: -0.5rem;
-  margin-right:  -0.5rem;
-  border-width: 0 0 1px 0;
+	margin-left: -0.5rem;
+	margin-right:  -0.5rem;
+	border-width: 0 0 1px 0;
 }
 
 .sapMDialog-CTX, .sapMPopup-CTX {
