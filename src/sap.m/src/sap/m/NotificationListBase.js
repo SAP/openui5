@@ -170,23 +170,23 @@ sap.ui.define([
 		};
 
 		// overrides ListItemBase method
-		NotificationListBase.prototype.updateSelectedDOM = function() {
+		NotificationListBase.prototype.updateSelectedDOM = function () {
 
 		};
 
-		NotificationListBase.prototype.getAccessibilityText = function() {
+		NotificationListBase.prototype.getAccessibilityText = function () {
 			return '';
 		};
 
 		NotificationListBase.prototype.getButtons = function () {
-			return this._getOverflowToolbar().getContent().filter(function(item){
+			return this._getOverflowToolbar().getContent().filter(function (item) {
 				return item !== this._closeButton && item !== this._toolbarSeparator;
 			}, this);
 		};
 
 		NotificationListBase.prototype.addButton = function (oButton) {
 
-			var overflowToolbar  = this._getOverflowToolbar(),
+			var overflowToolbar = this._getOverflowToolbar(),
 				index = overflowToolbar.getContent().length;
 
 			if (Device.system.phone) {
@@ -195,6 +195,8 @@ sap.ui.define([
 
 			overflowToolbar.insertContent(oButton, index);
 
+			this.invalidate();
+
 			return this;
 		};
 
@@ -202,11 +204,17 @@ sap.ui.define([
 
 			this._getOverflowToolbar().insertContent(oButton, index);
 
+			this.invalidate();
+
 			return this;
 		};
 
 		NotificationListBase.prototype.removeButton = function (oButton) {
-			return this._getOverflowToolbar().removeContent(oButton.getId());
+			var result = this._getOverflowToolbar().removeContent(oButton.getId());
+
+			this.invalidate();
+
+			return result;
 		};
 
 		NotificationListBase.prototype.removeAllButtons = function () {
@@ -216,6 +224,8 @@ sap.ui.define([
 			buttons.forEach(function (button) {
 				overflowToolbar.removeContent(button.getId());
 			});
+
+			this.invalidate();
 
 			return this;
 		};
@@ -227,10 +237,12 @@ sap.ui.define([
 				button.destroy();
 			});
 
+			this.invalidate();
+
 			return this;
 		};
 
-		NotificationListBase.prototype._getOverflowToolbar = function() {
+		NotificationListBase.prototype._getOverflowToolbar = function () {
 			var overflowToolbar = this.getAggregation('_overflowToolbar');
 
 			if (!overflowToolbar) {
@@ -239,12 +251,13 @@ sap.ui.define([
 				this.setAggregation("_overflowToolbar", overflowToolbar, true);
 
 				if (Device.system.phone) {
+
 					var oCloseButton = this._getCloseButton();
-					this._toolbarSeparator = new ToolbarSeparator();
 					oCloseButton.setLayoutData(new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.AlwaysOverflow
 					}));
 
+					this._toolbarSeparator = new ToolbarSeparator();
 					this._toolbarSeparator.setLayoutData(new OverflowToolbarLayoutData({
 						priority: OverflowToolbarPriority.AlwaysOverflow
 					}));
@@ -258,7 +271,7 @@ sap.ui.define([
 		};
 
 
-		NotificationListBase.prototype._getCloseButton = function() {
+		NotificationListBase.prototype._getCloseButton = function () {
 			var closeButton = this._closeButton;
 
 			if (!closeButton) {
@@ -285,7 +298,7 @@ sap.ui.define([
 			return this._closeButton;
 		};
 
-		NotificationListBase.prototype.exit = function() {
+		NotificationListBase.prototype.exit = function () {
 			if (this._closeButton) {
 				this._closeButton.destroy();
 			}
@@ -295,20 +308,100 @@ sap.ui.define([
 			}
 		};
 
-		NotificationListBase.prototype.onBeforeRendering = function() {
+		NotificationListBase.prototype._hasActionButtons = function () {
+			return this.getShowButtons() && this.getButtons().length;
+		};
+
+		NotificationListBase.prototype._shouldRenderCloseButton = function () {
+			return !Device.system.phone && this.getShowCloseButton();
+		};
+
+		NotificationListBase.prototype._shouldRenderOverflowToolbar = function () {
+
+			var hasActionButtons = this._hasActionButtons();
+
+			if (Device.system.phone) {
+				return hasActionButtons || this.getShowCloseButton();
+			}
+
+			return hasActionButtons;
+		};
+
+		NotificationListBase.prototype.onBeforeRendering = function () {
+
 			var buttons = this.getButtons(),
-				firstButtonOverflow = (Device.system.phone || buttons.length > 1) ? OverflowToolbarPriority.AlwaysOverflow : OverflowToolbarPriority.NeverOverflow,
+				firstButtonOverflow,
 				button;
+
+			if (Device.system.phone) {
+				this._updatePhoneButtons();
+				return;
+			}
+
+			firstButtonOverflow = buttons.length > 1 ? OverflowToolbarPriority.AlwaysOverflow : OverflowToolbarPriority.NeverOverflow;
 
 			for (var i = 0; i < buttons.length; i++) {
 				button = buttons[i];
+
 				button.setLayoutData(new OverflowToolbarLayoutData({
 					priority: i === 0 ? firstButtonOverflow : OverflowToolbarPriority.AlwaysOverflow
 				}));
 			}
+		};
 
-			if (this._getOverflowToolbar().getContent().length === 1) {
-				this.addStyleClass("sapMNLBNoOverflow");
+		NotificationListBase.prototype._updatePhoneButtons = function () {
+
+			var closeButton = this._getCloseButton(),
+				isNotificationListGroup = this.isA("sap.m.NotificationListGroup"),
+				buttonText = isNotificationListGroup ? closeAllText : closeText,
+				isCollapsed = isNotificationListGroup && this.getCollapsed(),
+				hasActionButtons = !isCollapsed && this._hasActionButtons(),
+				showCloseButton = this.getShowCloseButton(),
+				priority;
+
+			this.getButtons().forEach(function (button) {
+				if (hasActionButtons) {
+					priority = OverflowToolbarPriority.AlwaysOverflow;
+					button.removeStyleClass('sapMNLIBHiddenButton');
+				} else {
+					priority = OverflowToolbarPriority.NeverOverflow;
+					button.addStyleClass('sapMNLIBHiddenButton');
+				}
+
+				button.setLayoutData(new OverflowToolbarLayoutData({
+					priority: priority
+				}));
+			});
+
+			if (!showCloseButton) {
+				closeButton.setVisible(false);
+				this._toolbarSeparator.setVisible(false);
+				return;
+			}
+
+			closeButton.setVisible(true);
+
+			if (hasActionButtons) {
+				closeButton.setText(buttonText);
+				closeButton.setTooltip('');
+				closeButton.setType(ButtonType.Default);
+				closeButton.setIcon('');
+				closeButton.setLayoutData(new OverflowToolbarLayoutData({
+					priority: OverflowToolbarPriority.AlwaysOverflow
+				}));
+
+				this._toolbarSeparator.setVisible(true);
+
+			} else {
+				closeButton.setText('');
+				closeButton.setTooltip(buttonText);
+				closeButton.setType(ButtonType.Transparent);
+				closeButton.setIcon(IconPool.getIconURI('decline'));
+				closeButton.setLayoutData(new OverflowToolbarLayoutData({
+					priority: OverflowToolbarPriority.NeverOverflow
+				}));
+
+				this._toolbarSeparator.setVisible(false);
 			}
 		};
 
@@ -324,7 +417,7 @@ sap.ui.define([
 
 			if (!bHasParentAfterClose && parent && parent instanceof Element) {
 				var delegate = {
-					onAfterRendering: function() {
+					onAfterRendering: function () {
 						parent.focus();
 						parent.removeEventDelegate(delegate);
 					}
@@ -333,7 +426,7 @@ sap.ui.define([
 			}
 		};
 
-		NotificationListBase.prototype._getPriorityIcon = function() {
+		NotificationListBase.prototype._getPriorityIcon = function () {
 			var priorityIcon = this.getAggregation('_priorityIcon');
 
 			if (!priorityIcon) {

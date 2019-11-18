@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/List",
 	"sap/ui/core/library",
+	"sap/m/library",
 	"sap/ui/core/Core",
+	'sap/ui/Device',
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
@@ -20,7 +22,9 @@ sap.ui.define([
 	OverflowToolbar,
 	List,
 	coreLibrary,
+	mLibrary,
 	Core,
+	Device,
 	Button,
 	KeyCodes,
 	JSONModel
@@ -30,6 +34,10 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.Priority
 	var Priority = coreLibrary.Priority;
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
+
 	var  oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 	var  oResourceBundleCore = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
@@ -337,5 +345,99 @@ sap.ui.define([
 		list.destroy();
 		notificationCloning.destroy();
 		notification.destroy();
+	});
+
+	QUnit.module('Action and close buttons - non mobile', {
+		beforeEach: function() {
+
+			this.isPhone = Device.system.phone;
+			Device.system.phone = false;
+
+			this.notificationListItem = createNotificatoinListItem();
+			this.notificationListItem.placeAt(RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.notificationListItem.destroy();
+			Device.system.phone = this.isPhone;
+		}
+	});
+
+	QUnit.test('action buttons', function(assert) {
+		var buttons = this.notificationListItem.getButtons();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+
+		this.notificationListItem.removeButton(buttons[1]);
+		Core.applyChanges();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
+
+		this.notificationListItem.addButton(buttons[1]);
+		Core.applyChanges();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+	});
+
+	QUnit.module('Action and close buttons - mobile', {
+		beforeEach: function() {
+
+			this.isPhone = Device.system.phone;
+			Device.system.phone = true;
+
+			this.notificationListItem = createNotificatoinListItem();
+			this.notificationListItem.placeAt(RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.notificationListItem.destroy();
+
+			Device.system.phone = this.isPhone;
+		}
+	});
+
+	QUnit.test('action and close buttons', function(assert) {
+		var buttons = this.notificationListItem.getButtons(),
+			closeButton = this.notificationListItem._getCloseButton(),
+			toolbarSeparator = this.notificationListItem._toolbarSeparator;
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+		assert.strictEqual(buttons[1].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+
+		assert.notOk(buttons[0].hasStyleClass('sapMNLIBHiddenButton'), 'button is visible');
+		assert.notOk(buttons[1].hasStyleClass('sapMNLIBHiddenButton'), 'button is visible');
+
+		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'close button overflow priority is ok');
+		assert.ok(toolbarSeparator.getVisible(), 'toolbar separator is visible');
+
+		this.notificationListItem.setShowButtons(false);
+		Core.applyChanges();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
+		assert.strictEqual(buttons[1].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
+
+		assert.ok(buttons[0].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
+		assert.ok(buttons[1].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
+
+		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
+		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
+
+		this.notificationListItem.setShowButtons(true);
+		this.notificationListItem.setShowCloseButton(false);
+		Core.applyChanges();
+
+
+		assert.notOk(closeButton.getVisible(), 'close button is not visible');
+		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
+
+		this.notificationListItem.setShowCloseButton(true);
+		this.notificationListItem.removeButton(buttons[0]);
+		this.notificationListItem.removeButton(buttons[1]);
+		Core.applyChanges();
+
+		assert.ok(closeButton.getVisible(), 'close button is visible');
+		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
+		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
 	});
 });
