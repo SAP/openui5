@@ -4261,10 +4261,15 @@ sap.ui.define([
 	 * @param {object} [oData] The data for this request
 	 * @param {string} [sETag] The ETag
 	 * @param {boolean} [bAsync] Async request
+	 * @param {boolean} [bRefresh]
+	 *   Whether the read request is triggered while refreshing a binding. If message scope is
+	 *   <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, all non-persistent messages
+	 *   for the requested resources and its child resources are removed.
 	 * @return {object} Request object
 	 * @private
 	 */
-	ODataModel.prototype._createRequest = function(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag, bAsync) {
+	ODataModel.prototype._createRequest = function(sUrl, sDeepPath, sMethod, mHeaders, oData, sETag,
+			bAsync, bRefresh) {
 		bAsync = bAsync !== false;
 
 		if (sETag && sMethod !== "GET") {
@@ -4306,7 +4311,8 @@ sap.ui.define([
 			user: this.sUser,
 			password: this.sPassword,
 			async: bAsync,
-			deepPath: sDeepPath
+			deepPath: sDeepPath,
+			refresh: bRefresh
 		};
 
 		if (oData) {
@@ -4821,36 +4827,38 @@ sap.ui.define([
 	 * 		failed. The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead
 	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
+	 * @param {boolean} [mParameters._refresh] Private parameter for internal usage
 	 *
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 *
 	 * @public
 	 */
 	ODataModel.prototype.read = function(sPath, mParameters) {
-		var oRequest, sUrl,
-		oContext, mUrlParams, fnSuccess, fnError,
-		aFilters, aSorters, sFilterParams, sSorterParams,
-		oFilter, oEntityType,
-		aUrlParams, mHeaders, sMethod,
-		sGroupId, sETag,
-		mRequests, sNormalizedTempPath, sDeepPath,
-		sNormalizedPath, bCanonical,
-		that = this;
+		var sDeepPath, oEntityType, sETag, oFilter, sFilterParams, sMethod, sNormalizedPath,
+			sNormalizedTempPath, oRequest, mRequests, sSorterParams, sUrl, aUrlParams,
+			bCanonical, oContext, fnError, aFilters, sGroupId, mHeaders, bRefresh, aSorters,
+			fnSuccess, mUrlParams,
+			that = this;
 
-		// The object parameter syntax has been used.
+
 		if (mParameters) {
-			oContext	= mParameters.context;
-			mUrlParams	= mParameters.urlParameters;
-			fnSuccess	= mParameters.success;
-			fnError		= mParameters.error;
-			aFilters	= mParameters.filters;
-			aSorters	= mParameters.sorters;
-			sGroupId 	= mParameters.groupId || mParameters.batchGroupId;
-			mHeaders 	= mParameters.headers;
-			bCanonical  = mParameters.canonicalRequest;
+			/* Whether the read request is triggered while refreshing a binding. If message scope is
+			 * <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, then all non-persistent
+			 * messages for the requested resources and its child resources are removed. See
+			 * {@link sap.ui.model.odata.ODataMessageParser#_propagateMessages}
+			 */
+			bRefresh = mParameters._refresh;
+			bCanonical = mParameters.canonicalRequest;
+			oContext = mParameters.context;
+			fnError = mParameters.error;
+			aFilters = mParameters.filters;
+			sGroupId = mParameters.groupId || mParameters.batchGroupId;
+			mHeaders = mParameters.headers;
+			aSorters = mParameters.sorters;
+			fnSuccess = mParameters.success;
+			mUrlParams = mParameters.urlParameters;
 		}
 		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
-
 
 		//if the read is triggered via a refresh we should use the refreshGroupId instead
 		if (this.sRefreshGroupId) {
@@ -4878,7 +4886,7 @@ sap.ui.define([
 		if (iIndex !== -1) {
 			sTempPath = sPath.substring(0, iIndex - 1);
 		}
-		sNormalizedTempPath = that._normalizePath(sTempPath, oContext, bCanonical);
+		sNormalizedTempPath = this._normalizePath(sTempPath, oContext, bCanonical);
 
 		sNormalizedPath = this._normalizePath(sPath, oContext, bCanonical);
 		sDeepPath = this.resolveDeep(sPath, oContext);
@@ -4900,7 +4908,8 @@ sap.ui.define([
 			}
 
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
+				undefined, bRefresh);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
@@ -6797,4 +6806,3 @@ sap.ui.define([
 
 	return ODataModel;
 });
-

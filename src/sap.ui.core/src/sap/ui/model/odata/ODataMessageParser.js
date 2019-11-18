@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/URI",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
+	function(MessageScope, ODataUtils, coreLibrary, URI, MessageParser, Message, Log, jQuery) {
 	"use strict";
 
 // shortcuts for enums
@@ -265,20 +266,38 @@ ODataMessageParser.prototype._getAffectedTargets = function(aMessages, mRequestI
  * messageChange-event) based on the entities belonging to this request.
  *
  * @param {sap.ui.core.message.Message[]} aMessages - All messaged returned from the back-end in this request
- * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
+ * @param {ODataMessageParser~RequestInfo} mRequestInfo
+ *   Info object about the request URL. If the "request" property of "mRequestInfo" is flagged with
+ *   "bRefresh=true" and if the message scope is
+ *    <code>sap.ui.model.odata.MessageScope.BusinessObject</code>, all non-persistent messages for
+ *    the requested resources and its child resources are removed.
  * @param {map} mGetEntities - A map containing the entities requested from the back-end as keys
  * @param {map} mChangeEntities - A map containing the entities changed on the back-end as keys
  * @param {boolean} bSimpleMessageLifecycle - This flag is set to false, if the used OData Model v2 supports message scopes
  */
 ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestInfo, mGetEntities, mChangeEntities, bSimpleMessageLifecycle) {
-	var i, sTarget;
-	var aRemovedMessages = [];
-	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
-	var aKeptMessages = [];
-	for (i = 0; i < this._lastMessages.length; ++i) {
+	var mAffectedTargets = this._getAffectedTargets(aMessages, mRequestInfo, mGetEntities,
+			mChangeEntities),
+		sDeepPath = mRequestInfo.request.deepPath,
+		aKeptMessages = [],
+		bPrefixMatch = sDeepPath
+			&& mRequestInfo.request.refresh
+			&& mRequestInfo.request.headers
+			&& mRequestInfo.request.headers["sap-message-scope"] === MessageScope.BusinessObject,
+		aRemovedMessages = [],
+		iStatusCode = mRequestInfo.response.statusCode,
+		bSuccess = (iStatusCode >= 200 && iStatusCode < 300),
+		sTarget;
+
+	function isTargetMatching(oMessage, sTarget) {
+		return mAffectedTargets[sTarget]
+			|| bPrefixMatch && oMessage.fullTarget.startsWith(sDeepPath);
+	}
+
+	this._lastMessages.forEach(function (oCurrentMessage) {
 		// Note: mGetEntities and mChangeEntities contain the keys without leading or trailing "/", so all targets must
 		// be trimmed here
-		sTarget = this._lastMessages[i].getTarget().replace(/^\/+|\/$/g, "");
+		sTarget = oCurrentMessage.getTarget().replace(/^\/+|\/$/g, "");
 
 		// Get entity for given target (properties are not affected targets as all messages must be sent for affected entity)
 		var iPropertyPos = sTarget.lastIndexOf(")/");
@@ -286,24 +305,20 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 			sTarget = sTarget.substr(0, iPropertyPos + 1);
 		}
 
-		if ((mRequestInfo.response.statusCode >= 200 && mRequestInfo.response.statusCode < 300) || bSimpleMessageLifecycle){
-			if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent()){
-				// New non-technical message => remove old message
-				aRemovedMessages.push(this._lastMessages[i]);
+		if (bSuccess || bSimpleMessageLifecycle){
+			if (!oCurrentMessage.getPersistent()
+					&& isTargetMatching(oCurrentMessage, sTarget)) {
+				aRemovedMessages.push(oCurrentMessage);
 			} else {
-				// Old message is not affected or persistent => keep message
-				aKeptMessages.push(this._lastMessages[i]);
+				aKeptMessages.push(oCurrentMessage);
 			}
+		} else if (!oCurrentMessage.getPersistent() && oCurrentMessage.getTechnical()
+				&& isTargetMatching(oCurrentMessage, sTarget)) {
+			aRemovedMessages.push(oCurrentMessage);
 		} else {
-			if (mAffectedTargets[sTarget] && !this._lastMessages[i].getPersistent() && this._lastMessages[i].getTechnical()) {
-				// New technical message => remove old technical message
-				aRemovedMessages.push(this._lastMessages[i]);
-			} else {
-				// Old message is non-technical or persistent or not affected => keep message
-				aKeptMessages.push(this._lastMessages[i]);
-			}
+			aKeptMessages.push(oCurrentMessage);
 		}
-	}
+	});
 	this.getProcessor().fireMessageChange({
 		oldMessages: aRemovedMessages,
 		newMessages: aMessages
