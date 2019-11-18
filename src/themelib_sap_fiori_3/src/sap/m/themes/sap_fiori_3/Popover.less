@@ -61,3 +61,28 @@
 		}
 	}
 }
+
+.sapMPopoverHeader, .sapMPopoverSubHeader {
+	position: relative;
+	z-index: 2;
+}
+
+.sapMPopoverWithoutSubHeader .sapMPopoverHeader, .sapMPopoverSubHeader {
+	&:after {
+		content: "";
+		position: absolute;
+		height: 1px;
+		bottom: 0px;
+		width: 100%;
+		box-shadow: @sapUiShadowHeader;
+		z-index: 1;
+	}
+
+	.sapMIBar-CTX {
+		z-index: 2;
+	}
+}
+
+.sapMPopoverWithSubHeader .sapMPopoverHeader .sapMIBar-CTX {
+	box-shadow: none;
+}
