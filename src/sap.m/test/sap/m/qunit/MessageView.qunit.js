@@ -266,6 +266,32 @@ sap.ui.define([
 		assert.ok(this.oMessageView._oLists.all.getItems()[0] instanceof sap.m.GroupHeaderListItem, "Item should be GroupHeaderItem");
 	});
 
+	QUnit.test("_restoreItemsType should not throw an exception when there the groupItems property is set to true", function (assert) {
+		// arrange
+		var oRestoreItemsTypeSpy = sinon.spy(this.oMessageView, "_restoreItemsType");
+
+		// act
+		this.oMessageView.setGroupItems(true);
+
+		this.oDialog.open();
+		this.oMessageView.navigateBack();
+
+		this.clock.tick(500);
+
+		sap.ui.getCore().applyChanges();
+
+		try {
+			oRestoreItemsTypeSpy.apply(this.oMessageView);
+		} catch (e) {
+			// pass through here in case of thrown error
+		}
+
+		// Assert
+		assert.notOk(oRestoreItemsTypeSpy.threw(), "The method didn't threw an error.");
+
+		oRestoreItemsTypeSpy.restore();
+
+	});
 	QUnit.test("No navigation arrow should be shown if there is no description", function (assert) {
 		var oStandardListItem = this.oMessageView._oLists.all.getItems()[1];
 
