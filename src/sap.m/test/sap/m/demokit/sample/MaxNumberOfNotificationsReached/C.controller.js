@@ -6,30 +6,11 @@ sap.ui.define([
 	'use strict';
 
 	var CController = Controller.extend('sap.m.sample.MaxNumberOfNotificationsReached.C', {
-		onRejectPress: function () {
-			MessageToast.show('Reject Button Pressed');
-		},
 
-		onAcceptPress: function () {
-			MessageToast.show('Accept Button Pressed');
-		},
-
-		onLoadMaxNotifications: function (event) {
+		onLoadNotifications: function (event) {
 			/** @type {sap.m.NotificationListGroup} */
 			var notificationGroup = event.getSource().getParent().getParent();
 			var maxNumberOfNotifications = (sap.ui.Device.system.desktop ? 400 : 100) + 2;
-
-			if (!notificationGroup.getItems().length) {
-				for (var index = 0; index < maxNumberOfNotifications; index++) {
-					notificationGroup.addItem(this._createItem(notificationGroup, index));
-				}
-			}
-		},
-
-		onLoadMaxNotificationsWithout: function (event) {
-			/** @type {sap.m.NotificationListGroup} */
-			var notificationGroup = event.getSource().getParent().getParent();
-			var maxNumberOfNotifications = sap.ui.Device.system.desktop ? 10 : 5;
 
 			if (!notificationGroup.getItems().length) {
 				for (var index = 0; index < maxNumberOfNotifications; index++) {
