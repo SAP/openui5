@@ -692,8 +692,14 @@ sap.ui.define([
 			this.bSkipDataEvents = false;
 			//if load is triggered by a refresh we have to check the refreshGroup
 			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-			this.mRequestHandles[sGuid] = this.oModel.read(this.sPath, {
-				context: this.oContext, groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError, canonicalRequest: this.bCanonicalRequest
+			this.mRequestHandles[sGuid] = this.oModel._read(this.sPath, {
+				context: this.oContext,
+				groupId: sGroupId,
+				urlParameters: aParams,
+				success: fnSuccess,
+				error: fnError,
+				canonicalRequest: this.bCanonicalRequest,
+				refresh: this.bRefresh
 			});
 		}
 
