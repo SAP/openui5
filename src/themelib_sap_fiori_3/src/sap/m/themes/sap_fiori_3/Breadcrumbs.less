@@ -3,6 +3,13 @@
 /* Fiori 3 theme                      */
 /* ================================== */
 
-.sapMBreadcrumbs .sapMSlt {
-	background-color: transparent;
+.sapMBreadcrumbs {
+  .sapMBreadcrumbsCurrentLocation:focus {
+    outline: 1px dotted @sapUiContentFocusColor;
+    outline-offset: -1px;
+  }
+
+  .sapMSlt {
+    background-color: transparent;
+  }
 }
