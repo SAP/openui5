@@ -24,6 +24,7 @@
 		"rootView": {
 			"viewName": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
 			"type": "XML",
+			"id": "rootView",
 			"async": true
 		},
 		"dependencies": {
@@ -52,7 +53,7 @@
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
 				"viewPath": "sap.ui.fl.support.apps.contentbrowser.view",
-				"controlId": "sap.ui.fl.support.apps.contentbrowser.App",
+				"controlId": "container-contentbrowser---rootView--splitApp",
 				"controlAggregation": "masterPages",
 				"async": true
 			},
