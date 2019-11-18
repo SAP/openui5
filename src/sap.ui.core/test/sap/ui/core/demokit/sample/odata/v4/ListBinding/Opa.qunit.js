@@ -10,8 +10,9 @@ sap.ui.getCore().attachInit(function () {
 	sap.ui.require([
 		"sap/ui/core/sample/common/pages/Any",
 		"sap/ui/core/sample/odata/v4/ListBinding/pages/Main",
-		"sap/ui/test/opaQunit"
-	], function (Any, Main, opaTest) {
+		"sap/ui/test/opaQunit",
+		"sap/ui/test/TestUtils"
+	], function (Any, Main, opaTest, TestUtils) {
 
 		QUnit.module("sap.ui.core.sample.odata.v4.ListBinding");
 
@@ -34,6 +35,25 @@ sap.ui.getCore().attachInit(function () {
 				+ "ProductPicture/Picture");
 			When.onTheMainPage.refreshEmployees();
 			Then.onTheMainPage.checkEmployeeNameInRow(0, "Walter\"s Win's");
+
+			if (TestUtils.isRealOData()) {
+				// change the budget
+				When.onTheMainPage.openChangeTeamBudgetDialog();
+				Then.onTheChangeTeamBudgetDialog.checkTeamID("TEAM_01");
+				Then.onTheChangeTeamBudgetDialog.checkBudget("555.55");
+				When.onTheChangeTeamBudgetDialog.changeBudget("444.44");
+				When.onTheChangeTeamBudgetDialog.pressChange();
+				When.onTheSuccessInfo.confirm();
+				Then.onTheMainPage.checkBudgetInForm("444.44");
+
+				// change the manager
+				When.onTheMainPage.openChangeManagerOfTeamDialog();
+				Then.onTheChangeManagerOfTeamDialog.checkManager("3");
+				When.onTheChangeManagerOfTeamDialog.changeManager("5");
+				When.onTheChangeManagerOfTeamDialog.pressChange();
+				When.onTheSuccessInfo.confirm();
+				Then.onTheMainPage.checkManagerInForm("5");
+			}
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();

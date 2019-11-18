@@ -42,30 +42,31 @@
 					}" >
 					<core:Item key="{Team_Id}" text="{Name}"/>
 				</Select>
-				<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit"
-						press="openChangeTeamBudgetDialog" text="Budget">
+				<Button id="openChangeTeamBudgetDialog" enabled="{ui>/bRealOData}" text="Budget"
+						icon="sap-icon://edit" press="openChangeTeamBudgetDialog">
 					<dependents>
 						<Dialog id="ChangeTeamBudgetDialog" title="Change Team Budget"
 							binding="{/ChangeTeamBudgetByID(...)}">
 							<buttons>
 								<Button icon="sap-icon://sys-cancel-2"
 									press="cancelChangeTeamBudget" text="Cancel" type="Reject"/>
-								<Button icon="sap-icon://save" press="changeTeamBudget"
-									text="Change" type="Accept"/>
+								<Button id="changeTeamBudget" icon="sap-icon://save"
+									press="changeTeamBudget" text="Change" type="Accept"/>
 							</buttons>
 							<form:SimpleForm ariaLabelledBy="ChangeTeamBudgetDialog"
 								binding="{$Parameter}" editable="true"
 								id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
 								<Label text="Team ID" />
-								<Input value="{TeamID}" editable="false" />
+								<Input id="ChangeTeamBudgetDialog::TeamID" value="{TeamID}"
+									   editable="false" />
 								<Label text="Budget" />
-								<Input value="{Budget}" />
+								<Input id="ChangeTeamBudgetDialog::Budget" value="{Budget}" />
 							</form:SimpleForm>
 						</Dialog>
 					</dependents>
 				</Button>
-				<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit"
-						press="openChangeManagerOfTeamDialog" text="Manager"/>
+				<Button id="openChangeManagerOfTeamDialog" enabled="{ui>/bRealOData}" text="Manager"
+						icon="sap-icon://edit" press="openChangeManagerOfTeamDialog"/>
 			</Toolbar>
 		</form:toolbar>
 		<Label text="Team ID" />
@@ -85,14 +86,14 @@
 				<buttons>
 					<Button icon="sap-icon://sys-cancel-2" press="cancelChangeManagerOfTeam"
 						text="Cancel" type="Reject"/>
-					<Button icon="sap-icon://save" press="changeManagerOfTeam"
-						text="Change" type="Accept"/>
+					<Button icon="sap-icon://save" id="changeManagerOfTeam"
+						press="changeManagerOfTeam" text="Change" type="Accept"/>
 				</buttons>
 				<form:SimpleForm ariaLabelledBy="ChangeManagerOfTeamDialog"
 						editable="true" id="ChangeTeamManagerByID"
 						layout="ResponsiveGridLayout">
 					<Label text="Manager ID" />
-					<Input value="{parameterContext>ManagerID}" />
+					<Input id="ChangeManagerOfTeamDialog::Manager" value="{parameterContext>ManagerID}" />
 				</form:SimpleForm>
 			</Dialog>
 		</form:dependents>
