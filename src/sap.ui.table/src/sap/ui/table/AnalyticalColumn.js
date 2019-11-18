@@ -12,7 +12,7 @@ sap.ui.define([
 	'sap/ui/model/type/Float',
 	'sap/ui/model/type/Integer',
 	'sap/ui/model/type/Time',
-	'./TableUtils',
+	'./utils/TableUtils',
 	'./AnalyticalColumnMenu'
 ],
 	function(

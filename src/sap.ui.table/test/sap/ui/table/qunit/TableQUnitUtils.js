@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/table/TableUtils"
+	"sap/ui/table/utils/TableUtils"
 ], function(JSONModel, Control, TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, TableUtils) {
 	"use strict";
 

@@ -14,7 +14,7 @@ sap.ui.define([
 	'sap/ui/model/Sorter',
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
-	'./TableUtils',
+	'./utils/TableUtils',
 	"./plugins/BindingSelectionPlugin",
 	"sap/base/Log",
 	"sap/base/assert",

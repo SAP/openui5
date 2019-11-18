@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/table/TablePointerExtension",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library"
 ], function(TableQUnitUtils, qutils, Device, TablePointerExtension, TableUtils, tableLibrary) {
 	"use strict";

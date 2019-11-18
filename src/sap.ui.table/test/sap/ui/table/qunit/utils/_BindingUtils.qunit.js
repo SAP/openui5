@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Table",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel"
 ], function(MockServer, Table, TableUtils, ODataModel) {
 	"use strict";

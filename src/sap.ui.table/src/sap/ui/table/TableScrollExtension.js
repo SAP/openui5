@@ -5,7 +5,7 @@
 // Provides helper sap.ui.table.TableScrollExtension.
 sap.ui.define([
 	"./TableExtension",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/Device",
 	"./library",
 	"sap/ui/performance/trace/Interaction",

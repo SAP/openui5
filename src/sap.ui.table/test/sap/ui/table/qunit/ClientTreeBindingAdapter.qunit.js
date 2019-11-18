@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/model/ClientTreeBindingAdapter",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",

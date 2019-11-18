@@ -6,7 +6,7 @@ sap.ui.define([
 	"./SelectionModelPlugin",
 	"./BindingSelectionPlugin",
 	"../library",
-	"../TableUtils",
+	"../utils/TableUtils",
 	"sap/ui/core/Icon",
 	"sap/ui/core/IconPool",
 	"sap/base/Log"

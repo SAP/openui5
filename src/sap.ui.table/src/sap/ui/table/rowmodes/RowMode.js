@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"../library",
-	"../TableUtils",
+	"../utils/TableUtils",
 	"sap/ui/core/Element",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
@@ -293,7 +293,7 @@ sap.ui.define([
 	/**
 	 * This hook is called when the table layout is updated, for example when resizing.
 	 *
-	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
 	 * @private
 	 */
 	RowMode.prototype.updateTableSizes = function(sReason) {};

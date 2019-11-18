@@ -368,7 +368,7 @@
 				DENSITY: {
 					text: "Density",
 					value: function(oTable) {
-						var sDensity = sap.ui.table.TableUtils.getContentDensity(oTable);
+						var sDensity = sap.ui.table.utils.TableUtils.getContentDensity(oTable);
 						if (!sDensity || sDensity.indexOf("sapUiSize") === -1) {
 							return null;
 						}
@@ -820,25 +820,25 @@
 				HIGHLIGHTS: {
 					text: "Highlights",
 					value: function(oTable) {
-						return sap.ui.table.TableUtils.hasRowHighlights(oTable);
+						return sap.ui.table.utils.TableUtils.hasRowHighlights(oTable);
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
 						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
 							highlight: bValue ? "{highlightState}" : sap.ui.core.MessageType.None,
-							navigated: sap.ui.table.TableUtils.hasRowNavigationIndicators(oTable) ? "{navigatedState}" : false
+							navigated: sap.ui.table.utils.TableUtils.hasRowNavigationIndicators(oTable) ? "{navigatedState}" : false
 						}));
 					}
 				},
 				NAVINDICATORS: {
 					text: "Navigation Indicators",
 					value: function(oTable) {
-						return sap.ui.table.TableUtils.hasRowNavigationIndicators(oTable);
+						return sap.ui.table.utils.TableUtils.hasRowNavigationIndicators(oTable);
 					},
 					input: "boolean",
 					action: function(oTable, bValue) {
 						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
-							highlight: sap.ui.table.TableUtils.hasRowHighlights(oTable) ? "{highlightState}" : sap.ui.core.MessageType.None,
+							highlight: sap.ui.table.utils.TableUtils.hasRowHighlights(oTable) ? "{highlightState}" : sap.ui.core.MessageType.None,
 							navigated: bValue ? "{navigatedState}" : false
 						}));
 					}

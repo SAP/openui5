@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/FixedRowMode",
 	"sap/ui/table/rowmodes/AutoRowMode",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/table/library",
 	"sap/ui/table/Column",
