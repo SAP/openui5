@@ -373,5 +373,72 @@
         ]
       }
     ]
+  },
+  "1.71.4": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "c051488fbe82487cb117838fd5346d0c26db074b",
+        "type": "FIX",
+        "text": " Commands: Move focusable span to static-ui-area",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "d453442c1eb55ec333609f80cf09a2a3fd9f10a1",
+        "type": "FIX",
+        "text": " ODataContextBinding: multiple preliminary context bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980405260"
+          }
+        ]
+      },
+      {
+        "id": "475ccff5b44ea47729a4cd33a2b81920372bde9c",
+        "type": "FIX",
+        "text": " core.routing: target should be suspended without promise involved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970526256"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970527298"
+          }
+        ]
+      },
+      {
+        "id": "f770a40ea52723c9daa36a2a9fb580740736f543",
+        "type": "FIX",
+        "text": " format.NumberFormat: Support lenient-parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003154282019"
+          },
+          {
+            "type": "BCP",
+            "reference": "012005041000000656012019"
+          }
+        ]
+      },
+      {
+        "id": "45812a5bf46ec7b6b5808b62069a02d1984043df",
+        "type": "FIX",
+        "text": " sap/ui/Device: Detect iPads running on iOS 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970475024"
+          }
+        ]
+      }
+    ]
   }
 }

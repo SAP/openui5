@@ -1086,5 +1086,65 @@
         "references": []
       }
     ]
+  },
+  "1.71.4": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "6f8243d411b2496e393524da31e9c855fa68de45",
+        "type": "FIX",
+        "text": " GenericTile breathing \u0026 language fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000498912019"
+          }
+        ]
+      },
+      {
+        "id": "8f384f56ba06bb8e1bd0ba3b8b174857a6a02ccc",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: GroupHeaderListItem styles adjusted in compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980062789"
+          }
+        ]
+      },
+      {
+        "id": "a6cdf86482d03baafa99e38a7d1c7996e2caee74",
+        "type": "FIX",
+        "text": " sap.m.Input: IE typeahead cursor position fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1930652682"
+          }
+        ]
+      },
+      {
+        "id": "b5eeb5508350024924651944968cf5afe853e4a9",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: ARIA texts placed in messagebundle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970498180"
+          }
+        ]
+      },
+      {
+        "id": "8bf6cd04ac86ea4550806f2b42ac9b59f9785414",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Sticky header adjusted properly onThemeChanged",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970484883"
+          }
+        ]
+      }
+    ]
   }
 }

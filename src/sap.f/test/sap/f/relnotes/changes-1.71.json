@@ -81,5 +81,21 @@
         ]
       }
     ]
+  },
+  "1.71.4": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "6d342eed43bb921251d6a18c30d80769d238c9aa",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed design time metadata",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002028376600003928952019"
+          }
+        ]
+      }
+    ]
   }
 }
