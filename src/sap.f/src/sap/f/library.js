@@ -43,6 +43,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.AvatarSize",
 			"sap.f.AvatarType",
 			"sap.f.AvatarColor",
+			"sap.f.AvatarGroupType",
 			"sap.f.cards.HeaderPosition",
 			"sap.f.DynamicPageTitleArea",
 			"sap.f.DynamicPageTitleShrinkRatio",
@@ -50,6 +51,8 @@ sap.ui.define(["sap/ui/base/DataType",
 		],
 		controls: [
 			"sap.f.Avatar",
+			"sap.f.AvatarGroup",
+			"sap.f.AvatarGroupItem",
 			"sap.f.cards.Header",
 			"sap.f.cards.NumericHeader",
 			"sap.f.cards.NumericSideIndicator",
@@ -398,6 +401,31 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.AvatarImageFitType = AvatarImageFitType;
+
+	/**
+	 * Group modes for the {@link sap.f.AvatarGroup} control.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @experimental Since 1.73.
+	 * @since 1.73
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.AvatarGroupType = {
+		/**
+		 * The avatars are displayed as partially overlapped on top of each other and the entire group has one click/tap area.
+		 *
+		 * @public
+		 */
+		Group: "Group",
+
+		/**
+		 * The avatars are displayed side-by-side and each avatar has its own click/tap area.
+		 *
+		 * @public
+		 */
+		Individual: "Individual"
+	};
 
 	/**
 	 * Interface that should be implemented by all card controls.

@@ -1,0 +1,46 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout">
+	<Popover
+		showHeader="false"
+		contentWidth="450px"
+		contentHeight="600px"
+		placement="Bottom">
+		<NavContainer
+			id="navCon">
+			<Page
+				id="main"
+				titleAlignment="Center"
+				title="{/popoverTitle}" >
+				<l:VerticalLayout class="sapUiTinyMarginTop" width="100%">
+					<l:Grid defaultSpan="XL6 L6 M6 S12" content="{path: 'groupedAvatars>/'}">
+						<HBox alignItems="Center">
+							<VBox>
+								<f:Avatar class="sapUiTinyMarginEnd"
+										src="{groupedAvatars>src}"
+										initials="{groupedAvatars>initials}"
+										fallbackIcon="{personData>/fallbackIcon}"
+										backgroundColor="{groupedAvatars>backgroundColor}"
+										press="onAvatarPress"/>
+							</VBox>
+							<VBox>
+								<Text text="{groupedAvatars>name}"/>
+								<Text text="{groupedAvatars>jobPosition}"/>
+							</VBox>
+						</HBox>
+					</l:Grid>
+				</l:VerticalLayout>
+			</Page>
+			<Page
+				id="detail"
+				showNavButton="true"
+				navButtonPress="onNavBack"
+				titleAlignment="Center"
+				title="{/popoverTitle}" >
+				<core:Fragment fragmentName="sap.f.sample.AvatarGroup.view.Card" type="XML"> </core:Fragment>
+			</Page>
+		</NavContainer>
+	</Popover>
+</core:FragmentDefinition>
