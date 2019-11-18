@@ -36,6 +36,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 
@@ -73,6 +74,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when adding the descriptor inline change was successful (without backend access)
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.addDescriptorInlineChange = function(oDescriptorInlineChange) {
@@ -110,6 +112,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when setting of transport request was successful
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.setTransportRequest = function(sTransportRequest) {
@@ -131,6 +134,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when setting of package was successful
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.setPackage = function(sPackage) {
@@ -149,6 +153,7 @@ sap.ui.define([
 	 * @return {Promise} resolving when submitting the app variant was successful
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.submit = function() {
@@ -258,6 +263,7 @@ sap.ui.define([
 	 * @param {string} sReference the new reference
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.setReference = function(sReference) {
@@ -297,6 +303,7 @@ sap.ui.define([
 	 * @return {object} copy of JSON object of the app variant
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariant.prototype.getJson = function() {
@@ -345,6 +352,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	var DescriptorVariantFactory = {};
@@ -370,6 +378,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createNew = function(mParameters) {
@@ -388,6 +397,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the new DescriptorVariant instance
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createAppVariant = function(mParameters) {
@@ -421,6 +431,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createForExisting = function(sId) {
@@ -435,6 +446,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createFromJson = function(mParameters) {
@@ -454,6 +466,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.createDeletion = function(sId) {
@@ -470,6 +483,7 @@ sap.ui.define([
 	 * @return {Promise} resolving the DescriptorVariant instance
 	 *
 	 * @private
+	 * @deprecated Since version 1.73
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	DescriptorVariantFactory.loadAppVariant = function(sId, bDeletion, sLayer, bIsForSapDelivery) {
