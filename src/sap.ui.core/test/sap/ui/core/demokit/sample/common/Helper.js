@@ -5,14 +5,43 @@
 sap.ui.define("sap/ui/core/sample/common/Helper", [
 	"sap/base/Log",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable"
-], function (Log, Opa5, Press, Interactable) {
+], function (Log, Opa5, EnterText, Press, Interactable) {
 	"use strict";
 	var Helper;
 
 	// Helper functions used within sap.ui.core.sample.common namespace
 	Helper = {
+
+		/**
+		 * Change the value of a sap.m.Input field
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *  An instance of Opa5 to access the current page object
+		 * @param {string} sViewName
+		 *  The name of the view which contains the searched control
+		 * @param {string} sId
+		 *  The ID of a "sap.m.Input" control inside the view sViewName
+		 * @param {string} sValue
+		 *  The external value of the control as a string
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		changeInputValue : function (oOpa5, sViewName, sId, sValue) {
+			return oOpa5.waitFor({
+				actions : new EnterText({clearTextFirst : true, text : sValue}),
+				controlType : "sap.m.Input",
+				id : sId,
+				success : function (oInput) {
+					Opa5.assert.strictEqual(oInput.getValue(), sValue, sId + ": Input value set to "
+						+ sValue);
+				},
+				viewName : sViewName
+			});
+		},
+
 		/**
 		 * Checks if a sap.m.Button is disabled.
 		 *
