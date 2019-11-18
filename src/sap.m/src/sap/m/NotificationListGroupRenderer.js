@@ -38,7 +38,11 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			isUnread = control.getUnread(),
 			priorityClass = '',
 			visibleItemsCount = control._getVisibleItemsCount(),
-			maxNumberMsg;
+			maxNumberMsg,
+			sControlId = control.getId(),
+			sGroupTitleId = sControlId + '-groupTitle',
+			sInvisibleTitleText = sControlId + '-invisibleGroupTitleText',
+			sAriaLablledByIds = sGroupTitleId + ' ' + sInvisibleTitleText;
 
 		rm.write('<li');
 		rm.writeControlData(control);
@@ -61,7 +65,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.writeAccessibilityState(control, {
 			role: "option",
 			expanded: !control.getCollapsed(),
-			label: control.getAccessibilityText()
+			labelledby: {
+				value: sAriaLablledByIds
+			}
 		});
 
 		rm.write('>');
@@ -100,7 +106,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		}
 
 		// group header title
-		rm.write('<div class="sapMNLIItem sapMNLGroupTitle">');
+		rm.write('<div class="sapMNLIItem sapMNLGroupTitle" id="' + sControlId + '-groupTitle">');
 		rm.writeEscaped(control.getTitle());
 		rm.write('</div>');
 
@@ -130,6 +136,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			rm.write('</div>');
 		}
 
+		rm.renderControl(control._getGroupTitleInvisibleText());
 		// end group header
 		rm.write('</div>');
 

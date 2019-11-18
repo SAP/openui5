@@ -32,12 +32,11 @@ function(
 	) {
 	'use strict';
 
-	var resourceBundle = Core.getLibraryResourceBundle('sap.m'),
-		expandText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE'),
-		collapseText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS'),
-		readText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_READ'),
-		unreadText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD'),
-		createdByText = resourceBundle.getText('NOTIFICATION_LIST_ITEM_CREATED_BY');
+	var RESOURCE_BUNDLE = Core.getLibraryResourceBundle('sap.m'),
+		EXPAND_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE'),
+		COLLAPSE_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS'),
+		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_READ'),
+		UNREAD_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_UNREAD');
 
 	// anything better?
 	var maxTruncationHeight = 44;
@@ -114,9 +113,15 @@ function(
 		}
 	});
 
+	/**
+	 * Handles the internal event init.
+	 *
+	 * @private
+	 */
 	NotificationListItem.prototype.init = function() {
 		// set it to an active ListItemBase to the press and tap events are fired
 		this.setType('Active');
+		this._footerIvisibleText = new InvisibleText({id: this.getId() + "-invisibleFooterText"});
 	};
 
 	NotificationListItem.prototype._getAuthorAvatar = function() {
@@ -130,6 +135,11 @@ function(
 		return avatar;
 	};
 
+	/**
+	 * Handles the internal event onBeforeRendering.
+	 *
+	 * @private
+	 */
 	NotificationListItem.prototype.onBeforeRendering = function() {
 		NotificationListBase.prototype.onBeforeRendering.call(this);
 
@@ -220,6 +230,11 @@ function(
 			ResizeHandler.deregister(this._resizeListenerId);
 			this._resizeListenerId = null;
 		}
+
+		if (this._footerIvisibleText) {
+			this._footerIvisibleText.destroy();
+			this._footerIvisibleText = null;
+		}
 	};
 
 	NotificationListItem.prototype._onResize = function () {
@@ -244,10 +259,10 @@ function(
 
 		if (!showMoreButton) {
 			showMoreButton = new Link(this.getId() + '-showMoreButton', {
-				text: this.getTruncate() ? expandText : collapseText,
+				text: this.getTruncate() ? EXPAND_TEXT : COLLAPSE_TEXT,
 				press: function () {
 					var truncate = !this.getTruncate();
-					this._getShowMoreButton().setText(truncate ? expandText : collapseText);
+					this._getShowMoreButton().setText(truncate ? EXPAND_TEXT : COLLAPSE_TEXT);
 					this.setTruncate(truncate);
 				}.bind(this)
 			});
@@ -258,21 +273,26 @@ function(
 		return showMoreButton;
 	};
 
-	NotificationListItem.prototype.getAccessibilityText = function() {
+	/**
+	 * Updates invisible text.
+	 *
+	 * @private
+	 */
+	NotificationListItem.prototype._getFooterInvisibleText = function() {
 
-		var readUnreadText = this.getUnread() ? unreadText : readText,
-			dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', [this.getDatetime(), this.getPriority()]),
+		var readUnreadText = this.getUnread() ? UNREAD_TEXT : READ_TEXT,
+			dueAndPriorityString = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY', [this.getDatetime(), this.getPriority()]),
 			authorName = this.getAuthorName(),
-			ariaTexts = [this.getTitle(), this.getDescription(), readUnreadText];
+			ariaTexts = [readUnreadText];
 
 		if (authorName) {
-			ariaTexts.push(createdByText);
+			authorName = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_CREATED_BY');
 			ariaTexts.push(authorName);
+			ariaTexts.push(this.getAuthorName());
 		}
-
 		ariaTexts.push(dueAndPriorityString);
 
-		return ariaTexts.join(' ');
+		return this._footerIvisibleText.setText(ariaTexts.join(' '));
 	};
 
 	return NotificationListItem;
