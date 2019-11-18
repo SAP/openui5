@@ -8,6 +8,8 @@ sap.ui.define([
 ], function (Log) {
 	"use strict";
 
+	// Set stored amount of log entries to unlimited
+	Log.setLogEntriesLimit(Infinity);
 	// component names of all loggers created by OPA components
 	var aLoggerComponents = [];
 	// DEBUG is the default maximum log level for OPA
