@@ -159,4 +159,42 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitch", "sap/f/ProductSwitchIt
 			assert.strictEqual(this.oProductSwitch._getGridContainer().getLayout().getColumns(), 3, "Layout columns are updated");
 		});
 
+		QUnit.module("ProductSwitch - Accessibility", {
+			beforeEach: function () {
+				this.oProductSwitch = oUtil.getProductSwitch(5);
+				this.oProductSwitch.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oProductSwitch.destroy();
+				this.oProductSwitch = null;
+			}
+		});
+
+		QUnit.test("Attributes", function (assert) {
+			var $ProductSwitch = this.oProductSwitch.$(),
+				oRb = Core.getLibraryResourceBundle("sap.f");
+
+			assert.equal($ProductSwitch.attr("role"), "menu", "Role menu is set on the container");
+			assert.equal($ProductSwitch.attr("aria-label"), oRb.getText("PRODUCTSWITCH_CONTAINER_LABEL"), "Container aria-label is set correctly");
+		});
+
+		QUnit.test("Setsize and Posinset values", function (assert) {
+			var aItems = this.oProductSwitch.getItems(),
+				iItemCount = aItems.length,
+				oItem = aItems[3],
+				$Item = oItem.$();
+
+			assert.equal($Item.attr("aria-setsize"), iItemCount, "aria-setsize has the correct value");
+			assert.equal($Item.attr("aria-posinset"), "4", "aria-posinset has the correct value");
+
+			this.oProductSwitch.setSelectedItem(oItem);
+
+			assert.equal($Item.attr("aria-checked"), "true", "aria-checked is correctly set");
+
+			this.oProductSwitch.rerender();
+
+			assert.equal($Item.attr("aria-checked"), "true", "aria-checked is still correctly set");
+		});
+
 	});

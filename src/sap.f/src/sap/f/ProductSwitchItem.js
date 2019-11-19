@@ -150,6 +150,15 @@ sap.ui.define([
 			return oText;
 		};
 
+		/**
+		 * Gets the parent ProductSwitch instance.
+		 * @returns {sap.f.ProductSwitch}
+		 * @private
+		 */
+		ProductSwitchItem.prototype._getProductSwitch = function () {
+			return this.getParent().getParent();
+		};
+
 		ProductSwitchItem.prototype.onkeyup = function (oEvent) {
 			if ((oEvent.keyCode === KeyCodes.SPACE && !this._bEscapeShiftKeyPress)) {
 				this.fireEvent("_itemPress");

@@ -135,4 +135,22 @@ sap.ui.define(["sap/ui/core/Core", "sap/f/ProductSwitchItem", "sap/ui/qunit/QUni
 			assert.ok(this.oProductSwitchItem._getTitle().hasStyleClass("sapFPSItemMainTitle"), "Internal aggregation has sapFPSItemMainTitle additional class");
 			assert.ok(this.oProductSwitchItem._getTitle().hasStyleClass("sapFPSItemTitle"), "Internal aggregation has sapFPSItemTitle additional class");
 		});
+
+		QUnit.module("ProductSwitchItem - Accessibility", {
+			beforeEach: function () {
+				this.oProductSwitchItem = oUtil.getProductSwitchItem();
+				this.oProductSwitchItem.placeAt(TESTS_DOM_CONTAINER);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oProductSwitchItem.destroy();
+				this.oProductSwitchItem = null;
+			}
+		});
+
+		QUnit.test("Attributes", function (assert) {
+			var $ProductSwitchItem = this.oProductSwitchItem.$();
+
+			assert.equal($ProductSwitchItem.attr("role"), "menuitemradio", "Role menuitem is set on the ProductSwitch item");
+		});
 	});
