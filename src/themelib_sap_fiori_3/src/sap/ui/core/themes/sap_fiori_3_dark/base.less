@@ -125,16 +125,16 @@
 
 
 /* ACCENT COLORS */
-@sapAccentColor1: #e78e16;
-@sapAccentColor2: #d04343;
-@sapAccentColor3: #db1f77;
-@sapAccentColor4: #c949aa;
-@sapAccentColor5: #787ce2;
-@sapAccentColor6: #a9d4ff;
-@sapAccentColor7: #0f828f;
-@sapAccentColor8: #7ca10c;
-@sapAccentColor9: #925ace;
-@sapAccentColor10: #647987;
+@sapAccentColor1: #ffc847;
+@sapAccentColor2: #e7a1a1;
+@sapAccentColor3: #f37aa2;
+@sapAccentColor4: #e269c9;
+@sapAccentColor5: #8ca7d5;
+@sapAccentColor6: #6bd3ff;
+@sapAccentColor7: #7fc6c6;
+@sapAccentColor8: #b2e484;
+@sapAccentColor9: #b995e0;
+@sapAccentColor10: #b0bcc5;
 
 
 /* LEGEND COLORS */
@@ -339,7 +339,7 @@
 // [Label "Marker Text Color"]
 // [Description "The color of Marker Texts."]
 // [Tags "Base", "Content", "Color", "Font"]
-@sapContent_MarkerTextColor: lighten(@sapAccentColor7, 30);
+@sapContent_MarkerTextColor: @sapAccentColor7;
 
 // [Label "Image Placeholder Background Color"]
 // [Description "The background color of Image Placeholders."]
@@ -448,7 +448,7 @@
 // [Label "Content Badge Background"]
 // [Description "The background color of badges."]
 // [Tags "Base", "Content", "Color"]
-@sapContent_BadgeBackground: @sapAccentColor2;
+@sapContent_BadgeBackground: darken(@sapAccentColor2, 23);
 
 @sapContent_DragAndDropActiveColor: @sapActiveColor;
 
@@ -753,7 +753,7 @@
 // [Label "Required Field Color"]
 // [Description "The color of the asterisk next to required input fields."]
 // [Tags "Base", "Field", "Color"]
-@sapField_RequiredColor: lighten(@sapAccentColor2, 14);
+@sapField_RequiredColor: @sapAccentColor2;
 
 // [Label "Invalid Field Color"]
 // [Description "The base color of input fields with an invalid value."]
@@ -988,9 +988,9 @@
 // [Tags "Base", "Page", "Color"]
 @sapInfobar_Background: @sapAccentColor7;
 
-@sapInfobar_Hover_Background: lighten(@sapInfobar_Background, 5);
+@sapInfobar_Hover_Background: darken(@sapInfobar_Background, 3);
 
-@sapInfobar_Active_Background: lighten(@sapInfobar_Background, 10);
+@sapInfobar_Active_Background: darken(@sapInfobar_Background, 11);
 
 // [Label "Object Header Background Color"]
 // [Description "The background color of object headers."]
