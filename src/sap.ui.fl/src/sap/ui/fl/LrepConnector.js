@@ -509,5 +509,35 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Authenticated access to a resource in the Lrep
+	 *
+	 * @param {String} sNamespace The abap package goes here. It is needed to identify the change. Default LREP namespace is "localchange".
+	 * @param {String} sName Name of the change
+	 * @param {String} sType File type extension
+	 * @param {Boolean} bIsRuntime The stored file content is handed over to the lrep provider that can dynamically adjust the content to the runtime context (e.g. do text replacement to the users' logon language) before
+	 * @returns {Promise} Returns the result from the request
+	 *
+	 * @deprecated
+	 * @ui5-restricted sap.apf
+	 * @private
+	 */
+	LrepConnector.prototype.getStaticResource = function(sNamespace, sName, sType, bIsRuntime) {
+		var sRequestPath = FlexUtils.getLrepUrl() + LrepConnector.ROUTES.CONTENT;
+		sRequestPath += sNamespace + "/" + sName + "." + sType;
+
+		var aParams = [];
+		if (!bIsRuntime) {
+			aParams.push({
+				name: "dt",
+				value: "true"
+			});
+		}
+
+		sRequestPath += this._buildParams(aParams);
+
+		return this.send(sRequestPath, "GET", null, null);
+	};
+
 	return LrepConnector;
 }, true);
