@@ -95,6 +95,8 @@ function (
 
 	QUnit.module("flexEnabled set to `true` and there is unstable control when RTA is started", {
 		beforeEach: function () {
+			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").returns(true);
+
 			this.oComponent = _getMockedComponent(true, true);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -203,6 +205,7 @@ function (
 
 	QUnit.module("flexEnabled set to `true` and there are no unstable controls", {
 		beforeEach: function () {
+			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").returns(true);
 			this.oComponent = this.oComponent = _getMockedComponent(true, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
@@ -292,6 +295,7 @@ function (
 
 	QUnit.module("flexEnabled is not set and there is an unstable control", {
 		beforeEach: function () {
+			sandbox.stub(RuntimeAuthoring.prototype, "_shouldValidateFlexEnabled").returns(true);
 			this.oComponent = this.oComponent = _getMockedComponent(false, false);
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
