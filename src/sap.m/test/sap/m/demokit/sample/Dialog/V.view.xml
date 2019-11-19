@@ -3,39 +3,36 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button
-				text="Dialog"
-				width="230px"
-				press="onDialogPress"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-				text="Dialog (Fixed Size)"
-				width="230px"
-				press="onDialogWithSizePress"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-					text="Dialog (Resizable)"
-					width="230px"
-					press="onResizableDialog"
-					class="sapUiSmallMarginBottom" />
-
-			<Button
-					text="Dialog (Draggable)"
-					width="230px"
-					press="onDraggableDialog"
-					class="sapUiSmallMarginBottom" />
-
-			<Button
-					text="Dialog with prevent close"
-					width="230px"
-					press="onEscapePreventDialog"
-					class="sapUiSmallMarginBottom" />
-		</l:content>
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			text="Dialog"
+			width="230px"
+			press="onDialogPress"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Dialog (Fixed Size)"
+			width="230px"
+			press="onDialogWithSizePress"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Dialog (Resizable)"
+			width="230px"
+			press="onResizableDialog"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Dialog (Draggable)"
+			width="230px"
+			press="onDraggableDialog"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Dialog with prevent close"
+			width="230px"
+			press="onEscapePreventDialog"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Dialog with responsive padding"
+			width="230px"
+			press="onResponsivePaddingDialog"
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

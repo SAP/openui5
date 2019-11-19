@@ -4,25 +4,26 @@
 
 // Provides control sap.m.Dialog.
 sap.ui.define([
-	'./Bar',
-	'./InstanceManager',
-	'./AssociativeOverflowToolbar',
-	'./ToolbarSpacer',
-	'./Title',
-	'./library',
-	'./TitleAlignmentMixin',
-	'sap/ui/core/Control',
-	'sap/ui/core/IconPool',
-	'sap/ui/core/Popup',
-	'sap/ui/core/delegate/ScrollEnablement',
-	'sap/ui/core/RenderManager',
-	'sap/ui/core/InvisibleText',
-	'sap/ui/core/ResizeHandler',
-	'sap/ui/Device',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/core/library',
-	'./TitlePropagationSupport',
-	'./DialogRenderer',
+	"./Bar",
+	"./InstanceManager",
+	"./AssociativeOverflowToolbar",
+	"./ToolbarSpacer",
+	"./Title",
+	"./library",
+	"./TitleAlignmentMixin",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/Popup",
+	"sap/ui/core/delegate/ScrollEnablement",
+	"sap/ui/core/RenderManager",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/util/ResponsivePaddingsEnablement",
+	"sap/ui/Device",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/library",
+	"./TitlePropagationSupport",
+	"./DialogRenderer",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
@@ -47,6 +48,7 @@ function(
 	RenderManager,
 	InvisibleText,
 	ResizeHandler,
+	ResponsivePaddingsEnablement,
 	Device,
 	ManagedObject,
 	coreLibrary,
@@ -127,6 +129,7 @@ function(
 		* <li>If the <code>contentWidth</code> and/or <code>contentHeight</code> properties are set, the Dialog will try to fill those sizes.</li>
 		* <li>If there is no specific sizing, the Dialog will try to adjust its size to its content.</li>
 		* </ul>
+		* When using the <code>sap.m.Dialog</code> in SAP Quartz themes, the breakpoints and layout paddings could be determined by the Dialog's width. To enable this concept and add responsive paddings to an element of the Dialog control, you have to add the following classes depending on your use case: <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--subHeader</code>, <code>sapUiResponsivePadding--content</code>, <code>sapUiResponsivePadding--footer</code>.
 		* <h4>Smartphones</h4>
 		* If the Dialog has one or two actions, they will cover the entire footer. If there are more actions, they will overflow.
 		* <h4>Tablets</h4>
@@ -402,6 +405,13 @@ function(
 			}
 		});
 
+		ResponsivePaddingsEnablement.call(Dialog.prototype, {
+			header: {suffix: "header"},
+			subHeader: {selector: ".sapMDialogSubHeader .sapMIBar"},
+			content: {selector: ".sapMDialogScrollCont"},
+			footer: {suffix: "footer"}
+		});
+
 		// Add title propagation support
 		TitlePropagationSupport.call(Dialog.prototype, "content", function () {
 			return this._headerTitle ? this._headerTitle.getId() : false;
@@ -503,6 +513,8 @@ function(
 			}
 
 			this._initTitlePropagationSupport();
+
+			this._initResponsivePaddingsEnablement();
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {

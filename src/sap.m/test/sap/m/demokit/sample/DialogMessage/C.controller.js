@@ -1,38 +1,38 @@
 sap.ui.define([
-		'sap/m/Button',
-		'sap/m/Dialog',
-		'sap/m/Text',
-		'sap/ui/core/mvc/Controller',
-		'sap/m/ButtonType'
-	], function(Button, Dialog, Text, Controller, ButtonType) {
+	"sap/m/Button",
+	"sap/m/Dialog",
+	"sap/m/Text",
+	"sap/ui/core/mvc/Controller",
+	"sap/m/ButtonType"
+], function (Button, Dialog, Text, Controller, ButtonType) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.DialogMessage.C", {
+	return Controller.extend("sap.m.sample.DialogMessage.C", {
 
-		onMessageDialogPress: function (oEvent) {
-			var dialog = new Dialog({
+		onMessageDialogPress: function () {
+			var oDialog = new Dialog({
 				title: 'Default Message',
 				type: 'Message',
-					content: new Text({
-						text: 'Build enterprise-ready web applications, responsive to all devices and running on the browser of your choice. That´s OpenUI5.'
-					}),
+				content: new Text({
+					text: 'Build enterprise-ready web applications, responsive to all devices and running on the browser of your choice. That´s OpenUI5.'
+				}),
 				beginButton: new Button({
 					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		},
 
-		onMessageErrorDialogPress: function (oEvent) {
-			var dialog = new Dialog({
+		onMessageErrorDialogPress: function () {
+			var oDialog = new Dialog({
 				title: 'Error',
 				type: 'Message',
 				state: 'Error',
@@ -43,19 +43,19 @@ sap.ui.define([
 					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		},
 
-		onMessageWarningDialogPress: function (oEvent) {
-			var dialog = new Dialog({
+		onMessageWarningDialogPress: function () {
+			var oDialog = new Dialog({
 				title: 'Warning',
 				type: 'Message',
 				state: 'Warning',
@@ -66,19 +66,19 @@ sap.ui.define([
 					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		},
 
-		onMessageSuccessDialogPress: function (oEvent) {
-			var dialog = new Dialog({
+		onMessageSuccessDialogPress: function () {
+			var oDialog = new Dialog({
 				title: 'Success',
 				type: 'Message',
 				state: 'Success',
@@ -89,19 +89,19 @@ sap.ui.define([
 					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		},
 
-		onMessageInformationDialogPress: function (oEvent) {
-			var dialog = new Dialog({
+		onMessageInformationDialogPress: function () {
+			var oDialog = new Dialog({
 				title: 'Information',
 				type: 'Message',
 				state: 'Information',
@@ -112,19 +112,16 @@ sap.ui.define([
 					type: ButtonType.Emphasized,
 					text: 'OK',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		}
+
 	});
-
-
-	return CController;
-
 });

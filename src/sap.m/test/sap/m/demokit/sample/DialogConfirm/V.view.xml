@@ -3,33 +3,26 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button
-				text="Approve"
-				width="250px"
-				press="onApproveDialog"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-				text="Reject"
-				width="250px"
-				press="onRejectDialog"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-				text="Submit (mandatory note)"
-				width="250px"
-				press="onSubmitDialog"
-				class="sapUiSmallMarginBottom" />
-
-			<Button
-				text="Confirm (optional note)"
-				width="250px"
-				press="onConfirmDialog"
-				class="sapUiSmallMarginBottom" />
-		</l:content>
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Button
+			text="Approve"
+			width="230px"
+			press="onApproveDialog"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Reject"
+			width="230px"
+			press="onRejectDialog"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Submit (mandatory note)"
+			width="230px"
+			press="onSubmitDialog"
+			class="sapUiSmallMarginBottom" />
+		<Button
+			text="Confirm (optional note)"
+			width="230px"
+			press="onConfirmDialog"
+			class="sapUiSmallMarginBottom" />
 	</l:VerticalLayout>
 </mvc:View>

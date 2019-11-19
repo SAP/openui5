@@ -1,21 +1,21 @@
 sap.ui.define([
-		'sap/m/Button',
-		'sap/m/Dialog',
-		'sap/m/Label',
-		'sap/m/MessageToast',
-		'sap/m/Text',
-		'sap/m/TextArea',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/layout/HorizontalLayout',
-		'sap/ui/layout/VerticalLayout',
-		'sap/m/ButtonType'
-	], function(Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout, ButtonType) {
+	"sap/m/Button",
+	"sap/m/Dialog",
+	"sap/m/Label",
+	"sap/m/MessageToast",
+	"sap/m/Text",
+	"sap/m/TextArea",
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
+	"sap/m/ButtonType"
+], function (Button, Dialog, Label, MessageToast, Text, TextArea, Controller, HorizontalLayout, VerticalLayout, ButtonType) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.DialogConfirm.C", {
+	return Controller.extend("sap.m.sample.DialogConfirm.C", {
 
 		onApproveDialog: function () {
-			var dialog = new Dialog({
+			var oDialog = new Dialog({
 				title: 'Confirm',
 				type: 'Message',
 				content: new Text({ text: 'Are you sure you want to submit your shopping cart?' }),
@@ -24,29 +24,29 @@ sap.ui.define([
 					text: 'Submit',
 					press: function () {
 						MessageToast.show('Submit pressed!');
-						dialog.close();
+						oDialog.close();
 					}
 				}),
 				endButton: new Button({
 					text: 'Cancel',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		},
 
 		onRejectDialog: function () {
-			var dialog = new Dialog({
+			var oDialog = new Dialog({
 				title: 'Reject',
 				type: 'Message',
 				content: [
-					new Label({ text: 'Are you sure you want to reject your shopping cart?', labelFor: 'rejectDialogTextarea'}),
+					new Label({ text: 'Are you sure you want to reject your shopping cart?', labelFor: 'rejectDialogTextarea' }),
 					new TextArea('rejectDialogTextarea', {
 						width: '100%',
 						placeholder: 'Add note (optional)'
@@ -58,31 +58,31 @@ sap.ui.define([
 					press: function () {
 						var sText = sap.ui.getCore().byId('rejectDialogTextarea').getValue();
 						MessageToast.show('Note is: ' + sText);
-						dialog.close();
+						oDialog.close();
 					}
 				}),
 				endButton: new Button({
 					text: 'Cancel',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		},
 
 		onSubmitDialog: function () {
-			var dialog = new Dialog({
+			var oDialog = new Dialog({
 				title: 'Confirm',
 				type: 'Message',
 				content: [
-					new Label({ text: 'Are you sure you want to submit your shopping cart?', labelFor: 'submitDialogTextarea'}),
+					new Label({ text: 'Are you sure you want to submit your shopping cart?', labelFor: 'submitDialogTextarea' }),
 					new TextArea('submitDialogTextarea', {
-						liveChange: function(oEvent) {
+						liveChange: function (oEvent) {
 							var sText = oEvent.getParameter('value');
 							var parent = oEvent.getSource().getParent();
 
@@ -99,25 +99,25 @@ sap.ui.define([
 					press: function () {
 						var sText = sap.ui.getCore().byId('submitDialogTextarea').getValue();
 						MessageToast.show('Note is: ' + sText);
-						dialog.close();
+						oDialog.close();
 					}
 				}),
 				endButton: new Button({
 					text: 'Cancel',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		},
 
 		onConfirmDialog: function () {
-			var dialog = new Dialog({
+			var oDialog = new Dialog({
 				title: 'Confirm',
 				type: 'Message',
 				content: [
@@ -151,25 +151,22 @@ sap.ui.define([
 					press: function () {
 						var sText = sap.ui.getCore().byId('confirmDialogTextarea').getValue();
 						MessageToast.show('Note is: ' + sText);
-						dialog.close();
+						oDialog.close();
 					}
 				}),
 				endButton: new Button({
 					text: 'Cancel',
 					press: function () {
-						dialog.close();
+						oDialog.close();
 					}
 				}),
-				afterClose: function() {
-					dialog.destroy();
+				afterClose: function () {
+					oDialog.destroy();
 				}
 			});
 
-			dialog.open();
+			oDialog.open();
 		}
+
 	});
-
-
-	return CController;
-
 });
