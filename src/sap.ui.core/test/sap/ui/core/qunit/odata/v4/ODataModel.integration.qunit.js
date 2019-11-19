@@ -1982,6 +1982,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: relative ODLB without cache; late property does not attach, but requests the value
+	// itself.
+	// JIRA: CPOUI5UISERVICESV3-2021
+	QUnit.test("ODLB w/o cache: late property", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/SalesOrderList(\'1\')}">\
+	<Table id="table" items="{SO_2_SOITEM}">\
+		<ColumnListItem>\
+			<Text id="position" text="{ItemPosition}"/>\
+		</ColumnListItem>\
+	</Table>\
+</FlexBox>\
+<Text id="quantity" text="{Quantity}" />',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
+			+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				SO_2_SOITEM : [
+					{ItemPosition : "0010", SalesOrderID : "1"}
+				]
+			})
+			.expectChange("position", ["0010"])
+			.expectChange("quantity");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// the late property does not attach, but requests the value itself
+			that.expectRequest(
+				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')/Quantity", {
+					value : "5"
+				})
+				.expectChange("quantity", "5.000");
+
+			// select an item
+			that.oView.byId("quantity").setBindingContext(
+				that.oView.byId("table").getBinding("items").getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: ODLB, late property. See that it is requested only once, even when bound twice. See
 	// that it is updated via requestSideEffects called at the parent binding (all visible rows).
 	// JIRA: CPOUI5UISERVICESV3-1878
@@ -14966,8 +15008,7 @@ sap.ui.define([
 	</ColumnListItem>\
 </Table>\
 <!-- to determine which request is fired the second table requests only 5 entries -->\
-<Table id="tableSOItems2" growing="true" growingThreshold="5"\
-		items="{path : \'SO_2_SOITEM\', parameters : {}}">\
+<Table id="tableSOItems2" growing="true" growingThreshold="5" items="{SO_2_SOITEM}">\
 	<ColumnListItem>\
 		<Input id="note2" value="{Note}" />\
 	</ColumnListItem>\

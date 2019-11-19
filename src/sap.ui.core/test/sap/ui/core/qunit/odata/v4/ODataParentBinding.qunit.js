@@ -1584,6 +1584,21 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("aggregateQueryOptions: no cache", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mAggregatedQueryOptions : {$select : ["foo"]},
+				oCache : null
+			}),
+			mChildQueryOptions = {$select : ["bar"]};
+
+		// code under test
+		assert.strictEqual(oBinding.aggregateQueryOptions(mChildQueryOptions, true), false);
+	});
+	// TODO instead of rejecting late properties if there is no cache, the binding should instead
+	//   aggregate the late query options (but not in mAggregatedQueryOptions) and bubble up to the
+	//   parent binding
+
+	//*********************************************************************************************
 	QUnit.test("deleteFromCache: binding w/ cache", function (assert) {
 		var oCache = {
 				_delete : function () {}
