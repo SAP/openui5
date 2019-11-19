@@ -732,8 +732,8 @@ function(
 				oCoreMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
 				oBinding = this.getBinding("value"),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
-				sBindingConstraintMax = oBindingType && oBindingType.oConstraints.maximum,
-				sBindingConstraintMin = oBindingType && oBindingType.oConstraints.minimum,
+				sBindingConstraintMax = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.maximum,
+				sBindingConstraintMin = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.minimum,
 				sMessage,
 				aViolatedConstraints = [],
 				bHasValidationErrorListeners = false,
@@ -1444,7 +1444,7 @@ function(
 		StepInput.prototype._getMin = function() {
 			var oBinding = this.getBinding("value"),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
-				sBindingConstraintMin = oBindingType && oBindingType.oConstraints.minimum;
+				sBindingConstraintMin = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.minimum;
 
 			return sBindingConstraintMin ? parseFloat(sBindingConstraintMin) : this.getMin();
 		};
@@ -1452,7 +1452,7 @@ function(
 		StepInput.prototype._getMax = function() {
 			var oBinding = this.getBinding("value"),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
-				sBindingConstraintMax = oBindingType && oBindingType.oConstraints.maximum;
+				sBindingConstraintMax = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.maximum;
 
 			return sBindingConstraintMax ? parseFloat(sBindingConstraintMax) : this.getMax();
 		};
