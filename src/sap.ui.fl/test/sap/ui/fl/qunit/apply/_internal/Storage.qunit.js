@@ -518,21 +518,14 @@ sap.ui.define([
 				assert.deepEqual(aVariants[2].content, oVariant2.content, "the variant 2 is added");
 				assert.equal(aVariants[2].controlChanges.length, 0, "no control changes are present for the variant 2");
 				mVariantChanges = aVariants[2].variantChanges;
-				assert.equal(Object.keys(mVariantChanges).length, 1, "one type of changes are present for variant 2");
-				aSetTitleChanges = mVariantChanges.setTitle;
-				assert.equal(aSetTitleChanges.length, 1, "two set title variant changes are present for the variant 2");
-				assert.deepEqual(aSetTitleChanges[0], oVariantChange1_1, "the variant change 1_1 was added");
+				assert.deepEqual(mVariantChanges, {}, "no variant change for variant 2");
 
 				assert.deepEqual(aVariants[3].content, oVariant3.content, "the variant 3 is added");
 				assert.equal(aVariants[3].controlChanges.length, 2, "no control changes are present for the variant 3");
 				assert.deepEqual(aVariants[1].controlChanges[1], oVariantDependentChange2, "the control change 2 was added");
 				assert.deepEqual(aVariants[1].controlChanges[2], oVariantDependentChange3, "the control change 3 was added");
 				mVariantChanges = aVariants[3].variantChanges;
-				assert.equal(Object.keys(mVariantChanges).length, 1, "one type of changes are present for variant 3");
-				aSetTitleChanges = mVariantChanges.setTitle;
-				assert.equal(aSetTitleChanges.length, 2, "two set title variant changes are present for the variant 3");
-				assert.deepEqual(aSetTitleChanges[0], oVariantChange1_1, "the variant change 1_1 was added");
-				assert.deepEqual(aSetTitleChanges[1], oVariantChange1_2, "the variant change 1_2 was added");
+				assert.deepEqual(mVariantChanges, {}, "no variant change for variant 3");
 			});
 		});
 	});
