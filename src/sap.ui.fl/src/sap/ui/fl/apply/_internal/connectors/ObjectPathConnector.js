@@ -32,7 +32,7 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				var sPath = ObjectPathConnector.jsonPath || mPropertyBag.path;
 				if (sPath) {
-					jQuery.getJSON(ObjectPathConnector.jsonPath).done(function (oResponse) {
+					jQuery.getJSON(sPath).done(function (oResponse) {
 						oResponse.componentClassName = mPropertyBag.flexReference;
 						resolve(oResponse);
 					}).fail(reject);

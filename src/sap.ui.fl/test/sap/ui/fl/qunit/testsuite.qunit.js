@@ -226,6 +226,17 @@ sap.ui.define(function () {
 					flexibilityServices: '[{"connector": "JsObjectConnector", "layers": ["ALL"]}]'
 				}
 			},
+			"write/_internal/connectors/ObjectPathConnector": {
+				group: "Write Internal",
+				coverage: {
+					only: [
+						"sap/ui/fl/write/_internal/connectors/ObjectPathConnector"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
+				}
+			},
 			"write/_internal/connectors/Utils": {
 				group: "Write Internal",
 				coverage: {
