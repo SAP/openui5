@@ -54,6 +54,14 @@ sap.ui.define(function () {
 					only: ["sap/f/cards/BindingResolver"]
 				}
 			},
+			"Card-BindingFeatures-DateRange": {
+				coverage: {
+					only: ["sap/f/cards/bindingFeatures/DateRange"]
+				},
+				module: [
+					'./cards/bindingFeatures/DateRange.qunit'
+				]
+			},
 			"DataProvider": {
 				coverage: {
 					only: [

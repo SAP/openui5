@@ -181,6 +181,15 @@ sap.ui.define([
 						manifestUrl: '/samples/dynamicCounter/manifest.json'
 					},
 					{
+						key: 'dateRange',
+						target: 'exploreSamples',
+						title: 'Date Range',
+						settings: {
+							columns: 6
+						},
+						manifestUrl: "/samples/dateRange.json"
+					},
+					{
 						key: 'htmlConsumption',
 						target: 'exploreSamples',
 						title: 'Consumption in HTML',
@@ -218,7 +227,7 @@ sap.ui.define([
 				key: 'formatters',
 				target: 'exploreOverview',
 				targetKey: 'formatters',
-				icon: 'sap-icon://activities',
+				icon: 'sap-icon://text-formatting',
 				hasExpander: false,
 				items: [
 					{

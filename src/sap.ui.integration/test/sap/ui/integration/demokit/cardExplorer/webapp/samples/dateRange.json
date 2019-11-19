@@ -1,0 +1,72 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "card.explorer.features.dateRange",
+		"type": "card",
+		"title": "Sample of date range usage",
+		"subTitle": "Sample of date range usage"
+	},
+	"sap.card": {
+		"type": "Table",
+		"configuration": {
+			"parameters": {
+				"northwindServiceUrl": {
+					"value": "https://services.odata.org/V3/Northwind/Northwind.svc"
+				},
+				"periodInterval": {
+				    "value": "lastYears"
+				},
+				"periodAge": {
+				    "value": "30"
+				},
+				"maxItems": {
+					"value": "7"
+				}
+			}
+		},
+		"header": {
+			"title": "Top orders for last {{parameters.periodAge}} years",
+			"subTitle": "Since: {= format.date(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'MMMM d, y'})}",
+			"icon": {
+				"src": "sap-icon://compare-2"
+			},
+			"status": {
+			    "text": "top {{parameters.maxItems}}"
+			}
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "{{parameters.northwindServiceUrl}}/Orders",
+					"parameters": {
+						"$format": "json",
+						"$top": "{{parameters.maxItems}}",
+						"$orderby": "Freight desc",
+						"$filter": "OrderDate ge datetime'{= format.date(dateRange.start('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}' and OrderDate le datetime'{= format.date(dateRange.end('{{parameters.periodInterval}}', {{parameters.periodAge}}), {pattern: 'yyyy-MM-ddTHH:mm:ss'})}'"
+					}
+				},
+				"path": "/value/"
+			},
+			"maxItems": "{{parameters.maxItems}}",
+			"row": {
+				"columns": [{
+						"title": "Customer",
+						"value": "{ShipName}"
+					},
+					{
+						"title": "Country",
+						"value": "{ShipCountry}"
+					},
+					{
+						"title": "Freight",
+						"value": "{Freight}"
+					},
+					{
+						"title": "Date",
+						"value": "{= format.date(${OrderDate}, {pattern: 'MMMM, y'})}"
+					}
+				]
+			}
+		}
+	}
+}
