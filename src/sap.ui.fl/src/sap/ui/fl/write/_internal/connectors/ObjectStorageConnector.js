@@ -31,6 +31,17 @@ sap.ui.define([
 		return bDelete;
 	}
 
+	function setFlexObjectCreation(oFlexObject, iCounter) {
+		if (!oFlexObject.creation) {
+			// safari browser uses only 1 ms intervals to create a timestamp. This
+			// generates creation timestamp duplicates. But creation timestamp is
+			// used to define the order of the changes and needs to be unique
+			var nCreationTimestamp = Date.now() + iCounter;
+			oFlexObject.creation = new Date(nCreationTimestamp).toISOString();
+		}
+		return oFlexObject;
+	}
+
 	/**
 	 * Base Connector for requesting data from session or local storage
 	 *
@@ -52,8 +63,9 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		write: function(mPropertyBag) {
-			var aPromises = mPropertyBag.flexObjects.map(function(oFlexObject) {
+			var aPromises = mPropertyBag.flexObjects.map(function(oFlexObject, iIndex) {
 				var sKey = ObjectStorageUtils.createFlexObjectKey(oFlexObject);
+				oFlexObject = setFlexObjectCreation(oFlexObject, ++iIndex);
 				var vFlexObject = this.oStorage._itemsStoredAsObjects ? oFlexObject : JSON.stringify(oFlexObject);
 				return this.oStorage.setItem(sKey, vFlexObject);
 			}.bind(this));
