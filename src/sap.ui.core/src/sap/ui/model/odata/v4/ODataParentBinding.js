@@ -283,6 +283,9 @@ sap.ui.define([
 			if (!bCacheImmutable) {
 				this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
 			} else if (bChanged) {
+				if (this.oCache === null) {
+					return false;
+				}
 				this.oCache.setLateQueryOptions(mAggregatedQueryOptionsClone);
 			}
 			return true;
