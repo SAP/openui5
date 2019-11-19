@@ -1344,6 +1344,8 @@ sap.ui.define([
 
 		// check whether property is bound and update model in case of two way binding
 		this.updateModelProperty(sPropertyName, oValue, oOldValue);
+		// refresh new value as model might have changed it
+		oValue = this.mProperties[sPropertyName];
 
 		// fire property change event (experimental, only for internal use)
 		if ( this.mEventRegistry["_change"] ) {

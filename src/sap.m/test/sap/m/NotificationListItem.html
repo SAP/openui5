@@ -43,14 +43,14 @@
 					new sap.m.Button({
 						text: 'Accept',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
 					new sap.m.Button({
 						text: 'Cancel',
 						type: sap.m.ButtonType.Reject,
-						tap: function () {
+						press: function () {
 							listItem2.close();
 						}
 					})
@@ -70,7 +70,7 @@
 						id: 'button1',
 						text: 'Accept',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					})
@@ -81,7 +81,7 @@
 				title: 'Notification List Title',
 				description : 'Notification List Item with no "Accept" and no "Reject" buttons.',
 				showButtons: false,
-				showCloseButton : false,
+				showCloseButton : true,
 				datetime : '3 days',
 				priority : sap.ui.core.Priority.Low,
 				authorName : 'Office Notification',
@@ -91,7 +91,7 @@
 						id: 'button356',
 						text: 'OK',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					})
@@ -110,8 +110,7 @@
 					new sap.m.Button({
 						id: 'button3',
 						text: 'OK',
-						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					})
@@ -132,7 +131,7 @@
 						id: 'button5',
 						text: 'Accept',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
@@ -140,7 +139,7 @@
 						id: 'button6',
 						text: 'Cancel',
 						type: sap.m.ButtonType.Reject,
-						tap: function () {
+						press: function () {
 							listItem2.close();
 						}
 					})
@@ -295,7 +294,7 @@
 						id: 'button51',
 						text: 'Accept',
 						type: sap.m.ButtonType.Accept,
-						tap: function () {
+						press: function () {
 							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
@@ -303,7 +302,7 @@
 						id: 'button61',
 						text: 'Cancel',
 						type: sap.m.ButtonType.Reject,
-						tap: function () {
+						press: function () {
 							listItem8.close();
 						}
 					})

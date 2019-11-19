@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/table/TableUtils"
+	"sap/ui/table/utils/TableUtils"
 ], function(JSONModel, Control, TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, TableUtils) {
 	"use strict";
 
@@ -163,11 +163,15 @@ sap.ui.define([
 	function setExperimentalConfig(oTable, mOptions) {
 		var aExperimentalProperties = ["_bVariableRowHeightEnabled", "_bLargeDataScrolling"];
 
-		Object.keys(mOptions).reduce(function(oObject, sExperimentalProperty) {
-			if (aExperimentalProperties.indexOf(sExperimentalProperty) >= 0) {
-				oTable[sExperimentalProperty] = mOptions[sExperimentalProperty];
+		for (var sKey in mOptions) {
+			if (aExperimentalProperties.indexOf(sKey) >= 0) {
+				oTable[sKey] = mOptions[sKey];
 			}
-		}, {});
+		}
+
+		if ("rowMode" in mOptions) {
+			oTable.setRowMode(mOptions.rowMode);
+		}
 	}
 
 	function addAsyncHelpers(oTable) {
@@ -185,9 +189,11 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				window.requestAnimationFrame(function() {
 					if (TableUtils.isVariableRowHeightEnabled(oTable)) {
-						window.requestAnimationFrame(resolve);
+						window.requestAnimationFrame(function() {
+							setTimeout(resolve, 0);
+						});
 					} else {
-						resolve();
+						setTimeout(resolve, 0);
 					}
 				});
 			});
@@ -246,7 +252,9 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.whenRenderingFinished = function() {
-			if (oTable.qunit.pRenderingFinished != null) {
+			if (!oTable.qunit.bInitialRenderingFinished) {
+				return oTable.qunit.whenInitialRenderingFinished();
+			} else if (oTable.qunit.pRenderingFinished != null) {
 				return oTable.qunit.pRenderingFinished;
 			} else if (oTable._getFirstRenderedRowIndex() !== oTable._iRenderedFirstVisibleRow) {
 				return oTable.qunit.whenNextRenderingFinished();
@@ -344,6 +352,17 @@ sap.ui.define([
 		};
 
 		/**
+		 * Returns a promise that resolves when the next scroll event of the viewport is fired.
+		 *
+		 * @returns {Promise} A promise.
+		 */
+		oTable.qunit.whenViewportScrolled = function() {
+			return new Promise(function(resolve) {
+				TableQUnitUtils.addEventListenerOnce(oTable.getDomRef("tableCCnt"), "scroll", resolve);
+			});
+		};
+
+		/**
 		 * Returns a promise that resolves when the scrolling is performed and rendering is finished.
 		 *
 		 * @param {int} iScrollPosition The new vertical scroll position.
@@ -358,6 +377,7 @@ sap.ui.define([
 			if (oVSb.scrollTop === iOldScrollTop) {
 				return Promise.resolve();
 			} else {
+				// TODO: Make this work with large data scrolling.
 				return oTable.qunit.whenVSbScrolled().then(oTable.qunit.whenRenderingFinished);
 			}
 		};
@@ -563,12 +583,12 @@ sap.ui.define([
 	};
 
 	TableQUnitUtils.createTable = function(TableClass, mOptions, fnBeforePlaceAt) {
-		if (typeof TableClass === "object" && TableClass !== null) {
+		if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
+			fnBeforePlaceAt = TableClass;
+			TableClass = Table;
+		} else if (typeof TableClass === "object") {
 			fnBeforePlaceAt = mOptions;
 			mOptions = TableClass;
-			TableClass = Table;
-		} else if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
-			fnBeforePlaceAt = TableClass;
 			TableClass = Table;
 		}
 		mOptions = Object.assign({}, mDefaultOptions, mOptions);

@@ -4,7 +4,7 @@
 sap.ui.define([
 	"../library",
 	"./RowMode",
-	"../TableUtils",
+	"../utils/TableUtils",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
@@ -246,7 +246,7 @@ sap.ui.define([
 		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 		if (!bRenderedRows && oTable.getRows().length > 0) {
-			oTable._fireRowsUpdated(TableUtils.RowsUpdateReason.Render);
+			this.fireRowsUpdated(TableUtils.RowsUpdateReason.Render);
 		}
 	};
 

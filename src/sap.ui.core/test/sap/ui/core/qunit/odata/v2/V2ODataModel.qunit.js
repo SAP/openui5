@@ -6085,8 +6085,11 @@ sap.ui.define([
 						dataReceived: function() {
 							assert.strictEqual(iCount, 0, "dataReceived called once");
 							iCount++;
-							oInput1.destroy();
-							done();
+							if (iCount === 1) {
+								oModel.setProperty("/ProductSet('HT-1000')/Name", "Test");
+								oInput1.destroy();
+								done();
+							}
 						}
 					}
 				}

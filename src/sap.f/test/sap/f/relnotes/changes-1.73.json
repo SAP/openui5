@@ -36,6 +36,18 @@
         "type": "FIX",
         "text": " sap.ui.core: address SDK feedback (2019/10 and older)",
         "references": []
+      },
+      {
+        "id": "319623ecc320e60d13852311d6b77f99b0b28e95",
+        "type": "FEATURE",
+        "text": " Demo Kit: Search highlighting is implemented",
+        "references": []
+      },
+      {
+        "id": "122353840693bb68d5082f00f91df319ae7eae5e",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Visual bugs fixed",
+        "references": []
       }
     ]
   }

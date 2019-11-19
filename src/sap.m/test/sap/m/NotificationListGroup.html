@@ -34,7 +34,7 @@
 				new sap.m.Button({
 					text: 'OK',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('OK button pressed');
 					}
 				})
@@ -56,11 +56,12 @@
 			// datetime: 'More than 5 minutes', // deprecated
 			// authorPicture: 'images/SAPLogo.jpg', // deprecated
 			// authorName: 'Lorem Ipsum', // deprecated
+			showCloseButton: false,
 			buttons: [
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				}),
@@ -79,6 +80,29 @@
 				sap.m.MessageToast.show(collapseExpandText);
 			}
 		});
+
+		// for testing the showing of the buttons for short time before to be hidden in the overflow toolbar after reload of the page
+				var overflowToolBarTest = new sap.m.OverflowToolbar({
+				width: "200px",
+				content: [
+					new sap.m.Text ({text:"some long long long long text", wrapping: false}),
+					new sap.m.Button({
+						text: 'Accept All',
+						type: sap.m.ButtonType.Accept,
+						press: function () {
+							sap.m.MessageToast.show('Accept all button pressed');
+						}
+					}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+					})),
+					new sap.m.Button({
+						text: 'Cancel All',
+						type: sap.m.ButtonType.Reject
+					}).setLayoutData(new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.AlwaysOverflow
+					}))
+				]
+			});
 
 		var singleItemGroup = new sap.m.NotificationListGroup({
 			id: 'notificationGroup2',
@@ -102,14 +126,14 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})
@@ -127,7 +151,7 @@
 						new sap.m.Button({
 							text: 'OK',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('OK button pressed');
 							}
 						})
@@ -150,7 +174,7 @@
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				})
@@ -169,8 +193,7 @@
 			buttons: [
 				new sap.m.Button({
 					text: 'Accept All',
-					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				})
@@ -189,7 +212,7 @@
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				}),
@@ -211,19 +234,19 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})
 					]
-				}),
+				})
 			]
 		});
 
@@ -239,7 +262,7 @@
 				new sap.m.Button({
 					text: 'Accept All',
 					type: sap.m.ButtonType.Accept,
-					tap: function () {
+					press: function () {
 						sap.m.MessageToast.show('Accept all button pressed');
 					}
 				}),
@@ -261,14 +284,14 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})
@@ -286,14 +309,14 @@
 						new sap.m.Button({
 							text: 'Accept',
 							type: sap.m.ButtonType.Accept,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Accept button pressed');
 							}
 						}),
 						new sap.m.Button({
 							text: 'Cancel',
 							type: sap.m.ButtonType.Reject,
-							tap: function () {
+							press: function () {
 								sap.m.MessageToast.show('Cancel button pressed');
 							}
 						})
@@ -323,7 +346,7 @@
 
 		var page = new sap.m.Page("page", {
 			title: "NotificationGroup Test Page",
-        		content: [compactSizeButton, list]
+        		content: [overflowToolBarTest, compactSizeButton, list]
 		});
 
 		var oApp = new sap.m.App("myApp", { initialPage: "page" });

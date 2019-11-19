@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",

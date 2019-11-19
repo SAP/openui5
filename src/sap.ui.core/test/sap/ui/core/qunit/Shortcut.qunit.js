@@ -82,10 +82,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("fnWrapper trigger", function(assert) {
+		assert.expect(4);
 		var done = assert.async();
-		assert.expect(1);
+		var oHTMLElementFocusSpy = sinon.spy(HTMLElement.prototype, "focus");
 		var oInput = new Input();
-		oInput.addDependent(new CommandExecution({command:"Save", execute:function() {assert.ok(true, "triggered"); done();}}));
+
+		oInput.addDependent(new CommandExecution({command:"Save", execute:function() {
+			assert.ok(true, "triggered");
+			assert.equal(oHTMLElementFocusSpy.callCount, 3, "HTMLElement.prototype.focus should be called thrice");
+			assert.ok(oInput.getDomRef().contains(document.activeElement), "Focus should be restored correctly");
+			assert.notOk(document.getElementById("sap-ui-shortcut-focus"), "span element should be removed again");
+
+			oHTMLElementFocusSpy.restore();
+			done();
+		}}));
+
 		oInput.placeAt("qunit-fixture");
 		oInput.addEventDelegate({"onAfterRendering": function() {
 			oInput.focus();

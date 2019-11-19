@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.table.RowSettings
 sap.ui.define([
-	'sap/ui/core/Element', './TableUtils', 'sap/ui/base/DataType', './library', 'sap/ui/core/library'
+	'sap/ui/core/Element', './utils/TableUtils', 'sap/ui/base/DataType', './library', 'sap/ui/core/library'
 ], function(Element, TableUtils, DataType, library, coreLibrary) {
 	"use strict";
 

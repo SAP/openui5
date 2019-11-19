@@ -23,11 +23,6 @@
 		padding: 0.75rem 0.5rem 0 0.75rem;
 		display: flex;
 		align-items: center;
-
-		.sapMNLIBPriority .sapUiIcon {
-			font-size: 0.875rem;
-			line-height: 0.875rem;
-		}
 	}
 
 	.sapMNLGroupTitle {
@@ -58,7 +53,8 @@
 
 	.sapMNLGroupCollapseButton {
 		margin-right: 0.75rem;
-		width: 2.25rem;
+		min-width: 2.25rem; // fixes IE flex issue
+		max-width: 2.25rem; // fixes IE flex issue
 	}
 
 	.sapMNLGroupMaxNotifications {
@@ -108,8 +104,9 @@
 .sapUiSizeCompact {
 	.sapMNLGroup {
 		.sapMNLGroupCollapseButton {
-			width: 2rem;
 			margin-right: 1rem;
+			min-width: 2rem; // fixes IE flex issue
+			max-width: 2rem; // fixes IE flex issue
 		}
 	}
 }

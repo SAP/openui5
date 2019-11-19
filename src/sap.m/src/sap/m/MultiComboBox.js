@@ -437,7 +437,7 @@ function(
 		aVisibleItems = this._getUnselectedItems(bPickerOpened ? "" : this.getValue());
 
 		for (i = 0; i < aVisibleItems.length; i++) {
-			if (aVisibleItems[i].getText().toUpperCase() === this.getValue().toUpperCase()) {
+			if (aVisibleItems[i].getText().toUpperCase() === this.getValue().toUpperCase() && aVisibleItems[i].getKey()) {
 				oItem = aVisibleItems[i];
 				bItemMatched = true;
 				break;
@@ -774,6 +774,11 @@ function(
 		if (this.isOpen()) {
 			// wait a tick so the setVisible call has replaced the DOM
 			setTimeout(this._highlightList.bind(this, this._sOldInput));
+		}
+
+		// if recommendations were shown - add the icon pressed style
+		if (this._getItemsShownWithFilter()) {
+			this.toggleIconPressedStyle(true);
 		}
 	};
 
@@ -1147,10 +1152,10 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onBeforeOpen = function() {
+		ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
 		var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
 
 		// add the active state to the MultiComboBox's field
-		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this._resetCurrentItem();
 		this.addContent();
 		this._aInitiallySelectedItems = this.getSelectedItems();
@@ -1203,7 +1208,7 @@ function(
 		oDomRef && this.getRoleComboNodeDomRef().setAttribute("aria-expanded", "false");
 
 		// remove the active state of the MultiComboBox's field
-		this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
+		this.toggleIconPressedStyle(false);
 
 		// Show all items when the list will be opened next time
 		this.clearFilter();

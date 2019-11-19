@@ -5,6 +5,15 @@
 
 .sapMNLIB {
 	position: relative;
+
+	.sapMIBar.sapMTB .sapMBarChild:only-child,
+	.sapMTB {
+		padding-right: 0;
+	}
+
+	.sapMNLICloseBtn {
+		margin-left: 0.5rem
+	}
 }
 
 html.sap-desktop {
@@ -36,6 +45,11 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 .sapMNLIBPriority {
 	padding-right: 0.5rem;
+
+	.sapUiIcon {
+		font-size: 1rem;
+		line-height: 1rem;
+	}
 }
 
 .sapMNLIBPriorityLow .sapUiIcon {
@@ -62,6 +76,12 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 }
 
-.sap-phone .sapMNLIBPriority {
-	padding-right: 0.25rem;
+.sap-phone {
+	.sapMNLIBPriority {
+		padding-right: 0.25rem;
+	}
+
+	.sapMNLIBHiddenButton {
+		display: none;
+	}
 }

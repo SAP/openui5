@@ -75,6 +75,13 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 			rm.attr("title", sTooltip);
 		}
 
+		// add sticky style classes
+		var iStickyValue = oControl.getStickyStyleValue();
+		if (iStickyValue) {
+			rm.class("sapMSticky");
+			rm.class("sapMSticky" + iStickyValue);
+		}
+
 		// run hook method
 		this.renderContainerAttributes(rm, oControl);
 
@@ -126,9 +133,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 
 		// run hook method to start building list
 		this.renderListStartAttributes(rm, oControl);
-
-		// write accessibility state
-		rm.accessibilityState(oControl, this.getAccessibilityState(oControl));
 
 		// list attributes
 		rm.class("sapMListUl");
@@ -204,12 +208,6 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	ListBaseRenderer.renderContainerAttributes = function(rm, oControl) {
-		// add sticky style classes
-		var iStickyValue = oControl.getStickyStyleValue();
-		if (iStickyValue) {
-			rm.class("sapMSticky");
-			rm.class("sapMSticky" + iStickyValue);
-		}
 	};
 
 	/**
@@ -231,6 +229,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 		rm.openStart("ul", oControl.getId("listUl"));
 		rm.class("sapMListItems");
 		oControl.addNavSection(oControl.getId("listUl"));
+
+		// write accessibility state
+		rm.accessibilityState(oControl, this.getAccessibilityState(oControl));
 	};
 
 	/**
@@ -250,6 +251,15 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText", ".
 	 * @returns {String|undefined}
 	 */
 	ListBaseRenderer.getAriaLabelledBy = function(oControl) {
+		var oHeaderTBar = oControl.getHeaderToolbar();
+		if (oHeaderTBar) {
+			var oTitle = oHeaderTBar.getTitleControl();
+			if (oTitle) {
+				return oTitle.getId();
+			}
+		} else if (oControl.getHeaderText()) {
+			return oControl.getId("header");
+		}
 	};
 
 	/**

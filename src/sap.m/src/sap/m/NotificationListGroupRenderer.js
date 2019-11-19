@@ -6,7 +6,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 	'use strict';
 
 	/**
-	 * NotificationListItemGroup renderer.
+	 * NotificationListGroup renderer.
 	 * @namespace
 	 */
 	var NotificationListGroupRenderer = {};
@@ -28,9 +28,11 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			return false;
 		}
 
-		var overflowToolbar = control._getOverflowToolbar(),
-			closeButton = control._getCloseButton(),
-			isCollapsed = control.getCollapsed(),
+		if (!control.getItems().length && !control.getShowEmptyGroup()) {
+			return false;
+		}
+
+		var isCollapsed = control.getCollapsed(),
 			priority = control.getPriority(),
 			bShowItemsCounter = control.getShowItemsCounter(),
 			isUnread = control.getUnread(),
@@ -55,9 +57,11 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.writeClasses();
 
 		rm.writeAttribute('tabindex', '0');
+
 		rm.writeAccessibilityState(control, {
 			role: "option",
-			expanded: !control.getCollapsed()
+			expanded: !control.getCollapsed(),
+			label: control.getAccessibilityText()
 		});
 
 		rm.write('>');
@@ -108,21 +112,21 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.write('<div class="sapMNLGroupHeaderSpacer"></div>');
 
 		// actions
-		if (control.getShowButtons() && !isCollapsed) {
+		if (control._shouldRenderOverflowToolbar() && (!isCollapsed || Device.system.phone)) {
 			rm.write('<div class="sapMNLIItem sapMNLIActions">');
 		} else {
-			rm.write('<div class="sapMNLIItem sapMNLIActions" style= "display:none">');
+			rm.write('<div class="sapMNLIItem sapMNLIActions" style="display:none">');
 		}
 
-		if (overflowToolbar) {
-			rm.renderControl(overflowToolbar);
+		if (control._shouldRenderOverflowToolbar()) {
+			rm.renderControl(control._getOverflowToolbar());
 		}
 		rm.write('</div>');
 
 		// close button
-		if (control.getShowCloseButton() && closeButton && !Device.system.phone) {
-			rm.write('<div class="sapMNLIItem">');
-			rm.renderControl(closeButton);
+		if (control._shouldRenderCloseButton()) {
+			rm.write('<div class="sapMNLIItem sapMNLICloseBtn">');
+			rm.renderControl(control._getCloseButton());
 			rm.write('</div>');
 		}
 

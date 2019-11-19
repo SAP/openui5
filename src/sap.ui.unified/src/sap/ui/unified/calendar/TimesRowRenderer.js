@@ -17,6 +17,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 	 * @namespace
 	 */
 	var TimesRowRenderer = {
+		apiVersion: 2
 	};
 
 	/**
@@ -32,40 +33,48 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 		var sId = oTimesRow.getId();
 		var oAriaLabel = {value: sId + "-Descr", append: true};
 
-		oRm.write("<div");
-		oRm.writeControlData(oTimesRow);
-		oRm.addClass("sapUiCalTimesRow");
-		oRm.addClass("sapUiCalRow");
-		oRm.writeClasses();
+		oRm.openStart("div", oTimesRow);
+		oRm.class("sapUiCalTimesRow");
+		oRm.class("sapUiCalRow");
 
 		if (sTooltip) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+			oRm.attr("title", sTooltip);
 		}
 
 		if (oTimesRow._getShowHeader()) {
 			oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
 		}
 
-		oRm.writeAccessibilityState(oTimesRow, {
+		oRm.accessibilityState(oTimesRow, {
 			role: "grid",
 			readonly: "true",
 			multiselectable: !oTimesRow.getSingleSelection() || oTimesRow.getIntervalSelection(),
 			labelledby: oAriaLabel
 		});
 
-		oRm.write(">"); // div element
-
-		oRm.write("<span id=\"" + sId + "-Descr\" style=\"display: none;\">" + oTimesRow._rb.getText("CALENDAR_DIALOG") + "</span>");
+		oRm.openEnd(); // div element
+		oRm.openStart("span", sId + "-Descr");
+		oRm.style("display", "none");
+		oRm.openEnd();
+		oRm.text(oTimesRow._rb.getText("CALENDAR_DIALOG"));
+		oRm.close("span");
 
 		if (oTimesRow.getIntervalSelection()) {
-			oRm.write("<span id=\"" + sId + "-Start\" style=\"display: none;\">" + oTimesRow._rb.getText("CALENDAR_START_TIME") + "</span>");
-			oRm.write("<span id=\"" + sId + "-End\" style=\"display: none;\">" + oTimesRow._rb.getText("CALENDAR_END_TIME") + "</span>");
+			oRm.openStart("span", sId + "-Start");
+			oRm.style("display", "none");
+			oRm.openEnd();
+			oRm.text(oTimesRow._rb.getText("CALENDAR_START_TIME"));
+			oRm.close("span");
+			oRm.openStart("span", sId + "-End");
+			oRm.style("display", "none");
+			oRm.openEnd();
+			oRm.text(oTimesRow._rb.getText("CALENDAR_END_TIME"));
+			oRm.close("span");
 		}
 
 		this.renderRow(oRm, oTimesRow, oDate);
 
-		oRm.write("</div>");
-
+		oRm.close("div");
 	};
 
 	TimesRowRenderer.renderRow = function(oRm, oTimesRow, oDate){
@@ -76,10 +85,11 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 		this.renderHeader(oRm, oTimesRow, oDate);
 
 		// time items
-		oRm.write("<div id=\"" + sId + "-times\" class=\"sapUiCalItems\">"); // extra DIV around the times to allow rerendering only it's content
+		oRm.openStart("div", sId + "-times"); // extra DIV around the times to allow rerendering only it's content
+		oRm.class("sapUiCalItems");
+		oRm.openEnd();
 		this.renderTimes(oRm, oTimesRow, oDate);
-		oRm.write("</div>");
-
+		oRm.close("div");
 	};
 
 	TimesRowRenderer.renderHeader = function(oRm, oTimesRow, oDate){
@@ -89,9 +99,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 			var oLocaleData = oTimesRow._getLocaleData();
 			var sId = oTimesRow.getId();
 
-			oRm.write("<div id=\"" + sId + "-Head\">");
+			oRm.openStart("div", sId + "-Head");
+			oRm.openEnd();
 			this.renderHeaderLine(oRm, oTimesRow, oLocaleData, oDate);
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
 	};
@@ -121,9 +132,12 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 		for (i = 0; i < aDayIntervals.length; i++) {
 			var oDayInterval = aDayIntervals[i];
 			sWidth = ( 100 / iItems * oDayInterval.iItems) + "%";
-			oRm.write("<div id=\"" + sId + "-Head" + i + "\"class=\"sapUiCalHeadText\" style=\"width:" + sWidth + "\">");
-			oRm.write(oDayInterval.sDay);
-			oRm.write("</div>");
+			oRm.openStart("div", sId + "-Head" + i);
+			oRm.class("sapUiCalHeadText");
+			oRm.style("width", sWidth);
+			oRm.openEnd();
+			oRm.text(oDayInterval.sDay);
+			oRm.close("div");
 		}
 
 	};
@@ -198,23 +212,22 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 		var oType = oTimesRow._getDateType(oDate);
 		var bEnabled = oTimesRow._checkTimeEnabled(oDate);
 
-		oRm.write("<div");
-		oRm.writeAttribute("id", oHelper.sId + "-" + sYyyyMMddHHmm);
-		oRm.addClass("sapUiCalItem");
+		oRm.openStart("div", oHelper.sId + "-" + sYyyyMMddHHmm);
+		oRm.class("sapUiCalItem");
 		if (sWidth) {
-			oRm.addStyle("width", sWidth);
+			oRm.style("width", sWidth);
 		}
 
 		var oNextInterval = new UniversalDate(oDate.getTime());
 		oNextInterval.setUTCMinutes(oNextInterval.getUTCMinutes() + oHelper.iMinutes);
 
 		if (oDate.getTime() <= oHelper.oNow.getTime() && oNextInterval.getTime() > oHelper.oNow.getTime()) {
-			oRm.addClass("sapUiCalItemNow");
+			oRm.class("sapUiCalItemNow");
 			mAccProps["label"] = oHelper.sCurrentTime + " ";
 		}
 
 		if (iSelected > 0) {
-			oRm.addClass("sapUiCalItemSel"); // time selected
+			oRm.class("sapUiCalItemSel"); // time selected
 
 			if (sRole === "gridcell") {
 				// aria-selected isn't valid for role="button"
@@ -222,63 +235,55 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/core/date/Univer
 			}
 		}
 		if (iSelected == 2) {
-			oRm.addClass("sapUiCalItemSelStart"); // interval start
+			oRm.class("sapUiCalItemSelStart"); // interval start
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-Start";
 		} else if (iSelected == 3) {
-			oRm.addClass("sapUiCalItemSelEnd"); // interval end
+			oRm.class("sapUiCalItemSelEnd"); // interval end
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 		} else if (iSelected == 4) {
-			oRm.addClass("sapUiCalItemSelBetween"); // interval between
+			oRm.class("sapUiCalItemSelBetween"); // interval between
 		} else if (iSelected == 5) {
-			oRm.addClass("sapUiCalItemSelStart"); // interval start
-			oRm.addClass("sapUiCalItemSelEnd"); // interval end
+			oRm.class("sapUiCalItemSelStart"); // interval start
+			oRm.class("sapUiCalItemSelEnd"); // interval end
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-Start";
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 		}
 
 		if (oType && oType.type != CalendarDayType.None) {
-			oRm.addClass("sapUiCalItem" + oType.type);
+			oRm.class("sapUiCalItem" + oType.type);
 			if (oType.tooltip) {
-				oRm.writeAttributeEscaped('title', oType.tooltip);
+				oRm.attr('title', oType.tooltip);
 			}
 		}
 
 		if (!bEnabled) {
-			oRm.addClass("sapUiCalItemDsbl"); // time disabled
+			oRm.class("sapUiCalItemDsbl"); // time disabled
 			mAccProps["disabled"] = true;
 		}
 
-		oRm.writeAttribute("tabindex", "-1");
-		oRm.writeAttribute("data-sap-time", sYyyyMMddHHmm);
+		oRm.attr("tabindex", "-1");
+		oRm.attr("data-sap-time", sYyyyMMddHHmm);
 		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDate, true);
 
 		if (oType && oType.type != CalendarDayType.None) {
 			CalendarLegendRenderer.addCalendarTypeAccInfo(mAccProps, oType.type, oHelper.oLegend);
 		}
 
-		oRm.writeAccessibilityState(null, mAccProps);
-		oRm.writeClasses();
-		oRm.writeStyles();
-		oRm.write(">"); // div element
-
-		oRm.write("<span");
-		oRm.addClass("sapUiCalItemText");
-		oRm.writeClasses();
-		oRm.write(">"); // span
-		oRm.write(oHelper.oFormatTime.format(oDate, true));
-	//		oRm.write("</span>");
-
+		oRm.accessibilityState(null, mAccProps);
+		oRm.openEnd();
+		oRm.openStart("span");
+		oRm.class("sapUiCalItemText");
+		oRm.openEnd();
+		oRm.text(oHelper.oFormatTime.format(oDate, true));
 		if (sAmPm) {
-			oRm.write("<span");
-			oRm.addClass("sapUiCalItemTextAmPm");
-			oRm.writeClasses();
-			oRm.write(">"); // span
-			oRm.write(sAmPm);
-			oRm.write("</span>");
+			oRm.openStart("span");
+			oRm.class("sapUiCalItemTextAmPm");
+			oRm.openEnd();
+			oRm.text(sAmPm);
+			oRm.close("span");
 		}
-		oRm.write("</span>");
-
-		oRm.write("</div>");
+		oRm.close("span");
+		oRm.close("div");
 
 	};
 

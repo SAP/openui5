@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./TableExtension",
 	"sap/ui/core/delegate/ItemNavigation",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"./TableKeyboardDelegate2",
 	"sap/ui/Device",
 	"sap/ui/dom/containsOrEquals",
@@ -479,7 +479,7 @@ sap.ui.define([
 	/**
 	 * Returns the combined info about the last focused data cell (based on the item navigation).
 	 *
-	 * @returns {sap.ui.table.TableUtils.FocusedItemInfo} The cell info of the last focused cell.
+	 * @returns {sap.ui.table.utils.TableUtils.FocusedItemInfo} The cell info of the last focused cell.
 	 * @protected
 	 */
 	TableKeyboardExtension.prototype._getLastFocusedCellInfo = function() {

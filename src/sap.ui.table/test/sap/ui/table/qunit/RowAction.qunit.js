@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/Device"
 ], function(qutils, RowAction, RowActionItem, TableUtils, Device) {
 	"use strict";

@@ -5,13 +5,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/CompatibilityConnector",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/Utils",
 	"sap/base/util/UriParameters",
 	"sap/base/Log"
 ], function(
 	CompatibilityConnector,
-	Cache,
 	Utils,
 	UriParameters,
 	Log
@@ -97,21 +95,8 @@ sap.ui.define([
 		if (Settings._instance) {
 			return Promise.resolve(Settings._instance);
 		}
-		var oPromise = Cache.getFlexDataPromise();
-		if (oPromise) {
-			return oPromise.then(
-				function (oFileContent) {
-					var oSettings = {};
-					if (oFileContent.changes && oFileContent.changes.settings) {
-						oSettings = oFileContent.changes.settings;
-						return Settings._storeInstance(oSettings);
-					}
-					return Settings._loadSettings();
-				},
-				function () {
-					// In case /flex/data request failed, send /flex/settings as a fallback
-					return Settings._loadSettings();
-				});
+		if (Settings._oLoadSettingsPromise) {
+			return Settings._oLoadSettingsPromise;
 		}
 		return Settings._loadSettings();
 	};
@@ -123,7 +108,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Settings._loadSettings = function() {
-		return CompatibilityConnector.loadSettings().then(function (oSettings) {
+		var oLoadingPromise = CompatibilityConnector.loadSettings().then(function (oSettings) {
 			if (!oSettings) {
 				Log.error("The request for flexibility settings failed; A default response is generated and returned to consuming APIs");
 				// in case the back end cannot respond resolve with a default response
@@ -140,12 +125,14 @@ sap.ui.define([
 
 			return Settings._storeInstance(oSettings);
 		});
+		Settings._oLoadSettingsPromise = oLoadingPromise;
+		return oLoadingPromise;
 	};
 
 	/**
-	 * Writes the data received from the back end or cache into an internal instance and then returns the settings object within a Promise.
+	 * Writes the data received from the storage into an internal instance and then returns the settings object within a Promise.
 	 *
-	 * @param oSettings - Data received from the back end or cache
+	 * @param oSettings - Data received from the storage
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @protected
 	 *

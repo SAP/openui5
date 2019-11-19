@@ -222,10 +222,10 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
 		rm.attr("role", "application");
-		rm.attr("aria-labelledby", this.getAriaAnnouncement("TABLE_CONTAINER_ROLE_DESCRIPTION"));
 		rm.class("sapMListTblCnt");
 
-		ListBaseRenderer.renderContainerAttributes.apply(this, arguments);
+		// write accessibility state for the table container
+		rm.accessibilityState(oControl, this.getAccessibilityState(oControl));
 	};
 
 	/**

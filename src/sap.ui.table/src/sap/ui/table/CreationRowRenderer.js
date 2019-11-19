@@ -5,7 +5,7 @@
 //Provides default renderer for control sap.ui.table.CreationRow
 sap.ui.define([
 	"./TableRenderer",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/core/Renderer"
 ], function(TableRenderer, TableUtils, Renderer) {
 	"use strict";

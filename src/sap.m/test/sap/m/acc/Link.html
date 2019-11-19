@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>sap.m.Link - Accessibility</title>
+
+		<script src="../shared-config.js"></script>
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
+
+		<script>
+			// ----------------
+			// Utility functions
+			// ----------------
+
+			function getText(sText) {
+				return new sap.m.Text({ text: sText }).addStyleClass("sapUiSmallMarginTop");
+			}
+
+			function getTitle(sText) {
+				return new sap.m.Title({
+					text: sText,
+					titleStyle: "H3"
+				}).addStyleClass("sapUiMediumMarginTop")
+			}
+
+
+			// ----------------
+			// Layout sections
+			// ----------------
+
+			var oRegularLinksLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Regular Links"),
+
+					getText("With href:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com" }),
+
+					getText("Without href (should be announced as \"button\"):"),
+					new sap.m.Link({ text: "Something" }),
+
+					getText("Disabled:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", enabled: false}),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "regularLinkWithLabel" }),
+					new sap.m.Link("regularLinkWithLabel", { text: "Something", href: "www.sap.com" }),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("regularLinkLabelledBy", { text: "Label" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaLabelledBy: "regularLinkLabelledBy" }),
+
+					getText("Using ariaDescribedBy association:"),
+					new sap.m.Text("regularLinkDescribedBy", { text: "Description" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaDescribedBy: "regularLinkDescribedBy" })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+			var oSubtleLinksLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Subtle Links"),
+
+					getText("With href:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", subtle: true }),
+
+					getText("Without href (should be announced as \"button\"):"),
+					new sap.m.Link({ text: "Something", subtle: true }),
+
+					getText("Disabled:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", enabled: false, subtle: true}),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "subtleLinkWithLabel" }),
+					new sap.m.Link("subtleLinkWithLabel", { text: "Something", href: "www.sap.com", subtle: true }),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("subtleLinkLabelledBy", { text: "Label" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaLabelledBy: "subtleLinkLabelledBy", subtle: true }),
+
+					getText("Using ariaDescribedBy association:"),
+					new sap.m.Text("subtleLinkDescribedBy", { text: "Description" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaDescribedBy: "subtleLinkDescribedBy", subtle: true })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+			var oEmphasizedLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Emphasized Links"),
+
+					getText("With href:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", emphasized: true }),
+
+					getText("Without href (should be announced as \"button\"):"),
+					new sap.m.Link({ text: "Something", emphasized: true }),
+
+					getText("Disabled:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", enabled: false, emphasized: true}),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "emphasizedLinkWithLabel" }),
+					new sap.m.Link("emphasizedLinkWithLabel", { text: "Something", href: "www.sap.com", emphasized: true }),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("emphasizedLinkLabelledBy", { text: "Label" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaLabelledBy: "emphasizedLinkLabelledBy", emphasized: true }),
+
+					getText("Using ariaDescribedBy association:"),
+					new sap.m.Text("emphasizedLinkDescribedBy", { text: "Description" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaDescribedBy: "emphasizedLinkDescribedBy", emphasized: true })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+			var oCombinedLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Combined Links (Subtle & Emphasized)"),
+
+					getText("With href:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", subtle: true, emphasized: true }),
+
+					getText("Without href (should be announced as \"button\"):"),
+					new sap.m.Link({ text: "Something", subtle: true, emphasized: true }),
+
+					getText("Disabled:"),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", enabled: false, subtle: true, emphasized: true}),
+
+					getText("Connected to a Label:"),
+					new sap.m.Label({ text: "Label", labelFor: "combinedLinkWithLabel" }),
+					new sap.m.Link("combinedLinkWithLabel", { text: "Something", href: "www.sap.com", subtle: true, emphasized: true }),
+
+					getText("Using ariaLabelledBy association:"),
+					new sap.m.Text("combinedLinkLabelledBy", { text: "Label" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaLabelledBy: "combinedLinkLabelledBy", subtle: true, emphasized: true }),
+
+					getText("Using ariaDescribedBy association:"),
+					new sap.m.Text("combinedLinkDescribedBy", { text: "Description" }),
+					new sap.m.Link({ text: "Something", href: "www.sap.com", ariaDescribedBy: "combinedLinkDescribedBy", subtle: true, emphasized: true })
+				]
+			}).addStyleClass("sapUiLargeMarginBeginEnd");
+
+
+			var oTableLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					getTitle("Links in Table").addStyleClass("sapUiLargeMarginBegin sapUiSmallMarginBottom"),
+
+					new sap.m.Table({
+						columns: [
+							new sap.m.Column({
+								header: new sap.m.Text({text: "Link's type"})
+							}),
+							new sap.m.Column({
+								header: new sap.m.Text({text: "Control with href"})
+							}),
+							new sap.m.Column({
+								header: new sap.m.Text({text: "Control without href"})
+							}),
+							new sap.m.Column({
+								header: new sap.m.Text({text: "Disabled control"})
+							})
+						],
+						items: [
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({text: "Regular"}),
+									new sap.m.Link({text: "Something", href: "www.sap.com"}),
+									new sap.m.Link({text: "Something"}),
+									new sap.m.Link({text: "Something", href: "www.sap.com", enabled: false})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({text: "Subtle"}),
+									new sap.m.Link({text: "Something", href: "www.sap.com", subtle: true}),
+									new sap.m.Link({text: "Something", subtle: true}),
+									new sap.m.Link({text: "Something", href: "www.sap.com", subtle: true, enabled: false})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({text: "Emphasized"}),
+									new sap.m.Link({text: "Something", href: "www.sap.com", emphasized: true}),
+									new sap.m.Link({text: "Something", emphasized: true}),
+									new sap.m.Link({text: "Something", href: "www.sap.com", emphasized: true, enabled: false})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								cells: [
+									new sap.m.Text({text: "Combined"}),
+									new sap.m.Link({text: "Something", href: "www.sap.com", subtle: true, emphasized: true}),
+									new sap.m.Link({text: "Something", subtle: true, emphasized: true}),
+									new sap.m.Link({text: "Something", href: "www.sap.com", subtle: true, emphasized: true, enabled: false})
+								]
+							})
+						]
+					})
+				]
+			});
+
+
+			// ----------------
+			// Final page
+			// ----------------
+
+			var oApp = new sap.m.App(),
+				oPage = new sap.m.Page({
+					title: "Link ACC Test Page",
+					content: [
+						oRegularLinksLayout,
+						oSubtleLinksLayout,
+						oEmphasizedLayout,
+						oCombinedLayout,
+						oTableLayout
+					]
+				});
+
+			oApp.addPage(oPage);
+			oApp.placeAt("content");
+
+		</script>
+	</head>
+	<body id="content" class="sapUiBody" role="application">
+	</body>
+</html>

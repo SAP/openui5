@@ -80,6 +80,14 @@ sap.ui.define([
 				assert.deepEqual(oResult, {changes: [], loadModules: true}, "/sap/bc/lrep/flex/data/~abc123~/reference?appVersion=1.0.0", "and the flex_data response resolves the promise");
 			}.bind(undefined, sandbox.server));
 		});
+
+		QUnit.test("given a mock server, when loading flex data the settings value is stored", function (assert) {
+			fnReturnData(JSON.stringify({changes: [], settings: {isKeyUser: true}}));
+			return LrepConnector.loadFlexData({url: "/sap/bc/lrep", reference: "reference", appVersion: "1.0.0"}).then(function (oServer) {
+				assert.equal(oServer.requestCount, 1, "then there is one request to load data");
+				assert.deepEqual(LrepConnector.settings, {isKeyUser: true}, "and the settings value is stored");
+			}.bind(undefined, sandbox.server));
+		});
 	});
 
 	QUnit.done(function () {

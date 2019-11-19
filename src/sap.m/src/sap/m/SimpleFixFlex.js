@@ -114,8 +114,8 @@ function (Control, ResizeHandler, Log /**, SimpleFixFlexRenderer */) {
 			oFixedDom = $fixContent.get(0);
 
 		// In case the fixed content is already hidden / destroyed when the handler is executed
-		if (!oFixedDom) {
-			return;
+		if (!oFixedDom || !oFixedDom.clientHeight) {
+			return null;
 		}
 
 			//using clientHeight as jQuery's innerHeight() method returns the height

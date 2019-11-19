@@ -4,7 +4,7 @@
 
 // Provides helper sap.ui.table.TableExtension.
 sap.ui.define([
-"sap/ui/base/Object", "./TableUtils"
+"sap/ui/base/Object", "./utils/TableUtils"
 ], function(BaseObject, TableUtils) {
 	"use strict";
 

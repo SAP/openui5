@@ -385,7 +385,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
  * Row Actions
  ******************************************************************************/
 
-.sapUiTableRowActionScr {
+.sapUiTableRowActionScr, .sapUiTableRowWithAction {
 	display: none;
 	position: absolute;
 	top: 0;
@@ -393,11 +393,17 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	box-sizing: border-box;
 	z-index: 4; /* Ensure Action Area before Resize/Reorder bars*/
 	touch-action: pan-x; /* for touch scrolling, vertical only */
+	.sapUiTableRActFlexible & {
+		right: auto;
+	}
 }
 
-.sapUiTableRAct .sapUiTableRowActionScr,
-.sapUiTableRActS .sapUiTableRowActionScr {
-	display: block;
+.sapUiTableRAct,
+.sapUiTableRActS,
+.sapUiTableRowNavIndicator {
+	& .sapUiTableRowActionScr, & .sapUiTableRowWithAction {
+		display: block;
+	}
 }
 
 /*******************************************************************************
@@ -451,10 +457,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
    horizontal scrolling is done in in TableScrollExtensions.js */
 .sapUiTableCtrlRowFixed, .sapUiTableCtrlRowFixedBottom {
 	touch-action: pan-y;
-}
-
-.sapUiTableVScr .sapUiTableCtrlScr {
-	border-right: @_sap_ui_table_BaseBorderWidth solid @sapUiListVerticalBorderColor;
 }
 
 .sapUiTableRAct .sapUiTableCtrlScr,

@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./library",
 	"./TableExtension",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/core/Popup",
 	"sap/base/Log",
@@ -89,13 +89,7 @@ sap.ui.define([
 				}
 			}
 
-			var bHasSelection = false;
-			if (window.getSelection) {
-				var oSelection = window.getSelection();
-				bHasSelection = oSelection.rangeCount ? !oSelection.getRangeAt(0).collapsed : false;
-			}
-
-			if (bHasSelection) {
+			if (window.getSelection().toString().length > 0) {
 				Log.debug("DOM Selection detected -> Click event on table skipped, Target: " + oEvent.target);
 				return true;
 			}

@@ -177,6 +177,7 @@ sap.ui.define('sap/ui/debug/DebugEnv', ['sap/ui/base/Interface', './ControlTree'
 	 */
 	DebugEnv.prototype.initLogger = function(oLogger, bOnInit) {
 		this.oLogger = oLogger;
+		this.oLogger.setLogEntriesLimit(Infinity);
 		if ( !this.bRunsEmbedded ) {
 			// attach test suite log viewer to our Log
 			this.oTraceWindow = top.frames["sap-ui-TraceWindow"];

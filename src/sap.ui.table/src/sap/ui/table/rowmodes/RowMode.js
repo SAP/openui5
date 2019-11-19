@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"../library",
-	"../TableUtils",
+	"../utils/TableUtils",
 	"sap/ui/core/Element",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
@@ -238,7 +238,7 @@ sap.ui.define([
 		}
 
 		if (bRowsAggregationChanged || oTable.getRows().length > 0) {
-			oTable._fireRowsUpdated(sReason);
+			this.fireRowsUpdated(sReason);
 		}
 	};
 
@@ -293,7 +293,7 @@ sap.ui.define([
 	/**
 	 * This hook is called when the table layout is updated, for example when resizing.
 	 *
-	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason The reason for updating the table sizes.
 	 * @private
 	 */
 	RowMode.prototype.updateTableSizes = function(sReason) {};
@@ -633,6 +633,38 @@ sap.ui.define([
 		}
 
 		return oTable._getRowContexts(iRequestLength, bSuppressAdjustToBindingLength === true);
+	};
+
+	/**
+	 * Fires the <code>_rowsUpdated</code> event of the table if no update of the binding contexts of rows is to be expected.
+	 * The first event after a rendering is always fired with reason "Render", regardless of the provided reason.
+	 *
+	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} [sReason=sap.ui.table.TableUtils.RowsUpdateReason.Unknown]
+	 * The reason why the rows have been updated.
+	 * @private
+	 */
+	RowMode.prototype.fireRowsUpdated = function(sReason) {
+		var oTable = this.getTable();
+
+		if (!oTable || !oTable._bContextsAvailable) {
+			return;
+		}
+
+		// The first _rowsUpdated event after rendering should be fired with reason "Render".
+		if (!this._bFiredRowsUpdatedAfterRendering) {
+			sReason = TableUtils.RowsUpdateReason.Render;
+
+			if (!this._bListeningForFirstRowsUpdatedAfterRendering) {
+				this._bListeningForFirstRowsUpdatedAfterRendering = true;
+
+				oTable.attachEvent("_rowsUpdated", function() {
+					this._bFiredRowsUpdatedAfterRendering = true;
+					this._bListeningForFirstRowsUpdatedAfterRendering = false;
+				}.bind(this));
+			}
+		}
+
+		oTable._fireRowsUpdated(sReason);
 	};
 
 	/**

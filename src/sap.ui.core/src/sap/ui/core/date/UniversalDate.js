@@ -9,18 +9,19 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 
 
 	/**
-	 * Constructor for UniversalDate
+	 * Constructor for UniversalDate.
 	 *
 	 * @class
-	 * The Date is the base class of calendar date instances. It contains the static methods to create calendar
+	 * The UniversalDate is the base class of calendar date instances. It contains the static methods to create calendar
 	 * specific instances.
 	 *
-	 * The member variable this.oData contains the JS Date object, which is the source value of the date information.
+	 * The member variable <code>this.oData</code> contains the JS Date object, which is the source value of the date information.
 	 * The prototype is containing getters and setters of the JS Date and is delegating them to the internal date object.
 	 * Implementations for specific calendars may override methods needed for their specific calendar (e.g. getYear
-	 * and getEra for japanese emperor calendar);
+	 * and getEra for Japanese emperor calendar);
 	 *
 	 * @private
+	 * @ui5-restricted
 	 * @alias sap.ui.core.date.UniversalDate
 	 */
 	var UniversalDate = BaseObject.extend("sap.ui.core.date.UniversalDate", /** @lends sap.ui.core.date.UniversalDate.prototype */ {

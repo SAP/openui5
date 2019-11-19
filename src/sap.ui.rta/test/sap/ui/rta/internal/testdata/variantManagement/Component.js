@@ -1,7 +1,5 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/rta/util/UrlParser",
 	"sap/ui/rta/test/variantManagement/SmartLinkUtil",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -10,8 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils"
 ], function(
 	UIComponent,
-	FakeLrepConnectorLocalStorage,
-	UrlParser,
 	SmartLinkUtil,
 	MockServer,
 	ODataModel,
@@ -24,11 +20,6 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.rta.test.variantManagement.Component", {
 		metadata: {
 			manifest: "json"
-		},
-
-		constructor: function () {
-			UIComponent.prototype.constructor.apply(this, arguments);
-			this._createFakeLrep();
 		},
 
 		init : function() {
@@ -87,31 +78,6 @@ sap.ui.define([
 						oAppModel.setProperty("/showAdaptButton", bIsKeyUser);
 					});
 			}
-		},
-
-		_createFakeLrep: function () {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				var mAppManifest = this.getManifestEntry("sap.app");
-				var mSettings = {};
-//				mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources").replace('resources', 'test-resources') + "/FakeVariantLrepResponse.json";
-				FakeLrepConnectorLocalStorage.enableFakeConnector(
-					mSettings,
-					mAppManifest.id + '.Component',
-					mAppManifest.applicationVersion.version);
-			}
-		},
-
-		destroy: function() {
-			if (UrlParser.getParam('sap-rta-mock-lrep') !== false) {
-				var mAppManifest = this.getManifestEntry("sap.app");
-				FakeLrepConnectorLocalStorage.disableFakeConnector(
-					mAppManifest.id + '.Component',
-					mAppManifest.applicationVersion.version
-				);
-			}
-			// call the base component's destroy function
-			UIComponent.prototype.destroy.apply(this, arguments);
 		}
-
 	});
 });

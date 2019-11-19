@@ -140,19 +140,24 @@ sap.ui.define([
 
 			// Utils
 			"TableUtils": {
-				group: "Utils"
-			},
-			"TableColumnUtils": {
-				group: "Utils"
-			},
-			"TableMenuUtils": {
-				group: "Utils"
-			},
-			"TableGrouping": {
-				group: "Utils"
-			},
-			"TableBindingUtils": {
 				group: "Utils",
+				module: "./utils/{name}.qunit"
+			},
+			"ColumnUtils": {
+				group: "Utils",
+				module: "./utils/_{name}.qunit"
+			},
+			"MenuUtils": {
+				group: "Utils",
+				module: "./utils/_{name}.qunit"
+			},
+			"GroupingUtils": {
+				group: "Utils",
+				module: "./utils/_{name}.qunit"
+			},
+			"BindingUtils": {
+				group: "Utils",
+				module: "./utils/_{name}.qunit",
 				sinon: false /*uses Mockserver*/
 			},
 

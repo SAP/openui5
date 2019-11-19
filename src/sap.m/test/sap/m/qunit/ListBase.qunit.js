@@ -2130,7 +2130,6 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			assert.ok(oList.getNavigationRoot().getAttribute("aria-labelledby") == oText1.getId(), "Accessibility info of text1 is in the list dom");
-			assert.ok(oList.getAccessibilityDescription().indexOf(oText1.getText()) == -1, "Accessibility info of text1 is not added to the list.");
 
 			oList.removeAriaLabelledBy(oText1);
 			sap.ui.getCore().applyChanges();

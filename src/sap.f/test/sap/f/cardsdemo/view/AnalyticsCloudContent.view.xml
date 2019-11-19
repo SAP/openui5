@@ -1,0 +1,34 @@
+<mvc:View
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:w="sap.ui.integration.widgets"
+	displayBlock="true">
+
+	<Page title="{i18n>appTitle}">
+
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="AnalyticsCloud Content Card "/>
+				<ToolbarSpacer/>
+			</Toolbar>
+		</subHeader>
+
+		<content>
+			<Text class="sapUiSmallMargin" text="Note: You can run this example only locally and you have to include the Highcharts script in 'cardsdemo/Card.html'. It can be copied from the Highcharts website." />
+			<f:GridContainer class="sapUiSmallMargin">
+				<w:Card manifest="{manifests>/analyticsCloud/example1}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="listCountStatic" manifest="{manifests>/analyticsCloud/example2}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</content>
+	</Page>
+</mvc:View>

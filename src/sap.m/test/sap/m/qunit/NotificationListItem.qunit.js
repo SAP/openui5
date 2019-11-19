@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/m/OverflowToolbar",
 	"sap/m/List",
 	"sap/ui/core/library",
+	"sap/m/library",
 	"sap/ui/core/Core",
+	'sap/ui/Device',
 	"sap/m/Button",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
@@ -20,7 +22,9 @@ sap.ui.define([
 	OverflowToolbar,
 	List,
 	coreLibrary,
+	mLibrary,
 	Core,
+	Device,
 	Button,
 	KeyCodes,
 	JSONModel
@@ -30,6 +34,12 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.Priority
 	var Priority = coreLibrary.Priority;
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
+
+	var  oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var  oResourceBundleCore = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
@@ -114,7 +124,7 @@ sap.ui.define([
 		assert.ok($item.hasClass('sapMNLIUnread'), 'unread class is set');
 		assert.strictEqual($item.find('.sapMNLITitle .sapMNLITitleText').text(), 'Notification List Item Title', 'title is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), 'Error', 'priority is rendered');
+		assert.strictEqual($item.find('.sapMNLIBPriorityHigh span').attr('title'), oResourceBundleCore.getText("Icon.error"), 'priority is rendered');
 
 		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), 'Close', 'close button is rendered');
 		assert.ok(this.notificationListItem.$('overflowToolbar'), 'overflow toolbar is rendered');
@@ -123,7 +133,7 @@ sap.ui.define([
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIFooterItem:nth-child(3)').text(), '3 days', 'datetime is rendered');
 		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIFooterItem:first-child').text(), 'John Smith', 'author name is rendered');
 
-		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), 'Show More', 'Show More link is rendered');
+		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_MORE"), 'Show More link is rendered');
 
 		assert.strictEqual($item.find('.sapFAvatar').attr('aria-label'), 'Avatar', 'author avatar is rendered');
 
@@ -178,7 +188,7 @@ sap.ui.define([
 		$item = this.notificationListItem.$();
 		assert.notOk($item.find('.sapMNLITitleText').hasClass('sapMNLIItemTextLineClamp'), 'title does not have sapMNLIItemTextLineClamp class');
 		assert.notOk($item.find('.sapMNLIDescription').hasClass('sapMNLIItemTextLineClamp'), 'description does not have sapMNLIItemTextLineClamp class');
-		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), 'Show Less', 'text is "Show Less"');
+		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_LESS"), 'text is "Show Less"');
 
 		showMoreButton.firePress();
 		Core.applyChanges();
@@ -186,7 +196,7 @@ sap.ui.define([
 		$item = this.notificationListItem.$();
 		assert.ok($item.find('.sapMNLITitleText').hasClass('sapMNLIItemTextLineClamp'), 'title has sapMNLIItemTextLineClamp class');
 		assert.ok($item.find('.sapMNLIDescription').hasClass('sapMNLIItemTextLineClamp'), 'description has sapMNLIItemTextLineClamp class');
-		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), 'Show More', 'text is "Show More"');
+		assert.strictEqual($item.find('.sapMNLIFooter .sapMNLIShowMore a').text(), oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_SHOW_MORE"), 'text is "Show More"');
 
 		this.list.setWidth('1000px');
 		Core.applyChanges();
@@ -225,14 +235,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('ARIA - Accessibility Text', function (assert) {
-		var invisibleText = NotificationListBase._getInvisibleText();
-		assert.notOk(invisibleText.getText(), "accessibility text is initially empty");
-
-		this.notificationListItem.onfocusin({
-			target: this.notificationListItem.getDomRef()
-		});
-
-		assert.equal(invisibleText.getText(), 'Notification List Item Title Notification List Item Description Notification unread. Created By John Smith Due in 3 days, High Priority.', "accessibility text is correct");
+		assert.equal(this.notificationListItem.$().attr('aria-label'), 'Notification List Item Title Notification List Item Description ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + ' ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY")  + ' John Smith ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY", [this.notificationListItem.getDatetime(), this.notificationListItem.getPriority()]), "accessibility text is correct");
 	});
 
 	QUnit.module('Keyboard navigation', {
@@ -342,5 +345,99 @@ sap.ui.define([
 		list.destroy();
 		notificationCloning.destroy();
 		notification.destroy();
+	});
+
+	QUnit.module('Action and close buttons - non mobile', {
+		beforeEach: function() {
+
+			this.isPhone = Device.system.phone;
+			Device.system.phone = false;
+
+			this.notificationListItem = createNotificatoinListItem();
+			this.notificationListItem.placeAt(RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.notificationListItem.destroy();
+			Device.system.phone = this.isPhone;
+		}
+	});
+
+	QUnit.test('action buttons', function(assert) {
+		var buttons = this.notificationListItem.getButtons();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+
+		this.notificationListItem.removeButton(buttons[1]);
+		Core.applyChanges();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
+
+		this.notificationListItem.addButton(buttons[1]);
+		Core.applyChanges();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+	});
+
+	QUnit.module('Action and close buttons - mobile', {
+		beforeEach: function() {
+
+			this.isPhone = Device.system.phone;
+			Device.system.phone = true;
+
+			this.notificationListItem = createNotificatoinListItem();
+			this.notificationListItem.placeAt(RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.notificationListItem.destroy();
+
+			Device.system.phone = this.isPhone;
+		}
+	});
+
+	QUnit.test('action and close buttons', function(assert) {
+		var buttons = this.notificationListItem.getButtons(),
+			closeButton = this.notificationListItem._getCloseButton(),
+			toolbarSeparator = this.notificationListItem._toolbarSeparator;
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+		assert.strictEqual(buttons[1].getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'button overflow priority is ok');
+
+		assert.notOk(buttons[0].hasStyleClass('sapMNLIBHiddenButton'), 'button is visible');
+		assert.notOk(buttons[1].hasStyleClass('sapMNLIBHiddenButton'), 'button is visible');
+
+		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.AlwaysOverflow, 'close button overflow priority is ok');
+		assert.ok(toolbarSeparator.getVisible(), 'toolbar separator is visible');
+
+		this.notificationListItem.setShowButtons(false);
+		Core.applyChanges();
+
+		assert.strictEqual(buttons[0].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
+		assert.strictEqual(buttons[1].getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'button overflow priority is ok');
+
+		assert.ok(buttons[0].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
+		assert.ok(buttons[1].hasStyleClass('sapMNLIBHiddenButton'), 'button is hidden');
+
+		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
+		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
+
+		this.notificationListItem.setShowButtons(true);
+		this.notificationListItem.setShowCloseButton(false);
+		Core.applyChanges();
+
+
+		assert.notOk(closeButton.getVisible(), 'close button is not visible');
+		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
+
+		this.notificationListItem.setShowCloseButton(true);
+		this.notificationListItem.removeButton(buttons[0]);
+		this.notificationListItem.removeButton(buttons[1]);
+		Core.applyChanges();
+
+		assert.ok(closeButton.getVisible(), 'close button is visible');
+		assert.strictEqual(closeButton.getLayoutData().getPriority(), OverflowToolbarPriority.NeverOverflow, 'close button overflow priority is ok');
+		assert.notOk(toolbarSeparator.getVisible(), 'toolbar separator is not visible');
 	});
 });

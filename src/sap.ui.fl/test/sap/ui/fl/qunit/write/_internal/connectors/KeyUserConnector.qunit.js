@@ -177,6 +177,17 @@ sap.ui.define([
 				assert.deepEqual(oResponse, "something", "the settings object is returned correctly");
 			});
 		});
+		QUnit.test("get Response does not send when the settings already stored in apply connector", function (assert) {
+			var mPropertyBag = {
+				url : "/flexKeyuser"
+			};
+			var oStubSendRequest = sinon.stub(ApplyUtils, "sendRequest").resolves({response : "something"});
+			ApplyConnector.settings = {isKeyUser: true};
+			return KeyUserConnector.loadFeatures(mPropertyBag).then(function (oResponse) {
+				assert.ok(oStubSendRequest.notCalled, "no request is sent to back end");
+				assert.deepEqual(oResponse.response, {isKeyUser: true}, "the settings object is obtain from apply connector correctly");
+			});
+		});
 	});
 
 	QUnit.done(function () {

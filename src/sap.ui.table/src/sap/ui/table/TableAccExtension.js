@@ -8,7 +8,7 @@ sap.ui.define([
 	"./library",
 	"./TableExtension",
 	"./TableAccRenderExtension",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
 ], function(Control, library, TableExtension, TableAccRenderExtension, TableUtils, Device, jQuery) {
@@ -138,7 +138,7 @@ sap.ui.define([
 		 * the cell type and the jQuery wrapper object of the corresponding cell:
 		 *
 		 * @param {sap.ui.table.TableAccExtension} oExtension The accessibility extension.
-		 * @returns {sap.ui.table.TableUtils.CellInfo} An object containing information about the cell.
+		 * @returns {sap.ui.table.utils.TableUtils.CellInfo} An object containing information about the cell.
 		 */
 		getInfoOfFocusedCell: function(oExtension) {
 			var oTable = oExtension.getTable();
@@ -327,7 +327,7 @@ sap.ui.define([
 			}
 
 			if (oCountChangeInfo.initial || oCountChangeInfo.rowChange) {
-				if (TableUtils.hasRowNavigatedIndicators(oTable)) {
+				if (TableUtils.hasRowNavigationIndicators(oTable)) {
 					var oCellInfo = TableUtils.getCellInfo($Cell);
 					if (oCellInfo.type !== TableUtils.CELLTYPE.COLUMNHEADER && oCellInfo.type !== TableUtils.CELLTYPE.COLUMNROWHEADER) {
 						var oRowSettings = oTable.getRows()[oCellInfo.rowIndex].getAggregation("_settings");
@@ -1063,8 +1063,8 @@ sap.ui.define([
 	/**
 	 * Determines the current focused cell and modifies the labels and descriptions if needed.
 	 *
-	 * @param {sap.ui.table.TableUtils.RowsUpdateReason} sReason Why the accessibility information of the cell needs to be updated. Additionally
-	 * to the reasons in {@link sap.ui.table.TableUtils.RowsUpdateReason RowsUpdateReason}, also \"Focus\" is possible.
+	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} sReason Why the accessibility information of the cell needs to be updated. Additionally
+	 * to the reasons in {@link sap.ui.table.utils.TableUtils.RowsUpdateReason RowsUpdateReason}, also \"Focus\" is possible.
 	 * @public
 	 */
 	TableAccExtension.prototype.updateAccForCurrentCell = function(sReason) {
@@ -1103,7 +1103,7 @@ sap.ui.define([
 		if (sReason !== "Focus" && sReason !== TableUtils.RowsUpdateReason.Expand && sReason !== TableUtils.RowsUpdateReason.Collapse) {
 			// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
-			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
+			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER | CellType.ROWACTION)) {
 				if (Device.browser.msie) {
 					if (oTable._mTimeouts._cleanupACCCellBusy) {
 						clearTimeout(oTable._mTimeouts._cleanupACCCellBusy);

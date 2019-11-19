@@ -87,6 +87,12 @@
 		"group": "Card Type Examples"
 	},
 	{
+		"title": "AnalyticsCloud Card",
+		"description": "Example page for Card of type AnalyticsCloud. Used for displaying data from Sap Analytics Cloud",
+		"route": "analyticsCloudContent",
+		"group": "Card Type Examples"
+	},
+	{
 		"title": "Custom Card",
 		"description": "Example page for Card of type Custom (Where a ComponentContainer is rendered)",
 		"route": "customContent",

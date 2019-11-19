@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/dt/DesignTimeMetadata",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/Utils",
@@ -20,7 +19,6 @@ sap.ui.define([
 	DesignTimeMetadata,
 	CommandSerializer,
 	CommandStack,
-	FakeLrepConnectorSessionStorage,
 	ChangeRegistry,
 	RtaQunitUtils,
 	flUtils,
@@ -68,8 +66,6 @@ sap.ui.define([
 		getModel: function () {return oModel;} // eslint-disable-line no-use-before-define
 	};
 	var oGetAppComponentForControlStub = sinon.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
-
-	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 	var oData = {
 		variantMgmtId1: {
@@ -168,7 +164,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when two commands get undone, redone and saved while the element of one command is not available", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oInput3 = new Input("input3");
 			var oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
 			var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
@@ -255,7 +251,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 
 			var oAddChangeSpy = sandbox.spy(PersistenceWriteAPI, "add");
 
@@ -289,7 +285,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory, but one is relevant for runtime only", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement : this.oInput1
@@ -337,7 +333,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 'remove' command and 2 App Descriptor 'add library' commands", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement : this.oInput1
@@ -386,7 +382,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute and undo a composite command with 1 'remove' command and 1 App Descriptor 'add library' command and execute another remove command", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oRemoveCommand;
 			var oAddLibraryCommand;
 			var oCompositeCommand;
@@ -443,7 +439,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute 1 'remove' command and 1 App Descriptor 'add library' command, undo the 'add library' command and call saveCommands", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement : this.oInput1
@@ -478,7 +474,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute undo and redo on 1 App Descriptor 'add library' command and call saveCommands", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oDeleteChangeSpy = sandbox.spy(PersistenceWriteAPI, "remove");
 			var oCreateAndStoreChangeSpy;
 
@@ -641,7 +637,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute 1 'Remove' command and 1 'ControlVariantSwitch' command and save commands", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 
 			return CommandFactory.getCommandFor(this.oInput1, "switch", {
 				targetVariantReference : "variantReference",
@@ -666,7 +662,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Execute 1 'Remove' command, 1 'ControlVariantSwitch' command, undo and call saveCommands", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
 				removedElement : this.oInput1
@@ -693,7 +689,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when changes belonging to a variant management are executed/partially undone and later saved ", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oRemoveCommand1;
 			var oRemoveCommand2;
 			var oAddChangeSpy;
@@ -758,7 +754,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 2 remove commands created via CommandFactory and these are booked for a new app variant whose id is different from the id of the current running app", function(assert) {
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oRemoveCommand1;
 			var oRemoveCommand2;
 
@@ -844,7 +840,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
 			sandbox.stub(oModel.oVariantController, "getVariant").returns(oVariant);
-			var fnAssertWrite = FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oControlVariantConfigureCommand;
 			var oControlVariantSwitchCommand;
 			var oControlVariantDuplicateCommand;

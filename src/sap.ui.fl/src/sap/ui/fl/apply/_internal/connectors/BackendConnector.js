@@ -26,7 +26,7 @@ sap.ui.define([
 	var BackendConnector = merge({}, BaseConnector, { /** @lends sap.ui.fl.apply.api._internal.connectors.BackendConnector */
 
 		xsrfToken: undefined,
-
+		settings: undefined,
 		/**
 		 * Loads flexibility data from a back end.
 		 *
@@ -46,6 +46,9 @@ sap.ui.define([
 					this.xsrfToken = oResult.xsrfToken;
 				}
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
+				if (oResponse.settings) {
+					this.settings = oResponse.settings;
+				}
 				return oResponse;
 			}.bind(this));
 		}

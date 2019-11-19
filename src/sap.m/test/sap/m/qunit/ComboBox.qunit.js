@@ -4987,7 +4987,7 @@ sap.ui.define([
 			assert.ok(oComboBox.getAggregation("_endIcon")[0].getDomRef().classList.contains("sapUiIcon"), 'The arrow button has the CSS class sapUiIcon"');
 			assert.ok(oComboBox.getAggregation("_endIcon")[0].hasStyleClass("sapMInputBaseIcon"), 'The arrow button has the CSS class sapMInputBaseIcon "');
 			assert.strictEqual(oComboBox.getAggregation("_endIcon")[0].getNoTabStop(), true, "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
-			assert.strictEqual(oComboBox.getAggregation("_endIcon")[0].getDomRef().getAttribute("aria-labelledby"), " " + oComboBox.getAggregation("_endIcon")[0].getDomRef().children[0].id);
+			assert.strictEqual(oComboBox.getAggregation("_endIcon")[0].getDomRef().getAttribute("aria-label"), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_BUTTON"));
 
 			// cleanup
 			oComboBox.destroy();
@@ -8961,7 +8961,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.skip("onAfterOpen test case 3 - selected item position", function (assert) {
+	QUnit.test("onAfterOpen test case 3 - selected item position", function (assert) {
 
 		var oComboBox = new ComboBox({
 			items: [
@@ -9104,11 +9104,49 @@ sap.ui.define([
 				new Item({
 					key: "YE",
 					text: "Yemen"
+				}),
+				new Item({
+					key: "14",
+					text: "item 14"
+				}),
+
+				new Item({
+					key: "15",
+					text: "item 15"
+				}),
+
+				new Item({
+					key: "16",
+					text: "item 16"
+				}),
+
+				new Item({
+					key: "17",
+					text: "item 17"
+				}),
+				new Item({
+					key: "4",
+					text: "item 4"
+				}),
+
+				new Item({
+					key: "5",
+					text: "item 5"
+				}),
+
+				new Item({
+					key: "6",
+					text: "item 6"
+				}),
+
+				new Item({
+					key: "7",
+					text: "item 7"
 				})
 
 			],
 
-			selectedKey: "AR"
+			selectedKey: "7"
 		});
 
 		// arrange
@@ -9119,7 +9157,9 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// asserts
-		assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop < oComboBox.getSelectedItem().getDomRef().offsetTop);
+		assert.ok(oComboBox._oSuggestionPopover._getScrollableContent().scrollTop, "The picker was scrolled");
+		assert.ok(oComboBox._oSuggestionPopover._getScrollableContent().scrollTop < oComboBox.getListItem(oComboBox.getSelectedItem()).getDomRef().offsetTop,
+				"The selected item is on the viewport");
 
 		// cleanup
 		oComboBox.destroy();
@@ -12569,6 +12609,96 @@ sap.ui.define([
 
 		// Cleanup
 		oComboBox.destroy();
+	});
+
+	QUnit.test("Should call toggleIconPressedState correctly in the process of showing items", function (assert) {
+		// Setup
+		var oSpy = new sinon.spy(this.oCombobox, "toggleIconPressedStyle");
+
+		// Act
+		this.oCombobox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+
+		// Act
+		this.oCombobox._handlePopupOpenAndItemsLoad(true); // Icon press
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+
+		// Arrange
+		this.oCombobox._bShouldClosePicker = true;
+		this.oCombobox._bItemsShownWithFilter = false;
+
+		// Act
+		this.oCombobox._handlePopupOpenAndItemsLoad(); // Icon press
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 2, "The toggleIconPressedStyle method was called twice:");
+		assert.strictEqual(oSpy.getCall(1).args[0], false, "...second time with 'false'.");
+
+		// Clean
+		oSpy.restore();
+	});
+
+	QUnit.test("Should call toggleIconPressedState after showItems is called and oninput is triggered.", function (assert) {
+		// Setup
+		var oSpy = new sinon.spy(this.oCombobox, "toggleIconPressedStyle"),
+			oFakeEvent = {
+				isMarked: function () {return false;},
+				target: {
+					value: "A Item"
+				},
+				srcControl: this.oCombobox
+			};
+
+		// Act
+		this.oCombobox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+
+		// Act
+		this.oCombobox.oninput(oFakeEvent); // Fake input
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+
+		// Clean
+		oSpy.restore();
+	});
+
+	QUnit.test("Should show all items when drop down arrow is pressed after showing filtered list.", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oCombobox.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 1, "Only the matching items are visible");
+
+		// Act
+		this.oCombobox._handlePopupOpenAndItemsLoad(true); // Icon press
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 5, "All items are visible");
 	});
 
 	QUnit.module("List configuration");

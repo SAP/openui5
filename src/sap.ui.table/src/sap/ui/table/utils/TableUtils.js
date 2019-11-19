@@ -2,34 +2,32 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableUtils.
+// Provides helper sap.ui.table.utils.TableUtils.
 sap.ui.define([
+	"./_GroupingUtils",
+	"./_ColumnUtils",
+	"./_MenuUtils",
+	"./_BindingUtils",
+	"../library",
 	"sap/ui/base/Object",
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/model/ChangeReason",
-	"./TableGrouping",
-	"./TableColumnUtils",
-	"./TableMenuUtils",
-	"./TableBindingUtils",
-	"./library",
-	"sap/base/Log",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	GroupingUtils,
+	ColumnUtils,
+	MenuUtils,
+	BindingUtils,
+	library,
 	BaseObject,
 	Control,
 	ResizeHandler,
 	coreLibrary,
 	ThemeParameters,
 	ChangeReason,
-	TableGrouping,
-	TableColumnUtils,
-	TableMenuUtils,
-	TableBindingUtils,
-	library,
-	Log,
 	jQuery
 ) {
 	"use strict";
@@ -49,10 +47,10 @@ sap.ui.define([
 	/**
 	 * Table cell type.
 	 *
-	 * @type {sap.ui.table.TableUtils.CellType}
+	 * @type {sap.ui.table.utils.TableUtils.CellType}
 	 * @static
 	 * @constant
-	 * @typedef {Object} sap.ui.table.TableUtils.CellType
+	 * @typedef {Object} sap.ui.table.utils.TableUtils.CellType
 	 * @property {int} DATACELL - Data cell.
 	 * @property {int} COLUMNHEADER - Column header cell.
 	 * @property {int} ROWHEADER - Row header cell.
@@ -80,9 +78,9 @@ sap.ui.define([
 	/**
 	 * The default row base size in pixels for the different content densities for the current theme. If no theme is applied, default values are used.
 	 *
-	 * @type {sap.ui.table.TableUtils.BaseSize}
+	 * @type {sap.ui.table.utils.TableUtils.BaseSize}
 	 * @static
-	 * @typedef {Object} sap.ui.table.TableUtils.BaseSize
+	 * @typedef {Object} sap.ui.table.utils.TableUtils.BaseSize
 	 * @property {int} sapUiSizeCondensed - The default base size in pixels in condensed content density.
 	 * @property {int} sapUiSizeCompact - The default base siz in pixels in compact content density.
 	 * @property {int} sapUiSizeCozy - The default base siz in pixels in cozy content density.
@@ -115,9 +113,9 @@ sap.ui.define([
 	/**
 	 * The default row heights in pixels for the different content densities for the current theme. If no theme is applied, default values are used.
 	 *
-	 * @type {sap.ui.table.TableUtils.DefaultRowHeight}
+	 * @type {sap.ui.table.utils.TableUtils.DefaultRowHeight}
 	 * @static
-	 * @typedef {Object} sap.ui.table.TableUtils.DefaultRowHeight
+	 * @typedef {Object} sap.ui.table.utils.TableUtils.DefaultRowHeight
 	 * @property {int} sapUiSizeCondensed - The default height of a row in pixels in condensed content density.
 	 * @property {int} sapUiSizeCompact - The default height of a row in pixels in compact content density.
 	 * @property {int} sapUiSizeCozy - The default height of a row in pixels in cozy content density.
@@ -133,26 +131,28 @@ sap.ui.define([
 	/**
 	 * The theme-based parameters. If no theme is applied, default values are used.
 	 *
-	 * @type {sap.ui.table.TableUtils.ThemeParameters}
+	 * @type {sap.ui.table.utils.TableUtils.ThemeParameters}
 	 * @static
-	 * @typedef {Object} sap.ui.table.TableUtils.ThemeParameters
+	 * @typedef {Object} sap.ui.table.utils.TableUtils.ThemeParameters
 	 * @property {string} navigationIcon - Name of the navigation icon.
 	 * @property {string} deleteIcon - Name of the delete icon.
 	 * @property {string} resetIcon - Name of the reset icon.
+	 * @property {int} navIndicatorWidth - Width of the navigation indicator
 	 */
 	var mThemeParameters = {
 		navigationIcon: "navigation-right-arrow",
 		deleteIcon: "sys-cancel",
-		resetIcon: "undo"
+		resetIcon: "undo",
+		navIndicatorWidth: 3
 	};
 
 	/**
 	 * Reason for updates of the rows. Inherits from {@link sap.ui.model.ChangeReason}.
 	 *
-	 * @type {sap.ui.table.TableUtils.ROWS_UPDATE_REASON}
+	 * @type {sap.ui.table.utils.TableUtils.ROWS_UPDATE_REASON}
 	 * @static
 	 * @constant
-	 * @typedef {Object} sap.ui.table.TableUtils.ROWS_UPDATE_REASON
+	 * @typedef {Object} sap.ui.table.utils.TableUtils.ROWS_UPDATE_REASON
 	 * @property {string} Sort - {@link sap.ui.model.ChangeReason.Sort}
 	 * @property {string} Filter - {@link sap.ui.model.ChangeReason.Filter}
 	 * @property {string} Change - {@link sap.ui.model.ChangeReason.Change}
@@ -207,15 +207,15 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @alias sap.ui.table.TableUtils
+	 * @alias sap.ui.table.utils.TableUtils
 	 * @private
 	 */
 	var TableUtils = {
 		// Make other utils available.
-		Grouping: TableGrouping,
-		Column: TableColumnUtils,
-		Menu: TableMenuUtils,
-		Binding: TableBindingUtils,
+		Grouping: GroupingUtils,
+		Column: ColumnUtils,
+		Menu: MenuUtils,
+		Binding: BindingUtils,
 
 		CELLTYPE: CELLTYPE,
 		BaseSize: mBaseSize,
@@ -234,7 +234,7 @@ sap.ui.define([
 		 */
 		hasRowHeader: function(oTable) {
 			return (oTable.getSelectionMode() !== SelectionMode.None && oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly)
-				   || TableGrouping.isGroupMode(oTable);
+				   || GroupingUtils.isGroupMode(oTable);
 		},
 
 		/**
@@ -277,7 +277,7 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @returns {boolean} Whether the table has navigation indicators for rows
 		 */
-		hasRowNavigatedIndicators: function(oTable) {
+		hasRowNavigationIndicators: function(oTable) {
 			if (!oTable) {
 				return false;
 			}
@@ -639,9 +639,9 @@ sap.ui.define([
 		 * Returns a combined info about the currently focused item (based on the item navigation).
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {sap.ui.table.TableUtils.FocusedItemInfo | null} Returns the information about the focused item, or <code>null</code>, if the
+		 * @returns {sap.ui.table.utils.TableUtils.FocusedItemInfo | null} Returns the information about the focused item, or <code>null</code>, if the
 		 *                                                           item navigation is not yet initialized.
-		 * @typedef {Object} sap.ui.table.TableUtils.FocusedItemInfo
+		 * @typedef {Object} sap.ui.table.utils.TableUtils.FocusedItemInfo
 		 * @property {int} cell Index of focused cell in the ItemNavigation.
 		 * @property {int} columnCount Number of columns in the ItemNavigation.
 		 * @property {int} cellInRow Index of the cell in the row.
@@ -725,21 +725,21 @@ sap.ui.define([
 		 *     <li><b>cell</b>: Is <code>null</code>, if the cell is not a table cell.</li>
 		 * </ul>
 		 *
-		 * @typedef {Object} sap.ui.table.TableUtils.CellInfo
-		 * @property {sap.ui.table.TableUtils.CellType} [type] The type of the cell.
+		 * @typedef {Object} sap.ui.table.utils.TableUtils.CellInfo
+		 * @property {sap.ui.table.utils.TableUtils.CellType} [type] The type of the cell.
 		 * @property {int | null} [rowIndex] The index of the row the cell is inside.
 		 * @property {int | null} columnIndex The index of the column, in the <code>columns</code> aggregation, the cell is inside.
 		 * @property {int | null} columnSpan The amount of columns the cell spans over.
 		 * @property {jQuery | null} cell The jQuery reference to the table cell.
-		 * @property {sap.ui.table.TableUtils.CellInfo#isOfType} isOfType Function to check for the type of the cell.
+		 * @property {sap.ui.table.utils.TableUtils.CellInfo#isOfType} isOfType Function to check for the type of the cell.
 		 */
 
 		/**
 		 * Collects all available information of a table cell by reading the DOM and returns them in a single object.
 		 *
 		 * @param {jQuery | HTMLElement} oCellRef DOM reference of a table cell.
-		 * @returns {sap.ui.table.TableUtils.CellInfo} An object containing information about the cell.
-		 * @see sap.ui.table.TableUtils.CellInfo
+		 * @returns {sap.ui.table.utils.TableUtils.CellInfo} An object containing information about the cell.
+		 * @see sap.ui.table.utils.TableUtils.CellInfo
 		 */
 		getCellInfo: function(oCellRef) {
 			var oCellInfo;
@@ -816,7 +816,7 @@ sap.ui.define([
 			 * Returns true if the cell is of one of the specified types, otherwise false. Also returns false if no or an invalid bitmask
 			 * is specified.
 			 *
-			 * @alias sap.ui.table.TableUtils.CellInfo#isOfType
+			 * @alias sap.ui.table.utils.TableUtils.CellInfo#isOfType
 			 * @param {int} cellTypeMask Bitmask of cell types to check.
 			 * @returns {boolean} Whether the specified cell type mask matches the type of the cell.
 			 * @see CELLTYPE
@@ -1158,7 +1158,7 @@ sap.ui.define([
 
 		/**
 		 * Gets the resource bundle of the sap.ui.table library. The bundle will be loaded if it is not already loaded or if it should be reloaded.
-		 * After the bundle is loaded, {@link sap.ui.table.TableUtils.getResourceText} can be used to get texts.
+		 * After the bundle is loaded, {@link sap.ui.table.utils.TableUtils.getResourceText} can be used to get texts.
 		 *
 		 * @param {Object} [mOptions] Configuration options
 		 * @param {boolean} [mOptions.async=false] Whether to load the bundle asynchronously.
@@ -1191,7 +1191,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Gets a resource text, if the resource bundle was already loaded with {@link sap.ui.table.TableUtils.getResourceBundle}.
+		 * Gets a resource text, if the resource bundle was already loaded with {@link sap.ui.table.utils.TableUtils.getResourceBundle}.
 		 *
 		 * @param {string} sKey The key of the resource text.
 		 * @param {string[]} [aValues] List of parameters values which should replace the placeholders.
@@ -1535,6 +1535,7 @@ sap.ui.define([
 			mThemeParameters.navigationIcon = ThemeParameters.get("_sap_ui_table_NavigationIcon");
 			mThemeParameters.deleteIcon = ThemeParameters.get("_sap_ui_table_DeleteIcon");
 			mThemeParameters.resetIcon = ThemeParameters.get("_sap_ui_table_ResetIcon");
+			mThemeParameters.navIndicatorWidth = getPixelValue("_sap_ui_table_NavIndicatorWidth");
 		},
 
 		/**
@@ -1586,10 +1587,10 @@ sap.ui.define([
 	};
 
 	// Avoid cyclic dependency.
-	TableGrouping.TableUtils = TableUtils;
-	TableColumnUtils.TableUtils = TableUtils;
-	TableMenuUtils.TableUtils = TableUtils;
-	TableBindingUtils.TableUtils = TableUtils;
+	GroupingUtils.TableUtils = TableUtils;
+	ColumnUtils.TableUtils = TableUtils;
+	MenuUtils.TableUtils = TableUtils;
+	BindingUtils.TableUtils = TableUtils;
 
 	return TableUtils;
 

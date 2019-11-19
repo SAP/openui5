@@ -75,6 +75,10 @@ sap.ui.define([
 		return FakeLrepConnectorSessionStorage.forTesting.getNumberOfChanges("sap.ui.rta.qunitrta.Component");
 	};
 
+	RtaQunitUtils.spySessionStorageWrite = function(sandbox, assert) {
+		return FakeLrepConnectorSessionStorage.forTesting.spyWrite(sandbox, assert);
+	};
+
 	RtaQunitUtils.renderTestAppAtAsync = function(sDomId) {
 		FakeLrepConnectorSessionStorage.enableFakeConnector();
 

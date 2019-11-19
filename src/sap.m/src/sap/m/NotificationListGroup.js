@@ -39,24 +39,26 @@ function(
 	var resourceBundle = Core.getLibraryResourceBundle('sap.m'),
 		expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND'),
 		collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE'),
+		readText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_READ'),
+		unreadText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD'),
 		expandIcon = 'sap-icon://slim-arrow-right',
 		collapseIcon = 'sap-icon://slim-arrow-down';
 
 	var maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
 
 	/**
-	 * Constructor for a new NotificationListGroup.
+	 * Constructor for a new <code>NotificationListGroup<code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListItemGroup control is used for grouping {@link sap.m.NotificationListItem notification items} of the same type.
+	 * The <code>NotificationListGroup</code> control is used for grouping {@link sap.m.NotificationListItem notification items} of the same type.
 	 * <h4>Behavior</h4>
 	 * The group handles specific behavior for different use cases:
 	 * <ul>
-	 * <li><code>autoPriority</code> - sets the group priority to the highest priority of an item in the group.</li>
-	 * <li><code>enableCollapseButtonWhenEmpty</code> - displays a collapse button for an empty group.</li>
+	 * <li><code>autoPriority</code> - determines the group priority to the highest priority of an item in the group.</li>
+	 * <li><code>enableCollapseButtonWhenEmpty</code> - determines if the collapse/expand button for an empty group is displayed.</li>
 	 * <li><code>showEmptyGroup</code> - determines if the header/footer of an empty group is displayed.</li>
 	 * </ul>
 	 * @extends sap.m.NotificationListBase
@@ -81,17 +83,18 @@ function(
 				collapsed: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
 				/**
-				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the "priority" property.
+				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the <code>priority</code> property.
 				 */
 				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
 				/**
 				 * Determines if the group header/footer of the empty group will be always shown. By default groups with 0 notifications are not shown.
+				 *
 				 */
 				showEmptyGroup: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
 				/**
-				 * Determines if the collapse/expand button should be enabled for an empty group.
+				 * Determines if the collapse/expand button for an empty group is displayed.
 				 */
 				enableCollapseButtonWhenEmpty: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
@@ -105,21 +108,21 @@ function(
 				/**
 				 * Determines the notification group's author name.
 				 *
-				 * @deprecated Since version 1.73
+				 * @deprecated As of version 1.73
 				 */
 				authorName: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true},
 
 				/**
 				 * Determines the URL of the notification group's author picture.
 				 *
-				 *  @deprecated Since version 1.73
+				 *  @deprecated As of version 1.73
 				 */
 				authorPicture: {type: 'sap.ui.core.URI', multiple: false, deprecated: true},
 
 				/**
 				 * Determines the due date of the NotificationListGroup.
 				 *
-				 *  @deprecated Since version 1.73
+				 *  @deprecated As of version 1.73
 				 */
 				datetime: {type: 'string', group: 'Appearance', defaultValue: '', deprecated: true}
 			},
@@ -139,7 +142,7 @@ function(
 			},
 			events: {
 				/**
-				 * This event is called when collapse property value is changed
+				 * <code>onCollapse</code> event is called when collapse property value is changed
 				 * @since 1.44
 				 */
 				onCollapse: {
@@ -179,23 +182,37 @@ function(
 		var $that = this.$(),
 			collapseButton = this._getCollapseButton(),
 			display = "",
-			areActionButtonsVisible = !bCollapsed && this.getShowButtons();
+			areActionButtonsVisible = !bCollapsed && this._shouldRenderOverflowToolbar();
 
 		$that.toggleClass('sapMNLGroupCollapsed', bCollapsed);
 		$that.attr('aria-expanded', !bCollapsed);
-		areActionButtonsVisible ? display = "block" : display = "none";
-		$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
+
+		if (!Device.system.phone) {
+			areActionButtonsVisible ? display = "block" : display = "none";
+			$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
+		}
 
 		collapseButton.setIcon(bCollapsed ? expandIcon : collapseIcon);
 		collapseButton.setTooltip(bCollapsed ? expandText : collapseText);
 
 		// Setter overwritten to suppress invalidation
 		this.setProperty('collapsed', bCollapsed, true);
+
+		if (Device.system.phone && this.getDomRef()) {
+			this._updatePhoneButtons();
+		}
+
 		this.fireOnCollapse({collapsed: bCollapsed});
 
 		return this;
 	};
 
+	/**
+	 * Gets the visible NotificationListItems inside the group.
+	 *
+	 * @private
+	 * @returns {number} The visible notifications.
+	 */
 	NotificationListGroup.prototype.getVisibleItems = function () {
 		var visibleItems = this.getItems().filter(function (item) {
 			return item.getVisible();
@@ -215,7 +232,16 @@ function(
 	};
 
 	NotificationListGroup.prototype.getAccessibilityText = function() {
-		var ariaTexts = [this.getTitle()];
+
+		var readUnreadText = this.getUnread() ? unreadText : readText,
+			priorityText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_PRIORITY', this.getPriority()),
+			counterText,
+			ariaTexts = [this.getTitle(), readUnreadText, priorityText];
+
+		if (this.getShowItemsCounter()) {
+			counterText = resourceBundle.getText("LIST_ITEM_COUNTER", this._getVisibleItemsCount());
+			ariaTexts.push(counterText);
+		}
 
 		return ariaTexts.join(' ');
 	};

@@ -20,7 +20,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("loadFlexData trigger the correct request to back end", function (assert) {
+		QUnit.test("loadFlexData trigger the correct request to back end then store the token and settings value", function (assert) {
 			var mPropertyBag = {
 				url: "/flexKeyuser",
 				reference: "reference",
@@ -33,7 +33,11 @@ sap.ui.define([
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
 				response : {
-					changes: []
+					changes: [],
+					settings: {
+						isKeyUser: true,
+						isVariantSharingEnabled: true
+					}
 				},
 				xsrfToken : "newToken",
 				status: "200"
@@ -48,6 +52,7 @@ sap.ui.define([
 				assert.equal(oStubSendRequest.getCall(0).args[1], "GET", "with correct method");
 				assert.equal(oStubSendRequest.getCall(0).args[2].xsrfToken, undefined, "with correct token");
 				assert.equal(KeyUserConnector.xsrfToken, "newToken", "new token is set");
+				assert.deepEqual(KeyUserConnector.settings, { isKeyUser: true, isVariantSharingEnabled: true}, "new settings is stored");
 			});
 		});
 

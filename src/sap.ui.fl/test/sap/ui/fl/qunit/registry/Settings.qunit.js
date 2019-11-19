@@ -35,6 +35,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			Settings._instance = undefined;
+			Settings._oLoadSettingsPromise = undefined;
 
 			sandbox.restore();
 		}
@@ -101,16 +102,15 @@ sap.ui.define([
 			assert.equal(this.cut.getClient(), "someClient");
 		});
 
-		QUnit.test("get instance from flex settings request when flex data promise is not available", function(assert) {
+		QUnit.test("get instance from flex settings request when load settings promise is not available", function(assert) {
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true
 			};
 
 			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(oSetting);
-			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").returns(undefined);
+			Settings._oLoadSettingsPromise = undefined;
 			return Settings.getInstance().then(function(oSettings) {
-				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
 				assert.equal(oSettings.isModelS(), true);
 				Settings.getInstance().then(function(oSettings2) {
@@ -119,52 +119,33 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("get instance from flex settings request when flex data promise is rejected", function(assert) {
-			var oSetting = {
+		QUnit.test("get instance return default value when flex data promise failed to obtain settings value", function(assert) {
+			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(undefined);
+			Settings._oLoadSettingsPromise = undefined;
+			return Settings.getInstance().then(function(oSettings) {
+				assert.equal(oSettings.isKeyUser(), false);
+				assert.equal(oSettings.isModelS(), false);
+				assert.equal(oSettings.isVariantSharingEnabled(), false);
+				assert.equal(oSettings.isAtoEnabled(), false);
+				assert.equal(oSettings.isProductiveSystem(), true);
+				Settings.getInstance().then(function(oSettings2) {
+					assert.equal(oSettings, oSettings2);
+				});
+			});
+		});
+
+		QUnit.test("get instance when _oLoadSettingsPromise is resolved", function(assert) {
+			var oSettings = {
 				isKeyUser: true,
 				isAtoAvailable: true
 			};
-			sandbox.stub(CompatibilityConnector, "loadSettings").resolves(oSetting);
-			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").rejects();
+			Settings._oLoadSettingsPromise = Promise.resolve(new Settings(oSettings));
 			return Settings.getInstance().then(function(oSettings) {
-				assert.equal(oStubGetFlexDataPromise.callCount, 1);
 				assert.equal(oSettings.isKeyUser(), true);
 				assert.equal(oSettings.isModelS(), true);
 				Settings.getInstance().then(function(oSettings2) {
 					assert.equal(oSettings, oSettings2);
 				});
-			});
-		});
-
-		QUnit.test("get instance from cache when flex data promise is resolved", function(assert) {
-			var oFileContent = {
-				changes: {
-					settings: {
-						isKeyUser: true,
-						isAtoAvailable: true
-					}
-				}
-			};
-			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").resolves(oFileContent);
-			return Settings.getInstance().then(function(oSettings) {
-				assert.equal(oStubGetFlexDataPromise.callCount, 1);
-				assert.equal(oSettings.isKeyUser(), true);
-				assert.equal(oSettings.isModelS(), true);
-				Settings.getInstance().then(function(oSettings2) {
-					assert.equal(oSettings, oSettings2);
-				});
-			});
-		});
-
-		QUnit.test("get instance from flex data when cache settings is not set", function(assert) {
-			var oFileContent = {
-				changes: {}
-			};
-			var oStubSendRequest = sandbox.stub(Settings, "_loadSettings");
-			var oStubGetFlexDataPromise = sandbox.stub(Cache, "getFlexDataPromise").resolves(oFileContent);
-			return Settings.getInstance().then(function() {
-				assert.equal(oStubGetFlexDataPromise.callCount, 1);
-				assert.equal(oStubSendRequest.callCount, 1, "call _loadSettings once");
 			});
 		});
 

@@ -3,7 +3,7 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', "./Column", './TableUtils', "./TableExtension",
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/Device', './library', "./Column", './utils/TableUtils', "./TableExtension",
 			   'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/base/Log"],
 	function(Control, Parameters, Device, library, Column, TableUtils, TableExtension, Renderer, IconPool, Log) {
 	"use strict";
@@ -88,6 +88,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		if (TableUtils.hasRowActions(oTable)) {
 			var iRowActionCount = TableUtils.getRowActionCount(oTable);
 			rm.class(iRowActionCount == 1 ? "sapUiTableRActS" : "sapUiTableRAct");
+		} else if (TableUtils.hasRowNavigationIndicators(oTable)){
+			rm.class("sapUiTableRowNavIndicator");
 		}
 
 		if (TableUtils.isNoDataVisible(oTable) && !TableUtils.hasPendingRequests(oTable)) {
@@ -371,6 +373,11 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		rm.close("div");
 
+		rm.openStart("div");
+		rm.class("sapUiTableVSbHeader");
+		rm.openEnd();
+		rm.close("div");
+
 		if (TableUtils.hasRowActions(oTable)) {
 			rm.openStart("div");
 			rm.attr("id", oTable.getId() + "-rowacthdr");
@@ -586,12 +593,12 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderRowActions = function(rm, oTable) {
-		if (!TableUtils.hasRowActions(oTable)) {
+		if (!TableUtils.hasRowActions(oTable) && !TableUtils.hasRowNavigationIndicators(oTable)) {
 			return;
 		}
 		rm.openStart("div", oTable.getId() + "-sapUiTableRowActionScr");
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "PRESENTATION");
-		rm.class("sapUiTableRowActionScr");
+		TableUtils.hasRowActions(oTable) ? rm.class("sapUiTableRowWithAction") : rm.class("sapUiTableRowActionScr");
 		rm.class("sapUiTableNoOpacity");
 		rm.openEnd();
 
@@ -673,8 +680,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			var oAction = oRow.getRowAction();
 			if (oAction) {
 				rm.renderControl(oAction);
-				this.writeRowNavigatedContent(rm, oTable, oRow, iRowIndex);
 			}
+			this.writeRowNavigationContent(rm, oTable, oRow, iRowIndex);
 		}
 		rm.close("div");
 
@@ -942,8 +949,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	 * @param {sap.ui.table.Row} oRow Instance of the row
 	 * @param {int} iRowIndex Index of the row
 	 */
-	TableRenderer.writeRowNavigatedContent = function(rm, oTable, oRow, iRowIndex) {
-		if (!TableUtils.hasRowNavigatedIndicators(oTable)) {
+	TableRenderer.writeRowNavigationContent = function(rm, oTable, oRow, iRowIndex) {
+		if (!TableUtils.hasRowNavigationIndicators(oTable)) {
 			return;
 		}
 

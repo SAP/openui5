@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	'./SelectionPlugin',
-	"../TableUtils",
+	"../utils/TableUtils",
 	'../library'
 ], function(
 	SelectionPlugin,

@@ -473,6 +473,22 @@ sap.ui.define([
 			sap.ui.Device.system.tablet = false;
 			sap.ui.Device.system.phone = true;
 		};
+		var fnToDesktopMode = function () {
+			jQuery("html").removeClass("sapUiMedia-Std-Phone")
+				.removeClass("sapUiMedia-Std-Tablet")
+				.addClass("sapUiMedia-Std-Desktop");
+			sap.ui.Device.system.desktop = true;
+			sap.ui.Device.system.tablet = false;
+			sap.ui.Device.system.phone = false;
+		};
+		var fnToTabletMode = function () {
+			$("html").removeClass("sapUiMedia-Std-Desktop")
+				.removeClass("sapUiMedia-Std-Phone")
+				.addClass("sapUiMedia-Std-Tablet");
+			sap.ui.Device.system.desktop = false;
+			sap.ui.Device.system.phone = false;
+			sap.ui.Device.system.tablet = true;
+		};
 
 		QUnit.module("default values");
 
@@ -10091,5 +10107,52 @@ sap.ui.define([
 
 			assert.strictEqual(this.getPickerValueStateContent(oPicker).getText(), sChangedWarningText,
 			"The correct value state text should be shown.");
+		});
+
+		QUnit.module("Select list width");
+
+		QUnit.test("it should set select list max width of 600px on desktop", function (assert) {
+			fnToDesktopMode(); // Enter desktop mode
+
+			// system under test
+			var oSelect = new Select({
+				items: [ new Item({ key: "1", text: "item 1" }) ]
+			});
+
+			// assert
+			assert.strictEqual(oSelect._oList.getMaxWidth(), "600px", "Select List max width is correct");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should set select list max width of 600px on tablet", function (assert) {
+			fnToTabletMode(); // Enter tabled mode
+
+			// system under test
+			var oSelect = new Select({
+				items: [ new Item({ key: "1", text: "item 1" }) ]
+			});
+
+			// assert
+			assert.strictEqual(oSelect._oList.getMaxWidth(), "600px", "Select List max width is correct");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		QUnit.test("it should set select list max width of 100% on phone", function (assert) {
+			fnToMobileMode(); // Enter phone mode
+
+			// system under test
+			var oSelect = new Select({
+				items: [ new Item({ key: "1", text: "item 1" }) ]
+			});
+
+			// assert
+			assert.strictEqual(oSelect._oList.getMaxWidth(), "100%", "Select List max width is correct");
+
+			// cleanup
+			oSelect.destroy();
 		});
 	});

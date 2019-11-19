@@ -459,6 +459,15 @@ function(
 		return this.setProperty("notificationsNumber", sNotificationsNumber, true);
 	};
 
+	/**
+	 * Helper method for unification of all Content items.
+	 *
+	 * @private
+	 */
+	ShellBar.prototype._addOTContent = function(oControl){
+		oControl.addStyleClass("sapFShellBarItem");
+		this._oOverflowToolbar.addContent(oControl);
+	};
 
 	// Utility
 	ShellBar.prototype._assignControlsToOverflowToolbar = function () {
@@ -472,15 +481,15 @@ function(
 		this._oOverflowToolbar.removeAllContent();
 
 		if (this._oNavButton) {
-			this._oOverflowToolbar.addContent(this._oNavButton);
+			this._addOTContent(this._oNavButton);
 		}
 
 		if (this._oMenuButton) {
-			this._oOverflowToolbar.addContent(this._oMenuButton);
+			this._addOTContent(this._oMenuButton);
 		}
 
 		if (this._oHomeIcon) {
-			this._oOverflowToolbar.addContent(this._oHomeIcon);
+			this._addOTContent(this._oHomeIcon);
 		}
 
 
@@ -489,37 +498,37 @@ function(
 		this._oTitleControl = null;
 		//depends on the given configuration we either show MenuButton with MegaMenu, or Title
 		if (this.getShowMenuButton() && this._oPrimaryTitle){
-			this._oOverflowToolbar.addContent(this._oPrimaryTitle);
+			this._addOTContent(this._oPrimaryTitle);
 			this._oTitleControl = this._oPrimaryTitle;
 		} else if (this._oMegaMenu) {
-			this._oOverflowToolbar.addContent(this._oMegaMenu);
+			this._addOTContent(this._oMegaMenu);
 			this._oTitleControl = this._oMegaMenu;
 		}
 
 		if (this._oSecondTitle) {
-			this._oOverflowToolbar.addContent(this._oSecondTitle);
+			this._addOTContent(this._oSecondTitle);
 		}
 		if (this._oControlSpacer) {
-			this._oOverflowToolbar.addContent(this._oControlSpacer);
+			this._addOTContent(this._oControlSpacer);
 		}
 		if (this._oCopilot) {
-			this._oOverflowToolbar.addContent(this._oCopilot);
+			this._addOTContent(this._oCopilot);
 		}
 
-		this._oOverflowToolbar.addContent(this._oToolbarSpacer);
+		this._addOTContent(this._oToolbarSpacer);
 
 		if (this._oManagedSearch) {
-			this._oOverflowToolbar.addContent(this._oManagedSearch);
+			this._addOTContent(this._oManagedSearch);
 			this._aOverflowControls.push(this._oManagedSearch);
 		}
 
 		if (this._oSearch) {
-			this._oOverflowToolbar.addContent(this._oSearch);
+			this._addOTContent(this._oSearch);
 			this._aOverflowControls.push(this._oSearch);
 		}
 
 		if (this._oNotifications) {
-			this._oOverflowToolbar.addContent(this._oNotifications);
+			this._addOTContent(this._oNotifications);
 			this._aOverflowControls.push(this._oNotifications);
 		}
 
@@ -527,16 +536,16 @@ function(
 		aAdditionalContent = this.getAdditionalContent();
 		if (aAdditionalContent) {
 			aAdditionalContent.forEach(function (oControl) {
-				this._oOverflowToolbar.addContent(oControl);
+				this._addOTContent(oControl);
 				this._aOverflowControls.push(oControl);
 			}.bind(this));
 		}
 
 		if (this._oAvatarButton) {
-			this._oOverflowToolbar.addContent(this._oAvatarButton);
+			this._addOTContent(this._oAvatarButton);
 		}
 		if (this._oProductSwitcher) {
-			this._oOverflowToolbar.addContent(this._oProductSwitcher);
+			this._addOTContent(this._oProductSwitcher);
 		}
 
 		this._bOTBUpdateNeeded = false;

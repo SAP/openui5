@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/Change",
 	"sap/base/Log",
 	"sap/base/util/includes",
 	"sap/base/util/merge"
@@ -17,6 +18,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory,
 	ChangesController,
 	Utils,
+	Change,
 	Log,
 	includes,
 	merge
@@ -178,6 +180,15 @@ sap.ui.define([
 		});
 	}
 
+	function _prepareAppVariantSpecificChange(oAppVariant) {
+		return new Change({
+			fileName: oAppVariant.getDefinition().fileName,
+			fileType: oAppVariant.getDefinition().fileType,
+			packageName: oAppVariant.getPackage(),
+			namespace: oAppVariant.getNamespace()
+		});
+	}
+
 	var SaveAs = {
 		saveAs: function(mPropertyBag) {
 			var oAppVariantClosure;
@@ -262,9 +273,14 @@ sap.ui.define([
 						throw new Error("App variant with ID: " + mPropertyBag.referenceAppId + "does not exist");
 					}
 					oAppVariantClosure = merge({}, oAppVariant);
-					return _getTransportInfo(oAppVariantClosure, mPropertyBag);
+
+					var oChange = _prepareAppVariantSpecificChange(oAppVariant);
+					return _getTransportInfo(oChange, mPropertyBag);
 				})
 				.then(function(oTransportInfo) {
+					if (oTransportInfo === "cancel") {
+						return Promise.reject("cancel");
+					}
 					// Sets the transport info for app variant
 					if (oTransportInfo) {
 						if (oTransportInfo.transport) {
@@ -301,8 +317,10 @@ sap.ui.define([
 					return oAppVariantResultClosure;
 				})
 				.catch(function(oError) {
-					Log.error("the app variant could not be updated.", oError.message || oError.name);
-					throw oError;
+					if (oError !== "cancel") {
+						Log.error("the app variant could not be updated.", oError.message || oError.name);
+						throw oError;
+					}
 				});
 		},
 		deleteAppVariant: function(mPropertyBag) {
@@ -315,9 +333,14 @@ sap.ui.define([
 				})
 				.then(function(oAppVariant) {
 					oAppVariantClosure = merge({}, oAppVariant);
-					return _getTransportInfo(oAppVariantClosure, mPropertyBag);
+
+					var oChange = _prepareAppVariantSpecificChange(oAppVariant);
+					return _getTransportInfo(oChange, mPropertyBag);
 				})
 				.then(function(oTransportInfo) {
+					if (oTransportInfo === "cancel") {
+						return Promise.reject("cancel");
+					}
 					// Sets the transport info for app variant
 					if (oTransportInfo) {
 						if (oTransportInfo.transport) {
@@ -336,8 +359,10 @@ sap.ui.define([
 						});
 				})
 				.catch(function(oError) {
-					Log.error("the app variant could not be deleted.", oError.message || oError.name);
-					throw oError;
+					if (oError !== "cancel") {
+						Log.error("the app variant could not be deleted.", oError.message || oError.name);
+						throw oError;
+					}
 				});
 		}
 	};

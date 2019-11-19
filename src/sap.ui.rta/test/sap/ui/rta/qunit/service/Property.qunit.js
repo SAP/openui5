@@ -12,7 +12,6 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/thirdparty/sinon-4"
 ],
@@ -27,14 +26,12 @@ function(
 	Button,
 	UIComponent,
 	ComponentContainer,
-	FakeLrepConnectorSessionStorage,
 	_omit,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	FakeLrepConnectorSessionStorage.enableFakeConnector();
 
 // TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {

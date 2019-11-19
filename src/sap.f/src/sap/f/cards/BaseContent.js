@@ -365,6 +365,9 @@ sap.ui.define([
 								reject("Analytical content type is not available with this distribution.");
 							});
 						break;
+					case "analyticscloud":
+						sap.ui.require(["sap/f/cards/AnalyticsCloudContent"], fnCreateContentInstance);
+						break;
 					case "timeline":
 						Core.loadLibrary("sap.suite.ui.commons", {
 								async: true
@@ -405,6 +408,8 @@ sap.ui.define([
 			case "TimelineContent":
 				iHeight = BaseContent._getMinTimelineHeight(oContent); break;
 			case "AnalyticalContent":
+				iHeight = 14; break;
+			case "AnalyticsCloudContent":
 				iHeight = 14; break;
 			case "ObjectContent":
 				iHeight = 0; break;

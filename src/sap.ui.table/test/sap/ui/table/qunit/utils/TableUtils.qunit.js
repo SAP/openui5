@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/CreationRow",
@@ -420,31 +420,31 @@ sap.ui.define([
 		assert.ok(TableUtils.hasRowHighlights(oTable), "Row highlight is bound: Returned true");
 	});
 
-	QUnit.test("hasRowNavigatedIndicators", function(assert) {
-		assert.ok(!TableUtils.hasRowNavigatedIndicators(), "No table instance passed: Returned false");
+	QUnit.test("hasRowNavigationIndicators", function(assert) {
+		assert.ok(!TableUtils.hasRowNavigationIndicators(), "No table instance passed: Returned false");
 
 		oTable.setRowSettingsTemplate(null);
-		assert.ok(!TableUtils.hasRowNavigatedIndicators(oTable), "No row settings configured: Returned false");
+		assert.ok(!TableUtils.hasRowNavigationIndicators(oTable), "No row settings configured: Returned false");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: null
 		}));
-		assert.ok(!TableUtils.hasRowNavigatedIndicators(oTable), "No row navigated configured: Returned false");
+		assert.ok(!TableUtils.hasRowNavigationIndicators(oTable), "No row navigated configured: Returned false");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: false
 		}));
-		assert.ok(!TableUtils.hasRowNavigatedIndicators(oTable), "Returned false");
+		assert.ok(!TableUtils.hasRowNavigationIndicators(oTable), "Returned false");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: true
 		}));
-		assert.ok(TableUtils.hasRowNavigatedIndicators(oTable), "Returned true");
+		assert.ok(TableUtils.hasRowNavigationIndicators(oTable), "Returned true");
 
 		oTable.setRowSettingsTemplate(new RowSettings({
 			navigated: "{bindingPath}"
 		}));
-		assert.ok(TableUtils.hasRowNavigatedIndicators(oTable), "Row navigated is bound: Returned true");
+		assert.ok(TableUtils.hasRowNavigationIndicators(oTable), "Row navigated is bound: Returned true");
 	});
 
 	QUnit.test("getVisibleColumnCount", function(assert) {
@@ -1406,7 +1406,7 @@ sap.ui.define([
 
 			this.oTable = new Table();
 
-			this.TableUtilsDummyControl = Control.extend("sap.ui.table.TableUtilsDummyControl", {
+			this.TableUtilsDummyControl = Control.extend("sap.ui.table.utils.TableUtilsDummyControl", {
 				metadata: {
 					library: "sap.ui.table",
 					aggregations: {

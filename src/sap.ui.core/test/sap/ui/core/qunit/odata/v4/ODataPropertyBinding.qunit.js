@@ -185,8 +185,6 @@ sap.ui.define([
 			assert.strictEqual(oBinding.sGroupId, undefined);
 			assert.strictEqual(oBinding.hasOwnProperty("oCheckUpdateCallToken"), true);
 			assert.strictEqual(oBinding.oCheckUpdateCallToken, undefined);
-			assert.strictEqual(oBinding.hasOwnProperty("sPathWithFetchTypeError"), true);
-			assert.strictEqual(oBinding.sPathWithFetchTypeError, undefined);
 			assert.ok(oBindingSpy.calledOnceWithExactly(sinon.match.same(oBinding)));
 		});
 	});

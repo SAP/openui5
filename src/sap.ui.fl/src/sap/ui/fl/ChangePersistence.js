@@ -21,7 +21,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
 	"sap/base/util/isEmptyObject",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/fl/apply/_internal/flexState/FlexState"
 ], function(
 	Change,
 	Variant,
@@ -41,7 +42,8 @@ sap.ui.define([
 	jQuery,
 	merge,
 	isEmptyObject,
-	Log
+	Log,
+	FlexState
 ) {
 	"use strict";
 
@@ -221,10 +223,6 @@ sap.ui.define([
 			var oChangeFileContent = merge({}, oWrappedChangeFileContent);
 			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
 
-			if (oChangeFileContent.changes && oChangeFileContent.changes.settings) {
-				Settings._storeInstance(oChangeFileContent.changes.settings);
-			}
-
 			var bFlexChangesExist = oChangeFileContent.changes
 				&& Array.isArray(oChangeFileContent.changes.changes)
 				&& oChangeFileContent.changes.changes.length !== 0;
@@ -276,6 +274,14 @@ sap.ui.define([
 				this._bHasChangesOverMaxLayer = false;
 				return this.HIGHER_LAYER_CHANGES_EXIST;
 			}
+
+			// correct place to initialize maps yet to be defined
+			FlexState.initMaps(
+				Object.assign({
+					reference: this.getComponentName(),
+					flexResponse: oChangeFileContent
+				}, oComponentData && {technicalParameters: oComponentData.technicalParameters})
+			);
 
 			if (bVariantSectionContainsContent) {
 				// if variant changes should be included in response OR if filtering is required for variant changes
@@ -989,19 +995,20 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
+	 * Saves the passed or all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 *
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
+	 * @param {sap.ui.fl.Change} [aChanges] If passed only those changes are saved
 	 * @returns {Promise} resolving after all changes have been saved
 	 */
-	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache) {
-		var aDirtyChangesClone = this._aDirtyChanges.slice(0);
-		var aDirtyChanges = this._aDirtyChanges;
-		var aRequests = this._getRequests(aDirtyChangesClone);
-		var aPendingActions = this._getPendingActions(aDirtyChangesClone);
+	ChangePersistence.prototype.saveDirtyChanges = function(bSkipUpdateCache, aChanges) {
+		var aDirtyChanges = aChanges || this._aDirtyChanges;
+		var aDirtyChangesClone = aDirtyChanges.slice(0);
+		var aRequests = this._getRequests(aDirtyChanges);
+		var aPendingActions = this._getPendingActions(aDirtyChanges);
 
 		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
 			var sRequest = aRequests[0];

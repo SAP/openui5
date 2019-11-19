@@ -6,7 +6,7 @@
 sap.ui.define([
 	"./CreationRowRenderer",
 	"./Column",
-	"./TableUtils",
+	"./utils/TableUtils",
 	"sap/ui/core/Control",
 	"sap/m/library",
 	"sap/m/OverflowToolbar",

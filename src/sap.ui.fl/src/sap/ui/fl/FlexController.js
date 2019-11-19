@@ -832,7 +832,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.saveSequenceOfDirtyChanges = function (aDirtyChanges) {
-		return this._oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges);
+		return this._oChangePersistence.saveDirtyChanges(false, aDirtyChanges);
 	};
 
 	/**

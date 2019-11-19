@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/library",

@@ -1,6 +1,6 @@
 
 sap.ui.define([
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -45,12 +45,16 @@ sap.ui.define([
 			Promise.resolve().then(fnTest.bind(this));
 		};
 
-		oControl.attachEvent("_rowsUpdated", fnEventHandler);
+		if (iSkipCalls === 0) {
+			oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
+		} else {
+			oControl.attachEvent("_rowsUpdated", fnEventHandler);
+		}
 	}
 
 	function performTestAfterTableIsUpdated(doTest, done) {
 		this.oModel.metadataLoaded().then(function() {
-			attachEventHandler(this.oTable, 1, function() {
+			attachEventHandler(this.oTable, 0, function() {
 				doTest(this.oTable);
 				if (done) {
 					done();
@@ -540,7 +544,7 @@ sap.ui.define([
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
 		}.bind(this));
@@ -666,7 +670,7 @@ sap.ui.define([
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
 		}.bind(this));
@@ -705,7 +709,7 @@ sap.ui.define([
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler1, this);
+			attachEventHandler(this.oTable, 0, fnHandler1, this);
 			this.oTable.bindRows({
 				path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
 				parameters: {
@@ -739,7 +743,7 @@ sap.ui.define([
 				done();
 			};
 
-			attachEventHandler(this.oTable, 1, fnHandler, this);
+			attachEventHandler(this.oTable, 0, fnHandler, this);
 			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
 
 		}.bind(this));

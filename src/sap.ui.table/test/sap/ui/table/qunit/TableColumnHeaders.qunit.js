@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",

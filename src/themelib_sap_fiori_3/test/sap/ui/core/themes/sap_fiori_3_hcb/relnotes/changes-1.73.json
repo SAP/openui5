@@ -56,6 +56,23 @@
             "reference": "1970578622"
           }
         ]
+      },
+      {
+        "id": "122353840693bb68d5082f00f91df319ae7eae5e",
+        "type": "FIX",
+        "text": " sap.f.ShellBar: Visual bugs fixed",
+        "references": []
+      },
+      {
+        "id": "7775253973a5ba15004ac6bc8595abe0fa11a554",
+        "type": "FIX",
+        "text": " sap.m.Button: Now there is no text-shadow in Quartz Dark",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970564749"
+          }
+        ]
       }
     ]
   }

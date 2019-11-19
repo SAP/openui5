@@ -5664,6 +5664,79 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("_selectItemByKey should set items with valid keys only", function(assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox();
+		var oFakeEvent = {
+			setMarked: function () {}
+		};
+
+		var fnTestFunction = function() {
+			return "Test";
+		};
+
+		var oGetUnselectedItemsStub = sinon.stub(oMultiComboBox, "_getUnselectedItems", function() {
+			return [
+				{
+					getId: fnTestFunction,
+					getText: fnTestFunction,
+					data: fnTestFunction,
+					getKey: function () {
+						return "";
+					}
+				},
+				{
+					getId: fnTestFunction,
+					getText: fnTestFunction,
+					data: fnTestFunction,
+					getKey: fnTestFunction
+				}
+			];
+		}),
+		oGetEnabledStub = sinon.stub(oMultiComboBox, "getEnabled", function () {
+			return true;
+		}),
+		oGetListItemStub = sinon.stub(oMultiComboBox, "getListItem", function (oItem) {
+			return {
+				isSelected: function () {
+					return false;
+				}
+			};
+		}),
+		oGetValueStub = sinon.stub(oMultiComboBox, "getValue", fnTestFunction),
+		oSetSelectionSpy = sinon.spy(oMultiComboBox, "setSelection");
+
+		// Act
+		oMultiComboBox._selectItemByKey(oFakeEvent);
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(oSetSelectionSpy.calledWith({
+			item: {
+				getId: fnTestFunction,
+				getText: fnTestFunction,
+				data: fnTestFunction,
+				getKey: fnTestFunction
+			},
+			id: "Test",
+			key: "Test",
+			fireChangeEvent: true,
+			fireFinishEvent: true,
+			suppressInvalidate: true,
+			listItemUpdated: false
+		}), "Selection should be called with not empty string as a key");
+
+		// cleanup
+		oGetUnselectedItemsStub.restore();
+		oGetEnabledStub.restore();
+		oGetListItemStub.restore();
+		oGetValueStub.restore();
+		oSetSelectionSpy.restore();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test("onsapenter on mobile device", function(assert) {
 
 		// system under test
@@ -7276,6 +7349,96 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
 		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
+	});
+
+	QUnit.test("Should call toggleIconPressedState correctly in the process of showing items", function (assert) {
+		// Setup
+		var oSpy = new sinon.spy(this.oMultiComboBox, "toggleIconPressedStyle");
+
+		// Act
+		this.oMultiComboBox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+
+		// Act
+		this.oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+
+		// Arrange
+		this.oMultiComboBox._bShouldClosePicker = true;
+		this.oMultiComboBox._bItemsShownWithFilter = false;
+
+		// Act
+		this.oMultiComboBox._handlePopupOpenAndItemsLoad(); // Icon press
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 2, "The toggleIconPressedStyle method was called twice:");
+		assert.strictEqual(oSpy.getCall(1).args[0], false, "...second time with 'false'.");
+
+		// Clean
+		oSpy.restore();
+	});
+
+	QUnit.test("Should call toggleIconPressedState after showItems is called and oninput is triggered.", function (assert) {
+		// Setup
+		var oSpy = new sinon.spy(this.oMultiComboBox, "toggleIconPressedStyle"),
+			oFakeEvent = {
+				isMarked: function () {return false;},
+				target: {
+					value: "A Item"
+				},
+				srcControl: this.oMultiComboBox
+			};
+
+		// Act
+		this.oMultiComboBox.showItems(function () {
+			return true;
+		});
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 0, "The toggleIconPressedStyle method was not called.");
+
+		// Act
+		this.oMultiComboBox.oninput(oFakeEvent); // Fake input
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "The toggleIconPressedStyle method was called once:");
+		assert.strictEqual(oSpy.getCall(0).args[0], true, "...first time with 'true'.");
+
+		// Clean
+		oSpy.restore();
+	});
+
+	QUnit.test("Should show all items when drop down arrow is pressed after showing filtered list.", function (assert) {
+		// Setup
+		var fnGetVisisbleItems = function (aItems) {
+			return aItems.filter(function (oItem) {
+				return oItem.getVisible();
+			});
+		};
+
+		// Act
+		this.oMultiComboBox.showItems(function (sValue, oItem) {
+			return oItem.getText() === "A Item 1";
+		});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 1, "Only the matching items are visible");
+
+		// Act
+		this.oMultiComboBox._handlePopupOpenAndItemsLoad(true); // Icon press
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oMultiComboBox._oList.getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oMultiComboBox._oList.getItems()).length, 5, "All items are visible");
 	});
 
 	QUnit.module("selectedKeys");

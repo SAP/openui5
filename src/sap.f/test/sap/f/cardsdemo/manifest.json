@@ -178,6 +178,11 @@
 		  "target": "objectContent"
 		},
 		{
+		  "pattern": "analyticsCloudContent",
+		  "name": "analyticsCloudContent",
+		  "target": "analyticsCloudContent"
+		},
+		{
 		  "pattern": "dnd",
 		  "name": "dnd",
 		  "target": "dnd"
@@ -342,6 +347,11 @@
 			"objectContent": {
 				"viewId": "object",
 				"viewName": "ObjectContent",
+				"viewLevel": 1
+			},
+			"analyticsCloudContent": {
+				"viewId": "analyticsCloudContent",
+				"viewName": "AnalyticsCloudContent",
 				"viewLevel": 1
 			},
 			"dnd": {

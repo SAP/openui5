@@ -2738,5 +2738,113 @@
 				}
 			}
 		}
+	},
+	"analyticsCloud": {
+		"example1": {
+			"sap.card": {
+				"configuration": {
+					"parameters": {
+						"server": {
+							"value": "./cardcontent/analyticsCloud/example1.json"
+						},
+						"system": {
+							"value": "moses"
+						},
+						"story": {
+							"value": "39B4ADC625FFA750D5DD27609AE03E9"
+						}
+					}
+				},
+				"type": "AnalyticsCloud",
+				"data": {
+					"request": {
+						"url": "{{parameters.server}}",
+						"parameters": {
+							"system": "{{parameters.system}}",
+							"story": "{{parameters.story}}"
+						}
+					},
+					"path": "/"
+				},
+				"header": {
+					"type": "Numeric",
+					"title": "{Items/0/Data/title/text}",
+					"subTitle": "Price",
+					"unitOfMeasurement": "EUR",
+					"mainIndicator": {
+						"number": "{Items/0/Data/series/0/data/1/y}",
+						"unit": "EUR",
+						"trend": "Up",
+						"state": "Good"
+					},
+					"details": "Top product price",
+					"sideIndicators": [{
+							"title": "Target",
+							"number": "120",
+							"unit": "EUR"
+						},
+						{
+							"title": "Deviation",
+							"number": "90",
+							"unit": "%"
+						}
+					]
+				},
+				"content": {
+					"options": "{Items/1/Data}"
+				}
+			}
+		},
+		"example2": {
+			"sap.card": {
+				"type": "AnalyticsCloud",
+				"header": {
+					"type": "Numeric",
+					"title": "Fruit Consumption",
+					"subTitle": "Average consumption",
+					"mainIndicator": {
+						"number": "3",
+						"trend": "Down",
+						"state": "Critical"
+					}
+				},
+
+				"content": {
+					"options": {
+						"chart": {
+							"type": "bar"
+						},
+						"title": {
+							"text": ""
+						},
+						"credits": {
+							"enabled": false
+						},
+						"xAxis": {
+							"categories": ["Apples", "Bananas", "Oranges"]
+						},
+						"yAxis": {
+							"title": {
+								"text": "Fruit eaten"
+							}
+						},
+						"series": [{
+							"name": "Jane",
+							"data": [1, 0, 4]
+						}, {
+							"name": "John",
+							"data": [5, 7, 3]
+						}]
+					},
+					"actions": [
+						{
+							"type": "Navigation",
+							"enabled": true,
+							"url": "http://sap.com"
+						}
+					]
+				}
+			}
+		}
 	}
 }

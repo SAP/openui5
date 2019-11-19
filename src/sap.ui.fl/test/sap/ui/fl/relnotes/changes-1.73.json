@@ -35,6 +35,12 @@
         "type": "FIX",
         "text": " sap.ui.fl: undo of setDefault triggers update of current variant",
         "references": []
+      },
+      {
+        "id": "2dce2b07d8746fd432ad0412648657a4c3ec9d41",
+        "type": "FIX",
+        "text": " fl.VariantManagement: provide busy handling",
+        "references": []
       }
     ]
   }

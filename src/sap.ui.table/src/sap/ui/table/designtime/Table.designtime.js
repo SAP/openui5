@@ -4,7 +4,7 @@
 
 // Provides the Design Time Metadata for the sap.ui.table.Table control
 sap.ui.define([
-	'sap/ui/table/TableUtils'
+	'sap/ui/table/utils/TableUtils'
 ],
 	function(
 		TableUtils

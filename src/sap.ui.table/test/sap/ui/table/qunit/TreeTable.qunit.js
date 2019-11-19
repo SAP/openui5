@@ -2,12 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/library"
-], function(qutils, TreeTable, Column, TableUtils, JSONModel, library) {
+], function(qutils, TableQUnitUtils, TreeTable, Column, TableUtils, JSONModel, library) {
 	"use strict";
 
 	// Shortcuts
@@ -454,22 +455,6 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			destroyTable(this.table);
-		},
-		checkRowsUpdated: function(assert, aActualReasons, aExpectedReasons) {
-			var oTreeTable = this.table;
-
-			return new Promise(function(resolve) {
-				window.setTimeout(function() {
-					assert.deepEqual(aActualReasons, aExpectedReasons,
-						"VisibleRowCountMode: " + oTreeTable.getVisibleRowCountMode() + " - "
-						+ (aExpectedReasons.length > 0
-						? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
-						: "The event _rowsUpdated has not been fired")
-					);
-
-					resolve();
-				}, 100);
-			});
 		}
 	});
 
@@ -627,56 +612,84 @@ sap.ui.define([
 		assert.ok(oBinding.getSelectedNodesCount() == 0, "# of selected nodes is correct");
 	});
 
+	QUnit.test("Selection Plugin", function(assert) {
+		assert.ok(this.table._getSelectionPlugin().isA("sap.ui.table.plugins.BindingSelectionPlugin"), "BindingSelectionPlugin is initialized");
+	});
+
+	QUnit.module("Event: _rowsUpdated", {
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		},
+		createTable: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+
+			this.oTable = TableQUnitUtils.createTable(TreeTable, {
+				rows: "{/root}",
+				models: new JSONModel(getData()),
+				columns: [
+					new Column({label: "Name", template: "name", filterProperty: "name"}),
+					new Column({label: "Description", template: "description"})
+				]
+			});
+
+			return this.oTable;
+		},
+		checkRowsUpdated: function(assert, aActualReasons, aExpectedReasons) {
+			var that = this;
+
+			return new Promise(function(resolve) {
+				setTimeout(function() {
+					assert.deepEqual(aActualReasons, aExpectedReasons,
+						"VisibleRowCountMode: " + that.oTable.getVisibleRowCountMode() + " - "
+						+ (aExpectedReasons.length > 0
+						   ? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
+						   : "The event _rowsUpdated has not been fired")
+					);
+
+					resolve();
+				}, 250);
+			});
+		}
+	});
+
 	QUnit.test("_rowsUpdated - Expand", function(assert) {
-		var done = assert.async();
-		var oTable = this.table;
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTable();
 
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
-
-		TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
-
-		window.setTimeout(function() {
-			aFiredReasons = [];
-			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-
-			that.checkRowsUpdated(assert, aFiredReasons, [
-				TableUtils.RowsUpdateReason.Expand
-			]).then(function() {
-				done();
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
 			});
-		}, 0);
+			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			return that.checkRowsUpdated(assert, aFiredReasons, [
+				TableUtils.RowsUpdateReason.Expand
+			]);
+		});
 	});
 
 	QUnit.test("_rowsUpdated - Collapse", function(assert) {
-		var done = assert.async();
-		var oTable = this.table;
 		var aFiredReasons = [];
 		var that = this;
+		var oTable = this.createTable();
 
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			aFiredReasons.push(oEvent.getParameter("reason"));
-		});
-
-		TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
-
-		window.setTimeout(function() {
-			aFiredReasons = [];
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
 			TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
 
-			that.checkRowsUpdated(assert, aFiredReasons, [
+			return that.checkRowsUpdated(assert, aFiredReasons, [
 				TableUtils.RowsUpdateReason.Collapse
-			]).then(function() {
-				done();
-			});
-		}, 0);
-	});
-
-	QUnit.test("Selection Plugin", function(assert) {
-		assert.ok(this.table._getSelectionPlugin().isA("sap.ui.table.plugins.BindingSelectionPlugin"), "BindingSelectionPlugin is initialized");
+			]);
+		});
 	});
 
 	QUnit.module("Selection", {

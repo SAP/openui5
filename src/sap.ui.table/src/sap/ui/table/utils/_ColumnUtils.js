@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-// Provides helper sap.ui.table.TableUtils.
+// Provides helper sap.ui.table.utils._ColumnUtils.
 sap.ui.define([
 	"sap/ui/Device",
-	"./library",
+	"../library",
 	"sap/base/Log"
 ], function(Device, library, Log) {
 	"use strict";
@@ -13,15 +13,15 @@ sap.ui.define([
 	/**
 	 * Static collection of utility functions related to column of sap.ui.table.Table, ...
 	 *
-	 * Note: Do not access the function of this helper directly but via <code>sap.ui.table.TableUtils.Column...</code>
+	 * Note: Do not access the functions of this helper directly, but via <code>sap.ui.table.utils.TableUtils.Column...</code>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 * @namespace
-	 * @alias sap.ui.table.TableColumnUtils
+	 * @alias sap.ui.table.utils._ColumnUtils
 	 * @private
 	 */
-	var TableColumnUtils = {
+	var ColumnUtils = {
 
 		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils
 
@@ -33,7 +33,7 @@ sap.ui.define([
 		 */
 		initColumnUtils: function(oTable) {
 			if (!oTable._oColumnInfo) {
-				TableColumnUtils.updateColumnInfo(oTable, TableColumnUtils.collectColumnInfo(oTable));
+				ColumnUtils.updateColumnInfo(oTable, ColumnUtils.collectColumnInfo(oTable));
 			}
 		},
 
@@ -79,8 +79,8 @@ sap.ui.define([
 		collectColumnInfo: function(oTable) {
 			return {
 				columnCount: oTable.getColumns().length,
-				visibleColumnCount: TableColumnUtils.TableUtils.getVisibleColumnCount(oTable),
-				columnMap: TableColumnUtils.getColumnMap(oTable)
+				visibleColumnCount: ColumnUtils.TableUtils.getVisibleColumnCount(oTable),
+				columnMap: ColumnUtils.getColumnMap(oTable)
 			};
 		},
 
@@ -122,7 +122,7 @@ sap.ui.define([
 			var oColumnMap = {};
 			var aColumns = oTable.getColumns();
 
-			var iMaxLevel = TableColumnUtils.TableUtils.getHeaderRowCount(oTable);
+			var iMaxLevel = ColumnUtils.TableUtils.getHeaderRowCount(oTable);
 
 			var oParentReferences = {};
 
@@ -138,7 +138,7 @@ sap.ui.define([
 					oColumnMapItem.levelInfo[iLevel] = {};
 					oColumnMapItem.levelInfo[iLevel].spannedColumns = [];
 
-					var iHeaderSpan = TableColumnUtils.getHeaderSpan(oColumn, iLevel);
+					var iHeaderSpan = ColumnUtils.getHeaderSpan(oColumn, iLevel);
 					// collect columns which are spanned by the current column
 					for (i = 1; i < iHeaderSpan; i++) {
 						var oSpannedColumn = aColumns[iColumnIndex + i];
@@ -174,7 +174,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getColumnMapItem: function(oTable, sColumnId) {
-			TableColumnUtils.initColumnUtils(oTable);
+			ColumnUtils.initColumnUtils(oTable);
 			var oSourceColumnMapItem = oTable._oColumnInfo.columnMap[sColumnId];
 			if (!oSourceColumnMapItem) {
 				Log.error("Column with ID '" + sColumnId + "' not found", oTable);
@@ -193,7 +193,7 @@ sap.ui.define([
 		 * @returns {Array.<{column: sap.ui.table.Column, level: int}>|undefined} Array of column information.
 		 */
 		getParentSpannedColumns: function(oTable, sColumnId, iLevel) {
-			var oColumnMapItem = TableColumnUtils.getColumnMapItem(oTable, sColumnId);
+			var oColumnMapItem = ColumnUtils.getColumnMapItem(oTable, sColumnId);
 			if (!oColumnMapItem) {
 				return undefined;
 			}
@@ -220,7 +220,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getChildrenSpannedColumns: function(oTable, sColumnId, iLevel) {
-			var oColumnMapItem = TableColumnUtils.getColumnMapItem(oTable, sColumnId);
+			var oColumnMapItem = ColumnUtils.getColumnMapItem(oTable, sColumnId);
 			if (!oColumnMapItem) {
 				return undefined;
 			}
@@ -286,7 +286,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getMaxHeaderSpan: function(oColumn) {
-			return TableColumnUtils.getHeaderSpan(oColumn);
+			return ColumnUtils.getHeaderSpan(oColumn);
 		},
 
 		/**
@@ -297,7 +297,7 @@ sap.ui.define([
 		 * @private
 		 */
 		hasHeaderSpan: function(oColumn) {
-			return TableColumnUtils.getHeaderSpan(oColumn) > 1;
+			return ColumnUtils.getHeaderSpan(oColumn) > 1;
 		},
 
 		/**
@@ -311,7 +311,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getColumnBoundaries: function(oTable, sColumnId) {
-			var oColumnMapItem = TableColumnUtils.getColumnMapItem(oTable, sColumnId);
+			var oColumnMapItem = ColumnUtils.getColumnMapItem(oTable, sColumnId);
 			if (!oColumnMapItem) {
 				return undefined;
 			}
@@ -334,8 +334,8 @@ sap.ui.define([
 				// they can be seen as an immutable block of columns.
 				for (i = 0; i < aNewRelations.length; i++) {
 					oColumn = mColumns[aNewRelations[i]];
-					aDirectRelations = aDirectRelations.concat(TableColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()));
-					aDirectRelations = aDirectRelations.concat(TableColumnUtils.getChildrenSpannedColumns(oTable, oColumn.getId()));
+					aDirectRelations = aDirectRelations.concat(ColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()));
+					aDirectRelations = aDirectRelations.concat(ColumnUtils.getChildrenSpannedColumns(oTable, oColumn.getId()));
 				}
 
 				aNewRelations = [];
@@ -371,7 +371,7 @@ sap.ui.define([
 			for (var i = 0; i < aKeys.length; i++) {
 				var oColumn = mColumns[aKeys[i]];
 				iColumnIndex = oTable.indexOfColumn(oColumn);
-				var iHeaderSpan = TableColumnUtils.getMaxHeaderSpan(oColumn);
+				var iHeaderSpan = ColumnUtils.getMaxHeaderSpan(oColumn);
 				// start
 				if (iColumnIndex < mBoundaries.startIndex) {
 					mBoundaries.startIndex = iColumnIndex;
@@ -409,8 +409,8 @@ sap.ui.define([
 				return false;
 			}
 
-			if (TableColumnUtils.hasHeaderSpan(oColumn)
-				|| TableColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()).length != 0) {
+			if (ColumnUtils.hasHeaderSpan(oColumn)
+				|| ColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()).length != 0) {
 				// No movement if the column is spanned by an other column or itself defines a span
 				return false;
 			}
@@ -456,12 +456,12 @@ sap.ui.define([
 		isColumnMovableTo: function(oColumn, iNewIndex) {
 			var oTable = oColumn.getParent();
 
-			if (!oTable || iNewIndex === undefined || !TableColumnUtils.isColumnMovable(oColumn)) {
+			if (!oTable || iNewIndex === undefined || !ColumnUtils.isColumnMovable(oColumn)) {
 				// Column is not movable at all
 				return false;
 			}
 
-			iNewIndex = TableColumnUtils.normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
+			iNewIndex = ColumnUtils.normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
 
 			if (iNewIndex < oTable.getComputedFixedColumnCount() || iNewIndex < oTable._iFirstReorderableIndex) {
 				// No movement of fixed columns or e.g. the first column in the TreeTable
@@ -474,13 +474,13 @@ sap.ui.define([
 			if (iNewIndex > iCurrentIndex) { // Column moved to higher index
 				// The column to be moved will appear after this column.
 				var oBeforeColumn = aColumns[iNewIndex >= aColumns.length ? aColumns.length - 1 : iNewIndex];
-				var oTargetBoundaries = TableColumnUtils.getColumnBoundaries(oTable, oBeforeColumn.getId());
-				if (TableColumnUtils.hasHeaderSpan(oBeforeColumn) || oTargetBoundaries.endIndex > iNewIndex) {
+				var oTargetBoundaries = ColumnUtils.getColumnBoundaries(oTable, oBeforeColumn.getId());
+				if (ColumnUtils.hasHeaderSpan(oBeforeColumn) || oTargetBoundaries.endIndex > iNewIndex) {
 					return false;
 				}
 			} else {
 				var oAfterColumn = aColumns[iNewIndex]; // The column to be moved will appear before this column.
-				if (TableColumnUtils.getParentSpannedColumns(oTable, oAfterColumn.getId()).length != 0) {
+				if (ColumnUtils.getParentSpannedColumns(oTable, oAfterColumn.getId()).length != 0) {
 					// If column which is currently at the desired target position is spanned by previous columns
 					// also the column to reorder would be spanned after the move.
 					return false;
@@ -500,7 +500,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the column was moved to the desired position.
 		 */
 		moveColumnTo: function(oColumn, iNewIndex) {
-			if (!TableColumnUtils.isColumnMovableTo(oColumn, iNewIndex)) {
+			if (!ColumnUtils.isColumnMovableTo(oColumn, iNewIndex)) {
 				return false;
 			}
 
@@ -511,7 +511,7 @@ sap.ui.define([
 				return false;
 			}
 
-			iNewIndex = TableColumnUtils.normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
+			iNewIndex = ColumnUtils.normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
 
 			var bExecuteDefault = oTable.fireColumnMove({
 				column: oColumn,
@@ -624,7 +624,7 @@ sap.ui.define([
 			var iSpanWidth = 0;
 			for (var i = 0; i < aVisibleColumns.length; i++) {
 				var oVisibleColumn = aVisibleColumns[i];
-				iSpanWidth += TableColumnUtils.getColumnWidth(oTable, oVisibleColumn.getIndex());
+				iSpanWidth += ColumnUtils.getColumnWidth(oTable, oVisibleColumn.getIndex());
 			}
 
 			var iPixelDelta = iWidth - iSpanWidth;
@@ -637,14 +637,14 @@ sap.ui.define([
 			// Set minimum widths of all columns with variable width except those in aResizableColumns.
 			// As a result, flexible columns cannot shrink smaller as their current width after the resize
 			// (see setMinColWidths in Table.js).
-			if (!TableColumnUtils.TableUtils.isFixedColumn(oTable, iColumnIndex)) {
+			if (!ColumnUtils.TableUtils.isFixedColumn(oTable, iColumnIndex)) {
 				oTable._getVisibleColumns().forEach(function(col) {
 					var width = col.getWidth(),
 						colElement;
-					if (oTableElement && aResizableColumns.indexOf(col) < 0 && TableColumnUtils.TableUtils.isVariableWidth(width)) {
+					if (oTableElement && aResizableColumns.indexOf(col) < 0 && ColumnUtils.TableUtils.isVariableWidth(width)) {
 						colElement = oTableElement.querySelector("th[data-sap-ui-colid=\"" + col.getId() + "\"]");
 						if (colElement) {
-							col._minWidth = Math.max(colElement.offsetWidth, TableColumnUtils.getMinColumnWidth());
+							col._minWidth = Math.max(colElement.offsetWidth, ColumnUtils.getMinColumnWidth());
 						}
 					}
 				});
@@ -653,10 +653,10 @@ sap.ui.define([
 			// Resize all resizable columns. Share the width change (pixel delta) between them.
 			for (var i = 0; i < aResizableColumns.length; i++) {
 				var oResizableColumn = aResizableColumns[i];
-				var iColumnWidth = TableColumnUtils.getColumnWidth(oTable, oResizableColumn.getIndex());
+				var iColumnWidth = ColumnUtils.getColumnWidth(oTable, oResizableColumn.getIndex());
 
 				var iNewWidth = iColumnWidth + iSharedPixelDelta;
-				var iColMinWidth = TableColumnUtils.getMinColumnWidth();
+				var iColMinWidth = ColumnUtils.getMinColumnWidth();
 				if (iNewWidth < iColMinWidth) {
 					iNewWidth = iColMinWidth;
 				}
@@ -723,7 +723,7 @@ sap.ui.define([
 					return 0;
 				}
 			} else {
-				return TableColumnUtils.TableUtils.convertCSSSizeToPixel(sColumnWidth);
+				return ColumnUtils.TableUtils.convertCSSSizeToPixel(sColumnWidth);
 			}
 		},
 
@@ -761,6 +761,6 @@ sap.ui.define([
 		}
 	};
 
-	return TableColumnUtils;
+	return ColumnUtils;
 
 }, /* bExport= */ true);

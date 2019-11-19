@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'./InputBase',
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./List',
@@ -22,7 +21,6 @@ sap.ui.define([
 	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
-		InputBase,
 		ComboBoxTextField,
 		ComboBoxBase,
 		List,
@@ -151,9 +149,9 @@ sap.ui.define([
 					 * <ul>
 					 * 	<li>The focus leaves the text input field</li>
 					 * 	<li>The <i>Enter</i> key is pressed</li>
+					 * 	<li>An item in the list is selected</li>
 					 * </ul>
 					 *
-					 * In addition, this event is also fired when an item in the list is selected.
 					 */
 					change: {
 						parameters: {
@@ -263,12 +261,12 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype.scrollToItem = function(oItem) {
-			var oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont"),
+			var oSuggestionsPopover = this._getSuggestionsPopover(),
+				oPickerDomRef = oSuggestionsPopover && oSuggestionsPopover._getScrollableContent(),
 				oListItem = this.getListItem(oItem),
 				oItemDomRef = oItem && oListItem && oListItem.getDomRef();
 
-			if (!oPicker || !oPickerDomRef || !oItemDomRef) {
+			if (!oSuggestionsPopover || !oPickerDomRef || !oItemDomRef) {
 				return;
 			}
 
@@ -302,8 +300,8 @@ sap.ui.define([
 				oItemDomRef = oItem && oListItem && oListItem.getDomRef(),
 				oItemOffsetTop = oItemDomRef && oItemDomRef.offsetTop,
 				oItemOffsetHeight = oItemDomRef && oItemDomRef.offsetHeight,
-				oPicker = this.getPicker(),
-				oPickerDomRef = oPicker.getDomRef("cont"),
+				oSuggestionsPopover = this._getSuggestionsPopover(),
+				oPickerDomRef = oSuggestionsPopover && oSuggestionsPopover._getScrollableContent(),
 				oPickerClientHeight = oPickerDomRef.clientHeight;
 
 			//check if the selected item is on the viewport
@@ -904,6 +902,11 @@ sap.ui.define([
 			// always focus input field when typing in it
 			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
+
+			// if recommendations were shown - add the icon pressed style
+			if (this._getItemsShownWithFilter()) {
+				this.toggleIconPressedStyle(true);
+			}
 		};
 
 		/**
@@ -1090,6 +1093,7 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBox.prototype.onBeforeOpen = function() {
+			ComboBoxBase.prototype.onBeforeOpen.apply(this, arguments);
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
 				oDomRef = this.getFocusDomRef();
 
@@ -1100,8 +1104,6 @@ sap.ui.define([
 				this.loadItems();
 			}
 
-			// add the active state to the control field
-			this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 			if (oDomRef) {
 
 				// expose a parent/child contextual relationship to assistive technologies,
@@ -1185,7 +1187,7 @@ sap.ui.define([
 			}
 
 			// remove the active state of the control's field
-			this.removeStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
+			this.toggleIconPressedStyle(false);
 		};
 
 		/**

@@ -602,25 +602,6 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("loadSettings request is cached", function(assert) {
-			var oSetting = {
-				isKeyUser : "true"
-			};
-			var oResponse = {
-				response : oSetting
-			};
-			LrepConnector._oLoadSettingsPromise = undefined;
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oResponse);
-
-			return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function(oSettings) {
-				assert.equal(oSendStub.callCount, 1, "the backend request was triggered only one");
-				assert.notEqual(LrepConnector._oLoadSettingsPromise, undefined, "loadSettings promise was saved");
-				assert.deepEqual(oSettings[0], oSetting, "settings content is correct in the first request");
-				assert.deepEqual(oSettings[1], oSetting, "settings content is correct in the second request");
-				assert.deepEqual(oSettings[2], oSetting, "settings content is correct in the third request");
-			});
-		});
-
 		QUnit.test("loadChanges failed with 404 error code", function(assert) {
 			var oError = {
 				code: 404
@@ -902,25 +883,6 @@ sap.ui.define([
 			return this.oLrepConnector.loadSettings().then(function () {
 				assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 				assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
-			});
-		});
-
-		QUnit.test("loadSettings request is cached", function (assert) {
-			var oSetting = {
-				isKeyUser : "true"
-			};
-			var oResponse = {
-				response : oSetting
-			};
-			LrepConnector._oLoadSettingsPromise = undefined;
-			var oSendStub = sandbox.stub(this.oLrepConnector, "send").resolves(oResponse);
-
-			return Promise.all([this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings(), this.oLrepConnector.loadSettings()]).then(function (oSettings) {
-				assert.equal(oSendStub.callCount, 1, "the backend request was triggered only one");
-				assert.notEqual(LrepConnector._oLoadSettingsPromise, undefined, "loadSettings promise was saved");
-				assert.deepEqual(oSettings[0], oSetting, "settings content is correct in the first request");
-				assert.deepEqual(oSettings[1], oSetting, "settings content is correct in the second request");
-				assert.deepEqual(oSettings[2], oSetting, "settings content is correct in the third request");
 			});
 		});
 	});

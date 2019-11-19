@@ -3,13 +3,14 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/table/Table",
-	"sap/ui/table/TableUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/table/library",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/table/plugins/MultiSelectionPlugin"
-], function(MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, KeyCodes, MultiSelectionPlugin) {
+], function(MockServer, Table, TableUtils, ODataModel, tableLibrary, qutils, TableQUnitUtils, KeyCodes, MultiSelectionPlugin) {
 	"use strict";
 
 	var sServiceURI = "/service/";
@@ -76,11 +77,11 @@ sap.ui.define([
 	QUnit.module("Deselect All button", {
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
-			this.oTable = new Table();
-			this.oTable.addPlugin(new MultiSelectionPlugin());
-			this.oTable.placeAt("qunit-fixture");
-
-			sap.ui.getCore().applyChanges();
+			this.oTable = TableQUnitUtils.createTable({
+				plugins: [
+					new MultiSelectionPlugin()
+				]
+			});
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -89,74 +90,53 @@ sap.ui.define([
 	});
 
 	QUnit.test("Enable/Disable", function(assert) {
-		var that = this;
-		var sText = "Before bindRows: ";
-		assert.ok(this.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is set to true");
-		assert.ok(this.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is disabled");
+		var oTable = this.oTable;
+		var oSelectionPlugin = oTable._getSelectionPlugin();
 
-		this.oTable.bindRows({path: "/Products"});
-		var oModel = new ODataModel(sServiceURI, {
-			json: true
-		});
-		this.oTable.setModel(oModel);
+		return oTable.qunit.whenInitialRenderingFinished().then(function() {
+			assert.ok(oTable.$("selall").attr("aria-disabled"), "Before bindRows: aria-disabled is set to true");
+			assert.ok(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "Before bindRows: Deselect All is disabled");
 
-		sap.ui.getCore().applyChanges();
-
-		return new Promise(function(resolve) {
-			that.oTable.attachEvent("_rowsUpdated", function(oEvent) {
-				if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Change) {
-					sText = "After bindRows: ";
-					assert.ok(that.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is set to true");
-					assert.ok(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is disabled");
-					resolve();
-				}
-			});
+			oTable.bindRows({path: "/Products"});
+			oTable.setModel(new ODataModel(sServiceURI, {
+				json: true
+			}));
+		}).then(oTable.qunit.whenBindingChange).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oTable.getBinding("rows").getLength() > 0, "After bindRows: Table has data");
+			assert.ok(oTable.$("selall").attr("aria-disabled"), "After bindRows: aria-disabled is set to true");
+			assert.ok(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "After bindRows: Deselect All is disabled");
 		}).then(function() {
 			return new Promise(function(resolve) {
-				var oSelectionPlugin = that.oTable._getSelectionPlugin();
-
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-					sText = "After rows are selected: ";
-					assert.notOk(that.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is removed");
-					assert.notOk(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is enabled");
-					that.oTable.unbindRows();
+					assert.notOk(oTable.$("selall").attr("aria-disabled"), "After rows are selected: aria-disabled is removed");
+					assert.notOk(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "After rows are selected: Deselect All is enabled");
+					oTable.unbindRows();
 					resolve();
 				});
-
 				oSelectionPlugin.setSelectedIndex(0);
 			});
-		}).then(function() {
-			return new Promise(function(resolve) {
-				sText = "After unbindRows: ";
-				assert.ok(that.oTable.$("selall").attr("aria-disabled"), sText + "aria-disabled is set to true");
-				assert.ok(that.oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), sText + "Deselect All is disabled");
-				resolve();
-			});
+		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+			assert.ok(oTable.$("selall").attr("aria-disabled"), "After unbindRows: aria-disabled is set to true");
+			assert.ok(oTable.$("selall").hasClass("sapUiTableSelAllDisabled"), "After unbindRows: Deselect All is disabled");
 		});
 	});
 
 	QUnit.module("Multi selection behavior", {
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
-			this.oTable = new Table();
-			this.oTable.addPlugin(new MultiSelectionPlugin());
-			this.oTable.placeAt("qunit-fixture");
-
-			this.oTable.bindRows({path: "/Products"});
-			var oModel = new ODataModel(sServiceURI, {
-				json: true
+			this.oTable = TableQUnitUtils.createTable({
+				plugins: [
+					new MultiSelectionPlugin()
+				],
+				rows: {
+					path: "/Products"
+				},
+				models: new ODataModel(sServiceURI, {
+					json: true
+				})
 			});
-			this.oTable.setModel(oModel);
 
-			sap.ui.getCore().applyChanges();
-
-			return new Promise(function(resolve) {
-				this.oTable.attachEvent("_rowsUpdated", function(oEvent) {
-					if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Change) {
-						resolve();
-					}
-				});
-			}.bind(this));
+			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {
 			this.oTable.destroy();

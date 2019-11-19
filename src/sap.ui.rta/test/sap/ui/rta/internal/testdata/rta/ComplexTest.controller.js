@@ -179,29 +179,28 @@ sap.ui.define([
 			sap.ui.require([
 				"sap/ui/rta/RuntimeAuthoring",
 				"sap/ui/rta/command/Stack",
-				"sap/ui/fl/FakeLrepLocalStorage",
+				"sap/ui/fl/FakeLrepConnectorLocalStorage",
 				"sap/m/MessageToast"
 			], function(
 				RuntimeAuthoring,
 				Stack,
-				FakeLrepLocalStorage,
+				FakeLrepConnectorLocalStorage,
 				MessageToast
 			) {
 				var aFileNames = [];
 
-				FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
-					if (
-						oChange.fileType !== "ctrl_variant_change" &&
-						oChange.fileType !== "ctrl_variant" &&
-						oChange.fileType !== "ctrl_variant_management_change" &&
-						oChange.projectId === "sap.ui.rta.test"
-					) {
-						aFileNames.push(oChange.fileName);
-					}
-				});
+				// FakeLrepConnectorLocalStorage.getChanges().forEach(function(oChange) {
+				// 	if (
+				// 		oChange.fileType !== "ctrl_variant_change" &&
+				// 		oChange.fileType !== "ctrl_variant" &&
+				// 		oChange.fileType !== "ctrl_variant_management_change" &&
+				// 		oChange.projectId === "sap.ui.rta.test"
+				// 	) {
+				// 		aFileNames.push(oChange.fileName);
+				// 	}
+				// });
 
-				Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames)
-				.then(function(oStack) {
+				Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames).then(function(oStack) {
 					//expose undo/redo test function to console
 					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
 

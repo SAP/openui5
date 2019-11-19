@@ -32,14 +32,12 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* --------------------- */
 .sapMBtnInner {
 	font-size: @sapMFontMediumSize;
-
 	height: 2.25rem;
 	min-width: 2.25rem;
 	margin: 0;
 	padding: 0;
 	text-align: center;
 	position: relative;
-
 	border-radius: 0.25rem;
 	text-shadow: none;
 }
@@ -112,12 +110,12 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	padding-left: 1.25rem;
 }
 
-.sapMBtnGhost {
+.sapMBtnInner.sapMBtnGhost {
 	color: @sapUiButtonTextColor;
 	border: 0.0625rem solid @sapUiButtonBorderColor;
 	background: @sapUiButtonLiteBackground;
+	text-shadow: none;
 }
-
 
 .sapMBtnGhost.sapMBtnHoverable.sapMBtnActive {
 	color: @sapUiButtonActiveTextColor;
@@ -259,7 +257,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
 /* ------------------------------------------------ */
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
-	border-color:     transparent;
+	border-color: transparent;
 }
 
 .sapUiSizeCompact .sapMBar-CTX .sapMBtnInner.sapMBtnGhost:not(.sapMBtnDisabled) {

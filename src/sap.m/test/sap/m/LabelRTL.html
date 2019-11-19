@@ -20,6 +20,12 @@
 
 			var oVL = new sap.ui.layout.VerticalLayout("oVL", {
 				content:[
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with text set:",
+						design: "Bold"
+					}),
+
 					new sap.m.Label("lbl1", {
 						 required: "{/globalRequired}",
 						 text:'mobile standard label '
@@ -29,13 +35,25 @@
 						 required: true,
 						 text:'required label'
 					}),
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with design property set: ",
+						design: "Bold"
+					}),
 				
 					new sap.m.Label("lbl3", {
 						required: "{/globalRequired}",
 						text: "mobile bold label",
 						design: "Bold"
 					}),
-				
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with textDirection property set:",
+						design: "Bold"
+					}),
+
 					new sap.m.Label("lbl4", {
  						required: "{/globalRequired}",
 						text: "mobile LTR label",
@@ -56,7 +74,13 @@
 						textDirection: "Inherit",
 						width: sLabelWidth
 					}),
-				
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with textAlign property set:",
+						design: "Bold"
+					}),
+
 					new sap.m.Label("lbl7", {
  						required: "{/globalRequired}",
 						text: "mobile begin label",
@@ -91,23 +115,44 @@
 						width: sLabelWidth,
 						textAlign: "Right"
 					}),
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with no text:",
+						design: "Bold"
+					}),
 				
 					new sap.m.Label("lbl12", {
  						required: "{/globalRequired}",
 						text: ""
 					}),
-				
+
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: "Label with width property set:",
+						design: "Bold"
+					}),
 				
 					new sap.m.Label("lbl13", {
  						required: "{/globalRequired}",
 						text: "mobile label with width set to 250px with loooooooooooooooooooooooooooooooong content",
 						width: "250px"
 					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: 'Label with displayOnly property set to "true":',
+						design: "Bold"
+					}),
 				
 					new sap.m.Label("lbl8a", {
  						required: "{/globalRequired}",
 						text: "mobile label in display mode",
 						displayOnly: true
+					}),
+					new sap.m.Label({
+ 						required: "{/globalRequired}",
+						text: 'Label with wrappingType property set to "Hyphenated":',
+						design: "Bold"
 					}),
 				
 					new sap.m.Label("lbl14", {
@@ -116,54 +161,6 @@
 						width: "100px",
 						wrapping: true,
 						wrappingType: "Hyphenated"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: "Label with text set:",
-						design: "Bold"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: "Label with design property set: ",
-						design: "Bold"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: "Label with textDirection property set:",
-						design: "Bold"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: "Label with textAlign property set:",
-						design: "Bold"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: "Label with no text:",
-						design: "Bold"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: "Label with width property set:",
-						design: "Bold"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: 'Label with wrappingType property set to "Hyphenated"',
-						design: "Bold"
-					}),
-				
-					new sap.m.Label({
- 						required: "{/globalRequired}",
-						text: 'Label with displayOnly property set to "true"',
-						design: "Bold"
 					})
 				]
 			});
@@ -175,7 +172,7 @@
 					}),
 					new sap.m.Label({
  						required: "{/globalRequired}",
-						text: "Default behavior",
+						text: "Default behavior:",
 						width: '100%',
 						design: "Bold"
 					}),
@@ -186,7 +183,7 @@
 					}),
 					new sap.m.Label({
  						required: "{/globalRequired}",
-						text: 'LTR content direction, wrong default alignment',
+						text: 'LTR content direction, wrong default alignment:',
 						width: '100%',
 						design: "Bold"
 					}),
@@ -198,7 +195,7 @@
 					}),
 					new sap.m.Label({
  						required: "{/globalRequired}",
-						text: 'LTR content direction, right alignment',
+						text: 'LTR content direction, right alignment:',
 						width: '100%',
 						design: "Bold"
 					}),

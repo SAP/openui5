@@ -19,6 +19,12 @@
 
 	.sapMNLIMain {
 		display: flex;
+		flex-direction: row-reverse;
+		width: 100%;
+	}
+
+	.sapMNLIItemAC {
+		display: flex;
 	}
 
 	.sapMNLIContent {
@@ -39,11 +45,6 @@
 			color: @sapUiGroupTitleTextColor;
 
 			padding-bottom: 0.75rem;
-
-			.sapUiIcon {
-				font-size: 0.875rem;
-				line-height: 0.875rem;
-			}
 		}
 
 		.sapMNLIDescription {
@@ -102,7 +103,7 @@
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
-	max-height: 44px;
+	max-height: 40px; // font-size * line-height (value 1.4) * 2 (number of rows)
 }
 
 .sapMNLIActions {

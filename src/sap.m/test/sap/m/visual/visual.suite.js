@@ -12,6 +12,7 @@ module.exports = [
 	"CarouselNoPages.spec.js",
 	"CheckBox.spec.js",
 	"ComboBox.spec.js",
+	"ComboBoxShowItems.spec.js",
 	"ContextMenuSupportIntegration.spec.js",
 	"DatePicker.spec.js",
 	"DateTimePicker.spec.js",
