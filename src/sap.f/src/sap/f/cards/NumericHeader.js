@@ -414,7 +414,7 @@ sap.ui.define([
 				withMargin: false,
 				nullifyValue: false,
 				animateTextChange: false,
-				truncateValueTo: 5
+				truncateValueTo: 100
 			});
 			this.setAggregation("_mainIndicator", oControl);
 		}
