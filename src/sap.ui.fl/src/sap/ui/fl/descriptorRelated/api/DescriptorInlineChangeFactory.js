@@ -91,7 +91,7 @@ sap.ui.define([
 				"appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
 				"appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
 				"appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
-				"appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_flp_setConfig",
+				"appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_app_addCdsViews", "appdescr_app_removeCdsViews", "appdescr_flp_setConfig",
 				"appdescr_ui5_addNewModel", "appdescr_ui5_addNewModelEnhanceWith", "appdescr_ui5_removeModel", "appdescr_ui5_replaceComponentUsage", "appdescr_ui5_setMinUI5Version",
 				"appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
 				"appdescr_ui5_addLibraries", "appdescr_url_setUri", "appdescr_fiori_setRegistrationIds"];
@@ -702,6 +702,38 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "technicalAttributes", "array");
 		return this._createDescriptorInlineChange('appdescr_app_removeTechnicalAttributes', mParameters);
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_app_addCdsViews
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {array} mParameters.cdsViews the cdsViews
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.rta, smart business
+	 */
+	DescriptorInlineChangeFactory.create_app_addCdsViews = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "cdsViews", "array");
+		return this._createDescriptorInlineChange('appdescr_app_addCdsViews', mParameters);
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_app_removeCdsViews
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {array} mParameters.cdsViews the cdsViews
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.rta, smart business
+	 */
+	DescriptorInlineChangeFactory.create_app_removeCdsViews = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "cdsViews", "array");
+		return this._createDescriptorInlineChange('appdescr_app_removeCdsViews', mParameters);
 	};
 
 	/**
