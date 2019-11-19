@@ -1291,6 +1291,7 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype._onDragOverUploadCollection = function(event) {
 		event.preventDefault();
+		event.originalEvent.dataTransfer.dropEffect = "copy";
 	};
 
 	/**
