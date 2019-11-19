@@ -203,7 +203,7 @@ sap.ui.define([
 
 		if (bWidthValidated) {
 			// set property, suppressInvalidate
-			this.setProperty("contextualWidth", sWidth);
+			this.setProperty("contextualWidth", sWidth, true);
 		} else {
 			return this;
 		}
