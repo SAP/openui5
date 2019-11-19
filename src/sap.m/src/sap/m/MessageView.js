@@ -347,7 +347,9 @@ sap.ui.define([
 		if (this._isListPage() && this.getItems().length > 1) {
 			var that = this;
 			this._oLists[this._sCurrentList || 'all'].getItems().forEach(function (oListItem) {
-				that._setItemType(oListItem);
+				if (oListItem.isA("sap.m.MessageListItem")) {
+					that._setItemType(oListItem);
+				}
 			});
 		}
 	};
