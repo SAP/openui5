@@ -409,10 +409,10 @@ sap.ui.define([
 
 		if (sName === "apiId") {
 			sPath = sPath.replace(/#$/, ""); // Remove trailing hash
+			sPath = decodeURIComponent(sPath); // no encoding of paths in the APIRef section
 		}
 
 		// Parse new path
-		sPath = decodeURIComponent(sPath);
 		this.parse(sPath);
 
 		// Modify URL
