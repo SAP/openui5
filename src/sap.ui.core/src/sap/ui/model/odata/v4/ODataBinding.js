@@ -1039,7 +1039,7 @@ sap.ui.define([
 			if (that.isRelative() && that.oContext && that.oContext.withCache) {
 				return that.oContext.withCache(fnProcessor,
 					sPath[0] === "/" ? sPath : _Helper.buildPath(that.sPath, sPath),
-					bSync);
+					bSync, bWithOrWithoutCache);
 			}
 			// no context or base context -> no cache (yet)
 			return undefined;

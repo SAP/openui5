@@ -31,13 +31,13 @@ sap.ui.define([
 
 		changeTeamBudget : function (oEvent) {
 			var oView = this.getView(),
-				oForm = oView.byId("ChangeTeamBudgetByID");
+				oDialog = oView.byId("ChangeTeamBudgetDialog");
 
-			oForm.getObjectBinding().execute().then(function () {
+			oDialog.getObjectBinding().execute().then(function () {
 					var oBinding = oView.byId("Budget").getBinding("text");
 
 					oBinding.setContext(null);
-					oBinding.setContext(oForm.getBindingContext());
+					oBinding.setContext(oDialog.getBindingContext());
 					MessageBox.alert("Budget changed", {
 						icon : MessageBox.Icon.SUCCESS,
 						title : "Success"});
@@ -47,14 +47,15 @@ sap.ui.define([
 
 		changeManagerOfTeam : function (oEvent) {
 			var oView = this.getView(),
-				oForm = oView.byId("ChangeTeamManagerByID");
+				that  = this;
 
-			oForm.getObjectBinding().execute().then(function () {
+			this.oChangeManager.execute().then(function () {
 					var oControl = oView.byId("ManagerID");
 
+					// set text to the operation result
 					oControl.bindProperty("text", "MANAGER_ID");
 					oControl.getBinding("text").setContext(null);
-					oControl.getBinding("text").setContext(oForm.getBindingContext());
+					oControl.getBinding("text").setContext(that.oChangeManager.getBoundContext());
 					MessageBox.alert("Manager changed", {
 						icon : MessageBox.Icon.SUCCESS,
 						title : "Success"});
@@ -210,11 +211,10 @@ sap.ui.define([
 		},
 
 		openChangeTeamBudgetDialog : function (oEvent) {
-			var oView = this.getView(),
-				oTeamContext = oView.byId("TeamDetails").getBindingContext();
+			var oTeamContext = this.byId("TeamDetails").getBindingContext();
 
 			// set default values for operation parameters
-			oView.byId("ChangeTeamBudgetByID").getObjectBinding()
+			this.byId("ChangeTeamBudgetDialog").getObjectBinding()
 				.setParameter("TeamID", oTeamContext.getProperty("Team_Id"))
 				.setParameter("Budget", oTeamContext.getProperty("Budget"));
 
@@ -225,11 +225,20 @@ sap.ui.define([
 			var oView = this.getView(),
 				oTeamContext = oView.byId("TeamDetails").getBindingContext();
 
-			// set default values for operation parameters
-			oView.byId("ChangeTeamManagerByID").getObjectBinding()
-				.setParameter("ManagerID", oTeamContext.getProperty("TEAM_2_MANAGER/ID"));
+			if (!this.oChangeManager) {
+				this.oChangeManager = oView.getModel("parameterContext").bindContext(
+					"com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)");
+			}
 
-			this.byId("ChangeManagerOfTeamDialog").open();
+			// operation is bound switch the context
+			this.oChangeManager.setContext(oTeamContext);
+			// set default values for operation parameters
+			this.oChangeManager.setParameter(
+				"ManagerID", oTeamContext.getProperty("TEAM_2_MANAGER/ID"));
+
+			oView.byId("ChangeManagerOfTeamDialog")
+				.setBindingContext(this.oChangeManager.getParameterContext(), "parameterContext")
+				.open();
 		},
 
 		// *********************************************************************************

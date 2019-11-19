@@ -326,9 +326,9 @@ sap.ui.define([
 				_Helper.buildPath(this.sPath, sPath),
 				this.oBinding.getBaseForPathReduction());
 		}
-		return this.oBinding.doSetProperty(sPath, vValue, oGroupLock)
-			|| oMetaModel.fetchUpdateData(sPath, this).then(function (oResult) {
-				return that.withCache(function (oCache, sCachePath, oBinding) {
+		return this.withCache(function (oCache, sCachePath, oBinding) {
+			return oBinding.doSetProperty(sCachePath, vValue, oGroupLock)
+				|| oMetaModel.fetchUpdateData(sPath, that).then(function (oResult) {
 					// If a PATCH is merged into a POST request, firePatchSent is not called, thus
 					// don't call firePatchCompleted
 					var bFirePatchCompleted = false;
@@ -369,7 +369,9 @@ sap.ui.define([
 					// if request is canceled fnPatchSent and fnErrorCallback are not called and
 					// returned Promise is rejected -> no patch events
 					return oCache.update(oGroupLock, oResult.propertyPath, vValue,
-						bSkipRetry ? undefined : errorCallback, oResult.editUrl, sCachePath,
+						bSkipRetry ? undefined : errorCallback, oResult.editUrl,
+						_Helper.getRelativePath(oResult.entityPath,
+							that.oModel.resolve(oBinding.sPath, oBinding.oContext)),
 						oMetaModel.getUnitOrCurrencyPath(that.oModel.resolve(sPath, that)),
 						oBinding.isPatchWithoutSideEffects(), patchSent
 					).then(function () {
@@ -378,8 +380,8 @@ sap.ui.define([
 						firePatchCompleted(false);
 						throw oError;
 					});
-				}, oResult.entityPath);
 			});
+		}, sPath, /*bSync*/false, /*bWithOrWithoutCache*/true);
 	};
 
 	/**
@@ -1063,17 +1065,19 @@ sap.ui.define([
 	 *   the cache's request path (it will become absolute when forwarding the request to the
 	 *   parent binding)
 	 * @param {boolean} [bSync] Whether to use the synchronously available cache
+	 * @param {boolean} [bWithOrWithoutCache] Whether to call the processor even without a cache
+	 *   (currently implemented for operation bindings only)
 	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved with either the result of
 	 *   the processor or <code>undefined</code> if there is no cache for this binding, or if the
 	 *   cache determination is not yet completed
 	 */
-	Context.prototype.withCache = function (fnProcessor, sPath, bSync) {
+	Context.prototype.withCache = function (fnProcessor, sPath, bSync, bWithOrWithoutCache) {
 		if (this.iIndex === iVIRTUAL) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
 		return this.oBinding.withCache(fnProcessor,
 			sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
-			bSync);
+			bSync, bWithOrWithoutCache);
 	};
 
 	oModule = {
