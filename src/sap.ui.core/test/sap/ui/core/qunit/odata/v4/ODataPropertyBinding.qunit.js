@@ -1605,7 +1605,8 @@ sap.ui.define([
 		}
 		this.mock(oContext).expects("doSetProperty")
 			.withExactArgs("Address/City", sinon.match.same(oFixture.value),
-				sinon.match.same(oGroupLock)); // return value does not matter here
+				sinon.match.same(oGroupLock))
+			.returns(SyncPromise.resolve());
 
 		// code under test
 		oBinding.setValue(oFixture.value, oFixture.updateGroupId);
