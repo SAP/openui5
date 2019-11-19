@@ -219,6 +219,17 @@ sap.ui.define([
 				assert.equal(aSubCommands2[1]._oPreparedChange, aCompositeChanges[1], "the second sub-command of the second composite command contains the last change");
 			});
 		});
+
+		QUnit.test("when calling function 'initializeWithChanges' for a non existent change...", function(assert) {
+			var aChanges = [new Change(this.oChangeDefinition1), new Change(this.oChangeDefinition2)];
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
+
+			return CommandStack.initializeWithChanges(this.oControl, ["unavailableChangeFileName"]).then(function(oStack) {
+				assert.ok(oStack, "an instance of the CommandStack has been created");
+				var aCommands = oStack.getCommands();
+				assert.equal(aCommands.length, 0, "the CommandStack contains no commands");
+			});
+		});
 	});
 
 	QUnit.done(function () {
