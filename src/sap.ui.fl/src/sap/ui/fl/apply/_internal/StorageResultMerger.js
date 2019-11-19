@@ -59,23 +59,8 @@ sap.ui.define([
 		});
 	}
 
-	function getReferencedVariantChanges(oReferencedVariant) {
-		if (!oReferencedVariant) {
-			return {};
-		}
-
-		var oVariantChanges = {};
-		Object.keys(oReferencedVariant.variantChanges).forEach(function(sChangeType) {
-			oVariantChanges[sChangeType] = oReferencedVariant.variantChanges[sChangeType].map(function (oChange) {
-				return oChange;
-			});
-		});
-
-		return oVariantChanges;
-	}
-
 	/**
-	 * Adds a list of variants to the variantsMap and add all (control & variant) changes already present in the referenced variant.
+	 * Adds a list of variants to the variantsMap and add all control changes already present in the referenced variant.
 	 *
 	 * @param {object} oVariantsMap Map of variants with their IDs as keys
 	 * @param {object[]} aVariants List of variants to be added
@@ -93,7 +78,7 @@ sap.ui.define([
 			oVariantsMapCopy[oVariant.fileName] = {
 				content: oVariant,
 				controlChanges: getReferencedControlChange(oReferencedVariant),
-				variantChanges: getReferencedVariantChanges(oReferencedVariant)
+				variantChanges: {}
 			};
 		});
 
