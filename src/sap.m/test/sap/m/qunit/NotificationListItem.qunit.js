@@ -235,7 +235,11 @@ sap.ui.define([
 	});
 
 	QUnit.test('ARIA - Accessibility Text', function (assert) {
-		assert.equal(this.notificationListItem.$().attr('aria-label'), 'Notification List Item Title Notification List Item Description ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_UNREAD") + ' ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_CREATED_BY")  + ' John Smith ' + oResourceBundleM.getText("NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY", [this.notificationListItem.getDatetime(), this.notificationListItem.getPriority()]), "accessibility text is correct");
+		var ariallabledBy = this.notificationListItem.$().attr('aria-labelledby');
+
+		assert.ok(ariallabledBy.indexOf('-title') > 0, "title is labeled to notification item");
+		assert.ok(ariallabledBy.indexOf('-descr') > 0, "description is labeled to notification item");
+		assert.ok(ariallabledBy.indexOf('-invisibleFooterText') > 0, "invisible text is labeled to notification ite,");
 	});
 
 	QUnit.module('Keyboard navigation', {

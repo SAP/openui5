@@ -82,10 +82,8 @@ sap.ui.define([
 
 		assert.ok($item.hasClass('sapMNLGroupUnread'), 'unread class is set');
 		assert.strictEqual($item.find('.sapMNLGroupTitle').text(), 'Notification List Group Title', 'title is rendered');
-
 		assert.strictEqual($item.find('.sapMNLGroupCollapseButton button').attr('title'), oResourceBundleM.getText("NOTIFICATION_LIST_GROUP_COLLAPSE"), 'collapse button is rendered');
-
-		assert.strictEqual($item.find('.sapMNLIItem:last-child button').attr('title'), 'Close all', 'close button is rendered');
+		assert.strictEqual($item.find('.sapMNLIItem.sapMNLICloseBtn button').attr('title'), 'Close all', 'close button is rendered');
 		assert.ok(this.notificationListGroup.$('overflowToolbar'), 'overflow toolbar is rendered');
 
 		assert.strictEqual($item.find('.sapMNLGroupChildren li').length, 2, 'group has 2 items');
@@ -146,7 +144,7 @@ sap.ui.define([
 
 		var fnSpy = sinon.spy(this.notificationListGroup, 'fireClose'),
 			$item = this.notificationListGroup.$(),
-			closeButton = $item.find('.sapMNLIItem:last-child button').control()[0];
+			closeButton = $item.find('.sapMNLIItem.sapMNLICloseBtn button').control()[0];
 
 		closeButton.firePress();
 
@@ -166,7 +164,10 @@ sap.ui.define([
 	});
 
 	QUnit.test('ARIA - Accessibility Text', function (assert) {
-		assert.equal(this.notificationListGroup.$().attr('aria-label'), 'Notification List Group Title Notification group unread. None Priority. Counter 2', "accessibility text is correct");
+		var ariallabledBy = this.notificationListGroup.$().attr('aria-labelledby');
+		assert.ok(ariallabledBy.indexOf('-groupTitle') > 0, "title is labeled to notification group");
+		assert.ok(ariallabledBy.indexOf('-invisibleGroupTitleText') > 0, "invisibleText is labeled to notification group");
+
 	});
 
 	QUnit.module('Action and close buttons - non mobile', {

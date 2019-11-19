@@ -36,13 +36,13 @@ function(
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
-	var resourceBundle = Core.getLibraryResourceBundle('sap.m'),
-		expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND'),
-		collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE'),
-		readText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_READ'),
-		unreadText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_UNREAD'),
-		expandIcon = 'sap-icon://slim-arrow-right',
-		collapseIcon = 'sap-icon://slim-arrow-down';
+	var RESOURCE_BUNDLE = Core.getLibraryResourceBundle('sap.m'),
+		EXPAND_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_EXPAND'),
+		COLLAPSE_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_COLLAPSE'),
+		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_READ'),
+		UNREAD_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_UNREAD'),
+		EXPAND_ICON = 'sap-icon://slim-arrow-right',
+		COLLAPSE_ICON = 'sap-icon://slim-arrow-down';
 
 	var maxNumberOfNotifications = Device.system.desktop ? 400 : 100;
 
@@ -164,8 +164,8 @@ function(
 		if (!collapseButton) {
 			collapseButton = new Button(this.getId() + '-collapseButton', {
 				type: ButtonType.Transparent,
-				icon: collapsed ? expandIcon : collapseIcon,
-				tooltip: collapsed ? expandText : collapseText,
+				icon: collapsed ? EXPAND_ICON : COLLAPSE_ICON,
+				tooltip: collapsed ? EXPAND_TEXT : COLLAPSE_TEXT,
 				press: function () {
 					this.setCollapsed(!this.getCollapsed());
 				}.bind(this)
@@ -192,8 +192,8 @@ function(
 			$that.find(".sapMNLGroupHeader .sapMNLIActions").css("display", display);
 		}
 
-		collapseButton.setIcon(bCollapsed ? expandIcon : collapseIcon);
-		collapseButton.setTooltip(bCollapsed ? expandText : collapseText);
+		collapseButton.setIcon(bCollapsed ? EXPAND_ICON : COLLAPSE_ICON);
+		collapseButton.setTooltip(bCollapsed ? EXPAND_TEXT : COLLAPSE_TEXT);
 
 		// Setter overwritten to suppress invalidation
 		this.setProperty('collapsed', bCollapsed, true);
@@ -205,6 +205,27 @@ function(
 		this.fireOnCollapse({collapsed: bCollapsed});
 
 		return this;
+	};
+
+	/**
+	 * Handles the internal event init.
+	 *
+	 * @private
+	 */
+	NotificationListGroup.prototype.init = function() {
+		this._groupTitleInvisibleText = new InvisibleText({id: this.getId() + "-invisibleGroupTitleText"});
+	};
+
+	/**
+	 * Handles the internal event exit.
+	 *
+	 * @private
+	 */
+	NotificationListGroup.prototype.exit = function() {
+		if (this._groupTitleInvisibleText) {
+			this._groupTitleInvisibleText.destroy();
+			this._groupTitleInvisibleText = null;
+		}
 	};
 
 	/**
@@ -231,19 +252,24 @@ function(
 		return this.getVisibleItems().length;
 	};
 
-	NotificationListGroup.prototype.getAccessibilityText = function() {
+	/**
+	 * Updates invisible text.
+	 *
+	 * @private
+	 */
+	NotificationListGroup.prototype._getGroupTitleInvisibleText = function() {
 
-		var readUnreadText = this.getUnread() ? unreadText : readText,
-			priorityText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_PRIORITY', this.getPriority()),
+		var readUnreadText = this.getUnread() ? UNREAD_TEXT : READ_TEXT,
+			priorityText = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_PRIORITY', this.getPriority()),
 			counterText,
-			ariaTexts = [this.getTitle(), readUnreadText, priorityText];
+			ariaTexts = [readUnreadText, priorityText];
 
 		if (this.getShowItemsCounter()) {
-			counterText = resourceBundle.getText("LIST_ITEM_COUNTER", this._getVisibleItemsCount());
+			counterText = RESOURCE_BUNDLE.getText("LIST_ITEM_COUNTER", this._getVisibleItemsCount());
 			ariaTexts.push(counterText);
 		}
 
-		return ariaTexts.join(' ');
+		return this._groupTitleInvisibleText.setText(ariaTexts.join(' '));
 	};
 
 	/**
@@ -304,6 +330,11 @@ function(
 		return firstPriority;
 	}
 
+	/**
+	 * Handles the internal event onBeforeRendering.
+	 *
+	 * @private
+	 */
 	NotificationListGroup.prototype.onBeforeRendering = function () {
 
 		NotificationListBase.prototype.onBeforeRendering.apply(this, arguments);
@@ -329,8 +360,8 @@ function(
 	 */
 	NotificationListGroup.prototype._getMaxNumberReachedMsg = function () {
 		return {
-			title: resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', this.getItems().length - maxNumberOfNotifications),
-			description: resourceBundle.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY')
+			title: RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_TITLE', this.getItems().length - maxNumberOfNotifications),
+			description: RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_MAX_NOTIFICATIONS_BODY')
 		};
 	};
 

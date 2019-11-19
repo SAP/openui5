@@ -34,7 +34,20 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			authorAvatar = control._getAuthorAvatar(),
 			priority = control.getPriority(),
 			isUnread = control.getUnread(),
-			priorityClass = '';
+			priorityClass = '',
+			sControlId = control.getId(),
+			footerId = sControlId + '-invisibleFooterText',
+			sAriaLabelledBy = '';
+
+		if (control.getTitle()) {
+			sAriaLabelledBy += ' ' + sControlId + '-title';
+		}
+
+		if (control.getDescription()) {
+			sAriaLabelledBy += ' ' + sControlId + '-descr';
+		}
+
+		sAriaLabelledBy += ' ' + footerId;
 
 		rm.write('<li');
 		rm.writeControlData(control);
@@ -53,7 +66,9 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		// ARIA
 		rm.writeAccessibilityState(control, {
 			role: "option",
-			label: control.getAccessibilityText()
+			labelledby: {
+				value: sAriaLabelledBy
+			}
 		});
 
 		rm.write('>');
@@ -113,7 +128,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 			rm.write('</div>');
 		}
 
-		rm.write('<div');
+		rm.write('<div id=' + sControlId + '-title');
 		rm.addClass('sapMNLITitleText');
 		if (truncate) {
 			rm.addClass('sapMNLIItemTextLineClamp');
@@ -127,7 +142,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 		rm.write('</div>');
 
 		// content- description
-		rm.write('<div');
+		rm.write('<div id=' + sControlId + '-descr');
 		rm.addClass('sapMNLIDescription');
 		if (truncate) {
 			rm.addClass('sapMNLIItemTextLineClamp');
@@ -161,12 +176,14 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/D
 
 		// content - footer - show more
 		if (!control.getHideShowMoreButton()) {
-			// aria-hidden stop show more button to read out the whole notification
+			// aria-hidden stop show more button to read out the whole notification, when in a group
 			rm.write('<div class="sapMNLIShowMore" aria-hidden="true">');
 			rm.renderControl(control._getShowMoreButton());
 			rm.write('</div>');
 		}
 
+
+		rm.renderControl(control._getFooterInvisibleText());
 		// end content - footer
 		rm.write('</div>');
 
