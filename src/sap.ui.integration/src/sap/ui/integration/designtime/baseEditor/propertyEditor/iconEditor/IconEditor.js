@@ -7,14 +7,16 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/IconPool"
+	"sap/ui/core/IconPool",
+	"sap/ui/base/BindingParser"
 ], function (
 	BasePropertyEditor,
 	Fragment,
 	JSONModel,
 	Filter,
 	FilterOperator,
-	IconPool
+	IconPool,
+	BindingParser
 ) {
 	"use strict";
 
@@ -44,7 +46,10 @@ sap.ui.define([
 				additionalText: "{icons>name}"
 			}));
 			this._oInput.attachLiveChange(function(oEvent) {
-				this.firePropertyChange(oEvent.getParameter("value"));
+				var sIconInput = oEvent.getParameter("value");
+				if (this._isValid(sIconInput)) {
+					this.firePropertyChange(sIconInput);
+				}
 			}.bind(this));
 			this._oInput.attachSuggestionItemSelected(function(oEvent) {
 				this.firePropertyChange(oEvent.getParameter("selectedItem").getText());
@@ -53,6 +58,32 @@ sap.ui.define([
 		},
 		renderer: BasePropertyEditor.getMetadata().getRenderer().render
 	});
+
+	IconEditor.prototype._isValid = function (sSelectedIcon) {
+		try {
+			var oParsed = BindingParser.complexParser(sSelectedIcon);
+			var bIsValidIcon = IconPool.isIconURI(sSelectedIcon) && !!IconPool.getIconInfo(sSelectedIcon);
+			if (!oParsed && sSelectedIcon && !bIsValidIcon) {
+				throw "Not an icon";
+			}
+			this._oInput.setValueState("None");
+			return true;
+		} catch (vError) {
+			this._oInput.setValueState("Error");
+			this._oInput.setValueStateText(this.getI18nProperty("BASE_EDITOR.ICON.INVALID_BINDING_OR_ICON"));
+			return false;
+		}
+	};
+
+	IconEditor.prototype._getDefaultSearchValue = function (sSelectedIcon) {
+		// Avoid binding strings in the search field of the value help
+		try {
+			var oParsed = BindingParser.complexParser(sSelectedIcon);
+			return oParsed ? "" : sSelectedIcon;
+		} catch (vError) {
+			return sSelectedIcon;
+		}
+	};
 
 	IconEditor.prototype._handleValueHelp = function (oEvent) {
 		var sValue = oEvent.getSource().getValue();
@@ -66,11 +97,11 @@ sap.ui.define([
 				this.addDependent(this._oDialog);
 				this._oDialog.setModel(this._oIconModel);
 				this._filter(sValue);
-				this._oDialog.open(sValue);
+				this._oDialog.open(this._getDefaultSearchValue(sValue));
 			}.bind(this));
 		} else {
 			this._filter(sValue);
-			this._oDialog.open(sValue);
+			this._oDialog.open(this._getDefaultSearchValue(sValue));
 		}
 	};
 
