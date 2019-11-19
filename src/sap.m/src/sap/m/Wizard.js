@@ -69,6 +69,13 @@ sap.ui.define([
 		 * When using the sap.m.Wizard in SAP Quartz theme, the breakpoints and layout paddings could be determined by the container's width.
 		 * To enable this concept and add responsive paddings to the navigation area and to the content of the Wizard control, you may add the following classes depending on your use case:
 		 * <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--content</code>.
+		 *
+		 * As the <code>sap.m.Wizard</code> is a layout control, when used in the {@link sap.f.DynamicPage},
+		 * the {@link sap.f.DynamicPage}'s <code>fitContent</code> property needs to be set to 'true' so that the scroll handling is
+		 * left to the <code>sap.m.Wizard</code> control.
+		 * Also, in order to achieve the target Fiori design, the <code>sapUiNoContentPadding</code> class needs to be added to the {@link sap.f.DynamicPage} as well as
+		 * <code>sapUiResponsivePadding--header</code>, <code>sapUiResponsivePadding--content</code> to the <code>sap.m.Wizard</code>.
+		 *
 		 * @extends sap.ui.core.Control
 		 * @author SAP SE
 		 * @version ${version}
@@ -84,6 +91,7 @@ sap.ui.define([
 			metadata: {
 				library: "sap.m",
 				designtime: "sap/m/designtime/Wizard.designtime",
+				interfaces : ["sap.f.IDynamicPageStickyContent"],
 				properties: {
 					/**
 					 * Determines the width of the Wizard.
@@ -552,6 +560,52 @@ sap.ui.define([
 		Wizard.prototype.destroySteps = function () {
 			this._resetStepCount();
 			return this.destroyAggregation("steps");
+		};
+
+		/**************************************** INTERFACE METHODS ***************************************/
+
+		/**
+		 * Gets the sticky content of the Wizard.
+		 *
+		 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance.
+		 * @private
+		 */
+		Wizard.prototype._getStickyContent = function () {
+			return this._getProgressNavigator();
+		};
+
+		/**
+		 * Places back the sticky content in the Wizard.
+		 *
+		 * @private
+		 */
+		Wizard.prototype._returnStickyContent = function () {
+			// Place back the progress navigator in the Wizard
+			if (this.bIsDestroyed) {
+				return;
+			}
+
+			this._getStickyContent().$().prependTo(this.$());
+		};
+
+		/**
+		 * Sets if the sticky content is stuck in the DynamicPage's header.
+		 *
+		 * @param {boolean} bIsInStickyContainer True if the sticky content is stuck in the DynamicPage's header.
+		 * @private
+		 */
+		Wizard.prototype._setStickySubheaderSticked = function (bIsInStickyContainer) {
+			this._bStickyContentSticked = bIsInStickyContainer;
+		};
+
+		/**
+		 * Gets if the sticky content is stuck in the DynamicPage's header.
+		 *
+		 * @returns {boolean} True if the sticky content is stuck in the DynamicPage's header.
+		 * @private
+		 */
+		Wizard.prototype._getStickySubheaderSticked = function () {
+			return this._bStickyContentSticked;
 		};
 
 		/**************************************** PRIVATE METHODS ***************************************/
