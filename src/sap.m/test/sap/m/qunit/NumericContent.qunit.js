@@ -390,6 +390,75 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Truncate value to", {
+		beforeEach: function () {
+			this.oNumericContent = new NumericContent("numeric-cnt", {
+				value: "12345678123456781234567812345678",
+				animateTextChange: false
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oNumericContent.destroy();
+			this.oNumericContent = null;
+		}
+	});
+
+	QUnit.test("Test custom truncateValueTo property", function(assert) {
+		// Arrange
+		this.oNumericContent.setTruncateValueTo(1);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 1, "Value is truncated to 1 char");
+
+		// Arrange
+		this.oNumericContent.setTruncateValueTo(20);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 20, "Value is truncated to 20 chars");
+	});
+
+	QUnit.test("Test default value when adaptiveFontSize=false", function(assert) {
+		// Arrange
+		this.oNumericContent.setAdaptiveFontSize(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 4, "Value is truncated to 4 chars");
+	});
+
+	QUnit.test("Test default value for specific language", function(assert) {
+		// Arrange
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 8, "Value is truncated to 8 chars for 'de'");
+
+		// Arrange
+		sap.ui.getCore().getConfiguration().setLanguage("es");
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 6, "Value is truncated to 6 chars for 'es'");
+
+		// Arrange
+		sap.ui.getCore().getConfiguration().setLanguage("en");
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 4, "Value is truncated to 4 chars for 'en'");
+
+		// return the language
+		sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+	});
+
 	/* --- Helpers --- */
 
 	function fnAssertNumericContentHasRendered (assert) {
