@@ -39,7 +39,9 @@
 					"ObjectPage.view.xml",
 					"PublicationObjectPage.controller.js",
 					"PublicationObjectPage.view.xml",
-					"manifest.json"
+					"manifest.json",
+					"SandboxModel.js",
+					"../../../common/SandboxModelHelper.js"
 				]
 			}
 		},
@@ -63,7 +65,9 @@
 					"earlyRequests": true,
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
-				}
+				},
+				"type" : "sap.ui.core.sample.odata.v4.MusicArtists.SandboxModel",
+				"uriSettingName" : "serviceUrl"
 			}
 		},
 		"rootView" : {
@@ -71,11 +75,6 @@
 			"id" : "app",
 			"type" : "XML",
 			"viewName" : "sap.ui.core.sample.odata.v4.MusicArtists.App"
-		},
-		"resources" : {
-			"js" : [{
-				"uri" : "MusicArtistsSandbox.js"
-			}]
 		},
 		"routing" : {
 			"config" : {

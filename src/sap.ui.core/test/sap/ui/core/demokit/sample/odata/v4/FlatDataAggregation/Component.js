@@ -7,28 +7,16 @@
  * @version @version@
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/MessageBox",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/test/TestUtils"
-], function (jQuery, MessageBox, UIComponent, Filter, FilterOperator, TestUtils) {
+	"sap/ui/model/FilterOperator"
+], function (MessageBox, UIComponent, Filter, FilterOperator) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.core.sample.odata.v4.FlatDataAggregation.Component", {
 		metadata : {
 			manifest : "json"
-		},
-
-		exit : function () {
-			TestUtils.retrieveData("sap.ui.core.sample.odata.v4.FlatDataAggregation.sandbox")
-				.restore();
-			// ensure the sandbox module is reloaded so that sandbox initialization takes place
-			// again the next time the component used
-			jQuery.sap.unloadResources(
-				"sap/ui/core/sample/odata/v4/FlatDataAggregation/Sandbox.js",
-				/*bPreloadGroup*/false, /*bUnloadAll*/true, /*bDeleteExports*/true);
 		},
 
 		init : function () {

@@ -43,6 +43,7 @@
 					"manifest.json",
 					"SandboxModel.js",
 					"../../../common/Controller.js",
+					"../../../common/SandboxModelHelper.js",
 					"../../../common/ValueHelp.js"
 				]
 			}
