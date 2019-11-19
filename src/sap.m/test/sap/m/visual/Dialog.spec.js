@@ -146,4 +146,12 @@ describe('sap.m.Dialog', function() {
 			element(by.id('compactMode-CbBg')).click();
 		});
 	});
+
+	it('should open dialog with responsive paddings enabled (SAP Quartz themes only)', function () {
+		browser.executeScript('document.getElementById("buttonDialogResponsivePadding").scrollIntoView()').then(function() {
+			element(by.id("buttonDialogResponsivePadding")).click();
+			var oDialogResponsivePadding = element(by.id("dialogResponsivePadding"));
+			expect(takeScreenshot(oDialogResponsivePadding)).toLookAs("responsive-paddings-dialog-quartz-only");
+		});
+	});
 });
