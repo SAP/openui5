@@ -156,8 +156,11 @@ sap.ui.define([
 
 				/**
 				 * The number of characters of the <code>value</code> property to display.
+				 *
+				 * <b>Note</b> If <code>adaptiveFontSize</code> is set to <code>true</code> the default value of this property will vary between languages.
+				 * If <code>adaptiveFontSize</code> is set to <code>false</code> the default value of this property is <code>4</code>.
 				 */
-				"truncateValueTo": {type: "int", group: "Appearance", defaultValue: 4},
+				"truncateValueTo": {type: "int", group: "Appearance"},
 
 				/**
 				 * The actual value.
@@ -246,6 +249,7 @@ sap.ui.define([
 			}
 		} else {
 			sFontClass = "sapMNCLargeFontSize";
+			iMaxLength = 4; // the default value if size is not adaptive
 		}
 
 		return {
