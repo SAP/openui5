@@ -3,24 +3,39 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
+	"sap/m/ComboBox",
 	"sap/ui/core/Item",
 	"sap/ui/base/BindingParser"
 ], function (
 	BasePropertyEditor,
+	ComboBox,
 	Item,
 	BindingParser
 ) {
 	"use strict";
 
 	/**
-	 * @constructor
+	 * @class
+	 * Constructor for a new <code>EnumStringEditor</code>.
+	 * This allows to select from predefined string values or to provide binding strings for a specified property of a JSON object.
+	 * The editor is rendered as a {@link sap.m.ComboBox}.
+	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChange</code> method,
+	 * which passes the current property state as a string representing a valid option value or as a binding string to the provided callback function when the user selects a value or edits the input.
+	 *
+	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor
+	 * @author SAP SE
+	 * @since 1.70
+	 * @version ${version}
+	 *
 	 * @private
-	 * @experimental
+	 * @experimental 1.70
+	 * @ui5-restricted
 	 */
 	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor", {
 		constructor: function() {
 			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			this._oCombo = new sap.m.ComboBox({
+			this._oCombo = new ComboBox({
 				selectedKey: "{value}",
 				value: "{value}",
 				width: "100%"

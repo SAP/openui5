@@ -3,6 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
+	"sap/m/Input",
+	"sap/ui/core/ListItem",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
@@ -10,6 +12,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool"
 ], function (
 	BasePropertyEditor,
+	Input,
+	ListItem,
 	Fragment,
 	JSONModel,
 	Filter,
@@ -19,9 +23,22 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @constructor
+	 * @class
+	 * Constructor for a new <code>IconEditor</code>.
+	 * This allows to set icon URIs or binding strings for a specified property of a JSON object.
+	 * The editor is rendered as a {@link sap.m.Input} with a {@link sap.m.SelectDialog} value help.
+	 * To get notified about changes made with the editor, you can use the <code>attachPropertyChange</code> method,
+	 * which passes the current property state as a string containing an icon URI or as a binding string to the provided callback function when the user edits the input or selects an item in the dialog.
+	 *
+	 * @extends sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor
+	 * @alias sap.ui.integration.designtime.baseEditor.propertyEditor.iconEditor.IconEditor
+	 * @author SAP SE
+	 * @since 1.70
+	 * @version ${version}
+	 *
 	 * @private
-	 * @experimental
+	 * @experimental 1.70
+	 * @ui5-restricted
 	 */
 	var IconEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.iconEditor.IconEditor", {
 		constructor: function() {
@@ -32,14 +49,14 @@ sap.ui.define([
 					path: "sap-icon://" + sName
 				};
 			}));
-			this._oInput = new sap.m.Input({
+			this._oInput = new Input({
 				value: "{value}",
 				showSuggestion: true,
 				showValueHelp: true,
 				valueHelpRequest: this._handleValueHelp.bind(this)
 			});
 			this._oInput.setModel(this._oIconModel, "icons");
-			this._oInput.bindAggregation("suggestionItems", "icons>/", new sap.ui.core.ListItem({
+			this._oInput.bindAggregation("suggestionItems", "icons>/", new ListItem({
 				text: "{icons>path}",
 				additionalText: "{icons>name}"
 			}));
