@@ -24,6 +24,7 @@ sap.ui.define([
 	var getRowAction = window.getRowAction;
 	var getSelectAll = window.getSelectAll;
 	var initRowActions = window.initRowActions;
+	var removeRowActions = window.removeRowActions;
 	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
@@ -313,6 +314,13 @@ sap.ui.define([
 			$Cell = getCell(1, i, true, assert);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true});
 		}
+
+		removeRowActions(oTable);
+
+		for (i = 0; i < oTable.columnCount; i++) {
+			$Cell = getCell(2, i, true, assert);
+			testAriaLabelsForFocusedDataCell($Cell, 2, i, assert, {rowChange: i == 0, colChange: true});
+		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, oTable.columnCount - 1, assert);
@@ -331,6 +339,13 @@ sap.ui.define([
 		for (i = 0; i < oTreeTable.columnCount; i++) {
 			$Cell = getCell(1, i, true, assert, oTreeTable);
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, table: oTreeTable});
+		}
+
+		removeRowActions(oTreeTable);
+
+		for (i = 0; i < oTreeTable.columnCount; i++) {
+			$Cell = getCell(2, i, true, assert, oTreeTable);
+			testAriaLabelsForFocusedDataCell($Cell, 2, i, assert, {rowChange: i == 0, colChange: true, table: oTreeTable});
 		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {
@@ -600,6 +615,13 @@ sap.ui.define([
 		for (var i = 0; i < oTable.columnCount; i++) {
 			$Cell = getColumnHeader(i, true, assert);
 			testAriaLabelsForColumnHeader($Cell, i, assert, {firstTime: i == 0, colChange: true, focus: true});
+		}
+
+		removeRowActions(oTable);
+
+		for (var i = 0; i < oTable.columnCount; i++) {
+			$Cell = getColumnHeader(i, true, assert);
+			testAriaLabelsForColumnHeader($Cell, i, assert, {firstTime: false, colChange: true, focus: true});
 		}
 		setFocusOutsideOfTable(assert);
 		setTimeout(function() {

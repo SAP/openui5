@@ -1014,5 +1014,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	};
 
+	window.removeRowActions = function(oTable) {
+		var oCurrentTemplate = oTable.getRowActionTemplate();
+		if (oCurrentTemplate) {
+			oCurrentTemplate.destroy();
+		}
+
+		oTable.setRowActionCount(0);
+		sap.ui.getCore().applyChanges();
+	};
+
 	return TableQUnitUtils;
 });
