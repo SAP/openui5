@@ -57,7 +57,7 @@ sap.ui.define([
 				"QUnit" in window
 				|| (
 					window.frameElement
-					&& window.frameElement.getAttribute("id") === "OpaFrame"
+					&& (window.frameElement.getAttribute("id") || "").toLowerCase() === "opaframe"
 				)
 			);
 		}
