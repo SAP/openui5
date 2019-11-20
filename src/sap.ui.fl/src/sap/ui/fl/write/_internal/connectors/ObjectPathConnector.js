@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/write/connectors/BaseConnector"
+	"sap/ui/fl/write/connectors/BaseConnector",
+	"sap/ui/fl/apply/_internal/connectors/ObjectPathConnector"
 ], function(
 	merge,
-	BaseConnector
+	BaseConnector,
+	ApplyObjectPathConnector
 ) {
 	"use strict";
 
@@ -21,6 +23,20 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
 	 */
 	return merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.ObjectPathConnector */ {
-		layers: []
+		layers: [],
+
+		loadFeatures: function (mPropertyBag) {
+			return new Promise(function(resolve, reject) {
+				var sPath = ApplyObjectPathConnector.jsonPath || mPropertyBag.path;
+				if (sPath) {
+					jQuery.getJSON(sPath).done(function (oResponse) {
+						oResponse.componentClassName = mPropertyBag.flexReference;
+						resolve(oResponse.settings);
+					}).fail(reject);
+				} else {
+					resolve({});
+				}
+			});
+		}
 	});
 }, true);
