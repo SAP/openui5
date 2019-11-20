@@ -134,7 +134,6 @@ sap.ui.define([
 			"sap.m.TimePickerSliders",
 			"sap.m.Wizard",
 			"sap.tnt.NavigationList",
-			"sap.ui.demokit.IndexLayout._Tile",
 			"sap.ui.layout.BlockLayoutRow",
 			"sap.ui.layout.form.ResponsiveGridLayoutPanel", // control not for stand alone usage. Only inside ResponsiveGridLayout
 			"sap.ui.layout.form.ResponsiveLayoutPanel", // control not for stand alone usage. Only inside ResponsiveLayout
@@ -176,8 +175,6 @@ sap.ui.define([
 			"sap.uiext.inbox.composite.InboxAttachmentsTileContainer", // Ticket: TODO 6
 			"sap.uiext.inbox.composite.InboxUploadAttachmentTile",     // Ticket: TODO 7
 			"sap.uiext.inbox.InboxTaskCategoryFilterList",             // Ticket: TODO 8
-			"sap.ui.demokit.CodeSampleContainer",  // Ticket: none (Demokit Lib)
-			"sap.ui.demokit.UI5EntityCueCard",     // Ticket: none (Demokit Lib)
 			"sap.viz.ui5.controls.Popover"
 		   ].indexOf(sControlName) > -1) { // known to be leaking
 			assert.ok(true, "WARNING: " + sControlName + " is known to have memory leaks and is ignored until they are fixed.");

@@ -21,7 +21,6 @@
     "karma:sap.ui.codeeditor": "npm run karma -- --lib=sap.ui.codeeditor",
     "karma:sap.ui.commons": "npm run karma -- --lib=sap.ui.commons",
     "karma:sap.ui.core": "npm run karma -- --lib=sap.ui.core",
-    "karma:sap.ui.demokit": "npm run karma -- --lib=sap.ui.demokit",
     "karma:sap.ui.documentation": "npm run karma -- --lib=sap.ui.documentation",
     "karma:sap.ui.dt": "npm run karma -- --lib=sap.ui.dt",
     "karma:sap.ui.fl": "npm run karma -- --lib=sap.ui.fl",
