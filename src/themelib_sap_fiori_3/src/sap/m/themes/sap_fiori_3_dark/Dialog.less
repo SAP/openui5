@@ -49,6 +49,13 @@
 	min-width: 4rem;
 }
 
+// buttons on phone must be to the right side (in LTR mode)
+html.sap-phone .sapMDialog {
+	& > footer .sapMFooter-CTX {
+		justify-content: flex-end;
+	}
+}
+
 // ==========================================================================
 // header, sub-header, footer
 // ==========================================================================
@@ -69,9 +76,30 @@
 	}
 }
 
-// buttons on phone must be to the right side (in LTR mode)
-html.sap-phone .sapMDialog {
-	& > footer .sapMFooter-CTX {
-		justify-content: flex-end;
+.sapMDialogTitle, .sapMDialogSubHeader {
+	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+		&.sapMIBar {
+			.sapMBarMiddle .sapMBarPH {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.sapMBarLeft {
+				padding-left: inherit;
+
+				.sapMBarChild {
+					padding-right: 0.5rem;
+				}
+			}
+
+			.sapMBarRight {
+				padding-right: inherit;
+
+				.sapMBarChild {
+					padding-left: 0.5rem;
+				}
+			}
+		}
 	}
 }

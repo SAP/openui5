@@ -30,3 +30,51 @@ html.sap-phone .sapMDialog {
 		justify-content: flex-end;
 	}
 }
+
+// ==========================================================================
+// header, sub-header, footer
+// ==========================================================================
+
+.sapMDialog {
+	header .sapMBarLeft,
+	header .sapMBarPH {
+		padding-left: 1rem;
+	}
+
+	header .sapMBarRight,
+	header .sapMBarPH {
+		padding-right: 1rem;
+	}
+
+	footer .sapMTB {
+		padding: 0 1rem;
+	}
+}
+
+.sapMDialogTitle, .sapMDialogSubHeader {
+	.sapUi-Std-PaddingS, .sapUi-Std-PaddingM,
+	.sapUi-Std-PaddingL, .sapUi-Std-PaddingXL {
+		&.sapMIBar {
+			.sapMBarMiddle .sapMBarPH {
+				padding-left: 0;
+				padding-right: 0;
+			}
+
+			.sapMBarLeft {
+				padding-left: inherit;
+
+				.sapMBarChild {
+					padding-right: 0.5rem;
+				}
+			}
+
+			.sapMBarRight {
+				padding-right: inherit;
+
+				.sapMBarChild {
+					padding-left: 0.5rem;
+				}
+			}
+		}
+	}
+}
