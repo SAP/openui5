@@ -765,25 +765,30 @@ function(
 				sMessage = oCoreMessageBundle.getText("Float.Invalid");
 			}
 
-			if (!sMessage) {
-				this.setProperty("valueState", ValueState.None, true);
-				this._getInput().setValueState(ValueState.None);
-				return;
-			}
+			if (sMessage) {
+				// there is error message
 
-			if (bHasValidationErrorListeners) {
-				this.fireValidationError({
-					element: this,
-					exception: new ValidateException(sMessage, aViolatedConstraints),
-					id: this.getId(),
-					message: sMessage,
-					property: "value"
-				});
-			} else {
+				// first set valueState and valueStateText
 				this.setProperty("valueState", ValueState.Error, true);
 				this._getInput().setValueState(ValueState.Error);
 				this._getInput().setValueStateText(sMessage);
+
+				// then, if there are listeners, fire an exception
+				if (bHasValidationErrorListeners) {
+					this.fireValidationError({
+						element: this,
+						exception: new ValidateException(sMessage, aViolatedConstraints),
+						id: this.getId(),
+						message: sMessage,
+						property: "value"
+					});
+				}
+			} else {
+				// no errors
+				this.setProperty("valueState", ValueState.None, true);
+				this._getInput().setValueState(ValueState.None);
 			}
+
 		};
 
 		/*
