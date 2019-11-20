@@ -275,10 +275,27 @@ sap.ui.define([
 
 	};
 
+	DocumentationRouter.prototype.popstateHandler = function () {
+		var bStatic = !!window['sap-ui-documentation-static'],
+			sRoute =  bStatic ?
+				location.hash.replace(/^[#/]/, "")
+				: this._processPath(location.pathname);
+
+		// trigger the UI update logic for the new path
+		this.parse(sRoute);
+	};
+
 	DocumentationRouter.prototype.attachGlobalLinkHandler = function () {
 		if (!this._bGlobalHandlerAttached) {
 			document.body.addEventListener("click", this.linkClickHandler.bind(this), true);
 			this._bGlobalHandlerAttached = true;
+		}
+	};
+
+	DocumentationRouter.prototype.attachPopstateHandler = function () {
+		if (!this._bPopstateHandlerAttached) {
+			window.addEventListener('popstate', this.popstateHandler.bind(this));
+			this._bPopstateHandlerAttached = true;
 		}
 	};
 
@@ -467,10 +484,7 @@ sap.ui.define([
 		 * @override
 		 */
 		DocumentationRouter.prototype.initialize = function () {
-			var oPopstateHandler,
-				sPath;
-
-			sPath = this._processPath(location.pathname);
+			var sPath = this._processPath(location.pathname);
 
 			// stop the hash change listener
 			this.stop();
@@ -479,11 +493,7 @@ sap.ui.define([
 			this.parse(sPath);
 
 			// attach listener for route changes via the browser back/forward buttons
-			oPopstateHandler = function (event) {
-				// trigger the UI update logic for the new path
-				this.parse(this._processPath(location.pathname));
-			}.bind(this);
-			window.addEventListener('popstate', oPopstateHandler);
+			this.attachPopstateHandler();
 
 			// Attach link handler
 			this.attachGlobalLinkHandler();
@@ -525,14 +535,7 @@ sap.ui.define([
 			Router.prototype.initialize.apply(this, arguments);
 
 			// attach listener for route changes via the browser back/forward buttons
-			var oPopstateHandler = function (event) {
-
-				var sRoute = location.hash.replace(/^[#]/, "");
-				sRoute = sRoute.replace(/^[/]/, "");
-				// trigger the UI update logic for the new path
-				this.parse(sRoute);
-			}.bind(this);
-			window.addEventListener('popstate', oPopstateHandler);
+			this.attachPopstateHandler();
 
 			// Attach link handler
 			this.attachGlobalLinkHandler();
