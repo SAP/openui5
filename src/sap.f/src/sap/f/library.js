@@ -345,8 +345,8 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * <ul>
 	 * <li><code>_getStickyContent</code> - returns the content (control) used in the
 	 * subheader</li>
-	 * <li><code>_returnStickyContent</code> - accepts control as argument and ensures
-	 * that the control is placed back in its place in the provider</li>
+	 * <li><code>_returnStickyContent</code> - ensures that the content (control) returned by <code>_getStickyContent</code>,
+	 * is placed back in its place in the provider</li>
 	 * <li><code>_getStickySubHeaderSticked</code> - returns boolean value that shows
 	 * where the sticky content is placed (in its provider or in the
 	 * <code>DynamicPage</code>)</li>
