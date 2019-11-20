@@ -1604,6 +1604,26 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
+		QUnit.test("Numeric Header indicator truncation", function (assert) {
+
+			// Arrange
+			var sSampleNumber = "1234567812345678",
+				oHeader = new NumericHeader({
+					number: sSampleNumber
+				});
+
+			// Act
+			oHeader.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			// Assert
+
+			assert.strictEqual(oHeader.$("mainIndicator-value-inner").html().length, sSampleNumber.length, "The numeric content is not truncated");
+
+			// Clean up
+			oHeader.destroy();
+		});
+
 		QUnit.test("Numeric Header main indicator with json data", function (assert) {
 
 			// Arrange
