@@ -1111,20 +1111,22 @@ sap.ui.define([
 
 	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
 		if (oContent && oContent.isA("sap.m.Title")) {
+			this._observeHeaderTitleText(oContent);
 			this._getHeader().setTitle(oContent.getText());
-		} else {
-			this.addAggregation("toolbarContent", oContent);
+			oContent.setVisible(false);
 		}
+		this.addAggregation("toolbarContent", oContent);
 
 		return this;
 	 };
 
 	PlanningCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
 		if (oContent && oContent.isA("sap.m.Title")) {
+			this._observeHeaderTitleText(oContent);
 			this._getHeader().setTitle(oContent.getText());
-		} else {
-			this.insertAggregation("toolbarContent", oContent, iIndex);
+			oContent.setVisible(false);
 		}
+		this.insertAggregation("toolbarContent", oContent, iIndex);
 
 		return this;
 	};
@@ -1134,6 +1136,7 @@ sap.ui.define([
 
 		if (oContent && oContent.isA("sap.m.Title")) {
 			this._getHeader().setTitle("");
+			this._disconnectAndDestroyHeaderObserver();
 		} else {
 			oRemoved = this.removeAggregation("toolbarContent", oContent);
 		}
@@ -1144,15 +1147,58 @@ sap.ui.define([
 	PlanningCalendar.prototype.removeAllToolbarContent = function() {
 		var aRemoved = this.removeAllAggregation("toolbarContent");
 		this._getHeader().setTitle("");
+		this._disconnectAndDestroyHeaderObserver();
 		return aRemoved;
 	};
 
 	PlanningCalendar.prototype.destroyToolbarContent = function() {
 		var destroyed = this.destroyAggregation("toolbarContent");
 		this._getHeader().setTitle("");
+		this._disconnectAndDestroyHeaderObserver();
 		return destroyed;
 	};
 
+	/**
+	* Returns the ManagedObjectObserver for the title.
+	*
+	* @return {sap.ui.base.ManagedObjectObserver} The header observer object
+	* @private
+	*/
+	PlanningCalendar.prototype._getHeaderObserver = function () {
+		if (!this._oHeaderObserver) {
+			this._oHeaderObserver = new ManagedObjectObserver(this._handleTitleTextChange.bind(this));
+		}
+		return this._oHeaderObserver;
+	};
+
+	/**
+	* Observes the text property of the title.
+	*
+	* @param {sap.m.Title} oTitle text property will be observed
+	* @private
+	*/
+	PlanningCalendar.prototype._observeHeaderTitleText = function (oTitle) {
+		this._getHeaderObserver().observe(oTitle, {
+			properties: ["text"]
+		});
+	};
+
+	 PlanningCalendar.prototype._handleTitleTextChange = function (oChanges) {
+		this._getHeader().setTitle(oChanges.current);
+	};
+
+	/**
+	 * Disconnects and destroys the ManagedObjectObserver observing title's text.
+	 *
+	 * @private
+	 */
+	PlanningCalendar.prototype._disconnectAndDestroyHeaderObserver = function () {
+		if (this._oHeaderObserver) {
+			this._oHeaderObserver.disconnect();
+			this._oHeaderObserver.destroy();
+			this._oHeaderObserver = null;
+		}
+	};
 
 	/**
 	 * Sets the given date as start date. The current date is used as default.

@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/PlanningCalendarRow",
 	"sap/m/PlanningCalendar",
+	"sap/m/Title",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/CustomData",
 	"sap/ui/Device",
@@ -56,6 +57,7 @@ sap.ui.define([
 	mobileLibrary,
 	PlanningCalendarRow,
 	PlanningCalendar,
+	Title,
 	LocaleData,
 	CustomData,
 	Device,
@@ -734,6 +736,10 @@ sap.ui.define([
 		// Assert
 		assert.notOk(oPCHeaderToolbar.getVisible(), "PlanningCalendarHeader: Toolbar is not visible");
 
+		// Assert
+		assert.notOk(oPC._oHeaderObserver, "The ManagedObjectObserver not exists, because remove all toolbar content.");
+		assert.equal(oPC.getToolbarContent().length, 0, "PlanningCalendarHeader: Toolbar has two elements");
+
 		// Clean up
 		oPC.destroy();
 	});
@@ -764,6 +770,48 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(oPCHeaderToolbar.getVisible(), "PlanningCalendar: HeaderToolbar is not visible");
+
+		// Clean up
+		oPC.destroy();
+	});
+
+	QUnit.test("PlannigCalendarHeaderToolbar possibility to change Title text", function(assert) {
+		// Prepare
+		var oPC = createPlanningCalendar("PC7").placeAt("qunit-fixture"),
+			oTitle = new Title({text: "TEST"}),
+			oButton = new Button({text: "ButtonTest"});
+			sap.ui.getCore().applyChanges();
+
+		assert.notOk(oPC._oHeaderObserver, "The ManagedObjectObserver not exists, because a Title not added.");
+
+		// Act
+		oPC.addToolbarContent(oTitle);
+		oPC.addToolbarContent(oButton);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oPC._oHeaderObserver, "The ManagedObjectObserver exists, because add title.");
+		assert.equal(oPC._getHeader().getTitle(), "TEST", "PlanningCalendarHeader: header's title is correct");
+
+		// Act
+		oTitle.setText("new TEST");
+
+		// Assert
+		assert.equal(oPC._getHeader().getTitle(),"new TEST", "PlanningCalendarHeader: header's text has change correctly");
+
+		// Act
+		oPC.removeToolbarContent(oButton);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oPC._oHeaderObserver, "The ManagedObjectObserver exists correctly");
+
+		// Act
+		oPC.removeToolbarContent(oTitle);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oPC._oHeaderObserver, "The ManagedObjectObserver not exists, because remove Title from toolbar content.");
 
 		// Clean up
 		oPC.destroy();
