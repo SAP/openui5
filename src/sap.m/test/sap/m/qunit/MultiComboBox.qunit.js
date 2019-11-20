@@ -7390,6 +7390,7 @@ sap.ui.define([
 		var oSpy = new sinon.spy(this.oMultiComboBox, "toggleIconPressedStyle"),
 			oFakeEvent = {
 				isMarked: function () {return false;},
+				setMarked: function () {},
 				target: {
 					value: "A Item"
 				},
