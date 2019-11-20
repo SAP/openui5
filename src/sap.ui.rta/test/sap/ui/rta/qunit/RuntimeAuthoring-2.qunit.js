@@ -75,6 +75,9 @@ sap.ui.define([
 		oRta._oSerializer = {
 			needsReload : function(){
 				return Promise.resolve(bExist);
+			},
+			saveCommands : function() {
+				return Promise.resolve();
 			}
 		};
 	}
@@ -456,6 +459,70 @@ sap.ui.define([
 				assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
 						"then the reload page is triggered to update the flp cache");
 			}.bind(this));
+		});
+
+		QUnit.test("when no app descriptor changes exist at first save and later they exist and user exits ...", function(assert) {
+			this.oRta._oSerializer = {
+				needsReload : function(bReload) {
+					return Promise.resolve(bReload);
+				},
+				saveCommands : function() {
+					return Promise.resolve();
+				}
+			};
+			var fnNeedsReloadStub = sandbox.stub(this.oRta._oSerializer, "needsReload");
+			fnNeedsReloadStub.onFirstCall().resolves(false);
+			fnNeedsReloadStub.onSecondCall().resolves(true);
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+
+			return this.oRta._serializeToLrep()
+				.then(this.oRta._handleReloadOnExit.bind(this.oRta))
+				.then(function(sShouldReload) {
+					assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+						"then RTA restart will not be enabled");
+					assert.strictEqual(fnNeedsReloadStub.callCount, 2,
+						"then the reload check is called once");
+					assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+						"then the reload page is triggered to update the flp cache");
+				}.bind(this));
+		});
+
+		QUnit.test("when app descriptor changes exist and user publishes and afterwards exits ...", function(assert) {
+			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			whenAppDescriptorChangesExist(this.oRta);
+			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+
+			return this.oRta._serializeToLrep()
+				.then(this.oRta._handleReloadOnExit.bind(this.oRta))
+				.then(function(sShouldReload) {
+					assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+						"then RTA restart will not be enabled");
+					assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
+						"then the reload check is called once");
+					assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+						"then the reload page is triggered to update the flp cache");
+				}.bind(this));
+		});
+
+		QUnit.test("when app descriptor changes exist and user exits ...", function(assert) {
+			givenMaxLayerParameterIsSetTo.call(this, "CUSTOMER", this.fnFLPToExternalStub);
+			whenAppDescriptorChangesExist(this.oRta);
+			var fnNeedsReloadSpy = sandbox.spy(this.oRta._oSerializer, "needsReload");
+
+			whenUserConfirmsMessage.call(this, "MSG_RELOAD_NEEDED", assert);
+
+			return this.oRta._handleReloadOnExit()
+				.then(function(sShouldReload) {
+					assert.strictEqual(this.fnEnableRestartSpy.callCount, 0,
+						"then RTA restart will not be enabled");
+					assert.strictEqual(fnNeedsReloadSpy.callCount, 1,
+						"then the reload check is called once");
+					assert.strictEqual(sShouldReload, this.oRta._RESTART.RELOAD_PAGE,
+						"then the reload page is triggered to update the flp cache");
+				}.bind(this));
 		});
 
 		QUnit.test("when there are no personalized and appDescriptor changes and _handleReloadOnExit() is called", function(assert) {

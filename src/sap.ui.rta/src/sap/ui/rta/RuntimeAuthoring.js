@@ -930,6 +930,13 @@ function(
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
+		if (!this._bReloadNeeded) {
+			return this._oSerializer.needsReload().then(function(bReloadNeeded) {
+				this._bReloadNeeded = bReloadNeeded;
+				return this._oSerializer.saveCommands()
+				.then(this._invalidateCache.bind(this));
+			}.bind(this));
+		}
 		return this._oSerializer.saveCommands()
 		.then(this._invalidateCache.bind(this));
 	};
@@ -1087,6 +1094,18 @@ function(
 				.then(function(sResponse) {
 					if (sResponse !== "Error" && sResponse !== "Cancel") {
 						this._showMessageToast("MSG_TRANSPORT_SUCCESS");
+
+						if (this.getShowToolbars()) {
+							var mPropertyBag = {
+								selector: this.getRootControlInstance(),
+								layer: this.getLayer()
+							};
+							this._getFlexController().getResetAndPublishInfo(mPropertyBag)
+							.then(function(oPublishAndResetInfo) {
+								this.getToolbar().setPublishEnabled(oPublishAndResetInfo.isPublishEnabled);
+								this.getToolbar().setRestoreEnabled(oPublishAndResetInfo.isResetEnabled);
+							}.bind(this));
+						}
 					}
 				}.bind(this));
 		}.bind(this))['catch'](fnShowTechnicalError);
@@ -1436,7 +1455,9 @@ function(
 	 */
 	RuntimeAuthoring.prototype._handleReloadOnExit = function() {
 		return Promise.all([
-			this._oSerializer.needsReload(),
+			(!this._bReloadNeeded) ?
+				this._oSerializer.needsReload() :
+				Promise.resolve(this._bReloadNeeded),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
 			this._getFlexController().hasHigherLayerChanges({ignoreMaxLayerParameter : true})

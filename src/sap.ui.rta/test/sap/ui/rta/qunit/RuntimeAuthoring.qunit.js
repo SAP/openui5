@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/Change',
+	'sap/ui/fl/ChangePersistence',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/Utils',
 	"sap/ui/rta/appVariant/AppVariantUtils",
@@ -44,6 +45,7 @@ function(
 	Overlay,
 	ChangeRegistry,
 	Change,
+	ChangePersistence,
 	Utils,
 	RtaUtils,
 	AppVariantUtils,
@@ -760,6 +762,19 @@ function(
 			RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(2, assert);
 			return this.oRta.stop().then(function() {
 				assert.ok(true, "then the promise got resolved");
+			});
+		});
+
+		QUnit.test("When transport function is called and transportChanges returns Promise.resolve() when the running application is not an application variant", function(assert) {
+			sandbox.stub(ChangePersistence.prototype, "transportAllUIChanges").resolves();
+			var fnGetResetAndPublishInfoStub = sandbox.stub(this.oRta._getFlexController(), "getResetAndPublishInfo").resolves({
+				isPublishEnabled: false,
+				isResetEnabled: true
+			});
+			var oMessageToastStub = sandbox.stub(this.oRta, "_showMessageToast");
+			return this.oRta.transport().then(function() {
+				assert.equal(oMessageToastStub.callCount, 1, "then the messageToast was shown");
+				assert.equal(fnGetResetAndPublishInfoStub.callCount, 1, "then the status of publish and reset button is evaluated");
 			});
 		});
 	});
