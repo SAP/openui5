@@ -18,6 +18,39 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function _toAvailableChanges(mChanges, aChanges, sFileName) {
+		var oChange = mChanges[sFileName];
+		if (oChange) {
+			aChanges.push(oChange);
+		}
+		return aChanges;
+	}
+
+	function _pushToStack(oComponent, mComposite, oStack, oChange) {
+		var oSelector = oChange.getSelector();
+		var oCommand = new Settings({
+			selector : oSelector,
+			changeType : oChange.getDefinition().changeType,
+			element : JsControlTreeModifier.bySelector(oSelector, oComponent)
+		});
+		oCommand._oPreparedChange = oChange;
+		if (oChange.getUndoOperations()) {
+			oCommand._aRecordedUndo = oChange.getUndoOperations();
+			oChange.resetUndoOperations();
+		}
+		// check if change belongs to a composite command
+		var sCompositeId = oChange.getDefinition().support.compositeCommand;
+		if (sCompositeId) {
+			if (!mComposite[sCompositeId]) {
+				mComposite[sCompositeId] = new CompositeCommand();
+				oStack.pushExecutedCommand(mComposite[sCompositeId]);
+			}
+			mComposite[sCompositeId].addCommand(oCommand);
+		} else {
+			oStack.pushExecutedCommand(oCommand);
+		}
+	}
+
 	/**
 	 * Basic implementation for the command stack pattern.
 	 *
@@ -64,10 +97,9 @@ sap.ui.define([
 	Stack.initializeWithChanges = function(oControl, aFileNames) {
 		var oStack = new Stack();
 		oStack._aPersistedChanges = aFileNames;
-		var mComposite = {};
 		if (aFileNames && aFileNames.length > 0) {
 			var oComponent = FlUtils.getComponentForControl(oControl);
-			var sAppName = sap.ui.fl.Utils.getAppDescriptor(oComponent)["sap.app"].id;
+			var sAppName = FlUtils.getAppDescriptor(oComponent)["sap.app"].id;
 			var mPropertyBag = {
 				oComponent : oComponent,
 				appName : sAppName,
@@ -76,35 +108,14 @@ sap.ui.define([
 			};
 			return PersistenceWriteAPI._getUIChanges(mPropertyBag)
 			.then(function(aChanges) {
+				var mComposite = {};
 				var mChanges = {};
 				aChanges.forEach(function(oChange) {
 					mChanges[oChange.getDefinition().fileName] = oChange;
 				});
-				aFileNames.forEach(function(sFileName) {
-					var oChange = mChanges[sFileName];
-					var oSelector = oChange.getSelector();
-					var oCommand = new Settings({
-						selector : oSelector,
-						changeType : oChange.getDefinition().changeType,
-						element : JsControlTreeModifier.bySelector(oSelector, oComponent)
-					});
-					oCommand._oPreparedChange = oChange;
-					if (oChange.getUndoOperations()) {
-						oCommand._aRecordedUndo = oChange.getUndoOperations();
-						oChange.resetUndoOperations();
-					}
-					// check if change belongs to a composite command
-					var sCompositeId = oChange.getDefinition().support.compositeCommand;
-					if (sCompositeId) {
-						if (!mComposite[sCompositeId]) {
-							mComposite[sCompositeId] = new CompositeCommand();
-							oStack.pushExecutedCommand(mComposite[sCompositeId]);
-						}
-						mComposite[sCompositeId].addCommand(oCommand);
-					} else {
-						oStack.pushExecutedCommand(oCommand);
-					}
-				});
+				aFileNames
+				.reduce(_toAvailableChanges.bind(null, mChanges), [])
+				.forEach(_pushToStack.bind(null, oComponent, mComposite, oStack));
 				return oStack;
 			});
 		}
