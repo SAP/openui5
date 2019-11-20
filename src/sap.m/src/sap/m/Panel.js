@@ -194,16 +194,6 @@ sap.ui.define([
 	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
-	Panel.prototype.setWidth = function (sWidth) {
-		this.setProperty("width", sWidth, true);
-
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			oDomRef.style.width = sWidth;
-		}
-
-		return this;
-	};
 
 	/**
 	 * Sets the height of the panel.
@@ -211,39 +201,8 @@ sap.ui.define([
 	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
-	Panel.prototype.setHeight = function (sHeight) {
-		this.setProperty("height", sHeight, true);
-
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			oDomRef.style.height = sHeight;
-			if (parseFloat(sHeight) != 0) {
-				oDomRef.querySelector(".sapMPanelContent").style.height = sHeight;
-			}
-			this._setContentHeight();
-		}
-
-		return this;
-	};
-
 	Panel.prototype.onThemeChanged = function () {
 		this._setContentHeight();
-	};
-
-	/**
-	 * Sets the expandable property of the control.
-	 * @param {boolean} bExpandable Defines whether the control is expandable or not.
-	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
-	 * @public
-	 */
-	Panel.prototype.setExpandable = function (bExpandable) {
-		this.setProperty("expandable", bExpandable, false); // rerender since we set certain css classes
-
-		if (bExpandable && !this.oIconCollapsed) {
-			this.oIconCollapsed = this._createIcon();
-		}
-
-		return this;
 	};
 
 	/**
@@ -264,9 +223,6 @@ sap.ui.define([
 			return this;
 		}
 
-		// ARIA
-		this._getIcon().$().attr("aria-expanded", this.getExpanded());
-
 		this._toggleExpandCollapse();
 		this._toggleCssClasses();
 		this.fireExpand({ expand: bExpanded, triggeredByInteraction: this._bInteractiveExpand });
@@ -281,30 +237,38 @@ sap.ui.define([
 	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
-	Panel.prototype.setAccessibleRole = function (sRole) {
-		if (sRole === this.getAccessibleRole()) {
-			return this;
+	Panel.prototype.onBeforeRendering = function () {
+		if (this.getExpandable() && !this.oIconCollapsed) {
+			this.oIconCollapsed = this._createIcon();
 		}
 
-		this.setProperty("accessibleRole", sRole, true);
+		if (this.oIconCollapsed) {
+			this._getIcon().$().attr("aria-expanded", this.getExpanded());
+		}
+
+		if (Device.browser.msie || Device.browser.edge) {
+			this._updateIconAriaLabelledBy();
+		}
 
 		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 			this.$().attr("role", this.getAccessibleRole().toLowerCase());
-		}
-
-		return this;
-	};
-
-	Panel.prototype.onBeforeRendering = function () {
-		if (Device.browser.msie || Device.browser.edge) {
-			this._updateIconAriaLabelledBy();
 		}
 	};
 
 	Panel.prototype.onAfterRendering = function () {
 		var $this = this.$(), $icon,
 			oPanelContent = this.getDomRef("content");
+		var oDomRef = this.getDomRef();
 
+		if (oDomRef) {
+			oDomRef.style.width = this.getWidth();
+
+			var sHeight = this.getHeight();
+			oDomRef.style.height = sHeight;
+			if (parseFloat(sHeight) != 0) {
+				oDomRef.querySelector(".sapMPanelContent").style.height = sHeight;
+			}
+		}
 		this._setContentHeight();
 
 		if (this.getExpandable()) {
@@ -312,12 +276,10 @@ sap.ui.define([
 			oPanelContent && $icon.attr("aria-controls", oPanelContent.id);
 
 			if (this.getExpanded()) {
-				//ARIA
 				$icon.attr("aria-expanded", "true");
 			} else {
 				// hide those parts which are collapsible (w/o animation, otherwise initial loading doesn't look good ...)
 				$this.children(".sapMPanelExpandablePart").css("display", "none");
-				//ARIA
 				$icon.attr("aria-expanded", "false");
 			}
 		}
