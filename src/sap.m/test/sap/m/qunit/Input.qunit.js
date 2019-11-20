@@ -3824,6 +3824,64 @@ sap.ui.define([
 		oInput = null;
 	});
 
+
+	QUnit.test("Auto complete should not be allowed when it is set to false", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			filterSuggests: false,
+			autocomplete: false,
+			suggestionItems: [
+				new Item({text: "Germany"}),
+				new Item({text: "Bulgaria"}),
+				new Item({text: "Italy"})
+			]
+		}).placeAt("content");
+
+		var sTestTypedInValue = "Test";
+		var oMockFocus = {
+				id: '1',
+				cursorPos: 1,
+				selectionEnd: 1,
+				selectionStart: 1
+			};
+
+		var oStubFocusInfo = sinon.stub(oInput, "getFocusInfo", function () {
+			return oMockFocus;
+		});
+
+		var oStubPopover = sinon.stub(oInput._oSuggPopover._oPopover, "isOpen", function () {
+			return true;
+		});
+
+		var oStub = this.stub(Device, "browser", {
+			internet_explorer: true
+		});
+
+		var oApplyFocusInfoSpy = sinon.spy(oInput, "applyFocusInfo");
+		var oSetDOMValueSpy = sinon.spy(oInput, "setDOMValue");
+
+		oInput._bUseDialog = false;
+		sap.ui.getCore().applyChanges();
+		oInput._oSuggPopover._sTypedInValue = sTestTypedInValue;
+
+		// Act
+		oInput._hideSuggestionPopup();
+		this.clock.tick(300);
+
+		// Assert
+		assert.ok(oApplyFocusInfoSpy.calledOnce, "Apply focus should be called once.");
+		assert.ok(oSetDOMValueSpy.calledWith(sTestTypedInValue), "Set dom value should be called with correct params.");
+		assert.ok(oApplyFocusInfoSpy.calledWith(oMockFocus), "Apply focus should be called with correct params.");
+
+		// cleanup
+		oInput.destroy();
+		oInput = null;
+		oStubFocusInfo.restore();
+		oStubPopover.restore();
+		oStub.restore();
+	});
+
 	QUnit.test("Autocomplete on desktop", function (assert) {
 		// arrange
 		var oInput = new Input({
