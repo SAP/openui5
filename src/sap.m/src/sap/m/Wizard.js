@@ -220,7 +220,11 @@ sap.ui.define([
 			}
 
 			var oStep = this._getCurrentStepInstance();
-			this._activateAllPreceedingSteps(oStep);
+
+			if (oStep) {
+				this._activateAllPreceedingSteps(oStep);
+			}
+
 			this._attachScrollHandler();
 		};
 
