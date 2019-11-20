@@ -23,7 +23,6 @@
             "src/testsuite/**/*"
         ],
         "demokit": [
-            "src/sap.ui.demokit/**/*"
         ],
         "suite-controls": [
             "src/sap.ui.suite/**/*"
