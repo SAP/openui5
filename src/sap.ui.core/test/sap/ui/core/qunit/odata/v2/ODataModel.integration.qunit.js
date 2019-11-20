@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/Device",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/MessageType",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/odata/CountMode",
@@ -15,8 +16,8 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper'
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, uid, Device, SyncPromise, Controller, View, CountMode, ODataModel, TestUtils,
-		datajs, XMLHelper) {
+], function (Log, uid, Device, SyncPromise, MessageType, Controller, View, CountMode, ODataModel,
+		TestUtils, datajs, XMLHelper) {
 	/*global QUnit*/
 	"use strict";
 
@@ -26,13 +27,16 @@ sap.ui.define([
 	/**
 	 * Creates a V2 OData model.
 	 *
-	 * @param {string} sServiceUrl The service URL
-	 * @param {object} [mModelParameters] Map of parameters for model construction
+	 * @param {string} sServiceUrl
+	 *   The service URL
+	 * @param {object} [mModelParameters]
+	 *   Map of parameters for model construction
 	 *   {@link sap.ui.model.odata.v2.ODataModel#constructor}. The standard ODataModel behavior will
 	 *   be overwritten by the following default test parameters:
-	 * @param {sap.ui.model.odata.CountMode} [mModelParameters.defaultCountMode=None] Starting
-	 *   $count request are disabled
-	 * @param {boolean} [mModelParameters.useBatch=false] Requests are handled as single requests
+	 * @param {sap.ui.model.odata.CountMode} [mModelParameters.defaultCountMode=None]
+	 *   Sets the default count mode for the model
+	 * @param {boolean} [mModelParameters.useBatch=false]
+	 *   Whether all requests should be sent in batch requests
 	 * @returns {sap.ui.model.odata.v2.ODataModel} The model
 	 */
 	function createModel(sServiceUrl, mModelParameters) {
@@ -221,6 +225,38 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks that exactly the expected messages have been reported, the order doesn't matter.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 */
+		checkMessages : function (assert) {
+			var aCurrentMessages = sap.ui.getCore().getMessageManager().getMessageModel()
+					.getObject("/").sort(compareMessages),
+				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
+
+			function compareMessages(oMessage1, oMessage2) {
+				return oMessage1.message.localeCompare(oMessage2.message);
+			}
+
+			// check only a subset of properties
+			aCurrentMessages = aCurrentMessages.map(function (oMessage) {
+				return {
+					code : oMessage.code,
+					descriptionUrl : oMessage.descriptionUrl,
+					fullTarget : oMessage.fullTarget,
+					message : oMessage.message,
+					persistent : oMessage.persistent,
+					target : oMessage.target,
+					technical : oMessage.technical,
+					type : oMessage.type
+				};
+			});
+
+			assert.deepEqual(aCurrentMessages, aExpectedMessages,
+				this.aMessages.length + " expected messages in message manager");
+		},
+
+		/**
 		 * Checks that the given value is the expected one for the control.
 		 *
 		 * @param {object} assert The QUnit assert object
@@ -374,6 +410,7 @@ sap.ui.define([
 					mHeaders = oActualRequest.headers,
 					sMethod = oActualRequest.method,
 					oResponse,
+					mResponseHeaders,
 					sUrl = oActualRequest.requestUri,
 					bWaitForResponse = true;
 
@@ -431,8 +468,10 @@ sap.ui.define([
 					}
 					bWaitForResponse = !(oResponse && typeof oResponse.then === "function");
 					delete oExpectedRequest.response;
+					mResponseHeaders = oExpectedRequest.responseHeaders;
 					delete oExpectedRequest.responseHeaders;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
+					oResponse.headers = mResponseHeaders || {};
 				} else {
 					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
 					oResponse = {value : []}; // dummy response to avoid further errors
@@ -600,6 +639,26 @@ sap.ui.define([
 
 		/**
 		 * The following code (either {@link #createView} or anything before
+		 * {@link #waitForChanges}) is expected to report exactly the given messages. All expected
+		 * messages should have a different message text.
+		 *
+		 * @param {object[]} aExpectedMessages The expected messages (with properties code, message,
+		 *   target, persistent, technical and type corresponding the getters of
+		 *   sap.ui.core.message.Message)
+		 * @returns {object} The test instance for chaining
+		 */
+		expectMessages : function (aExpectedMessages) {
+			this.aMessages = aExpectedMessages.map(function (oMessage) {
+				oMessage.descriptionUrl = oMessage.descriptionUrl || "";
+				oMessage.technical = oMessage.technical || false;
+				return oMessage;
+			});
+
+			return this;
+		},
+
+		/**
+		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to perform the given request. <code>oResponse</code>
 		 * describes how to react on the request. Usually you simply give the JSON for the response
 		 * and the request will be responded in the next microtask.
@@ -745,6 +804,7 @@ sap.ui.define([
 						}
 					}
 				}
+				that.checkMessages(assert);
 			});
 
 			return oPromise;
@@ -804,10 +864,10 @@ sap.ui.define([
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	testViewStart("Minimal integration test", '\
 <FlexBox binding="{/SalesOrderSet(\'0815\')}">\
-	<Text id="id0" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}" />\
 </FlexBox>',
 		{"SalesOrderSet('0815')" : {SalesOrderID : "0815"}},
-		[{"id0" : null}, {"id0" : "0815"}]
+		[{"id" : null}, {"id" : "0815"}]
 	);
 
 	//*********************************************************************************************
@@ -817,15 +877,15 @@ sap.ui.define([
 		var oModel = createSalesOrdersModel({useBatch : true}),
 			sView = '\
 <FlexBox binding="{/SalesOrderSet(\'0815\')}">\
-	<Text id="id0" text="{SalesOrderID}" />\
+	<Text id="id" text="{SalesOrderID}" />\
 </FlexBox>';
 
 		this.expectHeadRequest()
 			.expectRequest("SalesOrderSet('0815')", {
 				SalesOrderID : "0815"
 			})
-			.expectChange("id0", null)
-			.expectChange("id0", "0815");
+			.expectChange("id", null)
+			.expectChange("id", "0815");
 
 		// code under test
 		return this.createView(assert, sView, oModel);
@@ -879,4 +939,38 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel);
 	});
 
+	//*********************************************************************************************
+	// Scenario: Message with empty target
+	QUnit.test("Message with empty target", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox binding="{/SalesOrderSet(\'0815\')}">\
+	<Text id="id" text="{SalesOrderID}" />\
+</FlexBox>';
+
+		this.expectRequest("SalesOrderSet('0815')", {
+				SalesOrderID : "0815"
+			}, {
+				"sap-message" : JSON.stringify({
+						code : "1234",
+						message : "Foo",
+						severity : "error",
+						target : "",
+						details : []
+					})
+			})
+			.expectChange("id", null)
+			.expectChange("id", "0815")
+			.expectMessages([{
+				code : "1234",
+				fullTarget : "/SalesOrderSet('0815')",
+				message : "Foo",
+				persistent : false,
+				target : "/SalesOrderSet('0815')",
+				type : MessageType.Error
+			}]);
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
 });
