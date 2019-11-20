@@ -73,6 +73,46 @@
             "reference": "1970564749"
           }
         ]
+      },
+      {
+        "id": "5bed03375f0d9a843bd3d9a27833d19d186c40ff",
+        "type": "FEATURE",
+        "text": " sap.f.AvatarGroup: Control for grouped Avatars is implemented",
+        "references": []
+      },
+      {
+        "id": "e509dd2889834537fa6631679cd1c1bd9b5c5a2d",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Current location focus style restored",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970601251"
+          }
+        ]
+      },
+      {
+        "id": "a41edf2dbfcfb28454b1627175ef0dda97e5f9f5",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Accessibility improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970521416"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970564900"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970625121"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970512440"
+          }
+        ]
       }
     ]
   }

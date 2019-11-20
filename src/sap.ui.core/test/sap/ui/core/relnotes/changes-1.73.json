@@ -109,6 +109,46 @@
             "reference": "1970614786"
           }
         ]
+      },
+      {
+        "id": "109a011c6dd3591679d3fc712767020dab175989",
+        "type": "FIX",
+        "text": " core/Shortcut: Restore focus on DOM element instead",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970531258"
+          }
+        ]
+      },
+      {
+        "id": "a41edf2dbfcfb28454b1627175ef0dda97e5f9f5",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Accessibility improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970521416"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970564900"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970625121"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970512440"
+          }
+        ]
+      },
+      {
+        "id": "13dc5374fa3b4f1f6f96741df490d23eb95d8170",
+        "type": "FIX",
+        "text": " sap/base/Log: Limit amount of stored log entries",
+        "references": []
       }
     ]
   }

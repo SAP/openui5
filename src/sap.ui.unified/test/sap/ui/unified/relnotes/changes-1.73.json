@@ -67,6 +67,17 @@
             "reference": "1970400974"
           }
         ]
+      },
+      {
+        "id": "42e5ae61e5c2cd3a88764e0592bd3b546c89ee84",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Belize plus colors adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006570372019"
+          }
+        ]
       }
     ]
   }

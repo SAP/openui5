@@ -551,6 +551,85 @@
         "type": "FIX",
         "text": " sap.m.UploadCollection - fix correct filesize for range 1000-1023 Bytes",
         "references": []
+      },
+      {
+        "id": "7ef76f6114535372f47a00be1259c6ca2aab8b04",
+        "type": "FEATURE",
+        "text": " DataStateIndicator: Table plug-in for binding messages added",
+        "references": []
+      },
+      {
+        "id": "8943da2210b7e2611e632ee7f74a411451a27171",
+        "type": "FEATURE",
+        "text": " sap.m.NumericContent: Added a new property - adaptiveFontSize",
+        "references": []
+      },
+      {
+        "id": "a41edf2dbfcfb28454b1627175ef0dda97e5f9f5",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Accessibility improvements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970521416"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970564900"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970625121"
+          },
+          {
+            "type": "BCP",
+            "reference": "1970512440"
+          }
+        ]
+      },
+      {
+        "id": "7bc37cf27e50a0321493e3fdd397f2dc39581ab7",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Console error in _restoreItemsType prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980431395"
+          }
+        ]
+      },
+      {
+        "id": "db365760c2e2d42ee4d4e29727f7db7d3ac770ca",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Property truncateValueTo is not ignored anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006220662019"
+          }
+        ]
+      },
+      {
+        "id": "6b0865b7a92774236a4d354bea58f134aa90443d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: missing title of header fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970590683"
+          }
+        ]
+      },
+      {
+        "id": "32c9b10a6c65782f4db7ab15ee02aa644906a03c",
+        "type": "FIX",
+        "text": " sap.m.Token: Token\u0027s text font size adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970610728"
+          }
+        ]
       }
     ]
   }
