@@ -255,8 +255,19 @@ function(
 		};
 	};
 
+	Toolbar.prototype._markFirstLastVisibleItems = function () {
+		var $domRef = this.$(),
+			$firstVisible = $domRef.find(".sapMBarChild:visible:first"),
+			$lastVisible = $domRef.find(".sapMBarChild:visible:last");
+
+		$firstVisible.addClass("sapMBarFirstVisibleChild");
+		$lastVisible.addClass("sapMBarLastVisibleChild");
+	};
+
 	Toolbar.prototype.onAfterRendering = function() {
 		this._checkContents();
+
+		this._markFirstLastVisibleItems();
 	};
 
 	Toolbar.prototype.onLayoutDataChange = function() {

@@ -2030,6 +2030,55 @@ sap.ui.define([
 		spyOTInvalidate.restore();
 	});
 
+	QUnit.test("Mark first/last visible child", function (assert) {
+		// Arrange
+		var aContent = getDefaultContent();
+
+			createOverflowToolbar({}, aContent);
+
+		// Assert
+		assert.ok(aContent[0].$().hasClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+		assert.ok(aContent[aContent.length - 1].$().hasClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+	});
+
+	QUnit.test("Mark first/last visible child when there are not visible children", function (assert) {
+		assert.expect(4);
+		// Arrange
+		var aContent = getDefaultContent(),
+			oOverflowTB = createOverflowToolbar({}, aContent),
+			done = assert.async(),
+			iControlsWithFirstChildClass,
+			iControlsWithLastChildClass,
+			oDelegate = {
+				onAfterRendering: function () {
+					oOverflowTB.removeEventDelegate(oDelegate);
+
+					iControlsWithFirstChildClass = aContent.filter(function (oElement) {
+						return oElement.$().hasClass("sapMBarFirstVisibleChild");
+					}).length;
+					iControlsWithLastChildClass = aContent.filter(function (oElement) {
+						return oElement.$().hasClass("sapMBarLastVisibleChild");
+					}).length;
+
+					// assert
+					assert.strictEqual(iControlsWithFirstChildClass, 1, "Only 1 child with sapMBarFirstVisibleChild class.");
+					assert.strictEqual(iControlsWithLastChildClass, 1, "Only 1 child with sapMBarLastVisibleChild class.");
+					assert.ok(aContent[1].$().hasClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+					assert.ok(aContent[aContent.length - 2].$().hasClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+					done();
+
+					// Clean-up
+					oOverflowTB.destroy();
+				}
+			};
+
+		aContent[0].setVisible(false);
+		aContent[aContent.length - 1].setVisible(false);
+		oOverflowTB.addEventDelegate(oDelegate);
+
+		sap.ui.getCore().applyChanges();
+	});
+
 	QUnit.module("Resize handling");
 
 	QUnit.test("Handling of resizes that don't move elements around", function (assert) {
