@@ -134,6 +134,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/baseEditor/propertyEditor/stringEditor/StringEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/baseEditor/propertyEditor/booleanEditor/BooleanEditor": {
 				group: "DesignTime Editor",
 				coverage: {
@@ -166,6 +175,24 @@ sap.ui.define(function () {
 				coverage: {
 					only: [
 						"sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/baseEditor/propertyEditor/iconEditor/IconEditor": {
+				group: "DesignTime Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/baseEditor/propertyEditor/iconEditor/IconEditor"
 					]
 				},
 				sinon: false

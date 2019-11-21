@@ -69,7 +69,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditor.getContent()[0].getDomRef().value = 'false';
+			this.oEditor.getContent()[0].getDomRef().value = "false";
 			QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].getDomRef());
 			QUnitUtils.triggerKeydown(this.oEditor.getContent()[0].getDomRef(), KeyCodes.ENTER);
 		});
@@ -82,7 +82,7 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditor.getContent()[0].$("inner").val('{someBindingPath}');
+			this.oEditor.getContent()[0].$("inner").val("{someBindingPath}");
 			QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].$("inner"));
 			QUnitUtils.triggerKeydown(this.oEditor.getContent()[0].getDomRef(), KeyCodes.ENTER);
 		});
@@ -95,14 +95,14 @@ sap.ui.define([
 				url: sap.ui.require.toUrl("sap/ui/integration/designtime/baseEditor/i18n/i18n.properties"),
 				async: true
 			}).then(function (oI18nBundle) {
-				var _oI18nModel = new ResourceModel({
+				var oI18nModel = new ResourceModel({
 					bundle: oI18nBundle
 				});
-				_oI18nModel.setDefaultBindingMode("OneWay");
-				this.oEditor.setModel(_oI18nModel, "i18n");
+				oI18nModel.setDefaultBindingMode("OneWay");
+				this.oEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				this.oEditor.getContent()[0].$("inner").val('abc');
+				this.oEditor.getContent()[0].$("inner").val("abc");
 				QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].$("inner"));
 				QUnitUtils.triggerKeydown(this.oEditor.getContent()[0].getDomRef(), KeyCodes.ENTER);
 
