@@ -350,6 +350,36 @@ sap.ui.define([
 		oLabel2.destroy();
 	});
 
+	QUnit.test("attribute required should be set to the input field, when the associate label is required", function(assert) {
+		// Arrange
+		var oLabel = new Label({
+			id: "lorem-ipsum-label",
+			labelFor: "inputRequired",
+			required: true
+		}).placeAt("content");
+
+		var oInput = new InputBase("inputRequired", {
+			ariaLabelledBy: [
+				"lorem-ipsum-label"
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getFocusDomRef().getAttribute("required"), "required", "The attribute is set correctly");
+
+		// Act
+		oLabel.setRequired(false);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oInput.getFocusDomRef().getAttribute("required"), "The attribute is removed");
+
+		// cleanup
+		oInput.destroy();
+		oLabel.destroy();
+	});
+
 	/* ------------------------------ */
 	/* setValue()                     */
 	/* ------------------------------ */
