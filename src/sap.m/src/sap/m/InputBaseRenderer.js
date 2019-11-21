@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
-	function(Renderer, coreLibrary, Device) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/LabelEnablement', 'sap/ui/Device'],
+	function(Renderer, coreLibrary, LabelEnablement, Device) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -141,7 +141,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
 
 		}
 
-		if (oControl.getRequired()) {
+		if (LabelEnablement.isRequired(oControl)) {
 			oRm.attr("required", "required");
 		}
 
