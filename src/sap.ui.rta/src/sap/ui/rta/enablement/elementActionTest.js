@@ -41,7 +41,7 @@ function (
 	 *
 	 * See <code>RTAControlEnabling.qunit.html</code> and <code>RTAControlEnabling.qunit.js</code> as an example on how to use.
 	 *
-	 * During development you may insert ".skip" to ommit processing of a specific control enabling check:
+	 * During development you may insert ".skip" to omit processing of a specific control enabling check:
 	 * <code>controlEnablingCheck.skip(...);</code> instead of <code>controlEnablingCheck(...);</code>.
 	 *
 	 * Use <code>controlEnablingCheck.only( sMsgSubstring );</code> to specify that only some tests are to be executed:
@@ -64,7 +64,7 @@ function (
 	 * @param {object}   mOptions.action - action to operate on <code>mOptions.xmlView</code>
 	 * @param {string}   mOptions.action.name - name of the action - e.g. 'remove', 'move', 'rename'
 	 * @param {string}   [mOptions.action.controlId] - id of the control the action is executed with - may be the parent of the control being 'touched'
-	 * @param {function<sap.ui.core.Control>} [mOptions.action.control] - Control instance on which change is being applied
+	 * @param {function():sap.ui.core.Control} [mOptions.action.control] - Function returning the control instance on which the change is being applied
 	 * @param {function} mOptions.action.parameter - (optional) function(oView) returning the parameter object of the action to be executed
 	 * @param {function} [mOptions.before] - function(assert) hook before test execution is started
 	 * @param {function} [mOptions.after] - function(assert) hook after test execution is finished

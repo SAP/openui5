@@ -94,7 +94,7 @@ sap.ui.define([
 	 *   sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, oObject);
 	 * </pre>
 	 *
-	 * @param {sap.ui.core.Control | sap.ui.core.Element | DOMNode} oContent the content to render in the popup. In case of sap.ui.core.Element or DOMNode, the content must be present in the page (i.e. rendered). In case of sap.ui.core.Control, the Popup ensures rendering before opening.
+	 * @param {sap.ui.core.Control | sap.ui.core.Element | Element} oContent the content to render in the popup. In case of sap.ui.core.Element or DOMNode, the content must be present in the page (i.e. rendered). In case of sap.ui.core.Control, the Popup ensures rendering before opening.
 	 * @param {boolean} [bModal=false] whether the popup should be opened in a modal way (i.e. with blocking background). Setting this to "true" effectively blocks all attempts to focus content outside the modal popup. A modal popup also automatically sets the focus back to whatever was focused when the popup opened.
 	 * @param {boolean} [bShadow=true] whether the popup should be have a visual shadow underneath (shadow appearance depends on active theme and browser support)
 	 * @param {boolean} [bAutoClose=false] whether the popup should automatically close when the focus moves out of the popup
@@ -964,11 +964,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks whether the given DOM object is contained in the current popup or
-	 * one of the children popups
+	 * Checks whether the given DOM element is contained in the current popup or
+	 * one of the child popups.
 	 *
-	 * @param {DOMRef} the DOM object which will be checked against
-	 * @return {boolean} whether the given DOM object is contained
+	 * @param {Element} oDomRef The DOM element for which the check is performed
+	 * @returns {boolean} Whether the given DOM element is contained
 	 */
 	Popup.prototype._contains = function(oDomRef) {
 		var oPopupDomRef = this._$().get(0);

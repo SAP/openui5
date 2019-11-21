@@ -189,9 +189,10 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 		},
 
 		/**
-		 * Create the correct event object for a mouse event
-		 * @param {string} sName the mouse event name
-		 * @param {DOMElement} oDomRef the domref on that the event is going to be triggered
+		 * Create the correct event object for a mouse event.
+		 *
+		 * @param {string} sName Name of the mouse event
+		 * @param {Element} oDomRef DOM element on which the event is going to be triggered
 		 * @private
 		 */
 		_createAndDispatchMouseEvent: function (sName, oDomRef) {
