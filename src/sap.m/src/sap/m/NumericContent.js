@@ -231,7 +231,7 @@ sap.ui.define([
 	NumericContent.prototype._getMaxDigitsData = function () {
 		var sFontClass = null,
 		  sLang = sap.ui.getCore().getConfiguration().getLanguage().toLowerCase(),
-		  iMaxLength = LANG_MAP[sLang] || iMaxLength;
+		  iMaxLength = LANG_MAP[sLang] || 4;
 
 		if (this.getAdaptiveFontSize()) {
 			switch (iMaxLength) {

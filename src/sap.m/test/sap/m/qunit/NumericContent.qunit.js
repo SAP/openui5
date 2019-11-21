@@ -224,7 +224,7 @@ sap.ui.define([
 		assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
 	});
 
-	QUnit.test("Test _getMaxDigitsData language casing", function (assert) {
+	QUnit.test("Test _getMaxDigitsData language", function (assert) {
 		// Arrange 1
 		var sOrigLang = sap.ui.getCore().getConfiguration().getLanguage();
 		var oExpected = {fontClass: "sapMNCLargeFontSize", maxLength: 4};
@@ -253,6 +253,24 @@ sap.ui.define([
 
 		// Assert 3
 		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct with lowercase language casing.");
+
+		// Arrange 4
+		sap.ui.getCore().getConfiguration().setLanguage("en-US-x-sappsd");
+
+		// Act 4
+		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+		// Assert 4
+		assert.deepEqual(oMaxDigitsData, oExpected, "Max digits data should be correct for a language which is not defined in the language map.");
+
+		// Arrange 5
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+
+		// Act 5
+		oMaxDigitsData = this.oNumericContent._getMaxDigitsData();
+
+		// Assert 5
+		assert.deepEqual(oMaxDigitsData, {fontClass: "sapMNCSmallFontSize", maxLength: 8}, "Max digits data should be correct for de language.");
 
 		// Restore
 		sap.ui.getCore().getConfiguration().setLanguage(sOrigLang);
