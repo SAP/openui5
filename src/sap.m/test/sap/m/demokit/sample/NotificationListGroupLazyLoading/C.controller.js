@@ -30,13 +30,16 @@ sap.ui.define([
 		},
 
 		loadNotifications: function (event) {
-			/** @type {sap.m.NotificationListGroup} */
-			var notificationGroup = event.getSource();
-			/** @type [sap.m.NotificationListItem] */
-			var notifications = notificationGroup.getItems();
+			// on expand
+			if (!event.getParameters().collapsed) {
+				/** @type {sap.m.NotificationListGroup} */
+				var notificationGroup = event.getSource();
+				/** @type [sap.m.NotificationListItem] */
+				var notifications = notificationGroup.getItems();
 
-			if (notifications.length === 0) {
-				this._addItemsToGroup(notificationGroup);
+				if (notifications.length === 0) {
+					this._addItemsToGroup(notificationGroup);
+				}
 			}
 		},
 
