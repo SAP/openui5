@@ -2096,6 +2096,10 @@ sap.ui.define([
 			}
 			sText = sPattern.replace(/\{0\}/, sFirstMonthName).replace(/\{1\}/, sLastMonthName);
 			sAriaLabel = aMonthNamesWide.length ? sPattern.replace(/\{0\}/, aMonthNamesWide[aMonths[0]]).replace(/\{1\}/, aMonthNamesWide[aMonths[aMonths.length - 1]]) : sText;
+			if (this._isTwoMonthsInTwoColumns() || this._isTwoMonthsInOneColumn()) {
+				// set single month if the calendar displays 2 months in one or two column(s)
+				sText = sFirstMonthName;
+			}
 		} else {
 			sText = sFirstMonthName;
 			sAriaLabel = aMonthNamesWide[aMonths[0]] || sText;
