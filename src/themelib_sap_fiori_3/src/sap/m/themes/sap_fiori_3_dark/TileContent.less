@@ -3,13 +3,14 @@
 /* Quartz Dark theme                  */
 /* ================================== */
 
-@_sap_m_TileContent_NewsFooterTextColor: darken(@sapUiTileTextColor, 45);
+@_sap_m_TileContent_NewsContentBackgroundColor: fade(darken(@sapUiBrand, 50), 85);
+@_sap_m_TileContent_NewsFooterTextColor: @_sap_m_NewsContent_SubHeaderTextColor;
 
 .sapMTileCnt.News {
-	background-color: fade(lighten(@sapUiBrand, 18), 85);
+	background-color: @_sap_m_TileContent_NewsContentBackgroundColor;
 }
 
 .sapMTileCnt.News .sapMTileCntFtrTxt {
 	color: @_sap_m_TileContent_NewsFooterTextColor;
-	text-shadow: 0 0 0.125rem @sapUiContentShadowColor;
+	text-shadow: 0 0 0.125rem contrast(@_sap_m_NewsContent_SubHeaderTextColor, @sapUiContentShadowColor, @sapUiContentContrastShadowColor, @sapUiContentContrastTextThreshold);
 }
