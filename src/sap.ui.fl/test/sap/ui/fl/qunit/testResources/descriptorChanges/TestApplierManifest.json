@@ -1,0 +1,96 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "sap.app.descriptor.test",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.2.2"
+		},
+		"dataSources": {
+			"salesOrder": {
+				"uri": "/sap/opu/odata/snce/po_s_srv;v=2/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"annotations": [
+						"salesOrderAnno"
+					],
+					"localUri": "model/metadata.xml"
+				}
+			},
+			"salesOrderAnno": {
+				"uri": "/sap/bc/bsp/sap/bscbn_anf_eam_bscbn_equipment_srv.anno.xml",
+				"type": "ODataAnnotation",
+				"settings": {
+					"localUri": "model/annotations.xml"
+				}
+			},
+			"equipment": {
+				"uri": "/sap/opu/odata/sap/cb_equipment_srv",
+				"type": "OData"
+			},
+			"ppm": {
+				"uri": "/sap/opu/odata/snce/po_s_srv;v=2/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"annotations": [
+						"salesOrderAnno"
+					],
+					"localUri": "model/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.71.0",
+			"libs": {
+				"sap.m": {
+					"minVersion": "1.72"
+				},
+				"sap.me": {
+					"minVersion": "1.71.3",
+					"lazy": true
+				},
+				"sap.ushell": {
+					"minVersion": "1.73.0",
+					"lazy": false
+				}
+			}
+		},
+		"componentUsages": {
+			"myusage": {
+				"name": "sap.app.test.usage",
+				"settings": {
+				},
+				"componentData": {
+				}
+			},
+			"myusage.other": {
+				"name": "sap.app.test.usage.other",
+				"settings": {
+				},
+				"componentData": {
+				}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"uri": "i18n/i18n.properties"
+			},
+			"salesOrder": {
+				"dataSource": "salesOrder",
+				"settings": {
+				}
+			},
+			"ppm": {
+				"dataSource": "ppm"
+			}
+		}
+	}
+}
