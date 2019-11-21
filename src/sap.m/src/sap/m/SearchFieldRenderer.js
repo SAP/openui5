@@ -169,6 +169,10 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 
 			rm.write("</form>");
 
+			if (oSF.getEnableSuggestions()) {
+				rm.write('<span id="' + oSF.getId() + '-SuggDescr" class="sapUiPseudoInvisibleText" role="status" aria-live="polite"></span>');
+			}
+
 		rm.write("</div>");
 
 	};

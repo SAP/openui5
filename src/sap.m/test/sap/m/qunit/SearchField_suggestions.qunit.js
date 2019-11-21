@@ -82,6 +82,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(oSF._oSuggest.isOpen(), true, "The suggestion popup opens");
+		assert.strictEqual(oSF.$('SuggDescr').text()[0], "5", "Available results are correct");
+
 		assert.ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
 
 		var popupId = jQuery(".sapMSuL:visible").parents(".sapMPopup-CTX").attr("id");
@@ -147,14 +149,17 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 		assert.strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected");
 		assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
+		assert.strictEqual(oSF.$('I').attr('aria-activedescendant'), oSF.getSuggestionItems()[0].getId(), "aria-activedescendant is correct");
 
 		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 		assert.strictEqual(oSF._oSuggest.getSelected(), 1, "The second item is selected");
 		assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[1].getSuggestionText(), "Suggestion text value is set to the search field");
+		assert.strictEqual(oSF.$('I').attr('aria-activedescendant'), oSF.getSuggestionItems()[1].getId(), "aria-activedescendant is correct");
 
 		sap.ui.test.qunit.triggerKeydown(oSF.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 		assert.strictEqual(oSF._oSuggest.getSelected(), 0, "The first item is selected again");
 		assert.strictEqual(oSF.getValue(), oSF.getSuggestionItems()[0].getSuggestionText(), "Suggestion text value is set to the search field");
+		assert.strictEqual(oSF.$('I').attr('aria-activedescendant'), oSF.getSuggestionItems()[0].getId(), "aria-activedescendant is correct");
 	});
 
 	QUnit.test("Enter closes suggestions", function(assert){
@@ -162,6 +167,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeyup(oSF.getDomRef("I"), jQuery.sap.KeyCodes.ENTER);
 		this.clock.tick(1000);
 		assert.ok(!oSF._oSuggest.isOpen(), "Picker is closed after ENTER");
+		assert.notOk(oSF.$('SuggDescr').text(), "'Available results' text is cleared");
 	});
 
 	QUnit.test("Escape closes suggestions", function(assert) {
@@ -179,6 +185,7 @@ sap.ui.define([
 
 		assert.ok(!oSF._oSuggest.isOpen(), "Picker is closed after ESCAPE");
 		assert.strictEqual(oSF.getValue(), "ABCD", "Escape closes suggestions and keeps the value");
+		assert.notOk(oSF.$('SuggDescr').text(), "'Available results' text is cleared");
 	});
 
 	QUnit.test("applyFocusInfo test", function (assert) {

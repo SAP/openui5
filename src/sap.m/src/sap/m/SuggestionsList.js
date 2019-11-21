@@ -105,7 +105,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 			var item;
 			var itemId;
 			var parentInput = sap.ui.getCore().byId(this.getParentInput());
-			var descendantAttr = "aria-activedecendant";
+			var descendantAttr = "aria-activedescendant";
 
 			// selectByIndex(null || undefined || -1) -> remove selection
 			if (isNaN(parseInt(iIndex))) {
@@ -152,6 +152,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control'],
 					parentInput.$("I").attr(descendantAttr, itemId);
 				} else {
 					parentInput.$("I").removeAttr(descendantAttr);
+					parentInput.$("SuggDescr").text("");
 				}
 			}
 

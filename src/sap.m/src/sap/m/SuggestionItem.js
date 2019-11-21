@@ -99,7 +99,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
 			rm.addClass("sapMSelectListItemBaseSelected");
 			rm.writeAttribute("aria-selected", "true");
 			if (parent) {
-				parent.$("I").attr("aria-activedecendant", oItem.getId());
+				parent.$("I").attr("aria-activedescendant", oItem.getId());
 			}
 		} else {
 			rm.writeAttribute("aria-selected", "false");
