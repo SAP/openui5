@@ -3,13 +3,11 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/deepClone",
 	"sap/base/util/isPlainObject"
 ], function (
 	BasePropertyEditor,
-	Fragment,
 	JSONModel,
 	deepClone,
 	isPlainObject
@@ -22,32 +20,25 @@ sap.ui.define([
 	 * @experimental
 	 */
 	var ParametersEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.parametersEditor.ParametersEditor", {
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			this._oTableModel = new JSONModel([]);
-			Fragment.load({
-				name: "sap.ui.integration.designtime.baseEditor.propertyEditor.parametersEditor.ParametersTable",
-				controller: this
-			}).then(function(oTable) {
-				oTable.setModel(this._oTableModel);
-				if (this.getRenderLabel()) {
-					// render label in table toolbar
-					oTable.getHeaderToolbar().insertContent(this.getLabel(), 0);
-				}
-				this.addContent(oTable);
-			}.bind(this));
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.parametersEditor.ParametersEditor",
+
+		asyncInit: function() {
+			var oTable = this.getContent();
+			oTable.setModel(this._getTableModel());
+			if (this.getRenderLabel()) {
+				// render label in table toolbar
+				oTable.getHeaderToolbar().insertContent(this.getLabel(), 0);
+			}
 		},
 		renderer: function (oRm, oParametersEditor) {
 			oRm.openStart("div", oParametersEditor);
 			oRm.openEnd();
 
-			oParametersEditor.getContent().forEach(function(oControl) {
-				oRm.openStart("div");
-				oRm.style("max-heigth", "500px");
-				oRm.openEnd();
-				oRm.renderControl(oControl);
-				oRm.close("div");
-			});
+			oRm.openStart("div");
+			oRm.style("max-heigth", "500px");
+			oRm.openEnd();
+			oRm.renderControl(oParametersEditor.getContent());
+			oRm.close("div");
 
 			oRm.close("div");
 		},
@@ -66,13 +57,19 @@ sap.ui.define([
 				oObject._key = sKey;
 				return oObject;
 			});
-			this._oTableModel.setData(aParams);
+			this._getTableModel().setData(aParams);
 			return vReturn;
 		},
+		_getTableModel: function () {
+			if (!this._oTableModel) {
+				this._oTableModel = new JSONModel([]);
+			}
+			return this._oTableModel;
+		},
 		_syncParameters: function() {
-			this._oTableModel.checkUpdate();
+			this._getTableModel().checkUpdate();
 			var mParams = {};
-			this._oTableModel.getData().forEach(function(oParam) {
+			this._getTableModel().getData().forEach(function(oParam) {
 				mParams[oParam._key] = deepClone(oParam);
 				delete mParams[oParam._key]._key;
 			});
@@ -85,7 +82,7 @@ sap.ui.define([
 			while (mParams[sKey]) {
 				sKey = "key" + ++iIndex;
 			}
-			var aParams = this._oTableModel.getData();
+			var aParams = this._getTableModel().getData();
 			aParams.push({
 				_key: sKey,
 				value: ""
@@ -94,7 +91,7 @@ sap.ui.define([
 		},
 		_removeParameter: function(oEvent) {
 			var oParam = oEvent.getSource().getBindingContext().getObject();
-			var aParams = this._oTableModel.getData();
+			var aParams = this._getTableModel().getData();
 			aParams.splice(aParams.indexOf(oParam), 1);
 			this._syncParameters(aParams);
 		},

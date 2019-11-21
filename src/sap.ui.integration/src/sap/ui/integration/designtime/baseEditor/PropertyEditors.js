@@ -207,7 +207,7 @@ sap.ui.define([
 	});
 
 	PropertyEditors.prototype.getEditor = function () {
-		return sap.ui.getCore().byId(this.getAssociation('editor'));
+		return sap.ui.getCore().byId(this.getAssociation("editor"));
 	};
 
 	PropertyEditors.prototype.setConfig = function (mConfig) {

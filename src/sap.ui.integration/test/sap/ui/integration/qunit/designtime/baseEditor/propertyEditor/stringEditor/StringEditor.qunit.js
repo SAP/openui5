@@ -25,7 +25,7 @@ sap.ui.define([
 				path: "content"
 			};
 		},
-		beforeEach: function () {
+		beforeEach: function (assert) {
 			this.oContextModel = new JSONModel({
 				content: "Hello World."
 			});
@@ -36,6 +36,12 @@ sap.ui.define([
 			this.oEditor.setConfig(this.oPropertyConfig);
 			this.oEditor.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			var fnReady = assert.async();
+			this.oEditor.attachReady(function () {
+				this.oEditorElement = this.oEditor.getContent();
+				fnReady();
+			}, this);
 		},
 		afterEach: function () {
 			this.oContextModel.destroy();
@@ -49,14 +55,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a model is set", function (assert) {
-			assert.strictEqual(this.oEditor.getContent()[0].getValue(), "Hello World.", "Then the editor has the correct value");
+			assert.strictEqual(this.oEditorElement.getValue(), "Hello World.", "Then the editor has the correct value");
 		});
 
 		QUnit.test("When a value is changed in the model", function (assert) {
 			this.oContextModel.setData({
 				content: "FooBar"
 			});
-			assert.strictEqual(this.oEditor.getContent()[0].getValue(), "FooBar", "Then the editor value is updated");
+			assert.strictEqual(this.oEditorElement.getValue(), "FooBar", "Then the editor value is updated");
 		});
 
 		QUnit.test("When a value is changed in the editor", function (assert) {
@@ -67,8 +73,8 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditor.getContent()[0].setValue("FooBar");
-			QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].getDomRef());
+			this.oEditorElement.setValue("FooBar");
+			QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 		});
 
 		QUnit.test("When a binding path is provided", function (assert) {
@@ -79,8 +85,8 @@ sap.ui.define([
 				fnDone();
 			});
 
-			this.oEditor.getContent()[0].setValue("{someBindingPath}");
-			QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].getDomRef());
+			this.oEditorElement.setValue("{someBindingPath}");
+			QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 		});
 
 		QUnit.test("When an invalid input is provided", function (assert) {
@@ -98,10 +104,10 @@ sap.ui.define([
 				this.oEditor.setModel(oI18nModel, "i18n");
 
 				// Test
-				this.oEditor.getContent()[0].setValue("{brokenBindingString");
-				QUnitUtils.triggerEvent("input", this.oEditor.getContent()[0].getDomRef());
+				this.oEditorElement.setValue("{brokenBindingString");
+				QUnitUtils.triggerEvent("input", this.oEditorElement.getDomRef());
 
-				assert.strictEqual(this.oEditor._oInput.getValueState(), "Error", "Then the error is displayed");
+				assert.strictEqual(this.oEditorElement.getValueState(), "Error", "Then the error is displayed");
 				assert.strictEqual(this.oEditor.getBindingContext().getObject().value, "Hello World.", "Then the model is not updated");
 
 				fnDone();

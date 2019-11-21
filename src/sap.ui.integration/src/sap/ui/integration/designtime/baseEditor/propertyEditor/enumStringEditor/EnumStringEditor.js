@@ -3,12 +3,10 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
-	"sap/m/ComboBox",
 	"sap/ui/core/Item",
 	"sap/ui/base/BindingParser"
 ], function (
 	BasePropertyEditor,
-	ComboBox,
 	Item,
 	BindingParser
 ) {
@@ -33,29 +31,19 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	var EnumStringEditor = BasePropertyEditor.extend("sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor", {
-		constructor: function() {
-			BasePropertyEditor.prototype.constructor.apply(this, arguments);
-			this._oCombo = new ComboBox({
-				selectedKey: "{value}",
-				value: "{value}",
-				width: "100%"
-			});
-			this._oCombo.bindAggregation("items", "enum", function(sId, oContext) {
-				return new Item({
-					key: oContext.getObject(),
-					text: oContext.getObject()
-				});
-			});
-			this._oCombo.attachChange(function() {
-				if (this._validate()) {
-					this.firePropertyChange(this._oCombo.getSelectedKey() || this._oCombo.getValue());
-				}
-			}.bind(this));
-			this.addContent(this._oCombo);
+		xmlFragment: "sap.ui.integration.designtime.baseEditor.propertyEditor.enumStringEditor.EnumStringEditor",
+
+		_onChange: function() {
+			var oCombo = this.getContent();
+			if (this._validate()) {
+				this.firePropertyChange(oCombo.getSelectedKey() || oCombo.getValue());
+			}
 		},
+
 		_validate: function() {
-			var sSelectedKey = this._oCombo.getSelectedKey();
-			var sValue = this._oCombo.getValue();
+			var oCombo = this.getContent();
+			var sSelectedKey = oCombo.getSelectedKey();
+			var sValue = oCombo.getValue();
 
 			if (!sSelectedKey && sValue) {
 				var oParsedValue;
@@ -63,16 +51,16 @@ sap.ui.define([
 					oParsedValue = BindingParser.complexParser(sValue);
 				} finally {
 					if (!oParsedValue) {
-						this._oCombo.setValueState("Error");
-						this._oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.ENUM.INVALID_SELECTION_OR_BINDING"));
+						oCombo.setValueState("Error");
+						oCombo.setValueStateText(this.getI18nProperty("BASE_EDITOR.ENUM.INVALID_SELECTION_OR_BINDING"));
 						return false;
 					} else {
-						this._oCombo.setValueState("None");
+						oCombo.setValueState("None");
 						return true;
 					}
 				}
 			} else {
-				this._oCombo.setValueState("None");
+				oCombo.setValueState("None");
 				return true;
 			}
 		},
