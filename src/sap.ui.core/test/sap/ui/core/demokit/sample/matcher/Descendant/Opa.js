@@ -40,6 +40,24 @@ sap.ui.require([
 			errorMessage: "Did not find special text"
 		});
 
+		// Descendant - declarative syntax
+		When.waitFor({
+			controlType: "sap.m.CustomListItem",
+			matchers: {
+				descendant: {
+					viewName: "Main",
+					controlType: "sap.m.Text",
+					properties: {
+						text: "Ultra Jet Super Color"
+					}
+				}
+			},
+			success: function (aRows) {
+				Opa5.assert.strictEqual(aRows.length, 1, "Found row with special text");
+			},
+			errorMessage: "Did not find row or special text is not inside table row"
+		});
+
 		// Tear down should always be done in real use case
 		// In this sample we commented it out so you can see the result.
 		// If no globals is activated,
