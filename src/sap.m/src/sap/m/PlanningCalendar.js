@@ -1612,8 +1612,9 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._handleFocus = function (oEvent) {
-		var oDate = oEvent.getParameter("date");
-		var bRestoreOldDate = oEvent.getParameter("restoreOldDate");
+		var oDate = oEvent.getParameter("date"),
+			bRestoreOldDate = oEvent.getParameter("restoreOldDate");
+
 		if (bRestoreOldDate) {
 			return;
 		}
@@ -1636,6 +1637,11 @@ sap.ui.define([
 
 		oStart = this._dateNav.getStart();
 		oCurrent = this._dateNav.getCurrent();
+
+		if (this._dateNav.getCurrent() > this._dateNav.getEnd()){
+			oStart = new Date(this._dateNav.getStart());
+			oStart.setDate(oStart.getDate() + 1);
+		}
 
 		if (oRowInstance &&
 			!(oRowInstance.getMode && oRowInstance.getMode() < 2 && !bOtherMonth)) {

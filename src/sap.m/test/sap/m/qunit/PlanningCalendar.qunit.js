@@ -3166,6 +3166,24 @@ sap.ui.define([
 		}, 0);
 	});
 
+	QUnit.test("Navigation forward via keyboard right (outside the current visible area) when in days view", function(assert) {
+		//Arrange
+		this.oPC2.setViewKey(CalendarIntervalType.Day);
+
+		var oStartDate = this.oPC2.getStartDate(),
+			oLastDay,
+			oComparisonDate = new Date(oStartDate);
+
+		//Act
+		oComparisonDate.setDate(oComparisonDate.getDate() + 1);
+		sap.ui.getCore().applyChanges();
+		oLastDay = new Date("2016/09/12");
+		this.oPC2.shiftToDate(oLastDay, false);
+
+		//Assert
+		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate, "Navigation via keyboard when in days view works");
+	});
+
 	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
 		var $Days,
 			aDays,
