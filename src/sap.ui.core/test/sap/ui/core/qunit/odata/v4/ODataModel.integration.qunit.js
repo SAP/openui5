@@ -1998,7 +1998,8 @@ sap.ui.define([
 	</Table>\
 </FlexBox>\
 <Text id="age1" text="{AGE}" />\
-<Text id="age2" text="{AGE}" />',
+<Text id="age2" text="{AGE}" />\
+<Input id="team" value="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}"/>',
 			that = this;
 
 		this.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
@@ -2009,15 +2010,43 @@ sap.ui.define([
 			})
 			.expectChange("name", ["Frederic Fall", "Jonathan Smith"])
 			.expectChange("age1")
-			.expectChange("age2");
+			.expectChange("age2")
+			.expectChange("team");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=AGE", {AGE : 42})
-				.expectChange("age1", "42");
+				//TODO: one request -> CPOUI5UISERVICESV3-1880
+				.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')?$select=EMPLOYEE_2_TEAM"
+					+ "&$expand=EMPLOYEE_2_TEAM($select=Team_Id;"
+						+ "$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))", {
+					EMPLOYEE_2_TEAM : {
+						// Team_Id : "1",
+						TEAM_2_MANAGER : {
+							"@odata.etag" : "ETag",
+							ID : "5",
+							TEAM_ID : "1"
+						}
+					}
+				})
+				.expectChange("age1", "42")
+				.expectChange("team", "1");
 
-			// code under test - AGE is requested
+			// code under test - AGE and TEAM_ID are requested
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			that.oView.byId("age1").setBindingContext(oRowContext);
+			that.oView.byId("team").setBindingContext(oRowContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("team", "changed")
+				.expectRequest({
+					method : "PATCH",
+					headers : {"If-Match" : "ETag"},
+					url : "MANAGERS('5')",
+					payload : {TEAM_ID : "changed"}
+				});
+
+			that.oView.byId("team").getBinding("value").setValue("changed");
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -14690,7 +14719,7 @@ sap.ui.define([
 		<Text id="SalesOrderID" text="{SalesOrderID}" />\
 	</ColumnListItem>\
 </Table>\
-<Table id="LineItems" items="{SO_2_SOITEM}">\
+<Table id="LineItems" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 	<ColumnListItem>\
 		<Text id="ItemSalesOrderID" text="{SalesOrderID}" />\
 		<Text id="ItemPosition" text="{ItemPosition}" />\
@@ -14856,8 +14885,12 @@ sap.ui.define([
 		<Text id="text" text="{Name}" />\
 	</ColumnListItem>\
 </Table>\
-<Table id="detailTable" items="{path : \'TEAM_2_EMPLOYEES\', \
-		parameters : {$select : \'__CT__FAKE__Message/__FAKE__Messages\'}}">\
+<Table id="detailTable" items="{\
+			path : \'TEAM_2_EMPLOYEES\',\
+			parameters : {\
+				$select : \'__CT__FAKE__Message/__FAKE__Messages\'\
+			}\
+		}">\
 	<ColumnListItem>\
 		<Input id="Name" value="{Name}" />\
 	</ColumnListItem>\
@@ -14967,7 +15000,7 @@ sap.ui.define([
 </Table>\
 <!-- to determine which request is fired the second table requests only 5 entries -->\
 <Table id="tableSOItems2" growing="true" growingThreshold="5"\
-		items="{path : \'SO_2_SOITEM\', parameters : {}}">\
+		items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}">\
 	<ColumnListItem>\
 		<Input id="note2" value="{Note}" />\
 	</ColumnListItem>\
@@ -17004,7 +17037,7 @@ sap.ui.define([
 		</Table>\
 	</FlexBox>\
 </FlexBox>\
-<FlexBox binding="{}" id="detail">\
+<FlexBox binding="{path : \'\', parameters : {$$ownRequest : true}}" id="detail">\
 	<Text id="priceDetail" text="{Price}" />\
 	<Text id="currencyDetail" text="{CurrencyCode}" />\
 	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\

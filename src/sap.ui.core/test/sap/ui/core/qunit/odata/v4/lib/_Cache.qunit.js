@@ -938,7 +938,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_Cache#drillDown: unread navigation property", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Products"),
-			oData = [{"@$ui5._" : {predicate : ("('42')")}}];
+			oData = [{"@$ui5._" : {predicate : ("('42')")}}],
+			oGroupLock = {};
 
 		oData.$byPredicate = {"('42')" : oData[0]};
 
@@ -950,13 +951,16 @@ sap.ui.define([
 				$kind : "NavigationProperty",
 				$Type : "name.space.BusinessPartner"
 			}));
-		this.mock(oCache).expects("fetchLateProperty").never();
+		this.mock(oCache).expects("fetchLateProperty")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(oData[0]), "('42')",
+				"PRODUCT_2_BP", "PRODUCT_2_BP")
+			.returns(undefined);
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into ('42')/PRODUCT_2_BP, invalid segment: PRODUCT_2_BP",
 			oCache.toString(), sClassName);
 
 		// code under test
-		return oCache.drillDown(oData, "('42')/PRODUCT_2_BP").then(function (sResult) {
+		return oCache.drillDown(oData, "('42')/PRODUCT_2_BP", oGroupLock).then(function (sResult) {
 			assert.strictEqual(sResult, undefined);
 		});
 	});
@@ -3107,7 +3111,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#fetchLateProperty", function (assert) {
+	QUnit.test("Cache#fetchLateProperty: $select", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')"),
 			oData = {
 				foo : {
@@ -3125,15 +3129,17 @@ sap.ui.define([
 			mQueryOptions = {
 				$apply : "A.P.P.L.E.",
 				$count : true,
-				$expand : {foo : null},
 				$filter : "bar eq 42",
 				$orderby : "bar",
 				$search : "search",
 				$select : [sRequestedPropertyPath],
 				"sap-client" : "123"
-			};
+			},
+			mTypeForMetaPath = {};
 
 		oCache.mLateQueryOptions = {};
+		this.mock(oCache).expects("fetchTypes")
+			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
 		this.mock(_Helper).expects("getMetaPath").withExactArgs("").returns("");
 		this.mock(_Helper).expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), [sRequestedPropertyPath],
@@ -3153,6 +3159,9 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "/~/?$select=~1", sinon.match.same(oRequestGroupLock))
 			.resolves(oData);
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
+				oCache.sMetaPath, "");
 		this.mock(_Helper).expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 				sinon.match.same(oEntity), sinon.match.same(oData), [sRequestedPropertyPath]);
@@ -3170,6 +3179,123 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#fetchLateProperty: $expand", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "Employees"),
+			oData = {
+				foo : {
+					bar : "baz"
+				}
+			},
+			oEntity = {},
+			oGroupLock = {
+				getUnlockedCopy : function () {}
+			},
+			oHelperMock = this.mock(_Helper),
+			oPromise,
+			mQueryOptions = {
+				$expand : {
+					foo : {
+						$expand : {
+							bar : {
+								$expand : {
+									baz : {$select : ["qux"]}
+								},
+								$select : ["baz"]
+							}
+						},
+						$select : ["bar"]
+					}
+				},
+				$select : ["foo"]
+			},
+			oRequestGroupLock = {},
+			oTypeBar = {},
+			oTypeBaz = {
+				$Key : ["baz1"]
+			},
+			oTypeFoo = {
+				$Key : ["foo1", {foo2 : "t/foo2"}]
+			},
+			mTypeForMetaPath = {},
+			oUpdateSelectedCall,
+			oVisitResponseCall;
+
+		oCache.mLateQueryOptions = {};
+		this.mock(oCache).expects("fetchTypes")
+			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
+		oHelperMock.expects("getMetaPath").withExactArgs("('1')").returns("");
+		oHelperMock.expects("intersectQueryOptions")
+			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["foo/bar/baz/qux"],
+				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
+				oCache.sMetaPath, {})
+			.returns(mQueryOptions);
+		oHelperMock.expects("buildPath").withExactArgs("", "foo").returns("foo");
+		this.oRequestorMock.expects("fetchTypeForPath")
+			.withExactArgs(oCache.sMetaPath + "/foo")
+			.returns(SyncPromise.resolve(oTypeFoo));
+		oHelperMock.expects("buildPath").withExactArgs("foo", "bar").returns("foo/bar");
+		this.oRequestorMock.expects("fetchTypeForPath")
+			.withExactArgs(oCache.sMetaPath + "/foo/bar")
+			.returns(SyncPromise.resolve(oTypeBar));
+		oHelperMock.expects("buildPath").withExactArgs("foo/bar", "baz").returns("foo/bar/baz");
+		this.oRequestorMock.expects("fetchTypeForPath")
+			.withExactArgs(oCache.sMetaPath + "/foo/bar/baz")
+			.returns(SyncPromise.resolve(oTypeBaz));
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs(oCache.sMetaPath, {
+				$expand : {
+					foo : {
+						$expand : {
+							bar : {
+								$expand : {
+									baz : {
+										$select : ["qux", "baz1"]
+									}
+								},
+								$select : ["baz"]
+							}
+						},
+						$select : ["foo1", "t/foo2"]
+					}
+				},
+				$select : ["foo"]
+			}, false, true)
+			.returns("?$expand=~1");
+		oHelperMock.expects("buildPath")
+			.withExactArgs(oCache.sResourcePath, "('1')")
+			.returns("/~/");
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", "/~/?$expand=~1", sinon.match.same(oRequestGroupLock))
+			.resolves(oData);
+		oVisitResponseCall = this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
+				oCache.sMetaPath, "('1')");
+		oUpdateSelectedCall = oHelperMock.expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('1')",
+				sinon.match.same(oEntity), sinon.match.same(oData), [
+					"foo/bar/baz/qux", "foo/foo1", "foo/t/foo2", "foo/@odata.etag",
+					"foo/@$ui5._/predicate", "foo/bar/@odata.etag", "foo/bar/@$ui5._/predicate",
+					"foo/bar/baz/baz1", "foo/bar/baz/@odata.etag", "foo/bar/baz/@$ui5._/predicate"
+				]);
+		oHelperMock.expects("drillDown")
+			.withExactArgs(sinon.match.same(oEntity), ["foo"])
+			.returns(oData.foo);
+
+		// code under test - assuming foo, bar and baz are navigation properties
+		oPromise = oCache.fetchLateProperty(oGroupLock, oEntity, "('1')", "foo/bar/baz/qux", "foo");
+
+		assert.strictEqual(mTypeForMetaPath["/Employees/foo"], oTypeFoo);
+		assert.strictEqual(mTypeForMetaPath["/Employees/foo/bar"], oTypeBar);
+		assert.strictEqual(mTypeForMetaPath["/Employees/foo/bar/baz"], oTypeBaz);
+
+		return oPromise.then(function (oResult) {
+			assert.deepEqual(oResult, oData.foo);
+			assert.ok((oUpdateSelectedCall.calledAfter(oVisitResponseCall)));
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#fetchLateProperty: parallel calls", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "Employees('31')"),
 			oData = {property : {foo : "foo", bar : "bar"}},
@@ -3181,9 +3307,12 @@ sap.ui.define([
 			oPromise1,
 			oPromise2,
 			mQueryOptions = {},
-			oRequestGroupLock;
+			oRequestGroupLock,
+			mTypeForMetaPath = {};
 
 		oCache.mLateQueryOptions = {};
+		this.mock(oCache).expects("fetchTypes").twice()
+			.withExactArgs().returns(SyncPromise.resolve(mTypeForMetaPath));
 		oHelperMock.expects("intersectQueryOptions")
 			.withExactArgs(sinon.match.same(oCache.mLateQueryOptions), ["property/foo"],
 				sinon.match.same(this.oRequestor.getModelInterface().fetchMetadata),
@@ -3202,6 +3331,9 @@ sap.ui.define([
 			.withExactArgs("GET", "Employees('31')?$select=property",
 				sinon.match.same(oRequestGroupLock))
 			.resolves(oData);
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oData), sinon.match.same(mTypeForMetaPath),
+				oCache.sMetaPath, "");
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 				sinon.match.same(oEntity), sinon.match.same(oData), ["property/foo"]);
