@@ -14,13 +14,32 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 
-		onAfterRendering: function () {
-			var oMessageStrip = this.getView().byId("idMessageStrip");
+		onBeforeRendering: function () {
 			if (Device.system.phone) {
-				oMessageStrip.setVisible(false);
-			} else {
-				oMessageStrip.setVisible(true);
+				Device.orientation.attachHandler(this._orientationHandler, this);
+				if (Device.orientation.portrait) {
+					this._showMessageStrip(false);
+				} else {
+					this._showMessageStrip(true);
+				}
 			}
+		},
+
+		_orientationHandler: function (mParams) {
+			if (mParams.landscape) {
+				this._showMessageStrip(true);
+			} else {
+				this._showMessageStrip(false);
+			}
+		},
+
+		_showMessageStrip: function (bShow) {
+			var oMessageStrip = this.getView().byId("idMessageStrip");
+			oMessageStrip.setVisible(bShow);
+		},
+
+		onExit: function () {
+			Device.orientation.detachHandler(this._orientationHandler, this);
 		}
 	});
 
