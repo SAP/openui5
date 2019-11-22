@@ -133,74 +133,41 @@ sap.ui.define([
 		this.setBusyIndicatorDelay(0);
 	};
 
-	BusyIndicator.prototype.setText = function (sText) {
-		this.setProperty("text", sText, true);
-		this._createLabel("setText", sText);
-		return this;
-	};
-
-	BusyIndicator.prototype.setTextDirection = function (sDirection) {
-		this.setProperty("textDirection", sDirection, true);
-		this._createLabel("setTextDirection", sDirection);
-		return this;
-	};
-
-	BusyIndicator.prototype.setCustomIcon = function (iSrc) {
-		this.setProperty("customIcon", iSrc, false);
-		this._createCustomIcon("setSrc", iSrc);
-		return this;
-	};
-
-	BusyIndicator.prototype.setCustomIconRotationSpeed = function (iSpeed) {
-		if (isNaN(iSpeed) || iSpeed < 0) {
-			iSpeed = 0;
-		}
-
-		if (iSpeed !== this.getCustomIconRotationSpeed()) {
-			this.setProperty("customIconRotationSpeed", iSpeed, true);
-			this._setRotationSpeed();
-		}
-
-		return this;
-	};
-
-	BusyIndicator.prototype.setCustomIconDensityAware = function (bAware) {
-		this.setProperty("customIconDensityAware", bAware, true);
-		this._createCustomIcon("setDensityAware", bAware);
-		return this;
-	};
-
-	BusyIndicator.prototype.setCustomIconWidth = function (sWidth) {
-		this.setProperty("customIconWidth", sWidth, true);
-		this._createCustomIcon("setWidth", sWidth);
-		this._iconImage.$().css("width", sWidth);
-		return this;
-	};
-
-	BusyIndicator.prototype.setCustomIconHeight = function (sHeight) {
-		this.setProperty("customIconHeight", sHeight, true);
-		this._createCustomIcon("setHeight", sHeight);
-		this._iconImage.$().css("height", sHeight);
-		return this;
-	};
-
-	BusyIndicator.prototype.setSize = function (sSize) {
-		this.setProperty("size", sSize, true);
-
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			oDomRef.style.fontSize = sSize;
-		}
-
-		return this;
-	};
-
 	BusyIndicator.prototype.onBeforeRendering = function () {
 		if (this.getCustomIcon()) {
 			this.setBusy(false);
 		} else {
 			this.setBusy(true, "busy-area");
 		}
+
+		if (this._busyLabel) {
+			this._busyLabel.setTextDirection(this.getTextDirection());
+		}
+
+		if (this._iconImage) {
+			this._iconImage.setDensityAware(this.getCustomIconDensityAware());
+			this._iconImage.setSrc(this.getCustomIcon());
+			this._iconImage.setWidth(this.getCustomIconWidth());
+			this._iconImage.setHeight(this.getCustomIconHeight());
+		} else if (!this._iconImage && this.getCustomIcon()) {
+			this._createCustomIcon(this.getCustomIcon()).addStyleClass("sapMBsyIndIcon");
+		}
+
+		if (this._busyLabel) {
+			this._busyLabel.setText(this.getText());
+			this._busyLabel.setTextDirection(this.getTextDirection());
+		} else if (!this._busyLabel && this.getText()) {
+			this._createLabel(this.getText());
+		}
+
+		var sRotationSpeed = this.getCustomIconRotationSpeed();
+		if (sRotationSpeed < 0) {
+			this.setCustomIconRotationSpeed(0);
+		}
+	};
+
+	BusyIndicator.prototype.onAfterRendering = function() {
+		this._setRotationSpeed();
 	};
 
 	BusyIndicator.prototype.exit = function () {
@@ -215,33 +182,24 @@ sap.ui.define([
 		}
 	};
 
-	BusyIndicator.prototype._createCustomIcon = function(sName, sValue){
-		if (!this._iconImage) {
-			this._iconImage = new Image(this.getId() + "-icon", {
-				width: "44px",
-				height: "44px"
-			}).addStyleClass("sapMBsyIndIcon");
-
-			this._iconImage.addEventDelegate({
-				onAfterRendering: function() {
-					this._setRotationSpeed();
-				}
-			}, this);
-		}
-
-		this._iconImage[sName](sValue);
-		this._setRotationSpeed();
+	BusyIndicator.prototype._createCustomIcon = function(sIconURI) {
+		this._iconImage = new Image(this.getId() + "-icon", {
+			src: sIconURI,
+			width: this.getCustomIconWidth(),
+			height: this.getCustomIconHeight(),
+			densityAware: this.getCustomIconDensityAware()
+		});
+		return this._iconImage;
 	};
 
-	BusyIndicator.prototype._createLabel = function (sName, sValue) {
-		if (!this._busyLabel) {
-			this._busyLabel = new Label(this.getId() + "-label", {
-				labelFor: this.getId(),
-				textAlign: "Center"
-			});
-		}
-
-		this._busyLabel[sName](sValue);
+	BusyIndicator.prototype._createLabel = function(sText) {
+		this._busyLabel = new Label(this.getId() + "-label", {
+			labelFor: this.getId(),
+			text: sText,
+			textAlign: "Center",
+			textDirection: this.getTextDirection()
+		});
+		return this._busyLabel;
 	};
 
 	BusyIndicator.prototype._setRotationSpeed = function () {
