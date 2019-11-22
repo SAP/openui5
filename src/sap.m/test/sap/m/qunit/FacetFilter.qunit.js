@@ -4234,6 +4234,80 @@ sap.ui.define([
 		oFF._navToFilterItemsPage(oFacetListItem1);
 	});
 
+	QUnit.test("The button for the list is rendered, when _bCheckForAddListBtn is already true and for the list which is not active is set selected key programatically", function(assert) {
+		var done = assert.async();
+		var oSelectedKey = {};
+		var fetchDimensionData = function(oEvent) {
+			var oFacetList = oEvent.getSource();
+
+			oFacetList.addItem(new FacetFilterItem({text: "Val"}));
+		};
+
+		var oFF = new FacetFilter({
+			showPersonalization : true
+		});
+		var oFFL = new FacetFilterList({
+			active: false,
+			multiSelect: true,
+			title: "List",
+			listOpen: fetchDimensionData
+		});
+
+		var oFFL2 = new FacetFilterList({
+			active: false,
+			multiSelect: true,
+			title: "List3",
+			listOpen: fetchDimensionData
+		});
+
+		oFF.addList(oFFL);
+		oFF.addList(oFFL2);
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oFF.openFilterDialog();
+
+		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
+		var oFacetPage = sap.ui.getCore().byId(oNavContainer.getInitialPage());
+		var oFacetList = oFacetPage.getContent()[0];
+		var oFacetListItem1 = oFacetList.getItems()[0];
+
+		oNavContainer.attachEventOnce("afterNavigate", function() {
+			var oFacetFilterListPage = oNavContainer.getPages()[1];
+			var oFacetFilterListBar = oFacetFilterListPage.getContent()[0];
+			var oCheckbox = oFacetFilterListBar.getContentLeft()[0];
+			// act
+			oCheckbox.ontap(new jQuery.Event()); // check "All" checkbox
+
+			var oDialog = oFF._getFacetDialog();
+			var oDialogOkButton = oDialog.getButtons()[0];
+			// act
+			oDialogOkButton.firePress({}); // press "OK" button
+		});
+
+		oFF._getFacetDialog().attachEventOnce("afterClose", function(oEvent) {
+			// Assert
+			setTimeout(function () {
+				assert.ok(oFF.getAggregation("buttons")[0].getDomRef(), 'The button for the first list is rendered');
+
+				// act
+				// setSelectedKey - this will make the list active if it is in multiselect mode
+				oSelectedKey['{"key1"}'] = "key1";
+				oFFL2.setSelectedKeys(oSelectedKey);
+				oFF.rerender();
+				setTimeout(function () {
+					// Assert
+					assert.ok(oFF.getAggregation("buttons")[1].getDomRef(), 'The button for the second list is rendered');
+					// clean
+					destroyFF(oFF);
+					done();
+				}, 0);
+			}, 1000);
+		});
+
+		oFF._navToFilterItemsPage(oFacetListItem1);
+	});
+
 	QUnit.test("The button for the list is rendered, when the list is empty but active", function(assert) {
 		var done = assert.async();
 
@@ -4281,7 +4355,6 @@ sap.ui.define([
 
 		oFF._navToFilterItemsPage(oFacetListItem1);
 	});
-
 
 	QUnit.module('Group Headers', {
 		beforeEach: function () {
