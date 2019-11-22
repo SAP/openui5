@@ -6,10 +6,12 @@ sap.ui.define([
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Device, Control, RenderManager, Element, IconPool, jQuery, encodeXML, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/base/Log"
+], function(Device, Control, RenderManager, Element, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, Log) {
 	"use strict";
 
 	// prepare DOM
@@ -23,6 +25,7 @@ sap.ui.define([
 		"}";
 	document.head.appendChild(styleElement);
 	createAndAppendDiv(["area1", "area2", "area3", "area4", "area5", "area6", "area7", "area8"], createAndAppendDiv("testArea"));
+	createAndAppendDiv("area9");
 
 
 	var fnCheckRendererInterface = null;
@@ -1352,5 +1355,155 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 	});
 
+	/**
+	 * Sample container which renders exactly one of its children and calls
+	 * cleanupControlWithoutRendering for all others.
+	 *
+	 * Method 'setTheLuckyOneAndRender' synchronously renders the content aggregation.
+	 * This mimics the behavior of controls that try to optimize rendering.
+	 */
+	var TestContainer = Control.extend("TestContainer", {
+		metadata: {
+			properties: {
+				theLuckyOne: "int"
+			},
+			aggregations: {
+				"content": {}
+			},
+			defaultAggregation: "content"
+		},
+		renderer: {
+			apiVersion :1,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.openEnd();
+				oRm.openStart("div", oControl.getId() + "-content");
+				oRm.openEnd();
+				this.renderContent(oRm, oControl);
+				oRm.close("div");
+				oRm.close("div");
+			},
+			renderContent: function(oRm, oControl) {
+				var theLuckyOne = oControl.getTheLuckyOne();
+				Log.info("begin");
+				oControl.getContent().forEach(function(oChild, idx) {
+					if ( idx === theLuckyOne ) {
+						Log.info("rendering ", idx);
+						oRm.renderControl(oChild);
+					} else {
+						Log.info("cleaning up ", idx);
+						oRm.cleanupControlWithoutRendering(oChild);
+					}
+				});
+				Log.info("done");
+			}
+		},
+		setTheLuckyOneAndRender: function(value) {
+			this.setProperty("theLuckyOne", value, true);
+			var oRM = sap.ui.getCore().createRenderManager();
+			this.getMetadata().getRenderer().renderContent(oRM, this);
+			oRM.flush(this.getDomRef("content"));
+			oRM.destroy();
+		}
+	});
+
+	QUnit.module("cleanupControlWithoutRendering and DOM preservation", {
+		beforeEach: function() {
+			var sViewXML = '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>';
+			this.oView1 = new XMLView({viewContent: sViewXML});
+			this.oView2 = new XMLView({viewContent: sViewXML});
+			this.oContainer = new TestContainer({
+				theLuckyOne: 0,
+				content: [ this.oView1, this.oView2 ]
+			});
+		},
+		afterEach: function() {
+			this.oView1 = null;
+			this.oView2 = null;
+			this.oContainer = null;
+		},
+
+		executeTest: function (assert, fnApplyLuckyOne) {
+			var oView1 = this.oView1;
+			var oView2 = this.oView2;
+			var oContainer = this.oContainer;
+			// initially show view 1. view 2 has not been rendered yet
+			oContainer.placeAt("area9");
+			sap.ui.getCore().applyChanges();
+			assert.ok(oView1.getDomRef(), "view1 should have DOM");
+			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
+			assert.notOk(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should not be in preserve area");
+			assert.notOk(oView2.getDomRef(), "view2 should not have DOM");
+			assert.notOk(oView2.bOutput, "view2 should not be marked with bOutput");
+
+			// show view 2. view 1 will be moved to preserve area
+			fnApplyLuckyOne(1);
+			assert.ok(oView1.getDomRef(), "view1 still should have DOM");
+			assert.ok(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should be in preserve area");
+			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
+			assert.ok(oView2.getDomRef(), "view2 also should have DOM");
+			assert.ok(oView2.bOutput, "view2 should be marked with bOutput");
+			assert.notOk(RenderManager.isPreservedContent(oView2.getDomRef()), "DOM of view2 should not be in preserve area");
+
+			// show view 1 again (includes restore from preserve area
+			fnApplyLuckyOne(0);
+			assert.ok(oView1.getDomRef(), "view1 still should have DOM");
+			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
+			assert.notOk(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should not be in preserve area");
+			assert.ok(oView2.getDomRef(), "view2 still should have DOM");
+			assert.ok(oView2.bOutput, "view2 should be marked with bOutput");
+			assert.ok(RenderManager.isPreservedContent(oView2.getDomRef()), "DOM of view2 should be in preserve area");
+
+			// show view 3 (which does not exists). view 1 & 2 are moved to the preserve area
+			fnApplyLuckyOne(2);
+			assert.ok(oView1.getDomRef(), "view1 still should have DOM");
+			assert.ok(oView1.bOutput, "view1 should be marked with bOutput");
+			assert.ok(RenderManager.isPreservedContent(oView1.getDomRef()), "DOM of view1 should be in preserve area");
+			assert.ok(oView2.getDomRef(), "view2 still should have DOM");
+			assert.ok(oView2.bOutput, "view2 should be marked with bOutput");
+			assert.ok(RenderManager.isPreservedContent(oView2.getDomRef()), "DOM of view2 should be in preserve area");
+
+			// destroy, DOM should disappear (bOutput is no longer relevant)
+			oContainer.destroy();
+			assert.notOk(oView1.getDomRef(), "view1 no longer should have DOM");
+			assert.notOk(oView2.getDomRef(), "view2 no longer should have DOM");
+		}
+	});
+
+	QUnit.test("default rendering (string)", function(assert) {
+		TestContainer.getMetadata().getRenderer().apiVersion = 1;
+		this.executeTest(assert, function(value) {
+			// use normal invalidation
+			this.oContainer.setTheLuckyOne(value);
+			// and force re-rendering
+			sap.ui.getCore().applyChanges();
+		}.bind(this));
+	});
+
+	QUnit.test("custom rendering (string)", function(assert) {
+		TestContainer.getMetadata().getRenderer().apiVersion = 1;
+		this.executeTest(assert, function(value) {
+			// use custom rendering (leaves the preservation to the flush call)
+			this.oContainer.setTheLuckyOneAndRender(value);
+		}.bind(this));
+	});
+
+	QUnit.test("default rendering (patcher)", function(assert) {
+		TestContainer.getMetadata().getRenderer().apiVersion = 2;
+		this.executeTest(assert, function(value) {
+			// use normal invalidation
+			this.oContainer.setTheLuckyOne(value);
+			// and force re-rendering
+			sap.ui.getCore().applyChanges();
+		}.bind(this));
+	});
+
+	QUnit.test("custom rendering (patcher)", function(assert) {
+		TestContainer.getMetadata().getRenderer().apiVersion = 2;
+		this.executeTest(assert, function(value) {
+			// use custom rendering (leaves the preservation to the flush call)
+			this.oContainer.setTheLuckyOneAndRender(value);
+		}.bind(this));
+	});
 
 });
