@@ -197,7 +197,11 @@ sap.ui.define([
 			}
 
 			var step = this._getCurrentStepInstance();
-			this._activateAllPreceedingSteps(step);
+
+			if (step) {
+				this._activateAllPreceedingSteps(step);
+			}
+
 			this._attachScrollHandler();
 		};
 

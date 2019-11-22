@@ -179,8 +179,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("DestroySteps() empties the steps aggregation", function (assert) {
+		//Arrange
+		var oSpy = sinon.spy(Wizard.prototype, "_activateAllPreceedingSteps");
+
+		//Act
 		this.oWizard.destroySteps();
+		Core.applyChanges();
+
+		//Assert
 		assert.ok(this.oWizard.getSteps().length === 0, "Aggregation should be empty");
+		assert.notOk(oSpy.called, "_activateAllPreceedingSteps should not be called after deleting the steps");
+
+		//Clean up
+		oSpy.restore();
 	});
 
 	QUnit.test("validateStep(step) should validate the given step", function (assert) {
