@@ -5,7 +5,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<MessageStrip
-			text="move the splitter to see the container based popin behaviour with dynamic width."
+			id="idMessageStrip"
+			text="Move the splitter to see the container based popin behaviour with dynamic width."
 			type="Success"
 			showIcon="true"
 			showCloseButton="true"
