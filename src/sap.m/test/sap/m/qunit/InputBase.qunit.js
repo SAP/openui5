@@ -2383,4 +2383,66 @@ sap.ui.define([
 		// cleanup
 		oInputBase.destroy();
 	});
+
+	QUnit.module("Value concurrency scenario", {
+		beforeEach: function () {
+			this.oInput = new InputBase();
+			this.oModel = new JSONModel();
+
+			this.oInput._setPreferUserInteraction(true);
+			this.oInput.bindProperty("value", {path: "/value"});
+			this.oModel.setData({"value": 'Initial Value'});
+			sap.ui.getCore().setModel(this.oModel);
+			this.oInput.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.oInputFocusDomRef = this.oInput.getFocusDomRef();
+		},
+		afterEach: function () {
+			// cleanup
+			this.oInput.destroy();
+			this.oModel.destroy();
+		}
+	});
+
+	QUnit.test("Value concurrency scenario - model update on a focused empty input with _bPreferUserInteraction = true", function(assert) {
+		// assert
+		assert.strictEqual(this.oInput.getValue(), "Initial Value",
+			"The input value should be the one coming from the model");
+
+		// act
+		this.oInput.resetProperty('value');
+		this.oInput.focus();
+		this.oModel.setProperty('/value', "Model Value");
+
+		// assert
+		assert.strictEqual(this.oInput.getValue(), "Model Value",
+			"The input value should be set from the model update");
+		assert.strictEqual(document.getSelection().toString(), "Model Value",
+			"The value should be selected, since the user has focused the input and the new value is from the model");
+	});
+
+	QUnit.test("Value concurrency scenario - model update on a focused non-empty input with _bPreferUserInteraction = true", function(assert) {
+		// act
+		this.oInput.focus();
+		this.oInputFocusDomRef.value = "User Value";
+		this.oModel.setProperty('/value', "Model Value");
+		sap.ui.test.qunit.triggerKeydown(this.oInputFocusDomRef, "ENTER");
+
+		// assert
+		assert.strictEqual(this.oInput.getValue(), "User Value",
+			"The user input should not get overwritten by the model, when _bPreferUserInteraction is set to true");
+	});
+
+	QUnit.test("Value concurrency scenario - model update on a focused non-empty input with _bPreferUserInteraction = false", function(assert) {
+		// act
+		this.oInput._setPreferUserInteraction(false);
+		this.oInput.focus();
+		this.oInputFocusDomRef.value = "User Value 2";
+		this.oModel.setProperty('/value', "Model Value");
+		sap.ui.test.qunit.triggerKeydown(this.oInputFocusDomRef, "ENTER");
+
+		// assert
+		assert.strictEqual(this.oInput.getValue(), "Model Value",
+			"The user input should be overwritten by the model, when _bPreferUserInteraction is set to false");
+	});
 });
