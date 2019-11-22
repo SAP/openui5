@@ -997,8 +997,9 @@ sap.ui.define([
 								that.oCache = oCache;
 								that.oCachePromise = SyncPromise.resolve(oCache);
 								oCache.setActive(true);
-								that.checkUpdate();
+								return that.checkUpdateInternal();
 							}
+						}).then(function () {
 							throw oError;
 						});
 					});
