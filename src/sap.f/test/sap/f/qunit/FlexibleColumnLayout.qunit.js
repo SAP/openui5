@@ -830,6 +830,25 @@ function (
 		}
 	});
 
+	QUnit.test("ResizeHandler's resume method is not called before the toggling of pin column class", function (assert) {
+		// Arrange
+		var $column = this.oFCL._$columns["begin"],
+			oSpyResizeHandler = this.spy(this.oFCL, "_resumeResizeHandler"),
+			oStubToggleClass = this.stub($column, "toggleClass", function () {
+				// Assert
+				assert.ok(oSpyResizeHandler.notCalled,
+					"ResizeHandler's resume method is not called before the toggling of pin column class");
+			});
+
+		// Act
+		this.oFCL._adjustColumnAfterAnimation(false, "300px", 400, $column, $column.get(0));
+
+		// Clean up
+		oSpyResizeHandler.restore();
+		oStubToggleClass.restore();
+	});
+
+
 	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", function (assert) {
 		// assert
 		assert.expect(6);
