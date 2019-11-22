@@ -188,16 +188,5 @@ sap.ui.define([
 			return this;
 		};
 
-		ScrollContainer.prototype.setHorizontal = function (horizontal) {
-			this._oScroller.setHorizontal(horizontal);
-			return this.setProperty("horizontal", horizontal, true);
-		};
-
-		ScrollContainer.prototype.setVertical = function (vertical) {
-			this._oScroller.setVertical(vertical);
-			return this.setProperty("vertical", vertical, true);
-		};
-
 		return ScrollContainer;
-
 	});
