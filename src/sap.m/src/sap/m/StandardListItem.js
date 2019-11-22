@@ -115,7 +115,15 @@ sap.ui.define([
 			 * In the desktop mode, initial rendering of the control contains 300 characters along with a button to expand and collapse the text whereas in the phone mode, the character limit is set to 100 characters.
 			 * @since 1.67
 			 */
-			wrapping : {type : "boolean", group : "Behavior", defaultValue : false}
+			wrapping : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Determines the inverted rendering behavior of the info text and the info state.
+			 * The color defined by the <code>infoState</code> property is rendered as the background color for the info text, if this property is set to <code>true</code>.
+			 *
+			 * @since 1.74
+			 */
+			infoStateInverted : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		designtime: "sap/m/designtime/StandardListItem.designtime"
 	}});

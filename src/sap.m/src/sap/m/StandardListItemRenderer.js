@@ -206,6 +206,10 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 		rm.class("sapMSLIInfo");
 		rm.class("sapMSLIInfo" + oLI.getInfoState());
 
+		if (oLI.getInfoStateInverted()) {
+			rm.class("sapMSLIInfoStateInverted");
+		}
+
 		rm.class(oLI.showCompleteInfoText() ? "sapMSLIInfoTextFull" : "sapMSLIInfoTextMinWidth");
 
 		rm.openEnd();
