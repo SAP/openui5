@@ -668,4 +668,29 @@ sap.ui.define([
 					"Avatar is with the correct CSS class for " + sCurrentColor + " background color.");
 		}
 	});
+
+	QUnit.test("Random color is not changed after re-rendering", function (assert) {
+		// Arrange
+		var oAvatar = this.oAvatar,
+			$oAvatar = oAvatar.$(),
+			sActualBackgroundColor;
+
+		// Act - Setting the background of the control to Random
+		oAvatar.setBackgroundColor(AvatarColor.Random);
+		oCore.applyChanges();
+
+		sActualBackgroundColor = oAvatar._getActualBackgroundColor();
+
+		// Assert
+		assert.ok($oAvatar.hasClass("sapFAvatarColor" + sActualBackgroundColor),
+			"After setting the Avatar color to Random, its background is " + sActualBackgroundColor + ".");
+
+		// Act - Re-rendering the control
+		oAvatar.invalidate();
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(sActualBackgroundColor, oAvatar._getActualBackgroundColor(),
+			"After re-rendering the Avatar, its background is kept (" + sActualBackgroundColor + ").");
+	});
 });
