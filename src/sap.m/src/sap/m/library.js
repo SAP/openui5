@@ -3962,12 +3962,11 @@ sap.ui.define([
 		return value && Object.prototype.toString.call(value) == "[object Date]" && !isNaN(value);
 	};
 
-
 	/**
 	 * Search given control's parents and try to find iScroll.
 	 *
 	 * @param {sap.ui.core.Control} oControl Control to start the search at
-	 * @returns {iScroll|undefined} iScroll reference or undefined if cannot find
+	 * @returns {Object|undefined} iScroll reference or undefined if cannot find
 	 * @public
 	 * @since 1.11
 	 */
@@ -4499,12 +4498,12 @@ sap.ui.define([
 			 * @param {string} sImgId UD of the image to be dealt with.
 			 * @param {sap.m.Image} oImageControl The image to update. If undefined, a new image will be created.
 			 * @param {sap.ui.core.Control} oParent oImageControl's parentControl.
-			 * @param {Map} mProperties Map object that contains key value pairs if image properties; the <code>src</code> property
-			 * MUST be contained; the keys of the map must be names of image properties
-			 * @param {Array} aCssClassesToAdd Array of CSS classes which will be added if the image needs to be created.
-			 * @param {Array} aCssClassesToRemove All CSS classes that oImageControl has and which are contained in this array
+			 * @param {object} mProperties Settings for the image control; the <code>src</code> property
+			 * MUST be contained; the keys of the object must be valid names of image settings
+			 * @param {string[]} aCssClassesToAdd Array of CSS classes which will be added if the image needs to be created.
+			 * @param {string[]} aCssClassesToRemove All CSS classes that oImageControl has and which are contained in this array
 			 * are removed before adding the CSS classes listed in aCssClassesToAdd.
-			 * @returns the new or updated image control
+			 * @returns {sap.m.Image|sap.ui.core.Icon} The new or updated image control or icon
 			 *
 			 * @protected
 			 */
