@@ -72,6 +72,14 @@ Common compact/cozy
 	&.sapUxAPAnchorBarTranslucent {
 		background: lighten(@sapUiObjectHeaderBackground, 10);
 	}
+
+	&>.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus:before {
+		outline: none;
+	}
+
+	&>.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState) {
+		border: none;
+	}
 }
 
 /* L fullscreen paddings */
