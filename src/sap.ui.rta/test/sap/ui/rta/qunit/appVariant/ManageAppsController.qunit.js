@@ -125,16 +125,22 @@ sap.ui.define([
 
 			var aAppVariantOverviewAttributes = [];
 
-			var showMessageWhenNoAppVariantsSpy = sandbox.stub(oManageAppsController, "_showMessageWhenNoAppVariantsExist");
+			var showMessageWhenNoAppVariantsSpy = sandbox.spy(oManageAppsController, "_showMessageWhenNoAppVariantsExist");
 
-			sandbox.stub(RtaUtils, "_showMessageBox").resolves(true);
+			var utilsShowMessageBoxSpy = sandbox.spy(RtaUtils, "_showMessageBox");
+
+			var messageBoxPromiseStub = sandbox.stub(RtaUtils, "_messageBoxPromise");
 
 			var getAppVariantOverviewSpy = sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
+
 
 			return oManageAppsController.onInit().then(function() {
 				assert.notOk(highlightAppVariantSpy.calledOnce, "the _highlightNewCreatedAppVariant method is not called");
 				assert.ok(getAppVariantOverviewSpy.calledOnce, "the getAppVariantOverview method is called once");
 				assert.ok(showMessageWhenNoAppVariantsSpy.calledOnce, "the showMessageWhenNoAppVariantsSpy method is called once");
+				assert.ok(utilsShowMessageBoxSpy.calledOnce, "the utilsShowMessageBoxSpy method is called once");
+				assert.notEqual(messageBoxPromiseStub.args[0][1], "MSG_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", "the messageBoxPromise method displays message value correctly");
+				assert.notEqual(messageBoxPromiseStub.args[0][2], "TITLE_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", "the messageBoxPromise method displays message title correctly");
 			});
 		});
 

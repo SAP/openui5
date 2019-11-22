@@ -571,7 +571,10 @@ function(
 		var sMessage = oResourceBundle.getText(sMessageKey, oError ? [oError.message || oError] : undefined);
 		var sTitle = oResourceBundle.getText(sTitleKey);
 		var vAction = sAction ? oResourceBundle.getText(sAction) : MessageBox.Action.OK;
+		return Utils._messageBoxPromise(oMessageType, sMessage, sTitle, vAction);
+	};
 
+	Utils._messageBoxPromise = function(oMessageType, sMessage, sTitle, vAction) {
 		return new Promise(function(resolve) {
 			MessageBox.show(sMessage, {
 				icon: oMessageType,
