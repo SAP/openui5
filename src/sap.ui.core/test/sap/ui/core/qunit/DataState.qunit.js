@@ -8,7 +8,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("Basic");
+	QUnit.module("sap.ui.model.DataState");
 
 	QUnit.test("test DataState API",function(assert) {
 		var oDataState = new DataState();
