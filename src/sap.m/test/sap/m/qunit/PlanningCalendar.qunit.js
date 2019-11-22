@@ -3184,6 +3184,36 @@ sap.ui.define([
 		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate, "Navigation via keyboard when in days view works");
 	});
 
+	QUnit.test("Navigation forward via keyboard right (outside the current visible area) and reaching the limit", function(assert) {
+		//Arrange
+		this.oPC2.setViewKey(CalendarIntervalType.Day);
+		var oStartDate = this.oPC2.getStartDate(),
+			oComparisonDate = new Date(oStartDate),
+			oGoToDate = new Date(oStartDate),
+			oMaxDate = new Date("2016/09/14"),
+			oGoToDate2 = new Date("2016/09/15"),
+			oComparisonDate2 = new Date("2016/09/01");
+
+		this.oPC2.setMinDate(new Date(oStartDate));
+
+		//Act
+		oGoToDate.setDate(oGoToDate.getDate() - 1);
+		this.oPC2.shiftToDate(oGoToDate, false);
+
+		//Assert
+		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate, "Navigation via keyboard stops on min date");
+
+		//Arrange
+		this.oPC2.setStartDate(oComparisonDate2);
+		this.oPC2.setMaxDate(oMaxDate);
+
+		//Act
+		this.oPC2.shiftToDate(oGoToDate2, false);
+
+		//Assert
+		assert.deepEqual(this.oPC2.getStartDate(), oComparisonDate2, "Navigation via keyboard stops on max date");
+	});
+
 	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
 		var $Days,
 			aDays,
