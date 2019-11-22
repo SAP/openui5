@@ -15,8 +15,16 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/opaQunit",
 		"sap/ui/test/TestUtils"
 	], function (Any, Main, Log, Opa5, opaTest, TestUtils) {
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
-		QUnit.module("sap.ui.core.sample.odata.v4.Sticky");
+		QUnit.module("sap.ui.core.sample.odata.v4.Sticky", {
+			before : function () {
+				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			},
+			after : function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
 
 		//*****************************************************************************
 		if (TestUtils.isRealOData()) {

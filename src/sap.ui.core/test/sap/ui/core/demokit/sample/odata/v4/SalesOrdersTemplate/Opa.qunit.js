@@ -13,7 +13,16 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/opaQunit"
 	], function (Any, Main, opaTest) {
 
-		QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersTemplate");
+		var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
+		QUnit.module("sap.ui.core.sample.odata.v4.SalesOrdersTemplate", {
+			before : function () {
+				sap.ui.getCore().getConfiguration().setLanguage("en-US");
+			},
+			after : function () {
+				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+			}
+		});
 
 		//*****************************************************************************
 		opaTest("Start sales orders template app and check log", function (Given, When, Then) {

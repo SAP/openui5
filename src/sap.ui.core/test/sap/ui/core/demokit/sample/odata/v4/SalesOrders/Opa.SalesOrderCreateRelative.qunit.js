@@ -8,7 +8,16 @@ sap.ui.define([
 	/*global QUnit */
 	"use strict";
 
-	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - Create Relative");
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
+	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders - Create Relative", {
+		before : function () {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		},
+		after : function () {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
+		}
+	});
 
 	//*****************************************************************************
 	opaTest("Create, modify and delete within relative listbinding", function (Given, When, Then) {
