@@ -258,7 +258,7 @@ sap.ui.define(
          * @param {boolean} [bDialogElement] if true, only popover and dialogs are searched for
          * @param {sap.ui.test.matchers.Matcher | function | Array | Object} [vMatchers] additional matchers to filter target control(s)
          * @param {sap.ui.test.actions.Action | function | Array} [vActions] the actions to be performed on target control(s)
-         * @param {options} [oOptions] oOptions the {@link sap.ui.test.Opa5#waitFor} options to apply
+         * @param {object} [oOptions] oOptions the {@link sap.ui.test.Opa5#waitFor} options to apply
          * @returns {sap.ui.test.OpaBuilder} a new OpaBuilder instance
          * @public
          * @static

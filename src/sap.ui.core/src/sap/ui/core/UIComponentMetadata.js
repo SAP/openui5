@@ -23,6 +23,8 @@ sap.ui.define(['./ComponentMetadata', './library'],
 	 * @version ${version}
 	 * @since 1.15.1
 	 * @alias sap.ui.core.UIComponentMetadata
+	 * @extends sap.ui.core.ComponentMetadata
+	 * @private
 	 */
 	var UIComponentMetadata = function(sClassName, oClassInfo) {
 
@@ -48,7 +50,7 @@ sap.ui.define(['./ComponentMetadata', './library'],
 
 	/**
 	 * Returns the root view of the component.
-	 * <p>
+	 *
 	 * <b>Important:</b></br>
 	 * If a Component is loaded using the manifest URL (or according the
 	 * "manifest first" strategy), this function ignores the entries of the
@@ -67,7 +69,7 @@ sap.ui.define(['./ComponentMetadata', './library'],
 
 	/**
 	 * Returns the routing configuration.
-	 * <p>
+	 *
 	 * <b>Important:</b></br>
 	 * If a Component is loaded using the manifest URL (or according the
 	 * "manifest first" strategy), this function ignores the entries of the
@@ -86,7 +88,7 @@ sap.ui.define(['./ComponentMetadata', './library'],
 
 	/**
 	 * Returns the array of routes. If not defined the array is undefined.
-	 * <p>
+	 *
 	 * <b>Important:</b></br>
 	 * If a Component is loaded using the manifest URL (or according the
 	 * "manifest first" strategy), this function ignores the entries of the

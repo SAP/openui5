@@ -12,7 +12,7 @@ sap.ui.define(function() {
 	*
 	* @enum {string}
 	* @public
-	* @alias sap.ui.model.odata.BatchMode
+	* @alias sap.ui.model.odata.v2.BatchMode
 	*/
 	var BatchMode = {
 			/**
