@@ -1185,7 +1185,7 @@ sap.ui.define([
 		 * Use page objects to structure your actions and assertions based on parts of the screen.
 		 * This helps to avoid name clashes and to structure your tests.
 		 *
-		 * @param {Object<string,sap.ui.test.Opa5.PageObjectDefinition>} mPageObjects
+		 * @param {Object<string,sap.ui.test.PageObjectDefinition>} mPageObjects
 		 *   Multiple page objects are possible, provide at least actions or assertions
 		 * @returns {Object<string,Object>}
 		 *   The created page object. It will look like this:

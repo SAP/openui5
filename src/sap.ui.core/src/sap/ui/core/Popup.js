@@ -255,84 +255,99 @@ sap.ui.define([
 	 * "Right" and "Left" will stay the same in RTL mode, but "Begin" and "End" will flip to the other side ("Begin" is "Right" in RTL).
 	 *
 	 * @public
-	 * @namespace
+	 * @enum {string}
 	 */
 	Popup.Dock = {
 
-			/**
-			 * @public
-			 */
-			BeginTop      : "begin top",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		BeginTop      : "begin top",
 
-			/**
-			 * @public
-			 */
-			BeginCenter   : "begin center",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		BeginCenter   : "begin center",
 
-			/**
-			 * @public
-			 */
-			BeginBottom   : "begin bottom",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		BeginBottom   : "begin bottom",
 
-			/**
-			 * @public
-			 */
-			LeftTop      : "left top",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		LeftTop      : "left top",
 
-			/**
-			 * @public
-			 */
-			LeftCenter   : "left center",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		LeftCenter   : "left center",
 
-			/**
-			 * @public
-			 */
-			LeftBottom   : "left bottom",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		LeftBottom   : "left bottom",
 
-			/**
-			 * @public
-			 */
-			CenterTop    : "center top",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		CenterTop    : "center top",
 
-			/**
-			 * @public
-			 */
-			CenterCenter : "center center",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		CenterCenter : "center center",
 
-			/**
-			 * @public
-			 */
-			CenterBottom : "center bottom",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		CenterBottom : "center bottom",
 
-			/**
-			 * @public
-			 */
-			RightTop     : "right top",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		RightTop     : "right top",
 
-			/**
-			 * @public
-			 */
-			RightCenter  : "right center",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		RightCenter  : "right center",
 
-			/**
-			 * @public
-			 */
-			RightBottom  : "right bottom",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		RightBottom  : "right bottom",
 
-			/**
-			 * @public
-			 */
-			EndTop     : "end top",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		EndTop     : "end top",
 
-			/**
-			 * @public
-			 */
-			EndCenter  : "end center",
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		EndCenter  : "end center",
 
-			/**
-			 * @public
-			 */
-			EndBottom  : "end bottom"
+		/**
+		 * @public
+		 * @type {string}
+		 */
+		EndBottom  : "end bottom"
 	};
 
 	/**
@@ -347,7 +362,6 @@ sap.ui.define([
 	 * @type {boolean}
 	 * @private
 	 */
-	//TODO: global jquery call found
 	Popup.prototype.touchEnabled = Device.support.touch && !Device.system.combi;
 
 	/**
@@ -359,7 +373,6 @@ sap.ui.define([
 	 * @type {boolean}
 	 * @private
 	 */
-	//TODO: global jquery call found
 	Popup.prototype.preventBrowserFocus = Device.support.touch && !Device.system.combi;
 
 	//****************************************************
@@ -529,7 +542,7 @@ sap.ui.define([
 		 * with the set z-index.
 		 * If the given z-index is lower than any current available z-index the highest z-index will be used.
 		 *
-		 * @param {Number} iInitialZIndex is the initial z-index
+		 * @param {number} iInitialZIndex is the initial z-index
 		 * @public
 		 * @since 1.30.0
 		 */
@@ -544,7 +557,7 @@ sap.ui.define([
 		/**
 		 * Returns the last z-index that has been handed out. does not increase the internal z-index counter.
 		 *
-		 * @returns {Number}
+		 * @returns {number}
 		 * @public
 		 */
 		Popup.getLastZIndex = function(){
@@ -554,7 +567,7 @@ sap.ui.define([
 		/**
 		 * Returns the last z-index that has been handed out. does not increase the internal z-index counter.
 		 *
-		 * @returns {Number}
+		 * @returns {number}
 		 * @public
 		 */
 		Popup.prototype.getLastZIndex = function(){
@@ -564,7 +577,7 @@ sap.ui.define([
 		/**
 		 * Returns the next available z-index on top of the existing/previous popups. Each call increases the internal z-index counter and the returned z-index.
 		 *
-		 * @returns {Number} the next z-index on top of the Popup stack
+		 * @returns {number} the next z-index on top of the Popup stack
 		 * @public
 		 */
 		Popup.getNextZIndex = function(){
@@ -578,7 +591,7 @@ sap.ui.define([
 		/**
 		 * Returns the next available z-index on top of the existing/previous popups. Each call increases the internal z-index counter and the returned z-index.
 		 *
-		 * @returns {Number} the next z-index on top of the Popup stack
+		 * @returns {number} the next z-index on top of the Popup stack
 		 * @public
 		 */
 		Popup.prototype.getNextZIndex = function(){
@@ -2493,7 +2506,7 @@ sap.ui.define([
 	 * @param {object} oEvent.getParameters
 	 * @param {boolean} oEvent.getParameters.visible Indicates whether a blocking layer is currently visible <code>visible: true</code>
 	 *  or not <code>visible: false</code>
-	 * @param {Number} oEvent.getParameters.zIndex In case a blocking layer is visible, the <code>zIndex</code> property
+	 * @param {number} oEvent.getParameters.zIndex In case a blocking layer is visible, the <code>zIndex</code> property
 	 *  will represent the zIndex at which the blocking layer is displayed.
 	 *  In case of <code>visible: false</code>, <code>zIndex</code> represents the zIndex value of the last open popup.
 	 * @static

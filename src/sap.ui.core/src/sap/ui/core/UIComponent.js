@@ -217,9 +217,9 @@ sap.ui.define([
 	 *            <b>Note: Configuring the routing in the metadata in the source code is deprecated.
 	 *            Better create an application descriptor (manifest.json) instead for your component.</b>
 	 *
-	 * @param {function} [FNMetaImpl}
-	 *            Constructor function for the metadata object. If not given, it defaults to
-	 *            <code>sap.ui.core.UIComponentMetadata</code> (which is not public).
+	 * @param {function} [FNMetaImpl=sap.ui.core.ComponentMetadata]
+	 *            Constructor function for the metadata object. If not given, it defaults to an
+	 *            internal subclass of <code>sap.ui.core.ComponentMetadata</code>.
 	 * @name sap.ui.core.UIComponent.extend
 	 * @function
 	 * @public
