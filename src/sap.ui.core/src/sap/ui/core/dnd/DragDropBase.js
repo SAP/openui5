@@ -99,15 +99,15 @@ sap.ui.define(['../Element', '../library', 'sap/base/Log', './DragAndDrop'],
 		return true;
 	};
 
-	/**
-	 * Enabled property should only invalidate for DragInfos
+	/*
+	 * Enabled property should only invalidate for DragInfos.
 	 */
 	DragDropBase.prototype.setEnabled = function(bEnabled) {
 		return this.setProperty("enabled", bEnabled, !this.isA("sap.ui.core.dnd.IDragInfo"));
 	};
 
-	/**
-	 * Suppress invalidation when the invalidate attribute of the property metadata is "false"
+	/*
+	 * Suppress invalidation when the invalidate attribute of the property metadata is "false".
 	 */
 	DragDropBase.prototype.setProperty = function(sProperty, vValue, bSuppressInvalidate) {
 		bSuppressInvalidate = bSuppressInvalidate || (this.getMetadata().getProperty(sProperty).appData || {}).invalidate === false;
