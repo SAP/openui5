@@ -166,7 +166,7 @@ sap.ui.define([
 				this.oEditor._openJsonEditor.returnValues[0].then(function (oDialog) {
 					oDialog.getContent()[1]._getEditorInstance().getSession().on("changeAnnotation", function () {
 						assert.ok(oDialog.getContent()[0].getText().length > 0, "Then an error is displayed in the editor dialog");
-						oDialog.getContent()[1]._getEditorInstance().getSession().removeAllListeners('changeAnnotation');
+						oDialog.getContent()[1]._getEditorInstance().getSession().removeAllListeners("changeAnnotation");
 						fnDone();
 					});
 				});

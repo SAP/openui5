@@ -106,7 +106,7 @@ sap.ui.define([
 		var sValue = oEvent.getSource().getValue();
 
 		if (!this._oDialog) {
-			Fragment.load({
+			return Fragment.load({
 				name: "sap.ui.integration.designtime.baseEditor.propertyEditor.iconEditor.IconSelection",
 				controller: this
 			}).then(function(oDialog){
@@ -115,10 +115,12 @@ sap.ui.define([
 				this._oDialog.setModel(this._oIconModel);
 				this._filter(sValue);
 				this._oDialog.open(this._getDefaultSearchValue(sValue));
+				return this._oDialog;
 			}.bind(this));
 		} else {
 			this._filter(sValue);
 			this._oDialog.open(this._getDefaultSearchValue(sValue));
+			return Promise.resolve(this._oDialog);
 		}
 	};
 
