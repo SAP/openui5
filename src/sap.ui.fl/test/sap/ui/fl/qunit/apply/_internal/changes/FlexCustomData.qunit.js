@@ -111,16 +111,8 @@ function (
 			assert.equal(FlexCustomData.getCustomDataIdentifier(false, true, false), sFailedJSKey, "the correct identifier is returned");
 		});
 
-		QUnit.test("hasFailedCustomDataJs", function(assert) {
-			assert.notOk(FlexCustomData.hasFailedCustomDataJs(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no failed flex custom data");
-		});
-
-		QUnit.test("hasNotApplicableCustomData", function(assert) {
-			assert.notOk(FlexCustomData.hasNotApplicableCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no 'not applicable' flex custom data");
-		});
-
-		QUnit.test("hasAppliedCustomData", function(assert) {
-			assert.notOk(FlexCustomData.hasAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no applied flex custom data");
+		QUnit.test("hasChangeApplyFinishedCustomData", function(assert) {
+			assert.notOk(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has no flex custom data");
 		});
 	});
 
@@ -132,6 +124,8 @@ function (
 			this.oChange2 = new Change(getChangeContent("a2", "control"));
 			this.oChange3 = new Change(getChangeContent("a3", "control"));
 			this.oChange4 = new Change(getChangeContent("a4", "control"));
+			this.oChangeNoValidCustomData = new Change(getChangeContent("a5", "control"));
+			this.oChangeWithoutCustomData = new Change(getChangeContent("a6", "control"));
 
 			var oCustomData = new CustomData({
 				key: createCustomDataKey(this.oChange, sAppliedKey)
@@ -149,6 +143,10 @@ function (
 			this.oControl.addCustomData(new CustomData({
 				key: createCustomDataKey(this.oChange4, sFailedJSKey),
 				value: "true"
+			}));
+			this.oControl.addCustomData(new CustomData({
+				key: createCustomDataKey(this.oChangeNoValidCustomData, sFailedJSKey),
+				value: ""
 			}));
 
 			this.mPropertyBag = {
@@ -193,19 +191,10 @@ function (
 			assert.notOk(getCustomData(this.oControl, createCustomDataKey(this.oChange, sAppliedKey)));
 		});
 
-		QUnit.test("hasFailedCustomDataJs", function(assert) {
-			assert.ok(FlexCustomData.hasFailedCustomDataJs(this.oControl, this.oChange4, this.mPropertyBag.modifier), "the control has failed flex custom data");
-			assert.notOk(FlexCustomData.hasFailedCustomDataJs(this.oControl, this.oChange3, this.mPropertyBag.modifier), "the control has no failed flex custom data with the wrong change");
-		});
-
-		QUnit.test("hasNotApplicableCustomData", function(assert) {
-			assert.ok(FlexCustomData.hasNotApplicableCustomData(this.oControl, this.oChange2, this.mPropertyBag.modifier), "the control has 'not applicable' flex custom data");
-			assert.notOk(FlexCustomData.hasNotApplicableCustomData(this.oControl, this.oChange3, this.mPropertyBag.modifier), "the control has NO 'not applicable' flex custom data with the wrong change");
-		});
-
-		QUnit.test("hasAppliedCustomData", function(assert) {
-			assert.notOk(FlexCustomData.hasAppliedCustomData(this.oControl, this.oChange4, this.mPropertyBag.modifier), "the control has NO applied flex custom data");
-			assert.ok(FlexCustomData.hasAppliedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has applied flex custom data");
+		QUnit.test("hasChangeApplyFinishedCustomData", function(assert) {
+			assert.notOk(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChangeNoValidCustomData, this.mPropertyBag.modifier), "the control has NO applied flex custom data");
+			assert.notOk(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChangeWithoutCustomData, this.mPropertyBag.modifier), "the control has NO applied flex custom data");
+			assert.ok(FlexCustomData.hasChangeApplyFinishedCustomData(this.oControl, this.oChange, this.mPropertyBag.modifier), "the control has applied flex custom data");
 		});
 	});
 

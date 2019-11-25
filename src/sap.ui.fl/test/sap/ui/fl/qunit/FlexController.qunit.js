@@ -1180,10 +1180,6 @@ function (
 
 			this.oErrorLogStub = sandbox.stub(Log, "error");
 
-			this.hasFailedCustomDataStub = sandbox.stub(FlexCustomData, "hasFailedCustomDataJs").callsFake(function(oControl) {
-				return oControl.getId() === this.sLabelId2;
-			}.bind(this));
-
 			this.oChangeHandlerApplyChangeStub = sandbox.stub().resolves(function(fnResolve) {
 				setTimeout(function() {
 					fnResolve();
@@ -1283,7 +1279,6 @@ function (
 
 			var oChangeHandlerApplyChangeRejectStub = sandbox.stub().throws(new Error());
 			this.oGetChangeHandlerStub.restore();
-			this.hasFailedCustomDataStub.restore();
 			this.oGetChangeHandlerStub = sandbox.stub(ChangeUtils, "getChangeHandler")
 			.onCall(0).resolves({
 				applyChange: oChangeHandlerApplyChangeRejectStub
