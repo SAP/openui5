@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"./AsyncViewModuleHook",
 	"sap/m/App",
-	"sap/m/Panel"
-], function(View, Targets, Views, Log, ModuleHook, App, Panel){
+	"sap/m/Panel",
+	"sap/ui/model/json/JSONModel"
+], function(View, Targets, Views, Log, ModuleHook, App, Panel, JSONModel){
 	"use strict";
 
 	// use sap.m.Panel as a lightweight drop-in replacement for the ux3.Shell
@@ -670,7 +671,7 @@ sap.ui.define([
 
 	QUnit.test("fire/attach/detach", function(assert) {
 		// Arrange
-		var oParameters = { foo : "bar" },
+		var oParameters = { title : "bar" },
 			oListener = {},
 			oData = { some : "data" },
 			fnEventSpy = this.spy(function(oEvent, oActualData) {
@@ -685,7 +686,7 @@ sap.ui.define([
 		// Act
 		oFireReturnValue = this.oTargets.fireTitleChanged(oParameters);
 		oDetachReturnValue = this.oTargets.detachTitleChanged(fnEventSpy, oListener);
-		this.oTargets.fireTitleChanged();
+		this.oTargets.fireTitleChanged(oParameters);
 
 		// Assert
 		assert.strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
@@ -812,7 +813,7 @@ sap.ui.define([
 		return oDisplayed.then(function() {
 			// Assert
 			assert.ok(fnEventSpy.notCalled, "the event isn't fired");
-			sinon.assert.calledWithExactly(
+			sinon.assert.calledWith(
 				oLogSpy,
 				"The target with the name \"foo\" where the titleChanged event should be fired does not exist!",
 				this.oTargets
@@ -820,15 +821,15 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("single target with parent", function (assert) {
+	QUnit.test("single target which has its own title with parent", function (assert) {
 		// Arrange
 		var that = this,
 			oParameters = null,
 			oData = {some : "data"},
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
-				assert.strictEqual(oParameters.name, "myTarget", "name from parent target is taken");
-				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
+				assert.strictEqual(oParameters.name, "myChild", "name from itself is taken");
+				assert.strictEqual(oParameters.title, "myChildTarget", "title from itself is taken");
 			});
 
 		this.stub(this.oViews, "_getView").callsFake(function () {
@@ -846,6 +847,33 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("single target which doesn't have title with parent", function (assert) {
+		// Arrange
+		var that = this,
+			oParameters = null,
+			oData = {some : "data"},
+			fnEventSpy = this.spy(function (oEvent) {
+				oParameters = oEvent.getParameters();
+				assert.strictEqual(oParameters.name, "myTarget", "name from parent is taken");
+				assert.strictEqual(oParameters.title, "myTitle", "title from parent is taken");
+			});
+
+		this.stub(this.oViews, "_getView").callsFake(function () {
+			return that.oView;
+		});
+
+		this.oTargets.attachTitleChanged(fnEventSpy);
+
+		// Act
+		var oDisplayed = this.oTargets.display(["myNoTitleChild"], oData);
+
+		// Assert
+		return oDisplayed.then(function() {
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+		});
+	});
+
+
 	QUnit.test("single target with multiple ancestors", function (assert) {
 		// Arrange
 		var that = this,
@@ -853,8 +881,8 @@ sap.ui.define([
 			oData = {some : "data"},
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
-				assert.strictEqual(oParameters.name, "myTarget", "name from parent target is taken");
-				assert.strictEqual(oParameters.title, "myTitle", "title from parent target is taken");
+				assert.strictEqual(oParameters.name, "myChild", "name from nearest parent target is taken");
+				assert.strictEqual(oParameters.title, "myChildTarget", "title from nearest parent target is taken");
 			});
 
 		this.stub(this.oViews, "_getView").callsFake(function () {
@@ -903,6 +931,121 @@ sap.ui.define([
 			assert.strictEqual(aTargetNames.shift(), "myChild", "the child got fired after the parent");
 			assert.strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
 		});
+	});
+
+	QUnit.module("titleChanged with binding and context change", {
+		beforeEach: function () {
+			this.oApp = new App();
+			this.oView = createView(
+					['<View xmlns="sap.ui.core.mvc">',
+						'</View>']);
+
+			this.oDefaultConfig = {
+				viewPath: "bar",
+				viewName: "foo",
+				controlAggregation: "pages",
+				viewType: "XML",
+				controlId: this.oApp.getId(),
+				async: true
+			};
+
+			this.oTargetsConfig = {
+				target1: {
+					title: "{name}"
+				}
+			};
+
+			this.oViews = new Views({async: true});
+
+			this.stub(this.oViews, "_getView").callsFake(function () {
+				return this.oView;
+			}.bind(this));
+
+			// System under test + Arrange
+			this.oTargets = new Targets({
+				targets: this.oTargetsConfig,
+				views: this.oViews,
+				config: this.oDefaultConfig
+			});
+
+			this.oModel = new JSONModel({
+				cheese: {
+					name: "cheese"
+				},
+				joghurt: {
+					name: "joghurt"
+				}
+			});
+
+			this.oApp.setModel(this.oModel);
+		},
+		afterEach: function () {
+			this.oApp.destroy();
+			this.oTargets.destroy();
+			this.oViews.destroy();
+			this.oView.destroy();
+			this.oModel.destroy();
+		}
+	});
+
+	QUnit.test("titleChanged event should be fired once the binding context is available", function(assert) {
+		var aEventParams = [];
+		var fnEventSpy = this.spy(function (oEvent) {
+			aEventParams.push(oEvent.getParameters());
+		});
+
+		this.oTargets.attachTitleChanged(fnEventSpy);
+		var pDisplayed = this.oTargets.display("target1");
+		return pDisplayed.then(function() {
+			assert.equal(fnEventSpy.callCount, 0, "titleChanged event isn't fired yet");
+			this.oView.bindObject("/cheese");
+			assert.equal(fnEventSpy.callCount, 1, "titleChanged event is fired after binding context is available");
+			assert.equal(aEventParams[0].title, "cheese", "title property is correct");
+		}.bind(this));
+	});
+
+	QUnit.test("The same titleChanged event shouldn't be fired again when the target is displayed with the same binding context", function(assert) {
+		var aEventParams = [];
+		var fnEventSpy = this.spy(function (oEvent) {
+			aEventParams.push(oEvent.getParameters());
+		});
+
+		this.oView.bindObject("/cheese");
+		this.oTargets.attachTitleChanged(fnEventSpy);
+		var pDisplayed = this.oTargets.display("target1");
+		return pDisplayed.then(function() {
+			assert.equal(fnEventSpy.callCount, 1, "titleChanged event is fired after binding context is available");
+			assert.equal(aEventParams[0].title, "cheese", "title property is correct");
+
+			// display the same target again
+			return this.oTargets.display("target1").then(function() {
+				assert.equal(fnEventSpy.callCount, 1, "titleChanged event isn't fired again because the binding context isn't changed");
+			});
+		}.bind(this));
+	});
+
+	QUnit.test("titleChanged event is fired again when new binding context is set", function(assert) {
+		var aEventParams = [];
+		var fnEventSpy = this.spy(function (oEvent) {
+			aEventParams.push(oEvent.getParameters());
+		});
+
+		this.oView.bindObject("/cheese");
+		this.oTargets.attachTitleChanged(fnEventSpy);
+		var pDisplayed = this.oTargets.display("target1");
+		return pDisplayed.then(function() {
+			assert.equal(fnEventSpy.callCount, 1, "titleChanged event is fired after binding context is available");
+			assert.equal(aEventParams[0].title, "cheese", "title property is correct");
+
+			// display the same target again
+			return this.oTargets.display("target1").then(function() {
+				assert.equal(fnEventSpy.callCount, 1, "titleChanged event isn't fired again because the binding context isn't changed");
+
+				this.oView.bindObject("/joghurt");
+				assert.equal(fnEventSpy.callCount, 2, "titleChanged event is fired again because a new binding context is set");
+				assert.equal(aEventParams[1].title, "joghurt", "title property is correct");
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.module("destruction");

@@ -393,7 +393,7 @@ sap.ui.define([
 				// Setting title property should not trigger two way change in model
 				this.setProperty("title", sTitle, true);
 
-				if (this._oTarget._bIsDisplayed) {
+				if (this._oTarget._bIsDisplayed && sTitle) {
 					this._oTarget.fireTitleChanged({
 						name: this._oTarget._oOptions._name,
 						title: sTitle

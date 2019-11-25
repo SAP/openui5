@@ -921,8 +921,20 @@ sap.ui.define([
 			name: "fixedPattern",
 			pattern: "foo/bar"
 		}, {
-			name: "withParameter",
+			name: "withSingleParameter",
 			pattern: "bar/{foo}"
+		}, {
+			name: "withMultipleParameter",
+			pattern: "products/{productId}/{supplerId}"
+		},{
+			name: "withOptionalParameter",
+			pattern: "people/{peopleId}/:year:"
+		}, {
+			name: "withQueryParameter",
+			pattern: "employees/{employeeId}{?query}"
+		}, {
+			name: "withOptionalQueryParameter",
+			pattern: "suppliers/{supplierId}:?query:"
 		}, {
 			name: "emptyPattern",
 			pattern: ""
@@ -931,43 +943,139 @@ sap.ui.define([
 		var aHashAndResults = [{
 			hash: "foo/bar",
 			match: true,
-			name: "fixedPattern"
+			name: "fixedPattern",
+			info: {
+				name: "fixedPattern",
+				arguments: {}
+			}
 		}, {
 			hash: "foo/bar1",
 			match: false,
-			name: undefined
+			name: undefined,
+			info: undefined
 		}, {
 			hash: "foo",
 			match: false,
-			name: undefined
+			name: undefined,
+			info: undefined
+
 		}, {
 			hash: "bar/foo",
 			match: true,
-			name: "withParameter"
+			name: "withSingleParameter",
+			info: {
+				name: "withSingleParameter",
+				arguments: {foo: "foo"}
+			}
 		}, {
 			hash: "bar",
 			match: false,
-			name: undefined
+			name: undefined,
+			info: undefined
 		}, {
 			hash: "bar/a",
 			match: true,
-			name: "withParameter"
+			name: "withSingleParameter",
+			info: {
+				name: "withSingleParameter",
+				arguments: {foo: "a"}
+			}
 		}, {
 			hash: "bar/a/b",
 			match: false,
-			name: undefined
-		},{
+			name: undefined,
+			info: undefined
+		}, {
 			hash: "",
 			match: true,
-			name: "emptyPattern"
+			name: "emptyPattern",
+			info: {
+				name: "emptyPattern",
+				arguments: {}
+			  }
+		}, {
+			hash: null,
+			match: true,
+			name: "emptyPattern",
+			info: {
+				name: "emptyPattern",
+				arguments: {}
+			  }
+		}, {
+			hash: undefined,
+			match: true,
+			name: "emptyPattern",
+			info: {
+				name: "emptyPattern",
+				arguments: {}
+			  }
+		}, {
+			hash: "products/P1/S1",
+			match: true,
+			name: "withMultipleParameter",
+			info: {
+				name: "withMultipleParameter",
+				arguments: {productId: "P1", supplerId: "S1"}
+			}
+		}, {
+			hash: "people/0",
+			match: true,
+			name: "withOptionalParameter",
+			info: {
+				name: "withOptionalParameter",
+				arguments: {peopleId: "0", year: undefined}
+			}
+		}, {
+			hash: "people/0/2019",
+			match: true,
+			name: "withOptionalParameter",
+			info: {
+				name: "withOptionalParameter",
+				arguments: {peopleId: "0", year: "2019"}
+			}
+		}, {
+			hash: "employees/123?company=sap",
+			match: true,
+			name: "withQueryParameter",
+			info: {
+				name: "withQueryParameter",
+				arguments: {employeeId: "123", "?query": {company: "sap"}}
+			}
+		}, {
+			hash: "suppliers/678?company=sap",
+			match: true,
+			name: "withOptionalQueryParameter",
+			info: {
+				name: "withOptionalQueryParameter",
+				arguments: {supplierId: "678", "?query": {company: "sap"}}
+			}
+		}, {
+			hash: "suppliers/678?company=sap&region=asia",
+			match: true,
+			name: "withOptionalQueryParameter",
+			info: {
+				name: "withOptionalQueryParameter",
+				arguments: {supplierId: "678", "?query": {company: "sap", region: "asia"}}
+			}
+		}, {
+			hash: "suppliers/678",
+			match: true,
+			name: "withOptionalQueryParameter",
+			info: {
+				name: "withOptionalQueryParameter",
+				arguments: {supplierId: "678", "?query": undefined}
+			}
 		}];
 
-		var oRouteByHash;
+		var oRouteByHash, oRouteInfo, sHash;
 		aHashAndResults.forEach(function (oHashAndResult) {
-			assert.strictEqual(oRouter.match(oHashAndResult.hash), oHashAndResult.match, JSON.stringify(oHashAndResult, true) + " can" + (oHashAndResult.match ? "" : "'t") + " be matched by the router");
+			sHash = oHashAndResult.hash;
+			oRouteByHash = oRouter.getRouteByHash(sHash);
+			oRouteInfo = oRouter.getRouteInfoByHash(sHash);
 
-			oRouteByHash = oRouter.getRouteByHash(oHashAndResult.hash);
-			assert.strictEqual(oRouteByHash ? oRouteByHash._oConfig.name : oRouteByHash, oHashAndResult.name, oHashAndResult.name + " can" + (oHashAndResult.hash ? "" : "'t") + " be matched by the hash");
+			assert.strictEqual(oRouter.match(sHash), oHashAndResult.match, JSON.stringify(oHashAndResult, true) + " can" + (oHashAndResult.match ? "" : "'t") + " be matched by the router");
+			assert.strictEqual(oRouteByHash ? oRouteByHash._oConfig.name : undefined, oHashAndResult.name, oHashAndResult.name + " can" + (oHashAndResult.hash ? "" : "'t") + " be matched by the hash");
+			assert.deepEqual(oRouteInfo, oHashAndResult.info, "Route info object should be correct");
 		});
 	});
 
@@ -989,6 +1097,110 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oReturnValue, this.oRouter, "able to chain navTo");
+	});
+
+	QUnit.test("Should be able to use navTo with query parameters", function (assert) {
+		// Prepare
+		var done = assert.async();
+		var iCounter = 0;
+		HashChanger.getInstance().setHash("");
+		var oApp = new App();
+
+		var oRouter = fnCreateRouter([
+			{
+				name: "start",
+				pattern:  "",
+				targetControl: oApp.getId()
+			},
+			{
+				name : "startWithQueryParameter",
+				pattern : "start:?query:",
+				targetControl: oApp.getId()
+			}
+		]);
+		oRouter.getRoute("start").attachPatternMatched(function(oEvent){
+			assert.strictEqual(oEvent.getParameter("name"), "start", "The 'start' route is matched correctly");
+			oRouter.navTo("startWithQueryParameter");
+		});
+		oRouter.getRoute("startWithQueryParameter").attachPatternMatched(function(oEvent){
+			var oParameters = oEvent.getParameters();
+			var sRouteName = oParameters.name;
+			var oRouteArguments = oParameters.arguments;
+			assert.strictEqual(sRouteName, "startWithQueryParameter", "The 'startWithQueryParameter' route is matched correctly");
+			if (iCounter === 0) {
+				assert.deepEqual(oRouteArguments, {"?query": undefined}, "The route arguments are empty." );
+				iCounter++;
+				oRouter.navTo("startWithQueryParameter", {query: {region: "asia"}});
+			} else if (iCounter === 1){
+				assert.deepEqual(oRouteArguments, {"?query": {region: "asia"}}, "The route arguments correct." );
+				iCounter++;
+				oRouter.navTo("startWithQueryParameter", {"?query": {region: "europe"}});
+			} else {
+				assert.deepEqual(oRouteArguments, {"?query": {region: "europe"}}, "The route arguments correct." );
+				done();
+			}
+		});
+		oRouter.initialize();
+
+		// Act
+		oRouter.navTo("home");
+	});
+
+	QUnit.test("Should throw an exception if route placeholder are not unique", function(assert){
+		assert.throws(function(){
+			fnCreateRouter([
+				{
+					name: "notValid",
+					pattern: "{products}{?products}"
+				}]);
+			}, new Error("The config of route 'notValid' contains standard parameter and query parameter with the same name: 'products'. The name of the routing parameters and query parameter have to differentiate."));
+		assert.ok(
+			fnCreateRouter([
+				{
+					name: "valid",
+					pattern: "{products}/{products}"
+				}]),
+				"The router configuration is correct."
+		);
+		assert.ok(
+			fnCreateRouter([
+				{
+					name: "valid",
+					pattern: "products"
+				}]),
+				"The router configuration is correct."
+		);
+		assert.ok(
+			fnCreateRouter([
+				{
+					name: "valid",
+					pattern: "{products}/:products:"
+				}]),
+				"The router configuration is correct."
+		);
+		assert.throws(function(){
+			fnCreateRouter([
+				{
+					name: "notValid",
+					pattern: "{products}:?products:"
+				}]);
+		}, new Error("The config of route 'notValid' contains standard parameter and query parameter with the same name: 'products'. The name of the routing parameters and query parameter have to differentiate."));
+		assert.throws(function(){
+			fnCreateRouter([
+				{
+					name: "notValid",
+					pattern: ":products::?products:"
+				}
+			]);
+		}, new Error("The config of route 'notValid' contains standard parameter and query parameter with the same name: 'products'. The name of the routing parameters and query parameter have to differentiate."));
+		assert.throws(function(){
+			fnCreateRouter([
+				{
+					name: "notValid",
+					pattern: "{id}/{products}/{id}{?products}"
+				}
+			]);
+		}, new Error("The config of route 'notValid' contains standard parameter and query parameter with the same name: 'products'. The name of the routing parameters and query parameter have to differentiate."));
 	});
 
 	QUnit.module("View generation", ModuleHook.create());
@@ -2135,11 +2347,12 @@ sap.ui.define([
 				that.oRouter.navTo("productDetail");
 				sinon.assert.calledOnce(that.oRouteMatchedSpies["productDetail"]);
 				return that.oRouteMatchedSpies["productDetail"].returnValues[0].then(function() {
+					assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event is fired twice");
 					window.history.go(-1);
 
 					// Assert
 					that.oRouter.attachRouteMatched(function() {
-						assert.strictEqual(fnEventSpy.callCount, 3, "titleChanged event is fired again");
+						assert.strictEqual(fnEventSpy.callCount, 2, "titleChanged event isn't fired again");
 						assert.strictEqual(oParameters.title, sProductTitle, "Did pass title value to the event parameters");
 						assert.equal(oParameters.history.length, 1, "history entry was not removed");
 						assert.deepEqual(oParameters.history[oParameters.history.length - 1], {
@@ -2228,6 +2441,9 @@ sap.ui.define([
 		this.oOwner = {
 			getManifestEntry: function() {
 				return "HOME";
+			},
+			getId: function() {
+				return "component1";
 			}
 		};
 
@@ -3855,7 +4071,7 @@ sap.ui.define([
 								name: "namespace1.ChildComponent",
 								type: "Component",
 								id: "component1",
-								title: "TitleComponent1",
+								title: "{/titleComponent1}",
 								options: {
 									manifest: false
 								}
@@ -3922,6 +4138,9 @@ sap.ui.define([
 					},
 					init : function() {
 						UIComponent.prototype.init.apply(this, arguments);
+						this.setModel(new JSONModel({
+							titleComponent1: "Title defined in model"
+						}));
 						var oRouter = this.getRouter();
 						oRouter.initialize();
 					}
@@ -3996,6 +4215,134 @@ sap.ui.define([
 			assert.equal(oRouterRouteMatchedSpy.callCount, 2, "fireRouteMatched should be called twice");
 			assert.strictEqual(oRouterRouteMatchedSpy.getCall(1).thisValue, oParentRouter, "Should be the correct ");
 			done();
+		});
+	});
+
+	QUnit.test("Propagate titleChange event from nested component", function(assert) {
+		var done = assert.async(),
+			that = this,
+			oParentRouter = this.oParentComponent.getRouter();
+
+		// Expected results
+		var oExpected1 = {
+			"history": [],
+			"name": "home",
+			"nestedHistory": [{
+					"history": [{
+						"hash": "",
+						"title": "Title defined in model"
+					}],
+					"ownerComponentId": "parent"
+				},
+				{
+					"history": [{
+						"hash": "",
+						"title": "TitleNestedView1"
+					}],
+					"ownerComponentId": "parent---component1"
+				}
+			],
+			"title": "Title defined in model"
+		},
+		oExpected2 = {
+			"history": [{
+				"hash": "",
+				"title": "TitleNestedView1"
+			}],
+			"name": "nestedView2",
+			"nestedHistory": [{
+					"history": [{
+						"hash": "",
+						"title": "Title defined in model"
+					}],
+					"ownerComponentId": "parent"
+				},
+				{
+					"history": [{
+							"hash": "",
+							"title": "TitleNestedView1"
+						},
+						{
+							"hash": "view2",
+							"title": "TitleNestedView2"
+						}
+					],
+					"ownerComponentId": "parent---component1"
+				}
+			],
+			"propagated": true,
+			"title": "TitleNestedView2"
+		},
+		oExpected3 = {
+			"history": [{
+				"hash": "",
+				"title": "Title defined in model"
+			}],
+			"name": "second",
+			"nestedHistory": [{
+					"history": [{
+							"hash": "",
+							"title": "Title defined in model"
+						},
+						{
+							"hash": "second",
+							"title": "TitleComponent2"
+						}
+					],
+					"ownerComponentId": "parent"
+				},
+				{
+					"history": [{
+						"hash": "",
+						"title": "TitleNestedView3"
+					}],
+					"ownerComponentId": "parent---component2"
+				}
+			],
+			"title": "TitleComponent2"
+		};
+
+		oParentRouter.attachTitleChanged(this.oTitleChangedSpy);
+
+		var oHomeRoute = oParentRouter.getRoute("home");
+		var oHomeRouteMatchedSpy = sinon.spy(oHomeRoute, "_routeMatched");
+
+		oParentRouter.initialize();
+
+		oHomeRouteMatchedSpy.getCall(0).returnValue.then(function(oObject) {
+			assert.equal(that.oTitleChangedSpy.callCount, 1, "initialize(): fireTitleChange should be called the first time");
+			assert.deepEqual(that.oTitleChangedSpy.getCall(0).args[0].getParameters(), oExpected1, "initialize(): titleChange event object should be correct");
+
+			var oNestedComponent1 = oObject.view.getComponentInstance(),
+				oNestedComponent1Router = oNestedComponent1.getRouter();
+
+			var oNestedComponentRoute = oNestedComponent1Router.getRoute("nestedView2");
+			var oNestedRouteMatchedSpy1 = sinon.spy(oNestedComponentRoute, "_routeMatched");
+
+			oNestedComponent1.getRouter().navTo("nestedView2");
+			return oNestedRouteMatchedSpy1.getCall(0).returnValue;
+		}).then(function() {
+			assert.equal(that.oTitleChangedSpy.callCount, 2, "navTo('nestedView2'): fireTitleChange should be called the two times");
+			assert.ok(that.oTitleChangedSpy.getCall(1).args[0].getParameters().propagated, "Navigation triggered by nested component, marked as propagated");
+			assert.deepEqual(that.oTitleChangedSpy.getCall(1).args[0].getParameters(), oExpected2, "navTo('nestedView2'): titleChange event object should be correct");
+
+			var oSecondRoute = oParentRouter.getRoute("second");
+			var oSecondRouteMatchedSpy = sinon.spy(oSecondRoute, "_routeMatched");
+
+			oParentRouter.navTo("second");
+			oSecondRouteMatchedSpy.getCall(0).returnValue.then(function() {
+				assert.equal(that.oTitleChangedSpy.callCount, 3, "navTo('second'): fireTitleChange should be called the three times");
+				assert.deepEqual(that.oTitleChangedSpy.getCall(2).args[0].getParameters(), oExpected3, "navTo('second'): titleChange event object should be correct");
+
+				var oParentView1Route = oParentRouter.getRoute("parentView1");
+				var oParentView1RouteMatchedSpy = sinon.spy(oParentView1Route, "_routeMatched");
+
+				oParentRouter.navTo("parentView1");
+				oParentView1RouteMatchedSpy.getCall(0).returnValue.then(function() {
+					assert.equal(oParentRouter.getTitleHistory().length, 3, "The number of history entries should be correct");
+					done();
+				});
+			});
 		});
 	});
 

@@ -183,6 +183,7 @@ sap.ui.define([
 					that._aPattern[iIndex] = sRoute;
 
 					that._aRoutes[iIndex] = oRouter._oRouter.addRoute(sRoute);
+					that._checkRoute(that._aRoutes[iIndex]);
 					that._aRoutes[iIndex].greedy = oConfig.greedy;
 
 					that._aRoutes[iIndex].matched.add(function() {
@@ -197,6 +198,22 @@ sap.ui.define([
 						that._routeSwitched();
 					});
 				});
+			},
+
+			_checkRoute: function(oRoute){
+				var aParams = oRoute._paramsIds;
+				if (Array.isArray(aParams)){
+					var aDuplicateParams = aParams.filter( function(sParam){
+						return sParam.charAt(0) === "?";
+					}).filter( function(sParam){
+						return aParams.indexOf(sParam.substring(1)) > -1;
+					}).map(function(sParam){
+						return sParam.substring(1);
+					});
+					if (aDuplicateParams.length > 0) {
+						throw Error("The config of route '" + this._oConfig.name + "' contains standard parameter and query parameter with the same name: '" + aDuplicateParams + "'. The name of the routing parameters and query parameter have to differentiate.");
+					}
+				}
 			},
 
 			_routeSwitched: function() {
@@ -633,6 +650,18 @@ sap.ui.define([
 					}
 					return null;
 				}
+			},
+
+			/**
+			 * Returns the arguments of the route which matches the given hash
+			 *
+			 * @param {string} sHash The hash
+			 * @returns {object} An object containing the route arguments
+			 * @private
+			 * @ui5-restricted sap.ui.core
+			 */
+			getPatternArguments : function(sHash) {
+				return this._aRoutes[0].extrapolate(sHash);
 			}
 		});
 
