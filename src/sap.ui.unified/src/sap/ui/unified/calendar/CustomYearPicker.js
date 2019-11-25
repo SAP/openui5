@@ -67,10 +67,6 @@ sap.ui.define([
 		this.fireCancel();
 	};
 
-	CustomYearPicker.prototype._shouldFocusB2OnTabPrevious = function(oEvent) {
-		return false; //in Months view, the year picker button is not focusable
-	};
-
 	return CustomYearPicker;
 
 });

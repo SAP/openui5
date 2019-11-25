@@ -1045,6 +1045,24 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Getter for monthPicker aggregation.
+	 * @return {sap.ui.unified.calendar.MonthPicker} The monthPicker control instance
+	 * @private
+	 */
+	Calendar.prototype._getMonthPicker = function () {
+		return this.getAggregation("monthPicker");
+	};
+
+	/**
+	 * Getter for yearPicker aggregation.
+	 * @return {sap.ui.unified.calendar.YearPicker} The yearPicker control instance
+	 * @private
+	 */
+	Calendar.prototype._getYearPicker = function () {
+		return this.getAggregation("yearPicker");
+	};
+
 	/*
 	 * gets the information if month headers should be shown
 	 * used by Month controls instead of updating the controls on every change
@@ -1076,6 +1094,15 @@ sap.ui.define([
 
 		return this;
 
+	};
+
+	/**
+	 * Getter for yearPicker aggregation.
+	 * @return {sap.ui.unified.calendar.YearRangePicker} The yearRangePicker control instance
+	 * @private
+	 */
+	Calendar.prototype._getYearRangePicker = function () {
+		return this.getAggregation("yearRangePicker");
 	};
 
 	Calendar.prototype.onclick = function(oEvent){
@@ -1141,94 +1168,108 @@ sap.ui.define([
 	Calendar.prototype.onsaphide = Calendar.prototype.onsapshow;
 
 	Calendar.prototype.onsaptabnext = function(oEvent){
-
-		// if tab was pressed on a day it should jump to the month and then to the year button
 		var oHeader = this.getAggregation("header");
 
-		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			if (this._shouldFocusB2OnTabNext(oEvent)) {
-				var oDomRefB2 = oHeader.getDomRef("B2");
-				if (oDomRefB2) {
-					oDomRefB2.focus();
+			if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+				if (oHeader.getVisibleButton1()) {
+					oHeader.getDomRef("B1").focus();
+					oEvent.preventDefault();
+				} else if (oHeader.getVisibleButton2()) {
+					oHeader.getDomRef("B2").focus();
+					oEvent.preventDefault();
+				} else if (!this._bPoupupMode) {
+					// remove Tabindex from day, month, year - to break cycle
+					this._clearTabindex0();
+				} else {
+					this._clearTabindex0();
+					oEvent.preventDefault();
 				}
-			} else {
-				var oDomRefB1 = oHeader.getDomRef("B1");
-				if (oDomRefB1) {
-					oDomRefB1.focus();
+			} else if (oEvent.target.id === oHeader.getId() + "-B1") {
+				oHeader.getVisibleButton2() && oHeader.getDomRef("B2").focus();
+
+				oEvent.preventDefault();
+			} else if (oEvent.target.id === oHeader.getId() + "-B2") {
+				if (this._bPoupupMode) {
+					this._moveFocusToCalContent();
+
+					oEvent.preventDefault();
+				} else {
+					// remove Tabindex from day, month, year - to break cycle
+					this._clearTabindex0();
 				}
+
 			}
 
-			if (!this._bPoupupMode) {
-				// remove Tabindex from day, month, year - to break cycle
-				var aMonths = this.getAggregation("month");
-
-				for (var i = 0; i < aMonths.length; i++) {
-					var oMonth = aMonths[i];
-					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-				}
-
-				if (!this._getSucessorsPickerPopup()) {
-					var oMonthPicker = this.getAggregation("monthPicker");
-					var oYearPicker = this.getAggregation("yearPicker");
-
-					if (oMonthPicker.getDomRef()) {
-						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-					if (oYearPicker.getDomRef()) {
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-				}
-			}
-
-			oEvent.preventDefault();
-		} else if (this._shouldFocusB2OnTabNext(oEvent)) {
-			var oDomRefB2 = oHeader.getDomRef("B2");
-			if (oDomRefB2) {
-				oDomRefB2.focus();
-			}
-
-			oEvent.preventDefault();
-			//} else if (oEvent.target.id == oHeader.getId() + "-B2") {
-			// go to next element on page, in Popup mode to day, month or year
-		}
-
-	};
-
-	Calendar.prototype._shouldFocusB2OnTabNext = function(oEvent){
-		var oHeader = this.getAggregation("header");
-
-		return (oEvent.target.id == oHeader.getId() + "-B1");
-	};
-
-	Calendar.prototype._shouldFocusB2OnTabPrevious = function(oEvent) {
-		return this._bPoupupMode;
 	};
 
 	Calendar.prototype.onsaptabprevious = function(oEvent){
-
 		var oHeader = this.getAggregation("header");
 
 		if (containsOrEquals(this.getDomRef("content"), oEvent.target)) {
-			// tab from day, month or year -> go to header
-
-			if (this._shouldFocusB2OnTabPrevious()) {
-				var oDomRefB2 = oHeader.getDomRef("B2");
-				if (oDomRefB2) {
-					oDomRefB2.focus();
+			if (this._bPoupupMode) {
+				if (oHeader.getVisibleButton2()) {
+					oHeader.getDomRef("B2").focus();
+				} else {
+					oHeader.getVisibleButton1() && oHeader.getDomRef("B1").focus();
 				}
 				oEvent.preventDefault();
+			} else {
+				// remove Tabindex from day, month, year - to break cycle
+				this._clearTabindex0();
 			}
-		} else if (oEvent.target.id == oHeader.getId() + "-B1") {
-			// focus day, month or year
-			var aMonths = this.getAggregation("month");
+		} else if (oEvent.target.id === oHeader.getId() + "-B1") {
+			this._moveFocusToCalContent();
 
-			var oFocusedDate;
-			switch (this._iMode) {
+			oEvent.preventDefault();
+		} else if (oEvent.target.id === oHeader.getId() + "-B2") {
+			if (oHeader.getVisibleButton1()) {
+				oHeader.getDomRef("B1").focus();
+			} else {
+				this._moveFocusToCalContent();
+			}
+
+			oEvent.preventDefault();
+		}
+	};
+
+	Calendar.prototype._clearTabindex0 = function() {
+		var aMonths = this.getAggregation("month"),
+			oMonthPicker = this._getMonthPicker(),
+			oYearPicker = this.getAggregation("yearPicker"),
+			oYearRangePicker = this.getAggregation("yearRangePicker"),
+			oMonth, i;
+
+		// remove Tabindex from day, month, year - to break cycle
+		for (i = 0; i < aMonths.length; i++) {
+			oMonth = aMonths[i];
+			jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+		}
+		if (!this._getSucessorsPickerPopup()) {
+			if (oMonthPicker.getDomRef()) {
+				jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+			}
+			if (oYearPicker.getDomRef()) {
+				jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+			}
+			if (oYearRangePicker.getDomRef()) {
+				jQuery(oYearRangePicker._oItemNavigation.getItemDomRefs()[oYearRangePicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+			}
+		}
+	};
+
+	Calendar.prototype._moveFocusToCalContent = function() {
+		var oYearPicker = this.getAggregation("yearPicker"),
+			oMonthPicker = this._getMonthPicker(),
+			aMonths = this.getAggregation("month"),
+			oMonth, oMonthDate,
+			oFocusedDate, i;
+
+		switch (this._iMode) {
 			case 0: // day picker
 				oFocusedDate = this._getFocusedDate();
-				for (var i = 0; i < aMonths.length; i++) {
-					var oMonth = aMonths[i];
-					var oMonthDate = CalendarDate.fromLocalJSDate(oMonth.getDate(), this.getPrimaryCalendarType());
+				for (i = 0; i < aMonths.length; i++) {
+					oMonth = aMonths[i];
+					oMonthDate = CalendarDate.fromLocalJSDate(oMonth.getDate(), this.getPrimaryCalendarType());
 					if (oFocusedDate.isSame(oMonthDate)) {
 						oMonth._oItemNavigation.focusItem(oMonth._oItemNavigation.getFocusedIndex());
 					} else {
@@ -1239,28 +1280,16 @@ sap.ui.define([
 
 			case 1: // month picker
 				if (!this._getSucessorsPickerPopup()) {
-					var oMonthPicker = this.getAggregation("monthPicker");
 					oMonthPicker._oItemNavigation.focusItem(oMonthPicker._oItemNavigation.getFocusedIndex());
 				}
 				break;
 
 			case 2: // year picker
 				if (!this._getSucessorsPickerPopup()) {
-					var oYearPicker = this.getAggregation("yearPicker");
 					oYearPicker._oItemNavigation.focusItem(oYearPicker._oItemNavigation.getFocusedIndex());
 				}
 				break;
 				// no default
-			}
-
-			oEvent.preventDefault();
-		} else if (oEvent.target.id == oHeader.getId() + "-B2") {
-			var oDomRefB1 = oHeader.getDomRef("B1");
-			if (oDomRefB1) {
-				oDomRefB1.focus();
-			}
-
-			oEvent.preventDefault();
 		}
 	};
 
@@ -1268,26 +1297,11 @@ sap.ui.define([
 
 		if (oEvent.target.id == this.getId() + "-end") {
 			// focus via tab+shift (otherwise not possible to go to this element)
-			var aMonths = this.getAggregation("month");
-
 			this._focusOnShiftTab();
 
 			if (!this._bPoupupMode) {
 				// remove Tabindex from day, month, year - to break cycle
-				for (var i = 0; i < aMonths.length; i++) {
-					var oMonth = aMonths[i];
-					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-				}
-				if (!this._getSucessorsPickerPopup()) {
-					var oMonthPicker = this.getAggregation("monthPicker");
-					var oYearPicker = this.getAggregation("yearPicker");
-					if (oMonthPicker.getDomRef()) {
-						jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-					if (oYearPicker.getDomRef()) {
-						jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-					}
-				}
+				this._clearTabindex0();
 			}
 		}
 
@@ -1297,11 +1311,13 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._focusOnShiftTab = function() {
-		var oHeader = this.getAggregation("header");
+		var oHeader = this.getAggregation("header"),
+			oDomRefB2 = oHeader.getDomRef("B2");
 
-		var oDomRefB2 = oHeader.getDomRef("B2");
 		if (oDomRefB2) {
 			oDomRefB2.focus();
+		} else {
+			this.focus();
 		}
 	};
 
@@ -1350,8 +1366,18 @@ sap.ui.define([
 	Calendar.prototype.getFocusDomRef = function(){
 
 		// set focus on the day
-		var oMonth = this._oSelectedMonth ? this._oSelectedMonth : this.getAggregation("month")[0];
-		return oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()];
+		var oMonth = this._oSelectedMonth ? this._oSelectedMonth : this.getAggregation("month")[0],
+			oMonthPicker = this._getMonthPicker(),
+			oYearPicker = this._getYearPicker(),
+			oYearRangePicker = this._getYearRangePicker();
+
+		switch (this._iMode) {
+			case 0: return oMonth.getFocusDomRef();
+			case 1: return oMonthPicker.getFocusDomRef();
+			case 2: return oYearPicker.getFocusDomRef();
+			case 3: return oYearRangePicker.getFocusDomRef();
+			default: return;
+		}
 
 	};
 
@@ -1832,7 +1858,7 @@ sap.ui.define([
 		if (this._iMode == 2) {
 			this._hideYearPicker(true);
 		}
-
+		var oMonthPicker = this._getMonthPicker();
 		var oDate = this._getFocusedDate();
 		var oMonthPicker = this.getAggregation("monthPicker");
 
@@ -1852,16 +1878,6 @@ sap.ui.define([
 		if (!bSkipFocus) {
 			oMonthPicker.setMonth(oDate.getMonth());
 			this._setDisabledMonths(oDate.getYear(), oMonthPicker);
-
-			if (this._iMode == 0) {
-				// remove tabindex from month
-				var aMonths = this.getAggregation("month");
-
-				for (var i = 0; i < aMonths.length; i++) {
-					var oMonth = aMonths[i];
-					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
-				}
-			}
 		}
 
 		this._iMode = 1;
@@ -1916,7 +1932,6 @@ sap.ui.define([
 			oRm,
 			$Container,
 			oMonth,
-			aMonths,
 			aDomRefs;
 
 		if (this._iMode == 1) {
@@ -1951,16 +1966,6 @@ sap.ui.define([
 				oYearPicker.$().addClass("sapUiCalYearNoTop");
 			}else {
 				oYearPicker.$().removeClass("sapUiCalYearNoTop");
-			}
-		}
-
-		if (this._iMode == 0) {
-			// remove tabindex from month
-			aMonths = this.getAggregation("month");
-
-			for (var i = 0; i < aMonths.length; i++) {
-				oMonth = aMonths[i];
-				jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
 			}
 		}
 

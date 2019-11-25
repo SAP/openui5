@@ -135,6 +135,10 @@ sap.ui.define([
 
 		_initItemNavigation.call(this);
 	};
+	
+	YearPicker.prototype.getFocusDomRef = function(){
+		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+	};
 
 	YearPicker.prototype.setYear = function(iYear){
 

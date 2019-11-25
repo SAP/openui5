@@ -140,6 +140,10 @@ sap.ui.define([
 
 	};
 
+	MonthPicker.prototype.getFocusDomRef = function(){
+		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+	};
+	
 	/*
 	 * Use rendered locale for stand alone control
 	 * But as Calendar can have an own locale, use this one if used inside Calendar

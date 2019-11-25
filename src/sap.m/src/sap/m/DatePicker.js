@@ -1171,11 +1171,10 @@ sap.ui.define([
 				this._oCalendar.attachSelect(this._handleCalendarSelect, this);
 				this._oCalendar.attachCancel(_cancel, this);
 				this._oCalendar.attachEvent("_renderMonth", _resizeCalendar, this);
-
+				this._oCalendar.setPopupMode(true);
 				this._oPopup._getButtonFooter().setVisible(this.getShowFooter());
-				this._oCalendar._bSkipCancelButtonRendering = true;
-
-				this._oPopup.addContent(this._oCalendar);
+				this._getCalendar()._bSkipCancelButtonRendering = true;
+				this._oPopup.addContent(this._getCalendar());
 
 				if (!this.getDateValue()) {
 					this._oPopup.getBeginButton().setEnabled(false);
@@ -1405,7 +1404,6 @@ sap.ui.define([
 	}
 
 	function _handleOpened(oEvent) {
-		this._oCalendar.focus();
 		this.addStyleClass(InputBase.ICON_PRESSED_CSS_CLASS);
 		this._renderedDays = this._oCalendar.$("-Month0-days").find(".sapUiCalItem").length;
 
@@ -1413,6 +1411,7 @@ sap.ui.define([
 		this.$("inner").attr("aria-expanded", true);
 
 		InstanceManager.addPopoverInstance(this._oPopup);
+		this._getCalendar().focus();
 	}
 
 	function _handleClosed(oEvent) {
