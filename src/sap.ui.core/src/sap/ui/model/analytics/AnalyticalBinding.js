@@ -481,7 +481,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getRootContexts
-	 * @param {map}
+	 * @param {object}
 	 *            mParameters specifying how the top-most aggregation level shall be fetched. Supported parameters are:
 	 * <ul>
 	 * <li>numberOfExpandedLevels: number of child levels that shall be fetched automatically</li>
@@ -565,7 +565,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getNodeContexts
-	 * @param {map}
+	 * @param {object}
 	 *            mParameters specifying the aggregation level for which contexts shall be fetched. Supported parameters are:
 	 * <ul>
 	 * <li>oContext: parent context identifying the requested group of child contexts</li>
@@ -701,7 +701,7 @@ sap.ui.define([
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.hasChildren
 	 * @param {sap.ui.model.Context}
 	 *            oContext the parent context identifying the requested group of child contexts.
-	 * @param {map}
+	 * @param {object}
 	 *            mParameters The only supported parameter is level as the level number of oContext (because the context might occur at multiple levels)
 	 * @return {boolean}
 	 *            true if and only if the contexts in the specified group have further children.
@@ -753,7 +753,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getDimensionDetails
-	 * @return {map}
+	 * @return {object}
 	 *            details for every dimension property addressed by its name. The details object provides these properties: name of the dimension,
 	 * keyPropertyName for the name of the property holding the dimension key, textPropertyName for the name of the property holding the
 	 * text for the dimension, aAttributeName listing all properties holding dimension attributes, grouped as indicator whether or not this
@@ -771,7 +771,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getMeasureDetails
-	 * @return {map}
+	 * @return {object}
 	 *            details for every measure property addressed by its name. The details object provides these properties: name of the measure,
 	 * rawValuePropertyName for the name of the property holding the raw value, unitPropertyName for the name of the property holding the related
 	 * value unit or currency, if any, and analyticalInfo, which contains the binding information for this measure passed from the
@@ -1418,7 +1418,7 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.loadGroups
-	 * @param {map}
+	 * @param {Object<string,array>}
 	 *            mGroupIdRanges specifies index ranges of child contexts to be loaded for multiple groups identified by their ID. A group index range is
 	 *            given by an object consisting of startIndex, length, threshold. For every group ID, the map holds an array of such range objects.
 	 *

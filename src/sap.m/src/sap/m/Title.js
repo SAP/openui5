@@ -238,7 +238,7 @@ sap.ui.define([
 	 * Gets a map of texts which should be hyphenated.
 	 *
 	 * @private
-	 * @returns {map} The texts to be hyphenated.
+	 * @returns {Object<string,string>} The texts to be hyphenated.
 	 */
 	Title.prototype.getTextsToBeHyphenated = function () {
 		var oTitleAssociation = this._getTitle();

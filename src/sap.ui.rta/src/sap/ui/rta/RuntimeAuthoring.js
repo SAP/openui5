@@ -297,7 +297,7 @@ function(
 	 * always the same instances get returned.
 	 *
 	 * @public
-	 * @return {map} Map with plugins
+	 * @return {Object<string,sap.ui.rta.plugin.Plugin>} Map with plugins
 	 */
 	RuntimeAuthoring.prototype.getDefaultPlugins = function() {
 		if (!this._mDefaultPlugins) {

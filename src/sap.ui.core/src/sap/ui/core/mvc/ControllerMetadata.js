@@ -183,7 +183,7 @@ sap.ui.define([
 	/**
 	 * Get all defined methods and their metadata.
 	 *
-	 * @return {map} A map containing all methods (key) and their metadata
+	 * @return {Object<string,object>} A map containing all methods (key) and their metadata
 	 */
 	ControllerMetadata.prototype.getAllMethods = function() {
 		return this._mMethods;
@@ -237,7 +237,7 @@ sap.ui.define([
 	/**
 	 * Get configuration for extending lifecycle methods.
 	 *
-	 * @return {map} A map containing the lifecycle configuration metadata
+	 * @return {Object<string,object>} A map containing the lifecycle configuration metadata
 	 * @private
 	 */
 	ControllerMetadata.prototype.getLifecycleConfiguration = function() {

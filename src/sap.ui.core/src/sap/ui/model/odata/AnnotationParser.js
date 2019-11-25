@@ -84,8 +84,8 @@ var AnnotationParser =  {
 	/**
 	 * Merges the given parsed annotation map into the given target annotation map.
 	 *
-	 * @param {map} mTargetAnnotations The target annotation map into which the source annotations should be merged
-	 * @param {map} mSourceAnnotations The source annotation map that should be merged into the target annotation map
+	 * @param {Object<string,Object>} mTargetAnnotations The target annotation map into which the source annotations should be merged
+	 * @param {Object<string,Object>} mSourceAnnotations The source annotation map that should be merged into the target annotation map
 	 * @static
 	 * @protected
 	 */

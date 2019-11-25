@@ -605,7 +605,7 @@ sap.ui.define([
 		 * See {@link sap.ui.base.ManagedObjectMetadata#getAllAggregations} method.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
-		 * @return {map} Map of aggregation info objects keyed by aggregation names
+		 * @return {Object<string,object>} Map of aggregation info objects keyed by aggregation names
 		 * @public
 		 */
 		getAllAggregations: function (vControl) {},

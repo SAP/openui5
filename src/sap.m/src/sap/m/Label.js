@@ -240,7 +240,7 @@ function(
 	 * Gets a map of texts which should be hyphenated.
 	 *
 	 * @private
-	 * @returns {map} The texts to be hyphenated.
+	 * @returns {Object<string,string>} The texts to be hyphenated.
 	 */
 	Label.prototype.getTextsToBeHyphenated = function () {
 		return {

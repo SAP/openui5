@@ -43,7 +43,7 @@ sap.ui.define([
 	 * </pre>
 	 * @param {object} node Esprima compatible node of a syntax tree
 	 * @param {string} defaultKey When no object is given but only a literla, then the literal is assumed to be the value of the defaultKey
-	 * @returns {Map<string,Property>} Map of "Property" objects keyed by the property key
+	 * @returns {Object<string,object>} Map of "Property" objects keyed by the property key
 	 */
 	function createPropertyMap(node, defaultKey) {
 

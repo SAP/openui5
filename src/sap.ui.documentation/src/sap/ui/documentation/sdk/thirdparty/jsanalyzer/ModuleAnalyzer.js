@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/base/ManagedObjectMetadata', './ASTUtils', './Doclet', 's
 		 * For a full fledged scope analysis, either the StaticAnalyzer needs to be migrated or an opensource
 		 * component like 'escope' could be integrated.
 		 *
-		 * @type {Map<string,string>}
+		 * @type {Object<string,string>}
 		 * @private
 		 */
 		var scope; // TODO implement scope properly using escope

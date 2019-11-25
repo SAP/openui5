@@ -1722,7 +1722,7 @@ function(
 		 * <li>valid parameter of type <code>boolean</code> - indicator for a valid time</li>
 		 * </ul>
 		 *
-		 * @param {Map} [mArguments] The arguments to pass along with the event
+		 * @param {object} [mArguments] The arguments to pass along with the event
 		 * @return {sap.m.TimePicker} <code>this</code> to allow method chaining
 		 * @protected
 		 * @name sap.m.TimePicker#fireChange

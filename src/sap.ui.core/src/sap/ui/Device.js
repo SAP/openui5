@@ -1496,7 +1496,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {string} sName The name of the range set. The range set must be initialized beforehand ({@link sap.ui.Device.media.initRangeSet})
 	 * @param {int} [iWidth] An optional width, based on which the range should be determined;
 	 *             If <code>iWidth</code> is not a number, the window size will be used.
-	 * @returns {map} Information about the current active interval of the range set. The returned map has the same structure as the argument of the event handlers ({@link sap.ui.Device.media.attachHandler})
+	 * @returns {object} Information about the current active interval of the range set. The returned object has the same structure as the argument of the event handlers ({@link sap.ui.Device.media.attachHandler})
 	 *
 	 * @name sap.ui.Device.media.getCurrentRange
 	 * @function
