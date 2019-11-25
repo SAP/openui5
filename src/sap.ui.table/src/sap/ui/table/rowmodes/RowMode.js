@@ -336,12 +336,15 @@ sap.ui.define([
 			if (this.getTotalRowCountOfTable() === 0 && aContexts.length === 1) {
 				// The context might be a virtual context part of AutoExpandSelect.
 				var oVirtualContext = aContexts[0];
-				var oVirtualRow = createRows(oTable, 1)[0];
+				var oVirtualRow = oTable._getRowClone("Virtual");
+				var oBindingInfo = oTable.getBindingInfo("rows");
+				var sModelName = oBindingInfo ? oBindingInfo.model : undefined;
 
-				oVirtualRow.setBindingContext(oVirtualContext);
+				oVirtualRow.setBindingContext(oVirtualContext, sModelName);
 				oTable.addAggregation("rows", oVirtualRow, true);
 				oTable.removeAggregation("rows", oVirtualRow, true);
-				oVirtualRow.setBindingContext(null);
+				oVirtualRow.setBindingContext(null, sModelName);
+				oVirtualRow.destroy();
 			}
 
 			return; // No need to update rows if the binding is not ready.

@@ -3441,16 +3441,20 @@ sap.ui.define([
 		return !!(oEvent && oEvent.originalEvent && oEvent.originalEvent.touches);
 	};
 
-	Table.prototype._getRowClone = function(iIndex) {
-		var oRowClone = this._aRowClones[iIndex];
+	Table.prototype._getRowClone = function(vIndex) {
+		var bGetRowFromPool = typeof vIndex === "number";
+		var oRowClone = bGetRowFromPool ? this._aRowClones[vIndex] : null;
 
 		if (oRowClone && !oRowClone.bIsDestroyed) {
 			return oRowClone;
 		}
 
 		// No intact row clone at this index exists. Therefore, create a new row clone.
-		oRowClone = new Row(this.getId() + "-rows" + "-row" + iIndex);
-		this._aRowClones[iIndex] = oRowClone;
+		oRowClone = new Row(this.getId() + "-rows" + "-row" + vIndex);
+
+		if (bGetRowFromPool) {
+			this._aRowClones[vIndex] = oRowClone;
+		}
 
 		// Add cells to the row clone.
 		var aColumns = this.getColumns();
