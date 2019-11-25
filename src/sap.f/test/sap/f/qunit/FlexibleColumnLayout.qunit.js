@@ -298,30 +298,64 @@ function (
 		this.clock.restore();
 	});
 
-	QUnit.test("Resizing the control triggers a layout change", function (assert) {
-		this.clock = sinon.useFakeTimers();
+	QUnit.test("Resizing the control triggers a layout change - phone", function (assert) {
+		var fnDone = assert.async(),
+			$qunitFixture = $("#" + sQUnitFixture),
+			iInitialWidth = $qunitFixture.width();
+
+		assert.expect(3);
 
 		this.oFCL = oFactory.createFCL({
 			layout: LT.ThreeColumnsMidExpanded
 		});
 
-		$("#" + sQUnitFixture).width(TABLET_SIZE);
-		this.clock.tick(ANIMATION_WAIT_TIME);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
+		$qunitFixture.width(PHONE_SIZE);
 
-		$("#" + sQUnitFixture).width(PHONE_SIZE);
-		this.clock.tick(ANIMATION_WAIT_TIME);
-		assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+		setTimeout(function () {
+			assertColumnsVisibility(assert, this.oFCL, 0, 0, 1);
+			$qunitFixture.width(iInitialWidth);
+			fnDone();
+		}.bind(this), ANIMATION_WAIT_TIME);
+	});
 
-		$("#" + sQUnitFixture).width(TABLET_SIZE);
-		this.clock.tick(ANIMATION_WAIT_TIME);
-		assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
+	QUnit.test("Resizing the control triggers a layout change - tablet", function (assert) {
+		var fnDone = assert.async(),
+			$qunitFixture = $("#" + sQUnitFixture),
+			iInitialWidth = $qunitFixture.width();
+
+		assert.expect(3);
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded
+		});
+
+		$qunitFixture.width(TABLET_SIZE);
+
+		setTimeout(function () {
+			assertColumnsVisibility(assert, this.oFCL, 0, 1, 1);
+			$qunitFixture.width(iInitialWidth);
+			fnDone();
+		}.bind(this), ANIMATION_WAIT_TIME);
+	});
+
+	QUnit.test("Resizing the control triggers a layout change - desktop", function (assert) {
+		var fnDone = assert.async(),
+			$qunitFixture = $("#" + sQUnitFixture),
+			iInitialWidth = $qunitFixture.width();
+
+		assert.expect(3);
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.ThreeColumnsMidExpanded
+		});
 
 		$("#" + sQUnitFixture).width(DESKTOP_SIZE);
-		this.clock.tick(ANIMATION_WAIT_TIME);
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
 
-		this.clock.restore();
+		setTimeout(function () {
+			assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
+			$qunitFixture.width(iInitialWidth);
+			fnDone();
+		}.bind(this), ANIMATION_WAIT_TIME);
 	});
 
 	QUnit.test("stateChange event is fired on the first load", function (assert) {
@@ -922,30 +956,27 @@ function (
 
 	QUnit.test("Conceal effect layout changes", function(assert) {
 		//arrange
-		var $endColumn = this.oFCL._$columns["end"];
-		this.clock = sinon.useFakeTimers();
+		var $endColumn = this.oFCL._$columns["end"],
+			fnDone = assert.async();
+
+		assert.expect(8);
 
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
-		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
-
-		//act
-		this.oFCL.getAggregation("_midColumnForwardArrow").firePress();
-
-		//assert
 
 		//the animation hasn't been executed so the three columns are visible
 		assertColumnsVisibility(assert, this.oFCL, 1, 1, 1);
 		assert.ok($endColumn.hasClass("sapFFCLPinnedColumn"),
 			"End column should have the 'sapFFCLPinnedColumn' class applied.");
 
-		//since the last column is concealed we must wait for all animations to end.
-		this.clock.tick(COLUMN_RESIZING_ANIMATION_DURATION);
+		this.oFCL.getAggregation("_midColumnForwardArrow").firePress();
+		setTimeout(function() {
+			//assert
+			assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
+			assert.notOk($endColumn.hasClass("sapFFCLPinnedColumn"),
+				"End column should not have the 'sapFFCLPinnedColumn' class applied.");
 
-		assertColumnsVisibility(assert, this.oFCL, 1, 1, 0); // End column is gone
-		assert.notOk($endColumn.hasClass("sapFFCLPinnedColumn"),
-			"End column should not have the 'sapFFCLPinnedColumn' class applied.");
-
-		this.clock.restore();
+			fnDone();
+		}.bind(this), COLUMN_RESIZING_ANIMATION_DURATION);
 	});
 
 	//BCP: 1970178100
@@ -1132,6 +1163,41 @@ function (
 		afterEach: function () {
 			this.oFCL.destroy();
 		}
+	});
+
+	QUnit.test("Width caching", function (assert) {
+		// setup
+		var iNewWidth = "600",
+			iCurrentWidth;
+
+		this.oFCL = new FlexibleColumnLayout();
+
+		// assert
+		assert.strictEqual(this.oFCL._getControlWidth(), 0, "Initial width before rendering is 0px");
+
+		// act
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		// assert
+		iCurrentWidth = this.oFCL._getControlWidth();
+		assert.ok(iCurrentWidth > 0, "Width is > 0px after rendering");
+
+		// act
+		this.oFCL._onResize({
+			oldSize: {
+				 width: iCurrentWidth
+				},
+			size: {
+				width: iNewWidth
+			}});
+
+		// assert
+		assert.strictEqual(this.oFCL._getControlWidth(), iNewWidth, "After resizing the new width is correct");
+		assert.ok(iCurrentWidth !== iNewWidth, "The width has been changed");
+
+		// clean-up
+		this.oFCL.destroy();
 	});
 
 	QUnit.test("_onNavContainerRendered", function (assert) {
