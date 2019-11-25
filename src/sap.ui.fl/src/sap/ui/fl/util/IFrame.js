@@ -79,9 +79,9 @@ sap.ui.define([
 				 * Defines the <code>IFrame</code> height.
 				 */
 				height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "100%"}
-			}
+			},
 
-			// designtime: "sap/ui/fl/util/IFrame.designtime"
+			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"
 		},
 
 		init: function () {

@@ -385,6 +385,17 @@ sap.ui.define(function () {
 			},
 
 			// ChangeHandler tests:
+			"changeHandler/AddIFrame": {
+				group: "ChangeHandler",
+				coverage: {
+					only: ["sap/ui/fl/changeHandler/AddIFrame"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
+					}
+				}
+			},
 			"changeHandler/AddXML": {
 				group: "ChangeHandler",
 				coverage: {
