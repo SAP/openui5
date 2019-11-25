@@ -195,8 +195,8 @@ sap.ui.define([
 
 
 		// Assert
-		assert.ok(aContent[0].$().hasClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
-		assert.ok(aContent[aContent.length - 1].$().hasClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+		assert.ok(aContent[0].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+		assert.ok(aContent[aContent.length - 1].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
 	});
 
 	QUnit.test("Mark first/last visible child when there are not visible children", function (assert) {
@@ -221,17 +221,17 @@ sap.ui.define([
 					oToolbar.removeEventDelegate(oDelegate);
 
 					iControlsWithFirstChildClass = aContent.filter(function (oElement) {
-						return oElement.$().hasClass("sapMBarFirstVisibleChild");
+						return oElement.hasStyleClass("sapMBarFirstVisibleChild");
 					}).length;
 					iControlsWithLastChildClass = aContent.filter(function (oElement) {
-						return oElement.$().hasClass("sapMBarLastVisibleChild");
+						return oElement.hasStyleClass("sapMBarLastVisibleChild");
 					}).length;
 
 					// assert
 					assert.strictEqual(iControlsWithFirstChildClass, 1, "Only 1 child with sapMBarFirstVisibleChild class.");
 					assert.strictEqual(iControlsWithLastChildClass, 1, "Only 1 child with sapMBarLastVisibleChild class.");
-					assert.ok(aContent[1].$().hasClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
-					assert.ok(aContent[aContent.length - 2].$().hasClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
+					assert.ok(aContent[1].hasStyleClass("sapMBarFirstVisibleChild"), "First visible child is marked.");
+					assert.ok(aContent[aContent.length - 2].hasStyleClass("sapMBarLastVisibleChild"), "Last visible child is marked.");
 					done();
 
 					// Clean-up
