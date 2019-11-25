@@ -146,7 +146,8 @@ sap.ui.define([
 					showHeader: {type: "boolean", group: "Appearance", defaultValue: true},
 
 					/**
-					 * Title text appears in the header. This property will be ignored when showHeader is set to false.
+					 * Title text appears in the header. This property will be ignored when <code>showHeader</code> is set to <code>false</code>.
+					 * If you want to show a header in the <code>sap.m.Popover</code>, don't forget to set the {@link #setShowHeader showHeader} property to <code>true</code>.
 					 */
 					title: {type: "string", group: "Appearance", defaultValue: null},
 
@@ -441,7 +442,7 @@ sap.ui.define([
 			this._followOfTolerance = 32;
 
 			// used to judge if enableScrolling needs to be disabled
-			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer", "sap.m.SimpleFixFlex"];
+			this._scrollContentList = ["sap.m.NavContainer", "sap.m.Page", "sap.m.ScrollContainer"];
 
 			// Make this.oPopup call this._adjustPositionAndArrow each time after its position is changed
 			this._fnAdjustPositionAndArrow = jQuery.proxy(this._adjustPositionAndArrow, this);
@@ -603,24 +604,34 @@ sap.ui.define([
 				};
 			}
 
-			// TODO: Nice to refactor scrolling related code - ambiguous
-			if (!this.getHorizontalScrolling() && !this.getVerticalScrolling()) {
-				//  If both properties are false - we do not need scroll enablement for sure
-				this._forceDisableScrolling = true;
-			} else if (!this._bVScrollingEnabled && !this._bHScrollingEnabled && this._hasSingleScrollableContent()) {
-				// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
-				this._forceDisableScrolling = true;
-				Log.info("VerticalScrolling and horizontalScrolling in sap.m.Popover with ID " + this.getId() + " has been disabled because there's scrollable content inside");
-			} else {
-				this._forceDisableScrolling = false;
+			var bHorScrolling = this.getHorizontalScrolling();
+			var bVerScrolling = this.getVerticalScrolling();
+			this._hasSingleScrollableContent();
+			/* Disable scroll enablement cases:
+				-- If both properties are false - we do not need scroll enablement for sure
+				-- When scrolling isn't set manually(to true) and content has scrolling, disable scrolling automatically
+			*/
+			switch (true) {
+				case !bHorScrolling && !bVerScrolling:
+					this._forceDisableScrolling = true;
+					break;
+				case (this.isPropertyInitial("horizontalScrolling")) &&
+				(this.isPropertyInitial("verticalScrolling")) && this._singleScrollableContent:
+					this._forceDisableScrolling = true;
+					break;
+				default:
+					this._forceDisableScrolling = false;
 			}
 
 			if (!this._forceDisableScrolling) {
 				if (!this._oScroller) {
 					this._oScroller = new ScrollEnablement(this, this.getId() + "-scroll", {
-						horizontal: this.getHorizontalScrolling(),
-						vertical: this.getVerticalScrolling()
+						horizontal: bHorScrolling,
+						vertical: bVerScrolling
 					});
+				} else {
+					this._oScroller.setHorizontal(bHorScrolling);
+					this._oScroller.setVertical(bVerScrolling);
 				}
 			}
 
@@ -655,6 +666,14 @@ sap.ui.define([
 					}
 				}
 			}
+
+			if (!this.isPropertyInitial("title")) {
+				this._setHeaderTitle();
+			}
+
+			if (!Device.system.desktop) {
+				this.setResizable(false);
+			}
 		};
 
 		/**
@@ -684,6 +703,8 @@ sap.ui.define([
 					this._marginTopInit = true;
 				}
 			}
+
+			this._repositionOffset();
 		};
 
 		/**
@@ -1246,16 +1267,15 @@ sap.ui.define([
 		 */
 		Popover.prototype._hasSingleScrollableContent = function () {
 			var aContent = this._getAllContent();
-
 			while (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA("sap.ui.core.mvc.View")) {
 				aContent = aContent[0].getContent();
 			}
 
 			if (aContent.length === 1 && aContent[0] instanceof Control && aContent[0].isA(this._scrollContentList)) {
-				return true;
+				this._singleScrollableContent = true;
+			} else {
+				this._singleScrollableContent = false;
 			}
-
-			return false;
 		};
 
 		/**
@@ -2310,6 +2330,24 @@ sap.ui.define([
 		};
 
 		/**
+		 * The setter of the header title property.
+		 * @private
+		 */
+		Popover.prototype._setHeaderTitle = function () {
+			if (this._headerTitle) {
+				this._headerTitle.setText(this.getTitle());
+			} else {
+				this._headerTitle = new Title(this.getId() + "-title", {
+					text: this.getTitle(),
+					level: "H2"
+				});
+
+				this._createInternalHeader();
+				this._internalHeader.addContentMiddle(this._headerTitle);
+			}
+		};
+
+		/**
 		 * Getter for property <code>bounce</code>.
 		 *
 		 * Default value is empty
@@ -2344,32 +2382,6 @@ sap.ui.define([
 				// this variable is internal used for the placement of the popover
 				this._oCalcedPos = sPlacement;
 			}
-			return this;
-		};
-
-		/**
-		 * The setter of the title property.
-		 *
-		 * If you want to show a header in the popover, don't forget to set the
-		 * {@link #setShowHeader showHeader} property to true.
-		 * @param {string} sTitle The title to be set
-		 * @returns {sap.m.Popover} Reference to the control instance for chaining
-		 * @public
-		 */
-		Popover.prototype.setTitle = function (sTitle) {
-			this.setProperty("title", sTitle, true);
-			if (this._headerTitle) {
-				this._headerTitle.setText(sTitle);
-			} else {
-				this._headerTitle = new Title(this.getId() + "-title", {
-					text: this.getTitle(),
-					level: "H2"
-				});
-
-				this._createInternalHeader();
-				this._internalHeader.addContentMiddle(this._headerTitle);
-			}
-
 			return this;
 		};
 
@@ -2442,30 +2454,6 @@ sap.ui.define([
 			return this.setAssociation("rightButton", vButton);
 		};
 
-		Popover.prototype.setShowHeader = function (bValue) {
-			if (bValue === this.getShowHeader() || this.getCustomHeader()) {
-				return this;
-			}
-
-			if (bValue) {
-				//when internal header is created, show header
-				//if not, the header will be created when setting title, beginButton, or endButton
-				//the latest time of the header creation before it's rendered is in the renderer, calling get any header.
-				if (this._internalHeader) {
-					this._internalHeader.$().show();
-				}
-			} else {
-				if (this._internalHeader) {
-					this._internalHeader.$().hide();
-				}
-			}
-
-			//skip the rerendering
-			this.setProperty("showHeader", bValue, true);
-
-			return this;
-		};
-
 		/**
 		 * Setter for property <code>modal</code>.
 		 * This overwrites the default setter of the property <code>modal</code> to avoid rerendering the whole popover control.
@@ -2490,78 +2478,12 @@ sap.ui.define([
 			return this;
 		};
 
-		Popover.prototype.setOffsetX = function (iValue) {
-			this.setProperty("offsetX", iValue, true);
-
-			return this._repositionOffset();
-		};
-
-		Popover.prototype.setOffsetY = function (iValue) {
-			this.setProperty("offsetY", iValue, true);
-
-			return this._repositionOffset();
-		};
-
 		Popover.prototype.setEnableScrolling = function (bValue) {
 			//map deprecated property to new properties
 			this.setHorizontalScrolling(bValue);
 			this.setVerticalScrolling(bValue);
-
-			var oldValue = this.getEnableScrolling();
-			if (oldValue === bValue) {
-				return this;
-			}
-
-			this.setProperty("enableScrolling", bValue, true);
-
+			this.setProperty("enableScrolling", bValue);
 			return this;
-		};
-
-		Popover.prototype.setVerticalScrolling = function (bValue) {
-			// Mark that vertical scrolling is manually set
-			this._bVScrollingEnabled = bValue;
-
-			var oldValue = this.getVerticalScrolling();
-			if (oldValue === bValue) {
-				return this;
-			}
-
-			this.$().toggleClass("sapMPopoverVerScrollDisabled", !bValue);
-			this.setProperty("verticalScrolling", bValue, true);
-
-			if (this._oScroller) {
-				this._oScroller.setVertical(bValue);
-			}
-
-			return this;
-
-		};
-
-		Popover.prototype.setHorizontalScrolling = function (bValue) {
-			// Mark that horizontal scrolling is manually set
-			this._bHScrollingEnabled = bValue;
-
-			var oldValue = this.getHorizontalScrolling();
-			if (oldValue === bValue) {
-				return this;
-			}
-
-			this.$().toggleClass("sapMPopoverHorScrollDisabled", !bValue);
-			this.setProperty("horizontalScrolling", bValue, true);
-
-			if (this._oScroller) {
-				this._oScroller.setHorizontal(bValue);
-			}
-
-			return this;
-		};
-
-		Popover.prototype.setResizable = function (bValue) {
-			if (!Device.system.desktop) {
-				bValue = false;
-			}
-
-			return this.setProperty("resizable", bValue, true);
 		};
 
 		Popover.prototype._setAriaModal = function (bValue) {
