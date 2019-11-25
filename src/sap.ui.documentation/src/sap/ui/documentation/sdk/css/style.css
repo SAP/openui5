@@ -1275,7 +1275,7 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 	min-height: 7rem;
 }
 
-html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITBScrollContainer {
+html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITHScrollContainer {
 	margin-left: 0;
 }
 

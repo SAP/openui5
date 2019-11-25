@@ -85,12 +85,16 @@ body {
 	height: 0.55rem !important;
 }
 
+.customIconTabHeader.sapMITH .sapMITBHead {
+	margin-top: 0;
+}
+
 .customIconTabHeader {
 	border-bottom: none !important;
 	box-shadow: none !important;
 }
 
-.customIconTabHeader .sapMITBScrollContainer, .sapMITBHead {
+.customIconTabHeader .sapMITHScrollContainer, .sapMITBHead {
 	padding: 0 !important;
 	padding-left: 1px !important;
 }

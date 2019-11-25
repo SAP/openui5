@@ -73,20 +73,16 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			var done = assert.async();
 
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oIconTabBar]
+			});
 
-			this.oIconTabBar.addEventDelegate({
-				onAfterRendering : function() {
-					this.oDesignTime = new DesignTime({
-						rootElements : [this.oIconTabBar]
-					});
-					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
-						done();
-					});
-				}.bind(this)
+			this.oDesignTime.attachEventOnce("synced", function() {
+				done();
 			});
 		},
 		afterEach : function() {
