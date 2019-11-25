@@ -1,0 +1,39 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "fdb1083cb70d0a81fd1a5038db0af341defbb381",
+        "type": "FIX",
+        "text": " sap.m.SlideTile Quartz Light and Dark theme adjustments",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "206852b02b632acd48530a7932b45f7afba9de5d",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Unnecessary focus is now removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970611339"
+          }
+        ]
+      }
+    ]
+  }
+}
