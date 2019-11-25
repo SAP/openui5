@@ -93,24 +93,26 @@ sap.ui.define([
 	/**
 	 * Open the Settings Dialog
 	 *
+	 * @param {object|undefined} mSettings - existing iframe settings
 	 * @returns {Promise} empty promise
 	 * @public
 	 */
-	SettingsDialog.prototype.open = function () {
+	SettingsDialog.prototype.open = function (mSettings) {
 		return new Promise(function (resolve) {
 			this._fnResolve = resolve;
-			this._createDialog();
+			this._createDialog(mSettings);
 		}.bind(this));
 	};
 
 	/**
 	 * Create the Settings Dialog
 	 *
+	 * @param {object|undefined} mSettings - existing iframe settings
 	 * @private
 	 */
-	SettingsDialog.prototype._createDialog = function () {
+	SettingsDialog.prototype._createDialog = function (mSettings) {
 		this._oJSONModel = _createJSONModel();
-		this._oController = new SettingsDialogController(this._oJSONModel);
+		this._oController = new SettingsDialogController(this._oJSONModel, mSettings);
 		Fragment.load({
 			name: "sap.ui.rta.view.SettingsDialog",
 			controller: this._oController
