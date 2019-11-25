@@ -1,0 +1,89 @@
+{
+  "1.74.0": {
+    "date": "November 2019",
+    "notes": [
+      {
+        "id": "70dc8088939ec27619cb8535483b32c437e6cf04",
+        "type": "FEATURE",
+        "text": " sap.m.NavContainer: New transition added",
+        "references": []
+      },
+      {
+        "id": "6b57e462d5dfa622161bf02e5db0bda3a0f22623",
+        "type": "FEATURE",
+        "text": " sap.m.Select: Required property implemented",
+        "references": []
+      },
+      {
+        "id": "ee525257bd5a579652bfbbd39b6ea2f29869414c",
+        "type": "FIX",
+        "text": " Case insensitive NumericContent lang map + add en_US lang",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "4bef77d4a68ada207915f511bdd09443d0ff6226",
+        "type": "FIX",
+        "text": " NumericContent max length fallback",
+        "references": [
+          {
+            "type": "BCP"
+          }
+        ]
+      },
+      {
+        "id": "24c235673c3a2ff38a879b65490e38c0da827987",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Required attribute is set correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980434150"
+          }
+        ]
+      },
+      {
+        "id": "42ba13c4ec1d0118b04dee1b57161362c563c6f2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Keyboard handling navigation on days view is now working correctly",
+        "references": []
+      },
+      {
+        "id": "368500eedeeeb43cada62cf7cd7959cb33f8ffd2",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Control layout is now correct in rtl",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970610144"
+          }
+        ]
+      },
+      {
+        "id": "4ec5e49b906db04e142734d83cc59613257a84f3",
+        "type": "FIX",
+        "text": " sap.m.Toolbar/OverflowToolbar: Fixed items adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1970591185"
+          }
+        ]
+      },
+      {
+        "id": "00d37eaeeed7307603be8bbc440578a93769b9ad",
+        "type": "FIX",
+        "text": " sap.m.Wizard: destroySteps causing browsers to crash fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1980440936"
+          }
+        ]
+      }
+    ]
+  }
+}
