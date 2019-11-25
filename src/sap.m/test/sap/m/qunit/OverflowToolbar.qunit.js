@@ -93,7 +93,7 @@ sap.ui.define([
 		];
 	}
 
-	function createOverflowToolbar(oConfig, aContent) {
+	function createOverflowToolbar(oConfig, aContent, bSkipAplyChanges) {
 		var oOverflowTB;
 
 		oConfig = oConfig || {};
@@ -103,7 +103,10 @@ sap.ui.define([
 		oOverflowTB = new OverflowToolbar(oConfig);
 
 		oOverflowTB.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+
+		if (!bSkipAplyChanges) {
+			sap.ui.getCore().applyChanges();
+		}
 
 		return oOverflowTB;
 	}
@@ -468,29 +471,43 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
-	QUnit.test("Buttons with priority AlwaysOverflow should always overflow", function (assert) {
+	QUnit.test("Buttons with priority AlwaysOverflow should always overflow and should never be rendered in the toolbar", function (assert) {
 
 		// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
-		// but two of the button has special priority whith force the buttons to overflow always
+		// but two of the button has special priority which force the buttons to overflow always
 		var aDefaultContent = [
-					getButton('1'),
-					getButton('2'),
-					getButton('3', OverflowToolbarPriority.AlwaysOverflow),
-					getButton('4', OverflowToolbarPriority.AlwaysOverflow),
-					getButton('5')
-				],
-				oOverflowTB = createOverflowToolbar({
-					width: "600px"
-				}, aDefaultContent);
+				getButton('1'),
+				getButton('2'),
+				getButton('3', OverflowToolbarPriority.AlwaysOverflow),
+				getButton('4', OverflowToolbarPriority.AlwaysOverflow),
+				getButton('5')
+			],
+			oOverflowTB = createOverflowToolbar({
+				width: "600px"
+			}, aDefaultContent, true),
+			iVisibleButtons,
+			iOverflowedButtons,
+			fnDoLayout = oOverflowTB._doLayout,
+			oStubDoLayout = this.stub(OverflowToolbar.prototype, "_doLayout", function () {
+				// There should be three buttons visible in the toolbar
+				iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+				assert.strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
+
+				// call the real _doLayout method
+				fnDoLayout.call(oOverflowTB);
+			});
+
+		sap.ui.getCore().applyChanges();
 
 		// Even though there is enough space on the toolbar, two of the buttons always oferflows
-		var iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
-		assert.strictEqual(iOverflowedButtons, 2, "Two of the buttons always oferflows");
+		iOverflowedButtons = oOverflowTB._getPopover().getAssociatedContent().length;
+		assert.strictEqual(iOverflowedButtons, 2, "Two of the buttons always overflow");
 
 		// There should be three buttons visible in the toolbar
-		var iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
+		iVisibleButtons = getVisibleControls(oOverflowTB, "sap.m.Button");
 		assert.strictEqual(iVisibleButtons, 3, "Only three buttons are visible in the toolbar");
 
+		oStubDoLayout.restore();
 		oOverflowTB.destroy();
 	});
 
