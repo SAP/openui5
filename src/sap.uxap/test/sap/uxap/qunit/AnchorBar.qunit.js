@@ -2,12 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	'./ObjectPageLayoutUtils',
 	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/uxap/AnchorBar",
 	"sap/m/Button"
-], function ($, Device, Core, JSONModel, AnchorBar, Button) {
+], function ($, utils, Device, Core, JSONModel, AnchorBar, Button) {
 	"use strict";
 
 	var iRenderingDelay = 2000,
@@ -624,5 +625,45 @@ sap.ui.define([
 
 		assert.strictEqual(this.oAnchorBarButton2.$().attr('tabindex'), '0', "Selected button has tabindex of 0");
 		assert.strictEqual(this.oAnchorBarButton1.$().attr('tabindex'), '-1', "Rest of the button remains with tabindex of -1");
+	});
+
+	QUnit.module("Scrolling", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 15;
+			this.NUMBER_OF_SUB_SECTIONS = 2;
+			this.oObjectPage = utils.helpers.generateObjectPageWithSubSectionContent(utils.oFactory, this.NUMBER_OF_SECTIONS, this.NUMBER_OF_SUB_SECTIONS, true);
+			this.oObjectPage.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("AnchorBar scrolled to section on width change", function (assert) {
+
+		var oPage = this.oObjectPage,
+			done = assert.async(),
+			oSection = oPage.getSections()[14],
+			oAnchorBar,
+			sectionId = oSection.getId(),
+			anchorBarSpy,
+			fnScrollToStub = function(sectionId) {
+				// Assert
+				assert.equal(anchorBarSpy.callCount, 1, "AnchorBar is scrolled");
+				assert.equal(anchorBarSpy.args[0][0], sectionId, "AnchorBar scrolled to correct section");
+
+				// Clean up
+				done();
+			},
+			fnOnDomReady = function() {
+				oAnchorBar = oPage.getAggregation("_anchorBar");
+				anchorBarSpy = sinon.stub(oAnchorBar, "scrollToSection", fnScrollToStub);
+
+				//act
+				oPage.scrollToSection(sectionId, 0, null, true);
+				oPage.getDomRef().style.width = 772	 + "px";
+			};
+
+		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 });
