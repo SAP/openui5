@@ -211,6 +211,10 @@ sap.ui.define([
 		}
 	};
 
+	MonthPicker.prototype.getFocusDomRef = function(){
+		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+	};
+
 	/**
 	 * Sets the control instance which contains the selectedDates
 	 * to the MonthPicker control instance

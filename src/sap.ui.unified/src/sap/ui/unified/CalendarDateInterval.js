@@ -109,6 +109,12 @@ sap.ui.define([
 
 	};
 
+	CalendarDateInterval.prototype.onBeforeRendering = function() {
+		Calendar.prototype.onBeforeRendering.apply(this, arguments);
+
+		this._bPoupupMode = this.getPickerPopup();
+	};
+
 	CalendarDateInterval.prototype._initilizeMonthPicker = function() {
 		var oMonthPicker = this._createMonthPicker();
 		this.setAggregation("monthPicker", oMonthPicker);
@@ -595,12 +601,6 @@ sap.ui.define([
 
 		return this;
 
-	};
-
-	CalendarDateInterval.prototype._shouldFocusB2OnTabNext = function(oEvent){
-		var oHeader = this.getAggregation("header");
-
-		return (!this.getPickerPopup() && oEvent.target.id == oHeader.getId() + "-B1");
 	};
 
 	CalendarDateInterval.prototype._focusOnShiftTab = function() {
