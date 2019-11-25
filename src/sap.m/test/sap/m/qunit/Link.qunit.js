@@ -336,8 +336,7 @@ sap.ui.define([
 		}).placeAt("uiArea1");
 		sap.ui.getCore().applyChanges();
 
-		var $oLink = oLink1.$(),
-			oBrowserStub;
+		var $oLink = oLink1.$();
 
 		// ARIA role
 		assert.notOk($oLink.attr("role"), "Attribute 'role' is redundant on an anchor tag");
@@ -383,22 +382,14 @@ sap.ui.define([
 
 		assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
 
-		oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: false });
 		oLink1.addAriaLabelledBy("id1");
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(),
-			"Property 'aria-labelledby' should contain the link ID for non-IE browsers");
+			"Property 'aria-labelledby' should contain the link ID");
 
 		oLink1.removeAriaLabelledBy("id1");
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
-
-		// No self-reference on IE
-		oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true });
-		oLink1.addAriaLabelledBy("id1");
-		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1", "Link has no self-reference on IE");
-		oBrowserStub.restore();
 
 		oLink1.destroy();
 	});
