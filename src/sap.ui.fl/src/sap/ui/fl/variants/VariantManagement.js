@@ -1344,6 +1344,7 @@ sap.ui.define([
 			this.oManagementCancel = new Button(this.getId() + "-managementcancel", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_CANCEL"),
 				press: function() {
+					this._resumeManagementTableBinding();
 					this.oManagementDialog.close();
 					this._handleManageCancelPressed();
 				}.bind(this)
@@ -1437,19 +1438,15 @@ sap.ui.define([
 
 		var fPress = function(oEvent) {
 			this._handleManageDeletePressed(oEvent.oSource.getBindingContext(this._sModelName).getObject());
+			var oListItem = oEvent.oSource.getParent();
+			if (oListItem) {
+				oListItem.setVisible(false);
+			}
 		}.bind(this);
 
 		var fSelectFav = function(oEvent) {
 			this._handleManageFavoriteChanged(oEvent.oSource, oEvent.oSource.getBindingContext(this._sModelName).getObject());
 		}.bind(this);
-
-// if (oItem.key !== this.getStandardVariantKey()) {
-// if (!oItem.remove) {
-// sTooltip = this._oRb.getText("VARIANT_MANAGEMENT_WRONG_LAYER");
-// } else if (oItem.textReadOnly) {
-// sTooltip = this._oRb.getText("VARIANT_MANAGEMENT_WRONG_LANGUAGE");
-// }
-// }
 
 		if (oItem.rename) {
 			oNameControl = new Input({
@@ -1536,6 +1533,8 @@ sap.ui.define([
 		if (this.oVariantPopOver) {
 			this.oVariantPopOver.close();
 		}
+
+		this._suspendManagementTableBinding();
 
 		this._clearDeletedItems();
 		this.oManagementSave.setEnabled(false);
@@ -1711,7 +1710,26 @@ sap.ui.define([
 
 		this.fireManage();
 
+		this._resumeManagementTableBinding();
 		this.oManagementDialog.close();
+	};
+
+	VariantManagement.prototype._resumeManagementTableBinding = function() {
+		if (this.oManagementTable) {
+			var oListBinding = this.oManagementTable.getBinding("items");
+			if (oListBinding) {
+				oListBinding.resume();
+			}
+		}
+	};
+
+	VariantManagement.prototype._suspendManagementTableBinding = function() {
+		if (this.oManagementTable) {
+			var oListBinding = this.oManagementTable.getBinding("items");
+			if (oListBinding) {
+				oListBinding.suspend();
+			}
+		}
 	};
 
 	VariantManagement.prototype._anyInErrorState = function(oManagementTable) {
@@ -1767,6 +1785,7 @@ sap.ui.define([
 			value1: true
 		});
 	};
+
 
 	VariantManagement.prototype._checkVariantNameConstraints = function(oInputField, oSaveButton, sKey) {
 		if (!oInputField) {
