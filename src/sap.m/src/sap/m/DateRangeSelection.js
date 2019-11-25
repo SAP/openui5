@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/date/UniversalDate',
 	'./DateRangeSelectionRenderer',
+	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/base/assert",
@@ -24,6 +25,7 @@ sap.ui.define([
 		DateFormat,
 		UniversalDate,
 		DateRangeSelectionRenderer,
+		CustomMonthPicker,
 		deepEqual,
 		Log,
 		assert
@@ -178,6 +180,16 @@ sap.ui.define([
 
 		this._bIntervalSelection = true;
 
+	};
+
+	DateRangeSelection.prototype._createPopupContent = function() {
+		DatePicker.prototype._createPopupContent.apply(this, arguments);
+
+		var oCalendar = this._getCalendar();
+
+		if (oCalendar instanceof CustomMonthPicker) {
+			oCalendar._getMonthPicker().setIntervalSelection(true);
+		}
 	};
 
 	DateRangeSelection.prototype.onkeypress = function(oEvent){

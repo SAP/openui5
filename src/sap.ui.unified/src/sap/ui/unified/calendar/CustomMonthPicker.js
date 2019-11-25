@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/unified/Calendar",
+	"sap/ui/unified/calendar/CalendarDate",
 	'sap/ui/unified/CalendarRenderer',
 	"sap/ui/unified/calendar/Header",
 	"sap/ui/unified/DateRange",
@@ -14,6 +15,7 @@ sap.ui.define([
 	function(
 		Renderer,
 		Calendar,
+		CalendarDate,
 		CalendarRenderer,
 		Header,
 		DateRange,
@@ -65,18 +67,20 @@ sap.ui.define([
 	};
 
 	CustomMonthPicker.prototype._selectMonth = function () {
-		var oMonthPicker = this.getAggregation("monthPicker");
-		var oSelectedDate = this.getSelectedDates()[0];
-		var oFocusedDate = this._getFocusedDate();
-
-		oFocusedDate.setMonth(oMonthPicker.getMonth());
+		var oMonthPicker = this.getAggregation("monthPicker"),
+			oSelectedDate = this.getSelectedDates()[0],
+			oFocusedDate = this._getFocusedDate();
 
 		if (!oSelectedDate) {
 			oSelectedDate = new DateRange();
 		}
 
-		oSelectedDate.setStartDate(oFocusedDate.toLocalJSDate());
-		this.addSelectedDate(oSelectedDate);
+		if (!this.getIntervalSelection()) {
+			oFocusedDate.setMonth(oMonthPicker.getMonth());
+
+			oSelectedDate.setStartDate(oFocusedDate.toLocalJSDate());
+			this.addSelectedDate(oSelectedDate);
+		}
 
 		this.fireSelect();
 	};
