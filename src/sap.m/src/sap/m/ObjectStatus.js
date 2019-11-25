@@ -253,7 +253,13 @@ sap.ui.define([
 		}
 
 		return {
-			description: ((this.getTitle() || "") + " " + (this.getText() || "") + " " + (sState !== null ? sState : "") + " " + (this.getTooltip() || "")).trim()
+			description: (
+				(this.getTitle() || "") + " " +
+				(this.getText() || "") + " " +
+				(sState !== null ? sState : "") + " " +
+				(this.getTooltip() || "") + " " +
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS")
+			).trim()
 		};
 	};
 
