@@ -3,7 +3,7 @@
 		xmlns="sap.m">
 	<Page showHeader="false">
 		<content>
-			<Button id="mVBtn" text="Messages" class="sapUiLargeMarginTop sapUiMediumMarginBegin" press="handlePopoverPress"/>
+			<Button id="mVBtn" text="Messages" class="sapUiLargeMarginTop sapUiSmallMarginBegin" press="handlePopoverPress"/>
 		</content>
 	</Page>
 </mvc:View>
