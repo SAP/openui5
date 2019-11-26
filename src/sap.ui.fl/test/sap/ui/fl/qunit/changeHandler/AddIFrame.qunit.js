@@ -226,7 +226,7 @@ sap.ui.define([
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
 			assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 2, "after the addXML there are two children in the horizontal box");
 			var oCreatedControl = oHBoxItemsAggregation.childNodes[1];
-			assert.ok(oCreatedControl.id.toString().match(/test$/), "the created IFrame ends with the expected baseId");
+			assert.ok(oCreatedControl.getAttribute("id").match(/test$/), "the created IFrame ends with the expected baseId");
 			assert.strictEqual(oCreatedControl.getAttribute("url"), sUrl, "the created IFrame has the correct URL");
 		});
 
@@ -237,7 +237,7 @@ sap.ui.define([
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag);
 			assert.strictEqual(oHBoxItemsAggregation.childNodes.length, 2, "after the addXML there are two children in the horizontal box");
 			var oCreatedControl = oHBoxItemsAggregation.childNodes[0];
-			assert.ok(oCreatedControl.id.toString().match(/test$/), "the created IFrame ends with the expected baseId");
+			assert.ok(oCreatedControl.getAttribute("id").match(/test$/), "the created IFrame ends with the expected baseId");
 			assert.strictEqual(oCreatedControl.getAttribute("url"), sUrl, "the created IFrame has the correct URL");
 		});
 
