@@ -288,6 +288,20 @@ sap.ui.define([
 			}
 		};
 
+		/**
+		 * Prevents highlighting call from the Suggestion Popover.
+		 * TODO: Delete that once the Suggestion Popover's filtering is adopted
+		 *
+		 * @private
+		 */
+		ComboBox.prototype._createSuggestionsPopover = function () {
+			var result = ComboBoxBase.prototype._createSuggestionsPopover.call(this, arguments);
+
+			result._bEnableHighlighting = false;
+
+			return result;
+		};
+
 		function fnSelectTextIfFocused(iStart, iEnd) {
 			if (document.activeElement === this.getFocusDomRef()) {
 				this.selectText(iStart, iEnd);
