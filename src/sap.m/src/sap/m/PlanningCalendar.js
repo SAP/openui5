@@ -1643,6 +1643,10 @@ sap.ui.define([
 			oStart.setDate(oStart.getDate() + 1);
 		}
 
+		if ((this.getMaxDate() && this.getMaxDate() < oDate) || (this.getMinDate() && this.getMinDate() > oDate)){
+			return;
+		}
+
 		if (oRowInstance &&
 			!(oRowInstance.getMode && oRowInstance.getMode() < 2 && !bOtherMonth)) {
 			this.setStartDate(oStart);
