@@ -1,0 +1,42 @@
+{
+  "sap.app": {
+    "type": "card"
+  },
+  "sap.card": {
+    "type": "List",
+    "header": {
+      "data": {
+        "request": {
+          "url": "./cardcontent/delayedLoading/listData2.json"
+        },
+        "path": "/header"
+      },
+      "title": "Error Test Case ",
+      "subTitle": "Unable to fetch data",
+      "icon": {
+        "src": "{src}"
+      }
+
+    },
+    "content": {
+      "data": {
+        "request": {
+          "url": "./cardcontent/delayedLoading/listDat2.json"
+        },
+        "path": "/content"
+      },
+      "item": {
+        "title": {
+          "label": "{{title_label}}",
+          "value": "{Name}"
+        },
+        "icon": {
+          "src": "{icon}"
+        },
+        "description": {
+          "value": "{Name}"
+        }
+      }
+    }
+  }
+}

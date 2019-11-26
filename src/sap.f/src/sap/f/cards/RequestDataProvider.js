@@ -96,7 +96,8 @@ sap.ui.define([
 
 			if (this._isValidRequest(oRequest)) {
 				jQuery.ajax(oRequest).done(function (oData) {
-					resolve(oData);
+						resolve(oData);
+
 				}).fail(function (jqXHR, sTextStatus, sError) {
 					reject(sError);
 				});

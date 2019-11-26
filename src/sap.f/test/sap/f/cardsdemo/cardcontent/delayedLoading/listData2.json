@@ -2,9 +2,8 @@
 	"header": {
 		"title": "Title",
 		"subTitle": "Subtitle",
-		"mainIndicator": {
-			"number": 55
-		}
+        "count": 15,
+        "src": "sap-icon://newspaper"
 	},
 	"content": [{
 			"Name": "Notebook Basic 15",

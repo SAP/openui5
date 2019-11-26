@@ -30,22 +30,22 @@
 		"type": "Analytical",
 		"header": {
 			"type": "Numeric",
-			"data": {
-				"json": {
-					"number": "65.34",
-					"unit": "K",
-					"trend": "Down",
-					"state": "Error",
-					"target": {
-						"number": 100,
-						"unit": "K"
-					},
-					"deviation": {
-						"number": 34.7
-					},
-					"details": "Q1, 2018"
-				}
-			},
+		  "data": {
+			"json": {
+			  "number": "65.34",
+			  "unit": "K",
+			  "trend": "Down",
+			  "state": "Error",
+			  "target": {
+				"number": 100,
+				"unit": "K"
+			  },
+			  "deviation": {
+				"number": 34.7
+			  },
+			  "details": "Q1, 2018"
+			}
+		  },
 			"title": "Project Cloud Transformation",
 			"subTitle": "Revenue",
 			"unitOfMeasurement": "EUR",
@@ -99,10 +99,10 @@
 					"dimensions": {
 						"weekLabel": "Weeks"
 					},
-				    "measures": {
-				        "revenueLabel": "Revenue",
-				        "costLabel": "Costs"
-				    },
+					"measures": {
+						"revenueLabel": "Revenue",
+						"costLabel": "Costs"
+					},
 					"legend": {
 						"visible": true,
 						"position": "Bottom",

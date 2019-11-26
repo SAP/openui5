@@ -13,7 +13,7 @@
 			"icon": {
 				"src": "{photo}"
 			},
-			"title": "{firstName} {lastName}",
+			"title": "Object Card",
 			"subTitle": "{position}"
 		},
 		"content": {

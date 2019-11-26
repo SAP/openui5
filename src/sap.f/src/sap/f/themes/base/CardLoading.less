@@ -1,0 +1,158 @@
+.sapFCard {
+  .sapFCardHeader.sapFCardHeaderLoading {
+
+	.sapFCardHeaderImage.sapFCardHeaderItemBinded {
+	  height: 3rem;
+	  width: 3rem;
+	  margin-right: 0.75rem;
+	  //hide the fallback icon
+	}
+	.sapFCardHeaderText .sapFCardHeaderTextFirstLine {
+
+	  .sapFCardTitle.sapFCardHeaderItemBinded {
+		flex: 1 0;
+		position: relative;
+	  }
+
+	  .sapFCardStatus.sapFCardHeaderItemBinded {
+		position: relative;
+		display: flex;
+		justify-content: flex-end;
+		align-self: center;
+		min-width: 1.5rem;
+		min-height: 1rem;
+	  }
+
+	}
+
+	.sapFCardHeaderItemBinded::after {
+	  content: "";
+	  animation-duration: 2.5s;
+	  animation-fill-mode: forwards;
+	  animation-iteration-count: infinite;
+	  animation-name: placeHolderShimmer;
+	  animation-timing-function: linear;
+	  background-color:#e0e0e0 !important;
+	  background-image: linear-gradient(to right, #e0e0e0 0%, #e0e0e0 35%, #d3d3d3 50%, #e0e0e0 65%, #e0e0e0 100%);
+	  background-repeat: no-repeat;
+	  background-size: 800px 144px;
+	  position: absolute;
+	  width: 100%;
+	  height: 100%;
+	  border-radius: 0.25rem;
+	  top: 0;
+	  left: 0;
+	}
+  }
+
+  .sapFCardNumericHeader.sapFCardHeaderLoading {
+	.sapFCardHeaderMainIndicator.sapFCardHeaderItemBinded {
+	  min-width: 5rem;
+	}
+
+	.sapFCardHeaderSideIndicator.sapFCardHeaderItemBinded {
+	  flex: 1 0;
+	  min-height: 2rem;
+	}
+
+	.sapFCardHeaderDetails.sapFCardHeaderItemBinded {
+	  flex: 1 0;
+	  min-height: 0.5rem;
+	  width: 100%;
+	}
+  }
+
+
+  .sapFCardContent  {
+
+	.sapFCardContentGenericPlaceholder {
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  width: 100%;
+	  height: 100%;
+
+	  .sapFCardLoadingShimmer {
+		width: 144px;
+		height: 144px;
+	  }
+
+	  .sapFCardSVG {
+		fill: @sapUiTileBackground;
+	  }
+	}
+	.sapFCardContentShimmerPlaceholderItem {
+	  height: 5rem;
+	  padding: 0 1rem 0 1rem;
+	  box-sizing: border-box;
+	  display: flex;
+	  position: relative;
+	  align-items: center;
+	  flex: 1 1 auto;
+
+	  .sapFCardContentShimmerPlaceholderImg {
+		margin: 0rem 0.75rem 0rem 0rem;
+		height: 2rem;
+		width: 2rem;
+		display: inline-block;
+	  }
+
+	  .sapFCardContentShimmerPlaceholderRows {
+		flex-grow: 1;
+
+		.sapFCardContentShimmerPlaceholderItemText {
+		  height: 0.75rem;
+		  margin-bottom: 0.5rem;
+		  margin-top: 0.5rem;
+		}
+	  }
+	}
+
+	.sapFCardContentShimmerPlaceholderItem.sapFCardContentShimmerPlaceholderNoIcon {
+	  height: 2.75rem;
+	}
+
+	.sapFCardLoadingShimmer {
+	  animation-duration: 2.5s;
+	  animation-fill-mode: forwards;
+	  animation-iteration-count: infinite;
+	  animation-name: placeHolderShimmer;
+	  animation-timing-function: linear;
+	  background-color:#e0e0e0 !important;
+	  background-image: linear-gradient(to right, #e0e0e0 0%, #e0e0e0 35%, #d3d3d3 50%, #e0e0e0 65%, #e0e0e0 100%);
+	  background-repeat: no-repeat;
+	  background-size: 800px 144px;
+	  position: relative;
+	  border-radius: 0.25rem;
+	}
+
+  }
+
+  @keyframes placeHolderShimmer{
+	0% {
+	  background-position: -468px 0;
+	}
+	100% {
+	  background-position: 468px 0;
+	}
+  }
+}
+
+.sapUiSizeCompact {
+
+  .sapFCard {
+
+	.sapFCardContent {
+
+	  .sapFCardContentShimmerPlaceholderItem {
+		height: 5rem;
+	  }
+
+	  .sapFCardContentShimmerPlaceholderItem.sapFCardContentShimmerPlaceholderNoIcon {
+		height: 2rem;
+	  }
+	}
+
+  }
+
+}

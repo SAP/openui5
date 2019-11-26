@@ -5,7 +5,6 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
-			"type": "Numeric",
 			"data": {
 				"request": {
 					"url": "./cardcontent/delayedLoading/listData1.json"
@@ -14,26 +13,25 @@
 			},
 			"title": "{title}",
 			"subTitle": "{subTitle}",
-			"mainIndicator": {
-				"number": "{mainIndicator/number}"
+			"icon": {
+			  "src": "sap-icon://newspaper"
 			}
 		},
 		"content": {
+          "maxItems": 3,
 			"data": {
 				"request": {
 					"url": "./cardcontent/delayedLoading/listData1.json"
 				},
 				"path": "/content"
 			},
-			"maxItems": 3,
 			"item": {
 				"title": {
 					"label": "{{title_label}}",
 					"value": "{Name}"
 				},
-				"description": {
-					"label": "{{description_label}}",
-					"value": "{Description}"
+				"icon": {
+					"src": "{icon}"
 				},
 				"highlight": "{state}",
 				"info": {

@@ -82,8 +82,11 @@
 	border-bottom: @_sap_f_Card_HeaderBorderBottom;
 	padding: @_sap_f_Card_ContentPadding;
 	display: flex;
-	align-items: flex-start;
 	outline: none;
+
+	.sapFCardHeaderImage {
+	  position: relative;
+	}
 
 	.sapFCardIcon.sapFAvatar:not(.sapFAvatarImage ):not(.sapFAvatarInitials ){
 		background-color: transparent;
@@ -105,6 +108,10 @@
 
 	.sapFCardHeaderText {
 		flex: 1 1 auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		//fixes bug with flex
 		min-width: 0;
 		width: 100%;
 
@@ -120,17 +127,19 @@
 			font-weight: @sapUiFontHeaderWeight;
 			color: @sapUiTileTitleTextColor;
 			min-height: 1rem;
+			position: relative;
 		}
 	}
 
-	.sapFCardSubtitle {
-		margin: 0.5rem 0 0 0;
-		font-family: @sapUiFontFamily;
-		font-size: @sapMFontMediumSize;
-		font-weight: normal;
-		color: @sapUiTileTextColor;
-		min-height: 1rem;
-	}
+  .sapFCardSubtitle {
+	position: relative;
+	margin: 0.5rem 0 0 0;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiTileTextColor;
+	min-height: 1rem;
+  }
 
 	.sapFCardStatus {
 		font-family: @sapUiFontFamily;
@@ -172,8 +181,8 @@
 	}
 
 	.sapFCardSubtitle {
-		display: flex;
-		align-items: flex-end;
+	  display: flex;
+	  align-items: flex-end;
 
 		.sapFCardHeaderUnitOfMeasurement {
 			margin-left: 0.25rem;
@@ -190,12 +199,14 @@
 		margin-top: 0.25rem;
 		font-size: @sapMFontSmallSize;
 		color: @sapUiTileTextColor;
+		position: relative;
 	}
 
 	.sapFCardHeaderIndicators {
 		margin-top: 0.25rem;
 		display: flex;
 		justify-content: flex-start;
+		align-items: center;
 
 		.sapFCardHeaderMainIndicator {
 			flex-shrink: 0;
@@ -220,6 +231,7 @@
 			padding: 0.5rem 0;
 			.sapFCardHeaderSideIndicator {
 				margin-right: 1rem;
+				position: relative;
 			}
 			.sapFCardHeaderSideIndicator:last-child {
 				margin-right: 0;
@@ -237,11 +249,13 @@
 		font-size: @sapMFontSmallSize;
 		color: @sapUiTileTextColor;
 		padding-bottom: 0.25rem;
+		position: relative;
 	}
 	.sapFCardHeaderSINumber,
 	.sapFCardHeaderSINumber .sapMText {
 		font-size: @sapMFontSmallSize;
 		color: @sapUiTileTitleTextColor;
+		position: relative;
 	}
 }
 
@@ -253,7 +267,8 @@
 	position: relative;
 	display: flex;
 
-	.sapFCardTemporaryContent,
+	.sapFCardContentListPlaceholder,
+	.sapFCardErrorContent,
 	.sapFCardBaseContent {
 		max-width: 100%;
 		flex: 1;
