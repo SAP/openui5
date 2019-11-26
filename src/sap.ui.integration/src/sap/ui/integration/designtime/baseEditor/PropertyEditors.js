@@ -99,10 +99,10 @@ sap.ui.define([
 				 */
 				propertyEditorsChange: {
 					parameters: {
-						previousPropertyEditor: {
+						previousPropertyEditors: {
 							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
 						},
-						propertyEditor: {
+						propertyEditors: {
 							type: "sap.ui.integration.designtime.baseEditor.propertyEditor.BasePropertyEditor"
 						}
 					}
@@ -159,11 +159,25 @@ sap.ui.define([
 				this._initPropertyEditors();
 			});
 
-			this.attachConfigChange(function () {
-				if (this._sCreatedBy) {
+			this.attachConfigChange(function (oEvent) {
+				var aPreviousConfig = oEvent.getParameter("previousConfig");
+				var aConfig = oEvent.getParameter("config");
+
+				if (
+					this._fnCancelInit
+					|| this._sCreatedBy === CREATED_BY_TAGS
+					|| !Array.isArray(aPreviousConfig)
+					|| !Array.isArray(aConfig)
+					|| aPreviousConfig.length !== aConfig.length
+				) {
 					this._removePropertyEditors();
+					this._initPropertyEditors();
+				} else if (this._sCreatedBy) {
+					var aPropertyEditors = this.getAggregation("propertyEditors");
+					aConfig.forEach(function (mConfig, iIndex) {
+						aPropertyEditors[iIndex].setConfig(mConfig);
+					});
 				}
-				this._initPropertyEditors();
 			});
 
 			this.attachTagsChange(function () {
@@ -268,7 +282,8 @@ sap.ui.define([
 
 			this._sCreatedBy = null;
 			this.firePropertyEditorsChange({
-				propertyEditor: null
+				previousPropertyEditors: aPropertyEditors,
+				propertyEditors: []
 			});
 		}
 	};
@@ -320,11 +335,13 @@ sap.ui.define([
 			this._fnCancelInit = mPromise.cancel;
 
 			mPromise.promise.then(function (aPropertyEditors) {
+				var aPreviousPropertyEditors = (this.getAggregation("propertyEditors") || []).slice();
 				aPropertyEditors.forEach(function (oPropertyEditor) {
 					this.addAggregation("propertyEditors", oPropertyEditor);
 				}, this);
 				this.firePropertyEditorsChange({
-					propertyEditors: aPropertyEditors
+					previousPropertyEditors: aPreviousPropertyEditors,
+					propertyEditors: (this.getAggregation("propertyEditors") || []).slice()
 				});
 			}.bind(this));
 		}

@@ -9,7 +9,7 @@ sap.ui.define([
 		"use strict";
 
 		QUnit.module("Given BaseEditor is created", {
-			beforeEach: function (assert) {
+			beforeEach: function () {
 				this.oBaseEditor = new BaseEditor({
 					json: {
 						context: {
@@ -41,7 +41,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
+			this.oBaseEditor.attachPropertyEditorsReady(function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync().length, 1, "Then 1 property editor is created");
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[0].getBindingContext().getObject().value, "value1", "Then value of the property is correctly retrieved from the context object");
 				done();
@@ -66,7 +66,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
+			this.oBaseEditor.attachPropertyEditorsReady(function () {
 				this.oBaseEditor.attachJsonChange(function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("json").context.prop1, "test", "Then the value is updated in JSON");
 					assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getConfig().value, "test", "Then the value is updated in another editor interested in the same path");
@@ -99,7 +99,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
+			this.oBaseEditor.attachPropertyEditorsReady(function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().val, "value1", "Then binding against property model works properly");
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync()[1].getBindingContext().getObject().i18n, "prop", "Then binding against other models is untouched");
 				done();
@@ -136,7 +136,7 @@ sap.ui.define([
 					"anotherString": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
 			});
-			this.oBaseEditor.attachPropertyEditorsReady(function(oEvent) {
+			this.oBaseEditor.attachPropertyEditorsReady(function () {
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop2").getConfig().path, "prop2", "Then property editor getter works with property name");
 
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync("commonTag").length, 2, "Then property editor getter works with one tag (1/3)");
@@ -145,60 +145,6 @@ sap.ui.define([
 
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync(["commonTag", "tag1"]).length, 1, "Then property editor getter works with multiple tags (1/2)");
 				assert.strictEqual(this.oBaseEditor.getPropertyEditorsSync(["commonTag", "tag1"])[0].getConfig().path, "prop1", "Then property editor getter works with multiple tags (2/2)");
-				done();
-			}.bind(this));
-		});
-
-		QUnit.test("When config contains arrays", function (assert) {
-			var done = assert.async();
-			var aArray = [
-				{
-					a: "test1",
-					b: "Default"
-				},
-				{
-					a: "test2",
-					b: "Bold"
-				}
-			];
-			this.oBaseEditor.setJson({
-				context: {
-					prop: aArray
-				},
-				fooPath: {
-					foo1: "bar1"
-				}
-			});
-			this.oBaseEditor.setConfig({
-				context: "context",
-				properties: {
-					"prop": {
-						path: "prop",
-						type: "array",
-						template: {
-							a: {
-								path: "a",
-								type: "string"
-							},
-							b: {
-								path: "b",
-								type: "enum",
-								"enum": ["Default", "Bold"]
-							}
-						}
-					}
-				},
-				propertyEditors: {
-					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
-					"array": "sap/ui/integration/designtime/baseEditor/propertyEditor/arrayEditor/ArrayEditor",
-					"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor"
-				}
-			});
-			this.oBaseEditor.attachPropertyEditorsReady(function() {
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items.length, 2, "Then configuration for array items is created from template");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items[0].properties[0].path, "prop/0/a", "Then path index in array item is resolved");
-				assert.strictEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().items[0].properties[1].path, "prop/0/b", "Then path index in array item is resolved");
-				assert.deepEqual(this.oBaseEditor.getPropertyEditorSync("prop").getConfig().value, aArray, "Then array value is set correctly");
 				done();
 			}.bind(this));
 		});
