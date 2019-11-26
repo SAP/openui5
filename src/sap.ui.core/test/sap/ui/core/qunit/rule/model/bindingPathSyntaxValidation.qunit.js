@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(JSONModel, Button, testRule) {
 	"use strict";
 
-	QUnit.module("sap.ui.core bindingPathSyntaxValidation rule tests", {
+	QUnit.module("sap.ui.core.rules.Model.support", {
 
 		beforeEach: function() {
 
