@@ -481,20 +481,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oControl = new ObjectStatus({text: "Text", title: "Title", tooltip: "Tooltip"});
+		var oControl = new ObjectStatus({text: "Text", title: "Title", tooltip: "Tooltip"}),
+			sCustomControlName = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS");
+
 		assert.ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, undefined, "AriaRole");
 		assert.strictEqual(oInfo.type, undefined, "Type");
-		assert.strictEqual(oInfo.description, "Title Text  Tooltip", "Description");
+		assert.strictEqual(oInfo.description, "Title Text  Tooltip " + sCustomControlName, "Description");
 		assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
 		oControl.setState("Warning");
 		oControl.setTitle("");
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Text " + ValueStateSupport.getAdditionalText(oControl.getState()) + " " + oControl.getTooltip(), "Description");
+		assert.strictEqual(oInfo.description, "Text " + ValueStateSupport.getAdditionalText(oControl.getState()) + " " +
+			oControl.getTooltip() + " " + sCustomControlName, "Description");
 		oControl.destroy();
 	});
 
