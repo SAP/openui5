@@ -207,33 +207,6 @@ sap.ui.define([
 		return this.setProperty("showPopover", bValue, true /* always trigger re-rendering manually */);
 	};
 
-	/**
-	 * Sets the value of the <code>backgroundDesign</code> property.
-	 *
-	 * @param {sap.m.BackgroundDesign} sBackgroundDesign - new value of the <code>backgroundDesign</code>
-	 * @return {sap.uxap.AnchorBar} <code>this</code> to allow method chaining
-	 * @public
-	 * @since 1.58
-	 */
-	AnchorBar.prototype.setBackgroundDesign = function (sBackgroundDesign) {
-		var sCurrentBackgroundDesign = this.getBackgroundDesign(),
-			$domRef = this.$(),
-			sCssClassPrefix = "sapUxAPAnchorBar";
-
-		if (sCurrentBackgroundDesign === sBackgroundDesign) {
-			return this;
-		}
-
-		this.setProperty("backgroundDesign", sBackgroundDesign, true);
-
-		if ($domRef.length) {
-			$domRef.removeClass(sCssClassPrefix + sCurrentBackgroundDesign);
-			$domRef.addClass(sCssClassPrefix + sBackgroundDesign);
-		}
-
-		return this;
-	};
-
 	AnchorBar.prototype.getSelectedSection = function () {
 
 		var oSelectedButton = this.getSelectedButton();
@@ -255,8 +228,6 @@ sap.ui.define([
 	 * create phone equivalents for each of the provided content controls
 	 */
 	AnchorBar.prototype.onBeforeRendering = function () {
-		var sBackgroundDesign = this.getBackgroundDesign();
-
 		if (this._bHasButtonsBar) {
 			this._iREMSize = parseInt(jQuery("body").css("font-size"));
 			this._iTolerance = this._iREMSize * 1;  // 1 rem
@@ -274,10 +245,6 @@ sap.ui.define([
 		this._oSelect.removeAllItems();
 		this._oSelect.setUpperCase(bUpperCase);
 		this.toggleStyleClass("sapUxAPAnchorBarUpperCase", bUpperCase);
-
-		if (sBackgroundDesign) {
-			this.addStyleClass("sapUxAPAnchorBar" + sBackgroundDesign);
-		}
 
 		//create responsive equivalents of the provided controls
 		aContent.forEach(function (oButton) {

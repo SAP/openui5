@@ -5,7 +5,9 @@
 sap.ui.define(function () {
 	"use strict";
 
-	var BlockBaseRenderer = {};
+	var BlockBaseRenderer = {
+		apiVersion: 2
+	};
 
 	BlockBaseRenderer.render = function (oRm, oControl) {
 
@@ -13,24 +15,22 @@ sap.ui.define(function () {
 			return;
 		}
 
-		oRm.write("<div");
-		oRm.writeControlData(oControl);
+		oRm.openStart("div", oControl);
 		if (oControl._getSelectedViewContent()) {
-			oRm.addClass('sapUxAPBlockBase');
-			oRm.addClass("sapUxAPBlockBase" + oControl.getMode());
+			oRm.class('sapUxAPBlockBase')
+				.class("sapUxAPBlockBase" + oControl.getMode());
 		} else {
 			var sClassShortName = oControl.getMetadata().getName().split(".").pop();
 
-			oRm.addClass('sapUxAPBlockBaseDefaultSize');
-			oRm.addClass('sapUxAPBlockBaseDefaultSize' + sClassShortName + oControl.getMode());
+			oRm.class('sapUxAPBlockBaseDefaultSize')
+				.class('sapUxAPBlockBaseDefaultSize' + sClassShortName + oControl.getMode());
 		}
-		oRm.writeClasses();
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (oControl._getSelectedViewContent()) {
 			oRm.renderControl(oControl._getSelectedViewContent());
 		}
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 	return BlockBaseRenderer;

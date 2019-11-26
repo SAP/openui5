@@ -9,7 +9,9 @@ sap.ui.define(function () {
 	 * @class Section renderer.
 	 * @static
 	 */
-	var ObjectPageSubSectionRenderer = {};
+	var ObjectPageSubSectionRenderer = {
+		apiVersion: 2
+	};
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
 		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
@@ -25,106 +27,104 @@ sap.ui.define(function () {
 		bHasTitleLine = bHasTitle || bHasActions;
 		bHasVisibleActions = oControl._hasVisibleActions();
 
-		oRm.write("<div ");
-		oRm.writeAttribute("role", "region");
-		oRm.writeControlData(oControl);
-
-		if (oControl._getHeight()) {
-		    oRm.writeAttribute("style", "height:" + oControl._getHeight() + ";");
-		}
+		oRm.openStart("div", oControl)
+			.attr("role", "region")
+			.style("height", oControl._getHeight());
 
 		if (oControl._bBlockHasMore) {
-			oRm.addClass("sapUxAPObjectPageSubSectionWithSeeMore");
+			oRm.class("sapUxAPObjectPageSubSectionWithSeeMore");
 		}
 
-		oRm.addClass("sapUxAPObjectPageSubSection");
-		oRm.addClass("ui-helper-clearfix");
-		oRm.writeClasses();
+		oRm.class("sapUxAPObjectPageSubSection")
+			.class("ui-helper-clearfix");
+
 
 		if (bAccessibilityOn) {
 			if (bHasTitle) {
-				oRm.writeAttributeEscaped("aria-labelledby", oControl.getId() + "-headerTitle");
+				oRm.attr("aria-labelledby", oControl.getId() + "-headerTitle");
 			} else {
-				oRm.writeAttribute("aria-label", sap.uxap.ObjectPageSubSection._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME"));
+				oRm.attr("aria-label", sap.uxap.ObjectPageSubSection._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME"));
 			}
 		}
 
-		oRm.write(">");
+		oRm.openEnd();
 
 		if (bHasTitleLine) {
-			oRm.write("<div");
-			oRm.addClass("sapUxAPObjectPageSubSectionHeader");
+			oRm.openStart("div", oControl.getId() + "-header")
+				.class("sapUxAPObjectPageSubSectionHeader");
 
 			if (!bHasTitle && !bHasVisibleActions) {
-				oRm.addClass("sapUiHidden");
+				oRm.class("sapUiHidden");
 			}
 
 			bUseTitleOnTheLeft = oControl._getUseTitleOnTheLeft();
 			if (bUseTitleOnTheLeft) {
-				oRm.addClass("titleOnLeftLayout");
+				oRm.class("titleOnLeftLayout");
 			}
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-header");
-			oRm.writeClasses();
-			oRm.write(">");
 
-			oRm.write("<div");
+			oRm.openEnd();
+
+			oRm.openStart("div", oControl.getId() + "-headerTitle");
+
 			if (bHasTitle) {
-				oRm.writeAttribute("role", "heading");
-				oRm.writeAttribute("aria-level",  oControl._getARIALevel());
+				oRm.attr("role", "heading")
+					.attr("aria-level",  oControl._getARIALevel());
 			}
-			oRm.addClass('sapUxAPObjectPageSubSectionHeaderTitle');
+
+			oRm.class('sapUxAPObjectPageSubSectionHeaderTitle');
+
 			if (oControl.getTitleUppercase()) {
-				oRm.addClass("sapUxAPObjectPageSubSectionHeaderTitleUppercase");
+				oRm.class("sapUxAPObjectPageSubSectionHeaderTitleUppercase");
 			}
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-headerTitle");
-			oRm.writeClasses();
-			oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
-			oRm.write(">");
+
+			oRm.attr("data-sap-ui-customfastnavgroup", true)
+				.openEnd();
+
 			if (bHasTitle) {
-				oRm.writeEscaped(oControl.getTitle());
+				oRm.text(oControl.getTitle());
 			}
-			oRm.write("</div>");
+
+			oRm.close("div");
 
 			if (bHasActions) {
-				oRm.write("<div");
-				oRm.addClass('sapUxAPObjectPageSubSectionHeaderActions');
-				oRm.writeClasses();
-				oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
-				oRm.write(">");
+				oRm.openStart("div")
+					.class('sapUxAPObjectPageSubSectionHeaderActions')
+					.attr("data-sap-ui-customfastnavgroup", true)
+					.openEnd();
 				aActions.forEach(oRm.renderControl, oRm);
-				oRm.write("</div>");
+				oRm.close("div");
 			}
 
-			oRm.write("</div>");
+			oRm.close("div");
 		}
 
-		oRm.write("<div");
-		oRm.addClass("ui-helper-clearfix");
-		oRm.addClass("sapUxAPBlockContainer");
-		oRm.writeClasses();
+		oRm.openStart("div")
+			.class("ui-helper-clearfix")
+			.class("sapUxAPBlockContainer");
+
 		if (oControl._isHidden){
-			oRm.addStyle("display", "none");
+			oRm.style("display", "none");
 		}
-		oRm.writeStyles();
-		oRm.write(">");
+
+		oRm.openEnd();
 
 		oRm.renderControl(oControl._getGrid());
 
-		oRm.write("</div>");
+		oRm.close("div");
 
-		oRm.write("<div");
-		oRm.addClass("sapUxAPSubSectionSeeMoreContainer");
-		oRm.writeClasses();
+		oRm.openStart("div")
+			.class("sapUxAPSubSectionSeeMoreContainer");
+
 		if (oControl._isHidden){
-			oRm.addStyle("display", "none");
+			oRm.style("display", "none");
 		}
-		oRm.writeStyles();
-		oRm.write(">");
+
+		oRm.openEnd();
 
 		oRm.renderControl(oControl._getSeeMoreButton());
-		oRm.write("</div>");
+		oRm.close("div");
 
-		oRm.write("</div>");
+		oRm.close("div");
 	};
 
 
