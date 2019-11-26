@@ -512,6 +512,9 @@ sap.ui.define([
 				version: 1,
 				qunitBridge: true
 			},
+			qunit: {
+				noglobals: false
+			},
 			module: "./selectors/selectors.qunit"
 		},
 		"_BrowserLogCollector": {

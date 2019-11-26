@@ -1,10 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
     "sap/ui/test/selectors/_DropdownItem",
+    "sap/ui/test/selectors/_ControlSelectorGenerator",
     "sap/ui/model/json/JSONModel",
     "sap/m/Select",
     "sap/ui/core/Item"
-], function (_DropdownItem, JSONModel, Select, Item) {
+], function (_DropdownItem, _ControlSelectorGenerator, JSONModel, Select, Item) {
     "use strict";
 
     QUnit.module("_DropdownItem", {
@@ -31,16 +32,25 @@ sap.ui.define([
     });
 
     QUnit.test("Should generate selector for item inside dropdown", function (assert) {
-        var oDropdownItem = new _DropdownItem();
-        var mSelector = oDropdownItem.generate(this.oSelect.getItems()[0], {id: "mySelect"});
-        assert.strictEqual(mSelector.ancestor.id, "mySelect", "Should generate selector with the dropdown ancestor");
-        assert.strictEqual(mSelector.controlType, "sap.ui.core.Item", "Should generate selector with item type");
-        assert.strictEqual(mSelector.properties.key, "1", "Should generate selector with item selector key");
+        var fnDone = assert.async();
+        this.oSelect.open();
+        // wait for select list to open
+        setTimeout(function () {
+            _ControlSelectorGenerator._generate({control: this.oSelect.getItems()[0], includeAll: true})
+            .then(function (aSelectors) {
+                var mDropdownSelector = aSelectors[2][0];
+                assert.strictEqual(mDropdownSelector.ancestor.controlType, "sap.m.SelectList", "Should generate selector with the dropdown ancestor");
+                assert.strictEqual(mDropdownSelector.controlType, "sap.ui.core.Item", "Should generate selector with item type");
+                assert.strictEqual(mDropdownSelector.properties.key, "1", "Should generate selector with item selector key");
+            }).finally(fnDone);
+        }.bind(this), 100);
     });
 
     QUnit.test("Should find ancestor select list", function (assert) {
-        var oDropdownItem = new _DropdownItem();
-        var mAncestors = oDropdownItem._getAncestors(this.oSelect.getItems()[0]);
-        assert.strictEqual(mAncestors.selector, this.oSelect.getList(), "Should find ancestor select list");
+        var oGenerator = new _DropdownItem();
+        assert.ok(!oGenerator._isValidationRootRequired());
+        assert.ok(oGenerator._isAncestorRequired());
+        var oAncestor = oGenerator._getAncestor(this.oSelect.getItems()[0]);
+        assert.strictEqual(oAncestor, this.oSelect.getList(), "Should find ancestor select list");
     });
 });

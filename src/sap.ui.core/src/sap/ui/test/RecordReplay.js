@@ -65,15 +65,14 @@ sap.ui.define([
 	 */
 	RecordReplay.findControlSelectorByDOMElement = function(oOptions) {
 		return new Promise(function (resolve, reject) {
-			try {
-				var oControl = _ControlFinder._getControlForElement(oOptions.domElement);
-				if (!oControl) {
+			var oControl = _ControlFinder._getControlForElement(oOptions.domElement);
+			if (!oControl) {
 					reject(new Error("Could not find control for DOM element " + oOptions.domElement.id));
-				}
-				var oSelector = _ControlSelectorGenerator._generate({
-					control: oControl,
-					domElement: oOptions.domElement
-				});
+			}
+			_ControlSelectorGenerator._generate({
+				control: oControl,
+				domElement: oOptions.domElement
+			}).then(function (oSelector) {
 				var sIDSuffix = _ControlFinder._getDomElementIDSuffix(oOptions.domElement, oControl);
 				if (sIDSuffix) {
 					oLogger.debug("DOM element ID suffix is " + sIDSuffix);
@@ -82,9 +81,9 @@ sap.ui.define([
 					};
 				}
 				resolve(oSelector);
-			} catch (oError) {
+			}).catch(function (oError) {
 				reject(new Error("No control selector found for DOM element " + oOptions.domElement.id + ". Error: " + oError));
-			}
+			});
 		});
 	};
 

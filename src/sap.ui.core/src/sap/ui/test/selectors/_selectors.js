@@ -8,6 +8,7 @@ sap.ui.define([
     "sap/ui/test/selectors/_BindingPath",
     "sap/ui/test/selectors/_DropdownItem",
     "sap/ui/test/selectors/_GlobalID",
+    "sap/ui/test/selectors/_ControlType",
     "sap/ui/test/selectors/_LabelFor",
     "sap/ui/test/selectors/_Properties",
     "sap/ui/test/selectors/_Selector",
@@ -27,6 +28,21 @@ sap.ui.define([
         }, {});
     }
 
-    return getSelectorInstances.apply(this, arguments);
+    function sort(aSelectors) {
+        return [
+            "globalID",
+            "viewID",
+            "labelFor",
+            "bindingPath",
+            "properties",
+            "dropdownItem",
+            "tableRowItem",
+            "controlType"
+        ].map(function (sName) {
+            return aSelectors[sName];
+        });
+    }
+
+    return sort(getSelectorInstances.apply(this, arguments));
 
 });
