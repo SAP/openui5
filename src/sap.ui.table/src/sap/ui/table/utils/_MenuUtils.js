@@ -263,6 +263,10 @@ sap.ui.define([
 						var sFilterProperty = oColumn.getFilterProperty();
 						var sFilterValue = oRowContext.getProperty(sFilterProperty);
 
+						if (sFilterValue != null && typeof sFilterValue !== "string") {
+							sFilterValue = sFilterValue.toString();
+						}
+
 						if (this.getEnableCustomFilter()) {
 							this.fireCustomFilter({
 								column: oColumn,
