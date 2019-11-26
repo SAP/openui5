@@ -70,14 +70,17 @@ sap.ui.define([
 		ODataModel.mServiceData = {};
 	}
 
+	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+
 	QUnit.module("ODataModelV2DataState ", {
 		beforeEach : function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
-
 		},
 		afterEach : function() {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -562,12 +565,14 @@ sap.ui.define([
 
 	QUnit.module("New DataState Tests", {
 		beforeEach : function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
 		afterEach : function() {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -822,12 +827,14 @@ sap.ui.define([
 
 	QUnit.module("Other Old DataState Tests", {
 		beforeEach : function() {
+			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
 		afterEach : function() {
+			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();

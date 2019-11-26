@@ -15,10 +15,17 @@ sap.ui.require([
 
 	// Note: cannot require these above as data-sap-ui-resourceroots is ignored until boot
 	sap.ui.require([
+		// Load sinon before sinon-4 so that the global sinon object is sinon-4 and tests using
+		// sinon-4 APIs do not break
+		"sap/ui/thirdparty/sinon",
+		"sap/ui/thirdparty/sinon-4",
 		// alphabetic sort order according to module names
 		// base
 		"sap/ui/core/qunit/BindingParser.qunit",
 		"sap/ui/core/qunit/ExpressionParser.qunit",
+		// DataState
+		"sap/ui/core/qunit/DataState.qunit",
+		"sap/ui/core/qunit/odata/v2/V2ODataModelDataState.qunit",
 		// OData types
 		"sap/ui/core/qunit/odata/type/Boolean.qunit",
 		"sap/ui/core/qunit/odata/type/Currency.qunit",
