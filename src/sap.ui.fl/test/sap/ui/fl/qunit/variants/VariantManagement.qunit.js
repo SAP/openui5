@@ -584,13 +584,18 @@ sap.ui.define([
 			sinon.stub(this.oVariantManagement.oManagementDialog, "open");
 
 			this.oVariantManagement._openManagementDialog();
+
+			assert.ok(oItemDel.visible);
 			this.oVariantManagement._handleManageDeletePressed(oItemDel);
+			assert.ok(!oItemDel.visible);
 
 			var aRows = this.oVariantManagement.oManagementTable.getItems();
 			assert.ok(aRows);
-			assert.equal(aRows.length, 4);
+			assert.equal(aRows.length, 5);
 
 			this.oVariantManagement._handleManageCancelPressed();
+			assert.ok(oItemDel.visible);
+
 
 			this.oVariantManagement._openManagementDialog();
 			aRows = this.oVariantManagement.oManagementTable.getItems();
