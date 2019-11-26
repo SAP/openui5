@@ -92,7 +92,16 @@ sap.ui.define([
 					/**
 					 * Available options for the text direction are LTR and RTL. By default the control inherits the text direction from its parent control.
 					 */
-					textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit }
+					textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: TextDirection.Inherit },
+
+					/**
+					 * Defines the icon to be displayed as graphical element within the <code>InfoLabel</code>.
+					 * It can be an icon from the icon font.
+					 *
+					 * @since 1.74
+					 */
+					icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue: "" }
+
 				}
 			}
 		});

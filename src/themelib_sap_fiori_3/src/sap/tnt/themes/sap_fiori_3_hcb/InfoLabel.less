@@ -3,31 +3,26 @@
 /* Quartz High Contrast Black theme   */
 /* ================================== */
 
-
 .sapTntInfoLabel {
 	background-color: @sapUiGroupContentBackground;
 	border: 1px solid @sapUiGroupContentBorderColor;
 	line-height: 85%;
-
-	.sapTntInfoLabelInner{
-		line-height: 1rem;
-	}
 }
 
 /* ==========================================================================
    InfoLabel Display Only
    ========================================================================== */
-   .sapTntInfoLabel.sapTntInfoLabelDisplayOnly .sapTntInfoLabelInner {
-		line-height: 0.875rem;
+.sapTntInfoLabel.sapTntInfoLabelDisplayOnly .sapTntInfoLabelInner {
+	line-height: 0.875rem;
 }
 
 /* ==========================================================================
    InfoLabel No Text
    ========================================================================== */
-   .sapTntInfoLabel.sapTntInfoLabelNoText {
+.sapTntInfoLabel.sapTntInfoLabelNoText:not(.sapTntInfoLabelWithIcon) {
 	padding: 0 0.5rem;
 
-		&.sapTntInfoLabelDisplayOnly{
-			padding: 0 0.4375rem;
-		}
-   }
+	&.sapTntInfoLabelDisplayOnly{
+		padding: 0 0.4375rem;
+	}
+}

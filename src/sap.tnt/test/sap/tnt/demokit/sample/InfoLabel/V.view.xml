@@ -63,7 +63,7 @@
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 8">
 							<f:fields>
-								<tnt:InfoLabel id="il8" text="available" colorScheme="8" displayOnly= "true" />
+								<tnt:InfoLabel id="il8" text="with icon" colorScheme="8" displayOnly= "true" icon="sap-icon://background" />
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Color Scheme 9">

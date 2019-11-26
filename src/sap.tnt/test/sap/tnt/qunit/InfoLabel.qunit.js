@@ -28,6 +28,7 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabel.getWidth(), "", "width should be null");
 		assert.strictEqual(this.InfoLabel.getDisplayOnly(), false, "displayOnly should be false");
 		assert.strictEqual(this.InfoLabel.getTextDirection(), "Inherit", "textDirection should be Inherit");
+		assert.strictEqual(this.InfoLabel.getIcon(), "", "icon should not be set");
 	});
 
 	QUnit.module("Renderer", {
@@ -77,6 +78,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(this.InfoLabel.getTextDirection(), "RTL", "InfoLabel should have textDirection \"RTL\"");
 		assert.strictEqual(jQuery(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0]).attr("dir"), "rtl", "InfoLabel \"dir\" attribute should be \"rtl\"");
+	});
+
+	QUnit.test("testing icon", function (assert) {
+		this.InfoLabel.setIcon("sap-icon://show");
+		sap.ui.getCore().applyChanges();
+		assert.ok(jQuery(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelWithIcon")[0]), "There is a span with an icon rendered");
 	});
 
 	QUnit.module("Appearance", {
