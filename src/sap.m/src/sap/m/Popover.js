@@ -1792,10 +1792,6 @@ sap.ui.define([
 				oCSS["max-height"] = iMaxContentHeight + "px";
 			}
 
-			if ((iActualContentHeight > iMaxContentHeight) && this._hasSingleScrollableContent()) {
-				oCSS["max-height"] = Math.min(iMaxContentHeight, iActualContentHeight) + "px";
-			}
-
 			return oCSS;
 		};
 
@@ -1951,6 +1947,8 @@ sap.ui.define([
 				return;
 			}
 
+			this._beforeAdjustPositionAndArrowHook();
+
 			var $popover = this.$(),
 				$arrow = this.$("arrow"),
 				$content = this.$("cont"),
@@ -2060,6 +2058,14 @@ sap.ui.define([
 		 * @protected
 		 */
 		Popover.prototype._afterAdjustPositionAndArrowHook = function () {
+		};
+
+		/**
+		 * Hook called before adjusment of the Popover position.
+		 *
+		 * @protected
+		 */
+		Popover.prototype._beforeAdjustPositionAndArrowHook = function () {
 		};
 
 		/**

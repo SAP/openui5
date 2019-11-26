@@ -2878,7 +2878,7 @@ function(
 
 		if (bEditable) {
 			oList.setMode(ListMode.MultiSelect);
-			oSuggestionsPopover.addFlexContent(oList);
+			oSuggestionsPopover.addContent(oList);
 		} else if (!oReadOnlyPopover.getContent().length){
 			oList.setMode(ListMode.None);
 			oReadOnlyPopover.addContent(oList);

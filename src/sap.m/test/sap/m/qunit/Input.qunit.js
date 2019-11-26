@@ -116,7 +116,7 @@ sap.ui.define([
 
 	function getPopupItemsContent(oPopup) {
 		var aContents = oPopup.getContent();
-		return aContents[0].getFlexContent()[0];
+		return oPopup.isA("sap.m.Popover") ? aContents[0] : aContents[1];
 	}
 
 	var i1;
@@ -959,7 +959,7 @@ sap.ui.define([
 		assert.ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
-		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getFlexContent()[0].getItems()[0];
+		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getItems()[0];
 		assert.ok(oItem, "Item should be created");
 
 		oItem.focus();
@@ -1095,7 +1095,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 		oPopup1 = oInput7._oSuggPopover._oPopover;
-		aItems = oPopup1.getContent()[0].getFlexContent()[0].getItems();
+		aItems = oPopup1.getContent()[0].getItems();
 
 		assert.ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
 		assert.ok(oPopup1.isOpen(), "Two Value Suggestion Popup is open now");
@@ -1105,12 +1105,12 @@ sap.ui.define([
 		oInput7._$input.focus().val("abcT").trigger("input");
 		this.clock.tick(400);
 
-		aItems = oPopup1.getContent()[0].getFlexContent()[0].getItems();
+		aItems = oPopup1.getContent()[0].getItems();
 		assert.ok(oPopup1.isOpen(), "Two Value Suggestion Popup is still open now");
 		assert.equal(aItems.length, 1, "Suggestions are filtered");
 
 		//trigger selection
-		var oList = oPopup1.getContent()[0].getFlexContent()[0];
+		var oList = oPopup1.getContent()[0];
 		var oListItem = oList.getItems()[0];
 		oList.fireItemPress({
 			listItem : oListItem
@@ -1123,7 +1123,7 @@ sap.ui.define([
 		oInput7._$input.focus().val("").trigger("input");
 		this.clock.tick(300);
 
-		aItems = oPopup1.getContent()[0].getFlexContent()[0].getItems();
+		aItems = oPopup1.getContent()[0].getItems();
 		assert.ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
 		assert.equal(aItems.length, 0, "Suggestions are destroyed");
 
@@ -1591,12 +1591,12 @@ sap.ui.define([
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(500);
-
 		var oSpy = this.spy(oInput._oSuggPopover._oPopover, "invalidate");
 		oInput._oSuggPopover._oPopupInput._$input.focus().val("abc").trigger("input");
 		this.clock.tick(400);
 
 		assert.equal(oInput.getSuggestionItems().length, 1, "Suggestion Item is inserted");
+
 		assert.equal(oSpy.callCount, 0, "invalidate isn't called on dialog instance");
 
 		oInput.destroy();
@@ -3091,7 +3091,7 @@ sap.ui.define([
 
 		this.clock.tick(300);
 
-		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getFlexContent()[0].getItems()[0];
+		var oItem = oInput._oSuggPopover._oPopover.getContent()[0].getItems()[0];
 		assert.ok(oItem, "Item should be created");
 
 		oItem.focus();
@@ -4068,14 +4068,14 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'G'.");
 		assert.strictEqual(oInput.getValue(), "Germany", "Input value should be autocompleted.");
 		assert.strictEqual(oInput.getSelectedText(), "ermany", "Suggested value should be selected");
-		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getFlexContent()[0].getItems()[0].getSelected(), true, "Correct item in the Suggestions list is selected.");
+		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[0].getSelected(), true, "Correct item in the Suggestions list is selected.");
 
 		// act
 		oInput._$input.focus().trigger(oFakeKeydown).val("Gr").trigger("input");
 		this.clock.tick(300);
 
 		// assert
-		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getFlexContent()[0].getItems()[2].getSelected(), true, "Correct item in the Suggestions list is selected.");
+		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getItems()[2].getSelected(), true, "Correct item in the Suggestions list is selected.");
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oInput._$input, KeyCodes.ENTER);
@@ -4091,7 +4091,7 @@ sap.ui.define([
 
 		// assert
 		assert.notOk(oInput._oSuggPopover._bDoTypeAhead, "Autocomplete shouldn't be allowed when deleting.");
-		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getFlexContent()[0].getSelectedItem(), null, "No items in the Suggestions list are selected when deleting.");
+		assert.strictEqual(oInput._oSuggestionPopup.getContent()[0].getSelectedItem(), null, "No items in the Suggestions list are selected when deleting.");
 
 		// clean up
 		oInput.destroy();
@@ -4174,7 +4174,7 @@ sap.ui.define([
 		assert.ok(oInput._oSuggPopover._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
 		assert.strictEqual(oPopupInput.getValue(), "united Kingdom", "Input value should be autocompleted and character casing should be preserved.");
 		assert.strictEqual(oPopupInput.getSelectedText(), "ted Kingdom", "Suggested value should be selected");
-		assert.strictEqual(oPopover._oPopover.getContent()[0].getFlexContent()[0].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
+		assert.strictEqual(oPopover._oPopover.getContent()[1].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(oPopupInput._$input, KeyCodes.ENTER);
@@ -4438,14 +4438,14 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find(".sapMSuggestionsPopoverValueState").text(), "Some Error", "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find(".sapMValueStateHeaderText").text(), "Some Error", "value state message is displayed in the suggestion popover");
 
 		// Act
 		this.inputWithSuggestions.setValueStateText(sValueStateText);
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find(".sapMSuggestionsPopoverValueState").text(), sValueStateText, "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.$().find(".sapMValueStateHeaderText").text(), sValueStateText, "value state message is displayed in the suggestion popover");
 
 		var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
 
@@ -4512,14 +4512,14 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getFixContent().getText(), "Some Error", "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getText(), "Some Error", "value state message is displayed in the suggestion popover");
 
 		// Act
 		this.inputWithSuggestions.setValueStateText(sValueStateText);
 		this.clock.tick(300);
 
 		// Assert
-		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getFixContent().getText(), sValueStateText, "value state message is displayed in the suggestion popover");
+		assert.strictEqual(this.inputWithSuggestions._getSuggestionsPopover()._oPopover.getContent()[0].getText(), sValueStateText, "value state message is displayed in the suggestion popover");
 
 		var oPopup = this.inputWithSuggestions._oValueStateMessage._oPopup;
 
@@ -4584,7 +4584,7 @@ sap.ui.define([
 
 		// act
 		this.input.onfocusin();
-		this.clock.tick(300);
+		this.clock.tick(500);
 		var iValueStateZIndex = jQuery(this.input._oValueStateMessage._oPopup.getContent()).zIndex();
 
 		// assert

@@ -22,6 +22,15 @@ describe('sap.m.MultiComboBox', function() {
 		defaultMultiComboBoxArrow.click();
 	});
 
+	//MultiComboBox - Filtering
+	it("should open first ComboBox - Default", function() {
+		var defaultArrow = element(by.id("MultiComboBox0-arrow"));
+		defaultArrow.click();
+		browser.actions().sendKeys("B").perform();
+		expect(takeScreenshot()).toLookAs("multicombobox-filtering");
+
+	});
+
 	//MultiComboBox - 50% width
 	it("should visualize  a MultiComboBox with 50% width", function(){
 		var definedWidthMultiComboBox = element(by.id("MultiComboBox0"));
@@ -84,6 +93,7 @@ describe('sap.m.MultiComboBox', function() {
 		browser.executeScript('document.getElementById("MultiComboBoxWarning").scrollIntoView()').then(function() {
 			var warningStateMultiComboBox = element(by.id("MultiComboBoxWarning"));
 			expect(takeScreenshot(warningStateMultiComboBox)).toLookAs("warning_state");
+			expect(takeScreenshot()).toLookAs("long_value_state");
 		});
 	});
 

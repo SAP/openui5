@@ -379,7 +379,7 @@ sap.ui.define([
 		// NOTE!
 		// This can change in future! In such case please ensure that the scroll is working on mobile devices
 		// and amend this test accordingly and/or add new ones!
-		assert.notEqual(jQuery(oComboBox._oSuggestionPopover._oSimpleFixFlex.getDomRef()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+		assert.notEqual(jQuery(oComboBox._oSuggestionPopover._getScrollableContent()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
 
 		//Cleanup
 		oComboBox.destroy();
@@ -406,7 +406,7 @@ sap.ui.define([
 		// NOTE!
 		// This can change in future! In such case please ensure that the scroll is working on mobile devices
 		// and amend this test accordingly and/or add new ones!
-		assert.notEqual(jQuery(oMultiComboBox._oSuggestionPopover._oSimpleFixFlex.getDomRef()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
+		assert.notEqual(jQuery(oMultiComboBox._oSuggestionPopover._getScrollableContent()).css("height"), "auto", "Height style attribute of the SimpleFixFlex is not 'auto'.");
 
 		//Cleanup
 		oMultiComboBox.destroy();
@@ -416,26 +416,16 @@ sap.ui.define([
 
 	QUnit.test("_getScrollableContent", function (assert) {
 		//Set up
-		var oInput = new Input(),
-			oGetDomRefSpy,
-			oSuggestionsPopover = new SuggestionsPopover(oInput);
+		var oInput = new Input({
+			showSuggestion: true
+		});
+
+		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.ok(!oSuggestionsPopover._getScrollableContent(),
-			"_getScrollableContent should not return anything, when there is no SimpleFixFlex");
-
-		//Act
-		oSuggestionsPopover._createSuggestionPopupContent(false);
-		oGetDomRefSpy = sinon.spy(SimpleFixFlex.prototype, "getDomRef");
-		oSuggestionsPopover._getScrollableContent();
-
-		//Assert
-		assert.ok(oGetDomRefSpy.calledOnce,
-			"_getScrollableContent should return the dom ref of the flex content, when a SimpleFixFlex is created");
+		assert.strictEqual(oInput._oSuggPopover._getScrollableContent(), oInput._oSuggPopover._oPopover.getDomRef("scroll"), "_getScrollableContent should return Popover's scroll content");
 
 		//Clean up
-		oSuggestionsPopover.destroy();
 		oInput.destroy();
-		oGetDomRefSpy.restore();
 	});
 });
