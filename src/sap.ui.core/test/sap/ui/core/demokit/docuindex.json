@@ -231,7 +231,8 @@
 				"since" : "1.16",
 				"samples" : [
 					"sap.ui.core.sample.RoutingFullscreen",
-					"sap.ui.core.sample.RoutingMasterDetail"
+					"sap.ui.core.sample.RoutingMasterDetail",
+					"sap.ui.core.sample.RoutingNestedComponent"
 				]
 			},
 			{
@@ -672,6 +673,11 @@
 				"id" : "sap.ui.core.sample.RoutingMasterDetail",
 				"name" : "Routing in a split screen layout with the master detail pattern",
 				"description" : "A mini app with 2 detail pages. Both are bookmarkable."
+			},
+			{
+				"id" : "sap.ui.core.sample.RoutingNestedComponent",
+				"name" : "Routing with nested components consuming the NorthWind OData Service",
+				"description" : "An App that shows how nested component with routing enabled can be used. This app uses the NorthWind OData Service and shows the 'Products', 'Categories' and 'Suppliers' entity sets and the relationships between them."
 			},
 			{
 				"id": "sap.ui.core.sample.matcher.BindingPath",

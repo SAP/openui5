@@ -1,0 +1,163 @@
+{
+	"_version": "1.17.0",
+	"sap.app": {
+		"id": "sap.ui.core.sample.RoutingNestedComponent",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"dataSources": {}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.core.sample.RoutingNestedComponent.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
+		"componentUsages": {
+			"suppliersComponent": {
+				"name": "sap.ui.core.sample.RoutingNestedComponent.reuse.suppliers",
+				"settings": {},
+				"componentData": {},
+				"lazy": true
+			},
+			"categoriesComponent": {
+				"name": "sap.ui.core.sample.RoutingNestedComponent.reuse.categories",
+				"settings": {},
+				"componentData": {},
+				"lazy": true
+			},
+			"productsComponent": {
+				"name": "sap.ui.core.sample.RoutingNestedComponent.reuse.products",
+				"settings": {},
+				"componentData": {},
+				"lazy": true
+			}
+		},
+		"dependencies": {
+			"minUI5Version": "1.72",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.core.sample.RoutingNestedComponent.i18n.i18n"
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.core.sample.RoutingNestedComponent.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"transition": "slide",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"async": true
+			},
+			"routes": [
+				{
+					"name": "home",
+					"pattern": "",
+					"target": "home"
+				},
+				{
+					"name": "suppliers",
+					"pattern": "suppliers",
+					"target": {
+						"name": "suppliers",
+						"prefix": "s"
+					}
+				},
+				{
+					"name": "categories",
+					"pattern": "categories",
+					"target": {
+						"name": "categories",
+						"prefix": "c"
+					}
+				},
+				{
+					"name": "products",
+					"pattern": "products",
+					"target": {
+						"name": "products",
+						"prefix": "p"
+					}
+				}
+			],
+			"targets": {
+				"home": {
+					"viewId": "home",
+					"viewName": "Home"
+				},
+				"suppliers": {
+					"type": "Component",
+					"usage": "suppliersComponent"
+				},
+				"categories": {
+					"type": "Component",
+					"usage": "categoriesComponent"
+				},
+				"products": {
+					"type": "Component",
+					"usage": "productsComponent"
+				},
+				"notFound": {
+					"viewId": "notFound",
+					"viewName": "NotFound",
+					"transition": "show"
+				}
+			}
+		},
+		"config": {
+			"sample": {
+				"iframe": "RoutingNestedComponent.html",
+				"stretch": true,
+				"files": [
+					"reuse/categories/Component.js",
+					"reuse/categories/manifest.json",
+					"reuse/suppliers/Component.js",
+					"reuse/suppliers/manifest.json",
+					"reuse/products/Component.js",
+					"reuse/products/manifest.json",
+					"base/BaseController.js",
+					"base/BaseComponent.js",
+					"i18n/i18n.properties",
+					"controller/Home.controller.js",
+					"controller/App.controller.js",
+					"view/Home.view.xml",
+					"view/App.view.xml",
+					"Component.js",
+					"RoutingNestedComponent.html",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
